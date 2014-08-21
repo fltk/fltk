@@ -28,6 +28,9 @@ extern "C" {
 #endif
 
 int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
+#if defined(HAVE_VSNPRINTF) && defined(__linux__)
+  return vsnprintf(buffer, bufsize, format, ap);
+#else
   char		*bufptr,		/* Pointer to position in buffer */
 		*bufend,		/* Pointer to end of buffer */
 		sign,			/* Sign of format width */
@@ -251,6 +254,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
   if (bufptr) *bufptr = '\0';
 
   return (bytes);
+#endif //HAVE_VSNPRINTF
 }
 
 int fl_snprintf(char* str, size_t size, const char* fmt, ...) {
