@@ -142,6 +142,9 @@ long
 XKeysymToUcs(
 	KeySym 	keysym);
 
+#ifdef X_HAVE_UTF8_STRING
+#define XUtf8LookupString Xutf8LookupString
+#else
 int
 XUtf8LookupString(
     XIC                 ic,
@@ -150,6 +153,7 @@ XUtf8LookupString(
     int                 bytes_buffer,
     KeySym*             keysym,
     Status*             status_return);
+#endif
 
 unsigned short
 XUtf8IsNonSpacing(

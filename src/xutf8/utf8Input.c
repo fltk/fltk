@@ -407,6 +407,7 @@ XConvertEucToUtf8(const char*	locale,
   return len;
 }
 
+#ifndef X_HAVE_UTF8_STRING
 int
 XUtf8LookupString(XIC                 ic,
 		  XKeyPressedEvent*   event,
@@ -447,6 +448,7 @@ XUtf8LookupString(XIC                 ic,
   }
   return len;
 }
+#endif /* X11 has utf-8 */
 
 #endif /* X11 only */
 
