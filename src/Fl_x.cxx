@@ -310,9 +310,9 @@ Window fl_message_window = 0;
 int fl_screen;
 XVisualInfo *fl_visual;
 Colormap fl_colormap;
-XIM fl_xim_im = 0;
+static XIM fl_xim_im = 0;
 XIC fl_xim_ic = 0;
-char fl_is_over_the_spot = 0;
+static char fl_is_over_the_spot = 0;
 static XRectangle status_area;
 
 static Atom WM_DELETE_WINDOW;
@@ -335,24 +335,24 @@ Atom fl_XdndActionCopy;
 Atom fl_XdndFinished;
 //Atom fl_XdndProxy;
 Atom fl_XdndURIList;
-Atom fl_Xatextplainutf;
-Atom fl_Xatextplainutf2;		// STR#2930 
-Atom fl_Xatextplain;
+static Atom fl_Xatextplainutf;
+static Atom fl_Xatextplainutf2;		// STR#2930 
+static Atom fl_Xatextplain;
 static Atom fl_XaText;
-Atom fl_XaCompoundText;
+static Atom fl_XaCompoundText;
 Atom fl_XaUtf8String;
-Atom fl_XaTextUriList;
-Atom fl_XaImageBmp;
-Atom fl_XaImagePNG;
-Atom fl_INCR;
-Atom fl_NET_WM_NAME;			// utf8 aware window label
-Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
-Atom fl_NET_SUPPORTING_WM_CHECK;
-Atom fl_NET_WM_STATE;
-Atom fl_NET_WM_STATE_FULLSCREEN;
-Atom fl_NET_WM_FULLSCREEN_MONITORS;
-Atom fl_NET_WORKAREA;
-Atom fl_NET_WM_ICON;
+static Atom fl_XaTextUriList;
+static Atom fl_XaImageBmp;
+static Atom fl_XaImagePNG;
+static Atom fl_INCR;
+static Atom fl_NET_WM_NAME;			// utf8 aware window label
+static Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
+static Atom fl_NET_SUPPORTING_WM_CHECK;
+static Atom fl_NET_WM_STATE;
+static Atom fl_NET_WM_STATE_FULLSCREEN;
+static Atom fl_NET_WM_FULLSCREEN_MONITORS;
+static Atom fl_NET_WORKAREA;
+static Atom fl_NET_WM_ICON;
 
 /*
   X defines 32-bit-entities to have a format value of max. 32,
@@ -384,7 +384,7 @@ extern "C" {
 
 extern char *fl_get_font_xfld(int fnum, int size);
 
-void fl_new_ic()
+static void fl_new_ic()
 {
   XVaNestedList preedit_attr = NULL;
   XVaNestedList status_attr = NULL;
@@ -561,7 +561,7 @@ void fl_set_status(int x, int y, int w, int h)
   XFree(status_attr);
 }
 
-void fl_init_xim() {
+static void fl_init_xim() {
   static int xim_warning = 2;
   if (xim_warning > 0) xim_warning--;
 
@@ -865,11 +865,11 @@ int Fl::clipboard_contains(const char *type)
   return retval;
 }
 
-Window fl_dnd_source_window;
-Atom *fl_dnd_source_types; // null-terminated list of data types being supplied
-Atom fl_dnd_type;
-Atom fl_dnd_source_action;
-Atom fl_dnd_action;
+static Window fl_dnd_source_window;
+static Atom *fl_dnd_source_types; // null-terminated list of data types being supplied
+static Atom fl_dnd_type;
+static Atom fl_dnd_source_action;
+static Atom fl_dnd_action;
 
 void fl_sendClientMessage(Window window, Atom message,
                                  unsigned long d0,

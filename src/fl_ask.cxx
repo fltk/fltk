@@ -126,7 +126,7 @@ static Fl_Window *makeform() {
  *                  that is asked of them...
  */
 
-void resizeform() {
+static void resizeform() {
   int	i;
   int	message_w, message_h;
   int	text_height;

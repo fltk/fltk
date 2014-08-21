@@ -101,8 +101,8 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 Fl_XFont_On_Demand fl_xfont;
 void *fl_xftfont = 0;
-//const char* fl_encoding_ = "iso8859-1";
-const char* fl_encoding_ = "iso10646-1";
+//static const char* fl_encoding_ = "iso8859-1";
+static const char* fl_encoding_ = "iso10646-1";
 
 static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching

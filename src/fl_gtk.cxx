@@ -203,7 +203,7 @@ static void draw(int which, int x,int y,int w,int h, int inset)
   }
 }
 
-void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
+static void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   draw(FILL,	    x,   y, w,   h, 2);
 
@@ -234,7 +234,7 @@ void gtk_round_up_box(int x, int y, int w, int h, Fl_Color c) {
   draw(CLOSED,	    x,   y, w,   h, 0);
 }
 
-void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
+static void gtk_round_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c);
   draw(FILL,	    x,   y, w,   h, 2);
 
