@@ -110,7 +110,7 @@ static void cb_print_properties_panel(Fl_Double_Window*, void*) {
   print_update_status();
 }
 
-static Fl_Menu_Item menu_print_page_size[] = {
+static const Fl_Menu_Item menu_print_page_size[] = {
   {"Letter", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
   {"A4", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
   {"Legal", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
@@ -124,7 +124,7 @@ static Fl_Menu_Item menu_print_page_size[] = {
 };
 
 #include <FL/Fl_Pixmap.H>
-static const char *idata_print_color[] = {
+static const char * const idata_print_color[] = {
 "24 24 17 1",
 " \tc None",
 ".\tc #FFFF00",
@@ -170,7 +170,7 @@ static const char *idata_print_color[] = {
 };
 static Fl_Pixmap image_print_color(idata_print_color);
 
-static const char *idata_print_gray[] = {
+static const char * const idata_print_gray[] = {
 "24 24 17 1",
 " \tc None",
 ".\tc #E3E3E3",

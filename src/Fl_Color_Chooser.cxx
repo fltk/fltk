@@ -91,7 +91,7 @@ enum {
   M_HEX,	/**< mode() of Fl_Color_Chooser showing hex values */
   M_HSV		/**< mode() of Fl_Color_Chooser showing HSV values */
 };
-static Fl_Menu_Item mode_menu[] = {
+static const Fl_Menu_Item mode_menu[] = {
   {"rgb"},
   {"byte"},
   {"hex"},

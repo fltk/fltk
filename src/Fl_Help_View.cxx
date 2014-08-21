@@ -97,7 +97,7 @@ static char initial_load = 0;
 // Broken image...
 //
 
-static const char *broken_xpm[] =
+static const char * const broken_xpm[] =
 		{
 		  "16 24 4 1",
 		  "@ c #000000",
