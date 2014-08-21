@@ -1165,6 +1165,30 @@ if test -n "$GCC"; then
 	AC_MSG_RESULT(no))
     CFLAGS="$OLDCFLAGS"
 
+    # See if ld supports -Bsymbolic-functions...
+    AC_MSG_CHECKING(if ld supports -Bsymbolic-functions)
+    OLDLDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -Wl,-Bsymbolic-functions"
+    AC_TRY_LINK(,,
+        [DSOFLAGS="$DSOFLAGS -Wl,-Bsymbolic-functions"]
+        AC_MSG_RESULT(yes),
+        AC_MSG_RESULT(no))
+    LDFLAGS="$OLDLDFLAGS"
+
+    # See if toolchain supports a sectioned build...
+    AC_MSG_CHECKING(if toolchain supports sections)
+    OLDLDFLAGS="$LDFLAGS"
+    OLDCFLAGS="$CFLAGS"
+    LDFLAGS="$LDFLAGS -Wl,-gc-sections"
+    CFLAGS="$CFLAGS -ffunction-sections -fdata-sections"
+    AC_TRY_LINK(,,
+        [DSOFLAGS="$DSOFLAGS -Wl,-gc-sections"
+        OPTIM="$OPTIM -ffunction-sections -fdata-sections"]
+        AC_MSG_RESULT(yes),
+        AC_MSG_RESULT(no))
+    LDFLAGS="$OLDLDFLAGS"
+    CFLAGS="$OLDCFLAGS"
+
     # See if we are running Solaris; if so, try the -fpermissive option...
     # This option is required on some versions of Solaris to work around
     # bugs in the X headers up through Solaris 7.
