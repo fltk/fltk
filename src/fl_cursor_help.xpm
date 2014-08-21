@@ -1,5 +1,5 @@
 /* XPM */
-static const char * fl_cursor_help_xpm[] = {
+static const char * const fl_cursor_help_xpm[] = {
 "16 27 9 1",
 " 	c None",
 ".	c #FFFFFF",

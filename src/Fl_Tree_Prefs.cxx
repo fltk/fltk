@@ -28,7 +28,7 @@
 // INTERNAL: BUILT IN OPEN/STOW XPMS
 //    These can be replaced via prefs.openicon()/closeicon()
 //
-static const char *L_open_xpm[] = {
+static const char * const L_open_xpm[] = {
 #ifdef __APPLE__
   "11 11 2 1",
   ".  c None",
@@ -64,7 +64,7 @@ static const char *L_open_xpm[] = {
 };
 static Fl_Pixmap L_openpixmap(L_open_xpm);
 
-static const char *L_close_xpm[] = {
+static const char * const L_close_xpm[] = {
 #ifdef __APPLE__
   "11 11 2 1",
   ".  c None",
