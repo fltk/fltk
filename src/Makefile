@@ -235,7 +235,7 @@ $(LIBNAME): $(OBJECTS)
 
 libfltk.so.1.3: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(OBJECTS)
+	$(DSOCOMMAND) $@ $(OBJECTS) $(LDLIBS)
 	$(RM) libfltk.so
 	$(LN) libfltk.so.1.3 libfltk.so
 
@@ -271,7 +271,7 @@ $(FLLIBNAME): $(FLOBJECTS)
 
 libfltk_forms.so.1.3: $(FLOBJECTS) libfltk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
+	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk $(LDLIBS)
 	$(RM) libfltk_forms.so
 	$(LN) libfltk_forms.so.1.3 libfltk_forms.so
 
@@ -307,7 +307,7 @@ $(GLLIBNAME): $(GLOBJECTS)
 
 libfltk_gl.so.1.3: $(GLOBJECTS) libfltk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
+	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk $(LDLIBS) $(GLDLIBS)
 	$(RM) libfltk_gl.so
 	$(LN) libfltk_gl.so.1.3 libfltk_gl.so
 
@@ -343,7 +343,7 @@ $(IMGLIBNAME): $(IMGOBJECTS)
 
 libfltk_images.so.1.3: $(IMGOBJECTS) libfltk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk $(LDLIBS)
 	$(RM) libfltk_images.so
 	$(LN) libfltk_images.so.1.3 libfltk_images.so
 
