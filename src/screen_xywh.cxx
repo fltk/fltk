@@ -58,7 +58,7 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
   mi.cbSize = sizeof(mi);
 
 //  GetMonitorInfo(mon, &mi);
-//  (but we use our self-aquired function pointer instead)
+//  (but we use our self-acquired function pointer instead)
   if (fl_gmi(mon, &mi)) {
     screens[num_screens] = mi.rcMonitor;
 // If we also want to record the work area, we would also store mi.rcWork at this point
@@ -97,7 +97,7 @@ static void screen_init() {
       if (fl_gmi) {
         // We have GetMonitorInfoA, enumerate all the screens...
 //      EnumDisplayMonitors(0,0,screen_cb,0);
-//      (but we use our self-aquired function pointer instead)
+//      (but we use our self-acquired function pointer instead)
 //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, 0);
