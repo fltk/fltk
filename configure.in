@@ -947,6 +947,7 @@ case $host_os_gui in
 
 	    if test "x$FTCONFIG" != x; then
 	        CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
+	        CFLAGS="`$FTCONFIG --cflags` $CFLAGS"
 	        CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
 
 	        AC_CHECK_LIB(fontconfig, FcPatternCreate)
