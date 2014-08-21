@@ -39,9 +39,9 @@
 #      include <ndir.h>
 #    endif /* HAVE_NDIR_H */
 #  endif /* HAVE_DIRENT_H */
-#else /* For WIN32 variants */
-#  include <FL/filename.H>
 #endif /* !WIN32 || __CYGWIN__ */
+
+#include <FL/filename.H>
 
 /*
  * 'numericsort()' - Compare two directory entries, possibly with

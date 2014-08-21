@@ -29,6 +29,8 @@
 #    else
 #      define FL_EXPORT	__declspec(dllimport)
 #    endif /* FL_LIBRARY */
+#  elif __GNUC__ >= 4
+#    define FL_EXPORT __attribute__ ((visibility ("default")))
 #  else
 #    define FL_EXPORT
 #  endif /* FL_DLL */

@@ -36,6 +36,7 @@
 #  include <FL/Fl_Paged_Device.H>
 #  include <FL/Fl_Shared_Image.H>
 #  include <FL/fl_ask.H>
+#  include <FL/filename.H>
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
