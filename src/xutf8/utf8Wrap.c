@@ -203,7 +203,7 @@ get_encodings(char	**font_name_list,
 /*********************************************************************/
 /** find the first font which matches the name and load it.	    **/
 /*********************************************************************/
-XFontStruct *
+static XFontStruct *
 find_best_font(Display  *dpy,
 	       char     **name) {
 

@@ -266,7 +266,7 @@ static unsigned short const keysym_to_unicode_20a0_20ac[] = {
     0x20a8, 0x20a9, 0x20aa, 0x20ab, 0x20ac                          /* 0x20a8-0x20af */
 };
 
-unsigned int
+static unsigned int
 KeySymToUcs4(KeySym keysym)
 {
     /* 'Unicode keysym' */

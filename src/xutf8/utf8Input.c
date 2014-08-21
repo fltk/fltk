@@ -52,7 +52,7 @@ typedef struct {
 #include "lcUniConv/jisx0212.h"
 #include "lcUniConv/ksc5601.h"
 
-int 
+static int
 XConvertEucTwToUtf8(char* buffer_return, int len) {
   /* FIXME */
 #if HAVE_LIBC_ICONV
@@ -119,7 +119,7 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
   return l;
 }
 
-int 
+static int
 XConvertEucKrToUtf8(char* buffer_return, int len) {
   int i = 0, l = 0;
   char *buf;
@@ -159,7 +159,7 @@ XConvertEucKrToUtf8(char* buffer_return, int len) {
   return l;
 }
 
-int 
+static int
 XConvertBig5ToUtf8(char* buffer_return, int len) {
   int i = 0, l = 0;
   char *buf;
@@ -188,7 +188,7 @@ XConvertBig5ToUtf8(char* buffer_return, int len) {
   return l;
 }
 
-int 
+static int
 XConvertCp936extToUtf8(char* buffer_return, int len)
 {
   int i = 0, l = 0;
@@ -225,7 +225,7 @@ XConvertCp936extToUtf8(char* buffer_return, int len)
   return l;
 }
 
-int 
+static int
 XConvertGb2312ToUtf8(char* buffer_return, int len) {
   int i = 0, l = 0;
   char *buf;
@@ -260,7 +260,7 @@ XConvertGb2312ToUtf8(char* buffer_return, int len) {
   return l;
 }
 
-int 
+static int
 XConvertEucCnToUtf8(char* buffer_return, int len) {
   int i = 0, l = 0;
   char *buf;
@@ -299,7 +299,7 @@ XConvertEucCnToUtf8(char* buffer_return, int len) {
   return l;
 }
 
-int 
+static int
 XConvertEucJpToUtf8(char* buffer_return, int len) {
   int i = 0, l = 0;
   char *buf;
@@ -372,7 +372,7 @@ XConvertEucJpToUtf8(char* buffer_return, int len) {
   return l;
 }
 
-int
+static int
 XConvertEucToUtf8(const char*	locale,
 		  char*		buffer_return, 
 		  int		len, 
