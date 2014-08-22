@@ -253,11 +253,10 @@ endif(HAVE_XCURSOR)
 
 if(USE_XFT)
    target_link_libraries(fltk ${X11_Xft_LIB})
+   if(LIB_fontconfig)
+      target_link_libraries(fltk ${LIB_fontconfig})
+   endif(LIB_fontconfig)
 endif(USE_XFT)
-
-if(LIB_fontconfig)
-   target_link_libraries(fltk ${LIB_fontconfig})
-endif(LIB_fontconfig)
 
 #######################################################################
 add_library(fltk_forms STATIC ${FLCPPFILES})
@@ -367,11 +366,10 @@ endif(HAVE_XINERAMA)
 
 if(USE_XFT)
    target_link_libraries(fltk_SHARED ${X11_Xft_LIB})
+   if(LIB_fontconfig)
+      target_link_libraries(fltk_SHARED ${LIB_fontconfig})
+   endif(LIB_fontconfig)
 endif(USE_XFT)
-
-if(LIB_fontconfig)
-   target_link_libraries(fltk_SHARED ${LIB_fontconfig})
-endif(LIB_fontconfig)
 
 #######################################################################
 add_library(fltk_forms_SHARED SHARED ${FLCPPFILES})
