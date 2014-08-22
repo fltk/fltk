@@ -120,7 +120,6 @@ static void make_unused_color(uchar &r, uchar &g, uchar &b) {
 int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   int w, h;
   const uchar*const* data = (const uchar*const*)(cdata+1);
-  int transparent_index = -1;
 
   if (!fl_measure_pixmap(cdata, w, h))
     return 0;
@@ -144,7 +143,6 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
     // it not be transparent):
     if (*p == ' ') {
       uchar* c = colors[(int)' '];
-      transparent_index = ' ';
       Fl::get_color(bg, c[0], c[1], c[2]); c[3] = 0;
 #ifdef WIN32
       transparent_c = c;
@@ -201,7 +199,6 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
 	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
         c[3] = 0;
-	transparent_index = ind;
 #ifdef WIN32
 	transparent_c = c;
 #endif
