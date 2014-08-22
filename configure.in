@@ -255,8 +255,41 @@ if test x$enable_shared = xyes; then
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
-            OPTIM="$OPTIM -fvisibility=hidden"
-            CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+
+            # See if the compiler supports -fvisibility...
+            AC_CACHE_CHECK([if the compiler supports -fvisibility],
+                ac_cv_cxx_fvisibility, [
+                    OLDCXXFLAGS="$CXXFLAGS"
+                    CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+                    AC_LANG_SAVE
+                    AC_LANG_CPLUSPLUS
+                    AC_TRY_COMPILE(,,
+                        ac_cv_cxx_fvisibility=yes,
+                        ac_cv_cxx_fvisibility=no)
+                    CXXFLAGS="$OLDCXXFLAGS"
+                    AC_LANG_RESTORE
+            ])
+            if test x"$ac_cv_cxx_fvisibility" = xyes; then
+                OPTIM="$OPTIM -fvisibility=hidden"
+            fi
+
+            # See if the compiler supports -fvisibility-inlines-hidden...
+            AC_CACHE_CHECK([if the compiler supports -fvisibility-inlines-hidden],
+                ac_cv_cxx_fvisibility_inlines, [
+                    OLDCXXFLAGS="$CXXFLAGS"
+                    CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+                    AC_LANG_SAVE
+                    AC_LANG_CPLUSPLUS
+                    AC_TRY_COMPILE(,,
+                        ac_cv_cxx_fvisibility_inlines=yes,
+                        ac_cv_cxx_fvisibility_inlines=no)
+                    CXXFLAGS="$OLDCXXFLAGS"
+                    AC_LANG_RESTORE
+            ])
+            if test x"$ac_cv_cxx_fvisibility_inlines" = xyes; then
+                CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+            fi
+
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
