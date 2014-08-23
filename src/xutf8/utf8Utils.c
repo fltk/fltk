@@ -20,7 +20,7 @@
 
 #if !defined(WIN32) && !defined(__APPLE__)
 
-#include "../../FL/Xutf8.h"
+#include "../Xutf8.h"
 
 /*** NOTE : all functions are LIMITED to 24 bits Unicode values !!! ***/
 

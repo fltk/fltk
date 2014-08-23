@@ -19,7 +19,7 @@
  */
 #if !defined(WIN32) && !defined(__APPLE__)
 
-#include "../../FL/Xutf8.h"
+#include "../Xutf8.h"
 #include <X11/Xlib.h>
 #include <ctype.h>
 #include <stdlib.h>

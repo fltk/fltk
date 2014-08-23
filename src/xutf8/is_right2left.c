@@ -18,6 +18,8 @@
  * This file is required on all platforms for utf8 support
  */
 
+#include "../Xutf8.h"
+
 unsigned short 
 XUtf8IsRightToLeft(unsigned int ucs) {
 

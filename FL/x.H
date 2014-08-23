@@ -52,7 +52,6 @@
 #    endif
 #    include <X11/Xatom.h>
 #    include "Fl_Window.H"
-#    include "Xutf8.h"
 // Mirror X definition of Region to Fl_Region, for portability...
 typedef Region Fl_Region;
 
