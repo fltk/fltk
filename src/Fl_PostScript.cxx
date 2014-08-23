@@ -833,7 +833,7 @@ void Fl_PostScript_Graphics_Driver::point(int x, int y){
   rectf(x,y,1,1);
 }
 
-static int dashes_flat[5][7]={
+static const int dashes_flat[5][7]={
 {-1,0,0,0,0,0,0},
 {3,1,-1,0,0,0,0},
 {1,1,-1,0,0,0,0},
@@ -843,7 +843,7 @@ static int dashes_flat[5][7]={
 
 
 //yeah, hack...
-static double dashes_cap[5][7]={
+static const double dashes_cap[5][7]={
 {-1,0,0,0,0,0,0},
 {2,2,-1,0,0,0,0},
 {0.01,1.99,-1,0,0,0,0},
@@ -892,16 +892,15 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
       dashes++;
     }
   }else{
-    int * ds; 
     if(style & 0x200){ // round and square caps, dash length need to be adjusted
-      double *dt = dashes_cap[style & 0xff];
+      const double *dt = dashes_cap[style & 0xff];
       while (*dt >= 0){
 	fprintf(output, "%g ",width * (*dt));
 	dt++;
       }
     }else{
       
-      ds = dashes_flat[style & 0xff];
+      const int *ds = dashes_flat[style & 0xff];
       while (*ds >= 0){
 	fprintf(output, "%i ",width * (*ds));
         ds++;
