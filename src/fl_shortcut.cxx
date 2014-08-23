@@ -179,7 +179,7 @@ const char* fl_shortcut_label(unsigned int shortcut) {
   \see fl_shortcut_label(unsigned int shortcut)
   */
 const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
-  static char buf[20];
+  static char buf[40];
   char *p = buf;
   if (eom) *eom = p;
   if (!shortcut) {*p = 0; return buf;}
