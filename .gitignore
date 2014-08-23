@@ -1,6 +1,9 @@
 # ignore file for git - generated from subversion with:
 # git svn show-ignore
 
+*.o
+*.exe
+
 # /
 /autom4te*.cache
 /clang
@@ -156,6 +159,7 @@
 /test/glpuzzle
 /test/hello
 /test/help
+/test/icon
 /test/iconize
 /test/image
 /test/inactive
