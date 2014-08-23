@@ -43,6 +43,7 @@ typedef struct {
   unsigned short used;
 } Summary16;
 
+#ifndef X_HAVE_UTF8_STRING
 #define NEED_TOWC /* indicates what part of these include files is needed here (avoid compilation warnings) */
 #include "lcUniConv/big5.h"
 #include "lcUniConv/gb2312.h"
@@ -407,7 +408,6 @@ XConvertEucToUtf8(const char*	locale,
   return len;
 }
 
-#ifndef X_HAVE_UTF8_STRING
 int
 XUtf8LookupString(XIC                 ic,
 		  XKeyPressedEvent*   event,
