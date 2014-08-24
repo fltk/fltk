@@ -18,9 +18,11 @@
  * This file is required on all platforms for utf8 support
  */
 
-#include "../Xutf8.h"
+#if !defined(WIN32) && !defined(__APPLE__)
+#  include "../Xutf8.h"
+#endif /* !defined(WIN32) && !defined(__APPLE__) */
 
-unsigned short 
+unsigned short
 XUtf8IsRightToLeft(unsigned int ucs) {
 
 #if 0
@@ -36,7 +38,7 @@ XUtf8IsRightToLeft(unsigned int ucs) {
     if (ucs >= 0x0591) return 1;
     return 0;
   }
-  
+
   /* ARABIC */
   if (ucs <= 0x06ED) {
     if (ucs >= 0x060C)  return 1;
@@ -58,7 +60,7 @@ XUtf8IsRightToLeft(unsigned int ucs) {
     if (ucs >= 0xFB1E) return 1;
     return 0;
   }
-  
+
   if (ucs <= 0xFDFB) {
     if (ucs >= 0xFB50) return 1;
     return 0;
