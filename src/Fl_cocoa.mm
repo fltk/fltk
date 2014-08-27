@@ -2361,6 +2361,7 @@ void Fl_X::flush()
   fl_x_to_redraw = NULL;
 }
 
+//bool Fl_X::make_shaped = false;
 
 /*
  * go ahead, create that (sub)window
@@ -2517,6 +2518,10 @@ void Fl_X::make(Fl_Window* w)
     [cw setFrameOrigin:crect.origin];
     [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
+    if (w->type() == FL_SHAPED_WINDOW) {
+      [cw setOpaque:NO]; // shaped windows must be non opaque
+      [cw setBackgroundColor:[NSColor clearColor]]; // and with transparent background color
+      }
     x->xid = cw;
     x->w = w; w->i = x;
     x->wait_for_expose = 1;
@@ -2645,7 +2650,7 @@ void Fl_Window::show() {
     labeltype(FL_NO_LABEL);
   }
   Fl_Tooltip::exit(this);
-  if (!shown() || !i) {
+  if (!shown()) {
     Fl_X::make(this);
   } else {
     if ( !parent() ) {

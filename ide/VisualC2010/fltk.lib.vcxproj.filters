@@ -268,6 +268,9 @@
     <ClInclude Include="..\..\FL\Fl_Select_Browser.H">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\FL\Fl_Shaped_Window.H">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\FL\Fl_Shared_Image.H">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -481,6 +484,7 @@
     <ClCompile Include="..\..\src\fl_set_font.cxx" />
     <ClCompile Include="..\..\src\fl_set_fonts.cxx" />
     <ClCompile Include="..\..\src\fl_shadow_box.cxx" />
+    <ClCompile Include="..\..\src\Fl_Shaped_Window.cxx" />
     <ClCompile Include="..\..\src\Fl_Shared_Image.cxx" />
     <ClCompile Include="..\..\src\fl_shortcut.cxx" />
     <ClCompile Include="..\..\src\fl_show_colormap.cxx" />

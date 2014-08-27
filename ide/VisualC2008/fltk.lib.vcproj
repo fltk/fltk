@@ -656,6 +656,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\FL\Fl_Shaped_Window.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\FL\Fl_Shared_Image.H"
 				>
 			</File>
@@ -5340,7 +5344,53 @@
 				/>
 			</FileConfiguration>
 		</File>
-		<File
+			<File
+			RelativePath="..\..\src\Fl_Shaped_Window.cxx"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""
+					BrowseInformation="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					FavorSizeOrSpeed="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug Cairo|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					Optimization="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""
+					BrowseInformation="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release Cairo|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					FavorSizeOrSpeed="0"
+					AdditionalIncludeDirectories=""
+					PreprocessorDefinitions=""
+				/>
+			</FileConfiguration>
+		</File>
+	<File
 			RelativePath="..\..\src\Fl_Shared_Image.cxx"
 			>
 			<FileConfiguration

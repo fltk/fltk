@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/* \file
+/** \file
    Fl_Window widget . */
 
 #ifndef Fl_Window_H
@@ -30,6 +30,7 @@
 
 #define FL_WINDOW 0xF0		///< window type id all subclasses have type() >= this
 #define FL_DOUBLE_WINDOW 0xF1   ///< double window type id
+#define FL_SHAPED_WINDOW 0xF2   ///< shaped window type id
 
 class Fl_X;
 class Fl_RGB_Image;
