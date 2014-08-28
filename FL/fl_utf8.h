@@ -49,8 +49,6 @@
 #    define stricmp _stricmp
 #    undef strnicmp
 #    define strnicmp _strnicmp
-#    undef hypot
-#    define hypot _hypot
 #    undef chdir
 #    define chdir _chdir
 #  endif
