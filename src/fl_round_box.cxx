@@ -71,10 +71,10 @@ static void draw(int which, int x,int y,int w,int h, int inset, Fl_Color color)
   }
 }
 
-extern uchar* fl_gray_ramp();
+extern const uchar* fl_gray_ramp();
 
 void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
-  uchar *g = fl_gray_ramp();
+  const uchar *g = fl_gray_ramp();
   draw(FILL,	    x,   y, w,   h, 2, bgcolor);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g['N']);
   draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g['H']);
@@ -88,7 +88,7 @@ void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
 }
 
 void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
-  uchar *g = fl_gray_ramp();
+  const uchar *g = fl_gray_ramp();
   draw(FILL,	    x,   y, w,   h, 2, bgcolor);
   draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g['H']);
   draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g['N']);

@@ -25,7 +25,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-extern uchar* fl_gray_ramp();
+extern const uchar* fl_gray_ramp();
 
 static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   w &= -2;
@@ -33,7 +33,7 @@ static void fl_diamond_up_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   int x1 = x+w/2;
   int y1 = y+h/2;
   fl_color(bgcolor); fl_polygon(x+3, y1, x1,y+3, x+w-3,y1, x1,y+h-3);
-  uchar *g = fl_gray_ramp();
+  const uchar *g = fl_gray_ramp();
   fl_color(g['W']); fl_line(x+1, y1, x1, y+1, x+w-1, y1);
   fl_color(g['U']); fl_line(x+2, y1, x1, y+2, x+w-2, y1);
   fl_color(g['S']); fl_line(x+3, y1, x1, y+3, x+w-3, y1);
@@ -48,7 +48,7 @@ static void fl_diamond_down_box(int x,int y,int w,int h,Fl_Color bgcolor) {
   h &= -2;
   int x1 = x+w/2;
   int y1 = y+h/2;
-  uchar *g = fl_gray_ramp();
+  const uchar *g = fl_gray_ramp();
   fl_color(g['P']); fl_line(x+0, y1, x1, y+0, x+w-0, y1);
   fl_color(g['N']); fl_line(x+1, y1, x1, y+1, x+w-1, y1);
   fl_color(g['H']); fl_line(x+2, y1, x1, y+2, x+w-2, y1);
