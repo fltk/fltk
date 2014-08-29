@@ -2703,34 +2703,60 @@ void Fl_X::set_icons() {
 ////////////////////////////////////////////////////////////////
 
 int Fl_X::set_cursor(Fl_Cursor c) {
-  unsigned int shape;
+
+  /* The cursors are cached, because creating one takes 0.5ms including
+     opening, reading, and closing theme files. They are kept until program
+     exit by design, which valgrind will note as reachable. */
+  static Cursor xc_arrow = None;
+  static Cursor xc_cross = None;
+  static Cursor xc_wait = None;
+  static Cursor xc_insert = None;
+  static Cursor xc_hand = None;
+  static Cursor xc_help = None;
+  static Cursor xc_move = None;
+  static Cursor xc_ns = None;
+  static Cursor xc_we = None;
+  static Cursor xc_ne = None;
+  static Cursor xc_n = None;
+  static Cursor xc_nw = None;
+  static Cursor xc_e = None;
+  static Cursor xc_w = None;
+  static Cursor xc_se = None;
+  static Cursor xc_s = None;
+  static Cursor xc_sw = None;
+
   Cursor xc;
 
+#define cache_cursor(name, var) if (var == None) { \
+                                  var = XCreateFontCursor(fl_display, name); \
+                                } \
+                                xc = var
+
   switch (c) {
-  case FL_CURSOR_ARROW:   shape = XC_left_ptr; break;
-  case FL_CURSOR_CROSS:   shape = XC_tcross; break;
-  case FL_CURSOR_WAIT:    shape = XC_watch; break;
-  case FL_CURSOR_INSERT:  shape = XC_xterm; break;
-  case FL_CURSOR_HAND:    shape = XC_hand2; break;
-  case FL_CURSOR_HELP:    shape = XC_question_arrow; break;
-  case FL_CURSOR_MOVE:    shape = XC_fleur; break;
-  case FL_CURSOR_NS:      shape = XC_sb_v_double_arrow; break;
-  case FL_CURSOR_WE:      shape = XC_sb_h_double_arrow; break;
-  case FL_CURSOR_NE:      shape = XC_top_right_corner; break;
-  case FL_CURSOR_N:       shape = XC_top_side; break;
-  case FL_CURSOR_NW:      shape = XC_top_left_corner; break;
-  case FL_CURSOR_E:       shape = XC_right_side; break;
-  case FL_CURSOR_W:       shape = XC_left_side; break;
-  case FL_CURSOR_SE:      shape = XC_bottom_right_corner; break;
-  case FL_CURSOR_S:       shape = XC_bottom_side; break;
-  case FL_CURSOR_SW:      shape = XC_bottom_left_corner; break;
+  case FL_CURSOR_ARROW:   cache_cursor(XC_left_ptr, xc_arrow); break;
+  case FL_CURSOR_CROSS:   cache_cursor(XC_tcross, xc_cross); break;
+  case FL_CURSOR_WAIT:    cache_cursor(XC_watch, xc_wait); break;
+  case FL_CURSOR_INSERT:  cache_cursor(XC_xterm, xc_insert); break;
+  case FL_CURSOR_HAND:    cache_cursor(XC_hand2, xc_hand); break;
+  case FL_CURSOR_HELP:    cache_cursor(XC_question_arrow, xc_help); break;
+  case FL_CURSOR_MOVE:    cache_cursor(XC_fleur, xc_move); break;
+  case FL_CURSOR_NS:      cache_cursor(XC_sb_v_double_arrow, xc_ns); break;
+  case FL_CURSOR_WE:      cache_cursor(XC_sb_h_double_arrow, xc_we); break;
+  case FL_CURSOR_NE:      cache_cursor(XC_top_right_corner, xc_ne); break;
+  case FL_CURSOR_N:       cache_cursor(XC_top_side, xc_n); break;
+  case FL_CURSOR_NW:      cache_cursor(XC_top_left_corner, xc_nw); break;
+  case FL_CURSOR_E:       cache_cursor(XC_right_side, xc_e); break;
+  case FL_CURSOR_W:       cache_cursor(XC_left_side, xc_w); break;
+  case FL_CURSOR_SE:      cache_cursor(XC_bottom_right_corner, xc_se); break;
+  case FL_CURSOR_S:       cache_cursor(XC_bottom_side, xc_s); break;
+  case FL_CURSOR_SW:      cache_cursor(XC_bottom_left_corner, xc_sw); break;
   default:
     return 0;
   }
 
-  xc = XCreateFontCursor(fl_display, shape);
+#undef cache_cursor
+
   XDefineCursor(fl_display, xid, xc);
-  XFreeCursor(fl_display, xc);
 
   return 1;
 }
