@@ -122,8 +122,10 @@ static int send(Fl_Widget* o, int event) {
 }
 
 // translate the current keystroke into up/down/left/right for navigation:
-#define ctrl(x) (x^0x40)
 static int navkey() {
+  // The app may want these for hotkeys, check key state
+  if (Fl::event_state(FL_CTRL | FL_ALT | FL_META)) return 0;
+
   switch (Fl::event_key()) {
   case 0: // not an FL_KEYBOARD/FL_SHORTCUT event
     break;
