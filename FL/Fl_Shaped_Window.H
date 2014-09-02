@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id$"
 //
 // Fl_Shaped_Window header file for the Fast Light Tool Kit (FLTK).
 //
@@ -74,5 +74,5 @@ public:
 #endif // Fl_Shaped_Window_H
 
 //
-// End of "$Id".
+// End of "$Id$".
 //

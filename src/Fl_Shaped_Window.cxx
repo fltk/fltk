@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id$"
 //
 // Fl_Shaped_Window source file for the Fast Light Tool Kit (FLTK).
 //
@@ -365,5 +365,5 @@ void Fl_Shaped_Window::shape(const Fl_Image* img) {
 }
 
 //
-// End of "$Id".
+// End of "$Id$".
 //
