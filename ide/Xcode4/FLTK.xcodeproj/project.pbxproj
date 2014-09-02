@@ -622,7 +622,6 @@
 		C9EDD4B01274B93000ADB21C /* Fl_Wizard.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = A57A8421086F1F0F9906B692 /* Fl_Wizard.H */; };
 		C9EDD4B11274B93000ADB21C /* Fl_XBM_Image.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2DE1079C826533A91053A9C /* Fl_XBM_Image.H */; };
 		C9EDD4B21274B93000ADB21C /* Fl_XPM_Image.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1433F1B8C4085D5D5E1BA0E1 /* Fl_XPM_Image.H */; };
-		C9EDD4B31274B93000ADB21C /* Xutf8.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91A43F37963443EA5E91BF1F /* Xutf8.h */; };
 		C9EDD4B41274B93000ADB21C /* dirent.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E448719A354B3D80FD2E1992 /* dirent.h */; };
 		C9EDD4B51274B93000ADB21C /* filename.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = AF65626F49A71525D24ED1B0 /* filename.H */; };
 		C9EDD4B61274B93000ADB21C /* fl_ask.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = 87259ACF8723616344D9AEB2 /* fl_ask.H */; };
@@ -3813,7 +3812,6 @@
 				C9EDD4B01274B93000ADB21C /* Fl_Wizard.H in CopyFiles */,
 				C9EDD4B11274B93000ADB21C /* Fl_XBM_Image.H in CopyFiles */,
 				C9EDD4B21274B93000ADB21C /* Fl_XPM_Image.H in CopyFiles */,
-				C9EDD4B31274B93000ADB21C /* Xutf8.h in CopyFiles */,
 				C9EDD4B41274B93000ADB21C /* dirent.h in CopyFiles */,
 				C9EDD4B51274B93000ADB21C /* filename.H in CopyFiles */,
 				C9EDD4B61274B93000ADB21C /* fl_ask.H in CopyFiles */,
@@ -4385,7 +4383,6 @@
 		90D9C06A2DCECD5B99C4A90A /* jdatadst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdatadst.c; path = ../../jpeg/jdatadst.c; sourceTree = SOURCE_ROOT; };
 		91173358E60D137409651286 /* Fl_Preferences.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Preferences.H; path = ../../FL/Fl_Preferences.H; sourceTree = SOURCE_ROOT; };
 		91726A70C25E6155A2FAF315 /* undo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = undo.h; path = ../../fluid/undo.h; sourceTree = SOURCE_ROOT; };
-		91A43F37963443EA5E91BF1F /* Xutf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Xutf8.h; path = ../../FL/Xutf8.h; sourceTree = SOURCE_ROOT; };
 		91E088F22E63779E9E9FA651 /* alignment_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alignment_panel.cxx; path = ../../fluid/alignment_panel.cxx; sourceTree = SOURCE_ROOT; };
 		922182C23B114BA60D9CF160 /* native-filechooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "native-filechooser.cxx"; path = "../../test/native-filechooser.cxx"; sourceTree = SOURCE_ROOT; };
 		9305831B5D584A1C9652C308 /* scroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6369,7 +6366,6 @@
 				A57A8421086F1F0F9906B692 /* Fl_Wizard.H */,
 				D2DE1079C826533A91053A9C /* Fl_XBM_Image.H */,
 				1433F1B8C4085D5D5E1BA0E1 /* Fl_XPM_Image.H */,
-				91A43F37963443EA5E91BF1F /* Xutf8.h */,
 				E448719A354B3D80FD2E1992 /* dirent.h */,
 				AF65626F49A71525D24ED1B0 /* filename.H */,
 				87259ACF8723616344D9AEB2 /* fl_ask.H */,
@@ -8518,7 +8514,6 @@
 			};
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
