@@ -240,7 +240,7 @@ public:
    */
   static size_t max_size() {return max_size_;}
 
-  /** Sets the currently used scaling method.
+  /** Sets the scaling method used for copy(int, int).
       Applies to all RGB images, defaults to FL_SCALING_NEAREST.
   */
   static void scaling(Fl_RGB_Scaling);
