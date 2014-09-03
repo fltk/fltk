@@ -164,6 +164,7 @@ Fl_Image::measure(const Fl_Label *lo,		// I - Label
 // RGB image class...
 //
 size_t Fl_RGB_Image::max_size_ = ~((size_t)0);
+Fl_RGB_Scaling Fl_RGB_Image::scaling_ = FL_SCALING_NEAREST;
 
 int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
 
@@ -260,25 +261,84 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   new_image = new Fl_RGB_Image(new_array, W, H, d());
   new_image->alloc_array = 1;
 
-  // Scale the image using a nearest-neighbor algorithm...
-  for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
-      for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
+  if (scaling_ == FL_SCALING_NEAREST) {
+    // Scale the image using a nearest-neighbor algorithm...
+    for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
+      for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
+        for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
 
-      old_ptr += xstep;
-      xerr    -= xmod;
+        old_ptr += xstep;
+        xerr    -= xmod;
 
-      if (xerr <= 0) {
-	xerr    += W;
-	old_ptr += d();
+        if (xerr <= 0) {
+          xerr    += W;
+	  old_ptr += d();
+        }
+      }
+
+      sy   += ystep;
+      yerr -= ymod;
+      if (yerr <= 0) {
+        yerr += H;
+        sy ++;
       }
     }
+  } else {
+    // Bilinear scaling
+    const float xscale = (w() - 1) / (float) W;
+    const float yscale = (h() - 1) / (float) H;
+    for (dy = 0; dy < H; dy++) {
+      float oldy = dy * yscale;
+      if (oldy >= h())
+        oldy = h() - 1;
+      const float yfract = oldy - (unsigned) oldy;
 
-    sy   += ystep;
-    yerr -= ymod;
-    if (yerr <= 0) {
-      yerr += H;
-      sy ++;
+      for (dx = 0; dx < W; dx++) {
+        new_ptr = new_array + dy * W * d() + dx * d();
+
+        float oldx = dx * xscale;
+        if (oldx >= w())
+          oldx = w() - 1;
+        const float xfract = oldx - (unsigned) oldx;
+
+        const unsigned leftx = oldx;
+        const unsigned lefty = oldy;
+        const unsigned rightx = oldx + 1 >= w() ? oldx : oldx + 1;
+        const unsigned righty = oldy;
+        const unsigned dleftx = oldx;
+        const unsigned dlefty = oldy + 1 >= h() ? oldy : oldy + 1;
+        const unsigned drightx = rightx;
+        const unsigned drighty = dlefty;
+
+        uchar left[4], right[4], downleft[4], downright[4];
+        memcpy(left, array + lefty * line_d + leftx * d(), d());
+        memcpy(right, array + righty * line_d + rightx * d(), d());
+        memcpy(downleft, array + dlefty * line_d + dleftx * d(), d());
+        memcpy(downright, array + drighty * line_d + drightx * d(), d());
+
+        // TODO: how to check if it's premultiplied alpha?
+        int i;
+        if (d() == 4) {
+          for (i = 0; i < 3; i++) {
+            left[i] *= left[3] / 255.0f;
+            right[i] *= right[3] / 255.0f;
+            downleft[i] *= downleft[3] / 255.0f;
+            downright[i] *= downright[3] / 255.0f;
+          }
+        }
+
+	const float leftf = 1 - xfract;
+	const float rightf = xfract;
+	const float upf = 1 - yfract;
+	const float downf = yfract;
+
+        for (i = 0; i < d(); i++) {
+          new_ptr[i] = (left[i] * leftf +
+                   right[i] * rightf) * upf +
+                   (downleft[i] * leftf +
+                   downright[i] * rightf) * downf;
+        }
+      }
     }
   }
 
@@ -614,6 +674,13 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
   m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
 
+void Fl_RGB_Image::scaling(Fl_RGB_Scaling method) {
+	scaling_ = method;
+}
+
+Fl_RGB_Scaling Fl_RGB_Image::scaling() {
+	return scaling_;
+}
 
 //
 // End of "$Id$".

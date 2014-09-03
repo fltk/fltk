@@ -154,6 +154,14 @@ class FL_EXPORT Fl_Image {
   virtual void uncache();
 };
 
+/// \enum Fl_RGB_Scaling
+/// The scaling algorithm to use.
+///
+enum Fl_RGB_Scaling {
+	FL_SCALING_NEAREST = 0,
+	FL_SCALING_BILINEAR
+};
+
 /**
   The Fl_RGB_Image class supports caching and drawing
   of full-color images with 1 to 4 channels of color information.
@@ -170,6 +178,7 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   friend class Fl_GDI_Graphics_Driver;
   friend class Fl_Xlib_Graphics_Driver;
   static size_t max_size_;
+  static Fl_RGB_Scaling scaling_;
 public:
 
   const uchar *array;
@@ -230,6 +239,14 @@ public:
    \sa  void Fl_RGB_Image::max_size(size_t)
    */
   static size_t max_size() {return max_size_;}
+
+  /** Sets the currently used scaling method.
+      Applies to all RGB images, defaults to FL_SCALING_NEAREST.
+  */
+  static void scaling(Fl_RGB_Scaling);
+
+  /** Returns the currently used scaling method. */
+  static Fl_RGB_Scaling scaling();
 };
 
 #endif // !Fl_Image_H
