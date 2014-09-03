@@ -196,7 +196,7 @@ static int load_browser(char *fname)
 
 static int search_entry(int r, int g, int b)
 {
-  register RGBdb *db = rgbdb;
+  RGBdb *db = rgbdb;
   int i, j, diffr, diffg, diffb;
   unsigned int diff, mindiff;
   
