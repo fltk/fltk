@@ -84,6 +84,9 @@ public:
     _items[bx] = asave;
   }
 #endif /*FLTK_ABI_VERSION*/
+  int move(int to, int from);
+  int deparent(int pos);
+  int reparent(Fl_Tree_Item *item, Fl_Tree_Item *newparent, int pos);
   void clear();
   void add(Fl_Tree_Item *val);
   void insert(int pos, Fl_Tree_Item *new_item);

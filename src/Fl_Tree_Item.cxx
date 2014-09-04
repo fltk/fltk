@@ -453,6 +453,142 @@ Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char 
   return(0);
 }
 
+/// Deparent child at index position \p 'pos'.
+/// This creates an "orphaned" item that is still allocated,
+/// but has no parent or siblings. Normally the caller would
+/// want to immediately reparent the orphan elsewhere.
+///
+/// A successfully orphaned item will have its parent()
+/// and prev_sibling()/next_sibling() set to NULL.
+///
+/// \returns
+///     - pointer to orphaned item on success
+///     - NULL on error (could not deparent the item)
+///
+Fl_Tree_Item* Fl_Tree_Item::deparent(int pos) {
+  Fl_Tree_Item *orphan = _children[pos];
+  if ( _children.deparent(pos) < 0 ) return NULL;
+  return orphan;
+}
+
+/// Reparent specified item as a child of ourself at position \p 'pos'.
+/// Typically 'newchild' was recently orphaned with deparent().
+///
+/// \returns
+///    -  0: on success
+///    - -1: on error (e.g. if \p 'pos' out of range)
+///
+int Fl_Tree_Item::reparent(Fl_Tree_Item *newchild, int pos) {
+  int ret;
+  if ( (ret = _children.reparent(newchild, this, pos)) < 0 ) return ret;
+  newchild->parent(this);		// take custody
+  return 0;
+}
+
+/// Move the item 'to' to sibling position of 'from'.
+///
+/// \returns
+///    -  0: Success
+///    - -1: range error (e.g. if \p 'to' or \p 'from' out of range).
+///    - (Other return values reserved for future use)
+///
+int Fl_Tree_Item::move(int to, int from) {
+  return _children.move(to, from);
+}
+
+/// Move the current item above/below/into the specified 'item',
+/// where \p 'op' determines the type of move:
+///
+///    - 0: move above \p 'item' (\p 'pos' ignored)
+///    - 1: move below \p 'item' (\p 'pos' ignored)
+///    - 2: move into  \p 'item' as a child (at optional position \p 'pos')
+///
+/// \returns 0 on success. a negative number on error:
+///     - -1: one of the items has no parent
+///     - -2: item's index could not be determined
+///     - -3: bad 'op'
+///     - -4: index range error
+///     - -5: could not deparent
+///     - -6: could not reparent at \p 'pos'
+///     - (Other return values reserved for future use.)
+///
+int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
+  Fl_Tree_Item *from_parent, *to_parent;
+  int from, to;
+  switch (op) {
+    case 0:	// "above"
+      from_parent = this->parent();
+      to_parent   = item->parent();
+      from        = from_parent->find_child(this);
+      to          = to_parent->find_child(item);
+      break;
+    case 1:	// "below"
+      from_parent = this->parent();
+      to_parent   = item->parent();
+      from        = from_parent->find_child(this);
+      to          = to_parent->find_child(item);
+      break;
+    case 2:	// "into"
+      from_parent = this->parent();
+      to_parent   = item;
+      from        = from_parent->find_child(this);
+      to          = pos;
+      break;
+    default:
+      return -3;
+  }
+  if ( !from_parent || !to_parent ) return -1;
+  if ( from < 0 || to < 0 ) return -2;
+  if ( op == 1 ) to++;				// 'below'? apply +1 offset for 'to'
+  if ( from_parent == to_parent ) {		// same parent?
+    if ( from_parent->move(to, from) < 0 )	// simple move among siblings
+      return -4;
+  } else {					// different parent?
+    if ( to > to_parent->children() )		// try to prevent a reparent() error
+      return -4;
+    if ( from_parent->deparent(from) < 0 )	// deparent self from current parent
+      return -5;
+    if ( to_parent->reparent(this, to) < 0 ) {	// reparent self to new parent at position 'to'
+      to_parent->reparent(this, 0);		// failed? shouldn't happen, reparent at 0
+      return -6;
+    }
+  }
+  return 0;
+}
+
+/// Move the current item above the specified 'item'.
+/// This is the equivalent of calling move(item,0,0).
+///
+/// \returns 0 on success.<br>
+///          On error returns a negative value;
+///          see move(Fl_Tree_Item*,int,int) for possible error codes.
+///
+int Fl_Tree_Item::move_above(Fl_Tree_Item *item) {
+  return move(item, 0, 0);
+}
+
+/// Move the current item below the specified 'item'.
+/// This is the equivalent of calling move(item,1,0).
+///
+/// \returns 0 on success.<br>
+///          On error returns a negative value;
+///          see move(Fl_Tree_Item*,int,int) for possible error codes.
+///
+int Fl_Tree_Item::move_below(Fl_Tree_Item *item) {
+  return move(item, 1, 0);
+}
+
+/// Parent the current item as a child of the specified \p 'item'.
+/// This is the equivalent of calling move(item,2,pos).
+///
+/// \returns 0 on success.<br>
+///          On error returns a negative value;
+///          see move(Fl_Tree_Item*,int,int) for possible error codes.
+///
+int Fl_Tree_Item::move_into(Fl_Tree_Item *item, int pos) {
+  return move(item, 2, pos);
+}
+
 #if FLTK_ABI_VERSION >= 10303
 /// Return the parent tree's prefs.
 /// \returns a reference to the parent tree's Fl_Tree_Prefs
@@ -1519,11 +1655,18 @@ Fl_Tree_Item *Fl_Tree_Item::prev_sibling() {
 /// Update our _prev_sibling and _next_sibling pointers to point to neighbors
 /// given \p index as being our current position in the parent's item array.
 /// Call this whenever items in the array are added/removed/moved/swapped/etc.
-/// \param[in] index Our index# in the parent
+/// \param[in] index Our index# in the parent.<br>
+///                  Special case if index=-1: become an orphan; null out all parent/sibling associations.
 /// 
 void Fl_Tree_Item::update_prev_next(int index) {
 #if FLTK_ABI_VERSION >= 10301
   // NEW
+  if ( index == -1 ) {	// special case: become an orphan
+    _parent = 0;
+    _prev_sibling = 0;
+    _next_sibling = 0;
+    return;
+  }
   int pchildren = parent() ? parent()->children() : 0;
   int index_prev = index-1;
   int index_next = index+1;
