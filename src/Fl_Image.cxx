@@ -316,7 +316,6 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
         memcpy(downleft, array + dlefty * line_d + dleftx * d(), d());
         memcpy(downright, array + drighty * line_d + drightx * d(), d());
 
-        // TODO: how to check if it's premultiplied alpha?
         int i;
         if (d() == 4) {
           for (i = 0; i < 3; i++) {
@@ -337,6 +336,12 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
                    right[i] * rightf) * upf +
                    (downleft[i] * leftf +
                    downright[i] * rightf) * downf;
+        }
+
+        if (d() == 4) {
+          for (i = 0; i < 3; i++) {
+            new_ptr[i] /= new_ptr[3] / 255.0f;
+          }
         }
       }
     }
