@@ -922,10 +922,17 @@ void Fl::focus(Fl_Widget *o) {
 	if (fl_xfocus != win) {
 	  Fl_X *x = Fl_X::i(win);
 	  if (x) x->set_key_window();
-	  }
+	}
+#elif defined(USE_X11)
+	if (fl_xfocus != win) {
+	  Fl_X *x = Fl_X::i(win);
+	  win->show(); // Old WMs, XMapRaised
+	  // New WMs use the NETWM attribute:
+	  if (x) Fl_X::activate_window(x->xid);
+	}
 #endif
 	fl_xfocus = win;
-	}
+      }
     }
     // take focus from the old focused window
     fl_oldfocus = 0;
