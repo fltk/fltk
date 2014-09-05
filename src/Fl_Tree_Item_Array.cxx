@@ -234,6 +234,10 @@ void Fl_Tree_Item_Array::swap(int ax, int bx) {
 #endif /* FLTK_ABI_VERSION */
 
 /// Move item at 'from' to new position 'to' in the array.
+/// Due to how the moving an item shuffles the array around,
+/// a positional 'move' implies things that may not be obvious:
+/// - When 'from' moved lower in tree, appears BELOW item that was at 'to'.
+/// - When 'from' moved higher in tree, appears ABOVE item that was at 'to'.
 ///
 ///     \returns 0 on success, -1 on range error (e.g. if \p 'to' or \p 'from' out of range)
 ///
@@ -241,23 +245,18 @@ int Fl_Tree_Item_Array::move(int to, int from) {
   if ( from == to ) return 0;    // nop
   if ( to<0 || to>=_total || from<0 || from>=_total ) return -1;
   Fl_Tree_Item *item = _items[from];
-  Fl_Tree_Item *prev = item->prev_sibling();
-  Fl_Tree_Item *next = item->next_sibling();
   // Remove item..
   if ( from < to )
-    for ( int t=from; t<to && t<_total; t++ )
+    for ( int t=from; t<to && t<(_total+1); t++ )
       _items[t] = _items[t+1];
   else
-    for ( int t=from; t>to; t-- )
+    for ( int t=from; t>to && t>0; t-- )
       _items[t] = _items[t-1];
   // Move to new position
   _items[to] = item;
-  // Adjust for new siblings
-  _items[to]->update_prev_next(to);
-  _items[from]->update_prev_next(from);
-  // Adjust old siblings
-  if ( prev ) prev->update_prev_next(from-1);
-  if ( next ) next->update_prev_next(from);
+  // Update all children
+  for ( int r=0; r<_total; r++ )	// XXX: excessive to do all children,
+    _items[r]->update_prev_next(r);	// XXX: but avoids weird boundary issues
   return 0;
 }
 

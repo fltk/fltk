@@ -539,8 +539,11 @@ int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
   }
   if ( !from_parent || !to_parent ) return -1;
   if ( from < 0 || to < 0 ) return -2;
-  if ( op == 1 ) to++;				// 'below'? apply +1 offset for 'to'
   if ( from_parent == to_parent ) {		// same parent?
+    switch (op) {				// 'to' offsets due to scroll
+      case 0: if ( from < to && to > 0 ) --to; break;
+      case 1: if ( from > to && to < to_parent->children() ) ++to; break;
+    }
     if ( from_parent->move(to, from) < 0 )	// simple move among siblings
       return -4;
   } else {					// different parent?
