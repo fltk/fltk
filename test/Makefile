@@ -91,6 +91,7 @@ CPPFILES =\
 	tile.cxx \
 	tiled_image.cxx \
 	tree.cxx \
+	twowin.cxx \
 	valuators.cxx \
 	utf8.cxx
 
@@ -159,6 +160,7 @@ ALL =	\
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
 	tree$(EXEEXT) \
+	twowin$(EXEEXT) \
 	valuators$(EXEEXT) \
 	cairotest$(EXEEXT) \
 	utf8$(EXEEXT) 
@@ -469,6 +471,8 @@ tiled_image$(EXEEXT): tiled_image.o
 
 tree$(EXEEXT): tree.o
 tree.cxx:	tree.fl ../fluid/fluid$(EXEEXT)
+
+twowin$(EXEEXT): twowin.o
 
 valuators$(EXEEXT): valuators.o
 valuators.cxx:	valuators.fl ../fluid/fluid$(EXEEXT)
