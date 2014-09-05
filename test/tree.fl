@@ -51,6 +51,7 @@ Function {reason_as_name(Fl_Tree_Reason reason)} {
       case FL_TREE_REASON_DESELECTED: return("deselected");
       case FL_TREE_REASON_OPENED:     return("opened");
       case FL_TREE_REASON_CLOSED:     return("closed");
+      case FL_TREE_REASON_DRAGGED:    return("dragged");
 \#if FLTK_ABI_VERSION >= 10301
 	  case FL_TREE_REASON_RESELECTED: return("reselected");
 \#endif
@@ -345,7 +346,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {0 234 1045 580} type Double visible
+    xywh {1 234 1045 580} type Double visible
   } {
     Fl_Group tree {
       label Tree
@@ -637,8 +638,9 @@ switch ( selectmode_chooser->value() ) {
     case 0:  tree->selectmode(FL_TREE_SELECT_NONE);   break;	// None
     case 1:  tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
     case 2:  tree->selectmode(FL_TREE_SELECT_MULTI);  break; 	// Multi
+    case 3:  tree->selectmode(FL_TREE_SELECT_SINGLE_DRAGGABLE);  break; // Single draggable
     default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
-}}
+}} open selected
         tooltip {Tests Fl_Tree::selectmode()
 Sets how Fl_Tree handles mouse selection of tree items.
     NONE	-- Not selectable by keyboard/mouse
@@ -658,6 +660,10 @@ Sets how Fl_Tree handles mouse selection of tree items.
         MenuItem {} {
           label Multi
           xywh {60 60 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Single + drag}
+          xywh {70 70 36 21} labelsize 12
         }
       }
       Fl_Choice reselectmode_chooser {
@@ -1393,7 +1399,7 @@ if ( !item) {
 }
 int onoff = rootselect2_toggle->value();
 if ( onoff ) tree->select_all(item);	// select /ROOT and its children
-else         tree->deselect_all(item);	// deselect /ROOT and its children} selected
+else         tree->deselect_all(item);	// deselect /ROOT and its children}
         tooltip {Toggle selection of the ROOT item and all children} xywh {914 219 95 16} selection_color 1 labelsize 9
       }
       Fl_Box {} {
@@ -1728,8 +1734,7 @@ helpwin->show();}
         callback {tree->scrollbar_size((int)tree_scrollbar_size_slider->value());
 tree->redraw();}
         tooltip {Tests Fl_Tree::scrollbar_size() effects on tree clipping.
-The value is normally 0, which causes Fl_Tree to use the global Fl::scrollbar_size() instead.
-} xywh {835 499 180 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 9
+The value is normally 0, which causes Fl_Tree to use the global Fl::scrollbar_size() instead.} xywh {835 499 180 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 9
         code0 {o->value(tree->scrollbar_size());}
         code1 {o->range(0.0, 30.0);}
         code2 {o->step(1.0);}

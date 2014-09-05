@@ -328,6 +328,7 @@ int Fl_Tree::handle(int e) {
 		case FL_TREE_SELECT_NONE:
 		  break;					// ignore, let group have shot at event
 		case FL_TREE_SELECT_SINGLE:
+		case FL_TREE_SELECT_SINGLE_DRAGGABLE:
 		  if ( is_ctrl ) {				// CTRL-SPACE: (single mode) toggle
 		    if ( ! _item_focus->is_selected() ) {
 		      select_only(_item_focus, when());
@@ -389,6 +390,7 @@ int Fl_Tree::handle(int e) {
 		switch ( _prefs.selectmode() ) {
 		  case FL_TREE_SELECT_NONE:
 		  case FL_TREE_SELECT_SINGLE:
+		  case FL_TREE_SELECT_SINGLE_DRAGGABLE:
 		    break;
 		  case FL_TREE_SELECT_MULTI:
 		    // Do a 'select all'
@@ -432,6 +434,7 @@ int Fl_Tree::handle(int e) {
 	  case FL_TREE_SELECT_NONE:
 	    break;
 	  case FL_TREE_SELECT_SINGLE:
+	  case FL_TREE_SELECT_SINGLE_DRAGGABLE:
 	  case FL_TREE_SELECT_MULTI:
 	    deselect_all();
 	    break;
@@ -449,6 +452,7 @@ int Fl_Tree::handle(int e) {
 	    case FL_TREE_SELECT_NONE:
 	      break;
 	    case FL_TREE_SELECT_SINGLE:
+	    case FL_TREE_SELECT_SINGLE_DRAGGABLE:
 	      select_only(item, when());		// select only this item (handles redraw)
 	      _lastselect = item;
 	      break;
@@ -511,7 +515,8 @@ int Fl_Tree::handle(int e) {
 #endif
       if ( !item ) break;			// not near item? ignore drag event
       ret |= 1;					// acknowledge event
-      set_item_focus(item);			// becomes new focus item
+      if (_prefs.selectmode() != FL_TREE_SELECT_SINGLE_DRAGGABLE)
+        set_item_focus(item);			// becomes new focus item
       if (item==_lastselect) break;		// same item as before? avoid reselect
 
       // Handle selection behavior
@@ -520,6 +525,11 @@ int Fl_Tree::handle(int e) {
 	  break;				// no selection changes
 	case FL_TREE_SELECT_SINGLE: {
 	  select_only(item, when());		// select only this item (handles redraw)
+	  break;
+	}
+	case FL_TREE_SELECT_SINGLE_DRAGGABLE: {
+	  item = _lastselect; // Keep the source intact
+	  redraw();
 	  break;
 	}
 	case FL_TREE_SELECT_MULTI: {
@@ -535,6 +545,57 @@ int Fl_Tree::handle(int e) {
       break;
     }
     case FL_RELEASE:
+      if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
+          Fl::event_button() == FL_LEFT_MOUSE) {
+#if FLTK_ABI_VERSION >= 10303
+        Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
+#else
+        Fl_Tree_Item *item = _root->find_clicked(_prefs); // item we're on, vertically
+#endif
+
+        if (item && _lastselect && item != _lastselect &&
+            Fl::event_x() >= item->label_x()) {
+          //printf("Would drag '%s' to '%s'\n", _lastselect->label(), item->label());
+          // Are we dropping above or below the target item?
+          const int h = Fl::event_y() - item->y();
+          const int mid = item->h() / 2;
+          const bool before = h < mid;
+          //printf("Dropping %s it\n", before ? "before" : "after");
+
+          // Do nothing if it would be a no-op
+          if ((before && prev(item) != _lastselect) ||
+              (!before && next(item) != _lastselect)) {
+            Fl_Tree_Item *parent = item->parent();
+
+            if (parent) {
+              int pos = parent->find_child(item);
+              if (!before)
+                pos++;
+
+              // Special case: trying to drop right before a folder
+              if (item->children() && item->is_open() && !before) {
+                parent = item;
+                pos = 0;
+              }
+
+              // If we're moving inside the same parent, use the below/above methods
+              if (_lastselect->parent() == parent) {
+                if (before) {
+                  _lastselect->move_above(item);
+                } else {
+                  _lastselect->move_below(item);
+                }
+              } else {
+                _lastselect->move_into(parent, pos);
+              }
+
+              redraw();
+              do_callback_for_item(_lastselect, FL_TREE_REASON_DRAGGED);
+            }
+          }
+        }
+        redraw();
+      } // End single-drag check
       ret |= 1;
       break;
   }
@@ -750,6 +811,29 @@ void Fl_Tree::draw() {
 	     _vscroll->w(),
 	     _hscroll->h());
   }
+
+  // Draw dragging line
+  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
+      Fl::pushed() == this) {
+
+    Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
+    if (item && item != _item_focus) {
+      // Are we dropping above or before the target item?
+      const int h = Fl::event_y() - item->y();
+      const int mid = item->h() / 2;
+      const bool before = h < mid;
+
+      fl_color(FL_BLACK);
+
+      int tgt;
+      if (before) {
+        tgt = item->y();
+      } else {
+        tgt = item->y() + item->h();
+      }
+      fl_line(item->x(), tgt, item->x() + item->w(), tgt);
+    }
+  }
 }
 #else
 /// Standard FLTK draw() method, handles drawing the tree widget.
@@ -774,6 +858,29 @@ void Fl_Tree::draw() {
       _vscroll->value(range2);
     }
     Fl::add_timeout(.10, redraw_soon, (void*)this);	// use timer to trigger redraw; we can't
+  }
+
+  // Draw dragging line
+  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
+      Fl::pushed() == this) {
+
+    Fl_Tree_Item *item = _root->find_clicked(_prefs); // item we're on, vertically
+    if (item && item != _item_focus) {
+      // Are we dropping above or before the target item?
+      const int h = Fl::event_y() - item->y();
+      const int mid = item->h() / 2;
+      const bool before = h < mid;
+
+      fl_color(FL_BLACK);
+
+      int tgt;
+      if (before) {
+        tgt = item->y();
+      } else {
+        tgt = item->y() + item->h();
+      }
+      fl_line(item->x(), tgt, item->x() + item->w(), tgt);
+    }
   }
 }
 

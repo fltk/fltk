@@ -67,8 +67,10 @@ enum Fl_Tree_Connector {
 enum Fl_Tree_Select {
   FL_TREE_SELECT_NONE=0,	///< Nothing selected when items are clicked
   FL_TREE_SELECT_SINGLE=1,	///< Single item selected when item is clicked (default)
-  FL_TREE_SELECT_MULTI=2	///< Multiple items can be selected by clicking
+  FL_TREE_SELECT_MULTI=2,	///< Multiple items can be selected by clicking
   				///< with SHIFT, CTRL or mouse drags.
+  FL_TREE_SELECT_SINGLE_DRAGGABLE=3, ///< Single items may be selected, and they may be
+                                     ///< reordered by mouse drag.
 };
 
 #if FLTK_ABI_VERSION >= 10301
