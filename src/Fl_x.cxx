@@ -2213,12 +2213,17 @@ void Fl_X::activate_window(Window w) {
   if (!ewmh_supported())
     return;
 
-  Fl_X *x = Fl_X::i(fl_xfocus);
-  if (!x)
-    return;
+  Window prev = 0;
+
+  if (fl_xfocus) {
+    Fl_X *x = Fl_X::i(fl_xfocus);
+    if (!x)
+      return;
+    prev = x->xid;
+  }
 
   send_wm_event(w, fl_NET_ACTIVE_WINDOW, 1 /* application */,
-                0 /* timestamp */, x->xid /* previously active window */);
+                0 /* timestamp */, prev /* previously active window */);
 }
 
 /* Change an existing window to fullscreen */

@@ -113,7 +113,7 @@ unsigned char   Fl::options_[] = { 0, 0 };
 unsigned char   Fl::options_read_ = 0;
 
 
-Fl_Window *fl_xfocus;	// which window X thinks has focus
+Fl_Window *fl_xfocus = NULL;	// which window X thinks has focus
 Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
 Fl_Window *Fl::grab_;	// most recent Fl::grab()
 Fl_Window *Fl::modal_;	// topmost modal() window
