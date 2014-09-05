@@ -239,7 +239,7 @@ appears as:
 There is no real need to use HTML \<P\> and \</P\> tags within the text
 to tell doxygen to start or stop a paragraph. In most cases, when doxygen
 encounters a blank line or some, but not all, \b \\commands in the text it
-knows that it as reached the start or end of a paragraph. Doxygen also
+knows that it has reached the start or end of a paragraph. Doxygen also
 offers the \b \\par command for special paragraph handling. It can be used
 to provide a paragraph title and also to indent a paragraph. Unfortunately
 \b \\par won't do what you expect if you want to have doxygen links and
