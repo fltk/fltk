@@ -926,9 +926,10 @@ void Fl::focus(Fl_Widget *o) {
 #elif defined(USE_X11)
 	if (fl_xfocus != win) {
 	  Fl_X *x = Fl_X::i(win);
-	  win->show(); // Old WMs, XMapRaised
-	  // New WMs use the NETWM attribute:
-	  if (x) Fl_X::activate_window(x->xid);
+	  if (!Fl_X::ewmh_supported())
+	    win->show(); // Old WMs, XMapRaised
+	  else if (x) // New WMs use the NETWM attribute:
+	    Fl_X::activate_window(x->xid);
 	}
 #endif
 	fl_xfocus = win;
