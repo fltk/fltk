@@ -3247,12 +3247,13 @@ void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
  and the styleBufOffset argument must indicate the starting position of the
  copy, to take into account the correct style information.
 
- \param buf
- \param startPos
- \param maxPos
- \param maxLines
- \param startPosIsLineStart
- \param styleBufOffset
+ \param[in] buf      The text buffer to operate on
+ \param[in] startPos Starting index position into the buffer
+ \param[in] maxPos   Maximum index position into the buffer we'll reach
+ \param[in] maxLines Maximum number of lines we'll reach
+ \param[in] startPosIsLineStart  Flag indicating if startPos is start of line.
+                                 (If set, prevents our having to find the line start)
+ \param[in] styleBufOffset Offset index position into style buffer.
 
  \param[out] retPos Position where counting ended.  When counting lines, the
     position returned is the start of the line "maxLines" lines
