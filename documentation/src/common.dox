@@ -372,7 +372,7 @@ The @ sign may also be followed by the following optional
 
 \li +[1-9] or -[1-9] tweaks the scaling a little bigger or smaller.
 
-\li '$' flips the symbol horizontally, '%' flips it vertically.
+\li '$' flips the symbol horizontally, '\%' flips it vertically.
 
 \li [0-9] - rotates by a multiple of 45 degrees. '5' and '6' do no rotation
     while the others point in the direction of that key on a numeric keypad.
