@@ -436,14 +436,6 @@ draw the labels in ways inaccessible through the
 fl_font() mechanism (e.g. <tt>FL_ENGRAVED_LABEL</tt>) or
 with program-generated letters or symbology.
 
-<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
-<TR>
-	<TD><B>Note:</B>
-	<P>This interface has changed in FLTK 2.0!
-	</TD>
-</TR>
-</TABLE></CENTER>
-
 \par Label Type Functions
 
 To setup your own label type you will need to write two
