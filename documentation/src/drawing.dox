@@ -551,8 +551,8 @@ Add a single vertex to the current path.
 void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
 
 \par
-Add a series of points on a Bezier curve to the path.  The curve ends
-(and two of the points) are at <tt>X0,Y0</tt> and <tt>X3,Y3</tt>.
+Add a series of points on a Bezier curve to the path. The curve ends
+(and two of the points are) at <tt>X0,Y0</tt> and <tt>X3,Y3</tt>.
 
 \anchor drawing_fl_arc
 void fl_arc(double x, double y, double r, double start, double end)
