@@ -338,7 +338,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
                    downright[i] * rightf) * downf;
         }
 
-        if (d() == 4) {
+        if (d() == 4 && new_ptr[3]) {
           for (i = 0; i < 3; i++) {
             new_ptr[i] /= new_ptr[3] / 255.0f;
           }
