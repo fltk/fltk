@@ -1413,29 +1413,36 @@ void fl_open_display() {
     while (ign_event);
     
     // bring the application into foreground without a 'CARB' resource
-    Boolean same_psn;
-    ProcessSerialNumber cur_psn, front_psn;
-    if ( !GetCurrentProcess( &cur_psn ) && !GetFrontProcess( &front_psn ) &&
-         !SameProcess( &front_psn, &cur_psn, &same_psn ) && !same_psn ) {
+    bool i_am_in_front;
+    ProcessSerialNumber cur_psn = { 0, kCurrentProcess };
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+    if (fl_mac_os_version >= 100600) {
+      i_am_in_front = [[NSRunningApplication currentApplication] isActive];
+    }
+    else
+#endif
+    {
+      Boolean same_psn;
+      ProcessSerialNumber front_psn;
+      i_am_in_front = (!GetFrontProcess( &front_psn ) &&
+                       !SameProcess( &front_psn, &cur_psn, &same_psn ) && same_psn );
+    }
+    if (!i_am_in_front) {
       // only transform the application type for unbundled apps
       NSBundle *bundle = [NSBundle mainBundle];
       if (bundle) {
-	NSString *exe = [[bundle executablePath] stringByStandardizingPath];
-	NSString *bpath = [bundle bundlePath];
-	NSString *exe_dir = [exe stringByDeletingLastPathComponent];
-	if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) bundle = nil;
-	}
-            
-      if ( !bundle )
-      {
-        OSErr err;
-	err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication); // needs Mac OS 10.3
-	/* support of Mac OS 10.2 or earlier used this undocumented call instead
-	 err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
-	*/
-        if (err == noErr) {
-          SetFrontProcess( &cur_psn );
-        }
+        NSString *exe = [[bundle executablePath] stringByStandardizingPath];
+        NSString *bpath = [bundle bundlePath];
+        NSString *exe_dir = [exe stringByDeletingLastPathComponent];
+        if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) bundle = nil;
+      }
+      
+      if ( !bundle ) {
+        TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication); // needs Mac OS 10.3
+        /* support of Mac OS 10.2 or earlier used this undocumented call instead
+         err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+         */
+        [NSApp activateIgnoringOtherApps:YES];
       }
     }
     if (![NSApp servicesMenu]) createAppleMenu();
@@ -2550,8 +2557,7 @@ void Fl_X::make(Fl_Window* w)
     [myview registerForDraggedTypes:[NSArray arrayWithObjects:utf8_format,  NSFilenamesPboardType, nil]];
     if ( ! Fl_X::first->next ) {	
       // if this is the first window, we need to bring the application to the front
-      ProcessSerialNumber psn = { 0, kCurrentProcess };
-      SetFrontProcess( &psn );
+      [NSApp activateIgnoringOtherApps:YES];
     }
     
     if (w->size_range_set) w->size_range_();
