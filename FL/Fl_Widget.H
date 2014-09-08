@@ -777,6 +777,18 @@ public:
    */
   void clear_changed() {flags_ &= ~CHANGED;}
 
+  /** Marks the widget as inactive without sending events or changing focus.
+      This is mainly for specialized use, for normal cases you want deactivate().
+      \see deactivate()
+   */
+  void clear_active() {flags_ |= INACTIVE;}
+
+  /** Marks the widget as active without sending events or changing focus.
+      This is mainly for specialized use, for normal cases you want activate().
+      \see activate()
+   */
+  void set_active() {flags_ &= ~INACTIVE;}
+
   /** Gives the widget the keyboard focus.
       Tries to make this widget be the Fl::focus() widget, by first sending 
       it an FL_FOCUS event, and if it returns non-zero, setting 
