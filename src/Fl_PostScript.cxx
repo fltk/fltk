@@ -16,6 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <FL/Fl_Printer.H>
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>

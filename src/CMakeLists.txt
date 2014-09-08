@@ -46,6 +46,7 @@ set(CPPFILES
   Fl_Paged_Device.cxx
   Fl_Pixmap.cxx
   Fl_Positioner.cxx
+  Fl_PostScript.cxx
   Fl_Printer.cxx
   Fl_Preferences.cxx
   Fl_Progress.cxx

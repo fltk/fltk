@@ -19,13 +19,9 @@
 
 #include <FL/Fl_Printer.H>
 
-#ifdef __APPLE__
-//#include "Fl_Quartz_Printer.mm"
-#elif defined(WIN32)
+#if defined(WIN32)
 #include "Fl_GDI_Printer.cxx"
 #endif
-
-#include "Fl_PostScript.cxx"
 
 // print dialog customization strings
 /** [this text may be customized at run-time] */

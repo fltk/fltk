@@ -332,6 +332,7 @@
 		7F76E016192FAD420071728B /* Fl_Copy_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F76E015192FAD420071728B /* Fl_Copy_Surface.cxx */; };
 		7F76E018192FAD590071728B /* Fl_Image_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F76E017192FAD590071728B /* Fl_Image_Surface.cxx */; };
 		7FD807F719ADD610007622B2 /* Fl_Shaped_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FD807F619ADD610007622B2 /* Fl_Shaped_Window.cxx */; };
+		7FFDD15A19BE072000779AD1 /* Fl_PostScript.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDD15919BE072000779AD1 /* Fl_PostScript.cxx */; };
 		7FFDE4AD171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDE4AC171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm */; };
 		812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */; };
 		812761E94039F13357F56EE6 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
@@ -632,7 +633,6 @@
 		C9EDD4B01274B93000ADB21C /* Fl_Wizard.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = A57A8421086F1F0F9906B692 /* Fl_Wizard.H */; };
 		C9EDD4B11274B93000ADB21C /* Fl_XBM_Image.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2DE1079C826533A91053A9C /* Fl_XBM_Image.H */; };
 		C9EDD4B21274B93000ADB21C /* Fl_XPM_Image.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1433F1B8C4085D5D5E1BA0E1 /* Fl_XPM_Image.H */; };
-		C9EDD4B31274B93000ADB21C /* Xutf8.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91A43F37963443EA5E91BF1F /* Xutf8.h */; };
 		C9EDD4B41274B93000ADB21C /* dirent.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E448719A354B3D80FD2E1992 /* dirent.h */; };
 		C9EDD4B51274B93000ADB21C /* filename.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = AF65626F49A71525D24ED1B0 /* filename.H */; };
 		C9EDD4B61274B93000ADB21C /* fl_ask.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = 87259ACF8723616344D9AEB2 /* fl_ask.H */; };
@@ -3823,7 +3823,6 @@
 				C9EDD4B01274B93000ADB21C /* Fl_Wizard.H in CopyFiles */,
 				C9EDD4B11274B93000ADB21C /* Fl_XBM_Image.H in CopyFiles */,
 				C9EDD4B21274B93000ADB21C /* Fl_XPM_Image.H in CopyFiles */,
-				C9EDD4B31274B93000ADB21C /* Xutf8.h in CopyFiles */,
 				C9EDD4B41274B93000ADB21C /* dirent.h in CopyFiles */,
 				C9EDD4B51274B93000ADB21C /* filename.H in CopyFiles */,
 				C9EDD4B61274B93000ADB21C /* fl_ask.H in CopyFiles */,
@@ -4350,6 +4349,7 @@
 		7FC91721DA7888C8A1FD762E /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FD807F419ADD5F4007622B2 /* Fl_Shaped_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Shaped_Window.H; path = ../../FL/Fl_Shaped_Window.H; sourceTree = SOURCE_ROOT; };
 		7FD807F619ADD610007622B2 /* Fl_Shaped_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Shaped_Window.cxx; path = ../../src/Fl_Shaped_Window.cxx; sourceTree = SOURCE_ROOT; };
+		7FFDD15919BE072000779AD1 /* Fl_PostScript.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PostScript.cxx; path = ../../src/Fl_PostScript.cxx; sourceTree = "<group>"; };
 		7FFDE4AC171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Sys_Menu_Bar.mm; path = ../../src/Fl_Sys_Menu_Bar.mm; sourceTree = SOURCE_ROOT; };
 		800E34DEF9E503C5EC6C4FA5 /* Fl_XBM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_XBM_Image.cxx; path = ../../src/Fl_XBM_Image.cxx; sourceTree = SOURCE_ROOT; };
 		806103D71A8CD0075BF8E1DA /* Fl_Group.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Group.cxx; path = ../../src/Fl_Group.cxx; sourceTree = SOURCE_ROOT; };
@@ -4390,7 +4390,6 @@
 		90D9C06A2DCECD5B99C4A90A /* jdatadst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdatadst.c; path = ../../jpeg/jdatadst.c; sourceTree = SOURCE_ROOT; };
 		91173358E60D137409651286 /* Fl_Preferences.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Preferences.H; path = ../../FL/Fl_Preferences.H; sourceTree = SOURCE_ROOT; };
 		91726A70C25E6155A2FAF315 /* undo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = undo.h; path = ../../fluid/undo.h; sourceTree = SOURCE_ROOT; };
-		91A43F37963443EA5E91BF1F /* Xutf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Xutf8.h; path = ../../FL/Xutf8.h; sourceTree = SOURCE_ROOT; };
 		91E088F22E63779E9E9FA651 /* alignment_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alignment_panel.cxx; path = ../../fluid/alignment_panel.cxx; sourceTree = SOURCE_ROOT; };
 		922182C23B114BA60D9CF160 /* native-filechooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "native-filechooser.cxx"; path = "../../test/native-filechooser.cxx"; sourceTree = SOURCE_ROOT; };
 		9305831B5D584A1C9652C308 /* scroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5499,6 +5498,7 @@
 				6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */,
 				D79D3910F834D4B78FED92F3 /* Fl_Pixmap.cxx */,
 				05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */,
+				7FFDD15919BE072000779AD1 /* Fl_PostScript.cxx */,
 				B4CAFA162560925C4591997A /* Fl_Printer.cxx */,
 				3789CACF6C845E9C0DE0C58F /* Fl_Preferences.cxx */,
 				570D0C7510FE3A3FB7A1BD5D /* Fl_Progress.cxx */,
@@ -6330,7 +6330,6 @@
 				A57A8421086F1F0F9906B692 /* Fl_Wizard.H */,
 				D2DE1079C826533A91053A9C /* Fl_XBM_Image.H */,
 				1433F1B8C4085D5D5E1BA0E1 /* Fl_XPM_Image.H */,
-				91A43F37963443EA5E91BF1F /* Xutf8.h */,
 				E448719A354B3D80FD2E1992 /* dirent.h */,
 				AF65626F49A71525D24ED1B0 /* filename.H */,
 				87259ACF8723616344D9AEB2 /* fl_ask.H */,
@@ -8477,6 +8476,8 @@
 /* Begin PBXProject section */
 		4BF1A7FFEACF5F31B4127482 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
 			developmentRegion = English;
@@ -9405,6 +9406,7 @@
 				302D959F1FBBC3D44D27BA3F /* Fl_Group.cxx in Sources */,
 				74D195DEE3A33FA0C8C7A5BE /* Fl_Help_View.cxx in Sources */,
 				6F8B4EC22CC54B6B06F9D5C7 /* Fl_Image.cxx in Sources */,
+				7FFDD15A19BE072000779AD1 /* Fl_PostScript.cxx in Sources */,
 				0BD1B4FF53C27EDA7B9F2C66 /* Fl_Input.cxx in Sources */,
 				2CFBED9BA0BE01679B285434 /* Fl_Input_.cxx in Sources */,
 				5D1D08BF3F79DC7C29D6FCF4 /* Fl_Light_Button.cxx in Sources */,
@@ -13089,8 +13091,7 @@
 		793DEFB743639835433A664B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_SSE41_EXTENSIONS = NO;
 				GCC_ENABLE_SSE42_EXTENSIONS = YES;
@@ -13100,7 +13101,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
@@ -14186,14 +14187,14 @@
 		AC3226B9FE17327A0476ACA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;

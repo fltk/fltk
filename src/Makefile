@@ -61,6 +61,7 @@ CPPFILES = \
 	Fl_Pack.cxx \
 	Fl_Paged_Device.cxx \
 	Fl_Pixmap.cxx \
+  Fl_PostScript.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
 	Fl_Printer.cxx \

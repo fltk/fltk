@@ -336,6 +336,7 @@
 		7FDBB8F616B2D1FA00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031F16B1A909000FC50F /* Localizable.strings */; };
 		7FDBB8F716B2D1FF00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031C16B1A909000FC50F /* Localizable.strings */; };
 		7FDBB8F816B2D20A00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031916B1A909000FC50F /* Localizable.strings */; };
+		7FFDD15C19BE08A800779AD1 /* Fl_PostScript.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDD15B19BE08A800779AD1 /* Fl_PostScript.cxx */; };
 		7FFDE552171D8D0D008753A3 /* Fl_Sys_Menu_Bar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDE551171D8D0D008753A3 /* Fl_Sys_Menu_Bar.mm */; };
 		812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */; };
 		812761E94039F13357F56EE6 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
@@ -4343,6 +4344,7 @@
 		7FC91721DA7888C8A1FD762E /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FD8084F19ADD6DE007622B2 /* Fl_Shaped_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Shaped_Window.H; path = ../../FL/Fl_Shaped_Window.H; sourceTree = SOURCE_ROOT; };
 		7FD8085019ADD6F2007622B2 /* Fl_Shaped_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Shaped_Window.cxx; path = ../../src/Fl_Shaped_Window.cxx; sourceTree = SOURCE_ROOT; };
+		7FFDD15B19BE08A800779AD1 /* Fl_PostScript.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PostScript.cxx; path = ../../src/Fl_PostScript.cxx; sourceTree = "<group>"; };
 		7FFDE551171D8D0D008753A3 /* Fl_Sys_Menu_Bar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Sys_Menu_Bar.mm; path = ../../src/Fl_Sys_Menu_Bar.mm; sourceTree = SOURCE_ROOT; };
 		800E34DEF9E503C5EC6C4FA5 /* Fl_XBM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_XBM_Image.cxx; path = ../../src/Fl_XBM_Image.cxx; sourceTree = SOURCE_ROOT; };
 		806103D71A8CD0075BF8E1DA /* Fl_Group.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Group.cxx; path = ../../src/Fl_Group.cxx; sourceTree = SOURCE_ROOT; };
@@ -5490,6 +5492,7 @@
 				6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */,
 				D79D3910F834D4B78FED92F3 /* Fl_Pixmap.cxx */,
 				05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */,
+				7FFDD15B19BE08A800779AD1 /* Fl_PostScript.cxx */,
 				B4CAFA162560925C4591997A /* Fl_Printer.cxx */,
 				3789CACF6C845E9C0DE0C58F /* Fl_Preferences.cxx */,
 				570D0C7510FE3A3FB7A1BD5D /* Fl_Progress.cxx */,
@@ -9520,6 +9523,7 @@
 				12E4293A141DD684369D6B8F /* fl_boxtype.cxx in Sources */,
 				34870EA10DBD90DB3DD49DA0 /* fl_call_main.c in Sources */,
 				854002A1B71DBAE327B8C4E8 /* fl_color.cxx in Sources */,
+				7FFDD15C19BE08A800779AD1 /* Fl_PostScript.cxx in Sources */,
 				2C8EFE6F2A1297FB4B263B2A /* fl_cursor.cxx in Sources */,
 				5DE5BC3242C44595E62FA505 /* fl_curve.cxx in Sources */,
 				CD2C6C2797C19E76EA67D308 /* fl_diamond_box.cxx in Sources */,
