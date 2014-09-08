@@ -383,6 +383,15 @@ Fl_Positioner.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
 Fl_Positioner.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl_Positioner.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
 Fl_Positioner.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_PostScript.o:  ../FL/Fl_Printer.H  ../FL/Fl.H ../FL/fl_ask.H ../FL/fl_draw.H
+Fl_PostScript.o:  ../FL/Fl_PostScript.H ../FL/Fl_Native_File_Chooser.H Fl_Font.H Xutf8.H
+Fl_PostScript.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_PostScript.o: ../FL/fl_types.h ../FL/Enumerations.H  ../FL/Fl_File_Chooser.H
+Fl_PostScript.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H ./FL/Fl_Plugin.H
+Fl_PostScript.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/filename.H
+Fl_PostScript.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_PostScript.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_PostScript.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Paged_Device.H 
 Fl_Preferences.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Preferences.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/Fl_Plugin.H
