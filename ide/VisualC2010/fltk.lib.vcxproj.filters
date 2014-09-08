@@ -467,6 +467,7 @@
     <ClCompile Include="..\..\src\Fl_Pixmap.cxx" />
     <ClCompile Include="..\..\src\fl_plastic.cxx" />
     <ClCompile Include="..\..\src\Fl_Positioner.cxx" />
+    <ClCompile Include="..\..\src\Fl_PostScript.cxx" />
     <ClCompile Include="..\..\src\Fl_Preferences.cxx" />
     <ClCompile Include="..\..\src\Fl_Printer.cxx" />
     <ClCompile Include="..\..\src\Fl_Progress.cxx" />

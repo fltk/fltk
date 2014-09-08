@@ -447,6 +447,10 @@ SOURCE=..\..\src\Fl_Positioner.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\Fl_PostScript.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\Fl_Preferences.cxx
 # End Source File
 # Begin Source File
