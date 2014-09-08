@@ -559,6 +559,10 @@ tree.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
 tree.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Bitmap.H
 tree.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Text_Buffer.H ../FL/Fl_Value_Slider.H
 tree.o: ../FL/Fl_Light_Button.H
+twowin.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+twowin.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
+twowin.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Button.H
+twowin.o: ../FL/Fl_Input.H
 valuators.o: valuators.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 valuators.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Double_Window.H
 valuators.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
