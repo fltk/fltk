@@ -92,6 +92,7 @@ private:
 		    sb->update();
 		  }
 
+                  sb->set_changed();
 		  sb->do_callback();
 		}
   void		update() {
