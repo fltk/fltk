@@ -1781,9 +1781,6 @@ fprintf(stderr,"\n");*/
           keysym = XKeycodeToKeysym(fl_display, keycode, 0);
         }
       }
-      // MRS: Can't use Fl::event_state(FL_CTRL) since the state is not
-      //      set until set_event_xy() is called later...
-      if ((xevent.xkey.state & ControlMask) && keysym == '-') kp_buffer[0] = 0x1f; // ^_
       kp_buffer[len] = 0;
       Fl::e_text = kp_buffer;
       Fl::e_length = len;
