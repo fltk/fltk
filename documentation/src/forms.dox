@@ -45,7 +45,7 @@ C++ compiler.  The FLTK library does not provide C bindings or header
 files. 
 
 Although FLTK was designed to be compatible with the GL Forms
-library (version 0.3 or so), XForms has bloated severely and it's
+library (version 0.3 or so), XForms has bloated severely and its
 interface is X-specific.  Therefore, XForms compatibility is no longer
 a goal of FLTK.  Compatibility was limited to things that were free, or
 that would add code that would not be linked in if the feature is
@@ -81,7 +81,7 @@ Replace <tt>"boxtype"</tt> with <tt>"box()"</tt>.
 
 <tt>const char *</tt> arguments to most FLTK methods are simply
 stored, while Forms would \c strdup() the passed string.  This is
-most noticable with the label of widgets.  Your program must always
+most noticeable with the label of widgets.  Your program must always
 pass static data such as a string constant or malloc'd buffer to
 \c label().  If you are using labels to display program output you
 may want to try the Fl_Output widget. 
@@ -94,7 +94,7 @@ fdesign outputs a setting of a "fdui" instance variable to the main
 window.  I did not emulate this because I wanted all instance variables
 to be hidden.  You can store the same information in the \c user_data()
 field of a window.  To do this,  search through the fdesign output for all
-occurances of <tt>"->fdui"</tt> and edit to use <tt>"->user_data()"</tt>
+occurrences of <tt>"->fdui"</tt> and edit to use <tt>"->user_data()"</tt>
 instead.  This will require casts and is not trivial. 
 
 The prototype for the functions passed to \c fl_add_timeout()
