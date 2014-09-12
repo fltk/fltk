@@ -89,7 +89,7 @@ but this is even more wasteful for ASCII or Latin1.
 
 The Unicode standard defines various UCS Transformation Formats.
 UTF-16 and UTF-32 are based on units of two and four bytes.
-UCS characters requiring more than 16-bits are encoded using
+UCS characters requiring more than 16 bits are encoded using
 "surrogate pairs" in UTF-16.
 
 UTF-8 encodes all Unicode characters into variable length 
@@ -135,10 +135,9 @@ some level of synchronisation and error detection.
 </table>
 
 Moving from ASCII encoding to Unicode will allow all new FLTK
-applications to be easily internationalized and used all
-over the world. By choosing UTF-8 encoding, FLTK remains 
-largely source-code compatible to previous iteration of the 
-library.
+applications to be easily internationalized and used all over
+the world. By choosing UTF-8 encoding, FLTK remains largely
+source-code compatible to previous iterations of the library.
 
 \section unicode_in_fltk Unicode in FLTK
 
@@ -231,7 +230,7 @@ of the sequence. Trailing bytes in a UTF-8 sequence will return -1.
   know that the byte sequence contains only valid UTF-8 sequences.
 
 - \b WARNING:
-  Some of the [OksiD] functions below use still use %fl_utf8len() in
+  Some of the [OksiD] functions below still use %fl_utf8len() in
   their implementations. These may need further validation.
 
 Please see the individual function description for further details
@@ -249,7 +248,7 @@ int fl_utf8locale()
 \p %fl_utf8locale() returns true if the "locale" seems to indicate
 that UTF-8 encoding is used.
 \par
-<i>It is highly recommended that your change your system so this does return
+<i>It is highly recommended that you change your system so this does return
 true!</i>
 
 
@@ -267,7 +266,7 @@ int fl_utf_nb_char(const unsigned char *buf, int len)
   \b OksiD
   <br>
 \par
-Returns the number of UTF-8 character in the first \p len bytes of \p buf.
+Returns the number of UTF-8 characters in the first \p len bytes of \p buf.
 
 
 int fl_unichar_to_utf8_size(Fl_Unichar)
@@ -340,7 +339,7 @@ If the \p src string contains only ASCII characters, the return value will
 be the same as \p srclen.
 \par
 \p %fl_utf8toa() converts a string containing UTF-8 characters into
-single byte characters. UTF-8 characters do not correspond to ASCII
+single byte characters. UTF-8 characters that do not correspond to ASCII
 or ISO-8859-1 characters below 0xFF are replaced with '?'.
 
 \par
@@ -370,7 +369,7 @@ unsigned int fl_utf8toUtf16(const char *src, unsigned srclen, unsigned short *ds
 \par
 These routines convert between UTF-8 and \p wchar_t or "wide character"
 strings.
-The difficulty lies in the fact \p sizeof(wchar_t) is 2 on Windows
+The difficulty lies in the fact that \p sizeof(wchar_t) is 2 on Windows
 and 4 on Linux and most other systems.
 Therefore some "wide characters" on Windows may be represented
 as "surrogate pairs" of more than one \p wchar_t.
@@ -378,7 +377,7 @@ as "surrogate pairs" of more than one \p wchar_t.
 \par
 \p %fl_utf8fromwc() converts from a "wide character" string to UTF-8.
 Note that \p srclen is the number of \p wchar_t elements in the source
-string and on Windows and this might be larger than the number of characters.
+string and on Windows this might be larger than the number of characters.
 \p dstlen specifies the maximum number of \b bytes to copy, including
 the null terminator.
 

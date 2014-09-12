@@ -152,13 +152,10 @@ value:
 \li FL_BUTTONS - Any mouse button is pushed. 
 \li FL_BUTTON(n) - Mouse button \p n ( where <tt>n > 0</tt>) is pushed. 
 
-<!-- NEED 4in -->
-
-
 \section enumerations_alignment Alignment Values
 
 The following constants define bits that can be used with
-Fl_Widget::alighn()
+Fl_Widget::align()
 to control the positioning of the label:
 
 \li FL_ALIGN_CENTER - The label is centered (0). 
