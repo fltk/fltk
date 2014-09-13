@@ -133,6 +133,12 @@ int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount,
   return 0;
 }
 
+/** Don't use with this class. */
+int Fl_PostScript_File_Device::start_job(int pagecount, int* from, int* to)
+{
+  return 1;
+}
+
 /**
  @brief The destructor.
  */

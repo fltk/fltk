@@ -224,7 +224,8 @@ public:
   const char *class_name() {return class_id;};
   Fl_PostScript_File_Device();
   ~Fl_PostScript_File_Device();
-  int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4, 
+  int start_job(int pagecount, int* from, int* to);
+  int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
 		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
   int start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4, 
 		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
