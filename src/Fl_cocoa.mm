@@ -51,6 +51,7 @@ extern "C" {
 #include <stdarg.h>
 #include <math.h>
 #include <limits.h>
+#include <dlfcn.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -639,9 +640,28 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
  */
 - (BOOL)containsGLsubwindow;
 - (void)containsGLsubwindow:(BOOL)contains;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+- (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
+#endif
 @end
 
 @implementation FLWindow
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+- (NSPoint)convertBaseToScreen:(NSPoint)aPoint
+{
+  if (fl_mac_os_version >= 100700) {
+    NSRect r = [self convertRectToScreen:NSMakeRect(aPoint.x, aPoint.y, 0, 0)];
+    return r.origin;
+    }
+  else {
+    // replaces return [super convertBaseToScreen:aPoint] that may trigger a compiler warning
+    typedef NSPoint (*convertIMP)(id, SEL, NSPoint);
+    convertIMP addr = (convertIMP)[NSWindow instanceMethodForSelector:@selector(convertBaseToScreen:)];
+    return addr(self, @selector(convertBaseToScreen:), aPoint);
+    }
+}
+#endif
+
 - (FLWindow*)initWithFl_W:(Fl_Window *)flw 
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle 
@@ -1349,7 +1369,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
  */
 void fl_open_callback(void (*cb)(const char *)) {
   fl_open_display();
-  [[NSApp delegate] open_cb:cb];
+  [(FLAppDelegate*)[NSApp delegate] open_cb:cb];
 }
 
 @implementation FLApplication
@@ -1424,8 +1444,14 @@ void fl_open_display() {
     {
       Boolean same_psn;
       ProcessSerialNumber front_psn;
-      i_am_in_front = (!GetFrontProcess( &front_psn ) &&
-                       !SameProcess( &front_psn, &cur_psn, &same_psn ) && same_psn );
+      //avoid compilation warnings triggered by GetFrontProcess() and SameProcess()
+      void* h = dlopen(NULL, RTLD_LAZY);
+      typedef OSErr (*GetFrontProcess_type)(ProcessSerialNumber*);
+      GetFrontProcess_type  GetFrontProcess_ = (GetFrontProcess_type)dlsym(h, "GetFrontProcess");
+      typedef OSErr (*SameProcess_type)(ProcessSerialNumber*, ProcessSerialNumber*, Boolean*);
+      SameProcess_type  SameProcess_ = (SameProcess_type)dlsym(h, "SameProcess");
+      i_am_in_front = (!GetFrontProcess_( &front_psn ) &&
+                       !SameProcess_( &front_psn, &cur_psn, &same_psn ) && same_psn );
     }
     if (!i_am_in_front) {
       // only transform the application type for unbundled apps
@@ -2311,7 +2337,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   }
   // Convert the rect to screen coordinates
   glyphRect.origin.y = wfocus->h() - glyphRect.origin.y;
-  glyphRect.origin = [[self window] convertBaseToScreen:glyphRect.origin];
+  glyphRect.origin = [(FLWindow*)[self window] convertBaseToScreen:glyphRect.origin];
   if (actualRange) *actualRange = aRange;
   fl_unlock_function();
   return glyphRect;
@@ -3845,7 +3871,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
-#include <dlfcn.h>
 
 /* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
  Supports old Mac OS X versions that may use a couple of Carbon calls:
