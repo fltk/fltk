@@ -1401,7 +1401,7 @@ void fl_open_display() {
     if (need_new_nsapp) [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; // never released
-    [NSApp setDelegate:[[FLAppDelegate alloc] init]];
+    [(NSApplication*)NSApp setDelegate:[[FLAppDelegate alloc] init]];
     if (need_new_nsapp) [NSApp finishLaunching];
 
     // empty the event queue but keep system events for drag&drop of files at launch
@@ -3870,9 +3870,17 @@ void *Fl_X::get_carbon_function(const char *function_name) {
 static int calc_mac_os_version() {
   int M, m, b = 0;
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
-  NSDictionary * sv = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-  const char *s = [[sv objectForKey:@"ProductVersion"] UTF8String];
-  sscanf(s, "%d.%d.%d", &M, &m, &b);
+  if ([NSProcessInfo instancesRespondToSelector:@selector(operatingSystemVersion)]) {
+    NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
+    M = version.majorVersion;
+    m = version.minorVersion;
+    b = version.patchVersion;
+  }
+  else {
+    NSDictionary * sv = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+    const char *s = [[sv objectForKey:@"ProductVersion"] UTF8String];
+    sscanf(s, "%d.%d.%d", &M, &m, &b);
+  }
   [localPool release];
   return M*10000 + m*100 + b;
 }
