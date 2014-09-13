@@ -64,6 +64,12 @@ typedef CGContextRef Fl_Offscreen;
 #ifndef MAC_OS_X_VERSION_10_8
 #define MAC_OS_X_VERSION_10_8 1080
 #endif
+#ifndef MAC_OS_X_VERSION_10_9
+#define MAC_OS_X_VERSION_10_9 1090
+#endif
+#ifndef MAC_OS_X_VERSION_10_10
+#define MAC_OS_X_VERSION_10_10 101000
+#endif
 
 #ifdef __OBJC__
 @class NSCursor;

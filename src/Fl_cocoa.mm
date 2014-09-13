@@ -3870,13 +3870,16 @@ void *Fl_X::get_carbon_function(const char *function_name) {
 static int calc_mac_os_version() {
   int M, m, b = 0;
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_10
   if ([NSProcessInfo instancesRespondToSelector:@selector(operatingSystemVersion)]) {
     NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
     M = version.majorVersion;
     m = version.minorVersion;
     b = version.patchVersion;
   }
-  else {
+  else
+#endif
+  {
     NSDictionary * sv = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
     const char *s = [[sv objectForKey:@"ProductVersion"] UTF8String];
     sscanf(s, "%d.%d.%d", &M, &m, &b);
