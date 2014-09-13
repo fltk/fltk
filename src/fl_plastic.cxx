@@ -278,9 +278,9 @@ static void up_frame(int x, int y, int w, int h, Fl_Color c) {
 static void narrow_thin_box(int x, int y, int w, int h, Fl_Color c) {
   if (h<=0 || w<=0) return;
   const uchar *g = fl_gray_ramp();
-  fl_color(shade_color(g['R'], c));
+  fl_color(shade_color(g[(int)'R'], c));
   fl_rectf(x+1, y+1, w-2, h-2);
-  fl_color(shade_color(g['I'], c));
+  fl_color(shade_color(g[(int)'I'], c));
   if (w > 1) {
     fl_xyline(x+1, y, x+w-2);
     fl_xyline(x+1, y+h-1, x+w-2);

@@ -76,29 +76,29 @@ extern const uchar* fl_gray_ramp();
 void fl_round_down_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   const uchar *g = fl_gray_ramp();
   draw(FILL,	    x,   y, w,   h, 2, bgcolor);
-  draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g['N']);
-  draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g['H']);
-  draw(UPPER_LEFT,  x,   y, w,   h, 0, (Fl_Color)g['N']);
-  draw(UPPER_LEFT,  x,   y, w,   h, 1, (Fl_Color)g['H']);
-  draw(LOWER_RIGHT, x,   y, w,   h, 0, (Fl_Color)g['S']);
-  draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g['U']);
-  draw(LOWER_RIGHT, x,   y, w,   h, 1, (Fl_Color)g['U']);
-  draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g['W']);
-  draw(CLOSED,	    x,   y, w,   h, 2, (Fl_Color)g['A']);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g[(int)'N']);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g[(int)'H']);
+  draw(UPPER_LEFT,  x,   y, w,   h, 0, (Fl_Color)g[(int)'N']);
+  draw(UPPER_LEFT,  x,   y, w,   h, 1, (Fl_Color)g[(int)'H']);
+  draw(LOWER_RIGHT, x,   y, w,   h, 0, (Fl_Color)g[(int)'S']);
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g[(int)'U']);
+  draw(LOWER_RIGHT, x,   y, w,   h, 1, (Fl_Color)g[(int)'U']);
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g[(int)'W']);
+  draw(CLOSED,	    x,   y, w,   h, 2, (Fl_Color)g[(int)'A']);
 }
 
 void fl_round_up_box(int x, int y, int w, int h, Fl_Color bgcolor) {
   const uchar *g = fl_gray_ramp();
   draw(FILL,	    x,   y, w,   h, 2, bgcolor);
-  draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g['H']);
-  draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g['N']);
-  draw(LOWER_RIGHT, x,   y, w,   h, 1, (Fl_Color)g['H']);
-  draw(LOWER_RIGHT, x,   y, w,   h, 2, (Fl_Color)g['N']);
-  draw(UPPER_LEFT,  x,   y, w,   h, 2, (Fl_Color)g['U']);
-  draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g['S']);
-  draw(UPPER_LEFT,  x,   y, w,   h, 1, (Fl_Color)g['W']);
-  draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g['U']);
-  draw(CLOSED,	    x,   y, w,   h, 0, (Fl_Color)g['A']);
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 0, (Fl_Color)g[(int)'H']);
+  draw(LOWER_RIGHT, x+1, y, w-2, h, 1, (Fl_Color)g[(int)'N']);
+  draw(LOWER_RIGHT, x,   y, w,   h, 1, (Fl_Color)g[(int)'H']);
+  draw(LOWER_RIGHT, x,   y, w,   h, 2, (Fl_Color)g[(int)'N']);
+  draw(UPPER_LEFT,  x,   y, w,   h, 2, (Fl_Color)g[(int)'U']);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 1, (Fl_Color)g[(int)'S']);
+  draw(UPPER_LEFT,  x,   y, w,   h, 1, (Fl_Color)g[(int)'W']);
+  draw(UPPER_LEFT,  x+1, y, w-2, h, 0, (Fl_Color)g[(int)'U']);
+  draw(CLOSED,	    x,   y, w,   h, 0, (Fl_Color)g[(int)'A']);
 }
 
 extern void fl_internal_boxtype(Fl_Boxtype, Fl_Box_Draw_F*);
