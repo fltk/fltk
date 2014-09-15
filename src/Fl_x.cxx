@@ -1279,42 +1279,15 @@ int fl_handle(const XEvent& thisevent)
 
   if (fl_xim_ic && (xevent.type == FocusIn))
   {
-#define POOR_XIM
-#ifdef POOR_XIM
-        if (xim_win != xid)
-        {
-                xim_win  = xid;
-                XDestroyIC(fl_xim_ic);
-                fl_xim_ic = NULL;
-                fl_new_ic();
-                XSetICValues(fl_xim_ic,
-                                XNFocusWindow, xevent.xclient.window,
-                                XNClientWindow, xid,
-                                NULL);
-        }
-        fl_set_spot(spotf, spots, spot.x, spot.y, spot.width, spot.height);
-#else
-    if (Fl::first_window() && Fl::first_window()->modal()) {
-      Window x  = fl_xid(Fl::first_window());
-      if (x != xim_win) {
-        xim_win  = x;
-        XSetICValues(fl_xim_ic,
-                        XNFocusWindow, xim_win,
-                        XNClientWindow, xim_win,
-                        NULL);
-        fl_set_spot(spotf, spots, spot.x, spot.y, spot.width, spot.height);
-      }
-    } else if (xim_win != xid && xid) {
-      xim_win = xid;
-      XSetICValues(fl_xim_ic,
-                        XNFocusWindow, xevent.xclient.window,
-                        XNClientWindow, xid,
-                        //XNFocusWindow, xim_win,
-                        //XNClientWindow, xim_win,
-                        NULL);
-      fl_set_spot(spotf, spots, spot.x, spot.y, spot.width, spot.height);
+    if (xim_win != xid) {
+      xim_win  = xid;
+      XDestroyIC(fl_xim_ic);
+      fl_xim_ic = NULL;
+      fl_new_ic();
+      XSetICValues(fl_xim_ic, XNFocusWindow, xevent.xclient.window,
+                   XNClientWindow, xid, NULL);
     }
-#endif
+    fl_set_spot(spotf, spots, spot.x, spot.y, spot.width, spot.height);
   }
 
   if ( XFilterEvent((XEvent *)&xevent, 0) )
