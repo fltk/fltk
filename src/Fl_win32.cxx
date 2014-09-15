@@ -60,8 +60,6 @@
 #include <ole2.h>
 #include <shellapi.h>
 
-#include "aimm.h"
-
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 // USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
@@ -338,7 +336,6 @@ void* Fl::thread_message() {
 
 extern int fl_send_system_handlers(void *e);
 
-IActiveIMMApp *fl_aimm = NULL;
 MSG fl_msg;
 
 // This is never called with time_to_wait < 0.0.
@@ -779,7 +776,6 @@ void fl_clipboard_notify_untarget(HWND wnd) {
 }
 
 ////////////////////////////////////////////////////////////////
-char fl_is_ime = 0;
 void fl_get_codepage()
 {
   HKL hkl = GetKeyboardLayout(0);
@@ -787,14 +783,7 @@ void fl_get_codepage()
 
   GetLocaleInfo (LOWORD(hkl), LOCALE_IDEFAULTANSICODEPAGE, ld, 6);
   DWORD ccp = atol(ld);
-  fl_is_ime = 0;
-
   fl_codepage = ccp;
-  if (fl_aimm) {
-    fl_aimm->GetCodePageA(GetKeyboardLayout(0), &fl_codepage);
-  } else if (get_imm_module() && flImmIsIME(hkl)) {
-    fl_is_ime = 1;
-  }
 }
 
 HWND fl_capture;
@@ -1865,14 +1854,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // Register all windows for potential drag'n'drop operations
   fl_OleInitialize();
   RegisterDragDrop(x->xid, flIDropTarget);
-
-  if (!fl_aimm) {
-    CoCreateInstance(CLSID_CActiveIMM, NULL, CLSCTX_INPROC_SERVER,
-		     IID_IActiveIMMApp, (void**) &fl_aimm);
-    if (fl_aimm) {
-      fl_aimm->Activate(TRUE);
-    }
-  }
 
   return x;
 }
