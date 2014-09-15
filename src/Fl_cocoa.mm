@@ -81,6 +81,7 @@ typedef unsigned int NSUInteger;
 // external functions
 extern void fl_fix_focus();
 extern unsigned short *fl_compute_macKeyLookUp();
+extern int fl_send_system_handlers(void *e);
 
 // forward definition of functions in this file
 // converting cr lf converter function
@@ -1375,6 +1376,9 @@ void fl_open_callback(void (*cb)(const char *)) {
 @implementation FLApplication
 + (void)sendEvent:(NSEvent *)theEvent
 {
+  if (fl_send_system_handlers(theEvent))
+    return;
+
   NSEventType type = [theEvent type];  
   if (type == NSLeftMouseDown) {
     fl_lock_function();

@@ -96,6 +96,9 @@ typedef void (*Fl_FD_Handler)(FL_SOCKET fd, void *data);
 /** Signature of add_handler functions passed as parameters */
 typedef int (*Fl_Event_Handler)(int event);
 
+/** Signature of add_system_handler functions passed as parameters */
+typedef int (*Fl_System_Handler)(void *event, void *data);
+
 /** Signature of set_abort functions passed as parameters */
 typedef void (*Fl_Abort_Handler)(const char *format,...);
 
@@ -770,6 +773,8 @@ public:
   static void focus(Fl_Widget*);
   static void add_handler(Fl_Event_Handler h);
   static void remove_handler(Fl_Event_Handler h);
+  static void add_system_handler(Fl_System_Handler h, void *data);
+  static void remove_system_handler(Fl_System_Handler h);
   static void event_dispatch(Fl_Event_Dispatch d);
   static Fl_Event_Dispatch event_dispatch();
   /** @} */

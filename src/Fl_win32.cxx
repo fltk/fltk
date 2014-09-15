@@ -336,6 +336,8 @@ void* Fl::thread_message() {
   return r;
 }
 
+extern int fl_send_system_handlers(void *e);
+
 IActiveIMMApp *fl_aimm = NULL;
 MSG fl_msg;
 
@@ -402,6 +404,9 @@ int fl_wait(double time_to_wait) {
   // Execute the message we got, and all other pending messages:
   // have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
   while ((have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE)) > 0) {
+    if (fl_send_system_handlers(&fl_msg))
+      continue;
+
     // Let applications treat WM_QUIT identical to SIGTERM on *nix
     if (fl_msg.message == WM_QUIT)
       raise(SIGTERM);

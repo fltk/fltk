@@ -194,6 +194,8 @@ void Fl::remove_fd(int n) {
   remove_fd(n, -1);
 }
 
+extern int fl_send_system_handlers(void *e);
+
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
@@ -204,6 +206,8 @@ static void do_queued_events() {
   while (XEventsQueued(fl_display,QueuedAfterReading)) {
     XEvent xevent;
     XNextEvent(fl_display, &xevent);
+    if (fl_send_system_handlers(&xevent))
+      continue;
     fl_handle(xevent);
   }
   // we send FL_LEAVE only if the mouse did not enter some other window:
