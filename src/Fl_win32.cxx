@@ -401,26 +401,22 @@ int fl_wait(double time_to_wait) {
 
   // Execute the message we got, and all other pending messages:
   // have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
-  have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
-  if (have_message > 0) {
-    while (have_message != 0 && have_message != -1) {
-      // Let applications treat WM_QUIT identical to SIGTERM on *nix
-      if (fl_msg.message == WM_QUIT)
-        raise(SIGTERM);
-      if (fl_msg.message == fl_wake_msg) {
-        // Used for awaking wait() from another thread
-	thread_message_ = (void*)fl_msg.wParam;
-        Fl_Awake_Handler func;
-        void *data;
-        while (Fl::get_awake_handler_(func, data)==0) {
-          func(data);
-        }
-      }
+  while ((have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE)) > 0) {
+    // Let applications treat WM_QUIT identical to SIGTERM on *nix
+    if (fl_msg.message == WM_QUIT)
+      raise(SIGTERM);
 
-      TranslateMessage(&fl_msg);
-      DispatchMessageW(&fl_msg);
-      have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
+    if (fl_msg.message == fl_wake_msg) {
+      // Used for awaking wait() from another thread
+      thread_message_ = (void*)fl_msg.wParam;
+      Fl_Awake_Handler func;
+      void *data;
+      while (Fl::get_awake_handler_(func, data)==0)
+        func(data);
     }
+
+    TranslateMessage(&fl_msg);
+    DispatchMessageW(&fl_msg);
   }
   Fl::flush();
 
