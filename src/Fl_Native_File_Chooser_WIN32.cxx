@@ -34,13 +34,12 @@ LPCWSTR utf8towchar(const char *in); //MG
 char *wchartoutf8(LPCWSTR in);  //MG
 
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/x.H>
 
 #define LCURLY_CHR	'{'
 #define RCURLY_CHR	'}'
 #define LBRACKET_CHR	'['
 #define RBRACKET_CHR	']'
-
-void fl_OleInitialize();	// in Fl.cxx (Windows only)
 
 // STATIC: PRINT WINDOWS 'DOUBLE NULL' STRING (DEBUG)
 #ifdef DEBUG
@@ -465,7 +464,7 @@ int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LP
 // SHOW DIRECTORY BROWSER
 int Fl_Native_File_Chooser::showdir() {
   // initialize OLE only once
-  fl_OleInitialize();		// init needed by BIF_USENEWUI
+  fl_open_display();		// init needed by BIF_USENEWUI
   ClearBINF();
   clear_pathnames();
   // PARENT WINDOW

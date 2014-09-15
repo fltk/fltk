@@ -101,6 +101,8 @@ extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
 inline Window fl_xid(const Fl_Window* w) { Fl_X *temp = Fl_X::i(w); return temp ? temp->xid : 0; }
 
+extern FL_EXPORT void fl_open_display();
+
 #else
 FL_EXPORT Window fl_xid_(const Fl_Window* w);
 #define fl_xid(w) fl_xid_(w)

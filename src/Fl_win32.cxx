@@ -125,21 +125,15 @@ typedef BOOL (WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
 static flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
 typedef BOOL (WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
 static flTypeImmReleaseContext flImmReleaseContext = 0;
-typedef BOOL (WINAPI* flTypeImmIsIME)(HKL);
-static flTypeImmIsIME flImmIsIME = 0;
 
-static HMODULE get_imm_module() {
-  if (!s_imm_module) {
-    s_imm_module = LoadLibrary("IMM32.DLL");
-    if (!s_imm_module)
-      Fl::fatal("FLTK Lib Error: IMM32.DLL file not found!\n\n"
-        "Please check your input method manager library accessibility.");
-    flImmGetContext = (flTypeImmGetContext)GetProcAddress(s_imm_module, "ImmGetContext");
-    flImmSetCompositionWindow = (flTypeImmSetCompositionWindow)GetProcAddress(s_imm_module, "ImmSetCompositionWindow");
-    flImmReleaseContext = (flTypeImmReleaseContext)GetProcAddress(s_imm_module, "ImmReleaseContext");
-    flImmIsIME = (flTypeImmIsIME)GetProcAddress(s_imm_module, "ImmIsIME");
-  }
-  return s_imm_module;
+static void get_imm_module() {
+  s_imm_module = LoadLibrary("IMM32.DLL");
+  if (!s_imm_module)
+    Fl::fatal("FLTK Lib Error: IMM32.DLL file not found!\n\n"
+      "Please check your input method manager library accessibility.");
+  flImmGetContext = (flTypeImmGetContext)GetProcAddress(s_imm_module, "ImmGetContext");
+  flImmSetCompositionWindow = (flTypeImmSetCompositionWindow)GetProcAddress(s_imm_module, "ImmSetCompositionWindow");
+  flImmReleaseContext = (flTypeImmReleaseContext)GetProcAddress(s_imm_module, "ImmReleaseContext");
 }
 
 // USE_TRACK_MOUSE - define NO_TRACK_MOUSE if you don't have
@@ -257,7 +251,9 @@ void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
   Fl_Window* tw = win;
   while (tw->parent()) tw = tw->window(); // find top level window
 
-  get_imm_module();
+  if (!tw->shown())
+    return;
+
   HIMC himc = flImmGetContext(fl_xid(tw));
 
   if (himc) {
@@ -437,6 +433,32 @@ int fl_ready() {
   memcpy(fdt, fdsets, sizeof fdt);
   return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
 }
+
+void fl_open_display() {
+  static char beenHereDoneThat = 0;
+
+  if (beenHereDoneThat)
+    return;
+
+  beenHereDoneThat = 1;
+
+  OleInitialize(0L);
+
+  get_imm_module();
+}
+
+class Fl_Win32_At_Exit {
+public:
+  Fl_Win32_At_Exit() { }
+  ~Fl_Win32_At_Exit() {
+    fl_free_fonts();        // do some WIN32 cleanup
+    fl_cleanup_pens();
+    OleUninitialize();
+    fl_brush_action(1);
+    fl_cleanup_dc_list();
+  }
+};
+static Fl_Win32_At_Exit win32_at_exit;
 
 ////////////////////////////////////////////////////////////////
 
@@ -1649,6 +1671,8 @@ int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 Fl_X* Fl_X::make(Fl_Window* w) {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
+  fl_open_display();
+
   // if the window is a subwindow and our parent is not mapped yet, we
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
@@ -1852,7 +1876,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 	     (Fl::grab() || (styleEx & WS_EX_TOOLWINDOW)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
 
   // Register all windows for potential drag'n'drop operations
-  fl_OleInitialize();
   RegisterDragDrop(x->xid, flIDropTarget);
 
   return x;
