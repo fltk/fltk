@@ -119,6 +119,8 @@ static HMODULE get_wsock_mod() {
  * size and link dependencies.
  */
 static HMODULE s_imm_module = 0;
+typedef BOOL (WINAPI* flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
+static flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
 typedef HIMC (WINAPI* flTypeImmGetContext)(HWND);
 static flTypeImmGetContext flImmGetContext = 0;
 typedef BOOL (WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
@@ -131,6 +133,7 @@ static void get_imm_module() {
   if (!s_imm_module)
     Fl::fatal("FLTK Lib Error: IMM32.DLL file not found!\n\n"
       "Please check your input method manager library accessibility.");
+  flImmAssociateContextEx = (flTypeImmAssociateContextEx)GetProcAddress(s_imm_module, "ImmAssociateContextEx");
   flImmGetContext = (flTypeImmGetContext)GetProcAddress(s_imm_module, "ImmGetContext");
   flImmSetCompositionWindow = (flTypeImmSetCompositionWindow)GetProcAddress(s_imm_module, "ImmSetCompositionWindow");
   flImmReleaseContext = (flTypeImmReleaseContext)GetProcAddress(s_imm_module, "ImmReleaseContext");
@@ -459,6 +462,32 @@ public:
   }
 };
 static Fl_Win32_At_Exit win32_at_exit;
+
+static char im_enabled = 1;
+
+void Fl::enable_im() {
+  fl_open_display();
+
+  Fl_X* i = Fl_X::first;
+  while (i) {
+    flImmAssociateContextEx(i->xid, 0, IACE_DEFAULT);
+    i = i->next;
+  }
+
+  im_enabled = 1;
+}
+
+void Fl::disable_im() {
+  fl_open_display();
+
+  Fl_X* i = Fl_X::first;
+  while (i) {
+    flImmAssociateContextEx(i->xid, 0, 0);
+    i = i->next;
+  }
+
+  im_enabled = 0;
+}
 
 ////////////////////////////////////////////////////////////////
 
@@ -1877,6 +1906,9 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   // Register all windows for potential drag'n'drop operations
   RegisterDragDrop(x->xid, flIDropTarget);
+
+  if (!im_enabled)
+    flImmAssociateContextEx(x->xid, 0, 0);
 
   return x;
 }

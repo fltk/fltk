@@ -92,6 +92,7 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static int calc_mac_os_version();
 static void clipboard_check(void);
 static NSString *calc_utf8_format(void);
+static void im_update(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static Fl_X *fl_x_to_redraw = NULL; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 
@@ -116,6 +117,7 @@ static int main_screen_height; // height of menubar-containing screen used to co
 // through_drawRect = YES means the drawRect: message was sent to the view, 
 // thus the graphics context was prepared by the system
 static BOOL through_drawRect = NO; 
+static int im_enabled = -1;
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -123,6 +125,29 @@ extern Fl_Window* fl_xmousewin;
 #endif
 
 enum { FLTKTimerEvent = 1, FLTKDataReadyEvent };
+
+// Carbon functions and definitions
+
+typedef void *TSMDocumentID;
+
+extern "C" enum {
+ kTSMDocumentEnabledInputSourcesPropertyTag = 'enis' //  from Carbon/TextServices.h
+};
+
+// Undocumented voodoo. Taken from Mozilla.
+static const int smEnableRomanKybdsOnly = -23;
+
+typedef TSMDocumentID (*TSMGetActiveDocument_type)(void);
+static TSMGetActiveDocument_type TSMGetActiveDocument;
+typedef OSStatus (*TSMSetDocumentProperty_type)(TSMDocumentID, OSType, UInt32, void*);
+static TSMSetDocumentProperty_type TSMSetDocumentProperty;
+typedef OSStatus (*TSMRemoveDocumentProperty_type)(TSMDocumentID, OSType);
+static TSMRemoveDocumentProperty_type TSMRemoveDocumentProperty;
+typedef CFArrayRef (*TISCreateASCIICapableInputSourceList_type)(void);
+static TISCreateASCIICapableInputSourceList_type TISCreateASCIICapableInputSourceList;
+
+typedef void (*KeyScript_type)(short);
+static KeyScript_type KeyScript;
 
 
 /* fltk-utf8 placekeepers */
@@ -1222,10 +1247,12 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 #endif
 {
   void (*open_cb)(const char*);
+  TSMDocumentID currentDoc;
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationDidChangeScreenParameters:(NSNotification *)aNotification;
+- (void)applicationDidUpdate:(NSNotification *)aNotification;
 - (void)applicationWillResignActive:(NSNotification *)notify;
 - (void)applicationWillHide:(NSNotification *)notify;
 - (void)applicationWillUnhide:(NSNotification *)notify;
@@ -1282,6 +1309,23 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
   fl_unlock_function();
+}
+- (void)applicationDidUpdate:(NSNotification *)aNotification
+{
+  if ((fl_mac_os_version >= 100500) && (im_enabled != -1) &&
+      (TSMGetActiveDocument != NULL)) {
+    TSMDocumentID newDoc;
+    // It is extremely unclear when Cocoa decides to create/update
+    // the input context, but debugging reveals that it is done
+    // by NSApplication:updateWindows. So check if the input context
+    // has shifted after each such run so that we can update our
+    // input methods status.
+    newDoc = TSMGetActiveDocument();
+    if (newDoc != currentDoc) {
+        im_update();
+        currentDoc = newDoc;
+    }
+  }
 }
 - (void)applicationWillResignActive:(NSNotification *)notify
 {
@@ -1420,6 +1464,13 @@ void fl_open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
+
+    TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_X::get_carbon_function("TSMGetActiveDocument");
+    TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_X::get_carbon_function("TSMSetDocumentProperty");
+    TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_X::get_carbon_function("TSMRemoveDocumentProperty");
+    TISCreateASCIICapableInputSourceList = (TISCreateASCIICapableInputSourceList_type)Fl_X::get_carbon_function("TISCreateASCIICapableInputSourceList");
+
+    KeyScript = (KeyScript_type)Fl_X::get_carbon_function("KeyScript");
     
     BOOL need_new_nsapp = (NSApp == nil);
     if (need_new_nsapp) [NSApplication sharedApplication];
@@ -1492,6 +1543,66 @@ void fl_open_display() {
  * get rid of allocated resources
  */
 void fl_close_display() {
+}
+
+// Force a "Roman" or "ASCII" keyboard, which both the Mozilla and
+// Safari people seem to think implies turning off advanced IME stuff
+// (see nsTSMManager::SyncKeyScript in Mozilla and enableSecureTextInput
+// in Safari/Webcore). Should be good enough for us then...
+
+static void im_update(void) {
+  if (fl_mac_os_version >= 100500) {
+    TSMDocumentID doc;
+
+    if ((TSMGetActiveDocument == NULL) ||
+        (TSMSetDocumentProperty == NULL) ||
+        (TSMRemoveDocumentProperty == NULL) ||
+        (TISCreateASCIICapableInputSourceList == NULL))
+      return;
+
+    doc = TSMGetActiveDocument();
+
+    if (im_enabled)
+      TSMRemoveDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag);
+    else {
+      CFArrayRef inputSources;
+
+      inputSources = TISCreateASCIICapableInputSourceList();
+      TSMSetDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag,
+                             sizeof(CFArrayRef), &inputSources);
+      CFRelease(inputSources);
+    }
+  } else {
+    if (KeyScript == NULL)
+      return;
+
+    if (im_enabled)
+      KeyScript(smKeyEnableKybds);
+    else
+      KeyScript(smEnableRomanKybdsOnly);
+  }
+}
+
+void Fl::enable_im() {
+  fl_open_display();
+
+  im_enabled = 1;
+
+  if (fl_mac_os_version >= 100500)
+    [NSApp updateWindows];
+  else
+    im_update();
+}
+
+void Fl::disable_im() {
+  fl_open_display();
+
+  im_enabled = 0;
+
+  if (fl_mac_os_version >= 100500)
+    [NSApp updateWindows];
+  else
+    im_update();
 }
 
 

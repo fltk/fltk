@@ -757,6 +757,17 @@ public:
   static int event_inside(const Fl_Widget*);
   static int test_shortcut(Fl_Shortcut);
 
+  /**
+    Enables the system input methods facilities. This is the default.
+    \see disable_im()
+  */
+  static void enable_im();
+  /**
+    Disables the system input methods facilities.
+    \see enable_im()
+  */
+  static void disable_im();
+
   // event destinations:
   static int handle(int, Fl_Window*);
   static int handle_(int, Fl_Window*);
