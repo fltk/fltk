@@ -104,7 +104,7 @@ Gizmo.cxx:
   int popup_gizmo(...);
 \endverbatim
 
-<H3>Comments Within Doxygen Comment Blocks:</H3>
+<H3>Comments Within Doxygen Comment Blocks</H3>
 
 You can use HTML comment statements to embed comments in doxygen comment blocks.
 These comments will not be visible in the generated document.
@@ -122,19 +122,25 @@ will be shown as:
     This will be visible again.
 
 
-<H3>Different Headlines:</H3>
+<H3>Different Headlines</H3>
+
+You can use HTML tags \<H1> ... \<H4> for headlines with different sizes.
+As of doxygen 1.8.x there must not be more than three spaces at the
+beginning of the line for this to work. Currently (doxygen 1.8.6)
+there seems to be no difference in the font sizes of \<H3> and \<H4>
+in the pdf output, whereas the html output uses different font sizes.
 
 \code
-    <H1>Headline in big text (H1)</H1>
-    <H2>Headline in big text (H2)</H2>
-    <H3>Headline in big text (H3)</H3>
-    <H4>Headline in big text (H4)</H4>
+   <H1>Headline in big text (H1)</H1>
+   <H2>Headline in big text (H2)</H2>
+   <H3>Headline in big text (H3)</H3>
+   <H4>Headline in big text (H4)</H4>
 \endcode
 
-    <H1>Headline in big text (H1)</H1>
-    <H2>Headline in big text (H2)</H2>
-    <H3>Headline in big text (H3)</H3>
-    <H4>Headline in big text (H4)</H4>
+   <H1>Headline in big text (H1)</H1>
+   <H2>Headline in big text (H2)</H2>
+   <H3>Headline in big text (H3)</H3>
+   <H4>Headline in big text (H4)</H4>
 
 
 \section development_non-ascii Non-ASCII Characters
@@ -149,8 +155,8 @@ This will appear in the document:
     Doxygen understands many HTML quoting characters like
     &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
 
-For further informations about HTML quoting characters see 
-    \b http://www.doxygen.org/htmlcmds.html
+For further informations about HTML quoting characters see
+    <br> \b http://www.doxygen.org/htmlcmds.html
 
 Alternatively you can use \b UTF-8 encoding within Doxygen comments.
 
@@ -190,7 +196,7 @@ at its top.
 
 This section is
   \code
-	\section development_structure Document structure
+	\section development_structure Document Structure
   \endcode
 
 The following section is
@@ -212,7 +218,7 @@ Links to other documents and external links can be embedded with
 \code
 
 -   see chapter \ref unicode creates a link to the named chapter
-    unicode that has been created with a \page statement.
+    unicode that has been created with a \\page statement.
 
 -   For further informations about quoting see
     http://www.doxygen.org/htmlcmds.html
@@ -245,54 +251,54 @@ to provide a paragraph title and also to indent a paragraph. Unfortunately
 \b \\par won't do what you expect if you want to have doxygen links and
 sometimes html tags don't work either.
 
-  <!-- use verbatim rather than code to avoid links to code reference -->
-  \verbatim
-    \par Normal Paragraph with title
+<!-- use verbatim rather than code to avoid links to code reference -->
+\verbatim
+  \par Normal Paragraph with title
 
-    This paragraph will have a title, but because there is a blank line
-    between the \par and the text, it will have the normal layout.
+  This paragraph will have a title, but because there is a blank line
+  between the \par and the text, it will have the normal layout.
 
-    \par Indented Paragraph with title
-    This paragraph will also have a title, but because there is no blank
-    line between the \par and the text, it will be indented.
+  \par Indented Paragraph with title
+  This paragraph will also have a title, but because there is no blank
+  line between the \par and the text, it will be indented.
 
-    \par
-    It is also possible to have an indented paragraph without title.
-    This is how you indent subsequent paragraphs.
+  \par
+  It is also possible to have an indented paragraph without title.
+  This is how you indent subsequent paragraphs.
 
-    \par No link to Fl_Widget::draw()
-    Note that the paragraph title is treated as plain text.
-    Doxygen type links will not work.
-    HTML characters and tags may or may not work.
+  \par No link to Fl_Widget::draw()
+  Note that the paragraph title is treated as plain text.
+  Doxygen type links will not work.
+  HTML characters and tags may or may not work.
 
-    Fl_Widget::draw() links and &quot;html&quot; tags work<br>
-    \par
-    Use a single line ending with <br> for complicated paragraph titles.
-  \endverbatim
+  Fl_Widget::draw() links and &quot;html&quot; tags work<br>
+  \par
+  Use a single line ending with <br> for complicated paragraph titles.
+\endverbatim
 
 The above code produces the following paragraphs:
 
-    \par Normal Paragraph with title
+  \par Normal Paragraph with title
 
-    This paragraph will have a title, but because there is a blank line
-    between the \\par and the text, it will have the normal layout.
+  This paragraph will have a title, but because there is a blank line
+  between the \\par and the text, it will have the normal layout.
 
-    \par Indented Paragraph with title
-    This paragraph will also have a title, but because there is no blank
-    line between the \\par and the text, it will be indented.
+  \par Indented Paragraph with title
+  This paragraph will also have a title, but because there is no blank
+  line between the \\par and the text, it will be indented.
 
-    \par
-    It is also possible to have an indented paragraph without title.
-    This is how you indent subsequent paragraphs.
+  \par
+  It is also possible to have an indented paragraph without title.
+  This is how you indent subsequent paragraphs.
 
-    \par No link to Fl_Widget::draw()
-    Note that the paragraph title is treated as plain text.
-    Doxygen type links will not work.
-    HTML characters and tags may or may not work.
+  \par No link to Fl_Widget::draw()
+  Note that the paragraph title is treated as plain text.
+  Doxygen type links will not work.
+  HTML characters and tags may or may not work.
 
-    Fl_Widget::draw() links and &quot;html&quot; tags work<br>
-    \par
-    Use a single line ending with \<br\> for complicated paragraph titles.
+  Fl_Widget::draw() links and &quot;html&quot; tags work<br>
+  \par
+  Use a single line ending with \<br\> for complicated paragraph titles.
 
 
 \section development_navigation_test Navigation Elements
