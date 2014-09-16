@@ -411,6 +411,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 }
 - (FLopenDelegate*)setPopup:(NSPopUpButton*)popup filter_pattern:(char**)pattern;
 - (BOOL)panel:(id)sender shouldShowFilename:(NSString *)filename;
+- (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url;
 @end
 @implementation FLopenDelegate
 - (FLopenDelegate*)setPopup:(NSPopUpButton*)popup filter_pattern:(char**)pattern
@@ -422,10 +423,15 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 - (BOOL)panel:(id)sender shouldShowFilename:(NSString *)filename
 {
   if ( [nspopup indexOfSelectedItem] == [nspopup numberOfItems] - 1) return YES;
-  const char *pathname = [filename fileSystemRepresentation];
-  if ( fl_filename_isdir(pathname) ) return YES;
-  if ( fl_filename_match(pathname, filter_pattern[ [nspopup indexOfSelectedItem] ]) ) return YES;
+  BOOL isdir = NO;
+  [[NSFileManager defaultManager] fileExistsAtPath:filename isDirectory:&isdir];
+  if (isdir) return YES;
+  if ( fl_filename_match([filename fileSystemRepresentation], filter_pattern[ [nspopup indexOfSelectedItem] ]) ) return YES;
   return NO;
+}
+- (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)url
+{
+  return [self panel:sender shouldShowFilename:[url path]];
 }
 @end
 
