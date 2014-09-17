@@ -59,11 +59,10 @@ int main(int argc, char *argv[]) {
     G_tree->showroot(0);
 
     // Add 200 random numbers to the tree
-    Fl_Tree_Item *item;
     char word[50];
     for ( int t=0; t<200; t++ ) {
       sprintf(word, "%ld", long((float(rand()) / RAND_MAX) * 1000000));
-      item = G_tree->add(word);
+      G_tree->add(word);
     }
 
     // Add some sort buttons
