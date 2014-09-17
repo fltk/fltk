@@ -55,10 +55,12 @@ public:
       }
       fl_pop_clip();
       fl_pop_clip();
-      }
+    }
     draw_label(); // draw the box image
   }
 } *chess_obj;
+
+#define TAB_COLOR FL_DARK3
 
 class clipboard_viewer : public Fl_Tabs { // use tabs to display as appropriate the image or textual content of the clipboard
 public:
@@ -80,11 +82,11 @@ public:
 	if (format && format < CF_MAX) { sprintf(p, " %d",format); p += strlen(p); }
       }
       HANDLE h;
-      if (h = GetClipboardData(CF_DIB)) {
+      if ((h = GetClipboardData(CF_DIB))) {
 	LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
 	sprintf(p, " biBitCount=%d biCompression=%d biClrUsed=%d",
-		lpBI->bmiHeader.biBitCount, lpBI->bmiHeader.biCompression, lpBI->bmiHeader.biClrUsed);
-	}
+		lpBI->bmiHeader.biBitCount, (int)lpBI->bmiHeader.biCompression, (int)lpBI->bmiHeader.biClrUsed);
+      }
       CloseClipboard();
 #endif
       float scale_x =  (float)im->w() / image_box->w(); // rescale the image if larger than the display box
@@ -95,21 +97,21 @@ public:
 	Fl_Image *im2 = im->copy(im->w()/scale, im->h()/scale);
 	delete im;
 	im = im2;
-	}
+      }
       Fl_Image *oldim = image_box->image();
       if (oldim) delete oldim;
       image_box->image(im); // show the scaled image
       image_size->copy_label(title);
       value(image_box->parent());
       window()->redraw();
-      }
+    }
     else { // text is being pasted
       display->buffer()->text(Fl::event_text());
       value(display);
       display->redraw();
-      }
-    return 1;
     }
+    return 1;
+  }
 } *tabs;
 
 
@@ -118,7 +120,7 @@ void cb(Fl_Widget *wid, clipboard_viewer *tabs)
   if (Fl::clipboard_contains(Fl::clipboard_image)) {
     Fl::paste(*tabs, 1, Fl::clipboard_image); // try to find image in the clipboard
     return;
-    }
+  }
   if (Fl::clipboard_contains(Fl::clipboard_plain_text)) Fl::paste(*tabs, 1, Fl::clipboard_plain_text); // also try to find text
 }
 
@@ -126,7 +128,7 @@ void clip_callback(int source, void *data) { // called after clipboard was chang
   if ( source == 1 ) cb(NULL, (clipboard_viewer *)data);
 }
 
-int main()
+int main(int argc, char **argv)
 {
 #if !(defined(__APPLE__) || defined(WIN32))
   extern void fl_register_images();
@@ -139,15 +141,15 @@ int main()
   image_box = new chess(5, 30, 490, 450);
   image_size = new Fl_Box(FL_NO_BOX, 5, 485, 490, 10, 0);
   g->end();
-  g->selection_color(FL_INACTIVE_COLOR);
-  
+  g->selection_color(TAB_COLOR);
+
   Fl_Text_Buffer *buffer = new Fl_Text_Buffer();
   display = new Fl_Text_Display(5,30,490, 460, Fl::clipboard_plain_text); // display will display the text form
   display->buffer(buffer);
-  display->selection_color(FL_INACTIVE_COLOR);
+  display->selection_color(TAB_COLOR);
   tabs->end();
   tabs->resizable(display);
-  
+
   Fl_Group *g2 = new Fl_Group( 10,510,200,25);
   Fl_Button *refresh = new Fl_Button(10,510,200,25, "Refresh from clipboard");
   refresh->callback((Fl_Callback*)cb, tabs);
@@ -155,7 +157,7 @@ int main()
   g2->resizable(NULL);
   win->end();
   win->resizable(tabs);
-  win->show();
+  win->show(argc,argv);
 #if defined(__APPLE__) || defined(WIN32)
   clip_callback(1, tabs); // use clipboard content at start
 #endif
