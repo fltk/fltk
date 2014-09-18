@@ -24,6 +24,21 @@
 #include <FL/fl_draw.H>
 #import <Cocoa/Cocoa.h>
 
+typedef OSStatus (*PMSessionSetDocumentFormatGeneration_type)(
+                                     PMPrintSession   printSession,
+                                     CFStringRef      docFormat,
+                                     CFArrayRef       graphicsContextTypes,
+                                     CFTypeRef        options);
+typedef OSStatus (*PMSessionBeginDocumentNoDialog_type)(
+                               PMPrintSession    printSession,
+                               PMPrintSettings   printSettings,
+                               PMPageFormat      pageFormat);
+typedef OSStatus
+(*PMSessionGetGraphicsContext_type)(
+                            PMPrintSession   printSession,
+                            CFStringRef      graphicsContextType,
+                            void **          graphicsContext);
+
 extern void fl_quartz_restore_line_style_();
 
 Fl_System_Printer::Fl_System_Printer(void)
@@ -69,9 +84,9 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     if(topage && *topage > pagecount) *topage = pagecount;
     status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
   }
-  else {
+  else
 #endif
-    
+  {
 #if !__LP64__
     Boolean accepted;
     status = PMCreateSession(&printSession);
@@ -112,14 +127,16 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     CFStringRef mystring[1];
     mystring[0] = kPMGraphicsContextCoreGraphics;
     CFArrayRef array = CFArrayCreate(NULL, (const void **)mystring, 1, &kCFTypeArrayCallBacks);
+    PMSessionSetDocumentFormatGeneration_type PMSessionSetDocumentFormatGeneration =
+      (PMSessionSetDocumentFormatGeneration_type)Fl_X::get_carbon_function("PMSessionSetDocumentFormatGeneration");
     status = PMSessionSetDocumentFormatGeneration(printSession, kPMDocumentFormatDefault, array, NULL);
     CFRelease(array);
+    PMSessionBeginDocumentNoDialog_type PMSessionBeginDocumentNoDialog =
+      (PMSessionBeginDocumentNoDialog_type)Fl_X::get_carbon_function("PMSessionBeginDocumentNoDialog");
     status = PMSessionBeginDocumentNoDialog(printSession, printSettings, pageFormat);
 #endif //__LP64__
-    
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
-#endif
+
   if (status != noErr) return 1;
   y_offset = x_offset = 0;
   this->set_current();
@@ -224,14 +241,15 @@ int Fl_System_Printer::start_page (void)
   if ( PMSessionGetCGGraphicsContext != NULL ) {
     status = PMSessionGetCGGraphicsContext(printSession, &fl_gc);
   }
-  else {
+  else
 #endif
-#if ! __LP64__
-    status = PMSessionGetGraphicsContext(printSession,NULL,(void **)&fl_gc);
+  {
+#if ! __LP64_
+    PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
+      (PMSessionGetGraphicsContext_type)Fl_X::get_carbon_function("PMSessionGetGraphicsContext");
+    status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&fl_gc);
 #endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   }
-#endif
   PMRect pmRect;
   float win_scale_x, win_scale_y;
 
