@@ -399,8 +399,8 @@ static void fl_new_ic()
   XVaNestedList status_attr = NULL;
   static XFontSet fs = NULL;
   char *fnt;
-  char **missing_list;
-  int missing_count;
+  char **missing_list = 0;
+  int missing_count = 0;
   char *def_string;
   static XRectangle spot;
   int predit = 0;
@@ -428,6 +428,9 @@ static void fl_new_ic()
     if (must_free_fnt) free(fnt);
   }
 #endif
+
+  if (missing_list) XFreeStringList(missing_list);
+
   preedit_attr = XVaCreateNestedList(0,
                                      XNSpotLocation, &spot,
                                      XNFontSet, fs, NULL);
