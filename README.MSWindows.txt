@@ -240,6 +240,22 @@ linking:
   ./configure <config flags> LDFLAGS=-Wl,--enable-auto-import
 :END_ADVANCED
 
+Known Problems:
+
+  There is a known incompatibility with some Windows subversion tools that
+  may not set the correct line endings for autoconf. If you get strange
+  error messages when running ./configure or make, you may need to convert
+  configh.in to "Unix line endings" (LF-only). These error messages are
+  unspecific, e.g. compilation errors like:
+
+     error: 'U32' does not name a type
+     error: 'bmibuffer' was not declared in this scope
+
+  You can fix the line endings with the MinGW/msys tool 'unix2dos' (u2d)
+  or with your favorite editor, if it allows to change the line endings,
+  then run autoconf and ./configure again.
+  For further information see this bug report:
+     http://www.fltk.org/newsgroups.php?gfltk.bugs+v:10197
 
  Building FLTK
 ---------------
@@ -537,7 +553,7 @@ is changed, the corresponding .cxx file will be recompiled.
 
 Windows has a flag that determines whether an application
 runs in the foreground with a console or in the background
-without a console. 
+without a console.
 
 If you're using gcc (i.e. MinGW or Cygwin), then use the
 linker option "-mwindows" to make your application run in
