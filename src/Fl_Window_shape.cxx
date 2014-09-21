@@ -271,7 +271,7 @@ void Fl_Window::shape_pixmap_(Fl_Pixmap* pixmap) {
 }
 
 #if FLTK_ABI_VERSION < 10303 && !defined(FL_DOXYGEN)
-shape_data_type* Fl_Window::shape_data_ = NULL;
+Fl_Window::shape_data_type* Fl_Window::shape_data_ = NULL;
 #endif
 
 /** Assigns a non-rectangular shape to the window.
