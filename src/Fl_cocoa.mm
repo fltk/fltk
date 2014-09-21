@@ -2667,7 +2667,7 @@ void Fl_X::make(Fl_Window* w)
     [cw setFrameOrigin:crect.origin];
     [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
-    if (w->type() == FL_SHAPED_WINDOW) {
+    if (w->shape_data_) {
       [cw setOpaque:NO]; // shaped windows must be non opaque
       [cw setBackgroundColor:[NSColor clearColor]]; // and with transparent background color
       }

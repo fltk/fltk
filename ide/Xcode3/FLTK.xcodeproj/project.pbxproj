@@ -328,10 +328,10 @@
 		7F66B1D912BB924C00C67B59 /* Fl_cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */; };
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
+		7F6F526219CF0F530075F408 /* Fl_Window_shape.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F6F526119CF0F530075F408 /* Fl_Window_shape.cxx */; };
 		7F74F393190D7F0500C56950 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 299E717718BC503400FF83F2 /* fl_gleam.cxx */; };
 		7F76E016192FAD420071728B /* Fl_Copy_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F76E015192FAD420071728B /* Fl_Copy_Surface.cxx */; };
 		7F76E018192FAD590071728B /* Fl_Image_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F76E017192FAD590071728B /* Fl_Image_Surface.cxx */; };
-		7FD807F719ADD610007622B2 /* Fl_Shaped_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FD807F619ADD610007622B2 /* Fl_Shaped_Window.cxx */; };
 		7FFDD15A19BE072000779AD1 /* Fl_PostScript.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDD15919BE072000779AD1 /* Fl_PostScript.cxx */; };
 		7FFDE4AD171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDE4AC171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm */; };
 		812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */; };
@@ -4340,6 +4340,7 @@
 		7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Native_File_Chooser_MAC.mm; path = ../../src/Fl_Native_File_Chooser_MAC.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Quartz_Printer.mm; path = ../../src/Fl_Quartz_Printer.mm; sourceTree = SOURCE_ROOT; };
+		7F6F526119CF0F530075F408 /* Fl_Window_shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Window_shape.cxx; path = ../../src/Fl_Window_shape.cxx; sourceTree = "<group>"; };
 		7F76E015192FAD420071728B /* Fl_Copy_Surface.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Copy_Surface.cxx; path = ../../src/Fl_Copy_Surface.cxx; sourceTree = SOURCE_ROOT; };
 		7F76E017192FAD590071728B /* Fl_Image_Surface.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Image_Surface.cxx; path = ../../src/Fl_Image_Surface.cxx; sourceTree = SOURCE_ROOT; };
 		7F76E019192FAD740071728B /* Fl_Copy_Surface.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Copy_Surface.H; path = ../../FL/Fl_Copy_Surface.H; sourceTree = SOURCE_ROOT; };
@@ -4347,8 +4348,6 @@
 		7F784151AF1B748D0F3DB1C0 /* forms.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = forms.cxx; path = ../../test/forms.cxx; sourceTree = SOURCE_ROOT; };
 		7FAC914955D699539F73B996 /* bitmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bitmap.cxx; path = ../../test/bitmap.cxx; sourceTree = SOURCE_ROOT; };
 		7FC91721DA7888C8A1FD762E /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FD807F419ADD5F4007622B2 /* Fl_Shaped_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Shaped_Window.H; path = ../../FL/Fl_Shaped_Window.H; sourceTree = SOURCE_ROOT; };
-		7FD807F619ADD610007622B2 /* Fl_Shaped_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Shaped_Window.cxx; path = ../../src/Fl_Shaped_Window.cxx; sourceTree = SOURCE_ROOT; };
 		7FFDD15919BE072000779AD1 /* Fl_PostScript.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PostScript.cxx; path = ../../src/Fl_PostScript.cxx; sourceTree = "<group>"; };
 		7FFDE4AC171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Sys_Menu_Bar.mm; path = ../../src/Fl_Sys_Menu_Bar.mm; sourceTree = SOURCE_ROOT; };
 		800E34DEF9E503C5EC6C4FA5 /* Fl_XBM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_XBM_Image.cxx; path = ../../src/Fl_XBM_Image.cxx; sourceTree = SOURCE_ROOT; };
@@ -5508,7 +5507,6 @@
 				13BCF00369D5254F0CE49599 /* Fl_Round_Button.cxx */,
 				3F60A41762817C834FF38947 /* Fl_Scroll.cxx */,
 				A5B9A5CE605BB8A57F66A2E6 /* Fl_Scrollbar.cxx */,
-				7FD807F619ADD610007622B2 /* Fl_Shaped_Window.cxx */,
 				57639C1D5415FB55436556A2 /* Fl_Shared_Image.cxx */,
 				9D942824B8FC886F6FCD853D /* Fl_Single_Window.cxx */,
 				5AF5119D08DFC92EA1032671 /* Fl_Slider.cxx */,
@@ -5534,6 +5532,7 @@
 				F42EEFA08A75F71B33094D50 /* Fl_Window_fullscreen.cxx */,
 				CC2482EC04B752BF38D4DBE2 /* Fl_Window_hotspot.cxx */,
 				9E22773911BDBADEA86730D4 /* Fl_Window_iconize.cxx */,
+				7F6F526119CF0F530075F408 /* Fl_Window_shape.cxx */,
 				9951B49F640C2C15321EED9C /* Fl_Wizard.cxx */,
 				800E34DEF9E503C5EC6C4FA5 /* Fl_XBM_Image.cxx */,
 				0CBC6DC7942212D47B70681B /* Fl_XPM_Image.cxx */,
@@ -6297,7 +6296,6 @@
 				28F3E4EBB6E5F8420624A5DA /* Fl_Scrollbar.H */,
 				42FEA3A2967D04217C27FA61 /* Fl_Secret_Input.H */,
 				9DA766AE10DC532F3D0401A2 /* Fl_Select_Browser.H */,
-				7FD807F419ADD5F4007622B2 /* Fl_Shaped_Window.H */,
 				A46A39199806D09CE0ABEE59 /* Fl_Shared_Image.H */,
 				9B57B581401BD8575BFAF2F1 /* Fl_Simple_Counter.H */,
 				0EC11A5CAD4E3607A72BEF84 /* Fl_Single_Window.H */,
@@ -9438,6 +9436,7 @@
 				DB29DA4D89702B490E69B569 /* Fl_Table.cxx in Sources */,
 				644FEEF43A0CCBD89E2CE6FC /* Fl_Table_Row.cxx in Sources */,
 				CDCB453B3493D8E96E80DFF7 /* Fl_Tabs.cxx in Sources */,
+				7F6F526219CF0F530075F408 /* Fl_Window_shape.cxx in Sources */,
 				FB93EB94C997FC6F8C5D389D /* Fl_Text_Buffer.cxx in Sources */,
 				4536387C357FBA58B3C5258B /* Fl_Text_Display.cxx in Sources */,
 				8F77031B8CCFF315D4CB151E /* Fl_Text_Editor.cxx in Sources */,
@@ -9534,7 +9533,6 @@
 				01C68DB0192C6089000BD75C /* Fl_sleep.cxx in Sources */,
 				7F76E016192FAD420071728B /* Fl_Copy_Surface.cxx in Sources */,
 				7F76E018192FAD590071728B /* Fl_Image_Surface.cxx in Sources */,
-				7FD807F719ADD610007622B2 /* Fl_Shaped_Window.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

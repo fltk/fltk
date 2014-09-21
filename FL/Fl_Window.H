@@ -27,13 +27,15 @@
 #endif
 
 #include "Fl_Group.H"
+#include "Fl_Bitmap.H"
+#include <stdlib.h>
 
 #define FL_WINDOW 0xF0		///< window type id all subclasses have type() >= this
 #define FL_DOUBLE_WINDOW 0xF1   ///< double window type id
-#define FL_SHAPED_WINDOW 0xF2   ///< shaped window type id
 
 class Fl_X;
 class Fl_RGB_Image;
+
 
 /**
   This widget produces an actual window.  This can either be a main
@@ -117,6 +119,40 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // legacy, not used
   Fl_Color cursor_fg, cursor_bg;
 #endif
+  
+protected:
+  /** Data supporting a non-rectangular window shape */
+  struct shape_data_type {
+    int lw_; ///<  width of shape image
+    int lh_; ///<  height of shape image
+    Fl_Image* shape_; ///<  shape image
+#if defined(__APPLE__)
+    typedef struct CGImage* CGImageRef;
+    CGImageRef mask;
+#endif
+    Fl_Bitmap *todelete_; ///<  auxiliary bitmap image
+  };
+
+#if FLTK_ABI_VERSION < 10303 && !defined(FL_DOXYGEN)
+  static
+#endif
+  shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
+private:
+  void shape_bitmap_(Fl_Bitmap* b);
+  void shape_alpha_(Fl_RGB_Image* img, int offset);
+  void shape_pixmap_(Fl_Pixmap* pixmap);
+public:
+  void shape(const Fl_Image* img);
+  /** Set the window's shape with an Fl_Image.
+   \see void shape(const Fl_Image* img)
+   */
+  inline void shape(const Fl_Image& b) { shape(&b); }
+#if ! (defined(WIN32) || defined(__APPLE__) || defined(FL_DOXYGEN))
+  void combine_mask(void);
+#endif
+private:
+
+
   void size_range_();
   void _Fl_Window(); // constructor innards
   void fullscreen_x(); // platform-specific part of sending a window to full screen
@@ -280,7 +316,7 @@ public:
 
   /**  Returns true if this window is a menu window. */
   unsigned int menu_window() const {return flags() & MENU_WINDOW;}
-
+  
   /**
     Marks the window as a tooltip window.
 

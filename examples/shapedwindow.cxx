@@ -20,7 +20,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl.H>
-#include <FL/Fl_Shaped_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Tiled_Image.H>
 #include <FL/Fl_Image_Surface.H>
@@ -91,7 +91,7 @@ Fl_RGB_Image* prepare_shape(int w)
 
 int main(int argc, char **argv) {
   int dim = 200;
-  Fl_Shaped_Window *win = new Fl_Shaped_Window(100, 100, dim, dim, "Testing1");  
+  Fl_Double_Window *win = new Fl_Double_Window(100, 100, dim, dim, "Testing1");
   Fl_RGB_Image *img = prepare_shape(dim);
   win->shape(img);
   dragbox *box = new dragbox(0, 0, win->w(), win->h());

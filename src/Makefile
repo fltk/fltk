@@ -72,7 +72,6 @@ CPPFILES = \
 	Fl_Round_Button.cxx \
 	Fl_Scroll.cxx \
 	Fl_Scrollbar.cxx \
-	Fl_Shaped_Window.cxx \
 	Fl_Shared_Image.cxx \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
@@ -98,6 +97,7 @@ CPPFILES = \
 	Fl_Window_fullscreen.cxx \
 	Fl_Window_hotspot.cxx \
 	Fl_Window_iconize.cxx \
+	Fl_Window_shape.cxx \
 	Fl_Wizard.cxx \
 	Fl_XBM_Image.cxx \
 	Fl_XPM_Image.cxx \

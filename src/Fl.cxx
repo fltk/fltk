@@ -1596,14 +1596,6 @@ void Fl_Window::hide() {
   delete ip;
 }
 
-Fl_Window::~Fl_Window() {
-  hide();
-  if (xclass_) {
-    free(xclass_);
-  }
-  free_icons();
-  delete icon_;
-}
 
 // FL_SHOW and FL_HIDE are called whenever the visibility of this widget
 // or any parent changes.  We must correctly map/unmap the system's window.

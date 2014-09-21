@@ -52,6 +52,7 @@ void Fl_Window::_Fl_Window() {
   resizable(0);
   size_range_set = 0;
   minw = maxw = minh = maxh = 0;
+  shape_data_ = NULL;
 #if FLTK_ABI_VERSION >= 10301
   no_fullscreen_x = 0;
   no_fullscreen_y = 0;
@@ -77,6 +78,25 @@ Fl_Window::Fl_Window(int W, int H, const char *l)
   _Fl_Window();
   clear_visible();
 }
+
+Fl_Window::~Fl_Window() {
+  hide();
+  if (xclass_) {
+    free(xclass_);
+  }
+  free_icons();
+  delete icon_;
+  if (shape_data_) {
+    if (shape_data_->todelete_) delete shape_data_->todelete_;
+#if defined(__APPLE__)
+    if (shape_data_->mask) {
+      CGImageRelease(shape_data_->mask);
+    }
+#endif
+    delete shape_data_;
+  }
+}
+
 
 /** Returns a pointer to the nearest parent window up the widget hierarchy.
     This will return sub-windows if there are any, or the parent window if there's no sub-windows.
@@ -131,46 +151,6 @@ int Fl_Window::y_root() const {
   Fl_Window *p = window();
   if (p) return p->y_root() + y();
   return y();
-}
-
-void Fl_Window::draw() {
-
-  // The following is similar to Fl_Group::draw(), but ...
-  //  - we draw the box with x=0 and y=0 instead of x() and y()
-  //  - we don't draw a label
-
-  if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
-    draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
-  }
-  draw_children();
-
-#ifdef __APPLE_QUARTZ__
-  // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
-  // corner. This code draws a little ribbed triangle for dragging.
-  if (fl_mac_os_version < 100700 && fl_gc && !parent() && resizable() && 
-      (!size_range_set || minh!=maxh || minw!=maxw)) {
-    int dx = Fl::box_dw(box())-Fl::box_dx(box());
-    int dy = Fl::box_dh(box())-Fl::box_dy(box());
-    if (dx<=0) dx = 1;
-    if (dy<=0) dy = 1;
-    int x1 = w()-dx-1, x2 = x1, y1 = h()-dx-1, y2 = y1;
-    Fl_Color c[4] = {
-      color(),
-      fl_color_average(color(), FL_WHITE, 0.7f),
-      fl_color_average(color(), FL_BLACK, 0.6f),
-      fl_color_average(color(), FL_BLACK, 0.8f),
-    };
-    int i;
-    for (i=dx; i<12; i++) {
-      fl_color(c[i&3]);
-      fl_line(x1--, y1, x2, y2--);
-    }
-  }
-#endif
-
-# if defined(FLTK_USE_CAIRO)
-  Fl::cairo_make_current(this); // checkout if an update is necessary
-# endif
 }
 
 void Fl_Window::label(const char *name) {
