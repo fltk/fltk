@@ -537,10 +537,6 @@ SOURCE=..\..\src\fl_shadow_box.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\Fl_Shaped_Window.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\Fl_Shared_Image.cxx
 # End Source File
 # Begin Source File
@@ -666,6 +662,10 @@ SOURCE=..\..\src\Fl_Window_hotspot.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Window_iconize.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Window_shape.cxx
 # End Source File
 # Begin Source File
 
