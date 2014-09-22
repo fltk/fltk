@@ -36,7 +36,7 @@ If you prefer watching TV to reading books and code, google search for
 "FLTK video tutorials" which has some introductory examples of how to
 write FLTK programs in C++ and build them.
 
-\section faq_box_with_text How do a make a box with text?
+\section faq_box_with_text How do I make a box with text?
 
 The 'hello world' program shows how to make a box with text.
 All widgets have labels, so picking a simple widget like Fl_Box
@@ -53,10 +53,8 @@ which handles simple HTML formatted text.
 
 \section faq_license Can I use FLTK to make closed-source commercial applications?
 
-Yes. The 
-\ref license FLTK license
-is standard LGPL, but also includes a special clause ("exception")
-to allow for static linking. Specifically:
+Yes. The FLTK \ref license is standard LGPL, but also includes a special
+clause ("exception") to allow for static linking. Specifically:
 
 \verbatim
 
