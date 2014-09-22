@@ -282,29 +282,30 @@ Fl_Window::shape_data_type* Fl_Window::shape_data_ = NULL;
  rectangular bounding box is available
  to them. It is up to you to make sure they adhere to the bounds of their masking shape.
  
- Platform details:
- \li On the unix/linux platform, the SHAPE extension of the X server is required.
- This function does control the shape of Fl_GL_Window instances.
- \li On the MSWindows platform, this function does nothing with class Fl_GL_Window.
- \li On the Mac platform, OS version 10.4 or above is required. This function does nothing with class Fl_GL_Window.
-
- The window borders and caption created by the window system are turned off by default.  They
- can be re-enabled by calling void Fl_Window::border(1).
- 
- A usage example is found at example/shapedwindow.cxx.
-
- The \p img argument can be an Fl_Bitmap, Fl_Pixmap or Fl_RGB_Image.
- \li With Fl_Bitmap or Fl_Pixmap, the shaped window covers the image part where bitmap bits equal one, 
+ The \p img argument can be an Fl_Bitmap, Fl_Pixmap or Fl_RGB_Image:
+ \li With Fl_Bitmap or Fl_Pixmap, the shaped window covers the image part where bitmap bits equal one,
  or where the pixmap is not fully transparent.
  \li With an Fl_RGB_Image with an alpha channel (depths 2 or 4), the shaped window covers the image part
  that is not fully transparent.
  \li With an Fl_RGB_Image of depth 1 (gray-scale) or 3 (RGB), the shaped window covers the non-black image part.
  
- On some platforms, an 8-bit shape-mask is used when \p img is an Fl_RGB_Image: 
- with depths 2 or 4, the image alpha channel becomes the shape mask such that areas with alpha = 0 
- are out of the shaped window; 
- with depths 1 or 3, white and black are in and out of the 
+ Platform details:
+ \li On the unix/linux platform, the SHAPE extension of the X server is required.
+ This function does control the shape of Fl_Gl_Window instances.
+ \li On the MSWindows platform, this function does nothing with class Fl_Gl_Window.
+ \li On the Mac platform, OS version 10.4 or above is required. 
+ An 8-bit shape-mask is used when \p img is an Fl_RGB_Image:
+ with depths 2 or 4, the image alpha channel becomes the shape mask such that areas with alpha = 0
+ are out of the shaped window;
+ with depths 1 or 3, white and black are in and out of the
  shaped window, respectively, and other colors give intermediate masking scores.
+ This function does nothing with class Fl_Gl_Window.
+
+ The window borders and caption created by the window system are turned off by default. They
+ can be re-enabled by calling Fl_Window::border(1).
+ 
+ A usage example is found at example/shapedwindow.cxx.
+ 
  \version 1.3.3 (and requires compilation with -DFLTK_ABI_VERSION = 10303)
  */
 void Fl_Window::shape(const Fl_Image* img) {
