@@ -227,7 +227,6 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   DeleteDC(new_gc);
 }
 
-extern void fl_restore_clip();
 
 #elif defined(__APPLE_QUARTZ__) || defined(FL_DOXYGEN)
 
@@ -347,7 +346,6 @@ void fl_end_offscreen() {
 
 /** @} */
 
-extern void fl_restore_clip();
 
 #else
 # error unsupported platform
