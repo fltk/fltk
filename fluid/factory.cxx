@@ -37,45 +37,6 @@
 
 extern Fl_Pixmap *pixmap[];
 
-// Note: current MinGW versions don't find strcasecmp() in configure,
-// since it has been #define'd to _stricmp, and hence it does work,
-// although it is actually not available as a function in any lib.
-// The following "&& !defined(strcasecmp)" fixes this *temporarily*,
-// until a better fix can be found. One way would be to rename this
-// local, static version of function strcasecmp()...
-// AlbrechtS, Jan 03, 2014, svn -r ~10044, see STR #2994
-//
-// For some (yet unknown) reason the previous fix didn't work with
-// CMake-generated MinGW (MSYS) Makefiles, hence we have to use
-// !defined(__MINGW32__) instead of !defined(strcasecmp).
-// AlbrechtS, Jan 21, 2014, svn -r ~10074, see STR #2994
-
-#if !HAVE_STRCASECMP && !defined(__MINGW32__)
-//
-// 'strcasecmp()' - Do a case-insensitive compare...
-//
-
-static int
-strcasecmp(const char *s, const char *t) {
-  while (*s != '\0' && *t != '\0') {
-    if (tolower(*s) < tolower(*t))
-      return (-1);
-    else if (tolower(*s) > tolower(*t))
-      return (1);
-
-    s ++;
-    t ++;
-  }
-
-  if (*s == '\0' && *t == '\0')
-    return (0);
-  else if (*s != '\0')
-    return (1);
-  else
-    return (-1);
-}
-#endif // !HAVE_STRCASECMP
-
 ////////////////////////////////////////////////////////////////
 
 #include <FL/Fl_Box.H>
@@ -1131,8 +1092,8 @@ Fl_Type *Fl_Type_make(const char *tn) {
     Fl_Menu_Item *m = New_Menu+i;
     if (!m->user_data()) continue;
     Fl_Type *t = (Fl_Type*)(m->user_data());
-    if (!strcasecmp(tn,t->type_name())) {r = t->make(); break;}
-    if (!strcasecmp(tn,t->alt_type_name())) {r = t->make(); break;}
+    if (!fl_ascii_strcasecmp(tn,t->type_name())) {r = t->make(); break;}
+    if (!fl_ascii_strcasecmp(tn,t->alt_type_name())) {r = t->make(); break;}
   }
   reading_file = 0;
   return r;
@@ -1272,7 +1233,7 @@ static symbol table[] = {
 int lookup_symbol(const char *name, int &v, int numberok) {
   if (name[0]=='F' && name[1]=='L' && name[2]=='_') name += 3;
   for (int i=0; i < int(sizeof(table)/sizeof(*table)); i++)
-    if (!strcasecmp(name,table[i].name)) {v = table[i].value; return 1;}
+    if (!fl_ascii_strcasecmp(name,table[i].name)) {v = table[i].value; return 1;}
   if (numberok && ((v = atoi(name)) || !strcmp(name,"0"))) return 1;
   return 0;
 }
