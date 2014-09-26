@@ -33,6 +33,7 @@
 #endif
 
 #include <FL/Fl.H>
+#include <FL/x.H> // for fl_open_callback
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_ask.H>
