@@ -486,6 +486,10 @@ public:
     \see virtual void Fl_Window::show()
   */
   void show(int argc, char **argv);
+
+  // Enables synchronous show(), docs in Fl_Window.cxx
+  void wait_for_expose();
+
   /**
     Makes the window completely fill one or more screens, without any
     window manager border visible.  You must use fullscreen_off() to

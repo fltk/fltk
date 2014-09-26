@@ -93,7 +93,8 @@ CPPFILES =\
 	tree.cxx \
 	twowin.cxx \
 	valuators.cxx \
-	utf8.cxx
+	utf8.cxx \
+	windowfocus.cxx
 
 ALL =	\
 	unittests$(EXEEXT) \
@@ -163,7 +164,8 @@ ALL =	\
 	twowin$(EXEEXT) \
 	valuators$(EXEEXT) \
 	cairotest$(EXEEXT) \
-	utf8$(EXEEXT) 
+	utf8$(EXEEXT) \
+	windowfocus$(EXEEXT)
 
 
 GLALL = \

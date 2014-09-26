@@ -222,6 +222,7 @@
 /test/valuators
 /test/valuators.cxx
 /test/valuators.h
+/test/windowfocus
 /test/*.bck
 /test/*.exe
 /test/*.ilk

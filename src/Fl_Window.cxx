@@ -397,6 +397,58 @@ void Fl_Window::free_icons() {
 #endif
 }
 
+/**
+  Waits for the window to be fully displayed after calling show().
+
+  Fl_Window::show() is not guaranteed to show and draw the window on
+  all platforms immediately. Instead this is done in the background;
+  particularly on X11 this will take a few messages (client server
+  roundtrips) to display the window.
+
+  Usually this small delay doesn't matter, but in some cases you may
+  want to have the window instantiated and displayed synchronously.
+
+  Currently (as of FLTK 1.3.3) this method only has an effect on X11.
+  On Windows and Mac OS X show() is always synchronous. If you want to
+  write portable code and need this synchronous show() feature, add
+  win->wait_for_expose() on all platforms, FLTK will just do the
+  right thing.
+
+  This method can be used for displaying splash screens before
+  calling Fl::run() or for having exact control over which window
+  has focus after calling show().
+
+  If the window is not shown(), this method does nothing.
+
+  \see virtual void Fl_Window::show()
+
+  Example code for displaying a window before calling Fl::run()
+
+  \code
+    Fl_Double_Window win = new Fl_Double_Window(...);
+
+    // do more window initialization here ...
+
+    win->show();			// show window
+    win->wait_for_expose();		// wait, until displayed
+    Fl::flush();			// make sure everything gets drawn
+
+    // do more initialization work that needs some time here ...
+
+    Fl::run();				// start FLTK event loop
+  \endcode
+
+  Note that the window will not be responsive until the event loop
+  is started with Fl::run().
+*/
+
+void Fl_Window::wait_for_expose() {
+  if (!shown()) return;
+  while (!i || i->wait_for_expose) {
+    Fl::wait();
+  }
+}
+
 //
 // End of "$Id$".
 //
