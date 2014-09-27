@@ -1,4 +1,6 @@
 //
+// "$Id$"
+//
 // Cross-window show/focus test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2014 by Bill Spitzak and others.
@@ -56,3 +58,7 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
+
+//
+// End of "$Id$".
+//

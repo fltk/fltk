@@ -1,4 +1,6 @@
 //
+// "$Id$"
+//
 // Cross-window focus test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2014 by Bill Spitzak and others.
@@ -52,3 +54,7 @@ int main() {
 	win2->show();
 	return Fl::run();
 }
+
+//
+// End of "$Id$".
+//
