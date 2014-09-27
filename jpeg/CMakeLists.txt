@@ -1,9 +1,3 @@
-project(FLTKJPEG)
-
-include_regular_expression("^j.*[.][c|h]$")
-
-include_directories(${FLTKJPEG_SOURCE_DIR})
-include_directories(${FLTKJPEG_BINARY_DIR})
 
 # memmgr back ends: compile only one of these into a working library
 # (For now, let's use the mode that requires the image fit into memory.
@@ -31,21 +25,16 @@ set(decompression_SRCS
    jdsample.c jdcolor.c jquant1.c jquant2.c jdmerge.c
 )
 
+list(APPEND BUILD_SRCS "${systemdependent_SRCS};${common_SRCS}")
+list(APPEND BUILD_SRCS "${compression_SRCS};${decompression_SRCS}")
 #######################################################################
-add_library(fltk_jpeg ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
+FL_ADD_LIBRARY(fltk_jpeg STATIC "${BUILD_SRCS}")
 
-if(MSVC)
-   set_target_properties(fltk_jpeg
-      PROPERTIES
-         OUTPUT_NAME fltkjpeg
-         DEBUG_OUTPUT_NAME fltkjpegd
-   )
-   if(OPTION_LARGE_FILE)
-      set_target_properties(fltk_jpeg PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
-   endif(OPTION_LARGE_FILE)
-endif(MSVC)
+#######################################################################
+if(OPTION_BUILD_SHARED_LIBS)
+#######################################################################
+FL_ADD_LIBRARY(fltk_jpeg SHARED "${BUILD_SRCS}")
 
-install(TARGETS fltk_jpeg
-   EXPORT fltk-install
-   DESTINATION ${PREFIX_LIB}
-)
+#######################################################################
+endif(OPTION_BUILD_SHARED_LIBS)
+#######################################################################

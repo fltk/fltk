@@ -32,7 +32,7 @@ add_custom_target(uninstall
 )
 
 install(DIRECTORY ${FLTK_SOURCE_DIR}/FL
-   DESTINATION ${PREFIX_INCLUDE} USE_SOURCE_PERMISSIONS
+   DESTINATION include USE_SOURCE_PERMISSIONS
    PATTERN ".svn" EXCLUDE
 )
 
@@ -40,29 +40,41 @@ if(OPTION_CREATE_LINKS)
    install(SCRIPT ${FLTK_BINARY_DIR}/install-symlinks.cmake)
 endif(OPTION_CREATE_LINKS)
 
-install(PROGRAMS ${FLTK_BINARY_DIR}/fltk-config
-   DESTINATION ${PREFIX_BIN}
-   OPTIONAL
+# generate FLTKConfig.cmake for installed directory use
+set(INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
+
+set(CONFIG_PATH ${CMAKE_INSTALL_PREFIX}/@FLTK_CONFIG_PATH@)
+
+install(EXPORT FLTK-Targets
+   DESTINATION ${FLTK_CONFIG_PATH}
+   FILE FLTK-Targets.cmake
 )
 
-install(EXPORT fltk-install
-   DESTINATION ${PREFIX_CONFIG}
-   FILE FLTKLibraries.cmake
+configure_file(
+   ${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
+   ${FLTK_BINARY_DIR}/etc/FLTKConfig.cmake
+   @ONLY
 )
 
-install(FILES ${EXECUTABLE_OUTPUT_PATH}/FLTKConfig.cmake
-   DESTINATION ${PREFIX_CONFIG}
+install(FILES ${FLTK_BINARY_DIR}/etc/FLTKConfig.cmake
+   DESTINATION ${FLTK_CONFIG_PATH}
 )
 
-install(FILES ${EXECUTABLE_OUTPUT_PATH}/UseFLTK.cmake
-   DESTINATION ${PREFIX_CONFIG}
+configure_file(
+   ${FLTK_SOURCE_DIR}/CMake/UseFLTK.cmake.in
+   ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
+   @ONLY
 )
 
-if(CMAKE_HOST_UNIX)
+install(FILES ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
+   DESTINATION ${FLTK_CONFIG_PATH}
+)
+
+if(UNIX)
    macro(INSTALL_MAN FILE LEVEL)
    install(FILES
       ${FLTK_SOURCE_DIR}/documentation/src/${FILE}.man
-      DESTINATION ${PREFIX_MAN}/man${LEVEL}
+      DESTINATION man/man${LEVEL}
       RENAME ${FILE}.${LEVEL}
    )
    endmacro(INSTALL_MAN FILE LEVEL)
@@ -74,4 +86,4 @@ if(CMAKE_HOST_UNIX)
    INSTALL_MAN(checkers 6)
    INSTALL_MAN(sudoku 6)
 
-endif(CMAKE_HOST_UNIX)
+endif(UNIX)

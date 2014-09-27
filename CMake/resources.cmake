@@ -24,7 +24,7 @@
 find_file(HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
 find_file(HAVE_DIRENT_H dirent.h)
 find_file(HAVE_DLFCN_H dlfcn.h)
-find_file(HAVE_FREETYPE_H freetype.h PATH_SUFFIXES freetype2)
+find_file(HAVE_FREETYPE_H freetype.h PATH_SUFFIXES freetype2 freetype2/freetype)
 find_file(HAVE_GL_GL_H GL/gl.h)
 find_file(HAVE_GL_GLU_H GL/glu.h)
 find_file(HAVE_LIBPNG_PNG_H libpng/png.h)
@@ -51,6 +51,7 @@ mark_as_advanced(HAVE_SYS_STDTYPES_H HAVE_XDBE_H)
 
 # where to find freetype headers
 find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
+find_path(FREETYPE_PATH freetype/freetype.h PATH_SUFFIXES freetype2)
 if(FREETYPE_PATH)
    include_directories(${FREETYPE_PATH})
 endif(FREETYPE_PATH)

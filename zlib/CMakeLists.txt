@@ -1,32 +1,20 @@
-project(FLTKZLIB)
-include_regular_expression(regex_match "[.][h|c]$")
-
-include_directories(${FLTKZLIB_SOURCE_DIR})
-include_directories(${FLTKZLIB_BINARY_DIR})
 
 # source files for zlib
 set(ZLIB_SRCS
-   adler32.c compress.c crc32.c deflate.c 
+   adler32.c compress.c crc32.c deflate.c
    gzclose.c gzlib.c gzread.c gzwrite.c
-   inffast.c infback.c inflate.c inftrees.c 
+   inffast.c infback.c inflate.c inftrees.c
    trees.c uncompr.c zutil.c
 )
 
 #######################################################################
-add_library(fltk_z ${ZLIB_SRCS})
+FL_ADD_LIBRARY(fltk_z STATIC "${ZLIB_SRCS}")
 
-if(MSVC)
-   set_target_properties(fltk_z
-      PROPERTIES
-         OUTPUT_NAME zlib
-         DEBUG_OUTPUT_NAME zlibd
-   )
-   if(OPTION_LARGE_FILE)
-      set_target_properties(fltk_z PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
-   endif(OPTION_LARGE_FILE)
-endif(MSVC)
+#######################################################################
+if(OPTION_BUILD_SHARED_LIBS)
+#######################################################################
+FL_ADD_LIBRARY(fltk_z SHARED "${ZLIB_SRCS}")
 
-install(TARGETS fltk_z
-   EXPORT fltk-install
-   DESTINATION ${PREFIX_LIB}
-)
+#######################################################################
+endif(OPTION_BUILD_SHARED_LIBS)
+#######################################################################

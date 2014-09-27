@@ -34,114 +34,24 @@ set(OPTION_ARCHFLAGS ""
 add_definitions(${OPTION_ARCHFLAGS})
 
 #######################################################################
-set(OPTION_PREFIX_BIN ""
-   CACHE STRING
-   "where to install executables - leave empty to use {CMAKE_INSTALL_PREFIX}/bin"
-   )
-
-if(OPTION_PREFIX_BIN)
-   set(PREFIX_BIN ${OPTION_PREFIX_BIN} CACHE INTERNAL "" FORCE)
-else()
-   set(PREFIX_BIN ${CMAKE_INSTALL_PREFIX}/bin CACHE INTERNAL "" FORCE)
-endif(OPTION_PREFIX_BIN)
-
 #######################################################################
-set(OPTION_PREFIX_LIB ""
-   CACHE STRING
-   "where to install libraries - leave empty to use {CMAKE_INSTALL_PREFIX}/lib"
-   )
-
-if(OPTION_PREFIX_LIB)
-   set(PREFIX_LIB ${OPTION_PREFIX_LIB} CACHE INTERNAL "" FORCE)
-else()
-   set(PREFIX_LIB ${CMAKE_INSTALL_PREFIX}/lib CACHE INTERNAL "" FORCE)
-endif(OPTION_PREFIX_LIB)
-
-#######################################################################
-set(OPTION_PREFIX_INCLUDE ""
-   CACHE STRING
-   "where to install include files - leave empty to use {CMAKE_INSTALL_PREFIX}/include"
-   )
-
-if(OPTION_PREFIX_INCLUDE)
-   set(PREFIX_INCLUDE ${OPTION_PREFIX_INCLUDE} CACHE INTERNAL "" FORCE)
-else()
-   set(PREFIX_INCLUDE ${CMAKE_INSTALL_PREFIX}/include CACHE INTERNAL "" FORCE)
-endif(OPTION_PREFIX_INCLUDE)
-
-#######################################################################
-set(OPTION_PREFIX_DATA ""
-   CACHE STRING
-   "where to install data files - leave empty to use {CMAKE_INSTALL_PREFIX}/share/FLTK"
-   )
-
-if(OPTION_PREFIX_DATA)
-   set(PREFIX_DATA ${OPTION_PREFIX_DATA} CACHE INTERNAL "" FORCE)
-else()
-   set(PREFIX_DATA ${CMAKE_INSTALL_PREFIX}/share/FLTK CACHE INTERNAL "" FORCE)
-endif(OPTION_PREFIX_DATA)
-
-#######################################################################
-set(OPTION_PREFIX_DOC ""
-   CACHE STRING
-   "where to install doc files - leave empty to use {CMAKE_INSTALL_PREFIX}/share/doc/FLTK"
-   )
-
-if(OPTION_PREFIX_DOC)
-   set(PREFIX_DOC ${OPTION_PREFIX_DOC} CACHE INTERNAL "" FORCE)
-else()
-   set(PREFIX_DOC ${CMAKE_INSTALL_PREFIX}/share/doc/FLTK CACHE INTERNAL "" FORCE)
-endif(OPTION_PREFIX_DOC)
-
-#######################################################################
-if(WIN32)
-   set(DEFAULT_CONFIG "${CMAKE_INSTALL_PREFIX}/CMake")
-elseif(APPLE)
-   set(DEFAULT_CONFIG "${CMAKE_INSTALL_PREFIX}/FLTK/.framework/Resources/CMake")
-else()
-   set(DEFAULT_CONFIG "${CMAKE_INSTALL_PREFIX}/lib/FLTK-${FLTK_VERSION}")
-endif(WIN32)
-
-set(OPTION_PREFIX_CONFIG ""
-   CACHE STRING
-   "where to install CMake config files - leave empty to use ${DEFAULT_CONFIG}"
-   )
-
-if(OPTION_PREFIX_CONFIG)
-   set(PREFIX_CONFIG "${OPTION_PREFIX_CONFIG}" CACHE INTERNAL "" FORCE)
-else()
-   set(PREFIX_CONFIG "${DEFAULT_CONFIG}" CACHE INTERNAL "" FORCE)
-endif(OPTION_PREFIX_CONFIG)
-
-#######################################################################
-if(CMAKE_HOST_UNIX)
-   set(OPTION_PREFIX_MAN ""
-      CACHE STRING
-      "where to install man files - leave empty to use {CMAKE_INSTALL_PREFIX}/man"
-      )
-
-   if(OPTION_PREFIX_MAN)
-      set(PREFIX_MAN ${OPTION_PREFIX_MAN} CACHE INTERNAL "" FORCE)
-   else()
-      set(PREFIX_MAN ${CMAKE_INSTALL_PREFIX}/man CACHE INTERNAL "" FORCE)
-   endif(OPTION_PREFIX_MAN)
-
+if(UNIX)
    option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
-endif(CMAKE_HOST_UNIX)
+endif(UNIX)
 
 #######################################################################
 if(APPLE)
    option(OPTION_APPLE_X11 "use X11" OFF)
 endif(APPLE)
 
-if(NOT APPLE OR OPTION_APPLE_X11)
+if((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
    include(FindX11)
    if(X11_FOUND)
       set(USE_X11 1)
       list(APPEND FLTK_CFLAGS -DUSE_X11)
       list(APPEND FLTK_LDLIBS -lX11)
    endif(X11_FOUND)
-endif(NOT APPLE OR OPTION_APPLE_X11)
+endif((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
 
 #######################################################################
 option(OPTION_USE_POLL "use poll if available" OFF)
@@ -151,7 +61,10 @@ if(OPTION_USE_POLL)
 endif(OPTION_USE_POLL)
 
 #######################################################################
-option(OPTION_BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(OPTION_BUILD_SHARED_LIBS
+    "Build shared libraries(in addition to static libraries)"
+    OFF
+    )
 
 #######################################################################
 option(OPTION_BUILD_EXAMPLES "build example programs" ON)
@@ -241,30 +154,6 @@ if(OPTION_LARGE_FILE)
 endif(OPTION_LARGE_FILE)
 
 #######################################################################
-option(OPTION_USE_SYSTEM_LIBJPEG "Use's system libjpeg" ON)
-
-if(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
-   include(FindJPEG)
-endif(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
-
-if(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
-   set(FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
-   include_directories(${JPEG_INCLUDE_DIR})
-   set(FLTK_BUILTIN_JPEG_FOUND FALSE)
-else()
-   add_subdirectory(jpeg)
-   set(FLTK_JPEG_LIBRARIES fltk_jpeg)
-   include_directories(${FLTK_SOURCE_DIR}/jpeg)
-   set(FLTK_BUILTIN_JPEG_FOUND TRUE)
-endif(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
-
-if(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
-   message(STATUS "\ncannot find system jpeg library - using built-in\n")
-endif(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
-
-set(HAVE_LIBJPEG 1)
-
-#######################################################################
 option(OPTION_USE_SYSTEM_ZLIB "Use's system zlib" ON)
 
 if(OPTION_USE_SYSTEM_ZLIB AND LIB_zlib)
@@ -288,6 +177,30 @@ if(OPTION_USE_SYSTEM_ZLIB AND NOT ZLIB_FOUND)
 endif(OPTION_USE_SYSTEM_ZLIB AND NOT ZLIB_FOUND)
 
 set(HAVE_LIBZ 1)
+
+#######################################################################
+option(OPTION_USE_SYSTEM_LIBJPEG "Use's system libjpeg" ON)
+
+if(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
+   include(FindJPEG)
+endif(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
+
+if(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
+   set(FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
+   include_directories(${JPEG_INCLUDE_DIR})
+   set(FLTK_BUILTIN_JPEG_FOUND FALSE)
+else()
+   add_subdirectory(jpeg)
+   set(FLTK_JPEG_LIBRARIES fltk_jpeg)
+   include_directories(${FLTK_SOURCE_DIR}/jpeg)
+   set(FLTK_BUILTIN_JPEG_FOUND TRUE)
+endif(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
+
+if(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
+   message(STATUS "\ncannot find system jpeg library - using built-in\n")
+endif(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
+
+set(HAVE_LIBJPEG 1)
 
 #######################################################################
 option(OPTION_USE_SYSTEM_LIBPNG "Use's system libpng" ON)

@@ -34,18 +34,39 @@ set(ARCHIVE_OUTPUT_PATH ${FLTK_BINARY_DIR}/lib)
 # Search for modules in the FLTK source dir first
 set(CMAKE_MODULE_PATH "${FLTK_SOURCE_DIR}/CMake")
 
-include_directories(${FLTK_BINARY_DIR} ${FLTK_SOURCE_DIR})
+set(FLTK_INCLUDE_DIRS ${FLTK_BINARY_DIR} ${FLTK_SOURCE_DIR})
+include_directories(${FLTK_INCLUDE_DIRS})
 
 #######################################################################
 # platform dependent information
 #######################################################################
+
+# fix no WIN32 defined issue
+if(NOT WIN32)
+    if(_WIN32)
+        set(WIN32 _WIN32)
+    elseif(__WIN32__)
+        set(WIN32 __WIN32__)
+    endif(_WIN32)
+endif(NOT WIN32)
+
+# set where config and example files go
+if(WIN32 AND NOT CYGWIN)
+   set(FLTK_CONFIG_PATH CMake)
+   set(FLTK_EXAMPLES_PATH bin/fltk-examples)
+elseif(APPLE)
+   set(FLTK_CONFIG_PATH FLTK/.framework/Resources/CMake)
+   set(FLTK_EXAMPLES_PATH share/fltk-examples)
+else()
+   set(FLTK_CONFIG_PATH lib/fltk)
+   set(FLTK_EXAMPLES_PATH share/fltk-examples)
+endif(WIN32 AND NOT CYGWIN)
 
 include(TestBigEndian)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 if(APPLE)
    set(__APPLE_QUARTZ__ 1)
-   set(HAVE_STRTOLL 1)
    set(HAVE_STRCASECMP 1)
    set(HAVE_DIRENT_H 1)
    set(HAVE_SNPRINTF 1)
@@ -57,16 +78,19 @@ if(APPLE)
 endif(APPLE)
 
 if(WIN32)
-   if(MSVC)
-      add_definitions(-DWIN32_LEAN_AND_MEAN)
-      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-   endif(MSVC)
-   if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
-   endif(CMAKE_C_COMPILER_ID STREQUAL GNU)
-   if(MINGW AND EXISTS /mingw)
-      list(APPEND CMAKE_PREFIX_PATH /mingw)
-   endif(MINGW AND EXISTS /mingw)
+    if(MSVC)
+        add_definitions(-DWIN32_LEAN_AND_MEAN)
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+######## from ide/VisualC2010/config.h
+        set(BORDER_WIDTH 2)
+########
+    endif(MSVC)
+    if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
+    endif(CMAKE_C_COMPILER_ID STREQUAL GNU)
+    if(MINGW AND EXISTS /mingw)
+        list(APPEND CMAKE_PREFIX_PATH /mingw)
+    endif(MINGW AND EXISTS /mingw)
 endif(WIN32)
 
 #######################################################################

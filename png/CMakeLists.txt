@@ -1,11 +1,3 @@
-project(FLTKPNG)
-include_regular_expression("^png.*[.][c|h]$")
-
-include_directories(${FLTKZLIB_SOURCE_DIR})
-include_directories(${ZLIB_INCLUDE_DIR})
-
-include_directories(${FLTKPNG_SOURCE_DIR})
-include_directories(${FLTKPNG_BINARY_DIR})
 
 # source files for png
 set(PNG_SRCS
@@ -16,20 +8,25 @@ set(PNG_SRCS
 )
 
 #######################################################################
-add_library(fltk_png ${PNG_SRCS})
+FL_ADD_LIBRARY(fltk_png STATIC "${PNG_SRCS}")
 
-if(MSVC)
-   set_target_properties(fltk_png PROPERTIES OUTPUT_NAME fltkpng)
-   if(OPTION_LARGE_FILE)
-      set_target_properties(fltk_png PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
-   endif(OPTION_LARGE_FILE)
+if(OPTION_USE_SYSTEM_ZLIB)
+    target_link_libraries(fltk_png ${FLTK_ZLIB_LIBRARIES})
 else()
-   set_target_properties(fltk_png PROPERTIES OUTPUT_NAME fltk_png)
-endif(MSVC)
+    target_link_libraries(fltk_png fltk_z)
+endif(OPTION_USE_SYSTEM_ZLIB)
 
-target_link_libraries(fltk_png ${FLTK_ZLIB_LIBRARIES})
+#######################################################################
+if(OPTION_BUILD_SHARED_LIBS)
+#######################################################################
+FL_ADD_LIBRARY(fltk_png SHARED "${PNG_SRCS}")
 
-install(TARGETS fltk_png
-   EXPORT fltk-install
-   DESTINATION ${PREFIX_LIB}
-)
+if(OPTION_USE_SYSTEM_ZLIB)
+    target_link_libraries(fltk_png_SHARED ${FLTK_ZLIB_LIBRARIES})
+else()
+    target_link_libraries(fltk_png_SHARED fltk_z_SHARED)
+endif(OPTION_USE_SYSTEM_ZLIB)
+
+#######################################################################
+endif(OPTION_BUILD_SHARED_LIBS)
+#######################################################################

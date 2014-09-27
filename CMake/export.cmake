@@ -29,30 +29,35 @@ if(CMAKE_CROSSCOMPILING)
    )
    add_executable(fluid IMPORTED)
    set(FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
-   set(FLTK_FLUID_PATH ${FLUID_PATH})
+   set(FLUID)       # no export
    set_target_properties(fluid
       PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
    )
 else()
    add_subdirectory(fluid)
    set(FLTK_FLUID_EXECUTABLE fluid)
-   set(FLTK_FLUID_PATH ${PREFIX_BIN}/fluid)
+   set(FLUID fluid) # export
 endif(CMAKE_CROSSCOMPILING)
 
 add_subdirectory(src)
 
-# generate FLTKConfig.cmake
-string(REPLACE ";" " " EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+# generate FLTK-Targets.cmake for build directory use
+export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_BINARY_DIR}/FLTK-Targets.cmake)
+
+# generate FLTKConfig.cmake for build directory use
+set(INCLUDE_DIRS "@FLTK_INCLUDE_DIRS@")
+set(CONFIG_PATH @FLTK_BINARY_DIR@)
+
 configure_file(
    ${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
-   ${EXECUTABLE_OUTPUT_PATH}/FLTKConfig.cmake
+   ${FLTK_BINARY_DIR}/FLTKConfig.cmake
    @ONLY
 )
 
-# generate UseFLTK.cmake
+# generate UseFLTK.cmake for build directory use
 configure_file(
    ${FLTK_SOURCE_DIR}/CMake/UseFLTK.cmake.in
-   ${EXECUTABLE_OUTPUT_PATH}/UseFLTK.cmake
+   ${FLTK_BINARY_DIR}/UseFLTK.cmake
    @ONLY
 )
 
@@ -92,4 +97,3 @@ if(OPTION_CREATE_LINKS)
       @ONLY
    )
 endif(OPTION_CREATE_LINKS)
-#

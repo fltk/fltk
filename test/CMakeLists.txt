@@ -11,46 +11,6 @@ elseif(HAVE_ALSA_ASOUNDLIB_H)
 endif(WIN32)
 
 #######################################################################
-macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
-	set(srcs)
-	set(flsrcs)
-	foreach(src ${SOURCES})
-		if("${src}" MATCHES ".fl$")
-         list(APPEND flsrcs ${src})
-		else()
-			list(APPEND srcs ${src})
-		endif("${src}" MATCHES ".fl$")
-	endforeach(src)
-
-   if(flsrcs)
-      fltk_wrap_ui(${NAME} ${flsrcs})
-   endif(flsrcs)
-
-	add_executable(${NAME} WIN32 ${srcs} ${${NAME}_FLTK_UI_SRCS})
-   if(flsrcs)
-      add_dependencies(${NAME} ${FLTK_FLUID_EXECUTABLE})
-   endif(flsrcs)
-	target_link_libraries(${NAME} ${LIBRARIES})
-
-   # link in optional libraries
-   if(FLTK_HAVE_CAIRO)
-      target_link_libraries(${NAME} fltk_cairo)
-   endif(FLTK_HAVE_CAIRO)
-
-   if(USE_XFT)
-      target_link_libraries(${NAME} ${X11_Xft_LIB})
-   endif(USE_XFT)
-
-   if(HAVE_XINERAMA)
-      target_link_libraries(${NAME} ${X11_Xinerama_LIB})
-   endif(HAVE_XINERAMA)
-
-   install(TARGETS ${NAME}
-      DESTINATION ${PREFIX_DOC}/examples
-      )
-endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
-
-#######################################################################
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -137,5 +97,5 @@ endif(OPENGL_FOUND)
 
 # Cairo demo
 if(FLTK_HAVE_CAIRO)
-   CREATE_EXAMPLE(cairo_test cairo_test.cxx fltk)
+   CREATE_EXAMPLE(cairo_test cairo_test.cxx "fltk;fltk_cairo")
 endif(FLTK_HAVE_CAIRO)

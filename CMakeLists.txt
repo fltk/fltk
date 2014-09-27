@@ -18,7 +18,12 @@
 #
 
 project(FLTK)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
+
+#######################################################################
+# define some macros
+#######################################################################
+include(CMake/macros.cmake)
 
 #######################################################################
 # basic setup

@@ -1,4 +1,4 @@
-README.CMake.txt - 2010-12-20 - Building and using FLTK with CMake
+README.CMake.txt - 2014-09-27 - Building and using FLTK with CMake
 ------------------------------------------------------------------
 
 
@@ -97,16 +97,6 @@ OPTION_OPTIM
 
 OPTION_ARCHFLAGS
    Extra architecture flags.
-
-OPTION_PREFIX_BIN
-OPTION_PREFIX_LIB
-OPTION_PREFIX_INCLUDE
-OPTION_PREFIX_DATA
-OPTION_PREFIX_DOC
-OPTION_PREFIX_CONFIG
-OPTION_PREFIX_MAN
-   The OPTION_PREFIX_* flags are for fine-tuning where everything goes
-   on the install.
 
 OPTION_APPLE_X11 - default OFF
    In case you want to use X11 on OSX.  Not currently supported.
@@ -218,6 +208,11 @@ install it in the /usr/i486-mingw32/usr tree.
  USING CMAKE WITH FLTK
 =======================
 
+The CMake Export/Import facility can be thought of as an automated
+fltk-config.  For example, if you link your program to the fltk
+library, it will automatically link in all of its dependencies.  This
+includes any special flags.  ie on Linux it includes the -lpthread flag.
+
 This howto assumes that you have FLTK libraries which were built using
 CMake, installed.  Building them with CMake generates some CMake helper
 files which are installed in standard locations, making FLTK easy to find
@@ -231,6 +226,12 @@ cmake_minimum_required(VERSION 2.6)
 
 project(hello)
 
+# the following line is required only if you don't install FLTK
+# or if find_package can't find your installation directory
+# it points to the build directory or the base folder,
+# not the library folder.
+set(FLTK_DIR /path/to/fltk)
+
 find_package(FLTK REQUIRED NO_MODULE)
 include(${FLTK_USE_FILE})
 
@@ -240,20 +241,19 @@ target_link_libraries(hello fltk)
 
 ------
 
+The set(FLTK_DIR ...) command is a superhint to the find_package command.
+This is very useful if you don't install or have a non-standard install.
 The find_package command tells CMake to find the package FLTK, REQUIRED
 means that it is an error if it's not found.  NO_MODULE tells it to search
 only for the FLTKConfig file, not using the FindFLTK.cmake supplied with
 CMake, which doesn't work with this version of FLTK.
 
 Once the package is found we include the ${FLTK_USE_FILE} which adds the
-FLTK include directories and library link information to its knowledge
-base.  After that your programs will be able to find FLTK headers and
-when you link the fltk library, it automatically links the libraries
-fltk depends on.
+FLTK include directories to its knowledge base.  After that your programs
+will be able to find FLTK headers.
 
 The WIN32 in the add_executable tells your Windows compiler that this is
 a gui app.  It is ignored on other platforms.
-
 
  LIBRARY NAMES
 ---------------
@@ -301,3 +301,4 @@ when find_package(FLTK REQUIRED NO_MODULE) succeeds.
 
 Dec 20 2010 - matt: merged and restructures
 May 15 2013 - erco: small formatting tweaks, added some examples
+Feb 23 2014 - msurette: updated to reflect changes to the CMake files
