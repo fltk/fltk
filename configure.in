@@ -26,6 +26,10 @@ AC_INIT(src/Fl.cxx)
 
 AC_CANONICAL_HOST
 
+dnl Find compiler commands...
+AC_PROG_CC
+AC_PROG_CXX
+
 dnl So --with-archflags option is used during "checking size of long"
 case $host_os in
     darwin*)
@@ -71,16 +75,7 @@ case $host_os in
         # Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [(default=no)]])
 	AC_ARG_ENABLE(x11,    [  --enable-x11            use Cygwin with X11 [(default=no)]])
-	if test x$enable_cygwin != xyes; then
-	    # NOTE: We can't use ARCHFLAGS for this, since it does not work
-	    #       with some of the function tests - Cygwin uses a
-	    #       different C library...
-	    CFLAGS="$CFLAGS -mno-cygwin"
-	    CPPFLAGS="$CPPFLAGS -mno-cygwin"
-	    CXXFLAGS="$CXXFLAGS -mno-cygwin"
-	    LDFLAGS="$LDFLAGS -mno-cygwin"
-	    DSOFLAGS="$DSOFLAGS -mno-cygwin"
-	else
+	if test x$enable_cygwin = xyes; then
 	    # we target Cygwin in combination with X11
 	    if test x$enable_x11 = xyes; then
 		host_os_gui="X11$host_os"
@@ -187,10 +182,6 @@ fi
 
 
 AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [default=yes]])
-
-dnl Find commands...
-AC_PROG_CC
-AC_PROG_CXX
 
 AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]])
 if test x$enable_shared = xyes; then
