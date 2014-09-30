@@ -3,7 +3,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -104,12 +104,14 @@ extern Fl_Choice *wVisibleFocus;
 extern Fl_Choice *wArrowFocus;
 extern Fl_Choice *wShowTooltips;
 extern Fl_Choice *wDNDText;
+extern Fl_Choice *wGTKText;
 extern Fl_Choice *wUserOrSystem;
 Fl_Double_Window* make_global_settings_window();
 extern Fl_Menu_Item menu_wVisibleFocus[];
 extern Fl_Menu_Item menu_wArrowFocus[];
 extern Fl_Menu_Item menu_wShowTooltips[];
 extern Fl_Menu_Item menu_wDNDText[];
+extern Fl_Menu_Item menu_wGTKText[];
 extern Fl_Menu_Item menu_wUserOrSystem[];
 #endif
 

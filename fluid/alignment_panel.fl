@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0302 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -188,7 +188,7 @@ Function {make_settings_window()} {} {
         xywh {10 10 35 25}
       }
       MenuItem {} {
-        label {Gleam}
+        label Gleam
         xywh {20 20 35 25}
       }
     }
@@ -443,7 +443,8 @@ Function {refreshUI()} {
 wVisibleFocus->value(opt[Fl::OPTION_VISIBLE_FOCUS][mode]);
 wArrowFocus->value(opt[Fl::OPTION_ARROW_FOCUS][mode]);
 wShowTooltips->value(opt[Fl::OPTION_SHOW_TOOLTIPS][mode]);
-wDNDText->value(opt[Fl::OPTION_DND_TEXT][mode]);} {}
+wDNDText->value(opt[Fl::OPTION_DND_TEXT][mode]);
+wGTKText->value(opt[Fl::OPTION_FNFC_USES_GTK][mode]);} {}
 } 
 
 Function {readPrefs()} {
@@ -457,6 +458,7 @@ Function {readPrefs()} {
   opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1], 2);
   opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][1], 2);
   opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1], 2);
+  opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][1], 2);
 }
 {
   Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
@@ -465,6 +467,7 @@ Function {readPrefs()} {
   opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0], 2);
   opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][0], 2);
   opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0], 2);
+  opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][0], 2);
 }
 refreshUI();} {}
 } 
@@ -484,6 +487,8 @@ Function {writePrefs()} {
   else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][1]);
   if (opt[Fl::OPTION_SHOW_TOOLTIPS][1]==2) opt_prefs.deleteEntry("ShowTooltips");
   else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1]);
+  if (opt[Fl::OPTION_FNFC_USES_GTK][1]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
+  else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][1]);
 }
 {
   Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
@@ -496,6 +501,8 @@ Function {writePrefs()} {
   else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][0]);
   if (opt[Fl::OPTION_SHOW_TOOLTIPS][0]==2) opt_prefs.deleteEntry("ShowTooltips");
   else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0]);
+  if (opt[Fl::OPTION_FNFC_USES_GTK][0]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
+  else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][0]);
 }} {}
 } 
 
@@ -519,7 +526,7 @@ global_settings_window->show();} {selected
 Function {make_global_settings_window()} {} {
   Fl_Window global_settings_window {
     label {FLTK Preferences} open
-    xywh {444 220 403 317} type Double color 50 visible
+    xywh {1148 148 400 378} type Double color 50 visible
   } {
     Fl_Group {} {
       label {Keyboard Focus Options} open
@@ -640,9 +647,42 @@ Default is on.} xywh {245 225 100 25} down_box BORDER_BOX
         }
       }
     }
+    Fl_Group {} {
+      label {Native File Chooser Options} open
+      xywh {10 269 380 66} box GTK_DOWN_BOX labelfont 2 align 21
+    } {
+      Fl_Choice wGTKText {
+        label {Native File Chooser uses GTK:}
+        callback {int mode = wUserOrSystem->value();
+opt[Fl::OPTION_FNFC_USES_GTK ][mode] = wGTKText->value();} open
+        tooltip {OPTION_FNFC_USES_GTK
+        
+If 'Native File Chooser uses GTK' is enabled, the Fl_Native_File_Chooser class
+calls the GTK open/save file dialogs when they are available on the platfom. If disabled, the Fl_Native_File_Chooser class
+always uses FLTK's own file dialog (i.e., Fl_File_Chooser) even if GTK is available.
+
+Default is on.} xywh {245 300 100 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {30 30 31 20}
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {30 30 31 20} divider
+        }
+        MenuItem {} {
+          label default
+          user_data 2 user_data_type long
+          xywh {30 30 31 20}
+        }
+      }
+    }
     Fl_Choice wUserOrSystem {
       callback {refreshUI();} open
-      tooltip {Change settings for the current user, or default values for all users of this computer. Individual users can override system options, if they set their options to specific values (not 'default').} xywh {14 275 141 25} down_box BORDER_BOX
+      tooltip {Change settings for the current user, or default values for all users of this computer. Individual users can override system options, if they set their options to specific values (not 'default').} xywh {10 345 141 25} down_box BORDER_BOX
     } {
       MenuItem {} {
         label {User Settings}
@@ -658,13 +698,13 @@ Default is on.} xywh {245 225 100 25} down_box BORDER_BOX
     Fl_Button {} {
       label Cancel
       callback {global_settings_window->hide();}
-      xywh {230 275 75 25}
+      xywh {230 345 75 25}
     }
     Fl_Button {} {
       label OK
       callback {writePrefs();
 global_settings_window->hide();}
-      xywh {315 275 75 25}
+      xywh {315 345 75 25}
     }
   }
   code {readPrefs();

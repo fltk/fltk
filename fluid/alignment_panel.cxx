@@ -3,7 +3,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -510,6 +510,7 @@ static void refreshUI() {
   wArrowFocus->value(opt[Fl::OPTION_ARROW_FOCUS][mode]);
   wShowTooltips->value(opt[Fl::OPTION_SHOW_TOOLTIPS][mode]);
   wDNDText->value(opt[Fl::OPTION_DND_TEXT][mode]);
+  wGTKText->value(opt[Fl::OPTION_FNFC_USES_GTK][mode]);
 }
 
 /**
@@ -524,6 +525,7 @@ static void readPrefs() {
     opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1], 2);
     opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][1], 2);
     opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1], 2);
+    opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][1], 2);
   }
   {
     Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
@@ -532,6 +534,7 @@ static void readPrefs() {
     opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0], 2);
     opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][0], 2);
     opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0], 2);
+    opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][0], 2);
   }
   refreshUI();
 }
@@ -552,6 +555,8 @@ static void writePrefs() {
     else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][1]);
     if (opt[Fl::OPTION_SHOW_TOOLTIPS][1]==2) opt_prefs.deleteEntry("ShowTooltips");
     else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1]);
+    if (opt[Fl::OPTION_FNFC_USES_GTK][1]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
+    else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][1]);
   }
   {
     Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
@@ -564,6 +569,8 @@ static void writePrefs() {
     else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][0]);
     if (opt[Fl::OPTION_SHOW_TOOLTIPS][0]==2) opt_prefs.deleteEntry("ShowTooltips");
     else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0]);
+    if (opt[Fl::OPTION_FNFC_USES_GTK][0]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
+    else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][0]);
   }
 }
 
@@ -640,6 +647,20 @@ Fl_Menu_Item menu_wDNDText[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+Fl_Choice *wGTKText=(Fl_Choice *)0;
+
+static void cb_wGTKText(Fl_Choice*, void*) {
+  int mode = wUserOrSystem->value();
+opt[Fl::OPTION_FNFC_USES_GTK ][mode] = wGTKText->value();
+}
+
+Fl_Menu_Item menu_wGTKText[] = {
+ {"off", 0,  0, (void*)(0), 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"on", 0,  0, (void*)(1), 128, FL_NORMAL_LABEL, 0, 14, 0},
+ {"default", 0,  0, (void*)(2), 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Choice *wUserOrSystem=(Fl_Choice *)0;
 
 static void cb_wUserOrSystem(Fl_Choice*, void*) {
@@ -662,7 +683,7 @@ global_settings_window->hide();
 }
 
 Fl_Double_Window* make_global_settings_window() {
-  { global_settings_window = new Fl_Double_Window(403, 317, "FLTK Preferences");
+  { global_settings_window = new Fl_Double_Window(400, 378, "FLTK Preferences");
     global_settings_window->color(FL_LIGHT1);
     { Fl_Group* o = new Fl_Group(10, 10, 380, 100, "Keyboard Focus Options");
       o->box(FL_GTK_DOWN_BOX);
@@ -717,7 +738,23 @@ dropping text from other applications still works.\n\nDefault is on.");
       } // Fl_Choice* wDNDText
       o->end();
     } // Fl_Group* o
-    { wUserOrSystem = new Fl_Choice(14, 275, 141, 25);
+    { Fl_Group* o = new Fl_Group(10, 269, 380, 66, "Native File Chooser Options");
+      o->box(FL_GTK_DOWN_BOX);
+      o->labelfont(2);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
+      { wGTKText = new Fl_Choice(245, 300, 100, 25, "Native File Chooser uses GTK:");
+        wGTKText->tooltip("OPTION_FNFC_USES_GTK\n        \nIf \'Native File Chooser uses GTK\' is enable\
+d, the Fl_Native_File_Chooser class\ncalls the GTK open/save file dialogs when\
+ they are available on the platfom. If disabled, the Fl_Native_File_Chooser cl\
+ass\nalways uses FLTK\'s own file dialog (i.e., Fl_File_Chooser) even if GTK i\
+s available.\n\nDefault is on.");
+        wGTKText->down_box(FL_BORDER_BOX);
+        wGTKText->callback((Fl_Callback*)cb_wGTKText);
+        wGTKText->menu(menu_wGTKText);
+      } // Fl_Choice* wGTKText
+      o->end();
+    } // Fl_Group* o
+    { wUserOrSystem = new Fl_Choice(10, 345, 141, 25);
       wUserOrSystem->tooltip("Change settings for the current user, or default values for all users of this\
  computer. Individual users can override system options, if they set their opt\
 ions to specific values (not \'default\').");
@@ -725,10 +762,10 @@ ions to specific values (not \'default\').");
       wUserOrSystem->callback((Fl_Callback*)cb_wUserOrSystem);
       wUserOrSystem->menu(menu_wUserOrSystem);
     } // Fl_Choice* wUserOrSystem
-    { Fl_Button* o = new Fl_Button(230, 275, 75, 25, "Cancel");
+    { Fl_Button* o = new Fl_Button(230, 345, 75, 25, "Cancel");
       o->callback((Fl_Callback*)cb_Cancel1);
     } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(315, 275, 75, 25, "OK");
+    { Fl_Button* o = new Fl_Button(315, 345, 75, 25, "OK");
       o->callback((Fl_Callback*)cb_OK);
     } // Fl_Button* o
     global_settings_window->end();
