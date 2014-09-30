@@ -104,7 +104,6 @@ extern Fl_Choice *wVisibleFocus;
 extern Fl_Choice *wArrowFocus;
 extern Fl_Choice *wShowTooltips;
 extern Fl_Choice *wDNDText;
-extern Fl_Choice *wGTKText;
 extern Fl_Choice *wUserOrSystem;
 Fl_Double_Window* make_global_settings_window();
 extern Fl_Menu_Item menu_wVisibleFocus[];
