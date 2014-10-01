@@ -40,10 +40,14 @@
 #elif defined (__APPLE__)
 #  include <ApplicationServices/ApplicationServices.h>
 #  include <unistd.h>
+#  include <config.h>
 #  include <dlfcn.h>
 #else
 #  include <unistd.h>
-#  include <dlfcn.h>
+#  include <config.h>
+#  if HAVE_DLFCN_H
+#    include <dlfcn.h>
+#  endif
 #endif
 
 #ifdef WIN32
@@ -1766,7 +1770,10 @@ int Fl_Plugin_Manager::load(const char *filename) {
 #if defined(WIN32) && !defined(__CYGWIN__)
   HMODULE dl = LoadLibrary(filename);
 #else
-  void * dl = dlopen(filename, RTLD_LAZY);
+  void * dl = NULL;
+# if HAVE_DLSYM
+    dl = dlopen(filename, RTLD_LAZY);
+# endif
 #endif
   // There is no way of unloading a plugin!
   return (dl!=0) ? 0 : -1;
