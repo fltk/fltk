@@ -27,7 +27,10 @@
 #ifdef WIN32
 # include <malloc.h> // needed for VisualC2010
 #elif !defined(__APPLE__)
+#include <config.h>
+#if HAVE_DLFCN_H
 #include <dlfcn.h>
+#endif
 #define ShapeBounding			0
 #define ShapeSet			0
 #endif
@@ -136,16 +139,18 @@ void Fl_Window::combine_mask()
   static XShapeCombineMask_type XShapeCombineMask_f = NULL;
   static int beenhere = 0;
   typedef Bool (*XShapeQueryExtension_type)(Display*, int*, int*);
-  int error_base, shapeEventBase;
   if (!beenhere) {
     beenhere = 1;
+#if HAVE_DLSYM && HAVE_DLFCN_H
     fl_open_display();
     void *handle = dlopen(NULL, RTLD_LAZY); // search symbols in executable
     XShapeQueryExtension_type XShapeQueryExtension_f = (XShapeQueryExtension_type)dlsym(handle, "XShapeQueryExtension");
     XShapeCombineMask_f = (XShapeCombineMask_type)dlsym(handle, "XShapeCombineMask");
     // make sure that the X server has the SHAPE extension
-    if ( !( XShapeQueryExtension_f && XShapeCombineMask_f && 
+    int error_base, shapeEventBase;
+    if ( !( XShapeQueryExtension_f && XShapeCombineMask_f &&
 	   XShapeQueryExtension_f(fl_display, &shapeEventBase, &error_base) ) ) XShapeCombineMask_f = NULL;
+#endif
   }
   if (!XShapeCombineMask_f) return;
   shape_data_->lw_ = w();
