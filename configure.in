@@ -5,7 +5,7 @@ dnl "$Id$"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2013 by Bill Spitzak and others.
+dnl Copyright 1998-2014 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -405,7 +405,6 @@ if test "x$NROFF" = "x:"; then
         NROFF="$GROFF -T ascii"
     fi
 fi
-AC_PATH_PROG(HTMLDOC,htmldoc)
 AC_PATH_PROG(DOXYDOC,doxygen)
 
 dnl How do we make libraries?
