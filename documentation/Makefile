@@ -64,7 +64,7 @@ dist:	all html pdf
 alldocs: dist
 
 clean:
-	$(RM) fltk.pdf refman.pdf
+	$(RM) fltk.pdf refman.pdf src/fltk-book.tex
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -148,7 +148,7 @@ html-online: html
 pdf:	refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
 
-refman.pdf: $(HTMLFILES) Doxybook
+refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 	-$(RMDIR) latex
 	echo "Generating PDF documentation ..."
 	$(DOXYDOC) Doxybook ;\
@@ -165,6 +165,13 @@ refman.pdf: $(HTMLFILES) Doxybook
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
 	cd ..) > pdfall.log 2>&1
+
+src/fltk-book.tex: src/fltk-book.tex.in
+	DOXY_VERSION=`$(DOXYDOC) --version`; \
+	YEAR=`date +%Y`; \
+	FLTK_VERSION=`cat ../VERSION`; \
+	sed -e"s/@YEAR@/$$YEAR/g" -e"s/@VERSION@/$$FLTK_VERSION/g" \
+	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" < $< > $@
 
 #
 # End of "$Id$".
