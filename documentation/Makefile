@@ -128,7 +128,7 @@ uninstall-linux uninstall-osx:
 # is not made by default.
 # Use `make html' or `make dist' to create the html docs
 
-html:	$(HTMLFILES) Doxyfile
+html:	$(HTMLFILES) Doxyfile src/fltk-book.tex
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
