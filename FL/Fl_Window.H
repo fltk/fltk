@@ -77,19 +77,19 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 #endif
   int no_fullscreen_h;
 #if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.2 is respected
+  static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int fullscreen_screen_top;
 #if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.2 is respected
+  static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int fullscreen_screen_bottom;
 #if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.2 is respected
+  static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int fullscreen_screen_left;
 #if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.2 is respected
+  static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int fullscreen_screen_right;
 
