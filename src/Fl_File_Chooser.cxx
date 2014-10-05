@@ -60,7 +60,6 @@ void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
 }
 
 #include <FL/Fl_Bitmap.H>
-// FIXME: fluid does NOT (yet?) generate 'const' image data !
 static const unsigned char idata_new[] =
 {0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
 128,1,128,1,128,255,255,0,0};

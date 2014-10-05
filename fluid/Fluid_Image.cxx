@@ -84,7 +84,7 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_Bitmap.H>\n");
       bitmap_header_written = write_number;
     }
-    write_c("static unsigned char %s[] =\n",
+    write_c("static const unsigned char %s[] =\n",
 	    unique_id(this, "idata", fl_filename_name(name()), 0));
     write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
     write_c(";\n");
@@ -99,9 +99,9 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_JPEG_Image.H>\n");
       jpeg_header_written = write_number;
     }
-    write_c("static unsigned char %s[] =\n",
+    write_c("static const unsigned char %s[] =\n",
 	    unique_id(this, "idata", fl_filename_name(name()), 0));
-        
+
     FILE *f = fl_fopen(name(), "rb");
     if (!f) {
       // message = "Can't include binary file. Can't open";
@@ -130,7 +130,7 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_Image.H>\n");
       image_header_written = write_number;
     }
-    write_c("static unsigned char %s[] =\n",
+    write_c("static const unsigned char %s[] =\n",
 	    unique_id(this, "idata", fl_filename_name(name()), 0));
     write_cdata(img->data()[0], (img->w() * img->d() + img->ld()) * img->h());
     write_c(";\n");
