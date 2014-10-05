@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0302 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <stdio.h>} {public global
@@ -346,7 +346,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {1 234 1045 580} type Double visible
+    xywh {115 293 1045 580} type Double visible
   } {
     Fl_Group tree {
       label Tree

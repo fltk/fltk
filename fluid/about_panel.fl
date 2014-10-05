@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0302 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -29,7 +29,7 @@ Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {680 247 345 180} type Double color 50 selection_color 47 hotspot non_modal visible
+    xywh {513 213 345 180} type Double color 50 selection_color 47 hotspot non_modal visible
   } {
     Fl_Box {} {
       image {icons/fluid-96.xpm} xywh {10 10 115 120}
@@ -37,7 +37,7 @@ Function {make_about_panel()} {open
     Fl_Box {} {
       label {FLTK User
 Interface Designer
-Version x.x.x} selected
+Version x.x.x}
       xywh {135 10 205 75} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
       code0 {char about[80]; // uses less than 60}
       code1 {snprintf(about,sizeof(about),"FLTK User\\nInterface Designer\\nVersion %d.%d.%d",FL_MAJOR_VERSION,FL_MINOR_VERSION,FL_PATCH_VERSION);}
@@ -45,7 +45,7 @@ Version x.x.x} selected
     }
     Fl_Box {} {
       label {Copyright 1998-2014 by
-Bill Spitzak and others}
+Bill Spitzak and others} selected
       xywh {135 90 200 45} align 148
     }
     Fl_Button {} {

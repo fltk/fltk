@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -43,7 +43,7 @@ Function {make_widget_panel()} {open
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb
+            callback label_cb selected
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
           }
@@ -126,7 +126,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Choice {} {
-            callback align_text_image_cb open selected
+            callback align_text_image_cb open
             xywh {172 115 110 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {

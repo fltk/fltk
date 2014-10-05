@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -22,21 +22,26 @@ comment {//
 } {in_source in_header
 } 
 
-decl {\#include <stdio.h>} {} 
+decl {\#include <stdio.h>} {private local
+} 
 
-decl {\#include <stdlib.h>} {} 
+decl {\#include <stdlib.h>} {private local
+} 
 
-decl {\#include "../src/flstring.h"} {} 
+decl {\#include "../src/flstring.h"} {private local
+} 
 
-decl {\#include <FL/Fl_Preferences.H>} {} 
+decl {\#include <FL/Fl_Preferences.H>} {private local
+} 
 
-decl {extern Fl_Preferences fluid_prefs;} {} 
+decl {extern Fl_Preferences fluid_prefs;} {private local
+} 
 
 Function {make_print_panel()} {open
 } {
   Fl_Window print_panel {
     label Print open
-    xywh {342 21 465 235} type Double modal visible
+    xywh {394 209 465 235} type Double modal visible
   } {
     Fl_Group print_panel_controls {open
       xywh {10 10 447 216}
@@ -48,7 +53,7 @@ Function {make_print_panel()} {open
       } {}
       Fl_Button print_properties {
         label {Properties...}
-        callback {print_properties_panel->show();}
+        callback {print_properties_panel->show();} selected
         xywh {294 10 105 25}
       }
       Fl_Box print_status {
@@ -100,7 +105,7 @@ print_to->deactivate();}
   print_collate_button->activate();
   print_collate_group[0]->activate();
   print_collate_group[1]->activate();
-}} selected
+}}
           xywh {321 96 45 25} when 1
         }
         Fl_Check_Button print_collate_button {
@@ -210,7 +215,7 @@ print_collate_group[1 - i]->hide();}
     label {Printer Properties}
     callback {print_properties_panel->hide();
 print_update_status();} open
-    xywh {340 213 290 130} type Double modal visible
+    xywh {400 537 290 130} type Double modal visible
   } {
     Fl_Choice print_page_size {
       label {Page Size:}
@@ -274,7 +279,7 @@ print_update_status();}
   }
 } 
 
-decl {void print_cb(Fl_Return_Button *, void *);} {public
+decl {void print_cb(Fl_Return_Button *, void *);} {public local
 } 
 
 Function {print_load()} {open return_type void

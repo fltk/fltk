@@ -3,7 +3,7 @@
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2014 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -251,7 +251,7 @@ libfltk.1.3.dylib: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.2 \
+		-current_version 1.3.3 \
 		-compatibility_version 1.3.0 \
 		$(OBJECTS) $(LDLIBS)
 	$(RM) libfltk.dylib
@@ -287,7 +287,7 @@ libfltk_forms.1.3.dylib: $(FLOBJECTS) libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.2 \
+		-current_version 1.3.3 \
 		-compatibility_version 1.3.0 \
 		$(FLOBJECTS) -L. $(LDLIBS) -lfltk
 	$(RM) libfltk_forms.dylib
@@ -323,7 +323,7 @@ libfltk_gl.1.3.dylib: $(GLOBJECTS) libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.2 \
+		-current_version 1.3.3 \
 		-compatibility_version 1.3.0 \
 		$(GLOBJECTS) -L. $(GLDLIBS) -lfltk
 	$(RM) libfltk_gl.dylib
@@ -359,7 +359,7 @@ libfltk_images.1.3.dylib: $(IMGOBJECTS) libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.2 \
+		-current_version 1.3.3 \
 		-compatibility_version 1.3.0 \
 		$(IMGOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.dylib

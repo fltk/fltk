@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -22,32 +22,45 @@ comment {//
 } {in_source in_header
 } 
 
-decl {\#include <stdio.h>} {} 
+decl {\#include <stdio.h>} {private local
+} 
 
-decl {\#include <stdlib.h>} {} 
+decl {\#include <stdlib.h>} {private local
+} 
 
-decl {\#include "../src/flstring.h"} {} 
+decl {\#include "../src/flstring.h"} {private local
+} 
 
-decl {\#include <errno.h>} {} 
+decl {\#include <errno.h>} {private local
+} 
 
-decl {\#include <FL/filename.H>} {} 
+decl {\#include <FL/filename.H>} {private local
+} 
 
-decl {\#include <FL/fl_ask.H>} {} 
+decl {\#include <FL/fl_ask.H>} {private local
+} 
 
-decl {\#include <FL/Fl_Shared_Image.H>} {} 
+decl {\#include <FL/Fl_Shared_Image.H>} {private local
+} 
 
-decl {\#include <FL/Fl_Preferences.H>} {} 
+decl {\#include <FL/Fl_Preferences.H>} {private local
+} 
 
 declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {after {\#endif // WIN32 && !__CYGWIN__}
 } {
-  decl {\#include <io.h>} {}
-  decl {\#else} {}
-  decl {\#include <unistd.h>} {}
+  decl {\#include <io.h>} {private local
+  }
+  decl {\#else} {private local
+  }
+  decl {\#include <unistd.h>} {private local
+  }
 } 
 
-decl {extern Fl_Preferences fluid_prefs;} {} 
+decl {extern Fl_Preferences fluid_prefs;} {private local
+} 
 
-Function {make_template_panel()} {} {
+Function {make_template_panel()} {open
+} {
   Fl_Window template_panel {
     label {New/Save Template}
     callback {Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
@@ -58,7 +71,7 @@ template_browser->deselect();
 template_name->value("");
 template_instance->value("");
 template_panel->hide();} open
-    xywh {340 237 460 355} type Double resizable modal visible
+    xywh {398 200 460 355} type Double resizable modal visible
   } {
     Fl_Browser template_browser {
       label {Available Templates:}
@@ -116,7 +129,7 @@ if (img) {
       callback {if (strlen(template_name->value())) {
   template_submit->activate();
   if (Fl::event_key() == FL_Enter) template_panel->hide();
-} else template_submit->deactivate();}
+} else template_submit->deactivate();} selected
       xywh {144 288 306 25} labelfont 1 when 3 textfont 4
     }
     Fl_Input template_instance {
@@ -172,7 +185,7 @@ template_browser->deselect();
 template_browser->clear();} {}
 } 
 
-Function {template_delete_cb(Fl_Button *, void *)} {selected return_type void
+Function {template_delete_cb(Fl_Button *, void *)} {return_type void
 } {
   code {int item = template_browser->value();
 if (item < 1) return;

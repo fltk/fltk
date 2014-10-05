@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0302 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -58,10 +58,11 @@ decl {extern Fl_Preferences fluid_prefs;} {public local
 decl {Fl_Text_Buffer *shell_run_buffer;} {public local
 } 
 
-Function {make_project_window()} {} {
+Function {make_project_window()} {open
+} {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {393 460 399 252} type Double
+    xywh {396 475 399 252} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -128,7 +129,7 @@ Function {make_project_window()} {} {
         }
         Fl_Input i18n_include_input {
           label {\#include:}
-          callback i18n_text_cb
+          callback i18n_text_cb selected
           tooltip {The include file for internationalization.} xywh {100 78 272 20} box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_file_input {
@@ -264,7 +265,7 @@ load_history();}
 Function {make_shell_window()} {} {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {741 195 365 125} type Double visible
+    xywh {761 190 365 125} type Double visible
   } {
     Fl_Input shell_command_input {
       label {Command:}
@@ -329,7 +330,7 @@ Function {make_shell_window()} {} {
 Function {make_layout_window()} {} {
   Fl_Window grid_window {
     label {Layout Settings} open
-    xywh {760 427 310 245} type Double non_modal visible
+    xywh {812 369 310 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
       label x
@@ -519,14 +520,13 @@ fl_message(
 	"ALL users on this machine.\\n\\n"
 	"Please choose these settings carefully, or reset\\n"
 	"user and system settings to \\"default\\".");
-global_settings_window->show();} {selected
-  }
+global_settings_window->show();} {}
 } 
 
 Function {make_global_settings_window()} {} {
   Fl_Window global_settings_window {
     label {FLTK Preferences} open
-    xywh {1148 148 400 378} type Double color 50 visible
+    xywh {1147 190 400 378} type Double color 50 visible
   } {
     Fl_Group {} {
       label {Keyboard Focus Options} open

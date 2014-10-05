@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0303 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -132,7 +132,7 @@ Function {make_code_panel()} {open
     label {Code Properties}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
     return; // ignore Escape
-code_panel->hide(); // otherwise hide..} open selected
+code_panel->hide(); // otherwise hide..} open
     xywh {353 262 540 180} type Double labelsize 11 resizable
     code0 {o->size_range(200, 150);} modal visible
   } {
@@ -410,7 +410,7 @@ Function {make_data_panel()} {open
 Function {make_class_panel()} {} {
   Fl_Window class_panel {
     label {Class Properties} open
-    xywh {395 191 342 196} type Double labelsize 11 resizable modal size_range {343 188 0 0} visible
+    xywh {783 191 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -456,8 +456,8 @@ Function {make_class_panel()} {} {
 
 Function {make_comment_panel()} {} {
   Fl_Window comment_panel {
-    label {Comment Properties} open
-    xywh {422 190 550 280} type Double labelsize 11 resizable
+    label {Comment Properties} open selected
+    xywh {780 296 550 280} type Double labelsize 11 resizable
     code0 {o->size_range(320, 180);} modal visible
   } {
     Fl_Text_Editor comment_input {
@@ -528,7 +528,7 @@ Function {make_widgetbin()} {open
   exit_cb((Fl_Widget*)o, v);
 else  
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {410 171 574 85} type Single align 80 non_modal visible
+    xywh {410 171 574 85} type Single align 80 hide non_modal
   } {
     Fl_Group {} {
       xywh {3 3 79 79}
@@ -881,7 +881,7 @@ Function {make_sourceview()} {} {
   Fl_Window sourceview_panel {
     label {Code View}
     callback toggle_sourceview_cb
-    xywh {430 273 520 490} type Double align 80 resizable size_range {384 120 0 0} visible
+    xywh {430 273 520 490} type Double align 80 hide resizable size_range {384 120 0 0}
   } {
     Fl_Tabs sv_tab {
       callback update_sourceview_position_cb
@@ -889,7 +889,7 @@ Function {make_sourceview()} {} {
     } {
       Fl_Group {} {
         label Source open
-        xywh {10 35 500 415} labelsize 13 hide resizable
+        xywh {10 35 500 415} labelsize 13 resizable
       } {
         Fl_Text_Editor sv_source {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
@@ -899,7 +899,7 @@ Function {make_sourceview()} {} {
       }
       Fl_Group {} {
         label Header open
-        xywh {10 35 500 415} labelsize 13
+        xywh {10 35 500 415} labelsize 13 hide
       } {
         Fl_Text_Editor sv_header {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable

@@ -3,7 +3,7 @@
  \page preface Preface
 
 This manual describes the Fast Light Tool Kit ("FLTK")
-version 1.3.2, a C++ Graphical User Interface
+version 1.3.3, a C++ Graphical User Interface
 ("GUI") toolkit for UNIX, Microsoft Windows and Apple OS X. Each
 of the chapters in this manual is designed as a tutorial for
 using FLTK, while the appendices provide a convenient reference
@@ -75,7 +75,7 @@ was dropped after FLTK 1.0.10. FLTK uses the preprocessor definition
 
 \section preface_copyrights Copyrights and Trademarks
 
-FLTK is Copyright 1998-2012 by Bill Spitzak and others.  Use and
+FLTK is Copyright 1998-2014 by Bill Spitzak and others.  Use and
 distribution of FLTK is governed by the GNU Library General Public
 License with 4 exceptions, located in \ref license.
 

@@ -53,7 +53,7 @@ libfltk_cairo.1.3.dylib: $(CAIROOBJECTS) ../src/libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.2 \
+		-current_version 1.3.3 \
 		-compatibility_version 1.3.0 \
 		$(CAIROOBJECTS)  -L../src $(LDLIBS) $(CAIROLIBS) -lfltk
 	$(RM) libfltk_cairo.dylib
