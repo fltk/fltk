@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0303 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,31 +19,55 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
+// ========================================================================
+//  DO NOT EDIT FL/Fl_File_Chooser.H and src/Fl_File_Chooser.cxx !!!
+// ========================================================================
+//  Please use fluid to change src/Fl_File_Chooser.fl interactively
+//  and then use fluid to "write code" or edit and use fluid -c .
+// ========================================================================
+//
 } {in_source in_header
 } 
 
-decl {\#include <FL/fl_draw.H>} {} 
+decl {\#include <FL/fl_draw.H>} {private local
+} 
 
 class FL_EXPORT Fl_File_Chooser {open
 } {
-  decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public
+  decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public local
   }
-  decl {static Fl_Preferences prefs_;} {}
-  decl {void (*callback_)(Fl_File_Chooser*, void *);} {}
-  decl {void *data_;} {}
-  decl {char directory_[FL_PATH_MAX];} {}
-  decl {char pattern_[FL_PATH_MAX];} {}
-  decl {char preview_text_[2048];} {}
-  decl {int type_;} {}
-  decl {void favoritesButtonCB();} {}
-  decl {void favoritesCB(Fl_Widget *w);} {}
-  decl {void fileListCB();} {}
-  decl {void fileNameCB();} {}
-  decl {void newdir();} {}
-  decl {static void previewCB(Fl_File_Chooser *fc);} {}
-  decl {void showChoiceCB();} {}
-  decl {void update_favorites();} {}
-  decl {void update_preview();} {}
+  decl {static Fl_Preferences prefs_;} {private local
+  }
+  decl {void (*callback_)(Fl_File_Chooser*, void *);} {private local
+  }
+  decl {void *data_;} {private local
+  }
+  decl {char directory_[FL_PATH_MAX];} {private local
+  }
+  decl {char pattern_[FL_PATH_MAX];} {private local
+  }
+  decl {char preview_text_[2048];} {private local
+  }
+  decl {int type_;} {private local
+  }
+  decl {void favoritesButtonCB();} {private local
+  }
+  decl {void favoritesCB(Fl_Widget *w);} {private local
+  }
+  decl {void fileListCB();} {private local
+  }
+  decl {void fileNameCB();} {private local
+  }
+  decl {void newdir();} {private local
+  }
+  decl {static void previewCB(Fl_File_Chooser *fc);} {private local
+  }
+  decl {void showChoiceCB();} {private local
+  }
+  decl {void update_favorites();} {private local
+  }
+  decl {void update_preview();} {private local
+  }
   Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
     code {Fl_Group *prev_current = Fl_Group::current();} {}
     Fl_Window window {
@@ -119,7 +143,7 @@ window->hide();} open
         Fl_File_Input fileName {
           callback {fileNameCB();}
           private xywh {115 300 365 35} labelfont 1 when 8 resizable
-          code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);}
+          code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
         }
         Fl_Box {} {
           label {Filename:}
@@ -238,15 +262,15 @@ data_     = d;} {}
   } {
     code {return (fileList->color());} {}
   }
-  decl {int count();} {public
+  decl {int count();} {public local
   }
-  decl {void directory(const char *d);} {public
+  decl {void directory(const char *d);} {public local
   }
   Function {directory()} {return_type {char *}
   } {
     code {return directory_;} {}
   }
-  decl {void filter(const char *p);} {public
+  decl {void filter(const char *p);} {public local
   }
   Function {filter()} {return_type {const char *}
   } {
@@ -294,19 +318,19 @@ okButton->parent()->init_sizes();} {}
   } {
     code {return (okButton->label());} {}
   }
-  decl {void preview(int e);} {public
+  decl {void preview(int e);} {public local
   }
-  decl {int preview() const { return previewButton->value(); }} {public
+  decl {int preview() const { return previewButton->value(); }} {public local
   }
-  decl {void showHidden(int e);} {private
+  decl {void showHidden(int e);} {private local
   }
-  decl {void remove_hidden_files();} {private
+  decl {void remove_hidden_files();} {private local
   }
-  decl {void rescan();} {public
+  decl {void rescan();} {public local
   }
-  decl {void rescan_keep_filename();} {public
+  decl {void rescan_keep_filename();} {public local
   }
-  decl {void show();} {public
+  decl {void show();} {public local
   }
   Function {shown()} {return_type int
   } {
@@ -364,61 +388,62 @@ else
   } {
     code {data_ = d;} {}
   }
-  decl {const char *value(int f = 1);} {public
+  decl {const char *value(int f = 1);} {public local
   }
-  decl {void value(const char *filename);} {public
+  decl {void value(const char *filename);} {public local
   }
   Function {visible()} {return_type int
   } {
     code {return window->visible();} {}
   }
   decl {static const char *add_favorites_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *all_files_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *custom_filter_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *existing_file_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *favorites_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *filename_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *filesystems_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *manage_favorites_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *new_directory_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *new_directory_tooltip;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *preview_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *save_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *show_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static const char *hidden_label;} {
-    comment {[standard text may be customized at run-time]} public
+    comment {[standard text may be customized at run-time]} public local
   }
   decl {static Fl_File_Sort_F *sort;} {
     comment {the sort function that is used when loading
-the contents of a directory.} public
+the contents of a directory.} public local
   }
-  decl {Fl_Widget* ext_group;} {}
+  decl {Fl_Widget* ext_group;} {private local
+  }
   Function {add_extra(Fl_Widget* gr)} {open return_type {Fl_Widget*}
   } {
     code {Fl_Widget* ret=ext_group;} {}
@@ -451,16 +476,16 @@ window->resizable(svres);} {}
   }
 } 
 
-decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);} {public
+decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);} {public local
 } 
 
-decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);} {public
+decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);} {public local
 } 
 
-decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public
+decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public local
 } 
 
-decl {FL_EXPORT void fl_file_chooser_ok_label(const char*l);} {public
+decl {FL_EXPORT void fl_file_chooser_ok_label(const char*l);} {public local
 } 
 
 comment {
