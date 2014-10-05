@@ -18,11 +18,11 @@ this is often useful to know when programming.
 
 The FLTK version number is stored in a number of compile-time constants:
 
-\li FL_MAJOR_VERSION - The major release number, currently  1. 
-\li FL_MINOR_VERSION - The minor release number, currently  3. 
-\li FL_PATCH_VERSION - The patch release number, currently  2. 
+\li FL_MAJOR_VERSION - The major release number, currently  1
+\li FL_MINOR_VERSION - The minor release number, currently  3
+\li FL_PATCH_VERSION - The patch release number, currently  3
 \li FL_VERSION - A combined floating-point version  number for
-    the major, minor, and patch release numbers, currently 1.0302. 
+    the major, minor, and patch release numbers, currently 1.0303
 
 
 \section enumerations_events Events
