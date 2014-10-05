@@ -1305,6 +1305,13 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lowe
   return (long)total;
 }
 
+/* Internal function to reduce "deprecated" warnings for XKeycodeToKeysym().
+   This way we get only one warning. The option to use XkbKeycodeToKeysym()
+   instead would not help much - see STR #2913 for more information.
+*/
+static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
+  return XKeycodeToKeysym(d, k, i);
+}
 
 int fl_handle(const XEvent& thisevent)
 {
@@ -1784,7 +1791,7 @@ fprintf(stderr,"\n");*/
 	  len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
 			     kp_buffer, kp_buffer_len, &keysym, &status);
 	}
-	keysym = XKeycodeToKeysym(fl_display, keycode, 0);
+	keysym = fl_KeycodeToKeysym(fl_display, keycode, 0);
       } else {
         //static XComposeStatus compose;
         len = XLookupString((XKeyEvent*)&(xevent.xkey),
@@ -1796,7 +1803,7 @@ fprintf(stderr,"\n");*/
           if (len < 1) len = 1;
           // ignore all effects of shift on the keysyms, which makes it a lot
           // easier to program shortcuts and is Windoze-compatible:
-          keysym = XKeycodeToKeysym(fl_display, keycode, 0);
+          keysym = fl_KeycodeToKeysym(fl_display, keycode, 0);
         }
       }
       kp_buffer[len] = 0;
@@ -1839,7 +1846,7 @@ fprintf(stderr,"\n");*/
       event = FL_KEYUP;
       fl_key_vector[keycode/8] &= ~(1 << (keycode%8));
       // keyup events just get the unshifted keysym:
-      keysym = XKeycodeToKeysym(fl_display, keycode, 0);
+      keysym = fl_KeycodeToKeysym(fl_display, keycode, 0);
     }
 #  ifdef __sgi
     // You can plug a microsoft keyboard into an sgi but the extra shift
@@ -1932,7 +1939,7 @@ fprintf(stderr,"\n");*/
     if (keysym >= 0xff91 && keysym <= 0xff9f) {
       // Map keypad keysym to character or keysym depending on
       // numlock state...
-      unsigned long keysym1 = XKeycodeToKeysym(fl_display, keycode, 1);
+      unsigned long keysym1 = fl_KeycodeToKeysym(fl_display, keycode, 1);
       if (keysym1 <= 0x7f || (keysym1 > 0xff9f && keysym1 <= FL_KP_Last))
         Fl::e_original_keysym = (int)(keysym1 | FL_KP);
       if ((xevent.xkey.state & Mod2Mask) &&
