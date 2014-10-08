@@ -790,23 +790,8 @@ static HWND clipboard_wnd = 0;
 static HWND next_clipboard_wnd = 0;
 
 static bool initial_clipboard = true;
-void fl_clipboard_notify_target(HWND wnd);
 
-void fl_clipboard_notify_change() {
-  // untarget clipboard monitor if no handlers are registered
-  if (clipboard_wnd != NULL && fl_clipboard_notify_empty())
-  {
-    fl_clipboard_notify_untarget(clipboard_wnd);
-    return;
-  }
-
-  // if there are clipboard notify handlers but no window targeted
-  // target first window if available
-  if (clipboard_wnd == NULL && Fl::first_window())
-    fl_clipboard_notify_target(fl_xid(Fl::first_window()));
-}
-
-void fl_clipboard_notify_target(HWND wnd) {
+static void fl_clipboard_notify_target(HWND wnd) {
   if (clipboard_wnd)
     return;
 
@@ -818,14 +803,37 @@ void fl_clipboard_notify_target(HWND wnd) {
   next_clipboard_wnd = SetClipboardViewer(wnd);
 }
 
-void fl_clipboard_notify_untarget(HWND wnd) {
+static void fl_clipboard_notify_untarget(HWND wnd) {
   if (wnd != clipboard_wnd)
     return;
 
   ChangeClipboardChain(wnd, next_clipboard_wnd);
   clipboard_wnd = next_clipboard_wnd = 0;
+}
+
+void fl_clipboard_notify_retarget(HWND wnd) {
+  // The given window is getting destroyed. If it's part of the
+  // clipboard chain then we need to unregister it and find a
+  // replacement window.
+  if (wnd != clipboard_wnd)
+    return;
+
+  fl_clipboard_notify_untarget(wnd);
 
   if (Fl::first_window())
+    fl_clipboard_notify_target(fl_xid(Fl::first_window()));
+}
+
+void fl_clipboard_notify_change() {
+  // untarget clipboard monitor if no handlers are registered
+  if (clipboard_wnd != NULL && fl_clipboard_notify_empty()) {
+    fl_clipboard_notify_untarget(clipboard_wnd);
+    return;
+  }
+
+  // if there are clipboard notify handlers but no window targeted
+  // target first window if available
+  if (clipboard_wnd == NULL && Fl::first_window())
     fl_clipboard_notify_target(fl_xid(Fl::first_window()));
 }
 

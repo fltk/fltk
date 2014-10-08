@@ -1464,7 +1464,7 @@ int Fl::handle_(int e, Fl_Window* window)
 // hide() destroys the X window, it does not do unmap!
 
 #if defined(WIN32)
-extern void fl_clipboard_notify_untarget(HWND wnd);
+extern void fl_clipboard_notify_retarget(HWND wnd);
 extern void fl_update_clipboard(void);
 #elif USE_XFT
 extern void fl_destroy_xft_draw(Window);
@@ -1542,7 +1542,7 @@ void Fl_Window::hide() {
   if (GetClipboardOwner()==ip->xid)
     fl_update_clipboard();
   // Make sure we unlink this window from the clipboard chain
-  fl_clipboard_notify_untarget(ip->xid);
+  fl_clipboard_notify_retarget(ip->xid);
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
