@@ -201,6 +201,9 @@ static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
 #  define WHEEL_DELTA 120	// according to MSDN.
 #endif
 
+#ifndef SM_CXPADDEDBORDER
+#  define SM_CXPADDEDBORDER (92) // STR #3061
+#endif
 
 //
 // WM_FLSELECT is the user-defined message that we get when one of
@@ -1485,13 +1488,17 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   if (fallback) {
     if (w->border() && !w->parent()) {
       if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) {
-        ret = 2;
-        bx = GetSystemMetrics(SM_CXSIZEFRAME);
-        by = GetSystemMetrics(SM_CYSIZEFRAME);
+	ret = 2;
+	bx = GetSystemMetrics(SM_CXSIZEFRAME);
+	by = GetSystemMetrics(SM_CYSIZEFRAME);
       } else {
-        ret = 1;
-        bx = GetSystemMetrics(SM_CXFIXEDFRAME);
-        by = GetSystemMetrics(SM_CYFIXEDFRAME);
+	ret = 1;
+	int padding = GetSystemMetrics(SM_CXPADDEDBORDER);
+	NONCLIENTMETRICS ncm;
+	ncm.cbSize = sizeof(NONCLIENTMETRICS);
+	SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0);
+	bx = GetSystemMetrics(SM_CXFIXEDFRAME) + (padding ? padding + ncm.iBorderWidth : 0);
+	by = GetSystemMetrics(SM_CYFIXEDFRAME) + (padding ? padding + ncm.iBorderWidth : 0);
       }
       bt = GetSystemMetrics(SM_CYCAPTION);
     }
