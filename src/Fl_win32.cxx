@@ -82,9 +82,19 @@
   for async mode proper operation, not mentioning the side effects...
 */
 
+// Internal functions
+static void fl_clipboard_notify_target(HWND wnd);
+static void fl_clipboard_notify_untarget(HWND wnd);
+
+// Internal variables
 static Fl_GDI_Graphics_Driver fl_gdi_driver;
 static Fl_Display_Device fl_gdi_display(&fl_gdi_driver);
 Fl_Display_Device *Fl_Display_Device::_display = &fl_gdi_display; // the platform display
+
+static HWND clipboard_wnd = 0;
+static HWND next_clipboard_wnd = 0;
+
+static bool initial_clipboard = true;
 
 // dynamic wsock dll handling api:
 #if defined(__CYGWIN__) && !defined(SOCKET)
@@ -785,11 +795,6 @@ int Fl::clipboard_contains(const char *type)
   CloseClipboard();
   return retval;
 }
-
-static HWND clipboard_wnd = 0;
-static HWND next_clipboard_wnd = 0;
-
-static bool initial_clipboard = true;
 
 static void fl_clipboard_notify_target(HWND wnd) {
   if (clipboard_wnd)
