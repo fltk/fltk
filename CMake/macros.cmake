@@ -4,7 +4,7 @@
 # macros.cmake defines macros used by the build system
 # Written by Michael Surette
 #
-# Copyright 1998-2014 by Bill Spitzak and others.
+# Copyright 1998-2010 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -78,17 +78,8 @@ endmacro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 #######################################################################
 macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
-    set(srcs)			# source files
-    set(flsrcs)			# fluid source files
-
-    set(tname ${NAME})		# target name
-    set(oname ${NAME})		# output (executable) name
-
-    # rename reserved target name "help" (CMake 2.8.12 and later)
-    if(${tname} MATCHES "^help$")
-        set(tname "test_help")
-    endif(${tname} MATCHES "^help$")
-
+    set(srcs)
+    set(flsrcs)
     foreach(src ${SOURCES})
         if("${src}" MATCHES ".fl$")
             list(APPEND flsrcs ${src})
@@ -99,27 +90,24 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
     if(flsrcs)
         set(FLTK_WRAP_UI TRUE)
-        fltk_wrap_ui(${tname} ${flsrcs})
+        fltk_wrap_ui(${NAME} ${flsrcs})
     endif(flsrcs)
 
-    add_executable(${tname} WIN32 ${srcs} ${${tname}_FLTK_UI_SRCS})
-    set_target_properties(${tname}
-	PROPERTIES OUTPUT_NAME ${oname}
-	)
+    add_executable(${NAME} WIN32 ${srcs} ${${NAME}_FLTK_UI_SRCS})
 
-    target_link_libraries(${tname} ${LIBRARIES})
+    target_link_libraries(${NAME} ${LIBRARIES})
 
     # link in optional libraries
     if(USE_XFT)
-        target_link_libraries(${tname} ${X11_Xft_LIB})
+        target_link_libraries(${NAME} ${X11_Xft_LIB})
     endif(USE_XFT)
 
     if(HAVE_XINERAMA)
-        target_link_libraries(${tname} ${X11_Xinerama_LIB})
+        target_link_libraries(${NAME} ${X11_Xinerama_LIB})
     endif(HAVE_XINERAMA)
 
     # install the example
-    install(TARGETS ${tname}
+    install(TARGETS ${NAME}
         DESTINATION ${FLTK_EXAMPLES_PATH}
         )
 
