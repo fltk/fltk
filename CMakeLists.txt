@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2014 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,6 +16,10 @@
 #
 #     http://www.fltk.org/str.php
 #
+
+# Prevent annoying warning under Cygwin; this must be before project().
+# Remove when CMake >= 2.8.4 is required
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 project(FLTK)
 cmake_minimum_required(VERSION 2.6)

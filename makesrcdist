@@ -3,6 +3,11 @@
 # makesrcdist - make a distribution of FLTK.
 #
 
+TAR='tar'
+SVN='http://seriss.com/public/fltk/fltk'
+DOWNLOAD='http://fltk.org/pub/fltk'
+SNAPSHOTS='http://fltk.org/pub/fltk/snapshots'
+
 echo "Getting distribution..."
 
 if test $# = 0 -o "x$1" = xsnapshot; then
@@ -10,8 +15,9 @@ if test $# = 0 -o "x$1" = xsnapshot; then
 	svn up
 	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
 	version="1.3svn"
-	fileversion="1.3svn-r$rev"
-	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
+	fileversion="1.3.x-r$rev"
+	fileurl="$SNAPSHOTS/fltk-$fileversion.tar.gz"
+#	e.g. http://fltk.org/pub/fltk/snapshots/fltk-1.3.x-r10337.tar.gz
 	url="."
 else
 	if test ! -e "documentation/html/"; then
@@ -32,11 +38,16 @@ else
 	rev="1"
 	version=$1
 	fileversion=$1
-	fileurl="ftp://ftp.easysw.com/pub/fltk/$version/fltk-$fileversion-source.tar.bz2"
-	url="https://svn.easysw.com/public/fltk/fltk/tags/release-$version"
+	fileurl="$DOWNLOAD/$version/fltk-$fileversion-source.tar.gz"
+#	e.g. http://fltk.org/pub/fltk/1.3.2/fltk-1.3.2-source.tar.gz
 
-	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.3 "$url" \
+	if test "x$2" = xtest; then
+		url="."
+	else
+		url="$SVN/tags/release-$version"
+		svn copy $SVN/branches/branch-1.3 "$url" \
 		-m "Tag $version" || exit 1
+	fi
 fi
 
 echo Exporting $version...
@@ -72,10 +83,10 @@ cd ..
 
 if test $# != 0 -a "x$1" != xsnapshot; then
 	echo "Making HTML docs distribution..."
-	gtar czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
+	$TAR czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
 
 	echo "Making PDF docs distribution..."
-	gtar czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
+	$TAR czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
 fi
 
 echo "Removing documentation..."
@@ -83,10 +94,10 @@ rm -rf fltk-$version/documentation/html/
 rm -f fltk-$version/documentation/fltk.pdf
 
 echo "Making UNIX distribution..."
-gtar czf fltk-$fileversion-source.tar.gz fltk-$version
+$TAR czf fltk-$fileversion-source.tar.gz fltk-$version
 
 #echo "Making BZ2 distribution..."
-#gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
+#$TAR cjf fltk-$fileversion-source.tar.bz2 fltk-$version
 
 #echo "Making Windows distribution..."
 #rm -f fltk-$fileversion-source.zip
