@@ -25,7 +25,7 @@
 #include "Fl_Input.H"
 
 /**
-  This input field displays '\n' characters as new lines rather than ^J,
+  This input field displays '\\n' characters as new lines rather than ^J,
   and accepts the Return, Tab, and up and down arrow keys.  This is for
   editing multiline text.
 
