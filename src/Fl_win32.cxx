@@ -472,6 +472,11 @@ public:
     OleUninitialize();
     fl_brush_action(1);
     fl_cleanup_dc_list();
+    // This is actually too late in the cleanup process to remove the
+    // clipboard notifications, but we have no earlier hook so we try
+    // to work around it anyway.
+    if (clipboard_wnd != NULL)
+      fl_clipboard_notify_untarget(clipboard_wnd);
   }
 };
 static Fl_Win32_At_Exit win32_at_exit;
@@ -812,7 +817,30 @@ static void fl_clipboard_notify_untarget(HWND wnd) {
   if (wnd != clipboard_wnd)
     return;
 
-  ChangeClipboardChain(wnd, next_clipboard_wnd);
+  // We might be called late in the cleanup where Windows has already
+  // implicitly destroyed our clipboard window. At that point we need
+  // to do some extra work to manually repair the clipboard chain.
+  if (IsWindow(wnd))
+    ChangeClipboardChain(wnd, next_clipboard_wnd);
+  else {
+    HWND tmp, head;
+
+    tmp = CreateWindow("STATIC", "Temporary FLTK Clipboard Window", 0,
+                       0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
+    if (tmp == NULL)
+      return;
+
+    head = SetClipboardViewer(tmp);
+    if (head == NULL)
+      ChangeClipboardChain(tmp, next_clipboard_wnd);
+    else {
+      SendMessage(head, WM_CHANGECBCHAIN, (WPARAM)wnd, (LPARAM)next_clipboard_wnd);
+      ChangeClipboardChain(tmp, head);
+    }
+
+    DestroyWindow(tmp);
+  }
+
   clipboard_wnd = next_clipboard_wnd = 0;
 }
 
