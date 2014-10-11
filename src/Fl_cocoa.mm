@@ -3852,19 +3852,33 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   *bytesPerPixel = [bitmap bitsPerPixel]/8;
   int bpp = (int)[bitmap bytesPerPlane];
   int bpr = (int)[bitmap bytesPerRow];
-  int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason
-  int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1
-  unsigned char *data = new unsigned char[w * h *  *bytesPerPixel];
-  if (w == ww) {
-    memcpy(data, [bitmap bitmapData], w * hh *  *bytesPerPixel);
-  } else {
-    unsigned char *p = [bitmap bitmapData];
-    unsigned char *q = data;
-    for(int i = 0;i < hh; i++) {
-      memcpy(q, p, *bytesPerPixel * ww);
-      p += bpr;
-      q += w * *bytesPerPixel;
+  int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason, and hh = 2*h with retina
+  int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1, and ww = 2*w with retina
+  unsigned char *data;
+  if (ww > w) { // with a retina display
+    Fl_RGB_Image *rgb = new Fl_RGB_Image([bitmap bitmapData], ww, hh, 4);
+    Fl_RGB_Scaling save_scaling =Fl_RGB_Image::scaling();
+    Fl_RGB_Image::scaling(FL_SCALING_BILINEAR);
+    Fl_RGB_Image *rgb2 = (Fl_RGB_Image*)rgb->copy(w, h);
+    Fl_RGB_Image::scaling(save_scaling);
+    delete rgb;
+    rgb2->alloc_array = 0;
+    data = (uchar*)rgb2->array;
+    delete rgb2;
+  }
+  else {
+    data = new unsigned char[w * h *  *bytesPerPixel];
+    if (w == ww) {
+      memcpy(data, [bitmap bitmapData], w * hh *  *bytesPerPixel);
+    } else {
+      unsigned char *p = [bitmap bitmapData];
+      unsigned char *q = data;
+      for(int i = 0;i < hh; i++) {
+        memcpy(q, p, *bytesPerPixel * ww);
+        p += bpr;
+        q += w * *bytesPerPixel;
       }
+    }
   }
   return data;
 }
