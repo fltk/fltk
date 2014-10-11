@@ -3958,19 +3958,34 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   win->show();
   fl_gc = NULL;
   Fl::check();
+  BOOL to_quartz = dynamic_cast<Fl_Printer*>(this) != NULL;
   // capture the window title bar with no title
-  unsigned char *bitmap = Fl_X::bitmap_from_window_rect(win, 0, -bt, win->w(), bt, &bpp);
+  CGImageRef img = NULL;
+  unsigned char *bitmap = NULL;
+  if (to_quartz)
+    img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+  else
+    bitmap = Fl_X::bitmap_from_window_rect(win, 0, -bt, win->w(), bt, &bpp);
   win->label(title); // put back the window title
   // and print it
   this->set_current(); // back to the Fl_Paged_Device
-  Fl_RGB_Image *rgb = new Fl_RGB_Image(bitmap, win->w(), bt, bpp);
-  rgb->draw(x_offset, y_offset);
-  delete rgb;
-  delete[] bitmap;
+  if (img && to_quartz) {
+    CGRect rect = { { x_offset, y_offset }, { win->w(), bt } };
+    Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
+    CGContextDrawImage(fl_gc, rect, img);
+    Fl_X::q_end_image();
+    CFRelease(img);
+  }
+  else if(!to_quartz) {
+    Fl_RGB_Image *rgb = new Fl_RGB_Image(bitmap, win->w(), bt, bpp);
+    rgb->draw(x_offset, y_offset);
+    delete rgb;
+    delete[] bitmap;
+  }
   if (title) { // print the window title
     const int skip = 68; // approx width of the zone of the 3 window control buttons
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-    if (fl_mac_os_version >= 100400 && dynamic_cast<Fl_Printer*>(this)) { // use Cocoa string drawing with exact title bar font
+    if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
       NSGraphicsContext *current = [NSGraphicsContext currentContext];
       [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
       NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] 
