@@ -90,11 +90,11 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
     endif(${tname} MATCHES "^help$")
 
     foreach(src ${SOURCES})
-        if("${src}" MATCHES ".fl$")
+        if("${src}" MATCHES "\\.fl$")
             list(APPEND flsrcs ${src})
         else()
             list(APPEND srcs ${src})
-        endif("${src}" MATCHES ".fl$")
+        endif("${src}" MATCHES "\\.fl$")
     endforeach(src)
 
     if(flsrcs)
