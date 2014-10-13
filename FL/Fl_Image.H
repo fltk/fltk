@@ -16,8 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-/* \file
-   Fl_Image, Fl_RGB_Image classes . */
+/** \file
+   Fl_Image, Fl_RGB_Image classes. */
 
 #ifndef Fl_Image_H
 #  define Fl_Image_H
@@ -154,12 +154,13 @@ class FL_EXPORT Fl_Image {
   virtual void uncache();
 };
 
-/// \enum Fl_RGB_Scaling
-/// The scaling algorithm to use.
-///
+/** \enum Fl_RGB_Scaling
+ The image-scaling algorithm to use.
+ */
+
 enum Fl_RGB_Scaling {
-	FL_SCALING_NEAREST = 0,
-	FL_SCALING_BILINEAR
+	FL_SCALING_NEAREST = 0, ///< default RGB image-scaling algorithm
+	FL_SCALING_BILINEAR ///< alternative, slower and more accurate RGB image-scaling algorithm
 };
 
 /**
