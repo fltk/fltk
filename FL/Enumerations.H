@@ -931,7 +931,7 @@ enum Fl_Cursor {
   FL_CURSOR_W          = 36, /**< leftwards resize. */
   FL_CURSOR_NW         = 68, /**< upwards, left resize. */
 
-  FL_CURSOR_NONE       =255, /**< invisible. */
+  FL_CURSOR_NONE       =255  /**< invisible. */
 };
 /*@}*/		// group: Cursors  
 
