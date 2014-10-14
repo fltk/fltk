@@ -30,7 +30,7 @@ class Fl_Pixmap;
 struct Fl_Menu_Item;
 struct Fl_Label;
 
-/** \enum Fl_RGB_Scaling.
+/** \enum Fl_RGB_Scaling
     The scaling algorithm to use for RGB images.
 */
 enum Fl_RGB_Scaling {
