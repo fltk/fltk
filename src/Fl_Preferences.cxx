@@ -1216,7 +1216,7 @@ int Fl_Preferences::RootNode::write() {
 // get the path to the preferences directory
 char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
   if (!filename_)   // RUNTIME preferences
-    return -1; 
+    return 1; // return 1 (not -1) to be consistent with fl_make_path()
   strlcpy( path, filename_, pathlen); 
 
   char *s;
