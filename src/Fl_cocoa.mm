@@ -3,7 +3,7 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2013 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -3857,10 +3857,10 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   unsigned char *data;
   if (ww > w) { // with a retina display
     Fl_RGB_Image *rgb = new Fl_RGB_Image([bitmap bitmapData], ww, hh, 4);
-    Fl_RGB_Scaling save_scaling =Fl_RGB_Image::scaling();
-    Fl_RGB_Image::scaling(FL_SCALING_BILINEAR);
+    Fl_RGB_Scaling save_scaling = Fl_Image::RGB_scaling();
+    Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR);
     Fl_RGB_Image *rgb2 = (Fl_RGB_Image*)rgb->copy(w, h);
-    Fl_RGB_Image::scaling(save_scaling);
+    Fl_Image::RGB_scaling(save_scaling);
     delete rgb;
     rgb2->alloc_array = 0;
     data = (uchar*)rgb2->array;

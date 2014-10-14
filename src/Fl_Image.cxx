@@ -3,7 +3,7 @@
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -33,6 +33,8 @@ void fl_restore_clip(); // from fl_rect.cxx
 //
 // Base image class...
 //
+
+Fl_RGB_Scaling Fl_Image::RGB_scaling_ = FL_RGB_SCALING_NEAREST;
 
 /**
   The destructor is a virtual method that frees all memory used
@@ -159,12 +161,23 @@ Fl_Image::measure(const Fl_Label *lo,		// I - Label
   lh = img->h();
 }
 
+/** Sets the RGB image scaling method used for copy(int, int).
+    Applies to all RGB images, defaults to FL_RGB_SCALING_NEAREST.
+*/
+void Fl_Image::RGB_scaling(Fl_RGB_Scaling method) {
+  RGB_scaling_ = method;
+}
+
+/** Returns the currently used RGB image scaling method. */
+Fl_RGB_Scaling Fl_Image::RGB_scaling() {
+  return RGB_scaling_;
+}
+
 
 //
 // RGB image class...
 //
 size_t Fl_RGB_Image::max_size_ = ~((size_t)0);
-Fl_RGB_Scaling Fl_RGB_Image::scaling_ = FL_SCALING_NEAREST;
 
 int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
 
@@ -261,7 +274,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   new_image = new Fl_RGB_Image(new_array, W, H, d());
   new_image->alloc_array = 1;
 
-  if (scaling_ == FL_SCALING_NEAREST) {
+  if (Fl_Image::RGB_scaling() == FL_RGB_SCALING_NEAREST) {
     // Scale the image using a nearest-neighbor algorithm...
     for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
       for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
@@ -284,7 +297,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
       }
     }
   } else {
-    // Bilinear scaling
+    // Bilinear scaling (FL_RGB_SCALING_BILINEAR)
     const float xscale = (w() - 1) / (float) W;
     const float yscale = (h() - 1) / (float) H;
     for (dy = 0; dy < H; dy++) {
@@ -677,14 +690,6 @@ void Fl_RGB_Image::label(Fl_Widget* widget) {
 void Fl_RGB_Image::label(Fl_Menu_Item* m) {
   Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
   m->label(_FL_IMAGE_LABEL, (const char*)this);
-}
-
-void Fl_RGB_Image::scaling(Fl_RGB_Scaling method) {
-	scaling_ = method;
-}
-
-Fl_RGB_Scaling Fl_RGB_Image::scaling() {
-	return scaling_;
 }
 
 //

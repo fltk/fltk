@@ -162,6 +162,8 @@ int main(int argc, char **argv)
   clip_callback(1, tabs); // use clipboard content at start
 #endif
   Fl::add_clipboard_notify(clip_callback, tabs); // will update with new clipboard content immediately or at application activation
+
+  Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR); // set bilinear image scaling method
   return Fl::run();
 }
 
