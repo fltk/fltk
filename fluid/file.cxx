@@ -379,7 +379,7 @@ static void read_children(Fl_Type *p, int paste) {
     if (!strcmp(c,"version")) {
       c = read_word();
       read_version = strtod(c,0);
-      if (read_version<=0 || read_version>FL_VERSION)
+      if (read_version<=0 || read_version>double(FL_VERSION+0.00001d))
         read_error("unknown version '%s'",c);
       continue;
     }
