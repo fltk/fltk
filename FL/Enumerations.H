@@ -27,7 +27,7 @@
  * in the current patch release of FLTK. ** Use for static builds only! **
  * For more info on this macro, see: http://fltk.org/cmp.php#FLTK_ABI_VERSION
  */
-//#define FLTK_ABI_VERSION 10303
+#define FLTK_ABI_VERSION 10303
 
 #  include "Fl_Export.H"
 #  include "fl_types.h"
@@ -36,7 +36,7 @@
 
     FLTK defines some constants to help the programmer to
     find out, for which FLTK version a program is compiled.
-    
+
     The following constants are defined:
  */
 /*@{*/
@@ -83,12 +83,12 @@
     or presses a key, an event is generated and sent to your
     application. Events can also come from other programs like the
     window manager.
-   
-    Events are identified by the integer argument passed to the 
-    Fl_Widget::handle() virtual method. Other information about the 
-    most recent event is stored in static locations and acquired  by 
-    calling the Fl::event_*() methods. This static information remains 
-    valid until the next event is read from the window system, so it 
+
+    Events are identified by the integer argument passed to the
+    Fl_Widget::handle() virtual method. Other information about the
+    most recent event is stored in static locations and acquired  by
+    calling the Fl::event_*() methods. This static information remains
+    valid until the next event is read from the window system, so it
     is ok to look at it outside of the handle() method.
 
     \sa Fl::event_text(), Fl::event_key(), class Fl::
@@ -98,22 +98,22 @@ enum Fl_Event {	// events
   FL_NO_EVENT		= 0,
 
   /** A mouse button has gone down with the mouse pointing at this
-      widget. You can find out what button by calling Fl::event_button(). 
+      widget. You can find out what button by calling Fl::event_button().
       You find out the mouse position by calling Fl::event_x() and
       Fl::event_y().
 
-      A widget indicates that it "wants" the mouse click by returning non-zero 
-      from its Fl_Widget::handle() method. It will then become the 
-      Fl::pushed() widget and will get FL_DRAG and the matching FL_RELEASE events.  
-      If Fl_Widget::handle() returns zero then FLTK will try sending the FL_PUSH 
-      to another widget. 
+      A widget indicates that it "wants" the mouse click by returning non-zero
+      from its Fl_Widget::handle() method. It will then become the
+      Fl::pushed() widget and will get FL_DRAG and the matching FL_RELEASE events.
+      If Fl_Widget::handle() returns zero then FLTK will try sending the FL_PUSH
+      to another widget.
    */
   FL_PUSH		= 1,
 
-  /** A mouse button has been released. You can find out what button by 
+  /** A mouse button has been released. You can find out what button by
       calling Fl::event_button().
 
-      In order to receive the FL_RELEASE event, the widget must return 
+      In order to receive the FL_RELEASE event, the widget must return
       non-zero when handling FL_PUSH.
    */
   FL_RELEASE		= 2,
@@ -122,64 +122,64 @@ enum Fl_Event {	// events
       be used for highlighting feedback.  If a widget wants to
       highlight or otherwise track the mouse, it indicates this by
       returning non-zero from its handle() method. It then
-      becomes the Fl::belowmouse() widget and will receive 
+      becomes the Fl::belowmouse() widget and will receive
       FL_MOVE and FL_LEAVE events.
    */
   FL_ENTER		= 3,
 
   /** The mouse has moved out of the widget.
-      In order to receive the FL_LEAVE event, the widget must 
+      In order to receive the FL_LEAVE event, the widget must
       return non-zero when handling FL_ENTER.
    */
   FL_LEAVE		= 4,
 
-  /** The mouse has moved with a button held down. The current button state 
-      is in Fl::event_state(). The mouse position is in Fl::event_x() and 
+  /** The mouse has moved with a button held down. The current button state
+      is in Fl::event_state(). The mouse position is in Fl::event_x() and
       Fl::event_y().
 
-      In order to receive FL_DRAG events, the widget must return non-zero 
+      In order to receive FL_DRAG events, the widget must return non-zero
       when handling FL_PUSH.
    */
   FL_DRAG		= 5,
 
   /** This indicates an <I>attempt</I> to give a widget the keyboard focus.
 
-      If a widget wants the focus, it should change itself to display the 
+      If a widget wants the focus, it should change itself to display the
       fact that it has the focus, and return non-zero from its handle() method.
-      It then becomes the Fl::focus() widget and gets FL_KEYDOWN, FL_KEYUP, 
+      It then becomes the Fl::focus() widget and gets FL_KEYDOWN, FL_KEYUP,
       and FL_UNFOCUS events.
 
-      The focus will change either because the window manager changed which 
-      window gets the focus, or because the user tried to navigate using tab, 
-      arrows, or other keys. You can check Fl::event_key() to figure out why 
-      it moved. For navigation it will be the key pressed and for interaction 
+      The focus will change either because the window manager changed which
+      window gets the focus, or because the user tried to navigate using tab,
+      arrows, or other keys. You can check Fl::event_key() to figure out why
+      it moved. For navigation it will be the key pressed and for interaction
       with the window manager it will be zero.
    */
   FL_FOCUS		= 6,
-  
-  /** This event is sent to the previous Fl::focus() widget when another 
+
+  /** This event is sent to the previous Fl::focus() widget when another
       widget gets the focus or the window loses focus.
    */
   FL_UNFOCUS		= 7,
 
-  /** A key was pressed (FL_KEYDOWN) or released (FL_KEYUP). 
+  /** A key was pressed (FL_KEYDOWN) or released (FL_KEYUP).
       Fl_KEYBOARD is a synonym for FL_KEYDOWN.
       The key can be found in Fl::event_key().
-      The text that the key should insert can be found with Fl::event_text() 
+      The text that the key should insert can be found with Fl::event_text()
       and its length is in Fl::event_length(). If you use the key handle()
-      should return 1. If you return zero then FLTK assumes you ignored the 
-      key and will then attempt to send it to a parent widget. If none of 
+      should return 1. If you return zero then FLTK assumes you ignored the
+      key and will then attempt to send it to a parent widget. If none of
       them want it, it will change the event into a FL_SHORTCUT event.
 
       To receive FL_KEYBOARD events you must also respond to the FL_FOCUS
       and FL_UNFOCUS events.
 
-      If you are writing a text-editing widget you may also want to call 
-      the Fl::compose() function to translate individual keystrokes into 
+      If you are writing a text-editing widget you may also want to call
+      the Fl::compose() function to translate individual keystrokes into
       non-ASCII characters.
 
-      FL_KEYUP events are sent to the widget that currently has focus. This 
-      is not necessarily the same widget that received the corresponding 
+      FL_KEYUP events are sent to the widget that currently has focus. This
+      is not necessarily the same widget that received the corresponding
       FL_KEYDOWN event because focus may have changed between events.
    */
   FL_KEYDOWN		= 8,
@@ -188,7 +188,7 @@ enum Fl_Event {	// events
       \see FL_KEYDOWN
    */
   FL_KEYBOARD		= 8,
- 
+
   /** Key release event.
       \see FL_KEYDOWN
    */
@@ -196,70 +196,70 @@ enum Fl_Event {	// events
 
   /** The user clicked the close button of a window.
       This event is used internally only to trigger the callback of
-      Fl_Window derived classed. The default callback closes the 
+      Fl_Window derived classed. The default callback closes the
       window calling Fl_Window::hide().
    */
   FL_CLOSE		= 10,
 
-  /** The mouse has moved without any mouse buttons held down. 
+  /** The mouse has moved without any mouse buttons held down.
       This event is sent to the Fl::belowmouse() widget.
 
-      In order to receive FL_MOVE events, the widget must return 
+      In order to receive FL_MOVE events, the widget must return
       non-zero when handling FL_ENTER.
    */
   FL_MOVE		= 11,
 
   /** If the Fl::focus() widget is zero or ignores an FL_KEYBOARD
-      event then FLTK tries sending this event to every widget it 
-      can, until one of them returns non-zero. FL_SHORTCUT is first 
-      sent to the Fl::belowmouse() widget, then its parents and siblings, 
-      and eventually to every widget in the window, trying to find an 
-      object that returns non-zero. FLTK tries really hard to not to ignore 
+      event then FLTK tries sending this event to every widget it
+      can, until one of them returns non-zero. FL_SHORTCUT is first
+      sent to the Fl::belowmouse() widget, then its parents and siblings,
+      and eventually to every widget in the window, trying to find an
+      object that returns non-zero. FLTK tries really hard to not to ignore
       any keystrokes!
 
-      You can also make "global" shortcuts by using Fl::add_handler(). A 
-      global shortcut will work no matter what windows are displayed or 
+      You can also make "global" shortcuts by using Fl::add_handler(). A
+      global shortcut will work no matter what windows are displayed or
       which one has the focus.
    */
   FL_SHORTCUT		= 12,
 
-  /** This widget is no longer active, due to Fl_Widget::deactivate() 
-      being called on it or one of its parents. Fl_Widget::active() may 
+  /** This widget is no longer active, due to Fl_Widget::deactivate()
+      being called on it or one of its parents. Fl_Widget::active() may
       still be true after this, the widget is only active if Fl_Widget::active()
       is true on it and all its parents (use Fl_Widget::active_r() to check this).
    */
   FL_DEACTIVATE		= 13,
 
-  /** This widget is now active, due to Fl_Widget::activate() being 
+  /** This widget is now active, due to Fl_Widget::activate() being
       called on it or one of its parents.
    */
   FL_ACTIVATE		= 14,
 
-  /** This widget is no longer visible, due to Fl_Widget::hide() being 
-      called on it or one of its parents, or due to a parent window being 
-      minimized.  Fl_Widget::visible() may still be true after this, but the 
-      widget is visible only if visible() is true for it and all its 
+  /** This widget is no longer visible, due to Fl_Widget::hide() being
+      called on it or one of its parents, or due to a parent window being
+      minimized.  Fl_Widget::visible() may still be true after this, but the
+      widget is visible only if visible() is true for it and all its
       parents (use Fl_Widget::visible_r() to check this).
    */
   FL_HIDE		= 15,
 
-  /** This widget is visible again, due to Fl_Widget::show() being called on 
-      it or one of its parents, or due to a parent window being restored. 
-      Child Fl_Windows respond to this by actually creating the window if not 
-      done already, so if you subclass a window, be sure to pass FL_SHOW 
+  /** This widget is visible again, due to Fl_Widget::show() being called on
+      it or one of its parents, or due to a parent window being restored.
+      Child Fl_Windows respond to this by actually creating the window if not
+      done already, so if you subclass a window, be sure to pass FL_SHOW
       to the base class Fl_Widget::handle() method!
    */
   FL_SHOW		= 16,
 
-  /** You should get this event some time after you call Fl::paste(). 
-      The contents of Fl::event_text() is the text to insert and the number 
+  /** You should get this event some time after you call Fl::paste().
+      The contents of Fl::event_text() is the text to insert and the number
       of characters is in Fl::event_length().
    */
   FL_PASTE		= 17,
 
-  /** The Fl::selection_owner() will get this event before the selection is 
-      moved to another widget. This indicates that some other widget or program 
-      has claimed the selection. Motif programs used this to clear the selection 
+  /** The Fl::selection_owner() will get this event before the selection is
+      moved to another widget. This indicates that some other widget or program
+      has claimed the selection. Motif programs used this to clear the selection
       indication. Most modern programs ignore this.
    */
   FL_SELECTIONCLEAR	= 18,
@@ -269,14 +269,14 @@ enum Fl_Event {	// events
    */
   FL_MOUSEWHEEL		= 19,
 
-  /** The mouse has been moved to point at this widget. A widget that is 
-      interested in receiving drag'n'drop data must return 1 to receive 
+  /** The mouse has been moved to point at this widget. A widget that is
+      interested in receiving drag'n'drop data must return 1 to receive
       FL_DND_DRAG, FL_DND_LEAVE and FL_DND_RELEASE events.
    */
   FL_DND_ENTER		= 20,
 
-  /** The mouse has been moved inside a widget while dragging data.  A 
-      widget that is interested in receiving drag'n'drop data should 
+  /** The mouse has been moved inside a widget while dragging data.  A
+      widget that is interested in receiving drag'n'drop data should
       indicate the possible drop position.
    */
   FL_DND_DRAG		= 21,
@@ -285,8 +285,8 @@ enum Fl_Event {	// events
    */
   FL_DND_LEAVE		= 22,
 
-  /** The user has released the mouse button dropping data into the widget. 
-      If the widget returns 1, it will receive the data in the immediately 
+  /** The user has released the mouse button dropping data into the widget.
+      If the widget returns 1, it will receive the data in the immediately
       following FL_PASTE event.
    */
   FL_DND_RELEASE	= 23,
@@ -326,7 +326,7 @@ enum Fl_When { // Fl_Widget::when():
 
 	\todo	FL_Button and FL_key... constants could be structured better
 		(use an enum or some doxygen grouping ?)
-  
+
 	\sa	Fl::event_key() and Fl::get_key(int) (use ascii letters for all other keys):
  */
 
@@ -338,7 +338,7 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_BackSpace	0xff08	///< The backspace key.
 #define FL_Tab		0xff09	///< The tab key.
 #define FL_Iso_Key	0xff0c  ///< The additional key of ISO keyboards.
-#define FL_Enter	0xff0d	///< The enter key. 
+#define FL_Enter	0xff0d	///< The enter key.
 #define FL_Pause	0xff13	///< The pause key.
 #define FL_Scroll_Lock	0xff14	///< The scroll lock key.
 #define FL_Escape	0xff1b	///< The escape key.
@@ -355,7 +355,7 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Page_Down	0xff56	///< The page-down key.
 #define FL_End		0xff57	///< The end key.
 #define FL_Print	0xff61	///< The print (or print-screen) key.
-#define FL_Insert	0xff63	///< The insert key. 
+#define FL_Insert	0xff63	///< The insert key.
 #define FL_Menu		0xff67	///< The menu key.
 #define FL_Help		0xff68	///< The 'help' key on Mac keyboards
 #define FL_Num_Lock	0xff7f	///< The num lock key.
@@ -372,7 +372,7 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Meta_L	0xffe7	///< The left meta/Windows key.
 #define FL_Meta_R	0xffe8	///< The right meta/Windows key.
 #define FL_Alt_L	0xffe9	///< The left alt key.
-#define FL_Alt_R	0xffea	///< The right alt key. 
+#define FL_Alt_R	0xffea	///< The right alt key.
 #define FL_Delete	0xffff	///< The delete key.
 
 // These use the Private Use Area (PUA) of the Basic Multilingual Plane
@@ -401,7 +401,7 @@ enum Fl_When { // Fl_Widget::when():
 /** \name Mouse Buttons
 
 	These constants define the button numbers for FL_PUSH and FL_RELEASE events.
-	
+
 	\sa Fl::event_button()
 */
 
@@ -440,7 +440,7 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_BUTTONS	0x7f000000	///< Any mouse button is pushed
 #define FL_BUTTON(n)	(0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
 
-#define FL_KEY_MASK 0x0000ffff		///< All keys are 16 bit for now 
+#define FL_KEY_MASK 0x0000ffff		///< All keys are 16 bit for now
 					//   FIXME: Unicode needs 24 bits!
 
 #ifdef __APPLE__
@@ -455,14 +455,14 @@ enum Fl_When { // Fl_Widget::when():
 
 /** \name Box Types
     \brief FLTK standard box types
-    
+
     This enum defines the standard box types included with FLTK.
-    
-    FL_NO_BOX means nothing is drawn at all, so whatever is already 
-    on the screen remains. The FL_..._FRAME types only draw their edges, 
-    leaving the interior unchanged. The blue color in Figure 1 
+
+    FL_NO_BOX means nothing is drawn at all, so whatever is already
+    on the screen remains. The FL_..._FRAME types only draw their edges,
+    leaving the interior unchanged. The blue color in Figure 1
     is the area that is not drawn by the frame types.
-    
+
     \image html boxtypes.png "Figure 1: FLTK standard box types"
     \image latex boxtypes.png "FLTK standard box types" width=10cm
     \todo	Description of boxtypes is incomplete.
@@ -620,9 +620,9 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
 
 /**
    The labeltype() method sets the type of the label.
-   
+
    The following standard label types are included:
-   
+
    \todo	The doxygen comments are incomplete, and some labeltypes
    		are starting with an underscore. Also, there are three
 		external functions undocumented (yet):
@@ -643,8 +643,8 @@ enum Fl_Labeltype {	// labeltypes:
   FL_FREE_LABELTYPE		///< first free labeltype to use for creating own labeltypes
 };
 
-/** 
-  Sets the current label type and return its corresponding Fl_Labeltype value. 
+/**
+  Sets the current label type and return its corresponding Fl_Labeltype value.
   @{
 */
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
@@ -656,9 +656,9 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
 /** @} */
 
-/** \name Alignment Flags 
-    Flags to control the label alignment. 
-    This controls how the label is displayed next to or inside the widget. 
+/** \name Alignment Flags
+    Flags to control the label alignment.
+    This controls how the label is displayed next to or inside the widget.
     The default value is FL_ALIGN_CENTER for most widgets, which centers the label
     inside the widget.
 
@@ -743,7 +743,7 @@ const Fl_Font FL_HELVETICA_BOLD         = 1;	///< Helvetica (or Arial) bold
 const Fl_Font FL_HELVETICA_ITALIC       = 2;	///< Helvetica (or Arial) oblique
 const Fl_Font FL_HELVETICA_BOLD_ITALIC  = 3;	///< Helvetica (or Arial) bold-oblique
 const Fl_Font FL_COURIER                = 4;	///< Courier normal
-const Fl_Font FL_COURIER_BOLD           = 5;	///< Courier bold 
+const Fl_Font FL_COURIER_BOLD           = 5;	///< Courier bold
 const Fl_Font FL_COURIER_ITALIC         = 6;	///< Courier italic
 const Fl_Font FL_COURIER_BOLD_ITALIC    = 7;	///< Courier bold-italic
 const Fl_Font FL_TIMES                  = 8;	///< Times roman
@@ -769,7 +769,7 @@ typedef int Fl_Fontsize;
 
 extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
 
-/** \name Colors 
+/** \name Colors
     The Fl_Color type holds an FLTK color value.
 
     Colors are either 8-bit indexes into a virtual colormap
@@ -787,7 +787,7 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
                 +--------- red component (8 bit)
  </pre>
 
-    A color can have either an index or an rgb value. Colors with rgb set 
+    A color can have either an index or an rgb value. Colors with rgb set
     and an index >0 are reserved for special use.
 
  */
@@ -867,19 +867,19 @@ inline Fl_Color fl_rgb_color(uchar g) {
   else return (Fl_Color)(((((g << 8) | g) << 8) | g) << 8);
 }
 
-/** Returns a gray color value from black (i == 0) to white (i == FL_NUM_GRAY - 1). 
-    FL_NUM_GRAY is defined to be 24 in the current FLTK release. 
+/** Returns a gray color value from black (i == 0) to white (i == FL_NUM_GRAY - 1).
+    FL_NUM_GRAY is defined to be 24 in the current FLTK release.
     To get the closest FLTK gray value to an 8-bit grayscale color 'I' use:
 
- \code 
+ \code
    fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
  \endcode
-*/ 
+*/
 inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 
 /** Returns a color out of the color cube.
 
-  \p r must be in the range 0 to FL_NUM_RED (5) minus 1, 
+  \p r must be in the range 0 to FL_NUM_RED (5) minus 1,
   \p g must be in the range 0 to FL_NUM_GREEN (8) minus 1,
   \p b must be in the range 0 to FL_NUM_BLUE (5) minus 1.
 
@@ -894,7 +894,7 @@ inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 inline Fl_Color fl_color_cube(int r, int g, int b) {
   return (Fl_Color)((b*FL_NUM_RED + r) * FL_NUM_GREEN + g + FL_COLOR_CUBE);}
 
-/*@}*/		// group: Colors  
+/*@}*/		// group: Colors
 
 /** \name Cursors */
 /*@{*/
@@ -933,7 +933,7 @@ enum Fl_Cursor {
 
   FL_CURSOR_NONE       =255  /**< invisible. */
 };
-/*@}*/		// group: Cursors  
+/*@}*/		// group: Cursors
 
 /** FD "when" conditions */
 enum { // values for "when" passed to Fl::add_fd()
@@ -943,7 +943,7 @@ enum { // values for "when" passed to Fl::add_fd()
 };
 
 /** visual types and Fl_Gl_Window::mode() (values match Glut) */
-enum Fl_Mode { 
+enum Fl_Mode {
   FL_RGB	= 0,
   FL_INDEX	= 1,
   FL_SINGLE	= 0,
