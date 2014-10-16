@@ -428,16 +428,17 @@ static int isword(char c) {
 /**
   Finds the end of a word.
 
-  This call calculates the end of a word based on the given 
-  index \p i. Calling this function repeatedly will move
-  forwards to the end of the text.
- 
+  Returns the index after the last byte of a space-separated word. This
+  first skips spaces, and then non-spaces, so if you call it repeatedly
+  you will move forwards to the end of the text.
+
+  Note that this is inconsistent with line_end().
+
   \param [in] i starting index for the search
   \return end of the word
 */
 int Fl_Input_::word_end(int i) const {
   if (input_type() == FL_SECRET_INPUT) return size();
-  //while (i < size() && !isword(index(i))) i++;
   while (i < size() && !isword(index(i))) i++;
   while (i < size() && isword(index(i))) i++;
   return i;
@@ -446,17 +447,18 @@ int Fl_Input_::word_end(int i) const {
 /**
   Finds the start of a word.
 
-  This call calculates the start of a word based on the given 
-  index \p i. Calling this function repeatedly will move
-  backwards to the beginning of the text.
- 
+  Returns the index of the first byte of a space-separated word.
+  If the index is already at the beginning of the word, it will find the
+  beginning of the previous word, so if you call it repeatedly you will
+  move backwards to the beginning of the text.
+
+  Note that this is inconsistent with line_start().
+
   \param [in] i starting index for the search
-  \return start of the word
+  \return start of the word, or previous word
 */
 int Fl_Input_::word_start(int i) const {
   if (input_type() == FL_SECRET_INPUT) return 0;
-//   if (i >= size() || !isword(index(i)))
-//     while (i > 0 && !isword(index(i-1))) i--;
   while (i > 0 && !isword(index(i-1))) i--;
   while (i > 0 && isword(index(i-1))) i--;
   return i;
@@ -518,6 +520,20 @@ int Fl_Input_::line_start(int i) const {
   } else return j;
 }
 
+static int strict_word_start(const char *s, int i, int itype) {
+  if (itype == FL_SECRET_INPUT) return 0;
+  while (i > 0 && !isspace(s[i-1]))
+    i--;
+  return i;
+}
+
+static int strict_word_end(const char *s, int len, int i, int itype) {
+  if (itype == FL_SECRET_INPUT) return len;
+  while (i < len && !isspace(s[i]))
+    i++;
+  return i;
+}
+
 /** 
   Handles mouse clicks and mouse moves.
   \todo Add comment and parameters
@@ -571,16 +587,16 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
 	newpos = line_end(newpos);
 	newmark = line_start(newmark);
       } else {
-	newpos = word_end(newpos);
-	newmark = word_start(newmark);
+	newpos = strict_word_end(value(), size(), newpos, input_type());
+	newmark = strict_word_start(value(), newmark, input_type());
       }
     } else {
       if (Fl::event_clicks() > 1) {
 	newpos = line_start(newpos);
 	newmark = line_end(newmark);
       } else {
-	newpos = word_start(newpos);
-	newmark = word_end(newmark);
+	newpos = strict_word_start(value(), newpos, input_type());
+	newmark = strict_word_end(value(), size(), newmark, input_type());
       }
     }
     // if the multiple click does not increase the selection, revert
