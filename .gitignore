@@ -59,6 +59,7 @@
 /documentation/src/*.3
 /documentation/src/*.6
 /documentation/src/*.z
+/documentation/src/fltk-book.tex
 
 # /examples/
 /examples/*.exe
