@@ -3,10 +3,10 @@
 //
 // Button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
+// the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
 //     http://www.fltk.org/COPYING.php
@@ -126,7 +126,7 @@ int Fl_Button::handle(int event) {
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
-	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;    
+	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
     if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
     goto triggered_by_keyboard;
   case FL_FOCUS :
@@ -175,7 +175,7 @@ void Fl_Button::simulate_key_action()
     Fl::remove_timeout(key_release_timeout, key_release_tracker);
     key_release_timeout(key_release_tracker);
   }
-  value(1); 
+  value(1);
   redraw();
   key_release_tracker = new Fl_Widget_Tracker(this);
   Fl::add_timeout(0.15, key_release_timeout, key_release_tracker);
@@ -186,7 +186,7 @@ void Fl_Button::key_release_timeout(void *d)
   Fl_Widget_Tracker *wt = (Fl_Widget_Tracker*)d;
   if (!wt)
     return;
-  if (wt==key_release_tracker) 
+  if (wt==key_release_tracker)
     key_release_tracker = 0L;
   Fl_Button *btn = (Fl_Button*)wt->widget();
   if (btn) {
@@ -197,7 +197,16 @@ void Fl_Button::key_release_timeout(void *d)
 }
 
 /**
-  The constructor creates the button using the given position, size and label.
+  The constructor creates the button using the given position, size, and label.
+
+  The default box type is box(FL_UP_BOX).
+
+  You can control how the button is drawn when ON by setting down_box().
+  The default is FL_NO_BOX (0) which will select an appropriate box type
+  using the normal (OFF) box type by using fl_down(box()).
+
+  Derived classes may handle this differently.
+
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
  */
@@ -210,15 +219,29 @@ Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *L)
   set_flag(SHORTCUT_LABEL);
 }
 
+/**
+  The constructor creates the button using the given position, size, and label.
 
+  The Button type() is set to FL_RADIO_BUTTON.
+
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
 Fl_Radio_Button::Fl_Radio_Button(int X,int Y,int W,int H,const char *L)
 : Fl_Button(X, Y, W, H, L) {
   type(FL_RADIO_BUTTON);
 }
 
+/**
+  The constructor creates the button using the given position, size, and label.
 
-Fl_Toggle_Button::Fl_Toggle_Button(int X,int Y,int W,int H,const char *l)
-: Fl_Button(X,Y,W,H,l) 
+  The Button type() is set to FL_TOGGLE_BUTTON.
+
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
+Fl_Toggle_Button::Fl_Toggle_Button(int X,int Y,int W,int H,const char *L)
+: Fl_Button(X,Y,W,H,L)
 {
   type(FL_TOGGLE_BUTTON);
 }

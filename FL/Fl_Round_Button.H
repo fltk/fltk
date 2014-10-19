@@ -3,10 +3,10 @@
 //
 // Round button header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
+// the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
 //     http://www.fltk.org/COPYING.php
@@ -15,9 +15,6 @@
 //
 //     http://www.fltk.org/str.php
 //
-
-/* \file
-   Fl_Round_Button widget . */
 
 #ifndef Fl_Round_Button_H
 #define Fl_Round_Button_H
