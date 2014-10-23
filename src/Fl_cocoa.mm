@@ -3994,15 +3994,15 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     delete[] bitmap;
   }
   if (fl_mac_os_version >= 101000) { // print the title bar buttons
-    Fl_Color inactive = fl_rgb_color(0xCECE, 0xCECE, 0xCECE); // inactive button color
+    Fl_Color inactive = fl_rgb_color((uchar)0xCECE, (uchar)0xCECE, (uchar)0xCECE); // inactive button color
     Fl_Color redish, yellowish, greenish;
     if ([[NSUserDefaults standardUserDefaults] integerForKey:@"AppleAquaColorVariant"] == 6) { // graphite appearance
-      redish = yellowish = greenish = fl_rgb_color(0x8C8C, 0x8C8C, 0x8C8C);
+      redish = yellowish = greenish = fl_rgb_color((uchar)0x8C8C, (uchar)0x8C8C, (uchar)0x8C8C);
     }
     else {
-      redish = fl_rgb_color(0xFFFF, 0x6363, 0x5A5A);
-      yellowish = fl_rgb_color(0xFFFF, 0xC6C6, 0x4242);
-      greenish = fl_rgb_color(0x2929, 0xD6D6, 0x5252);
+      redish = fl_rgb_color((uchar)0xFFFF, (uchar)0x6363, (uchar)0x5A5A);
+      yellowish = fl_rgb_color((uchar)0xFFFF, (uchar)0xC6C6, (uchar)0x4242);
+      greenish = fl_rgb_color((uchar)0x2929, (uchar)0xD6D6, (uchar)0x5252);
     }
     
     if (![close isEnabled]) fl_color(inactive); else fl_color(redish);
