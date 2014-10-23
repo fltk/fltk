@@ -160,7 +160,7 @@ void Fl_System_Printer::absolute_printable_rect(int *x, int *y, int *w, int *h)
 
 void Fl_System_Printer::margins(int *left, int *top, int *right, int *bottom)
 {
-  int x, y, w, h;
+  int x = 0, y = 0, w = 0, h = 0;
   absolute_printable_rect(&x, &y, &w, &h);
   if (left) *left = x;
   if (top) *top = y;
