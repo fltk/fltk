@@ -3,7 +3,7 @@
 //
 // Mac OS X-specific printing support (objective-c++) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2012 by Bill Spitzak and others.
+// Copyright 2010-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -313,6 +313,26 @@ void Fl_System_Printer::end_job (void)
   fl_gc = 0;
   Fl_Window *w = Fl::first_window();
   if (w) w->show();
+}
+
+// version that prints at high res if using a retina display
+void Fl_System_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
+{
+  Fl_Surface_Device *current = Fl_Surface_Device::surface();
+  Fl_Display_Device::display_device()->set_current();
+  Fl_Window *save_front = Fl::first_window();
+  win->show();
+  fl_gc = NULL;
+  Fl::check();
+  win->make_current();
+  CGImageRef img = Fl_X::CGImage_from_window_rect(win, x, y, w, h);
+  if (save_front != win) save_front->show();
+  current->set_current();
+  CGRect rect = { { delta_x, delta_y }, { w, h } };
+  Fl_X::q_begin_image(rect, 0, 0, w, h);
+  CGContextDrawImage(fl_gc, rect, img);
+  Fl_X::q_end_image();
+  CFRelease(img);
 }
 
 #endif // __APPLE__

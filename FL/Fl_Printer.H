@@ -3,7 +3,7 @@
 //
 // Printing support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2011 by Bill Spitzak and others.
+// Copyright 2010-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -84,6 +84,9 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
+#ifdef __APPLE__
+  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
+#endif
   /** \brief The destructor */
   ~Fl_System_Printer(void);
 }; // class Fl_System_Printer
