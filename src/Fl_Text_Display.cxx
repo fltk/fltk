@@ -25,6 +25,7 @@
 #include "flstring.h"
 #include <limits.h>
 #include <ctype.h>
+#include <string.h>	// strdup()
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
@@ -158,7 +159,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   linenumber_fgcolor_ = FL_INACTIVE_COLOR;
   linenumber_bgcolor_ = 53;	// ~90% gray
   linenumber_align_   = FL_ALIGN_RIGHT;
-  linenumber_format_  = "%d";
+  linenumber_format_  = strdup("%d");
 #endif
 }
 
@@ -180,6 +181,10 @@ Fl_Text_Display::~Fl_Text_Display() {
     mBuffer->remove_predelete_callback(buffer_predelete_cb, this);
   }
   if (mLineStarts) delete[] mLineStarts;
+  if (linenumber_format_) {
+    free((void*)linenumber_format_);
+    linenumber_format_ = 0;
+  }
 }
 
 
@@ -321,7 +326,13 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
 
 /**
  Sets the printf() style format string used for line numbers.
- Default is "%d" for normal unpadded decimal integers. Example values:
+ Default is "%d" for normal unpadded decimal integers. 
+
+ An internal copy of \p val is allocated and managed;
+ it is automatically freed whenever a new value is assigned,
+ or when the widget is destroyed.
+
+ Example values:
 
      - "%d"   -- For normal line numbers without padding (Default)
      - "%03d" -- For 000 padding
@@ -332,7 +343,8 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
 */
 void Fl_Text_Display::linenumber_format(const char* val) {
 #if FLTK_ABI_VERSION >= 10303
-  linenumber_format_ = val;
+  if ( linenumber_format_ ) free((void*)linenumber_format_);
+  linenumber_format_ = val ? strdup(val) : 0;
 #else
   // do nothing
 #endif
