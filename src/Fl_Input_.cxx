@@ -419,7 +419,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
 /** \internal
   Simple function that determines if a character could be part of a word.
-  \todo This function is not ucs4-aware.
+  \todo This function is not UTF-8-aware.
 */
 static int isword(char c) {
   return (c&128 || isalnum(c) || strchr("#%&-/@\\_~", c));
@@ -428,9 +428,10 @@ static int isword(char c) {
 /**
   Finds the end of a word.
 
-  Returns the index after the last byte of a space-separated word. This
-  first skips spaces, and then non-spaces, so if you call it repeatedly
-  you will move forwards to the end of the text.
+  Returns the index after the last byte of a word.
+  If the index is already at the end of a word, it will find the
+  end of the following word, so if you call it repeatedly you will
+  move forwards to the end of the text.
 
   Note that this is inconsistent with line_end().
 
@@ -447,8 +448,8 @@ int Fl_Input_::word_end(int i) const {
 /**
   Finds the start of a word.
 
-  Returns the index of the first byte of a space-separated word.
-  If the index is already at the beginning of the word, it will find the
+  Returns the index of the first byte of a word.
+  If the index is already at the beginning of a word, it will find the
   beginning of the previous word, so if you call it repeatedly you will
   move backwards to the beginning of the text.
 
