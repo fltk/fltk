@@ -331,6 +331,8 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
  An internal copy of \p val is allocated and managed;
  it is automatically freed whenever a new value is assigned,
  or when the widget is destroyed.
+ 
+ The value of \p val must \a not be NULL.
 
  Example values:
 
