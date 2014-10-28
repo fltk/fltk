@@ -181,10 +181,12 @@ Fl_Text_Display::~Fl_Text_Display() {
     mBuffer->remove_predelete_callback(buffer_predelete_cb, this);
   }
   if (mLineStarts) delete[] mLineStarts;
+#if FLTK_ABI_VERSION >= 10303
   if (linenumber_format_) {
     free((void*)linenumber_format_);
     linenumber_format_ = 0;
   }
+#endif
 }
 
 
