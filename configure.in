@@ -26,6 +26,16 @@ AC_INIT(src/Fl.cxx)
 
 AC_CANONICAL_HOST
 
+dnl Do not automatically add "-g" to compiler options...
+dnl This must be _before_ "Find compiler commands..."
+ARCHFLAGS="${ARCHFLAGS:=}"
+CFLAGS="${CFLAGS:=}"
+CPPFLAGS="${CPPFLAGS:=}"
+CXXFLAGS="${CXXFLAGS:=}"
+DSOFLAGS="${DSOFLAGS:=}"
+LDFLAGS="${LDFLAGS:=}"
+OPTIM="${OPTIM:=}"
+
 dnl Find compiler commands...
 AC_PROG_CC
 AC_PROG_CXX
@@ -54,15 +64,6 @@ AC_SUBST(FL_MAJOR_VERSION)
 AC_SUBST(FL_MINOR_VERSION)
 AC_SUBST(FL_PATCH_VERSION)
 AC_SUBST(FL_API_VERSION)
-
-dnl Do not automatically add "-g" to compiler options...
-ARCHFLAGS="${ARCHFLAGS:=}"
-CFLAGS="${CFLAGS:=}"
-CPPFLAGS="${CPPFLAGS:=}"
-CXXFLAGS="${CXXFLAGS:=}"
-DSOFLAGS="${DSOFLAGS:=}"
-LDFLAGS="${LDFLAGS:=}"
-OPTIM="${OPTIM:=}"
 
 AC_SUBST(ARCHFLAGS)
 AC_SUBST(OPTIM)
