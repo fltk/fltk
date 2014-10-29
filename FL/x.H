@@ -92,7 +92,7 @@ typedef ulong Fl_Offscreen;
 #    define fl_end_offscreen() \
   fl_pop_clip(); fl_window = _sw; _ss->set_current()
 
-extern void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+extern FL_EXPORT void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
 
 // Bitmap masks
