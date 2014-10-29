@@ -300,6 +300,45 @@ public:
   unsigned int non_modal() const {return flags() & (NON_MODAL|MODAL);}
 
   /**
+    Clears the "modal" flags and converts a "modal" or "non-modal"
+    window back into a "normal" window.
+
+    Note that there are <I>three</I> states for a window: modal,
+    non-modal, and normal.
+
+    You can not change the "modality" of a window whilst
+    it is shown, so it is necessary to first hide() the window,
+    change its "modality" as required, then re-show the window
+    for the new state to take effect.
+
+    This method can also be used to change a "modal" window into a
+    "non-modal" one. On several supported platforms, the "modal" state
+    over-rides the "non-modal" state, so the "modal" state must be
+    cleared before the window can be set into the "non-modal"
+    state.
+    In general, the following sequence should work:
+
+    \code
+    win->hide();
+    win->clear_modal_states();
+    //Set win to new state as desired, or leave "normal", e.g...
+    win->set_non_modal();
+    win->show();
+    \endcode
+
+    \note Under some window managers, the sequence of hiding the
+    window and changing its modality will often cause it to be
+    re-displayed at a different position when it is subsequently
+    shown. This is an irritating feature but appears to be
+    unavoidable at present.
+    As a result we would advise to use this method only when
+    absolutely necessary.
+
+    \see void set_modal(), void set_non_modal()
+  */
+  void clear_modal_states() {clear_flag(NON_MODAL | MODAL);}
+
+  /**
     Marks the window as a menu window.
 
     This is intended for internal use, but it can also be used if you

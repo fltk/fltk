@@ -70,6 +70,8 @@ CHANGES IN FLTK 1.3.3					RELEASED: Oct XX 2014
 	- Improved Fl_Widget::when() handling in Fl_Tabs (STR #2939).
 	- Improved support for more recent compilers (clang and gcc) that
 	  issue more warnings, and fixed some 32-/64-bit compilation issues.
+	- Add method Fl_Window::clear_modal_states() to make it possible to
+	  remove the modal or non-modal state from a window (STR #3123).
 	- New portable sleep methods Fl::sleep(), Fl::msleep(), Fl::usleep().
 
 	Bug fixes
