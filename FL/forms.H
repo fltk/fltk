@@ -819,7 +819,7 @@ inline double fl_get_timer(Fl_Widget* o) {return ((Fl_Timer*)o)->value();}
 inline void fl_suspend_timer(Fl_Widget* o) {((Fl_Timer*)o)->suspended(1);}
 inline void fl_resume_timer(Fl_Widget* o) {((Fl_Timer*)o)->suspended(0);}
 inline void fl_set_timer_countup(Fl_Widget* o,char d) {((Fl_Timer*)o)->direction(d);}
-void fl_gettime(long* sec, long* usec);
+void FL_EXPORT fl_gettime(long* sec, long* usec);
 
 // Fl_XYPlot nyi
 
