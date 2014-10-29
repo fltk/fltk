@@ -248,7 +248,7 @@ private:
 };
 
 #if !defined(__APPLE__) && !defined(WIN32)
-class Fl_FLTK_File_Chooser {
+class FL_EXPORT Fl_FLTK_File_Chooser {
   friend class Fl_Native_File_Chooser;
 protected:
   int   _btype;			// kind-of browser to show()
@@ -291,7 +291,7 @@ protected:
 };
 
 
-class Fl_GTK_File_Chooser : public Fl_FLTK_File_Chooser {
+class FL_EXPORT Fl_GTK_File_Chooser : public Fl_FLTK_File_Chooser {
   friend class Fl_Native_File_Chooser;
 private:
   typedef struct _GtkWidget GtkWidget;
