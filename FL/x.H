@@ -170,7 +170,7 @@ inline Window fl_xid(const Fl_Window* w) { Fl_X *xTemp = Fl_X::i(w); return xTem
 
 #else
 
-extern Window fl_xid_(const Fl_Window* w);
+extern FL_EXPORT Window fl_xid_(const Fl_Window* w);
 #define fl_xid(w) fl_xid_(w)
 
 #endif // FL_LIBRARY || FL_INTERNALS
