@@ -23,6 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Timer.H>
 #include <FL/fl_draw.H>
+#include <FL/forms.H>
 #ifdef WIN32
 #  ifdef __MWERKS__
 #    include <time.h>
