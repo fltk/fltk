@@ -293,7 +293,6 @@
     <ClInclude Include="..\..\FL\Fl_XPM_Image.H" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Fl_sleep.cxx" />
     <ClCompile Include="..\..\src\xutf8\case.c" />
     <ClCompile Include="..\..\src\filename_absolute.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug Cairo|Win32'">Disabled</Optimization>

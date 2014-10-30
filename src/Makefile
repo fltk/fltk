@@ -61,7 +61,7 @@ CPPFILES = \
 	Fl_Pack.cxx \
 	Fl_Paged_Device.cxx \
 	Fl_Pixmap.cxx \
-  Fl_PostScript.cxx \
+	Fl_PostScript.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
 	Fl_Printer.cxx \
@@ -110,7 +110,6 @@ CPPFILES = \
 	Fl_get_system_colors.cxx \
 	Fl_grab.cxx \
 	Fl_lock.cxx \
-	Fl_sleep.cxx \
 	Fl_own_colormap.cxx \
 	Fl_visual.cxx \
 	Fl_x.cxx \
