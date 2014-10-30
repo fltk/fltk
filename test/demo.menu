@@ -84,7 +84,7 @@
 	@j:ask\n(modified):ask
 	@j:button:button
 	@j:CubeView:CubeView
-	@j:editor:editor editor.cxx
+	@j:editor:editor
 	@j:hello:hello
 	@j:shape:shape
 
