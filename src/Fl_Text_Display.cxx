@@ -3369,9 +3369,13 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
       if (b<lineStart) b = lineStart;
       if (!foundBreak) { /* no whitespace, just break at margin */
         newLineStart = max(p, buf->next_char(lineStart));
-        const char *s = buf->address(b);
         colNum++;
-        width = measure_proportional_character(s, 0, p+styleBufOffset);
+	if (b >= buf->length()) { // STR #2730
+	  width = 0;
+	} else {
+	  const char *s = buf->address(b);
+	  width = measure_proportional_character(s, 0, p+styleBufOffset);
+	}
       }
       if (p >= maxPos) {
         *retPos = maxPos;
