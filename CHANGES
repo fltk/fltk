@@ -72,7 +72,6 @@ CHANGES IN FLTK 1.3.3					RELEASED: Oct XX 2014
 	  issue more warnings, and fixed some 32-/64-bit compilation issues.
 	- Add method Fl_Window::clear_modal_states() to make it possible to
 	  remove the modal or non-modal state from a window (STR #3123).
-	- New portable sleep methods Fl::sleep(), Fl::msleep(), Fl::usleep().
 
 	Bug fixes
 
@@ -94,6 +93,7 @@ CHANGES IN FLTK 1.3.3					RELEASED: Oct XX 2014
 	  Enter key now selects the file again.
 	- Fixed a bug in Fl_Native_File_Chooser (Windows) for some file name
 	  input filters (STR #3101).
+	- Fixed out-of-bounds memory access in Fl_Text_Display (STR #2730).
 
     1.3.3 ABI FEATURES
 
