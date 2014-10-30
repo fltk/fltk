@@ -74,8 +74,8 @@ host_os_gui=$host_os
 case $host_os in
     cygwin*)
         # Handle Cygwin option *first*, before all other tests.
-	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [(default=no)]])
-	AC_ARG_ENABLE(x11,    [  --enable-x11            use Cygwin with X11 [(default=no)]])
+	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [[default=no]]])
+	AC_ARG_ENABLE(x11,    [  --enable-x11            use Cygwin with X11 [[default=no]]])
 	if test x$enable_cygwin = xyes; then
 	    # we target Cygwin in combination with X11
 	    if test x$enable_x11 = xyes; then
@@ -112,8 +112,8 @@ LINKFLTKCAIRO=""
 FLTKCAIROOPTION=""
 CAIROLIBS=""
 
-AC_ARG_ENABLE(cairoext,[  --enable-cairoext       use fltk code instrumentation for cairo extended use (default=no)])
-AC_ARG_ENABLE(cairo,[  --enable-cairo          use lib Cairo  (default=no)])
+AC_ARG_ENABLE(cairoext,[  --enable-cairoext       use fltk code instrumentation for cairo extended use [[default=no]]])
+AC_ARG_ENABLE(cairo,   [  --enable-cairo          use lib Cairo [[default=no]]])
 
 if test x$enable_cairoext = xyes; then
 	  AC_DEFINE(FLTK_USE_CAIRO)
@@ -169,22 +169,22 @@ AC_SUBST(IMGLIBBASENAME)
 AC_SUBST(CAIROLIBBASENAME)
 
 dnl Handle compile-time options...
-AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]])
+AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [[default=no]]])
 if test x$enable_debug = xyes; then
     DEBUGFLAG="-g "
 else
     DEBUGFLAG=""
 fi
 
-AC_ARG_ENABLE(cp936, [  --enable-cp936          turn on CP936 [default=no]])
+AC_ARG_ENABLE(cp936, [  --enable-cp936          turn on CP936 [[default=no]]])
 if test x$enable_cp936 = xyes; then
     CFLAGS="$CFLAGS -DCP936"
 fi
 
 
-AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [default=yes]])
+AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [[default=yes]]])
 
-AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]])
+AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [[default=no]]])
 if test x$enable_shared = xyes; then
     PICFLAG=1
     SHAREDSUFFIX=""
@@ -370,7 +370,7 @@ AC_SUBST(SHAREDSUFFIX)
 AC_SUBST(LINKSHARED)
 AC_SUBST(FLUID)
 
-AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support (default=yes)])
+AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support [[default=yes]]])
 
 AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
 
@@ -620,7 +620,7 @@ AC_SUBST(STATICIMAGELIBS)
 # Handle the JPEG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localjpeg parameter is not set by user
 # Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
-AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library, default=auto])
+AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library [[default=auto]]])
 # Check for System lib use if automatic mode or --disable-localjpeg is requested
 sysjpeglib_ok=no
 sysjpeginc_ok=no
@@ -655,7 +655,7 @@ fi
 # Handle the ZLIB lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localzlib parameter is not set by user
 # Then we check the ZLIB lib usability, with result in syszlib_ok variable
-AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library, default=auto])
+AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library [[default=auto]]])
 # Check for System lib use if automatic mode or --disable-localzlib is requested
 syszlib_ok=no
 syszinc_ok=no
@@ -692,7 +692,7 @@ fi
 # Handle the PNG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localpng parameter is not set by user
 # Then we check the png lib usability with result in syspng_lib variable
-AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto])
+AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library  [[default=auto]]])
 
 # Now check if system lib is usable, we check Lib AND include availability with inc variant,
 # but only, if the builtin lib is not requested
@@ -808,7 +808,7 @@ HLINKS=
 OSX_ONLY=:
 THREADS=
 
-AC_ARG_WITH(links, [  --with-links            make header links for common misspellings (default=no)])
+AC_ARG_WITH(links, [  --with-links            make header links for common misspellings [[default=no]]])
 
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
@@ -957,7 +957,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for Xinerama support unless disabled...
-        AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [default=yes]])
+        AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [[default=yes]]])
 
 	if test x$enable_xinerama != xno; then
 	    AC_CHECK_LIB(Xinerama,XineramaIsActive,
@@ -966,7 +966,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xft library unless disabled...
-        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [default=yes]])
+        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [[default=yes]]])
 
 	if test x$enable_xft != xno; then
             AC_PATH_PROG(FTCONFIG,freetype-config)
@@ -985,7 +985,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xdbe extension unless disabled...
-        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [default=yes]])
+        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
 
 	if test x$enable_xdbe != xno; then
 	    AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE),,
@@ -995,7 +995,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xfixes extension unless disabled...
-        AC_ARG_ENABLE(xfixes, [  --enable-xfixes       turn on Xfixes support [default=yes]])
+        AC_ARG_ENABLE(xfixes, [  --enable-xfixes         turn on Xfixes support [[default=yes]]])
 
 	if test x$enable_xfixes != xno; then
 	    AC_CHECK_HEADER(X11/extensions/Xfixes.h, AC_DEFINE(HAVE_XFIXES),,
@@ -1005,7 +1005,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xcursor library unless disabled...
-        AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [default=yes]])
+        AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [[default=yes]]])
 
 	if test x$enable_xcursor != xno; then
 	    AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, AC_DEFINE(HAVE_XCURSOR),,
