@@ -23,6 +23,7 @@
 #include <FL/Fl.H>
 extern void show_help(const char *name); 
 #include <FL/Fl_Double_Window.H>
+#include "../src/flstring.h"
 extern Fl_Double_Window *about_panel;
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>

@@ -28,8 +28,9 @@ decl {void show_help(const char *name);} {public local
 Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
-    label {About FLUID} open
-    xywh {513 213 345 180} type Double color 50 selection_color 47 hotspot non_modal visible
+    label {About FLUID} open selected
+    xywh {340 195 345 180} type Double color 50 selection_color 47 hotspot
+    code0 {\#include "../src/flstring.h"} non_modal visible
   } {
     Fl_Box {} {
       image {icons/fluid-96.xpm} xywh {10 10 115 120}
@@ -45,7 +46,7 @@ Version x.x.x}
     }
     Fl_Box {} {
       label {Copyright 1998-2014 by
-Bill Spitzak and others} selected
+Bill Spitzak and others}
       xywh {135 90 200 45} align 148
     }
     Fl_Button {} {
