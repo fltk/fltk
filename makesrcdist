@@ -2,16 +2,59 @@
 #
 # makesrcdist - make a distribution of FLTK.
 #
+# There are 3 different modes of operation, dependent on commandline arguments:
+#
+#  (1)	Create snapshot:
+#
+#	makesrcdist [snapshot]
+#
+#	Use no arguments or "snapshot" (verbatim).
+#
+#  (2)	Create distribution tarballs for test and verification:
+#
+#	makesrcdist <version>
+#
+#	Use a version number as argument, e.g. "1.3.3" or "1.3.4rc2".
+#	This can be used for local testing.
+#
+#  (3)	Create distribution tarballs (final):
+#
+#	makesrcdist <version> tag
+#
+#	Same as (2), but create subversion tag with version number.
+#	Enter "tag" (verbatim) as 2nd argument.
+#	This will create the subversion tag "release-<version>" for the
+#	current revision in the FLTK subversion repository and export the
+#	FLTK sources from this tag for creation of distribution files.
+#
+# Note: define FLTK_TAR if you want to use a different compatible tar
+#	command than "tar", e.g. to use "gtar" (bash syntax):
+#	$ export FLTK_TAR="gtar"
+#
+
+TAR="tar"
+if test "x$FLTK_TAR" != "x"; then
+  TAR="$FLTK_TAR"
+fi
+
+# these are the subversion and snapshot/download URL's currently in use:
+
+SVN='http://seriss.com/public/fltk/fltk'
+DOWNLOAD='http://fltk.org/pub/fltk'
+SNAPSHOT='http://fltk.org/pub/fltk/snapshots'
+VS=`cat VERSION | sed -e's/\([0-9]*\.[0-9]*\).*/\1/'`
 
 echo "Getting distribution..."
 
-if test $# = 0 -o "x$1" = xsnapshot; then
+if test $# = 0 -o "x$1" = "xsnapshot"; then
 	echo Updating for snapshot...
 	svn up
 	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
-	version="1.3svn"
-	fileversion="1.3svn-r$rev"
-	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
+	version="${VS}svn"
+	fileversion="${VS}.x-r$rev"
+	fileurl="$SNAPSHOT/fltk-$fileversion.tar.gz"
+	echo "fileversion = $fileversion"
+	echo "fileurl     = $fileurl"
 	url="."
 else
 	if test ! -e "documentation/html/"; then
@@ -28,22 +71,26 @@ else
 		echo "  cd documentation; make dist"
 		exit
 	fi
-	echo Creating tag for release...
 	rev="1"
 	version=$1
 	fileversion=$1
-	fileurl="ftp://ftp.easysw.com/pub/fltk/$version/fltk-$fileversion-source.tar.bz2"
-	url="https://svn.easysw.com/public/fltk/fltk/tags/release-$version"
+	fileurl="$DOWNLOAD/$version/fltk-$fileversion-source.tar.gz"
 
-	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.3 "$url" \
+	if test "x$2" != "xtag"; then
+		url="."
+	else
+		echo "Creating subversion tag 'release-$version' ..."
+		url="$SVN/tags/release-$version"
+		svn copy $SVN/branches/branch-${VS} "$url" \
 		-m "Tag $version" || exit 1
+	fi
 fi
 
 echo Exporting $version...
 rm -rf /tmp/fltk-$version
 svn export $url /tmp/fltk-$version
 
-if test $# != 0 -a "x$1" != xsnapshot; then
+if test $# != 0 -a "x$1" != "xsnapshot"; then
 	echo "Copying HTML and PDF documentation..."
 	cp -r documentation/html /tmp/fltk-$version/documentation/
 	cp documentation/fltk.pdf /tmp/fltk-$version/documentation/
@@ -70,12 +117,12 @@ rm -f makesrcdist
 
 cd ..
 
-if test $# != 0 -a "x$1" != xsnapshot; then
+if test $# != 0 -a "x$1" != "xsnapshot"; then
 	echo "Making HTML docs distribution..."
-	gtar czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
+	$TAR czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
 
 	echo "Making PDF docs distribution..."
-	gtar czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
+	$TAR czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
 fi
 
 echo "Removing documentation..."
@@ -83,10 +130,10 @@ rm -rf fltk-$version/documentation/html/
 rm -f fltk-$version/documentation/fltk.pdf
 
 echo "Making UNIX distribution..."
-gtar czf fltk-$fileversion-source.tar.gz fltk-$version
+$TAR czf fltk-$fileversion-source.tar.gz fltk-$version
 
 #echo "Making BZ2 distribution..."
-#gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
+#$TAR cjf fltk-$fileversion-source.tar.bz2 fltk-$version
 
 #echo "Making Windows distribution..."
 #rm -f fltk-$fileversion-source.zip
