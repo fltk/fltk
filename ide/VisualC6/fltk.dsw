@@ -728,6 +728,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name fltk
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltk_png
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name fltk_jpeg
+    End Project Dependency
 }}}
 
 ###############################################################################
