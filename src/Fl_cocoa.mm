@@ -3946,7 +3946,7 @@ int Fl_Window::decorated_h()
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  NSButton *close, *miniaturize, *zoom;
+  NSButton *close = nil, *miniaturize = nil, *zoom = nil;
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
     this->print_widget(win, x_offset, y_offset);
     return;
