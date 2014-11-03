@@ -205,9 +205,9 @@ Fluid_Image.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
 about_panel.o: about_panel.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 about_panel.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Double_Window.H
 about_panel.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-about_panel.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Box.H
-about_panel.o: ../FL/Fl_Button.H ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
-about_panel.o: ../FL/Fl_Pixmap.H
+about_panel.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../src/flstring.h
+about_panel.o: ../FL/Fl_Export.H ../config.h ../FL/Fl_Box.H ../FL/Fl_Button.H
+about_panel.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H ../FL/Fl_Pixmap.H
 align_widget.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 align_widget.o: ../FL/Enumerations.H ../FL/Fl_Window.H Fl_Widget_Type.h
 align_widget.o: Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H

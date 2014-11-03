@@ -185,9 +185,9 @@ doublebuffer.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Double_Window.H
 doublebuffer.o: ../FL/Fl_Box.H ../FL/fl_draw.H ../FL/Fl_Hor_Slider.H
 doublebuffer.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/math.h
 editor.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-editor.o: ../FL/Enumerations.H ../FL/Fl_Group.H ../FL/Fl_Double_Window.H
-editor.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-editor.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/fl_ask.H
+editor.o: ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+editor.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+editor.o: ../FL/Fl_Group.H ../FL/Fl_Double_Window.H ../FL/fl_ask.H
 editor.o: ../FL/Fl_Native_File_Chooser.H ../FL/Fl_File_Chooser.H
 editor.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
 editor.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H ../FL/Fl_Preferences.H
@@ -198,11 +198,11 @@ editor.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
 editor.o: ../FL/Fl_Light_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 editor.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H ../FL/Fl_Menu_Bar.H
 editor.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Editor.H
-editor.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/x.H
-editor.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
-editor.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
-editor.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-editor.o: ../FL/Fl_Text_Buffer.H ../FL/filename.H
+editor.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/Enumerations.H
+editor.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+editor.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+editor.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Text_Buffer.H
+editor.o: ../FL/filename.H
 fast_slow.o: fast_slow.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 fast_slow.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Double_Window.H
 fast_slow.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
@@ -581,6 +581,9 @@ tree.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 tree.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Return_Button.H
 tree.o: ../FL/Fl_Button.H ../FL/Fl_Color_Chooser.H ../FL/Fl_Value_Input.H
 tree.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Text_Display.H
+tree.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Window.H
+tree.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+tree.o: ../FL/Fl_Bitmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Text_Buffer.H
 tree.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Light_Button.H
 twowin.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 twowin.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
@@ -607,3 +610,7 @@ utf8.o: ../FL/Fl_Hold_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
 utf8.o: ../FL/Fl_Value_Output.H ../FL/Fl_Button.H ../FL/Fl_Check_Button.H
 utf8.o: ../FL/Fl_Light_Button.H ../FL/Fl_Output.H ../FL/Fl_Input.H
 utf8.o: ../FL/Fl_Input_.H ../FL/fl_draw.H ../FL/fl_utf8.h
+windowfocus.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+windowfocus.o: ../FL/Enumerations.H ../FL/Fl_Box.H ../FL/Fl_Double_Window.H
+windowfocus.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+windowfocus.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Input.H
