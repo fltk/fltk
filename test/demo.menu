@@ -35,6 +35,7 @@
 	@w:resize:resize
 
 @main:Drawing\nTests...:@d
+	@d:unit tests:unittests
 	@d:Images...:@di
 		@di:Fl_Bitmap:bitmap
 		@di:Fl_Pixmap:pixmap
