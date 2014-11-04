@@ -2211,6 +2211,7 @@ int Fl_X::ewmh_supported() {
   static int result = -1;
 
   if (result == -1) {
+    fl_open_display();
     result = 0;
     unsigned long nitems;
     unsigned long *words = 0;
