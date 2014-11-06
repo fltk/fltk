@@ -3,7 +3,7 @@
 //
 // implementation of Fl_Paged_Device class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2011 by Bill Spitzak and others.
+// Copyright 2010-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -63,12 +63,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
     Fl_Plugin_Manager pm("fltk:device");  
     Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
     if (pi) {
-      int height = 0;
-#ifdef __APPLE__
-      int width;
-      this->printable_rect(&width, &height);
-#endif
-      drawn_by_plugin = pi->print(widget, 0, 0, height);
+      drawn_by_plugin = pi->print(widget, 0, 0, 0);
     }
   }
   if (!drawn_by_plugin) {

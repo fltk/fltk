@@ -3,7 +3,7 @@
 //
 // implementation of class Fl_Gl_Device_Plugin for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,19 +20,36 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
+#include <FL/Fl_RGB_Image.H>
 #include "FL/Fl.H"
-#ifndef __APPLE__
-#include "FL/fl_draw.H"
-#endif
 
 #if defined(__APPLE__)
-static void imgProviderReleaseData (void *info, const void *data, size_t size)
+uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
 {
-  free((void *)data);
+  uchar *newimg = new uchar[3*w*h];
+  uchar *to = newimg;
+  for (int i = 0; i < h; i++) {
+    uchar *from = baseAddress + i * mByteWidth;
+    for (int j = 0; j < w; j++, from += 4) {
+#if __ppc__
+      memcpy(to, from + 1, 3);
+      to += 3;
+#else
+      *(to++) = *(from+2);
+      *(to++) = *(from+1);
+      *(to++) = *from;
+#endif
+    }
+  }
+  delete[] baseAddress;
+  return newimg;
 }
 #endif
 
-static void print_gl_window(Fl_Gl_Window *glw, int x, int y, int height)
+static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
+/* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
+ stored from bottom to top.
+ */
 {
 #if defined(__APPLE__)
   const int bytesperpixel = 4;
@@ -48,66 +65,46 @@ static void print_gl_window(Fl_Gl_Window *glw, int x, int y, int height)
   glPixelStorei(GL_PACK_SKIP_ROWS, 0);
   glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
   // Read a block of pixels from the frame buffer
-  int mByteWidth = glw->w() * bytesperpixel;                
+  int mByteWidth = w * bytesperpixel;
   mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
-  uchar *baseAddress = (uchar*)malloc(mByteWidth * glw->h());
-  glReadPixels(0, 0, glw->w(), glw->h(), 
+  uchar *baseAddress = new uchar[mByteWidth * h];
+  glReadPixels(x, glw->h() - (y+h), w, h,
 #if defined(__APPLE__)
-	       GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
+               GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
 #else
-	       GL_RGB, GL_UNSIGNED_BYTE,
+               GL_RGB, GL_UNSIGNED_BYTE,
 #endif
-	       baseAddress);
+               baseAddress);
   glPopClientAttrib();
 #if defined(__APPLE__)
-// kCGBitmapByteOrder32Host and CGBitmapInfo are supposed to arrive with 10.4
-// but some 10.4 don't have kCGBitmapByteOrder32Host, so we play a little #define game
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-#define kCGBitmapByteOrder32Host 0
-#define CGBitmapInfo CGImageAlphaInfo
-#elif ! defined(kCGBitmapByteOrder32Host)
-#ifdef __BIG_ENDIAN__
-#define kCGBitmapByteOrder32Host (4 << 12)
-#else    /* Little endian. */
-#define kCGBitmapByteOrder32Host (2 << 12)
+  baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
+  mByteWidth = 3 * w;
 #endif
-#endif
-  CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, baseAddress, mByteWidth * glw->h(), imgProviderReleaseData);
-  CGImageRef image = CGImageCreate(glw->w(), glw->h(), 8, 8*bytesperpixel, mByteWidth, cSpace, 
-				   (CGBitmapInfo)(kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host), 
-				   provider, NULL, false, kCGRenderingIntentDefault);
-  if(image == NULL) return;
-  CGContextSaveGState(fl_gc);
-  CGContextTranslateCTM(fl_gc, 0, height);
-  CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-  CGRect rect = { { x, height - y - glw->h() }, { glw->w(), glw->h() } };
-  Fl_X::q_begin_image(rect, 0, 0, glw->w(), glw->h());
-  CGContextDrawImage(fl_gc, rect, image);
-  Fl_X::q_end_image();
-  CGContextRestoreGState(fl_gc);
-  CGImageRelease(image);
-  CGColorSpaceRelease(cSpace);
-  CGDataProviderRelease(provider);  
-#else
-  fl_draw_image(baseAddress + (glw->h() - 1) * mByteWidth, x, y , glw->w(), glw->h(), bytesperpixel, - mByteWidth);
-  free(baseAddress);
-#endif // __APPLE__
+  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
+  img->alloc_array = 1;
+  return img;
 }
 
 /**
- This class will make sure that OpenGL printing is available if fltk_gl
- was linked to the program.
+ This class will make sure that OpenGL printing/screen capture is available if fltk_gl
+ was linked to the program
  */
 class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
 public:
   Fl_Gl_Device_Plugin() : Fl_Device_Plugin(name()) { }
   virtual const char *name() { return "opengl.device.fltk.org"; }
-  virtual int print(Fl_Widget *w, int x, int y, int height) {
+  virtual int print(Fl_Widget *w, int x, int y, int height /*useless*/) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
-    print_gl_window(glw, x, y, height);
-    return 1; 
+    Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
+    fl_draw_image(img->array + (glw->h() - 1) * img->ld(), x, y , glw->w(), glw->h(), 3, - img->ld());
+    delete img;
+    return 1;
+  }
+  virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) {
+    Fl_Gl_Window *glw = widget->as_gl_window();
+    if (!glw) return NULL;
+    return capture_gl_rectangle(glw, x, y, w, h);
   }
 };
 

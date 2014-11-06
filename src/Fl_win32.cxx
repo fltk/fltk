@@ -2683,11 +2683,14 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   fl_gc = GetDC(NULL); // get the screen device context
   // capture the 4 window sides from screen
   RECT r; GetWindowRect(fl_window, &r);
+  Window save_win = fl_window;
+  fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
   uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
   uchar *left_image = fl_read_image(NULL, r.left, r.top, bx, wh);
   uchar *right_image = fl_read_image(NULL, r.right - bx, r.top, bx, wh);
   uchar *bottom_image = fl_read_image(NULL, r.left, r.bottom-by, ww, by);
-  ReleaseDC(NULL, fl_gc); fl_gc = save_gc;
+  fl_window = save_win;
+  ReleaseDC(NULL, fl_gc);  fl_gc = save_gc;
   this->set_current();
   // print the 4 window sides
   fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3);
