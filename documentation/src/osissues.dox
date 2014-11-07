@@ -682,6 +682,52 @@ US keyboard will set \c FL_ALT in Fl::event_state(),
 set Fl::event_key() to 'y' and return the Yen symbol in
 Fl::event_text().
 
+Right Click simulation with Ctrl Click
+\par
+The Apple HIG guidelines indicate applications should support
+'Ctrl Click' to simulate 'Right Click' for e.g. context menus,
+so users with one-button mice and one-click trackpads can still
+access right-click features. However, paraphrasing 
+<A HREF="http://www.fltk.org/newsgroups.php?gfltk.coredev+v:14725">
+Manolo's comment on the fltk.coredev newsgroup</A>:
+\par
+<UL><LI>
+    <I>FLTK does /not/ support Ctrl-Click == Right Click itself because Mac OS
+    X event processing doesn't support this at the system level: the system
+    reports left-clicks with the ctrl modifier when the user ctrl-clicks, and
+    OS X system preferences don't allow changing this behavior. Therefore,
+    applications must handle simulation of Right Click with Ctrl Click
+    in the application code.</I>
+</LI></UL>
+\par
+Ian MacArthur provided the following handle() method code snippet
+showing an example of how to do this:
+\code
+    case FL_PUSH:
+    {
+	int btn = Fl::event_button();
+#ifdef __APPLE__
+	int ev_state = Fl::event_state();
+#endif
+	//
+	// Context menu can be called up in one of two ways: -
+	//     1 - right click, as normally used on Windows and Linux
+	//     2 - Ctrl + left click, as sometimes used on Mac
+	//
+#ifdef __APPLE__
+	// On apple, check right click, and ctrl+left click
+	if ((btn == FL_RIGHT_MOUSE) || (ev_state == (FL_CTRL | FL_BUTTON1)))
+#else
+	// On other platforms, only check right click as ctrl+left is used for selections
+	if (btn == FL_RIGHT_MOUSE)
+#endif
+	{
+	    // Did we right click on the object?..
+\endcode
+\par
+There is a thread about this subject on fltk.coredev (Aug 1-14, 2014)
+entitled "[RFC] Right click emulation for one button mouse on Mac".
+
 Apple "Quit" Event
 
 \par
