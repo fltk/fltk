@@ -3057,14 +3057,6 @@ char *fl_selection_buffer[2] = {NULL, NULL};
 int fl_selection_length[2] = {0, 0};
 static int fl_selection_buffer_length[2];
 
-static PasteboardRef allocatePasteboard(void) 
-{
-  PasteboardRef clip;
-  PasteboardCreate(kPasteboardClipboard, &clip); // requires Mac OS 10.3
-  return clip;
-}
-static PasteboardRef myPasteboard = allocatePasteboard();
-
 extern void fl_trigger_clipboard_notify(int source);
 
 void fl_clipboard_notify_change() {
@@ -3073,15 +3065,10 @@ void fl_clipboard_notify_change() {
 
 static void clipboard_check(void)
 {
-  PasteboardSyncFlags flags;
-  
-  flags = PasteboardSynchronize(myPasteboard); // requires Mac OS 10.3
-
-  if (!(flags & kPasteboardModified))
-    return;
-  if (flags & kPasteboardClientIsOwner)
-    return;
-
+  static NSInteger oldcount = -1;
+  NSInteger newcount = [[NSPasteboard generalPasteboard] changeCount];
+  if (newcount == oldcount) return;
+  oldcount = newcount;
   fl_trigger_clipboard_notify(1);
 }
 
