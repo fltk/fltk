@@ -570,7 +570,7 @@ void copy(Fl_Widget *, void *data) {
   if (strcmp(operation, "Fl_Copy_Surface") == 0) {
     Fl_Copy_Surface *copy_surf = new Fl_Copy_Surface(target->w()+10, target->h()+20);
     copy_surf->set_current();
-    fl_color(FL_YELLOW);fl_rectf(0,0,1000,1000);
+    fl_color(FL_YELLOW);fl_rectf(0,0,copy_surf->w(), copy_surf->h());
     copy_surf->draw(target, 5, 10);
     delete copy_surf;
     Fl_Display_Device::display_device()->set_current();  
