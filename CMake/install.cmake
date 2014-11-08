@@ -74,7 +74,7 @@ if(UNIX)
    macro(INSTALL_MAN FILE LEVEL)
    install(FILES
       ${FLTK_SOURCE_DIR}/documentation/src/${FILE}.man
-      DESTINATION man/man${LEVEL}
+      DESTINATION share/man/man${LEVEL}
       RENAME ${FILE}.${LEVEL}
    )
    endmacro(INSTALL_MAN FILE LEVEL)
