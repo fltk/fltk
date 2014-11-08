@@ -44,6 +44,7 @@ extern "C" {
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Input_.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Copy_Surface.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -3031,6 +3032,38 @@ void Fl_X::q_end_image() {
   CGContextRestoreGState(fl_gc);
 }
 
+void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
+{
+  CGContextRestoreGState(gc);
+  CGContextEndPage(gc);
+  CGContextRelease(gc);
+  NSPasteboard *clip = [NSPasteboard generalPasteboard];
+  [clip declareTypes:[NSArray arrayWithObjects:@"com.adobe.pdf", @"public.tiff", nil] owner:nil];
+  [clip setData:(NSData*)pdfdata forType:@"com.adobe.pdf"];
+  //second, transform this PDF to a bitmap image and put it as tiff in clipboard
+  NSPDFImageRep *vectorial = [[NSPDFImageRep alloc] initWithData:(NSData*)pdfdata];
+  CFRelease(pdfdata);
+	NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                    pixelsWide:width
+                                                    pixelsHigh:height
+                                                 bitsPerSample:8
+                                               samplesPerPixel:3
+                                                      hasAlpha:NO
+                                                      isPlanar:NO
+                                                colorSpaceName:NSDeviceRGBColorSpace
+                                                   bytesPerRow:width*4
+                                                  bitsPerPixel:32];
+  memset([bitmap bitmapData], -1, [bitmap bytesPerRow] * [bitmap pixelsHigh]);
+  NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap
+                                                   forKey:NSGraphicsContextDestinationAttributeName];
+	NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+  [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
+	[vectorial draw];
+  [vectorial release];
+	[NSGraphicsContext setCurrentContext:oldgc];
+  [clip setData:[bitmap TIFFRepresentation] forType:@"public.tiff"];
+  [bitmap release];
+}
 
 ////////////////////////////////////////////////////////////////
 // Copy & Paste fltk implementation.
@@ -3436,25 +3469,6 @@ static NSImage *CGBitmapContextToNSImage(CGContextRef c)
       [imagerep release];
     }
   return [image autorelease];
-}
-
-
-CFDataRef Fl_X::CGBitmapContextToTIFF(CGContextRef c)
-{ // the returned value is autoreleased
-  unsigned char *pdata = (unsigned char *)CGBitmapContextGetData(c);
-  NSBitmapImageRep *imagerep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:&pdata
-								       pixelsWide:CGBitmapContextGetWidth(c)
-								       pixelsHigh:CGBitmapContextGetHeight(c)
-								    bitsPerSample:8
-								  samplesPerPixel:3
-									 hasAlpha:NO
-									 isPlanar:NO
-								   colorSpaceName:NSDeviceRGBColorSpace
-								      bytesPerRow:CGBitmapContextGetBytesPerRow(c)
-								     bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
-  NSData* tiff = [imagerep TIFFRepresentation];
-  [imagerep release];
-  return (CFDataRef)tiff;
 }
 
 int Fl_X::set_cursor(Fl_Cursor c)

@@ -212,49 +212,6 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
   CGContextSaveGState(gc);
 }
 
-
-void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
-{
-  CGContextRestoreGState(gc);
-  CGContextEndPage(gc);
-  CGContextRelease(gc);
-  PasteboardRef clipboard = NULL;
-  PasteboardCreate(kPasteboardClipboard, &clipboard);
-  PasteboardClear(clipboard); //	first, copy PDF to clipboard 
-  PasteboardPutItemFlavor (clipboard, (PasteboardItemID)1, 
-			   CFSTR("com.adobe.pdf"), // kUTTypePDF
-			   pdfdata, kPasteboardFlavorNoFlags);
-  //second, transform this PDF to a bitmap image and put it as tiff in clipboard
-  CGDataProviderRef prov;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1040
-  if(fl_mac_os_version >= 100400)
-    prov = CGDataProviderCreateWithCFData(pdfdata); // 10.4
-  else 
-#endif
-    prov = CGDataProviderCreateWithData(NULL, CFDataGetBytePtr(pdfdata), CFDataGetLength(pdfdata), NULL);
-  CGPDFDocumentRef pdfdoc = CGPDFDocumentCreateWithProvider(prov);
-  CGPDFPageRef pdfpage = CGPDFDocumentGetPage(pdfdoc, 1);
-  CGDataProviderRelease(prov);
-  CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-  void *mem = ( fl_mac_os_version >= 100600 ? NULL : malloc(width * height * 4) );
-  gc = CGBitmapContextCreate(mem, width, height, 8, width * 4, space, kCGImageAlphaNoneSkipLast);
-  CFRelease(space);
-  if (gc == NULL) { if (mem) free(mem); return; }
-  CGRect rect = CGRectMake(0, 0, width, height);
-  CGContextSetRGBFillColor(gc,  1,1,1,1);//need to clear background
-  CGContextFillRect(gc, rect);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1030
-  CGContextDrawPDFPage(gc, pdfpage);  // requires 10.3
-#endif
-  CGPDFDocumentRelease(pdfdoc);
-  CFRelease(pdfdata);
-  PasteboardPutItemFlavor(clipboard, (PasteboardItemID)1, CFSTR("public.tiff"), 
-			  Fl_X::CGBitmapContextToTIFF(gc), kPasteboardFlavorNoFlags);
-  CFRelease(clipboard);    
-  CGContextRelease(gc);
-  if (mem) free(mem);
-}
-
 #endif  // __APPLE__
 
 #if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
