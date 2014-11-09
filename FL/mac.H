@@ -41,6 +41,7 @@ typedef struct OpaquePMPrintSettings*   PMPrintSettings;
 typedef struct OpaquePMPageFormat*      PMPageFormat;
 typedef struct OpaquePMPrintSession*    PMPrintSession;
 typedef struct CGImage* CGImageRef;
+typedef void *Fl_CFMutableDataRef; // used in Fl_Copy_Surface.H
 typedef CGContextRef Fl_Offscreen;
 
 #else // this part must be compiled when building the FLTK libraries
@@ -78,6 +79,7 @@ class NSCursor;
 #endif // __OBJC__
 
 typedef CGContextRef Fl_Offscreen;
+typedef CFMutableDataRef Fl_CFMutableDataRef;
 
 typedef struct flCocoaRegion {
   int count;

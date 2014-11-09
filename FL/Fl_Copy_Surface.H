@@ -21,10 +21,7 @@
 
 #include <FL/Fl_Paged_Device.H>
 #include <FL/Fl_Printer.H>
-
-#if defined(__APPLE__)
-#include <ApplicationServices/ApplicationServices.h>
-#endif
+#include <FL/x.H>
 
 /** Supports copying of graphical data to the clipboard.
  
@@ -57,7 +54,7 @@ private:
   int height;
   Fl_Paged_Device *helper;
 #ifdef __APPLE__
-  CFMutableDataRef pdfdata;
+  Fl_CFMutableDataRef pdfdata;
   CGContextRef oldgc;
   CGContextRef gc;
   void prepare_copy_pdf_and_tiff(int w, int h);
