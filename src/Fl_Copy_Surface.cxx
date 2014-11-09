@@ -22,9 +22,6 @@
 
 #if defined(__APPLE__)
 #include <ApplicationServices/ApplicationServices.h>
-#if defined(__ppc__)
-#include <QuickTime/QuickTimeComponents.h>
-#endif // __ppc__
 
 Fl_Quartz_Surface_::Fl_Quartz_Surface_(int w, int h) : Fl_System_Printer(), width(w), height(h) {
 }
