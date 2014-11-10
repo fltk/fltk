@@ -125,12 +125,14 @@ public:
     In these examples the gray area is the resizable:
 
     \image html resizebox1.png
+
+    <br>
     
     \image html resizebox2.png
     
     \image latex resizebox1.png "before resize"  width=4cm
     
-    \image latex resizebox2.png "after resize"   width=4cm
+    \image latex resizebox2.png "after resize"   width=4.85cm
 
     The resizable may be set to the group itself, in which case all the
     contents are resized. This is the default value for Fl_Group,
