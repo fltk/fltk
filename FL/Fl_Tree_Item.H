@@ -60,8 +60,8 @@
 /// The following shows the Fl_Tree_Item's dimensions, useful when overriding
 /// the draw_item_content() method:
 ///
-///     \image html  Fl_Tree_Item-dimensions.png "Fl_Tree_Item's internal dimensions." width=6cm
-///     \image latex Fl_Tree_Item-dimensions.png "Fl_Tree_Item's internal dimensions." width=6cm
+///   \image html  Fl_Tree_Item-dimensions.png "Fl_Tree_Item's internal dimensions." width=6cm
+///   \image latex Fl_Tree_Item-dimensions.png "Fl_Tree_Item's internal dimensions." width=6cm
 ///
 class Fl_Tree;
 class FL_EXPORT Fl_Tree_Item {
