@@ -180,16 +180,8 @@ void Fl_Gl_Window::make_current() {
   // correct parent window size to work with...
   GLint xywh[4];
 
-  if (window()) {
-    int xoff,yoff;
-    const Fl_Window *win = top_window_offset(xoff, yoff);	// STR #2944 [2]
-    xywh[0] = xoff;
-    xywh[1] = win->h() - yoff - h();
-  } else {
-    xywh[0] = 0;
-    xywh[1] = 0;
-  }
-
+  xywh[0] = 0;
+  xywh[1] = 0;
   xywh[2] = w();
   xywh[3] = h();
 

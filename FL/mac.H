@@ -125,9 +125,8 @@ public:
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
-  Fl_Region subRegion;     // region for this specific subwindow
+  CGRect* subRect;         // make sure subwindow remains inside its parent window
   Fl_X *next;              // linked tree to support subwindows
-  Fl_X *xidChildren, *xidNext; // more subwindow tree
   int wait_for_expose;
   NSCursor *cursor;
   static Fl_X* first;
@@ -146,7 +145,6 @@ public:
   void destroy(void);
   void map(void);
   void unmap(void);
-  int unlink(Fl_X* start = NULL);
   void collapse(void);
   WindowRef window_ref(void);
   void set_key_window(void);
@@ -169,9 +167,6 @@ public:
   static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
   static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
-private:
-  static void relink(Fl_Window*, Fl_Window*);
-  bool subwindow;
 };
 
 extern Window fl_window;

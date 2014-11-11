@@ -681,20 +681,13 @@ Fl_X* Fl_X::first;
 Fl_Window* fl_find(Window xid) {
   Fl_X *window;
   for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next)
-#if defined(WIN32) || defined(USE_X11)
-   if (window->xid == xid)
-#elif defined(__APPLE_QUARTZ__)
-   if (window->xid == xid && !window->w->window())
-#else
-# error unsupported platform
-#endif // __APPLE__
-	{
+   if (window->xid == xid) {
       if (window != Fl_X::first && !Fl::modal()) {
-	// make this window be first to speed up searches
-	// this is not done if modal is true to avoid messing up modal stack
-	*pp = window->next;
-	window->next = Fl_X::first;
-	Fl_X::first = window;
+        // make this window be first to speed up searches
+        // this is not done if modal is true to avoid messing up modal stack
+        *pp = window->next;
+        window->next = Fl_X::first;
+        Fl_X::first = window;
       }
       return window->w;
     }
@@ -1505,7 +1498,6 @@ void Fl_Window::hide() {
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return;
   *pp = ip->next;
 #ifdef __APPLE__
-  ip->unlink();
   // MacOS X manages a single pointer per application. Make sure that hiding
   // a toplevel window will not leave us with some random pointer shape, or
   // worst case, an invisible pointer
@@ -1556,7 +1548,7 @@ void Fl_Window::hide() {
     }
 #elif defined(__APPLE_QUARTZ__)
   Fl_X::q_release_context(ip);
-  if ( ip->xid == fl_window && !parent() )
+  if ( ip->xid == fl_window )
     fl_window = 0;
 #endif
 
@@ -1584,6 +1576,7 @@ void Fl_Window::hide() {
   if (count) delete[] doit;
 #elif defined(__APPLE_QUARTZ__)
   ip->destroy();
+  delete ip->subRect;
 #else
 # error unsupported platform
 #endif
