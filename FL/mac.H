@@ -29,7 +29,7 @@
 @class FLWindow; // a subclass of the NSWindow Cocoa class
 typedef FLWindow *Window;
 #else
-typedef class FLWindow_opaque *Window; // pointer to the FLWindow objective-c class
+typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif // __OBJC__
 
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
