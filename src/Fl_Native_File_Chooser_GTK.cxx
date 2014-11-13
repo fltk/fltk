@@ -351,7 +351,7 @@ gboolean Fl_GTK_File_Chooser::custom_gtk_filter_function(const GtkFileFilterInfo
     p->running->changed_output_type(p->filter);
     p->running->previous_filter = p->filter;
     }
-  return (gboolean)fl_filename_match(info->filename, p->filter);
+  return (gboolean)fl_filename_match(fl_filename_name(info->filename), p->filter);
 }
 
 void Fl_GTK_File_Chooser::free_pair(Fl_GTK_File_Chooser::pair *p)
