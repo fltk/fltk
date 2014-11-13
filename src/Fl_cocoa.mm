@@ -2609,9 +2609,11 @@ static void set_subwindow_frame(Fl_Window *w) { // maps a subwindow at its corre
   // subwindow coordinates are in screen units from bottom just like all windows
   rp.origin = NSMakePoint(rp.origin.x + w->x(), rp.origin.y + parent->h() - w->y() - w->h());
   rp.size = NSMakeSize(w->w(), w->h());
-  [xid setFrame:rp display:YES];
-  [pxid addChildWindow:xid ordered:NSWindowAbove]; // needs OS X 10.2
-  [xid orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
+  if (!NSEqualRects(rp, [xid frame])) {
+    [xid setFrame:rp display:YES];
+    [pxid addChildWindow:xid ordered:NSWindowAbove]; // needs OS X 10.2
+    [xid orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
+  }
 }
 
 /*
@@ -2911,6 +2913,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
         size_range(W, H, W, H);
       }
       Fl_Group::resize(X,Y,W,H);
+      if (parent()) set_subwindow_frame(this);
       // make sure that subwindows of this window don't leak out of their parent window
       NSArray *children = [fl_xid(this) childWindows]; // 10.2
       NSEnumerator *enumerator = [children objectEnumerator];
