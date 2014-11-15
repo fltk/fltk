@@ -1865,7 +1865,13 @@ static Fl_Widget	**dwidgets = 0;
   When deleting groups or windows, you must only delete the group or
   window widget and not the individual child widgets.
 
-  \since FLTK 1.3 it is not necessary to remove widgets from their parent
+  \since FLTK 1.3.4 the widget will be hidden immediately, but the actual
+  destruction will be delayed until the event loop is finished. Up to
+  FLTK 1.3.3 windows wouldn't be hidden before the event loop was done,
+  hence you had to hide() a window in your window close callback if
+  you called Fl::delete_widget() to destroy (and hide) the window.
+
+  \since FLTK 1.3.0 it is not necessary to remove widgets from their parent
   groups or windows before calling this, because it will be done in the
   widget's destructor, but it is not a failure to do this nevertheless.
 
@@ -1876,8 +1882,11 @@ static Fl_Widget	**dwidgets = 0;
 */
 void Fl::delete_widget(Fl_Widget *wi) {
   if (!wi) return;
-  
-  // don;t add the same widget twice
+
+  // if the widget is shown(), hide() it (FLTK 1.3.4)
+  if (wi->visible_r()) wi->hide();
+
+  // don't add the same widget twice to the widget delete list
   for (int i = 0; i < num_dwidgets; i++) {
     if (dwidgets[i]==wi) return;
   }
