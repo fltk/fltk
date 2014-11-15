@@ -1332,11 +1332,12 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   fl_lock_function();
   NSApplicationTerminateReply reply = NSTerminateNow;
   while ( Fl_X::first ) {
-    Fl_X *x = Fl_X::first;
-    Fl::handle( FL_CLOSE, x->w );
-    Fl::do_widget_deletion();
-    if ( Fl_X::first == x ) {
-      reply = NSTerminateCancel; // FLTK has not closed all windows, so we return to the main program now
+    Fl_Window *win = Fl::first_window();
+    if (win->parent()) win = win->top_window();
+    Fl_Widget_Tracker wt(win); // track the window object
+    Fl::handle(FL_CLOSE, win);
+    if (wt.exists() && win->shown()) { // the user didn't close win
+      reply = NSTerminateCancel; // so we return to the main program now
       break;
     }
   }
