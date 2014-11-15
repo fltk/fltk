@@ -3525,10 +3525,17 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 @interface FLaboutItemTarget : NSObject 
 {
 }
+- (BOOL)validateMenuItem:(NSMenuItem *)item;
 - (void)showPanel;
 - (void)printPanel;
+- (void)terminate:(id)sender;
 @end
 @implementation FLaboutItemTarget
+- (BOOL)validateMenuItem:(NSMenuItem *)item
+{ // invalidate the Quit item of the application menu when running modal
+  if (!Fl::modal() || [item action] != @selector(terminate:)) return YES;
+  return NO;
+}
 - (void)showPanel
 {
     NSDictionary *options;
@@ -3576,6 +3583,10 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   printer.end_job();
   fl_unlock_function();
 }
+- (void)terminate:(id)sender
+{
+  [NSApp terminate:sender];
+}
 @end
 
 static void createAppleMenu(void)
@@ -3606,7 +3617,6 @@ static void createAppleMenu(void)
 		action:@selector(printPanel) 
 		keyEquivalent:@""];
     [menuItem setTarget:about];
-    [appleMenu setAutoenablesItems:NO];
     [menuItem setEnabled:YES];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     }
@@ -3637,9 +3647,10 @@ static void createAppleMenu(void)
     // Quit AppName
     title = [NSString stringWithFormat:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::quit] , nil),
 	     nsappname];
-    [appleMenu addItemWithTitle:title 
-			 action:@selector(terminate:) 
-		  keyEquivalent:@"q"];
+    menuItem = [appleMenu addItemWithTitle:title
+                                    action:@selector(terminate:)
+                             keyEquivalent:@"q"];
+    [menuItem setTarget:about];
     }
   /* Put menu into the menubar */
   menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
