@@ -156,11 +156,6 @@ public:
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
   static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h);
-  static CGContextRef watch_cursor_image(void);
-  static CGContextRef help_cursor_image(void);
-  static CGContextRef nesw_cursor_image(void);
-  static CGContextRef nwse_cursor_image(void);
-  static CGContextRef none_cursor_image(void);
   static void *get_carbon_function(const char *name);
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
