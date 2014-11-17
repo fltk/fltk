@@ -1380,8 +1380,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)applicationDidUpdate:(NSNotification *)aNotification
 {
-  if ((fl_mac_os_version >= 100500) && (im_enabled != -1) &&
-      (TSMGetActiveDocument != NULL)) {
+  if ((im_enabled != -1) && (TSMGetActiveDocument != NULL)) {
     TSMDocumentID newDoc;
     // It is extremely unclear when Cocoa decides to create/update
     // the input context, but debugging reveals that it is done
@@ -1478,6 +1477,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 
 @interface FLAppDelegateBefore10_5 : FLAppDelegate
 - (void)applicationDidUnhide:(NSNotification *)notify;
+- (void)applicationDidUpdate:(NSNotification *)aNotification;
 @end
 @implementation FLAppDelegateBefore10_5
 - (void)applicationDidUnhide:(NSNotification *)notify
@@ -1489,6 +1489,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     }
   }
   fl_unlock_function();
+}
+- (void)applicationDidUpdate:(NSNotification *)aNotification
+{
 }
 @end
 
