@@ -92,7 +92,6 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static int calc_mac_os_version();
 static void clipboard_check(void);
 static NSString *calc_utf8_format(void);
-static void im_update(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static Fl_X *fl_x_to_redraw = NULL; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
@@ -1313,6 +1312,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 #endif
 {
   void (*open_cb)(const char*);
+  @public
   TSMDocumentID currentDoc;
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
@@ -1379,7 +1379,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)applicationDidUpdate:(NSNotification *)aNotification
 {
-  if ((im_enabled != -1) && (TSMGetActiveDocument != NULL)) {
+  if (im_enabled != -1) {
     TSMDocumentID newDoc;
     // It is extremely unclear when Cocoa decides to create/update
     // the input context, but debugging reveals that it is done
@@ -1388,8 +1388,21 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     // input methods status.
     newDoc = TSMGetActiveDocument();
     if (newDoc != currentDoc) {
-        im_update();
-        currentDoc = newDoc;
+      TSMDocumentID doc;
+    
+      doc = TSMGetActiveDocument();
+      
+      if (im_enabled)
+        TSMRemoveDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag);
+      else {
+        CFArrayRef inputSources;
+        
+        inputSources = TISCreateASCIICapableInputSourceList();
+        TSMSetDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag,
+                               sizeof(CFArrayRef), &inputSources);
+        CFRelease(inputSources);
+      }
+      currentDoc = newDoc;
     }
   }
 }
@@ -1549,13 +1562,6 @@ void fl_open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
-
-    TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_X::get_carbon_function("TSMGetActiveDocument");
-    TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_X::get_carbon_function("TSMSetDocumentProperty");
-    TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_X::get_carbon_function("TSMRemoveDocumentProperty");
-    TISCreateASCIICapableInputSourceList = (TISCreateASCIICapableInputSourceList_type)Fl_X::get_carbon_function("TISCreateASCIICapableInputSourceList");
-
-    KeyScript = (KeyScript_type)Fl_X::get_carbon_function("KeyScript");
     
     BOOL need_new_nsapp = (NSApp == nil);
     if (need_new_nsapp) [NSApplication sharedApplication];
@@ -1636,59 +1642,49 @@ void fl_close_display() {
 // (see nsTSMManager::SyncKeyScript in Mozilla and enableSecureTextInput
 // in Safari/Webcore). Should be good enough for us then...
 
-static void im_update(void) {
-  if (fl_mac_os_version >= 100500) {
-    TSMDocumentID doc;
-
-    if ((TSMGetActiveDocument == NULL) ||
-        (TSMSetDocumentProperty == NULL) ||
-        (TSMRemoveDocumentProperty == NULL) ||
-        (TISCreateASCIICapableInputSourceList == NULL))
-      return;
-
-    doc = TSMGetActiveDocument();
-
-    if (im_enabled)
-      TSMRemoveDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag);
-    else {
-      CFArrayRef inputSources;
-
-      inputSources = TISCreateASCIICapableInputSourceList();
-      TSMSetDocumentProperty(doc, kTSMDocumentEnabledInputSourcesPropertyTag,
-                             sizeof(CFArrayRef), &inputSources);
-      CFRelease(inputSources);
+static int input_method_startup()
+{
+  static int retval = -1; // -1: not initialized, 0: not usable, 1: ready for use
+  if (retval == -1) {
+    fl_open_display();
+    if (fl_mac_os_version >= 100500) {
+      TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_X::get_carbon_function("TSMGetActiveDocument");
+      TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_X::get_carbon_function("TSMSetDocumentProperty");
+      TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_X::get_carbon_function("TSMRemoveDocumentProperty");
+      TISCreateASCIICapableInputSourceList = (TISCreateASCIICapableInputSourceList_type)Fl_X::get_carbon_function("TISCreateASCIICapableInputSourceList");
+      retval = (TSMGetActiveDocument && TSMSetDocumentProperty && TSMRemoveDocumentProperty && TISCreateASCIICapableInputSourceList ? 1 : 0);
+    } else {
+      KeyScript = (KeyScript_type)Fl_X::get_carbon_function("KeyScript");
+      retval = (KeyScript? 1 : 0);
     }
-  } else {
-    if (KeyScript == NULL)
-      return;
-
-    if (im_enabled)
-      KeyScript(smKeyEnableKybds);
-    else
-      KeyScript(smEnableRomanKybdsOnly);
   }
+  return retval;
 }
 
 void Fl::enable_im() {
-  fl_open_display();
+  if (!input_method_startup()) return;
 
   im_enabled = 1;
 
-  if (fl_mac_os_version >= 100500)
-    [NSApp updateWindows];
+  if (fl_mac_os_version >= 100500) {
+    ((FLAppDelegate*)[NSApp delegate])->currentDoc = NULL;
+    [NSApp updateWindows]; // triggers [FLAppDelegate applicationDidUpdate]
+  }
   else
-    im_update();
+    KeyScript(smKeyEnableKybds);
 }
 
 void Fl::disable_im() {
-  fl_open_display();
+  if (!input_method_startup()) return;
 
   im_enabled = 0;
 
-  if (fl_mac_os_version >= 100500)
-    [NSApp updateWindows];
+  if (fl_mac_os_version >= 100500) {
+    ((FLAppDelegate*)[NSApp delegate])->currentDoc = NULL;
+    [NSApp updateWindows]; // triggers [FLAppDelegate applicationDidUpdate]
+  }
   else
-    im_update();
+    KeyScript(smEnableRomanKybdsOnly);
 }
 
 
