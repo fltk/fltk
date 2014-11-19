@@ -324,7 +324,6 @@ void Fl_System_Printer::print_window_part(Fl_Window *win, int x, int y, int w, i
   win->show();
   fl_gc = NULL;
   Fl::check();
-  win->make_current();
   CGImageRef img = Fl_X::CGImage_from_window_rect(win, x, y, w, h);
   if (save_front != win) save_front->show();
   current->set_current();
