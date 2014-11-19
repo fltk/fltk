@@ -546,6 +546,10 @@ public:
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
   static Fl_Display_Device *_display; // the platform display device
+#ifdef __APPLE__
+  friend class Fl_X;
+  static bool high_res_window_; // true when drawing to a window of a retina display
+#endif
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
@@ -553,6 +557,9 @@ public:
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
   /** Returns the platform display device. */
   static inline Fl_Display_Device *display_device() {return _display;};
+#ifdef __APPLE__
+  static bool high_resolution() {return high_res_window_;}
+#endif
 };
 
 /**

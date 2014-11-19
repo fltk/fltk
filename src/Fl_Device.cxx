@@ -26,6 +26,7 @@ const char *Fl_Display_Device::class_id = "Fl_Display_Device";
 const char *Fl_Graphics_Driver::class_id = "Fl_Graphics_Driver";
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
 const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
+bool Fl_Display_Device::high_res_window_ = false;
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
 const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";

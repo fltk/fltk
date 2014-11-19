@@ -792,9 +792,8 @@ double fl_mac_flush_and_wait(double time_to_wait) {
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
   if (fl_gc) {
-    CGContextFlush(fl_gc);
-    fl_gc = 0;
-    }  
+    Fl_X::q_release_context();
+    }
   [pool release];
   return retval;
 }
@@ -2989,6 +2988,9 @@ void Fl_Window::make_current()
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  Fl_X::set_high_resolution(fl_mac_os_version >= 100700 && [fl_window backingScaleFactor] > 1.0);
+#endif
   current_ = this;
   
   NSGraphicsContext *nsgc = through_drawRect ? [NSGraphicsContext currentContext] :
@@ -3048,6 +3050,9 @@ void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;
   if (!fl_gc) return;
   CGContextRestoreGState(fl_gc); // KEEP IT: matches the CGContextSaveGState of make_current
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  Fl_X::set_high_resolution(false);
+#endif
   CGContextFlush(fl_gc);
   fl_gc = 0;
 #if defined(FLTK_USE_CAIRO)
@@ -3071,6 +3076,11 @@ void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
 
 void Fl_X::q_end_image() {
   CGContextRestoreGState(fl_gc);
+}
+
+void Fl_X::set_high_resolution(bool new_val)
+{
+  Fl_Display_Device::high_res_window_ = new_val;
 }
 
 void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
@@ -3583,6 +3593,7 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   printer.origin(w/2, h/2);
 #endif
   printer.print_window(win, -ww/2, -wh/2);
+  //printer.print_window_part(win,0,0,win->w(),win->h(), -ww/2, -wh/2);
   printer.end_page();
   printer.end_job();
   fl_unlock_function();
@@ -3933,9 +3944,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   } else {
     NSView *winview = nil;
     if ( through_drawRect && Fl_Window::current() == win ) {
-      CGFloat epsilon = 0;
-      if (fl_mac_os_version >= 100600) epsilon = 0.5; // STR #2887
-      rect = NSMakeRect(x - epsilon, y - epsilon, w, h);
+      rect = NSMakeRect(x - 0.5, y - 0.5, w, h);
     }
     else {
       rect = NSMakeRect(x, win->h()-(y+h), w, h);
