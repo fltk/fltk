@@ -130,6 +130,9 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   win->make_current();
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
+#ifdef __APPLE__
+  Fl_X::q_release_context(); // matches make_current() call above
+#endif
   if (save_front != win) save_front->show();
   current->set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
