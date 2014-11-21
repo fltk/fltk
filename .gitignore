@@ -63,19 +63,29 @@
 
 # /examples/
 /examples/*.exe
+/examples/clipboard
 /examples/howto-add_fd-and-popen
+/examples/howto-browser-with-icons
+/examples/howto-drag-and-drop
 /examples/howto-parse-args
 /examples/howto-text-over-image-button
 /examples/menubar-add
 /examples/nativefilechooser-simple-app
+/examples/progress-simple
+/examples/shapedwindow
 /examples/table-as-container
 /examples/table-simple
 /examples/table-sort
 /examples/table-spreadsheet
 /examples/table-spreadsheet-with-keyboard-nav
+/examples/table-with-keynav
 /examples/tabs-simple
 /examples/textdisplay-with-colors
 /examples/texteditor-simple
+/examples/tree-as-container
+/examples/tree-custom-draw-items
+/examples/tree-custom-sort
+/examples/tree-of-tables
 /examples/tree-simple
 /examples/wizard-simple
 
