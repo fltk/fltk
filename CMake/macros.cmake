@@ -1,5 +1,5 @@
 #
-# "$Id: CMakeLists.txt 10092 2014-02-02 00:49:50Z AlbrechtS $"
+# "$Id$"
 #
 # macros.cmake defines macros used by the build system
 # Written by Michael Surette
