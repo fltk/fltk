@@ -45,8 +45,8 @@ add_subdirectory(src)
 export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_BINARY_DIR}/FLTK-Targets.cmake)
 
 # generate FLTKConfig.cmake for build directory use
-set(INCLUDE_DIRS "@FLTK_INCLUDE_DIRS@")
-set(CONFIG_PATH @FLTK_BINARY_DIR@)
+set(INCLUDE_DIRS "${FLTK_INCLUDE_DIRS}")
+set(CONFIG_PATH ${FLTK_BINARY_DIR})
 
 configure_file(
    ${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
