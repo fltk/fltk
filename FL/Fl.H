@@ -620,28 +620,31 @@ public:
   */
   static void event_is_click(int i) {e_is_click = i;}
   /**
-    Gets which particular mouse button caused the current event. 
+    Gets which particular mouse button caused the current event.
+
     This returns garbage if the most recent event was not a FL_PUSH or FL_RELEASE event.
     \retval FL_LEFT_MOUSE \retval FL_MIDDLE_MOUSE \retval FL_RIGHT_MOUSE.
     \see Fl::event_buttons()
   */
   static int event_button()	{return e_keysym-FL_Button;}
   /**
+    Returns the keyboard and mouse button states of the last event.
+
     This is a bitfield of what shift states were on and what mouse buttons
-    were held down during the most recent event. The second version
-    returns non-zero if any of the passed bits are turned on.
-    The legal bits are:
-    
-    \li FL_SHIFT
-    \li FL_CAPS_LOCK
-    \li FL_CTRL
-    \li FL_ALT
-    \li FL_NUM_LOCK
-    \li FL_META
-    \li FL_SCROLL_LOCK
-    \li FL_BUTTON1
-    \li FL_BUTTON2
-    \li FL_BUTTON3
+    were held down during the most recent event.
+
+    The legal event state bits are:
+
+    - FL_SHIFT
+    - FL_CAPS_LOCK
+    - FL_CTRL
+    - FL_ALT
+    - FL_NUM_LOCK
+    - FL_META
+    - FL_SCROLL_LOCK
+    - FL_BUTTON1
+    - FL_BUTTON2
+    - FL_BUTTON3
     
     X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and
     FL_SCROLL_LOCK may not work. The values were selected to match the
@@ -650,8 +653,13 @@ public:
     <I>after</I> the shift key is pressed or released.
   */
   static int event_state()	{return e_state;}
-  /** See int event_state() */
-  static int event_state(int i) {return e_state&i;}
+
+  /** Returns non-zero if any of the passed event state bits are turned on.
+
+    Use \p mask to pass the event states you're interested in.
+    The legal event state bits are defined in Fl::event_state().
+  */
+  static int event_state(int mask) {return e_state&mask;}
   /**
     Gets which key on the keyboard was last pushed.
 
