@@ -3881,7 +3881,7 @@ static CGImageRef GL_rect_to_CGImage_10_5(Fl_Window *win, int x, int y, int w, i
   if (!pi) return NULL;
   Fl_RGB_Image *img = pi->rectangle_capture(win, x, y, w, h);
   CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef provider = CGDataProviderCreateWithData(img, img->array, img->ld() * h, imgProviderReleaseData);
+  CGDataProviderRef provider = CGDataProviderCreateWithData(img, img->array, img->ld() * img->h(), imgProviderReleaseData);
   CGImageRef image = CGImageCreate(img->w(), img->h(), 8, 24, img->ld(), cSpace,
                                    (CGBitmapInfo)(kCGImageAlphaNone),
                                    provider, NULL, false, kCGRenderingIntentDefault);
