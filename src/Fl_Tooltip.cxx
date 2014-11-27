@@ -57,6 +57,14 @@ public:
     
     Fl_Menu_Window::show();
   }
+
+  int handle(int e) {
+    if (e == FL_PUSH || e == FL_KEYDOWN) {
+      hide();
+      return 1;
+    }
+    return Fl_Menu_Window::handle(e);
+  }
 };
 
 Fl_Widget* Fl_Tooltip::widget_ = 0;
@@ -168,7 +176,13 @@ void Fl_Tooltip::enter_(Fl_Widget* w) {
   printf("Fl_Tooltip::enter_(w=%p)\n", w);
   printf("    window=%p\n", window);
 #endif // DEBUG
-
+  if (w && w->as_window() && ((Fl_Window*)w)->tooltip_window()) {
+    // Fix STR #2650: if there's no better place for a tooltip window, don't move it.
+    int oldx = w->x();
+    int oldy = w->y();
+    ((Fl_TooltipBox*)w)->layout();
+    if (w->x() == oldx && w->y() == oldy) return;
+  }
   // find the enclosing group with a tooltip:
   Fl_Widget* tw = w;
   for (;;) {
