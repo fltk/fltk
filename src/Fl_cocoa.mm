@@ -1919,7 +1919,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  that implements the NSTextInputClient protocol to properly handle text input. It also implements the old NSTextInput
  protocol to run with OS <= 10.4. The few NSTextInput protocol methods that differ in signature from the NSTextInputClient 
  protocol transmit the received message to the corresponding NSTextInputClient method.
- If OS < 10.6, the FLView class is replaced by the FLViewBefore10_6 class that re-implements its fl_handle_keydown_event method.
+ If OS < 10.6, the FLView class implements differently its fl_handle_keydown_event method.
 
  Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
  ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
@@ -1959,8 +1959,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  selectedRange = NSMakeRange(100, newSelection.length); to indicate that this length of text is selected.
 
  With OS <= 10.5, the fl_handle_keydown_event: method is implemented differently because neither the
- inputContext nor the handleEvent: methods are available. It is re-implemented
- by the FLViewBefore10_6 class as [[FLTextInputContext singleInstance] handleEvent:event].
+ inputContext nor the handleEvent: methods are available.
+ It becomes [[FLTextInputContext singleInstance] handleEvent:event].
  Method +[FLTextInputContext singleInstance] returns an instance of class FLTextInputContext that possesses
  a handleEvent: method. The class FLTextView implements the so-called view's "field editor". This editor is an instance
  of the FLTextView class allocated by the -(id)[FLWindowDelegate windowWillReturnFieldEditor: toObject:] method.
@@ -2050,7 +2050,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 + (void)prepareEtext:(NSString*)aString;
 + (void)concatEtext:(NSString*)aString;
-- (id)init;
+- (id)initWithFrame:(NSRect)frameRect;
 - (void)drawRect:(NSRect)rect;
 - (BOOL)acceptsFirstResponder;
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent;
@@ -2086,10 +2086,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 @end
 
 @implementation FLView
-- (id)init
+- (id)initWithFrame:(NSRect)frameRect
 {
   static NSInteger counter = 0;
-  self = [super init];
+  self = [super initWithFrame:frameRect];
   if (self) {
     in_key_event = NO;
     identifier = ++counter;
@@ -2110,7 +2110,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 
 - (BOOL)acceptsFirstResponder
 {   
-  return YES;
+  return [[self window] parentWindow] ? NO : YES; // 10.2
 }
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
@@ -2324,8 +2324,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   return NSDragOperationGeneric;
 }
 
-- (BOOL)fl_handle_keydown_event:(NSEvent*)event { // used if OS ≥ 10.6
-  return [[self performSelector:@selector(inputContext)] handleEvent:event];
+- (BOOL)fl_handle_keydown_event:(NSEvent*)event {
+  return fl_mac_os_version >= 100600 ?
+          [[self performSelector:@selector(inputContext)] handleEvent:event]
+          :
+          [[FLTextInputContext singleInstance] handleEvent:event];
 }
 
 + (void)prepareEtext:(NSString*)aString {
@@ -2410,6 +2413,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
   if (palette) Fl::flush();
+  if (fl_mac_os_version < 100600) [[FLTextView singleInstance] setActive:NO];
   fl_unlock_function();
 }
 
@@ -2539,25 +2543,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (NSInteger)conversationIdentifier {
   return identifier;
 }
-
 @end
-
-@interface FLViewBefore10_6 : FLView
-- (BOOL)fl_handle_keydown_event:(NSEvent*)event;
-- (void)insertText:(id)aString replacementRange:(NSRange)replacementRange;
-@end
-@implementation FLViewBefore10_6
-- (BOOL)fl_handle_keydown_event:(NSEvent*)event
-{
-  return [[FLTextInputContext singleInstance] handleEvent:event];
-}
-- (void)insertText:(id)aString replacementRange:(NSRange)replacementRange {
-  [super insertText:aString replacementRange:replacementRange];
-  [[FLTextView singleInstance] setActive:NO];
-}
-@end
-
-static Class FLViewThisOS = (fl_mac_os_version >= 100600 ? [FLView class] : [FLViewBefore10_6 class]);
 
 
 void Fl_Window::fullscreen_x() {
@@ -2726,8 +2712,10 @@ void Fl_X::make(Fl_Window* w)
 				      contentRect:crect  
 					styleMask:winstyle];
     [cw setFrameOrigin:crect.origin];
-    if (!w->parent()) [cw setHasShadow:YES];
-    [cw setAcceptsMouseMovedEvents:YES];
+    if (!w->parent()) {
+      [cw setHasShadow:YES];
+      [cw setAcceptsMouseMovedEvents:YES];
+    }
     if (w->shape_data_) {
       [cw setOpaque:NO]; // shaped windows must be non opaque
       [cw setBackgroundColor:[NSColor clearColor]]; // and with transparent background color
@@ -2746,7 +2734,7 @@ void Fl_X::make(Fl_Window* w)
       x->next = NULL;
       Fl_X::first = x;
     }
-    FLView *myview = [[FLViewThisOS alloc] init];
+    FLView *myview = [[FLView alloc] initWithFrame:crect];
     [cw setContentView:myview];
     [myview release];
     [cw setLevel:winlevel];
@@ -2780,29 +2768,39 @@ void Fl_X::make(Fl_Window* w)
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
     if (!w->parent()) Fl::first_window(w);
     [cw setDelegate:[FLWindowDelegate singleInstance]];
-    if (fl_show_iconic) { 
-      fl_show_iconic = 0;
-      [cw miniaturize:nil];
-    } else if (w->parent()) {
-      set_subwindow_frame(w);
-    } else {
-      [cw makeKeyAndOrderFront:nil];
+  if (fl_show_iconic) {
+    fl_show_iconic = 0;
+    [cw miniaturize:nil];
+  } else if (w->parent()) {
+    [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
+    // next 2 statements so a subwindow doesn't leak out of its parent window
+    [cw setOpaque:NO];
+    [cw setBackgroundColor:[NSColor clearColor]]; // transparent background color
+    CGRect prect = CGRectMake(0, 0, w->window()->w(), w->window()->h());
+    CGRect srect = CGRectMake(w->x(), w->y(), w->w(), w->h());
+    if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
+      CGRect clip = CGRectIntersection(prect, srect);
+      clip = CGRectOffset(clip, -w->x(), -w->y());
+      clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
+      x->subRect = new CGRect(clip);
     }
-    
-    if (w->parent()) {
-      [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
-      // next 2 statements so a subwindow doesn't leak out of its parent window
-      [cw setOpaque:NO];
-      [cw setBackgroundColor:[NSColor clearColor]]; // transparent background color
-    } else {
-      crect = [[cw contentView] frame];
-      w->w(int(crect.size.width));
-      w->h(int(crect.size.height));
-      crect = [cw frame];
-      w->x(int(crect.origin.x));
-      w->y(int(main_screen_height - (crect.origin.y + w->h())));
-    }
-    
+    set_subwindow_frame(w);
+    // needed if top window was first displayed miniaturized
+    FLWindow *pxid = fl_xid(w->top_window());
+    [pxid makeFirstResponder:[pxid contentView]];
+  } else {
+    [cw makeKeyAndOrderFront:nil];
+  }
+  
+  if (!w->parent()) {
+    crect = [[cw contentView] frame];
+    w->w(int(crect.size.width));
+    w->h(int(crect.size.height));
+    crect = [cw frame];
+    w->x(int(crect.origin.x));
+    w->y(int(main_screen_height - (crect.origin.y + w->h())));
+  }
+  
     int old_event = Fl::e_number;
     w->handle(Fl::e_number = FL_SHOW);
     Fl::e_number = old_event;
@@ -2872,7 +2870,7 @@ void Fl_Window::show() {
     labeltype(FL_NO_LABEL);
   }
   Fl_Tooltip::exit(this);
-  if (!shown()) {
+  if (!shown() && (!parent() || ![fl_xid(top_window()) isMiniaturized])) {
     Fl_X::make(this);
   } else {
     if ( !parent() ) {
@@ -2915,39 +2913,42 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       }
       Fl_Group::resize(X,Y,W,H);
       if ([i->xid parentWindow]) set_subwindow_frame(this);
-      // make sure that subwindows of this window don't leak out of their parent window
-      NSArray *children = [fl_xid(this) childWindows]; // 10.2
-      NSEnumerator *enumerator = [children objectEnumerator];
-      id child;
-      while ((child = [enumerator nextObject]) != nil) {
-        [[(FLWindow*)child contentView] setNeedsDisplay:YES];
-        Fl_Window *childw = [child getFl_Window];
-        CGRect prect = CGRectMake(0, 0, w(), h());
-        CGRect srect = CGRectMake(childw->x(), childw->y(), childw->w(), childw->h());
-        CGRect **active = &(Fl_X::i(childw)->subRect);
-        delete *active;
-        *active = NULL;
-        if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
-          CGRect clip = CGRectIntersection(prect, srect);
-          clip = CGRectOffset(clip, -childw->x(), -childw->y());
-          clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
-          *active = new CGRect(clip);
-        }
-      }
       
     } else {
-      x(X); y(Y); 
+      x(X); y(Y);
     }
-    return;
   }
-  resize_from_system = 0;
-  if (is_a_resize) {
-    Fl_Group::resize(X,Y,W,H);
-    if (shown()) { 
-      redraw(); 
+  else {
+    resize_from_system = 0;
+    if (is_a_resize) {
+      Fl_Group::resize(X,Y,W,H);
+      if (shown()) {
+        redraw();
+      }
+    } else {
+      x(X); y(Y);
     }
-  } else {
-    x(X); y(Y); 
+  }
+  if (is_a_resize) {
+    // make sure that subwindows of this window don't leak out of their parent window
+    NSArray *children = [fl_xid(this) childWindows]; // 10.2
+    NSEnumerator *enumerator = [children objectEnumerator];
+    id child;
+    while ((child = [enumerator nextObject]) != nil) {
+      [[(FLWindow*)child contentView] setNeedsDisplay:YES];
+      Fl_Window *childw = [child getFl_Window];
+      CGRect prect = CGRectMake(0, 0, w(), h());
+      CGRect srect = CGRectMake(childw->x(), childw->y(), childw->w(), childw->h());
+      CGRect **active = &(Fl_X::i(childw)->subRect);
+      delete *active;
+      *active = NULL;
+      if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
+        CGRect clip = CGRectIntersection(prect, srect);
+        clip = CGRectOffset(clip, -childw->x(), -childw->y());
+        clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
+        *active = new CGRect(clip);
+      }
+    }
   }
 }
 
@@ -3356,7 +3357,7 @@ void Fl_X::map() {
   }
   //+ link to window list
   if (w && w->parent()) {
-    w->redraw();
+    w->redraw(); // possibly not necessary
   }
   if (cursor) {
     [(NSCursor*)cursor release];
