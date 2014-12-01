@@ -82,7 +82,14 @@ threads on all operating systems:
 
 \li Don't \p show() or \p hide() anything that contains
     widgets derived from Fl_Window, including dialogs, file
-    choosers, subwindows or those using Fl_Gl_Window.
+    choosers, subwindows or those using Fl_Gl_Window. Note that
+    this constraint may also apply to non-window widgets that
+    have tooltips, since the tooltip will contain a Fl_Window
+    object. In general, it is advised \b not to call \p show()
+    or \p hide() on any widget from the context of a
+    non-main thread (instead use the Fl_Awake_Handler function
+    variant of Fl::awake to have the main thread show or hide
+    the widget on behalf of the child thread.)
 
 \li Don't call Fl::run(), Fl::wait(), Fl::flush() or any
     related methods that will handle system messages
