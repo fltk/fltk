@@ -142,6 +142,7 @@ public:
   static void q_begin_image(CGRect&, int x, int y, int w, int h);
   static void q_end_image();
   // Cocoa additions
+  static CGSize window_pixel_size(Fl_Window* win);
   void destroy(void);
   void map(void);
   void unmap(void);

@@ -2545,6 +2545,22 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 @end
 
+// returns the window size in pixels.
+// On retina display, values are double of w() x h()
+CGSize Fl_X::window_pixel_size(Fl_Window* win)
+{
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700 && win->shown()) {
+    NSSize s = [[win->i->xid contentView] convertSizeToBacking:NSMakeSize(win->w(), win->h())];
+#if __LP64__
+    return s;
+#else
+    return CGSizeMake(s.width, s.height);
+#endif
+  }
+#endif
+  return CGSizeMake(win->w(), win->h());
+}
 
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
@@ -2985,9 +3001,7 @@ void Fl_Window::make_current()
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  Fl_X::set_high_resolution(fl_mac_os_version >= 100700 && [fl_window backingScaleFactor] > 1.0);
-#endif
+  Fl_X::set_high_resolution( Fl_X::window_pixel_size(this).width > w() + 0.5 );
   current_ = this;
   
   NSGraphicsContext *nsgc = through_drawRect ? [NSGraphicsContext currentContext] :
