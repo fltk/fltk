@@ -304,12 +304,6 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   context = aglCreateContext( g->pixelformat, shared_ctx);
   if (!context) return 0;
   add_context((GLContext)context);
-  if ( window->parent() ) {
-    int H = window->window()->h();
-    GLint rect[] = { window->x(), H-window->h()-window->y(), window->w(), window->h() };
-    aglSetInteger( (GLContext)context, AGL_BUFFER_RECT, rect );
-    aglEnable( (GLContext)context, AGL_BUFFER_RECT );
-  }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 #if __LP64__
   // 64 bit version
@@ -344,12 +338,6 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
 #  elif defined(__APPLE_QUARTZ__)
     // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-    if ( w->parent() ) { //: resize our GL buffer rectangle
-      int H = w->window()->h();
-      GLint rect[] = { w->x(), H-w->h()-w->y(), w->w(), w->h() };
-      aglSetInteger( context, AGL_BUFFER_RECT, rect );
-      aglEnable( context, AGL_BUFFER_RECT );
-    }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 #if __LP64__
     // 64 bit version
