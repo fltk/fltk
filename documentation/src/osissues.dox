@@ -762,8 +762,7 @@ Fl_Window *fl_find(Window xid)
 
 \par
 Returns the Fl_Window that corresponds to the given window reference,
-or \c NULL if not found. FLTK windows that are children of top-level
-windows share the \c Window of the top-level window.
+or \c NULL if not found.
 
 void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
 
