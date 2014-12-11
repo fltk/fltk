@@ -1106,6 +1106,7 @@ static void position_subwindows(Fl_Window *parent, BOOL is_a_move)
   while ((child = [enumerator nextObject]) != nil) {
     NSRect rchild;
     Fl_Window *sub = [child getFl_Window];
+    Fl_X::i(sub)->mapped_to_retina = Fl_X::i(parent)->mapped_to_retina;
     rchild.origin = NSMakePoint(pframe.origin.x + sub->x(), pframe.origin.y + parent->h() - (sub->h() + sub->y()));
     rchild.size = NSMakeSize(sub->w(), sub->h());
     [child setFrame:rchild display:YES];
@@ -1190,7 +1191,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     update_e_xy_and_e_xy_root(nsw);
     resize_from_system = NULL;
     window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
-    position_subwindows(window, YES);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
       bool *mapped = &(Fl_X::i(window)->mapped_to_retina);
@@ -1201,6 +1201,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       if ((!previous) && *mapped) window->redraw();
     }
 #endif
+    position_subwindows(window, YES);
    }
   fl_unlock_function();
 }
@@ -2681,8 +2682,9 @@ void Fl_X::make(Fl_Window* w)
     x->subRect = 0;
     x->cursor = NULL;
     x->gc = 0;
-    x->mapped_to_retina = false;
-	  
+    if (w->parent()) x->mapped_to_retina = w->top_window()->i->mapped_to_retina;
+    else x->mapped_to_retina = false;
+  
     NSRect crect;
     if (w->fullscreen_active()) {
       int top, bottom, left, right;
