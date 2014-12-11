@@ -129,6 +129,7 @@ public:
   Fl_X *next;              // linked tree to support subwindows
   int wait_for_expose;
   NSCursor *cursor;
+  bool mapped_to_retina;   // true when window is mapped to a retina display
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);

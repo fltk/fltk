@@ -1191,6 +1191,16 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     resize_from_system = NULL;
     window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
     position_subwindows(window, YES);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
+      bool *mapped = &(Fl_X::i(window)->mapped_to_retina);
+      bool previous = *mapped;
+      NSSize s = [[nsw contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+      *mapped = (int(s.width + 0.5) > 10);
+      // window needs redrawn when moving from low res to retina
+      if ((!previous) && *mapped) window->redraw();
+    }
+#endif
    }
   fl_unlock_function();
 }
@@ -2545,23 +2555,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 @end
 
-// returns the window size in pixels.
-// On retina display, values are double of w() x h()
-CGSize Fl_X::window_pixel_size(Fl_Window* win)
-{
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  if (fl_mac_os_version >= 100700 && win->shown()) {
-    NSSize s = [[win->i->xid contentView] convertSizeToBacking:NSMakeSize(win->w(), win->h())];
-#if __LP64__
-    return s;
-#else
-    return CGSizeMake(s.width, s.height);
-#endif
-  }
-#endif
-  return CGSizeMake(win->w(), win->h());
-}
-
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
   /* On OS X < 10.6, it is necessary to recreate the window. This is done
@@ -2688,6 +2681,7 @@ void Fl_X::make(Fl_Window* w)
     x->subRect = 0;
     x->cursor = NULL;
     x->gc = 0;
+    x->mapped_to_retina = false;
 	  
     NSRect crect;
     if (w->fullscreen_active()) {
@@ -3001,7 +2995,7 @@ void Fl_Window::make_current()
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
-  Fl_X::set_high_resolution( Fl_X::window_pixel_size(this).width > w() + 0.5 );
+  Fl_X::set_high_resolution( i->mapped_to_retina );
   current_ = this;
   
   NSGraphicsContext *nsgc = through_drawRect ? [NSGraphicsContext currentContext] :
