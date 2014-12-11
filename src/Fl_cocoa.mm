@@ -1134,6 +1134,21 @@ static void orderfront_subwindows(FLWindow *xid)
   }
 }
 
+//determines whether the window is mapped to a retina display
+static void compute_mapped_to_retina(Fl_Window *window)
+{
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
+    bool *mapped = &(Fl_X::i(window)->mapped_to_retina);
+    bool previous = *mapped;
+    NSSize s = [[fl_xid(window) contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+    *mapped = (int(s.width + 0.5) > 10);
+    // window needs redrawn when moving from low res to retina
+    if ((!previous) && *mapped) window->redraw();
+  }
+#endif
+}
+
 @interface FLWindowDelegateBefore10_6 : FLWindowDelegate
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
 @end
@@ -1191,16 +1206,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     update_e_xy_and_e_xy_root(nsw);
     resize_from_system = NULL;
     window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
-      bool *mapped = &(Fl_X::i(window)->mapped_to_retina);
-      bool previous = *mapped;
-      NSSize s = [[nsw contentView] convertSizeToBacking:NSMakeSize(10, 10)];
-      *mapped = (int(s.width + 0.5) > 10);
-      // window needs redrawn when moving from low res to retina
-      if ((!previous) && *mapped) window->redraw();
-    }
-#endif
+    compute_mapped_to_retina(window);
     position_subwindows(window, YES);
    }
   fl_unlock_function();
@@ -2811,6 +2817,7 @@ void Fl_X::make(Fl_Window* w)
     crect = [cw frame];
     w->x(int(crect.origin.x));
     w->y(int(main_screen_height - (crect.origin.y + w->h())));
+    compute_mapped_to_retina(w);
   }
   
     int old_event = Fl::e_number;
