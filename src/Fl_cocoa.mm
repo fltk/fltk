@@ -4123,7 +4123,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   }
   fl_gc = NULL;
   Fl::check();
-  BOOL to_quartz = dynamic_cast<Fl_Quartz_Graphics_Driver*>(this->driver()) != NULL;
+  BOOL to_quartz =  (this->driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id);
   // capture the window title bar with no title
   CGImageRef img = NULL;
   unsigned char *bitmap = NULL;
