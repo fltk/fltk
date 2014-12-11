@@ -2882,7 +2882,9 @@ void Fl_Window::show() {
     labeltype(FL_NO_LABEL);
   }
   Fl_Tooltip::exit(this);
-  if (!shown() && (!parent() || ![fl_xid(top_window()) isMiniaturized])) {
+  Fl_X *top = NULL;
+  if (parent()) top = top_window()->i;
+  if (!shown() && (!parent() || (top && ![top->xid isMiniaturized]))) {
     Fl_X::make(this);
   } else {
     if ( !parent() ) {
