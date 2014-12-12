@@ -3830,6 +3830,36 @@ int Fl::dnd(void)
   return true;
 }
 
+// rescales an NSBitmapImageRep
+static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float scale)
+{
+  int w = [img pixelsWide];
+  int h = [img pixelsHigh];
+  int scaled_w = int(scale * w + 0.5);
+  int scaled_h = int(scale * h + 0.5);
+  NSBitmapImageRep *scaled = [[NSBitmapImageRep alloc]  initWithBitmapDataPlanes:NULL
+                                                                      pixelsWide:scaled_w
+                                                                      pixelsHigh:scaled_h
+                                                                   bitsPerSample:8
+                                                                 samplesPerPixel:4
+                                                                        hasAlpha:YES
+                                                                        isPlanar:NO
+                                                                  colorSpaceName:NSDeviceRGBColorSpace
+                                                                     bytesPerRow:scaled_w*4
+                                                                    bitsPerPixel:32];
+  NSDictionary *dict = [NSDictionary dictionaryWithObject:scaled
+                                                   forKey:NSGraphicsContextDestinationAttributeName];
+  NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+  [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
+  [[NSColor clearColor] set];
+  NSRect r = NSMakeRect(0, 0, scaled_w, scaled_h);
+  NSRectFill(r);
+  [img drawInRect:r];
+  [NSGraphicsContext setCurrentContext:oldgc];
+  [img release];
+  return scaled;
+}
+
 static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImageRep *from,
                                 int to_x, int to_y)
 /* Copies in bitmap "to" the bitmap "from" with its top-left angle at coordinates to_x, to_y
@@ -3862,88 +3892,25 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
   }
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-static CGImageRef GL_rect_to_CGImage(Fl_Window *win, int x, int y, int w, int h)
-// to be used with Mac OS ≥ 10.6 to support retina displays
-// captures a rectangle from a GL window and returns it as a CGImageRef
-// with retina the image dimensions are 2*w,2*h
-// win is really a Fl_Gl_Window*
-{
-  CGRect rect;
-  NSRect r = [fl_xid(win) frame];
-  rect = CGRectMake(r.origin.x + x, r.origin.y + win->h() - (y + h), w, h); // rect is target rect in window coordinates
-  // convert r to global display coordinates
-  rect.origin.y = CGDisplayPixelsHigh(CGMainDisplayID()) - (rect.origin.y + rect.size.height);
-  uint32_t count;
-  CGDirectDisplayID win_display;
-  CGGetDisplaysWithPoint(rect.origin, 1, &win_display, &count); // find display containing the window
-  CGRect bounds = CGDisplayBounds(win_display);
-  rect.origin.x -= bounds.origin.x; // rect is now in local display coordinates
-  rect.origin.y -= bounds.origin.y;
-  return CGDisplayCreateImageForRect(win_display, rect); // Mac OS 10.6
-}
-#endif
-
-
-static void imgProviderReleaseData (void *info, const void *data, size_t size)
-{
-  delete (Fl_RGB_Image *)info;
-}
-
-
-static CGImageRef GL_rect_to_CGImage_10_5(Fl_Window *win, int x, int y, int w, int h)
-// captures a rectangle from a GL window and returns it as a CGImageRef
-// used with Mac OS X 10.5 and before
-// win is really a Fl_Gl_Window*
-{
-  Fl_Plugin_Manager pm("fltk:device");
-  Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
-  if (!pi) return NULL;
-  Fl_RGB_Image *img = pi->rectangle_capture(win, x, y, w, h);
-  CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef provider = CGDataProviderCreateWithData(img, img->array, img->ld() * img->h(), imgProviderReleaseData);
-  CGImageRef image = CGImageCreate(img->w(), img->h(), 8, 24, img->ld(), cSpace,
-                                   (CGBitmapInfo)(kCGImageAlphaNone),
-                                   provider, NULL, false, kCGRenderingIntentDefault);
-  CGColorSpaceRelease(cSpace);
-  CGDataProviderRelease(provider);
-  if (image == NULL) delete img;
-  return image;
-}
-
 
 static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w, int h)
 // captures a rectangle from a GL window and returns it as an allocated NSBitmapImageRep
 {
-  CGImageRef image;
-  BOOL toflip = YES;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 100600) {
-    image = GL_rect_to_CGImage(win, x, y, w, h); // BGRA top to bottom
-    toflip = NO;
-  }
-  else
-#endif
-    image = GL_rect_to_CGImage_10_5(win, x, y, w, h); // RGB bottom to top
-  if (!image) return nil;
-  w = CGImageGetWidth(image);
-  h = CGImageGetHeight(image);
-  // convert image to RGBA writing it to a bitmap context
-  Fl_Offscreen offscreen = fl_create_offscreen(w, h);
+  Fl_Plugin_Manager pm("fltk:device");
+  Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+  if (!pi) return nil;
+  Fl_RGB_Image *img = pi->rectangle_capture(win, x, y, w, h);
+  Fl_Offscreen offscreen = fl_create_offscreen(img->w(), img->h());
   fl_begin_offscreen(offscreen);
-  if (toflip) {
-    CGContextTranslateCTM(fl_gc, 0, h);
-    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-  }
-  CGRect rect = CGRectMake(0, 0, w, h);
-  Fl_X::q_begin_image(rect, 0, 0, w, h);
-  CGContextDrawImage(fl_gc, rect, image);
+  CGRect rect = CGRectMake(0, 0, img->w(), img->h());
+  Fl_X::q_begin_image(rect, 0, 0, img->w(), img->h()); // flip the image
+  img->draw(0, 0);
   Fl_X::q_end_image();
-  CGImageRelease(image);
   fl_end_offscreen();
-  NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:w pixelsHigh:h bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*w bitsPerPixel:32];
+  NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:img->w() pixelsHigh:img->h() bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*img->w() bitsPerPixel:32];
   memcpy([bitmap bitmapData], CGBitmapContextGetData(offscreen), CGBitmapContextGetBytesPerRow(offscreen)*CGBitmapContextGetHeight(offscreen));
   fl_delete_offscreen(offscreen);
+  delete img;
   return bitmap;
 }
 
@@ -3985,9 +3952,13 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     clip = CGRectIntersection(rsub, clip);
     if (CGRectIsNull(clip)) continue;
     NSBitmapImageRep *childbitmap = rect_to_NSBitmapImageRep(sub, clip.origin.x - sub->x(),
-            win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height);
-    if (childbitmap) write_bitmap_inside(bitmap, w, childbitmap,
-                                      clip.origin.x - x, win->h() - clip.origin.y - clip.size.height - y );
+                                                             win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height);
+    if (childbitmap) {
+      // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
+      if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
+      write_bitmap_inside(bitmap, w, childbitmap,
+                          clip.origin.x - x, win->h() - clip.origin.y - clip.size.height - y );
+    }
     [childbitmap release];
   }
   return bitmap;
