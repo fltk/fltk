@@ -1106,7 +1106,11 @@ static void position_subwindows(Fl_Window *parent, BOOL is_a_move)
   while ((child = [enumerator nextObject]) != nil) {
     NSRect rchild;
     Fl_Window *sub = [child getFl_Window];
-    Fl_X::i(sub)->mapped_to_retina = Fl_X::i(parent)->mapped_to_retina;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    Fl_X *subx = Fl_X::i(sub);
+    bool previous = subx->mapped_to_retina();
+    subx->mapped_to_retina( Fl_X::i(parent)->mapped_to_retina() );
+#endif
     rchild.origin = NSMakePoint(pframe.origin.x + sub->x(), pframe.origin.y + parent->h() - (sub->h() + sub->y()));
     rchild.size = NSMakeSize(sub->w(), sub->h());
     [child setFrame:rchild display:YES];
@@ -1134,20 +1138,39 @@ static void orderfront_subwindows(FLWindow *xid)
   }
 }
 
-//determines whether the window is mapped to a retina display
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+//determines whether the (top-level) window is mapped to a retina display
 static void compute_mapped_to_retina(Fl_Window *window)
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
-    bool *mapped = &(Fl_X::i(window)->mapped_to_retina);
-    bool previous = *mapped;
+    Fl_X *flx = Fl_X::i(window);
+    bool previous = flx->mapped_to_retina();
     NSSize s = [[fl_xid(window) contentView] convertSizeToBacking:NSMakeSize(10, 10)];
-    *mapped = (int(s.width + 0.5) > 10);
+    flx->mapped_to_retina( int(s.width + 0.5) > 10 );
     // window needs redrawn when moving from low res to retina
-    if ((!previous) && *mapped) window->redraw();
+    if ((!previous) && flx->mapped_to_retina()) {
+      window->redraw();
+    }
   }
+}
+
+bool Fl_X::mapped_to_retina() {
+#if FLTK_ABI_VERSION >= 10304
+  return (bool)mapped_to_retina_;
+#else
+  return xidChildren != NULL;
 #endif
 }
+
+void Fl_X::mapped_to_retina(bool b) {
+#if FLTK_ABI_VERSION >= 10304
+  mapped_to_retina_ = b;
+#else
+  xidChildren = (b ? (Fl_X*)1 : NULL);
+#endif
+}
+
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 
 @interface FLWindowDelegateBefore10_6 : FLWindowDelegate
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
@@ -2685,11 +2708,11 @@ void Fl_X::make(Fl_Window* w)
     Fl_X* x = new Fl_X;
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
-    x->subRect = 0;
+    x->subRect(0);
     x->cursor = NULL;
     x->gc = 0;
-    if (w->parent()) x->mapped_to_retina = w->top_window()->i->mapped_to_retina;
-    else x->mapped_to_retina = false;
+    if (w->parent()) x->mapped_to_retina( w->top_window()->i->mapped_to_retina() );
+    else x->mapped_to_retina(false);
   
     NSRect crect;
     if (w->fullscreen_active()) {
@@ -2800,7 +2823,7 @@ void Fl_X::make(Fl_Window* w)
       CGRect clip = CGRectIntersection(prect, srect);
       clip = CGRectOffset(clip, -w->x(), -w->y());
       clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
-      x->subRect = new CGRect(clip);
+      x->subRect(new CGRect(clip));
     }
     set_subwindow_frame(w);
     // needed if top window was first displayed miniaturized
@@ -2960,15 +2983,15 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       Fl_Window *childw = [child getFl_Window];
       CGRect prect = CGRectMake(0, 0, w(), h());
       CGRect srect = CGRectMake(childw->x(), childw->y(), childw->w(), childw->h());
-      CGRect **active = &(Fl_X::i(childw)->subRect);
-      delete *active;
-      *active = NULL;
+      delete Fl_X::i(childw)->subRect();
+      CGRect *pclip = NULL;
       if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
         CGRect clip = CGRectIntersection(prect, srect);
         clip = CGRectOffset(clip, -childw->x(), -childw->y());
         clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
-        *active = new CGRect(clip);
+        pclip = new CGRect(clip);
       }
+      Fl_X::i(childw)->subRect(pclip);
     }
   }
 }
@@ -3006,7 +3029,7 @@ void Fl_Window::make_current()
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
-  Fl_X::set_high_resolution( i->mapped_to_retina );
+  Fl_X::set_high_resolution( i->mapped_to_retina() );
   current_ = this;
   
   NSGraphicsContext *nsgc = through_drawRect ? [NSGraphicsContext currentContext] :
@@ -3022,7 +3045,7 @@ void Fl_Window::make_current()
   CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
   CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   // for subwindows, limit drawing to inside of parent window
-  if (i->subRect) CGContextClipToRect(fl_gc, *(i->subRect));
+  if (i->subRect()) CGContextClipToRect(fl_gc, *(i->subRect()));
   
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(fl_gc);
@@ -3367,6 +3390,7 @@ void Fl_X::destroy() {
   if (xid) {
     [xid close];
   }
+  delete subRect();
 }
 
 void Fl_X::map() {

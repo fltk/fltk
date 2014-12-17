@@ -125,11 +125,27 @@ public:
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
-  CGRect* subRect;         // make sure subwindow remains inside its parent window
-  Fl_X *next;              // linked tree to support subwindows
+#if FLTK_ABI_VERSION >= 10304
+  CGRect* subRect_;        // make sure subwindow remains inside its parent window
+  CGRect* subRect() { return subRect_; } // getter
+  void subRect(CGRect *r) { subRect_ = r; } // setter
+#else
+  Fl_Region subRegion;   // for ABI compatibility, recycled to replace subRect_
+  CGRect* subRect() { return (CGRect*)subRegion; } // getter
+  void subRect(CGRect *r) { subRegion = (Fl_Region)r; } // setter
+#endif
+  Fl_X *next;              // chain of mapped windows
+#if FLTK_ABI_VERSION < 10304
+  Fl_X *xidChildren;       // useless with true subwindows, recycled to replace mapped_to_retina_
+  Fl_X *xidNext;           // useless with true subwindows
+#endif
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  bool mapped_to_retina();        // is window mapped to retina display?
+  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
+#endif
+  static void set_high_resolution(bool);
   int wait_for_expose;
   NSCursor *cursor;
-  bool mapped_to_retina;   // true when window is mapped to a retina display
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
@@ -164,7 +180,13 @@ public:
   static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
   static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
-  static void set_high_resolution(bool);
+private:
+#if FLTK_ABI_VERSION >= 10304
+  // stores whether window is mapped to retina display
+  unsigned mapped_to_retina_;
+#else
+  bool subwindow;     // for ABI compatibility, useless with true subwindows
+#endif
 };
 
 extern Window fl_window;

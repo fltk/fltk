@@ -1576,7 +1576,6 @@ void Fl_Window::hide() {
   if (count) delete[] doit;
 #elif defined(__APPLE_QUARTZ__)
   ip->destroy();
-  delete ip->subRect;
 #else
 # error unsupported platform
 #endif
