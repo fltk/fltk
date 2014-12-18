@@ -125,25 +125,14 @@ public:
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
-#if FLTK_ABI_VERSION >= 10304
-  CGRect* subRect_;        // make sure subwindow remains inside its parent window
-  CGRect* subRect() { return subRect_; } // getter
-  void subRect(CGRect *r) { subRect_ = r; } // setter
-#else
-  Fl_Region subRegion;   // for ABI compatibility, recycled to replace subRect_
-  CGRect* subRect() { return (CGRect*)subRegion; } // getter
-  void subRect(CGRect *r) { subRegion = (Fl_Region)r; } // setter
+#if FLTK_ABI_VERSION < 10304
+  Fl_Region subRegion;     // for ABI compatibility, recycled to replace subRect_
 #endif
   Fl_X *next;              // chain of mapped windows
 #if FLTK_ABI_VERSION < 10304
   Fl_X *xidChildren;       // useless with true subwindows, recycled to replace mapped_to_retina_
   Fl_X *xidNext;           // useless with true subwindows
 #endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  bool mapped_to_retina();        // is window mapped to retina display?
-  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
-#endif
-  static void set_high_resolution(bool);
   int wait_for_expose;
   NSCursor *cursor;
   static Fl_X* first;
@@ -151,6 +140,18 @@ public:
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static void make(Fl_Window*);
   void flush();
+  static void set_high_resolution(bool);
+#if FLTK_ABI_VERSION >= 10304
+  CGRect* subRect() { return subRect_; } // getter
+  void subRect(CGRect *r) { subRect_ = r; } // setter
+#else
+  CGRect* subRect() { return (CGRect*)subRegion; } // getter
+  void subRect(CGRect *r) { subRegion = (Fl_Region)r; } // setter
+#endif
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  bool mapped_to_retina();      // is window mapped to retina display?
+  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
+#endif
   // Quartz additions:
   CGContextRef gc;                 // graphics context (NULL when using QD)
   static void q_fill_context();    // fill a Quartz context with current FLTK state
@@ -182,8 +183,8 @@ public:
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
 private:
 #if FLTK_ABI_VERSION >= 10304
-  // stores whether window is mapped to retina display
-  unsigned mapped_to_retina_;
+  CGRect* subRect_;           // makes sure subwindow remains inside its parent window
+  unsigned mapped_to_retina_; // stores whether window is mapped to retina display
 #else
   bool subwindow;     // for ABI compatibility, useless with true subwindows
 #endif
