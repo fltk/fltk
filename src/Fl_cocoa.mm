@@ -1107,9 +1107,7 @@ static void position_subwindows(Fl_Window *parent, BOOL is_a_move)
     NSRect rchild;
     Fl_Window *sub = [child getFl_Window];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    Fl_X *subx = Fl_X::i(sub);
-    bool previous = subx->mapped_to_retina();
-    subx->mapped_to_retina( Fl_X::i(parent)->mapped_to_retina() );
+    Fl_X::i(sub)->mapped_to_retina( Fl_X::i(parent)->mapped_to_retina() );
 #endif
     rchild.origin = NSMakePoint(pframe.origin.x + sub->x(), pframe.origin.y + parent->h() - (sub->h() + sub->y()));
     rchild.size = NSMakeSize(sub->w(), sub->h());
