@@ -1227,7 +1227,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     update_e_xy_and_e_xy_root(nsw);
     resize_from_system = NULL;
     window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     compute_mapped_to_retina(window);
+#endif
     position_subwindows(window, YES);
    }
   fl_unlock_function();
@@ -2709,8 +2711,10 @@ void Fl_X::make(Fl_Window* w)
     x->subRect(0);
     x->cursor = NULL;
     x->gc = 0;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (w->parent()) x->mapped_to_retina( w->top_window()->i->mapped_to_retina() );
     else x->mapped_to_retina(false);
+#endif
   
     NSRect crect;
     if (w->fullscreen_active()) {
@@ -2838,7 +2842,9 @@ void Fl_X::make(Fl_Window* w)
     crect = [cw frame];
     w->x(int(crect.origin.x));
     w->y(int(main_screen_height - (crect.origin.y + w->h())));
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     compute_mapped_to_retina(w);
+#endif
   }
   
     int old_event = Fl::e_number;
@@ -3027,7 +3033,9 @@ void Fl_Window::make_current()
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   Fl_X::set_high_resolution( i->mapped_to_retina() );
+#endif
   current_ = this;
   
   NSGraphicsContext *nsgc = through_drawRect ? [NSGraphicsContext currentContext] :
