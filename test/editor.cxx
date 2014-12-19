@@ -206,7 +206,9 @@ style_parse(const char *text,
         // Might be a keyword...
 	for (temp = text, bufptr = buf;
 	     (islower((*temp)&255) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
-	     *bufptr++ = *temp++);
+	     *bufptr++ = *temp++) {
+	  // nothing
+        }
 
         if (!islower((*temp)&255) && *temp != '_') {
 	  *bufptr = '\0';

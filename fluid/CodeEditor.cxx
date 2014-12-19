@@ -179,7 +179,9 @@ void CodeEditor::style_parse(const char *text, char *style, int length) {
         // Might be a keyword...
 	for (temp = text, bufptr = buf;
 	     (islower(*temp) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
-	     *bufptr++ = *temp++);
+	     *bufptr++ = *temp++) {
+	  // nothing
+	}
 
         if (!islower(*temp) && *temp != '_') {
 	  *bufptr = '\0';
