@@ -1294,6 +1294,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
+  Fl::flush(); // process redraws set by FL_SHOW
   fl_unlock_function();
 }
 - (void)windowWillMiniaturize:(NSNotification *)notif
@@ -1803,7 +1804,7 @@ void Fl::get_mouse(int &x, int &y)
 
 
 /*
- * Gets called when a window is created, resized, or deminiaturized
+ * Gets called when a window is created or resized
  */    
 static void handleUpdateEvent( Fl_Window *window ) 
 {
@@ -2139,12 +2140,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (void)drawRect:(NSRect)rect
 {
   fl_lock_function();
-  through_drawRect = YES;
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *w = [cw getFl_Window];
-  if (fl_x_to_redraw) fl_x_to_redraw->flush();
-  else handleUpdateEvent(w);
-  through_drawRect = NO;
+  if (w->visible()) {
+    through_drawRect = YES;
+    if (fl_x_to_redraw) fl_x_to_redraw->flush();
+    else handleUpdateEvent(w);
+    through_drawRect = NO;
+  }
   fl_unlock_function();
 }
 
@@ -3006,7 +3009,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
  
  This can be called in 3 different instances:
  
- 1) When a window is created, resized, or deminiaturized. 
+ 1) When a window is created or resized.
  The system sends the drawRect: message to the window's view after having prepared the current graphics context 
  to draw to this view. Variable through_drawRect is YES, and fl_x_to_redraw is NULL. Processing of drawRect: calls 
  handleUpdateEvent() that calls Fl_X::flush() for the window and its subwindows. Fl_X::flush() calls 
