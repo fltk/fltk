@@ -955,40 +955,6 @@ Fl_Preferences::Name::~Name() {
 
 int Fl_Preferences::Node::lastEntrySet = -1;
 
-// recursively create a path in the file system
-static char makePath( const char *path ) {
-  if (access(path, 0)) {
-    const char *s = strrchr( path, '/' );
-    if ( !s ) return 0;
-    size_t len = s-path;
-    char *p = (char*)malloc( len+1 );
-    memcpy( p, path, len );
-    p[len] = 0;
-    makePath( p );
-    free( p );
-#if defined(WIN32) && !defined(__CYGWIN__)
-    return ( mkdir( path ) == 0 );
-#else
-    return ( mkdir( path, 0777 ) == 0 );
-#endif // WIN32 && !__CYGWIN__
-  }
-  return 1;
-}
-
-#if 0
-// strip the filename and create a path
-static void makePathForFile( const char *path ) {
-  const char *s = strrchr( path, '/' );
-  if ( !s ) return;
-  int len = s-path;
-  char *p = (char*)malloc( len+1 );
-  memcpy( p, path, len );
-  p[len] = 0;
-  makePath( p );
-  free( p );
-}
-#endif
-
 // create the root node
 // - construct the name of the file that will hold our preferences
 Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char *vendor, const char *application )
