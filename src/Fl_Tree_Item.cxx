@@ -732,13 +732,14 @@ void Fl_Tree_Item::draw_horizontal_connector(int x1, int x2, int y, const Fl_Tre
       fl_line(x1,y,x2,y);
       return;
     case FL_TREE_CONNECTOR_DOTTED: 
-        {
-            y |= 1;				// force alignment w/dot pattern
-            for ( int xx=x1; xx<=x2; xx++ ) {
-                if ( !(xx & 1) ) fl_point(xx, y);
-            }
-        }
+    {
+      y  |= 1;				// force alignment w/dot pattern
+      x1 |= 1;
+      for ( int xx=x1; xx<=x2; xx+=2 ) {
+	fl_point(xx, y);
+      }
       return;
+    }
     case FL_TREE_CONNECTOR_NONE:
       return;
   }
