@@ -27,7 +27,7 @@
  * in the current patch release of FLTK. ** Use for static builds only! **
  * For more info on this macro, see: http://fltk.org/cmp.php#FLTK_ABI_VERSION
  */
-//#define FLTK_ABI_VERSION 10303
+//#define FLTK_ABI_VERSION 10304
 
 #  include "Fl_Export.H"
 #  include "fl_types.h"

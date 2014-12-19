@@ -199,7 +199,12 @@
 	such as using the arrow keys while at the left or right end of the tabs.
 */
 class FL_EXPORT Fl_Tabs : public Fl_Group {
-  Fl_Widget *value_;
+#if FLTK_ABI_VERSION >= 10304
+  // NEW (nothing)
+#else
+  // OLD (maintained for ABI compat)
+  Fl_Widget *value_;	// NOTE: this member no longer used -- STR #3169
+#endif
   Fl_Widget *push_;
   int *tab_pos;		// array of x-offsets of tabs per child + 1
   int *tab_width;	// array of widths of tabs per child + 1

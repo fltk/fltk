@@ -461,6 +461,12 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
   Fl_Group(X,Y,W,H,l)
 {
   box(FL_THIN_UP_BOX);
+#if FLTK_ABI_VERSION >= 10304
+  // NEW (nothing)
+#else
+  // OLD (init to prevent 'unused' warnings) -- STR #3169
+  value_ = 0;	// NOTE: this member unused -- STR #3169
+#endif
   push_ = 0;
   tab_pos = 0;
   tab_width = 0;
