@@ -759,14 +759,14 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
       fl_line(x,y1,x,y2);
       return;
     case FL_TREE_CONNECTOR_DOTTED:
-        {
-            y1 |= 1;				// force alignment w/dot pattern
-            y2 |= 1;				// force alignment w/dot pattern
-            for ( int yy=y1; yy<=y2; yy++ ) {
-                if ( yy & 1 ) fl_point(x, yy);
-            }
-        }
-        return;
+    {
+      y1 |= 1;				// force alignment w/dot pattern
+      y2 |= 1;				// force alignment w/dot pattern
+      for ( int yy=y1; yy<=y2; yy+=2 ) {
+        fl_point(x, yy);
+      }
+      return;
+    }
     case FL_TREE_CONNECTOR_NONE:
       return;
   }
