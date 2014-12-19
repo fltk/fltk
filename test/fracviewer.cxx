@@ -308,7 +308,6 @@ void agvSwitchMoveMode(int move)
       Ex    = -EyeDist*sin(TORAD(EyeAz))*cos(TORAD(EyeEl));
       Ey    =  EyeDist*sin(TORAD(EyeEl));
       Ez    =  EyeDist*(cos(TORAD(EyeAz))*cos(TORAD(EyeEl)));
-      EyeAz =  EyeAz;
       EyeEl = -EyeEl;
       EyeMove = INIT_MOVE;
       break;
