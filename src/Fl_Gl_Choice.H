@@ -51,10 +51,16 @@
 #  include <FL/gl.h>
 #  define GLContext HGLRC
 #elif defined(__APPLE_QUARTZ__)
-// warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 #  include <OpenGL/gl.h>
-#  include <AGL/agl.h>
-#  define GLContext AGLContext
+#ifdef __OBJC__
+@class NSOpenGLPixelFormat;
+@class NSOpenGLContext;
+#else
+class NSOpenGLPixelFormat;
+class NSOpenGLContext;
+#endif // __OBJC__
+typedef NSOpenGLContext* FLOpenGLContextPtr;
+#  define GLContext FLOpenGLContextPtr
 #else
 #  include <GL/glx.h>
 #  define GLContext GLXContext
@@ -70,8 +76,7 @@ public:
   int pixelformat;	// the visual to use
   PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
 #elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-  AGLPixelFormat pixelformat;
+  NSOpenGLPixelFormat* pixelformat;
 #else
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
@@ -89,7 +94,6 @@ class Fl_Window;
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
 #elif defined(__APPLE_QUARTZ__)
-// warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 

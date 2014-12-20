@@ -48,6 +48,7 @@ static Fl_Gl_Choice* gl_choice;
 
 #ifdef __APPLE__
 static Fl_Gl_Choice* gl_choice;
+extern void gl_context_update(NSOpenGLContext*);
 #endif
 
 Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
@@ -61,14 +62,15 @@ void gl_start() {
     if (!gl_choice) Fl::gl_visual(0);
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #elif defined(__APPLE_QUARTZ__)
-    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #else
 #  error Unsupported platform
 #endif
   }
   fl_set_gl_context(Fl_Window::current(), context);
-#if !defined(WIN32) && !defined(__APPLE__)
+#ifdef __APPLE__
+  gl_context_update(context); // supports window resizing
+#elif !defined(WIN32)
   glXWaitX();
 #endif
   if (pw != Fl_Window::current()->w() || ph != Fl_Window::current()->h()) {
@@ -110,7 +112,6 @@ int Fl::gl_visual(int mode, int *alist) {
 #elif defined(WIN32)
   gl_choice = c;
 #elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   gl_choice = c;
 #else
 #  error Unsupported platform

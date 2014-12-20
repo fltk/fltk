@@ -1107,7 +1107,10 @@ static void position_subwindows(Fl_Window *parent, BOOL is_a_move)
     NSRect rchild;
     Fl_Window *sub = [child getFl_Window];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    Fl_X::i(sub)->mapped_to_retina( Fl_X::i(parent)->mapped_to_retina() );
+    Fl_X *subx = Fl_X::i(sub);
+    bool previous = subx->mapped_to_retina();
+    subx->mapped_to_retina( Fl_X::i(parent)->mapped_to_retina() );
+    if (previous != subx->mapped_to_retina()) subx->changed_resolution(true);
 #endif
     rchild.origin = NSMakePoint(pframe.origin.x + sub->x(), pframe.origin.y + parent->h() - (sub->h() + sub->y()));
     rchild.size = NSMakeSize(sub->w(), sub->h());
@@ -1143,8 +1146,9 @@ static void compute_mapped_to_retina(Fl_Window *window)
   if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
     Fl_X *flx = Fl_X::i(window);
     bool previous = flx->mapped_to_retina();
-    NSSize s = [[fl_xid(window) contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+    NSSize s = [[flx->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
     flx->mapped_to_retina( int(s.width + 0.5) > 10 );
+    if (previous != flx->mapped_to_retina()) flx->changed_resolution(true);
     // window needs redrawn when moving from low res to retina
     if ((!previous) && flx->mapped_to_retina()) {
       window->redraw();
@@ -1152,19 +1156,47 @@ static void compute_mapped_to_retina(Fl_Window *window)
   }
 }
 
+#if FLTK_ABI_VERSION >= 10304
+static const unsigned mapped_mask = 1;
+static const unsigned changed_mask = 2;
+#else
+static const unsigned long mapped_mask = 1; // sizeof(unsigned long) = sizeof(Fl_X*)
+static const unsigned long changed_mask = 2;
+#endif
+
 bool Fl_X::mapped_to_retina() {
 #if FLTK_ABI_VERSION >= 10304
-  return (bool)mapped_to_retina_;
+  return mapped_to_retina_ & mapped_mask;
 #else
-  return xidChildren != NULL;
+  return (unsigned long)xidChildren & mapped_mask;
 #endif
 }
 
 void Fl_X::mapped_to_retina(bool b) {
 #if FLTK_ABI_VERSION >= 10304
-  mapped_to_retina_ = b;
+  if (b) mapped_to_retina_ |= mapped;
+  else mapped_to_retina_ &= ~mapped;
 #else
-  xidChildren = (b ? (Fl_X*)1 : NULL);
+  if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | mapped_mask);
+  else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~mapped_mask);
+#endif
+}
+
+bool Fl_X::changed_resolution() {
+#if FLTK_ABI_VERSION >= 10304
+  return mapped_to_retina_ & changed_mask;
+#else
+  return (unsigned long)xidChildren & changed_mask;
+#endif
+}
+
+void Fl_X::changed_resolution(bool b) {
+#if FLTK_ABI_VERSION >= 10304
+  if (b) mapped_to_retina_ |= changed_mask;
+  else mapped_to_retina_ &= ~changed_mask;
+#else
+  if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | changed_mask);
+  else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~changed_mask);
 #endif
 }
 
@@ -2162,20 +2194,21 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   cocoaKeyboardHandler(theEvent);
   BOOL handled;
   NSUInteger mods = [theEvent modifierFlags];
-  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) ) {
+  Fl_Window *w = [(FLWindow*)[theEvent window] getFl_Window];
+  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) || (w->as_gl_window() && Fl::focus() == w)) {
     NSString *s = [theEvent characters];
     if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
       s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
       }
     [FLView prepareEtext:s];
     Fl::compose_state = 0;
-    handled = Fl::handle(FL_KEYBOARD, [(FLWindow*)[theEvent window] getFl_Window]);
+    handled = Fl::handle(FL_KEYBOARD, w);
   }
   else {
     in_key_event = YES;
     need_handle = NO;
     handled = [self fl_handle_keydown_event:theEvent];
-    if (need_handle) handled = Fl::handle(FL_KEYBOARD, [(FLWindow*)[theEvent window] getFl_Window]);
+    if (need_handle) handled = Fl::handle(FL_KEYBOARD, w);
     in_key_event = NO;
     }
   fl_unlock_function();
@@ -2238,8 +2271,13 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl::first_window(window);
   cocoaKeyboardHandler(theEvent);
   in_key_event = YES;
-  need_handle = NO;
-  [self fl_handle_keydown_event:theEvent];
+  if (window->as_gl_window() && Fl::focus() == window ) { // ignore text input methods for GL windows
+    need_handle = YES;
+    [FLView prepareEtext:[theEvent characters]];
+  } else {
+    need_handle = NO;
+    [self fl_handle_keydown_event:theEvent];
+  }
   if (need_handle) Fl::handle(FL_KEYBOARD, window);
   in_key_event = NO;
   fl_unlock_function();
@@ -2588,6 +2626,125 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 @end
 
+
+// For Fl_Gl_Window on retina display, returns 2, otherwise 1
+int Fl_X::resolution_scaling_factor(Fl_Window* win)
+{
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  return (win->as_gl_window() && Fl::use_high_res_GL() && win->i->mapped_to_retina()) ? 2 : 1;
+#else
+  return 1;
+#endif
+}
+
+
+NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
+{
+  NSOpenGLPixelFormatAttribute attribs[32];
+  int n = 0;
+  // AGL-style code remains commented out for comparison
+  if (!alistp) {
+    if (m & FL_INDEX) {
+      //list[n++] = AGL_BUFFER_SIZE; list[n++] = 8;
+    } else {
+      //list[n++] = AGL_RGBA;
+      //list[n++] = AGL_GREEN_SIZE;
+      //list[n++] = (m & FL_RGB8) ? 8 : 1;
+      attribs[n++] = NSOpenGLPFAColorSize;
+      attribs[n++] = (m & FL_RGB8) ? 32 : 1;
+      if (m & FL_ALPHA) {
+        //list[n++] = AGL_ALPHA_SIZE;
+        attribs[n++] = NSOpenGLPFAAlphaSize;
+        attribs[n++] = (m & FL_RGB8) ? 8 : 1;
+      }
+      if (m & FL_ACCUM) {
+        //list[n++] = AGL_ACCUM_GREEN_SIZE; list[n++] = 1;
+        attribs[n++] = NSOpenGLPFAAccumSize;
+        attribs[n++] = 1;
+        if (m & FL_ALPHA) {
+          //list[n++] = AGL_ACCUM_ALPHA_SIZE; list[n++] = 1;
+        }
+      }
+    }
+    if (m & FL_DOUBLE) {
+      //list[n++] = AGL_DOUBLEBUFFER;
+      attribs[n++] = NSOpenGLPFADoubleBuffer;
+    }
+    if (m & FL_DEPTH) {
+      //list[n++] = AGL_DEPTH_SIZE; list[n++] = 24;
+      attribs[n++] = NSOpenGLPFADepthSize;
+      attribs[n++] = 24;
+    }
+    if (m & FL_STENCIL) {
+      //list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
+      attribs[n++] = NSOpenGLPFAStencilSize;
+      attribs[n++] = 1;
+    }
+    if (m & FL_STEREO) {
+      //list[n++] = AGL_STEREO;
+      attribs[n++] = NSOpenGLPFAStereo;
+    }
+    if (m & FL_MULTISAMPLE) {
+      attribs[n++] = NSOpenGLPFAMultisample,
+      attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = 1;
+      attribs[n++] = NSOpenGLPFASamples; attribs[n++] = 4;
+    }
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    if (fl_mac_os_version >= 100700) {
+      attribs[n++] = NSOpenGLPFAOpenGLProfile;
+      attribs[n++] = NSOpenGLProfileVersionLegacy;
+    }
+#endif
+  } else {
+    while (alistp[n] && n < 30) {
+      attribs[n] = alistp[n];
+      n++;
+    }
+  }
+  attribs[n] = 0;
+  NSOpenGLPixelFormat *pixform = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
+  /*GLint color,alpha,accum,depth;
+  [pixform getValues:&color forAttribute:NSOpenGLPFAColorSize forVirtualScreen:0];
+  [pixform getValues:&alpha forAttribute:NSOpenGLPFAAlphaSize forVirtualScreen:0];
+  [pixform getValues:&accum forAttribute:NSOpenGLPFAAccumSize forVirtualScreen:0];
+  [pixform getValues:&depth forAttribute:NSOpenGLPFADepthSize forVirtualScreen:0];
+  NSLog(@"color=%d alpha=%d accum=%d depth=%d",color,alpha,accum,depth);*/
+  return pixform;
+}
+
+NSOpenGLContext* gl_create_context_for_window(NSOpenGLPixelFormat *pixelformat,
+                                              NSOpenGLContext *shared_ctx, Fl_Window *window)
+{
+  NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
+  if (context) [context setView:[fl_xid(window) contentView]];
+  return context;
+}
+
+void gl_context_update(NSOpenGLContext* ctxt)
+{
+  [ctxt update];
+}
+
+void gl_context_flushbuffer(NSOpenGLContext* ctxt)
+{
+  [ctxt flushBuffer];
+}
+
+void gl_context_release(NSOpenGLContext* ctxt)
+{
+  [ctxt release];
+}
+
+void gl_cleardrawable(void)
+{
+  [[NSOpenGLContext currentContext] clearDrawable];
+}
+
+void gl_context_makecurrent(NSOpenGLContext* ctxt)
+{
+  [ctxt makeCurrentContext];
+}
+
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
   /* On OS X < 10.6, it is necessary to recreate the window. This is done
@@ -2610,15 +2767,19 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
  */ 
 void Fl_X::flush()
 {
-  if (through_drawRect || w->as_gl_window()) {
-    make_current_counts = 1;
-    w->flush();
-    make_current_counts = 0;
-    Fl_X::q_release_context();
+  if (through_drawRect) {
+    if (w->as_gl_window()) {
+      w->flush();
+    } else {
+      make_current_counts = 1;
+      w->flush();
+      make_current_counts = 0;
+      Fl_X::q_release_context();
+    }
     return;
   }
   // have Cocoa immediately redraw the window's view
-  FLView *view = (FLView*)[fl_xid(w) contentView];
+  FLView *view = (FLView*)[xid contentView];
   fl_x_to_redraw = this;
   [view setNeedsDisplay:YES];
   // will send the drawRect: message to the window's view after having prepared the adequate NSGraphicsContext
@@ -2717,6 +2878,7 @@ void Fl_X::make(Fl_Window* w)
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (w->parent()) x->mapped_to_retina( w->top_window()->i->mapped_to_retina() );
     else x->mapped_to_retina(false);
+    x->changed_resolution(false);
 #endif
   
     NSRect crect;
@@ -2781,6 +2943,11 @@ void Fl_X::make(Fl_Window* w)
       Fl_X::first = x;
     }
     FLView *myview = [[FLView alloc] initWithFrame:crect];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    if (w->as_gl_window() && fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
+      [myview setWantsBestResolutionOpenGLSurface:YES];
+    }
+#endif
     [cw setContentView:myview];
     [myview release];
     [cw setLevel:winlevel];
@@ -2835,6 +3002,10 @@ void Fl_X::make(Fl_Window* w)
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
   } else {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    compute_mapped_to_retina(w);
+    x->changed_resolution(false);
+#endif
     [cw makeKeyAndOrderFront:nil];
   }
   
@@ -3928,6 +4099,7 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
 
 static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w, int h)
 // captures a rectangle from a GL window and returns it as an allocated NSBitmapImageRep
+// the capture has high res on retina
 {
   Fl_Plugin_Manager pm("fltk:device");
   Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");

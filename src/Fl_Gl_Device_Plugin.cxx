@@ -53,10 +53,13 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
 {
 #if defined(__APPLE__)
   const int bytesperpixel = 4;
+  if (Fl_X::resolution_scaling_factor(glw) > 1) {
+    w = 2*w; h = 2*h; x = 2*x; y = 2*y;
+  }
 #else
   const int bytesperpixel = 3;
 #endif
-  glw->flush(); // forces a GL redraw necessary for the glpuzzle demo
+  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -68,7 +71,7 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   int mByteWidth = w * bytesperpixel;
   mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
   uchar *baseAddress = new uchar[mByteWidth * h];
-  glReadPixels(x, glw->h() - (y+h), w, h,
+  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
 #if defined(__APPLE__)
                GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
 #else
@@ -85,6 +88,11 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   return img;
 }
 
+static void imgProviderReleaseData (void *info, const void *data, size_t size)
+{
+  delete (Fl_RGB_Image *)info;
+}
+
 /**
  This class will make sure that OpenGL printing/screen capture is available if fltk_gl
  was linked to the program
@@ -97,7 +105,27 @@ public:
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
     Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
-    fl_draw_image(img->array + (glw->h() - 1) * img->ld(), x, y , glw->w(), glw->h(), 3, - img->ld());
+#ifdef __APPLE__
+    if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
+      // convert the image to CGImage, and draw it at full res (useful on retina display)
+      CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
+      CGDataProviderRef provider = CGDataProviderCreateWithData(img, img->array, img->ld() * img->h(), imgProviderReleaseData);
+      CGImageRef cgimg = CGImageCreate(img->w(), img->h(), 8, 24, img->ld(), cSpace,
+                                     (CGBitmapInfo)(kCGImageAlphaNone),
+                                     provider, NULL, false, kCGRenderingIntentDefault);
+      CGColorSpaceRelease(cSpace);
+      CGDataProviderRelease(provider);
+      CGContextDrawImage(fl_gc, CGRectMake(0, 0, glw->w(), glw->h()), cgimg);
+      CFRelease(cgimg);
+      return 1;
+    } else if (img->w() > glw->w()) {
+      Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(glw->w(), glw->h());
+      delete img;
+      img = img2;
+    }
+#endif
+    int ld = img->ld() ? img->ld() : img->w() * img->d();
+    fl_draw_image(img->array + (img->h() - 1) * ld, x, y , img->w(), img->h(), 3, - ld);
     delete img;
     return 1;
   }

@@ -57,7 +57,7 @@ void shape_window::draw() {
   if (!valid()) {
     valid(1);
     glLoadIdentity();
-    glViewport(0,0,w(),h());
+    glViewport(0,0,pixel_w(),pixel_h());
   }
 // draw an amazing but slow graphic:
   glClear(GL_COLOR_BUFFER_BIT);
@@ -78,7 +78,7 @@ void shape_window::draw_overlay() {
   if (!valid()) {
     valid(1);
     glLoadIdentity();
-    glViewport(0,0,w(),h());
+    glViewport(0,0,pixel_w(),pixel_h());
   }
 // draw an amazing graphic:
   gl_color(FL_RED);
@@ -108,6 +108,7 @@ void overlay_sides_cb(Fl_Widget *o, void *p) {
 #include <stdio.h>
 int main(int argc, char **argv) {
 
+  Fl::use_high_res_GL(1);
   Fl_Window window(300, 370);
 
   shape_window sw(10, 75, window.w()-20, window.h()-90);

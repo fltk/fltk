@@ -94,7 +94,7 @@ void cube_box::draw() {
   lasttime = lasttime+speed;
   if (!valid()) {
     glLoadIdentity();
-    glViewport(0,0,w(),h());
+    glViewport(0,0,pixel_w(),pixel_h());
     glEnable(GL_DEPTH_TEST);
     glFrustum(-1,1,-1,1,2,10000);
     glTranslatef(0,0,-10);
@@ -167,6 +167,7 @@ void print_cb(Fl_Widget *w, void *data)
 // end of printing demo
 
 int main(int argc, char **argv) {
+  Fl::use_high_res_GL(1);
   makeform(argv[0]);
   // added to demo printing
   form->begin();

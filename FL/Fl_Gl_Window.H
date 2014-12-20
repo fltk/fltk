@@ -89,7 +89,7 @@ public:
     \code
     void mywindow::draw() {
      if (!valid()) {
-       glViewport(0,0,w(),h());
+       glViewport(0,0,pixel_w(),pixel_h());
        glFrustum(...);
        ...other initialization...
      }
@@ -168,7 +168,8 @@ public:
   int mode(int a) {return mode(a,0);}
   /** See Fl_Mode mode() const */
   int mode(const int *a) {return mode(0, a);}
-  /** void See void context(void* v, int destroy_flag) */
+  /** Returns a pointer to the GLContext that this window is using.
+   \see void context(void* v, int destroy_flag) */
   void* context() const {return context_;}
   void context(void*, int destroy_flag = 0);
   void make_current();
@@ -200,6 +201,24 @@ public:
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Gl_Window* as_gl_window() {return this;}
+  
+#if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  int pixel_w();
+  int pixel_h();
+#else
+  /** Gives the window width in OpenGL pixels.
+   Generally identical with the result of the w() function, but on macintosh computers
+   with a 'retina' display, and if Fl::use_high_res_GL(bool) is set to true, 
+   pixel_w() returns 2 * w().
+   */
+  int pixel_w() { return w(); }
+  /** Gives the window height in OpenGL pixels.
+   Generally identical with the result of the h() function, but on macintosh computers
+   with a 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
+   pixel_h() returns 2 * h().
+   */
+  int pixel_h() { return h(); }
+#endif
   
   ~Fl_Gl_Window();
   /**

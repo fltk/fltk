@@ -28,8 +28,11 @@
 #  include <FL/fl_utf8.h>
 
 #  ifdef __APPLE__
-#    include <ApplicationServices/ApplicationServices.h>
-#    include <FL/Fl_Window.H>
+extern NSOpenGLContext* gl_create_context_for_window(NSOpenGLPixelFormat *pixelformat,
+                                                     NSOpenGLContext *shared_ctx, Fl_Window *window);
+extern void gl_context_release(NSOpenGLContext*);
+extern void gl_context_makecurrent(NSOpenGLContext*);
+extern void gl_cleardrawable(void);
 #  endif
 
 #  ifdef WIN32
@@ -108,53 +111,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   }
 
 #elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-  const int *blist;
-  int list[32];
-   
-  if (alistp)
-    blist = alistp;
-  else {
-    int n = 0;
-    if (m & FL_INDEX) {
-      list[n++] = AGL_BUFFER_SIZE;
-      list[n++] = 8; // glut tries many sizes, but this should work...
-    } else {
-      list[n++] = AGL_RGBA;
-      list[n++] = AGL_GREEN_SIZE;
-      list[n++] = (m & FL_RGB8) ? 8 : 1;
-      if (m & FL_ALPHA) {
-        list[n++] = AGL_ALPHA_SIZE;
-        list[n++] = (m & FL_RGB8) ? 8 : 1;
-      }
-      if (m & FL_ACCUM) {
-        list[n++] = AGL_ACCUM_GREEN_SIZE;
-        list[n++] = 1;
-        if (m & FL_ALPHA) {
-          list[n++] = AGL_ACCUM_ALPHA_SIZE;
-          list[n++] = 1;
-        }
-      }
-    }
-    if (m & FL_DOUBLE) {
-      list[n++] = AGL_DOUBLEBUFFER;
-    }
-    if (m & FL_DEPTH) {
-      list[n++] = AGL_DEPTH_SIZE; list[n++] = 24;
-    }
-    if (m & FL_STENCIL) {
-      list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
-    }
-#    ifdef AGL_STEREO
-    if (m & FL_STEREO) {
-      list[n++] = AGL_STEREO;
-    }
-#    endif
-    list[n] = AGL_NONE;
-    blist = list;
-  }
-  fl_open_display();
-  AGLPixelFormat fmt = aglChoosePixelFormat(NULL, 0, (GLint*)blist);
+  NSOpenGLPixelFormat* fmt = Fl_X::mode_to_NSOpenGLPixelFormat(m, alistp);
   if (!fmt) return 0;
   
 #elif defined(WIN32)
@@ -216,7 +173,6 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
 #  elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   g->pixelformat = fmt;
 #  else
 #    error unsupported platform
@@ -287,38 +243,13 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 }
 
 #  elif defined(__APPLE_QUARTZ__)
-#if !(MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 && __LP64__)
-static CGrafPtr fl_GetWindowPort(WindowRef window)
-{
-  typedef CGrafPtr (*wf)(WindowRef);
-  static wf f = NULL;
-  if ( ! f) f = (wf)Fl_X::get_carbon_function("GetWindowPort");
-  return (*f)(window);
-}
-#endif
 
-// warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext context, shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
-  context = aglCreateContext( g->pixelformat, shared_ctx);
+  context = gl_create_context_for_window(g->pixelformat, shared_ctx, window);
   if (!context) return 0;
   add_context((GLContext)context);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#if __LP64__
-  // 64 bit version
-  aglSetWindowRef(context, Fl_X::i(window)->window_ref() );
-#else
-  // 32 bit version >= 10.5
-  if (aglSetWindowRef != NULL)
-    aglSetWindowRef(context, Fl_X::i(window)->window_ref() );
-  else
-    aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(window)->window_ref() ) );
-#endif
-#else
-  // 32 bit version < 10.5
-  aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(window)->window_ref() ) );
-#endif
   return (context);
 }
 #  else
@@ -337,23 +268,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
 #  elif defined(WIN32)
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
 #  elif defined(__APPLE_QUARTZ__)
-    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#if __LP64__
-    // 64 bit version
-    aglSetWindowRef(context, Fl_X::i(w)->window_ref() );
-#else
-    // 32 bit version >= 10.5
-    if (aglSetWindowRef != NULL)
-      aglSetWindowRef(context, Fl_X::i(w)->window_ref() );
-    else
-      aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(w)->window_ref() ) );
-#endif
-#else
-    // 32 bit version < 10.5
-    aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(w)->window_ref() ) );
-#endif
-    aglSetCurrentContext(context);
+    gl_context_makecurrent(context);
 #  else
 #   error unsupported platform
 #  endif
@@ -368,15 +283,7 @@ void fl_no_gl_context() {
 #  elif defined(WIN32)
   wglMakeCurrent(0, 0);
 #  elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-  AGLContext ctx = aglGetCurrentContext();  
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (aglSetWindowRef != NULL)
-    { if(ctx) aglSetWindowRef(ctx, NULL ); }
-  else
-#endif
-  if(ctx) aglSetDrawable( ctx, NULL );
-  aglSetCurrentContext(0);
+  gl_cleardrawable();
 #  else
 #    error unsupported platform
 #  endif
@@ -389,8 +296,7 @@ void fl_delete_gl_context(GLContext context) {
 #  elif defined(WIN32)
   wglDeleteContext(context);
 #  elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-  aglDestroyContext( context );
+  gl_context_release(context);
 #  else
 #    error unsupported platform
 #  endif

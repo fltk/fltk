@@ -2190,7 +2190,7 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker()
   Fl::release_widget_pointer(wp_); // remove pointer from watch list
 }
 
-
+int Fl::use_high_res_GL_ = 0;
 //
 // End of "$Id$".
 //

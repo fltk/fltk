@@ -36,9 +36,9 @@
 #include "Xutf8.h"
 #endif
 
-#if USE_XFT
-//extern XFontStruct* fl_xxfont();
-#endif // USE_XFT
+#ifdef __APPLE__
+static int gl_scale = 1; // set to 2 for high resolution Fl_Gl_Window
+#endif
 
 /** Returns the current font's height */
 int   gl_height() {return fl_height();}
@@ -53,11 +53,8 @@ double gl_width(uchar c) {return fl_width(c);}
 
 static Fl_Font_Descriptor *gl_fontsize;
 
-#define GL_DRAW_USES_TEXTURES  (defined(__APPLE__) && !__ppc__) // 1 only for non-PPC OSX
 #ifndef __APPLE__
 #  define USE_OksiD_style_GL_font_selection 1  // Most hosts except OSX
-#else
-#  undef USE_OksiD_style_GL_font_selection  // OSX
 #endif
 
 #if USE_XFT
@@ -70,7 +67,7 @@ static Fl_Font_Descriptor *gl_fontsize;
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
   Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-#if !GL_DRAW_USES_TEXTURES
+#ifndef __APPLE__
   if (!fl_fontsize->listbase) {
 
 #ifdef  USE_OksiD_style_GL_font_selection
@@ -97,28 +94,12 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
-# elif defined(__APPLE_QUARTZ__)
-//AGL is not supported for use in 64-bit applications:
-//http://developer.apple.com/mac/library/documentation/Carbon/Conceptual/Carbon64BitGuide/OtherAPIChanges/OtherAPIChanges.html
-    short font, face, size;
-    uchar fn[256];
-    const char *pname = Fl::get_font_name(fontid, NULL);
-    fn[0]=strlen(pname);
-    strcpy((char*)(fn+1), pname);
-    GetFNum(fn, &font);
-    face = 0;
-    size = fl_fontsize->size;
-    fl_fontsize->listbase = glGenLists(256);
-	aglUseFont(aglGetCurrentContext(), font, face,
-               size, 0, 256, fl_fontsize->listbase);
-# else 
-#   error unsupported platform
 # endif
 
 #endif // USE_OksiD_style_GL_font_selection
   }
   glListBase(fl_fontsize->listbase);
-#endif // !GL_DRAW_USES_TEXTURES
+#endif // !__APPLE__
   gl_fontsize = fl_fontsize;
 }
 
@@ -143,8 +124,6 @@ static void get_list(int r) {
   HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
   wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
   SelectObject(fl_gc, oldFid);
-#elif defined(__APPLE_QUARTZ__)
-// handled by textures
 #else
 #  error unsupported platform
 #endif
@@ -189,7 +168,7 @@ void gl_remove_displaylist_fonts()
 #endif
 }
 
-#if GL_DRAW_USES_TEXTURES
+#if __APPLE__
 static void gl_draw_textures(const char* str, int n);
 #endif
 
@@ -200,13 +179,7 @@ static void gl_draw_textures(const char* str, int n);
   */
 void gl_draw(const char* str, int n) {
 #ifdef __APPLE__  
-  
-#if GL_DRAW_USES_TEXTURES
   gl_draw_textures(str, n);
-#else
-  glCallLists(n, GL_UNSIGNED_BYTE, str);
-#endif
-  
 #else
   static xchar *buf = NULL;
   static int l = 0;
@@ -284,11 +257,13 @@ void gl_draw(
   const char* str, 	// the (multi-line) string
   int x, int y, int w, int h, 	// bounding box
   Fl_Align align) {
-  fl_draw(str, x, -y-h, w, h, align, gl_draw_invert);
+  fl_draw(str, x, -y-h, w, h, align, gl_draw_invert, NULL, 0);
 }
 
 /** Measure how wide and tall the string will be when drawn by the gl_draw() function */
-void gl_measure(const char* str, int& x, int& y) {fl_measure(str,x,y);}
+void gl_measure(const char* str, int& x, int& y) {
+  fl_measure(str,x,y,0);
+}
 
 /**
   Outlines the given rectangle with the current color.
@@ -350,9 +325,9 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
 
-#if GL_DRAW_USES_TEXTURES || defined(FL_DOXYGEN)
+#if __APPLE__ || defined(FL_DOXYGEN)
 
-#include <FL/glu.h>
+#include <FL/glu.h>  // for gluUnProject()
 
 // manages a fifo pile of pre-computed string textures
 class gl_texture_fifo {
@@ -364,6 +339,7 @@ private:
     Fl_Font_Descriptor *fdesc; // its font
     int width; // its width
     int height; // its height
+    int scale; // 1 or 2 for low/high resolution
   } data;
   data *fifo; // array of pile elements
   int size_; // pile height
@@ -408,14 +384,14 @@ void gl_texture_fifo::display_texture(int rank)
   glMatrixMode (GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity ();
-  float winw = Fl_Window::current()->w();
-  float winh = Fl_Window::current()->h();
+  float winw = gl_scale * Fl_Window::current()->w();
+  float winh = gl_scale * Fl_Window::current()->h();
   glScalef (2.0f / winw, 2.0f /  winh, 1.0f);
   glTranslatef (-winw / 2.0f, -winh / 2.0f, 0.0f);
   //write the texture on screen
   GLfloat pos[4];
   glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);
-  CGRect bounds = CGRectMake (pos[0], pos[1] - fl_descent(), fifo[rank].width, fifo[rank].height);
+  CGRect bounds = CGRectMake (pos[0], pos[1] - gl_scale*fl_descent(), fifo[rank].width, fifo[rank].height);
   
   // GL_COLOR_BUFFER_BIT for glBlendFunc, GL_ENABLE_BIT for glEnable / glDisable
   glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT); 
@@ -471,6 +447,9 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fifo[current].utf8[n] = 0;
   fifo[current].width = 0, fifo[current].height = 0;
   fl_measure(fifo[current].utf8, fifo[current].width, fifo[current].height, 0);
+  fifo[current].width *= gl_scale;
+  fifo[current].height *= gl_scale;
+  fifo[current].scale = gl_scale;
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   void *base = calloc(4*fifo[current].width, fifo[current].height);
   if (base == NULL) return -1;
@@ -481,8 +460,10 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   GLfloat colors[4];
   glGetFloatv(GL_CURRENT_COLOR, colors);
   fl_color((uchar)(colors[0]*255), (uchar)(colors[1]*255), (uchar)(colors[2]*255));
-  fl_draw(str, n, 0, fifo[current].height - fl_descent());
-  //put this bitmap in a texture  
+  CGContextTranslateCTM(fl_gc, 0, fifo[current].height - gl_scale*fl_descent());
+  CGContextScaleCTM(fl_gc, gl_scale, gl_scale);
+  fl_draw(str, n, 0, 0);
+  //put this bitmap in a texture
   glPushAttrib(GL_TEXTURE_BIT);
   glBindTexture (GL_TEXTURE_RECTANGLE_EXT, fifo[current].texName);
   glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -502,7 +483,7 @@ int gl_texture_fifo::already_known(const char *str, int n)
   int rank;
   for ( rank = 0; rank <= last; rank++) {
     if ( memcmp(str, fifo[rank].utf8, n) == 0 && fifo[rank].utf8[n] == 0 &&
-      fifo[rank].fdesc == gl_fontsize) return rank;
+      fifo[rank].fdesc == gl_fontsize && fifo[rank].scale == gl_scale) return rank;
   }
   return -1;
 }
@@ -512,6 +493,8 @@ static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class inst
 // draws a utf8 string using pre-computed texture if available
 static void gl_draw_textures(const char* str, int n) 
 {
+  gl_scale = Fl_X::resolution_scaling_factor(Fl_Window::current());
+  //fprintf(stderr,"gl_scale=%d\n",gl_scale);
   if (! gl_fifo) gl_fifo = new gl_texture_fifo();
   if (!gl_fifo->textures_generated) {
     for (int i = 0; i < gl_fifo->size_; i++) glGenTextures (1, &(gl_fifo->fifo[i].texName));
@@ -553,17 +536,9 @@ void gl_texture_pile_height(int max)
 
 /** @} */
 
-#elif defined(__APPLE__)
-// used only if __ppc__
-int gl_texture_pile_height(void) {return 0;}
-void gl_texture_pile_height(int max) {}
-#endif // GL_DRAW_USES_TEXTURES
-#if defined(__APPLE__)
 void gl_texture_reset()
 {
-#if GL_DRAW_USES_TEXTURES
   if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
-#endif // GL_DRAW_USES_TEXTURES
 }
 #endif // __APPLE__
 

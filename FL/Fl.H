@@ -125,6 +125,9 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
 class FL_EXPORT Fl {
   Fl() {}; // no constructor!
   
+private:
+  static int use_high_res_GL_;
+  
 public: // should be private!
 #ifndef FL_DOXYGEN
   static int e_number;
@@ -1206,6 +1209,16 @@ public:
   static void release_widget_pointer(Fl_Widget *&w);
   static void clear_widget_pointer(Fl_Widget const *w);
   /** @} */
+  
+  /**  sets whether GL windows should be drawn at high resolution on Apple
+   computers with retina displays
+   */
+  static void use_high_res_GL(int val) { use_high_res_GL_ = val; }
+  /**  returns whether GL windows should be drawn at high resolution on Apple
+   computers with retina displays.
+   Default is no.
+   */
+  static int use_high_res_GL() { return use_high_res_GL_; }
 
 #ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo support functions and classes 

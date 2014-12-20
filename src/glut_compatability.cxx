@@ -38,6 +38,9 @@
 #    include <dlfcn.h>
 #  endif // HAVE_DLFCN_H
 #  define MAXWINDOWS 32
+#  ifdef __APPLE__
+#    include <FL/x.H>
+#  endif
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
 static void (*glut_idle_func)() = 0; // global glut idle function
@@ -59,7 +62,7 @@ static int indraw;
 void Fl_Glut_Window::draw() {
   glut_window = this;
   indraw = 1;
-  if (!valid()) {reshape(w(),h()); valid(1);}
+  if (!valid()) {reshape(pixel_w(),pixel_h()); valid(1);}
   display();
   indraw = 0;
 }
@@ -70,7 +73,7 @@ void glutSwapBuffers() {
 
 void Fl_Glut_Window::draw_overlay() {
   glut_window = this;
-  if (!valid()) {reshape(w(),h()); valid(1);}
+  if (!valid()) {reshape(pixel_w(),pixel_h()); valid(1);}
   overlaydisplay();
 }
 
@@ -80,6 +83,13 @@ int Fl_Glut_Window::handle(int event) {
   make_current();
   int ex = Fl::event_x();
   int ey = Fl::event_y();
+#ifdef __APPLE__
+  if (shown()) {
+    int factor = Fl_X::resolution_scaling_factor(this);
+    ex *= factor;
+    ey *= factor;
+  }
+#endif
   int button;
   switch (event) {
 
@@ -377,8 +387,8 @@ int glutGet(GLenum type) {
   case GLUT_RETURN_ZERO: return 0;
   case GLUT_WINDOW_X: return glut_window->x();
   case GLUT_WINDOW_Y: return glut_window->y();
-  case GLUT_WINDOW_WIDTH: return glut_window->w();
-  case GLUT_WINDOW_HEIGHT: return glut_window->h();
+  case GLUT_WINDOW_WIDTH: return glut_window->pixel_w();
+  case GLUT_WINDOW_HEIGHT: return glut_window->pixel_h();
   case GLUT_WINDOW_PARENT:
     if (glut_window->parent())
       return ((Fl_Glut_Window *)(glut_window->parent()))->number;

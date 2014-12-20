@@ -1416,6 +1416,7 @@ main(int argc, char **argv)
 {
   long i;
 
+  Fl::use_high_res_GL(1);
   glutInit(&argc, argv);
   for (i = 1; i < argc; i++) {
     if (argv[i][0] == '-') {

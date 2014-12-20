@@ -74,8 +74,10 @@ typedef CGContextRef Fl_Offscreen;
 
 #ifdef __OBJC__
 @class NSCursor;
+@class NSOpenGLPixelFormat;
 #else
 class NSCursor;
+class NSOpenGLPixelFormat;
 #endif // __OBJC__
 
 typedef CGContextRef Fl_Offscreen;
@@ -151,6 +153,8 @@ public:
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   bool mapped_to_retina();      // is window mapped to retina display?
   void mapped_to_retina(bool);  // sets whether window is mapped to retina display
+  bool changed_resolution();      // did window just moved to display with another resolution?
+  void changed_resolution(bool);// sets whether window just moved to display with another resolution
 #endif
   // Quartz additions:
   CGContextRef gc;                 // graphics context (NULL when using QD)
@@ -160,6 +164,8 @@ public:
   static void q_begin_image(CGRect&, int x, int y, int w, int h);
   static void q_end_image();
   // Cocoa additions
+  static int resolution_scaling_factor(Fl_Window*);
+  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
   void destroy(void);
   void map(void);
   void unmap(void);
@@ -183,7 +189,8 @@ public:
 private:
 #if FLTK_ABI_VERSION >= 10304
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
-  unsigned mapped_to_retina_; // stores whether window is mapped to retina display
+  // stores 2 binary flags: whether window is mapped to retina display; whether resolution just changed
+  unsigned mapped_to_retina_;
 #else
   bool subwindow;     // for ABI compatibility, useless with true subwindows
 #endif
