@@ -26,6 +26,9 @@ some extra drawing functions provided by FLTK, and include the
 \p <windows.h> header file needed by WIN32
 applications.
 
+Some simple coding rules (see \ref osissues_retina) allow to write cross-platform code that will draw high resolution
+OpenGL graphics if run on 'retina' displays with Mac OS X.
+
 \section opengl_subclass Making a Subclass of Fl_Gl_Window
 
 To make a subclass of Fl_Gl_Window, you must provide:

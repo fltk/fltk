@@ -824,6 +824,27 @@ Set <tt>"Print Front Window" = "";</tt> therein so the application menu doesn't 
 To localize the application name itself, create a file <tt>InfoPlist.strings</tt> in each .lproj directory
 and put <tt>CFBundleName = "localized name";</tt> in each such file.
 
+\subsection osissues_retina OpenGL and 'retina' displays
+It is possible to have OpenGL produce graphics at the high pixel resolution allowed by the so-called 'retina' displays
+present on recent Apple hardware.
+For this, call 
+\verbatim
+Fl::use_high_res_GL(1); 
+\endverbatim
+before any Fl_Gl_Window is shown. Also, adapt your Fl_Gl_Window::draw() and Fl_Gl_Window::draw_overlay() methods replacing
+\verbatim
+glViewport(0, 0, w(), h());
+\endverbatim
+by
+\verbatim
+glViewport(0, 0, pixel_w(), pixel_h());
+\endverbatim
+making use of the Fl_Gl_Window::pixel_w() and Fl_Gl_Window::pixel_h() functions that return the width and height of
+the GL scene in pixels: if the Fl_Gl_Window is mapped on a retina display, these functions return twice as much as 
+reported by Fl_Widget::w() and Fl_Widget::h(); if it's mapped on a regular display, they return the same values as w() and h().
+If you don't call Fl::use_high_res_GL(1), your Fl_Gl_Window 's will be drawn with low resolution.
+These functions are synonyms of w() and h() on non-Mac OS X platforms, so your source code remains cross-platform.
+
 Fl_Double_Window
 
 OS X double-buffers all windows automatically. On OS X,
