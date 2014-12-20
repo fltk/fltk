@@ -88,10 +88,12 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   return img;
 }
 
+#ifdef __APPLE__
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
   delete (Fl_RGB_Image *)info;
 }
+#endif
 
 /**
  This class will make sure that OpenGL printing/screen capture is available if fltk_gl
