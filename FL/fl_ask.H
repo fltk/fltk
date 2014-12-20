@@ -39,6 +39,8 @@ enum Fl_Beep {
 };
 
 #  ifdef __GNUC__
+/* the GNUC-specific attribute appearing below in prototypes with a variable list of arguments
+ helps detection of mismatches between format string and argument list at compilation time */
 #    define __fl_attr(x) __attribute__ (x)
 #  else
 #    define __fl_attr(x)
