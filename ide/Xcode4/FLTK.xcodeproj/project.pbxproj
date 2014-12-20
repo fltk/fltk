@@ -57,13 +57,11 @@
 		16FC08C22B1B693EB00C15F5 /* tree.fl in Sources */ = {isa = PBXBuildFile; fileRef = D10B1EA053B5C8F02A636D93 /* tree.fl */; };
 		17875FB347705D46D333E6EC /* fractals.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 598DD70F89D7731D61BBD8EF /* fractals.cxx */; };
 		185933E619D6C024C4B53D3B /* Fl_Value_Input.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 34CB383C3A4360C14B58562E /* Fl_Value_Input.cxx */; };
-		1864F562FFBE13A16D723ED1 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
 		1871DE13AAABA8DAC4D72C1B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05376DC900B2C885B847EA36 /* OpenGL.framework */; };
 		1886A0D16F1C4CBC01549AF6 /* jdinput.c in Sources */ = {isa = PBXBuildFile; fileRef = EB9D2470FCD53D54DDB5CA10 /* jdinput.c */; };
 		1950AEA5C2CDBA7309A1C106 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		1A14C4DE9E6CF0B95B0FB8AD /* fltk_forms.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 097D0B476E396B9AAC6FA1E0 /* fltk_forms.framework */; };
 		1A4648F50FDEC75D91ADB1F8 /* boxtype.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6C64353A3129BCCFAA667D86 /* boxtype.cxx */; };
-		1A46AB707D7B26FD693A1708 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
 		1B467A9025A86C4F5E8A7768 /* fltk_jpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C39FA04F3B7CD8E53876D0F4 /* fltk_jpeg.framework */; };
 		1BCCDEA57BF0DF6092597A65 /* jfdctfst.c in Sources */ = {isa = PBXBuildFile; fileRef = A4456FF8D730E5BE234723F8 /* jfdctfst.c */; };
 		1BD5FB7C1332668EC666F663 /* preferences.fl in Sources */ = {isa = PBXBuildFile; fileRef = 1D152F81B7390EEECF3BB670 /* preferences.fl */; };
@@ -216,7 +214,6 @@
 		550652B276CA98DED26285DE /* CubeMain.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2A3CEBA07E8AE9BF4C002531 /* CubeMain.cxx */; };
 		5532B5F13E75B01A47BF52E4 /* line_style.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DA6D2097C089DE9936A0B112 /* line_style.cxx */; };
 		5555352E4C682E105F2B220B /* editor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 368BC008DC3AE26333DF0321 /* editor.cxx */; };
-		55A47C5D765D2D97E27913C0 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
 		55FDB9355B4B2E99384B59F1 /* fullscreen.cxx in Sources */ = {isa = PBXBuildFile; fileRef = EDE6CE6B09D31AC0AAC9FF56 /* fullscreen.cxx */; };
 		578EC0C763C2179582923456 /* CubeView.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 323779B8DE42371A98337337 /* CubeView.cxx */; };
 		57CBCDDBCD73332F9CF12C0A /* fltk_images.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E917C15E28EE293416A38C5E /* fltk_images.framework */; };
@@ -224,7 +221,6 @@
 		58B9DC2FA44EF62193BCB145 /* pixmap_browser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 78EE1A0803C3AAA7BFAF79B8 /* pixmap_browser.cxx */; };
 		58D9DA0C0F0A11E97EAAB61B /* freeglut_stroke_roman.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6CCA5064754A8314839CB37A /* freeglut_stroke_roman.cxx */; };
 		59826A4FF117DE06A6F70ABD /* Fl_Native_File_Chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2DE25DB4CE986C1857B5ECF7 /* Fl_Native_File_Chooser.cxx */; };
-		59879CC60E91D23A1380763F /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
 		5B3DACE9AD337A089D2A2BDA /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		5B4CB32F2F0797A635568B3A /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		5BF4C749E28B3792559C9107 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -289,7 +285,6 @@
 		717B3CDBF11CAE5C04D035F8 /* Fl_Progress.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 570D0C7510FE3A3FB7A1BD5D /* Fl_Progress.cxx */; };
 		71967BE27E13E5EA2F6627D0 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		71A1293362845D379D9FE9D1 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
-		723EE52FFF6386AA974A3D0A /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
 		72E4CB2E5E835C6DFB5C032B /* fracviewer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 431856A376572B057493295D /* fracviewer.cxx */; };
 		7359A414B4FEE003CFCA6351 /* threads.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD0BF5428959EE73D260D8 /* threads.cxx */; };
 		743107FF599BD4B46CF82FB8 /* fltk_jpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C39FA04F3B7CD8E53876D0F4 /* fltk_jpeg.framework */; };
@@ -503,7 +498,6 @@
 		C9165EAA1291A304003FF4F0 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		C9165ED41291A376003FF4F0 /* unittests.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9165ED31291A376003FF4F0 /* unittests.cxx */; };
 		C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
-		C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E11274D0EF007D3CFE /* AGL.framework */; };
 		C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E51274D100007D3CFE /* OpenGL.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
@@ -753,7 +747,6 @@
 		F6307C90D252F006E432B184 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		F77512958607662BAA15DA70 /* jdmerge.c in Sources */ = {isa = PBXBuildFile; fileRef = C84F99F5AC8C6517F45055B0 /* jdmerge.c */; };
 		F7888AFE5E6F6CE9BB785D69 /* fltk_png.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
-		F7AE5C438784EFFB281D2F73 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
 		F8816EDD9D3E75B3971CC981 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = BBD2663C0F428CC57126F4E2 /* pngrutil.c */; };
 		F8C4B882B6A9C15C2105AAA8 /* filename_absolute.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D60CC89D1A70BE6AA3929604 /* filename_absolute.cxx */; };
 		F9C96700B8B44B5E3F736E66 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = 51A1DE1F52564E84C104F074 /* jquant2.c */; };
@@ -4512,7 +4505,6 @@
 		C9165EAF1291A304003FF4F0 /* utf8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = utf8.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9165ED31291A376003FF4F0 /* unittests.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unittests.cxx; path = ../../test/unittests.cxx; sourceTree = SOURCE_ROOT; };
 		C9628FFD1274D0B3007D3CFE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		C96290E11274D0EF007D3CFE /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
 		C96290E51274D100007D3CFE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		C984AFA712D02A1800D66DAD /* demo.menu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demo.menu; path = ../../test/demo.menu; sourceTree = SOURCE_ROOT; };
 		C9EDD143127338F600ADB21C /* README.OSX.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.OSX.txt; path = ../../README.OSX.txt; sourceTree = SOURCE_ROOT; };
@@ -4711,7 +4703,6 @@
 				3BB6C389D42EA62871E9F4B4 /* fltk.framework in Frameworks */,
 				64917A6B67AF2060534DB5D9 /* fltk_gl.framework in Frameworks */,
 				ECF6318C21BBD0ACB27F4E32 /* OpenGL.framework in Frameworks */,
-				1A46AB707D7B26FD693A1708 /* AGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4754,7 +4745,6 @@
 				F0CADB27D4B0259803F4057C /* fltk.framework in Frameworks */,
 				692AE7202326E78B7334933D /* fltk_gl.framework in Frameworks */,
 				1871DE13AAABA8DAC4D72C1B /* OpenGL.framework in Frameworks */,
-				F7AE5C438784EFFB281D2F73 /* AGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4789,7 +4779,6 @@
 				16C76FAEEC543074798FF0CB /* fltk.framework in Frameworks */,
 				5B4CB32F2F0797A635568B3A /* fltk_gl.framework in Frameworks */,
 				CF5A76042FD86936E94CF561 /* OpenGL.framework in Frameworks */,
-				55A47C5D765D2D97E27913C0 /* AGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4901,7 +4890,6 @@
 				D236C2998846B3EAFA5A5BE5 /* fltk.framework in Frameworks */,
 				6EB2B457956E33EEE724D16A /* fltk_gl.framework in Frameworks */,
 				DF808F46E13A49F6E1D5A25A /* OpenGL.framework in Frameworks */,
-				59879CC60E91D23A1380763F /* AGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5095,7 +5083,6 @@
 				C128558FCAE9FD45D3F7563F /* fltk_gl.framework in Frameworks */,
 				89EFAED2C8654D609ED97DD4 /* fltk_forms.framework in Frameworks */,
 				A2BE7794E4B78E8545BD833D /* OpenGL.framework in Frameworks */,
-				1864F562FFBE13A16D723ED1 /* AGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5158,7 +5145,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				04C166D5213DD80648BE1F4D /* fltk.framework in Frameworks */,
-				C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */,
 				C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */,
 				7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */,
 			);
@@ -5262,7 +5248,6 @@
 				5BFD4A9B3EAC4767672C021C /* fltk.framework in Frameworks */,
 				EBC76AA6B5E8DFAFE0758014 /* fltk_gl.framework in Frameworks */,
 				447C7E45BD97CAF001C928CF /* OpenGL.framework in Frameworks */,
-				723EE52FFF6386AA974A3D0A /* AGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6450,7 +6435,6 @@
 				7F92032416B1A90A000FC50F /* Spanish.lproj */,
 				7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */,
 				C9628FFD1274D0B3007D3CFE /* Cocoa.framework */,
-				C96290E11274D0EF007D3CFE /* AGL.framework */,
 				C96290E51274D100007D3CFE /* OpenGL.framework */,
 			);
 			name = Resources;
@@ -6701,7 +6685,6 @@
 			children = (
 				FC940D10359580615C166335 /* shape.cxx */,
 				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = shape;
 			sourceTree = "<group>";
