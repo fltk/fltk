@@ -1174,8 +1174,8 @@ bool Fl_X::mapped_to_retina() {
 
 void Fl_X::mapped_to_retina(bool b) {
 #if FLTK_ABI_VERSION >= 10304
-  if (b) mapped_to_retina_ |= mapped;
-  else mapped_to_retina_ &= ~mapped;
+  if (b) mapped_to_retina_ |= mapped_mask;
+  else mapped_to_retina_ &= ~mapped_mask;
 #else
   if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | mapped_mask);
   else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~mapped_mask);
