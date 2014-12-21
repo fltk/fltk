@@ -81,7 +81,7 @@ void  gl_font(int fontid, int size) {
  * then sorting through them at draw time (for normal X rendering) to find which one can
  * render the current glyph... But for now, just use the first font in the list for GL...
  */
-    XFontStruct *font = fl_xfont;
+    XFontStruct *font = fl_X_core_font();
     int base = font->min_char_or_byte2;
     int count = font->max_char_or_byte2-base+1;
     fl_fontsize->listbase = glGenLists(256);

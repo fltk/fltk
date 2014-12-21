@@ -132,6 +132,7 @@ private:
   XFontStruct *ptr;
 };
 extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
+extern FL_EXPORT XFontStruct* fl_X_core_font();
 
 // this object contains all X-specific stuff about a window:
 // Warning: this object is highly subject to change!  

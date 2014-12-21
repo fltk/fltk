@@ -55,6 +55,12 @@
 #  include "fl_font_x.cxx"
 #endif // WIN32
 
+#if ! (defined(WIN32) || defined(__APPLE__))
+XFontStruct *fl_X_core_font()
+{
+  return fl_xfont.value();
+}
+#endif
 
 double fl_width(const char* c) {
   if (c) return fl_width(c, (int) strlen(c));
