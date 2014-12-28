@@ -91,8 +91,12 @@
     valid until the next event is read from the window system, so it 
     is ok to look at it outside of the handle() method.
 
+    Event numbers can be converted to their actual names using the
+    \ref fl_eventnames[] array defined in \#include &lt;FL/names.h&gt;
+
     \sa Fl::event_text(), Fl::event_key(), class Fl::
  */
+// DEV NOTE: Keep this list in sync with FL/names.H
 enum Fl_Event {	// events
   /** No event. */
   FL_NO_EVENT		= 0,
