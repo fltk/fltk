@@ -2767,15 +2767,14 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
  */ 
 void Fl_X::flush()
 {
-  if (through_drawRect) {
-    if (w->as_gl_window()) {
-      w->flush();
-    } else {
-      make_current_counts = 1;
-      w->flush();
-      make_current_counts = 0;
-      Fl_X::q_release_context();
-    }
+  if (w->as_gl_window()) {
+    w->flush();
+    return;
+  } else if (through_drawRect) {
+    make_current_counts = 1;
+    w->flush();
+    make_current_counts = 0;
+    Fl_X::q_release_context();
     return;
   }
   // have Cocoa immediately redraw the window's view
