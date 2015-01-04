@@ -47,40 +47,40 @@ class Fl_Menu_;
   is used by the Fl_Menu_ class.  
   \code
   struct Fl_Menu_Item {
-   const char*		text;     // label()
-   ulong		shortcut_;
-   Fl_Callback*		callback_;
-   void*		user_data_;
-   int			flags;
-   uchar		labeltype_;
-   uchar		labelfont_;
-   uchar		labelsize_;
-   uchar		labelcolor_;
+   const char*   text;     // label()
+   ulong         shortcut_;
+   Fl_Callback*  callback_;
+   void*         user_data_;
+   int           flags;
+   uchar         labeltype_;
+   uchar         labelfont_;
+   uchar         labelsize_;
+   uchar         labelcolor_;
   };
   
   enum { // values for flags:
-   FL_MENU_INACTIVE	= 1,      // Deactivate menu item (gray out)
-   FL_MENU_TOGGLE	= 2,      // Item is a checkbox toggle (shows checkbox for on/off state)
-   FL_MENU_VALUE	= 4,      // The on/off state for checkbox/radio buttons (if set, state is 'on')
-   FL_MENU_RADIO	= 8,      // Item is a radio button (one checkbox of many can be on)
-   FL_MENU_INVISIBLE	= 0x10,   // Item will not show up (shortcut will work)
-   FL_SUBMENU_POINTER	= 0x20,   // Indicates user_data() is a pointer to another menu array
-   FL_SUBMENU		= 0x40,   // This item is a submenu to other items
-   FL_MENU_DIVIDER	= 0x80,   // Creates divider line below this item. Also ends a group of radio buttons.
-   FL_MENU_HORIZONTAL	= 0x100   // ??? -- reserved
+   FL_MENU_INACTIVE   = 1,      // Deactivate menu item (gray out)
+   FL_MENU_TOGGLE     = 2,      // Item is a checkbox toggle (shows checkbox for on/off state)
+   FL_MENU_VALUE      = 4,      // The on/off state for checkbox/radio buttons (if set, state is 'on')
+   FL_MENU_RADIO      = 8,      // Item is a radio button (one checkbox of many can be on)
+   FL_MENU_INVISIBLE  = 0x10,   // Item will not show up (shortcut will work)
+   FL_SUBMENU_POINTER = 0x20,   // Indicates user_data() is a pointer to another menu array
+   FL_SUBMENU         = 0x40,   // This item is a submenu to other items
+   FL_MENU_DIVIDER    = 0x80,   // Creates divider line below this item. Also ends a group of radio buttons.
+   FL_MENU_HORIZONTAL = 0x100   // ??? -- reserved
   };
   \endcode
   Typically menu items are statically defined; for example:
   \code
   Fl_Menu_Item popup[] = {
-   {"&alpha",   FL_ALT+'a', the_cb, (void*)1},
-   {"&beta",    FL_ALT+'b', the_cb, (void*)2},
-   {"gamma",    FL_ALT+'c', the_cb, (void*)3, FL_MENU_DIVIDER},
-   {"&strange",  0,   strange_cb},
-   {"&charm",    0,   charm_cb},
-   {"&truth",    0,   truth_cb},
-   {"b&eauty",   0,   beauty_cb},
-   {"sub&menu",  0,   0, 0, FL_SUBMENU},
+   {"&alpha",    FL_ALT+'a', the_cb, (void*)1},
+   {"&beta",     FL_ALT+'b', the_cb, (void*)2},
+   {"gamma",     FL_ALT+'c', the_cb, (void*)3, FL_MENU_DIVIDER},
+   {"&strange",  0,          strange_cb},
+   {"&charm",    0,          charm_cb},
+   {"&truth",    0,          truth_cb},
+   {"b&eauty",   0,          beauty_cb},
+   {"sub&menu",  0,          0, 0, FL_SUBMENU},
    {"one"},
    {"two"},
    {"three"},
