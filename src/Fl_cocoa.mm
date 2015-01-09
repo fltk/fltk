@@ -4297,9 +4297,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     close = [xid standardWindowButton:NSWindowCloseButton]; // 10.2
     miniaturize = [xid standardWindowButton:NSWindowMiniaturizeButton];
     zoom = [xid standardWindowButton:NSWindowZoomButton];
-    [close setHidden:YES]; // 10.3
-    [miniaturize setHidden:YES];
-    [zoom setHidden:YES];
   }
   fl_gc = NULL;
   Fl::check();
@@ -4326,28 +4323,22 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     delete rgb;
     delete[] bitmap;
   }
-  if (fl_mac_os_version >= 101000) { // print the title bar buttons
-    Fl_Color inactive = fl_rgb_color((uchar)0xCE, (uchar)0xCE, (uchar)0xCE); // inactive button color
-    Fl_Color redish, yellowish, greenish;
-    if ([[NSUserDefaults standardUserDefaults] integerForKey:@"AppleAquaColorVariant"] == 6) { // graphite appearance
-      redish = yellowish = greenish = fl_rgb_color((uchar)0x8C, (uchar)0x8C, (uchar)0x8C);
-    }
-    else {
-      redish = fl_rgb_color((uchar)0xFF, (uchar)0x63, (uchar)0x5A);
-      yellowish = fl_rgb_color((uchar)0xFF, (uchar)0xC6, (uchar)0x42);
-      greenish = fl_rgb_color((uchar)0x29, (uchar)0xD6, (uchar)0x52);
-    }
-    
-    if (![close isEnabled]) fl_color(inactive); else fl_color(redish);
-    fl_pie(x_offset+8, y_offset+5, 12, 12, 0, 360);
-    if (![miniaturize isEnabled]) fl_color(inactive); else fl_color(yellowish);
-    fl_pie(x_offset+28, y_offset+5, 12, 12, 0, 360);
-    if (![zoom isEnabled]) fl_color(inactive); else fl_color(greenish);
-    fl_pie(x_offset+48, y_offset+5, 12, 12, 0, 360);
-    
-    [close setHidden:NO]; // 10.3
-    [miniaturize setHidden:NO];
-    [zoom setHidden:NO];
+  if (fl_mac_os_version >= 101000 && to_quartz) { // print the title bar buttons
+    NSGraphicsContext *currentgc = [NSGraphicsContext currentContext];
+    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
+    [NSGraphicsContext saveGraphicsState];
+    NSAffineTransform *tr = [NSAffineTransform transform];
+    [tr translateXBy:x_offset + 7 yBy:y_offset + 3];
+    [tr concat];
+    [close drawRect:[close frame]]; // draw the close button to the print context
+    tr = [NSAffineTransform transform];
+    [tr translateXBy:20 yBy:0];
+    [tr concat];
+    [miniaturize drawRect:[miniaturize frame]]; // draw the miniaturize button to the print context
+    [tr concat];
+    [zoom drawRect:[zoom frame]]; // draw the zoom button to the print context
+    [NSGraphicsContext restoreGraphicsState];
+    [NSGraphicsContext setCurrentContext:currentgc];
   }
   if (title) { // print the window title
     const int skip = 65; // approx width of the zone of the 3 window control buttons
