@@ -35,6 +35,17 @@
   <P>The class contains a pointer to an array of structures of type  Fl_Menu_Item.  The
   array may either be supplied directly by the user program, or it may
   be "private": a dynamically allocated array managed by the Fl_Menu_.
+
+  When the user clicks a menu item:
+
+      - If the Fl_Menu_Item has a callback set, that callback
+        is invoked with any userdata configured for it.
+        (The Fl_Menu_ widget's callback is NOT invoked.
+
+      - For any Fl_Menu_Items that \b don't have a callback set,
+        the Fl_Menu_ widget's callback is invoked with any userdata
+        configured for it. The callback can determine which item
+        was picked using value(), mvalue(), item_pathname(), etc.
 */
 class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 
