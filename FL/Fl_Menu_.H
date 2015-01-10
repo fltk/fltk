@@ -36,7 +36,8 @@
   array may either be supplied directly by the user program, or it may
   be "private": a dynamically allocated array managed by the Fl_Menu_.
 
-  When the user clicks a menu item:
+  When the user clicks a menu item, value() is set to that item
+  and then:
 
       - If the Fl_Menu_Item has a callback set, that callback
         is invoked with any userdata configured for it.

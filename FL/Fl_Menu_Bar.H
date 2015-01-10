@@ -41,14 +41,17 @@
   submenu, then it acts like a "button" in the menubar.  Clicking on it
   will pick it. </P>
 
-  When the user picks an item in the menu:
+  When the user clicks a menu item, value() is set to that item
+  and then:
 
-      - The item's callback is done; the menubar is passed as the
-        Fl_Widget* argument, along with any userdata configured
-	for the callback.
+      - The item's callback is done if one has been set; the
+        Fl_Menu_Bar is passed as the Fl_Widget* argument, 
+        along with any userdata configured for the callback.
 
-      - If the item does not have a callback, the menubar's callback
+      - If the item does not have a callback, the Fl_Menu_Bar's callback
         is done instead, along with any userdata configured for the callback.
+        The callback can determine which item was picked using
+        value(), mvalue(), item_pathname(), etc.
 
   <P>Submenus will also pop up in response to shortcuts indicated by
   putting a '&' character in the name field of the menu item. If you put a

@@ -42,10 +42,18 @@
   callbacks exactly the same as when you pick the item with the mouse.
   The '&' character in menu item names are only looked at when the menu is
   popped up, however. </P>
-  <P>When the user picks an item off the menu, the item's callback is
-  done with the menu_button as the Fl_Widget* argument.  If the
-  item does not have a callback the menu_button's callback is done
-  instead.
+
+  When the user clicks a menu item, value() is set to that item
+  and then:
+
+      - The item's callback is done if one has been set; the
+        Fl_Menu_Button is passed as the Fl_Widget* argument, 
+        along with any userdata configured for the callback.
+
+      - If the item does not have a callback, the Fl_Menu_Button's callback
+        is done instead, along with any userdata configured for it.
+        The callback can determine which item was picked using
+        value(), mvalue(), item_pathname(), etc.
 */
 class FL_EXPORT Fl_Menu_Button : public Fl_Menu_ {
 protected:

@@ -43,10 +43,54 @@
   The user can either type into the input area, or use the
   menu button chooser on the right to choose an item which loads
   the input area with the selected text.
-  <P>
+
   The application can directly access both the internal Fl_Input 
   and Fl_Menu_Button widgets respectively using the input() and menubutton()
   accessor methods.
+
+  The default behavior is to invoke the Fl_Input_Choice::callback()
+  if the user changes the input field's contents, either by typing,
+  pasting, or clicking a different item in the choice menu.
+  
+  The callback can determine if an item was picked vs. typing
+  into the input field by checking the value of menubutton()->changed(),
+  which will be:
+
+      - 1: the user picked a different item in the choice menu
+      - 0: the user typed or pasted directly into the input field
+
+  Example use:
+  \code
+  #include <stdio.h>
+  #include <FL/Fl.H>
+  #include <FL/Fl_Double_Window.H>
+  #include <FL/Fl_Input_Choice.H>
+  void choice_cb(Fl_Widget *w, void *userdata) {
+    // Show info about the picked item
+    Fl_Input_Choice *choice = (Fl_Input_Choice*)w;
+    const Fl_Menu_Item *item = choice->menubutton()->mvalue();
+    printf("*** Choice Callback:\n");
+    printf("    item label()='%s'\n", item ? item->label() : "(No item)");
+    printf("    item value()=%d\n", choice->menubutton()->value());
+    printf("    input value()='%s'\n", choice->input()->value());
+    printf("    The user %s\n", choice->menubutton()->changed()
+                                    ? "picked a menu item"
+                                    : "typed text");
+  }
+  int main() {
+    Fl_Double_Window win(200,100,"Input Choice");
+    win.begin();
+      Fl_Input_Choice choice(10,10,100,30);
+      choice.callback(choice_cb, 0);
+      choice.add("Red");
+      choice.add("Orange");
+      choice.add("Yellow");
+      //choice.value("Red");    // uncomment to make "Red" default
+    win.end();
+    win.show();
+    return Fl::run();
+  }
+  \endcode
 */
 class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // Private class to handle slightly 'special' behavior of menu button
@@ -66,6 +110,7 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   Fl_Input *inp_;
   InputMenuButton *menu_;
 
+  // note: this is used by the Fl_Input_Choice ctor defined in Fl_Group.
   static void menu_cb(Fl_Widget*, void *data) { 
     Fl_Input_Choice *o=(Fl_Input_Choice *)data;
     Fl_Widget_Tracker wp(o);
@@ -95,6 +140,7 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
     }
   }
 
+  // note: this is used by the Fl_Input_Choice ctor defined in Fl_Group.
   static void inp_cb(Fl_Widget*, void *data) { 
     Fl_Input_Choice *o=(Fl_Input_Choice *)data;
     Fl_Widget_Tracker wp(o);
