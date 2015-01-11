@@ -131,6 +131,15 @@ static void recent_timeout(void*) {
 
 static char recursion;
 
+// Is top level window iconified?
+static int top_win_iconified_() {
+  Fl_Widget *w = Fl_Tooltip::current();
+  if ( !w ) return 0;
+  Fl_Window *topwin = w->top_window();
+  if ( !topwin ) return 0;
+  return !topwin->visible() ? 1 : 0;
+}
+
 static void tooltip_timeout(void*) {
 #ifdef DEBUG
   puts("tooltip_timeout();");
@@ -138,22 +147,24 @@ static void tooltip_timeout(void*) {
 
   if (recursion) return;
   recursion = 1;
-  if (!tip || !*tip) {
-    if (window) window->hide();
-  } else {
-    int condition = 1;
+  if (!top_win_iconified_()) {   // no tooltip if top win iconified (STR #3157)
+    if (!tip || !*tip) {
+      if (window) window->hide();
+    } else {
+      int condition = 1;
 #if !(defined(__APPLE__) || defined(WIN32))
-    condition = (Fl::grab() == NULL);
+      condition = (Fl::grab() == NULL);
 #endif
-    if ( condition ) {
-      if (!window) window = new Fl_TooltipBox;
-      // this cast bypasses the normal Fl_Window label() code:
-      ((Fl_Widget*)window)->label(tip);
-      window->layout();
-      window->redraw();
-  //    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
-  //           window, tip ? tip : "(null)");
-      window->show();
+      if ( condition ) {
+	if (!window) window = new Fl_TooltipBox;
+	// this cast bypasses the normal Fl_Window label() code:
+	((Fl_Widget*)window)->label(tip);
+	window->layout();
+	window->redraw();
+	// printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+	//        window, tip ? tip : "(null)");
+	window->show();
+      }
     }
   }
 
