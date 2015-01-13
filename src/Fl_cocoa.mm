@@ -4279,28 +4279,45 @@ int Fl_Window::decorated_h()
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  NSButton *close = nil, *miniaturize = nil, *zoom = nil;
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
     this->print_widget(win, x_offset, y_offset);
     return;
   }
   int bx, by, bt, bpp;
   get_window_frame_sizes(bx, by, bt);
+  BOOL to_quartz =  (this->driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  if (fl_mac_os_version >= 101000) {
+    CALayer *layer = [[[fl_xid(win) standardWindowButton:NSWindowCloseButton] superview] layer]; // 10.5
+    if (layer) { // if program is linked with 10.10, title bar uses a layer
+      if (to_quartz) { // to Quartz printer
+        CGContextSaveGState(fl_gc);
+        CGContextTranslateCTM(fl_gc, x_offset - 0.5, y_offset + bt - 0.5);
+        CGContextScaleCTM(fl_gc, 1, -1);
+        [layer renderInContext:fl_gc]; // 10.5 // print all title bar
+        CGContextRestoreGState(fl_gc);
+      }
+      else { // to PostScript
+        CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB ();
+        CGContextRef gc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
+        CGColorSpaceRelease(cspace);
+        [layer renderInContext:gc]; // 10.5 // draw all title bar to bitmap
+        Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), win->w(), bt, 4); // 10.2
+        image->draw(x_offset, y_offset); // draw title bar to PostScript
+        delete image;
+        CGContextRelease(gc);
+      }
+      this->print_widget(win, x_offset, y_offset + bt);
+      return;
+    }
+  }
+#endif
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
   const char *title = win->label();
   win->label(""); // temporarily set a void window title
   win->show();
-  if (fl_mac_os_version >= 101000) {
-    // if linked for OS 10.10, capture of title bar does not capture the title bar buttons
-    // so we draw them in FLTK
-    NSWindow *xid = fl_xid(win);
-    close = [xid standardWindowButton:NSWindowCloseButton]; // 10.2
-    miniaturize = [xid standardWindowButton:NSWindowMiniaturizeButton];
-    zoom = [xid standardWindowButton:NSWindowZoomButton];
-  }
   fl_gc = NULL;
   Fl::check();
-  BOOL to_quartz =  (this->driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id);
   // capture the window title bar with no title
   CGImageRef img = NULL;
   unsigned char *bitmap = NULL;
@@ -4322,23 +4339,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     rgb->draw(x_offset, y_offset);
     delete rgb;
     delete[] bitmap;
-  }
-  if (fl_mac_os_version >= 101000 && to_quartz) { // print the title bar buttons
-    NSGraphicsContext *currentgc = [NSGraphicsContext currentContext];
-    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
-    [NSGraphicsContext saveGraphicsState];
-    NSAffineTransform *tr = [NSAffineTransform transform];
-    [tr translateXBy:x_offset + 7 yBy:y_offset + 3];
-    [tr concat];
-    [close drawRect:[close frame]]; // draw the close button to the print context
-    tr = [NSAffineTransform transform];
-    [tr translateXBy:20 yBy:0];
-    [tr concat];
-    [miniaturize drawRect:[miniaturize frame]]; // draw the miniaturize button to the print context
-    [tr concat];
-    [zoom drawRect:[zoom frame]]; // draw the zoom button to the print context
-    [NSGraphicsContext restoreGraphicsState];
-    [NSGraphicsContext setCurrentContext:currentgc];
   }
   if (title) { // print the window title
     const int skip = 65; // approx width of the zone of the 3 window control buttons
