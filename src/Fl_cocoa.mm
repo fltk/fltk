@@ -4303,7 +4303,8 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
         CGContextRef gc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
         CGColorSpaceRelease(cspace);
         [layer renderInContext:gc]; // 10.5 // draw all title bar to bitmap
-        Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), win->w(), bt, 4); // 10.2
+        Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), win->w(), bt, 4,
+                                               CGBitmapContextGetBytesPerRow(gc)); // 10.2
         image->draw(x_offset, y_offset); // draw title bar to PostScript
         delete image;
         CGContextRelease(gc);
