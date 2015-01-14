@@ -3456,68 +3456,68 @@ static Fl_Image* get_image_from_clipboard()
   for (rank = 0; rank < [present count]; rank++) { // find first of possible types present in pasteboard
     for (NSUInteger i = 0; i < [possible count]; i++) {
       if ([[present objectAtIndex:rank] isEqualToString:[possible objectAtIndex:i]]) {
-	found = [present objectAtIndex:rank];
-	goto after_loop;
+        found = [present objectAtIndex:rank];
+        goto after_loop;
       }
     }
   }
-after_loop: 
+after_loop:
   if (found) {
     NSData *data = [clip dataForType:found];
     if (data) {
       if ([found isEqualToString:@"public.tiff"]) {
-	bitmap = [NSBitmapImageRep imageRepWithData:data];
-	int bpp = [bitmap bytesPerPlane];
-	int bpr = [bitmap bytesPerRow];
-	int depth = [bitmap samplesPerPixel], w = bpr/depth, h = bpp/bpr;
-	imagedata = new uchar[w * h * depth];
-	memcpy(imagedata, [bitmap bitmapData], w * h * depth);
-	image = new Fl_RGB_Image(imagedata, w, h, depth);
-	image->alloc_array = 1;
+        bitmap = [NSBitmapImageRep imageRepWithData:data];
+        int bpp = [bitmap bytesPerPlane];
+        int bpr = [bitmap bytesPerRow];
+        int depth = [bitmap samplesPerPixel], w = bpr/depth, h = bpp/bpr;
+        imagedata = new uchar[w * h * depth];
+        memcpy(imagedata, [bitmap bitmapData], w * h * depth);
+        image = new Fl_RGB_Image(imagedata, w, h, depth);
+        image->alloc_array = 1;
       }
       else if ([found isEqualToString:@"com.adobe.pdf"] || [found isEqualToString:@"com.apple.pict"]) {
-	NSRect rect;
-	NSImageRep *vectorial;
-	NSAffineTransform *dilate = [NSAffineTransform transform];
-	if ([found isEqualToString:@"com.adobe.pdf"] ) {
-	  vectorial = [NSPDFImageRep imageRepWithData:data];
-	  rect = [(NSPDFImageRep*)vectorial bounds]; // in points =  1/72 inch
-	  Fl_Window *win = Fl::first_window();
-	  int screen_num = win ? Fl::screen_num(win->x(), win->y(), win->w(), win->h()) : 0;
-	  float hr, vr;
-	  Fl::screen_dpi(hr, vr, screen_num); // 1 inch = hr pixels = 72 points -> hr/72 pixel/point	  
-	  CGFloat scale = hr/72;
-	  [dilate scaleBy:scale];
-	  rect.size.width *= scale;
-	  rect.size.height *= scale;
-	  rect = NSIntegralRect(rect);
-	  }
-	else {
-	  vectorial = [NSPICTImageRep imageRepWithData:data];
-	  rect = [(NSPICTImageRep*)vectorial boundingBox]; // in pixel, no scaling required
-	  }
-	imagedata = new uchar[(int)(rect.size.width * rect.size.height) * 4];
-	memset(imagedata, -1, (int)(rect.size.width * rect.size.height) * 4);
-	bitmap = [[NSBitmapImageRep alloc]  initWithBitmapDataPlanes:&imagedata
-							  pixelsWide:rect.size.width
-							  pixelsHigh:rect.size.height
-						       bitsPerSample:8
-						     samplesPerPixel:3
-							    hasAlpha:NO
-							    isPlanar:NO
-						      colorSpaceName:NSDeviceRGBColorSpace
-							 bytesPerRow:rect.size.width*4
-							bitsPerPixel:32];
-	NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap 
-							 forKey:NSGraphicsContextDestinationAttributeName];
-	NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
-	[NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
-	[dilate concat];
-	[vectorial draw];
-	[NSGraphicsContext setCurrentContext:oldgc];
-	[bitmap release];
-	image = new Fl_RGB_Image(imagedata, rect.size.width, rect.size.height, 4);
-	image->alloc_array = 1;
+        NSRect rect;
+        NSImageRep *vectorial;
+        NSAffineTransform *dilate = [NSAffineTransform transform];
+        if ([found isEqualToString:@"com.adobe.pdf"] ) {
+          vectorial = [NSPDFImageRep imageRepWithData:data];
+          rect = [(NSPDFImageRep*)vectorial bounds]; // in points =  1/72 inch
+          Fl_Window *win = Fl::first_window();
+          int screen_num = win ? Fl::screen_num(win->x(), win->y(), win->w(), win->h()) : 0;
+          float hr, vr;
+          Fl::screen_dpi(hr, vr, screen_num); // 1 inch = hr pixels = 72 points -> hr/72 pixel/point
+          CGFloat scale = hr/72;
+          [dilate scaleBy:scale];
+          rect.size.width *= scale;
+          rect.size.height *= scale;
+          rect = NSIntegralRect(rect);
+        }
+        else {
+          vectorial = [NSPICTImageRep imageRepWithData:data];
+          rect = [(NSPICTImageRep*)vectorial boundingBox]; // in pixel, no scaling required
+        }
+        imagedata = new uchar[(int)(rect.size.width * rect.size.height) * 4];
+        memset(imagedata, -1, (int)(rect.size.width * rect.size.height) * 4);
+        bitmap = [[NSBitmapImageRep alloc]  initWithBitmapDataPlanes:&imagedata
+                                                          pixelsWide:rect.size.width
+                                                          pixelsHigh:rect.size.height
+                                                       bitsPerSample:8
+                                                     samplesPerPixel:3
+                                                            hasAlpha:NO
+                                                            isPlanar:NO
+                                                      colorSpaceName:NSDeviceRGBColorSpace
+                                                         bytesPerRow:rect.size.width*4
+                                                        bitsPerPixel:32];
+        NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap 
+                                                         forKey:NSGraphicsContextDestinationAttributeName];
+        NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+        [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
+        [dilate concat];
+        [vectorial draw];
+        [NSGraphicsContext setCurrentContext:oldgc];
+        [bitmap release];
+        image = new Fl_RGB_Image(imagedata, rect.size.width, rect.size.height, 4);
+        image->alloc_array = 1;
       }
       Fl::e_clipboard_type = Fl::clipboard_image;
     }
@@ -3530,21 +3530,21 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (type[0] == 0) type = Fl::clipboard_plain_text;
   if (clipboard) {
     Fl::e_clipboard_type = "";
-   if (strcmp(type, Fl::clipboard_plain_text) == 0) {
-      fl_selection_length[1] = get_plain_text_from_clipboard( &fl_selection_buffer[1],  fl_selection_length[1]);   
-      }
+    if (strcmp(type, Fl::clipboard_plain_text) == 0) {
+      fl_selection_length[1] = get_plain_text_from_clipboard( &fl_selection_buffer[1],  fl_selection_length[1]);
+    }
     else if (strcmp(type, Fl::clipboard_image) == 0) {
       Fl::e_clipboard_data = get_image_from_clipboard( );
       if (Fl::e_clipboard_data) {
-	int done = receiver.handle(FL_PASTE);
-	Fl::e_clipboard_type = "";
-	if (done == 0) {
-	  delete (Fl_Image*)Fl::e_clipboard_data;
-	  Fl::e_clipboard_data = NULL;
-	}
+        int done = receiver.handle(FL_PASTE);
+        Fl::e_clipboard_type = "";
+        if (done == 0) {
+          delete (Fl_Image*)Fl::e_clipboard_data;
+          Fl::e_clipboard_data = NULL;
+        }
       }
       return;
-      }
+    }
     else
       fl_selection_length[1] = 0;
   }
