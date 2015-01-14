@@ -202,7 +202,7 @@ public:
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Gl_Window* as_gl_window() {return this;}
   
-#if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+#if defined(__APPLE__)
   int pixel_w();
   int pixel_h();
 #else

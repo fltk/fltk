@@ -99,19 +99,27 @@ void Fl_Gl_Window::show() {
 #endif /* __APPLE__ */
 }
 
-#if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+#if defined(__APPLE__)
 
 int Fl_Gl_Window::pixel_w()
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   return Fl_X::resolution_scaling_factor(this) * w();
+#else
+  return w();
+#endif
 }
 
 int Fl_Gl_Window::pixel_h()
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   return Fl_X::resolution_scaling_factor(this) * h();
+#else
+  return h();
+#endif
 }
 
-#endif
+#endif // __APPLE__
 
 /**
   The invalidate() method turns off valid() and is
