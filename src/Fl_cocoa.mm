@@ -4286,7 +4286,8 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   int bx, by, bt, bpp;
   get_window_frame_sizes(bx, by, bt);
   BOOL to_quartz =  (this->driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+// a compilation warning appears with SDK 10.5, so we require SDK 10.6 instead
   if (fl_mac_os_version >= 101000) {
     CALayer *layer = [[[fl_xid(win) standardWindowButton:NSWindowCloseButton] superview] layer]; // 10.5
     if (layer) { // if program is linked with 10.10, title bar uses a layer
