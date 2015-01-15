@@ -1094,34 +1094,6 @@ static FLTextView *fltextview_instance = nil;
 - (void)anyWindowWillClose:(NSNotification *)notif;
 @end
 
-/* recursively set Cocoa's position and size of subwindows from their FLTK coords
- */
-static void position_subwindows(Fl_Window *parent, BOOL is_a_move)
-{
-  FLWindow *xid = fl_xid(parent);
-  NSArray *children = [xid childWindows]; // 10.2
-  NSEnumerator *enumerator = [children objectEnumerator];
-  id child;
-  NSRect pframe = [xid frame];
-  while ((child = [enumerator nextObject]) != nil) {
-    NSRect rchild;
-    Fl_Window *sub = [child getFl_Window];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    Fl_X *subx = Fl_X::i(sub);
-    bool previous = subx->mapped_to_retina();
-    subx->mapped_to_retina( Fl_X::i(parent)->mapped_to_retina() );
-    if (previous != subx->mapped_to_retina()) subx->changed_resolution(true);
-#endif
-    rchild.origin = NSMakePoint(pframe.origin.x + sub->x(), pframe.origin.y + parent->h() - (sub->h() + sub->y()));
-    rchild.size = NSMakeSize(sub->w(), sub->h());
-    [child setFrame:rchild display:YES];
-    position_subwindows(sub, is_a_move);
-    if (is_a_move && fl_mac_os_version < 100700) { // after move, redraw parent and children of GL windows
-      if (parent->as_gl_window()) [child display];
-      if (sub->as_gl_window()) [xid display];
-    }
-  }
-}
 
 /* make subwindows re-appear after appl unhide or window deminiaturize
  (not necessary with 10.5 and above)
@@ -1253,17 +1225,27 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  if (!window->parent()) {
-    NSPoint pt2;
-    pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
-    update_e_xy_and_e_xy_root(nsw);
-    resize_from_system = NULL;
-    window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
+  resize_from_system = window;
+  NSPoint pt2;
+  pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
+  update_e_xy_and_e_xy_root(nsw);
+  pt2.y = main_screen_height - pt2.y;
+  Fl_Window *parent = window->window();
+  while (parent) {
+    pt2.x -= parent->x();
+    pt2.y -= parent->y();
+    parent = parent->window();
+  }
+  window->position((int)pt2.x, (int)pt2.y);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    compute_mapped_to_retina(window);
+  compute_mapped_to_retina(window);
 #endif
-    position_subwindows(window, YES);
-   }
+  if (fl_mac_os_version < 100700) { // after move, redraw parent and children of GL windows
+    parent = window->window();
+    if (parent && parent->as_gl_window()) window->redraw();
+    if (parent && window->as_gl_window()) parent->redraw();
+  }
+  resize_from_system = NULL;
   fl_unlock_function();
 }
 - (void)windowDidResize:(NSNotification *)notif
@@ -1272,15 +1254,18 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   NSRect r; NSPoint pt2;
-  if (!window->parent()) {
-    r = [[nsw contentView] frame];
-    pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
-    pt2.y = main_screen_height - pt2.y;
-    resize_from_system = window;
-    update_e_xy_and_e_xy_root(nsw);
-    window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
-    position_subwindows(window, NO);
+  r = [[nsw contentView] frame];
+  pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
+  pt2.y = main_screen_height - pt2.y;
+  Fl_Window *parent = window->window();
+  while (parent) {
+    pt2.x -= parent->x();
+    pt2.y -= parent->y();
+    parent = parent->window();
   }
+  resize_from_system = window;
+  update_e_xy_and_e_xy_root(nsw);
+  window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
@@ -3111,6 +3096,8 @@ void Fl_Window::show() {
  * resize a window
  */
 void Fl_Window::resize(int X,int Y,int W,int H) {
+  int bx, by, bt;
+  Fl_Window *parent;
   if (W<=0) W = 1; // OS X does not like zero width windows
   if (H<=0) H = 1;
   int is_a_resize = (W != w() || H != h());
@@ -3133,10 +3120,27 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
         size_range(W, H, W, H);
       }
       Fl_Group::resize(X,Y,W,H);
-      if ([i->xid parentWindow]) set_subwindow_frame(this);
-      
+      // transmit changes in FLTK coords to cocoa
+      get_window_frame_sizes(bx, by, bt);
+      bx = X; by = Y;
+      parent = window();
+      while (parent) {
+        bx += parent->x();
+        by += parent->y();
+        parent = parent->window();
+      }
+      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
+      [fl_xid(this) setFrame:r display:YES];
     } else {
-      x(X); y(Y);
+      bx = X; by = Y;
+      parent = window();
+      while (parent) {
+        bx += parent->x();
+        by += parent->y();
+        parent = parent->window();
+      }
+      NSPoint pt = NSMakePoint(bx, main_screen_height - (by + H));
+      [fl_xid(this) setFrameOrigin:pt]; // set cocoa coords to FLTK position
     }
   }
   else {
@@ -3150,26 +3154,21 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       x(X); y(Y);
     }
   }
-  if (is_a_resize) {
-    // make sure that subwindows of this window don't leak out of their parent window
-    NSArray *children = [fl_xid(this) childWindows]; // 10.2
-    NSEnumerator *enumerator = [children objectEnumerator];
-    id child;
-    while ((child = [enumerator nextObject]) != nil) {
-      [[(FLWindow*)child contentView] setNeedsDisplay:YES];
-      Fl_Window *childw = [child getFl_Window];
-      CGRect prect = CGRectMake(0, 0, w(), h());
-      CGRect srect = CGRectMake(childw->x(), childw->y(), childw->w(), childw->h());
-      delete Fl_X::i(childw)->subRect();
-      CGRect *pclip = NULL;
-      if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
-        CGRect clip = CGRectIntersection(prect, srect);
-        clip = CGRectOffset(clip, -childw->x(), -childw->y());
-        clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
-        pclip = new CGRect(clip);
-      }
-      Fl_X::i(childw)->subRect(pclip);
+  if (this->parent()) {
+    // make sure that subwindows don't leak out of their parent window
+    parent = window();
+    CGRect prect = CGRectMake(0, 0, parent->w(), parent->h());
+    CGRect srect = CGRectMake(x(), y(), w(), h());
+    delete i->subRect();
+    CGRect *pclip = NULL;
+    if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
+      CGRect clip = CGRectIntersection(prect, srect);
+      clip = CGRectOffset(clip, -x(), -y());
+      clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
+      pclip = new CGRect(clip);
+      [[fl_xid(this) contentView] setNeedsDisplay:YES];
     }
+    i->subRect(pclip);
   }
 }
 
