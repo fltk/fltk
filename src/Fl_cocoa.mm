@@ -1112,13 +1112,13 @@ static void orderfront_subwindows(FLWindow *xid)
 }
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-//determines whether the (top-level) window is mapped to a retina display
+//determines whether a window is mapped to a retina display
 static void compute_mapped_to_retina(Fl_Window *window)
 {
   if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
     Fl_X *flx = Fl_X::i(window);
     bool previous = flx->mapped_to_retina();
-    NSSize s = [[flx->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+    NSSize s = [[flx->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
     flx->mapped_to_retina( int(s.width + 0.5) > 10 );
     if (previous != flx->mapped_to_retina()) flx->changed_resolution(true);
     // window needs redrawn when moving from low res to retina
