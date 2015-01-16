@@ -2987,6 +2987,8 @@ void Fl_X::make(Fl_Window* w)
     [pxid makeFirstResponder:[pxid contentView]];
   } else {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+    // this is useful for menu/tooltip windows where no windowDidMove notification is received
+    // so they are drawn at high res already at first time
     compute_mapped_to_retina(w);
     x->changed_resolution(false);
 #endif
@@ -2994,15 +2996,13 @@ void Fl_X::make(Fl_Window* w)
   }
   
   if (!w->parent()) {
+    // this may be useful for menu/tooltip windows where no windowDidMove notification is received
     crect = [[cw contentView] frame];
     w->w(int(crect.size.width));
     w->h(int(crect.size.height));
     crect = [cw frame];
     w->x(int(crect.origin.x));
     w->y(int(main_screen_height - (crect.origin.y + w->h())));
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-    compute_mapped_to_retina(w);
-#endif
   }
   
     int old_event = Fl::e_number;
@@ -3154,7 +3154,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       x(X); y(Y);
     }
   }
-  if (this->parent()) {
+  if (this->parent() && shown()) {
     // make sure that subwindows don't leak out of their parent window
     parent = window();
     CGRect prect = CGRectMake(0, 0, parent->w(), parent->h());
