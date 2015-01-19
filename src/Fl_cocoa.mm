@@ -2256,7 +2256,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl::first_window(window);
   cocoaKeyboardHandler(theEvent);
   in_key_event = YES;
-  if (Fl::focus()->as_gl_window()) { // ignore text input methods for GL windows
+  Fl_Widget *f = Fl::focus();
+  if (f && f->as_gl_window()) { // ignore text input methods for GL windows
     need_handle = YES;
     [FLView prepareEtext:[theEvent characters]];
   } else {
