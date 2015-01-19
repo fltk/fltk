@@ -2180,7 +2180,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   BOOL handled;
   NSUInteger mods = [theEvent modifierFlags];
   Fl_Window *w = [(FLWindow*)[theEvent window] getFl_Window];
-  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) || (w->as_gl_window() && Fl::focus() == w)) {
+  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) ) {
     NSString *s = [theEvent characters];
     if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
       s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
@@ -2256,7 +2256,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl::first_window(window);
   cocoaKeyboardHandler(theEvent);
   in_key_event = YES;
-  if (window->as_gl_window() && Fl::focus() == window ) { // ignore text input methods for GL windows
+  if (Fl::focus()->as_gl_window()) { // ignore text input methods for GL windows
     need_handle = YES;
     [FLView prepareEtext:[theEvent characters]];
   } else {
