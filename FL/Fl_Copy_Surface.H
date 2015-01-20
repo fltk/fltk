@@ -43,8 +43,8 @@
  Platform details:
  \li MSWindows: Transparent RGB images copy without transparency.
  The graphical data is copied to the clipboard as an 'enhanced metafile'.
- \li Mac OS: The graphical data is copied to the clipboard (a.k.a. pasteboard) in 2 'flavors': 
- 1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image (or PICT for Mac OS 10.3). 
+ \li Mac OS: The graphical data is copied to the clipboard (a.k.a. pasteboard) in two 'flavors': 
+ 1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image. 
  Applications to which the clipboard content is pasted can use the flavor that suits them best.
  \li X11: the graphical data is copied to the clipboard as an image in BMP format.
 */
