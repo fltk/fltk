@@ -3156,20 +3156,25 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     }
   }
   if (this->parent() && shown()) {
-    // make sure that subwindows don't leak out of their parent window
-    parent = window();
-    CGRect prect = CGRectMake(0, 0, parent->w(), parent->h());
-    CGRect srect = CGRectMake(x(), y(), w(), h());
-    delete i->subRect();
-    CGRect *pclip = NULL;
-    if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
-      CGRect clip = CGRectIntersection(prect, srect);
-      clip = CGRectOffset(clip, -x(), -y());
-      clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
-      pclip = new CGRect(clip);
-      [[fl_xid(this) contentView] setNeedsDisplay:YES];
+    // make sure this subwindow doesn't leak out of its parent window
+    Fl_Window *from = this;
+    CGRect full = CGRectMake(0, 0, w(), h()); // full subwindow area
+    CGRect srect = full; // will become new subwindow clip
+    int fromx = 0, fromy = 0;
+    while ((parent = from->window()) != NULL) { // loop over all parent windows
+      fromx -= from->x(); // parent origin in subwindow's coordinates
+      fromy -= from->y();
+      CGRect prect = CGRectMake(fromx, fromy, parent->w(), parent->h());
+      srect = CGRectIntersection(prect, srect); // area of subwindow inside its parent
+      from = parent;
     }
-    i->subRect(pclip);
+    CGRect *r = i->subRect();
+    CGRect current_clip = (r ? *r : full); // current subwindow clip
+    if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
+      delete r;
+      [[i->xid contentView] setNeedsDisplay:YES]; // subwindow needs redrawn
+      i->subRect( ( CGRectEqualToRect(srect, full) ? NULL : new CGRect(srect) ) );
+    }
   }
 }
 
