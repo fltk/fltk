@@ -4250,7 +4250,7 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
   return img;
 }
 
-WindowRef Fl_X::window_ref()
+WindowRef Fl_X::window_ref() // useless with cocoa GL windows
 {
   return (WindowRef)[xid windowRef];
 }
@@ -4403,7 +4403,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
  Supports old Mac OS X versions that may use a couple of Carbon calls:
  GetKeys used by OS X 10.3 or before (in Fl::get_key())
  PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
- GetWindowPort used by 10.4 or before (in Fl_Gl_Choice.cxx)
  */
 void *Fl_X::get_carbon_function(const char *function_name) {
   static void *carbon = NULL;

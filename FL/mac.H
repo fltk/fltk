@@ -170,7 +170,7 @@ public:
   void map(void);
   void unmap(void);
   void collapse(void);
-  WindowRef window_ref(void);
+  WindowRef window_ref(void); // useless with cocoa GL windows
   void set_key_window(void);
   // OS X doesn't have per window icons
   static void set_default_icons(const Fl_RGB_Image*[], int) {};
