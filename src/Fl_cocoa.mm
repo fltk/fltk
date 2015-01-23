@@ -3173,7 +3173,11 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
       delete r;
       [[i->xid contentView] setNeedsDisplay:YES]; // subwindow needs redrawn
-      i->subRect( ( CGRectEqualToRect(srect, full) ? NULL : new CGRect(srect) ) );
+      if (CGRectEqualToRect(srect, full)) r = NULL;
+      else {
+        r = new CGRect(fl_cgrectmake_cocoa(srect.origin.x, srect.origin.y, srect.size.width, srect.size.height));
+      }
+      i->subRect(r);
     }
   }
 }
