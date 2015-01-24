@@ -2637,16 +2637,16 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
       //list[n++] = AGL_GREEN_SIZE;
       //list[n++] = (m & FL_RGB8) ? 8 : 1;
       attribs[n++] = NSOpenGLPFAColorSize;
-      attribs[n++] = (m & FL_RGB8) ? 32 : 1;
+      attribs[n++] = (NSOpenGLPixelFormatAttribute)((m & FL_RGB8) ? 32 : 1);
       if (m & FL_ALPHA) {
         //list[n++] = AGL_ALPHA_SIZE;
         attribs[n++] = NSOpenGLPFAAlphaSize;
-        attribs[n++] = (m & FL_RGB8) ? 8 : 1;
+        attribs[n++] = (NSOpenGLPixelFormatAttribute)((m & FL_RGB8) ? 8 : 1);
       }
       if (m & FL_ACCUM) {
         //list[n++] = AGL_ACCUM_GREEN_SIZE; list[n++] = 1;
         attribs[n++] = NSOpenGLPFAAccumSize;
-        attribs[n++] = 1;
+        attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
         if (m & FL_ALPHA) {
           //list[n++] = AGL_ACCUM_ALPHA_SIZE; list[n++] = 1;
         }
@@ -2659,12 +2659,12 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
     if (m & FL_DEPTH) {
       //list[n++] = AGL_DEPTH_SIZE; list[n++] = 24;
       attribs[n++] = NSOpenGLPFADepthSize;
-      attribs[n++] = 24;
+      attribs[n++] = (NSOpenGLPixelFormatAttribute)24;
     }
     if (m & FL_STENCIL) {
       //list[n++] = AGL_STENCIL_SIZE; list[n++] = 1;
       attribs[n++] = NSOpenGLPFAStencilSize;
-      attribs[n++] = 1;
+      attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
     }
     if (m & FL_STEREO) {
       //list[n++] = AGL_STEREO;
@@ -2672,8 +2672,8 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
     }
     if (m & FL_MULTISAMPLE) {
       attribs[n++] = NSOpenGLPFAMultisample,
-      attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = 1;
-      attribs[n++] = NSOpenGLPFASamples; attribs[n++] = 4;
+      attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
+      attribs[n++] = NSOpenGLPFASamples; attribs[n++] = (NSOpenGLPixelFormatAttribute)4;
     }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (fl_mac_os_version >= 100700) {
@@ -2683,11 +2683,11 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
 #endif
   } else {
     while (alistp[n] && n < 30) {
-      attribs[n] = alistp[n];
+      attribs[n] = (NSOpenGLPixelFormatAttribute)alistp[n];
       n++;
     }
   }
-  attribs[n] = 0;
+  attribs[n] = (NSOpenGLPixelFormatAttribute)0;
   NSOpenGLPixelFormat *pixform = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
   /*GLint color,alpha,accum,depth;
   [pixform getValues:&color forAttribute:NSOpenGLPFAColorSize forVirtualScreen:0];
