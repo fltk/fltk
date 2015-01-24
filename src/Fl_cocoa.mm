@@ -2979,7 +2979,6 @@ void Fl_X::make(Fl_Window* w)
     if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
       CGRect clip = CGRectIntersection(prect, srect);
       clip = CGRectOffset(clip, -w->x(), -w->y());
-      clip = fl_cgrectmake_cocoa(clip.origin.x, clip.origin.y, clip.size.width, clip.size.height);
       x->subRect(new CGRect(clip));
     }
     set_subwindow_frame(w);
@@ -3175,7 +3174,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       [[i->xid contentView] setNeedsDisplay:YES]; // subwindow needs redrawn
       if (CGRectEqualToRect(srect, full)) r = NULL;
       else {
-        r = new CGRect(fl_cgrectmake_cocoa(srect.origin.x, srect.origin.y, srect.size.width, srect.size.height));
+        r = new CGRect(srect);
       }
       i->subRect(r);
     }
@@ -3233,7 +3232,8 @@ void Fl_Window::make_current()
   CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
   CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   // for subwindows, limit drawing to inside of parent window
-  if (i->subRect()) CGContextClipToRect(fl_gc, *(i->subRect()));
+  // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
+  if (i->subRect()) CGContextClipToRect(fl_gc, CGRectOffset(*(i->subRect()), -0.5, -0.5));
   
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(fl_gc);
