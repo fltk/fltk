@@ -226,10 +226,8 @@ use it for any purpose you want.  Try to keep the value less than 100
 to not interfere with reserved values.
 
 \par
-To enhance portability, FLTK does not use RTTI (Run Time Typing Information), 
-except on the Mac OS X platform.  But this may change in the near future 
-if RTTI becomes standard everywhere. RTTI use on the Mac allows to change 
-the image of the cursor when dragging text data, as expected from Mac applications.
+FLTK does not use RTTI (Run Time Typing Information) to enhance portability.
+But this may change in the near future if RTTI becomes standard everywhere.
 
 \par
 If you don't have RTTI you can use the clumsy FLTK mechanism, by
