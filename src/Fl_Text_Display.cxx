@@ -3863,7 +3863,11 @@ int Fl_Text_Display::handle(int event) {
       if (dragType==DRAG_START_DND) {
         if (!Fl::event_is_click() && Fl::dnd_text_ops()) {
           const char* copy = buffer()->selection_text();
+#ifdef __APPLE__
+          Fl_X::dnd(1);
+#else
           Fl::dnd();
+#endif
           free((void*)copy);
         }
         return 1;
