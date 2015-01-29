@@ -5,7 +5,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree_Prefs.H>
-#include <string.h>		// strcmp
 
 //////////////////////
 // Fl_Tree_Prefs.cxx
