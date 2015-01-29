@@ -474,7 +474,7 @@ enum Fl_When { // Fl_Widget::when():
 		\see src/Fl_get_system_colors.cxx
 */
 /*@{*/
-enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
+enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.cxx):
 
   FL_NO_BOX = 0,		///< nothing is drawn at all, this box is invisible
   FL_FLAT_BOX,			///< a flat box
@@ -517,21 +517,21 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_GTK_UP_BOX,		///< gtk+ version of FL_UP_BOX
   _FL_GTK_DOWN_BOX,		///< gtk+ version of FL_DOWN_BOX
   _FL_GTK_UP_FRAME,		///< gtk+ version of FL_UP_FRAME
-  _FL_GTK_DOWN_FRAME,		///< gtk+ version of FL_DOWN_RAME
+  _FL_GTK_DOWN_FRAME,		///< gtk+ version of FL_DOWN_FRAME
   _FL_GTK_THIN_UP_BOX,		///< gtk+ version of FL_THIN_UP_BOX
   _FL_GTK_THIN_DOWN_BOX,	///< gtk+ version of FL_THIN_DOWN_BOX
-  _FL_GTK_THIN_UP_FRAME,	///< gtk+ version of FL_UP_FRAME
+  _FL_GTK_THIN_UP_FRAME,	///< gtk+ version of FL_THIN_UP_FRAME
   _FL_GTK_THIN_DOWN_FRAME,	///< gtk+ version of FL_THIN_DOWN_FRAME
   _FL_GTK_ROUND_UP_BOX,		///< gtk+ version of FL_ROUND_UP_BOX
   _FL_GTK_ROUND_DOWN_BOX,	///< gtk+ version of FL_ROUND_DOWN_BOX
-  _FL_GLEAM_UP_BOX,		///< gleam version of FL_GLEAM_UP_BOX
-  _FL_GLEAM_DOWN_BOX,		///< gleam version of FL_GLEAM_DOWN_BOX
-  _FL_GLEAM_UP_FRAME, 		///< gleam version of FL_GLEAM_UP_FRAME
-  _FL_GLEAM_DOWN_FRAME,		///< gleam version of FL_GLEAM_DOWN_FRAME
-  _FL_GLEAM_THIN_UP_BOX,    	///< gleam version of FL_GLEAM_THIN_UP_BOX
-  _FL_GLEAM_THIN_DOWN_BOX,	///< gleam version of FL_GLEAM_THIN_DOWN_BOX
-  _FL_GLEAM_ROUND_UP_BOX,   	///< gleam version of FL_GLEAM_ROUND_UP_BOX
-  _FL_GLEAM_ROUND_DOWN_BOX,	///< gleam version of FL_GLEAM_ROUND_DOWN_BOX
+  _FL_GLEAM_UP_BOX,		///< gleam version of FL_UP_BOX
+  _FL_GLEAM_DOWN_BOX,		///< gleam version of FL_DOWN_BOX
+  _FL_GLEAM_UP_FRAME,		///< gleam version of FL_UP_FRAME
+  _FL_GLEAM_DOWN_FRAME,		///< gleam version of FL_DOWN_FRAME
+  _FL_GLEAM_THIN_UP_BOX,	///< gleam version of FL_THIN_UP_BOX
+  _FL_GLEAM_THIN_DOWN_BOX,	///< gleam version of FL_THIN_DOWN_BOX
+  _FL_GLEAM_ROUND_UP_BOX,	///< gleam version of FL_ROUND_UP_BOX
+  _FL_GLEAM_ROUND_DOWN_BOX,	///< gleam version of FL_ROUND_DOWN_BOX
   FL_FREE_BOXTYPE		///< the first free box type for creation of new box types
 };
 extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
@@ -871,19 +871,19 @@ inline Fl_Color fl_rgb_color(uchar g) {
   else return (Fl_Color)(((((g << 8) | g) << 8) | g) << 8);
 }
 
-/** Returns a gray color value from black (i == 0) to white (i == FL_NUM_GRAY - 1). 
-    FL_NUM_GRAY is defined to be 24 in the current FLTK release. 
+/** Returns a gray color value from black (i == 0) to white (i == FL_NUM_GRAY - 1).
+    FL_NUM_GRAY is defined to be 24 in the current FLTK release.
     To get the closest FLTK gray value to an 8-bit grayscale color 'I' use:
 
- \code 
+ \code
    fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
  \endcode
-*/ 
+*/
 inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 
 /** Returns a color out of the color cube.
 
-  \p r must be in the range 0 to FL_NUM_RED (5) minus 1, 
+  \p r must be in the range 0 to FL_NUM_RED (5) minus 1,
   \p g must be in the range 0 to FL_NUM_GREEN (8) minus 1,
   \p b must be in the range 0 to FL_NUM_BLUE (5) minus 1.
 
@@ -898,7 +898,7 @@ inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 inline Fl_Color fl_color_cube(int r, int g, int b) {
   return (Fl_Color)((b*FL_NUM_RED + r) * FL_NUM_GREEN + g + FL_COLOR_CUBE);}
 
-/*@}*/		// group: Colors  
+/*@}*/		// group: Colors
 
 /** \name Cursors */
 /*@{*/
