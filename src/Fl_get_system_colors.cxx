@@ -3,7 +3,7 @@
 //
 // System color support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -280,6 +280,8 @@ static Fl_Pixmap	tile(tile_xpm);
 
     If the resulting scheme name is not defined, the default scheme will
     be used and Fl::scheme() will return NULL.
+
+    \see Fl::is_scheme()
 */
 int Fl::scheme(const char *s) {
   if (!s) {

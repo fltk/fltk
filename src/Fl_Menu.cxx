@@ -3,7 +3,7 @@
 //
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -189,13 +189,11 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 	int tW = (W - Fl::box_dw(FL_ROUND_DOWN_BOX)) / 2 + 1;
 	if ((W - tW) & 1) tW++;	// Make sure difference is even to center
 	int td = (W - tW) / 2;
-        if (Fl::scheme()) {
-	  if (!strcmp(Fl::scheme(), "gtk+")) {
-	    fl_color(FL_SELECTION_COLOR);
-	    tW --;
-	    fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
-	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
-	  } else fl_color(labelcolor_);
+        if (Fl::is_scheme("gtk+")) {
+	  fl_color(FL_SELECTION_COLOR);
+	  tW --;
+	  fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
+	  fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
 	} else fl_color(labelcolor_);
 
 	switch (tW) {
@@ -224,7 +222,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 	    break;
 	}
 
-	if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	if (Fl::is_scheme("gtk+")) {
 	  fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.5));
 	  fl_arc(x + td + 2, y + d + td, tW + 1, tW + 1, 60.0, 180.0);
 	}
@@ -232,7 +230,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
     } else {
       fl_draw_box(FL_DOWN_BOX, x+2, y+d, W, W, FL_BACKGROUND2_COLOR);
       if (value()) {
-	if (Fl::scheme() && !strcmp(Fl::scheme(), "gtk+")) {
+	if (Fl::is_scheme("gtk+")) {
 	  fl_color(FL_SELECTION_COLOR);
 	} else {
 	  fl_color(labelcolor_);
