@@ -679,7 +679,7 @@ char Fl_Preferences::get( const char *key, char *text, const char *defaultValue,
   }
   if ( !v ) v = defaultValue;
   if ( v ) strlcpy(text, v, maxSize);
-  else text = 0;
+  else *text = 0;
   return ( v != defaultValue );
 }
 

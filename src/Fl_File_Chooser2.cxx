@@ -410,6 +410,8 @@ static int	compare_dirnames(const char *a, const char *b);
 static void	quote_pathname(char *, const char *, int);
 static void	unquote_pathname(char *, const char *, int);
 
+// use platform dependent getenv() to get the home directory (STR #3166)
+static const char* get_homedir();
 
 //
 // 'Fl_File_Chooser::count()' - Return the number of selected files.
@@ -539,7 +541,7 @@ Fl_File_Chooser::favoritesButtonCB()
 
   if (!v) {
     // Add current directory to favorites...
-    if (getenv("HOME")) v = favoritesButton->size() - 5;
+    if (get_homedir()) v = favoritesButton->size() - 5;
     else v = favoritesButton->size() - 4;
 
     sprintf(menuname, "favorite%02d", v);
@@ -1273,8 +1275,8 @@ Fl_File_Chooser::update_favorites()
   favoritesButton->add(add_favorites_label, FL_ALT + 'a', 0);
   favoritesButton->add(manage_favorites_label, FL_ALT + 'm', 0, 0, FL_MENU_DIVIDER);
   favoritesButton->add(filesystems_label, FL_ALT + 'f', 0);
-    
-  if ((home = getenv("HOME")) != NULL) {
+
+  if ((home = get_homedir()) != NULL) {
     quote_pathname(menuname, home, sizeof(menuname));
     favoritesButton->add(menuname, FL_ALT + 'h', 0);
   }
@@ -1665,18 +1667,22 @@ quote_pathname(char       *dst,		// O - Destination string
                const char *src,		// I - Source string
 	       int        dstsize)	// I - Size of destination string
 {
-  dstsize --;
+  dstsize--; // prepare for trailing zero
 
   while (*src && dstsize > 1) {
     if (*src == '\\') {
       // Convert backslash to forward slash...
       *dst++ = '\\';
       *dst++ = '/';
+      dstsize -= 2;
       src ++;
     } else {
-      if (*src == '/') *dst++ = '\\';
-
+      if (*src == '/') {
+	*dst++ = '\\';
+	dstsize--;
+      }
       *dst++ = *src++;
+      dstsize--;
     }
   }
 
@@ -1693,14 +1699,32 @@ unquote_pathname(char       *dst,	// O - Destination string
                  const char *src,	// I - Source string
 	         int        dstsize)	// I - Size of destination string
 {
-  dstsize --;
+  dstsize--; // prepare for trailing zero
 
-  while (*src && dstsize > 1) {
-    if (*src == '\\') src ++;
+  while (*src && dstsize > 0) {
+    if (*src == '\\') src++;
     *dst++ = *src++;
+    dstsize--;
   }
 
   *dst = '\0';
+}
+
+//
+// 'get_homedir()' - Try to find the home directory (platform dependent).
+
+static const char*
+get_homedir() {
+
+  const char *home = fl_getenv("HOME");
+
+#ifdef WIN32
+
+  if (!home) home = fl_getenv("UserProfile");
+
+#endif // WIN32
+
+  return home;
 }
 
 
