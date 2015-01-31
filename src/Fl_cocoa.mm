@@ -1111,6 +1111,30 @@ static void orderfront_subwindows(FLWindow *xid)
   }
 }
 
+#if FLTK_ABI_VERSION >= 10304
+static const unsigned windowDidResize_mask = 1;
+#else
+static const unsigned long windowDidResize_mask = 1;
+#endif
+
+bool Fl_X::in_windowDidResize() {
+#if FLTK_ABI_VERSION >= 10304
+  return mapped_to_retina_ & windowDidResize_mask;
+#else
+  return (unsigned long)xidChildren & windowDidResize_mask;
+#endif
+}
+
+void Fl_X::in_windowDidResize(bool b) {
+#if FLTK_ABI_VERSION >= 10304
+  if (b) mapped_to_retina_ |= windowDidResize_mask;
+  else mapped_to_retina_ &= ~windowDidResize_mask;
+#else
+  if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | windowDidResize_mask);
+  else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~windowDidResize_mask);
+#endif
+}
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 //determines whether a window is mapped to a retina display
 static void compute_mapped_to_retina(Fl_Window *window)
@@ -1129,11 +1153,11 @@ static void compute_mapped_to_retina(Fl_Window *window)
 }
 
 #if FLTK_ABI_VERSION >= 10304
-static const unsigned mapped_mask = 1;
-static const unsigned changed_mask = 2;
+static const unsigned mapped_mask = 2;
+static const unsigned changed_mask = 4;
 #else
-static const unsigned long mapped_mask = 1; // sizeof(unsigned long) = sizeof(Fl_X*)
-static const unsigned long changed_mask = 2;
+static const unsigned long mapped_mask = 2; // sizeof(unsigned long) = sizeof(Fl_X*)
+static const unsigned long changed_mask = 4;
 #endif
 
 bool Fl_X::mapped_to_retina() {
@@ -1264,8 +1288,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     parent = parent->window();
   }
   resize_from_system = window;
+  if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
+  if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(false);
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
@@ -2974,12 +3000,17 @@ void Fl_X::make(Fl_Window* w)
     // next 2 statements so a subwindow doesn't leak out of its parent window
     [cw setOpaque:NO];
     [cw setBackgroundColor:[NSColor clearColor]]; // transparent background color
-    CGRect prect = CGRectMake(0, 0, w->window()->w(), w->window()->h());
-    CGRect srect = CGRectMake(w->x(), w->y(), w->w(), w->h());
-    if (!CGRectContainsRect(prect, srect)) { // if subwindow extends outside its parent window
-      CGRect clip = CGRectIntersection(prect, srect);
-      clip = CGRectOffset(clip, -w->x(), -w->y());
-      x->subRect(new CGRect(clip));
+    CGRect srect = CGRectMake(0, 0, w->w(), w->h());
+    Fl_Window *parent, *from = w;
+    int fromx = 0, fromy = 0;
+    while ((parent = from->window()) != NULL) {
+      fromx -= from->x(); // parent origin in w's coordinates
+      fromy -= from->y();
+      srect = CGRectIntersection(CGRectMake(fromx, fromy, parent->w(), parent->h()), srect);
+      from = parent;
+    }
+    if (!CGRectEqualToRect(srect, CGRectMake(0, 0, w->w(), w->h()))) { // if subwindow extends outside its parent windows
+      x->subRect(new CGRect(srect));
     }
     set_subwindow_frame(w);
     // needed if top window was first displayed miniaturized
@@ -3587,9 +3618,9 @@ void Fl_X::map() {
     set_subwindow_frame(w);
   }
   //+ link to window list
-  if (w && w->parent()) {
+  /*if (w && w->parent()) {
     w->redraw(); // possibly not necessary
-  }
+  }*/
   if (cursor) {
     [(NSCursor*)cursor release];
     cursor = NULL;

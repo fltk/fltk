@@ -434,6 +434,10 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 
   int is_a_resize = (W != Fl_Widget::w() || H != Fl_Widget::h());
   if (is_a_resize) valid(0);
+  
+#ifdef __APPLE__
+  if (Fl_X::i(this)->in_windowDidResize()) gl_context_update(context_);
+#endif
 
 #if ! ( defined(__APPLE__) || defined(WIN32) )
   if (is_a_resize && !resizable() && overlay && overlay != this) {
@@ -442,12 +446,6 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 #endif
 
   Fl_Window::resize(X,Y,W,H);
-#ifdef __APPLE__
-  if (is_a_resize) {
-    gl_context_update(context_);
-    redraw();
-  }
-#endif
 }
 
 /**

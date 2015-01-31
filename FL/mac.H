@@ -156,6 +156,8 @@ public:
   bool changed_resolution();      // did window just moved to display with another resolution?
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
 #endif
+  bool in_windowDidResize();      // is window performing windowDidResize?
+  void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
   // Quartz additions:
   CGContextRef gc;                 // graphics context (NULL when using QD)
   static void q_fill_context();    // fill a Quartz context with current FLTK state
