@@ -27,6 +27,11 @@
 #include <FL/fl_draw.H>
 #include <stdarg.h>
 
+/* Signature of Fl_PostScript::close_command() functions passed as parameters. */
+extern "C" {
+  typedef int (Fl_PostScript_Close_Command)(FILE *);
+}
+
 /**
  \brief PostScript graphical backend.
  *
@@ -53,12 +58,6 @@
  <br> All other unicode characters or all other fonts (FL_FREE_FONT and above) are output as a bitmap.
  <br> FLTK standard fonts are output using the corresponding PostScript standard fonts.
  */
-
-/** Signature of Fl_PostScript::close_command() functions passed as parameters. */
-extern "C" {
-  typedef int (Fl_PostScript_Close_Command)(FILE *);
-}
-
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   static const char *class_id;
