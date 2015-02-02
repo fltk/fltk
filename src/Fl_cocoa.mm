@@ -2724,7 +2724,7 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
   return pixform;
 }
 
-NSOpenGLContext* gl_create_context_for_window(NSOpenGLPixelFormat *pixelformat,
+NSOpenGLContext* Fl_X::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat,
                                               NSOpenGLContext *shared_ctx, Fl_Window *window)
 {
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
@@ -2732,27 +2732,27 @@ NSOpenGLContext* gl_create_context_for_window(NSOpenGLPixelFormat *pixelformat,
   return context;
 }
 
-void gl_context_update(NSOpenGLContext* ctxt)
+void Fl_X::GLcontext_update(NSOpenGLContext* ctxt)
 {
   [ctxt update];
 }
 
-void gl_context_flushbuffer(NSOpenGLContext* ctxt)
+void Fl_X::GLcontext_flushbuffer(NSOpenGLContext* ctxt)
 {
   [ctxt flushBuffer];
 }
 
-void gl_context_release(NSOpenGLContext* ctxt)
+void Fl_X::GLcontext_release(NSOpenGLContext* ctxt)
 {
   [ctxt release];
 }
 
-void gl_cleardrawable(void)
+void Fl_X::GL_cleardrawable(void)
 {
   [[NSOpenGLContext currentContext] clearDrawable];
 }
 
-void gl_context_makecurrent(NSOpenGLContext* ctxt)
+void Fl_X::GLcontext_makecurrent(NSOpenGLContext* ctxt)
 {
   [ctxt makeCurrentContext];
 }

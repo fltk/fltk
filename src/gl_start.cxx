@@ -48,7 +48,6 @@ static Fl_Gl_Choice* gl_choice;
 
 #ifdef __APPLE__
 static Fl_Gl_Choice* gl_choice;
-extern void gl_context_update(NSOpenGLContext*);
 #endif
 
 Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
@@ -69,7 +68,7 @@ void gl_start() {
   }
   fl_set_gl_context(Fl_Window::current(), context);
 #ifdef __APPLE__
-  gl_context_update(context); // supports window resizing
+  Fl_X::GLcontext_update(context); // supports window resizing
 #elif !defined(WIN32)
   glXWaitX();
 #endif

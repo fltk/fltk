@@ -27,14 +27,6 @@
 #  include "flstring.h"
 #  include <FL/fl_utf8.h>
 
-#  ifdef __APPLE__
-extern NSOpenGLContext* gl_create_context_for_window(NSOpenGLPixelFormat *pixelformat,
-                                                     NSOpenGLContext *shared_ctx, Fl_Window *window);
-extern void gl_context_release(NSOpenGLContext*);
-extern void gl_context_makecurrent(NSOpenGLContext*);
-extern void gl_cleardrawable(void);
-#  endif
-
 #  ifdef WIN32
 void fl_save_dc(HWND, HDC);
 #  endif
@@ -247,7 +239,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext context, shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
-  context = gl_create_context_for_window(g->pixelformat, shared_ctx, window);
+  context = Fl_X::create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
   if (!context) return 0;
   add_context((GLContext)context);
   return (context);
@@ -268,7 +260,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
 #  elif defined(WIN32)
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
 #  elif defined(__APPLE_QUARTZ__)
-    gl_context_makecurrent(context);
+    Fl_X::GLcontext_makecurrent(context);
 #  else
 #   error unsupported platform
 #  endif
@@ -283,7 +275,7 @@ void fl_no_gl_context() {
 #  elif defined(WIN32)
   wglMakeCurrent(0, 0);
 #  elif defined(__APPLE_QUARTZ__)
-  gl_cleardrawable();
+  Fl_X::GL_cleardrawable();
 #  else
 #    error unsupported platform
 #  endif
@@ -296,7 +288,7 @@ void fl_delete_gl_context(GLContext context) {
 #  elif defined(WIN32)
   wglDeleteContext(context);
 #  elif defined(__APPLE_QUARTZ__)
-  gl_context_release(context);
+  Fl_X::GLcontext_release(context);
 #  else
 #    error unsupported platform
 #  endif

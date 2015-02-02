@@ -29,8 +29,6 @@ extern void gl_texture_reset();
 #include "Fl_Gl_Choice.H"
 #ifdef __APPLE__
 #include <FL/gl.h>
-extern void gl_context_update(NSOpenGLContext*);
-extern void gl_context_flushbuffer(NSOpenGLContext*);
 #endif
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
@@ -191,7 +189,7 @@ void Fl_Gl_Window::make_current() {
   if (Fl_X::i(this)->changed_resolution()){
     Fl_X::i(this)->changed_resolution(false);
     invalidate();
-    gl_context_update(context_);
+    Fl_X::GLcontext_update(context_);
   }
 #endif
   if (!context_) {
@@ -406,7 +404,7 @@ void Fl_Gl_Window::flush() {
 
     }
 #ifdef __APPLE__
-    gl_context_flushbuffer(context_);
+    Fl_X::GLcontext_flushbuffer(context_);
 #endif
 
     if (overlay==this && SWAP_TYPE != SWAP) { // fake overlay in front buffer
@@ -436,7 +434,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (is_a_resize) valid(0);
   
 #ifdef __APPLE__
-  if (Fl_X::i(this)->in_windowDidResize()) gl_context_update(context_);
+  if (Fl_X::i(this)->in_windowDidResize()) Fl_X::GLcontext_update(context_);
 #endif
 
 #if ! ( defined(__APPLE__) || defined(WIN32) )

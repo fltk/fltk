@@ -75,9 +75,11 @@ typedef CGContextRef Fl_Offscreen;
 #ifdef __OBJC__
 @class NSCursor;
 @class NSOpenGLPixelFormat;
+@class NSOpenGLContext;
 #else
 class NSCursor;
 class NSOpenGLPixelFormat;
+class NSOpenGLContext;
 #endif // __OBJC__
 
 typedef CGContextRef Fl_Offscreen;
@@ -168,6 +170,12 @@ public:
   // Cocoa additions
   static int resolution_scaling_factor(Fl_Window*);
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
+  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
+  static void GLcontext_update(NSOpenGLContext*);
+  static void GLcontext_flushbuffer(NSOpenGLContext*);
+  static void GLcontext_release(NSOpenGLContext*);
+  static void GLcontext_makecurrent(NSOpenGLContext*);
+  static void GL_cleardrawable(void);
   void destroy(void);
   void map(void);
   void unmap(void);
