@@ -3,7 +3,7 @@
 //
 // File chooser widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,6 +32,22 @@ static void callback(Fl_File_Chooser *, void*) {
   if (current_callback && fc->value())
     (*current_callback)(fc->value());
 }
+
+// Pop up a file chooser dialog window and wait until it is closed...
+static void popup(Fl_File_Chooser *fc) {
+  fc->show();
+
+  // deactivate Fl::grab(), because it is incompatible with modal windows
+  Fl_Window* g = Fl::grab();
+  if (g) Fl::grab(0);
+
+  while (fc->shown())
+    Fl::wait();
+
+  if (g) // regrab the previous popup menu, if there was one
+    Fl::grab(g);
+}
+
 
 /** \addtogroup  group_comdlg 
     @{ */
@@ -130,11 +146,7 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
   }
 
   fc->ok_label(current_label);
-  fc->show();
-
-  while (fc->shown())
-    Fl::wait();
-
+  popup(fc);
   if (fc->value() && relative) {
     fl_filename_relative(retname, sizeof(retname), fc->value());
 
@@ -171,10 +183,7 @@ fl_dir_chooser(const char *message,	// I - Message for titlebar
     fc->label(message);
   }
 
-  fc->show();
-
-  while (fc->shown())
-    Fl::wait();
+  popup(fc);
 
   if (fc->value() && relative) {
     fl_filename_relative(retname, sizeof(retname), fc->value());
