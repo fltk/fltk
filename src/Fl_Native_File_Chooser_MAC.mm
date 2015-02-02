@@ -609,7 +609,7 @@ int Fl_Native_File_Chooser::post() {
       popup = createPopupAccessory((NSSavePanel*)_panel, t, Fl_File_Chooser::show_label, 0);
       delete[] t;
       [[popup menu] addItem:[NSMenuItem separatorItem]];
-      [popup addItemWithTitle:[[NSString alloc] initWithUTF8String:Fl_File_Chooser::all_files_label]];
+      [popup addItemWithTitle:[NSString stringWithUTF8String:Fl_File_Chooser::all_files_label]];
       [popup setAction:@selector(validateVisibleColumns)];
       [popup setTarget:(NSObject*)_panel];
       FLopenDelegate *openDelegate = [[[FLopenDelegate alloc] init] autorelease];
