@@ -434,7 +434,8 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   if (is_a_resize) valid(0);
   
 #ifdef __APPLE__
-  if (Fl_X::i(this)->in_windowDidResize()) Fl_X::GLcontext_update(context_);
+  Fl_X *flx = Fl_X::i(this);
+  if (flx && flx->in_windowDidResize()) Fl_X::GLcontext_update(context_);
 #endif
 
 #if ! ( defined(__APPLE__) || defined(WIN32) )
