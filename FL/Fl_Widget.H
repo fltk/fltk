@@ -235,6 +235,16 @@ public:
    */
   virtual int handle(int event);
 
+  /** Returns whether the current label was assigned with copy_label().
+
+      This can be useful for temporarily overwriting the widget's label
+      and restoring it later.
+
+      \retval 0 current label was assigned with label().
+      \retval 1 current label was assigned with copy_label().
+  */
+  int is_label_copied() const {return ((flags_ & COPIED_LABEL) ? 1 : 0);}
+
   /** Returns a pointer to the parent widget.  
       Usually this is a Fl_Group or Fl_Window. 
       \retval NULL if the widget has no parent
