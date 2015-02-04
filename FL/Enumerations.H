@@ -3,7 +3,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -624,27 +624,27 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
 
 /**
    The labeltype() method sets the type of the label.
-   
+
    The following standard label types are included:
-   
+
    \todo	The doxygen comments are incomplete, and some labeltypes
-   		are starting with an underscore. Also, there are three
+   	start with an underscore. Also, there are three
 		external functions undocumented (yet):
 		  - fl_define_FL_SHADOW_LABEL()
 		  - fl_define_FL_ENGRAVED_LABEL()
 		  - fl_define_FL_EMBOSSED_LABEL()
 */
 enum Fl_Labeltype {	// labeltypes:
-  FL_NORMAL_LABEL	= 0,	///< draws the text (0)
-  FL_NO_LABEL,			///< does nothing
-  _FL_SHADOW_LABEL,		///< draws a drop shadow under the text
-  _FL_ENGRAVED_LABEL,		///< draws edges as though the text is engraved
-  _FL_EMBOSSED_LABEL,		///< draws edges as though the text is raised
-  _FL_MULTI_LABEL,		///< ?
-  _FL_ICON_LABEL,		///< draws the icon associated with the text
-  _FL_IMAGE_LABEL,		///< ?
+  FL_NORMAL_LABEL	= 0, ///< draws the text (0)
+  FL_NO_LABEL,         ///< does nothing
+  _FL_SHADOW_LABEL,    ///< draws a drop shadow under the text
+  _FL_ENGRAVED_LABEL,	 ///< draws edges as though the text is engraved
+  _FL_EMBOSSED_LABEL,  ///< draws edges as though the text is raised
+  _FL_MULTI_LABEL,     ///< draws a composite label \see Fl_Multi_Label
+  _FL_ICON_LABEL,      ///< draws the icon associated with the text
+  _FL_IMAGE_LABEL,     ///< the label displays an "icon" based on a Fl_Image
 
-  FL_FREE_LABELTYPE		///< first free labeltype to use for creating own labeltypes
+  FL_FREE_LABELTYPE    ///< first free labeltype to use for creating own labeltypes
 };
 
 /** 

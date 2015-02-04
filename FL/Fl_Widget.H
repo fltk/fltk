@@ -3,7 +3,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -56,10 +56,11 @@ typedef void (Fl_Callback1)(Fl_Widget*, long);
 
 /** This struct stores all information for a text or mixed graphics label.
 
-    \todo For FLTK 1.3, the Fl_Label type will become a widget by itself. That way
-          we will be avoiding a lot of code duplication by handling labels in 
+    \todo There is an aspiration that the Fl_Label type will become a widget by itself.
+          That way we will be avoiding a lot of code duplication by handling labels in
           a similar fashion to widgets containing text. We also provide an easy
           interface for very complex labels, containing html or vector graphics.
+          However, this re-factoring is not in place in this release.
  */
 struct FL_EXPORT Fl_Label {
   /** label text */
