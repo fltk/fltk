@@ -4,7 +4,7 @@
 #
 # FLTK configuration utility.
 #
-# Copyright 2000-2010 by Bill Spitzak and others.
+# Copyright 2000-2015 by Bill Spitzak and others.
 # Original version Copyright 2000 by James Dean Palmer
 # Adapted by Vincent Penne and Michael Sweet
 #
@@ -31,7 +31,6 @@ selfdir=`dirname "$0"`
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 exec_prefix_set=no
-bindir=@PREFIX_BIN@
 includedir=@PREFIX_INCLUDE@
 libdir=@PREFIX_LIB@
 srcdir=.
@@ -50,8 +49,7 @@ OPTIM="@OPTION_OPTIM@"
 CAIROFLAGS="@CAIROFLAGS@"
 
 # Check for local invocation, and update paths accordingly...
-if test -f "$selfdir/bin/UseFLTK.cmake"; then
-	bindir="$selfdir/bin/fluid"
+if test -f "$selfdir/bin/fluid"; then
 	includedir="@FLTK_SOURCE_DIR@"
 	libdir="$selfdir/lib"
 

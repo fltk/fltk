@@ -4,7 +4,7 @@
 #
 # FLTK configuration utility.
 #
-# Copyright 2000-2010 by Bill Spitzak and others.
+# Copyright 2000-2015 by Bill Spitzak and others.
 # Original version Copyright 2000 by James Dean Palmer
 # Adapted by Vincent Penne and Michael Sweet
 #
@@ -31,7 +31,6 @@ selfdir=`dirname "$0"`
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 exec_prefix_set=no
-bindir=@bindir@
 includedir=@includedir@
 libdir=@libdir@
 srcdir=@srcdir@
@@ -51,7 +50,6 @@ CAIROFLAGS="@CAIROFLAGS@"
 
 # Check for local invocation, and update paths accordingly...
 if test -f "$selfdir/FL/Fl_Window.H"; then
-	bindir="$selfdir/fluid"
 	includedir="$selfdir"
 	libdir="$selfdir/lib"
 
