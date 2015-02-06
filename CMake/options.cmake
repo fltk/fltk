@@ -296,3 +296,31 @@ if(OPTION_USE_XDBE AND HAVE_XDBE_H)
 else()
    set(FLTK_XDBE_FOUND FALSE)
 endif(OPTION_USE_XDBE AND HAVE_XDBE_H)
+
+#######################################################################
+# add several libraries (STR #3011)
+# FIXME: libraries may need reordering, and this version does not yet
+# correctly support static linking and local zlib, png, and jpeg libs.
+
+if(LIB_fontconfig)
+   list(APPEND FLTK_LDLIBS -lfontconfig)
+endif(LIB_fontconfig)
+
+if(HAVE_DLSYM)
+   list(APPEND FLTK_LDLIBS -ldl)
+endif(HAVE_DLSYM)
+
+if(LIB_png)
+   list(APPEND IMAGELIBS -lpng)
+endif(LIB_png)
+
+if(LIB_zlib)
+   list(APPEND IMAGELIBS -lz)
+endif(LIB_zlib)
+
+if(LIB_jpeg)
+   list(APPEND IMAGELIBS -ljpeg)
+endif(LIB_jpeg)
+
+string(REPLACE ";" " " IMAGELIBS "${IMAGELIBS}")
+set(STATICIMAGELIBS "${IMAGELIBS}")
