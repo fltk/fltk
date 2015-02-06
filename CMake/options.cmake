@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -74,7 +74,7 @@ include(FindPkgConfig)
 
 option(OPTION_CAIRO "use lib Cairo" OFF)
 option(OPTION_CAIROEXT
-   "use fltk code instrumentation for cairo extended use" OFF
+   "use FLTK code instrumentation for cairo extended use" OFF
    )
 
 if(OPTION_CAIRO OR OPTION_CAIROEXT AND LIB_CAIRO)
@@ -154,7 +154,7 @@ if(OPTION_LARGE_FILE)
 endif(OPTION_LARGE_FILE)
 
 #######################################################################
-option(OPTION_USE_SYSTEM_ZLIB "Use's system zlib" ON)
+option(OPTION_USE_SYSTEM_ZLIB "use system zlib" ON)
 
 if(OPTION_USE_SYSTEM_ZLIB AND LIB_zlib)
    include(FindZLIB)
@@ -179,7 +179,7 @@ endif(OPTION_USE_SYSTEM_ZLIB AND NOT ZLIB_FOUND)
 set(HAVE_LIBZ 1)
 
 #######################################################################
-option(OPTION_USE_SYSTEM_LIBJPEG "Use's system libjpeg" ON)
+option(OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
 
 if(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
    include(FindJPEG)
@@ -203,7 +203,7 @@ endif(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
 set(HAVE_LIBJPEG 1)
 
 #######################################################################
-option(OPTION_USE_SYSTEM_LIBPNG "Use's system libpng" ON)
+option(OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
 
 if(OPTION_USE_SYSTEM_LIBPNG AND LIB_png)
    include(FindPNG)
@@ -246,7 +246,7 @@ endif(OPTION_USE_XINERAMA)
 
 #######################################################################
 if(X11_Xfixes_FOUND)
-   option(OPTION_USE_XFIXES "use lib XFIXES" ON)
+   option(OPTION_USE_XFIXES "use lib Xfixes" ON)
 endif(X11_Xfixes_FOUND)
 
 if(OPTION_USE_XFIXES)
@@ -260,7 +260,7 @@ endif(OPTION_USE_XFIXES)
 
 #######################################################################
 if(X11_Xcursor_FOUND)
-   option(OPTION_USE_XCURSOR "use lib XCURSOR" ON)
+   option(OPTION_USE_XCURSOR "use lib Xcursor" ON)
 endif(X11_Xcursor_FOUND)
 
 if(OPTION_USE_XCURSOR)
