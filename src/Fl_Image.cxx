@@ -22,6 +22,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
+#include <FL/Fl_Printer.H>
 #include "flstring.h"
 
 #ifdef WIN32
@@ -546,10 +547,6 @@ static void imgProviderReleaseData (void *info, const void *data, size_t size)
   delete[] (unsigned char *)data;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-typedef void (*CGDataProviderReleaseDataCallback)(void *info, const void *data, size_t size);
-#endif
-
 void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   // Don't draw an empty image...
@@ -561,31 +558,35 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     return;
   }
   if (!img->id_) {
-    CGColorSpaceRef lut = 0;
-    CGDataProviderReleaseDataCallback release_cb = NULL;
-    const uchar* img_bytes = img->array;
+    CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     int ld = img->ld();
-    if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
-      // when printing, duplicate the image data so it can be deleted later, at page end
-      release_cb = imgProviderReleaseData;
-      Fl_RGB_Image* img2 = (Fl_RGB_Image*)img->copy();
-      img2->alloc_array = 0;
-      img_bytes = img2->array;
-      ld = 0;
-      delete img2;
-      }
-    if (img->d()<=2)
-      lut = CGColorSpaceCreateDeviceGray();
-    else
-      lut = CGColorSpaceCreateDeviceRGB();
-    CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, img->w()*img->h()*img->d(), release_cb);
-    img->id_ = CGImageCreate( img->w(), img->h(), 8, img->d()*8, ld?ld:img->w()*img->d(),
-			lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
-			src, 0L, false, kCGRenderingIntentDefault);
+    if (!ld) ld = img->w() * img->d();
+    CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img->array, ld * img->h(), NULL);
+    img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+                             lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                             src, 0L, false, kCGRenderingIntentDefault);
     CGColorSpaceRelease(lut);
     CGDataProviderRelease(src);
   }
   if (img->id_ && fl_gc) {
+    if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
+      // when printing, duplicate the image data so it can be deleted later, after page end,
+      // by the release-callback of the image data provider
+      Fl_RGB_Image* img2 = (Fl_RGB_Image*)img->copy();
+      img2->alloc_array = 0;
+      const uchar *img_bytes = img2->array;
+      int ld = img2->ld();
+      if (!ld) ld = img2->w() * img2->d();
+      delete img2;
+      CGImageRelease((CGImageRef)img->id_);
+      CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+      CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, ld * img->h(), imgProviderReleaseData);
+      img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+                               lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                               src, 0L, true, kCGRenderingIntentDefault);
+      CGColorSpaceRelease(lut);
+      CGDataProviderRelease(src);
+    }
     CGRect rect = { { X, Y }, { W, H } };
     Fl_X::q_begin_image(rect, cx, cy, img->w(), img->h());
     CGContextDrawImage(fl_gc, rect, (CGImageRef)img->id_);
