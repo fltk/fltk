@@ -133,6 +133,10 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
     switch (format) {
       case 1 :
+        for (x = w(); x > 0; x --)
+          if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * (1-val));
+        break;
+        
       case 2 :
           for (x = w(); x > 0; x --)
             if (fscanf(fp, "%d", &val) == 1) *ptr++ = (uchar)(255 * val / maxval);
@@ -147,17 +151,17 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
           break;
 
       case 4 :
-          for (x = w(), byte = (uchar)getc(fp), bit = 128; x > 0; x --) {
-	    if (byte & bit) *ptr++ = 255;
-	    else *ptr++ = 0;
-
-            if (bit > 1) bit >>= 1;
-            else {
-              bit  = 128;
-              byte = (uchar)getc(fp);
-            }
+        for (x = w(), byte = (uchar)getc(fp), bit = 128; x > 0; x --) {
+          if ((byte & bit) == 0) *ptr++ = 255; // 0 bit for white pixel
+          else *ptr++ = 0; // 1 bit for black pixel
+          
+          if (bit > 1) bit >>= 1;
+          else {
+            bit  = 128;
+            if (x > 1) byte = (uchar)getc(fp);
           }
-          break;
+        }
+        break;
           
       case 5 :
       case 6 :
