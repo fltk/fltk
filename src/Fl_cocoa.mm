@@ -3051,8 +3051,8 @@ void Fl_Window::size_range_() {
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
   size_range_set = 1;
-  NSSize minSize = { minw, minh + bt };
-  NSSize maxSize = { maxw?maxw:32000, maxh?maxh + bt:32000 };
+  NSSize minSize = NSMakeSize(minw, minh + bt);
+  NSSize maxSize = NSMakeSize(maxw?maxw:32000, maxh?maxh + bt:32000);
   if (i && i->xid) {
     [i->xid setMinSize:minSize];
     [i->xid setMaxSize:maxSize];
@@ -4392,7 +4392,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   win->label(title); // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   if (img && to_quartz) { // print the title bar
-    CGRect rect = { { x_offset, y_offset }, { win->w(), bt } };
+    CGRect rect = NSMakeRect(x_offset, y_offset, win->w(), bt);
     Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
     CGContextDrawImage(fl_gc, rect, img);
     Fl_X::q_end_image();
@@ -4417,7 +4417,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       NSSize size = [title_s sizeWithAttributes:attr];
       int x = x_offset + win->w()/2 - size.width/2;
       if (x < x_offset+skip) x = x_offset+skip;
-      NSRect r = {{x, y_offset+bt/2+4}, {win->w() - skip, bt}};
+      NSRect r = NSMakeRect(x, y_offset+bt/2+4, win->w() - skip, bt);
       [[NSGraphicsContext currentContext] setShouldAntialias:YES];
       [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];

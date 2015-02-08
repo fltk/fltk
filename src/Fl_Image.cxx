@@ -587,7 +587,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       CGColorSpaceRelease(lut);
       CGDataProviderRelease(src);
     }
-    CGRect rect = { { X, Y }, { W, H } };
+    CGRect rect = CGRectMake(X, Y, W, H);
     Fl_X::q_begin_image(rect, cx, cy, img->w(), img->h());
     CGContextDrawImage(fl_gc, rect, (CGImageRef)img->id_);
     Fl_X::q_end_image();

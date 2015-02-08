@@ -144,7 +144,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 #elif defined(__APPLE_QUARTZ__)
   CGImageRef img = Fl_X::CGImage_from_window_rect(Fl_Window::current(), src_x, src_y, src_w, src_h);
   if (img) {
-    CGRect rect = { { dest_x, dest_y }, { src_w, src_h } };
+    CGRect rect = CGRectMake(dest_x, dest_y, src_w, src_h);
     Fl_X::q_begin_image(rect, 0, 0, src_w, src_h);
     CGContextDrawImage(fl_gc, rect, img);
     Fl_X::q_end_image();

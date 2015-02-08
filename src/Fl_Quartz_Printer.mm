@@ -327,7 +327,7 @@ void Fl_System_Printer::print_window_part(Fl_Window *win, int x, int y, int w, i
   CGImageRef img = Fl_X::CGImage_from_window_rect(win, x, y, w, h);
   if (save_front != win) save_front->show();
   current->set_current();
-  CGRect rect = { { delta_x, delta_y }, { w, h } };
+  CGRect rect = CGRectMake(delta_x, delta_y, w, h);
   Fl_X::q_begin_image(rect, 0, 0, w, h);
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
