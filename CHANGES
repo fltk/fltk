@@ -8,17 +8,17 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 
 	Other improvements
 
-  - The Mac OS X FLTK platform no longer uses the deprecated AGL
-    (Apple GL library) to draw openGL data. Instead, it uses standard cocoa
-    APIs. This allows FLTK to support drawing GL scenes at high resolution
-    when an Fl_Gl_Window is mapped to a 'retina' display.
+	- The Mac OS X FLTK platform no longer uses the deprecated AGL
+	  (Apple GL library) to draw openGL data. Instead, it uses standard cocoa
+	  APIs. This allows FLTK to support drawing GL scenes at high resolution
+	  when an Fl_Gl_Window is mapped to a 'retina' display.
 	- fl_read_image() now captures all pixels within the rectangle
 	  described by its arguments, whether they belong to a GL scene
 	  or not (STR #3142). It also captures subwindows of GL windows.
 	- Fl::delete_widget() now hides the widget or window immediately
 	  (i.e. when called) - only destruction is delayed as before.
-  - Reading of .pbm image files is fixed: 1 is now interpreted as
-    black, and images of width a multiple of 8 are correctly read.
+	- Reading of .pbm image files is fixed: 1 is now interpreted as
+	  black, and images of width a multiple of 8 are correctly read.
 
 CHANGES IN FLTK 1.3.3					RELEASED: Nov 03 2014
 
