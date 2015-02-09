@@ -104,6 +104,7 @@ int main(int argc, char ** argv) {
 #endif
 
   // set window title to show active scheme
+  Fl::scheme(Fl::scheme()); // init scheme
   char title[100];
   sprintf(title,"FLTK boxtypes: scheme = '%s'",Fl::scheme()?Fl::scheme():"none");
   window->label(title);

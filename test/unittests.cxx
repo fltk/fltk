@@ -171,6 +171,8 @@ void Browser_CB(Fl_Widget*, void*) {
 // registered tests to the browser widget.
 int main(int argc, char **argv) {
   Fl::args(argc,argv);
+  Fl::get_system_colors();
+  Fl::scheme(Fl::scheme()); // init scheme before instantiating tests
   Fl::visual(FL_RGB);
   mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "Fltk Unit Tests");
   browser = new Fl_Hold_Browser(BROWSER_X, BROWSER_Y, BROWSER_W, BROWSER_H, "Unit Tests");
