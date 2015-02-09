@@ -130,19 +130,23 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   } else return 0;
 }
 #endif // WIN32 || __APPLE__
+
+
 /** \fn Fl::get_system_colors()
     Read the user preference colors from the system and use them to call
-    Fl::foreground(), Fl::background(), and 
-    Fl::background2().  This is done by
-    Fl_Window::show(argc,argv) before applying the -fg and -bg
-    switches.
+    Fl::foreground(), Fl::background(), and Fl::background2().
+
+    This is done by Fl_Window::show(argc,argv) before applying
+    the -fg and -bg switches.
     
-    <P>On X this reads some common values from the Xdefaults database.
+    On X this reads some common values from the Xdefaults database.
     KDE users can set these values by running the "krdb" program, and
     newer versions of KDE set this automatically if you check the "apply
     style to other X programs" switch in their control panel.
 */
-#if defined(WIN32)
+
+#if defined(WIN32)				// --- WIN32 ---
+
 static void
 getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
 {
@@ -165,7 +169,8 @@ void Fl::get_system_colors() {
   getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
 }
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__)			// --- APPLE ---
+
 // MacOS X currently supports two color schemes - Blue and Graphite.
 // Since we aren't emulating the Aqua interface (even if Apple would
 // let us), we use some defaults that are similar to both.  The
@@ -194,7 +199,8 @@ void Fl::get_system_colors()
   set_selection_color(0x00, 0x00, 0x80);
 #endif
 }
-#else
+
+#else						// --- X11 ---
 
 // Read colors that KDE writes to the xrdb database.
 
@@ -231,7 +237,7 @@ void Fl::get_system_colors()
   getsyscolor("Text", "selectBackground", 0, "#000080", set_selection_color);
 }
 
-#endif
+#endif					// --- WIN32 | APPLE | X11 ---
 
 
 //// Simple implementation of 2.0 Fl::scheme() interface...
