@@ -1337,6 +1337,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
+  Fl_X::i(window)->wait_for_expose = 0; // necessary when window was created miniaturized
   Fl::flush(); // process redraws set by FL_SHOW
   fl_unlock_function();
 }
@@ -2990,7 +2991,6 @@ void Fl_X::make(Fl_Window* w)
 
     w->set_visible();
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
-    if (!w->parent()) Fl::first_window(w);
     [cw setDelegate:[FLWindowDelegate singleInstance]];
   if (fl_show_iconic) {
     fl_show_iconic = 0;
@@ -3119,6 +3119,7 @@ void Fl_Window::show() {
         [i->xid makeKeyAndOrderFront:nil];
       }
     }
+    else set_visible();
   }
 }
 
