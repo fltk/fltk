@@ -197,15 +197,17 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
 
 /**  The destructor frees all memory and server resources that are used by the image. */
 Fl_RGB_Image::~Fl_RGB_Image() {
-  uncache();
-  if (alloc_array) delete[] (uchar *)array;
+  if (id_) CGImageRelease((CGImageRef)id_);
+  else if (alloc_array) delete[] (uchar *)array;
 }
 
 void Fl_RGB_Image::uncache() {
 #ifdef __APPLE_QUARTZ__
   if (id_) {
+    if (mask_) *(bool*)mask_ = false;
     CGImageRelease((CGImageRef)id_);
     id_ = 0;
+    mask_ = NULL;
   }
 #else
   if (id_) {
@@ -544,7 +546,8 @@ static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h
 #ifdef __APPLE__
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
-  delete[] (unsigned char *)data;
+  if (!info || *(bool*)info) delete[] (unsigned char *)data;
+  delete (bool*)info;
 }
 
 void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -561,7 +564,16 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     int ld = img->ld();
     if (!ld) ld = img->w() * img->d();
-    CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img->array, ld * img->h(), NULL);
+    // If img->alloc_array == 0, the CGImage data provider must not release the image data.
+    // If img->alloc_array != 0, the CGImage data provider will take responsibilty of deleting RGB image data after use:
+    // when the CGImage is deallocated, the release callback of its data provider
+    // (imgProviderReleaseData) is called and can delete the RGB image data.
+    // If the CGImage is printed, it is not deallocated until after the end of the page,
+    // therefore, with img->alloc_array != 0, the RGB image can be safely deleted any time after return from this function.
+    // The previously unused mask_ member allows to make sure the RGB image data is not deleted by Fl_RGB_Image::uncache().
+    if (img->alloc_array) img->mask_ = new bool(true);
+    CGDataProviderRef src = CGDataProviderCreateWithData(img->mask_, img->array, ld * img->h(),
+                                                         img->alloc_array?imgProviderReleaseData:NULL);
     img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
                              lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                              src, 0L, false, kCGRenderingIntentDefault);
@@ -569,16 +581,17 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     CGDataProviderRelease(src);
   }
   if (img->id_ && fl_gc) {
-    if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
-      // when printing, duplicate the image data so it can be deleted later, after page end,
-      // by the release-callback of the image data provider
+    if (!img->alloc_array && Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
+      // When printing, the image data is used when the page is completed, that is, after return from this function.
+      // If the image has alloc_array = 0, we must protect against image data being freed before it is used:
+      // we duplicate the image data and have it deleted after use by the release-callback of the CGImage data provider
       Fl_RGB_Image* img2 = (Fl_RGB_Image*)img->copy();
       img2->alloc_array = 0;
       const uchar *img_bytes = img2->array;
       int ld = img2->ld();
       if (!ld) ld = img2->w() * img2->d();
       delete img2;
-      CGImageRelease((CGImageRef)img->id_);
+      img->uncache();
       CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
       CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, ld * img->h(), imgProviderReleaseData);
       img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
