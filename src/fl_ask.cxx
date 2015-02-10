@@ -378,6 +378,10 @@ void fl_alert(const char *fmt, ...) {
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \retval 0 if the no button is selected or another dialog box is still open
    \retval 1 if yes is selected
+
+   \deprecated fl_ask() is deprecated since it uses "Yes" and "No" for the buttons which
+               does not conform to the current FLTK Human Interface Guidelines.
+               Use fl_choice() with the appropriate verbs instead.
  */
 int fl_ask(const char *fmt, ...) {
 
@@ -401,10 +405,43 @@ int fl_ask(const char *fmt, ...) {
     can be open at any time. Requests for additional dialog boxes are ignored.
    \note \#include <FL/fl_ask.H>
 
+   Three choice example:
+   \code
+       switch ( fl_choice("How many musketeers?", "One", "Two", "Three") ) {
+         case 0: .. // One (default)
+	 case 1: .. // Two
+	 case 2: .. // Three
+       }
+   \endcode
+
+   Three choices with printf() style formatting:
+   \code
+       int num_msgs = GetNumberOfMessages();
+       switch ( fl_choice("What to do with %d messages?", "Send", "Save", "Delete", num_msgs) ) {
+         case 0: .. // Send (default)
+	 case 1: .. // Save
+	 case 2: .. // Delete
+	   ..
+       }
+   \endcode
+
+   Two choice example:
+   \code
+       switch ( fl_choice("Empty trash?", "Yes", "No", 0) ) {
+         case 0: .. // Yes (default)
+	 case 1: .. // No
+       }
+   \endcode
+
+   One choice example:
+   \code
+       fl_choice("All hope is lost.", "OK", 0, 0);
+   \endcode
+
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] b0 text label of button 0
-   \param[in] b1 text label of button 1
-   \param[in] b2 text label of button 2
+   \param[in] b1 text label of button 1 (can be 0)
+   \param[in] b2 text label of button 2 (can be 0)
    \retval 0 if the first button with \p b0 text is selected or another dialog box is still open
    \retval 1 if the second button with \p b1 text is selected
    \retval 2 if the third button with \p b2 text is selected
