@@ -197,12 +197,17 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
 
 /**  The destructor frees all memory and server resources that are used by the image. */
 Fl_RGB_Image::~Fl_RGB_Image() {
+#ifdef __APPLE__
   if (id_) CGImageRelease((CGImageRef)id_);
   else if (alloc_array) delete[] (uchar *)array;
+#else
+  uncache();
+  if (alloc_array) delete[] (uchar *)array;
+#endif
 }
 
 void Fl_RGB_Image::uncache() {
-#ifdef __APPLE_QUARTZ__
+#ifdef __APPLE__
   if (id_) {
     if (mask_) *(bool*)mask_ = false;
     CGImageRelease((CGImageRef)id_);
@@ -464,7 +469,7 @@ void Fl_RGB_Image::desaturate() {
   d(new_d);
 }
 
-#if !defined(WIN32) && !defined(__APPLE_QUARTZ__)
+#if !defined(WIN32) && !defined(__APPLE__)
 // Composite an image with alpha on systems that don't have accelerated
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
@@ -521,7 +526,7 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
 
   delete[] dst;
 }
-#endif // !WIN32 && !__APPLE_QUARTZ__
+#endif // !WIN32 && !__APPLE__
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
