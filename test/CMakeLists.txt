@@ -99,3 +99,17 @@ endif(OPENGL_FOUND)
 if(FLTK_HAVE_CAIRO)
    CREATE_EXAMPLE(cairo_test cairo_test.cxx "fltk;fltk_cairo")
 endif(FLTK_HAVE_CAIRO)
+
+# We need some support files for the demo programs:
+
+# Note: this is incomplete as of 11 Feb 2015
+# Todo: currently all files are copied, but some of them need configuration:
+# - demo.menu: fluid can't be started (wrong path)
+# - demo.menu: help (help-test.html) can't find its images (not copied)
+# - maybe more ...
+
+configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
+configure_file(rgb.txt ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
+configure_file(help-test.html ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
+configure_file(browser.cxx ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
+configure_file(editor.cxx ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
