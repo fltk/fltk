@@ -1789,7 +1789,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wcw.lpfnWndProc = (WNDPROC)WndProc;
     wcw.cbClsExtra = wcw.cbWndExtra = 0;
     wcw.hInstance = fl_display;
-    if (!w->icon())
+    if (!w->icon() && !w->icon_->count)
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
     wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
     wcw.hCursor = LoadCursor(NULL, IDC_ARROW);
