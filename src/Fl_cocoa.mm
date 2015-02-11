@@ -4393,7 +4393,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   win->label(title); // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   if (img && to_quartz) { // print the title bar
-    CGRect rect = NSMakeRect(x_offset, y_offset, win->w(), bt);
+    CGRect rect = CGRectMake(x_offset, y_offset, win->w(), bt);
     Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
     CGContextDrawImage(fl_gc, rect, img);
     Fl_X::q_end_image();
