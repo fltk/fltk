@@ -3494,8 +3494,8 @@ static Fl_Image* get_image_from_clipboard(Fl_Widget *receiver)
   NSArray  *possible = [NSArray arrayWithObjects:@"com.adobe.pdf", @"public.tiff", @"com.apple.pict", nil];
   NSString *found = nil;
   NSUInteger rank;
-  for (rank = 0; rank < [present count]; rank++) { // find first of possible types present in pasteboard
-    for (NSUInteger i = 0; i < [possible count]; i++) {
+  for (NSUInteger i = 0; i < [possible count]; i++) {
+    for (rank = 0; rank < [present count]; rank++) { // find first of possible types present in pasteboard
       if ([[present objectAtIndex:rank] isEqualToString:[possible objectAtIndex:i]]) {
         found = [present objectAtIndex:rank];
         goto after_loop;
