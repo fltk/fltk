@@ -718,10 +718,10 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
       else u = CGRectUnion(u, test);
     }
   }
-  X = int(u.origin.x);
-  Y = int(u.origin.y);
-  W = int(u.size.width + 1);
-  H = int(u.size.height + 1);
+  X = int(u.origin.x + 0.5); // reverse offset introduced by fl_cgrectmake_cocoa()
+  Y = int(u.origin.y + 0.5);
+  W = int(u.size.width + 0.5); // round to nearest integer
+  H = int(u.size.height + 0.5);
   if(CGRectIsEmpty(u)) W = H = 0;
   return ! CGRectEqualToRect(arg, u);
 #else
