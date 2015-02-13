@@ -548,16 +548,10 @@ void Fl_Graphics_Driver::restore_clip() {
 #elif defined(WIN32)
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE_QUARTZ__)
-  if ( fl_window ) { // clipping for a true window
+  if ( fl_window || fl_gc ) { // clipping for a true window or an offscreen buffer
     Fl_X::q_clear_clipping();
     Fl_X::q_fill_context();//flip coords if bitmap context
     //apply program clip
-    if (r) {
-      CGContextClipToRects(fl_gc, r->rects, r->count);
-    }
-  } else if (fl_gc) { // clipping for an offscreen drawing world (CGBitmap)
-    Fl_X::q_clear_clipping();
-    Fl_X::q_fill_context();
     if (r) {
       CGContextClipToRects(fl_gc, r->rects, r->count);
     }
