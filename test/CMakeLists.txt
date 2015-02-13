@@ -108,7 +108,10 @@ endif(FLTK_HAVE_CAIRO)
 # - demo.menu: help (help-test.html) can't find its images (not copied)
 # - maybe more ...
 
-configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
+# use a target filename to make sure the target directory gets created
+configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH}/demo.menu COPYONLY)
+
+# use target directory only to avoid redundancy
 configure_file(rgb.txt ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
 configure_file(help-test.html ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
 configure_file(browser.cxx ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
