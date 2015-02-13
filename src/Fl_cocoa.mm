@@ -3484,7 +3484,7 @@ static int get_plain_text_from_clipboard(char **buffer, int previous_length)
   return length;
 }
 
-static Fl_Image* get_image_from_clipboard()
+static Fl_Image* get_image_from_clipboard(Fl_Widget *receiver)
 {
   Fl_RGB_Image *image = NULL;
   uchar *imagedata;
@@ -3523,7 +3523,8 @@ after_loop:
         if ([found isEqualToString:@"com.adobe.pdf"] ) {
           vectorial = [NSPDFImageRep imageRepWithData:data];
           rect = [(NSPDFImageRep*)vectorial bounds]; // in points =  1/72 inch
-          Fl_Window *win = Fl::first_window();
+          Fl_Window *win = receiver->top_window();
+          if (!win) win = Fl::first_window();
           int screen_num = win ? Fl::screen_num(win->x(), win->y(), win->w(), win->h()) : 0;
           float hr, vr;
           Fl::screen_dpi(hr, vr, screen_num); // 1 inch = hr pixels = 72 points -> hr/72 pixel/point
@@ -3575,7 +3576,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
       fl_selection_length[1] = get_plain_text_from_clipboard( &fl_selection_buffer[1],  fl_selection_length[1]);
     }
     else if (strcmp(type, Fl::clipboard_image) == 0) {
-      Fl::e_clipboard_data = get_image_from_clipboard( );
+      Fl::e_clipboard_data = get_image_from_clipboard(&receiver);
       if (Fl::e_clipboard_data) {
         int done = receiver.handle(FL_PASTE);
         Fl::e_clipboard_type = "";
