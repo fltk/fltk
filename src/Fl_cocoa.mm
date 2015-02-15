@@ -3898,7 +3898,7 @@ static void createAppleMenu(void)
     }
   if (fl_mac_os_version >= 100400) { // services+hide+quit already in menu in OS 10.3
     // Services Menu
-    services = [[NSMenu alloc] init];
+    services = [[NSMenu alloc] initWithTitle:@""];
     menuItem = [appleMenu 
 		addItemWithTitle:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::services], nil)
 		action:nil 
