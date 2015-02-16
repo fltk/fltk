@@ -9,6 +9,10 @@ set(PNG_SRCS
 
 #######################################################################
 FL_ADD_LIBRARY(fltk_png STATIC "${PNG_SRCS}")
+# install the png headers
+install(FILES png.h;pngconf.h;pnglibconf.h
+    DESTINATION ${FLTK_INCLUDEDIR}/FL/images
+)
 
 if(OPTION_USE_SYSTEM_ZLIB)
     target_link_libraries(fltk_png ${FLTK_ZLIB_LIBRARIES})

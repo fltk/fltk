@@ -9,6 +9,10 @@ set(ZLIB_SRCS
 
 #######################################################################
 FL_ADD_LIBRARY(fltk_z STATIC "${ZLIB_SRCS}")
+# install the zlib headers
+install(FILES zconf.h;zlib.h;zutil.h
+    DESTINATION ${FLTK_INCLUDEDIR}/FL/images
+)
 
 #######################################################################
 if(OPTION_BUILD_SHARED_LIBS)
