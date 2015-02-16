@@ -50,7 +50,7 @@ include(CMake/options.cmake)
 include(CMake/export.cmake)
 
 #######################################################################
-# build examples - these have to be after fluid is built/imported
+# build examples - these have to be built after fluid is built/imported
 #######################################################################
 if(OPTION_BUILD_EXAMPLES)
    add_subdirectory(test)

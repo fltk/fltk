@@ -31,8 +31,8 @@ selfdir=`dirname "$0"`
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 exec_prefix_set=no
-includedir=@PREFIX_INCLUDE@
-libdir=@PREFIX_LIB@
+includedir=@FLTK_FULL_INCLUDEDIR@
+libdir=@FLTK_FULL_LIBDIR@
 srcdir=.
 
 # compiler names

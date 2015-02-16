@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -69,6 +69,26 @@ configure_file(
 )
 
 # generate fltk-config
+# Set install locations; this could be shortened with a foreach loop...
+if(IS_ABSOLUTE ${FLTK_INSTALL_BINDIR})
+   set(FLTK_FULL_BINDIR ${FLTK_BINDIR})
+else()
+   set(FLTK_FULL_BINDIR ${CMAKE_INSTALL_PREFIX}/${FLTK_BINDIR})
+endif(IS_ABSOLUTE ${FLTK_INSTALL_BINDIR})
+
+if(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
+   set(FLTK_FULL_INCLUDEDIR ${FLTK_INCLUDEDIR})
+else()
+   set(FLTK_FULL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/${FLTK_INCLUDEDIR})
+endif(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
+
+if(IS_ABSOLUTE ${FLTK_LIBDIR})
+   set(FLTK_FULL_LIBDIR ${FLTK_LIBDIR})
+else()
+   set(FLTK_FULL_LIBDIR ${CMAKE_INSTALL_PREFIX}/${FLTK_LIBDIR})
+endif(IS_ABSOLUTE ${FLTK_LIBDIR})
+
+# set compiler
 get_filename_component(CC ${CMAKE_C_COMPILER} NAME)
 get_filename_component(CXX ${CMAKE_CXX_COMPILER} NAME)
 
@@ -91,6 +111,12 @@ if(UNIX)
 endif(UNIX)
 
 if(OPTION_CREATE_LINKS)
+   # Set PREFIX_INCLUDE to the proper value.
+   if(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
+      set(PREFIX_INCLUDE ${FLTK_INCLUDEDIR})
+   else()
+      set(PREFIX_INCLUDE "${CMAKE_INSTALL_PREFIX}/${FLTK_INCLUDEDIR}")
+   endif(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
    configure_file(
       "${FLTK_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
       "${FLTK_BINARY_DIR}/install-symlinks.cmake"

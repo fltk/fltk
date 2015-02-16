@@ -6,5 +6,5 @@ Exec=fluid %F
 Icon=fluid
 Terminal=false
 Type=Application
-MimeType=application/x-fluid
+MimeType=application/x-fluid;
 Categories=Development;GUIDesigner;

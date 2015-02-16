@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -32,7 +32,7 @@ add_custom_target(uninstall
 )
 
 install(DIRECTORY ${FLTK_SOURCE_DIR}/FL
-   DESTINATION include USE_SOURCE_PERMISSIONS
+   DESTINATION ${FLTK_INCLUDEDIR} USE_SOURCE_PERMISSIONS
    PATTERN ".svn" EXCLUDE
 )
 
@@ -70,11 +70,11 @@ install(FILES ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
    DESTINATION ${FLTK_CONFIG_PATH}
 )
 
-if(UNIX)
+if(UNIX OR MSYS OR (MINGW AND CMAKE_CROSSCOMPILING))
    macro(INSTALL_MAN FILE LEVEL)
    install(FILES
       ${FLTK_SOURCE_DIR}/documentation/src/${FILE}.man
-      DESTINATION share/man/man${LEVEL}
+      DESTINATION ${FLTK_MANDIR}/man${LEVEL}
       RENAME ${FILE}.${LEVEL}
    )
    endmacro(INSTALL_MAN FILE LEVEL)
@@ -86,4 +86,4 @@ if(UNIX)
    INSTALL_MAN(checkers 6)
    INSTALL_MAN(sudoku 6)
 
-endif(UNIX)
+endif(UNIX OR MSYS OR (MINGW AND CMAKE_CROSSCOMPILING))

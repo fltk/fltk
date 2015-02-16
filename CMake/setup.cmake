@@ -4,7 +4,7 @@
 # CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2014 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -37,6 +37,31 @@ set(CMAKE_MODULE_PATH "${FLTK_SOURCE_DIR}/CMake")
 set(FLTK_INCLUDE_DIRS ${FLTK_BINARY_DIR} ${FLTK_SOURCE_DIR})
 include_directories(${FLTK_INCLUDE_DIRS})
 
+# Setup install locations
+if(CMAKE_VERSION VERSION_GREATER 2.8.4)
+    # Use GNUInstallDirs if available.
+    include(GNUInstallDirs)
+else()
+    # Else set reasonable defaults.
+    set(CMAKE_INSTALL_BINDIR bin)
+    set(CMAKE_INSTALL_LIBDIR lib)
+    set(CMAKE_INSTALL_INCLUDEDIR include)
+    set(CMAKE_INSTALL_DATADIR share)
+    set(CMAKE_INSTALL_MANDIR share/man)
+endif(CMAKE_VERSION VERSION_GREATER 2.8.4)
+
+set(FLTK_BINDIR ${CMAKE_INSTALL_BINDIR} CACHE PATH
+    "Binary install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
+set(FLTK_LIBDIR ${CMAKE_INSTALL_LIBDIR} CACHE PATH
+    "Library install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
+set(FLTK_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH
+    "Public header install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
+set(FLTK_DATADIR ${CMAKE_INSTALL_DATADIR} CACHE PATH
+    "Non-arch data install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
+set(FLTK_MANDIR ${CMAKE_INSTALL_MANDIR} CACHE PATH
+    "Manual install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
+
+
 #######################################################################
 # platform dependent information
 #######################################################################
@@ -58,8 +83,8 @@ elseif(APPLE)
    set(FLTK_CONFIG_PATH FLTK/.framework/Resources/CMake)
    set(FLTK_EXAMPLES_PATH share/fltk-examples)
 else()
-   set(FLTK_CONFIG_PATH lib/fltk)
-   set(FLTK_EXAMPLES_PATH share/fltk-examples)
+   set(FLTK_CONFIG_PATH ${FLTK_LIBDIR}/fltk)
+   set(FLTK_EXAMPLES_PATH ${FLTK_DATADIR}/fltk-examples)
 endif(WIN32 AND NOT CYGWIN)
 
 include(TestBigEndian)

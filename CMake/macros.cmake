@@ -4,7 +4,7 @@
 # macros.cmake defines macros used by the build system
 # Written by Michael Surette
 #
-# Copyright 1998-2014 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -65,9 +65,9 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
     install(TARGETS ${LIBRARY_NAME}
         EXPORT FLTK-Targets
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION ${FLTK_BINDIR}
+        LIBRARY DESTINATION ${FLTK_LIBDIR}
+        ARCHIVE DESTINATION ${FLTK_LIBDIR}
         )
 
     list(APPEND FLTK_LIBRARIES "${LIBRARY_NAME}")
