@@ -1194,6 +1194,18 @@ if test -n "$GCC"; then
 	AC_MSG_RESULT(no))
     CFLAGS="$OLDCFLAGS"
 
+dnl Experimental (as of 17 Feb 2015):
+dnl Make sure that shared libraries don't have undefined references
+    # See if ld supports -no-undefined...
+    AC_MSG_CHECKING(if ld supports -no-undefined)
+    OLDLDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -Wl,-no-undefined"
+    AC_TRY_LINK(,,
+        [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"]
+        AC_MSG_RESULT(yes),
+        AC_MSG_RESULT(no))
+    LDFLAGS="$OLDLDFLAGS"
+
     # See if ld supports -Bsymbolic-functions...
     AC_MSG_CHECKING(if ld supports -Bsymbolic-functions)
     OLDLDFLAGS="$LDFLAGS"
