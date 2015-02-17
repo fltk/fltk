@@ -3,7 +3,7 @@
 //
 // Single-buffered window header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,7 +27,7 @@
 /**
   This is the same as Fl_Window.  However, it is possible that
   some implementations will provide double-buffered windows by default.
-  This subcan be used to force single-buffering.  This may be
+  This subclass can be used to force single-buffering.  This may be
   useful for modifying existing programs that use incremental update, or
   for some types of image data, such as a movie flipbook.
 */
