@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// implementation of Fl_Window::shape(Fl_Image*) for the Fast Light Tool Kit (FLTK).
+// Implementation of Fl_Window::shape(Fl_Image*) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -358,16 +358,18 @@ void Fl_Window::draw() {
     }
 # endif
   }
-  
+
   // The following is similar to Fl_Group::draw(), but ...
-  //  - we draw the box with x=0 and y=0 instead of x() and y()
-  //  - we don't draw a label
-  
+  //  - draws the box at (0,0), i.e. with x=0 and y=0 instead of x() and y()
+  //  - draws the label at (0,0): this draws the background image, if any
+  // Note: align() *must* be set correctly for this to work as expected
+
   if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
     draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
+    draw_label(0,0,w(),h());		 // draws label and/or bg image
   }
   draw_children();
-  
+
 #ifdef __APPLE_QUARTZ__
   // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
   // corner. This code draws a little ribbed triangle for dragging.
