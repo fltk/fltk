@@ -2823,6 +2823,7 @@ static void set_subwindow_frame(Fl_Window *w) { // maps a subwindow at its corre
  */
 void Fl_X::make(Fl_Window* w)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     Fl_Group::current(0);
     fl_open_display();
     NSInteger winlevel = NSNormalWindowLevel;
@@ -3041,6 +3042,7 @@ void Fl_X::make(Fl_Window* w)
     Fl::e_number = old_event;
     
     // if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    [pool release];
 }
 
 
