@@ -670,7 +670,7 @@ void fl_open_display() {
   if (fl_display) return;
 
   setlocale(LC_CTYPE, "");
-  XSetLocaleModifiers("");
+  XSetLocaleModifiers("@im=");
 
   XSetIOErrorHandler(io_error_handler);
   XSetErrorHandler(xerror_handler);
