@@ -25,6 +25,7 @@ extern "C" {
 #include <X11/Xlib.h>
 #include <X11/Xlocale.h>
 #include <X11/Xutil.h>
+#include <FL/Fl_Export.H>
 
 typedef struct {
 	int nb_font;
@@ -98,8 +99,8 @@ XUtf8UcsWidth(
 	XUtf8FontStruct  *font_set,
 	unsigned int            ucs);
 
-int
-XGetUtf8FontAndGlyph(
+FL_EXPORT int
+fl_XGetUtf8FontAndGlyph(
         XUtf8FontStruct  *font_set,
         unsigned int            ucs,
         XFontStruct     **fnt,

@@ -114,7 +114,7 @@ static void get_list(int r) {
   for (int i = 0; i < 0x400; i++) {
     XFontStruct *font = NULL;
     unsigned short id;
-    XGetUtf8FontAndGlyph(gl_fontsize->font, ii, &font, &id);
+    fl_XGetUtf8FontAndGlyph(gl_fontsize->font, ii, &font, &id);
     if (font) glXUseXFont(font->fid, id, 1, gl_fontsize->listbase+ii);
     ii++;
    }

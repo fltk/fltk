@@ -816,10 +816,10 @@ XUtf8TextWidth(XUtf8FontStruct 	*font_set,
 /**  get the X font and glyph ID of a UCS char                              **/
 /*****************************************************************************/
 int
-XGetUtf8FontAndGlyph(XUtf8FontStruct  *font_set,
-		     unsigned int     ucs,
-		     XFontStruct      **fnt,
-		     unsigned short   *id) {
+fl_XGetUtf8FontAndGlyph(XUtf8FontStruct  *font_set,
+			unsigned int     ucs,
+			XFontStruct      **fnt,
+			unsigned short   *id) {
 
   /* int             x; */
   int             *encodings; /* encodings array */
