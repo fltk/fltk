@@ -172,7 +172,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)pxm->id_);
     // print all of offscreen but its parts in background color
-    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, pxm->w(), pxm->h(), pxm->pixmap_bg_color );
+    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, W, H, pxm->pixmap_bg_color );
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   }
