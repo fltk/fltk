@@ -213,8 +213,12 @@ endif(APPLE)
 #######################################################################
 FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${MMFILES};${CFILES};fl_call_main.c")
 
+if(LIB_dl)
+   target_link_libraries(fltk ${LIB_dl})
+endif(LIB_dl)
+
 if(USE_THREADS)
-   target_link_libraries(fltk ${CMAKE_THREAD_LIBS_INIT} ${LIB_dl})
+   target_link_libraries(fltk ${CMAKE_THREAD_LIBS_INIT})
 endif(USE_THREADS)
 
 if(USE_X11)
@@ -288,8 +292,12 @@ if(OPTION_BUILD_SHARED_LIBS)
 #######################################################################
 FL_ADD_LIBRARY(fltk SHARED "${CPPFILES};${MMFILES};${CFILES}")
 
+if(LIB_dl)
+   target_link_libraries(fltk_SHARED ${LIB_dl})
+endif(LIB_dl)
+
 if(USE_THREADS)
-   target_link_libraries(fltk_SHARED ${CMAKE_THREAD_LIBS_INIT} ${LIB_dl})
+   target_link_libraries(fltk_SHARED ${CMAKE_THREAD_LIBS_INIT})
 endif(USE_THREADS)
 
 if(USE_X11)
