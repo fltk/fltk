@@ -1547,7 +1547,10 @@ void Fl_PostScript_File_Device::end_job (void)
   Fl_Display_Device::display_device()->set_current();
 }
 
+#endif // FL_DOXYGEN
+
 #if ! (defined(__APPLE__) || defined(WIN32) )
+/** Starts a print job. */
 int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
@@ -1645,7 +1648,6 @@ int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
 
 #endif // ! (defined(__APPLE__) || defined(WIN32) )
 
-#endif // FL_DOXYGEN
 
 //
 // End of "$Id$".

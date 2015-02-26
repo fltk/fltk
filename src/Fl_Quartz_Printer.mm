@@ -80,8 +80,10 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     PMGetFirstPage(printSettings, &from32); 
     if (frompage) *frompage = (int)from32;
     PMGetLastPage(printSettings, &to32); 
-    if (topage) *topage = (int)to32;
-    if(topage && *topage > pagecount) *topage = pagecount;
+    if (topage) {
+      *topage = (int)to32;
+      if (*topage > pagecount && pagecount > 0) *topage = pagecount;
+    }
     status = PMSessionBeginCGDocumentNoDialog(printSession, printSettings, pageFormat);//from 10.4
   }
   else

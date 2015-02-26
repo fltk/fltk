@@ -146,7 +146,7 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
 /**
  @brief Starts a print job.
 
- @param[in] pagecount the total number of pages of the job
+ @param[in] pagecount the total number of pages of the job (or 0 if you don't know the number of pages)
  @param[out] frompage if non-null, *frompage is set to the first page the user wants printed
  @param[out] topage if non-null, *topage is set to the last page the user wants printed
  @return 0 if OK, non-zero if any error

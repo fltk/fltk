@@ -117,7 +117,7 @@ public:
 /**
  * \brief OS-independent print support.
  *
- Fl_Printer allows to use all FLTK drawing, color, text, and clip functions, and to have them operate
+ Fl_Printer allows to use all drawing, color, text, image, and clip FLTK functions, and to have them operate
  on printed page(s). There are two main, non exclusive, ways to use it.
  <ul><li>Print any widget (standard, custom, Fl_Window, Fl_Gl_Window) as it appears 
  on screen, with optional translation, scaling and rotation. This is done by calling print_widget(), 
@@ -127,7 +127,29 @@ public:
  </ul>
  In both cases, begin by start_job(), start_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
- <p><b>Platform specifics</b>
+ <p>Example of use: print a widget centered in a page
+ \code
+ #include <FL/Fl_Printer.H>
+ #include <FL/fl_draw.H>
+ int width, height;
+ Fl_Widget *widget = ...  // a widget we want printed
+ Fl_Printer *printer = new Fl_Printer();
+ if (printer->start_job(1) == 0) {
+  printer->start_page();
+  printer->printable_rect(&width, &height);
+  fl_color(FL_BLACK);
+  fl_line_style(FL_SOLID, 2);
+  fl_rect(0, 0, width, height);
+  fl_font(FL_COURIER, 12);
+  time_t now; time(&now); fl_draw(ctime(&now), 0, fl_height());
+  printer->origin(width/2, height/2);
+  printer->print_widget(widget, -widget->w()/2, -widget->h()/2);
+  printer->end_page();
+  printer->end_job();
+ }
+ delete printer;
+ \endcode
+ <b>Platform specifics</b>
  <ul>
  <li>Unix/Linux platforms:
  Unless it has been previously changed, the default paper size is A4.

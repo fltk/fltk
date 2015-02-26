@@ -55,6 +55,7 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
 // returns 0 iff OK
 {
+  if (pagecount == 0) pagecount = 10000;
   DWORD       commdlgerr;
   DOCINFO     di;
   char        docName [256];

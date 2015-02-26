@@ -210,7 +210,9 @@ class Clip {
 };
 
 /**
- \brief To send graphical output to a PostScript file.
+ To send graphical output to a PostScript file.
+ This class is used exactly as the Fl_Printer class except for the start_job() call,
+ two variants of which are usable and allow to specify what page format and layout are desired.
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 #ifdef __APPLE__

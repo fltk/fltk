@@ -63,7 +63,8 @@ typedef short COORD_T;
 #endif
 
 /**
- \brief All graphical output devices and all graphics systems.
+ All graphical output devices and all graphics systems.
+ This class supports a rudimentary system of run-time type information.
  */
 class FL_EXPORT Fl_Device {
 public:
@@ -94,11 +95,15 @@ public:
 #define FL_MATRIX_STACK_SIZE 32
 /**
  \brief A virtual class subclassed for each graphics driver FLTK uses.
- *
- The virtual methods of this class are those that a graphics driver should implement to
- support all of FLTK drawing functions.
- <br> The public API for drawing operations is functionally presented in \ref drawing and as function lists
- in the \ref fl_drawings and \ref fl_attributes modules. 
+ Typically, FLTK applications do not use directly objects from this class. Rather, they perform
+ drawing operations (e.g., fl_rectf()) that operate on the current drawing surface (see Fl_Surface_Device).
+ Drawing operations are functionally presented in \ref drawing and as function lists
+ in the \ref fl_drawings and \ref fl_attributes modules.
+ 
+ \p The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
+ An example would be to draw to a PDF file. This would involve creating a new Fl_Graphics_Driver derived class,
+ say, my_PDF_Graphics_Driver. This new class should implement all virtual methods of the Fl_Graphics_Driver class
+ to support all FLTK drawing functions.
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
 public:
@@ -518,7 +523,20 @@ public:
 #endif
 
 /**
- \brief A surface that's susceptible to receive graphical output.
+ \brief A drawing surface that's susceptible to receive graphical output.
+ A drawing surface is typically used as follows:
+ \li Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
+ \li Memorize what is the current drawing surface with <tt> Fl_Surface_Device *old_current = Fl_Surface_Device::surface();</tt>
+ \li Call \c surface->set_current(); to redirect all graphics requests to \c surface which becomes the new 
+ current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::start_job()).
+ \li At this point any of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions 
+ (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface. 
+ Certain drawing surfaces allow additional ways to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
+ \li After all drawing requests have been performed, redirect graphics requests back to their previous destination 
+ with \c old_current->set_current();.
+ \li Delete \c surface.
+ 
+ The current drawing surface is initially the computer's display, an instance of the Fl_Display_Device class.
  */
 class FL_EXPORT Fl_Surface_Device : public Fl_Device {
   /** \brief The graphics driver in use by this surface. */
@@ -542,7 +560,9 @@ public:
 };
 
 /**
- \brief A display to which the computer can draw.
+ A display to which the computer can draw.
+ When the program begins running, an Fl_Display_Device instance has been created and made the current drawing surface.
+ There is no need to create any other object of this class.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
   static Fl_Display_Device *_display; // the platform display device
