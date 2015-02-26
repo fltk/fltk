@@ -143,11 +143,12 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   } else
 #endif
   if (depth<3) {
+    RGBQUAD *bmi_colors = &bmi.bmiColors[0];	// suppress warning (STR #3199)
     for (int i=0; i<256; i++) {
-      bmi.bmiColors[i].rgbBlue = (uchar)i;
-      bmi.bmiColors[i].rgbGreen = (uchar)i;
-      bmi.bmiColors[i].rgbRed = (uchar)i;
-      bmi.bmiColors[i].rgbReserved = (uchar)0; // must be zero
+      bmi_colors[i].rgbBlue = (uchar)i;		// bmi.bmiColors[i]...
+      bmi_colors[i].rgbGreen = (uchar)i;
+      bmi_colors[i].rgbRed = (uchar)i;
+      bmi_colors[i].rgbReserved = (uchar)0; // must be zero
     }
   }
   bmi.bmiHeader.biWidth = w;
