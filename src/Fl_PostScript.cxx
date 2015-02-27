@@ -3,7 +3,7 @@
 //
 // PostScript device support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2011 by Bill Spitzak and others.
+// Copyright 2010-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -242,7 +242,7 @@ static const char * prolog =
 "translate \n"
 "sx sy scale px py 8 \n"
 "[ px 0 0 py neg 0 py ]\n"
-"currentfile /ASCIIHexDecode filter\n false 3"
+"currentfile /ASCII85Decode filter\n false 3"
 " colorimage GR\n"
 "} bind def\n"
 
@@ -254,17 +254,17 @@ static const char * prolog =
 
 
 "[ px 0 0 py neg 0 py ]\n"
-"currentfile /ASCIIHexDecode filter\n"
+"currentfile /ASCII85Decode filter\n"
 "image GR\n"
 "} bind def\n"
 
 // single-color bitmask 
 
-"/MI { GS /py exch def /px exch def /sy exch def /sx exch def \n"
+"/MI { GS      /filtername exch def       /py exch def /px exch def /sy exch def /sx exch def \n"
 "translate \n"
 "sx sy scale px py true \n"
 "[ px 0 0 py neg 0 py ]\n"
-"currentfile /ASCIIHexDecode filter\n"
+"currentfile filtername filter\n"
 "imagemask GR\n"
 "} bind def\n"
 
@@ -315,7 +315,7 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "/Height py def\n"
 "/BitsPerComponent 8 def\n"
 "/Interpolate inter def\n"
-"/DataSource currentfile /ASCIIHexDecode filter def\n"
+"/DataSource currentfile /ASCII85Decode filter def\n"
 "/MultipleDataSources false def\n"
 "/ImageMatrix [ px 0 0 py neg 0 py ] def\n"
 "/Decode [ 0 1 0 1 0 1 ] def\n"
@@ -335,7 +335,7 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "/BitsPerComponent 8 def\n"
 
 "/Interpolate inter def\n"
-"/DataSource currentfile /ASCIIHexDecode filter def\n"
+"/DataSource currentfile /ASCII85Decode filter def\n"
 "/MultipleDataSources false def\n"
 "/ImageMatrix [ px 0 0 py neg 0 py ] def\n"
 "/Decode [ 0 1 ] def\n"
@@ -440,7 +440,7 @@ static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 
 "pixmap_w pixmap_h scale "
 "pixmap_sx pixmap_sy 8 "
 "pixmap_mat "
-"currentfile /ASCIIHexDecode filter "
+"currentfile /ASCII85Decode filter "
 "false 3 "
 "colorimage "
 "end "
@@ -458,7 +458,7 @@ static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 
 "pixmap_sx pixmap_sy\n"
 "true\n"
 "pixmap_mat\n"
-"currentfile /ASCIIHexDecode filter\n"
+"currentfile /ASCII85Decode filter\n"
 "imagemask\n"
 "GR\n"
 "} bind def\n"
@@ -480,7 +480,7 @@ static const char * prolog_3 = // prolog relevant only if lang_level >2
 "/Height py def\n"
 "/BitsPerComponent 8 def\n"
 "/Interpolate inter def\n"
-"/DataSource currentfile /ASCIIHexDecode filter def\n"
+"/DataSource currentfile /ASCII85Decode filter def\n"
 "/MultipleDataSources false def\n"
 "/ImageMatrix [ px 0 0 py neg 0 py ] def\n"
 
@@ -521,7 +521,7 @@ static const char * prolog_3 = // prolog relevant only if lang_level >2
 "/Height py def\n"
 "/BitsPerComponent 8 def\n"
 "/Interpolate inter def\n"
-"/DataSource currentfile /ASCIIHexDecode filter def\n"
+"/DataSource currentfile /ASCII85Decode filter def\n"
 "/MultipleDataSources false def\n"
 "/ImageMatrix [ px 0 0 py neg 0 py ] def\n"
 
@@ -1106,7 +1106,7 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
   delete[] img;
   // write the string image to PostScript as a scaled bitmask
   scale = w2 / float(w);
-  driver->clocale_printf("%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w2/scale, h/scale, w2, h);
+  driver->clocale_printf("%g %g %g %g %d %d /ASCIIHexDecode MI\n", x, y - h*0.77/scale, w2/scale, h/scale, w2, h);
   uchar *di;
   int wmask = (w2+7)/8;
   for (int j = h - 1; j >= 0; j--){

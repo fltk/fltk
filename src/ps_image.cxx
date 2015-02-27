@@ -3,7 +3,7 @@
 //
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,6 +26,83 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
+
+
+//
+// Implementation of the /ASCII85Encode PostScript filter
+// as described in "PostScript LANGUAGE REFERENCE third edition" p. 131
+//
+struct struct85 {
+  FILE* outfile;   // receives ASCII85-encoded output
+  uchar bytes4[4]; // holds up to 4 input bytes
+  int l4;          // # of unencoded input bytes
+  int blocks;      // counter to insert newlines after 80 output characters
+  uchar chars5[5]; // holds 5 output characters
+};
+
+
+static struct85 *prepare85(FILE *outfile) // prepare to produce ASCII85-encoded output
+{
+  struct85 *big = new struct85;
+  big->outfile = outfile;
+  big->l4 = 0;
+  big->blocks = 0;
+  return big;
+}
+
+static int convert85(const uchar *bytes4, uchar *chars5) // encodes 4 input bytes into chars5 array
+{
+  unsigned val = bytes4[0]*256*256*256 + bytes4[1]*256*256 + bytes4[2]*256 + bytes4[3];
+  chars5[0] = val / 52200625;
+  val = val % 52200625;
+  chars5[1] = val / 614125;
+  val = val % 614125;
+  chars5[2] = val / 7225;
+  val = val % 7225;
+  chars5[3] = val / 85;
+  chars5[4] = val % 85;
+  if (chars5[0] == 0 && chars5[1] == 0 && chars5[2] == 0 && chars5[3] == 0 && chars5[4] == 0) {
+    chars5[0] = 'z';
+    return 1;
+  }
+  chars5[0] += 33; chars5[1] += 33; chars5[2] += 33; chars5[3] += 33; chars5[4] += 33;
+  return 5;
+}
+
+
+static void write85(const uchar *p, struct85 *big, int len) // sends len input bytes for encoding
+{
+  const uchar *last = p + len;
+  while (p < last) {
+    int c = 4 - big->l4;
+    if (last-p < c) c = last-p;
+    memcpy(big->bytes4 + big->l4, p, c);
+    p += c;
+    big->l4 += c;
+    if (big->l4 == 4) {
+      c = convert85(big->bytes4, big->chars5);
+      fwrite(big->chars5, c, 1, big->outfile);
+      big->l4 = 0;
+      if (++big->blocks >= 16) { fputc('\n', big->outfile); big->blocks = 0; }
+    }
+  }
+}
+
+
+static void close85(struct85 *big)  // stops ASCII85-encoding after processing remaining unencoded input bytes, if any
+{
+  int l;
+  if (big->l4) { // # of remaining unencoded input bytes
+    l = big->l4;
+    while (l < 4) big->bytes4[l++] = 0; // complete them with 0s
+    l = convert85(big->bytes4, big->chars5); // encode them
+    if (l == 1) memcpy(big->chars5, "!!!!!", 5);
+    fwrite(big->chars5, big->l4 + 1, 1, big->outfile);
+  }
+  fputs("~>\n", big->outfile); // write EOD mark
+  delete big;
+}
+
  
 int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, int D, int LD){
 
@@ -231,66 +308,63 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
     else interpol="false";
     if (mask && lang_level_ > 2) {
       fprintf(output, "%g %g %g %g %i %i %i %i %s CIM\n", x , y+h , w , -h , iw , ih, mx, my, interpol);
-      }
+    }
     else if (mask && lang_level_ == 2) {
       level2_mask = 1; // use method for drawing masked color image with PostScript level 2
       fprintf(output, " %g %g %g %g %d %d pixmap_plot\n", x, y, w, h, iw, ih);
     }
     else {
       fprintf(output, "%g %g %g %g %i %i %s CII\n", x , y+h , w , -h , iw , ih, interpol);
-      }
+    }
   } else {
     fprintf(output , "%g %g %g %g %i %i CI", x , y+h , w , -h , iw , ih);
-    }
-
+  }
+  
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
-
+  uchar line[3];
+  struct85 *big = prepare85(output);
+  
   if (level2_mask) {
     for (j = ih - 1; j >= 0; j--) { // output full image data
       call(data, 0, j, iw, rgbdata);
       uchar *curdata = rgbdata;
       for (i=0 ; i<iw ; i++) {
-	if (!(i%20)) fputs("\n", output);
-	fprintf(output, "%.2x%.2x%.2x", curdata[0], curdata[1], curdata[2]);
-	curdata += D;
-	}
-      fputs("\n", output);
+        write85(curdata, big, 3);
+        curdata += D;
       }
-    fputs(">\n", output);
+    }
+    close85(big);
+    big = prepare85(output);
     for (j = ih - 1; j >= 0; j--) { // output mask data
       curmask = mask + j * (my/ih) * ((mx+7)/8);
       for (k=0; k < my/ih; k++) {
-	for (i=0; i < ((mx+7)/8); i++) {
-	  if (!(i%40)) fputs("\n", output);
-	  fprintf(output, "%.2x",swap_byte(*curmask));
-	  curmask++;
-	}
-	fputs("\n", output);
+        for (i=0; i < ((mx+7)/8); i++) {
+          line[0] = swap_byte(*curmask); write85(line, big, 1);
+          curmask++;
+        }
       }
     }
-    fputs(">\n", output);
+    close85(big);
   }
   else {
     for (j=0; j<ih;j++) {
       if (mask && lang_level_ > 2) {  // InterleaveType 2 mask data
-	for (k=0; k<my/ih;k++) { //for alpha pseudo-masking
-	  for (i=0; i<((mx+7)/8);i++) {
-	    if (!(i%40)) fputs("\n", output);
-	    fprintf(output, "%.2x",swap_byte(*curmask));
-	    curmask++;
-	  }
-	  fprintf(output,"\n");
-	}
+        for (k=0; k<my/ih;k++) { //for alpha pseudo-masking
+          for (i=0; i<((mx+7)/8);i++) {
+            line[0] = swap_byte(*curmask); write85(line, big, 1);
+            curmask++;
+          }
+        }
       }
       call(data,0,j,iw,rgbdata);
       uchar *curdata=rgbdata;
       for (i=0 ; i<iw ; i++) {
-	uchar r = curdata[0];
-	uchar g =  curdata[1];
-	uchar b =  curdata[2];
-
+        uchar r = curdata[0];
+        uchar g =  curdata[1];
+        uchar b =  curdata[2];
+        
         if (lang_level_<3 && D>3) { //can do  mixing using bg_* colors)
           unsigned int a2 = curdata[3]; //must be int
           unsigned int a = 255-a2;
@@ -298,18 +372,16 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
           g = (a2 * g + bg_g * a)/255;
           b = (a2 * b + bg_b * a)/255;
         }
-
-	if (!(i%40)) 	fputs("\n", output);
-	fprintf(output, "%.2x%.2x%.2x", r, g, b);
-
-	curdata +=D;
+        
+        line[0]=r; line[1]=g; line[2]=b; write85(line, big, 3);
+        
+        curdata +=D;
       }
-      fputs("\n", output);
-
+      
     }
-    fputs(">\n", output);
-    }
-
+    close85(big);
+  }
+  
   fprintf(output,"restore\n");
   delete[] rgbdata;
 }
@@ -341,20 +413,18 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
   int bg = (bg_r + bg_g + bg_b)/3;
 
   uchar *curmask=mask;
+  struct85 *big = prepare85(output);
   for (j=0; j<ih;j++){
     if (mask){
       for (k=0;k<my/ih;k++){
         for (i=0; i<((mx+7)/8);i++){
-          if (!(i%80)) fprintf(output, "\n");
-          fprintf(output, "%.2x",swap_byte(*curmask));
+          uchar c = swap_byte(*curmask); write85(&c, big, 1);
           curmask++;
         }
-        fprintf(output,"\n");
       }
     }
     const uchar *curdata=data+j*LD;
     for (i=0 ; i<iw ; i++) {
-      if (!(i%80)) fprintf(output, "\n");
       uchar r = curdata[0];
       if (lang_level_<3 && D>1) { //can do  mixing
 
@@ -362,16 +432,13 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
         unsigned int a = 255-a2;
         r = (a2 * r + bg * a)/255;
       }
-      if (!(i%120)) fprintf(output, "\n");
-      fprintf(output, "%.2x", r);
+      write85(&r, big, 1);
       curdata +=D;
     }
-    fprintf(output,"\n");
 
   }
-
-  fprintf(output," >\nrestore\n" );
-
+  close85(big);
+  fprintf(output,"restore\n");
 }
 
 
@@ -395,29 +462,25 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void 
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
+  struct85 *big = prepare85(output);
   for (j=0; j<ih;j++){
 
     if (mask && lang_level_>2){  // InterleaveType 2 mask data
       for (k=0; k<my/ih;k++){ //for alpha pseudo-masking
         for (i=0; i<((mx+7)/8);i++){
-          if (!(i%40)) fprintf(output, "\n");
-          fprintf(output, "%.2x",swap_byte(*curmask));
+          uchar c = swap_byte(*curmask); write85(&c, big, 1);
           curmask++;
         }
-        fprintf(output,"\n");
       }
     }
     call(data,0,j,iw,rgbdata);
     uchar *curdata=rgbdata;
     for (i=0 ; i<iw ; i++) {
-      uchar r = curdata[0];
-      if (!(i%120)) fprintf(output, "\n");
-      fprintf(output, "%.2x", r);
+      write85(curdata, big, 1);
       curdata +=D;
     }
-    fprintf(output,"\n");
   }
-  fprintf(output,">\n");
+  close85(big);
   fprintf(output,"restore\n");
   delete[] rgbdata;
 }
@@ -479,17 +542,16 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
 
   int i,j;
   push_clip(XP, YP, WP, HP);
-  fprintf(output , "%i %i %i %i %i %i MI", XP - si, YP + HP , WP , -HP , w , h);
+  fprintf(output , "%i %i %i %i %i %i /ASCII85Decode MI\n", XP - si, YP + HP , WP , -HP , w , h);
 
+  struct85 *big = prepare85(output);
   for (j=0; j<HP; j++){
     for (i=0; i<xx; i++){
-      if (!(i%80)) fprintf(output, "\n"); // not have lines longer than 255 chars
-      fprintf(output, "%.2x", swap_byte(*di) );
+      uchar c = swap_byte(*di); write85(&c, big, 1);
       di++;
     }
-    fprintf(output,"\n");
   }
-  fprintf(output,">\n");
+  close85(big);
   pop_clip();
 }
 
