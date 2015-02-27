@@ -3,7 +3,7 @@
 //
 // Cross-window show/focus test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
 #include <FL/Fl_Input.H>
 
 static Fl_Double_Window *win1, *win2;
-static Fl_Input *inp;
+static Fl_Input *input1;
 
 static void popup(Fl_Widget *, void *) {
 
@@ -30,7 +30,7 @@ static void popup(Fl_Widget *, void *) {
 
   win2->show();
   win2->wait_for_expose();
-  inp->take_focus();
+  input1->take_focus();
 }
 
 int main(int argc, char **argv) {
@@ -44,9 +44,9 @@ int main(int argc, char **argv) {
 	   "and you should be able to continue typing.");
   b->align(FL_ALIGN_WRAP | FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-  inp = new Fl_Input(10, 150, 150, 25);
-  inp->when(FL_WHEN_CHANGED);
-  inp->callback(popup);
+  input1 = new Fl_Input(10, 150, 150, 25);
+  input1->when(FL_WHEN_CHANGED);
+  input1->callback(popup);
 
   win1->end();
 
