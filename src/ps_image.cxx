@@ -50,22 +50,23 @@ static struct85 *prepare85(FILE *outfile) // prepare to produce ASCII85-encoded 
   return big;
 }
 
-static int convert85(const uchar *bytes4, uchar *chars5) // encodes 4 input bytes into chars5 array
+// encodes 4 input bytes from bytes4 into chars5 array
+// returns # of output chars
+static int convert85(const uchar *bytes4, uchar *chars5)
 {
-  unsigned val = bytes4[0]*256*256*256 + bytes4[1]*256*256 + bytes4[2]*256 + bytes4[3];
-  chars5[0] = val / 52200625;
-  val = val % 52200625;
-  chars5[1] = val / 614125;
-  val = val % 614125;
-  chars5[2] = val / 7225;
-  val = val % 7225;
-  chars5[3] = val / 85;
-  chars5[4] = val % 85;
-  if (chars5[0] == 0 && chars5[1] == 0 && chars5[2] == 0 && chars5[3] == 0 && chars5[4] == 0) {
+  if (bytes4[0] == 0 && bytes4[1] == 0 && bytes4[2] == 0 && bytes4[3] == 0) {
     chars5[0] = 'z';
     return 1;
   }
-  chars5[0] += 33; chars5[1] += 33; chars5[2] += 33; chars5[3] += 33; chars5[4] += 33;
+  unsigned val = bytes4[0]*(256*256*256) + bytes4[1]*(256*256) + bytes4[2]*256 + bytes4[3];
+  chars5[0] = val / 52200625 + 33; // 52200625 = 85 to the 4th
+  val = val % 52200625;
+  chars5[1] = val / 614125 + 33;   // 614125 = 85 cube
+  val = val % 614125;
+  chars5[2] = val / 7225 + 33;     // 7225 = 85 squared
+  val = val % 7225;
+  chars5[3] = val / 85 + 33;
+  chars5[4] = val % 85 + 33;
   return 5;
 }
 
@@ -102,6 +103,10 @@ static void close85(struct85 *big)  // stops ASCII85-encoding after processing r
   fputs("~>\n", big->outfile); // write EOD mark
   delete big;
 }
+
+//
+// End of implementation of the /ASCII85Encode PostScript filter
+//
 
  
 int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, int D, int LD){
