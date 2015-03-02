@@ -27,13 +27,11 @@
   Use a width and height of 0 to tile the whole window/widget.
 
   \note Due to implementation constraints in FLTK 1.3.3 and later width
-  and height of 0 may not work as expected when used as background image
-  in widgets other than windows.
-
-  You may need to center and clip the image (label) and set the label type
-  to FL_NORMAL_LABEL. Doing so will let the tiled image fill the whole
-  widget as its background image. Other combinations of label flags may
-  or may not work.
+    and height of 0 may not work as expected when used as background image
+    in widgets other than windows. You may need to center and clip the
+    image (label) and set the label type to FL_NORMAL_LABEL. Doing so will
+    let the tiled image fill the whole widget as its background image.
+    Other combinations of label flags may or may not work.
 
   \code
   #include "bg.xpm"
@@ -48,13 +46,13 @@
   \endcode
 
   \note Setting an image (label) for a window may not work as expected due
-  to implementation constraints in FLTK 1.3.x and maybe later. The reason
-  is the way Fl::scheme() is initializing the window's label type and image.
-  A workaround is to use another Fl_Group as the only child widget and set
-  the background image for this group as described above.
+    to implementation constraints in FLTK 1.3.x and maybe later. The reason
+    is the way Fl::scheme() initializes the window's label type and image.
+    A possible workaround is to use another Fl_Group as the only child widget
+    and to set the background image for this group as described above.
 
-  \todo Fix Fl_Tiled_Image as background image for widgets and windows,
-	and fix the implementation of Fl::scheme(const char *).
+  \todo Fix Fl_Tiled_Image as background image for widgets and windows
+    and fix the implementation of Fl::scheme(const char *).
 */
 Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *i,	// I - Image to tile
                                int      W,	// I - Width of tiled area
@@ -127,7 +125,7 @@ Fl_Tiled_Image::desaturate() {
   Draws a tiled image.
 
   Tiled images can be used as background images for widgets and windows.
-  However, due to some implementation constraints, you must take care when
+  However, due to implementation constraints, you must take care when
   setting label types and alignment flags. Only certain combinations work as
   expected, others may yield unexpected results and undefined behavior.
 
@@ -137,15 +135,15 @@ Fl_Tiled_Image::desaturate() {
   The optional arguments \p cx and \p cy can be used to crop the image
   starting at offsets (cx, cy). \p cx and \p cy must be \>= 0 (negative values
   are ignored). If one of the values is greater than the image width or height
-  resp. (\b cx \>= image()->w() or \p cy \>= image()->h()) nothing is drawn,
+  resp. (\p cx \>= image()->w() or \p cy \>= image()->h()) nothing is drawn,
   because the resulting image would be empty.
 
   After calculating the resulting image size the image is drawn as often
   as necessary to fill the given area, starting at the top left corner.
 
-  If both \p X and \p Y are 0 the image is repeated as often as necessary
+  If both \p W and \p H are 0 the image is repeated as often as necessary
   to fill the entire window, unless there is a valid clip region. If you
-  want to fill only one particular widget's background, make sure that you
+  want to fill only one particular widget's background, then you should
   either set a clip region in your draw() method or use the label alignment
   flags \p FL_ALIGN_INSIDE|FL_ALIGN_CLIP to make sure the image is clipped.
 
