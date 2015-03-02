@@ -33,7 +33,6 @@
 // as described in "PostScript LANGUAGE REFERENCE third edition" p. 131
 //
 struct struct85 {
-  FILE* outfile;   // receives ASCII85-encoded output
   uchar bytes4[4]; // holds up to 4 input bytes
   int l4;          // # of unencoded input bytes
   int blocks;      // counter to insert newlines after 80 output characters
@@ -41,10 +40,9 @@ struct struct85 {
 };
 
 
-void *Fl_PostScript_Graphics_Driver::prepare85(FILE *outfile) // prepare to produce ASCII85-encoded output
+void *Fl_PostScript_Graphics_Driver::prepare85() // prepare to produce ASCII85-encoded output
 {
   struct85 *big = new struct85;
-  big->outfile = outfile;
   big->l4 = 0;
   big->blocks = 0;
   return big;
@@ -83,9 +81,9 @@ void Fl_PostScript_Graphics_Driver::write85(void *data, const uchar *p, int len)
     big->l4 += c;
     if (big->l4 == 4) {
       c = convert85(big->bytes4, big->chars5);
-      fwrite(big->chars5, c, 1, big->outfile);
+      fwrite(big->chars5, c, 1, output);
       big->l4 = 0;
-      if (++big->blocks >= 16) { fputc('\n', big->outfile); big->blocks = 0; }
+      if (++big->blocks >= 16) { fputc('\n', output); big->blocks = 0; }
     }
   }
 }
@@ -100,9 +98,9 @@ void Fl_PostScript_Graphics_Driver::close85(void *data)  // stops ASCII85-encodi
     while (l < 4) big->bytes4[l++] = 0; // complete them with 0s
     l = convert85(big->bytes4, big->chars5); // encode them
     if (l == 1) memset(big->chars5, '!', 5);
-    fwrite(big->chars5, big->l4 + 1, 1, big->outfile);
+    fwrite(big->chars5, big->l4 + 1, 1, output);
   }
-  fputs("~>", big->outfile); // write EOD mark
+  fputs("~>", output); // write EOD mark
   delete big;
 }
 
@@ -122,12 +120,12 @@ struct struct_rle85 {
   int run_length; // current length of run
 };
 
-void *Fl_PostScript_Graphics_Driver::prepare_rle85(FILE *out) // prepare to produce RLE+ASCII85-encoded output
+void *Fl_PostScript_Graphics_Driver::prepare_rle85() // prepare to produce RLE+ASCII85-encoded output
 {
   struct_rle85 *rle = new struct_rle85;
   rle->count = 0;
   rle->run_length = 0;
-  rle->data85 = (struct85*)prepare85(out);
+  rle->data85 = (struct85*)prepare85();
   return rle;
 }
 
@@ -412,7 +410,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
-  void *big = prepare_rle85(output);
+  void *big = prepare_rle85();
   
   if (level2_mask) {
     for (j = ih - 1; j >= 0; j--) { // output full image data
@@ -424,7 +422,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
       }
     }
     close_rle85(big); fputc('\n', output);
-    big = prepare_rle85(output);
+    big = prepare_rle85();
     for (j = ih - 1; j >= 0; j--) { // output mask data
       curmask = mask + j * (my/ih) * ((mx+7)/8);
       for (k=0; k < my/ih; k++) {
@@ -498,7 +496,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
   int bg = (bg_r + bg_g + bg_b)/3;
 
   uchar *curmask=mask;
-  void *big = prepare_rle85(output);
+  void *big = prepare_rle85();
   for (j=0; j<ih;j++){
     if (mask){
       for (k=0;k<my/ih;k++){
@@ -547,7 +545,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void 
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
-  void *big = prepare_rle85(output);
+  void *big = prepare_rle85();
   for (j=0; j<ih;j++){
 
     if (mask && lang_level_>2){  // InterleaveType 2 mask data
@@ -629,7 +627,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
   push_clip(XP, YP, WP, HP);
   fprintf(output , "%i %i %i %i %i %i MI\n", XP - si, YP + HP , WP , -HP , w , h);
 
-  void *rle85 = prepare_rle85(output);
+  void *rle85 = prepare_rle85();
   for (j=0; j<HP; j++){
     for (i=0; i<xx; i++){
       write_rle85(swap_byte(*di), rle85);

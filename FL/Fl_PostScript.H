@@ -59,6 +59,14 @@ extern "C" {
  <br> FLTK standard fonts are output using the corresponding PostScript standard fonts.
  */
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
+private:
+  void transformed_draw_extra(const char* str, int n, double x, double y, int w, bool rtl);
+  void *prepare_rle85();
+  void write_rle85(uchar b, void *data);
+  void close_rle85(void *data);
+  void *prepare85();
+  void write85(void *data, const uchar *p, int len);
+  void close85(void *data);
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
@@ -132,12 +140,6 @@ class Clip {
   
   void page(double pw, double ph, int media = 0);
   void page(int format);
-  static void *prepare_rle85(FILE *out);
-  static void write_rle85(uchar b, void *data);
-  static void close_rle85(void *data);
-  static void *prepare85(FILE *out);
-  static void write85(void *data, const uchar *p, int len);
-  static void close85(void *data);
 #endif // FL_DOXYGEN
   
   // implementation of drawing methods
