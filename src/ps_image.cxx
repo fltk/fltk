@@ -41,7 +41,7 @@ struct struct85 {
 };
 
 
-static struct85 *prepare85(FILE *outfile) // prepare to produce ASCII85-encoded output
+void *Fl_PostScript_Graphics_Driver::prepare85(FILE *outfile) // prepare to produce ASCII85-encoded output
 {
   struct85 *big = new struct85;
   big->outfile = outfile;
@@ -71,8 +71,9 @@ static int convert85(const uchar *bytes4, uchar *chars5)
 }
 
 
-static void write85(struct85 *big, const uchar *p, int len) // sends len input bytes for ASCII85 encoding
+void Fl_PostScript_Graphics_Driver::write85(void *data, const uchar *p, int len) // sends len input bytes for ASCII85 encoding
 {
+  struct85 *big = (struct85 *)data;
   const uchar *last = p + len;
   while (p < last) {
     int c = 4 - big->l4;
@@ -90,8 +91,9 @@ static void write85(struct85 *big, const uchar *p, int len) // sends len input b
 }
 
 
-static void close85(struct85 *big)  // stops ASCII85-encoding after processing remaining unencoded input bytes, if any
+void Fl_PostScript_Graphics_Driver::close85(void *data)  // stops ASCII85-encoding after processing remaining unencoded input bytes, if any
 {
+  struct85 *big = (struct85 *)data;
   int l;
   if (big->l4) { // # of remaining unencoded input bytes
     l = big->l4;
@@ -120,18 +122,19 @@ struct struct_rle85 {
   int run_length; // current length of run
 };
 
-static struct_rle85 *prepare_rle85(FILE *out) // prepare to produce RLE+ASCII85-encoded output
+void *Fl_PostScript_Graphics_Driver::prepare_rle85(FILE *out) // prepare to produce RLE+ASCII85-encoded output
 {
   struct_rle85 *rle = new struct_rle85;
   rle->count = 0;
   rle->run_length = 0;
-  rle->data85 = prepare85(out);
+  rle->data85 = (struct85*)prepare85(out);
   return rle;
 }
 
 
-static void write_rle85(uchar b, struct_rle85 *rle) // sends one input byte to RLE+ASCII85 encoding
+void Fl_PostScript_Graphics_Driver::write_rle85(uchar b, void *data) // sends one input byte to RLE+ASCII85 encoding
 {
+  struct_rle85 *rle = (struct_rle85 *)data;
   uchar c;
   if (rle->run_length > 0) { // if within a run
     if (b == rle->buffer[0] &&  rle->run_length < 128) { // the run can be extended
@@ -166,8 +169,9 @@ static void write_rle85(uchar b, struct_rle85 *rle) // sends one input byte to R
 }
 
 
-static void close_rle85(struct_rle85 *rle) // stop doing RLE+ASCII85 encoding
+void Fl_PostScript_Graphics_Driver::close_rle85(void *data) // stop doing RLE+ASCII85 encoding
 {
+  struct_rle85 *rle = (struct_rle85 *)data;
   uchar c;
   if (rle->run_length > 0) { // if within a run, output it
     c = (uchar)(257 - rle->run_length);
@@ -408,7 +412,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
-  struct_rle85 *big = prepare_rle85(output);
+  void *big = prepare_rle85(output);
   
   if (level2_mask) {
     for (j = ih - 1; j >= 0; j--) { // output full image data
@@ -495,7 +499,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, i
   int bg = (bg_r + bg_g + bg_b)/3;
 
   uchar *curmask=mask;
-  struct_rle85 *big = prepare_rle85(output);
+  void *big = prepare_rle85(output);
   for (j=0; j<ih;j++){
     if (mask){
       for (k=0;k<my/ih;k++){
@@ -544,7 +548,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void 
   int LD=iw*D;
   uchar *rgbdata=new uchar[LD];
   uchar *curmask=mask;
-  struct_rle85 *big = prepare_rle85(output);
+  void *big = prepare_rle85(output);
   for (j=0; j<ih;j++){
 
     if (mask && lang_level_>2){  // InterleaveType 2 mask data
@@ -624,16 +628,16 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
 
   int i,j;
   push_clip(XP, YP, WP, HP);
-  fprintf(output , "%i %i %i %i %i %i {A85RLE} MI\n", XP - si, YP + HP , WP , -HP , w , h);
+  fprintf(output , "%i %i %i %i %i %i MI\n", XP - si, YP + HP , WP , -HP , w , h);
 
-  struct_rle85 *big = prepare_rle85(output);
+  void *rle85 = prepare_rle85(output);
   for (j=0; j<HP; j++){
     for (i=0; i<xx; i++){
-      write_rle85(swap_byte(*di), big);
+      write_rle85(swap_byte(*di), rle85);
       di++;
     }
   }
-  close_rle85(big);
+  close_rle85(rle85);
   pop_clip();
 }
 

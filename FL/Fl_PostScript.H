@@ -132,6 +132,12 @@ class Clip {
   
   void page(double pw, double ph, int media = 0);
   void page(int format);
+  static void *prepare_rle85(FILE *out);
+  static void write_rle85(uchar b, void *data);
+  static void close_rle85(void *data);
+  static void *prepare85(FILE *out);
+  static void write85(void *data, const uchar *p, int len);
+  static void close85(void *data);
 #endif // FL_DOXYGEN
   
   // implementation of drawing methods

@@ -262,11 +262,11 @@ static const char * prolog =
 
 // single-color bitmask 
 
-"/MI { GS      /filtername exch def       /py exch def /px exch def /sy exch def /sx exch def \n"
+"/MI { GS /py exch def /px exch def /sy exch def /sx exch def \n"
 "translate \n"
 "sx sy scale px py true \n"
 "[ px 0 0 py neg 0 py ]\n"
-"currentfile filtername\n"
+"currentfile A85RLE\n"
 "imagemask GR\n"
 "} bind def\n"
 
@@ -1108,19 +1108,18 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
   delete[] img;
   // write the string image to PostScript as a scaled bitmask
   scale = w2 / float(w);
-  driver->clocale_printf("%g %g %g %g %d %d {/ASCIIHexDecode filter} MI\n", x, y - h*0.77/scale, w2/scale, h/scale, w2, h);
+  driver->clocale_printf("%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w2/scale, h/scale, w2, h);
   uchar *di;
   int wmask = (w2+7)/8;
+  void *rle85 = Fl_PostScript_Graphics_Driver::prepare_rle85(output);
   for (int j = h - 1; j >= 0; j--){
     di = mask + j * wmask;
     for (int i = 0; i < wmask; i++){
-      //if (!(i%80)) fprintf(output, "\n"); // don't have lines longer than 255 chars
-      fprintf(output, "%2.2x", *di );
+      Fl_PostScript_Graphics_Driver::write_rle85(*di, rle85);
       di++;
     }
-    fprintf(output,"\n");
   }
-  fprintf(output,">\n");
+  Fl_PostScript_Graphics_Driver::close_rle85(rle85);
   delete[] mask;
 }
 
@@ -1157,7 +1156,8 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
     transformed_draw_extra(str, n, x, y, w, output, this, false);
     return;
     }
-  fprintf(output, "%d <", w);
+  fprintf(output, "%d <~", w);
+  void *data = prepare85(output);
   // transforms UTF8 encoding to our custom PostScript encoding as follows:
   // extract each unicode character
   // if unicode <= 0x17F, unicode and PostScript codes are identical
@@ -1178,13 +1178,15 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
       utf = code;
       }
     else { // unhandled character: draw all string as bitmap image
-      fprintf(output, "> pop pop\n"); // close and ignore the opened hex string
+      fprintf(output, "~> pop pop\n"); // close and ignore the opened hex string
       transformed_draw_extra(str, n, x, y, w, output, this, false);
       return;
     }
-    fprintf(output, "%4.4X", utf);
+    // 2 bytes per character, high-order byte first, encode that to ASCII85
+    uchar c[2]; c[1] = utf & 0xFF; c[0] = (utf & 0xFF00)>>8; write85(data, c, 2);
   }
-  clocale_printf("> %g %g show_pos_width\n", x, y);
+  close85(data);
+  clocale_printf(" %g %g show_pos_width\n", x, y);
 }
 
 void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
