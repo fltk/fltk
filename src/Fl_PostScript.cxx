@@ -1119,7 +1119,7 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
       di++;
     }
   }
-  Fl_PostScript_Graphics_Driver::close_rle85(rle85);
+  Fl_PostScript_Graphics_Driver::close_rle85(rle85); fputc('\n', output);
   delete[] mask;
 }
 

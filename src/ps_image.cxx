@@ -99,10 +99,10 @@ void Fl_PostScript_Graphics_Driver::close85(void *data)  // stops ASCII85-encodi
     l = big->l4;
     while (l < 4) big->bytes4[l++] = 0; // complete them with 0s
     l = convert85(big->bytes4, big->chars5); // encode them
-    if (l == 1) memcpy(big->chars5, "!!!!!", 5);
+    if (l == 1) memset(big->chars5, '!', 5);
     fwrite(big->chars5, big->l4 + 1, 1, big->outfile);
   }
-  fputs("~>\n", big->outfile); // write EOD mark
+  fputs("~>", big->outfile); // write EOD mark
   delete big;
 }
 
@@ -141,7 +141,7 @@ void Fl_PostScript_Graphics_Driver::write_rle85(uchar b, void *data) // sends on
       rle->run_length++;
       return;
     } else { // output the run
-      uchar c = (uchar)(257 - rle->run_length);
+      c = (uchar)(257 - rle->run_length);
       write85(rle->data85, &c, 1); // the run-length info
       write85(rle->data85, rle->buffer, 1); // the byte of the run
       rle->run_length = 0;
@@ -423,7 +423,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
         curdata += D;
       }
     }
-    close_rle85(big);
+    close_rle85(big); fputc('\n', output);
     big = prepare_rle85(output);
     for (j = ih - 1; j >= 0; j--) { // output mask data
       curmask = mask + j * (my/ih) * ((mx+7)/8);
@@ -467,8 +467,7 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
     }
   }
   close_rle85(big);
-  
-  fprintf(output,"restore\n");
+  fprintf(output,"\nrestore\n");
   delete[] rgbdata;
 }
 
@@ -637,7 +636,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
       di++;
     }
   }
-  close_rle85(rle85);
+  close_rle85(rle85); fputc('\n', output);
   pop_clip();
 }
 
