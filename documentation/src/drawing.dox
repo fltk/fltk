@@ -50,7 +50,7 @@ FLTK provides three functions that can be used to draw boxes for buttons
 and other UI controls. Each function uses the supplied upper-lefthand corner
 and width and height to determine where to draw the box.
 
-void fl_draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c);
+void fl_draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c)
 
 \par
 The \p %fl_draw_box() function draws a standard boxtype \p b
@@ -745,8 +745,8 @@ These functions allow you to draw interactive selection rectangles
 without using the overlay hardware. FLTK will XOR a single rectangle
 outline over a window.
 
-void fl_overlay_rect(int x, int y, int w, int h); <br>
-void fl_overlay_clear();
+void fl_overlay_rect(int x, int y, int w, int h) <br>
+void fl_overlay_clear()
 
 \par
 \p %fl_overlay_rect() draws a selection rectangle, erasing any
@@ -970,30 +970,40 @@ Finally, FLTK provides a special image class called Fl_Tiled_Image to
 tile another image object in the specified area. This class can be
 used to tile a background image in a Fl_Group widget, for example.
 
-virtual void Fl_Tiled_Image::copy(); <br>
-virtual Fl_Image* Fl_Tiled_Image::copy(int w, int h);
+virtual void Fl_Image::copy() <br>
+virtual Fl_Image* Fl_Image::copy(int w, int h)
 
 \par
 The \p copy() method creates a copy of the image. The second form
 specifies the new size of the image - the image is resized using the
-nearest-neighbor algorithm.
+nearest-neighbor algorithm (this is the default).
 
-void Fl_Tiled_Image::draw(int x, int y, int w, int h, int ox, int oy);
+\note
+As of FLTK 1.3.3 the image resizing algorithm can be changed.
+See Fl_Image::RGB_scaling(Fl_RGB_Scaling method)
+
+
+virtual void Fl_Image::draw(int x, int y, int w, int h, int ox, int oy)
 
 \par
 The \p draw() method draws the image object.
-<tt>x,y,w,h</tt> indicates a destination rectangle.
-<tt>ox,oy,w,h</tt> is a source rectangle. This source rectangle
+<tt>x,y,w,h</tt> indicates the destination rectangle.
+<tt>ox,oy,w,h</tt> is the source rectangle. This source rectangle
 is copied to the destination. The source rectangle may extend
 outside the image, i.e. \p ox and \p oy may be
 negative and \p w and \p h may be bigger than the
 image, and this area is left unchanged.
 
-void Fl_Tiled_Image::draw(int x, int y)
+\note
+See exceptions for Fl_Tiled_Image::draw() regarding arguments
+\p ox, \p oy, \p w, and \p h.
+
+virtual void Fl_Image::draw(int x, int y)
 
 \par
-Draws the image with the upper-left corner at <tt>x,y</tt>.
-This is the same as doing \p draw(x,y,img->w(),img->h(),0,0).
+Draws the image with the upper-left corner at <tt>x, y</tt>.
+This is the same as doing <tt>img->draw(x, y, img->w(), img->h(), 0, 0)</tt>
+where img is a pointer to any Fl_Image type.
 
 \subsection ssect_Offscreen Offscreen Drawing
 
