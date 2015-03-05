@@ -662,29 +662,37 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 
 /** \name Alignment Flags 
     Flags to control the label alignment. 
-    This controls how the label is displayed next to or inside the widget. 
-    The default value is FL_ALIGN_CENTER for most widgets, which centers the label
-    inside the widget.
 
-    Flags can be or'd to achieve a combination of alignments.
+    This controls how the label is displayed next to or inside the widget. 
+    The default value is FL_ALIGN_CENTER (0) for most widgets, which centers
+    the label inside the widget.
+
+    Flags can be or'd to achieve a combination of alignments, but there
+    are some "magic values" (e.g. combinations of TOP and BOTTOM and of
+    LEFT and RIGHT) that have special meanings (see below). For instance:<BR>
+    FL_ALIGN_TOP_LEFT == (FL_ALIGN_TOP|FL_ALIGN_LEFT) != FL_ALIGN_LEFT_TOP.
 
     \code
-    Outside alignments:
-               TOP_LEFT        TOP       TOP_RIGHT
-       LEFT_TOP+---------------------------------+RIGHT_TOP
-               |                                 |
-           LEFT|                                 |RIGHT
-               |                                 |
-    LEFT_BOTTOM+---------------------------------+RIGHT_BOTTOM
-               BOTTOM_RIGHT   BOTTOM   BOTTOM_LEFT
+    Outside alignments (FL_ALIGN_INSIDE is not set):
 
-    Inside alignments:
+               TOP_LEFT        TOP       TOP_RIGHT
+               +---------------------------------+
+       LEFT_TOP|                                 |RIGHT_TOP
+               |                                 |
+           LEFT|             CENTER              |RIGHT
+               |                                 |
+    LEFT_BOTTOM|                                 |RIGHT_BOTTOM
+               +---------------------------------+
+               BOTTOM_LEFT   BOTTOM   BOTTOM_RIGHT
+
+    Inside alignments (FL_ALIGN_INSIDE is set):
+
                +---------------------------------+
                |TOP_LEFT       TOP      TOP_RIGHT|
                |                                 |
-               |LEFT                        RIGHT|
+               |LEFT         CENTER         RIGHT|
                |                                 |
-               |BOTTOM_RIGHT  BOTTOM  BOTTOM_LEFT|
+               |BOTTOM_LEFT  BOTTOM  BOTTOM_RIGHT|
                +---------------------------------+
     \endcode
     \see #FL_ALIGN_CENTER, etc.
