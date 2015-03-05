@@ -56,7 +56,7 @@ void button_cb(Fl_Widget *,void *) {
 void image_cb(Fl_Widget *,void *) {
   if (imageb->value())
     text->image(img);
-  else 
+  else
     text->image(0);
   window->redraw();
 }
@@ -115,59 +115,83 @@ Fl_Menu_Item choices[] = {
 
 int main(int argc, char **argv) {
   img = new Fl_Pixmap(blast_xpm);
-  
-  window = new Fl_Double_Window(400,400);
 
-  input = new Fl_Input(50,375,350,25);
+  window = new Fl_Double_Window(440,420);
+
+  input = new Fl_Input(70,375,350,25,"Label:");
   input->static_value("The quick brown fox jumped over the lazy dog.");
   input->when(FL_WHEN_CHANGED);
   input->callback(input_cb);
+  input->tooltip("label text");
 
-  sizes= new Fl_Hor_Value_Slider(50,350,350,25,"Size:");
+  sizes= new Fl_Hor_Value_Slider(70,350,350,25,"Size:");
   sizes->align(FL_ALIGN_LEFT);
   sizes->bounds(1,64);
   sizes->step(1);
   sizes->value(14);
   sizes->callback(size_cb);
 
-  fonts=new Fl_Hor_Value_Slider(50,325,350,25,"Font:");
+  fonts=new Fl_Hor_Value_Slider(70,325,350,25,"Font:");
   fonts->align(FL_ALIGN_LEFT);
   fonts->bounds(0,15);
   fonts->step(1);
   fonts->value(0);
   fonts->callback(font_cb);
 
-  Fl_Group *g = new Fl_Group(50,275,350,50);
-  imageb = new Fl_Toggle_Button(50,275,50,25,"image");
+  Fl_Group *g = new Fl_Group(70,275,350,50);
+  imageb = new Fl_Toggle_Button(70,275,50,25,"image");
   imageb->callback(image_cb);
-  imageovertextb = new Fl_Toggle_Button(100,275,50,25,"I - T");
+  imageb->tooltip("show image");
+
+  imageovertextb = new Fl_Toggle_Button(120,275,50,25,"T o I");
   imageovertextb->callback(button_cb);
-  imagenexttotextb = new Fl_Toggle_Button(150,275,50,25,"I | T");
+  imageovertextb->tooltip("FL_ALIGN_TEXT_OVER_IMAGE");
+
+  imagenexttotextb = new Fl_Toggle_Button(170,275,50,25,"I | T");
   imagenexttotextb->callback(button_cb);
-  imagebackdropb = new Fl_Toggle_Button(200,275,50,25,"back");
+  imagenexttotextb->tooltip("FL_ALIGN_IMAGE_NEXT_TO_TEXT");
+
+  imagebackdropb = new Fl_Toggle_Button(220,275,50,25,"back");
   imagebackdropb->callback(button_cb);
-  leftb = new Fl_Toggle_Button(50,300,50,25,"left");
+  imagebackdropb->tooltip("FL_ALIGN_IMAGE_BACKDROP");
+
+  leftb = new Fl_Toggle_Button(70,300,50,25,"left");
   leftb->callback(button_cb);
-  rightb = new Fl_Toggle_Button(100,300,50,25,"right");
+  leftb->tooltip("FL_ALIGN_LEFT");
+
+  rightb = new Fl_Toggle_Button(120,300,50,25,"right");
   rightb->callback(button_cb);
-  topb = new Fl_Toggle_Button(150,300,50,25,"top");
+  rightb->tooltip("FL_ALIGN_RIGHT");
+
+  topb = new Fl_Toggle_Button(170,300,50,25,"top");
   topb->callback(button_cb);
-  bottomb = new Fl_Toggle_Button(200,300,50,25,"bottom");
+  topb->tooltip("FL_ALIGN_TOP");
+
+  bottomb = new Fl_Toggle_Button(220,300,50,25,"bottom");
   bottomb->callback(button_cb);
-  insideb = new Fl_Toggle_Button(250,300,50,25,"inside");
+  bottomb->tooltip("FL_ALIGN_BOTTOM");
+
+  insideb = new Fl_Toggle_Button(270,300,50,25,"inside");
   insideb->callback(button_cb);
-  wrapb = new Fl_Toggle_Button(300,300,50,25,"wrap");
+  insideb->tooltip("FL_ALIGN_INSIDE");
+
+  wrapb = new Fl_Toggle_Button(320,300,50,25,"wrap");
   wrapb->callback(button_cb);
-  clipb = new Fl_Toggle_Button(350,300,50,25,"clip");
+  wrapb->tooltip("FL_ALIGN_WRAP");
+
+  clipb = new Fl_Toggle_Button(370,300,50,25,"clip");
   clipb->callback(button_cb);
+  clipb->tooltip("FL_ALIGN_CLIP");
+
   g->resizable(insideb);
   g->end();
 
-  Fl_Choice *c = new Fl_Choice(50,250,200,25);
+  Fl_Choice *c = new Fl_Choice(70,250,200,25);
   c->menu(choices);
 
-  text= new Fl_Box(FL_FRAME_BOX,100,75,200,100,input->value());
+  text = new Fl_Box(FL_FRAME_BOX,120,75,200,100,input->value());
   text->align(FL_ALIGN_CENTER);
+
   window->resizable(text);
   window->end();
   window->show(argc,argv);
