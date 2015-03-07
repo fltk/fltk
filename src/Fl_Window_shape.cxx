@@ -360,13 +360,27 @@ void Fl_Window::draw() {
   }
 
   // The following is similar to Fl_Group::draw(), but ...
+  //
   //  - draws the box at (0,0), i.e. with x=0 and y=0 instead of x() and y()
-  //  - draws the label at (0,0): this draws the background image, if any
-  // Note: align() *must* be set correctly for this to work as expected
+  //  - does NOT draw the label (text)
+  //  - draws the image only if FL_ALIGN_INSIDE is set
+  //
+  // Note: The label (text) of top level windows is drawn in the title bar.
+  //   Other windows do not draw their labels at all, unless drawn by their
+  //   parent widgets or by special draw() methods (derived classes).
 
   if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
     draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
-    draw_label(0,0,w(),h());		 // draws label and/or bg image
+
+    if (image() && (align() & FL_ALIGN_INSIDE)) { // draw the image only
+      Fl_Label l1;
+      memset(&l1,0,sizeof(l1));
+      l1.align_ = align();
+      l1.image = image();
+      if (!active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
+      l1.type = labeltype();
+      l1.draw(0,0,w(),h(),align());
+    }
   }
   draw_children();
 
