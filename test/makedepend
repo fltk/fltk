@@ -61,7 +61,7 @@ blocks.o: pixmaps/magenta_bomb.xpm pixmaps/gray.xpm pixmaps/gray_bomb.xpm
 boxtype.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 boxtype.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 boxtype.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
-boxtype.o: ../FL/Fl_Image.H ../FL/Fl_Box.H
+boxtype.o: ../FL/Fl_Image.H ../FL/Fl_Box.H ../FL/fl_draw.H
 browser.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 browser.o: ../FL/Enumerations.H ../FL/Fl_Select_Browser.H ../FL/Fl_Browser.H
 browser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H

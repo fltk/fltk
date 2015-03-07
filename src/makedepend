@@ -242,6 +242,7 @@ Fl_Image.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Image.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Image.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
 Fl_Image.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Image.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H ../FL/Fl_PostScript.H
 Fl_Image.o: flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Image_Surface.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Copy_Surface.H
 Fl_Image_Surface.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
@@ -1019,7 +1020,8 @@ fl_vertex.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
 fl_vertex.o: ../FL/Fl_RGB_Image.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/math.h
 screen_xywh.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 screen_xywh.o: ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H ../config.h
-fl_utf8.o: ../config.h ../FL/filename.H Xutf8.h ../FL/fl_utf8.h
+fl_utf8.o: ../config.h ../FL/filename.H Xutf8.h ../FL/Fl_Export.H
+fl_utf8.o: ../FL/fl_utf8.h
 ps_image.o: ../FL/Fl_PostScript.H ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
 ps_image.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
 ps_image.o: ../FL/Fl_Window.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
@@ -1268,24 +1270,27 @@ numericsort.o: ../config.h ../FL/filename.H
 vsnprintf.o: flstring.h ../FL/Fl_Export.H ../config.h
 fl_utf.o: ../FL/fl_utf8.h xutf8/mk_wcwidth.c
 xutf8/case.o: xutf8/headers/case.h
-xutf8/is_right2left.o: Xutf8.h
+xutf8/is_right2left.o: Xutf8.h ../FL/Fl_Export.H
 xutf8/is_spacing.o: xutf8/headers/spacing.h
-xutf8/keysym2Ucs.o: Xutf8.h xutf8/imKStoUCS.c xutf8/Xlibint.h xutf8/Ximint.h
-xutf8/utf8Input.o: ../config.h Xutf8.h xutf8/lcUniConv/big5.h
-xutf8/utf8Input.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/cp936ext.h
-xutf8/utf8Input.o: xutf8/lcUniConv/jisx0201.h xutf8/lcUniConv/jisx0208.h
-xutf8/utf8Input.o: xutf8/lcUniConv/jisx0212.h xutf8/lcUniConv/ksc5601.h
-xutf8/utf8Utils.o: Xutf8.h
-xutf8/utf8Wrap.o: Xutf8.h xutf8/ucs2fontmap.c xutf8/lcUniConv/cp936ext.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/big5.h xutf8/lcUniConv/gb2312.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_10.h xutf8/lcUniConv/iso8859_11.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_13.h xutf8/lcUniConv/iso8859_14.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_15.h xutf8/lcUniConv/iso8859_2.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_3.h xutf8/lcUniConv/iso8859_4.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_5.h xutf8/lcUniConv/iso8859_6.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_7.h xutf8/lcUniConv/iso8859_8.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_9.h xutf8/lcUniConv/jisx0201.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0208.h xutf8/lcUniConv/jisx0212.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_r.h xutf8/lcUniConv/koi8_u.h
-xutf8/utf8Wrap.o: xutf8/lcUniConv/ksc5601.h xutf8/lcUniConv/cp1251.h
-xutf8/utf8Wrap.o: xutf8/headers/symbol_.h xutf8/headers/dingbats_.h
+xutf8/keysym2Ucs.o: Xutf8.h ../FL/Fl_Export.H xutf8/imKStoUCS.c
+xutf8/keysym2Ucs.o: xutf8/Xlibint.h xutf8/Ximint.h
+xutf8/utf8Input.o: ../config.h Xutf8.h ../FL/Fl_Export.H
+xutf8/utf8Input.o: xutf8/lcUniConv/big5.h xutf8/lcUniConv/gb2312.h
+xutf8/utf8Input.o: xutf8/lcUniConv/cp936ext.h xutf8/lcUniConv/jisx0201.h
+xutf8/utf8Input.o: xutf8/lcUniConv/jisx0208.h xutf8/lcUniConv/jisx0212.h
+xutf8/utf8Input.o: xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Utils.o: Xutf8.h ../FL/Fl_Export.H
+xutf8/utf8Wrap.o: Xutf8.h ../FL/Fl_Export.H xutf8/ucs2fontmap.c
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp936ext.h xutf8/lcUniConv/big5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/iso8859_10.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_11.h xutf8/lcUniConv/iso8859_13.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_14.h xutf8/lcUniConv/iso8859_15.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_2.h xutf8/lcUniConv/iso8859_3.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_4.h xutf8/lcUniConv/iso8859_5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_6.h xutf8/lcUniConv/iso8859_7.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_8.h xutf8/lcUniConv/iso8859_9.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0201.h xutf8/lcUniConv/jisx0208.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0212.h xutf8/lcUniConv/koi8_r.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_u.h xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp1251.h xutf8/headers/symbol_.h
+xutf8/utf8Wrap.o: xutf8/headers/dingbats_.h

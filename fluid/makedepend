@@ -311,10 +311,11 @@ file.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Choice.H
 file.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Int_Input.H
 file.o: ../FL/Fl_Input.H ../FL/Fl_Spinner.H ../FL/Fl_Repeat_Button.H
 file.o: ../FL/Fl.H ../FL/Fl_Return_Button.H ../FL/Fl_Round_Button.H
-file.o: ../FL/fl_message.H ../FL/fl_ask.H Fl_Widget_Type.h Fl_Type.h
-file.o: ../FL/Fl_Menu.H Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/fl_draw.H
-file.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
-file.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Input_Choice.H ../FL/Fl_Menu_Bar.H
+file.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Menu.H Fluid_Image.h
+file.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H ../FL/Fl_Pack.H
+file.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H
+file.o: ../FL/Fl_Input_Choice.H ../FL/Fl_Menu_Bar.H ../FL/fl_message.H
+file.o: ../FL/fl_ask.H
 fluid.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fluid.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 fluid.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
