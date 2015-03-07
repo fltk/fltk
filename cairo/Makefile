@@ -16,6 +16,9 @@
 #     http://www.fltk.org/str.php
 #
 
+# Note:	see ../configure.in and/or ../makeinclude for definition of
+#	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_API_VERSION (x.y)
+
 FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
@@ -37,27 +40,27 @@ $(CAIROLIBNAME): $(CAIROOBJECTS)
 	$(LIBCOMMAND) $@ $(CAIROOBJECTS)
 	$(RANLIB) $@
 
-libfltk_cairo.so.1.3: $(CAIROOBJECTS) ../src/libfltk.so.1.3
+libfltk_cairo.so.$(FL_API_VERSION): $(CAIROOBJECTS) ../src/libfltk.so.$(FL_API_VERSION)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
 	$(RM) libfltk_cairo.so
 	$(LN) $(CAIRODSONAME) libfltk_cairo.so
 
-libfltk_cairo.sl.1.3: $(CAIROOBJECTS) ../src/libfltk.sl.1.3
+libfltk_cairo.sl.$(FL_API_VERSION): $(CAIROOBJECTS) ../src/libfltk.sl.$(FL_API_VERSION)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
 	$(RM) libfltk_cairo.sl
-	$(LN) libfltk_cairo.sl.1.3 libfltk_cairo.sl
+	$(LN) libfltk_cairo.sl.$(FL_API_VERSION) libfltk_cairo.sl
 
-libfltk_cairo.1.3.dylib: $(CAIROOBJECTS) ../src/libfltk.1.3.dylib
+libfltk_cairo.$(FL_API_VERSION).dylib: $(CAIROOBJECTS) ../src/libfltk.$(FL_API_VERSION).dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.3 \
-		-compatibility_version 1.3.0 \
+		-current_version $(FL_VERSION) \
+		-compatibility_version $(FL_ABI_VERSION) \
 		$(CAIROOBJECTS)  -L../src $(LDLIBS) $(CAIROLIBS) -lfltk
 	$(RM) libfltk_cairo.dylib
-	$(LN) libfltk_cairo.1.3.dylib libfltk_cairo.dylib
+	$(LN) libfltk_cairo.$(FL_API_VERSION).dylib libfltk_cairo.dylib
 
 libfltk_cairo_s.a: $(CAIROOBJECTS)
 	echo $(DSOCOMMAND) libfltk_cairo_s.o ...
@@ -68,13 +71,13 @@ libfltk_cairo_s.a: $(CAIROOBJECTS)
 	$(CHMOD) +x src/libfltk_cairo_s.a
 
 
-cygfltknox_cairo-1.3.dll: $(CAIROLIBNAME) ../src/cygfltknox-1.3.dll
+cygfltknox_cairo-$(FL_API_VERSION).dll: $(CAIROLIBNAME) ../src/cygfltknox-$(FL_API_VERSION).dll
 	echo $(DSOCOMMAND) $(CAIROLIBNAME) ...
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_cairo.dll.a \
 		-L../src -lfltk $(CAIROLIBS) $(LDLIBS)
 
-mgwfltknox_cairo-1.3.dll: $(CAIROLIBNAME) ../src/mgwfltknox-1.3.dll
+mgwfltknox_cairo-$(FL_API_VERSION).dll: $(CAIROLIBNAME) ../src/mgwfltknox-$(FL_API_VERSION).dll
 	echo $(DSOCOMMAND) $(CAIROLIBNAME) ...
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_cairo.dll.a \
@@ -98,32 +101,32 @@ install: $(CAIROLIBNAME) $(CAIRODSONAME)
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(CAIROLIBNAME) $(DESTDIR)$(libdir)
 
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.1.3; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.$(FL_API_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.so*;\
-		$(INSTALL_LIB) libfltk_cairo.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.so.1.3 $(DESTDIR)$(libdir)/libfltk_cairo.so;\
+		$(INSTALL_LIB) libfltk_cairo.so.$(FL_API_VERSION) $(DESTDIR)$(libdir); \
+		$(LN) libfltk_cairo.so.$(FL_API_VERSION) $(DESTDIR)$(libdir)/libfltk_cairo.so;\
 	fi
-	if test x$(CAIRODSONAME) = xsrc/libfltk_cairo.sl.1.3; then\
+	if test x$(CAIRODSONAME) = xsrc/libfltk_cairo.sl.$(FL_API_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.sl*;\
-		$(INSTALL_LIB) libfltk_cairo.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.sl.1.3 $(DESTDIR)$(libdir)/libfltk_cairo.sl;\
+		$(INSTALL_LIB) libfltk_cairo.sl.$(FL_API_VERSION) $(DESTDIR)$(libdir); \
+		$(LN) libfltk_cairo.sl.$(FL_API_VERSION) $(DESTDIR)$(libdir)/libfltk_cairo.sl;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.1.3.dylib; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.$(FL_API_VERSION).dylib; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.*dylib;\
-		$(INSTALL_LIB) libfltk_cairo.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.1.3.dylib $(DESTDIR)$(libdir)/libfltk_cairo.dylib;\
+		$(INSTALL_LIB) libfltk_cairo.$(FL_API_VERSION).dylib $(DESTDIR)$(libdir); \
+		$(LN) libfltk_cairo.$(FL_API_VERSION).dylib $(DESTDIR)$(libdir)/libfltk_cairo.dylib;\
 	fi
 	if test x$(CAIRODSONAME) = xlibfltk_cairo_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo_s.a;\
 		$(INSTALL_LIB) libfltk_cairo_s.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(CAIRODSONAME) = xcygfltknox_cairo-1.3.dll; then\
+	if test x$(CAIRODSONAME) = xcygfltknox_cairo-$(FL_API_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(INSTALL_LIB) $(CAIRODSONAME) $(DESTDIR)$(bindir); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 		$(INSTALL_LIB) libfltk_cairo.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-1.3.dll; then\
+	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-$(FL_API_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(INSTALL_LIB) $(CAIRODSONAME) $(DESTDIR)$(bindir); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
@@ -138,23 +141,23 @@ uninstall:
 	if test x$(CAIROLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(CAIROLIBNAME);\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.1.3; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.$(FL_API_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.so*;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.sl.1.3; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.sl.$(FL_API_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.sl*;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.1.3.dylib; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.$(FL_API_VERSION).dylib; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.*dylib;\
 	fi
 	if test x$(CAIRODSONAME) = xlibfltk_cairo_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo_s.a;\
 	fi
-	if test x$(CAIRODSONAME) = xcygfltknox_cairo-1.3.dll; then\
+	if test x$(CAIRODSONAME) = xcygfltknox_cairo-$(FL_API_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 	fi
-	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-1.3.dll; then\
+	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-$(FL_API_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 	fi

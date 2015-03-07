@@ -16,6 +16,18 @@
 #      http://www.fltk.org/str.php
 #
 
+# FLTK version numbers
+
+FL_MAJOR_VERSION	= @FL_MAJOR_VERSION@
+FL_MINOR_VERSION	= @FL_MINOR_VERSION@
+FL_PATCH_VERSION	= @FL_PATCH_VERSION@
+
+FL_API_VERSION		= @FL_API_VERSION@
+FL_ABI_VERSION		= @FL_ABI_VERSION@
+FL_VERSION		= @FL_VERSION@
+
+# Standard configure variables
+
 prefix		= @prefix@
 exec_prefix	= @exec_prefix@
 bindir		= @bindir@
