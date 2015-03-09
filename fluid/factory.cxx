@@ -167,7 +167,7 @@ static Fl_Round_Button_Type Fl_Round_Button_type;
 
 ////////////////////////////////////////////////////////////////
 
-extern int compile_only;
+extern int batch_mode;
 
 #include <FL/Fl_Browser.H>
 #include <FL/Fl_Check_Browser.H>
@@ -201,7 +201,7 @@ public:
     Fl_Browser* b = new Fl_Browser(x,y,w,h);
     // Fl_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!compile_only) {
+    if (!batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
 	sprintf(buffer,"Browser Line %d",i);
@@ -249,7 +249,7 @@ public:
     Fl_Check_Browser* b = new Fl_Check_Browser(x,y,w,h);
     // Fl_Check_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!compile_only) {
+    if (!batch_mode) {
       char buffer[20];
       for (int i = 1; i <= 20; i++) {
 	sprintf(buffer,"Browser Line %d",i);
@@ -285,7 +285,7 @@ public:
   virtual const char *alt_type_name() {return "fltk::TreeBrowser";}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Tree* b = new Fl_Tree(x,y,w,h);
-    if (!compile_only) {
+    if (!batch_mode) {
       b->add("/A1/B1/C1");
       b->add("/A1/B1/C2");
       b->add("/A1/B2/C1");
@@ -324,7 +324,7 @@ public:
     Fl_File_Browser* b = new Fl_File_Browser(x,y,w,h);
     // Fl_File_Browser::add calls fl_height(), which requires the X display open.
     // Avoid this when compiling so it works w/o a display:
-    if (!compile_only) {
+    if (!batch_mode) {
       b->load(".");
     }
     return b;
@@ -640,7 +640,7 @@ public:
   virtual const char *alt_type_name() {return "fltk::HelpView";}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Help_View *myo = new Fl_Help_View(x,y,w,h);
-    if (!compile_only) {
+    if (!batch_mode) {
       myo->value("<HTML><BODY><H1>Fl_Help_View Widget</H1>"
                  "<P>This is a Fl_Help_View widget.</P></BODY></HTML>");
     }

@@ -634,8 +634,10 @@ void new_cb(Fl_Widget *, void *v) {
 }
 
 int exit_early = 0;
-int compile_only = 0;
-int compile_strings = 0;
+int update_file = 0;		// fluid -u
+int compile_file = 0;		// fluid -c
+int compile_strings = 0;	// fluic -cs
+int batch_mode = 0;		// if set (-c, -u) don't open display
 int header_file_set = 0;
 int code_file_set = 0;
 const char* header_file_name = ".h";
@@ -668,12 +670,12 @@ void write_cb(Fl_Widget *, void *) {
   } else {
     strlcpy(hname, header_file_name, sizeof(hname));
   }
-  if (!compile_only) goto_source_dir();
+  if (!batch_mode) goto_source_dir();
   int x = write_code(cname,hname);
-  if (!compile_only) leave_source_dir();
+  if (!batch_mode) leave_source_dir();
   strlcat(cname, " and ", sizeof(cname));
   strlcat(cname, hname, sizeof(cname));
-  if (compile_only) {
+  if (batch_mode) {
     if (!x) {fprintf(stderr,"%s : %s\n",cname,strerror(errno)); exit(1);}
   } else {
     if (!x) {
@@ -693,10 +695,10 @@ void write_strings_cb(Fl_Widget *, void *) {
   char sname[FL_PATH_MAX];
   strlcpy(sname, fl_filename_name(filename), sizeof(sname));
   fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
-  if (!compile_only) goto_source_dir();
+  if (!batch_mode) goto_source_dir();
   int x = write_strings(sname);
-  if (!compile_only) leave_source_dir();
-  if (compile_only) {
+  if (!batch_mode) leave_source_dir();
+  if (batch_mode) {
     if (x) {fprintf(stderr,"%s : %s\n",sname,strerror(errno)); exit(1);}
   } else {
     if (x) {
@@ -1097,7 +1099,7 @@ Fl_Menu_Item Main_Menu[] = {
 extern void fill_in_New_Menu();
 
 void scheme_cb(Fl_Choice *, void *) {
-  if (compile_only)
+  if (batch_mode)
     return;
 
   switch (scheme_choice->value()) {
@@ -1169,7 +1171,7 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
 }
 
 void make_main_window() {
-  if (!compile_only) {
+  if (!batch_mode) {
     fluid_prefs.get("snap", snap, 1);
     fluid_prefs.get("gridx", gridx, 5);
     fluid_prefs.get("gridy", gridy, 5);
@@ -1200,7 +1202,7 @@ void make_main_window() {
     main_window->end();
   }
 
-  if (!compile_only) {
+  if (!batch_mode) {
     load_history();
     make_settings_window();
     make_global_settings_window();
@@ -1420,14 +1422,14 @@ static bool prepare_shell_command(const char * &command)  { // common pre-shell 
     save_cb(0, 0);
   }
   if (shell_writecode_button->value()) {
-    compile_only = 1;
+    batch_mode = 1;
     write_cb(0, 0);
-    compile_only = 0;
+    batch_mode = 0;
   }
   if (shell_writemsgs_button->value()) {
-    compile_only = 1;
+    batch_mode = 1;
     write_strings_cb(0, 0);
-    compile_only = 0;
+    batch_mode = 0;
   }
   return true;
 }
@@ -1510,7 +1512,7 @@ void set_filename(const char *c) {
   if (filename) free((void *)filename);
   filename = c ? strdup(c) : NULL;
 
-  if (filename && !compile_only) 
+  if (filename && !batch_mode)
     update_history(filename);
 
   set_modflag(modflag);
@@ -1647,7 +1649,7 @@ void set_modflag(int mf) {
   // if the UI was modified in any way, update the Source View panel
   if (sourceview_panel && sourceview_panel->visible() && sv_autorefresh->value())
   {
-    // we will only update ealiest 0.5 seconds after the last change, and only
+    // we will only update earliest 0.5 seconds after the last change, and only
     // if no other change was made, so dragging a widget will not generate any
     // CPU load
     Fl::remove_timeout(update_sourceview_timer, 0);
@@ -1662,8 +1664,9 @@ void set_modflag(int mf) {
 ////////////////////////////////////////////////////////////////
 
 static int arg(int argc, char** argv, int& i) {
-  if (argv[i][1] == 'c' && !argv[i][2]) {compile_only = 1; i++; return 1;}
-  if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_only = 1; compile_strings = 1; i++; return 1;}
+  if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
+  if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
+  if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_file++; compile_strings++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'o' && !argv[i][2] && i+1 < argc) {
     code_file_name = argv[i+1];
     code_file_set  = 1;
@@ -1715,6 +1718,7 @@ int main(int argc,char **argv) {
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
     static const char *msg = 
       "usage: %s <switches> name.fl\n"
+      " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"
       " -c : write .cxx and .h and exit\n"
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
@@ -1752,7 +1756,7 @@ int main(int argc,char **argv) {
 
 
   if (c) set_filename(c);
-  if (!compile_only) {
+  if (!batch_mode) {
 #ifdef __APPLE__
     fl_open_callback(apple_open_cb);
 #endif // __APPLE__
@@ -1770,15 +1774,23 @@ int main(int argc,char **argv) {
   }
   undo_suspend();
   if (c && !read_file(c,0)) {
-    if (compile_only) {
+    if (batch_mode) {
       fprintf(stderr,"%s : %s\n", c, strerror(errno));
       exit(1);
     }
     fl_message("Can't read %s: %s", c, strerror(errno));
   }
   undo_resume();
-  if (compile_only) {
-    if (compile_strings) write_strings_cb(0,0);
+
+  if (update_file) {		// fluid -u
+    write_file(c,0);
+    if (!compile_file)
+      exit(0);
+  }
+
+  if (compile_file) {		// fluid -c[s]
+    if (compile_strings)
+      write_strings_cb(0,0);
     write_cb(0,0);
     exit(0);
   }

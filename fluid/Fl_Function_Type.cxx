@@ -33,7 +33,7 @@ extern const char* i18n_file;
 extern const char* i18n_set;
 extern char i18n_program[];
 
-extern int compile_only;
+extern int batch_mode;
 
 extern void redraw_browser();
 extern void goto_source_dir();
@@ -920,9 +920,9 @@ void Fl_Data_Type::write_code1() {
     }
   }
   // if we are in interactive mode, we pop up a warning dialog 
-  // giving the error: (compile_only && !write_sourceview)
+  // giving the error: (batch_mode && !write_sourceview) ???
   if (message && !write_sourceview) {
-    if (compile_only)
+    if (batch_mode)
       fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn);
     else
       fl_alert("%s\n%s\n", message, fn);

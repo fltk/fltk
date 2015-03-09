@@ -123,7 +123,8 @@ file from a <tt>.fl</tt> file.  To do this type:
 fluid -c filename.fl
 \endcode
 
-This will read the <tt>filename.fl</tt> file and write
+This is the same as the menu 'File/Write Code...'.
+It will read the <tt>filename.fl</tt> file and write
 <tt>filename.cxx</tt> and <tt>filename.h</tt>. Any leading
 directory on <tt>filename.fl</tt> will be stripped, so they are
 always written to the current directory. If there are any errors
@@ -145,6 +146,32 @@ files to be compiled:
 .fl.h .fl.cxx:
 	fluid -c $<
 \endcode
+
+If you use
+
+\code
+fluid -cs filename.fl
+\endcode
+
+FLUID will also write the "strings" for internationalization in file
+'filename.txt' (menu: 'File/Write Strings...').
+
+Finally there is another option which is useful for program developers
+who have many .fl files and want to upgrade them to the current FLUID
+version. FLUID will read the \p filename.fl file, save it, and exit
+immediately. This writes the file with current syntax and options and
+the current FLTK version in the header of the file. Use
+
+\code
+fluid -u filename.fl
+\endcode
+
+to 'upgrade' \p filename.fl . You may combine this with '-c' or '-cs'.
+
+\note All these commands overwrite existing files w/o warning. You should
+paticularly take care when running 'fluid -u' since this overwrites the
+original .fl source file.
+
 
 \section fluid_tutorial A Short Tutorial
 
