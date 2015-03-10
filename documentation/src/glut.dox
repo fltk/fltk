@@ -37,6 +37,7 @@ to compile:
 \li \p glutGet(GLUT_SCREEN_WIDTH_MM)
 \li \p glutGet(GLUT_WINDOW_NUM_CHILDREN)
 \li \p glutInitDisplayMode(GLUT_LUMINANCE)
+\li \p glutKeyboardUpFunc(void(*callback)(unsigned char key, int x, int y))
 \li \p glutLayerGet(GLUT_HAS_OVERLAY)
 \li \p glutLayerGet(GLUT_LAYER_IN_USE)
 \li \p glutPushWindow()
