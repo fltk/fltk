@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,8 +29,8 @@ Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
     label {About FLUID} open selected
-    xywh {340 195 345 180} type Double color 50 selection_color 47 hotspot
-    code0 {\#include "../src/flstring.h"} non_modal visible
+    xywh {340 195 345 180} type Double color 50 selection_color 47 hide hotspot
+    code0 {\#include "../src/flstring.h"} non_modal
   } {
     Fl_Box {} {
       image {icons/fluid-96.xpm} xywh {10 10 115 120}
@@ -45,7 +45,7 @@ Version x.x.x}
       code2 {o->copy_label(about);}
     }
     Fl_Box {} {
-      label {Copyright 1998-2014 by
+      label {Copyright 1998-2015 by
 Bill Spitzak and others}
       xywh {135 90 200 45} align 148
     }

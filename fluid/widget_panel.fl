@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // Widget panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,8 +25,8 @@ comment {//
 Function {make_widget_panel()} {open
 } {
   Fl_Window {} {open
-    xywh {383 206 420 360} type Double labelsize 11 align 80 resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} visible
+    xywh {383 206 420 360} type Double labelsize 11 align 80 hide resizable hotspot
+    code0 {o->size_range(o->w(), o->h());}
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open

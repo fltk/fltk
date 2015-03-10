@@ -1,7 +1,7 @@
 CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 
 	New features and extensions
-  
+
 	- Added full support of true subwindows to the Mac OS X platform.
 	  Window nesting to any depth is possible. An Fl_Gl_Window window or
 	  subwindow can contain Fl_Window's as subwindows.
@@ -17,8 +17,8 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	  or not (STR #3142). It also captures subwindows of GL windows.
 	- Fl::delete_widget() now hides the widget or window immediately
 	  (i.e. when called) - only destruction is delayed as before.
-  - The PostScript code output when printing images under Linux/Unix
-    is quite smaller due to use of lossless compression techniques.
+	- The PostScript code output when printing images under Linux/Unix
+	  is quite smaller due to use of lossless compression techniques.
 
 	Bug fixes
 
@@ -45,7 +45,7 @@ CHANGES IN FLTK 1.3.3					RELEASED: Nov 03 2014
 	- New bilinear scaling method for RGB images (STR #2869, STR #3062).
 	- New method Fl_Widget::top_window() (STR #2948).
 	- New method Fl_Widget::top_window_offset() (part of STR #2944).
-  - New Fl_Tree_Item methods label_x(), label_y(), label_w(), label_h().
+	- New Fl_Tree_Item methods label_x(), label_y(), label_w(), label_h().
 	- New methods Fl::enable_im() and Fl::disable_im() to enable/disable
 	  system Input Methods (IM).
 	- New methods Fl::add_system_handler() and Fl::remove_system_handler()
@@ -220,7 +220,7 @@ CHANGES IN FLTK 1.3.1					RELEASED: Nov 06 2012
 	- Created the FL_SCREEN_CONFIGURATION_CHANGED event that is triggered
 	  when a screen is added, removed, moved or when resolution is changed
 	  (STR #2600)
-	- Improved the description of page size and orientation by 
+	- Improved the description of page size and orientation by
 	  Fl_PostScript_File_Device.
 	- Added support for horizontal wheel movement under X11 and Windows
 	  Vista and above (STR #2644).
@@ -268,10 +268,10 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	  to be declared const, corrected an Fl_Text_Buffer attrib. typo
 	- All draw() methods of widgets are now protected (STR #2142).
 	- Changed Fl_Group::clip_children() to public (STR #2017)
-	- Changed socket library to winsock2 (ws2_32.dll) instead of 
-	  wsock32.dll for Windows. The dll is now loaded dynamically only 
-	  if/when needed.	  
-	- Changed hide() and show() methods. They are now virtual from 
+	- Changed socket library to winsock2 (ws2_32.dll) instead of
+	  wsock32.dll for Windows. The dll is now loaded dynamically only
+	  if/when needed.
+	- Changed hide() and show() methods. They are now virtual from
 	  Fl_Widget.
 	- Added new label and image alignments (STR #2269)
 	- Added global UI options (STR #2471)
@@ -284,7 +284,7 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	- Added interface to set color chooser mode (STR #2407)
 	- Added Fl_Menu_::find_item by callback
 	- Added loading jpeg images from memory
-        - Added support for shortcuts for Fl_Input_, Fl_Value_Input, and 
+        - Added support for shortcuts for Fl_Input_, Fl_Value_Input, and
 	  Fl_Text_Display derived widgets (STR #1770)
         - Added Fl_Menu_ methods: insert(), find_index(), clear_submenu()
 	- Hotspot behavior of fl_message() and other common dialogs is now
@@ -345,7 +345,7 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	- Added callback when double-clicking file in a file chooser
 	  (STR #2346)
 	- Added alternative Xft font names (STR #2215)
-	- Added mouse!=0 check in Fl_Glut_Window::handle (STR #2381)	
+	- Added mouse!=0 check in Fl_Glut_Window::handle (STR #2381)
 	- Added indexing to Fl_Preferences
 	- Added OS X cursor control to Fl_Input (STR #2169)
 	- Added menu shortcut alignment for OS X
@@ -353,18 +353,18 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	  for the first dropped character
 	- Added flexible gap size for text buffer (STR #2046)
 	- Added clarification to Fl_GL_Window mode function (STR #1945)
-	- Added alternative text input awareness on OS X 
+	- Added alternative text input awareness on OS X
 	- Improved handling of composed keys in OS X 10.5 and up
 	- Improved stability of fl_read_image (STR #2021)
 	- Much faster fl_read_image() for Windows (STR #2387).
 	- Improved support for faulty X11 clients (STR #2385)
-	- Integrated default menu into Demo test app	
+	- Integrated default menu into Demo test app
 	- Replaced _WIN32 symbols that had come with UTF-8 and the
 	  new Fl_Table widget with WIN32
 	- Widgets now remove stale entries from the default callback
 	  queue when they are deleted (STR #2302)
 	- Managing all Widget flags in a single location now (STR #2161)
-	- File chooser preview now recognizes UTF-8 encoded 
+	- File chooser preview now recognizes UTF-8 encoded
 	  text files (STR #2218)
 	- Setting a default font for Xft (STR #2216)
 	- Restructured the unittest application
@@ -396,13 +396,13 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	- Fixed handling of missing fonts in Xft (STR #2355)
 	- Fixed OpenGL hide/show issue in OS X (STR #2260)
 	- Fixed File Chooser preview hang if a device was choosen
-	- Fixed blinking of selection when the mouse was dragged 
+	- Fixed blinking of selection when the mouse was dragged
 	  outside of the Fl_Text_* widget
 	- Fixed Unicode support for Fl_Text_* widgets
 	- Fixed menu and shortcut handling (STR #2243)
 	- Fixed fltk-config to give --libs on one line (STR #2408)
 	- Fixed outside label redraw damage areas (STR #2436)
-	- Fixed compile errors when HAVE_LIBJPEG was not defined 
+	- Fixed compile errors when HAVE_LIBJPEG was not defined
 	  (STR #2382)
 	- Fixed special handling for ISO back-tab keycode (STR #2369)
 	- Fixed static allocation in Fl_Tabs (STR #2370)
@@ -417,10 +417,10 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	- Fixed possibility of wrong flags() in Fl_Window::iconlabel()
 	  (STR #2161)
 	- Fixed Scrollbar events when max is less than min (STR #2283)
-	- Fixed crash in test/Editor when freeing buffer 
-	  too soon (STR #2294) 
+	- Fixed crash in test/Editor when freeing buffer
+	  too soon (STR #2294)
 	- Fixed Fl_Preferences Cygwin wide character bug (STR #2164)
-	- Fixed sorting in Fl_Browser - last item would not 
+	- Fixed sorting in Fl_Browser - last item would not
 	  be sorted (STR #2300)
 	- Fixed window levels in OS X Cocoa (STR #2316)
 	- Fixed a buffer overflow in fl_utf8from_mb() (STR #2279)
@@ -451,7 +451,7 @@ CHANGES IN FLTK 1.3.0					RELEASED: Jun 16 2011
 	- Fixed Copy/Paste operations with UTF-8, UTF-16 support and
 	  fltk1.1 compatibility. (STR #2104, 2121).
 	- Fixed fl_set_spot() for Windows (STR #2101)
-	- Fixed callback that would not be called when shortcut was used 
+	- Fixed callback that would not be called when shortcut was used
 	  with radio and toggle buttons in default FL_RELEASE mode.
 	- Fixed a problem with TrackMouseEvent() (Windows only) that would
 	  generate wrong FL_LEAVE events with subwindows. TrackMouseEvent

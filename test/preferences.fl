@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public local
@@ -45,7 +45,7 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {408 202 298 311} type Double visible
+    xywh {408 202 298 311} type Double hide
   } {
     Fl_Button {} {
       label Cancel

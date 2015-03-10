@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {../FL/Fl_Help_Dialog.H} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -51,7 +51,7 @@ class FL_EXPORT Fl_Help_Dialog {open
   } {
     Fl_Window window_ {
       label {Help Dialog} open
-      private xywh {398 64 530 385} type Double resizable size_range {260 150 0 0} visible
+      private xywh {398 64 530 385} type Double hide resizable size_range {260 150 0 0}
     } {
       Fl_Group {} {open selected
         xywh {10 10 511 25}

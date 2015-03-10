@@ -311,7 +311,7 @@ Fl_Window::shape_data_type* Fl_Window::shape_data_ = NULL;
  
  A usage example is found at example/shapedwindow.cxx.
  
- \version 1.3.3 (and requires compilation with -DFLTK_ABI_VERSION = 10303)
+ \version 1.3.3 (and requires compilation with FLTK_ABI_VERSION >= 10303)
  */
 void Fl_Window::shape(const Fl_Image* img) {
 #if FLTK_ABI_VERSION >= 10303

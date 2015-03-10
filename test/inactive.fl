@@ -1,11 +1,11 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 Function {} {open
 } {
   Fl_Window {} {open
-    xywh {390 200 420 369} type Double resizable visible
+    xywh {390 200 420 369} type Double hide resizable
   } {
     Fl_Group the_group {
       label {activate()/deactivate() called on this Fl_Group} open

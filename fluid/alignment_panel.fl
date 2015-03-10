@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -62,9 +62,9 @@ Function {make_project_window()} {open
 } {
   Fl_Window project_window {
     label {Project Settings} open
-    xywh {396 475 399 252} type Double
+    xywh {396 475 399 252} type Double hide
     code0 {\#include <FL/Fl_Preferences.H>}
-    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
+    code1 {\#include <FL/Fl_Tooltip.H>} modal
   } {
     Fl_Button {} {
       label Close
@@ -161,7 +161,7 @@ decl {void scheme_cb(Fl_Choice *, void *);} {public local
 Function {make_settings_window()} {} {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {393 191 349 241} type Double non_modal visible
+    xywh {393 191 349 241} type Double hide non_modal
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
@@ -265,7 +265,7 @@ load_history();}
 Function {make_shell_window()} {} {
   Fl_Window shell_window {
     label {Shell Command} open
-    xywh {761 190 365 125} type Double visible
+    xywh {761 190 365 125} type Double hide
   } {
     Fl_Input shell_command_input {
       label {Command:}
@@ -330,7 +330,7 @@ Function {make_shell_window()} {} {
 Function {make_layout_window()} {} {
   Fl_Window grid_window {
     label {Layout Settings} open
-    xywh {812 369 310 245} type Double non_modal visible
+    xywh {812 369 310 245} type Double hide non_modal
   } {
     Fl_Input horizontal_input {
       label x
@@ -526,7 +526,7 @@ global_settings_window->show();} {}
 Function {make_global_settings_window()} {} {
   Fl_Window global_settings_window {
     label {FLTK Preferences} open
-    xywh {1147 190 400 378} type Double color 50 visible
+    xywh {1147 190 400 378} type Double color 50 hide
   } {
     Fl_Group {} {
       label {Keyboard Focus Options} open

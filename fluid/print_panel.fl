@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // FLUID print panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -41,7 +41,7 @@ Function {make_print_panel()} {open
 } {
   Fl_Window print_panel {
     label Print open
-    xywh {394 209 465 235} type Double modal visible
+    xywh {394 209 465 235} type Double hide modal
   } {
     Fl_Group print_panel_controls {open
       xywh {10 10 447 216}
@@ -215,7 +215,7 @@ print_collate_group[1 - i]->hide();}
     label {Printer Properties}
     callback {print_properties_panel->hide();
 print_update_status();} open
-    xywh {400 537 290 130} type Double modal visible
+    xywh {400 537 290 130} type Double hide modal
   } {
     Fl_Choice print_page_size {
       label {Page Size:}

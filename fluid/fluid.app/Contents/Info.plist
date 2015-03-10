@@ -9,11 +9,11 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.fltk.fluid</string>
 	<key>CFBundleVersion</key>
-	<string>1.3.3</string>
+	<string>1.3.4</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 1998-2014 by Bill Spitzak and others</string>
+	<string>Copyright 1998-2015 by Bill Spitzak and others</string>
 	<key>CFAppleHelpAnchor</key>
 	<string>help</string>
 	<key>CFBundleName</key>
@@ -25,9 +25,9 @@
 	<key>CFBundleIconFile</key>
 	<string>fluid.icns</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.3</string>
+	<string>1.3.4</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.3.3, Copyright 1998-2014 by Bill Spitzak and others</string>
+	<string>1.3.4, Copyright 1998-2015 by Bill Spitzak and others</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

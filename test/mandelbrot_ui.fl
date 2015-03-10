@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include "mandelbrot.h"} {public local
@@ -13,8 +13,8 @@ class Drawing_Window {open
   Function {make_window()} {open return_type void
   } {
     Fl_Window window {open
-      xywh {515 343 450 520} type Single resizable
-      code0 {o->size_range(220,220);} visible
+      xywh {515 343 450 520} type Single hide resizable
+      code0 {o->size_range(220,220);}
     } {
       Fl_Box d {
         user_data this user_data_type {void*}

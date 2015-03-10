@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 class CubeViewUI {open
@@ -8,7 +8,7 @@ class CubeViewUI {open
   } {
     Fl_Window mainWindow {
       label CubeView open
-      private xywh {428 124 415 405} type Double box UP_BOX labelsize 12 resizable visible
+      private xywh {428 124 415 405} type Double box UP_BOX labelsize 12 hide resizable
     } {
       Fl_Group {} {open
         xywh {5 3 374 399}

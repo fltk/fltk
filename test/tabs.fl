@@ -1,12 +1,12 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {
     label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open
-    xywh {423 205 642 337} type Double resizable visible
+    xywh {423 205 642 337} type Double hide resizable
   } {
     Fl_Box {} {
       label {class Fl_Tabs}

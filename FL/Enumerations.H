@@ -59,7 +59,7 @@
 
    FLTK remains binary compatible between patches.
  */
-#define FL_PATCH_VERSION	3
+#define FL_PATCH_VERSION	4
 
 /**
     The FLTK version number as a \em double.

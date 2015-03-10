@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -76,11 +76,11 @@ class FL_EXPORT Fl_File_Chooser {open
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();} open
-      private xywh {507 327 490 380} type Double resizable
+      private xywh {507 327 490 380} type Double hide resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
-      code3 {\#include <string.h>} modal visible
+      code3 {\#include <string.h>} modal
     } {
       Fl_Group {} {open
         private xywh {10 10 470 25}
@@ -181,8 +181,8 @@ window->hide();}
     }
     Fl_Window favWindow {
       label {Manage Favorites}
-      private xywh {413 100 355 150} type Double resizable
-      code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0} visible
+      private xywh {413 100 355 150} type Double hide resizable
+      code0 {favWindow->label(manage_favorites_label);} modal size_range {181 150 0 0}
     } {
       Fl_File_Browser favList {
         callback {favoritesCB(favList);}

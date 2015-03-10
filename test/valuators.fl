@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 Function {callback(Fl_Widget* o, void*)} {open private return_type void
@@ -12,8 +12,8 @@ Function {} {open
 } {
   Fl_Window {} {
     label {Valuator classes, showing values for type()} open
-    xywh {400 199 580 510} type Double color 43 selection_color 43
-    code0 {\#include <stdio.h>} visible
+    xywh {400 199 580 510} type Double color 43 selection_color 43 hide
+    code0 {\#include <stdio.h>}
   } {
     Fl_Box {} {
       label Fl_Slider

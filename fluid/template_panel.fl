@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0303 
+version 1.0304 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -7,7 +7,7 @@ comment {//
 //
 // FLUID template support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -71,7 +71,7 @@ template_browser->deselect();
 template_name->value("");
 template_instance->value("");
 template_panel->hide();} open
-    xywh {398 200 460 355} type Double resizable modal visible
+    xywh {398 200 460 355} type Double hide resizable modal
   } {
     Fl_Browser template_browser {
       label {Available Templates:}
