@@ -3003,7 +3003,8 @@ Fl_Help_View::handle(int event)	// I - Event to handle
       }
       return 1;
     case FL_SHORTCUT: {
-      if (Fl::event_state() == FL_COMMAND) {
+      int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT|FL_SHIFT);
+      if ( mods == FL_COMMAND) {
 	switch ( Fl::event_key() ) {
 	  case 'a': select_all(); redraw(); return 1;
 	  case 'c':
