@@ -3,7 +3,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,8 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_XBM_Image.H>
 #include <FL/Fl_XPM_Image.H>
-
+#include <FL/Fl_Preferences.H>
+#include <FL/fl_draw.H>
 
 //
 // Global class vars...
@@ -89,6 +90,9 @@ Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
   original_    = 0;
   image_       = 0;
   alloc_image_ = 0;
+#if FLTK_ABI_VERSION >= 10304
+  scaled_image_= 0;
+#endif
 }
 
 
@@ -109,6 +113,9 @@ Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
   image_       = img;
   alloc_image_ = !img;
   original_    = 1;
+#if FLTK_ABI_VERSION >= 10304
+  scaled_image_= 0;
+#endif
 
   if (!img) reload();
   else update();
@@ -170,6 +177,9 @@ Fl_Shared_Image::update() {
 Fl_Shared_Image::~Fl_Shared_Image() {
   if (name_) delete[] (char *)name_;
   if (alloc_image_) delete image_;
+#if FLTK_ABI_VERSION >= 10304
+  delete scaled_image_;
+#endif
 }
 
 
@@ -317,12 +327,94 @@ Fl_Shared_Image::desaturate() {
 //
 // 'Fl_Shared_Image::draw()' - Draw a shared image...
 //
-
-void
-Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
+void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
+#if FLTK_ABI_VERSION >= 10304
+  if (!image_) {
+    Fl_Image::draw(X, Y, W, H, cx, cy);
+    return;
+  }
+  if (w() == image_->w() && h() == image_->h()) {
+    image_->draw(X, Y, W, H, cx, cy);
+    return;
+  }
+  fl_push_clip(X, Y, W, H);
+  int use_scaled_image = 0, done;
+  if (image_->d() == 0) { // handles Fl_Bitmap
+    use_scaled_image = 1;
+  }
+  else if (image_->count() >= 2) { // handles Fl_Pixmap
+    done = fl_graphics_driver->draw_scaled((Fl_Pixmap*)image_, X-cx, Y-cy, w(), h());
+    if (done == 0) use_scaled_image = 1;
+  }
+  else { // handles Fl_RGB_Image
+    done = fl_graphics_driver->draw_scaled((Fl_RGB_Image*)image_, X-cx, Y-cy, w(), h());
+    if (done == 0) use_scaled_image = 1;
+  }
+  if (use_scaled_image) {
+    if (scaled_image_ && (scaled_image_->w() != w() || scaled_image_->h() != h())) {
+      delete scaled_image_;
+      scaled_image_ = NULL;
+    }
+    if (!scaled_image_) {
+      Fl_RGB_Scaling previous = RGB_scaling();
+      RGB_scaling(scaling_algorithm_); // useless but no harm if image_ is not an Fl_RGB_Image
+      scaled_image_ = image_->copy(w(), h());
+      RGB_scaling(previous);
+    }
+    scaled_image_->draw(X-cx, Y-cy, scaled_image_->w(), scaled_image_->h(), 0, 0);
+  }
+  fl_pop_clip();
+#else
   if (image_) image_->draw(X, Y, W, H, cx, cy);
   else Fl_Image::draw(X, Y, W, H, cx, cy);
+#endif // FLTK_ABI_VERSION
 }
+
+/** Sets the drawing size of the shared image.
+ This function gives the shared image its own size, independently from the size of the original image
+ that is typically larger than the shared image.
+ This can be useful to draw a shared image on a drawing surface whose resolution is higher
+ than the drawing unit for this surface. Examples of such drawing surfaces: laser printers,
+ PostScript files, PDF printers, retina displays on Apple hardware.
+
+ \param width,height   maximum width and height (in drawing units) to use when drawing the shared image
+ \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
+ \param can_expand  if null, the width and height of the shared image will not exceed those of the original image
+ 
+ \version 1.3.4 and requires compiling with FLTK_ABI_VERSION = 10304
+ 
+ Example code: scale an image to fit in a box
+ \code
+ Fl_Box *b = ...  // a box
+ Fl_Shared_Image *shared = Fl_Shared_Image::get("/path/to/picture.jpeg"); // read a picture file
+ b->image(shared); // use the shared image as the box image
+ b->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_CLIP); // the image is to be drawn centered in the box
+ shared->scale(b->w(), b->h(), 1); // set the drawing size of the shared image to the size of the box
+ \endcode
+ */
+void Fl_Shared_Image::scale(int width, int height, int proportional, int can_expand)
+{
+#if FLTK_ABI_VERSION >= 10304
+  w(width);
+  h(height);
+  if (!image_) return;
+  float fw = image_->w() / float(width);
+  float fh = image_->h() / float(height);
+  if (proportional) {
+    if (fh > fw) fw = fh;
+    else fh = fw;
+  }
+  if (!can_expand) {
+    if (fw < 1) fw = 1;
+    if (fh < 1) fh = 1;
+  }
+  w(image_->w() / fw);
+  h(image_->h() / fh);
+#endif
+}
+
+
+Fl_RGB_Scaling Fl_Shared_Image::scaling_algorithm_ = FL_RGB_SCALING_BILINEAR;
 
 
 //
@@ -408,6 +500,18 @@ Fl_Shared_Image* Fl_Shared_Image::get(const char *n, int W, int H) {
   return temp;
 }
 
+/** Builds a shared image from a pre-existing Fl_RGB_Image
+ \param rgb  an Fl_RGB_Image used to build a new shared image.
+ \param own_it 1 if the shared image should delete \p rgb when it is itself deleted, 0 otherwise
+ \version 1.3.4
+ */
+Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
+{
+  Fl_Shared_Image *shared = new Fl_Shared_Image(Fl_Preferences::newUUID(), rgb);
+  shared->alloc_image_ = own_it;
+  shared->add();
+  return shared;
+}
 
 
 /** Adds a shared image handler, which is basically a test function for adding new formats */

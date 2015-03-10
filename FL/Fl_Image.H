@@ -183,6 +183,7 @@ class FL_EXPORT Fl_Image {
 class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   friend class Fl_Quartz_Graphics_Driver;
   friend class Fl_GDI_Graphics_Driver;
+  friend class Fl_GDI_Printer_Graphics_Driver;
   friend class Fl_Xlib_Graphics_Driver;
   static size_t max_size_;
 public:

@@ -3,7 +3,7 @@
 //
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +21,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Printer.H>
 #include <string.h>
 #include <errno.h>
 #include <FL/Fl_File_Chooser.H>
@@ -35,7 +36,7 @@ static char name[1024];
 
 void load_file(const char *n) {
   if (img) {
-    img->release();
+    ((Fl_Shared_Image*)b->image())->release();
     img = 0L;
   }
   if (fl_filename_isdir(n)) {
@@ -46,8 +47,9 @@ void load_file(const char *n) {
     b->redraw();
     return;
   }
-  img = Fl_Shared_Image::get(n);
-  if (!img) {
+  Fl_Shared_Image *img2 = Fl_Shared_Image::get(n);
+ 
+  if (!img2) {
     b->label("@filenew"); // show an empty document
     b->labelsize(64);
     b->labelcolor(FL_LIGHT2);
@@ -55,18 +57,23 @@ void load_file(const char *n) {
     b->redraw();
     return;
   }
-  if (img->w() > b->w() || img->h() > b->h()) {
-    Fl_Image *temp;
-    if (img->w() > img->h()) temp = img->copy(b->w(), b->h() * img->h() / img->w());
-    else temp = img->copy(b->w() * img->w() / img->h(), b->h());
-
-    img->release();
-    img = (Fl_Shared_Image *)temp;
-  }
-  b->label(name);
+  img = img2;
   b->labelsize(14);
   b->labelcolor(FL_FOREGROUND_COLOR);
+#if FLTK_ABI_VERSION >= 10304
   b->image(img);
+  img->scale(b->w(), b->h());
+#else
+  if (img->w() <= b->w() && img->h() <= b->h()) b->image(img);
+  else {
+    float fw = img->w() / float(b->w());
+    float fh = img->h() / float(b->h());
+    float f = fw > fh ? fw : fh;
+    b->image(img->copy(img->w()/f, img->h()/f));
+    img->release();
+  }
+#endif
+  b->label(NULL);
   b->redraw();
 }
 
@@ -83,6 +90,20 @@ void button_cb(Fl_Widget *,void *) {
   puts(fname ? fname : "(null)"); fflush(stdout);
   fl_file_chooser_callback(0);
 }
+void print_cb(Fl_Widget *widget, void *) {
+  Fl_Printer printer;
+  int width, height;
+  if (printer.start_job(1)) return;
+  printer.start_page();
+  printer.printable_rect(&width, &height);
+  float fw = widget->window()->decorated_w() / float(width);
+  float fh = widget->window()->decorated_h() / float(height);
+  if (fh > fw) fw = fh;
+  printer.scale(1/fw);
+  printer.print_window(widget->window());
+  printer.end_page();
+  printer.end_job();
+}
 
 int dvisual = 0;
 int arg(int, char **argv, int &i) {
@@ -97,15 +118,18 @@ int main(int argc, char **argv) {
 
   Fl::args(argc,argv,i,arg);
 
-  Fl_Double_Window window(400,435); ::w = &window;
+  Fl_Double_Window window(400,450); ::w = &window;
   Fl_Box b(10,45,380,380); ::b = &b;
   b.box(FL_THIN_DOWN_BOX);
-  b.align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER);
+  b.align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER|FL_ALIGN_CLIP);
   Fl_Button button(150,5,100,30,"load");
   button.callback(button_cb);
   if (!dvisual) Fl::visual(FL_RGB);
   if (argv[1]) load_file(argv[1]);
-  window.resizable(window);
+  window.resizable(b);
+  Fl_Button print(300,425,50,25,"Print");
+  print.callback(print_cb);
+
   window.show(argc,argv);
   return Fl::run();
 }

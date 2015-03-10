@@ -402,6 +402,14 @@ public:
   inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   /** Sets the current Fl_Font_Descriptor for the graphics driver */
   inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
+#if FLTK_ABI_VERSION >= 10304 || defined(FL_DOXYGEN)
+  virtual
+#endif
+  int draw_scaled(Fl_RGB_Image *img, int X, int Y, int W, int H);
+#if FLTK_ABI_VERSION >= 10304 || defined(FL_DOXYGEN)
+  virtual
+#endif
+  int draw_scaled(Fl_Pixmap *img, int X, int Y, int W, int H);
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 };
@@ -428,6 +436,8 @@ public:
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_RGB_Image *img, int XP, int YP, int WP, int HP);
+  int draw_scaled(Fl_Pixmap *img, int XP, int YP, int WP, int HP);
   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
@@ -488,6 +498,8 @@ public:
   const char *class_name() {return class_id;};
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_RGB_Image *img, int X, int Y, int W, int H);
+  int draw_scaled(Fl_Pixmap *img, int X, int Y, int W, int H);
 };
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
