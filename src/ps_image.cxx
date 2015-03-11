@@ -602,27 +602,14 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int 
   mask=0;
 }
 
-int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP){
-  int X, Y, W, H;
-  clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
-  if (W == 0 || H == 0) return 1;
-  push_no_clip(); // remove the FLTK clip that can't be rescaled
-  clocale_printf("%d %d %i %i CL\n", X, Y, W, H);
-  clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/rgb->w(), float(HP)/rgb->h());
-  draw(rgb, 0, 0, rgb->w(), rgb->h(), 0, 0);
-  clocale_printf("GR GR\n");
-  pop_clip(); // restore FLTK's clip
-  return 1;
-}
-
-int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Pixmap *img, int XP, int YP, int WP, int HP){
+int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP){
   int X, Y, W, H;
   clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
   if (W == 0 || H == 0) return 1;
   push_no_clip(); // remove the FLTK clip that can't be rescaled
   clocale_printf("%d %d %i %i CL\n", X, Y, W, H);
   clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->w(), float(HP)/img->h());
-  draw(img, 0, 0, img->w(), img->h(), 0, 0);
+  img->draw(0, 0, img->w(), img->h(), 0, 0);
   clocale_printf("GR GR\n");
   pop_clip(); // restore FLTK's clip
   return 1;

@@ -548,20 +548,12 @@ static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h
   return 0;
 }
 
-/** Draws an Fl_RGB_Image scaled to width \p W & height \p H with top-left corner at \em X,Y
+/** Draws an Fl_Image scaled to width \p W & height \p H with top-left corner at \em X,Y
  \return zero when the graphics driver doesn't implement scaled drawing, non-zero if it does implement it.
  */
-int Fl_Graphics_Driver::draw_scaled(Fl_RGB_Image *img, int X, int Y, int W, int H) {
+int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
   return 0;
 }
-
-/** Draws an Fl_Pixmap scaled to width \p W & height \p H with top-left corner at \em X,Y
- \return zero when the graphics driver doesn't implement scaled drawing, non-zero if it does implement it.
- */
-int Fl_Graphics_Driver::draw_scaled(Fl_Pixmap *img, int X, int Y, int W, int H) {
-  return 0;
-}
-
 
 #ifdef __APPLE__
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
@@ -627,7 +619,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   }
 }
 
-int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_RGB_Image *img, int XP, int YP, int WP, int HP) {
+int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   int X, Y, W, H;
   fl_clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
   if (W == 0 || H == 0) return 1;
@@ -636,7 +628,7 @@ int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_RGB_Image *img, int XP, int YP, in
   CGContextClipToRect(fl_gc, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
   CGContextTranslateCTM(fl_gc, XP, YP);
   CGContextScaleCTM(fl_gc, float(WP)/img->w(), float(HP)/img->h());
-  draw(img, 0, 0, img->w(), img->h(), 0, 0);
+  img->draw(0, 0, img->w(), img->h(), 0, 0);
   CGContextRestoreGState(fl_gc);
   fl_pop_clip(); // restore FLTK's clip
   return 1;
@@ -688,7 +680,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
   }
 }
 
-int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_RGB_Image *img, int XP, int YP, int WP, int HP) {
+int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   XFORM old_tr, tr;
   GetWorldTransform(fl_gc, &old_tr); // storing old transform
   tr.eM11 = float(WP)/float(img->w());
@@ -697,9 +689,9 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_RGB_Image *img, int XP, int Y
   tr.eDx =  XP;
   tr.eDy =  YP;
   ModifyWorldTransform(fl_gc, &tr, MWT_LEFTMULTIPLY);
-  Fl_GDI_Graphics_Driver::draw(img, 0, 0, img->w(), img->h(), 0, 0);
+  img->draw(0, 0, img->w(), img->h(), 0, 0);
   SetWorldTransform(fl_gc, &old_tr);
-return 1;
+  return 1;
 }
 
 #else

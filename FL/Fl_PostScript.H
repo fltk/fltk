@@ -213,8 +213,7 @@ class Clip {
   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-  int draw_scaled(Fl_RGB_Image *img, int XP, int YP, int WP, int HP);
-  int draw_scaled(Fl_Pixmap *img, int XP, int YP, int WP, int HP);
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
   int clocale_printf(const char *format, ...);
   ~Fl_PostScript_Graphics_Driver();
 };

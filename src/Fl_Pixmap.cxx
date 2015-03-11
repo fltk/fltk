@@ -135,21 +135,6 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int
   copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
 }
 
-int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Pixmap *img, int XP, int YP, int WP, int HP) {
-  int X, Y, W, H;
-  fl_clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
-  if (W == 0 || H == 0) return 1;
-  fl_push_no_clip(); // remove the FLTK clip that can't be rescaled
-  CGContextSaveGState(fl_gc);
-  CGContextClipToRect(fl_gc, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
-  CGContextTranslateCTM(fl_gc, XP, YP);
-  CGContextScaleCTM(fl_gc, float(WP)/img->w(), float(HP)/img->h());
-  draw(img, 0, 0, img->w(), img->h(), 0, 0);
-  CGContextRestoreGState(fl_gc);
-  fl_pop_clip(); // restore FLTK's clip
-  return 1;
-}
-
 #elif defined(WIN32)
 void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
@@ -195,20 +180,6 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
     copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
   }
 }
-
-int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Pixmap *img, int XP, int YP, int WP, int HP) {
-  XFORM old_tr, tr;
-  GetWorldTransform(fl_gc, &old_tr); // storing old transform
-  tr.eM11 = float(WP)/float(img->w());
-  tr.eM22 = float(HP)/float(img->h());
-  tr.eM12 = tr.eM21 = 0;
-  tr.eDx =  XP;
-  tr.eDy =  YP;
-  ModifyWorldTransform(fl_gc, &tr, MWT_LEFTMULTIPLY);
-  draw(img, 0, 0, img->w(), img->h(), 0, 0);
-  SetWorldTransform(fl_gc, &old_tr);
-}
-
 
 #else // Xlib
 void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
