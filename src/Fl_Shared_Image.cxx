@@ -338,7 +338,11 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     return;
   }
   fl_push_clip(X, Y, W, H);
-  int done = fl_graphics_driver->draw_scaled(image_, X-cx, Y-cy, w(), h());
+  int done = 0;
+  // don't call Fl_Graphics_Driver::draw_scaled(Fl_Image*,...) for an enlarged Fl_Bitmap or Fl_Pixmap
+  if ((d() != 0 && count() < 2) || (w() <= image_->w() && h() <= image_->h())) {
+    done = fl_graphics_driver->draw_scaled(image_, X-cx, Y-cy, w(), h());
+  }
   if (!done) {
     if (scaled_image_ && (scaled_image_->w() != w() || scaled_image_->h() != h())) {
       delete scaled_image_;
