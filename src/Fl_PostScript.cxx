@@ -1561,7 +1561,7 @@ int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
 
   // first test version for print dialog
   if (!print_panel) make_print_panel();
-  print_load();
+  printing_style style = print_load();
   print_selection->deactivate();
   print_all->setonly();
   print_all->do_callback();
@@ -1635,9 +1635,10 @@ int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   // Print: pipe the output into the lp command...
 
   char command[1024];
-  snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
-             printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5),
-	     "FLTK", media);
+  if (style == SystemV) snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
+        printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5), "FLTK", media);
+  else snprintf(command, sizeof(command), "lpr -h -P %s -# %d -T FLTK ",
+                printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5));
 
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->output = popen(command, "w");

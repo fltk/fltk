@@ -35,9 +35,10 @@
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Progress.H>
+enum printing_style {SystemV, BSD};
 static Fl_Double_Window* make_print_panel();
 static void print_cb(Fl_Return_Button *, void *); 
-static void print_load();
+static printing_style print_load();
 static void print_update_status();
 #endif
 
