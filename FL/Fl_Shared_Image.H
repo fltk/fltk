@@ -31,7 +31,7 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
 
 // Shared images class. 
 /**
-  This class supports caching, loading,
+  This class supports caching, loading, scaling,
   and drawing of image files. Most applications will also want to
   link against the fltk_images library and call the
   fl_register_images()

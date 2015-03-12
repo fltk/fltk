@@ -365,10 +365,11 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
 
 /** Sets the drawing size of the shared image.
  This function gives the shared image its own size, independently from the size of the original image
- that is typically larger than the shared image.
+ that is typically larger.
  This can be useful to draw a shared image on a drawing surface whose resolution is higher
- than the drawing unit for this surface. Examples of such drawing surfaces: laser printers,
- PostScript files, PDF printers, retina displays on Apple hardware.
+ than the drawing unit for this surface: all pixels of the original image become available to fill
+ an area of the drawing surface sized at <tt>width,height</tt>.
+ Examples of such drawing surfaces: laser printers, PostScript files, PDF printers, retina displays on Apple hardware.
 
  \param width,height   maximum width and height (in drawing units) to use when drawing the shared image
  \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
@@ -380,9 +381,9 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
  \code
  Fl_Box *b = ...  // a box
  Fl_Shared_Image *shared = Fl_Shared_Image::get("/path/to/picture.jpeg"); // read a picture file
+ shared->scale(b->w(), b->h(), 1); // set the drawing size of the shared image to the size of the box
  b->image(shared); // use the shared image as the box image
  b->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_CLIP); // the image is to be drawn centered in the box
- shared->scale(b->w(), b->h(), 1); // set the drawing size of the shared image to the size of the box
  \endcode
  */
 void Fl_Shared_Image::scale(int width, int height, int proportional, int can_expand)
@@ -453,7 +454,7 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *n, int W, int H) {
  \brief Find or load an image that can be shared by multiple widgets.
  
  Gets a shared image, if it exists already ; it will return it.
- If it does not exist or if it exist but with other size, 
+ If it does not exist or if it exists but with other size, 
  then the existing image is deleted and replaced
  by a new image from the n filename of the proper dimension.
  If n is not a valid image filename, then get() will return NULL.
