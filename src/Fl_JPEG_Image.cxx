@@ -155,7 +155,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
   
   jpeg_create_decompress(&dinfo);
   jpeg_stdio_src(&dinfo, fp);
-  jpeg_read_header(&dinfo, 1);
+  jpeg_read_header(&dinfo, TRUE);
   
   dinfo.quantize_colors      = (boolean)FALSE;
   dinfo.out_color_space      = JCS_RGB;
@@ -337,7 +337,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
   
   jpeg_create_decompress(&dinfo);
   jpeg_mem_src(&dinfo, data);
-  jpeg_read_header(&dinfo, 1);
+  jpeg_read_header(&dinfo, TRUE);
   
   dinfo.quantize_colors      = (boolean)FALSE;
   dinfo.out_color_space      = JCS_RGB;
