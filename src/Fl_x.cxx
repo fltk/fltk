@@ -2234,6 +2234,7 @@ int Fl_X::ewmh_supported() {
 }
 
 int Fl_X::xrender_supported() {
+#if HAVE_XRENDER
   static int result = -1;
 
   if (result == -1) {
@@ -2244,6 +2245,9 @@ int Fl_X::xrender_supported() {
   }
 
   return result;
+#else
+  return 0;
+#endif
 }
 
 extern Fl_Window *fl_xfocus;
