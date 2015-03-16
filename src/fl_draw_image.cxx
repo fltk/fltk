@@ -317,7 +317,7 @@ static void xrgb_converter(const uchar *from, uchar *to, int w, int delta) {
 }
 
 static void argb_premul_converter(const uchar *from, uchar *to, int w, int delta) {
-  INNARDS32((from[3] << 24) +
+  INNARDS32((unsigned(from[3]) << 24) +
              (((from[0] * from[3]) / 255) << 16) +
              (((from[1] * from[3]) / 255) << 8) +
              ((from[2] * from[3]) / 255));
