@@ -20,6 +20,7 @@ include ../makeinclude
 
 CPPFILES =\
 	unittests.cxx \
+	animated.cxx \
 	adjuster.cxx \
 	arc.cxx \
 	ask.cxx \
@@ -98,6 +99,7 @@ CPPFILES =\
 
 ALL =	\
 	unittests$(EXEEXT) \
+	animated$(EXEEXT) \
 	adjuster$(EXEEXT) \
 	arc$(EXEEXT) \
 	ask$(EXEEXT) \
@@ -285,6 +287,8 @@ unittests.o: unittests.cxx unittest_about.cxx unittest_points.cxx unittest_lines
 	unittest_schemes.cxx
 
 adjuster$(EXEEXT): adjuster.o
+
+animated$(EXEEXT): animated.o
 
 arc$(EXEEXT): arc.o
 
