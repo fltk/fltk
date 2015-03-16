@@ -2,6 +2,7 @@
  * jmemmgr.c
  *
  * Copyright (C) 1991-1997, Thomas G. Lane.
+ * Modified 2011-2012 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -213,7 +214,7 @@ print_mem_stats (j_common_ptr cinfo, int pool_id)
 #endif /* MEM_STATS */
 
 
-LOCAL(void)
+LOCAL(noreturn_t)
 out_of_memory (j_common_ptr cinfo, int which)
 /* Report an out-of-memory error and stop execution */
 /* If we compiled MEM_STATS support, report alloc requests before dying */
@@ -303,7 +304,7 @@ alloc_small (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
       if (slop < MIN_SLOP)	/* give up when it gets real small */
 	out_of_memory(cinfo, 2); /* jpeg_get_small failed */
     }
-    mem->total_space_allocated += (long) (min_request + slop);
+    mem->total_space_allocated += min_request + slop;
     /* Success, initialize the new pool header and add to end of list */
     hdr_ptr->hdr.next = NULL;
     hdr_ptr->hdr.bytes_used = 0;
@@ -363,7 +364,7 @@ alloc_large (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
 					    SIZEOF(large_pool_hdr));
   if (hdr_ptr == NULL)
     out_of_memory(cinfo, 4);	/* jpeg_get_large failed */
-  mem->total_space_allocated += (long) (sizeofobject + SIZEOF(large_pool_hdr));
+  mem->total_space_allocated += sizeofobject + SIZEOF(large_pool_hdr);
 
   /* Success, initialize the new pool header and add to list */
   hdr_ptr->hdr.next = mem->large_list[pool_id];
@@ -821,7 +822,7 @@ access_virt_sarray (j_common_ptr cinfo, jvirt_sarray_ptr ptr,
       undef_row -= ptr->cur_start_row; /* make indexes relative to buffer */
       end_row -= ptr->cur_start_row;
       while (undef_row < end_row) {
-	jzero_far((void FAR *) ptr->mem_buffer[undef_row], bytesperrow);
+	FMEMZERO((void FAR *) ptr->mem_buffer[undef_row], bytesperrow);
 	undef_row++;
       }
     } else {
@@ -906,7 +907,7 @@ access_virt_barray (j_common_ptr cinfo, jvirt_barray_ptr ptr,
       undef_row -= ptr->cur_start_row; /* make indexes relative to buffer */
       end_row -= ptr->cur_start_row;
       while (undef_row < end_row) {
-	jzero_far((void FAR *) ptr->mem_buffer[undef_row], bytesperrow);
+	FMEMZERO((void FAR *) ptr->mem_buffer[undef_row], bytesperrow);
 	undef_row++;
       }
     } else {
@@ -973,7 +974,7 @@ free_pool (j_common_ptr cinfo, int pool_id)
 		  lhdr_ptr->hdr.bytes_left +
 		  SIZEOF(large_pool_hdr);
     jpeg_free_large(cinfo, (void FAR *) lhdr_ptr, space_freed);
-    mem->total_space_allocated -= (long) space_freed;
+    mem->total_space_allocated -= space_freed;
     lhdr_ptr = next_lhdr_ptr;
   }
 
@@ -987,7 +988,7 @@ free_pool (j_common_ptr cinfo, int pool_id)
 		  shdr_ptr->hdr.bytes_left +
 		  SIZEOF(small_pool_hdr);
     jpeg_free_small(cinfo, (void *) shdr_ptr, space_freed);
-    mem->total_space_allocated -= (long) space_freed;
+    mem->total_space_allocated -= space_freed;
     shdr_ptr = next_shdr_ptr;
   }
 }

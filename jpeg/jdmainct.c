@@ -2,6 +2,7 @@
  * jdmainct.c
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
+ * Modified 2002-2012 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -194,7 +195,7 @@ alloc_funny_pointers (j_decompress_ptr cinfo)
 LOCAL(void)
 make_funny_pointers (j_decompress_ptr cinfo)
 /* Create the funny pointer lists discussed in the comments above.
- * The actual workspace is already allocated (in mainp->buffer),
+ * The actual workspace is already allocated (in main->buffer),
  * and the space for the pointer lists is allocated too.
  * This routine just fills in the curiously ordered lists.
  * This will be repeated at the beginning of each pass.
@@ -482,7 +483,7 @@ jinit_d_main_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
   mainp = (my_main_ptr)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_main_controller));
-  cinfo->main = (struct jpeg_d_main_controller *) mainp;
+  cinfo->main = &mainp->pub;
   mainp->pub.start_pass = start_pass_main;
 
   if (need_full_buffer)		/* shouldn't happen */
@@ -505,8 +506,8 @@ jinit_d_main_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     rgroup = (compptr->v_samp_factor * compptr->DCT_v_scaled_size) /
       cinfo->min_DCT_v_scaled_size; /* height of a row group of component */
     mainp->buffer[ci] = (*cinfo->mem->alloc_sarray)
-			((j_common_ptr) cinfo, JPOOL_IMAGE,
-			 compptr->width_in_blocks * compptr->DCT_h_scaled_size,
-			 (JDIMENSION) (rgroup * ngroups));
+      ((j_common_ptr) cinfo, JPOOL_IMAGE,
+       compptr->width_in_blocks * ((JDIMENSION) compptr->DCT_h_scaled_size),
+       (JDIMENSION) (rgroup * ngroups));
   }
 }

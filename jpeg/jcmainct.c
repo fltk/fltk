@@ -2,6 +2,7 @@
  * jcmainct.c
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
+ * Modified 2003-2012 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -181,14 +182,16 @@ process_data_buffer_main (j_compress_ptr cinfo,
       for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
 	   ci++, compptr++) {
 	mainp->buffer[ci] = (*cinfo->mem->access_virt_sarray)
-	  ((j_common_ptr) cinfo, mainp->whole_image[ci],
-	   mainp->cur_iMCU_row * (compptr->v_samp_factor * DCTSIZE),
-	   (JDIMENSION) (compptr->v_samp_factor * DCTSIZE), writing);
+	  ((j_common_ptr) cinfo, mainp->whole_image[ci], mainp->cur_iMCU_row *
+	   ((JDIMENSION) (compptr->v_samp_factor * cinfo->min_DCT_v_scaled_size)),
+	   (JDIMENSION) (compptr->v_samp_factor * cinfo->min_DCT_v_scaled_size),
+	   writing);
       }
       /* In a read pass, pretend we just read some source data. */
       if (! writing) {
-	*in_row_ctr += cinfo->max_v_samp_factor * DCTSIZE;
-	mainp->rowgroup_ctr = DCTSIZE;
+	*in_row_ctr += (JDIMENSION)
+	  (cinfo->max_v_samp_factor * cinfo->min_DCT_v_scaled_size);
+	mainp->rowgroup_ctr = (JDIMENSION) cinfo->min_DCT_v_scaled_size;
       }
     }
 
@@ -198,9 +201,9 @@ process_data_buffer_main (j_compress_ptr cinfo,
       (*cinfo->prep->pre_process_data) (cinfo,
 					input_buf, in_row_ctr, in_rows_avail,
 					mainp->buffer, &mainp->rowgroup_ctr,
-					(JDIMENSION) DCTSIZE);
+					(JDIMENSION) cinfo->min_DCT_v_scaled_size);
       /* Return to application if we need more data to fill the iMCU row. */
-      if (mainp->rowgroup_ctr < DCTSIZE)
+      if (mainp->rowgroup_ctr < (JDIMENSION) cinfo->min_DCT_v_scaled_size)
 	return;
     }
 
@@ -251,7 +254,7 @@ jinit_c_main_controller (j_compress_ptr cinfo, boolean need_full_buffer)
   mainp = (my_main_ptr)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
 				SIZEOF(my_main_controller));
-  cinfo->main = (struct jpeg_c_main_controller *) mainp;
+  cinfo->main = &mainp->pub;
   mainp->pub.start_pass = start_pass_main;
 
   /* We don't need to create a buffer in raw-data mode. */
@@ -269,9 +272,10 @@ jinit_c_main_controller (j_compress_ptr cinfo, boolean need_full_buffer)
 	 ci++, compptr++) {
       mainp->whole_image[ci] = (*cinfo->mem->request_virt_sarray)
 	((j_common_ptr) cinfo, JPOOL_IMAGE, FALSE,
-	 compptr->width_in_blocks * compptr->DCT_h_scaled_size,
-	 (JDIMENSION) jround_up((long) compptr->height_in_blocks,
-				(long) compptr->v_samp_factor) * DCTSIZE,
+	 compptr->width_in_blocks * ((JDIMENSION) compptr->DCT_h_scaled_size),
+	 ((JDIMENSION) jround_up((long) compptr->height_in_blocks,
+				 (long) compptr->v_samp_factor)) *
+	 ((JDIMENSION) cinfo->min_DCT_v_scaled_size),
 	 (JDIMENSION) (compptr->v_samp_factor * compptr->DCT_v_scaled_size));
     }
 #else
@@ -286,7 +290,7 @@ jinit_c_main_controller (j_compress_ptr cinfo, boolean need_full_buffer)
 	 ci++, compptr++) {
       mainp->buffer[ci] = (*cinfo->mem->alloc_sarray)
 	((j_common_ptr) cinfo, JPOOL_IMAGE,
-	 compptr->width_in_blocks * compptr->DCT_h_scaled_size,
+	 compptr->width_in_blocks * ((JDIMENSION) compptr->DCT_h_scaled_size),
 	 (JDIMENSION) (compptr->v_samp_factor * compptr->DCT_v_scaled_size));
     }
   }

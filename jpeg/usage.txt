@@ -77,6 +77,13 @@ The basic command line switches for cjpeg are:
 			saying -grayscale, you'll get a smaller JPEG file that
 			takes less time to process.
 
+	-rgb		Create RGB JPEG file.
+			Using this switch suppresses the conversion from RGB
+			colorspace input to the default YCbCr JPEG colorspace.
+			You can use this switch in combination with the
+			-block N switch (see below) for lossless JPEG coding.
+			See also the -rgb1 switch below.
+
 	-optimize	Perform optimization of entropy encoding parameters.
 			Without this, default encoding parameters are used.
 			-optimize usually makes the JPEG file a little smaller,
@@ -151,6 +158,11 @@ file size is about the same --- often a little smaller.
 
 Switches for advanced users:
 
+	-arithmetic	Use arithmetic coding.
+			CAUTION: arithmetic coded JPEG is not yet widely
+			implemented, so many decoders will be unable to
+			view an arithmetic coded JPEG file at all.
+
 	-block N	Set DCT block size.  All N from 1 to 16 are possible.
 			Default is 8 (baseline format).
 			Larger values produce higher compression,
@@ -163,6 +175,37 @@ Switches for advanced users:
 			enabled JPEG is not yet widely implemented, so many
 			decoders will be unable to view a SmartScale extended
 			JPEG file at all.
+
+	-rgb1		Create RGB JPEG file with reversible color transform.
+			Works like the -rgb switch (see above) and inserts a
+			simple reversible color transform into the processing
+			which significantly improves the compression.
+			Use this switch in combination with the -block N
+			switch (see above) for lossless JPEG coding.
+			CAUTION: A decoder with inverse color transform
+			support is required for this feature.  Reversible
+			color transform support is not yet widely implemented,
+			so many decoders will be unable to view a reversible
+			color transformed JPEG file at all.
+
+	-bgycc		Create big gamut YCC JPEG file.
+			In this type of encoding the color difference
+			components are quantized further by a factor of 2
+			compared to the normal Cb/Cr values, thus creating
+			space to allow larger color values with higher
+			saturation than the normal gamut limits to be encoded.
+			In order to compensate for the loss of color fidelity
+			compared to a normal YCC encoded file, the color
+			quantization tables can be adjusted accordingly.
+			For example, cjpeg -bgycc -quality 80,90 will give
+			similar results as cjpeg -quality 80.
+			CAUTION: For correct decompression a decoder with big
+			gamut YCC support (JFIF version 2) is required.
+			An old decoder may or may not display a big gamut YCC
+			encoded JPEG file, depending on JFIF version check
+			and corresponding warning/error configuration.
+			In case of a granted decompression the old decoder
+			will display the image with half saturated colors.
 
 	-dct int	Use integer DCT method (default).
 	-dct fast	Use fast integer DCT (less accurate).
@@ -209,11 +252,6 @@ in a smaller JPEG file and a better-looking image.  Too large a smoothing
 factor will visibly blur the image, however.
 
 Switches for wizards:
-
-	-arithmetic	Use arithmetic coding.  CAUTION: arithmetic coded JPEG
-			is not yet widely implemented, so many decoders will
-			be unable to view an arithmetic coded JPEG file at
-			all.
 
 	-baseline	Force baseline-compatible quantization tables to be
 			generated.  This clamps quantization values to 8 bits
@@ -368,7 +406,8 @@ quality settings to make very small JPEG files; the percentage improvement
 is often a lot more than it is on larger files.  (At present, -optimize
 mode is always selected when generating progressive JPEG files.)
 
-GIF input files are no longer supported, to avoid the Unisys LZW patent.
+GIF input files are no longer supported, to avoid the Unisys LZW patent
+(now expired).
 (Conversion of GIF files to JPEG is usually a bad idea anyway.)
 
 
@@ -396,8 +435,9 @@ it may run out of memory even with -maxmemory 0.  In that case you can still
 decompress, with some loss of image quality, by specifying -onepass for
 one-pass quantization.
 
-To avoid the Unisys LZW patent, djpeg produces uncompressed GIF files.  These
-are larger than they should be, but are readable by standard GIF decoders.
+To avoid the Unisys LZW patent (now expired), djpeg produces uncompressed GIF
+files.  These are larger than they should be, but are readable by standard GIF
+decoders.
 
 
 HINTS FOR BOTH PROGRAMS
@@ -459,9 +499,9 @@ To specify the coded JPEG representation used in the output file,
 jpegtran accepts a subset of the switches recognized by cjpeg:
 	-optimize	Perform optimization of entropy encoding parameters.
 	-progressive	Create progressive JPEG file.
+	-arithmetic	Use arithmetic coding.
 	-restart N	Emit a JPEG restart marker every N MCU rows, or every
 			N MCU blocks if "B" is attached to the number.
-	-arithmetic	Use arithmetic coding.
 	-scans file	Use the scan script given in the specified text file.
 See the previous discussion of cjpeg for more details about these switches.
 If you specify none of these switches, you get a plain baseline-JPEG output
@@ -514,13 +554,19 @@ image region but losslessly preserves what is inside.  Like the rotate and
 flip transforms, lossless crop is restricted by the current JPEG format: the
 upper left corner of the selected region must fall on an iMCU boundary.  If
 this does not hold for the given crop parameters, we silently move the upper
-left corner up and/or left to make it so, simultaneously increasing the region
-dimensions to keep the lower right crop corner unchanged.  (Thus, the output
-image covers at least the requested region, but may cover more.)
+left corner up and/or left to make it so, simultaneously increasing the
+region dimensions to keep the lower right crop corner unchanged.  (Thus, the
+output image covers at least the requested region, but may cover more.)
+The adjustment of the region dimensions may be optionally disabled.
 
 The image can be losslessly cropped by giving the switch:
 	-crop WxH+X+Y	Crop to a rectangular subarea of width W, height H
 			starting at point X,Y.
+
+A complementary lossless-wipe option is provided to discard (gray out) data
+inside a given image region while losslessly preserving what is outside:
+	-wipe WxH+X+Y	Wipe (gray out) a rectangular subarea of
+			width W, height H starting at point X,Y.
 
 Other not-strictly-lossless transformation switches are:
 
