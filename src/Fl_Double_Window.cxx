@@ -129,7 +129,7 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
 
 #if defined(USE_X11)
 
-#ifdef HAVE_XRENDER
+#if HAVE_XRENDER
 #include <X11/extensions/Xrender.h>
 #endif
 
@@ -139,7 +139,7 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offs
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int h,
 						        Fl_Offscreen pixmap, int srcx, int srcy) {
-#ifdef HAVE_XRENDER
+#if HAVE_XRENDER
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   XRenderPictFormat *srcfmt = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
