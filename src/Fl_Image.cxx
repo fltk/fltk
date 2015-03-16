@@ -711,6 +711,12 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       fl_begin_offscreen((Fl_Offscreen)img->id_);
       fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
       fl_end_offscreen();
+    } else if (img->d() == 4 && fl_can_do_alpha_blending()) {
+      img->id_ = fl_create_offscreen_with_alpha(img->w(), img->h());
+      fl_begin_offscreen((Fl_Offscreen)img->id_);
+      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d() | FL_IMAGE_WITH_ALPHA,
+                    img->ld());
+      fl_end_offscreen();
     }
   }
   if (img->id_) {
@@ -726,9 +732,12 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       int oy = Y-cy; if (oy < 0) oy += img->h();
       XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
     }
-    
-    copy_offscreen(X, Y, W, H, img->id_, cx, cy);
-    
+
+    if (img->d() == 4 && fl_can_do_alpha_blending())
+      copy_offscreen_with_alpha(X, Y, W, H, img->id_, cx, cy);
+    else
+      copy_offscreen(X, Y, W, H, img->id_, cx, cy);
+
     if (img->mask_) {
       // put the old clip region back
       XSetClipOrigin(fl_display, fl_gc, 0, 0);

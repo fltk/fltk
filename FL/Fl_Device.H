@@ -525,6 +525,9 @@ public:
   int height();
   int descent();
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+#if ! defined(FL_DOXYGEN)
+  void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+#endif
 };
 #endif
 

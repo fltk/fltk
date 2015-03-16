@@ -129,14 +129,44 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
 
 #if defined(USE_X11)
 
+#ifdef HAVE_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif
+
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y);
 }
 
+void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int h,
+						        Fl_Offscreen pixmap, int srcx, int srcy) {
+#ifdef HAVE_XRENDER
+  XRenderPictureAttributes srcattr;
+  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
+  XRenderPictFormat *srcfmt = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+  XRenderPictFormat *dstfmt = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
 
-// maybe someone feels inclined to implement alpha blending on X11?
+  Picture src = XRenderCreatePicture(fl_display, pixmap, srcfmt, 0, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
+
+  if (!src || !dst) {
+    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
+    return;
+  }
+
+  const Fl_Region clipr = fl_clip_region();
+  if (clipr)
+    XRenderSetPictureClipRegion(fl_display, dst, clipr);
+
+  XRenderComposite(fl_display, PictOpOver, src, None, dst, srcx, srcy, 0, 0,
+  			x, y, w, h);
+
+  XRenderFreePicture(fl_display, src);
+  XRenderFreePicture(fl_display, dst);
+#endif
+}
+
 char fl_can_do_alpha_blending() {
-  return 0;
+  return Fl_X::xrender_supported();
 }
 #elif defined(WIN32)
 

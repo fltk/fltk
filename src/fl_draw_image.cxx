@@ -316,6 +316,13 @@ static void xrgb_converter(const uchar *from, uchar *to, int w, int delta) {
   INNARDS32((from[0]<<16)+(from[1]<<8)+(from[2]));
 }
 
+static void argb_premul_converter(const uchar *from, uchar *to, int w, int delta) {
+  INNARDS32((from[3] << 24) +
+             (((from[0] * from[3]) / 255) << 16) +
+             (((from[1] * from[3]) / 255) << 8) +
+             ((from[2] * from[3]) / 255));
+}
+
 static void bgrx_converter(const uchar *from, uchar *to, int w, int delta) {
   INNARDS32((from[0]<<8)+(from[1]<<16)+(unsigned(from[2])<<24));
 }
@@ -451,7 +458,8 @@ static void figure_out_visual() {
 
 static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int mono,
-		    Fl_Draw_Image_Cb cb, void* userdata)
+		    Fl_Draw_Image_Cb cb, void* userdata,
+		    const bool alpha)
 {
   if (!linedelta) linedelta = W*delta;
 
@@ -462,11 +470,28 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   dy -= Y;
 
   if (!bytes_per_pixel) figure_out_visual();
+  const unsigned oldbpp = bytes_per_pixel;
+  const GC oldgc = fl_gc;
+  static GC gc32 = None;
   xi.width = w;
   xi.height = h;
 
   void (*conv)(const uchar *from, uchar *to, int w, int delta) = converter;
   if (mono) conv = mono_converter;
+  if (alpha) {
+    // This flag states the destination format is ARGB32 (big-endian), pre-multiplied.
+    bytes_per_pixel = 4;
+    conv = argb_premul_converter;
+    xi.depth = 32;
+    xi.bits_per_pixel = 32;
+
+    // Do we need a new GC?
+    if (fl_visual->depth != 32) {
+      if (gc32 == None)
+        gc32 = XCreateGC(fl_display, fl_window, 0, NULL);
+      fl_gc = gc32;
+    }
+  }
 
   // See if the data is already in the right format.  Unfortunately
   // some 32-bit x servers (XFree86) care about the unknown 8 bits
@@ -534,21 +559,39 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       delete[] linebuf;
     }
   }
+
+  if (alpha) {
+    bytes_per_pixel = oldbpp;
+    xi.depth = fl_visual->depth;
+    xi.bits_per_pixel = oldbpp * 8;
+
+    if (fl_visual->depth != 32) {
+      fl_gc = oldgc;
+    }
+  }
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0);
+
+  const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
+  d &= ~FL_IMAGE_WITH_ALPHA;
+
+  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,alpha);
 }
 void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data);
+
+  const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
+  d &= ~FL_IMAGE_WITH_ALPHA;
+
+  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,alpha);
 }
 void Fl_Xlib_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0);
+  innards(buf,x,y,w,h,d,l,1,0,0,0);
 }
 void Fl_Xlib_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data);
+  innards(0,x,y,w,h,d,0,1,cb,data,0);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -558,7 +601,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   } else {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0);
+    innards(c,x,y,w,h,0,0,0,0,0,0);
   }
 }
 
