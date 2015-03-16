@@ -161,6 +161,7 @@ public:
   static void x(Fl_Window* wi, int X) {wi->x(X);}
   static void y(Fl_Window* wi, int Y) {wi->y(Y);}
   static int ewmh_supported();
+  static int xrender_supported();
   static void activate_window(Window w);
 };
 

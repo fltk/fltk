@@ -124,6 +124,14 @@
 #define HAVE_XCURSOR 0
 
 /*
+ * HAVE_XRENDER:
+ *
+ * Do we have the X render library?
+ */
+
+#define HAVE_XRENDER 0
+
+/*
  * __APPLE_QUARTZ__:
  *
  * All Apple implementations are now based on Quartz and Cocoa,

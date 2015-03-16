@@ -69,6 +69,9 @@ static bool have_xfixes = false;
 #  if HAVE_XCURSOR
 #    include <X11/Xcursor/Xcursor.h>
 #  endif
+#  if HAVE_XRENDER
+#    include <X11/extensions/Xrender.h>
+#  endif
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
 Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platform display
@@ -2225,6 +2228,19 @@ int Fl_X::ewmh_supported() {
       }
     }
     if ( words ) { XFree(words); words = 0; }
+  }
+
+  return result;
+}
+
+int Fl_X::xrender_supported() {
+  static int result = -1;
+
+  if (result == -1) {
+    fl_open_display();
+
+    int nop1, nop2;
+    result = XRenderQueryExtension(fl_display, &nop1, &nop2);
   }
 
   return result;
