@@ -402,27 +402,41 @@ void Fl_Window::free_icons() {
 }
 
 /**
-  Waits for the window to be fully displayed after calling show().
+  Waits for the window to be displayed after calling show().
 
   Fl_Window::show() is not guaranteed to show and draw the window on
   all platforms immediately. Instead this is done in the background;
-  particularly on X11 this will take a few messages (client server
-  roundtrips) to display the window.
-
-  Usually this small delay doesn't matter, but in some cases you may
-  want to have the window instantiated and displayed synchronously.
+  particularly on X11 it will take a few messages (client server
+  roundtrips) to display the window. Usually this small delay doesn't
+  matter, but in some cases you may want to have the window instantiated
+  and displayed synchronously.
 
   Currently (as of FLTK 1.3.3) this method only has an effect on X11.
   On Windows and Mac OS X show() is always synchronous. If you want to
   write portable code and need this synchronous show() feature, add
-  win->wait_for_expose() on all platforms, FLTK will just do the
+  win->wait_for_expose() on all platforms, and FLTK will just do the
   right thing.
 
   This method can be used for displaying splash screens before
   calling Fl::run() or for having exact control over which window
-  has focus after calling show().
+  has the focus after calling show().
 
   If the window is not shown(), this method does nothing.
+
+  \note Depending on the platform and window manager wait_for_expose()
+    may not guarantee that the window is fully drawn when it is called.
+    Under X11 it may only make sure that the window is \b mapped, i.e.
+    the internal (OS dependent) window object was created (and maybe
+    shown on the desktop as an empty frame or something like that).
+    You may need to call Fl::flush() after wait_for_expose() to make
+    sure the window and all its widgets are drawn and thus visible.
+
+  \note FLTK does the best it can do to make sure that all widgets
+    get drawn if you call wait_for_expose() and Fl::flush(). However,
+    dependent on the window manager it can not be guaranteed that this
+    does always happen synchronously. The only guaranteed behavior that
+    all widgets are eventually drawn is if the FLTK event loop is run
+    continuously, for instance with Fl::run().
 
   \see virtual void Fl_Window::show()
 
@@ -433,13 +447,13 @@ void Fl_Window::free_icons() {
 
     // do more window initialization here ...
 
-    win->show();			// show window
-    win->wait_for_expose();		// wait, until displayed
-    Fl::flush();			// make sure everything gets drawn
+    win->show();                // show window
+    win->wait_for_expose();     // wait, until displayed
+    Fl::flush();                // make sure everything gets drawn
 
     // do more initialization work that needs some time here ...
 
-    Fl::run();				// start FLTK event loop
+    Fl::run();                  // start FLTK event loop
   \endcode
 
   Note that the window will not be responsive until the event loop
