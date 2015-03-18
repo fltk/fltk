@@ -108,8 +108,8 @@ ADVANCED: type "./configure --help" to get a complete list of optional
 configurations parameters. These should be pretty self-explanatory. Some
 more details can be found in README. 
 
-To create Universal Binaries, start "configure" with these flags:
-  ./configure  --with-archflags="-arch i386 -arch ppc -arch x86_64"
+To create multi-architecture binaries, start "configure" with these flags:
+  ./configure  --with-archflags="-arch i386 -arch x86_64"
   
 To create applications that can run under Mac OS X 10.4 and above, use these flags:
   ./configure CXXFLAGS="-mmacosx-version-min=10.4" LDFLAGS="-mmacosx-version-min=10.4"
@@ -180,7 +180,7 @@ recommend that you add it to the command search path.
  3.1  Prerequisites
 --------------------
 
-In order to build FLTK from within Xcode, you need to install the Xcode
+In order to build FLTK from within Xcode 3, you need to install the Xcode 3
 developer environment from the Apple Inc. web site. The developer environment
 can be downloaded from the Mac Dev Center for free:
 
@@ -338,7 +338,7 @@ follow the instructions.
  4.1  Prerequisites
 --------------------
 
-In order to build FLTK from within Xcode 4, you need to install the Xcode
+In order to build FLTK from within Xcode 4, 5 or 6, you need to install the Xcode
 developer environment via the Apple App Store that comes with Lion and up. 
 If you also want the command line version of gcc, you can use the 
 Download section in the Preferences dialog.
