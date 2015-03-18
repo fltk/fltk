@@ -7,7 +7,7 @@
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.fltk.fltk_gl</string>
+	<string>org.fltk.fltk-gl</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
