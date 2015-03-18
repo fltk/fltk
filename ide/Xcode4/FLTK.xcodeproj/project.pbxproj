@@ -323,6 +323,8 @@
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
 		7F6F526419CF0FED0075F408 /* Fl_Window_shape.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F6F526319CF0FED0075F408 /* Fl_Window_shape.cxx */; };
+		7F7CF8191AB97DA600E12B22 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
+		7F7CF81F1AB9836C00E12B22 /* animated.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F7CF81E1AB9836C00E12B22 /* animated.cxx */; };
 		7FA5C2BE192FAEBB00519823 /* Fl_Copy_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FA5C2BD192FAEBB00519823 /* Fl_Copy_Surface.cxx */; };
 		7FA5C2C0192FAECA00519823 /* Fl_Image_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FA5C2BF192FAECA00519823 /* Fl_Image_Surface.cxx */; };
 		7FDBB8F416B2D1EA00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92032516B1A90A000FC50F /* Localizable.strings */; };
@@ -2357,6 +2359,27 @@
 			remoteGlobalIDString = A58BB416AAFDCFF08D7C7E41;
 			remoteInfo = fltk_png;
 		};
+		7F7CF8171AB97D8F00E12B22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A57FDE871C99A52BEEDEE68C;
+			remoteInfo = fltk;
+		};
+		7F7CF81A1AB97F5500E12B22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7F7CF7F41AB97CEF00E12B22;
+			remoteInfo = animated;
+		};
+		7F7CF81C1AB97F5500E12B22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9165EA11291A304003FF4F0;
+			remoteInfo = unittests;
+		};
 		84093881736DAE476B31E5AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
@@ -4323,6 +4346,8 @@
 		7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Quartz_Printer.mm; path = ../../src/Fl_Quartz_Printer.mm; sourceTree = SOURCE_ROOT; };
 		7F6F526319CF0FED0075F408 /* Fl_Window_shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Window_shape.cxx; path = ../../src/Fl_Window_shape.cxx; sourceTree = "<group>"; };
 		7F784151AF1B748D0F3DB1C0 /* forms.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = forms.cxx; path = ../../test/forms.cxx; sourceTree = SOURCE_ROOT; };
+		7F7CF7F51AB97CEF00E12B22 /* animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = animated.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F7CF81E1AB9836C00E12B22 /* animated.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animated.cxx; path = ../../test/animated.cxx; sourceTree = SOURCE_ROOT; };
 		7F92031A16B1A909000FC50F /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = Localizable.strings; sourceTree = "<group>"; };
 		7F92031D16B1A909000FC50F /* French */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = French; path = Localizable.strings; sourceTree = "<group>"; };
 		7F92032016B1A909000FC50F /* German */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = German; path = Localizable.strings; sourceTree = "<group>"; };
@@ -4439,7 +4464,6 @@
 		A8F89055CABBCFECCC4CC940 /* Fl_Plugin.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Plugin.H; path = ../../FL/Fl_Plugin.H; sourceTree = SOURCE_ROOT; };
 		AA630D4D7FC09AEEA0D0424F /* colbrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = colbrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAA7458AD5CC6DCD9BA25E7F /* overlay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = overlay.cxx; path = ../../test/overlay.cxx; sourceTree = SOURCE_ROOT; };
-		AACB2F49A22C3FB3E837EC61 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		AAD25B747F4122A2C5224708 /* Fl_Browser_.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Browser_.cxx; path = ../../src/Fl_Browser_.cxx; sourceTree = SOURCE_ROOT; };
 		AAE8D31DC4F024028C66743C /* Fl_own_colormap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_own_colormap.cxx; path = ../../src/Fl_own_colormap.cxx; sourceTree = SOURCE_ROOT; };
 		AB154476769DB7F2247ADEF9 /* utf8.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utf8.cxx; path = ../../test/utf8.cxx; sourceTree = SOURCE_ROOT; };
@@ -5002,6 +5026,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7F7CF7F21AB97CEF00E12B22 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F7CF8191AB97DA600E12B22 /* fltk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84287AB87AC48E0110823FB1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5349,6 +5381,7 @@
 			children = (
 				1745FD7A82A025A97E1FFD22 /* Demo */,
 				00A184CFEE690C4BD856C12B /* adjuster */,
+				7F7CF7F61AB97CEF00E12B22 /* animated */,
 				D4A58B6D0BEEB58E9CB0E31F /* arc */,
 				3565869B79F481C90BE5CDFF /* ask */,
 				9A7992A3C037B0F0C5CA8652 /* bitmap */,
@@ -5742,8 +5775,6 @@
 			isa = PBXGroup;
 			children = (
 				C7C5A11DD7448F61DFC69398 /* glpuzzle.cxx */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = glpuzzle;
 			sourceTree = "<group>";
@@ -5897,8 +5928,6 @@
 			children = (
 				598DD70F89D7731D61BBD8EF /* fractals.cxx */,
 				431856A376572B057493295D /* fracviewer.cxx */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = fractals;
 			sourceTree = "<group>";
@@ -5907,7 +5936,6 @@
 			isa = PBXGroup;
 			children = (
 				3E19864FD168E465A1DAFA6A /* blocks.cxx */,
-				46DBACE210E8AEF57FFB5693 /* CoreAudio.framework */,
 			);
 			name = blocks;
 			sourceTree = "<group>";
@@ -5959,8 +5987,6 @@
 				AFB1FA7E614E064C55880F21 /* gl_draw.cxx */,
 				DD77F09FACBBCDC3C5276B93 /* glut_compatability.cxx */,
 				29E61287C1F4A1123829C900 /* glut_font.cxx */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = fltk_gl;
 			sourceTree = "<group>";
@@ -5976,6 +6002,14 @@
 				451D01896EFDD83277515630 /* glut.H */,
 			);
 			name = Headers;
+			sourceTree = "<group>";
+		};
+		7F7CF7F61AB97CEF00E12B22 /* animated */ = {
+			isa = PBXGroup;
+			children = (
+				7F7CF81E1AB9836C00E12B22 /* animated.cxx */,
+			);
+			path = animated;
 			sourceTree = "<group>";
 		};
 		7F8E4196B47A3E1099092789 /* file_chooser */ = {
@@ -6067,8 +6101,6 @@
 			isa = PBXGroup;
 			children = (
 				2148BFD8D4CD2F1527B71C3C /* cube.cxx */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = cube;
 			sourceTree = "<group>";
@@ -6079,8 +6111,6 @@
 				323779B8DE42371A98337337 /* CubeView.cxx */,
 				2A3CEBA07E8AE9BF4C002531 /* CubeMain.cxx */,
 				ADA5BC653C9EFBEAA8C0AD29 /* CubeViewUI.fl */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = CubeView;
 			sourceTree = "<group>";
@@ -6658,6 +6688,7 @@
 				C05E4BE052F69E6F1FD92730 /* utf8.app */,
 				5191489A6263E11B65A57B4D /* valuators.app */,
 				C9165EAF1291A304003FF4F0 /* utf8.app */,
+				7F7CF7F51AB97CEF00E12B22 /* animated.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6674,8 +6705,6 @@
 			isa = PBXGroup;
 			children = (
 				1F6E4CE3C0DF58D8F7B3A94A /* gl_overlay.cxx */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = gl_overlay;
 			sourceTree = "<group>";
@@ -6709,8 +6738,6 @@
 			isa = PBXGroup;
 			children = (
 				EDE6CE6B09D31AC0AAC9FF56 /* fullscreen.cxx */,
-				05376DC900B2C885B847EA36 /* OpenGL.framework */,
-				AACB2F49A22C3FB3E837EC61 /* AGL.framework */,
 			);
 			name = fullscreen;
 			sourceTree = "<group>";
@@ -7544,6 +7571,7 @@
 				9B9A2BB92B3E2F87BB97AFA0 /* PBXTargetDependency */,
 				54C82BE82E5941634B1E012C /* PBXTargetDependency */,
 				68DE1373AD62783E0EFEF8C7 /* PBXTargetDependency */,
+				7F7CF81B1AB97F5500E12B22 /* PBXTargetDependency */,
 				5FE1F1CC79D7F93FA6EB27F8 /* PBXTargetDependency */,
 				3E8F1C9A8FD91D1ECC32B32D /* PBXTargetDependency */,
 				203B4731A5BF35E250C4D234 /* PBXTargetDependency */,
@@ -7597,6 +7625,7 @@
 				D935E83C336302B382D9C5E7 /* PBXTargetDependency */,
 				3AB170D03BCA254D2CF0B45D /* PBXTargetDependency */,
 				D2F0364CF3AEA88A0D2C44A3 /* PBXTargetDependency */,
+				436A4CC79091883CE3F58547 /* PBXTargetDependency */,
 				22F66AA06214063787F83EDD /* PBXTargetDependency */,
 				2615DA509AA27BA3E80CA8C6 /* PBXTargetDependency */,
 				D58A0AFC4CD07FCAE4A0C15C /* PBXTargetDependency */,
@@ -7608,9 +7637,9 @@
 				F89D09FA9B104B390A19EB4D /* PBXTargetDependency */,
 				EC5F74DECF6370DDEBEED562 /* PBXTargetDependency */,
 				4DA0C774EE4A826993923200 /* PBXTargetDependency */,
+				7F7CF81D1AB97F5500E12B22 /* PBXTargetDependency */,
 				032F55B6903F81C55E6FF55A /* PBXTargetDependency */,
 				BBA5BFA4C8A09C8BA8D75F41 /* PBXTargetDependency */,
-				436A4CC79091883CE3F58547 /* PBXTargetDependency */,
 			);
 			name = Demo;
 			productName = Demo;
@@ -7635,6 +7664,24 @@
 			name = threads;
 			productName = threads;
 			productReference = BFEF05C334B87B518BFFEC1F /* threads.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7F7CF7F41AB97CEF00E12B22 /* animated */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F7CF8131AB97CF000E12B22 /* Build configuration list for PBXNativeTarget "animated" */;
+			buildPhases = (
+				7F7CF7F11AB97CEF00E12B22 /* Sources */,
+				7F7CF7F21AB97CEF00E12B22 /* Frameworks */,
+				7F7CF7F31AB97CEF00E12B22 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7F7CF8181AB97D8F00E12B22 /* PBXTargetDependency */,
+			);
+			name = animated;
+			productName = animated;
+			productReference = 7F7CF7F51AB97CEF00E12B22 /* animated.app */;
 			productType = "com.apple.product-type.application";
 		};
 		82436F720F585ECD3B0A56CE /* tile */ = {
@@ -8492,6 +8539,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0430;
+				TargetAttributes = {
+					7F7CF7F41AB97CEF00E12B22 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+				};
 			};
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -8504,6 +8556,7 @@
 				German,
 				Italian,
 				Spanish,
+				Base,
 			);
 			mainGroup = 2000E0C1AD91ACA63811D339;
 			productRefGroup = DCB546B00EC62A9F8CC4181A /* Products */;
@@ -8520,6 +8573,7 @@
 				AA5932F4EEB6D1D7E5D1A314 /* fltk_zlib */,
 				79BD42AF87FBA9AE10BD7C58 /* Demo */,
 				E8BE99F75E5F3C8725834B33 /* adjuster */,
+				7F7CF7F41AB97CEF00E12B22 /* animated */,
 				9A8F59CD813587E2E463DF07 /* arc */,
 				28919176E960D4209BAB8420 /* ask */,
 				43080284D40D3965685C7975 /* bitmap */,
@@ -8854,6 +8908,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7E2F13E3024D0010203CE197 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F7CF7F31AB97CEF00E12B22 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -9644,6 +9705,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE4DBBE6653EF8D85096E098 /* tabs.fl in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F7CF7F11AB97CEF00E12B22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F7CF81F1AB9836C00E12B22 /* animated.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10480,6 +10549,21 @@
 			isa = PBXTargetDependency;
 			target = A57FDE871C99A52BEEDEE68C /* fltk */;
 			targetProxy = E243DFACCE7A653F30C860F6 /* PBXContainerItemProxy */;
+		};
+		7F7CF8181AB97D8F00E12B22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A57FDE871C99A52BEEDEE68C /* fltk */;
+			targetProxy = 7F7CF8171AB97D8F00E12B22 /* PBXContainerItemProxy */;
+		};
+		7F7CF81B1AB97F5500E12B22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7F7CF7F41AB97CEF00E12B22 /* animated */;
+			targetProxy = 7F7CF81A1AB97F5500E12B22 /* PBXContainerItemProxy */;
+		};
+		7F7CF81D1AB97F5500E12B22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9165EA11291A304003FF4F0 /* unittests */;
+			targetProxy = 7F7CF81C1AB97F5500E12B22 /* PBXContainerItemProxy */;
 		};
 		7F9611BCAC5D5A43DF75FE3B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13269,6 +13353,86 @@
 				);
 			};
 			name = Debug;
+		};
+		7F7CF80F1AB97CF000E12B22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/animated-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		7F7CF8101AB97CF000E12B22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/animated-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
 		};
 		7FD9FF3CBC717FD201EA3584 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -16233,6 +16397,15 @@
 			buildConfigurations = (
 				8251F5D32F144C4A3B38611A /* Debug */,
 				7FEBA7A2E6CBD42A2CB9EC6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7F7CF8131AB97CF000E12B22 /* Build configuration list for PBXNativeTarget "animated" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F7CF80F1AB97CF000E12B22 /* Debug */,
+				7F7CF8101AB97CF000E12B22 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
