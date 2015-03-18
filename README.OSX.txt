@@ -207,7 +207,7 @@ location. I have set up a "dev" folder in my home folder for all my projects.
 
 Launch Xcode. Open the project file in 
 
-  .../fltk-1.3.xxxx/ide/Xcode3/FLTK.xcodeproj
+  .../fltk-1.3.xxxx/ide/Xcode4/FLTK.xcodeproj
 
 Use the "Project" pulldown menu to change "Active Build Configuration" to 
 "Release". Change the "Active Architecture"  as desired. 
@@ -219,12 +219,12 @@ Use the "Project" pulldown menu to change "Active Build Configuration" to
 Use the "Project" pulldown menu to set the "Active Target" to "Demo". 
 Select "Build" from the "Build" menu to create all libraries and test applications.
 
-By default, the Xcode3 project builds applications that run under Mac OS X 10.5 and above.
+By default, the Xcode4 project builds applications that run under Mac OS X 10.5 and above.
 To build applications that run under older Mac OS versions, select "Edit Project Settings" 
 of the Project menu, then select the Build panel, and modify the "Mac OS X Deployment Target" 
 item.
 
-All frameworks and apps will be located in "./ide/Xcode3/build/Release/".
+All frameworks and apps will be located in "./ide/Xcode4/build/Release/".
 
 
  3.5  Testing FLTK
@@ -254,12 +254,12 @@ the application package. For development however, it is very convenient to have
 the Release-mode Frameworks in a standard location.
 
 For Xcode project template use, all FLTK frameworks should be copied from 
-"./ide/Xcode3/build/Release/" to "/Library/Frameworks/". The FLTK header files 
+"./ide/Xcode4/build/Release/" to "/Library/Frameworks/". The FLTK header files
 for all FLTK frameworks will then be at "/Library/Frameworks/fltk.framework/
 Headers/". Add this path to the header search path of your projects.
 
   sudo rm -f -r /Library/Frameworks/fltk*
-  sudo cp -R ide/Xcode3/build/Release/fltk*.framework /Library/Frameworks/
+  sudo cp -R ide/Xcode4/build/Release/fltk*.framework /Library/Frameworks/
 
 Many FLTK applications will use Fluid, the FLTK User Interface builder, to 
 generate C++ source code from .fl resource files. Add Fluid to the developer 
@@ -267,7 +267,7 @@ tools:
 
   sudo mkdir /Developer/Applications/Utilities/FLTK/
   sudo rm -f -r /Developer/Applications/Utilities/FLTK/Fluid.app
-  sudo cp -R ide/Xcode3/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
+  sudo cp -R ide/Xcode4/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
 
 
  3.8  Installing Little Helpers
@@ -289,7 +289,7 @@ First, we need to create the Template folder:
 
 Next, we copy the project template over:
 
-  sudo cp -r ide/Xcode3/Project\ Templates/* /Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/
+  sudo cp -r ide/Xcode4/Project\ Templates/* /Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/
 
 After restarting Xcode, the dialog for "File > New Project..." will offer an
 FLTK 1.3 user template which is ready to compile.
@@ -307,7 +307,7 @@ First, we need to create the spec folder:
 
 Next, we copy the Fluid specification over:
 
-  sudo cp ide/Xcode3/fluid.pbfilespec /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
+  sudo cp ide/Xcode4/fluid.pbfilespec /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
 
 Open Xcode preferences and select the File Types tab. Find the 
 "sourcecode.fluid" entry in "file > text > sourcecode" and set the external 
@@ -376,7 +376,7 @@ Use the "Scheme" pulldown menu to change the active target to "Demo" and
 "My Mac 32-bit" or "My Mac 64-bit". Select "Build for" -> "Running"Run" from 
 the "Product" menu to create all libraries and test applications.
 
-By default, the Xcode4 project builds applications that need the current Mac OS X version.
+By default, the Xcode4 project builds applications that run under Mac OS X 10.5 and above.
 To build applications that also run under older Mac OS versions, modify the "OS X Deployment
 Target" item of the FLTK project build settings.
 
@@ -462,3 +462,4 @@ Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config s
 Apr 17 2012 - matt: added Xcode4 documentation
 Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
 Apr 28 2014 - Manolo: how to build programs that run on various Mac OS X versions
+Mar 18 2015 - Manolo: removed uses of the Xcode3 project
