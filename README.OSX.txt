@@ -61,11 +61,8 @@ not be mixed!
 --------------------
 
 In order to build FLTK from the command line, you need to install the Xcode
-developer environment from the Apple Inc. web site. The developer environment
-can be downloaded from the Mac Dev Center for free:
+developer environment. It can be downloaded from the Apple Store for free.
 
-  http://developer.apple.com/technologies/xcode.html
-  
 After downloading and installing, you need to launch the Terminal. Terminal.app
 is located in the "Utilities" folder inside the "Applications" folder. I like to
 keep the Terminal in the Dock.
@@ -89,18 +86,32 @@ dev directory:
   mv ~/Downloads/fltk-1.3.xxxx.tar.gz .
   tar xvfz fltk-1.3.xxxx.tar.gz
   cd fltk-1.3.xxxx
-  
+
+If you got FLTK via subversion then you need one extra step: build the configure script.
+Otherwise skip the following part marked ADVANCED:
+
+ADVANCED: (only if you got FLTK via subversion)
+- The preferred procedure is to build the configure script using tools
+  called autoconf and automake. If these tools are not both available
+  on your system, this post
+     http://www.fltk.org/newsgroups.php?s15486+gfltk.coredev+v15499
+  details how to get them.
+
+  Then, stay in your FLTK source-code directory and type the following:
+
+  NOCONFIGURE=1 ./autogen.sh
+
+- Alternatively, copy the configure script from the last FLTK weekly snapshot
+  to your svn source-code directory.
+
+:END_ADVANCED
+
 
  2.3  Configuring FLTK
 -----------------------
 
-If you got FLTK via subversion then you need one extra step. Otherwise skip
-over this part. Stay in your FLTK source-code directory and type the
-following:
 
-  NOCONFIGURE=1 ./autogen.sh
-
-Now configure your FLTK installation:
+Now configure your FLTK installation: stay in your FLTK source-code directory and type
 
   ./configure
   
@@ -180,12 +191,9 @@ recommend that you add it to the command search path.
  3.1  Prerequisites
 --------------------
 
-In order to build FLTK from within Xcode 3, you need to install the Xcode 3
-developer environment from the Apple Inc. web site. The developer environment
-can be downloaded from the Mac Dev Center for free:
+In order to build FLTK from within Xcode 3, you need to have the Xcode 3
+developer environment on your computer. If you don't, go to: 'HOW TO BUILD FLTK USING XCODE4'
 
-  http://developer.apple.com/technologies/xcode.html
-  
 
  3.2  Downloading and Unpacking
 --------------------------------
