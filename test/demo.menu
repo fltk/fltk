@@ -42,6 +42,7 @@
 		@di:Fl_RGB\n_Image:image
 		@di:Fl_Shared\n_Image:pixmap_browser
 		@di:Fl_Tiled\n_Image:tiled_image
+		@di:transparency:animated
 	@d:cursor:cursor
 	@d:labels:label
 	@d:rotated text:rotated_text
