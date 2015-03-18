@@ -19,6 +19,7 @@ include_directories(
 #######################################################################
 CREATE_EXAMPLE(adjuster adjuster.cxx fltk)
 CREATE_EXAMPLE(arc arc.cxx fltk)
+CREATE_EXAMPLE(animated animated.cxx fltk)
 CREATE_EXAMPLE(ask ask.cxx fltk)
 CREATE_EXAMPLE(bitmap bitmap.cxx fltk)
 CREATE_EXAMPLE(blocks blocks.cxx "fltk;${AUDIOLIBS}")
