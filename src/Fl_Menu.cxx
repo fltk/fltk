@@ -29,7 +29,32 @@
 #include <stdio.h>
 #include "flstring.h"
 
-/** Size of the menu starting from this menu item */
+/** Size of the menu starting from this menu item.
+
+  This method counts all menu items starting with \p this menu item,
+  including all menu items in the same (sub)menu level, all nested
+  submenus, \b and the terminating empty (0) menu item.
+
+  It does \b not count menu items referred to by FL_SUBMENU_POINTER
+  menu items (except the single menu item with FL_SUBMENU_POINTER).
+
+  All menu items counted are consecutive in memory (one array).
+
+  Example:
+
+  \code
+    schemechoice = new Fl_Choice(X+125,Y,140,25,"FLTK Scheme");
+    schemechoice->add("none");
+    schemechoice->add("plastic");
+    schemechoice->add("gtk+");
+    schemechoice->add("gleam");
+    printf("schemechoice->menu()->size() = %d\n", schemechoice->menu()->size());
+  \endcode
+
+  Output:
+
+  schemechoice->menu()->%size() = 5
+*/
 int Fl_Menu_Item::size() const {
   const Fl_Menu_Item* m = this;
   int nest = 0;
