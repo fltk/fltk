@@ -1637,7 +1637,7 @@ int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   char command[1024];
   if (style == SystemV) snprintf(command, sizeof(command), "lp -s -d %s -n %d -t '%s' -o media=%s",
         printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5), "FLTK", media);
-  else snprintf(command, sizeof(command), "lpr -h -P %s -# %d -T FLTK ",
+  else snprintf(command, sizeof(command), "lpr -h -P%s -#%d -T FLTK ",
                 printer, print_collate_button->value() ? 1 : (int)(print_copies->value() + 0.5));
 
   Fl_PostScript_Graphics_Driver *ps = driver();
