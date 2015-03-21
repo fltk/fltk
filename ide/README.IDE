@@ -10,9 +10,8 @@ distrib subdir 	|   supported products
 ------------------------------------------------------------------------
 ide/VisualC6	|   Microsoft Visual C++ 6 and 2005 (2)
 ide/VisualC2008	|   Microsoft Visual C++ 2008
-ide/VisualC2010	|   Microsoft Visual C++ 2010
-ide/Xcode3 	|   Apple Xcode 3.x and up
-ide/Xcode4 	|   Apple Xcode 4.x and up
+ide/VisualC2010	|   Microsoft Visual C++ 2010 and later (3)
+ide/Xcode4 	|   Apple Xcode 3.x and up (see ../README.OSX.txt)
 
 Notes :
 -------
@@ -20,8 +19,11 @@ Notes :
     simply run autoconf, then the configure script on the root dir.
     Read the ./README file for more info.
 (2) When first using the project file (ide/VisualC6/fltk.dsw) with
-    VC++ 2005, you will be asked to convert the project to the newer 
+    VC++ 2005, you will be asked to convert the project to the newer
     format.
+(3) When first using the project file (ide/VisualC2010/fltk.sln) with
+    a later version of Visual C++ you may be asked to convert the project
+    to the newer format.
 
 
 Further notes about Microsoft IDE project files (December 2010):
@@ -44,8 +46,7 @@ Xcode 3 is available from Apple for free. Xcode 4 is available from the
 App Store for a nominal fee, or as part of a paid developer membership
 with Apple. The Xcode3 project targets OS X 10.5, whereas Xcode4
 targets 10.6. If you wish to develop for a lower version, you will
-need to download the required SDK from Apple and change the target 
-SDK.
+need to download the required SDK from Apple and change the target SDK.
 
 
 Other IDE's and Platforms
@@ -60,4 +61,10 @@ If you feel that your favourite IDE is missing from our list, we will
 happily add your IDE files and ask you to keep them up to date.
 
 
+Using CMake to generate IDE project files
+------------------------------------------------------------------------
 
+Other IDE files can likely be created using CMake and the provided
+CMake files. However, as of Mar 2015 (FLTK 1.3.4) this is not yet fully
+supported. The FLTK team can't guarantee the usability of any generated
+IDE files.
