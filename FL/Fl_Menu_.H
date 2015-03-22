@@ -176,6 +176,7 @@ public:
   Fl_Color down_color() const {return selection_color();}
   /** For back compatibility, same as selection_color() */
   void down_color(unsigned c) {selection_color(c);}
+  void setonly(Fl_Menu_Item* item);
 };
 
 #endif

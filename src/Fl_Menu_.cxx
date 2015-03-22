@@ -254,8 +254,8 @@ const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
   if (v) {
     if (v->radio()) {
       if (!v->value()) { // they are turning on a radio item
-	set_changed();
-	((Fl_Menu_Item*)v)->setonly();
+        set_changed();
+        setonly((Fl_Menu_Item*)v);
       }
       redraw();
     } else if (v->flags & FL_MENU_TOGGLE) {
@@ -276,7 +276,59 @@ const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
   return v;
 }
 
-/** Turns the radio item "on" for the menu item and turns off adjacent radio items set. */
+/* Scans an array of Fl_Menu_Item's that begins at start, searching for item.
+ Returns NULL if item is not found.
+ If item is present, returns start, unless item belongs to an
+ FL_SUBMENU_POINTER-adressed array of items, in which case the first item of this array is returned.
+ */
+static Fl_Menu_Item *first_submenu_item(Fl_Menu_Item *item, Fl_Menu_Item *start)
+{
+  Fl_Menu_Item* m = start;
+  int nest = 0; // will indicate submenu nesting depth
+  while (1) { // loop over all menu items
+    if (!m->text) { // m is a null item
+      if (!nest) return NULL; // item was not found
+      nest--; // m marks the end of a submenu -> decrement submenu nesting depth
+    } else { // a true item
+      if (m == item) return start; // item is found, return menu start item
+      if (m->flags & FL_SUBMENU_POINTER) {
+        // scan the detached submenu which begins at m->user_data()
+        Fl_Menu_Item *first = first_submenu_item(item, (Fl_Menu_Item*)m->user_data());
+        if (first) return first; // if item was found in the submenu, return
+      }
+      else if (m->flags & FL_SUBMENU) { // a direct submenu
+        nest++; // increment submenu nesting depth
+      }
+    }
+    m++; // step to next menu item
+  }
+}
+
+
+/** Turns the radio item "on" for the menu item and turns "off" adjacent radio items of the same group. */
+void Fl_Menu_::setonly(Fl_Menu_Item* item) {
+  // find the first item of the (sub)menu containing item
+  Fl_Menu_Item* first = first_submenu_item(item, menu_);
+  if (!first) return; // item does not belong to our menu
+  item->flags |= FL_MENU_RADIO | FL_MENU_VALUE;
+  Fl_Menu_Item* j;
+  for (j = item; ; ) {	// go down
+    if (j->flags & FL_MENU_DIVIDER) break; // stop on divider lines
+    j++;
+    if (!j->text || !j->radio()) break; // stop after group
+    j->clear();
+  }
+  for (j = item-1; j>=first; j--) { // go up
+    //DEBUG printf("GO UP: WORKING ON: item='%s', flags=%x\n", j->text, j->flags);
+    if (!j->text || (j->flags&FL_MENU_DIVIDER) || !j->radio()) break;
+    j->clear();
+  }
+}
+
+/** Turns the radio item "on" for the menu item and turns "off" adjacent radio items set.
+ \deprecated This method is dangerous if radio items are first in the menu.
+ Use Fl_Menu_::setonly(Fl_Menu_Item*) instead.
+ */
 void Fl_Menu_Item::setonly() {
   flags |= FL_MENU_RADIO | FL_MENU_VALUE;
   Fl_Menu_Item* j;
