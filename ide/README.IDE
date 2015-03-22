@@ -41,7 +41,7 @@ Visual Studio Express edition of the corresponding version.
 Further notes about Xcode IDE project files (December 2010):
 ------------------------------------------------------------------------
 
-The FLTK's Xcode project, FLTK.xcodeproj, is usable with versions 3 and 
+The FLTK Xcode project, FLTK.xcodeproj, is usable with versions 3 and 
 upward of Xcode (even if it's in a directory called Xcode4 for 
 historical reason). The Xcode developer environment is currently 
 available at no cost from the App store.
