@@ -38,7 +38,7 @@ VisualC2008 and VisualC2010 Solutions were generated with the free
 Visual Studio Express edition of the corresponding version.
 
 
-Further notes about Xcode IDE project files (December 2010):
+Further notes about Xcode IDE project files (March 2015):
 ------------------------------------------------------------------------
 
 The FLTK Xcode project, FLTK.xcodeproj, is usable with versions 3 and 
