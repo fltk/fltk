@@ -37,7 +37,8 @@ const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
 #endif
 
 
-/** \brief Use this drawing surface for future graphics requests. */
+/** \brief Make this surface the current drawing surface.
+ This surface will receive all future graphics requests. */
 void Fl_Surface_Device::set_current(void)
 {
   fl_graphics_driver = _driver;

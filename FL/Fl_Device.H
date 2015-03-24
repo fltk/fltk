@@ -101,8 +101,8 @@ public:
  in the \ref fl_drawings and \ref fl_attributes modules.
  
  \p The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
- An example would be to draw to a PDF file. This would involve creating a new Fl_Graphics_Driver derived class,
- say, my_PDF_Graphics_Driver. This new class should implement all virtual methods of the Fl_Graphics_Driver class
+ An example would be to draw to a PDF file. This would involve creating a new Fl_Graphics_Driver derived 
+ class. This new class should implement all virtual methods of the Fl_Graphics_Driver class
  to support all FLTK drawing functions.
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
@@ -534,17 +534,17 @@ public:
 /**
  \brief A drawing surface that's susceptible to receive graphical output.
  A drawing surface is typically used as follows:
- \li Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
- \li Memorize what is the current drawing surface with <tt> Fl_Surface_Device *old_current = Fl_Surface_Device::surface();</tt>
- \li Call \c surface->set_current(); to redirect all graphics requests to \c surface which becomes the new 
+ <ol><li> Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
+ <li> Memorize what is the current drawing surface with <tt> Fl_Surface_Device *old_current = Fl_Surface_Device::surface();</tt>
+ <li> Call \c surface->set_current(); to redirect all graphics requests to \c surface which becomes the new
  current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::start_job()).
- \li At this point any of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions 
- (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface. 
+ <li> At this point any of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
+ (e.g., fl_draw_image(), Fl_Image::draw()) operates on the new current drawing surface.
  Certain drawing surfaces allow additional ways to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
- \li After all drawing requests have been performed, redirect graphics requests back to their previous destination 
+ <li> After all drawing requests have been performed, redirect graphics requests back to their previous destination
  with \c old_current->set_current();.
- \li Delete \c surface.
- 
+ <li> Delete \c surface.
+ </ol>
  The current drawing surface is initially the computer's display, an instance of the Fl_Display_Device class.
  */
 class FL_EXPORT Fl_Surface_Device : public Fl_Device {
@@ -562,7 +562,8 @@ public:
   inline void driver(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver;};
   /** \brief Returns the graphics driver of this drawing surface. */
   inline Fl_Graphics_Driver *driver() {return _driver; };
-  /** \brief the surface that currently receives graphics output */
+  /** The current drawing surface.
+   In other words, the Fl_Surface_Device object that currently receives all graphics output */
   static inline Fl_Surface_Device *surface() {return _surface; }; 
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device() {}

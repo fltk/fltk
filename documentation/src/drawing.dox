@@ -6,7 +6,8 @@ This chapter covers the drawing functions that are provided with FLTK.
 
 \section sect_WhenCanYouDraw When Can You Draw Things in FLTK?
 
-There are only certain places you can execute drawing code in FLTK.
+There are only certain places you can execute FLTK code 
+that draws to the computer's display.
 Calling these functions at other places will result in undefined behavior!
 
 \li The most common place is inside the virtual Fl_Widget::draw() method.
@@ -21,6 +22,33 @@ Calling these functions at other places will result in undefined behavior!
 
 \li You can call Fl_Window::make_current() to do incremental update of a
     widget. Use Fl_Widget::window() to find the window.
+    
+In contrast, code that draws to other drawing surfaces than the display
+(i.e., instances of derived classes of the Fl_Surface_Device class, except 
+Fl_Display_Device, such as Fl_Printer and Fl_Copy_Surface) can be executed 
+at any time as follows:
+<ol><li> Memorize what is the current drawing surface calling Fl_Surface_Device::surface(),
+and make your surface the new current drawing surface calling the surface's 
+set_current() function;
+<li> Make a series of calls to any of the drawing functions described below;
+these will operate on the new current drawing surface;
+<li> Set the current drawing surface back to its previous state calling 
+the previous surface's set_current().
+</ol>
+
+\subsection ssect_DrawingUnit What Drawing Unit do FLTK drawing functions use?
+
+When drawing to the display or to instances of Fl_Copy_Surface and Fl_Image_Surface, 
+the unit of drawing functions corresponds
+generally to one pixel. The so-called 'retina' displays of some recent
+Apple computers are an exception to this rule: one drawing unit corresponds
+to the width or the height of 2 display pixels on a retina display.
+
+When drawing to surfaces that are instances of Fl_Paged_Device
+derived classes (i.e., Fl_Printer or Fl_PostScript_File_Device), the drawing unit
+is initially one point, that is, 1/72 of an inch. But this unit is changed
+after calls to Fl_Paged_Device::scale().
+
 
 
 \section sect_DrawingFunctions Drawing Functions
@@ -961,10 +989,12 @@ standard image types for common file formats:
 \li Fl_XBM_Image 
 \li Fl_XPM_Image
 
-Each of these image classes load a named file of the
+Each of these image classes loads a named file of the
 corresponding format. The Fl_Shared_Image class
 can be used to load any type of image file - the class examines
-the file and constructs an image of the appropriate type.
+the file and constructs an image of the appropriate type. It can also be used
+to scale an image to a certain size in drawing units, independently from its size 
+in pixels (see Fl_Shared_Image::scale()).
 
 Finally, FLTK provides a special image class called Fl_Tiled_Image to
 tile another image object in the specified area. This class can be
