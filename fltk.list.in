@@ -58,31 +58,31 @@ $ZLIB=@ZLIB@
 %system aix
 f 0555 root sys $libdir/libfltk_s.a src/libfltk_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk.sl.@FL_API_VERSION@ src/libfltk.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk.sl.@FL_DSO_VERSION@ src/libfltk.sl.@FL_DSO_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk.@FL_API_VERSION@.dylib src/libfltk.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libfltk.@FL_DSO_VERSION@.dylib src/libfltk.@FL_DSO_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk.so.@FL_API_VERSION@ src/libfltk.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk.so.@FL_DSO_VERSION@ src/libfltk.so.@FL_DSO_VERSION@ nostrip()
 %system all
 
 %system aix
 f 0555 root sys $libdir/libfltk_forms_s.a src/libfltk_forms_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk_forms.sl.@FL_API_VERSION@ src/libfltk_forms.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk_forms.sl.@FL_DSO_VERSION@ src/libfltk_forms.sl.@FL_DSO_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk_forms.@FL_API_VERSION@.dylib src/libfltk_forms.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libfltk_forms.@FL_DSO_VERSION@.dylib src/libfltk_forms.@FL_DSO_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk_forms.so.@FL_API_VERSION@ src/libfltk_forms.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk_forms.so.@FL_DSO_VERSION@ src/libfltk_forms.so.@FL_DSO_VERSION@ nostrip()
 %system all
 
 %system aix
 f 0555 root sys $libdir/libfltk_images_s.a src/libfltk_images_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk_images.sl.@FL_API_VERSION@ src/libfltk_images.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk_images.sl.@FL_DSO_VERSION@ src/libfltk_images.sl.@FL_DSO_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk_images.@FL_API_VERSION@.dylib src/libfltk_images.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libfltk_images.@FL_DSO_VERSION@.dylib src/libfltk_images.@FL_DSO_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk_images.so.@FL_API_VERSION@ src/libfltk_images.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk_images.so.@FL_DSO_VERSION@ src/libfltk_images.so.@FL_DSO_VERSION@ nostrip()
 %system all
 %endif
 
@@ -90,11 +90,11 @@ f 0555 root sys $libdir/libfltk_images.so.@FL_API_VERSION@ src/libfltk_images.so
 %system aix
 f 0555 root sys $libdir/libfltk_gl_s.a src/libfltk_gl_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk_gl.sl.@FL_API_VERSION@ src/libfltk_gl.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk_gl.sl.@FL_DSO_VERSION@ src/libfltk_gl.sl.@FL_DSO_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk_gl.@FL_API_VERSION@.dylib src/libfltk_gl.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libfltk_gl.@FL_DSO_VERSION@.dylib src/libfltk_gl.@FL_DSO_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk_gl.so.@FL_API_VERSION@ src/libfltk_gl.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libfltk_gl.so.@FL_DSO_VERSION@ src/libfltk_gl.so.@FL_DSO_VERSION@ nostrip()
 %system all
 %endif
 
@@ -162,37 +162,37 @@ f 0444 root sys $libdir/libfltk_z.a lib/libfltk_z.a
 
 %if DSONAME
 %system hpux
-l 0000 root sys $libdir/libfltk.sl libfltk.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk.sl libfltk.sl.@FL_DSO_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk.dylib libfltk.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libfltk.dylib libfltk.@FL_DSO_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk.so libfltk.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk.so libfltk.so.@FL_DSO_VERSION@
 %system all
 
 %system hpux
-l 0000 root sys $libdir/libfltk_forms.sl libfltk_forms.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_forms.sl libfltk_forms.sl.@FL_DSO_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk_forms.dylib libfltk_forms.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libfltk_forms.dylib libfltk_forms.@FL_DSO_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk_forms.so libfltk_forms.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_forms.so libfltk_forms.so.@FL_DSO_VERSION@
 %system all
 
 %system hpux
-l 0000 root sys $libdir/libfltk_images.sl libfltk_images.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_images.sl libfltk_images.sl.@FL_DSO_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk_images.dylib libfltk_images.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libfltk_images.dylib libfltk_images.@FL_DSO_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk_images.so libfltk_images.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_images.so libfltk_images.so.@FL_DSO_VERSION@
 %system all
 %endif
 
 %if GLDSONAME
 %system hpux
-l 0000 root sys $libdir/libfltk_gl.sl libfltk_gl.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_gl.sl libfltk_gl.sl.@FL_DSO_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk_gl.dylib libfltk_gl.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libfltk_gl.dylib libfltk_gl.@FL_DSO_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk_gl.so libfltk_gl.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libfltk_gl.so libfltk_gl.so.@FL_DSO_VERSION@
 %system all
 %endif
 

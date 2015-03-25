@@ -17,7 +17,7 @@
 #
 
 # Note:	see ../configure.in and/or ../makeinclude for definition of
-#	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_API_VERSION (x.y)
+#	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_DSO_VERSION (x.y)
 
 FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
@@ -40,19 +40,19 @@ $(CAIROLIBNAME): $(CAIROOBJECTS)
 	$(LIBCOMMAND) $@ $(CAIROOBJECTS)
 	$(RANLIB) $@
 
-libfltk_cairo.so.$(FL_API_VERSION): $(CAIROOBJECTS) ../src/libfltk.so.$(FL_API_VERSION)
+libfltk_cairo.so.$(FL_DSO_VERSION): $(CAIROOBJECTS) ../src/libfltk.so.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
 	$(RM) libfltk_cairo.so
 	$(LN) $(CAIRODSONAME) libfltk_cairo.so
 
-libfltk_cairo.sl.$(FL_API_VERSION): $(CAIROOBJECTS) ../src/libfltk.sl.$(FL_API_VERSION)
+libfltk_cairo.sl.$(FL_DSO_VERSION): $(CAIROOBJECTS) ../src/libfltk.sl.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
 	$(RM) libfltk_cairo.sl
-	$(LN) libfltk_cairo.sl.$(FL_API_VERSION) libfltk_cairo.sl
+	$(LN) libfltk_cairo.sl.$(FL_DSO_VERSION) libfltk_cairo.sl
 
-libfltk_cairo.$(FL_API_VERSION).dylib: $(CAIROOBJECTS) ../src/libfltk.$(FL_API_VERSION).dylib
+libfltk_cairo.$(FL_DSO_VERSION).dylib: $(CAIROOBJECTS) ../src/libfltk.$(FL_DSO_VERSION).dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
@@ -60,7 +60,7 @@ libfltk_cairo.$(FL_API_VERSION).dylib: $(CAIROOBJECTS) ../src/libfltk.$(FL_API_V
 		-compatibility_version $(FL_ABI_VERSION) \
 		$(CAIROOBJECTS)  -L../src $(LDLIBS) $(CAIROLIBS) -lfltk
 	$(RM) libfltk_cairo.dylib
-	$(LN) libfltk_cairo.$(FL_API_VERSION).dylib libfltk_cairo.dylib
+	$(LN) libfltk_cairo.$(FL_DSO_VERSION).dylib libfltk_cairo.dylib
 
 libfltk_cairo_s.a: $(CAIROOBJECTS)
 	echo $(DSOCOMMAND) libfltk_cairo_s.o ...
@@ -71,13 +71,13 @@ libfltk_cairo_s.a: $(CAIROOBJECTS)
 	$(CHMOD) +x src/libfltk_cairo_s.a
 
 
-cygfltknox_cairo-$(FL_API_VERSION).dll: $(CAIROLIBNAME) ../src/cygfltknox-$(FL_API_VERSION).dll
+cygfltknox_cairo-$(FL_DSO_VERSION).dll: $(CAIROLIBNAME) ../src/cygfltknox-$(FL_DSO_VERSION).dll
 	echo $(DSOCOMMAND) $(CAIROLIBNAME) ...
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_cairo.dll.a \
 		-L../src -lfltk $(CAIROLIBS) $(LDLIBS)
 
-mgwfltknox_cairo-$(FL_API_VERSION).dll: $(CAIROLIBNAME) ../src/mgwfltknox-$(FL_API_VERSION).dll
+mgwfltknox_cairo-$(FL_DSO_VERSION).dll: $(CAIROLIBNAME) ../src/mgwfltknox-$(FL_DSO_VERSION).dll
 	echo $(DSOCOMMAND) $(CAIROLIBNAME) ...
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_cairo.dll.a \
@@ -101,32 +101,32 @@ install: $(CAIROLIBNAME) $(CAIRODSONAME)
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(CAIROLIBNAME) $(DESTDIR)$(libdir)
 
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.$(FL_API_VERSION); then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.$(FL_DSO_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.so*;\
-		$(INSTALL_LIB) libfltk_cairo.so.$(FL_API_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.so.$(FL_API_VERSION) $(DESTDIR)$(libdir)/libfltk_cairo.so;\
+		$(INSTALL_LIB) libfltk_cairo.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
+		$(LN) libfltk_cairo.so.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_cairo.so;\
 	fi
-	if test x$(CAIRODSONAME) = xsrc/libfltk_cairo.sl.$(FL_API_VERSION); then\
+	if test x$(CAIRODSONAME) = xsrc/libfltk_cairo.sl.$(FL_DSO_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.sl*;\
-		$(INSTALL_LIB) libfltk_cairo.sl.$(FL_API_VERSION) $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.sl.$(FL_API_VERSION) $(DESTDIR)$(libdir)/libfltk_cairo.sl;\
+		$(INSTALL_LIB) libfltk_cairo.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir); \
+		$(LN) libfltk_cairo.sl.$(FL_DSO_VERSION) $(DESTDIR)$(libdir)/libfltk_cairo.sl;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.$(FL_API_VERSION).dylib; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.$(FL_DSO_VERSION).dylib; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.*dylib;\
-		$(INSTALL_LIB) libfltk_cairo.$(FL_API_VERSION).dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.$(FL_API_VERSION).dylib $(DESTDIR)$(libdir)/libfltk_cairo.dylib;\
+		$(INSTALL_LIB) libfltk_cairo.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir); \
+		$(LN) libfltk_cairo.$(FL_DSO_VERSION).dylib $(DESTDIR)$(libdir)/libfltk_cairo.dylib;\
 	fi
 	if test x$(CAIRODSONAME) = xlibfltk_cairo_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo_s.a;\
 		$(INSTALL_LIB) libfltk_cairo_s.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(CAIRODSONAME) = xcygfltknox_cairo-$(FL_API_VERSION).dll; then\
+	if test x$(CAIRODSONAME) = xcygfltknox_cairo-$(FL_DSO_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(INSTALL_LIB) $(CAIRODSONAME) $(DESTDIR)$(bindir); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 		$(INSTALL_LIB) libfltk_cairo.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-$(FL_API_VERSION).dll; then\
+	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-$(FL_DSO_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(INSTALL_LIB) $(CAIRODSONAME) $(DESTDIR)$(bindir); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
@@ -141,23 +141,23 @@ uninstall:
 	if test x$(CAIROLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(CAIROLIBNAME);\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.$(FL_API_VERSION); then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.$(FL_DSO_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.so*;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.sl.$(FL_API_VERSION); then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.sl.$(FL_DSO_VERSION); then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.sl*;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.$(FL_API_VERSION).dylib; then\
+	if test x$(CAIRODSONAME) = xlibfltk_cairo.$(FL_DSO_VERSION).dylib; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.*dylib;\
 	fi
 	if test x$(CAIRODSONAME) = xlibfltk_cairo_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo_s.a;\
 	fi
-	if test x$(CAIRODSONAME) = xcygfltknox_cairo-$(FL_API_VERSION).dll; then\
+	if test x$(CAIRODSONAME) = xcygfltknox_cairo-$(FL_DSO_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 	fi
-	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-$(FL_API_VERSION).dll; then\
+	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-$(FL_DSO_VERSION).dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 	fi
