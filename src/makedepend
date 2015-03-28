@@ -485,6 +485,11 @@ Fl_Shared_Image.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Shared_Image.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
 Fl_Shared_Image.o: ../FL/Fl_XBM_Image.H ../FL/Fl_Bitmap.H
 Fl_Shared_Image.o: ../FL/Fl_XPM_Image.H ../FL/Fl_Pixmap.H
+Fl_Shared_Image.o: ../FL/Fl_Preferences.H ../FL/fl_draw.H ../FL/x.H
+Fl_Shared_Image.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Shared_Image.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_Shared_Image.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Shared_Image.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 Fl_Single_Window.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H
 Fl_Slider.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Slider.o: ../FL/Enumerations.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H

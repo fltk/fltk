@@ -28,6 +28,11 @@ unittests.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H
 unittests.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Display.H
 unittests.o: ../FL/Fl_File_Input.H ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 unittests.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
+animated.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+animated.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
+animated.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
+animated.o: ../FL/Fl_Image.H ../FL/Fl_Button.H ../FL/Fl_Image.H ../FL/x.H
+animated.o: ../FL/fl_draw.H
 adjuster.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 adjuster.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 adjuster.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
@@ -424,10 +429,15 @@ pixmap_browser.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Box.H
 pixmap_browser.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 pixmap_browser.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 pixmap_browser.o: ../FL/Fl_Button.H ../FL/Fl_Shared_Image.H
-pixmap_browser.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
-pixmap_browser.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
-pixmap_browser.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Preferences.H
-pixmap_browser.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+pixmap_browser.o: ../FL/Fl_Printer.H ../FL/x.H ../FL/Fl_Paged_Device.H
+pixmap_browser.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+pixmap_browser.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+pixmap_browser.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Window.H ../FL/fl_draw.H
+pixmap_browser.o: ../FL/Fl_PostScript.H ../FL/Fl_File_Chooser.H
+pixmap_browser.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+pixmap_browser.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
+pixmap_browser.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+pixmap_browser.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
 pixmap_browser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 pixmap_browser.o: ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H ../FL/Fl.H
 pixmap_browser.o: ../FL/filename.H ../FL/Fl_Check_Button.H
