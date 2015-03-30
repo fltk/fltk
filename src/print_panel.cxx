@@ -562,7 +562,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
         p = line + strlen(line) - 1;
         if (*p == '\n' && p > line) p--;
         if (*p != '\\') break;
-        fgets(line, sizeof(line),lpstat);
+        if (fgets(line, sizeof(line),lpstat)==0) { /* ignore */ }
       }
     }
     fclose(lpstat);
@@ -600,7 +600,7 @@ void print_update_status() {
         pclose(lpstat);
         snprintf(command, sizeof(command), "lpq -P%s", printer); // try next with BSD printing system
         if ((lpstat = popen(command, "r")) !=  NULL) {
-          fgets(status, sizeof(status), lpstat);
+          if (fgets(status, sizeof(status), lpstat)==0) { /* ignore */ }
         }
       }
     pclose(lpstat);
