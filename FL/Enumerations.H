@@ -300,7 +300,12 @@ enum Fl_Event {	// events
   FL_SCREEN_CONFIGURATION_CHANGED = 24,
   /** The fullscreen state of the window has changed
    */
-   FL_FULLSCREEN         = 25
+  FL_FULLSCREEN         = 25,
+  /** The user has made a zoom/pinch/magnification gesture. 
+      The Fl::event_dy() method can be used to find magnification amount,
+      Fl::event_x() and Fl::event_y() are set as well.
+     */
+  FL_ZOOM_GESTURE	= 26
 };
 
 /** \name When Conditions */
