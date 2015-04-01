@@ -253,9 +253,41 @@ const char* Fl_Type::title() {
 
 extern const char* subclassname(Fl_Type*);
 
+
+/**
+ Draw an item in the widget browser.
+ 
+ A browser line starts with a variable size space. This space directly
+ relates to the level of the type entry.
+ 
+ If this type has the ability to store children, a triangle follows, pointing 
+ right (closed) or pointing down (open, children shown)
+ 
+ Next follows an Icon that is specific to the type. This makes it easy to
+ spot certain types
+ 
+ Now follows some text. For classes and widgets, this is the type itself,
+ followed by the name of the object. Other objects show their content as
+ text, possibly abbreviated with an elipsis.
+ 
+ \param v       v is a pointer to the actual widget type and can be cast safely
+                to Fl_Type
+ \param X, Y    these give the position in window coordinates of the top left 
+                corner of this line
+ */
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
+  // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
-  X += 3 + 18 + l->level * 12;
+    
+  // calculate the horizontal start position of this item
+  // 3 is the edge of the browser
+  // 13 is the width of the arrow that indicates children for the item
+  // 18 is the width of the icon
+  // 12 is the indent per level
+  X += 3 + 13 + 18 + l->level * 12;
+  
+  // items can contain a comment. If they do, the comment gets a second text
+  // line inside this browser line
   int comment_incr = 0;
   if (show_comments && l->comment()) {
     char buf[82], *d = buf;
@@ -270,34 +302,48 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
     if (l->new_selected) fl_color(fl_contrast(FL_DARK_GREEN,FL_SELECTION_COLOR));
     else fl_color(fl_contrast(FL_DARK_GREEN,color()));
     fl_font(textfont()+FL_ITALIC, textsize()-2);
-    fl_draw(buf, (l->is_parent())?X+12:X, Y+12);
+    fl_draw(buf, X, Y+12);
     Y += comment_incr/2;
     comment_incr -= comment_incr/2;
   }
+  
   if (l->new_selected) fl_color(fl_contrast(FL_FOREGROUND_COLOR,FL_SELECTION_COLOR));
   else fl_color(FL_FOREGROUND_COLOR);
-  Fl_Pixmap *pm = pixmap[l->pixmapID()];
-  if (pm) pm->draw(X-18, Y);
-  switch (l->is_public()) {
-    case 0: lock_pixmap.draw(X - 17, Y); break;
-    case 2: protected_pixmap.draw(X - 17, Y); break;
-  }
+  
+  // Width=10: Draw the triangle that indicate possible children
   if (l->is_parent()) {
+    X = X - 18 - 13;
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
+        // an outlined triangle to the right indicates closed item, no children
         fl_loop(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
+        // an outlined triangle to the bottom indicates open item, no children
         fl_loop(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     } else {
       if (l->open_!=(l==pushedtitle)) {
+        // afilled  triangle to the right indicates closed item, with children
         fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
+        // a filled triangle to the bottom indicates open item, with children
         fl_polygon(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     }
-    X += 10;
+    X = X + 13 + 18;
   }
+  
+  // Width=18: Draw the icon associated with the type.
+  Fl_Pixmap *pm = pixmap[l->pixmapID()];
+  if (pm) pm->draw(X-18, Y);
+  
+  // Add tags on top of the icon for locked and protected types.
+  switch (l->is_public()) {
+    case 0: lock_pixmap.draw(X - 17, Y); break;
+    case 2: protected_pixmap.draw(X - 17, Y); break;
+  }
+  
+  // Indent=12 per level: Now write the text that comes after the graphics representation
   Y += comment_incr;
   if (l->is_widget() || l->is_class()) {
     const char* c = subclassname(l);
@@ -344,8 +390,7 @@ int Widget_Browser::item_width(void *v) const {
 
   if (!l->visible) return 0;
 
-  int W = 3 + 16 + 18 + l->level*10;
-  if (l->is_parent()) W += 10;
+  int W = 3 + 13 + 18 + l->level * 12;
 
   if (l->is_widget() || l->is_class()) {
     const char* c = l->type_name();
@@ -392,6 +437,21 @@ void Widget_Browser::callback() {
   selection_changed((Fl_Type*)selection());
 }
 
+
+/**
+ Override the event handling fo rthis browser.
+
+ The vertical mouse position corresponds to an entry in the Type tree.
+ The horizontal position has the following hot zones:
+  * 0-3 is the windget frame and ignored
+  * the next hot zone starts 12*indent pixels further to the right
+  * the next 13 pixels refer to the arrow that indicates children for the item
+  * 18 pixels follow for the icon
+  * the remianing part is filled with text
+
+ \param e the incoming event type
+ \return 0 if the event is not supported, and 1 if the event was "used up"
+ */
 int Widget_Browser::handle(int e) {
   static Fl_Type *title;
   Fl_Type *l;
@@ -401,7 +461,7 @@ int Widget_Browser::handle(int e) {
     if (!Fl::event_inside(X,Y,W,H)) break;
     l = (Fl_Type*)find_item(Fl::event_y());
     if (l) {
-      X += 12*l->level + 18 - hposition();
+      X += 3 + 12*l->level - hposition();
       if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) {
 	title = pushedtitle = l;
 	redraw_line(l);
@@ -413,7 +473,7 @@ int Widget_Browser::handle(int e) {
     if (!title) break;
     l = (Fl_Type*)find_item(Fl::event_y());
     if (l) {
-      X += 12*l->level + 18 - hposition();
+      X += 3 + 12*l->level - hposition();
       if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) ;
       else l = 0;
     }
