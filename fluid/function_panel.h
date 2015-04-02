@@ -33,12 +33,12 @@ extern Fl_Light_Button *f_c_button;
 #include <FL/Fl_Input.H>
 extern Fl_Input *f_name_input;
 extern Fl_Input *f_return_type_input;
+#include <FL/Fl_Text_Editor.H>
+extern Fl_Text_Editor *f_comment_input;
 #include <FL/Fl_Return_Button.H>
 extern Fl_Return_Button *f_panel_ok;
 #include <FL/Fl_Button.H>
 extern Fl_Button *f_panel_cancel;
-#include <FL/Fl_Text_Editor.H>
-extern Fl_Text_Editor *f_comment_input;
 Fl_Double_Window* make_function_panel();
 extern Fl_Menu_Item menu_f_public_member_choice[];
 extern Fl_Menu_Item menu_f_public_choice[];
@@ -67,9 +67,9 @@ extern Fl_Double_Window *decl_panel;
 extern Fl_Choice *decl_choice;
 extern Fl_Choice *decl_class_choice;
 extern Fl_Input *decl_input;
+extern Fl_Text_Editor *decl_comment_input;
 extern Fl_Return_Button *decl_panel_ok;
 extern Fl_Button *decl_panel_cancel;
-extern Fl_Text_Editor *decl_comment_input;
 Fl_Double_Window* make_decl_panel();
 extern Fl_Menu_Item menu_decl_choice[];
 extern Fl_Menu_Item menu_decl_class_choice[];
@@ -79,9 +79,9 @@ extern Fl_Choice *data_class_choice;
 extern Fl_Input *data_input;
 extern Fl_Input *data_filename;
 extern Fl_Button *data_filebrowser;
+extern Fl_Text_Editor *data_comment_input;
 extern Fl_Return_Button *data_panel_ok;
 extern Fl_Button *data_panel_cancel;
-extern Fl_Text_Editor *data_comment_input;
 Fl_Double_Window* make_data_panel();
 extern Fl_Menu_Item menu_data_choice[];
 extern Fl_Menu_Item menu_data_class_choice[];

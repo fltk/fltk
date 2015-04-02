@@ -28,6 +28,13 @@ extern void select_only(Fl_Type*);
 extern void exit_cb(Fl_Widget*, void*);
 extern void toggle_widgetbin_cb(Fl_Widget*, void*);
 
+/**
+   Allow Windget navigation on Text fields with Tab.
+*/
+static int use_tab_navigation(int, Fl_Text_Editor*) {
+  return 0;
+}
+
 Fl_Double_Window *function_panel=(Fl_Double_Window *)0;
 
 Fl_Choice *f_public_member_choice=(Fl_Choice *)0;
@@ -53,11 +60,11 @@ Fl_Input *f_name_input=(Fl_Input *)0;
 
 Fl_Input *f_return_type_input=(Fl_Input *)0;
 
+Fl_Text_Editor *f_comment_input=(Fl_Text_Editor *)0;
+
 Fl_Return_Button *f_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *f_panel_cancel=(Fl_Button *)0;
-
-Fl_Text_Editor *f_comment_input=(Fl_Text_Editor *)0;
 
 Fl_Double_Window* make_function_panel() {
   { function_panel = new Fl_Double_Window(343, 232, "Function/Method Properties");
@@ -105,6 +112,18 @@ Fl_Double_Window* make_function_panel() {
       f_return_type_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       f_return_type_input->when(FL_WHEN_NEVER);
     } // Fl_Input* f_return_type_input
+    { f_comment_input = new Fl_Text_Editor(10, 125, 320, 65, "Comment:");
+      f_comment_input->tooltip("Function comment in Doxygen format");
+      f_comment_input->box(FL_DOWN_BOX);
+      f_comment_input->labelfont(1);
+      f_comment_input->labelsize(11);
+      f_comment_input->textfont(4);
+      f_comment_input->textsize(11);
+      f_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(f_comment_input);
+      f_comment_input->buffer(new Fl_Text_Buffer());
+      f_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
+    } // Fl_Text_Editor* f_comment_input
     { Fl_Group* o = new Fl_Group(10, 200, 320, 20);
       { f_panel_ok = new Fl_Return_Button(220, 200, 50, 20, "OK");
         f_panel_ok->tooltip("Apply the changes.");
@@ -120,17 +139,6 @@ Fl_Double_Window* make_function_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { f_comment_input = new Fl_Text_Editor(10, 125, 320, 65, "Comment:");
-      f_comment_input->tooltip("Function comment in Doxygen format");
-      f_comment_input->box(FL_DOWN_BOX);
-      f_comment_input->labelfont(1);
-      f_comment_input->labelsize(11);
-      f_comment_input->textfont(4);
-      f_comment_input->textsize(11);
-      f_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      Fl_Group::current()->resizable(f_comment_input);
-      f_comment_input->buffer(new Fl_Text_Buffer());
-    } // Fl_Text_Editor* f_comment_input
     function_panel->set_modal();
     function_panel->end();
   } // Fl_Double_Window* function_panel
@@ -347,11 +355,11 @@ Fl_Menu_Item menu_decl_class_choice[] = {
 
 Fl_Input *decl_input=(Fl_Input *)0;
 
+Fl_Text_Editor *decl_comment_input=(Fl_Text_Editor *)0;
+
 Fl_Return_Button *decl_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *decl_panel_cancel=(Fl_Button *)0;
-
-Fl_Text_Editor *decl_comment_input=(Fl_Text_Editor *)0;
 
 Fl_Double_Window* make_decl_panel() {
   { decl_panel = new Fl_Double_Window(343, 237, "Declaration Properties");
@@ -385,6 +393,18 @@ n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\
       decl_input->align(Fl_Align(134));
       decl_input->when(FL_WHEN_NEVER);
     } // Fl_Input* decl_input
+    { decl_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
+      decl_comment_input->tooltip("Declaration comment in Doxygen format");
+      decl_comment_input->box(FL_DOWN_BOX);
+      decl_comment_input->labelfont(1);
+      decl_comment_input->labelsize(11);
+      decl_comment_input->textfont(4);
+      decl_comment_input->textsize(11);
+      decl_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(decl_comment_input);
+      decl_comment_input->buffer(new Fl_Text_Buffer());
+      decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
+    } // Fl_Text_Editor* decl_comment_input
     { Fl_Group* o = new Fl_Group(10, 205, 320, 20);
       { decl_panel_ok = new Fl_Return_Button(200, 205, 60, 20, "OK");
         decl_panel_ok->labelsize(11);
@@ -399,17 +419,6 @@ n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { decl_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
-      decl_comment_input->tooltip("Declaration comment in Doxygen format");
-      decl_comment_input->box(FL_DOWN_BOX);
-      decl_comment_input->labelfont(1);
-      decl_comment_input->labelsize(11);
-      decl_comment_input->textfont(4);
-      decl_comment_input->textsize(11);
-      decl_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      Fl_Group::current()->resizable(decl_comment_input);
-      decl_comment_input->buffer(new Fl_Text_Buffer());
-    } // Fl_Text_Editor* decl_comment_input
     decl_panel->size_range(343, 237);
     decl_panel->end();
   } // Fl_Double_Window* decl_panel
@@ -443,11 +452,11 @@ Fl_Input *data_filename=(Fl_Input *)0;
 
 Fl_Button *data_filebrowser=(Fl_Button *)0;
 
+Fl_Text_Editor *data_comment_input=(Fl_Text_Editor *)0;
+
 Fl_Return_Button *data_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *data_panel_cancel=(Fl_Button *)0;
-
-Fl_Text_Editor *data_comment_input=(Fl_Text_Editor *)0;
 
 Fl_Double_Window* make_data_panel() {
   { data_panel = new Fl_Double_Window(343, 237, "Binary Data Properties");
@@ -491,6 +500,18 @@ Fl_Double_Window* make_data_panel() {
     { data_filebrowser = new Fl_Button(290, 90, 40, 20, "@fileopen");
       data_filebrowser->labelcolor((Fl_Color)134);
     } // Fl_Button* data_filebrowser
+    { data_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
+      data_comment_input->tooltip("Declaration comment in Doxygen format");
+      data_comment_input->box(FL_DOWN_BOX);
+      data_comment_input->labelfont(1);
+      data_comment_input->labelsize(11);
+      data_comment_input->textfont(4);
+      data_comment_input->textsize(11);
+      data_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(data_comment_input);
+      data_comment_input->buffer(new Fl_Text_Buffer());
+      data_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
+    } // Fl_Text_Editor* data_comment_input
     { Fl_Group* o = new Fl_Group(10, 205, 320, 20);
       { data_panel_ok = new Fl_Return_Button(200, 205, 60, 20, "OK");
         data_panel_ok->labelsize(11);
@@ -505,17 +526,6 @@ Fl_Double_Window* make_data_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { data_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
-      data_comment_input->tooltip("Declaration comment in Doxygen format");
-      data_comment_input->box(FL_DOWN_BOX);
-      data_comment_input->labelfont(1);
-      data_comment_input->labelsize(11);
-      data_comment_input->textfont(4);
-      data_comment_input->textsize(11);
-      data_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-      Fl_Group::current()->resizable(data_comment_input);
-      data_comment_input->buffer(new Fl_Text_Buffer());
-    } // Fl_Text_Editor* data_comment_input
     data_panel->size_range(343, 237);
     data_panel->end();
   } // Fl_Double_Window* data_panel
@@ -580,6 +590,7 @@ Fl_Double_Window* make_class_panel() {
       c_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       Fl_Group::current()->resizable(c_comment_input);
       c_comment_input->buffer(new Fl_Text_Buffer());
+      c_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);
     } // Fl_Text_Editor* c_comment_input
     { Fl_Group* o = new Fl_Group(10, 165, 320, 20);
       { c_panel_ok = new Fl_Return_Button(200, 165, 60, 20, "OK");

@@ -46,10 +46,16 @@ decl {extern void exit_cb(Fl_Widget*, void*);} {private global
 decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {private global
 } 
 
+Function {use_tab_navigation(int, Fl_Text_Editor*)} {
+  comment {Allow Windget navigation on Text fields with Tab.} private return_type int
+} {
+  code {return 0;} {}
+} 
+
 Function {make_function_panel()} {} {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {394 671 343 232} type Double hide resizable modal
+    xywh {557 523 343 232} type Double resizable modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -103,7 +109,13 @@ Function {make_function_panel()} {} {
       label {Return Type: (blank to return outermost widget)}
       tooltip {The return type of the function or method.} xywh {10 90 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
-    Fl_Group {} {
+    Fl_Text_Editor f_comment_input {
+      label {Comment:}
+      tooltip {Function comment in Doxygen format} xywh {10 125 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {f_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {f_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
+    Fl_Group {} {open
       xywh {10 200 320 20}
     } {
       Fl_Return_Button f_panel_ok {
@@ -118,23 +130,17 @@ Function {make_function_panel()} {} {
         xywh {10 200 205 20} resizable
       }
     }
-    Fl_Text_Editor f_comment_input {
-      label {Comment:}
-      tooltip {Function comment in Doxygen format} xywh {10 125 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
-      code0 {f_comment_input->buffer(new Fl_Text_Buffer());}
-    }
   }
 } 
 
-Function {make_code_panel()} {open
-} {
+Function {make_code_panel()} {} {
   Fl_Window code_panel {
     label {Code Properties}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
     return; // ignore Escape
 code_panel->hide(); // otherwise hide..} open
-    xywh {353 262 540 180} type Double labelsize 11 hide resizable
-    code0 {o->size_range(200, 150);} modal
+    xywh {503 450 540 180} type Double labelsize 11 resizable
+    code0 {o->size_range(200, 150);} modal visible
   } {
     Fl_Text_Editor code_input {
       xywh {10 10 520 130} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
@@ -162,9 +168,9 @@ code_panel->hide(); // otherwise hide..} open
 
 Function {make_codeblock_panel()} {} {
   Fl_Window codeblock_panel {
-    label {Code Block Properties}
-    xywh {468 221 300 115} type Double labelsize 11 hide resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
+    label {Code Block Properties} open
+    xywh {468 221 300 115} type Double labelsize 11 resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
   } {
     Fl_Input code_before_input {
       label {Conditional code block}
@@ -195,8 +201,8 @@ Function {make_codeblock_panel()} {} {
 Function {make_declblock_panel()} {} {
   Fl_Window declblock_panel {
     label {Declaration Block Properties} open
-    xywh {428 215 300 135} type Double labelsize 11 hide resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
+    xywh {428 215 300 135} type Double labelsize 11 resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 280 20}
@@ -230,7 +236,7 @@ Function {make_declblock_panel()} {} {
       label {"\\n...child code...\\n" is inserted here}
       tooltip {\#endif or similar declaration code block.} xywh {10 75 280 20} labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
-    Fl_Group {} {
+    Fl_Group {} {open
       xywh {10 105 280 20}
     } {
       Fl_Return_Button declblock_panel_ok {
@@ -251,7 +257,7 @@ Function {make_declblock_panel()} {} {
 Function {make_decl_panel()} {} {
   Fl_Window decl_panel {
     label {Declaration Properties} open
-    xywh {395 411 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    xywh {480 333 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -300,6 +306,12 @@ Function {make_decl_panel()} {} {
       label {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
       tooltip {Declaration text.} xywh {10 40 320 20} labelsize 11 align 134 when 0 textfont 4 textsize 11
     }
+    Fl_Text_Editor decl_comment_input {
+      label {Comment:}
+      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {decl_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {decl_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
     Fl_Group {} {open
       xywh {10 205 320 20}
     } {
@@ -315,19 +327,13 @@ Function {make_decl_panel()} {} {
         xywh {10 205 185 20} resizable
       }
     }
-    Fl_Text_Editor decl_comment_input {
-      label {Comment:}
-      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
-      code0 {decl_comment_input->buffer(new Fl_Text_Buffer());}
-    }
   }
 } 
 
-Function {make_data_panel()} {open
-} {
+Function {make_data_panel()} {} {
   Fl_Window data_panel {
     label {Binary Data Properties} open
-    xywh {414 355 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
+    xywh {595 352 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -384,6 +390,12 @@ Function {make_data_panel()} {open
       label {@fileopen}
       xywh {290 90 40 20} labelcolor 134
     }
+    Fl_Text_Editor data_comment_input {
+      label {Comment:}
+      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {data_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {data_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
+    }
     Fl_Group {} {open
       xywh {10 205 320 20}
     } {
@@ -399,18 +411,14 @@ Function {make_data_panel()} {open
         xywh {10 205 185 20} resizable
       }
     }
-    Fl_Text_Editor data_comment_input {
-      label {Comment:}
-      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
-      code0 {data_comment_input->buffer(new Fl_Text_Buffer());}
-    }
   }
 } 
 
-Function {make_class_panel()} {} {
+Function {make_class_panel()} {open
+} {
   Fl_Window class_panel {
     label {Class Properties} open
-    xywh {783 191 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
+    xywh {497 585 342 196} type Double labelsize 11 resizable modal size_range {343 188 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -432,9 +440,10 @@ Function {make_class_panel()} {} {
       tooltip {Name of subclass.} xywh {10 55 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Text_Editor c_comment_input {
-      label {Comment:}
+      label {Comment:} selected
       tooltip {Class comment in Doxygen format} xywh {10 90 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
       code0 {c_comment_input->buffer(new Fl_Text_Buffer());}
+      code1 {c_comment_input->add_key_binding(FL_Tab, 0, use_tab_navigation);}
     }
     Fl_Group {} {open
       xywh {10 165 320 20}
@@ -456,7 +465,7 @@ Function {make_class_panel()} {} {
 
 Function {make_comment_panel()} {} {
   Fl_Window comment_panel {
-    label {Comment Properties} open selected
+    label {Comment Properties} open
     xywh {780 296 550 280} type Double labelsize 11 hide resizable
     code0 {o->size_range(320, 180);} modal
   } {
@@ -520,8 +529,7 @@ Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
   }} {}
 } 
 
-Function {make_widgetbin()} {open
-} {
+Function {make_widgetbin()} {} {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
