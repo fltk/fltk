@@ -1498,6 +1498,7 @@ void Fl_Widget_Class_Type::write_code1() {
   const char *c = subclass();
   if (!c) c = "Fl_Group";
 
+  write_comment_h();
   write_h("\nclass %s : public %s {\n", name(), c);
   if (strstr(c, "Window")) {
     write_h("  void _%s();\n", trimclassname(name()));

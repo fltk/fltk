@@ -1259,7 +1259,31 @@ void callback_cb(CodeEditor* i, void *v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected) {
         o->callback(c);
-	mod = 1;
+        mod = 1;
+      }
+    }
+    if (mod) set_modflag(1);
+    free(c);
+  }
+}
+
+void comment_cb(Fl_Text_Editor* i, void *v) {
+  if (v == LOAD) {
+    const char *cmttext = current_widget->comment();
+    i->buffer()->text( cmttext ? cmttext : "" );
+  } else {
+    int mod = 0;
+    char *c = i->buffer()->text();
+    const char *d = c_check(c);
+    if (d) {
+      fl_message("Error in comment: %s",d);
+      if (i->window()) i->window()->make_current();
+      haderror = 1;
+    }
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected) {
+        o->comment(c);
+        mod = 1;
       }
     }
     if (mod) set_modflag(1);
@@ -2127,6 +2151,7 @@ void Fl_Widget_Type::write_code1() {
   }
 
   write_c("%s{ ", indent());
+  write_comment_inline_c();
   if (varused) write_c("%s* o = ", t);
   if (name()) write_c("%s = ", name());
   if (is_window()) {

@@ -91,8 +91,12 @@ extern void name_public_member_cb(Fl_Choice*, void*);
 extern void name_public_cb(Fl_Choice*, void*);
 extern void v_input_cb(Fl_Input*, void*);
 extern Fl_Input *v_input[4];
+#include <FL/Fl_Tile.H>
+#include <FL/Fl_Text_Editor.H>
+extern Fl_Text_Editor *wComment;
 #include "CodeEditor.h"
 extern void callback_cb(CodeEditor*, void*);
+extern CodeEditor *wCallback;
 extern void user_data_cb(Fl_Input*, void*);
 extern Fl_Menu_Item whenmenu[];
 extern void when_cb(Fl_Choice*, void*);

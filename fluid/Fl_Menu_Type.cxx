@@ -291,6 +291,7 @@ void Fl_Menu_Item_Type::write_item() {
     "FL_IMAGE_LABEL"
   };
 
+  write_comment_inline_c(" ");
   write_c(" {");
   if (image) write_c("0");
   else if (label()) write_cstring(label()); // we will call i18n when the widget is instantiated for the first time
@@ -324,6 +325,7 @@ void Fl_Menu_Item_Type::write_item() {
 
 void Fl_Menu_Item_Type::write_code1() {
   int i; const char* mname = menu_name(i);
+
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
     if (class_name(1)) {

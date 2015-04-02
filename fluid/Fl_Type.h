@@ -119,6 +119,7 @@ public:
   virtual void write_code2(); // code and .h after children
   void write_comment_h(const char *ind=""); // write the commentary text into the header file
   void write_comment_c(const char *ind=""); // write the commentary text into the source file
+  void write_comment_inline_c(const char *ind=0L); // write the commentary text
 
   // live mode
   virtual Fl_Widget *enter_live_mode(int top=0); // build wdgets needed for live mode
@@ -788,6 +789,7 @@ public:
 };
 // object list operations:
 Fl_Widget *make_widget_browser(int X,int Y,int W,int H);
+void redraw_widget_browser(Fl_Type*);
 extern int modflag;
 void delete_all(int selected_only=0);
 void selection_changed(Fl_Type* new_current);

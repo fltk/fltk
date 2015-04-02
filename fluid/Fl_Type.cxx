@@ -192,6 +192,14 @@ Fl_Widget *make_widget_browser(int x,int y,int w,int h) {
   return (widget_browser = new Widget_Browser(x,y,w,h));
 }
 
+void redraw_widget_browser(Fl_Type *caller)
+{
+  if (caller) {
+    widget_browser->display(caller);
+  }
+  widget_browser->redraw();
+}
+
 void select(Fl_Type *o, int v) {
   widget_browser->select(o,v,1);
   //  Fl_Type::current = o;
@@ -699,7 +707,9 @@ void Fl_Type::user_data_type(const char *n) {
 }
 
 void Fl_Type::comment(const char *n) {
-  storestring(n, comment_, 1);
+  if (storestring(n,comment_,1)) {
+    if (visible) widget_browser->redraw();
+  }
 }
 
 void Fl_Type::open() {
@@ -845,6 +855,7 @@ void Fl_Type::move_before(Fl_Type* g) {
   widget_browser->redraw();
 }
 
+
 // move selected widgets in their parent's list:
 void earlier_cb(Fl_Widget*,void*) {
   Fl_Type *f;
@@ -979,14 +990,14 @@ int has_toplevel_function(const char *rtype, const char *sig) {
  */
 void Fl_Type::write_comment_h(const char *pre)
 {
-  if (comment()) {
+  if (comment() && *comment()) {
     write_h("%s/**\n", pre);
     const char *s = comment();
-    write_h("%s   ", pre);
+    write_h("%s ", pre);
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          write_h("\n%s   ", pre);
+          write_h("\n%s ", pre);
         }
       } else {
         write_h("%c", *s); // FIXME this is much too slow!
@@ -998,18 +1009,18 @@ void Fl_Type::write_comment_h(const char *pre)
 }
 
 /**
- * Write a comment inot the header file.
+ * Write a comment into the source file.
  */
 void Fl_Type::write_comment_c(const char *pre)
 {
-  if (comment()) {
+  if (comment() && *comment()) {
     write_c("%s/**\n", pre);
     const char *s = comment();
-    write_c("%s   ", pre);
+    write_c("%s ", pre);
     while(*s) {
       if (*s=='\n') {
         if (s[1]) {
-          write_c("\n%s   ", pre);
+          write_c("\n%s ", pre);
         }
       } else {
         write_c("%c", *s); // FIXME this is much too slow!
@@ -1017,6 +1028,37 @@ void Fl_Type::write_comment_c(const char *pre)
       s++;
     }
     write_c("\n%s*/\n", pre);
+  }
+}
+
+/**
+ * Write a comment into the source file.
+ */
+void Fl_Type::write_comment_inline_c(const char *pre)
+{
+  if (comment() && *comment()) {
+    const char *s = comment();
+    if (strchr(s, '\n')==0L) {
+      // single line comment
+      if (pre) write_c("%s", pre);
+      write_c("// %s\n", s);
+      if (!pre) write_c("%s  ", indent());
+    } else {
+      write_c("%s/*\n", pre?pre:"");
+      if (pre) write_c("%s ", pre); else write_c("%s   ", indent());
+      while(*s) {
+        if (*s=='\n') {
+          if (s[1]) {
+            if (pre) write_c("\n%s ", pre); else write_c("\n%s   ", indent());
+          }
+        } else {
+          write_c("%c", *s); // FIXME this is much too slow!
+        }
+        s++;
+      }
+      if (pre) write_c("\n%s */\n", pre); else write_c("\n%s   */\n", indent());
+      if (!pre) write_c("%s  ", indent());
+    }
   }
 }
 

@@ -22,20 +22,25 @@ comment {//
 } {in_source in_header
 } 
 
-Function {make_widget_panel()} {open
+decl {extern void comment_cb(Fl_Text_Editor*, void*);} {private global
+} 
+
+Function {make_widget_panel()} {
+  comment {Create a panel that can be used with all known widgets} open
 } {
-  Fl_Window {} {open
-    xywh {383 206 420 360} type Double labelsize 11 align 80 hide resizable hotspot
-    code0 {o->size_range(o->w(), o->h());}
+  Fl_Window {} {
+    comment {Use a Double Window to avoid flickering.} open
+    xywh {468 187 420 400} type Double labelsize 11 align 80 resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
-      xywh {10 10 400 310} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
+      xywh {10 10 400 350} selection_color 12 labelsize 11 labelcolor 7 when 0 resizable
     } {
       Fl_Group {} {
         label GUI
         callback propagate_load open
-        xywh {10 30 400 290} labelsize 11 when 0 resizable
+        xywh {10 30 400 330} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
@@ -43,7 +48,7 @@ Function {make_widget_panel()} {open
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback label_cb selected
+            callback label_cb
             tooltip {The label text for the widget.
 Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
           }
@@ -358,6 +363,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         Fl_Button {} {
           label {Shortcut:}
           callback shortcut_in_cb
+          comment {This is a special button that grabs keystrokes directly} selected
           tooltip {The shortcut key for the widget.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
           code0 {\#include "Shortcut_Button.h"}
           class Shortcut_Button
@@ -430,7 +436,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       Fl_Group {} {
         label Style
         callback propagate_load
-        xywh {10 30 400 290} labelsize 11 when 0 hide
+        xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           label {Label Font:}
@@ -515,7 +521,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       Fl_Group {} {
         label {C++}
         callback propagate_load open
-        xywh {10 30 400 290} labelsize 11 when 0 hide
+        xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           label {Class:}
@@ -598,77 +604,97 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           callback v_input_cb
           tooltip {Extra initialization code for the widget.} xywh {95 150 310 20} labelsize 11 textfont 4 textsize 11
         }
-        Fl_Text_Editor {} {
-          label {Callback:}
-          callback callback_cb
-          tooltip {The callback function or code for the widget. Use the variable name 'o' to access the Widget pointer and 'v' to access the user value.} xywh {95 175 310 90} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
-          code0 {\#include "CodeEditor.h"}
-          class CodeEditor
+        Fl_Tile {} {
+          callback {wComment->do_callback(wComment, (long)v);
+wCallback->do_callback(wCallback, (long)v);} open
+          xywh {95 175 310 130} resizable
+        } {
+          Fl_Group {} {open
+            xywh {95 175 310 48} box FLAT_BOX
+          } {
+            Fl_Text_Editor wComment {
+              label {Comment:}
+              tooltip {Write a comment that will appear in the source code and in the widget tree overview.} xywh {95 175 310 45} box DOWN_BOX labelfont 1 labelsize 11 align 4 when 1 textfont 6 textsize 11 textcolor 59 resizable
+              code0 {wComment->buffer(new Fl_Text_Buffer());}
+              code1 {wComment->callback((Fl_Callback*)comment_cb);}
+            }
+          }
+          Fl_Group {} {open
+            xywh {95 223 310 82} box FLAT_BOX
+          } {
+            Fl_Text_Editor wCallback {
+              label {Callback:}
+              callback callback_cb
+              tooltip {The callback function or code for the widget. Use the variable name 'o' to access the Widget pointer and 'v' to access the user value.} xywh {95 225 310 80} box DOWN_BOX labelfont 1 labelsize 11 align 4 textfont 4 textsize 11 resizable
+              code0 {\#include "CodeEditor.h"}
+              class CodeEditor
+            }
+          }
         }
         Fl_Group {} {
           label {User Data:}
-          callback propagate_load
-          xywh {95 270 310 20} labelfont 1 labelsize 11 align 4
+          callback propagate_load open
+          xywh {95 310 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             callback user_data_cb
-            tooltip {The user data to pass into the callback code.} xywh {95 270 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
+            tooltip {The user data to pass into the callback code.} xywh {95 310 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           }
           Fl_Choice {} {
             label {When:}
             callback when_cb open
-            tooltip {When to call the callback function.} xywh {300 270 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1 textsize 11
+            tooltip {When to call the callback function.} xywh {300 310 105 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 when 1 textsize 11
             code0 {extern Fl_Menu_Item whenmenu[];}
             code1 {o->menu(whenmenu);}
           } {}
         }
         Fl_Group {} {
           label {Type:}
-          callback propagate_load
-          xywh {95 295 310 20} labelfont 1 labelsize 11 align 4
+          callback propagate_load open
+          xywh {95 335 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
             callback user_data_type_cb
-            tooltip {The type of the user data.} xywh {95 295 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
+            tooltip {The type of the user data.} xywh {95 335 158 20} labelfont 1 labelsize 11 textfont 4 textsize 11 resizable
           }
           Fl_Light_Button {} {
             label {No Change}
             callback when_button_cb
-            tooltip {Call the callback even if the value has not changed.} xywh {300 295 105 20} selection_color 1 labelsize 11
+            tooltip {Call the callback even if the value has not changed.} xywh {300 335 105 20} selection_color 1 labelsize 11
           }
         }
       }
     }
     Fl_Group {} {open
-      xywh {9 330 400 20} labelsize 11
+      xywh {9 370 400 20} labelsize 11
     } {
       Fl_Box {} {
-        xywh {9 330 20 20} labelsize 11 resizable
+        xywh {9 370 20 20} labelsize 11 resizable
       }
       Fl_Button {} {
         label {Hide &Overlays}
         callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {240 330 99 20} labelsize 11 labelcolor 1
+        tooltip {Hide the widget overlay box.} xywh {240 370 99 20} labelsize 11 labelcolor 1
       }
       Fl_Button {} {
         label Revert
         callback revert_cb
-        xywh {66 330 80 20} labelsize 11 hide
+        xywh {66 370 80 20} labelsize 11 hide
       }
       Fl_Return_Button {} {
         label Close
         callback ok_cb
-        xywh {344 330 64 20} labelsize 11
+        xywh {344 370 64 20} labelsize 11
       }
       Fl_Button {} {
         label Cancel
         callback cancel_cb
-        xywh {339 330 70 20} labelsize 11 hide
+        xywh {339 370 70 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {
         label {Live &Mode}
         callback live_mode_cb
-        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {151 330 84 20} type Toggle labelsize 11
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {151 370 84 20} type Toggle labelsize 11
       }
     }
   }
