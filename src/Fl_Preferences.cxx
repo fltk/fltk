@@ -1287,7 +1287,7 @@ int Fl_Preferences::Node::write( FILE *f ) {
 	for ( cnt = 0; cnt < 80; cnt++ )
 	  if ( src[cnt]==0 ) break;
         fputc( '+', f );
-	written = fwrite( src, cnt, 1, f );
+	written += fwrite( src, cnt, 1, f );
         fputc( '\n', f );
 	src += cnt;
       }
