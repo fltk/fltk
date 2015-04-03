@@ -3,7 +3,7 @@
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -231,7 +231,6 @@ enum {GLUT_NOT_VISIBLE, GLUT_VISIBLE};
 
 FL_EXPORT void glutIdleFunc(void (*f)());
 
-// Warning: this cast may not work on all machines:
 inline void glutTimerFunc(unsigned int msec, void (*f)(int), int value) {
   Fl::add_timeout(msec*.001, (void (*)(void *))f, (void *)(fl_intptr_t)value);
 }
