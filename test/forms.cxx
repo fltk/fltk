@@ -3,13 +3,12 @@
 //
 // Another forms demo for the Fast Light Tool Kit (FLTK).
 //
-// This is an XForms program with very few changes.
-// Search for "fltk" to find all changes necessary to port to fltk.
+// This is an XForms program with some changes for FLTK.
 //
 // This demo show the different boxtypes. Note that some
 // boxtypes are not appropriate for some objects
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,14 +26,7 @@
 static int border = 1; // changed from FL_TRANSIENT for fltk
 // (this is so the close box and Esc work to close the window)
 
-typedef struct { int val; const char *name; } VN_struct;
-#define VN(a) {a,#a}
-
-// static VN_struct gmode[] =
-// {
-//   VN(StaticGray), VN(GrayScale), VN(StaticColor),
-//   VN(PseudoColor), VN(TrueColor), VN(DirectColor),
-// };
+typedef struct { Fl_Boxtype val; const char *name; } VN_struct;
 
 static VN_struct btypes[]=
 {
@@ -60,7 +52,7 @@ static VN_struct btypes[]=
    {FL_GTK_ROUND_UP_BOX,"GTK round up box"},
    {FL_GLEAM_UP_BOX,"Gleam up box"},
    /* sentinel */
-   {-1}
+   {(Fl_Boxtype)(-1)}
 };
 
 #include "pixmaps/srs.xbm"
@@ -70,7 +62,7 @@ static VN_struct btypes[]=
 FL_FORM *form;
 Fl_Widget *tobj[18], *exitob, *btypeob, *modeob;
 
-void 
+void
 boxtype_cb (Fl_Widget * ob, long)
 {
   int i, req_bt = fl_get_choice(ob) - 1;
@@ -81,39 +73,21 @@ boxtype_cb (Fl_Widget * ob, long)
      fl_freeze_form (form);
      fl_redraw_form (form);
      for (i = 0; i < 18; i++)
-        fl_set_object_boxtype (tobj[i], (Fl_Boxtype)btypes[req_bt].val);
+        fl_set_object_boxtype (tobj[i], btypes[req_bt].val);
      fl_unfreeze_form (form);
      lastbt = req_bt;
      fl_redraw_form(form); // added for fltk
   }
 }
 
-void 
-mode_cb (Fl_Widget *, long)
-{
-//   static int lval = -1;
-//   int val = fl_get_choice (ob) -1;
-//   int  db = 0;
-
-//   if (val == lval || val < 0)
-//     return;
-
-//   fl_hide_form (form);
-//   if (!fl_mode_capable (gmode[val].val, 0))
-//   {
-//       fl_set_choice(ob, lval);
-//       val = lval;
-//   }
-
-//   fl_set_graphics_mode (gmode[val].val, db);
-//   fl_show_form (form, FL_PLACE_GEOMETRY, border, "Box types");
-
-//   lval = val;
+void
+mode_cb (Fl_Widget *, long) {
+  // empty
 }
 
 /*************** Creation Routines *********************/
 
-void 
+void
 create_form_form (void)
 {
   Fl_Widget *obj;
@@ -155,7 +129,7 @@ create_form_form (void)
 }
 /*---------------------------------------*/
 
-void 
+void
 create_the_forms (void)
 {
   create_form_form ();
@@ -205,18 +179,6 @@ main (int argc, char *argv[])
 
   for ( vn = btypes; vn->val >= 0; vn++)
     fl_addto_choice(btypeob, vn->name);
-
-//   {
-//     int i;
-//     VN_struct *g = gmode, *gs = g + sizeof (gmode) / sizeof (gmode[0]);
-//     for (i = 1; g < gs; g++, i++)
-//     {
-//       fl_addto_choice (modeob, g->name);
-//       if(!fl_mode_capable(g->val, 0))
-//         fl_set_choice_item_mode(modeob, i, FL_PUP_GRAY);
-//     }
-//   }
-//   fl_set_choice (modeob, fl_vmode+1);
 
   fl_show_form (form, FL_PLACE_MOUSE, border, "Box types");
 
