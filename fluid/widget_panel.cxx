@@ -78,8 +78,8 @@ Fl_Menu_Item menu_3[] = {
 Fl_Input *v_input[4]={(Fl_Input *)0};
 
 static void cb_1(Fl_Tile*, void* v) {
-  wComment->do_callback(wComment, (long)v);
-wCallback->do_callback(wCallback, (long)v);
+  wComment->do_callback(wComment, v);
+wCallback->do_callback(wCallback, v);
 }
 
 Fl_Text_Editor *wComment=(Fl_Text_Editor *)0;

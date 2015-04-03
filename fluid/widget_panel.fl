@@ -605,8 +605,8 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           tooltip {Extra initialization code for the widget.} xywh {95 150 310 20} labelsize 11 textfont 4 textsize 11
         }
         Fl_Tile {} {
-          callback {wComment->do_callback(wComment, (long)v);
-wCallback->do_callback(wCallback, (long)v);} open
+          callback {wComment->do_callback(wComment, v);
+wCallback->do_callback(wCallback, v);} open
           xywh {95 175 310 130} resizable
         } {
           Fl_Group {} {open
