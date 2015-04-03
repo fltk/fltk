@@ -956,6 +956,7 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
  */
 static void cocoaMagnifyHandler(NSEvent *theEvent)
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   fl_lock_function();
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   if ( !window->shown() ) {
@@ -963,7 +964,7 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
     return;
   }
   Fl::first_window(window);
-  Fl::e_dy = [theEvent magnification]*1000;
+  Fl::e_dy = [theEvent magnification]*1000; // 10.5.2
   if ( Fl::e_dy) {
     NSPoint pos = [theEvent locationInWindow];
     pos.y = window->h() - pos.y;
@@ -973,6 +974,7 @@ static void cocoaMagnifyHandler(NSEvent *theEvent)
     Fl::handle( FL_ZOOM_GESTURE, window );
   }
   fl_unlock_function();
+#endif
 }
 
 /*
