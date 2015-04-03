@@ -130,7 +130,7 @@ Fl_Menu_Item menutable[] = {
     {"Emboss",	0, 0, 0, 0, (uchar)FL_EMBOSSED_LABEL},
     {"Engrave",	0, 0, 0, 0, (uchar)FL_ENGRAVED_LABEL},
     {"Shadow",	0, 0, 0, 0, (uchar)FL_SHADOW_LABEL},
-    {"@->",	0, 0, 0, 0, FL_SYMBOL_LABEL},
+    {"@->",	0, 0, 0, 0, (uchar)FL_SYMBOL_LABEL},
     {0},
   {"&International",0,0,0,FL_SUBMENU},
     {"Sharp Ess",0x0000df},
