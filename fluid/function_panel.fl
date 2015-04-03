@@ -47,7 +47,7 @@ decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {private global
 } 
 
 Function {use_tab_navigation(int, Fl_Text_Editor*)} {
-  comment {Allow Windget navigation on Text fields with Tab.} private return_type int
+  comment {Allow widget navigation on text fields with Tab.} private return_type int
 } {
   code {return 0;} {}
 } 

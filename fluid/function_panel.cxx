@@ -29,7 +29,7 @@ extern void exit_cb(Fl_Widget*, void*);
 extern void toggle_widgetbin_cb(Fl_Widget*, void*);
 
 /**
-   Allow Windget navigation on Text fields with Tab.
+ Allow widget navigation on text fields with Tab.
 */
 static int use_tab_navigation(int, Fl_Text_Editor*) {
   return 0;
