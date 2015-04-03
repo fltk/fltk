@@ -233,11 +233,7 @@ FL_EXPORT void glutIdleFunc(void (*f)());
 
 // Warning: this cast may not work on all machines:
 inline void glutTimerFunc(unsigned int msec, void (*f)(int), int value) {
-#if defined(__LP64__)
-  Fl::add_timeout(msec*.001, (void (*)(void *))f, (void *) (long long) value);
-#else
-  Fl::add_timeout(msec*.001, (void (*)(void *))f, (void *)value);
-#endif
+  Fl::add_timeout(msec*.001, (void (*)(void *))f, (void *)(fl_intptr_t)value);
 }
 
 inline void glutMenuStateFunc(void (*f)(int state)) {
