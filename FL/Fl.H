@@ -268,6 +268,32 @@ public:
   // ABI version number
   static int abi_version();
 
+  /*
+    Returns whether the runtime library ABI version is correct.
+
+    This enables you to check the ABI version of the linked FLTK
+    library at runtime.
+
+    Returns 1 (true) if the compiled ABI version (in the header files)
+    and the linked library ABI version (used at runtime) are the same,
+    0 (false) otherwise.
+
+    Argument \p val can be used to query a particular library ABI version.
+    Use for instance 10303 to query if the runtime library is compatible
+    with FLTK ABI version 1.3.3. This is rarely useful.
+
+    The default \val argument is FL_ABI_VERSION, which checks the version
+    defined at configure time (i.e. in the header files at program
+    compilation time) against the linked library version used at runtime.
+    This is particularly useful if you linked with a shared object library,
+    but it also concerns static linking.
+
+    \see Fl::abi_version()
+  */
+  static inline int abi_check(const int val = FL_ABI_VERSION) {
+    return val == abi_version();
+  }
+
   // argument parsers:
   static int arg(int argc, char **argv, int& i);
   static int args(int argc, char **argv, int& i, Fl_Args_Handler cb = 0);
