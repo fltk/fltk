@@ -282,7 +282,7 @@ public:
     Use for instance 10303 to query if the runtime library is compatible
     with FLTK ABI version 1.3.3. This is rarely useful.
 
-    The default \val argument is FL_ABI_VERSION, which checks the version
+    The default \p val argument is FL_ABI_VERSION, which checks the version
     defined at configure time (i.e. in the header files at program
     compilation time) against the linked library version used at runtime.
     This is particularly useful if you linked with a shared object library,
