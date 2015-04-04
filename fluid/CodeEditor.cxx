@@ -427,6 +427,16 @@ CodeViewer::CodeViewer(int X, int Y, int W, int H, const char *L)
   cursor_style(CARET_CURSOR);
 }
 
+
+void CodeViewer::draw()
+{
+  // Tricking Fl_Text_Display into using bearable colors for this specific task
+  Fl_Color c = Fl::get_color(FL_SELECTION_COLOR);
+  Fl::set_color(FL_SELECTION_COLOR, fl_color_average(FL_BACKGROUND_COLOR, FL_FOREGROUND_COLOR, 0.9));
+  CodeEditor::draw();
+  Fl::set_color(FL_SELECTION_COLOR, c);
+}
+
 //
 // End of "$Id$".
 //

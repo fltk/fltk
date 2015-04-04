@@ -71,6 +71,7 @@ class CodeViewer : public CodeEditor {
   protected:
 
   int handle(int ev) { return Fl_Text_Display::handle(ev); }
+  void draw();
 };
 
 #endif // !CodeEditor_h
