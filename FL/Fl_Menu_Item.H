@@ -240,7 +240,7 @@ struct FL_EXPORT Fl_Menu_Item {
     for the menu item's callback function.
     \see Fl_Callback_p Fl_MenuItem::callback() const
    */
-  void callback(Fl_Callback1*c, long p=0) {callback_=(Fl_Callback*)c; user_data_=(void*)p;}
+  void callback(Fl_Callback1*c, long p=0) {callback_=(Fl_Callback*)c; user_data_=(void*)(fl_intptr_t)p;}
 
   /**
     Gets the user_data() argument that is sent to the callback function.
@@ -264,7 +264,7 @@ struct FL_EXPORT Fl_Menu_Item {
     and stores it in the menu item's userdata() member.
     This may not be portable to some machines.
   */
-  void argument(long v) {user_data_ = (void*)v;}
+  void argument(long v) {user_data_ = (void*)(fl_intptr_t)v;}
 
   /** Gets what key combination shortcut will trigger the menu item. */
   int shortcut() const {return shortcut_;}
@@ -394,7 +394,7 @@ struct FL_EXPORT Fl_Menu_Item {
     the callback.
     You must first check that callback() is non-zero before calling this.
   */
-  void do_callback(Fl_Widget* o,long arg) const {callback_(o, (void*)arg);}
+  void do_callback(Fl_Widget* o,long arg) const {callback_(o, (void*)(fl_intptr_t)arg);}
 
   // back-compatibility, do not use:
 
