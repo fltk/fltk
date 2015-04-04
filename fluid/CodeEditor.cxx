@@ -307,6 +307,14 @@ void CodeEditor::style_update(int pos, int nInserted, int nDeleted,
   // style character and keep updating if we have a multi-line
   // comment character...
   start = editor->mBuffer->line_start(pos);
+  // the following code checks the style of the last character of the previous
+  // line. If it is a block comment, the previous line is interpreted as well.
+  int altStart = editor->mBuffer->prev_char(start);
+  if (altStart>0) {
+    altStart = editor->mBuffer->prev_char(altStart);
+    if (altStart>=0 && editor->mStyleBuffer->byte_at(start-2)=='C')
+      start = editor->mBuffer->line_start(altStart);
+  }
   end   = editor->mBuffer->line_end(pos + nInserted);
   text  = editor->mBuffer->text_range(start, end);
   style = editor->mStyleBuffer->text_range(start, end);
