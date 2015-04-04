@@ -127,13 +127,30 @@ char const * const Fl::clipboard_image = "image";
 // 'Fl::version()' - Return the API version number...
 //
 
-double
 /**
   Returns the compiled-in value of the FL_VERSION constant. This
   is useful for checking the version of a shared library.
+
+  \deprecated	Use int Fl::api_version() instead.
 */
-Fl::version() {
+double Fl::version() {
   return FL_VERSION;
+}
+
+/**
+  Returns the compiled-in value of the FL_API_VERSION constant. This
+  is useful for checking the version of a shared library.
+*/
+int Fl::api_version() {
+  return FL_API_VERSION;
+}
+
+/**
+  Returns the compiled-in value of the FL_ABI_VERSION constant. This
+  is useful for checking the version of a shared library.
+*/
+int  Fl::abi_version() {
+  return FL_ABI_VERSION;
 }
 
 /**

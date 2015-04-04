@@ -23,11 +23,23 @@
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
-/* Uncomment the following FLTK_ABI_VERSION line to enable ABI breaking fixes
+/* Uncomment the following FL_ABI_VERSION line to enable ABI breaking fixes
  * in the current patch release of FLTK. ** Use for static builds only! **
  * For more info on this macro, see: http://fltk.org/cmp.php#FLTK_ABI_VERSION
+ ******************************************************************************
+ * Note: the link above is outdated.
+ * FIXME: Update docs ...
+ ******************************************************************************
+ * This is work in progress!
+ *
+ *  OLD: FLTK_ABI_VERSION	deprecated, but defined later (see below)
+ *  NEW: FL_ABI_VERSION		FIXME: to be defined by configure !
+ *
+ * The intent is to define FL_ABI_VERSION by configure and CMake.
+ * When this is done, the definition will be #include'd here !
+ ******************************************************************************
  */
-//#define FLTK_ABI_VERSION 10304
+//#define FL_ABI_VERSION 10304
 
 #  include "Fl_Export.H"
 #  include "fl_types.h"
@@ -64,17 +76,123 @@
 /**
     The FLTK version number as a \em double.
 
-    FL_VERSION is a double that describes the major and minor version numbers.
-    Version 1.1 is actually stored as 1.01 to allow for more than 9 minor
-    releases.
+    FL_VERSION is a \em double that describes the major, minor, and patch
+    version numbers.
+
+    Version 1.2.3 is actually stored as 1.0203 to allow for more than 9
+    minor and patch releases.
+
+    \deprecated This \p double version number is retained for compatibility
+    with existing program code. New code should use \em int FL_API_VERSION
+    instead. FL_VERSION is deprecated because comparisons of floating point
+    values may fail because of rounding errors. However, there are
+    currently no plans to remove this constant.
+
+    FL_VERSION is equivalent to <em>(double)FL_API_VERSION / 10000</em>.
+
+    \see Fl::version() (deprecated as well)
+    \see FL_API_VERSION
+    \see Fl::api_version()
+ */
+#define FL_VERSION	( (double)FL_MAJOR_VERSION + \
+			  (double)FL_MINOR_VERSION * 0.01 + \
+			  (double)FL_PATCH_VERSION * 0.0001 )
+
+/**
+    The FLTK API version number as an \em int.
+
+    FL_API_VERSION is an \em int that describes the major, minor, and patch
+    version numbers.
+
+    Version 1.2.3 is actually stored as 10203 to allow for more than 9
+    minor and patch releases.
 
     The FL_MAJOR_VERSION, FL_MINOR_VERSION, and FL_PATCH_VERSION constants
     give the integral values for the major, minor, and patch releases
     respectively.
+
+    \note FL_API_VERSION is intended to replace the deprecated
+    \em double FL_VERSION.
+
+    \see Fl::api_version()
  */
-#define FL_VERSION		((double)FL_MAJOR_VERSION + \
-				 (double)FL_MINOR_VERSION * 0.01 + \
-				 (double)FL_PATCH_VERSION * 0.0001)
+#define FL_API_VERSION	( FL_MAJOR_VERSION * 10000 + \
+			  FL_MINOR_VERSION * 100 + \
+			  FL_PATCH_VERSION )
+
+/**
+    The FLTK ABI (Application Binary Interface) version number as an \em int.
+
+    FL_ABI_VERSION is an \em int that describes the major, minor, and patch
+    ABI version numbers in the same format as FL_API_VERSION.
+
+    The ABI version number \p FL_ABI_VERSION is usually the same as the
+    API version \p FL_API_VERSION with the last two digits set to '00'.
+
+    FLTK retains the ABI (Application Binary Interface) during patch
+    releases of the same major and minor versions. Examples:
+
+    \verbatim
+      FLTK Version  FL_API_VERSION  FL_ABI_VERSION  FL_VERSION (deprecated)
+        1.3.0          10300           10300           1.0300
+	1.3.4          10304           10300           1.0304
+    \endverbatim
+
+    Version 1.2.3 is actually stored as 10203 to allow for more than 9
+    minor and patch releases.
+
+    The FL_MAJOR_VERSION, FL_MINOR_VERSION, and FL_PATCH_VERSION constants
+    give the integral values for the major, minor, and patch releases
+    respectively.
+
+    To enable new ABI-breaking features in patch releases you can configure
+    FLTK to use a higher FL_ABI_VERSION.
+
+    \todo Configuration of FL_ABI_VERSION needs documentation.
+ */
+#ifndef FL_ABI_VERSION
+#define FL_ABI_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100)
+#endif
+
+/*
+  Check if FL_ABI_VERSION is out of allowed range; redefine if necessary.
+
+  This is done to prevent users from defining an illegal ABI version.
+
+  Rule: FL_MAJOR_VERSION * 10000 + FL_MINOR_VERSION * 100
+	  <= FL_ABI_VERSION <= FL_API_VERSION.
+
+  Example (FLTK 1.3.4):
+
+    10300 <= FL_ABI_VERSION <= 10304
+
+  Note: configure + CMake not yet implemented, see also STR #3161.
+*/
+
+#if FL_ABI_VERSION < FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100
+
+# undef FL_ABI_VERSION
+# define FL_ABI_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100)
+
+#elif FL_ABI_VERSION > FL_API_VERSION
+
+# undef FL_ABI_VERSION
+# define FL_ABI_VERSION FL_API_VERSION
+
+#endif
+
+/*
+  FLTK_ABI_VERSION is deprecated (replaced by FL_ABI_VERSION).
+
+  This deprecated constant should be removed in FLTK 1.4.0 and later.
+  Please use FL_ABI_VERSION instead.
+*/
+
+#ifdef FLTK_ABI_VERSION
+#undef FLTK_ABI_VERSION
+#endif
+
+#define FLTK_ABI_VERSION FL_ABI_VERSION
 
 /*@}*/	// group: Version Numbers
 

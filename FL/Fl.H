@@ -263,6 +263,10 @@ public:
 
   // API version number
   static double version();
+  static int api_version();
+
+  // ABI version number
+  static int abi_version();
 
   // argument parsers:
   static int arg(int argc, char **argv, int& i);
