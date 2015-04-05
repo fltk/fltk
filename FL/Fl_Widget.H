@@ -599,6 +599,8 @@ public:
   void user_data(void* v) {user_data_ = v;}
 
   /** Gets the current user data (long) argument that is passed to the callback function.
+      \todo The user data value must be implemented using \em intptr_t or similar
+      to avoid 64-bit machine incompatibilities.
    */
   long argument() const {return (long)(fl_intptr_t)user_data_;}
 
@@ -835,12 +837,20 @@ public:
    */
   unsigned int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
-  /** Sets the default callback for all widgets.
-      Sets the default callback, which puts a pointer to the widget on the queue 
-      returned by Fl::readqueue(). You may want to call this from your own callback.
-      \param[in] cb the new callback
-      \param[in] d user data associated with that callback
-      \see callback(), do_callback(), Fl::readqueue()
+  /** The default callback for all widgets that don't set a callback.
+
+    This callback function puts a pointer to the widget on the queue
+    returned by Fl::readqueue().
+
+    Relying on the default callback and reading the callback queue with
+    Fl::readqueue() is not recommended. If you need a callback, you should
+    set one with Fl_Widget::callback(Fl_Callback *cb, void *data)
+    or one of its variants.
+
+    \param[in] cb the widget given to the callback
+    \param[in] d user data associated with that callback
+
+    \see callback(), do_callback(), Fl::readqueue()
    */
   static void default_callback(Fl_Widget *cb, void *d);
 
