@@ -868,7 +868,7 @@ public:
   Set things up so the handle function of the \p receiver widget will be called with an FL_PASTE event some
   time in the future if the clipboard does contain data of the requested type. During processing of this event,
   and if \p type is Fl::clipboard_plain_text, the text data from the specified \p source are in Fl::event_text()
-  with UTF-8 encoding, and the number of characters in Fl::event_length();
+  with UTF-8 encoding, and the number of bytes in Fl::event_length();
   if \p type is Fl::clipboard_image, Fl::event_clipboard() returns a pointer to the
   image data, as an Fl_Image *.
   The receiver
