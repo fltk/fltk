@@ -49,7 +49,7 @@ OPTIM="@OPTION_OPTIM@"
 CAIROFLAGS="@CAIROFLAGS@"
 
 # Check for local invocation, and update paths accordingly...
-if test -f "$selfdir/bin/fluid"; then
+if test -f "$selfdir/config.h"; then
 	includedir="@FLTK_SOURCE_DIR@"
 	libdir="$selfdir/lib"
 
