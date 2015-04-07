@@ -1482,29 +1482,33 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 //   1   |  fix   |   yes
 //   2   |  size  |   yes
 
-int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
+static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by, DWORD style, DWORD styleEx,
+                     int w_maxw, int w_minw, int w_maxh, int w_minh, uchar w_size_range_set) {
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
 
   int fallback = 1;
   if (!w->parent()) {
-    HWND hwnd = fl_xid(w);
-    if (hwnd) {
+    if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
       // required decorated window rectangle for a desired client rectangle.
       // If any part of the function above fails, we will drop to a 
       // fallback to get the best guess which is always available.
-      HWND hwnd = fl_xid(w);
-      // request the style flags of this window, as WIN32 sees them
-      LONG style = GetWindowLong(hwnd, GWL_STYLE);
-      LONG exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+      
+	 if (!style) {
+	     HWND hwnd = fl_xid(w);
+          // request the style flags of this window, as WIN32 sees them
+          style = GetWindowLong(hwnd, GWL_STYLE);
+          styleEx = GetWindowLong(hwnd, GWL_EXSTYLE);
+	 }
+
       RECT r;
       r.left = w->x();
       r.top = w->y();
       r.right = w->x()+w->w();
       r.bottom = w->y()+w->h();
       // get the decoration rectangle for the desired client rectangle
-      BOOL ok = AdjustWindowRectEx(&r, style, FALSE, exstyle);
+      BOOL ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
       if (ok) {
         X = r.left;
         Y = r.top;
@@ -1517,7 +1521,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
         yoff = by + bt;
         dx = W - w->w();
         dy = H - w->h();
-        if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh))
+        if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh))
           ret = 2;
         else
           ret = 1;
@@ -1528,7 +1532,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   // This is the original (pre 1.1.7) routine to calculate window border sizes.
   if (fallback) {
     if (w->border() && !w->parent()) {
-      if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) {
+      if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh)) {
 	ret = 2;
 	bx = GetSystemMetrics(SM_CXSIZEFRAME);
 	by = GetSystemMetrics(SM_CYSIZEFRAME);
@@ -1580,6 +1584,10 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   }
 
   return ret;
+}
+
+int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
+  return fake_X_wm_style(w, X, Y, bt, bx, by, 0, 0, w->maxw, w->minw, w->maxh, w->minh, w->size_range_set);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1832,8 +1840,14 @@ Fl_X* Fl_X::make(Fl_Window* w) {
       }
     }
     styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
-    int xwm = xp , ywm = yp , bt, bx, by;
-    switch (fake_X_wm(w, xwm, ywm, bt, bx, by)) {
+
+    int wintype = 0;
+    if (w->border() && !w->parent()) {
+      if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) wintype = 2;
+	  else wintype = 1;
+    }
+
+    switch (wintype) {
       // No border (used for menus)
       case 0:
         style |= WS_POPUP;
@@ -1854,6 +1868,9 @@ Fl_X* Fl_X::make(Fl_Window* w) {
           style |= WS_MINIMIZEBOX;
         break;
     }
+
+    int xwm = xp , ywm = yp , bt, bx, by;
+    fake_X_wm_style(w, xwm, ywm, bt, bx, by, style, styleEx, w->maxw, w->minw, w->maxh, w->minh, w->size_range_set);
     if (by+bt) {
       wp += 2*bx;
       hp += 2*by+bt;
