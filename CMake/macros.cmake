@@ -102,10 +102,29 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
         fltk_wrap_ui(${tname} ${flsrcs})
     endif(flsrcs)
 
-    add_executable(${tname} WIN32 ${srcs} ${${tname}_FLTK_UI_SRCS})
-    set_target_properties(${tname}
-	PROPERTIES OUTPUT_NAME ${oname}
-	)
+    if(APPLE)
+      unset(ICON_NAME)
+      if(${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
+        set( ICON_NAME ${tname}.icns )
+        set( ICON_PATH "${PROJECT_SOURCE_DIR}/test/${tname}.app/Contents/resources/${ICON_NAME}" )
+      endif(${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
+
+      if(DEFINED ICON_NAME )
+        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${ICON_PATH})
+      else()
+        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${${tname}_FLTK_UI_SRCS})
+      endif(DEFINED ICON_NAME)
+    else()
+      add_executable(${tname} WIN32 ${srcs} ${${tname}_FLTK_UI_SRCS})
+    endif(APPLE)
+
+    set_target_properties(${tname}    
+	    PROPERTIES OUTPUT_NAME ${oname}
+	  )
+    if(APPLE AND DEFINED ICON_NAME)    
+        set_target_properties(${tname} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+        set_target_properties(${tname} PROPERTIES RESOURCE ${ICON_PATH})
+    endif(APPLE AND DEFINED ICON_NAME)
 
     target_link_libraries(${tname} ${LIBRARIES})
 
