@@ -38,7 +38,14 @@ set(CPPFILES
     widget_panel.cxx
 )
 
-add_executable(fluid ${CPPFILES})
+if(APPLE)
+  set( ICON_NAME fluid.icns )
+  set( ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/Fluid.app/Contents/Resources/${ICON_NAME}" )
+  add_executable(fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+else()
+  add_executable(fluid ${CPPFILES})
+endif(APPLE)
+
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
 # link in optional libraries
@@ -50,12 +57,18 @@ if(HAVE_XINERAMA)
    target_link_libraries(fluid ${X11_Xinerama_LIB})
 endif(HAVE_XINERAMA)
 
-install(TARGETS fluid
+if(APPLE)    
+  set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
+  set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
+  install(TARGETS fluid DESTINATION ${FLTK_BINDIR})
+else()
+  install(TARGETS fluid
     EXPORT FLTK-Targets
     RUNTIME DESTINATION ${FLTK_BINDIR}
     LIBRARY DESTINATION ${FLTK_LIBDIR}
     ARCHIVE DESTINATION ${FLTK_LIBDIR}
     )
+endif(APPLE)
 
 if(UNIX)
     install(FILES fluid.desktop
