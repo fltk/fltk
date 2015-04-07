@@ -106,7 +106,7 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       unset(ICON_NAME)
       if(${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
         set( ICON_NAME ${tname}.icns )
-        set( ICON_PATH "${PROJECT_SOURCE_DIR}/test/${tname}.app/Contents/resources/${ICON_NAME}" )
+        set( ICON_PATH "${PROJECT_SOURCE_DIR}/test/${tname}.app/Contents/Resources/${ICON_NAME}" )
       endif(${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
 
       if(DEFINED ICON_NAME )
