@@ -1,21 +1,20 @@
-README.CMake.txt - 2014-09-27 - Building and using FLTK with CMake
-------------------------------------------------------------------
-
+README.CMake.txt - Building and using FLTK with CMake
+-----------------------------------------------------
 
 
  CONTENTS
 ==========
 
-  1   INTRODUCTION TO CMAKE
-  2   USING CMAKE TO BUILD FLTK
+  1	INTRODUCTION TO CMAKE
+  2	USING CMAKE TO BUILD FLTK
     2.1   Prerequisites
     2.2   Options
     2.3   Building under Linux with Unix Makefiles
     2.4   Crosscompiling
-  3   USING CMAKE WITH FLTK
+  3	USING CMAKE WITH FLTK
     3.1   Library names
     3.2   Using Fluid files
-  4   DOCUMENT HISTORY
+  4	DOCUMENT HISTORY
 
 
  INTRODUCTION TO CMAKE
@@ -59,8 +58,8 @@ More information on CMake can be found on its web site http://www.cmake.org.
 ---------------
 
 The prerequisites for building FLTK with CMake are staightforward:
-CMake 2.6 or later and a recent FLTK 1.3 snapshot.  Installation of
-CMake is covered on its web site.
+CMake 2.6 or later and a recent FLTK 1.3 release, snapshot, or subversion
+download (working copy).  Installation of CMake is covered on its web site.
 
 This howto will cover building FLTK with the default options using cmake
 under Linux with both the default Unix Makefiles and a MinGW cross compiling
@@ -129,8 +128,9 @@ OPTION_LARGE_FILE - default ON
 OPTION_USE_SYSTEM_LIBJPEG - default ON
 OPTION_USE_SYSTEM_ZLIB - default ON
 OPTION_USE_SYSTEM_LIBPNG - default ON
-   FLTK has built in jpeg zlib and png libraries.  These let you use
-   system libraries instead, unless CMake can't find them.
+   FLTK has built in jpeg, zlib, and png libraries.  These let you use
+   system libraries instead, unless CMake can't find them.  If you set
+   any of these options to OFF, then the built in library will be used.
 
 OPTION_USE_XINERAMA - default ON
 OPTION_USE_XFT - default ON
@@ -226,10 +226,15 @@ cmake_minimum_required(VERSION 2.6)
 
 project(hello)
 
-# the following line is required only if you don't install FLTK
-# or if find_package can't find your installation directory
-# it points to the build directory or the base folder,
-# not the library folder.
+# The following line is required only if (a) you didn't install FLTK
+# or if (b) find_package can't find your installation directory because
+# you installed FLTK in a non-standard location.  It points to
+# (a) the base folder of the build directory, or
+# (b) <fltk-install-prefix>/share/fltk
+# resp., where <fltk-install-prefix> is the installation prefix you
+# used to install FLTK.
+# (The file FLTKConfig.cmake and others must be found in that path.)
+
 set(FLTK_DIR /path/to/fltk)
 
 find_package(FLTK REQUIRED NO_MODULE)
@@ -302,3 +307,4 @@ when find_package(FLTK REQUIRED NO_MODULE) succeeds.
 Dec 20 2010 - matt: merged and restructures
 May 15 2013 - erco: small formatting tweaks, added some examples
 Feb 23 2014 - msurette: updated to reflect changes to the CMake files
+Apr 07 2015 - AlbrechtS: update use example and more docs

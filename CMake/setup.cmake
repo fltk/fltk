@@ -83,7 +83,7 @@ elseif(APPLE)
    set(FLTK_CONFIG_PATH FLTK/.framework/Resources/CMake)
    set(FLTK_EXAMPLES_PATH share/fltk-examples)
 else()
-   set(FLTK_CONFIG_PATH ${FLTK_LIBDIR}/fltk)
+   set(FLTK_CONFIG_PATH ${FLTK_DATADIR}/fltk)
    set(FLTK_EXAMPLES_PATH ${FLTK_DATADIR}/fltk-examples)
 endif(WIN32 AND NOT CYGWIN)
 
