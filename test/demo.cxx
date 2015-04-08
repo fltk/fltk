@@ -301,6 +301,7 @@ void dobut(Fl_Widget *, long arg)
     
     char *name = new char[strlen(cmd) + 5];
     strcpy(name, cmd);
+    if (arg) name[arg-cmd] = 0;
     strcat(name, ".app");
     // check whether app bundle exists
     if ( ! fl_filename_isdir(name) ) strcpy(name, cmd);
