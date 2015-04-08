@@ -110,7 +110,14 @@ endif(FLTK_HAVE_CAIRO)
 # - maybe more ...
 
 # use a target filename to make sure the target directory gets created
-configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH}/demo.menu COPYONLY)
+if(APPLE) #copy files to bundle resources
+  configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH}/demo.app/Contents/Resources/demo.menu COPYONLY)
+  configure_file(blocks.app/Contents/Resources/blocks.icns ${EXECUTABLE_OUTPUT_PATH}/blocks.app/Contents/Resources/blocks.icns COPYONLY)
+  configure_file(checkers.app/Contents/Resources/checkers.icns ${EXECUTABLE_OUTPUT_PATH}/checkers.app/Contents/Resources/checkers.icns COPYONLY)
+  configure_file(sudoku.app/Contents/Resources/sudoku.icns ${EXECUTABLE_OUTPUT_PATH}/sudoku.app/Contents/Resources/sudoku.icns COPYONLY)
+else()
+  configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH}/demo.menu COPYONLY)
+endif(APPLE)
 
 # use target directory only to avoid redundancy
 configure_file(rgb.txt ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
