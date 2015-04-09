@@ -332,6 +332,9 @@
 		7FDBB8F616B2D1FA00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031F16B1A909000FC50F /* Localizable.strings */; };
 		7FDBB8F716B2D1FF00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031C16B1A909000FC50F /* Localizable.strings */; };
 		7FDBB8F816B2D20A00AE76EF /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031916B1A909000FC50F /* Localizable.strings */; };
+		7FED8F171AD699C700276ED9 /* blocks.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7FED8F161AD699C700276ED9 /* blocks.icns */; };
+		7FED8F1A1AD69B4200276ED9 /* checkers.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7FED8F191AD69B4200276ED9 /* checkers.icns */; };
+		7FED8F1C1AD69B5B00276ED9 /* sudoku.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7FED8F1B1AD69B5B00276ED9 /* sudoku.icns */; };
 		7FFDD15C19BE08A800779AD1 /* Fl_PostScript.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDD15B19BE08A800779AD1 /* Fl_PostScript.cxx */; };
 		7FFDE552171D8D0D008753A3 /* Fl_Sys_Menu_Bar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDE551171D8D0D008753A3 /* Fl_Sys_Menu_Bar.mm */; };
 		812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */; };
@@ -4359,6 +4362,9 @@
 		7FA5C2C2192FAEF200519823 /* Fl_Copy_Surface.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Copy_Surface.H; path = ../../FL/Fl_Copy_Surface.H; sourceTree = SOURCE_ROOT; };
 		7FAC914955D699539F73B996 /* bitmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bitmap.cxx; path = ../../test/bitmap.cxx; sourceTree = SOURCE_ROOT; };
 		7FC91721DA7888C8A1FD762E /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FED8F161AD699C700276ED9 /* blocks.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = blocks.icns; path = ../../test/blocks.app/Contents/Resources/blocks.icns; sourceTree = "<group>"; };
+		7FED8F191AD69B4200276ED9 /* checkers.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = checkers.icns; path = ../../test/checkers.app/Contents/Resources/checkers.icns; sourceTree = "<group>"; };
+		7FED8F1B1AD69B5B00276ED9 /* sudoku.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = sudoku.icns; path = ../../test/sudoku.app/Contents/Resources/sudoku.icns; sourceTree = "<group>"; };
 		7FFDD15B19BE08A800779AD1 /* Fl_PostScript.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PostScript.cxx; path = ../../src/Fl_PostScript.cxx; sourceTree = "<group>"; };
 		7FFDE551171D8D0D008753A3 /* Fl_Sys_Menu_Bar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Sys_Menu_Bar.mm; path = ../../src/Fl_Sys_Menu_Bar.mm; sourceTree = SOURCE_ROOT; };
 		800E34DEF9E503C5EC6C4FA5 /* Fl_XBM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_XBM_Image.cxx; path = ../../src/Fl_XBM_Image.cxx; sourceTree = SOURCE_ROOT; };
@@ -6458,6 +6464,9 @@
 		C9628FFA1274D0A1007D3CFE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7FED8F161AD699C700276ED9 /* blocks.icns */,
+				7FED8F191AD69B4200276ED9 /* checkers.icns */,
+				7FED8F1B1AD69B5B00276ED9 /* sudoku.icns */,
 				7F92031816B1A909000FC50F /* English.lproj */,
 				7F92031B16B1A909000FC50F /* French.lproj */,
 				7F92031E16B1A909000FC50F /* German.lproj */,
@@ -8743,6 +8752,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FED8F171AD699C700276ED9 /* blocks.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8897,6 +8907,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FED8F1A1AD69B4200276ED9 /* checkers.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8967,6 +8978,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FED8F1C1AD69B5B00276ED9 /* sudoku.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
