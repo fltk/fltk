@@ -11188,7 +11188,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11222,7 +11222,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11250,7 +11250,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11282,7 +11282,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11314,7 +11314,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11346,7 +11346,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11376,7 +11376,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11406,7 +11406,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11438,7 +11438,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11468,7 +11468,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11500,7 +11500,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11530,7 +11530,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11562,7 +11562,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11594,7 +11594,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11626,7 +11626,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11656,7 +11656,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11686,7 +11686,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11716,7 +11716,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11746,7 +11746,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11776,7 +11776,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11808,7 +11808,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11837,7 +11837,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11869,7 +11869,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11901,7 +11901,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11933,7 +11933,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11963,7 +11963,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -11995,7 +11995,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12027,7 +12027,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12057,7 +12057,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12087,7 +12087,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12117,7 +12117,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12149,7 +12149,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12179,7 +12179,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12209,7 +12209,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12239,7 +12239,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12268,7 +12268,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12300,7 +12300,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12332,7 +12332,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12364,7 +12364,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12396,7 +12396,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12426,7 +12426,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12456,7 +12456,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12488,7 +12488,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12518,7 +12518,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12548,7 +12548,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12580,7 +12580,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12612,7 +12612,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12644,7 +12644,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12676,7 +12676,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12708,7 +12708,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12740,7 +12740,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12770,7 +12770,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12802,7 +12802,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12831,7 +12831,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12861,7 +12861,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12891,7 +12891,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12920,7 +12920,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12950,7 +12950,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -12982,7 +12982,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13014,7 +13014,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13044,7 +13044,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13076,7 +13076,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13104,7 +13104,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13134,7 +13134,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13172,7 +13172,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13199,7 +13199,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13230,7 +13230,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13271,7 +13271,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13303,7 +13303,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13335,7 +13335,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13447,7 +13447,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13477,7 +13477,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13507,7 +13507,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13539,7 +13539,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13571,7 +13571,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13601,7 +13601,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13632,7 +13632,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13660,7 +13660,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13687,7 +13687,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13719,7 +13719,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13751,7 +13751,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13781,7 +13781,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13811,7 +13811,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13841,7 +13841,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13873,7 +13873,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13905,7 +13905,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13935,7 +13935,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13963,7 +13963,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -13990,7 +13990,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14020,7 +14020,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14050,7 +14050,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14080,7 +14080,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14107,7 +14107,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14137,7 +14137,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14169,7 +14169,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14199,7 +14199,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14234,7 +14234,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14261,7 +14261,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14293,7 +14293,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14325,7 +14325,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14355,7 +14355,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14385,7 +14385,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14417,7 +14417,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14461,7 +14461,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14491,7 +14491,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14524,7 +14524,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14554,7 +14554,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14586,7 +14586,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14618,7 +14618,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14650,7 +14650,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14682,7 +14682,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14712,7 +14712,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14746,7 +14746,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14773,7 +14773,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14803,7 +14803,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14833,7 +14833,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14865,7 +14865,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14902,7 +14902,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14931,7 +14931,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14959,7 +14959,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -14989,7 +14989,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15021,7 +15021,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15053,7 +15053,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15085,7 +15085,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15115,7 +15115,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15147,7 +15147,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15179,7 +15179,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15211,7 +15211,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15241,7 +15241,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15271,7 +15271,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15303,7 +15303,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15335,7 +15335,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15367,7 +15367,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15399,7 +15399,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15429,7 +15429,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15459,7 +15459,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15489,7 +15489,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15519,7 +15519,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15549,7 +15549,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15581,7 +15581,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15611,7 +15611,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15643,7 +15643,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15673,7 +15673,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15703,7 +15703,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15731,7 +15731,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15758,7 +15758,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15788,7 +15788,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15820,7 +15820,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15856,7 +15856,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15883,7 +15883,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15913,7 +15913,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/Xcode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15945,7 +15945,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -15974,7 +15974,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -16006,7 +16006,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -16035,7 +16035,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,
@@ -16065,7 +16065,7 @@
 				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
-					../../ide/XCode3/,
+					../../ide/XCode4/,
 					../../,
 					../../png,
 					../../jpeg,

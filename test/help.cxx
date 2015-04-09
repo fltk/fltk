@@ -63,8 +63,8 @@ main(int  argc,			// I - Number of command-line arguments
   
 #ifdef USING_XCODE
   
-  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0)
-    argn++;
+  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0) argn++;
+  else if (argc>argn && strncmp(argv[1], "-NSDocumentRevisionsDebugMode", 29)==0) argn += 2;
   set_app_dir();
   
   if (argc <= argn)
