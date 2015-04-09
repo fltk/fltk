@@ -32,9 +32,10 @@
 #include "list_visuals.cxx"
 #endif
 
-int width = 75;
-int height = 75;
+int width = 100;
+int height = 100;
 uchar *image;
+Fl_Box *hint;
 
 void make_image() {
   image = new uchar[3*width*height];
@@ -71,6 +72,7 @@ void cb1(Fl_Widget *, void *v) {
   c = fl_show_colormap(c);
   Fl_Box* b = (Fl_Box*)v;
   b->color(c);
+  hint->labelcolor(fl_contrast(FL_BLACK,c));
   b->parent()->redraw();
 }
 
@@ -82,25 +84,29 @@ void cb2(Fl_Widget *, void *v) {
   Fl::set_color(fullcolor_cell,r,g,b);
   Fl_Box* bx = (Fl_Box*)v;
   bx->color(fullcolor_cell);
+  hint->labelcolor(fl_contrast(FL_BLACK,fullcolor_cell));
   bx->parent()->redraw();
 }
 
 int main(int argc, char ** argv) {
   Fl::set_color(fullcolor_cell,145,159,170);
   Fl_Window window(400,400);
-  Fl_Box box(50,50,300,300);
+  Fl_Box box(30,30,340,340);
   box.box(FL_THIN_DOWN_BOX);
   c = fullcolor_cell;
   box.color(c);
-  Fl_Button b1(140,120,120,30,"fl_show_colormap");
+  Fl_Box hintbox(40,40,320,30,"Pick background color with buttons:");
+  hintbox.align(FL_ALIGN_INSIDE);
+  hint = &hintbox;
+  Fl_Button b1(120,80,180,30,"fl_show_colormap()");
   b1.callback(cb1,&box);
-  Fl_Button b2(140,160,120,30,"fl_choose_color");
+  Fl_Button b2(120,120,180,30,"fl_color_chooser()");
   b2.callback(cb2,&box);
-  Fl_Box image_box(140,200,120,120,0);
+  Fl_Box image_box(160,190,width,height,0);
   make_image();
   (new Fl_RGB_Image(image, width, height))->label(&image_box);
-  Fl_Box b(140,320,120,0,"Example of fl_draw_image()");
-  Pens p(80,200,3*8,120,"lines");
+  Fl_Box b(160,310,120,30,"Example of fl_draw_image()");
+  Pens p(60,180,3*8,120,"lines");
   p.align(FL_ALIGN_TOP);
   int i = 1;
   if (!Fl::args(argc,argv,i) || i < argc-1) {
