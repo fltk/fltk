@@ -318,7 +318,7 @@ void Fl_Menu_Item_Type::write_item() {
     write_c(" (void*)(%s),", user_data());
   else
     write_c(" 0,");
-  write_c(" %d, %s, %d, %d, %d", flags(),
+  write_c(" %d, (uchar)%s, %d, %d, %d", flags(),
 	  labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
   write_c("},\n");
 }

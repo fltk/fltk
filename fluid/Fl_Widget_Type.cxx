@@ -2187,7 +2187,7 @@ void Fl_Widget_Type::write_code1() {
 
   indentation += 2;
 
-  if (wused) write_c("%sw = o;\n", indent());
+  if (wused) write_c("%sw = o; if (w) {/* empty */}\n", indent());
 
   write_widget_code();
 }
