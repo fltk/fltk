@@ -75,16 +75,13 @@ if(NOT WIN32)
     endif(_WIN32)
 endif(NOT WIN32)
 
-# set where config and example files go
+# set where config files go
 if(WIN32 AND NOT CYGWIN)
    set(FLTK_CONFIG_PATH CMake)
-   set(FLTK_EXAMPLES_PATH bin/fltk-examples)
 elseif(APPLE)
    set(FLTK_CONFIG_PATH FLTK/.framework/Resources/CMake)
-   set(FLTK_EXAMPLES_PATH share/fltk-examples)
 else()
    set(FLTK_CONFIG_PATH ${FLTK_DATADIR}/fltk)
-   set(FLTK_EXAMPLES_PATH ${FLTK_DATADIR}/fltk-examples)
 endif(WIN32 AND NOT CYGWIN)
 
 include(TestBigEndian)

@@ -145,11 +145,6 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
         target_link_libraries(${tname} ${X11_Xinerama_LIB})
     endif(HAVE_XINERAMA)
 
-    # install the example
-    install(TARGETS ${tname}
-        DESTINATION ${FLTK_EXAMPLES_PATH}
-        )
-
 endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
 #######################################################################
