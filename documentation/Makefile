@@ -1,9 +1,9 @@
 #
 # "$Id$"
 #
-# Documentation makefile for the Fast Light Tool Kit (FLTK).
+# Makefile for the Fast Light Tool Kit (FLTK) documentation.
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -56,12 +56,15 @@ MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 
 all:	$(MANPAGES)
 
-# use make dist to create all docs for distribution files
-# you need an installed version of doxygen for this
-dist:	all html pdf
+# Use `make docs' to create all docs for distribution files.
+# You need installed versions of Doxygen and LaTeX for this.
 
-# synonym for dist
-alldocs: dist
+docs:	all html pdf
+
+# Synonyms for docs:
+
+alldocs: docs
+dist:	docs
 
 clean:
 	$(RM) fltk.pdf refman.pdf src/fltk-book.tex
@@ -123,10 +126,10 @@ uninstall-linux uninstall-osx:
 	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
 	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
 
-# The HTML files are now generated using doxygen, and this needs
+# The HTML files are generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target
 # is not made by default.
-# Use `make html' or `make dist' to create the html docs
+# Use `make html' or `make docs' to create the html docs.
 
 html:	$(HTMLFILES) Doxyfile src/fltk-book.tex
 	echo "Generating HTML documentation..."
@@ -138,12 +141,10 @@ html:	$(HTMLFILES) Doxyfile src/fltk-book.tex
 	fi
 	test -d html && cp src/tiny.png html/
 
-# this is only used to minimize subversion updates of the online docs
-html-online: html
-	echo "*** Warning: re-create HTML files if you want to build distribution files."
-	echo "*** Warning: Use 'make html' to re-create the correct HTML files."
-	echo "Stripping HTML files for online documentation upload..."
-	./strip_tags
+# The PDF documentation (fltk.pdf) is generated using doxygen and LaTeX, and
+# this needs installed Doxygen and LaTeX programs and may take some time, so
+# this target is not made by default.
+# Use `make pdf' or `make docs' to create the PDF docs.
 
 pdf:	refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
@@ -151,20 +152,8 @@ pdf:	refman.pdf
 refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 	-$(RMDIR) latex
 	echo "Generating PDF documentation ..."
-	$(DOXYDOC) Doxybook ;\
-	(cd latex ;\
-	pdflatex --interaction=nonstopmode refman.tex ;\
-	makeindex refman.idx ;\
-	pdflatex --interaction=nonstopmode refman.tex ;\
-	latex_count=5;\
-	while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log \
-		&& [ $$latex_count -gt 0 ] ;\
-	    do \
-	      echo "Rerunning latex ..." ;\
-	      pdflatex --interaction=nonstopmode refman.tex ;\
-	      latex_count=`expr $$latex_count - 1` ;\
-	    done ; \
-	cd ..) > pdfall.log 2>&1
+	$(DOXYDOC) Doxybook
+	./make_pdf
 
 src/fltk-book.tex: src/fltk-book.tex.in
 	DOXY_VERSION=`$(DOXYDOC) --version`; \
