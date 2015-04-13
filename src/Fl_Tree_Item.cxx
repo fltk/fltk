@@ -476,7 +476,7 @@ Fl_Tree_Item* Fl_Tree_Item::deparent(int pos) {
 ///
 /// \returns
 ///    -  0: on success
-///    - -1: on error (e.g. if \p 'pos' out of range)
+///    - -1: on error (e.g. if \p 'pos' out of range) with no changes made.
 ///
 int Fl_Tree_Item::reparent(Fl_Tree_Item *newchild, int pos) {
   int ret;
@@ -485,7 +485,7 @@ int Fl_Tree_Item::reparent(Fl_Tree_Item *newchild, int pos) {
   return 0;
 }
 
-/// Move the item 'to' to sibling position of 'from'.
+/// Move the item 'from' to sibling position of 'to'.
 ///
 /// \returns
 ///    -  0: Success
