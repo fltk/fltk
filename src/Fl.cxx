@@ -1586,11 +1586,15 @@ void Fl_Window::hide() {
   }
   XDestroyWindow(fl_display, ip->xid);
   // end of fix for STR#3079
-  for (int ii = 0; ii < count; ii++) {
-    doit[ii]->hide();
-    doit[ii]->show();
+  if (count) {
+    int ii;
+    for (ii = 0; ii < count; ii++)  doit[ii]->hide();
+    for (ii = 0; ii < count; ii++)  {
+      if (ii != 0) doit[0]->show(); // Fix for STR#3165
+      doit[ii]->show();
+    }
+    delete[] doit;
   }
-  if (count) delete[] doit;
 #elif defined(__APPLE_QUARTZ__)
   ip->destroy();
 #else
