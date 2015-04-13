@@ -549,7 +549,7 @@ int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
   } else {					// different parent?
     if ( to > to_parent->children() )		// try to prevent a reparent() error
       return -4;
-    if ( from_parent->deparent(from) < 0 )	// deparent self from current parent
+    if ( from_parent->deparent(from) == NULL )	// deparent self from current parent
       return -5;
     if ( to_parent->reparent(this, to) < 0 ) {	// reparent self to new parent at position 'to'
       to_parent->reparent(this, 0);		// failed? shouldn't happen, reparent at 0
