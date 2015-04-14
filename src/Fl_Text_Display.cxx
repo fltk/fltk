@@ -2164,6 +2164,11 @@ void Fl_Text_Display::draw_string(int style,
     background = color();
   }
 
+  if ( !active_r() ) {
+    foreground = fl_inactive(foreground);
+    background = fl_inactive(background);
+  }
+
   if (!(style & TEXT_ONLY_MASK)) {
     fl_color( background );
     fl_rectf( X, Y, toX - X, mMaxsize );
@@ -2222,21 +2227,23 @@ void Fl_Text_Display::clear_rect(int style,
   if ( width == 0 )
     return;
 
+  Fl_Color c;
   if (style & PRIMARY_MASK) {
     if (Fl::focus()==(Fl_Widget*)this) {
-      fl_color(selection_color());
+      c = selection_color();
     } else {
-      fl_color(fl_color_average(color(), selection_color(), 0.4f));
+      c = fl_color_average(color(), selection_color(), 0.4f);
     }
   } else if (style & HIGHLIGHT_MASK) {
     if (Fl::focus()==(Fl_Widget*)this) {
-      fl_color(fl_color_average(color(), selection_color(), 0.5f));
+      c = fl_color_average(color(), selection_color(), 0.5f);
     } else {
-      fl_color(fl_color_average(color(), selection_color(), 0.6f));
+      c = fl_color_average(color(), selection_color(), 0.6f);
     }
   } else {
-    fl_color( color() );
+    c = color();
   }
+  fl_color(active_r() ? c : fl_inactive(c));
   fl_rectf( X, Y, width, height );
 }
 
@@ -2857,6 +2864,7 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
   int Y, line, visLine, lineStart;
   char lineNumString[16];
   int lineHeight = mMaxsize;
+  int isactive = active_r() ? 1 : 0;
 
   // Don't draw if lineNumWidth == 0 (line numbers are hidden),
   // or widget is not yet realized
@@ -2868,6 +2876,8 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
   // and therefore clipping ranges may be invalid.
   int xoff = Fl::box_dx(box());
   int hscroll_h = mHScrollBar->visible() ? mHScrollBar->h() : 0;
+  Fl_Color fgcolor = isactive ? linenumber_fgcolor() : fl_inactive(linenumber_fgcolor());
+  Fl_Color bgcolor = isactive ? linenumber_bgcolor() : fl_inactive(linenumber_bgcolor());
   fl_push_clip(x() + xoff,
                y() + Fl::box_dy(box()),
                mLineNumWidth - xoff,
@@ -2875,7 +2885,7 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
   {
     // Set background color for line number area -- LZA / STR# 2621
     // Erase background
-    fl_color(linenumber_bgcolor());
+    fl_color(bgcolor);
     fl_rectf(x(), y(), mLineNumWidth, h());
 
     // Draw separator line
@@ -2889,7 +2899,7 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
     line = get_absolute_top_line_number();
 
     // set font color for line numbers
-    fl_color(linenumber_fgcolor());
+    fl_color(fgcolor);
     for (visLine=0; visLine < mNVisibleLines; visLine++) {
       lineStart = mLineStarts[visLine];
       if (lineStart != -1 && (lineStart==0 || buffer()->char_at(lineStart-1)=='\n')) {
@@ -3588,16 +3598,19 @@ void Fl_Text_Display::draw(void) {
 
   fl_push_clip(x(),y(),w(),h());	// prevent drawing outside widget area
 
+  // background color -- change if inactive
+  Fl_Color bgcolor = active_r() ? color() : fl_inactive(color());
+
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
     //    printf("drawing all (box = %d)\n", box());
     if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
       // if to printer, draw the background
-      fl_rectf(text_area.x, text_area.y, text_area.w, text_area.h, color() );
+      fl_rectf(text_area.x, text_area.y, text_area.w, text_area.h, bgcolor);
     }
     // draw the box()
     int W = w(), H = h();
-    draw_box(box(), x(), y(), W, H, color());
+    draw_box(box(), x(), y(), W, H, bgcolor);
 
     if (mHScrollBar->visible())
       W -= scrollbar_width();
@@ -3607,20 +3620,20 @@ void Fl_Text_Display::draw(void) {
     // left margin
     fl_rectf(text_area.x-LEFT_MARGIN, text_area.y-TOP_MARGIN,
              LEFT_MARGIN, text_area.h+TOP_MARGIN+BOTTOM_MARGIN,
-             color());
+             bgcolor);
 
     // right margin
     fl_rectf(text_area.x+text_area.w, text_area.y-TOP_MARGIN,
              RIGHT_MARGIN, text_area.h+TOP_MARGIN+BOTTOM_MARGIN,
-             color());
+             bgcolor);
 
     // top margin
     fl_rectf(text_area.x, text_area.y-TOP_MARGIN,
-             text_area.w, TOP_MARGIN, color());
+             text_area.w, TOP_MARGIN, bgcolor);
 
     // bottom margin
     fl_rectf(text_area.x, text_area.y+text_area.h,
-             text_area.w, BOTTOM_MARGIN, color());
+             text_area.w, BOTTOM_MARGIN, bgcolor);
 
     // draw that little box in the corner of the scrollbars
     if (mVScrollBar->visible() && mHScrollBar->visible())
@@ -3637,9 +3650,9 @@ void Fl_Text_Display::draw(void) {
                  text_area.w+LEFT_MARGIN+RIGHT_MARGIN,
                  text_area.h);
     fl_rectf(text_area.x-LEFT_MARGIN, mCursorOldY,
-             LEFT_MARGIN, mMaxsize, color());
+             LEFT_MARGIN, mMaxsize, bgcolor);
     fl_rectf(text_area.x+text_area.w, mCursorOldY,
-             RIGHT_MARGIN, mMaxsize, color());
+             RIGHT_MARGIN, mMaxsize, bgcolor);
     fl_pop_clip();
   }
 
