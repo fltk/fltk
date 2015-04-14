@@ -806,14 +806,14 @@ unsigned fl_utf8to_mb(const char* src, unsigned srclen,
     wchar_t lbuf[1024];
     wchar_t* buf = lbuf;
     unsigned length = fl_utf8towc(src, srclen, buf, 1024);
-    int ret;
+    int ret; // note: wcstombs() returns unsigned(length) or unsigned(-1)
     if (length >= 1024) {
       buf = (wchar_t*)(malloc((length+1)*sizeof(wchar_t)));
       fl_utf8towc(src, srclen, buf, length+1);
     }
     if (dstlen) {
       ret = wcstombs(dst, buf, dstlen);
-      if (ret >= dstlen-1) ret = wcstombs(0,buf,0);
+      if (ret >= (int)dstlen-1) ret = wcstombs(0,buf,0);
     } else {
       ret = wcstombs(0,buf,0);
     }
