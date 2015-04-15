@@ -17,6 +17,7 @@
 //
 
 #include <config.h>
+#include <math.h>
 
 /* from fl_utf.c */
 extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short* dst, unsigned dstlen);
@@ -48,7 +49,7 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   double w;
   CTFontGetAdvancesForGlyphs(fontref, kCTFontHorizontalOrientation, glyph, advances, 2);
   w = advances[0].width;
-  if ( abs(advances[0].width - advances[1].width) < 1E-2 ) {//this is a fixed-width font
+  if ( fabs(advances[0].width - advances[1].width) < 1E-2 ) {//this is a fixed-width font
     // slightly rescale fixed-width fonts so the character width has an integral value
     CFRelease(fontref);
     CGFloat fsize = size / ( w/floor(w + 0.5) );
