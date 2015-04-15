@@ -6,21 +6,21 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	  Window nesting to any depth is possible. An Fl_Gl_Window window or
 	  subwindow can contain Fl_Window's as subwindows.
 
-  1.3.4 ABI FEATURES
+	1.3.4 ABI FEATURES
 
-    To enable the following ABI features, put:
-    #define FL_ABI_VERSION 10304
-    ..at the top of your FL/Enumerations.H and rebuild FLTK and your app.
+	  To enable the following ABI features, put:
+	  #define FL_ABI_VERSION 10304
+	  ..at the top of your FL/Enumerations.H and rebuild FLTK and your app.
 
-    - Added the Fl_Shared_Image::scale(width, height) function which gives
-    a shared image its own drawing size, independently of the size of the
-    underlying image. This improves much image drawing on high resolution
-    surfaces such as Laser printers, PDF files, or Apple retina displays.
+	- Added the Fl_Shared_Image::scale(width, height) function which gives
+	  a shared image its own drawing size, independently of the size of the
+	  underlying image. This improves much image drawing on high resolution
+	  surfaces such as Laser printers, PDF files, or Apple retina displays.
 
 	Other improvements
 
 	- The Mac OS X platform no longer uses the deprecated AGL
-	  (Apple GL library) to draw openGL data. Instead, it uses standard
+	  (Apple GL library) to draw OpenGL data. Instead, it uses standard
 	  cocoa APIs. This allows FLTK to support drawing GL scenes at high
 	  resolution when an Fl_Gl_Window is mapped to a 'retina' display.
 	- fl_read_image() now captures all pixels within the rectangle
