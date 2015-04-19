@@ -3,7 +3,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -51,7 +51,6 @@
 #include <FL/x.H>
 
 #include <ctype.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -1137,7 +1136,7 @@ void fl_throw_focus(Fl_Widget *o) {
 // Call to->handle(), but first replace the mouse x/y with the correct
 // values to account for nested windows. 'window' is the outermost
 // window the event was posted to by the system:
-static int send(int event, Fl_Widget* to, Fl_Window* window) {
+static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
   int dx, dy;
   int old_event = Fl::e_number;
   if (window) {
@@ -1279,7 +1278,7 @@ int Fl::handle_(int e, Fl_Window* window)
     else if (modal() && wi != modal()) return 0;
     pushed_ = wi;
     Fl_Tooltip::current(wi);
-    if (send(e, wi, window)) return 1;
+    if (send_event(e, wi, window)) return 1;
     // raise windows that are clicked on:
     window->show();
     return 1;
@@ -1323,11 +1322,11 @@ int Fl::handle_(int e, Fl_Window* window)
 	  Fl::event_y_root() >= tooltip->y() && Fl::event_y_root() < tooltip->y() + tooltip->h() );
 	}
 	// if inside, send event to tooltip window instead of background window
-	if (inside) ret = send(e, tooltip, window);
-	else ret = (wi && send(e, wi, window));
+	if (inside) ret = send_event(e, tooltip, window);
+	else ret = (wi && send_event(e, wi, window));
       } else
 #endif
-      ret = (wi && send(e, wi, window));
+      ret = (wi && send_event(e, wi, window));
    if (pbm != belowmouse()) {
 #ifdef DEBUG
       printf("Fl::handle(e=%d, window=%p);\n", e, window);
@@ -1347,7 +1346,7 @@ int Fl::handle_(int e, Fl_Window* window)
       wi = pushed();
       pushed_ = 0; // must be zero before callback is done!
     } else if (modal() && wi != modal()) return 0;
-    int r = send(e, wi, window);
+    int r = send_event(e, wi, window);
     fl_fix_focus();
     return r;}
 
@@ -1369,7 +1368,7 @@ int Fl::handle_(int e, Fl_Window* window)
     // a KEYUP there. I believe that the current solution is
     // "close enough".
     for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
-      if (send(FL_KEYUP, wi, window)) return 1;
+      if (send_event(FL_KEYUP, wi, window)) return 1;
     return 0;
 
   case FL_KEYBOARD:
@@ -1383,7 +1382,7 @@ int Fl::handle_(int e, Fl_Window* window)
 
     // Try it as keystroke, sending it to focus and all parents:
     for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
-      if (send(FL_KEYBOARD, wi, window)) return 1;
+      if (send_event(FL_KEYBOARD, wi, window)) return 1;
 
     // recursive call to try shortcut:
     if (handle(FL_SHORTCUT, window)) return 1;
@@ -1404,11 +1403,11 @@ int Fl::handle_(int e, Fl_Window* window)
       wi = modal();
       if (!wi) wi = window;
     } else if (wi->window() != first_window()) {
-      if (send(FL_SHORTCUT, first_window(), first_window())) return 1;
+      if (send_event(FL_SHORTCUT, first_window(), first_window())) return 1;
     }
 
     for (; wi; wi = wi->parent()) {
-      if (send(FL_SHORTCUT, wi, wi->window())) return 1;
+      if (send_event(FL_SHORTCUT, wi, wi->window())) return 1;
     }
 
     // try using add_handle() functions:
@@ -1450,19 +1449,19 @@ int Fl::handle_(int e, Fl_Window* window)
 
     // Try sending it to the "grab" first
     if (grab() && grab()!=modal() && grab()!=window) {
-      if (send(FL_MOUSEWHEEL, grab(), window)) return 1;
+      if (send_event(FL_MOUSEWHEEL, grab(), window)) return 1;
     }
     // Now try sending it to the "modal" window
     if (modal()) {
-      send(FL_MOUSEWHEEL, modal(), window);
+      send_event(FL_MOUSEWHEEL, modal(), window);
       return 1;
     }
     // Finally try sending it to the window, the event occured in
-    if (send(FL_MOUSEWHEEL, window, window)) return 1;
+    if (send_event(FL_MOUSEWHEEL, window, window)) return 1;
   default:
     break;
   }
-  if (wi && send(e, wi, window)) {
+  if (wi && send_event(e, wi, window)) {
     dnd_flag = 0;
     return 1;
   }
