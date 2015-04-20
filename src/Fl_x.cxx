@@ -355,6 +355,7 @@ static Atom fl_XaTextUriList;
 static Atom fl_XaImageBmp;
 static Atom fl_XaImagePNG;
 static Atom fl_INCR;
+static Atom fl_NET_WM_PID;
 static Atom fl_NET_WM_NAME;			// utf8 aware window label
 static Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
 static Atom fl_NET_SUPPORTING_WM_CHECK;
@@ -719,6 +720,7 @@ void fl_open_display(Display* d) {
   fl_XaImageBmp         = XInternAtom(d, "image/bmp",           0);
   fl_XaImagePNG         = XInternAtom(d, "image/png",           0);
   fl_INCR               = XInternAtom(d, "INCR",                0);
+  fl_NET_WM_PID         = XInternAtom(d, "_NET_WM_PID",         0);
   fl_NET_WM_NAME        = XInternAtom(d, "_NET_WM_NAME",        0);
   fl_NET_WM_ICON_NAME   = XInternAtom(d, "_NET_WM_ICON_NAME",   0);
   fl_NET_SUPPORTING_WM_CHECK = XInternAtom(d, "_NET_SUPPORTING_WM_CHECK", 0);
@@ -2472,6 +2474,15 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
                                visual->visual,
                                mask, &attr));
   int showit = 1;
+
+  // Set WM_CLIENT_MACHINE and WM_LOCALE_NAME
+  XSetWMProperties(fl_display, xp->xid, NULL, NULL, NULL, 0, NULL, NULL, NULL);
+
+  // Set _NET_WM_PID
+  long pid;
+  pid = getpid();
+  XChangeProperty(fl_display, xp->xid, fl_NET_WM_PID,
+		  XA_CARDINAL, 32, 0, (unsigned char *)&pid, 1);
 
   if (!win->parent() && !attr.override_redirect) {
     // Communicate all kinds 'o junk to the X Window Manager:
