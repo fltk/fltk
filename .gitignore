@@ -64,6 +64,7 @@
 # /examples/
 /examples/*.exe
 /examples/clipboard
+/examples/fltk-versions
 /examples/howto-add_fd-and-popen
 /examples/howto-browser-with-icons
 /examples/howto-drag-and-drop
