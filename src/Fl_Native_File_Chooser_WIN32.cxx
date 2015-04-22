@@ -568,13 +568,21 @@ int Fl_Native_File_Chooser::showdir() {
 //   -1 - failed; errmsg() has reason
 //
 int Fl_Native_File_Chooser::show() {
+  int retval;
   if ( _btype == BROWSE_DIRECTORY ||
        _btype == BROWSE_MULTI_DIRECTORY ||
        _btype == BROWSE_SAVE_DIRECTORY ) {
-    return(showdir());
+    retval = showdir();
   } else {
-    return(showfile());
+    retval = showfile();
   }
+  // restore the correct state of mouse buttons and keyboard modifier keys (STR #3221)
+  HWND h = GetForegroundWindow();
+  if (h) {
+    WNDPROC windproc = (WNDPROC)GetWindowLongPtrW(h, GWLP_WNDPROC);
+    CallWindowProc(windproc, h, WM_ACTIVATEAPP, 1, 0);
+  }
+  return retval;
 }
 
 // RETURN ERROR MESSAGE
