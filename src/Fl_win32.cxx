@@ -3,7 +3,7 @@
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -350,6 +350,16 @@ extern int fl_send_system_handlers(void *e);
 
 MSG fl_msg;
 
+// A local helper function to flush any pending callback requests
+// from the awake ring-buffer
+static void process_awake_handler_requests(void) {
+  Fl_Awake_Handler func;
+  void *data;
+  while (Fl::get_awake_handler_(func, data) == 0) {
+    func(data);
+  }
+}
+
 // This is never called with time_to_wait < 0.0.
 // It *should* return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.  This version only
@@ -423,15 +433,37 @@ int fl_wait(double time_to_wait) {
     if (fl_msg.message == fl_wake_msg) {
       // Used for awaking wait() from another thread
       thread_message_ = (void*)fl_msg.wParam;
-      Fl_Awake_Handler func;
-      void *data;
-      while (Fl::get_awake_handler_(func, data)==0)
-        func(data);
+      process_awake_handler_requests();
     }
 
     TranslateMessage(&fl_msg);
     DispatchMessageW(&fl_msg);
   }
+
+  // The following conditional test:
+  //    (Fl::awake_ring_head_ != Fl::awake_ring_tail_)
+  // is a workaround / fix for STR #3143. This works, but a better solution
+  // would be to understand why the PostThreadMessage() messages are not
+  // seen by the main window if it is being dragged/ resized at the time.
+  // If a worker thread posts an awake callback to the ring buffer
+  // whilst the main window is unresponsive (if a drag or resize operation
+  // is in progress) we may miss the PostThreadMessage(). So here, we check if
+  // there is anything pending in the awake ring buffer and if so process
+  // it. This is not strictly thread safe (for speed it compares the head
+  // and tail indices without first locking the ring buffer) but is intended
+  // only as a fall-back recovery mechanism if the awake processing stalls.
+  // If the test erroneously returns true (may happen if we test the indices
+  // whilst they are being modified) we will call process_awake_handler_requests()
+  // unnecessarily, but this has no harmful consequences so is safe to do.
+  // Note also that if we miss the PostThreadMessage(), then thread_message_
+  // will not be updated, so this is not a perfect solution, but it does
+  // recover and process any pending awake callbacks.
+  // Normally the ring buffer head and tail indices will match and this
+  // comparison will do nothing. Addresses STR #3143
+  if (Fl::awake_ring_head_ != Fl::awake_ring_tail_) {
+    process_awake_handler_requests();
+  }
+
   Fl::flush();
 
   // This should return 0 if only timer events were handled:

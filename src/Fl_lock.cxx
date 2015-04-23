@@ -3,7 +3,7 @@
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,7 +70,6 @@ static const int AWAKE_RING_SIZE = 1024;
 static void lock_ring();
 static void unlock_ring();
 
-
 /** Adds an awake handler for use in awake(). */
 int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
 {
@@ -80,33 +79,43 @@ int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
     awake_ring_size_ = AWAKE_RING_SIZE;
     awake_ring_ = (Fl_Awake_Handler*)malloc(awake_ring_size_*sizeof(Fl_Awake_Handler));
     awake_data_ = (void**)malloc(awake_ring_size_*sizeof(void*));
+    // explicitly initialize the head and tail indices
+    awake_ring_head_= awake_ring_tail_ = 0;
   }
-  if (awake_ring_head_==awake_ring_tail_-1 || awake_ring_head_+1==awake_ring_tail_) {
-    // ring is full. Return -1 as an error indicator.
+  // The next head index we will want (not the current index):
+  // We use this to check if the ring-buffer is full or not
+  // (and to update awake_ring_head_ if we do use the current index.)
+  int next_head = awake_ring_head_ + 1;
+  if (next_head >= awake_ring_size_) {
+    next_head = 0;
+  }
+  // check that the ring buffer is not full, and that it exists
+  if ((!awake_ring_) || (next_head == awake_ring_tail_)) {
+    // ring is non-existent or full. Return -1 as an error indicator.
     ret = -1;
   } else {
     awake_ring_[awake_ring_head_] = func;
     awake_data_[awake_ring_head_] = data;
-    ++awake_ring_head_;
-    if (awake_ring_head_ == awake_ring_size_)
-      awake_ring_head_ = 0;
+    awake_ring_head_ = next_head;
   }
   unlock_ring();
   return ret;
 }
+
 /** Gets the last stored awake handler for use in awake(). */
 int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
 {
   int ret = 0;
   lock_ring();
-  if (!awake_ring_ || awake_ring_head_ == awake_ring_tail_) {
+  if ((!awake_ring_) || (awake_ring_head_ == awake_ring_tail_)) {
     ret = -1;
   } else {
     func = awake_ring_[awake_ring_tail_];
     data = awake_data_[awake_ring_tail_];
     ++awake_ring_tail_;
-    if (awake_ring_tail_ == awake_ring_size_)
+    if (awake_ring_tail_ >= awake_ring_size_) {
       awake_ring_tail_ = 0;
+    }
   }
   unlock_ring();
   return ret;
