@@ -863,17 +863,17 @@ int Fl_Preferences::size( const char *key ) {
  database without the \c .prefs extension and located in the same directory.
  It then fills the given buffer with the complete path name.
 
- Exmaple:
+ Example:
  \code
  Fl_Preferences prefs( USER, "matthiasm.com", "test" );
  char path[FL_PATH_MAX];
  prefs.getUserdataPath( path );
  \endcode
- creates the preferences database in (MS Windows):
+ ..creates the preferences database in (MS Windows):
  \code
  c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
  \endcode
- and returns the userdata path:
+ ..and returns the userdata path:
  \code
  c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
  \endcode
