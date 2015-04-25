@@ -78,16 +78,12 @@ mark_as_advanced(LIB_jpeg LIB_png LIB_zlib)
 include(CheckFunctionExists)
 
 if(HAVE_DLFCN_H)
-   set(CMAKE_REQUIRED_LIBRARIES dl)
    set(HAVE_DLFCN_H 1)
 endif(HAVE_DLFCN_H)
 CHECK_FUNCTION_EXISTS(dlsym                  HAVE_DLSYM)
 
 CHECK_FUNCTION_EXISTS(localeconv             HAVE_LOCALECONV)
 
-if(LIB_png)
-   set(CMAKE_REQUIRED_LIBRARIES png)
-endif(LIB_png)
 CHECK_FUNCTION_EXISTS(png_get_valid          HAVE_PNG_GET_VALID)
 CHECK_FUNCTION_EXISTS(png_set_tRNS_to_alpha  HAVE_PNG_SET_TRNS_TO_ALPHA)
 
@@ -104,8 +100,6 @@ CHECK_FUNCTION_EXISTS(strcasecmp             HAVE_STRCASECMP)
 CHECK_FUNCTION_EXISTS(strlcat                HAVE_STRLCAT)
 CHECK_FUNCTION_EXISTS(strlcpy                HAVE_STRLCPY)
 CHECK_FUNCTION_EXISTS(vsnprintf              HAVE_VSNPRINTF)
-
-set(CMAKE_REQUIRED_LIBRARIES)
 
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")

@@ -45,6 +45,14 @@ include(CMake/resources.cmake)
 include(CMake/options.cmake)
 
 #######################################################################
+# variables shared by export and install
+# export.cmake creates configuration files for direct use in a built but uninstalled FLTK
+# install.cmake creates these files for an installed FLTK
+# these two would only differ in paths, so common variables are set here
+#######################################################################
+include(CMake/variables.cmake)
+
+#######################################################################
 # final config and export
 #######################################################################
 include(CMake/export.cmake)

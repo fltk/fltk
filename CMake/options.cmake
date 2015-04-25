@@ -37,6 +37,7 @@ add_definitions(${OPTION_ARCHFLAGS})
 #######################################################################
 if(UNIX)
    option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
+   list(APPEND FLTK_LDLIBS -lm)
 endif(UNIX)
 
 #######################################################################
@@ -49,6 +50,12 @@ if((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
    if(X11_FOUND)
       set(USE_X11 1)
       list(APPEND FLTK_LDLIBS -lX11)
+      if (X11_Xext_FOUND)
+          list(APPEND FLTK_LDLIBS -lXext)
+      endif(X11_Xext_FOUND)
+      if(X11_Xrender_FOUND)
+          list(APPEND FLTK_LDLIBS -lXrender)
+      endif(X11_Xrender_FOUND)
    endif(X11_FOUND)
 endif((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
 
@@ -108,7 +115,7 @@ endif(OPTION_USE_GL)
 
 if(OPENGL_FOUND)
    set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
-   set(CMAKE_REQUIRED_LIBRARIES -lGLU -lGL)
+   set(GLLIB "-lGLU -lGL")
    CHECK_FUNCTION_EXISTS(glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
    set(FLTK_GL_FOUND TRUE)
 else()
@@ -298,30 +305,3 @@ else()
    set(FLTK_XDBE_FOUND FALSE)
 endif(OPTION_USE_XDBE AND HAVE_XDBE_H)
 
-#######################################################################
-# add several libraries (STR #3011)
-# FIXME: libraries may need reordering, and this version does not yet
-# correctly support static linking and local zlib, png, and jpeg libs.
-
-if(LIB_fontconfig)
-   list(APPEND FLTK_LDLIBS -lfontconfig)
-endif(LIB_fontconfig)
-
-if(HAVE_DLSYM)
-   list(APPEND FLTK_LDLIBS -ldl)
-endif(HAVE_DLSYM)
-
-if(LIB_png)
-   list(APPEND IMAGELIBS -lpng)
-endif(LIB_png)
-
-if(LIB_zlib)
-   list(APPEND IMAGELIBS -lz)
-endif(LIB_zlib)
-
-if(LIB_jpeg)
-   list(APPEND IMAGELIBS -ljpeg)
-endif(LIB_jpeg)
-
-string(REPLACE ";" " " IMAGELIBS "${IMAGELIBS}")
-set(STATICIMAGELIBS "${IMAGELIBS}")

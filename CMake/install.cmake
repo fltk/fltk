@@ -70,7 +70,27 @@ install(FILES ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
    DESTINATION ${FLTK_CONFIG_PATH}
 )
 
-install(PROGRAMS ${FLTK_BINARY_DIR}/fltk-config
+# generate fltk-config
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix "\${prefix}")
+set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
+set(srcdir ".")
+
+set(LIBNAME "${libdir}/libfltk.a")
+
+configure_file(
+   "${FLTK_SOURCE_DIR}/fltk-config.in"
+   "${FLTK_BINARY_DIR}/bin/fltk-config"
+   @ONLY
+)
+if(UNIX)
+   execute_process(COMMAND chmod 755 fltk-config
+      WORKING_DIRECTORY "${FLTK_BINARY_DIR}/bin"
+   )
+endif(UNIX)
+
+install(PROGRAMS ${FLTK_BINARY_DIR}/bin/fltk-config
    DESTINATION ${FLTK_BINDIR}
 )
 

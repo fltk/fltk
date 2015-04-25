@@ -61,46 +61,17 @@ configure_file(
    @ONLY
 )
 
-# generate config.h
-configure_file(
-   "${FLTK_SOURCE_DIR}/configh.cmake.in"
-   "${FLTK_BINARY_DIR}/config.h"
-   @ONLY
-)
+# generate fltk-config for build directory use
+set(prefix ${FLTK_BINARY_DIR})
+set(exec_prefix "\${prefix}")
+set(includedir "${FLTK_SOURCE_DIR}")
+set(libdir "\${exec_prefix}/lib")
+set(srcdir ".")
 
-# generate fltk-config
-# Set install locations; this could be shortened with a foreach loop...
-if(IS_ABSOLUTE ${FLTK_INSTALL_BINDIR})
-   set(FLTK_FULL_BINDIR ${FLTK_BINDIR})
-else()
-   set(FLTK_FULL_BINDIR ${CMAKE_INSTALL_PREFIX}/${FLTK_BINDIR})
-endif(IS_ABSOLUTE ${FLTK_INSTALL_BINDIR})
-
-if(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
-   set(FLTK_FULL_INCLUDEDIR ${FLTK_INCLUDEDIR})
-else()
-   set(FLTK_FULL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/${FLTK_INCLUDEDIR})
-endif(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
-
-if(IS_ABSOLUTE ${FLTK_LIBDIR})
-   set(FLTK_FULL_LIBDIR ${FLTK_LIBDIR})
-else()
-   set(FLTK_FULL_LIBDIR ${CMAKE_INSTALL_PREFIX}/${FLTK_LIBDIR})
-endif(IS_ABSOLUTE ${FLTK_LIBDIR})
-
-# set compiler
-get_filename_component(CC ${CMAKE_C_COMPILER} NAME)
-get_filename_component(CXX ${CMAKE_CXX_COMPILER} NAME)
-
-string(REPLACE ";" " " C_FLAGS "${FLTK_CFLAGS}")
-
-if(X11_Xext_FOUND)
-   list(APPEND FLTK_LDLIBS -lXext)
-endif(X11_Xext_FOUND)
-string(REPLACE ";" " " LD_LIBS "${FLTK_LDLIBS}")
+set(LIBNAME "${libdir}/libfltk.a")
 
 configure_file(
-   "${FLTK_SOURCE_DIR}/fltk-config.cmake.in"
+   "${FLTK_SOURCE_DIR}/fltk-config.in"
    "${FLTK_BINARY_DIR}/fltk-config"
    @ONLY
 )
@@ -109,6 +80,13 @@ if(UNIX)
       WORKING_DIRECTORY "${FLTK_BINARY_DIR}"
    )
 endif(UNIX)
+
+# generate config.h
+configure_file(
+   "${FLTK_SOURCE_DIR}/configh.cmake.in"
+   "${FLTK_BINARY_DIR}/config.h"
+   @ONLY
+)
 
 if(OPTION_CREATE_LINKS)
    # Set PREFIX_INCLUDE to the proper value.
