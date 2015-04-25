@@ -58,11 +58,12 @@ set(ARCHFLAGS ${OPTION_ARCHFLAGS})
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_UPPER)
 if(${BUILD_UPPER})
-	set(CFLAGS "${CMAKE_C_FLAGS_${BUILD_UPPER}} ${CFLAGS}")
+    set(CFLAGS "${CMAKE_C_FLAGS_${BUILD_UPPER}} ${CFLAGS}")
 endif(${BUILD_UPPER})
+
 set(CFLAGS "${OPTION_OPTIM} ${CMAKE_C_FLAGS} ${CFLAGS}")
 foreach(arg ${FLTK_CFLAGS})
-  set(CFLAGS "${CFLAGS} ${arg}")
+    set(CFLAGS "${CFLAGS} ${arg}")
 endforeach(arg ${FLTK_CFLAGS})
 
 set(CXXFLAGS ${CFLAGS})
@@ -73,9 +74,8 @@ endforeach(arg ${FLTK_LDLIBS})
 
 set(LIBS ${LINK_LIBS})
 
-# FIXME: The only case `configure' would set the "SHAREDSUFFIX"
-# variable is to "_s" if OS == "aix", hence we do NOT (yet) set it here.
-# This is for fltk-config only, so it doesn't matter much anyway.
-# ${CMAKE_SHARED_LIBRARY_SUFFIX} would be ".so" under Linux.
-# * do not * set(SHAREDSUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-set(SHAREDSUFFIX "")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "AIX")
+    set(SHAREDSUFFIX "_s")
+else ()
+    set(SHAREDSUFFIX "")
+endif (${CMAKE_SYSTEM_NAME} STREQUAL "AIX")
