@@ -76,6 +76,20 @@ option(OPTION_BUILD_SHARED_LIBS
 option(OPTION_BUILD_EXAMPLES "build example programs" ON)
 
 #######################################################################
+if(DOXYGEN_FOUND)
+    option(OPTION_BUILD_HTML_DOCUMENTATION "build html docs" OFF)
+    option(OPTION_INSTALL_HTML_DOCUMENTATION "install html docs" OFF)
+    if(LATEX_FOUND)
+	option(OPTION_BUILD_PDF_DOCUMENTATION "build pdf docs" OFF)
+	option(OPTION_INSTALL_PDF_DOCUMENTATION "install pdf docs" OFF)
+    endif(LATEX_FOUND)
+endif(DOXYGEN_FOUND)
+
+if(OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
+    add_subdirectory(documentation)
+endif(OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
+
+#######################################################################
 include(FindPkgConfig)
 
 option(OPTION_CAIRO "use lib Cairo" OFF)
