@@ -34,7 +34,7 @@
 \begin{titlepage}
 \vspace*{4.5cm}
 \begin{center}
-{\Huge FLTK @VERSION@ Programming Manual}\\
+{\Huge FLTK @FL_VERSION@ Programming Manual}\\
 \vspace*{2cm}
 \begin{ImageNoCaption}
  \mbox{\includegraphics[width=6cm]{FL200}}

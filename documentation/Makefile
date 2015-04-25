@@ -131,7 +131,7 @@ uninstall-linux uninstall-osx:
 # is not made by default.
 # Use `make html' or `make docs' to create the html docs.
 
-html:	$(HTMLFILES) Doxyfile src/fltk-book.tex
+html:	$(HTMLFILES) Doxyfile
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
@@ -158,9 +158,10 @@ refman.pdf: $(HTMLFILES) Doxybook src/fltk-book.tex
 src/fltk-book.tex: src/fltk-book.tex.in
 	DOXY_VERSION=`$(DOXYDOC) --version`; \
 	YEAR=`date +%Y`; \
-	FLTK_VERSION=`cat ../VERSION`; \
-	sed -e"s/@YEAR@/$$YEAR/g" -e"s/@VERSION@/$$FLTK_VERSION/g" \
-	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" < $< > $@
+	sed -e"s/@YEAR@/$$YEAR/g" \
+	    -e"s/@FL_VERSION@/$(FL_VERSION)/g" \
+	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
+	< $< > $@
 
 #
 # End of "$Id$".
