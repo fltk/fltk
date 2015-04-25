@@ -319,3 +319,10 @@ else()
    set(FLTK_XDBE_FOUND FALSE)
 endif(OPTION_USE_XDBE AND HAVE_XDBE_H)
 
+#######################################################################
+# prior to CMake 3.0 this feature was buggy
+if(NOT CMAKE_VERSION VERSION_LESS 3.0.0)
+    option(CMAKE_SUPPRESS_REGENERATION
+	   "suppress rules to re-run CMake on rebuild" OFF)
+    mark_as_advanced(CMAKE_SUPPRESS_REGENERATION)
+endif(NOT CMAKE_VERSION VERSION_LESS 3.0.0)
