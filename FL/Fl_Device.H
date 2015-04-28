@@ -585,10 +585,8 @@ class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
-  /** \brief A constructor that sets the graphics driver used by the display */
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
-  /** Returns the platform display device. */
-  static inline Fl_Display_Device *display_device() {return _display;};
+  static Fl_Display_Device *display_device();
 #ifdef __APPLE__
   static bool high_resolution() {return high_res_window_;}
 #endif

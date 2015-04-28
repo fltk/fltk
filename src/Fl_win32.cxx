@@ -87,10 +87,6 @@ static void fl_clipboard_notify_target(HWND wnd);
 static void fl_clipboard_notify_untarget(HWND wnd);
 
 // Internal variables
-static Fl_GDI_Graphics_Driver fl_gdi_driver;
-static Fl_Display_Device fl_gdi_display(&fl_gdi_driver);
-Fl_Display_Device *Fl_Display_Device::_display = &fl_gdi_display; // the platform display
-
 static HWND clipboard_wnd = 0;
 static HWND next_clipboard_wnd = 0;
 

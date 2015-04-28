@@ -32,6 +32,9 @@ static int table_size;
   the string is not copied, so the string must be in static memory.
 */    
 void Fl::set_font(Fl_Font fnum, const char* name) {
+#ifdef __APPLE__
+  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
+#endif
   while (fnum >= table_size) {
     int i = table_size;
     if (!i) {	// don't realloc the built-in table
@@ -70,7 +73,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
   s->xlist = 0;
 #endif
   s->first = 0;
-  fl_font(-1, 0);
+  Fl_Display_Device::display_device()->driver()->font(-1, 0);
 }
 /** Copies one face to another. */
 void Fl::set_font(Fl_Font fnum, Fl_Font from) {
@@ -81,7 +84,12 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
     face. Under X this value is passed to XListFonts to get all the sizes
     of this face.
 */
-const char* Fl::get_font(Fl_Font fnum) {return fl_fonts[fnum].name;}
+const char* Fl::get_font(Fl_Font fnum) {
+#ifdef __APPLE__
+  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
+#endif
+  return fl_fonts[fnum].name;
+}
 
 //
 // End of "$Id$".

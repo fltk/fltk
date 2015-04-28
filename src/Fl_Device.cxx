@@ -71,10 +71,27 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
   dy = descent();
 }
 
-Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) {
+/**  A constructor that sets the graphics driver used by the display */
+Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device(graphics_driver) {
 this->set_current();
 };
 
+
+/** Returns the platform display device. */
+Fl_Display_Device *Fl_Display_Device::display_device() {
+  static Fl_Display_Device *display = new Fl_Display_Device(new
+#if defined(__APPLE__)
+                                                                  Fl_Quartz_Graphics_Driver
+#elif defined(WIN32)
+                                                                  Fl_GDI_Graphics_Driver
+#else
+                                                                  Fl_Xlib_Graphics_Driver
+#endif
+                                                                 );
+  return display;
+};
+
+Fl_Display_Device *Fl_Display_Device::_display = Fl_Display_Device::display_device();
 
 //
 // End of "$Id$".

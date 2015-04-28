@@ -72,9 +72,6 @@ static bool have_xfixes = false;
 #  if HAVE_XRENDER
 #    include <X11/extensions/Xrender.h>
 #  endif
-static Fl_Xlib_Graphics_Driver fl_xlib_driver;
-static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
-Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platform display
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:

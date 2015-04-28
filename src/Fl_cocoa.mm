@@ -89,14 +89,13 @@ extern int fl_send_system_handlers(void *e);
 static void convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
-static int calc_mac_os_version();
 static void clipboard_check(void);
 static NSString *calc_utf8_format(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static Fl_X *fl_x_to_redraw = NULL; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
-Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Quartz_Graphics_Driver); // the platform display
+int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
 // public variables
 CGContextRef fl_gc = 0;
@@ -105,8 +104,6 @@ bool fl_show_iconic;                    // true if called from iconize() - shows
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
 Fl_Window *Fl_Window::current_;
-int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
-Fl_Fontdesc* fl_fonts = Fl_X::calc_fl_fonts();
 static NSString *utf8_format = calc_utf8_format();
 
 // forward declarations of variables in this file
@@ -4492,7 +4489,8 @@ void *Fl_X::get_carbon_function(const char *function_name) {
   
 /* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
  */
-static int calc_mac_os_version() {
+int Fl_X::calc_mac_os_version() {
+  if (fl_mac_os_version) return fl_mac_os_version;
   int M, m, b = 0;
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_10
