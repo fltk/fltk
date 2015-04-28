@@ -107,6 +107,16 @@ static Fl_Pixmap L_closepixmap(L_close_xpm);
 ///
 void Fl_Tree_Prefs::openicon(Fl_Image *val) {
   _openimage = val ? val : &L_openpixmap;
+#if FLTK_ABI_VERSION >= 10304
+  // Update deactivated version of icon..
+  if ( _opendeimage ) delete _opendeimage;
+  if ( _openimage ) {
+    _opendeimage = _openimage->copy();
+    _opendeimage->inactive();
+  } else {
+    _opendeimage = 0;
+  }
+#endif
 }
 
 /// Sets the icon to be used as the 'close' icon.
@@ -116,6 +126,16 @@ void Fl_Tree_Prefs::openicon(Fl_Image *val) {
 ///
 void Fl_Tree_Prefs::closeicon(Fl_Image *val) {
   _closeimage = val ? val : &L_closepixmap;
+#if FLTK_ABI_VERSION >= 10304
+  // Update deactivated version of icon..
+  if ( _closedeimage ) delete _closedeimage;
+  if ( _closeimage ) {
+    _closedeimage = _closeimage->copy();
+    _closedeimage->inactive();
+  } else {
+    _closedeimage = 0;
+  }
+#endif
 }
 
 /// Fl_Tree_Prefs constructor
@@ -145,6 +165,13 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _openimage              = &L_openpixmap;
   _closeimage             = &L_closepixmap;
   _userimage              = 0;
+#if FLTK_ABI_VERSION >= 10304
+  _opendeimage = _openimage->copy();
+  _opendeimage->inactive();
+  _closedeimage = _closeimage->copy();
+  _closedeimage->inactive();
+  _userdeimage            = 0;
+#endif
   _showcollapse           = 1;
   _showroot               = 1;
   _connectorwidth         = 17;
@@ -166,6 +193,15 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
     _selectbox = _FL_PLASTIC_THIN_UP_BOX;
   }
 }
+
+#if FLTK_ABI_VERSION >= 10304
+/// Fl_Tree_Prefs destructor
+Fl_Tree_Prefs::~Fl_Tree_Prefs() {
+  if ( _opendeimage )  delete _opendeimage;
+  if ( _closedeimage ) delete _closedeimage;
+  if ( _userdeimage )  delete _userdeimage;
+}
+#endif
 
 //
 // End of "$Id$".

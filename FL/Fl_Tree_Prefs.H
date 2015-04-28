@@ -132,6 +132,11 @@ class FL_EXPORT Fl_Tree_Prefs {
   Fl_Image *_openimage;			// the 'open' icon [+]
   Fl_Image *_closeimage;		// the 'close' icon [-]
   Fl_Image *_userimage;			// user's own icon
+#if FLTK_ABI_VERSION >= 10304
+  Fl_Image *_opendeimage;		// deactivated 'open' icon
+  Fl_Image *_closedeimage;		// deactivated 'close' icon
+  Fl_Image *_userdeimage;		// deactivated user icon
+#endif
   char _showcollapse;			// 1=show collapse icons, 0=don't
   char _showroot;			// show the root item as part of the tree
   Fl_Tree_Sort   _sortorder;		// none, ascening, descending, etc.
@@ -147,6 +152,9 @@ class FL_EXPORT Fl_Tree_Prefs {
 #endif
 public:
   Fl_Tree_Prefs();
+#if FLTK_ABI_VERSION >= 10304
+  ~Fl_Tree_Prefs();
+#endif
   
   ////////////////////////////
   // Labels
@@ -340,7 +348,35 @@ public:
   ///
   inline void usericon(Fl_Image *val) {
     _userimage = val;
+#if FLTK_ABI_VERSION >= 10304
+    // Update deactivated version of icon..
+    if ( _userdeimage ) delete _userdeimage;
+    if ( _userimage ) {
+      _userdeimage = _userimage->copy();
+      _userdeimage->inactive();
+    } else {
+      _userdeimage = 0;
+    }
+#endif
   }
+
+#if FLTK_ABI_VERSION >= 10304
+  /// Return the deactivated version of the open icon, if any.
+  /// Returns 0 if none.
+  inline Fl_Image *opendeicon() const {
+    return _opendeimage;
+  }
+  /// Return the deactivated version of the close icon, if any.
+  /// Returns 0 if none.
+  inline Fl_Image *closedeicon() const {
+    return _closedeimage;
+  }
+  /// Return the deactivated version of the user icon, if any.
+  /// Returns 0 if none.
+  inline Fl_Image *userdeicon() const {
+    return _userdeimage;
+  }
+#endif
   
   ////////////////////////////
   // Options

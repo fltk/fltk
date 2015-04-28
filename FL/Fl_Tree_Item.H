@@ -100,6 +100,9 @@ class FL_EXPORT Fl_Tree_Item {
   int                     _label_xywh[4];	// xywh of label
   Fl_Widget              *_widget;		// item's label widget (optional)
   Fl_Image               *_usericon;		// item's user-specific icon (optional)
+#if FLTK_ABI_VERSION >= 10304
+  Fl_Image               *_userdeicon;		// deactivated usericon
+#endif
   Fl_Tree_Item_Array      _children;		// array of child items
   Fl_Tree_Item           *_parent;		// parent item (=0 if root)
   void                   *_userdata;    	// user data that can be associated with an item
@@ -425,12 +428,29 @@ public:
   /// Set the item's user icon to an Fl_Image. '0' will disable.
   void usericon(Fl_Image *val) {
     _usericon = val;
+#if FLTK_ABI_VERSION >= 10304
+    // Update deactivated version of icon..
+    if ( _userdeicon ) delete _userdeicon;
+    if ( _usericon ) {
+      _userdeicon = _usericon->copy();
+      _userdeicon->inactive();
+    } else {
+      _userdeicon = 0;
+    }
+#endif
     recalc_tree();		// may change tree geometry
   }
   /// Get the item's user icon as an Fl_Image. Returns '0' if disabled.
   Fl_Image *usericon() const {
     return(_usericon);
   }
+#if FLTK_ABI_VERSION >= 10304
+  /// Return the deactivated version of the user icon, if any.
+  /// Returns 0 if none.
+  Fl_Image* userdeicon() const {
+    return _userdeicon;
+  }
+#endif
   //////////////////
   // Events
   //////////////////
