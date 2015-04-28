@@ -34,6 +34,8 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	  (lpr/lpq) when SystemV-style commands (lp/lpstat) are not available.
 	- Drawing alpha-blended images under X11 is now accelerated with
 	  Xrender.
+	- The fonts used for the FL_COURIER font family was changed on the Mac OS X
+	  platform from 'Courier New' to 'Courier' because it was too thin.
 
 	Bug fixes
 
