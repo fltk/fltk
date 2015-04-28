@@ -46,6 +46,13 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	- Restored window background drawing, particularly the 'plastic'
 	  scheme's background (STR #3059). This was a regression since
 	  FLTK 1.3.0.
+	- Fl_Text_Display: style buffer colors are no longer manipulated by
+	  fl_contrast() for normal text drawing (fltk.coredev thread
+	  started 04/08/15, Subject: "RFC: Fl_Text_Display style buffer color weirdness")
+	- Fl_Tree::deactivate() now affects draw color of items (must have
+	  ABI 1.3.3 or higher enabled). For icons to draw deactivated,
+	  enable ABI 1.3.4. (test/tree has a 'deactivate tree' button)
+
   - Fixed possible bad border effect when a set of radio menu items
     is located first in its menu (STR #3176): Fl_Menu_Item::set_only()
     is deprecated and replaced by Fl_Menu_::set_only(Fl_Menu_item*).
