@@ -87,8 +87,10 @@ Fl_Image *Fl_Image::copy(int W, int H) {
   argument specifies the amount of the original image to combine
   with the color, so a value of 1.0 results in no color blend, and
   a value of 0.0 results in a constant image of the specified
-  color. <I>The original image data is not altered by this
-  method.</I>
+  color. 
+
+  An internal copy is made of the original image before
+  changes are applied, to avoid modifying the original image.
 */
 void Fl_Image::color_average(Fl_Color, float) {
 }
@@ -96,8 +98,10 @@ void Fl_Image::color_average(Fl_Color, float) {
 /**
   The desaturate() method converts an image to
   grayscale. If the image contains an alpha channel (depth = 4),
-  the alpha channel is preserved. <I>This method does not alter
-  the original image data.</I>
+  the alpha channel is preserved.
+  
+  An internal copy is made of the original image before
+  changes are applied, to avoid modifying the original image.
 */
 void Fl_Image::desaturate() {
 }

@@ -140,8 +140,10 @@ class FL_EXPORT Fl_Image {
   /**
     The inactive() method calls
     color_average(FL_BACKGROUND_COLOR, 0.33f) to produce 
-    an image that appears grayed out. <I>This method does not 
-    alter the original image data.</I>
+    an image that appears grayed out.
+
+    An internal copy is made of the original image before
+    changes are applied, to avoid modifying the original image.
   */
   void inactive() { color_average(FL_GRAY, .33f); }
   virtual void desaturate();
