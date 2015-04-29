@@ -4476,15 +4476,8 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
  PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
  */
 void *Fl_X::get_carbon_function(const char *function_name) {
-  static void *carbon = NULL;
-  void *f = NULL;
-  if (!carbon) {
-    carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
-  }
-  if (carbon) {
-    f = dlsym(carbon, function_name);
-  }
-  return f;
+  static void *carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
+  return (carbon ? dlsym(carbon, function_name) : NULL);
 }
   
 /* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
