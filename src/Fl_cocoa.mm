@@ -42,12 +42,9 @@ extern "C" {
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
-#include <FL/Fl_Input_.H>
-#include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Copy_Surface.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include "flstring.h"
 #include <unistd.h>
 #include <stdarg.h>
 #include <math.h>
