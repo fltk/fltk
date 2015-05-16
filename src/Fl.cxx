@@ -1904,6 +1904,8 @@ void Fl::delete_widget(Fl_Widget *wi) {
 
   // if the widget is shown(), hide() it (FLTK 1.3.4)
   if (wi->visible_r()) wi->hide();
+  Fl_Window *win = wi->as_window();
+  if (win && win->shown()) win->hide(); // case of iconified window
 
   // don't add the same widget twice to the widget delete list
   for (int i = 0; i < num_dwidgets; i++) {
