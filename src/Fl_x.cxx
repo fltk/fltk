@@ -994,6 +994,13 @@ static int get_xwinprop(Window wnd, Atom prop, long max_length,
 
 void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
+
+  if (clipboard >= 2) {
+    copy(stuff, len, 0, type);
+    copy(stuff, len, 1, type);
+    return;
+  }
+
   if (len+1 > fl_selection_buffer_length[clipboard]) {
     delete[] fl_selection_buffer[clipboard];
     fl_selection_buffer[clipboard] = new char[len+100];

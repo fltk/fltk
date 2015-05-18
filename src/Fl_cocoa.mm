@@ -3457,6 +3457,9 @@ static void resize_selection_buffer(int len, int clipboard) {
  */
 void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
+  if (clipboard >= 2)
+    clipboard = 1; // Only on X11 do multiple clipboards make sense.
+
   resize_selection_buffer(len+1, clipboard);
   memcpy(fl_selection_buffer[clipboard], stuff, len);
   fl_selection_buffer[clipboard][len] = 0; // needed for direct paste

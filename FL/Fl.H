@@ -837,8 +837,9 @@ public:
   // cut/paste:
   /**
   Copies the data pointed to by \p stuff to the selection buffer 
-  (\p destination is 0) or
-  the clipboard (\p destination is 1).
+  (\p destination is 0), the clipboard (\p destination is 1), or
+  both (\p destination is 2). Copying to both is only relevant on X11,
+  on other platforms it maps to the clipboard (1).
   \p len is the number of relevant bytes in \p stuff.
   \p type is always Fl::clipboard_plain_text.
   The selection buffer is used for

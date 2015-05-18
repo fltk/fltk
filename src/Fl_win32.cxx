@@ -664,6 +664,8 @@ void fl_update_clipboard(void) {
 // call this when you create a selection:
 void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
+  if (clipboard >= 2)
+    clipboard = 1; // Only on X11 do multiple clipboards make sense.
 
   // Convert \n -> \r\n (for old apps like Notepad, DOS)
   Lf2CrlfConvert buf(stuff, len);
