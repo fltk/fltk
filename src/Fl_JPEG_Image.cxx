@@ -111,7 +111,10 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
   array = (uchar *)0;
   
   // Open the image file...
-  if ((fp = fl_fopen(filename, "rb")) == NULL) return;
+  if ((fp = fl_fopen(filename, "rb")) == NULL) {
+    ld(ERR_FILE_ACCESS);
+    return;
+  }
   
   // Setup the decompressor info and read the header...
   dinfo.err                = jpeg_std_error((jpeg_error_mgr *)&jerr);
@@ -150,6 +153,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
     free(max_destroy_decompress_err);
     free(max_finish_decompress_err);
     
+    ld(ERR_FORMAT);
     return;
   }
   
@@ -275,7 +279,10 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  The inherited destructor frees all memory and server resources that are used 
  by the image.
 
- There is no error function in this class. If the image has loaded correctly, 
+ Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+ JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
+ be loaded for another reason. If the image has loaded correctly,
  w(), h(), and d() should return values greater zero.
 
  \param name A unique name or NULL

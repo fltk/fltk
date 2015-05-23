@@ -71,27 +71,36 @@ typedef unsigned char uchar;
 #define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
 
 /**  
-  The constructor loads the named GIF image.
-  <P>The inherited destructor free all memory and server resources that are used by
-  the image.
-*/
+ The constructor loads the named GIF image.
+ 
+ The inherited destructor free all memory and server resources that are used 
+ by the image.
+ 
+ Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+ GIF format could not be decoded, and ERR_NO_IMAGE if the image could not
+ be loaded for another reason.
+ */
 Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   FILE *GifFile;	// File to read
   char **new_data;	// Data array
 
   if ((GifFile = fl_fopen(infname, "rb")) == NULL) {
     Fl::error("Fl_GIF_Image: Unable to open %s!", infname);
+    ld(ERR_FILE_ACCESS);
     return;
   }
 
   {char b[6];
   if (fread(b,1,6,GifFile)<6) {
     fclose(GifFile);
+    ld(ERR_FILE_ACCESS);
     return; /* quit on eof */
   }
   if (b[0]!='G' || b[1]!='I' || b[2] != 'F') {
     fclose(GifFile);
     Fl::error("Fl_GIF_Image: %s is not a GIF file.\n", infname);
+    ld(ERR_FORMAT);
     return;
   }
   if (b[3]!='8' || b[4]>'9' || b[5]!= 'a')
@@ -135,6 +144,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     if (i<0) {
       fclose(GifFile);
       Fl::error("Fl_GIF_Image: %s - unexpected EOF",infname); 
+      w(0); h(0); d(0); ld(ERR_FORMAT);
       return;
     }
     int blocklen;

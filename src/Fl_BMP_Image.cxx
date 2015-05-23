@@ -52,13 +52,19 @@
 static int		read_long(FILE *fp);
 static unsigned short	read_word(FILE *fp);
 static unsigned int	read_dword(FILE *fp);
+
+
 /** 
-  The constructor loads the named BMP image from the given bmp filename.  
-  <P>The inherited destructor free all memory and server resources that are used by
-  the image.
-  <P>The destructor free all memory and server resources that are used by
-  the image
-*/
+ The constructor loads the named BMP image from the given bmp filename.
+
+ The inherited destructor frees all memory and server resources that are
+ used by the image.
+
+ Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+ BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
+ be loaded for another reason.
+ */
 Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   : Fl_RGB_Image(0,0,0) {
   FILE		*fp;		// File pointer
@@ -86,13 +92,17 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
 
   // Open the file...
-  if ((fp = fl_fopen(bmp, "rb")) == NULL) return;
+  if ((fp = fl_fopen(bmp, "rb")) == NULL) {
+    ld(ERR_FILE_ACCESS);
+    return;
+  }
 
   // Get the header...
   byte = (uchar)getc(fp);	// Check "BM" sync chars
   bit  = (uchar)getc(fp);
   if (byte != 'B' || bit != 'M') {
     fclose(fp);
+    ld(ERR_FORMAT);
     return;
   }
 
@@ -161,6 +171,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   // Check header data...
   if (!w() || !h() || !depth) {
     fclose(fp);
+    w(0); h(0); d(0); ld(ERR_FORMAT);
     return;
   }
 
@@ -191,6 +202,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   if (((size_t)w()) * h() * d() > max_size() ) {
     Fl::warning("BMP file \"%s\" is too large!\n", bmp);
     fclose(fp);
+    w(0); h(0); d(0); ld(ERR_FORMAT);
     return;
   }
   array = new uchar[w() * h() * d()];

@@ -24,10 +24,10 @@
 #  include "Fl_Pixmap.H"
 
 /**
-  The Fl_GIF_Image class supports loading, caching,
-  and drawing of Compuserve GIF<SUP>SM</SUP> images. The class
-  loads the first image and supports transparency.
-*/
+ The Fl_GIF_Image class supports loading, caching,
+ and drawing of Compuserve GIF<SUP>SM</SUP> images. The class
+ loads the first image and supports transparency.
+ */
 class FL_EXPORT Fl_GIF_Image : public Fl_Pixmap {
 
   public:

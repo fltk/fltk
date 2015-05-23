@@ -37,6 +37,17 @@ void fl_restore_clip(); // from fl_rect.cxx
 
 Fl_RGB_Scaling Fl_Image::RGB_scaling_ = FL_RGB_SCALING_NEAREST;
 
+
+/**
+ The constructor creates an empty image with the specified
+ width, height, and depth. The width and height are in pixels.
+ The depth is 0 for bitmaps, 1 for pixmap (colormap) images, and
+ 1 to 4 for color images.
+ */
+Fl_Image::Fl_Image(int W, int H, int D) :
+  w_(W), h_(H), d_(D), ld_(0), count_(0), data_(0L)
+{}
+
 /**
   The destructor is a virtual method that frees all memory used
   by the image.
@@ -129,6 +140,18 @@ void Fl_Image::label(Fl_Menu_Item* m) {
   m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
 
+int Fl_Image::fail()
+{
+    // if no image exists, ld_ may contain a simple error code
+    if ( (w_<=0) || (h_<=0) || (d_<=0) ) {
+        if (ld_==0)
+            return ERR_NO_IMAGE;
+        else
+            return ld_;
+    }
+    return 0;
+}
+
 void
 Fl_Image::labeltype(const Fl_Label *lo,		// I - Label
                     int            lx,		// I - X position
@@ -186,12 +209,44 @@ size_t Fl_RGB_Image::max_size_ = ~((size_t)0);
 
 int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
 
-/** The constructor creates a new RGBA image from the specified Fl_Pixmap. 
+
+/**
+ The constructor creates a new image from the specified data.
+ \param[in] bits   The image data array.
+ \param[in] W      The width of the image in pixels
+ \param[in] H      The height of the image in pixels
+ \param[in] D      The image depth, or 'number of channels'. Default=3<br>
+    If D=1, each uchar in bits[] is a grayscale pixel value.<br>
+    If D=2, each uchar pair in bits[] is a grayscale + alpha pixel value.<br>
+    If D=3, each uchar triplet in bits[] is an R/G/B pixel value<br>
+    If D=4, each uchar quad in bits[] is an R/G/B/A pixel value.
+ \param[in] LD     Line data size (default=0).<br>
+    Line data is extra data that is included after each line
+    of color image data and is normally not present.
+ \see Fl_Image::data(), Fl_Image::w(), Fl_Image::h(), Fl_Image::d(), Fl_Image::ld()
+ */
+Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
+  Fl_Image(W,H,D),
+  array(bits),
+  alloc_array(0),
+  id_(0),
+  mask_(0)
+{
+    data((const char **)&array, 1);
+    ld(LD);
+}
+
+
+/** 
+ The constructor creates a new RGBA image from the specified Fl_Pixmap.
  
  The RGBA image is built fully opaque except for the transparent area
- of the pixmap that is assigned the \par bg color with full transparency */
+ of the pixmap that is assigned the \par bg color with full transparency 
+ */
 Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
-  Fl_Image(pxm->w(), pxm->h(), 4), id_(0), mask_(0)
+  Fl_Image(pxm->w(), pxm->h(), 4),
+  id_(0),
+  mask_(0)
 {
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
@@ -199,7 +254,11 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
   data((const char **)&array, 1);
 }
 
-/**  The destructor frees all memory and server resources that are used by the image. */
+
+/**  
+ The destructor frees all memory and server resources that are used by 
+ the image. 
+ */
 Fl_RGB_Image::~Fl_RGB_Image() {
 #ifdef __APPLE__
   if (id_) CGImageRelease((CGImageRef)id_);
@@ -258,7 +317,9 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
       new_image->alloc_array = 1;
 
       return new_image;
-    } else return new Fl_RGB_Image(array, w(), h(), d(), ld());
+    } else {
+      return new Fl_RGB_Image(array, w(), h(), d(), ld());
+    }
   }
   if (W <= 0 || H <= 0) return 0;
 
