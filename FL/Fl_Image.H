@@ -129,13 +129,6 @@ public:
    Use the count() method to find the size of the data array.
    */
   const char * const *data() const {return data_;}
-  /**
-   Returns a value that is not 0 if there is currently no image
-   available.
-   \return ERR_NO_IMAGE if no image was found
-   \return ERR_FILE_ACCESS if there was a file access related error (errno should be set)
-   \return ERR_FORMAT if image decoding failed.
-   */
   int fail();
   Fl_Image(int W, int H, int D);
   virtual ~Fl_Image();

@@ -140,6 +140,32 @@ void Fl_Image::label(Fl_Menu_Item* m) {
   m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
 
+/**
+ Returns a value that is not 0 if there is currently no image
+ available.
+
+ Example use:
+ \code
+    [..]
+    Fl_Box box(X,Y,W,H);
+    Fl_JPEG_Image jpg("/tmp/foo.jpg");
+    switch ( jpg.fail() ) {
+        case Fl_Image::ERR_NO_IMAGE:
+        case Fl_Image::ERR_FILE_ACCESS:
+            fl_alert("/tmp/foo.jpg: %s", strerror(errno));    // shows actual os error to user
+            exit(1);
+        case Fl_Image::ERR_FORMAT:
+            fl_alert("/tmp/foo.jpg: couldn't decode image");
+            exit(1);
+    }
+    box.image(jpg);
+    [..]
+ \endcode
+
+ \return ERR_NO_IMAGE if no image was found
+ \return ERR_FILE_ACCESS if there was a file access related error (errno should be set)
+ \return ERR_FORMAT if image decoding failed.
+ */
 int Fl_Image::fail()
 {
     // if no image exists, ld_ may contain a simple error code
