@@ -55,9 +55,9 @@ enum Fl_RGB_Scaling {
 class FL_EXPORT Fl_Image {
     
 public:
-  const int ERR_NO_IMAGE    = -1;
-  const int ERR_FILE_ACCESS = -2;
-  const int ERR_FORMAT      = -3;
+  static const int ERR_NO_IMAGE    = -1;
+  static const int ERR_FILE_ACCESS = -2;
+  static const int ERR_FORMAT      = -3;
     
 private:
   int w_, h_, d_, ld_, count_;
