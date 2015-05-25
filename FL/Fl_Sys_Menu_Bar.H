@@ -88,7 +88,9 @@ public:
   int mode(int i) const { return Fl_Menu_::mode(i); }
   /** Changes the shortcut of item i to n.
    */
-  void shortcut (int i, int s) { Fl_Menu_::shortcut(i, s); update(); };
+  void shortcut (int i, int s) { Fl_Menu_::shortcut(i, s); update(); }
+  /** Turns the radio item "on" for the menu item and turns "off" adjacent radio items of the same group.*/
+  void setonly (Fl_Menu_Item *item) { Fl_Menu_::setonly(item); update(); }
 };
 
 #else
