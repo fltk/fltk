@@ -63,6 +63,7 @@ void Fl_Quartz_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   float fr = r/255.0f;
   float fg = g/255.0f;
   float fb = b/255.0f;
+  if (!fl_gc) return; // no context yet? We will assign the color later.
   CGContextSetRGBFillColor(fl_gc, fr, fg, fb, 1.0f);
   CGContextSetRGBStrokeColor(fl_gc, fr, fg, fb, 1.0f);
 }
