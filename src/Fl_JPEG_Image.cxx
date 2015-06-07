@@ -88,7 +88,10 @@ extern "C" {
  The inherited destructor frees all memory and server resources that are used 
  by the image.
  
- There is no error function in this class. If the image has loaded correctly, 
+ Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+ JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
+ be loaded for another reason. If the image has loaded correctly,
  w(), h(), and d() should return values greater zero.
  
  \param[in] filename a full path and name pointing to a valid jpeg file.
@@ -279,7 +282,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  The inherited destructor frees all memory and server resources that are used 
  by the image.
 
- Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+ Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
  ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
  JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason. If the image has loaded correctly,
