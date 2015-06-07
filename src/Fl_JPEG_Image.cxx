@@ -89,7 +89,7 @@ extern "C" {
  by the image.
  
  Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+ ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason. If the image has loaded correctly,
  w(), h(), and d() should return values greater than zero.
@@ -283,7 +283,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  by the image.
 
  Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+ ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason. If the image has loaded correctly,
  w(), h(), and d() should return values greater than zero.
