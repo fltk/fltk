@@ -92,7 +92,7 @@ extern "C" {
  ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
  JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason. If the image has loaded correctly,
- w(), h(), and d() should return values greater zero.
+ w(), h(), and d() should return values greater than zero.
  
  \param[in] filename a full path and name pointing to a valid jpeg file.
  */
@@ -286,7 +286,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
  JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason. If the image has loaded correctly,
- w(), h(), and d() should return values greater zero.
+ w(), h(), and d() should return values greater than zero.
 
  \param name A unique name or NULL
  \param data A pointer to the memory location of the JPEG image
