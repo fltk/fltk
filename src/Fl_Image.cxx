@@ -267,7 +267,7 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
  The constructor creates a new RGBA image from the specified Fl_Pixmap.
  
  The RGBA image is built fully opaque except for the transparent area
- of the pixmap that is assigned the \par bg color with full transparency 
+ of the pixmap that is assigned the \p bg color with full transparency 
  */
 Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
   Fl_Image(pxm->w(), pxm->h(), 4),
