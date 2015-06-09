@@ -874,7 +874,7 @@ case $host_os_gui in
 	if test x$enable_gl != xno; then
             AC_DEFINE(HAVE_GL)
             AC_DEFINE(HAVE_GL_GLU_H)
-            GLLIB="-framework AGL -framework OpenGL -framework ApplicationServices"
+            GLLIB="-framework OpenGL"
         else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
