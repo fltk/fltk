@@ -185,7 +185,7 @@ void Fl_Copy_Surface::init_PDF_context(int w, int h)
   pdfdata = CFDataCreateMutable(NULL, 0);
   CGDataConsumerRef myconsumer;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1040
-  if(CGDataConsumerCreateWithCFData != NULL) {
+  if (&CGDataConsumerCreateWithCFData != NULL) {
     myconsumer = CGDataConsumerCreateWithCFData(pdfdata); // 10.4
   }
   else 

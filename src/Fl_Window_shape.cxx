@@ -337,7 +337,7 @@ void Fl_Window::shape(const Fl_Image* img) {
 void Fl_Window::draw() {
   if (shape_data_) {
 # if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-    if (shape_data_->mask && (CGContextClipToMask != NULL)) {
+    if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
       CGContextClipToMask(fl_gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
     }
     CGContextSaveGState(fl_gc);

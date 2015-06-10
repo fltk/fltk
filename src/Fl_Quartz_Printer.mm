@@ -240,7 +240,7 @@ int Fl_System_Printer::start_page (void)
 {	
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if ( PMSessionGetCGGraphicsContext != NULL ) {
+  if ( &PMSessionGetCGGraphicsContext != NULL ) {
     status = PMSessionGetCGGraphicsContext(printSession, &fl_gc);
   }
   else

@@ -131,7 +131,7 @@ static void screen_init() {
     screens[i].width  = int(r.size.width);
     screens[i].height = int(r.size.height);
 //fprintf(stderr,"screen %d %dx%dx%dx%d\n",i,screens[i].x,screens[i].y,screens[i].width,screens[i].height);
-    if (CGDisplayScreenSize != NULL) {
+    if (&CGDisplayScreenSize != NULL) {
       CGSize s = CGDisplayScreenSize(displays[i]); // from 10.3
       dpi_h[i] = screens[i].width / (s.width/25.4);
       dpi_v[i] = screens[i].height / (s.height/25.4);
