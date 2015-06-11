@@ -90,7 +90,7 @@ int Fl_Native_File_Chooser::type() const { return _x11_file_chooser->type(); }
  NEW_FOLDER        Shows the 'New Folder' button.                    Ignored   Used      Used
  PREVIEW           Enables the 'Preview' mode by default.            Ignored   Ignored   Used
  SAVEAS_CONFIRM    Confirm dialog if BROWSE_SAVE_FILE file exists.   Used      Used      Used
- USE_FILTER_EXT    Chooser filter pilots the output file extension.  Ignored   Used      Ignored
+ USE_FILTER_EXT    Chooser filter pilots the output file extension.  Ignored   Used      Used (GTK)
 \endcode
  */
 void Fl_Native_File_Chooser::options(int o) {  _x11_file_chooser->options(o); }
