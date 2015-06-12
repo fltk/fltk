@@ -663,7 +663,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   else {
     // replaces return [super convertBaseToScreen:aPoint] that may trigger a compiler warning
     typedef NSPoint (*convertIMP)(id, SEL, NSPoint);
-    convertIMP addr = (convertIMP)[NSWindow instanceMethodForSelector:@selector(convertBaseToScreen:)];
+    static convertIMP addr = (convertIMP)[NSWindow instanceMethodForSelector:@selector(convertBaseToScreen:)];
     return addr(self, @selector(convertBaseToScreen:), aPoint);
     }
 }
@@ -679,7 +679,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
     if (fl_mac_os_version >= 100700) {
       // replaces [self setRestorable:NO] that may trigger a compiler warning
       typedef void (*setIMP)(id, SEL, BOOL);
-      setIMP addr = (setIMP)[self methodForSelector:@selector(setRestorable:)];
+      static setIMP addr = (setIMP)[NSWindow instanceMethodForSelector:@selector(setRestorable:)];
       addr(self, @selector(setRestorable:), NO);
       }
   }
