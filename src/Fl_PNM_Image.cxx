@@ -38,14 +38,14 @@
 //
 
 
-/** 
+/**
  The constructor loads the named PNM image.
-  
- The inherited destructor free all memory and server resources that are used by 
+
+ The destructor frees all memory and server resources that are used by
  the image.
- 
- Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+
+ Use Fl_Image::fail() to check if Fl_PNM_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  PNM format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
  */

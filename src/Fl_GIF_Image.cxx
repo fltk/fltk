@@ -3,7 +3,7 @@
 //
 // Fl_GIF_Image routines.
 //
-// Copyright 1997-2010 by Bill Spitzak and others.
+// Copyright 1997-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,14 +70,14 @@ typedef unsigned char uchar;
 #define NEXTBYTE (uchar)getc(GifFile)
 #define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
 
-/**  
+/**
  The constructor loads the named GIF image.
- 
- The inherited destructor free all memory and server resources that are used 
- by the image.
- 
- Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not bo opened or read, ERR_FORMAT if the
+
+ The destructor frees all memory and server resources that are used by
+ the image.
+
+ Use Fl_Image::fail() to check if Fl_GIF_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  GIF format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
  */
