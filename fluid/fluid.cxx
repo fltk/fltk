@@ -1296,7 +1296,7 @@ public:
   Fl_Process() {_fpt= NULL;}
   ~Fl_Process() {if (_fpt) close();}
 
-  // FIXME: popen needs the utf8 equivalen fl_popen
+  // FIXME: popen needs the UTF-8 equivalent fl_popen
   FILE * popen	(const char *cmd, const char *mode="r");
   //not necessary here: FILE * fl_fopen	(const char *file, const char *mode="r");
   int  close();

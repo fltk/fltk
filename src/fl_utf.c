@@ -3,7 +3,7 @@
  *
  * This is the utf.c file from fltk2 adapted for use in my fltk1.1 port
  */
-/* Copyright 2006-2011 by Bill Spitzak and others.
+/* Copyright 2006-2015 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -59,7 +59,7 @@
   /** @} */
 #endif /* 0 */
 
-/*!Set to 1 to turn bad UTF8 bytes into ISO-8859-1. If this is to zero
+/*!Set to 1 to turn bad UTF-8 bytes into ISO-8859-1. If this is zero
    they are instead turned into the Unicode REPLACEMENT CHARACTER, of
    value 0xfffd.
    If this is on fl_utf8decode() will correctly map most (perhaps all)
@@ -69,7 +69,7 @@
 */
 #define ERRORS_TO_ISO8859_1 1
 
-/*!Set to 1 to turn bad UTF8 bytes in the 0x80-0x9f range into the
+/*!Set to 1 to turn bad UTF-8 bytes in the 0x80-0x9f range into the
    Unicode index for Microsoft's CP1252 character set. You should
    also set ERRORS_TO_ISO8859_1. With this a huge amount of more
    available text (such as all web pages) are correctly converted
@@ -118,7 +118,7 @@ static unsigned short cp1252[32] = {
     if (*p & 0x80) {              // what should be a multibyte encoding
       code = fl_utf8decode(p,end,&len);
       if (len<2) code = 0xFFFD;   // Turn errors into REPLACEMENT CHARACTER
-    } else {                      // handle the 1-byte utf8 encoding:
+    } else {                      // handle the 1-byte UTF-8 encoding:
       code = *p;
       len = 1;
     }
@@ -208,7 +208,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   byte of the error is an individual character.
 
   \e start is the start of the string and is used to limit the
-  backwards search for the start of a utf8 character.
+  backwards search for the start of a UTF-8 character.
 
   \e end is the end of the string and is assumed to be a break
   between characters. It is assumed to be greater than p.
@@ -216,7 +216,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   This function is for moving a pointer that was jumped to the
   middle of a string, such as when doing a binary search for
   a position. You should use either this or fl_utf8back() depending
-  on which direction your algorithim can handle the pointer
+  on which direction your algorithm can handle the pointer
   moving. Do not use this to scan strings, use fl_utf8decode()
   instead.
 */
@@ -532,12 +532,12 @@ unsigned fl_utf8towc(const char* src, unsigned srclen,
     If the UTF-8 decodes to a character greater than 0xff then it is
     replaced with '?'.
 
-    Errors in the UTF-8 are converted as individual bytes, same as
+    Errors in the UTF-8 sequence are converted as individual bytes, same as
     fl_utf8decode() does. This allows ISO-8859-1 text mistakenly identified
-    as UTF-8 to be printed correctly (and possibly CP1512 on Windows).
+    as UTF-8 to be printed correctly (and possibly CP1252 on Windows).
 
-    \p src points at the UTF-8, and \p srclen is the number of bytes to
-    convert.
+    \p src points at the UTF-8 sequence, and \p srclen is the number of
+    bytes to convert.
 
     Up to \p dstlen bytes are written to \p dst, including a null
     terminator. The return value is the number of bytes that would be
@@ -629,7 +629,7 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen,
       /* surrogate pair */
       unsigned ucs2 = src[i++];
       ucs = 0x10000U + ((ucs&0x3ff)<<10) + (ucs2&0x3ff);
-      /* all surrogate pairs turn into 4-byte utf8 */
+      /* all surrogate pairs turn into 4-byte UTF-8 */
 #else
     } else if (ucs >= 0x10000) {
       if (ucs > 0x10ffff) {

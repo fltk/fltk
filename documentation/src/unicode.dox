@@ -291,7 +291,6 @@ unsigned int fl_nonspacing(unsigned int ucs)
   <br>
 \par
 Returns true if \p ucs is a non-spacing character.
-<b>[What are non-spacing characters?]</b>
 
 
 const char* fl_utf8back(const char *p, const char *start, const char *end)

@@ -16,7 +16,7 @@
  */
 
 /*
- * This file is required on all platforms for utf8 support
+ * This file is required on all platforms for UTF-8 support
  */
 
 #include "headers/case.h"
