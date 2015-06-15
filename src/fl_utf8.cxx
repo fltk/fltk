@@ -358,8 +358,8 @@ int fl_latin12utf(const unsigned char *str, int len, char *buf)
   returns true if the character is non-spacing.
   
   Non-spacing characters in Unicode are typically combining marks like
-  tilde (~), diaresis (¨), or other marks that are added to a base
-  character, for instance 'a' (base character) + '¨' (combining mark) = 'ä'
+  tilde (~), diaeresis (Â¨), or other marks that are added to a base
+  character, for instance 'a' (base character) + 'Â¨' (combining mark) = 'Ã¤'
   (German Umlaut).
 
   http://unicode.org/glossary/#base_character
