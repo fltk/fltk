@@ -3,7 +3,7 @@
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -128,14 +128,20 @@ int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
   return 0;
 }
 
-#ifdef __APPLE__
+//------------------------------------------------------------------------------
+#ifdef __APPLE__					// Apple, Mac OS X
+//------------------------------------------------------------------------------
+
 void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
 }
 
-#elif defined(WIN32)
+//------------------------------------------------------------------------------
+#elif defined(WIN32)					// Windows GDI
+//------------------------------------------------------------------------------
+
 void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
@@ -181,7 +187,10 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
   }
 }
 
-#else // Xlib
+//------------------------------------------------------------------------------
+#else							// X11, Xlib
+//------------------------------------------------------------------------------
+
 void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
@@ -205,10 +214,12 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
   }
 }
 
-#endif
+//------------------------------------------------------------------------------
+#endif							// (platform-specific)
+//------------------------------------------------------------------------------
 
 /**
-  The destructor free all memory and server resources that are used by
+  The destructor frees all memory and server resources that are used by
   the pixmap.
 */
 Fl_Pixmap::~Fl_Pixmap() {
