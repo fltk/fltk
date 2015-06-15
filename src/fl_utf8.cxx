@@ -356,15 +356,19 @@ int fl_latin12utf(const unsigned char *str, int len, char *buf)
 
 /**
   returns true if the character is non-spacing.
-  \todo explain what non-spacing means.
+  
+  Non-spacing characters in Unicode are typically combining marks like
+  tilde (~), diaresis (¨), or other marks that are added to a base
+  character, for instance 'a' (base character) + '¨' (combining mark) = 'ä'
+  (German Umlaut).
+
+  http://unicode.org/glossary/#base_character
+  http://unicode.org/glossary/#nonspacing_mark
+  http://unicode.org/glossary/#combining_character
   */
 unsigned int fl_nonspacing(unsigned int ucs)
 {
-#ifdef __APPLE__
-  return (ucs==0x20); // FIXME: what does this really do?
-#else
   return (unsigned int) XUtf8IsNonSpacing(ucs);
-#endif
 }
 
 #if defined(WIN32) && !defined(__CYGWIN__)
