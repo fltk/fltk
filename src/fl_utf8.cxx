@@ -362,9 +362,9 @@ int fl_latin12utf(const unsigned char *str, int len, char *buf)
   character, for instance 'a' (base character) + '¨' (combining mark) = 'ä'
   (German Umlaut).
 
-  http://unicode.org/glossary/#base_character
-  http://unicode.org/glossary/#nonspacing_mark
-  http://unicode.org/glossary/#combining_character
+  - http://unicode.org/glossary/#base_character
+  - http://unicode.org/glossary/#nonspacing_mark
+  - http://unicode.org/glossary/#combining_character
   */
 unsigned int fl_nonspacing(unsigned int ucs)
 {
