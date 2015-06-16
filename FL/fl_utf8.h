@@ -22,7 +22,7 @@
 
 /**
   \file fl_utf8.h
-  \brief header for Unicode and UTF-8 chracter handling
+  \brief header for Unicode and UTF-8 character handling
 */
 
 #ifndef _HAVE_FL_UTF8_HDR_
@@ -119,13 +119,9 @@ FL_EXPORT unsigned fl_utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src,
 
 /* F2: Convert a UTF-8 string into ASCII, eliding untranslatable glyphs */
 FL_EXPORT unsigned fl_utf8toa (const char *src, unsigned srclen, char *dst, unsigned dstlen);
-/* OD: convert UTF-8 string to latin1 */
-/* FL_EXPORT int fl_utf2latin1(const unsigned char *src, int srclen, char *dst); */
 
 /* F2: Convert 8859-1 string to UTF-8 */
 FL_EXPORT unsigned fl_utf8froma (char *dst, unsigned dstlen, const char *src, unsigned srclen);
-/* OD: convert latin1 str to UTF-8 */
-/* FL_EXPORT int fl_latin12utf(const unsigned char *src, int srclen, char *dst); */
 
 /* F2: Returns true if the current O/S locale is UTF-8 */
 FL_EXPORT int fl_utf8locale();
@@ -154,8 +150,6 @@ FL_EXPORT char* fl_utf2mbcs(const char *src);
 
 /* F2: Convert a local multi-byte encoding to UTF-8 - mainly for win32? */
 FL_EXPORT unsigned fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen);
-/* OD: Convert a local multi-byte encoding to UTF-8 */
-/* FL_EXPORT char* fl_mbcs2utf(const char *src); */
 
 /*****************************************************************************/
 #ifdef WIN32
