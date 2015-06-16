@@ -67,6 +67,7 @@ alldocs: docs
 dist:	docs
 
 clean:
+	$(RM) Doxyfile Doxybook
 	$(RM) fltk.pdf refman.pdf src/fltk-book.tex
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
@@ -125,6 +126,31 @@ uninstall-linux uninstall-osx:
 	$(RM) $(DESTDIR)$(mandir)/man6/blocks.6
 	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
 	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
+
+# The documentation is generated using doxygen. There are two control files
+# for doxygen: Doxyfile for html documentation and Doxybook for pdf docs.
+# Both files are generated from the common source file Doxyfile.in.
+# Note that Doxyfile.in is shared with CMake to configure these files.
+
+Doxyfile: Doxyfile.in
+	echo "Generating Doxyfile ..."
+	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	    -e's,@GENERATE_HTML@,YES,' \
+	    -e's,@GENERATE_LATEX@,NO,' \
+	    -e's, @LATEX_HEADER@,,' \
+	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
+	    -e's,@CMAKE_SOURCE_DIR@/,../,' \
+	    < $< > $@
+
+Doxybook: Doxyfile.in
+	echo "Generating Doxybook ..."
+	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	    -e's,@GENERATE_HTML@,NO,' \
+	    -e's,@GENERATE_LATEX@,YES,' \
+	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
+	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
+	    -e's,@CMAKE_SOURCE_DIR@/,../,' \
+	    < $< > $@
 
 # The HTML files are generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target
