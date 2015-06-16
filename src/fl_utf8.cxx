@@ -171,7 +171,7 @@ fl_utf_nb_char(
   int i = 0;
   int nbc = 0;
   while (i < len) {
-    int cl = fl_utf8len((buf+i)[0]); // fl_utflen(buf + i, len - i);
+    int cl = fl_utf8len((buf+i)[0]);
     if (cl < 1) cl = 1;
     nbc++;
     i += cl;
@@ -252,7 +252,6 @@ int fl_utf_tolower(const unsigned char *str, int len, char *buf)
     int l1, l2;
     unsigned int u1;
 
-//  l1 = fl_utf2ucs((unsigned char*)str + i, len - i, &u1);
     u1 = fl_utf8decode((const char*)(str + i), end, &l1);
     l2 = fl_utf8encode((unsigned int) XUtf8Tolower(u1), buf + l);
     if (l1 < 1) {
@@ -282,7 +281,6 @@ int fl_utf_toupper(const unsigned char *str, int len, char *buf)
     int l1, l2;
     unsigned int u1;
 
-//  l1 = fl_utf2ucs((unsigned char*)str + i, len - i, &u1);
     u1 = fl_utf8decode((const char*)(str + i), end, &l1);
     l2 = fl_utf8encode((unsigned int) Toupper(u1), buf + l);
     if (l1 < 1) {
@@ -317,16 +315,21 @@ unsigned int fl_nonspacing(unsigned int ucs)
   return (unsigned int) XUtf8IsNonSpacing(ucs);
 }
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-static xchar *mbwbuf = NULL;
-#endif
-
 #ifdef WIN32
 unsigned int fl_codepage = 0;
 #endif
 
 #if defined (WIN32) && !defined(__CYGWIN__)
 
+// For Win32 platforms, we frequently need to translate between
+// Windows 16-bit wide characters (usually UTF-16) and our
+// native UTF-8 strings. To this end, we maintain a number of
+// character buffers to support the conversions.
+// NOTE: Our re-use of these buffers means this code is not
+// going to be thread-safe.
+static xchar *mbwbuf = NULL;
+static xchar *wbuf = NULL;
+static xchar *wbuf1 = NULL;
 static char *buf = NULL;
 static int buf_len = 0;
 static unsigned short *wbufa = NULL;
@@ -336,11 +339,6 @@ char *fl_utf8_to_locale(const char *s, int len, UINT codepage)
 {
   if (!s) return (char *)"";
   int l = 0;
-  //  if (buf_len < len * 2 + 1) {
-  //    buf_len = len * 2 + 1;
-  //    buf = (char*) realloc(buf, buf_len);
-  //    wbufa = (unsigned short*) realloc(wbufa, buf_len * sizeof(short));
-  //  }
   unsigned wn = fl_utf8toUtf16(s, len, NULL, 0); // Query length
   wn = wn * 2 + 1;
   if (wn >= (unsigned)buf_len) {
@@ -349,7 +347,6 @@ char *fl_utf8_to_locale(const char *s, int len, UINT codepage)
     wbufa = (unsigned short*) realloc(wbufa, buf_len * sizeof(short));
   }
   if (codepage < 1) codepage = fl_codepage;
-  // l = fl_utf2unicode((const unsigned char *)s, len, (xchar*) wbufa);
   l = fl_utf8toUtf16(s, len, wbufa, wn); // Convert string
   wbufa[l] = 0;
   buf[l] = 0;
@@ -375,7 +372,6 @@ char *fl_locale_to_utf8(const char *s, int len, UINT codepage)
   l = MultiByteToWideChar(codepage, 0, s, len, (WCHAR*)wbufa, buf_len);
   if (l < 0) l = 0;
   wbufa[l] = 0;
-//l = fl_unicode2utf((xchar*)wbufa, l, buf);
   l = fl_utf8fromwc(buf, buf_len, (xchar*)wbufa, l);
   buf[l] = 0;
   return buf;
@@ -394,9 +390,6 @@ char * fl_utf2mbcs(const char *s)
   size_t l = strlen(s);
   static char *buf = NULL;
 
-//  mbwbuf = (xchar*)realloc(mbwbuf, (l+6) * sizeof(xchar));
-//  l = fl_utf2unicode((unsigned char*)s, l, mbwbuf);
-//  mbwbuf[l] = 0;
   unsigned wn = fl_utf8toUtf16(s, (unsigned) l, NULL, 0) + 7; // Query length
   mbwbuf = (xchar*)realloc(mbwbuf, sizeof(xchar)*wn);
   l = fl_utf8toUtf16(s, (unsigned) l, (unsigned short *)mbwbuf, wn); // Convert string
@@ -410,7 +403,6 @@ char * fl_utf2mbcs(const char *s)
   return (char*) s;
 #endif
 }
-
 
 /** Cross-platform function to get environment variables with a UTF-8 encoded
   name or value.
@@ -431,9 +423,6 @@ char *fl_getenv(const char* v) {
 #if defined (WIN32) && !defined(__CYGWIN__)
 
   size_t l =  strlen(v);
-  // static xchar* wbuf = NULL;
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)v, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(v, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(v, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -444,7 +433,6 @@ char *fl_getenv(const char* v) {
     l = (unsigned) wcslen(ret);
     wn = fl_utf8fromwc(NULL, 0, ret, (unsigned) l) + 1; // query length
     buf = (char*) realloc(buf, wn);
-    // buf[fl_unicode2utf(ret, l, buf)] = 0;
     wn = fl_utf8fromwc(buf, wn, ret, (unsigned) l); // convert string
     buf[wn] = 0;
     return buf;
@@ -481,8 +469,6 @@ int fl_open(const char* f, int oflags, ...)
 #if defined (WIN32) && !defined(__CYGWIN__)
 
   unsigned l = (unsigned) strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, l, (unsigned short *)wbuf, wn); // Convert string
@@ -514,15 +500,11 @@ FILE *fl_fopen(const char* f, const char *mode) {
 #if  defined (WIN32) && !defined(__CYGWIN__)
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
   l = strlen(mode);
-  // wbuf1 = (xchar*)realloc(wbuf1, sizeof(xchar) * (l+1));
-  // wbuf1[fl_utf2unicode((const unsigned char*)mode, l, wbuf1)] = 0;
   wn = fl_utf8toUtf16(mode, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf1 = (xchar*)realloc(wbuf1, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(mode, (unsigned) l, (unsigned short *)wbuf1, wn); // Convert string
@@ -557,8 +539,6 @@ int fl_system(const char* cmd)
   return system(fl_utf2mbcs(cmd));
 # else
   size_t l = strlen(cmd);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)cmd, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(cmd, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(cmd, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -581,8 +561,6 @@ int fl_execvp(const char *file, char *const *argv)
   size_t l = strlen(file);
   int i, n;
   xchar **ar;
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)file, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(file, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(file, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -595,8 +573,6 @@ int fl_execvp(const char *file, char *const *argv)
   while (i <= n) {
     unsigned wn;
     l = strlen(argv[i]);
-    // ar[i] = (xchar *)malloc(sizeof(xchar) * (l+1));
-    // ar[i][fl_utf2unicode((const unsigned char*)argv[i], l, ar[i])] = 0;
     wn = fl_utf8toUtf16(argv[i], (unsigned) l, NULL, 0) + 1; // Query length
     ar[i] = (xchar *)malloc(sizeof(xchar)*wn);
     wn = fl_utf8toUtf16(argv[i], (unsigned) l, (unsigned short *)ar[i], wn); // Convert string
@@ -620,15 +596,21 @@ int fl_execvp(const char *file, char *const *argv)
 
 }
 
+/** Cross-platform function to set a files mode() with a UTF-8 encoded
+  name or value.
 
+ This function is especially useful under the MSWindows platform where the
+ standard chmod() function fails with UTF-8 encoded non-ASCII filenames.
 
+  \param[in] f the UTF-8 encoded filename
+  \param[in] mode the mode to set
+  \return    the return value of _wchmod() on Windows or chmod() on other platforms.
+*/
 int fl_chmod(const char* f, int mode) {
 
 #if defined(WIN32) && !defined(__CYGWIN__) // Windows
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -644,13 +626,21 @@ int fl_chmod(const char* f, int mode) {
 } // fl_chmod()
 
 
+/** Cross-platform function to test a files access() with a UTF-8 encoded
+  name or value.
+
+ This function is especially useful under the MSWindows platform where the
+ standard access() function fails with UTF-8 encoded non-ASCII filenames.
+
+  \param[in] f the UTF-8 encoded filename
+  \param[in] mode the mode to test
+  \return    the return value of _waccess() on Windows or access() on other platforms.
+*/
 int fl_access(const char* f, int mode) {
 
 #if defined (WIN32) && !defined(__CYGWIN__) // Windows
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -666,13 +656,21 @@ int fl_access(const char* f, int mode) {
 } // fl_access()
 
 
+/** Cross-platform function to stat() a file using a UTF-8 encoded
+  name or value.
+
+ This function is especially useful under the MSWindows platform where the
+ standard stat() function fails with UTF-8 encoded non-ASCII filenames.
+
+  \param[in] f the UTF-8 encoded filename
+  \param     b the stat struct to populate
+  \return    the return value of _wstat() on Windows or stat() on other platforms.
+*/
 int fl_stat(const char* f, struct stat *b) {
 
 #if defined(WIN32) && !defined(__CYGWIN__) // Windows
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -688,6 +686,16 @@ int fl_stat(const char* f, struct stat *b) {
 } // fl_stat()
 
 
+/** Cross-platform function to get the current working directory
+    as a UTF-8 encoded value.
+
+ This function is especially useful under the MSWindows platform where the
+ standard _wgetcwd() function returns UTF-16 encoded non-ASCII filenames.
+
+  \param     b the buffer to populate
+  \param     l the length of the buffer
+  \return    the CWD encoded as UTF-8.
+*/
 char *fl_getcwd(char* b, int l) {
 
   if (b == NULL) {
@@ -698,12 +706,10 @@ char *fl_getcwd(char* b, int l) {
 
   static xchar *wbuf = NULL;
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // xchar *ret = _wgetcwd(wbuf, l / 5);
   xchar *ret = _wgetcwd(wbuf, l);
   if (ret) {
     unsigned dstlen = l;
     l = (int) wcslen(wbuf);
-    // b[fl_unicode2utf(wbuf, l, b)] = 0;
     dstlen = fl_utf8fromwc(b, dstlen, wbuf, (unsigned) l);
     b[dstlen] = 0;
     return b;
@@ -720,13 +726,20 @@ char *fl_getcwd(char* b, int l) {
 } // fl_getcwd()
 
 
+/** Cross-platform function to unlink() (that is, delete) a file using
+    a UTF-8 encoded filename.
+
+ This function is especially useful under the MSWindows platform where the
+ standard function expects UTF-16 encoded non-ASCII filenames.
+
+  \param     f the filename to unlink
+  \return    the return value of _wunlink() on Windows or unlink() on other platforms.
+*/
 int fl_unlink(const char* f) {
 
 #if defined(WIN32) && !defined(__CYGWIN__) // Windows
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -742,13 +755,21 @@ int fl_unlink(const char* f) {
 } // fl_unlink()
 
 
+/** Cross-platform function to create a directory with a UTF-8 encoded
+  name.
+
+ This function is especially useful on the MSWindows platform where the
+ standard _wmkdir() function expects UTF-16 encoded non-ASCII filenames.
+
+  \param[in] f the UTF-8 encoded filename
+  \param[in] mode the mode of the directory
+  \return    the return value of _wmkdir() on Windows or mkdir() on other platforms.
+*/
 int fl_mkdir(const char* f, int mode) {
 
 #if defined(WIN32) && !defined(__CYGWIN__) // Windows
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(short) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -764,13 +785,20 @@ int fl_mkdir(const char* f, int mode) {
 } // fl_mkdir()
 
 
+/** Cross-platform function to remove a directory with a UTF-8 encoded
+  name.
+
+ This function is especially useful on the MSWindows platform where the
+ standard _wrmdir() function expects UTF-16 encoded non-ASCII filenames.
+
+  \param[in] f the UTF-8 encoded filename to remove
+  \return    the return value of _wrmdir() on Windows or rmdir() on other platforms.
+*/
 int fl_rmdir(const char* f) {
 
 #if defined (WIN32) && !defined(__CYGWIN__) // Windows
 
   size_t l = strlen(f);
-  // wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
-  // wbuf[fl_utf2unicode((const unsigned char*)f, l, wbuf)] = 0;
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (xchar*)realloc(wbuf, sizeof(xchar)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
@@ -786,6 +814,16 @@ int fl_rmdir(const char* f) {
 } // fl_rmdir()
 
 
+/** Cross-platform function to rename a filesystem object using
+    UTF-8 encoded names.
+
+ This function is especially useful on the MSWindows platform where the
+ standard _wrename() function expects UTF-16 encoded non-ASCII filenames.
+
+  \param[in] f the UTF-8 encoded filename to change
+  \param[in] n the new UTF-8 encoded filename to set
+  \return    the return value of _wrename() on Windows or rename() on other platforms.
+*/
 int fl_rename(const char* f, const char *n) {
 
 #if defined (WIN32) && !defined(__CYGWIN__) // Windows
