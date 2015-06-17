@@ -5,14 +5,14 @@ code_name {.cxx}
 Function {} {open
 } {
   Fl_Window foo_window {
-    label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open
+    label {Comparison of Fl_Tab (left) vs. Fl_Wizard (right)} open selected
     xywh {516 38 660 400} type Double hide resizable
   } {
     Fl_Box {} {
       label {class Fl_Tabs}
       xywh {95 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Tabs {} {open selected
+    Fl_Tabs {} {open
       tooltip {the various index cards test different aspects of the Fl_Tabs widget} xywh {10 35 315 260} selection_color 4 labelcolor 7 resizable
     } {
       Fl_Group {} {
@@ -34,92 +34,92 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label {tab&2} open
+        label {tab&2}
         tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {10 60 315 235} selection_color 2 hide
       } {
         Fl_Button {} {
           label button1
           callback {fl_message("Test to see if this modal window prevents you from "
            "changing the tabs. It should.");}
-          xywh {20 90 100 30}
+          xywh {20 85 100 30}
           code0 {\#include <FL/fl_ask.H>}
         }
         Fl_Input {} {
           label {input in box2}
-          xywh {140 130 100 30}
+          xywh {130 130 175 30}
         }
         Fl_Button {} {
           label {This is stuff inside the Fl_Group "tab2"}
-          xywh {25 170 275 30}
+          xywh {25 170 280 30}
         }
         Fl_Button {} {
           label {Test event blocking by modal window}
           callback {fl_message("Make sure you cannot change the tabs while this modal window is up");}
-          xywh {25 200 275 30}
+          xywh {25 200 280 30}
           code0 {\#include <FL/fl_ask.H>}
         }
       }
       Fl_Group {} {
-        label {tab&3} open
+        label {tab&3}
         tooltip {tab3 checks for correct keyboard navigation} xywh {10 60 315 235} selection_color 3 hide
       } {
         Fl_Button {} {
           label button2
-          xywh {20 65 60 80}
+          xywh {20 80 60 80}
         }
         Fl_Button {} {
           label button
-          xywh {80 65 60 80}
+          xywh {80 80 60 80}
         }
         Fl_Button {} {
           label button
-          xywh {140 65 60 80}
+          xywh {140 80 60 80}
         }
       }
       Fl_Group {} {
-        label {&tab4} open
+        label {&tab4}
         tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {10 60 315 235} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
-          xywh {20 55 60 110}
+          xywh {20 80 60 120}
         }
         Fl_Button {} {
           label button
-          xywh {80 55 60 110}
+          xywh {80 80 60 120}
         }
         Fl_Button {} {
           label button
-          xywh {140 55 60 110}
+          xywh {140 80 60 120}
         }
       }
       Fl_Group {} {
-        label {@fileprint  &print} open
+        label {@fileprint  &print}
         tooltip {tab5 verifies if visibility requests are handled correctly} xywh {10 60 315 235} hide
       } {
         Fl_Button {} {
           label button2
-          tooltip {button2 has a different tooltp than tab5} xywh {20 55 60 80}
+          tooltip {button2 has a different tooltp than tab5} xywh {20 80 60 80}
         }
         Fl_Button {} {
           label button
-          xywh {90 55 60 80}
+          xywh {90 80 60 80}
         }
         Fl_Clock {} {
           label {Make sure this clock does not use processor time when this tab is hidden or window is iconized}
-          xywh {160 55 100 100} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
+          xywh {185 80 120 120} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
         }
         Fl_Group {} {open
-          xywh {20 155 40 55} box THIN_DOWN_BOX color 173 align 16
+          xywh {20 190 40 55} box THIN_DOWN_BOX color 173 align 16
           class Fl_Window
         } {}
         Fl_Group {} {
           label {subwindows:} open
-          xywh {65 155 40 55} box THIN_DOWN_BOX color 167
+          xywh {65 190 40 55} box THIN_DOWN_BOX color 167
           class Fl_Window
         } {}
         Fl_Group {} {open
-          xywh {110 155 40 55} box THIN_DOWN_BOX color 239 align 16
+          xywh {110 190 40 55} box THIN_DOWN_BOX color 239 align 16
           class Fl_Window
         } {}
       }
@@ -128,12 +128,12 @@ Function {} {open
       label {class Fl_Wizard}
       xywh {410 0 130 35} labeltype ENGRAVED_LABEL labelfont 1
     }
-    Fl_Wizard wWizard {
+    Fl_Wizard wWizard {open
       xywh {330 35 320 260}
     } {
       Fl_Group {} {
-        label Label1 open
-        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {330 60 320 235} selection_color 1 resizable
+        label Label1
+        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {330 60 320 235} selection_color 1 hide resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -150,7 +150,7 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab2 open
+        label tab2
         tooltip {tab2 tests among other things the cooperation of modal windows and tabs} xywh {330 60 320 235} selection_color 2 hide
       } {
         Fl_Button {} {
@@ -176,7 +176,7 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab3 open
+        label tab3
         tooltip {tab3 checks for correct keyboard navigation} xywh {330 50 320 245} selection_color 3 hide
       } {
         Fl_Button {} {
@@ -193,25 +193,25 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label tab4 open
+        label tab4
         tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {330 60 320 235} selection_color 5 labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
-          xywh {350 80 60 110}
+          xywh {350 80 60 120}
         }
         Fl_Button {} {
           label button
-          xywh {410 80 60 110}
+          xywh {410 80 60 120}
         }
         Fl_Button {} {
           label button
-          xywh {470 80 60 110}
+          xywh {470 80 60 120}
         }
       }
       Fl_Group {} {
-        label {     tab5      } open
-        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {330 65 320 230} labeltype ENGRAVED_LABEL hide
+        label {     tab5      }
+        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {330 65 320 230} labeltype ENGRAVED_LABEL
       } {
         Fl_Button {} {
           label button2
@@ -223,19 +223,19 @@ Function {} {open
         }
         Fl_Clock {} {
           label {Make sure this clock does not use processor time when this tab is hidden or window is iconized}
-          xywh {490 80 100 100} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
+          xywh {510 80 120 120} box OSHADOW_BOX color 238 selection_color 0 labelfont 8 labelsize 10 align 130
         }
         Fl_Group {} {open
-          xywh {350 180 40 55} box THIN_DOWN_BOX color 173 align 16
+          xywh {350 190 40 55} box THIN_DOWN_BOX color 173 align 16
           class Fl_Window
         } {}
         Fl_Group {} {
           label {subwindows:} open
-          xywh {395 180 40 55} box THIN_DOWN_BOX color 167
+          xywh {395 190 40 55} box THIN_DOWN_BOX color 167
           class Fl_Window
         } {}
         Fl_Group {} {open
-          xywh {440 180 40 55} box THIN_DOWN_BOX color 239 align 16
+          xywh {440 190 40 55} box THIN_DOWN_BOX color 239 align 16
           class Fl_Window
         } {}
       }
