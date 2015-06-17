@@ -1,7 +1,7 @@
 README (documentation)
 ----------------------
-FLTK 1.3 documentation is available in HTML and PDF format. The
-documentation must be generated in a separate step or downloaded
+FLTK 1.3 (and higher) documentation is available in HTML and PDF format.
+The documentation must be generated in a separate step or downloaded
 from FLTK's software download pages. The documentation can also
 be accessed online.
 
@@ -23,7 +23,7 @@ the current online documentation:
 
     http://www.fltk.org/documentation.php
 
-    
+
 Documentation Download:
 -----------------------
 To download pre-generated docs, go to
@@ -39,28 +39,63 @@ Extract the documentation tarballs into the same directory as you
 did with the source tarball.
 
 
-Generation of Documentation:
-----------------------------
+Generation of Documentation (common part):
+------------------------------------------
 To generate the documentation yourself, you should have Doxygen
-version 1.5.7 or later (recommended version is 1.7.3).
+version 1.5.7 or later (recommended version is 1.7.3 or later).
 
 To generate the PDF version you also need a current version of LaTeX.
 You can use the packages tetex (older) or texlive (current) if your
 distribution provides them. You may need to install additional fonts
 and other sub-packages for the PDF version to be generated correctly.
 
+
+Generation of Documentation with autoconf (configure) + make:
+-------------------------------------------------------------
 Use "make html" in the documentation directory to generate the HTML
-documentation, or "make pdf" to generate the PDF version. "make dist"
+documentation, or "make pdf" to generate the PDF version. "make docs"
 generates both versions in one step (as would do "make clean html pdf").
 
 To read the HTML or PDF docs, see above.
+
+
+Generation of Documentation with CMake + make:
+----------------------------------------------
+We assume that you use an out-of-source build as recommended.
+Documentation is not generated in a default build. You must set one or
+more CMake options using cmake-gui, ccmake, or cmake -DOPTION...
+
+These options are predefined to OFF and can be switched ON:
+
+  - OPTION_BUILD_HTML_DOCUMENTATION:BOOL=OFF	target:	html
+  - OPTION_BUILD_PDF_DOCUMENTATION:BOOL=OFF	target:	pdf
+
+  - OPTION_INSTALL_HTML_DOCUMENTATION:BOOL=OFF
+  - OPTION_INSTALL_PDF_DOCUMENTATION:BOOL=OFF
+
+If you switch one or both of the first two options ON, then the
+targets 'html' and/or 'pdf' are generated, respectively. Target 'docs'
+is added to generate both 'html' and 'pdf'. As said above, you need
+installed Doxygen and LaTeX software for this to work.
+
+Use "make html" in the root or documentation directory of the build tree
+to generate the HTML documentation, or "make pdf" to generate the PDF
+version. "make docs" generates both versions in one step (as would do
+"make clean html pdf").
+
+To read the HTML or PDF docs, see above, but use the build directory.
+
+Note: if you enable one or more of the "*INSTALL*" options, then
+`make install' will install the docs, but you must still build them
+manually, because the generation is not included in the standard ('all')
+target. This may be changed in the future.
 
 
 FLTK Developer Snapshots or Subversion Usage:
 ---------------------------------------------
 There is no pre-generated documentation available if you use a current
 developer snapshot or subversion. You must generate the documentation
-yourself.
+yourself or access the online documentation.
 
 
 Bugs and Feature Requests:
