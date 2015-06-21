@@ -32,6 +32,7 @@
 // Implemented without using the xpm library (which I can't use because
 // it interferes with the color cube used by fl_draw_image).
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -39,6 +40,10 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Printer.H>
+
+#if defined(USE_X11)
+#include <X11/Xregion.h>
+#endif
 
 #include <stdio.h>
 #include "flstring.h"
@@ -195,23 +200,38 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   if (pxm->mask_) {
-    // I can't figure out how to combine a mask with existing region,
-    // so cut the image down to a clipped rectangle:
-    int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
-    cx += nx-X; X = nx;
-    cy += ny-Y; Y = ny;
     // make X use the bitmap as a mask:
     XSetClipMask(fl_display, fl_gc, pxm->mask_);
-    int ox = X-cx; if (ox < 0) ox += pxm->w();
-    int oy = Y-cy; if (oy < 0) oy += pxm->h();
     XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
-  }
-  copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
-  if (pxm->mask_) {
+    if (clip_region()) {
+      // At this point, XYWH is the bounding box of the intersection between
+      // the current clip region and the (portion of the) pixmap we have to draw.
+      // The current clip region is often a rectangle. But, when a window with rounded
+      // corners is moved above another window, expose events may create a complex clip
+      // region made of several (e.g., 10) rectangles. We have to draw only in the clip
+      // region, and also to mask out the transparent pixels of the image. This can't
+      // be done in a single Xlib call for a multi-rectangle clip region. Thus, we
+      // process each rectangle of the intersection between the clip region and XYWH.
+      // See also STR #3206.
+      Region r = XRectangleRegion(X,Y,W,H);
+      XIntersectRegion(r, clip_region(), r);
+      int X1, Y1, W1, H1;
+      for (int i = 0; i < r->numRects; i++) {
+	X1 = r->rects[i].x1;
+	Y1 = r->rects[i].y1;
+	W1 = r->rects[i].x2 - r->rects[i].x1;
+	H1 = r->rects[i].y2 - r->rects[i].y1;
+	copy_offscreen(X1, Y1, W1, H1, pxm->id_, cx + (X1 - X), cy + (Y1 - Y));
+      }
+      XDestroyRegion(r);
+    } else {
+      copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
+    }
     // put the old clip region back
     XSetClipOrigin(fl_display, fl_gc, 0, 0);
-    fl_restore_clip();
+    restore_clip();
   }
+  else copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
 }
 
 //------------------------------------------------------------------------------
