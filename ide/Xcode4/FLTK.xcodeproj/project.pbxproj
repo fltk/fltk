@@ -13787,11 +13787,11 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ../../;
+				HEADER_SEARCH_PATHS = (
+					.,
+					../../,
+				);
 				INFOPLIST_FILE = "plists/animated-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -13802,12 +13802,13 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				HEADER_SEARCH_PATHS = ../../;
+				HEADER_SEARCH_PATHS = (
+					.,
+					../../,
+				);
 				INFOPLIST_FILE = "plists/animated-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -13821,14 +13822,12 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					.,
 					../..,
 					../../jpeg,
 					../../png,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = fltk;
 				SDKROOT = macosx;
 			};
@@ -13838,7 +13837,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -13849,7 +13847,6 @@
 					../../jpeg,
 					../../png,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = fltk;
 				SDKROOT = macosx;
 			};
