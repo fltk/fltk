@@ -217,11 +217,11 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
       XIntersectRegion(r, clip_region(), r);
       int X1, Y1, W1, H1;
       for (int i = 0; i < r->numRects; i++) {
-	X1 = r->rects[i].x1;
-	Y1 = r->rects[i].y1;
-	W1 = r->rects[i].x2 - r->rects[i].x1;
-	H1 = r->rects[i].y2 - r->rects[i].y1;
-	copy_offscreen(X1, Y1, W1, H1, pxm->id_, cx + (X1 - X), cy + (Y1 - Y));
+        X1 = r->rects[i].x1;
+        Y1 = r->rects[i].y1;
+        W1 = r->rects[i].x2 - r->rects[i].x1;
+        H1 = r->rects[i].y2 - r->rects[i].y1;
+        copy_offscreen(X1, Y1, W1, H1, pxm->id_, cx + (X1 - X), cy + (Y1 - Y));
       }
       XDestroyRegion(r);
     } else {
