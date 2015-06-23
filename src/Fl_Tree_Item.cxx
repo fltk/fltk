@@ -260,7 +260,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) const {
     if ( child(t)->label() ) {
       if ( strcmp(child(t)->label(), *arr) == 0 ) {	// match?
         if ( *(arr+1) ) {				// more in arr? descend
-          return(_children[t]->find_item(arr+1));
+          return(_children[t]->find_child_item(arr+1));
         } else {					// end of arr? done
           return(_children[t]);
         }
