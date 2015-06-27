@@ -1133,6 +1133,37 @@ void fl_throw_focus(Fl_Widget *o) {
 
 ////////////////////////////////////////////////////////////////
 
+// Find the first active_r() widget, starting at the widget wi and
+// walking up the widget hierarchy to the top level window.
+//
+// In other words: find_active() returns an active group that contains
+// the inactive widget and all inactive parent groups.
+//
+// This is used to send FL_SHORTCUT events to the Fl::belowmouse() widget
+// in case the target widget itself is inactive_r(). In this case the event
+// is sent to the first active_r() parent.
+//
+// This prevents sending events to inactive widgets that might get the
+// input focus otherwise. The search is fast and light and avoids calling
+// inactive_r() multiple times.
+// See STR #3216.
+//
+// Returns: first active_r() widget "above" the widget wi or NULL if
+// no widget is active. May return the top level window.
+
+static Fl_Widget *find_active(Fl_Widget *wi) {
+  Fl_Widget *found = 0;
+  for (; wi; wi = wi->parent()) {
+    if (wi->active()) {
+      if (!found) found = wi;
+    }
+    else found = 0;
+  }
+  return found;
+}
+
+////////////////////////////////////////////////////////////////
+
 // Call to->handle(), but first replace the mouse x/y with the correct
 // values to account for nested windows. 'window' is the outermost
 // window the event was posted to by the system:
@@ -1398,7 +1429,7 @@ int Fl::handle_(int e, Fl_Window* window)
     if (grab()) {wi = grab(); break;} // send it to grab window
 
     // Try it as shortcut, sending to mouse widget and all parents:
-    wi = belowmouse();
+    wi = find_active(belowmouse()); // STR #3216
     if (!wi) {
       wi = modal();
       if (!wi) wi = window;
