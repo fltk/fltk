@@ -89,7 +89,6 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
 static NSString *calc_utf8_format(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
-static Fl_X *fl_x_to_redraw = NULL; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
@@ -2209,8 +2208,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl_Window *w = [cw getFl_Window];
   if (w->visible()) {
     through_drawRect = YES;
-    if (fl_x_to_redraw) fl_x_to_redraw->flush();
-    else handleUpdateEvent(w);
+    handleUpdateEvent(w);
     through_drawRect = NO;
   }
   fl_unlock_function();
@@ -2806,21 +2804,14 @@ void Fl_X::flush()
 {
   if (w->as_gl_window()) {
     w->flush();
-    return;
-  } else if (through_drawRect) {
+  } else {
     make_current_counts = 1;
+    if (!through_drawRect) [[xid contentView] lockFocus];
     w->flush();
+    if (!through_drawRect) [[xid contentView] unlockFocus];
     make_current_counts = 0;
     Fl_X::q_release_context();
-    return;
   }
-  // have Cocoa immediately redraw the window's view
-  FLView *view = (FLView*)[xid contentView];
-  fl_x_to_redraw = this;
-  [view setNeedsDisplay:YES];
-  // will send the drawRect: message to the window's view after having prepared the adequate NSGraphicsContext
-  [view displayIfNeededIgnoringOpacity]; 
-  fl_x_to_redraw = NULL;
 }
 
 
@@ -3246,24 +3237,23 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
  This can be called in 3 different instances:
  
  1) When a window is created or resized.
- The system sends the drawRect: message to the window's view after having prepared the current graphics context 
- to draw to this view. Variable through_drawRect is YES, and fl_x_to_redraw is NULL. Processing of drawRect: calls 
- handleUpdateEvent() that calls Fl_X::flush() for the window and its subwindows. Fl_X::flush() calls 
- Fl_Window::flush() that calls Fl_Window::make_current() that only needs to identify the graphics port of the 
- current graphics context. The window's draw() function is then executed.
+ The system sends the drawRect: message to the window's view after having prepared the current 
+ graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect 
+ to YES and calls handleUpdateEvent() that calls Fl_X::flush(). Fl_X::flush() calls
+ Fl_Window::flush() that calls Fl_Window::make_current() that only needs to identify the graphics 
+ port of the current graphics context. The window's draw() function is then executed.
  
  2) At each round of the FLTK event loop.
- Fl::flush() is called, that calls Fl_X::flush() on each window that needs drawing. Fl_X::flush() sets 
- fl_x_to_redraw to this and sends the displayIfNeededIgnoringOpacity message to the window's view. 
- This message makes the system prepare the current graphics context adequately for drawing to this view, and 
- send it the drawRect: message which sets through_drawRect to YES. Processing of the drawRect: message calls 
- Fl_X::flush() for the window which proceeds as in 1) above.
+ Fl::flush() is called, that calls Fl_X::flush() on each window that needs drawing. Variable 
+ through_drawRect is NO. Fl_X::flush() locks the focus to the view and calls Fl_Window::flush() 
+ that calls Fl_Window::make_current() which creates a new graphics context for the window.
+ Fl_Window::flush() then runs the window's draw() function.
  
  3) An FLTK application can call Fl_Window::make_current() at any time before it draws to a window.
- This occurs for instance in the idle callback function of the mandelbrot test program. Variable through_drawRect is NO,
- so Fl_Window::make_current() creates a new graphics context adequate for the window. 
- Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(), Fl::check()
- nor Fl::ready() while in the draw() function of a widget. Use an idle callback instead.
+ This occurs for instance in the idle callback function of the mandelbrot test program. Variable 
+ through_drawRect is NO, so Fl_Window::make_current() creates a new graphics context adequate for 
+ the window. Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(),
+ Fl::check() nor Fl::ready() while in the draw() function of a widget. Use an idle callback instead.
  
  */
 void Fl_Window::make_current() 
