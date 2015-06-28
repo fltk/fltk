@@ -3,7 +3,7 @@
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,7 @@ void Fl_Scroll::clear() {
   add(scrollbar);
 }
 
-/** Insure the scrollbars are the last children */
+/** Insure the scrollbars are the last children. */
 void Fl_Scroll::fix_scrollbar_order() {
   Fl_Widget** a = (Fl_Widget**)array();
   if (a[children()-1] != &scrollbar) {
@@ -90,12 +90,14 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
 }
 
 /**
-   Calculate visibility/size/position of scrollbars, find children's bounding box.
-   The \p si paramater will be filled with data from the calculations.
-   Derived classes can make use of this call to figure out the scrolling area
-   eg. during resize() handling.
-   \param[in] si -- ScrollInfo structure
-   \returns Structure containing the calculated info.
+  Calculate visibility/size/position of scrollbars, find children's bounding box.
+
+  The \p si parameter will be filled with data from the calculations.
+  Derived classes can make use of this call to figure out the scrolling area
+  eg. during resize() handling.
+
+  \param[in] si -- ScrollInfo structure
+  \returns Structure containing the calculated info.
 */
 void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
 
@@ -170,7 +172,7 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
 
   // calculate hor scrollbar position
   si.hscroll.x = si.innerchild.x;
-  si.hscroll.y = (scrollbar.align() & FL_ALIGN_TOP) 
+  si.hscroll.y = (scrollbar.align() & FL_ALIGN_TOP)
 		     ? si.innerbox.y
 		     : si.innerbox.y + si.innerbox.h - si.scrollsize;
   si.hscroll.w = si.innerchild.w;
@@ -213,10 +215,10 @@ void Fl_Scroll::recalc_scrollbars(ScrollInfo &si) {
 /**
   Returns the bounding box for the interior of the scrolling area, inside
   the scrollbars.
-  
+
   Currently this is only reliable after draw(), and before any resizing of
   the Fl_Scroll or any child widgets occur.
-  
+
   \todo The visibility of the scrollbars ought to be checked/calculated
   outside of the draw() method (STR #1895).
 */
@@ -328,6 +330,30 @@ void Fl_Scroll::draw() {
   }
 }
 
+/**
+  Resizes the Fl_Scroll widget and moves its children if necessary.
+
+  The Fl_Scroll widget first resizes itself, and then it moves all its
+  children if (and only if) the Fl_Scroll widget has been moved. The
+  children are moved by the same amount as the Fl_Scroll widget has been
+  moved, hence all children keep their relative positions.
+
+  \note Fl_Scroll::resize() does \b not call Fl_Group::resize(), and
+  child widgets are \b not resized.
+
+  Since children of an Fl_Scroll are not resized, the resizable() widget
+  is ignored (if it is set).
+
+  The scrollbars are moved to their proper positions, as given by
+  Fl_Scroll::scrollbar.align(), and switched on or off as necessary.
+
+  \note Due to current (FLTK 1.3.x) implementation constraints some of this
+  may effectively be postponed until the Fl_Scroll is drawn the next time.
+  This may change in a future release.
+
+  \sa Fl_Group::resizable()
+  \sa Fl_Widget::resize(int,int,int,int)
+*/
 void Fl_Scroll::resize(int X, int Y, int W, int H) {
   int dx = X-x(), dy = Y-y();
   int dw = W-w(), dh = H-h();
@@ -346,12 +372,27 @@ void Fl_Scroll::resize(int X, int Y, int W, int H) {
     scrollbar.position(al?X:X+W-scrollbar.w(), (at&&pad)?Y+hscrollbar.h():Y);
     hscrollbar.position((al&&pad)?X+scrollbar.w():X, at?Y:Y+H-hscrollbar.h());
   } else {
-    // FIXME recalculation of scrollbars needs to be moved out fo "draw()" (STR #1895)
+    // FIXME recalculation of scrollbars needs to be moved out of "draw()" (STR #1895)
     redraw(); // need full recalculation of scrollbars
   }
 }
 
-/**  Moves the contents of the scroll group to a new position.*/
+/**  Moves the contents of the scroll group to a new position.
+
+  This is like moving the scrollbars of the Fl_Scroll around. For instance:
+  \code
+    Fl_Scroll scroll (10,10,200,200);
+    Fl_Box b1 ( 10, 10,50,50,"b1"); // relative (x,y) = (0,0)
+    Fl_Box b2 ( 60, 60,50,50,"b2"); // relative (x,y) = (50,50)
+    Fl_Box b3 ( 60,110,50,50,"b3"); // relative (x,y) = (50,100)
+    // populate scroll with more children ...
+    scroll.end();
+    scroll.scroll_to(50,100);
+  \endcode
+  will move the logical origin of the internal scroll area to (-50,-100)
+  relative to the origin of the Fl_Scroll (10,10), i.e. Fl_Box b3 will
+  be visible in the top left corner of the scroll area.
+*/
 void Fl_Scroll::scroll_to(int X, int Y) {
   int dx = xposition_-X;
   int dy = yposition_-Y;
@@ -380,15 +421,16 @@ void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
 /**
   Creates a new Fl_Scroll widget using the given position,
   size, and label string. The default boxtype is FL_NO_BOX.
-  <P>The destructor <I>also deletes all the children</I>. This allows a
+
+  The destructor <I>also deletes all the children</I>. This allows a
   whole tree to be deleted at once, without having to keep a pointer to
-  all the children in the user code. A kludge has been done so the 
+  all the children in the user code. A kludge has been done so the
   Fl_Scroll and all of its children can be automatic (local)
   variables, but you must declare the Fl_Scroll <I>first</I>, so
   that it is destroyed last.
 */
 Fl_Scroll::Fl_Scroll(int X,int Y,int W,int H,const char* L)
-  : Fl_Group(X,Y,W,H,L), 
+  : Fl_Group(X,Y,W,H,L),
     scrollbar(X+W-Fl::scrollbar_size(),Y,
               Fl::scrollbar_size(),H-Fl::scrollbar_size()),
     hscrollbar(X,Y+H-Fl::scrollbar_size(),

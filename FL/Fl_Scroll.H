@@ -3,7 +3,7 @@
 //
 // Scroll header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,37 +38,37 @@
   one of the _FRAME types. This will result in the best output.
   However, if the child widgets are a sparse arrangement you must
   set box() to a real _BOX type. This can result in some
-  blinking during redrawing, but that can be solved by using a 
+  blinking during redrawing, but that can be solved by using a
   Fl_Double_Window.
 
   By default you can scroll in both directions, and the scrollbars
-  disappear if the data will fit in the area of the scroll. 
+  disappear if the data will fit in the area of the scroll.
 
   Use Fl_Scroll::type() to change this as follows :
-  <UL>
-  <LI>0                            - No scrollbars </LI>
-  <LI>Fl_Scroll::HORIZONTAL        - Only a horizontal scrollbar. </LI>
-  <LI>Fl_Scroll::VERTICAL          - Only a vertical scrollbar. </LI>
-  <LI>Fl_Scroll::BOTH              - The default is both scrollbars. </LI>
-  <LI>Fl_Scroll::HORIZONTAL_ALWAYS - Horizontal scrollbar always on, vertical always off. </LI>
-  <LI>Fl_Scroll::VERTICAL_ALWAYS   - Vertical scrollbar always on, horizontal always off. </LI>
-  <LI>Fl_Scroll::BOTH_ALWAYS       - Both always on. </LI>
-  </UL>
+
+  - 0                            - No scrollbars
+  - Fl_Scroll::HORIZONTAL        - Only a horizontal scrollbar.
+  - Fl_Scroll::VERTICAL          - Only a vertical scrollbar.
+  - Fl_Scroll::BOTH              - The default is both scrollbars.
+  - Fl_Scroll::HORIZONTAL_ALWAYS - Horizontal scrollbar always on, vertical always off.
+  - Fl_Scroll::VERTICAL_ALWAYS   - Vertical scrollbar always on, horizontal always off.
+  - Fl_Scroll::BOTH_ALWAYS       - Both always on.
 
   Use <B> scrollbar.align(int) ( see void Fl_Widget::align(Fl_Align) ) :</B>
   to change what side the scrollbars are drawn on.
 
   If the FL_ALIGN_LEFT bit is on, the vertical scrollbar is on the left.
   If the FL_ALIGN_TOP bit is on, the horizontal scrollbar is on
-  the top. Note that only the alignment flags in scrollbar are 
+  the top. Note that only the alignment flags in scrollbar are
   considered. The flags in hscrollbar however are ignored.
 
   This widget can also be used to pan around a single child widget
-  "canvas".  This child widget should be of your own class, with a 
+  "canvas".  This child widget should be of your own class, with a
   draw() method that draws the contents.  The scrolling is done by
   changing the x() and y() of the widget, so this child
   must use the x() and y() to position its drawing.
-  To speed up drawing it should test fl_push_clip().
+  To speed up drawing it should test fl_not_clipped(int x,int y,int w,int h)
+  to find out if a particular area of the widget must be drawn.
 
   Another very useful child is a single Fl_Pack, which is itself a group
   that packs its children together and changes size to surround them.
@@ -144,7 +144,7 @@ public:
   Fl_Scrollbar scrollbar;
   Fl_Scrollbar hscrollbar;
 
-  void resize(int,int,int,int);
+  void resize(int X, int Y, int W, int H);
   int handle(int);
 
   Fl_Scroll(int X,int Y,int W,int H,const char*l=0);
@@ -168,9 +168,9 @@ public:
   /**
     Gets the current size of the scrollbars' troughs, in pixels.
 
-    If this value is zero (default), this widget will use the 
+    If this value is zero (default), this widget will use the
     Fl::scrollbar_size() value as the scrollbar's width.
-  
+
     \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
     \see Fl::scrollbar_size(int)
   */
@@ -181,17 +181,17 @@ public:
     Sets the pixel size of the scrollbars' troughs to \p newSize, in pixels.
 
     Normally you should not need this method, and should use
-    Fl::scrollbar_size(int) instead to manage the size of ALL 
-    your widgets' scrollbars. This ensures your application 
+    Fl::scrollbar_size(int) instead to manage the size of ALL
+    your widgets' scrollbars. This ensures your application
     has a consistent UI, is the default behavior, and is normally
     what you want.
 
     Only use THIS method if you really need to override the global
     scrollbar size. The need for this should be rare.
-    
+
     Setting \p newSize to the special value of 0 causes the widget to
     track the global Fl::scrollbar_size(), which is the default.
-    
+
     \param[in] newSize Sets the scrollbar size in pixels.\n
                     If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
     \see Fl::scrollbar_size()
@@ -199,7 +199,7 @@ public:
   void scrollbar_size(int newSize) {
       if ( newSize != scrollbar_size_ ) redraw();
       scrollbar_size_ = newSize;
-  }   
+  }
 };
 
 #endif
