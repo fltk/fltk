@@ -532,7 +532,11 @@ int Fl_Native_File_Chooser::runmodal()
   NSString *dir = nil;
   NSString *fname = nil;
   NSString *preset = nil;
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+  int retval;
+#else
   NSInteger retval;
+#endif
   if (_preset_file) {
     preset = [[NSString alloc] initWithUTF8String:_preset_file];
     if (strchr(_preset_file, '/') != NULL) {
