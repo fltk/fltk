@@ -72,6 +72,16 @@ typedef CGContextRef Fl_Offscreen;
 #define MAC_OS_X_VERSION_10_10 101000
 #endif
 
+#ifndef NSINTEGER_DEFINED // appears with 10.5 in NSObjCRuntime.h
+#if defined(__LP64__) && __LP64__
+typedef long NSInteger;
+typedef unsigned long NSUInteger;
+#else
+typedef int NSInteger;
+typedef unsigned int NSUInteger;
+#endif
+#endif
+
 #ifdef __OBJC__
 @class NSCursor;
 @class NSOpenGLPixelFormat;

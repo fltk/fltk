@@ -53,17 +53,6 @@ extern "C" {
 
 #import <Cocoa/Cocoa.h>
 
-#ifndef NSINTEGER_DEFINED // appears with 10.5 in NSObjCRuntime.h
-#if defined(__LP64__) && __LP64__
-typedef long NSInteger;
-typedef unsigned long NSUInteger;
-#else
-typedef long NSInteger;
-typedef unsigned int NSUInteger;
-#endif
-#endif
-
-
 // #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT
 #include <stdio.h>		// testing
