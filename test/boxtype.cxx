@@ -49,13 +49,14 @@ int N = 0;
 
 static const int outline = 0; // draw 1-px red frame around all boxes
 static const int box_bg  = 0; // draw white background inside all boxes
+static const int inactive  = 0; // deactivate boxes and use green background
 
 class BoxGroup : public Fl_Group {
   public:
     BoxGroup(int x, int y, int w, int h) : Fl_Group(x,y,w,h) {};
     void draw() {
       draw_box();
-      if (outline||box_bg) {
+      if (outline + box_bg) { // outline or box_bg or both
 	Fl_Widget*const* a = array();
 	for (int i=children(); i--;) {
 	  Fl_Widget& o = **a++;
@@ -69,7 +70,7 @@ class BoxGroup : public Fl_Group {
 	  }
 	  fl_color(FL_BLACK);
 	}
-      } // outline || box_bg
+      } // outline or box_bg or both
       Fl_Group::draw_children();
     } // draw()
 }; // class BoxGroup
@@ -84,6 +85,10 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
   y = y*H+10;
   Fl_Box *b = new Fl_Box(type,x,y,square ? H-20 : W-20,H-20,name);
   b->labelsize(11);
+  if (inactive) {
+    b->color(FL_GREEN);
+    b->deactivate();
+  }
   if (square) b->align(FL_ALIGN_RIGHT);
 }
 
