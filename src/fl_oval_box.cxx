@@ -24,12 +24,12 @@
 #include <FL/fl_draw.H>
 
 static void fl_oval_flat_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c);
+  Fl::set_box_color(c);
   fl_pie(x, y, w, h, 0, 360);
 }
 
 static void fl_oval_frame(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c);
+  Fl::set_box_color(c);
   fl_arc(x, y, w, h, 0, 360);
 }
 

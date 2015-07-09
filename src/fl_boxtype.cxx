@@ -49,12 +49,48 @@ static const uchar inactive_ramp[24] = {
 static int draw_it_active = 1;
 
 /**
-  Determines if the current draw box is active or inactive.
-  If inactive, the box color is changed by the inactive color.
+  Determines if the currently drawn box is active or inactive.
+
+  If inactive, the box color should be changed to the inactive color.
+
+  \see Fl::box_color(Fl_Color c)
 */
 int Fl::draw_box_active() { return draw_it_active; }
 
 const uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
+
+/**
+  Gets the drawing color to be used for the background of a box.
+
+  This method is only useful inside box drawing code. It returns the
+  color to be used, either fl_inactive(c) if the widget is inactive_r()
+  or \p c otherwise.
+*/
+Fl_Color Fl::box_color(Fl_Color c) {
+  return (draw_it_active ? c : fl_inactive(c));
+}
+
+/**
+  Sets the drawing color for the box that is currently drawn.
+
+  This method sets the current drawing color fl_color() depending on
+  the widget's state to either \p c or fl_inactive(c).
+
+  It should be used whenever a box background is drawn in the box (type)
+  drawing code instead of calling fl_color(Fl_Color bg) with the
+  background color \p bg, usually Fl_Widget::color().
+
+  This method is only useful inside box drawing code. Whenever a box is
+  drawn with one of the standard box drawing methods, a static variable
+  is set depending on the widget's current state - if the widget is
+  inactive_r() then the internal variable is false (0), otherwise it
+  is true (1). This is faster than calling Fl_Widget::active_r()
+  because the state is cached.
+
+  \see Fl::draw_box_active()
+  \see Fl::box_color(Fl_Color)
+*/
+void Fl::set_box_color(Fl_Color c) { fl_color(box_color(c)); }
 
 /**
   Draws a series of line segments around the given box.
@@ -127,6 +163,11 @@ void fl_frame2(const char* s, int x, int y, int w, int h) {
 /** Draws a box of type FL_NO_BOX */
 void fl_no_box(int, int, int, int, Fl_Color) {}
 
+/** Draws a box of type FL_FLAT_BOX */
+void fl_flat_box(int x, int y, int w, int h, Fl_Color c) {
+  fl_rectf(x, y, w, h, Fl::box_color(c));
+}
+
 /** Draws a frame of type FL_THIN_DOWN_FRAME */
 void fl_thin_down_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame2("WWHH",x,y,w,h);
@@ -135,7 +176,7 @@ void fl_thin_down_frame(int x, int y, int w, int h, Fl_Color) {
 /** Draws a box of type FL_THIN_DOWN_BOX */
 void fl_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_thin_down_frame(x,y,w,h,c);
-  fl_color(draw_it_active ? c : fl_inactive(c));
+  Fl::set_box_color(c);
   fl_rectf(x+1, y+1, w-2, h-2);
 }
 
@@ -147,7 +188,7 @@ void fl_thin_up_frame(int x, int y, int w, int h, Fl_Color) {
 /** Draws a box of type FL_THIN_UP_BOX */
 void fl_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_thin_up_frame(x,y,w,h,c);
-  fl_color(draw_it_active ? c : fl_inactive(c));
+  Fl::set_box_color(c);
   fl_rectf(x+1, y+1, w-2, h-2);
 }
 
@@ -170,7 +211,7 @@ void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
 /** Draws a box of type FL_UP_BOX */
 void fl_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_up_frame(x,y,w,h,c);
-  fl_color(draw_it_active ? c : fl_inactive(c));
+  Fl::set_box_color(c);
   fl_rectf(x+D1, y+D1, w-D2, h-D2);
 }
 
@@ -190,7 +231,8 @@ void fl_down_frame(int x, int y, int w, int h, Fl_Color) {
 /** Draws a box of type FL_DOWN_BOX */
 void fl_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_down_frame(x,y,w,h,c);
-  fl_color(c); fl_rectf(x+D1, y+D1, w-D2, h-D2);
+  Fl::set_box_color(c);
+  fl_rectf(x+D1, y+D1, w-D2, h-D2);
 }
 
 /** Draws a frame of type FL_ENGRAVED_FRAME */
@@ -201,7 +243,7 @@ void fl_engraved_frame(int x, int y, int w, int h, Fl_Color) {
 /** Draws a box of type FL_ENGRAVED_BOX */
 void fl_engraved_box(int x, int y, int w, int h, Fl_Color c) {
   fl_engraved_frame(x,y,w,h,c);
-  fl_color(draw_it_active ? c : fl_inactive(c));
+  Fl::set_box_color(c);
   fl_rectf(x+2, y+2, w-4, h-4);
 }
 
@@ -213,7 +255,7 @@ void fl_embossed_frame(int x, int y, int w, int h, Fl_Color) {
 /** Draws a box of type FL_EMBOSSED_BOX */
 void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
   fl_embossed_frame(x,y,w,h,c);
-  fl_color(draw_it_active ? c : fl_inactive(c));
+  Fl::set_box_color(c);
   fl_rectf(x+2, y+2, w-4, h-4);
 }
 
@@ -222,9 +264,9 @@ void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
   Equivalent to drawing a box of type FL_BORDER_BOX.
 */
 void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
-  fl_color(draw_it_active ? FL_BLACK : fl_inactive(FL_BLACK));
+  Fl::set_box_color(FL_BLACK);
   fl_rect(x, y, w, h);
-  fl_color(draw_it_active ? bgcolor : fl_inactive(bgcolor));
+  Fl::set_box_color(bgcolor);
   fl_rectf(x+1, y+1, w-2, h-2);
 }
 #define fl_border_box fl_rectbound	/**< allow consistent naming */
@@ -233,7 +275,7 @@ void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
   Draws a frame of type FL_BORDER_FRAME.
 */
 void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(draw_it_active ? c : fl_inactive(c));
+  Fl::set_box_color(c);
   fl_rect(x, y, w, h);
 }
 
@@ -246,7 +288,7 @@ static struct {
 } fl_box_table[256] = {
 // must match list in Enumerations.H!!!
   {fl_no_box,		0,0,0,0,1},
-  {fl_rectf,		0,0,0,0,1}, // FL_FLAT_BOX
+  {fl_flat_box,		0,0,0,0,1}, // FL_FLAT_BOX
   {fl_up_box,		D1,D1,D2,D2,1},
   {fl_down_box,		D1,D1,D2,D2,1},
   {fl_up_frame,		D1,D1,D2,D2,1},
@@ -266,7 +308,7 @@ static struct {
   {fl_border_box,	1,1,2,2,0}, // _FL_ROUNDED_BOX
   {fl_border_box,	1,1,2,2,0}, // _FL_RSHADOW_BOX
   {fl_border_frame,	1,1,2,2,0}, // _FL_ROUNDED_FRAME
-  {fl_rectf,		0,0,0,0,0}, // _FL_RFLAT_BOX
+  {fl_flat_box,		0,0,0,0,0}, // _FL_RFLAT_BOX
   {fl_up_box,		3,3,6,6,0}, // _FL_ROUND_UP_BOX
   {fl_down_box,		3,3,6,6,0}, // _FL_ROUND_DOWN_BOX
   {fl_up_box,		0,0,0,0,0}, // _FL_DIAMOND_UP_BOX
@@ -274,7 +316,7 @@ static struct {
   {fl_border_box,	1,1,2,2,0}, // _FL_OVAL_BOX
   {fl_border_box,	1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX
   {fl_border_frame,	1,1,2,2,0}, // _FL_OVAL_FRAME
-  {fl_rectf,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
+  {fl_flat_box,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX
   {fl_up_box,		4,4,8,8,0}, // _FL_PLASTIC_UP_BOX
   {fl_down_box,		2,2,4,4,0}, // _FL_PLASTIC_DOWN_BOX
   {fl_up_frame,		2,2,4,4,0}, // _FL_PLASTIC_UP_FRAME

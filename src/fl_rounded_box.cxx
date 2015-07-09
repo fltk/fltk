@@ -46,15 +46,18 @@ static void rbox(int fill, int x, int y, int w, int h) {
 }
 
 static void fl_rflat_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c); rbox(1, x, y, w, h); rbox(0, x, y, w, h);
+  Fl::set_box_color(c);
+  rbox(1, x, y, w, h); rbox(0, x, y, w, h);
 }
 
 static void fl_rounded_frame(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c); rbox(0, x, y, w, h);
+  Fl::set_box_color(c);
+  rbox(0, x, y, w, h);
 }
 
 static void fl_rounded_box(int x, int y, int w, int h, Fl_Color c) {
-  fl_color(c); rbox(1, x, y, w, h);
+  Fl::set_box_color(c);
+  rbox(1, x, y, w, h);
   fl_color(FL_BLACK); rbox(0, x, y, w, h);
 }
 

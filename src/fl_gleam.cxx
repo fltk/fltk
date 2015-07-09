@@ -30,8 +30,7 @@
 
 
 static void gleam_color(Fl_Color c) {
-  if (Fl::draw_box_active()) fl_color(c);
-  else fl_color(fl_inactive(c));
+  Fl::set_box_color(c);
 }
 
 static void shade_rect_top_bottom(int x, int y, int w, int h, Fl_Color fg1, Fl_Color fg2, float th) {

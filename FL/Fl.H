@@ -1092,7 +1092,10 @@ public:
   static int box_dy(Fl_Boxtype);
   static int box_dw(Fl_Boxtype);
   static int box_dh(Fl_Boxtype);
+
   static int draw_box_active();
+  static Fl_Color box_color(Fl_Color);
+  static void set_box_color(Fl_Color);
 
   // back compatibility:
   /** \addtogroup fl_windows 
