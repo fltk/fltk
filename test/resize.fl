@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 Function {} {open
 } {
@@ -48,4 +48,4 @@ w->size(w->w()-20, w->h()-20);}
       xywh {150 10 160 220} box BORDER_BOX align 148
     }
   }
-} 
+}

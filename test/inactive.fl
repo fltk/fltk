@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 Function {} {open
 } {
@@ -117,4 +117,4 @@ Function {} {open
       xywh {220 330 180 25} type Radio
     }
   }
-} 
+}

@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 Function {} {open
 } {
@@ -286,4 +286,4 @@ wWizard->value(wWizard->child(last));}
       code0 {\#include <stdlib.h>}
     }
   }
-} 
+}

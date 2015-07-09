@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -20,31 +20,31 @@ comment {//
 //     http://www.fltk.org/str.php
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include <stdio.h>} {private local
-} 
+}
 
 decl {\#include <stdlib.h>} {private local
-} 
+}
 
 decl {\#include "../src/flstring.h"} {private local
-} 
+}
 
 decl {\#include <errno.h>} {private local
-} 
+}
 
 decl {\#include <FL/filename.H>} {private local
-} 
+}
 
 decl {\#include <FL/fl_ask.H>} {private local
-} 
+}
 
 decl {\#include <FL/Fl_Shared_Image.H>} {private local
-} 
+}
 
 decl {\#include <FL/Fl_Preferences.H>} {private local
-} 
+}
 
 declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {after {\#endif // WIN32 && !__CYGWIN__}
 } {
@@ -54,10 +54,10 @@ declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {after {\#endif // WIN32
   }
   decl {\#include <unistd.h>} {private local
   }
-} 
+}
 
 decl {extern Fl_Preferences fluid_prefs;} {private local
-} 
+}
 
 Function {make_template_panel()} {open
 } {
@@ -170,7 +170,7 @@ template_panel->hide();}
       }
     }
   }
-} 
+}
 
 Function {template_clear()} {return_type void
 } {
@@ -183,7 +183,7 @@ for (i = 1; i <= template_browser->size(); i ++) {
 
 template_browser->deselect();
 template_browser->clear();} {}
-} 
+}
 
 Function {template_delete_cb(Fl_Button *, void *)} {return_type void
 } {
@@ -204,7 +204,7 @@ if (unlink(flfile)) {
 
 template_browser->remove(item);
 template_browser->do_callback();} {}
-} 
+}
 
 Function {template_load()} {return_type void
 } {
@@ -238,10 +238,10 @@ for (i = 0; i < num_files; i ++) {
 }
 
 if (num_files > 0) free(files);} {}
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}

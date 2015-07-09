@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -20,22 +20,22 @@ comment {//
 //     http://www.fltk.org/str.php
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include <stdio.h>} {private local
-} 
+}
 
 decl {\#include <stdlib.h>} {private local
-} 
+}
 
 decl {\#include "../src/flstring.h"} {private local
-} 
+}
 
 decl {\#include <FL/Fl_Preferences.H>} {private local
-} 
+}
 
 decl {extern Fl_Preferences fluid_prefs;} {private local
-} 
+}
 
 Function {make_print_panel()} {open
 } {
@@ -277,10 +277,10 @@ print_update_status();}
       xywh {60 95 53 25}
     }
   }
-} 
+}
 
 decl {void print_cb(Fl_Return_Button *, void *);} {public local
-} 
+}
 
 Function {print_load()} {open return_type void
 } {
@@ -328,7 +328,7 @@ if (defname[0]) {
 
 
 print_update_status();} {}
-} 
+}
 
 Function {print_update_status()} {open return_type void
 } {
@@ -357,10 +357,10 @@ print_page_size->value(val);
 snprintf(name, sizeof(name), "%s/output_mode", printer);
 fluid_prefs.get(name, val, 0);
 print_output_mode[val]->setonly();} {}
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}

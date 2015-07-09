@@ -1,12 +1,12 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 decl {\#include "mandelbrot.h"} {public local
-} 
+}
 
 decl {\#include <stdlib.h>} {private local
-} 
+}
 
 class Drawing_Window {open
 } {
@@ -69,4 +69,4 @@ d->new_display();}
   }
   decl {void update_label();} {public local
   }
-} 
+}

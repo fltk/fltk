@@ -1,46 +1,46 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 decl {\#include <stdio.h>} {public global
-} 
+}
 
 decl {\#include <FL/Fl.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Tooltip.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Pixmap.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Group.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Tree.H>} {public global
-} 
+}
 
 decl {\#include <FL/fl_ask.H>} {public global
-} 
+}
 
 decl {\#include <FL/fl_message.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_File_Chooser.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Preferences.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Color_Chooser.H>} {public global
-} 
+}
 
 decl {\#include <FL/Fl_Text_Display.H>} {public global
-} 
+}
 
 decl {int G_cb_counter = 0;} {
   comment {// Global callback event counter} private local
-} 
+}
 
 Function {reason_as_name(Fl_Tree_Reason reason)} {
   comment {Return an Fl_Tree_Reason as a text string name} return_type {const char*}
@@ -57,7 +57,7 @@ Function {reason_as_name(Fl_Tree_Reason reason)} {
 \#endif
       default:                        return("???");
     }} {}
-} 
+}
 
 Function {Button_CB(Fl_Widget*w, void*data)} {open return_type void
 } {
@@ -77,7 +77,7 @@ if ( height > 50 ) height = 20;
 cw->resize(cw->x(), cw->y(), cw->w(), height);
 tree->redraw();	// adjusted height
 fprintf(stderr, "'%s' button pushed (height=%d)\\n", w->label(), height);} {}
-} 
+}
 
 Function {AssignUserIcons()} {
   comment {Assign user icons to the items} open
@@ -128,7 +128,7 @@ for ( Fl_Tree_Item *item = tree->first(); item; item=item->next())
         item->usericon(0);
 
 tree->redraw();} {}
-} 
+}
 
 Function {RebuildTree()} {
   comment {Rebuild the 'example tree' from scratch} open
@@ -255,7 +255,7 @@ tree->close("500 Items");	// close the 500 items by default
 AssignUserIcons();
 
 tree->redraw();} {}
-} 
+}
 
 Function {EditColor(Fl_Color &val)} {
   comment {Prompt the user to change the specified color} return_type Fl_Color
@@ -276,7 +276,7 @@ val = fl_rgb_color(r,g,b);
 
 
 return(ret);} {}
-} 
+}
 
 Function {UpdateColorChips()} {
   comment {Updates the color chips with current colors from widget} open return_type void
@@ -292,7 +292,7 @@ all_labelfgcolor_button->color(tree->item_labelfgcolor());  // use default
 all_labelbgcolor_button->color(tree->item_labelbgcolor());  // use default
 
 window->redraw();} {}
-} 
+}
 
 Function {GetTreeMarginBottom()} {
   comment {Get the current 'margin bottom' size
@@ -303,7 +303,7 @@ return tree->marginbottom();
 \#else
 return 0;
 \#endif} {}
-} 
+}
 
 Function {GetTreeWidgetMarginLeft()} {
   comment {Get the current 'margin bottom' size
@@ -314,7 +314,7 @@ return tree->widgetmarginleft();
 \#else
 return 0;
 \#endif} {}
-} 
+}
 
 Function {GetSelectedItemFGColor()} {
   comment {Return the selected item's fg color} open return_type Fl_Color
@@ -327,7 +327,7 @@ for ( item=tree->first(); item; item = tree->next(item) ) {
 }
 // No items selected? Use default
 return(tree->item_labelfgcolor());} {}
-} 
+}
 
 Function {GetSelectedItemBGColor()} {
   comment {Return the selected item's bg color} open return_type Fl_Color
@@ -340,13 +340,13 @@ for ( item=tree->first(); item; item = tree->next(item) ) {
 }
 // No items selected? Use default
 return(tree->item_labelbgcolor());} {}
-} 
+}
 
 Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {600 253 1045 580} type Double visible
+    xywh {600 253 1045 580} type Double hide
   } {
     Fl_Group tree {
       label Tree
@@ -1782,4 +1782,4 @@ window->size_range(window->w(), window->h(), 0, 0);
      if ( tree->when() == FL_WHEN_CHANGED ) whenmode_chooser->value(0);
 else if ( tree->when() == FL_WHEN_RELEASE ) whenmode_chooser->value(1);
 else if ( tree->when() == FL_WHEN_NEVER   ) whenmode_chooser->value(2);} {}
-} 
+}

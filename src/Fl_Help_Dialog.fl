@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {../FL/Fl_Help_Dialog.H} 
+version 1.0304
+header_name {../FL/Fl_Help_Dialog.H}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -27,13 +27,13 @@ comment {//
 // ========================================================================
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include "flstring.h"} {private local
-} 
+}
 
 decl {\#include <FL/fl_ask.H>} {private local
-} 
+}
 
 class FL_EXPORT Fl_Help_Dialog {open
 } {
@@ -261,10 +261,10 @@ window_->label(view_->title());} {}
   } {
     code {return (window_->y());} {}
   }
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}

@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -20,18 +20,18 @@ comment {//
 //     http://www.fltk.org/str.php
 //
 } {in_source in_header
-} 
+}
 
 decl {extern void comment_cb(Fl_Text_Editor*, void*);} {private global
-} 
+}
 
 Function {make_widget_panel()} {
   comment {Create a panel that can be used with all known widgets} open
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {468 187 420 400} type Double labelsize 11 align 80 resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
+    xywh {468 187 420 400} type Double labelsize 11 align 80 hide resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0}
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
@@ -698,10 +698,10 @@ wCallback->do_callback(wCallback, v);} open
       }
     }
   }
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}

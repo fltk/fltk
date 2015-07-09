@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 Function {button_cb(Fl_Button *b, void *)} {
   comment {Buttons test callback} open private return_type void
@@ -11,7 +11,7 @@ cb_info->value(msg);
 cb_info->redraw();
 printf("%s\\n",msg);} {selected
   }
-} 
+}
 
 Function {} {open
 } {
@@ -97,4 +97,4 @@ Function {} {open
       xywh {190 148 170 62} type Multiline align 133 textsize 12
     }
   }
-} 
+}

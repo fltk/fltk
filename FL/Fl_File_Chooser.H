@@ -169,64 +169,64 @@ public:
   void value(const char *filename); 
   int visible();
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *add_favorites_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *all_files_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *custom_filter_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *existing_file_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *favorites_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *filename_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *filesystems_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *manage_favorites_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *new_directory_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *new_directory_tooltip; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *preview_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *save_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *show_label; 
   /**
-     [standard text may be customized at run-time]
+   [standard text may be customized at run-time]
   */
   static const char *hidden_label; 
   /**
-     the sort function that is used when loading
-     the contents of a directory.
+   the sort function that is used when loading
+   the contents of a directory.
   */
   static Fl_File_Sort_F *sort; 
 private:

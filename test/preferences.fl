@@ -1,44 +1,44 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_Preferences.H>} {public local
-} 
+}
 
 decl {\#include <stdio.h>} {public local
-} 
+}
 
 decl {\#include <stdlib.h>} {private local
-} 
+}
 
 decl {\#include <FL/filename.H>} {private local
-} 
+}
 
 decl {\#include <FL/fl_ask.H>} {private local
-} 
+}
 
 decl {void readPrefs();} {public local
-} 
+}
 
 decl {void writePrefs();} {public local
-} 
+}
 
 decl {const char *project = "fltk.org";} {private local
-} 
+}
 
 decl {const char *application = "test/preferences";} {private local
-} 
+}
 
 Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {Fl::delete_widget(myWindow);} {}
-} 
+}
 
 Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {writePrefs();
 Fl::delete_widget(myWindow);} {}
-} 
+}
 
 Function {} {open return_type int
 } {
@@ -192,7 +192,7 @@ Function {} {open return_type int
     }
   }
   code {readPrefs();} {}
-} 
+}
 
 Function {readPrefs()} {open return_type void
 } {
@@ -270,7 +270,7 @@ Fl_Preferences app( Fl_Preferences::USER, project, application );
     eat.get( "binFoo2", data, 0, 0 );
   **/} {selected
   }
-} 
+}
 
 Function {writePrefs()} {open return_type void
 } {
@@ -331,4 +331,4 @@ Function {writePrefs()} {open return_type void
   unsigned int hex = 0x2387efcd;
   eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
   eat.set( "binFoo2", (void*)&bed, 256 );} {}
-} 
+}

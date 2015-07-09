@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -20,42 +20,42 @@ comment {//
 //     http://www.fltk.org/str.php
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include <FL/Fl_Pixmap.H>} {private local
-} 
+}
 
 decl {\#include "Fl_Type.h"} {private local
-} 
+}
 
 decl {\#include "undo.h"} {private local
-} 
+}
 
 decl {extern class Fl_Pixmap *pixmap[];} {private local
-} 
+}
 
 decl {extern class Fl_Type *Fl_Type_make(const char*);} {private local
-} 
+}
 
 decl {extern void select_only(Fl_Type*);} {private local
-} 
+}
 
 decl {extern void exit_cb(Fl_Widget*, void*);} {private global
-} 
+}
 
 decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {private global
-} 
+}
 
 Function {use_tab_navigation(int, Fl_Text_Editor*)} {
   comment {Allow widget navigation on text fields with Tab.} private return_type int
 } {
   code {return 0;} {}
-} 
+}
 
 Function {make_function_panel()} {} {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {557 523 343 232} type Double resizable modal visible
+    xywh {557 523 343 232} type Double hide resizable modal
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -131,7 +131,7 @@ Function {make_function_panel()} {} {
       }
     }
   }
-} 
+}
 
 Function {make_code_panel()} {} {
   Fl_Window code_panel {
@@ -139,8 +139,8 @@ Function {make_code_panel()} {} {
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
     return; // ignore Escape
 code_panel->hide(); // otherwise hide..} open
-    xywh {503 450 540 180} type Double labelsize 11 resizable
-    code0 {o->size_range(200, 150);} modal visible
+    xywh {503 450 540 180} type Double labelsize 11 hide resizable
+    code0 {o->size_range(200, 150);} modal
   } {
     Fl_Text_Editor code_input {
       xywh {10 10 520 130} box DOWN_BOX labelsize 11 textfont 4 textsize 11 resizable
@@ -164,13 +164,13 @@ code_panel->hide(); // otherwise hide..} open
       }
     }
   }
-} 
+}
 
 Function {make_codeblock_panel()} {} {
   Fl_Window codeblock_panel {
     label {Code Block Properties} open
-    xywh {468 221 300 115} type Double labelsize 11 resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
+    xywh {468 221 300 115} type Double labelsize 11 hide resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Input code_before_input {
       label {Conditional code block}
@@ -196,13 +196,13 @@ Function {make_codeblock_panel()} {} {
       }
     }
   }
-} 
+}
 
 Function {make_declblock_panel()} {} {
   Fl_Window declblock_panel {
     label {Declaration Block Properties} open
-    xywh {428 215 300 135} type Double labelsize 11 resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
+    xywh {428 215 300 135} type Double labelsize 11 hide resizable
+    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal
   } {
     Fl_Group {} {open
       xywh {10 10 280 20}
@@ -252,12 +252,12 @@ Function {make_declblock_panel()} {} {
       }
     }
   }
-} 
+}
 
 Function {make_decl_panel()} {} {
   Fl_Window decl_panel {
     label {Declaration Properties} open
-    xywh {480 333 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+    xywh {480 333 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -328,12 +328,12 @@ Function {make_decl_panel()} {} {
       }
     }
   }
-} 
+}
 
 Function {make_data_panel()} {} {
   Fl_Window data_panel {
     label {Binary Data Properties} open
-    xywh {595 352 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+    xywh {595 352 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -412,13 +412,13 @@ Function {make_data_panel()} {} {
       }
     }
   }
-} 
+}
 
 Function {make_class_panel()} {open
 } {
   Fl_Window class_panel {
     label {Class Properties} open
-    xywh {497 585 342 196} type Double labelsize 11 resizable modal size_range {343 188 0 0} visible
+    xywh {497 585 342 196} type Double labelsize 11 hide resizable modal size_range {343 188 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -461,7 +461,7 @@ Function {make_class_panel()} {open
       }
     }
   }
-} 
+}
 
 Function {make_comment_panel()} {} {
   Fl_Window comment_panel {
@@ -513,7 +513,7 @@ Function {make_comment_panel()} {} {
       }
     }
   }
-} 
+}
 
 Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
 } {
@@ -527,7 +527,7 @@ Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
     undo_current --;
     undo_last --;
   }} {}
-} 
+}
 
 Function {make_widgetbin()} {} {
   Fl_Window widgetbin_panel {
@@ -883,7 +883,7 @@ else
       }
     }
   }
-} 
+}
 
 Function {make_sourceview()} {} {
   Fl_Window sourceview_panel {
@@ -943,10 +943,10 @@ Function {make_sourceview()} {} {
       }
     }
   }
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}

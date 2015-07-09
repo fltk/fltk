@@ -108,8 +108,8 @@ print_update_status();
 Fl_Choice *print_page_size=(Fl_Choice *)0;
 
 Fl_Menu_Item menu_print_page_size[] = {
- {"Letter", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {"A4", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"Letter", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
+ {"A4", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

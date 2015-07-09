@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 Function {} {open
 } {
@@ -34,4 +34,4 @@ The right slider (representing a widget with high overhead) is only updated when
       xywh {10 10 300 180} box DOWN_BOX color 53 selection_color 47 labelfont 4 labelsize 12 align 148
     }
   }
-} 
+}

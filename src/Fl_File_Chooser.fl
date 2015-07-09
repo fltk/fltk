@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {../FL/Fl_File_Chooser.H} 
+version 1.0304
+header_name {../FL/Fl_File_Chooser.H}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -27,10 +27,10 @@ comment {//
 // ========================================================================
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include <FL/fl_draw.H>} {private local
-} 
+}
 
 class FL_EXPORT Fl_File_Chooser {open
 } {
@@ -474,22 +474,22 @@ window->resizable(svres);} {}
     }
     code {return ret;} {}
   }
-} 
+}
 
 decl {FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);} {public local
-} 
+}
 
 decl {FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);} {public local
-} 
+}
 
 decl {FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));} {public local
-} 
+}
 
 decl {FL_EXPORT void fl_file_chooser_ok_label(const char*l);} {public local
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}

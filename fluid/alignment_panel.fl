@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 comment {//
 // "$Id$"
@@ -20,43 +20,43 @@ comment {//
 //     http://www.fltk.org/str.php
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include <FL/Fl_Text_Buffer.H>} {public local
-} 
+}
 
 decl {\#include <FL/Fl_Text_Display.H>} {public local
-} 
+}
 
 decl {\#include <FL/filename.H>} {public local
-} 
+}
 
 decl {\#include <FL/Fl_Preferences.H>} {private global
-} 
+}
 
 decl {\#include <FL/fl_ask.H>} {private global
-} 
+}
 
 decl {extern void load_history();} {public local
-} 
+}
 
 decl {extern void redraw_browser();} {public local
-} 
+}
 
 decl {extern int show_comments;} {public local
-} 
+}
 
 decl {extern int show_coredevmenus;} {public local
-} 
+}
 
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
-} 
+}
 
 decl {extern Fl_Preferences fluid_prefs;} {public local
-} 
+}
 
 decl {Fl_Text_Buffer *shell_run_buffer;} {public local
-} 
+}
 
 Function {make_project_window()} {open
 } {
@@ -150,13 +150,13 @@ Function {make_project_window()} {open
       }
     }
   }
-} 
+}
 
 decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
-} 
+}
 
 decl {void scheme_cb(Fl_Choice *, void *);} {public local
-} 
+}
 
 Function {make_settings_window()} {} {
   Fl_Window settings_window {
@@ -260,7 +260,7 @@ load_history();}
       tooltip {Close this dialog.} xywh {276 205 64 25}
     }
   }
-} 
+}
 
 Function {make_shell_window()} {} {
   Fl_Window shell_window {
@@ -325,7 +325,7 @@ Function {make_shell_window()} {} {
       xywh {468 395 77 25}
     }
   }
-} 
+}
 
 Function {make_layout_window()} {} {
   Fl_Window grid_window {
@@ -431,11 +431,11 @@ Function {make_layout_window()} {} {
       }
     }
   }
-} 
+}
 
 decl {int opt[10][2];} {
   comment {Copy of all options in user and system mode} private local
-} 
+}
 
 Function {refreshUI()} {
   comment {Update the UI using the values in the opt array} private return_type void
@@ -446,7 +446,7 @@ wArrowFocus->value(opt[Fl::OPTION_ARROW_FOCUS][mode]);
 wShowTooltips->value(opt[Fl::OPTION_SHOW_TOOLTIPS][mode]);
 wDNDText->value(opt[Fl::OPTION_DND_TEXT][mode]);
 wGTKText->value(opt[Fl::OPTION_FNFC_USES_GTK][mode]);} {}
-} 
+}
 
 Function {readPrefs()} {
   comment {read all preferences and refresh the GUI} private return_type void
@@ -471,7 +471,7 @@ Function {readPrefs()} {
   opt_prefs.get("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK ][0], 2);
 }
 refreshUI();} {}
-} 
+}
 
 Function {writePrefs()} {
   comment {write all preferences using the array} private return_type void
@@ -505,7 +505,7 @@ Function {writePrefs()} {
   if (opt[Fl::OPTION_FNFC_USES_GTK][0]==2) opt_prefs.deleteEntry("FNFCUsesGTK");
   else opt_prefs.set("FNFCUsesGTK", opt[Fl::OPTION_FNFC_USES_GTK][0]);
 }} {}
-} 
+}
 
 Function {show_global_settings_window()} {open return_type void
 } {
@@ -521,7 +521,7 @@ fl_message(
 	"Please choose these settings carefully, or reset\\n"
 	"user and system settings to \\"default\\".");
 global_settings_window->show();} {}
-} 
+}
 
 Function {make_global_settings_window()} {} {
   Fl_Window global_settings_window {
@@ -709,10 +709,10 @@ global_settings_window->hide();}
   }
   code {readPrefs();
   Fl::option(Fl::OPTION_SHOW_TOOLTIPS,1); // make sure tooltips are on !} {}
-} 
+}
 
 comment {
 //
 // End of "$Id$".
 //} {in_source in_header
-} 
+}
