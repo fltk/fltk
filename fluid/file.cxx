@@ -87,11 +87,13 @@ void write_word(const char *w) {
   putc('}', fout);
 }
 
-// write an arbitrary formatted word, or a comment, etc:
+// write an arbitrary formatted word, or a comment, etc.
+// if needspace is set, then one space is written before the string
+// unless the format starts with a newline character ('\n'):
 void write_string(const char *format, ...) {
   va_list args;
   va_start(args, format);
-  if (needspace) fputc(' ',fout);
+  if (needspace && *format != '\n') fputc(' ',fout);
   vfprintf(fout, format, args);
   va_end(args);
   needspace = !isspace(format[strlen(format)-1] & 255);
