@@ -2,6 +2,9 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 
 	New features and extensions
 
+	- FLTK's ABI version can now be configured with configure or CMake.
+*FIXME*	  See further documentation in ... [TBD].
+
 	- Added full support of true subwindows to the Mac OS X platform.
 	  Window nesting to any depth is possible. An Fl_Gl_Window window or
 	  subwindow can contain Fl_Window's as subwindows.

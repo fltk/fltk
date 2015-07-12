@@ -57,6 +57,12 @@ include(CMake/variables.cmake)
 #######################################################################
 include(CMake/export.cmake)
 
+configure_file(
+ ${FLTK_SOURCE_DIR}/abi-version.cmake.in
+ ${FLTK_BINARY_DIR}/FL/abi-version.h
+ @ONLY
+ )
+
 #######################################################################
 # build examples - these have to be built after fluid is built/imported
 #######################################################################

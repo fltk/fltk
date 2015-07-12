@@ -21,7 +21,8 @@
 /*.bck
 /TAGS
 
-# /FL/
+# /FL
+/FL/abi-version.h
 /FL/Makefile
 /FL/*.bck
 

@@ -23,23 +23,28 @@
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
-/* Uncomment the following FL_ABI_VERSION line to enable ABI breaking fixes
- * in the current patch release of FLTK. ** Use for static builds only! **
- * For more info on this macro, see: http://fltk.org/cmp.php#FLTK_ABI_VERSION
+/*
  ******************************************************************************
- * Note: the link above is outdated.
+ * Notes on FL_ABI_VERSION and deprecated (obsolete) FLTK_ABI_VERSION:
+ *
+ * (1)	FLTK_ABI_VERSION is deprecated, but still defined below.
+ *	Do NOT define FLTK_ABI_VERSION here - it would be overwritten later.
+ *
+ * (2)	FL_ABI_VERSION is now (as of FLTK 1.3.4) defined by configure
+ *	or CMake. Do NOT define it here. Its definition will be included
+ *	below by "#include <FL/abi-version.h>".
+ *
+ * (3)	If you use the provided IDE files (Windows VC++ or Xcode) you should
+ *	edit the definition in the provided IDE subdirectory. The correct
+ *	file is `/path/to/fltk/ide/<IDE-name>/FL/abi-version.h' .
+ *
+ ******************************************************************************
+ * For more info on FL_ABI_VERSION, see: http://fltk.org/cmp.php#FL_ABI_VERSION
  * FIXME: Update docs ...
  ******************************************************************************
- * This is work in progress!
- *
- *  OLD: FLTK_ABI_VERSION	deprecated, but defined later (see below)
- *  NEW: FL_ABI_VERSION		FIXME: to be defined by configure !
- *
- * The intent is to define FL_ABI_VERSION by configure and CMake.
- * When this is done, the definition will be #include'd here !
- ******************************************************************************
  */
-//#define FL_ABI_VERSION 10304
+
+#include <FL/abi-version.h>
 
 #  include "Fl_Export.H"
 #  include "fl_types.h"
@@ -166,7 +171,8 @@
 
     10300 <= FL_ABI_VERSION <= 10304
 
-  Note: configure + CMake not yet implemented, see also STR #3161.
+  Note: configure + CMake can be used to define FL_ABI_VERSION, but they
+  do not check validity. This is done here.
 */
 
 #if FL_ABI_VERSION < FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100
@@ -184,8 +190,8 @@
 /*
   FLTK_ABI_VERSION is deprecated (replaced by FL_ABI_VERSION).
 
-  This deprecated constant should be removed in FLTK 1.4.0 and later.
-  Please use FL_ABI_VERSION instead.
+  This deprecated constant will be removed in FLTK 1.4.0 and later.
+  Please use FL_ABI_VERSION when FLTK 1.4.0 has been released.
 */
 
 #ifdef FLTK_ABI_VERSION

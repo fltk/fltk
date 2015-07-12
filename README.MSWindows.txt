@@ -389,6 +389,9 @@ without adding link and include paths to the solution.
 
   copy the entire FL directory into the include path
 
+  add all files from ide\VisualC2008\FL to the FL directory copied above
+    (this is currently only one file: abi-version.h)
+
   copy all .lib files from the fltk lib directory to the VC lib directory
 
   copy fluid.exe in the fluid directory to the bin directory
@@ -499,6 +502,9 @@ respective subdirectories, so that they are available for future development
 without adding link and include paths to the solution.
 
   copy the entire FL directory into the include path
+
+  add all files from ide\VisualC2010\FL to the FL directory copied above
+    (this is currently only one file: abi-version.h)
 
   copy all .lib files from the fltk lib directory to the VC lib directory
 
@@ -638,3 +644,4 @@ Oct 25 2010 - matt: restructured entire document and verified instructions
 Dec 20 2010 - matt: merged with README.win32
 Dec 22 2010 - AlbrechtS: added newer Cygwin (cross/mingw-w64) options
 Feb 24 2012 - AlbrechtS: clarified console window FAQ
+Jul 12 2015 - AlbrechtS: add abi-config.h to files to be copied

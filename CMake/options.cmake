@@ -34,6 +34,13 @@ set(OPTION_ARCHFLAGS ""
 add_definitions(${OPTION_ARCHFLAGS})
 
 #######################################################################
+set(OPTION_ABI_VERSION ""
+   CACHE STRING
+   "FLTK ABI Version (FL_ABI_VERSION - define as 10x0y for 1.x.y)"
+   )
+set(FL_ABI_VERSION ${OPTION_ABI_VERSION})
+
+#######################################################################
 #######################################################################
 if(UNIX)
    option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
