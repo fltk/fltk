@@ -42,9 +42,11 @@ int main(int argc, char **argv) {
   sprintf(version[versions++],"Fl::abi_version() = %6d  %s",Fl::abi_version(),
     (FL_ABI_VERSION == Fl::abi_version()) ? "" : "***");
 #endif
- 
+
 #ifdef FLTK_ABI_VERSION
   sprintf(version[versions++],"FLTK_ABI_VERSION  = %6d",FLTK_ABI_VERSION);
+  sprintf(version[versions++],"NOTE: FLTK_ABI_VERSION is deprecated.\n"
+			      "Please use FL_ABI_VERSION instead !");
 #endif
 
   for (int i=0; i<versions; i++) {
@@ -62,12 +64,12 @@ int main(int argc, char **argv) {
   }
 #endif
 
-  Fl_Window *window = new Fl_Window(630,300);
+  Fl_Window *window = new Fl_Window(670,300);
 
   Fl_Box *box[8];
   for (int i=0; i<4; i++) {
-    box[2*i]   = new Fl_Box( 10,40+40*i,300,30,version[2*i]);
-    box[2*i+1] = new Fl_Box(320,40+40*i,300,30,version[2*i+1]);
+    box[2*i]   = new Fl_Box( 10,40+40*i,320,30,version[2*i]);
+    box[2*i+1] = new Fl_Box(340,40+40*i,320,30,version[2*i+1]);
   }
 
   for (int i=0; i<8; i++) {
