@@ -65,6 +65,7 @@ configure_file(
 set(prefix ${FLTK_BINARY_DIR})
 set(exec_prefix "\${prefix}")
 set(includedir "${FLTK_SOURCE_DIR}")
+set(BINARY_DIR "${FLTK_BINARY_DIR}")
 set(libdir "\${exec_prefix}/lib")
 set(srcdir ".")
 

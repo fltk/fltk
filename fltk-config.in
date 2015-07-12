@@ -35,6 +35,9 @@ includedir=@includedir@
 libdir=@libdir@
 srcdir=@srcdir@
 
+# BINARY_DIR - used only for CMake builds in local (binary) directory
+BINARY_DIR=@BINARY_DIR@
+
 # compiler names
 CC="@CC@"
 CXX="@CXX@"
@@ -219,6 +222,10 @@ if test "$includedir" != /usr/include; then
     includes=-I$includedir
 else
     includes=
+fi
+
+if test "$BINARY_DIR" != ""; then
+    includes="-I$BINARY_DIR $includes"
 fi
 
 if test "$libdir" != /usr/lib -a "$libdir" != /usr/lib32; then

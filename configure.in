@@ -1488,6 +1488,10 @@ else
     echo "        Threads: YES"
 fi
 
+dnl Set empty BINARY_DIR variable for fltk-config.in (CMake compatibility)
+BINARY_DIR=
+AC_SUBST(BINARY_DIR)
+
 dnl Write all of the files...
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_CONFIG_HEADER(FL/abi-version.h:abi-version.in)

@@ -78,6 +78,7 @@ install(FILES ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix "\${prefix}")
 set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+set(BINARY_DIR)
 set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
 set(srcdir ".")
 
