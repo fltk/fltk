@@ -50,6 +50,7 @@ extern "C" {
 #include <math.h>
 #include <limits.h>
 #include <dlfcn.h>
+#include <string.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -1719,9 +1720,11 @@ void fl_open_display() {
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
-    // necessary for secondary pthreads to be allowed to use cocoa, 
-    // especially to create an NSAutoreleasePool.
-    [NSThread detachNewThreadSelector:nil toTarget:nil withObject:nil];
+    if (![NSThread isMultiThreaded]) {
+      // necessary for secondary pthreads to be allowed to use cocoa,
+      // especially to create an NSAutoreleasePool.
+      [NSThread detachNewThreadSelector:nil toTarget:nil withObject:nil];
+    }
   }
 }
 
@@ -4216,6 +4219,18 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     NSBitmapImageRep *childbitmap = rect_to_NSBitmapImageRep(sub, clip.origin.x - sub->x(),
                                                              win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height);
     if (childbitmap) {
+      if ( ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) && !([childbitmap bitmapFormat] & NSAlphaFirstBitmapFormat) ) {
+        // bitmap is ARGB and childbitmap is RGBA --> convert childbitmap to ARGB too
+        uchar *b = [childbitmap bitmapData];
+        for (int i = 0; i < [childbitmap pixelsHigh]; i++) {
+          for (int j = 0; j < [childbitmap pixelsWide]; j++) {
+            uchar A = *(b+3);
+            memmove(b+1, b, 3);
+            *b = A;
+            b += 4;
+          }
+        }
+      }
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
       if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
       write_bitmap_inside(bitmap, w, childbitmap,
@@ -4241,6 +4256,17 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   int bpr = (int)[bitmap bytesPerRow];
   int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason, and hh = 2*h with retina
   int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1, and ww = 2*w with retina
+  if ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) { // imagerep is ARGB --> convert it to RGBA
+    uchar *b = [bitmap bitmapData];
+    for (int i = 0; i < hh; i++) {
+      for (int j = 0; j < ww; j++) {
+        uchar A = *b;
+        memmove(b, b+1, 3);
+        *(b+3) = A;
+        b += 4;
+      }
+    }
+  }
   unsigned char *data;
   if (ww > w) { // with a retina display
     Fl_RGB_Image *rgb = new Fl_RGB_Image([bitmap bitmapData], ww, hh, 4);
