@@ -1,10 +1,30 @@
 /*
-  DO NOT EDIT - This file must be configured BEFORE building FLTK !
+ * "$Id$"
+ *
+ * Configuration file for the Fast Light Tool Kit (FLTK).
+ *
+ * Copyright 1998-2015 by Bill Spitzak and others.
+ *
+ * This library is free software. Distribution and use rights are outlined in
+ * the file "COPYING" which should have been included with this file.  If this
+ * file is missing or damaged, see the license at:
+ *
+ *     http://www.fltk.org/COPYING.php
+ *
+ * Please report all bugs and problems on the following page:
+ *
+ *     http://www.fltk.org/str.php
+ */
+
+/*
+  ============================================================================
+    DO NOT EDIT - This file must be configured BEFORE building FLTK !
+  ============================================================================
 */
 
 /*
   ============================================================================
-  Important note to IDE users:
+    Important note to IDE users:
   ============================================================================
 
   This file *may* be edited *before* building FLTK with your IDE project,
@@ -22,10 +42,17 @@
   the ABI and thus render your programs unusable - they may crash or
   show other unpredictable errors. You have been warned!
 
-  ============================================================================
-  End of important note to IDE users.
-  ============================================================================
+  Define FL_ABI_VERSION as 10x0y for FLTK ABI version 1.x.y .
+  Do NOT define FL_ABI_VERSION if you want the ABI compatible default build.
 
-/* define FL_ABI_VERSION as 10x0y for FLTK ABI version 1.x.y */
+  ============================================================================
+    End of important note to IDE users.
+  ============================================================================
+*/
 
-#define FL_ABI_VERSION 10300
+/* #undef FL_ABI_VERSION */
+
+
+/*
+ * End of "$Id$".
+ */
