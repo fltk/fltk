@@ -4219,6 +4219,8 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     NSBitmapImageRep *childbitmap = rect_to_NSBitmapImageRep(sub, clip.origin.x - sub->x(),
                                                              win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height);
     if (childbitmap) {
+      // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
+      if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
       if ( ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) && !([childbitmap bitmapFormat] & NSAlphaFirstBitmapFormat) ) {
         // bitmap is ARGB and childbitmap is RGBA --> convert childbitmap to ARGB too
         uchar *b = [childbitmap bitmapData];
@@ -4231,8 +4233,6 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
           }
         }
       }
-      // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
-      if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
       write_bitmap_inside(bitmap, w, childbitmap,
                           clip.origin.x - x, win->h() - clip.origin.y - clip.size.height - y );
     }
