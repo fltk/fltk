@@ -492,12 +492,18 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 #endif
 
 static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Driver *driver) {
+  // the range [0xFE00-0xFE0F] corresponds to Unicode's 'variation selectors'
+  static CFCharacterSetRef set = CFCharacterSetCreateWithCharactersInRange(NULL, CFRangeMake(0xFE00, 16));
+  CFRange res;
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
-    CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, uniStr, n,  kCFAllocatorNull);
+    CFMutableStringRef str16 = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, uniStr, n,  n, kCFAllocatorNull);
     if (str16 == NULL) return; // shd not happen
+    while (CFStringFindCharacterFromSet(str16, set, CFRangeMake(0, CFStringGetLength(str16)), 0, &res)) {
+      CFStringReplace(str16, res, CFSTR("")); // remove all variation selectors from the input string
+    }
     CGColorRef color = flcolortocgcolor(driver->color());
     CFDictionarySetValue (attributes, kCTFontAttributeName, driver->font_descriptor()->fontref);
     CFDictionarySetValue (attributes, kCTForegroundColorAttributeName, color);
