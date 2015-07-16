@@ -304,6 +304,18 @@ static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsi
   if(must_release) CFRelease(font2);
   return a.width;
 }
+
+static CGFloat variation_selector_width(CFStringRef str16, Fl_Font_Descriptor *fl_fontsize)
+{
+  CGFloat retval;
+  CFDictionarySetValue(attributes, kCTFontAttributeName, fl_fontsize->fontref);
+  CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
+  CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
+  CFRelease(mastr);
+  retval = CTLineGetOffsetForStringIndex(ctline, 2, NULL);
+  CFRelease(ctline);
+  return retval;
+}
 #endif
 
 static double fl_mac_width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
@@ -317,6 +329,13 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
     if (uni >= 0xD800 && uni <= 0xDBFF) { // handles the surrogate range
       retval += surrogate_width(&txt[i], fl_fontsize);
       i++; // because a pair of UniChar's represent a single character
+      continue;
+    }
+    if (i+1 < n && txt[i+1] >= 0xFE00 && txt[i+1] <= 0xFE0F) { // handles variation selectors
+      CFStringRef substr = CFStringCreateWithCharacters(NULL, txt + i, 2);
+      retval += variation_selector_width(substr, fl_fontsize);
+      CFRelease(substr);
+      i++;
       continue;
     }
     const int block = 0x10000 / (sizeof(fl_fontsize->width)/sizeof(float*)); // block size
@@ -492,18 +511,12 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 #endif
 
 static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Driver *driver) {
-  // the range [0xFE00-0xFE0F] corresponds to Unicode's 'variation selectors'
-  static CFCharacterSetRef set = CFCharacterSetCreateWithCharactersInRange(NULL, CFRangeMake(0xFE00, 16));
-  CFRange res;
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
     CFMutableStringRef str16 = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, uniStr, n,  n, kCFAllocatorNull);
     if (str16 == NULL) return; // shd not happen
-    while (CFStringFindCharacterFromSet(str16, set, CFRangeMake(0, CFStringGetLength(str16)), 0, &res)) {
-      CFStringReplace(str16, res, CFSTR("")); // remove all variation selectors from the input string
-    }
     CGColorRef color = flcolortocgcolor(driver->color());
     CFDictionarySetValue (attributes, kCTFontAttributeName, driver->font_descriptor()->fontref);
     CFDictionarySetValue (attributes, kCTForegroundColorAttributeName, color);
