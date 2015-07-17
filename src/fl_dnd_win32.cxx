@@ -334,7 +334,7 @@ public:
       delete this;
     return nTemp;
   }
-  STDMETHODIMP GiveFeedback( ulong ) { return DRAGDROP_S_USEDEFAULTCURSORS; }
+  STDMETHODIMP GiveFeedback( DWORD ) { return DRAGDROP_S_USEDEFAULTCURSORS; }
   STDMETHODIMP QueryContinueDrag( BOOL esc, DWORD keyState ) {
     if ( esc )
       return DRAGDROP_S_CANCEL;
