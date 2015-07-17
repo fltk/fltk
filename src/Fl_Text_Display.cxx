@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2014 by Bill Spitzak and others.
+// Copyright 2001-2015 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -30,7 +30,6 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Printer.H>
 
 #undef min
 #undef max
