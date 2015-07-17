@@ -1861,7 +1861,8 @@ void Fl::get_mouse(int &x, int &y)
 
 
 /*
- * Gets called when a window is created or resized
+ * Gets called when a window is created or resized, or moved into/out a retina display
+ * (with Mac OS 10.11 also when deminiaturized)
  */    
 static void handleUpdateEvent( Fl_Window *window ) 
 {
