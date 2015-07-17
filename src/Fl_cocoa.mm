@@ -4222,7 +4222,8 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     if (childbitmap) {
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
       if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
-      if ( ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) && !([childbitmap bitmapFormat] & NSAlphaFirstBitmapFormat) ) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+      if ( ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) && !([childbitmap bitmapFormat] & NSAlphaFirstBitmapFormat) ) { // 10.4
         // bitmap is ARGB and childbitmap is RGBA --> convert childbitmap to ARGB too
         uchar *b = [childbitmap bitmapData];
         for (int i = 0; i < [childbitmap pixelsHigh]; i++) {
@@ -4234,6 +4235,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
           }
         }
       }
+#endif
       write_bitmap_inside(bitmap, w, childbitmap,
                           clip.origin.x - x, win->h() - clip.origin.y - clip.size.height - y );
     }
@@ -4257,6 +4259,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   int bpr = (int)[bitmap bytesPerRow];
   int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason, and hh = 2*h with retina
   int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1, and ww = 2*w with retina
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) { // imagerep is ARGB --> convert it to RGBA
     uchar *b = [bitmap bitmapData];
     for (int i = 0; i < hh; i++) {
@@ -4268,6 +4271,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
       }
     }
   }
+#endif
   unsigned char *data;
   if (ww > w) { // with a retina display
     Fl_RGB_Image *rgb = new Fl_RGB_Image([bitmap bitmapData], ww, hh, 4);
