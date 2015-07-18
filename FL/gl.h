@@ -56,6 +56,9 @@
 
 #  ifdef __APPLE__
 #    include <OpenGL/gl.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#    include <OpenGL/glext.h>
+#endif
 #  else
 #    include <GL/gl.h>
 #  endif

@@ -2715,7 +2715,9 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
       attribs[n++] = NSOpenGLPFAStereo;
     }
     if (m & FL_MULTISAMPLE) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
       attribs[n++] = NSOpenGLPFAMultisample,
+#endif
       attribs[n++] = NSOpenGLPFASampleBuffers; attribs[n++] = (NSOpenGLPixelFormatAttribute)1;
       attribs[n++] = NSOpenGLPFASamples; attribs[n++] = (NSOpenGLPixelFormatAttribute)4;
     }
