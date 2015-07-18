@@ -96,7 +96,7 @@
  <td>The table's inner dimension. The inner edge of the border around the cells,
  but inside the row/col headings and scrollbars. AKA the table's clip region. 
  eg. if the table_box() is FL_NO_BOX, these values are the same as
- tox/toyy/tow/toh. (Blue in the diagram above)
+ tox/toy/tow/toh. (Blue in the diagram above)
  </td></tr></table>
  
  CORE DEVELOPERS
@@ -170,7 +170,9 @@
 class FL_EXPORT Fl_Table : public Fl_Group {
 public:
   /**
-   The context bit flags for Fl_Table related callbacks (eg. draw_cell(), callback(), etc)
+   The context bit flags for Fl_Table related callbacks.
+
+   Used in draw_cell(), callback(), etc.
    */
   enum TableContext {
     CONTEXT_NONE       = 0,	///< no known context
@@ -395,11 +397,11 @@ protected:
        static char s[40];
        sprintf(s, "%d/%d", R, C);              // text for each cell
        switch ( context ) {
-	   case CONTEXT_STARTPAGE:             // Fl_Table telling us its starting to draw page
+	   case CONTEXT_STARTPAGE:             // Fl_Table telling us it's starting to draw page
 	       fl_font(FL_HELVETICA, 16);
 	       return;
        
-	   case CONTEXT_ROW_HEADER:            // Fl_Table telling us it's draw row/col headers
+	   case CONTEXT_ROW_HEADER:            // Fl_Table telling us to draw row/col headers
 	   case CONTEXT_COL_HEADER:
 	       fl_push_clip(X, Y, W, H);
 	       {
@@ -577,7 +579,7 @@ public:
   } 
   
   /**
-   Returns the current value of this flag.
+   Returns if row resizing by the user is allowed.
    */
   inline int row_resize() {
     return(_row_resize);
@@ -594,7 +596,7 @@ public:
   }
   
   /**
-   Returns the current value of this flag.
+   Returns if column resizing by the user is allowed.
    */
   inline int col_resize() {
     return(_col_resize);
@@ -610,16 +612,16 @@ public:
   }
   
   /**
-   Sets the current column minimum resize value.
-   This is used to prevent the user from interactively resizing
-   any column to be smaller than 'pixels'. Must be a value >=1.
+   Returns the current column minimum resize value.
    */
   inline int col_resize_min() {			// column minimum resizing width
     return(_col_resize_min);
   }
   
   /**
-   Returns the current column minimum resize value.
+   Sets the current column minimum resize value.
+   This is used to prevent the user from interactively resizing
+   any column to be smaller than 'pixels'. Must be a value >=1.
    */
   void col_resize_min(int val) {
     _col_resize_min = ( val < 1 ) ? 1 : val;
@@ -642,7 +644,7 @@ public:
   }
   
   /**
-   Returns the value of this flag.
+   Returns if row headers are enabled or not.
    */
   inline int row_header() {			// set/get row header enable flag
     return(_row_header);
@@ -933,7 +935,7 @@ public:
   /**
    * Returns the current row the event occurred on.
    *
-   * This function should only be used from within the user's callback function
+   * This function should only be used from within the user's callback function.
    */
   int callback_row() {
     return(_callback_row);
@@ -942,7 +944,7 @@ public:
   /**
    * Returns the current column the event occurred on.
    *
-   * This function should only be used from within the user's callback function
+   * This function should only be used from within the user's callback function.
    */
   int callback_col() {
     return(_callback_col);
@@ -951,7 +953,7 @@ public:
   /**
    * Returns the current 'table context'.
    *
-   * This function should only be used from within the user's callback function
+   * This function should only be used from within the user's callback function.
    */
   TableContext callback_context() {
     return(_callback_context);
@@ -985,13 +987,13 @@ public:
    </td>
    </tr>
    </table>
-   
-   The callback() routine is sent a TableContext that indicates the context the 
-   event occurred in, such as in a cell, in a header, or elsewhere on the table.  
-   When an event occurs in a cell or header, callback_row() and 
-   callback_col() can be used to determine the row and column. The callback can 
-   also look at the regular fltk event values (ie. Fl::event() and Fl::button()) 
-   to determine what kind of event is occurring.
+
+   The callback() routine is sent a TableContext that indicates the context the
+   event occurred in, such as in a cell, in a header, or elsewhere on the table.
+   When an event occurs in a cell or header, callback_row() and
+   callback_col() can be used to determine the row and column. The callback
+   can also look at the regular fltk event values (ie. Fl::event() and
+   Fl::event_button()) to determine what kind of event is occurring.
    */
   void when(Fl_When flags);
 #endif
@@ -1002,11 +1004,11 @@ public:
    
    Callback functions should use the following functions to determine the 
    context/row/column:
-   
-   * Fl_Table::callback_row() returns current row
-   * Fl_Table::callback_col() returns current column
-   * Fl_Table::callback_context() returns current table context
-   
+
+   - Fl_Table::callback_row() returns current row
+   - Fl_Table::callback_col() returns current column
+   - Fl_Table::callback_context() returns current table context
+
    callback_row() and callback_col() will be set to the row and column number the 
    event occurred on. If someone clicked on a row header, \p col will be \a 0.  
    If someone clicked on a column header, \p row will be \a 0.
@@ -1061,7 +1063,7 @@ public:
      // Actual static callback
      static void event_callback(Fl_Widget*, void* data) {
        MyTable *o = (MyTable*)data;
-       o-&gt;event_callback2();
+       o->event_callback2();
      }
      
    public:
@@ -1085,7 +1087,7 @@ public:
     If this value is zero (default), this widget will use the 
     Fl::scrollbar_size() value as the scrollbar's width.
   
-    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
     \see Fl::scrollbar_size(int)
   */
   int scrollbar_size() const {

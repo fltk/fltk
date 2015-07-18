@@ -2760,7 +2760,7 @@ int Fl_Tree::is_scrollbar(Fl_Widget *w) {
 /// If this value is zero (default), this widget will use the global
 /// Fl::scrollbar_size() value as the scrollbar's width.
 /// 
-/// \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+/// \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
 /// \see Fl::scrollbar_size(int)
 ///
 int Fl_Tree::scrollbar_size() const {
