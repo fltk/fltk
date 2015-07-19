@@ -3039,6 +3039,7 @@ void Fl_X::make(Fl_Window* w)
     x->changed_resolution(false);
 #endif
     [cw makeKeyAndOrderFront:nil];
+    [cw displayIfNeeded]; // make sure the window is drawn (useful with 10.11)
   }
   
   if (!w->parent()) {
