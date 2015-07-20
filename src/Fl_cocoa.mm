@@ -1349,7 +1349,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
   Fl_X::i(window)->wait_for_expose = 0; // necessary when window was created miniaturized
-  Fl::flush(); // process redraws set by FL_SHOW
+  if (fl_mac_os_version < 101100) Fl::flush(); // process redraws set by FL_SHOW
   fl_unlock_function();
 }
 - (void)windowWillMiniaturize:(NSNotification *)notif
@@ -3039,7 +3039,10 @@ void Fl_X::make(Fl_Window* w)
     x->changed_resolution(false);
 #endif
     [cw makeKeyAndOrderFront:nil];
-    [cw displayIfNeeded]; // make sure the window is drawn (useful with 10.11)
+    if (fl_mac_os_version >= 101100) { // these two messages seem necessary to make the window appear on screen
+      [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+      [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+    }
   }
   
   if (!w->parent()) {
