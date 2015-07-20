@@ -327,6 +327,7 @@
 		7F7CF81F1AB9836C00E12B22 /* animated.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F7CF81E1AB9836C00E12B22 /* animated.cxx */; };
 		7FA5C2BE192FAEBB00519823 /* Fl_Copy_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FA5C2BD192FAEBB00519823 /* Fl_Copy_Surface.cxx */; };
 		7FA5C2C0192FAECA00519823 /* Fl_Image_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FA5C2BF192FAECA00519823 /* Fl_Image_Surface.cxx */; };
+		7FB1BE051B5D20CF00055291 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7FBCECDF1B1D8B2100AB970D /* Fl_cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */; };
 		7FBCECE01B1D8B2100AB970D /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7FBCECE11B1D8B2100AB970D /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
@@ -3635,6 +3636,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7FB1BE041B5D20C100055291 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7FB1BE051B5D20CF00055291 /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8867D980D3F5085D34A6DF7B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4716,7 +4727,7 @@
 		C7C5A11DD7448F61DFC69398 /* glpuzzle.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glpuzzle.cxx; path = ../../test/glpuzzle.cxx; sourceTree = SOURCE_ROOT; };
 		C84F99F5AC8C6517F45055B0 /* jdmerge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmerge.c; path = ../../jpeg/jdmerge.c; sourceTree = SOURCE_ROOT; };
 		C8AE10A8DDF53B8B27E3215A /* Fl_Choice.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Choice.H; path = ../../FL/Fl_Choice.H; sourceTree = SOURCE_ROOT; };
-		C9165EAF1291A304003FF4F0 /* utf8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = utf8.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9165EAF1291A304003FF4F0 /* unittests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = unittests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9165ED31291A376003FF4F0 /* unittests.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unittests.cxx; path = ../../test/unittests.cxx; sourceTree = SOURCE_ROOT; };
 		C9628FFD1274D0B3007D3CFE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C96290E51274D100007D3CFE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -6887,7 +6898,7 @@
 				6101F771F14EE7AEB2C917A4 /* tree.app */,
 				C05E4BE052F69E6F1FD92730 /* utf8.app */,
 				5191489A6263E11B65A57B4D /* valuators.app */,
-				C9165EAF1291A304003FF4F0 /* utf8.app */,
+				C9165EAF1291A304003FF4F0 /* unittests.app */,
 				7F7CF7F51AB97CEF00E12B22 /* animated.app */,
 				7FBCECC81B1D8AA500AB970D /* libfltk.a */,
 			);
@@ -7881,6 +7892,7 @@
 				7F7CF7F11AB97CEF00E12B22 /* Sources */,
 				7F7CF7F21AB97CEF00E12B22 /* Frameworks */,
 				7F7CF7F31AB97CEF00E12B22 /* Resources */,
+				7FB1BE041B5D20C100055291 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -8467,7 +8479,7 @@
 			);
 			name = unittests;
 			productName = utf8;
-			productReference = C9165EAF1291A304003FF4F0 /* utf8.app */;
+			productReference = C9165EAF1291A304003FF4F0 /* unittests.app */;
 			productType = "com.apple.product-type.application";
 		};
 		CA05747C492074A51F2F35BC /* iconize */ = {
@@ -15639,7 +15651,7 @@
 					"-framework",
 					Cocoa,
 				);
-				PRODUCT_NAME = utf8;
+				PRODUCT_NAME = unittests;
 				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
@@ -15669,7 +15681,7 @@
 					"-framework",
 					Cocoa,
 				);
-				PRODUCT_NAME = utf8;
+				PRODUCT_NAME = unittests;
 				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
