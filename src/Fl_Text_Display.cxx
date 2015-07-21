@@ -2149,7 +2149,7 @@ void Fl_Text_Display::draw_string(int style,
       if (Fl::focus() == (Fl_Widget*)this) background = fl_color_average(color(), selection_color(), 0.5f);
       else background = fl_color_average(color(), selection_color(), 0.6f);
     } else background = color();
-    foreground = styleRec->color;
+    foreground = (style & PRIMARY_MASK) ? fl_contrast(styleRec->color, background) : styleRec->color;
   } else if (style & PRIMARY_MASK) {
     if (Fl::focus() == (Fl_Widget*)this) background = selection_color();
     else background = fl_color_average(color(), selection_color(), 0.4f);
