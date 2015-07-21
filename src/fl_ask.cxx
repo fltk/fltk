@@ -73,7 +73,6 @@ static void button_cb(Fl_Widget *, long val) {
 
 static Fl_Window *makeform() {
  if (message_form) {
-   message_form->size(410,103);
    return message_form;
  }
  // make sure that the dialog does not become the child of some
@@ -133,6 +132,8 @@ static void resizeform() {
   int	button_w[3], button_h[3];
   int	x, w, h, max_w, max_h;
 	const int icon_size = 50;
+
+  message_form->size(410,103);
 
   fl_font(message->labelfont(), message->labelsize());
   message_w = message_h = 0;
@@ -209,6 +210,7 @@ static int innards(const char* fmt, va_list ap,
   avoidRecursion = 1;
 
   makeform();
+  message_form->size(410,103);
   char buffer[1024];
   if (!strcmp(fmt,"%s")) {
     message->label(va_arg(ap, const char*));
@@ -469,6 +471,7 @@ Fl_Widget *fl_message_icon() {makeform(); return icon;}
 static const char* input_innards(const char* fmt, va_list ap,
 				 const char* defstr, uchar type) {
   makeform();
+  message_form->size(410,103);
   message->position(60,10);
   input->type(type);
   input->show();
