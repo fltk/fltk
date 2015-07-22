@@ -251,7 +251,9 @@ static int innards(const char* fmt, va_list ap,
   // deactivate Fl::grab(), because it is incompatible with modal windows
   Fl_Window* g = Fl::grab();
   if (g) Fl::grab(0);
+  Fl_Group *current_group = Fl_Group::current(); // make sure the dialog does not interfere with any active group
   message_form->show();
+  Fl_Group::current(current_group);
   while (message_form->shown()) Fl::wait();
   if (g) // regrab the previous popup menu, if there was one
     Fl::grab(g);
