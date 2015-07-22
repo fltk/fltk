@@ -138,9 +138,9 @@ protected:
 #endif
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
 private:
-  void shape_bitmap_(Fl_Bitmap* b);
-  void shape_alpha_(Fl_RGB_Image* img, int offset);
-  void shape_pixmap_(Fl_Pixmap* pixmap);
+  void shape_bitmap_(Fl_Image* b);
+  void shape_alpha_(Fl_Image* img, int offset);
+  void shape_pixmap_(Fl_Image* pixmap);
 public:
   void shape(const Fl_Image* img);
   /** Set the window's shape with an Fl_Image.

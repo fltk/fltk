@@ -54,7 +54,7 @@ static inline uchar swap_byte(const uchar b) {
 
 static inline BYTE bit(int x) { return (BYTE)(1 << (x%8)); }
 
-static HRGN bitmap2region(Fl_Bitmap* image) {
+static HRGN bitmap2region(Fl_Image* image) {
   HRGN hRgn = 0;
   /* Does this need to be dynamically determined, perhaps? */
   const int ALLOC_UNIT = 100;
@@ -67,7 +67,7 @@ static HRGN bitmap2region(Fl_Bitmap* image) {
   SetRect(&pData->rdh.rcBound, MAXLONG, MAXLONG, 0, 0);
   
   const int bytesPerLine = (image->w() + 7)/8;
-  BYTE* p, *data = (BYTE*)image->array;
+  BYTE* p, *data = (BYTE*)*image->data();
   for (int y = 0; y < image->h(); y++) {
     // each row, left to right
     for (int x = 0; x < image->w(); x++) {
@@ -155,9 +155,9 @@ void Fl_Window::combine_mask()
   if (!XShapeCombineMask_f) return;
   shape_data_->lw_ = w();
   shape_data_->lh_ = h();
-  Fl_Bitmap* temp = (Fl_Bitmap*)shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
-  Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(this), 
-					 (const char*)temp->array,
+  Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
+  Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(this),
+					 (const char*)*temp->data(),
 					 temp->w(), temp->h());
   XShapeCombineMask_f(fl_display, fl_xid(this), ShapeBounding, 0, 0, pbitmap, ShapeSet);
   if (pbitmap != None) XFreePixmap(fl_display, pbitmap);
@@ -168,7 +168,7 @@ void Fl_Window::combine_mask()
 #endif // __APPLE__
 
 
-void Fl_Window::shape_bitmap_(Fl_Bitmap* b) {
+void Fl_Window::shape_bitmap_(Fl_Image* b) {
   shape_data_->shape_ = b;
 #if defined(__APPLE__)
   if (b) {
@@ -176,7 +176,7 @@ void Fl_Window::shape_bitmap_(Fl_Bitmap* b) {
     int bytes_per_row = (b->w() + 7)/8;
     uchar *from = new uchar[bytes_per_row * b->h()];
     for (int i = 0; i < b->h(); i++) {
-      uchar *p = (uchar*)b->array + bytes_per_row * i;
+      uchar *p = (uchar*)(*b->data()) + bytes_per_row * i;
       uchar *last = p + bytes_per_row;
       uchar *q = from + (b->h() - 1 - i) * bytes_per_row;
       while (p < last) {
@@ -195,7 +195,7 @@ void Fl_Window::shape_bitmap_(Fl_Bitmap* b) {
 /* the image can be of any depth
  offset gives the byte offset from the pixel start to the byte used to construct the shape
  */
-void Fl_Window::shape_alpha_(Fl_RGB_Image* img, int offset) {
+void Fl_Window::shape_alpha_(Fl_Image* img, int offset) {
   int i, d = img->d(), w = img->w(), h = img->h();
   shape_data_->shape_ = img;
   if (shape_data_->shape_) {
@@ -203,7 +203,7 @@ void Fl_Window::shape_alpha_(Fl_RGB_Image* img, int offset) {
     int bytes_per_row = w * d;
     uchar *from = new uchar[w * h];
     for ( i = 0; i < h; i++) {
-      uchar *p = (uchar*)img->array + bytes_per_row * i + offset;
+      uchar *p = (uchar*)(*img->data()) + bytes_per_row * i + offset;
       uchar *last = p + bytes_per_row;
       uchar *q = from + (h - 1 - i) * w;
       while (p < last) {
@@ -230,13 +230,13 @@ void Fl_Window::shape_alpha_(Fl_RGB_Image* img, int offset) {
 /* the img image can be of any depth
  offset gives the byte offset from the pixel start to the byte used to construct the shape
  */
-void Fl_Window::shape_alpha_(Fl_RGB_Image* img, int offset) {
+void Fl_Window::shape_alpha_(Fl_Image* img, int offset) {
   int i, j, d = img->d(), w = img->w(), h = img->h(), bytesperrow = (w+7)/8;
   unsigned u;
   uchar byte, onebit;
   // build an Fl_Bitmap covering the non-fully transparent/black part of the image
   const uchar* bits = new uchar[h*bytesperrow]; // to store the bitmap
-  const uchar* alpha = img->array + offset; // points to alpha value of rgba pixels
+  const uchar* alpha = (const uchar*)*img->data() + offset; // points to alpha value of rgba pixels
   for (i = 0; i < h; i++) {
     uchar *p = (uchar*)bits + i * bytesperrow;
     byte = 0;
@@ -269,8 +269,8 @@ void Fl_Window::shape_alpha_(Fl_RGB_Image* img, int offset) {
 #endif
 
 
-void Fl_Window::shape_pixmap_(Fl_Pixmap* pixmap) {
-  Fl_RGB_Image* rgba = new Fl_RGB_Image(pixmap);
+void Fl_Window::shape_pixmap_(Fl_Image* pixmap) {
+  Fl_RGB_Image* rgba = new Fl_RGB_Image((Fl_Pixmap*)pixmap);
   shape_alpha_(rgba, 3);
   delete rgba;
 }
@@ -287,12 +287,14 @@ Fl_Window::shape_data_type* Fl_Window::shape_data_ = NULL;
  rectangular bounding box is available
  to them. It is up to you to make sure they adhere to the bounds of their masking shape.
  
- The \p img argument can be an Fl_Bitmap, Fl_Pixmap or Fl_RGB_Image:
+ The \p img argument can be an Fl_Bitmap, Fl_Pixmap, Fl_RGB_Image or Fl_Shared_Image:
  \li With Fl_Bitmap or Fl_Pixmap, the shaped window covers the image part where bitmap bits equal one,
  or where the pixmap is not fully transparent.
  \li With an Fl_RGB_Image with an alpha channel (depths 2 or 4), the shaped window covers the image part
  that is not fully transparent.
  \li With an Fl_RGB_Image of depth 1 (gray-scale) or 3 (RGB), the shaped window covers the non-black image part.
+ \li With an Fl_Shared_Image, the shape is determined by rules above applied to the underlying image.
+ The shared image should not have been scaled through Fl_Shared_Image::scale().
  
  Platform details:
  \li On the unix/linux platform, the SHAPE extension of the X server is required.
@@ -327,10 +329,10 @@ void Fl_Window::shape(const Fl_Image* img) {
   memset(shape_data_, 0, sizeof(shape_data_type));
   border(false);
   int d = img->d();
-  if (d && img->count() >= 2) shape_pixmap_((Fl_Pixmap*)img);
-  else if (d == 0) shape_bitmap_((Fl_Bitmap*)img);
-  else if (d == 2 || d == 4) shape_alpha_((Fl_RGB_Image*)img, d - 1);
-  else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_RGB_Image*)img, 0);
+  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  else if (d == 0) shape_bitmap_((Fl_Image*)img);
+  else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
+  else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
 #endif
 }
 
@@ -346,7 +348,7 @@ void Fl_Window::draw() {
       // size of window has changed since last time
       shape_data_->lw_ = w();
       shape_data_->lh_ = h();
-      Fl_Bitmap* temp = (Fl_Bitmap*)shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
+      Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
       SetWindowRgn(fl_xid(this), region, TRUE); // the system deletes the region when it's no longer needed
       delete temp;
