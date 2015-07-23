@@ -15,7 +15,7 @@
 // not in the linked list and are not written to files or
 // copied or otherwise examined.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -263,26 +263,26 @@ extern const char* subclassname(Fl_Type*);
 
 
 /**
- Draw an item in the widget browser.
- 
- A browser line starts with a variable size space. This space directly
- relates to the level of the type entry.
- 
- If this type has the ability to store children, a triangle follows, pointing 
- right (closed) or pointing down (open, children shown)
- 
- Next follows an Icon that is specific to the type. This makes it easy to
- spot certain types
- 
- Now follows some text. For classes and widgets, this is the type itself,
- followed by the name of the object. Other objects show their content as
- text, possibly abbreviated with an elipsis.
- 
- \param v       v is a pointer to the actual widget type and can be cast safely
-                to Fl_Type
- \param X, Y    these give the position in window coordinates of the top left 
-                corner of this line
- */
+  Draw an item in the widget browser.
+
+  A browser line starts with a variable size space. This space directly
+  relates to the level of the type entry.
+
+  If this type has the ability to store children, a triangle follows,
+  pointing right (closed) or pointing down (open, children shown).
+
+  Next follows an icon that is specific to the type. This makes it easy to
+  spot certain types.
+
+  Now follows some text. For classes and widgets, this is the type itself,
+  followed by the name of the object. Other objects show their content as
+  text, possibly abbreviated with an ellipsis.
+
+  \param v	v is a pointer to the actual widget type and can be cast safely
+		to Fl_Type
+  \param X,Y	these give the position in window coordinates of the top left 
+		corner of this line
+*/
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
@@ -447,19 +447,19 @@ void Widget_Browser::callback() {
 
 
 /**
- Override the event handling fo rthis browser.
+  Override the event handling for this browser.
 
- The vertical mouse position corresponds to an entry in the Type tree.
- The horizontal position has the following hot zones:
-  * 0-3 is the windget frame and ignored
-  * the next hot zone starts 12*indent pixels further to the right
-  * the next 13 pixels refer to the arrow that indicates children for the item
-  * 18 pixels follow for the icon
-  * the remianing part is filled with text
+  The vertical mouse position corresponds to an entry in the type tree.
+  The horizontal position has the following hot zones:
+  - 0-3 is the widget frame and ignored
+  - the next hot zone starts 12*indent pixels further to the right
+  - the next 13 pixels refer to the arrow that indicates children for the item
+  - 18 pixels follow for the icon
+  - the remaining part is filled with text
 
- \param e the incoming event type
- \return 0 if the event is not supported, and 1 if the event was "used up"
- */
+  \param[in] e the incoming event type
+  \return 0 if the event is not supported, and 1 if the event was "used up"
+*/
 int Widget_Browser::handle(int e) {
   static Fl_Type *title;
   Fl_Type *l;
@@ -971,7 +971,7 @@ void Fl_Type::read_property(const char *c) {
 int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
 
 /**
- * Return 1 if the list contains a function with the given signature at the top level
+  Return 1 if the list contains a function with the given signature at the top level.
  */
 int has_toplevel_function(const char *rtype, const char *sig) {
   Fl_Type *child;
@@ -986,8 +986,8 @@ int has_toplevel_function(const char *rtype, const char *sig) {
 }
 
 /**
- * Write a comment inot the header file.
- */
+  Write a comment into the header file.
+*/
 void Fl_Type::write_comment_h(const char *pre)
 {
   if (comment() && *comment()) {
@@ -1009,8 +1009,8 @@ void Fl_Type::write_comment_h(const char *pre)
 }
 
 /**
- * Write a comment into the source file.
- */
+  Write a comment into the source file.
+*/
 void Fl_Type::write_comment_c(const char *pre)
 {
   if (comment() && *comment()) {
@@ -1032,8 +1032,8 @@ void Fl_Type::write_comment_c(const char *pre)
 }
 
 /**
- * Write a comment into the source file.
- */
+  Write a comment into the source file.
+*/
 void Fl_Type::write_comment_inline_c(const char *pre)
 {
   if (comment() && *comment()) {
@@ -1063,9 +1063,9 @@ void Fl_Type::write_comment_inline_c(const char *pre)
 }
 
 /**
- * Make sure that the given item is visible in the browser by opening
- * all parent groups and moving the item into the visible space.
- */
+  Make sure that the given item is visible in the browser by opening
+  all parent groups and moving the item into the visible space.
+*/
 void reveal_in_browser(Fl_Type *t) {
   Fl_Type *p = t->parent;
   if (p) {
@@ -1082,34 +1082,34 @@ void reveal_in_browser(Fl_Type *t) {
 }
 
 /**
- * Build widgets and dataset needed in live mode.
- * \return a widget pointer that the live mode initiator can 'show()'
- * \see leave_live_mode()
- */
+  Build widgets and dataset needed in live mode.
+  \return a widget pointer that the live mode initiator can 'show()'
+  \see leave_live_mode()
+*/
 Fl_Widget *Fl_Type::enter_live_mode(int) {
   return 0L;
 }
 
 /**
- * Release all resources created when enetring live mode.
- * \see enter_live_mode()
- */
+  Release all resources created when entering live mode.
+  \see enter_live_mode()
+*/
 void Fl_Type::leave_live_mode() {
 }
 
 /**
- * Copy all needed properties for this tye into the live object.
- */
+  Copy all needed properties for this type into the live object.
+*/
 void Fl_Type::copy_properties() {
 }
 
 /**
- * Check whether callback name is declared anywhere else by the user
- *
- * \b Warning: this just checks that the name is declared somewhere,
- * but it should probably also check that the name corresponds to a
- * plain function or a member function within the same class and that
- * the parameter types match.
+  Check whether callback \p cbname is declared anywhere else by the user.
+
+  \b Warning: this just checks that the name is declared somewhere,
+  but it should probably also check that the name corresponds to a
+  plain function or a member function within the same class and that
+  the parameter types match.
  */
 int Fl_Type::user_defined(const char* cbname) const {
   for (Fl_Type* p = Fl_Type::first; p ; p = p->next)
