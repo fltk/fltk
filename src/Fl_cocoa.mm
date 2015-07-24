@@ -3243,19 +3243,20 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
  The system sends the drawRect: message to the window's view after having prepared the current 
  graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect 
  to YES and calls handleUpdateEvent() that calls Fl_X::flush(). Fl_X::flush() sets through_Fl_X_flush 
- to YES and calls Fl_Window::flush() that calls Fl_Window::make_current() that only needs to 
- identify the graphics port of the current graphics context. The window's draw() function is then executed.
+ to YES and calls Fl_Window::flush() that calls Fl_Window::make_current() that
+ uses the window's graphics context. The window's draw() function is then executed.
  
  2) At each round of the FLTK event loop.
  Fl::flush() is called, that calls Fl_X::flush() on each window that needs drawing. Variable 
  through_Fl_X_flush is set to YES. Fl_X::flush() locks the focus to the view and calls Fl_Window::flush()
- that calls Fl_Window::make_current() which uses the current graphics context.
+ that calls Fl_Window::make_current() which uses the window's graphics context.
  Fl_Window::flush() then runs the window's draw() function.
  
  3) An FLTK application can call Fl_Window::make_current() at any time before it draws to a window.
  This occurs for instance in the idle callback function of the mandelbrot test program. Variable 
- through_Fl_X_flush is NO, so Fl_Window::make_current() creates a new graphics context adequate for
- the window. Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(),
+ through_Fl_X_flush is NO. Under Mac OS 10.4 and higher, the window's graphics context is obtained.
+ Under Mac OS 10.3 a new graphics context adequate for the window is created. 
+ Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(),
  Fl::check() nor Fl::ready() while in the draw() function of a widget. Use an idle callback instead.
  */
 void Fl_Window::make_current() 
@@ -3269,11 +3270,16 @@ void Fl_Window::make_current()
 #endif
   current_ = this;
   
-  NSGraphicsContext *nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] :
-					       [NSGraphicsContext graphicsContextWithWindow:fl_window];
+  NSGraphicsContext *nsgc;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400)
+    nsgc = [fl_window graphicsContext]; // 10.4
+  else
+#endif
+    nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
   i->gc = (CGContextRef)[nsgc graphicsPort];
   fl_gc = i->gc;
-  
+  CGContextSaveGState(fl_gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
   // it gets activated when needed (e.g., draw text)
@@ -3327,6 +3333,7 @@ void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;
   if (!fl_gc) return;
   CGContextRestoreGState(fl_gc); // KEEP IT: matches the CGContextSaveGState of make_current
+  CGContextRestoreGState(fl_gc);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   Fl_X::set_high_resolution(false);
 #endif

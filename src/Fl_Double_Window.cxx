@@ -361,8 +361,9 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
 /** Quit sending drawing commands to the current offscreen buffer.
  */
 void fl_end_offscreen() {
-  Fl_X::q_release_context();
   fl_pop_clip();
+  CGContextRestoreGState(fl_gc); // matches CGContextSaveGState in fl_begin_offscreen()
+  CGContextFlush(fl_gc);
   if (stack_ix>0)
     stack_ix--;
   else
