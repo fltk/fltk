@@ -77,7 +77,6 @@ static void convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
-static NSString *calc_utf8_format(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
@@ -90,7 +89,6 @@ bool fl_show_iconic;                    // true if called from iconize() - shows
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
 Fl_Window *Fl_Window::current_;
-static NSString *utf8_format = calc_utf8_format();
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -102,6 +100,16 @@ static BOOL through_drawRect = NO;
 // through_Fl_X_flush = YES means Fl_X::flush() was called
 static BOOL through_Fl_X_flush = NO;
 static int im_enabled = -1;
+// OS version-dependent pasteboard type names
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+#define NSPasteboardTypeTIFF @"public.tiff"
+#define NSPasteboardTypePDF @"com.adobe.pdf"
+#define NSPasteboardTypeString @"public.utf8-plain-text"
+#endif
+static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeTIFF : NSTIFFPboardType);
+static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : NSPDFPboardType);
+static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.apple.pict" : NSPICTPboardType);
+static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString : NSStringPboardType);
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -2396,8 +2404,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
     CFRelease(all);
   }
-  else if ( [[pboard types] containsObject:utf8_format] ) {
-    NSData *data = [pboard dataForType:utf8_format];
+  else if ( [[pboard types] containsObject:UTF8_pasteboard_type] ) {
+    NSData *data = [pboard dataForType:UTF8_pasteboard_type];
     DragData = (char *)malloc([data length] + 1);
     [data getBytes:DragData];
     DragData[[data length]] = 0;
@@ -2994,7 +3002,7 @@ void Fl_X::make(Fl_Window* w)
       [cw setAlphaValue:0.97];
     }
     // Install DnD handlers 
-    [myview registerForDraggedTypes:[NSArray arrayWithObjects:utf8_format,  NSFilenamesPboardType, nil]];
+    [myview registerForDraggedTypes:[NSArray arrayWithObjects:UTF8_pasteboard_type,  NSFilenamesPboardType, nil]];
   
     if (w->size_range_set) w->size_range_();
     
@@ -3372,11 +3380,9 @@ void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
   CGContextRestoreGState(gc);
   CGContextEndPage(gc);
   CGContextRelease(gc);
-  static NSString *TIFFpname = (fl_mac_os_version >= 100600 ? @"public.tiff" : NSTIFFPboardType);
-  static NSString *PDFpname = (fl_mac_os_version >= 100600 ? @"com.adobe.pdf" : NSPDFPboardType);
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
-  [clip declareTypes:[NSArray arrayWithObjects:PDFpname, TIFFpname, nil] owner:nil];
-  [clip setData:(NSData*)pdfdata forType:PDFpname];
+  [clip declareTypes:[NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, nil] owner:nil];
+  [clip setData:(NSData*)pdfdata forType:PDF_pasteboard_type];
   //second, transform this PDF to a bitmap image and put it as tiff in clipboard
   NSPDFImageRep *vectorial = [[NSPDFImageRep alloc] initWithData:(NSData*)pdfdata];
   CFRelease(pdfdata);
@@ -3394,11 +3400,12 @@ void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
   NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap
                                                    forKey:NSGraphicsContextDestinationAttributeName];
   NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+  // this method of drawing to a bitmap requires Mac OS 10.4
   [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
   [vectorial draw];
   [vectorial release];
   [NSGraphicsContext setCurrentContext:oldgc];
-  [clip setData:[bitmap TIFFRepresentation] forType:TIFFpname];
+  [clip setData:[bitmap TIFFRepresentation] forType:TIFF_pasteboard_type];
   [bitmap release];
 }
 
@@ -3410,16 +3417,6 @@ static void convert_crlf(char * s, size_t len)
 {
   // turn all \r characters into \n:
   for (size_t x = 0; x < len; x++) if (s[x] == '\r') s[x] = '\n';
-}
-
-// fltk 1.3 clipboard support constant definitions:
-static NSString *calc_utf8_format(void)
-{
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
-#define NSPasteboardTypeString @"public.utf8-plain-text"
-#endif
-  if (fl_mac_os_version >= 100600) return NSPasteboardTypeString;
-  return NSStringPboardType;
 }
 
 // clipboard variables definitions :
@@ -3469,8 +3466,8 @@ void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
     CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[1], len);
     if (text==NULL) return; // there was a pb creating the object, abort.
     NSPasteboard *clip = [NSPasteboard generalPasteboard];
-    [clip declareTypes:[NSArray arrayWithObject:utf8_format] owner:nil];
-    [clip setData:(NSData*)text forType:utf8_format];
+    [clip declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
+    [clip setData:(NSData*)text forType:UTF8_pasteboard_type];
     CFRelease(text);
   }
 }
@@ -3479,13 +3476,13 @@ static int get_plain_text_from_clipboard(int clipboard)
 {
   NSInteger length = 0;
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
-  NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:utf8_format, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
+  NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:UTF8_pasteboard_type, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
   if (found) {
     NSData *data = [clip dataForType:found];
     if (data) {
       NSInteger len;
       char *aux_c = NULL;
-      if (![found isEqualToString:utf8_format]) {
+      if (![found isEqualToString:UTF8_pasteboard_type]) {
 	NSString *auxstring;
 	auxstring = (NSString *)CFStringCreateWithBytes(NULL, 
 							(const UInt8*)[data bytes], 
@@ -3498,7 +3495,7 @@ static int get_plain_text_from_clipboard(int clipboard)
       }
       else len = [data length] + 1;
       resize_selection_buffer(len, clipboard);
-      if (![found isEqualToString:utf8_format]) {
+      if (![found isEqualToString:UTF8_pasteboard_type]) {
         strcpy(fl_selection_buffer[clipboard], aux_c);
         free(aux_c);
       }
@@ -3521,7 +3518,7 @@ static Fl_Image* get_image_from_clipboard(Fl_Widget *receiver)
   NSBitmapImageRep *bitmap;
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
-  NSArray  *possible = [NSArray arrayWithObjects:@"com.adobe.pdf", @"public.tiff", @"com.apple.pict", nil];
+  NSArray  *possible = [NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, PICT_pasteboard_type, nil];
   NSString *found = nil;
   NSUInteger rank;
   for (NSUInteger i = 0; i < [possible count]; i++) {
@@ -3536,7 +3533,7 @@ after_loop:
   if (found) {
     NSData *data = [clip dataForType:found];
     if (data) {
-      if ([found isEqualToString:@"public.tiff"]) {
+      if ([found isEqualToString:TIFF_pasteboard_type]) {
         bitmap = [NSBitmapImageRep imageRepWithData:data];
         int bpp = [bitmap bytesPerPlane];
         int bpr = [bitmap bytesPerRow];
@@ -3546,11 +3543,11 @@ after_loop:
         image = new Fl_RGB_Image(imagedata, w, h, depth);
         image->alloc_array = 1;
       }
-      else if ([found isEqualToString:@"com.adobe.pdf"] || [found isEqualToString:@"com.apple.pict"]) {
+      else if ([found isEqualToString:PDF_pasteboard_type] || [found isEqualToString:PICT_pasteboard_type]) {
         NSRect rect;
         NSImageRep *vectorial;
         NSAffineTransform *dilate = [NSAffineTransform transform];
-        if ([found isEqualToString:@"com.adobe.pdf"] ) {
+        if ([found isEqualToString:PDF_pasteboard_type] ) {
           vectorial = [NSPDFImageRep imageRepWithData:data];
           rect = [(NSPDFImageRep*)vectorial bounds]; // in points =  1/72 inch
           Fl_Window *win = receiver->top_window();
@@ -3583,6 +3580,7 @@ after_loop:
         NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap 
                                                          forKey:NSGraphicsContextDestinationAttributeName];
         NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+        // this method of drawing to a bitmap requires Mac OS 10.4
         [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
         [dilate concat];
         [vectorial draw];
@@ -3629,10 +3627,10 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 int Fl::clipboard_contains(const char *type) {
   NSString *found = nil;
   if (strcmp(type, Fl::clipboard_plain_text) == 0) {
-    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:utf8_format, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
+    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:UTF8_pasteboard_type, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
     }
   else if (strcmp(type, Fl::clipboard_image) == 0) {
-    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:@"public.tiff", @"com.adobe.pdf", @"com.apple.pict", nil]];
+    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:TIFF_pasteboard_type, PDF_pasteboard_type, PICT_pasteboard_type, nil]];
     }
   return found != nil;
 }
@@ -4076,8 +4074,8 @@ int Fl_X::dnd(int use_selection)
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init]; 
   NSPasteboard *mypasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-  [mypasteboard declareTypes:[NSArray arrayWithObject:utf8_format] owner:nil];
-  [mypasteboard setData:(NSData*)text forType:utf8_format];
+  [mypasteboard declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
+  [mypasteboard setData:(NSData*)text forType:UTF8_pasteboard_type];
   CFRelease(text);
   Fl_Widget *w = Fl::pushed();
   Fl_Window *win = w->top_window();
