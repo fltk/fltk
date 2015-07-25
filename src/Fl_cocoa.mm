@@ -3372,31 +3372,33 @@ void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
   CGContextRestoreGState(gc);
   CGContextEndPage(gc);
   CGContextRelease(gc);
+  static NSString *TIFFpname = (fl_mac_os_version >= 100600 ? @"public.tiff" : NSTIFFPboardType);
+  static NSString *PDFpname = (fl_mac_os_version >= 100600 ? @"com.adobe.pdf" : NSPDFPboardType);
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
-  [clip declareTypes:[NSArray arrayWithObjects:@"com.adobe.pdf", @"public.tiff", nil] owner:nil];
-  [clip setData:(NSData*)pdfdata forType:@"com.adobe.pdf"];
+  [clip declareTypes:[NSArray arrayWithObjects:PDFpname, TIFFpname, nil] owner:nil];
+  [clip setData:(NSData*)pdfdata forType:PDFpname];
   //second, transform this PDF to a bitmap image and put it as tiff in clipboard
   NSPDFImageRep *vectorial = [[NSPDFImageRep alloc] initWithData:(NSData*)pdfdata];
   CFRelease(pdfdata);
-	NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                    pixelsWide:width
-                                                    pixelsHigh:height
-                                                 bitsPerSample:8
-                                               samplesPerPixel:3
-                                                      hasAlpha:NO
-                                                      isPlanar:NO
-                                                colorSpaceName:NSDeviceRGBColorSpace
-                                                   bytesPerRow:width*4
-                                                  bitsPerPixel:32];
+  NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                                     pixelsWide:width
+                                                                     pixelsHigh:height
+                                                                  bitsPerSample:8
+                                                                samplesPerPixel:3
+                                                                       hasAlpha:NO
+                                                                       isPlanar:NO
+                                                                 colorSpaceName:NSDeviceRGBColorSpace
+                                                                    bytesPerRow:width*4
+                                                                   bitsPerPixel:32];
   memset([bitmap bitmapData], -1, [bitmap bytesPerRow] * [bitmap pixelsHigh]);
   NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap
                                                    forKey:NSGraphicsContextDestinationAttributeName];
-	NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+  NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
   [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
-	[vectorial draw];
+  [vectorial draw];
   [vectorial release];
-	[NSGraphicsContext setCurrentContext:oldgc];
-  [clip setData:[bitmap TIFFRepresentation] forType:@"public.tiff"];
+  [NSGraphicsContext setCurrentContext:oldgc];
+  [clip setData:[bitmap TIFFRepresentation] forType:TIFFpname];
   [bitmap release];
 }
 
