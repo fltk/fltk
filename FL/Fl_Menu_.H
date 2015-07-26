@@ -61,6 +61,8 @@ protected:
   Fl_Fontsize textsize_;
   Fl_Color textcolor_;
 
+  int item_pathname_(char *name, int namelen, const Fl_Menu_Item *finditem,
+                     const Fl_Menu_Item *menu=0) const;
 public:
   Fl_Menu_(int,int,int,int,const char * =0);
   ~Fl_Menu_();

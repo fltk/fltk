@@ -63,39 +63,68 @@
     \see find_item()
 */
 int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem) const {
-    int len = 0;
-    finditem = finditem ? finditem : mvalue();    
-    name[0] = '\0';
-    for ( int t=0; t<size(); t++ ) {
-        const Fl_Menu_Item *m = &(menu()[t]);
-	if ( m->submenu() ) {				// submenu? descend
-	    if (*name) SAFE_STRCAT("/");
-	    if (m->label()) SAFE_STRCAT(m->label());
-	    if ( m == finditem ) return(0);		// found? done.
-	} else {
-	    if (m->label()) {				// menu item?
-		if ( m == finditem ) {			// found? tack on itemname, done.
-		    SAFE_STRCAT("/");
-		    SAFE_STRCAT(m->label());
-		    return(0);
-		}
-	    } else {					// end of submenu? pop
-	        char *ss = strrchr(name, '/');
-		if ( ss ) { *ss = 0; len = (int) strlen(name); }	// "File/Edit" -> "File"
-		else { name[0] = '\0'; len = 0; }		// "File" -> ""
-		continue;
-	    }
+  name[0] = '\0';
+  return item_pathname_(name, namelen, finditem, menu_);
+}
+
+// INTERNAL: Descend into a specific menu hierarchy
+int Fl_Menu_::item_pathname_(char *name, 
+			     int namelen,
+			     const Fl_Menu_Item *finditem,
+			     const Fl_Menu_Item *menu) const {
+  int len = 0;
+  int level = 0;
+  finditem = finditem ? finditem : mvalue();    
+  menu = menu ? menu : this->menu();
+  for ( int t=0; t<size(); t++ ) {
+    const Fl_Menu_Item *m = menu + t;
+    if (m->submenu()) {				// submenu? descend
+      if (m->flags & FL_SUBMENU_POINTER) {
+        // SUBMENU POINTER? Recurse to descend
+        int slen = strlen(name);
+	const Fl_Menu_Item *submenu = (const Fl_Menu_Item*)m->user_data();
+        if (m->label()) {
+          if (*name) SAFE_STRCAT("/");
+	  SAFE_STRCAT(m->label());
+        }
+        if (item_pathname_(name, len, finditem, submenu) == 0)
+	  return 0;
+	name[slen] = 0;				// continue from where we were
+      } else {
+        // REGULAR SUBMENU? DESCEND
+	++level;
+        if (*name) SAFE_STRCAT("/");
+        if (m->label()) SAFE_STRCAT(m->label());
+        if (m == finditem) return(0);		// found? done.
+      }
+    } else {
+      if (m->label()) {				// menu item?
+	if ( m == finditem ) {			// found? tack on itemname, done.
+	  SAFE_STRCAT("/");
+	  SAFE_STRCAT(m->label());
+	  return(0);
 	}
+      } else {					// end of submenu? pop
+        if ( --level < 0 ) {
+	  *name = '\0';
+	  return -1;
+	}
+	char *ss = strrchr(name, '/');
+	if ( ss ) { *ss = 0; len = (int) strlen(name); }	// "File/Edit" -> "File"
+	else { name[0] = '\0'; len = 0; }	// "File" -> ""
+	continue;
+      }
     }
-    *name = '\0';
-    return(-1);						// item not found
+  }
+  *name = '\0';
+  return(-1);					// item not found
 }
 
 /**
  Find the menu item for a given menu \p pathname, such as "Edit/Copy".
  
  This method finds a menu item in the menu array, also traversing submenus, but
- not submenu pointers.
+ not submenu pointers (FL_SUBMENU_POINTER).
 
  To get the menu item's index, use find_index(const char*)
 
@@ -129,6 +158,11 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) {
  
  A way to convert a menu item pointer into an index.
 
+ Does \b not handle items that are in submenu pointers (FL_SUBMENU_POINTER).
+
+ -1 is returned if the item is not in this menu
+ or is part of an FL_SUBMENU_POINTER submenu.
+
  Current implementation is fast and not expensive.
 
  \code
@@ -155,9 +189,10 @@ int Fl_Menu_::find_index(const Fl_Menu_Item *item) const {
  Find the index into the menu array for a given callback \p cb.
  
  This method finds a menu item's index position, also traversing submenus, but
- not submenu pointers. This is useful if an application uses internationalisation
- and a menu item can not be found using its label. This search is also much faster.
- 
+ \b not submenu pointers (FL_SUBMENU_POINTER). This is useful if an
+ application uses internationalisation and a menu item can not be found
+ using its label. This search is also much faster.
+
  \param cb Find the first item with this callback
  \returns  The index of the item with the specific callback, or -1 if not found
  \see      find_index(const char*)
@@ -173,7 +208,7 @@ int Fl_Menu_::find_index(Fl_Callback *cb) const {
  Find the menu item index for a given menu \p pathname, such as "Edit/Copy".
  
  This method finds a menu item's index position for the given menu pathname,
- also traversing submenus, but not submenu pointers.
+ also traversing submenus, but \b not submenu pointers (FL_SUBMENU_POINTER).
 
  To get the menu item pointer for a pathname, use find_item()
 
