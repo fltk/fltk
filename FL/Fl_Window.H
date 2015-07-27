@@ -491,11 +491,22 @@ public:
     top.  This is really convenient because your program can call show()
     at any time, even if the window is already up.  It also means that
     show() serves the purpose of raise() in other toolkits.
-    
+
     Fl_Window::show(int argc, char **argv) is used for top-level
     windows and allows standard arguments to be parsed from the
     command-line.
-    
+
+    \note For some obscure reasons Fl_Window::show() resets the current
+    group by calling Fl_Group::current(0). The comments in the code
+    say "get rid of very common user bug: forgot end()". Although
+    this is true it may have unwanted side effects if you show() an
+    unrelated window (maybe for an error message or warning) while
+    building a window or any other group widget.
+
+    \todo Check if we can remove resetting the current group in a later
+    FLTK version (after 1.3.x). This may break "already broken" programs
+    though if they rely on this "feature".
+
     \see Fl_Window::show(int argc, char **argv)
   */
   virtual void show();

@@ -2541,8 +2541,8 @@ void Fl_Window::show() {
     //ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
 #ifdef USE_PRINT_BUTTON
-void preparePrintFront(void);
-preparePrintFront();
+  void preparePrintFront(void);
+  preparePrintFront();
 #endif
 }
 
