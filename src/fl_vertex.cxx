@@ -35,6 +35,10 @@
 #include <FL/math.h>
 #include <stdlib.h>
 
+#if defined(__APPLE_QUARTZ__)
+extern void CGContextStrokePath_fixed(CGContextRef);
+#endif
+
 void Fl_Graphics_Driver::push_matrix() {
   if (sptr==matrix_stack_size)
     Fl::error("fl_push_matrix(): matrix stack overflow.");
@@ -122,7 +126,7 @@ void Fl_Graphics_Driver::end_points() {
   for (int i=0; i<n; i++) { 
     CGContextMoveToPoint(fl_gc, p[i].x, p[i].y);
     CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextStrokePath(fl_gc);
+    CGContextStrokePath_fixed(fl_gc);
   }
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
@@ -145,7 +149,7 @@ void Fl_Graphics_Driver::end_line() {
   CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
   for (int i=1; i<n; i++)
     CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
@@ -265,7 +269,7 @@ void Fl_Graphics_Driver::circle(double x, double y,double r) {
   // Last argument must be 0 (counter-clockwise) or it draws nothing under __LP64__ !!!!
   CGContextSetShouldAntialias(fl_gc, true);
   CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
-  (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
+  (what == POLYGON ? CGContextFillPath : CGContextStrokePath_fixed)(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
