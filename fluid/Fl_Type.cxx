@@ -242,9 +242,9 @@ int Widget_Browser::item_height(void *l) const {
   Fl_Type *t = (Fl_Type*)l;
   if (t->visible) {
     if (show_comments && t->comment())
-      return textsize()*2+1;
+      return textsize()*2+4;
     else
-      return textsize()+2;
+      return textsize()+5;
   }
   return 0;
 }
@@ -286,14 +286,18 @@ extern const char* subclassname(Fl_Type*);
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
-    
+
   // calculate the horizontal start position of this item
   // 3 is the edge of the browser
   // 13 is the width of the arrow that indicates children for the item
   // 18 is the width of the icon
   // 12 is the indent per level
   X += 3 + 13 + 18 + l->level * 12;
-  
+
+  // calculate the horizontal start position and width of the separator line
+  int x1 = X;
+  int w1 = w() - x1;
+
   // items can contain a comment. If they do, the comment gets a second text
   // line inside this browser line
   int comment_incr = 0;
@@ -318,7 +322,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (l->new_selected) fl_color(fl_contrast(FL_FOREGROUND_COLOR,FL_SELECTION_COLOR));
   else fl_color(FL_FOREGROUND_COLOR);
   
-  // Width=10: Draw the triangle that indicate possible children
+  // Width=10: Draw the triangle that indicates possible children
   if (l->is_parent()) {
     X = X - 18 - 13;
     if (!l->next || l->next->level <= l->level) {
@@ -331,7 +335,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
       }
     } else {
       if (l->open_!=(l==pushedtitle)) {
-        // afilled  triangle to the right indicates closed item, with children
+        // a filled triangle to the right indicates closed item, with children
         fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
         // a filled triangle to the bottom indicates open item, with children
@@ -390,6 +394,13 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
     *p = 0;
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     fl_draw(buf, X, Y+13);
+  }
+
+  // draw a thin line below the item if this item is not selected
+  // (if it is selected this additional line would look bad)
+  if (!l->new_selected) {
+    fl_color(fl_lighter(FL_GRAY));
+    fl_line(x1,Y+16,x1+w1,Y+16);
   }
 }
 
