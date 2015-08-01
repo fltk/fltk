@@ -3384,29 +3384,10 @@ void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
   [clip declareTypes:[NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, nil] owner:nil];
   [clip setData:(NSData*)pdfdata forType:PDF_pasteboard_type];
   //second, transform this PDF to a bitmap image and put it as tiff in clipboard
-  NSPDFImageRep *vectorial = [[NSPDFImageRep alloc] initWithData:(NSData*)pdfdata];
+  NSImage *image = [[NSImage alloc] initWithData:(NSData*)pdfdata];
   CFRelease(pdfdata);
-  NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                                     pixelsWide:width
-                                                                     pixelsHigh:height
-                                                                  bitsPerSample:8
-                                                                samplesPerPixel:3
-                                                                       hasAlpha:NO
-                                                                       isPlanar:NO
-                                                                 colorSpaceName:NSDeviceRGBColorSpace
-                                                                    bytesPerRow:width*4
-                                                                   bitsPerPixel:32];
-  memset([bitmap bitmapData], -1, [bitmap bytesPerRow] * [bitmap pixelsHigh]);
-  NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap
-                                                   forKey:NSGraphicsContextDestinationAttributeName];
-  NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
-  // this method of drawing to a bitmap requires Mac OS 10.4
-  [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
-  [vectorial draw];
-  [vectorial release];
-  [NSGraphicsContext setCurrentContext:oldgc];
-  [clip setData:[bitmap TIFFRepresentation] forType:TIFF_pasteboard_type];
-  [bitmap release];
+  [clip setData:[image TIFFRepresentation] forType:TIFF_pasteboard_type];
+  [image release];
 }
 
 ////////////////////////////////////////////////////////////////
@@ -3513,85 +3494,45 @@ static int get_plain_text_from_clipboard(int clipboard)
 
 static Fl_Image* get_image_from_clipboard(Fl_Widget *receiver)
 {
-  Fl_RGB_Image *image = NULL;
-  uchar *imagedata;
-  NSBitmapImageRep *bitmap;
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
-  NSArray  *possible = [NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, PICT_pasteboard_type, nil];
+  NSArray  *possible = [NSArray arrayWithObjects:TIFF_pasteboard_type, PDF_pasteboard_type, PICT_pasteboard_type, nil];
   NSString *found = nil;
   NSUInteger rank;
-  for (NSUInteger i = 0; i < [possible count]; i++) {
+  for (NSUInteger i = 0; (!found) && i < [possible count]; i++) {
     for (rank = 0; rank < [present count]; rank++) { // find first of possible types present in pasteboard
       if ([[present objectAtIndex:rank] isEqualToString:[possible objectAtIndex:i]]) {
         found = [present objectAtIndex:rank];
-        goto after_loop;
+        break;
       }
     }
   }
-after_loop:
-  if (found) {
-    NSData *data = [clip dataForType:found];
-    if (data) {
-      if ([found isEqualToString:TIFF_pasteboard_type]) {
-        bitmap = [NSBitmapImageRep imageRepWithData:data];
-        int bpp = [bitmap bytesPerPlane];
-        int bpr = [bitmap bytesPerRow];
-        int depth = [bitmap samplesPerPixel], w = bpr/depth, h = bpp/bpr;
-        imagedata = new uchar[w * h * depth];
-        memcpy(imagedata, [bitmap bitmapData], w * h * depth);
-        image = new Fl_RGB_Image(imagedata, w, h, depth);
-        image->alloc_array = 1;
-      }
-      else if ([found isEqualToString:PDF_pasteboard_type] || [found isEqualToString:PICT_pasteboard_type]) {
-        NSRect rect;
-        NSImageRep *vectorial;
-        NSAffineTransform *dilate = [NSAffineTransform transform];
-        if ([found isEqualToString:PDF_pasteboard_type] ) {
-          vectorial = [NSPDFImageRep imageRepWithData:data];
-          rect = [(NSPDFImageRep*)vectorial bounds]; // in points =  1/72 inch
-          Fl_Window *win = receiver->top_window();
-          if (!win) win = Fl::first_window();
-          int screen_num = win ? Fl::screen_num(win->x(), win->y(), win->w(), win->h()) : 0;
-          float hr, vr;
-          Fl::screen_dpi(hr, vr, screen_num); // 1 inch = hr pixels = 72 points -> hr/72 pixel/point
-          CGFloat scale = hr/72;
-          [dilate scaleBy:scale];
-          rect.size.width *= scale;
-          rect.size.height *= scale;
-          rect = NSIntegralRect(rect);
-        }
-        else {
-          vectorial = [NSPICTImageRep imageRepWithData:data];
-          rect = [(NSPICTImageRep*)vectorial boundingBox]; // in pixel, no scaling required
-        }
-        imagedata = new uchar[(int)(rect.size.width * rect.size.height) * 4];
-        memset(imagedata, -1, (int)(rect.size.width * rect.size.height) * 4);
-        bitmap = [[NSBitmapImageRep alloc]  initWithBitmapDataPlanes:&imagedata
-                                                          pixelsWide:rect.size.width
-                                                          pixelsHigh:rect.size.height
-                                                       bitsPerSample:8
-                                                     samplesPerPixel:3
-                                                            hasAlpha:NO
-                                                            isPlanar:NO
-                                                      colorSpaceName:NSDeviceRGBColorSpace
-                                                         bytesPerRow:rect.size.width*4
-                                                        bitsPerPixel:32];
-        NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap 
-                                                         forKey:NSGraphicsContextDestinationAttributeName];
-        NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
-        // this method of drawing to a bitmap requires Mac OS 10.4
-        [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
-        [dilate concat];
-        [vectorial draw];
-        [NSGraphicsContext setCurrentContext:oldgc];
-        [bitmap release];
-        image = new Fl_RGB_Image(imagedata, rect.size.width, rect.size.height, 4);
-        image->alloc_array = 1;
-      }
-      Fl::e_clipboard_type = Fl::clipboard_image;
-    }
+  if (!found) return NULL;
+  NSData *data = [clip dataForType:found];
+  if (!data) return NULL;
+  NSBitmapImageRep *bitmap = nil;
+  if ([found isEqualToString:TIFF_pasteboard_type]) {
+    bitmap = [[NSBitmapImageRep alloc] initWithData:data];
   }
+  else if ([found isEqualToString:PDF_pasteboard_type] || [found isEqualToString:PICT_pasteboard_type]) {
+    NSImage *nsimg = [[NSImage alloc] initWithData:data];
+    [nsimg lockFocus];
+    bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, [nsimg size].width, [nsimg size].height)];
+    [nsimg unlockFocus];
+    [nsimg release];
+  }
+  if (!bitmap) return NULL;
+  int bytesPerPixel([bitmap bitsPerPixel]/8);
+  int bpr([bitmap bytesPerRow]);
+  int bpp([bitmap bytesPerPlane]);
+  int hh(bpp/bpr);
+  int ww(bpr/bytesPerPixel);
+  uchar *imagedata = new uchar[bpr * hh];
+  memcpy(imagedata, [bitmap bitmapData], bpr * hh);
+  Fl_RGB_Image *image = new Fl_RGB_Image(imagedata, ww, hh, bytesPerPixel);
+  image->alloc_array = 1;
+  [bitmap release];
+  Fl::e_clipboard_type = Fl::clipboard_image;
   return image;
 }
 
@@ -4212,11 +4153,19 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
       rect = NSMakeRect(x, win->h()-(y+h), w, h);
       // lock focus to win's view
       winview = [fl_xid(win) contentView];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+      if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] saveGraphicsState]; // necessary under 10.11
+#endif
       [winview lockFocus];
     }
     // The image depth is 3 until 10.5 and 4 with 10.6 and above
     bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
-    if ( !( through_Fl_X_flush && Fl_Window::current() == win) ) {[winview unlockFocus];}
+    if ( !( through_Fl_X_flush && Fl_Window::current() == win) ) {
+      [winview unlockFocus];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+      if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] restoreGraphicsState];
+#endif
+    }
     if (!bitmap) return nil;
   }
   
