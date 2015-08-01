@@ -195,6 +195,20 @@ void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
 #endif
 }
 
+#ifdef __APPLE_QUARTZ__
+void CGContextStrokePath_fixed(CGContextRef c)
+{
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 101100) {
+    // bizarrely, CGContextStrokePath does not work with 10.11 after mouse click or keydown event
+    CGContextReplacePathWithStrokedPath(c); // needs 10.4
+    CGContextFillPath(c);
+  } else
+#endif
+    CGContextStrokePath(c);
+}
+#endif
+
 void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y), clip_x(x1), clip_x(y));
@@ -202,21 +216,16 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
 #elif defined(__APPLE_QUARTZ__)
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  if (fl_mac_os_version >= 101100) {
-    // bizarrely, the line drawing does not always work with 10.11, draw a thin rectangle instead
-    CGContextFillRect(fl_gc, CGRectMake((x1>x?x:x1) - 0.5, y - fl_quartz_line_width_/2, (x1>x?x1-x:x-x1)+1, fl_quartz_line_width_));
-   } else {
-    CGContextMoveToPoint(fl_gc, x, y);
-    CGContextAddLineToPoint(fl_gc, x1, y);
-    CGContextStrokePath(fl_gc);
-    if (Fl_Display_Device::high_resolution()) {
-      /* On retina displays, all xyline() and yxline() functions produce lines that are half-unit
-       (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
-       of size one unit by line-width.
-       */
-      CGContextFillRect(fl_gc, CGRectMake(x-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-      CGContextFillRect(fl_gc, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    }
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextStrokePath_fixed(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    /* On retina displays, all xyline() and yxline() functions produce lines that are half-unit
+     (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
+     of size one unit by line-width.
+     */
+    CGContextFillRect(fl_gc, CGRectMake(x-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(fl_gc, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
@@ -241,7 +250,7 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   if (Fl_Display_Device::high_resolution()) {
     CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(fl_gc, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
@@ -272,7 +281,7 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
   CGContextAddLineToPoint(fl_gc, x3, y2);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   if (Fl_Display_Device::high_resolution()) {
     CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(fl_gc, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
@@ -292,20 +301,13 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
 #elif defined(__APPLE_QUARTZ__)
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  if (fl_mac_os_version >= 101100) {
-    // bizarrely, the line drawing does not always work with 10.11, draw a thin rectangle instead
-    CGContextFillRect(fl_gc, CGRectMake(x - fl_quartz_line_width_/2, (y>y1?y1:y) - 0.5,
-                                        fl_quartz_line_width_ , (y>y1?y-y1:y1-y)+1));
-  }
-  else {
     CGContextMoveToPoint(fl_gc, x, y);
     CGContextAddLineToPoint(fl_gc, x, y1);
-    CGContextStrokePath(fl_gc);
+    CGContextStrokePath_fixed(fl_gc);
     if (Fl_Display_Device::high_resolution()) {
       CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
       CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
     }
-  }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
@@ -329,7 +331,7 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   if (Fl_Display_Device::high_resolution()) {
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(fl_gc, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
@@ -360,7 +362,7 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
   CGContextAddLineToPoint(fl_gc, x2, y3);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   if (Fl_Display_Device::high_resolution()) {
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(fl_gc, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
@@ -384,7 +386,7 @@ void Fl_Graphics_Driver::line(int x, int y, int x1, int y1) {
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
@@ -410,7 +412,7 @@ void Fl_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
@@ -436,7 +438,7 @@ void Fl_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextClosePath(fl_gc);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
@@ -465,7 +467,7 @@ void Fl_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int 
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextAddLineToPoint(fl_gc, x3, y3);
   CGContextClosePath(fl_gc);
-  CGContextStrokePath(fl_gc);
+  CGContextStrokePath_fixed(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
