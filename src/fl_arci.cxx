@@ -66,8 +66,7 @@ void Fl_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
     float r = (w+h)*0.25f-0.5f;
     CGContextAddArc(fl_gc, cx, cy, r, a1, a2, 1);
   }
-  extern void CGContextStrokePath_fixed(CGContextRef);
-  CGContextStrokePath_fixed(fl_gc);
+  CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
