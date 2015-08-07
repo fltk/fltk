@@ -779,7 +779,9 @@ double fl_mac_flush_and_wait(double time_to_wait) {
     // the idle function may turn off idle, we can then wait:
     if (Fl::idle) time_to_wait = 0.0;
   }
+  NSDisableScreenUpdates(); // 10.3 Makes updates to all windows appear as a single event
   Fl::flush();
+  NSEnableScreenUpdates(); // 10.3
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
@@ -3047,10 +3049,6 @@ void Fl_X::make(Fl_Window* w)
     x->changed_resolution(false);
 #endif
     [cw makeKeyAndOrderFront:nil];
-    if (fl_mac_os_version >= 101100) { // these two messages seem necessary to make the window appear on screen
-      [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
-      [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
-    }
   }
   
   if (!w->parent()) {
@@ -3087,6 +3085,13 @@ void Fl_Window::size_range_() {
   }
 }
 
+void Fl_X::do_wait_for_expose()
+{ // this will make freshly created windows appear on the screen
+  [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+  if (fl_mac_os_version >= 101100) { // this extra message seems necessary with 10.11
+    [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+  }
+}
 
 /*
  * returns pointer to the filename, or null if name ends with ':'
@@ -3340,7 +3345,7 @@ void Fl_X::q_clear_clipping() {
 void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;
   if (!fl_gc) return;
-  CGContextRestoreGState(fl_gc); // KEEP IT: matches the CGContextSaveGState of make_current
+  CGContextRestoreGState(fl_gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(fl_gc);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   Fl_X::set_high_resolution(false);
