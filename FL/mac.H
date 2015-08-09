@@ -212,7 +212,8 @@ public:
 private:
 #if FLTK_ABI_VERSION >= 10304
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
-  // stores 2 binary flags: whether window is mapped to retina display; whether resolution just changed
+  // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
+  // whether window is OpenGL and is currently being resized.
   unsigned mapped_to_retina_;
 #else
   bool subwindow;     // for ABI compatibility, useless with true subwindows
