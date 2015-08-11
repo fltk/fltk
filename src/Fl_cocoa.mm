@@ -3085,11 +3085,13 @@ void Fl_Window::size_range_() {
   }
 }
 
-void Fl_X::do_wait_for_expose()
-{ // this will make freshly created windows appear on the screen
-  [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
-  if (fl_mac_os_version >= 101100) { // this extra message seems necessary with 10.11
-    [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
+void Fl_Window::wait_for_expose()
+{
+  if (shown()) {
+    // this makes freshly created windows appear on the screen, if they are not there already
+    NSModalSession session = [NSApp beginModalSessionForWindow:i->xid];
+    [NSApp runModalSession:session];
+    [NSApp endModalSession:session];
   }
 }
 

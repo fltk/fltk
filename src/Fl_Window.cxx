@@ -401,6 +401,8 @@ void Fl_Window::free_icons() {
 #endif
 }
 
+
+#ifndef __APPLE__
 /**
   Waits for the window to be displayed after calling show().
 
@@ -462,14 +464,11 @@ void Fl_Window::free_icons() {
 
 void Fl_Window::wait_for_expose() {
   if (!shown()) return;
-#ifdef __APPLE__
-  Fl_X::do_wait_for_expose();
-#else
   while (!i || i->wait_for_expose) {
     Fl::wait();
   }
-#endif
 }
+#endif  // ! __APPLE__
 
 //
 // End of "$Id$".
