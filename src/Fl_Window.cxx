@@ -413,10 +413,12 @@ void Fl_Window::free_icons() {
   matter, but in some cases you may want to have the window instantiated
   and displayed synchronously.
 
-  Currently (as of FLTK 1.3.3) this method only has an effect on X11.
-  On Windows and Mac OS X show() is always synchronous. If you want to
-  write portable code and need this synchronous show() feature, add
-  win->wait_for_expose() on all platforms, and FLTK will just do the
+  Currently (as of FLTK 1.3.4) this method has an effect on X11 and Mac OS.
+  On Windows, show() is always synchronous. The effect of show() varies with
+  versions of Mac OS X: early versions have the window appear on the screen
+  when show() returns, later versions don't.
+  If you want to write portable code and need this synchronous show() feature,
+  add win->wait_for_expose() on all platforms, and FLTK will just do the
   right thing.
 
   This method can be used for displaying splash screens before
