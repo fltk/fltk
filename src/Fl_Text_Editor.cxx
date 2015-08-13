@@ -192,7 +192,13 @@ void Fl_Text_Editor::remove_all_key_bindings(Key_Binding** list) {
   *list = 0;
 }
 
-/** Removes the key binding associated with the key "key" of state "state" */
+/** Removes the key binding associated with the key \p key of state \p state
+    from the Key_Binding list \p list.
+
+    This can be used in derived classes to remove global key bindings
+    by using the global (static) Key_Binding list
+    Fl_Text_Editor::global_key_bindings.
+*/
 void Fl_Text_Editor::remove_key_binding(int key, int state, Key_Binding** list) {
   Key_Binding *cur, *last = 0;
   for (cur = *list; cur; last = cur, cur = cur->next)
@@ -202,7 +208,14 @@ void Fl_Text_Editor::remove_key_binding(int key, int state, Key_Binding** list) 
   else *list = cur->next;
   delete cur;
 }
-/** Adds a key of state "state" with the function "function" */
+
+/** Adds a \p key of state \p state with the function \p function to an
+    arbitrary key binding list \p list.
+
+    This can be used in derived classes to add global key bindings
+    by using the global (static) Key_Binding list
+    Fl_Text_Editor::global_key_bindings.
+*/
 void Fl_Text_Editor::add_key_binding(int key, int state, Key_Func function,
                                 Key_Binding** list) {
   Key_Binding* kb = new Key_Binding;
