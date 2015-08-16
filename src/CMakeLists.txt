@@ -316,6 +316,14 @@ if(HAVE_XINERAMA)
    target_link_libraries(fltk_SHARED ${X11_Xinerama_LIB})
 endif(HAVE_XINERAMA)
 
+if(HAVE_XFIXES)
+   target_link_libraries(fltk_SHARED ${X11_Xfixes_LIB})
+endif(HAVE_XFIXES)
+
+if(HAVE_XCURSOR)
+   target_link_libraries(fltk_SHARED ${X11_Xcursor_LIB})
+endif(HAVE_XCURSOR)
+
 if(USE_XFT)
    target_link_libraries(fltk_SHARED ${X11_Xft_LIB})
    if(LIB_fontconfig)
