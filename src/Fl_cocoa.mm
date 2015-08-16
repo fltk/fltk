@@ -4093,6 +4093,15 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
  to_width is the width in screen units of "to". On retina, its pixel width is twice that.
  */
 {
+  const uchar *from_data = [from bitmapData];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400 && ([to bitmapFormat] & NSAlphaFirstBitmapFormat) && !([from bitmapFormat] & NSAlphaFirstBitmapFormat) ) { // 10.4
+    // "to" is ARGB and "from" is RGBA --> convert "from" to ARGB
+    // it is enough to read "from" starting one byte earlier, because A is always 0xFF:
+    // RGBARGBA becomes (A)RGBARGB
+    from_data--;
+  }
+#endif
   int to_w = (int)[to pixelsWide]; // pixel width of "to"
   int from_w = (int)[from pixelsWide]; // pixel width of "from"
   int from_h = [from pixelsHigh]; // pixel height of "from"
@@ -4105,17 +4114,23 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
   to_y = factor*to_y;
   // perform the copy
   uchar *tobytes = [to bitmapData] + to_y * to_w * to_depth + to_x * to_depth;
-  uchar *frombytes = [from bitmapData];
+  uchar *first = tobytes;
+  const uchar *frombytes = from_data;
   for (int i = 0; i < from_h; i++) {
-    if (depth == 0) memcpy(tobytes, frombytes, from_w * from_depth);
-    else {
+    if (depth == 0) {
+      if (i > 0 || from_data >= [from bitmapData]) memcpy(tobytes, frombytes, from_w * from_depth);
+      else memcpy(tobytes+1, frombytes+1, from_w * from_depth-1); // avoid reading before [from bitmapData]
+    } else {
       for (int j = 0; j < from_w; j++) {
-        memcpy(tobytes + j * to_depth, frombytes + j * from_depth, depth);
+        // avoid reading before [from bitmapData]
+        if (j==0 && i==0 && from_data < [from bitmapData]) memcpy(tobytes+1, frombytes+1, depth-1);
+        else memcpy(tobytes + j * to_depth, frombytes + j * from_depth, depth);
       }
     }
     tobytes += to_w * to_depth;
     frombytes += from_w * from_depth;
   }
+  if (from_data == [from bitmapData] - 1) *first = 0xFF; // set the very first A byte
 }
 
 
@@ -4191,20 +4206,6 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     if (childbitmap) {
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
       if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-      if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat) && !([childbitmap bitmapFormat] & NSAlphaFirstBitmapFormat) ) { // 10.4
-        // bitmap is ARGB and childbitmap is RGBA --> convert childbitmap to ARGB too
-        uchar *b = [childbitmap bitmapData];
-        for (int i = 0; i < [childbitmap pixelsHigh]; i++) {
-          for (int j = 0; j < [childbitmap pixelsWide]; j++) {
-            uchar A = *(b+3);
-            memmove(b+1, b, 3);
-            *b = A;
-            b += 4;
-          }
-        }
-      }
-#endif
       write_bitmap_inside(bitmap, w, childbitmap,
                           clip.origin.x - x, win->h() - clip.origin.y - clip.size.height - y );
     }
@@ -4228,22 +4229,18 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   int bpr = (int)[bitmap bytesPerRow];
   int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason, and hh = 2*h with retina
   int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1, and ww = 2*w with retina
+  const uchar *start = [bitmap bitmapData]; // start of the bitmap data
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat)) { // imagerep is ARGB --> convert it to RGBA
-    uchar *b = [bitmap bitmapData];
-    for (int i = 0; i < hh; i++) {
-      for (int j = 0; j < ww; j++) {
-        uchar A = *b;
-        memmove(b, b+1, 3);
-        *(b+3) = A;
-        b += 4;
-      }
-    }
+  if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat)) {
+    // bitmap is ARGB --> convert it to RGBA
+    // it is enough to offset reading by one byte because A is always 0xFF
+    // so ARGBARGB becomes RGBARGBA as needed
+    start++;
   }
 #endif
   unsigned char *data;
   if (ww > w) { // with a retina display
-    Fl_RGB_Image *rgb = new Fl_RGB_Image([bitmap bitmapData], ww, hh, 4);
+    Fl_RGB_Image *rgb = new Fl_RGB_Image(start, ww, hh, 4);
     Fl_RGB_Scaling save_scaling = Fl_Image::RGB_scaling();
     Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR);
     Fl_RGB_Image *rgb2 = (Fl_RGB_Image*)rgb->copy(w, h);
@@ -4256,9 +4253,9 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   else {
     data = new unsigned char[w * h *  *bytesPerPixel];
     if (w == ww) {
-      memcpy(data, [bitmap bitmapData], w * hh *  *bytesPerPixel);
+      memcpy(data, start, w * hh *  *bytesPerPixel);
     } else {
-      unsigned char *p = [bitmap bitmapData];
+      const uchar *p = start;
       unsigned char *q = data;
       for(int i = 0;i < hh; i++) {
         memcpy(q, p, *bytesPerPixel * ww);
@@ -4267,6 +4264,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
       }
     }
   }
+  if (start == [bitmap bitmapData] + 1) data[w*h*4-1] = 0xFF; // set the last A byte
   [bitmap release];
   return data;
 }
