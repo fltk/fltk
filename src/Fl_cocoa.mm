@@ -4142,16 +4142,17 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
   Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
   if (!pi) return nil;
   Fl_RGB_Image *img = pi->rectangle_capture(win, x, y, w, h);
-  Fl_Offscreen offscreen = fl_create_offscreen(img->w(), img->h());
-  fl_begin_offscreen(offscreen);
-  CGRect rect = CGRectMake(0, 0, img->w(), img->h());
-  Fl_X::q_begin_image(rect, 0, 0, img->w(), img->h()); // flip the image
-  img->draw(0, 0);
-  Fl_X::q_end_image();
-  fl_end_offscreen();
   NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:img->w() pixelsHigh:img->h() bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*img->w() bitsPerPixel:32];
-  memcpy([bitmap bitmapData], CGBitmapContextGetData(offscreen), CGBitmapContextGetBytesPerRow(offscreen)*CGBitmapContextGetHeight(offscreen));
-  fl_delete_offscreen(offscreen);
+  memset([bitmap bitmapData], 0xFF, [bitmap bytesPerPlane]);
+  const uchar *from = img->array;
+  for (int r = img->h() - 1; r >= 0; r--) {
+    uchar *to = [bitmap bitmapData] + r * [bitmap bytesPerRow];
+    for (int c = 0; c < img->w(); c++) {
+      memcpy(to, from, 3);
+      from += 3;
+      to += 4;
+    }
+  }
   delete img;
   return bitmap;
 }
