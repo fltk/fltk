@@ -1731,9 +1731,10 @@ void fl_open_display() {
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
     if (![NSThread isMultiThreaded]) {
-      // necessary for secondary pthreads to be allowed to use cocoa,
-      // especially to create an NSAutoreleasePool.
-      [NSThread detachNewThreadSelector:nil toTarget:nil withObject:nil];
+      // With older OS X versions, it is necessary to create one thread for secondary pthreads to be
+      // allowed to use cocoa, especially to create an NSAutoreleasePool.
+      // We create a thread that will complete very fast:
+      [NSThread detachNewThreadSelector:@selector(unhide:) toTarget:NSApp withObject:nil];
     }
   }
 }
