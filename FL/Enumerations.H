@@ -121,9 +121,7 @@
 
     \see Fl::api_version()
  */
-#define FL_API_VERSION	( FL_MAJOR_VERSION * 10000 + \
-			  FL_MINOR_VERSION * 100 + \
-			  FL_PATCH_VERSION )
+#define FL_API_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100 + FL_PATCH_VERSION)
 
 /**
     The FLTK ABI (Application Binary Interface) version number as an \em int.
