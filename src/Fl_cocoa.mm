@@ -1113,6 +1113,7 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
+- (void)doNothing:(id)unused;
 @end
 
 
@@ -1409,6 +1410,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     }
   }
   fl_unlock_function();
+}
+- (void)doNothing:(id)unused
+{
+  return;
 }
 @end
 
@@ -1731,10 +1736,10 @@ void fl_open_display() {
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
     if (![NSThread isMultiThreaded]) {
-      // With older OS X versions, it is necessary to create one thread for secondary pthreads to be
+      // With old OS X versions, it is necessary to create one thread for secondary pthreads to be
       // allowed to use cocoa, especially to create an NSAutoreleasePool.
-      // We create a thread that will complete very fast:
-      [NSThread detachNewThreadSelector:@selector(unhide:) toTarget:NSApp withObject:nil];
+      // We create a thread that does nothing so it completes very fast:
+      [NSThread detachNewThreadSelector:@selector(doNothing:) toTarget:[FLWindowDelegate singleInstance] withObject:nil];
     }
   }
 }
