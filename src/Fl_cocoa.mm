@@ -79,6 +79,7 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
+static SEL inputContext_SEL = @selector(inputContext);
 
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -2034,14 +2035,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  that implements the NSTextInputClient protocol to properly handle text input. It also implements the old NSTextInput
  protocol to run with OS <= 10.4. The few NSTextInput protocol methods that differ in signature from the NSTextInputClient 
  protocol transmit the received message to the corresponding NSTextInputClient method.
- If OS < 10.6, the FLView class implements differently its fl_handle_keydown_event method.
 
  Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
  ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
- The keyDown: method calls [myview fl_handle_keydown_event:theEvent] (equivalent to [[myview inputContext] handleEvent:theEvent])
- that triggers system processing of keyboard events.
+ The keyDown: method calls [[myview performSelector:inputContext_SEL] handleEvent:theEvent] that is equivalent to
+ [[myview inputContext] handleEvent:theEvent], and triggers system processing of keyboard events.
  The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window)
- when the Ctrl or Cmd modifiers are used. If not, it also calls [myview fl_handle_keydown_event:theEvent].
+ when the Ctrl or Cmd modifiers are used. If not, it also calls [[myview inputContext] handleEvent:theEvent].
  The performKeyEquivalent: method returns YES when the keystroke has been handled and NO otherwise, which allows
  shortcuts of the system menu to be processed. Three sorts of messages are then sent back by the system to myview: 
  doCommandBySelector:, setMarkedText: and insertText:. All 3 messages eventually produce Fl::handle(FL_KEYBOARD, win) calls.
@@ -2073,9 +2073,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  selectedRange = NSMakeRange(100, 0); to indicate no text is selected. The setMarkedText: method does   
  selectedRange = NSMakeRange(100, newSelection.length); to indicate that this length of text is selected.
 
- With OS <= 10.5, the fl_handle_keydown_event: method is implemented differently because neither the
- inputContext nor the handleEvent: methods are available.
- It becomes [[FLTextInputContext singleInstance] handleEvent:event].
+ With OS <= 10.5, the NSView class does not implement the inputContext message. The inputContext_SEL selector is 
+ assigned inputContextBefore10_6 which returns [FLTextInputContext singleInstance].
  Method +[FLTextInputContext singleInstance] returns an instance of class FLTextInputContext that possesses
  a handleEvent: method. The class FLTextView implements the so-called view's "field editor". This editor is an instance
  of the FLTextView class allocated by the -(id)[FLWindowDelegate windowWillReturnFieldEditor: toObject:] method.
@@ -2163,8 +2162,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   NSInteger identifier;
   NSRange selectedRange;
 }
++ (void)initialize;
 + (void)prepareEtext:(NSString*)aString;
 + (void)concatEtext:(NSString*)aString;
+- (id)inputContextBefore10_6;
 - (id)initWithFrame:(NSRect)frameRect;
 - (void)drawRect:(NSRect)rect;
 - (BOOL)acceptsFirstResponder;
@@ -2191,7 +2192,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
 - (void)draggingExited:(id < NSDraggingInfo >)sender;
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal;
-- (BOOL)fl_handle_keydown_event:(NSEvent*)event;
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 - (void)insertText:(id)aString replacementRange:(NSRange)replacementRange;
 - (void)setMarkedText:(id)aString selectedRange:(NSRange)newSelection replacementRange:(NSRange)replacementRange;
@@ -2202,6 +2202,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 @end
 
 @implementation FLView
++ (void)initialize
+{
+  if (fl_mac_os_version < 100600) inputContext_SEL = @selector(inputContextBefore10_6);
+}
+- (id)inputContextBefore10_6
+{
+  return [FLTextInputContext singleInstance];
+}
 - (id)initWithFrame:(NSRect)frameRect
 {
   static NSInteger counter = 0;
@@ -2249,7 +2257,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   else {
     in_key_event = YES;
     need_handle = NO;
-    handled = [self fl_handle_keydown_event:theEvent];
+    handled = [[self performSelector:inputContext_SEL] handleEvent:theEvent];
     if (need_handle) handled = Fl::handle(FL_KEYBOARD, w);
     in_key_event = NO;
     }
@@ -2322,7 +2330,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     [FLView prepareEtext:[theEvent characters]];
   } else {
     need_handle = NO;
-    [self fl_handle_keydown_event:theEvent];
+    [[self performSelector:inputContext_SEL] handleEvent:theEvent];
   }
   if (need_handle) Fl::handle(FL_KEYBOARD, window);
   in_key_event = NO;
@@ -2449,13 +2457,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
   return NSDragOperationGeneric;
-}
-
-- (BOOL)fl_handle_keydown_event:(NSEvent*)event {
-  return fl_mac_os_version >= 100600 ?
-          [[self performSelector:@selector(inputContext)] handleEvent:event]
-          :
-          [[FLTextInputContext singleInstance] handleEvent:event];
 }
 
 + (void)prepareEtext:(NSString*)aString {
