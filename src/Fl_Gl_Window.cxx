@@ -101,20 +101,12 @@ void Fl_Gl_Window::show() {
 
 int Fl_Gl_Window::pixel_w()
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   return Fl_X::resolution_scaling_factor(this) * w();
-#else
-  return w();
-#endif
 }
 
 int Fl_Gl_Window::pixel_h()
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   return Fl_X::resolution_scaling_factor(this) * h();
-#else
-  return h();
-#endif
 }
 
 #endif // __APPLE__
@@ -184,7 +176,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 void Fl_Gl_Window::make_current() {
 //  puts("Fl_Gl_Window::make_current()");
 //  printf("make_current: context_=%p\n", context_);
-#if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+#if defined(__APPLE__)
   // detect if the window was moved between low and high resolution displays
   if (Fl_X::i(this)->changed_resolution()){
     Fl_X::i(this)->changed_resolution(false);

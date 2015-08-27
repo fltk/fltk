@@ -162,12 +162,10 @@ public:
   CGRect* subRect() { return (CGRect*)subRegion; } // getter
   void subRect(CGRect *r) { subRegion = (Fl_Region)r; } // setter
 #endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   bool mapped_to_retina();      // is window mapped to retina display?
   void mapped_to_retina(bool);  // sets whether window is mapped to retina display
   bool changed_resolution();      // did window just moved to display with another resolution?
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
-#endif
   bool in_windowDidResize();      // is window performing windowDidResize?
   void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
   // Quartz additions:

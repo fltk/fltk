@@ -1158,14 +1158,17 @@ void Fl_X::in_windowDidResize(bool b) {
 #endif
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 //determines whether a window is mapped to a retina display
 static void compute_mapped_to_retina(Fl_Window *window)
 {
   if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
     Fl_X *flx = Fl_X::i(window);
     bool previous = flx->mapped_to_retina();
-    NSSize s = [[flx->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
+    // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
+    //NSSize s = [[flx->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+    typedef NSSize (*convertSizeIMP)(id, SEL, NSSize);
+    static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
+    NSSize s = addr([flx->xid contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
     flx->mapped_to_retina( int(s.width + 0.5) > 10 );
     if (previous != flx->mapped_to_retina()) flx->changed_resolution(true);
     // window needs redrawn when moving from low res to retina
@@ -1219,7 +1222,6 @@ void Fl_X::changed_resolution(bool b) {
 #endif
 }
 
-#endif // MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 
 @interface FLWindowDelegateBefore10_6 : FLWindowDelegate
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
@@ -1284,9 +1286,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     parent = parent->window();
   }
   window->position((int)pt2.x, (int)pt2.y);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   compute_mapped_to_retina(window);
-#endif
   if (fl_mac_os_version < 100700) { // after move, redraw parent and children of GL windows
     parent = window->window();
     if (parent && parent->as_gl_window()) window->redraw();
@@ -2677,11 +2677,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 // For Fl_Gl_Window on retina display, returns 2, otherwise 1
 int Fl_X::resolution_scaling_factor(Fl_Window* win)
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-  return (win->as_gl_window() && Fl::use_high_res_GL() && win->i->mapped_to_retina()) ? 2 : 1;
-#else
-  return 1;
-#endif
+  return (fl_mac_os_version >= 100700 && win->as_gl_window() && Fl::use_high_res_GL() && win->i->mapped_to_retina()) ? 2 : 1;
 }
 
 
@@ -2919,11 +2915,9 @@ void Fl_X::make(Fl_Window* w)
     x->subRect(0);
     x->cursor = NULL;
     x->gc = 0;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (w->parent()) x->mapped_to_retina( w->top_window()->i->mapped_to_retina() );
     else x->mapped_to_retina(false);
     x->changed_resolution(false);
-#endif
   
     NSRect crect;
     if (w->fullscreen_active()) {
@@ -2987,11 +2981,12 @@ void Fl_X::make(Fl_Window* w)
       Fl_X::first = x;
     }
     FLView *myview = [[FLView alloc] initWithFrame:crect];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     if (w->as_gl_window() && fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
-      [myview setWantsBestResolutionOpenGLSurface:YES];
+      //replaces  [myview setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
+      typedef void (*bestResolutionIMP)(id, SEL, BOOL);
+      static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
+      addr(myview, @selector(setWantsBestResolutionOpenGLSurface:), YES);
     }
-#endif
     [cw setContentView:myview];
     [myview release];
     [cw setLevel:winlevel];
@@ -3049,12 +3044,10 @@ void Fl_X::make(Fl_Window* w)
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
   } else {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
     // this is useful for menu/tooltip windows where no windowDidMove notification is received
     // so they are drawn at high res already at first time
     compute_mapped_to_retina(w);
     x->changed_resolution(false);
-#endif
     [cw makeKeyAndOrderFront:nil];
   }
   
@@ -3287,9 +3280,7 @@ void Fl_Window::make_current()
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   Fl_X::set_high_resolution( i->mapped_to_retina() );
-#endif
   current_ = this;
   
   NSGraphicsContext *nsgc;
@@ -3356,9 +3347,7 @@ void Fl_X::q_release_context(Fl_X *x) {
   if (!fl_gc) return;
   CGContextRestoreGState(fl_gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(fl_gc);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   Fl_X::set_high_resolution(false);
-#endif
   CGContextFlush(fl_gc);
   fl_gc = 0;
 #if defined(FLTK_USE_CAIRO)
