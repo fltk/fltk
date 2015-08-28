@@ -94,6 +94,9 @@ class NSOpenGLContext;
 
 typedef CGContextRef Fl_Offscreen;
 typedef CFMutableDataRef Fl_CFMutableDataRef;
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+typedef CGImageAlphaInfo CGBitmapInfo;
+#endif
 
 typedef struct flCocoaRegion {
   int count;

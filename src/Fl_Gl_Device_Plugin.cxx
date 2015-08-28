@@ -90,9 +90,6 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
 }
 
 #ifdef __APPLE__
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-typedef CGImageAlphaInfo CGBitmapInfo;
-#endif
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
   delete (Fl_RGB_Image *)info;
