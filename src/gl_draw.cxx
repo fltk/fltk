@@ -446,6 +446,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   memcpy(fifo[current].utf8, str, n);
   fifo[current].utf8[n] = 0;
   fifo[current].width = 0, fifo[current].height = 0;
+  fl_graphics_driver->font_descriptor(gl_fontsize);
   fl_measure(fifo[current].utf8, fifo[current].width, fifo[current].height, 0);
   fifo[current].width *= gl_scale;
   fifo[current].height *= gl_scale;
@@ -456,7 +457,6 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   CGContextRef save_gc = fl_gc;
   fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
-  fl_graphics_driver->font_descriptor(gl_fontsize);
   GLfloat colors[4];
   glGetFloatv(GL_CURRENT_COLOR, colors);
   fl_color((uchar)(colors[0]*255), (uchar)(colors[1]*255), (uchar)(colors[2]*255));
