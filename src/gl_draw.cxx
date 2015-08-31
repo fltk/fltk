@@ -327,6 +327,11 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 
 #if __APPLE__ || defined(FL_DOXYGEN)
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#define kCGBitmapByteOrder32Host 0
+#define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
+#endif
+
 #include <FL/glu.h>  // for gluUnProject()
 
 // manages a fifo pile of pre-computed string textures
@@ -398,9 +403,9 @@ void gl_texture_fifo::display_texture(int rank)
   glDisable (GL_DEPTH_TEST); // ensure text is not removed by depth buffer test.
   glEnable (GL_BLEND); // for text fading
   glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // ditto
-  glEnable (GL_TEXTURE_RECTANGLE_EXT);	
+  glEnable (GL_TEXTURE_RECTANGLE_ARB);
   glDisable(GL_LIGHTING);
-  glBindTexture (GL_TEXTURE_RECTANGLE_EXT, fifo[rank].texName);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[rank].texName);
   glBegin (GL_QUADS);
   glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
   glVertex2f (bounds.origin.x, bounds.origin.y);
@@ -452,10 +457,11 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fifo[current].height *= gl_scale;
   fifo[current].scale = gl_scale;
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  void *base = calloc(4*fifo[current].width, fifo[current].height);
-  if (base == NULL) return -1;
+  void *base = NULL;
+  if (fl_mac_os_version < 100600) base = calloc(4*fifo[current].width, fifo[current].height);
   CGContextRef save_gc = fl_gc;
-  fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
+  fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut,
+                                 (CGBitmapInfo)(kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
   CGColorSpaceRelease(lut);
   GLfloat colors[4];
   glGetFloatv(GL_CURRENT_COLOR, colors);
@@ -465,14 +471,14 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fl_draw(str, n, 0, 0);
   //put this bitmap in a texture
   glPushAttrib(GL_TEXTURE_BIT);
-  glBindTexture (GL_TEXTURE_RECTANGLE_EXT, fifo[current].texName);
-  glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, fifo[current].width, fifo[current].height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, base);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[current].texName);
+  glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, fifo[current].width);
+  glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, fifo[current].width, fifo[current].height, 0,  GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(fl_gc));
   glPopAttrib();
   CGContextRelease(fl_gc);
   fl_gc = save_gc;
-  free(base);
+  if (base) free(base);
   fifo[current].fdesc = gl_fontsize;
   return current;
 }
