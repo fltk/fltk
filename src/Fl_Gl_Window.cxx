@@ -20,9 +20,6 @@
 #if HAVE_GL
 
 extern int fl_gl_load_plugin;
-#ifdef __APPLE__
-extern void gl_texture_reset();
-#endif
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -189,11 +186,6 @@ void Fl_Gl_Window::make_current() {
     context_ = fl_create_gl_context(this, g);
     valid(0);
     context_valid(0);
-#ifdef __APPLE__
-    // resets the pile of string textures used to draw strings
-    // necessary when the context is renewed
-    gl_texture_reset();
-#endif
   }
   fl_set_gl_context(this, context_);
 

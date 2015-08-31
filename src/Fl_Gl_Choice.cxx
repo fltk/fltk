@@ -29,7 +29,9 @@
 
 #  ifdef WIN32
 void fl_save_dc(HWND, HDC);
-#  endif
+#elif defined(__APPLE__)
+extern void gl_texture_reset();
+#endif
 
 static Fl_Gl_Choice *first;
 
@@ -239,6 +241,9 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext context, shared_ctx = 0;
   if (context_list && nContext) shared_ctx = context_list[0];
+  // resets the pile of string textures used to draw strings
+  // necessary before the first context is created
+  if (!shared_ctx) gl_texture_reset();
   context = Fl_X::create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
   if (!context) return 0;
   add_context((GLContext)context);
