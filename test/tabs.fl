@@ -17,7 +17,7 @@ Function {} {open
     } {
       Fl_Group {} {
         label {Label&1}
-        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 resizable
+        tooltip {this tab tests correct keyboard navigation between text input fields} xywh {10 60 315 235} selection_color 1 resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -78,7 +78,7 @@ Function {} {open
       }
       Fl_Group {} {
         label {&tab4}
-        tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {10 60 315 235} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 hide
+        tooltip {this tab shows the issue of indicating a selected tab if the tab layouts are very similar} xywh {10 60 315 235} selection_color 5 labeltype ENGRAVED_LABEL labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
@@ -99,7 +99,7 @@ Function {} {open
       } {
         Fl_Button {} {
           label button2
-          tooltip {button2 has a different tooltp than tab5} xywh {20 80 60 80}
+          tooltip {button2 has a different tooltip than tab5} xywh {20 80 60 80}
         }
         Fl_Button {} {
           label button
@@ -133,7 +133,7 @@ Function {} {open
     } {
       Fl_Group {} {
         label Label1
-        tooltip {this Tab tests correct keyboard navigation between text input fields} xywh {330 60 320 235} selection_color 1 hide resizable
+        tooltip {this tab tests correct keyboard navigation between text input fields} xywh {330 60 320 235} selection_color 1 hide resizable
       } {
         Fl_Input {} {
           label {input:}
@@ -194,7 +194,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab4
-        tooltip {this tab show the issue of indicating a selcted tab if the tab layouts are very similar} xywh {330 60 320 235} selection_color 5 labelfont 2 hide
+        tooltip {this tab shows the issue of indicating a selected tab if the tab layouts are very similar} xywh {330 60 320 235} selection_color 5 labelfont 2 hide
       } {
         Fl_Button {} {
           label button2
@@ -215,7 +215,7 @@ Function {} {open
       } {
         Fl_Button {} {
           label button2
-          tooltip {button2 has a different tooltp than tab5} xywh {350 80 60 80}
+          tooltip {button2 has a different tooltip than tab5} xywh {350 80 60 80}
         }
         Fl_Button {} {
           label button
