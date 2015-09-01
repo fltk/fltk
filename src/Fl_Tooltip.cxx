@@ -3,7 +3,7 @@
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,6 +38,10 @@ int		Fl_Tooltip::wrap_width_    = 400;
 #endif
 
 static const char* tip;
+
+// FIXME: this should be a static class variable: Fl_Tooltip::draw_symbols_
+static const int draw_symbols_ = 1; // 1 = draw @-symbols in tooltips, 0 = no
+
 /**
     This widget creates a tooltip box window, with no caption.
 */
@@ -82,8 +86,8 @@ Fl_Window *Fl_Tooltip::current_window(void)
 void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
   int ww = Fl_Tooltip::wrap_width();
-  int hh;
-  fl_measure(tip, ww, hh, FL_ALIGN_LEFT|FL_ALIGN_WRAP|FL_ALIGN_INSIDE);
+  int hh = 0;
+  fl_measure(tip, ww, hh, draw_symbols_);
   ww += (Fl_Tooltip::margin_width() * 2);
   hh += (Fl_Tooltip::margin_height() * 2);
 
@@ -116,7 +120,7 @@ void Fl_TooltipBox::draw() {
   int Y = Fl_Tooltip::margin_height();
   int W = w() - (Fl_Tooltip::margin_width()*2);
   int H = h() - (Fl_Tooltip::margin_height()*2);
-  fl_draw(tip, X, Y, W, H, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP));
+  fl_draw(tip, X, Y, W, H, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP), 0, draw_symbols_);
 }
 
 static char recent_tooltip;
