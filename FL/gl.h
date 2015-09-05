@@ -56,13 +56,15 @@
 
 #  ifdef __APPLE__
 #    include <OpenGL/gl.h>
-#    include <FL/x.H>  // makes sure MAC_OS_X_VERSION_10_4 is defined
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-#    include <OpenGL/glext.h>
-#endif
+#    ifdef FL_LIBRARY
+#      include <FL/x.H>
+#      if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#        include <OpenGL/glext.h>
+#      endif
+#    endif // FL_LIBRARY
 #  else
 #    include <GL/gl.h>
-#  endif
+#  endif  // __APPLE__
 
 FL_EXPORT void gl_start();
 FL_EXPORT void gl_finish();
