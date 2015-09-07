@@ -3,7 +3,7 @@
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,6 +26,7 @@ extern int fl_gl_load_plugin;
 #include "Fl_Gl_Choice.H"
 #ifdef __APPLE__
 #include <FL/gl.h>
+#include <OpenGL/OpenGL.h>
 #endif
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
@@ -68,7 +69,16 @@ void Fl_Gl_Window::show() {
   if (!shown()) {
     if (!g) {
       g = Fl_Gl_Choice::find(mode_,alist);
-
+#if defined(__APPLE__)
+      if (g && alist) {
+        // when the mode is set using the system-dependent alist, and if asking for double buffer,
+        // the FL_DOUBLE flag must be set in the mode_ member variable
+        const int *a = alist;
+        while (*a) {
+          if (*(a++) == kCGLPFADoubleBuffer) mode_ |= FL_DOUBLE;
+        }
+      }
+#endif
       if (!g && (mode_ & FL_DOUBLE) == FL_SINGLE) {
         g = Fl_Gl_Choice::find(mode_ | FL_DOUBLE,alist);
 	if (g) mode_ |= FL_FAKE_SINGLE;
