@@ -3,7 +3,7 @@
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -124,49 +124,61 @@ public:
   */
   void context_valid(char v) {if (v) valid_f_ |= 2; else valid_f_ &= 0xfd;}
 
-  /**  Returns non-zero if the hardware supports the given or current OpenGL mode. */
+  /**  Returns non-zero if the hardware supports the given OpenGL mode. */
   static int can_do(int m) {return can_do(m,0);}
-  /**  Returns non-zero if the hardware supports the given or current OpenGL mode. */
+  /**  Returns non-zero if the hardware supports the given OpenGL mode.
+   \see Fl_Gl_Window::mode(const int *a) */
   static int can_do(const int *m) {return can_do(0, m);}
-  /**  Returns non-zero if the hardware supports the given or current OpenGL mode. */
+  /**  Returns non-zero if the hardware supports the current OpenGL mode. */
   int can_do() {return can_do(mode_,alist);}
-  /**
-    Set or change the OpenGL capabilites of the window.  The value can be
-    any of the following OR'd together:
-
-    - \c FL_RGB - RGB color (not indexed)
-    - \c FL_RGB8 - RGB color with at least 8 bits of each color
-    - \c FL_INDEX - Indexed mode
-    - \c FL_SINGLE - not double buffered
-    - \c FL_DOUBLE - double buffered
-    - \c FL_ACCUM - accumulation buffer
-    - \c FL_ALPHA - alpha channel in color
-    - \c FL_DEPTH - depth buffer
-    - \c FL_STENCIL - stencil buffer
-    - \c FL_MULTISAMPLE - multisample antialiasing
-
-    FL_RGB and FL_SINGLE have a value of zero, so they
-    are "on" unless you give FL_INDEX or FL_DOUBLE.
-
-    If the desired combination cannot be done, FLTK will try turning off 
-    FL_MULTISAMPLE.  If this also fails the show() will call 
-    Fl::error() and not show the window.
-
-    You can change the mode while the window is displayed.  This is most
-    useful for turning double-buffering on and off.  Under X this will
-    cause the old X window to be destroyed and a new one to be created.  If
-    this is a top-level window this will unfortunately also cause the
-    window to blink, raise to the top, and be de-iconized, and the xid()
-    will change, possibly breaking other code.  It is best to make the GL
-    window a child of another window if you wish to do this!
-
-    mode() must not be called within draw() since it
-    changes the current context.
-  */
+  /** Returns the current OpenGL capabilites of the window.
+   Don't use this if capabilities were set through Fl_Gl_Window::mode(const int *a).
+   */
   Fl_Mode mode() const {return (Fl_Mode)mode_;}
-  /** See Fl_Mode mode() const */
+  /**
+   Set or change the OpenGL capabilites of the window.  The value can be
+   any of the following OR'd together:
+   
+   - \c FL_RGB - RGB color (not indexed)
+   - \c FL_RGB8 - RGB color with at least 8 bits of each color
+   - \c FL_INDEX - Indexed mode
+   - \c FL_SINGLE - not double buffered
+   - \c FL_DOUBLE - double buffered
+   - \c FL_ACCUM - accumulation buffer
+   - \c FL_ALPHA - alpha channel in color
+   - \c FL_DEPTH - depth buffer
+   - \c FL_STENCIL - stencil buffer
+   - \c FL_MULTISAMPLE - multisample antialiasing
+   
+   FL_RGB and FL_SINGLE have a value of zero, so they
+   are "on" unless you give FL_INDEX or FL_DOUBLE.
+   
+   If the desired combination cannot be done, FLTK will try turning off
+   FL_MULTISAMPLE.  If this also fails the show() will call
+   Fl::error() and not show the window.
+   
+   You can change the mode while the window is displayed.  This is most
+   useful for turning double-buffering on and off.  Under X this will
+   cause the old X window to be destroyed and a new one to be created.  If
+   this is a top-level window this will unfortunately also cause the
+   window to blink, raise to the top, and be de-iconized, and the xid()
+   will change, possibly breaking other code.  It is best to make the GL
+   window a child of another window if you wish to do this!
+   
+   mode() must not be called within draw() since it
+   changes the current context.
+   */
   int mode(int a) {return mode(a,0);}
-  /** See Fl_Mode mode() const */
+  /** Set the OpenGL capabilites of the window using platform-specific data.
+   \param a zero-ending array of platform-specific attributes and attribute values
+   <p><b>Unix/Linux platform</b>: attributes are GLX attributes adequate for the 3rd argument of
+   the <tt>glXChooseVisual()</tt> function (e.g., <tt>GLX_DOUBLEBUFFER</tt>).
+   <p><b>MSWindows platform</b>: this member function is of no use.
+   <p><b>Mac OS X platform</b>: attributes belong to the <tt>CGLPixelFormatAttribute</tt> enumeration
+   (e.g., <tt>kCGLPFADoubleBuffer</tt>) and may be followed by adequate attribute values.
+   The pair <tt>kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core</tt> allows to create an OpenGL V3.2 profile
+   under Mac OS X 10.7 and above.
+   */
   int mode(const int *a) {return mode(0, a);}
   /** Returns a pointer to the GLContext that this window is using.
    \see void context(void* v, int destroy_flag) */
