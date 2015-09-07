@@ -69,16 +69,6 @@ void Fl_Gl_Window::show() {
   if (!shown()) {
     if (!g) {
       g = Fl_Gl_Choice::find(mode_,alist);
-#if defined(__APPLE__)
-      if (g && alist) {
-        // when the mode is set using the system-dependent alist, and if asking for double buffer,
-        // the FL_DOUBLE flag must be set in the mode_ member variable
-        const int *a = alist;
-        while (*a) {
-          if (*(a++) == kCGLPFADoubleBuffer) mode_ |= FL_DOUBLE;
-        }
-      }
-#endif
       if (!g && (mode_ & FL_DOUBLE) == FL_SINGLE) {
         g = Fl_Gl_Choice::find(mode_ | FL_DOUBLE,alist);
 	if (g) mode_ |= FL_FAKE_SINGLE;
@@ -133,13 +123,18 @@ void Fl_Gl_Window::invalidate() {
 #endif
 }
 
-/**
-  See const int Fl_Gl_Window::mode() const 
-*/
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
 #ifndef __APPLE__
   int oldmode = mode_;
+#else
+  if (a) { // when the mode is set using the a array of system-dependent values, and if asking for double buffer,
+           // the FL_DOUBLE flag must be set in the mode_ member variable
+    const int *aa = a;
+    while (*aa) {
+      if (*(aa++) == kCGLPFADoubleBuffer) m |= FL_DOUBLE;
+    }
+  }
 #endif // !__APPLE__
 #if !defined(WIN32) && !defined(__APPLE__)
   Fl_Gl_Choice* oldg = g;
