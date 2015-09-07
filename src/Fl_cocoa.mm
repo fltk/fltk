@@ -2730,9 +2730,9 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
       attribs[n++] = NSOpenGLPFASamples; attribs[n++] = (NSOpenGLPixelFormatAttribute)4;
     }
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
-#define NSOpenGLPFAOpenGLProfile      99
+#define NSOpenGLPFAOpenGLProfile      (NSOpenGLPixelFormatAttribute)99
 #define kCGLPFAOpenGLProfile          NSOpenGLPFAOpenGLProfile
-#define NSOpenGLProfileVersionLegacy  0x1000
+#define NSOpenGLProfileVersionLegacy  (NSOpenGLPixelFormatAttribute)0x1000
 #define kCGLOGLPVersion_Legacy        NSOpenGLProfileVersionLegacy
 #endif
     if (fl_mac_os_version >= 100700) {
