@@ -127,12 +127,19 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
 #ifndef __APPLE__
   int oldmode = mode_;
-#else
+#endif
+#if defined(__APPLE__) || defined(USE_X11)
   if (a) { // when the mode is set using the a array of system-dependent values, and if asking for double buffer,
            // the FL_DOUBLE flag must be set in the mode_ member variable
     const int *aa = a;
     while (*aa) {
-      if (*(aa++) == kCGLPFADoubleBuffer) m |= FL_DOUBLE;
+      if (*(aa++) ==
+#  if defined(__APPLE__)
+          kCGLPFADoubleBuffer
+#  else
+          GLX_DOUBLEBUFFER
+#  endif
+          ) { m |= FL_DOUBLE; break; }
     }
   }
 #endif // !__APPLE__
