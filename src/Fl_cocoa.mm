@@ -3,7 +3,7 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1157,26 +1157,6 @@ void Fl_X::in_windowDidResize(bool b) {
 #endif
 }
 
-//determines whether a window is mapped to a retina display
-static void compute_mapped_to_retina(Fl_Window *window)
-{
-  if (fl_mac_os_version >= 100700) { // determine whether window is now mapped to a retina display
-    Fl_X *flx = Fl_X::i(window);
-    bool previous = flx->mapped_to_retina();
-    // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
-    //NSSize s = [[flx->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
-    typedef NSSize (*convertSizeIMP)(id, SEL, NSSize);
-    static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
-    NSSize s = addr([flx->xid contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
-    flx->mapped_to_retina( int(s.width + 0.5) > 10 );
-    if (previous != flx->mapped_to_retina()) flx->changed_resolution(true);
-    // window needs redrawn when moving from low res to retina
-    if ((!previous) && flx->mapped_to_retina()) {
-      window->redraw();
-    }
-  }
-}
-
 #if FLTK_ABI_VERSION >= 10304
 static const unsigned mapped_mask = 2;
 static const unsigned changed_mask = 4;
@@ -1285,7 +1265,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     parent = parent->window();
   }
   window->position((int)pt2.x, (int)pt2.y);
-  compute_mapped_to_retina(window);
   if (fl_mac_os_version < 100700) { // after move, redraw parent and children of GL windows
     parent = window->window();
     if (parent && parent->as_gl_window()) window->redraw();
@@ -1359,8 +1338,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
-  Fl_X::i(window)->wait_for_expose = 0; // necessary when window was created miniaturized
-  if (fl_mac_os_version < 101100) Fl::flush(); // process redraws set by FL_SHOW
+  Fl::flush(); // Process redraws set by FL_SHOW.
   fl_unlock_function();
 }
 - (void)windowWillMiniaturize:(NSNotification *)notif
@@ -1368,7 +1346,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   // subwindows are not captured in system-built miniature window image
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
-  if ([nsw childWindows]) {
+  if ([[nsw childWindows] count]) {
     // capture the window and its subwindows and use as miniature window image
     Fl_Window *window = [nsw getFl_Window];
     NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(window, 0, 0, window->w(), window->h());
@@ -1884,13 +1862,22 @@ static void handleUpdateEvent( Fl_Window *window )
 {
   if ( !window ) return;
   Fl_X *i = Fl_X::i( window );
+  if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
+    bool previous = i->mapped_to_retina();
+    // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
+    //NSSize s = [[i->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+    typedef NSSize (*convertSizeIMP)(id, SEL, NSSize);
+    static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
+    NSSize s = addr([i->xid contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
+    i->mapped_to_retina( int(s.width + 0.5) > 10 );
+    if (i->wait_for_expose == 0 && previous != i->mapped_to_retina()) i->changed_resolution(true);
+  }  
   i->wait_for_expose = 0;
 
   if ( i->region ) {
     XDestroyRegion(i->region);
     i->region = 0;
   }
-  
   window->clear_damage(FL_DAMAGE_ALL);
   i->flush();
   window->clear_damage();
@@ -2220,11 +2207,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *w = [cw getFl_Window];
-  if (w->visible()) {
-    through_drawRect = YES;
-    handleUpdateEvent(w);
-    through_drawRect = NO;
-  }
+  through_drawRect = YES;
+  handleUpdateEvent(w);
+  through_drawRect = NO;
   fl_unlock_function();
 }
 
@@ -2921,9 +2906,9 @@ void Fl_X::make(Fl_Window* w)
     x->subRect(0);
     x->cursor = NULL;
     x->gc = 0;
-    if (w->parent()) x->mapped_to_retina( w->top_window()->i->mapped_to_retina() );
-    else x->mapped_to_retina(false);
+    x->mapped_to_retina(false);
     x->changed_resolution(false);
+    x->in_windowDidResize(false);
   
     NSRect crect;
     if (w->fullscreen_active()) {
@@ -3027,8 +3012,10 @@ void Fl_X::make(Fl_Window* w)
     [cw setDelegate:[FLWindowDelegate singleInstance]];
   if (fl_show_iconic) {
     fl_show_iconic = 0;
-    [cw miniaturize:nil];
-  } else if (w->parent()) {
+    // w->handle(FL_SHOW); this creates subwindows correctly, but they are deiconized at a wrong location
+    if (fl_mac_os_version < 101100) [myview display]; // draws the view before its icon is computed
+    [cw miniaturize:nil]; // on 10.11 this sends drawRect:
+  } else if (w->parent()) { // a subwindow
     [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
     // next 2 statements so a subwindow doesn't leak out of its parent window
     [cw setOpaque:NO];
@@ -3049,22 +3036,8 @@ void Fl_X::make(Fl_Window* w)
     // needed if top window was first displayed miniaturized
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
-  } else {
-    // this is useful for menu/tooltip windows where no windowDidMove notification is received
-    // so they are drawn at high res already at first time
-    compute_mapped_to_retina(w);
-    x->changed_resolution(false);
+  } else { // a top-level window
     [cw makeKeyAndOrderFront:nil];
-  }
-  
-  if (!w->parent()) {
-    // this may be useful for menu/tooltip windows where no windowDidMove notification is received
-    crect = [[cw contentView] frame];
-    w->w(int(crect.size.width));
-    w->h(int(crect.size.height));
-    crect = [cw frame];
-    w->x(int(crect.origin.x));
-    w->y(int(main_screen_height - (crect.origin.y + w->h())));
   }
   
     int old_event = Fl::e_number;
