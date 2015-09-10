@@ -3012,9 +3012,8 @@ void Fl_X::make(Fl_Window* w)
     [cw setDelegate:[FLWindowDelegate singleInstance]];
   if (fl_show_iconic) {
     fl_show_iconic = 0;
-    // w->handle(FL_SHOW); this creates subwindows correctly, but they are deiconized at a wrong location
-    if (fl_mac_os_version < 101100) [myview display]; // draws the view before its icon is computed
-    [cw miniaturize:nil]; // on 10.11 this sends drawRect:
+    [myview display]; // draws the view before its icon is computed
+    [cw miniaturize:nil];
   } else if (w->parent()) { // a subwindow
     [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
     // next 2 statements so a subwindow doesn't leak out of its parent window
