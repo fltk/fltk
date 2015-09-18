@@ -173,9 +173,12 @@ public:
    \param a zero-ending array of platform-specific attributes and attribute values
    <p><b>Unix/Linux platform</b>: attributes are GLX attributes adequate for the 3rd argument of
    the <tt>glXChooseVisual()</tt> function (e.g., <tt>GLX_DOUBLEBUFFER</tt>).
+   \note What attributes are adequate here is subject to change.
+   The preferred, stable public API is Fl_Gl_Window::mode(int a).
    <p><b>MSWindows platform</b>: this member function is of no use.
    <p><b>Mac OS X platform</b>: attributes belong to the <tt>CGLPixelFormatAttribute</tt> enumeration
-   (e.g., <tt>kCGLPFADoubleBuffer</tt>) and may be followed by adequate attribute values.
+   (defined by including <tt><OpenGL/OpenGL.h></tt>, e.g., <tt>kCGLPFADoubleBuffer</tt>)
+   and may be followed by adequate attribute values.
    The pair <tt>kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core</tt> allows to create an OpenGL V3.2 profile
    under Mac OS X 10.7 and above.
    */
