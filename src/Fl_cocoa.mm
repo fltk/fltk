@@ -2992,6 +2992,9 @@ void Fl_X::make(Fl_Window* w)
         static NSPoint delta = NSZeroPoint;
         delta = [cw cascadeTopLeftFromPoint:delta];
       }
+      crect = [cw frame]; // synchronize FLTK's and the system's window coordinates
+      w->x(int(crect.origin.x));
+      w->y(int(main_screen_height - (crect.origin.y + w->h())));
     }
     if(w->menu_window()) { // make menu windows slightly transparent
       [cw setAlphaValue:0.97];
