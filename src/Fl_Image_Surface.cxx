@@ -42,6 +42,8 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
   helper = new Fl_Quartz_Flipped_Surface_(width, height);
   driver(helper->driver());
   CGContextSaveGState(offscreen);
+  CGContextTranslateCTM(offscreen, 0, height);
+  CGContextScaleCTM(offscreen, 1.0f, -1.0f);
 #elif defined(WIN32)
   helper = new Fl_GDI_Surface_();
   driver(helper->driver());
