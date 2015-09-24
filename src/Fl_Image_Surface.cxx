@@ -31,7 +31,7 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
   height = h;
 #if !(defined(__APPLE__) || defined(WIN32))
   gc = 0;
-  if (!fl_display) { // allows use of this class before any window is shown
+  if (!fl_gc) { // allows use of this class before any window is shown
     fl_open_display();
     gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
     fl_gc = gc;
