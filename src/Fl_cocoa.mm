@@ -4210,7 +4210,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   const uchar *start = [bitmap bitmapData]; // start of the bitmap data
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat)) {
-    // bitmap is ARGB --> convert it to RGBA
+    // bitmap is ARGB --> convert it to RGBA (ARGB happens with Mac OS 10.11)
     // it is enough to offset reading by one byte because A is always 0xFF
     // so ARGBARGB becomes RGBARGBA as needed
     start++;
