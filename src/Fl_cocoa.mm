@@ -4192,6 +4192,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   return bitmap;
 }
 
+
 unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
 /* Returns a capture of a rectangle of a mapped window as a pre-multiplied RGBA array of bytes.
  Alpha values are always 1 (except for the angles of a window title bar)
@@ -4208,17 +4209,28 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason, and hh = 2*h with retina
   int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1, and ww = 2*w with retina
   const uchar *start = [bitmap bitmapData]; // start of the bitmap data
+  bool convert = false;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400 && ([bitmap bitmapFormat] & NSAlphaFirstBitmapFormat)) {
     // bitmap is ARGB --> convert it to RGBA (ARGB happens with Mac OS 10.11)
     // it is enough to offset reading by one byte because A is always 0xFF
     // so ARGBARGB becomes RGBARGBA as needed
     start++;
+    convert = true;
   }
 #endif
   unsigned char *data;
-  if (ww > w) { // with a retina display
-    Fl_RGB_Image *rgb = new Fl_RGB_Image(start, ww, hh, 4);
+  size_t tocopy;
+  if (ww > w) { // with a retina display, we have to scale the image by a factor of 2
+    uchar *data2 = [bitmap bitmapData];
+    if (convert) { // duplicate the NSBitmapImageRep data taking care not to access beyond its end
+      tocopy = ww*hh*4;
+      data2 = new uchar[tocopy];
+      memcpy(data2, start, --tocopy);
+      data2[tocopy] = 0xFF; // set the last A byte
+    }
+    Fl_RGB_Image *rgb = new Fl_RGB_Image(data2, ww, hh, 4);
+    rgb->alloc_array = (convert ? 1 : 0);
     Fl_RGB_Scaling save_scaling = Fl_Image::RGB_scaling();
     Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR);
     Fl_RGB_Image *rgb2 = (Fl_RGB_Image*)rgb->copy(w, h);
@@ -4230,22 +4242,28 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   }
   else {
     data = new unsigned char[w * h *  *bytesPerPixel];
-    if (w == ww) {
-      memcpy(data, start, w * hh *  *bytesPerPixel);
-    } else {
+    if (w == ww) { // the NSBitmapImageRep data can be copied in one step
+      tocopy = w * hh * (*bytesPerPixel);
+      if (convert) { // take care not to access beyond the image end
+        data[--tocopy] = 0xFF; // set the last A byte
+      }
+      memcpy(data, start, tocopy);
+    } else {  // copy the NSBitmapImageRep data line by line
       const uchar *p = start;
       unsigned char *q = data;
-      for(int i = 0;i < hh; i++) {
-        memcpy(q, p, *bytesPerPixel * ww);
+      tocopy = bpr;
+      for (int i = 0; i < hh; i++) {
+        if (i == hh-1 && convert) tocopy--; // take care not to access beyond the image end
+        memcpy(q, p, tocopy);
         p += bpr;
-        q += w * *bytesPerPixel;
+        q += w * (*bytesPerPixel);
       }
     }
   }
-  if (start == [bitmap bitmapData] + 1) data[w*h*4-1] = 0xFF; // set the last A byte
   [bitmap release];
   return data;
 }
+
 
 static void nsbitmapProviderReleaseData (void *info, const void *data, size_t size)
 {
