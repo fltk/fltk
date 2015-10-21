@@ -36,6 +36,12 @@
 #include "Xutf8.h"
 #endif
 
+#if defined(__APPLE__) &&  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#  include <OpenGL/glext.h>
+#  define kCGBitmapByteOrder32Host 0
+#  define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
+#endif // __APPLE__
+
 /** Returns the current font's height */
 int   gl_height() {return fl_height();}
 /** Returns the current font's descent */
@@ -329,10 +335,6 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
  but not text font, and only ASCII characters can be drawn.
  */
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-#define kCGBitmapByteOrder32Host 0
-#define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
-#endif
 static int gl_scale = 1; // set to 2 for high resolution Fl_Gl_Window
 static int has_texture_rectangle = 0; // true means GL_EXT_texture_rectangle is available
 
