@@ -172,7 +172,7 @@ public:
   /** Set the OpenGL capabilites of the window using platform-specific data.
    \param a zero-ending array of platform-specific attributes and attribute values
    <p><b>Unix/Linux platform</b>: attributes are GLX attributes adequate for the 3rd argument of
-   the <tt>glXChooseVisual()</tt> function (e.g., <tt>GLX_DOUBLEBUFFER</tt>).
+   the <tt>glXChooseVisual()</tt> function (e.g., <tt>GLX_DOUBLEBUFFER</tt>, defined by including <GL/glx.h>).
    \note What attributes are adequate here is subject to change.
    The preferred, stable public API is Fl_Gl_Window::mode(int a).
    <p><b>MSWindows platform</b>: this member function is of no use.
@@ -180,7 +180,7 @@ public:
    (defined by including <tt><OpenGL/OpenGL.h></tt>, e.g., <tt>kCGLPFADoubleBuffer</tt>)
    and may be followed by adequate attribute values.
    The pair <tt>kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core</tt> allows to create an OpenGL V3.2 profile
-   under Mac OS X 10.7 and above.
+   under Mac OS X 10.7 and above (and include <OpenGL/gl3.h> to define OpenGL 3 symbols).
    */
   int mode(const int *a) {return mode(0, a);}
   /** Returns a pointer to the GLContext that this window is using.
