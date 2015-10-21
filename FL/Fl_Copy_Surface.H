@@ -42,11 +42,11 @@
  \endcode
  Platform details:
  \li MSWindows: Transparent RGB images copy without transparency.
- The graphical data is copied to the clipboard as an 'enhanced metafile'.
- \li Mac OS: The graphical data is copied to the clipboard (a.k.a. pasteboard) in two 'flavors': 
+ The graphical data are copied to the clipboard as an 'enhanced metafile'.
+ \li Mac OS: The graphical data are copied to the clipboard (a.k.a. pasteboard) in two 'flavors':
  1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image. 
  Applications to which the clipboard content is pasted can use the flavor that suits them best.
- \li X11: the graphical data is copied to the clipboard as an image in BMP format.
+ \li X11: the graphical data are copied to the clipboard as an image in BMP format.
 */
 class FL_EXPORT Fl_Copy_Surface : public Fl_Surface_Device {
 private:
