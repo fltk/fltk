@@ -268,7 +268,7 @@ public:
   // ABI version number
   static int abi_version();
 
-  /*
+  /**
     Returns whether the runtime library ABI version is correct.
 
     This enables you to check the ABI version of the linked FLTK
