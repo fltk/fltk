@@ -2718,11 +2718,12 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
 #define NSOpenGLPFAOpenGLProfile      (NSOpenGLPixelFormatAttribute)99
 #define kCGLPFAOpenGLProfile          NSOpenGLPFAOpenGLProfile
 #define NSOpenGLProfileVersionLegacy  (NSOpenGLPixelFormatAttribute)0x1000
+#define NSOpenGLProfileVersion3_2Core  (NSOpenGLPixelFormatAttribute)0x3200
 #define kCGLOGLPVersion_Legacy        NSOpenGLProfileVersionLegacy
 #endif
     if (fl_mac_os_version >= 100700) {
       attribs[n++] = NSOpenGLPFAOpenGLProfile;
-      attribs[n++] = NSOpenGLProfileVersionLegacy; // for now, no public FLTK API for OpenGL v3 profiles
+      attribs[n++] =  (m & FL_OPENGL3) ? NSOpenGLProfileVersion3_2Core : NSOpenGLProfileVersionLegacy;
     }
   } else {
     while (alistp[n] && n < 30) {

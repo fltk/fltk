@@ -149,6 +149,7 @@ public:
    - \c FL_DEPTH - depth buffer
    - \c FL_STENCIL - stencil buffer
    - \c FL_MULTISAMPLE - multisample antialiasing
+   - \c FL_OPENGL3 - use OpenGL version 3.0 or more when running Mac OS.
    
    FL_RGB and FL_SINGLE have a value of zero, so they
    are "on" unless you give FL_INDEX or FL_DOUBLE.
@@ -167,6 +168,19 @@ public:
    
    mode() must not be called within draw() since it
    changes the current context.
+   
+   \note On the <b>MSWindows and Unix/Linux platforms</b>, FLTK produces
+   contexts for the highest OpenGL version supported by the hardware. Such contexts
+   are also compatible with lower OpenGL versions. On the <b>Apple OS X
+   platform</b>, it is necessary to decide whether the source code targets
+   OpenGL versions higher or lower than 3.0. By default, FLTK
+   creates contexts adequate for OpenGL versions 1 and 2. To get contexts
+   for OpenGL 3.0 or higher, the <tt>FL_OPENGL3</tt> flag and Mac OS
+   version 10.7 or higher are required (in that case the context is NOT 
+   compatible with OpenGL versions 1 or 2). The <tt>FL_OPENGL3</tt> flag has no
+   effect on non-Apple platforms.
+   
+   \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4
    */
   int mode(int a) {return mode(a,0);}
   /** Set the OpenGL capabilites of the window using platform-specific data.
@@ -179,8 +193,6 @@ public:
    <p><b>Mac OS X platform</b>: attributes belong to the <tt>CGLPixelFormatAttribute</tt> enumeration
    (defined by including <tt><OpenGL/OpenGL.h></tt>, e.g., <tt>kCGLPFADoubleBuffer</tt>)
    and may be followed by adequate attribute values.
-   The pair <tt>kCGLPFAOpenGLProfile, kCGLOGLPVersion_3_2_Core</tt> allows to create an OpenGL V3.2 profile
-   under Mac OS X 10.7 and above (and include <OpenGL/gl3.h> to define OpenGL 3 symbols).
    */
   int mode(const int *a) {return mode(0, a);}
   /** Returns a pointer to the GLContext that this window is using.

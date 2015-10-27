@@ -449,6 +449,73 @@ The \p scene() method sets the scene to be drawn.  The scene is
 a collection of 3D objects in a \p csGroup.  The scene is redrawn
 after this call.
 
+\section opengl3 Using OpenGL 3.0 (or higher versions)
+
+The examples subdirectory contains OpenGL3test.cxx, a toy program
+showing how to use OpenGL 3.0 (or higher versions) with FLTK in a cross-platform fashion.
+It contains also OpenGL3-glut-test.cxx which shows how to use FLTK's GLUT compatibility
+and OpenGL 3.
+
+<b>On the MSWindows and Unix/Linux platforms</b>, FLTK creates contexts implementing 
+the highest OpenGL version supported by the hardware,
+which are also compatible with lower OpenGL versions. Thus, FLTK allows
+source code targeting any version of OpenGL. Access to functions from OpenGL versions above 1.1 requires to load function pointers at runtime on these platforms. FLTK recommends to use the GLEW library to perform this. It is therefore
+necessary to install the GLEW library (see below).  <b>On the Mac OS X platform</b>, 
+FLTK creates by default contexts implementing OpenGL versions 1 or 2. 
+To access OpenGL 3.0 (or higher versions), use the <tt>FL_OPENGL3</tt> flag (see below).
+Mac OS 10.7 or above is required; GLEW is possible but not necessary.
+
+\par GLEW installation (Unix/Linux and MSWindows platforms)
+GLEW is available as a package for most Linux distributions and in source form at http://glew.sourceforge.net/.
+For the MSWindows platform, a Visual Studio static library (glew32.lib) can be downloaded from the same web site; a MinGW-style static library (libglew32.a) can be built from source with the make command.
+
+\par  Source-level changes for OpenGL 3:
+\li Put this in all OpenGL-using source files (instead of \#include <FL/gl.h>, 
+and before \#include <FL/glut.h> if you use GLUT):
+\code
+#if defined(__APPLE__)
+#  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
+#else
+#  if defined(WIN32)
+#    define GLEW_STATIC 1
+#  endif
+#  include <GL/glew.h>
+#endif
+\endcode
+\li Add the <tt>FL_OPENGL3</tt> flag when calling Fl_Gl_Window::mode(int a)
+or glutInitDisplayMode().
+\li Put this in the <tt>handle(int event)</tt> member function of the first to be created 
+among your Fl_Gl_Window-derived classes:
+\code
+#ifndef __APPLE__
+    static int first = 1;
+    if (first && event == FL_SHOW && shown()) {
+      first = 0;
+      make_current();
+      glewInit(); // defines pters to functions of OpenGL V 1.2 and above
+    }
+#endif
+\endcode
+\li Alternatively, if you use GLUT, put
+\code
+#ifndef __APPLE__
+  glewInit(); // defines pters to functions of OpenGL V 1.2 and above
+#endif
+\endcode
+after the first glutCreateWindow() call.
+
+If GLEW is installed on the Mac OS development platform, it is possible 
+to use the same code for all platforms, with one exception: put
+\code
+#ifdef __APPLE__
+glewExperimental = TRUE;
+#endif
+\endcode
+before the glewInit() call.
+
+\par Changes in the build process
+Link with libGLEW.so (on Unix/Linux), libglew32.a (with MinGW) or glew32.lib 
+(with MS Visual Studio); no change is needed on the Mac OS platform.
 
 \htmlonly
 <hr>
