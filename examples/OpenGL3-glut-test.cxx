@@ -1,5 +1,6 @@
 #include <stdio.h>
 #if defined(__APPLE__)
+#  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED 1
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
 #  if defined(WIN32)
