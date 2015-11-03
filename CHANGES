@@ -10,6 +10,7 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	  subwindow can contain Fl_Window's as subwindows.
         - Added method Fl_Widget::is_label_copied().
         - Added methods Fl_Copy_Surface::w() and Fl_Copy_Surface::h().
+        - Added support for OpenGL version 3 and later.
 
 	1.3.4 ABI FEATURES
 
