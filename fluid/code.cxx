@@ -151,16 +151,17 @@ int varused_test;
 int varused;
 
 // write an array of C characters (adds a null):
-void write_cstring(const char *w, int length) {
+void write_cstring(const char *s, int length) {
   if (varused_test) {
     varused = 1;
     return;
   }
-  const char *e = w+length;
+  const char *p = s;
+  const char *e = s+length;
   int linelength = 1;
   putc('\"', code_file);
-  for (; w < e;) {
-    int c = *w++;
+  for (; p < e;) {
+    int c = *p++;
     switch (c) {
     case '\b': c = 'b'; goto QUOTED;
     case '\t': c = 't'; goto QUOTED;
@@ -177,7 +178,7 @@ void write_cstring(const char *w, int length) {
       linelength += 2;
       break;
     case '?': // prevent trigraphs by writing ?? as ?\?
-      if (*(w-2) == '?') goto QUOTED;
+      if (p-2 >= s && *(p-2) == '?') goto QUOTED;
       // else fall through:
     default:
       if (c >= ' ' && c < 127) {
@@ -205,8 +206,8 @@ void write_cstring(const char *w, int length) {
       // We must not put more numbers after it, because some C compilers
       // consume them as part of the quoted sequence.  Use string constant
       // pasting to avoid this:
-      c = *w;
-      if (w < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
+      c = *p;
+      if (p < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
 	putc('\"', code_file); linelength++;
 	if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
 	putc('\"', code_file); linelength++;
@@ -218,7 +219,7 @@ void write_cstring(const char *w, int length) {
 }
 
 // write a C string, quoting characters if necessary:
-void write_cstring(const char *w) {write_cstring(w,strlen(w));}
+void write_cstring(const char *s) {write_cstring(s,strlen(s));}
 
 // write an array of C binary data (does not add a null):
 void write_cdata(const char *s, int length) {
