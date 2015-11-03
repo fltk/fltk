@@ -3,7 +3,7 @@
 //
 // MacOS font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -137,7 +137,7 @@ if(fl_mac_os_version >= Fl_X::CoreText_threshold) {
 }
 else {
 #endif
-#if ! __LP64__
+#if (!__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
   ItemCount oFontCount, oCountAgain;
   ATSUFontID *oFontIDs;
   // How many fonts?

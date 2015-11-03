@@ -3,7 +3,7 @@
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -70,6 +70,9 @@ typedef CGContextRef Fl_Offscreen;
 #endif
 #ifndef MAC_OS_X_VERSION_10_10
 #define MAC_OS_X_VERSION_10_10 101000
+#endif
+#ifndef MAC_OS_X_VERSION_10_11
+#define MAC_OS_X_VERSION_10_11 101100
 #endif
 
 #ifndef NSINTEGER_DEFINED // appears with 10.5 in NSObjCRuntime.h
