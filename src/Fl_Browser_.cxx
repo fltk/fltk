@@ -813,7 +813,7 @@ J1:
     } else {
       void* l = find_item(my);
       whichway = 1;
-      if (Fl::event_state(FL_CTRL)) { // toggle selection:
+      if (Fl::event_state(FL_COMMAND)) { // toggle selection:
       TOGGLE:
 	if (l) {
 	  whichway = !item_selected(l);
