@@ -646,6 +646,9 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle;
 - (Fl_Window *)getFl_Window;
+- (void)recursivelyDisplay;
+- (void)recursivelyRepositionSubwindows;
+- (void)setSubwindowFrame;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
 #endif
@@ -704,6 +707,43 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 		//  when another modal window is currently the key win
 
   return !(w->tooltip_window() || w->menu_window() || w->parent());
+}
+
+- (void)recursivelyDisplay
+{
+  [self display];
+  NSEnumerator *enumerator = [[self childWindows] objectEnumerator];
+  id child;
+  while ((child = [enumerator nextObject]) != nil) {
+    [child recursivelyDisplay];
+  }
+}
+
+- (void)recursivelyRepositionSubwindows
+{
+  if ([self parentWindow]) [self setSubwindowFrame];
+  NSEnumerator *enumerator = [[self childWindows] objectEnumerator];
+  id child;
+  while ((child = [enumerator nextObject]) != nil) {
+    [child recursivelyRepositionSubwindows];
+  }
+}
+
+- (void)setSubwindowFrame { // maps a subwindow at its correct position/size
+  Fl_Window *parent = w->window();
+  FLWindow *pxid = fl_xid(parent);
+  if (!pxid) return;
+  NSRect rp = [pxid frame];
+  // subwindow coordinates are in screen units from bottom just like all windows
+  rp.origin = NSMakePoint(rp.origin.x + w->x(), rp.origin.y + parent->h() - w->y() - w->h());
+  rp.size = NSMakeSize(w->w(), w->h());
+  if (!NSEqualRects(rp, [self frame])) {
+    [self setFrame:rp display:YES];
+  }
+  if (![self parentWindow]) {
+    [pxid addChildWindow:self ordered:NSWindowAbove]; // needs OS X 10.2
+    [self orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
+  }
 }
 
 @end
@@ -1271,6 +1311,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (parent && window->as_gl_window()) parent->redraw();
   }
   resize_from_system = NULL;
+  if ([[nsw childWindows] count]) [nsw recursivelyRepositionSubwindows];
   fl_unlock_function();
 }
 - (void)windowDidResize:(NSNotification *)notif
@@ -1459,7 +1500,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   int count = [windows count];
   for (int i = 0; i < count; i++) {
     NSWindow *win = [windows objectAtIndex:i];
-    if ([win isKindOfClass:[FLWindow class]]) {
+    if ([win isKindOfClass:[FLWindow class]] && ![win parentWindow]) {
       [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidMoveNotification object:win];
       }
     }
@@ -2818,25 +2859,6 @@ void Fl_X::flush()
   }
 }
 
-
-static void set_subwindow_frame(Fl_Window *w) { // maps a subwindow at its correct position/size
-  FLWindow *xid = fl_xid(w);
-  Fl_Window *parent = w->window();
-  FLWindow *pxid = fl_xid(parent);
-  if (!pxid) return;
-  NSRect rp = [pxid frame];
-  // subwindow coordinates are in screen units from bottom just like all windows
-  rp.origin = NSMakePoint(rp.origin.x + w->x(), rp.origin.y + parent->h() - w->y() - w->h());
-  rp.size = NSMakeSize(w->w(), w->h());
-  if (!NSEqualRects(rp, [xid frame])) {
-    [xid setFrame:rp display:YES];
-  }
-  if (![xid parentWindow]) {
-    [pxid addChildWindow:xid ordered:NSWindowAbove]; // needs OS X 10.2
-    [xid orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
-  }
-}
-
 /*
  * go ahead, create that (sub)window
  */
@@ -2853,6 +2875,12 @@ void Fl_X::make(Fl_Window* w)
     }
     if (w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
     else winstyle = NSBorderlessWindowMask;
+    if (fl_show_iconic && !w->parent()) { // prevent window from being out of work area when created iconized
+      int sx, sy, sw, sh;
+      Fl::screen_work_area (sx, sy, sw, sh, w->x(), w->y());
+      if (w->x() < sx) w->x(sx);
+      if (w->y() < sy) w->y(sy);
+    }
     int xp = w->x();
     int yp = w->y();
     int wp = w->w();
@@ -3016,7 +3044,8 @@ void Fl_X::make(Fl_Window* w)
     [cw setDelegate:[FLWindowDelegate singleInstance]];
   if (fl_show_iconic) {
     fl_show_iconic = 0;
-    [myview display]; // draws the view before its icon is computed
+    w->handle(FL_SHOW); // create subwindows if any
+    [cw recursivelyDisplay]; // draw the window and its subwindows before its icon is computed
     [cw miniaturize:nil];
   } else if (w->parent()) { // a subwindow
     [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
@@ -3035,7 +3064,7 @@ void Fl_X::make(Fl_Window* w)
     if (!CGRectEqualToRect(srect, CGRectMake(0, 0, w->w(), w->h()))) { // if subwindow extends outside its parent windows
       x->subRect(new CGRect(srect));
     }
-    set_subwindow_frame(w);
+    [cw setSubwindowFrame];
     // needed if top window was first displayed miniaturized
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
@@ -3571,12 +3600,8 @@ void Fl_X::destroy() {
 void Fl_X::map() {
   if (w && xid && ![xid parentWindow]) { // 10.2
     // after a subwindow has been unmapped, it has lost its parent window and its frame may be wrong
-    set_subwindow_frame(w);
+    [xid setSubwindowFrame];
   }
-  //+ link to window list
-  /*if (w && w->parent()) {
-    w->redraw(); // possibly not necessary
-  }*/
   if (cursor) {
     [(NSCursor*)cursor release];
     cursor = NULL;
