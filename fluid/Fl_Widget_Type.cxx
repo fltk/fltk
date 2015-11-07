@@ -215,8 +215,14 @@ Fl_Widget_Type::~Fl_Widget_Type() {
   }
   if (subclass_) free((void*)subclass_);
   if (tooltip_) free((void*)tooltip_);
-  if (image_name_) free((void*)image_name_);
-  if (inactive_name_) free((void*)inactive_name_);
+  if (image_name_) {
+    free((void*)image_name_);
+    if (image) image->decrement();
+  }
+  if (inactive_name_) {
+    free((void*)inactive_name_);
+    if (inactive) inactive->decrement();
+  }
   for (int n=0; n<NUM_EXTRA_CODE; n++) {
     if (extra_code_[n]) free((void*) extra_code_[n]);
   }
