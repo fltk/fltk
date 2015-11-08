@@ -646,9 +646,9 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle;
 - (Fl_Window *)getFl_Window;
-- (void)recursivelyDisplay;
-- (void)recursivelyRepositionSubwindows;
+- (void)recursivelySendToSubwindows:(SEL)sel;
 - (void)setSubwindowFrame;
+- (void)checkSubwindowFrame;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
 #endif
@@ -709,28 +709,19 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   return !(w->tooltip_window() || w->menu_window() || w->parent());
 }
 
-- (void)recursivelyDisplay
+- (void)recursivelySendToSubwindows:(SEL)sel
 {
-  [self display];
+  [self performSelector:sel];
   NSEnumerator *enumerator = [[self childWindows] objectEnumerator];
   id child;
   while ((child = [enumerator nextObject]) != nil) {
-    [child recursivelyDisplay];
-  }
-}
-
-- (void)recursivelyRepositionSubwindows
-{
-  if ([self parentWindow]) [self setSubwindowFrame];
-  NSEnumerator *enumerator = [[self childWindows] objectEnumerator];
-  id child;
-  while ((child = [enumerator nextObject]) != nil) {
-    [child recursivelyRepositionSubwindows];
+    [child recursivelySendToSubwindows:sel];
   }
 }
 
 - (void)setSubwindowFrame { // maps a subwindow at its correct position/size
   Fl_Window *parent = w->window();
+  if (!parent) return;
   FLWindow *pxid = fl_xid(parent);
   if (!pxid) return;
   NSRect rp = [pxid frame];
@@ -746,6 +737,33 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   }
 }
 
+- (void)checkSubwindowFrame {
+  if (![self parentWindow]) return;
+  // make sure this subwindow doesn't leak out of its parent window
+  Fl_Window *from = w, *parent;
+  CGRect full = CGRectMake(0, 0, w->w(), w->h()); // full subwindow area
+  CGRect srect = full; // will become new subwindow clip
+  int fromx = 0, fromy = 0;
+  while ((parent = from->window()) != NULL) { // loop over all parent windows
+    fromx -= from->x(); // parent origin in subwindow's coordinates
+    fromy -= from->y();
+    CGRect prect = CGRectMake(fromx, fromy, parent->w(), parent->h());
+    srect = CGRectIntersection(prect, srect); // area of subwindow inside its parent
+    from = parent;
+  }
+  CGRect *r = Fl_X::i(w)->subRect();
+  CGRect current_clip = (r ? *r : full); // current subwindow clip
+  if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
+    delete r;
+    [[Fl_X::i(w)->xid contentView] setNeedsDisplay:YES]; // subwindow needs redrawn
+    if (CGRectEqualToRect(srect, full)) r = NULL;
+    else {
+      r = new CGRect(srect);
+      if (r->size.width == 0 && r->size.height == 0) r->origin.x = r->origin.y = 0;
+    }
+    Fl_X::i(w)->subRect(r);
+  }
+}
 @end
 
 @interface FLApplication : NSObject
@@ -1311,7 +1329,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (parent && window->as_gl_window()) parent->redraw();
   }
   resize_from_system = NULL;
-  if ([[nsw childWindows] count]) [nsw recursivelyRepositionSubwindows];
+  if ([[nsw childWindows] count]) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   fl_unlock_function();
 }
 - (void)windowDidResize:(NSNotification *)notif
@@ -1333,6 +1351,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
+  [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(false);
   fl_unlock_function();
 }
@@ -3045,7 +3064,7 @@ void Fl_X::make(Fl_Window* w)
   if (fl_show_iconic) {
     fl_show_iconic = 0;
     w->handle(FL_SHOW); // create subwindows if any
-    [cw recursivelyDisplay]; // draw the window and its subwindows before its icon is computed
+    [cw recursivelySendToSubwindows:@selector(display)];  // draw the window and its subwindows before its icon is computed
     [cw miniaturize:nil];
   } else if (w->parent()) { // a subwindow
     [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
@@ -3230,31 +3249,6 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       }
     } else {
       x(X); y(Y);
-    }
-  }
-  if (this->parent() && shown()) {
-    // make sure this subwindow doesn't leak out of its parent window
-    Fl_Window *from = this;
-    CGRect full = CGRectMake(0, 0, w(), h()); // full subwindow area
-    CGRect srect = full; // will become new subwindow clip
-    int fromx = 0, fromy = 0;
-    while ((parent = from->window()) != NULL) { // loop over all parent windows
-      fromx -= from->x(); // parent origin in subwindow's coordinates
-      fromy -= from->y();
-      CGRect prect = CGRectMake(fromx, fromy, parent->w(), parent->h());
-      srect = CGRectIntersection(prect, srect); // area of subwindow inside its parent
-      from = parent;
-    }
-    CGRect *r = i->subRect();
-    CGRect current_clip = (r ? *r : full); // current subwindow clip
-    if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
-      delete r;
-      [[i->xid contentView] setNeedsDisplay:YES]; // subwindow needs redrawn
-      if (CGRectEqualToRect(srect, full)) r = NULL;
-      else {
-        r = new CGRect(srect);
-      }
-      i->subRect(r);
     }
   }
 }
