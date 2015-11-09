@@ -1351,7 +1351,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
-  [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
+  if ([[nsw childWindows] count]) {
+    [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+    [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
+  }
   if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(false);
   fl_unlock_function();
 }
