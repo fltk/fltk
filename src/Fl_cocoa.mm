@@ -724,10 +724,13 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   if (!parent) return;
   FLWindow *pxid = fl_xid(parent);
   if (!pxid) return;
-  NSRect rp = [pxid frame];
-  // subwindow coordinates are in screen units from bottom just like all windows
-  rp.origin = NSMakePoint(rp.origin.x + w->x(), rp.origin.y + parent->h() - w->y() - w->h());
-  rp.size = NSMakeSize(w->w(), w->h());
+  int bx = w->x(); int by = w->y();
+  while (parent) {
+    bx += parent->x();
+    by += parent->y();
+    parent = parent->window();
+  }
+  NSRect rp = NSMakeRect(bx, main_screen_height - (by + w->h()), w->w(), w->h());
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
   }
@@ -3231,6 +3234,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       }
       NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
       [fl_xid(this) setFrame:r display:YES];
+      [fl_xid(this) recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
     } else {
       bx = X; by = Y;
       parent = window();
@@ -3241,6 +3245,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       }
       NSPoint pt = NSMakePoint(bx, main_screen_height - (by + H));
       [fl_xid(this) setFrameOrigin:pt]; // set cocoa coords to FLTK position
+      [fl_xid(this) recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
     }
   }
   else {
