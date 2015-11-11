@@ -4100,11 +4100,18 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
 {
   const uchar *from_data = [from bitmapData];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (fl_mac_os_version >= 100400 && ([to bitmapFormat] & NSAlphaFirstBitmapFormat) && !([from bitmapFormat] & NSAlphaFirstBitmapFormat) ) { // 10.4
-    // "to" is ARGB and "from" is RGBA --> convert "from" to ARGB
-    // it is enough to read "from" starting one byte earlier, because A is always 0xFF:
-    // RGBARGBA becomes (A)RGBARGB
-    from_data--;
+  if (fl_mac_os_version >= 100400) { // 10.4 required by the bitmapFormat message
+    if (([to bitmapFormat] & NSAlphaFirstBitmapFormat) && !([from bitmapFormat] & NSAlphaFirstBitmapFormat) ) {
+      // "to" is ARGB and "from" is RGBA --> convert "from" to ARGB
+      // it is enough to read "from" starting one byte earlier, because A is always 0xFF:
+      // RGBARGBA becomes (A)RGBARGB
+      from_data--;
+    } else if ( !([to bitmapFormat] & NSAlphaFirstBitmapFormat) && ([from bitmapFormat] & NSAlphaFirstBitmapFormat) ) {
+      // "from" is ARGB and "to" is RGBA --> convert "from" to RGBA
+      // it is enough to offset reading by one byte because A is always 0xFF
+      // so ARGBARGB becomes RGBARGB(A) as needed
+      from_data++;
+    }
   }
 #endif
   int to_w = (int)[to pixelsWide]; // pixel width of "to"
@@ -4119,23 +4126,26 @@ static void write_bitmap_inside(NSBitmapImageRep *to, int to_width, NSBitmapImag
   to_y = factor*to_y;
   // perform the copy
   uchar *tobytes = [to bitmapData] + to_y * to_w * to_depth + to_x * to_depth;
-  uchar *first = tobytes;
   const uchar *frombytes = from_data;
   for (int i = 0; i < from_h; i++) {
-    if (depth == 0) {
-      if (i > 0 || from_data >= [from bitmapData]) memcpy(tobytes, frombytes, from_w * from_depth);
-      else memcpy(tobytes+1, frombytes+1, from_w * from_depth-1); // avoid reading before [from bitmapData]
+    if (depth == 0) { // depth is always 0 in case of RGBA <-> ARGB conversion
+      if (i == 0 && from_data < [from bitmapData]) {
+        memcpy(tobytes+1, frombytes+1, from_w * from_depth-1); // avoid reading before [from bitmapData]
+        *tobytes = 0xFF; // set the very first A byte
+      } else if (i == from_h - 1 && from_data > [from bitmapData]) {
+        memcpy(tobytes, frombytes, from_w * from_depth - 1); // avoid reading after end of [from bitmapData]
+        *(tobytes + from_w * from_depth - 1) = 0xFF; // set the very last A byte
+      } else {
+        memcpy(tobytes, frombytes, from_w * from_depth);
+      }
     } else {
       for (int j = 0; j < from_w; j++) {
-        // avoid reading before [from bitmapData]
-        if (j==0 && i==0 && from_data < [from bitmapData]) memcpy(tobytes+1, frombytes+1, depth-1);
-        else memcpy(tobytes + j * to_depth, frombytes + j * from_depth, depth);
+        memcpy(tobytes + j * to_depth, frombytes + j * from_depth, depth);
       }
     }
     tobytes += to_w * to_depth;
     frombytes += from_w * from_depth;
   }
-  if (from_data == [from bitmapData] - 1) *first = 0xFF; // set the very first A byte
 }
 
 
