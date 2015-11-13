@@ -1332,7 +1332,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (parent && window->as_gl_window()) parent->redraw();
   }
   resize_from_system = NULL;
-  if ([[nsw childWindows] count]) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+  [nsw checkSubwindowFrame];
   fl_unlock_function();
 }
 - (void)windowDidResize:(NSNotification *)notif
@@ -1354,10 +1355,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
-  if ([[nsw childWindows] count]) {
-    [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
-    [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
-  }
+  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+  [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(false);
   fl_unlock_function();
 }
@@ -3234,7 +3233,6 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       }
       NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
       [fl_xid(this) setFrame:r display:YES];
-      [fl_xid(this) recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
     } else {
       bx = X; by = Y;
       parent = window();
@@ -3245,7 +3243,6 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       }
       NSPoint pt = NSMakePoint(bx, main_screen_height - (by + H));
       [fl_xid(this) setFrameOrigin:pt]; // set cocoa coords to FLTK position
-      [fl_xid(this) recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
     }
   }
   else {
