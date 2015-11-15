@@ -715,7 +715,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   NSEnumerator *enumerator = [[self childWindows] objectEnumerator];
   id child;
   while ((child = [enumerator nextObject]) != nil) {
-    [child recursivelySendToSubwindows:sel];
+    if ([child isKindOfClass:[FLWindow class]]) [child recursivelySendToSubwindows:sel];
   }
 }
 
