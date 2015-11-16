@@ -767,6 +767,27 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
     Fl_X::i(w)->subRect(r);
   }
 }
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+/* With Mac OS 10.11 the green window button makes window fullscreen (covers system menu bar and dock).
+ When there are subwindows, they are by default constrained not to cover the menu bar
+ (this is arguably a Mac OS bug).
+ Overriding this method prevents them from having this constraint.
+ */
+- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
+{
+  if (fl_mac_os_version >= 1011000) {
+    NSWindow *p = self, *win; // compute win the toplevel window
+    while (p) {
+      win = p;
+      p = [win parentWindow];
+    }
+    if ([win inLiveResize]) // inLiveResize requires 10.6
+      return frameRect;
+  }
+  return [super constrainFrameRect:frameRect toScreen:screen]; // will prevent a window from covering the menu bar
+}
+#endif
 @end
 
 @interface FLApplication : NSObject
@@ -1343,7 +1364,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   NSRect r; NSPoint pt2;
   r = [[nsw contentView] frame];
-  pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
+  pt2 = [nsw convertBaseToScreen:NSMakePoint(0, r.size.height)];
   pt2.y = main_screen_height - pt2.y;
   Fl_Window *parent = window->window();
   while (parent) {
