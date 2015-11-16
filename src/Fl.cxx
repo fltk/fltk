@@ -811,7 +811,7 @@ static handler_link *handlers = 0;
   - \ref FL_SCREEN_CONFIGURATION_CHANGED events.
     Under X11, this event requires the libXrandr.so shared library to be
     loadable at run-time and the X server to implement the RandR extension.
-  - \ref FL_FULLSCREEN events sent to a window that enters of leaves
+  - \ref FL_FULLSCREEN events sent to a window that enters or leaves
     fullscreen mode.
   - System events that FLTK does not recognize.  See fl_xevent.
   - \e Some other events when the widget FLTK selected returns
