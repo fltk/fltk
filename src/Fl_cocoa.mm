@@ -652,6 +652,9 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
 #endif
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen;
+#endif
 @end
 
 @implementation FLWindow
@@ -776,7 +779,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
  */
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
 {
-  if (fl_mac_os_version >= 1011000) {
+  if (fl_mac_os_version >= 101100) {
     NSWindow *p = self, *win; // compute win the toplevel window
     while (p) {
       win = p;
