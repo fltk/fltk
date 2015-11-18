@@ -54,7 +54,7 @@ private:
   int height;
   Fl_Paged_Device *helper;
 #ifdef __APPLE__
-  Fl_CFMutableDataRef pdfdata;
+  CFMutableDataRef pdfdata;
   CGContextRef oldgc;
   CGContextRef gc;
   void prepare_copy_pdf_and_tiff(int w, int h);
