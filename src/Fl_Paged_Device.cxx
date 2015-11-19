@@ -56,7 +56,16 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
     translate(new_x - old_x, new_y - old_y );
   }
   // if widget is a main window, clip all drawings to the window area
-  if (is_window && !widget->window()) fl_push_clip(0, 0, widget->w(), widget->h() );
+  if (is_window && !widget->window()) {
+    fl_push_clip(0, 0, widget->w(), widget->h() );
+#ifdef __APPLE__ // for Mac OS X 10.6 and above, make window with rounded bottom corners
+    if ( fl_mac_os_version >= 100600 && driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id ) {
+      CGContextRestoreGState(fl_gc);
+      Fl_X::clip_to_rounded_corners(fl_gc, widget->w(), widget->h());
+      CGContextSaveGState(fl_gc);
+    }
+#endif
+  }
   // we do some trickery to recognize OpenGL windows and draw them via a plugin
   int drawn_by_plugin = 0;
   if (widget->as_gl_window()) {

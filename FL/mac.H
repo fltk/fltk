@@ -211,6 +211,7 @@ public:
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
   static int dnd(int use_selection); // call Fl_X::dnd(1) to support text dragging
   static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
+  static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
 private:
 #if FLTK_ABI_VERSION >= 10304
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window

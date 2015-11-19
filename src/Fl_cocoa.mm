@@ -4376,10 +4376,9 @@ int Fl_Window::decorated_h()
   return h() + bt + by;
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-// clip the graphics context to round top angles, as in window title bars
-static void apply_titlebar_clipping(CGContextRef gc, int w, int h) {
-  const CGFloat radius = 4;
+// clip the graphics context to rounded corners
+void Fl_X::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
+  const CGFloat radius = 5;
   CGContextMoveToPoint(gc, 0, 0);
   CGContextAddLineToPoint(gc, 0, h - radius);
   CGContextAddArcToPoint(gc, 0, h,  radius, h, radius);
@@ -4388,7 +4387,6 @@ static void apply_titlebar_clipping(CGContextRef gc, int w, int h) {
   CGContextAddLineToPoint(gc, w, 0);
   CGContextClip(gc);
 }
-#endif
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
@@ -4408,7 +4406,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
         CGContextSaveGState(fl_gc);
         CGContextTranslateCTM(fl_gc, x_offset - 0.5, y_offset + bt - 0.5);
         CGContextScaleCTM(fl_gc, 1, -1);
-        apply_titlebar_clipping(fl_gc, win->w(), bt);
+        Fl_X::clip_to_rounded_corners(fl_gc, win->w(), bt);
         [layer renderInContext:fl_gc]; // 10.5 // print all title bar
         CGContextRestoreGState(fl_gc);
       }
@@ -4417,7 +4415,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
         CGContextRef gc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
         CGColorSpaceRelease(cspace);
         CGContextClearRect(gc, CGRectMake(0, 0, win->w(), bt));
-        apply_titlebar_clipping(gc, win->w(), bt);
+        Fl_X::clip_to_rounded_corners(gc, win->w(), bt);
         [layer renderInContext:gc]; // 10.5 // draw all title bar to bitmap
         Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), win->w(), bt, 4,
                                                CGBitmapContextGetBytesPerRow(gc)); // 10.2
