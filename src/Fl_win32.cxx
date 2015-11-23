@@ -104,6 +104,10 @@ typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const stru
 typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 
 static HMODULE s_wsock_mod = 0;
+static HMODULE dwmapi_dll = LoadLibrary("dwmapi.dll");
+typedef HRESULT (WINAPI* DwmGetWindowAttribute_type)(HWND hwnd, DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
+static DwmGetWindowAttribute_type DwmGetWindowAttribute = 0;
+static const DWORD DWMA_EXTENDED_FRAME_BOUNDS = 9;
 static fl_wsk_select_f s_wsock_select = 0;
 static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
 
@@ -1618,7 +1622,19 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
 }
 
 int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
-  return fake_X_wm_style(w, X, Y, bt, bx, by, 0, 0, w->maxw, w->minw, w->maxh, w->minh, w->size_range_set);
+  int val = fake_X_wm_style(w, X, Y, bt, bx, by, 0, 0, w->maxw, w->minw, w->maxh, w->minh, w->size_range_set);
+  if (dwmapi_dll) {
+    RECT r;
+    if (!DwmGetWindowAttribute) DwmGetWindowAttribute = (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute");
+    if (DwmGetWindowAttribute) {
+      if ( DwmGetWindowAttribute(fl_xid(w), DWMA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
+        bx = (r.right - r.left - w->w())/2;
+        by = bx;
+        bt = r.bottom - r.top - w->h() - 2*by;
+      }
+    }
+  }
+  return val;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -2730,7 +2746,14 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   HDC save_gc = fl_gc;
   fl_gc = GetDC(NULL); // get the screen device context
   // capture the 4 window sides from screen
-  RECT r; GetWindowRect(fl_window, &r);
+  RECT r;
+  HRESULT res = S_OK + 1;
+  if (DwmGetWindowAttribute) {
+    res = DwmGetWindowAttribute(fl_window, DWMA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT));
+  }
+  if (res != S_OK) {
+    GetWindowRect(fl_window, &r);
+  }
   Window save_win = fl_window;
   fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
   uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
