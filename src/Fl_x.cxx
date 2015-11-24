@@ -3024,6 +3024,11 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     this->print_widget(win, x_offset, y_offset);
     return;
   }
+  draw_decorated_window(win, x_offset, y_offset, this);
+}
+
+void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset)
+{
   Fl_Display_Device::display_device()->set_current();
   win->show();
   Fl::check();
@@ -3052,7 +3057,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     bottom_image = fl_read_image(NULL, 0, bt + win->h(), -(win->w() + 2*bx), bx);
   }
   fl_window = from;
-  this->set_current();
+  toset->set_current();
   if (top_image) {
     fl_draw_image(top_image, x_offset, y_offset, win->w() + 2 * bx, bt, 3);
     delete[] top_image;
@@ -3110,14 +3115,29 @@ void printFront(Fl_Widget *o, void *data)
   o->window()->show();
 }
 
+#include <FL/Fl_Copy_Surface.H>
+void copyFront(Fl_Widget *o, void *data)
+{
+  o->window()->hide();
+  Fl_Window *win = Fl::first_window();
+  if (!win) return;
+  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
+  surf->set_current();
+  surf->draw_decorated_window(win); // draw the window content
+  delete surf; // put the window on the clipboard
+  o->window()->show();
+}
+
 void preparePrintFront(void)
 {
   static int first=1;
   if(!first) return;
   first=0;
-  static Fl_Window w(0,0,150,30);
-  static Fl_Button b(0,0,w.w(),w.h(), "Print front window");
-  b.callback(printFront);
+  static Fl_Window w(0,0,140,60);
+  static Fl_Button bp(0,0,w.w(),30, "Print front window");
+  bp.callback(printFront);
+  static Fl_Button bc(0,30,w.w(),30, "Copy front window");
+  bc.callback(copyFront);
   w.end();
   w.show();
 }

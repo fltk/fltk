@@ -3855,6 +3855,45 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 }
 @end
 
+
+void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+  int bx, by, bt;
+  get_window_frame_sizes(bx, by, bt);
+  draw(win, 0, bt); // draw the window content
+  if (win->border()) {
+    // draw the window title bar
+    CGContextSaveGState(gc);
+    CGContextTranslateCTM(gc, 0, bt);
+    CGContextScaleCTM(gc, 1, -1);
+    Fl_X::clip_to_rounded_corners(gc, win->w(), bt);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+    CALayer *layer = fl_mac_os_version >= 101000 ?
+    [[[fl_xid(win) standardWindowButton:NSWindowCloseButton] superview] layer] : nil; // 10.5
+    if (layer) {
+      CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+      // for unknown reason, rendering the layer to the Fl_Copy_Surface pdf graphics context does not work;
+      // we use an auxiliary bitmap context
+      CGContextRef auxgc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
+      CGColorSpaceRelease(cspace);
+      CGContextClearRect(auxgc, CGRectMake(0, 0, win->w(), bt));
+      CGContextTranslateCTM(auxgc, 0, bt);
+      CGContextScaleCTM(auxgc, 1, -1);
+      [layer renderInContext:auxgc]; // 10.5
+      fl_draw_image((uchar*)CGBitmapContextGetData(auxgc), 0, 0, win->w(), bt, 4, CGBitmapContextGetBytesPerRow(auxgc));
+      CGContextRelease(auxgc);
+    } else
+#endif
+    {
+      CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+      CGContextDrawImage(gc, CGRectMake(0, 0, win->w(), bt), img);
+      CFRelease(img);
+    }
+    CGContextRestoreGState(gc);
+  }
+}
+
+
 static void createAppleMenu(void)
 {
   static BOOL donethat = NO;

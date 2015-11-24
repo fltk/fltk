@@ -211,6 +211,14 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
 
 #endif  // __APPLE__
 
+#if !defined(__APPLE__)
+/** Copies a window and its borders and title bar to the clipboard. */
+void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+  helper->draw_decorated_window(win, delta_x, delta_y, this);
+}
+#endif
+
 #if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
 /* graphics driver that translates all graphics coordinates before calling Xlib */
 class Fl_translated_Xlib_Graphics_Driver_ : public Fl_Xlib_Graphics_Driver {

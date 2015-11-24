@@ -2731,10 +2731,14 @@ int Fl_Window::decorated_h()
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
-    this->print_widget(win, x_offset, y_offset);
-    return;
-  }
+  if (!win->shown() || win->parent() || !win->border() || !win->visible())
+    print_widget(win, x_offset, y_offset);
+  else
+    draw_decorated_window(win, x_offset, y_offset, this);
+}
+
+void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset)
+{
   int X, Y, bt, bx, by, ww, wh; // compute the window border sizes
   Fl_X::fake_X_wm(win, X, Y, bt, bx, by);
   ww = win->w() + 2 * bx;
@@ -2757,21 +2761,17 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   Window save_win = fl_window;
   fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
   uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
-  uchar *left_image = fl_read_image(NULL, r.left, r.top, bx, wh);
-  uchar *right_image = fl_read_image(NULL, r.right - bx, r.top, bx, wh);
-  uchar *bottom_image = fl_read_image(NULL, r.left, r.bottom-by, ww, by);
+  uchar *left_image = bx ? fl_read_image(NULL, r.left, r.top, bx, wh) : NULL;
+  uchar *right_image = bx ? fl_read_image(NULL, r.right - bx, r.top, bx, wh) : NULL;
+  uchar *bottom_image = by ? fl_read_image(NULL, r.left, r.bottom-by, ww, by) : NULL;
   fl_window = save_win;
   ReleaseDC(NULL, fl_gc);  fl_gc = save_gc;
-  this->set_current();
+  toset->set_current();
   // print the 4 window sides
-  fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3);
-  fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3);
-  fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3);
-  fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3);
-  delete[] top_image;
-  delete[] left_image;
-  delete[] right_image;
-  delete[] bottom_image;
+  fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3); delete[] top_image;
+  if (left_image) { fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3); delete left_image; }
+  if (right_image) { fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3); delete right_image; }
+  if (bottom_image) { fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3); delete bottom_image; }
   // print the window inner part
   this->print_widget(win, x_offset + bx, y_offset + bt + by);
   fl_gc = GetDC(fl_xid(win));
@@ -2819,14 +2819,30 @@ void printFront(Fl_Widget *o, void *data)
   o->window()->show();
 }
 
+#include <FL/Fl_Copy_Surface.H>
+void copyFront(Fl_Widget *o, void *data)
+{
+  o->window()->hide();
+  Fl_Window *win = Fl::first_window();
+  if (!win) return;
+  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w() + 1, (int)(win->decorated_h() *0.985));
+  surf->set_current();
+  surf->draw_decorated_window(win); // draw the window content
+  delete surf; // put the window on the clipboard
+  Fl_Display_Device::display_device()->set_current();
+  o->window()->show();
+}
+
 void preparePrintFront(void)
 {
   static BOOL first=TRUE;
   if(!first) return;
   first=FALSE;
-  static Fl_Window w(0,0,120,30);
-  static Fl_Button b(0,0,w.w(),w.h(), "Print front window");
-  b.callback(printFront);
+  static Fl_Window w(0,0,120,60);
+  static Fl_Button bp(0,0,w.w(),30, "Print front window");
+  bp.callback(printFront);
+  static Fl_Button bc(0,30,w.w(),30, "Copy front window");
+  bc.callback(copyFront);
   w.end();
   w.show();
 }
