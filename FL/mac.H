@@ -301,6 +301,7 @@ public:
   static const char *show;
   /** Localizable text for the "Quit xxx" application menu item */
   static const char *quit;
+  static void custom_application_menu_items(const Fl_Menu_Item *m);
 };
 
 /** @} */

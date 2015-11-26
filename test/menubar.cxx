@@ -237,6 +237,16 @@ int main(int argc, char **argv) {
   ch2.callback(menu_location_cb, &menubar);
 #endif
   window.end();
+  
+#ifdef __APPLE__
+  Fl_Menu_Item custom[] = {
+    {"Preferences",	0,	test_cb, NULL, FL_MENU_DIVIDER},
+    {"Radio1",	0,	test_cb, NULL, FL_MENU_RADIO|FL_MENU_VALUE},
+    {"Radio2",	0,	test_cb, NULL, FL_MENU_RADIO},
+    {0}
+  };
+  Fl_Mac_App_Menu::custom_application_menu_items(custom);
+#endif
   window.show(argc, argv);
   return Fl::run();
 }

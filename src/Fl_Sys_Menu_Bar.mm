@@ -48,6 +48,7 @@
 typedef const Fl_Menu_Item *pFl_Menu_Item;
 
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
+static Fl_Menu_Bar *custom_menu;
 
 static char *remove_ampersand(const char *s);
 extern void (*fl_lock_function)();
@@ -75,12 +76,14 @@ typedef struct {
 
 @interface FLMenuItem : NSMenuItem {
 }
-- (void) doCallback:(id)unused;
-- (void) directCallback:(id)unused;
 - (const Fl_Menu_Item*) getFlItem;
+- (void) itemCallback:(Fl_Menu_*)menu;
+- (void) doCallback;
+- (void) customCallback;
+- (void) directCallback;
 - (void) setKeyEquivalentModifierMask:(int)value;
 - (void) setFltkShortcut:(int)key;
-+ (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu;
++ (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu action:(SEL)selector;
 @end
 
 @implementation FLMenuItem
@@ -91,11 +94,10 @@ typedef struct {
   if (smi->use_rank) return fl_sys_menu_bar->menu() + smi->rank;
   return smi->item;
 }
-- (void) doCallback:(id)unused
+- (void) itemCallback:(Fl_Menu_*)menu
 {
-  fl_lock_function();
   const Fl_Menu_Item *item = [self getFlItem];
-  fl_sys_menu_bar->picked(item);
+  menu->picked(item);
   if ( item->flags & FL_MENU_TOGGLE ) {	// update the menu toggle symbol
     [self setState:(item->value() ? NSOnState : NSOffState)];
   }
@@ -122,9 +124,20 @@ typedef struct {
       [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
     }
   }
+}
+- (void) doCallback
+{
+  fl_lock_function();
+  [self itemCallback:fl_sys_menu_bar];
   fl_unlock_function();
 }
-- (void) directCallback:(id)unused
+- (void) customCallback
+{
+  fl_lock_function();
+  [self itemCallback:custom_menu];
+  fl_unlock_function();
+}
+- (void) directCallback
 {
   fl_lock_function();
   Fl_Menu_Item *item = (Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
@@ -154,22 +167,22 @@ typedef struct {
   [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
   [self setKeyEquivalentModifierMask:mod];
 }
-+ (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu
++ (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu action:(SEL)selector
 {
   char *name = remove_ampersand(mitem->label());
-  CFStringRef cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
+  NSString *title = NSLocalizedString([NSString stringWithUTF8String:name], nil);
   free(name);
-  FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
-						action:@selector(doCallback:) 
+  FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:title
+						action:selector
 					 keyEquivalent:@""];
   sys_menu_item smi;
-  smi.rank = fl_sys_menu_bar->find_index(mitem); // ≥ 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
+  // ≥ 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
+  smi.rank = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
   smi.use_rank = (smi.rank >= 0);
   if (!smi.use_rank) smi.item = mitem;
   NSData *pointer = [NSData dataWithBytes:&smi length:sizeof(smi)];
   [item setRepresentedObject:pointer];
   [menu addItem:item];
-  CFRelease(cfname);
   [item setTarget:item];
   int retval = [menu indexOfItem:item];
   [item release];
@@ -190,7 +203,7 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
   CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
   [appleMenu removeItemAtIndex:0];
   FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
-						 action:@selector(directCallback:) 
+						 action:@selector(directCallback)
 					  keyEquivalent:@""] autorelease];
   if (aboutItem.shortcut())
     [item setFltkShortcut:aboutItem.shortcut()];
@@ -257,36 +270,37 @@ static char *remove_ampersand(const char *s)
 /*
  * create a sub menu for a specific menu handle
  */
-static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *mitem)
+static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *mitem, SEL selector)
 {
   NSMenu *submenu;
   int miCnt, flags;
   
-  NSMenuItem *menuItem;
-  char *ts = remove_ampersand(mitem->text);
-  CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
-  free(ts);
-  submenu = [[NSMenu alloc] initWithTitle:(NSString*)title];
-  CFRelease(title);
-  [submenu setAutoenablesItems:NO];
+  if (mitem) {
+    NSMenuItem *menuItem;
+    char *ts = remove_ampersand(mitem->text);
+    CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
+    free(ts);
+    submenu = [[NSMenu alloc] initWithTitle:(NSString*)title];
+    CFRelease(title);
+    [submenu setAutoenablesItems:NO];
+    
+    int cnt;
+    cnt = [mh numberOfItems];
+    cnt--;
+    menuItem = [mh itemAtIndex:cnt];
+    [menuItem setSubmenu:submenu];
+    [submenu release];
+  } else submenu = mh;
   
-  int cnt;
-  cnt = [mh numberOfItems];
-  cnt--;
-  menuItem = [mh itemAtIndex:cnt];
-  [menuItem setSubmenu:submenu];
-  [submenu release];
-  
-  while ( mm->text )
-  {
+  while ( mm->text ) {
     if (!mm->visible() ) { // skip invisible items and submenus
       mm = mm->next(0);
       continue;
     }
-    miCnt = [FLMenuItem addNewItem:mm menu:submenu];
+    miCnt = [FLMenuItem addNewItem:mm menu:submenu action:selector];
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
-    if ( mm->flags & FL_MENU_INACTIVE || mitem->flags & FL_MENU_INACTIVE) {
+    if ( mm->flags & FL_MENU_INACTIVE || (mitem && (mitem->flags & FL_MENU_INACTIVE))) {
       NSMenuItem *item = [submenu itemAtIndex:miCnt];
       [item setEnabled:NO];
     }
@@ -294,12 +308,12 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     if ( mm->flags & FL_SUBMENU )
     {
       mm++;
-      createSubMenu( submenu, mm, mm - 1 );
+      createSubMenu( submenu, mm, mm - 1, selector);
     }
     else if ( mm->flags & FL_SUBMENU_POINTER )
     {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
-      createSubMenu( submenu, smm, mm);
+      createSubMenu( submenu, smm, mm, selector);
     }
     if ( flags & FL_MENU_DIVIDER ) {
       [submenu addItem:[NSMenuItem separatorItem]];
@@ -316,33 +330,12 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
 static void convertToMenuBar(const Fl_Menu_Item *mm)
 {
   NSMenu *fl_system_menu = [NSApp mainMenu];
-  int rank;
   int count;//first, delete all existing system menus
   count = [fl_system_menu numberOfItems];
   for(int i = count - 1; i > 0; i--) {
     [fl_system_menu removeItem:[fl_system_menu itemAtIndex:i]];
   }
-  //now convert FLTK stuff into MacOS menus
-  for (;;)
-  {
-    if ( !mm || !mm->text )
-      break;
-    if (!mm->visible() ) { // skip invisible menus
-      mm = mm->next(0);
-      continue;
-    }
-    rank = [FLMenuItem  addNewItem:mm menu:fl_system_menu];
-    
-    if ( mm->flags & FL_SUBMENU ) {
-      mm++;
-      createSubMenu(fl_system_menu, mm, mm - 1);
-      }
-    else if ( mm->flags & FL_SUBMENU_POINTER ) {
-      const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
-      createSubMenu(fl_system_menu, smm, mm);
-    }
-    mm++;
-  }
+  if (mm) createSubMenu(fl_system_menu, mm, NULL, @selector(doCallback));
 }
 
 
@@ -479,6 +472,7 @@ Fl_Sys_Menu_Bar::Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l)
 : Fl_Menu_Bar(x,y,w,h,l) 
 {
   deactivate();			// don't let the old area take events
+  if (fl_sys_menu_bar) delete fl_sys_menu_bar;
   fl_sys_menu_bar = this;
   Fl::add_handler(process_sys_menu_shortcuts);
 }
@@ -491,6 +485,46 @@ Fl_Sys_Menu_Bar::~Fl_Sys_Menu_Bar()
   Fl::remove_handler(process_sys_menu_shortcuts);
 }
 
+/** \class Fl_Mac_App_Menu
+ Mac OS-specific class allowing to customize and localize the application menu.
+ 
+ The public class attributes are used to build the application menu. They can be localized
+ at run time to any UTF-8 text by placing instructions such as this before fl_open_display()
+ gets called:
+ \verbatim
+ Fl_Mac_App_Menu::print = "Imprimer la fenêtre";
+ \endverbatim
+ \see \ref osissues_macos for another way to localization.
+ */
+
+
+/** Adds custom menu item(s) to the application menu of the system menu bar.
+ They are positioned after the "Print Front Window" item, or at its place
+ if it was removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
+ \param m zero-ending array of Fl_Menu_Item 's.
+ */
+void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
+{
+  fl_open_display(); // create the system menu, if needed
+  custom_menu = new Fl_Menu_Bar(0,0,0,0);
+  custom_menu->menu(m);
+  NSMenu *menu = [[[NSApp mainMenu] itemAtIndex:0] submenu]; // the application menu
+  NSInteger to_rank;
+  if ([[menu itemAtIndex:2] action] != @selector(printPanel)) { // the 'Print' item was removed
+    [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
+    to_rank = 2;
+  } else to_rank = 3; // after the "Print Front Window" item
+  NSInteger count = [menu numberOfItems];
+  createSubMenu(menu, m, NULL, @selector(customCallback)); // add new items at end of application menu
+  NSInteger count2 = [menu numberOfItems];
+  for (NSInteger i = count; i < count2; i++) { // move new items to their desired position in application menu
+    NSMenuItem *item = [menu itemAtIndex:i];
+    [item retain];
+    [menu removeItemAtIndex:i];
+    [menu insertItem:item atIndex:to_rank++];
+    [item release];
+  }
+}
 #endif /* __APPLE__ */
 
 //
