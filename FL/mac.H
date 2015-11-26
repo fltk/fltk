@@ -281,6 +281,7 @@ extern int fl_mac_os_version;
  */
 extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
+struct Fl_Menu_Item;
 
 class Fl_Mac_App_Menu {
 public:
