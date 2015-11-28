@@ -278,10 +278,9 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
   if (mitem) {
     NSMenuItem *menuItem;
     char *ts = remove_ampersand(mitem->text);
-    CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
+    NSString *title = NSLocalizedString([NSString stringWithUTF8String:ts], nil);
     free(ts);
     submenu = [[NSMenu alloc] initWithTitle:(NSString*)title];
-    CFRelease(title);
     [submenu setAutoenablesItems:NO];
     
     int cnt;
