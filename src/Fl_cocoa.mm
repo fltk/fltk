@@ -2734,7 +2734,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 // For Fl_Gl_Window on retina display, returns 2, otherwise 1
 int Fl_X::resolution_scaling_factor(Fl_Window* win)
 {
-  return (fl_mac_os_version >= 100700 && win->as_gl_window() && Fl::use_high_res_GL() && win->i->mapped_to_retina()) ? 2 : 1;
+  return (fl_mac_os_version >= 100700 && win->as_gl_window() && Fl::use_high_res_GL() && win->i && win->i->mapped_to_retina()) ? 2 : 1;
 }
 
 
