@@ -1364,12 +1364,12 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     parent = parent->window();
   }
   resize_from_system = window;
-  if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(true);
+  if (window->as_gl_window() && Fl_X::i(window)) Fl_X::i(window)->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
-  if (window->as_gl_window()) Fl_X::i(window)->in_windowDidResize(false);
+  if (window->as_gl_window() && Fl_X::i(window)) Fl_X::i(window)->in_windowDidResize(false);
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
