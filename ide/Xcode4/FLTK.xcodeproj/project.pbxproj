@@ -325,6 +325,11 @@
 		7F6F526419CF0FED0075F408 /* Fl_Window_shape.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F6F526319CF0FED0075F408 /* Fl_Window_shape.cxx */; };
 		7F7CF8191AB97DA600E12B22 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		7F7CF81F1AB9836C00E12B22 /* animated.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F7CF81E1AB9836C00E12B22 /* animated.cxx */; };
+		7F8E7E391C0DA8D200B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92032516B1A90A000FC50F /* Localizable.strings */; };
+		7F8E7E3A1C0DA8F000B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031C16B1A909000FC50F /* Localizable.strings */; };
+		7F8E7E3B1C0DA8F700B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031F16B1A909000FC50F /* Localizable.strings */; };
+		7F8E7E3C1C0DA8FB00B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92032216B1A909000FC50F /* Localizable.strings */; };
+		7F8E7E3D1C0DA90100B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031916B1A909000FC50F /* Localizable.strings */; };
 		7FA5C2BE192FAEBB00519823 /* Fl_Copy_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FA5C2BD192FAEBB00519823 /* Fl_Copy_Surface.cxx */; };
 		7FA5C2C0192FAECA00519823 /* Fl_Image_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FA5C2BF192FAECA00519823 /* Fl_Image_Surface.cxx */; };
 		7FB1BE051B5D20CF00055291 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -8969,6 +8974,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F8E7E3D1C0DA90100B806A0 /* Localizable.strings in Resources */,
+				7F8E7E391C0DA8D200B806A0 /* Localizable.strings in Resources */,
+				7F8E7E3C1C0DA8FB00B806A0 /* Localizable.strings in Resources */,
+				7F8E7E3B1C0DA8F700B806A0 /* Localizable.strings in Resources */,
+				7F8E7E3A1C0DA8F000B806A0 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
