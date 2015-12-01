@@ -240,7 +240,7 @@ int main(int argc, char **argv) {
   
 #ifdef __APPLE__
   Fl_Menu_Item custom[] = {
-    {"Preferences",	0,	test_cb, NULL, FL_MENU_DIVIDER},
+    {"Preferences…",	0,	test_cb, NULL, FL_MENU_DIVIDER},
     {"Radio1",	0,	test_cb, NULL, FL_MENU_RADIO|FL_MENU_VALUE},
     {"Radio2",	0,	test_cb, NULL, FL_MENU_RADIO},
     {0}
