@@ -508,7 +508,7 @@ If GLEW is installed on the Mac OS development platform, it is possible
 to use the same code for all platforms, with one exception: put
 \code
 #ifdef __APPLE__
-glewExperimental = TRUE;
+glewExperimental = GL_TRUE;
 #endif
 \endcode
 before the glewInit() call.
