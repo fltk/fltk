@@ -8,12 +8,12 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	- Added full support of true subwindows to the Mac OS X platform.
 	  Window nesting to any depth is possible. An Fl_Gl_Window window or
 	  subwindow can contain Fl_Window's as subwindows.
-        - Added method Fl_Widget::is_label_copied().
-        - Added methods Fl_Copy_Surface::w(), Fl_Copy_Surface::h(),
-          and Fl_Copy_Surface::draw_decorated_window().
-        - Added support for OpenGL version 3 and later.
-        - Added method Fl_Mac_App_Menu::custom_application_menu_items()
-          allowing to customize the application menu on the Mac OS X platform.
+	- Added method Fl_Widget::is_label_copied().
+	- Added methods Fl_Copy_Surface::w(), Fl_Copy_Surface::h(),
+	  and Fl_Copy_Surface::draw_decorated_window().
+	- Added support for OpenGL version 3 and later.
+	- Added method Fl_Mac_App_Menu::custom_application_menu_items()
+	  allowing to customize the application menu on the Mac OS X platform.
 
 	1.3.4 ABI FEATURES
 
@@ -28,12 +28,14 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 
 	Other improvements
 
-        - Full support of Apple 'retina' displays for which one drawing unit
-          corresponds to two pixels.
+	- Full support of Apple 'retina' displays for which one drawing unit
+	  corresponds to two pixels.
 	- The Mac OS X platform no longer uses the deprecated AGL
 	  (Apple GL library) to draw OpenGL data. Instead, it uses standard
 	  cocoa APIs. This allows FLTK to support drawing GL scenes at high
 	  resolution when an Fl_Gl_Window is mapped to a 'retina' display.
+	- Added Fl_Gl_Window::pixel_w(), Fl_Gl_Window::pixel_w(), Fl::event_x_pixel(),
+	  and Fl::event_y_pixel() useful for high resolution OpenGL windows.
 	- fl_read_image() now captures all pixels within the rectangle
 	  described by its arguments, whether they belong to a GL scene
 	  or not (STR #3142). It also captures subwindows of GL windows.
@@ -47,13 +49,13 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	  Xrender.
 	- The fonts used for the FL_COURIER font family was changed on the Mac OS X
 	  platform from 'Courier New' to 'Courier' because it was too thin.
-        - Text drawing on the Mac platform supports Unicode 'variation selectors'
-          in the range [0xFE00-0xFE0F].
-        - Added a Mac OS implementation of Fl_Window::wait_for_expose() that
-          became necessary with Mac OS 10.10 "Yosemite".
-        - Added the libfltk target to the Xcode project producing a static version
-          of the FLTK library (Mac OS X).
-        - Restored the possibility to call Fl::set_font() before main() starts.
+	- Text drawing on the Mac platform supports Unicode 'variation selectors'
+	  in the range [0xFE00-0xFE0F].
+	- Added a Mac OS implementation of Fl_Window::wait_for_expose() that
+	  became necessary with Mac OS 10.10 "Yosemite".
+	- Added the libfltk target to the Xcode project producing a static version
+	  of the FLTK library (Mac OS X).
+	- Restored the possibility to call Fl::set_font() before main() starts.
 
 	Bug fixes
 
@@ -80,23 +82,23 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	- Fixed possible bad border effect when a set of radio menu items
 	  is located first in its menu (STR #3176): Fl_Menu_Item::set_only()
 	  is deprecated and replaced by Fl_Menu_::set_only(Fl_Menu_item*).
-        - Restore the correct state of mouse buttons and keyboard modifier keys
-          after closing a file or printer dialog (STR #3221).
-        - Fix for deactivate colors issue with Fl_Text_Display/Editor (STR #3219).
-        - Fixed issue with MSWindows platform where the program kept running after
-          closing all its windows (STR#3165).
-        - Fix issue with MSWindows platform where a window would decrease in size
-          after each close/open (STR#3167).
-        - Fix undefined reference XGetUtf8FontAndGlyph (STR #3191).
-        - Fix potential keyboard hangup (STR #3192).
-        - Fix for: .xbm images were not previewed (STR#3131).
-        - Fixed crash on Mac platform when resizing a not yet shown() Fl_Gl_Window.
-        - Fix Linux/Unix potential program hang when dialog pops up while a menu
-          is open (STR #3179).
-        - Fixes a crash when a Unix/Linux program calls take_focus() before any
-          window has been show()n.
-        - Fixed an error on the Mac platform when drawing to an Fl_Image_Surface
-          object without using the Fl_Image_Surface::draw() method.
+	- Restore the correct state of mouse buttons and keyboard modifier keys
+	  after closing a file or printer dialog (STR #3221).
+	- Fix for deactivate colors issue with Fl_Text_Display/Editor (STR #3219).
+	- Fixed issue with MSWindows platform where the program kept running after
+	  closing all its windows (STR#3165).
+	- Fix issue with MSWindows platform where a window would decrease in size
+	  after each close/open (STR#3167).
+	- Fix undefined reference XGetUtf8FontAndGlyph (STR #3191).
+	- Fix potential keyboard hangup (STR #3192).
+	- Fix for: .xbm images were not previewed (STR#3131).
+	- Fixed crash on Mac platform when resizing a not yet shown() Fl_Gl_Window.
+	- Fix Linux/Unix potential program hang when dialog pops up while a menu
+	  is open (STR #3179).
+	- Fixes a crash when a Unix/Linux program calls take_focus() before any
+	  window has been show()n.
+	- Fixed an error on the Mac platform when drawing to an Fl_Image_Surface
+	  object without using the Fl_Image_Surface::draw() method.
 
 
 CHANGES IN FLTK 1.3.3					RELEASED: Nov 03 2014
