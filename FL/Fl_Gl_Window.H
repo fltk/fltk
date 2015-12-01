@@ -234,16 +234,18 @@ public:
   int pixel_h();
 #else
   /** Gives the window width in OpenGL pixels.
-   Generally identical with the result of the w() function, but on macintosh computers
-   with a 'retina' display, and if Fl::use_high_res_GL(bool) is set to true, 
-   pixel_w() returns 2 * w().
+   Generally identical with the result of the w() function, but for a window mapped to
+   an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
+   pixel_w() returns 2 * w(). This method detects when the window has been moved
+   between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
   int pixel_w() { return w(); }
   /** Gives the window height in OpenGL pixels.
-   Generally identical with the result of the h() function, but on macintosh computers
-   with a 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
-   pixel_h() returns 2 * h().
+   Generally identical with the result of the h() function, but for a window mapped to
+   an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
+   pixel_h() returns 2 * h(). This method detects when the window has been moved
+   between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
   int pixel_h() { return h(); }
