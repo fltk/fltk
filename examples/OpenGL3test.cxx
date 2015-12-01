@@ -149,7 +149,7 @@ public:
       data[0] *= factor;
       glBufferSubData(GL_ARRAY_BUFFER, 24*sizeof(GLfloat), 4*sizeof(GLfloat), data);
       redraw();
-      add_output("push\n");
+      add_output("push Fl::event_x_pixel()=%d  Fl::event_y_pixel()=%d\n",Fl::event_x_pixel(), Fl::event_y_pixel());
       return 1;
     }
     return Fl_Gl_Window::handle(event);
@@ -189,7 +189,8 @@ void add_output(const char *format, ...)
   va_start(args, format);
   vsnprintf(line_buffer, sizeof(line_buffer)-1, format, args);
   va_end(args);
-  output->insert(line_buffer);
+  output->buffer()->append(line_buffer);
+  output->scroll(10000, 0);
   output->redraw();
 }
 

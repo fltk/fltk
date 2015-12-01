@@ -972,11 +972,20 @@ static void update_e_xy_and_e_xy_root(NSWindow *nsw)
 {
   NSPoint pt;
   pt = [nsw mouseLocationOutsideOfEventStream];
+  Fl::e_window_ = [(FLWindow*)nsw getFl_Window];
   Fl::e_x = int(pt.x);
   Fl::e_y = int([[nsw contentView] frame].size.height - pt.y);
   pt = [NSEvent mouseLocation];
   Fl::e_x_root = int(pt.x);
   Fl::e_y_root = int(main_screen_height - pt.y);
+}
+
+int Fl::event_x_pixel()	{
+  return e_x * Fl_X::resolution_scaling_factor(Fl::e_window_);
+}
+
+int Fl::event_y_pixel()	{
+  return e_y * Fl_X::resolution_scaling_factor(Fl::e_window_);
 }
 
 /*
@@ -2734,7 +2743,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 // For Fl_Gl_Window on retina display, returns 2, otherwise 1
 int Fl_X::resolution_scaling_factor(Fl_Window* win)
 {
-  return (fl_mac_os_version >= 100700 && win->as_gl_window() && Fl::use_high_res_GL() && win->i && win->i->mapped_to_retina()) ? 2 : 1;
+  return (fl_mac_os_version >= 100700 && win && win->as_gl_window() && Fl::use_high_res_GL() && win->i && win->i->mapped_to_retina()) ? 2 : 1;
 }
 
 
