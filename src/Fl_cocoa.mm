@@ -2824,7 +2824,16 @@ NSOpenGLContext* Fl_X::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelfor
                                               NSOpenGLContext *shared_ctx, Fl_Window *window)
 {
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
-  if (context) [context setView:[fl_xid(window) contentView]];
+  if (context) {
+    NSView *view = [fl_xid(window) contentView];
+    if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
+      //replaces  [view setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
+      typedef void (*bestResolutionIMP)(id, SEL, BOOL);
+      static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
+      addr(view, @selector(setWantsBestResolutionOpenGLSurface:), YES);
+    }
+    [context setView:view];
+  }
   return context;
 }
 
@@ -3031,12 +3040,6 @@ void Fl_X::make(Fl_Window* w)
       Fl_X::first = x;
     }
     FLView *myview = [[FLView alloc] initWithFrame:crect];
-    if (w->as_gl_window() && fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
-      //replaces  [myview setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
-      typedef void (*bestResolutionIMP)(id, SEL, BOOL);
-      static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
-      addr(myview, @selector(setWantsBestResolutionOpenGLSurface:), YES);
-    }
     [cw setContentView:myview];
     [myview release];
     [cw setLevel:winlevel];
