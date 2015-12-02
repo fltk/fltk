@@ -105,16 +105,9 @@ static int send(Fl_Widget* o, int event) {
   }
   int save_x = Fl::e_x; Fl::e_x -= o->x();
   int save_y = Fl::e_y; Fl::e_y -= o->y();
-#ifdef __APPLE__
-  Fl_Window *save_e_window = Fl::e_window_;
-  Fl::e_window_ = o->as_window();
-#endif
   int ret = o->handle(event);
   Fl::e_y = save_y;
   Fl::e_x = save_x;
-#ifdef __APPLE__
-  Fl::e_window_ = save_e_window;
-#endif
   switch ( event )
   {
   case FL_ENTER: /* FALLTHROUGH */

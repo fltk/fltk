@@ -86,9 +86,6 @@ Fl_Widget	*Fl::belowmouse_,
 		*Fl::pushed_,
 		*Fl::focus_,
 		*Fl::selection_owner_;
-#ifdef __APPLE__
-Fl_Window       *Fl::e_window_; // the window relative to which Fl::e_x and Fl::e_y are measured
-#endif
 int		Fl::damage_,
 		Fl::e_number,
 		Fl::e_x,
@@ -1093,9 +1090,6 @@ void fl_fix_focus() {
 	// send a FL_MOVE event so the enter/leave state is up to date
 	Fl::e_x = Fl::e_x_root-fl_xmousewin->x();
 	Fl::e_y = Fl::e_y_root-fl_xmousewin->y();
-#ifdef __APPLE__
-        Fl::e_window_ = fl_xmousewin;
-#endif
         int old_event = Fl::e_number;
 	w->handle(Fl::e_number = FL_MOVE);
 	Fl::e_number = old_event;
@@ -1186,19 +1180,10 @@ static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
     if (w->type()>=FL_WINDOW) {dx -= w->x(); dy -= w->y();}
   int save_x = Fl::e_x; Fl::e_x += dx;
   int save_y = Fl::e_y; Fl::e_y += dy;
-#ifdef __APPLE__
-  Fl_Window *save_e_window = Fl::e_window_;
-  if (dx || dy) {
-    Fl::e_window_ = (to->as_window() ? to->as_window() : to->window());
-  }
-#endif
   int ret = to->handle(Fl::e_number = event);
   Fl::e_number = old_event;
   Fl::e_y = save_y;
   Fl::e_x = save_x;
-#ifdef __APPLE__
-  Fl::e_window_ = save_e_window;
-#endif
   return ret;
 }
 

@@ -181,7 +181,6 @@ public:
   static void q_begin_image(CGRect&, int x, int y, int w, int h);
   static void q_end_image();
   // Cocoa additions
-  static int resolution_scaling_factor(Fl_Window*);
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
   static void GLcontext_update(NSOpenGLContext*);

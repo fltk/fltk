@@ -135,9 +135,6 @@ public: // should be private!
   static int e_y;
   static int e_x_root;
   static int e_y_root;
-#ifdef __APPLE__
-  static Fl_Window *e_window_;
-#endif
   static int e_dx;
   static int e_dy;
   static int e_state;
@@ -604,29 +601,6 @@ public:
     event_x(),event_y().
   */
   static int event_y_root()	{return e_y_root;}
-#ifdef __APPLE__
-  static int event_x_pixel();
-  static int event_y_pixel();
-#else
-  /** Horizontal position in pixels of the mouse event relative to the Fl_Window it was passed to.
-   Generally identical with Fl::event_x(), but for OpenGL windows of macintosh computers
-   with a 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
-   the returned position, measured in pixels, differs from Fl::event_x(), measured in FLTK units.
-   \version 1.3.4
-   */
-  static int event_x_pixel()	{
-    return e_x;
-  }
-  /** Vertical position in pixels of the mouse event relative to the Fl_Window it was passed to.
-   Generally identical with Fl::event_y(), but for OpenGL windows of macintosh computers
-   with a 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
-   the returned position, measured in pixels, differs from Fl::event_y(), measured in FLTK units.
-   \version 1.3.4
-   */
-  static int event_y_pixel()	{
-    return e_y;
-  }
-#endif
   /**
     Returns the current horizontal mouse scrolling associated with the
     FL_MOUSEWHEEL event. Right is positive.

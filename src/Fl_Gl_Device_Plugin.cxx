@@ -53,7 +53,7 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
 {
 #if defined(__APPLE__)
   const int bytesperpixel = 4;
-  int factor = Fl_X::resolution_scaling_factor(glw);
+  int factor = glw->pixels_per_unit();
   if (factor > 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }

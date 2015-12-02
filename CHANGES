@@ -34,8 +34,8 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	  (Apple GL library) to draw OpenGL data. Instead, it uses standard
 	  cocoa APIs. This allows FLTK to support drawing GL scenes at high
 	  resolution when an Fl_Gl_Window is mapped to a 'retina' display.
-	- Added Fl_Gl_Window::pixel_w(), Fl_Gl_Window::pixel_h(), Fl::event_x_pixel(),
-	  and Fl::event_y_pixel() useful for high resolution OpenGL windows.
+	- Added Fl_Gl_Window::pixel_w(), Fl_Gl_Window::pixel_h(), and
+	  Fl_Gl_Window::pixels_per_unit() useful for high resolution OpenGL windows.
 	- fl_read_image() now captures all pixels within the rectangle
 	  described by its arguments, whether they belong to a GL scene
 	  or not (STR #3142). It also captures subwindows of GL windows.

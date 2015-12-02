@@ -839,16 +839,21 @@ by
 \verbatim
 glViewport(0, 0, pixel_w(), pixel_h());
 \endverbatim
-making use of the Fl_Gl_Window::pixel_w() and Fl_Gl_Window::pixel_h() functions that return the width and height of
-the GL scene in pixels: if the Fl_Gl_Window is mapped on a retina display, these functions return twice as much as 
-reported by Fl_Widget::w() and Fl_Widget::h(); if it's mapped on a regular display, they return the same values as w() and h().
-If you don't call Fl::use_high_res_GL(1), your Fl_Gl_Window 's will be drawn with low resolution.
-These functions are synonyms of w() and h() on non-Mac OS X platforms, so your source code remains cross-platform.
+making use of the Fl_Gl_Window::pixel_w() and Fl_Gl_Window::pixel_h() methods that return the width and height of
+the GL scene in pixels: if the Fl_Gl_Window is mapped on a retina display, these methods return twice as much as
+reported by Fl_Widget::w() and Fl_Widget::h(); if it's mapped on a regular display, they return the same values
+as w() and h(). These methods dynamically change their values if the window is moved into/out from a retina
+display. If Fl::use_high_res_GL(1) is not called, all Fl_Gl_Window 's are drawn at low resolution.
+These methods are synonyms of w() and h() on non-Mac OS X platforms, so the source code remains cross-platform.
 
-Fl_Double_Window
+The Fl_Gl_Window::pixels_per_unit() method is useful when the OpenGL code depends on the pixel dimension
+of the GL scene. This occurs, e.g., if a window's handle() method uses Fl::event_x() and Fl::event_y()
+whose returned values should be multiplied by Fl_Gl_Window::pixels_per_unit() to obtain the adequate pixel units.
+This method may also be useful, for example, to adjust the width of a line in a high resolution GL scene.
 
-OS X double-buffers all windows automatically. On OS X,
-Fl_Window and Fl_Double_Window are handled
+\subsection double_window Fl_Double_Window
+
+OS X double-buffers all windows automatically. On OS X, Fl_Window and Fl_Double_Window are handled
 internally in the same way.
 
 \subsection osissues_mac_files Mac File System Specifics

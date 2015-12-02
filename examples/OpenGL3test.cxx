@@ -149,7 +149,7 @@ public:
       data[0] *= factor;
       glBufferSubData(GL_ARRAY_BUFFER, 24*sizeof(GLfloat), 4*sizeof(GLfloat), data);
       redraw();
-      add_output("push Fl::event_x_pixel()=%d  Fl::event_y_pixel()=%d\n",Fl::event_x_pixel(), Fl::event_y_pixel());
+      add_output("push  Fl_Gl_Window::pixels_per_unit()=%d\n", pixels_per_unit());
       return 1;
     }
     return Fl_Gl_Window::handle(event);

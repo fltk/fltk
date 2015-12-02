@@ -520,7 +520,7 @@ static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class inst
 // draws a utf8 string using pre-computed texture if available
 static void gl_draw_textures(const char* str, int n) 
 {
-  gl_scale = Fl_X::resolution_scaling_factor(Fl_Window::current());
+  gl_scale = Fl_Window::current()->as_gl_window()->pixels_per_unit();
   //fprintf(stderr,"gl_scale=%d\n",gl_scale);
   if (! gl_fifo) gl_fifo = new gl_texture_fifo();
   if (!gl_fifo->textures_generated) {

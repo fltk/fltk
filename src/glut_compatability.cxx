@@ -83,13 +83,9 @@ int Fl_Glut_Window::handle(int event) {
   make_current();
   int ex = Fl::event_x();
   int ey = Fl::event_y();
-#ifdef __APPLE__
-  if (shown()) {
-    int factor = Fl_X::resolution_scaling_factor(this);
-    ex *= factor;
-    ey *= factor;
-  }
-#endif
+  int factor = pixels_per_unit();
+  ex *= factor;
+  ey *= factor;
   int button;
   switch (event) {
 
