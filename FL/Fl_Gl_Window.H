@@ -229,9 +229,6 @@ public:
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Gl_Window* as_gl_window() {return this;}
   
-#ifdef __APPLE__
-  int pixels_per_unit();
-#else
   /** The number of pixels per FLTK unit of length for the window.
    Returns 1, except for a window mapped to
    an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
@@ -241,6 +238,9 @@ public:
    Fl::event_y() to the pixel units used by the OpenGL source code.
    \version 1.3.4
    */
+#ifdef __APPLE__
+  int pixels_per_unit();
+#else
   int pixels_per_unit() { return 1; }
 #endif
   /** Gives the window width in OpenGL pixels.
