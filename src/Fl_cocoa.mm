@@ -2726,7 +2726,13 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   return [[self window] level];
 }
 
-- (NSInteger)conversationIdentifier {
+- (
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+   NSInteger
+#else
+   long
+#endif
+)conversationIdentifier {
   return identifier;
 }
 @end
