@@ -3091,18 +3091,6 @@ void Fl_X::make(Fl_Window* w)
     // next 2 statements so a subwindow doesn't leak out of its parent window
     [cw setOpaque:NO];
     [cw setBackgroundColor:[NSColor clearColor]]; // transparent background color
-    CGRect srect = CGRectMake(0, 0, w->w(), w->h());
-    Fl_Window *parent, *from = w;
-    int fromx = 0, fromy = 0;
-    while ((parent = from->window()) != NULL) {
-      fromx -= from->x(); // parent origin in w's coordinates
-      fromy -= from->y();
-      srect = CGRectIntersection(CGRectMake(fromx, fromy, parent->w(), parent->h()), srect);
-      from = parent;
-    }
-    if (!CGRectEqualToRect(srect, CGRectMake(0, 0, w->w(), w->h()))) { // if subwindow extends outside its parent windows
-      x->subRect(new CGRect(srect));
-    }
     [cw setSubwindowFrame];
     // needed if top window was first displayed miniaturized
     FLWindow *pxid = fl_xid(w->top_window());
