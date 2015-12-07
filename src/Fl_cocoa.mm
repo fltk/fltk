@@ -735,7 +735,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
   }
-  if (![self parentWindow]) {
+  if (w->visible_r() && ![self parentWindow]) {
     [pxid addChildWindow:self ordered:NSWindowAbove]; // needs OS X 10.2
     [self orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
   }
