@@ -46,7 +46,7 @@ public:
     else if (event == FL_DRAG) {
       int deltax = Fl::event_x_root() - fromx;
       int deltay = Fl::event_y_root() - fromy;
-      window()->resize(winx + deltax, winy + deltay, window()->w(), window()->h());
+      window()->position(winx + deltax, winy + deltay);
       return 1;
     }
     return Fl_Box::handle(event);
