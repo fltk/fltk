@@ -1413,6 +1413,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 {
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
+  if ([nsw miniwindowImage]) { [nsw setMiniwindowImage:nil]; }
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
