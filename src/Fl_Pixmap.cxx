@@ -42,7 +42,19 @@
 #include <FL/Fl_Printer.H>
 
 #if defined(USE_X11)
-#include <X11/Xregion.h>
+#  ifdef __APPLE_CC__ // allows using on Darwin + X11 even if X11/Xregion.h is absent
+typedef struct {
+  short x1, x2, y1, y2;
+} BOX;
+struct _XRegion {
+  long size;
+  long numRects;
+  BOX *rects;
+  BOX extents;
+};
+#  else
+#    include <X11/Xregion.h>
+#  endif
 #endif
 
 #include <stdio.h>
