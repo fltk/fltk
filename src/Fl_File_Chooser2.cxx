@@ -379,7 +379,7 @@
 // File chooser label strings and sort function...
 //
 
-Fl_Preferences	Fl_File_Chooser::prefs_(Fl_Preferences::USER, "fltk.org", "filechooser");
+Fl_Preferences*	Fl_File_Chooser::prefs_ = NULL;
 
 const char	*Fl_File_Chooser::add_favorites_label = "Add to Favorites";
 const char	*Fl_File_Chooser::all_files_label = "All Files (*)";
@@ -546,8 +546,8 @@ Fl_File_Chooser::favoritesButtonCB()
 
     sprintf(menuname, "favorite%02d", v);
 
-    prefs_.set(menuname, directory_);
-    prefs_.flush();
+    prefs_->set(menuname, directory_);
+    prefs_->flush();
 
     quote_pathname(menuname, directory_, sizeof(menuname));
     favoritesButton->add(menuname);
@@ -590,7 +590,7 @@ Fl_File_Chooser::favoritesCB(Fl_Widget *w)
       // Get favorite directory 0 to 99...
       sprintf(name, "favorite%02d", i);
 
-      prefs_.get(name, pathname, "", sizeof(pathname));
+      prefs_->get(name, pathname, "", sizeof(pathname));
 
       // Stop on the first empty favorite...
       if (!pathname[0]) break;
@@ -669,7 +669,7 @@ Fl_File_Chooser::favoritesCB(Fl_Widget *w)
       // Set favorite directory 0 to 99...
       sprintf(name, "favorite%02d", i);
 
-      prefs_.set(name, favList->text(i + 1));
+      prefs_->set(name, favList->text(i + 1));
     }
 
     // Clear old entries as necessary...
@@ -677,14 +677,14 @@ Fl_File_Chooser::favoritesCB(Fl_Widget *w)
       // Clear favorite directory 0 to 99...
       sprintf(name, "favorite%02d", i);
 
-      prefs_.get(name, pathname, "", sizeof(pathname));
+      prefs_->get(name, pathname, "", sizeof(pathname));
 
-      if (pathname[0]) prefs_.set(name, "");
+      if (pathname[0]) prefs_->set(name, "");
       else break;
     }
 
     update_favorites();
-    prefs_.flush();
+    prefs_->flush();
 
     favWindow->hide();
   }
@@ -1097,8 +1097,8 @@ Fl_File_Chooser::newdir()
 void Fl_File_Chooser::preview(int e)
 {
   previewButton->value(e);
-  prefs_.set("preview", e);
-  prefs_.flush();
+  prefs_->set("preview", e);
+  prefs_->flush();
 
   Fl_Group *p = previewBox->parent();
   if (e) {
@@ -1283,7 +1283,7 @@ Fl_File_Chooser::update_favorites()
 
   for (i = 0; i < 100; i ++) {
     sprintf(menuname, "favorite%02d", i);
-    prefs_.get(menuname, pathname, "", sizeof(pathname));
+    prefs_->get(menuname, pathname, "", sizeof(pathname));
     if (!pathname[0]) break;
 
     quote_pathname(menuname, pathname, sizeof(menuname));

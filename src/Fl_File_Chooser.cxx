@@ -27,6 +27,7 @@
 
 #include "../FL/Fl_File_Chooser.H"
 #include <FL/fl_draw.H>
+#include <FL/Fl_Bitmap.H>
 
 void Fl_File_Chooser::cb_window_i(Fl_Double_Window*, void*) {
   fileName->value("");
@@ -59,11 +60,9 @@ void Fl_File_Chooser::cb_newButton(Fl_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->user_data()))->cb_newButton_i(o,v);
 }
 
-#include <FL/Fl_Bitmap.H>
 static const unsigned char idata_new[] =
 {0,0,120,0,132,0,2,1,1,254,1,128,49,128,49,128,253,128,253,128,49,128,49,
 128,1,128,1,128,255,255,0,0};
-static Fl_Bitmap image_new(idata_new, 16, 16);
 
 void Fl_File_Chooser::cb__i(Fl_Tile*, void*) {
   update_preview();
@@ -164,6 +163,11 @@ void Fl_File_Chooser::cb_favOkButton(Fl_Return_Button* o, void* v) {
 }
 
 Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
+  static Fl_Bitmap *image_new = NULL;
+  if (!image_new) {
+    prefs_ = new Fl_Preferences(Fl_Preferences::USER, "fltk.org", "filechooser");
+    image_new = new Fl_Bitmap(idata_new, 16, 16);
+  }
   Fl_Group *prev_current = Fl_Group::current();
   { window = new Fl_Double_Window(490, 380, "Choose File");
     window->callback((Fl_Callback*)cb_window, (void*)(this));
@@ -305,7 +309,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
   value(d);
   type(t);
   int e;
-  prefs_.get("preview", e, 1);
+  prefs_->get("preview", e, 1);
   preview(e);
   Fl_Group::current(prev_current);
   ext_group=(Fl_Widget*)0;
@@ -369,7 +373,7 @@ const char * Fl_File_Chooser::label() {
 }
 
 void Fl_File_Chooser::ok_label(const char *l) {
-  okButton->label(l);
+  if (l) okButton->label(l);
   int w=0, h=0;
   okButton->measure_label(w, h);
   okButton->resize(cancelButton->x() - 50 - w, cancelButton->y(),
