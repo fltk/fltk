@@ -375,6 +375,7 @@ int Fl_GTK_File_Chooser::show()
   char *p;
   char *before = NULL;
   static char *gtk_wants = NULL;
+  fl_open_display();
   // record in before the calling program's current locale
   p = setlocale(LC_ALL, NULL);
   if (p) before = strdup(p);
