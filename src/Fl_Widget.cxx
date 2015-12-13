@@ -145,9 +145,6 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   if (!been_here) {
     been_here = 1;
     Fl_Display_Device::display_device(); // make sure fl_graphics_driver is initialized
-#ifdef __APPLE__
-    fl_fonts = Fl_X::calc_fl_fonts(); // make sure fl_fonts is initialized
-#endif
   }
 }
 
