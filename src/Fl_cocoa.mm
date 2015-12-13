@@ -158,7 +158,7 @@ void fl_set_status(int x, int y, int w, int h)
 /*
  * Mac keyboard lookup table
  */
-static unsigned short* macKeyLookUp = fl_compute_macKeyLookUp();
+static unsigned short* macKeyLookUp = NULL;
 
 /*
  * convert the current mouse chord into the FLTK modifier state
@@ -2177,6 +2177,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   // printf("%08x %08x %08x\n", keyCode, mods, key);
   maskedKeyCode = keyCode & 0x7f;
   mods_to_e_state( mods ); // process modifier keys
+  if (!macKeyLookUp) macKeyLookUp = fl_compute_macKeyLookUp();
   sym = macKeyLookUp[maskedKeyCode];
   if (sym < 0xff00) { // a "simple" key
     // find the result of this key without modifier
@@ -2417,6 +2418,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if ( tMods )
   {
     unsigned short keycode = [theEvent keyCode];
+    if (!macKeyLookUp) macKeyLookUp = fl_compute_macKeyLookUp();
     Fl::e_keysym = Fl::e_original_keysym = macKeyLookUp[keycode & 0x7f];
     if ( Fl::e_keysym ) 
       sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;
