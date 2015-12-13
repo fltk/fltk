@@ -141,6 +141,11 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
   parent_ = 0;
   if (Fl_Group::current()) Fl_Group::current()->add(this);
+  static int been_here = 0;
+  if (!been_here) {
+    been_here = 1;
+    Fl_Display_Device::display_device(); // make sure fl_graphics_driver is initialized
+  }
 }
 
 void Fl_Widget::resize(int X, int Y, int W, int H) {
