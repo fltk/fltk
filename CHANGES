@@ -56,6 +56,9 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? ????
 	- Added the libfltk target to the Xcode project producing a static version
 	  of the FLTK library (Mac OS X).
 	- Restored the possibility to call Fl::set_font() before main() starts.
+	- Allow using the --enable-x11 configure option on the Mac OS platform
+	  which produces an X11 version of the FLTK library (don't use that unless
+	  you know what you do).
 
 	Bug fixes
 
