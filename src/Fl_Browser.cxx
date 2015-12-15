@@ -80,7 +80,7 @@ void* Fl_Browser::item_next(void* item) const {return ((FL_BLINE*)item)->next;}
 /**
   Returns the previous item before \p item.
   \param[in] item The 'current' item
-  \returns The previous item before \p item, or NULL if there none before this one.
+  \returns The previous item before \p item, or NULL if there are none before this one.
   \see item_first(), item_last(), item_next(), item_prev()
 */
 void* Fl_Browser::item_prev(void* item) const {return ((FL_BLINE*)item)->prev;}
@@ -284,6 +284,7 @@ void Fl_Browser::insert(int line, FL_BLINE* item) {
   \param[in] d Optional pointer to user data to be associated with the new line.
 */
 void Fl_Browser::insert(int line, const char* newtext, void* d) {
+  if (!newtext) newtext = "";		// STR #3269
   int l = (int) strlen(newtext);
   FL_BLINE* t = (FL_BLINE*)malloc(sizeof(FL_BLINE)+l);
   t->length = (short)l;
@@ -319,6 +320,7 @@ void Fl_Browser::move(int to, int from) {
 void Fl_Browser::text(int line, const char* newtext) {
   if (line < 1 || line > lines) return;
   FL_BLINE* t = find_line(line);
+  if (!newtext) newtext = "";		// STR #3269
   int l = (int) strlen(newtext);
   if (l > t->length) {
     FL_BLINE* n = (FL_BLINE*)malloc(sizeof(FL_BLINE)+l);
@@ -789,7 +791,7 @@ int Fl_Browser::visible(int line) const {
 }
 
 /**
-  Returns the line number of the currently selected line, or 0 if none.
+  Returns the line number of the currently selected line, or 0 if none selected.
   \returns The line number of current selection, or 0 if none selected.
   \see select(), selected(), value(), item_select(), item_selected()
 */
