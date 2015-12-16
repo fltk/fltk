@@ -551,6 +551,7 @@ class FL_EXPORT Fl_Surface_Device : public Fl_Device {
   /** \brief The graphics driver in use by this surface. */
   Fl_Graphics_Driver *_driver;
   static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
+  static Fl_Surface_Device *default_surface(); // create surface is none exists yet
 protected:
   /** \brief Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver; };
@@ -564,7 +565,9 @@ public:
   inline Fl_Graphics_Driver *driver() {return _driver; };
   /** The current drawing surface.
    In other words, the Fl_Surface_Device object that currently receives all graphics output */
-  static inline Fl_Surface_Device *surface() {return _surface; }; 
+  static inline Fl_Surface_Device *surface() {
+    return _surface ? _surface : default_surface();
+  };
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device() {}
 };

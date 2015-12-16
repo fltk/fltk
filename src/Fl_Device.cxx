@@ -93,6 +93,13 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
   return display;
 };
 
+
+Fl_Surface_Device *Fl_Surface_Device::default_surface()
+{
+  return Fl_Display_Device::display_device();
+}
+
+
 Fl_Display_Device *Fl_Display_Device::_display = Fl_Display_Device::display_device();
 
 //
