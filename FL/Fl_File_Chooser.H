@@ -49,7 +49,7 @@ class FL_EXPORT Fl_File_Chooser {
 public:
   enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 }; 
 private:
-  static Fl_Preferences *prefs_;
+  static Fl_Preferences *prefs_; 
   void (*callback_)(Fl_File_Chooser*, void *); 
   void *data_; 
   char directory_[FL_PATH_MAX]; 

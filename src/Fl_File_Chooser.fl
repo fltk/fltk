@@ -36,7 +36,7 @@ class FL_EXPORT Fl_File_Chooser {open
 } {
   decl {enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };} {public local
   }
-  decl {static Fl_Preferences prefs_;} {private local
+  decl {static Fl_Preferences *prefs_;} {private local
   }
   decl {void (*callback_)(Fl_File_Chooser*, void *);} {private local
   }
@@ -69,6 +69,9 @@ class FL_EXPORT Fl_File_Chooser {open
   decl {void update_preview();} {private local
   }
   Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
+    code {if (!prefs_) {
+  prefs_ = new Fl_Preferences(Fl_Preferences::USER, "fltk.org", "filechooser");
+}} {}
     code {Fl_Group *prev_current = Fl_Group::current();} {}
     Fl_Window window {
       label {Choose File}
@@ -238,7 +241,7 @@ update_favorites();
 value(d);
 type(t);
 int e;
-prefs_.get("preview", e, 1);
+prefs_->get("preview", e, 1);
 preview(e);
 Fl_Group::current(prev_current);} {}
     code {ext_group=(Fl_Widget*)0;} {}
@@ -307,7 +310,7 @@ showChoiceCB();} {}
   }
   Function {ok_label(const char *l)} {return_type void
   } {
-    code {okButton->label(l);
+    code {if (l) okButton->label(l);
 int w=0, h=0;
 okButton->measure_label(w, h);
 okButton->resize(cancelButton->x() - 50 - w, cancelButton->y(),

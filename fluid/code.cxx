@@ -254,14 +254,18 @@ void write_cdata(const char *s, int length) {
   putc('}', code_file);
 }
 
-void write_c(const char* format,...) {
+void vwrite_c(const char* format, va_list args) {
   if (varused_test) {
     varused = 1;
     return;
   }
+  vfprintf(code_file, format, args);
+}
+
+void write_c(const char* format,...) {
   va_list args;
   va_start(args, format);
-  vfprintf(code_file, format, args);
+  vwrite_c(format, args);
   va_end(args);
 }
 

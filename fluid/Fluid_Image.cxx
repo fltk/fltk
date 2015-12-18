@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// Pixmap label support for the Fast Light Tool Kit (FLTK).
+// Pixmap (and other images) label support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2015 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,10 +24,11 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <FL/filename.H>
 
-extern void goto_source_dir(); // in fluid.C
-extern void leave_source_dir(); // in fluid.C
+extern void goto_source_dir(); // in fluid.cxx
+extern void leave_source_dir(); // in fluid.cxx
 
 void Fluid_Image::image(Fl_Widget *o) {
   if (o->window() != o) o->image(img);
@@ -44,6 +45,8 @@ static int jpeg_header_written = 0;
 
 void Fluid_Image::write_static() {
   if (!img) return;
+  const char *idata_name = unique_id(this, "idata", fl_filename_name(name()), 0);
+  function_name_ = unique_id(this, "image", fl_filename_name(name()), 0);
   if (img->count() > 1) {
     // Write Pixmap data...
     write_c("\n");
@@ -51,8 +54,7 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_Pixmap.H>\n");
       pixmap_header_written = write_number;
     }
-    write_c("static const char *%s[] = {\n",
-	    unique_id(this, "idata", fl_filename_name(name()), 0));
+    write_c("static const char *%s[] = {\n", idata_name);
     write_cstring(img->data()[0], strlen(img->data()[0]));
 
     int i;
@@ -74,9 +76,7 @@ void Fluid_Image::write_static() {
       write_cstring(img->data()[i], img->w() * chars_per_color);
     }
     write_c("\n};\n");
-    write_c("static Fl_Pixmap %s(%s);\n",
-	    unique_id(this, "image", fl_filename_name(name()), 0),
-	    unique_id(this, "idata", fl_filename_name(name()), 0));
+    write_initializer("Fl_Pixmap", "%s", idata_name);
   } else if (img->d() == 0) {
     // Write Bitmap data...
     write_c("\n");
@@ -84,14 +84,10 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_Bitmap.H>\n");
       bitmap_header_written = write_number;
     }
-    write_c("static const unsigned char %s[] =\n",
-	    unique_id(this, "idata", fl_filename_name(name()), 0));
+    write_c("static const unsigned char %s[] =\n", idata_name);
     write_cdata(img->data()[0], ((img->w() + 7) / 8) * img->h());
     write_c(";\n");
-    write_c("static Fl_Bitmap %s(%s, %d, %d);\n",
-	    unique_id(this, "image", fl_filename_name(name()), 0),
-	    unique_id(this, "idata", fl_filename_name(name()), 0),
-	    img->w(), img->h());
+    write_initializer( "Fl_Bitmap", "%s, %d, %d", idata_name, img->w(), img->h());
   } else if (strcmp(fl_filename_ext(name()), ".jpg")==0) {
     // Write jpeg image data...
     write_c("\n");
@@ -99,8 +95,7 @@ void Fluid_Image::write_static() {
       write_c("#include <FL/Fl_JPEG_Image.H>\n");
       jpeg_header_written = write_number;
     }
-    write_c("static const unsigned char %s[] =\n",
-	    unique_id(this, "idata", fl_filename_name(name()), 0));
+    write_c("static const unsigned char %s[] =\n", idata_name);
 
     FILE *f = fl_fopen(name(), "rb");
     if (!f) {
@@ -119,32 +114,39 @@ void Fluid_Image::write_static() {
     }
     
     write_c(";\n");
-    write_c("static Fl_JPEG_Image %s(\"%s\", %s);\n",
-	    unique_id(this, "image", fl_filename_name(name()), 0),
-	    fl_filename_name(name()),
-	    unique_id(this, "idata", fl_filename_name(name()), 0));
+    write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
   } else {
     // Write image data...
     write_c("\n");
     if (image_header_written != write_number) {
       write_c("#include <FL/Fl_Image.H>\n");
       image_header_written = write_number;
-    }
-    write_c("static const unsigned char %s[] =\n",
-	    unique_id(this, "idata", fl_filename_name(name()), 0));
+    } 
+    write_c("static const unsigned char %s[] =\n", idata_name);
     write_cdata(img->data()[0], (img->w() * img->d() + img->ld()) * img->h());
     write_c(";\n");
-    write_c("static Fl_RGB_Image %s(%s, %d, %d, %d, %d);\n",
-	    unique_id(this, "image", fl_filename_name(name()), 0),
-	    unique_id(this, "idata", fl_filename_name(name()), 0),
-	    img->w(), img->h(), img->d(), img->ld());
+    write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
   }
 }
 
+void Fluid_Image::write_initializer(const char *type_name, const char *format, ...) {
+  /* Outputs code that returns (and initializes if needed) an Fl_Image as follows:
+   static Fl_Image *'function_name_'() {
+     static Fl_Image *image = new 'type_name'('product of format and remaining args');
+     return image;
+   } */
+  va_list ap;
+  va_start(ap, format);
+  write_c("static Fl_Image *%s() {\n  static Fl_Image *image = new %s(", function_name_, type_name);
+  vwrite_c(format, ap);
+  write_c(");\n  return image;\n}\n");
+  va_end(ap);
+}
+
 void Fluid_Image::write_code(const char *var, int inactive) {
-  if (!img) return;
-  write_c("%s%s->%s(%s);\n", indent(), var, inactive ? "deimage" : "image",
-	  unique_id(this, "image", fl_filename_name(name()), 0));
+  /* Outputs code that attaches an image to an Fl_Widget or Fl_Menu_Item.
+   This code calls a function output before by Fluid_Image::write_initializer() */
+  if (img) write_c("%s%s->%s( %s() );\n", indent(), var, inactive ? "deimage" : "image", function_name_);
 }
 
 
@@ -207,6 +209,7 @@ Fluid_Image::Fluid_Image(const char *iname) {
   written = 0;
   refcount = 0;
   img = Fl_Shared_Image::get(iname);
+  function_name_ = NULL;
 }
 
 void Fluid_Image::increment() {

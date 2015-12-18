@@ -30,6 +30,7 @@
 #include <FL/Fl_Plugin.H>
 #include "Fluid_Image.h"
 #include <FL/fl_draw.H>
+#include <stdarg.h>
 
 void set_modflag(int mf);
 
@@ -813,6 +814,7 @@ int write_declare(const char *, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 int is_id(char);
 const char* unique_id(void* o, const char*, const char*, const char*);
 void write_c(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
+void vwrite_c(const char* format, va_list args);
 void write_h(const char*, ...) __fl_attr((__format__ (__printf__, 1, 2)));
 void write_cstring(const char *);
 void write_cstring(const char *,int length);
