@@ -1379,8 +1379,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   /* Fullscreen windows obscure all other windows so we need to return
-   to a "normal" level when the user switches to another window */
-  if (window->fullscreen_active()) {
+   to a "normal" level when the user switches to another window,
+   unless this other window is above the fullscreen window */
+  if (window->fullscreen_active() && [NSApp keyWindow] && [[NSApp keyWindow] level] <= [nsw level]) {
     [nsw setLevel:NSNormalWindowLevel];
     fixup_window_levels();
   }
