@@ -98,7 +98,9 @@ public:
  Typically, FLTK applications do not use directly objects from this class. Rather, they perform
  drawing operations (e.g., fl_rectf()) that operate on the current drawing surface (see Fl_Surface_Device).
  Drawing operations are functionally presented in \ref drawing and as function lists
- in the \ref fl_drawings and \ref fl_attributes modules.
+ in the \ref fl_drawings and \ref fl_attributes modules. The \ref fl_graphics_driver global variable
+ gives at any time the graphics driver used by all drawing operations. Its value changes when
+ drawing operations are directed to another drawing surface by Fl_Surface_Device::set_current().
  
  \p The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
  An example would be to draw to a PDF file. This would involve creating a new Fl_Graphics_Driver derived 
@@ -532,8 +534,13 @@ public:
 #endif
 
 /**
- \brief A drawing surface that's susceptible to receive graphical output.
- A drawing surface is typically used as follows:
+ A drawing surface that's susceptible to receive graphical output.
+ Any FLTK application has at any time a current drawing surface to which all drawing requests are directed.
+ The current surface is given by Fl_Surface_Device::surface().
+ When main() begins running, the current drawing surface has been set to the computer's display, 
+ an instance of the Fl_Display_Device class.
+
+ A drawing surface other than the computer's display, is typically used as follows:
  <ol><li> Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
  <li> Memorize what is the current drawing surface with <tt> Fl_Surface_Device *old_current = Fl_Surface_Device::surface();</tt>
  <li> Call \c surface->set_current(); to redirect all graphics requests to \c surface which becomes the new
@@ -545,7 +552,6 @@ public:
  with \c old_current->set_current();.
  <li> Delete \c surface.
  </ol>
- The current drawing surface is initially the computer's display, an instance of the Fl_Display_Device class.
  */
 class FL_EXPORT Fl_Surface_Device : public Fl_Device {
   /** \brief The graphics driver in use by this surface. */
