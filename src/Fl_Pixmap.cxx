@@ -16,15 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \fn Fl_Pixmap::Fl_Pixmap(const char **data)
-  The constructors create a new pixmap from the specified XPM data.*/
-
-/** \fn Fl_Pixmap::Fl_Pixmap(const unsigned char * const *data)
-  The constructors create a new pixmap from the specified XPM data.*/
-
-/** \fn Fl_Pixmap::Fl_Pixmap(const unsigned char **data)
-  The constructors create a new pixmap from the specified XPM data.*/
-
 // Draws X pixmap data, keeping it stashed in a server pixmap so it
 // redraws fast.
 
