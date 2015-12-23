@@ -1868,7 +1868,6 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt) {
   static int top, left, bottom;
   if (first) {
     first = false;
-    if (NSApp == nil) fl_open_display();
     NSRect inside = { {20,20}, {100,100} };
     NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
     left = int(outside.origin.x - inside.origin.x);
