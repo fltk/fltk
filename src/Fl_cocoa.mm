@@ -1639,12 +1639,14 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-  // without the next statement, the opening of the 1st window is delayed by several seconds
+  // without the next two statements, the opening of the 1st window is delayed by several seconds
   // under Mac OS ≥ 10.8 when a file is dragged on the application icon
-  [[theApplication mainWindow] orderFront:self];
+  Fl_Window *firstw = Fl::first_window();
+  if (firstw) firstw->wait_for_expose();
   if (open_cb) {
     fl_lock_function();
     (*open_cb)([filename UTF8String]);
+    Fl::flush(); // useful for AppleScript that does not break the event loop
     fl_unlock_function();
     return YES;
   }
