@@ -342,6 +342,7 @@ editor$(EXEEXT): editor.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) editor.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+	$(OSX_ONLY) cp -f ../ide/Xcode4/plists/editor-Info.plist editor.app/Contents/Info.plist
 
 fast_slow$(EXEEXT): fast_slow.o
 fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)

@@ -22,7 +22,7 @@
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>editor</string>
 	<key>CFBundleGetInfoString</key>
 	<string>Part of the FLTK library. Please visit www.fltk.org.</string>
 	<key>CFBundleIdentifier</key>
