@@ -132,9 +132,9 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       endif(NOT ${tname} STREQUAL "demo")
       set_target_properties(${tname} PROPERTIES RESOURCE ${RESOURCE_PATH})
     endif(APPLE AND DEFINED RESOURCE_PATH)
-    if(${tname} STREQUAL "editor")
+    if(APPLE AND ${tname} STREQUAL "editor")
       set_target_properties("editor" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/ide/Xcode4/plists/editor-Info.plist" )
-    endif(${tname} STREQUAL "editor")
+    endif(APPLE AND ${tname} STREQUAL "editor")
     
 
     target_link_libraries(${tname} ${LIBRARIES})
