@@ -82,10 +82,28 @@ if(UNIX)
    )
 endif(UNIX)
 
+# prepare some variables for config.h
+
+if(IS_ABSOLUTE "${FLTK_DATADIR}")
+  set(PREFIX_DATA "${FLTK_DATADIR}/fltk")
+else(IS_ABSOLUTE "${FLTK_DATADIR}")
+  set(PREFIX_DATA "${CMAKE_INSTALL_PREFIX}/${FLTK_DATADIR}/fltk")
+endif(IS_ABSOLUTE "${FLTK_DATADIR}")
+
+if(IS_ABSOLUTE "${FLTK_DOCDIR}")
+  set(PREFIX_DOC "${FLTK_DOCDIR}/fltk")
+else(IS_ABSOLUTE "${FLTK_DOCDIR}")
+  set(PREFIX_DOC "${CMAKE_INSTALL_PREFIX}/${FLTK_DOCDIR}/fltk")
+endif(IS_ABSOLUTE "${FLTK_DOCDIR}")
+
+set(CONFIG_H_IN configh.cmake.in)
+set(CONFIG_H config.h)
+
 # generate config.h
+
 configure_file(
-   "${FLTK_SOURCE_DIR}/configh.cmake.in"
-   "${FLTK_BINARY_DIR}/config.h"
+   "${FLTK_SOURCE_DIR}/${CONFIG_H_IN}"
+   "${FLTK_BINARY_DIR}/${CONFIG_H}"
    @ONLY
 )
 

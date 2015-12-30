@@ -1,8 +1,8 @@
+/* @CONFIG_H@.  Generated from @CONFIG_H_IN@ by CMake.  */
 /*
  * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
- * @configure_input@
  *
  * Copyright 1998-2015 by Bill Spitzak and others.
  *
@@ -21,8 +21,8 @@
  * Where to find files...
  */
 
-#define FLTK_DATADIR	"@PREFIX_DATA@"
-#define FLTK_DOCDIR	"@PREFIX_DOC@"
+#define FLTK_DATADIR "@PREFIX_DATA@"
+#define FLTK_DOCDIR "@PREFIX_DOC@"
 
 /*
  * BORDER_WIDTH:
@@ -147,7 +147,7 @@
  * no meaning on operating systems other than Mac OS X.
  */
 
-#cmakedefine __APPLE_QUARTZ__ @__APPLE_QUARTZ__@
+#cmakedefine __APPLE_QUARTZ__ 1
 
 
 /*
@@ -185,7 +185,11 @@
  * Byte order of your machine: 1 = big-endian, 0 = little-endian.
  */
 
-#define WORDS_BIGENDIAN @WORDS_BIGENDIAN@
+#ifdef __APPLE__
+#include <mac_endianness.h>
+#else
+#cmakedefine01 WORDS_BIGENDIAN
+#endif
 
 /*
  * U16, U32, U64:

@@ -60,6 +60,8 @@ set(FLTK_DATADIR ${CMAKE_INSTALL_DATADIR} CACHE PATH
     "Non-arch data install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
 set(FLTK_MANDIR ${CMAKE_INSTALL_MANDIR} CACHE PATH
     "Manual install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
+set(FLTK_DOCDIR ${CMAKE_INSTALL_DATADIR}/doc CACHE PATH
+    "Non-arch doc install path relative to CMAKE_INSTALL_PREFIX unless set to an absolute path.")
 
 
 #######################################################################

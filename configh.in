@@ -2,7 +2,6 @@
  * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
- * @configure_input@
  *
  * Copyright 1998-2015 by Bill Spitzak and others.
  *
@@ -21,8 +20,8 @@
  * Where to find files...
  */
 
-#define FLTK_DATADIR	""
-#define FLTK_DOCDIR	""
+#define FLTK_DATADIR ""
+#define FLTK_DOCDIR ""
 
 /*
  * BORDER_WIDTH:
@@ -184,7 +183,7 @@
  *
  * Byte order of your machine: 1 = big-endian, 0 = little-endian.
  */
- 
+
 #ifdef __APPLE__
 #include <mac_endianness.h>
 #else
