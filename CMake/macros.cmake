@@ -148,6 +148,10 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
         target_link_libraries(${tname} ${X11_Xinerama_LIB})
     endif(HAVE_XINERAMA)
 
+    if(HAVE_XRENDER)
+        target_link_libraries(${tname} ${X11_Xrender_LIB})
+    endif(HAVE_XRENDER)
+
 endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
 #######################################################################

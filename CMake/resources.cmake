@@ -49,6 +49,7 @@ mark_as_advanced(HAVE_OPENGL_GLU_H HAVE_PNG_H HAVE_PTHREAD_H)
 mark_as_advanced(HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
 mark_as_advanced(HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
 mark_as_advanced(HAVE_SYS_STDTYPES_H HAVE_XDBE_H)
+mark_as_advanced(HAVE_X11_XREGION_H)
 
 # where to find freetype headers
 find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)

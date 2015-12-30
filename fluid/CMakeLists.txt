@@ -57,6 +57,10 @@ if(HAVE_XINERAMA)
    target_link_libraries(fluid ${X11_Xinerama_LIB})
 endif(HAVE_XINERAMA)
 
+if(HAVE_XRENDER)
+   target_link_libraries(fluid ${X11_Xrender_LIB})
+endif(HAVE_XRENDER)
+
 if(APPLE)    
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})

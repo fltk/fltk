@@ -64,7 +64,7 @@
  * Do you have the OpenGL glXGetProcAddressARB() function?
  */
 
-#cmakedefine HAVE_GLXGETPROCADDRESSARB %HAVE_GLXGETPROCADDRESSARB%
+#cmakedefine HAVE_GLXGETPROCADDRESSARB 1
 
 /*
  * USE_COLORMAP:
@@ -124,6 +124,14 @@
 #cmakedefine01 HAVE_XCURSOR
 
 /*
+ * HAVE_XRENDER:
+ *
+ * Do we have the X render library?
+ */
+
+#cmakedefine01 HAVE_XRENDER
+
+/*
  * HAVE_X11_XREGION_H:
  *
  * Do we have the X11 Xregion.h header file ?
@@ -134,9 +142,9 @@
 /*
  * __APPLE_QUARTZ__:
  *
- * If __APPLE_QUARTZ__ is defined, FLTK will be
- * compiled using Quartz. This flag has no meaning on
- * other operating systems than Mac OS X.
+ * All Apple implementations are now based on Quartz and Cocoa,
+ * so this flag should always be on for Mac OS X. This flag has
+ * no meaning on operating systems other than Mac OS X.
  */
 
 #cmakedefine __APPLE_QUARTZ__ @__APPLE_QUARTZ__@
@@ -149,7 +157,7 @@
  *
  */
 
-#cmakedefine USE_X11 @USE_X11@
+#cmakedefine USE_X11 1
 
 /*
  * HAVE_OVERLAY:
@@ -197,35 +205,35 @@
  * Where is <dirent.h> (used only by fl_file_chooser and scandir).
  */
 
-#cmakedefine HAVE_DIRENT_H @HAVE_DIRENT_H@
-#cmakedefine HAVE_SYS_NDIR_H @HAVE_SYS_NDIR_H@
-#cmakedefine HAVE_SYS_DIR_H @HAVE_SYS_DIR_H@
-#cmakedefine HAVE_NDIR_H @HAVE_NDIR_H@
-#cmakedefine HAVE_SCANDIR @HAVE_SCANDIR@
-#cmakedefine HAVE_SCANDIR_POSIX @HAVE_SCANDIR_POSIX@
+#cmakedefine HAVE_DIRENT_H 1
+#cmakedefine HAVE_SYS_NDIR_H 1
+#cmakedefine HAVE_SYS_DIR_H 1
+#cmakedefine HAVE_NDIR_H 1
+#cmakedefine HAVE_SCANDIR 1
+#cmakedefine HAVE_SCANDIR_POSIX 1
 
 /*
  * Possibly missing sprintf-style functions:
  */
 
-#cmakedefine HAVE_VSNPRINTF @HAVE_VSNPRINTF@
-#cmakedefine HAVE_SNPRINTF @HAVE_SNPRINTF@
+#cmakedefine HAVE_VSNPRINTF 1
+#cmakedefine HAVE_SNPRINTF 1
 
 /*
  * String functions and headers...
  */
 
-#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
-#cmakedefine HAVE_STRCASECMP @HAVE_STRCASECMP@
-#cmakedefine HAVE_STRLCAT @HAVE_STRLCAT@
-#cmakedefine HAVE_STRLCPY @HAVE_STRLCPY@
+#cmakedefine HAVE_STRINGS_H 1
+#cmakedefine HAVE_STRCASECMP 1
+#cmakedefine HAVE_STRLCAT 1
+#cmakedefine HAVE_STRLCPY 1
 
 /*
  * Do we have POSIX locale support?
  */
 
-#cmakedefine HAVE_LOCALE_H @HAVE_LOCALE_H@
-#cmakedefine HAVE_LOCALECONV @HAVE_LOCALECONV@
+#cmakedefine HAVE_LOCALE_H 1
+#cmakedefine HAVE_LOCALECONV 1
 
 /*
  * HAVE_SYS_SELECT_H:
@@ -241,7 +249,7 @@
  * Whether or not we have the <sys/stdtypes.h> header file.
  */
 
-#cmakedefine HAVE_SYS_STDTYPES_H @HAVE_SYS_STDTYPES_H@
+#cmakedefine HAVE_SYS_STDTYPES_H 1
 
 /*
  * USE_POLL:
@@ -255,9 +263,9 @@
  * Do we have various image libraries?
  */
 
-#cmakedefine HAVE_LIBPNG @HAVE_LIBPNG@
-#cmakedefine HAVE_LIBZ @HAVE_LIBZ@
-#cmakedefine HAVE_LIBJPEG @HAVE_LIBJPEG@
+#cmakedefine HAVE_LIBPNG 1
+#cmakedefine HAVE_LIBZ 1
+#cmakedefine HAVE_LIBJPEG 1
 
 /*
  * FLTK_USE_CAIRO
@@ -266,7 +274,7 @@
  * will implies to link cairo.lib in all fltk based apps.
  */
 
-#cmakedefine FLTK_USE_CAIRO @FLTK_USE_CAIRO@
+#cmakedefine FLTK_USE_CAIRO 1
 
 /*
  * FLTK_HAVE_CAIRO
@@ -274,39 +282,40 @@
  * Do we have the cairo library available?
  */
 
-#cmakedefine FLTK_HAVE_CAIRO @FLTK_HAVE_CAIRO@
+#cmakedefine FLTK_HAVE_CAIRO 1
 
 /*
  * Which header file do we include for libpng?
  */
 
-#cmakedefine HAVE_PNG_H @HAVE_PNG_H@
-#cmakedefine HAVE_LIBPNG_PNG_H @HAVE_LIBPNG_PNG_H@
+#cmakedefine HAVE_PNG_H 1
+#cmakedefine HAVE_LIBPNG_PNG_H 1
 
 /*
  * Do we have the png_xyz() functions?
  */
 
-#cmakedefine HAVE_PNG_GET_VALID @HAVE_PNG_GET_VALID@
-#cmakedefine HAVE_PNG_SET_TRNS_TO_ALPHA @HAVE_PNG_SET_TRNS_TO_ALPHA@
+#cmakedefine HAVE_PNG_GET_VALID 1
+#cmakedefine HAVE_PNG_SET_TRNS_TO_ALPHA 1
 
 /*
  * Do we have POSIX threading?
  */
 
-#cmakedefine HAVE_PTHREAD @HAVE_PTHREAD@
-#cmakedefine01 HAVE_PTHREAD_H
+#cmakedefine HAVE_PTHREAD 1
+#cmakedefine HAVE_PTHREAD_H 1
 
 /*
  * Do we have the ALSA library?
  */
 
-#cmakedefine HAVE_ALSA_ASOUNDLIB_H @HAVE_ALSA_ASOUNDLIB_H@
+#cmakedefine HAVE_ALSA_ASOUNDLIB_H 1
+
 /*
  * Do we have the long long type?
  */
 
-#cmakedefine HAVE_LONG_LONG @HAVE_LONG_LONG@
+#cmakedefine HAVE_LONG_LONG 1
 
 #ifdef HAVE_LONG_LONG
 #  define FLTK_LLFMT	"%lld"
@@ -320,8 +329,8 @@
  * Do we have the dlsym() function and header?
  */
 
-#cmakedefine HAVE_DLFCN_H @HAVE_DLFCN_H@
-#cmakedefine HAVE_DLSYM @HAVE_DLSYM@
+#cmakedefine HAVE_DLFCN_H 1
+#cmakedefine HAVE_DLSYM 1
 
 /*
  * End of "$Id$".

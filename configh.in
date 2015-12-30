@@ -56,7 +56,7 @@
  * (many broken Mesa RPMs do not...)
  */
 
-#undef HAVE_GL_GLU_H
+#define HAVE_GL_GLU_H 0
 
 /*
  * HAVE_GLXGETPROCADDRESSARB:
@@ -143,7 +143,7 @@
  * __APPLE_QUARTZ__:
  *
  * All Apple implementations are now based on Quartz and Cocoa,
- * so this flag should always be on for Mac OS X. This flag has 
+ * so this flag should always be on for Mac OS X. This flag has
  * no meaning on operating systems other than Mac OS X.
  */
 
@@ -245,7 +245,7 @@
  * Whether or not select() call has its own header file.
  */
 
-#undef HAVE_SYS_SELECT_H
+#define HAVE_SYS_SELECT_H 0
 
 /*
  * HAVE_SYS_STDTYPES_H:
