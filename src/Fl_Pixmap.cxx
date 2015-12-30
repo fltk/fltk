@@ -33,7 +33,9 @@
 #include <FL/Fl_Printer.H>
 
 #if defined(USE_X11)
-#  ifdef __APPLE_CC__ // allows using on Darwin + X11 even if X11/Xregion.h is absent
+#  if HAVE_X11_XREGION_H
+#    include <X11/Xregion.h>
+#  else // if the X11/Xregion.h header is not available, we assume this is the layout of an X11 Region:
 typedef struct {
   short x1, x2, y1, y2;
 } BOX;
@@ -43,10 +45,8 @@ struct _XRegion {
   BOX *rects;
   BOX extents;
 };
-#  else
-#    include <X11/Xregion.h>
-#  endif
-#endif
+#  endif // HAVE_X11_XREGION_H
+#endif   // USE_X11
 
 #include <stdio.h>
 #include "flstring.h"

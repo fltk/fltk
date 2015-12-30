@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2015 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -39,6 +39,7 @@ find_file(HAVE_SYS_DIR_H sys/dir.h)
 find_file(HAVE_SYS_NDIR_H sys/ndir.h)
 find_file(HAVE_SYS_SELECT_H sys/select.h)
 find_file(HAVE_SYS_STDTYPES_H sys/stdtypes.h)
+find_file(HAVE_X11_XREGION_H X11/Xregion.h)
 find_path(HAVE_XDBE_H Xdbe.h PATH_SUFFIXES X11/extensions extensions)
 
 mark_as_advanced(HAVE_ALSA_ASOUNDLIB_H HAVE_DIRENT_H HAVE_DLFCN_H)

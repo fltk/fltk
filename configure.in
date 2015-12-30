@@ -1046,6 +1046,10 @@ case $host_os_gui in
 		LIBS="-lXrender $LIBS")
 	fi
 
+	dnl Check for the X11/Xregion.h header file...
+	AC_CHECK_HEADER(X11/Xregion.h, AC_DEFINE(HAVE_X11_XREGION_H),,
+	    [#include <X11/Xlib.h>])
+
 	dnl Check for overlay visuals...
 	AC_PATH_PROG(XPROP, xprop)
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,
