@@ -198,7 +198,7 @@ set(CFILES
 )
 
 add_definitions(-DFL_LIBRARY)
-if(APPLE)
+if(APPLE AND NOT OPTION_APPLE_X11)
     set(MMFILES
         Fl_cocoa.mm
         Fl_Quartz_Printer.mm
@@ -208,7 +208,7 @@ if(APPLE)
 else()
    set(MMFILES
       )
-endif(APPLE)
+endif(APPLE AND NOT OPTION_APPLE_X11)
 
 #######################################################################
 FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${MMFILES};${CFILES};fl_call_main.c")

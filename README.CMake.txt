@@ -98,7 +98,8 @@ OPTION_ARCHFLAGS
    Extra architecture flags.
 
 OPTION_APPLE_X11 - default OFF
-   In case you want to use X11 on OSX.  Not currently supported.
+   In case you want to use X11 on OSX.
+   Use this only if you know what you do, and if you have installed X11.
 
 OPTION_USE_POLL - default OFF
    Don't use this one either.

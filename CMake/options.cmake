@@ -128,6 +128,10 @@ if(HAVE_GL)
 endif(HAVE_GL)
 
 if(OPTION_USE_GL)
+   if(OPTION_APPLE_X11)
+     find_library(OPENGL_gl_LIBRARY GL)
+     find_library(OPENGL_glu_LIBRARY GLU)
+   endif(OPTION_APPLE_X11)
    include(FindOpenGL)
 endif(OPTION_USE_GL)
 
