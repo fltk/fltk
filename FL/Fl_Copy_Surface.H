@@ -64,6 +64,9 @@ private:
 #elif defined(WIN32)
   HDC oldgc;
   HDC gc;
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define variables to hold a native offscreen bitmap in Fl_Copy_Surface"
+  // no default implementation
 #else // Xlib
   Fl_Offscreen xid;
   Window oldwindow;
@@ -114,6 +117,10 @@ public:
   virtual void untranslate();
   virtual ~Fl_GDI_Surface_();
 };
+
+#elif defined(FL_PORTING)
+
+# pragma message "FL_PORTING: define a drawing surface for your platform"
 
 #elif !defined(FL_DOXYGEN)
 

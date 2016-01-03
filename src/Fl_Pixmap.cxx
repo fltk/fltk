@@ -32,6 +32,12 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Printer.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: this file needs a lot of custom code to draw Pixmaps correctly"
+#else
+#endif
+
 #if defined(USE_X11)
 #  if HAVE_X11_XREGION_H
 #    include <X11/Xregion.h>

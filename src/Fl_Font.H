@@ -26,6 +26,13 @@
 
 #include <config.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement font descriptor details here"
+#else
+#endif
+
+
 #  if USE_XFT
 typedef struct _XftFont XftFont;
 #  elif !defined(WIN32) && !defined(__APPLE__)
@@ -65,6 +72,8 @@ public:
   //const char* encoding;
   int angle;
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle);
+#  elif defined(FL_PORTING)
+#    pragma message "FL_PORTING: define variables and storage types for font handling"
 #  else
   XUtf8FontStruct* font;	// X UTF-8 font information
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
@@ -87,15 +96,28 @@ struct Fl_Fontdesc {
   const char *name;
   char fontname[128];	// "Pretty" font name
   Fl_Font_Descriptor *first;	// linked list of sizes of this style
-#  ifndef WIN32
+#ifdef WIN32
+#elif defined(__APPLE__)
   char **xlist;		// matched X font names
   int n;		// size of xlist, negative = don't free xlist!
-#  endif
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you need additional storage in Fl_Fontdesc?"
+#else
+  char **xlist;		// matched X font names
+  int n;		// size of xlist, negative = don't free xlist!
+#endif
 };
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
-#  ifndef WIN32
+#ifdef WIN32
+#elif defined(__APPLE__)
+// functions for parsing X font names:
+FL_EXPORT const char* fl_font_word(const char *p, int n);
+FL_EXPORT char *fl_find_fontsize(char *name);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you need additional functions for font handling?"
+#else
 // functions for parsing X font names:
 FL_EXPORT const char* fl_font_word(const char *p, int n);
 FL_EXPORT char *fl_find_fontsize(char *name);

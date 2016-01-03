@@ -26,6 +26,13 @@
 #include <FL/x.H>
 #endif
 
+#ifdef WIN32
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement directory and filename handling for your platfomr if needed"
+#else // X11
+#endif
+
 extern "C" {
 #ifndef HAVE_SCANDIR
   int fl_scandir (const char *dir, dirent ***namelist,

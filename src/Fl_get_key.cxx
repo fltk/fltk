@@ -20,6 +20,8 @@
 #  include "Fl_get_key_win32.cxx"
 #elif defined(__APPLE__)
 #  include "Fl_get_key_mac.cxx"
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement keyboard reading and interpretation in its own file"
 #else
 
 // Return the current state of a key.  This is the X version.  I identify

@@ -103,6 +103,12 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 #ifdef WIN32
     HICON big_icon;
     HICON small_icon;
+#elif defined(__APPLE__)
+    // not needed
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define storage for per-window icons here if needed"
+#else // X11
+      // not needed
 #endif
   };
 
@@ -129,6 +135,12 @@ protected:
 #if defined(__APPLE__)
     typedef struct CGImage* CGImageRef;
     CGImageRef mask;
+#elif defined(WIN32)
+    // not needed
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define storage for a window mask here if needed"
+#else // X11
+      // not needed
 #endif
     Fl_Bitmap *todelete_; ///<  auxiliary bitmap image
   };
@@ -147,7 +159,10 @@ public:
    \see void shape(const Fl_Image* img)
    */
   inline void shape(const Fl_Image& b) { shape(&b); }
-#if ! (defined(WIN32) || defined(__APPLE__) || defined(FL_DOXYGEN))
+#if defined(WIN32) || defined(__APPLE__) || defined(FL_DOXYGEN)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you need a combine_mask() function in Fl_Window?"
+#else // X11
   void combine_mask(void);
 #endif
 private:
@@ -471,6 +486,12 @@ public:
 #ifdef WIN32
   static void default_icons(HICON big_icon, HICON small_icon);
   void icons(HICON big_icon, HICON small_icon);
+#elif defined(__APPLE__)
+  // not needed
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define functions to handle window icons here if needed"
+#else // X11
+      // not needed
 #endif
 
   /* for legacy compatibility */

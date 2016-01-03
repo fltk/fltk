@@ -42,6 +42,12 @@
 #include <FL/x.H>
 #endif
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement keyboard shortcut handling here"
+#else
+#endif
+
 /**
   Tests the current event, which must be an FL_KEYBOARD or
   FL_SHORTCUT, against a shortcut value (described in Fl_Button).

@@ -201,6 +201,12 @@ class Clip {
   void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); };
 #ifdef __APPLE__
   void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); };
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define floating point position text drawing if you have it"
+#else // X11
+      // not needed
 #endif
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
@@ -226,6 +232,12 @@ class Clip {
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 #ifdef __APPLE__
   CGContextRef gc;
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define storage for your graphics context in Fl_Postscript_File_Device if needed"
+#else // X11
+  // not needed
 #endif
 protected:
   Fl_PostScript_Graphics_Driver *driver();
@@ -252,6 +264,12 @@ public:
   void end_job(void);
 #ifdef __APPLE__
   void set_current() { fl_gc = gc; Fl_Paged_Device::set_current(); }
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: set access to your graphics context in Fl_Postscript_File_Device if needed"
+#else // X11
+      // not needed
 #endif
   
   static const char *file_chooser_title; 

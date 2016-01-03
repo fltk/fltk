@@ -25,6 +25,7 @@
 
 // Use Windows' chooser
 #ifdef WIN32
+
 // #define _WIN32_WINNT	0x0501	// needed for OPENFILENAME's 'FlagsEx'
 #if defined(FL_LIBRARY) || FLTK_ABI_VERSION < 10304
 #  include <windows.h>
@@ -36,18 +37,21 @@ typedef BROWSEINFOW fl_BROWSEINFOW;
 typedef void fl_OPENFILENAMEW;
 typedef void fl_BROWSEINFOW;
 #endif
-#endif
+#  include <FL/filename.H>	// FL_EXPORT
 
 // Use Apple's chooser
-#ifdef __APPLE__
+#elif defined(__APPLE__)
 #  define MAXFILTERS	80
-#endif
+#  include <FL/filename.H>	// FL_EXPORT
+
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define a file chooser if one is available on your platform"
+#  include <FL/Fl_File_Chooser.H> // default to FLTK file chooser if none id ported
 
 // All else falls back to FLTK's own chooser
-#if ! defined(__APPLE__) && !defined(WIN32)
-#  include <FL/Fl_File_Chooser.H>
 #else
-#  include <FL/filename.H>	// FL_EXPORT
+#  include <FL/Fl_File_Chooser.H>
+
 #endif
 
 class Fl_FLTK_File_Chooser;
@@ -192,9 +196,8 @@ private:
   void parse_filter(const char *);
   void clear_filters();
   void add_filter(const char *, const char *);
-#endif
 
-#ifdef __APPLE__
+#elif defined(__APPLE__)
 private:
   int             _btype;		// kind-of browser to show()
   int             _options;		// general options
@@ -230,9 +233,12 @@ private:
   void parse_filter(const char *from);
   int post();
   int runmodal();
-#endif
 
-#if ! defined(__APPLE__) && !defined(WIN32)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define member variables for file chooser if one is available on your platform"
+
+#else
+
 private:
 #if FLTK_ABI_VERSION <= 10302
   int   _btype;			// kind-of browser to show()
@@ -254,7 +260,8 @@ private:
 #endif
 };
 
-#if !defined(__APPLE__) && !defined(WIN32)
+
+#if !defined(__APPLE__) && !defined(WIN32) && !defined(FL_PORTING)
 class FL_EXPORT Fl_FLTK_File_Chooser {
   friend class Fl_Native_File_Chooser;
 protected:

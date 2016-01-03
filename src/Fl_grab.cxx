@@ -30,6 +30,12 @@
 
 extern void fl_fix_focus(); // in Fl.cxx
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: tell a window to grab all following events"
+#else
+#endif
+
 #ifdef WIN32
 // We have to keep track of whether we have captured the mouse, since
 // MSWindows shows little respect for this... Grep for fl_capture to

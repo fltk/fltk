@@ -14,6 +14,12 @@
  *     http://www.fltk.org/str.php
  */
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: utf8"
+#else
+#endif
+
 /*
  * Unicode to UTF-8 conversion functions.
  */

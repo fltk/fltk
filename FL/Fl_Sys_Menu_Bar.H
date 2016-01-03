@@ -93,6 +93,14 @@ public:
   void setonly (Fl_Menu_Item *item) { Fl_Menu_::setonly(item); update(); }
 };
 
+#elif defined(WIN32)
+
+typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
+
+#elif defined(FL_PORTING)
+
+# pragma message "FL_PORTING: define your own system menu class"
+
 #else
 
 typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;

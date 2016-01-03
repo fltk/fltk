@@ -26,6 +26,12 @@
 #include <stdarg.h>
 #include "flstring.h"
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: use native message box below if one is available"
+#else
+#endif
+
 #ifdef WIN32
 #  include <windows.h>
 

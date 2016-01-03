@@ -27,6 +27,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: manage character composing here"
+#else
+#endif
+
+
 #define MAXBUF 1024
 #if defined(USE_X11) && !USE_XFT
 const int secret_char = '*'; // asterisk to hide secret input

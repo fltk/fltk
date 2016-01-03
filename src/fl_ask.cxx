@@ -309,6 +309,8 @@ void fl_beep(int type) {
     default :
       break;
   }
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement beeping or other noise generating functions"
 #else
   switch (type) {
     case FL_BEEP_DEFAULT :

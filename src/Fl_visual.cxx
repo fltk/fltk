@@ -73,6 +73,9 @@ int Fl::visual(int flags) {
   return 1;
 }
 
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add code to handle RGB and color index visuals"
+
 #else
 
 #if USE_XDBE

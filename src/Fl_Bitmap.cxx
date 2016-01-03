@@ -150,6 +150,10 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 }
 
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement fl_create_bitmap"
+
 #else // X11 bitmask functions
 
 
@@ -262,8 +266,10 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
   if (H <= 0) return 1;
 #if defined(WIN32)
   if (!id_) id_ = fl_create_bitmap(w(), h(), array);
-#else
+#elif defined(__APPLE__) || defined(USE_X11)
   if (!id_) id_ = fl_create_bitmask(w(), h(), array);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: call the right funtion to create a bitmap"
 #endif
   return 0;
 }
@@ -345,6 +351,10 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
   DeleteDC(tempdc);
 }  
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement Fl_Xlib_Graphics_Driver::draw()"
+
 #else // Xlib
 void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
@@ -375,8 +385,10 @@ void Fl_Bitmap::uncache() {
   if (id_) {
 #ifdef __APPLE_QUARTZ__
     fl_delete_bitmask((Fl_Bitmask)id_);
-#else
+#elif defined(WIN32) || defined(USE_X11)
     fl_delete_bitmask((Fl_Offscreen)id_);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: call the right funtion to create a bitmask"
 #endif
     id_ = 0;
   }

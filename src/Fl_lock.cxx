@@ -389,6 +389,10 @@ void lock_ring() {
   pthread_mutex_lock(ring_mutex);
 }
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement simple locking and unlocking for basic multithreading support"
+
 #else
 
 void unlock_ring() {

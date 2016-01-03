@@ -55,6 +55,8 @@ private:
   Window _sw; 
   Fl_Surface_Device *_ss;
   int _savedc;
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define variables to hold imaga data for Fl_Image_Surface"
 #else
   Fl_Surface_Device *previous;
   Window pre_window;
@@ -81,6 +83,10 @@ public:
   void untranslate();
   virtual ~Fl_Quartz_Flipped_Surface_() {};
 };
+#elif defined(WIN32)
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define a helper class for Fl_Image_Surface if needed"
+#else
 #endif 
 
 #endif // Fl_Image_Surface_H

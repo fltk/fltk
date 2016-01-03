@@ -27,6 +27,12 @@
 #  include "flstring.h"
 #  include <FL/fl_utf8.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add code to list and select OpenGL drawing contexts"
+#else
+#endif
+
 #  ifdef WIN32
 void fl_save_dc(HWND, HDC);
 #elif defined(__APPLE__)

@@ -28,6 +28,8 @@
 #  include "fl_set_fonts_mac.cxx"
 #elif USE_XFT
 #  include "fl_set_fonts_xft.cxx"
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement changes in font in its own file"
 #else
 #  include "fl_set_fonts_x.cxx"
 #endif // WIN32

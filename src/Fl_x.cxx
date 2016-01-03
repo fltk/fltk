@@ -20,6 +20,8 @@
 //#  include "Fl_win32.cxx"
 #elif defined(__APPLE__)
 //#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the FLTK core in its own file"
 #elif !defined(FL_DOXYGEN)
 
 #  define CONSOLIDATE_MOTION 1

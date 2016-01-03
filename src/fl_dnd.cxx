@@ -20,6 +20,8 @@
 #  include "fl_dnd_win32.cxx"
 #elif defined(__APPLE__)
 //#  include "fl_dnd_mac.cxx"
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement drag and drop in its own platform file"
 #else
 #  include "fl_dnd_x.cxx"
 #endif

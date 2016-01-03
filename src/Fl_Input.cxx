@@ -22,6 +22,13 @@
 // In theory you can replace this code with another subclass to change
 // the keybindings.
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement text input specifics here"
+  // current custom code is for OS X keybaord specifics only
+#else
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/Fl.H>

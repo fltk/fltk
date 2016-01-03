@@ -151,6 +151,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
     CFRelease(img);
     }
 #else
+# pragma message "FL_PORTING: implement scrolling of the screen contents"
 # error unsupported platform
 #endif
   if (dx) draw_area(data, clip_x, dest_y, clip_w, src_h);

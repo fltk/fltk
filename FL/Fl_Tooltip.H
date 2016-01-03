@@ -100,6 +100,12 @@ public:
 #ifdef __APPLE__
   // the unique tooltip window
   static Fl_Window* current_window(void);
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: do we need to remember the tooltip parent window?"
+#else // X11
+  // not needed
 #endif
 
   // These should not be public, but Fl_Widget::tooltip() needs them...

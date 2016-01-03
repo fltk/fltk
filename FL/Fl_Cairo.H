@@ -29,15 +29,17 @@
 
 # include <FL/Fl_Export.H>
 
-# if defined(USE_X11) // X11
+#if defined(USE_X11) // X11
 #  include <cairo-xlib.h>
-# elif defined(WIN32)
+#elif defined(WIN32)
 #  include <cairo-win32.h>
-# elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__)
 #  include <cairo-quartz.h>
-# else
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: is the Cairo library available on this platform?"
+#else
 #  error Cairo is not supported on that platform.
-# endif
+#endif
 
 /** 
    \addtogroup group_cairo

@@ -32,6 +32,12 @@ extern int fl_gl_load_plugin;
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the creation and destruction of OpenGL surfaces"
+#else
+#endif
+
 ////////////////////////////////////////////////////////////////
 
 // The symbol SWAP_TYPE defines what is in the back buffer after doing

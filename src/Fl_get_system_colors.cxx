@@ -200,6 +200,10 @@ void Fl::get_system_colors()
 #endif
 }
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement code to find the current desktop color scheme"
+
 #else						// --- X11 ---
 
 // Read colors that KDE writes to the xrdb database.

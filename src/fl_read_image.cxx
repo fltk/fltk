@@ -25,6 +25,12 @@
 #  include <stdio.h>
 #endif // DEBUG
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement code to read RGB data from screen"
+#else
+#endif
+
 #if defined(__APPLE__)
 #  include "fl_read_image_mac.cxx"
 #else

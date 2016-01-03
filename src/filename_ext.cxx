@@ -20,6 +20,13 @@
 
 #include <FL/filename.H>
 
+#ifdef WIN32
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement directory and filename handling for your platfomr if needed"
+#else // X11
+#endif
+
 /** Gets the extensions of a filename.
    \code
    #include <FL/filename.H>

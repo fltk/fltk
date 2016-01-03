@@ -25,6 +25,12 @@
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement OpenGL hardware overlays if they are availbale in a compatible way. This is rarely needed."
+#else
+#endif
+
 #if !HAVE_GL_OVERLAY
 
 int Fl_Gl_Window::can_do_overlay() {return 0;}

@@ -92,6 +92,12 @@ FL_EXPORT void gl_measure(const char*, int& x, int& y);
 #ifdef __APPLE__
 extern FL_EXPORT void gl_texture_pile_height(int max);
 extern FL_EXPORT int gl_texture_pile_height();
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define functions to control OpenGL texture pile height if supported"
+#else // X11
+  // not needed
 #endif
 
 FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);

@@ -21,6 +21,12 @@
 #include <FL/filename.H>
 #include <stdarg.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: verify code for utf8 handling"
+#else
+#endif
+
 #if defined(WIN32) || defined(__CYGWIN__)
 # include <ctype.h>
 # include <io.h>

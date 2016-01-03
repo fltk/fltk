@@ -142,6 +142,9 @@ fl_open_uri(const char *uri, char *msg, int msglen) {
 
   return run_program("/usr/bin/open", argv, msg, msglen) != 0;
 
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add code to open any file type with an external app"
+
 #else // !WIN32 && !__APPLE__
   // Run any of several well-known commands to open the URI.
   //

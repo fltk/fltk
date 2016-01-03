@@ -108,6 +108,8 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx
     ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
 #elif defined(__APPLE__)
     ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: call our version of fl_copy_offscreen"
 #endif
   }
   else { // when copy is not to the display
@@ -379,6 +381,7 @@ void fl_end_offscreen() {
 
 
 #else
+# pragma message "FL_PORTING: implement offscreen render space generation and management"
 # error unsupported platform
 #endif
 
@@ -416,6 +419,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       clear_damage(FL_DAMAGE_ALL);
     }
 #else
+# pragma message "FL_PORTING: call a function to clear any graphics port damage flags"
 # error unsupported platform
 #endif
   }
@@ -467,6 +471,8 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     } else {
       draw();
     }
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: manage double buffered drawing"
 #else // X:
     fl_window = myi->other_xid;
     draw();

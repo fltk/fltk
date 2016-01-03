@@ -33,6 +33,12 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement al the line drawing functions below"
+#else
+#endif
+
 // fl_line_width_ must contain the absolute value of the current
 // line width to be used for X11 clipping (see below).
 // This is defined in src/fl_line_style.cxx

@@ -31,6 +31,12 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: look out for some code that visualizes character composing"
+#else
+#endif
+
 #undef min
 #undef max
 

@@ -32,6 +32,8 @@
 void Fl::display(const char *d) {
 #if defined(__APPLE__) || defined(WIN32)
   (void)d;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: initiate a connection to the display"
 #else
   static char e[1024];
   strcpy(e,"DISPLAY=");

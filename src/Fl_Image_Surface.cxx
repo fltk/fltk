@@ -20,6 +20,11 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement image surface handling here"
+#else
+#endif
 
 const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
 

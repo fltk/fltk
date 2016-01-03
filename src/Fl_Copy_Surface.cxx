@@ -97,6 +97,8 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
     SetTextAlign(gc, TA_BASELINE|TA_LEFT);
     SetBkMode(gc, TRANSPARENT);
   } 
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: initialize memebrs of Fl_Copy_Surface"
 #else // Xlib
   helper = new Fl_Xlib_Surface_();
   driver(helper->driver());
@@ -133,6 +135,8 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   DeleteDC(gc);
   fl_gc = oldgc;
   delete (Fl_GDI_Surface_*)helper;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: free resources in destructo of Fl_Copy_Surface"
 #else // Xlib
   fl_pop_clip(); 
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);
@@ -162,6 +166,8 @@ void Fl_Copy_Surface::set_current()
   fl_gc = gc;
   fl_window = (Window)1;
   Fl_Surface_Device::set_current();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Copy_Surface::set_current"
 #else
   fl_window=xid; 
   _ss = Fl_Surface_Device::surface(); 

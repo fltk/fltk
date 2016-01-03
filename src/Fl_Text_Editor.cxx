@@ -25,6 +25,11 @@
 #include <FL/Fl_Text_Editor.H>
 #include <FL/fl_ask.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add common shortcut for your platform here"
+#else
+#endif
 
 /* Keyboard Control Matrix
 

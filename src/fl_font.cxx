@@ -51,6 +51,8 @@
 #  include "fl_font_mac.cxx"
 #elif USE_XFT
 #  include "fl_font_xft.cxx"
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement font handling specific in its own file"
 #else
 #  include "fl_font_x.cxx"
 #endif // WIN32

@@ -30,6 +30,8 @@
 #  include "fl_draw_image_win32.cxx"
 #elif defined(__APPLE__)
 #  include "fl_draw_image_mac.cxx"
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement image drawing in its own file"
 #else
 
 // A list of assumptions made about the X display:

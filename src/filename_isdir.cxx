@@ -25,6 +25,12 @@
 #include <FL/filename.H>
 #include <FL/fl_utf8.h>
 
+#ifdef WIN32
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement directory and filename handling for your platfomr if needed"
+#else // X11
+#endif
 
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
 static inline int isdirsep(char c) {return c=='/' || c=='\\';}

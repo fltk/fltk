@@ -24,6 +24,12 @@
 #include <FL/Fl_Pixmap.H>
 #include <string.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add code to implement arbitrarily shaped windows"
+#else
+#endif
+
 #ifdef WIN32
 # include <malloc.h> // needed for VisualC2010
 #elif !defined(__APPLE__)

@@ -30,10 +30,14 @@
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Bitmap.H>
 #include <stdio.h>
-#if !(defined(__APPLE__) || defined(WIN32))
-#include <FL/Fl_PostScript.H>
-#elif defined(WIN32)
+#ifdef WIN32
 #include <commdlg.h>
+#elif defined(__APPLE__)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: include files needed for printing support"
+#else // X11
+#include <FL/Fl_PostScript.H>
 #endif
 
 #if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
@@ -91,9 +95,12 @@ public:
   ~Fl_System_Printer(void);
 }; // class Fl_System_Printer
 
-#endif
-  
-#if !(defined(__APPLE__) || defined(WIN32) )
+#elif defined(FL_PORTING)
+
+# pragma message "FL_PORTING: define your own Fl_xxx_Printer class"
+
+#else 
+
 /**
  Print support under Unix/Linux.
  
@@ -224,6 +231,8 @@ public:
 private:
 #if defined(WIN32) || defined(__APPLE__)
   Fl_System_Printer *printer;
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: instantiate your own Fl_xxx_Printer here"
 #else
   Fl_PostScript_Printer *printer;
 #endif

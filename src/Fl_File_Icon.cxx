@@ -51,6 +51,11 @@
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement file type interpretation here"
+#else
+#endif
 
 //
 // Define missing POSIX/XPG4 macros as needed...

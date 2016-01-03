@@ -64,10 +64,13 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   static // a static member is needed for ABI compatibility
 #endif
   UINT pixmap_bg_color; // RGB color used for pixmap background
-#endif // WIN32
-#if defined(__APPLE__) || defined(WIN32)
   void *id_; // for internal use
   void *mask_; // for internal use (mask bitmap)
+#elif defined(__APPLE__)
+  void *id_; // for internal use
+  void *mask_; // for internal use (mask bitmap)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define member variables to store an RGB image and a mask for Fl_Pixmap"
 #else
   unsigned id_; // for internal use
   unsigned mask_; // for internal use (mask bitmap)

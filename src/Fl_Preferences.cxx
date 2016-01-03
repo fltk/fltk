@@ -29,6 +29,12 @@
 #include <sys/stat.h>
 #include <time.h>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement some file storage in a designated place"
+#else
+#endif
+
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <windows.h>
 #  include <direct.h>

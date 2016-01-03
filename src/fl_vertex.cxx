@@ -28,6 +28,12 @@
 // matt: the Quartz implementation purposely doesn't use the Quartz matrix
 //       operations for reasons of compatibility and maintainability
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement functions below for vector drawing"
+#else
+#endif
+
 #include <config.h>
 #include <FL/fl_draw.H>
 #include <FL/x.H>

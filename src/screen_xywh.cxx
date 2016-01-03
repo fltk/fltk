@@ -142,6 +142,10 @@ static void screen_init() {
   num_screens = count;
 }
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: return various information about the screens in the system"
+
 #else
 
 #if HAVE_XINERAMA

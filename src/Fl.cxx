@@ -59,6 +59,13 @@
 #endif // DEBUG || DEBUG_WATCH
 
 #ifdef WIN32
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement global variables for your platform here"
+#else // X11
+#endif
+
+#ifdef WIN32
 #  include <ole2.h>
 void fl_free_fonts(void);
 HBRUSH fl_brush_action(int action);
@@ -242,6 +249,10 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 #elif defined(__APPLE__)
 
 // implementation in Fl_cocoa.mm (was Fl_mac.cxx)
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement timers in your platform specific core file"
 
 #else
 
@@ -543,6 +554,10 @@ double Fl::wait(double time_to_wait) {
   run_checks();
   return fl_mac_flush_and_wait(time_to_wait);
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement waiting for a timer or a message from the system"
+
 #else
 
   if (first_timeout) {
@@ -676,7 +691,11 @@ int Fl::check() {
   \endcode
 */
 int Fl::ready() {
-#if ! defined( WIN32 )  &&  ! defined(__APPLE__)
+#if defined( WIN32 ) || defined(__APPLE__)
+  // not used
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: you may need to handle timers here."
+#else // X11
   if (first_timeout) {
     elapse_timeouts();
     if (first_timeout->time <= 0) return 1;
@@ -780,6 +799,8 @@ void Fl::flush() {
 #elif defined (__APPLE_QUARTZ__)
   if (fl_gc)
     CGContextFlush(fl_gc);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: flush your graohics context here"
 #else
 # error unsupported platform
 #endif
@@ -978,6 +999,9 @@ void Fl::focus(Fl_Widget *o) {
 	  else if (x) // New WMs use the NETWM attribute:
 	    Fl_X::activate_window(x->xid);
 	}
+#elif defined(WIN32)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: handle platform specifics for change of keyboard focus here"
 #endif
 	fl_xfocus = win;
       }
@@ -1119,7 +1143,13 @@ void fl_throw_focus(Fl_Widget *o) {
 #endif // DEBUG
 
   if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
-#if !(defined(WIN32) || defined(__APPLE__))
+#ifdef WIN32
+  // not used
+#elif defined(__APPLE__)
+  // not used
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: platform specific code when deleting a window"
+#else
   if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
 #endif
   if (o->contains(Fl::belowmouse())) Fl::belowmouse_ = 0;
@@ -1627,6 +1657,8 @@ void Fl_Window::hide() {
   }
 #elif defined(__APPLE_QUARTZ__)
   ip->destroy();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: code to destroy a window on screen"
 #else
 # error unsupported platform
 #endif
@@ -1659,6 +1691,8 @@ int Fl_Window::handle(int ev)
         XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
 #elif defined(__APPLE_QUARTZ__)
 	i->map();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: code to show a window on screen"
 #else
 # error unsupported platform
 #endif // __APPLE__
@@ -1681,6 +1715,8 @@ int Fl_Window::handle(int ev)
 	XUnmapWindow(fl_display, fl_xid(this));
 #elif defined(__APPLE_QUARTZ__)
 	i->unmap();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: code to hide a window from screen"
 #else
 # error platform unsupported
 #endif
@@ -1867,6 +1903,8 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
         i->region->rects = (CGRect*)realloc(i->region->rects, (++(i->region->count)) * sizeof(CGRect));
         i->region->rects[i->region->count - 1] = arg;
       }
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: code to merge damage regions"
 #else
 # error unsupported platform
 #endif

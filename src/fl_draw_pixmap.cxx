@@ -38,6 +38,12 @@
 #include <stdio.h>
 #include "flstring.h"
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement platform specific about pixmap drawing here"
+#else
+#endif
+
 static int ncolors, chars_per_pixel;
 
 /**

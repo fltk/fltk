@@ -45,6 +45,12 @@
 #ifndef Fl_Gl_Choice_H
 #define Fl_Gl_Choice_H
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add code to list and select OpenGL drawing contexts"
+#else
+#endif
+
 // Warning: whatever GLContext is defined to must take exactly the same
 // space in a structure as a void*!!!
 #ifdef WIN32
@@ -77,6 +83,8 @@ public:
   PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
 #elif defined(__APPLE_QUARTZ__)
   NSOpenGLPixelFormat* pixelformat;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: define OpenGL pixel format containers"
 #else
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
@@ -96,6 +104,10 @@ GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 #elif defined(__APPLE_QUARTZ__)
 
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: define fl_create_gl_context function"
 
 #else
 

@@ -57,6 +57,11 @@ typedef float COORD_T;
 typedef struct { float x; float y; } QPoint;
 #  define XPOINT QPoint
 extern float fl_quartz_line_width_;
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define types for COORD_T and XPOINT"
+typedef int COORD_T; // default if not ported
+typedef struct { int x; int y; } QPoint;
+#  define XPOINT QPoint
 #else
 typedef short COORD_T;
 #  define XPOINT XPoint
@@ -131,6 +136,13 @@ private:
 #ifdef WIN32
   int numcount;
   int counts[20];
+#elif defined(__APPLE__)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define variables for Fl_Graphics_Driver if needed."
+  // not needed
+#else
+  // not needed in X11
 #endif
   Fl_Font_Descriptor *font_descriptor_;
   void transformed_vertex0(COORD_T x, COORD_T y);
@@ -166,6 +178,12 @@ protected:
   friend void fl_draw(const char *str, int n, int x, int y);
 #ifdef __APPLE__
   friend void fl_draw(const char *str, int n, float x, float y);
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: add floating point text positioning if your platform supports it"
+#else 
+  // not needed
 #endif
   friend void fl_draw(int angle, const char *str, int n, int x, int y);
   friend void fl_rtl_draw(const char *str, int n, int x, int y);
@@ -251,6 +269,12 @@ protected:
   virtual void draw(const char *str, int n, int x, int y) {}
 #ifdef __APPLE__
   virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: add floating point text positioning if your platform supports it"
+#else
+  // not needed
 #endif
   /** \brief see fl_draw(int angle, const char *str, int n, int x, int y). */
   virtual void draw(int angle, const char *str, int n, int x, int y) {}
@@ -412,7 +436,9 @@ public:
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 };
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN)
+
+#if defined(__APPLE__)
+
 /**
  \brief The Mac OS X-specific graphics class.
  *
@@ -449,8 +475,9 @@ public:
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 };
-#endif
-#if defined(WIN32) || defined(FL_DOXYGEN)
+
+#elif defined(WIN32) || defined(FL_DOXYGEN)
+
 /**
  \brief The MSWindows-specific graphics class.
  *
@@ -497,8 +524,13 @@ public:
   void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
 };
-#endif
-#if !(defined(__APPLE__) || defined(WIN32))
+
+#elif defined(FL_PORTING)
+
+# pragma message "FL_PORTING: define a native graphics driver Fl_xxx_Graphics_Driver"
+
+#else // X11
+
 /**
  \brief The Xlib-specific graphics class.
  *
@@ -531,6 +563,7 @@ public:
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
 };
+
 #endif
 
 /**
@@ -590,6 +623,10 @@ class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
   friend class Fl_Graphics_Driver;
   static bool high_res_window_; //< true when drawing to a window of a retina display (Mac OS X only)
   static bool high_resolution() {return high_res_window_;}
+#elif defined(WIN32)
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement functions for extra high res drawing if your platform supports it"
+#else
 #endif
 public:
   static const char *class_id;

@@ -208,6 +208,8 @@ public:
 #if defined(__APPLE__) || defined(WIN32)
   void *id_; // for internal use
   void *mask_; // for internal use (mask bitmap)
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define variables to hold an RGB image and a mask for Fl_RGB_Image"
 #else
   unsigned id_; // for internal use
   unsigned mask_; // for internal use (mask bitmap)

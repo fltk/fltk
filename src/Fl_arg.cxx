@@ -29,6 +29,12 @@
 #include "flstring.h"
 
 #if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement special command line handling"
+#else
+#endif
+
+#if defined(WIN32) || defined(__APPLE__)
 int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #  define NoValue	0x0000
 #  define XValue  	0x0001

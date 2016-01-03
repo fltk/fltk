@@ -25,6 +25,12 @@
 #include <FL/Fl_Printer.H>
 #include "flstring.h"
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement RGB image handling here"
+#else
+#endif
+
 #ifdef WIN32
 void fl_release_dc(HWND, HDC); // from Fl_win32.cxx
 #endif

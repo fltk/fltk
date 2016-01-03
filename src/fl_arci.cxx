@@ -69,6 +69,7 @@ void Fl_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
+# pragma message "FL_PORTING: implement arc drawing"
 # error unsupported platform
 #endif
 }
@@ -114,6 +115,7 @@ void Fl_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
 #else
+# pragma message "FL_PORTING: implement pie drawing (mmmh, apple pie)"
 # error unsupported platform
 #endif
 }

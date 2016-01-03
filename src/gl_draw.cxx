@@ -19,6 +19,12 @@
 // Functions from <FL/gl.h>
 // See also Fl_Gl_Window and gl_start.cxx
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement OpenGL text rendering here"
+#else
+#endif
+
 #include "flstring.h"
 #if HAVE_GL || defined(FL_DOXYGEN)
 

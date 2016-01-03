@@ -81,6 +81,9 @@ struct dirent {char d_name[1];};
 #    include <sys/types.h>
 #    include <direct.h>
 
+#  elif defined(FL_PORTING)
+#    pragma message "FL_PORTING: insert the equivalent to dirent.h on your system"
+     struct dirent {char d_name[1];}; // default if not ported
 #  else
 /*
  * WARNING: on some systems (very few nowadays?) <dirent.h> may not exist.

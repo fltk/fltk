@@ -50,6 +50,11 @@ struct Fl_Label;
 # else
 #  define FL_SOCKET int
 # endif
+#elif defined(__APPLE__)
+# define FL_SOCKET int
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define a type for FL_SOCKET"
+# define FL_SOCKET int // default if not ported
 #else
 # define FL_SOCKET int
 #endif
@@ -158,6 +163,13 @@ public: // should be private!
 #ifdef __APPLE__
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
+#elif defined(WIN32)
+  // not needed in WIN32
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define a type for FL_SOCKET"
+  // no default implementation
+#else
+  // not needed in X11
 #endif
 #endif // FL_DOXYGEN
   
@@ -856,9 +868,18 @@ public:
   static void copy(const char* stuff, int len, int destination, const char *type);
   static void copy(const char* stuff, int len, int destination = 0);
 #endif
-  
-#if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
-  static void copy_image(const unsigned char* data, int W, int H, int destination = 0); // platform dependent
+
+#if defined(__APPLE__)
+  // not needed
+#elif defined(WIN32)
+  // not needed
+#elif defined(FL_DOXYGEN)
+  // don't show in documentation
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: do you need to implement copy_image() ?"
+  // not implemented by default
+#else
+  static void copy_image(const unsigned char* data, int W, int H, int destination = 0); // X11 platform dependent
 #endif
   /**
   Pastes the data from the selection buffer (\p source is 0) or the clipboard 

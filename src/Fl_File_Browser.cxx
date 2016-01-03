@@ -26,6 +26,12 @@
 //   Fl_File_Browser::filter()          - Set the filename filter.
 //
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the iternals of your file browser here"
+#else
+#endif
+
 //
 // Include necessary header files...
 //

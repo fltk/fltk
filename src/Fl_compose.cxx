@@ -21,6 +21,11 @@
 Utility functions to support text input.
 */
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement keyboard composing in the code below"
+#else
+#endif
 
 #include <FL/Fl.H>
 #include <FL/x.H>

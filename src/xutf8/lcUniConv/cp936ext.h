@@ -16,7 +16,15 @@
  *     http://www.fltk.org/str.php
  */
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__)
+
+  // not needed
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: include the character encoding file below if needed"
+
+#else
 
 #ifndef CP936
 #ifdef NEED_TOWC

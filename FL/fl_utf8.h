@@ -57,6 +57,9 @@
 #  include <wchar.h>
 #  include <sys/stat.h>
 #  define xchar wchar_t
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: include utf8 support files and define utf8 types"
+#  define xchar unsigned short
 #else /* X11 */
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -158,6 +161,12 @@ FL_EXPORT char *fl_utf8_to_locale(const char *s, int len, unsigned int codepage)
 
 /* OD: Attempt to convert a string in the current locale to UTF-8 */
 FL_EXPORT char *fl_locale_to_utf8(const char *s, int len, unsigned int codepage);
+#elif defined(__APPLE__)
+  // not needed
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you want to be able to convert from a local charset to utf8?"
+#else // X11
+  // not needed
 #endif
 
 /*****************************************************************************

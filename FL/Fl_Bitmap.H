@@ -48,6 +48,9 @@ public:
 #if defined(__APPLE__) || defined(WIN32)
   /** for internal use */
   void *id_;
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define variables to hold a native bitmap in Fl_Bitmap"
+  unsigned id_; // default if not ported
 #else
   /** for internal use */
   unsigned id_;

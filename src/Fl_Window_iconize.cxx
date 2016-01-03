@@ -29,6 +29,8 @@ void Fl_Window::iconize() {
     ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
 #elif defined(__APPLE__)
     i->collapse();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: add code to iconify a window"
 #else
     XIconifyWindow(fl_display, i->xid, fl_screen);
 #endif

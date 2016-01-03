@@ -20,6 +20,12 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: instantiate and implement various device drivers here"
+#else
+#endif
+
 const char *Fl_Device::class_id = "Fl_Device";
 const char *Fl_Surface_Device::class_id = "Fl_Surface_Device";
 const char *Fl_Display_Device::class_id = "Fl_Display_Device";
@@ -86,6 +92,8 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
                                                                   Fl_Quartz_Graphics_Driver
 #elif defined(WIN32)
                                                                   Fl_GDI_Graphics_Driver
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: instantiate your display driver here"
 #else
                                                                   Fl_Xlib_Graphics_Driver
 #endif

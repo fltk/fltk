@@ -19,6 +19,12 @@
 
 #include <FL/Fl_Printer.H>
 
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the printer device specifics"
+#else
+#endif
+
 #if defined(WIN32)
 #include "Fl_GDI_Printer.cxx"
 #endif
