@@ -243,7 +243,7 @@ public:
 #elif defined(WIN32)
   int pixels_per_unit() { return 1; }
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define mutiple resolution OpenGL rendering if your platform supports it"
+# pragma message "FL_PORTING: define multiple resolution OpenGL rendering if your platform supports it"
 #else
   int pixels_per_unit() { return 1; }
 #endif

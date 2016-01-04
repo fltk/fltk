@@ -31,7 +31,7 @@
 #  elif defined(__APPLE__)
 #    include "mac.H"
 #  elif defined(FL_PORTING)
-#    pragma message "FL_PORTING: write  a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
+#    pragma message "FL_PORTING: write a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
 #  else // X11
 #    if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
 #      pragma set woff 3322

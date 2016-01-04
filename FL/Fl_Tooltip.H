@@ -103,7 +103,7 @@ public:
 #elif defined(WIN32)
   // not needed
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: do we need to remember the tooltip parent window?"
+# pragma message "FL_PORTING: do you need to remember the tooltip parent window?"
 #else // X11
   // not needed
 #endif

@@ -359,7 +359,7 @@
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the internal of your filechooser here"
+#  pragma message "FL_PORTING: implement the internals of your filechooser here"
 #else
 #endif
 

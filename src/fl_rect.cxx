@@ -35,7 +35,7 @@
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement al the line drawing functions below"
+#  pragma message "FL_PORTING: implement all the line drawing functions below"
 #else
 #endif
 

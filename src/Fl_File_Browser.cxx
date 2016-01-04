@@ -28,7 +28,7 @@
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the iternals of your file browser here"
+#  pragma message "FL_PORTING: implement the internals of your file browser here"
 #else
 #endif
 

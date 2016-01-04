@@ -109,7 +109,7 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx
 #elif defined(__APPLE__)
     ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: call our version of fl_copy_offscreen"
+#  pragma message "FL_PORTING: call your version of fl_copy_offscreen here"
 #endif
   }
   else { // when copy is not to the display

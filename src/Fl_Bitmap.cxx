@@ -269,7 +269,7 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
 #elif defined(__APPLE__) || defined(USE_X11)
   if (!id_) id_ = fl_create_bitmask(w(), h(), array);
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: call the right funtion to create a bitmap"
+#  pragma message "FL_PORTING: call the right function to create a bitmap"
 #endif
   return 0;
 }
@@ -353,7 +353,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
 
 #elif defined(FL_PORTING)
 
-#  pragma message "FL_PORTING: implement Fl_Xlib_Graphics_Driver::draw()"
+#  pragma message "FL_PORTING: implement Fl_xxx_Graphics_Driver::draw()"
 
 #else // Xlib
 void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -388,7 +388,7 @@ void Fl_Bitmap::uncache() {
 #elif defined(WIN32) || defined(USE_X11)
     fl_delete_bitmask((Fl_Offscreen)id_);
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: call the right funtion to create a bitmask"
+#  pragma message "FL_PORTING: call the right function to create a bitmask"
 #endif
     id_ = 0;
   }

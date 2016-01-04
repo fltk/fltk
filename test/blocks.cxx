@@ -36,7 +36,7 @@
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: FLTK does not provide cross platform access to system sound"
+#  pragma message "FL_PORTING: FLTK does not provide cross platform sound support"
 #else
 #endif
 

@@ -24,7 +24,7 @@
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: llok out for some unicode functions here. Default should be fine though."
+#  pragma message "FL_PORTING: look out for some unicode functions here. Default should be fine though."
 #else
 #endif
 

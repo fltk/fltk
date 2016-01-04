@@ -56,7 +56,7 @@ private:
   Fl_Surface_Device *_ss;
   int _savedc;
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define variables to hold imaga data for Fl_Image_Surface"
+# pragma message "FL_PORTING: define variables to hold image data for Fl_Image_Surface"
 #else
   Fl_Surface_Device *previous;
   Window pre_window;

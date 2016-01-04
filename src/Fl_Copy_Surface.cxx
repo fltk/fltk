@@ -98,7 +98,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
     SetBkMode(gc, TRANSPARENT);
   } 
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: initialize memebrs of Fl_Copy_Surface"
+#  pragma message "FL_PORTING: initialize members of Fl_Copy_Surface"
 #else // Xlib
   helper = new Fl_Xlib_Surface_();
   driver(helper->driver());
@@ -136,7 +136,7 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   fl_gc = oldgc;
   delete (Fl_GDI_Surface_*)helper;
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: free resources in destructo of Fl_Copy_Surface"
+#  pragma message "FL_PORTING: free resources in destructor of Fl_Copy_Surface"
 #else // Xlib
   fl_pop_clip(); 
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);

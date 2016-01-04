@@ -235,7 +235,7 @@ class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 #elif defined(WIN32)
   // not needed
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define storage for your graphics context in Fl_Postscript_File_Device if needed"
+# pragma message "FL_PORTING: define storage for your graphics context in Fl_PostScript_File_Device if needed"
 #else // X11
   // not needed
 #endif
@@ -267,7 +267,7 @@ public:
 #elif defined(WIN32)
   // not needed
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: set access to your graphics context in Fl_Postscript_File_Device if needed"
+# pragma message "FL_PORTING: set access to your graphics context in Fl_PostScript_File_Device if needed"
 #else // X11
       // not needed
 #endif

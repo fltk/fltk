@@ -48,7 +48,7 @@ void Fl::own_colormap() {}
 
 #elif defined(FL_PORTING)
 
-#  pragma message "FL_PORTING: implement color map handling if you don;t have an RGB screen"
+#  pragma message "FL_PORTING: implement color map handling if you don't have an RGB screen"
 
 #else
 // X version

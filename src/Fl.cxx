@@ -800,7 +800,7 @@ void Fl::flush() {
   if (fl_gc)
     CGContextFlush(fl_gc);
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: flush your graohics context here"
+#  pragma message "FL_PORTING: flush your graphics context here"
 #else
 # error unsupported platform
 #endif
