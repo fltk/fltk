@@ -490,6 +490,11 @@ int fl_open(const char* f, int oflags, ...)
   if (pmode == -1) return _wopen(wbuf, oflags);
   else return _wopen(wbuf, oflags, pmode);
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of fl_open."
+  return -1;
+
 #else
 
   if (pmode == -1) return open(f, oflags);
@@ -603,6 +608,11 @@ int fl_execvp(const char *file, char *const *argv)
   free(ar);
   return -1;		// STR #3040
 # endif
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of execvp."
+  return -1;
 
 #else			// other platforms
   return execvp(file, argv);
@@ -746,6 +756,11 @@ char *fl_getcwd(char* b, int l) {
     return NULL;
   }
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of getcwd."
+  return 0L;
+
 #else // other platforms
 
   return getcwd(b, l);
@@ -774,6 +789,11 @@ int fl_unlink(const char* f) {
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
   return _wunlink(wbuf);
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of fl_unlink."
+  return -1;
 
 #else // other platforms
 
@@ -838,6 +858,11 @@ int fl_rmdir(const char* f) {
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
   return _wrmdir(wbuf);
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of mkdir."
+  return -1;
 
 #else
 
