@@ -71,6 +71,8 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   void *mask_; // for internal use (mask bitmap)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: define member variables to store an RGB image and a mask for Fl_Pixmap"
+  void *id_;   // don't use
+  void *mask_; // don't use
 #else
   unsigned id_; // for internal use
   unsigned mask_; // for internal use (mask bitmap)

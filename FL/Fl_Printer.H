@@ -98,6 +98,11 @@ public:
 #elif defined(FL_PORTING)
 
 # pragma message "FL_PORTING: define your own Fl_xxx_Printer class"
+class Fl_XXX_Printer : public Fl_Paged_Device {
+  friend class Fl_Printer;
+protected:
+  Fl_XXX_Printer(void) { }
+};
 
 #else 
 
@@ -233,6 +238,7 @@ private:
   Fl_System_Printer *printer;
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: instantiate your own Fl_xxx_Printer here"
+  Fl_XXX_Printer *printer;
 #else
   Fl_PostScript_Printer *printer;
 #endif

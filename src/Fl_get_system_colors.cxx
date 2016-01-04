@@ -117,6 +117,9 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   r = (uchar)R; g = (uchar)G; b = (uchar)B;
   return 1;
 }
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement fl_parse_color"
+int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) { return 0; }
 #else
 // Wrapper around XParseColor...
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
@@ -203,6 +206,7 @@ void Fl::get_system_colors()
 #elif defined(FL_PORTING)
 
 #  pragma message "FL_PORTING: implement code to find the current desktop color scheme"
+void Fl::get_system_colors() { }
 
 #else						// --- X11 ---
 
@@ -296,7 +300,10 @@ static Fl_Pixmap	tile(tile_xpm);
 int Fl::scheme(const char *s) {
   if (!s) {
     if ((s = getenv("FLTK_SCHEME")) == NULL) {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl::scheme"
+#else
       const char* key = 0;
       if (Fl::first_window()) key = Fl::first_window()->xclass();
       if (!key) key = "fltk";

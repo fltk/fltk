@@ -145,6 +145,7 @@ static void screen_init() {
 #elif defined(FL_PORTING)
 
 #  pragma message "FL_PORTING: return various information about the screens in the system"
+static void screen_init() { }
 
 #else
 
@@ -298,6 +299,9 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   Y = screens[n].y;
   W = screens[n].width;
   H = screens[n].height;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement screen_xywh"
+  X = 0; Y = 0; W = 800; H = 600;
 #else
   if (num_screens > 0) {
     X = screens[n].x_org;
@@ -394,6 +398,8 @@ void Fl::screen_dpi(float &h, float &v, int n)
     h = dpi_h[n];
     v = dpi_v[n];
   }
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement screen_dpi"
 #else
   if (n >= 0 && n < num_screens) {
     h = dpi[n][0];

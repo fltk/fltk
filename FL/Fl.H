@@ -37,6 +37,10 @@
 #    undef check
 #  endif
 
+#  ifdef BSD
+#    undef BSD
+#  endif
+
 
 class Fl_Widget;
 class Fl_Window;
@@ -55,6 +59,7 @@ struct Fl_Label;
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define a type for FL_SOCKET"
 # define FL_SOCKET int // default if not ported
+# undef check
 #else
 # define FL_SOCKET int
 #endif

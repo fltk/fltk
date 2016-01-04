@@ -232,6 +232,8 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   for (yy = 0; yy < H; yy ++, i ++) if (i & 1) fl_point(X + W, Y + yy);
   for (xx = W; xx > 0; xx --, i ++) if (i & 1) fl_point(X + xx, Y + H);
   for (yy = H; yy > 0; yy --, i ++) if (i & 1) fl_point(X, Y + yy);
+#elif defined(FL_PORTING)
+# pragma message "handle focus drawing"
 #else
 # error unsupported platform
 #endif // WIN32

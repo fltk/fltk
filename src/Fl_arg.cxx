@@ -34,7 +34,7 @@
 #else
 #endif
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) || defined(FL_PORTING)
 int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #  define NoValue	0x0000
 #  define XValue  	0x0001
@@ -301,7 +301,11 @@ void Fl_Window::show(int argc, char **argv) {
 
   Fl::get_system_colors();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32)
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: Parse additional default settings"
+#else // X11
   // Get defaults for drag-n-drop and focus...
   const char *key = 0, *val;
 
@@ -361,7 +365,11 @@ void Fl_Window::show(int argc, char **argv) {
   // Show the window AFTER we have set the colors and scheme.
   show();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32)
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: Parse additional default settings"
+#else // X11
   // set the command string, used by state-saving window managers:
   int j;
   int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
@@ -543,6 +551,10 @@ int XParseGeometry(const char* string, int* x, int* y,
     *height = tempHeight;
   return (mask);
 }
+
+#elif defined(FL_PORTING)
+
+int XParseGeometry(const char* string, int* x, int* y, unsigned int* width, unsigned int* height) { return 0; }
 
 #endif // ifdef WIN32
 

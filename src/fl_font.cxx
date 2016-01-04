@@ -57,7 +57,10 @@
 #  include "fl_font_x.cxx"
 #endif // WIN32
 
-#if ! (defined(WIN32) || defined(__APPLE__))
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you need the XFontStruct"
+#else
 XFontStruct *fl_X_core_font()
 {
   return fl_xfont.value();

@@ -379,9 +379,9 @@ void fl_end_offscreen() {
 
 /** @} */
 
-
-#else
+#elif defined(FL_PORTING)
 # pragma message "FL_PORTING: implement offscreen render space generation and management"
+#else
 # error unsupported platform
 #endif
 
@@ -418,8 +418,9 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       myi->other_xid = fl_create_offscreen(w(), h());
       clear_damage(FL_DAMAGE_ALL);
     }
-#else
+#elif defined(FL_PORTING)
 # pragma message "FL_PORTING: call a function to clear any graphics port damage flags"
+#else
 # error unsupported platform
 #endif
   }

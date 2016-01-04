@@ -13701,6 +13701,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"MACOSX_DEPLOYMENT_TARGET[arch=i386]" = 10.4;
+				OTHER_CFLAGS = "";
 				SDKROOT = "";
 			};
 			name = Release;
@@ -14886,6 +14887,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
 				SDKROOT = "";
 			};
 			name = Debug;

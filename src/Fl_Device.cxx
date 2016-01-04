@@ -41,7 +41,11 @@ const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
 const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_Driver";
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
+#if defined(FL_PORTING)
+#  pragma message "FL_PORTING: instantiate the main graphics driver here"
+#else
 const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
+#endif
 #endif
 
 
@@ -94,6 +98,7 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
                                                                   Fl_GDI_Graphics_Driver
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: instantiate your display driver here"
+                                                                  Fl_XXX_Graphics_Driver
 #else
                                                                   Fl_Xlib_Graphics_Driver
 #endif

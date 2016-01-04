@@ -16,7 +16,9 @@
 #define USE_XFT 0
 #define HAVE_XDBE 0
 #define USE_XDBE HAVE_XDBE
+#ifdef __APPLE__
 #define __APPLE_QUARTZ__ 1
+#endif
 #define HAVE_OVERLAY 0
 #define HAVE_GL_OVERLAY HAVE_OVERLAY
 #if defined(__BIG_ENDIAN__)

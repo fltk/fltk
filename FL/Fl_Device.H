@@ -528,6 +528,8 @@ public:
 #elif defined(FL_PORTING)
 
 # pragma message "FL_PORTING: define a native graphics driver Fl_xxx_Graphics_Driver"
+class FL_EXPORT Fl_XXX_Graphics_Driver : public Fl_Graphics_Driver {
+};
 
 #else // X11
 

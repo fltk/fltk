@@ -62,6 +62,14 @@ extern "C" {
   unsigned short XUtf8IsNonSpacing(unsigned int ucs);
 }
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 tools."
+extern "C" {
+  int XUtf8Tolower(int ucs);
+  unsigned short XUtf8IsNonSpacing(unsigned int ucs);
+}
+
 #else // X-windows platform
 
 # include "Xutf8.h"
@@ -623,6 +631,11 @@ int fl_chmod(const char* f, int mode) {
   wbuf[wn] = 0;
   return _wchmod(wbuf, mode);
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of chmod."
+  return -1;
+
 #else // other platforms
 
   return chmod(f, mode);
@@ -653,6 +666,11 @@ int fl_access(const char* f, int mode) {
   wbuf[wn] = 0;
   return _waccess(wbuf, mode);
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of access."
+  return -1;
+  
 #else // other platforms
 
   return access(f, mode);
@@ -683,6 +701,11 @@ int fl_stat(const char* f, struct stat *b) {
   wbuf[wn] = 0;
   return _wstat(wbuf, (struct _stat*)b);
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of stat."
+  return -1;
+  
 #else // other platforms
 
   return stat(f, b);
@@ -782,6 +805,11 @@ int fl_mkdir(const char* f, int mode) {
   wbuf[wn] = 0;
   return _wmkdir(wbuf);
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement utf8 version of mkdir."
+  return -1;
+  
 #else // other platforms
 
   return mkdir(f, mode);

@@ -50,7 +50,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
     for (; i < table_size; i++) {
       fl_fonts[i].fontname[0] = 0;
       fl_fonts[i].name = 0;
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(USE_X11)
       fl_fonts[i].xlist = 0;
       fl_fonts[i].n = 0;
 #endif // !WIN32 && !__APPLE__
@@ -59,7 +59,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(USE_X11)
     if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
 #endif
     for (Fl_Font_Descriptor* f = s->first; f;) {
@@ -69,7 +69,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
   }
   s->name = name;
   s->fontname[0] = 0;
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(USE_X11)
   s->xlist = 0;
 #endif
   s->first = 0;

@@ -131,6 +131,8 @@ void Fl_Graphics_Driver::end_points() {
     CGContextStrokePath(fl_gc);
   }
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement end_points"
 #else
 # error unsupported platform
 #endif
@@ -153,6 +155,8 @@ void Fl_Graphics_Driver::end_line() {
     CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
   CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement end_line"
 #else
 # error unsupported platform
 #endif
@@ -190,6 +194,8 @@ void Fl_Graphics_Driver::end_polygon() {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement end_polygon"
 #else
 # error unsupported platform
 #endif
@@ -238,6 +244,8 @@ void Fl_Graphics_Driver::end_complex_polygon() {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement end_complex_polygon"
 #else
 # error unsupported platform
 #endif
@@ -273,6 +281,8 @@ void Fl_Graphics_Driver::circle(double x, double y,double r) {
   CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
   (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement circle"
 #else
 # error unsupported platform
 #endif

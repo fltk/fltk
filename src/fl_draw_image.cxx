@@ -32,6 +32,8 @@
 #  include "fl_draw_image_mac.cxx"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement image drawing in its own file"
+#  include <FL/x.H>
+void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) { }
 #else
 
 // A list of assumptions made about the X display:

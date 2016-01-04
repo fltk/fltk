@@ -178,6 +178,8 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
   if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement rect"
 #else
 # error unsupported platform
 #endif
@@ -196,6 +198,8 @@ void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
 #elif defined(__APPLE_QUARTZ__)
   CGRect  rect = CGRectMake(x - 0.5, y - 0.5, w , h);
   CGContextFillRect(fl_gc, rect);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement rectf"
 #else
 # error unsupported platform
 #endif
@@ -220,6 +224,8 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
     CGContextFillRect(fl_gc, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement xyline"
 #else
 # error unsupported platform
 #endif
@@ -248,6 +254,8 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
     CGContextFillRect(fl_gc, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement xyline"
 #else
 #error unsupported platform
 #endif
@@ -279,6 +287,8 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
     CGContextFillRect(fl_gc, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement xyline"
 #else
 # error unsupported platform
 #endif
@@ -301,6 +311,8 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement yxline"
 #else
 # error unsupported platform
 #endif
@@ -329,6 +341,8 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
     CGContextFillRect(fl_gc, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement yxline"
 #else
 # error unsupported platform
 #endif
@@ -360,6 +374,8 @@ void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
     CGContextFillRect(fl_gc, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
   }
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement yxline"
 #else
 # error unsupported platform
 #endif
@@ -380,6 +396,8 @@ void Fl_Graphics_Driver::line(int x, int y, int x1, int y1) {
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextStrokePath(fl_gc);
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement line"
 #else
 # error unsupported platform
 #endif
@@ -406,6 +424,8 @@ void Fl_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextStrokePath(fl_gc);
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement line"
 #else
 # error unsupported platform
 #endif
@@ -432,6 +452,8 @@ void Fl_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
   CGContextClosePath(fl_gc);
   CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement loop"
 #else
 # error unsupported platform
 #endif
@@ -461,6 +483,8 @@ void Fl_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int 
   CGContextClosePath(fl_gc);
   CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement loop"
 #else
 # error unsupported platform
 #endif
@@ -486,6 +510,8 @@ void Fl_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement polygon"
 #else
 # error unsupported platform
 #endif
@@ -513,6 +539,8 @@ void Fl_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, i
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement polygon"
 #else
 # error unsupported platform
 #endif
@@ -525,6 +553,8 @@ void Fl_Graphics_Driver::point(int x, int y) {
   SetPixel(fl_gc, x, y, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
   CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement point"
 #else
 # error unsupported platform
 #endif
@@ -532,7 +562,11 @@ void Fl_Graphics_Driver::point(int x, int y) {
 
 ////////////////////////////////////////////////////////////////
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32)
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement region stuff"
+#else
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
 // MSWindows equivalent exists, implemented inline in win32.H
 Fl_Region XRectangleRegion(int x, int y, int w, int h) {
@@ -562,6 +596,8 @@ void Fl_Graphics_Driver::restore_clip() {
       CGContextClipToRects(fl_gc, r->rects, r->count);
     }
   }
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement restore_clip"
 #else
 # error unsupported platform
 #endif
@@ -594,6 +630,8 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 #elif defined(__APPLE_QUARTZ__)
       XDestroyRegion(r);
       r = Fl_X::intersect_region_and_rect(current, x,y,w,h);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement push_clip"
 #else
 # error unsupported platform
 #endif
@@ -605,6 +643,8 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
     r = CreateRectRgn(0,0,0,0);
 #elif defined(__APPLE_QUARTZ__)
     r = XRectangleRegion(0,0,0,0);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement push_clip"
 #else
 # error unsupported platform
 #endif
@@ -655,6 +695,8 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
     if (!CGRectIsEmpty(test)) return 1;
   }
   return 0;
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement not_clipped"
 #else
 # error unsupported platform
 #endif
@@ -730,6 +772,8 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
   H = int(u.size.height + 0.5);
   if(CGRectIsEmpty(u)) W = H = 0;
   return ! CGRectEqualToRect(arg, u);
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: implement clip_box"
 #else
 # error unsupported platform
 #endif

@@ -221,11 +221,22 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
 /** Copies a window and its borders and title bar to the clipboard. */
 void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
 {
+#if defined(WIN32)
   helper->draw_decorated_window(win, delta_x, delta_y, this);
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you want to draw a window border around a printout"
+#else
+  helper->draw_decorated_window(win, delta_x, delta_y, this);
+#endif
 }
 #endif
 
-#if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
+#if defined(WIN32)
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you need a helper class for your graphics driver"
+#elif !defined(FL_DOXYGEN)
 /* graphics driver that translates all graphics coordinates before calling Xlib */
 class Fl_translated_Xlib_Graphics_Driver_ : public Fl_Xlib_Graphics_Driver {
   int offset_x, offset_y; // translation between user and graphical coordinates: graphical = user + offset

@@ -73,7 +73,10 @@ const char *Fl_Printer::class_id = "Fl_Printer";
 #if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
 const char *Fl_System_Printer::class_id = Fl_Printer::class_id;
 #endif
-#if !( defined(__APPLE__) || defined(WIN32) )
+#if defined(__APPLE__) || defined(WIN32)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the printer device specifics"
+#else
 const char *Fl_PostScript_Printer::class_id = Fl_Printer::class_id;
 #endif
 
@@ -98,6 +101,9 @@ void Fl_System_Printer::origin(int *x, int *y)
 Fl_Printer::Fl_Printer(void) {
 #if defined(WIN32) || defined(__APPLE__)
   printer = new Fl_System_Printer();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the printer device specifics"
+  printer = new Fl_XXX_Printer();
 #else
   printer = new Fl_PostScript_Printer();
 #endif

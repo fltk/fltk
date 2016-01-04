@@ -24,7 +24,10 @@
  * This file is required on all platforms for utf8 support
  */
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you want to include Xutf8.h? It's written for X11."
+#else
 #  include "../Xutf8.h"
 #endif /* !defined(WIN32) && !defined(__APPLE__) */
 

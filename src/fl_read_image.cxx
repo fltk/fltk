@@ -28,6 +28,7 @@
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"
+static uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) { }
 #else
 #endif
 
@@ -175,6 +176,9 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
 #ifdef WIN32
 #  include "fl_read_image_win32.cxx" // gives the WIN32 version of read_win_rectangle()
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: create your own version of fl_read_image.cxx"
+#  include "fl_read_image_porting.cxx"
 #else
 #  include <X11/Xutil.h>
 #  ifdef __sgi

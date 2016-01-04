@@ -23,7 +23,11 @@
 /*
  * X11 UTF-8 text drawing functions.
  */
-#if !defined(WIN32) && !defined(__APPLE__)
+#elif defined(WIN32)
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you want to include Xutf8.h?"
+#else
 
 #include "../Xutf8.h"
 #include <X11/Xlib.h>

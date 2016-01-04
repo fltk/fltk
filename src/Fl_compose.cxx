@@ -21,12 +21,6 @@
 Utility functions to support text input.
 */
 
-#if defined(WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement keyboard composing in the code below"
-#else
-#endif
-
 #include <FL/Fl.H>
 #include <FL/x.H>
 
@@ -37,7 +31,10 @@ int Fl_X::next_marked_length = 0;
 #endif
 #endif
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement keyboard composing in the code below"
+#else // X11
 extern XIC fl_xim_ic;
 #endif
 
@@ -146,7 +143,10 @@ void Fl::insertion_point_location(int x, int y, int height) {
 void Fl::compose_reset()
 {
   Fl::compose_state = 0;
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: compose reset extra functions"
+#else
   if (fl_xim_ic) XmbResetIC(fl_xim_ic);
 #endif
 }

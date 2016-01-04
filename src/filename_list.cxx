@@ -121,6 +121,9 @@ int fl_filename_list(const char *d, dirent ***list,
 # else
   int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
 # endif
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: defien scandir"
+  int n = 0;
 #else
   // The vast majority of UNIX systems want the sort function to have this
   // prototype, most likely so that it can be passed to qsort without any

@@ -30,6 +30,18 @@
 #include <sys/stat.h>
 #include <string.h>
 
+#if defined(FL_PORTING)
+# pragma message "FL_PORTING: implement Fl_Native_File_Chooser"
+int Fl_Native_File_Chooser::show() { return 0; }
+void Fl_Native_File_Chooser::type(int t) { }
+void Fl_Native_File_Chooser::title(const char *t) { }
+void Fl_Native_File_Chooser::filter(const char *f) { }
+void Fl_Native_File_Chooser::options(int val) { }
+const char *Fl_Native_File_Chooser::filename() const { return 0; }
+Fl_Native_File_Chooser::Fl_Native_File_Chooser(int) { }
+Fl_Native_File_Chooser::~Fl_Native_File_Chooser() { }
+#else
+
 int Fl_Native_File_Chooser::have_looked_for_GTK_libs = 0;
 
 /**
@@ -503,6 +515,8 @@ const char* Fl_FLTK_File_Chooser::preset_file() const {
 int Fl_FLTK_File_Chooser::exist_dialog() {
   return fl_choice("%s", fl_cancel, fl_ok, NULL, Fl_Native_File_Chooser::file_exists_message);
 }
+
+#endif
 
 //
 // End of "$Id$".

@@ -1553,7 +1553,11 @@ void Fl_PostScript_File_Device::end_job (void)
 
 #endif // FL_DOXYGEN
 
-#if ! (defined(__APPLE__) || defined(WIN32) )
+#if defined(__APPLE__)
+#elif defined(WIN32)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement postscript printing"
+#else // X11
 /** Starts a print job. */
 int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;

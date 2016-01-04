@@ -29,6 +29,7 @@
 #  include "fl_color_mac.cxx"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement color handling in your own file based on fl_color.cxx"
+#  include "fl_color_porting.cxx"
 #else
 
 // Also code to look at the X visual and figure out the best way to turn

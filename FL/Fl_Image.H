@@ -210,6 +210,8 @@ public:
   void *mask_; // for internal use (mask bitmap)
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define variables to hold an RGB image and a mask for Fl_RGB_Image"
+  unsigned id_; // don't use
+  unsigned mask_; // don't use
 #else
   unsigned id_; // for internal use
   unsigned mask_; // for internal use (mask bitmap)

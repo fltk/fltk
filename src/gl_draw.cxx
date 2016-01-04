@@ -38,8 +38,11 @@
 #include "Fl_Font.H"
 #include <FL/fl_utf8.h>
 
-#if !defined(WIN32) && !defined(__APPLE__)
-#include "Xutf8.h"
+#if defined(WIN32) || defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you want to include Xutf8.h? It's written for X11."
+#else
+#  include "Xutf8.h"
 #endif
 
 #if defined(__APPLE__) &&  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4

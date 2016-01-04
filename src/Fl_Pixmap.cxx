@@ -202,6 +202,9 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
 }
 
 //------------------------------------------------------------------------------
+#elif defined(FL_PORTING)
+#pragma message "Implement Fl_XXX_Graphics_Driver methods here"
+//------------------------------------------------------------------------------
 #else							// X11, Xlib
 //------------------------------------------------------------------------------
 

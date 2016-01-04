@@ -791,6 +791,10 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, i
   return 1;
 }
 
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement RGB image handling here"
+
 #else
 void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;

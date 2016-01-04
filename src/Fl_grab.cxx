@@ -30,21 +30,20 @@
 
 extern void fl_fix_focus(); // in Fl.cxx
 
-#if defined(WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: tell a window to grab all following events"
-#else
-#endif
-
 #ifdef WIN32
 // We have to keep track of whether we have captured the mouse, since
 // MSWindows shows little respect for this... Grep for fl_capture to
 // see where and how this is used.
 extern HWND fl_capture;
-#endif
 
-#ifdef __APPLE__
+#elif defined(__APPLE__)
 extern void *fl_capture;
+
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: tell a window to grab all following events"
+
+#else // X11
+
 #endif
 
 void Fl::grab(Fl_Window* win) {
@@ -65,6 +64,8 @@ void Fl::grab(Fl_Window* win) {
 #elif defined(__APPLE__)
       fl_capture = Fl_X::i(first_window())->xid;
       Fl_X::i(first_window())->set_key_window();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement event grabbing"
 #else
       Window xid = fullscreen_win ? fl_xid(fullscreen_win) : fl_xid(first_window());
       XGrabPointer(fl_display,
@@ -93,6 +94,8 @@ void Fl::grab(Fl_Window* win) {
       ReleaseCapture();
 #elif defined(__APPLE__)
       fl_capture = 0;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement event grabbing"
 #else
       // We must keep the grab in the non-EWMH fullscreen case
       if (!fullscreen_win || Fl_X::ewmh_supported()) {

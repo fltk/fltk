@@ -17,6 +17,9 @@
 //
 
 #include <FL/x.H>
+
+#ifdef USE_X11
+
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <dlfcn.h>   // for dlopen et al
 #endif
@@ -727,6 +730,8 @@ void Fl_GTK_File_Chooser::probe_for_GTK_libs(void) {
   did_find_GTK_libs = 1;
 #endif
 } // probe_for_GTK_libs
+
+#endif
 
 //
 // End of "$Id$".

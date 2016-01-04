@@ -556,7 +556,8 @@ double Fl::wait(double time_to_wait) {
 
 #elif defined(FL_PORTING)
 
-#  pragma message "FL_PORTING: implement waiting for a timer or a message from the system"
+# pragma message "FL_PORTING: implement waiting for a timer or a message from the system"
+  return fl_wait(time_to_wait);
 
 #else
 

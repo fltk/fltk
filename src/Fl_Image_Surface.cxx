@@ -34,7 +34,11 @@ const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
 Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
   width = w;
   height = h;
-#if !(defined(__APPLE__) || defined(WIN32))
+#if defined(__APPLE__) 
+#elif defined(WIN32)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Image_Surface"
+#else
   gc = 0;
   if (!fl_gc) { // allows use of this class before any window is shown
     fl_open_display();
@@ -52,6 +56,8 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
 #elif defined(WIN32)
   helper = new Fl_GDI_Surface_();
   driver(helper->driver());
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   helper = new Fl_Xlib_Surface_();
   driver(helper->driver());
@@ -66,6 +72,8 @@ Fl_Image_Surface::~Fl_Image_Surface() {
   delete (Fl_Quartz_Flipped_Surface_*)helper;
 #elif defined(WIN32)
   delete (Fl_GDI_Surface_*)helper;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   if (gc) { XFreeGC(fl_display, gc); fl_gc = 0; }
   delete (Fl_Xlib_Surface_*)helper;
@@ -90,6 +98,8 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   _ss->set_current(); 
   fl_window=_sw; 
   fl_gc = _sgc;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   fl_pop_clip(); 
   data = fl_read_image(NULL, 0, 0, width, height, 0);
@@ -127,6 +137,8 @@ void Fl_Image_Surface::set_current()
    _savedc = SaveDC(fl_gc); 
   fl_window=(HWND)offscreen; 
   fl_push_no_clip();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   pre_window = fl_window; 
   fl_window = offscreen; 

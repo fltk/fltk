@@ -243,6 +243,8 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
   }
   *p = 0;
   return buf;
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement fl_shortcut_label"
 #else
   const char* q;
   if (key == FL_Enter || key == '\r') q="Enter";  // don't use Xlib's "Return":

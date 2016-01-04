@@ -33,11 +33,15 @@
 #endif
 
 
-#  if USE_XFT
+#if USE_XFT
 typedef struct _XftFont XftFont;
-#  elif !defined(WIN32) && !defined(__APPLE__)
-#    include "Xutf8.h"
-#  endif // USE_XFT
+#elif defined(WIN32)
+#elif defined(__APPLE__)
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: do you want to include Xutf8.h?"
+#else
+#  include "Xutf8.h"
+#endif // USE_XFT
 
 /**
    This a structure for an actual system font, with junk to

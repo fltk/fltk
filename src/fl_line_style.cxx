@@ -154,8 +154,9 @@ void Fl_Graphics_Driver::line_style(int style, int width, char* dashes) {
 		fl_quartz_line_pattern_size = 0;
   }
   fl_quartz_restore_line_style_();
-#else
+#elif defined(FL_PORTING)
 # pragma message "FL_PORTING: implement line styles here"
+#else
 # error unsupported platform
 #endif
 }

@@ -25,7 +25,8 @@
 #include <FL/Fl_Native_File_Chooser.H>
 
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the native file chooser interface"
+# pragma message "FL_PORTING: implement the native file chooser interface"
+# include "Fl_Native_File_Chooser_FLTK.cxx"
 
 // All else falls back to FLTK's own chooser
 #else
