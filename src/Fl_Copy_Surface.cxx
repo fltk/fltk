@@ -209,15 +209,54 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
   CGContextSaveGState(gc);
 }
 
-#endif  // __APPLE__
+void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+  int bt = win->decorated_h() - win->h();
+  draw(win, delta_x, bt + delta_y ); // draw the window content
+  if (win->border()) {
+    // draw the window title bar
+    CGContextSaveGState(gc);
+    CGContextTranslateCTM(gc, delta_x, bt + delta_y);
+    CGContextScaleCTM(gc, 1, -1);
+    Fl_X::clip_to_rounded_corners(gc, win->w(), bt);
+    void *layer = Fl_X::get_titlebar_layer(win);
+    if (layer) {
+      CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+      // for unknown reason, rendering the layer to the Fl_Copy_Surface pdf graphics context does not work;
+      // we use an auxiliary bitmap context
+      CGContextRef auxgc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
+      CGColorSpaceRelease(cspace);
+      CGContextTranslateCTM(auxgc, 0, bt);
+      CGContextScaleCTM(auxgc, 1, -1);
+      Fl_X::draw_layer_to_context(layer, auxgc, win->w(), bt);
+      Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(auxgc), win->w(), bt, 4,
+                                             CGBitmapContextGetBytesPerRow(auxgc)); // 10.2
+      image->draw(0, 0);
+      delete image;
+      CGContextRelease(auxgc);
+    } else {
+      CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+      CGContextDrawImage(gc, CGRectMake(0, 0, win->w(), bt), img);
+      CFRelease(img);
+    }
+    CGContextRestoreGState(gc);
+  }
+}
 
-#if !defined(__APPLE__)
-/** Copies a window and its borders and title bar to the clipboard. */
+#else
+
+/** Copies a window and its borders and title bar to the clipboard. 
+ \param win an FLTK window to copy
+ \param delta_x and \param delta_y give
+ the position in the clipboard of the top-left corner of the window's title bar
+*/
 void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
 {
   helper->draw_decorated_window(win, delta_x, delta_y, this);
 }
-#endif
+
+#endif // __APPLE__
+
 
 #if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
 /* graphics driver that translates all graphics coordinates before calling Xlib */

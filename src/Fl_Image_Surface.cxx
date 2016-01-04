@@ -151,7 +151,48 @@ void Fl_Quartz_Flipped_Surface_::untranslate() {
 
 const char *Fl_Quartz_Flipped_Surface_::class_id = "Fl_Quartz_Flipped_Surface_";
 
-#endif // __APPLE__
+
+void Fl_Image_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+  int bt = win->decorated_h() - win->h();
+  draw(win, delta_x, bt + delta_y ); // draw the window content
+  if (win->border()) {
+    // draw the window title bar
+    helper->translate(delta_x, delta_y);
+    CGContextTranslateCTM(fl_gc, 0, bt);
+    CGContextScaleCTM(fl_gc, 1, -1);
+    void *layer = Fl_X::get_titlebar_layer(win);
+    if (layer) {
+      Fl_X::draw_layer_to_context(layer, fl_gc, win->w(), bt);
+    } else {
+      CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+      CGContextDrawImage(fl_gc, CGRectMake(0, 0, win->w(), bt), img);
+      CFRelease(img);
+    }
+    helper->untranslate();
+    CGContextTranslateCTM(fl_gc, delta_x, height+delta_y);
+    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+  }
+}
+
+#else
+
+/** Draws a window and its borders and title bar to the image drawing surface. 
+ \param win an FLTK window to draw in the image
+ \param delta_x and \param delta_y give
+ the position in the image of the top-left corner of the window's title bar
+*/
+void Fl_Image_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+#ifdef WIN32
+  // draw_decorated_window() will change the current drawing surface, and set it
+  // back to us; it's necessary to call image() before for this to work
+  delete image();
+#endif
+  helper->draw_decorated_window(win, delta_x, delta_y, this);
+}
+#endif
+
 
 //
 // End of "$Id$".

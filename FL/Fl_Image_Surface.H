@@ -67,6 +67,7 @@ public:
   ~Fl_Image_Surface();
   void set_current();
   void draw(Fl_Widget*, int delta_x = 0, int delta_y = 0);
+  void draw_decorated_window(Fl_Window* win, int delta_x = 0, int delta_y = 0);
   Fl_RGB_Image *image();
 };
 

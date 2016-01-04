@@ -60,9 +60,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
     fl_push_clip(0, 0, widget->w(), widget->h() );
 #ifdef __APPLE__ // for Mac OS X 10.6 and above, make window with rounded bottom corners
     if ( fl_mac_os_version >= 100600 && driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id ) {
-      CGContextRestoreGState(fl_gc);
       Fl_X::clip_to_rounded_corners(fl_gc, widget->w(), widget->h());
-      CGContextSaveGState(fl_gc);
     }
 #endif
   }

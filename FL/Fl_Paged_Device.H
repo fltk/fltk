@@ -38,6 +38,7 @@
 class FL_EXPORT Fl_Paged_Device : public Fl_Surface_Device {
 #ifndef __APPLE__
   friend class Fl_Copy_Surface;
+  friend class Fl_Image_Surface;
   void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset);
 #endif
 public:

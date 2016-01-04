@@ -2769,9 +2769,7 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
   if (bottom_image) { fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3); delete bottom_image; }
   // print the window inner part
   this->print_widget(win, x_offset + bx, y_offset + bt + by);
-  fl_gc = GetDC(fl_xid(win));
-  ReleaseDC(fl_xid(win), fl_gc);
-}  
+}
 
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
