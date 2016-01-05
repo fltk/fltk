@@ -1546,7 +1546,7 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
         W = r.right - r.left;
         H = r.bottom - r.top;
         bx = w->x() - r.left;
-        by = r.bottom - w->y() - w->h(); // height of the bootm frame
+        by = r.bottom - w->y() - w->h(); // height of the bottom frame
         bt = w->y() - r.top - by; // height of top caption bar
         xoff = bx;
         yoff = by + bt;
@@ -2697,77 +2697,81 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
+static RECT border_width_title_bar_height(Fl_Window *win, int &bx, int &by, int &bt)
+{
+  RECT r = {0,0,0,0};
+  bx = by = bt = 0;
+  if (win->shown() && !win->parent() && win->border() && win->visible()) {
+    static HMODULE dwmapi_dll = LoadLibrary("dwmapi.dll");
+    typedef HRESULT (WINAPI* DwmGetWindowAttribute_type)(HWND hwnd, DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
+    static DwmGetWindowAttribute_type DwmGetWindowAttribute = dwmapi_dll ?
+    (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute") : NULL;
+    int need_r = 1;
+    if (DwmGetWindowAttribute) {
+      const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+      if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
+        need_r = 0;
+      }
+    }
+    if (need_r) {
+      GetWindowRect(fl_xid(win), &r);
+    }
+    bx = (r.right - r.left - win->w())/2;
+    by = bx;
+    bt = r.bottom - r.top - win->h() - 2*by;
+  }
+  return r;
+}
+
 int Fl_Window::decorated_w()
 {
-  if (!shown() || parent() || !border() || !visible()) return w();
-  int X, Y, bt, bx, by;
-  Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+  int bt, bx, by;
+  border_width_title_bar_height(this, bx, by, bt);
   return w() + 2 * bx;
 }
 
 int Fl_Window::decorated_h()
 {
-  if (!shown() || parent() || !border() || !visible()) return h();
-  int X, Y, bt, bx, by;
-  Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+  int bt, bx, by;
+  border_width_title_bar_height(this, bx, by, bt);
   return h() + bt + 2 * by;
 }
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  if (!win->shown() || win->parent() || !win->border() || !win->visible())
-    print_widget(win, x_offset, y_offset);
-  else
-    draw_decorated_window(win, x_offset, y_offset, this);
+  draw_decorated_window(win, x_offset, y_offset, this);
 }
 
 void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset)
 {
-  static HMODULE dwmapi_dll = LoadLibrary("dwmapi.dll");
-  typedef HRESULT (WINAPI* DwmGetWindowAttribute_type)(HWND hwnd, DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
-  static DwmGetWindowAttribute_type DwmGetWindowAttribute = 0;
-  static const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
-  int bt, bx, by; // compute the window border sizes
-  RECT r;
-  int need_r = 1;
-  if (dwmapi_dll) {
-    if (!DwmGetWindowAttribute) DwmGetWindowAttribute = (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute");
-    if (DwmGetWindowAttribute) {
-      if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
-        need_r = 0;
-      }
-    }
+  int bt, bx, by; // border width and title bar height of window
+  RECT r = border_width_title_bar_height(win, bx, by, bt);
+  if (bt) {
+    Fl_Display_Device::display_device()->set_current(); // make window current
+    win->show();
+    Fl::check();
+    win->make_current();
+    HDC save_gc = fl_gc;
+    fl_gc = GetDC(NULL); // get the screen device context
+    int ww = win->w() + 2 * bx;
+    int wh = win->h() + bt + 2 * by;
+    // capture the 4 window sides from screen
+    Window save_win = fl_window;
+    fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
+    uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
+    uchar *left_image = bx ? fl_read_image(NULL, r.left, r.top, bx, wh) : NULL;
+    uchar *right_image = bx ? fl_read_image(NULL, r.right - bx, r.top, bx, wh) : NULL;
+    uchar *bottom_image = by ? fl_read_image(NULL, r.left, r.bottom-by, ww, by) : NULL;
+    fl_window = save_win;
+    ReleaseDC(NULL, fl_gc);  fl_gc = save_gc;
+    toset->set_current();
+    // draw the 4 window sides
+    fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3); delete[] top_image;
+    if (left_image) { fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3); delete left_image; }
+    if (right_image) { fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3); delete right_image; }
+    if (bottom_image) { fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3); delete bottom_image; }
   }
-  if (need_r) {
-    GetWindowRect(fl_xid(win), &r);
-  }
-  bx = (r.right - r.left - win->w())/2;
-  by = bx;
-  bt = r.bottom - r.top - win->h() - 2*by;
-  int ww = win->w() + 2 * bx;
-  int wh = win->h() + bt + 2 * by;
-  Fl_Display_Device::display_device()->set_current(); // make window current
-  win->show();
-  Fl::check();
-  win->make_current();
-  HDC save_gc = fl_gc;
-  fl_gc = GetDC(NULL); // get the screen device context
-  // capture the 4 window sides from screen
-  Window save_win = fl_window;
-  fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
-  uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
-  uchar *left_image = bx ? fl_read_image(NULL, r.left, r.top, bx, wh) : NULL;
-  uchar *right_image = bx ? fl_read_image(NULL, r.right - bx, r.top, bx, wh) : NULL;
-  uchar *bottom_image = by ? fl_read_image(NULL, r.left, r.bottom-by, ww, by) : NULL;
-  fl_window = save_win;
-  ReleaseDC(NULL, fl_gc);  fl_gc = save_gc;
-  toset->set_current();
-  // print the 4 window sides
-  fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3); delete[] top_image;
-  if (left_image) { fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3); delete left_image; }
-  if (right_image) { fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3); delete right_image; }
-  if (bottom_image) { fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3); delete bottom_image; }
-  // print the window inner part
+  // draw the window inner part
   this->print_widget(win, x_offset + bx, y_offset + bt + by);
 }
 
@@ -2818,7 +2822,7 @@ void copyFront(Fl_Widget *o, void *data)
   o->window()->hide();
   Fl_Window *win = Fl::first_window();
   if (!win) return;
-  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w() + 1, (int)(win->decorated_h() *0.985));
+  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
   surf->set_current();
   surf->draw_decorated_window(win); // draw the window content
   delete surf; // put the window on the clipboard

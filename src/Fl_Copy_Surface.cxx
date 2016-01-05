@@ -89,7 +89,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
   int vdots = GetDeviceCaps(hdc, VERTRES);
   ReleaseDC(NULL, hdc);
   float factorw =  (100. * hmm) / hdots;
-  float factorh =  (100. * vmm) / vdots + 0.5;
+  float factorh =  (100. * vmm) / vdots;
   
   RECT rect; rect.left = 0; rect.top = 0; rect.right = w * factorw; rect.bottom = h * factorh;
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
