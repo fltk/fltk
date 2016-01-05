@@ -186,8 +186,10 @@ void Fl_Image_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int de
 {
 #ifdef WIN32
   // draw_decorated_window() will change the current drawing surface, and set it
-  // back to us; it's necessary to call image() before for this to work
-  delete image();
+  // back to us; it's necessary to do some cleaning before
+  fl_pop_clip();
+  RestoreDC(fl_gc, _savedc);
+  DeleteDC(fl_gc);
 #endif
   helper->draw_decorated_window(win, delta_x, delta_y, this);
 }
