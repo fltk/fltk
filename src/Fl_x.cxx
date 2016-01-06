@@ -3044,7 +3044,7 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
   // and I don't know where to find the window decoration
   if (do_it && root == parent) do_it = 0; 
   if (!do_it) {
-    this->set_current();
+    toset->set_current();
     this->print_widget(win, x_offset, y_offset);
     return;
   }
