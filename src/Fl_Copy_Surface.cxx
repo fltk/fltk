@@ -217,6 +217,12 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
 
 #endif  // __APPLE__
 
+
+/** Copies a window and its borders and title bar to the clipboard. 
+ \param win an FLTK window to copy
+ \param delta_x and \param delta_y give
+ the position in the clipboard of the top-left corner of the window's title bar
+*/
 void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
 {
   helper->draw_decorated_window(win, delta_x, delta_y);
