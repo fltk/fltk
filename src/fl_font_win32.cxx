@@ -383,6 +383,8 @@ exit_error:
 
 void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
+  // avoid crash if no font has been set yet
+  if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
   SelectObject(fl_gc, font_descriptor()->fid);
   int wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
   if(wn >= wstr_len) {
