@@ -89,7 +89,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
   int vdots = GetDeviceCaps(hdc, VERTRES);
   ReleaseDC(NULL, hdc);
   float factorw =  (100. * hmm) / hdots;
-  float factorh =  (100. * vmm) / vdots + 0.5;
+  float factorh =  (100. * vmm) / vdots;
   
   RECT rect; rect.left = 0; rect.top = 0; rect.right = w * factorw; rect.bottom = h * factorh;
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
@@ -217,20 +217,10 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
 
 #endif  // __APPLE__
 
-#if !defined(__APPLE__)
-/** Copies a window and its borders and title bar to the clipboard. */
 void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
 {
-#if defined(WIN32)
-  helper->draw_decorated_window(win, delta_x, delta_y, this);
-#elif defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you want to draw a window border around a printout"
-#else
-  helper->draw_decorated_window(win, delta_x, delta_y, this);
-#endif
+  helper->draw_decorated_window(win, delta_x, delta_y);
 }
-#endif
 
 #if defined(WIN32)
 #elif defined(__APPLE__)

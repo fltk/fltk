@@ -34,8 +34,17 @@ const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
 Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
   width = w;
   height = h;
-#if defined(__APPLE__) 
+#ifdef __APPLE__
+  offscreen = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
+  helper = new Fl_Quartz_Flipped_Surface_(width, height);
+  driver(helper->driver());
+  CGContextSaveGState(offscreen);
+  CGContextTranslateCTM(offscreen, 0, height);
+  CGContextScaleCTM(offscreen, 1.0f, -1.0f);
 #elif defined(WIN32)
+  offscreen = fl_create_offscreen(w, h);
+  helper = new Fl_GDI_Surface_();
+  driver(helper->driver());
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
@@ -44,21 +53,8 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
     fl_open_display();
     gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
     fl_gc = gc;
-    }
-#endif
+  }
   offscreen = fl_create_offscreen(w, h);
-#ifdef __APPLE__
-  helper = new Fl_Quartz_Flipped_Surface_(width, height);
-  driver(helper->driver());
-  CGContextSaveGState(offscreen);
-  CGContextTranslateCTM(offscreen, 0, height);
-  CGContextScaleCTM(offscreen, 1.0f, -1.0f);
-#elif defined(WIN32)
-  helper = new Fl_GDI_Surface_();
-  driver(helper->driver());
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement Fl_Image_Surface"
-#else
   helper = new Fl_Xlib_Surface_();
   driver(helper->driver());
 #endif
@@ -67,14 +63,18 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
 /** The destructor.
  */
 Fl_Image_Surface::~Fl_Image_Surface() {
-  fl_delete_offscreen(offscreen);
 #ifdef __APPLE__
+  void *data = CGBitmapContextGetData((CGContextRef)offscreen);
+  free(data);
+  CGContextRelease((CGContextRef)offscreen);
   delete (Fl_Quartz_Flipped_Surface_*)helper;
 #elif defined(WIN32)
+  fl_delete_offscreen(offscreen);
   delete (Fl_GDI_Surface_*)helper;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
+  fl_delete_offscreen(offscreen);
   if (gc) { XFreeGC(fl_display, gc); fl_gc = 0; }
   delete (Fl_Xlib_Surface_*)helper;
 #endif
@@ -86,9 +86,13 @@ Fl_Image_Surface::~Fl_Image_Surface() {
 Fl_RGB_Image* Fl_Image_Surface::image()
 {
   unsigned char *data;
+  int depth = 3, ld = 0;
 #ifdef __APPLE__
   CGContextFlush(offscreen);
-  data = fl_read_image(NULL, 0, 0, width, height, 0);
+  ld = CGBitmapContextGetBytesPerRow(offscreen);
+  data = (uchar*)malloc(ld * height);
+  memcpy(data, (uchar *)CGBitmapContextGetData(offscreen), ld * height);
+  depth = 4;
   fl_gc = 0;
 #elif defined(WIN32)
   fl_pop_clip(); 
@@ -106,7 +110,7 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   fl_window = pre_window; 
   previous->set_current();
 #endif
-  Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height);
+  Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height, depth, ld);
   image->alloc_array = 1;
   return image;
 }
@@ -168,7 +172,18 @@ void Fl_Quartz_Flipped_Surface_::untranslate() {
 
 const char *Fl_Quartz_Flipped_Surface_::class_id = "Fl_Quartz_Flipped_Surface_";
 
-#endif // __APPLE__
+#endif
+
+/** Draws a window and its borders and title bar to the image drawing surface. 
+ \param win an FLTK window to draw in the image
+ \param delta_x and \param delta_y give
+ the position in the image of the top-left corner of the window's title bar
+*/
+void Fl_Image_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+  helper->draw_decorated_window(win, delta_x, delta_y);
+}
+
 
 //
 // End of "$Id$".

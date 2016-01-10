@@ -3021,59 +3021,52 @@ int Fl_Window::decorated_w()
   return w;
 }
 
-void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
+/* Returns images of the captures of the window title-bar, and the left, bottom and right window borders
+ (or NULL if a particular border is absent).
+ Returned images can be deleted after use. Their depth and size may be platform-dependent.
+ The top and bottom images extend from left of the left border to right of the right border.
+ 
+ On the X11 platform, this function exploits a feature of fl_read_image() which, when called
+ with negative 4th argument, captures the window decoration.
+ */
+void Fl_X::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
-  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
-    this->print_widget(win, x_offset, y_offset);
-    return;
-  }
-  draw_decorated_window(win, x_offset, y_offset, this);
-}
-
-void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset)
-{
+  top = left = bottom = right = NULL;
+  if (w->decorated_h() == w->h()) return;
+  Window from = fl_window;
+  Fl_Surface_Device *previous = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
-  win->show();
+  w->show();
   Fl::check();
-  win->make_current();
-  Window root, parent, *children, child_win, from;
+  w->make_current();
+  Window root, parent, *children, child_win;
   unsigned n = 0;
-  int bx, bt, do_it;
-  from = fl_window;
-  do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 && 
-	   XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &bx, &bt, &child_win) == True);
+  int do_it;
+  int wsides, htop;
+  do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 &&
+           XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &wsides, &htop, &child_win) == True);
   if (n) XFree(children);
-  // hack to bypass STR #2648: when compiz is used, root and parent are the same window 
-  // and I don't know where to find the window decoration
-  if (do_it && root == parent) do_it = 0; 
-  if (!do_it) {
-    this->set_current();
-    this->print_widget(win, x_offset, y_offset);
-    return;
-  }
+  int hbottom = wsides;
   fl_window = parent;
-  uchar *top_image = 0, *left_image = 0, *right_image = 0, *bottom_image = 0;
-  top_image = fl_read_image(NULL, 0, 0, - (win->w() + 2 * bx), bt);
-  if (bx) {
-    left_image = fl_read_image(NULL, 0, bt, -bx, win->h() + bx);
-    right_image = fl_read_image(NULL, win->w() + bx, bt, -bx, win->h() + bx);
-    bottom_image = fl_read_image(NULL, 0, bt + win->h(), -(win->w() + 2*bx), bx);
+  uchar *rgb;
+  if (htop) {
+    rgb = fl_read_image(NULL, 0, 0, - (w->w() + 2 * wsides), htop);
+    top = new Fl_RGB_Image(rgb, w->w() + 2 * wsides, htop, 3);
+    top->alloc_array = 1;
+  }
+  if (wsides) {
+    rgb = fl_read_image(NULL, 0, htop, -wsides, w->h());
+    left = new Fl_RGB_Image(rgb, wsides, w->h(), 3);
+    left->alloc_array = 1;
+    rgb = fl_read_image(NULL, w->w() + wsides, htop, -wsides, w->h());
+    right = new Fl_RGB_Image(rgb, wsides, w->h(), 3);
+    right->alloc_array = 1;
+    rgb = fl_read_image(NULL, 0, htop + w->h(), -(w->w() + 2*wsides), hbottom);
+    bottom = new Fl_RGB_Image(rgb, w->w() + 2*wsides, hbottom, 3);
+    bottom->alloc_array = 1;
   }
   fl_window = from;
-  toset->set_current();
-  if (top_image) {
-    fl_draw_image(top_image, x_offset, y_offset, win->w() + 2 * bx, bt, 3);
-    delete[] top_image;
-  }
-  if (bx) {
-    if (left_image) fl_draw_image(left_image, x_offset, y_offset + bt, bx, win->h() + bx, 3);
-    if (right_image) fl_draw_image(right_image, x_offset + win->w() + bx, y_offset + bt, bx, win->h() + bx, 3);
-    if (bottom_image) fl_draw_image(bottom_image, x_offset, y_offset + bt + win->h(), win->w() + 2*bx, bx, 3);
-    if (left_image) delete[] left_image;
-    if (right_image) delete[] right_image;
-    if (bottom_image) delete[] bottom_image;
-  }
-  this->print_widget( win, x_offset + bx, y_offset + bt );
+  previous->Fl_Surface_Device::set_current();
 }
 
 #ifdef USE_PRINT_BUTTON

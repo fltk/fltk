@@ -36,17 +36,9 @@
  or Fl_PostScript_File_Device instead.
  */
 class FL_EXPORT Fl_Paged_Device : public Fl_Surface_Device {
-#ifdef __APPLE__
-  // not needed
-#elif defined(WIN32)
   friend class Fl_Copy_Surface;
-  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define member variables to support Fl_Copy_Surface in Fl_Paged_Device"
-#else // X11
-  friend class Fl_Copy_Surface;
-  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset);
-#endif
+  friend class Fl_Image_Surface;
+  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
 public:
   /**
    \brief Possible page formats.

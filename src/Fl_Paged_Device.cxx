@@ -60,9 +60,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
     fl_push_clip(0, 0, widget->w(), widget->h() );
 #ifdef __APPLE__ // for Mac OS X 10.6 and above, make window with rounded bottom corners
     if ( fl_mac_os_version >= 100600 && driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id ) {
-      CGContextRestoreGState(fl_gc);
       Fl_X::clip_to_rounded_corners(fl_gc, widget->w(), widget->h());
-      CGContextSaveGState(fl_gc);
     }
 #endif
   }
@@ -295,6 +293,45 @@ const Fl_Paged_Device::page_format Fl_Paged_Device::page_formats[NO_PAGE_FORMATS
   { 792, 1224, "Tabloid"},
   { 297,  684, "Env10"} // envelope
 };
+
+void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
+{
+  Fl_RGB_Image *top, *left, *bottom, *right;
+#if defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_X::capture_titlebar_and_borders"
+#endif
+  Fl_X::i(win)->capture_titlebar_and_borders(top, left, bottom, right);
+  int wsides = left ? left->w() : 0;
+  int toph = top ? top->h() : 0;
+  if (top) {
+#ifdef __APPLE__
+    top->draw(x_offset, y_offset); // draw with transparency
+#else
+    fl_draw_image(top->array, x_offset, y_offset, top->w(), top->h(), top->d());
+#endif // __APPLE__
+    delete top;
+  }
+  if (left) {
+    fl_draw_image(left->array, x_offset, y_offset + toph, left->w(), left->h(), left->d());
+    delete left;
+  }
+  if (right) {
+    fl_draw_image(right->array, x_offset + win->w() + wsides, y_offset + toph, right->w(), right->h(), right->d());
+    delete right;
+  }
+  if (bottom) {
+    fl_draw_image(bottom->array, x_offset, y_offset + toph + win->h(), bottom->w(), bottom->h(), bottom->d());
+    delete bottom;
+  }
+  this->print_widget(win, x_offset + wsides, y_offset + toph);
+}
+
+#if !defined(__APPLE__) //  Mac OS version in Fl_Cocoa.mm
+void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
+{
+  draw_decorated_window(win, x_offset, y_offset);
+}
+#endif
 
 //
 // End of "$Id$".
