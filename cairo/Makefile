@@ -42,13 +42,13 @@ $(CAIROLIBNAME): $(CAIROOBJECTS)
 
 libfltk_cairo.so.$(FL_DSO_VERSION): $(CAIROOBJECTS) ../src/libfltk.so.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
+	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk $(CAIROLIBS)
 	$(RM) libfltk_cairo.so
 	$(LN) $(CAIRODSONAME) libfltk_cairo.so
 
 libfltk_cairo.sl.$(FL_DSO_VERSION): $(CAIROOBJECTS) ../src/libfltk.sl.$(FL_DSO_VERSION)
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
+	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk $(CAIROLIBS)
 	$(RM) libfltk_cairo.sl
 	$(LN) libfltk_cairo.sl.$(FL_DSO_VERSION) libfltk_cairo.sl
 
