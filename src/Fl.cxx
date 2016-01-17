@@ -21,7 +21,7 @@
 //          mostly to get around the single active context in QD and
 //          to implement clipping. This should be changed into pure
 //          Quartz calls in the near future.
-#include <config.h>
+#include "config_lib.h"
 
 /* We require Windows 2000 features (e.g. VK definitions) */
 #if defined(WIN32)
@@ -75,6 +75,85 @@ void fl_cleanup_dc_list(void);
 #elif defined(__APPLE__)
 extern double fl_mac_flush_and_wait(double time_to_wait);
 #endif // WIN32
+
+
+//
+// Runtime configuartion flags
+//
+#ifdef FL_CFG_GFX_XLIB
+bool Fl::cfg_gfx_xlib = 1;
+#else
+bool Fl::cfg_gfx_xlib = 0;
+#endif
+#ifdef FL_CFG_GFX_QUARTZ
+bool Fl::cgf_gfx_quartz = 1;
+#else
+bool Fl::cgf_gfx_quartz = 0;
+#endif
+#ifdef FL_CFG_GFX_GDI
+bool Fl::cfg_gfx_gdi = 1;
+#else
+bool Fl::cfg_gfx_gdi = 0;
+#endif
+#ifdef FL_CFG_GFX_OPENGL
+bool Fl::cfg_gfx_opengl = 1;
+#else
+bool Fl::cfg_gfx_opengl = 0;
+#endif
+#ifdef FL_CFG_GFX_CAIRO
+bool Fl::cfg_gfx_cairo = 1;
+#else
+bool Fl::cfg_gfx_cairo = 0;
+#endif
+#ifdef FL_CFG_GFX_DIRECTX
+bool Fl::cfg_gfx_directx = 1;
+#else
+bool Fl::cfg_gfx_directx = 0;
+#endif
+
+#ifdef FL_CFG_PRN_PS
+bool Fl::cfg_prn_ps = 1;
+#else
+bool Fl::cfg_prn_ps = 0;
+#endif
+#ifdef FL_CFG_PRN_QUARTZ
+bool Fl::cgf_prn_quartz = 1;
+#else
+bool Fl::cgf_prn_quartz = 0;
+#endif
+#ifdef FL_CFG_PRN_GDI
+bool Fl::cfg_prn_gdi = 1;
+#else
+bool Fl::cfg_prn_gdi = 0;
+#endif
+
+#ifdef FL_CFG_WIN_X11
+bool Fl::cfg_win_x11 = 1;
+#else
+bool Fl::cfg_win_x11 = 0;
+#endif
+#ifdef FL_CFG_WIN_COCOA
+bool Fl::cgf_win_cocoa = 1;
+#else
+bool Fl::cgf_win_cocoa = 0;
+#endif
+#ifdef FL_CFG_WIN_WIN32
+bool Fl::cfg_win_win32 = 1;
+#else
+bool Fl::cfg_win_win32 = 0;
+#endif
+
+#ifdef FL_SYS_POSIX
+bool Fl::cfg_sys_posix = 1;
+#else
+bool Fl::cfg_sys_posix = 0;
+#endif
+#ifdef FL_SYS_WIN32
+bool Fl::cfg_sys_win32 = 1;
+#else
+bool Fl::cfg_sys_win32 = 0;
+#endif
+
 
 //
 // Globals...

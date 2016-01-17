@@ -17,6 +17,7 @@
 //
 
 #include "flstring.h"
+#include "config_lib.h"
 #if HAVE_GL
 
 extern int fl_gl_load_plugin;
@@ -29,6 +30,7 @@ extern int fl_gl_load_plugin;
 #include <OpenGL/OpenGL.h>
 #endif
 #include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Device.H>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 
@@ -37,6 +39,123 @@ extern int fl_gl_load_plugin;
 #  pragma message "FL_PORTING: implement the creation and destruction of OpenGL surfaces"
 #else
 #endif
+
+
+// ------ this should be in a separate file! -----------------------------------
+#ifdef FL_CFG_GFX_OPENGL
+
+#include <FL/Fl_Device.h>
+
+/**
+ \brief OpenGL pecific graphics class.
+ *
+ This class is implemented only on the Mac OS X platform.
+ */
+class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
+public:
+  static const char *class_id;
+  const char *class_name() {return class_id;};
+  void draw(const char* str, int n, int x, int y) {
+    gl_draw(str, n, x, y);
+  }
+  void color(Fl_Color c) {
+    gl_color(c);
+  }
+  void color(uchar r, uchar g, uchar b) {
+    unsigned int c = (r<<24)|(g<<16)|(b<<8);
+    gl_color(c);
+  }
+  void rectf(int x, int y, int w, int h) {
+    glBegin(GL_POLYGON);
+    glVertex2i(x, y);
+    glVertex2i(x+w-1, y);
+    glVertex2i(x+w-1, y+h-1);
+    glVertex2i(x, y+h-1);
+    glEnd();
+  }
+  void line(int x, int y, int x1, int y1) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x1, y1);
+    glEnd();
+  }
+  void xyline(int x, int y, int x1) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x1, y);
+    glEnd();
+  }
+  void xyline(int x, int y, int x1, int y2) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x1, y);
+    glVertex2i(x1, y2);
+    glEnd();
+  }
+  void xyline(int x, int y, int x1, int y2, int x3) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x1, y);
+    glVertex2i(x1, y2);
+    glVertex2i(x3, y2);
+    glEnd();
+  }
+  void yxline(int x, int y, int y1) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x, y1);
+    glEnd();
+  }
+  void yxline(int x, int y, int y1, int x2) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x, y1);
+    glVertex2i(x2, y1);
+    glEnd();
+  }
+  void yxline(int x, int y, int y1, int x2, int y3) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x, y1);
+    glVertex2i(x2, y1);
+    glVertex2i(x2, y3);
+    glEnd();
+  }
+
+  /*
+#ifdef __APPLE__
+  void draw(const char *str, int n, float x, float y);
+#endif
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* str, int n, int x, int y);
+  void font(Fl_Font face, Fl_Fontsize size);
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
+  void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+  void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+  void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+  void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  double width(const char *str, int n);
+  double width(unsigned int c);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
+#if ! defined(FL_DOXYGEN)
+  static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
+#endif
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+*/
+};
+
+const char *Fl_OpenGL_Graphics_Driver::class_id = "Fl_OpenGL_Graphics_Driver";
+
+Fl_OpenGL_Graphics_Driver fl_opengl_graphics_driver;
+
+#endif
+// ------ end of separate file! ------------------------------------------------
+
 
 ////////////////////////////////////////////////////////////////
 
@@ -539,7 +658,25 @@ void Fl_Gl_Window::draw_overlay() {}
   buffers are swapped after this function is completed.
 */
 void Fl_Gl_Window::draw() {
-    Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
+#ifdef FL_CFG_GFX_OPENGL
+  Fl_Graphics_Driver *prev_driver = fl_graphics_driver;
+  fl_graphics_driver = &fl_opengl_graphics_driver;
+  glPushAttrib(GL_ENABLE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
+//  glOrtho(0, w(), h(), 0, -1, 1);
+  glLineWidth(pixels_per_unit());
+
+  Fl_Window::draw();
+
+  glPopMatrix();
+  glPushAttrib(GL_ENABLE_BIT);
+  fl_graphics_driver = prev_driver;
+#else
+  Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
+#endif
 }
 
 

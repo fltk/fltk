@@ -469,6 +469,8 @@ void gl_texture_fifo::display_texture(int rank)
 // pre-computes a string texture
 int gl_texture_fifo::compute_texture(const char* str, int n)
 {
+  Fl_Graphics_Driver *prev_driver = fl_graphics_driver;
+  fl_graphics_driver = Fl_Display_Device::display_device()->driver();
   current = (current + 1) % size_;
   if (current > last) last = current;
   if ( fifo[current].utf8 ) free(fifo[current].utf8);
@@ -510,6 +512,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   } else {
     fifo[current].ratio = float(fifo[current].width)/glutStrokeLength(GLUT_STROKE_ROMAN, (uchar*)fifo[current].utf8);
   }
+  fl_graphics_driver = prev_driver;
   return current;
 }
 
