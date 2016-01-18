@@ -86,9 +86,9 @@ bool Fl::cfg_gfx_xlib = 1;
 bool Fl::cfg_gfx_xlib = 0;
 #endif
 #ifdef FL_CFG_GFX_QUARTZ
-bool Fl::cgf_gfx_quartz = 1;
+bool Fl::cfg_gfx_quartz = 1;
 #else
-bool Fl::cgf_gfx_quartz = 0;
+bool Fl::cfg_gfx_quartz = 0;
 #endif
 #ifdef FL_CFG_GFX_GDI
 bool Fl::cfg_gfx_gdi = 1;
@@ -117,9 +117,9 @@ bool Fl::cfg_prn_ps = 1;
 bool Fl::cfg_prn_ps = 0;
 #endif
 #ifdef FL_CFG_PRN_QUARTZ
-bool Fl::cgf_prn_quartz = 1;
+bool Fl::cfg_prn_quartz = 1;
 #else
-bool Fl::cgf_prn_quartz = 0;
+bool Fl::cfg_prn_quartz = 0;
 #endif
 #ifdef FL_CFG_PRN_GDI
 bool Fl::cfg_prn_gdi = 1;
@@ -133,9 +133,9 @@ bool Fl::cfg_win_x11 = 1;
 bool Fl::cfg_win_x11 = 0;
 #endif
 #ifdef FL_CFG_WIN_COCOA
-bool Fl::cgf_win_cocoa = 1;
+bool Fl::cfg_win_cocoa = 1;
 #else
-bool Fl::cgf_win_cocoa = 0;
+bool Fl::cfg_win_cocoa = 0;
 #endif
 #ifdef FL_CFG_WIN_WIN32
 bool Fl::cfg_win_win32 = 1;

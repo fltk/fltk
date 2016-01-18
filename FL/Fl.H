@@ -142,7 +142,7 @@ public: // run time information about compile time configuration
   /** \defgroup cfg_gfx runtime graphics driver configuration */
   /** @{ */
   static bool cfg_gfx_xlib;   ///< X11 Xlib rendering available, usually on Linux systems
-  static bool cgf_gfx_quartz; ///< Quartz rendering available, usually on OS X systems
+  static bool cfg_gfx_quartz; ///< Quartz rendering available, usually on OS X systems
   static bool cfg_gfx_gdi;    ///< GDI redering available, usually on MSWindows systems
   static bool cfg_gfx_opengl; ///< OpenGL redering available, available on many platforms
   static bool cfg_gfx_cairo;  ///< Cairo redering available, available on many platforms
@@ -151,13 +151,13 @@ public: // run time information about compile time configuration
   /** \defgroup cfg_prn runtime printer driver configuration */
   /** @{ */
   static bool cfg_prn_ps;     ///< PostScript rendering available, usually on Linux systems
-  static bool cgf_prn_quartz; ///< Quartz rendering available, usually on OS X systems
+  static bool cfg_prn_quartz; ///< Quartz rendering available, usually on OS X systems
   static bool cfg_prn_gdi;    ///< GDI redering available, usually on MSWindows systems
   /** @} */
   /** \defgroup cfg_win runtime window and event manager configuration */
   /** @{ */
   static bool cfg_win_x11;    ///< X11 window management available, usually on Linux systems
-  static bool cgf_win_cocoa;  ///< Cocoa window management available, usually on OS X systems
+  static bool cfg_win_cocoa;  ///< Cocoa window management available, usually on OS X systems
   static bool cfg_win_win32;  ///< WIN32 window management available, on low level MSWindows
   /** @} */
   /** \defgroup cfg_sys runtime system configuration */
