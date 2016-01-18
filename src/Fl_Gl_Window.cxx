@@ -151,7 +151,21 @@ public:
 
 const char *Fl_OpenGL_Graphics_Driver::class_id = "Fl_OpenGL_Graphics_Driver";
 
-Fl_OpenGL_Graphics_Driver fl_opengl_graphics_driver;
+Fl_OpenGL_Display_Device *Fl_OpenGL_Display_Device::display_device() {
+  static Fl_OpenGL_Display_Device *display = new Fl_OpenGL_Display_Device(new Fl_OpenGL_Graphics_Driver());
+  return display;
+};
+
+
+Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver)
+: Fl_Surface_Device(graphics_driver)
+{
+}
+
+
+const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
+
+
 
 #endif
 // ------ end of separate file! ------------------------------------------------
@@ -659,8 +673,8 @@ void Fl_Gl_Window::draw_overlay() {}
 */
 void Fl_Gl_Window::draw() {
 #ifdef FL_CFG_GFX_OPENGL
-  Fl_Graphics_Driver *prev_driver = fl_graphics_driver;
-  fl_graphics_driver = &fl_opengl_graphics_driver;
+  Fl_Surface_Device *prev_device = Fl_Surface_Device::surface();
+  Fl_OpenGL_Display_Device::display_device()->set_current();
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
   glPushMatrix();
@@ -673,7 +687,7 @@ void Fl_Gl_Window::draw() {
 
   glPopMatrix();
   glPushAttrib(GL_ENABLE_BIT);
-  fl_graphics_driver = prev_driver;
+  prev_device->set_current();
 #else
   Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
 #endif

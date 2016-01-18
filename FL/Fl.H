@@ -146,7 +146,7 @@ public: // run time information about compile time configuration
   static bool cfg_gfx_gdi;    ///< GDI redering available, usually on MSWindows systems
   static bool cfg_gfx_opengl; ///< OpenGL redering available, available on many platforms
   static bool cfg_gfx_cairo;  ///< Cairo redering available, available on many platforms
-  static bool cfg_gfx_directx;///< DirectX redering available, available on many platforms
+  static bool cfg_gfx_directx;///< DirectX redering available, usually on MSWindows systems
   /** @} */
   /** \defgroup cfg_prn runtime printer driver configuration */
   /** @{ */

@@ -24,6 +24,30 @@
 
 #include "Fl_Window.H"
 
+
+// ------ this should be in a separate file! -----------------------------------
+#ifdef FL_CFG_GFX_OPENGL
+
+#include <FL/Fl_Device.h>
+
+class Fl_OpenGL_Graphics_Driver;
+/**
+ OpenGL Surface.
+ This surface is needed as an interface between GL windows and the GL graphics driver.
+ */
+class FL_EXPORT Fl_OpenGL_Display_Device : public Fl_Surface_Device {
+public:
+  static const char *class_id;
+  const char *class_name() {return class_id;};
+  Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver);
+  static Fl_OpenGL_Display_Device *display_device();
+};
+
+#endif
+// ------ end of separate file! ------------------------------------------------
+
+
+
 #ifndef GLContext
 /**
   Opaque pointer type to hide system specific implementation.

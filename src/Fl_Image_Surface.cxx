@@ -82,6 +82,7 @@ Fl_Image_Surface::~Fl_Image_Surface() {
 
 /** Returns an image made of all drawings sent to the Fl_Image_Surface object.
  The returned object contains its own copy of the RGB data.
+ The caller is responsible for deleting the image.
  */
 Fl_RGB_Image* Fl_Image_Surface::image()
 {
