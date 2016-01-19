@@ -99,6 +99,7 @@
 /fluid/*.bck
 /fluid/*.exe
 /fluid/*.ilk
+/fluid/*.pdb
 /fluid/TAGS
 
 # /fluid/fluid.app/Contents/MacOS/
@@ -106,6 +107,33 @@
 
 # /fluid/pixmaps/
 /fluid/pixmaps/*.bck
+
+# /ide/VisualC2008/
+/ide/VisualC2008/fltk.ncb
+/ide/VisualC2008/*.pdb
+/ide/VisualC2008/*.user
+/ide/VisualC2008/*_/
+/ide/VisualC2008/*__0/
+/ide/VisualC2008/fltkdll/
+/ide/VisualC2008/fltkdlld/
+/ide/VisualC2008/Debug/
+/ide/VisualC2008/Debug Cairo/
+/ide/VisualC2008/Release/
+/ide/VisualC2008/Release Cairo/
+
+# /ide/VisualC2010/
+/ide/VisualC2010/*.user
+/ide/VisualC2010/*_debug/
+/ide/VisualC2010/*_release/
+/ide/VisualC2010/fltk.*sdf
+/ide/VisualC2010/fltk.suo
+/ide/VisualC2010/fltkdlld.pdb
+/ide/VisualC2010/fltkdll/
+/ide/VisualC2010/fltkdlld/
+/ide/VisualC2010/Debug/
+/ide/VisualC2010/Debug Cairo/
+/ide/VisualC2010/Release/
+/ide/VisualC2010/Release Cairo/
 
 # /ide/Xcode3/
 /ide/Xcode3/build
@@ -125,6 +153,7 @@
 /lib/lib*
 /lib/*.lib
 /lib/*.a
+/lib/*.bsc
 
 # /misc/
 /misc/doxystar
@@ -138,6 +167,7 @@
 /src/*.dylib
 
 # /test/
+/test/*.pdb
 /test/CubeView
 /test/CubeViewUI.cxx
 /test/CubeViewUI.h

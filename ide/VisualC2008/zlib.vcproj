@@ -206,7 +206,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\lib\fltkzd.lib"
+				OutputFile="..\..\lib\fltkzd.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -277,7 +277,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\lib\fltkz.lib"
+				OutputFile="..\..\lib\fltkz.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

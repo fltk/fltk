@@ -26,6 +26,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -97,6 +98,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -168,6 +170,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -239,6 +242,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -367,11 +371,11 @@
 				RelativePath="..\..\FL\Fl_Color_Chooser.H"
 				>
 			</File>
-				<File
+			<File
 				RelativePath="..\..\FL\Fl_Copy_Surface.H"
 				>
 			</File>
-		<File
+			<File
 				RelativePath="..\..\FL\Fl_Counter.H"
 				>
 			</File>
@@ -2230,7 +2234,7 @@
 				/>
 			</FileConfiguration>
 		</File>
-			<File
+		<File
 			RelativePath="..\..\src\Fl_Copy_Surface.cxx"
 			>
 			<FileConfiguration
@@ -2276,7 +2280,7 @@
 				/>
 			</FileConfiguration>
 		</File>
-	<File
+		<File
 			RelativePath="..\..\src\Fl_Counter.cxx"
 			>
 			<FileConfiguration
@@ -3247,6 +3251,10 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\..\src\fl_gleam.cxx"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\Fl_grab.cxx"
 			>
 			<FileConfiguration
@@ -3340,10 +3348,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\fl_gtk.cxx"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\fl_gleam.cxx"
 			>
 		</File>
 		<File
@@ -5340,7 +5344,7 @@
 				/>
 			</FileConfiguration>
 		</File>
-	<File
+		<File
 			RelativePath="..\..\src\Fl_Shared_Image.cxx"
 			>
 			<FileConfiguration
