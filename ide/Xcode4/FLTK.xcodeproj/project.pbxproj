@@ -4555,6 +4555,7 @@
 		7F92032016B1A909000FC50F /* German */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = German; path = Localizable.strings; sourceTree = "<group>"; };
 		7F92032316B1A90A000FC50F /* Italian */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Italian; path = Localizable.strings; sourceTree = "<group>"; };
 		7F92032616B1A90A000FC50F /* Spanish */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Spanish; path = Localizable.strings; sourceTree = "<group>"; };
+		7FA08BBF1C4EA7A0001CBE06 /* abi-version.ide */ = {isa = PBXFileReference; lastKnownFileType = text; name = "abi-version.ide"; path = "../../abi-version.ide"; sourceTree = "<group>"; };
 		7FA5C2BD192FAEBB00519823 /* Fl_Copy_Surface.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Copy_Surface.cxx; path = ../../src/Fl_Copy_Surface.cxx; sourceTree = SOURCE_ROOT; };
 		7FA5C2BF192FAECA00519823 /* Fl_Image_Surface.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Image_Surface.cxx; path = ../../src/Fl_Image_Surface.cxx; sourceTree = SOURCE_ROOT; };
 		7FA5C2C1192FAEE300519823 /* Fl_Image_Surface.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Image_Surface.H; path = ../../FL/Fl_Image_Surface.H; sourceTree = SOURCE_ROOT; };
@@ -5920,6 +5921,7 @@
 			isa = PBXGroup;
 			children = (
 				C9EDD143127338F600ADB21C /* README.OSX.txt */,
+				7FA08BBF1C4EA7A0001CBE06 /* abi-version.ide */,
 				5D444464FCF5714805936107 /* Applications */,
 				188555DBC553F66588792C6B /* Frameworks */,
 				015D2BD894993395B263D6C0 /* Tests */,
@@ -8159,6 +8161,7 @@
 				C9EDD5C81274C6BA00ADB21C /* Headers */,
 				C9EDD42D1274B84100ADB21C /* CopyFiles */,
 				C9EDD4DD1274BB4100ADB21C /* CopyFiles */,
+				7FA08BC11C4EA964001CBE06 /* ShellScript */,
 				4DA82C38AA0403E56A1E3545 /* Sources */,
 				D2A1AD2D93B0EED43F624520 /* Frameworks */,
 			);
@@ -9462,6 +9465,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7FA08BC11C4EA964001CBE06 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -p -f ../../abi-version.ide FL/abi-version.h";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		03952EF9A011C37E408094AD /* Sources */ = {
