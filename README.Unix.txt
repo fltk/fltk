@@ -143,6 +143,7 @@ has no permission to call "sudo", so we will change user a few times:
   su root
   yum groupinstall "Development Tools"
   yum groupinstall "X Software Development"
+  yum groupinstall "C Development Tools and Libraries"
 
 If you are planning to use the Code::Blocks IDE, also install this
 

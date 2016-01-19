@@ -44,7 +44,8 @@ extern int fl_gl_load_plugin;
 // ------ this should be in a separate file! -----------------------------------
 #ifdef FL_CFG_GFX_OPENGL
 
-#include <FL/Fl_Device.h>
+#include <FL/Fl_Device.H>
+#include <FL/gl.h>
 
 /**
  \brief OpenGL pecific graphics class.

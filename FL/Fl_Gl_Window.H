@@ -28,7 +28,7 @@
 // ------ this should be in a separate file! -----------------------------------
 #ifdef FL_CFG_GFX_OPENGL
 
-#include <FL/Fl_Device.h>
+#include <FL/Fl_Device.H>
 
 class Fl_OpenGL_Graphics_Driver;
 /**
