@@ -66,12 +66,46 @@ public:
     unsigned int c = (r<<24)|(g<<16)|(b<<8);
     gl_color(c);
   }
+  // --- implementation will eventually be in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
+  // --- line and polygon drawing with integer coordinates
+  void point(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
+    glEnd();
+  }
+  void rect(int x, int y, int w, int h) {
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(x, y);
+    glVertex2i(x+w, y);
+    glVertex2i(x+w, y+h);
+    glVertex2i(x, y+h);
+    glEnd();
+  }
+  void rectf(int x, int y, int w, int h) {
+    if (w<=0 || h<=0) return;
+    // OpenGL has the natural origin at the bottom left. Drawing in FLTK
+    // coordinates requires that we shift the rectangle one pixel up.
+    glBegin(GL_POLYGON);
+    glVertex2i(x, y-1);
+    glVertex2i(x+w, y-1);
+    glVertex2i(x+w, y+h-1);
+    glVertex2i(x, y+h-1);
+    glEnd();
+  }
   void line(int x, int y, int x1, int y1) {
     glBegin(GL_LINE_STRIP);
     glVertex2i(x, y);
     glVertex2i(x1, y1);
     glEnd();
     point(x1, y1);
+  }
+  void line(int x, int y, int x1, int y1, int x2, int y2) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x, y);
+    glVertex2i(x1, y1);
+    glVertex2i(x2, y2);
+    glEnd();
+    point(x2, y2);
   }
   void xyline(int x, int y, int x1) {
     glBegin(GL_LINE_STRIP);
@@ -121,29 +155,34 @@ public:
     glEnd();
     point(x2, y3);
   }
-  // --- recently moved implementations (see FL_PORTING efforts)
-  void point(int x, int y) {
-    glBegin(GL_POINTS);
-    glVertex2i(x, y);
-    glEnd();
-  }
-  void rect(int x, int y, int w, int h) {
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2) {
     glBegin(GL_LINE_LOOP);
-    glVertex2i(x, y);
-    glVertex2i(x+w, y);
-    glVertex2i(x+w, y+h);
-    glVertex2i(x, y+h);
+    glVertex2i(x0, y0);
+    glVertex2i(x1, y1);
+    glVertex2i(x2, y2);
     glEnd();
   }
-  void rectf(int x, int y, int w, int h) {
-    if (w<=0 || h<=0) return;
-    // OpenGL has the natural origin at the bottom left. Drawing in FLTK
-    // coordinates requires that we shift the rectangle one pixel up.
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(x0, y0);
+    glVertex2i(x1, y1);
+    glVertex2i(x2, y2);
+    glVertex2i(x3, y3);
+    glEnd();
+  }
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
     glBegin(GL_POLYGON);
-    glVertex2i(x, y-1);
-    glVertex2i(x+w, y-1);
-    glVertex2i(x+w, y+h-1);
-    glVertex2i(x, y+h-1);
+    glVertex2i(x0, y0);
+    glVertex2i(x1, y1);
+    glVertex2i(x2, y2);
+    glEnd();
+  }
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+    glBegin(GL_POLYGON);
+    glVertex2i(x0, y0);
+    glVertex2i(x1, y1);
+    glVertex2i(x2, y2);
+    glVertex2i(x3, y3);
     glEnd();
   }
 };
@@ -681,7 +720,9 @@ void Fl_Gl_Window::draw() {
   glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
 //  glOrtho(0, w(), h(), 0, -1, 1);
   glLineWidth(pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
-
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
+  glEnable(GL_BLEND); // FIXME: push on state stack
+  
   Fl_Window::draw();
 
   glPopMatrix();

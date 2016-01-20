@@ -162,347 +162,6 @@ static int clip_x (int x) {
 #endif	// USE_X11
 
 
-void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
-#if defined(USE_X11)
-  XDrawLine(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y), clip_x(x1), clip_x(y));
-#elif defined(WIN32)
-  MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
-#elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y);
-  CGContextStrokePath(fl_gc);
-  if (Fl_Display_Device::high_resolution()) {
-    /* On retina displays, all xyline() and yxline() functions produce lines that are half-unit
-     (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
-     of size one unit by line-width.
-     */
-    CGContextFillRect(fl_gc, CGRectMake(x-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    CGContextFillRect(fl_gc, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-  }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement xyline"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-#if defined (USE_X11)
-  XPoint p[3];
-  p[0].x = clip_x(x);  p[0].y = p[1].y = clip_x(y);
-  p[1].x = p[2].x = clip_x(x1); p[2].y = clip_x(y2);
-  XDrawLines(fl_display, fl_window, fl_gc, p, 3, 0);
-#elif defined(WIN32)
-  if (y2 < y) y2--;
-  else y2++;
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x1, y);
-  LineTo(fl_gc, x1, y2);
-#elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y);
-  CGContextAddLineToPoint(fl_gc, x1, y2);
-  CGContextStrokePath(fl_gc);
-  if (Fl_Display_Device::high_resolution()) {
-    CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    CGContextFillRect(fl_gc, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
-  }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement xyline"
-#else
-#error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-#if defined(USE_X11)
-  XPoint p[4];
-  p[0].x = clip_x(x);  p[0].y = p[1].y = clip_x(y);
-  p[1].x = p[2].x = clip_x(x1); p[2].y = p[3].y = clip_x(y2);
-  p[3].x = clip_x(x3);
-  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
-#elif defined(WIN32)
-  if(x3 < x1) x3--;
-  else x3++;
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x1, y);
-  LineTo(fl_gc, x1, y2);
-  LineTo(fl_gc, x3, y2);
-#elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y);
-  CGContextAddLineToPoint(fl_gc, x1, y2);
-  CGContextAddLineToPoint(fl_gc, x3, y2);
-  CGContextStrokePath(fl_gc);
-  if (Fl_Display_Device::high_resolution()) {
-    CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    CGContextFillRect(fl_gc, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-  }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement xyline"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
-#if defined(USE_X11)
-  XDrawLine(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y), clip_x(x), clip_x(y1));
-#elif defined(WIN32)
-  if (y1 < y) y1--;
-  else y1++;
-  MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
-#elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x, y1);
-  CGContextStrokePath(fl_gc);
-  if (Fl_Display_Device::high_resolution()) {
-    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
-    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
-  }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement yxline"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-#if defined(USE_X11)
-  XPoint p[3];
-  p[0].x = p[1].x = clip_x(x);  p[0].y = clip_x(y);
-  p[1].y = p[2].y = clip_x(y1); p[2].x = clip_x(x2);
-  XDrawLines(fl_display, fl_window, fl_gc, p, 3, 0);
-#elif defined(WIN32)
-  if (x2 > x) x2++;
-  else x2--;
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x, y1);
-  LineTo(fl_gc, x2, y1);
-#elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y1);
-  CGContextStrokePath(fl_gc);
-  if (Fl_Display_Device::high_resolution()) {
-    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
-    CGContextFillRect(fl_gc, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-  }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement yxline"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-#if defined(USE_X11)
-  XPoint p[4];
-  p[0].x = p[1].x = clip_x(x);  p[0].y = clip_x(y);
-  p[1].y = p[2].y = clip_x(y1); p[2].x = p[3].x = clip_x(x2);
-  p[3].y = clip_x(y3);
-  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
-#elif defined(WIN32)
-  if(y3<y1) y3--;
-  else y3++;
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x, y1);
-  LineTo(fl_gc, x2, y1);
-  LineTo(fl_gc, x2, y3);
-#elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y3);
-  CGContextStrokePath(fl_gc);
-  if (Fl_Display_Device::high_resolution()) {
-    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
-    CGContextFillRect(fl_gc, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
-  }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement yxline"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::line(int x, int y, int x1, int y1) {
-#if defined(USE_X11)
-  XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
-#elif defined(WIN32)
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x1, y1);
-  // Draw the last point *again* because the GDI line drawing
-  // functions will not draw the last point ("it's a feature!"...)
-  SetPixel(fl_gc, x1, y1, fl_RGB());
-#elif defined(__APPLE_QUARTZ__)
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextStrokePath(fl_gc);
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement line"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
-#if defined(USE_X11)
-  XPoint p[3];
-  p[0].x = x;  p[0].y = y;
-  p[1].x = x1; p[1].y = y1;
-  p[2].x = x2; p[2].y = y2;
-  XDrawLines(fl_display, fl_window, fl_gc, p, 3, 0);
-#elif defined(WIN32)
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x1, y1);
-  LineTo(fl_gc, x2, y2);
-  // Draw the last point *again* because the GDI line drawing
-  // functions will not draw the last point ("it's a feature!"...)
-  SetPixel(fl_gc, x2, y2, fl_RGB());
-#elif defined(__APPLE_QUARTZ__)
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y2);
-  CGContextStrokePath(fl_gc);
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement line"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
-#if defined(USE_X11)
-  XPoint p[4];
-  p[0].x = x;  p[0].y = y;
-  p[1].x = x1; p[1].y = y1;
-  p[2].x = x2; p[2].y = y2;
-  p[3].x = x;  p[3].y = y;
-  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
-#elif defined(WIN32)
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x1, y1);
-  LineTo(fl_gc, x2, y2);
-  LineTo(fl_gc, x, y);
-#elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y2);
-  CGContextClosePath(fl_gc);
-  CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement loop"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
-#if defined(USE_X11)
-  XPoint p[5];
-  p[0].x = x;  p[0].y = y;
-  p[1].x = x1; p[1].y = y1;
-  p[2].x = x2; p[2].y = y2;
-  p[3].x = x3; p[3].y = y3;
-  p[4].x = x;  p[4].y = y;
-  XDrawLines(fl_display, fl_window, fl_gc, p, 5, 0);
-#elif defined(WIN32)
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x1, y1);
-  LineTo(fl_gc, x2, y2);
-  LineTo(fl_gc, x3, y3);
-  LineTo(fl_gc, x, y);
-#elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y2);
-  CGContextAddLineToPoint(fl_gc, x3, y3);
-  CGContextClosePath(fl_gc);
-  CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement loop"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
-  XPoint p[4];
-  p[0].x = x;  p[0].y = y;
-  p[1].x = x1; p[1].y = y1;
-  p[2].x = x2; p[2].y = y2;
-#if defined (USE_X11)
-  p[3].x = x;  p[3].y = y;
-  XFillPolygon(fl_display, fl_window, fl_gc, p, 3, Convex, 0);
-  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
-#elif defined(WIN32)
-  SelectObject(fl_gc, fl_brush());
-  Polygon(fl_gc, p, 3);
-#elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y2);
-  CGContextClosePath(fl_gc);
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement polygon"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
-  XPoint p[5];
-  p[0].x = x;  p[0].y = y;
-  p[1].x = x1; p[1].y = y1;
-  p[2].x = x2; p[2].y = y2;
-  p[3].x = x3; p[3].y = y3;
-#if defined(USE_X11)
-  p[4].x = x;  p[4].y = y;
-  XFillPolygon(fl_display, fl_window, fl_gc, p, 4, Convex, 0);
-  XDrawLines(fl_display, fl_window, fl_gc, p, 5, 0);
-#elif defined(WIN32)
-  SelectObject(fl_gc, fl_brush());
-  Polygon(fl_gc, p, 4);
-#elif defined(__APPLE_QUARTZ__)
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x1, y1);
-  CGContextAddLineToPoint(fl_gc, x2, y2);
-  CGContextAddLineToPoint(fl_gc, x3, y3);
-  CGContextClosePath(fl_gc);
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement polygon"
-#else
-# error unsupported platform
-#endif
-}
-
 
 ////////////////////////////////////////////////////////////////
 
@@ -745,7 +404,11 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
  (which is still to be written)
  */
 
+////////////////////////////////////////////////////////////////
+
 #ifdef FL_CFG_GFX_QUARTZ
+
+// --- line and polygon drawing with integer coordinates
 
 void Fl_Quartz_Graphics_Driver::point(int x, int y) {
   CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
@@ -766,11 +429,154 @@ void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
   CGContextFillRect(fl_gc, rect);
 }
 
+void Fl_Quartz_Graphics_Driver::line(int x, int y, int x1, int y1) {
+  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextStrokePath(fl_gc);
+  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
+  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextStrokePath(fl_gc);
+  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextStrokePath(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    /* On retina displays, all xyline() and yxline() functions produce lines that are half-unit
+     (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
+     of size one unit by line-width.
+     */
+    CGContextFillRect(fl_gc, CGRectMake(x-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(fl_gc, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+  }
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextAddLineToPoint(fl_gc, x1, y2);
+  CGContextStrokePath(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(fl_gc, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
+  }
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y);
+  CGContextAddLineToPoint(fl_gc, x1, y2);
+  CGContextAddLineToPoint(fl_gc, x3, y2);
+  CGContextStrokePath(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(fl_gc, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+  }
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1) {
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y1);
+  CGContextStrokePath(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
+    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
+  }
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y1);
+  CGContextStrokePath(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
+    CGContextFillRect(fl_gc, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+  }
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y3);
+  CGContextStrokePath(fl_gc);
+  if (Fl_Display_Device::high_resolution()) {
+    CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
+    CGContextFillRect(fl_gc, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
+  }
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
+  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextClosePath(fl_gc);
+  CGContextStrokePath(fl_gc);
+  CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextAddLineToPoint(fl_gc, x3, y3);
+  CGContextClosePath(fl_gc);
+  CGContextStrokePath(fl_gc);
+  CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
+  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextClosePath(fl_gc);
+  CGContextFillPath(fl_gc);
+  CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextMoveToPoint(fl_gc, x, y);
+  CGContextAddLineToPoint(fl_gc, x1, y1);
+  CGContextAddLineToPoint(fl_gc, x2, y2);
+  CGContextAddLineToPoint(fl_gc, x3, y3);
+  CGContextClosePath(fl_gc);
+  CGContextFillPath(fl_gc);
+  CGContextSetShouldAntialias(fl_gc, false);
+}
+
 #endif
 
 // -----------------------------------------------------------------------------
 
 #ifdef FL_CFG_GFX_GDI
+
+// --- line and polygon drawing with integer coordinates
 
 void Fl_GDI_Graphics_Driver::point(int x, int y) {
   SetPixel(fl_gc, x, y, fl_RGB());
@@ -793,11 +599,104 @@ void Fl_GDI_Graphics_Driver::rectf(int x, int y, int w, int h) {
   FillRect(fl_gc, &rect, fl_brush());
 }
 
+void Fl_GDI_Graphics_Driver::line(int x, int y, int x1, int y1) {
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x1, y1);
+  SetPixel(fl_gc, x1, y1, fl_RGB());
+}
+
+void Fl_GDI_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x1, y1);
+  LineTo(fl_gc, x2, y2);
+  SetPixel(fl_gc, x2, y2, fl_RGB());
+}
+
+void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1) {
+  MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
+}
+
+void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
+  if (y2 < y) y2--;
+  else y2++;
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x1, y);
+  LineTo(fl_gc, x1, y2);
+}
+
+void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
+  if(x3 < x1) x3--;
+  else x3++;
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x1, y);
+  LineTo(fl_gc, x1, y2);
+  LineTo(fl_gc, x3, y2);
+}
+
+void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1) {
+  if (y1 < y) y1--;
+  else y1++;
+  MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
+}
+
+void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
+  if (x2 > x) x2++;
+  else x2--;
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x, y1);
+  LineTo(fl_gc, x2, y1);
+}
+
+void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
+  if(y3<y1) y3--;
+  else y3++;
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x, y1);
+  LineTo(fl_gc, x2, y1);
+  LineTo(fl_gc, x2, y3);
+}
+
+void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x1, y1);
+  LineTo(fl_gc, x2, y2);
+  LineTo(fl_gc, x, y);
+}
+
+void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x1, y1);
+  LineTo(fl_gc, x2, y2);
+  LineTo(fl_gc, x3, y3);
+  LineTo(fl_gc, x, y);
+}
+
+void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
+  XPoint p[3];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  SelectObject(fl_gc, fl_brush());
+  Polygon(fl_gc, p, 3);
+}
+
+void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  XPoint p[4];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  p[3].x = x3; p[3].y = y3;
+  SelectObject(fl_gc, fl_brush());
+  Polygon(fl_gc, p, 4);
+}
+
 #endif
 
 // -----------------------------------------------------------------------------
 
 #ifdef FL_CFG_GFX_XLIB
+
+// --- line and polygon drawing with integer coordinates
 
 void Fl_Xlib_Graphics_Driver::point(int x, int y) {
   XDrawPoint(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y));
@@ -813,6 +712,96 @@ void Fl_Xlib_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
   if (!clip_to_short(x, y, w, h))
     XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
+}
+
+void Fl_Xlib_Graphics_Driver::line(int x, int y, int x1, int y1) {
+  XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
+}
+
+void Fl_Xlib_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
+  XPoint p[3];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  XDrawLines(fl_display, fl_window, fl_gc, p, 3, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1) {
+  XDrawLine(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y), clip_x(x1), clip_x(y));
+}
+
+void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
+  XPoint p[3];
+  p[0].x = clip_x(x);  p[0].y = p[1].y = clip_x(y);
+  p[1].x = p[2].x = clip_x(x1); p[2].y = clip_x(y2);
+  XDrawLines(fl_display, fl_window, fl_gc, p, 3, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
+  XPoint p[4];
+  p[0].x = clip_x(x);  p[0].y = p[1].y = clip_x(y);
+  p[1].x = p[2].x = clip_x(x1); p[2].y = p[3].y = clip_x(y2);
+  p[3].x = clip_x(x3);
+  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1) {
+  XDrawLine(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y), clip_x(x), clip_x(y1));
+}
+
+void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
+  XPoint p[3];
+  p[0].x = p[1].x = clip_x(x);  p[0].y = clip_x(y);
+  p[1].y = p[2].y = clip_x(y1); p[2].x = clip_x(x2);
+  XDrawLines(fl_display, fl_window, fl_gc, p, 3, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
+  XPoint p[4];
+  p[0].x = p[1].x = clip_x(x);  p[0].y = clip_x(y);
+  p[1].y = p[2].y = clip_x(y1); p[2].x = p[3].x = clip_x(x2);
+  p[3].y = clip_x(y3);
+  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
+  XPoint p[4];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  p[3].x = x;  p[3].y = y;
+  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  XPoint p[5];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  p[3].x = x3; p[3].y = y3;
+  p[4].x = x;  p[4].y = y;
+  XDrawLines(fl_display, fl_window, fl_gc, p, 5, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
+  XPoint p[4];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  p[3].x = x;  p[3].y = y;
+  XFillPolygon(fl_display, fl_window, fl_gc, p, 3, Convex, 0);
+  XDrawLines(fl_display, fl_window, fl_gc, p, 4, 0);
+}
+
+void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+  XPoint p[5];
+  p[0].x = x;  p[0].y = y;
+  p[1].x = x1; p[1].y = y1;
+  p[2].x = x2; p[2].y = y2;
+  p[3].x = x3; p[3].y = y3;
+  p[4].x = x;  p[4].y = y;
+  XFillPolygon(fl_display, fl_window, fl_gc, p, 4, Convex, 0);
+  XDrawLines(fl_display, fl_window, fl_gc, p, 5, 0);
 }
 
 #endif

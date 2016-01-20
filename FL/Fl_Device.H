@@ -250,21 +250,21 @@ protected:
   /** \brief see fl_line_style(int style, int width, char* dashes). */
   virtual void line_style(int style, int width=0, char* dashes=0);
   /** \brief see fl_xyline(int x, int y, int x1). */
-  virtual void xyline(int x, int y, int x1);
+  virtual void xyline(int x, int y, int x1) = 0;
   /** \brief see fl_xyline(int x, int y, int x1, int y2). */
-  virtual void xyline(int x, int y, int x1, int y2);
+  virtual void xyline(int x, int y, int x1, int y2) = 0;
   /** \brief see fl_xyline(int x, int y, int x1, int y2, int x3). */
-  virtual void xyline(int x, int y, int x1, int y2, int x3);
+  virtual void xyline(int x, int y, int x1, int y2, int x3) = 0;
   /** \brief see fl_yxline(int x, int y, int y1). */
-  virtual void yxline(int x, int y, int y1);
+  virtual void yxline(int x, int y, int y1) = 0;
   /** \brief see fl_yxline(int x, int y, int y1, int x2). */
-  virtual void yxline(int x, int y, int y1, int x2);
+  virtual void yxline(int x, int y, int y1, int x2) = 0;
   /** \brief see fl_yxline(int x, int y, int y1, int x2, int y3). */
-  virtual void yxline(int x, int y, int y1, int x2, int y3);
+  virtual void yxline(int x, int y, int y1, int x2, int y3) = 0;
   /** \brief see fl_line(int x, int y, int x1, int y1). */
-  virtual void line(int x, int y, int x1, int y1);
+  virtual void line(int x, int y, int x1, int y1) = 0;
   /** \brief see fl_line(int x, int y, int x1, int y1, int x2, int y2). */
-  virtual void line(int x, int y, int x1, int y1, int x2, int y2);
+  virtual void line(int x, int y, int x1, int y1, int x2, int y2) = 0;
   /** \brief see fl_draw(const char *str, int n, int x, int y). */
   virtual void draw(const char *str, int n, int x, int y) {}
 #ifdef __APPLE__
@@ -287,13 +287,13 @@ protected:
   /** \brief see fl_point(int x, int y). */
   virtual void point(int x, int y) = 0;
   /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2). */
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
   /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3). */
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
   /** \brief see fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2). */
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
   /** \brief see fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3). */
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
   /** \brief see fl_begin_points(). */
   virtual void begin_points();
   /** \brief see fl_begin_line(). */
@@ -474,10 +474,22 @@ public:
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  // --- recently moved implementations (see FL_PORTING efforts)
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
   void rectf(int x, int y, int w, int h);
+  void line(int x, int y, int x1, int y1);
+  void line(int x, int y, int x1, int y1, int x2, int y2);
+  void xyline(int x, int y, int x1);
+  void xyline(int x, int y, int x1, int y2);
+  void xyline(int x, int y, int x1, int y2, int x3);
+  void yxline(int x, int y, int y1);
+  void yxline(int x, int y, int y1, int x2);
+  void yxline(int x, int y, int y1, int x2, int y3);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
 };
 
 // FIXME: add Fl_Quartz_Printer_Graphics_Driver
@@ -515,10 +527,22 @@ public:
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  // --- recently moved implementations (see FL_PORTING efforts)
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
   void rectf(int x, int y, int w, int h);
+  void line(int x, int y, int x1, int y1);
+  void line(int x, int y, int x1, int y1, int x2, int y2);
+  void xyline(int x, int y, int x1);
+  void xyline(int x, int y, int x1, int y2);
+  void xyline(int x, int y, int x1, int y2, int x3);
+  void yxline(int x, int y, int y1);
+  void yxline(int x, int y, int y1, int x2);
+  void yxline(int x, int y, int y1, int x2, int y3);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
 };
 
 /**
@@ -578,10 +602,22 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
-  // --- recently moved implementations (see FL_PORTING efforts)
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
   void rectf(int x, int y, int w, int h);
+  void line(int x, int y, int x1, int y1);
+  void line(int x, int y, int x1, int y1, int x2, int y2);
+  void xyline(int x, int y, int x1);
+  void xyline(int x, int y, int x1, int y2);
+  void xyline(int x, int y, int x1, int y2, int x3);
+  void yxline(int x, int y, int y1);
+  void yxline(int x, int y, int y1, int x2);
+  void yxline(int x, int y, int y1, int x2, int y3);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
 };
 
 #endif
@@ -637,6 +673,7 @@ public:
  There is no need to create any other object of this class.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
+  friend class Fl_Quartz_Graphics_Driver;
   static Fl_Display_Device *_display; // the platform display device
 #ifdef __APPLE__
   friend class Fl_X;
