@@ -67,10 +67,14 @@ public:
     gl_color(c);
   }
   void rectf(int x, int y, int w, int h) {
+    if (w<0) { x = x+w; w = -w; }
+    if (h<0) { y = y+h; h = -h; }
+    // OpenGL has the natural origin at the bottom left. Drawing in FLTK
+    // coordinates requires that we shift the rectangle one pixel up.
     glBegin(GL_POLYGON);
-    glVertex2i(x, y);
-    glVertex2i(x+w-1, y);
-    glVertex2i(x+w-1, y+h-1);
+    glVertex2i(x, y-1);
+    glVertex2i(x+w, y-1);
+    glVertex2i(x+w, y+h-1);
     glVertex2i(x, y+h-1);
     glEnd();
   }
@@ -79,12 +83,14 @@ public:
     glVertex2i(x, y);
     glVertex2i(x1, y1);
     glEnd();
+    point(x1, y1);
   }
   void xyline(int x, int y, int x1) {
     glBegin(GL_LINE_STRIP);
     glVertex2i(x, y);
     glVertex2i(x1, y);
     glEnd();
+    point(x1, y);
   }
   void xyline(int x, int y, int x1, int y2) {
     glBegin(GL_LINE_STRIP);
@@ -92,6 +98,7 @@ public:
     glVertex2i(x1, y);
     glVertex2i(x1, y2);
     glEnd();
+    point(x1, y2);
   }
   void xyline(int x, int y, int x1, int y2, int x3) {
     glBegin(GL_LINE_STRIP);
@@ -100,12 +107,14 @@ public:
     glVertex2i(x1, y2);
     glVertex2i(x3, y2);
     glEnd();
+    point(x3, y2);
   }
   void yxline(int x, int y, int y1) {
     glBegin(GL_LINE_STRIP);
     glVertex2i(x, y);
     glVertex2i(x, y1);
     glEnd();
+    point(x, y1);
   }
   void yxline(int x, int y, int y1, int x2) {
     glBegin(GL_LINE_STRIP);
@@ -113,6 +122,7 @@ public:
     glVertex2i(x, y1);
     glVertex2i(x2, y1);
     glEnd();
+    point(x2, y1);
   }
   void yxline(int x, int y, int y1, int x2, int y3) {
     glBegin(GL_LINE_STRIP);
@@ -120,6 +130,12 @@ public:
     glVertex2i(x, y1);
     glVertex2i(x2, y1);
     glVertex2i(x2, y3);
+    glEnd();
+    point(x2, y3);
+  }
+  virtual void point(int x, int y) {
+    glBegin(GL_POINTS);
+    glVertex2i(x, y);
     glEnd();
   }
 
@@ -682,7 +698,7 @@ void Fl_Gl_Window::draw() {
   glLoadIdentity();
   glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
 //  glOrtho(0, w(), h(), 0, -1, 1);
-  glLineWidth(pixels_per_unit());
+  glLineWidth(pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
 
   Fl_Window::draw();
 

@@ -285,7 +285,7 @@ protected:
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
   virtual void color(uchar r, uchar g, uchar b) {}
   /** \brief see fl_point(int x, int y). */
-  virtual void point(int x, int y);
+  virtual void point(int x, int y) = 0;
   /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2). */
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
   /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3). */
@@ -474,6 +474,7 @@ public:
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  virtual void point(int x, int y);
 };
 
 #elif defined(WIN32) || defined(FL_DOXYGEN)
@@ -509,6 +510,7 @@ public:
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  virtual void point(int x, int y);
 };
 
 /**
@@ -529,6 +531,8 @@ public:
 
 # pragma message "FL_PORTING: define a native graphics driver Fl_xxx_Graphics_Driver"
 class FL_EXPORT Fl_XXX_Graphics_Driver : public Fl_Graphics_Driver {
+protected:
+  virtual void point(int x, int y) { }
 };
 
 #else // X11
@@ -564,6 +568,7 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
+  virtual void point(int x, int y);
 };
 
 #endif

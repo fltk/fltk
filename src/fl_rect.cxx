@@ -27,6 +27,7 @@
 // that minimal update works.
 
 #include <config.h>
+#include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Printer.H>
@@ -546,19 +547,53 @@ void Fl_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, i
 #endif
 }
 
-void Fl_Graphics_Driver::point(int x, int y) {
-#if defined(USE_X11)
-  XDrawPoint(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y));
-#elif defined(WIN32)
-  SetPixel(fl_gc, x, y, fl_RGB());
-#elif defined(__APPLE_QUARTZ__)
+
+/*
+ Matt: I wrote individual methods for every class. They are virtual, so the
+ correct function is called, depending on the active driver.
+ 
+ By having individual methods, multiple drivers can co-exist, for example
+ Quartz, OpenGL, and a printer driver.
+ 
+ The individual implementations should eventually go into files that are 
+ included into this file, based on the configuration, for example:
+ 
+   src/cfg_gfx/quartz_rect.cxx
+   src/cfg_gfx/gdi_rect.cxx
+   src/cfg_gfx/xlib_rect.cxx
+ 
+ Porting the graphics system to a new platform then requires to copy one of
+ these files and implement the virtual functions. point() is the only function
+ that *must* be implemented when deriving from 'Fl_Minimal_Graphics_Driver"
+ (which is still to be written)
+ */
+
+#ifdef FL_CFG_GFX_QUARTZ
+
+void Fl_Quartz_Graphics_Driver::point(int x, int y) {
   CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement point"
-#else
-# error unsupported platform
-#endif
 }
+
+#endif
+
+
+#ifdef FL_CFG_GFX_GDI
+
+void Fl_GDI_Graphics_Driver::point(int x, int y) {
+  SetPixel(fl_gc, x, y, fl_RGB());
+}
+
+#endif
+
+
+#ifdef FL_CFG_GFX_XLIB
+
+void Fl_Xlib_Graphics_Driver::point(int x, int y) {
+  XDrawPoint(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y));
+}
+
+#endif
+
 
 ////////////////////////////////////////////////////////////////
 
