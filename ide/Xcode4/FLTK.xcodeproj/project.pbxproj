@@ -9478,7 +9478,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -p -f ../../abi-version.ide FL/abi-version.h";
+			shellScript = "cp -p -f ../../abi-version.ide ../../FL/abi-version.h";
 		};
 /* End PBXShellScriptBuildPhase section */
 
