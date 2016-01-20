@@ -66,18 +66,6 @@ public:
     unsigned int c = (r<<24)|(g<<16)|(b<<8);
     gl_color(c);
   }
-  void rectf(int x, int y, int w, int h) {
-    if (w<0) { x = x+w; w = -w; }
-    if (h<0) { y = y+h; h = -h; }
-    // OpenGL has the natural origin at the bottom left. Drawing in FLTK
-    // coordinates requires that we shift the rectangle one pixel up.
-    glBegin(GL_POLYGON);
-    glVertex2i(x, y-1);
-    glVertex2i(x+w, y-1);
-    glVertex2i(x+w, y+h-1);
-    glVertex2i(x, y+h-1);
-    glEnd();
-  }
   void line(int x, int y, int x1, int y1) {
     glBegin(GL_LINE_STRIP);
     glVertex2i(x, y);
@@ -133,37 +121,31 @@ public:
     glEnd();
     point(x2, y3);
   }
-  virtual void point(int x, int y) {
+  // --- recently moved implementations (see FL_PORTING efforts)
+  void point(int x, int y) {
     glBegin(GL_POINTS);
     glVertex2i(x, y);
     glEnd();
   }
-
-  /*
-#ifdef __APPLE__
-  void draw(const char *str, int n, float x, float y);
-#endif
-  void draw(int angle, const char *str, int n, int x, int y);
-  void rtl_draw(const char* str, int n, int x, int y);
-  void font(Fl_Font face, Fl_Fontsize size);
-  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
-  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
-  void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
-  void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
-  void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
-  void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
-  double width(const char *str, int n);
-  double width(unsigned int c);
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  int height();
-  int descent();
-#if ! defined(FL_DOXYGEN)
-  static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
-#endif
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-*/
+  void rect(int x, int y, int w, int h) {
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(x, y);
+    glVertex2i(x+w, y);
+    glVertex2i(x+w, y+h);
+    glVertex2i(x, y+h);
+    glEnd();
+  }
+  void rectf(int x, int y, int w, int h) {
+    if (w<=0 || h<=0) return;
+    // OpenGL has the natural origin at the bottom left. Drawing in FLTK
+    // coordinates requires that we shift the rectangle one pixel up.
+    glBegin(GL_POLYGON);
+    glVertex2i(x, y-1);
+    glVertex2i(x+w, y-1);
+    glVertex2i(x+w, y+h-1);
+    glVertex2i(x, y+h-1);
+    glEnd();
+  }
 };
 
 const char *Fl_OpenGL_Graphics_Driver::class_id = "Fl_OpenGL_Graphics_Driver";

@@ -162,50 +162,6 @@ static int clip_x (int x) {
 #endif	// USE_X11
 
 
-void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {
-
-  if (w<=0 || h<=0) return;
-#if defined(USE_X11)
-  if (!clip_to_short(x, y, w, h))
-    XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
-#elif defined(WIN32)
-  MoveToEx(fl_gc, x, y, 0L); 
-  LineTo(fl_gc, x+w-1, y);
-  LineTo(fl_gc, x+w-1, y+h-1);
-  LineTo(fl_gc, x, y+h-1);
-  LineTo(fl_gc, x, y);
-#elif defined(__APPLE_QUARTZ__)
-  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGRect rect = CGRectMake(x, y, w-1, h-1);
-  CGContextStrokeRect(fl_gc, rect);
-  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement rect"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
-  if (w<=0 || h<=0) return;
-#if defined(USE_X11)
-  if (!clip_to_short(x, y, w, h))
-    XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
-#elif defined(WIN32)
-  RECT rect;
-  rect.left = x; rect.top = y;  
-  rect.right = x + w; rect.bottom = y + h;
-  FillRect(fl_gc, &rect, fl_brush());
-#elif defined(__APPLE_QUARTZ__)
-  CGRect  rect = CGRectMake(x - 0.5, y - 0.5, w , h);
-  CGContextFillRect(fl_gc, rect);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement rectf"
-#else
-# error unsupported platform
-#endif
-}
-
 void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y), clip_x(x1), clip_x(y));
@@ -548,53 +504,6 @@ void Fl_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, i
 }
 
 
-/*
- Matt: I wrote individual methods for every class. They are virtual, so the
- correct function is called, depending on the active driver.
- 
- By having individual methods, multiple drivers can co-exist, for example
- Quartz, OpenGL, and a printer driver.
- 
- The individual implementations should eventually go into files that are 
- included into this file, based on the configuration, for example:
- 
-   src/cfg_gfx/quartz_rect.cxx
-   src/cfg_gfx/gdi_rect.cxx
-   src/cfg_gfx/xlib_rect.cxx
- 
- Porting the graphics system to a new platform then requires to copy one of
- these files and implement the virtual functions. point() is the only function
- that *must* be implemented when deriving from 'Fl_Minimal_Graphics_Driver"
- (which is still to be written)
- */
-
-#ifdef FL_CFG_GFX_QUARTZ
-
-void Fl_Quartz_Graphics_Driver::point(int x, int y) {
-  CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
-}
-
-#endif
-
-
-#ifdef FL_CFG_GFX_GDI
-
-void Fl_GDI_Graphics_Driver::point(int x, int y) {
-  SetPixel(fl_gc, x, y, fl_RGB());
-}
-
-#endif
-
-
-#ifdef FL_CFG_GFX_XLIB
-
-void Fl_Xlib_Graphics_Driver::point(int x, int y) {
-  XDrawPoint(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y));
-}
-
-#endif
-
-
 ////////////////////////////////////////////////////////////////
 
 #if defined(WIN32)
@@ -813,6 +722,100 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
 # error unsupported platform
 #endif
 }
+
+////////////////////////////////////////////////////////////////
+
+/*
+ Matt: I wrote individual methods for every class. They are virtual, so the
+ correct function is called, depending on the active driver.
+
+ By having individual methods, multiple drivers can co-exist, for example
+ Quartz, OpenGL, and a printer driver.
+
+ The individual implementations should eventually go into files that are
+ included into this file, based on the configuration, for example:
+
+ src/cfg_gfx/quartz_rect.cxx
+ src/cfg_gfx/gdi_rect.cxx
+ src/cfg_gfx/xlib_rect.cxx
+
+ Porting the graphics system to a new platform then requires to copy one of
+ these files and implement the virtual functions. point() is the only function
+ that *must* be implemented when deriving from 'Fl_Minimal_Graphics_Driver"
+ (which is still to be written)
+ */
+
+#ifdef FL_CFG_GFX_QUARTZ
+
+void Fl_Quartz_Graphics_Driver::point(int x, int y) {
+  CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
+}
+
+void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
+  if (w<=0 || h<=0) return;
+  // FIXME: there should be a quartz graphics driver for the printer device that makes the USINGQUARTZPRINTER obsolete
+  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  CGRect rect = CGRectMake(x, y, w-1, h-1);
+  CGContextStrokeRect(fl_gc, rect);
+  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+}
+
+void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
+  if (w<=0 || h<=0) return;
+  CGRect rect = CGRectMake(x - 0.5, y - 0.5, w , h);
+  CGContextFillRect(fl_gc, rect);
+}
+
+#endif
+
+// -----------------------------------------------------------------------------
+
+#ifdef FL_CFG_GFX_GDI
+
+void Fl_GDI_Graphics_Driver::point(int x, int y) {
+  SetPixel(fl_gc, x, y, fl_RGB());
+}
+
+void Fl_GDI_Graphics_Driver::rect(int x, int y, int w, int h) {
+  if (w<=0 || h<=0) return;
+  MoveToEx(fl_gc, x, y, 0L);
+  LineTo(fl_gc, x+w-1, y);
+  LineTo(fl_gc, x+w-1, y+h-1);
+  LineTo(fl_gc, x, y+h-1);
+  LineTo(fl_gc, x, y);
+}
+
+void Fl_GDI_Graphics_Driver::rectf(int x, int y, int w, int h) {
+  if (w<=0 || h<=0) return;
+  RECT rect;
+  rect.left = x; rect.top = y;
+  rect.right = x + w; rect.bottom = y + h;
+  FillRect(fl_gc, &rect, fl_brush());
+}
+
+#endif
+
+// -----------------------------------------------------------------------------
+
+#ifdef FL_CFG_GFX_XLIB
+
+void Fl_Xlib_Graphics_Driver::point(int x, int y) {
+  XDrawPoint(fl_display, fl_window, fl_gc, clip_x(x), clip_x(y));
+}
+
+void Fl_Xlib_Graphics_Driver::rect(int x, int y, int w, int h) {
+  if (w<=0 || h<=0) return;
+  if (!clip_to_short(x, y, w, h))
+    XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
+}
+
+void Fl_Xlib_Graphics_Driver::rectf(int x, int y, int w, int h) {
+  if (w<=0 || h<=0) return;
+  if (!clip_to_short(x, y, w, h))
+    XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
+}
+
+#endif
 
 //
 // End of "$Id$".

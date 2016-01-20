@@ -244,9 +244,9 @@ protected:
   /** \brief The constructor. */
   Fl_Graphics_Driver();
   /** \brief see fl_rect(int x, int y, int w, int h). */
-  virtual void rect(int x, int y, int w, int h);
+  virtual void rect(int x, int y, int w, int h) = 0;
   /** \brief see fl_rectf(int x, int y, int w, int h). */
-  virtual void rectf(int x, int y, int w, int h);
+  virtual void rectf(int x, int y, int w, int h) = 0;
   /** \brief see fl_line_style(int style, int width, char* dashes). */
   virtual void line_style(int style, int width=0, char* dashes=0);
   /** \brief see fl_xyline(int x, int y, int x1). */
@@ -474,8 +474,13 @@ public:
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  virtual void point(int x, int y);
+  // --- recently moved implementations (see FL_PORTING efforts)
+  void point(int x, int y);
+  void rect(int x, int y, int w, int h);
+  void rectf(int x, int y, int w, int h);
 };
+
+// FIXME: add Fl_Quartz_Printer_Graphics_Driver
 
 #elif defined(WIN32) || defined(FL_DOXYGEN)
 
@@ -510,7 +515,10 @@ public:
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  virtual void point(int x, int y);
+  // --- recently moved implementations (see FL_PORTING efforts)
+  void point(int x, int y);
+  void rect(int x, int y, int w, int h);
+  void rectf(int x, int y, int w, int h);
 };
 
 /**
@@ -532,7 +540,9 @@ public:
 # pragma message "FL_PORTING: define a native graphics driver Fl_xxx_Graphics_Driver"
 class FL_EXPORT Fl_XXX_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
-  virtual void point(int x, int y) { }
+  // --- recently moved implementations (see FL_PORTING efforts)
+  void point(int x, int y) { }
+  void rect(int x, int y, int w, int h) { }
 };
 
 #else // X11
@@ -568,7 +578,10 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
-  virtual void point(int x, int y);
+  // --- recently moved implementations (see FL_PORTING efforts)
+  void point(int x, int y);
+  void rect(int x, int y, int w, int h);
+  void rectf(int x, int y, int w, int h);
 };
 
 #endif
