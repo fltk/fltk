@@ -45,9 +45,9 @@
 // This is defined in src/fl_line_style.cxx
 extern int fl_line_width_;
 
+
 void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
-  Fl_Region r = rstack[rstackptr];
 }
 
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
