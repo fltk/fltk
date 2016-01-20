@@ -117,7 +117,7 @@ public:
   /** A 2D coordinate transformation matrix
    */
   struct matrix {double a, b, c, d, x, y;};
-private:
+protected:
   static const matrix m0;
   Fl_Font font_; // current font
   Fl_Fontsize size_; // current font size
@@ -331,15 +331,15 @@ protected:
   /** \brief see fl_transformed_vertex(double xf, double yf). */
   virtual void transformed_vertex(double xf, double yf);
   /** \brief see fl_push_clip(int x, int y, int w, int h). */
-  virtual void push_clip(int x, int y, int w, int h);
+  virtual void push_clip(int x, int y, int w, int h) = 0;
   /** \brief see fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H). */
-  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) = 0;
   /** \brief see fl_not_clipped(int x, int y, int w, int h). */
-  virtual int not_clipped(int x, int y, int w, int h);
+  virtual int not_clipped(int x, int y, int w, int h) = 0;
   /** \brief see fl_push_no_clip(). */
-  virtual void push_no_clip();
+  virtual void push_no_clip() = 0;
   /** \brief see fl_pop_clip(). */
-  virtual void pop_clip();
+  virtual void pop_clip() = 0;
     
   /** \brief see fl_push_matrix(). */
   void push_matrix();
@@ -364,11 +364,11 @@ protected:
   /** \brief see fl_transform_dy(double x, double y). */
   double transform_dy(double x, double y);
   /** \brief see fl_clip_region(). */
-  Fl_Region clip_region();
+  virtual Fl_Region clip_region();                // has default implementation
   /** \brief see fl_clip_region(Fl_Region r). */
-  void clip_region(Fl_Region r);
+  virtual void clip_region(Fl_Region r);          // has default implementation
   /** \brief see fl_restore_clip(). */
-  void restore_clip();
+  virtual void restore_clip();                    // has default implementation
   
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
@@ -490,6 +490,13 @@ public:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  // --- clipping
+  void push_clip(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  int not_clipped(int x, int y, int w, int h);
+  void push_no_clip();
+  void pop_clip();
+  void restore_clip();
 };
 
 // FIXME: add Fl_Quartz_Printer_Graphics_Driver
@@ -543,6 +550,13 @@ public:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  // --- clipping
+  void push_clip(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  int not_clipped(int x, int y, int w, int h);
+  void push_no_clip();
+  void pop_clip();
+  void restore_clip();
 };
 
 /**
@@ -618,6 +632,13 @@ public:
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  // --- clipping
+  void push_clip(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  int not_clipped(int x, int y, int w, int h);
+  void push_no_clip();
+  void pop_clip();
+  void restore_clip();
 };
 
 #endif

@@ -45,165 +45,9 @@
 // This is defined in src/fl_line_style.cxx
 extern int fl_line_width_;
 
-#ifdef __APPLE_QUARTZ__
-extern float fl_quartz_line_width_;
-#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id)
-#endif
-
-#ifdef USE_X11
-
-#ifndef SHRT_MAX
-#define SHRT_MAX (32767)
-#endif
-
-/*
-  We need to check some coordinates for areas for clipping before we
-  use X functions, because X can't handle coordinates outside the 16-bit
-  range. Since all windows use relative coordinates > 0, we do also
-  check for negative values. X11 only, see also STR #2304.
-  
-  Note that this is only necessary for large objects, where only a
-  part of the object is visible. The draw() functions (e.g. box
-  drawing) must be clipped correctly. This is usually only a matter
-  for large container widgets. The individual child widgets will be
-  clipped completely.
-
-  We define the usable X coordinate space as [ -LW : SHRT_MAX - LW ]
-  where LW = current line width for drawing. This is done so that
-  horizontal and vertical line drawing works correctly, even in real
-  border cases, e.g. drawing a rectangle slightly outside the top left
-  window corner, but with a line width so that a part of the line should
-  be visible (in this case 2 of 5 pixels):
-
-    fl_line_style (FL_SOLID,5);	// line width = 5
-    fl_rect (-1,-1,100,100);	// top/left: 2 pixels visible
-  
-  In this example case, no clipping would be done, because X can
-  handle it and clip unneeded pixels.
-  
-  Note that we must also take care of the case where fl_line_width_
-  is zero (maybe unitialized). If this is the case, we assume a line
-  width of 1.
-
-  Todo: Arbitrary line drawings (e.g. polygons) and clip regions
-  are not yet done.
-
-  Note:
-
-  We could use max. screen coordinates instead of SHRT_MAX, but that
-  would need more work and would probably be slower. We assume that
-  all window coordinates are >= 0 and that no window extends up to
-  32767 - LW (where LW = current line width). Thus it is safe to clip
-  all coordinates to this range before calling X functions. If this
-  is not true, then clip_to_short() and clip_x() must be redefined.
-
-  It would be somewhat easier if we had fl_clip_w and fl_clip_h, as
-  defined in FLTK 2.0 (for the upper clipping bounds)...
-*/
-
-/*
-  clip_to_short() returns 1, if the area is invisible (clipped),
-  because ...
-
-    (a) w or h are <= 0		i.e. nothing is visible
-    (b) x+w or y+h are < kmin	i.e. left of or above visible area
-    (c) x or y are > kmax	i.e. right of or below visible area
-
-  kmin and kmax are the minimal and maximal X coordinate values,
-  as defined above. In this case x, y, w, and h are not changed.
-
-  It returns 0, if the area is potentially visible and X can handle
-  clipping. x, y, w, and h may have been adjusted to fit into the
-  X coordinate space.
-
-  Use this for clipping rectangles, as used in fl_rect() and
-  fl_rectf().
-*/
-
-static int clip_to_short(int &x, int &y, int &w, int &h) {
-
-  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
-  int kmin = -lw;
-  int kmax = SHRT_MAX - lw;
-
-  if (w <= 0 || h <= 0) return 1;		// (a)
-  if (x+w < kmin || y+h < kmin) return 1;	// (b)
-  if (x > kmax || y > kmax) return 1;		// (c)
-
-  if (x < kmin) { w -= (kmin-x); x = kmin; }
-  if (y < kmin) { h -= (kmin-y); y = kmin; }
-  if (x+w > kmax) w = kmax - x;
-  if (y+h > kmax) h = kmax - y;
-
-  return 0;
-}
-
-/*
-  clip_x() returns a coordinate value clipped to the 16-bit coordinate
-  space (see above). This can be used to draw horizontal and vertical
-  lines that can be handled by X11. Each single coordinate value can
-  be clipped individually, and the result can be used directly, e.g.
-  in fl_xyline() and fl_yxline(). Note that this can't be used for
-  arbitrary lines (not horizontal or vertical).
-*/
-static int clip_x (int x) {
-
-  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
-  int kmin = -lw;
-  int kmax = SHRT_MAX - lw;
-
-  if (x < kmin)
-    x = kmin;
-  else if (x > kmax)
-    x = kmax;
-  return x;
-}
-
-#endif	// USE_X11
-
-
-
-////////////////////////////////////////////////////////////////
-
-#if defined(WIN32)
-#elif defined(__APPLE__)
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement region stuff"
-#else
-// Missing X call: (is this the fastest way to init a 1-rectangle region?)
-// MSWindows equivalent exists, implemented inline in win32.H
-Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  XRectangle R;
-  clip_to_short(x, y, w, h);
-  R.x = x; R.y = y; R.width = w; R.height = h;
-  Fl_Region r = XCreateRegion();
-  XUnionRectWithRegion(&R, r, r);
-  return r;
-}
-#endif
-
 void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
-#if defined(USE_X11)
-  if (r) XSetRegion(fl_display, fl_gc, r);
-  else XSetClipMask(fl_display, fl_gc, 0);
-#elif defined(WIN32)
-  SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
-#elif defined(__APPLE_QUARTZ__)
-  if ( fl_window || fl_gc ) { // clipping for a true window or an offscreen buffer
-    Fl_X::q_clear_clipping();
-    Fl_X::q_fill_context();//flip coords if bitmap context
-    //apply program clip
-    if (r) {
-      CGContextClipToRects(fl_gc, r->rects, r->count);
-    }
-  }
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement restore_clip"
-#else
-# error unsupported platform
-#endif
 }
 
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
@@ -217,170 +61,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
   return rstack[rstackptr];
 }
 
-void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
-  Fl_Region r;
-  if (w > 0 && h > 0) {
-    r = XRectangleRegion(x,y,w,h);
-    Fl_Region current = rstack[rstackptr];
-    if (current) {
-#if defined(USE_X11)
-      Fl_Region temp = XCreateRegion();
-      XIntersectRegion(current, r, temp);
-      XDestroyRegion(r);
-      r = temp;
-#elif defined(WIN32)
-      CombineRgn(r,r,current,RGN_AND);
-#elif defined(__APPLE_QUARTZ__)
-      XDestroyRegion(r);
-      r = Fl_X::intersect_region_and_rect(current, x,y,w,h);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement push_clip"
-#else
-# error unsupported platform
-#endif
-    }
-  } else { // make empty clip region:
-#if defined(USE_X11)
-    r = XCreateRegion();
-#elif defined(WIN32)
-    r = CreateRectRgn(0,0,0,0);
-#elif defined(__APPLE_QUARTZ__)
-    r = XRectangleRegion(0,0,0,0);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement push_clip"
-#else
-# error unsupported platform
-#endif
-  }
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
-  else Fl::warning("fl_push_clip: clip stack overflow!\n");
-  fl_restore_clip();
-}
 
-// make there be no clip (used by fl_begin_offscreen() only!)
-void Fl_Graphics_Driver::push_no_clip() {
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
-  else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
-  fl_restore_clip();
-}
-
-// pop back to previous clip:
-void Fl_Graphics_Driver::pop_clip() {
-  if (rstackptr > 0) {
-    Fl_Region oldr = rstack[rstackptr--];
-    if (oldr) XDestroyRegion(oldr);
-  } else Fl::warning("fl_pop_clip: clip stack underflow!\n");
-  fl_restore_clip();
-}
-
-int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
-  if (x+w <= 0 || y+h <= 0) return 0;
-  Fl_Region r = rstack[rstackptr];
-  if (!r) return 1;
-#if defined (USE_X11)
-  // get rid of coordinates outside the 16-bit range the X calls take.
-  if (clip_to_short(x,y,w,h)) return 0;	// clipped
-  return XRectInRegion(r, x, y, w, h);
-#elif defined(WIN32)
-  RECT rect;
-  if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // in case of print context, convert coords from logical to device
-    POINT pt[2] = { {x, y}, {x + w, y + h} };
-    LPtoDP(fl_gc, pt, 2);
-    rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
-  } else {
-    rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
-  }
-  return RectInRegion(r,&rect);
-#elif defined(__APPLE_QUARTZ__)
-  CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
-  for (int i = 0; i < r->count; i++) {
-    CGRect test = CGRectIntersection(r->rects[i], arg);
-    if (!CGRectIsEmpty(test)) return 1;
-  }
-  return 0;
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement not_clipped"
-#else
-# error unsupported platform
-#endif
-}
-
-// return rectangle surrounding intersection of this rectangle and clip:
-int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
-  X = x; Y = y; W = w; H = h;
-  Fl_Region r = rstack[rstackptr];
-  if (!r) return 0;
-#if defined(USE_X11)
-  switch (XRectInRegion(r, x, y, w, h)) {
-  case 0: // completely outside
-    W = H = 0;
-    return 2;
-  case 1: // completely inside:
-    return 0;
-  default: // partial:
-    break;
-  }
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
-  Fl_Region temp = XCreateRegion();
-  XIntersectRegion(r, rr, temp);
-  XRectangle rect;
-  XClipBox(temp, &rect);
-  X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
-  XDestroyRegion(temp);
-  XDestroyRegion(rr);
-  return 1;
-#elif defined(WIN32)
-// The win32 API makes no distinction between partial and complete
-// intersection, so we have to check for partial intersection ourselves.
-// However, given that the regions may be composite, we have to do
-// some voodoo stuff...
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
-  Fl_Region temp = CreateRectRgn(0,0,0,0);
-  int ret;
-  if (CombineRgn(temp, rr, r, RGN_AND) == NULLREGION) { // disjoint
-    W = H = 0;
-    ret = 2;
-  } else if (EqualRgn(temp, rr)) { // complete
-    ret = 0;
-  } else {	// partial intersection
-    RECT rect;
-    GetRgnBox(temp, &rect);
-    if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // if print context, convert coords from device to logical
-      POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
-      DPtoLP(fl_gc, pt, 2);
-      X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;
-    }
-    else {
-      X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
-      }
-    ret = 1;
-  }
-  DeleteObject(temp);
-  DeleteObject(rr);
-  return ret;
-#elif defined(__APPLE_QUARTZ__)
-  CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
-  CGRect u = CGRectMake(0,0,0,0);
-  CGRect test;
-  for(int i = 0; i < r->count; i++) {
-    test = CGRectIntersection(r->rects[i], arg);
-    if( ! CGRectIsEmpty(test) ) {
-      if(CGRectIsEmpty(u)) u = test;
-      else u = CGRectUnion(u, test);
-    }
-  }
-  X = int(u.origin.x + 0.5); // reverse offset introduced by fl_cgrectmake_cocoa()
-  Y = int(u.origin.y + 0.5);
-  W = int(u.size.width + 0.5); // round to nearest integer
-  H = int(u.size.height + 0.5);
-  if(CGRectIsEmpty(u)) W = H = 0;
-  return ! CGRectEqualToRect(arg, u);
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement clip_box"
-#else
-# error unsupported platform
-#endif
-}
 
 ////////////////////////////////////////////////////////////////
 
@@ -407,6 +88,9 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
 ////////////////////////////////////////////////////////////////
 
 #ifdef FL_CFG_GFX_QUARTZ
+
+extern float fl_quartz_line_width_;
+#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id)
 
 // --- line and polygon drawing with integer coordinates
 
@@ -570,6 +254,88 @@ void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, in
   CGContextSetShouldAntialias(fl_gc, false);
 }
 
+// --- clipping
+
+void Fl_Quartz_Graphics_Driver::push_clip(int x, int y, int w, int h) {
+  Fl_Region r;
+  if (w > 0 && h > 0) {
+    r = XRectangleRegion(x,y,w,h);
+    Fl_Region current = rstack[rstackptr];
+    if (current) {
+      XDestroyRegion(r);
+      r = Fl_X::intersect_region_and_rect(current, x,y,w,h);
+    }
+  } else { // make empty clip region:
+    r = XRectangleRegion(0,0,0,0);
+  }
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
+  else Fl::warning("Fl_Quartz_Graphics_Driver::push_clip: clip stack overflow!\n");
+  fl_restore_clip();
+}
+
+int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
+  X = x; Y = y; W = w; H = h;
+  Fl_Region r = rstack[rstackptr];
+  if (!r) return 0;
+  CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
+  CGRect u = CGRectMake(0,0,0,0);
+  CGRect test;
+  for (int i = 0; i < r->count; i++) {
+    test = CGRectIntersection(r->rects[i], arg);
+    if ( !CGRectIsEmpty(test) ) {
+      if(CGRectIsEmpty(u)) u = test;
+      else u = CGRectUnion(u, test);
+    }
+  }
+  X = int(u.origin.x + 0.5); // reverse offset introduced by fl_cgrectmake_cocoa()
+  Y = int(u.origin.y + 0.5);
+  W = int(u.size.width + 0.5); // round to nearest integer
+  H = int(u.size.height + 0.5);
+  if (CGRectIsEmpty(u)) W = H = 0;
+  return !CGRectEqualToRect(arg, u);
+}
+
+int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
+  if (x+w <= 0 || y+h <= 0) return 0;
+  Fl_Region r = rstack[rstackptr];
+  if (!r) return 1;
+  CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
+  for (int i = 0; i < r->count; i++) {
+    CGRect test = CGRectIntersection(r->rects[i], arg);
+    if (!CGRectIsEmpty(test)) return 1;
+  }
+  return 0;
+}
+
+// make there be no clip (used by fl_begin_offscreen() only!)
+void Fl_Quartz_Graphics_Driver::push_no_clip() {
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
+  else Fl::warning("Fl_Quartz_Graphics_Driver::push_no_clip: clip stack overflow!\n");
+  fl_restore_clip();
+}
+
+// pop back to previous clip:
+void Fl_Quartz_Graphics_Driver::pop_clip() {
+  if (rstackptr > 0) {
+    Fl_Region oldr = rstack[rstackptr--];
+    if (oldr) XDestroyRegion(oldr);
+  } else Fl::warning("Fl_Quartz_Graphics_Driver::pop_clip: clip stack underflow!\n");
+  fl_restore_clip();
+}
+
+void Fl_Quartz_Graphics_Driver::restore_clip() {
+  fl_clip_state_number++;
+  Fl_Region r = rstack[rstackptr];
+  if ( fl_window || fl_gc ) { // clipping for a true window or an offscreen buffer
+    Fl_X::q_clear_clipping();
+    Fl_X::q_fill_context();//flip coords if bitmap context
+                           //apply program clip
+    if (r) {
+      CGContextClipToRects(fl_gc, r->rects, r->count);
+    }
+  }
+}
+
 #endif
 
 // -----------------------------------------------------------------------------
@@ -690,11 +456,217 @@ void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y
   Polygon(fl_gc, p, 4);
 }
 
+// --- clipping
+
+void Fl_GDI_Graphics_Driver::push_clip(int x, int y, int w, int h) {
+  Fl_Region r;
+  if (w > 0 && h > 0) {
+    r = XRectangleRegion(x,y,w,h);
+    Fl_Region current = rstack[rstackptr];
+    if (current) {
+      CombineRgn(r,r,current,RGN_AND);
+    }
+  } else { // make empty clip region:
+    r = CreateRectRgn(0,0,0,0);
+  }
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
+  else Fl::warning("Fl_GDI_Graphics_Driver::push_clip: clip stack overflow!\n");
+  fl_restore_clip();
+}
+
+int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
+  X = x; Y = y; W = w; H = h;
+  Fl_Region r = rstack[rstackptr];
+  if (!r) return 0;
+  // The win32 API makes no distinction between partial and complete
+  // intersection, so we have to check for partial intersection ourselves.
+  // However, given that the regions may be composite, we have to do
+  // some voodoo stuff...
+  Fl_Region rr = XRectangleRegion(x,y,w,h);
+  Fl_Region temp = CreateRectRgn(0,0,0,0);
+  int ret;
+  if (CombineRgn(temp, rr, r, RGN_AND) == NULLREGION) { // disjoint
+    W = H = 0;
+    ret = 2;
+  } else if (EqualRgn(temp, rr)) { // complete
+    ret = 0;
+  } else {	// partial intersection
+    RECT rect;
+    GetRgnBox(temp, &rect);
+    if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // if print context, convert coords from device to logical
+      POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
+      DPtoLP(fl_gc, pt, 2);
+      X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;
+    }
+    else {
+      X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
+    }
+    ret = 1;
+  }
+  DeleteObject(temp);
+  DeleteObject(rr);
+  return ret;
+}
+
+int Fl_GDI_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
+  if (x+w <= 0 || y+h <= 0) return 0;
+  Fl_Region r = rstack[rstackptr];
+  if (!r) return 1;
+  RECT rect;
+  if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // in case of print context, convert coords from logical to device
+    POINT pt[2] = { {x, y}, {x + w, y + h} };
+    LPtoDP(fl_gc, pt, 2);
+    rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
+  } else {
+    rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+  }
+  return RectInRegion(r,&rect);
+}
+
+// make there be no clip (used by fl_begin_offscreen() only!)
+void Fl_GDI_Graphics_Driver::push_no_clip() {
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
+  else Fl::warning("Fl_GDI_Graphics_Driver::push_no_clip: clip stack overflow!\n");
+  fl_restore_clip();
+}
+
+// pop back to previous clip:
+void Fl_GDI_Graphics_Driver::pop_clip() {
+  if (rstackptr > 0) {
+    Fl_Region oldr = rstack[rstackptr--];
+    if (oldr) XDestroyRegion(oldr);
+  } else Fl::warning("Fl_GDI_Graphics_Driver::pop_clip: clip stack underflow!\n");
+  fl_restore_clip();
+}
+
+void Fl_GDI_Graphics_Driver::restore_clip() {
+  fl_clip_state_number++;
+  Fl_Region r = rstack[rstackptr];
+  SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
+}
+
 #endif
 
 // -----------------------------------------------------------------------------
 
 #ifdef FL_CFG_GFX_XLIB
+
+#ifndef SHRT_MAX
+#define SHRT_MAX (32767)
+#endif
+
+/*
+ We need to check some coordinates for areas for clipping before we
+ use X functions, because X can't handle coordinates outside the 16-bit
+ range. Since all windows use relative coordinates > 0, we do also
+ check for negative values. X11 only, see also STR #2304.
+
+ Note that this is only necessary for large objects, where only a
+ part of the object is visible. The draw() functions (e.g. box
+ drawing) must be clipped correctly. This is usually only a matter
+ for large container widgets. The individual child widgets will be
+ clipped completely.
+
+ We define the usable X coordinate space as [ -LW : SHRT_MAX - LW ]
+ where LW = current line width for drawing. This is done so that
+ horizontal and vertical line drawing works correctly, even in real
+ border cases, e.g. drawing a rectangle slightly outside the top left
+ window corner, but with a line width so that a part of the line should
+ be visible (in this case 2 of 5 pixels):
+
+ fl_line_style (FL_SOLID,5);	// line width = 5
+ fl_rect (-1,-1,100,100);	// top/left: 2 pixels visible
+
+ In this example case, no clipping would be done, because X can
+ handle it and clip unneeded pixels.
+
+ Note that we must also take care of the case where fl_line_width_
+ is zero (maybe unitialized). If this is the case, we assume a line
+ width of 1.
+
+ Todo: Arbitrary line drawings (e.g. polygons) and clip regions
+ are not yet done.
+
+ Note:
+
+ We could use max. screen coordinates instead of SHRT_MAX, but that
+ would need more work and would probably be slower. We assume that
+ all window coordinates are >= 0 and that no window extends up to
+ 32767 - LW (where LW = current line width). Thus it is safe to clip
+ all coordinates to this range before calling X functions. If this
+ is not true, then clip_to_short() and clip_x() must be redefined.
+
+ It would be somewhat easier if we had fl_clip_w and fl_clip_h, as
+ defined in FLTK 2.0 (for the upper clipping bounds)...
+ */
+
+/*
+ clip_to_short() returns 1, if the area is invisible (clipped),
+ because ...
+
+ (a) w or h are <= 0		i.e. nothing is visible
+ (b) x+w or y+h are < kmin	i.e. left of or above visible area
+ (c) x or y are > kmax	i.e. right of or below visible area
+
+ kmin and kmax are the minimal and maximal X coordinate values,
+ as defined above. In this case x, y, w, and h are not changed.
+
+ It returns 0, if the area is potentially visible and X can handle
+ clipping. x, y, w, and h may have been adjusted to fit into the
+ X coordinate space.
+
+ Use this for clipping rectangles, as used in fl_rect() and
+ fl_rectf().
+ */
+static int clip_to_short(int &x, int &y, int &w, int &h) {
+
+  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int kmin = -lw;
+  int kmax = SHRT_MAX - lw;
+
+  if (w <= 0 || h <= 0) return 1;		// (a)
+  if (x+w < kmin || y+h < kmin) return 1;	// (b)
+  if (x > kmax || y > kmax) return 1;		// (c)
+
+  if (x < kmin) { w -= (kmin-x); x = kmin; }
+  if (y < kmin) { h -= (kmin-y); y = kmin; }
+  if (x+w > kmax) w = kmax - x;
+  if (y+h > kmax) h = kmax - y;
+
+  return 0;
+}
+
+/*
+ clip_x() returns a coordinate value clipped to the 16-bit coordinate
+ space (see above). This can be used to draw horizontal and vertical
+ lines that can be handled by X11. Each single coordinate value can
+ be clipped individually, and the result can be used directly, e.g.
+ in fl_xyline() and fl_yxline(). Note that this can't be used for
+ arbitrary lines (not horizontal or vertical).
+ */
+static int clip_x (int x) {
+
+  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int kmin = -lw;
+  int kmax = SHRT_MAX - lw;
+
+  if (x < kmin)
+    x = kmin;
+  else if (x > kmax)
+    x = kmax;
+  return x;
+}
+
+// Missing X call: (is this the fastest way to init a 1-rectangle region?)
+// MSWindows equivalent exists, implemented inline in win32.H
+Fl_Region XRectangleRegion(int x, int y, int w, int h) {
+  XRectangle R;
+  clip_to_short(x, y, w, h);
+  R.x = x; R.y = y; R.width = w; R.height = h;
+  Fl_Region r = XCreateRegion();
+  XUnionRectWithRegion(&R, r, r);
+  return r;
+}
 
 // --- line and polygon drawing with integer coordinates
 
@@ -802,6 +774,83 @@ void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int 
   p[4].x = x;  p[4].y = y;
   XFillPolygon(fl_display, fl_window, fl_gc, p, 4, Convex, 0);
   XDrawLines(fl_display, fl_window, fl_gc, p, 5, 0);
+}
+
+// --- clipping
+
+void Fl_Xlib_Graphics_Driver::push_clip(int x, int y, int w, int h) {
+  Fl_Region r;
+  if (w > 0 && h > 0) {
+    r = XRectangleRegion(x,y,w,h);
+    Fl_Region current = rstack[rstackptr];
+    if (current) {
+      Fl_Region temp = XCreateRegion();
+      XIntersectRegion(current, r, temp);
+      XDestroyRegion(r);
+      r = temp;
+    }
+  } else { // make empty clip region:
+    r = XCreateRegion();
+  }
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
+  else Fl::warning("Fl_Xlib_Graphics_Driver::push_clip: clip stack overflow!\n");
+  fl_restore_clip();
+}
+
+int Fl_Xlib_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
+  X = x; Y = y; W = w; H = h;
+  Fl_Region r = rstack[rstackptr];
+  if (!r) return 0;
+  switch (XRectInRegion(r, x, y, w, h)) {
+    case 0: // completely outside
+      W = H = 0;
+      return 2;
+    case 1: // completely inside:
+      return 0;
+    default: // partial:
+      break;
+  }
+  Fl_Region rr = XRectangleRegion(x,y,w,h);
+  Fl_Region temp = XCreateRegion();
+  XIntersectRegion(r, rr, temp);
+  XRectangle rect;
+  XClipBox(temp, &rect);
+  X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
+  XDestroyRegion(temp);
+  XDestroyRegion(rr);
+  return 1;
+}
+
+int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
+  if (x+w <= 0 || y+h <= 0) return 0;
+  Fl_Region r = rstack[rstackptr];
+  if (!r) return 1;
+  // get rid of coordinates outside the 16-bit range the X calls take.
+  if (clip_to_short(x,y,w,h)) return 0;	// clipped
+  return XRectInRegion(r, x, y, w, h);
+}
+
+// make there be no clip (used by fl_begin_offscreen() only!)
+void Fl_Xlib_Graphics_Driver::push_no_clip() {
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
+  else Fl::warning("fl_push_no_cFl_Xlib_Graphics_Driver::push_no_cliplip: clip stack overflow!\n");
+  fl_restore_clip();
+}
+
+// pop back to previous clip:
+void Fl_Xlib_Graphics_Driver::pop_clip() {
+  if (rstackptr > 0) {
+    Fl_Region oldr = rstack[rstackptr--];
+    if (oldr) XDestroyRegion(oldr);
+  } else Fl::warning("Fl_Xlib_Graphics_Driver::pop_clip: clip stack underflow!\n");
+  fl_restore_clip();
+}
+
+void Fl_Xlib_Graphics_Driver::restore_clip() {
+  fl_clip_state_number++;
+  Fl_Region r = rstack[rstackptr];
+  if (r) XSetRegion(fl_display, fl_gc, r);
+  else XSetClipMask(fl_display, fl_gc, 0);
 }
 
 #endif

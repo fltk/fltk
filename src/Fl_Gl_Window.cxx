@@ -185,6 +185,27 @@ public:
     glVertex2i(x3, y3);
     glEnd();
   }
+  void push_clip(int x, int y, int w, int h) {
+    // TODO: implement OpenGL clipping
+  }
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
+    // TODO: implement OpenGL clipping
+    X = x; Y = y; W = w, H = h;
+    return 0;
+  }
+  int not_clipped(int x, int y, int w, int h) {
+    // TODO: implement OpenGL clipping
+    return 1;
+  }
+  void push_no_clip() {
+    // TODO: implement OpenGL clipping
+  }
+  void pop_clip() {
+    // TODO: implement OpenGL clipping
+  }
+  void restore_clip() {
+    // TODO: implement OpenGL clipping
+  }
 };
 
 const char *Fl_OpenGL_Graphics_Driver::class_id = "Fl_OpenGL_Graphics_Driver";
