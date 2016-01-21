@@ -102,7 +102,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 #ifdef FL_CFG_GFX_GDI
 
-# include "cfg_gfx/quartz_rect.cxx"
+# include "cfg_gfx/gdi_rect.cxx"
 
 #endif
 
