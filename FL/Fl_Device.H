@@ -164,17 +164,7 @@ protected:
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
-  friend void fl_rect(int x, int y, int w, int h);
-  friend void fl_rectf(int x, int y, int w, int h);
   friend void fl_line_style(int style, int width, char* dashes);
-  friend void fl_xyline(int x, int y, int x1);
-  friend void fl_xyline(int x, int y, int x1, int y2);
-  friend void fl_xyline(int x, int y, int x1, int y2, int x3);
-  friend void fl_yxline(int x, int y, int y1);
-  friend void fl_yxline(int x, int y, int y1, int x2);
-  friend void fl_yxline(int x, int y, int y1, int x2, int y3);
-  friend void fl_line(int x, int y, int x1, int y1);
-  friend void fl_line(int x, int y, int x1, int y1, int x2, int y2);
   friend void fl_draw(const char *str, int n, int x, int y);
 #ifdef __APPLE__
   friend void fl_draw(const char *str, int n, float x, float y);
@@ -190,11 +180,6 @@ protected:
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
   friend void fl_color(Fl_Color c);
   friend void fl_color(uchar r, uchar g, uchar b);
-  friend void fl_point(int x, int y);
-  friend void fl_loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  friend void fl_loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  friend void fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  friend void fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   friend void fl_begin_points();
   friend void fl_begin_line();
   friend void fl_begin_loop();
@@ -210,11 +195,6 @@ protected:
   friend void fl_end_loop();
   friend void fl_end_polygon();
   friend void fl_transformed_vertex(double xf, double yf);
-  friend void fl_push_clip(int x, int y, int w, int h);
-  friend int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  friend int fl_not_clipped(int x, int y, int w, int h);
-  friend void fl_push_no_clip();
-  friend void fl_pop_clip();
   friend void fl_begin_complex_polygon();
   friend void fl_gap();
   friend void fl_end_complex_polygon();
@@ -229,10 +209,7 @@ protected:
   friend double fl_transform_y(double x, double y);
   friend double fl_transform_dx(double x, double y);
   friend double fl_transform_dy(double x, double y);
-  friend Fl_Region fl_clip_region();
-  friend void fl_clip_region(Fl_Region r);
-  friend void fl_restore_clip();
-  
+
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
@@ -243,28 +220,8 @@ protected:
 
   /** \brief The constructor. */
   Fl_Graphics_Driver();
-  /** \brief see fl_rect(int x, int y, int w, int h). */
-  virtual void rect(int x, int y, int w, int h) = 0;
-  /** \brief see fl_rectf(int x, int y, int w, int h). */
-  virtual void rectf(int x, int y, int w, int h) = 0;
   /** \brief see fl_line_style(int style, int width, char* dashes). */
   virtual void line_style(int style, int width=0, char* dashes=0);
-  /** \brief see fl_xyline(int x, int y, int x1). */
-  virtual void xyline(int x, int y, int x1) = 0;
-  /** \brief see fl_xyline(int x, int y, int x1, int y2). */
-  virtual void xyline(int x, int y, int x1, int y2) = 0;
-  /** \brief see fl_xyline(int x, int y, int x1, int y2, int x3). */
-  virtual void xyline(int x, int y, int x1, int y2, int x3) = 0;
-  /** \brief see fl_yxline(int x, int y, int y1). */
-  virtual void yxline(int x, int y, int y1) = 0;
-  /** \brief see fl_yxline(int x, int y, int y1, int x2). */
-  virtual void yxline(int x, int y, int y1, int x2) = 0;
-  /** \brief see fl_yxline(int x, int y, int y1, int x2, int y3). */
-  virtual void yxline(int x, int y, int y1, int x2, int y3) = 0;
-  /** \brief see fl_line(int x, int y, int x1, int y1). */
-  virtual void line(int x, int y, int x1, int y1) = 0;
-  /** \brief see fl_line(int x, int y, int x1, int y1, int x2, int y2). */
-  virtual void line(int x, int y, int x1, int y1, int x2, int y2) = 0;
   /** \brief see fl_draw(const char *str, int n, int x, int y). */
   virtual void draw(const char *str, int n, int x, int y) {}
 #ifdef __APPLE__
@@ -284,16 +241,6 @@ protected:
   virtual void color(Fl_Color c) {color_ = c;}
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
   virtual void color(uchar r, uchar g, uchar b) {}
-  /** \brief see fl_point(int x, int y). */
-  virtual void point(int x, int y) = 0;
-  /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2). */
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
-  /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3). */
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
-  /** \brief see fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2). */
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
-  /** \brief see fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3). */
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
   /** \brief see fl_begin_points(). */
   virtual void begin_points();
   /** \brief see fl_begin_line(). */
@@ -330,17 +277,7 @@ protected:
   virtual void end_complex_polygon();
   /** \brief see fl_transformed_vertex(double xf, double yf). */
   virtual void transformed_vertex(double xf, double yf);
-  /** \brief see fl_push_clip(int x, int y, int w, int h). */
-  virtual void push_clip(int x, int y, int w, int h) = 0;
-  /** \brief see fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H). */
-  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) = 0;
-  /** \brief see fl_not_clipped(int x, int y, int w, int h). */
-  virtual int not_clipped(int x, int y, int w, int h) = 0;
-  /** \brief see fl_push_no_clip(). */
-  virtual void push_no_clip() = 0;
-  /** \brief see fl_pop_clip(). */
-  virtual void pop_clip() = 0;
-    
+
   /** \brief see fl_push_matrix(). */
   void push_matrix();
   /** \brief see fl_pop_matrix(). */
@@ -363,13 +300,7 @@ protected:
   double transform_dx(double x, double y);
   /** \brief see fl_transform_dy(double x, double y). */
   double transform_dy(double x, double y);
-  /** \brief see fl_clip_region(). */
-  virtual Fl_Region clip_region();                // has default implementation
-  /** \brief see fl_clip_region(Fl_Region r). */
-  virtual void clip_region(Fl_Region r);          // has default implementation
-  /** \brief see fl_restore_clip(). */
-  virtual void restore_clip();                    // has default implementation
-  
+
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
   virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
@@ -434,6 +365,57 @@ public:
   int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
+
+  // === all code below in this class has been to the reorganisation FL_PORTING process
+protected:
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
+  friend  void fl_point(int x, int y);
+  virtual void    point(int x, int y) = 0;
+  friend  void fl_rect(int x, int y, int w, int h);
+  virtual void    rect(int x, int y, int w, int h) = 0;
+  friend  void fl_rectf(int x, int y, int w, int h);
+  virtual void    rectf(int x, int y, int w, int h) = 0;
+  friend  void fl_line(int x, int y, int x1, int y1);
+  virtual void    line(int x, int y, int x1, int y1) = 0;
+  friend  void fl_line(int x, int y, int x1, int y1, int x2, int y2);
+  virtual void    line(int x, int y, int x1, int y1, int x2, int y2) = 0;
+  friend  void fl_xyline(int x, int y, int x1);
+  virtual void    xyline(int x, int y, int x1) = 0;
+  friend  void fl_xyline(int x, int y, int x1, int y2);
+  virtual void    xyline(int x, int y, int x1, int y2) = 0;
+  friend  void fl_xyline(int x, int y, int x1, int y2, int x3);
+  virtual void    xyline(int x, int y, int x1, int y2, int x3) = 0;
+  friend  void fl_yxline(int x, int y, int y1);
+  virtual void    yxline(int x, int y, int y1) = 0;
+  friend  void fl_yxline(int x, int y, int y1, int x2);
+  virtual void    yxline(int x, int y, int y1, int x2) = 0;
+  friend  void fl_yxline(int x, int y, int y1, int x2, int y3);
+  virtual void    yxline(int x, int y, int y1, int x2, int y3) = 0;
+  friend  void fl_loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void    loop(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
+  friend  void fl_loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void    loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
+  friend  void fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  virtual void    polygon(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
+  friend  void fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  virtual void    polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
+  // --- clipping
+  friend  void fl_push_clip(int x, int y, int w, int h);
+  virtual void    push_clip(int x, int y, int w, int h) = 0;
+  friend  int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  virtual int    clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) = 0;
+  friend  int fl_not_clipped(int x, int y, int w, int h);
+  virtual int    not_clipped(int x, int y, int w, int h) = 0;
+  friend  void fl_push_no_clip();
+  virtual void    push_no_clip() = 0;
+  friend  void fl_pop_clip();
+  virtual void    pop_clip() = 0;
+  friend  Fl_Region fl_clip_region();
+  virtual Fl_Region    clip_region();              // has default implementation
+  friend  void fl_clip_region(Fl_Region r);
+  virtual void    clip_region(Fl_Region r);        // has default implementation
+  friend  void fl_restore_clip();
+  virtual void    restore_clip();
 };
 
 
@@ -474,6 +456,7 @@ public:
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+protected:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
@@ -534,6 +517,7 @@ public:
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+protected:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
@@ -616,6 +600,7 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
+protected:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
