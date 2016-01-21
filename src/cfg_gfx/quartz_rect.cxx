@@ -17,8 +17,8 @@
 //
 
 
-#ifndef FL_CFG_GFX_QUARTZ_CXX
-#define FL_CFG_GFX_QUARTZ_CXX
+#ifndef FL_CFG_GFX_QUARTZ_RECT_CXX
+#define FL_CFG_GFX_QUARTZ_RECT_CXX
 
 
 /**
@@ -282,7 +282,7 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
 }
 
 
-#endif
+#endif // FL_CFG_GFX_QUARTZ_RECT_CXX
 
 //
 // End of "$Id$".
