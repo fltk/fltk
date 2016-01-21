@@ -17,6 +17,7 @@
 //
 
 #include <config.h>
+#include "config_lib.h"
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
@@ -28,6 +29,33 @@
 #  pragma message "FL_PORTING: implement code to read OpenGL renderings into RGB maps"
 #else
 #endif
+
+
+// ------ this should be in a separate file! -----------------------------------
+#ifdef FL_CFG_GFX_OPENGL
+
+#include <FL/Fl_Device.H>
+#include <FL/gl.h>
+#include "src/cfg_gfx/opengl.H"
+
+Fl_OpenGL_Display_Device *Fl_OpenGL_Display_Device::display_device() {
+  static Fl_OpenGL_Display_Device *display = new Fl_OpenGL_Display_Device(new Fl_OpenGL_Graphics_Driver());
+  return display;
+};
+
+Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver)
+: Fl_Surface_Device(graphics_driver)
+{
+}
+
+const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
+
+#endif
+// ------ end of separate file! ------------------------------------------------
+
+#include "cfg_gfx/opengl_rect.cxx"
+
+
 
 #if defined(__APPLE__)
 uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)

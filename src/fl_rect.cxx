@@ -50,12 +50,14 @@ void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
 }
 
+
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
   rstack[rstackptr] = r;
   fl_restore_clip();
 }
+
 
 Fl_Region Fl_Graphics_Driver::clip_region() {
   return rstack[rstackptr];
@@ -87,13 +89,16 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 ////////////////////////////////////////////////////////////////
 
+
 #ifdef FL_CFG_GFX_QUARTZ
 
 # include "cfg_gfx/quartz_rect.cxx"
 
 #endif
 
+
 // -----------------------------------------------------------------------------
+
 
 #ifdef FL_CFG_GFX_GDI
 
