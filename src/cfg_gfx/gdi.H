@@ -421,9 +421,68 @@ protected:
 
 #if defined(__APPLE__)
 
+/**
+ \brief The Mac OS X-specific graphics class.
+ *
+ This class is implemented only on the Mac OS X platform.
+ */
+class FL_EXPORT Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
+public:
+  static const char *class_id;
+  const char *class_name() {return class_id;};
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b);
+  void draw(const char* str, int n, int x, int y);
+#ifdef __APPLE__
+  void draw(const char *str, int n, float x, float y);
+#endif
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* str, int n, int x, int y);
+  void font(Fl_Font face, Fl_Fontsize size);
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
+  void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+  void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+  void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+  void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  double width(const char *str, int n);
+  double width(unsigned int c);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
+#if ! defined(FL_DOXYGEN)
+  static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
+#endif
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+protected:
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
+  void point(int x, int y);
+  void rect(int x, int y, int w, int h);
+  void rectf(int x, int y, int w, int h);
+  void line(int x, int y, int x1, int y1);
+  void line(int x, int y, int x1, int y1, int x2, int y2);
+  void xyline(int x, int y, int x1);
+  void xyline(int x, int y, int x1, int y2);
+  void xyline(int x, int y, int x1, int y2, int x3);
+  void yxline(int x, int y, int y1);
+  void yxline(int x, int y, int y1, int x2);
+  void yxline(int x, int y, int y1, int x2, int y3);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
+  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
+  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  // --- clipping
+  void push_clip(int x, int y, int w, int h);
+  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
+  int not_clipped(int x, int y, int w, int h);
+  void push_no_clip();
+  void pop_clip();
+  void restore_clip();
+};
+
 // FIXME: add Fl_Quartz_Printer_Graphics_Driver
-// FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
-#include "src/cfg_gfx/quartz.H"
 
 #elif defined(WIN32) || defined(FL_DOXYGEN)
 
