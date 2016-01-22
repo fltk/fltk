@@ -26,7 +26,7 @@
  */
 
 #include <FL/gl.h>
-#include "opengl.h"
+#include "opengl.H"
 
 void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   gl_draw(str, n, x, y);
