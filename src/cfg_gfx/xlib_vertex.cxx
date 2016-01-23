@@ -52,10 +52,6 @@ void Fl_Xlib_Graphics_Driver::end_line() {
   if (n>1) XDrawLines(fl_display, fl_window, fl_gc, p, n, 0);
 }
 
-void Fl_Xlib_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
-
 void Fl_Xlib_Graphics_Driver::end_loop() {
   fixloop();
   if (n>2) transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
@@ -113,7 +109,7 @@ void Fl_Xlib_Graphics_Driver::circle(double x, double y,double r) {
     (fl_display, fl_window, fl_gc, llx, lly, w, h, 0, 360*64);
 }
 
-#endif FL_CFG_GFX_XLIB_VERTEX_CXX
+#endif // FL_CFG_GFX_XLIB_VERTEX_CXX
 
 //
 // End of "$Id$".
