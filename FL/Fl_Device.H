@@ -388,9 +388,9 @@ protected:
   virtual void    arc(double x, double y, double r, double start, double end);
   // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
   friend  void fl_arc(int x, int y, int w, int h, double a1, double a2);
-  virtual void    arc(int x, int y, int w, int h, double a1, double a2);
+  virtual void    arc(int x, int y, int w, int h, double a1, double a2) = 0;
   friend  void fl_pie(int x, int y, int w, int h, double a1, double a2);
-  virtual void    pie(int x, int y, int w, int h, double a1, double a2);
+  virtual void    pie(int x, int y, int w, int h, double a1, double a2) = 0;
 };
 
 

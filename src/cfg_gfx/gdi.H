@@ -94,6 +94,11 @@ protected:
   void end_complex_polygon();
   void gap();
   void circle(double x, double y, double r);
+  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
+  // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
+  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
+  void arc(int x, int y, int w, int h, double a1, double a2);
+  void pie(int x, int y, int w, int h, double a1, double a2);
 };
 
 
