@@ -64,10 +64,6 @@ void Fl_Quartz_Graphics_Driver::end_line() {
   CGContextSetShouldAntialias(fl_gc, false);
 }
 
-void Fl_Quartz_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
-
 void Fl_Quartz_Graphics_Driver::end_loop() {
   fixloop();
   if (n>2) transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);

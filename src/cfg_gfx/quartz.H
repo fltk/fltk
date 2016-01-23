@@ -94,7 +94,6 @@ protected:
   void pop_clip();
   void restore_clip();
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  void fixloop();
   void begin_complex_polygon();
   void transformed_vertex(double xf, double yf);
   void vertex(double x, double y);

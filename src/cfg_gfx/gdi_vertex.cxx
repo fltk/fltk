@@ -52,10 +52,6 @@ void Fl_GDI_Graphics_Driver::end_line() {
   if (n>1) Polyline(fl_gc, p, n);
 }
 
-void Fl_GDI_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
-
 void Fl_GDI_Graphics_Driver::end_loop() {
   fixloop();
   if (n>2) transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
@@ -124,7 +120,7 @@ void Fl_GDI_Graphics_Driver::circle(double x, double y,double r) {
     Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
 }
 
-#endif FL_CFG_GFX_GDI_VERTEX_CXX
+#endif // FL_CFG_GFX_GDI_VERTEX_CXX
 
 //
 // End of "$Id$".

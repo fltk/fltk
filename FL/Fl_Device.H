@@ -368,7 +368,7 @@ protected:
   friend  void fl_begin_polygon();
   virtual void    begin_polygon();
   friend  void fl_begin_complex_polygon();
-  virtual void    begin_complex_polygon();
+  virtual void    begin_complex_polygon() = 0;
   friend  double fl_transform_x(double x, double y);
   virtual double    transform_x(double x, double y);
   friend  double fl_transform_y(double x, double y);
@@ -378,23 +378,23 @@ protected:
   friend  double fl_transform_dy(double x, double y);
   virtual double    transform_dy(double x, double y);
   friend  void fl_transformed_vertex(double xf, double yf);
-  virtual void    transformed_vertex(double xf, double yf);
+  virtual void    transformed_vertex(double xf, double yf) = 0;
   friend  void fl_vertex(double x, double y);
-  virtual void    vertex(double x, double y);
+  virtual void    vertex(double x, double y) = 0;
   friend  void fl_end_points();
-  virtual void    end_points();
+  virtual void    end_points() = 0;
   friend  void fl_end_line();
-  virtual void    end_line();
+  virtual void    end_line() = 0;
   friend  void fl_end_loop();
-  virtual void    end_loop();
+  virtual void    end_loop() = 0;
   friend  void fl_end_polygon();
-  virtual void    end_polygon();
+  virtual void    end_polygon() = 0;
   friend  void fl_end_complex_polygon();
-  virtual void    end_complex_polygon();
+  virtual void    end_complex_polygon() = 0;
   friend  void fl_gap();
-  virtual void    gap();
+  virtual void    gap() = 0;
   friend  void fl_circle(double x, double y, double r);
-  virtual void    circle(double x, double y, double r);
+  virtual void    circle(double x, double y, double r) = 0;
 };
 
 

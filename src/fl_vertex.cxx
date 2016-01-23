@@ -107,6 +107,10 @@ void Fl_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
   }
 }
 
+void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
+  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+}
+
 
 // -----------------------------------------------------------------------------
 
