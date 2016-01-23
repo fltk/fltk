@@ -71,12 +71,6 @@ void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double 
   }
 }
 
-#if 0 // portable version.  X-specific one in fl_vertex.cxx
-void fl_circle(double x,double y,double r) {
-  _fl_arc(x, y, r, r, 0, 360);
-}
-#endif
-
 //
 // End of "$Id$".
 //

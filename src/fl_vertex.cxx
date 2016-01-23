@@ -42,6 +42,7 @@
 #include <FL/math.h>
 #include <stdlib.h>
 
+
 void Fl_Graphics_Driver::push_matrix() {
   if (sptr==matrix_stack_size)
     Fl::error("fl_push_matrix(): matrix stack overflow.");
@@ -79,21 +80,53 @@ void Fl_Graphics_Driver::rotate(double d) {
   }
 }
 
-void Fl_Graphics_Driver::begin_points() {n = 0; what = POINT_;}
+void Fl_Graphics_Driver::scale(double x, double y) {
+  mult_matrix(x,0,0,y,0,0);
+}
 
-void Fl_Graphics_Driver::begin_line() {n = 0; what = LINE;}
+void Fl_Graphics_Driver::scale(double x) {
+  mult_matrix(x,0,0,x,0,0);
+}
 
-void Fl_Graphics_Driver::begin_loop() {n = 0; what = LOOP;}
+void Fl_Graphics_Driver::translate(double x,double y) {
+  mult_matrix(1,0,0,1,x,y);
+}
 
-void Fl_Graphics_Driver::begin_polygon() {n = 0; what = POLYGON;}
+void Fl_Graphics_Driver::begin_points() {
+  n = 0;
+  what = POINT_;
+}
 
-double Fl_Graphics_Driver::transform_x(double x, double y) {return x*m.a + y*m.c + m.x;}
+void Fl_Graphics_Driver::begin_line() {
+  n = 0;
+  what = LINE;
+}
 
-double Fl_Graphics_Driver::transform_y(double x, double y) {return x*m.b + y*m.d + m.y;}
+void Fl_Graphics_Driver::begin_loop() {
+  n = 0;
+  what = LOOP;
+}
 
-double Fl_Graphics_Driver::transform_dx(double x, double y) {return x*m.a + y*m.c;}
+void Fl_Graphics_Driver::begin_polygon() {
+  n = 0;
+  what = POLYGON;
+}
 
-double Fl_Graphics_Driver::transform_dy(double x, double y) {return x*m.b + y*m.d;}
+double Fl_Graphics_Driver::transform_x(double x, double y) {
+  return x*m.a + y*m.c + m.x;
+}
+
+double Fl_Graphics_Driver::transform_y(double x, double y) {
+  return x*m.b + y*m.d + m.y;
+}
+
+double Fl_Graphics_Driver::transform_dx(double x, double y) {
+  return x*m.a + y*m.c;
+}
+
+double Fl_Graphics_Driver::transform_dy(double x, double y) {
+  return x*m.b + y*m.d;
+}
 
 void Fl_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
   if (!n || x != p[n-1].x || y != p[n-1].y) {

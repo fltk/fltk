@@ -179,12 +179,6 @@ protected:
   friend void fl_color(Fl_Color c);
   friend void fl_color(uchar r, uchar g, uchar b);
   friend void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-  friend void fl_arc(double x, double y, double r, double start, double end);
-  friend void fl_arc(int x, int y, int w, int h, double a1, double a2);
-  friend void fl_pie(int x, int y, int w, int h, double a1, double a2);
-  friend void fl_scale(double x, double y);
-  friend void fl_scale(double x);
-  friend void fl_translate(double x, double y);
 
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
@@ -219,19 +213,7 @@ protected:
   virtual void color(uchar r, uchar g, uchar b) {}
   /** \brief see fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3). */
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-  /** \brief see fl_arc(double x, double y, double r, double start, double end). */
-  virtual void arc(double x, double y, double r, double start, double end);
-  /** \brief see fl_arc(int x, int y, int w, int h, double a1, double a2). */
-  virtual void arc(int x, int y, int w, int h, double a1, double a2);
-  /** \brief see fl_pie(int x, int y, int w, int h, double a1, double a2). */
-  virtual void pie(int x, int y, int w, int h, double a1, double a2);
 
-  /** \brief see fl_scale(double x, double y). */
-  inline void scale(double x, double y) { mult_matrix(x,0,0,y,0,0); }
-  /** \brief see fl_scale(double x). */
-  inline void scale(double x) { mult_matrix(x,0,0,x,0,0); }
-  /** \brief see fl_translate(double x, double y). */
-  inline void translate(double x,double y) { mult_matrix(1,0,0,1,x,y); }
 
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
@@ -359,6 +341,12 @@ protected:
   virtual void    mult_matrix(double a, double b, double c, double d, double x, double y);
   friend  void fl_rotate(double d);
   virtual void    rotate(double d);
+  friend  void fl_scale(double x, double y);
+  virtual void    scale(double x, double y);
+  friend  void fl_scale(double x);
+  virtual void    scale(double x);
+  friend  void fl_translate(double x, double y);
+  virtual void    translate(double x,double y);
   friend  void fl_begin_points();
   virtual void    begin_points();
   friend  void fl_begin_line();
@@ -395,6 +383,14 @@ protected:
   virtual void    gap() = 0;
   friend  void fl_circle(double x, double y, double r);
   virtual void    circle(double x, double y, double r) = 0;
+  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
+  friend  void fl_arc(double x, double y, double r, double start, double end);
+  virtual void    arc(double x, double y, double r, double start, double end);
+  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
+  friend  void fl_arc(int x, int y, int w, int h, double a1, double a2);
+  virtual void    arc(int x, int y, int w, int h, double a1, double a2);
+  friend  void fl_pie(int x, int y, int w, int h, double a1, double a2);
+  virtual void    pie(int x, int y, int w, int h, double a1, double a2);
 };
 
 

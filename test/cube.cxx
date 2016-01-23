@@ -147,7 +147,8 @@ void makeform(const char *name) {
   cube = new cube_box(23,23,344,344, 0);
   if (Fl::cfg_gfx_opengl) { // try to overlay a button onto an OpenGL window
     cube->begin();
-    /*Fl_Button *test =*/ new Fl_Button(35, 105, 100, 30, "Test");
+    Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
+    test->box(FL_ROUND_UP_BOX);
     cube->end();
   }
   cube2 = new cube_box(513,23,344,344, 0);

@@ -54,6 +54,7 @@ const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
 // ------ end of separate file! ------------------------------------------------
 
 #include "cfg_gfx/opengl_rect.cxx"
+#include "cfg_gfx/opengl_vertex.cxx"
 
 
 
