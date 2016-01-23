@@ -66,7 +66,7 @@ void Fl_Quartz_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2)
   CGContextSetShouldAntialias(fl_gc, false);
 }
 
-#endif FL_CFG_GFX_QUARTZ_ARCI_CXX
+#endif // FL_CFG_GFX_QUARTZ_ARCI_CXX
 
 //
 // End of "$Id$".

@@ -28,7 +28,6 @@
 #include "opengl.H"
 
 #include <FL/fl_draw.H>
-#include <FL/x.h>
 #include <FL/gl.h>
 #include <FL/math.h>
 

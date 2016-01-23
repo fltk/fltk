@@ -55,7 +55,7 @@ void Fl_GDI_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   } else Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
 }
 
-#endif FL_CFG_GFX_GDI_ARCI_CXX
+#endif // FL_CFG_GFX_GDI_ARCI_CXX
 
 //
 // End of "$Id$".

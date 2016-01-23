@@ -35,7 +35,7 @@ void Fl_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   XFillArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 }
 
-#endif FL_CFG_GFX_XLIB_ARCI_CXX
+#endif // FL_CFG_GFX_XLIB_ARCI_CXX
 
 //
 // End of "$Id$".
