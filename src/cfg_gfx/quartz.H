@@ -93,6 +93,18 @@ protected:
   void push_no_clip();
   void pop_clip();
   void restore_clip();
+  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
+  void fixloop();
+  void begin_complex_polygon();
+  void transformed_vertex(double xf, double yf);
+  void vertex(double x, double y);
+  void end_points();
+  void end_line();
+  void end_loop();
+  void end_polygon();
+  void end_complex_polygon();
+  void gap();
+  void circle(double x, double y, double r);
 };
 
 

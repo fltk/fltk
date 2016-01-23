@@ -35,6 +35,7 @@
 #endif
 
 #include <config.h>
+#include "config_lib.h"
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/Fl.H>
@@ -106,187 +107,39 @@ void Fl_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
   }
 }
 
-void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {
-#ifdef __APPLE_QUARTZ__
-  transformed_vertex0(COORD_T(xf), COORD_T(yf));
-#else
-  transformed_vertex0(COORD_T(rint(xf)), COORD_T(rint(yf)));
+
+// -----------------------------------------------------------------------------
+
+
+#ifdef FL_CFG_GFX_QUARTZ
+
+# include "cfg_gfx/quartz_vertex.cxx"
+
 #endif
-}
 
-void Fl_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(COORD_T(x*m.a + y*m.c + m.x), COORD_T(x*m.b + y*m.d + m.y));
-}
 
-void Fl_Graphics_Driver::end_points() {
-#if defined(USE_X11)
-  if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
-#elif defined(WIN32)
-  for (int i=0; i<n; i++) SetPixel(fl_gc, p[i].x, p[i].y, fl_RGB());
-#elif defined(__APPLE_QUARTZ__)
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  for (int i=0; i<n; i++) { 
-    CGContextMoveToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextStrokePath(fl_gc);
-  }
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement end_points"
-#else
-# error unsupported platform
+// -----------------------------------------------------------------------------
+
+
+#ifdef FL_CFG_GFX_GDI
+
+# include "cfg_gfx/gdi_vertex.cxx"
+
 #endif
-}
 
-void Fl_Graphics_Driver::end_line() {
-  if (n < 2) {
-    end_points();
-    return;
-  }
-#if defined(USE_X11)
-  if (n>1) XDrawLines(fl_display, fl_window, fl_gc, p, n, 0);
-#elif defined(WIN32)
-  if (n>1) Polyline(fl_gc, p, n);
-#elif defined(__APPLE_QUARTZ__)
-  if (n<=1) return;
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
-  for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement end_line"
-#else
-# error unsupported platform
+
+// -----------------------------------------------------------------------------
+
+
+#ifdef FL_CFG_GFX_XLIB
+
+# include "cfg_gfx/xlib_vertex.cxx"
+
 #endif
-}
 
-void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
 
-void Fl_Graphics_Driver::end_loop() {
-  fixloop();
-  if (n>2) transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
-  end_line();
-}
+// -----------------------------------------------------------------------------
 
-void Fl_Graphics_Driver::end_polygon() {
-  fixloop();
-  if (n < 3) {
-    end_line();
-    return;
-  }
-#if defined(USE_X11)
-  if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, Convex, 0);
-#elif defined(WIN32)
-  if (n>2) {
-    SelectObject(fl_gc, fl_brush());
-    Polygon(fl_gc, p, n);
-  }
-#elif defined(__APPLE_QUARTZ__)
-  if (n<=1) return;
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
-  for (int i=1; i<n; i++) 
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextClosePath(fl_gc);
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement end_polygon"
-#else
-# error unsupported platform
-#endif
-}
-
-void Fl_Graphics_Driver::begin_complex_polygon() {
-  begin_polygon();
-  gap_ = 0;
-#if defined(WIN32)
-  numcount = 0;
-#endif
-}
-
-void Fl_Graphics_Driver::gap() {
-  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
-  if (n > gap_+2) {
-    transformed_vertex((COORD_T)p[gap_].x, (COORD_T)p[gap_].y);
-#if defined(WIN32)
-    counts[numcount++] = n-gap_;
-#endif
-    gap_ = n;
-  } else {
-    n = gap_;
-  }
-}
-
-void Fl_Graphics_Driver::end_complex_polygon() {
-  gap();
-  if (n < 3) {
-    end_line();
-    return;
-  }
-#if defined(USE_X11)
-  if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, 0, 0);
-#elif defined(WIN32)
-  if (n>2) {
-    SelectObject(fl_gc, fl_brush());
-    PolyPolygon(fl_gc, p, counts, numcount);
-  }
-#elif defined(__APPLE_QUARTZ__)
-  if (n<=1) return;
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
-  for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextClosePath(fl_gc);
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement end_complex_polygon"
-#else
-# error unsupported platform
-#endif
-}
-
-// shortcut the closed circles so they use XDrawArc:
-// warning: these do not draw rotated ellipses correctly!
-// See fl_arc.c for portable version.
-
-void Fl_Graphics_Driver::circle(double x, double y,double r) {
-  double xt = transform_x(x,y);
-  double yt = transform_y(x,y);
-  double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
-  double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
-  int llx = (int)rint(xt-rx);
-  int w = (int)rint(xt+rx)-llx;
-  int lly = (int)rint(yt-ry);
-  int h = (int)rint(yt+ry)-lly;
-
-#if defined(USE_X11)
-  (what == POLYGON ? XFillArc : XDrawArc)
-    (fl_display, fl_window, fl_gc, llx, lly, w, h, 0, 360*64);
-#elif defined(WIN32)
-  if (what==POLYGON) {
-    SelectObject(fl_gc, fl_brush());
-    Pie(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
-  } else
-    Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
-#elif defined(__APPLE_QUARTZ__)
-  // Quartz warning: circle won't scale to current matrix!
-  // Last argument must be 0 (counter-clockwise) or it draws nothing under __LP64__ !!!!
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
-  (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement circle"
-#else
-# error unsupported platform
-#endif
-}
 
 //
 // End of "$Id$".

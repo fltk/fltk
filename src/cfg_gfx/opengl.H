@@ -61,6 +61,31 @@ public:
   void push_no_clip();
   void pop_clip();
   void restore_clip();
+  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
+//  void transformed_vertex0(COORD_T x, COORD_T y);
+//  void fixloop();
+//  void push_matrix();
+//  void pop_matrix();
+//  void mult_matrix(double a, double b, double c, double d, double x, double y);
+//  void rotate(double d);
+//  void begin_points();
+//  void begin_line();
+//  void begin_loop();
+//  void begin_polygon();
+//  void begin_complex_polygon();
+//  double transform_x(double x, double y);
+//  double transform_y(double x, double y);
+//  double transform_dx(double x, double y);
+//  double transform_dy(double x, double y);
+//  void transformed_vertex(double xf, double yf);
+//  void vertex(double x, double y);
+//  void end_points();
+//  void end_line();
+//  void end_loop();
+//  void end_polygon();
+//  void end_complex_polygon();
+//  void gap();
+//  void circle(double x, double y, double r);
 };
 
 

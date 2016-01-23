@@ -145,9 +145,7 @@ protected:
   // not needed in X11
 #endif
   Fl_Font_Descriptor *font_descriptor_;
-  void transformed_vertex0(COORD_T x, COORD_T y);
-  void fixloop();
-  
+
 protected:
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
@@ -180,35 +178,13 @@ protected:
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
   friend void fl_color(Fl_Color c);
   friend void fl_color(uchar r, uchar g, uchar b);
-  friend void fl_begin_points();
-  friend void fl_begin_line();
-  friend void fl_begin_loop();
-  friend void fl_begin_polygon();
-  friend void fl_vertex(double x, double y);
   friend void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-  friend void fl_circle(double x, double y, double r);
   friend void fl_arc(double x, double y, double r, double start, double end);
   friend void fl_arc(int x, int y, int w, int h, double a1, double a2);
   friend void fl_pie(int x, int y, int w, int h, double a1, double a2);
-  friend void fl_end_points();
-  friend void fl_end_line();
-  friend void fl_end_loop();
-  friend void fl_end_polygon();
-  friend void fl_transformed_vertex(double xf, double yf);
-  friend void fl_begin_complex_polygon();
-  friend void fl_gap();
-  friend void fl_end_complex_polygon();
-  friend void fl_push_matrix();
-  friend void fl_pop_matrix();
-  friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
   friend void fl_scale(double x, double y);
   friend void fl_scale(double x);
   friend void fl_translate(double x, double y);
-  friend void fl_rotate(double d);
-  friend double fl_transform_x(double x, double y);
-  friend double fl_transform_y(double x, double y);
-  friend double fl_transform_dx(double x, double y);
-  friend double fl_transform_dy(double x, double y);
 
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
@@ -241,65 +217,21 @@ protected:
   virtual void color(Fl_Color c) {color_ = c;}
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
   virtual void color(uchar r, uchar g, uchar b) {}
-  /** \brief see fl_begin_points(). */
-  virtual void begin_points();
-  /** \brief see fl_begin_line(). */
-  virtual void begin_line();
-  /** \brief see fl_begin_loop(). */
-  virtual void begin_loop();
-  /** \brief see fl_begin_polygon(). */
-  virtual void begin_polygon();
-  /** \brief see fl_vertex(double x, double y). */
-  virtual void vertex(double x, double y);
   /** \brief see fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3). */
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-  /** \brief see fl_circle(double x, double y, double r). */
-  virtual void circle(double x, double y, double r);
   /** \brief see fl_arc(double x, double y, double r, double start, double end). */
   virtual void arc(double x, double y, double r, double start, double end);
   /** \brief see fl_arc(int x, int y, int w, int h, double a1, double a2). */
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
   /** \brief see fl_pie(int x, int y, int w, int h, double a1, double a2). */
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
-  /** \brief see fl_end_points(). */
-  virtual void end_points();
-  /** \brief see fl_end_line(). */
-  virtual void end_line();
-  /** \brief see fl_end_loop(). */
-  virtual void end_loop();
-  /** \brief see fl_end_polygon(). */
-  virtual void end_polygon();
-  /** \brief see fl_begin_complex_polygon(). */
-  virtual void begin_complex_polygon();
-  /** \brief see fl_gap(). */
-  virtual void gap();
-  /** \brief see fl_end_complex_polygon(). */
-  virtual void end_complex_polygon();
-  /** \brief see fl_transformed_vertex(double xf, double yf). */
-  virtual void transformed_vertex(double xf, double yf);
 
-  /** \brief see fl_push_matrix(). */
-  void push_matrix();
-  /** \brief see fl_pop_matrix(). */
-  void pop_matrix();
-  /** \brief see fl_mult_matrix(double a, double b, double c, double d, double x, double y). */
-  void mult_matrix(double a, double b, double c, double d, double x, double y);
   /** \brief see fl_scale(double x, double y). */
   inline void scale(double x, double y) { mult_matrix(x,0,0,y,0,0); }
   /** \brief see fl_scale(double x). */
   inline void scale(double x) { mult_matrix(x,0,0,x,0,0); }
   /** \brief see fl_translate(double x, double y). */
   inline void translate(double x,double y) { mult_matrix(1,0,0,1,x,y); }
-  /** \brief see fl_rotate(double d). */
-  void rotate(double d);
-  /** \brief see fl_transform_x(double x, double y). */
-  double transform_x(double x, double y);
-  /** \brief see fl_transform_y(double x, double y). */
-  double transform_y(double x, double y);
-  /** \brief see fl_transform_dx(double x, double y). */
-  double transform_dx(double x, double y);
-  /** \brief see fl_transform_dy(double x, double y). */
-  double transform_dy(double x, double y);
 
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
@@ -368,7 +300,7 @@ public:
 
   // === all code below in this class has been to the reorganisation FL_PORTING process
 protected:
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xxx_rect.cxx
   friend  void fl_point(int x, int y);
   virtual void    point(int x, int y) = 0;
   friend  void fl_rect(int x, int y, int w, int h);
@@ -416,6 +348,53 @@ protected:
   virtual void    clip_region(Fl_Region r);        // has default implementation
   friend  void fl_restore_clip();
   virtual void    restore_clip();
+  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
+  virtual void transformed_vertex0(COORD_T x, COORD_T y);
+  virtual void fixloop();
+  friend  void fl_push_matrix();
+  virtual void    push_matrix();
+  friend  void fl_pop_matrix();
+  virtual void    pop_matrix();
+  friend  void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
+  virtual void    mult_matrix(double a, double b, double c, double d, double x, double y);
+  friend  void fl_rotate(double d);
+  virtual void    rotate(double d);
+  friend  void fl_begin_points();
+  virtual void    begin_points();
+  friend  void fl_begin_line();
+  virtual void    begin_line();
+  friend  void fl_begin_loop();
+  virtual void    begin_loop();
+  friend  void fl_begin_polygon();
+  virtual void    begin_polygon();
+  friend  void fl_begin_complex_polygon();
+  virtual void    begin_complex_polygon();
+  friend  double fl_transform_x(double x, double y);
+  virtual double    transform_x(double x, double y);
+  friend  double fl_transform_y(double x, double y);
+  virtual double    transform_y(double x, double y);
+  friend  double fl_transform_dx(double x, double y);
+  virtual double    transform_dx(double x, double y);
+  friend  double fl_transform_dy(double x, double y);
+  virtual double    transform_dy(double x, double y);
+  friend  void fl_transformed_vertex(double xf, double yf);
+  virtual void    transformed_vertex(double xf, double yf);
+  friend  void fl_vertex(double x, double y);
+  virtual void    vertex(double x, double y);
+  friend  void fl_end_points();
+  virtual void    end_points();
+  friend  void fl_end_line();
+  virtual void    end_line();
+  friend  void fl_end_loop();
+  virtual void    end_loop();
+  friend  void fl_end_polygon();
+  virtual void    end_polygon();
+  friend  void fl_end_complex_polygon();
+  virtual void    end_complex_polygon();
+  friend  void fl_gap();
+  virtual void    gap();
+  friend  void fl_circle(double x, double y, double r);
+  virtual void    circle(double x, double y, double r);
 };
 
 
