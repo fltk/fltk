@@ -25,7 +25,7 @@
 */
 
 #include "opengl.H"
-#include <FL/gl.H>
+#include <FL/gl.h>
 
 extern int fl_line_width_;
 
