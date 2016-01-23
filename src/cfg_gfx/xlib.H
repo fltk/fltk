@@ -98,6 +98,8 @@ protected:
   // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
   void arc(int x, int y, int w, int h, double a1, double a2);
   void pie(int x, int y, int w, int h, double a1, double a2);
+  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
+  void line_style(int style, int width=0, char* dashes=0);
 };
 
 

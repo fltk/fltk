@@ -162,7 +162,6 @@ protected:
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
-  friend void fl_line_style(int style, int width, char* dashes);
   friend void fl_draw(const char *str, int n, int x, int y);
 #ifdef __APPLE__
   friend void fl_draw(const char *str, int n, float x, float y);
@@ -178,7 +177,6 @@ protected:
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
   friend void fl_color(Fl_Color c);
   friend void fl_color(uchar r, uchar g, uchar b);
-  friend void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
 
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
@@ -190,8 +188,6 @@ protected:
 
   /** \brief The constructor. */
   Fl_Graphics_Driver();
-  /** \brief see fl_line_style(int style, int width, char* dashes). */
-  virtual void line_style(int style, int width=0, char* dashes=0);
   /** \brief see fl_draw(const char *str, int n, int x, int y). */
   virtual void draw(const char *str, int n, int x, int y) {}
 #ifdef __APPLE__
@@ -211,8 +207,6 @@ protected:
   virtual void color(Fl_Color c) {color_ = c;}
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
   virtual void color(uchar r, uchar g, uchar b) {}
-  /** \brief see fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3). */
-  virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
 
 
   // Images
@@ -281,116 +275,72 @@ public:
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 
   // === all code below in this class has been to the reorganisation FL_PORTING process
-protected:
+public:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  friend  void fl_point(int x, int y);
-  virtual void    point(int x, int y) = 0;
-  friend  void fl_rect(int x, int y, int w, int h);
-  virtual void    rect(int x, int y, int w, int h) = 0;
-  friend  void fl_rectf(int x, int y, int w, int h);
-  virtual void    rectf(int x, int y, int w, int h) = 0;
-  friend  void fl_line(int x, int y, int x1, int y1);
-  virtual void    line(int x, int y, int x1, int y1) = 0;
-  friend  void fl_line(int x, int y, int x1, int y1, int x2, int y2);
-  virtual void    line(int x, int y, int x1, int y1, int x2, int y2) = 0;
-  friend  void fl_xyline(int x, int y, int x1);
-  virtual void    xyline(int x, int y, int x1) = 0;
-  friend  void fl_xyline(int x, int y, int x1, int y2);
-  virtual void    xyline(int x, int y, int x1, int y2) = 0;
-  friend  void fl_xyline(int x, int y, int x1, int y2, int x3);
-  virtual void    xyline(int x, int y, int x1, int y2, int x3) = 0;
-  friend  void fl_yxline(int x, int y, int y1);
-  virtual void    yxline(int x, int y, int y1) = 0;
-  friend  void fl_yxline(int x, int y, int y1, int x2);
-  virtual void    yxline(int x, int y, int y1, int x2) = 0;
-  friend  void fl_yxline(int x, int y, int y1, int x2, int y3);
-  virtual void    yxline(int x, int y, int y1, int x2, int y3) = 0;
-  friend  void fl_loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void    loop(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
-  friend  void fl_loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void    loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
-  friend  void fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void    polygon(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
-  friend  void fl_polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void    polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
+  virtual void point(int x, int y) = 0;
+  virtual void rect(int x, int y, int w, int h) = 0;
+  virtual void rectf(int x, int y, int w, int h) = 0;
+  virtual void line(int x, int y, int x1, int y1) = 0;
+  virtual void line(int x, int y, int x1, int y1, int x2, int y2) = 0;
+  virtual void xyline(int x, int y, int x1) = 0;
+  virtual void xyline(int x, int y, int x1, int y2) = 0;
+  virtual void xyline(int x, int y, int x1, int y2, int x3) = 0;
+  virtual void yxline(int x, int y, int y1) = 0;
+  virtual void yxline(int x, int y, int y1, int x2) = 0;
+  virtual void yxline(int x, int y, int y1, int x2, int y3) = 0;
+  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
+  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
+  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
+  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
   // --- clipping
-  friend  void fl_push_clip(int x, int y, int w, int h);
-  virtual void    push_clip(int x, int y, int w, int h) = 0;
-  friend  int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  virtual int    clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) = 0;
-  friend  int fl_not_clipped(int x, int y, int w, int h);
-  virtual int    not_clipped(int x, int y, int w, int h) = 0;
-  friend  void fl_push_no_clip();
-  virtual void    push_no_clip() = 0;
-  friend  void fl_pop_clip();
-  virtual void    pop_clip() = 0;
-  friend  Fl_Region fl_clip_region();
-  virtual Fl_Region    clip_region();              // has default implementation
-  friend  void fl_clip_region(Fl_Region r);
-  virtual void    clip_region(Fl_Region r);        // has default implementation
-  friend  void fl_restore_clip();
-  virtual void    restore_clip();
+  virtual void push_clip(int x, int y, int w, int h) = 0;
+  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) = 0;
+  virtual int not_clipped(int x, int y, int w, int h) = 0;
+  virtual void push_no_clip() = 0;
+  virtual void pop_clip() = 0;
+  virtual Fl_Region clip_region();              // has default implementation
+  virtual void clip_region(Fl_Region r);        // has default implementation
+  virtual void restore_clip();
+  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
+  virtual void push_matrix();
+  virtual void pop_matrix();
+  virtual void mult_matrix(double a, double b, double c, double d, double x, double y);
+  virtual void rotate(double d);
+  virtual void scale(double x, double y);
+  virtual void scale(double x);
+  virtual void translate(double x,double y);
+  virtual void begin_points();
+  virtual void begin_line();
+  virtual void begin_loop();
+  virtual void begin_polygon();
+  virtual void begin_complex_polygon() = 0;
+  virtual double transform_x(double x, double y);
+  virtual double transform_y(double x, double y);
+  virtual double transform_dx(double x, double y);
+  virtual double transform_dy(double x, double y);
+  virtual void transformed_vertex(double xf, double yf) = 0;
+  virtual void vertex(double x, double y) = 0;
+  virtual void end_points() = 0;
+  virtual void end_line() = 0;
+  virtual void end_loop() = 0;
+  virtual void end_polygon() = 0;
+  virtual void end_complex_polygon() = 0;
+  virtual void gap() = 0;
+  virtual void circle(double x, double y, double r) = 0;
+  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
+  virtual void arc(double x, double y, double r, double start, double end);
+  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
+  virtual void arc(int x, int y, int w, int h, double a1, double a2) = 0;
+  virtual void pie(int x, int y, int w, int h, double a1, double a2) = 0;
+  // --- implementation is in src/fl_curve.cxx which includes src/cfg_gfx/xxx_curve.cxx if needed
+  virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
+  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
+  virtual void line_style(int style, int width=0, char* dashes=0) = 0;
+
+protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);
   virtual void fixloop();
-  friend  void fl_push_matrix();
-  virtual void    push_matrix();
-  friend  void fl_pop_matrix();
-  virtual void    pop_matrix();
-  friend  void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
-  virtual void    mult_matrix(double a, double b, double c, double d, double x, double y);
-  friend  void fl_rotate(double d);
-  virtual void    rotate(double d);
-  friend  void fl_scale(double x, double y);
-  virtual void    scale(double x, double y);
-  friend  void fl_scale(double x);
-  virtual void    scale(double x);
-  friend  void fl_translate(double x, double y);
-  virtual void    translate(double x,double y);
-  friend  void fl_begin_points();
-  virtual void    begin_points();
-  friend  void fl_begin_line();
-  virtual void    begin_line();
-  friend  void fl_begin_loop();
-  virtual void    begin_loop();
-  friend  void fl_begin_polygon();
-  virtual void    begin_polygon();
-  friend  void fl_begin_complex_polygon();
-  virtual void    begin_complex_polygon() = 0;
-  friend  double fl_transform_x(double x, double y);
-  virtual double    transform_x(double x, double y);
-  friend  double fl_transform_y(double x, double y);
-  virtual double    transform_y(double x, double y);
-  friend  double fl_transform_dx(double x, double y);
-  virtual double    transform_dx(double x, double y);
-  friend  double fl_transform_dy(double x, double y);
-  virtual double    transform_dy(double x, double y);
-  friend  void fl_transformed_vertex(double xf, double yf);
-  virtual void    transformed_vertex(double xf, double yf) = 0;
-  friend  void fl_vertex(double x, double y);
-  virtual void    vertex(double x, double y) = 0;
-  friend  void fl_end_points();
-  virtual void    end_points() = 0;
-  friend  void fl_end_line();
-  virtual void    end_line() = 0;
-  friend  void fl_end_loop();
-  virtual void    end_loop() = 0;
-  friend  void fl_end_polygon();
-  virtual void    end_polygon() = 0;
-  friend  void fl_end_complex_polygon();
-  virtual void    end_complex_polygon() = 0;
-  friend  void fl_gap();
-  virtual void    gap() = 0;
-  friend  void fl_circle(double x, double y, double r);
-  virtual void    circle(double x, double y, double r) = 0;
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
-  friend  void fl_arc(double x, double y, double r, double start, double end);
-  virtual void    arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  friend  void fl_arc(int x, int y, int w, int h, double a1, double a2);
-  virtual void    arc(int x, int y, int w, int h, double a1, double a2) = 0;
-  friend  void fl_pie(int x, int y, int w, int h, double a1, double a2);
-  virtual void    pie(int x, int y, int w, int h, double a1, double a2) = 0;
 };
 
 

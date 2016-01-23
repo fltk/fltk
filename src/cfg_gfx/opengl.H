@@ -62,14 +62,6 @@ public:
   void pop_clip();
   void restore_clip();
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  //  void push_matrix();
-  //  void pop_matrix();
-  //  void mult_matrix(double a, double b, double c, double d, double x, double y);
-  //  void rotate(double d);
-  //  double transform_x(double x, double y);
-  //  double transform_y(double x, double y);
-  //  double transform_dx(double x, double y);
-  //  double transform_dy(double x, double y);
   void transformed_vertex0(COORD_T x, COORD_T y);
   void transformed_vertex(double xf, double yf);
   void vertex(double x, double y);
@@ -91,6 +83,8 @@ public:
   // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
   void arc(int x, int y, int w, int h, double a1, double a2);
   void pie(int x, int y, int w, int h, double a1, double a2);
+  // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
+  void line_style(int style, int width=0, char* dashes=0);
 };
 
 
