@@ -28,10 +28,6 @@
 #include <FL/gl.h>
 #include "opengl.H"
 
-void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
-  gl_draw(str, n, x, y);
-}
-
 // --- line and polygon drawing with integer coordinates
 
 void Fl_OpenGL_Graphics_Driver::point(int x, int y) {

@@ -35,7 +35,6 @@ class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
-  void draw(const char* str, int n, int x, int y);
   // --- line and polygon drawing with integer coordinates
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
@@ -86,6 +85,12 @@ public:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
+  // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx
+  void draw(const char *str, int n, int x, int y);
+  double width(const char *str, int n);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
 };
 
 

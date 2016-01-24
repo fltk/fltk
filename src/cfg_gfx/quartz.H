@@ -43,13 +43,7 @@ class FL_EXPORT Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
-  void draw(const char* str, int n, int x, int y);
-#ifdef __APPLE__
-  void draw(const char *str, int n, float x, float y);
-#endif
-  void draw(int angle, const char *str, int n, int x, int y);
-  void rtl_draw(const char* str, int n, int x, int y);
-  void font(Fl_Font face, Fl_Fontsize size);
+
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -58,11 +52,6 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
-  double width(const char *str, int n);
-  double width(unsigned int c);
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  int height();
-  int descent();
 #if ! defined(FL_DOXYGEN)
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
@@ -113,6 +102,17 @@ protected:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
+  // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx
+  void draw(const char *str, int n, int x, int y);
+  void draw(const char *str, int n, float x, float y);
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char *str, int n, int x, int y);
+  void font(Fl_Font face, Fl_Fontsize fsize);
+  double width(const char *str, int n);
+  double width(unsigned int c);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
 };
 
 

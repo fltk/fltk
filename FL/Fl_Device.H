@@ -113,9 +113,11 @@ public:
  to support all FLTK drawing functions.
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
+  friend class Fl_Pixmap;
+  friend class Fl_Bitmap;
+  friend class Fl_RGB_Image;
 public:
-  /** A 2D coordinate transformation matrix
-   */
+  /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
 protected:
   static const matrix m0;
@@ -134,64 +136,16 @@ protected:
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
   Fl_Region rstack[FL_REGION_STACK_SIZE];
   Fl_Font_Descriptor *font_descriptor_;
-
-protected:
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }
   inline XPOINT *vertices() {return p;}
   inline int vertex_kind() {return what;}
 #endif
-/*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
-  uchar bg_r_; 
-  ** \brief green color for background and/or mixing if device does not support masking or alpha *
-  uchar bg_g_; 
-  ** \brief blue color for background and/or mixing if device does not support masking or alpha *
-  uchar bg_b_; */
-  friend class Fl_Pixmap;
-  friend class Fl_Bitmap;
-  friend class Fl_RGB_Image;
-  friend void fl_draw(const char *str, int n, int x, int y);
-#ifdef __APPLE__
-  friend void fl_draw(const char *str, int n, float x, float y);
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: add floating point text positioning if your platform supports it"
-#else 
-  // not needed
-#endif
-  friend void fl_draw(int angle, const char *str, int n, int x, int y);
-  friend void fl_rtl_draw(const char *str, int n, int x, int y);
-  friend void fl_font(Fl_Font face, Fl_Fontsize size);
-
-  friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
-  friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
-  friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
-  friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
-  friend FL_EXPORT void gl_start();
-  friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 
-  /** \brief The constructor. */
-  Fl_Graphics_Driver();
-  /** \brief see fl_draw(const char *str, int n, int x, int y). */
-  virtual void draw(const char *str, int n, int x, int y) {}
-#ifdef __APPLE__
-  virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: add floating point text positioning if your platform supports it"
-#else
-  // not needed
-#endif
-  /** \brief see fl_draw(int angle, const char *str, int n, int x, int y). */
-  virtual void draw(int angle, const char *str, int n, int x, int y) {}
-  /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
-  virtual void rtl_draw(const char *str, int n, int x, int y) {};
-
-  // Images
+public:
+  // ---- Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
   virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
   /** \brief see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
@@ -219,42 +173,16 @@ protected:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-#if FLTK_ABI_VERSION >= 10301
-  virtual
-#endif
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  
+  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
+  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+
+
+  // === all code below in this class has been to the reorganisation FL_PORTING process
 public:
   static const char *class_id;
   virtual const char *class_name() {return class_id;};
-  /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
-  virtual void font(Fl_Font face, Fl_Fontsize fsize) {font_ = face; size_ = fsize;}
-  /** \brief see fl_font(void). */
-  Fl_Font font() {return font_; }
-  /** \brief see fl_size(). */
-  Fl_Fontsize size() {return size_; }
-  /** \brief see fl_width(const char *str, int n). */
-  virtual double width(const char *str, int n) {return 0;}
-  /** \brief see fl_width(unsigned int n). */
-  virtual inline double width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
-  /** \brief see fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h). */
-  virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  /** \brief see fl_height(). */
-  virtual int height() {return size();}
-  /** \brief see fl_descent(). */
-  virtual int descent() {return 0;}
-  /** Returns a pointer to the current Fl_Font_Descriptor for the graphics driver */
-  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
-  /** Sets the current Fl_Font_Descriptor for the graphics driver */
-  inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
-#if FLTK_ABI_VERSION >= 10304 || defined(FL_DOXYGEN)
-  virtual
-#endif
-  int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
-  /** \brief The destructor */
+  Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
-
-  // === all code below in this class has been to the reorganisation FL_PORTING process
 public:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void point(int x, int y) = 0;
@@ -320,6 +248,21 @@ public:
   virtual void color(Fl_Color c) { color_ = c; }
   virtual Fl_Color color() { return color_; }
   virtual void color(uchar r, uchar g, uchar b) = 0;
+  // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx
+  virtual void draw(const char *str, int n, int x, int y) = 0;
+  virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
+  virtual void draw(int angle, const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  virtual void rtl_draw(const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  virtual void font(Fl_Font face, Fl_Fontsize fsize) {font_ = face; size_ = fsize;}
+  virtual Fl_Font font() {return font_; }
+  virtual Fl_Fontsize size() {return size_; }
+  virtual double width(const char *str, int n) { return 0; }
+  virtual double width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
+  virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  virtual int height() { return size(); }
+  virtual int descent() { return 0; }
+  virtual Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
+  virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
 
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
