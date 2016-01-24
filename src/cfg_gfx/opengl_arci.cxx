@@ -25,6 +25,7 @@
 */
 
 #include <FL/gl.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
