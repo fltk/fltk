@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// WIN32 color functions for the Fast Light Tool Kit (FLTK).
+// MSWidnows' GDI color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,14 +21,16 @@
 // changes can be made.  Not to be confused with the X colormap, which
 // I try to hide completely.
 
-// SGI compiler seems to have problems with unsigned char arguments
-// being used to index arrays.  So I always copy them to an integer
-// before use.
-
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+
+// FIXME: all the global functions in this file should probably be protected
+// members of the driver class. Starting with 1.4 we will allow multiple drivers
+// to co-exist, creating conflicts with multipe mapping.
+
+// FIXME: maybe we can forget about color mapping and assume RGB?
 
 static unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":

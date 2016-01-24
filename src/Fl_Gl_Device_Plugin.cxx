@@ -53,10 +53,11 @@ const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
 #endif
 // ------ end of separate file! ------------------------------------------------
 
+#include "cfg_gfx/opengl_arci.cxx"
+#include "cfg_gfx/opengl_color.cxx"
+#include "cfg_gfx/opengl_line_style.cxx"
 #include "cfg_gfx/opengl_rect.cxx"
 #include "cfg_gfx/opengl_vertex.cxx"
-#include "cfg_gfx/opengl_arci.cxx"
-#include "cfg_gfx/opengl_line_style.cxx"
 
 
 #if defined(__APPLE__)

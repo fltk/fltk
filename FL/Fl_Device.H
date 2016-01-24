@@ -133,17 +133,6 @@ protected:
   int rstackptr;
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
   Fl_Region rstack[FL_REGION_STACK_SIZE];
-#ifdef WIN32
-  int numcount;
-  int counts[20];
-#elif defined(__APPLE__)
-  // not needed
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define variables for Fl_Graphics_Driver if needed."
-  // not needed
-#else
-  // not needed in X11
-#endif
   Fl_Font_Descriptor *font_descriptor_;
 
 protected:
@@ -175,8 +164,6 @@ protected:
   friend void fl_draw(int angle, const char *str, int n, int x, int y);
   friend void fl_rtl_draw(const char *str, int n, int x, int y);
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
-  friend void fl_color(Fl_Color c);
-  friend void fl_color(uchar r, uchar g, uchar b);
 
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
@@ -203,11 +190,6 @@ protected:
   virtual void draw(int angle, const char *str, int n, int x, int y) {}
   /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
   virtual void rtl_draw(const char *str, int n, int x, int y) {};
-  /** \brief see fl_color(Fl_Color c). */
-  virtual void color(Fl_Color c) {color_ = c;}
-  /** \brief see fl_color(uchar r, uchar g, uchar b). */
-  virtual void color(uchar r, uchar g, uchar b) {}
-
 
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
@@ -261,8 +243,6 @@ public:
   virtual int height() {return size();}
   /** \brief see fl_descent(). */
   virtual int descent() {return 0;}
-  /** \brief see fl_color(void). */
-  Fl_Color color() {return color_;}
   /** Returns a pointer to the current Fl_Font_Descriptor for the graphics driver */
   inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   /** Sets the current Fl_Font_Descriptor for the graphics driver */
@@ -336,6 +316,10 @@ public:
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   virtual void line_style(int style, int width=0, char* dashes=0) = 0;
+  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
+  virtual void color(Fl_Color c) { color_ = c; }
+  virtual Fl_Color color() { return color_; }
+  virtual void color(uchar r, uchar g, uchar b) = 0;
 
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx

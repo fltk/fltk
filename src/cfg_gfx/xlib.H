@@ -100,6 +100,9 @@ protected:
   void pie(int x, int y, int w, int h, double a1, double a2);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   void line_style(int style, int width=0, char* dashes=0);
+  // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b);
 };
 
 

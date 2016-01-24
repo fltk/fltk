@@ -32,15 +32,6 @@ void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   gl_draw(str, n, x, y);
 }
 
-void Fl_OpenGL_Graphics_Driver::color(Fl_Color c) {
-  gl_color(c);
-}
-
-void Fl_OpenGL_Graphics_Driver::color(uchar r, uchar g, uchar b) {
-  unsigned int c = (r<<24)|(g<<16)|(b<<8);
-  gl_color(c);
-}
-
 // --- line and polygon drawing with integer coordinates
 
 void Fl_OpenGL_Graphics_Driver::point(int x, int y) {
