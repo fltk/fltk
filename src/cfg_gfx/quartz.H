@@ -43,8 +43,6 @@ class FL_EXPORT Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
-//  void color(Fl_Color c);
-//  void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
 #ifdef __APPLE__
   void draw(const char *str, int n, float x, float y);
@@ -113,6 +111,7 @@ protected:
   void line_style(int style, int width=0, char* dashes=0);
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   void color(Fl_Color c);
+  Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
 };
 

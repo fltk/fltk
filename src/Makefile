@@ -494,7 +494,7 @@ Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
-fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
+fl_color.o:	
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
 fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx

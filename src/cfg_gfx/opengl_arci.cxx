@@ -25,6 +25,7 @@
 */
 
 #include <FL/gl.h>
+#include <math.h>
 
 void Fl_OpenGL_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
