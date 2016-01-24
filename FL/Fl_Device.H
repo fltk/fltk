@@ -119,6 +119,7 @@ class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
 public:
   /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
+  int fl_clip_state_number;
 protected:
   static const matrix m0;
   Fl_Font font_; // current font
@@ -131,7 +132,6 @@ protected:
   int n, p_size, gap_;
   XPOINT *p;
   int what;
-  int fl_clip_state_number;
   int rstackptr;
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
   Fl_Region rstack[FL_REGION_STACK_SIZE];
