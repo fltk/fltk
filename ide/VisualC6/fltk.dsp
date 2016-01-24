@@ -89,7 +89,7 @@ SOURCE="..\..\FL\abi-version.h"
 
 USERDEP__ABI_V="..\..\abi-version.ide"	
 # Begin Custom Build - Creating FL\abi-version.h from abi-version.ide
-InputPath=.\FL\abi-version.h
+InputPath=..\..\FL\abi-version.h
 
 "..\..\FL\abi-version.h" : "..\..\abi-version.ide"
 	copy /Y ..\..\abi-version.ide ..\..\FL\abi-version.h
