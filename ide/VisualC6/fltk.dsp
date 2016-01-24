@@ -83,6 +83,35 @@ LIB32=link.exe -lib
 # Name "fltk - Win32 Debug"
 # Begin Source File
 
+SOURCE="..\..\FL\abi-version.h"
+
+!IF  "$(CFG)" == "fltk - Win32 Release"
+
+USERDEP__ABI_V="..\..\abi-version.ide"	
+# Begin Custom Build - Creating FL\abi-version.h from abi-version.ide
+InputPath=.\FL\abi-version.h
+
+"..\..\FL\abi-version.h" : "..\..\abi-version.ide"
+	copy /Y ..\..\abi-version.ide ..\..\FL\abi-version.h
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "fltk - Win32 Debug"
+
+USERDEP__ABI_V="..\..\abi-version.ide"	
+# Begin Custom Build - Creating FL\abi-version.h from abi-version.ide
+InputPath=..\..\FL\abi-version.h
+
+"..\..\FL\abi-version.h" : "..\..\abi-version.ide"
+	copy /Y ..\..\abi-version.ide ..\..\FL\abi-version.h
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\xutf8\case.c
 # End Source File
 # Begin Source File
