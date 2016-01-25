@@ -389,15 +389,19 @@ public:
   stdout with a fair degree of accuracy:
   
   \code
-     void callback(void*) {
-       puts("TICK");
-       Fl::repeat_timeout(1.0, callback);
-     }
-  
-     int main() {
-       Fl::add_timeout(1.0, callback);
-       return Fl::run();
-     }
+#include <stdio.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+void callback(void*) {
+  printf("TICK\n");
+  Fl::repeat_timeout(1.0, callback);    // retrigger timeout
+}
+int main() {
+  Fl_Window win(100,100);
+  win.show();
+  Fl::add_timeout(1.0, callback);       // set up first timeout
+  return Fl::run();
+}
   \endcode
   */
   static void add_timeout(double t, Fl_Timeout_Handler,void* = 0); // platform dependent
