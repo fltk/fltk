@@ -73,7 +73,7 @@ int Fl_OpenGL_Graphics_Driver::descent() {
 }
 
 int Fl_OpenGL_Graphics_Driver::height() {
-  return (int)(size_*0.8);
+  return (int)(size_);
 }
 
 void Fl_OpenGL_Graphics_Driver::text_extents(const char *str, int n, int& dx, int& dy, int& w, int& h)

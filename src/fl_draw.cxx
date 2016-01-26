@@ -96,17 +96,6 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
-/* This is in fact not useful: the point is that a valid UTF-8 sequence for a non-ascii char contains no ascii char,
- thus no tab, space, control, & or @ we want to process differently.
- Also, invalid UTF-8 sequences are copied unchanged by this procedure.
- Therefore, checking for tab, space, control, & or @, and copying the byte otherwise, is enough.
- } else  if (handle_utf8_seq(p, o)) { // figure out if we have an utf8 valid sequence before we determine the nbsp test validity:
-#ifdef __APPLE__
-    } else if (c == 0xCA) { // non-breaking space in MacRoman
-#else
-    } else if (c == 0xA0) { // non-breaking space in ISO 8859
-#endif
-      *o++ = ' ';*/
     } else if (c == '@' && draw_symbols) { // Symbol???
       if (p[1] && p[1] != '@')  break;
       *o++ = c;

@@ -57,6 +57,7 @@ const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx"
