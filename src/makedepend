@@ -917,7 +917,7 @@ fl_font.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
 fl_font.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 fl_font.o: ../FL/Fl_Image.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 fl_font.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
-fl_font.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H Fl_Font.H fl_font_xft.cxx
+fl_font.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H Fl_Font.H 
 fl_gleam.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_gleam.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/fl_draw.H
 fl_gleam.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
@@ -1018,7 +1018,7 @@ fl_set_font.o: flstring.h ../FL/Fl_Export.H ../config.h Fl_Font.H
 fl_set_fonts.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_set_fonts.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
 fl_set_fonts.o: ../FL/Fl_Window.H Fl_Font.H ../config.h flstring.h
-fl_set_fonts.o: ../FL/Fl_Export.H fl_set_fonts_xft.cxx
+fl_set_fonts.o: ../FL/Fl_Export.H 
 fl_scroll_area.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 fl_scroll_area.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 fl_scroll_area.o: ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H

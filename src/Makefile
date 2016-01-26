@@ -497,10 +497,9 @@ Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:	
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
-fl_font.o:	fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
+fl_font.o:	fl_font_win32.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
-fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
-		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
+fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_win32.cxx
 Fl_Printer.o: Fl_GDI_Printer.cxx Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H

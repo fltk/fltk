@@ -27,10 +27,12 @@
 #elif defined(__APPLE__)
 #  include "fl_set_fonts_mac.cxx"
 #elif USE_XFT
-#  include "fl_set_fonts_xft.cxx"
+//#  include "fl_set_fonts_xft.cxx"
+// now included for fl_font.cxx, but will be its own source code module in drivers/Xlib/Fl_Xlib_Graphics_Driver_font..."
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement changes in font in its own file"
 #else
+//#  include "fl_set_fonts_x.cxx"
 // now included for fl_font.cxx, but will be its own source code module in drivers/Xlib/Fl_Xlib_Graphics_Driver_font..."
 #endif // WIN32
 

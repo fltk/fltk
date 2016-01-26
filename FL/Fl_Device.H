@@ -310,7 +310,7 @@ protected:
 #else // X11
 
 // FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
-#include "src/cfg_gfx/xlib.H"
+#include "src/drivers/Xlib/Fl_Xlib_Graphics_Driver.h"
 
 
 #endif
