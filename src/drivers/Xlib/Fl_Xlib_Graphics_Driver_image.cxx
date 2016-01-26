@@ -48,8 +48,8 @@
 #  include <FL/Fl.H>
 #  include <FL/fl_draw.H>
 #  include <FL/x.H>
-#  include "Fl_XColor.H"
-#  include "flstring.h"
+#  include "../../Fl_XColor.H"
+#  include "../../flstring.h"
 
 static XImage xi;	// template used to pass info to X
 static int bytes_per_pixel;

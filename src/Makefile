@@ -496,10 +496,7 @@ Fl.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:	
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
-fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
-fl_font.o:	fl_font_win32.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
-fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_win32.cxx
 Fl_Printer.o: Fl_GDI_Printer.cxx Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H
@@ -512,8 +509,6 @@ fl_dnd.o:	../FL/mac.H ../FL/win32.H
 Fl.o:	../FL/mac.H ../FL/win32.H
 Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image.o:	../FL/mac.H ../FL/win32.H
-fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H
-fl_draw_image_win32.o:	../FL/mac.H ../FL/win32.H
 fl_draw_pixmap.o:	../FL/mac.H ../FL/win32.H
 fl_encoding_latin1.o:	../FL/mac.H ../FL/win32.H
 fl_encoding_mac_roman.o:   ../FL/mac.H ../FL/win32.H
