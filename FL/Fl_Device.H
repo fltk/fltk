@@ -281,7 +281,7 @@ protected:
 #elif defined(WIN32) || defined(FL_DOXYGEN)
 
 // FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
-#include "src/cfg_gfx/gdi.H"
+#include "src/drivers/GDI/Fl_GDI_Graphics_Driver.h"
 
 /**
  The graphics driver used when printing on MSWindows.

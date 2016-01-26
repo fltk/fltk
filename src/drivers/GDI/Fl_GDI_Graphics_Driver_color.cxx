@@ -21,6 +21,8 @@
 // changes can be made.  Not to be confused with the X colormap, which
 // I try to hide completely.
 
+#include "Fl_GDI_Graphics_Driver.h"
+
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -33,7 +35,7 @@
 // FIXME: maybe we can forget about color mapping and assume RGB?
 
 static unsigned fl_cmap[256] = {
-#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
+#include "../../fl_cmap.h" // this is a file produced by "cmap.cxx":
 };
 
 // Translations to win32 data structures:

@@ -25,7 +25,7 @@
  simple 2D transformations, implemented for MSWindows GDI.
  */
 
-#include "gdi.H"
+#include "Fl_GDI_Graphics_Driver.h"
 
 #include <FL/fl_draw.H>
 #include <FL/x.H>

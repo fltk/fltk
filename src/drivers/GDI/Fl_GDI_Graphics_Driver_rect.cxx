@@ -25,7 +25,7 @@
  \brief MSWindows GDI specific line and polygon drawing with integer coordinates.
  */
 
-#include "gdi.h"
+#include "Fl_GDI_Graphics_Driver.h"
 
 
 // --- line and polygon drawing with integer coordinates

@@ -46,7 +46,7 @@
 #include <stdlib.h>
 
 #ifdef WIN32
-#  include "fl_font_win32.cxx"
+#  include "drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx"
 #elif defined(__APPLE__)
 #  include "drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx"
 #elif USE_XFT

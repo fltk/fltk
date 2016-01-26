@@ -77,7 +77,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 #ifdef FL_CFG_GFX_GDI
 
-# include "cfg_gfx/gdi_rect.cxx"
+# include "drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx"
 
 #endif
 

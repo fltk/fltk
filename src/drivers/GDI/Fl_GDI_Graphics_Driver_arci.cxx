@@ -24,6 +24,8 @@
   \brief Utility functions for drawing circles using integers
 */
 
+#include "Fl_GDI_Graphics_Driver.h"
+
 #include <FL/math.h>
 
 void Fl_GDI_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {

@@ -42,7 +42,7 @@
 
 #ifdef FL_CFG_GFX_GDI
 
-# include "cfg_gfx/gdi_color.cxx"
+# include "drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx"
 
 #endif
 

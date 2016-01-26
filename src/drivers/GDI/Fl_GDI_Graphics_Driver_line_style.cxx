@@ -24,7 +24,8 @@
   \brief Line style drawing utility hiding different platforms.
 */
 
-#include "gdi.H"
+#include "Fl_GDI_Graphics_Driver.h"
+
 
 void Fl_GDI_Graphics_Driver::line_style(int style, int width, char* dashes) {
 
