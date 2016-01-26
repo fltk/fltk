@@ -25,7 +25,7 @@
           simple 2D transformations, implemented for OpenGL.
 */
 
-#include "opengl.H"
+#include "Fl_OpenGL_Graphics_Driver.h"
 
 #include <FL/fl_draw.H>
 #include <FL/gl.h>

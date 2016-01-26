@@ -36,7 +36,8 @@
 
 #include <FL/Fl_Device.H>
 #include <FL/gl.h>
-#include "src/cfg_gfx/opengl.H"
+
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.h"
 
 Fl_OpenGL_Display_Device *Fl_OpenGL_Display_Device::display_device() {
   static Fl_OpenGL_Display_Device *display = new Fl_OpenGL_Display_Device(new Fl_OpenGL_Graphics_Driver());
@@ -53,12 +54,12 @@ const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
 #endif
 // ------ end of separate file! ------------------------------------------------
 
-#include "cfg_gfx/opengl_arci.cxx"
-#include "cfg_gfx/opengl_color.cxx"
-#include "cfg_gfx/opengl_font.cxx"
-#include "cfg_gfx/opengl_line_style.cxx"
-#include "cfg_gfx/opengl_rect.cxx"
-#include "cfg_gfx/opengl_vertex.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx"
+#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx"
 
 
 #if defined(__APPLE__)

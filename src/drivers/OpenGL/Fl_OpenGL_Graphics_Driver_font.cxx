@@ -29,6 +29,11 @@
 
 #include <FL/gl.h>
 
+// FIXME: check out FreeGlut:
+// FIXME: implement font-to-RGBA in the main graphics driver
+
+#if 1
+
 /*
   |01234567|
  -+--------+
@@ -59,14 +64,6 @@ static const char *font_data[128] = {
 };
 
 
-#if 0
-
-void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
-  gl_draw(str, n, x, y);
-}
-
-#else
-
 double Fl_OpenGL_Graphics_Driver::width(const char *str, int n) {
   return size_*n*0.5;
 }
@@ -95,7 +92,7 @@ void Fl_OpenGL_Graphics_Driver::draw(const char *str, int n, int x, int y)
     const char *fd = font_data[(int)c];
     if (fd) {
       char rendering = 0;
-      float px=0.0f, py=0.0f;
+      float px, py;
       for (;;) {
         char cmd = *fd++;
         if (cmd==0) {
@@ -123,6 +120,27 @@ void Fl_OpenGL_Graphics_Driver::draw(const char *str, int n, int x, int y)
     }
     x += size_*0.5;
   }
+}
+
+#elif 0
+
+/*
+extern FL_EXPORT Fl_Glut_StrokeFont glutStrokeRoman;
+extern FL_EXPORT Fl_Glut_StrokeFont glutStrokeMonoRoman;
+#  define GLUT_STROKE_ROMAN             (&glutStrokeRoman)
+#  define GLUT_STROKE_MONO_ROMAN        (&glutStrokeMonoRoman)
+
+FL_EXPORT void glutStrokeCharacter(void *font, int character);
+FL_EXPORT GLfloat glutStrokeHeight(void *font);
+FL_EXPORT int glutStrokeLength(void *font, const unsigned char *string);
+FL_EXPORT void glutStrokeString(void *font, const unsigned char *string);
+FL_EXPORT int glutStrokeWidth(void *font, int character);
+*/
+
+#else
+
+void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
+  gl_draw(str, n, x, y);
 }
 
 #endif

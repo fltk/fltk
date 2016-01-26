@@ -21,7 +21,7 @@
   \brief Color handling
 */
 
-#include "opengl.H"
+#include "Fl_OpenGL_Graphics_Driver.h"
 #include <FL/gl.h>
 
 // Implementation of fl_color(i), fl_color(r,g,b).

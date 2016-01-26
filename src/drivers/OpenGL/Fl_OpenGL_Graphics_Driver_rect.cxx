@@ -26,7 +26,7 @@
  */
 
 #include <FL/gl.h>
-#include "opengl.H"
+#include "Fl_OpenGL_Graphics_Driver.h"
 
 // --- line and polygon drawing with integer coordinates
 

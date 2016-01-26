@@ -24,7 +24,7 @@
   \brief Line style drawing utility hiding different platforms.
 */
 
-#include "opengl.H"
+#include "Fl_OpenGL_Graphics_Driver.h"
 #include <FL/gl.h>
 
 extern int fl_line_width_;
