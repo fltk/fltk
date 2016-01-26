@@ -50,7 +50,7 @@ int fl_line_width_ = 0;
 
 #ifdef FL_CFG_GFX_GDI
 
-# include "drivers/GDI/Fl_GDI_Graphics_Driver_style.cxx"
+# include "drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx"
 
 #endif
 

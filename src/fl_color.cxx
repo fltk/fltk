@@ -23,6 +23,7 @@
 
 // Implementation of fl_color(i), fl_color(r,g,b).
 
+#include <FL/Fl_Device.H>
 #include <config.h>
 #include "config_lib.h"
 

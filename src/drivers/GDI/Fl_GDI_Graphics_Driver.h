@@ -22,8 +22,8 @@
  \brief Definition of MSWindows GDI graphics driver.
  */
 
-#ifndef FL_CFG_GFX_GDI_H
-#define FL_CFG_GFX_GDI_H
+#ifndef FL_GDI_GRAPHICS_DRIVER_H
+#define FL_GDI_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Device.H>
 
@@ -109,7 +109,7 @@ protected:
 };
 
 
-#endif // FL_CFG_GFX_GDI_H
+#endif // FL_GDI_GRAPHICS_DRIVER_H
 
 //
 // End of "$Id$".
