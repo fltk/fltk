@@ -144,39 +144,6 @@ protected:
 #endif
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 
-public:
-  // ---- Images
-  /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
-  virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
-  /** \brief see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
-  virtual   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
-  /** \brief see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
-  virtual   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
-  /** \brief see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
-  virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
-  // Image classes
-  /** \brief Draws an Fl_RGB_Image object to the device. 
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
-   the image offset by the cx and cy arguments.
-   */
-  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
-  /** \brief Draws an Fl_Pixmap object to the device. 
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
-   the image offset by the cx and cy arguments.
-   */
-  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
-  /** \brief Draws an Fl_Bitmap object to the device. 
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
-  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-
-
   // === all code below in this class has been to the reorganisation FL_PORTING process
 public:
   static const char *class_id;
@@ -184,7 +151,7 @@ public:
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 public:
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xxx_rect.cxx
+  // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   virtual void point(int x, int y) = 0;
   virtual void rect(int x, int y, int w, int h) = 0;
   virtual void rectf(int x, int y, int w, int h) = 0;
@@ -209,7 +176,7 @@ public:
   virtual Fl_Region clip_region();              // has default implementation
   virtual void clip_region(Fl_Region r);        // has default implementation
   virtual void restore_clip();
-  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
+  // --- implementation is in src/fl_vertex.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_vertex.cxx
   virtual void push_matrix();
   virtual void pop_matrix();
   virtual void mult_matrix(double a, double b, double c, double d, double x, double y);
@@ -235,12 +202,12 @@ public:
   virtual void end_complex_polygon() = 0;
   virtual void gap() = 0;
   virtual void circle(double x, double y, double r) = 0;
-  // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
+  // --- implementation is in src/fl_arc.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arc.cxx if needed
   virtual void arc(double x, double y, double r, double start, double end);
-  // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
+  // --- implementation is in src/fl_arci.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arci.cxx
   virtual void arc(int x, int y, int w, int h, double a1, double a2) = 0;
   virtual void pie(int x, int y, int w, int h, double a1, double a2) = 0;
-  // --- implementation is in src/fl_curve.cxx which includes src/cfg_gfx/xxx_curve.cxx if needed
+  // --- implementation is in src/fl_curve.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_curve.cxx if needed
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   virtual void line_style(int style, int width=0, char* dashes=0) = 0;
@@ -248,7 +215,7 @@ public:
   virtual void color(Fl_Color c) { color_ = c; }
   virtual Fl_Color color() { return color_; }
   virtual void color(uchar r, uchar g, uchar b) = 0;
-  // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx
+  // --- implementation is in src/fl_font.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx
   virtual void draw(const char *str, int n, int x, int y) = 0;
   virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
   virtual void draw(int angle, const char *str, int n, int x, int y) { draw(str, n, x, y); }
@@ -263,6 +230,31 @@ public:
   virtual int descent() { return 0; }
   virtual Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
+  // --- implementation is in src/fl_image.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx
+  virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
+  virtual   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
+  virtual   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
+  virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
+  /** \brief Draws an Fl_RGB_Image object to the device.
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+   the image offset by the cx and cy arguments.
+   */
+  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  /** \brief Draws an Fl_Pixmap object to the device.
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+   the image offset by the cx and cy arguments.
+   */
+  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  /** \brief Draws an Fl_Bitmap object to the device.
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+   the image offset by the cx and cy arguments.
+   */
+  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
+  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
