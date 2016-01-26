@@ -18,7 +18,7 @@
 //
 
 /**
- \file xlib.H
+ \file Fl_Xlib_Graphics_Driver.h
  \brief Definition of X11 Xlib graphics driver.
  */
 

@@ -65,31 +65,6 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 
 
-////////////////////////////////////////////////////////////////
-
-/*
- Matt: I wrote individual methods for every class. They are virtual, so the
- correct function is called, depending on the active driver.
-
- By having individual methods, multiple drivers can co-exist, for example
- Quartz, OpenGL, and a printer driver.
-
- The individual implementations should eventually go into files that are
- included into this file, based on the configuration, for example:
-
- src/cfg_gfx/quartz_rect.cxx
- src/cfg_gfx/gdi_rect.cxx
- src/cfg_gfx/xlib_rect.cxx
-
- Porting the graphics system to a new platform then requires to copy one of
- these files and implement the virtual functions. point() is the only function
- that *must* be implemented when deriving from 'Fl_Minimal_Graphics_Driver"
- (which is still to be written)
- */
-
-////////////////////////////////////////////////////////////////
-
-
 #ifdef FL_CFG_GFX_QUARTZ
 
 # include "cfg_gfx/quartz_rect.cxx"
@@ -112,7 +87,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 #ifdef FL_CFG_GFX_XLIB
 
-# include "cfg_gfx/xlib_rect.cxx"
+# include "drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx"
 
 #endif
 

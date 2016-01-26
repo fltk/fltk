@@ -25,7 +25,7 @@
  simple 2D transformations, implemented for X11 Xlib.
  */
 
-#include "xlib.H"
+#include "Fl_Xlib_Graphics_Driver.h"
 
 #include <FL/fl_draw.H>
 #include <FL/x.H>

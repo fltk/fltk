@@ -27,7 +27,7 @@
  */
 
 
-#include "xlib.H"
+#include "Fl_Xlib_Graphics_Driver.h"
 
 
 #ifndef SHRT_MAX

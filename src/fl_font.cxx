@@ -54,7 +54,8 @@
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement font handling specifics in its own file"
 #else
-#  include "fl_font_x.cxx"
+#  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx"
+#  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx"
 #endif // WIN32
 
 #if defined(WIN32) || defined(__APPLE__)

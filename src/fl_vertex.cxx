@@ -170,7 +170,7 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 
 #ifdef FL_CFG_GFX_XLIB
 
-# include "cfg_gfx/xlib_vertex.cxx"
+# include "drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx"
 
 #endif
 

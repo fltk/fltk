@@ -60,7 +60,7 @@ int fl_line_width_ = 0;
 
 #ifdef FL_CFG_GFX_XLIB
 
-# include "cfg_gfx/xlib_line_style.cxx"
+# include "drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx"
 
 #endif
 
