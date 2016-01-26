@@ -16,6 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "Fl_Quartz_Graphics_Driver.h"
+
 #include <config.h>
 #include <math.h>
 

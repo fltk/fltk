@@ -24,13 +24,15 @@
 // matt: Neither Quartz nor Quickdraw support colormaps in this implementation
 // matt: Quartz support done
 
+#include "Fl_Quartz_Graphics_Driver.h"
+
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
 static unsigned fl_cmap[256] = {
-#include "../fl_cmap.h" // this is a file produced by "cmap.cxx":
+#include "../../fl_cmap.h" // this is a file produced by "cmap.cxx":
 };
 
 void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {

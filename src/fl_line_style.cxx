@@ -40,7 +40,7 @@ int fl_line_width_ = 0;
 
 #ifdef FL_CFG_GFX_QUARTZ
 
-# include "cfg_gfx/quartz_line_style.cxx"
+# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx"
 
 #endif
 

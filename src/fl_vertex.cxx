@@ -150,7 +150,7 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 
 #ifdef FL_CFG_GFX_QUARTZ
 
-# include "cfg_gfx/quartz_vertex.cxx"
+# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx"
 
 #endif
 

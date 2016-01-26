@@ -19,6 +19,8 @@
 #ifndef FL_CFG_GFX_QUARTZ_ARCI_CXX
 #define FL_CFG_GFX_QUARTZ_ARCI_CXX
 
+#include "Fl_Quartz_Graphics_Driver.h"
+
 /**
   \file quartz_arci.cxx
   \brief Utility functions for drawing circles using integers

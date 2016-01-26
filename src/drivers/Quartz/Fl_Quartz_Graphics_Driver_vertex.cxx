@@ -25,7 +25,7 @@
           simple 2D transformations, implemented for OS X Quartz.
 */
 
-#include "quartz.H"
+#include "Fl_Quartz_Graphics_Driver.h"
 
 #include <FL/fl_draw.H>
 #include <FL/x.H>

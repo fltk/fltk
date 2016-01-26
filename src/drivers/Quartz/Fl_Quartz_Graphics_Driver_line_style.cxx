@@ -24,7 +24,7 @@
   \brief Line style drawing utility hiding different platforms.
 */
 
-#include "quartz.H"
+#include "Fl_Quartz_Graphics_Driver.h"
 
 float fl_quartz_line_width_ = 1.0f;
 static /*enum*/ CGLineCap fl_quartz_line_cap_ = kCGLineCapButt;

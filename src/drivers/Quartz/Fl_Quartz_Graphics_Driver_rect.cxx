@@ -27,7 +27,7 @@
 */
 
 
-#include "quartz.H"
+#include "Fl_Quartz_Graphics_Driver.h"
 
 
 extern float fl_quartz_line_width_;

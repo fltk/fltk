@@ -67,7 +67,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 #ifdef FL_CFG_GFX_QUARTZ
 
-# include "cfg_gfx/quartz_rect.cxx"
+# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx"
 
 #endif
 

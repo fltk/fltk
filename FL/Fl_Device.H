@@ -276,7 +276,7 @@ protected:
 
 // FIXME: add Fl_Quartz_Printer_Graphics_Driver
 // FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
-#include "src/cfg_gfx/quartz.H"
+#include "src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 
 #elif defined(WIN32) || defined(FL_DOXYGEN)
 

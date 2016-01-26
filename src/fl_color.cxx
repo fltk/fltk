@@ -32,7 +32,7 @@
 
 #ifdef FL_CFG_GFX_QUARTZ
 
-# include "cfg_gfx/quartz_color.cxx"
+# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx"
 
 #endif
 
