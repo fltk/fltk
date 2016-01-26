@@ -92,7 +92,7 @@ void Fl_OpenGL_Graphics_Driver::draw(const char *str, int n, int x, int y)
     const char *fd = font_data[(int)c];
     if (fd) {
       char rendering = 0;
-      float px, py;
+      float px=0.0f, py=0.0f;
       for (;;) {
         char cmd = *fd++;
         if (cmd==0) {
