@@ -94,16 +94,12 @@ class FL_EXPORT Fl_Scroll : public Fl_Group {
   void fix_scrollbar_order();
   static void draw_clip(void*,int,int,int,int);
 
-#if FLTK_ABI_VERSION >= 10303
-protected:	// NEW (STR#1895)
-#else
-private:	// OLD
-#endif
+protected:	//  (STR#1895)
   /**
     Structure to manage scrollbar and widget interior sizes.
     This is filled out by recalc_scrollbars() for use in calculations
     that need to know the visible scroll area size, etc.
-    \note Availability in FLTK_ABI_VERSION 10303 or higher.
+    \note Availability in FL_ABI_VERSION 10303 or higher.
   */
   typedef struct {
     /// A local struct to manage a region defined by xywh

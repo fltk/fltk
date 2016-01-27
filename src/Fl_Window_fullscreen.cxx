@@ -31,19 +31,6 @@
 
 #include <config.h>
 
-#if FLTK_ABI_VERSION < 10301
-int Fl_Window::no_fullscreen_x = 0;
-int Fl_Window::no_fullscreen_y = 0;
-int Fl_Window::no_fullscreen_w = 0;
-int Fl_Window::no_fullscreen_h = 0;
-#endif
-
-#if FLTK_ABI_VERSION < 10303
-int Fl_Window::fullscreen_screen_top = -1;
-int Fl_Window::fullscreen_screen_bottom = -1;
-int Fl_Window::fullscreen_screen_left = -1;
-int Fl_Window::fullscreen_screen_right = -1;
-#endif
 
 void Fl_Window::border(int b) {
   if (b) {

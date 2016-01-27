@@ -26,7 +26,7 @@
 //#  include "fl_set_fonts_win32.cxx"
 // now included for fl_font.cxx, but will be its own source code module in drivers/Xlib/Fl_Xlib_Graphics_Driver_font..."
 #elif defined(__APPLE__)
-//#  include "fl_set_fonts_mac.cxx"
+#  include "fl_set_fonts_mac.cxx"
 // now included for fl_font.cxx, but will be its own source code module in drivers/Xlib/Fl_Xlib_Graphics_Driver_font..."
 #elif USE_XFT
 //#  include "fl_set_fonts_xft.cxx"

@@ -27,16 +27,8 @@
 #ifdef WIN32
 
 // #define _WIN32_WINNT	0x0501	// needed for OPENFILENAME's 'FlagsEx'
-#if defined(FL_LIBRARY) || FLTK_ABI_VERSION < 10304
-#  include <windows.h>
-#  include <commdlg.h>		// OPENFILENAMEW, GetOpenFileName()
-#  include <shlobj.h>		// BROWSEINFOW, SHBrowseForFolder()
-typedef OPENFILENAMEW fl_OPENFILENAMEW;
-typedef BROWSEINFOW fl_BROWSEINFOW;
-#else
 typedef void fl_OPENFILENAMEW;
 typedef void fl_BROWSEINFOW;
-#endif
 #  include <FL/filename.H>	// FL_EXPORT
 
 // Use Apple's chooser
@@ -162,13 +154,8 @@ public:
 private:
   int  _btype;			// kind-of browser to show()
   int  _options;		// general options
-#if FLTK_ABI_VERSION >= 10304
   fl_OPENFILENAMEW *_ofn_ptr;		// GetOpenFileName() & GetSaveFileName() struct
   fl_BROWSEINFOW   *_binf_ptr;		// SHBrowseForFolder() struct
-#else
-  fl_OPENFILENAMEW _ofn;
-  fl_BROWSEINFOW   _binf;
-#endif
   char  **_pathnames;		// array of pathnames
   int     _tpathnames;		// total pathnames
   char   *_directory;		// default pathname to use
@@ -240,18 +227,6 @@ private:
 #else
 
 private:
-#if FLTK_ABI_VERSION <= 10302
-  int   _btype;			// kind-of browser to show()
-  int   _options;		// general options
-  int   _nfilters;
-  char *_filter;		// user supplied filter
-  char *_parsedfilt;		// parsed filter
-  int   _filtvalue;		// selected filter
-  char *_preset_file;
-  char *_prevvalue;		// Returned filename
-  char *_directory;
-  char *_errmsg;		// error message
-#endif
   static int have_looked_for_GTK_libs;
   union {
     Fl_FLTK_File_Chooser *_x11_file_chooser;

@@ -895,12 +895,7 @@ public:
    To copy graphical data, use the Fl_Copy_Surface class. The \p type argument may allow
    in the future to copy other kinds of data.
   */
-#if FLTK_ABI_VERSION >= 10303 || defined(FL_DOXYGEN)
   static void copy(const char* stuff, int len, int destination = 0, const char *type = Fl::clipboard_plain_text); // platform dependent
-#else
-  static void copy(const char* stuff, int len, int destination, const char *type);
-  static void copy(const char* stuff, int len, int destination = 0);
-#endif
 
 #if defined(__APPLE__)
   // not needed
@@ -945,12 +940,7 @@ public:
    can be pasted as image data.
     
    */
-#if FLTK_ABI_VERSION >= 10303 || defined(FL_DOXYGEN)
   static void paste(Fl_Widget &receiver, int source, const char *type = Fl::clipboard_plain_text); // platform dependent
-#else
-  static void paste(Fl_Widget &receiver, int source, const char *type);
-  static void paste(Fl_Widget &receiver, int source /*=0*/);
-#endif
   /**
   FLTK will call the registered callback whenever there is a change to the
   selection buffer or the clipboard. The source argument indicates which

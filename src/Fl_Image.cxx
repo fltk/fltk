@@ -690,7 +690,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     CGDataProviderRelease(src);
   }
   if (img->id_ && fl_gc) {
-    if (!img->alloc_array && Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
+    if (!img->alloc_array && has_feature(PRINTER) && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
       // When printing, the image data is used when the page is completed, that is, after return from this function.
       // If the image has alloc_array = 0, we must protect against image data being freed before it is used:
       // we duplicate the image data and have it deleted after use by the release-callback of the CGImage data provider

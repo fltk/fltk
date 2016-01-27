@@ -47,7 +47,7 @@ Fl_System_Printer::Fl_System_Printer(void)
   y_offset = 0;
   scale_x = scale_y = 1.;
   gc = 0;
-  driver(new Fl_Quartz_Graphics_Driver);
+  driver(new Fl_Quartz_Printer_Graphics_Driver);
 }
 
 Fl_System_Printer::~Fl_System_Printer(void) {

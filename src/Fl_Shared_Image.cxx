@@ -90,9 +90,7 @@ Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
   original_    = 0;
   image_       = 0;
   alloc_image_ = 0;
-#if FLTK_ABI_VERSION >= 10304
   scaled_image_= 0;
-#endif
 }
 
 
@@ -113,9 +111,7 @@ Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
   image_       = img;
   alloc_image_ = !img;
   original_    = 1;
-#if FLTK_ABI_VERSION >= 10304
   scaled_image_= 0;
-#endif
 
   if (!img) reload();
   else update();
@@ -177,9 +173,7 @@ Fl_Shared_Image::update() {
 Fl_Shared_Image::~Fl_Shared_Image() {
   if (name_) delete[] (char *)name_;
   if (alloc_image_) delete image_;
-#if FLTK_ABI_VERSION >= 10304
   delete scaled_image_;
-#endif
 }
 
 
@@ -328,7 +322,6 @@ Fl_Shared_Image::desaturate() {
 // 'Fl_Shared_Image::draw()' - Draw a shared image...
 //
 void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
-#if FLTK_ABI_VERSION >= 10304
   if (!image_) {
     Fl_Image::draw(X, Y, W, H, cx, cy);
     return;
@@ -357,10 +350,6 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     scaled_image_->draw(X-cx, Y-cy, scaled_image_->w(), scaled_image_->h(), 0, 0);
   }
   fl_pop_clip();
-#else
-  if (image_) image_->draw(X, Y, W, H, cx, cy);
-  else Fl_Image::draw(X, Y, W, H, cx, cy);
-#endif // FLTK_ABI_VERSION
 }
 
 /** Sets the drawing size of the shared image.
@@ -375,7 +364,7 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
  \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
  \param can_expand  if null, the width and height of the shared image will not exceed those of the original image
  
- \version 1.3.4 and requires compiling with FLTK_ABI_VERSION = 10304
+ \version 1.3.4 and requires compiling with FL_ABI_VERSION = 10304
  
  Example code: scale an image to fit in a box
  \code
@@ -388,7 +377,6 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
  */
 void Fl_Shared_Image::scale(int width, int height, int proportional, int can_expand)
 {
-#if FLTK_ABI_VERSION >= 10304
   w(width);
   h(height);
   if (!image_) return;
@@ -404,7 +392,6 @@ void Fl_Shared_Image::scale(int width, int height, int proportional, int can_exp
   }
   w(image_->w() / fw);
   h(image_->h() / fh);
-#endif
 }
 
 

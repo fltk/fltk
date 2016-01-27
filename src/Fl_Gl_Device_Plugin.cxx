@@ -149,7 +149,7 @@ public:
     if (!glw) return 0;
     Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
 #ifdef __APPLE__
-    if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
+    if (Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) {
       // convert the image to CGImage, and draw it at full res (useful on retina display)
       CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
       CGDataProviderRef provider = CGDataProviderCreateWithData(img, img->array, img->ld() * img->h(), imgProviderReleaseData);

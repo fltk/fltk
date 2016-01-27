@@ -1846,18 +1846,6 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
 void Fl::paste(Fl_Widget &receiver) {
   Fl::paste(receiver, 0);
 }
-#if FLTK_ABI_VERSION >= 10303
-#elif !defined(FL_DOXYGEN)
-void Fl::paste(Fl_Widget &receiver, int source)
-{
-  Fl::paste(receiver, source, Fl::clipboard_plain_text);
-}
-
-void Fl::copy(const char* stuff, int len, int destination) {
-  Fl::copy(stuff, len, destination, Fl::clipboard_plain_text);
-}
-
-#endif
 ////////////////////////////////////////////////////////////////
 
 #include <FL/fl_draw.H>

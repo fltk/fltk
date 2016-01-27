@@ -285,9 +285,6 @@ void Fl_Window::shape_pixmap_(Fl_Image* pixmap) {
   delete rgba;
 }
 
-#if FLTK_ABI_VERSION < 10303 && !defined(FL_DOXYGEN)
-Fl_Window::shape_data_type* Fl_Window::shape_data_ = NULL;
-#endif
 
 /** Assigns a non-rectangular shape to the window.
  This function gives an arbitrary shape (not just a rectangular region) to an Fl_Window.
@@ -323,10 +320,9 @@ Fl_Window::shape_data_type* Fl_Window::shape_data_ = NULL;
  
  A usage example is found at example/shapedwindow.cxx.
  
- \version 1.3.3 (and requires compilation with FLTK_ABI_VERSION >= 10303)
+ \version 1.3.3 (and requires compilation with FL_ABI_VERSION >= 10303)
  */
 void Fl_Window::shape(const Fl_Image* img) {
-#if FLTK_ABI_VERSION >= 10303
   if (shape_data_) {
     if (shape_data_->todelete_) { delete shape_data_->todelete_; }
 #if defined(__APPLE__)
@@ -343,7 +339,6 @@ void Fl_Window::shape(const Fl_Image* img) {
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
-#endif
 }
 
 void Fl_Window::draw() {

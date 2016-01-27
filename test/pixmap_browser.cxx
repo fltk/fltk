@@ -60,19 +60,8 @@ void load_file(const char *n) {
   img = img2;
   b->labelsize(14);
   b->labelcolor(FL_FOREGROUND_COLOR);
-#if FLTK_ABI_VERSION >= 10304
   b->image(img);
   img->scale(b->w(), b->h());
-#else
-  if (img->w() <= b->w() && img->h() <= b->h()) b->image(img);
-  else {
-    float fw = img->w() / float(b->w());
-    float fh = img->h() / float(b->h());
-    float f = fw > fh ? fw : fh;
-    b->image(img->copy(img->w()/f, img->h()/f));
-    img->release();
-  }
-#endif
   b->label(NULL);
   b->redraw();
 }

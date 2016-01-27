@@ -144,14 +144,7 @@ public:
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
-#if FLTK_ABI_VERSION < 10304
-  Fl_Region subRegion;     // for ABI compatibility, recycled to replace subRect_
-#endif
   Fl_X *next;              // chain of mapped windows
-#if FLTK_ABI_VERSION < 10304
-  Fl_X *xidChildren;       // useless with true subwindows, recycled to replace mapped_to_retina_
-  Fl_X *xidNext;           // useless with true subwindows
-#endif
   int wait_for_expose;
   NSCursor *cursor;
   static Fl_X* first;
@@ -160,13 +153,8 @@ public:
   static void make(Fl_Window*);
   void flush();
   static void set_high_resolution(bool);
-#if FLTK_ABI_VERSION >= 10304
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
-#else
-  CGRect* subRect() { return (CGRect*)subRegion; } // getter
-  void subRect(CGRect *r) { subRegion = (Fl_Region)r; } // setter
-#endif
   bool mapped_to_retina();      // is window mapped to retina display?
   void mapped_to_retina(bool);  // sets whether window is mapped to retina display
   bool changed_resolution();      // did window just moved to display with another resolution?
@@ -213,14 +201,10 @@ public:
   static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
 private:
-#if FLTK_ABI_VERSION >= 10304
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
   // whether window is OpenGL and is currently being resized.
   unsigned mapped_to_retina_;
-#else
-  bool subwindow;     // for ABI compatibility, useless with true subwindows
-#endif
 };
 
 extern Window fl_window;

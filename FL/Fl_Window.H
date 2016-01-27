@@ -60,37 +60,13 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // Note: we must use separate statements for each of the following 8 variables,
   // with the static attribute, otherwise MS VC++ 2008/2010 complains :-(
   // AlbrechtS 04/2012
-#if FLTK_ABI_VERSION < 10301
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int no_fullscreen_x;
-#if FLTK_ABI_VERSION < 10301
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int no_fullscreen_y;
-#if FLTK_ABI_VERSION < 10301
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int no_fullscreen_w;
-#if FLTK_ABI_VERSION < 10301
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int no_fullscreen_h;
-#if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int fullscreen_screen_top;
-#if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int fullscreen_screen_bottom;
-#if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int fullscreen_screen_left;
-#if FLTK_ABI_VERSION < 10303
-  static // when these members are static, ABI compatibility with 1.3.0 is respected
-#endif
   int fullscreen_screen_right;
 
   friend class Fl_X;
@@ -121,10 +97,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   uchar size_range_set;
   // cursor stuff
   Fl_Cursor cursor_default;
-#if FLTK_ABI_VERSION < 10303
-  // legacy, not used
-  Fl_Color cursor_fg, cursor_bg;
-#endif
   
 protected:
   /** Data supporting a non-rectangular window shape */
@@ -145,9 +117,6 @@ protected:
     Fl_Bitmap *todelete_; ///<  auxiliary bitmap image
   };
 
-#if FLTK_ABI_VERSION < 10303 && !defined(FL_DOXYGEN)
-  static
-#endif
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
 private:
   void shape_bitmap_(Fl_Image* b);

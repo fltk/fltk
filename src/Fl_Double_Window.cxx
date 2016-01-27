@@ -90,33 +90,9 @@ void Fl_Double_Window::show() {
  \param pixmap  offscreen buffer containing the rectangle to copy
  \param srcx,srcy origin in offscreen buffer of rectangle to copy
  */
-#if FLTK_ABI_VERSION >= 10301
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
 }
-#else
-void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-#ifdef WIN32
-  if (fl_graphics_driver->class_name() == Fl_GDI_Graphics_Driver::class_id ||
-      fl_graphics_driver->class_name() == Fl_GDI_Printer_Graphics_Driver::class_id) {
-#else
-  if (fl_graphics_driver->class_name() == Fl_Display_Device::display_device()->driver()->class_name()) {
-#endif
-#ifdef USE_X11
-    ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
-#elif defined(WIN32)
-    ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
-#elif defined(__APPLE__)
-    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: call your version of fl_copy_offscreen here"
-#endif
-  }
-  else { // when copy is not to the display
-    fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
-  }
-}
-#endif // FLTK_ABI_VERSION
 /** @} */
 
 /** see fl_copy_offscreen() */

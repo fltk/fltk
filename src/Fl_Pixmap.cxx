@@ -173,9 +173,6 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
   }
 }
 
-#if FLTK_ABI_VERSION < 10301
-UINT Fl_Pixmap::pixmap_bg_color = 0;
-#endif
 
 void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;

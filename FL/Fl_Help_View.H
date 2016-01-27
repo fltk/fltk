@@ -260,13 +260,9 @@ class FL_EXPORT Fl_Help_View : public Fl_Group {	// Help viewer widget
   void		add_target(const char *n, int yy);
   static int	compare_targets(const Fl_Help_Target *t0, const Fl_Help_Target *t1);
   int		do_align(Fl_Help_Block *block, int line, int xx, int a, int &l);
-#if FLTK_ABI_VERSION >= 10303
 protected:
-#endif
   void		draw();
-#if FLTK_ABI_VERSION >= 10303
 private:
-#endif
   void		format();
   void		format_table(int *table_width, int *columns, const char *table);
   void		free_data();
@@ -275,13 +271,9 @@ private:
   Fl_Color	get_color(const char *n, Fl_Color c);
   Fl_Shared_Image *get_image(const char *name, int W, int H);
   int		get_length(const char *l);
-#if FLTK_ABI_VERSION >= 10303
 public:
-#endif
   int		handle(int);
-#if FLTK_ABI_VERSION >= 10303
 private:
-#endif
 
   void          hv_draw(const char *t, int x, int y);
   char          begin_selection();

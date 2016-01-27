@@ -119,6 +119,12 @@ class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
 public:
   /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
+  /** Features that a derived class may possess.  */
+  typedef enum {
+    NATIVE = 1, /**< native graphics driver for the platform */
+    PRINTER = 2 /**< graphics driver for a printer drawing surface */
+  } driver_feature;
+
   int fl_clip_state_number;
 protected:
   static const matrix m0;
@@ -220,6 +226,8 @@ public:
   virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
   virtual void draw(int angle, const char *str, int n, int x, int y) { draw(str, n, x, y); }
   virtual void rtl_draw(const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  /** Returns non-zero if the graphics driver possesses the \p feature */
+  virtual int has_feature(driver_feature feature) { return 0; }
   virtual void font(Fl_Font face, Fl_Fontsize fsize) {font_ = face; size_ = fsize;}
   virtual Fl_Font font() {return font_; }
   virtual Fl_Fontsize size() {return size_; }
@@ -266,28 +274,15 @@ protected:
 
 #if defined(__APPLE__)
 
-// FIXME: add Fl_Quartz_Printer_Graphics_Driver
-// FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
+#if FL_LIBRARY
 #include "src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#endif
 
 #elif defined(WIN32) || defined(FL_DOXYGEN)
 
-// FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
+#if FL_LIBRARY
 #include "src/drivers/GDI/Fl_GDI_Graphics_Driver.h"
-
-/**
- The graphics driver used when printing on MSWindows.
- *
- This class is implemented only on the MSWindows platform. It 's extremely similar to Fl_GDI_Graphics_Driver.
- */
-class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
-public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
-  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
-  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
-};
+#endif
 
 #elif defined(FL_PORTING)
 
@@ -301,9 +296,9 @@ protected:
 
 #else // X11
 
-// FIXME: it should not be required to include this file here. This is nothing that the user should have access to.
+#if FL_LIBRARY
 #include "src/drivers/Xlib/Fl_Xlib_Graphics_Driver.h"
-
+#endif
 
 #endif
 

@@ -1207,72 +1207,36 @@ static void orderfront_subwindows(FLWindow *xid)
   }
 }
 
-#if FLTK_ABI_VERSION >= 10304
 static const unsigned windowDidResize_mask = 1;
-#else
-static const unsigned long windowDidResize_mask = 1;
-#endif
 
 bool Fl_X::in_windowDidResize() {
-#if FLTK_ABI_VERSION >= 10304
   return mapped_to_retina_ & windowDidResize_mask;
-#else
-  return (unsigned long)xidChildren & windowDidResize_mask;
-#endif
 }
 
 void Fl_X::in_windowDidResize(bool b) {
-#if FLTK_ABI_VERSION >= 10304
   if (b) mapped_to_retina_ |= windowDidResize_mask;
   else mapped_to_retina_ &= ~windowDidResize_mask;
-#else
-  if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | windowDidResize_mask);
-  else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~windowDidResize_mask);
-#endif
 }
 
-#if FLTK_ABI_VERSION >= 10304
 static const unsigned mapped_mask = 2;
 static const unsigned changed_mask = 4;
-#else
-static const unsigned long mapped_mask = 2; // sizeof(unsigned long) = sizeof(Fl_X*)
-static const unsigned long changed_mask = 4;
-#endif
 
 bool Fl_X::mapped_to_retina() {
-#if FLTK_ABI_VERSION >= 10304
   return mapped_to_retina_ & mapped_mask;
-#else
-  return (unsigned long)xidChildren & mapped_mask;
-#endif
 }
 
 void Fl_X::mapped_to_retina(bool b) {
-#if FLTK_ABI_VERSION >= 10304
   if (b) mapped_to_retina_ |= mapped_mask;
   else mapped_to_retina_ &= ~mapped_mask;
-#else
-  if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | mapped_mask);
-  else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~mapped_mask);
-#endif
 }
 
 bool Fl_X::changed_resolution() {
-#if FLTK_ABI_VERSION >= 10304
   return mapped_to_retina_ & changed_mask;
-#else
-  return (unsigned long)xidChildren & changed_mask;
-#endif
 }
 
 void Fl_X::changed_resolution(bool b) {
-#if FLTK_ABI_VERSION >= 10304
   if (b) mapped_to_retina_ |= changed_mask;
   else mapped_to_retina_ &= ~changed_mask;
-#else
-  if (b) xidChildren = (Fl_X*)((unsigned long)xidChildren | changed_mask);
-  else xidChildren = (Fl_X*)((unsigned long)xidChildren & ~changed_mask);
-#endif
 }
 
 
@@ -4445,7 +4409,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   }
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
-  BOOL to_quartz =  (this->driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id);
+  BOOL to_quartz =  (this->driver()->has_feature(Fl_Graphics_Driver::NATIVE));
   CALayer *layer = get_titlebar_layer(win);
   if (layer) { // if title bar uses a layer
     if (to_quartz) { // to Quartz printer
