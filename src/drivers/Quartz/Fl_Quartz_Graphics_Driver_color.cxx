@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include "config_lib.h"
+#include "../../config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ
 
 // The fltk "colormap".  This allows ui colors to be stored in 8-bit

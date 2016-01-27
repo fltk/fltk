@@ -17,7 +17,7 @@
 //
 
 
-#include "config_lib.h"
+#include "../../config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ
 
 #include "Fl_Quartz_Printer_Graphics_Driver.h"

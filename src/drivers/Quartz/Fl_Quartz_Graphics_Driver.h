@@ -22,7 +22,7 @@
  \brief Definition of Apple Quartz graphics driver.
  */
 
-#include "config_lib.h"
+#include "../../config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ
 
 #ifndef FL_QUARTZ_GRAPHICS_DRIVER_H

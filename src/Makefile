@@ -215,10 +215,23 @@ UTF8CFILES = \
 	xutf8/utf8Utils.c \
 	xutf8/utf8Wrap.c
 
+QUARTZCPPFILES = \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx \
+	drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx \
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
+
+
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
+CPPFILES += $(shell if test $(USEMMFILES) = Yes; then echo $(QUARTZCPPFILES); fi)
 MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
