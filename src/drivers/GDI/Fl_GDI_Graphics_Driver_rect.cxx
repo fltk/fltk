@@ -16,8 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_QUARTZ_RECT_CXX
-#define FL_CFG_GFX_QUARTZ_RECT_CXX
 
 
 /**
@@ -231,8 +229,6 @@ void Fl_GDI_Graphics_Driver::restore_clip() {
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 }
 
-
-#endif // FL_CFG_GFX_GDI_RECT_CXX
 
 //
 // End of "$Id$".

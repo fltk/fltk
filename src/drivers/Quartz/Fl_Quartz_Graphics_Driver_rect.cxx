@@ -17,8 +17,10 @@
 //
 
 
-#ifndef FL_CFG_GFX_QUARTZ_RECT_CXX
-#define FL_CFG_GFX_QUARTZ_RECT_CXX
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+
+#include <FL/Fl.H>
 
 
 /**
@@ -210,7 +212,7 @@ void Fl_Quartz_Graphics_Driver::push_clip(int x, int y, int w, int h) {
   }
   if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
   else Fl::warning("Fl_Quartz_Graphics_Driver::push_clip: clip stack overflow!\n");
-  fl_restore_clip();
+  restore_clip();
 }
 
 int Fl_Quartz_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
@@ -251,7 +253,7 @@ int Fl_Quartz_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 void Fl_Quartz_Graphics_Driver::push_no_clip() {
   if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
   else Fl::warning("Fl_Quartz_Graphics_Driver::push_no_clip: clip stack overflow!\n");
-  fl_restore_clip();
+  restore_clip();
 }
 
 // pop back to previous clip:
@@ -260,7 +262,7 @@ void Fl_Quartz_Graphics_Driver::pop_clip() {
     Fl_Region oldr = rstack[rstackptr--];
     if (oldr) XDestroyRegion(oldr);
   } else Fl::warning("Fl_Quartz_Graphics_Driver::pop_clip: clip stack underflow!\n");
-  fl_restore_clip();
+  restore_clip();
 }
 
 void Fl_Quartz_Graphics_Driver::restore_clip() {
@@ -277,7 +279,7 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
 }
 
 
-#endif // FL_CFG_GFX_QUARTZ_RECT_CXX
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id$".

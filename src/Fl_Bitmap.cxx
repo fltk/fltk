@@ -275,18 +275,6 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
 }
 
 #ifdef __APPLE__
-void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (bm->id_ && fl_gc) {
-    CGRect rect = { { (CGFloat)X, (CGFloat)Y }, { (CGFloat)W, (CGFloat)H } };
-    Fl_X::q_begin_image(rect, cx, cy, bm->w(), bm->h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)bm->id_);
-    Fl_X::q_end_image();
-  }
-}
 
 #elif defined(WIN32)
 void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {

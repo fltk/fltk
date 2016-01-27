@@ -24,18 +24,16 @@
 // Implementation of fl_color(i), fl_color(r,g,b).
 
 #include <FL/Fl_Device.H>
+#include <FL/Fl.H>
 #include <config.h>
 #include "config_lib.h"
 
+// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx"
 
-// -----------------------------------------------------------------------------
 
-
-#ifdef FL_CFG_GFX_QUARTZ
-
-# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx"
-
-#endif
+static unsigned fl_cmap[256] = {
+#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
+};
 
 
 // -----------------------------------------------------------------------------

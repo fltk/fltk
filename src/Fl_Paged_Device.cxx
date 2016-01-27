@@ -23,8 +23,12 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-const char *Fl_Paged_Device::class_id = "Fl_Paged_Device";
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#endif
 
+const char *Fl_Paged_Device::class_id = "Fl_Paged_Device";
 
 /**
  @brief Draws the widget on the printed page.

@@ -16,8 +16,12 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_QUARTZ_LINE_STYLE_CXX
-#define FL_CFG_GFX_QUARTZ_LINE_STYLE_CXX
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+
+#include <FL/fl_draw.h>
+
+extern int fl_line_width_;
 
 /**
   \file quartz_line_style.cxx
@@ -53,9 +57,11 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
   fl_quartz_line_width_ = (float)width; 
   fl_quartz_line_cap_ = Cap[(style>>8)&3];
   // when printing kCGLineCapSquare seems better for solid lines
-  if ( Fl_Surface_Device::surface() != Fl_Display_Device::display_device() && style == FL_SOLID && dashes == NULL ) {
+  if ( Fl_Surface_Device::surface() != Fl_Display_Device::display_device()
+      && style == FL_SOLID && dashes == NULL )
+  {
     fl_quartz_line_cap_ = kCGLineCapSquare;
-    }
+  }
   fl_quartz_line_join_ = Join[(style>>12)&3];
   char *d = dashes; 
   static CGFloat pattern[16];
@@ -91,7 +97,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
   fl_quartz_restore_line_style_();
 }
 
-#endif // FL_CFG_GFX_QUARTZ_LINE_STYLE_CXX
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id$".

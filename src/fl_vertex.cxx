@@ -148,11 +148,7 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 // -----------------------------------------------------------------------------
 
 
-#ifdef FL_CFG_GFX_QUARTZ
-
-# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx"
-
-#endif
+// Apple Quartz graphics driver "drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx"
 
 
 // -----------------------------------------------------------------------------

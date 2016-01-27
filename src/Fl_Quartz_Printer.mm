@@ -18,6 +18,7 @@
 
 #ifdef __APPLE__
 #include <FL/Fl_Printer.H>
+#include "drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>

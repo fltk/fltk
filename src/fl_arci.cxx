@@ -35,14 +35,8 @@
 #include <config.h>
 #include "config_lib.h"
 
-// -----------------------------------------------------------------------------
 
-
-#ifdef FL_CFG_GFX_QUARTZ
-
-# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx"
-
-#endif
+// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx"
 
 
 // -----------------------------------------------------------------------------

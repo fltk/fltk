@@ -31,7 +31,7 @@
 #ifdef WIN32
 #  include "drivers/GDI/Fl_GDI_Graphics_Driver_image.cxx"
 #elif defined(__APPLE__)
-#  include "drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx"
+// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx"
 #else
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx"
 #endif

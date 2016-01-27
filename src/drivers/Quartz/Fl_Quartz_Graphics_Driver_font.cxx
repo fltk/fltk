@@ -16,10 +16,15 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+
 #include "Fl_Quartz_Graphics_Driver.h"
 
 #include <config.h>
 #include <math.h>
+#include <FL/Fl.H>
+#include <FL/fl_utf8.h>
 
 Fl_Fontdesc* fl_fonts = NULL;
 
@@ -582,6 +587,8 @@ void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   text_extents(c, n, dx, dy, w, h);
   draw(c, n, x - w - dx, y);
 }
+
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id$".

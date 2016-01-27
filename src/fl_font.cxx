@@ -48,7 +48,7 @@
 #ifdef WIN32
 #  include "drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx"
 #elif defined(__APPLE__)
-#  include "drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx"
+// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx"
 #elif USE_XFT
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx"
 #elif defined(FL_PORTING)

@@ -22,8 +22,11 @@
  \brief Definition of Apple Quartz graphics driver.
  */
 
-#ifndef FL_CFG_GFX_QUARTZ_H
-#define FL_CFG_GFX_QUARTZ_H
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+
+#ifndef FL_QUARTZ_GRAPHICS_DRIVER_H
+#define FL_QUARTZ_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Device.H>
 
@@ -117,15 +120,9 @@ protected:
 };
 
 
-/** Graphics driver used for Mac OS X printing. */
-class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
-public:
-  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
-};
+#endif // FL_QUARTZ_GRAPHICS_DRIVER_H
 
-
-
-#endif // FL_CFG_GFX_QUARTZ_H
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".

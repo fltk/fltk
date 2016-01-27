@@ -694,6 +694,15 @@
 		C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E51274D100007D3CFE /* OpenGL.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
+		C97E30B51C5976A600E22076 /* Fl_Quartz_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30B11C59704300E22076 /* Fl_Quartz_Graphics_Driver.cxx */; };
+		C97E30B61C5976A600E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A11C596CC900E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx */; };
+		C97E30B71C5976A600E22076 /* Fl_Quartz_Graphics_Driver_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A31C596CC900E22076 /* Fl_Quartz_Graphics_Driver_image.cxx */; };
+		C97E30B81C5976A600E22076 /* Fl_Quartz_Graphics_Driver_arci.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A41C596CC900E22076 /* Fl_Quartz_Graphics_Driver_arci.cxx */; };
+		C97E30B91C5976A600E22076 /* Fl_Quartz_Graphics_Driver_color.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A51C596CC900E22076 /* Fl_Quartz_Graphics_Driver_color.cxx */; };
+		C97E30BA1C5976A600E22076 /* Fl_Quartz_Graphics_Driver_font.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A61C596CC900E22076 /* Fl_Quartz_Graphics_Driver_font.cxx */; };
+		C97E30BB1C5976A600E22076 /* Fl_Quartz_Graphics_Driver_line_style.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A71C596CC900E22076 /* Fl_Quartz_Graphics_Driver_line_style.cxx */; };
+		C97E30BC1C5976A600E22076 /* Fl_Quartz_Graphics_Driver_vertex.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A81C596CC900E22076 /* Fl_Quartz_Graphics_Driver_vertex.cxx */; };
+		C97E30BD1C5976A600E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30B01C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx */; };
 		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
 		C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D999C03407EAEE9C4D3477A /* browser.cxx */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -4736,6 +4745,17 @@
 		C9165ED31291A376003FF4F0 /* unittests.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unittests.cxx; path = ../../test/unittests.cxx; sourceTree = SOURCE_ROOT; };
 		C9628FFD1274D0B3007D3CFE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C96290E51274D100007D3CFE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		C97E30A11C596CC900E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_rect.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx; sourceTree = "<group>"; };
+		C97E30A21C596CC900E22076 /* Fl_Quartz_Graphics_Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fl_Quartz_Graphics_Driver.h; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h; sourceTree = "<group>"; };
+		C97E30A31C596CC900E22076 /* Fl_Quartz_Graphics_Driver_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_image.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx; sourceTree = "<group>"; };
+		C97E30A41C596CC900E22076 /* Fl_Quartz_Graphics_Driver_arci.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_arci.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx; sourceTree = "<group>"; };
+		C97E30A51C596CC900E22076 /* Fl_Quartz_Graphics_Driver_color.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_color.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx; sourceTree = "<group>"; };
+		C97E30A61C596CC900E22076 /* Fl_Quartz_Graphics_Driver_font.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_font.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx; sourceTree = "<group>"; };
+		C97E30A71C596CC900E22076 /* Fl_Quartz_Graphics_Driver_line_style.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_line_style.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx; sourceTree = "<group>"; };
+		C97E30A81C596CC900E22076 /* Fl_Quartz_Graphics_Driver_vertex.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver_vertex.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx; sourceTree = "<group>"; };
+		C97E30B01C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Printer_Graphics_Driver.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx; sourceTree = "<group>"; };
+		C97E30B11C59704300E22076 /* Fl_Quartz_Graphics_Driver.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx; sourceTree = "<group>"; };
+		C97E30B21C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fl_Quartz_Printer_Graphics_Driver.h; path = ../../src/drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.h; sourceTree = "<group>"; };
 		C984AFA712D02A1800D66DAD /* demo.menu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demo.menu; path = ../../test/demo.menu; sourceTree = SOURCE_ROOT; };
 		C9EDD143127338F600ADB21C /* README.OSX.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.OSX.txt; path = ../../README.OSX.txt; sourceTree = SOURCE_ROOT; };
 		C9EDD4DE1274BB6600ADB21C /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../../png/png.h; sourceTree = SOURCE_ROOT; };
@@ -5671,6 +5691,7 @@
 		07A2E7B74BC0E97DC2AF181A /* fltk */ = {
 			isa = PBXGroup;
 			children = (
+				C97E309F1C596C5700E22076 /* Drivers */,
 				B04F6E032ADAF0A16A860A2E /* Headers */,
 				C9FCF4D61C4ADE4800BE15FD /* config_lib.h */,
 				7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */,
@@ -6686,6 +6707,32 @@
 				C96290E51274D100007D3CFE /* OpenGL.framework */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		C97E309F1C596C5700E22076 /* Drivers */ = {
+			isa = PBXGroup;
+			children = (
+				C97E30A01C596C8500E22076 /* Quartz */,
+			);
+			name = Drivers;
+			sourceTree = "<group>";
+		};
+		C97E30A01C596C8500E22076 /* Quartz */ = {
+			isa = PBXGroup;
+			children = (
+				C97E30A21C596CC900E22076 /* Fl_Quartz_Graphics_Driver.h */,
+				C97E30B11C59704300E22076 /* Fl_Quartz_Graphics_Driver.cxx */,
+				C97E30A11C596CC900E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx */,
+				C97E30A31C596CC900E22076 /* Fl_Quartz_Graphics_Driver_image.cxx */,
+				C97E30A41C596CC900E22076 /* Fl_Quartz_Graphics_Driver_arci.cxx */,
+				C97E30A51C596CC900E22076 /* Fl_Quartz_Graphics_Driver_color.cxx */,
+				C97E30A61C596CC900E22076 /* Fl_Quartz_Graphics_Driver_font.cxx */,
+				C97E30A71C596CC900E22076 /* Fl_Quartz_Graphics_Driver_line_style.cxx */,
+				C97E30A81C596CC900E22076 /* Fl_Quartz_Graphics_Driver_vertex.cxx */,
+				C97E30B21C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.h */,
+				C97E30B01C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx */,
+			);
+			name = Quartz;
 			sourceTree = "<group>";
 		};
 		C9EDD4DC1274BB4100ADB21C /* Headers */ = {
@@ -9707,6 +9754,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97E30BD1C5976A600E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx in Sources */,
 				7F66B1D912BB924C00C67B59 /* Fl_cocoa.mm in Sources */,
 				7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */,
 				7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */,
@@ -9731,6 +9779,7 @@
 				EE1DAA8B2CB944B2D5426CB6 /* Fl_Double_Window.cxx in Sources */,
 				745C2AF79ABD813E3AE9CD70 /* Fl_File_Browser.cxx in Sources */,
 				2C0BDF55B026879D401DF915 /* Fl_File_Chooser.cxx in Sources */,
+				C97E30BC1C5976A600E22076 /* Fl_Quartz_Graphics_Driver_vertex.cxx in Sources */,
 				61407877A424C4E1A74036C0 /* Fl_File_Chooser2.cxx in Sources */,
 				6DA839CF781EBC87AD3CF6B4 /* Fl_File_Icon.cxx in Sources */,
 				9DFFD353B45F553EA8D7A505 /* Fl_File_Input.cxx in Sources */,
@@ -9738,6 +9787,7 @@
 				74D195DEE3A33FA0C8C7A5BE /* Fl_Help_View.cxx in Sources */,
 				6F8B4EC22CC54B6B06F9D5C7 /* Fl_Image.cxx in Sources */,
 				0BD1B4FF53C27EDA7B9F2C66 /* Fl_Input.cxx in Sources */,
+				C97E30B91C5976A600E22076 /* Fl_Quartz_Graphics_Driver_color.cxx in Sources */,
 				2CFBED9BA0BE01679B285434 /* Fl_Input_.cxx in Sources */,
 				5D1D08BF3F79DC7C29D6FCF4 /* Fl_Light_Button.cxx in Sources */,
 				E3C29EE9B0D666B794852902 /* Fl_Menu.cxx in Sources */,
@@ -9752,6 +9802,7 @@
 				291FA24A9E91A2036BC718A2 /* Fl_Overlay_Window.cxx in Sources */,
 				2E43C0679E5714486D7D535F /* Fl_Pack.cxx in Sources */,
 				B082626A90693D0C12904CB7 /* Fl_Pixmap.cxx in Sources */,
+				C97E30B51C5976A600E22076 /* Fl_Quartz_Graphics_Driver.cxx in Sources */,
 				812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */,
 				AD0F285A651FEF5CB6FC7012 /* Fl_Printer.cxx in Sources */,
 				C616A9C9EDD193DF4BADDA5A /* Fl_Preferences.cxx in Sources */,
@@ -9761,6 +9812,7 @@
 				D0CF9C806A93CFB18B0DAA6F /* Fl_Roller.cxx in Sources */,
 				495C752B9742C0729399A646 /* Fl_Round_Button.cxx in Sources */,
 				878478F960A354C2DF2DC7E6 /* Fl_Scroll.cxx in Sources */,
+				C97E30B81C5976A600E22076 /* Fl_Quartz_Graphics_Driver_arci.cxx in Sources */,
 				D49C72834787A96D62E0DC96 /* Fl_Scrollbar.cxx in Sources */,
 				2C4DB237B4B8ACD2FB305BD5 /* Fl_Shared_Image.cxx in Sources */,
 				ED169E1E1FC93C1F97D21AC4 /* Fl_Single_Window.cxx in Sources */,
@@ -9803,6 +9855,7 @@
 				3C2E57EF6298BB0FC9412871 /* Fl_own_colormap.cxx in Sources */,
 				AC85BE9A50BEE739620E7080 /* Fl_visual.cxx in Sources */,
 				9B1EDE4CD694BD6EECFDD3D9 /* Fl_x.cxx in Sources */,
+				C97E30B71C5976A600E22076 /* Fl_Quartz_Graphics_Driver_image.cxx in Sources */,
 				F8C4B882B6A9C15C2105AAA8 /* filename_absolute.cxx in Sources */,
 				D7E6146CFE9389C35447F23B /* filename_expand.cxx in Sources */,
 				FD872A3C0217DEF3E1042A02 /* filename_ext.cxx in Sources */,
@@ -9810,6 +9863,7 @@
 				2BE1A3AC07CE39EEAC5E2B98 /* filename_list.cxx in Sources */,
 				A355A5A2EEF58A53CD2CF081 /* filename_match.cxx in Sources */,
 				3FD5B1D9C066066CCA52724A /* filename_setext.cxx in Sources */,
+				C97E30BB1C5976A600E22076 /* Fl_Quartz_Graphics_Driver_line_style.cxx in Sources */,
 				95AFA1B1A6FA7902372E96A6 /* fl_arc.cxx in Sources */,
 				88E3AAF4EEE5C45BE693C493 /* fl_arci.cxx in Sources */,
 				1CD7ED77B7B8FE0D99290351 /* fl_ask.cxx in Sources */,
@@ -9851,8 +9905,10 @@
 				0262498E858406B6E51BD4E4 /* fl_symbols.cxx in Sources */,
 				3BD005D954ABCB5983F540AB /* fl_utf.c in Sources */,
 				AEC9E288AC9E09B99855D15C /* fl_utf8.cxx in Sources */,
+				C97E30BA1C5976A600E22076 /* Fl_Quartz_Graphics_Driver_font.cxx in Sources */,
 				D2649C006A1AF19ADB38855E /* fl_vertex.cxx in Sources */,
 				51FC4E43CA74B5CB3FD91147 /* flstring.c in Sources */,
+				C97E30B61C5976A600E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx in Sources */,
 				DC4BEF50B12F14C694F1C9DE /* numericsort.c in Sources */,
 				C8D2445DE4DB272D6140EB4D /* ps_image.cxx in Sources */,
 				5849E21F505FC39533995DCA /* scandir.c in Sources */,

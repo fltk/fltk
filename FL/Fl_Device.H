@@ -274,10 +274,6 @@ protected:
 
 #if defined(__APPLE__)
 
-#if FL_LIBRARY
-#include "src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
-#endif
-
 #elif defined(WIN32) || defined(FL_DOXYGEN)
 
 #if FL_LIBRARY

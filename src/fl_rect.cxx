@@ -65,11 +65,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 
 
-#ifdef FL_CFG_GFX_QUARTZ
-
-# include "drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx"
-
-#endif
+// Apple Quartz driver in  "drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx"
 
 
 // -----------------------------------------------------------------------------

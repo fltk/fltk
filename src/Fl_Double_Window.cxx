@@ -238,20 +238,11 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
 
 #elif defined(__APPLE_QUARTZ__) || defined(FL_DOXYGEN)
 
+#include "src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+
 char fl_can_do_alpha_blending() {
   return 1;
 }
-
-#if ! defined(FL_DOXYGEN)
-Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h) {
-  void *data = calloc(w*h,4);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGContextRef ctx = CGBitmapContextCreate(
-    data, w, h, 8, w*4, lut, kCGImageAlphaPremultipliedLast);
-  CGColorSpaceRelease(lut);
-  return (Fl_Offscreen)ctx;
-}
-#endif
 
 /** \addtogroup fl_drawings
  @{

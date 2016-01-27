@@ -32,7 +32,9 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Printer.H>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) 
+#elif defined(__APPLE__)
+#include "src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: this file needs a lot of custom code to draw Pixmaps correctly"
 #else
@@ -145,12 +147,6 @@ int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
 //------------------------------------------------------------------------------
 #ifdef __APPLE__					// Apple, Mac OS X
 //------------------------------------------------------------------------------
-
-void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
-}
 
 //------------------------------------------------------------------------------
 #elif defined(WIN32)					// Windows GDI

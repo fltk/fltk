@@ -20,6 +20,11 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#endif
+
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: instantiate and implement various device drivers here"
@@ -31,7 +36,6 @@ const char *Fl_Surface_Device::class_id = "Fl_Surface_Device";
 const char *Fl_Display_Device::class_id = "Fl_Display_Device";
 const char *Fl_Graphics_Driver::class_id = "Fl_Graphics_Driver";
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
-const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
 #  ifndef FL_DOXYGEN
    bool Fl_Display_Device::high_res_window_ = false;
 #  endif

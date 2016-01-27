@@ -16,7 +16,10 @@
 //     http://www.fltk.org/str.php
 //
 
-////////////////////////////////////////////////////////////////
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+
+#include "Fl_Quartz_Graphics_Driver.h"
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -161,6 +164,123 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   fl_color(r,g,b);
   fl_rectf(x,y,w,h);
 }
+
+void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (bm->id_ && fl_gc) {
+    CGRect rect = { { (CGFloat)X, (CGFloat)Y }, { (CGFloat)W, (CGFloat)H } };
+    Fl_X::q_begin_image(rect, cx, cy, bm->w(), bm->h());
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)bm->id_);
+    Fl_X::q_end_image();
+  }
+}
+
+static void imgProviderReleaseData (void *info, const void *data, size_t size)
+{
+  if (!info || *(bool*)info) delete[] (unsigned char *)data;
+  delete (bool*)info;
+}
+
+static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
+                 int &X, int &Y, int &W, int &H)
+{
+  // account for current clip region (faster on Irix):
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
+  // clip the box down to the size of image, quit if empty:
+  if (cx < 0) {W += cx; X -= cx; cx = 0;}
+  if (cx+W > w) W = w-cx;
+  if (W <= 0) return 1;
+  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
+  if (cy+H > h) H = h-cy;
+  if (H <= 0) return 1;
+  return 0;
+}
+
+void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+    img->draw_empty(XP, YP);
+    return;
+  }
+  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!img->id_) {
+    CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+    int ld = img->ld();
+    if (!ld) ld = img->w() * img->d();
+    // If img->alloc_array == 0, the CGImage data provider must not release the image data.
+    // If img->alloc_array != 0, the CGImage data provider will take responsibilty of deleting RGB image data after use:
+    // when the CGImage is deallocated, the release callback of its data provider
+    // (imgProviderReleaseData) is called and can delete the RGB image data.
+    // If the CGImage is printed, it is not deallocated until after the end of the page,
+    // therefore, with img->alloc_array != 0, the RGB image can be safely deleted any time after return from this function.
+    // The previously unused mask_ member allows to make sure the RGB image data is not deleted by Fl_RGB_Image::uncache().
+    if (img->alloc_array) img->mask_ = new bool(true);
+    CGDataProviderRef src = CGDataProviderCreateWithData(img->mask_, img->array, ld * img->h(),
+                                                         img->alloc_array?imgProviderReleaseData:NULL);
+    img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+                             lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                             src, 0L, false, kCGRenderingIntentDefault);
+    CGColorSpaceRelease(lut);
+    CGDataProviderRelease(src);
+  }
+  if (img->id_ && fl_gc) {
+    if (!img->alloc_array && has_feature(PRINTER) && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
+      // When printing, the image data is used when the page is completed, that is, after return from this function.
+      // If the image has alloc_array = 0, we must protect against image data being freed before it is used:
+      // we duplicate the image data and have it deleted after use by the release-callback of the CGImage data provider
+      Fl_RGB_Image* img2 = (Fl_RGB_Image*)img->copy();
+      img2->alloc_array = 0;
+      const uchar *img_bytes = img2->array;
+      int ld = img2->ld();
+      if (!ld) ld = img2->w() * img2->d();
+      delete img2;
+      img->uncache();
+      CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+      CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, ld * img->h(), imgProviderReleaseData);
+      img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+                               lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                               src, 0L, true, kCGRenderingIntentDefault);
+      CGColorSpaceRelease(lut);
+      CGDataProviderRelease(src);
+    }
+    CGRect rect = CGRectMake(X, Y, W, H);
+    Fl_X::q_begin_image(rect, cx, cy, img->w(), img->h());
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)img->id_);
+    Fl_X::q_end_image();
+  }
+}
+
+int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
+  int X, Y, W, H;
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
+  if (W == 0 || H == 0) return 1;
+  fl_push_no_clip(); // remove the FLTK clip that can't be rescaled
+  CGContextSaveGState(fl_gc);
+  CGContextClipToRect(fl_gc, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
+  CGContextTranslateCTM(fl_gc, XP, YP);
+  CGContextScaleCTM(fl_gc, float(WP)/img->w(), float(HP)/img->h());
+  img->draw(0, 0, img->w(), img->h(), 0, 0);
+  CGContextRestoreGState(fl_gc);
+  fl_pop_clip(); // restore FLTK's clip
+  return 1;
+}
+
+void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+}
+
+
+
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id$".

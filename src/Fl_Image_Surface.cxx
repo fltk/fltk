@@ -20,7 +20,13 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl.H>
 
-#if defined(WIN32) || defined(__APPLE__)
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#endif
+
+#if defined(WIN32)
+#elif defined(__APPLE__)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement image surface handling here"
 #else

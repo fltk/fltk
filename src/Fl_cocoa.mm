@@ -43,6 +43,7 @@ extern "C" {
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Copy_Surface.H>
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -53,6 +54,8 @@ extern "C" {
 #include <string.h>
 
 #import <Cocoa/Cocoa.h>
+
+
 
 // #define DEBUG_SELECT		// UNCOMMENT FOR SELECT()/THREAD DEBUGGING
 #ifdef DEBUG_SELECT

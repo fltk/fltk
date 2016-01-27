@@ -16,8 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_QUARTZ_ARCI_CXX
-#define FL_CFG_GFX_QUARTZ_ARCI_CXX
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
 
 #include "Fl_Quartz_Graphics_Driver.h"
 
@@ -68,7 +68,7 @@ void Fl_Quartz_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2)
   CGContextSetShouldAntialias(fl_gc, false);
 }
 
-#endif // FL_CFG_GFX_QUARTZ_ARCI_CXX
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id$".

@@ -16,8 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_QUARTZ_VERTEX_CXX
-#define FL_CFG_GFX_QUARTZ_VERTEX_CXX
+#include "config_lib.h"
+#ifdef FL_CFG_GFX_QUARTZ
 
 /**
   \file quartz_vertex.cxx
@@ -135,7 +135,7 @@ void Fl_Quartz_Graphics_Driver::circle(double x, double y,double r) {
   CGContextSetShouldAntialias(fl_gc, false);
 }
 
-#endif // FL_CFG_GFX_QUARTZ_VERTEX_CXX
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id$".
