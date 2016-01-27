@@ -50,17 +50,6 @@ int Fl_Native_File_Chooser::have_looked_for_GTK_libs = 0;
  which can also be changed with type().
  */
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-#if FLTK_ABI_VERSION <= 10302
-  _btype       = val;
-  _options     = NO_OPTIONS;
-  _filter      = NULL;
-  _filtvalue   = 0;
-  _parsedfilt  = NULL;
-  _preset_file = NULL;
-  _prevvalue   = NULL;
-  _directory   = NULL;
-  _errmsg      = NULL;
-#endif // FLTK_ABI_VERSION
   if (have_looked_for_GTK_libs == 0) {
     // First Time here, try to find the GTK libs if they are installed
 #if HAVE_DLSYM && HAVE_DLFCN_H

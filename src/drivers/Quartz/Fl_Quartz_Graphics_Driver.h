@@ -39,10 +39,11 @@
  *
  This class is implemented only on the Mac OS X platform.
  */
-class FL_EXPORT Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
+class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
+  virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
 
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -114,6 +115,14 @@ protected:
   int height();
   int descent();
 };
+
+
+/** Graphics driver used for Mac OS X printing. */
+class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
+public:
+  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
+};
+
 
 
 #endif // FL_CFG_GFX_QUARTZ_H

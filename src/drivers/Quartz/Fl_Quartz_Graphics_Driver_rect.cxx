@@ -32,10 +32,6 @@
 
 extern float fl_quartz_line_width_;
 
-// FIXME: the use of the macro below can be avoided by adding a specific class
-//        for drawing to the prinitng context
-#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id)
-
 
 // --- line and polygon drawing with integer coordinates
 
@@ -45,11 +41,10 @@ void Fl_Quartz_Graphics_Driver::point(int x, int y) {
 
 void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  // FIXME: there should be a quartz graphics driver for the printer device that makes the USINGQUARTZPRINTER obsolete
-  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if ( (!has_feature(PRINTER)) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
-  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if ( (!has_feature(PRINTER)) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
@@ -76,7 +71,7 @@ void Fl_Quartz_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y
 }
 
 void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextStrokePath(fl_gc);
@@ -88,11 +83,11 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
     CGContextFillRect(fl_gc, CGRectMake(x-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(fl_gc, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
@@ -101,11 +96,11 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
     CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(fl_gc, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
   }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
@@ -115,11 +110,11 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
     CGContextFillRect(fl_gc, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(fl_gc, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1) {
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextStrokePath(fl_gc);
@@ -127,11 +122,11 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1) {
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
   }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
@@ -140,11 +135,11 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(fl_gc, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
@@ -154,7 +149,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
     CGContextFillRect(fl_gc, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(fl_gc, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
   }
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {

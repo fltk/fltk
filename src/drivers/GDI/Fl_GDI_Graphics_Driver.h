@@ -40,6 +40,7 @@ protected:
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
+  virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   void draw(const char* str, int n, int x, int y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
@@ -106,6 +107,21 @@ protected:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
+};
+
+/**
+ The graphics driver used when printing on MSWindows.
+ *
+ This class is implemented only on the MSWindows platform. It 's extremely similar to Fl_GDI_Graphics_Driver.
+ */
+class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+public:
+  static const char *class_id;
+  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
+  const char *class_name() {return class_id;};
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
 };
 
 
