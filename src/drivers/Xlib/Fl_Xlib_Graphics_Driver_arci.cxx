@@ -19,6 +19,10 @@
 #ifndef FL_CFG_GFX_XLIB_ARCI_CXX
 #define FL_CFG_GFX_XLIB_ARCI_CXX
 
+#include <FL/fl_draw.H>
+#include <config.h>
+#include "../../config_lib.h"
+
 /**
   \file xlib_arci.cxx
   \brief Utility functions for drawing circles using integers

@@ -147,6 +147,34 @@ set(CPPFILES
   fl_encoding_mac_roman.cxx
 )
 
+set(DRIVER_FILES)
+
+if (USE_X11)
+  # FILE(GLOB DRIVER_FILES drivers/Xlib/Fl_Xlib_Graphics_Driver_*.cxx)
+  set(DRIVER_FILES
+    drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
+    drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx
+    drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx
+    drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx
+    drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx
+    drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
+  )
+  if (USE_XFT)
+    set(DRIVER_FILES ${DRIVER_FILES}
+      drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
+    )
+  else ()
+    set(DRIVER_FILES ${DRIVER_FILES}
+      drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
+    )  
+  endif (USE_XFT)
+endif (USE_X11)
+
+set(CPPFILES
+  ${CPPFILES}
+  ${DRIVER_FILES}
+)
+
 set(FLCPPFILES
   forms_compatability.cxx
   forms_bitmap.cxx
@@ -197,7 +225,16 @@ set(CFILES
   fl_utf.c
 )
 
+# Add preprocessor macro FL_LIBRARY_CMAKE temporarily until the build
+# system transition is completed.
+# *** currently LINUX only ***
+
+if (UNIX)
+  add_definitions(-DFL_LIBRARY_CMAKE)
+endif (UNIX)
+
 add_definitions(-DFL_LIBRARY)
+
 if(APPLE AND NOT OPTION_APPLE_X11)
     set(MMFILES
         Fl_cocoa.mm

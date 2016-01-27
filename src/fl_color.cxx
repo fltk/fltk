@@ -23,6 +23,7 @@
 
 // Implementation of fl_color(i), fl_color(r,g,b).
 
+#  include <FL/Fl.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl.H>
 #include <config.h>
@@ -30,6 +31,10 @@
 
 // Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx"
 
+// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
+// statements when the new build system is ready:
+#ifndef FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
 
 static unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":
@@ -58,8 +63,17 @@ static unsigned fl_cmap[256] = {
 
 // -----------------------------------------------------------------------------
 
+#endif // FL_LIBRARY_CMAKE
+
+// -----------------------------------------------------------------------------
+
 /** \addtogroup  fl_attributes
  @{ */
+
+/* static */
+unsigned fl_cmap[256] = {
+#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
+};
 
 /**
  Returns the RGB value(s) for the given FLTK color index.

@@ -36,6 +36,8 @@
 #  include <FL/x.H>
 #  include <FL/fl_draw.H>
 
+extern unsigned fl_cmap[256]; // defined in fl_color.cxx
+
 ////////////////////////////////////////////////////////////////
 // figure_out_visual() calculates masks & shifts for generating
 // pixels in true-color visuals:
@@ -90,10 +92,6 @@ static void figure_out_visual() {
     fl_extrashift = 0;
 
 }
-
-static unsigned fl_cmap[256] = {
-#include "../../fl_cmap.h" // this is a file produced by "cmap.cxx":
-};
 
 #  if HAVE_OVERLAY
 /** HAVE_OVERLAY determines whether fl_xmap is one or two planes */

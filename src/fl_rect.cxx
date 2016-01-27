@@ -64,6 +64,11 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 }
 
 
+// -----------------------------------------------------------------------------
+// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
+// statements when the new build system is ready:
+#ifndef FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
 
 // Apple Quartz driver in  "drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx"
 
@@ -86,6 +91,10 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 # include "drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx"
 
 #endif
+
+// -----------------------------------------------------------------------------
+#endif // FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
 
 
 //

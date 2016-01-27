@@ -35,8 +35,13 @@
 int fl_line_width_ = 0;
 
 
-// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx"
+// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
+// statements when the new build system is ready:
+#ifndef FL_LIBRARY_CMAKE
 
+// -----------------------------------------------------------------------------
+
+// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx"
 
 // -----------------------------------------------------------------------------
 
@@ -59,6 +64,8 @@ int fl_line_width_ = 0;
 
 
 // -----------------------------------------------------------------------------
+
+#endif // FL_LIBRARY_CMAKE
 
 //
 // End of "$Id$".

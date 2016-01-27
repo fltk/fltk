@@ -24,7 +24,20 @@
   \brief Line style drawing utility hiding different platforms.
 */
 
+#include "../../config_lib.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
+#include <FL/Fl_Printer.H>
+#include "../../flstring.h"
+#include <stdio.h>
+
 #include "Fl_Xlib_Graphics_Driver.h"
+
+// We save the current line width (absolute value) here.
+// This is currently used only for X11 clipping, see src/fl_rect.cxx.
+// FIXME: this would probably better be in class Fl::
+extern int fl_line_width_;
 
 void Fl_Xlib_Graphics_Driver::line_style(int style, int width, char* dashes) {
 

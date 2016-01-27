@@ -26,6 +26,13 @@
  \brief X11 Xlib specific line and polygon drawing with integer coordinates.
  */
 
+#include <config.h>
+#include "../../config_lib.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Widget.H>
+#include <FL/Fl_Printer.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
 
 #include "Fl_Xlib_Graphics_Driver.h"
 
@@ -33,6 +40,11 @@
 #ifndef SHRT_MAX
 #define SHRT_MAX (32767)
 #endif
+
+// fl_line_width_ must contain the absolute value of the current
+// line width to be used for X11 clipping (see below).
+// This is defined in src/fl_line_style.cxx
+extern int fl_line_width_;
 
 /*
  We need to check some coordinates for areas for clipping before we

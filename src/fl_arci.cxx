@@ -35,9 +35,13 @@
 #include <config.h>
 #include "config_lib.h"
 
+// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
+// statements when the new build system is ready:
+#ifndef FL_LIBRARY_CMAKE
+
+// -----------------------------------------------------------------------------
 
 // Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx"
-
 
 // -----------------------------------------------------------------------------
 
@@ -58,6 +62,10 @@
 
 #endif
 
+
+// -----------------------------------------------------------------------------
+
+#endif // FL_LIBRARY_CMAKE
 
 // -----------------------------------------------------------------------------
 

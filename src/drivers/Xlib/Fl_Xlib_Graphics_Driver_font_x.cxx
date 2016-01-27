@@ -16,6 +16,16 @@
 //     http://www.fltk.org/str.php
 //
 
+// Select fonts from the FLTK font table.
+#include "../../flstring.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
+#include "../../Fl_Font.H"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 // This function fills in the fltk font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
 // and to sort them so the first 4 in a family are normal, bold, italic,

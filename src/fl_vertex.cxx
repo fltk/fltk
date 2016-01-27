@@ -146,6 +146,10 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 
 
 // -----------------------------------------------------------------------------
+// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
+// statements when the new build system is ready:
+#ifndef FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
 
 
 // Apple Quartz graphics driver "drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx"
@@ -170,6 +174,10 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 
 #endif
 
+
+// -----------------------------------------------------------------------------
+
+#endif // FL_LIBRARY_CMAKE
 
 // -----------------------------------------------------------------------------
 

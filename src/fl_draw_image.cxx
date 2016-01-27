@@ -27,7 +27,14 @@
 // defeat some of the shortcuts in translating the image for X.
 
 // FIXME: use the correct macros for these conditions
-// FIXME: eventuay get rid of this file and use the source files as modules.
+// FIXME: eventually get rid of this file and use the source files as modules.
+
+// -----------------------------------------------------------------------------
+// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
+// statements when the new build system is ready:
+#ifndef FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
+
 #ifdef WIN32
 #  include "drivers/GDI/Fl_GDI_Graphics_Driver_image.cxx"
 #elif defined(__APPLE__)
@@ -35,6 +42,10 @@
 #else
 #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx"
 #endif
+
+// -----------------------------------------------------------------------------
+#endif // FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
 
 //
 // End of "$Id$".
