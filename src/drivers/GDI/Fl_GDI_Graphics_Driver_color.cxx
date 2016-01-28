@@ -33,6 +33,9 @@
 // to co-exist, creating conflicts with multipe mapping.
 
 // FIXME: maybe we can forget about color mapping and assume RGB?
+//static unsigned fl_cmap[256] = {
+//#include "../../fl_cmap.h" // this is a file produced by "cmap.cxx":
+//};
 
 // Translations to win32 data structures:
 Fl_XMap fl_xmap[256];
@@ -150,7 +153,7 @@ HBRUSH fl_brush_action(int action) {
       for (int j=0; j<FL_N_BRUSH; j++) {
 	if (brushes[j].usage>16000)
 	  brushes[j].usage -= 16000;
-	else 
+	else
 	  brushes[j].usage = 0;
       }
     }

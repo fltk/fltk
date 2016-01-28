@@ -29,8 +29,8 @@
 #define _binf_ptr (&_binf)
 #endif
 
-#  include <stdlib.h>		// malloc
-#  include <stdio.h>		// sprintf
+#include <stdlib.h>		// malloc
+#include <stdio.h>		// sprintf
 #include <wchar.h>
 
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat

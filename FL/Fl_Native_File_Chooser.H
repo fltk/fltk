@@ -27,8 +27,16 @@
 #ifdef WIN32
 
 // #define _WIN32_WINNT	0x0501	// needed for OPENFILENAME's 'FlagsEx'
+#if defined(FL_LIBRARY)
+#  include <windows.h>
+#  include <commdlg.h>		// OPENFILENAMEW, GetOpenFileName()
+#  include <shlobj.h>		// BROWSEINFOW, SHBrowseForFolder()
+typedef OPENFILENAMEW fl_OPENFILENAMEW;
+typedef BROWSEINFOW fl_BROWSEINFOW;
+#else
 typedef void fl_OPENFILENAMEW;
 typedef void fl_BROWSEINFOW;
+#endif
 #  include <FL/filename.H>	// FL_EXPORT
 
 // Use Apple's chooser

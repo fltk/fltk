@@ -29,6 +29,17 @@
 #include <config.h>
 #include "config_lib.h"
 
+// fl_cmap needs to be defined *before* we include Fl_GDI_Graphics_Driver_color.cxx
+
+/** \addtogroup  fl_attributes
+ @{ */
+
+/* static */
+unsigned fl_cmap[256] = {
+#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
+};
+
+
 // Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
 // statements when the new build system is ready:
 #ifndef FL_LIBRARY_CMAKE
@@ -59,14 +70,6 @@
 #endif // FL_LIBRARY_CMAKE
 
 // -----------------------------------------------------------------------------
-
-/** \addtogroup  fl_attributes
- @{ */
-
-/* static */
-unsigned fl_cmap[256] = {
-#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
-};
 
 /**
  Returns the RGB value(s) for the given FLTK color index.
