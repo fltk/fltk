@@ -178,15 +178,15 @@ elseif (APPLE)
 
   # FILE(GLOB DRIVER_FILES drivers/Quartz/Fl_Quartz_Graphics_Driver_*.cxx)
   set(DRIVER_FILES
-    driversQuartz/Fl_Quartz_Graphics_Driver.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_color.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_rect.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_font.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_vertex.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_image.cxx
-    driversQuartz/Fl_Quartz_Printer_Graphics_Driver.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_arci.cxx
-    driversQuartz/Fl_Quartz_Graphics_Driver_line_style.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx
+    drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
   )
 
 else ()
