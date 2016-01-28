@@ -34,9 +34,7 @@
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
-static unsigned fl_cmap[256] = {
-#include "../../fl_cmap.h" // this is a file produced by "cmap.cxx":
-};
+extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
   Fl_Graphics_Driver::color(i);
