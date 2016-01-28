@@ -46,7 +46,7 @@
 #  include <commctrl.h>	// TrackMouseEvent
 // fabien: Ms Visual Studio >= 2003 permit embedded lib reference
 // that makes fltk use easier as only fltk libs are now requested
-// This idea could be extended to fltk libs themselves, 
+// This idea could be extended to fltk libs themselves,
 // implementer should then care about DLL linkage flags ...
 #  if (_MSC_VER>=1310)
 #    pragma comment (lib, "comctl32.lib")
@@ -68,10 +68,10 @@
   polling method, but as it has been discussed (Thanks Albrecht!) :
   - the async mode would imply to change the socket to non blocking mode.
     This can have unexpected side effects for 3rd party apps, especially
-    if it is set on-the-fly when socket service is really needed, as it is 
+    if it is set on-the-fly when socket service is really needed, as it is
     done today and on purpose, but still the 3rd party developer wouldn't easily
     control the sequencing of socket operations.
-  - Finer granularity of events furthered by the async select is a plus only 
+  - Finer granularity of events furthered by the async select is a plus only
     for socket 3rd party impl., it is simply not needed for the 'light' fltk
     use we make of wsock, so here it would also be a bad point, because of all
     the logic add-ons necessary for using this functionality, without a clear
@@ -120,7 +120,7 @@ static HMODULE get_wsock_mod() {
 
 /*
  * Dynamic linking of imm32.dll
- * This library is only needed for a hand full (four ATM) functions relating to 
+ * This library is only needed for a hand full (four ATM) functions relating to
  * international text rendering and locales. Dynamically loading reduces initial
  * size and link dependencies.
  */
@@ -150,7 +150,7 @@ static void get_imm_module() {
 //
 // Now (Dec. 2008) we can assume that current Cygwin/MinGW versions
 // support the TrackMouseEvent() function, but WinCE obviously doesn't
-// support it (STR 2095). Therefore, USE_TRACK_MOUSE is enabled by 
+// support it (STR 2095). Therefore, USE_TRACK_MOUSE is enabled by
 // default, but you can disable it by defining NO_TRACK_MOUSE.
 //
 // TrackMouseEvent is only used to support window leave notifications
@@ -177,7 +177,7 @@ static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
 // USE_CAPTURE_MOUSE_WIN - this must be defined for TrackMouseEvent to work
 // correctly with subwindows - otherwise a single mouse click and release
 // (without a move) would generate phantom leave events.
-// This defines, if the current mouse window (maybe a subwindow) or the 
+// This defines, if the current mouse window (maybe a subwindow) or the
 // main window should get mouse events after pushing (and holding) a mouse
 // button, i.e. when dragging the mouse. This is done by calling SetCapture
 // (see below).
@@ -373,7 +373,7 @@ int fl_wait(double time_to_wait) {
     Fl::idle();
     in_idle = 0;
   }
-  
+
   if (nfds) {
     // For WIN32 we need to poll for socket input FIRST, since
     // the event queue is not something we can select() on...
@@ -400,7 +400,7 @@ int fl_wait(double time_to_wait) {
     }
   }
 
-  if (Fl::idle || Fl::damage()) 
+  if (Fl::idle || Fl::damage())
     time_to_wait = 0.0;
 
   // if there are no more windows and this timer is set
@@ -693,7 +693,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
     // called in response to FL_PASTE!
     char *i = fl_selection_buffer[clipboard];
     if (i==0L) {
-      Fl::e_text = 0; 
+      Fl::e_text = 0;
       return;
     }
     Fl::e_text = new char[fl_selection_length[clipboard]+1];
@@ -740,7 +740,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 	  LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h) ;
 	  width = lpBI->bmiHeader.biWidth; // bitmap width & height
 	  height = lpBI->bmiHeader.biHeight;
-	  if ( (lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) && 
+	  if ( (lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) &&
 	      lpBI->bmiHeader.biCompression == BI_RGB &&
 	      lpBI->bmiHeader.biClrUsed == 0) { // direct use of the DIB data if it's RGB or RGBA
 	    int linewidth; // row length
@@ -763,7 +763,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 	    }
 	  }
 	  else { // the system will decode a complex DIB
-	    void *pDIBBits = (void*)(lpBI->bmiColors); 
+	    void *pDIBBits = (void*)(lpBI->bmiColors);
 	    if (lpBI->bmiHeader.biCompression == BI_BITFIELDS) pDIBBits = (void*)(lpBI->bmiColors + 3);
 	    else if (lpBI->bmiHeader.biClrUsed > 0) pDIBBits = (void*)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
 	    Fl_Offscreen off = fl_create_offscreen(width, height);
@@ -1403,7 +1403,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #ifndef WM_MOUSEHWHEEL
 #define WM_MOUSEHWHEEL 0x020E
 #endif
-      
+
   case WM_MOUSEHWHEEL: {
       static int delta = 0; // running total of all motion
       delta += (SHORT)(HIWORD(wParam));
@@ -1523,9 +1523,9 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
     if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
       // required decorated window rectangle for a desired client rectangle.
-      // If any part of the function above fails, we will drop to a 
+      // If any part of the function above fails, we will drop to a
       // fallback to get the best guess which is always available.
-      
+
 	 if (!style) {
 	     HWND hwnd = fl_xid(w);
           // request the style flags of this window, as WIN32 sees them
@@ -1624,7 +1624,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 ////////////////////////////////////////////////////////////////
 
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER 
+  UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER
              | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
   int is_a_resize = (W != w() || H != h());
   int resize_from_program = (this != resize_bug_fix);
@@ -1638,8 +1638,8 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   if (is_a_resize) {
     Fl_Group::resize(X,Y,W,H);
     if (visible_r()) {
-      redraw(); 
-      // only wait for exposure if this window has a size - a window 
+      redraw();
+      // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
       if (i && W>0 && H>0)
         i->wait_for_expose = 1;
@@ -1716,14 +1716,14 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   Fl_X::i(this)->xid = NULL;
   int wx, wy, bt, bx, by;
   switch (Fl_X::fake_X_wm(this, wx, wy, bt, bx, by)) {
-  case 0: 
+  case 0:
     break;
-  case 1: 
-    style |= WS_CAPTION; 
+  case 1:
+    style |= WS_CAPTION;
     break;
-  case 2: 
+  case 2:
     if (border()) {
-      style |= WS_THICKFRAME | WS_CAPTION; 
+      style |= WS_THICKFRAME | WS_CAPTION;
     }
     break;
   }
@@ -1746,17 +1746,17 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
 ////////////////////////////////////////////////////////////////
 
 /*
- * This silly little class remembers the name of all window classes 
- * we register to avoid double registration. It has the added bonus 
+ * This silly little class remembers the name of all window classes
+ * we register to avoid double registration. It has the added bonus
  * of freeing everything on application close as well.
  */
 class NameList {
 public:
   NameList() { name = (char**)malloc(sizeof(char**)); NName = 1; nName = 0; }
-  ~NameList() { 
+  ~NameList() {
     int i;
     for (i=0; i<nName; i++) free(name[i]);
-    if (name) free(name); 
+    if (name) free(name);
   }
   void add_name(const char *n) {
     if (NName==nName) {
@@ -1972,7 +1972,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
      monitor the window was placed on. */
     RECT rect;
     GetWindowRect(x->xid, &rect);
-    x->make_fullscreen(rect.left, rect.top, 
+    x->make_fullscreen(rect.left, rect.top,
                        rect.right - rect.left, rect.bottom - rect.top);
   }
 
@@ -2278,7 +2278,7 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
 static HICON default_big_icon = NULL;
 static HICON default_small_icon = NULL;
 
-static const Fl_RGB_Image *find_best_icon(int ideal_width, 
+static const Fl_RGB_Image *find_best_icon(int ideal_width,
                                           const Fl_RGB_Image *icons[],
                                           int count) {
   const Fl_RGB_Image *best;
@@ -2589,7 +2589,7 @@ void Fl_Window::make_current() {
 
 }
 
-/* Make sure that all allocated fonts are released. This works only if 
+/* Make sure that all allocated fonts are released. This works only if
    Fl::run() is allowed to exit by closing all windows. Calling 'exit(int)'
    will not automatically free any fonts. */
 void fl_free_fonts(void)
@@ -2622,13 +2622,13 @@ void fl_free_fonts(void)
 //  it is important to control GDI leaks, which are much more important than memory
 //  leaks. The following struct, global variable, and routines help implement
 //  the above protocol for those cases where the GetDC and RestoreDC are not in
-//  the same routine. For each GetDC, fl_save_dc is used to create an entry in 
+//  the same routine. For each GetDC, fl_save_dc is used to create an entry in
 //  a linked list that saves the window handle, the DC handle, and the initial
 //  state. When the DC is to be released, 'fl_release_dc' is called. It restores
 //  the initial state and releases the DC. When the program exits, 'fl_cleanup_dc_list'
 //  frees any remaining nodes in the list.
 
-struct Win_DC_List {      // linked list 
+struct Win_DC_List {      // linked list
   HWND    window;         // window handle
   HDC     dc;             // device context handle
   int     saved_dc;       // initial state of DC
@@ -2693,7 +2693,7 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 }
 
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
-  Fl_X *temp = Fl_X::i(w); 
+  Fl_X *temp = Fl_X::i(w);
   return temp ? temp->xid : 0;
 }
 
@@ -2746,7 +2746,7 @@ void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& 
   top = left = bottom = right = NULL;
   if (!shown() || parent() || !border() || !visible()) return;
   int wsides, hbottom, bt;
-  RECT r = border_width_title_bar_height(w, wsides, hbottom, bt);
+  RECT r = border_width_title_bar_height(this, wsides, hbottom, bt);
   int htop = bt + hbottom;
   HDC save_gc = fl_gc;
   Window save_win = fl_window;
@@ -2815,7 +2815,7 @@ void printFront(Fl_Widget *o, void *data)
   printer.rotate(ROTATE);
   printer.print_widget( win, - win->w()/2, - win->h()/2 );
   //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
-#else  
+#else
   printer.print_window(win);
 #endif
   printer.end_page();
