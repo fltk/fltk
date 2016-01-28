@@ -477,7 +477,6 @@ void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RG
 }
 #endif
 
-}
 
 #endif  // ! __APPLE__
 
