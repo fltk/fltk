@@ -226,6 +226,25 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
 
+#  FIXME:
+#  ------
+#  Prepared, but not yet used: Xlib graphics driver files. These files
+#  are (still) #included, but should be compiled directly. We need to
+#  take care of ...font_x.cxx and ...font_xft.cxx - only one of these
+#  files must be compiled and linked.
+#
+XLIBCPPFILES = \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
+	drivers/Xlib/Fl_Xlib_Printer_Graphics_Driver.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx
+
 
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY
