@@ -26,6 +26,13 @@ FL_DSO_VERSION		= @FL_DSO_VERSION@
 FL_ABI_VERSION		= @FL_ABI_VERSION@
 FL_VERSION		= @FL_VERSION@
 
+# FLTK configuration options
+
+BUILD_GDI	= @BUILD_GDI@
+BUILD_X11	= @BUILD_X11@
+BUILD_XFT	= @BUILD_XFT@
+USEMMFILES	= @USEMMFILES@
+
 # Standard configure variables
 
 prefix		= @prefix@
@@ -39,7 +46,6 @@ mandir		= @mandir@
 srcdir		= @srcdir@
 docdir		= $(datadir)/doc/fltk
 VPATH		= @srcdir@
-USEMMFILES	= @USEMMFILES@
 
 # programs we use...
 DOXYDOC		= @DOXYDOC@
