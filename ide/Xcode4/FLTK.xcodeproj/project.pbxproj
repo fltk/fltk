@@ -4556,6 +4556,7 @@
 		7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Native_File_Chooser_MAC.mm; path = ../../src/Fl_Native_File_Chooser_MAC.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Quartz_Printer.mm; path = ../../src/Fl_Quartz_Printer.mm; sourceTree = SOURCE_ROOT; };
 		7F6F526319CF0FED0075F408 /* Fl_Window_shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Window_shape.cxx; path = ../../src/Fl_Window_shape.cxx; sourceTree = "<group>"; };
+		7F72C8CE1C5A310D001BCD85 /* Fl_win32.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_win32.cxx; path = ../../src/Fl_win32.cxx; sourceTree = "<group>"; };
 		7F784151AF1B748D0F3DB1C0 /* forms.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = forms.cxx; path = ../../test/forms.cxx; sourceTree = SOURCE_ROOT; };
 		7F7CF7F51AB97CEF00E12B22 /* animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = animated.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F7CF81E1AB9836C00E12B22 /* animated.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animated.cxx; path = ../../test/animated.cxx; sourceTree = SOURCE_ROOT; };
@@ -5793,6 +5794,7 @@
 				D004B2D87C53E063F848C539 /* Fl_lock.cxx */,
 				AAE8D31DC4F024028C66743C /* Fl_own_colormap.cxx */,
 				5B2B6ED6A3649923BAAFFDF1 /* Fl_visual.cxx */,
+				7F72C8CE1C5A310D001BCD85 /* Fl_win32.cxx */,
 				09A359CA8F522F64BAF6CEAF /* Fl_x.cxx */,
 				AC0F7C69B25854F609BD1A0C /* cmap.cxx */,
 				D60CC89D1A70BE6AA3929604 /* filename_absolute.cxx */,

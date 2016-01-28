@@ -70,6 +70,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   int fullscreen_screen_right;
 
   friend class Fl_X;
+  friend class Fl_Paged_Device;
   Fl_X *i; // points at the system-specific stuff
 
   struct icon_data {
@@ -97,6 +98,8 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   uchar size_range_set;
   // cursor stuff
   Fl_Cursor cursor_default;
+  // Captures the titlebar and borders of the window, if they exist.
+  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
   
 protected:
   /** Data supporting a non-rectangular window shape */

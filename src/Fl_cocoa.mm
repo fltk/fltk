@@ -4378,27 +4378,27 @@ static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 /* Returns images of the capture of the window title-bar.
  On the Mac OS platform, left, bottom and right are returned NULL; top is returned with depth 4.
  */
-void Fl_X::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
   left = bottom = right = NULL;
-  int htop = w->decorated_h() - w->h();
-  CALayer *layer = get_titlebar_layer(w);
+  int htop = decorated_h() - h();
+  CALayer *layer = get_titlebar_layer(this);
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  uchar *rgba = new uchar[4 * w->w() * htop];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, w->w(), htop, 8, 4 * w->w(), cspace, kCGImageAlphaPremultipliedLast);
+  uchar *rgba = new uchar[4 * w() * htop];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, w(), htop, 8, 4 * w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  CGRect rect = CGRectMake(0, 0, w->w(), htop);
+  CGRect rect = CGRectMake(0, 0, w(), htop);
   if (layer) {
-    draw_layer_to_context(layer, auxgc, w->w(), htop);
+    draw_layer_to_context(layer, auxgc, w(), htop);
   } else {
-    CGImageRef img = Fl_X::CGImage_from_window_rect(w, 0, -htop, w->w(), htop);
+    CGImageRef img = Fl_X::CGImage_from_window_rect(this, 0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
-    Fl_X::clip_to_rounded_corners(auxgc, w->w(), htop);
+    Fl_X::clip_to_rounded_corners(auxgc, w(), htop);
     CGContextDrawImage(auxgc, rect, img);
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  top = new Fl_RGB_Image(rgba, w->w(), htop, 4);
+  top = new Fl_RGB_Image(rgba, w(), htop, 4);
   top->alloc_array = 1;
   CGContextRelease(auxgc);
 }
@@ -4451,7 +4451,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   Fl::check();
   // capture the window title bar with no title
   Fl_RGB_Image *top, *left, *bottom, *right;
-  Fl_X::i(win)->capture_titlebar_and_borders(top, left, bottom, right);
+  win->capture_titlebar_and_borders(top, left, bottom, right);
   win->label(title); // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar

@@ -468,6 +468,17 @@ void Fl_Window::wait_for_expose() {
     Fl::wait();
   }
 }
+
+#if defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Window::capture_titlebar_and_borders"
+void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+{
+  top = left = bottom = right = NULL;
+}
+#endif
+
+}
+
 #endif  // ! __APPLE__
 
 //

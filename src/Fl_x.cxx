@@ -3029,16 +3029,16 @@ int Fl_Window::decorated_w()
  On the X11 platform, this function exploits a feature of fl_read_image() which, when called
  with negative 4th argument, captures the window decoration.
  */
-void Fl_X::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
   top = left = bottom = right = NULL;
-  if (w->decorated_h() == w->h()) return;
+  if (decorated_h() == h()) return;
   Window from = fl_window;
   Fl_Surface_Device *previous = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
-  w->show();
+  show();
   Fl::check();
-  w->make_current();
+  make_current();
   Window root, parent, *children, child_win;
   unsigned n = 0;
   int do_it;
@@ -3050,19 +3050,19 @@ void Fl_X::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,
   fl_window = parent;
   uchar *rgb;
   if (htop) {
-    rgb = fl_read_image(NULL, 0, 0, - (w->w() + 2 * wsides), htop);
-    top = new Fl_RGB_Image(rgb, w->w() + 2 * wsides, htop, 3);
+    rgb = fl_read_image(NULL, 0, 0, - (w() + 2 * wsides), htop);
+    top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
     top->alloc_array = 1;
   }
   if (wsides) {
-    rgb = fl_read_image(NULL, 0, htop, -wsides, w->h());
-    left = new Fl_RGB_Image(rgb, wsides, w->h(), 3);
+    rgb = fl_read_image(NULL, 0, htop, -wsides, h());
+    left = new Fl_RGB_Image(rgb, wsides, h(), 3);
     left->alloc_array = 1;
-    rgb = fl_read_image(NULL, w->w() + wsides, htop, -wsides, w->h());
-    right = new Fl_RGB_Image(rgb, wsides, w->h(), 3);
+    rgb = fl_read_image(NULL, w() + wsides, htop, -wsides, h());
+    right = new Fl_RGB_Image(rgb, wsides, h(), 3);
     right->alloc_array = 1;
-    rgb = fl_read_image(NULL, 0, htop + w->h(), -(w->w() + 2*wsides), hbottom);
-    bottom = new Fl_RGB_Image(rgb, w->w() + 2*wsides, hbottom, 3);
+    rgb = fl_read_image(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom);
+    bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
     bottom->alloc_array = 1;
   }
   fl_window = from;

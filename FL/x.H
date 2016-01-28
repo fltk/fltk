@@ -147,7 +147,6 @@ public:
   void set_icons();
   int set_cursor(Fl_Cursor);
   int set_cursor(const Fl_RGB_Image*, int, int);
-  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
   static void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static Fl_X* set_xid(Fl_Window*, Window);
   // kludges to get around protection:

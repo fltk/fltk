@@ -301,12 +301,7 @@ const Fl_Paged_Device::page_format Fl_Paged_Device::page_formats[NO_PAGE_FORMATS
 void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
   Fl_RGB_Image *top, *left, *bottom, *right;
-#if defined(FL_PORTING)
-  top=left=bottom=right=NULL;
-#  pragma message "FL_PORTING: implement Fl_X::capture_titlebar_and_borders"
-#else
-  Fl_X::i(win)->capture_titlebar_and_borders(top, left, bottom, right);
-#endif
+  win->capture_titlebar_and_borders(top, left, bottom, right);
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {
