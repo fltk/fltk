@@ -3046,6 +3046,7 @@ void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& 
   do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 &&
            XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &wsides, &htop, &child_win) == True);
   if (n) XFree(children);
+  if (!do_it) wsides = htop = 0;
   int hbottom = wsides;
   fl_window = parent;
   uchar *rgb;
