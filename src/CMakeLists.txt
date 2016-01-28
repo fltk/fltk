@@ -150,6 +150,9 @@ set(CPPFILES
 set(DRIVER_FILES)
 
 if (USE_X11)
+
+  # X11 (including APPLE with X11)
+
   # FILE(GLOB DRIVER_FILES drivers/Xlib/Fl_Xlib_Graphics_Driver_*.cxx)
   set(DRIVER_FILES
     drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
@@ -168,6 +171,29 @@ if (USE_X11)
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
     )  
   endif (USE_XFT)
+  
+elseif (APPLE)
+
+  # Apple Quartz
+
+  # FILE(GLOB DRIVER_FILES drivers/Quartz/Fl_Quartz_Graphics_Driver_*.cxx)
+  set(DRIVER_FILES
+    driversQuartz/Fl_Quartz_Graphics_Driver.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_color.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_rect.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_font.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_vertex.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_image.cxx
+    driversQuartz/Fl_Quartz_Printer_Graphics_Driver.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_arci.cxx
+    driversQuartz/Fl_Quartz_Graphics_Driver_line_style.cxx
+  )
+
+else ()
+
+  # Windows (GDI)
+  # not yet "converted"
+
 endif (USE_X11)
 
 set(CPPFILES
