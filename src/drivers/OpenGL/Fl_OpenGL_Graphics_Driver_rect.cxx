@@ -25,8 +25,13 @@
  \brief OpenGL specific line and polygon drawing with integer coordinates.
  */
 
-#include <FL/gl.h>
+#include <config.h>
+#include "../../config_lib.h"
 #include "Fl_OpenGL_Graphics_Driver.h"
+#include <FL/gl.h>
+#include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_RGB_Image.H>
+#include <FL/Fl.H>
 
 // --- line and polygon drawing with integer coordinates
 
@@ -198,8 +203,6 @@ void Fl_OpenGL_Graphics_Driver::restore_clip() {
   // TODO: implement OpenGL clipping
   fl_clip_state_number++;
 }
-
-const char *Fl_OpenGL_Graphics_Driver::class_id = "Fl_OpenGL_Graphics_Driver";
 
 
 #endif // FL_CFG_GFX_OPENGL_RECT_CXX

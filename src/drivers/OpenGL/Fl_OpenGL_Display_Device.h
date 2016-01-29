@@ -16,6 +16,10 @@
 //     http://www.fltk.org/str.php
 //
 
+
+// FIXME: fill with code!
+#if 0
+
 #include <config.h>
 #include "config_lib.h"
 #include <FL/Fl_Printer.H>
@@ -31,9 +35,6 @@
 #endif
 
 
-
-// FIXME: remove the code below
-#if 0
 // ------ this should be in a separate file! -----------------------------------
 #ifdef FL_CFG_GFX_OPENGL
 
@@ -64,10 +65,6 @@ const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx"
 #include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx"
-
-#endif
-
-
 
 
 #if defined(__APPLE__)
@@ -191,6 +188,8 @@ static Fl_Gl_Device_Plugin Gl_Device_Plugin;
 // The purpose of this variable, used in Fl_Gl_Window.cxx, is only to force this file to be loaded
 // whenever Fl_Gl_Window.cxx is loaded, that is, whenever fltk_gl is.
 FL_EXPORT int fl_gl_load_plugin = 0;
+
+#endif
 
 //
 // End of "$Id$".

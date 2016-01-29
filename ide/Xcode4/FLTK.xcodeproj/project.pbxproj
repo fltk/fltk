@@ -706,6 +706,16 @@
 		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
 		C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D999C03407EAEE9C4D3477A /* browser.cxx */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
+		C9B6BB351C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB331C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx */; };
+		C9B6BB4D1C5BB7C500E80696 /* Fl_OpenGL_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB4A1C5BB72500E80696 /* Fl_OpenGL_Display_Device.cxx */; };
+		C9B6BB4E1C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB481C5BB0C600E80696 /* Fl_OpenGL_Graphics_Driver.cxx */; };
+		C9B6BB4F1C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB381C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx */; };
+		C9B6BB501C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3A1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_image.cxx */; };
+		C9B6BB511C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_line_style.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3C1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_line_style.cxx */; };
+		C9B6BB521C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_vertex.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3E1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_vertex.cxx */; };
+		C9B6BB581C5BB7EB00E80696 /* Fl_OpenGL_Graphics_Driver_arci.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB371C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_arci.cxx */; };
+		C9B6BB591C5BB7EB00E80696 /* Fl_OpenGL_Graphics_Driver_font.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB391C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_font.cxx */; };
+		C9B6BB5A1C5BB7EB00E80696 /* Fl_OpenGL_Graphics_Driver_rect.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3D1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_rect.cxx */; };
 		C9C4C91FDA73557BB6B69F3D /* jchuff.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DB580DCA05DE487FACA272 /* jchuff.c */; };
 		C9D72F10B7A22DD0349ABC68 /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097D0B476E396B9AAC6FA1E0 /* fltk_forms.framework */; };
 		C9EDD4441274B93000ADB21C /* Enumerations.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = 84CE79448708855561FEE498 /* Enumerations.H */; };
@@ -4758,6 +4768,19 @@
 		C97E30B11C59704300E22076 /* Fl_Quartz_Graphics_Driver.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Graphics_Driver.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx; sourceTree = "<group>"; };
 		C97E30B21C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fl_Quartz_Printer_Graphics_Driver.h; path = ../../src/drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.h; sourceTree = "<group>"; };
 		C984AFA712D02A1800D66DAD /* demo.menu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demo.menu; path = ../../test/demo.menu; sourceTree = SOURCE_ROOT; };
+		C9B6BB331C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Quartz_Display_Device.cxx; path = ../../src/drivers/Quartz/Fl_Quartz_Display_Device.cxx; sourceTree = "<group>"; };
+		C9B6BB341C5BACA100E80696 /* Fl_Quartz_Display_Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fl_Quartz_Display_Device.h; path = ../../src/drivers/Quartz/Fl_Quartz_Display_Device.h; sourceTree = "<group>"; };
+		C9B6BB371C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_arci.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_arci.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx; sourceTree = "<group>"; };
+		C9B6BB381C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_color.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx; sourceTree = "<group>"; };
+		C9B6BB391C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_font.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_font.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx; sourceTree = "<group>"; };
+		C9B6BB3A1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_image.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx; sourceTree = "<group>"; };
+		C9B6BB3C1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_line_style.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_line_style.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx; sourceTree = "<group>"; };
+		C9B6BB3D1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_rect.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_rect.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx; sourceTree = "<group>"; };
+		C9B6BB3E1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_vertex.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver_vertex.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx; sourceTree = "<group>"; };
+		C9B6BB3F1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fl_OpenGL_Graphics_Driver.h; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver.h; sourceTree = "<group>"; };
+		C9B6BB481C5BB0C600E80696 /* Fl_OpenGL_Graphics_Driver.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Graphics_Driver.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx; sourceTree = "<group>"; };
+		C9B6BB4A1C5BB72500E80696 /* Fl_OpenGL_Display_Device.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_OpenGL_Display_Device.cxx; path = ../../src/drivers/OpenGL/Fl_OpenGL_Display_Device.cxx; sourceTree = "<group>"; };
+		C9B6BB4B1C5BB72500E80696 /* Fl_OpenGL_Display_Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fl_OpenGL_Display_Device.h; path = ../../src/drivers/OpenGL/Fl_OpenGL_Display_Device.h; sourceTree = "<group>"; };
 		C9EDD143127338F600ADB21C /* README.OSX.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.OSX.txt; path = ../../README.OSX.txt; sourceTree = SOURCE_ROOT; };
 		C9EDD4DE1274BB6600ADB21C /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../../png/png.h; sourceTree = SOURCE_ROOT; };
 		C9EDD4DF1274BB6600ADB21C /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../../png/pngconf.h; sourceTree = SOURCE_ROOT; };
@@ -6213,6 +6236,7 @@
 		7D01507BB2E71FC0C390ABEA /* fltk_gl */ = {
 			isa = PBXGroup;
 			children = (
+				C9B6BB361C5BAF2400E80696 /* Drivers */,
 				7E097C61B5952D56DFB93ECF /* Headers */,
 				27C65F509527076EB26E9C0F /* Fl_Gl_Choice.cxx */,
 				A7A692EB67C5CBE35D4A4B5C /* Fl_Gl_Device_Plugin.cxx */,
@@ -6722,6 +6746,8 @@
 		C97E30A01C596C8500E22076 /* Quartz */ = {
 			isa = PBXGroup;
 			children = (
+				C9B6BB341C5BACA100E80696 /* Fl_Quartz_Display_Device.h */,
+				C9B6BB331C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx */,
 				C97E30A21C596CC900E22076 /* Fl_Quartz_Graphics_Driver.h */,
 				C97E30B11C59704300E22076 /* Fl_Quartz_Graphics_Driver.cxx */,
 				C97E30A11C596CC900E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx */,
@@ -6735,6 +6761,24 @@
 				C97E30B01C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx */,
 			);
 			name = Quartz;
+			sourceTree = "<group>";
+		};
+		C9B6BB361C5BAF2400E80696 /* Drivers */ = {
+			isa = PBXGroup;
+			children = (
+				C9B6BB4B1C5BB72500E80696 /* Fl_OpenGL_Display_Device.h */,
+				C9B6BB4A1C5BB72500E80696 /* Fl_OpenGL_Display_Device.cxx */,
+				C9B6BB3F1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver.h */,
+				C9B6BB481C5BB0C600E80696 /* Fl_OpenGL_Graphics_Driver.cxx */,
+				C9B6BB371C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_arci.cxx */,
+				C9B6BB381C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx */,
+				C9B6BB391C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_font.cxx */,
+				C9B6BB3A1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_image.cxx */,
+				C9B6BB3C1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_line_style.cxx */,
+				C9B6BB3D1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_rect.cxx */,
+				C9B6BB3E1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_vertex.cxx */,
+			);
+			name = Drivers;
 			sourceTree = "<group>";
 		};
 		C9EDD4DC1274BB4100ADB21C /* Headers */ = {
@@ -10486,6 +10530,7 @@
 				E1B04810E72BD9557356CAAE /* fluid.cxx in Sources */,
 				98A96758FF9D01852DFBECFE /* function_panel.cxx in Sources */,
 				438CCCA43724B2E59680EF6B /* template_panel.cxx in Sources */,
+				C9B6BB351C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx in Sources */,
 				27B4C89E8CBF260313ACA42E /* undo.cxx in Sources */,
 				B7D0770AC83AA04E8E12B76E /* widget_panel.cxx in Sources */,
 			);
@@ -10512,15 +10557,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				C635DF0A06D278F09C3A6359 /* Fl_Gl_Choice.cxx in Sources */,
+				C9B6BB511C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_line_style.cxx in Sources */,
+				C9B6BB591C5BB7EB00E80696 /* Fl_OpenGL_Graphics_Driver_font.cxx in Sources */,
+				C9B6BB521C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_vertex.cxx in Sources */,
 				FBAEA5F4CE75FCFCE1B7521A /* Fl_Gl_Device_Plugin.cxx in Sources */,
+				C9B6BB5A1C5BB7EB00E80696 /* Fl_OpenGL_Graphics_Driver_rect.cxx in Sources */,
+				C9B6BB581C5BB7EB00E80696 /* Fl_OpenGL_Graphics_Driver_arci.cxx in Sources */,
 				0C1C8E024CC1739ECC147412 /* Fl_Gl_Overlay.cxx in Sources */,
+				C9B6BB4D1C5BB7C500E80696 /* Fl_OpenGL_Display_Device.cxx in Sources */,
 				93473D40BFD87C1C855E3E2B /* Fl_Gl_Window.cxx in Sources */,
 				0E33CB7A389B20931404C97C /* freeglut_geometry.cxx in Sources */,
 				671D5E8AC4CDE34D468FDFE9 /* freeglut_stroke_mono_roman.cxx in Sources */,
 				58D9DA0C0F0A11E97EAAB61B /* freeglut_stroke_roman.cxx in Sources */,
 				00BD4FD0209BFB1A6446B9A5 /* freeglut_teapot.cxx in Sources */,
+				C9B6BB4F1C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx in Sources */,
 				0EEF4C6DD5294217DB42BB88 /* gl_draw.cxx in Sources */,
 				D7C1EDE212D9E84D085257BF /* glut_compatability.cxx in Sources */,
+				C9B6BB501C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_image.cxx in Sources */,
+				C9B6BB4E1C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver.cxx in Sources */,
 				F0EF820CDDEDCCBA9DF9AD84 /* glut_font.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

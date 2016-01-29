@@ -24,7 +24,14 @@
   \brief Utility functions for drawing circles using integers
 */
 
+#include <config.h>
+#include "../../config_lib.h"
+#include "Fl_OpenGL_Graphics_Driver.h"
 #include <FL/gl.h>
+#include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_RGB_Image.H>
+#include <FL/Fl.H>
+#include <FL/fl_draw.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 

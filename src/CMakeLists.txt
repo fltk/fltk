@@ -178,6 +178,7 @@ elseif (APPLE)
 
   # FILE(GLOB DRIVER_FILES drivers/Quartz/Fl_Quartz_Graphics_Driver_*.cxx)
   set(DRIVER_FILES
+    drivers/Quartz/Fl_Quartz_Display_Device.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx
@@ -223,6 +224,15 @@ set(GLCPPFILES
   gl_start.cxx
   glut_compatability.cxx
   glut_font.cxx
+  drivers/OpenGL/Fl_OpenGL_Display_Device.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
 
 set(IMGCPPFILES
