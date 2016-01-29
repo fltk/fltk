@@ -23,6 +23,8 @@
 #include <FL/gl.h>
 
 #include "Fl_OpenGL_Graphics_Driver.h"
+#include "Fl_OpenGL_Display_Device.h"
+
 
 Fl_OpenGL_Display_Device *Fl_OpenGL_Display_Device::display_device() {
   static Fl_OpenGL_Display_Device *display = new Fl_OpenGL_Display_Device(new Fl_OpenGL_Graphics_Driver());
