@@ -428,7 +428,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
     for (dy = 0; dy < H; dy++) {
       float oldy = dy * yscale;
       if (oldy >= h())
-        oldy = h() - 1;
+        oldy = (float)(h() - 1);
       const float yfract = oldy - (unsigned) oldy;
 
       for (dx = 0; dx < W; dx++) {
@@ -436,17 +436,17 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
         float oldx = dx * xscale;
         if (oldx >= w())
-          oldx = w() - 1;
+          oldx = (float)(w() - 1);
         const float xfract = oldx - (unsigned) oldx;
 
-        const unsigned leftx = oldx;
-        const unsigned lefty = oldy;
-        const unsigned rightx = oldx + 1 >= w() ? oldx : oldx + 1;
-        const unsigned righty = oldy;
-        const unsigned dleftx = oldx;
-        const unsigned dlefty = oldy + 1 >= h() ? oldy : oldy + 1;
-        const unsigned drightx = rightx;
-        const unsigned drighty = dlefty;
+        const unsigned leftx = (unsigned)oldx;
+        const unsigned lefty = (unsigned)oldy;
+        const unsigned rightx = (unsigned)(oldx + 1 >= w() ? oldx : oldx + 1);
+        const unsigned righty = (unsigned)oldy;
+        const unsigned dleftx = (unsigned)oldx;
+        const unsigned dlefty = (unsigned)(oldy + 1 >= h() ? oldy : oldy + 1);
+        const unsigned drightx = (unsigned)rightx;
+        const unsigned drighty = (unsigned)dlefty;
 
         uchar left[4], right[4], downleft[4], downright[4];
         memcpy(left, array + lefty * line_d + leftx * d(), d());
@@ -457,10 +457,10 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
         int i;
         if (d() == 4) {
           for (i = 0; i < 3; i++) {
-            left[i] *= left[3] / 255.0f;
-            right[i] *= right[3] / 255.0f;
-            downleft[i] *= downleft[3] / 255.0f;
-            downright[i] *= downright[3] / 255.0f;
+            left[i] = (uchar)(left[i] * left[3] / 255.0f);
+            right[i] = (uchar)(right[i] * right[3] / 255.0f);
+            downleft[i] = (uchar)(downleft[i] * downleft[3] / 255.0f);
+            downright[i] = (uchar)(downright[i] * downright[3] / 255.0f);
           }
         }
 

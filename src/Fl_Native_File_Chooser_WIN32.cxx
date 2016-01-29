@@ -140,6 +140,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   memset((void*)_ofn_ptr, 0, sizeof(OPENFILENAMEW));
   _ofn_ptr->lStructSize = sizeof(OPENFILENAMEW);
   _ofn_ptr->hwndOwner   = NULL;
+  _ofn_ptr.hwndOwner = 0L;
   memset((void*)_binf_ptr, 0, sizeof(BROWSEINFOW));
   _pathnames       = NULL;
   _tpathnames      = 0;
