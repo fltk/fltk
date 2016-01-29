@@ -3,7 +3,7 @@
 #
 # Library makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2014 by Bill Spitzak and others.
+# Copyright 1998-2016 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -226,32 +226,42 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
 
-#  FIXME:
-#  ------
-#  Prepared, but not yet used: Xlib graphics driver files. These files
-#  are (still) #included, but should be compiled directly. We need to
-#  take care of ...font_x.cxx and ...font_xft.cxx - only one of these
-#  files must be compiled and linked.
-#
 XLIBCPPFILES = \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
-	drivers/Xlib/Fl_Xlib_Printer_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
 
+XLIBFONTFILES = \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
+
+XLIBXFTFILES = \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
+
+GDICPPFILES = \
+	drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx \
+	drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx \
+	drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx \
+	drivers/GDI/Fl_GDI_Graphics_Driver_image.cxx \
+	drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx \
+	drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx \
+	drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
 
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
-CPPFILES += $(shell if test $(USEMMFILES) = Yes; then echo $(QUARTZCPPFILES); fi)
 MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
+CPPFILES += $(shell if test $(USEMMFILES) = Yes; then echo $(QUARTZCPPFILES); fi)
+
+CPPFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCPPFILES); fi)
+CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) = Yes; then echo $(XLIBXFTFILES); fi)
+CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo $(XLIBFONTFILES); fi)
+
+# CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
+
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
@@ -501,6 +511,7 @@ mgwfltknox_images-$(FL_DSO_VERSION).dll: $(IMGLIBNAME) mgwfltknox-$(FL_DSO_VERSI
 
 clean:
 	-$(RM) *.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM) drivers/GDI/*.o drivers/OpenGL/*.o drivers/Quartz/*.o drivers/Xlib/*.o
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \

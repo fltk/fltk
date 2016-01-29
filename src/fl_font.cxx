@@ -60,7 +60,7 @@
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement font handling specifics in its own file"
 #else
-#  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx"
+// #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx"
 #endif // WIN32
 
 #endif // FL_LIBRARY_CMAKE

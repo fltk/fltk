@@ -88,7 +88,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 #ifdef FL_CFG_GFX_XLIB
 
-# include "drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx"
+// # include "drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx"
 
 #endif
 

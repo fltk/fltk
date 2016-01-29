@@ -40,7 +40,7 @@
 #elif defined(__APPLE__)
 // Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx"
 #else
-#  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx"
+// #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx"
 #endif
 
 // -----------------------------------------------------------------------------

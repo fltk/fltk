@@ -60,7 +60,7 @@ unsigned fl_cmap[256] = {
 
 #ifdef FL_CFG_GFX_XLIB
 
-# include "drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx"
+// # include "drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx"
 
 #endif
 
