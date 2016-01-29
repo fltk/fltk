@@ -76,6 +76,23 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 endmacro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
 #######################################################################
+# USAGE: FLTK_RUN_FLUID TARGET_NAME "FLUID_SOURCE [.. FLUID_SOURCE]"
+function(FLTK_RUN_FLUID TARGET SOURCES)
+    set(CXX_FILES)
+    foreach(src ${SOURCES})
+        if("${src}" MATCHES "\\.fl$")
+	    string(REGEX REPLACE "(.*).fl" \\1 basename ${src})
+	    add_custom_command(
+		OUTPUT "${basename}.cxx" "${basename}.h"
+		COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/${src}
+		)
+	    list(APPEND CXX_FILES "${basename}.cxx")
+        endif("${src}" MATCHES "\\.fl$")
+        set(${TARGET} ${CXX_FILES} PARENT_SCOPE)
+	endforeach(src)
+endfunction(FLTK_RUN_FLUID TARGET SOURCES)
+
+#######################################################################
 macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
     set(srcs)			# source files
@@ -97,9 +114,9 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
         endif("${src}" MATCHES "\\.fl$")
     endforeach(src)
 
+    set(FLUID_SOURCES)
     if(flsrcs)
-        set(FLTK_WRAP_UI TRUE)
-        fltk_wrap_ui(${tname} ${flsrcs})
+	FLTK_RUN_FLUID(FLUID_SOURCES "${flsrcs}")
     endif(flsrcs)
 
     if(APPLE AND NOT OPTION_APPLE_X11)
@@ -112,20 +129,20 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       endif(${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
 
       if(DEFINED RESOURCE_PATH)
-        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${RESOURCE_PATH})
+        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES} ${RESOURCE_PATH})
         if(${tname} STREQUAL "demo")
           target_compile_definitions(demo PUBLIC USING_XCODE)
         endif(${tname} STREQUAL "demo")
       else()
-        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${${tname}_FLTK_UI_SRCS})
+        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES})
       endif(DEFINED RESOURCE_PATH)
     else()
-      add_executable(${tname} WIN32 ${srcs} ${${tname}_FLTK_UI_SRCS})
+      add_executable(${tname} WIN32 ${srcs} ${FLUID_SOURCES})
     endif(APPLE AND NOT OPTION_APPLE_X11)
 
     set_target_properties(${tname}    
-	    PROPERTIES OUTPUT_NAME ${oname}
-	  )
+      PROPERTIES OUTPUT_NAME ${oname}
+    )
     if(APPLE AND DEFINED RESOURCE_PATH)    
       if(NOT ${tname} STREQUAL "demo")
         set_target_properties(${tname} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
@@ -136,7 +153,6 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       set_target_properties("editor" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/ide/Xcode4/plists/editor-Info.plist" )
     endif(APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
     
-
     target_link_libraries(${tname} ${LIBRARIES})
 
     # link in optional libraries
