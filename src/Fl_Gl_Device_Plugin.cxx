@@ -31,45 +31,6 @@
 #endif
 
 
-
-// FIXME: remove the code below
-#if 0
-// ------ this should be in a separate file! -----------------------------------
-#ifdef FL_CFG_GFX_OPENGL
-
-#include <FL/Fl_Device.H>
-#include <FL/gl.h>
-
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver.h"
-
-Fl_OpenGL_Display_Device *Fl_OpenGL_Display_Device::display_device() {
-  static Fl_OpenGL_Display_Device *display = new Fl_OpenGL_Display_Device(new Fl_OpenGL_Graphics_Driver());
-  return display;
-};
-
-Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver)
-: Fl_Surface_Device(graphics_driver)
-{
-}
-
-const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
-
-#endif
-// ------ end of separate file! ------------------------------------------------
-
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx"
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx"
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx"
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx"
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx"
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx"
-#include "drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx"
-
-#endif
-
-
-
-
 #if defined(__APPLE__)
 uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
 {
