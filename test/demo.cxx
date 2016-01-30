@@ -44,6 +44,24 @@
 #include <FL/filename.H>
 #include <FL/x.H>
 
+/* Define a macro to decide if a trailing 'd' needs to be removed
+   from the executable file name. Previous versions of Visual Studio
+   added a 'd' to the executable file name ('demod.exe') in Debug
+   configurations that needed to be removed.
+   This is no longer true with CMake-generated IDE's since FLTK 1.4.
+   The 'old' behavior obviously applied or still applies to
+   CodeWarrior (__MWERKS__).
+   *FIXME* is this still true and necessary?
+*/
+
+// #if ( defined _MSC_VER || defined __MWERKS__ ) && defined _DEBUG
+
+#if defined(WIN32) && defined(__MWERKS__) && defined(_DEBUG)
+# define DEBUG_EXE_WITH_D 1
+#else
+# define DEBUG_EXE_WITH_D 0
+#endif
+
 /* The form description */
 
 void doexit(Fl_Widget *, void *);
@@ -250,7 +268,7 @@ void dobut(Fl_Widget *, long arg)
     char* command = new char[icommand_length+6]; // 6 for extra 'd.exe\0'
     
     if (start_parameters==NULL) { // no parameters required.
-#  ifdef _DEBUG
+#  if DEBUG_EXE_WITH_D
       sprintf(command, "%sd.exe", start_command);
 #  else
       sprintf(command, "%s.exe", start_command);
@@ -412,7 +430,7 @@ int main(int argc, char **argv) {
   putenv((char *)"FLTK_DOCDIR=../documentation/html");
   char buf[FL_PATH_MAX];
   strcpy(buf, argv[0]);
-#if ( defined _MSC_VER || defined __MWERKS__ ) && defined _DEBUG
+#if DEBUG_EXE_WITH_D
   // MS_VisualC appends a 'd' to debugging executables. remove it.
   fl_filename_setext( buf, "" );
   buf[ strlen(buf)-1 ] = 0;
