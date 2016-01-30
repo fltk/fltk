@@ -19,7 +19,7 @@
 #include "../../config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ
 
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 extern int fl_line_width_;
 

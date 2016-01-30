@@ -31,7 +31,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl.H>
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 extern int fl_line_width_;
 

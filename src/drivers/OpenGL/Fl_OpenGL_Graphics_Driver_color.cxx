@@ -28,7 +28,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl.H>
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 
 // Implementation of fl_color(i), fl_color(r,g,b).
