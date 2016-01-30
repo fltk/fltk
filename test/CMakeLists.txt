@@ -109,11 +109,18 @@ endif(FLTK_HAVE_CAIRO)
 # - demo.menu: help (help-test.html) can't find its images (not copied)
 # - maybe more ...
 
+# prepare for a "better" test file installation path
+set (TESTFILE_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+# *FIXME* *DEBUG*
+# message ("test/CMakeLists.txt: EXECUTABLE_OUTPUT_PATH = '${EXECUTABLE_OUTPUT_PATH}'")
+# message ("test/CMakeLists.txt: TESTFILE_PATH          = '${TESTFILE_PATH}'")
+
 # use a target filename to make sure the target directory gets created
-configure_file(demo.menu ${EXECUTABLE_OUTPUT_PATH}/demo.menu COPYONLY)
+configure_file(demo.menu ${TESTFILE_PATH}/demo.menu COPYONLY)
 
 # use target directory only to avoid redundancy
-configure_file(rgb.txt ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
-configure_file(help-test.html ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
-configure_file(browser.cxx ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
-configure_file(editor.cxx ${EXECUTABLE_OUTPUT_PATH} COPYONLY)
+configure_file(rgb.txt ${TESTFILE_PATH} COPYONLY)
+configure_file(help-test.html ${TESTFILE_PATH} COPYONLY)
+configure_file(browser.cxx ${TESTFILE_PATH} COPYONLY)
+configure_file(editor.cxx ${TESTFILE_PATH} COPYONLY)
