@@ -22,8 +22,8 @@
 #######################################################################
 # The FLTK version
 set(FLTK_VERSION_MAJOR "1")
-set(FLTK_VERSION_MINOR "3")
-set(FLTK_VERSION_PATCH "4")
+set(FLTK_VERSION_MINOR "4")
+set(FLTK_VERSION_PATCH "0")
 set(FLTK_VERSION "${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}")
 set(FLTK_VERSION_FULL "${FLTK_VERSION}.${FLTK_VERSION_PATCH}")
 

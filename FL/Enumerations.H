@@ -69,14 +69,14 @@
 
    FLTK remains mostly source-code compatible between minor version changes.
  */
-#define FL_MINOR_VERSION	3
+#define FL_MINOR_VERSION	4
 
 /**
    The patch version for this library.
 
    FLTK remains binary compatible between patches.
  */
-#define FL_PATCH_VERSION	4
+#define FL_PATCH_VERSION	0
 
 /**
     The FLTK version number as a \em double.

@@ -19,16 +19,16 @@ this is often useful to know when programming.
 The FLTK version number is stored in a number of compile-time constants:
 
   - FL_MAJOR_VERSION - The major release number, currently  1
-  - FL_MINOR_VERSION - The minor release number, currently  3
-  - FL_PATCH_VERSION - The patch release number, currently  4
+  - FL_MINOR_VERSION - The minor release number, currently  4
+  - FL_PATCH_VERSION - The patch release number, currently  0
   - FL_VERSION - \b [Deprecated] A combined floating-point version number for
-      the major, minor, and patch release numbers, currently 1.0304
+      the major, minor, and patch release numbers, currently 1.0400
   - FL_API_VERSION - A combined integer version number for the major, minor,
-      and patch release numbers, currently 10304 (use this instead of
+      and patch release numbers, currently 10400 (use this instead of
       FL_VERSION, if possible)
   - FL_ABI_VERSION - A combined integer version number for the application
       binary interface (ABI) major, minor, and patch release numbers,
-      currently 10300 (default)
+      currently 10400 (default)
 
   \note The ABI version (FL_ABI_VERSION) is usually constant throughout one
 	major/minor release version, for instance 10300 if FL_API_VERSION is 10304.
