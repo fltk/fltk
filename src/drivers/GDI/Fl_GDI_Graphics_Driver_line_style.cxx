@@ -19,12 +19,22 @@
 #ifndef FL_CFG_GFX_GDI_LINE_STYLE_CXX
 #define FL_CFG_GFX_GDI_LINE_STYLE_CXX
 
+#include "../../config_lib.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
+#include <FL/Fl_Printer.H>
+#include "../../flstring.h"
+#include <stdio.h>
+
 /**
   \file gdi_line_style.cxx
   \brief Line style drawing utility hiding different platforms.
 */
 
 #include "Fl_GDI_Graphics_Driver.h"
+
+extern int fl_line_width_;  // defined in src/fl_line_style.cxx
 
 
 void Fl_GDI_Graphics_Driver::line_style(int style, int width, char* dashes) {

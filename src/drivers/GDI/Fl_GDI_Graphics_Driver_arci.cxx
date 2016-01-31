@@ -24,6 +24,12 @@
   \brief Utility functions for drawing circles using integers
 */
 
+// "integer" circle drawing functions.  These draw the limited
+// circle types provided by X and NT graphics.  The advantage of
+// these is that small ones draw quite nicely (probably due to stored
+// hand-drawn bitmaps of small circles!) and may be implemented by
+// hardware and thus are fast.
+
 #include "Fl_GDI_Graphics_Driver.h"
 
 #include <FL/math.h>

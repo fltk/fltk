@@ -17,11 +17,18 @@
 //
 
 
-
 /**
  \file gdi_rect.cxx
  \brief MSWindows GDI specific line and polygon drawing with integer coordinates.
  */
+
+#include <config.h>
+#include "../../config_lib.h"
+#include <FL/Fl.H>
+#include <FL/Fl_Widget.H>
+#include <FL/Fl_Printer.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
 
 #include "Fl_GDI_Graphics_Driver.h"
 

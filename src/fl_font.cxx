@@ -3,7 +3,7 @@
 //
 // Font selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,24 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef WIN32
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-# endif
-/* We require Windows 2000 features such as GetGlyphIndices */
-# if !defined(WINVER) || (WINVER < 0x0500)
-#  ifdef WINVER
-#   undef WINVER
-#  endif
-#  define WINVER 0x0500
-# endif
-# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
-#  ifdef _WIN32_WINNT
-#   undef _WIN32_WINNT
-#  endif
-#  define _WIN32_WINNT 0x0500
-# endif
-#endif
 
 // Select fonts from the FLTK font table.
 #include "flstring.h"
@@ -46,30 +28,12 @@
 #include <stdlib.h>
 
 // -----------------------------------------------------------------------------
-// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
-// statements when the new build system is ready:
-
-#ifndef FL_LIBRARY_CMAKE
-
-#ifdef WIN32
-#  include "drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx"
-#elif defined(__APPLE__)
-// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx"
-#elif USE_XFT
-#  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx"
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement font handling specifics in its own file"
-#else
-// #  include "drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx"
-#endif // WIN32
-
-#endif // FL_LIBRARY_CMAKE
-
+// all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you need the XFontStruct"
+#  pragma message "FL_PORTING: do you need the XFontStruct ?"
 #else
 XFontStruct *fl_X_core_font()
 {

@@ -105,7 +105,6 @@ set(CPPFILES
   filename_match.cxx
   filename_setext.cxx
   fl_arc.cxx
-  fl_arci.cxx
   fl_ask.cxx
   fl_boxtype.cxx
   fl_color.cxx
@@ -114,7 +113,6 @@ set(CPPFILES
   fl_diamond_box.cxx
   fl_dnd.cxx
   fl_draw.cxx
-  fl_draw_image.cxx
   fl_draw_pixmap.cxx
   fl_engraved_label.cxx
   fl_file_dir.cxx
@@ -133,7 +131,6 @@ set(CPPFILES
   fl_round_box.cxx
   fl_rounded_box.cxx
   fl_set_font.cxx
-  fl_set_fonts.cxx
   fl_scroll_area.cxx
   fl_shadow_box.cxx
   fl_shortcut.cxx
@@ -153,7 +150,6 @@ if (USE_X11)
 
   # X11 (including APPLE with X11)
 
-  # FILE(GLOB DRIVER_FILES drivers/Xlib/Fl_Xlib_Graphics_Driver_*.cxx)
   set(DRIVER_FILES
     drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx
@@ -176,7 +172,6 @@ elseif (APPLE)
 
   # Apple Quartz
 
-  # FILE(GLOB DRIVER_FILES drivers/Quartz/Fl_Quartz_Graphics_Driver_*.cxx)
   set(DRIVER_FILES
     drivers/Quartz/Fl_Quartz_Display_Device.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
@@ -193,7 +188,16 @@ elseif (APPLE)
 else ()
 
   # Windows (GDI)
-  # not yet "converted"
+
+  set(DRIVER_FILES
+    drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx
+    drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx
+    drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx
+    drivers/GDI/Fl_GDI_Graphics_Driver_image.cxx
+    drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx
+    drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx
+    drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
+  )
 
 endif (USE_X11)
 

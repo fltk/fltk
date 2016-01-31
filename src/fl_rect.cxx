@@ -3,7 +3,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -78,7 +78,7 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 
 #ifdef FL_CFG_GFX_GDI
 
-# include "drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx"
+// # include "drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx"
 
 #endif
 

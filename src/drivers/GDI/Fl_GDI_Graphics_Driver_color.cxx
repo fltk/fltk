@@ -33,9 +33,8 @@
 // to co-exist, creating conflicts with multipe mapping.
 
 // FIXME: maybe we can forget about color mapping and assume RGB?
-//static unsigned fl_cmap[256] = {
-//#include "../../fl_cmap.h" // this is a file produced by "cmap.cxx":
-//};
+// FIXME: ... but for now we still have it ...
+extern unsigned fl_cmap[256]; // defined in fl_color.cxx
 
 // Translations to win32 data structures:
 Fl_XMap fl_xmap[256];

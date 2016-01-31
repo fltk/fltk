@@ -3,7 +3,7 @@
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,6 +15,35 @@
 //
 //     http://www.fltk.org/str.php
 //
+
+#ifdef WIN32
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+/* We require Windows 2000 features such as GetGlyphIndices */
+# if !defined(WINVER) || (WINVER < 0x0500)
+#  ifdef WINVER
+#   undef WINVER
+#  endif
+#  define WINVER 0x0500
+# endif
+# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+#  ifdef _WIN32_WINNT
+#   undef _WIN32_WINNT
+#  endif
+#  define _WIN32_WINNT 0x0500
+# endif
+#endif
+
+// Select fonts from the FLTK font table.
+#include "../../flstring.h"
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <FL/x.H>
+#include "../../Fl_Font.H"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 // This function fills in the FLTK font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
@@ -167,7 +196,7 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this

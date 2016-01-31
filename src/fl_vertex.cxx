@@ -160,7 +160,7 @@ void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
 
 #ifdef FL_CFG_GFX_GDI
 
-# include "drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx"
+// # include "drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx"
 
 #endif
 

@@ -124,7 +124,6 @@ CPPFILES = \
 	filename_match.cxx \
 	filename_setext.cxx \
 	fl_arc.cxx \
-	fl_arci.cxx \
 	fl_ask.cxx \
 	fl_boxtype.cxx \
 	fl_color.cxx \
@@ -133,7 +132,6 @@ CPPFILES = \
 	fl_diamond_box.cxx \
 	fl_dnd.cxx \
 	fl_draw.cxx \
-	fl_draw_image.cxx \
 	fl_draw_pixmap.cxx \
 	fl_encoding_latin1.cxx \
 	fl_encoding_mac_roman.cxx \
@@ -154,7 +152,6 @@ CPPFILES = \
 	fl_round_box.cxx \
 	fl_rounded_box.cxx \
 	fl_set_font.cxx \
-	fl_set_fonts.cxx \
 	fl_scroll_area.cxx \
 	fl_shadow_box.cxx \
 	fl_shortcut.cxx \
@@ -191,7 +188,16 @@ GLCPPFILES = \
 	gl_draw.cxx \
 	gl_start.cxx \
 	glut_compatability.cxx \
-	glut_font.cxx
+	glut_font.cxx \
+	drivers/OpenGL/Fl_OpenGL_Display_Device.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
+	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 
 IMGCPPFILES = \
 	fl_images_core.cxx \
@@ -260,7 +266,7 @@ CPPFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCPPFILES); fi)
 CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) = Yes; then echo $(XLIBXFTFILES); fi)
 CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo $(XLIBFONTFILES); fi)
 
-# CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
+CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
 
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
