@@ -324,28 +324,6 @@
 		7F6F526419CF0FED0075F408 /* Fl_Window_shape.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F6F526319CF0FED0075F408 /* Fl_Window_shape.cxx */; };
 		7F7CF8191AB97DA600E12B22 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		7F7CF81F1AB9836C00E12B22 /* animated.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F7CF81E1AB9836C00E12B22 /* animated.cxx */; };
-		7F7EEBCC1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30B11C59704300E22076 /* Fl_Quartz_Graphics_Driver.cxx */; };
-		7F7EEBCD1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_rect.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A11C596CC900E22076 /* Fl_Quartz_Graphics_Driver_rect.cxx */; };
-		7F7EEBCE1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A31C596CC900E22076 /* Fl_Quartz_Graphics_Driver_image.cxx */; };
-		7F7EEBCF1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_arci.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A41C596CC900E22076 /* Fl_Quartz_Graphics_Driver_arci.cxx */; };
-		7F7EEBD01C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_color.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A51C596CC900E22076 /* Fl_Quartz_Graphics_Driver_color.cxx */; };
-		7F7EEBD11C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_font.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A61C596CC900E22076 /* Fl_Quartz_Graphics_Driver_font.cxx */; };
-		7F7EEBD21C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_line_style.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A71C596CC900E22076 /* Fl_Quartz_Graphics_Driver_line_style.cxx */; };
-		7F7EEBD31C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_vertex.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30A81C596CC900E22076 /* Fl_Quartz_Graphics_Driver_vertex.cxx */; };
-		7F7EEBD41C5E2A2B00951DF7 /* Fl_Quartz_Printer_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97E30B01C59704300E22076 /* Fl_Quartz_Printer_Graphics_Driver.cxx */; };
-		7F7EEBD51C5E2A3300951DF7 /* Fl_Quartz_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB331C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx */; };
-		7F7EEBD61C5E2A3500951DF7 /* Fl_Quartz_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB331C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx */; };
-		7F7EEBF11C5E2CEB00951DF7 /* Fl_OpenGL_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB4A1C5BB72500E80696 /* Fl_OpenGL_Display_Device.cxx */; };
-		7F7EEBF21C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB481C5BB0C600E80696 /* Fl_OpenGL_Graphics_Driver.cxx */; };
-		7F7EEBF31C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_arci.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB371C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_arci.cxx */; };
-		7F7EEBF41C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_color.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB381C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx */; };
-		7F7EEBF51C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_font.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB391C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_font.cxx */; };
-		7F7EEBF61C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3A1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_image.cxx */; };
-		7F7EEBF71C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_line_style.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3C1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_line_style.cxx */; };
-		7F7EEBF81C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_rect.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3D1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_rect.cxx */; };
-		7F7EEBF91C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_vertex.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB3E1C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_vertex.cxx */; };
-		7F7EEBFB1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F7EEBFA1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx */; };
-		7F7EEBFC1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F7EEBFA1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx */; };
 		7F8E7E391C0DA8D200B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92032516B1A90A000FC50F /* Localizable.strings */; };
 		7F8E7E3A1C0DA8F000B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031C16B1A909000FC50F /* Localizable.strings */; };
 		7F8E7E3B1C0DA8F700B806A0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7F92031F16B1A909000FC50F /* Localizable.strings */; };
@@ -722,6 +700,7 @@
 		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
 		C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D999C03407EAEE9C4D3477A /* browser.cxx */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
+		C9B6BB351C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB331C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx */; };
 		C9B6BB4D1C5BB7C500E80696 /* Fl_OpenGL_Display_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB4A1C5BB72500E80696 /* Fl_OpenGL_Display_Device.cxx */; };
 		C9B6BB4E1C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB481C5BB0C600E80696 /* Fl_OpenGL_Graphics_Driver.cxx */; };
 		C9B6BB4F1C5BB7C500E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B6BB381C5BB07E00E80696 /* Fl_OpenGL_Graphics_Driver_color.cxx */; };
@@ -4583,24 +4562,6 @@
 		7F784151AF1B748D0F3DB1C0 /* forms.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = forms.cxx; path = ../../test/forms.cxx; sourceTree = SOURCE_ROOT; };
 		7F7CF7F51AB97CEF00E12B22 /* animated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = animated.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F7CF81E1AB9836C00E12B22 /* animated.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animated.cxx; path = ../../test/animated.cxx; sourceTree = SOURCE_ROOT; };
-		7F7EEBD91C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_arci.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_arci.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx; sourceTree = "<group>"; };
-		7F7EEBDA1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_color.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_color.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx; sourceTree = "<group>"; };
-		7F7EEBDB1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_font.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_font.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx; sourceTree = "<group>"; };
-		7F7EEBDC1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_image.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_image.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_image.cxx; sourceTree = "<group>"; };
-		7F7EEBDD1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_line_style.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_line_style.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx; sourceTree = "<group>"; };
-		7F7EEBDE1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_rect.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_rect.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx; sourceTree = "<group>"; };
-		7F7EEBDF1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_vertex.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_GDI_Graphics_Driver_vertex.cxx; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx; sourceTree = "<group>"; };
-		7F7EEBE01C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Fl_GDI_Graphics_Driver.h; path = ../../src/drivers/GDI/Fl_GDI_Graphics_Driver.h; sourceTree = "<group>"; };
-		7F7EEBE11C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_arci.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_arci.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx; sourceTree = "<group>"; };
-		7F7EEBE31C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_color.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_color.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx; sourceTree = "<group>"; };
-		7F7EEBE51C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_font_x.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_font_x.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx; sourceTree = "<group>"; };
-		7F7EEBE61C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_font_xft.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_font_xft.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx; sourceTree = "<group>"; };
-		7F7EEBE81C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_image.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_image.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx; sourceTree = "<group>"; };
-		7F7EEBEA1C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_line_style.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_line_style.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx; sourceTree = "<group>"; };
-		7F7EEBEC1C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_rect.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_rect.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx; sourceTree = "<group>"; };
-		7F7EEBEE1C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_vertex.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Xlib_Graphics_Driver_vertex.cxx; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx; sourceTree = "<group>"; };
-		7F7EEBF01C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Fl_Xlib_Graphics_Driver.h; path = ../../src/drivers/Xlib/Fl_Xlib_Graphics_Driver.h; sourceTree = "<group>"; };
-		7F7EEBFA1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_set_fonts_mac.cxx; path = ../../src/fl_set_fonts_mac.cxx; sourceTree = "<group>"; };
 		7F92031A16B1A909000FC50F /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = Localizable.strings; sourceTree = "<group>"; };
 		7F92031D16B1A909000FC50F /* French */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = French; path = Localizable.strings; sourceTree = "<group>"; };
 		7F92032016B1A909000FC50F /* German */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = German; path = Localizable.strings; sourceTree = "<group>"; };
@@ -5888,7 +5849,6 @@
 				5876E03E2818B598FAA5C307 /* fl_rounded_box.cxx */,
 				7C67E3A1368F9AC0A03A7BD6 /* fl_scroll_area.cxx */,
 				FBB2C3FCFF8322A237DDBE23 /* fl_set_font.cxx */,
-				7F7EEBFA1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx */,
 				F6A596316AE6F65117FF7196 /* fl_shadow_box.cxx */,
 				7C57535613D421F393DD662F /* fl_shortcut.cxx */,
 				EB15CE98189A4C0A7A8A480F /* fl_show_colormap.cxx */,
@@ -6300,37 +6260,6 @@
 				7F7CF81E1AB9836C00E12B22 /* animated.cxx */,
 			);
 			path = animated;
-			sourceTree = "<group>";
-		};
-		7F7EEBD71C5E2C1100951DF7 /* GDI */ = {
-			isa = PBXGroup;
-			children = (
-				7F7EEBD91C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_arci.cxx */,
-				7F7EEBDA1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_color.cxx */,
-				7F7EEBDB1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_font.cxx */,
-				7F7EEBDC1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_image.cxx */,
-				7F7EEBDD1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_line_style.cxx */,
-				7F7EEBDE1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_rect.cxx */,
-				7F7EEBDF1C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver_vertex.cxx */,
-				7F7EEBE01C5E2C3300951DF7 /* Fl_GDI_Graphics_Driver.h */,
-			);
-			name = GDI;
-			sourceTree = "<group>";
-		};
-		7F7EEBD81C5E2C1900951DF7 /* Xlib */ = {
-			isa = PBXGroup;
-			children = (
-				7F7EEBE11C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_arci.cxx */,
-				7F7EEBE31C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_color.cxx */,
-				7F7EEBE51C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_font_x.cxx */,
-				7F7EEBE61C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_font_xft.cxx */,
-				7F7EEBE81C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_image.cxx */,
-				7F7EEBEA1C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_line_style.cxx */,
-				7F7EEBEC1C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_rect.cxx */,
-				7F7EEBEE1C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver_vertex.cxx */,
-				7F7EEBF01C5E2C4B00951DF7 /* Fl_Xlib_Graphics_Driver.h */,
-			);
-			name = Xlib;
 			sourceTree = "<group>";
 		};
 		7F8E4196B47A3E1099092789 /* file_chooser */ = {
@@ -6798,8 +6727,6 @@
 			isa = PBXGroup;
 			children = (
 				C97E30A01C596C8500E22076 /* Quartz */,
-				7F7EEBD81C5E2C1900951DF7 /* Xlib */,
-				7F7EEBD71C5E2C1100951DF7 /* GDI */,
 			);
 			name = Drivers;
 			sourceTree = "<group>";
@@ -9941,7 +9868,6 @@
 				185933E619D6C024C4B53D3B /* Fl_Value_Input.cxx in Sources */,
 				86C566B54637B5F773257067 /* Fl_Value_Output.cxx in Sources */,
 				A40F3E633565708E8113728D /* Fl_Value_Slider.cxx in Sources */,
-				7F7EEBFB1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx in Sources */,
 				CAF6CE97B3EBEFFA65AAEEAD /* Fl_Widget.cxx in Sources */,
 				7F12FCC718E1EEB900AB6A11 /* fl_gleam.cxx in Sources */,
 				023D5B2431F40114C118A5DB /* Fl_Window.cxx in Sources */,
@@ -9990,7 +9916,6 @@
 				C15F39A34F7287D9D15F0F32 /* fl_engraved_label.cxx in Sources */,
 				B29518D26E24DA48CB98E311 /* fl_file_dir.cxx in Sources */,
 				929E238322B78D6EE544D8A3 /* fl_font.cxx in Sources */,
-				7F7EEBD51C5E2A3300951DF7 /* Fl_Quartz_Display_Device.cxx in Sources */,
 				B0A7D39BA00A2517C9AF5516 /* fl_gtk.cxx in Sources */,
 				B3A220D71CE32208C089B2BA /* fl_labeltype.cxx in Sources */,
 				44EF64739BF54210820845FC /* fl_line_style.cxx in Sources */,
@@ -10149,9 +10074,7 @@
 				7FBCED4B1B1D8B2100AB970D /* fl_arc.cxx in Sources */,
 				7FBCECE51B1D8B2100AB970D /* Fl_Bitmap.cxx in Sources */,
 				7FBCED381B1D8B2100AB970D /* Fl_add_idle.cxx in Sources */,
-				7F7EEBF91C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_vertex.cxx in Sources */,
 				7FBCED861B1D8B3B00AB970D /* glut_compatability.cxx in Sources */,
-				7F7EEBCD1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_rect.cxx in Sources */,
 				7FBCED4E1B1D8B2100AB970D /* fl_boxtype.cxx in Sources */,
 				7FBCECFA1B1D8B2100AB970D /* Fl_File_Input.cxx in Sources */,
 				7FBCED3A1B1D8B2100AB970D /* Fl_compose.cxx in Sources */,
@@ -10166,16 +10089,12 @@
 				7FBCED411B1D8B2100AB970D /* Fl_visual.cxx in Sources */,
 				7FBCED931B1D8B5C00AB970D /* forms_fselect.cxx in Sources */,
 				7FBCED831B1D8B3B00AB970D /* freeglut_stroke_roman.cxx in Sources */,
-				7F7EEBD41C5E2A2B00951DF7 /* Fl_Quartz_Printer_Graphics_Driver.cxx in Sources */,
 				7FBCED251B1D8B2100AB970D /* Fl_Tooltip.cxx in Sources */,
 				7FBCECE01B1D8B2100AB970D /* Fl_Native_File_Chooser_MAC.mm in Sources */,
 				7FBCED141B1D8B2100AB970D /* Fl_Repeat_Button.cxx in Sources */,
 				7FBCED691B1D8B2100AB970D /* fl_rounded_box.cxx in Sources */,
 				7FBCED0D1B1D8B2100AB970D /* Fl_Paged_Device.cxx in Sources */,
-				7F7EEBFC1C5E2EA700951DF7 /* fl_set_fonts_mac.cxx in Sources */,
 				7FBCECDF1B1D8B2100AB970D /* Fl_cocoa.mm in Sources */,
-				7F7EEBF41C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_color.cxx in Sources */,
-				7F7EEBF11C5E2CEB00951DF7 /* Fl_OpenGL_Display_Device.cxx in Sources */,
 				7FBCED121B1D8B2100AB970D /* Fl_Preferences.cxx in Sources */,
 				7FBCED2C1B1D8B2100AB970D /* Fl_Value_Output.cxx in Sources */,
 				7FBCED151B1D8B2100AB970D /* Fl_Return_Button.cxx in Sources */,
@@ -10206,11 +10125,9 @@
 				7FBCED0A1B1D8B2100AB970D /* Fl_Native_File_Chooser.cxx in Sources */,
 				7FBCED1A1B1D8B2100AB970D /* Fl_Shared_Image.cxx in Sources */,
 				7FBCED301B1D8B2100AB970D /* Fl_Window_fullscreen.cxx in Sources */,
-				7F7EEBF61C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_image.cxx in Sources */,
 				7FBCED581B1D8B2100AB970D /* fl_encoding_latin1.cxx in Sources */,
 				7FBCED5D1B1D8B2100AB970D /* fl_gleam.cxx in Sources */,
 				7FBCED911B1D8B5C00AB970D /* forms_compatability.cxx in Sources */,
-				7F7EEBF81C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_rect.cxx in Sources */,
 				7FBCECF21B1D8B2100AB970D /* Fl_Counter.cxx in Sources */,
 				7FBCED841B1D8B3B00AB970D /* freeglut_teapot.cxx in Sources */,
 				7FBCED611B1D8B2100AB970D /* fl_open_uri.cxx in Sources */,
@@ -10219,13 +10136,10 @@
 				7FBCED111B1D8B2100AB970D /* Fl_Printer.cxx in Sources */,
 				7FBCED261B1D8B2100AB970D /* Fl_Tree.cxx in Sources */,
 				7FBCED821B1D8B3B00AB970D /* freeglut_stroke_mono_roman.cxx in Sources */,
-				7F7EEBF31C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_arci.cxx in Sources */,
-				7F7EEBF71C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_line_style.cxx in Sources */,
 				7FBCED061B1D8B2100AB970D /* Fl_Menu_Window.cxx in Sources */,
 				7FBCED2E1B1D8B2100AB970D /* Fl_Widget.cxx in Sources */,
 				7FBCED711B1D8B2100AB970D /* fl_utf.c in Sources */,
 				7FBCED1D1B1D8B2100AB970D /* Fl_Table.cxx in Sources */,
-				7F7EEBD11C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_font.cxx in Sources */,
 				7FBCED6B1B1D8B2100AB970D /* fl_set_font.cxx in Sources */,
 				7FBCED8A1B1D8B4E00AB970D /* Fl_GIF_Image.cxx in Sources */,
 				7FBCECEC1B1D8B2100AB970D /* Fl_Check_Browser.cxx in Sources */,
@@ -10244,7 +10158,6 @@
 				7FBCED2F1B1D8B2100AB970D /* Fl_Window.cxx in Sources */,
 				7FBCED1E1B1D8B2100AB970D /* Fl_Table_Row.cxx in Sources */,
 				7FBCED5F1B1D8B2100AB970D /* fl_labeltype.cxx in Sources */,
-				7F7EEBCC1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver.cxx in Sources */,
 				7FBCED8D1B1D8B4E00AB970D /* Fl_PNG_Image.cxx in Sources */,
 				7FBCED4D1B1D8B2100AB970D /* fl_ask.cxx in Sources */,
 				7FBCED431B1D8B2100AB970D /* cmap.cxx in Sources */,
@@ -10255,9 +10168,7 @@
 				7FBCED031B1D8B2100AB970D /* Fl_Menu_.cxx in Sources */,
 				7FBCED021B1D8B2100AB970D /* Fl_Menu.cxx in Sources */,
 				7FBCED3F1B1D8B2100AB970D /* Fl_lock.cxx in Sources */,
-				7F7EEBF21C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver.cxx in Sources */,
 				7FBCED4F1B1D8B2100AB970D /* fl_call_main.c in Sources */,
-				7F7EEBF51C5E2CEB00951DF7 /* Fl_OpenGL_Graphics_Driver_font.cxx in Sources */,
 				7FBCED7E1B1D8B3B00AB970D /* Fl_Gl_Device_Plugin.cxx in Sources */,
 				7FBCECFE1B1D8B2100AB970D /* Fl_Image_Surface.cxx in Sources */,
 				7FBCED441B1D8B2100AB970D /* filename_absolute.cxx in Sources */,
@@ -10269,7 +10180,6 @@
 				7FBCED201B1D8B2100AB970D /* Fl_Text_Buffer.cxx in Sources */,
 				7FBCED171B1D8B2100AB970D /* Fl_Round_Button.cxx in Sources */,
 				7FBCED0E1B1D8B2100AB970D /* Fl_Pixmap.cxx in Sources */,
-				7F7EEBCF1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_arci.cxx in Sources */,
 				7FBCED231B1D8B2100AB970D /* Fl_Tile.cxx in Sources */,
 				7FBCED7D1B1D8B3B00AB970D /* Fl_Gl_Choice.cxx in Sources */,
 				7FBCED131B1D8B2100AB970D /* Fl_Progress.cxx in Sources */,
@@ -10277,22 +10187,18 @@
 				7FBCED601B1D8B2100AB970D /* fl_line_style.cxx in Sources */,
 				7FBCED2A1B1D8B2100AB970D /* Fl_Valuator.cxx in Sources */,
 				7FBCED671B1D8B2100AB970D /* fl_rect.cxx in Sources */,
-				7F7EEBD61C5E2A3500951DF7 /* Fl_Quartz_Display_Device.cxx in Sources */,
 				7FBCED0C1B1D8B2100AB970D /* Fl_Pack.cxx in Sources */,
 				7FBCED731B1D8B2100AB970D /* fl_vertex.cxx in Sources */,
 				7FBCED461B1D8B2100AB970D /* filename_ext.cxx in Sources */,
 				7FBCED321B1D8B2100AB970D /* Fl_Window_iconize.cxx in Sources */,
 				7FBCED161B1D8B2100AB970D /* Fl_Roller.cxx in Sources */,
 				7FBCECE41B1D8B2100AB970D /* Fl_Adjuster.cxx in Sources */,
-				7F7EEBD21C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_line_style.cxx in Sources */,
 				7FBCED651B1D8B2100AB970D /* fl_plastic.cxx in Sources */,
 				7FBCECE91B1D8B2100AB970D /* Fl_Browser_load.cxx in Sources */,
 				7FBCED5B1B1D8B2100AB970D /* fl_file_dir.cxx in Sources */,
 				7FBCED681B1D8B2100AB970D /* fl_round_box.cxx in Sources */,
 				7FBCECF41B1D8B2100AB970D /* Fl_Dial.cxx in Sources */,
-				7F7EEBD01C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_color.cxx in Sources */,
 				7FBCED571B1D8B2100AB970D /* fl_draw_pixmap.cxx in Sources */,
-				7F7EEBCE1C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_image.cxx in Sources */,
 				7FBCED401B1D8B2100AB970D /* Fl_own_colormap.cxx in Sources */,
 				7FBCED741B1D8B2100AB970D /* flstring.c in Sources */,
 				7FBCECEF1B1D8B2100AB970D /* Fl_Clock.cxx in Sources */,
@@ -10322,7 +10228,6 @@
 				7FBCECFF1B1D8B2100AB970D /* Fl_Input.cxx in Sources */,
 				7FBCED6D1B1D8B2100AB970D /* fl_shadow_box.cxx in Sources */,
 				7FBCED181B1D8B2100AB970D /* Fl_Scroll.cxx in Sources */,
-				7F7EEBD31C5E2A2B00951DF7 /* Fl_Quartz_Graphics_Driver_vertex.cxx in Sources */,
 				7FBCED5C1B1D8B2100AB970D /* fl_font.cxx in Sources */,
 				7FBCED3E1B1D8B2100AB970D /* Fl_grab.cxx in Sources */,
 				7FBCED7A1B1D8B2100AB970D /* case.c in Sources */,
@@ -10607,6 +10512,7 @@
 				E1B04810E72BD9557356CAAE /* fluid.cxx in Sources */,
 				98A96758FF9D01852DFBECFE /* function_panel.cxx in Sources */,
 				438CCCA43724B2E59680EF6B /* template_panel.cxx in Sources */,
+				C9B6BB351C5BACA100E80696 /* Fl_Quartz_Display_Device.cxx in Sources */,
 				27B4C89E8CBF260313ACA42E /* undo.cxx in Sources */,
 				B7D0770AC83AA04E8E12B76E /* widget_panel.cxx in Sources */,
 			);

@@ -171,8 +171,6 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
   if (!id_) id_ = fl_create_bitmask(w(), h(), array);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: call the right function to create a bitmap"
-#else
-  // TODO: please insert comment, explaining why we don;t need a bitmap here for X11
 #endif
   return 0;
 }
@@ -194,8 +192,6 @@ void Fl_Bitmap::uncache() {
     fl_delete_bitmask((Fl_Offscreen)id_);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: call the right function to create a bitmask"
-#else
-    // TODO: please insert comment, explaining why we don;t need a bitmap here for X11
 #endif
     id_ = 0;
   }

@@ -34,12 +34,6 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-#if defined(WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement all the line drawing functions below"
-#else
-#endif
-
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
