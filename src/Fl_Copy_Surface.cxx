@@ -16,6 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config_lib.h"
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl.H>
 

@@ -19,7 +19,7 @@
  Fl_Double_Window implementation.
  */
 
-#include <config.h>
+#include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Overlay_Window.H>

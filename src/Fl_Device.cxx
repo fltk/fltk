@@ -17,10 +17,10 @@
 //
 
 #include <FL/Fl.H>
+#include "config_lib.h"
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 
-#include "config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 #endif
