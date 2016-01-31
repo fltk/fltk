@@ -17,6 +17,8 @@
 //
 
 #include <config.h>
+#include <FL/Fl.H>
+#include <FL/x.H>
 
 // #inclde <SFNTTypes.h>
 
