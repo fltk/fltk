@@ -3,7 +3,7 @@
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -179,7 +179,7 @@ void gl_remove_displaylist_fonts()
 #endif
 }
 
-#if __APPLE__
+#ifdef __APPLE__
 static void gl_draw_textures(const char* str, int n);
 #endif
 
@@ -337,7 +337,7 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
 
-#if __APPLE__ || defined(FL_DOXYGEN)
+#if defined(__APPLE__) || defined(FL_DOXYGEN)
 /* Text drawing to an OpenGL scene under Mac OS X is implemented using textures, as recommended by Apple.
  This allows to use any font at any size, and any Unicode character.
  Some old Apple hardware doesn't implement the required GL_EXT_texture_rectangle extension.

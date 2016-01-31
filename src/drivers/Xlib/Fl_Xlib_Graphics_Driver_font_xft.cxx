@@ -3,7 +3,7 @@
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,6 +38,8 @@
 // the header files I decided to store this value in the last character
 // of the font name array.
 #define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
+
+#define USE_OVERLAY 0
 
 // turn a stored font name in "fltk format" into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {

@@ -3,7 +3,7 @@
  *
  * Configuration file for the Fast Light Tool Kit (FLTK) for Visual C++.
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -20,17 +20,21 @@
  * Where to find files...
  */
 
-#define FLTK_DATADIR	"C:/FLTK"
-#define FLTK_DOCDIR	"C:/FLTK/DOC"
+#define FLTK_DATADIR "C:/FLTK"
+#define FLTK_DOCDIR "C:/FLTK/DOC"
 
 /*
  * BORDER_WIDTH:
  *
  * Thickness of FL_UP_BOX and FL_DOWN_BOX.  Current 1,2, and 3 are
- * supported.  3 is the historic FLTK look.  2 looks more like Microsoft
- * Windows, KDE, and Qt, and is the default when building for Windows.
- * 1 is a plausible future evolution...  Note that this may be simulated
- * at runtime by redefining the boxtypes using Fl::set_boxtype().
+ * supported.
+ *
+ * 3 is the historic FLTK look.
+ * 2 is the default and looks like Microsoft Windows, KDE, and Qt.
+ * 1 is a plausible future evolution...
+ *
+ * Note that this may be simulated at runtime by redefining the boxtypes
+ * using Fl::set_boxtype().
  */
 
 #define BORDER_WIDTH 2
@@ -54,6 +58,14 @@
 #define HAVE_GL_GLU_H 1
 
 /*
+ * HAVE_GLXGETPROCADDRESSARB:
+ *
+ * Do you have the OpenGL glXGetProcAddressARB() function?
+ */
+
+/* #undef HAVE_GLXGETPROCADDRESSARB */
+
+/*
  * USE_COLORMAP:
  *
  * Setting this to zero will save a good deal of code (especially for
@@ -61,6 +73,22 @@
  */
 
 #define USE_COLORMAP 1
+
+/*
+ * HAVE_XINERAMA
+ *
+ * Do we have the Xinerama library to support multi-head displays?
+ */
+
+#define HAVE_XINERAMA 0
+
+/*
+ * USE_XFT
+ *
+ * Use the new Xft library to draw anti-aliased text.
+ */
+
+#define USE_XFT 0
 
 /*
  * HAVE_XDBE:
@@ -73,11 +101,62 @@
 /*
  * USE_XDBE:
  *
- * Actually try to use the double-buffer extension?  Set this to zero
- * disable use of XDBE without breaking the list_visuals program.
+ * Actually try to use the double-buffer extension?
  */
 
 #define USE_XDBE HAVE_XDBE
+
+/*
+ * HAVE_XFIXES:
+ *
+ * Do we have the X fixes extension?
+ */
+
+#define HAVE_XFIXES 0
+
+/*
+ * HAVE_XCURSOR:
+ *
+ * Do we have the X cursor library?
+ */
+
+#define HAVE_XCURSOR 0
+
+/*
+ * HAVE_XRENDER:
+ *
+ * Do we have the X render library?
+ */
+
+#define HAVE_XRENDER 0
+
+/*
+ * HAVE_X11_XREGION_H:
+ *
+ * Do we have the X11 Xregion.h header file ?
+ */
+
+#define HAVE_X11_XREGION_H 0
+
+/*
+ * __APPLE_QUARTZ__:
+ *
+ * All Apple implementations are now based on Quartz and Cocoa,
+ * so this flag should always be on for Mac OS X. This flag has
+ * no meaning on operating systems other than Mac OS X.
+ */
+
+/* #undef __APPLE_QUARTZ__ */
+
+
+/*
+ * USE_X11
+ *
+ * Should we use X11 for the current platform
+ *
+ */
+
+/* #undef USE_X11 */
 
 /*
  * HAVE_OVERLAY:
@@ -105,7 +184,11 @@
  * Byte order of your machine: 1 = big-endian, 0 = little-endian.
  */
 
+#ifdef __APPLE__
+#include <mac_endianness.h>
+#else
 #define WORDS_BIGENDIAN 0
+#endif
 
 /*
  * U16, U32, U64:
@@ -116,34 +199,37 @@
 
 #define U16 unsigned short
 #define U32 unsigned
-#undef U64
+/* #undef U64 */
 
 /*
- * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H, HAVE_SCANDIR:
+ * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H,
+ * HAVE_SCANDIR, HAVE_SCANDIR_POSIX:
  *
  * Where is <dirent.h> (used only by fl_file_chooser and scandir).
  */
 
-/*#undef HAVE_DIRENT_H */
-/*#undef HAVE_SYS_NDIR_H */
-/*#undef HAVE_SYS_DIR_H */
-/*#undef HAVE_NDIR_H */
-/*#undef HAVE_SCANDIR */
+/* #undef HAVE_DIRENT_H */
+/* #undef HAVE_SYS_NDIR_H */
+/* #undef HAVE_SYS_DIR_H */
+/* #undef HAVE_NDIR_H */
+/* #undef HAVE_SCANDIR */
+/* #undef HAVE_SCANDIR_POSIX */
 
 /*
  * Possibly missing sprintf-style functions:
  */
 
-#undef HAVE_VSNPRINTF
-#undef HAVE_SNPRINTF
+/* #undef HAVE_VSNPRINTF */
+/* #undef HAVE_SNPRINTF */
 
 /*
- * String functions...
+ * String functions and headers...
  */
 
-#define HAVE_STRCASECMP	1
-/*#undef HAVE_STRLCAT*/
-/*#undef HAVE_STRLCPY*/
+/* #undef HAVE_STRINGS_H */
+#define HAVE_STRCASECMP 1
+/* #undef HAVE_STRLCAT */
+/* #undef HAVE_STRLCPY */
 
 /*
  * Do we have POSIX locale support?
@@ -153,20 +239,36 @@
 #define HAVE_LOCALECONV 1
 
 /*
- * HAVE_POLL:
+ * HAVE_SYS_SELECT_H:
  *
- * Use poll() if we don't have select().
+ * Whether or not select() call has its own header file.
  */
 
-#define HAVE_POLL 0
+#define HAVE_SYS_SELECT_H 0
+
+/*
+ * HAVE_SYS_STDTYPES_H:
+ *
+ * Whether or not we have the <sys/stdtypes.h> header file.
+ */
+
+/* #undef HAVE_SYS_STDTYPES_H */
+
+/*
+ * USE_POLL:
+ *
+ * Use the poll() call provided on Linux and Irix instead of select()
+ */
+
+#define USE_POLL 0
 
 /*
  * Do we have various image libraries?
  */
 
-#define HAVE_LIBPNG
-#define HAVE_LIBZ
-#define HAVE_LIBJPEG
+#define HAVE_LIBPNG 1
+#define HAVE_LIBZ 1
+#define HAVE_LIBJPEG 1
 
 /*
  * Do we have Cairo ?
@@ -179,16 +281,49 @@
  * Which header file do we include for libpng?
  */
 
-#define HAVE_PNG_H
-#undef HAVE_LIBPNG_PNG_H
+#define HAVE_PNG_H 1
+/* #undef HAVE_LIBPNG_PNG_H */
 
 /*
  * Do we have the png_xyz() functions?
  */
 
-#define HAVE_PNG_GET_VALID
-#define HAVE_PNG_SET_TRNS_TO_ALPHA
+#define HAVE_PNG_GET_VALID 1
+#define HAVE_PNG_SET_TRNS_TO_ALPHA 1
 
+/*
+ * Do we have POSIX threading?
+ */
+
+/* #undef HAVE_PTHREAD */
+/* #undef HAVE_PTHREAD_H */
+
+/*
+ * Do we have the ALSA library?
+ */
+
+/* #undef HAVE_ALSA_ASOUNDLIB_H */
+
+/*
+ * Do we have the long long type?
+ */
+
+/* #undef HAVE_LONG_LONG */
+
+#ifdef HAVE_LONG_LONG
+#  define FLTK_LLFMT	"%lld"
+#  define FLTK_LLCAST	(long long)
+#else
+#  define FLTK_LLFMT	"%ld"
+#  define FLTK_LLCAST	(long)
+#endif /* HAVE_LONG_LONG */
+
+/*
+ * Do we have the dlsym() function and header?
+ */
+
+#define HAVE_DLFCN_H 0
+#define HAVE_DLSYM 0
 
 /*
  * End of "$Id: config.h 4454 2005-07-24 18:41:30Z matt $".

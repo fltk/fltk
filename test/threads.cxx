@@ -3,7 +3,7 @@
 //
 // Threading example program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 
 #include <config.h>
 
-#if HAVE_PTHREAD || defined(WIN32)
+#if defined(HAVE_PTHREAD) || defined(WIN32)
 #  include <FL/Fl.H>
 #  include <FL/Fl_Double_Window.H>
 #  include <FL/Fl_Browser.H>

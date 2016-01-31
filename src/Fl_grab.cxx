@@ -3,7 +3,7 @@
 //
 // Grab/release code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -47,7 +47,7 @@ extern void *fl_capture;
 #endif
 
 void Fl::grab(Fl_Window* win) {
-#if USE_X11
+#ifdef USE_X11
     Fl_Window *fullscreen_win = NULL;
     for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
       if (W->fullscreen_active()) {

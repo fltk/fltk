@@ -28,7 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if HAVE_LIBC_ICONV
+#ifdef HAVE_LIBC_ICONV
 #include <iconv.h>
 #endif
 /*
@@ -60,7 +60,7 @@ typedef struct {
 static int
 XConvertEucTwToUtf8(char* buffer_return, int len) {
   /* FIXME */
-#if HAVE_LIBC_ICONV
+#ifdef HAVE_LIBC_ICONV
   iconv_t cd;
   int cdl;
 #else
@@ -73,7 +73,7 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
   /*b = */ buf = (char*) malloc((unsigned)len);
   memcpy(buf, buffer_return, (unsigned) len);
 
-#if HAVE_LIBC_ICONV
+#ifdef HAVE_LIBC_ICONV
   l = cdl = len;
   cd = iconv_open("EUC-TW", "UTF-8");
   iconv(cd, &b, &len, &buffer_return, &cdl);

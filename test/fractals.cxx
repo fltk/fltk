@@ -7,7 +7,7 @@
 // demonstrate how to add FLTK controls to a GLUT program.   The GLUT
 // code is unchanged except for the end (search for FLTK to find changes).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_message.H>
 int main(int, char**) {
-  fl_alert("This demo does not work without GL and GLU (%d)");
+  fl_alert("This demo does not work without GL and GLU");
   return 1;
 }
 #else
