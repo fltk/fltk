@@ -22,17 +22,15 @@
           simple 2D transformations.
 */
 
-// Portable drawing code for drawing arbitrary shapes with
-// simple 2D transformations.  See also fl_arc.cxx
+// Portable code for drawing arbitrary shapes with simple 2D transformations.
+// See also fl_arc.cxx
 
 // matt: the Quartz implementation purposely doesn't use the Quartz matrix
 //       operations for reasons of compatibility and maintainability
 
-#if defined(WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement functions below for vector drawing"
-#else
-#endif
+// -----------------------------------------------------------------------------
+// all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
+// -----------------------------------------------------------------------------
 
 #include <config.h>
 #include "config_lib.h"
@@ -143,44 +141,6 @@ void Fl_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
 void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
-
-
-// -----------------------------------------------------------------------------
-// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
-// statements when the new build system is ready:
-#ifndef FL_LIBRARY_CMAKE
-// -----------------------------------------------------------------------------
-
-
-// Apple Quartz graphics driver "drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx"
-
-
-// -----------------------------------------------------------------------------
-
-
-#ifdef FL_CFG_GFX_GDI
-
-// # include "drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx"
-
-#endif
-
-
-// -----------------------------------------------------------------------------
-
-
-#ifdef FL_CFG_GFX_XLIB
-
-// # include "drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx"
-
-#endif
-
-
-// -----------------------------------------------------------------------------
-
-#endif // FL_LIBRARY_CMAKE
-
-// -----------------------------------------------------------------------------
-
 
 //
 // End of "$Id$".

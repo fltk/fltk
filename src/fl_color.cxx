@@ -23,53 +23,25 @@
 
 // Implementation of fl_color(i), fl_color(r,g,b).
 
-#  include <FL/Fl.H>
+#include <FL/Fl.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl.H>
 #include <config.h>
 #include "config_lib.h"
 
-// fl_cmap needs to be defined *before* we include Fl_GDI_Graphics_Driver_color.cxx
+// fl_cmap needs to be defined globally (here) and is used in the device
+// specific graphics drivers
 
-/** \addtogroup  fl_attributes
- @{ */
-
-/* static */
 unsigned fl_cmap[256] = {
 #include "fl_cmap.h" // this is a file produced by "cmap.cxx":
 };
 
-
-// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
-// statements when the new build system is ready:
-#ifndef FL_LIBRARY_CMAKE
+// -----------------------------------------------------------------------------
+// all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
 
-// Apple Quartz driver in "drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx"
-
-
-#ifdef FL_CFG_GFX_GDI
-
-// # include "drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx"
-
-#endif
-
-
-// -----------------------------------------------------------------------------
-
-
-#ifdef FL_CFG_GFX_XLIB
-
-// # include "drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx"
-
-#endif
-
-
-// -----------------------------------------------------------------------------
-
-#endif // FL_LIBRARY_CMAKE
-
-// -----------------------------------------------------------------------------
+/** \addtogroup  fl_attributes
+ @{ */
 
 /**
  Returns the RGB value(s) for the given FLTK color index.
@@ -83,22 +55,25 @@ unsigned Fl::get_color(Fl_Color i) {
   if (i & 0xffffff00) return (i);
   else return fl_cmap[i];
 }
+
 /**
- Sets an entry in the fl_color index table.  You can set it to
- any 8-bit RGB color.  The color is not allocated until fl_color(i)
- is used.
+ Sets an entry in the fl_color index table.
+
+ You can set it to any 8-bit RGB color. The color is not allocated
+ until fl_color(i) is used.
  */
 void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
   Fl::set_color((Fl_Color)(i & 255),
                 ((unsigned)red<<24)+((unsigned)green<<16)+((unsigned)blue<<8));
 }
+
 /**
  Returns the RGB value(s) for the given FLTK color index.
 
  This form returns the red, green, and blue values
  separately in referenced variables.
 
- See also unsigned get_color(Fl_Color c)
+ \see unsigned get_color(Fl_Color c)
  */
 void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   unsigned c;
@@ -113,6 +88,7 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 
 /**
  Returns the weighted average color between the two given colors.
+
  The red, green and blue values are averages using the following formula:
  \code
  color = color1 * weight  + color2 * (1 - weight)
@@ -141,7 +117,7 @@ Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
 }
 
 /**
- Returns the inactive, dimmed version of the given color
+ Returns the inactive, dimmed version of the given color.
  */
 Fl_Color fl_inactive(Fl_Color c) {
   return fl_color_average(c, FL_GRAY, .33f);
@@ -149,6 +125,7 @@ Fl_Color fl_inactive(Fl_Color c) {
 
 /**
  Returns a color that contrasts with the background color.
+
  This will be the foreground color if it contrasts sufficiently with the
  background color. Otherwise, returns \p FL_WHITE or \p FL_BLACK depending
  on which color provides the best contrast.
@@ -158,7 +135,6 @@ Fl_Color fl_inactive(Fl_Color c) {
 Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   unsigned c1, c2;	// RGB colors
   int l1, l2;		// Luminosities
-
 
   // Get the RGB values for each color...
   if (fg & 0xffffff00) c1 = (unsigned)fg;

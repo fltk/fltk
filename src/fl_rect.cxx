@@ -40,8 +40,12 @@
 #else
 #endif
 
+// -----------------------------------------------------------------------------
+// all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
+// -----------------------------------------------------------------------------
+
 // fl_line_width_ must contain the absolute value of the current
-// line width to be used for X11 clipping (see below).
+// line width to be used for X11 clipping (see driver code).
 // This is defined in src/fl_line_style.cxx
 extern int fl_line_width_;
 
@@ -62,39 +66,6 @@ void Fl_Graphics_Driver::clip_region(Fl_Region r) {
 Fl_Region Fl_Graphics_Driver::clip_region() {
   return rstack[rstackptr];
 }
-
-
-// -----------------------------------------------------------------------------
-// Remove #ifndef FL_LIBRARY_CMAKE and the entire block of #include
-// statements when the new build system is ready:
-#ifndef FL_LIBRARY_CMAKE
-// -----------------------------------------------------------------------------
-
-// Apple Quartz driver in  "drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx"
-
-
-// -----------------------------------------------------------------------------
-
-
-#ifdef FL_CFG_GFX_GDI
-
-// # include "drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx"
-
-#endif
-
-
-// -----------------------------------------------------------------------------
-
-
-#ifdef FL_CFG_GFX_XLIB
-
-// # include "drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx"
-
-#endif
-
-// -----------------------------------------------------------------------------
-#endif // FL_LIBRARY_CMAKE
-// -----------------------------------------------------------------------------
 
 
 //

@@ -265,14 +265,6 @@ set(CFILES
   fl_utf.c
 )
 
-# Add preprocessor macro FL_LIBRARY_CMAKE temporarily until the build
-# system transition is completed.
-# *** currently LINUX only ***
-
-if (UNIX)
-  add_definitions(-DFL_LIBRARY_CMAKE)
-endif (UNIX)
-
 add_definitions(-DFL_LIBRARY)
 
 if(APPLE AND NOT OPTION_APPLE_X11)
