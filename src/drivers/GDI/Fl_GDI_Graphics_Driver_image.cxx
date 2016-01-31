@@ -332,34 +332,6 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   fl_rectf(x,y,w,h);
 }
 
-// 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
-static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
-  // we need to pad the lines out to words & swap the bits
-  // in each byte.
-  int w1 = (w+7)/8;
-  int w2 = ((w+15)/16)*2;
-  uchar* newarray = new uchar[w2*h];
-  const uchar* src = data;
-  uchar* dest = newarray;
-  Fl_Bitmask bm;
-  static uchar reverse[16] =	/* Bit reversal lookup table */
-  { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-    0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-
-  for (int y=0; y < h; y++) {
-    for (int n = 0; n < w1; n++, src++)
-      *dest++ = (uchar)((reverse[*src & 0x0f] & 0xf0) |
-                        (reverse[(*src >> 4) & 0x0f] & 0x0f));
-    dest += w2-w1;
-  }
-
-  bm = CreateBitmap(w, h, 1, 1, newarray);
-
-  delete[] newarray;
-
-  return bm;
-}
-
 // 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
 Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
   // this won't work when the user changes display mode during run or
