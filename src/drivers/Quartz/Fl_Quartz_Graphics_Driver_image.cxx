@@ -278,6 +278,26 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int
   copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
 }
 
+Fl_Bitmask Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *array) {
+  static uchar reverse[16] =    /* Bit reversal lookup table */
+  { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+    0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+  int rowBytes = (w+7)>>3 ;
+  uchar *bmask = (uchar*)malloc(rowBytes*h), *dst = bmask;
+  const uchar *src = array;
+  for ( int i=rowBytes*h; i>0; i--,src++ ) {
+    *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
+  }
+  CGDataProviderRef srcp = CGDataProviderCreateWithData( 0L, bmask, rowBytes*h, 0L);
+  CGImageRef id_ = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
+  CGDataProviderRelease(srcp);
+  return (Fl_Bitmask)id_;
+}
+
+void Fl_Quartz_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
+  if (bm) CGImageRelease((CGImageRef)bm);
+}
+
 
 
 #endif // FL_CFG_GFX_QUARTZ

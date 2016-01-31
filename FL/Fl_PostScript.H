@@ -222,6 +222,9 @@ class Clip {
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
   int clocale_printf(const char *format, ...);
   ~Fl_PostScript_Graphics_Driver();
+  // ---
+  Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
+  void delete_bitmask(Fl_Bitmask bm) { };
 };
 
 /**

@@ -48,6 +48,9 @@ public:
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
 
+  // --- bitmap stuff
+  Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
+  void delete_bitmask(Fl_Bitmask bm);
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);

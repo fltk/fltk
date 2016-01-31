@@ -600,6 +600,30 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   }
 }
 
+Fl_Bitmask Fl_Xlib_Graphics_Driver::create_bitmask(int w, int h, const uchar *data) {
+  return XCreateBitmapFromData(fl_display, fl_window, (const char *)data,
+                               (w+7)&-8, h);
+}
+
+void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
+  fl_delete_offscreen((Fl_Offscreen)bm);
+}
+
+void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+
+  XSetStipple(fl_display, fl_gc, bm->id_);
+  int ox = X-cx; if (ox < 0) ox += bm->w();
+  int oy = Y-cy; if (oy < 0) oy += bm->h();
+  XSetTSOrigin(fl_display, fl_gc, ox, oy);
+  XSetFillStyle(fl_display, fl_gc, FillStippled);
+  XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
+  XSetFillStyle(fl_display, fl_gc, FillSolid);
+}
+
 //
 // End of "$Id$".
 //

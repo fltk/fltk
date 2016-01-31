@@ -32,144 +32,13 @@
 #include <FL/Fl_Printer.H>
 #include "flstring.h"
 
-#if defined(__APPLE_QUARTZ__)
-
-
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
-  static uchar reverse[16] =    /* Bit reversal lookup table */
-    { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee, 
-      0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-  int rowBytes = (w+7)>>3 ;
-  uchar *bmask = (uchar*)malloc(rowBytes*h), *dst = bmask;
-  const uchar *src = array;
-  for ( int i=rowBytes*h; i>0; i--,src++ ) {
-    *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
-  }
-  CGDataProviderRef srcp = CGDataProviderCreateWithData( 0L, bmask, rowBytes*h, 0L);
-  CGImageRef id_ = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
-  CGDataProviderRelease(srcp);
-  return (Fl_Bitmask)id_;
-}
-void fl_delete_bitmask(Fl_Bitmask bm) {
-  if (bm) CGImageRelease((CGImageRef)bm);
-}
-
-
-#elif defined(WIN32) // Windows bitmask functions...
-
-
-// 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
-static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
-  // we need to pad the lines out to words & swap the bits
-  // in each byte.
-  int w1 = (w+7)/8;
-  int w2 = ((w+15)/16)*2;
-  uchar* newarray = new uchar[w2*h];
-  const uchar* src = data;
-  uchar* dest = newarray;
-  Fl_Bitmask bm;
-  static uchar reverse[16] =	/* Bit reversal lookup table */
-  	      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-		0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-
-  for (int y=0; y < h; y++) {
-    for (int n = 0; n < w1; n++, src++)
-      *dest++ = (uchar)((reverse[*src & 0x0f] & 0xf0) |
-	                (reverse[(*src >> 4) & 0x0f] & 0x0f));
-    dest += w2-w1;
-  }
-
-  bm = CreateBitmap(w, h, 1, 1, newarray);
-
-  delete[] newarray;
-
-  return bm;
-}
-
-// 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
-Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
-  // this won't work when the user changes display mode during run or
-  // has two screens with differnet depths
-  Fl_Bitmask bm;
-  static uchar hiNibble[16] =
-  { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
-    0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
-  static uchar loNibble[16] =
-  { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
-    0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-  int np  = GetDeviceCaps(fl_gc, PLANES);	//: was always one on sample machines
-  int bpp = GetDeviceCaps(fl_gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
-  int Bpr = (bpp*w+7)/8;			//: bytes per row
-  int pad = Bpr&1, w1 = (w+7)/8, shr = ((w-1)&7)+1;
-  if (bpp==4) shr = (shr+1)/2;
-  uchar *newarray = new uchar[(Bpr+pad)*h];
-  uchar *dst = newarray;
-  const uchar *src = data;
-
-  for (int i=0; i<h; i++) {
-    // This is slooow, but we do it only once per pixmap
-    for (int j=w1; j>0; j--) {
-      uchar b = *src++;
-      if (bpp==1) {
-        *dst++ = (uchar)( hiNibble[b&15] ) | ( loNibble[(b>>4)&15] );
-      } else if (bpp==4) {
-        for (int k=(j==1)?shr:4; k>0; k--) {
-          *dst++ = (uchar)("\377\360\017\000"[b&3]);
-          b = b >> 2;
-        }
-      } else {
-        for (int k=(j==1)?shr:8; k>0; k--) {
-          if (b&1) {
-            *dst++=0;
-	    if (bpp>8) *dst++=0;
-            if (bpp>16) *dst++=0;
-	    if (bpp>24) *dst++=0;
-	  } else {
-	    *dst++=0xff;
-	    if (bpp>8) *dst++=0xff;
-	    if (bpp>16) *dst++=0xff;
-	    if (bpp>24) *dst++=0xff;
-	  }
-
-	  b = b >> 1;
-        }
-      }
-    }
-
-    dst += pad;
-  }
-
-  bm = CreateBitmap(w, h, np, bpp, newarray);
-  delete[] newarray;
-
-  return bm;
-}
-
-
-void fl_delete_bitmask(Fl_Bitmask bm) {
-  DeleteObject((HGDIOBJ)bm);
-}
-
-
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement fl_create_bitmap"
-
-#else // X11 bitmask functions
-
-
-Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
-  return XCreateBitmapFromData(fl_display, fl_window, (const char *)data,
-                               (w+7)&-8, h);
+  return fl_graphics_driver->create_bitmask(w, h, array);
 }
 
 void fl_delete_bitmask(Fl_Bitmask bm) {
-  fl_delete_offscreen((Fl_Offscreen)bm);
+  return fl_graphics_driver->delete_bitmask(bm);
 }
-
-
-#endif // __APPLE__
-
 
 // Create a 1-bit mask used for alpha blending
 Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) {
@@ -271,95 +140,11 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
   if (!id_) id_ = fl_create_bitmask(w(), h(), array);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: call the right function to create a bitmap"
+#else
+  // TODO: please insert comment, explaining why we don;t need a bitmap here for X11
 #endif
   return 0;
 }
-
-#ifdef __APPLE__
-
-#elif defined(WIN32)
-void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  
-  HDC tempdc = CreateCompatibleDC(fl_gc);
-  int save = SaveDC(tempdc);
-  SelectObject(tempdc, (HGDIOBJ)bm->id_);
-  SelectObject(fl_gc, fl_brush());
-  // secret bitblt code found in old MSWindows reference manual:
-  BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
-  RestoreDC(tempdc, save);
-  DeleteDC(tempdc);
-}  
-
-void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
-  static fl_transp_func fl_TransparentBlt = NULL;
-  static HMODULE hMod = NULL;
-  if (!hMod) {
-    hMod = LoadLibrary("MSIMG32.DLL");
-    if (hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-  }
-  if (!fl_TransparentBlt) {
-    Fl_GDI_Graphics_Driver::draw(bm,  XP,  YP,  WP,  HP,  cx,  cy);
-    return;
-    }
-  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  
-  HDC tempdc;
-  int save;
-  // algorithm for bitmap output to Fl_GDI_Printer
-  Fl_Color save_c = fl_color(); // save bitmap's desired color
-  uchar r, g, b;
-  Fl::get_color(save_c, r, g, b);
-  r = 255-r;
-  g = 255-g;
-  b = 255-b;
-  Fl_Color background = fl_rgb_color(r, g, b); // a color very different from the bitmap's
-  Fl_Offscreen tmp_id = fl_create_offscreen(W, H);
-  fl_begin_offscreen(tmp_id);
-  fl_color(background);
-  fl_rectf(0,0,W,H); // use this color as offscreen background
-  fl_color(save_c); // back to bitmap's color
-  tempdc = CreateCompatibleDC(fl_gc);
-  save = SaveDC(tempdc);
-  SelectObject(tempdc, (HGDIOBJ)bm->id_);
-  SelectObject(fl_gc, fl_brush()); // use bitmap's desired color
-  BitBlt(fl_gc, 0, 0, W, H, tempdc, 0, 0, 0xE20746L); // draw bitmap to offscreen
-  fl_end_offscreen(); // offscreen data is in tmp_id
-  SelectObject(tempdc, (HGDIOBJ)tmp_id); // use offscreen data
-  // draw it to printer context with background color as transparent
-  fl_TransparentBlt(fl_gc, X,Y,W,H, tempdc, cx, cy, bm->w(), bm->h(), RGB(r, g, b) ); 
-  fl_delete_offscreen(tmp_id);
-  RestoreDC(tempdc, save);
-  DeleteDC(tempdc);
-}  
-
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement Fl_xxx_Graphics_Driver::draw()"
-
-#else // Xlib
-void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  
-  XSetStipple(fl_display, fl_gc, bm->id_);
-  int ox = X-cx; if (ox < 0) ox += bm->w();
-  int oy = Y-cy; if (oy < 0) oy += bm->h();
-  XSetTSOrigin(fl_display, fl_gc, ox, oy);
-  XSetFillStyle(fl_display, fl_gc, FillStippled);
-  XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
-  XSetFillStyle(fl_display, fl_gc, FillSolid);
-}
-#endif
 
 /**
   The destructor free all memory and server resources that are used by
@@ -378,6 +163,8 @@ void Fl_Bitmap::uncache() {
     fl_delete_bitmask((Fl_Offscreen)id_);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: call the right function to create a bitmask"
+#else
+    // TODO: please insert comment, explaining why we don;t need a bitmap here for X11
 #endif
     id_ = 0;
   }

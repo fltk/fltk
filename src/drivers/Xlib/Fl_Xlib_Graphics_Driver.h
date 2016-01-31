@@ -37,6 +37,10 @@ public:
   static const char *class_id;
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
+  
+  // --- bitmap stuff
+  Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
+  void delete_bitmask(Fl_Bitmask bm);
   void draw(const char* str, int n, int x, int y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);

@@ -239,22 +239,24 @@ public:
   virtual Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   // --- implementation is in src/fl_image.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx
-  virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
-  virtual   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
-  virtual   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
-  virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
+  virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) = 0;
+  virtual void delete_bitmask(Fl_Bitmask bm) = 0;
+  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
+  virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
+  virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
+  virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
   /** \brief Draws an Fl_RGB_Image object to the device.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
-  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
   /** \brief Draws an Fl_Pixmap object to the device.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
-  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
   /** \brief Draws an Fl_Bitmap object to the device.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of

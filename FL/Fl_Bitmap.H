@@ -42,7 +42,7 @@ public:
   /** Non-zero if array points to bitmap data allocated internally */
   int alloc_array;
   
-  private:
+private:
   int start(int XP, int YP, int WP, int HP, int &cx, int &cy, 
 	    int &X, int &Y, int &W, int &H);
 #if defined(__APPLE__) || defined(WIN32)
@@ -56,7 +56,7 @@ public:
   unsigned id_;
 #endif // __APPLE__ || WIN32
 
-  public:
+public:
 
   /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const uchar *bits, int W, int H) :
