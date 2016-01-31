@@ -3,7 +3,7 @@
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -48,7 +48,7 @@
 // that makes fltk use easier as only fltk libs are now requested
 // This idea could be extended to fltk libs themselves, 
 // implementer should then care about DLL linkage flags ...
-#  if (_MSC_VER>=1310)
+#  if defined(_MSC_VER) && (_MSC_VER>=1310)
 #    pragma comment (lib, "comctl32.lib")
 #  endif
 #endif

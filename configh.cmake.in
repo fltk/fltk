@@ -4,12 +4,12 @@
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2015 by Bill Spitzak and others.
+ * Copyright 1998-2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
- * 
+ *
  *     http://www.fltk.org/COPYING.php
  *
  * Please report all bugs and problems on the following page:
@@ -274,8 +274,8 @@
 /*
  * FLTK_USE_CAIRO
  *
- * Do we have the cairo library available and want extended cairo use in fltk ?
- * will implies to link cairo.lib in all fltk based apps.
+ * Do we have the cairo library available and want extended cairo use in FLTK ?
+ * This implies to link cairo.lib in all FLTK based apps.
  */
 
 #cmakedefine FLTK_USE_CAIRO 1
@@ -333,8 +333,8 @@
  * Do we have the dlsym() function and header?
  */
 
-#cmakedefine HAVE_DLFCN_H 1
-#cmakedefine HAVE_DLSYM 1
+#cmakedefine01 HAVE_DLFCN_H
+#cmakedefine01 HAVE_DLSYM
 
 /*
  * End of "$Id$".

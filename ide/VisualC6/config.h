@@ -1,8 +1,8 @@
 /*
  * "$Id: ide_visualc.cxx 7586 2010-05-03 20:10:13Z ianmacarthur $"
  */
-#define FLTK_DATADIR    "C:/FLTK"
-#define FLTK_DOCDIR     "C:/FLTK/DOC"
+#define FLTK_DATADIR "C:/FLTK"
+#define FLTK_DOCDIR "C:/FLTK/DOC"
 #define BORDER_WIDTH 2
 #define HAVE_GL 1
 #define HAVE_GL_GLU_H 1
@@ -15,8 +15,8 @@
 #define U16 unsigned short
 #define U32 unsigned
 #undef U64
-#define HAVE_VSNPRINTF 0
-#define HAVE_SNPRINTF 0
+#undef HAVE_VSNPRINTF
+#undef HAVE_SNPRINTF
 #define HAVE_STRCASECMP 1
 #define HAVE_LOCALE_H 1
 #define HAVE_LOCALECONV 1

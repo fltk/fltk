@@ -3,7 +3,7 @@
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@
 #    define GLX_GLXEXT_LEGACY
 #    include <GL/glx.h>
 #  endif // HAVE_GLXGETPROCADDRESSARB
-#  ifdef HAVE_DLFCN_H
+#  if HAVE_DLFCN_H
 #    include <dlfcn.h>
 #  endif // HAVE_DLFCN_H
 #  define MAXWINDOWS 32
@@ -443,7 +443,7 @@ GLUTproc glutGetProcAddress(const char *procName) {
 #  ifdef WIN32
   return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
 
-#  elif defined(HAVE_DLSYM) && defined(HAVE_DLFCN_H)
+#  elif (HAVE_DLSYM && HAVE_DLFCN_H)
   char symbol[1024];
 
   snprintf(symbol, sizeof(symbol), "_%s", procName);

@@ -3,7 +3,7 @@
 //
 // UTF-8 test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -421,7 +421,7 @@ int make_font_chooser(void)
   //	font_count = Fl::set_fonts("*");
 #ifdef WIN32
   font_count = Fl::set_fonts("*");
-#elif __APPLE__
+#elif defined(__APPLE__)
   font_count = Fl::set_fonts("*");
 #else
   // Load the systems available fonts - ask for everything that claims to be 
@@ -582,7 +582,7 @@ int main(int argc, char** argv)
   Fl::set_font(extra_font,
 #ifdef WIN32
                " Arial Unicode MS"
-#elif __APPLE__
+#elif defined(__APPLE__)
                "Monaco"
 #else
                "-*-*-*-*-*-*-*-*-*-*-*-*-iso10646-1"

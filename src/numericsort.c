@@ -3,7 +3,7 @@
  *
  * Numeric sorting routine for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -29,13 +29,13 @@
 #    include <dirent.h>
 #  else
 #    define dirent direct
-#    if HAVE_SYS_NDIR_H
+#    ifdef HAVE_SYS_NDIR_H
 #      include <sys/ndir.h>
 #    endif /* HAVE_SYS_NDIR_H */
-#    if HAVE_SYS_DIR_H
+#    ifdef HAVE_SYS_DIR_H
 #      include <sys/dir.h>
 #    endif /* HAVE_SYS_DIR_H */
-#    if HAVE_NDIR_H
+#    ifdef HAVE_NDIR_H
 #      include <ndir.h>
 #    endif /* HAVE_NDIR_H */
 #  endif /* HAVE_DIRENT_H */

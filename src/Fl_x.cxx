@@ -3,7 +3,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1866,7 +1866,7 @@ fprintf(stderr,"\n");*/
     case 149: keysym = FL_Menu; break;
     }
 #  endif
-#  if BACKSPACE_HACK
+#  ifdef BACKSPACE_HACK
     // Attempt to fix keyboards that send "delete" for the key in the
     // upper-right corner of the main keyboard.  But it appears that
     // very few of these remain?

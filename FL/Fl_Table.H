@@ -966,7 +966,7 @@ public:
     Fl_Widget::do_callback();
   }
   
-#if FL_DOXYGEN
+#ifdef FL_DOXYGEN
   /**
    The Fl_Widget::when() function is used to set a group of flags, determining
    when the widget callback is called:
@@ -998,7 +998,7 @@ public:
   void when(Fl_When flags);
 #endif
   
-#if FL_DOXYGEN
+#ifdef FL_DOXYGEN
   /**
    Callbacks will be called depending on the setting of Fl_Widget::when().
    
