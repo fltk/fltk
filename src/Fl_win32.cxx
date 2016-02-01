@@ -2829,7 +2829,7 @@ void copyFront(Fl_Widget *o, void *data)
   o->window()->hide();
   Fl_Window *win = Fl::first_window();
   if (!win) return;
-  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w() + 1, (int)(win->decorated_h() *0.985));
+  Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
   surf->set_current();
   surf->draw_decorated_window(win); // draw the window content
   delete surf; // put the window on the clipboard
