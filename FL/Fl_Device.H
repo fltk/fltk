@@ -160,6 +160,7 @@ public:
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   virtual void point(int x, int y) = 0;
   virtual void rect(int x, int y, int w, int h) = 0;
+  virtual void focus_rect(int x, int y, int w, int h);
   virtual void rectf(int x, int y, int w, int h) = 0;
   virtual void line(int x, int y, int x1, int y1) = 0;
   virtual void line(int x, int y, int x1, int y1, int x2, int y2) = 0;

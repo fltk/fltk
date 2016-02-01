@@ -206,37 +206,13 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
     default:
       break;
   }
-
-  fl_color(fl_contrast(FL_BLACK, color()));
-
-#if defined(USE_X11) || defined(__APPLE_QUARTZ__)
-  fl_line_style(FL_DOT);
-  fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
-          W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
-  fl_line_style(FL_SOLID);
-#elif defined(WIN32) 
-  // Windows 95/98/ME do not implement the dotted line style, so draw
-  // every other pixel around the focus area...
-  //
-  // Also, QuickDraw (MacOS) does not support line styles specifically,
-  // and the hack we use in fl_line_style() will not draw horizontal lines
-  // on odd-numbered rows...
-  int i, xx, yy;
-
   X += Fl::box_dx(B);
   Y += Fl::box_dy(B);
-  W -= Fl::box_dw(B) + 2;
-  H -= Fl::box_dh(B) + 2;
+  W -= Fl::box_dw(B)+1;
+  H -= Fl::box_dh(B)+1;
 
-  for (xx = 0, i = 1; xx < W; xx ++, i ++) if (i & 1) fl_point(X + xx, Y);
-  for (yy = 0; yy < H; yy ++, i ++) if (i & 1) fl_point(X + W, Y + yy);
-  for (xx = W; xx > 0; xx --, i ++) if (i & 1) fl_point(X + xx, Y + H);
-  for (yy = H; yy > 0; yy --, i ++) if (i & 1) fl_point(X, Y + yy);
-#elif defined(FL_PORTING)
-# pragma message "handle focus drawing"
-#else
-# error unsupported platform
-#endif // WIN32
+  fl_color(fl_contrast(FL_BLACK, color()));
+  fl_focus_rect(X, Y, W, H);
 }
 
 

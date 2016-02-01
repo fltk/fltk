@@ -69,6 +69,7 @@ protected:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
+  void focus_rect(int x, int y, int w, int h);
   void rectf(int x, int y, int w, int h);
   void line(int x, int y, int x1, int y1);
   void line(int x, int y, int x1, int y1, int x2, int y2);

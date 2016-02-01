@@ -48,6 +48,17 @@ void Fl_GDI_Graphics_Driver::rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x, y);
 }
 
+void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
+  // Windows 95/98/ME do not implement the dotted line style, so draw
+  // every other pixel around the focus area...
+  w--; h--;
+  int i=1, xx, yy;
+  for (xx = 0; xx < w; xx++, i++) if (i & 1) point(x + xx, y);
+  for (yy = 0; yy < h; yy++, i++) if (i & 1) point(x + w, y + yy);
+  for (xx = w; xx > 0; xx--, i++) if (i & 1) point(x + xx, y + h);
+  for (yy = h; yy > 0; yy--, i++) if (i & 1) point(x, y + yy);
+}
+
 void Fl_GDI_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
   RECT rect;

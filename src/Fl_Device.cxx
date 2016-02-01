@@ -20,6 +20,7 @@
 #include "config_lib.h"
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
+#include <FL/fl_draw.h>
 
 #ifdef FL_CFG_GFX_QUARTZ
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
@@ -85,6 +86,13 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
   h = - height();
   dx = 0;
   dy = descent();
+}
+
+void Fl_Graphics_Driver::focus_rect(int x, int y, int w, int h)
+{
+  line_style(FL_DOT);
+  rect(x, y, w, h);
+  line_style(FL_SOLID);
 }
 
 /**  A constructor that sets the graphics driver used by the display */

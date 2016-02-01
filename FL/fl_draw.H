@@ -200,6 +200,10 @@ enum {
  */
 inline void fl_rect(int x, int y, int w, int h) { fl_graphics_driver->rect(x,y,w,h); }
 
+/**
+ Draw a dotted rectangle, used to indicate keyboard focus on a widget.
+ */
+inline void fl_focus_rect(int x, int y, int w, int h) { fl_graphics_driver->focus_rect(x, y, w, h); }
 /** Draws with passed color a 1-pixel border \e inside the given bounding box */
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 /** Colors with current color a rectangle that exactly fills the given bounding box */
