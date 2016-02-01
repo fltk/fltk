@@ -106,8 +106,11 @@ main(int  argc,		// I - Number of command-line arguments
   int argn = 1;
 #ifdef __APPLE__
   // OS X may add the process number as the first argument - ignore
+  // FIXME: Fl::args() should remove the Apple specific arguments form argc and argv
   if (argc>argn && strncmp(argv[1], "-psn_", 5)==0)
     argn++;
+  if (argc>argn+1 && strcmp(argv[argn], "-NSDocumentRevisionsDebugMode") == 0)
+    argn+=2;
 #endif
   if (argc > argn)
     filter->value(argv[argn]);

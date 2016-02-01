@@ -724,6 +724,7 @@ int fl_stat(const char* f, struct stat *b) {
 
 } // fl_stat()
 
+// TODO: add fl_chdir if we have fl_getcwd
 
 /** Cross-platform function to get the current working directory
     as a UTF-8 encoded value.

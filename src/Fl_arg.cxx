@@ -175,19 +175,14 @@ int Fl::arg(int argc, char **argv, int &i) {
     Fl_Tooltip::disable();
     i++;
     return 1;
-  }
 #ifdef __APPLE__
-  // The Finder application in MacOS X passes the "-psn_N_NNNNN" option
-  // to all apps...
-  else if (strcmp(s, "NSDocumentRevisionsDebugMode") == 0) {
-    i++;
-    if (argv[i]) i++;
-    return 1;
+    // The Finder application in MacOS X passes the "-psn_N_NNNNN" option
+    // to all apps...
   } else if (strncmp(s, "psn_", 4) == 0) {
     i++;
     return 1;
-  }
 #endif // __APPLE__
+  }
 
   const char *v = argv[i+1];
   if (i >= argc-1 || !v)
@@ -204,6 +199,12 @@ int Fl::arg(int argc, char **argv, int &i) {
   } else if (fl_match(s, "display", 2)) {
     Fl::display(v);
 #endif
+
+#ifdef __APPLE__
+    // Xcode in MacOS X may pass "-NSDocumentRevisionsDebugMode YES"
+  } else if (strcmp(s, "NSDocumentRevisionsDebugMode") == 0) {
+    // nothing to do
+#endif // __APPLE__
 
   } else if (fl_match(s, "title", 2)) {
     title = v;
