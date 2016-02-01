@@ -4417,7 +4417,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   if (layer) { // if title bar uses a layer
     if (to_quartz) { // to Quartz printer
       CGContextSaveGState(fl_gc);
-      CGContextTranslateCTM(fl_gc, 0, bt);
+      CGContextTranslateCTM(fl_gc, x_offset - 0.5, y_offset + bt - 0.5);
       CGContextScaleCTM(fl_gc, 1, -1);
       draw_layer_to_context(layer, fl_gc, win->w(), bt);
       CGContextRestoreGState(fl_gc);
