@@ -86,12 +86,6 @@ Fl_RGB_Image* prepare_shape(int w)
   Fl_RGB_Image* img = surf->image();
   delete surf;
   current->set_current();
-  if (img->d() == 4) { // if RGBA image, set its A component equal to its R component
-    for (int i = 0; i < img->h(); i ++) {
-      uchar *q = (uchar*)img->array + i * img->ld();
-      for (int j = 0; j < img->w(); j++, q += 4) *(q+3) = *q;
-    }
-  }
   return img; // return white image on black background
 }
 
