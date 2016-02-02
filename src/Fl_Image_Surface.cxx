@@ -30,12 +30,14 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
   width = w;
   height = h;
 #ifdef __APPLE__
-  offscreen = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
+  offscreen = fl_create_offscreen(w, h);
   helper = new Fl_Quartz_Flipped_Surface_(width, height);
   driver(helper->driver());
   CGContextSaveGState(offscreen);
   CGContextTranslateCTM(offscreen, 0, height);
   CGContextScaleCTM(offscreen, 1.0f, -1.0f);
+  CGContextSetRGBFillColor(offscreen, 1, 1, 1, 1);
+  CGContextFillRect(offscreen, CGRectMake(0,0,w,h) );
 #elif defined(WIN32)
   offscreen = fl_create_offscreen(w, h);
   helper = new Fl_GDI_Surface_();
@@ -80,10 +82,7 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   int depth = 3, ld = 0;
 #ifdef __APPLE__
   CGContextFlush(offscreen);
-  ld = CGBitmapContextGetBytesPerRow(offscreen);
-  data = (uchar*)malloc(ld * height);
-  memcpy(data, (uchar *)CGBitmapContextGetData(offscreen), ld * height);
-  depth = 4;
+  data = fl_read_image(NULL, 0, 0, width, height, 0);
   fl_gc = 0;
 #elif defined(WIN32)
   fl_pop_clip(); 
