@@ -17,13 +17,10 @@ wrapped in so-called ABI guards in the library code, e.g.
 		 ... old, ABI preserving code ...
 		#endif
 
-In versions older than 1.3.4 the user had to edit FL/Enumerations.H, but
-since FLTK 1.3.4 the ABI version can be configured when building the
-FLTK library.
-
-Note: This documentation is written for FLTK 1.3.x, but it applies to all
+Note: This documentation is written for FLTK 1.4.x, but it applies to all
 later versions as well. Replace the version numbers given here by the
-version numbers of the version you are using.
+version numbers of the version you are using. FLTK version 1.4.4 is
+chosen as an example only. As of this writing, FLTK 1.4.4 does not exist yet.
 
 
 How to define the FLTK ABI version
@@ -37,21 +34,15 @@ defined as a number representing the ABI version in the form
 where xx and yy are the minor and patch versions, resp. with leading zeroes,
 and '1' is the major version number.
 
-The default ABI version for all FLTK 1.3.x versions is 10300 (the binary
-version of FLTK 1.3.0), but you can configure another version, e.g.
-10304 for FLTK 1.3.4 to enable the ABI features of FLTK 1.3.4 and all
+The default ABI version for all FLTK 1.4.x versions is 10400 (the binary
+version of FLTK 1.4.0), but you can configure another version, e.g.
+10404 for FLTK 1.4.4 to enable the ABI features of FLTK 1.4.4 and all
 previous versions. See CHANGES file.
 
 
-Note: the now deprecated macro FLTK_ABI_VERSION has been used before
-FLTK 1.3.4.  The FLTK 1.3.4 code still uses FLTK_ABI_VERSION, but since
-FLTK 1.3.4 this is identical to FL_ABI_VERSION.
-FLTK_ABI_VERSION will be removed entirely in FLTK 1.4.0.
-
-
-Depending on how you build FLTK, there are three different ways to configure
-the ABI version. The default is always the lowest version (e.g. 10300). All
-following examples are written for FLTK 1.3.4, hence we use "10304" for
+Depending on how you build FLTK, there are two different ways to configure
+the ABI version. The default is always the lowest version (e.g. 10400). All
+following examples are written for FLTK 1.4.4, hence we use "10404" for
 the version number.
 
 
@@ -60,7 +51,7 @@ the version number.
 
 	Run
 
-		./configure --with-abiversion=10304
+		./configure --with-abiversion=10404
 		make
 
 	This will generate FL/abi-version.h and build FLTK as usual.
@@ -69,16 +60,13 @@ the version number.
 (2) CMake + make
 ----------------
 
-	FLTK 1.3.4 contains experimental CMake support. This is known	to be
-	incomplete, but you can use it for test builds. It "almost works"
-	in many cases, but it is not yet "officially supported". Use on your
-	own risk.
+	FLTK 1.4.0 and later contains full CMake support.
 
 	Use CMake to build the Makefile's and run 'make'. To configure the
 	ABI version, use ccmake, cmake-gui, or run make with the following
 	command:
 
-		cmake -D OPTION_ABI_VERSION:STRING=10304 /path/to/fltk
+		cmake -D OPTION_ABI_VERSION:STRING=10404 /path/to/fltk
 		make
 
 	You can define OPTION_ABI_VERSION to the required version number using
@@ -87,29 +75,37 @@ the version number.
 	For more information on how to use CMake with FLTK see README.CMake.txt.
 
 
-(3) Bundled IDE Projects: Visual C++ and Xcode4
------------------------------------------------
+(3) CMake + IDE Projects: Visual C++, Xcode, other IDE's
+--------------------------------------------------------
 
-	To use the bundled IDE projects with a different ABI version you need
-	to edit the supplied file abi-version.ide in the FLTK root directory.
+	FLTK 1.4.0 and later contains full CMake support.
 
-	Instructions are given in the file, just make sure that
+	IDE project files are no longer included in the FLTK source distribution.
+	You need to install CMake to generate the IDE files.
 
-		#define FL_ABI_VERSION 10304
+	Use CMake to generate the IDE project files of your choice. Currently
+	the FLTK team uses some Visual C++ (Visual Studio) versions and Xcode.
+	Other IDE's may work as well (not yet tested).
 
-	is used outside the comment - just replace "#undef FL_ABI_VERSION" with
-	the appropriate definition.
+	For more informations on how to install and use CMake see ...
+	... *FIXME* [Add documentation how to use CMake with FLTK].
+
+
+	Use CMake option OPTION_ABI_VERSION:STRING=10404 with the command line
+	or any of the CMake GUI programs.
 
 	Then start the build process in the IDE solution of your choice. This
-	will copy the file abi-version.ide to FL/abi-version.h and run the
-	build with the defined ABI version.
+	will run the build with the defined ABI version.
 
 
-Note on CMake:
+General note on CMake:
+----------------------
 
 	CMake generates FL/abi-version.h in the build tree. You may run
-	'make install' to install the FLTK library including the headers in
+	'make install' to install the FLTK library including all headers in
 	the chosen installation directory, although this is not necessary.
 
 	The FLTK team recommends to use the FLTK library directly from the
 	build folder. See README.CMake.txt for more information.
+
+	... to be continued ...
