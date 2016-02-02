@@ -13,6 +13,19 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Added support for OpenGL version 3 and later.
 	- Added method Fl_Mac_App_Menu::custom_application_menu_items()
 	  allowing to customize the application menu on the Mac OS X platform.
+	- Added 'fluid -u' command-line switch to upgrade fluid files in
+	  batch mode. This option opens a fluid ('.fl') file and saves it
+	  overwriting the old file with the current syntax and library version
+	  number. Use with care (input file is overwritten unconditionally).
+	- Added FL_ZOOM_GESTURE gesture for OS X (only). Needs implementation
+	  on other platforms.
+	- Added FL_ABI_VERSION, FL_API_VERSION, Fl::abi_version(), and
+	  Fl::api_version(). The constants can be used to determine the
+	  compiled FLTK version, whereas the functions can be used to
+	  find the version of the linked library.
+	- Added Fl::abi_check() method to test if the runtime (linked)
+	  ABI version is correct.
+
 
 	New configuration options (ABI version)
 	
@@ -55,13 +68,23 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	  in the range [0xFE00-0xFE0F].
 	- Added a Mac OS implementation of Fl_Window::wait_for_expose() that
 	  became necessary with Mac OS 10.10 "Yosemite".
-	- Added the libfltk target to the Xcode project producing a static version
-	  of the FLTK library (Mac OS X).
+	- Added the libfltk target to the Xcode project producing a static
+	  version of the FLTK library (Mac OS X).
 	- Restored the possibility to call Fl::set_font() before main() starts.
 	- Allow using the --enable-x11 configure option on the Mac OS platform
-	  which produces an X11 version of the FLTK library (don't use that unless
-	  you know what you do).
+	  which produces an X11 version of the FLTK library (don't use that
+	  unless you know what you do).
 	- FLTK code and fluid-generated code can be used in static initializers.
+	- Improve tooltip behavior for huge tooltips: remove flicker, support
+	  key/mouse dismiss (STR #2650).
+	- Many documentation improvements and fixes.
+	- Removed many compilation warnings.
+	- Many CMake improvements and fixes. Note: CMake is mostly operating
+	  now, but not yet recommended for production use. Please test and
+	  report issues.
+	- Updated bundled zlib from 1.2.5 to 1.2.8.
+	- Updated bundled libjpeg from jpeg-8c to jpeg-9a.
+
 
 	Bug fixes
 
@@ -92,13 +115,15 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Restore the correct state of mouse buttons and keyboard modifier keys
 	  after closing a file or printer dialog (STR #3221).
 	- Fix for deactivate colors issue with Fl_Text_Display/Editor (STR #3219).
-	- Fixed issue with MSWindows platform where the program kept running after
-	  closing all its windows (STR#3165).
-	- Fix issue with MSWindows platform where a window would decrease in size
-	  after each close/open (STR#3167).
+	- Fixed issue with MSWindows platform where the program kept running
+	  after closing all its windows (STR #3165).
+	- Fix potential buffer overflow (Windows: BEX64 error) and home
+	  directory (STR #3166).
+	- Fix issue with MSWindows platform where a window would decrease
+	  in size after each close/open (STR #3167).
 	- Fix undefined reference XGetUtf8FontAndGlyph (STR #3191).
 	- Fix potential keyboard hangup (STR #3192).
-	- Fix for: .xbm images were not previewed (STR#3131).
+	- Fix for: .xbm images were not previewed (STR #3131).
 	- Fixed crash on Mac platform when resizing a not yet shown() Fl_Gl_Window.
 	- Fix Linux/Unix potential program hang when dialog pops up while a menu
 	  is open (STR #3179).
@@ -106,8 +131,10 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	  window has been show()n.
 	- Fixed an error on the Mac platform when drawing to an Fl_Image_Surface
 	  object without using the Fl_Image_Surface::draw() method.
-	- Fixed STR #3268 where a fullscreen window could become relocated behind
-	  the menu bar and dock (Mac OS only).
+	- Fixed STR #3268 where a fullscreen window could become relocated
+	  behind the menu bar and dock (Mac OS only).
+	- Fixed STR #3207: ^C not working when numlock or capslock is on.
+	- Fixed code editor in Fluid (STR #3184).
 
 
 CHANGES IN FLTK 1.3.3					RELEASED: Nov 03 2014
