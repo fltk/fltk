@@ -150,7 +150,7 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       set_target_properties(${tname} PROPERTIES RESOURCE ${RESOURCE_PATH})
     endif(APPLE AND DEFINED RESOURCE_PATH)
     if(APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
-      set_target_properties("editor" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/ide/Xcode4/plists/editor-Info.plist" )
+      set_target_properties("editor" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/test/editor-Info.plist" )
     endif(APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
     
     target_link_libraries(${tname} ${LIBRARIES})

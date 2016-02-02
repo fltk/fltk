@@ -443,7 +443,7 @@ tools:
   5  MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
 =================================================================
 - Prepare an Info.plist file for your application derived from file
-ide/Xcode4/plists/editor-Info.plist which allows any file to be dropped
+test/editor-Info.plist which allows any file to be dropped
 on the application icon.
 You can edit this file in Xcode and change 
 Document types/Item 0/CFBundleTypeExtensions/Item 0
