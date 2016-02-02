@@ -282,25 +282,40 @@ The built-in libraries (if built):
 -------------------
 
 CMake has a command named fltk_wrap_ui which helps deal with fluid *.fl
-files.  An example of its use is in test/CMakeLists.txt.  Here is a short
-summary on its use.
+files. Unfortunately it is broken in CMake 3.4.x. You can however use
+add_custom_command to achieve the same result.
+This is a more basic approach and should work for all CMake versions.
 
-Set a variable to list your C++ files, say CPPFILES.
-Set another variable to list your *.fl files, say FLFILES.
-Say your executable will be called exec.
+Here is a sample CMakeLists.txt which compiles the CubeView example from
+a directory you've copied the test/Cube* files to.
 
-Then this is what you do...
+---
+cmake_minimum_required(VERSION 2.6)
 
-fltk_wrap_ui(exec ${FLFILES})
-add_executable(exec WIN32 ${CPPFILES} ${exec_FLTK_UI_SRCS})
+project(CubeView)
 
-fltk_wrap_ui calls fluid and generates the required C++ files from the *.fl
-files.  It sets the variable, in this case exec_FLTK_UI_SRCS, to the
-list of generated files for inclusion in the add_executable command.
+# change this to your fltk buid directory
+set(FLTK_DIR /home/msurette/build/fltk-release/)
 
-The variable FLTK_FLUID_EXECUTABLE which is needed by fltk_wrap_ui is set
-when find_package(FLTK REQUIRED NO_MODULE) succeeds.
+find_package(FLTK REQUIRED NO_MODULE)
+include(${FLTK_USE_FILE})
 
+#run fluid -c to generate CubeViewUI.cxx and CubeViewUI.h files
+add_custom_command(
+	OUTPUT "CubeViewUI.cxx" "CubeViewUI.h"
+	COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/CubeViewUI.fl
+)
+
+include_directories(${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_SOURCE_DIR})
+add_executable(CubeView WIN32 CubeMain.cxx  CubeView.cxx  CubeViewUI.cxx)
+
+target_link_libraries(CubeView fltk fltk_gl)
+---
+
+You can repeat the add_custom_command for each fluid file or if you have
+a large number of them see the CMake/macros.cmake function FLTK_RUN_FLUID
+for an example of how to run it in a loop.
 
  DOCUMENT HISTORY
 ==================
@@ -309,3 +324,4 @@ Dec 20 2010 - matt: merged and restructures
 May 15 2013 - erco: small formatting tweaks, added some examples
 Feb 23 2014 - msurette: updated to reflect changes to the CMake files
 Apr 07 2015 - AlbrechtS: update use example and more docs
+Jan 31 2016 - msurette: custom command instead of fltk_wrap_ui
