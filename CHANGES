@@ -25,10 +25,12 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	  find the version of the linked library.
 	- Added Fl::abi_check() method to test if the runtime (linked)
 	  ABI version is correct.
+	- Added Fl_Image::fail() to test if an image was loaded successfully
+	  to make life easier when loading images (STR #2873).
 
 
 	New configuration options (ABI version)
-	
+
 	- FLTK's ABI version can now be configured with configure, CMake, or
 	  by editing a supplied file when using the bundled IDE projects.
 	  See documentation in README.abi-version.txt.
@@ -75,10 +77,12 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	  which produces an X11 version of the FLTK library (don't use that
 	  unless you know what you do).
 	- FLTK code and fluid-generated code can be used in static initializers.
+	- Added light gray separator line to fluid widget browser (STR #2997).
 	- Improve tooltip behavior for huge tooltips: remove flicker, support
 	  key/mouse dismiss (STR #2650).
 	- Many documentation improvements and fixes.
 	- Removed many compilation warnings.
+	- Fluid now generates code with less compiler warnings (STR #2813).
 	- Many CMake improvements and fixes. Note: CMake is mostly operating
 	  now, but not yet recommended for production use. Please test and
 	  report issues.
@@ -88,14 +92,16 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 
 	Bug fixes
 
+	- Fixed undefined reference building shared cairo library (STR #3276).
 	- Fixed Fl_Browser if text argument to some methods is NULL (STR #3269).
 	- Fixed missing image release in fluid (STR #2840).
 	- Fixed out-of-bounds memory access in fluid (STR #3263).
-	- fluid doesn't output trailing white space in .fl files after
-	  some statements anymore (STR #3239).
+	- Fixed trailing white space in fluid .fl files (STR #3239).
 	- Several box types were not drawn correctly when deactivated.
 	  The background color for deactivated widgets is now correct:
 	  fl_inactive(color()) (STR #2907).
+	- Fixed Fl_Pixmap (background) drawing to respect the clip region
+	  (STR #3206).
 	- Reading of .pbm image files is fixed: 1 is now interpreted as
 	  black, and images of width a multiple of 8 are correctly read.
 	  Note: if you relied on the faulty behavior you may need to fix
@@ -103,12 +109,18 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Restored window background drawing, particularly the 'plastic'
 	  scheme's background (STR #3059). This was a regression since
 	  FLTK 1.3.0.
+	- Prevent sending (FL_SHORTCUT) events to inactive widgets (STR #3216).
+	- Fixed button label clipping (STR #3237).
+	- Fixed Fl_Menu_::item_pathname() handling of descending submenu
+	  pointers (STR #3177).
 	- Fl_Text_Display: style buffer colors are no longer manipulated by
 	  fl_contrast() for normal text drawing (fltk.coredev thread started
 	  04/08/15, Subject: "RFC: Fl_Text_Display style buffer color weirdness")
 	- Fl_Tree::deactivate() now affects draw color of items (must have
 	  ABI 1.3.3 or higher enabled). For icons to draw deactivated,
 	  enable ABI 1.3.4. (test/tree has a 'deactivate tree' button)
+	- Fl_Tree::find_item() did not find items if the pathname contained
+	  identical strings (STR #3234).
 	- Fixed possible bad border effect when a set of radio menu items
 	  is located first in its menu (STR #3176): Fl_Menu_Item::set_only()
 	  is deprecated and replaced by Fl_Menu_::set_only(Fl_Menu_item*).
@@ -125,8 +137,9 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Fix potential keyboard hangup (STR #3192).
 	- Fix for: .xbm images were not previewed (STR #3131).
 	- Fixed crash on Mac platform when resizing a not yet shown() Fl_Gl_Window.
-	- Fix Linux/Unix potential program hang when dialog pops up while a menu
-	  is open (STR #3179).
+	- Fixed potential Windows GDI leak (STR #3254).
+	- Fixed Linux/Unix potential program hang when dialog pops up while
+	  a menu is open (STR #3179).
 	- Fixed a crash when a Unix/Linux program calls take_focus() before any
 	  window has been show()n.
 	- Fixed an error on the Mac platform when drawing to an Fl_Image_Surface
@@ -135,6 +148,9 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	  behind the menu bar and dock (Mac OS only).
 	- Fixed STR #3207: ^C not working when numlock or capslock is on.
 	- Fixed code editor in Fluid (STR #3184).
+	- Fixed a potential hangup of the Fl::awake() queue under Windows if
+	  a window is resized or moved while the Fl::awake() message is sent
+	  (STR #3143).
 
 
 CHANGES IN FLTK 1.3.3					RELEASED: Nov 03 2014
