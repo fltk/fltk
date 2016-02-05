@@ -78,6 +78,7 @@ option(OPTION_BUILD_SHARED_LIBS
 
 #######################################################################
 option(OPTION_BUILD_EXAMPLES "build example programs" ON)
+option(OPTION_PRINT_SUPPORT "allow print support" ON)
 
 #######################################################################
 if(DOXYGEN_FOUND)
@@ -353,6 +354,13 @@ if(OPTION_USE_XDBE AND HAVE_XDBE_H)
 else()
    set(FLTK_XDBE_FOUND FALSE)
 endif(OPTION_USE_XDBE AND HAVE_XDBE_H)
+
+#######################################################################
+set(NO_PRINT_SUPPORT FALSE)
+if(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
+   set(NO_PRINT_SUPPORT TRUE)
+endif(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
+#######################################################################
 
 #######################################################################
 # prior to CMake 3.0 this feature was buggy

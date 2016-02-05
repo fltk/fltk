@@ -337,5 +337,11 @@
 #cmakedefine01 HAVE_DLSYM
 
 /*
+ * Do we want print support?
+ */
+
+#cmakedefine NO_PRINT_SUPPORT 1
+
+/*
  * End of "$Id$".
  */

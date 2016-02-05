@@ -46,9 +46,8 @@ set(CPPFILES
   Fl_Paged_Device.cxx
   Fl_Pixmap.cxx
   Fl_Positioner.cxx
-  Fl_PostScript.cxx
-  Fl_Printer.cxx
   Fl_Preferences.cxx
+  Fl_Printer.cxx
   Fl_Progress.cxx
   Fl_Repeat_Button.cxx
   Fl_Return_Button.cxx
@@ -137,12 +136,21 @@ set(CPPFILES
   fl_show_colormap.cxx
   fl_symbols.cxx
   fl_vertex.cxx
-  ps_image.cxx
   screen_xywh.cxx
   fl_utf8.cxx
   fl_encoding_latin1.cxx
   fl_encoding_mac_roman.cxx
 )
+
+if (USE_X11 AND NOT OPTION_PRINT_SUPPORT)
+  set(PSFILES
+  )
+else()
+  set(PSFILES
+    Fl_PostScript.cxx
+    ps_image.cxx
+  )
+endif(USE_X11 AND NOT OPTION_PRINT_SUPPORT)
 
 set(DRIVER_FILES)
 
@@ -280,7 +288,7 @@ else()
 endif(APPLE AND NOT OPTION_APPLE_X11)
 
 #######################################################################
-FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${MMFILES};${CFILES};fl_call_main.c")
+FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${PSFILES};${MMFILES};${CFILES};fl_call_main.c")
 
 if(LIB_dl)
    target_link_libraries(fltk ${LIB_dl})

@@ -4,7 +4,7 @@
 // Encompasses platform-specific printing-support code and 
 // PostScript output code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,6 +18,15 @@
 //
 
 #include <FL/Fl_Printer.H>
+
+const char *Fl_Printer::class_id = "Fl_Printer";
+
+#ifdef NO_PRINT_SUPPORT
+
+Fl_Printer::Fl_Printer(void) {
+}
+
+#else
 
 #if defined(WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
@@ -69,7 +78,6 @@ const char *Fl_Printer::property_save = "Save";
 /** [this text may be customized at run-time] */
 const char *Fl_Printer::property_cancel = "Cancel";
 
-const char *Fl_Printer::class_id = "Fl_Printer";
 #if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
 const char *Fl_System_Printer::class_id = Fl_Printer::class_id;
 #endif
@@ -207,6 +215,7 @@ Fl_Printer::~Fl_Printer(void)
   delete printer;
 }
 
+#endif // NO_PRINT_SUPPORT
 
 //
 // End of "$Id$".

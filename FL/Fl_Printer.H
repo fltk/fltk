@@ -3,7 +3,7 @@
 //
 // Printing support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,7 @@
 #ifndef Fl_Printer_H
 #define Fl_Printer_H
 
+#include "config.h"
 #include <FL/x.H>
 #include <FL/Fl_Paged_Device.H>
 #include <FL/fl_draw.H>
@@ -191,6 +192,7 @@ public:
   const char *class_name() {return class_id;};
   /** \brief The constructor */
   Fl_Printer(void);
+#ifndef NO_PRINT_SUPPORT
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page(void);
   int printable_rect(int *w, int *h);
@@ -207,8 +209,6 @@ public:
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x=0, int delta_y=0);
   void set_current(void);
   Fl_Graphics_Driver* driver(void);
-  /** \brief The destructor */
-  ~Fl_Printer(void);
  
   /** \name These attributes are effective under the Xlib platform only.
    \{
@@ -233,6 +233,9 @@ public:
   static const char *property_save;
   static const char *property_cancel;
   /** \} */ 
+  /** \brief The destructor */
+  ~Fl_Printer(void);
+
 private:
 #if defined(WIN32) || defined(__APPLE__)
   Fl_System_Printer *printer;
@@ -242,6 +245,7 @@ private:
 #else
   Fl_PostScript_Printer *printer;
 #endif
+#endif // NO_PRINT_SUPPORT
 };
 
 #endif // Fl_Printer_H
