@@ -137,6 +137,11 @@ OPTION_USE_XINERAMA - default ON
 OPTION_USE_XFT - default ON
 OPTION_USE_XDBE - default ON
    These are X11 extended libraries.
+OPTION_PRINT_SUPPORT - default ON
+   When turned off, the Fl_Printer class does nothing and the 
+   Fl_PostScript_File_Device class cannot be used, but the FLTK library
+   is somewhat smaller. This option makes sense only on the Unix/Linux
+   platform or when OPTION_APPLE_X11 is ON.
 
  BUILDING UNDER LINUX WITH UNIX MAKEFILES
 ------------------------------------------
