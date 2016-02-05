@@ -20,7 +20,7 @@
 #include "config_lib.h"
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 #ifdef FL_CFG_GFX_QUARTZ
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
