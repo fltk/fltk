@@ -23,7 +23,6 @@
 #ifndef Fl_Printer_H
 #define Fl_Printer_H
 
-#include "config.h"
 #include <FL/x.H>
 #include <FL/Fl_Paged_Device.H>
 #include <FL/fl_draw.H>
@@ -192,7 +191,6 @@ public:
   const char *class_name() {return class_id;};
   /** \brief The constructor */
   Fl_Printer(void);
-#ifndef NO_PRINT_SUPPORT
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page(void);
   int printable_rect(int *w, int *h);
@@ -245,7 +243,6 @@ private:
 #else
   Fl_PostScript_Printer *printer;
 #endif
-#endif // NO_PRINT_SUPPORT
 };
 
 #endif // Fl_Printer_H

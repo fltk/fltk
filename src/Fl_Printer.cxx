@@ -24,7 +24,45 @@ const char *Fl_Printer::class_id = "Fl_Printer";
 #ifdef NO_PRINT_SUPPORT
 
 Fl_Printer::Fl_Printer(void) {
+  printer = NULL;
 }
+int Fl_Printer::start_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Printer::start_page(void) {return 1;}
+int Fl_Printer::printable_rect(int *w, int *h) {return 1;}
+void Fl_Printer::margins(int *left, int *top, int *right, int *bottom) {}
+void Fl_Printer::origin(int *x, int *y) {}
+void Fl_Printer::origin(int x, int y) {}
+void Fl_Printer::scale(float scale_x, float scale_y) {}
+void Fl_Printer::rotate(float angle) {}
+void Fl_Printer::translate(int x, int y) {}
+void Fl_Printer::untranslate(void) {}
+int Fl_Printer::end_page (void) {return 1;}
+void Fl_Printer::end_job (void) {}
+void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) {}
+void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y) {}
+void Fl_Printer::set_current(void) {}
+Fl_Graphics_Driver* driver(void) {return NULL;}
+Fl_Printer::~Fl_Printer(void) {}
+
+const char *Fl_Printer::dialog_title = NULL;
+const char *Fl_Printer::dialog_printer = NULL;
+const char *Fl_Printer::dialog_range = NULL;
+const char *Fl_Printer::dialog_copies = NULL;
+const char *Fl_Printer::dialog_all = NULL;
+const char *Fl_Printer::dialog_pages = NULL;
+const char *Fl_Printer::dialog_from = NULL;
+const char *Fl_Printer::dialog_to = NULL;
+const char *Fl_Printer::dialog_properties = NULL;
+const char *Fl_Printer::dialog_copyNo = NULL;
+const char *Fl_Printer::dialog_print_button = NULL;
+const char *Fl_Printer::dialog_cancel_button = NULL;
+const char *Fl_Printer::dialog_print_to_file = NULL;
+const char *Fl_Printer::property_title = NULL;
+const char *Fl_Printer::property_pagesize = NULL;
+const char *Fl_Printer::property_mode = NULL;
+const char *Fl_Printer::property_use = NULL;
+const char *Fl_Printer::property_save = NULL;
+const char *Fl_Printer::property_cancel = NULL;
 
 #else
 
