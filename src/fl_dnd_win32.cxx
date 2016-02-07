@@ -134,6 +134,8 @@ public:
     }
     px = pt.x; py = pt.y;
     lastEffect = *pdwEffect;
+    // show insert position if dnd'ing in the same window/process (STR #3209)
+    Fl::flush();
     return S_OK;
   }
   HRESULT STDMETHODCALLTYPE DragLeave() {
