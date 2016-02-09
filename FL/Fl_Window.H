@@ -3,7 +3,7 @@
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,9 +57,7 @@ class Fl_RGB_Image;
 class FL_EXPORT Fl_Window : public Fl_Group {
 
   static char *default_xclass_;
-  // Note: we must use separate statements for each of the following 8 variables,
-  // with the static attribute, otherwise MS VC++ 2008/2010 complains :-(
-  // AlbrechtS 04/2012
+
   int no_fullscreen_x;
   int no_fullscreen_y;
   int no_fullscreen_w;

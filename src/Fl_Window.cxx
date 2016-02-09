@@ -3,7 +3,7 @@
 //
 // Window widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,6 +57,10 @@ void Fl_Window::_Fl_Window() {
   no_fullscreen_y = 0;
   no_fullscreen_w = w();
   no_fullscreen_h = h();
+  fullscreen_screen_top = -1;
+  fullscreen_screen_bottom = -1;
+  fullscreen_screen_left = -1;
+  fullscreen_screen_right = -1;
   callback((Fl_Callback*)default_callback);
 }
 
