@@ -57,6 +57,9 @@
 #  include <wchar.h>
 #  include <sys/stat.h>
 #  define xchar wchar_t
+#elif defined(ANDROID)
+#  include <wchar.h>
+#  define xchar wchar_t
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: include utf8 support files and define utf8 types"
 #  define xchar unsigned short

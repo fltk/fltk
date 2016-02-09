@@ -30,6 +30,8 @@
 #    include "win32.H"
 #  elif defined(__APPLE__)
 #    include "mac.H"
+#  elif defined(ANDROID)
+#    error "A clean port requires a driver-style system for Fl_X"
 #  elif defined(FL_PORTING)
 #    pragma message "FL_PORTING: write a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
 #    include "porting.H"

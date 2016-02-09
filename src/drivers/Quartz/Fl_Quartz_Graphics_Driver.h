@@ -43,6 +43,7 @@ public:
   static const char *class_id;
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
+  char can_do_alpha_blending();
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);

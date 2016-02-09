@@ -136,6 +136,7 @@ public:
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 public:
+  virtual char can_do_alpha_blending() { return 0; }
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   virtual void point(int x, int y) = 0;
   virtual void rect(int x, int y, int w, int h) = 0;

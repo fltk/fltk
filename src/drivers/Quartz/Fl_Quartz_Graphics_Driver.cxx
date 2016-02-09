@@ -42,6 +42,118 @@ Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h
   return (Fl_Offscreen)ctx;
 }
 
+char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {
+  return 1;
+}
+
+static void bmProviderRelease (void *src, const void *data, size_t size) {
+  CFIndex count = CFGetRetainCount(src);
+  CFRelease(src);
+  if(count == 1) free((void*)data);
+}
+
+void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
+  CGContextRef src = (CGContextRef)osrc;
+  void *data = CGBitmapContextGetData(src);
+  int sw = CGBitmapContextGetWidth(src);
+  int sh = CGBitmapContextGetHeight(src);
+  CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  // when output goes to a Quartz printercontext, release of the bitmap must be
+  // delayed after the end of the print page
+  CFRetain(src);
+  CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
+  CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
+                                 src_bytes, 0L, false, kCGRenderingIntentDefault);
+  // fl_push_clip();
+  CGRect rect = CGRectMake(x, y, w, h);
+  Fl_X::q_begin_image(rect, srcx, srcy, sw, sh);
+  CGContextDrawImage(fl_gc, rect, img);
+  Fl_X::q_end_image();
+  CGImageRelease(img);
+  CGColorSpaceRelease(lut);
+  CGDataProviderRelease(src_bytes);
+}
+
+/** \addtogroup fl_drawings
+ @{
+ */
+
+// FIXME: driver system
+/**
+ Creation of an offscreen graphics buffer.
+ \param w,h     width and height in pixels of the buffer.
+ \return    the created graphics buffer.
+ */
+Fl_Offscreen fl_create_offscreen(int w, int h) {
+  void *data = calloc(w*h,4);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  CGContextRef ctx = CGBitmapContextCreate(
+                                           data, w, h, 8, w*4, lut, kCGImageAlphaNoneSkipLast);
+  CGColorSpaceRelease(lut);
+  return (Fl_Offscreen)ctx;
+}
+
+// FIXME: driver system
+/**  Deletion of an offscreen graphics buffer.
+ \param ctx     the buffer to be deleted.
+ */
+void fl_delete_offscreen(Fl_Offscreen ctx) {
+  if (!ctx) return;
+  void *data = CGBitmapContextGetData((CGContextRef)ctx);
+  CFIndex count = CFGetRetainCount(ctx);
+  CGContextRelease((CGContextRef)ctx);
+  if(count == 1) free(data);
+}
+
+// FIXME: driver system
+const int stack_max = 16;
+static int stack_ix = 0;
+static CGContextRef stack_gc[stack_max];
+static Window stack_window[stack_max];
+static Fl_Surface_Device *_ss;
+
+// FIXME: driver system
+/**  Send all subsequent drawing commands to this offscreen buffer.
+ \param ctx     the offscreen buffer.
+ */
+void fl_begin_offscreen(Fl_Offscreen ctx) {
+  _ss = Fl_Surface_Device::surface();
+  Fl_Display_Device::display_device()->set_current();
+  if (stack_ix<stack_max) {
+    stack_gc[stack_ix] = fl_gc;
+    stack_window[stack_ix] = fl_window;
+  } else
+    fprintf(stderr, "FLTK CGContext Stack overflow error\n");
+  stack_ix++;
+
+  fl_gc = (CGContextRef)ctx;
+  fl_window = 0;
+  CGContextSaveGState(fl_gc);
+  fl_graphics_driver->push_no_clip();
+}
+
+// FIXME: driver system
+/** Quit sending drawing commands to the current offscreen buffer.
+ */
+void fl_end_offscreen() {
+  fl_graphics_driver->pop_clip();
+  CGContextRestoreGState(fl_gc); // matches CGContextSaveGState in fl_begin_offscreen()
+  CGContextFlush(fl_gc);
+  if (stack_ix>0)
+    stack_ix--;
+  else
+    fprintf(stderr, "FLTK CGContext Stack underflow error\n");
+  if (stack_ix<stack_max) {
+    fl_gc = stack_gc[stack_ix];
+    fl_window = stack_window[stack_ix];
+  }
+  _ss->set_current();
+}
+
+/** @} */
+
+
 
 //
 // End of "$Id$".
