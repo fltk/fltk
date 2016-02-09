@@ -150,6 +150,8 @@ char fl_can_do_alpha_blending() {
 }
 #elif defined(WIN32)
 
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
+
 // Code used to switch output to an off-screen window.  See macros in
 // win32.H which save the old state in local variables.
 

@@ -36,6 +36,7 @@
 #endif
 
 // Select fonts from the FLTK font table.
+#include "Fl_GDI_Graphics_Driver.h"
 #include "../../flstring.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>

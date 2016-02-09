@@ -37,6 +37,8 @@ const char *Fl_Quartz_Surface_::class_id = "Fl_Quartz_Surface_";
 
 #elif defined(WIN32)
 
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
+
 Fl_GDI_Surface_::Fl_GDI_Surface_() : Fl_Paged_Device() {
   driver(new Fl_GDI_Graphics_Driver);
   depth = 0;

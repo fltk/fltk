@@ -17,6 +17,9 @@
 //
 
 #ifdef WIN32
+
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
+
 #include <FL/Fl_Printer.H>
 
 

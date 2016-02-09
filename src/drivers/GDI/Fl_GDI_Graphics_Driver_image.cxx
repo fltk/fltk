@@ -36,6 +36,7 @@
 ////////////////////////////////////////////////////////////////
 
 #include <config.h>
+#include "Fl_GDI_Graphics_Driver.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
@@ -507,7 +508,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
   if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
     return;
   }
-  if (!img->id_) img->id_ = build_id(img, &(img->mask_));
+  if (!img->id_) img->id_ = (fl_uintptr_t)build_id(img, (void**)&(img->mask_));
   if (img->mask_) {
     HDC new_gc = CreateCompatibleDC(fl_gc);
     int save = SaveDC(new_gc);
@@ -530,8 +531,8 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, i
   tr.eM11 = float(WP)/float(img->w());
   tr.eM22 = float(HP)/float(img->h());
   tr.eM12 = tr.eM21 = 0;
-  tr.eDx =  XP;
-  tr.eDy =  YP;
+  tr.eDx =  float(XP);
+  tr.eDy =  float(YP);
   ModifyWorldTransform(fl_gc, &tr, MWT_LEFTMULTIPLY);
   img->draw(0, 0, img->w(), img->h(), 0, 0);
   SetWorldTransform(fl_gc, &old_tr);
@@ -580,7 +581,7 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
 }
 
 fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
-  return (fl_uintptr_t)create_bitmap(w, h, array);
+  return (fl_uintptr_t)fl_create_bitmap(w, h, array);
 }
 
 void Fl_GDI_Graphics_Driver::uncache(Fl_Bitmap *img, fl_uintptr_t &id_) {
@@ -629,18 +630,20 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
   }
 }
 
-fl_uintptr_t Fl_GDI_Printer_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
+extern uchar **fl_mask_bitmap;
+
+fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
   Fl_Offscreen id;
-  id = fl_create_offscreen(w(), h());
+  id = fl_create_offscreen(w, h);
   fl_begin_offscreen(id);
   uchar *bitmap = 0;
   fl_mask_bitmap = &bitmap;
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
-  this->pixmap_bg_color = win_pixmap_bg_color;
+  img->pixmap_bg_color = win_pixmap_bg_color;
   fl_mask_bitmap = 0;
   if (bitmap) {
-    img->mask_ = (fl_uintptr_t)fl_create_bitmask(w(), h(), bitmap);
+    img->mask_ = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
     delete[] bitmap;
   }
   fl_end_offscreen();
