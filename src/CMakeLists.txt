@@ -159,6 +159,7 @@ if (USE_X11)
   # X11 (including APPLE with X11)
 
   set(DRIVER_FILES
+    drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx
@@ -198,6 +199,7 @@ else ()
   # Windows (GDI)
 
   set(DRIVER_FILES
+    drivers/GDI/Fl_GDI_Graphics_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx

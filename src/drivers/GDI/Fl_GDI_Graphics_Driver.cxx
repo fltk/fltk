@@ -17,29 +17,23 @@
 //
 
 
+#include <config.h>
 #include "../../config_lib.h"
-#include "Fl_Quartz_Graphics_Driver.h"
+#include "Fl_GDI_Graphics_Driver.h"
 
 
-const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
+const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
 
+// FIXME: move to printer graphics driver
+const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_Driver";
 
 /*
- * By linking this module, the following static method will instatiate the 
- * OS X Quartz Graphics driver as the main display driver.
+ * By linking this module, the following static method will instatiate the
+ * MSWindows GDI Graphics driver as the main display driver.
  */
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
-  return new Fl_Quartz_Graphics_Driver();
-}
-
-
-Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h) {
-  void *data = calloc(w*h,4);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGContextRef ctx = CGBitmapContextCreate(data, w, h, 8, w*4, lut, kCGImageAlphaPremultipliedLast);
-  CGColorSpaceRelease(lut);
-  return (Fl_Offscreen)ctx;
+  return new Fl_GDI_Graphics_Driver();
 }
 
 

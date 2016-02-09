@@ -117,6 +117,14 @@ class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
 public:
+  // The following functions create the various graphics drivers that are required
+  // for core operations. They must be implemented as members of Fl_Graphics_Driver,
+  // but located in the device driver module that is linked to the core library
+  static Fl_Graphics_Driver *newMainGraphicsDriver();
+  //static Fl_Graphics_Driver *newOpenGLGraphicsDriver();
+  //static Fl_Graphics_Driver *newPrinterGraphicsDriver();
+  //static Fl_Graphics_Driver *new...;
+public:
   /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
   /** Features that a derived class may possess.  */
@@ -354,23 +362,16 @@ public:
  There is no need to create any other object of this class.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
-  friend class Fl_Quartz_Graphics_Driver;
-  static Fl_Display_Device *_display; // the platform display device
-#ifdef __APPLE__
   friend class Fl_X;
   friend class Fl_Graphics_Driver;
+  static Fl_Display_Device *_display; // the platform display device
   static bool high_res_window_; //< true when drawing to a window of a retina display (Mac OS X only)
-  static bool high_resolution() {return high_res_window_;}
-#elif defined(WIN32)
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement functions for extra high res drawing if your platform supports it"
-#else
-#endif
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
   static Fl_Display_Device *display_device();
+  static bool high_resolution() {return high_res_window_;}
 };
 
 /**

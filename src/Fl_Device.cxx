@@ -22,36 +22,12 @@
 #include <FL/Fl_Image.H>
 #include <FL/fl_draw.H>
 
-#ifdef FL_CFG_GFX_QUARTZ
-#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
-#endif
-
-#if defined(WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: instantiate and implement various device drivers here"
-#else
-#endif
-
 const char *Fl_Device::class_id = "Fl_Device";
 const char *Fl_Surface_Device::class_id = "Fl_Surface_Device";
 const char *Fl_Display_Device::class_id = "Fl_Display_Device";
 const char *Fl_Graphics_Driver::class_id = "Fl_Graphics_Driver";
-#if defined(__APPLE__) || defined(FL_DOXYGEN)
-#  ifndef FL_DOXYGEN
-   bool Fl_Display_Device::high_res_window_ = false;
-#  endif
-#endif
-#if defined(WIN32) || defined(FL_DOXYGEN)
-const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
-const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_Driver";
-#endif
-#if !(defined(__APPLE__) || defined(WIN32))
-#if defined(FL_PORTING)
-#  pragma message "FL_PORTING: instantiate the main graphics driver here"
-#else
-const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
-#endif
-#endif
+
+bool Fl_Display_Device::high_res_window_ = false;
 
 
 /** \brief Make this surface the current drawing surface.
@@ -103,18 +79,7 @@ Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_S
 
 /** Returns the platform display device. */
 Fl_Display_Device *Fl_Display_Device::display_device() {
-  static Fl_Display_Device *display = new Fl_Display_Device(new
-#if defined(__APPLE__)
-                                                                  Fl_Quartz_Graphics_Driver
-#elif defined(WIN32)
-                                                                  Fl_GDI_Graphics_Driver
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: instantiate your display driver here"
-                                                                  Fl_XXX_Graphics_Driver
-#else
-                                                                  Fl_Xlib_Graphics_Driver
-#endif
-                                                                 );
+  static Fl_Display_Device *display = new Fl_Display_Device(Fl_Graphics_Driver::newMainGraphicsDriver());
   return display;
 };
 
