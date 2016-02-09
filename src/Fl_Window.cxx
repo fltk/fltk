@@ -53,12 +53,21 @@ void Fl_Window::_Fl_Window() {
   size_range_set = 0;
   minw = maxw = minh = maxh = 0;
   shape_data_ = NULL;
+
 #if FLTK_ABI_VERSION >= 10301
   no_fullscreen_x = 0;
   no_fullscreen_y = 0;
   no_fullscreen_w = w();
   no_fullscreen_h = h();
 #endif
+
+#if FLTK_ABI_VERSION >= 10303
+  fullscreen_screen_top = -1;
+  fullscreen_screen_bottom = -1;
+  fullscreen_screen_left = -1;
+  fullscreen_screen_right = -1;
+#endif
+
   callback((Fl_Callback*)default_callback);
 }
 

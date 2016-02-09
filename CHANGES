@@ -92,6 +92,8 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 
 	Bug fixes
 
+	- Fixed valgrind warning (uninitialized variable) in Fl_Window.
+	  Visible only with FLTK_ABI_VERSION >= 10303, since FLTK 1.3.3.
 	- Fixed Windows drag'n'drop not showing insert position if the drop
 	  target is inside the same window or process (STR #3209).
 	- Fixed undefined reference building shared cairo library (STR #3276).
