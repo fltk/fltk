@@ -21,7 +21,8 @@
 
 #ifndef Fl_Bitmap_H
 #define Fl_Bitmap_H
-#  include "Fl_Image.H"
+#include "Fl_Image.H"
+#include "Fl_Widget.H" // for fl_uintptr_t
 
 class Fl_Widget;
 struct Fl_Menu_Item;
@@ -45,16 +46,8 @@ public:
 private:
   int start(int XP, int YP, int WP, int HP, int &cx, int &cy, 
 	    int &X, int &Y, int &W, int &H);
-#if defined(__APPLE__) || defined(WIN32)
   /** for internal use */
-  void *id_;
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define variables to hold a native bitmap in Fl_Bitmap"
-  unsigned id_; // default if not ported
-#else
-  /** for internal use */
-  unsigned id_;
-#endif // __APPLE__ || WIN32
+  fl_uintptr_t id_;
 
 public:
 

@@ -17,7 +17,6 @@
 //
 
 #include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
 
 #include "Fl_Quartz_Graphics_Driver.h"
 
@@ -221,12 +220,12 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     // If the CGImage is printed, it is not deallocated until after the end of the page,
     // therefore, with img->alloc_array != 0, the RGB image can be safely deleted any time after return from this function.
     // The previously unused mask_ member allows to make sure the RGB image data is not deleted by Fl_RGB_Image::uncache().
-    if (img->alloc_array) img->mask_ = new bool(true);
-    CGDataProviderRef src = CGDataProviderCreateWithData(img->mask_, img->array, ld * img->h(),
+    if (img->alloc_array) img->mask_ = (fl_uintptr_t)new bool(true);
+    CGDataProviderRef src = CGDataProviderCreateWithData((void*)img->mask_, img->array, ld * img->h(),
                                                          img->alloc_array?imgProviderReleaseData:NULL);
-    img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
-                             lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
-                             src, 0L, false, kCGRenderingIntentDefault);
+    img->id_ = (fl_uintptr_t)CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+                                           lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                                           src, 0L, false, kCGRenderingIntentDefault);
     CGColorSpaceRelease(lut);
     CGDataProviderRelease(src);
   }
@@ -244,9 +243,9 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       img->uncache();
       CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
       CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, ld * img->h(), imgProviderReleaseData);
-      img->id_ = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
-                               lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
-                               src, 0L, true, kCGRenderingIntentDefault);
+      img->id_ = (fl_uintptr_t)CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+                                             lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                                             src, 0L, true, kCGRenderingIntentDefault);
       CGColorSpaceRelease(lut);
       CGDataProviderRelease(src);
     }
@@ -298,9 +297,31 @@ void Fl_Quartz_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
   if (bm) CGImageRelease((CGImageRef)bm);
 }
 
+void Fl_Quartz_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_) {
+  if (id_) {
+    if (mask_) *(bool*)mask_ = false;
+    CGImageRelease((CGImageRef)id_);
+    id_ = 0;
+    mask_ = NULL;
+  }
+}
 
+fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
+  return (fl_uintptr_t)create_bitmask(w, h, array);
+}
 
-#endif // FL_CFG_GFX_QUARTZ
+void Fl_Quartz_Graphics_Driver::uncache(Fl_Bitmap*, fl_uintptr_t &id_) {
+  delete_bitmask((Fl_Bitmask)id_);
+}
+
+fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
+  Fl_Offscreen id;
+  id = create_offscreen_with_alpha(w, h);
+  fl_begin_offscreen(id);
+  fl_draw_pixmap(data, 0, 0, FL_BLACK);
+  fl_end_offscreen();
+  return (fl_uintptr_t)id;
+}
 
 //
 // End of "$Id$".

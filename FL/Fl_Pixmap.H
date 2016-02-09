@@ -49,33 +49,20 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   int prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
 			 int &X, int &Y, int &W, int &H);
 
-  protected:
+protected:
 
   void measure();
 
-  public:
+public:
 
   int alloc_data; // Non-zero if data was allocated
   
-  private:
+private:
+  // for internal use
+  fl_uintptr_t id_;
+  fl_uintptr_t mask_;
 
-#if defined(WIN32)
-  UINT pixmap_bg_color; // RGB color used for pixmap background
-  void *id_; // for internal use
-  void *mask_; // for internal use (mask bitmap)
-#elif defined(__APPLE__)
-  void *id_; // for internal use
-  void *mask_; // for internal use (mask bitmap)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define member variables to store an RGB image and a mask for Fl_Pixmap"
-  void *id_;   // don't use
-  void *mask_; // don't use
-#else
-  unsigned id_; // for internal use
-  unsigned mask_; // for internal use (mask bitmap)
-#endif // __APPLE__ || WIN32
-  
-  public:
+public:
 
   /**    The constructors create a new pixmap from the specified XPM data.  */
   explicit Fl_Pixmap(char * const * D) : Fl_Image(-1,0,1), alloc_data(0), id_(0), mask_(0) {set_data((const char*const*)D); measure();}

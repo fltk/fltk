@@ -20,10 +20,11 @@
    Fl_Image, Fl_RGB_Image classes. */
 
 #ifndef Fl_Image_H
-#  define Fl_Image_H
+#define Fl_Image_H
 
-#  include "Enumerations.H"
+#include "Enumerations.H"
 #include <stdlib.h>
+#include "Fl_Widget.H" // for fl_uintptr_t
 
 class Fl_Widget;
 class Fl_Pixmap;
@@ -203,19 +204,10 @@ public:
   const uchar *array;
   int alloc_array; // Non-zero if array was allocated
 
-  private:
-
-#if defined(__APPLE__) || defined(WIN32)
-  void *id_; // for internal use
-  void *mask_; // for internal use (mask bitmap)
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define variables to hold an RGB image and a mask for Fl_RGB_Image"
-  unsigned id_; // don't use
-  unsigned mask_; // don't use
-#else
-  unsigned id_; // for internal use
-  unsigned mask_; // for internal use (mask bitmap)
-#endif // __APPLE__ || WIN32
+private:
+  // These two variables are used to cache the image and mask for the main display graphics driver
+  fl_uintptr_t id_;
+  fl_uintptr_t mask_;
 
 public:
 

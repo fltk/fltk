@@ -624,6 +624,213 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP
   XSetFillStyle(fl_display, fl_gc, FillSolid);
 }
 
+
+static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
+                 int &X, int &Y, int &W, int &H)
+{
+  // account for current clip region (faster on Irix):
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
+  // clip the box down to the size of image, quit if empty:
+  if (cx < 0) {W += cx; X -= cx; cx = 0;}
+  if (cx+W > w) W = w-cx;
+  if (W <= 0) return 1;
+  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
+  if (cy+H > h) H = h-cy;
+  if (H <= 0) return 1;
+  return 0;
+}
+
+
+// Composite an image with alpha on systems that don't have accelerated
+// alpha compositing...
+static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
+  int ld = img->ld();
+  if (ld == 0) ld = img->w() * img->d();
+  uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
+  int srcskip = ld - img->d() * W;
+
+  uchar *dst = new uchar[W * H * 3];
+  uchar *dstptr = dst;
+
+  fl_read_image(dst, X, Y, W, H, 0);
+
+  uchar srcr, srcg, srcb, srca;
+  uchar dstr, dstg, dstb, dsta;
+
+  if (img->d() == 2) {
+    // Composite grayscale + alpha over RGB...
+    for (int y = H; y > 0; y--, srcptr+=srcskip)
+      for (int x = W; x > 0; x--) {
+        srcg = *srcptr++;
+        srca = *srcptr++;
+
+        dstr = dstptr[0];
+        dstg = dstptr[1];
+        dstb = dstptr[2];
+        dsta = 255 - srca;
+
+        *dstptr++ = (srcg * srca + dstr * dsta) >> 8;
+        *dstptr++ = (srcg * srca + dstg * dsta) >> 8;
+        *dstptr++ = (srcg * srca + dstb * dsta) >> 8;
+      }
+  } else {
+    // Composite RGBA over RGB...
+    for (int y = H; y > 0; y--, srcptr+=srcskip)
+      for (int x = W; x > 0; x--) {
+        srcr = *srcptr++;
+        srcg = *srcptr++;
+        srcb = *srcptr++;
+        srca = *srcptr++;
+
+        dstr = dstptr[0];
+        dstg = dstptr[1];
+        dstb = dstptr[2];
+        dsta = 255 - srca;
+
+        *dstptr++ = (srcr * srca + dstr * dsta) >> 8;
+        *dstptr++ = (srcg * srca + dstg * dsta) >> 8;
+        *dstptr++ = (srcb * srca + dstb * dsta) >> 8;
+      }
+  }
+  
+  fl_draw_image(dst, X, Y, W, H, 3, 0);
+  
+  delete[] dst;
+}
+
+
+void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+    img->draw_empty(XP, YP);
+    return;
+  }
+  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!img->id_) {
+    if (img->d() == 1 || img->d() == 3) {
+      img->id_ = fl_create_offscreen(img->w(), img->h());
+      fl_begin_offscreen((Fl_Offscreen)img->id_);
+      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
+      fl_end_offscreen();
+    } else if (img->d() == 4 && fl_can_do_alpha_blending()) {
+      img->id_ = (fl_uintptr_t)fl_create_offscreen_with_alpha(img->w(), img->h());
+      fl_begin_offscreen((Fl_Offscreen)img->id_);
+      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d() | FL_IMAGE_WITH_ALPHA,
+                    img->ld());
+      fl_end_offscreen();
+    }
+  }
+  if (img->id_) {
+    if (img->mask_) {
+      // I can't figure out how to combine a mask with existing region,
+      // so cut the image down to a clipped rectangle:
+      int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
+      cx += nx-X; X = nx;
+      cy += ny-Y; Y = ny;
+      // make X use the bitmap as a mask:
+      XSetClipMask(fl_display, fl_gc, img->mask_);
+      int ox = X-cx; if (ox < 0) ox += img->w();
+      int oy = Y-cy; if (oy < 0) oy += img->h();
+      XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
+    }
+
+    if (img->d() == 4 && fl_can_do_alpha_blending())
+      copy_offscreen_with_alpha(X, Y, W, H, img->id_, cx, cy);
+    else
+      copy_offscreen(X, Y, W, H, img->id_, cx, cy);
+
+    if (img->mask_) {
+      // put the old clip region back
+      XSetClipOrigin(fl_display, fl_gc, 0, 0);
+      fl_restore_clip();
+    }
+  } else {
+    // Composite image with alpha manually each time...
+    alpha_blend(img, X, Y, W, H, cx, cy);
+  }
+}
+
+void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
+{
+  if (id_) {
+    fl_delete_offscreen((Fl_Offscreen)id_);
+    id_ = 0;
+  }
+
+  if (mask_) {
+    fl_delete_bitmask((Fl_Bitmask)mask_);
+    mask_ = 0;
+  }
+}
+
+fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
+  return (fl_uintptr_t)create_bitmask(w, h, array);
+}
+
+void Fl_Xlib_Graphics_Driver::uncache(Fl_Bitmap*, fl_uintptr_t &id_) {
+  delete_bitmask((Fl_Offscreen)id_);
+}
+
+
+void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (pxm->mask_) {
+    // make X use the bitmap as a mask:
+    XSetClipMask(fl_display, fl_gc, pxm->mask_);
+    XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
+    if (clip_region()) {
+      // At this point, XYWH is the bounding box of the intersection between
+      // the current clip region and the (portion of the) pixmap we have to draw.
+      // The current clip region is often a rectangle. But, when a window with rounded
+      // corners is moved above another window, expose events may create a complex clip
+      // region made of several (e.g., 10) rectangles. We have to draw only in the clip
+      // region, and also to mask out the transparent pixels of the image. This can't
+      // be done in a single Xlib call for a multi-rectangle clip region. Thus, we
+      // process each rectangle of the intersection between the clip region and XYWH.
+      // See also STR #3206.
+      Region r = XRectangleRegion(X,Y,W,H);
+      XIntersectRegion(r, clip_region(), r);
+      int X1, Y1, W1, H1;
+      for (int i = 0; i < r->numRects; i++) {
+        X1 = r->rects[i].x1;
+        Y1 = r->rects[i].y1;
+        W1 = r->rects[i].x2 - r->rects[i].x1;
+        H1 = r->rects[i].y2 - r->rects[i].y1;
+        copy_offscreen(X1, Y1, W1, H1, pxm->id_, cx + (X1 - X), cy + (Y1 - Y));
+      }
+      XDestroyRegion(r);
+    } else {
+      copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
+    }
+    // put the old clip region back
+    XSetClipOrigin(fl_display, fl_gc, 0, 0);
+    restore_clip();
+  }
+  else copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
+}
+
+fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
+  Fl_Offscreen id;
+  id = fl_create_offscreen(w(), h());
+  fl_begin_offscreen(id);
+  uchar *bitmap = 0;
+  fl_mask_bitmap = &bitmap;
+  fl_draw_pixmap(data(), 0, 0, FL_BLACK);
+  fl_mask_bitmap = 0;
+  if (bitmap) {
+    img->mask_ = (fl_uintptr_t)fl_create_bitmask(w(), h(), bitmap);
+    delete[] bitmap;
+  }
+  fl_end_offscreen();
+  return (fl_uintptr_t)id;
+}
+
+
 //
 // End of "$Id$".
 //

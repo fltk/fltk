@@ -43,6 +43,8 @@
 
 #define MAXBUFFER 0x40000 // 256k
 
+void fl_release_dc(HWND, HDC); // from Fl_win32.cxx
+
 #if USE_COLORMAP
 
 // error-diffusion dither into the FLTK colormap
@@ -458,6 +460,192 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
   DeleteDC(tempdc);
 }  
 
+
+static Fl_Offscreen build_id(Fl_RGB_Image *img, void **pmask)
+{
+  Fl_Offscreen offs = fl_create_offscreen(img->w(), img->h());
+  if ((img->d() == 2 || img->d() == 4) && fl_can_do_alpha_blending()) {
+    fl_begin_offscreen(offs);
+    fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d()|FL_IMAGE_WITH_ALPHA, img->ld());
+    fl_end_offscreen();
+  } else {
+    fl_begin_offscreen(offs);
+    fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
+    fl_end_offscreen();
+    if (img->d() == 2 || img->d() == 4) {
+      *pmask = fl_create_alphamask(img->w(), img->h(), img->d(), img->ld(), img->array);
+    }
+  }
+  return offs;
+}
+
+
+static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
+                 int &X, int &Y, int &W, int &H)
+{
+  // account for current clip region (faster on Irix):
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
+  // clip the box down to the size of image, quit if empty:
+  if (cx < 0) {W += cx; X -= cx; cx = 0;}
+  if (cx+W > w) W = w-cx;
+  if (W <= 0) return 1;
+  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
+  if (cy+H > h) H = h-cy;
+  if (H <= 0) return 1;
+  return 0;
+}
+
+
+void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+    img->draw_empty(XP, YP);
+    return;
+  }
+  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!img->id_) img->id_ = build_id(img, &(img->mask_));
+  if (img->mask_) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
+    SelectObject(new_gc, (void*)img->mask_);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    SelectObject(new_gc, (void*)img->id_);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    RestoreDC(new_gc,save);
+    DeleteDC(new_gc);
+  } else if (img->d()==2 || img->d()==4) {
+    copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
+  } else {
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
+  }
+}
+
+int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
+  XFORM old_tr, tr;
+  GetWorldTransform(fl_gc, &old_tr); // storing old transform
+  tr.eM11 = float(WP)/float(img->w());
+  tr.eM22 = float(HP)/float(img->h());
+  tr.eM12 = tr.eM21 = 0;
+  tr.eDx =  XP;
+  tr.eDy =  YP;
+  ModifyWorldTransform(fl_gc, &tr, MWT_LEFTMULTIPLY);
+  img->draw(0, 0, img->w(), img->h(), 0, 0);
+  SetWorldTransform(fl_gc, &old_tr);
+  return 1;
+}
+
+void Fl_GDI_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
+{
+  if (id_) {
+    fl_delete_offscreen((Fl_Offscreen)id_);
+    id_ = 0;
+  }
+
+  if (mask_) {
+    fl_delete_bitmask((Fl_Bitmask)mask_);
+    mask_ = 0;
+  }
+}
+
+// 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
+static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
+  // we need to pad the lines out to words & swap the bits
+  // in each byte.
+  int w1 = (w + 7) / 8;
+  int w2 = ((w + 15) / 16) * 2;
+  uchar* newarray = new uchar[w2*h];
+  const uchar* src = data;
+  uchar* dest = newarray;
+  Fl_Bitmask bm;
+  static uchar reverse[16] =	/* Bit reversal lookup table */
+  { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+    0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+
+  for (int y = 0; y < h; y++) {
+    for (int n = 0; n < w1; n++, src++)
+      *dest++ = (uchar)((reverse[*src & 0x0f] & 0xf0) |
+                        (reverse[(*src >> 4) & 0x0f] & 0x0f));
+    dest += w2 - w1;
+  }
+
+  bm = CreateBitmap(w, h, 1, 1, newarray);
+  
+  delete[] newarray;
+  
+  return bm;
+}
+
+fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
+  return (fl_uintptr_t)create_bitmap(w, h, array);
+}
+
+void Fl_GDI_Graphics_Driver::uncache(Fl_Bitmap *img, fl_uintptr_t &id_) {
+  delete_bitmask((Fl_Offscreen)id_);
+}
+
+void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (pxm->mask_) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
+    SelectObject(new_gc, (void*)pxm->mask_);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    SelectObject(new_gc, (void*)pxm->id_);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    RestoreDC(new_gc,save);
+    DeleteDC(new_gc);
+  } else {
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+  }
+}
+
+
+void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
+  static HMODULE hMod = NULL;
+  static fl_transp_func fl_TransparentBlt = NULL;
+  if (!hMod) {
+    hMod = LoadLibrary("MSIMG32.DLL");
+    if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
+  }
+  if (fl_TransparentBlt) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
+    SelectObject(new_gc, (void*)pxm->id_);
+    // print all of offscreen but its parts in background color
+    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, W, H, pxm->pixmap_bg_color );
+    RestoreDC(new_gc,save);
+    DeleteDC(new_gc);
+  }
+  else {
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+  }
+}
+
+fl_uintptr_t Fl_GDI_Printer_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
+  Fl_Offscreen id;
+  id = fl_create_offscreen(w(), h());
+  fl_begin_offscreen(id);
+  uchar *bitmap = 0;
+  fl_mask_bitmap = &bitmap;
+  fl_draw_pixmap(data, 0, 0, FL_BLACK);
+  extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
+  this->pixmap_bg_color = win_pixmap_bg_color;
+  fl_mask_bitmap = 0;
+  if (bitmap) {
+    img->mask_ = (fl_uintptr_t)fl_create_bitmask(w(), h(), bitmap);
+    delete[] bitmap;
+  }
+  fl_end_offscreen();
+  return (fl_uintptr_t)id;
+}
 
 //
 // End of "$Id$".

@@ -25,6 +25,7 @@ set(CPPFILES
   Fl_File_Chooser2.cxx
   Fl_File_Icon.cxx
   Fl_File_Input.cxx
+  Fl_Graphics_Driver.cxx
   Fl_Group.cxx
   Fl_Help_View.cxx
   Fl_Image.cxx
@@ -211,6 +212,8 @@ else ()
 
 endif (USE_X11)
 
+source_group("Driver Source Files" FILES ${DRIVER_FILES})
+
 set(CPPFILES
   ${CPPFILES}
   ${DRIVER_FILES}
@@ -238,6 +241,9 @@ set(GLCPPFILES
   gl_start.cxx
   glut_compatability.cxx
   glut_font.cxx
+)
+
+set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Display_Device.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx
@@ -247,6 +253,13 @@ set(GLCPPFILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
+)
+
+source_group("Driver Source Files" FILES ${GL_DRIVER_FILES})
+
+set(GLCPPFILES
+  ${GLCPPFILES}
+  ${GL_DRIVER_FILES}
 )
 
 set(IMGCPPFILES

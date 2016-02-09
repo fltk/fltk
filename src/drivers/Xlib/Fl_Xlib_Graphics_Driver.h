@@ -25,7 +25,7 @@
 #ifndef FL_CFG_GFX_XLIB_H
 #define FL_CFG_GFX_XLIB_H
 
-#include <FL/Fl_Device.H>
+#include <FL/Fl_Graphics_Driver.H>
 
 /**
  \brief The Xlib-specific graphics class.
@@ -52,6 +52,10 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
+  fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
+  void uncache(Fl_Bitmap *img, fl_uintptr_t &id_);
+  void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   double width(const char *str, int n);
   double width(unsigned int c);
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);

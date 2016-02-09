@@ -23,14 +23,11 @@
   The constructors create a new bitmap from the specified bitmap data.*/
 
 #include <FL/Fl.H>
-#include <FL/x.H>
-#include "config_lib.h"
 #include <FL/fl_draw.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Printer.H>
-#include "flstring.h"
 
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
   return fl_graphics_driver->create_bitmask(w, h, array);
@@ -117,38 +114,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-#if defined(WIN32)
-// TODO: move this code into the GDI driver in a sensible way
-// 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
-static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
-	// we need to pad the lines out to words & swap the bits
-	// in each byte.
-	int w1 = (w + 7) / 8;
-	int w2 = ((w + 15) / 16) * 2;
-	uchar* newarray = new uchar[w2*h];
-	const uchar* src = data;
-	uchar* dest = newarray;
-	Fl_Bitmask bm;
-	static uchar reverse[16] =	/* Bit reversal lookup table */
-	{ 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-	0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-
-	for (int y = 0; y < h; y++) {
-		for (int n = 0; n < w1; n++, src++)
-			*dest++ = (uchar)((reverse[*src & 0x0f] & 0xf0) |
-			(reverse[(*src >> 4) & 0x0f] & 0x0f));
-		dest += w2 - w1;
-	}
-
-	bm = CreateBitmap(w, h, 1, 1, newarray);
-
-	delete[] newarray;
-
-	return bm;
-}
-#endif
-
-int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy, 
+int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
 		 int &X, int &Y, int &W, int &H)
 {
   if (!array) {
@@ -165,13 +131,8 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return 1;
-#if defined(WIN32)
-  if (!id_) id_ = fl_create_bitmap(w(), h(), array);
-#elif defined(__APPLE__) || defined(USE_X11)
-  if (!id_) id_ = fl_create_bitmask(w(), h(), array);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: call the right function to create a bitmap"
-#endif
+  if (!id_)
+    id_ = fl_graphics_driver->cache(this, w(), h(), array);
   return 0;
 }
 
@@ -186,13 +147,7 @@ Fl_Bitmap::~Fl_Bitmap() {
 
 void Fl_Bitmap::uncache() {
   if (id_) {
-#ifdef __APPLE_QUARTZ__
-    fl_delete_bitmask((Fl_Bitmask)id_);
-#elif defined(WIN32) || defined(USE_X11)
-    fl_delete_bitmask((Fl_Offscreen)id_);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: call the right function to create a bitmask"
-#endif
+    fl_graphics_driver->uncache(this, id_);
     id_ = 0;
   }
 }

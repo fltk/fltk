@@ -22,14 +22,10 @@
  \brief Definition of Apple Quartz graphics driver.
  */
 
-#include "../../config_lib.h"
-#ifdef FL_CFG_GFX_QUARTZ
-
 #ifndef FL_QUARTZ_GRAPHICS_DRIVER_H
 #define FL_QUARTZ_GRAPHICS_DRIVER_H
 
-#include <FL/Fl_Device.H>
-
+#include <FL/Fl_Graphics_Driver.H>
 
 // typedef what the x,y fields in a point are:
 // FIXME: this is still defined in Fl_Device.H, but should be invisible to the user
@@ -59,6 +55,10 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
+  fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
+  void uncache(Fl_Bitmap *img, fl_uintptr_t &id_);
+  void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
 #if ! defined(FL_DOXYGEN)
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
@@ -122,10 +122,7 @@ protected:
   int descent();
 };
 
-
 #endif // FL_QUARTZ_GRAPHICS_DRIVER_H
-
-#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".

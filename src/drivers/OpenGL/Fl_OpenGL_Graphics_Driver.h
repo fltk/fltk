@@ -25,7 +25,7 @@
 #ifndef FL_CFG_GFX_OPENGL_H
 #define FL_CFG_GFX_OPENGL_H
 
-#include <FL/Fl_Device.H>
+#include <FL/Fl_Graphics_Driver.H>
 
 
 /**

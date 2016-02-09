@@ -23,7 +23,6 @@
 // Implemented without using the xpm library (which I can't use because
 // it interferes with the color cube used by fl_draw_image).
 
-#include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -32,37 +31,9 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Printer.H>
 
-#if defined(WIN32) 
-#elif defined(__APPLE__)
-#include "src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: this file needs a lot of custom code to draw Pixmaps correctly"
-#else
-#endif
-
-#if defined(USE_X11)
-#  if HAVE_X11_XREGION_H
-#    include <X11/Xregion.h>
-#  else // if the X11/Xregion.h header is not available, we assume this is the layout of an X11 Region:
-typedef struct {
-  short x1, x2, y1, y2;
-} BOX;
-struct _XRegion {
-  long size;
-  long numRects;
-  BOX *rects;
-  BOX extents;
-};
-#  endif // HAVE_X11_XREGION_H
-#endif   // USE_X11
-
 #include <stdio.h>
 #include "flstring.h"
 #include <ctype.h>
-
-#ifdef WIN32
-extern void fl_release_dc(HWND, HDC);      // located in Fl_win32.cxx
-#endif
 
 extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
 void fl_restore_clip(); // in fl_rect.cxx
@@ -117,131 +88,10 @@ int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
     return 1;
   }
   if (!id_) {
-#ifdef __APPLE__
-    id_ = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w(), h());
-#else
-    id_ = fl_create_offscreen(w(), h());
-#endif
-    fl_begin_offscreen((Fl_Offscreen)id_);
-#ifndef __APPLE__
-    uchar *bitmap = 0;
-    fl_mask_bitmap = &bitmap;
-#endif
-    fl_draw_pixmap(data(), 0, 0, FL_BLACK);
-#ifndef __APPLE__
-#if defined(WIN32)
-    extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
-    this->pixmap_bg_color = win_pixmap_bg_color;
-#endif
-    fl_mask_bitmap = 0;
-    if (bitmap) {
-      mask_ = fl_create_bitmask(w(), h(), bitmap);
-      delete[] bitmap;
-    }
-#endif
-    fl_end_offscreen();
+    id_ = fl_graphics_driver->cache(this, w(), h(), data());
   }
   return 0;
 }
-
-//------------------------------------------------------------------------------
-#ifdef __APPLE__					// Apple, Mac OS X
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-#elif defined(WIN32)					// Windows GDI
-//------------------------------------------------------------------------------
-
-void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  if (pxm->mask_) {
-    HDC new_gc = CreateCompatibleDC(fl_gc);
-    int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)pxm->mask_);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)pxm->id_);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
-    RestoreDC(new_gc,save);
-    DeleteDC(new_gc);
-  } else {
-    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
-  }
-}
-
-
-void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
-  static HMODULE hMod = NULL;
-  static fl_transp_func fl_TransparentBlt = NULL;
-  if (!hMod) {
-    hMod = LoadLibrary("MSIMG32.DLL");
-    if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-  }
-  if (fl_TransparentBlt) {
-    HDC new_gc = CreateCompatibleDC(fl_gc);
-    int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)pxm->id_);
-    // print all of offscreen but its parts in background color
-    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, W, H, pxm->pixmap_bg_color );
-    RestoreDC(new_gc,save);
-    DeleteDC(new_gc);
-  }
-  else {
-    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
-  }
-}
-
-//------------------------------------------------------------------------------
-#elif defined(FL_PORTING)
-#pragma message "Implement Fl_XXX_Graphics_Driver methods here"
-//------------------------------------------------------------------------------
-#else							// X11, Xlib
-//------------------------------------------------------------------------------
-
-void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  if (pxm->mask_) {
-    // make X use the bitmap as a mask:
-    XSetClipMask(fl_display, fl_gc, pxm->mask_);
-    XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
-    if (clip_region()) {
-      // At this point, XYWH is the bounding box of the intersection between
-      // the current clip region and the (portion of the) pixmap we have to draw.
-      // The current clip region is often a rectangle. But, when a window with rounded
-      // corners is moved above another window, expose events may create a complex clip
-      // region made of several (e.g., 10) rectangles. We have to draw only in the clip
-      // region, and also to mask out the transparent pixels of the image. This can't
-      // be done in a single Xlib call for a multi-rectangle clip region. Thus, we
-      // process each rectangle of the intersection between the clip region and XYWH.
-      // See also STR #3206.
-      Region r = XRectangleRegion(X,Y,W,H);
-      XIntersectRegion(r, clip_region(), r);
-      int X1, Y1, W1, H1;
-      for (int i = 0; i < r->numRects; i++) {
-        X1 = r->rects[i].x1;
-        Y1 = r->rects[i].y1;
-        W1 = r->rects[i].x2 - r->rects[i].x1;
-        H1 = r->rects[i].y2 - r->rects[i].y1;
-        copy_offscreen(X1, Y1, W1, H1, pxm->id_, cx + (X1 - X), cy + (Y1 - Y));
-      }
-      XDestroyRegion(r);
-    } else {
-      copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
-    }
-    // put the old clip region back
-    XSetClipOrigin(fl_display, fl_gc, 0, 0);
-    restore_clip();
-  }
-  else copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
-}
-
-//------------------------------------------------------------------------------
-#endif							// (platform-specific)
-//------------------------------------------------------------------------------
 
 /**
   The destructor frees all memory and server resources that are used by

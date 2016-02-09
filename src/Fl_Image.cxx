@@ -32,10 +32,6 @@
 #else
 #endif
 
-#ifdef WIN32
-void fl_release_dc(HWND, HDC); // from Fl_win32.cxx
-#endif
-
 void fl_restore_clip(); // from fl_rect.cxx
 
 //
@@ -73,25 +69,6 @@ void Fl_Image::uncache() {
 void Fl_Image::draw(int XP, int YP, int, int, int, int) {
   draw_empty(XP, YP);
 }
-
-
-#if defined(WIN32) || defined (USE_X11)
-static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
-		 int &X, int &Y, int &W, int &H)
-{
-  // account for current clip region (faster on Irix):
-  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
-  cx += X-XP; cy += Y-YP;
-  // clip the box down to the size of image, quit if empty:
-  if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if (cx+W > w) W = w-cx;
-  if (W <= 0) return 1;
-  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if (cy+H > h) H = h-cy;
-  if (H <= 0) return 1;
-  return 0;
-}
-#endif // defined(WIN32) || defined (USE_X11)
 
 
 /**
@@ -313,34 +290,12 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
  the image. 
  */
 Fl_RGB_Image::~Fl_RGB_Image() {
-#ifdef __APPLE__
-  if (id_) CGImageRelease((CGImageRef)id_);
-  else if (alloc_array) delete[] (uchar *)array;
-#else
   uncache();
   if (alloc_array) delete[] (uchar *)array;
-#endif
 }
 
 void Fl_RGB_Image::uncache() {
-#ifdef __APPLE__
-  if (id_) {
-    if (mask_) *(bool*)mask_ = false;
-    CGImageRelease((CGImageRef)id_);
-    id_ = 0;
-    mask_ = NULL;
-  }
-#else
-  if (id_) {
-    fl_delete_offscreen((Fl_Offscreen)id_);
-    id_ = 0;
-  }
-
-  if (mask_) {
-    fl_delete_bitmask((Fl_Bitmask)mask_);
-    mask_ = 0;
-  }
-#endif
+  fl_graphics_driver->uncache(this, id_, mask_);
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
@@ -587,198 +542,9 @@ void Fl_RGB_Image::desaturate() {
   d(new_d);
 }
 
-#if !defined(WIN32) && !defined(__APPLE__)
-// Composite an image with alpha on systems that don't have accelerated
-// alpha compositing...
-static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  int ld = img->ld();
-  if (ld == 0) ld = img->w() * img->d();
-  uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
-  int srcskip = ld - img->d() * W;
-
-  uchar *dst = new uchar[W * H * 3];
-  uchar *dstptr = dst;
-
-  fl_read_image(dst, X, Y, W, H, 0);
-
-  uchar srcr, srcg, srcb, srca;
-  uchar dstr, dstg, dstb, dsta;
-
-  if (img->d() == 2) {
-    // Composite grayscale + alpha over RGB...
-    for (int y = H; y > 0; y--, srcptr+=srcskip)
-      for (int x = W; x > 0; x--) {
-	srcg = *srcptr++;
-	srca = *srcptr++;
-
-	dstr = dstptr[0];
-	dstg = dstptr[1];
-	dstb = dstptr[2];
-	dsta = 255 - srca;
-
-	*dstptr++ = (srcg * srca + dstr * dsta) >> 8;
-	*dstptr++ = (srcg * srca + dstg * dsta) >> 8;
-	*dstptr++ = (srcg * srca + dstb * dsta) >> 8;
-      }
-  } else {
-    // Composite RGBA over RGB...
-    for (int y = H; y > 0; y--, srcptr+=srcskip)
-      for (int x = W; x > 0; x--) {
-	srcr = *srcptr++;
-	srcg = *srcptr++;
-	srcb = *srcptr++;
-	srca = *srcptr++;
-
-	dstr = dstptr[0];
-	dstg = dstptr[1];
-	dstb = dstptr[2];
-	dsta = 255 - srca;
-
-	*dstptr++ = (srcr * srca + dstr * dsta) >> 8;
-	*dstptr++ = (srcg * srca + dstg * dsta) >> 8;
-	*dstptr++ = (srcb * srca + dstb * dsta) >> 8;
-      }
-  }
-
-  fl_draw_image(dst, X, Y, W, H, 3, 0);
-
-  delete[] dst;
-}
-#endif // !WIN32 && !__APPLE__
-
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
-
-/** Draws an Fl_Image scaled to width \p W & height \p H with top-left corner at \em X,Y
- \return zero when the graphics driver doesn't implement scaled drawing, non-zero if it does implement it.
- */
-int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
-  return 0;
-}
-
-#ifdef __APPLE__
-
-#elif defined(WIN32)
-static Fl_Offscreen build_id(Fl_RGB_Image *img, void **pmask)
-{
-  Fl_Offscreen offs = fl_create_offscreen(img->w(), img->h());
-  if ((img->d() == 2 || img->d() == 4) && fl_can_do_alpha_blending()) {
-    fl_begin_offscreen(offs);
-    fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d()|FL_IMAGE_WITH_ALPHA, img->ld());
-    fl_end_offscreen();
-  } else {
-    fl_begin_offscreen(offs);
-    fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
-    fl_end_offscreen();
-    if (img->d() == 2 || img->d() == 4) {
-      *pmask = fl_create_alphamask(img->w(), img->h(), img->d(), img->ld(), img->array);
-    }
-  }
-  return offs;
-}
-
-void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  // Don't draw an empty image...
-  if (!img->d() || !img->array) {
-    img->draw_empty(XP, YP);
-    return;
-  }
-  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (!img->id_) img->id_ = build_id(img, &(img->mask_));
-  if (img->mask_) {
-    HDC new_gc = CreateCompatibleDC(fl_gc);
-    int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)img->mask_);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)img->id_);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
-    RestoreDC(new_gc,save);
-    DeleteDC(new_gc);
-  } else if (img->d()==2 || img->d()==4) {
-    copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
-  } else {
-    copy_offscreen(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
-  }
-}
-
-int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
-  XFORM old_tr, tr;
-  GetWorldTransform(fl_gc, &old_tr); // storing old transform
-  tr.eM11 = float(WP)/float(img->w());
-  tr.eM22 = float(HP)/float(img->h());
-  tr.eM12 = tr.eM21 = 0;
-  tr.eDx =  XP;
-  tr.eDy =  YP;
-  ModifyWorldTransform(fl_gc, &tr, MWT_LEFTMULTIPLY);
-  img->draw(0, 0, img->w(), img->h(), 0, 0);
-  SetWorldTransform(fl_gc, &old_tr);
-  return 1;
-}
-
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement RGB image handling here"
-
-#else
-void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  // Don't draw an empty image...
-  if (!img->d() || !img->array) {
-    img->draw_empty(XP, YP);
-    return;
-  }
-  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (!img->id_) {
-    if (img->d() == 1 || img->d() == 3) {
-      img->id_ = fl_create_offscreen(img->w(), img->h());
-      fl_begin_offscreen((Fl_Offscreen)img->id_);
-      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
-      fl_end_offscreen();
-    } else if (img->d() == 4 && fl_can_do_alpha_blending()) {
-      img->id_ = fl_create_offscreen_with_alpha(img->w(), img->h());
-      fl_begin_offscreen((Fl_Offscreen)img->id_);
-      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d() | FL_IMAGE_WITH_ALPHA,
-                    img->ld());
-      fl_end_offscreen();
-    }
-  }
-  if (img->id_) {
-    if (img->mask_) {
-      // I can't figure out how to combine a mask with existing region,
-      // so cut the image down to a clipped rectangle:
-      int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
-      cx += nx-X; X = nx;
-      cy += ny-Y; Y = ny;
-      // make X use the bitmap as a mask:
-      XSetClipMask(fl_display, fl_gc, img->mask_);
-      int ox = X-cx; if (ox < 0) ox += img->w();
-      int oy = Y-cy; if (oy < 0) oy += img->h();
-      XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
-    }
-
-    if (img->d() == 4 && fl_can_do_alpha_blending())
-      copy_offscreen_with_alpha(X, Y, W, H, img->id_, cx, cy);
-    else
-      copy_offscreen(X, Y, W, H, img->id_, cx, cy);
-
-    if (img->mask_) {
-      // put the old clip region back
-      XSetClipOrigin(fl_display, fl_gc, 0, 0);
-      fl_restore_clip();
-    }
-  } else {
-    // Composite image with alpha manually each time...
-    alpha_blend(img, X, Y, W, H, cx, cy);
-  }
-}
-
-#endif
 
 void Fl_RGB_Image::label(Fl_Widget* widget) {
   widget->image(this);

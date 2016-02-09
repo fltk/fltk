@@ -27,7 +27,7 @@
 #include <FL/x.H>	      // for Fl_Region
 #include <FL/Enumerations.H>  // for the color names
 #include <FL/Fl_Window.H>     // for fl_set_spot()
-#include <FL/Fl_Device.H>     // for fl_graphics_driver
+#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
 
 // Image class...
 class Fl_Image;
