@@ -16,12 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_XLIB_ARCI_CXX
-#define FL_CFG_GFX_XLIB_ARCI_CXX
-
+#include "Fl_Xlib_Graphics_Driver.h"
 #include <FL/fl_draw.H>
-#include <config.h>
-#include "../../config_lib.h"
 
 /**
   \file xlib_arci.cxx
@@ -38,8 +34,6 @@ void Fl_Xlib_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
   XFillArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 }
-
-#endif // FL_CFG_GFX_XLIB_ARCI_CXX
 
 //
 // End of "$Id$".

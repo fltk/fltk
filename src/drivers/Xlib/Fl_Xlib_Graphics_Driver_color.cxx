@@ -31,6 +31,7 @@
 // being used to index arrays.  So I always copy them to an integer
 // before use.
 
+#include "Fl_Xlib_Graphics_Driver.h"
 #  include "../../Fl_XColor.H"
 #  include <FL/Fl.H>
 #  include <FL/x.H>
@@ -218,7 +219,7 @@ ulong fl_xpixel(Fl_Color i) {
     xmap.r = realcolor(r, fl_redmask);
     xmap.g = realcolor(g, fl_greenmask);
     xmap.b = realcolor(b, fl_bluemask);
-    return xmap.pixel = 
+    return xmap.pixel =
       (((r&fl_redmask) << fl_redshift)+
        ((g&fl_greenmask)<<fl_greenshift)+
        ((b&fl_bluemask)<< fl_blueshift)

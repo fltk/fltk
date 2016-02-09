@@ -25,7 +25,7 @@
 #define FL_GRAPHICS_DRIVER_H
 
 #include <FL/x.H>
-#include <FL/Fl_DevIce.H>
+#include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Pixmap.H>
@@ -77,9 +77,9 @@ typedef short COORD_T;
  in the \ref fl_drawings and \ref fl_attributes modules. The \ref fl_graphics_driver global variable
  gives at any time the graphics driver used by all drawing operations. Its value changes when
  drawing operations are directed to another drawing surface by Fl_Surface_Device::set_current().
- 
+
  \p The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
- An example would be to draw to a PDF file. This would involve creating a new Fl_Graphics_Driver derived 
+ An example would be to draw to a PDF file. This would involve creating a new Fl_Graphics_Driver derived
  class. This new class should implement all virtual methods of the Fl_Graphics_Driver class
  to support all FLTK drawing functions.
   */

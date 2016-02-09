@@ -18,6 +18,7 @@
 
 // Select fonts from the FLTK font table.
 #include "../../flstring.h"
+#include "Fl_Xlib_Graphics_Driver.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -836,7 +837,7 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &d
 // If this code fails to load the requested font, it falls back through a
 // series of tried 'n tested alternatives, ultimately resorting to what the
 // original fltk code did.
-// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04, 9.04, 9.10) this works 
+// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04, 9.04, 9.10) this works
 //       well for the fltk "built-in" font names.
 static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   XFontStruct* xgl_font = 0;
@@ -883,9 +884,9 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
     }
     snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
-  }  
+  }
   free(pc); // release our copy of the font name
-  
+
   // if we have nothing loaded, try a generic proportional font
   if(!xgl_font) {
     snprintf(xlfd, 128, "-*-helvetica-*-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
@@ -999,7 +1000,7 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
-  
+
   const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
   XftDrawString16(draw_, &color, font_descriptor()->font, x, y, (XftChar16 *)buffer, n);

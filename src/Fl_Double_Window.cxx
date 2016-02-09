@@ -60,18 +60,18 @@ static int can_xdbe() {
 #endif
 
 
-Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l) 
-: Fl_Window(W,H,l), 
-  force_doublebuffering_(0) 
-{ 
-  type(FL_DOUBLE_WINDOW); 
+Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l)
+: Fl_Window(W,H,l),
+  force_doublebuffering_(0)
+{
+  type(FL_DOUBLE_WINDOW);
 }
 
 
 Fl_Double_Window::Fl_Double_Window(int X, int Y, int W, int H, const char *l)
-: Fl_Window(X,Y,W,H,l), 
-  force_doublebuffering_(0) 
-{ 
+: Fl_Window(X,Y,W,H,l),
+  force_doublebuffering_(0)
+{
   type(FL_DOUBLE_WINDOW);
 }
 
@@ -106,6 +106,8 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
 }
 
 #if defined(USE_X11)
+
+#include "drivers/Xlib/Fl_Xlib_Graphics_Driver.h"
 
 #if HAVE_XRENDER
 #include <X11/extensions/Xrender.h>
@@ -248,7 +250,7 @@ char fl_can_do_alpha_blending() {
  @{
  */
 
-/** 
+/**
   Creation of an offscreen graphics buffer.
  \param w,h     width and height in pixels of the buffer.
  \return    the created graphics buffer.
@@ -312,12 +314,12 @@ static Fl_Surface_Device *_ss;
  \param ctx     the offscreen buffer.
  */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
-  _ss = Fl_Surface_Device::surface(); 
+  _ss = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
   if (stack_ix<stack_max) {
     stack_gc[stack_ix] = fl_gc;
     stack_window[stack_ix] = fl_window;
-  } else 
+  } else
     fprintf(stderr, "FLTK CGContext Stack overflow error\n");
   stack_ix++;
 
@@ -433,7 +435,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #elif defined(__APPLE__)
     if ( myi->other_xid ) {
       fl_begin_offscreen( myi->other_xid );
-      fl_clip_region( 0 );   
+      fl_clip_region( 0 );
       draw();
       fl_end_offscreen();
     } else {
@@ -498,23 +500,23 @@ Fl_Double_Window::~Fl_Double_Window() {
 
 
 Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l)
-: Fl_Double_Window(W,H,l) 
+: Fl_Double_Window(W,H,l)
 {
-  overlay_ = 0; 
-  force_doublebuffering_=1; 
-  image(0); 
-}
-  
-  
-Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l)
-: Fl_Double_Window(X,Y,W,H,l) 
-{
-  overlay_ = 0; 
-  force_doublebuffering_=1; 
-  image(0); 
+  overlay_ = 0;
+  force_doublebuffering_=1;
+  image(0);
 }
 
-  
+
+Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l)
+: Fl_Double_Window(X,Y,W,H,l)
+{
+  overlay_ = 0;
+  force_doublebuffering_=1;
+  image(0);
+}
+
+
 //
 // End of "$Id$".
 //
