@@ -24,14 +24,15 @@
 
 #define MAX_SCREENS 16
 
-// Number of screens returned by multi monitor aware API; -1 before init
-static int num_screens = -1;
 
 #ifdef WIN32
 #  if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
 #    define COMPILE_MULTIMON_STUBS
 #    include <multimon.h>
 #  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
+
+// Number of screens returned by multi monitor aware API; -1 before init
+static int num_screens = -1;
 
 #ifndef FL_DOXYGEN
 void Fl::call_screen_init() {
@@ -127,67 +128,7 @@ static void screen_init() {
 
 #else
 
-#ifndef FL_DOXYGEN
-void Fl::call_screen_init() {
-  screen_init();
-}
-#endif
-
-#if HAVE_XINERAMA
-#  include <X11/extensions/Xinerama.h>
-#endif
-typedef struct {
-  short x_org;
-  short y_org;
-  short width;
-  short height;
-} FLScreenInfo;
-static FLScreenInfo screens[MAX_SCREENS];
-static float dpi[MAX_SCREENS][2];
-
-static void screen_init() {
-  if (!fl_display) fl_open_display();
-  // FIXME: Rewrite using RandR instead
-#if HAVE_XINERAMA
-  if (XineramaIsActive(fl_display)) {
-    XineramaScreenInfo *xsi = XineramaQueryScreens(fl_display, &num_screens);
-    if (num_screens > MAX_SCREENS) num_screens = MAX_SCREENS;
-
-    /* There's no way to use different DPI for different Xinerama screens. */
-    for (int i=0; i<num_screens; i++) {
-      screens[i].x_org = xsi[i].x_org;
-      screens[i].y_org = xsi[i].y_org;
-      screens[i].width = xsi[i].width;
-      screens[i].height = xsi[i].height;
-
-      int mm = DisplayWidthMM(fl_display, fl_screen);
-      dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
-      mm = DisplayHeightMM(fl_display, fl_screen);
-      dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
-    }
-    if (xsi) XFree(xsi);
-  } else 
-#endif
-  { // ! XineramaIsActive()
-    num_screens = ScreenCount(fl_display);
-    if (num_screens > MAX_SCREENS) num_screens = MAX_SCREENS;
-    
-    for (int i=0; i<num_screens; i++) {
-      screens[i].x_org = 0;
-      screens[i].y_org = 0;
-      screens[i].width = DisplayWidth(fl_display, i);
-      screens[i].height = DisplayHeight(fl_display, i);
-  
-      int mm = DisplayWidthMM(fl_display, i);
-      dpi[i][0] = mm ? DisplayWidth(fl_display, i)*25.4f/mm : 0.0f;
-      mm = DisplayHeightMM(fl_display, i);
-      dpi[i][1] = mm ? DisplayHeight(fl_display, i)*25.4f/mm : 0.0f;
-    }
-  }
-}
-
 #endif // WIN32
-
 
 
 

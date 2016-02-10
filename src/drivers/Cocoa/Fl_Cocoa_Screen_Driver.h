@@ -26,6 +26,7 @@
 #define FL_COCOA_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
+#include <FL/x.H>
 
 /*
  Move everything here that manages the native screen interface.
@@ -38,7 +39,13 @@
 */
 
 
-class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver {
+class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
+{
+protected:
+  XRectangle screens[MAX_SCREENS];
+  float dpi_h[MAX_SCREENS];
+  float dpi_v[MAX_SCREENS];
+
 public:
   virtual void init();
   virtual int x();

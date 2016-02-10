@@ -20,7 +20,6 @@
 #define FL_SCREEN_DRIVER_H
 
 #include <FL/Fl_Device.H>
-#include <FL/x.H>
 
 
 class FL_EXPORT Fl_Screen_Driver : public Fl_Device {
@@ -30,10 +29,7 @@ protected:
 
   static const int MAX_SCREENS = 16;
 
-  int num_screens = -1;
-  XRectangle screens[MAX_SCREENS];
-  float dpi_h[MAX_SCREENS];
-  float dpi_v[MAX_SCREENS];
+  int num_screens;
 
 public:
   static Fl_Screen_Driver *newScreenDriver();

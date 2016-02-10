@@ -43,6 +43,7 @@
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
+#  include "drivers/X11/Fl_X11_Screen_Driver.h"
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>
@@ -362,7 +363,7 @@ static Atom fl_NET_SUPPORTING_WM_CHECK;
 static Atom fl_NET_WM_STATE;
 static Atom fl_NET_WM_STATE_FULLSCREEN;
 static Atom fl_NET_WM_FULLSCREEN_MONITORS;
-static Atom fl_NET_WORKAREA;
+Atom fl_NET_WORKAREA;
 static Atom fl_NET_WM_ICON;
 static Atom fl_NET_ACTIVE_WINDOW;
 
@@ -785,61 +786,6 @@ void fl_close_display() {
   XCloseDisplay(fl_display);
 }
 
-static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
-
-static void fl_init_workarea() {
-  fl_open_display();
-
-  Atom actual;
-  unsigned long count, remaining;
-  int format;
-  long *xywh = 0;
-
-  /* If there are several screens, the _NET_WORKAREA property 
-   does not give the work area of the main screen, but that of all screens together.
-   Therefore, we use this property only when there is a single screen,
-   and fall back to the main screen full area when there are several screens.
-   */
-  if (Fl::screen_count() > 1 || XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
-			 fl_NET_WORKAREA, 0, 4, False,
-                         XA_CARDINAL, &actual, &format, &count, &remaining,
-                         (unsigned char **)&xywh) || !xywh || !xywh[2] ||
-                         !xywh[3])
-  {
-    Fl::screen_xywh(fl_workarea_xywh[0], 
-		    fl_workarea_xywh[1], 
-		    fl_workarea_xywh[2], 
-		    fl_workarea_xywh[3], 0);
-  }
-  else
-  {
-    fl_workarea_xywh[0] = (int)xywh[0];
-    fl_workarea_xywh[1] = (int)xywh[1];
-    fl_workarea_xywh[2] = (int)xywh[2];
-    fl_workarea_xywh[3] = (int)xywh[3];
-  }
-  if ( xywh ) { XFree(xywh); xywh = 0; }
-}
-
-int Fl::x() {
-  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
-  return fl_workarea_xywh[0];
-}
-
-int Fl::y() {
-  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
-  return fl_workarea_xywh[1];
-}
-
-int Fl::w() {
-  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
-  return fl_workarea_xywh[2];
-}
-
-int Fl::h() {
-  if (fl_workarea_xywh[0] < 0) fl_init_workarea();
-  return fl_workarea_xywh[3];
-}
 
 void Fl::get_mouse(int &xx, int &yy) {
   fl_open_display();
@@ -1323,6 +1269,12 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lowe
 */
 static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
   return XKeycodeToKeysym(d, k, i);
+}
+
+static void fl_init_workarea()
+{
+  Fl_X11_Screen_Driver *drv = (Fl_X11_Screen_Driver*)Fl::screen_driver();
+  drv->init_workarea();
 }
 
 int fl_handle(const XEvent& thisevent)

@@ -28,8 +28,20 @@
 #include <FL/Fl_Screen_Driver.H>
 
 
-class FL_EXPORT Fl_X11_Screen_Driver : public Fl_Screen_Driver {
+class FL_EXPORT Fl_X11_Screen_Driver : public Fl_Screen_Driver 
+{
+protected:
+  typedef struct {
+    short x_org;
+    short y_org;
+    short width;
+    short height;
+  } FLScreenInfo;
+  FLScreenInfo screens[MAX_SCREENS];
+  float dpi[MAX_SCREENS][2];
+
 public:
+  void init_workarea();
   virtual void init();
   virtual int x();
   virtual int y();
