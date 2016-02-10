@@ -20,6 +20,7 @@
 #include <config.h>
 #include "../../config_lib.h"
 #include "Fl_Xlib_Graphics_Driver.h"
+#include <string.h>
 
 #if HAVE_XRENDER
 #include <X11/extensions/Xrender.h>

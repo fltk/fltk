@@ -44,6 +44,7 @@ CPPFILES = \
 	Fl_File_Chooser2.cxx \
 	Fl_File_Icon.cxx \
 	Fl_File_Input.cxx \
+	Fl_Graphics_Driver.cxx \
 	Fl_Group.cxx \
 	Fl_Help_View.cxx \
 	Fl_Image.cxx \
@@ -233,6 +234,7 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
 
 XLIBCPPFILES = \
+	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
@@ -247,6 +249,7 @@ XLIBXFTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
 
 GDICPPFILES = \
+	drivers/GDI/Fl_GDI_Graphics_Driver.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_font.cxx \
