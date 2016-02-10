@@ -20,6 +20,11 @@
 #include "../../config_lib.h"
 #include "Fl_WinAPI_Screen_Driver.h"
 
+#  if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
+#    define COMPILE_MULTIMON_STUBS
+#    include <multimon.h>
+#  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
+
 
 /**
  Creates a driver that manages all screen and display related calls.
@@ -33,28 +38,94 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 }
 
 
+// We go the much more difficult route of individually picking some multi-screen
+// functions from the USER32.DLL . If these functions are not available, we
+// will gracefully fall back to single monitor support.
+//
+// If we were to insist on the existence of "EnumDisplayMonitors" and
+// "GetMonitorInfoA", it would be impossible to use FLTK on Windows 2000
+// before SP2 or earlier.
+
+// BOOL EnumDisplayMonitors(HDC, LPCRECT, MONITORENUMPROC, LPARAM)
+typedef BOOL(WINAPI* fl_edm_func)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
+// BOOL GetMonitorInfo(HMONITOR, LPMONITORINFO)
+typedef BOOL(WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
+
+static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
+
+
+BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC hdc, LPRECT r, LPARAM d) 
+{
+  Fl_WinAPI_Screen_Driver *drv = (Fl_WinAPI_Screen_Driver*)d;
+  return drv->screen_cb(mon, hdc, r);
+}
+
+
+BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r) 
+{
+  if (num_screens >= MAX_SCREENS) return TRUE;
+
+  MONITORINFOEX mi;
+  mi.cbSize = sizeof(mi);
+
+  //  GetMonitorInfo(mon, &mi);
+  //  (but we use our self-acquired function pointer instead)
+  if (fl_gmi(mon, &mi)) {
+    screens[num_screens] = mi.rcMonitor;
+    // If we also want to record the work area, we would also store mi.rcWork at this point
+    work_area[num_screens] = mi.rcWork;
+    /*fl_alert("screen %d %d,%d,%d,%d work %d,%d,%d,%d",num_screens,
+    screens[num_screens].left,screens[num_screens].right,screens[num_screens].top,screens[num_screens].bottom,
+    work_area[num_screens].left,work_area[num_screens].right,work_area[num_screens].top,work_area[num_screens].bottom);
+    */
+    // find the pixel size
+    if (mi.cbSize == sizeof(mi)) {
+      HDC screen = CreateDC(mi.szDevice, NULL, NULL, NULL);
+      if (screen) {
+        dpi[num_screens][0] = (float)GetDeviceCaps(screen, LOGPIXELSX);
+        dpi[num_screens][1] = (float)GetDeviceCaps(screen, LOGPIXELSY);
+      }
+      ReleaseDC(0L, screen);
+    }
+
+    num_screens++;
+  }
+  return TRUE;
+}
+
+
 void Fl_WinAPI_Screen_Driver::init()
 {
-  CGDirectDisplayID displays[MAX_SCREENS];
-  CGDisplayCount count, i;
-  CGRect r;
-  CGGetActiveDisplayList(MAX_SCREENS, displays, &count);
-  for( i = 0; i < count; i++) {
-    r = CGDisplayBounds(displays[i]);
-    screens[i].x      = int(r.origin.x);
-    screens[i].y      = int(r.origin.y);
-    screens[i].width  = int(r.size.width);
-    screens[i].height = int(r.size.height);
-    //fprintf(stderr,"screen %d %dx%dx%dx%d\n",i,screens[i].x,screens[i].y,screens[i].width,screens[i].height);
-    if (&CGDisplayScreenSize != NULL) {
-      CGSize s = CGDisplayScreenSize(displays[i]); // from 10.3
-      dpi_h[i] = screens[i].width / (s.width/25.4);
-      dpi_v[i] = screens[i].height / (s.height/25.4);
-    } else {
-      dpi_h[i] = dpi_v[i] = 75.;
+  // Since not all versions of Windows include multiple monitor support,
+  // we do a run-time check for the required functions...
+  HMODULE hMod = GetModuleHandle("USER32.DLL");
+
+  if (hMod) {
+    // check that EnumDisplayMonitors is available
+    fl_edm_func fl_edm = (fl_edm_func)GetProcAddress(hMod, "EnumDisplayMonitors");
+
+    if (fl_edm) {
+      // we have EnumDisplayMonitors - do we also have GetMonitorInfoA ?
+      fl_gmi = (fl_gmi_func)GetProcAddress(hMod, "GetMonitorInfoA");
+      if (fl_gmi) {
+        // We have GetMonitorInfoA, enumerate all the screens...
+        //      EnumDisplayMonitors(0,0,screen_cb,0);
+        //      (but we use our self-acquired function pointer instead)
+        //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
+        num_screens = 0;
+        fl_edm(0, 0, screen_cb, (LPARAM)this);
+        return;
+      }
     }
   }
-  num_screens = count;
+
+  // If we get here, assume we have 1 monitor...
+  num_screens = 1;
+  screens[0].top = 0;
+  screens[0].left = 0;
+  screens[0].right = GetSystemMetrics(SM_CXSCREEN);
+  screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
+  work_area[0] = screens[0];
 }
 
 
@@ -62,7 +133,10 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  Fl_X::screen_work_area(X, Y, W, H, n);
+  X = work_area[n].left;
+  Y = work_area[n].top;
+  W = work_area[n].right - X;
+  H = work_area[n].bottom - Y;
 }
 
 
@@ -73,10 +147,18 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
   if ((n < 0) || (n >= num_screens))
     n = 0;
 
-  X = screens[n].x;
-  Y = screens[n].y;
-  W = screens[n].width;
-  H = screens[n].height;
+  if (num_screens > 0) {
+    X = screens[n].left;
+    Y = screens[n].top;
+    W = screens[n].right - screens[n].left;
+    H = screens[n].bottom - screens[n].top;
+  } else {
+    /* Fallback if something is broken... */
+    X = 0;
+    Y = 0;
+    W = GetSystemMetrics(SM_CXSCREEN);
+    H = GetSystemMetrics(SM_CYSCREEN);
+  }
 }
 
 
@@ -84,11 +166,42 @@ void Fl_WinAPI_Screen_Driver::screen_dpi(float &h, float &v, int n)
 {
   if (num_screens < 0) init();
   h = v = 0.0f;
-
   if (n >= 0 && n < num_screens) {
-    h = dpi_h[n];
-    v = dpi_v[n];
+    h = float(dpi[n][0]);
+    v = float(dpi[n][1]);
   }
+}
+
+int Fl_WinAPI_Screen_Driver::x()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.left;
+}
+
+int Fl_WinAPI_Screen_Driver::y()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.top;
+}
+
+int Fl_WinAPI_Screen_Driver::h()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.bottom - r.top;
+}
+
+int Fl_WinAPI_Screen_Driver::w()
+{
+  RECT r;
+
+  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
+  return r.right - r.left;
 }
 
 

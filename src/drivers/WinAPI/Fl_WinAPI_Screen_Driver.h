@@ -26,19 +26,19 @@
 #define FL_WINAPI_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
-
-/*
- Move everything here that manages the native screen interface.
- 
- There is exactly one screen driver in the system.
- 
- - screen configuration and sizes
- - multiple screens
- - native dialog boxes
-*/
+#include <FL/x.H>
 
 
-class FL_EXPORT Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver {
+class FL_EXPORT Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver 
+{
+protected:
+  RECT screens[MAX_SCREENS];
+  RECT work_area[MAX_SCREENS];
+  float dpi[MAX_SCREENS][2];
+
+  static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
+  BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
+
 public:
   virtual void init();
   virtual int x();

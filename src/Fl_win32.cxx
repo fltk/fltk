@@ -537,38 +537,6 @@ void Fl::disable_im() {
 
 ////////////////////////////////////////////////////////////////
 
-int Fl::x()
-{
-  RECT r;
-
-  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.left;
-}
-
-int Fl::y()
-{
-  RECT r;
-
-  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.top;
-}
-
-int Fl::h()
-{
-  RECT r;
-
-  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.bottom - r.top;
-}
-
-int Fl::w()
-{
-  RECT r;
-
-  SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.right - r.left;
-}
-
 void Fl::get_mouse(int &x, int &y) {
   POINT p;
   GetCursorPos(&p);
