@@ -202,9 +202,15 @@ elseif (APPLE)
     drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
+    drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx
+    drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
+    drivers/Darwin/Fl_Darwin_System_Driver.cxx
   )
   set(DRIVER_HEADER_FILES
     drivers/Quartz/Fl_Quartz_Graphics_Driver.h
+    drivers/Cocoa/Fl_Cocoa_Window_Driver.h
+    drivers/Cocoa/Fl_Cocoa_Screen_Driver.h
+    drivers/Darwin/Fl_Darwin_System_Driver.h
   )
 
 else ()

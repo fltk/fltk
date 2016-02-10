@@ -364,9 +364,9 @@ endif(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
 #######################################################################
 
 #######################################################################
-set(FL_CFG_FILESYSTEM_SUPPORT FALSE)
+set(FL_CFG_NO_FILESYSTEM_SUPPORT TRUE)
 if(OPTION_FILESYSTEM_SUPPORT)
-   set(FL_CFG_FILESYSTEM_SUPPORT TRUE)
+   set(FL_CFG_NO_FILESYSTEM_SUPPORT FALSE)
 endif(OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 

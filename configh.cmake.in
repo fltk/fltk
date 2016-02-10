@@ -346,7 +346,7 @@
  * Do we want filename handling and a filechooser?
  */
 
-#cmakedefine FL_CFG_FILESYSTEM_SUPPORT 1
+#cmakedefine FL_CFG_NO_FILESYSTEM_SUPPORT 1
 
 /*
  * End of "$Id$".
