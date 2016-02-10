@@ -21,6 +21,7 @@
 #include "Fl_X11_Screen_Driver.h"
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/fl_ask.h>
 
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
@@ -182,6 +183,21 @@ void Fl_X11_Screen_Driver::screen_dpi(float &h, float &v, int n)
   if (n >= 0 && n < num_screens) {
     h = dpi[n][0];
     v = dpi[n][1];
+  }
+}
+
+
+void Fl_X11_Screen_Driver::beep(int type) {
+  switch (type) {
+    case FL_BEEP_DEFAULT :
+    case FL_BEEP_ERROR :
+      if (!fl_display) fl_open_display();
+      XBell(fl_display, 100);
+      break;
+    default :
+      if (!fl_display) fl_open_display();
+      XBell(fl_display, 50);
+      break;
   }
 }
 

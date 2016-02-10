@@ -19,7 +19,10 @@
 
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Screen_Driver.h"
+#include <FL/fl_ask.h>
 
+
+extern "C" void NSBeep(void);
 
 
 /**
@@ -92,6 +95,22 @@ void Fl_Cocoa_Screen_Driver::screen_dpi(float &h, float &v, int n)
   }
 }
 
+
+/**
+ Emits a system beep message.
+ \param[in] type   The beep type from the \ref Fl_Beep enumeration.
+ \note \#include <FL/fl_ask.H>
+ */
+void Fl_Cocoa_Screen_Driver::beep(int type) {
+  switch (type) {
+    case FL_BEEP_DEFAULT :
+    case FL_BEEP_ERROR :
+      NSBeep();
+      break;
+    default :
+      break;
+  }
+}
 
 
 //

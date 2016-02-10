@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_WinAPI_Screen_Driver.h"
+#include <FL/fl_ask.h>
 
 #  if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
 #    define COMPILE_MULTIMON_STUBS
@@ -172,6 +173,7 @@ void Fl_WinAPI_Screen_Driver::screen_dpi(float &h, float &v, int n)
   }
 }
 
+
 int Fl_WinAPI_Screen_Driver::x()
 {
   RECT r;
@@ -179,6 +181,7 @@ int Fl_WinAPI_Screen_Driver::x()
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
   return r.left;
 }
+
 
 int Fl_WinAPI_Screen_Driver::y()
 {
@@ -188,6 +191,7 @@ int Fl_WinAPI_Screen_Driver::y()
   return r.top;
 }
 
+
 int Fl_WinAPI_Screen_Driver::h()
 {
   RECT r;
@@ -196,12 +200,36 @@ int Fl_WinAPI_Screen_Driver::h()
   return r.bottom - r.top;
 }
 
+
 int Fl_WinAPI_Screen_Driver::w()
 {
   RECT r;
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
   return r.right - r.left;
+}
+
+
+void Fl_WinAPI_Screen_Driver::beep(int type)
+{
+  switch (type) {
+    case FL_BEEP_QUESTION :
+    case FL_BEEP_PASSWORD :
+      MessageBeep(MB_ICONQUESTION);
+      break;
+    case FL_BEEP_MESSAGE :
+      MessageBeep(MB_ICONASTERISK);
+      break;
+    case FL_BEEP_NOTIFICATION :
+      MessageBeep(MB_ICONASTERISK);
+      break;
+    case FL_BEEP_ERROR :
+      MessageBeep(MB_ICONERROR);
+      break;
+    default :
+      MessageBeep(0xFFFFFFFF);
+      break;
+  }
 }
 
 
