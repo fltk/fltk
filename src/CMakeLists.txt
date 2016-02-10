@@ -395,7 +395,7 @@ endif(OPTION_USE_SYSTEM_LIBPNG)
 
 #######################################################################
 if(OPENGL_FOUND)
-FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES}";${GL_HEADER_FILE};${GL_DRIVER_HEADER_FILES})
+FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES};${GL_HEADER_FILE};${GL_DRIVER_HEADER_FILES}")
    target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
 endif(OPENGL_FOUND)
 

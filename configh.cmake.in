@@ -343,5 +343,11 @@
 #cmakedefine NO_PRINT_SUPPORT 1
 
 /*
+ * Do we want filename handling and a filechooser?
+ */
+
+#cmakedefine FL_CFG_FILESYSTEM_SUPPORT 1
+
+/*
  * End of "$Id$".
  */

@@ -79,6 +79,7 @@ option(OPTION_BUILD_SHARED_LIBS
 #######################################################################
 option(OPTION_BUILD_EXAMPLES "build example programs" ON)
 option(OPTION_PRINT_SUPPORT "allow print support" ON)
+option(OPTION_FILESYSTEM_SUPPORT "allow file system support" ON)
 
 #######################################################################
 if(DOXYGEN_FOUND)
@@ -360,6 +361,13 @@ set(NO_PRINT_SUPPORT FALSE)
 if(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
    set(NO_PRINT_SUPPORT TRUE)
 endif(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
+#######################################################################
+
+#######################################################################
+set(FL_CFG_FILESYSTEM_SUPPORT FALSE)
+if(OPTION_FILESYSTEM_SUPPORT)
+   set(FL_CFG_FILESYSTEM_SUPPORT TRUE)
+endif(OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
