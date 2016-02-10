@@ -302,7 +302,7 @@ void Fl_Quartz_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uin
     if (mask_) *(bool*)mask_ = false;
     CGImageRelease((CGImageRef)id_);
     id_ = 0;
-    mask_ = NULL;
+    mask_ = 0;
   }
 }
 
