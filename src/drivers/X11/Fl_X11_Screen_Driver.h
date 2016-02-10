@@ -1,7 +1,7 @@
 //
 // "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $"
 //
-// Definition of Apple Cocoa Screen interface
+// Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -18,27 +18,17 @@
 //
 
 /**
- \file Fl_Cocoa_Screen_Driver.h
- \brief Definition of Apple Cocoa Screen interface.
+ \file Fl_X11_Screen_Driver.h
+ \brief Definition of X11 Screen interface
  */
 
-#ifndef FL_COCOA_SCREEN_DRIVER_H
-#define FL_COCOA_SCREEN_DRIVER_H
+#ifndef FL_X11_SCREEN_DRIVER_H
+#define FL_X11_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
 
-/*
- Move everything here that manages the native screen interface.
- 
- There is exactly one screen driver in the system.
- 
- - screen configuration and sizes
- - multiple screens
- - native dialog boxes
-*/
 
-
-class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver {
+class FL_EXPORT Fl_X11_Screen_Driver : public Fl_Screen_Driver {
 public:
   virtual void init();
   virtual int x();
@@ -51,7 +41,7 @@ public:
 };
 
 
-#endif // FL_COCOA_SCREEN_DRIVER_H
+#endif // FL_X11_SCREEN_DRIVER_H
 
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".

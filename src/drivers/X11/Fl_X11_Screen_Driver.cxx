@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa Screen interface.
+// Definition of X11 Screen interface
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -18,8 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Cocoa_Screen_Driver.h"
-
+#include "Fl_X11_Screen_Driver.h"
 
 
 /**
@@ -30,11 +29,11 @@
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
-  return new Fl_Cocoa_Screen_Driver();
+  return new Fl_X11_Screen_Driver();
 }
 
 
-void Fl_Cocoa_Screen_Driver::init()
+void Fl_X11_Screen_Driver::init()
 {
   CGDirectDisplayID displays[MAX_SCREENS];
   CGDisplayCount count, i;
@@ -59,7 +58,7 @@ void Fl_Cocoa_Screen_Driver::init()
 }
 
 
-void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, int n)
+void Fl_X11_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, int n)
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
@@ -67,7 +66,7 @@ void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, in
 }
 
 
-void Fl_Cocoa_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
+void Fl_X11_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
 {
   if (num_screens < 0) init();
 
@@ -81,7 +80,7 @@ void Fl_Cocoa_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
 }
 
 
-void Fl_Cocoa_Screen_Driver::screen_dpi(float &h, float &v, int n)
+void Fl_X11_Screen_Driver::screen_dpi(float &h, float &v, int n)
 {
   if (num_screens < 0) init();
   h = v = 0.0f;

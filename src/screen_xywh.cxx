@@ -19,6 +19,7 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <config.h>
 
 #define MAX_SCREENS 16
@@ -31,6 +32,12 @@ static int num_screens = -1;
 #    define COMPILE_MULTIMON_STUBS
 #    include <multimon.h>
 #  endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
+
+#ifndef FL_DOXYGEN
+void Fl::call_screen_init() {
+  screen_init();
+}
+#endif
 
 // We go the much more difficult route of individually picking some multi-screen
 // functions from the USER32.DLL . If these functions are not available, we
@@ -47,12 +54,12 @@ typedef BOOL (WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
 
 static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
 
-static RECT screens[16];
-static RECT work_area[16];
-static float dpi[16][2];
+static RECT screens[MAX_SCREENS];
+static RECT work_area[MAX_SCREENS];
+static float dpi[MAX_SCREENS][2];
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
-  if (num_screens >= 16) return TRUE;
+  if (num_screens >= MAX_SCREENS) return TRUE;
 
   MONITORINFOEX mi;
   mi.cbSize = sizeof(mi);
@@ -115,39 +122,16 @@ static void screen_init() {
   work_area[0] = screens[0];
 }
 #elif defined(__APPLE__)
-static XRectangle screens[16];
-static float dpi_h[16];
-static float dpi_v[16];
-
-static void screen_init() {
-  CGDirectDisplayID displays[16];
-  CGDisplayCount count, i;
-  CGRect r;
-  CGGetActiveDisplayList(16, displays, &count);
-  for( i = 0; i < count; i++) {
-    r = CGDisplayBounds(displays[i]);
-    screens[i].x      = int(r.origin.x);
-    screens[i].y      = int(r.origin.y);
-    screens[i].width  = int(r.size.width);
-    screens[i].height = int(r.size.height);
-//fprintf(stderr,"screen %d %dx%dx%dx%d\n",i,screens[i].x,screens[i].y,screens[i].width,screens[i].height);
-    if (&CGDisplayScreenSize != NULL) {
-      CGSize s = CGDisplayScreenSize(displays[i]); // from 10.3
-      dpi_h[i] = screens[i].width / (s.width/25.4);
-      dpi_v[i] = screens[i].height / (s.height/25.4);
-    } else {
-      dpi_h[i] = dpi_v[i] = 75.;
-    }
-  }
-  num_screens = count;
-}
 
 #elif defined(FL_PORTING)
 
-#  pragma message "FL_PORTING: return various information about the screens in the system"
-static void screen_init() { }
-
 #else
+
+#ifndef FL_DOXYGEN
+void Fl::call_screen_init() {
+  screen_init();
+}
+#endif
 
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
@@ -204,20 +188,51 @@ static void screen_init() {
 
 #endif // WIN32
 
-#ifndef FL_DOXYGEN
-void Fl::call_screen_init() {
-  screen_init();
+
+
+
+void Fl::call_screen_init()
+{
+  screen_driver()->init();
 }
-#endif
+
+
+/** Returns the leftmost x coordinate of the main screen work area. */
+int Fl::x()
+{
+  return screen_driver()->x();
+}
+
+
+/** Returns the topmost y coordinate of the main screen work area. */
+int Fl::y()
+{
+  return screen_driver()->y();
+}
+
+
+/** Returns the width in pixels of the main screen work area. */
+int Fl::w()
+{
+  return screen_driver()->w();
+}
+
+
+/** Returns the height in pixels of the main screen work area. */
+int Fl::h()
+{
+  return screen_driver()->h();
+}
+
 
 /**
   Gets the number of available screens.
 */
-int Fl::screen_count() {
-  if (num_screens < 0) screen_init();
-
-  return num_screens ? num_screens : 1;
+int Fl::screen_count()
+{
+  return screen_driver()->screen_count();
 }
+
 
 /**
   Gets the bounding box of a screen
@@ -225,8 +240,9 @@ int Fl::screen_count() {
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] mx, my the absolute screen position
 */
-void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
-  screen_xywh(X, Y, W, H, screen_num(mx, my));
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my)
+{
+  screen_driver()->screen_xywh(X, Y, W, H, mx, my);
 }
 
 
@@ -236,8 +252,9 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
  \param[out]  X,Y,W,H the work area bounding box
  \param[in] mx, my the absolute screen position
  */
-void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my) {
-  screen_work_area(X, Y, W, H, screen_num(mx, my));
+void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my)
+{
+  screen_driver()->screen_work_area(X, Y, W, H, mx, my);
 }
 
 /**
@@ -246,26 +263,28 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my) {
  \param[in] n the screen number (0 to Fl::screen_count() - 1)
  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
 */
-void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n) {
-  if (num_screens < 0) screen_init();
-  if (n < 0 || n >= num_screens) n = 0;
-#ifdef WIN32
-  X = work_area[n].left;
-  Y = work_area[n].top;
-  W = work_area[n].right - X;
-  H = work_area[n].bottom - Y;
-#elif defined(__APPLE__)
-  Fl_X::screen_work_area(X, Y, W, H, n);
-#else
-  if (n == 0) { // for the main screen, these return the work area
-    X = Fl::x();
-    Y = Fl::y();
-    W = Fl::w();
-    H = Fl::h();
-  } else { // for other screens, work area is full screen,
-    screen_xywh(X, Y, W, H, n);
-  }
-#endif
+void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n)
+{
+  screen_driver()->screen_work_area(X, Y, W, H, n);
+//  if (num_screens < 0) screen_init();
+//  if (n < 0 || n >= num_screens) n = 0;
+//#ifdef WIN32
+//  X = work_area[n].left;
+//  Y = work_area[n].top;
+//  W = work_area[n].right - X;
+//  H = work_area[n].bottom - Y;
+//#elif defined(__APPLE__)
+//  Fl_X::screen_work_area(X, Y, W, H, n);
+//#else
+//  if (n == 0) { // for the main screen, these return the work area
+//    X = Fl::x();
+//    Y = Fl::y();
+//    W = Fl::w();
+//    H = Fl::h();
+//  } else { // for other screens, work area is full screen,
+//    screen_xywh(X, Y, W, H, n);
+//  }
+//#endif
 }
 
 /**
@@ -275,42 +294,46 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n) {
   \param[in] n the screen number (0 to Fl::screen_count() - 1)
   \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
 */
-void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
-  if (num_screens < 0) screen_init();
-
-  if ((n < 0) || (n >= num_screens))
-    n = 0;
-
-#ifdef WIN32
-  if (num_screens > 0) {
-    X = screens[n].left;
-    Y = screens[n].top;
-    W = screens[n].right - screens[n].left;
-    H = screens[n].bottom - screens[n].top;
-  } else {
-    /* Fallback if something is broken... */
-    X = 0;
-    Y = 0;
-    W = GetSystemMetrics(SM_CXSCREEN);
-    H = GetSystemMetrics(SM_CYSCREEN);
-  }
-#elif defined(__APPLE__)
-  X = screens[n].x;
-  Y = screens[n].y;
-  W = screens[n].width;
-  H = screens[n].height;
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement screen_xywh"
-  X = 0; Y = 0; W = 800; H = 600;
-#else
-  if (num_screens > 0) {
-    X = screens[n].x_org;
-    Y = screens[n].y_org;
-    W = screens[n].width;
-    H = screens[n].height;
-  }
-#endif // WIN32
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n)
+{
+  screen_driver()->screen_xywh(X, Y, W, H, n);
+//  
+//  if (num_screens < 0) screen_init();
+//
+//  if ((n < 0) || (n >= num_screens))
+//    n = 0;
+//
+//#ifdef WIN32
+//  if (num_screens > 0) {
+//    X = screens[n].left;
+//    Y = screens[n].top;
+//    W = screens[n].right - screens[n].left;
+//    H = screens[n].bottom - screens[n].top;
+//  } else {
+//    /* Fallback if something is broken... */
+//    X = 0;
+//    Y = 0;
+//    W = GetSystemMetrics(SM_CXSCREEN);
+//    H = GetSystemMetrics(SM_CYSCREEN);
+//  }
+//#elif defined(__APPLE__)
+//  X = screens[n].x;
+//  Y = screens[n].y;
+//  W = screens[n].width;
+//  H = screens[n].height;
+//#elif defined(FL_PORTING)
+//#  pragma message "FL_PORTING: implement screen_xywh"
+//  X = 0; Y = 0; W = 800; H = 600;
+//#else
+//  if (num_screens > 0) {
+//    X = screens[n].x_org;
+//    Y = screens[n].y_org;
+//    W = screens[n].width;
+//    H = screens[n].height;
+//  }
+//#endif // WIN32
 }
+
 
 /**
   Gets the screen bounding rect for the screen
@@ -320,41 +343,22 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   \param[in] mx, my, mw, mh the rectangle to search for intersection with
   \see void screen_xywh(int &X, int &Y, int &W, int &H, int n)
   */
-void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh) {
-  screen_xywh(X, Y, W, H, screen_num(mx, my, mw, mh));
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh)
+{
+  screen_driver()->screen_xywh(X, Y, W, H, mx, my, mw, mh);
 }
+
 
 /**
   Gets the screen number of a screen
   that contains the specified screen position \p x, \p y
   \param[in] x, y the absolute screen position
 */
-int Fl::screen_num(int x, int y) {
-  int screen = 0;
-  if (num_screens < 0) screen_init();
-  
-  for (int i = 0; i < num_screens; i ++) {
-    int sx, sy, sw, sh;
-    Fl::screen_xywh(sx, sy, sw, sh, i);
-    if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
-      screen = i;
-      break;
-    }
-  }
-  return screen;
+int Fl::screen_num(int x, int y)
+{
+  return screen_driver()->screen_num(x, y);
 }
 
-// Return the number of pixels common to the two rectangular areas
-static inline float fl_intersection(int x1, int y1, int w1, int h1,
-                                    int x2, int y2, int w2, int h2) {
-  if(x1+w1 < x2 || x2+w2 < x1 || y1+h1 < y2 || y2+h2 < y1)
-    return 0.;
-  int int_left = x1 > x2 ? x1 : x2;
-  int int_right = x1+w1 > x2+w2 ? x2+w2 : x1+w1;
-  int int_top = y1 > y2 ? y1 : y2;
-  int int_bottom = y1+h1 > y2+h2 ? y2+h2 : y1+h1;
-  return (float)(int_right - int_left) * (int_bottom - int_top);
-}
 
 /**
   Gets the screen number for the screen
@@ -362,20 +366,11 @@ static inline float fl_intersection(int x1, int y1, int w1, int h1,
   defined by \p x, \p y, \p w, \p h.
   \param[in] x, y, w, h the rectangle to search for intersection with
   */
-int Fl::screen_num(int x, int y, int w, int h) {
-  int best_screen = 0;
-  float best_intersection = 0.;
-  for (int i = 0; i < Fl::screen_count(); i++) {
-    int sx = 0, sy = 0, sw = 0, sh = 0;
-    Fl::screen_xywh(sx, sy, sw, sh, i);
-    float sintersection = fl_intersection(x, y, w, h, sx, sy, sw, sh);
-    if (sintersection > best_intersection) {
-      best_screen = i;
-      best_intersection = sintersection;
-    }
-  }
-  return best_screen;
+int Fl::screen_num(int x, int y, int w, int h)
+{
+  return screen_driver()->screen_num(x, y, w, h);
 }
+
 
 /**
  Gets the screen resolution in dots-per-inch for the given screen.
@@ -385,27 +380,50 @@ int Fl::screen_num(int x, int y, int w, int h) {
  */
 void Fl::screen_dpi(float &h, float &v, int n)
 {
-  if (num_screens < 0) screen_init();
-  h = v = 0.0f;
+  screen_driver()->screen_dpi(h, v, n);
+//  if (num_screens < 0) screen_init();
+//  h = v = 0.0f;
+//
+//#ifdef WIN32
+//  if (n >= 0 && n < num_screens) {
+//    h = float(dpi[n][0]);
+//    v = float(dpi[n][1]);
+//  }
+//#elif defined(__APPLE__)
+//  if (n >= 0 && n < num_screens) {
+//    h = dpi_h[n];
+//    v = dpi_v[n];
+//  }
+//#elif defined(FL_PORTING)
+//#  pragma message "FL_PORTING: implement screen_dpi"
+//#else
+//  if (n >= 0 && n < num_screens) {
+//    h = dpi[n][0];
+//    v = dpi[n][1];
+//  }
+//#endif // WIN32
+}
 
-#ifdef WIN32
-  if (n >= 0 && n < num_screens) {
-    h = float(dpi[n][0]);
-    v = float(dpi[n][1]);
-  }
-#elif defined(__APPLE__)
-  if (n >= 0 && n < num_screens) {
-    h = dpi_h[n];
-    v = dpi_v[n];
-  }
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement screen_dpi"
-#else
-  if (n >= 0 && n < num_screens) {
-    h = dpi[n][0];
-    v = dpi[n][1];
-  }
-#endif // WIN32
+
+/**
+ Gets the bounding box of a screen that contains the mouse pointer.
+ \param[out]  X,Y,W,H the corresponding screen bounding box
+ \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
+ */
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H)
+{
+  Fl::screen_driver()->screen_xywh(X, Y, W, H);
+}
+
+
+/**
+ Gets the bounding box of the work area of the screen that contains the mouse pointer.
+ \param[out]  X,Y,W,H the work area bounding box
+ \see void screen_work_area(int &x, int &y, int &w, int &h, int mx, int my)
+ */
+void Fl::screen_work_area(int &X, int &Y, int &W, int &H)
+{
+  Fl::screen_driver()->screen_xywh(X, Y, W, H);
 }
 
 

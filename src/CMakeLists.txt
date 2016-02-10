@@ -54,6 +54,7 @@ set(CPPFILES
   Fl_Return_Button.cxx
   Fl_Roller.cxx
   Fl_Round_Button.cxx
+  Fl_Screen_Driver.cxx
   Fl_Scroll.cxx
   Fl_Scrollbar.cxx
   Fl_Shared_Image.cxx
@@ -166,6 +167,7 @@ if (USE_X11)
   # X11 (including APPLE with X11)
 
   set(DRIVER_FILES
+    drivers/X11/Fl_X11_Screen_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx
@@ -184,7 +186,8 @@ if (USE_X11)
     )  
   endif (USE_XFT)
   set(DRIVER_HEADER_FILES
-    drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
+    drivers/Quartz/Fl_Quartz_Graphics_Driver.h
+    drivers/X11/Fl_X11_Screen_Driver.h
   )
 
 elseif (APPLE)
@@ -226,9 +229,11 @@ else ()
     drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
+    drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
   )
   set(DRIVER_HEADER_FILES
     drivers/GDI/Fl_GDI_Graphics_Driver.h
+    drivers/WinAPI/Fl_WinAPI_Screen_Driver.h
   )
 
 endif (USE_X11)

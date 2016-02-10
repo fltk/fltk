@@ -44,6 +44,7 @@ extern "C" {
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Copy_Surface.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -1849,7 +1850,7 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt) {
 /*
  * smallest x coordinate in screen space of work area of menubar-containing display
  */
-int Fl::x() {
+int Fl_Cocoa_Screen_Driver::x() {
   return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].origin.x);
 }
 
@@ -1857,7 +1858,7 @@ int Fl::x() {
 /*
  * smallest y coordinate in screen space of work area of menubar-containing display
  */
-int Fl::y() {
+int Fl_Cocoa_Screen_Driver::y() {
   fl_open_display();
   NSRect visible = [[[NSScreen screens] objectAtIndex:0] visibleFrame];
   return int(main_screen_height - (visible.origin.y + visible.size.height));
@@ -1867,7 +1868,7 @@ int Fl::y() {
 /*
  * width of work area of menubar-containing display
  */
-int Fl::w() {
+int Fl_Cocoa_Screen_Driver::w() {
   return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].size.width);
 }
 
@@ -1875,7 +1876,7 @@ int Fl::w() {
 /*
  * height of work area of menubar-containing display
  */
-int Fl::h() {
+int Fl_Cocoa_Screen_Driver::h() {
   return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].size.height);
 }
 

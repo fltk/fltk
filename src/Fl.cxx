@@ -46,6 +46,7 @@
 #endif
 
 #include <FL/Fl.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/x.H>
@@ -207,6 +208,21 @@ Fl_Window *Fl::modal_;	// topmost modal() window
 
 char const * const Fl::clipboard_plain_text = "text/plain";
 char const * const Fl::clipboard_image = "image";
+
+
+//
+// Drivers
+//
+
+Fl_Screen_Driver *Fl::screen_driver_ = Fl_Screen_Driver::newScreenDriver();
+
+Fl_Screen_Driver *Fl::screen_driver()
+{
+  if (!screen_driver_)
+    screen_driver_ = Fl_Screen_Driver::newScreenDriver();
+  return screen_driver_;
+}
+
 
 //
 // 'Fl::version()' - Return the API version number...
@@ -2350,6 +2366,8 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker()
 }
 
 int Fl::use_high_res_GL_ = 0;
+
+
 //
 // End of "$Id$".
 //

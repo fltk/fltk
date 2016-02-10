@@ -74,6 +74,7 @@ CPPFILES = \
 	Fl_Return_Button.cxx \
 	Fl_Roller.cxx \
 	Fl_Round_Button.cxx \
+	Fl_Screen_Driver.cxx \
 	Fl_Scroll.cxx \
 	Fl_Scrollbar.cxx \
 	Fl_Shared_Image.cxx \
@@ -231,7 +232,10 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx \
 	drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx \
-	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
+	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx \
+	drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx \
+	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
+	drivers/Darwin/Fl_Darwin_System_Driver.cxx
 
 XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
@@ -240,7 +244,8 @@ XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_image.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
-	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
+	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
+	drivers/X11/Fl_X11_Screen_Driver.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -256,7 +261,8 @@ GDICPPFILES = \
 	drivers/GDI/Fl_GDI_Graphics_Driver_image.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx \
-	drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
+	drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx \
+	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
 
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY

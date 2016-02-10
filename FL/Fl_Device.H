@@ -31,6 +31,7 @@
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
+class Fl_RGB_Image;
 
 /**
  All graphical output devices and all graphics systems.

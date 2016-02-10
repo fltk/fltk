@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Main header file for the Fast Light Tool Kit (FLTK).
+// All screen related calls in a driver style class.
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -16,12 +16,53 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
-    Fl static class.
- */
+#ifndef FL_SCREEN_DRIVER_H
+#define FL_SCREEN_DRIVER_H
 
-#ifndef Fl_H
-#  define Fl_H
+#include <FL/Fl_Device.H>
+#include <FL/x.H>
+
+
+class FL_EXPORT Fl_Screen_Driver : public Fl_Device {
+
+protected:
+  Fl_Screen_Driver();
+
+  static const int MAX_SCREENS = 16;
+
+  int num_screens = -1;
+  XRectangle screens[MAX_SCREENS];
+  float dpi_h[MAX_SCREENS];
+  float dpi_v[MAX_SCREENS];
+
+public:
+  static Fl_Screen_Driver *newScreenDriver();
+  virtual void init() = 0;
+  virtual int x() = 0;
+  virtual int y() = 0;
+  virtual int w() = 0;
+  virtual int h() = 0;
+  virtual int screen_count();
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H);
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) = 0;
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
+  virtual int screen_num(int x, int y);
+  virtual int screen_num(int x, int y, int w, int h);
+  virtual void screen_dpi(float &h, float &v, int n=0) = 0;
+  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
+  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) = 0;
+  virtual void screen_work_area(int &X, int &Y, int &W, int &H);
+};
+
+
+
+
+
+
+
+
+#if 0
 
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
@@ -134,15 +175,9 @@ typedef void (*Fl_Clipboard_Notify_Handler)(int source, void *data);
 */
 class FL_EXPORT Fl {
   Fl() {}; // no constructor!
-
+  
 private:
-
-  static class Fl_Screen_Driver *screen_driver_;
   static int use_high_res_GL_;
-
-public:
-
-  static Fl_Screen_Driver *screen_driver();
 
 public: // run time information about compile time configuration
   /** \defgroup cfg_gfx runtime graphics driver configuration */
@@ -1013,24 +1048,47 @@ int main() {
 /** \defgroup  fl_screen  Screen functions
 	fl global screen functions declared in <FL/Fl.H>
      @{ */
-  static int x(); // via screen driver
-  static int y(); // via screen driver
-  static int w(); // via screen driver
-  static int h(); // via screen driver
+  // screen size:
+  /** Returns the leftmost x coordinate of the main screen work area. */
+  static int x(); // platform dependent
+  /** Returns the topmost y coordinate of the main screen work area. */
+  static int y(); // platform dependent
+  /** Returns the width in pixels of the main screen work area. */
+  static int w(); // platform dependent
+  /** Returns the height in pixels of the main screen work area. */
+  static int h(); // platform dependent
 
   // multi-head support:
-  static int screen_count(); // via screen driver
-  static void screen_xywh(int &X, int &Y, int &W, int &H); // via screen driver
-  static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my); // via screen driver
-  static void screen_xywh(int &X, int &Y, int &W, int &H, int n); // via screen driver
-  static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh); // via screen driver
-  static int screen_num(int x, int y); // via screen driver
-  static int screen_num(int x, int y, int w, int h); // via screen driver
-  static void screen_dpi(float &h, float &v, int n=0); // via screen driver
-  static void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my); // via screen driver
-  static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // via screen driver
-  static void screen_work_area(int &X, int &Y, int &W, int &H); // via screen driver
-/**   @} */
+  static int screen_count();
+  /** 
+      Gets the bounding box of a screen that contains the mouse pointer.
+      \param[out]  X,Y,W,H the corresponding screen bounding box
+      \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+  */
+  static void screen_xywh(int &X, int &Y, int &W, int &H) {
+    int x, y;
+    Fl::get_mouse(x, y);
+    screen_xywh(X, Y, W, H, x, y);
+  }
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int n); 
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
+  static int screen_num(int x, int y);
+  static int screen_num(int x, int y, int w, int h);
+  static void screen_dpi(float &h, float &v, int n=0);
+  static void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
+  static void screen_work_area(int &X, int &Y, int &W, int &H, int n);
+  /** 
+   Gets the bounding box of the work area of the screen that contains the mouse pointer.
+   \param[out]  X,Y,W,H the work area bounding box
+   \see void screen_work_area(int &x, int &y, int &w, int &h, int mx, int my) 
+   */
+  static void screen_work_area(int &X, int &Y, int &W, int &H) {
+    int x, y;
+    Fl::get_mouse(x, y);
+    screen_work_area(X, Y, W, H, x, y);
+  }
+  /**   @} */
 
 
   /** \defgroup  fl_attributes  Color & Font functions
@@ -1417,13 +1475,10 @@ public:
   int exists()  {return wp_ != 0;}
 
 };
+#endif // 0
 
- /** \defgroup  fl_unicode  Unicode and UTF-8 functions
-	fl global Unicode and UTF-8 handling functions declared in <FL/fl_utf8.h>
-     @{ */
- /** @} */
 
-#endif // !Fl_H
+#endif // !FL_SCREEN_DRIVER_H
 
 //
 // End of "$Id$".
