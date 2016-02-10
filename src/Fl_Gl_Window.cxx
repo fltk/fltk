@@ -553,7 +553,7 @@ void Fl_Gl_Window::draw() {
   glLoadIdentity();
   glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
 //  glOrtho(0, w(), h(), 0, -1, 1);
-  glLineWidth(pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
+  glLineWidth((GLfloat)pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // FIXME: push on state stack
   glEnable(GL_BLEND); // FIXME: push on state stack
   

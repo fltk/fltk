@@ -39,8 +39,8 @@ static void shade_rect_top_bottom(int x, int y, int w, int h, Fl_Color fg1, Fl_C
   int h_bottom = ((h/6) < (15) ? (h/6) : (15)); // min(h/6,15);
   int h_flat = h-(h_top+h_bottom);
   int j = 0;
-  float step_size_top = h_top>1?(0.999/(float)(h_top)):1;
-  float step_size_bottom = h_bottom>1?(0.999/(float)(h_bottom)):1;
+  float step_size_top = h_top>1?(0.999f/(float)(h_top)):1;
+  float step_size_bottom = h_bottom>1?(0.999f/(float)(h_bottom)):1;
   // This loop generates the gradient at the top of the widget
   for (float k = 1; k >= 0; k -= step_size_top){
     gleam_color(fl_color_average(fl_color_average(fg1, fg2, th), fg1, k));

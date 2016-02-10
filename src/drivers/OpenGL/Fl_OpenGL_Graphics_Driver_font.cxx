@@ -88,7 +88,7 @@ void Fl_OpenGL_Graphics_Driver::text_extents(const char *str, int n, int& dx, in
 {
   dx = 0;
   dy = descent();
-  w = width(str, n);
+  w = (int)width(str, n);
   h = size_;
 }
 
@@ -120,8 +120,8 @@ void Fl_OpenGL_Graphics_Driver::draw(const char *str, int n, int x, int y)
           if (!rendering) { glBegin(GL_LINE_STRIP); rendering = 1; }
           int vx = (cmd & '\70')>>3;
           int vy = (cmd & '\07');
-          px = 0.5+x+vx*size_*0.5/8.0;
-          py = 0.5+y+vy*size_/8.0-0.8*size_;
+          px = (int)(0.5+x+vx*size_*0.5/8.0);
+          py = (int)(0.5+y+vy*size_/8.0-0.8*size_);
           glVertex2f(px, py);
         }
       }

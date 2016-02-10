@@ -390,8 +390,8 @@ void Fl_Shared_Image::scale(int width, int height, int proportional, int can_exp
     if (fw < 1) fw = 1;
     if (fh < 1) fh = 1;
   }
-  w(image_->w() / fw);
-  h(image_->h() / fh);
+  w((int)(image_->w() / fw));
+  h((int)(image_->h() / fh));
 }
 
 
