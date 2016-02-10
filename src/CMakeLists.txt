@@ -143,6 +143,12 @@ set(CPPFILES
   fl_encoding_mac_roman.cxx
 )
 
+file(GLOB
+  HEADER_FILES
+  "../FL/*.H"
+  "../FL/*.h"
+)
+
 if (USE_X11 AND NOT OPTION_PRINT_SUPPORT)
   set(PSFILES
   )
@@ -177,7 +183,10 @@ if (USE_X11)
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
     )  
   endif (USE_XFT)
-  
+  set(DRIVER_HEADER_FILES
+    drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
+  )
+
 elseif (APPLE)
 
   # Apple Quartz
@@ -194,6 +203,9 @@ elseif (APPLE)
     drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
   )
+  set(DRIVER_HEADER_FILES
+    drivers/Quartz/Fl_Quartz_Graphics_Driver.h
+  )
 
 else ()
 
@@ -209,10 +221,15 @@ else ()
     drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
   )
+  set(DRIVER_HEADER_FILES
+    drivers/GDI/Fl_GDI_Graphics_Driver.h
+  )
 
 endif (USE_X11)
 
+source_group("Source Files\\Headers" FILES ${HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
+source_group("Driver Source Files\\Headers" FILES ${DRIVER_HEADER_FILES})
 
 set(CPPFILES
   ${CPPFILES}
@@ -254,7 +271,12 @@ set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
 )
+set (GL_DRIVER_HEADER_FILES
+  drivers/OpenGL/Fl_OpenGL_Display_Device.h
+  drivers/OpenGL/Fl_OpenGL_Graphics_Driver.h
+)
 
+source_group("Driver Header Files" FILES ${GL_DRIVER_HEADER_FILES})
 source_group("Driver Source Files" FILES ${GL_DRIVER_FILES})
 
 set(GLCPPFILES
@@ -303,7 +325,7 @@ else()
 endif(APPLE AND NOT OPTION_APPLE_X11)
 
 #######################################################################
-FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${PSFILES};${MMFILES};${CFILES};fl_call_main.c")
+FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${PSFILES};${MMFILES};${CFILES};fl_call_main.c;${HEADER_FILES};${DRIVER_HEADER_FILES}")
 
 if(LIB_dl)
    target_link_libraries(fltk ${LIB_dl})
@@ -373,7 +395,7 @@ endif(OPTION_USE_SYSTEM_LIBPNG)
 
 #######################################################################
 if(OPENGL_FOUND)
-   FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES}")
+FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES}";${GL_HEADER_FILE};${GL_DRIVER_HEADER_FILES})
    target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
 endif(OPENGL_FOUND)
 
@@ -382,7 +404,7 @@ endif(OPENGL_FOUND)
 if(OPTION_BUILD_SHARED_LIBS)
 
 #######################################################################
-FL_ADD_LIBRARY(fltk SHARED "${CPPFILES};${MMFILES};${CFILES}")
+FL_ADD_LIBRARY(fltk SHARED "${CPPFILES};${MMFILES};${CFILES};${HEADER_FILES};${DRIVER_HEADER_FILES}")
 
 if(LIB_dl)
    target_link_libraries(fltk_SHARED ${LIB_dl})
@@ -459,7 +481,7 @@ endif(OPTION_USE_SYSTEM_LIBPNG)
 
 #######################################################################
 if(OPENGL_FOUND)
-   FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES}")
+   FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILE};${GL_DRIVER_HEADER_FILES}")
    target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
 endif(OPENGL_FOUND)
 
