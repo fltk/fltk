@@ -233,6 +233,12 @@ void Fl_WinAPI_Screen_Driver::beep(int type)
 }
 
 
+void Fl_WinAPI_Screen_Driver::flush()
+{
+  GdiFlush();
+}
+
+
 
 //
 // End of "$Id$".

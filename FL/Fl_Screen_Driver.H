@@ -63,6 +63,8 @@ public:
   virtual void screen_work_area(int &X, int &Y, int &W, int &H);
   // --- audible output
   virtual void beep(int type) = 0;
+  // --- global events
+  virtual void flush() = 0;
 };
 
 

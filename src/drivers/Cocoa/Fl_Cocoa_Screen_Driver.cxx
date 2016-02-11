@@ -113,6 +113,12 @@ void Fl_Cocoa_Screen_Driver::beep(int type) {
 }
 
 
+void Fl_Cocoa_Screen_Driver::flush() {
+  if (fl_gc)
+    CGContextFlush(fl_gc);
+}
+
+
 //
 // End of "$Id$".
 //

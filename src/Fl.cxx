@@ -888,18 +888,7 @@ void Fl::flush() {
       if (i->region) {XDestroyRegion(i->region); i->region = 0;}
     }
   }
-#if defined(USE_X11)
-  if (fl_display) XFlush(fl_display);
-#elif defined(WIN32)
-  GdiFlush();
-#elif defined (__APPLE_QUARTZ__)
-  if (fl_gc)
-    CGContextFlush(fl_gc);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: flush your graphics context here"
-#else
-# error unsupported platform
-#endif
+  screen_driver()->flush();
 }
 
 
