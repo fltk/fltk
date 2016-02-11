@@ -21,7 +21,7 @@
 #include <FL/filename.H>
 
 #ifdef WIN32
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: filename stuff
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement directory and filename handling for your platform if needed"
 #else // X11

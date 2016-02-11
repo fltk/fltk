@@ -26,7 +26,7 @@
 #include <stdarg.h>
 #include "flstring.h"
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: native message box
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: use native message box below if one is available"
 #else

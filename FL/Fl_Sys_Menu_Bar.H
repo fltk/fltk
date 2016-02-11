@@ -22,7 +22,7 @@
 #include "Fl_Menu_Bar.H"
 #include "x.H"
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN)
+#if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: system menu bar
 
 /**
   A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
@@ -105,7 +105,7 @@ typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
 
 typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
 
-#endif // defined(__APPLE__) || defined(FL_DOXYGEN)
+#endif // defined(__APPLE__) || defined(FL_DOXYGEN)  // PORTME: system menu bar
 
 #endif // Fl_Sys_Menu_Bar_H
 

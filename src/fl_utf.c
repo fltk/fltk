@@ -22,7 +22,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform unicode
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: look out for some unicode functions here. Default should be fine though."
 #else

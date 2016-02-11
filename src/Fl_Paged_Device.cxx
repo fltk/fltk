@@ -141,7 +141,7 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   win->make_current();
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform paged device
   Fl_X::q_release_context(); // matches make_current() call above
 #endif
   if (save_front != win) save_front->show();
@@ -305,11 +305,11 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform paged device
     top->draw(x_offset, y_offset); // draw with transparency
 #else
     fl_draw_image(top->array, x_offset, y_offset, top->w(), top->h(), top->d());
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform paged device
     delete top;
   }
   if (left) {
@@ -327,7 +327,7 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
   this->print_widget(win, x_offset + wsides, y_offset + toph);
 }
 
-#if !defined(__APPLE__) //  Mac OS version in Fl_Cocoa.mm
+#if !defined(__APPLE__) // PORTME: platform paged device //  Mac OS version in Fl_Cocoa.mm
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
   draw_decorated_window(win, x_offset, y_offset);

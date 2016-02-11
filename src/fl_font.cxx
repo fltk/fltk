@@ -31,7 +31,7 @@
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform font stuff
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you need the XFontStruct ?"
 #else
@@ -64,7 +64,7 @@ void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
 
 
 void fl_draw(const char* str, int l, float x, float y) {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform alternative API
   fl_graphics_driver->draw(str, l, x, y);
 #else
   fl_draw(str, l, (int)x, (int)y);

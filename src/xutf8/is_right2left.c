@@ -14,7 +14,7 @@
  *     http://www.fltk.org/str.php
  */
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform unicode
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: utf8 functionality"
 #else

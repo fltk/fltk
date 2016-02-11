@@ -49,7 +49,7 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
         top = bottom = GetSystemMetrics(SM_CYFIXEDFRAME);
       }
       top += GetSystemMetrics(SM_CYCAPTION);
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform window driver
       top = 24;
       left = 2;
       right = 2;

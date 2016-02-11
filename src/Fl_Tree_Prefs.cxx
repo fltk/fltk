@@ -28,7 +28,7 @@
 //    These can be replaced via prefs.openicon()/closeicon()
 //
 static const char * const L_open_xpm[] = {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform look and feel
   "11 11 2 1",
   ".  c None",
   "@  c #000000",
@@ -43,7 +43,7 @@ static const char * const L_open_xpm[] = {
   "...@@@.....",
   "...@@......",
   "...@......."
-#else /* __APPLE__ */
+#else /* __APPLE__ */ // PORTME: platform look and feel
   "11 11 3 1",
   ".	c #fefefe",
   "#	c #444444",
@@ -59,12 +59,12 @@ static const char * const L_open_xpm[] = {
   "#.........#",
   "#.........#",
   "###########"
-#endif /* __APPLE__ */
+#endif /* __APPLE__ */ // PORTME: platform look and feel
 };
 static Fl_Pixmap L_openpixmap(L_open_xpm);
 
 static const char * const L_close_xpm[] = {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform look and feel
   "11 11 2 1",
   ".  c None",
   "@  c #000000",
@@ -79,7 +79,7 @@ static const char * const L_close_xpm[] = {
   ".....@.....",
   "...........",
   "..........."
-#else /* __APPLE__ */
+#else /* __APPLE__ */ // PORTME: platform look and feel
   "11 11 3 1",
   ".	c #fefefe",
   "#	c #444444",
@@ -95,7 +95,7 @@ static const char * const L_close_xpm[] = {
   "#.........#",
   "#.........#",
   "###########"
-#endif /* __APPLE__ */
+#endif /* __APPLE__ */ // PORTME: platform look and feel
 };
 static Fl_Pixmap L_closepixmap(L_close_xpm);
 
@@ -157,7 +157,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _labelfgcolor           = FL_BLACK;
   _labelbgcolor           = 0xffffffff;		// we use this as 'transparent'
   _connectorcolor         = Fl_Color(43);
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform look and feel
   _connectorstyle         = FL_TREE_CONNECTOR_NONE;
 #else /* __APPLE__ */
   _connectorstyle         = FL_TREE_CONNECTOR_DOTTED;

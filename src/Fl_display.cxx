@@ -30,7 +30,7 @@
     and does nothing useful under WIN32.
 */
 void Fl::display(const char *d) {
-#if defined(__APPLE__) || defined(WIN32)
+#if defined(__APPLE__) || defined(WIN32) // PORTME: platform screen stuff
   (void)d;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: initiate a connection to the display"
@@ -45,7 +45,7 @@ void Fl::display(const char *d) {
     }
   }
   putenv(e);
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform screen stuff
 }
 
 //

@@ -49,7 +49,7 @@ private:
   int width;
   int height;
   Fl_Paged_Device *helper;
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform image surface driver
 #elif defined(WIN32)
   HDC _sgc; 
   Window _sw; 
@@ -73,7 +73,7 @@ public:
   void draw_decorated_window(Fl_Window* win, int delta_x = 0, int delta_y = 0);
 };
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform surface driver
 /* Mac class to implement translate()/untranslate() for a flipped bitmap graphics context */
 class FL_EXPORT Fl_Quartz_Flipped_Surface_ : public Fl_Quartz_Surface_ {
 public:

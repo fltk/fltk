@@ -21,7 +21,7 @@
 #include "Fl_Native_File_Chooser_WIN32.cxx"
 
 // Use Apple's chooser
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: native file chooser
 #include <FL/Fl_Native_File_Chooser.H>
 
 #elif defined(FL_PORTING)

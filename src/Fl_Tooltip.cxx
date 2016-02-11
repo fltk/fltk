@@ -75,7 +75,7 @@ Fl_Widget* Fl_Tooltip::widget_ = 0;
 static Fl_TooltipBox *window = 0;
 static int Y,H;
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform additonal function
 // returns the unique tooltip window
 Fl_Window *Fl_Tooltip::current_window(void)
 {
@@ -156,7 +156,7 @@ static void tooltip_timeout(void*) {
       if (window) window->hide();
     } else {
       int condition = 1;
-#if !(defined(__APPLE__) || defined(WIN32))
+#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: platform ??
       condition = (Fl::grab() == NULL);
 #endif
       if ( condition ) {

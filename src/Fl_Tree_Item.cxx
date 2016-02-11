@@ -869,7 +869,7 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y
   }
   fl_color(fl_contrast(fg, bg));
 
-#if defined(USE_X11) || defined(__APPLE_QUARTZ__)
+#if defined(USE_X11) || defined(__APPLE_QUARTZ__) // PORTME: platform look and feel
   fl_line_style(FL_DOT);
   fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
           W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);

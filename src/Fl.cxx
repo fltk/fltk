@@ -60,7 +60,7 @@
 #endif // DEBUG || DEBUG_WATCH
 
 #ifdef WIN32
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: window driver and main loop
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement global variables for your platform here"
 #else // X11
@@ -73,7 +73,7 @@ HBRUSH fl_brush_action(int action);
 void fl_cleanup_pens(void);
 void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform functions
 extern double fl_mac_flush_and_wait(double time_to_wait);
 #endif // WIN32
 
@@ -159,7 +159,7 @@ bool Fl::cfg_sys_win32 = 0;
 //
 // Globals...
 //
-#if defined(__APPLE__) || defined(FL_DOXYGEN)
+#if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: platform text
 const char *Fl_Mac_App_Menu::about = "About %@";
 const char *Fl_Mac_App_Menu::print = "Print Front Window";
 const char *Fl_Mac_App_Menu::services = "Services";
@@ -167,7 +167,7 @@ const char *Fl_Mac_App_Menu::hide = "Hide %@";
 const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
 const char *Fl_Mac_App_Menu::show = "Show All";
 const char *Fl_Mac_App_Menu::quit = "Quit %@";
-#endif // __APPLE__
+#endif // __APPLE__  // PORTME: platform text, system menu
 #ifndef FL_DOXYGEN
 Fl_Widget	*Fl::belowmouse_,
 		*Fl::pushed_,
@@ -341,7 +341,7 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 
 // implementation in Fl_win32.cxx
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: core stuff from screen, platform, and window driver
 
 // implementation in Fl_cocoa.mm (was Fl_mac.cxx)
 
@@ -557,7 +557,7 @@ static void run_checks()
   }
 }
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) // PORTME: ??
 static char in_idle;
 #endif
 
@@ -644,7 +644,7 @@ double Fl::wait(double time_to_wait) {
 
   return fl_wait(time_to_wait);
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform fl_wait
 
   run_checks();
   return fl_mac_flush_and_wait(time_to_wait);
@@ -787,7 +787,7 @@ int Fl::check() {
   \endcode
 */
 int Fl::ready() {
-#if defined( WIN32 ) || defined(__APPLE__)
+#if defined( WIN32 ) || defined(__APPLE__) // PORTME: platform timeouts
   // not used
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: you may need to handle timers here."
@@ -1071,7 +1071,7 @@ void Fl::focus(Fl_Widget *o) {
       if (!w1) w1 = o->window();
       while (w1) { win=w1; w1=win->window(); }
       if (win) {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform window focus
 	if (fl_xfocus != win) {
 	  Fl_X *x = Fl_X::i(win);
 	  if (x) x->set_key_window();
@@ -1210,7 +1210,7 @@ void fl_fix_focus() {
   }
 }
 
-#if !(defined(WIN32) || defined(__APPLE__))
+#if !(defined(WIN32) || defined(__APPLE__)) // PORTME: platform selection
 extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 #endif
 
@@ -1230,7 +1230,7 @@ void fl_throw_focus(Fl_Widget *o) {
   if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
 #ifdef WIN32
   // not used
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform selection
   // not used
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: platform specific code when deleting a window"
@@ -1457,7 +1457,7 @@ int Fl::handle_(int e, Fl_Window* window)
     if (grab()) wi = grab();
     { int ret;
       Fl_Widget* pbm = belowmouse();
-#ifdef __APPLE__
+#ifdef __APPLE__  // bug fix
       if (fl_mac_os_version < 100500) {
         // before 10.5, mouse moved events aren't sent to borderless windows such as tooltips
 	Fl_Window *tooltip = Fl_Tooltip::current_window();
@@ -1659,7 +1659,7 @@ void Fl_Window::hide() {
   Fl_X** pp = &Fl_X::first;
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return;
   *pp = ip->next;
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform pointer handling
   // MacOS X manages a single pointer per application. Make sure that hiding
   // a toplevel window will not leave us with some random pointer shape, or
   // worst case, an invisible pointer
@@ -1708,7 +1708,7 @@ void Fl_Window::hide() {
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
     }
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform window unmapping
   Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window )
     fl_window = 0;
@@ -1740,7 +1740,7 @@ void Fl_Window::hide() {
     }
     delete[] doit;
   }
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform window unmapping
   ip->destroy();
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: code to destroy a window on screen"
@@ -1774,13 +1774,13 @@ int Fl_Window::handle(int ev)
       else {
 #if defined(USE_X11) || defined(WIN32)
         XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform window mapping
 	i->map();
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: code to show a window on screen"
 #else
 # error unsupported platform
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform window mapping
       }
       break;
     case FL_HIDE:
@@ -1798,7 +1798,7 @@ int Fl_Window::handle(int ev)
 	}
 #if defined(USE_X11) || defined(WIN32)
 	XUnmapWindow(fl_display, fl_xid(this));
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform window unmapping, again
 	i->unmap();
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: code to hide a window from screen"
@@ -1966,7 +1966,7 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
       Fl_Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform damage region
       CGRect arg = fl_cgrectmake_cocoa(X, Y, W, H);
       int j; // don't add a rectangle totally inside the Fl_Region
       for(j = 0; j < i->region->count; j++) {
@@ -2001,7 +2001,7 @@ void Fl_Window::flush() {
 
 #ifdef WIN32
 #  include "Fl_win32.cxx"
-//#elif defined(__APPLE__)
+//#elif defined(__APPLE__) // nothing here to see
 #endif
 
 

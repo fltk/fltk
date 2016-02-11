@@ -122,7 +122,7 @@ class menuwindow : public Fl_Menu_Window {
 public:
   menutitle* title;
   int handle(int);
-#if defined (__APPLE__) || defined (USE_X11)
+#if defined (__APPLE__) || defined (USE_X11) // PORTME: menubar
   int early_hide_handle(int);
 #endif
   int itemheight;	// zero == menubar
@@ -653,7 +653,7 @@ static int backward(int menu) { // previous item in menu menu if possible
 }
 
 int menuwindow::handle(int e) {
-#if defined (__APPLE__) || defined (USE_X11)
+#if defined (__APPLE__) || defined (USE_X11) // PORTME: menubar
   // This off-route takes care of the "detached menu" bug on OS X.
   // Apple event handler requires that we hide all menu windows right
   // now, so that Carbon can continue undisturbed with handling window
@@ -746,7 +746,7 @@ int menuwindow::early_hide_handle(int e) {
     }
     break;
     case FL_MOVE:
-#if ! (defined(WIN32) || defined(__APPLE__))
+#if ! (defined(WIN32) || defined(__APPLE__)) // PORTME: menubar
       if (pp.state == DONE_STATE) {
 	return 1; // Fix for STR #2619
       }

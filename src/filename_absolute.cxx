@@ -219,11 +219,11 @@ fl_filename_relative(char       *to,	// O - Relative filename
       *slash != '\0' && *newslash != '\0';
        slash ++, newslash ++)
     if (isdirsep(*slash) && isdirsep(*newslash)) continue;
-#if defined(WIN32) || defined(__EMX__) || defined(__APPLE__)
+#if defined(WIN32) || defined(__EMX__) || defined(__APPLE__) // PORTME: filename stuff
     else if (tolower(*slash & 255) != tolower(*newslash & 255)) break;
 #else
     else if (*slash != *newslash) break;
-#endif // WIN32 || __EMX__ || __APPLE__
+#endif // WIN32 || __EMX__ || __APPLE__  // PORTME: filename stuff
 
   // skip over trailing slashes
   if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)

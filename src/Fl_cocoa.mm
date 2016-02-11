@@ -29,8 +29,6 @@
 // One Compile to copy them all and in the bundle bind them,
 // in the Land of MacOS X where the Drop-Shadows lie."
 
-#ifdef __APPLE__
-
 #define CONSOLIDATE_MOTION 0
 extern "C" {
 #include <pthread.h>
@@ -4524,8 +4522,6 @@ int Fl_X::calc_mac_os_version() {
   [localPool release];
   return M*10000 + m*100 + b;
 }
-
-#endif // __APPLE__
 
 //
 // End of "$Id$".

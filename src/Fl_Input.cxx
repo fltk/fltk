@@ -22,7 +22,7 @@
 // In theory you can replace this code with another subclass to change
 // the keybindings.
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform text editor look and feel
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: implement text input specifics here"
   // current custom code is for OS X keybaord specifics only
@@ -365,7 +365,7 @@ int Fl_Input::handle_key() {
       else replace(position(), del ? position()-del : mark(),
 	           Fl::event_text(), Fl::event_length());
     }
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
     if (Fl::compose_state) {
       this->mark( this->position() - Fl::compose_state );
       }
@@ -400,7 +400,7 @@ int Fl_Input::handle_key() {
       return 0;							// ignore other combos, pass to parent
 
     case FL_Delete: {
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_delete_char_right();	// Delete         (OSX-HIG,TE,SA,WOX)
       if (mods==FL_CTRL)    return kf_delete_char_right();	// Ctrl-Delete    (??? TE,!SA,!WOX)
       if (mods==FL_ALT)     return kf_delete_word_right();	// Alt-Delete     (OSX-HIG,TE,SA)
@@ -418,7 +418,7 @@ int Fl_Input::handle_key() {
     }
 
     case FL_Left:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_move_char_left();		// Left           (OSX-HIG)
       if (mods==FL_ALT)     return kf_move_word_left();		// Alt-Left       (OSX-HIG)
       if (mods==FL_META)    return kf_move_sol();		// Meta-Left      (OSX-HIG)
@@ -432,7 +432,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_Right:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_move_char_right();	// Right          (OSX-HIG)
       if (mods==FL_ALT)     return kf_move_word_right();	// Alt-Right      (OSX-HIG)
       if (mods==FL_META)    return kf_move_eol();		// Meta-Right     (OSX-HIG)
@@ -446,7 +446,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_Up:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_lines_up(1);		// Up             (OSX-HIG)
       if (mods==FL_CTRL)    return kf_page_up();		// Ctrl-Up        (TE !HIG)
       if (mods==FL_ALT)     return kf_move_up_and_sol();	// Alt-Up         (OSX-HIG)
@@ -459,7 +459,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_Down:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_lines_down(1);		// Dn             (OSX-HIG)
       if (mods==FL_CTRL)    return kf_page_down();		// Ctrl-Dn        (TE !HIG)
       if (mods==FL_ALT)     return kf_move_down_and_eol();	// Alt-Dn         (OSX-HIG)
@@ -474,7 +474,7 @@ int Fl_Input::handle_key() {
     case FL_Page_Up:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
       // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_page_up();		// PgUp           (OSX-HIG)
       if (mods==FL_ALT)     return kf_page_up();		// Alt-PageUp     (OSX-HIG)
       if (mods==FL_META)    return kf_top();			// Meta-PageUp    (OSX-HIG,!TE)
@@ -487,7 +487,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_Page_Down:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       // Fl_Input has no scroll control, so instead we move the cursor by one page
       // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
       if (mods==0)          return kf_page_down();		// PgDn           (OSX-HIG)
@@ -502,7 +502,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_Home:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_top();			// Home           (OSX-HIG)
       if (mods==FL_ALT)     return kf_top();			// Alt-Home       (???)
       return 0;							// ignore other combos, pass to parent
@@ -513,7 +513,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_End:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_bottom();			// End            (OSX-HIG)
       if (mods==FL_ALT)     return kf_bottom();			// Alt-End        (???)
       return 0;							// ignore other combos, pass to parent
@@ -524,7 +524,7 @@ int Fl_Input::handle_key() {
 #endif
 
     case FL_BackSpace:
-#ifdef __APPLE__
+#ifdef __APPLE__ // platform text editor look and feel
       if (mods==0)          return kf_delete_char_left();	// Backspace      (OSX-HIG)
       if (mods==FL_CTRL)    return kf_delete_char_left();	// Ctrl-Backspace (TE/SA)
       if (mods==FL_ALT)     return kf_delete_word_left();	// Alt-Backspace  (OSX-HIG)
@@ -597,7 +597,7 @@ int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
   static Fl_Widget *dnd_save_focus = NULL;
   switch (event) {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: compose text
     case FL_UNFOCUS:
       if (Fl::compose_state) {
 	this->mark( this->position() );
@@ -686,7 +686,7 @@ int Fl_Input::handle(int event) {
 	  dnd_save_focus = this;
           // drag the data:
           copy(0);
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: dnd
           Fl_X::dnd(1);
 #else
           Fl::dnd();
@@ -753,7 +753,7 @@ int Fl_Input::handle(int event) {
           Fl::focus(dnd_save_focus);
           handle(FL_UNFOCUS);
         }
-#if !(defined(__APPLE__) || defined(WIN32))
+#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: cursor
       Fl::first_window()->cursor(FL_CURSOR_MOVE);
 #endif
       dnd_save_focus = NULL;
@@ -847,7 +847,7 @@ Fl_Secret_Input::Fl_Secret_Input(int X,int Y,int W,int H,const char *l)
 
 int Fl_Secret_Input::handle(int event) {
   int retval = Fl_Input::handle(event);
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: compose
   if (event == FL_KEYBOARD && Fl::compose_state) {
     this->mark( this->position() ); // don't underline marked text
   }

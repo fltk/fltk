@@ -40,7 +40,7 @@ typedef void fl_BROWSEINFOW;
 #  include <FL/filename.H>	// FL_EXPORT
 
 // Use Apple's chooser
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: native file chooser support
 #  define MAXFILTERS	80
 #  include <FL/filename.H>	// FL_EXPORT
 
@@ -192,7 +192,7 @@ private:
   void clear_filters();
   void add_filter(const char *, const char *);
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: native file chooser support
 private:
   int             _btype;		// kind-of browser to show()
   int             _options;		// general options
@@ -244,7 +244,7 @@ private:
 };
 
 
-#if !defined(__APPLE__) && !defined(WIN32) && !defined(FL_PORTING)
+#if !defined(__APPLE__) && !defined(WIN32) && !defined(FL_PORTING) // PORTME: FLTK file chooser option
 class FL_EXPORT Fl_FLTK_File_Chooser {
   friend class Fl_Native_File_Chooser;
 protected:
@@ -328,7 +328,7 @@ private:
   static int custom_gtk_filter_function(const GtkFileFilterInfo*, Fl_GTK_File_Chooser::pair*);
   static void free_pair(pair *p);
 };
-#endif // !defined(__APPLE__) && !defined(WIN32)
+#endif // !defined(__APPLE__) && !defined(WIN32) // PORTME: native file chooser option
 
 #endif /*FL_NATIVE_FILE_CHOOSER_H*/
 

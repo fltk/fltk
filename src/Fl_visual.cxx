@@ -65,7 +65,7 @@ int Fl::visual(int flags) {
   if ((flags & FL_RGB8) && GetDeviceCaps(fl_gc,BITSPIXEL)<24) return 0;
   return 1;
 }
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform visuals
 
 // \todo Mac : need to implement Visual flags
 int Fl::visual(int flags) {

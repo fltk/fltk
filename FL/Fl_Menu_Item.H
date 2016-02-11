@@ -22,7 +22,7 @@
 #  include "Fl_Widget.H"
 #  include "Fl_Image.H"
 
-#  if (defined(__APPLE__) || defined(FL_PORTING)) && defined(check)
+#  if (defined(__APPLE__) || defined(FL_PORTING)) && defined(check) // name conflict
 #    undef check
 #  endif
 

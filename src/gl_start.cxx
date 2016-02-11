@@ -28,7 +28,7 @@
 // be erased when the buffers are swapped (when double buffer hardware
 // is being used)
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform opengl
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: if possible, add OpenGL rendering in non-OpenGL contexts"
 #else

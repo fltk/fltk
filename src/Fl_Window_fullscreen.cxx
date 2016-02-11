@@ -45,7 +45,7 @@ void Fl_Window::border(int b) {
 #elif defined(WIN32)
   // not yet implemented, but it's possible
   // for full fullscreen we have to make the window topmost as well
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform window driver
   // warning: not implemented in Quartz/Carbon
 #elif defined(FL_PORTING)
 # pragma message "handle window border setting"

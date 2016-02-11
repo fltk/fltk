@@ -25,7 +25,7 @@ extern int fl_gl_load_plugin;
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include "Fl_Gl_Choice.H"
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
 #include <FL/gl.h>
 #include <OpenGL/OpenGL.h>
 #endif
@@ -36,7 +36,7 @@ extern int fl_gl_load_plugin;
 
 #include "drivers/OpenGL/Fl_OpenGL_Display_Device.h"
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the creation and destruction of OpenGL surfaces"
 #else
@@ -74,7 +74,7 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 }
 
 void Fl_Gl_Window::show() {
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
   int need_redraw = 0;
 #endif
   if (!shown()) {
@@ -90,29 +90,29 @@ void Fl_Gl_Window::show() {
 	return;
       }
     }
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) // PORTME: platform OpenGL management
     Fl_X::make_xid(this, g->vis, g->colormap);
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform OpenGL management
 	if( ! parent() ) need_redraw=1;
 #endif
   }
   Fl_Window::show();
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
   set_visible();
   if(need_redraw) redraw();//necessary only after creation of a top-level GL window
-#endif /* __APPLE__ */
+#endif /* __APPLE__ */ // PORTME: platform OpenGL management
 }
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
 
 int Fl_Gl_Window::pixels_per_unit()
 {
   return (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(this) && Fl_X::i(this)->mapped_to_retina()) ? 2 : 1;
 }
 
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform OpenGL management
 
 /**
   The invalidate() method turns off valid() and is
@@ -131,16 +131,16 @@ void Fl_Gl_Window::invalidate() {
 
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
-#ifndef __APPLE__
+#ifndef __APPLE__ // PORTME: platform OpenGL management
   int oldmode = mode_;
 #endif
-#if defined(__APPLE__) || defined(USE_X11)
+#if defined(__APPLE__) || defined(USE_X11) // PORTME: platform OpenGL management
   if (a) { // when the mode is set using the a array of system-dependent values, and if asking for double buffer,
            // the FL_DOUBLE flag must be set in the mode_ member variable
     const int *aa = a;
     while (*aa) {
       if (*(aa++) ==
-#  if defined(__APPLE__)
+#  if defined(__APPLE__) // PORTME: platform OpenGL management
           kCGLPFADoubleBuffer
 #  else
           GLX_DOUBLEBUFFER
@@ -148,10 +148,10 @@ int Fl_Gl_Window::mode(int m, const int *a) {
           ) { m |= FL_DOUBLE; break; }
     }
   }
-#endif // !__APPLE__
-#if !defined(WIN32) && !defined(__APPLE__)
+#endif // !__APPLE__ // PORTME: platform OpenGL management
+#if !defined(WIN32) && !defined(__APPLE__) // PORTME: platform OpenGL management
   Fl_Gl_Choice* oldg = g;
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ // PORTME: platform OpenGL management
   context(0);
   mode_ = m; alist = a;
   if (shown()) {
@@ -168,7 +168,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
       hide();
       show();
     }
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
     redraw();
 #else
 #  error unsupported platform
@@ -191,7 +191,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 void Fl_Gl_Window::make_current() {
 //  puts("Fl_Gl_Window::make_current()");
 //  printf("make_current: context_=%p\n", context_);
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
   // detect if the window was moved between low and high resolution displays
   if (Fl_X::i(this)->changed_resolution()){
     Fl_X::i(this)->changed_resolution(false);
@@ -256,7 +256,7 @@ void Fl_Gl_Window::swap_buffers() {
 #  else
   SwapBuffers(Fl_X::i(this)->private_dc);
 #  endif
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   if(overlay != NULL) {
     // STR# 2944 [1]
     //    Save matrixmode/proj/modelview/rasterpos before doing overlay.
@@ -338,7 +338,7 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#if defined (__APPLE_QUARTZ__) || defined (USE_X11)
+#if defined (__APPLE_QUARTZ__) || defined (USE_X11) // PORTME: platform OpenGL management
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
@@ -405,7 +405,7 @@ void Fl_Gl_Window::flush() {
       }
 
     }
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
     Fl_X::GLcontext_flushbuffer(context_);
 #endif
 
@@ -435,12 +435,12 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   int is_a_resize = (W != Fl_Widget::w() || H != Fl_Widget::h());
   if (is_a_resize) valid(0);
   
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
   Fl_X *flx = Fl_X::i(this);
   if (flx && flx->in_windowDidResize()) Fl_X::GLcontext_update(context_);
 #endif
 
-#if ! ( defined(__APPLE__) || defined(WIN32) )
+#if ! ( defined(__APPLE__) || defined(WIN32) ) // PORTME: platform OpenGL management
   if (is_a_resize && !resizable() && overlay && overlay != this) {
     ((Fl_Gl_Window*)overlay)->resize(0,0,W,H);
   }

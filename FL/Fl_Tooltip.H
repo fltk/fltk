@@ -97,7 +97,7 @@ public:
   static int wrap_width() { return 400; }
 #endif
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: additional functionality?
   // the unique tooltip window
   static Fl_Window* current_window(void);
 #elif defined(WIN32)

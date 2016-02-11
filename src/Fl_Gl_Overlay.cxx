@@ -25,7 +25,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement OpenGL hardware overlays if they are availbale in a compatible way. This is rarely needed."
 #else
@@ -193,7 +193,7 @@ int Fl_Gl_Window::can_do_overlay() {
 void Fl_Gl_Window::redraw_overlay() {
   if (!shown()) return;
   make_overlay();
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
   redraw();
 #else
 #ifndef WIN32
@@ -207,7 +207,7 @@ void Fl_Gl_Window::redraw_overlay() {
 
 void Fl_Gl_Window::make_overlay_current() {
   make_overlay();
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
   // this is not very useful, but unfortunately, Apple decided
   // that front buffer drawing can no longer (OS X 10.4) be 
   // supported on their platforms.

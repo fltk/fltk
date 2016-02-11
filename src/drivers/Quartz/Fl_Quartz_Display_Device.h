@@ -26,41 +26,6 @@
 #define FL_QUARTZ_DISPLAY_DEVICE_H
 
 // FIXME: implement this
-#if 0
-#include <FL/x.H>
-#include <FL/Fl_Plugin.H>
-#include <FL/Fl_Image.H>
-#include <FL/Fl_Bitmap.H>
-#include <FL/Fl_Pixmap.H>
-#include <FL/Fl_RGB_Image.H>
-#include <stdlib.h>
-
-/**
- A display to which the computer can draw.
- When the program begins running, an Fl_Display_Device instance has been created and made the current drawing surface.
- There is no need to create any other object of this class.
- */
-class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
-  friend class Fl_Quartz_Graphics_Driver;
-  static Fl_Display_Device *_display; // the platform display device
-#ifdef __APPLE__
-  friend class Fl_X;
-  friend class Fl_Graphics_Driver;
-  static bool high_res_window_; //< true when drawing to a window of a retina display (Mac OS X only)
-  static bool high_resolution() {return high_res_window_;}
-#elif defined(WIN32)
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: implement functions for extra high res drawing if your platform supports it"
-#else
-#endif
-public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
-  Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
-  static Fl_Display_Device *display_device();
-};
-
-#endif
 
 #endif // FL_QUARTZ_DISPLAY_DEVICE_H
 

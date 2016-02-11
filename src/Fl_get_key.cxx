@@ -18,7 +18,7 @@
 
 #ifdef WIN32
 #  include "Fl_get_key_win32.cxx"
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform keyboard stuff
 #  include "Fl_get_key_mac.cxx"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement keyboard reading and interpretation in its own file"

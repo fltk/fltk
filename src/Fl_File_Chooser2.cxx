@@ -357,7 +357,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform file browser
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the internals of your filechooser here"
 #else

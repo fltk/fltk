@@ -27,7 +27,7 @@
 #  include "flstring.h"
 #  include <FL/fl_utf8.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: add code to list and select OpenGL drawing contexts"
 #else
@@ -35,7 +35,7 @@
 
 #  ifdef WIN32
 void fl_save_dc(HWND, HDC);
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform OpenGL management
 extern void gl_texture_reset();
 #endif
 
@@ -110,7 +110,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     return 0;
   }
 
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   NSOpenGLPixelFormat* fmt = Fl_X::mode_to_NSOpenGLPixelFormat(m, alistp);
   if (!fmt) return 0;
   
@@ -172,7 +172,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
 #  elif defined(WIN32)
   g->pixelformat = pixelformat;
   g->pfd = chosen_pfd;
-#  elif defined(__APPLE_QUARTZ__)
+#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   g->pixelformat = fmt;
 #  else
 #    error unsupported platform
@@ -242,7 +242,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   return context;
 }
 
-#  elif defined(__APPLE_QUARTZ__)
+#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
 
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext context, shared_ctx = 0;
@@ -270,7 +270,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     glXMakeCurrent(fl_display, fl_xid(w), context);
 #  elif defined(WIN32)
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
-#  elif defined(__APPLE_QUARTZ__)
+#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
     Fl_X::GLcontext_makecurrent(context);
 #  else
 #   error unsupported platform
@@ -285,7 +285,7 @@ void fl_no_gl_context() {
   glXMakeCurrent(fl_display, 0, 0);
 #  elif defined(WIN32)
   wglMakeCurrent(0, 0);
-#  elif defined(__APPLE_QUARTZ__)
+#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   Fl_X::GL_cleardrawable();
 #  else
 #    error unsupported platform
@@ -298,7 +298,7 @@ void fl_delete_gl_context(GLContext context) {
   glXDestroyContext(fl_display, context);
 #  elif defined(WIN32)
   wglDeleteContext(context);
-#  elif defined(__APPLE_QUARTZ__)
+#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   Fl_X::GLcontext_release(context);
 #  else
 #    error unsupported platform

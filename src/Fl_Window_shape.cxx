@@ -24,7 +24,7 @@
 #include <FL/Fl_Pixmap.H>
 #include <string.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform window driver
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: add code to implement arbitrarily shaped windows"
 #else
@@ -32,7 +32,7 @@
 
 #ifdef WIN32
 # include <malloc.h> // needed for VisualC2010
-#elif !defined(__APPLE__)
+#elif !defined(__APPLE__) // PORTME: platform window driver
 #include <config.h>
 #if HAVE_DLFCN_H
 #include <dlfcn.h>
@@ -42,7 +42,7 @@
 #endif
 
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform window driver
 
 static void MyProviderReleaseData (void *info, const void *data, size_t size) {
   delete[] (uchar*)data;
@@ -175,12 +175,12 @@ void Fl_Window::combine_mask()
 }
 #endif // !FL_DOXYGEN
 
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform window driver
 
 
 void Fl_Window::shape_bitmap_(Fl_Image* b) {
   shape_data_->shape_ = b;
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform window driver
   if (b) {
     // complement mask bits and perform bitwise inversion of all bytes and also reverse top and bottom
     int bytes_per_row = (b->w() + 7)/8;
@@ -201,7 +201,7 @@ void Fl_Window::shape_bitmap_(Fl_Image* b) {
 }
 
 
-#if defined(__APPLE__) // on the mac, use an 8-bit mask
+#if defined(__APPLE__) // on the mac, use an 8-bit mask // PORTME: platform window driver
 /* the image can be of any depth
  offset gives the byte offset from the pixel start to the byte used to construct the shape
  */
@@ -325,7 +325,7 @@ void Fl_Window::shape_pixmap_(Fl_Image* pixmap) {
 void Fl_Window::shape(const Fl_Image* img) {
   if (shape_data_) {
     if (shape_data_->todelete_) { delete shape_data_->todelete_; }
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform window driver
     if (shape_data_->mask) { CGImageRelease(shape_data_->mask); }
 #endif
     }
@@ -391,7 +391,7 @@ void Fl_Window::draw() {
   }
   draw_children();
 
-#ifdef __APPLE_QUARTZ__
+#ifdef __APPLE_QUARTZ__ // PORTME: platform window driver
   // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
   // corner. This code draws a little ribbed triangle for dragging.
   if (fl_mac_os_version < 100700 && fl_gc && !parent() && resizable() &&

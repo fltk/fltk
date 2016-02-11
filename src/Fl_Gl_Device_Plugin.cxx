@@ -24,14 +24,14 @@
 #include <FL/Fl_RGB_Image.H>
 #include "FL/Fl.H"
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read OpenGL renderings into RGB maps"
 #else
 #endif
 
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
 uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
 {
   uchar *newimg = new uchar[3*w*h];
@@ -59,7 +59,7 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
  stored from bottom to top.
  */
 {
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
   const int bytesperpixel = 4;
   int factor = glw->pixels_per_unit();
   if (factor > 1) {
@@ -81,14 +81,14 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
   uchar *baseAddress = new uchar[mByteWidth * h];
   glReadPixels(x, glw->pixel_h() - (y+h), w, h,
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
                GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
 #else
                GL_RGB, GL_UNSIGNED_BYTE,
 #endif
                baseAddress);
   glPopClientAttrib();
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform OpenGL management
   baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
   mByteWidth = 3 * w;
 #endif
@@ -97,7 +97,7 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   return img;
 }
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
   delete (Fl_RGB_Image *)info;
@@ -116,7 +116,7 @@ public:
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
     Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform OpenGL management
     if (Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) {
       // convert the image to CGImage, and draw it at full res (useful on retina display)
       CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();

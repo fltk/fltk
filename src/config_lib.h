@@ -15,7 +15,7 @@
 // find the right graphics configuration
 #if !defined(FL_CFG_GFX_XLIB) && !defined(FL_CFG_GFX_QUARTZ) && !defined(FL_CFG_GFX_GDI)
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // default configurations
 # define FL_CFG_GFX_QUARTZ
 # ifdef HAVE_GL
 #  define FL_CFG_GFX_OPENGL
@@ -40,7 +40,7 @@
 // find the right printer driver configuration
 #if !defined(FL_CFG_PRN_PS) && !defined(FL_CFG_PRN_QUARTZ) && !defined(FL_CFG_PRN_WIN32)
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // default configurations
 # define FL_CFG_PRN_QUARTZ
 #elif defined(WIN32)
 # define FL_CFG_WIN_WIN32
@@ -56,7 +56,7 @@
 // find the right window manager configuration
 #if !defined(FL_CFG_WIN_X11) && !defined(FL_CFG_WIN_COCOA) && !defined(FL_CFG_WIN_WIN32)
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // default configurations
 # define FL_CFG_WIN_COCOA
 #elif defined(WIN32)
 # define FL_CFG_WIN_WIN32
@@ -72,7 +72,7 @@
 // find the right system configuration
 #if !defined(FL_CFG_SYS_POSIX) && !defined(FL_CFG_SYS_WIN32)
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // default configurations
 # define FL_CFG_SYS_POSIX
 #elif defined(WIN32)
 # define FL_CFG_SYS_WIN32

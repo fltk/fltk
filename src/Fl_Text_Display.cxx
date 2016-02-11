@@ -31,7 +31,7 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform editor feel
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: look out for some code that visualizes character composing"
 #else
@@ -2144,7 +2144,7 @@ void Fl_Text_Display::draw_string(int style,
 
     if (style & PRIMARY_MASK) {
       if (Fl::focus() == (Fl_Widget*)this) {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
 	if (Fl::compose_state) background = color();// Mac OS: underline marked text
 	else 
 #endif
@@ -2181,18 +2181,18 @@ void Fl_Text_Display::draw_string(int style,
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
     fl_font( font, fsize );
-#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT
+#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT // PORTME: platform editor feel
     // makes sure antialiased ÄÖÜ do not leak on line above
     fl_push_clip(X, Y, toX - X, mMaxsize);
 #endif
     fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
-#ifdef __APPLE__ // Mac OS: underline marked (= selected + Fl::compose_state != 0) text
+#ifdef __APPLE__ // Mac OS: underline marked (= selected + Fl::compose_state != 0) text // PORTME: platform editor feel
     if (Fl::compose_state && (style & PRIMARY_MASK)) {
       fl_color( fl_color_average(foreground, background, 0.6) );
       fl_line(X, Y + mMaxsize - 1, X + fl_width(string, nChars), Y + mMaxsize - 1);
     }
 #endif
-#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT
+#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT // PORTME: platform editor feel
     fl_pop_clip();
 #endif
   }
@@ -2277,7 +2277,7 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
   if ( X < text_area.x - 1 || X > text_area.x + text_area.w )
     return;
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
   Fl::insertion_point_location(X, bot, fontHeight);
 #endif
   /* For cursors other than the block, make them around 2/3 of a character
@@ -3703,7 +3703,7 @@ void Fl_Text_Display::draw(void) {
   int has_selection = buffer()->selection_position(&start, &end);
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)
       && (
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
 	  Fl::compose_state ||
 #endif
 	  !has_selection || mCursorPos < start || mCursorPos > end) &&
@@ -3881,7 +3881,7 @@ int Fl_Text_Display::handle(int event) {
       if (dragType==DRAG_START_DND) {
         if (!Fl::event_is_click() && Fl::dnd_text_ops()) {
           const char* copy = buffer()->selection_text();
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
           Fl_X::dnd(1);
 #else
           Fl::dnd();

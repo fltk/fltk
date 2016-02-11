@@ -25,7 +25,7 @@
 #include <FL/Fl_Text_Editor.H>
 #include <FL/fl_ask.H>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform editor
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: add common shortcut for your platform here"
 #else
@@ -146,7 +146,7 @@ static struct {
   { FL_Insert,    FL_SHIFT,                 Fl_Text_Editor::kf_paste      },
   { 'a',          FL_CTRL,                  Fl_Text_Editor::kf_select_all },
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform editor feel
   // Define CMD+key accelerators...
   { 'z',          FL_COMMAND,               Fl_Text_Editor::kf_undo       },
   { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        },
@@ -161,7 +161,7 @@ static struct {
   { FL_Right,     FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
   { FL_Up,        FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
   { FL_Down,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform editor feel
 
   { 0,            0,                        0                             }
 };
@@ -543,7 +543,7 @@ int Fl_Text_Editor::handle_key() {
       if (insert_mode()) insert(Fl::event_text());
       else overstrike(Fl::event_text());
     }
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
     if (Fl::compose_state) {
       int pos = this->insert_position();
       this->buffer()->select(pos - Fl::compose_state, pos);
@@ -586,7 +586,7 @@ int Fl_Text_Editor::handle(int event) {
 
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform compose
       if (buffer()->selected() && Fl::compose_state) {
 	int pos = insert_position();
 	buffer()->select(pos, pos);

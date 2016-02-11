@@ -25,14 +25,14 @@
 #  include <stdio.h>
 #endif // DEBUG
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform screenshots
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"
 static uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) { }
 #else
 #endif
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform screenshots
 #  include "fl_read_image_mac.cxx"
 #else
 #  include <FL/Fl_RGB_Image.H>
@@ -108,7 +108,7 @@ static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int
     if (full_img) g->as_window()->make_current();
     uchar *image_data;
     int alloc_img = (full_img != NULL || p == NULL); // false means use p, don't alloc new memory for image
-#ifdef __APPLE_CC__
+#ifdef __APPLE_CC__ // PORTME: platform screenshots
     // on Darwin + X11, read_win_rectangle() sometimes returns NULL when there are subwindows
     do image_data = read_win_rectangle( (alloc_img ? NULL : p), x, y, w, h, alpha); while (!image_data);
 #else
@@ -638,7 +638,7 @@ static uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha
 
 #endif // !WIN32
 
-#endif // !__APPLE__
+#endif // !__APPLE__ // PORTME: platform screenshots
 
 //
 // End of "$Id$".

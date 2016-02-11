@@ -45,7 +45,7 @@
 #ifndef Fl_Gl_Choice_H
 #define Fl_Gl_Choice_H
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: add code to list and select OpenGL drawing contexts"
 #else
@@ -56,7 +56,7 @@
 #ifdef WIN32
 #  include <FL/gl.h>
 #  define GLContext HGLRC
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
 #  include <OpenGL/gl.h>
 #ifdef __OBJC__
 @class NSOpenGLPixelFormat;
@@ -81,7 +81,7 @@ public:
 #ifdef WIN32
   int pixelformat;	// the visual to use
   PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   NSOpenGLPixelFormat* pixelformat;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: define OpenGL pixel format containers"
@@ -101,7 +101,7 @@ class Fl_Window;
 
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
 
 GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 

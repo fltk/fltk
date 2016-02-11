@@ -21,7 +21,7 @@
 #include <FL/Fl.H>
 
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform copy surface
 #include <ApplicationServices/ApplicationServices.h>
 
 Fl_Quartz_Surface_::Fl_Quartz_Surface_(int w, int h) : Fl_System_Printer(), width(w), height(h) {
@@ -75,7 +75,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
 {
   width = w;
   height = h;
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform copy surface
   helper = new Fl_Quartz_Surface_(width, height);
   driver(helper->driver());
   prepare_copy_pdf_and_tiff(w, h);
@@ -120,7 +120,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
  */
 Fl_Copy_Surface::~Fl_Copy_Surface()
 {
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform copy surface
   complete_copy_pdf_and_tiff();
   fl_gc = oldgc;
   delete (Fl_Quartz_Surface_*)helper;
@@ -165,7 +165,7 @@ void Fl_Copy_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
 
 void Fl_Copy_Surface::set_current()
 {
-#if defined(__APPLE__) || defined(WIN32)
+#if defined(__APPLE__) || defined(WIN32) // PORTME: platform copy surface
   fl_gc = gc;
   fl_window = (Window)1;
   Fl_Surface_Device::set_current();
@@ -180,7 +180,7 @@ void Fl_Copy_Surface::set_current()
 }
 
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) // PORTME: platform copy surface
 
 size_t Fl_Copy_Surface::MyPutBytes(void* info, const void* buffer, size_t count)
   {
@@ -218,7 +218,7 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
   CGContextSaveGState(gc);
 }
 
-#endif  // __APPLE__
+#endif  // __APPLE__ // PORTME: platform copy surface
 
 
 /** Copies a window and its borders and title bar to the clipboard.
@@ -232,7 +232,7 @@ void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int del
 }
 
 #if defined(WIN32)
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform copy surface
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you need a helper class for your graphics driver"
 #elif !defined(FL_DOXYGEN)

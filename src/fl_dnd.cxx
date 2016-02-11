@@ -18,7 +18,7 @@
 
 #ifdef WIN32
 #  include "fl_dnd_win32.cxx"
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform dnd
 //#  include "fl_dnd_mac.cxx"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement drag and drop in its own platform file"

@@ -52,7 +52,7 @@ void fl_gettime(long* sec, long* usec) {
   *sec = (long) tp.time;
   *usec = tp.millitm * 1000;
 # endif
-#elif defined(FL_PORTING) && !defined(__APPLE__)
+#elif defined(FL_PORTING) && !defined(__APPLE__) // PORTME: platform timer
 #  pragma message "FL_PORTING: implement time, rarely needed, if ever."
 #else
   struct timeval tp;

@@ -19,7 +19,7 @@
 // Functions from <FL/gl.h>
 // See also Fl_Gl_Window and gl_start.cxx
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform opengl
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement OpenGL text rendering here"
 #else
@@ -38,7 +38,7 @@
 #include "Fl_Font.H"
 #include <FL/fl_utf8.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform opengl
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you want to include Xutf8.h? It's written for X11."
 #else

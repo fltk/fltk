@@ -28,13 +28,13 @@
 #include <ctype.h>
 #include "flstring.h"
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: command line arguments
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement special command line handling"
 #else
 #endif
 
-#if defined(WIN32) || defined(__APPLE__) || defined(FL_PORTING)
+#if defined(WIN32) || defined(__APPLE__) || defined(FL_PORTING) // PORTME: parse geometry
 int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #  define NoValue	0x0000
 #  define XValue  	0x0001
@@ -175,13 +175,13 @@ int Fl::arg(int argc, char **argv, int &i) {
     Fl_Tooltip::disable();
     i++;
     return 1;
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform command line
     // The Finder application in MacOS X passes the "-psn_N_NNNNN" option
     // to all apps...
   } else if (strncmp(s, "psn_", 4) == 0) {
     i++;
     return 1;
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform command line
   }
 
   const char *v = argv[i+1];
@@ -195,16 +195,16 @@ int Fl::arg(int argc, char **argv, int &i) {
     if (!flags) return 0;
     geometry = v;
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) // PORTME: platform command line
   } else if (fl_match(s, "display", 2)) {
     Fl::display(v);
 #endif
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform command line
     // Xcode in MacOS X may pass "-NSDocumentRevisionsDebugMode YES"
   } else if (strcmp(s, "NSDocumentRevisionsDebugMode") == 0) {
     // nothing to do
-#endif // __APPLE__
+#endif // __APPLE__ // PORTME: platform command line
 
   } else if (fl_match(s, "title", 2)) {
     title = v;
@@ -303,7 +303,7 @@ void Fl_Window::show(int argc, char **argv) {
   Fl::get_system_colors();
 
 #if defined(WIN32)
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform default parameters
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: Parse additional default settings"
 #else // X11
@@ -327,7 +327,7 @@ void Fl_Window::show(int argc, char **argv) {
   if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
                              strcasecmp(val, "on") == 0 ||
                              strcasecmp(val, "yes") == 0);
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ // PORTME: platform defaults
 
   // set colors first, so background_pixel is correct:
   static char beenhere;
@@ -367,7 +367,7 @@ void Fl_Window::show(int argc, char **argv) {
   show();
 
 #if defined(WIN32)
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform properties
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: Parse additional default settings"
 #else // X11
@@ -380,7 +380,7 @@ void Fl_Window::show(int argc, char **argv) {
   XChangeProperty(fl_display, fl_xid(this), XA_WM_COMMAND, XA_STRING, 8, 0,
 		  (unsigned char *)buffer, p-buffer-1);
   delete[] buffer;
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ // PORTME: platform properties
 }
 
 // Calls useful for simple demo programs, with automatic help message:
@@ -417,7 +417,7 @@ void Fl::args(int argc, char **argv) {
   int i; if (Fl::args(argc,argv,i) < argc) Fl::error(helpmsg);
 }
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform command line arguments
 
 /* the following function was stolen from the X sources as indicated. */
 

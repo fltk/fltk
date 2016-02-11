@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include "flstring.h"
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform pixmap
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement platform specific about pixmap drawing here"
 #else
@@ -256,7 +256,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   }
 
   // FIXME: Hack until fl_draw_image() supports alpha properly
-#ifdef  __APPLE_QUARTZ__
+#ifdef  __APPLE_QUARTZ__ // PORTME: platform pixmap
   if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
     Fl_RGB_Image* rgb = new Fl_RGB_Image(buffer, w, h, 4);
     rgb->alloc_array = 1;
@@ -264,7 +264,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     delete rgb;
     return 1;
   } else {
-#endif // __APPLE_QUARTZ__
+#endif // __APPLE_QUARTZ__ // PORTME: platform pixmap
   // build the mask bitmap used by Fl_Pixmap:
   if (fl_mask_bitmap) {
     int W = (w+7)/8;
@@ -289,7 +289,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 
   fl_draw_image(buffer, x, y, w, h, 4);
 
-#ifdef __APPLE_QUARTZ__
+#ifdef __APPLE_QUARTZ__ // PORTME: platform pixmap
   }
 #endif
   delete[] buffer;

@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: platform text encoding
  
 // These function assume a western code page. If you need to support 
 // scripts that are not part of this code page, you might want to

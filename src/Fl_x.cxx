@@ -18,7 +18,7 @@
 
 #ifdef WIN32
 //#  include "Fl_win32.cxx"
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform window driver
 //#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the FLTK core in its own file"

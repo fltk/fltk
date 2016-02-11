@@ -54,11 +54,11 @@
 #    endif
 #  endif
 
-#  ifdef __APPLE__
+#  ifdef __APPLE__ // PORTME: OpenGL path abstraction
 #    include <OpenGL/gl.h>
 #  else
 #    include <GL/gl.h>
-#  endif  // __APPLE__
+#  endif  // __APPLE__ // PORTME: OpenGL Path abstraction
 
 FL_EXPORT void gl_start();
 FL_EXPORT void gl_finish();
@@ -89,7 +89,7 @@ FL_EXPORT void gl_draw(const char*, int n, int x, int y);
 FL_EXPORT void gl_draw(const char*, int n, float x, float y);
 FL_EXPORT void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 FL_EXPORT void gl_measure(const char*, int& x, int& y);
-#ifdef __APPLE__
+#ifdef __APPLE__ // PORTME: OpenGL platform texture
 extern FL_EXPORT void gl_texture_pile_height(int max);
 extern FL_EXPORT int gl_texture_pile_height();
 #elif defined(WIN32)

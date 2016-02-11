@@ -37,7 +37,7 @@
  * Microsoft(r) Windows(r) that allows for it.
  */
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) // PORTME: platform main()
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement 'main()' here if your platform provides another app entry point"
 #else

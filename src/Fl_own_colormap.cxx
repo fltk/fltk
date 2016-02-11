@@ -41,7 +41,7 @@
 
 void Fl::own_colormap() {}
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) // PORTME: platform colormap
 // MacOS X always provides a TrueColor interface...
 
 void Fl::own_colormap() {}

@@ -28,7 +28,7 @@
 
 #  ifdef WIN32
 #    include "win32.H"
-#  elif defined(__APPLE__)
+#  elif defined(__APPLE__)  // PORTME: Fl_X Window Driver interface
 #    include "mac.H"
 #  elif defined(ANDROID)
 #    pragma message "A clean port requires a driver-style system for Fl_X"
