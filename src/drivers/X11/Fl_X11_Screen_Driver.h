@@ -53,7 +53,7 @@ public:
   // --- audible output
   virtual void beep(int type);
   // --- global events
-  virtual void flush() = 0;
+  virtual void flush();
 };
 
 
