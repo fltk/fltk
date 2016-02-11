@@ -20,19 +20,43 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl.H>
 
+#ifdef __APPLE__
+class Fl_Quartz_Scaled_Graphics_Driver_ : public Fl_Quartz_Graphics_Driver {
+protected:
+  virtual void push_clip(int x, int y, int w, int h) {
+    CGContextRestoreGState(fl_gc);
+    CGContextSaveGState(fl_gc);
+    CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
+    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+    CGContextClipToRect(fl_gc, CGRectMake(x, y, w, h));
+  }
+  virtual void pop_clip() {
+    CGContextRestoreGState(fl_gc);
+    CGContextSaveGState(fl_gc);
+    CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
+    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+  }
+};
+#endif
 
 const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
 
-/** The constructor.
- \param w and \param h give the size in pixels of the resulting image.
- */
-Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
+void Fl_Image_Surface::prepare_(int w, int h, int highres) {
   width = w;
   height = h;
+#if FL_ABI_VERSION < 10304
+  highres = 0;
+#endif
 #ifdef __APPLE__
-  offscreen = fl_create_offscreen(w, h);
-  helper = new Fl_Quartz_Flipped_Surface_(width, height);
+  offscreen = fl_create_offscreen(highres ? 2*w : w, highres ? 2*h : h);
+  helper = new Fl_Quartz_Flipped_Surface_(w, h);
+  if (highres) {
+    delete helper->driver();
+    helper->driver(new Fl_Quartz_Scaled_Graphics_Driver_);
+    CGContextScaleCTM(offscreen, 2, 2);
+  }
   driver(helper->driver());
+  CGContextSetShouldAntialias(offscreen, false);
   CGContextSaveGState(offscreen);
   CGContextTranslateCTM(offscreen, 0, height);
   CGContextScaleCTM(offscreen, 1.0f, -1.0f);
@@ -55,6 +79,24 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
 #endif
 }
 
+/** Constructor with optional high resolution.
+ \param w and \param h give the size in pixels of the resulting image.
+ \param highres if non-zero, the surface pixel size is twice as high and wide as w and h,
+ which is useful to draw it later on a high resolution display (e.g., retina display). 
+ This is implemented for the Mac OS platform only.
+ If \p highres is non-zero, use Fl_Image_Surface::highres_image() to get the image data.
+ \version 1.3.4 and requires compilation with -DFL_ABI_VERSION=10304 (1.3.3 without the highres parameter)
+ */
+Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Surface_Device(NULL) {
+  prepare_(w, h, highres);
+}
+#if FLTK_ABI_VERSION < 10304
+Fl_Image_Surface::Fl_Image_Surface(int w, int h) : Fl_Surface_Device(NULL) {
+  prepare_(w, h, 0);
+}
+#endif
+
+
 /** The destructor.
  */
 Fl_Image_Surface::~Fl_Image_Surface() {
@@ -75,14 +117,19 @@ Fl_Image_Surface::~Fl_Image_Surface() {
 
 /** Returns an image made of all drawings sent to the Fl_Image_Surface object.
  The returned object contains its own copy of the RGB data.
+ Prefer Fl_Image_Surface::highres_image() if the surface was 
+ constructed with the highres option on.
  */
 Fl_RGB_Image* Fl_Image_Surface::image()
 {
   unsigned char *data;
-  int depth = 3, ld = 0;
+  int W = width, H = height;
 #ifdef __APPLE__
   CGContextFlush(offscreen);
-  data = fl_read_image(NULL, 0, 0, width, height, 0);
+  W = CGBitmapContextGetWidth(offscreen);
+  H = CGBitmapContextGetHeight(offscreen);
+  Fl_X::set_high_resolution(0);
+  data = fl_read_image(NULL, 0, 0, W, H, 0);
   fl_gc = 0;
 #elif defined(WIN32)
   fl_pop_clip(); 
@@ -98,9 +145,22 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   fl_window = pre_window; 
   previous->set_current();
 #endif
-  Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height, depth, ld);
+  Fl_RGB_Image *image = new Fl_RGB_Image(data, W, H);
   image->alloc_array = 1;
   return image;
+}
+
+/** Returns a possibly high resolution image made of all drawings sent to the Fl_Image_Surface object.
+ The Fl_Image_Surface object should have been constructed with Fl_Image_Surface(W, H, 1).
+ The returned image is scaled to a size of WxH drawing units and may have a pixel size twice as wide and high.
+ The returned object should be deallocated with Fl_Shared_Image::release() after use.
+ \version 1.3.4 and requires compilation with -DFL_ABI_VERSION=10304
+ */
+Fl_Shared_Image* Fl_Image_Surface::highres_image()
+{
+  Fl_Shared_Image *s_img = Fl_Shared_Image::get(image());
+  s_img->scale(width, height);
+  return s_img;
 }
 
 /** Draws a widget in the image surface
@@ -120,6 +180,7 @@ void Fl_Image_Surface::set_current()
 #if defined(__APPLE__)
   fl_gc = offscreen; fl_window = 0;
   Fl_Surface_Device::set_current();
+  Fl_X::set_high_resolution( CGBitmapContextGetWidth(offscreen) > width );
 #elif defined(WIN32)
   _sgc=fl_gc; 
   _sw=fl_window;

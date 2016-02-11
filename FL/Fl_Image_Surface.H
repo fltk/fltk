@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl_Image.H>
+#include <FL/Fl_Shared_Image.H>
 
 
 /** Directs all graphics requests to an Fl_Image.
@@ -45,6 +46,7 @@
 */
 class FL_EXPORT Fl_Image_Surface : public Fl_Surface_Device {
 private:
+  void prepare_(int w, int h, int highres);
   Fl_Offscreen offscreen;
   int width;
   int height;
@@ -63,12 +65,18 @@ private:
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
+#if FLTK_ABI_VERSION >= 10304 || defined(FL_DOXYGEN)
+  Fl_Image_Surface(int w, int h, int highres = 0);
+#else
+  Fl_Image_Surface(int w, int h, int highres);
   Fl_Image_Surface(int w, int h);
+#endif
   ~Fl_Image_Surface();
   void set_current();
   void draw(Fl_Widget*, int delta_x = 0, int delta_y = 0);
   void draw_decorated_window(Fl_Window* win, int delta_x = 0, int delta_y = 0);
   Fl_RGB_Image *image();
+  Fl_Shared_Image *highres_image();
 };
 
 #ifdef __APPLE__

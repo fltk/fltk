@@ -3379,9 +3379,31 @@ void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   r2.origin.x -= 0.5f;
   r2.origin.y -= 0.5f;
   CGContextClipToRect(fl_gc, r2);
-  // move graphics context to origin of vertically reversed image 
+  // move graphics context to origin of vertically reversed image
+  // The 0.5 here cancels the 0.5 offset present in Quartz graphics contexts.
+  // Thus, image and surface pixels are in phase if there's no scaling.
+  // Below, we handle x2 and /2 scalings that occur when drawing to
+  // a double-resolution bitmap, and when drawing a double-resolution bitmap to display.
   CGContextTranslateCTM(fl_gc, rect.origin.x - cx - 0.5, rect.origin.y - cy + h - 0.5);
   CGContextScaleCTM(fl_gc, 1, -1);
+  CGAffineTransform at = CGContextGetCTM(fl_gc);
+  if (at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
+    // phase image with display pixels
+    CGFloat deltax = 0, deltay = 0;
+    if (at.a == 2) { // make .tx and .ty have even values
+      deltax = (at.tx/2 - round(at.tx/2));
+      deltay = (at.ty/2 - round(at.ty/2));
+    } else if (at.a == 0.5) {
+      if (Fl_Display_Device::high_resolution()) { // make .tx and .ty have int or half-int values
+        deltax = (at.tx*2 - round(at.tx*2));
+        deltay = (at.ty*2 - round(at.ty*2));
+      } else { // make .tx and .ty have integral values
+        deltax = (at.tx - round(at.tx))*2;
+        deltay = (at.ty - round(at.ty))*2;
+      }
+    }
+    CGContextTranslateCTM(fl_gc, -deltax, -deltay);
+  }
   rect.origin.x = rect.origin.y = 0;
   rect.size.width = w;
   rect.size.height = h;
@@ -4403,7 +4425,10 @@ void Fl_X::draw_layer_to_context(void *layer, CGContextRef gc, int w, int h)
   Fl_X::clip_to_rounded_corners(gc, w, h);
   CGContextSetRGBFillColor(gc, .79, .79, .79, 1.); // equiv. to FL_DARK1
   CGContextFillRect(gc, CGRectMake(0, 0, w, h));
+  CGContextSaveGState(gc);
+  CGContextSetShouldAntialias(gc, true);
   [(CALayer*)layer renderInContext:gc]; // 10.5
+  CGContextRestoreGState(gc);
 #endif
 }
 
