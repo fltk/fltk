@@ -563,13 +563,13 @@ void copy(Fl_Widget *, void *data) {
       H = target->h();
       decorated = 0;
     }
-    rgb_surf = new Fl_Image_Surface(W, H);
+    rgb_surf = new Fl_Image_Surface(W, H, 1);
     rgb_surf->set_current();
     if (decorated)
       rgb_surf->draw_decorated_window(target->as_window());
     else
       rgb_surf->draw(target);
-    Fl_Image *img = rgb_surf->image();
+    Fl_Image *img = rgb_surf->highres_image();
     delete rgb_surf;
     Fl_Display_Device::display_device()->set_current();
     Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10);

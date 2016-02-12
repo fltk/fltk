@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl_Image.H>
+#include <FL/Fl_Shared_Image.H>
 
 
 /** Directs all graphics requests to an Fl_Image.
@@ -65,12 +66,13 @@ private:
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
-  Fl_Image_Surface(int w, int h);
+  Fl_Image_Surface(int w, int h, int highres = 0);
   ~Fl_Image_Surface();
   void set_current();
   void draw(Fl_Widget*, int delta_x = 0, int delta_y = 0);
   Fl_RGB_Image *image();
   void draw_decorated_window(Fl_Window* win, int delta_x = 0, int delta_y = 0);
+  Fl_Shared_Image *highres_image();
 };
 
 #ifdef __APPLE__ // PORTME: platform surface driver
