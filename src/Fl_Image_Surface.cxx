@@ -36,17 +36,17 @@
 class Fl_Quartz_Scaled_Graphics_Driver_ : public Fl_Quartz_Graphics_Driver {
 protected:
   virtual void push_clip(int x, int y, int w, int h) {
-    CGContextRestoreGState(fl_gc);
-    CGContextSaveGState(fl_gc);
-    CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
-    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+    push_no_clip();
     CGContextClipToRect(fl_gc, CGRectMake(x, y, w, h));
   }
-  virtual void pop_clip() {
+  virtual void push_no_clip() {
     CGContextRestoreGState(fl_gc);
     CGContextSaveGState(fl_gc);
     CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
     CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+  }
+  virtual void pop_clip() {
+    push_no_clip();
   }
 };
 #endif

@@ -4407,9 +4407,10 @@ void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Im
   int htop = decorated_h() - h();
   CALayer *layer = get_titlebar_layer(this);
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  uchar *rgba = new uchar[4 * w() * htop];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, w(), htop, 8, 4 * w(), cspace, kCGImageAlphaPremultipliedLast);
+  uchar *rgba = new uchar[4 * w() * htop * 4];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * w(), 2 * htop, 8, 8 * w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
+  CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
     draw_layer_to_context(layer, auxgc, w(), htop);
   } else {
@@ -4420,9 +4421,10 @@ void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Im
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  Fl_RGB_Image *toprgb = new Fl_RGB_Image(rgba, w(), htop, 4);
-  toprgb->alloc_array = 1;
-  top = Fl_Shared_Image::get(toprgb);
+  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * w(), 2 * htop, 4);
+  top_rgb->alloc_array = 1;
+  top = Fl_Shared_Image::get(top_rgb);
+  top->scale(w(),htop);
   CGContextRelease(auxgc);
 }
 
