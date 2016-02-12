@@ -35,6 +35,7 @@
 
 class Fl_X;
 class Fl_RGB_Image;
+class Fl_Shared_Image;
 
 
 /**
@@ -97,7 +98,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // cursor stuff
   Fl_Cursor cursor_default;
   // Captures the titlebar and borders of the window, if they exist.
-  void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
+  void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   
 protected:
   /** Data supporting a non-rectangular window shape */

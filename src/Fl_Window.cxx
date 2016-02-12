@@ -475,7 +475,7 @@ void Fl_Window::wait_for_expose() {
 
 #if defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Window::capture_titlebar_and_borders"
-void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
 {
   top = left = bottom = right = NULL;
 }

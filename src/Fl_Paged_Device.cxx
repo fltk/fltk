@@ -20,6 +20,7 @@
  */
 
 #include <FL/Fl_Paged_Device.H>
+#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
@@ -300,29 +301,25 @@ const Fl_Paged_Device::page_format Fl_Paged_Device::page_formats[NO_PAGE_FORMATS
 
 void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  Fl_RGB_Image *top, *left, *bottom, *right;
+  Fl_Shared_Image *top, *left, *bottom, *right;
   win->capture_titlebar_and_borders(top, left, bottom, right);
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {
-#ifdef __APPLE__ // PORTME: platform paged device
-    top->draw(x_offset, y_offset); // draw with transparency
-#else
-    fl_draw_image(top->array, x_offset, y_offset, top->w(), top->h(), top->d());
-#endif // __APPLE__ // PORTME: platform paged device
-    delete top;
+    top->draw(x_offset, y_offset);
+    top->release();
   }
   if (left) {
-    fl_draw_image(left->array, x_offset, y_offset + toph, left->w(), left->h(), left->d());
-    delete left;
+    left->draw(x_offset, y_offset);
+    left->release();
   }
   if (right) {
-    fl_draw_image(right->array, x_offset + win->w() + wsides, y_offset + toph, right->w(), right->h(), right->d());
-    delete right;
+    right->draw(x_offset, y_offset);
+    right->release();
   }
   if (bottom) {
-    fl_draw_image(bottom->array, x_offset, y_offset + toph + win->h(), bottom->w(), bottom->h(), bottom->d());
-    delete bottom;
+    bottom->draw(x_offset, y_offset);
+    bottom->release();
   }
   this->print_widget(win, x_offset + wsides, y_offset + toph);
 }

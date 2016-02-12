@@ -2981,8 +2981,9 @@ int Fl_Window::decorated_w()
  On the X11 platform, this function exploits a feature of fl_read_image() which, when called
  with negative 4th argument, captures the window decoration.
  */
-void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
 {
+  Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
   top = left = bottom = right = NULL;
   if (decorated_h() == h()) return;
   Window from = fl_window;
@@ -3004,19 +3005,23 @@ void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& 
   uchar *rgb;
   if (htop) {
     rgb = fl_read_image(NULL, 0, 0, - (w() + 2 * wsides), htop);
-    top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
-    top->alloc_array = 1;
+    r_top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
+    r_top->alloc_array = 1;
+    top = Fl_Shared_Image::get(r_top);
   }
   if (wsides) {
     rgb = fl_read_image(NULL, 0, htop, -wsides, h());
-    left = new Fl_RGB_Image(rgb, wsides, h(), 3);
-    left->alloc_array = 1;
+    r_left = new Fl_RGB_Image(rgb, wsides, h(), 3);
+    r_left->alloc_array = 1;
+    left = Fl_Shared_Image::get(r_left);
     rgb = fl_read_image(NULL, w() + wsides, htop, -wsides, h());
-    right = new Fl_RGB_Image(rgb, wsides, h(), 3);
-    right->alloc_array = 1;
+    r_right = new Fl_RGB_Image(rgb, wsides, h(), 3);
+    r_right->alloc_array = 1;
+    right = Fl_Shared_Image::get(r_right);
     rgb = fl_read_image(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom);
-    bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
-    bottom->alloc_array = 1;
+    r_bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
+    r_bottom->alloc_array = 1;
+    bottom = Fl_Shared_Image::get(r_bottom);
   }
   fl_window = from;
   previous->Fl_Surface_Device::set_current();

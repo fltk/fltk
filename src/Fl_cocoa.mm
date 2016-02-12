@@ -41,6 +41,7 @@ extern "C" {
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Copy_Surface.H>
+#include <FL/Fl_Shared_Image.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.h"
 #include <stdio.h>
@@ -4400,7 +4401,7 @@ static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 /* Returns images of the capture of the window title-bar.
  On the Mac OS platform, left, bottom and right are returned NULL; top is returned with depth 4.
  */
-void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
 {
   left = bottom = right = NULL;
   int htop = decorated_h() - h();
@@ -4409,19 +4410,19 @@ void Fl_Window::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& 
   uchar *rgba = new uchar[4 * w() * htop];
   CGContextRef auxgc = CGBitmapContextCreate(rgba, w(), htop, 8, 4 * w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  CGRect rect = CGRectMake(0, 0, w(), htop);
   if (layer) {
     draw_layer_to_context(layer, auxgc, w(), htop);
   } else {
     CGImageRef img = Fl_X::CGImage_from_window_rect(this, 0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
     Fl_X::clip_to_rounded_corners(auxgc, w(), htop);
-    CGContextDrawImage(auxgc, rect, img);
+    CGContextDrawImage(auxgc, CGRectMake(0, 0, w(), htop), img);
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  top = new Fl_RGB_Image(rgba, w(), htop, 4);
-  top->alloc_array = 1;
+  Fl_RGB_Image *toprgb = new Fl_RGB_Image(rgba, w(), htop, 4);
+  toprgb->alloc_array = 1;
+  top = Fl_Shared_Image::get(toprgb);
   CGContextRelease(auxgc);
 }
 
@@ -4472,12 +4473,12 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   fl_gc = NULL;
   Fl::check();
   // capture the window title bar with no title
-  Fl_RGB_Image *top, *left, *bottom, *right;
+  Fl_Shared_Image *top, *left, *bottom, *right;
   win->capture_titlebar_and_borders(top, left, bottom, right);
   win->label(title); // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar
-  delete top;
+  top->release();
   if (title) { // print the window title
     const int skip = 65; // approx width of the zone of the 3 window control buttons
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
