@@ -19,6 +19,8 @@
 
 #include "../../config_lib.h"
 #include "Fl_WinAPI_Screen_Driver.h"
+#include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_ask.h>
 #include <stdio.h>
 
@@ -37,6 +39,17 @@
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
   return new Fl_WinAPI_Screen_Driver();
+}
+
+
+int Fl_Screen_Driver::visual(int flags)
+{
+  fl_GetDC(0);
+  if (flags & FL_DOUBLE) return 0;
+  if (!(flags & FL_INDEX) &&
+      GetDeviceCaps(fl_gc,BITSPIXEL) <= 8) return 0;
+  if ((flags & FL_RGB8) && GetDeviceCaps(fl_gc,BITSPIXEL)<24) return 0;
+  return 1;
 }
 
 
@@ -240,6 +253,45 @@ void Fl_WinAPI_Screen_Driver::flush()
 }
 
 
+double Fl_WinAPI_Screen_Driver::wait(double time_to_wait)
+{
+  return fl_wait(time_to_wait);
+}
+
+
+int Fl_WinAPI_Screen_Driver::ready()
+{
+  return fl_ready();
+}
+
+
+extern void fl_fix_focus(); // in Fl.cxx
+
+// We have to keep track of whether we have captured the mouse, since
+// MSWindows shows little respect for this... Grep for fl_capture to
+// see where and how this is used.
+extern HWND fl_capture;
+
+
+void Fl_WinAPI_Screen_Driver::grab(Fl_Window* win)
+{
+  if (win) {
+    if (!Fl::grab_) {
+      SetActiveWindow(fl_capture = fl_xid(Fl::first_window()));
+      SetCapture(fl_capture);
+    }
+    Fl::grab_ = win;
+  } else {
+    if (Fl::grab_) {
+      fl_capture = 0;
+      ReleaseCapture();
+      Fl::grab_ = 0;
+      fl_fix_focus();
+    }
+  }
+}
+
+
 // simulation of XParseColor:
 int Fl_WinAPI_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 {
@@ -292,6 +344,12 @@ void Fl_WinAPI_Screen_Driver::get_system_colors()
   if (!fg_set) getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
   if (!bg_set) getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
   getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
+}
+
+
+const char *Fl_WinAPI_Screen_Driver::get_system_scheme()
+{
+  return getenv("FLTK_SCHEME");
 }
 
 

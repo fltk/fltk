@@ -32,6 +32,8 @@
 // TODO: read screen to image
 // TODO: application shortcuts
 
+class Fl_Window;
+
 
 class FL_EXPORT Fl_Screen_Driver : public Fl_Device {
 
@@ -51,6 +53,7 @@ public:
   static Fl_Screen_Driver *newScreenDriver();
   // --- display management
   virtual void display(const char *disp);
+  virtual int visual(int flags);
   // --- screen configuration
   virtual void init() = 0;
   virtual int x() = 0;
@@ -72,10 +75,13 @@ public:
   virtual void beep(int type) = 0;
   // --- global events
   virtual void flush() = 0;
+  virtual double wait(double time_to_wait) = 0;
+  virtual int ready() = 0;
+  virtual void grab(Fl_Window* win) = 0;
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b) = 0;
   virtual void get_system_colors() = 0;
-
+  virtual const char *get_system_scheme();
 };
 
 

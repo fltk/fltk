@@ -38,6 +38,12 @@ void Fl_Screen_Driver::display(const char *) {
 }
 
 
+int Fl_Screen_Driver::visual(int) {
+  // blank
+  return 1;
+}
+
+
 void Fl_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H)
 {
   int x, y;
@@ -127,6 +133,11 @@ int Fl_Screen_Driver::screen_num(int x, int y, int w, int h)
   return best_screen;
 }
 
+
+const char *Fl_Screen_Driver::get_system_scheme()
+{
+  return 0L;
+}
 
 
 //

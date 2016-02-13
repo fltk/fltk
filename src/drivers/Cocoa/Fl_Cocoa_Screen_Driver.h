@@ -39,6 +39,9 @@
 */
 
 
+class Fl_Window;
+
+
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
 protected:
@@ -47,6 +50,8 @@ protected:
   float dpi_v[MAX_SCREENS];
 
 public:
+  // --- display management
+  // --- screen configuration
   virtual void init();
   virtual int x();
   virtual int y();
@@ -59,9 +64,13 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
+  virtual double wait(double time_to_wait);
+  virtual int ready();
+  virtual void grab(Fl_Window* win);
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors();
+  virtual const char *get_system_scheme();
 };
 
 

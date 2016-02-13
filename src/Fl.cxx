@@ -74,7 +74,6 @@ void fl_cleanup_pens(void);
 void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
 #elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform functions
-extern double fl_mac_flush_and_wait(double time_to_wait);
 #endif // WIN32
 
 
@@ -160,6 +159,7 @@ bool Fl::cfg_sys_win32 = 0;
 // Globals...
 //
 #if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - platform text
+                                              // this should probably be part of Fl_Sys_Menubar
 const char *Fl_Mac_App_Menu::about = "About %@";
 const char *Fl_Mac_App_Menu::print = "Print Front Window";
 const char *Fl_Mac_App_Menu::services = "Services";
@@ -543,7 +543,7 @@ int Fl::has_check(Fl_Timeout_Handler cb, void *argp) {
   return 0;
 }
 
-static void run_checks()
+void Fl::run_checks()
 {
   // checks are a bit messy so that add/remove and wait may be called
   // from inside them without causing an infinite loop:
@@ -557,9 +557,6 @@ static void run_checks()
   }
 }
 
-#if !defined(WIN32) && !defined(__APPLE__) // PORTME: ??
-static char in_idle;
-#endif
 
 ////////////////////////////////////////////////////////////////
 // Clipboard notifications
@@ -639,68 +636,7 @@ extern int fl_wait(double time); // in Fl_<platform>.cxx
 double Fl::wait(double time_to_wait) {
   // delete all widgets that were listed during callbacks
   do_widget_deletion();
-
-#ifdef WIN32
-
-  return fl_wait(time_to_wait);
-
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform fl_wait
-
-  run_checks();
-  return fl_mac_flush_and_wait(time_to_wait);
-
-#elif defined(FL_PORTING)
-
-# pragma message "FL_PORTING: implement waiting for a timer or a message from the system"
-  return fl_wait(time_to_wait);
-
-#else
-
-  if (first_timeout) {
-    elapse_timeouts();
-    Timeout *t;
-    while ((t = first_timeout)) {
-      if (t->time > 0) break;
-      // The first timeout in the array has expired.
-      missed_timeout_by = t->time;
-      // We must remove timeout from array before doing the callback:
-      void (*cb)(void*) = t->cb;
-      void *argp = t->arg;
-      first_timeout = t->next;
-      t->next = free_timeout;
-      free_timeout = t;
-      // Now it is safe for the callback to do add_timeout:
-      cb(argp);
-    }
-  } else {
-    reset_clock = 1; // we are not going to check the clock
-  }
-  run_checks();
-//  if (idle && !fl_ready()) {
-  if (idle) {
-    if (!in_idle) {
-      in_idle = 1;
-      idle();
-      in_idle = 0;
-    }
-    // the idle function may turn off idle, we can then wait:
-    if (idle) time_to_wait = 0.0;
-  }
-  if (first_timeout && first_timeout->time < time_to_wait)
-    time_to_wait = first_timeout->time;
-  if (time_to_wait <= 0.0) {
-    // do flush second so that the results of events are visible:
-    int ret = fl_wait(0.0);
-    flush();
-    return ret;
-  } else {
-    // do flush first so that user sees the display:
-    flush();
-    if (idle && !in_idle) // 'idle' may have been set within flush()
-      time_to_wait = 0.0;
-    return fl_wait(time_to_wait);
-  }
-#endif
+  return screen_driver()->wait(time_to_wait);
 }
 
 #define FOREVER 1e20
@@ -786,20 +722,9 @@ int Fl::check() {
   }
   \endcode
 */
-int Fl::ready() {
-#if defined( WIN32 ) || defined(__APPLE__) // PORTME: Fl_System_Driver - platform timeouts
-  // not used
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: you may need to handle timers here."
-#else // X11
-  if (first_timeout) {
-    elapse_timeouts();
-    if (first_timeout->time <= 0) return 1;
-  } else {
-    reset_clock = 1;
-  }
-#endif
-  return fl_ready();
+int Fl::ready()
+{
+  return screen_driver()->ready();
 }
 
 ////////////////////////////////////////////////////////////////

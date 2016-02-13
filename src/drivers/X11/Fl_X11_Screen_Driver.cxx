@@ -27,6 +27,10 @@
 #  include <X11/extensions/Xinerama.h>
 #endif
 
+#if USE_XDBE
+#include <X11/extensions/Xdbe.h>
+#endif
+
 extern Atom fl_NET_WORKAREA;
 
 
@@ -60,6 +64,69 @@ void Fl_X11_Screen_Driver::display(const char *d)
   }
   putenv(e);
   free(buf);
+}
+
+
+static int test_visual(XVisualInfo& v, int flags) {
+  if (v.screen != fl_screen) return 0;
+#if USE_COLORMAP
+  if (!(flags & FL_INDEX)) {
+    if (v.c_class != StaticColor && v.c_class != TrueColor) return 0;
+    if (v.depth <= 8) return 0; // fltk will work better in colormap mode
+  }
+  if (flags & FL_RGB8) {
+    if (v.depth < 24) return 0;
+  }
+  // for now, fltk does not like colormaps of more than 8 bits:
+  if ((v.c_class&1) && v.depth > 8) return 0;
+#else
+  // simpler if we can't use colormapped visuals at all:
+  if (v.c_class != StaticColor && v.c_class != TrueColor) return 0;
+#endif
+#if USE_XDBE
+  if (flags & FL_DOUBLE) {
+    static XdbeScreenVisualInfo *xdbejunk;
+    if (!xdbejunk) {
+      int event_base, error_base;
+      if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
+      Drawable root = RootWindow(fl_display,fl_screen);
+      int numscreens = 1;
+      xdbejunk = XdbeGetVisualInfo(fl_display,&root,&numscreens);
+      if (!xdbejunk) return 0;
+    }
+    for (int j = 0; ; j++) {
+      if (j >= xdbejunk->count) return 0;
+      if (xdbejunk->visinfo[j].visual == v.visualid) break;
+    }
+  }
+#endif
+  return 1;
+}
+
+
+int Fl_X11_Screen_Driver::visual(int flags)
+{
+#if USE_XDBE == 0
+  if (flags & FL_DOUBLE) return 0;
+#endif
+  fl_open_display();
+  // always use default if possible:
+  if (test_visual(*fl_visual, flags)) return 1;
+  // get all the visuals:
+  XVisualInfo vTemplate;
+  int num;
+  XVisualInfo *visualList = XGetVisualInfo(fl_display, 0, &vTemplate, &num);
+  // find all matches, use the one with greatest depth:
+  XVisualInfo *found = 0;
+  for (int i=0; i<num; i++) if (test_visual(visualList[i], flags)) {
+    if (!found || found->depth < visualList[i].depth)
+      found = &visualList[i];
+  }
+  if (!found) {XFree((void*)visualList); return 0;}
+  fl_visual = found;
+  fl_colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
+                                fl_visual->visual, AllocNone);
+  return 1;
 }
 
 
@@ -232,6 +299,119 @@ void Fl_X11_Screen_Driver::flush()
 }
 
 
+double Fl_X11_Screen_Driver::wait(double time_to_wait)
+{
+  static char in_idle;
+
+  if (first_timeout) {
+    elapse_timeouts();
+    Timeout *t;
+    while ((t = first_timeout)) {
+      if (t->time > 0) break;
+      // The first timeout in the array has expired.
+      missed_timeout_by = t->time;
+      // We must remove timeout from array before doing the callback:
+      void (*cb)(void*) = t->cb;
+      void *argp = t->arg;
+      first_timeout = t->next;
+      t->next = free_timeout;
+      free_timeout = t;
+      // Now it is safe for the callback to do add_timeout:
+      cb(argp);
+    }
+  } else {
+    reset_clock = 1; // we are not going to check the clock
+  }
+  Fl::run_checks();
+  //  if (idle && !fl_ready()) {
+  if (idle) {
+    if (!in_idle) {
+      in_idle = 1;
+      idle();
+      in_idle = 0;
+    }
+    // the idle function may turn off idle, we can then wait:
+    if (idle) time_to_wait = 0.0;
+  }
+  if (first_timeout && first_timeout->time < time_to_wait)
+    time_to_wait = first_timeout->time;
+  if (time_to_wait <= 0.0) {
+    // do flush second so that the results of events are visible:
+    int ret = fl_wait(0.0);
+    flush();
+    return ret;
+  } else {
+    // do flush first so that user sees the display:
+    flush();
+    if (idle && !in_idle) // 'idle' may have been set within flush()
+      time_to_wait = 0.0;
+    return fl_wait(time_to_wait);
+  }
+}
+
+
+int Fl_X11_Screen_Driver::ready()
+{
+  if (first_timeout) {
+    elapse_timeouts();
+    if (first_timeout->time <= 0) return 1;
+  } else {
+    reset_clock = 1;
+  }
+  return fl_ready();
+}
+
+
+extern void fl_fix_focus(); // in Fl.cxx
+
+
+void Fl_X11_Screen_Driver::grab(Fl_Window* win)
+{
+  Fl_Window *fullscreen_win = NULL;
+  for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
+    if (W->fullscreen_active()) {
+      fullscreen_win = W;
+      break;
+    }
+  }
+  if (win) {
+    if (!grab_) {
+      Window xid = fullscreen_win ? fl_xid(fullscreen_win) : fl_xid(Fl::first_window());
+      XGrabPointer(fl_display,
+                   xid,
+                   1,
+                   ButtonPressMask|ButtonReleaseMask|
+                   ButtonMotionMask|PointerMotionMask,
+                   GrabModeAsync,
+                   GrabModeAsync,
+                   None,
+                   0,
+                   fl_event_time);
+      XGrabKeyboard(fl_display,
+                    xid,
+                    1,
+                    GrabModeAsync,
+                    GrabModeAsync,
+                    fl_event_time);
+    }
+    grab_ = win;
+  } else {
+    if (Fl::grab_) {
+      // We must keep the grab in the non-EWMH fullscreen case
+      if (!fullscreen_win || Fl_X::ewmh_supported()) {
+        XUngrabKeyboard(fl_display, fl_event_time);
+      }
+      XUngrabPointer(fl_display, fl_event_time);
+      // this flush is done in case the picked menu item goes into
+      // an infinite loop, so we don't leave the X server locked up:
+      XFlush(fl_display);
+      Fl::grab_ = 0;
+      fl_fix_focus();
+    }
+  }
+}
+
+
 // Wrapper around XParseColor...
 int Fl_X11_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 {
@@ -287,6 +467,20 @@ void Fl_X11_Screen_Driver::get_system_colors()
   if (!bg_set)
     getsyscolor(key1,  "background",	fl_bg,	"#c0c0c0", Fl::background);
   getsyscolor("Text", "selectBackground", 0, "#000080", set_selection_color);
+}
+
+
+const char *Fl_X11_Screen_Driver::get_system_scheme()
+{
+  const char *s = 0L;
+  if ((s = getenv("FLTK_SCHEME")) == NULL) {
+    const char* key = 0;
+    if (Fl::first_window()) key = Fl::first_window()->xclass();
+    if (!key) key = "fltk";
+    fl_open_display();
+    s = XGetDefault(fl_display, key, "scheme");
+  }
+  return s;
 }
 
 

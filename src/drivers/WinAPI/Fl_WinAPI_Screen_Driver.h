@@ -29,6 +29,9 @@
 #include <FL/x.H>
 
 
+class Fl_Window;
+
+
 class FL_EXPORT Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver 
 {
 protected:
@@ -40,6 +43,8 @@ protected:
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
 
 public:
+  // --- display management
+  virtual int visual(int flags);
   // --- screen configuration
   virtual void init();
   virtual int x();
@@ -53,9 +58,13 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
+  virtual double wait(double time_to_wait);
+  virtual int ready();
+  virtual void grab(Fl_Window* win);
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors();
+  virtual const char *get_system_scheme();
 };
 
 

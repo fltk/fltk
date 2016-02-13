@@ -20,11 +20,15 @@
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Screen_Driver.h"
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_ask.h>
 #include <stdio.h>
 
 
 extern "C" void NSBeep(void);
+
+extern double fl_mac_flush_and_wait(double time_to_wait);
+extern int fl_ready();
 
 
 /**
@@ -121,6 +125,42 @@ void Fl_Cocoa_Screen_Driver::flush() {
 }
 
 
+double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
+{
+  Fl::run_checks();
+  return fl_mac_flush_and_wait(time_to_wait);
+}
+
+
+int Fl_Cocoa_Screen_Driver::ready()
+{
+  return fl_ready();
+}
+
+
+extern void fl_fix_focus(); // in Fl.cxx
+
+extern void *fl_capture;
+
+
+void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
+{
+  if (win) {
+    if (!Fl::grab_) {
+      fl_capture = Fl_X::i(Fl::first_window())->xid;
+      Fl_X::i(Fl::first_window())->set_key_window();
+    }
+    Fl::grab_ = win;
+  } else {
+    if (Fl::grab_) {
+      fl_capture = 0;
+      Fl::grab_ = 0;
+      fl_fix_focus();
+    }
+  }
+}
+
+
 // simulation of XParseColor:
 int Fl_Cocoa_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 {
@@ -179,6 +219,12 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 #else
   set_selection_color(0x00, 0x00, 0x80);
 #endif
+}
+
+
+const char *Fl_Cocoa_Screen_Driver::get_system_scheme()
+{
+  return getenv("FLTK_SCHEME");
 }
 
 

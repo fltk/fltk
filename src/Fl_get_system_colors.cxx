@@ -60,12 +60,15 @@ void Fl::background(uchar r, uchar g, uchar b) {
 		  uchar(pow(gray,powb)*255+.5));
   }
 }
+
+
 /** Changes fl_color(FL_FOREGROUND_COLOR). */
 void Fl::foreground(uchar r, uchar g, uchar b) {
   Fl_Screen_Driver::fg_set = 1;
 
   Fl::set_color(FL_FOREGROUND_COLOR,r,g,b);
 }
+
 
 /**
     Changes the alternative background color. This color is used as a 
@@ -80,6 +83,7 @@ void Fl::background2(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_FOREGROUND_COLOR,
                 get_color(fl_contrast(FL_FOREGROUND_COLOR,FL_BACKGROUND2_COLOR)));
 }
+
 
 // these are set by Fl::args() and override any system colors:
 const char *fl_fg = NULL;
@@ -133,6 +137,7 @@ Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;    // current background image for the
 
 static Fl_Pixmap	tile(tile_xpm);
 
+
 /**
     Sets the current widget scheme. NULL will use the scheme defined
     in the FLTK_SCHEME environment variable or the scheme resource
@@ -161,18 +166,7 @@ static Fl_Pixmap	tile(tile_xpm);
 */
 int Fl::scheme(const char *s) {
   if (!s) {
-    if ((s = getenv("FLTK_SCHEME")) == NULL) {
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform system scheme
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement Fl::scheme"
-#else
-      const char* key = 0;
-      if (Fl::first_window()) key = Fl::first_window()->xclass();
-      if (!key) key = "fltk";
-      fl_open_display();
-      s = XGetDefault(fl_display, key, "scheme");
-#endif // !WIN32 && !__APPLE__ // PORTME: Fl_Screen_Driver - platform system scheme
-    }
+    s = screen_driver()->get_system_scheme();
   }
 
   if (s) {
@@ -195,6 +189,7 @@ int Fl::scheme(const char *s) {
   // Load the scheme...
   return reload_scheme();
 }
+
 
 int Fl::reload_scheme() {
   Fl_Window *win;
@@ -318,6 +313,10 @@ int Fl::reload_scheme() {
   // is the workaround to use a group inside the window to achieve this.
   // See also STR #3075.
   // AlbrechtS, 01 Mar 2015
+  //
+  // If there is already an image assigned that is not the scheme_bg_,
+  // then don't change the labeltype or assign another image. Will that
+  // fix it?
 
   for (win = first_window(); win; win = next_window(win)) {
     win->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);

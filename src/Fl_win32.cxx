@@ -365,7 +365,7 @@ static void process_awake_handler_requests(void) {
 int fl_wait(double time_to_wait) {
   int have_message = 0;
 
-  run_checks();
+  Fl::run_checks();
 
   // idle processing
   static char in_idle;

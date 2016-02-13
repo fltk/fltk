@@ -151,7 +151,7 @@ static void tooltip_timeout(void*) {
       if (window) window->hide();
     } else {
       int condition = 1;
-#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: Fl_Screen_Driver - platform ??
+#if !(defined(__APPLE__) || defined(WIN32)) // bugfix: no need to refactor
       condition = (Fl::grab() == NULL);
 #endif
       if ( condition ) {
