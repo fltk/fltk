@@ -241,7 +241,7 @@ void Fl_WinAPI_Screen_Driver::flush()
 
 
 // simulation of XParseColor:
-int Fl_WinAPI_Screen_Driverparse_color(const char* p, uchar& r, uchar& g, uchar& b)
+int Fl_WinAPI_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 {
   if (*p == '#') p++;
   size_t n = strlen(p);
@@ -263,6 +263,38 @@ int Fl_WinAPI_Screen_Driverparse_color(const char* p, uchar& r, uchar& g, uchar&
   r = (uchar)R; g = (uchar)G; b = (uchar)B;
   return 1;
 }
+
+
+static void set_selection_color(uchar r, uchar g, uchar b)
+{
+  Fl::set_color(FL_SELECTION_COLOR,r,g,b);
+}
+
+
+static void getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
+{
+  if (arg) {
+    uchar r,g,b;
+    if (!fl_parse_color(arg, r,g,b))
+      Fl::error("Unknown color: %s", arg);
+    else
+      func(r,g,b);
+  } else {
+    DWORD x = GetSysColor(what);
+    func(uchar(x&255), uchar(x>>8), uchar(x>>16));
+  }
+}
+
+
+void Fl_WinAPI_Screen_Driver::get_system_colors()
+{
+  if (!bg2_set) getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
+  if (!fg_set) getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
+  if (!bg_set) getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
+  getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
+}
+
+
 
 
 //

@@ -43,6 +43,11 @@ protected:
   int num_screens;
 
 public:
+  static char bg_set;
+  static char bg2_set;
+  static char fg_set;
+
+public:
   static Fl_Screen_Driver *newScreenDriver();
   // --- display management
   virtual void display(const char *disp);
@@ -69,6 +74,8 @@ public:
   virtual void flush() = 0;
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b) = 0;
+  virtual void get_system_colors() = 0;
+
 };
 
 

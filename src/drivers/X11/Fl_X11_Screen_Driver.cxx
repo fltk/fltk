@@ -246,6 +246,50 @@ int Fl_X11_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& 
 }
 
 
+// Read colors that KDE writes to the xrdb database.
+
+// XGetDefault does not do the expected thing: it does not like
+// periods in either word. Therefore it cannot match class.Text.background.
+// However *.Text.background is matched by pretending the program is "Text".
+// But this will also match *.background if there is no *.Text.background
+// entry, requiring users to put in both (unless they want the text fields
+// the same color as the windows).
+
+static void set_selection_color(uchar r, uchar g, uchar b)
+{
+  Fl::set_color(FL_SELECTION_COLOR,r,g,b);
+}
+
+static void getsyscolor(const char *key1, const char* key2, const char *arg, const char *defarg, void (*func)(uchar,uchar,uchar))
+{
+  if (!arg) {
+    arg = XGetDefault(fl_display, key1, key2);
+    if (!arg) arg = defarg;
+  }
+  XColor x;
+  if (!XParseColor(fl_display, fl_colormap, arg, &x))
+    Fl::error("Unknown color: %s", arg);
+  else
+    func(x.red>>8, x.green>>8, x.blue>>8);
+}
+
+
+void Fl_X11_Screen_Driver::get_system_colors()
+{
+  fl_open_display();
+  const char* key1 = 0;
+  if (Fl::first_window()) key1 = Fl::first_window()->xclass();
+  if (!key1) key1 = "fltk";
+  if (!bg2_set)
+    getsyscolor("Text","background",	fl_bg2,	"#ffffff", Fl::background2);
+  if (!fg_set)
+    getsyscolor(key1,  "foreground",	fl_fg,	"#000000", Fl::foreground);
+  if (!bg_set)
+    getsyscolor(key1,  "background",	fl_bg,	"#c0c0c0", Fl::background);
+  getsyscolor("Text", "selectBackground", 0, "#000080", set_selection_color);
+}
+
+
 //
 // End of "$Id$".
 //

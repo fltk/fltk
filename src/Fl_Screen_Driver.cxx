@@ -22,6 +22,11 @@
 #include <FL/Fl.H>
 
 
+char Fl_Screen_Driver::bg_set = 0;
+char Fl_Screen_Driver::bg2_set = 0;
+char Fl_Screen_Driver::fg_set = 0;
+
+
 Fl_Screen_Driver::Fl_Screen_Driver() :
 num_screens(-1)
 {

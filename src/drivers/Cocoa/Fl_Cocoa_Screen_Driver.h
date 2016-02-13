@@ -61,6 +61,7 @@ public:
   virtual void flush();
   // --- global colors
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
+  virtual void get_system_colors();
 };
 
 

@@ -35,9 +35,6 @@
 #  define putenv _putenv
 #endif // WIN32 && !__CYGWIN__
 
-static char	fl_bg_set = 0;
-static char	fl_bg2_set = 0;
-static char	fl_fg_set = 0;
 
 /**
     Changes fl_color(FL_BACKGROUND_COLOR) to the given color, 
@@ -46,7 +43,7 @@ static char	fl_fg_set = 0;
     the edges of all the boxtypes.
 */
 void Fl::background(uchar r, uchar g, uchar b) {
-  fl_bg_set = 1;
+  Fl_Screen_Driver::bg_set = 1;
 
   // replace the gray ramp so that FL_GRAY is this color
   if (!r) r = 1; else if (r==255) r = 254;
@@ -65,7 +62,7 @@ void Fl::background(uchar r, uchar g, uchar b) {
 }
 /** Changes fl_color(FL_FOREGROUND_COLOR). */
 void Fl::foreground(uchar r, uchar g, uchar b) {
-  fl_fg_set = 1;
+  Fl_Screen_Driver::fg_set = 1;
 
   Fl::set_color(FL_FOREGROUND_COLOR,r,g,b);
 }
@@ -77,7 +74,7 @@ void Fl::foreground(uchar r, uchar g, uchar b) {
     does not provide sufficient contrast to FL_BACKGROUND2_COLOR.
 */
 void Fl::background2(uchar r, uchar g, uchar b) {
-  fl_bg2_set = 1;
+  Fl_Screen_Driver::bg2_set = 1;
 
   Fl::set_color(FL_BACKGROUND2_COLOR,r,g,b);
   Fl::set_color(FL_FOREGROUND_COLOR,
@@ -89,13 +86,9 @@ const char *fl_fg = NULL;
 const char *fl_bg = NULL;
 const char *fl_bg2 = NULL;
 
-static void set_selection_color(uchar r, uchar g, uchar b) {
-  Fl::set_color(FL_SELECTION_COLOR,r,g,b);
-}
-
 
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
-  Fl::screen_driver()->parse_color(p, r, g, b);
+  return Fl::screen_driver()->parse_color(p, r, g, b);
 }
 
 
@@ -111,105 +104,10 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
     newer versions of KDE set this automatically if you check the "apply
     style to other X programs" switch in their control panel.
 */
-
-#if defined(WIN32)				// --- WIN32 ---
-
-static void
-getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
-{
-  if (arg) {
-    uchar r,g,b;
-    if (!fl_parse_color(arg, r,g,b))
-      Fl::error("Unknown color: %s", arg);
-    else
-      func(r,g,b);
-  } else {
-    DWORD x = GetSysColor(what);
-    func(uchar(x&255), uchar(x>>8), uchar(x>>16));
-  }
-}
-
-void Fl::get_system_colors() {
-  if (!fl_bg2_set) getsyscolor(COLOR_WINDOW,	fl_bg2,Fl::background2);
-  if (!fl_fg_set) getsyscolor(COLOR_WINDOWTEXT,	fl_fg, Fl::foreground);
-  if (!fl_bg_set) getsyscolor(COLOR_BTNFACE,	fl_bg, Fl::background);
-  getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
-}
-
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform system colors
-
-// MacOS X currently supports two color schemes - Blue and Graphite.
-// Since we aren't emulating the Aqua interface (even if Apple would
-// let us), we use some defaults that are similar to both.  The
-// Fl::scheme("plastic") color/box scheme provides a usable Aqua-like
-// look-n-feel...
 void Fl::get_system_colors()
 {
-  fl_open_display();
-
-  if (!fl_bg2_set) background2(0xff, 0xff, 0xff);
-  if (!fl_fg_set) foreground(0, 0, 0);
-  if (!fl_bg_set) background(0xd8, 0xd8, 0xd8);
-  
-#if 0 
-  // this would be the correct code, but it does not run on all versions
-  // of OS X. Also, setting a bright selection color would require 
-  // some updates in Fl_Adjuster and Fl_Help_Browser
-  OSStatus err;
-  RGBColor c;
-  err = GetThemeBrushAsColor(kThemeBrushPrimaryHighlightColor, 24, true, &c);
-  if (err)
-    set_selection_color(0x00, 0x00, 0x80);
-  else
-    set_selection_color(c.red, c.green, c.blue);
-#else
-  set_selection_color(0x00, 0x00, 0x80);
-#endif
+  Fl::screen_driver()->get_system_colors();
 }
-
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement code to find the current desktop color scheme"
-void Fl::get_system_colors() { }
-
-#else						// --- X11 ---
-
-// Read colors that KDE writes to the xrdb database.
-
-// XGetDefault does not do the expected thing: it does not like
-// periods in either word. Therefore it cannot match class.Text.background.
-// However *.Text.background is matched by pretending the program is "Text".
-// But this will also match *.background if there is no *.Text.background
-// entry, requiring users to put in both (unless they want the text fields
-// the same color as the windows).
-
-static void
-getsyscolor(const char *key1, const char* key2, const char *arg, const char *defarg, void (*func)(uchar,uchar,uchar))
-{
-  if (!arg) {
-    arg = XGetDefault(fl_display, key1, key2);
-    if (!arg) arg = defarg;
-  }
-  XColor x;
-  if (!XParseColor(fl_display, fl_colormap, arg, &x))
-    Fl::error("Unknown color: %s", arg);
-  else
-    func(x.red>>8, x.green>>8, x.blue>>8);
-}
-
-void Fl::get_system_colors()
-{
-  fl_open_display();
-  const char* key1 = 0;
-  if (Fl::first_window()) key1 = Fl::first_window()->xclass();
-  if (!key1) key1 = "fltk";
-  if (!fl_bg2_set) getsyscolor("Text","background",	fl_bg2,	"#ffffff", Fl::background2);
-  if (!fl_fg_set) getsyscolor(key1,  "foreground",	fl_fg,	"#000000", Fl::foreground);
-  if (!fl_bg_set) getsyscolor(key1,  "background",	fl_bg,	"#c0c0c0", Fl::background);
-  getsyscolor("Text", "selectBackground", 0, "#000080", set_selection_color);
-}
-
-#endif					// --- WIN32 | APPLE | X11 ---
 
 
 //// Simple implementation of 2.0 Fl::scheme() interface...
