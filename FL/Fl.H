@@ -3,7 +3,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1261,19 +1261,19 @@ int main() {
   static int use_high_res_GL() { return use_high_res_GL_; }
 
 #ifdef FLTK_HAVE_CAIRO
-  /** \defgroup group_cairo Cairo support functions and classes 
+  /** \defgroup group_cairo Cairo Support Functions and Classes
       @{ 
   */
 public:
   // Cairo support API
   static cairo_t * cairo_make_current(Fl_Window* w);
-   /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true, 
-      any current window dc is linked to a current context.
+   /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true,
+      any current window dc is linked to a current cairo context.
       This is not the default, because it may not be necessary
       to add cairo support to all fltk supported windows.
       When you wish to associate a cairo context in this mode,
       you need to call explicitly in your draw() overridden method,
-      FL::cairo_make_current(Fl_Window*). This will create a cairo context
+      Fl::cairo_make_current(Fl_Window*). This will create a cairo context
       but only for this Window. 
       Still in custom cairo application it is possible to handle 
       completely this process automatically by setting \p alink to true.

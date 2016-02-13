@@ -3,7 +3,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,8 +26,21 @@
 #include <Carbon/Carbon.h>
 #endif
 
+// Cairo is currently supported for the following platforms:
+// Win32, Apple Quartz, X11
+
+# if defined(USE_X11) // X11
+#  include <cairo-xlib.h>
+# elif defined(WIN32)
+#  include <cairo-win32.h>
+# elif defined(__APPLE_QUARTZ__)
+#  include <cairo-quartz.h>
+# else
+#  error Cairo is not supported on this platform.
+# endif
+
 // static Fl module initialization :
-Fl_Cairo_State Fl::cairo_state_;	///< contains all necesary info for current cairo context mapping
+Fl_Cairo_State Fl::cairo_state_;	///< contains all necessary info for current cairo context mapping
 
 
 // Fl cairo features implementation
@@ -39,22 +52,22 @@ void  Fl_Cairo_State::autolink(bool b)  {
   autolink_ = b;
 #else
   Fl::fatal("In Fl::autolink(bool) : Cairo autolink() feature is only "
-	   "available with the enable-cairoext configure option, now quitting.");
+	    "available with the enable-cairoext configure option, now quitting.");
 #endif
 }
 
 /** 
     Provides a corresponding cairo context for window \a wi.
-    This is needed in a draw() override if Fl::cairo_autolink_context() 
+    This is needed in a draw() override if Fl::cairo_autolink_context()
     returns false, which is the default.
-    The cairo_context() does not need to be freed as it is freed every time 
+    The cairo_context() does not need to be freed as it is freed every time
     a new cairo context is created. When the program terminates,
     a call to Fl::cairo_make_current(0) will destroy any residual context.
     \note A new cairo context is not always re-created when this method
-    is used. In particular, if the current graphical context and the current 
+    is used. In particular, if the current graphical context and the current
     window didn't change between two calls, the previous gc is internally kept,
     thus optimizing the drawing performances.
-    Also, after this call, Fl::cairo_gc() is adequately updated with this 
+    Also, after this call, Fl::cairo_cc() is adequately updated with this
     cairo  context.
     \note Only available when configure has the --enable-cairo option
     \return the valid cairo_t* cairo context associated to this window.
@@ -83,7 +96,8 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
 
 /* 
     Creates transparently a cairo_surface_t object.
-    gc is an HDC context in  WIN32, a CGContext* in Quartz, a display on X11
+    gc is an HDC context in  WIN32, a CGContext* in Quartz, and
+    a display on X11 (not used on this platform)
  */
 
 static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
@@ -99,8 +113,9 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 }
 
 /** 
-  Creates a cairo context from a \a gc only, get its window size or offscreen size if fl_window is null.
-   \note Only available when configure has the --enable-cairo option
+  Creates a cairo context from a \a gc only, gets its window size or
+  offscreen size if fl_window is null.
+  \note Only available when configure has the --enable-cairo option
 */
 cairo_t * Fl::cairo_make_current(void *gc) {
     int W=0,H=0;
@@ -127,7 +142,7 @@ cairo_t * Fl::cairo_make_current(void *gc) {
 #elif defined(WIN32)
     // we don't need any W,H for WIN32
 #else
-# error Cairo is not supported under this platform.
+# error Cairo is not supported on this platform.
 #endif
     if (!gc) {
 	Fl::cairo_cc(0);
