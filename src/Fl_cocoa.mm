@@ -83,6 +83,9 @@ static void clipboard_check(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
+// make this available on all platforms to make code maintainability easier
+class Fl_Widget *fl_selection_requestor;
+
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
 // public variables
@@ -3342,46 +3345,6 @@ void Fl_X::q_release_context(Fl_X *x) {
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
 #endif
-}
-
-void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
-  CGContextSaveGState(fl_gc);
-  CGRect r2 = rect;
-  r2.origin.x -= 0.5f;
-  r2.origin.y -= 0.5f;
-  CGContextClipToRect(fl_gc, r2);
-  // move graphics context to origin of vertically reversed image
-  // The 0.5 here cancels the 0.5 offset present in Quartz graphics contexts.
-  // Thus, image and surface pixels are in phase if there's no scaling.
-  // Below, we handle x2 and /2 scalings that occur when drawing to
-  // a double-resolution bitmap, and when drawing a double-resolution bitmap to display.
-  CGContextTranslateCTM(fl_gc, rect.origin.x - cx - 0.5, rect.origin.y - cy + h - 0.5);
-  CGContextScaleCTM(fl_gc, 1, -1);
-  CGAffineTransform at = CGContextGetCTM(fl_gc);
-  if (at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
-    // phase image with display pixels
-    CGFloat deltax = 0, deltay = 0;
-    if (at.a == 2) { // make .tx and .ty have even values
-      deltax = (at.tx/2 - round(at.tx/2));
-      deltay = (at.ty/2 - round(at.ty/2));
-    } else if (at.a == 0.5) {
-      if (Fl_Display_Device::high_resolution()) { // make .tx and .ty have int or half-int values
-        deltax = (at.tx*2 - round(at.tx*2));
-        deltay = (at.ty*2 - round(at.ty*2));
-      } else { // make .tx and .ty have integral values
-        deltax = (at.tx - round(at.tx))*2;
-        deltay = (at.ty - round(at.ty))*2;
-      }
-    }
-    CGContextTranslateCTM(fl_gc, -deltax, -deltay);
-  }
-  rect.origin.x = rect.origin.y = 0;
-  rect.size.width = w;
-  rect.size.height = h;
-}
-
-void Fl_X::q_end_image() {
-  CGContextRestoreGState(fl_gc);
 }
 
 void Fl_X::set_high_resolution(bool new_val)

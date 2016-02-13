@@ -65,11 +65,8 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscr
   CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
   CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
                                  src_bytes, 0L, false, kCGRenderingIntentDefault);
-  // fl_push_clip();
-  CGRect rect = CGRectMake(x, y, w, h);
-  Fl_X::q_begin_image(rect, srcx, srcy, sw, sh);
-  CGContextDrawImage(fl_gc, rect, img);
-  Fl_X::q_end_image();
+  draw_CGImage(img, x, y, w, h, srcx, srcy,  sw, sh);
+
   CGImageRelease(img);
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src_bytes);
@@ -153,7 +150,42 @@ void fl_end_offscreen() {
 
 /** @} */
 
-
+void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh)
+{
+  CGRect rect = CGRectMake(x, y, w, h);
+  CGContextSaveGState(fl_gc);
+  CGContextClipToRect(fl_gc, CGRectOffset(rect, -0.5, -0.5 ));
+  // move graphics context to origin of vertically reversed image
+  // The 0.5 here cancels the 0.5 offset present in Quartz graphics contexts.
+  // Thus, image and surface pixels are in phase if there's no scaling.
+  CGContextTranslateCTM(fl_gc, rect.origin.x - srcx - 0.5, rect.origin.y - srcy + sh - 0.5);
+  CGContextScaleCTM(fl_gc, 1, -1);
+  CGAffineTransform at = CGContextGetCTM(fl_gc);
+  if (at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
+    // We handle x2 and /2 scalings that occur when drawing to
+    // a double-resolution bitmap, and when drawing a double-resolution bitmap to display.
+    bool doit = false;
+    // phase image with display pixels
+    CGFloat deltax = 0, deltay = 0;
+    if (at.a == 2) { // make .tx and .ty have even values
+      deltax = (at.tx/2 - round(at.tx/2));
+      deltay = (at.ty/2 - round(at.ty/2));
+      doit = true;
+    } else if (at.a == 0.5) {
+      doit = true;
+      if (Fl_Display_Device::high_resolution()) { // make .tx and .ty have int or half-int values
+        deltax = (at.tx*2 - round(at.tx*2));
+        deltay = (at.ty*2 - round(at.ty*2));
+      } else { // make .tx and .ty have integral values
+        deltax = (at.tx - round(at.tx))*2;
+        deltay = (at.ty - round(at.ty))*2;
+      }
+    }
+    if (doit) CGContextTranslateCTM(fl_gc, -deltax, -deltay);
+  }
+  CGContextDrawImage(fl_gc, CGRectMake(0, 0, sw, sh), cgimg);
+  CGContextRestoreGState(fl_gc);
+}
 
 //
 // End of "$Id$".

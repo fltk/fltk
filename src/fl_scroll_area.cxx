@@ -24,6 +24,9 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+#ifdef __APPLE__
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#endif
 
 // scroll a rectangle and redraw the newly exposed portions:
 /**
@@ -144,10 +147,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 #elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Graphics_Driver - platform scrolling
   CGImageRef img = Fl_X::CGImage_from_window_rect(Fl_Window::current(), src_x, src_y, src_w, src_h);
   if (img) {
-    CGRect rect = CGRectMake(dest_x, dest_y, src_w, src_h);
-    Fl_X::q_begin_image(rect, 0, 0, src_w, src_h);
-    CGContextDrawImage(fl_gc, rect, img);
-    Fl_X::q_end_image();
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,dest_x,dest_y,src_w,src_h,0,0,src_w,src_h);
     CFRelease(img);
     }
 #elif defined(FL_PORTING)

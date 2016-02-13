@@ -64,6 +64,7 @@ public:
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
 protected:
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
   void point(int x, int y);

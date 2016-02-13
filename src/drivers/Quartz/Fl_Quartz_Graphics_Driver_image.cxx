@@ -90,10 +90,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
                             src, 0L, false, kCGRenderingIntentDefault);
   // draw the image into the destination context
   if (img) {
-    CGRect rect = CGRectMake( X, Y,  W, H);
-    Fl_X::q_begin_image(rect, 0, 0, W, H);
-    CGContextDrawImage(fl_gc, rect, img);
-    Fl_X::q_end_image();
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img, X,Y,W,H, 0,0,W,H);
     // release all allocated resources
     CGImageRelease(img);
   }
@@ -170,10 +167,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
     return;
   }
   if (bm->id_ && fl_gc) {
-    CGRect rect = { { (CGFloat)X, (CGFloat)Y }, { (CGFloat)W, (CGFloat)H } };
-    Fl_X::q_begin_image(rect, cx, cy, bm->w(), bm->h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)bm->id_);
-    Fl_X::q_end_image();
+    draw_CGImage((CGImageRef)bm->id_, X,Y,W,H, cx, cy, bm->w(), bm->h());
   }
 }
 
@@ -249,10 +243,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       CGColorSpaceRelease(lut);
       CGDataProviderRelease(src);
     }
-    CGRect rect = CGRectMake(X, Y, W, H);
-    Fl_X::q_begin_image(rect, cx, cy, img->w(), img->h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)img->id_);
-    Fl_X::q_end_image();
+    draw_CGImage((CGImageRef)img->id_, X,Y,W,H, cx,cy, img->w(), img->h());
   }
 }
 
