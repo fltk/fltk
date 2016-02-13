@@ -143,7 +143,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       clear_damage(FL_DAMAGE_ALL);
     }
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: call a function to clear any graphics port damage flags"
+# pragma message "FL_PORTING: Fl_Window_Driver - call a function to clear any graphics port damage flags"
 #else
 # error unsupported platform
 #endif
@@ -187,7 +187,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     //# if defined(FLTK_USE_CAIRO)
     //if Fl::cairo_autolink_context() Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
     //# endif
-#elif defined(__APPLE__) // PORTME: platform double buffering
+#elif defined(__APPLE__) // PORTME: Fl_Window_Driver - platform double buffering
     if ( myi->other_xid ) {
       fl_begin_offscreen( myi->other_xid );
       fl_clip_region( 0 );

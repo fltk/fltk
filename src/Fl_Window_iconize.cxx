@@ -27,7 +27,7 @@ void Fl_Window::iconize() {
   } else {
 #ifdef WIN32
     ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
-#elif defined(__APPLE__) // PORTME: platform window driver
+#elif defined(__APPLE__) // PORTME: Fl_Window_Driver - platform window driver
     i->collapse();
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: add code to iconify a window"

@@ -26,7 +26,7 @@
 #endif
 
 #if defined(WIN32)
-#elif defined(__APPLE__) // PORTME: platform image surface
+#elif defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement image surface handling here"
 #else
@@ -80,7 +80,7 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Surface_Devic
 /** The destructor.
  */
 Fl_Image_Surface::~Fl_Image_Surface() {
-#ifdef __APPLE__ // PORTME: platform image surface
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform image surface
   void *data = CGBitmapContextGetData((CGContextRef)offscreen);
   free(data);
   CGContextRelease((CGContextRef)offscreen);
@@ -162,7 +162,7 @@ void Fl_Image_Surface::draw(Fl_Widget *widget, int delta_x, int delta_y)
 
 void Fl_Image_Surface::set_current()
 {
-#if defined(__APPLE__) // PORTME: platform image surface
+#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
   fl_gc = offscreen; fl_window = 0;
   Fl_Surface_Device::set_current();
   Fl_X::set_high_resolution( CGBitmapContextGetWidth(offscreen) > width );
@@ -186,7 +186,7 @@ void Fl_Image_Surface::set_current()
 #endif
 }
 
-#if defined(__APPLE__) // PORTME: platform image surface
+#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
 
 Fl_Quartz_Flipped_Surface_::Fl_Quartz_Flipped_Surface_(int w, int h) : Fl_Quartz_Surface_(w, h) {
 }

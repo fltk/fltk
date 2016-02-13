@@ -17,6 +17,7 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/math.h>
@@ -92,47 +93,10 @@ static void set_selection_color(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_SELECTION_COLOR,r,g,b);
 }
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform system colors
 
-#  include <stdio.h>
-// simulation of XParseColor:
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
-  if (*p == '#') p++;
-  size_t n = strlen(p);
-  size_t m = n/3;
-  const char *pattern = 0;
-  switch(m) {
-  case 1: pattern = "%1x%1x%1x"; break;
-  case 2: pattern = "%2x%2x%2x"; break;
-  case 3: pattern = "%3x%3x%3x"; break;
-  case 4: pattern = "%4x%4x%4x"; break;
-  default: return 0;
-  }
-  int R,G,B; if (sscanf(p,pattern,&R,&G,&B) != 3) return 0;
-  switch(m) {
-  case 1: R *= 0x11; G *= 0x11; B *= 0x11; break;
-  case 3: R >>= 4; G >>= 4; B >>= 4; break;
-  case 4: R >>= 8; G >>= 8; B >>= 8; break;
-  }
-  r = (uchar)R; g = (uchar)G; b = (uchar)B;
-  return 1;
+  Fl::screen_driver()->parse_color(p, r, g, b);
 }
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement fl_parse_color"
-int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) { return 0; }
-#else
-// Wrapper around XParseColor...
-int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
-  XColor x;
-  if (!fl_display) fl_open_display();
-  if (XParseColor(fl_display, fl_colormap, p, &x)) {
-    r = (uchar)(x.red>>8);
-    g = (uchar)(x.green>>8);
-    b = (uchar)(x.blue>>8);
-    return 1;
-  } else return 0;
-}
-#endif // WIN32 || __APPLE__ // PORTME: platform system colors
 
 
 /** \fn Fl::get_system_colors()
@@ -172,7 +136,7 @@ void Fl::get_system_colors() {
   getsyscolor(COLOR_HIGHLIGHT,	0,     set_selection_color);
 }
 
-#elif defined(__APPLE__) // PORTME: platform system colors
+#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform system colors
 
 // MacOS X currently supports two color schemes - Blue and Graphite.
 // Since we aren't emulating the Aqua interface (even if Apple would
@@ -300,7 +264,7 @@ static Fl_Pixmap	tile(tile_xpm);
 int Fl::scheme(const char *s) {
   if (!s) {
     if ((s = getenv("FLTK_SCHEME")) == NULL) {
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform system scheme
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform system scheme
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl::scheme"
 #else
@@ -309,7 +273,7 @@ int Fl::scheme(const char *s) {
       if (!key) key = "fltk";
       fl_open_display();
       s = XGetDefault(fl_display, key, "scheme");
-#endif // !WIN32 && !__APPLE__ // PORTME: platform system scheme
+#endif // !WIN32 && !__APPLE__ // PORTME: Fl_Screen_Driver - platform system scheme
     }
   }
 

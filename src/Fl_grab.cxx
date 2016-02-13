@@ -36,7 +36,7 @@ extern void fl_fix_focus(); // in Fl.cxx
 // see where and how this is used.
 extern HWND fl_capture;
 
-#elif defined(__APPLE__) // PORTME: platform focus grabbing
+#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform focus grabbing
 extern void *fl_capture;
 
 #elif defined(FL_PORTING)
@@ -61,7 +61,7 @@ void Fl::grab(Fl_Window* win) {
 #ifdef WIN32
       SetActiveWindow(fl_capture = fl_xid(first_window()));
       SetCapture(fl_capture);
-#elif defined(__APPLE__) // PORTME: platform focus grabbing
+#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform focus grabbing
       fl_capture = Fl_X::i(first_window())->xid;
       Fl_X::i(first_window())->set_key_window();
 #elif defined(FL_PORTING)
@@ -92,7 +92,7 @@ void Fl::grab(Fl_Window* win) {
 #ifdef WIN32
       fl_capture = 0;
       ReleaseCapture();
-#elif defined(__APPLE__) // PORTME: platform focus grabbing
+#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform focus grabbing
       fl_capture = 0;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement event grabbing"

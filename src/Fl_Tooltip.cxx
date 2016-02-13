@@ -31,11 +31,9 @@ Fl_Color	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 Fl_Color	Fl_Tooltip::textcolor_ = FL_BLACK;
 Fl_Font         Fl_Tooltip::font_ = FL_HELVETICA;
 Fl_Fontsize     Fl_Tooltip::size_ = -1;
-#if FLTK_ABI_VERSION >= 10301
 int		Fl_Tooltip::margin_width_  = 3;
 int		Fl_Tooltip::margin_height_ = 3;
 int		Fl_Tooltip::wrap_width_    = 400;
-#endif
 
 static const char* tip;
 
@@ -75,13 +73,10 @@ Fl_Widget* Fl_Tooltip::widget_ = 0;
 static Fl_TooltipBox *window = 0;
 static int Y,H;
 
-#ifdef __APPLE__ // PORTME: platform additonal function
-// returns the unique tooltip window
 Fl_Window *Fl_Tooltip::current_window(void)
 {
   return (Fl_Window*)window;
 }
-#endif
 
 void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
@@ -156,7 +151,7 @@ static void tooltip_timeout(void*) {
       if (window) window->hide();
     } else {
       int condition = 1;
-#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: platform ??
+#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: Fl_Screen_Driver - platform ??
       condition = (Fl::grab() == NULL);
 #endif
       if ( condition ) {

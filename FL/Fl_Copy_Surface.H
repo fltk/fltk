@@ -53,7 +53,7 @@ private:
   int width;
   int height;
   Fl_Paged_Device *helper;
-#ifdef __APPLE__ // PORTME: platform surface driver
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform surface driver
   CFMutableDataRef pdfdata;
   CGContextRef oldgc;
   CGContextRef gc;
@@ -86,7 +86,7 @@ public:
   int h() { return height; }
 };
 
-#if defined(__APPLE__) // PORTME: platform surface driver
+#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform surface driver
 
 /* Mac class to reimplement Fl_Paged_Device::printable_rect() */
 class FL_EXPORT Fl_Quartz_Surface_ : public Fl_System_Printer {

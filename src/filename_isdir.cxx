@@ -26,7 +26,7 @@
 #include <FL/fl_utf8.h>
 
 #ifdef WIN32
-#elif defined(__APPLE__) // PORTME: directory stuff
+#elif defined(__APPLE__) // PORTME: Fl_System_Driver - directory stuff
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement directory and filename handling for your platform if needed"
 #else // X11

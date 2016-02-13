@@ -35,7 +35,7 @@
 // lookup tables below will convert all common character codes and replace
 // unknown characters with an upsidedown question mark.
 
-#ifdef __APPLE__ // PORTME: platform text encoding
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform text encoding
 
 const char *fl_mac_roman_to_local(const char *t, int)
 {

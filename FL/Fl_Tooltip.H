@@ -78,7 +78,6 @@ public:
   static Fl_Color textcolor() { return textcolor_; }
   /** Sets the color of the text in the tooltip. The default is  black. */
   static void textcolor(Fl_Color c) { textcolor_ = c; }
-#if FLTK_ABI_VERSION >= 10301
   /** Gets the amount of extra space left/right of the tooltip's text. Default is 3. */
   static int margin_width() { return margin_width_; }
   /** Sets the amount of extra space left/right of the tooltip's text. Default is 3. */
@@ -91,22 +90,8 @@ public:
   static int wrap_width() { return wrap_width_; }
   /** Sets the maximum width for tooltip's text before it word wraps. Default is 400. */
   static void wrap_width(int v) { wrap_width_ = v; }
-#else
-  static int margin_width() { return 3; }
-  static int margin_height() { return 3; }
-  static int wrap_width() { return 400; }
-#endif
-
-#ifdef __APPLE__ // PORTME: additional functionality?
-  // the unique tooltip window
+  /** Returns the window that is used for tooltips */
   static Fl_Window* current_window(void);
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: do you need to remember the tooltip parent window?"
-#else // X11
-  // not needed
-#endif
 
   // These should not be public, but Fl_Widget::tooltip() needs them...
   // fabien: made it private with only a friend function access
@@ -125,11 +110,9 @@ private:
   static Fl_Font font_;
   static Fl_Fontsize size_;
   static Fl_Widget* widget_; //!< Keeps track of the current target widget
-#if FLTK_ABI_VERSION >= 10301
   static int margin_width_;	//!< distance around tooltip text left+right
   static int margin_height_;	//!< distance around tooltip text top+bottom
   static int wrap_width_;	//!< maximum width of tooltip text before it word wraps
-#endif
 };
 
 #endif

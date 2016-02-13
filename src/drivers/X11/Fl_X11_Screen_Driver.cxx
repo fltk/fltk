@@ -42,7 +42,29 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 }
 
 
+void Fl_X11_Screen_Driver::display(const char *d)
+{
+  if (!d) return;
+  
+  static const char *cmd = "DISPLAY=";
+  static const char *ext = ":0.0";
+  int nc = strlen(cmd);
+  int ne = strlen(ext);
+  int nd = strlen(d);
+
+  char *buf = malloc(nc+ne+nd+1);
+  strcpy(buf, cmd);
+  strcat(buf, d);
+  if (strchr(d, ':')) {
+    strcat(d, ext);
+  }
+  putenv(e);
+  free(buf);
+}
+
+
 static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
+
 
 void Fl_X11_Screen_Driver::init_workarea() 
 {
@@ -207,6 +229,20 @@ void Fl_X11_Screen_Driver::flush()
 {
   if (fl_display)
     XFlush(fl_display);
+}
+
+
+// Wrapper around XParseColor...
+int Fl_X11_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
+{
+  XColor x;
+  if (!fl_display) fl_open_display();
+  if (XParseColor(fl_display, fl_colormap, p, &x)) {
+    r = (uchar)(x.red>>8);
+    g = (uchar)(x.green>>8);
+    b = (uchar)(x.blue>>8);
+    return 1;
+  } else return 0;
 }
 
 

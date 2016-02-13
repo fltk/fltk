@@ -21,7 +21,7 @@
 #include <FL/filename.H>
 #include <stdarg.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform unicode
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform unicode
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: verify code for utf8 handling"
 #else

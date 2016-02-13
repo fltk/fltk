@@ -61,7 +61,7 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
  */
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
-#ifdef __APPLE__ // PORTME: platform PostScript
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform PostScript
   gc = fl_gc; // the display context is used by fl_text_extents()
 #endif
   Fl_Surface_Device::driver( new Fl_PostScript_Graphics_Driver() );
@@ -176,7 +176,7 @@ int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 
 #ifndef FL_DOXYGEN
 
-#if ! (defined(__APPLE__) || defined(WIN32) ) // PORTME: platform PostScript
+#if ! (defined(__APPLE__) || defined(WIN32) ) // PORTME: Fl_Surface_Driver - platform PostScript
 #  include "print_panel.cxx"
 #endif
 
@@ -1562,7 +1562,7 @@ void Fl_PostScript_File_Device::end_job (void)
 
 #endif // FL_DOXYGEN
 
-#if defined(__APPLE__) // PORTME: platform PostScript
+#if defined(__APPLE__) // PORTME: Fl_Surface_Driver ? - platform PostScript
 #elif defined(WIN32)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement postscript printing"
@@ -1664,7 +1664,7 @@ int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   return ps->start_postscript(pages, format, layout); // start printing
 }
 
-#endif // ! (defined(__APPLE__) || defined(WIN32) ) // PORTME: platform PostScript
+#endif // ! (defined(__APPLE__) || defined(WIN32) ) // PORTME: Fl_Surface_Driver - platform PostScript
 
 
 //

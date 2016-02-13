@@ -90,7 +90,7 @@ Fl_Window::~Fl_Window() {
   delete icon_;
   if (shape_data_) {
     if (shape_data_->todelete_) delete shape_data_->todelete_;
-#if defined(__APPLE__) // PORTME: platform window driver
+#if defined(__APPLE__) // PORTME: Fl_Window_Driver - platform window driver
     if (shape_data_->mask) {
       CGImageRelease(shape_data_->mask);
     }
@@ -404,7 +404,7 @@ void Fl_Window::free_icons() {
 }
 
 
-#ifndef __APPLE__ // PORTME: platform window driver
+#ifndef __APPLE__ // PORTME: Fl_Window_Driver - platform window driver
 /**
   Waits for the window to be displayed after calling show().
 
@@ -482,7 +482,7 @@ void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Im
 #endif
 
 
-#endif  // ! __APPLE__ // PORTME: platform window driver
+#endif  // ! __APPLE__ // PORTME: Fl_Window_Driver - platform window driver
 
 //
 // End of "$Id$".

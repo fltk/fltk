@@ -142,7 +142,7 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   win->make_current();
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
-#ifdef __APPLE__ // PORTME: platform paged device
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform paged device
   Fl_X::q_release_context(); // matches make_current() call above
 #endif
   if (save_front != win) save_front->show();
@@ -324,7 +324,7 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
   this->print_widget(win, x_offset + wsides, y_offset + toph);
 }
 
-#if !defined(__APPLE__) // PORTME: platform paged device //  Mac OS version in Fl_Cocoa.mm
+#if !defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform paged device //  Mac OS version in Fl_Cocoa.mm
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
   draw_decorated_window(win, x_offset, y_offset);

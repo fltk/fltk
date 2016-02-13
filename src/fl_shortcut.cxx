@@ -38,11 +38,11 @@
 #include <FL/fl_draw.H>
 #include <ctype.h>
 #include "flstring.h"
-#if !defined(WIN32) && !defined(__APPLE__) // PORTME: platform keyboard feel
+#if !defined(WIN32) && !defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard feel
 #include <FL/x.H>
 #endif
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform keyboard feel
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard feel
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement keyboard shortcut handling here"
 #else
@@ -123,7 +123,7 @@ static Keyname table[] = {
   {FL_Alt_R,	"Alt_R"},
   {FL_Delete,	"Delete"}
 };
-#elif defined(__APPLE__)  // PORTME: platform keyboard feel
+#elif defined(__APPLE__)  // PORTME: Fl_Screen_Driver - platform keyboard feel
 static Keyname table[] = {
                                  // v - this column contains UTF-8 characters
   {' ', "Space"},
@@ -194,7 +194,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
   if (((unsigned)fl_tolower(v))!=v) {
     shortcut |= FL_SHIFT;
   }
-#ifdef __APPLE__ // PORTME: platform keyboard feel
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
   //   this column contains utf8 characters - v
   if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;}  // U+21E7 (upwards white arrow)
   if (shortcut & FL_CTRL)  {strcpy(p,"\xe2\x8c\x83"); p += 3;}  // U+2303 (up arrowhead)
@@ -205,10 +205,10 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
   if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;}
   if (shortcut & FL_CTRL) {strcpy(p,"Ctrl+"); p += 5;}
-#endif // __APPLE__ // PORTME: platform keyboard feel
+#endif // __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
   if (eom) *eom = p;
   unsigned int key = shortcut & FL_KEY_MASK;
-#if defined(WIN32) || defined(__APPLE__) // if not X // PORTME: platform keyboard feel
+#if defined(WIN32) || defined(__APPLE__) // if not X // PORTME: Fl_Screen_Driver - platform keyboard feel
   if (key >= FL_F && key <= FL_F_Last) {
     *p++ = 'F';
     if (key > FL_F+9) *p++ = (key-FL_F)/10+'0';
@@ -401,7 +401,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   // for menubars etc. shortcuts must work only if the Alt modifier is pressed
   if (require_alt && Fl::event_state(FL_ALT)==0) return 0;
   unsigned int c = fl_utf8decode(Fl::event_text(), Fl::event_text()+Fl::event_length(), 0);
-#ifdef __APPLE__ // PORTME: platform keyboard feel
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
   // this line makes underline shortcuts work the same way they do on MSWindow
   // and Linux. 
   if (c && Fl::event_state(FL_ALT)) 
@@ -411,7 +411,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   unsigned int ls = label_shortcut(t);
   if (c == ls)
     return 1;
-#ifdef __APPLE__ // PORTME: platform keyboard feel
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
   // On OS X, we need to simulate the upper case keystroke as well
   if (Fl::event_state(FL_ALT) && c<128 && isalpha(c) && (unsigned)toupper(c)==ls)
     return 1;

@@ -51,7 +51,7 @@
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform file browser
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform file browser
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement file type interpretation here"
 #else

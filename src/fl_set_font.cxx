@@ -32,7 +32,7 @@ static int table_size;
   the string is not copied, so the string must be in static memory.
 */    
 void Fl::set_font(Fl_Font fnum, const char* name) {
-#ifdef __APPLE__ // PORTME: platform fonts
+#ifdef __APPLE__ // PORTME: Fl_Graphics_Driver - platform fonts
   if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
 #endif
   while (fnum >= table_size) {
@@ -53,7 +53,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
 #if defined(USE_X11)
       fl_fonts[i].xlist = 0;
       fl_fonts[i].n = 0;
-#endif // !WIN32 && !__APPLE__ // PORTME: platform fonts
+#endif // !WIN32 && !__APPLE__ // PORTME: Fl_Graphics_Driver - platform fonts
     }
   }
   Fl_Fontdesc* s = fl_fonts+fnum;
@@ -85,7 +85,7 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
     of this face.
 */
 const char* Fl::get_font(Fl_Font fnum) {
-#ifdef __APPLE__ // PORTME: platform fonts
+#ifdef __APPLE__ // PORTME: Fl_Graphics_Driver - platform fonts
   if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
 #endif
   return fl_fonts[fnum].name;

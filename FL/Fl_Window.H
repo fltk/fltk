@@ -79,7 +79,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 #ifdef WIN32
     HICON big_icon;
     HICON small_icon;
-#elif defined(__APPLE__)  // PORTME: per-window icons
+#elif defined(__APPLE__)  // PORTME: Fl_Window_Driver - per-window icons, move to FL_X/Fl_Window_Driver
     // not needed
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: define storage for per-window icons here if needed"
@@ -106,7 +106,7 @@ protected:
     int lw_; ///<  width of shape image
     int lh_; ///<  height of shape image
     Fl_Image* shape_; ///<  shape image
-#if defined(__APPLE__) // PORTME: per-window shape information
+#if defined(__APPLE__) // PORTME: Fl_Window_Driver - per-window shape information, move to Fl_X/Fl_Window_Driver
     typedef struct CGImage* CGImageRef;
     CGImageRef mask;
 #elif defined(WIN32)
@@ -130,14 +130,13 @@ public:
    \see void shape(const Fl_Image* img)
    */
   inline void shape(const Fl_Image& b) { shape(&b); }
-#if defined(WIN32) || defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: per-window shape
+#if defined(WIN32) || defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Window_Driver - per-window shape
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you need a combine_mask() function in Fl_Window?"
 #else // X11
   void combine_mask(void);
 #endif
 private:
-
 
   void size_range_();
   void _Fl_Window(); // constructor innards
@@ -457,7 +456,7 @@ public:
 #ifdef WIN32
   static void default_icons(HICON big_icon, HICON small_icon);
   void icons(HICON big_icon, HICON small_icon);
-#elif defined(__APPLE__) // PORTME: per-window icon
+#elif defined(__APPLE__) // PORTME: Fl_Window_Driver - per-window icon
   // not needed
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: define functions to handle window icons here if needed"

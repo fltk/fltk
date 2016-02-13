@@ -16,9 +16,14 @@
 //     http://www.fltk.org/str.php
 //
 
+// make this available on all platforms to make code maintainability easier
+class Fl_Widget *fl_selection_requestor;
+
 #ifdef WIN32
 //#  include "Fl_win32.cxx"
-#elif defined(__APPLE__) // PORTME: platform window driver
+#elif defined(__APPLE__) // PORTME: Fl_System_Driver - platform window driver
+                         // PORTME: Fl_Screen_Driver
+                         // PORTME: Fl_Window_Driver
 //#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the FLTK core in its own file"
@@ -799,7 +804,6 @@ void Fl::get_mouse(int &xx, int &yy) {
 ////////////////////////////////////////////////////////////////
 // Code used for paste and DnD into the program:
 
-Fl_Widget *fl_selection_requestor;
 char *fl_selection_buffer[2];
 int fl_selection_length[2];
 const char * fl_selection_type[2];

@@ -22,12 +22,12 @@
 #include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <stdlib.h>
-#ifdef __APPLE__  // PORTME: directory stuff
+#ifdef __APPLE__  // PORTME: Fl_System_Driver - directory stuff
 #include <FL/x.H>
 #endif
 
 #ifdef WIN32
-#elif defined(__APPLE__) // PORTME: directory stuff
+#elif defined(__APPLE__) // PORTME: Fl_System_Driver - directory stuff
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement directory and filename handling for your platform if needed"
 #else // X11
@@ -94,7 +94,7 @@ int fl_filename_list(const char *d, dirent ***list,
 
   // Assume that locale encoding is no less dense than UTF-8
   dirlen = strlen(d);
-#ifdef __APPLE__  // PORTME: directory stuff
+#ifdef __APPLE__  // PORTME: Fl_System_Driver - directory stuff
   dirloc = (char *)d;
 #else
   dirloc = (char *)malloc(dirlen + 1);
@@ -104,7 +104,7 @@ int fl_filename_list(const char *d, dirent ***list,
 #ifndef HAVE_SCANDIR
   // This version is when we define our own scandir
   int n = fl_scandir(dirloc, list, 0, sort);
-#elif defined(HAVE_SCANDIR_POSIX) && !defined(__APPLE__)  // PORTME: directory stuff
+#elif defined(HAVE_SCANDIR_POSIX) && !defined(__APPLE__)  // PORTME: Fl_System_Driver - directory stuff
   // POSIX (2008) defines the comparison function like this:
   int n = scandir(dirloc, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
@@ -115,7 +115,7 @@ int fl_filename_list(const char *d, dirent ***list,
   int n = scandir(dirloc, list, 0, (int(*)(void*, void*))sort);
 #elif defined(__sgi)
   int n = scandir(dirloc, list, 0, sort);
-#elif defined(__APPLE__)  // PORTME: directory stuff
+#elif defined(__APPLE__)  // PORTME: Fl_System_Driver - directory stuff
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   int n = scandir(dirloc, list, 0, (int(*)(const struct dirent**,const struct dirent**))sort);
 # else
@@ -131,7 +131,7 @@ int fl_filename_list(const char *d, dirent ***list,
   int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
 #endif
 
-#ifndef __APPLE__ // PORTME: directory stuff
+#ifndef __APPLE__ // PORTME: Fl_System_Driver - directory stuff
   free(dirloc);
 #endif
 
@@ -150,7 +150,7 @@ int fl_filename_list(const char *d, dirent ***list,
     int newlen;
     dirent *de = (*list)[i];
     int len = strlen(de->d_name);
-#ifdef __APPLE__ // PORTME: directory stuff
+#ifdef __APPLE__ // PORTME: Fl_System_Driver - directory stuff
     newlen = len;
 #else
     newlen = fl_utf8from_mb(NULL, 0, de->d_name, len);
@@ -159,7 +159,7 @@ int fl_filename_list(const char *d, dirent ***list,
 
     // Conversion to UTF-8
     memcpy(newde, de, de->d_name - (char*)de);
-#ifdef __APPLE__ // PORTME: directory stuff
+#ifdef __APPLE__ // PORTME: Fl_System_Driver - directory stuff
     strcpy(newde->d_name, de->d_name);
 #else
     fl_utf8from_mb(newde->d_name, newlen + 1, de->d_name, len);

@@ -32,7 +32,7 @@
 #include <stdio.h>
 #ifdef WIN32
 #include <commdlg.h>
-#elif defined(__APPLE__) // PORTME: platform printer driver
+#elif defined(__APPLE__) // PORTME: Fl_Surface_Driver ? - platform printer driver
   // not needed
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: include files needed for printing support"
@@ -40,7 +40,7 @@
 #include <FL/Fl_PostScript.H>
 #endif
 
-#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN) // PORTME: platform printer driver
+#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN) // PORTME: Fl_Surface_Driver ? - platform printer driver
 /**
  Print support under MSWindows and Mac OS.
 
@@ -54,7 +54,7 @@ private:
   /** \brief the printer's graphics context, if there's one, NULL otherwise */
   void *gc; 
   void set_current(void);
-#ifdef __APPLE__ // PORTME: platform printer driver
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform printer driver
   float scale_x;
   float scale_y;
   float angle; // rotation angle in radians
@@ -88,7 +88,7 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
-#ifdef __APPLE__ // PORTME: platform printer driver
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform printer driver
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
 #endif
   /** \brief The destructor */
@@ -235,7 +235,7 @@ public:
   ~Fl_Printer(void);
 
 private:
-#if defined(WIN32) || defined(__APPLE__) // PORTME: system printer driver
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Surface_Driver ? - system printer driver
   Fl_System_Printer *printer;
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: instantiate your own Fl_xxx_Printer here"

@@ -32,7 +32,7 @@
  * Many other calls of the parent class don't work.
  */
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: platform system menu bar
+#if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - platform system menu bar
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/x.H>
@@ -524,7 +524,7 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
     [item release];
   }
 }
-#endif /* __APPLE__ */ // PORTME: platform system menu bar
+#endif /* __APPLE__ */ // PORTME: Fl_Screen_Driver - platform system menu bar
 
 //
 // End of "$Id$".

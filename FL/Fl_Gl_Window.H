@@ -239,7 +239,7 @@ public:
    Fl::event_y() to the pixel units used by the OpenGL source code.
    \version 1.3.4
    */
-#ifdef __APPLE__ // PORTME: additional functionality
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - additional functionality
   int pixels_per_unit();
 #elif defined(WIN32)
   int pixels_per_unit() { return 1; }

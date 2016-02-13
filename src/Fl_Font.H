@@ -26,7 +26,7 @@
 
 #include <config.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform font stuff
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform font stuff
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement font descriptor details here"
 #else
@@ -36,7 +36,7 @@
 #if USE_XFT
 typedef struct _XftFont XftFont;
 #elif defined(WIN32)
-#elif defined(__APPLE__) // PORTME: platform font stuff
+#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform font stuff
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you want to include Xutf8.h?"
 #else
@@ -61,7 +61,7 @@ public:
   TEXTMETRIC metr;
   int angle;
   FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
-#  elif defined(__APPLE_QUARTZ__) // PORTME: platform font stuff
+#  elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Graphics_Driver - platform font stuff
   FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
   ATSUTextLayout layout;
 #     if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -84,9 +84,9 @@ public:
 #  endif
 #  if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
-#ifndef __APPLE_QUARTZ__ // PORTME: platform font stuff
+#ifndef __APPLE_QUARTZ__ // PORTME: Fl_Graphics_Driver - platform font stuff
   char glok[64];
-#endif // __APPLE_QUARTZ__ // PORTME: platform font stuff
+#endif // __APPLE_QUARTZ__ // PORTME: Fl_Graphics_Driver - platform font stuff
 #  endif // HAVE_GL
 
   FL_EXPORT ~Fl_Font_Descriptor();
@@ -101,7 +101,7 @@ struct Fl_Fontdesc {
   char fontname[128];	// "Pretty" font name
   Fl_Font_Descriptor *first;	// linked list of sizes of this style
 #ifdef WIN32
-#elif defined(__APPLE__) // PORTME: platform font stuff
+#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform font stuff
   char **xlist;		// matched X font names
   int n;		// size of xlist, negative = don't free xlist!
 #elif defined(FL_PORTING)
@@ -115,7 +115,7 @@ struct Fl_Fontdesc {
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
 #ifdef WIN32
-#elif defined(__APPLE__) // PORTME: platform font stuff
+#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform font stuff
 // functions for parsing X font names:
 FL_EXPORT const char* fl_font_word(const char *p, int n);
 FL_EXPORT char *fl_find_fontsize(char *name);

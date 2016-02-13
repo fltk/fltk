@@ -346,7 +346,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       int offset2;
       if (pp <= e) x2 = xpos + (float)expandpos(p, pp, buf, &offset2);
       else offset2 = (int) strlen(buf);
-#ifdef __APPLE__ // PORTME: Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
       if (Fl::compose_state) {
         fl_color(textcolor());
       }
@@ -358,7 +358,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       fl_color(fl_contrast(textcolor(), selection_color()));
       }
       fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
-#ifdef __APPLE__ // PORTME: Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
       if (Fl::compose_state) {
         fl_color( fl_color_average(textcolor(), color(), 0.6) );
         float width = fl_width(buf+offset1, offset2-offset1);
@@ -380,7 +380,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   CONTINUE2:
     // draw the cursor:
     if (Fl::focus() == this && (
-#ifdef __APPLE__ // PORTME: compose
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - compose
 				Fl::compose_state || 
 #endif
 				selstart == selend) &&
@@ -395,7 +395,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       } else {
         fl_rectf((int)(xpos+curx+0.5), Y+ypos, 2, height);
       }
-#ifdef __APPLE__ // PORTME: compose
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - compose
       Fl::insertion_point_location(xpos+curx, Y+ypos+height, height);
 #endif
     }

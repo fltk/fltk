@@ -66,7 +66,7 @@ const char *Fl_Printer::property_cancel = NULL;
 
 #else
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform printing
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform printing
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the printer device specifics"
 #else
@@ -116,7 +116,7 @@ const char *Fl_Printer::property_save = "Save";
 /** [this text may be customized at run-time] */
 const char *Fl_Printer::property_cancel = "Cancel";
 
-#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN) // PORTME: platform printing
+#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - platform printing
 const char *Fl_System_Printer::class_id = Fl_Printer::class_id;
 #endif
 #if defined(__APPLE__) || defined(WIN32)
@@ -126,10 +126,10 @@ const char *Fl_System_Printer::class_id = Fl_Printer::class_id;
 const char *Fl_PostScript_Printer::class_id = Fl_Printer::class_id;
 #endif
 
-#if defined(__APPLE__) || defined(WIN32) // PORTME: platform printing
+#if defined(__APPLE__) || defined(WIN32) // PORTME: Fl_Screen_Driver - platform printing
 void Fl_System_Printer::set_current(void)
 {
-#ifdef __APPLE__ // PORTME: platform printing
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform printing
   fl_gc = (CGContextRef)gc;
 #elif defined(WIN32)
   fl_gc = (HDC)gc;
@@ -145,7 +145,7 @@ void Fl_System_Printer::origin(int *x, int *y)
 #endif
 
 Fl_Printer::Fl_Printer(void) {
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform printing
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform printing
   printer = new Fl_System_Printer();
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the printer device specifics"

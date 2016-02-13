@@ -29,7 +29,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform Preferences
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_System_Driver - platform Preferences
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement some file storage in a designated place"
 #else
@@ -43,7 +43,7 @@
 // on Windows, which is supposed to be POSIX compliant...
 #  define access _access
 #  define mkdir _mkdir
-#elif defined (__APPLE__) // PORTME: platform Preferences
+#elif defined (__APPLE__) // PORTME: Fl_System_Driver - platform Preferences
 #  include <ApplicationServices/ApplicationServices.h>
 #  include <unistd.h>
 #  include <config.h>
@@ -86,7 +86,7 @@ Fl_Preferences *Fl_Preferences::runtimePrefs = 0;
  *         The buffer is overwritten during every call to this function!
  */
 const char *Fl_Preferences::newUUID() {
-#ifdef __APPLE__ // PORTME: platform Preferences
+#ifdef __APPLE__ // PORTME: Fl_System_Driver - platform Preferences
   CFUUIDRef theUUID = CFUUIDCreate(NULL);
   CFUUIDBytes b = CFUUIDGetUUIDBytes(theUUID);
   sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
@@ -1026,7 +1026,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
-#elif defined ( __APPLE__ ) // PORTME: platform Preferences
+#elif defined ( __APPLE__ ) // PORTME: Fl_System_Driver - platform Preferences
   // TODO: verify that this is the Apple sanctioned way of finding these folders
   // (On MSWindows, this frequently leads to issues with internationalized systems)
   // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
@@ -1168,7 +1168,7 @@ int Fl_Preferences::RootNode::write() {
   fprintf( f, "; application: %s\n", application_ );
   prefs_->node->write( f );
   fclose( f );
-#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: platform Preferences
+#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: Fl_System_Driver - platform Preferences
   // unix: make sure that system prefs are user-readable
   if (strncmp(filename_, "/etc/fltk/", 10) == 0) {
     char *p;
@@ -1197,7 +1197,7 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
   if ( !s ) return 0;
   *s = 0;
   char ret = fl_make_path( path );
-#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: platform Preferences
+#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: Fl_System_Driver - platform Preferences
   // unix: make sure that system prefs dir. is user-readable
   if (strncmp(path, "/etc/fltk/", 10) == 0) {
     fl_chmod(path, 0755); // rwxr-xr-x

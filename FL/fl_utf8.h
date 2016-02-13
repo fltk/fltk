@@ -164,7 +164,7 @@ FL_EXPORT char *fl_utf8_to_locale(const char *s, int len, unsigned int codepage)
 
 /* OD: Attempt to convert a string in the current locale to UTF-8 */
 FL_EXPORT char *fl_locale_to_utf8(const char *s, int len, unsigned int codepage);
-#elif defined(__APPLE__)  // PORTME: platform text encoding and conversion
+#elif defined(__APPLE__)  // PORTME: Fl_Screen_Driver ? - platform text encoding and conversion
   // not needed
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you want to be able to convert from a local charset to utf8?"

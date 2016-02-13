@@ -20,6 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Screen_Driver.h"
 #include <FL/fl_ask.h>
+#include <stdio.h>
 
 
 extern "C" void NSBeep(void);
@@ -116,6 +117,31 @@ void Fl_Cocoa_Screen_Driver::beep(int type) {
 void Fl_Cocoa_Screen_Driver::flush() {
   if (fl_gc)
     CGContextFlush(fl_gc);
+}
+
+
+// simulation of XParseColor:
+int Fl_Cocoa_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
+{
+  if (*p == '#') p++;
+  size_t n = strlen(p);
+  size_t m = n/3;
+  const char *pattern = 0;
+  switch(m) {
+    case 1: pattern = "%1x%1x%1x"; break;
+    case 2: pattern = "%2x%2x%2x"; break;
+    case 3: pattern = "%3x%3x%3x"; break;
+    case 4: pattern = "%4x%4x%4x"; break;
+    default: return 0;
+  }
+  int R,G,B; if (sscanf(p,pattern,&R,&G,&B) != 3) return 0;
+  switch(m) {
+    case 1: R *= 0x11; G *= 0x11; B *= 0x11; break;
+    case 3: R >>= 4; G >>= 4; B >>= 4; break;
+    case 4: R >>= 8; G >>= 8; B >>= 8; break;
+  }
+  r = (uchar)R; g = (uchar)G; b = (uchar)B;
+  return 1;
 }
 
 

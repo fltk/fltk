@@ -28,6 +28,11 @@ num_screens(-1)
 }
 
 
+void Fl_Screen_Driver::display(const char *) {
+  // blank
+}
+
+
 void Fl_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H)
 {
   int x, y;

@@ -199,7 +199,7 @@ class Clip {
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
       
   void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); };
-#ifdef __APPLE__ // PORTME: additional functionality
+#ifdef __APPLE__ // PORTME: merge into code - additional functionality
   void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); };
 #elif defined(WIN32)
   // not needed
@@ -233,7 +233,7 @@ class Clip {
  two variants of which are usable and allow to specify what page format and layout are desired.
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
-#ifdef __APPLE__ // PORTME: platform specifics for PostScript
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform specifics for PostScript
   CGContextRef gc;
 #elif defined(WIN32)
   // not needed
@@ -265,7 +265,7 @@ public:
   void untranslate(void);
   int end_page (void);    
   void end_job(void);
-#ifdef __APPLE__ // PORTME: platform specifics for PostScript
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform specifics for PostScript
   void set_current() { fl_gc = gc; Fl_Paged_Device::set_current(); }
 #elif defined(WIN32)
   // not needed

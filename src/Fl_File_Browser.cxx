@@ -26,7 +26,7 @@
 //   Fl_File_Browser::filter()          - Set the filename filter.
 //
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform file browser
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform file browser
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the internals of your file browser here"
 #else
@@ -62,11 +62,11 @@
 #  include <os2.h>
 #endif // __EMX__
 
-#if defined(__APPLE__) // PORTME: platform file browser
+#if defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform file browser
 #  include <sys/param.h>
 #  include <sys/ucred.h>
 #  include <sys/mount.h>
-#endif // __APPLE__ // PORTME: platform file browser
+#endif // __APPLE__ // PORTME: Fl_Screen_Driver - platform file browser
 
 #if defined(_AIX)
 extern "C" {
@@ -518,7 +518,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
 	num_files ++;
       }
-#elif defined(__APPLE__) // PORTME: platform file browser
+#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform file browser
     // MacOS X and Darwin use getfsstat() system call...
     int			numfs;	// Number of file systems
     struct statfs	*fs;	// Buffer for file system info
@@ -664,7 +664,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
       // window after requesting filesystem list.
       add("/", icon);
     }
-#endif // WIN32 || __EMX__ || __APPLE__ || _AIX || ...  // PORTME: platform file browser
+#endif // WIN32 || __EMX__ || __APPLE__ || _AIX || ...  // PORTME: Fl_Screen_Driver - platform file browser
   }
   else
   {

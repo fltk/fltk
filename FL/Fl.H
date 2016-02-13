@@ -54,7 +54,7 @@ struct Fl_Label;
 # else
 #  define FL_SOCKET int
 # endif
-#elif defined(__APPLE__) // PORTME: socket types
+#elif defined(__APPLE__) // PORTME: Fl_System_Driver - socket types
 # define FL_SOCKET int
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define a type for FL_SOCKET"
@@ -199,7 +199,7 @@ public: // should be private!
   static Fl_Window* grab_;
   static int compose_state; // used for dead keys (WIN32) or marked text (MacOS)
   static void call_screen_init(); // recompute screen number and dimensions
-#ifdef __APPLE__ // PORTME: additional functions
+#ifdef __APPLE__ // PORTME: add for all platforms - additional functions
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #elif defined(WIN32)
@@ -907,7 +907,7 @@ int main() {
   */
   static void copy(const char* stuff, int len, int destination = 0, const char *type = Fl::clipboard_plain_text); // platform dependent
 
-#if defined(__APPLE__) // PORTME: additional functions
+#if defined(__APPLE__) // PORTME: Fl_Screen_Driver ? - additional functions
   // not needed
 #elif defined(WIN32)
   // not needed

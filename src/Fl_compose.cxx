@@ -26,12 +26,12 @@ Utility functions to support text input.
 
 #ifndef FL_DOXYGEN
 int Fl::compose_state = 0;
-#ifdef __APPLE__ // PORTME: platform character composition
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform character composition
 int Fl_X::next_marked_length = 0;
 #endif
 #endif
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform character composition
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform character composition
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement keyboard composing in the code below"
 #else // X11
@@ -80,23 +80,23 @@ extern XIC fl_xim_ic;
  */
 int Fl::compose(int& del) {
   int condition;
-#if defined(__APPLE__) // PORTME: platform character composition
+#if defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform character composition
   int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
   (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
   condition = Fl::e_state&(FL_META | FL_CTRL) || 
       (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
       !has_text_key ;
 #else
-unsigned char ascii = (unsigned char)e_text[0];
+  unsigned char ascii = (unsigned char)e_text[0];
 #if defined(WIN32)
   condition = (e_state & (FL_ALT | FL_META)) && !(ascii & 128) ;
 #else
   condition = (e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128) ;
 #endif // WIN32
-#endif // __APPLE__ // PORTME: platform character composition
+#endif // __APPLE__ // PORTME: Fl_Screen_Driver - platform character composition
   if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
   del = Fl::compose_state;
-#ifdef __APPLE__ // PORTME: platform character composition
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform character composition
   Fl::compose_state = Fl_X::next_marked_length;
 #else
   Fl::compose_state = 0;
@@ -106,7 +106,7 @@ unsigned char ascii = (unsigned char)e_text[0];
   return 1;
 }
 
-#ifdef __APPLE__ // PORTME: platform character composition
+#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform character composition
 static int insertion_point_x = 0;
 static int insertion_point_y = 0;
 static int insertion_point_height = 0;
@@ -116,7 +116,8 @@ void Fl::reset_marked_text() {
   Fl::compose_state = 0;
   Fl_X::next_marked_length = 0;
   insertion_point_location_is_valid = false;
-  }
+}
+
 int Fl_X::insertion_point_location(int *px, int *py, int *pheight) 
 // return true if the current coordinates of the insertion point are available
 {
@@ -126,13 +127,14 @@ int Fl_X::insertion_point_location(int *px, int *py, int *pheight)
   *pheight = insertion_point_height;
   return true;
 }
+
 void Fl::insertion_point_location(int x, int y, int height) {
   insertion_point_location_is_valid = true;
   insertion_point_x = x;
   insertion_point_y = y;
   insertion_point_height = height;
 }
-#endif // __APPLE__ // PORTME: platform character composition
+#endif // __APPLE__ // PORTME: Fl_Screen_Driver - platform character composition
 
 /**
  If the user moves the cursor, be sure to call Fl::compose_reset().
@@ -143,7 +145,7 @@ void Fl::insertion_point_location(int x, int y, int height) {
 void Fl::compose_reset()
 {
   Fl::compose_state = 0;
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform character composition
+#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform character composition
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: compose reset extra functions"
 #else

@@ -40,6 +40,7 @@ protected:
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
 
 public:
+  // --- screen configuration
   virtual void init();
   virtual int x();
   virtual int y();
@@ -52,6 +53,8 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
+  // --- global colors
+  virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 };
 
 

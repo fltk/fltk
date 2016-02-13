@@ -368,7 +368,7 @@ int Fl_Input::handle_key() {
 #ifdef __APPLE__ // PORTME: platform compose
     if (Fl::compose_state) {
       this->mark( this->position() - Fl::compose_state );
-      }
+    }
 #endif
     return 1;
   }

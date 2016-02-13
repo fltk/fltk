@@ -50,7 +50,7 @@ private:
   int width;
   int height;
   Fl_Paged_Device *helper;
-#ifdef __APPLE__ // PORTME: platform image surface driver
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform image surface driver
 #elif defined(WIN32)
   HDC _sgc; 
   Window _sw; 
@@ -75,7 +75,7 @@ public:
   Fl_Shared_Image *highres_image();
 };
 
-#ifdef __APPLE__ // PORTME: platform surface driver
+#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform surface driver
 /* Mac class to implement translate()/untranslate() for a flipped bitmap graphics context */
 class FL_EXPORT Fl_Quartz_Flipped_Surface_ : public Fl_Quartz_Surface_ {
 public:

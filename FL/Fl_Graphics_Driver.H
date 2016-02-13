@@ -51,7 +51,7 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 #ifdef WIN32
 typedef int COORD_T;
 #  define XPOINT XPoint
-#elif defined(__APPLE__) // PORTME: platform specific types
+#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform specific types
 typedef float COORD_T;
 typedef struct { float x; float y; } QPoint;
 #  define XPOINT QPoint

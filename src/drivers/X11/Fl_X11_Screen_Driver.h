@@ -41,6 +41,9 @@ protected:
   float dpi[MAX_SCREENS][2];
 
 public:
+  // --- display management
+  virtual void display(const char *disp);
+  // --- screen configuration
   void init_workarea();
   virtual void init();
   virtual int x();
@@ -54,6 +57,8 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
+  // --- global colors
+  virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 };
 
 
