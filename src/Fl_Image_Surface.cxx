@@ -32,25 +32,6 @@
 #else
 #endif
 
-#ifdef __APPLE__
-class Fl_Quartz_Scaled_Graphics_Driver_ : public Fl_Quartz_Graphics_Driver {
-protected:
-  virtual void push_clip(int x, int y, int w, int h) {
-    push_no_clip();
-    CGContextClipToRect(fl_gc, CGRectMake(x, y, w, h));
-  }
-  virtual void push_no_clip() {
-    CGContextRestoreGState(fl_gc);
-    CGContextSaveGState(fl_gc);
-    CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
-    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-  }
-  virtual void pop_clip() {
-    push_no_clip();
-  }
-};
-#endif
-
 const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
 
 /** Constructor with optional high resolution.
@@ -68,8 +49,6 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Surface_Devic
   offscreen = fl_create_offscreen(highres ? 2*w : w, highres ? 2*h : h);
   helper = new Fl_Quartz_Flipped_Surface_(width, height);
   if (highres) {
-    delete helper->driver();
-    helper->driver(new Fl_Quartz_Scaled_Graphics_Driver_);
     CGContextScaleCTM(offscreen, 2, 2);
   }
   driver(helper->driver());
