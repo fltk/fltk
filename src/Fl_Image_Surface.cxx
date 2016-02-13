@@ -20,25 +20,6 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl.H>
 
-#ifdef __APPLE__
-class Fl_Quartz_Scaled_Graphics_Driver_ : public Fl_Quartz_Graphics_Driver {
-protected:
-  virtual void push_clip(int x, int y, int w, int h) {
-    CGContextRestoreGState(fl_gc);
-    CGContextSaveGState(fl_gc);
-    CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
-    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-    CGContextClipToRect(fl_gc, CGRectMake(x, y, w, h));
-  }
-  virtual void pop_clip() {
-    CGContextRestoreGState(fl_gc);
-    CGContextSaveGState(fl_gc);
-    CGContextTranslateCTM(fl_gc, 0, CGBitmapContextGetHeight(fl_gc)/2);
-    CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
-  }
-};
-#endif
-
 const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
 
 void Fl_Image_Surface::prepare_(int w, int h, int highres) {
@@ -51,8 +32,6 @@ void Fl_Image_Surface::prepare_(int w, int h, int highres) {
   offscreen = fl_create_offscreen(highres ? 2*w : w, highres ? 2*h : h);
   helper = new Fl_Quartz_Flipped_Surface_(w, h);
   if (highres) {
-    delete helper->driver();
-    helper->driver(new Fl_Quartz_Scaled_Graphics_Driver_);
     CGContextScaleCTM(offscreen, 2, 2);
   }
   driver(helper->driver());
