@@ -97,7 +97,6 @@ public:
 //  void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
 //  // Quartz additions:
 //  CGContextRef gc;                 // graphics context (NULL when using QD)
-//  static void q_fill_context();    // fill a Quartz context with current FLTK state
 //  static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
 //  // Cocoa additions
 //  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode

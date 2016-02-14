@@ -3305,26 +3305,6 @@ void Fl_Window::make_current()
 #endif
 }
 
-// helper function to manage the current CGContext fl_gc
-extern void fl_quartz_restore_line_style_();
-
-// FLTK has only one global graphics state. This function copies the FLTK state into the
-// current Quartz context
-void Fl_X::q_fill_context() {
-  if (!fl_gc) return;
-  if ( ! fl_window) { // a bitmap context
-    CGFloat hgt = CGBitmapContextGetHeight(fl_gc);
-    CGAffineTransform at = CGContextGetCTM(fl_gc);
-    if (at.a != 1 && at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
-      hgt /= at.a;
-    }
-    CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
-    CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
-  }
-  fl_color(fl_graphics_driver->color());
-  fl_quartz_restore_line_style_();
-}
-
 // Give the Quartz context back to the system
 void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;
