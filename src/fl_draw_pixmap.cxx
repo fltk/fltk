@@ -257,7 +257,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 
   // FIXME: Hack until fl_draw_image() supports alpha properly
 #ifdef  __APPLE_QUARTZ__ // PORTME: Fl_Graphics_Driver - platform pixmap
-  if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
+  if (Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) {
     Fl_RGB_Image* rgb = new Fl_RGB_Image(buffer, w, h, 4);
     rgb->alloc_array = 1;
     rgb->draw(x, y);
