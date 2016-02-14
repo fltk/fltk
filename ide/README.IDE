@@ -2,67 +2,18 @@
    HOW TO USE THE FLTK IDE ENVIRONMENTS
 -------------------------------------------
 
-As for today, FLTK 1.3 officially supports 
-the following integrated environments (1):
+Since FLTK 1.4.0 we do no longer include IDE solution files in our
+source distribution.
 
-------------------------------------------------------------------------
-distrib subdir 	|   supported products
-------------------------------------------------------------------------
-ide/VisualC6	|   Microsoft Visual C++ 6 and 2005 (2)
-ide/VisualC2008	|   Microsoft Visual C++ 2008
-ide/VisualC2010	|   Microsoft Visual C++ 2010 and later (3)
-ide/Xcode4 	|   Apple Xcode 3.x and up (see ../README.OSX.txt)
-
-Notes :
--------
-(1) For *nix platforms based on the autoconf/configure/make toolchain,
-    simply run autoconf, then the configure script on the root dir.
-    Read the ./README file for more info.
-(2) When first using the project file (ide/VisualC6/fltk.dsw) with
-    VC++ 2005, you will be asked to convert the project to the newer
-    format.
-(3) When first using the project file (ide/VisualC2010/fltk.sln) with
-    a later version of Visual C++ you may be asked to convert the project
-    to the newer format.
-
-
-Further notes about Microsoft IDE project files (December 2010):
-------------------------------------------------------------------------
-
-The FLTK team limits support to the last two releases of any major IDE.
-For Visual Studio, this is currently VisualC 2008 and VisualC 2010. 
-Earlier versions of Visual Studio can import the VisualC6 Project file
-to generate a working Solution.
-
-VisualC2008 and VisualC2010 Solutions were generated with the free 
-Visual Studio Express edition of the corresponding version.
-
-
-Further notes about Xcode IDE project files (March 2015):
-------------------------------------------------------------------------
-
-The FLTK Xcode project, FLTK.xcodeproj, is usable with versions 3 and 
-upward of Xcode (even if it's in a directory called Xcode4 for 
-historical reason). The Xcode developer environment is currently 
-available at no cost from the App store.
-
-
-Other IDE's and Platforms
-------------------------------------------------------------------------
-
-Code::Blocks supports FLTK project natively. Please compile and install 
-FLTK using the Makefile system. Once installed, new FLTK projects 
-can be generated using the Code::Blocks IDE.
-
-Further IDE's can only be supported if a volunteer maintainer is found.
-If you feel that your favourite IDE is missing from our list, we will
-happily add your IDE files and ask you to keep them up to date.
+If you want to build the FLTK library with an IDE you need to use
+CMake to generate the IDE files from the source distribution.
 
 
 Using CMake to generate IDE project files
 ------------------------------------------------------------------------
 
-Other IDE files can likely be created using CMake and the provided
-CMake files. However, as of Mar 2015 (FLTK 1.3.4) this is not yet fully
-supported. The FLTK team can't guarantee the usability of any generated
-IDE files.
+IDE files can easily be created using CMake and the provided
+CMake files.
+
+For more info about using CMake to build FLTK please read the file
+README.CMake.txt in the root directory of the FLTK distribution.
