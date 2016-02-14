@@ -98,10 +98,7 @@ public:
 //  // Quartz additions:
 //  CGContextRef gc;                 // graphics context (NULL when using QD)
 //  static void q_fill_context();    // fill a Quartz context with current FLTK state
-//  static void q_clear_clipping();  // remove all clipping from a Quartz context
 //  static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
-//  static void q_begin_image(CGRect&, int x, int y, int w, int h);
-//  static void q_end_image();
 //  // Cocoa additions
 //  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
 //  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);

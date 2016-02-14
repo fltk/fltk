@@ -3325,14 +3325,6 @@ void Fl_X::q_fill_context() {
   fl_quartz_restore_line_style_();
 }
 
-// The only way to reset clipping to its original state is to pop the current graphics
-// state and restore the global state.
-void Fl_X::q_clear_clipping() {
-  if (!fl_gc) return;
-  CGContextRestoreGState(fl_gc);
-  CGContextSaveGState(fl_gc);
-}
-
 // Give the Quartz context back to the system
 void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;

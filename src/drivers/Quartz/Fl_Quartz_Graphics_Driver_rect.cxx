@@ -269,7 +269,10 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
   if ( fl_window || fl_gc ) { // clipping for a true window or an offscreen buffer
-    Fl_X::q_clear_clipping();
+    if (fl_gc) {
+      CGContextRestoreGState(fl_gc);
+      CGContextSaveGState(fl_gc);
+    }
     Fl_X::q_fill_context();//flip coords if bitmap context
                            //apply program clip
     if (r) {
