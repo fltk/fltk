@@ -1229,7 +1229,7 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
     SAFE_RCAT('/');						// rcat leading slash
     item = item->parent();					// move up tree (NULL==root)
   }
-  if ( *(++s) == '/' ) ++s;				// leave off leading slash from pathname
+  if ( *(++s) == '/' ) { ++s; --slen; }				// leave off leading slash from pathname
   if ( s != pathname ) memmove(pathname, s, slen);	// Shift down right-aligned string
   return(0);
 }
