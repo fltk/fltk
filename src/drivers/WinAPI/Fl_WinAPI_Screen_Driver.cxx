@@ -24,6 +24,18 @@
 #include <FL/fl_ask.h>
 #include <stdio.h>
 
+// Add these externs to allow Win32 port to build - suspect that Fl_X11_Screen_Driver.cxx also might need these
+// but I don't have a X11 box to hand for testing. These should be in an internal header somewhere?
+extern int fl_ready(); // in Fl_win32.cxx
+extern int fl_wait(double time); // in Fl_win32.cxx
+
+// these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
+extern const char *fl_fg;
+extern const char *fl_bg;
+extern const char *fl_bg2;
+// end of extern additions workaround
+
+
 #if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
 #  define COMPILE_MULTIMON_STUBS
 #  include <multimon.h>
@@ -32,7 +44,7 @@
 
 /**
  Creates a driver that manages all screen and display related calls.
- 
+
  This function must be implemented once for every platform. It is called
  when the static members of the class "Fl" are created.
  */
@@ -42,7 +54,7 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 }
 
 
-int Fl_Screen_Driver::visual(int flags)
+int Fl_WinAPI_Screen_Driver::visual(int flags)
 {
   fl_GetDC(0);
   if (flags & FL_DOUBLE) return 0;
@@ -69,14 +81,14 @@ typedef BOOL(WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
 static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
 
 
-BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC hdc, LPRECT r, LPARAM d) 
+BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC hdc, LPRECT r, LPARAM d)
 {
   Fl_WinAPI_Screen_Driver *drv = (Fl_WinAPI_Screen_Driver*)d;
   return drv->screen_cb(mon, hdc, r);
 }
 
 
-BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r) 
+BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r)
 {
   if (num_screens >= MAX_SCREENS) return TRUE;
 
