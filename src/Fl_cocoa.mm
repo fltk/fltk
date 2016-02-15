@@ -3345,10 +3345,12 @@ void Fl_X::q_fill_context() {
   if ( ! fl_window) { // a bitmap context
     CGFloat hgt = CGBitmapContextGetHeight(fl_gc);
     CGAffineTransform at = CGContextGetCTM(fl_gc);
+    CGFloat offset = 0.5;
     if (at.a != 1 && at.a == at.d && at.b == 0 && at.c == 0) {
       hgt /= at.a;
+      offset /= at.a;
     }
-    CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
+    CGContextTranslateCTM(fl_gc, offset, hgt-offset);
     CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
     }
   fl_color(fl_graphics_driver->color());
@@ -3399,7 +3401,7 @@ void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
       deltay = (at.ty/2 - round(at.ty/2));
     } else if (at.a == 0.5) {
       if (Fl_Display_Device::high_resolution()) { // make .tx and .ty have int or half-int values
-        deltax = (at.tx*2 - round(at.tx*2));
+        deltax = -(at.tx*2 - round(at.tx*2));
         deltay = (at.ty*2 - round(at.ty*2));
       } else { // make .tx and .ty have integral values
         deltax = (at.tx - round(at.tx))*2;
