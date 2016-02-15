@@ -281,10 +281,11 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
     if ( ! fl_window ) { // a bitmap context
       CGFloat hgt = CGBitmapContextGetHeight(fl_gc);
       CGAffineTransform at = CGContextGetCTM(fl_gc);
+      CGFloat offset = 0.5;
       if (at.a != 1 && at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
         hgt /= at.a;
-      }
-      CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
+        offset /= at.a;      }
+      CGContextTranslateCTM(fl_gc, offset, hgt-offset);
       CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
     }
     color(color());

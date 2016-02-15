@@ -338,7 +338,7 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
     } else if (at.a == 0.5) {
       doit = true;
       if (Fl_Display_Device::high_resolution()) { // make .tx and .ty have int or half-int values
-        deltax = (at.tx*2 - round(at.tx*2));
+        deltax = -(at.tx*2 - round(at.tx*2));
         deltay = (at.ty*2 - round(at.ty*2));
       } else { // make .tx and .ty have integral values
         deltax = (at.tx - round(at.tx))*2;
