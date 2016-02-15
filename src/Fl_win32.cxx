@@ -83,6 +83,9 @@
   for async mode proper operation, not mentioning the side effects...
 */
 
+// make this available on all platforms to make code maintainability easier
+class Fl_Widget *fl_selection_requestor;
+
 // Internal functions
 static void fl_clipboard_notify_target(HWND wnd);
 static void fl_clipboard_notify_untarget(HWND wnd);
