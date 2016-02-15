@@ -284,7 +284,8 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
       CGFloat offset = 0.5;
       if (at.a != 1 && at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
         hgt /= at.a;
-        offset /= at.a;      }
+        offset /= at.a;
+      }
       CGContextTranslateCTM(fl_gc, offset, hgt-offset);
       CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
     }
