@@ -310,15 +310,15 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
     top->release();
   }
   if (left) {
-    left->draw(x_offset, y_offset);
+    left->draw(x_offset, y_offset + toph);
     left->release();
   }
   if (right) {
-    right->draw(x_offset, y_offset);
+    right->draw(x_offset + wsides + win->w(), y_offset + toph);
     right->release();
   }
   if (bottom) {
-    bottom->draw(x_offset, y_offset);
+    bottom->draw(x_offset, y_offset + toph + win->h());
     bottom->release();
   }
   this->print_widget(win, x_offset + wsides, y_offset + toph);
