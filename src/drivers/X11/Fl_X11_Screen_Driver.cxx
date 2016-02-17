@@ -23,6 +23,8 @@
 #include <FL/x.H>
 #include <FL/fl_ask.H>
 
+#include <sys/time.h>
+
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
 #endif
@@ -33,6 +35,64 @@
 
 extern Atom fl_NET_WORKAREA;
 
+// Add these externs to allow X11 port to build - same as Fl_WinAPI_Screen_Driver.cxx.
+// These should be in an internal header somewhere?
+// AlbrechtS (Comment by Ian, modified...)
+extern int fl_ready(); // in Fl_x.cxx
+extern int fl_wait(double time); // in Fl_x.cxx
+
+// these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
+extern const char *fl_fg;
+extern const char *fl_bg;
+extern const char *fl_bg2;
+// end of extern additions workaround
+
+//
+// X11 timers
+//
+
+
+////////////////////////////////////////////////////////////////////////
+// Timeouts are stored in a sorted list (*first_timeout), so only the
+// first one needs to be checked to see if any should be called.
+// Allocated, but unused (free) Timeout structs are stored in another
+// linked list (*free_timeout).
+
+struct Timeout {
+  double time;
+  void (*cb)(void*);
+  void* arg;
+  Timeout* next;
+};
+static Timeout* first_timeout, *free_timeout;
+
+// I avoid the overhead of getting the current time when we have no
+// timeouts by setting this flag instead of getting the time.
+// In this case calling elapse_timeouts() does nothing, but records
+// the current time, and the next call will actually elapse time.
+static char reset_clock = 1;
+
+static void elapse_timeouts() {
+  static struct timeval prevclock;
+  struct timeval newclock;
+  gettimeofday(&newclock, NULL);
+  double elapsed = newclock.tv_sec - prevclock.tv_sec +
+    (newclock.tv_usec - prevclock.tv_usec)/1000000.0;
+  prevclock.tv_sec = newclock.tv_sec;
+  prevclock.tv_usec = newclock.tv_usec;
+  if (reset_clock) {
+    reset_clock = 0;
+  } else if (elapsed > 0) {
+    for (Timeout* t = first_timeout; t; t = t->next) t->time -= elapsed;
+  }
+}
+
+
+// Continuously-adjusted error value, this is a number <= 0 for how late
+// we were at calling the last timeout. This appears to make repeat_timeout
+// very accurate even when processing takes a significant portion of the
+// time interval:
+static double missed_timeout_by;
 
 /**
  Creates a driver that manages all screen and display related calls.
@@ -56,13 +116,13 @@ void Fl_X11_Screen_Driver::display(const char *d)
   int ne = strlen(ext);
   int nd = strlen(d);
 
-  char *buf = malloc(nc+ne+nd+1);
+  char *buf = (char *)malloc(nc+ne+nd+1);
   strcpy(buf, cmd);
   strcat(buf, d);
-  if (strchr(d, ':')) {
-    strcat(d, ext);
+  if (!strchr(d, ':')) {
+    strcat(buf, ext);
   }
-  putenv(e);
+  putenv(buf);
   free(buf);
 }
 
@@ -324,14 +384,14 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
   }
   Fl::run_checks();
   //  if (idle && !fl_ready()) {
-  if (idle) {
+  if (Fl::idle) {
     if (!in_idle) {
       in_idle = 1;
-      idle();
+      Fl::idle();
       in_idle = 0;
     }
     // the idle function may turn off idle, we can then wait:
-    if (idle) time_to_wait = 0.0;
+    if (Fl::idle) time_to_wait = 0.0;
   }
   if (first_timeout && first_timeout->time < time_to_wait)
     time_to_wait = first_timeout->time;
@@ -343,7 +403,7 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
   } else {
     // do flush first so that user sees the display:
     flush();
-    if (idle && !in_idle) // 'idle' may have been set within flush()
+    if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
       time_to_wait = 0.0;
     return fl_wait(time_to_wait);
   }
@@ -375,7 +435,7 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
     }
   }
   if (win) {
-    if (!grab_) {
+    if (!Fl::grab()) {
       Window xid = fullscreen_win ? fl_xid(fullscreen_win) : fl_xid(Fl::first_window());
       XGrabPointer(fl_display,
                    xid,
@@ -394,9 +454,9 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
                     GrabModeAsync,
                     fl_event_time);
     }
-    grab_ = win;
+    Fl::grab(win);
   } else {
-    if (Fl::grab_) {
+    if (Fl::grab()) {
       // We must keep the grab in the non-EWMH fullscreen case
       if (!fullscreen_win || Fl_X::ewmh_supported()) {
         XUngrabKeyboard(fl_display, fl_event_time);
@@ -405,7 +465,7 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
       // this flush is done in case the picked menu item goes into
       // an infinite loop, so we don't leave the X server locked up:
       XFlush(fl_display);
-      Fl::grab_ = 0;
+      Fl::grab(0);
       fl_fix_focus();
     }
   }
@@ -482,6 +542,68 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
   }
   return s;
 }
+
+// ######################   *FIXME*   ########################
+// ######################   *FIXME*   ########################
+// ######################   *FIXME*   ########################
+
+
+//
+// X11 timers
+//
+
+void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
+  elapse_timeouts();
+  repeat_timeout(time, cb, argp);
+}
+
+void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
+  time += missed_timeout_by; if (time < -.05) time = 0;
+  Timeout* t = free_timeout;
+  if (t) {
+      free_timeout = t->next;
+  } else {
+      t = new Timeout;
+  }
+  t->time = time;
+  t->cb = cb;
+  t->arg = argp;
+  // insert-sort the new timeout:
+  Timeout** p = &first_timeout;
+  while (*p && (*p)->time <= time) p = &((*p)->next);
+  t->next = *p;
+  *p = t;
+}
+
+/**
+  Returns true if the timeout exists and has not been called yet.
+*/
+int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
+  for (Timeout* t = first_timeout; t; t = t->next)
+    if (t->cb == cb && t->arg == argp) return 1;
+  return 0;
+}
+
+/**
+  Removes a timeout callback. It is harmless to remove a timeout
+  callback that no longer exists.
+
+  \note	This version removes all matching timeouts, not just the first one.
+	This may change in the future.
+*/
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
+  for (Timeout** p = &first_timeout; *p;) {
+    Timeout* t = *p;
+    if (t->cb == cb && (t->arg == argp || !argp)) {
+      *p = t->next;
+      t->next = free_timeout;
+      free_timeout = t;
+    } else {
+      p = &(t->next);
+    }
+  }
+}
+
 
 
 //

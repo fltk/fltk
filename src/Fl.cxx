@@ -355,6 +355,7 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 // X11 timers
 //
 
+#if (0) // *FIXME* moved to src/drivers/X11/Fl_X11_Screen_Driver.cxx
 
 ////////////////////////////////////////////////////////////////////////
 // Timeouts are stored in a sorted list (*first_timeout), so only the
@@ -450,6 +451,8 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
     }
   }
 }
+
+#endif // *FIXME* moved to src/drivers/X11/Fl_X11_Screen_Driver.cxx
 
 #endif
 
