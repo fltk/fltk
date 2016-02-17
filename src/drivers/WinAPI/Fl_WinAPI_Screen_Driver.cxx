@@ -21,7 +21,7 @@
 #include "Fl_WinAPI_Screen_Driver.h"
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/fl_ask.h>
+#include <FL/fl_ask.H>
 #include <stdio.h>
 
 // Add these externs to allow Win32 port to build - suspect that Fl_X11_Screen_Driver.cxx also might need these

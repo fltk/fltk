@@ -21,7 +21,7 @@
 #include "Fl_Cocoa_Screen_Driver.h"
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/fl_ask.h>
+#include <FL/fl_ask.H>
 #include <stdio.h>
 
 
