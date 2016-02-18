@@ -642,14 +642,14 @@ double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
 }
 
 void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
-  if (font_gc != fl_gc) {
+  if (font_gc != gc) {
     if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-    font_gc = fl_gc;
-    XSetFont(fl_display, fl_gc, font_descriptor()->font->fid);
+    font_gc = gc;
+    XSetFont(fl_display, gc, font_descriptor()->font->fid);
   }
   int xx, yy, ww, hh;
   xx = yy = ww = hh = 0;
-  if (fl_gc) XUtf8_measure_extents(fl_display, fl_window, font_descriptor()->font, fl_gc, &xx, &yy, &ww, &hh, c, n);
+  if (gc) XUtf8_measure_extents(fl_display, fl_window, font_descriptor()->font, gc, &xx, &yy, &ww, &hh, c, n);
 
   W = ww; H = hh; dx = xx; dy = yy;
 // This is the safe but mostly wrong thing we used to do...
@@ -660,12 +660,12 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &d
 }
 
 void Fl_Xlib_Graphics_Driver::draw(const char* c, int n, int x, int y) {
-  if (font_gc != fl_gc) {
+  if (font_gc != gc) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
-    font_gc = fl_gc;
-    XSetFont(fl_display, fl_gc, font_descriptor()->font->fid);
+    font_gc = gc;
+    XSetFont(fl_display, gc, font_descriptor()->font->fid);
   }
-  if (fl_gc) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, fl_gc, x, y, c, n);
+  if (gc) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc, x, y, c, n);
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
@@ -674,11 +674,11 @@ void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
-  if (font_gc != fl_gc) {
+  if (font_gc != gc) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
-    font_gc = fl_gc;
+    font_gc = gc;
   }
-  if (fl_gc) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, fl_gc, x, y, c, n);
+  if (gc) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc, x, y, c, n);
 }
 #endif // FL_DOXYGEN
 //

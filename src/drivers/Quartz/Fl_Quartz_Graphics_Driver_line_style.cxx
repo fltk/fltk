@@ -36,11 +36,11 @@ static /*enum*/ CGLineJoin fl_quartz_line_join_ = kCGLineJoinMiter;
 static CGFloat *fl_quartz_line_pattern = 0;
 static int fl_quartz_line_pattern_size = 0;
 
-void fl_quartz_restore_line_style_() {
-  CGContextSetLineWidth(fl_gc, fl_quartz_line_width_);
-  CGContextSetLineCap(fl_gc, fl_quartz_line_cap_);
-  CGContextSetLineJoin(fl_gc, fl_quartz_line_join_);
-  CGContextSetLineDash(fl_gc, 0, fl_quartz_line_pattern, fl_quartz_line_pattern_size);
+void fl_quartz_restore_line_style_(CGContextRef gc) {
+  CGContextSetLineWidth(gc, fl_quartz_line_width_);
+  CGContextSetLineCap(gc, fl_quartz_line_cap_);
+  CGContextSetLineJoin(gc, fl_quartz_line_join_);
+  CGContextSetLineDash(gc, 0, fl_quartz_line_pattern, fl_quartz_line_pattern_size);
 }
 
 void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
@@ -94,7 +94,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
     fl_quartz_line_pattern = 0; 
 		fl_quartz_line_pattern_size = 0;
   }
-  fl_quartz_restore_line_style_();
+  fl_quartz_restore_line_style_((CGContextRef)get_gc());
 }
 
 #endif // FL_CFG_GFX_QUARTZ

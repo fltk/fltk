@@ -36,16 +36,16 @@
 // --- line and polygon drawing with integer coordinates
 
 void Fl_GDI_Graphics_Driver::point(int x, int y) {
-  SetPixel(fl_gc, x, y, fl_RGB());
+  SetPixel(gc, x, y, fl_RGB());
 }
 
 void Fl_GDI_Graphics_Driver::rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x+w-1, y);
-  LineTo(fl_gc, x+w-1, y+h-1);
-  LineTo(fl_gc, x, y+h-1);
-  LineTo(fl_gc, x, y);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x+w-1, y);
+  LineTo(gc, x+w-1, y+h-1);
+  LineTo(gc, x, y+h-1);
+  LineTo(gc, x, y);
 }
 
 void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
@@ -64,79 +64,79 @@ void Fl_GDI_Graphics_Driver::rectf(int x, int y, int w, int h) {
   RECT rect;
   rect.left = x; rect.top = y;
   rect.right = x + w; rect.bottom = y + h;
-  FillRect(fl_gc, &rect, fl_brush());
+  FillRect(gc, &rect, fl_brush());
 }
 
 void Fl_GDI_Graphics_Driver::line(int x, int y, int x1, int y1) {
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x1, y1);
-  SetPixel(fl_gc, x1, y1, fl_RGB());
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x1, y1);
+  SetPixel(gc, x1, y1, fl_RGB());
 }
 
 void Fl_GDI_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x1, y1);
-  LineTo(fl_gc, x2, y2);
-  SetPixel(fl_gc, x2, y2, fl_RGB());
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x1, y1);
+  LineTo(gc, x2, y2);
+  SetPixel(gc, x2, y2, fl_RGB());
 }
 
 void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1) {
-  MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
+  MoveToEx(gc, x, y, 0L); LineTo(gc, x1+1, y);
 }
 
 void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   if (y2 < y) y2--;
   else y2++;
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x1, y);
-  LineTo(fl_gc, x1, y2);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x1, y);
+  LineTo(gc, x1, y2);
 }
 
 void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   if(x3 < x1) x3--;
   else x3++;
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x1, y);
-  LineTo(fl_gc, x1, y2);
-  LineTo(fl_gc, x3, y2);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x1, y);
+  LineTo(gc, x1, y2);
+  LineTo(gc, x3, y2);
 }
 
 void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1) {
   if (y1 < y) y1--;
   else y1++;
-  MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
+  MoveToEx(gc, x, y, 0L); LineTo(gc, x, y1);
 }
 
 void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   if (x2 > x) x2++;
   else x2--;
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x, y1);
-  LineTo(fl_gc, x2, y1);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x, y1);
+  LineTo(gc, x2, y1);
 }
 
 void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   if(y3<y1) y3--;
   else y3++;
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x, y1);
-  LineTo(fl_gc, x2, y1);
-  LineTo(fl_gc, x2, y3);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x, y1);
+  LineTo(gc, x2, y1);
+  LineTo(gc, x2, y3);
 }
 
 void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x1, y1);
-  LineTo(fl_gc, x2, y2);
-  LineTo(fl_gc, x, y);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x1, y1);
+  LineTo(gc, x2, y2);
+  LineTo(gc, x, y);
 }
 
 void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
-  MoveToEx(fl_gc, x, y, 0L);
-  LineTo(fl_gc, x1, y1);
-  LineTo(fl_gc, x2, y2);
-  LineTo(fl_gc, x3, y3);
-  LineTo(fl_gc, x, y);
+  MoveToEx(gc, x, y, 0L);
+  LineTo(gc, x1, y1);
+  LineTo(gc, x2, y2);
+  LineTo(gc, x3, y3);
+  LineTo(gc, x, y);
 }
 
 void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
@@ -144,8 +144,8 @@ void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;
-  SelectObject(fl_gc, fl_brush());
-  Polygon(fl_gc, p, 3);
+  SelectObject(gc, fl_brush());
+  Polygon(gc, p, 3);
 }
 
 void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
@@ -154,8 +154,8 @@ void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;
   p[3].x = x3; p[3].y = y3;
-  SelectObject(fl_gc, fl_brush());
-  Polygon(fl_gc, p, 4);
+  SelectObject(gc, fl_brush());
+  Polygon(gc, p, 4);
 }
 
 // --- clipping
@@ -197,7 +197,7 @@ int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y,
     GetRgnBox(temp, &rect);
     if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // if print context, convert coords from device to logical
       POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
-      DPtoLP(fl_gc, pt, 2);
+      DPtoLP(gc, pt, 2);
       X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;
     }
     else {
@@ -217,7 +217,7 @@ int Fl_GDI_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   RECT rect;
   if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // in case of print context, convert coords from logical to device
     POINT pt[2] = { {x, y}, {x + w, y + h} };
-    LPtoDP(fl_gc, pt, 2);
+    LPtoDP(gc, pt, 2);
     rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
   } else {
     rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
@@ -244,7 +244,7 @@ void Fl_GDI_Graphics_Driver::pop_clip() {
 void Fl_GDI_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
-  SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
+  SelectClipRgn(gc, r); //if r is NULL, clip is automatically cleared
 }
 
 

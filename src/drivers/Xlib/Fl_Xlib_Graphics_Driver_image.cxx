@@ -456,7 +456,7 @@ static void figure_out_visual() {
 static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int mono,
 		    Fl_Draw_Image_Cb cb, void* userdata,
-		    const bool alpha)
+		    const bool alpha, GC gc)
 {
   if (!linedelta) linedelta = W*delta;
 
@@ -468,7 +468,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 
   if (!bytes_per_pixel) figure_out_visual();
   const unsigned oldbpp = bytes_per_pixel;
-  const GC oldgc = fl_gc;
   static GC gc32 = None;
   xi.width = w;
   xi.height = h;
@@ -486,7 +485,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     if (fl_visual->depth != 32) {
       if (gc32 == None)
         gc32 = XCreateGC(fl_display, fl_window, 0, NULL);
-      fl_gc = gc32;
+      gc = gc32;
     }
   }
 
@@ -538,7 +537,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	  buf += linedelta;
 	  to += linesize;
 	}
-	XPutImage(fl_display,fl_window,fl_gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
+	XPutImage(fl_display,fl_window,gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
     } else {
       STORETYPE* linebuf = new STORETYPE[(W*delta+(sizeof(STORETYPE)-1))/sizeof(STORETYPE)];
@@ -550,7 +549,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	  conv((uchar*)linebuf, (uchar*)to, w, delta);
 	  to += linesize;
 	}
-	XPutImage(fl_display,fl_window,fl_gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
+	XPutImage(fl_display,fl_window,gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
 
       delete[] linebuf;
@@ -561,10 +560,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     bytes_per_pixel = oldbpp;
     xi.depth = fl_visual->depth;
     xi.bits_per_pixel = oldbpp * 8;
-
-    if (fl_visual->depth != 32) {
-      fl_gc = oldgc;
-    }
   }
 }
 
@@ -573,7 +568,7 @@ void Fl_Xlib_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, 
   const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
   d &= ~FL_IMAGE_WITH_ALPHA;
 
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,alpha);
+  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,alpha,gc);
 }
 void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
@@ -581,14 +576,14 @@ void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
   const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
   d &= ~FL_IMAGE_WITH_ALPHA;
 
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,alpha);
+  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,alpha,gc);
 }
 void Fl_Xlib_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0,0);
+  innards(buf,x,y,w,h,d,l,1,0,0,0,gc);
 }
 void Fl_Xlib_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data,0);
+  innards(0,x,y,w,h,d,0,1,cb,data,0,gc);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -598,7 +593,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   } else {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,0);
+    innards(c,x,y,w,h,0,0,0,0,0,0,(GC)fl_graphics_driver->get_gc());
   }
 }
 
@@ -617,13 +612,13 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP
     return;
   }
 
-  XSetStipple(fl_display, fl_gc, bm->id_);
+  XSetStipple(fl_display, gc, bm->id_);
   int ox = X-cx; if (ox < 0) ox += bm->w();
   int oy = Y-cy; if (oy < 0) oy += bm->h();
-  XSetTSOrigin(fl_display, fl_gc, ox, oy);
-  XSetFillStyle(fl_display, fl_gc, FillStippled);
-  XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
-  XSetFillStyle(fl_display, fl_gc, FillSolid);
+  XSetTSOrigin(fl_display, gc, ox, oy);
+  XSetFillStyle(fl_display, gc, FillStippled);
+  XFillRectangle(fl_display, fl_window, gc, X, Y, W, H);
+  XSetFillStyle(fl_display, gc, FillSolid);
 }
 
 
@@ -734,10 +729,10 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       cx += nx-X; X = nx;
       cy += ny-Y; Y = ny;
       // make X use the bitmap as a mask:
-      XSetClipMask(fl_display, fl_gc, img->mask_);
+      XSetClipMask(fl_display, gc, img->mask_);
       int ox = X-cx; if (ox < 0) ox += img->w();
       int oy = Y-cy; if (oy < 0) oy += img->h();
-      XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
+      XSetClipOrigin(fl_display, gc, X-cx, Y-cy);
     }
 
     if (img->d() == 4 && fl_can_do_alpha_blending())
@@ -747,7 +742,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
 
     if (img->mask_) {
       // put the old clip region back
-      XSetClipOrigin(fl_display, fl_gc, 0, 0);
+      XSetClipOrigin(fl_display, gc, 0, 0);
       fl_restore_clip();
     }
   } else {
@@ -783,8 +778,8 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   if (pxm->mask_) {
     // make X use the bitmap as a mask:
-    XSetClipMask(fl_display, fl_gc, pxm->mask_);
-    XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
+    XSetClipMask(fl_display, gc, pxm->mask_);
+    XSetClipOrigin(fl_display, gc, X-cx, Y-cy);
     if (clip_region()) {
       // At this point, XYWH is the bounding box of the intersection between
       // the current clip region and the (portion of the) pixmap we have to draw.
@@ -810,7 +805,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
       copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
     }
     // put the old clip region back
-    XSetClipOrigin(fl_display, fl_gc, 0, 0);
+    XSetClipOrigin(fl_display, gc, 0, 0);
     restore_clip();
   }
   else copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);

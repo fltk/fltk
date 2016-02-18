@@ -3,7 +3,7 @@
 //
 // WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -77,13 +77,13 @@ read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate
   bi.bmiHeader.biClrImportant = 0;
 
   // copy bitmap from original DC (Window, Fl_Offscreen, ...)
-
-  HDC hdc = CreateCompatibleDC(fl_gc);
-  HBITMAP hbm = CreateCompatibleBitmap(fl_gc,w,h);
+  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC hdc = CreateCompatibleDC(gc);
+  HBITMAP hbm = CreateCompatibleBitmap(gc,w,h);
 
   int save_dc = SaveDC(hdc);			// save context for cleanup
   SelectObject(hdc,hbm);			// select bitmap
-  BitBlt(hdc,0,0,w,h,fl_gc,X,Y,SRCCOPY);	// copy image section to DDB
+  BitBlt(hdc,0,0,w,h,gc,X,Y,SRCCOPY);	// copy image section to DDB
 
   // copy RGB image data to the allocated DIB
 

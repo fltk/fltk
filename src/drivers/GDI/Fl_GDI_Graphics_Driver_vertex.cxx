@@ -41,7 +41,7 @@ void Fl_GDI_Graphics_Driver::vertex(double x,double y) {
 }
 
 void Fl_GDI_Graphics_Driver::end_points() {
-  for (int i=0; i<n; i++) SetPixel(fl_gc, p[i].x, p[i].y, fl_RGB());
+  for (int i=0; i<n; i++) SetPixel(gc, p[i].x, p[i].y, fl_RGB());
 }
 
 void Fl_GDI_Graphics_Driver::end_line() {
@@ -49,7 +49,7 @@ void Fl_GDI_Graphics_Driver::end_line() {
     end_points();
     return;
   }
-  if (n>1) Polyline(fl_gc, p, n);
+  if (n>1) Polyline(gc, p, n);
 }
 
 void Fl_GDI_Graphics_Driver::end_loop() {
@@ -65,8 +65,8 @@ void Fl_GDI_Graphics_Driver::end_polygon() {
     return;
   }
   if (n>2) {
-    SelectObject(fl_gc, fl_brush());
-    Polygon(fl_gc, p, n);
+    SelectObject(gc, fl_brush());
+    Polygon(gc, p, n);
   }
 }
 
@@ -94,8 +94,8 @@ void Fl_GDI_Graphics_Driver::end_complex_polygon() {
     return;
   }
   if (n>2) {
-    SelectObject(fl_gc, fl_brush());
-    PolyPolygon(fl_gc, p, counts, numcount);
+    SelectObject(gc, fl_brush());
+    PolyPolygon(gc, p, counts, numcount);
   }
 }
 
@@ -114,10 +114,10 @@ void Fl_GDI_Graphics_Driver::circle(double x, double y,double r) {
   int h = (int)rint(yt+ry)-lly;
 
   if (what==POLYGON) {
-    SelectObject(fl_gc, fl_brush());
-    Pie(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
+    SelectObject(gc, fl_brush());
+    Pie(gc, llx, lly, llx+w, lly+h, 0,0, 0,0);
   } else
-    Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
+    Arc(gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
 }
 
 #endif // FL_CFG_GFX_GDI_VERTEX_CXX

@@ -21,6 +21,7 @@
 #include "Fl_WinAPI_Screen_Driver.h"
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
 
@@ -58,9 +59,10 @@ int Fl_WinAPI_Screen_Driver::visual(int flags)
 {
   fl_GetDC(0);
   if (flags & FL_DOUBLE) return 0;
+  HDC gc = (HDC)Fl_Display_Device::display_device()->driver()->get_gc();
   if (!(flags & FL_INDEX) &&
-      GetDeviceCaps(fl_gc,BITSPIXEL) <= 8) return 0;
-  if ((flags & FL_RGB8) && GetDeviceCaps(fl_gc,BITSPIXEL)<24) return 0;
+      GetDeviceCaps(gc,BITSPIXEL) <= 8) return 0;
+  if ((flags & FL_RGB8) && GetDeviceCaps(gc,BITSPIXEL)<24) return 0;
   return 1;
 }
 

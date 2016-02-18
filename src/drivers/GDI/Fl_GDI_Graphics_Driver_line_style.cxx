@@ -63,7 +63,7 @@ void Fl_GDI_Graphics_Driver::line_style(int style, int width, char* dashes) {
     Fl::error("fl_line_style(): Could not create GDI pen object.");
     return;
   }
-  HPEN oldpen = (HPEN)SelectObject(fl_gc, newpen);
+  HPEN oldpen = (HPEN)SelectObject(gc, newpen);
   DeleteObject(oldpen);
   DeleteObject(fl_current_xmap->pen);
   fl_current_xmap->pen = newpen;

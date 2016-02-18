@@ -3,7 +3,7 @@
 //
 // Overlay support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -40,14 +40,15 @@ static int bgx, bgy, bgw, bgh;
 static void draw_current_rect() {
 #ifdef USE_XOR
 # if defined(USE_X11)
-  XSetFunction(fl_display, fl_gc, GXxor);
-  XSetForeground(fl_display, fl_gc, 0xffffffff);
-  XDrawRectangle(fl_display, fl_window, fl_gc, px, py, pw, ph);
-  XSetFunction(fl_display, fl_gc, GXcopy);
+  GC gc = (GC)fl_graphics_driver->get_gc();
+  XSetFunction(fl_display, gc, GXxor);
+  XSetForeground(fl_display, gc, 0xffffffff);
+  XDrawRectangle(fl_display, fl_window, gc, px, py, pw, ph);
+  XSetFunction(fl_display, gc, GXcopy);
 # elif defined(WIN32)
-  int old = SetROP2(fl_gc, R2_NOT);
+  int old = SetROP2(fl_graphics_driver->get_gc(), R2_NOT);
   fl_rect(px, py, pw, ph);
-  SetROP2(fl_gc, old);
+  SetROP2(fl_graphics_driver->get_gc(), old);
 # elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Window_Driver - platform overlay
   // warning: Quartz does not support xor drawing
   // Use the Fl_Overlay_Window instead.

@@ -3,7 +3,7 @@
 //
 // Mac OS X-specific printing support (objective-c++) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -40,14 +40,13 @@ typedef OSStatus
                             CFStringRef      graphicsContextType,
                             void **          graphicsContext);
 
-extern void fl_quartz_restore_line_style_();
+extern void fl_quartz_restore_line_style_(CGContextRef gc);
 
 Fl_System_Printer::Fl_System_Printer(void)
 {
   x_offset = 0;
   y_offset = 0;
   scale_x = scale_y = 1.;
-  gc = 0;
   driver(new Fl_Quartz_Printer_Graphics_Driver);
 }
 
@@ -189,13 +188,14 @@ void Fl_System_Printer::origin(int x, int y)
 {
   x_offset = x;
   y_offset = y;
-  CGContextRestoreGState(fl_gc);
-  CGContextRestoreGState(fl_gc);
-  CGContextSaveGState(fl_gc);
-  CGContextScaleCTM(fl_gc, scale_x, scale_y);
-  CGContextTranslateCTM(fl_gc, x, y);
-  CGContextRotateCTM(fl_gc, angle);
-  CGContextSaveGState(fl_gc);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc);
+  CGContextSaveGState(gc);
+  CGContextScaleCTM(gc, scale_x, scale_y);
+  CGContextTranslateCTM(gc, x, y);
+  CGContextRotateCTM(gc, angle);
+  CGContextSaveGState(gc);
 }
 
 void Fl_System_Printer::scale (float s_x, float s_y)
@@ -203,46 +203,51 @@ void Fl_System_Printer::scale (float s_x, float s_y)
   if (s_y == 0.) s_y = s_x;
   scale_x = s_x;
   scale_y = s_y;
-  CGContextRestoreGState(fl_gc);
-  CGContextRestoreGState(fl_gc);
-  CGContextSaveGState(fl_gc);
-  CGContextScaleCTM(fl_gc, scale_x, scale_y);
-  CGContextRotateCTM(fl_gc, angle);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc);
+  CGContextSaveGState(gc);
+  CGContextScaleCTM(gc, scale_x, scale_y);
+  CGContextRotateCTM(gc, angle);
   x_offset = y_offset = 0;
-  CGContextSaveGState(fl_gc);
+  CGContextSaveGState(gc);
 }
 
 void Fl_System_Printer::rotate (float rot_angle)
 {
   angle = - rot_angle * M_PI / 180.;
-  CGContextRestoreGState(fl_gc);
-  CGContextRestoreGState(fl_gc);
-  CGContextSaveGState(fl_gc);
-  CGContextScaleCTM(fl_gc, scale_x, scale_y);
-  CGContextTranslateCTM(fl_gc, x_offset, y_offset);
-  CGContextRotateCTM(fl_gc, angle);
-  CGContextSaveGState(fl_gc);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc);
+  CGContextSaveGState(gc);
+  CGContextScaleCTM(gc, scale_x, scale_y);
+  CGContextTranslateCTM(gc, x_offset, y_offset);
+  CGContextRotateCTM(gc, angle);
+  CGContextSaveGState(gc);
 }
 
 void Fl_System_Printer::translate(int x, int y)
 {
-  CGContextSaveGState(fl_gc);
-  CGContextTranslateCTM(fl_gc, x, y );
-  CGContextSaveGState(fl_gc);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextSaveGState(gc);
+  CGContextTranslateCTM(gc, x, y );
+  CGContextSaveGState(gc);
 }
 
 void Fl_System_Printer::untranslate(void)
 {
-  CGContextRestoreGState(fl_gc);
-  CGContextRestoreGState(fl_gc);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc);
 }
 
 int Fl_System_Printer::start_page (void)
 {	
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
+  CGContextRef gc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if ( &PMSessionGetCGGraphicsContext != NULL ) {
-    status = PMSessionGetCGGraphicsContext(printSession, &fl_gc);
+    status = PMSessionGetCGGraphicsContext(printSession, &gc);
   }
   else
 #endif
@@ -250,9 +255,10 @@ int Fl_System_Printer::start_page (void)
 #if ! __LP64_
     PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
       (PMSessionGetGraphicsContext_type)Fl_X::get_carbon_function("PMSessionGetGraphicsContext");
-    status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&fl_gc);
+    status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&gc);
 #endif
   }
+  driver()->set_gc(gc);
   PMRect pmRect;
   float win_scale_x, win_scale_y;
 
@@ -271,26 +277,26 @@ int Fl_System_Printer::start_page (void)
   scale_x = scale_y = 1;
   win_scale_x = win_scale_y = 1;
   if(orientation == kPMPortrait)
-    CGContextTranslateCTM(fl_gc, margins.left, margins.bottom + h);
+    CGContextTranslateCTM(gc, margins.left, margins.bottom + h);
   else
-    CGContextTranslateCTM(fl_gc, margins.top, margins.right + h);
-  CGContextScaleCTM(fl_gc, win_scale_x, - win_scale_y);
-  fl_quartz_restore_line_style_();
-  CGContextSetShouldAntialias(fl_gc, false);
-  CGContextSaveGState(fl_gc);
-  CGContextSaveGState(fl_gc);
+    CGContextTranslateCTM(gc, margins.top, margins.right + h);
+  CGContextScaleCTM(gc, win_scale_x, - win_scale_y);
+  fl_quartz_restore_line_style_(gc);
+  CGContextSetShouldAntialias(gc, false);
+  CGContextSaveGState(gc);
+  CGContextSaveGState(gc);
   fl_line_style(FL_SOLID);
   fl_window = (Window)1; // TODO: something better
   fl_clip_region(0);
-  if( status == noErr) gc = fl_gc;
   return status != noErr;
 }
 
 int Fl_System_Printer::end_page (void)
 {	
-  CGContextFlush(fl_gc);
-  CGContextRestoreGState(fl_gc);
-  CGContextRestoreGState(fl_gc);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextFlush(gc);
+  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc);
   OSStatus status = PMSessionEndPageNoDialog(printSession);
   gc = NULL;
   return status != noErr;
@@ -313,7 +319,7 @@ void Fl_System_Printer::end_job (void)
     }
 #endif
   Fl_Display_Device::display_device()->set_current();
-  fl_gc = 0;
+  driver()->set_gc(0);
   Fl_Window *w = Fl::first_window();
   if (w) w->show();
 }
@@ -325,7 +331,6 @@ void Fl_System_Printer::print_window_part(Fl_Window *win, int x, int y, int w, i
   Fl_Display_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
   win->show();
-  fl_gc = NULL;
   Fl::check();
   CGImageRef img = Fl_X::CGImage_from_window_rect(win, x, y, w, h);
   if (save_front != win) save_front->show();

@@ -580,7 +580,7 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   // activate the current GC
   iSize = sizeof(CGContextRef);
   iTag = kATSUCGContextTag;
-  iValuePtr = &fl_gc;
+  iValuePtr = &gc;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
   // now measure the bounding box
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
@@ -632,10 +632,10 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   CFRelease(str16);
   CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
   CFRelease(mastr);
-  CGContextSetTextPosition(fl_gc, 0, 0);
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGRect rect = CTLineGetImageBounds(ctline, fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+  CGContextSetTextPosition(gc, 0, 0);
+  CGContextSetShouldAntialias(gc, true);
+  CGRect rect = CTLineGetImageBounds(ctline, gc);
+  CGContextSetShouldAntialias(gc, false);
   CFRelease(ctline);
   dx = floor(rect.origin.x + 0.5);
   dy = floor(- rect.origin.y - rect.size.height + 0.5);
@@ -657,7 +657,7 @@ else {
         // activate the current GC
   iSize = sizeof(CGContextRef);
   iTag = kATSUCGContextTag;
-  iValuePtr = &fl_gc;
+  iValuePtr = &gc;
       ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
         // now measure the bounding box
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
@@ -704,11 +704,12 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Dr
     CFRelease(color);
     CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
     CFRelease(mastr);
-    CGContextSetTextMatrix(fl_gc, font_mx);
-    CGContextSetTextPosition(fl_gc, x, y);
-    CGContextSetShouldAntialias(fl_gc, true);
-    CTLineDraw(ctline, fl_gc);
-    CGContextSetShouldAntialias(fl_gc, false);
+    CGContextRef gc = (CGContextRef)driver->get_gc();
+    CGContextSetTextMatrix(gc, font_mx);
+    CGContextSetTextPosition(gc, x, y);
+    CGContextSetShouldAntialias(gc, true);
+    CTLineDraw(ctline, gc);
+    CGContextSetShouldAntialias(gc, false);
     CFRelease(ctline);
   } else {
 #endif
@@ -719,13 +720,13 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Dr
 
   ByteCount iSize = sizeof(CGContextRef);
   ATSUAttributeTag iTag = kATSUCGContextTag;
-  ATSUAttributeValuePtr iValuePtr=&fl_gc;
+  ATSUAttributeValuePtr iValuePtr=&gc;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
 
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
-  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextSetShouldAntialias(gc, true);
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
-  CGContextSetShouldAntialias(fl_gc, false);
+  CGContextSetShouldAntialias(gc, false);
 #endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
@@ -745,11 +746,11 @@ void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 }
 
 void Fl_Quartz_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
-  CGContextSaveGState(fl_gc);
-  CGContextTranslateCTM(fl_gc, x, y);
-  CGContextRotateCTM(fl_gc, - angle*(M_PI/180) );
+  CGContextSaveGState(gc);
+  CGContextTranslateCTM(gc, x, y);
+  CGContextRotateCTM(gc, - angle*(M_PI/180) );
   draw(str, n, 0, 0);
-  CGContextRestoreGState(fl_gc);
+  CGContextRestoreGState(gc);
 }
 
 void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {

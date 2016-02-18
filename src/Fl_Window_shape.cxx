@@ -3,7 +3,7 @@
 //
 // Implementation of Fl_Window::shape(Fl_Image*) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2015 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -342,12 +342,15 @@ void Fl_Window::shape(const Fl_Image* img) {
 }
 
 void Fl_Window::draw() {
+#if defined(__APPLE__)
+  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->get_gc();
+#endif
   if (shape_data_) {
 # if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
-      CGContextClipToMask(fl_gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
+      CGContextClipToMask(gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
     }
-    CGContextSaveGState(fl_gc);
+    CGContextSaveGState(gc);
 #elif defined(WIN32)
     if ((shape_data_->lw_ != w() || shape_data_->lh_ != h()) && shape_data_->shape_) {
       // size of window has changed since last time
@@ -394,7 +397,7 @@ void Fl_Window::draw() {
 #ifdef __APPLE_QUARTZ__ // PORTME: Fl_Window_Driver - platform window driver
   // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
   // corner. This code draws a little ribbed triangle for dragging.
-  if (fl_mac_os_version < 100700 && fl_gc && !parent() && resizable() &&
+  if (fl_mac_os_version < 100700 && gc && !parent() && resizable() &&
       (!size_range_set || minh!=maxh || minw!=maxw)) {
     int dx = Fl::box_dw(box())-Fl::box_dx(box());
     int dy = Fl::box_dh(box())-Fl::box_dy(box());
@@ -415,7 +418,7 @@ void Fl_Window::draw() {
   }
 #endif
 # if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (shape_data_) CGContextRestoreGState(fl_gc);
+  if (shape_data_) CGContextRestoreGState(gc);
 # endif
   
 # if defined(FLTK_USE_CAIRO)

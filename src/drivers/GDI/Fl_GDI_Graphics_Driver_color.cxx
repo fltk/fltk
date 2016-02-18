@@ -53,11 +53,11 @@ void fl_cleanup_pens(void) {
 
 void fl_save_pen(void) {
     if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
-    savepen = (HPEN)SelectObject(fl_gc, tmppen);
+  savepen = (HPEN)SelectObject((HDC)fl_graphics_driver->get_gc(), tmppen);
 }
 
 void fl_restore_pen(void) {
-    if (savepen) SelectObject(fl_gc, savepen);
+  if (savepen) SelectObject((HDC)fl_graphics_driver->get_gc(), savepen);
     DeleteObject(tmppen);
     tmppen = 0;
     savepen = 0;
@@ -65,9 +65,10 @@ void fl_restore_pen(void) {
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
+    HDC gc = (HDC)fl_graphics_driver->get_gc();
     HGDIOBJ tmppen = GetStockObject(BLACK_PEN);
-    HGDIOBJ oldpen = SelectObject(fl_gc, tmppen);       // Push out the current pen of the gc
-    if(oldpen != xmap.pen) SelectObject(fl_gc, oldpen); // Put it back if it is not the one we are about to delete
+    HGDIOBJ oldpen = SelectObject(gc, tmppen);       // Push out the current pen of the gc
+    if(oldpen != xmap.pen) SelectObject(gc, oldpen); // Put it back if it is not the one we are about to delete
     DeleteObject((HGDIOBJ)(xmap.pen));
     xmap.pen = 0;
     xmap.brush = -1;
@@ -77,8 +78,9 @@ static void clear_xmap(Fl_XMap& xmap) {
 static void set_xmap(Fl_XMap& xmap, COLORREF c) {
   xmap.rgb = c;
   if (xmap.pen) {
-      HGDIOBJ oldpen = SelectObject(fl_gc,GetStockObject(BLACK_PEN)); // replace current pen with safe one
-      if (oldpen != xmap.pen)SelectObject(fl_gc,oldpen);              // if old one not xmap.pen, need to put it back
+      HDC gc = (HDC)fl_graphics_driver->get_gc();
+      HGDIOBJ oldpen = SelectObject(gc,GetStockObject(BLACK_PEN)); // replace current pen with safe one
+      if (oldpen != xmap.pen)SelectObject(gc,oldpen);              // if old one not xmap.pen, need to put it back
       DeleteObject(xmap.pen);                                         // delete pen
   }
   xmap.pen = CreatePen(PS_SOLID, 1, xmap.rgb);                        // get a pen into xmap.pen
@@ -105,7 +107,7 @@ void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
 #endif
     }
     fl_current_xmap = &xmap;
-    SelectObject(fl_gc, (HGDIOBJ)(xmap.pen));
+    SelectObject(gc, (HGDIOBJ)(xmap.pen));
   }
 }
 
@@ -118,7 +120,7 @@ void Fl_GDI_Graphics_Driver::color(uchar r, uchar g, uchar b) {
     set_xmap(xmap, c);
   }
   fl_current_xmap = &xmap;
-  SelectObject(fl_gc, (HGDIOBJ)(xmap.pen));
+  SelectObject(gc, (HGDIOBJ)(xmap.pen));
 }
 
 HBRUSH fl_brush() {
@@ -127,6 +129,7 @@ HBRUSH fl_brush() {
 
 HBRUSH fl_brush_action(int action) {
   Fl_XMap *xmap = fl_current_xmap;
+  HDC gc = (HDC)fl_graphics_driver->get_gc();
   // Wonko: we use some statistics to cache only a limited number
   // of brushes:
 #define FL_N_BRUSH 16
@@ -137,7 +140,7 @@ HBRUSH fl_brush_action(int action) {
   } brushes[FL_N_BRUSH];
 
   if (action) {
-    SelectObject(fl_gc, GetStockObject(BLACK_BRUSH));  // Load stock object
+    SelectObject(gc, GetStockObject(BLACK_BRUSH));  // Load stock object
     for (int i=0; i<FL_N_BRUSH; i++) {
       if (brushes[i].brush)
         DeleteObject(brushes[i].brush); // delete all brushes in array
@@ -168,8 +171,8 @@ HBRUSH fl_brush_action(int action) {
     }
     i = imin;
     HGDIOBJ tmpbrush = GetStockObject(BLACK_BRUSH);  // get a stock brush
-    HGDIOBJ oldbrush = SelectObject(fl_gc,tmpbrush); // load in into current context
-    if (oldbrush != brushes[i].brush) SelectObject(fl_gc,oldbrush);  // reload old one
+    HGDIOBJ oldbrush = SelectObject(gc,tmpbrush); // load in into current context
+    if (oldbrush != brushes[i].brush) SelectObject(gc,oldbrush);  // reload old one
     DeleteObject(brushes[i].brush);      // delete the one in list
     brushes[i].brush = NULL;
     brushes[i].backref->brush = -1;
@@ -203,11 +206,11 @@ HPALETTE
 fl_select_palette(void)
 {
   static char beenhere;
+  HDC gc = (HDC)fl_graphics_driver->get_gc();
   if (!beenhere) {
     beenhere = 1;
 
-    //if (GetDeviceCaps(fl_gc, BITSPIXEL) > 8) return NULL;
-    int nColors = GetDeviceCaps(fl_gc, SIZEPALETTE);
+    int nColors = GetDeviceCaps(gc, SIZEPALETTE);
     if (nColors <= 0 || nColors > 256) return NULL;
     // this will try to work on < 256 color screens, but will probably
     // come out quite badly.
@@ -232,8 +235,8 @@ fl_select_palette(void)
     fl_palette = CreatePalette(pPal);
   }
   if (fl_palette) {
-    SelectPalette(fl_gc, fl_palette, FALSE);
-    RealizePalette(fl_gc);
+    SelectPalette(gc, fl_palette, FALSE);
+    RealizePalette(gc);
   }
   return fl_palette;
 }

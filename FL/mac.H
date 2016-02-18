@@ -162,7 +162,7 @@ public:
   void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
   // Quartz additions:
   CGContextRef gc;                 // graphics context (NULL when using QD)
-  static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
+  static void q_release_context(Fl_X *x=0); // free all resources associated with gc
   // Cocoa additions
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);

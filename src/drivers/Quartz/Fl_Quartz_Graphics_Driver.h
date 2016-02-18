@@ -39,10 +39,13 @@
  This class is implemented only on the Mac OS X platform.
  */
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
+  CGContextRef gc;
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
+  virtual void set_gc(void *ctxt) {gc = (CGContextRef)ctxt;}
+  virtual void *get_gc() {return gc;}
   char can_do_alpha_blending();
 
   // --- bitmap stuff

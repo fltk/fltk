@@ -3,7 +3,7 @@
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,6 +21,7 @@
 
 #  include <FL/Fl.H>
 #  include <FL/x.H>
+#  include <FL/Fl_Graphics_Driver.H>
 #  include <stdlib.h>
 #  include "Fl_Gl_Choice.H"
 #  include <FL/gl_draw.H>
@@ -118,12 +119,13 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
 
   // Replacement for ChoosePixelFormat() that finds one with an overlay
   // if possible:
-  if (!fl_gc) fl_GetDC(0);
+  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  if (!gc) gc = fl_GetDC(0);
   int pixelformat = 0;
   PIXELFORMATDESCRIPTOR chosen_pfd;
   for (int i = 1; ; i++) {
     PIXELFORMATDESCRIPTOR pfd;
-    if (!DescribePixelFormat(fl_gc, i, sizeof(pfd), &pfd)) break;
+    if (!DescribePixelFormat(gc, i, sizeof(pfd), &pfd)) break;
     // continue if it does not satisfy our requirements:
     if (~pfd.dwFlags & (PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL)) continue;
     if (pfd.iPixelType != ((m&FL_INDEX)?PFD_TYPE_COLORINDEX:PFD_TYPE_RGBA)) continue;

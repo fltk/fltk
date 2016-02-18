@@ -3,7 +3,7 @@
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -176,14 +176,15 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (damage() & ~FL_DAMAGE_EXPOSE) {
     fl_clip_region(myi->region); myi->region = 0;
 #ifdef WIN32
-    HDC _sgc = fl_gc;
-    fl_gc = fl_makeDC(myi->other_xid);
-    int save = SaveDC(fl_gc);
+    void* _sgc = fl_graphics_driver->get_gc();
+    HDC gc = fl_makeDC(myi->other_xid);
+    fl_graphics_driver->set_gc(gc);
+    int save = SaveDC(gc);
     fl_restore_clip(); // duplicate region into new gc
     draw();
-    RestoreDC(fl_gc, save);
-    DeleteDC(fl_gc);
-    fl_gc = _sgc;
+    RestoreDC(gc, save);
+    DeleteDC(gc);
+    fl_graphics_driver->set_gc(_sgc);
     //# if defined(FLTK_USE_CAIRO)
     //if Fl::cairo_autolink_context() Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
     //# endif

@@ -4,7 +4,7 @@
 // Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -84,9 +84,12 @@ typedef short COORD_T;
  to support all FLTK drawing functions.
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
+  friend class Fl_Surface_Device;
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
+private:
+  void global_gc(void);
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -251,6 +254,10 @@ public:
   virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
+  /** Sets the value of the driver-specific graphics context. */
+  virtual void set_gc(void*) {}
+  /** Returns the driver-specific graphics context, of NULL if there's none. */
+  virtual void *get_gc(void) {return NULL;}
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);

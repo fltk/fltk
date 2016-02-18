@@ -21,6 +21,7 @@
 #include "Fl_Cocoa_Screen_Driver.h"
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
 
@@ -120,8 +121,9 @@ void Fl_Cocoa_Screen_Driver::beep(int type) {
 
 
 void Fl_Cocoa_Screen_Driver::flush() {
-  if (fl_gc)
-    CGContextFlush(fl_gc);
+  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->get_gc();
+  if (gc)
+    CGContextFlush(gc);
 }
 
 

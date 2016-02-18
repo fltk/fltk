@@ -45,7 +45,8 @@ public:
   static const char *class_id;
   /** 
    Returns the name of the class of this object. 
-   Use of the class_name() function is discouraged because it will be removed from future FLTK versions.
+   The class_name() function is deprecated.   
+   The preferred procedure is to use the Fl_Graphics_Driver::has_feature() member function.
    
    The class of an instance of an Fl_Device subclass can be checked with code such as:
    \code

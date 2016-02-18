@@ -64,8 +64,8 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
   if (is_window && !widget->window()) {
     fl_push_clip(0, 0, widget->w(), widget->h() );
 #ifdef __APPLE__ // for Mac OS X 10.6 and above, make window with rounded bottom corners
-    if ( fl_mac_os_version >= 100600 && driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id ) {
-      Fl_X::clip_to_rounded_corners(fl_gc, widget->w(), widget->h());
+    if ( fl_mac_os_version >= 100600 && driver()->has_feature(Fl_Graphics_Driver::NATIVE) ) {
+      Fl_X::clip_to_rounded_corners((CGContextRef)driver()->get_gc(), widget->w(), widget->h());
     }
 #endif
   }
@@ -137,7 +137,6 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   Fl_Display_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
   win->show();
-  fl_gc = NULL;
   Fl::check();
   win->make_current();
   uchar *image_data;
@@ -150,8 +149,9 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
   delete[] image_data;
 #ifdef WIN32
-  fl_gc = GetDC(fl_xid(win));
-  ReleaseDC(fl_xid(win), fl_gc);
+  HDC gc = GetDC(fl_xid(win));
+  fl_graphics_driver->set_gc(gc);
+  ReleaseDC(fl_xid(win), gc);
 #endif
 }
 

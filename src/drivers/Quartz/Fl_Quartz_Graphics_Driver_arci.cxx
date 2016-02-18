@@ -30,42 +30,42 @@ void Fl_Quartz_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2)
   if (w <= 0 || h <= 0) return;
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
-  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextSetShouldAntialias(gc, true);
   if (w!=h) {
-    CGContextSaveGState(fl_gc);
-    CGContextTranslateCTM(fl_gc, cx, cy);
-    CGContextScaleCTM(fl_gc, w-1.0f, h-1.0f);
-    CGContextAddArc(fl_gc, 0, 0, 0.5, a1, a2, 1);
-    CGContextRestoreGState(fl_gc);
+    CGContextSaveGState(gc);
+    CGContextTranslateCTM(gc, cx, cy);
+    CGContextScaleCTM(gc, w-1.0f, h-1.0f);
+    CGContextAddArc(gc, 0, 0, 0.5, a1, a2, 1);
+    CGContextRestoreGState(gc);
   } else {
     float r = (w+h)*0.25f-0.5f;
-    CGContextAddArc(fl_gc, cx, cy, r, a1, a2, 1);
+    CGContextAddArc(gc, cx, cy, r, a1, a2, 1);
   }
-  CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+  CGContextStrokePath(gc);
+  CGContextSetShouldAntialias(gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
-  CGContextSetShouldAntialias(fl_gc, true);
+  CGContextSetShouldAntialias(gc, true);
   if (w!=h) {
-    CGContextSaveGState(fl_gc);
-    CGContextTranslateCTM(fl_gc, cx, cy);
-    CGContextScaleCTM(fl_gc, w, h);
-    CGContextAddArc(fl_gc, 0, 0, 0.5, a1, a2, 1);
-    CGContextAddLineToPoint(fl_gc, 0, 0);
-    CGContextClosePath(fl_gc);
-    CGContextRestoreGState(fl_gc);
+    CGContextSaveGState(gc);
+    CGContextTranslateCTM(gc, cx, cy);
+    CGContextScaleCTM(gc, w, h);
+    CGContextAddArc(gc, 0, 0, 0.5, a1, a2, 1);
+    CGContextAddLineToPoint(gc, 0, 0);
+    CGContextClosePath(gc);
+    CGContextRestoreGState(gc);
   } else {
     float r = (w+h)*0.25f;
-    CGContextAddArc(fl_gc, cx, cy, r, a1, a2, 1);
-    CGContextAddLineToPoint(fl_gc, cx, cy);
-    CGContextClosePath(fl_gc);
+    CGContextAddArc(gc, cx, cy, r, a1, a2, 1);
+    CGContextAddLineToPoint(gc, cx, cy);
+    CGContextClosePath(gc);
   }
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+  CGContextFillPath(gc);
+  CGContextSetShouldAntialias(gc, false);
 }
 
 #endif // FL_CFG_GFX_QUARTZ

@@ -51,9 +51,6 @@
 class Fl_System_Printer : public Fl_Paged_Device {
   friend class Fl_Printer;
 private:
-  /** \brief the printer's graphics context, if there's one, NULL otherwise */
-  void *gc; 
-  void set_current(void);
 #ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform printer driver
   float scale_x;
   float scale_y;

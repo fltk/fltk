@@ -41,13 +41,13 @@ void Fl_Quartz_Graphics_Driver::vertex(double x,double y) {
 }
 
 void Fl_Quartz_Graphics_Driver::end_points() {
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc, true);
   for (int i=0; i<n; i++) { 
-    CGContextMoveToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-    CGContextStrokePath(fl_gc);
+    CGContextMoveToPoint(gc, p[i].x, p[i].y);
+    CGContextAddLineToPoint(gc, p[i].x, p[i].y);
+    CGContextStrokePath(gc);
   }
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::end_line() {
@@ -56,12 +56,12 @@ void Fl_Quartz_Graphics_Driver::end_line() {
     return;
   }
   if (n<=1) return;
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
+  CGContextSetShouldAntialias(gc, true);
+  CGContextMoveToPoint(gc, p[0].x, p[0].y);
   for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextStrokePath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+    CGContextAddLineToPoint(gc, p[i].x, p[i].y);
+  CGContextStrokePath(gc);
+  CGContextSetShouldAntialias(gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::end_loop() {
@@ -77,13 +77,13 @@ void Fl_Quartz_Graphics_Driver::end_polygon() {
     return;
   }
   if (n<=1) return;
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
+  CGContextSetShouldAntialias(gc, true);
+  CGContextMoveToPoint(gc, p[0].x, p[0].y);
   for (int i=1; i<n; i++) 
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextClosePath(fl_gc);
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+    CGContextAddLineToPoint(gc, p[i].x, p[i].y);
+  CGContextClosePath(gc);
+  CGContextFillPath(gc);
+  CGContextSetShouldAntialias(gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::begin_complex_polygon() {
@@ -108,13 +108,13 @@ void Fl_Quartz_Graphics_Driver::end_complex_polygon() {
     return;
   }
   if (n<=1) return;
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
+  CGContextSetShouldAntialias(gc, true);
+  CGContextMoveToPoint(gc, p[0].x, p[0].y);
   for (int i=1; i<n; i++)
-    CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
-  CGContextClosePath(fl_gc);
-  CGContextFillPath(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+    CGContextAddLineToPoint(gc, p[i].x, p[i].y);
+  CGContextClosePath(gc);
+  CGContextFillPath(gc);
+  CGContextSetShouldAntialias(gc, false);
 }
 
 void Fl_Quartz_Graphics_Driver::circle(double x, double y,double r) {
@@ -129,10 +129,10 @@ void Fl_Quartz_Graphics_Driver::circle(double x, double y,double r) {
 
   // Quartz warning: circle won't scale to current matrix!
   // Last argument must be 0 (counter-clockwise) or it draws nothing under __LP64__ !!!!
-  CGContextSetShouldAntialias(fl_gc, true);
-  CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
-  (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
-  CGContextSetShouldAntialias(fl_gc, false);
+  CGContextSetShouldAntialias(gc, true);
+  CGContextAddArc(gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
+  (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(gc);
+  CGContextSetShouldAntialias(gc, false);
 }
 
 #endif // FL_CFG_GFX_QUARTZ

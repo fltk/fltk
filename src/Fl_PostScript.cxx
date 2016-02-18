@@ -3,7 +3,7 @@
 //
 // PostScript device support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2015 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -61,9 +61,6 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
  */
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform PostScript
-  gc = fl_gc; // the display context is used by fl_text_extents()
-#endif
   Fl_Surface_Device::driver( new Fl_PostScript_Graphics_Driver() );
 }
 

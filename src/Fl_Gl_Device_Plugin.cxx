@@ -3,7 +3,7 @@
 //
 // implementation of class Fl_Gl_Device_Plugin for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -126,7 +126,8 @@ public:
                                      provider, NULL, false, kCGRenderingIntentDefault);
       CGColorSpaceRelease(cSpace);
       CGDataProviderRelease(provider);
-      CGContextDrawImage(fl_gc, CGRectMake(0, 0, glw->w(), glw->h()), cgimg);
+      CGContextDrawImage((CGContextRef)Fl_Surface_Device::surface()->driver()->get_gc(),
+                         CGRectMake(0, 0, glw->w(), glw->h()), cgimg);
       CFRelease(cgimg);
       return 1;
     } else if (img->w() > glw->w()) {

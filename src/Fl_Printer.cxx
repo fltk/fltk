@@ -127,15 +127,6 @@ const char *Fl_PostScript_Printer::class_id = Fl_Printer::class_id;
 #endif
 
 #if defined(__APPLE__) || defined(WIN32) // PORTME: Fl_Screen_Driver - platform printing
-void Fl_System_Printer::set_current(void)
-{
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform printing
-  fl_gc = (CGContextRef)gc;
-#elif defined(WIN32)
-  fl_gc = (HDC)gc;
-#endif
-  this->Fl_Surface_Device::set_current();
-}
 
 void Fl_System_Printer::origin(int *x, int *y)
 {

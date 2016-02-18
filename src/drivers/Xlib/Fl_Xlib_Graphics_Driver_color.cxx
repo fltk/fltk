@@ -115,15 +115,15 @@ void Fl_Xlib_Graphics_Driver::color(Fl_Color i) {
     fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
     Fl_Graphics_Driver::color(i);
-    if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
-    XSetForeground(fl_display, fl_gc, fl_xpixel(i));
+    if(!gc) return; // don't get a default gc if current window is not yet created/valid
+    XSetForeground(fl_display, gc, fl_xpixel(i));
   }
 }
 
 void Fl_Xlib_Graphics_Driver::color(uchar r,uchar g,uchar b) {
   Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
-  if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
-  XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));
+  if(!gc) return; // don't get a default gc if current window is not yet created/valid
+  XSetForeground(fl_display, gc, fl_xpixel(r,g,b));
 }
 
 /** \addtogroup  fl_attributes

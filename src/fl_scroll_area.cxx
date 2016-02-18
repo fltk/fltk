@@ -3,7 +3,7 @@
 //
 // Scrolling routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -79,7 +79,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   }
 
 #if defined(USE_X11)
-  XCopyArea(fl_display, fl_window, fl_window, fl_gc,
+  XCopyArea(fl_display, fl_window, fl_window, (GC)fl_graphics_driver->get_gc(),
 	    src_x, src_y, src_w, src_h, dest_x, dest_y);
   // we have to sync the display and get the GraphicsExpose events! (sigh)
   for (;;) {
@@ -117,14 +117,15 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   // multi-screen solutions, it will not solve issues scrolling
   // from a different resolution screen onto another.
   // Note 3: this has been tested with image maps, too.
+  HDC gc = (HDC)fl_graphics_driver->get_gc();
   if (fl_GetRandomRgn) {
     // get the DC region minus all overlapping windows
     HRGN sys_rgn = CreateRectRgn(0, 0, 0, 0);
-    fl_GetRandomRgn(fl_gc, sys_rgn, 4);
+    fl_GetRandomRgn(gc, sys_rgn, 4);
     // now get the source scrolling rectangle 
     HRGN src_rgn = CreateRectRgn(src_x, src_y, src_x+src_w, src_y+src_h);
     POINT offset = { 0, 0 };
-    if (GetDCOrgEx(fl_gc, &offset)) {
+    if (GetDCOrgEx(gc, &offset)) {
       OffsetRgn(src_rgn, offset.x, offset.y);
     }
     // see if all source pixels are available in the system region
@@ -142,7 +143,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   }
 
   // Great, we can do an accelerated scroll instead of re-rendering
-  BitBlt(fl_gc, dest_x, dest_y, src_w, src_h, fl_gc, src_x, src_y,SRCCOPY);
+  BitBlt(gc, dest_x, dest_y, src_w, src_h, gc, src_x, src_y,SRCCOPY);
 
 #elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Graphics_Driver - platform scrolling
   CGImageRef img = Fl_X::CGImage_from_window_rect(Fl_Window::current(), src_x, src_y, src_w, src_h);

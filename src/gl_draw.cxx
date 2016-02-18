@@ -101,10 +101,10 @@ void  gl_font(int fontid, int size) {
     // this is unused because USE_OksiD_style_GL_font_selection == 1
     int base = fl_fontsize->metr.tmFirstChar;
     int count = fl_fontsize->metr.tmLastChar-base+1;
-    HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
+    HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->get_gc(), fl_fontsize->fid);
     fl_fontsize->listbase = glGenLists(256);
-    wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
-    SelectObject(fl_gc, oldFid);
+    wglUseFontBitmaps((HDC)fl_graphics_driver->get_gc(), base, count, fl_fontsize->listbase+base);
+    SelectObject((HDC)fl_graphics_driver->get_gc(), oldFid);
 # endif
 
 #endif // USE_OksiD_style_GL_font_selection
@@ -132,9 +132,9 @@ static void get_list(int r) {
 # endif
 #elif defined(WIN32)
   unsigned int ii = r * 0x400;
-  HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
-  wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
-  SelectObject(fl_gc, oldFid);
+  HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->get_gc(), gl_fontsize->fid);
+  wglUseFontBitmapsW((HDC)fl_graphics_driver->get_gc(), ii, ii + 0x03ff, gl_fontsize->listbase+ii);
+  SelectObject((HDC)fl_graphics_driver->get_gc(), oldFid);
 #else
 #  error unsupported platform
 #endif
@@ -350,6 +350,7 @@ static int has_texture_rectangle = 0; // true means GL_EXT_texture_rectangle is 
 
 #include <FL/glu.h>  // for gluUnProject() and gluCheckExtension()
 #include <FL/glut.H> // for glutStrokeString() and glutStrokeLength()
+#include <src/drivers/Quartz/Fl_Quartz_Graphics_Driver.h>
 
 // manages a fifo pile of pre-computed string textures
 class gl_texture_fifo {
@@ -490,25 +491,26 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
     CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
     void *base = NULL;
     if (fl_mac_os_version < 100600) base = calloc(4*fifo[current].width, h);
-    CGContextRef save_gc = fl_gc;
-    fl_gc = CGBitmapContextCreate(base, fifo[current].width, h, 8, fifo[current].width*4, lut,
+    void* save_gc = fl_graphics_driver->get_gc();
+    CGContextRef gc = CGBitmapContextCreate(base, fifo[current].width, h, 8, fifo[current].width*4, lut,
                                   (CGBitmapInfo)(kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    fl_graphics_driver->set_gc(gc);
     CGColorSpaceRelease(lut);
     GLfloat colors[4];
     glGetFloatv(GL_CURRENT_COLOR, colors);
     fl_color((uchar)(colors[0]*255), (uchar)(colors[1]*255), (uchar)(colors[2]*255));
-    CGContextTranslateCTM(fl_gc, 0, h - gl_scale*fl_descent());
-    CGContextScaleCTM(fl_gc, gl_scale, gl_scale);
+    CGContextTranslateCTM(gc, 0, h - gl_scale*fl_descent());
+    CGContextScaleCTM(gc, gl_scale, gl_scale);
     fl_draw(str, n, 0, 0);
     //put this bitmap in a texture
     glPushAttrib(GL_TEXTURE_BIT);
     glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[current].texName);
     glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, fifo[current].width);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, fifo[current].width, h, 0,  GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(fl_gc));
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, fifo[current].width, h, 0,  GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(gc));
     glPopAttrib();
-    CGContextRelease(fl_gc);
-    fl_gc = save_gc;
+    CGContextRelease(gc);
+    fl_graphics_driver->set_gc(save_gc);
     if (base) free(base);
   } else {
     fifo[current].ratio = float(fifo[current].width)/glutStrokeLength(GLUT_STROKE_ROMAN, (uchar*)fifo[current].utf8);

@@ -2919,18 +2919,14 @@ preparePrintFront();
 
 Window fl_window;
 Fl_Window *Fl_Window::current_;
-GC fl_gc;
 
 // make X drawing go into this window (called by subclass flush() impl.)
 void Fl_Window::make_current() {
-  static GC gc; // the GC used by all X windows
   if (!shown()) {
     fl_alert("Fl_Window::make_current(), but window is not shown().");
     Fl::fatal("Fl_Window::make_current(), but window is not shown().");
   }
-  if (!gc) gc = XCreateGC(fl_display, i->xid, 0, 0);
   fl_window = i->xid;
-  fl_gc = gc;
   current_ = this;
   fl_clip_region(0);
 

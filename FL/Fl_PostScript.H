@@ -3,7 +3,7 @@
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2011 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -233,15 +233,6 @@ class Clip {
  two variants of which are usable and allow to specify what page format and layout are desired.
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform specifics for PostScript
-  CGContextRef gc;
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define storage for your graphics context in Fl_PostScript_File_Device if needed"
-#else // X11
-  // not needed
-#endif
 protected:
   Fl_PostScript_Graphics_Driver *driver();
 public:
@@ -264,17 +255,7 @@ public:
   void translate(int x, int y);
   void untranslate(void);
   int end_page (void);    
-  void end_job(void);
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform specifics for PostScript
-  void set_current() { fl_gc = gc; Fl_Paged_Device::set_current(); }
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: set access to your graphics context in Fl_PostScript_File_Device if needed"
-#else // X11
-      // not needed
-#endif
-  
+  void end_job(void);  
   static const char *file_chooser_title; 
 };
 

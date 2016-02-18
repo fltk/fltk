@@ -3,7 +3,7 @@
 //
 // Menu window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,7 +35,6 @@ extern XVisualInfo *fl_find_overlay_visual();
 extern XVisualInfo *fl_overlay_visual;
 extern Colormap fl_overlay_colormap;
 extern unsigned long fl_transparent_pixel;
-static GC gc;	// the GC used by all X windows
 extern uchar fl_overlay; // changes how fl_color(x) works
 #endif
 
@@ -59,13 +58,10 @@ void Fl_Menu_Window::flush() {
   if (!fl_overlay_visual || !overlay()) {Fl_Single_Window::flush(); return;}
   Fl_X *myi = Fl_X::i(this);
   fl_window = myi->xid;
-  if (!gc) {
-	  gc = XCreateGC(fl_display, myi->xid, 0, 0);
 # if defined(FLTK_USE_CAIRO)
-	  if(Fl::autolink_context()) Fl::cairo_make_current(gc); // capture gc changes automatically to update the cairo context adequately
+    // capture gc changes automatically to update the cairo context adequately
+    if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->get_gc());
 # endif
-  }
-  fl_gc = gc;
   fl_overlay = 1;
   fl_clip_region(myi->region); myi->region = 0; current_ = this;
   draw();
@@ -78,7 +74,7 @@ void Fl_Menu_Window::flush() {
 /** Erases the window, does nothing if HAVE_OVERLAY is not defined config.h */
 void Fl_Menu_Window::erase() {
 #if HAVE_OVERLAY
-  if (!gc || !shown()) return;
+  if (!shown()) return;
 //XSetForeground(fl_display, gc, 0);
 //XFillRectangle(fl_display, fl_xid(this), gc, 0, 0, w(), h());
   XClearWindow(fl_display, fl_xid(this));

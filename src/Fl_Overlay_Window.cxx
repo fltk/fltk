@@ -3,7 +3,7 @@
 //
 // Overlay window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -87,7 +87,6 @@ extern XVisualInfo *fl_find_overlay_visual();
 extern XVisualInfo *fl_overlay_visual;
 extern Colormap fl_overlay_colormap;
 extern unsigned long fl_transparent_pixel;
-static GC gc;	// the GC used by all X windows
 extern uchar fl_overlay; // changes how fl_color(x) works
 
 class _Fl_Overlay : public Fl_Window {
@@ -116,10 +115,6 @@ void _Fl_Overlay::show() {
 
 void _Fl_Overlay::flush() {
   fl_window = fl_xid(this);
-  if (!gc) {
-	  gc = XCreateGC(fl_display, fl_xid(this), 0, 0);
-  }
-  fl_gc = gc;
 #if defined(FLTK_USE_CAIRO)
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
 #endif

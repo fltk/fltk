@@ -89,7 +89,6 @@ class Fl_Widget *fl_selection_requestor;
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
 // public variables
-CGContextRef fl_gc = 0;
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
@@ -864,9 +863,7 @@ double fl_mac_flush_and_wait(double time_to_wait) {
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
-  if (fl_gc) {
-    Fl_X::q_release_context();
-    }
+  Fl_X::q_release_context();
   [pool release];
   return retval;
 }
@@ -3279,21 +3276,21 @@ void Fl_Window::make_current()
 #endif
     nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
   i->gc = (CGContextRef)[nsgc graphicsPort];
-  fl_gc = i->gc;
-  CGContextSaveGState(fl_gc); // native context
+  Fl_Display_Device::display_device()->driver()->set_gc(i->gc);
+  CGContextSaveGState(i->gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
   // it gets activated when needed (e.g., draw text)
-  CGContextSetShouldAntialias(fl_gc, false);  
+  CGContextSetShouldAntialias(i->gc, false);
   CGFloat hgt = [[fl_window contentView] frame].size.height;
-  CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
-  CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
+  CGContextTranslateCTM(i->gc, 0.5, hgt-0.5f);
+  CGContextScaleCTM(i->gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   // for subwindows, limit drawing to inside of parent window
   // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
-  if (i->subRect()) CGContextClipToRect(fl_gc, CGRectOffset(*(i->subRect()), -0.5, -0.5));
+  if (i->subRect()) CGContextClipToRect(i->gc, CGRectOffset(*(i->subRect()), -0.5, -0.5));
   
 // this is the context with origin at top left of (sub)window
-  CGContextSaveGState(fl_gc);
+  CGContextSaveGState(i->gc);
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
 #endif
@@ -3307,13 +3304,14 @@ void Fl_Window::make_current()
 
 // Give the Quartz context back to the system
 void Fl_X::q_release_context(Fl_X *x) {
-  if (x && x->gc!=fl_gc) return;
-  if (!fl_gc) return;
-  CGContextRestoreGState(fl_gc); // match the CGContextSaveGState's of make_current
-  CGContextRestoreGState(fl_gc);
+  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->get_gc();
+  if (x && x->gc!=gc) return;
+  if (!gc) return;
+  CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
+  CGContextRestoreGState(gc);
   Fl_X::set_high_resolution(false);
-  CGContextFlush(fl_gc);
-  fl_gc = 0;
+  CGContextFlush(gc);
+  Fl_Display_Device::display_device()->driver()->set_gc(0);
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
 #endif
@@ -4380,11 +4378,12 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   CALayer *layer = get_titlebar_layer(win);
   if (layer) { // if title bar uses a layer
     if (to_quartz) { // to Quartz printer
-      CGContextSaveGState(fl_gc);
-      CGContextTranslateCTM(fl_gc, x_offset - 0.5, y_offset + bt - 0.5);
-      CGContextScaleCTM(fl_gc, 1, -1);
-      draw_layer_to_context(layer, fl_gc, win->w(), bt);
-      CGContextRestoreGState(fl_gc);
+      CGContextRef gc = (CGContextRef)driver()->get_gc();
+      CGContextSaveGState(gc);
+      CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
+      CGContextScaleCTM(gc, 1, -1);
+      draw_layer_to_context(layer, gc, win->w(), bt);
+      CGContextRestoreGState(gc);
     }
     else {
       CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB ();
@@ -4411,7 +4410,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   const char *title = win->label();
   win->label(""); // temporarily set a void window title
   win->show();
-  fl_gc = NULL;
   Fl::check();
   // capture the window title bar with no title
   Fl_Shared_Image *top, *left, *bottom, *right;
@@ -4426,7 +4424,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
       // the exact font is LucidaGrande 13 pts (and HelveticaNeueDeskInterface-Regular with 10.10)
       NSGraphicsContext *current = [NSGraphicsContext currentContext];
-      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
+      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->get_gc() flipped:YES]];//10.4
       NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0]
                                                        forKey:NSFontAttributeName];
       NSString *title_s = [fl_xid(win) title];

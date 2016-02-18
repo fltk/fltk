@@ -3,7 +3,7 @@
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,6 +23,7 @@
 extern int fl_gl_load_plugin;
 
 #include <FL/Fl.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <FL/x.H>
 #include "Fl_Gl_Choice.H"
 #ifdef __APPLE__ // PORTME: platform OpenGL management
@@ -210,8 +211,8 @@ void Fl_Gl_Window::make_current() {
 #if defined(WIN32) && USE_COLORMAP
   if (fl_palette) {
     fl_GetDC(fl_xid(this));
-    SelectPalette(fl_gc, fl_palette, FALSE);
-    RealizePalette(fl_gc);
+    SelectPalette((HDC)fl_graphics_driver->get_gc(), fl_palette, FALSE);
+    RealizePalette((HDC)fl_graphics_driver->get_gc());
   }
 #endif // USE_COLORMAP
   if (mode_ & FL_FAKE_SINGLE) {

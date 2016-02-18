@@ -4,7 +4,7 @@
 // Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -33,10 +33,14 @@
  This class is implemented only on the Xlib platform.
  */
 class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
+protected:
+  static GC gc;
 public:
   static const char *class_id;
+  Fl_Xlib_Graphics_Driver(void);
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
+  virtual void *get_gc() { return gc; }
   char can_do_alpha_blending();
   
   // --- bitmap stuff

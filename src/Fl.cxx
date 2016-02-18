@@ -3,7 +3,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,6 +60,7 @@
 #endif // DEBUG || DEBUG_WATCH
 
 #ifdef WIN32
+#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
 #elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - window driver and main loop
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement global variables for your platform here"
@@ -1618,10 +1619,10 @@ void Fl_Window::hide() {
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
-    if (ip->xid == fl_window && fl_gc) {
-      fl_release_dc(fl_window, fl_gc);
+    if (ip->xid == fl_window && fl_graphics_driver->get_gc()) {
+      fl_release_dc(fl_window, (HDC)fl_graphics_driver->get_gc());
       fl_window = (HWND)-1;
-      fl_gc = 0;
+      fl_graphics_driver->set_gc(0);
 # ifdef FLTK_USE_CAIRO
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif

@@ -3,7 +3,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,6 +29,17 @@
 
 const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
 
+/* Reference to the current graphics context
+ For back-compatibility only. The preferred procedure to get this pointer is
+ Fl_Surface_Device::surface()->driver()->get_gc().
+ */
+GC fl_gc = 0;
+
+void Fl_Graphics_Driver::global_gc()
+{
+  fl_gc = (GC)get_gc();
+}
+
 
 /*
  * By linking this module, the following static method will instatiate the
@@ -39,13 +50,23 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   return new Fl_Xlib_Graphics_Driver();
 }
 
+GC Fl_Xlib_Graphics_Driver::gc = NULL;
+
+Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
+  if (!gc) {
+    fl_open_display();
+    // the unique GC used by all X windows
+    gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
+  }
+}
+
 char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
   return Fl_X::xrender_supported();
 }
 
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y);
+  XCopyArea(fl_display, pixmap, fl_window, gc, srcx, srcy, w, h, x, y);
 }
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int h,

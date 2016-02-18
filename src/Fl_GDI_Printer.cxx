@@ -3,7 +3,7 @@
 //
 // Support for WIN32 printing for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2012 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -43,7 +43,6 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
   if ( !prHDC ) return;
   
   fl_window = 0;
-  fl_gc = prHDC;
   SetGraphicsMode(prHDC, GM_ADVANCED); // to allow for rotations
   SetMapMode(prHDC, MM_ANISOTROPIC);
   SetTextAlign(prHDC, TA_BASELINE|TA_LEFT);
@@ -110,7 +109,7 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     x_offset = 0;
     y_offset = 0;
     WIN_SetupPrinterDeviceContext (hPr);
-    gc = (void *)fl_gc;
+    driver()->set_gc(hPr);
     this->set_current();
   }
   return err;
@@ -144,9 +143,10 @@ void Fl_System_Printer::absolute_printable_rect(int *x, int *y, int *w, int *h)
   XFORM		transform;
     
   if (hPr == NULL) return;
-  GetWorldTransform(fl_gc, &transform);
-  ModifyWorldTransform(fl_gc, NULL, MWT_IDENTITY);
-  SetWindowOrgEx(fl_gc, 0, 0, NULL);
+  HDC gc = (HDC)driver()->get_gc();
+  GetWorldTransform(gc, &transform);
+  ModifyWorldTransform(gc, NULL, MWT_IDENTITY);
+  SetWindowOrgEx(gc, 0, 0, NULL);
   
   physPageSize.x = GetDeviceCaps(hPr, HORZRES);
   physPageSize.y = GetDeviceCaps(hPr, VERTRES);
@@ -164,7 +164,7 @@ void Fl_System_Printer::absolute_printable_rect(int *x, int *y, int *w, int *h)
   *x = left_margin;
   *y = top_margin;
   origin(x_offset, y_offset);
-  SetWorldTransform(fl_gc, &transform);
+  SetWorldTransform(gc, &transform);
 }
 
 void Fl_System_Printer::margins(int *left, int *top, int *right, int *bottom)
@@ -199,14 +199,13 @@ int Fl_System_Printer::start_page (void)
     printable_rect(&w, &h);
     origin(0, 0);
     fl_clip_region(0);
-    gc = (void *)fl_gc;
   }
   return rsult;
 }
 
 void Fl_System_Printer::origin (int deltax, int deltay)
 {
-  SetWindowOrgEx(fl_gc, - left_margin - deltax, - top_margin - deltay, NULL);
+  SetWindowOrgEx( (HDC)driver()->get_gc(), - left_margin - deltax, - top_margin - deltay, NULL);
   x_offset = deltax;
   y_offset = deltay;
 }
@@ -215,7 +214,7 @@ void Fl_System_Printer::scale (float scalex, float scaley)
 {
   if (scaley == 0.) scaley = scalex;
   int w, h;
-  SetWindowExtEx(fl_gc, (int)(720 / scalex + 0.5), (int)(720 / scaley + 0.5), NULL);
+  SetWindowExtEx((HDC)driver()->get_gc(), (int)(720 / scalex + 0.5), (int)(720 / scaley + 0.5), NULL);
   printable_rect(&w, &h);
   origin(0, 0);
 }
@@ -230,7 +229,7 @@ void Fl_System_Printer::rotate (float rot_angle)
   mat.eM21 = - mat.eM12;
   mat.eM22 = mat.eM11;
   mat.eDx = mat.eDy = 0;
-  SetWorldTransform(fl_gc, &mat);
+  SetWorldTransform((HDC)driver()->get_gc(), &mat);
 }
 
 int Fl_System_Printer::end_page (void)
@@ -246,7 +245,6 @@ int Fl_System_Printer::end_page (void)
       rsult = 1;
     }
   }
-  gc = NULL;
   return rsult;
 }
 
@@ -255,19 +253,19 @@ const int translate_stack_max = 5;
 static int translate_stack_x[translate_stack_max];
 static int translate_stack_y[translate_stack_max];
 
-static void do_translate(int x, int y)
+static void do_translate(int x, int y, HDC gc)
 {
   XFORM tr;
   tr.eM11 = tr.eM22 = 1;
   tr.eM12 = tr.eM21 = 0;
   tr.eDx =  (FLOAT) x;
   tr.eDy =  (FLOAT) y;
-  ModifyWorldTransform(fl_gc, &tr, MWT_LEFTMULTIPLY);
+  ModifyWorldTransform(gc, &tr, MWT_LEFTMULTIPLY);
 }
 
 void Fl_System_Printer::translate (int x, int y)
 {
-  do_translate(x, y);
+  do_translate(x, y, (HDC)driver()->get_gc());
   if (translate_stack_depth < translate_stack_max) {
     translate_stack_x[translate_stack_depth] = x;
     translate_stack_y[translate_stack_depth] = y;
@@ -279,7 +277,7 @@ void Fl_System_Printer::untranslate (void)
 {
   if (translate_stack_depth > 0) {
     translate_stack_depth--;
-    do_translate( - translate_stack_x[translate_stack_depth], - translate_stack_y[translate_stack_depth] );
+    do_translate( - translate_stack_x[translate_stack_depth], - translate_stack_y[translate_stack_depth], (HDC)driver()->get_gc() );
     }
 }
 

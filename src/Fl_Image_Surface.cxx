@@ -65,12 +65,6 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Surface_Devic
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
-  gc = 0;
-  if (!fl_gc) { // allows use of this class before any window is shown
-    fl_open_display();
-    gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
-    fl_gc = gc;
-  }
   offscreen = fl_create_offscreen(w, h);
   helper = new Fl_Xlib_Surface_();
   driver(helper->driver());
@@ -92,7 +86,6 @@ Fl_Image_Surface::~Fl_Image_Surface() {
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   fl_delete_offscreen(offscreen);
-  if (gc) { XFreeGC(fl_display, gc); fl_gc = 0; }
   delete (Fl_Xlib_Surface_*)helper;
 #endif
 }
@@ -111,15 +104,15 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   H = CGBitmapContextGetHeight(offscreen);
   Fl_X::set_high_resolution(0);
   data = fl_read_image(NULL, 0, 0, W, H, 0);
-  fl_gc = 0;
 #elif defined(WIN32)
   fl_pop_clip(); 
   data = fl_read_image(NULL, 0, 0, width, height, 0);
-  RestoreDC(fl_gc, _savedc); 
-  DeleteDC(fl_gc); 
+  HDC gc = (HDC)driver()->get_gc();
+  RestoreDC(gc, _savedc);
+  DeleteDC(gc);
   _ss->set_current(); 
   fl_window=_sw; 
-  fl_gc = _sgc;
+  _ss->driver()->set_gc(_sgc);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
@@ -163,16 +156,18 @@ void Fl_Image_Surface::draw(Fl_Widget *widget, int delta_x, int delta_y)
 void Fl_Image_Surface::set_current()
 {
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
-  fl_gc = offscreen; fl_window = 0;
+  driver()->set_gc(offscreen);
+  fl_window = 0;
   Fl_Surface_Device::set_current();
   Fl_X::set_high_resolution( CGBitmapContextGetWidth(offscreen) > width );
 #elif defined(WIN32)
-  _sgc=fl_gc; 
-  _sw=fl_window;
+  _sw = fl_window;
   _ss = Fl_Surface_Device::surface(); 
+  _sgc = (HDC)_ss->driver()->get_gc();
+  HDC gc = fl_makeDC(offscreen);
   Fl_Surface_Device::set_current();
-  fl_gc = fl_makeDC(offscreen); 
-   _savedc = SaveDC(fl_gc); 
+  driver()->set_gc(gc);
+   _savedc = SaveDC(gc);
   fl_window=(HWND)offscreen; 
   fl_push_no_clip();
 #elif defined(FL_PORTING)
@@ -192,16 +187,17 @@ Fl_Quartz_Flipped_Surface_::Fl_Quartz_Flipped_Surface_(int w, int h) : Fl_Quartz
 }
 
 void Fl_Quartz_Flipped_Surface_::translate(int x, int y) {
-  CGContextRestoreGState(fl_gc);
-  CGContextSaveGState(fl_gc);
-  CGContextTranslateCTM(fl_gc, x, -y);
-  CGContextSaveGState(fl_gc);
-  CGContextTranslateCTM(fl_gc, 0, height);
-  CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
+  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRestoreGState(gc);
+  CGContextSaveGState(gc);
+  CGContextTranslateCTM(gc, x, -y);
+  CGContextSaveGState(gc);
+  CGContextTranslateCTM(gc, 0, height);
+  CGContextScaleCTM(gc, 1.0f, -1.0f);
 }
 
 void Fl_Quartz_Flipped_Surface_::untranslate() {
-  CGContextRestoreGState(fl_gc);
+  CGContextRestoreGState((CGContextRef)driver()->get_gc());
 }
 
 const char *Fl_Quartz_Flipped_Surface_::class_id = "Fl_Quartz_Flipped_Surface_";
