@@ -454,7 +454,8 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
                     GrabModeAsync,
                     fl_event_time);
     }
-    Fl::grab(win);
+    Fl::grab_ = win;	// FIXME: Fl::grab_ "should be private", but we need
+			// a way to *set* the variable from the driver!
   } else {
     if (Fl::grab()) {
       // We must keep the grab in the non-EWMH fullscreen case
@@ -465,7 +466,8 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
       // this flush is done in case the picked menu item goes into
       // an infinite loop, so we don't leave the X server locked up:
       XFlush(fl_display);
-      Fl::grab(0);
+      Fl::grab_ = 0;	// FIXME: Fl::grab_ "should be private", but we need
+			// a way to *set* the variable from the driver!
       fl_fix_focus();
     }
   }
