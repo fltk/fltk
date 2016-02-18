@@ -159,8 +159,9 @@ private:
   int  _btype;			// kind-of browser to show()
   int  _options;		// general options
 #if FLTK_ABI_VERSION >= 10304
-  fl_OPENFILENAMEW *_ofn_ptr;		// GetOpenFileName() & GetSaveFileName() struct
-  fl_BROWSEINFOW   *_binf_ptr;		// SHBrowseForFolder() struct
+  fl_OPENFILENAMEW *_ofn_ptr;	// GetOpenFileName() & GetSaveFileName() struct
+  fl_BROWSEINFOW   *_binf_ptr;	// SHBrowseForFolder() struct
+  WCHAR            *_wpattern;	// pattern buffer for filter
 #else
   fl_OPENFILENAMEW _ofn;
   fl_BROWSEINFOW   _binf;
