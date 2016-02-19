@@ -32,6 +32,8 @@ typedef FLWindow *Window;
 typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif // __OBJC__
 
+#include <FL/Fl_Device.H>
+
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
 #  include <FL/Fl_Widget.H>
 
@@ -137,7 +139,7 @@ extern NSCursor *fl_default_cursor;
 
 // This object contains all mac-specific stuff about a window:
 // WARNING: this object is highly subject to change!
-class Fl_X {
+class Fl_X : public Fl_Device {
 public:
   Window xid;              // pointer to the Cocoa window object (FLWindow*)
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)

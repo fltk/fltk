@@ -99,6 +99,7 @@ CPPFILES = \
 	Fl_Value_Slider.cxx \
 	Fl_Widget.cxx \
 	Fl_Window.cxx \
+	Fl_Window_Driver.cxx \
 	Fl_Window_fullscreen.cxx \
 	Fl_Window_hotspot.cxx \
 	Fl_Window_iconize.cxx \
@@ -165,10 +166,10 @@ CPPFILES = \
 	ps_image.cxx
 
 OBJCPPFILES = \
-    Fl_cocoa.mm \
-    Fl_Quartz_Printer.mm \
-    Fl_Native_File_Chooser_MAC.mm \
-    Fl_Sys_Menu_Bar.mm
+	Fl_cocoa.mm \
+	Fl_Quartz_Printer.mm \
+	Fl_Native_File_Chooser_MAC.mm \
+	Fl_Sys_Menu_Bar.mm
 
 FLCPPFILES = \
 	forms_compatability.cxx \
@@ -245,7 +246,9 @@ XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
-	drivers/X11/Fl_X11_Screen_Driver.cxx
+	drivers/X11/Fl_X11_Window_Driver.cxx \
+	drivers/X11/Fl_X11_Screen_Driver.cxx \
+	drivers/X11/Fl_Posix_System_Driver.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -262,7 +265,9 @@ GDICPPFILES = \
 	drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx \
-	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
+	drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx \
+	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
+	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx
 
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY

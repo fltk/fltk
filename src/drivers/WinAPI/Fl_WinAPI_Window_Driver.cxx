@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Cocoa_Window_Driver.h"
+#include "Fl_WinAPI_Window_Driver.h"
 
 
 //

@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa window driver.
+// A base class for platform specific system calls.
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -17,8 +17,18 @@
 //
 
 
-#include "../../config_lib.h"
-#include "Fl_Cocoa_Window_Driver.h"
+#include "config_lib.h"
+#include <FL/Fl_System_Driver.H>
+
+
+Fl_System_Driver::Fl_System_Driver()
+{
+}
+
+
+Fl_System_Driver::~Fl_System_Driver()
+{
+}
 
 
 //

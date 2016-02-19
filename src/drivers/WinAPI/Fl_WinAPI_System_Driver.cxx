@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa window driver.
+// Definition of Apple Darwin system driver.
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Cocoa_Window_Driver.h"
+#include "Fl_WinAPI_System_Driver.h"
 
 
 //

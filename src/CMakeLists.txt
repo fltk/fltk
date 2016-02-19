@@ -167,7 +167,9 @@ if (USE_X11)
   # X11 (including APPLE with X11)
 
   set(DRIVER_FILES
+    drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/X11/Fl_X11_Screen_Driver.cxx
+    drivers/X11/Fl_X11_Window_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_color.cxx
@@ -186,8 +188,10 @@ if (USE_X11)
     )  
   endif (USE_XFT)
   set(DRIVER_HEADER_FILES
-    drivers/Quartz/Fl_Quartz_Graphics_Driver.h
+    drivers/Posix/Fl_Posix_System_Driver.h
     drivers/X11/Fl_X11_Screen_Driver.h
+    drivers/X11/Fl_X11_Window_Driver.h
+    drivers/Quartz/Fl_Quartz_Graphics_Driver.h
   )
 
 elseif (APPLE)
@@ -210,10 +214,10 @@ elseif (APPLE)
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
   )
   set(DRIVER_HEADER_FILES
-    drivers/Quartz/Fl_Quartz_Graphics_Driver.h
-    drivers/Cocoa/Fl_Cocoa_Window_Driver.h
-    drivers/Cocoa/Fl_Cocoa_Screen_Driver.h
     drivers/Darwin/Fl_Darwin_System_Driver.h
+    drivers/Cocoa/Fl_Cocoa_Screen_Driver.h
+    drivers/Cocoa/Fl_Cocoa_Window_Driver.h
+    drivers/Quartz/Fl_Quartz_Graphics_Driver.h
   )
 
 else ()
@@ -221,6 +225,9 @@ else ()
   # Windows (GDI)
 
   set(DRIVER_FILES
+    drivers/WinAPI/Fl_WinAPI_System_Driver.cxx
+    drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
+    drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx
@@ -229,11 +236,12 @@ else ()
     drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
-    drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
   )
   set(DRIVER_HEADER_FILES
-    drivers/GDI/Fl_GDI_Graphics_Driver.h
+    drivers/WinAPI/Fl_WinAPI_System_Driver.h
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.h
+    drivers/WinAPI/Fl_WinAPI_Window_Driver.h
+    drivers/GDI/Fl_GDI_Graphics_Driver.h
   )
 
 endif (USE_X11)

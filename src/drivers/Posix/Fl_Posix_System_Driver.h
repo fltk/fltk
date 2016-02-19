@@ -1,7 +1,7 @@
 //
 // "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $"
 //
-// Definition of Apple Darwin system driver
+// Definition of Posix system driver
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -18,12 +18,12 @@
 //
 
 /**
- \file Fl_Darwin_System_Driver.h
- \brief Definition of Apple Darwin system driver.
+ \file Fl_Posix_System_Driver.h
+ \brief Definition of Posix system driver.
  */
 
-#ifndef FL_DARWIN_SYSTEM_DRIVER_H
-#define FL_DARWIN_SYSTEM_DRIVER_H
+#ifndef FL_POSIX_SYSTEM_DRIVER_H
+#define FL_POSIX_SYSTEM_DRIVER_H
 
 #include <FL/Fl_System_Driver.H>
 
@@ -38,12 +38,12 @@
  - multithreading
  */
 
-class Fl_Darwin_System_Driver : public Fl_System_Driver
+class Fl_Posix_System_Driver : public Fl_System_Driver
 {
 public:
 };
 
-#endif // FL_DARWIN_SYSTEM_DRIVER_H
+#endif // FL_POSIX_SYSTEM_DRIVER_H
 
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".

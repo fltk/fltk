@@ -1,7 +1,8 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa window driver.
+// A base class for platform specific window handling code
+// for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -17,8 +18,20 @@
 //
 
 
-#include "../../config_lib.h"
-#include "Fl_Cocoa_Window_Driver.h"
+#include "config.h"
+#include "config_lib.h"
+#include <FL/Fl_Window_Driver.H>
+#include <FL/Fl.H>
+
+
+Fl_Window_Driver::Fl_Window_Driver()
+{
+}
+
+
+Fl_Window_Driver::~Fl_Window_Driver()
+{
+}
 
 
 //

@@ -25,13 +25,13 @@
 #ifndef Fl_Device_H
 #define Fl_Device_H
 
-#include <FL/x.H>
 #include <FL/Fl_Plugin.H>
 #include <stdlib.h>
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
 class Fl_RGB_Image;
+class Fl_Widget;
 
 /**
  All graphical output devices and all graphics systems.
