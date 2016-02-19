@@ -248,7 +248,7 @@ XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
-	drivers/X11/Fl_Posix_System_Driver.cxx
+	drivers/Posix/Fl_Posix_System_Driver.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
