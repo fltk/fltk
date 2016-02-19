@@ -24,7 +24,7 @@
 #include <FL/Fl.H>
 
 
-Fl_Window_Driver::Fl_Window_Driver()
+Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
 {
 }
 

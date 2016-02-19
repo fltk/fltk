@@ -24,6 +24,7 @@
 
 #ifndef FL_DOXYGEN
 #include <FL/Fl.H>
+#include <FL/Fl_Window_Driver.H>
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -1900,7 +1901,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     } else if (Fl::grab()) parent = fl_xid(Fl::grab());
   }
 
-  Fl_X* x = new Fl_X;
+  Fl_Window_Driver *x = Fl_Window_Driver::newWindowDriver(w);
   x->other_xid = 0;
   x->setwindow(w);
   x->region = 0;

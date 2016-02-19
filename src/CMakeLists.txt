@@ -79,6 +79,7 @@ set(CPPFILES
   Fl_Value_Slider.cxx
   Fl_Widget.cxx
   Fl_Window.cxx
+  Fl_Window_Driver.cxx
   Fl_Window_fullscreen.cxx
   Fl_Window_hotspot.cxx
   Fl_Window_iconize.cxx

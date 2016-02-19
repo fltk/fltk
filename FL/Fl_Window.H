@@ -34,6 +34,7 @@
 #define FL_DOUBLE_WINDOW 0xF1   ///< double window type id
 
 class Fl_X;
+class Fl_Window_Driver;
 class Fl_RGB_Image;
 class Fl_Shared_Image;
 
@@ -69,8 +70,9 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   int fullscreen_screen_right;
 
   friend class Fl_X;
+  friend class Fl_Window_Driver;
   friend class Fl_Paged_Device;
-  Fl_X *i; // points at the system-specific stuff
+  Fl_Window_Driver *i; // points at the system-specific stuff
 
   struct icon_data {
     const void *legacy_icon;

@@ -27,13 +27,17 @@
 #include <FL/x.H>
 
 
+class Fl_Window;
+
+
 /**
  \brief A base class for platform specific window handling code.
   */
 class FL_EXPORT Fl_Window_Driver : public Fl_X {
 public:
-  Fl_Window_Driver();
+  Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
+  static Fl_Window_Driver *newWindowDriver(Fl_Window *);
 };
 
 

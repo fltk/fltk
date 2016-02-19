@@ -36,7 +36,7 @@ extern "C" {
 
 
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
@@ -2946,7 +2946,7 @@ void Fl_X::make(Fl_Window* w)
       yp -= by+bt;
     }
   
-    Fl_X* x = new Fl_X;
+    Fl_Window_Driver *x = Fl_Window_Driver::newWindowDriver(w);
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
     x->subRect(0);

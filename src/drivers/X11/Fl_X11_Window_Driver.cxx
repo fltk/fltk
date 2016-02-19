@@ -21,6 +21,18 @@
 #include "Fl_X11_Window_Driver.h"
 
 
+Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
+{
+  return new Fl_X11_Window_Driver(w);
+}
+
+
+Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
+: Fl_Window_Driver(win)
+{
+}
+
+
 //
 // End of "$Id$".
 //

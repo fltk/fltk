@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/x.H>
+#include <FL/Fl_Window_Driver.H>
 
 extern char fl_show_iconic; // in Fl_x.cxx
 

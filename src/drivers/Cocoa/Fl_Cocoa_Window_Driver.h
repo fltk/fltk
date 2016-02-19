@@ -25,7 +25,7 @@
 #ifndef FL_COCOA_WINDOW_DRIVER_H
 #define FL_COCOA_WINDOW_DRIVER_H
 
-#include <FL/x.H>
+#include <FL/Fl_Window_Driver.H>
 
 /*
  Move everything here that manages the native window interface.
@@ -42,9 +42,10 @@
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 
-class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_X
+class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 {
 public:
+  Fl_Cocoa_Window_Driver(Fl_Window*);
 };
 
 
