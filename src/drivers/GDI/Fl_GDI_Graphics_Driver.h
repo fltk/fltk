@@ -43,7 +43,7 @@ public:
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
-  virtual void set_gc(void *ctxt) {gc = (HDC)ctxt;}
+  virtual void set_gc(void *ctxt) {if (ctxt != gc) global_gc(); gc = (HDC)ctxt;}
   virtual void *get_gc() {return gc;}
 
   // --- bitmap stuff

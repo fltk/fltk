@@ -88,8 +88,6 @@ class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
-private:
-  void global_gc(void);
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -138,7 +136,6 @@ public:
   virtual const char *class_name() {return class_id;};
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
-public:
   virtual char can_do_alpha_blending() { return 0; }
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   virtual void point(int x, int y) = 0;
@@ -262,6 +259,7 @@ protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);
   virtual void fixloop();
+  void global_gc(void);
 };
 
 #endif // FL_GRAPHICS_DRIVER_H

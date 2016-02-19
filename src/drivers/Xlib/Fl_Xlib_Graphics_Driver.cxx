@@ -37,7 +37,6 @@ GC fl_gc = 0;
 
 void Fl_Graphics_Driver::global_gc()
 {
-  fl_gc = (GC)get_gc();
 }
 
 
@@ -57,6 +56,7 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
     fl_open_display();
     // the unique GC used by all X windows
     gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
+    fl_gc = gc;
   }
 }
 
