@@ -78,11 +78,11 @@ public:
   HDC saved_hdc;  // saves the handle of the DC currently loaded
   // static variables, static functions and member functions
   static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return w->i;}
+  static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
   static int fake_X_wm(const Fl_Window* w,int &X, int &Y,
 		                 int &bt,int &bx,int &by);
   void make_fullscreen(int X, int Y, int W, int H);
-  void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
+  void setwindow(Fl_Window* wi) {w=wi; wi->i=(Fl_Window_Driver*)this;}
   void flush() {w->flush();}
   void set_minmax(LPMINMAXINFO minmax);
   void mapraise();
