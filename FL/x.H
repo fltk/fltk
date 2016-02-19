@@ -143,8 +143,8 @@ public:
   char wait_for_expose;
   char backbuffer_bad; // used for XDBE
   static Fl_X* first;
-  static Fl_X* i(const Fl_Window* wi) {return wi->i;}
-  void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
+  static Fl_X* i(const Fl_Window* wi) {return (Fl_X*)wi->i;}
+  void setwindow(Fl_Window* wi) {w=wi; wi->i=(Fl_Window_Driver*)this;}
   void sendxjunk();
   static void set_default_icons(const Fl_RGB_Image*[], int);
   void set_icons();

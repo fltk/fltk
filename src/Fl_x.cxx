@@ -36,7 +36,7 @@ class Fl_Widget *fl_selection_requestor;
 
 #  include <config.h>
 #  include <FL/Fl.H>
-#  include <FL/x.H>
+#  include <FL/Fl_Window_Driver.H>
 #  include <FL/Fl_Window.H>
 #  include <FL/fl_utf8.h>
 #  include <FL/Fl_Tooltip.H>
@@ -2285,7 +2285,7 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
 void fl_fix_focus(); // in Fl.cxx
 
 Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
-  Fl_Window_Driver *x = Fl_Window_Driver::newWindowDriver(win);
+  Fl_Window_Driver *xp = Fl_Window_Driver::newWindowDriver(win);
   xp->xid = winxid;
   xp->other_xid = 0;
   xp->setwindow(win);
