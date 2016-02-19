@@ -188,7 +188,7 @@ void Fl_System_Printer::origin(int x, int y)
 {
   x_offset = x;
   y_offset = y;
-  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
   CGContextSaveGState(gc);
@@ -203,7 +203,7 @@ void Fl_System_Printer::scale (float s_x, float s_y)
   if (s_y == 0.) s_y = s_x;
   scale_x = s_x;
   scale_y = s_y;
-  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
   CGContextSaveGState(gc);
@@ -216,7 +216,7 @@ void Fl_System_Printer::scale (float s_x, float s_y)
 void Fl_System_Printer::rotate (float rot_angle)
 {
   angle = - rot_angle * M_PI / 180.;
-  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
   CGContextSaveGState(gc);
@@ -228,7 +228,7 @@ void Fl_System_Printer::rotate (float rot_angle)
 
 void Fl_System_Printer::translate(int x, int y)
 {
-  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextSaveGState(gc);
   CGContextTranslateCTM(gc, x, y );
   CGContextSaveGState(gc);
@@ -236,7 +236,7 @@ void Fl_System_Printer::translate(int x, int y)
 
 void Fl_System_Printer::untranslate(void)
 {
-  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
 }
@@ -258,7 +258,7 @@ int Fl_System_Printer::start_page (void)
     status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&gc);
 #endif
   }
-  driver()->set_gc(gc);
+  driver()->gc(gc);
   PMRect pmRect;
   float win_scale_x, win_scale_y;
 
@@ -293,7 +293,7 @@ int Fl_System_Printer::start_page (void)
 
 int Fl_System_Printer::end_page (void)
 {	
-  CGContextRef gc = (CGContextRef)driver()->get_gc();
+  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextFlush(gc);
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
@@ -319,7 +319,7 @@ void Fl_System_Printer::end_job (void)
     }
 #endif
   Fl_Display_Device::display_device()->set_current();
-  driver()->set_gc(0);
+  driver()->gc(0);
   Fl_Window *w = Fl::first_window();
   if (w) w->show();
 }

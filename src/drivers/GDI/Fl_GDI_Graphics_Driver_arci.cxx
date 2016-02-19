@@ -41,9 +41,9 @@ void Fl_GDI_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
   if (fabs(a1 - a2) < 90) {
-    if (xa == xb && ya == yb) SetPixel(gc, xa, ya, fl_RGB());
-    else Arc(gc, x, y, x+w, y+h, xa, ya, xb, yb);
-  } else Arc(gc, x, y, x+w, y+h, xa, ya, xb, yb);
+    if (xa == xb && ya == yb) SetPixel(gc_, xa, ya, fl_RGB());
+    else Arc(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
+  } else Arc(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
 }
 
 void Fl_GDI_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
@@ -53,14 +53,14 @@ void Fl_GDI_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
   int yb = y+h/2-int(h*sin(a2/180.0*M_PI));
-  SelectObject(gc, fl_brush());
+  SelectObject(gc_, fl_brush());
   if (fabs(a1 - a2) < 90) {
     if (xa == xb && ya == yb) {
-      MoveToEx(gc, x+w/2, y+h/2, 0L); 
-      LineTo(gc, xa, ya);
-      SetPixel(gc, xa, ya, fl_RGB());
-    } else Pie(gc, x, y, x+w, y+h, xa, ya, xb, yb);
-  } else Pie(gc, x, y, x+w, y+h, xa, ya, xb, yb); 
+      MoveToEx(gc_, x+w/2, y+h/2, 0L);
+      LineTo(gc_, xa, ya);
+      SetPixel(gc_, xa, ya, fl_RGB());
+    } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
+  } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb); 
 }
 
 #endif // FL_CFG_GFX_GDI_ARCI_CXX

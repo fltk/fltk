@@ -3,7 +3,7 @@
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -642,14 +642,14 @@ double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
 }
 
 void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
-  if (font_gc != gc) {
+  if (font_gc != gc_) {
     if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-    font_gc = gc;
-    XSetFont(fl_display, gc, font_descriptor()->font->fid);
+    font_gc = gc_;
+    XSetFont(fl_display, gc_, font_descriptor()->font->fid);
   }
   int xx, yy, ww, hh;
   xx = yy = ww = hh = 0;
-  if (gc) XUtf8_measure_extents(fl_display, fl_window, font_descriptor()->font, gc, &xx, &yy, &ww, &hh, c, n);
+  if (gc_) XUtf8_measure_extents(fl_display, fl_window, font_descriptor()->font, gc_, &xx, &yy, &ww, &hh, c, n);
 
   W = ww; H = hh; dx = xx; dy = yy;
 // This is the safe but mostly wrong thing we used to do...
@@ -660,12 +660,12 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &d
 }
 
 void Fl_Xlib_Graphics_Driver::draw(const char* c, int n, int x, int y) {
-  if (font_gc != gc) {
+  if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
-    font_gc = gc;
-    XSetFont(fl_display, gc, font_descriptor()->font->fid);
+    font_gc = gc_;
+    XSetFont(fl_display, gc_, font_descriptor()->font->fid);
   }
-  if (gc) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc, x, y, c, n);
+  if (gc_) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc_, x, y, c, n);
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
@@ -674,11 +674,11 @@ void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
-  if (font_gc != gc) {
+  if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
-    font_gc = gc;
+    font_gc = gc_;
   }
-  if (gc) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc, x, y, c, n);
+  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc_, x, y, c, n);
 }
 #endif // FL_DOXYGEN
 //

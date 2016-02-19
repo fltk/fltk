@@ -1619,10 +1619,10 @@ void Fl_Window::hide() {
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
-    if (ip->xid == fl_window && fl_graphics_driver->get_gc()) {
-      fl_release_dc(fl_window, (HDC)fl_graphics_driver->get_gc());
+    if (ip->xid == fl_window && fl_graphics_driver->gc()) {
+      fl_release_dc(fl_window, (HDC)fl_graphics_driver->gc());
       fl_window = (HWND)-1;
-      fl_graphics_driver->set_gc(0);
+      fl_graphics_driver->gc(0);
 # ifdef FLTK_USE_CAIRO
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif

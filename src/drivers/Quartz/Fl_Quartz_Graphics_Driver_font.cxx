@@ -580,7 +580,7 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   // activate the current GC
   iSize = sizeof(CGContextRef);
   iTag = kATSUCGContextTag;
-  iValuePtr = &gc;
+  iValuePtr = &gc_;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
   // now measure the bounding box
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
@@ -632,10 +632,10 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   CFRelease(str16);
   CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
   CFRelease(mastr);
-  CGContextSetTextPosition(gc, 0, 0);
-  CGContextSetShouldAntialias(gc, true);
-  CGRect rect = CTLineGetImageBounds(ctline, gc);
-  CGContextSetShouldAntialias(gc, false);
+  CGContextSetTextPosition(gc_, 0, 0);
+  CGContextSetShouldAntialias(gc_, true);
+  CGRect rect = CTLineGetImageBounds(ctline, gc_);
+  CGContextSetShouldAntialias(gc_, false);
   CFRelease(ctline);
   dx = floor(rect.origin.x + 0.5);
   dy = floor(- rect.origin.y - rect.size.height + 0.5);
@@ -657,7 +657,7 @@ else {
         // activate the current GC
   iSize = sizeof(CGContextRef);
   iTag = kATSUCGContextTag;
-  iValuePtr = &gc;
+  iValuePtr = &gc_;
       ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
         // now measure the bounding box
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
@@ -692,6 +692,7 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Driver *driver) {
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
+  CGContextRef gc = (CGContextRef)driver->gc();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
     CFMutableStringRef str16 = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, uniStr, n,  n, kCFAllocatorNull);
@@ -704,7 +705,6 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Dr
     CFRelease(color);
     CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
     CFRelease(mastr);
-    CGContextRef gc = (CGContextRef)driver->get_gc();
     CGContextSetTextMatrix(gc, font_mx);
     CGContextSetTextPosition(gc, x, y);
     CGContextSetShouldAntialias(gc, true);
@@ -746,11 +746,11 @@ void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 }
 
 void Fl_Quartz_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
-  CGContextSaveGState(gc);
-  CGContextTranslateCTM(gc, x, y);
-  CGContextRotateCTM(gc, - angle*(M_PI/180) );
+  CGContextSaveGState(gc_);
+  CGContextTranslateCTM(gc_, x, y);
+  CGContextRotateCTM(gc_, - angle*(M_PI/180) );
   draw(str, n, 0, 0);
-  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc_);
 }
 
 void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {

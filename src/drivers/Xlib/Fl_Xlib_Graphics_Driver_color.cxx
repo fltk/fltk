@@ -3,7 +3,7 @@
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -115,15 +115,15 @@ void Fl_Xlib_Graphics_Driver::color(Fl_Color i) {
     fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
     Fl_Graphics_Driver::color(i);
-    if(!gc) return; // don't get a default gc if current window is not yet created/valid
-    XSetForeground(fl_display, gc, fl_xpixel(i));
+    if(!gc_) return; // don't get a default gc if current window is not yet created/valid
+    XSetForeground(fl_display, gc_, fl_xpixel(i));
   }
 }
 
 void Fl_Xlib_Graphics_Driver::color(uchar r,uchar g,uchar b) {
   Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
-  if(!gc) return; // don't get a default gc if current window is not yet created/valid
-  XSetForeground(fl_display, gc, fl_xpixel(r,g,b));
+  if(!gc_) return; // don't get a default gc if current window is not yet created/valid
+  XSetForeground(fl_display, gc_, fl_xpixel(r,g,b));
 }
 
 /** \addtogroup  fl_attributes

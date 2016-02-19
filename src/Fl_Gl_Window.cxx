@@ -211,8 +211,8 @@ void Fl_Gl_Window::make_current() {
 #if defined(WIN32) && USE_COLORMAP
   if (fl_palette) {
     fl_GetDC(fl_xid(this));
-    SelectPalette((HDC)fl_graphics_driver->get_gc(), fl_palette, FALSE);
-    RealizePalette((HDC)fl_graphics_driver->get_gc());
+    SelectPalette((HDC)fl_graphics_driver->gc(), fl_palette, FALSE);
+    RealizePalette((HDC)fl_graphics_driver->gc());
   }
 #endif // USE_COLORMAP
   if (mode_ & FL_FAKE_SINGLE) {

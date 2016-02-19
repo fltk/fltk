@@ -35,7 +35,7 @@
  */
 class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
-  HDC gc;
+  HDC gc_;
   int numcount;
   int counts[20];
 public:
@@ -43,8 +43,8 @@ public:
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
-  virtual void set_gc(void *ctxt) {if (ctxt != gc) global_gc(); gc = (HDC)ctxt;}
-  virtual void *get_gc() {return gc;}
+  virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (HDC)ctxt;}
+  virtual void *gc() {return gc_;}
 
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);

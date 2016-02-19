@@ -31,7 +31,7 @@ const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
 
 /* Reference to the current graphics context
  For back-compatibility only. The preferred procedure to get this pointer is
- Fl_Surface_Device::surface()->driver()->get_gc().
+ Fl_Surface_Device::surface()->driver()->gc().
  */
 GC fl_gc = 0;
 
@@ -49,14 +49,14 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   return new Fl_Xlib_Graphics_Driver();
 }
 
-GC Fl_Xlib_Graphics_Driver::gc = NULL;
+GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
 
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
-  if (!gc) {
+  if (!gc_) {
     fl_open_display();
     // the unique GC used by all X windows
-    gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
-    fl_gc = gc;
+    gc_ = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
+    fl_gc = gc_;
   }
 }
 
@@ -66,7 +66,7 @@ char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
 
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, gc, srcx, srcy, w, h, x, y);
+  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x, y);
 }
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int h,

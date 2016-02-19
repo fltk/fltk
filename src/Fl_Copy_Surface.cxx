@@ -49,15 +49,15 @@ Fl_GDI_Surface_::~Fl_GDI_Surface_() {
 }
 
 void Fl_GDI_Surface_::translate(int x, int y) {
-  GetWindowOrgEx((HDC)driver()->get_gc(), origins+depth);
-  SetWindowOrgEx((HDC)driver()->get_gc(), origins[depth].x - x, origins[depth].y - y, NULL);
+  GetWindowOrgEx((HDC)driver()->gc(), origins+depth);
+  SetWindowOrgEx((HDC)driver()->gc(), origins[depth].x - x, origins[depth].y - y, NULL);
   if (depth < sizeof(origins)/sizeof(POINT)) depth++;
   else Fl::warning("Fl_GDI_Surface_: translate stack overflow!");
 }
 
 void Fl_GDI_Surface_::untranslate() {
   if (depth > 0) depth--;
-  SetWindowOrgEx((HDC)driver()->get_gc(), origins[depth].x, origins[depth].y, NULL);
+  SetWindowOrgEx((HDC)driver()->gc(), origins[depth].x, origins[depth].y, NULL);
 }
 
 const char *Fl_GDI_Surface_::class_id = "Fl_GDI_Surface_";
@@ -82,7 +82,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
 #elif defined(WIN32)
   helper = new Fl_GDI_Surface_();
   driver(helper->driver());
-  oldgc = (HDC)Fl_Surface_Device::surface()->driver()->get_gc();
+  oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)
   HDC hdc = GetDC(NULL);
   int hmm = GetDeviceCaps(hdc, HORZSIZE);
@@ -123,7 +123,7 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   complete_copy_pdf_and_tiff();
   delete (Fl_Quartz_Surface_*)helper;
 #elif defined(WIN32)
-  if (oldgc == (HDC)Fl_Surface_Device::surface()->driver()->get_gc()) oldgc = NULL;
+  if (oldgc == (HDC)Fl_Surface_Device::surface()->driver()->gc()) oldgc = NULL;
   HENHMETAFILE hmf = CloseEnhMetaFile (gc);
   if ( hmf != NULL ) {
     if ( OpenClipboard (NULL) ){
@@ -134,7 +134,7 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
     DeleteEnhMetaFile(hmf);
   }
   DeleteDC(gc);
-  Fl_Surface_Device::surface()->driver()->set_gc(oldgc);
+  Fl_Surface_Device::surface()->driver()->gc(oldgc);
   delete (Fl_GDI_Surface_*)helper;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: free resources in destructor of Fl_Copy_Surface"
@@ -164,7 +164,7 @@ void Fl_Copy_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
 void Fl_Copy_Surface::set_current()
 {
 #if defined(__APPLE__) || defined(WIN32) // PORTME: Fl_Surface_Driver - platform copy surface
-  driver()->set_gc(gc);
+  driver()->gc(gc);
   fl_window = (Window)1;
   Fl_Surface_Device::set_current();
 #elif defined(FL_PORTING)

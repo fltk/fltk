@@ -126,7 +126,7 @@ public:
                                      provider, NULL, false, kCGRenderingIntentDefault);
       CGColorSpaceRelease(cSpace);
       CGDataProviderRelease(provider);
-      CGContextDrawImage((CGContextRef)Fl_Surface_Device::surface()->driver()->get_gc(),
+      CGContextDrawImage((CGContextRef)Fl_Surface_Device::surface()->driver()->gc(),
                          CGRectMake(0, 0, glw->w(), glw->h()), cgimg);
       CFRelease(cgimg);
       return 1;

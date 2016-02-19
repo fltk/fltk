@@ -94,7 +94,7 @@ void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
     fl_quartz_line_pattern = 0; 
 		fl_quartz_line_pattern_size = 0;
   }
-  fl_quartz_restore_line_style_((CGContextRef)get_gc());
+  fl_quartz_restore_line_style_((CGContextRef)gc());
 }
 
 #endif // FL_CFG_GFX_QUARTZ

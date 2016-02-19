@@ -32,7 +32,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   uchar *base;
   int rowBytes, delta;
   if(fl_window == NULL) { // reading from an offscreen buffer
-    CGContextRef src = (CGContextRef)Fl_Surface_Device::surface()->driver()->get_gc();  // get bitmap context
+    CGContextRef src = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();  // get bitmap context
     base = (uchar *)CGBitmapContextGetData(src);  // get data
     if(!base) return NULL;
     int sw = CGBitmapContextGetWidth(src);

@@ -3,7 +3,7 @@
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -568,7 +568,7 @@ void Fl_Xlib_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, 
   const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
   d &= ~FL_IMAGE_WITH_ALPHA;
 
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,alpha,gc);
+  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,alpha,gc_);
 }
 void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
@@ -576,14 +576,14 @@ void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
   const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
   d &= ~FL_IMAGE_WITH_ALPHA;
 
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,alpha,gc);
+  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,alpha,gc_);
 }
 void Fl_Xlib_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0,0,gc);
+  innards(buf,x,y,w,h,d,l,1,0,0,0,gc_);
 }
 void Fl_Xlib_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data,0,gc);
+  innards(0,x,y,w,h,d,0,1,cb,data,0,gc_);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -593,7 +593,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   } else {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,0,(GC)fl_graphics_driver->get_gc());
+    innards(c,x,y,w,h,0,0,0,0,0,0,(GC)fl_graphics_driver->gc());
   }
 }
 
@@ -612,13 +612,13 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP
     return;
   }
 
-  XSetStipple(fl_display, gc, bm->id_);
+  XSetStipple(fl_display, gc_, bm->id_);
   int ox = X-cx; if (ox < 0) ox += bm->w();
   int oy = Y-cy; if (oy < 0) oy += bm->h();
-  XSetTSOrigin(fl_display, gc, ox, oy);
-  XSetFillStyle(fl_display, gc, FillStippled);
-  XFillRectangle(fl_display, fl_window, gc, X, Y, W, H);
-  XSetFillStyle(fl_display, gc, FillSolid);
+  XSetTSOrigin(fl_display, gc_, ox, oy);
+  XSetFillStyle(fl_display, gc_, FillStippled);
+  XFillRectangle(fl_display, fl_window, gc_, X, Y, W, H);
+  XSetFillStyle(fl_display, gc_, FillSolid);
 }
 
 
@@ -729,10 +729,10 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       cx += nx-X; X = nx;
       cy += ny-Y; Y = ny;
       // make X use the bitmap as a mask:
-      XSetClipMask(fl_display, gc, img->mask_);
+      XSetClipMask(fl_display, gc_, img->mask_);
       int ox = X-cx; if (ox < 0) ox += img->w();
       int oy = Y-cy; if (oy < 0) oy += img->h();
-      XSetClipOrigin(fl_display, gc, X-cx, Y-cy);
+      XSetClipOrigin(fl_display, gc_, X-cx, Y-cy);
     }
 
     if (img->d() == 4 && fl_can_do_alpha_blending())
@@ -742,7 +742,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
 
     if (img->mask_) {
       // put the old clip region back
-      XSetClipOrigin(fl_display, gc, 0, 0);
+      XSetClipOrigin(fl_display, gc_, 0, 0);
       fl_restore_clip();
     }
   } else {
@@ -778,8 +778,8 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   if (pxm->mask_) {
     // make X use the bitmap as a mask:
-    XSetClipMask(fl_display, gc, pxm->mask_);
-    XSetClipOrigin(fl_display, gc, X-cx, Y-cy);
+    XSetClipMask(fl_display, gc_, pxm->mask_);
+    XSetClipOrigin(fl_display, gc_, X-cx, Y-cy);
     if (clip_region()) {
       // At this point, XYWH is the bounding box of the intersection between
       // the current clip region and the (portion of the) pixmap we have to draw.
@@ -805,7 +805,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
       copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
     }
     // put the old clip region back
-    XSetClipOrigin(fl_display, gc, 0, 0);
+    XSetClipOrigin(fl_display, gc_, 0, 0);
     restore_clip();
   }
   else copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);

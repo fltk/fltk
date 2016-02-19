@@ -109,7 +109,7 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     x_offset = 0;
     y_offset = 0;
     WIN_SetupPrinterDeviceContext (hPr);
-    driver()->set_gc(hPr);
+    driver()->gc(hPr);
     this->set_current();
   }
   return err;
@@ -143,7 +143,7 @@ void Fl_System_Printer::absolute_printable_rect(int *x, int *y, int *w, int *h)
   XFORM		transform;
     
   if (hPr == NULL) return;
-  HDC gc = (HDC)driver()->get_gc();
+  HDC gc = (HDC)driver()->gc();
   GetWorldTransform(gc, &transform);
   ModifyWorldTransform(gc, NULL, MWT_IDENTITY);
   SetWindowOrgEx(gc, 0, 0, NULL);
@@ -205,7 +205,7 @@ int Fl_System_Printer::start_page (void)
 
 void Fl_System_Printer::origin (int deltax, int deltay)
 {
-  SetWindowOrgEx( (HDC)driver()->get_gc(), - left_margin - deltax, - top_margin - deltay, NULL);
+  SetWindowOrgEx( (HDC)driver()->gc(), - left_margin - deltax, - top_margin - deltay, NULL);
   x_offset = deltax;
   y_offset = deltay;
 }
@@ -214,7 +214,7 @@ void Fl_System_Printer::scale (float scalex, float scaley)
 {
   if (scaley == 0.) scaley = scalex;
   int w, h;
-  SetWindowExtEx((HDC)driver()->get_gc(), (int)(720 / scalex + 0.5), (int)(720 / scaley + 0.5), NULL);
+  SetWindowExtEx((HDC)driver()->gc(), (int)(720 / scalex + 0.5), (int)(720 / scaley + 0.5), NULL);
   printable_rect(&w, &h);
   origin(0, 0);
 }
@@ -229,7 +229,7 @@ void Fl_System_Printer::rotate (float rot_angle)
   mat.eM21 = - mat.eM12;
   mat.eM22 = mat.eM11;
   mat.eDx = mat.eDy = 0;
-  SetWorldTransform((HDC)driver()->get_gc(), &mat);
+  SetWorldTransform((HDC)driver()->gc(), &mat);
 }
 
 int Fl_System_Printer::end_page (void)
@@ -265,7 +265,7 @@ static void do_translate(int x, int y, HDC gc)
 
 void Fl_System_Printer::translate (int x, int y)
 {
-  do_translate(x, y, (HDC)driver()->get_gc());
+  do_translate(x, y, (HDC)driver()->gc());
   if (translate_stack_depth < translate_stack_max) {
     translate_stack_x[translate_stack_depth] = x;
     translate_stack_y[translate_stack_depth] = y;
@@ -277,7 +277,7 @@ void Fl_System_Printer::untranslate (void)
 {
   if (translate_stack_depth > 0) {
     translate_stack_depth--;
-    do_translate( - translate_stack_x[translate_stack_depth], - translate_stack_y[translate_stack_depth], (HDC)driver()->get_gc() );
+    do_translate( - translate_stack_x[translate_stack_depth], - translate_stack_y[translate_stack_depth], (HDC)driver()->gc() );
     }
 }
 

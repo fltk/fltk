@@ -286,9 +286,9 @@ static int fl_abs(int v) { return v<0 ? -v : v; }
 void Fl_GDI_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
-    innards(buf,x,y,w,h,d,l,fl_abs(d),0,0, gc);
+    innards(buf,x,y,w,h,d,l,fl_abs(d),0,0, gc_);
   } else {
-    innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0, gc);
+    innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0, gc_);
   }
 }
 
@@ -296,18 +296,18 @@ void Fl_GDI_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
-    innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data, gc);
+    innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data, gc_);
   } else {
-    innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data, gc);
+    innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data, gc_);
   }
 }
 
 void Fl_GDI_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
-    innards(buf,x,y,w,h,d,l,1,0,0, gc);
+    innards(buf,x,y,w,h,d,l,1,0,0, gc_);
   } else {
-    innards(buf,x,y,w,h,d,l,1,0,0, gc);
+    innards(buf,x,y,w,h,d,l,1,0,0, gc_);
   }
 }
 
@@ -315,9 +315,9 @@ void Fl_GDI_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
-    innards(0,x,y,w,h,d,0,1,cb,data, gc);
+    innards(0,x,y,w,h,d,0,1,cb,data, gc_);
   } else {
-    innards(0,x,y,w,h,d,0,1,cb,data, gc);
+    innards(0,x,y,w,h,d,0,1,cb,data, gc_);
   }
 }
 
@@ -327,7 +327,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   if (fl_palette) {
     uchar c[3];
     c[0] = r; c[1] = g; c[2] = b;
-    innards(c,x,y,w,h,0,0,0,0,0,(HDC)fl_graphics_driver->get_gc());
+    innards(c,x,y,w,h,0,0,0,0,0,(HDC)fl_graphics_driver->gc());
     return;
   }
 #endif
@@ -346,8 +346,8 @@ Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *dat
   static uchar loNibble[16] =
   { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
     0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-  int np  = GetDeviceCaps(gc, PLANES);	//: was always one on sample machines
-  int bpp = GetDeviceCaps(gc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
+  int np  = GetDeviceCaps(gc_, PLANES);	//: was always one on sample machines
+  int bpp = GetDeviceCaps(gc_, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
   int Bpr = (bpp*w+7)/8;			//: bytes per row
   int pad = Bpr&1, w1 = (w+7)/8, shr = ((w-1)&7)+1;
   if (bpp==4) shr = (shr+1)/2;
@@ -404,12 +404,12 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP,
     return;
   }
 
-  HDC tempdc = CreateCompatibleDC(gc);
+  HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
   SelectObject(tempdc, (HGDIOBJ)bm->id_);
-  SelectObject(gc, fl_brush());
+  SelectObject(gc_, fl_brush());
   // secret bitblt code found in old MSWindows reference manual:
-  BitBlt(gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
+  BitBlt(gc_, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
 }
@@ -447,7 +447,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
   fl_color(background);
   fl_rectf(0,0,W,H); // use this color as offscreen background
   fl_color(save_c); // back to bitmap's color
-  HDC off_gc = (HDC)fl_graphics_driver->get_gc();
+  HDC off_gc = (HDC)fl_graphics_driver->gc();
   tempdc = CreateCompatibleDC(off_gc);
   save = SaveDC(tempdc);
   SelectObject(tempdc, (HGDIOBJ)bm->id_);
@@ -456,7 +456,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
   fl_end_offscreen(); // offscreen data is in tmp_id
   SelectObject(tempdc, (HGDIOBJ)tmp_id); // use offscreen data
                                          // draw it to printer context with background color as transparent
-  fl_TransparentBlt(gc, X,Y,W,H, tempdc, cx, cy, bm->w(), bm->h(), RGB(r, g, b) );
+  fl_TransparentBlt(gc_, X,Y,W,H, tempdc, cx, cy, bm->w(), bm->h(), RGB(r, g, b) );
   fl_delete_offscreen(tmp_id);
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
@@ -511,12 +511,12 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
   }
   if (!img->id_) img->id_ = (fl_uintptr_t)build_id(img, (void**)&(img->mask_));
   if (img->mask_) {
-    HDC new_gc = CreateCompatibleDC(gc);
+    HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)img->mask_);
-    BitBlt(gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCAND);
     SelectObject(new_gc, (void*)img->id_);
-    BitBlt(gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else if (img->d()==2 || img->d()==4) {
@@ -528,15 +528,15 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
 
 int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   XFORM old_tr, tr;
-  GetWorldTransform(gc, &old_tr); // storing old transform
+  GetWorldTransform(gc_, &old_tr); // storing old transform
   tr.eM11 = float(WP)/float(img->w());
   tr.eM22 = float(HP)/float(img->h());
   tr.eM12 = tr.eM21 = 0;
   tr.eDx =  float(XP);
   tr.eDy =  float(YP);
-  ModifyWorldTransform(gc, &tr, MWT_LEFTMULTIPLY);
+  ModifyWorldTransform(gc_, &tr, MWT_LEFTMULTIPLY);
   img->draw(0, 0, img->w(), img->h(), 0, 0);
-  SetWorldTransform(gc, &old_tr);
+  SetWorldTransform(gc_, &old_tr);
   return 1;
 }
 
@@ -593,12 +593,12 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   if (pxm->mask_) {
-    HDC new_gc = CreateCompatibleDC(gc);
+    HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)pxm->mask_);
-    BitBlt(gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCAND);
     SelectObject(new_gc, (void*)pxm->id_);
-    BitBlt(gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
@@ -618,11 +618,11 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
     if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
   }
   if (fl_TransparentBlt) {
-    HDC new_gc = CreateCompatibleDC(gc);
+    HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)pxm->id_);
     // print all of offscreen but its parts in background color
-    fl_TransparentBlt(gc, X, Y, W, H, new_gc, cx, cy, W, H, pxm->pixmap_bg_color );
+    fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx, cy, W, H, pxm->pixmap_bg_color );
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   }

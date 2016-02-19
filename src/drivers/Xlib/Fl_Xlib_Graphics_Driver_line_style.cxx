@@ -71,10 +71,10 @@ void Fl_Xlib_Graphics_Driver::line_style(int style, int width, char* dashes) {
   }
   static int Cap[4] = {CapButt, CapButt, CapRound, CapProjecting};
   static int Join[4] = {JoinMiter, JoinMiter, JoinRound, JoinBevel};
-  XSetLineAttributes(fl_display, gc, width,
+  XSetLineAttributes(fl_display, gc_, width,
 		     ndashes ? LineOnOffDash : LineSolid,
 		     Cap[(style>>8)&3], Join[(style>>12)&3]);
-  if (ndashes) XSetDashes(fl_display, gc, 0, dashes, ndashes);
+  if (ndashes) XSetDashes(fl_display, gc_, 0, dashes, ndashes);
 }
 
 #endif // FL_CFG_GFX_XLIB_LINE_STYLE_CXX

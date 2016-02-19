@@ -3,7 +3,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -162,23 +162,23 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 // --- line and polygon drawing with integer coordinates
 
 void Fl_Xlib_Graphics_Driver::point(int x, int y) {
-  XDrawPoint(fl_display, fl_window, gc, clip_x(x), clip_x(y));
+  XDrawPoint(fl_display, fl_window, gc_, clip_x(x), clip_x(y));
 }
 
 void Fl_Xlib_Graphics_Driver::rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
   if (!clip_to_short(x, y, w, h))
-    XDrawRectangle(fl_display, fl_window, gc, x, y, w-1, h-1);
+    XDrawRectangle(fl_display, fl_window, gc_, x, y, w-1, h-1);
 }
 
 void Fl_Xlib_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
   if (!clip_to_short(x, y, w, h))
-    XFillRectangle(fl_display, fl_window, gc, x, y, w, h);
+    XFillRectangle(fl_display, fl_window, gc_, x, y, w, h);
 }
 
 void Fl_Xlib_Graphics_Driver::line(int x, int y, int x1, int y1) {
-  XDrawLine(fl_display, fl_window, gc, x, y, x1, y1);
+  XDrawLine(fl_display, fl_window, gc_, x, y, x1, y1);
 }
 
 void Fl_Xlib_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
@@ -186,18 +186,18 @@ void Fl_Xlib_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2)
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;
-  XDrawLines(fl_display, fl_window, gc, p, 3, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1) {
-  XDrawLine(fl_display, fl_window, gc, clip_x(x), clip_x(y), clip_x(x1), clip_x(y));
+  XDrawLine(fl_display, fl_window, gc_, clip_x(x), clip_x(y), clip_x(x1), clip_x(y));
 }
 
 void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   XPoint p[3];
   p[0].x = clip_x(x);  p[0].y = p[1].y = clip_x(y);
   p[1].x = p[2].x = clip_x(x1); p[2].y = clip_x(y2);
-  XDrawLines(fl_display, fl_window, gc, p, 3, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
@@ -205,18 +205,18 @@ void Fl_Xlib_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   p[0].x = clip_x(x);  p[0].y = p[1].y = clip_x(y);
   p[1].x = p[2].x = clip_x(x1); p[2].y = p[3].y = clip_x(y2);
   p[3].x = clip_x(x3);
-  XDrawLines(fl_display, fl_window, gc, p, 4, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1) {
-  XDrawLine(fl_display, fl_window, gc, clip_x(x), clip_x(y), clip_x(x), clip_x(y1));
+  XDrawLine(fl_display, fl_window, gc_, clip_x(x), clip_x(y), clip_x(x), clip_x(y1));
 }
 
 void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   XPoint p[3];
   p[0].x = p[1].x = clip_x(x);  p[0].y = clip_x(y);
   p[1].y = p[2].y = clip_x(y1); p[2].x = clip_x(x2);
-  XDrawLines(fl_display, fl_window, gc, p, 3, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
@@ -224,7 +224,7 @@ void Fl_Xlib_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   p[0].x = p[1].x = clip_x(x);  p[0].y = clip_x(y);
   p[1].y = p[2].y = clip_x(y1); p[2].x = p[3].x = clip_x(x2);
   p[3].y = clip_x(y3);
-  XDrawLines(fl_display, fl_window, gc, p, 4, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
@@ -233,7 +233,7 @@ void Fl_Xlib_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2)
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;
   p[3].x = x;  p[3].y = y;
-  XDrawLines(fl_display, fl_window, gc, p, 4, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
@@ -243,7 +243,7 @@ void Fl_Xlib_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2,
   p[2].x = x2; p[2].y = y2;
   p[3].x = x3; p[3].y = y3;
   p[4].x = x;  p[4].y = y;
-  XDrawLines(fl_display, fl_window, gc, p, 5, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 5, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
@@ -252,8 +252,8 @@ void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int 
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;
   p[3].x = x;  p[3].y = y;
-  XFillPolygon(fl_display, fl_window, gc, p, 3, Convex, 0);
-  XDrawLines(fl_display, fl_window, gc, p, 4, 0);
+  XFillPolygon(fl_display, fl_window, gc_, p, 3, Convex, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
@@ -263,8 +263,8 @@ void Fl_Xlib_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int 
   p[2].x = x2; p[2].y = y2;
   p[3].x = x3; p[3].y = y3;
   p[4].x = x;  p[4].y = y;
-  XFillPolygon(fl_display, fl_window, gc, p, 4, Convex, 0);
-  XDrawLines(fl_display, fl_window, gc, p, 5, 0);
+  XFillPolygon(fl_display, fl_window, gc_, p, 4, Convex, 0);
+  XDrawLines(fl_display, fl_window, gc_, p, 5, 0);
 }
 
 // --- clipping
@@ -340,8 +340,8 @@ void Fl_Xlib_Graphics_Driver::pop_clip() {
 void Fl_Xlib_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
-  if (r) XSetRegion(fl_display, gc, r);
-  else XSetClipMask(fl_display, gc, 0);
+  if (r) XSetRegion(fl_display, gc_, r);
+  else XSetClipMask(fl_display, gc_, 0);
 }
 
 #endif // FL_CFG_GFX_XLIB_RECT_CXX

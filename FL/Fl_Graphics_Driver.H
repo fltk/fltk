@@ -252,9 +252,9 @@ public:
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
   /** Sets the value of the driver-specific graphics context. */
-  virtual void set_gc(void*) {}
+  virtual void gc(void*) {}
   /** Returns the driver-specific graphics context, of NULL if there's none. */
-  virtual void *get_gc(void) {return NULL;}
+  virtual void *gc(void) {return NULL;}
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);

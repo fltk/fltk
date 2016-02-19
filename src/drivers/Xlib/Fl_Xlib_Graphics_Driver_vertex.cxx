@@ -41,7 +41,7 @@ void Fl_Xlib_Graphics_Driver::vertex(double x,double y) {
 }
 
 void Fl_Xlib_Graphics_Driver::end_points() {
-  if (n>1) XDrawPoints(fl_display, fl_window, gc, p, n, 0);
+  if (n>1) XDrawPoints(fl_display, fl_window, gc_, p, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_line() {
@@ -49,7 +49,7 @@ void Fl_Xlib_Graphics_Driver::end_line() {
     end_points();
     return;
   }
-  if (n>1) XDrawLines(fl_display, fl_window, gc, p, n, 0);
+  if (n>1) XDrawLines(fl_display, fl_window, gc_, p, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_loop() {
@@ -64,7 +64,7 @@ void Fl_Xlib_Graphics_Driver::end_polygon() {
     end_line();
     return;
   }
-  if (n>2) XFillPolygon(fl_display, fl_window, gc, p, n, Convex, 0);
+  if (n>2) XFillPolygon(fl_display, fl_window, gc_, p, n, Convex, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
@@ -88,7 +88,7 @@ void Fl_Xlib_Graphics_Driver::end_complex_polygon() {
     end_line();
     return;
   }
-  if (n>2) XFillPolygon(fl_display, fl_window, gc, p, n, 0, 0);
+  if (n>2) XFillPolygon(fl_display, fl_window, gc_, p, n, 0, 0);
 }
 
 // shortcut the closed circles so they use XDrawArc:
@@ -106,7 +106,7 @@ void Fl_Xlib_Graphics_Driver::circle(double x, double y,double r) {
   int h = (int)rint(yt+ry)-lly;
 
   (what == POLYGON ? XFillArc : XDrawArc)
-    (fl_display, fl_window, gc, llx, lly, w, h, 0, 360*64);
+    (fl_display, fl_window, gc_, llx, lly, w, h, 0, 360*64);
 }
 
 #endif // FL_CFG_GFX_XLIB_VERTEX_CXX

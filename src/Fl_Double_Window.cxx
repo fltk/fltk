@@ -176,15 +176,15 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (damage() & ~FL_DAMAGE_EXPOSE) {
     fl_clip_region(myi->region); myi->region = 0;
 #ifdef WIN32
-    void* _sgc = fl_graphics_driver->get_gc();
+    void* _sgc = fl_graphics_driver->gc();
     HDC gc = fl_makeDC(myi->other_xid);
-    fl_graphics_driver->set_gc(gc);
+    fl_graphics_driver->gc(gc);
     int save = SaveDC(gc);
     fl_restore_clip(); // duplicate region into new gc
     draw();
     RestoreDC(gc, save);
     DeleteDC(gc);
-    fl_graphics_driver->set_gc(_sgc);
+    fl_graphics_driver->gc(_sgc);
     //# if defined(FLTK_USE_CAIRO)
     //if Fl::cairo_autolink_context() Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
     //# endif

@@ -40,15 +40,15 @@ static int bgx, bgy, bgw, bgh;
 static void draw_current_rect() {
 #ifdef USE_XOR
 # if defined(USE_X11)
-  GC gc = (GC)fl_graphics_driver->get_gc();
+  GC gc = (GC)fl_graphics_driver->gc();
   XSetFunction(fl_display, gc, GXxor);
   XSetForeground(fl_display, gc, 0xffffffff);
   XDrawRectangle(fl_display, fl_window, gc, px, py, pw, ph);
   XSetFunction(fl_display, gc, GXcopy);
 # elif defined(WIN32)
-  int old = SetROP2(fl_graphics_driver->get_gc(), R2_NOT);
+  int old = SetROP2(fl_graphics_driver->gc(), R2_NOT);
   fl_rect(px, py, pw, ph);
-  SetROP2(fl_graphics_driver->get_gc(), old);
+  SetROP2(fl_graphics_driver->gc(), old);
 # elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Window_Driver - platform overlay
   // warning: Quartz does not support xor drawing
   // Use the Fl_Overlay_Window instead.

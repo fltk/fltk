@@ -79,7 +79,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   }
 
 #if defined(USE_X11)
-  XCopyArea(fl_display, fl_window, fl_window, (GC)fl_graphics_driver->get_gc(),
+  XCopyArea(fl_display, fl_window, fl_window, (GC)fl_graphics_driver->gc(),
 	    src_x, src_y, src_w, src_h, dest_x, dest_y);
   // we have to sync the display and get the GraphicsExpose events! (sigh)
   for (;;) {
@@ -117,7 +117,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   // multi-screen solutions, it will not solve issues scrolling
   // from a different resolution screen onto another.
   // Note 3: this has been tested with image maps, too.
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   if (fl_GetRandomRgn) {
     // get the DC region minus all overlapping windows
     HRGN sys_rgn = CreateRectRgn(0, 0, 0, 0);

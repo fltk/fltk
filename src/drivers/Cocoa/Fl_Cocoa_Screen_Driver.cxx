@@ -121,7 +121,7 @@ void Fl_Cocoa_Screen_Driver::beep(int type) {
 
 
 void Fl_Cocoa_Screen_Driver::flush() {
-  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->get_gc();
+  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
   if (gc)
     CGContextFlush(gc);
 }

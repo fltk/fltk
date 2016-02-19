@@ -740,7 +740,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 	    else if (lpBI->bmiHeader.biClrUsed > 0) pDIBBits = (void*)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
 	    Fl_Offscreen off = fl_create_offscreen(width, height);
 	    fl_begin_offscreen(off);
-	    SetDIBitsToDevice((HDC)fl_graphics_driver->get_gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
+	    SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
 	    rgb = fl_read_image(NULL, 0, 0, width, height);
 	    depth = 3;
 	    fl_end_offscreen();
@@ -766,7 +766,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 	  Fl_Offscreen off = fl_create_offscreen(width, height);
 	  fl_begin_offscreen(off);
 	  fl_color(FL_WHITE); fl_rectf(0,0,width, height); // draw white background
-	  PlayEnhMetaFile((HDC)fl_graphics_driver->get_gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
+	  PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
 	  rgb = fl_read_image(NULL, 0, 0, width, height); // read pixels from offscreen buffer
 	  depth = 3;
 	  fl_end_offscreen();
@@ -2528,13 +2528,13 @@ HWND fl_window = NULL;
 
 // Here we ensure only one GetDC is ever in place.
 HDC fl_GetDC(HWND w) {
-  HDC gc = (HDC)Fl_Display_Device::display_device()->driver()->get_gc();
+  HDC gc = (HDC)Fl_Display_Device::display_device()->driver()->gc();
   if (gc) {
     if (w == fl_window  &&  fl_window != NULL) return gc;
     if (fl_window) fl_release_dc(fl_window, gc); // ReleaseDC
   }
   gc = GetDC(w);
-  Fl_Display_Device::display_device()->driver()->set_gc(gc);
+  Fl_Display_Device::display_device()->driver()->gc(gc);
   fl_save_dc(w, gc);
   fl_window = w;
   // calling GetDC seems to always reset these: (?)
@@ -2662,7 +2662,7 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
   if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) return CreateRectRgn(x,y,x+w,y+h);
   // because rotation may apply, the rectangle becomes a polygon in device coords
   POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
-  LPtoDP((HDC)fl_graphics_driver->get_gc(), pt, 4);
+  LPtoDP((HDC)fl_graphics_driver->gc(), pt, 4);
   return CreatePolygonRgn(pt, 4, ALTERNATE);
 }
 
@@ -2728,8 +2728,8 @@ void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Im
   Fl_Display_Device::display_device()->set_current();
   show();
   Fl::check();
-  void* save_gc = fl_graphics_driver->get_gc();
-  fl_graphics_driver->set_gc(GetDC(NULL));
+  void* save_gc = fl_graphics_driver->gc();
+  fl_graphics_driver->gc(GetDC(NULL));
   int ww = w() + 2 * wsides;
   // capture the 4 window sides from screen
   fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
@@ -2754,9 +2754,9 @@ void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Im
     r_bottom->alloc_array = 1;
     bottom = Fl_Shared_Image::get(r_bottom);
   }
-  ReleaseDC(NULL, (HDC)fl_graphics_driver->get_gc());
+  ReleaseDC(NULL, (HDC)fl_graphics_driver->gc());
   fl_window = save_win;
-  fl_graphics_driver->set_gc(save_gc);
+  fl_graphics_driver->gc(save_gc);
   previous->Fl_Surface_Device::set_current();
 }
 

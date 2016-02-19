@@ -60,7 +60,7 @@ void Fl_Menu_Window::flush() {
   fl_window = myi->xid;
 # if defined(FLTK_USE_CAIRO)
     // capture gc changes automatically to update the cairo context adequately
-    if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->get_gc());
+    if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->gc());
 # endif
   fl_overlay = 1;
   fl_clip_region(myi->region); myi->region = 0; current_ = this;

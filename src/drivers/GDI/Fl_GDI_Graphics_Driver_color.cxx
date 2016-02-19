@@ -53,11 +53,11 @@ void fl_cleanup_pens(void) {
 
 void fl_save_pen(void) {
     if(!tmppen) tmppen = CreatePen(PS_SOLID, 1, 0);
-  savepen = (HPEN)SelectObject((HDC)fl_graphics_driver->get_gc(), tmppen);
+  savepen = (HPEN)SelectObject((HDC)fl_graphics_driver->gc(), tmppen);
 }
 
 void fl_restore_pen(void) {
-  if (savepen) SelectObject((HDC)fl_graphics_driver->get_gc(), savepen);
+  if (savepen) SelectObject((HDC)fl_graphics_driver->gc(), savepen);
     DeleteObject(tmppen);
     tmppen = 0;
     savepen = 0;
@@ -65,7 +65,7 @@ void fl_restore_pen(void) {
 
 static void clear_xmap(Fl_XMap& xmap) {
   if (xmap.pen) {
-    HDC gc = (HDC)fl_graphics_driver->get_gc();
+    HDC gc = (HDC)fl_graphics_driver->gc();
     HGDIOBJ tmppen = GetStockObject(BLACK_PEN);
     HGDIOBJ oldpen = SelectObject(gc, tmppen);       // Push out the current pen of the gc
     if(oldpen != xmap.pen) SelectObject(gc, oldpen); // Put it back if it is not the one we are about to delete
@@ -78,7 +78,7 @@ static void clear_xmap(Fl_XMap& xmap) {
 static void set_xmap(Fl_XMap& xmap, COLORREF c) {
   xmap.rgb = c;
   if (xmap.pen) {
-      HDC gc = (HDC)fl_graphics_driver->get_gc();
+      HDC gc = (HDC)fl_graphics_driver->gc();
       HGDIOBJ oldpen = SelectObject(gc,GetStockObject(BLACK_PEN)); // replace current pen with safe one
       if (oldpen != xmap.pen)SelectObject(gc,oldpen);              // if old one not xmap.pen, need to put it back
       DeleteObject(xmap.pen);                                         // delete pen
@@ -107,7 +107,7 @@ void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
 #endif
     }
     fl_current_xmap = &xmap;
-    SelectObject(gc, (HGDIOBJ)(xmap.pen));
+    SelectObject(gc_, (HGDIOBJ)(xmap.pen));
   }
 }
 
@@ -120,7 +120,7 @@ void Fl_GDI_Graphics_Driver::color(uchar r, uchar g, uchar b) {
     set_xmap(xmap, c);
   }
   fl_current_xmap = &xmap;
-  SelectObject(gc, (HGDIOBJ)(xmap.pen));
+  SelectObject(gc_, (HGDIOBJ)(xmap.pen));
 }
 
 HBRUSH fl_brush() {
@@ -129,7 +129,7 @@ HBRUSH fl_brush() {
 
 HBRUSH fl_brush_action(int action) {
   Fl_XMap *xmap = fl_current_xmap;
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   // Wonko: we use some statistics to cache only a limited number
   // of brushes:
 #define FL_N_BRUSH 16
@@ -206,7 +206,7 @@ HPALETTE
 fl_select_palette(void)
 {
   static char beenhere;
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   if (!beenhere) {
     beenhere = 1;
 

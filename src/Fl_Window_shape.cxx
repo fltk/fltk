@@ -343,7 +343,7 @@ void Fl_Window::shape(const Fl_Image* img) {
 
 void Fl_Window::draw() {
 #if defined(__APPLE__)
-  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->get_gc();
+  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
 #endif
   if (shape_data_) {
 # if defined(__APPLE__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4

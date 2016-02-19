@@ -25,13 +25,13 @@ const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
 
 /* Reference to the current CGContext
  For back-compatibility only. The preferred procedure to get this reference is
- Fl_Surface_Device::surface()->driver()->get_gc().
+ Fl_Surface_Device::surface()->driver()->gc().
  */
 CGContextRef fl_gc = 0;
 
 void Fl_Graphics_Driver::global_gc()
 {
-  fl_gc = (CGContextRef)get_gc();
+  fl_gc = (CGContextRef)gc();
 }
 
 /*
@@ -128,13 +128,13 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
   _ss = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
   if (stack_ix<stack_max) {
-    stack_gc[stack_ix] = (CGContextRef)fl_graphics_driver->get_gc();
+    stack_gc[stack_ix] = (CGContextRef)fl_graphics_driver->gc();
     stack_window[stack_ix] = fl_window;
   } else
     fprintf(stderr, "FLTK CGContext Stack overflow error\n");
   stack_ix++;
 
-  fl_graphics_driver->set_gc(ctx);
+  fl_graphics_driver->gc(ctx);
   fl_window = 0;
   CGContextSaveGState(ctx);
   fl_graphics_driver->push_no_clip();
@@ -145,7 +145,7 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
  */
 void fl_end_offscreen() {
   fl_graphics_driver->pop_clip();
-  CGContextRef gc = (CGContextRef)fl_graphics_driver->get_gc();
+  CGContextRef gc = (CGContextRef)fl_graphics_driver->gc();
 
   CGContextRestoreGState(gc); // matches CGContextSaveGState in fl_begin_offscreen()
   CGContextFlush(gc);
@@ -154,7 +154,7 @@ void fl_end_offscreen() {
   else
     fprintf(stderr, "FLTK CGContext Stack underflow error\n");
   if (stack_ix<stack_max) {
-    fl_graphics_driver->set_gc(stack_gc[stack_ix]);
+    fl_graphics_driver->gc(stack_gc[stack_ix]);
     fl_window = stack_window[stack_ix];
   }
   _ss->set_current();

@@ -77,7 +77,7 @@ read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate
   bi.bmiHeader.biClrImportant = 0;
 
   // copy bitmap from original DC (Window, Fl_Offscreen, ...)
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   HDC hdc = CreateCompatibleDC(gc);
   HBITMAP hbm = CreateCompatibleBitmap(gc,w,h);
 

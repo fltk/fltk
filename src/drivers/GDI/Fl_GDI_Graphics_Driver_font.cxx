@@ -113,7 +113,7 @@ enumcbw(CONST LOGFONTW    *lpelf,
 } /* enumcbw */
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   if (fl_free_font == FL_FREE_FONT) {// if not already been called
     if (!gc) gc = fl_GetDC(0);
 
@@ -169,7 +169,7 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
 
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   if (!gc) gc = fl_GetDC(0);
   cyPerInch = GetDeviceCaps(gc, LOGPIXELSY);
   if (cyPerInch < 1) cyPerInch = 1;
@@ -244,7 +244,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize) {
     name	        // pointer to typeface name string
     );
   angle = fl_angle_;
-  HDC gc = (HDC)fl_graphics_driver->get_gc();
+  HDC gc = (HDC)fl_graphics_driver->gc();
   if (!gc) gc = fl_GetDC(0);
   SelectObject(gc, fid);
   GetTextMetrics(gc, &metr);
@@ -383,7 +383,7 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   // This code assumes that these glyphs are rarely used and simply
   // measures them explicitly if they occur - This will be slow...
   if(c > 0x0000FFFF) { // UTF16 surrogate pair is needed
-    if (!gc) { // We have no valid gc, so nothing to measure - bail out
+    if (!gc_) { // We have no valid gc, so nothing to measure - bail out
       return 0.0;
     }
     int cc; // cell count
@@ -391,9 +391,9 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
     // Creates a UTF16 string from a UCS code point.
     cc = fl_ucs_to_Utf16(c, u16, 4);
     // Make sure the current font is selected before we make the measurement
-    SelectObject(gc, fl_fontsize->fid);
+    SelectObject(gc_, fl_fontsize->fid);
     // measure the glyph width
-    GetTextExtentPoint32W(gc, (WCHAR*)u16, cc, &s);
+    GetTextExtentPoint32W(gc_, (WCHAR*)u16, cc, &s);
     return (double)s.cx;
   }
   // else - this falls through to the lookup-table for glyph widths
@@ -414,7 +414,7 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   // If that is null then we attempt to obtain the gc from the current screen
   // using (GetDC(NULL)).
   // This should resolve STR #2086
-  HDC gc2 = gc;
+  HDC gc2 = gc_;
   HWND hWnd = 0;
   if (!gc2) { // We have no valid gc, try and obtain one
     // Use our first fltk window, or fallback to using the screen via GetDC(NULL)
@@ -426,7 +426,7 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   ii += c &0x03FF;
   GetTextExtentPoint32W(gc2, (WCHAR*)&ii, 1, &s);
   fl_fontsize->width[r][c&0x03FF] = s.cx;
-  if (gc2 && gc2 != gc) ReleaseDC(hWnd, gc2);
+  if (gc2 && gc2 != gc_) ReleaseDC(hWnd, gc2);
   return (double) fl_fontsize->width[r][c & 0x03FF];
 }
 
@@ -486,7 +486,7 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   int minx = 0, miny = -999999;
   unsigned len = 0, idx = 0;
   HWND hWnd = 0;
-  HDC gc2 = gc; // local copy of current gc - make a copy in case we change it...
+  HDC gc2 = gc_; // local copy of current gc - make a copy in case we change it...
   int has_surrogates; // will be set if the string contains surrogate pairs
 
   // Have we loaded the GetGlyphIndicesW function yet?
@@ -543,7 +543,7 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
       len = gcp_res.nGlyphs;
     } else goto exit_error;
   } else {
-    if (fl_GetGlyphIndices(gc, (WCHAR*)ext_buff, len, w_buff, GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) {
+    if (fl_GetGlyphIndices(gc_, (WCHAR*)ext_buff, len, w_buff, GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) {
       // some error occured here - just return fl_measure values
       goto exit_error;
     }
@@ -567,7 +567,7 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   h = maxh + miny;
   dx = minx;
   dy = -miny;
-  EXTENTS_UPDATE(dx, dy, w, h, gc);
+  EXTENTS_UPDATE(dx, dy, w, h, gc_);
   return; // normal exit
 
 exit_error:
@@ -576,38 +576,38 @@ exit_error:
   h = height();
   dx = 0;
   dy = descent() - h;
-  EXTENTS_UPDATE(dx, dy, w, h, gc);
+  EXTENTS_UPDATE(dx, dy, w, h, gc_);
   return;
 } // fl_text_extents
 
 void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
-  COLORREF oldColor = SetTextColor(gc, fl_RGB());
+  COLORREF oldColor = SetTextColor(gc_, fl_RGB());
   // avoid crash if no font has been set yet
   if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
-  SelectObject(gc, font_descriptor()->fid);
+  SelectObject(gc_, font_descriptor()->fid);
   int wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
   if(wn >= wstr_len) {
     wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
     wstr_len = wn + 1;
     wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
   }
-  TextOutW(gc, x, y, (WCHAR*)wstr, wn);
-  SetTextColor(gc, oldColor); // restore initial state
+  TextOutW(gc_, x, y, (WCHAR*)wstr, wn);
+  SetTextColor(gc_, oldColor); // restore initial state
 }
 
 void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(this, Fl_Graphics_Driver::font(), size(), angle);
   int wn = 0; // count of UTF16 cells to render full string
-  COLORREF oldColor = SetTextColor(gc, fl_RGB());
-  SelectObject(gc, font_descriptor()->fid);
+  COLORREF oldColor = SetTextColor(gc_, fl_RGB());
+  SelectObject(gc_, font_descriptor()->fid);
   wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
   if(wn >= wstr_len) { // Array too small
     wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
     wstr_len = wn + 1;
     wn = fl_utf8toUtf16(str, n, wstr, wstr_len); // respin the translation
   }
-  TextOutW(gc, x, y, (WCHAR*)wstr, wn);
-  SetTextColor(gc, oldColor);
+  TextOutW(gc_, x, y, (WCHAR*)wstr, wn);
+  SetTextColor(gc_, oldColor);
   fl_font(this, Fl_Graphics_Driver::font(), size(), 0);
 }
 
@@ -620,26 +620,26 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
     wn = fl_utf8toUtf16(c, n, wstr, wstr_len);
   }
 
-  COLORREF oldColor = SetTextColor(gc, fl_RGB());
-  SelectObject(gc, font_descriptor()->fid);
+  COLORREF oldColor = SetTextColor(gc_, fl_RGB());
+  SelectObject(gc_, font_descriptor()->fid);
 #ifdef RTL_CHAR_BY_CHAR
   int i = 0;
   int lx = 0;
   while (i < wn) { // output char by char is very bad for Arabic but coherent with fl_width()
     lx = (int) width(wstr[i]);
     x -= lx;
-    TextOutW(gc, x, y, (WCHAR*)wstr + i, 1);
+    TextOutW(gc_, x, y, (WCHAR*)wstr + i, 1);
     if (fl_nonspacing(wstr[i])) {
       x += lx;
     }
     i++;
   }
 #else
-  UINT old_align = SetTextAlign(gc, TA_RIGHT | TA_RTLREADING);
-  TextOutW(gc, x, y - height() + descent(), (WCHAR*)wstr, wn);
-  SetTextAlign(gc, old_align);
+  UINT old_align = SetTextAlign(gc_, TA_RIGHT | TA_RTLREADING);
+  TextOutW(gc_, x, y - height() + descent(), (WCHAR*)wstr, wn);
+  SetTextAlign(gc_, old_align);
 #endif
-  SetTextColor(gc, oldColor);
+  SetTextColor(gc_, oldColor);
 }
 #endif
 //

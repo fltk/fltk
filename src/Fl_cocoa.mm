@@ -3276,7 +3276,7 @@ void Fl_Window::make_current()
 #endif
     nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
   i->gc = (CGContextRef)[nsgc graphicsPort];
-  Fl_Display_Device::display_device()->driver()->set_gc(i->gc);
+  Fl_Display_Device::display_device()->driver()->gc(i->gc);
   CGContextSaveGState(i->gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
@@ -3304,14 +3304,14 @@ void Fl_Window::make_current()
 
 // Give the Quartz context back to the system
 void Fl_X::q_release_context(Fl_X *x) {
-  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->get_gc();
+  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
   if (x && x->gc!=gc) return;
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);
   Fl_X::set_high_resolution(false);
   CGContextFlush(gc);
-  Fl_Display_Device::display_device()->driver()->set_gc(0);
+  Fl_Display_Device::display_device()->driver()->gc(0);
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
 #endif
@@ -4378,7 +4378,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   CALayer *layer = get_titlebar_layer(win);
   if (layer) { // if title bar uses a layer
     if (to_quartz) { // to Quartz printer
-      CGContextRef gc = (CGContextRef)driver()->get_gc();
+      CGContextRef gc = (CGContextRef)driver()->gc();
       CGContextSaveGState(gc);
       CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
       CGContextScaleCTM(gc, 1, -1);
@@ -4424,7 +4424,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
       // the exact font is LucidaGrande 13 pts (and HelveticaNeueDeskInterface-Regular with 10.10)
       NSGraphicsContext *current = [NSGraphicsContext currentContext];
-      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->get_gc() flipped:YES]];//10.4
+      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->gc() flipped:YES]];//10.4
       NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0]
                                                        forKey:NSFontAttributeName];
       NSString *title_s = [fl_xid(win) title];

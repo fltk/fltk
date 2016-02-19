@@ -3,7 +3,7 @@
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -142,18 +142,18 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 }
 
 void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc);
+  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc_);
 }
 void Fl_Quartz_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,gc);
+  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,gc_);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0,gc);
+  innards(buf,x,y,w,h,d,l,1,0,0,gc_);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data,gc);
+  innards(0,x,y,w,h,d,0,1,cb,data,gc_);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -166,7 +166,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
   if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (bm->id_ && gc) {
+  if (bm->id_ && gc_) {
     draw_CGImage((CGImageRef)bm->id_, X,Y,W,H, cx, cy, bm->w(), bm->h());
   }
 }
@@ -223,7 +223,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     CGColorSpaceRelease(lut);
     CGDataProviderRelease(src);
   }
-  if (img->id_ && gc) {
+  if (img->id_ && gc_) {
     if (!img->alloc_array && has_feature(PRINTER) && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
       // When printing, the image data is used when the page is completed, that is, after return from this function.
       // If the image has alloc_array = 0, we must protect against image data being freed before it is used:
@@ -252,12 +252,12 @@ int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP
   fl_clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
   if (W == 0 || H == 0) return 1;
   fl_push_no_clip(); // remove the FLTK clip that can't be rescaled
-  CGContextSaveGState(gc);
-  CGContextClipToRect(gc, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
-  CGContextTranslateCTM(gc, XP, YP);
-  CGContextScaleCTM(gc, float(WP)/img->w(), float(HP)/img->h());
+  CGContextSaveGState(gc_);
+  CGContextClipToRect(gc_, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
+  CGContextTranslateCTM(gc_, XP, YP);
+  CGContextScaleCTM(gc_, float(WP)/img->w(), float(HP)/img->h());
   img->draw(0, 0, img->w(), img->h(), 0, 0);
-  CGContextRestoreGState(gc);
+  CGContextRestoreGState(gc_);
   fl_pop_clip(); // restore FLTK's clip
   return 1;
 }
@@ -317,14 +317,14 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, cons
 void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh)
 {
   CGRect rect = CGRectMake(x, y, w, h);
-  CGContextSaveGState(gc);
-  CGContextClipToRect(gc, CGRectOffset(rect, -0.5, -0.5 ));
+  CGContextSaveGState(gc_);
+  CGContextClipToRect(gc_, CGRectOffset(rect, -0.5, -0.5 ));
   // move graphics context to origin of vertically reversed image
   // The 0.5 here cancels the 0.5 offset present in Quartz graphics contexts.
   // Thus, image and surface pixels are in phase if there's no scaling.
-  CGContextTranslateCTM(gc, rect.origin.x - srcx - 0.5, rect.origin.y - srcy + sh - 0.5);
-  CGContextScaleCTM(gc, 1, -1);
-  CGAffineTransform at = CGContextGetCTM(gc);
+  CGContextTranslateCTM(gc_, rect.origin.x - srcx - 0.5, rect.origin.y - srcy + sh - 0.5);
+  CGContextScaleCTM(gc_, 1, -1);
+  CGAffineTransform at = CGContextGetCTM(gc_);
   if (at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
     // We handle x2 and /2 scalings that occur when drawing to
     // a double-resolution bitmap, and when drawing a double-resolution bitmap to display.
@@ -345,10 +345,10 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
         deltay = (at.ty - round(at.ty))*2;
       }
     }
-    if (doit) CGContextTranslateCTM(gc, -deltax, -deltay);
+    if (doit) CGContextTranslateCTM(gc_, -deltax, -deltay);
   }
-  CGContextDrawImage(gc, CGRectMake(0, 0, sw, sh), cgimg);
-  CGContextRestoreGState(gc);
+  CGContextDrawImage(gc_, CGRectMake(0, 0, sw, sh), cgimg);
+  CGContextRestoreGState(gc_);
 }
 
 //

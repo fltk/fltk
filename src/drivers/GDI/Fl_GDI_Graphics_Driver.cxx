@@ -29,13 +29,13 @@ const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_
 
 /* Reference to the current device context
  For back-compatibility only. The preferred procedure to get this reference is
- Fl_Surface_Device::surface()->driver()->get_gc().
+ Fl_Surface_Device::surface()->driver()->gc().
  */
 HDC fl_gc = 0;
 
 void Fl_Graphics_Driver::global_gc()
 {
-  fl_gc = (HDC)get_gc();
+  fl_gc = (HDC)gc();
 }
 
 /*
@@ -98,7 +98,7 @@ char Fl_GDI_Graphics_Driver::can_do_alpha_blending() {
 }
 
 HDC fl_makeDC(HBITMAP bitmap) {
-  HDC new_gc = CreateCompatibleDC((HDC)fl_graphics_driver->get_gc());
+  HDC new_gc = CreateCompatibleDC((HDC)fl_graphics_driver->gc());
   SetTextAlign(new_gc, TA_BASELINE|TA_LEFT);
   SetBkMode(new_gc, TRANSPARENT);
 #if USE_COLORMAP
@@ -109,26 +109,26 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void Fl_GDI_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
-  HDC new_gc = CreateCompatibleDC(gc);
+  HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
-  BitBlt(gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+  BitBlt(gc_, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
 
 void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
-  HDC new_gc = CreateCompatibleDC(gc);
+  HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
   BOOL alpha_ok = 0;
   // first try to alpha blend
   if ( can_do_alpha_blending() ) {
-    alpha_ok = fl_alpha_blend(gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
+    alpha_ok = fl_alpha_blend(gc_, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
   }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
   if (!alpha_ok) {
-    BitBlt(gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+    BitBlt(gc_, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);

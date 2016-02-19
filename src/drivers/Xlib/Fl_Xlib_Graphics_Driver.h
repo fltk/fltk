@@ -34,13 +34,13 @@
  */
 class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
-  static GC gc;
+  static GC gc_;
 public:
   static const char *class_id;
   Fl_Xlib_Graphics_Driver(void);
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
-  virtual void *get_gc() { return gc; }
+  virtual void *gc() { return gc_; }
   char can_do_alpha_blending();
   
   // --- bitmap stuff
