@@ -398,7 +398,7 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
   if (time_to_wait <= 0.0) {
     // do flush second so that the results of events are visible:
     int ret = fl_wait(0.0);
-    flush();
+    Fl::flush();
     return ret;
   } else {
     // do flush first so that user sees the display:
