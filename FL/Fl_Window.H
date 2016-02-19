@@ -636,6 +636,8 @@ public:
    */
   int decorated_h();
 
+  Fl_Window_Driver *driver() { return i; }
+
 };
 
 #endif

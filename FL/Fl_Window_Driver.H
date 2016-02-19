@@ -38,6 +38,8 @@ public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
+
+  virtual void take_focus() { }
 };
 
 

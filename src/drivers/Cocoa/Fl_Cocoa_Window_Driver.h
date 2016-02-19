@@ -46,6 +46,7 @@ class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 {
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
+  virtual void take_focus();
 };
 
 

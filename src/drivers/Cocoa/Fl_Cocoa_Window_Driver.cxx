@@ -33,6 +33,14 @@ Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 }
 
 
+extern Fl_Window *fl_xfocus;
+
+
+void Fl_Cocoa_Window_Driver::take_focus()
+{
+  set_key_window();
+}
+
 
 //
 // End of "$Id$".

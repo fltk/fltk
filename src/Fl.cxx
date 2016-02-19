@@ -1001,24 +1001,16 @@ void Fl::focus(Fl_Widget *o) {
       if (!w1) w1 = o->window();
       while (w1) { win=w1; w1=win->window(); }
       if (win) {
-#ifdef __APPLE__ // PORTME: Fl_Window_Driver - platform window focus
-	if (fl_xfocus != win) {
-	  Fl_X *x = Fl_X::i(win);
-	  if (x) x->set_key_window();
-	}
-#elif defined(USE_X11)
-	if (fl_xfocus != win) {
-	  Fl_X *x = Fl_X::i(win);
-	  if (!Fl_X::ewmh_supported())
-	    win->show(); // Old WMs, XMapRaised
-	  else if (x) // New WMs use the NETWM attribute:
-	    Fl_X::activate_window(x->xid);
-	}
-#elif defined(WIN32)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: handle platform specifics for change of keyboard focus here"
+        if (fl_xfocus != win) {
+          Fl_Window_Driver *drvr = win->driver();
+#ifdef USE_X11 // platform fix
+          if (!Fl_X::ewmh_supported()) win->show(); // Old WMs, XMapRaised
+          else if (drvr) drvr->take_focus();
+#else
+          if (drvr) drvr->take_focus();
 #endif
-	fl_xfocus = win;
+          fl_xfocus = win;
+        }
       }
     }
     // take focus from the old focused window
