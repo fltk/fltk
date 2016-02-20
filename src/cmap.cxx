@@ -3,7 +3,7 @@
 //
 // Colormap generation program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,8 +17,11 @@
 //
 
 // This program produces the contents of "fl_cmap.h" as stdout
+//
+// Compile, link, and run (example):
+//
+//   gcc -o cmap cmap.cxx -lm && ./cmap > fl_cmap.h
 
-// #include <gl/gl.h>
 #include <stdio.h>
 
 // This table is initialized with color values I got by reading the
@@ -128,6 +131,7 @@ void background(uchar r, uchar g, uchar b) {
 
 int main() {
   int i,r,g,b;
+
 #if 0
   /* Read colormap colors into internal table */
   long cmwin;
@@ -137,9 +141,11 @@ int main() {
     getmcolor(i,&cmap[i][0],&cmap[i][1],&cmap[i][2]);
   winclose(cmwin);
 #endif
-// overwrite the X allocation area with one color so people are
-// discouraged from using it:
-  //for (i=16; i<32; i++) {cmap[i][0]=cmap[i][1]=cmap[i][2] = 85;}
+
+  // overwrite the X allocation area with one color so people are
+  // discouraged from using it:
+
+  // for (i=16; i<32; i++) {cmap[i][0]=cmap[i][1]=cmap[i][2] = 85;}
 
   // fill in the gray ramp:
   background(0xc0, 0xc0, 0xc0); // microsoft colors
