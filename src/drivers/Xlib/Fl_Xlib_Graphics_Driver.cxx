@@ -17,9 +17,10 @@
 //
 
 
-#include <config.h>
 #include "../../config_lib.h"
 #include "Fl_Xlib_Graphics_Driver.h"
+#include <FL/fl_draw.H>
+
 #include <string.h>
 
 #if HAVE_XRENDER
