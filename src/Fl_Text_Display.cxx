@@ -479,10 +479,10 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   W -= Fl::box_dw(box());
   H -= Fl::box_dh(box());
 
-  text_area.x = X+LEFT_MARGIN;
-  text_area.y = Y+TOP_MARGIN;
-  text_area.w = W-LEFT_MARGIN-RIGHT_MARGIN;
-  text_area.h = H-TOP_MARGIN-BOTTOM_MARGIN;
+  text_area.x = X + LEFT_MARGIN + mLineNumWidth;
+  text_area.y = Y + TOP_MARGIN;
+  text_area.w = W - LEFT_MARGIN - RIGHT_MARGIN - mLineNumWidth;
+  text_area.h = H - TOP_MARGIN - BOTTOM_MARGIN;
   const int oldTAWidth = text_area.w;
   int i;
 
@@ -534,18 +534,17 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       if (scrollbar_align() & (FL_ALIGN_LEFT|FL_ALIGN_RIGHT) &&
           mNBufferLines >= mNVisibleLines - 1)
       {
-        mVScrollBar->set_visible();
-        if (scrollbar_align() & FL_ALIGN_LEFT) {
-          text_area.x = X+scrollbar_width()+LEFT_MARGIN;
-          text_area.w = W-scrollbar_width()-LEFT_MARGIN-RIGHT_MARGIN;
-          mVScrollBar->resize(X, text_area.y-TOP_MARGIN, scrollbar_width(),
-                              text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
-        } else {
-          text_area.x = X+LEFT_MARGIN;
-          text_area.w = W-scrollbar_width()-LEFT_MARGIN-RIGHT_MARGIN;
-          mVScrollBar->resize(X+W-scrollbar_width(), text_area.y-TOP_MARGIN,
-                              scrollbar_width(), text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
-        }
+	mVScrollBar->set_visible();
+	text_area.w = W - scrollbar_width() - LEFT_MARGIN - RIGHT_MARGIN - mLineNumWidth;
+	if (scrollbar_align() & FL_ALIGN_LEFT) {
+	  text_area.x = X + scrollbar_width() + LEFT_MARGIN + mLineNumWidth;
+	  mVScrollBar->resize(X, text_area.y-TOP_MARGIN,
+			      scrollbar_width(), text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
+	} else {
+	  text_area.x = X + LEFT_MARGIN + mLineNumWidth;
+	  mVScrollBar->resize(X+W-scrollbar_width(), text_area.y-TOP_MARGIN,
+			      scrollbar_width(), text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
+	}
       }
       if (vbvis != mVScrollBar->visible()) again = 1;
 
@@ -592,12 +591,6 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
         }
       }
     }
-  }
-
-  // add linenum width to the text area - LZA / STR#2621
-  if (mLineNumWidth > 0) {
-    text_area.x += mLineNumWidth;
-    text_area.w -= mLineNumWidth;
   }
 
   // user request to change viewport
