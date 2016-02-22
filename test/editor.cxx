@@ -5,7 +5,7 @@
 //
 // This program is described in Chapter 4 of the FLTK Programmer's Guide.
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -51,6 +51,12 @@ char               filename[FL_PATH_MAX] = "";
 char               title[FL_PATH_MAX];
 Fl_Text_Buffer     *textbuf = 0;
 
+// width of line number display, if enabled
+const int line_num_width = 75;
+
+// #define DEV_TEST		// uncomment this line ...
+// ... to enable additional test features for developers,
+// particularly to test Fl_Text_Display and/or Fl_Text_Editor.
 
 // Syntax highlighting stuff...
 #define TS 14 // default editor textsize
@@ -411,7 +417,6 @@ style_update(int        pos,		// I - Position of update
   free(style);
 }
 
-
 // Editor window functions and class...
 void save_cb();
 void saveas_cb();
@@ -431,6 +436,20 @@ class EditorWindow : public Fl_Double_Window {
     Fl_Button          *replace_all;
     Fl_Return_Button   *replace_next;
     Fl_Button          *replace_cancel;
+
+#ifdef DEV_TEST
+
+    Fl_Button		*plus;		// increase width
+    Fl_Button		*minus;		// decrease width
+    Fl_Button		*vscroll;	// toggle vert. scrollbar left/right
+    Fl_Button		*hscroll;	// toggle hor.  scrollbar top/bottom
+    Fl_Button		*lnum;		// toggle line number display
+    Fl_Button		*wrap;		// toggle wrap mode
+
+#endif // DEV_TEST
+
+    int			wrap_mode;
+    int			line_numbers;
 
     Fl_Text_Editor     *editor;
     char               search[256];
@@ -456,11 +475,88 @@ EditorWindow::EditorWindow(int w, int h, const char* t) : Fl_Double_Window(w, h,
   replace_dlg->set_non_modal();
   editor = 0;
   *search = (char)0;
+  wrap_mode = 0;
+  line_numbers = 0;
 }
 
 EditorWindow::~EditorWindow() {
   delete replace_dlg;
 }
+
+#ifdef DEV_TEST
+
+void resize_cb(Fl_Widget *b, void *v) {
+  Fl_Window *w = b->window();
+  int dw = (int)(long)v;
+
+  const int fac = 16;	// factor
+  const int num = 1;	// loop count
+
+  dw *= fac;
+
+  for (int i=0; i<num; i++) {
+    w->resize(w->x(), w->y(), w->w()+dw, w->h());
+  }
+}
+
+void scroll_cb(Fl_Widget *b, void *v) {
+  EditorWindow *ew = (EditorWindow*)b->parent();
+  Fl_Text_Editor *ed = ew->editor;
+  int n = (int)(long)v;
+  int align = ed->scrollbar_align();
+
+  switch(n) {
+    case 1:			// vscroll
+      if (align & FL_ALIGN_LEFT) {
+	align &= ~FL_ALIGN_LEFT;
+	align |= FL_ALIGN_RIGHT;
+      } else {
+	align &= ~FL_ALIGN_RIGHT;
+	align |= FL_ALIGN_LEFT;
+      }
+      break;
+    case 2:			// hscroll
+      if (align & FL_ALIGN_TOP) {
+	align &= ~FL_ALIGN_TOP;
+	align |= FL_ALIGN_BOTTOM;
+      } else {
+	align &= ~FL_ALIGN_BOTTOM;
+	align |= FL_ALIGN_TOP;
+      }
+      break;
+    default:
+      break;
+  }
+  ed->scrollbar_align(align);
+  ed->resize(ed->x(),ed->y(),ed->w(),ed->h());
+  ed->redraw();
+}
+
+void wrap_cb(Fl_Widget *w, void* v) {
+  EditorWindow* ew = (EditorWindow*)v;
+  Fl_Text_Editor *ed = (Fl_Text_Editor*)ew->editor;
+  ew->wrap_mode = 1 - ew->wrap_mode;
+  if (ew->wrap_mode)
+    ed->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+  else
+    ed->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+  ew->redraw();
+}
+
+void lnum_cb(Fl_Widget *w, void* v) {
+  EditorWindow* ew = (EditorWindow*)v;
+  Fl_Text_Editor *ed = (Fl_Text_Editor*)ew->editor;
+  ew->line_numbers = 1 - ew->line_numbers;
+  if (ew->line_numbers) {
+    ed->linenumber_width(line_num_width);	// enable
+    ed->linenumber_size(ed->textsize());
+  } else {
+    ed->linenumber_width(0);			// disable
+  }
+  ew->redraw();
+}
+
+#endif // DEV_TEST
 
 int check_save(void) {
   if (!changed) return 1;
@@ -523,11 +619,12 @@ void linenumbers_cb(Fl_Widget *w, void* v) {
   Fl_Menu_Bar* m = (Fl_Menu_Bar*)w;
   const Fl_Menu_Item* i = m->mvalue();
   if ( i->value() ) {
-    e->editor->linenumber_width(50);	// enable
+    e->editor->linenumber_width(line_num_width);	// enable
     e->editor->linenumber_size(e->editor->textsize());
   } else {
     e->editor->linenumber_width(0);	// disable
   }
+  e->line_numbers = (i->value()?1:0);
   e->redraw();
 }
 
@@ -539,6 +636,7 @@ void wordwrap_cb(Fl_Widget *w, void* v) {
     e->editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
   else
     e->editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+  e->wrap_mode = (i->value()?1:0);
   e->redraw();
 }
 
@@ -795,7 +893,12 @@ Fl_Menu_Item menuitems[] = {
 };
 
 Fl_Window* new_view() {
+#ifdef DEV_TEST
+  EditorWindow* w = new EditorWindow(660, 500, title);
+#else
   EditorWindow* w = new EditorWindow(660, 400, title);
+#endif // DEV_TEST
+
     w->begin();
     Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 660, 30);
     m->copy(menuitems, w);
@@ -807,8 +910,40 @@ Fl_Window* new_view() {
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
 			      'A', style_unfinished_cb, 0);
+
+#ifdef DEV_TEST
+
+    w->minus = new Fl_Button(60, 410, 120, 30, "&-");
+    w->minus->labelsize(20);
+    w->minus->labelfont(FL_BOLD);
+    w->minus->callback(resize_cb,(void *)(-1));
+
+    w->plus = new Fl_Button(60, 450, 120, 30, "&+");
+    w->plus->labelsize(20);
+    w->plus->labelfont(FL_BOLD);
+    w->plus->callback(resize_cb,(void *)1);
+
+    w->vscroll = new Fl_Button(220, 410, 120, 30, "&vscroll");
+    w->vscroll->labelsize(16);
+    w->vscroll->callback(scroll_cb,(void *)1);
+
+    w->hscroll = new Fl_Button(220, 450, 120, 30, "&hscroll");
+    w->hscroll->labelsize(16);
+    w->hscroll->callback(scroll_cb,(void *)2);
+
+    w->lnum = new Fl_Button(380, 410, 120, 30, "&line #");
+    w->lnum->labelsize(16);
+    w->lnum->callback(lnum_cb,(void *)w);
+
+    w->wrap = new Fl_Button(380, 450, 120, 30, "&wrap");
+    w->wrap->labelsize(16);
+    w->wrap->callback(wrap_cb,(void *)w);
+
+#endif // DEV_TEST
+
   w->end();
   w->resizable(w->editor);
+  w->size_range(300,200);
   w->callback((Fl_Callback *)close_cb, w);
 
   textbuf->add_modify_callback(style_update, w->editor);
