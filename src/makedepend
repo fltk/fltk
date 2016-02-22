@@ -262,7 +262,8 @@ Fl_Image_Surface.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
 Fl_Image_Surface.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Image_Surface.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Printer.H
 Fl_Image_Surface.o: ../FL/fl_draw.H ../FL/Enumerations.H
-Fl_Image_Surface.o: ../FL/Fl_PostScript.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Image_Surface.o: ../FL/Fl_PostScript.H ../FL/Fl_Shared_Image.H ../FL/Fl.H
+Fl_Image_Surface.o: ../FL/fl_utf8.h
 Fl_Input.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Input.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Window.H
 Fl_Input.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
@@ -806,14 +807,14 @@ fl_boxtype.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 fl_boxtype.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 fl_boxtype.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
 fl_boxtype.o: ../FL/Fl_RGB_Image.H ../config.h
-fl_color.o: Fl_XColor.H ../config.h ../FL/Enumerations.H ../FL/abi-version.h
-fl_color.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl.H ../FL/fl_utf8.h
-fl_color.o: ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
-fl_color.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
-fl_color.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Device.H
-fl_color.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
-fl_color.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-fl_color.o: fl_cmap.h
+fl_color.o: Fl_XColor.H ../config.h ../FL/Enumerations.H ../FL/Fl.H
+fl_color.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_color.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
+fl_color.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_Window.H
+fl_color.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
+fl_color.o: ../FL/Fl_Image.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_color.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_color.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H fl_cmap.h
 fl_cursor.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_cursor.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Window.H
 fl_cursor.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H

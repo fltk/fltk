@@ -184,15 +184,16 @@ device.o: ../FL/Fl_Round_Button.H ../FL/Fl_Printer.H ../FL/x.H
 device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H
 device.o: ../FL/Fl_Window.H ../FL/Fl_PostScript.H ../FL/Fl_Copy_Surface.H
-device.o: ../FL/Fl_Image_Surface.H ../FL/Fl_File_Chooser.H
-device.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
-device.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
-device.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
-device.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
-device.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-device.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H ../FL/Fl_Box.H
-device.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
-device.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
+device.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Shared_Image.H
+device.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
+device.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
+device.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H ../FL/Fl_Preferences.H
+device.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+device.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+device.o: ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H ../FL/Fl.H
+device.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+device.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Return_Button.H
+device.o: ../FL/fl_ask.H
 doublebuffer.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 doublebuffer.o: ../FL/Enumerations.H ../FL/abi-version.h
 doublebuffer.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
@@ -494,15 +495,16 @@ device.o: ../FL/Fl_Round_Button.H ../FL/Fl_Printer.H ../FL/x.H
 device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H
 device.o: ../FL/Fl_Window.H ../FL/Fl_PostScript.H ../FL/Fl_Copy_Surface.H
-device.o: ../FL/Fl_Image_Surface.H ../FL/Fl_File_Chooser.H
-device.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
-device.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
-device.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
-device.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
-device.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-device.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H ../FL/Fl_Box.H
-device.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
-device.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
+device.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Shared_Image.H
+device.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
+device.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
+device.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H ../FL/Fl_Preferences.H
+device.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+device.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+device.o: ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H ../FL/Fl.H
+device.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+device.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Return_Button.H
+device.o: ../FL/fl_ask.H
 radio.o: radio.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 radio.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 radio.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
@@ -620,10 +622,7 @@ tree.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
 tree.o: ../FL/Fl_Light_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 tree.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H ../FL/Fl_Color_Chooser.H
 tree.o: ../FL/Fl_Value_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
-tree.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/x.H
-tree.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
-tree.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Bitmap.H
-tree.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Text_Buffer.H ../FL/Fl_Value_Slider.H
+tree.o: ../FL/Fl_Text_Display.H ../FL/Fl_Value_Slider.H
 tree.o: ../FL/Fl_Light_Button.H
 twowin.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 twowin.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Double_Window.H
