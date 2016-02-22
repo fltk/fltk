@@ -2955,11 +2955,11 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
   // Make sure we set the correct clipping range for line numbers.
   // Take scrollbars and positions into account.
   int hscroll_h = mHScrollBar->visible() ? mHScrollBar->h() : 0;
-  int vscroll_w = mVScrollBar->visible() ? mVScrollBar->w() : 0;
   int xoff = Fl::box_dx(box());
   int yoff = Fl::box_dy(box()) + ((scrollbar_align()&FL_ALIGN_TOP)?hscroll_h:0);
 
 #ifndef LINENUM_LEFT_OF_VSCROLL
+  int vscroll_w = mVScrollBar->visible() ? mVScrollBar->w() : 0;
   if (scrollbar_align()&FL_ALIGN_LEFT)
     xoff += vscroll_w;
 #endif
