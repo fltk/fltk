@@ -301,10 +301,6 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uc
   return (fl_uintptr_t)create_bitmask(w, h, array);
 }
 
-void Fl_Quartz_Graphics_Driver::uncache(Fl_Bitmap*, fl_uintptr_t &id_) {
-  delete_bitmask((Fl_Bitmask)id_);
-}
-
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
   Fl_Offscreen id;
   id = create_offscreen_with_alpha(w, h);

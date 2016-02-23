@@ -223,7 +223,6 @@ public:
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) = 0;
   virtual fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array) { return 0; }
   virtual fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array) { return 0; }
-  virtual void uncache(Fl_Bitmap *img, fl_uintptr_t &id_) { }
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
   virtual void delete_bitmask(Fl_Bitmask bm) = 0;
   virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}

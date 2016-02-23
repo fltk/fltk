@@ -289,7 +289,7 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 }
 
 void Fl_RGB_Image::uncache() {
-  fl_graphics_driver->uncache(this, id_, mask_);
+  Fl_Display_Device::display_device()->driver()->uncache(this, id_, mask_);
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {

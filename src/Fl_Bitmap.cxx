@@ -34,7 +34,7 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
 }
 
 void fl_delete_bitmask(Fl_Bitmask bm) {
-  return fl_graphics_driver->delete_bitmask(bm);
+  return Fl_Display_Device::display_device()->driver()->delete_bitmask(bm);
 }
 
 // Create a 1-bit mask used for alpha blending
@@ -147,7 +147,7 @@ Fl_Bitmap::~Fl_Bitmap() {
 
 void Fl_Bitmap::uncache() {
   if (id_) {
-    fl_graphics_driver->uncache(this, id_);
+    fl_delete_bitmask((Fl_Bitmask)id_);
     id_ = 0;
   }
 }

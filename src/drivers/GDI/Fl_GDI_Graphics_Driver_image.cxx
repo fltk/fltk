@@ -585,10 +585,6 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar
   return (fl_uintptr_t)fl_create_bitmap(w, h, array);
 }
 
-void Fl_GDI_Graphics_Driver::uncache(Fl_Bitmap *img, fl_uintptr_t &id_) {
-  delete_bitmask((Fl_Offscreen)id_);
-}
-
 void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
