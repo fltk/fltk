@@ -216,15 +216,11 @@ char const * const Fl::clipboard_image = "image";
 // Drivers
 //
 
-Fl_Screen_Driver *Fl::screen_driver_ = Fl_Screen_Driver::newScreenDriver();
-
 Fl_Screen_Driver *Fl::screen_driver()
 {
-  if (!screen_driver_)
-    screen_driver_ = Fl_Screen_Driver::newScreenDriver();
+  static  Fl_Screen_Driver* screen_driver_ = Fl_Screen_Driver::newScreenDriver();
   return screen_driver_;
 }
-
 
 //
 // 'Fl::version()' - Return the API version number...

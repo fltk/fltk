@@ -46,6 +46,7 @@ class Fl_Widget;
 class Fl_Window;
 class Fl_Image;
 struct Fl_Label;
+class Fl_Screen_Driver;
 
 // Keep avoiding having the socket deps at that level but mke sure it will work in both 32 & 64 bit builds
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -137,7 +138,6 @@ class FL_EXPORT Fl {
 
 private:
 
-  static class Fl_Screen_Driver *screen_driver_;
   static int use_high_res_GL_;
 
 public:
