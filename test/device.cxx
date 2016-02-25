@@ -565,6 +565,7 @@ void copy(Fl_Widget *, void *data) {
     }
     rgb_surf = new Fl_Image_Surface(W, H, 1);
     rgb_surf->set_current();
+    fl_color(FL_YELLOW);fl_rectf(0,0,1000,1000);
     if (decorated)
       rgb_surf->draw_decorated_window(target->as_window());
     else

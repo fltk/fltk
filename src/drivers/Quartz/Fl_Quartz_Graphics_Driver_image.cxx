@@ -85,8 +85,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 						       tmpBuf ? dataReleaseCB : NULL
 						       );
   CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta,
-                            lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
-                            //lut, delta&1?kCGImageAlphaNone:kCGImageAlphaLast,
+                            lut, delta&1?kCGImageAlphaNone:kCGImageAlphaLast,
                             src, 0L, false, kCGRenderingIntentDefault);
   // draw the image into the destination context
   if (img) {
