@@ -35,9 +35,6 @@
 #include "flstring.h"
 #include <ctype.h>
 
-extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
-void fl_restore_clip(); // in fl_rect.cxx
-
 void Fl_Pixmap::measure() {
   int W, H;
 
