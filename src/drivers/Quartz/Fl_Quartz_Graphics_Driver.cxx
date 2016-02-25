@@ -20,9 +20,6 @@
 #include "../../config_lib.h"
 #include "Fl_Quartz_Graphics_Driver.h"
 
-
-const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
-
 /* Reference to the current CGContext
  For back-compatibility only. The preferred procedure to get this reference is
  Fl_Surface_Device::surface()->driver()->gc().

@@ -23,8 +23,7 @@
 
 /* Attempt at an inheritance diagram.
  
- Fl_Device: base class for the core device systems
-  |
+ 
   +- Fl_Surface_Device: any kind of surface that we can draw onto -> uses an Fl_Graphics_Driver
       |
       +- Fl_Display_Device: some kind of video device
@@ -38,7 +37,7 @@
           +- Fl_PostScript_File_Device
               |
               +- Fl_PostScript_Printer
-  |
+ 
   +- Fl_Graphics_Driver
       |
       +- Fl_..._Graphics_Driver: platform specific graphics driver
@@ -48,10 +47,6 @@ TODO:
   System Device to handle file system acces, standard dialogs, etc.
 
 */
-
-const char *Fl_Device::class_id = "Fl_Device";
-const char *Fl_Surface_Device::class_id = "Fl_Surface_Device";
-const char *Fl_Display_Device::class_id = "Fl_Display_Device";
 
 bool Fl_Display_Device::high_res_window_ = false;
 

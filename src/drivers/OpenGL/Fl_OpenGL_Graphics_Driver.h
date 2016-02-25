@@ -33,8 +33,6 @@
  */
 class FL_EXPORT Fl_OpenGL_Graphics_Driver : public Fl_Graphics_Driver {
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   // --- line and polygon drawing with integer coordinates
   void point(int x, int y);
   void rect(int x, int y, int w, int h);

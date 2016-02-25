@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// implementation of Fl_Device class for the Fast Light Tool Kit (FLTK).
+// implementation of Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2012 by Bill Spitzak and others.
 //
@@ -21,8 +21,6 @@
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl_Image.H>
 #include <FL/fl_draw.H>
-
-const char *Fl_Graphics_Driver::class_id = "Fl_Graphics_Driver";
 
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current target device of graphics operations
 

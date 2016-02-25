@@ -42,8 +42,6 @@ class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
   CGContextRef gc_;
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
   virtual void *gc() {return gc_;}

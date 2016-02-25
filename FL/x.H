@@ -133,8 +133,9 @@ extern FL_EXPORT XFontStruct* fl_X_core_font();
 // this object contains all X-specific stuff about a window:
 // Warning: this object is highly subject to change!  
 // FL_LIBRARY or FL_INTERNALS must be defined to access this class.
-class FL_EXPORT Fl_X : public Fl_Device {
+class FL_EXPORT Fl_X {
 public:
+  virtual ~Fl_X() {}       // very important
   Window xid;
   Window other_xid;
   Fl_Window *w;

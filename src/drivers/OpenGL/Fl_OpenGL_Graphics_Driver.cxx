@@ -19,13 +19,8 @@
 #ifndef FL_CFG_GFX_OPENGL_CXX
 #define FL_CFG_GFX_OPENGL_CXX
 
-
 #include <FL/gl.h>
 #include "Fl_OpenGL_Graphics_Driver.h"
-
-
-const char *Fl_OpenGL_Graphics_Driver::class_id = "Fl_OpenGL_Graphics_Driver";
-
 
 #endif // FL_CFG_GFX_OPENGL_RECT_CXX
 

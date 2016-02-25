@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -39,9 +39,7 @@ protected:
   uchar **mask_bitmap() {return mask_bitmap_;}
   void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
 public:
-  static const char *class_id;
   Fl_Xlib_Graphics_Driver(void);
-  const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void *gc() { return gc_; }
   char can_do_alpha_blending();

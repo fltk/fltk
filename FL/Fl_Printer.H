@@ -71,8 +71,6 @@ protected:
   /** \brief The constructor */
   Fl_System_Printer(void);
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page (void);
   int printable_rect(int *w, int *h);
@@ -116,8 +114,6 @@ protected:
   /** The constructor */
   Fl_PostScript_Printer(void) {};
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
 };
 
@@ -184,8 +180,6 @@ public:
  */
 class FL_EXPORT Fl_Printer : public Fl_Paged_Device {
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   /** \brief The constructor */
   Fl_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);

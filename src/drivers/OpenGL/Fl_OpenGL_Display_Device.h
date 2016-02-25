@@ -27,8 +27,6 @@ class Fl_OpenGL_Graphics_Driver;
  */
 class FL_EXPORT Fl_OpenGL_Display_Device : public Fl_Surface_Device {
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *graphics_driver);
   static Fl_OpenGL_Display_Device *display_device();
 };

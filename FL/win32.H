@@ -63,8 +63,9 @@ inline void XClipBox(Fl_Region r,XRectangle* rect) {
 
 // this object contains all win32-specific stuff about a window:
 // Warning: this object is highly subject to change!
-class FL_EXPORT Fl_X : public Fl_Device {
+class FL_EXPORT Fl_X {
 public:
+  virtual ~Fl_X() {}       // very important
   // member variables - add new variables only at the end of this block
   Window xid;
   HBITMAP other_xid; // for double-buffered windows

@@ -113,8 +113,6 @@ protected:
 public:
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   virtual int start_page(void);
   virtual int printable_rect(int *w, int *h);

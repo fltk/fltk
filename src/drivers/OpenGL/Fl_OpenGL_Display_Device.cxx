@@ -37,9 +37,6 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 {
 }
 
-const char *Fl_OpenGL_Display_Device::class_id = "Fl_OpenGL_Display_Device";
-
-
 //
 // End of "$Id$".
 //

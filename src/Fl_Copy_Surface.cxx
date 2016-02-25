@@ -33,7 +33,6 @@ int Fl_Quartz_Surface_::printable_rect(int *w, int *h) {
   return 0;
 }
 
-const char *Fl_Quartz_Surface_::class_id = "Fl_Quartz_Surface_";
 
 #elif defined(WIN32)
 
@@ -60,12 +59,8 @@ void Fl_GDI_Surface_::untranslate() {
   SetWindowOrgEx((HDC)driver()->gc(), origins[depth].x, origins[depth].y, NULL);
 }
 
-const char *Fl_GDI_Surface_::class_id = "Fl_GDI_Surface_";
-
 #endif
 
-
-const char *Fl_Copy_Surface::class_id = "Fl_Copy_Surface";
 
 /** Constructor.
  \param w and \param h are the width and height of the clipboard surface
@@ -243,8 +238,6 @@ class Fl_translated_Xlib_Graphics_Driver_ : public Fl_Xlib_Graphics_Driver {
   unsigned depth; // depth of translation stack
   int stack_x[20], stack_y[20]; // translation stack allowing cumulative translations
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_translated_Xlib_Graphics_Driver_() {
     offset_x = 0; offset_y = 0;
     depth = 0;
@@ -258,7 +251,7 @@ public:
     push_matrix();
     translate(dx, dy);
     if (depth < sizeof(stack_x)/sizeof(int)) depth++;
-    else Fl::warning("%s: translate stack overflow!", class_id);
+    else Fl::warning("%s: translate stack overflow!", "Fl_translated_Xlib_Graphics_Driver_");
   }
   void untranslate_all() { // undoes previous translate_all()
     if (depth > 0) depth--;
@@ -353,7 +346,6 @@ public:
   void point(int x, int y) { Fl_Xlib_Graphics_Driver::point(x+offset_x, y+offset_y); }
 };
 
-const char *Fl_translated_Xlib_Graphics_Driver_::class_id = "Fl_translated_Xlib_Graphics_Driver_";
 
 void Fl_Xlib_Surface_::translate(int x, int y) {
   ((Fl_translated_Xlib_Graphics_Driver_*)driver())->translate_all(x, y);
@@ -368,8 +360,6 @@ Fl_Xlib_Surface_::Fl_Xlib_Surface_() : Fl_Paged_Device() {
 Fl_Xlib_Surface_::~Fl_Xlib_Surface_() {
   delete driver();
 }
-
-const char *Fl_Xlib_Surface_::class_id = "Fl_Xlib_Surface_";
 
 #endif
 

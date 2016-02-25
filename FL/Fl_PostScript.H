@@ -71,8 +71,6 @@ protected:
   uchar **mask_bitmap() {return &mask;}
   void mask_bitmap(uchar **value) { }
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_PostScript_Graphics_Driver();
 #ifndef FL_DOXYGEN
   enum SHAPE{NONE=0, LINE, LOOP, POLYGON, POINTS};
@@ -239,8 +237,6 @@ class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 protected:
   Fl_PostScript_Graphics_Driver *driver();
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_PostScript_File_Device();
   ~Fl_PostScript_File_Device();
   int start_job(int pagecount, int* from, int* to);

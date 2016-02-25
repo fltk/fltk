@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -83,7 +83,7 @@ typedef short COORD_T;
  class. This new class should implement all virtual methods of the Fl_Graphics_Driver class
  to support all FLTK drawing functions.
   */
-class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
+class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Surface_Device;
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
@@ -133,8 +133,6 @@ protected:
 
   // === all code below in this class has been to the reorganisation FL_PORTING process
 public:
-  static const char *class_id;
-  virtual const char *class_name() {return class_id;};
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() { if (p) free(p); }
   virtual char can_do_alpha_blending() { return 0; }

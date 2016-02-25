@@ -63,8 +63,6 @@ private:
   Window pre_window;
 #endif
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_Image_Surface(int w, int h, int highres = 0);
   ~Fl_Image_Surface();
   void set_current();
@@ -78,8 +76,6 @@ public:
 /* Mac class to implement translate()/untranslate() for a flipped bitmap graphics context */
 class FL_EXPORT Fl_Quartz_Flipped_Surface_ : public Fl_Quartz_Surface_ {
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_Quartz_Flipped_Surface_(int w, int h);
   void translate(int x, int y);
   void untranslate();

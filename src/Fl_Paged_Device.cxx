@@ -29,8 +29,6 @@
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 #endif
 
-const char *Fl_Paged_Device::class_id = "Fl_Paged_Device";
-
 /**
  @brief Draws the widget on the printed page.
  *

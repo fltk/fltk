@@ -22,11 +22,6 @@
 #include "Fl_GDI_Graphics_Driver.h"
 
 
-const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
-
-// FIXME: move to printer graphics driver
-const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_Driver";
-
 /* Reference to the current device context
  For back-compatibility only. The preferred procedure to get this reference is
  Fl_Surface_Device::surface()->driver()->gc().

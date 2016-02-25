@@ -27,9 +27,6 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
-
-const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
-
 /* Reference to the current graphics context
  For back-compatibility only. The preferred procedure to get this pointer is
  Fl_Surface_Device::surface()->driver()->gc().

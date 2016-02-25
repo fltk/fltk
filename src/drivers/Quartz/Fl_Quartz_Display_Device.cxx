@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// implementation of Fl_Device class for the Fast Light Tool Kit (FLTK).
+// implementation of Fl_Display_Device class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
 //
@@ -18,8 +18,6 @@
 
 // FIXME: implement this
 #if 0 
-
-const char *Fl_Display_Device::class_id = "Fl_Display_Device";
 
 /**  A constructor that sets the graphics driver used by the display */
 Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device(graphics_driver) {

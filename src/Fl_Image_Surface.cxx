@@ -32,8 +32,6 @@
 #else
 #endif
 
-const char *Fl_Image_Surface::class_id = "Fl_Image_Surface";
-
 /** Constructor with optional high resolution.
  \param w and \param h give the size in pixels of the resulting image.
  \param highres if non-zero, the surface pixel size is twice as high and wide as w and h,
@@ -199,8 +197,6 @@ void Fl_Quartz_Flipped_Surface_::translate(int x, int y) {
 void Fl_Quartz_Flipped_Surface_::untranslate() {
   CGContextRestoreGState((CGContextRef)driver()->gc());
 }
-
-const char *Fl_Quartz_Flipped_Surface_::class_id = "Fl_Quartz_Flipped_Surface_";
 
 #endif
 

@@ -32,8 +32,6 @@
 #endif
 #endif
 
-const char *Fl_PostScript_Graphics_Driver::class_id = "Fl_PostScript_Graphics_Driver";
-const char *Fl_PostScript_File_Device::class_id = "Fl_PostScript_File_Device";
 /** \brief Label of the PostScript file chooser window */
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 

@@ -73,8 +73,6 @@ private:
   Fl_Surface_Device *_ss;
 #endif
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_Copy_Surface(int w, int h);
   ~Fl_Copy_Surface();
   void set_current();
@@ -94,8 +92,6 @@ protected:
   int width;
   int height;
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_Quartz_Surface_(int w, int h);
   virtual int printable_rect(int *w, int *h);
   virtual ~Fl_Quartz_Surface_() {};
@@ -110,8 +106,6 @@ class FL_EXPORT Fl_GDI_Surface_ : public Fl_Paged_Device {
   unsigned depth;
   POINT origins[10];
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_GDI_Surface_();
   virtual void translate(int x, int y);
   virtual void untranslate();
@@ -127,8 +121,6 @@ public:
 /* Xlib class to implement translate()/untranslate() */
 class FL_EXPORT Fl_Xlib_Surface_ : public Fl_Paged_Device {
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_Xlib_Surface_();
   virtual void translate(int x, int y);
   virtual void untranslate();

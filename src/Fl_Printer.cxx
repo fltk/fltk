@@ -19,8 +19,6 @@
 
 #include <FL/Fl_Printer.H>
 
-const char *Fl_Printer::class_id = "Fl_Printer";
-
 #ifdef NO_PRINT_SUPPORT
 
 Fl_Printer::Fl_Printer(void) {
@@ -115,16 +113,6 @@ const char *Fl_Printer::property_use = "Use";
 const char *Fl_Printer::property_save = "Save";
 /** [this text may be customized at run-time] */
 const char *Fl_Printer::property_cancel = "Cancel";
-
-#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - platform printing
-const char *Fl_System_Printer::class_id = Fl_Printer::class_id;
-#endif
-#if defined(__APPLE__) || defined(WIN32)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the printer device specifics"
-#else
-const char *Fl_PostScript_Printer::class_id = Fl_Printer::class_id;
-#endif
 
 #if defined(__APPLE__) || defined(WIN32) // PORTME: Fl_Screen_Driver - platform printing
 

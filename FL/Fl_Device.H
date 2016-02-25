@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Device, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -18,8 +18,7 @@
 //
 
 /** \file Fl_Device.H 
- \brief declaration of classes Fl_Device, Fl_Surface_Device,
- Fl_Display_Device, Fl_Device_Plugin.
+ \brief declaration of classes Fl_Surface_Device, Fl_Display_Device, Fl_Device_Plugin.
 */
 
 #ifndef Fl_Device_H
@@ -32,37 +31,6 @@ class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
 class Fl_RGB_Image;
 class Fl_Widget;
-
-/**
- All graphical output devices and all graphics systems.
- This class supports a rudimentary system of run-time type information.
- */
-class FL_EXPORT Fl_Device {
-public:
-  /** A string that identifies each subclass of Fl_Device.
-     Function class_name() applied to a device of this class returns this string.
-   */
-  static const char *class_id;
-  /** 
-   Returns the name of the class of this object. 
-   The class_name() function is deprecated.   
-   The preferred procedure is to use the Fl_Graphics_Driver::has_feature() member function.
-   
-   The class of an instance of an Fl_Device subclass can be checked with code such as:
-   \code
-   if ( instance->class_name() == Fl_Printer::class_id ) { ... }
-   \endcode
-   */
-  virtual const char *class_name() {return class_id;};
-  /** 
-   Virtual destructor.
-   
-   The destructor of Fl_Device must be virtual to make the destructors of
-   derived classes being called correctly on destruction.
-   */
-  virtual ~Fl_Device() {};
-};
-
 
 /**
  A drawing surface that's susceptible to receive graphical output.
@@ -84,7 +52,7 @@ public:
  <li> Delete \c surface.
  </ol>
  */
-class FL_EXPORT Fl_Surface_Device : public Fl_Device {
+class FL_EXPORT Fl_Surface_Device {
   /** \brief The graphics driver in use by this surface. */
   Fl_Graphics_Driver *_driver;
   static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
@@ -93,8 +61,6 @@ protected:
   /** \brief Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver; };
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   virtual void set_current(void);
   /** \brief Sets the graphics driver of this drawing surface. */
   inline void driver(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver;};
@@ -120,8 +86,6 @@ class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
   static Fl_Display_Device *_display; // the platform display device
   static bool high_res_window_; //< true when drawing to a window of a retina display (Mac OS X only)
 public:
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
   static Fl_Display_Device *display_device();
   static bool high_resolution() {return high_res_window_;}

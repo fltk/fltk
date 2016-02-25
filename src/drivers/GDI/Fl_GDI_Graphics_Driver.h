@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -43,8 +43,6 @@ protected:
   void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
 public:
   Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL;}
-  static const char *class_id;
-  const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (HDC)ctxt;}
@@ -132,9 +130,7 @@ protected:
  */
 class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
 public:
-  static const char *class_id;
   virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
-  const char *class_name() {return class_id;};
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
