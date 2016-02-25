@@ -38,7 +38,11 @@ protected:
   HDC gc_;
   int numcount;
   int counts[20];
+  uchar **mask_bitmap_;
+  uchar **mask_bitmap() {return mask_bitmap_;}
+  void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
 public:
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL;}
   static const char *class_id;
   const char *class_name() {return class_id;};
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }

@@ -59,6 +59,7 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
     gc_ = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
     fl_gc = gc_;
   }
+  mask_bitmap_ = NULL;
 }
 
 char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {

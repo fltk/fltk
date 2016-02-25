@@ -806,16 +806,15 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
   else copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
 }
 
-extern uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
 fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
   Fl_Offscreen id;
   id = fl_create_offscreen(w, h);
   fl_begin_offscreen(id);
   uchar *bitmap = 0;
-  fl_mask_bitmap = &bitmap;
+  mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
-  fl_mask_bitmap = 0;
+  mask_bitmap(0);
   if (bitmap) {
     img->mask_ = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
     delete[] bitmap;

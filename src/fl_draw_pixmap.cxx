@@ -70,7 +70,6 @@ int fl_measure_pixmap(const char * const *cdata, int &w, int &h) {
   return 1;
 }
 
-uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
 /**
   Draw XPM image data, with the top-left corner at the given position.
@@ -256,10 +255,11 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   }
 
   // build the mask bitmap used by Fl_Pixmap:
-  if (fl_mask_bitmap) {
+  uchar **p = fl_graphics_driver->mask_bitmap();
+  if (p) {
     int W = (w+7)/8;
     uchar* bitmap = new uchar[W * h];
-    *fl_mask_bitmap = bitmap;
+    *p = bitmap;
     const uchar *p = &buffer[3];
     uchar b = 0;
     for (int Y = 0; Y < h; Y++) {

@@ -347,8 +347,6 @@ static inline uchar swap_byte(const uchar b) {
 }
 
 
-extern uchar **fl_mask_bitmap;
-
 struct callback_data {
   const uchar *data;
   int D, LD;
@@ -577,7 +575,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP,
   int w,h;
   if (!fl_measure_pixmap(di, w, h)) return;
   mask=0;
-  fl_mask_bitmap=&mask;
+  mask_bitmap(&mask);
   mx = WP;
   my = HP;
   push_clip(XP, YP, WP, HP);
@@ -585,7 +583,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP,
   pop_clip();
   delete[] mask;
   mask=0;
-  fl_mask_bitmap=0;
+  mask_bitmap(0);
 }
 
 void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy){

@@ -88,6 +88,7 @@ class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
+  friend int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -255,6 +256,10 @@ public:
   /** Returns the driver-specific graphics context, of NULL if there's none. */
   virtual void *gc(void) {return NULL;}
 protected:
+  /** Support for pixmap drawing */
+  virtual uchar **mask_bitmap() { return 0; }
+  /** Support for pixmap drawing */
+  virtual void mask_bitmap(uchar **) {}
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);
   virtual void fixloop();

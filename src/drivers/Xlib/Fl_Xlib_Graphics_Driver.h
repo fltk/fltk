@@ -35,6 +35,9 @@
 class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
   static GC gc_;
+  uchar **mask_bitmap_;
+  uchar **mask_bitmap() {return mask_bitmap_;}
+  void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
 public:
   static const char *class_id;
   Fl_Xlib_Graphics_Driver(void);
