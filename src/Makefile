@@ -65,7 +65,6 @@ CPPFILES = \
 	Fl_Pack.cxx \
 	Fl_Paged_Device.cxx \
 	Fl_Pixmap.cxx \
-	Fl_PostScript.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
 	Fl_Printer.cxx \
@@ -163,8 +162,7 @@ CPPFILES = \
 	fl_symbols.cxx \
 	fl_vertex.cxx \
 	screen_xywh.cxx \
-	fl_utf8.cxx \
-	ps_image.cxx
+	fl_utf8.cxx
 
 OBJCPPFILES = \
 	Fl_cocoa.mm \
@@ -567,7 +565,7 @@ Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:	
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
-Fl_Printer.o: Fl_GDI_Printer.cxx Fl_PostScript.cxx
+Fl_Printer.o: Fl_GDI_Printer.cxx ../src/drivers/PostScript/Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H
 Fl_arg.o:	../FL/mac.H ../FL/win32.H
