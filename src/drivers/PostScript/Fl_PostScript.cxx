@@ -26,7 +26,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <stdarg.h>
 #if defined(USE_X11)
-#include "Fl_Font.H"
+#include <src/Fl_Font.H>
 #if USE_XFT
 #include <X11/Xft/Xft.h>
 #endif
