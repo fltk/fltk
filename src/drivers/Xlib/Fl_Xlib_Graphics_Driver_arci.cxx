@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include "Fl_Xlib_Graphics_Driver.h"
+#include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/fl_draw.H>
 
 /**

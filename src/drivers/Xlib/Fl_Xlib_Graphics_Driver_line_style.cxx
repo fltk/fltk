@@ -32,7 +32,7 @@
 #include "../../flstring.h"
 #include <stdio.h>
 
-#include "Fl_Xlib_Graphics_Driver.h"
+#include "Fl_Xlib_Graphics_Driver.H"
 
 // We save the current line width (absolute value) here.
 // This is currently used only for X11 clipping, see src/fl_rect.cxx.

@@ -21,7 +21,7 @@
 
 #ifndef FL_DOXYGEN
 
-#include <src/drivers/Xlib/Fl_Xlib_Graphics_Driver.h>
+#include <src/drivers/Xlib/Fl_Xlib_Graphics_Driver.H>
 
 /* graphics driver that translates all graphics coordinates before calling Xlib */
 class Fl_Translated_Xlib_Graphics_Driver : public Fl_Xlib_Graphics_Driver {

@@ -31,7 +31,7 @@
 // being used to index arrays.  So I always copy them to an integer
 // before use.
 
-#include "Fl_Xlib_Graphics_Driver.h"
+#include "Fl_Xlib_Graphics_Driver.H"
 #  include "../../Fl_XColor.H"
 #  include <FL/Fl.H>
 #  include <FL/x.H>

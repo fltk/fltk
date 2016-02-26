@@ -34,7 +34,7 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-#include "Fl_Xlib_Graphics_Driver.h"
+#include "Fl_Xlib_Graphics_Driver.H"
 
 
 #ifndef SHRT_MAX
