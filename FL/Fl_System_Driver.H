@@ -30,7 +30,7 @@
 /**
  \brief A base class for platform specific window handling code.
   */
-class FL_EXPORT Fl_System_Driver : public Fl_Device {
+class FL_EXPORT Fl_System_Driver {
 public:
   Fl_System_Driver();
   virtual ~Fl_System_Driver();

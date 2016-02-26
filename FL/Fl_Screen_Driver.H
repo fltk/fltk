@@ -36,7 +36,7 @@
 class Fl_Window;
 
 
-class FL_EXPORT Fl_Screen_Driver : public Fl_Device {
+class FL_EXPORT Fl_Screen_Driver {
 
 protected:
   Fl_Screen_Driver();
