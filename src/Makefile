@@ -271,11 +271,16 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx
 
+PSCPPFILES = \
+	drivers/PostScript/Fl_PostScript.cxx \
+	drivers/PostScript/Fl_PostScript_image.cxx
+
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
+CPPFILES += $(PSCPPFILES)
 CPPFILES += $(shell if test $(USEMMFILES) = Yes; then echo $(QUARTZCPPFILES); fi)
 
 CPPFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCPPFILES); fi)

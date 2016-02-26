@@ -200,15 +200,7 @@ class Clip {
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
       
   void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); };
-#ifdef __APPLE__ // PORTME: merge into code - additional functionality
   void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); };
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define floating point position text drawing if you have it"
-#else // X11
-      // not needed
-#endif
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
   void font(int face, int size);

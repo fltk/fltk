@@ -172,7 +172,7 @@ int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 #ifndef FL_DOXYGEN
 
 #if ! (defined(__APPLE__) || defined(WIN32) ) // PORTME: Fl_Surface_Driver - platform PostScript
-#  include "print_panel.cxx"
+#  include <src/print_panel.cxx>
 #endif
 
 //  Prolog string 

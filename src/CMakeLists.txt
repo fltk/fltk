@@ -157,8 +157,8 @@ if (USE_X11 AND NOT OPTION_PRINT_SUPPORT)
   )
 else()
   set(PSFILES
-    Fl_PostScript.cxx
-    ps_image.cxx
+    drivers/PostScript/Fl_PostScript.cxx
+    drivers/PostScript/Fl_PostScript_image.cxx
   )
 endif(USE_X11 AND NOT OPTION_PRINT_SUPPORT)
 
