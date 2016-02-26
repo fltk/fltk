@@ -39,7 +39,6 @@ void Fl_Printer::end_job (void) {}
 void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) {}
 void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
-Fl_Graphics_Driver* driver(void) {return NULL;}
 Fl_Printer::~Fl_Printer(void) {}
 
 const char *Fl_Printer::dialog_title = NULL;
@@ -226,11 +225,6 @@ void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, i
 void Fl_Printer::set_current(void)
 {
   printer->set_current();
-}
-
-Fl_Graphics_Driver* Fl_Printer::driver(void)
-{
-  return printer->driver();
 }
 
 Fl_Printer::~Fl_Printer(void)

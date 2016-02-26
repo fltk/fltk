@@ -202,7 +202,6 @@ public:
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x=0, int delta_y=0);
   void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   void set_current(void);
-  Fl_Graphics_Driver* driver(void);
  
   /** \name These attributes are effective under the Xlib platform only.
    \{
