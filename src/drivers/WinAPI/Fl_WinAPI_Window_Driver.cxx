@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_WinAPI_Window_Driver.h"
+#include "Fl_WinAPI_Window_Driver.H"
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)

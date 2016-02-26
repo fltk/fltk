@@ -35,7 +35,7 @@ extern int fl_gl_load_plugin;
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 
-#include "drivers/OpenGL/Fl_OpenGL_Display_Device.h"
+#include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
 #elif defined(FL_PORTING)

@@ -32,7 +32,7 @@
   \brief Line style drawing utility hiding different platforms.
 */
 
-#include "Fl_GDI_Graphics_Driver.h"
+#include "Fl_GDI_Graphics_Driver.H"
 
 extern int fl_line_width_;  // defined in src/fl_line_style.cxx
 

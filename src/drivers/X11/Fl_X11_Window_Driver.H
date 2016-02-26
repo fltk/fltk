@@ -1,7 +1,7 @@
 //
 // "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $"
 //
-// Definition of Apple Cocoa window driver
+// Definition of X11 window driver
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -18,12 +18,12 @@
 //
 
 /**
- \file Fl_WinAPI_Window_Driver.h
- \brief Definition of MSWindows window driver.
+ \file Fl_X11_Window_Driver.H
+ \brief Definition of X11 window driver.
  */
 
-#ifndef FL_WINAPI_WINDOW_DRIVER_H
-#define FL_WINAPI_WINDOW_DRIVER_H
+#ifndef FL_X11_WINDOW_DRIVER_H
+#define FL_X11_WINDOW_DRIVER_H
 
 #include <FL/Fl_Window_Driver.H>
 
@@ -42,15 +42,16 @@
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 
-class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
+class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
 {
 public:
-  Fl_WinAPI_Window_Driver(Fl_Window*);
+  Fl_X11_Window_Driver(Fl_Window*);
+  virtual void take_focus();
 };
 
 
 
-#endif // FL_WINAPI_WINDOW_DRIVER_H
+#endif // FL_X11_WINDOW_DRIVER_H
 
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".

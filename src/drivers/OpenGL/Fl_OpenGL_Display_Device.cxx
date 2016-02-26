@@ -22,8 +22,8 @@
 #include <FL/Fl_Device.H>
 #include <FL/gl.h>
 
-#include "Fl_OpenGL_Graphics_Driver.h"
-#include "Fl_OpenGL_Display_Device.h"
+#include "Fl_OpenGL_Graphics_Driver.H"
+#include "Fl_OpenGL_Display_Device.H"
 
 // TODO: much of Fl_Gl_Choice should probably go here
 

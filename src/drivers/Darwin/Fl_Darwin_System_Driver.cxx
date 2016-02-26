@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Darwin_System_Driver.h"
+#include "Fl_Darwin_System_Driver.H"
 
 
 //

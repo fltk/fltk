@@ -30,7 +30,7 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-#include "Fl_GDI_Graphics_Driver.h"
+#include "Fl_GDI_Graphics_Driver.H"
 
 
 // --- line and polygon drawing with integer coordinates

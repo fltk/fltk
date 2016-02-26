@@ -26,7 +26,7 @@
 #include "drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.H"
 #endif
 #ifdef FL_CFG_GFX_GDI
-#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.H"
 #endif
 
 

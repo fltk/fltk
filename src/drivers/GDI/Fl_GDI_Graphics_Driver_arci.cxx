@@ -30,7 +30,7 @@
 // hand-drawn bitmaps of small circles!) and may be implemented by
 // hardware and thus are fast.
 
-#include "Fl_GDI_Graphics_Driver.h"
+#include "Fl_GDI_Graphics_Driver.H"
 
 #include <FL/math.h>
 

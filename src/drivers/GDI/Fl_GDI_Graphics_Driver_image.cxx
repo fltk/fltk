@@ -36,7 +36,7 @@
 ////////////////////////////////////////////////////////////////
 
 #include <config.h>
-#include "Fl_GDI_Graphics_Driver.h"
+#include "Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>

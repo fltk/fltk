@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Posix_System_Driver.h"
+#include "Fl_Posix_System_Driver.H"
 
 
 //

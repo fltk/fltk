@@ -27,7 +27,7 @@
 
 #include <config.h>
 #include "../../config_lib.h"
-#include "Fl_OpenGL_Graphics_Driver.h"
+#include "Fl_OpenGL_Graphics_Driver.H"
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_RGB_Image.H>

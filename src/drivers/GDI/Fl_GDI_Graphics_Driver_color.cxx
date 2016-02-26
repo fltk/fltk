@@ -21,7 +21,7 @@
 // changes can be made.  Not to be confused with the X colormap, which
 // I try to hide completely.
 
-#include "Fl_GDI_Graphics_Driver.h"
+#include "Fl_GDI_Graphics_Driver.H"
 
 #include <config.h>
 #include <FL/Fl.H>

@@ -48,7 +48,7 @@ class Fl_Widget *fl_selection_requestor;
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
-#  include "drivers/X11/Fl_X11_Screen_Driver.h"
+#  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>

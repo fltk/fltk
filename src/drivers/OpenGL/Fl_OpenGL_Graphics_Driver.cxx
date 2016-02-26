@@ -20,7 +20,7 @@
 #define FL_CFG_GFX_OPENGL_CXX
 
 #include <FL/gl.h>
-#include "Fl_OpenGL_Graphics_Driver.h"
+#include "Fl_OpenGL_Graphics_Driver.H"
 
 #endif // FL_CFG_GFX_OPENGL_RECT_CXX
 
