@@ -32,8 +32,8 @@ protected:
   int x_offset;
   /** \brief vertical offset to the origin of graphics coordinates */
   int y_offset;
-public:
   Fl_Widget_Surface(Fl_Graphics_Driver *d);
+public:
   /**
    Translates the current graphics origin accounting for the current rotation.
    

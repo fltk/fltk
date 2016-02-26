@@ -22,15 +22,18 @@
 #include <FL/Fl_Shared_Image.H>
 
 
+/** The constructor.
+ \param d can be nul.
+ */
 Fl_Widget_Surface::Fl_Widget_Surface(Fl_Graphics_Driver *d) : Fl_Surface_Device(d) {
   x_offset = 0;
   y_offset = 0;
 }
 
 /**
- @brief Draws the widget on the printed page.
+ @brief Draws the widget on the drawing surface.
  *
- The widget's position on the printed page is determined by the last call to origin()
+ The widget's position on the surface is determined by the last call to origin()
  and by the optional delta_x and delta_y arguments.
  Its dimensions are in points unless there was a previous call to scale().
  @param[in] widget Any FLTK widget (e.g., standard, custom, window).
