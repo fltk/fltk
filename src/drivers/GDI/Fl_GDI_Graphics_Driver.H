@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -18,32 +18,37 @@
 //
 
 /**
- \file Fl_Xlib_Graphics_Driver.h
- \brief Definition of X11 Xlib graphics driver.
+ \file Fl_GDI_Graphics_Driver.H
+ \brief Definition of MSWindows GDI graphics driver.
  */
 
-#ifndef FL_CFG_GFX_XLIB_H
-#define FL_CFG_GFX_XLIB_H
+#ifndef FL_GDI_GRAPHICS_DRIVER_H
+#define FL_GDI_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
+#include <windows.h>
+
 
 /**
- \brief The Xlib-specific graphics class.
+ \brief The MSWindows-specific graphics class.
  *
- This class is implemented only on the Xlib platform.
+ This class is implemented only on the MSWindows platform.
  */
-class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
-  static GC gc_;
+  HDC gc_;
+  int numcount;
+  int counts[20];
   uchar **mask_bitmap_;
   uchar **mask_bitmap() {return mask_bitmap_;}
   void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
 public:
-  Fl_Xlib_Graphics_Driver(void);
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL;}
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
-  virtual void *gc() { return gc_; }
   char can_do_alpha_blending();
-  
+  virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (HDC)ctxt;}
+  virtual void *gc() {return gc_;}
+
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
   void delete_bitmask(Fl_Bitmask bm);
@@ -66,14 +71,15 @@ public:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #if ! defined(FL_DOXYGEN)
-  void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 protected:
-  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
+  // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
+  void focus_rect(int x, int y, int w, int h);
   void rectf(int x, int y, int w, int h);
   void line(int x, int y, int x1, int y1);
   void line(int x, int y, int x1, int y1, int x2, int y2);
@@ -118,8 +124,29 @@ protected:
   void color(uchar r, uchar g, uchar b);
 };
 
+/**
+ The graphics driver used when printing on MSWindows.
+ *
+ This class is implemented only on the MSWindows platform. It 's extremely similar to Fl_GDI_Graphics_Driver.
+ */
+class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+public:
+  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
+};
 
-#endif // FL_CFG_GFX_XLIB_H
+class Fl_Translated_GDI_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+  unsigned depth;
+  POINT origins[10];
+public:
+  Fl_Translated_GDI_Graphics_Driver() {depth = 0;}
+  virtual void translate_all(int x, int y);
+  virtual void untranslate_all(void);
+};
+
+#endif // FL_GDI_GRAPHICS_DRIVER_H
 
 //
 // End of "$Id$".

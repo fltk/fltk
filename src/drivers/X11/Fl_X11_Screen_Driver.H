@@ -1,7 +1,7 @@
 //
 // "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $"
 //
-// Definition of MSWindows Win32/64 Screen interface
+// Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -18,34 +18,37 @@
 //
 
 /**
- \file Fl_WinAPI_Screen_Driver.h
- \brief Definition of MSWindows Win32/64 Screen interface.
+ \file Fl_X11_Screen_Driver.H
+ \brief Definition of X11 Screen interface
  */
 
-#ifndef FL_WINAPI_SCREEN_DRIVER_H
-#define FL_WINAPI_SCREEN_DRIVER_H
+#ifndef FL_X11_SCREEN_DRIVER_H
+#define FL_X11_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
-#include <FL/x.H>
 
 
 class Fl_Window;
 
 
-class FL_EXPORT Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver 
+class FL_EXPORT Fl_X11_Screen_Driver : public Fl_Screen_Driver 
 {
 protected:
-  RECT screens[MAX_SCREENS];
-  RECT work_area[MAX_SCREENS];
+  typedef struct {
+    short x_org;
+    short y_org;
+    short width;
+    short height;
+  } FLScreenInfo;
+  FLScreenInfo screens[MAX_SCREENS];
   float dpi[MAX_SCREENS][2];
-
-  static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
-  BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
 
 public:
   // --- display management
+  virtual void display(const char *disp);
   virtual int visual(int flags);
   // --- screen configuration
+  void init_workarea();
   virtual void init();
   virtual int x();
   virtual int y();
@@ -68,7 +71,7 @@ public:
 };
 
 
-#endif // FL_WINAPI_SCREEN_DRIVER_H
+#endif // FL_X11_SCREEN_DRIVER_H
 
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".
