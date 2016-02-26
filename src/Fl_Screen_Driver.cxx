@@ -32,6 +32,9 @@ num_screens(-1)
 {
 }
 
+Fl_Screen_Driver::~Fl_Screen_Driver() {
+}
+
 
 void Fl_Screen_Driver::display(const char *) {
   // blank

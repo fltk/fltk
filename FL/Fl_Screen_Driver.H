@@ -40,6 +40,7 @@ class FL_EXPORT Fl_Screen_Driver {
 
 protected:
   Fl_Screen_Driver();
+  virtual ~Fl_Screen_Driver();
 
   static const int MAX_SCREENS = 16;
 
