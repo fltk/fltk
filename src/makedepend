@@ -1330,7 +1330,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Image.H ../FL/Fl.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/fl_utf8.h ../FL/fl_ask.H
 drivers/Posix/Fl_Posix_System_Driver.o: config_lib.h ../config.h
-drivers/Posix/Fl_Posix_System_Driver.o: drivers/Posix/Fl_Posix_System_Driver.h
+drivers/Posix/Fl_Posix_System_Driver.o: drivers/Posix/Fl_Posix_System_Driver.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/Fl_System_Driver.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/Fl_Preferences.H
