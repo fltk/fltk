@@ -20,7 +20,7 @@
 #include <FL/fl_draw.H>
 
 /**
-  \file xlib_arci.cxx
+  \file Fl_Xlib_Graphics_Driver_arci.cxx
   \brief Utility functions for drawing circles using integers
 */
 

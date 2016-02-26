@@ -68,6 +68,7 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offs
   XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x, y);
 }
 
+#ifndef FL_DOXYGEN
 void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int h,
                                                         Fl_Offscreen pixmap, int srcx, int srcy) {
 #if HAVE_XRENDER
@@ -95,6 +96,7 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int
   XRenderFreePicture(fl_display, dst);
 #endif
 }
+#endif
 
 //
 // End of "$Id$".

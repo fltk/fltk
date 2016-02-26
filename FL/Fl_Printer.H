@@ -90,8 +90,9 @@ public:
   /** \brief The destructor */
   ~Fl_System_Printer(void);
 }; // class Fl_System_Printer
+#endif
 
-#elif defined(FL_PORTING)
+#if defined(FL_PORTING)
 
 # pragma message "FL_PORTING: define your own Fl_xxx_Printer class"
 class Fl_XXX_Printer : public Fl_Paged_Device {
@@ -100,7 +101,9 @@ protected:
   Fl_XXX_Printer(void) { }
 };
 
-#else 
+#endif
+
+#if defined(FL_DOXYGEN) || !(__APPLE__ || WIN32 || FL_PORTING)
 
 /**
  Print support under Unix/Linux.

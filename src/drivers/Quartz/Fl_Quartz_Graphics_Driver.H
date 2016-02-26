@@ -18,7 +18,7 @@
 //
 
 /**
- \file quartz.h
+ \file Fl_Quartz_Graphics_Driver.H
  \brief Definition of Apple Quartz graphics driver.
  */
 

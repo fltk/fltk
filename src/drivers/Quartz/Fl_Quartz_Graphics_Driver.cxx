@@ -40,7 +40,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   return new Fl_Quartz_Graphics_Driver();
 }
 
-
+#ifndef FL_DOXYGEN
 Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h) {
   void *data = calloc(w*h,4);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
@@ -48,6 +48,7 @@ Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h
   CGColorSpaceRelease(lut);
   return (Fl_Offscreen)ctx;
 }
+#endif
 
 char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {
   return 1;

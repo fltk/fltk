@@ -20,7 +20,7 @@
 #define FL_CFG_GFX_XLIB_LINE_STYLE_CXX
 
 /**
-  \file xlib_line_style.cxx
+  \file Fl_Xlib_Graphics_Driver_line_style.cxx
   \brief Line style drawing utility hiding different platforms.
 */
 

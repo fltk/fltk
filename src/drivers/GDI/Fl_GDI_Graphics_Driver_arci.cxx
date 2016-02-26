@@ -20,7 +20,7 @@
 #define FL_CFG_GFX_GDI_ARCI_CXX
 
 /**
-  \file gdi_arci.cxx
+  \file Fl_GDI_Graphics_Driver_arci.cxx
   \brief Utility functions for drawing circles using integers
 */
 

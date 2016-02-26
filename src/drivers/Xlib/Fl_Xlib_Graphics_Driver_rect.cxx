@@ -22,7 +22,7 @@
 
 
 /**
- \file xlib_rect.cxx
+ \file Fl_Xlib_Graphics_Driver_rect.cxx
  \brief X11 Xlib specific line and polygon drawing with integer coordinates.
  */
 

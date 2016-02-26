@@ -18,7 +18,7 @@
 
 
 /**
- \file gdi_rect.cxx
+ \file Fl_GDI_Graphics_Driver_rect.cxx
  \brief MSWindows GDI specific line and polygon drawing with integer coordinates.
  */
 

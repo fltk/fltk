@@ -22,11 +22,12 @@
 #include <config.h>
 
 
+#ifndef FL_DOXYGEN
 void Fl::call_screen_init()
 {
   screen_driver()->init();
 }
-
+#endif
 
 /** Returns the leftmost x coordinate of the main screen work area. */
 int Fl::x()

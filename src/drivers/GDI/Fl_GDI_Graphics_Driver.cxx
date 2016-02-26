@@ -113,6 +113,7 @@ void Fl_GDI_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,HBITMAP bitm
   DeleteDC(new_gc);
 }
 
+#if ! defined(FL_DOXYGEN)
 void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
@@ -129,6 +130,7 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
+#endif
 
 void Fl_Translated_GDI_Graphics_Driver::translate_all(int x, int y) {
   GetWindowOrgEx((HDC)gc(), origins+depth);

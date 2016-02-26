@@ -21,7 +21,7 @@
 
 
 /**
- \file quartz_rect.cxx
+ \file Fl_OpenGL_Graphics_Driver_rect.cxx
  \brief OpenGL specific line and polygon drawing with integer coordinates.
  */
 

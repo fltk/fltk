@@ -20,7 +20,7 @@
 #define FL_CFG_GFX_GDI_VERTEX_CXX
 
 /**
- \file gdi_vertex.cxx
+ \file Fl_GDI_Graphics_Driver_vertex.cxx
  \brief  Portable drawing code for drawing arbitrary shapes with
  simple 2D transformations, implemented for MSWindows GDI.
  */

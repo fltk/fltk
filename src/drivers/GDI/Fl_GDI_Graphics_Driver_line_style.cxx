@@ -28,7 +28,7 @@
 #include <stdio.h>
 
 /**
-  \file gdi_line_style.cxx
+  \file Fl_GDI_Graphics_Driver_line_style.cxx
   \brief Line style drawing utility hiding different platforms.
 */
 
