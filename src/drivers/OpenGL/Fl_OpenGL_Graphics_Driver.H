@@ -18,7 +18,7 @@
 //
 
 /**
- \file opengl.H
+ \file Fl_OpenGL_Graphics_Driver.H
  \brief Definition of OpenGL graphics driver.
  */
 
