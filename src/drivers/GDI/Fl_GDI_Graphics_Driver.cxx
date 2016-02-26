@@ -20,6 +20,7 @@
 #include <config.h>
 #include "../../config_lib.h"
 #include "Fl_GDI_Graphics_Driver.h"
+#include <FL/Fl.H>
 
 
 /* Reference to the current device context
@@ -127,6 +128,18 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
+}
+
+void Fl_Translated_GDI_Graphics_Driver::translate_all(int x, int y) {
+  GetWindowOrgEx((HDC)gc(), origins+depth);
+  SetWindowOrgEx((HDC)gc(), origins[depth].x - x, origins[depth].y - y, NULL);
+  if (depth < sizeof(origins)/sizeof(POINT)) depth++;
+  else Fl::warning("Fl_Copy_Surface: translate stack overflow!");
+}
+
+void Fl_Translated_GDI_Graphics_Driver::untranslate_all() {
+  if (depth > 0) depth--;
+  SetWindowOrgEx((HDC)gc(), origins[depth].x, origins[depth].y, NULL);
 }
 
 //

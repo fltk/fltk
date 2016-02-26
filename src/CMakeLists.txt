@@ -78,6 +78,7 @@ set(CPPFILES
   Fl_Value_Output.cxx
   Fl_Value_Slider.cxx
   Fl_Widget.cxx
+  Fl_Widget_Surface.cxx
   Fl_Window.cxx
   Fl_Window_Driver.cxx
   Fl_Window_fullscreen.cxx
@@ -178,6 +179,7 @@ if (USE_X11)
     drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
+    drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.cxx
   )
   if (USE_XFT)
     set(DRIVER_FILES ${DRIVER_FILES}

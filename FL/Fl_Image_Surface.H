@@ -44,12 +44,11 @@
  Fl_Display_Device::display_device()->set_current();  // direct graphics requests back to the display
  \endcode
 */
-class FL_EXPORT Fl_Image_Surface : public Fl_Surface_Device {
+class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
 private:
   Fl_Offscreen offscreen;
   int width;
   int height;
-  Fl_Paged_Device *helper;
 #ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform image surface driver
 #elif defined(WIN32)
   HDC _sgc; 
@@ -62,30 +61,16 @@ private:
   Fl_Surface_Device *previous;
   Window pre_window;
 #endif
+protected:
+  void translate(int x, int y);
+  void untranslate();
 public:
   Fl_Image_Surface(int w, int h, int highres = 0);
   ~Fl_Image_Surface();
   void set_current();
-  void draw(Fl_Widget*, int delta_x = 0, int delta_y = 0);
   Fl_RGB_Image *image();
-  void draw_decorated_window(Fl_Window* win, int delta_x = 0, int delta_y = 0);
   Fl_Shared_Image *highres_image();
 };
-
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform surface driver
-/* Mac class to implement translate()/untranslate() for a flipped bitmap graphics context */
-class FL_EXPORT Fl_Quartz_Flipped_Surface_ : public Fl_Quartz_Surface_ {
-public:
-  Fl_Quartz_Flipped_Surface_(int w, int h);
-  void translate(int x, int y);
-  void untranslate();
-  virtual ~Fl_Quartz_Flipped_Surface_() {};
-};
-#elif defined(WIN32)
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define a helper class for Fl_Image_Surface if needed"
-#else
-#endif 
 
 #endif // Fl_Image_Surface_H
 

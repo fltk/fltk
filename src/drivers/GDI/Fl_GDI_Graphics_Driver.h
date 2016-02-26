@@ -26,6 +26,7 @@
 #define FL_GDI_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
+#include <windows.h>
 
 
 /**
@@ -136,6 +137,14 @@ public:
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
 };
 
+class Fl_Translated_GDI_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+  unsigned depth;
+  POINT origins[10];
+public:
+  Fl_Translated_GDI_Graphics_Driver() {depth = 0;}
+  virtual void translate_all(int x, int y);
+  virtual void untranslate_all(void);
+};
 
 #endif // FL_GDI_GRAPHICS_DRIVER_H
 

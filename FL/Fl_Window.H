@@ -71,7 +71,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 
   friend class Fl_X;
   friend class Fl_Window_Driver;
-  friend class Fl_Paged_Device;
   Fl_Window_Driver *i; // points at the system-specific stuff
 
   struct icon_data {
@@ -99,8 +98,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   uchar size_range_set;
   // cursor stuff
   Fl_Cursor cursor_default;
-  // Captures the titlebar and borders of the window, if they exist.
-  void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   
 protected:
   /** Data supporting a non-rectangular window shape */
@@ -636,6 +633,8 @@ public:
    */
   int decorated_h();
 
+  // Captures the titlebar and borders of the window, if they exist.
+  void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   Fl_Window_Driver *driver() { return i; }
 
 };

@@ -4366,7 +4366,7 @@ void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Im
 }
 
 
-void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
+void Fl_System_Printer::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
     this->print_widget(win, x_offset, y_offset);

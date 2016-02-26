@@ -209,8 +209,14 @@ void Fl_Printer::end_job (void)
 
 void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
 {
-  printer->print_widget(widget, delta_x, delta_y);
+  printer->draw(widget, delta_x, delta_y);
 }
+
+void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
+{
+  printer->draw_decorated_window(win, delta_x, delta_y);
+}
+
 
 void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {

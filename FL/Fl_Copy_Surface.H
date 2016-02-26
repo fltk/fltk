@@ -48,11 +48,10 @@
  Applications to which the clipboard content is pasted can use the flavor that suits them best.
  \li X11: the graphical data are copied to the clipboard as an image in BMP format.
 */
-class FL_EXPORT Fl_Copy_Surface : public Fl_Surface_Device {
+class FL_EXPORT Fl_Copy_Surface : public Fl_Widget_Surface {
 private:
   int width;
   int height;
-  Fl_Paged_Device *helper;
 #ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform surface driver
   CFMutableDataRef pdfdata;
   CGContextRef oldgc;
@@ -72,12 +71,13 @@ private:
   Window oldwindow;
   Fl_Surface_Device *_ss;
 #endif
+protected:
+  void translate(int x, int y);
+  void untranslate();
 public:
   Fl_Copy_Surface(int w, int h);
   ~Fl_Copy_Surface();
   void set_current();
-  void draw(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
-  void draw_decorated_window(Fl_Window* win, int delta_x = 0, int delta_y = 0);
   /** Returns the pixel width of the copy surface */
   int w() { return width; }
   /** Returns the pixel height of the copy surface */
@@ -86,46 +86,14 @@ public:
 
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform surface driver
 
-/* Mac class to reimplement Fl_Paged_Device::printable_rect() */
-class FL_EXPORT Fl_Quartz_Surface_ : public Fl_System_Printer {
-protected:
-  int width;
-  int height;
-public:
-  Fl_Quartz_Surface_(int w, int h);
-  virtual int printable_rect(int *w, int *h);
-  virtual ~Fl_Quartz_Surface_() {};
-};
 
 #elif defined(WIN32)
-
-/* Win class to implement translate()/untranslate() */
-class FL_EXPORT Fl_GDI_Surface_ : public Fl_Paged_Device {
-  int width;
-  int height;
-  unsigned depth;
-  POINT origins[10];
-public:
-  Fl_GDI_Surface_();
-  virtual void translate(int x, int y);
-  virtual void untranslate();
-  virtual ~Fl_GDI_Surface_();
-};
 
 #elif defined(FL_PORTING)
 
 # pragma message "FL_PORTING: define a drawing surface for your platform"
 
 #elif !defined(FL_DOXYGEN)
-
-/* Xlib class to implement translate()/untranslate() */
-class FL_EXPORT Fl_Xlib_Surface_ : public Fl_Paged_Device {
-public:
-  Fl_Xlib_Surface_();
-  virtual void translate(int x, int y);
-  virtual void untranslate();
-  virtual ~Fl_Xlib_Surface_();
-};
 
 #endif
 

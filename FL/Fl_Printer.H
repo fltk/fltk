@@ -84,6 +84,7 @@ public:
   int end_page (void);
   void end_job (void);
 #ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform printer driver
+  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
 #endif
   /** \brief The destructor */
@@ -196,6 +197,7 @@ public:
   void end_job (void);
   void print_widget(Fl_Widget* widget, int delta_x=0, int delta_y=0);
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x=0, int delta_y=0);
+  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   void set_current(void);
   Fl_Graphics_Driver* driver(void);
  

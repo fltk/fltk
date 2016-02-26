@@ -23,8 +23,8 @@
 #ifndef Fl_Paged_Device_H
 #define Fl_Paged_Device_H
 
-#include <FL/Fl_Device.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Widget_Surface.H>
+
 
 /** \brief Number of elements in enum Page_Format */
 #define NO_PAGE_FORMATS 30 /* MSVC6 compilation fix */
@@ -35,10 +35,7 @@
  This class has no public constructor: don't instantiate it; use Fl_Printer 
  or Fl_PostScript_File_Device instead.
  */
-class FL_EXPORT Fl_Paged_Device : public Fl_Surface_Device {
-  friend class Fl_Copy_Surface;
-  friend class Fl_Image_Surface;
-  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
+class FL_EXPORT Fl_Paged_Device : public Fl_Widget_Surface {
 public:
   /**
    \brief Possible page formats.
@@ -101,29 +98,18 @@ public:
   /** \brief width, height and name of all elements of the enum \ref Page_Format.
    */
   static const page_format page_formats[NO_PAGE_FORMATS];  
-private:
-  void traverse(Fl_Widget *widget); // finds subwindows of widget and prints them
 protected:
-  /** \brief horizontal offset to the origin of graphics coordinates */
-  int x_offset;
-  /** \brief vertical offset to the origin of graphics coordinates */
-  int y_offset;
   /** \brief The constructor */
-  Fl_Paged_Device() : Fl_Surface_Device(NULL), x_offset(0), y_offset(0) {};
+  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
 public:
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   virtual int start_page(void);
-  virtual int printable_rect(int *w, int *h);
   virtual void margins(int *left, int *top, int *right, int *bottom);
-  virtual void origin(int x, int y);
-  virtual void origin(int *x, int *y);
   virtual void scale(float scale_x, float scale_y = 0.);
   virtual void rotate(float angle);
-  virtual void translate(int x, int y);
-  virtual void untranslate(void);
-  virtual void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
+  virtual void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0) {draw(widget, delta_x, delta_y);}
   /** Prints a window with its title bar and frame if any.
    
    \p x_offset and \p y_offset are optional coordinates of where to position the window top left.
@@ -131,8 +117,9 @@ public:
    Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the
    printed window.
    */
-  void print_window(Fl_Window *win, int x_offset = 0, int y_offset = 0);
-  virtual void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
+  void print_window(Fl_Window *win, int x_offset = 0, int y_offset = 0) {
+    draw_decorated_window(win, x_offset, y_offset);
+  }
   virtual int end_page (void);
   virtual void end_job (void);
 };

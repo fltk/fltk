@@ -24,6 +24,12 @@
 #ifdef FL_CFG_GFX_QUARTZ
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
 #endif
+#ifdef FL_CFG_GFX_GDI
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
+#endif
+#ifdef FL_CFG_GFX_XLIB
+#include "drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.H"
+#endif
 
 #if defined(WIN32)
 #elif defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
@@ -40,16 +46,15 @@
  If \p highres is non-zero, use Fl_Image_Surface::highres_image() to get the image data.
  \version 1.3.4 (1.3.3 without the highres parameter)
  */
-Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Surface_Device(NULL) {
+Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Widget_Surface(NULL) {
   width = w;
   height = h;
 #ifdef __APPLE__ // PORTME: platform image surface
   offscreen = fl_create_offscreen(highres ? 2*w : w, highres ? 2*h : h);
-  helper = new Fl_Quartz_Flipped_Surface_(width, height);
+  driver(new Fl_Quartz_Graphics_Driver);
   if (highres) {
     CGContextScaleCTM(offscreen, 2, 2);
   }
-  driver(helper->driver());
   CGContextSetShouldAntialias(offscreen, false);
   CGContextSaveGState(offscreen);
   CGContextTranslateCTM(offscreen, 0, height);
@@ -58,14 +63,12 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Surface_Devic
   CGContextFillRect(offscreen, CGRectMake(0,0,w,h));
 #elif defined(WIN32)
   offscreen = fl_create_offscreen(w, h);
-  helper = new Fl_GDI_Surface_();
-  driver(helper->driver());
+  driver(new Fl_Translated_GDI_Graphics_Driver);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   offscreen = fl_create_offscreen(w, h);
-  helper = new Fl_Xlib_Surface_();
-  driver(helper->driver());
+  driver(new Fl_Translated_Xlib_Graphics_Driver());
 #endif
 }
 
@@ -76,15 +79,12 @@ Fl_Image_Surface::~Fl_Image_Surface() {
   void *data = CGBitmapContextGetData((CGContextRef)offscreen);
   free(data);
   CGContextRelease((CGContextRef)offscreen);
-  delete (Fl_Quartz_Flipped_Surface_*)helper;
 #elif defined(WIN32)
   fl_delete_offscreen(offscreen);
-  delete (Fl_GDI_Surface_*)helper;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
   fl_delete_offscreen(offscreen);
-  delete (Fl_Xlib_Surface_*)helper;
 #endif
 }
 
@@ -139,18 +139,6 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
 }
 
 
-/** Draws a widget in the image surface
- 
- \param widget any FLTK widget (e.g., standard, custom, window, GL view) to draw in the image
- \param delta_x and \param delta_y give 
- the position in the image of the top-left corner of the widget
- */
-void Fl_Image_Surface::draw(Fl_Widget *widget, int delta_x, int delta_y)
-{
-  helper->print_widget(widget, delta_x, delta_y);
-}
-
-
 void Fl_Image_Surface::set_current()
 {
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
@@ -181,10 +169,7 @@ void Fl_Image_Surface::set_current()
 
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
 
-Fl_Quartz_Flipped_Surface_::Fl_Quartz_Flipped_Surface_(int w, int h) : Fl_Quartz_Surface_(w, h) {
-}
-
-void Fl_Quartz_Flipped_Surface_::translate(int x, int y) {
+void Fl_Image_Surface::translate(int x, int y) {
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextSaveGState(gc);
@@ -194,21 +179,32 @@ void Fl_Quartz_Flipped_Surface_::translate(int x, int y) {
   CGContextScaleCTM(gc, 1.0f, -1.0f);
 }
 
-void Fl_Quartz_Flipped_Surface_::untranslate() {
+void Fl_Image_Surface::untranslate() {
   CGContextRestoreGState((CGContextRef)driver()->gc());
+}
+
+#elif defined(WIN32)
+
+void Fl_Image_Surface::translate(int x, int y) {
+  ((Fl_Translated_GDI_Graphics_Driver*)driver())->translate_all(x, y);
+}
+
+void Fl_Image_Surface::untranslate() {
+  ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
+}
+
+#else
+
+void Fl_Image_Surface::translate(int x, int y) {
+  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
+}
+
+void Fl_Image_Surface::untranslate() {
+  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->untranslate_all();
 }
 
 #endif
 
-/** Draws a window and its borders and title bar to the image drawing surface. 
- \param win an FLTK window to draw in the image
- \param delta_x and \param delta_y give
- the position in the image of the top-left corner of the window's title bar
-*/
-void Fl_Image_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
-{
-  helper->draw_decorated_window(win, delta_x, delta_y);
-}
 
 
 //

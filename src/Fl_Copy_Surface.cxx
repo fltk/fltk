@@ -19,45 +19,23 @@
 #include "config_lib.h"
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl.H>
+#ifdef FL_CFG_GFX_QUARTZ
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
+#endif
+#ifdef FL_CFG_GFX_XLIB
+#include "drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.H"
+#endif
+#ifdef FL_CFG_GFX_GDI
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
+#endif
 
 
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform copy surface
-#include <ApplicationServices/ApplicationServices.h>
-
-Fl_Quartz_Surface_::Fl_Quartz_Surface_(int w, int h) : Fl_System_Printer(), width(w), height(h) {
-}
-
-int Fl_Quartz_Surface_::printable_rect(int *w, int *h) {
-  *w = width;
-  *h = height;
-  return 0;
-}
-
 
 #elif defined(WIN32)
 
-#include "drivers/GDI/Fl_GDI_Graphics_Driver.h"
 
-Fl_GDI_Surface_::Fl_GDI_Surface_() : Fl_Paged_Device() {
-  driver(new Fl_GDI_Graphics_Driver);
-  depth = 0;
-}
-
-Fl_GDI_Surface_::~Fl_GDI_Surface_() {
-  delete driver();
-}
-
-void Fl_GDI_Surface_::translate(int x, int y) {
-  GetWindowOrgEx((HDC)driver()->gc(), origins+depth);
-  SetWindowOrgEx((HDC)driver()->gc(), origins[depth].x - x, origins[depth].y - y, NULL);
-  if (depth < sizeof(origins)/sizeof(POINT)) depth++;
-  else Fl::warning("Fl_GDI_Surface_: translate stack overflow!");
-}
-
-void Fl_GDI_Surface_::untranslate() {
-  if (depth > 0) depth--;
-  SetWindowOrgEx((HDC)driver()->gc(), origins[depth].x, origins[depth].y, NULL);
-}
+#else
 
 #endif
 
@@ -66,17 +44,15 @@ void Fl_GDI_Surface_::untranslate() {
  \param w and \param h are the width and height of the clipboard surface
  in pixels where drawing will occur.
  */
-Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
+Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Widget_Surface(NULL)
 {
   width = w;
   height = h;
 #ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform copy surface
-  helper = new Fl_Quartz_Surface_(width, height);
-  driver(helper->driver());
+  driver(new Fl_Quartz_Graphics_Driver);
   prepare_copy_pdf_and_tiff(w, h);
 #elif defined(WIN32)
-  helper = new Fl_GDI_Surface_();
-  driver(helper->driver());
+  driver(new Fl_Translated_GDI_Graphics_Driver);
   oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)
   HDC hdc = GetDC(NULL);
@@ -97,8 +73,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: initialize members of Fl_Copy_Surface"
 #else // Xlib
-  helper = new Fl_Xlib_Surface_();
-  driver(helper->driver());
+  driver(new Fl_Translated_Xlib_Graphics_Driver());
   Fl::first_window()->make_current();
   oldwindow = fl_xid(Fl::first_window());
   xid = fl_create_offscreen(w,h);
@@ -116,7 +91,6 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
 {
 #ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform copy surface
   complete_copy_pdf_and_tiff();
-  delete (Fl_Quartz_Surface_*)helper;
 #elif defined(WIN32)
   if (oldgc == (HDC)Fl_Surface_Device::surface()->driver()->gc()) oldgc = NULL;
   HENHMETAFILE hmf = CloseEnhMetaFile (gc);
@@ -130,7 +104,6 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   }
   DeleteDC(gc);
   Fl_Surface_Device::surface()->driver()->gc(oldgc);
-  delete (Fl_GDI_Surface_*)helper;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: free resources in destructor of Fl_Copy_Surface"
 #else // Xlib
@@ -141,20 +114,9 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   Fl::copy_image(data,width,height,1);
   delete[] data;
   fl_delete_offscreen(xid);
-  delete (Fl_Xlib_Surface_*)helper;
 #endif
 }
 
-/** Copies a widget in the clipboard
-
- \param widget any FLTK widget (e.g., standard, custom, window, GL view) to copy
- \param delta_x and \param delta_y give
- the position in the clipboard of the top-left corner of the widget
- */
-void Fl_Copy_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
-{
-  helper->print_widget(widget, delta_x, delta_y);
-}
 
 void Fl_Copy_Surface::set_current()
 {
@@ -211,157 +173,38 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
   CGContextSaveGState(gc);
 }
 
+void Fl_Copy_Surface::translate(int x, int y) {
+  CGContextRef gc = (CGContextRef)driver()->gc();
+  CGContextRestoreGState(gc);
+  CGContextSaveGState(gc);
+  CGContextTranslateCTM(gc, x, y);
+  CGContextSaveGState(gc);
+}
+
+void Fl_Copy_Surface::untranslate() {
+  CGContextRestoreGState((CGContextRef)driver()->gc());
+}
+
+#elif defined(WIN32)
+
+void Fl_Copy_Surface::translate(int x, int y) {
+  ((Fl_Translated_GDI_Graphics_Driver*)driver())->translate_all(x, y);
+}
+
+void Fl_Copy_Surface::untranslate() {
+  ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
+}
+
+#else
+void Fl_Copy_Surface::translate(int x, int y) {
+  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
+}
+
+void Fl_Copy_Surface::untranslate() {
+  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->untranslate_all();
+}
+
 #endif  // __APPLE__ // PORTME: Fl_Surface_Driver - platform copy surface
-
-
-/** Copies a window and its borders and title bar to the clipboard.
- \param win an FLTK window to copy
- \param delta_x and \param delta_y give
- the position in the clipboard of the top-left corner of the window's title bar
-*/
-void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
-{
-  helper->draw_decorated_window(win, delta_x, delta_y);
-}
-
-#if defined(WIN32)
-#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform copy surface
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you need a helper class for your graphics driver"
-#elif !defined(FL_DOXYGEN)
-
-#include "drivers/Xlib/Fl_Xlib_Graphics_Driver.h"
-
-/* graphics driver that translates all graphics coordinates before calling Xlib */
-class Fl_translated_Xlib_Graphics_Driver_ : public Fl_Xlib_Graphics_Driver {
-  int offset_x, offset_y; // translation between user and graphical coordinates: graphical = user + offset
-  unsigned depth; // depth of translation stack
-  int stack_x[20], stack_y[20]; // translation stack allowing cumulative translations
-public:
-  Fl_translated_Xlib_Graphics_Driver_() {
-    offset_x = 0; offset_y = 0;
-    depth = 0;
-    }
-  virtual ~Fl_translated_Xlib_Graphics_Driver_() {};
-  void translate_all(int dx, int dy) { // reversibly adds dx,dy to the offset between user and graphical coordinates
-    stack_x[depth] = offset_x;
-    stack_y[depth] = offset_y;
-    offset_x = stack_x[depth] + dx;
-    offset_y = stack_y[depth] + dy;
-    push_matrix();
-    translate(dx, dy);
-    if (depth < sizeof(stack_x)/sizeof(int)) depth++;
-    else Fl::warning("%s: translate stack overflow!", "Fl_translated_Xlib_Graphics_Driver_");
-  }
-  void untranslate_all() { // undoes previous translate_all()
-    if (depth > 0) depth--;
-    offset_x = stack_x[depth];
-    offset_y = stack_y[depth];
-    pop_matrix();
-  }
-  void rect(int x, int y, int w, int h) { Fl_Xlib_Graphics_Driver::rect(x+offset_x, y+offset_y, w, h); }
-  void rectf(int x, int y, int w, int h) { Fl_Xlib_Graphics_Driver::rectf(x+offset_x, y+offset_y, w, h); }
-  void xyline(int x, int y, int x1) { Fl_Xlib_Graphics_Driver::xyline(x+offset_x, y+offset_y, x1+offset_x); }
-  void xyline(int x, int y, int x1, int y2) { Fl_Xlib_Graphics_Driver::xyline(x+offset_x, y+offset_y, x1+offset_x, y2+offset_y); }
-  void xyline(int x, int y, int x1, int y2, int x3) { Fl_Xlib_Graphics_Driver::xyline(x+offset_x, y+offset_y, x1+offset_x, y2+offset_y, x3+offset_x); }
-  void yxline(int x, int y, int y1) { Fl_Xlib_Graphics_Driver::yxline(x+offset_x, y+offset_y, y1+offset_y); }
-  void yxline(int x, int y, int y1, int x2) { Fl_Xlib_Graphics_Driver::yxline(x+offset_x, y+offset_y, y1+offset_y, x2+offset_x); }
-  void yxline(int x, int y, int y1, int x2, int y3) { Fl_Xlib_Graphics_Driver::yxline(x+offset_x, y+offset_y, y1+offset_y, x2+offset_x, y3+offset_y); }
-  void line(int x, int y, int x1, int y1) { Fl_Xlib_Graphics_Driver::line(x+offset_x, y+offset_y, x1+offset_x, y1+offset_y); }
-  void line(int x, int y, int x1, int y1, int x2, int y2) { Fl_Xlib_Graphics_Driver::line(x+offset_x, y+offset_y, x1+offset_x, y1+offset_y, x2+offset_x, y2+offset_y); }
-  void draw(const char* str, int n, int x, int y) {
-    Fl_Xlib_Graphics_Driver::draw(str, n, x+offset_x, y+offset_y);
- }
-  void draw(int angle, const char *str, int n, int x, int y) {
-    Fl_Xlib_Graphics_Driver::draw(angle, str, n, x+offset_x, y+offset_y);
-  }
-  void rtl_draw(const char* str, int n, int x, int y) {
-    Fl_Xlib_Graphics_Driver::rtl_draw(str, n, x+offset_x, y+offset_y);
-  }
-  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-    XP += offset_x; YP += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw(pxm, XP, YP, WP,HP,cx,cy);
-    untranslate_all();
-  }
-  void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-    XP += offset_x; YP += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw(bm, XP, YP, WP,HP,cx,cy);
-    untranslate_all();
-  }
-  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
-    XP += offset_x; YP += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw(img, XP, YP, WP,HP,cx,cy);
-    untranslate_all();
-  }
-  void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {
-    X += offset_x; Y += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw_image(buf, X, Y, W,H,D,L);
-    untranslate_all();
-  }
-  void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {
-    X += offset_x; Y += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw_image(cb, data, X, Y, W,H,D);
-    untranslate_all();
-  }
-  void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {
-    X += offset_x; Y += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw_image_mono(buf, X, Y, W,H,D,L);
-    untranslate_all();
-  }
-  void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {
-    X += offset_x; Y += offset_y;
-    translate_all(-offset_x, -offset_y);
-    Fl_Xlib_Graphics_Driver::draw_image_mono(cb, data, X, Y, W,H,D);
-    untranslate_all();
-  }
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-    Fl_Xlib_Graphics_Driver::copy_offscreen(x+offset_x, y+offset_y, w, h,pixmap,srcx,srcy);
-  }
-  void push_clip(int x, int y, int w, int h) {
-    Fl_Xlib_Graphics_Driver::push_clip(x+offset_x, y+offset_y, w, h);
-  }
-  int not_clipped(int x, int y, int w, int h) { return Fl_Xlib_Graphics_Driver::not_clipped(x + offset_x, y + offset_y, w, h); };
-  int clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H) {
-    int retval = Fl_Xlib_Graphics_Driver::clip_box(x + offset_x, y + offset_y, w,h,X,Y,W,H);
-    X -= offset_x;
-    Y -= offset_y;
-    return retval;
-  }
-  void pie(int x, int y, int w, int h, double a1, double a2) { Fl_Xlib_Graphics_Driver::pie(x+offset_x,y+offset_y,w,h,a1,a2); }
-  void arc(int x, int y, int w, int h, double a1, double a2) { Fl_Xlib_Graphics_Driver::arc(x+offset_x,y+offset_y,w,h,a1,a2); }
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2) { Fl_Xlib_Graphics_Driver::polygon(x0+offset_x,y0+offset_y,x1+offset_x,y1+offset_y,x2+offset_x,y2+offset_y);}
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-    Fl_Xlib_Graphics_Driver::polygon(x0+offset_x,y0+offset_y,x1+offset_x,y1+offset_y,x2+offset_x,y2+offset_y,x3+offset_x,y3+offset_y);
-  }
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2) {Fl_Xlib_Graphics_Driver::loop(x0+offset_x,y0+offset_y,x1+offset_x,y1+offset_y,x2+offset_x,y2+offset_y);}
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-    Fl_Xlib_Graphics_Driver::loop(x0+offset_x,y0+offset_y,x1+offset_x,y1+offset_y,x2+offset_x,y2+offset_y,x3+offset_x,y3+offset_y);
-  }
-  void point(int x, int y) { Fl_Xlib_Graphics_Driver::point(x+offset_x, y+offset_y); }
-};
-
-
-void Fl_Xlib_Surface_::translate(int x, int y) {
-  ((Fl_translated_Xlib_Graphics_Driver_*)driver())->translate_all(x, y);
-}
-void Fl_Xlib_Surface_::untranslate() {
-  ((Fl_translated_Xlib_Graphics_Driver_*)driver())->untranslate_all();
-}
-
-Fl_Xlib_Surface_::Fl_Xlib_Surface_() : Fl_Paged_Device() {
-  driver(new Fl_translated_Xlib_Graphics_Driver_());
-}
-Fl_Xlib_Surface_::~Fl_Xlib_Surface_() {
-  delete driver();
-}
-
-#endif
 
 //
 // End of "$Id$".
