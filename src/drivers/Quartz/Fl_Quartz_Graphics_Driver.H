@@ -61,9 +61,6 @@ public:
   fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
   fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
-#if ! defined(FL_DOXYGEN)
-  static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
-#endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
 protected:
