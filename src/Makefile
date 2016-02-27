@@ -541,6 +541,7 @@ clean:
 	-$(RM)	drivers/GDI/*.o
 	-$(RM)	drivers/OpenGL/*.o
 	-$(RM)	drivers/Posix/*.o
+	-$(RM)	drivers/PostScript/*.o
 	-$(RM)	drivers/Quartz/*.o
 	-$(RM)	drivers/WinAPI/*.o
 	-$(RM)	drivers/X11/*.o
