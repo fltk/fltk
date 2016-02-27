@@ -103,7 +103,7 @@ protected:
 
 #endif
 
-#if defined(FL_DOXYGEN) || !(__APPLE__ || WIN32 || FL_PORTING)
+#if defined(FL_DOXYGEN) || !(defined(__APPLE__) || defined(WIN32) || defined(FL_PORTING))
 
 /**
  Print support under Unix/Linux.

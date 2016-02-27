@@ -1268,7 +1268,7 @@ void Fl_Help_View::format() {
           // Copy the title in the document...
           for (s = title_;
 	       *ptr != '<' && *ptr && s < (title_ + sizeof(title_) - 1);
-	       *s++ = *ptr++);
+	       *s++ = *ptr++) {/*empty*/}
 
 	  *s = '\0';
 	  s = buf;

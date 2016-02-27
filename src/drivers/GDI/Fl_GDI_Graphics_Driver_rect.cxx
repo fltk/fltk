@@ -243,8 +243,10 @@ void Fl_GDI_Graphics_Driver::pop_clip() {
 
 void Fl_GDI_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
-  Fl_Region r = rstack[rstackptr];
-  SelectClipRgn(gc_, r); //if r is NULL, clip is automatically cleared
+  if (gc_) {
+    Fl_Region r = rstack[rstackptr];
+    SelectClipRgn(gc_, r); // if r is NULL, clip is automatically cleared
+  }
 }
 
 

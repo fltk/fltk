@@ -1220,7 +1220,7 @@ int Fl_Input_::static_value(const char* str, int len) {
       int i = 0;
       // find first different character:
       if (value_) {
-	for (; i<size_ && i<len && str[i]==value_[i]; i++);
+	for (; i<size_ && i<len && str[i]==value_[i]; i++) {/*empty*/}
 	if (i==size_ && i==len) return 0;
       }
       minimal_update(i);

@@ -53,7 +53,7 @@
 #    undef chdir
 #    define chdir _chdir
 #  endif
-#elif defined(__APPLE__) // PORTME: should not be in the header
+#elif defined(__APPLE__) /* PORTME: should not be in the header */
 #  include <wchar.h>
 #  include <sys/stat.h>
 #  define xchar wchar_t
@@ -130,7 +130,7 @@ FL_EXPORT unsigned fl_utf8toa (const char *src, unsigned srclen, char *dst, unsi
 FL_EXPORT unsigned fl_utf8froma (char *dst, unsigned dstlen, const char *src, unsigned srclen);
 
 /* F2: Returns true if the current O/S locale is UTF-8 */
-FL_EXPORT int fl_utf8locale();
+FL_EXPORT int fl_utf8locale(void);
 
 /* F2: Examine the first len characters of src, to determine if the input text is UTF-8 or not
  * NOTE: The value returned is not simply boolean - it contains information about the probable
@@ -164,12 +164,12 @@ FL_EXPORT char *fl_utf8_to_locale(const char *s, int len, unsigned int codepage)
 
 /* OD: Attempt to convert a string in the current locale to UTF-8 */
 FL_EXPORT char *fl_locale_to_utf8(const char *s, int len, unsigned int codepage);
-#elif defined(__APPLE__)  // PORTME: Fl_Screen_Driver ? - platform text encoding and conversion
-  // not needed
+#elif defined(__APPLE__)  /* PORTME: Fl_Screen_Driver ? - platform text encoding and conversion */
+  /* not needed */
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you want to be able to convert from a local charset to utf8?"
-#else // X11
-  // not needed
+#else /* X11 */
+  /* not needed */
 #endif
 
 /*****************************************************************************

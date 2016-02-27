@@ -359,7 +359,7 @@ int CodeEditor::auto_indent(int, CodeEditor* e) {
   char *text = e->buffer()->text_range(start, pos);
   char *ptr;
 
-  for (ptr = text; isspace(*ptr); ptr ++);
+  for (ptr = text; isspace(*ptr); ptr ++) {/*empty*/}
   *ptr = '\0';  
   if (*text) {
     // use only a single 'insert' call to avoid redraw issues

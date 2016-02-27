@@ -14,7 +14,7 @@
  *     http://www.fltk.org/str.php
  */
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform unicode
+#if defined(WIN32) || defined(__APPLE__) /* PORTME: Fl_Screen_Driver - platform unicode */
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: utf8"
 #else
@@ -389,7 +389,7 @@ XUtf8DrawRtlString(Display 		*display,
       ptr = buf + 128;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 
@@ -506,7 +506,7 @@ XUtf8DrawString(Display 	*display,
       i = 0;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 
@@ -639,7 +639,7 @@ XUtf8_measure_extents(
       i = 0;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 
@@ -762,7 +762,7 @@ XUtf8TextWidth(XUtf8FontStruct 	*font_set,
       i = 0;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 

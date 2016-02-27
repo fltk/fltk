@@ -1410,7 +1410,7 @@ Fl_File_Chooser::update_preview()
     if (*ptr || ptr == preview_text_) {
       for (ptr = preview_text_;
          *ptr && (isprint(*ptr & 255) || isspace(*ptr & 255));
-	 ptr ++);
+	 ptr ++) {/*empty*/}
     }
 
     if (*ptr || ptr == preview_text_) {

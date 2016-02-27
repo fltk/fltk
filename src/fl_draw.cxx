@@ -163,7 +163,7 @@ void fl_draw(
       // Start with a symbol...
       for (symptr = symbol[0];
            *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
-           *symptr++ = *str++);
+           *symptr++ = *str++) {/*empty*/}
       *symptr = '\0';
       if (isspace(*str)) str++;
       symwidth[0] = (w < h ? w : h);

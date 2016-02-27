@@ -57,7 +57,7 @@ fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
 
 clean:
-	-$(RM) *.o core.* *~ *.bck *.bck *.bak
+	-$(RM) *.o core.* *~ *.bck *.bak
 	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
 	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
 

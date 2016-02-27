@@ -339,9 +339,11 @@ void Fl_Xlib_Graphics_Driver::pop_clip() {
 
 void Fl_Xlib_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
-  Fl_Region r = rstack[rstackptr];
-  if (r) XSetRegion(fl_display, gc_, r);
-  else XSetClipMask(fl_display, gc_, 0);
+  if (gc_) {
+    Fl_Region r = rstack[rstackptr];
+    if (r) XSetRegion(fl_display, gc_, r);
+    else XSetClipMask(fl_display, gc_, 0);
+  }
 }
 
 #endif // FL_CFG_GFX_XLIB_RECT_CXX

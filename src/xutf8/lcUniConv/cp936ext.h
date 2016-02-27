@@ -3,7 +3,7 @@
  *
  * Character encoding support for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -16,9 +16,9 @@
  *     http://www.fltk.org/str.php
  */
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: is this really needed? It's huge!
+#if defined(WIN32) || defined(__APPLE__) /* PORTME: is this really needed? It's huge! */
 
-  // not needed
+  /* not needed */
 
 #elif defined(FL_PORTING)
 
@@ -6251,7 +6251,7 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 
 #endif /* CP936 */
 
-#endif /* __APPLE__  WIN32 */ // PORTME: Unicode stuff
+#endif /* __APPLE__  WIN32 */ /* PORTME: Unicode stuff */
 
 /*
  * End of "$Id$".

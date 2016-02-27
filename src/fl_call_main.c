@@ -1,7 +1,7 @@
 /*
  * "$Id$"
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2016 by Bill Spitzak and others.
  *
  * fl_call_main() calls main() for you Windows people.  Needs to be done in C
  * because Borland C++ won't let you call main() from C++.
@@ -37,7 +37,7 @@
  * Microsoft(r) Windows(r) that allows for it.
  */
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_System_Driver - platform main()
+#if defined(WIN32) || defined(__APPLE__) /* PORTME: Fl_System_Driver - platform main() */
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement 'main()' here if your platform provides another app entry point"
 #else

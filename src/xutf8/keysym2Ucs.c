@@ -17,7 +17,7 @@
 #define KEYSYM2UCS_INCLUDED
 
 #if defined(WIN32)
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform unicode
+#elif defined(__APPLE__) /* PORTME: Fl_Screen_Driver - platform unicode */
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: do you want to include Xutf8.h?"
 #else
