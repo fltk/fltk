@@ -347,17 +347,18 @@ fluid.o: ../FL/Fl_File_Icon.H ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 fluid.o: ../FL/Fl_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Return_Button.H
 fluid.o: ../FL/Fl_PNG_Image.H ../FL/fl_message.H ../FL/fl_ask.H
 fluid.o: ../FL/filename.H ../FL/Fl_Native_File_Chooser.H ../FL/Fl_Printer.H
-fluid.o: ../FL/Fl_Paged_Device.H ../FL/Fl_PostScript.H ../src/flstring.h
-fluid.o: ../FL/Fl_Export.H ../config.h alignment_panel.h
-fluid.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Display.H
-fluid.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
-fluid.o: ../FL/Fl_Tabs.H ../FL/Fl_Int_Input.H ../FL/Fl_Input.H
-fluid.o: ../FL/Fl_Spinner.H ../FL/Fl_Repeat_Button.H ../FL/Fl_Round_Button.H
-fluid.o: function_panel.h ../FL/Fl_Light_Button.H ../FL/Fl_Text_Editor.H
-fluid.o: ../FL/Fl_Text_Display.H CodeEditor.h template_panel.h
-fluid.o: ../FL/Fl_Browser.H about_panel.h undo.h Fl_Type.h ../FL/Fl_Menu.H
-fluid.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Pack.H
-fluid.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Input_Choice.H
+fluid.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H
+fluid.o: ../FL/Fl_PostScript.H ../src/flstring.h ../FL/Fl_Export.H
+fluid.o: ../config.h alignment_panel.h ../FL/Fl_Text_Buffer.H
+fluid.o: ../FL/Fl_Text_Display.H ../FL/Fl_Text_Buffer.H ../FL/Fl_Tooltip.H
+fluid.o: ../FL/Fl_Widget.H ../FL/Fl_Tabs.H ../FL/Fl_Int_Input.H
+fluid.o: ../FL/Fl_Input.H ../FL/Fl_Spinner.H ../FL/Fl_Repeat_Button.H
+fluid.o: ../FL/Fl_Round_Button.H function_panel.h ../FL/Fl_Light_Button.H
+fluid.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H CodeEditor.h
+fluid.o: template_panel.h ../FL/Fl_Browser.H about_panel.h undo.h Fl_Type.h
+fluid.o: ../FL/Fl_Menu.H Fluid_Image.h ../FL/Fl_Shared_Image.H
+fluid.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+fluid.o: ../FL/Fl_Input_Choice.H
 function_panel.o: function_panel.h ../FL/Fl.H ../FL/fl_utf8.h
 function_panel.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 function_panel.o: ../FL/abi-version.h ../FL/Fl_Double_Window.H

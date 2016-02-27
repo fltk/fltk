@@ -140,8 +140,9 @@ cube.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 cube.o: ../FL/gl.h ../FL/Fl_Sys_Menu_Bar.H ../FL/Fl_Menu_Bar.H
 cube.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/x.H ../FL/Fl_Device.H
 cube.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Printer.H ../FL/x.H
-cube.o: ../FL/Fl_Paged_Device.H ../FL/fl_draw.H ../FL/Fl_Pixmap.H
-cube.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_PostScript.H
+cube.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H ../FL/fl_draw.H
+cube.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Bitmap.H
+cube.o: ../FL/Fl_PostScript.H
 CubeMain.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 CubeMain.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 CubeMain.o: CubeViewUI.h ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
@@ -185,8 +186,8 @@ device.o: ../FL/Fl_Light_Button.H ../FL/fl_draw.H ../FL/Fl_Clock.H
 device.o: pixmaps/porsche.xpm ../FL/Fl_Pixmap.H ../FL/Fl_Bitmap.H
 device.o: ../FL/Fl_Round_Button.H ../FL/Fl_Printer.H ../FL/x.H
 device.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Window.H ../FL/Fl_RGB_Image.H
-device.o: ../FL/Fl_PostScript.H ../FL/Fl_Copy_Surface.H
+device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H ../FL/Fl_Window.H
+device.o: ../FL/Fl_RGB_Image.H ../FL/Fl_PostScript.H ../FL/Fl_Copy_Surface.H
 device.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Image.H ../FL/Fl_Shared_Image.H
 device.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
 device.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
@@ -390,8 +391,9 @@ mandelbrot.o: ../FL/Fl_Input.H ../FL/Fl_Window.H ../FL/Fl_Float_Input.H
 mandelbrot.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_draw.H
 mandelbrot.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/x.H
 mandelbrot.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-mandelbrot.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-mandelbrot.o: ../FL/Fl_Bitmap.H ../FL/Fl_PostScript.H
+mandelbrot.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H
+mandelbrot.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Bitmap.H
+mandelbrot.o: ../FL/Fl_PostScript.H
 menubar.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 menubar.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Box.H
 menubar.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
@@ -458,8 +460,9 @@ pixmap_browser.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 pixmap_browser.o: ../FL/Fl_Image.H ../FL/Fl_Button.H ../FL/Fl_Shared_Image.H
 pixmap_browser.o: ../FL/Fl_Printer.H ../FL/x.H ../FL/Fl_Device.H
 pixmap_browser.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-pixmap_browser.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Window.H ../FL/fl_draw.H
-pixmap_browser.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Bitmap.H
+pixmap_browser.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H
+pixmap_browser.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_Pixmap.H
+pixmap_browser.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Bitmap.H
 pixmap_browser.o: ../FL/Fl_PostScript.H ../FL/Fl_File_Chooser.H
 pixmap_browser.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
 pixmap_browser.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
@@ -498,8 +501,8 @@ device.o: ../FL/Fl_Light_Button.H ../FL/fl_draw.H ../FL/Fl_Clock.H
 device.o: pixmaps/porsche.xpm ../FL/Fl_Pixmap.H ../FL/Fl_Bitmap.H
 device.o: ../FL/Fl_Round_Button.H ../FL/Fl_Printer.H ../FL/x.H
 device.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Window.H ../FL/Fl_RGB_Image.H
-device.o: ../FL/Fl_PostScript.H ../FL/Fl_Copy_Surface.H
+device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H ../FL/Fl_Window.H
+device.o: ../FL/Fl_RGB_Image.H ../FL/Fl_PostScript.H ../FL/Fl_Copy_Surface.H
 device.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Image.H ../FL/Fl_Shared_Image.H
 device.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
 device.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
