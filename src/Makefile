@@ -535,9 +535,17 @@ mgwfltknox_images-$(FL_DSO_VERSION).dll: $(IMGLIBNAME) mgwfltknox-$(FL_DSO_VERSI
 			$(IMAGELIBS) $(LDLIBS)
 
 clean:
-	-$(RM) *.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
-	-$(RM) drivers/GDI/*.o drivers/OpenGL/*.o drivers/Quartz/*.o drivers/Xlib/*.o
-	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
+	-$(RM)	*.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM)	drivers/Cocoa/*.o
+	-$(RM)	drivers/Darwin/*.o
+	-$(RM)	drivers/GDI/*.o
+	-$(RM)	drivers/OpenGL/*.o
+	-$(RM)	drivers/Posix/*.o
+	-$(RM)	drivers/Quartz/*.o
+	-$(RM)	drivers/WinAPI/*.o
+	-$(RM)	drivers/X11/*.o
+	-$(RM)	drivers/Xlib/*.o
+	-$(RM)	$(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
 		libfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \
