@@ -494,6 +494,22 @@ inline double fl_transform_dy(double x, double y) {return fl_graphics_driver->tr
  \param[in] xf,yf transformed coordinate
  */
 inline void fl_transformed_vertex(double xf, double yf) {fl_graphics_driver->transformed_vertex(xf,yf); }
+
+/** Copy a rectangular area of the given offscreen buffer into the current drawing destination.
+   \param x,y	position where to draw the copied rectangle
+   \param w,h	size of the copied rectangle
+   \param pixmap  offscreen buffer containing the rectangle to copy
+   \param srcx,srcy origin in offscreen buffer of rectangle to copy
+   */
+inline void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+    fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
+}
+
+FL_EXPORT Fl_Offscreen fl_create_offscreen(int w, int h);
+FL_EXPORT void fl_begin_offscreen(Fl_Offscreen b);
+FL_EXPORT void fl_end_offscreen(void);
+FL_EXPORT void fl_delete_offscreen(Fl_Offscreen bitmap);
+
 /** @} */
 
 /** \addtogroup  fl_attributes

@@ -301,8 +301,7 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uc
 }
 
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
-  Fl_Offscreen id;
-  id = create_offscreen_with_alpha(w, h);
+  Fl_Offscreen id = fl_create_offscreen(w, h);
   fl_begin_offscreen(id);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   fl_end_offscreen();

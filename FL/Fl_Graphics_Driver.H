@@ -253,11 +253,11 @@ public:
   virtual void gc(void*) {}
   /** Returns the driver-specific graphics context, of NULL if there's none. */
   virtual void *gc(void) {return NULL;}
-protected:
   /** Support for pixmap drawing */
   virtual uchar **mask_bitmap() { return 0; }
   /** Support for pixmap drawing */
   virtual void mask_bitmap(uchar **) {}
+protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);
   virtual void fixloop();

@@ -3309,7 +3309,7 @@ void Fl_X::q_release_context(Fl_X *x) {
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);
-  Fl_X::set_high_resolution(false);
+//  Fl_X::set_high_resolution(false);
   CGContextFlush(gc);
   Fl_Display_Device::display_device()->driver()->gc(0);
 #if defined(FLTK_USE_CAIRO)
@@ -3886,12 +3886,13 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
   }
   height = nl * fl_height() + 3;
   width += 6;
-  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(width, height);
+  Fl_Offscreen off = fl_create_offscreen(width, height);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,width,height);
   fl_color(FL_BLACK);
   p = text;
+  fl_font(FL_HELVETICA, 10);
   int y = fl_height();
   while(TRUE) {
     q = strchr(p, '\n');
@@ -3922,7 +3923,7 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
   else {
     width = 16; height = 16;
     }
-  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(width, height);
+  Fl_Offscreen off = fl_create_offscreen(width, height);
   fl_begin_offscreen(off);
   if (fl_mac_os_version >= version_threshold) {
     fl_font(FL_HELVETICA, 20);

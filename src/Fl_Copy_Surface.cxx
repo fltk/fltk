@@ -77,6 +77,7 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Widget_Surface(NULL)
   Fl::first_window()->make_current();
   oldwindow = fl_xid(Fl::first_window());
   xid = fl_create_offscreen(w,h);
+  _ss = NULL;
   Fl_Surface_Device *present_surface = Fl_Surface_Device::surface();
   set_current();
   fl_color(FL_WHITE);
@@ -128,7 +129,7 @@ void Fl_Copy_Surface::set_current()
 #  pragma message "FL_PORTING: implement Fl_Copy_Surface::set_current"
 #else
   fl_window=xid;
-  _ss = Fl_Surface_Device::surface();
+  if (!_ss) _ss = Fl_Surface_Device::surface();
   Fl_Surface_Device::set_current();
   fl_push_no_clip();
 #endif

@@ -173,7 +173,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   int blocking = h;
   {int size = linesize*h;
   // when printing, don't limit buffer size not to get a crash in StretchDIBits
-  if (size > MAXBUFFER && Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
+  if (size > MAXBUFFER && !fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
     size = MAXBUFFER;
     blocking = MAXBUFFER/linesize;
   }
@@ -251,7 +251,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
         }            
       }
     }
-    if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
+    if (fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
       StretchDIBits(gc, x, y+j-k, w, k, 0, 0, w, k,
@@ -633,11 +633,11 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const c
   id = fl_create_offscreen(w, h);
   fl_begin_offscreen(id);
   uchar *bitmap = 0;
-  mask_bitmap(&bitmap);
+  fl_graphics_driver->mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
   img->pixmap_bg_color = win_pixmap_bg_color;
-  mask_bitmap(0);
+  fl_graphics_driver->mask_bitmap(0);
   if (bitmap) {
     img->mask_ = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
     delete[] bitmap;

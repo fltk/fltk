@@ -76,20 +76,8 @@ FL_EXPORT int fl_handle(const XEvent&);
 extern FL_EXPORT const XEvent* fl_xevent;
 extern FL_EXPORT ulong fl_event_time;
 
-// off-screen pixmaps: create, destroy, draw into, copy to window:
 typedef ulong Fl_Offscreen;
-#    define fl_create_offscreen(w,h) XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth)
-#    define fl_create_offscreen_with_alpha(w,h) XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, 32)
-// begin/end are macros that save the old state in local variables:
-#    define fl_begin_offscreen(pixmap) \
-  Window _sw=fl_window; fl_window=pixmap; \
-  Fl_Surface_Device *_ss = Fl_Surface_Device::surface(); Fl_Display_Device::display_device()->set_current(); \
-  fl_push_no_clip()
-#    define fl_end_offscreen() \
-  fl_pop_clip(); fl_window = _sw; _ss->set_current()
-
-extern FL_EXPORT void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-#    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
+extern FL_EXPORT Fl_Offscreen fl_create_offscreen_with_alpha(int,int);
 
 // Bitmap masks
 typedef ulong Fl_Bitmask;

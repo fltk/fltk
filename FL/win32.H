@@ -131,9 +131,8 @@ extern FL_EXPORT MSG fl_msg;
 extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 
-// off-screen pixmaps: create, destroy, draw into, copy to window
 typedef HBITMAP Fl_Offscreen;
-#define fl_create_offscreen(w, h) \
+/*#define fl_create_offscreen(w, h) \
   CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h)
 
 # define fl_begin_offscreen(b) \
@@ -146,9 +145,7 @@ Fl_Display_Device::display_device()->set_current(); \
 # define fl_end_offscreen() \
    fl_pop_clip(); RestoreDC((HDC)fl_graphics_driver->gc(), _savedc); DeleteDC((HDC)fl_graphics_driver->gc()); _ss->set_current(); fl_window=_sw; fl_graphics_driver->gc(_sgc);
 
-
-FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
-#define fl_delete_offscreen(bitmap) DeleteObject(bitmap)
+#define fl_delete_offscreen(bitmap) DeleteObject(bitmap)*/
 
 // Bitmap masks
 typedef HBITMAP Fl_Bitmask;

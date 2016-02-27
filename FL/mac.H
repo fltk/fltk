@@ -219,11 +219,6 @@ void fl_clip_region(Fl_Region);
 extern Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
 extern void fl_delete_bitmask(Fl_Bitmask bm);
-extern Fl_Offscreen fl_create_offscreen(int w, int h);
-extern void fl_copy_offscreen(int x,int y,int w,int h, Fl_Offscreen gWorld, int srcx,int srcy);
-extern void fl_delete_offscreen(Fl_Offscreen gWorld);
-extern void fl_begin_offscreen(Fl_Offscreen gWorld);
-extern void fl_end_offscreen();
 
 extern int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 extern void fl_open_display();

@@ -40,16 +40,6 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
   return new Fl_Quartz_Graphics_Driver();
 }
 
-#ifndef FL_DOXYGEN
-Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h) {
-  void *data = calloc(w*h,4);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGContextRef ctx = CGBitmapContextCreate(data, w, h, 8, w*4, lut, kCGImageAlphaPremultipliedLast);
-  CGColorSpaceRelease(lut);
-  return (Fl_Offscreen)ctx;
-}
-#endif
-
 char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {
   return 1;
 }
@@ -79,86 +69,6 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscr
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src_bytes);
 }
-
-/** \addtogroup fl_drawings
- @{
- */
-
-// FIXME: driver system
-/**
- Creation of an offscreen graphics buffer.
- \param w,h     width and height in pixels of the buffer.
- \return    the created graphics buffer.
- */
-Fl_Offscreen fl_create_offscreen(int w, int h) {
-  void *data = calloc(w*h,4);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGContextRef ctx = CGBitmapContextCreate(
-                                           data, w, h, 8, w*4, lut, kCGImageAlphaNoneSkipLast);
-  CGColorSpaceRelease(lut);
-  return (Fl_Offscreen)ctx;
-}
-
-// FIXME: driver system
-/**  Deletion of an offscreen graphics buffer.
- \param ctx     the buffer to be deleted.
- */
-void fl_delete_offscreen(Fl_Offscreen ctx) {
-  if (!ctx) return;
-  void *data = CGBitmapContextGetData((CGContextRef)ctx);
-  CFIndex count = CFGetRetainCount(ctx);
-  CGContextRelease((CGContextRef)ctx);
-  if(count == 1) free(data);
-}
-
-// FIXME: driver system
-const int stack_max = 16;
-static int stack_ix = 0;
-static CGContextRef stack_gc[stack_max];
-static Window stack_window[stack_max];
-static Fl_Surface_Device *_ss;
-
-// FIXME: driver system
-/**  Send all subsequent drawing commands to this offscreen buffer.
- \param ctx     the offscreen buffer.
- */
-void fl_begin_offscreen(Fl_Offscreen ctx) {
-  _ss = Fl_Surface_Device::surface();
-  Fl_Display_Device::display_device()->set_current();
-  if (stack_ix<stack_max) {
-    stack_gc[stack_ix] = (CGContextRef)fl_graphics_driver->gc();
-    stack_window[stack_ix] = fl_window;
-  } else
-    fprintf(stderr, "FLTK CGContext Stack overflow error\n");
-  stack_ix++;
-
-  fl_graphics_driver->gc(ctx);
-  fl_window = 0;
-  CGContextSaveGState(ctx);
-  fl_graphics_driver->push_no_clip();
-}
-
-// FIXME: driver system
-/** Quit sending drawing commands to the current offscreen buffer.
- */
-void fl_end_offscreen() {
-  fl_graphics_driver->pop_clip();
-  CGContextRef gc = (CGContextRef)fl_graphics_driver->gc();
-
-  CGContextRestoreGState(gc); // matches CGContextSaveGState in fl_begin_offscreen()
-  CGContextFlush(gc);
-  if (stack_ix>0)
-    stack_ix--;
-  else
-    fprintf(stderr, "FLTK CGContext Stack underflow error\n");
-  if (stack_ix<stack_max) {
-    fl_graphics_driver->gc(stack_gc[stack_ix]);
-    fl_window = stack_window[stack_ix];
-  }
-  _ss->set_current();
-}
-
-/** @} */
 
 //
 // End of "$Id$".

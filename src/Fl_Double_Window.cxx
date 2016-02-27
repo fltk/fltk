@@ -81,20 +81,6 @@ void Fl_Double_Window::show() {
 }
 
 
-/** \addtogroup fl_drawings
- @{
- */
-/** Copy a rectangular area of the given offscreen buffer into the current drawing destination.
- \param x,y	position where to draw the copied rectangle
- \param w,h	size of the copied rectangle
- \param pixmap  offscreen buffer containing the rectangle to copy
- \param srcx,srcy origin in offscreen buffer of rectangle to copy
- */
-void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
-}
-/** @} */
-
 /** see fl_copy_offscreen() */
 void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
 {
@@ -209,7 +195,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+  if (myi->other_xid) fl_graphics_driver->copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {

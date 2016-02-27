@@ -40,37 +40,55 @@
 
 /** Constructor with optional high resolution.
  \param w and \param h give the size in pixels of the resulting image.
- \param highres if non-zero, the surface pixel size is twice as high and wide as w and h,
+ \param high_res if non-zero, the surface pixel size is twice as high and wide as w and h,
  which is useful to draw it later on a high resolution display (e.g., retina display).
  This is implemented for the Mac OS platform only.
  If \p highres is non-zero, use Fl_Image_Surface::highres_image() to get the image data.
  \version 1.3.4 (1.3.3 without the highres parameter)
  */
-Fl_Image_Surface::Fl_Image_Surface(int w, int h, int highres) : Fl_Widget_Surface(NULL) {
+Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res) : Fl_Widget_Surface(NULL) {
+  initialize_(NULL, w, h, high_res);
+}
+
+void Fl_Image_Surface::initialize_(Fl_Offscreen pixmap, int w, int h, int high_res) {
   width = w;
   height = h;
+  previous = 0;
 #ifdef __APPLE__ // PORTME: platform image surface
-  offscreen = fl_create_offscreen(highres ? 2*w : w, highres ? 2*h : h);
+  int W = high_res ? 2*w : w;
+  int H = high_res ? 2*h : h;
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  offscreen = CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(lut);
   driver(new Fl_Quartz_Graphics_Driver);
-  if (highres) {
+  CGContextTranslateCTM(offscreen, -0.5, 0.5); // as when drawing to a window
+  if (high_res) {
     CGContextScaleCTM(offscreen, 2, 2);
   }
   CGContextSetShouldAntialias(offscreen, false);
   CGContextSaveGState(offscreen);
   CGContextTranslateCTM(offscreen, 0, height);
   CGContextScaleCTM(offscreen, 1.0f, -1.0f);
-  CGContextSetRGBFillColor(offscreen, 1, 1, 1, 1);
+  CGContextSetRGBFillColor(offscreen, 1, 1, 1, 0);
   CGContextFillRect(offscreen, CGRectMake(0,0,w,h));
 #elif defined(WIN32)
-  offscreen = fl_create_offscreen(w, h);
+  offscreen = CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h);
   driver(new Fl_Translated_GDI_Graphics_Driver);
+  _sgc = NULL;
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
-  offscreen = fl_create_offscreen(w, h);
+  offscreen = pixmap ? pixmap : XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
   driver(new Fl_Translated_Xlib_Graphics_Driver());
 #endif
 }
+
+#if USE_X11
+// private constructor for X11 only
+Fl_Image_Surface::Fl_Image_Surface(Fl_Offscreen pixmap, int w, int h) : Fl_Widget_Surface(NULL) {
+    initialize_(pixmap, w, h, 0);
+  }
+#endif
 
 /** The destructor.
  */
@@ -80,11 +98,11 @@ Fl_Image_Surface::~Fl_Image_Surface() {
   free(data);
   CGContextRelease((CGContextRef)offscreen);
 #elif defined(WIN32)
-  fl_delete_offscreen(offscreen);
+  DeleteObject(offscreen);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
-  fl_delete_offscreen(offscreen);
+  XFreePixmap(fl_display, offscreen);
 #endif
 }
 
@@ -100,24 +118,16 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   CGContextFlush(offscreen);
   W = CGBitmapContextGetWidth(offscreen);
   H = CGBitmapContextGetHeight(offscreen);
-  Fl_X::set_high_resolution(0);
   data = fl_read_image(NULL, 0, 0, W, H, 0);
 #elif defined(WIN32)
-  fl_pop_clip(); 
   data = fl_read_image(NULL, 0, 0, width, height, 0);
-  HDC gc = (HDC)driver()->gc();
-  RestoreDC(gc, _savedc);
-  DeleteDC(gc);
-  _ss->set_current(); 
-  fl_window=_sw; 
-  _ss->driver()->gc(_sgc);
+  end_current();
+  previous->driver()->gc(_sgc);
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
-  fl_pop_clip(); 
   data = fl_read_image(NULL, 0, 0, width, height, 0);
-  fl_window = pre_window; 
-  previous->set_current();
+  end_current();
 #endif
   Fl_RGB_Image *image = new Fl_RGB_Image(data, W, H);
   image->alloc_array = 1;
@@ -141,30 +151,47 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
 
 void Fl_Image_Surface::set_current()
 {
+  pre_window = fl_window;
+  if (!previous) previous = Fl_Surface_Device::surface();
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
   driver()->gc(offscreen);
   fl_window = 0;
   Fl_Surface_Device::set_current();
+  was_high = Fl_Display_Device::high_resolution();
   Fl_X::set_high_resolution( CGBitmapContextGetWidth(offscreen) > width );
 #elif defined(WIN32)
-  _sw = fl_window;
-  _ss = Fl_Surface_Device::surface(); 
-  _sgc = (HDC)_ss->driver()->gc();
+  if (!_sgc) _sgc = (HDC)previous->driver()->gc();
   HDC gc = fl_makeDC(offscreen);
   Fl_Surface_Device::set_current();
   driver()->gc(gc);
-   _savedc = SaveDC(gc);
-  fl_window=(HWND)offscreen; 
+  _savedc = SaveDC(gc);
+  fl_window=(HWND)offscreen;
   fl_push_no_clip();
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement Fl_Image_Surface"
 #else
-  pre_window = fl_window; 
-  fl_window = offscreen; 
-  previous = Fl_Surface_Device::surface(); 
+  fl_window = offscreen;
   Fl_Surface_Device::set_current();
   fl_push_no_clip();
 #endif
+}
+
+void Fl_Image_Surface::end_current()
+{
+#if defined(__APPLE__)
+  Fl_X::set_high_resolution(was_high);
+#elif defined(WIN32)
+  HDC gc = (HDC)driver()->gc();
+  RestoreDC(gc, _savedc);
+  DeleteDC(gc);
+  fl_pop_clip();
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement Fl_Image_Surface"
+#else
+  fl_pop_clip();
+#endif
+  previous->Fl_Surface_Device::set_current();
+  fl_window = pre_window;
 }
 
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform image surface
@@ -205,6 +232,76 @@ void Fl_Image_Surface::untranslate() {
 
 #endif
 
+static Fl_Image_Surface *offscreen_api_surface[20];
+static int count = 0;
+static int current;
+
+static int find_slot() { // return an available slot to memorize an Fl_Image_Surface object
+    for (int num = 0; num < count; num++) {
+        if (!offscreen_api_surface[num]) return num;
+      }
+    if (count >= sizeof(offscreen_api_surface)/sizeof(Fl_Image_Surface*)) return -1;
+    return count++;
+  }
+
+/** \addtogroup fl_drawings
+   @{
+   */
+
+/**
+   Creation of an offscreen graphics buffer.
+   \param w,h     width and height in pixels of the buffer.
+   \return    the created graphics buffer.
+   */
+Fl_Offscreen fl_create_offscreen(int w, int h) {
+  int rank = find_slot();
+  if (rank < 0) return NULL;
+  offscreen_api_surface[rank] = new Fl_Image_Surface(w, h);
+  return offscreen_api_surface[rank]->offscreen;
+}
+
+#if USE_X11
+Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
+  int rank = find_slot();
+  if (rank < 0) return NULL;
+  Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, 32);
+  offscreen_api_surface[rank] = new Fl_Image_Surface(pixmap, w, h);
+  return pixmap;
+}
+#endif
+
+/**  Deletion of an offscreen graphics buffer.
+   \param ctx     the buffer to be deleted.
+   */
+void fl_delete_offscreen(Fl_Offscreen ctx) {
+  if (!ctx) return;
+  for (int i = 0; i < count; i++) {
+    if (offscreen_api_surface[i] && offscreen_api_surface[i]->offscreen == ctx) {
+      delete offscreen_api_surface[i];
+      offscreen_api_surface[i] = NULL;
+    }
+  }
+}
+
+/**  Send all subsequent drawing commands to this offscreen buffer.
+   \param ctx     the offscreen buffer.
+   */
+void fl_begin_offscreen(Fl_Offscreen ctx) {
+  for (current = 0; current < count; current++) {
+    if (offscreen_api_surface[current] && offscreen_api_surface[current]->offscreen == ctx) {
+      offscreen_api_surface[current]->set_current();
+      return;
+    }
+  }
+}
+
+/** Quit sending drawing commands to the current offscreen buffer.
+   */
+void fl_end_offscreen() {
+  offscreen_api_surface[current]->end_current();
+}
+
+/** @} */
 
 
 //
