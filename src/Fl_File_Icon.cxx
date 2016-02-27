@@ -120,7 +120,7 @@ Fl_File_Icon::~Fl_File_Icon() {
   // Find the icon in the list...
   for (current = first_, prev = (Fl_File_Icon *)0;
        current != this && current != (Fl_File_Icon *)0;
-       prev = current, current = current->next_);
+       prev = current, current = current->next_) {/*empty*/}
 
   // Remove the icon from the list as needed...
   if (current)

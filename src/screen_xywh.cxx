@@ -326,7 +326,7 @@ int Fl::screen_num(int x, int y) {
   if (num_screens < 0) screen_init();
   
   for (int i = 0; i < num_screens; i ++) {
-    int sx, sy, sw, sh;
+    int sx = 0, sy = 0, sw = 0, sh = 0;
     Fl::screen_xywh(sx, sy, sw, sh, i);
     if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
       screen = i;

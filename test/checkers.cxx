@@ -500,7 +500,7 @@ int fullexpand(node *f, int level) {
   node* n = f->son;
   if (!n->jump && n->brother) {if (level<1) return(1); level--;}
   int i;
-  node* sons[32]; for (i=0; (sons[i++] = n); n = n->brother);
+  node* sons[32]; for (i=0; (sons[i++] = n); n = n->brother) {/*empty*/}
   int ret = 1;
   for (i=0; ret && (n = sons[i++]);) {
     makemove(n);

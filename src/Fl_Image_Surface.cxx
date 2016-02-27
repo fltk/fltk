@@ -27,6 +27,7 @@ void Fl_Image_Surface::prepare_(int w, int h, int highres) {
   height = h;
 #if FL_ABI_VERSION < 10304
   highres = 0;
+  if (highres) {/* avoid compiler warning (Linux + Windows */}
 #endif
 #ifdef __APPLE__
   offscreen = fl_create_offscreen(highres ? 2*w : w, highres ? 2*h : h);

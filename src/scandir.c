@@ -27,6 +27,9 @@
 #  endif /* HAVE_SCANDIR */
 #endif
 
+/* Avoid "ISO C forbids an empty translation unit" warning */
+typedef int dummy;
+
 /*
  * End of "$Id$".
  */

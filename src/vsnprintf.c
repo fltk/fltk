@@ -254,7 +254,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
   if (bufptr) *bufptr = '\0';
 
   return (bytes);
-#endif //HAVE_VSNPRINTF
+#endif /* HAVE_VSNPRINTF */
 }
 
 int fl_snprintf(char* str, size_t size, const char* fmt, ...) {

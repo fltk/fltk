@@ -339,7 +339,7 @@ int write_file(const char *filename, int selected_only) {
       p->write();
       write_string("\n");
       int q = p->level;
-      for (p = p->next; p && p->level > q; p = p->next);
+      for (p = p->next; p && p->level > q; p = p->next) {/*empty*/}
     } else {
       p = p->next;
     }

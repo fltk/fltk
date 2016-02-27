@@ -124,7 +124,7 @@ FL_EXPORT unsigned fl_utf8toa (const char *src, unsigned srclen, char *dst, unsi
 FL_EXPORT unsigned fl_utf8froma (char *dst, unsigned dstlen, const char *src, unsigned srclen);
 
 /* F2: Returns true if the current O/S locale is UTF-8 */
-FL_EXPORT int fl_utf8locale();
+FL_EXPORT int fl_utf8locale(void);
 
 /* F2: Examine the first len characters of src, to determine if the input text is UTF-8 or not
  * NOTE: The value returned is not simply boolean - it contains information about the probable

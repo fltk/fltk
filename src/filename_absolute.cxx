@@ -83,7 +83,7 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
   while (*start == '.') {
     if (start[1]=='.' && isdirsep(start[2])) {
       char *b;
-      for (b = a-1; b >= temp && !isdirsep(*b); b--);
+      for (b = a-1; b >= temp && !isdirsep(*b); b--) {/*empty*/}
       if (b < temp) break;
       a = b;
       start += 3;

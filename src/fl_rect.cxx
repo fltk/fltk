@@ -541,6 +541,7 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 
 void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
+  if (!fl_gc) return;
   Fl_Region r = rstack[rstackptr];
 #if defined(USE_X11)
   if (r) XSetRegion(fl_display, fl_gc, r);

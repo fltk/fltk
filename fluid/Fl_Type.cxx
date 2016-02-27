@@ -522,7 +522,7 @@ int Widget_Browser::handle(int e) {
 	  k->visible = 1;
 	  if (k->is_parent() && !k->open_) {
 	    Fl_Type *j;
-	    for (j = k->next; j && j->level>k->level; j = j->next);
+	    for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
 	    k = j;
 	  } else
 	    k = k->next;
@@ -579,7 +579,7 @@ void Fl_Type::add(Fl_Type *p) {
   Fl_Type *q;
   int newlevel;
   if (p) {
-    for (q = p->next; q && q->level > p->level; q = q->next);
+    for (q = p->next; q && q->level > p->level; q = q->next) {/*empty*/}
     newlevel = p->level+1;
   } else {
     q = 0;
@@ -774,7 +774,7 @@ void select_all_cb(Fl_Widget *,void *) {
   Fl_Type *p = Fl_Type::current ? Fl_Type::current->parent : 0;
   if (in_this_only) {
     Fl_Type *t = p;
-    for (; t && t != in_this_only; t = t->parent);
+    for (; t && t != in_this_only; t = t->parent) {/*empty*/}
     if (t != in_this_only) p = in_this_only;
   }
   for (;;) {
@@ -798,7 +798,7 @@ void select_none_cb(Fl_Widget *,void *) {
   Fl_Type *p = Fl_Type::current ? Fl_Type::current->parent : 0;
   if (in_this_only) {
     Fl_Type *t = p;
-    for (; t && t != in_this_only; t = t->parent);
+    for (; t && t != in_this_only; t = t->parent) {/*empty*/}
     if (t != in_this_only) p = in_this_only;
   }
   for (;;) {
@@ -820,7 +820,7 @@ void select_none_cb(Fl_Widget *,void *) {
 
 static void delete_children(Fl_Type *p) {
   Fl_Type *f;
-  for (f = p; f && f->next && f->next->level > p->level; f = f->next);
+  for (f = p; f && f->next && f->next->level > p->level; f = f->next) {/*empty*/}
   for (; f != p; ) {
     Fl_Type *g = f->prev;
     delete f;
@@ -851,7 +851,7 @@ void Fl_Type::move_before(Fl_Type* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",
 				level, g->level);
   Fl_Type* n;
-  for (n = next; n && n->level > level; n = n->next);
+  for (n = next; n && n->level > level; n = n->next) {/*empty*/}
   if (n == g) return;
   Fl_Type *l = n ? n->prev : Fl_Type::last;
   prev->next = n;
@@ -875,7 +875,7 @@ void earlier_cb(Fl_Widget*,void*) {
     Fl_Type* nxt = f->next;
     if (f->selected) {
       Fl_Type* g;
-      for (g = f->prev; g && g->level > f->level; g = g->prev);
+      for (g = f->prev; g && g->level > f->level; g = g->prev) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
         f->move_before(g);
         mod = 1;
@@ -893,7 +893,7 @@ void later_cb(Fl_Widget*,void*) {
     Fl_Type* prv = f->prev;
     if (f->selected) {
       Fl_Type* g;
-      for (g = f->next; g && g->level > f->level; g = g->next);
+      for (g = f->next; g && g->level > f->level; g = g->next) {/*empty*/}
       if (g && g->level == f->level && !g->selected) {
         g->move_before(f);
         mod = 1;

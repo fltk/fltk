@@ -90,7 +90,7 @@ Fl_XBM_Image::Fl_XBM_Image(const char *name) : Fl_Bitmap((const char *)0,0,0) {
         *ptr++ = (uchar)t;
 	i ++;
       }
-      while (*a && *a++ != ',');
+      while (*a && *a++ != ',') {/*empty*/}
     }
   }
 

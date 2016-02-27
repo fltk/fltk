@@ -379,7 +379,7 @@ XUtf8DrawRtlString(Display 		*display,
       ptr = buf + 128;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 
@@ -496,7 +496,7 @@ XUtf8DrawString(Display 	*display,
       i = 0;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 
@@ -629,7 +629,7 @@ XUtf8_measure_extents(
       i = 0;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 
@@ -752,7 +752,7 @@ XUtf8TextWidth(XUtf8FontStruct 	*font_set,
       i = 0;
     }
 
-    ulen = XFastConvertUtf8ToUcs((unsigned char*)string, num_bytes, &ucs);
+    ulen = XFastConvertUtf8ToUcs((const unsigned char*)string, num_bytes, &ucs);
 
     if (ulen < 1) ulen = 1;
 

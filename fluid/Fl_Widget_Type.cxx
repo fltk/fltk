@@ -1976,7 +1976,7 @@ const char *array_name(Fl_Widget_Type *o) {
   Fl_Type *t = o->prev;
   Fl_Type *tp = o;
   const char *cn = o->class_name(1);
-  for (; t && t->class_name(1) == cn; tp = t, t = t->prev);
+  for (; t && t->class_name(1) == cn; tp = t, t = t->prev) {/*empty*/}
   for (t = tp; t && t->class_name(1) == cn; t = t->next) {
     if (t == o) {sawthis=1; continue;}
     const char *e = t->name();
@@ -2710,7 +2710,7 @@ int Fl_Widget_Type::read_fdesign(const char* propname, const char* value) {
     if (sscanf(value,"%f %f %f %f",&x,&y,&w,&h) == 4) {
       if (fdesign_flip) {
 	Fl_Type *p;
-	for (p = parent; p && !p->is_window(); p = p->parent);
+	for (p = parent; p && !p->is_window(); p = p->parent) {/*empty*/}
 	if (p && p->is_widget()) y = ((Fl_Widget_Type*)p)->o->h()-(y+h);
       }	  
       x += pasteoffset;
