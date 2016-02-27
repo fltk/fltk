@@ -83,7 +83,7 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Improve tooltip behavior for huge tooltips: remove flicker, support
 	  key/mouse dismiss (STR #2650).
 	- Many documentation improvements and fixes.
-	- Removed many compilation warnings.
+	- Removed many compilation warnings (STR #2988).
 	- Fluid now generates code with less compiler warnings (STR #2813).
 	- Many CMake improvements and fixes. Note: CMake is mostly operating
 	  now, but not yet recommended for production use. Please test and
