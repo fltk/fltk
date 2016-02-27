@@ -240,7 +240,7 @@ static int find_slot() { // return an available slot to memorize an Fl_Image_Sur
     for (int num = 0; num < count; num++) {
         if (!offscreen_api_surface[num]) return num;
       }
-    if (count >= sizeof(offscreen_api_surface)/sizeof(Fl_Image_Surface*)) return -1;
+    if ((unsigned)count >= sizeof(offscreen_api_surface)/sizeof(Fl_Image_Surface*)) return -1;
     return count++;
   }
 
