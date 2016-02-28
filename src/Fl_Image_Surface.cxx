@@ -47,7 +47,7 @@
  \version 1.3.4 (1.3.3 without the highres parameter)
  */
 Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res) : Fl_Widget_Surface(NULL) {
-  initialize_(NULL, w, h, high_res);
+  initialize_((Fl_Offscreen)0, w, h, high_res);
 }
 
 void Fl_Image_Surface::initialize_(Fl_Offscreen pixmap, int w, int h, int high_res) {
@@ -255,7 +255,7 @@ static int find_slot() { // return an available slot to memorize an Fl_Image_Sur
    */
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   int rank = find_slot();
-  if (rank < 0) return NULL;
+  if (rank < 0) return (Fl_Offscreen)0;
   offscreen_api_surface[rank] = new Fl_Image_Surface(w, h);
   return offscreen_api_surface[rank]->offscreen;
 }
@@ -263,7 +263,7 @@ Fl_Offscreen fl_create_offscreen(int w, int h) {
 #if USE_X11
 Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
   int rank = find_slot();
-  if (rank < 0) return NULL;
+  if (rank < 0) return (Fl_Offscreen)0;
   Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, 32);
   offscreen_api_surface[rank] = new Fl_Image_Surface(pixmap, w, h);
   return pixmap;
