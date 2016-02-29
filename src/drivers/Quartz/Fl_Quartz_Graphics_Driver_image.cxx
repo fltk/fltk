@@ -53,91 +53,56 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int mono,
 		    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc)
 {
-  if (!linedelta) linedelta = W*delta;
+  if (!linedelta) linedelta = W*abs(delta);
 
   const void *array = buf;
   uchar *tmpBuf = 0;
   if (cb || Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
-    tmpBuf = new uchar[ H*W*delta ];
+    tmpBuf = new uchar[ H*W*abs(delta) ];
     if (cb) {
       for (int i=0; i<H; i++) {
-	cb(userdata, 0, i, W, tmpBuf+i*W*delta);
+	cb(userdata, 0, i, W, tmpBuf+i*W*abs(delta));
       }
     } else {
       uchar *p = tmpBuf;
       for (int i=0; i<H; i++) {
-	memcpy(p, buf+i*linedelta, W*delta);
-	p += W*delta;
+	memcpy(p, buf+i*abs(linedelta), W*abs(delta));
+	p += W*abs(delta);
 	}
     }
     array = (void*)tmpBuf;
-    linedelta = W*delta;
+    linedelta = W*abs(delta);
   }
   // create an image context
   CGColorSpaceRef   lut = 0;
-  if (delta<=2) 
+  if (abs(delta)<=2)
     lut = CGColorSpaceCreateDeviceGray();
   else
     lut = CGColorSpaceCreateDeviceRGB();
   // a release callback is necessary when the gc is a print context because the image data
   // must be kept until the page is closed. Thus tmpBuf can't be deleted here. It's too early.
-  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, 
+  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, abs(linedelta)*H,
 						       tmpBuf ? dataReleaseCB : NULL
 						       );
-  CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta,
-                            lut, delta&1?kCGImageAlphaNone:kCGImageAlphaLast,
+  CGImageRef        img = CGImageCreate( W, H, 8, 8*abs(delta), abs(linedelta),
+                            lut, abs(delta)&1?kCGImageAlphaNone:kCGImageAlphaLast,
                             src, 0L, false, kCGRenderingIntentDefault);
-  // draw the image into the destination context
-  if (img) {
-    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img, X,Y,W,H, 0,0,W,H);
-    // release all allocated resources
-    CGImageRelease(img);
-  }
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src);
-  if (img) return; // else fall through to slow mode
-  // following the very save (and very slow) way to write the image into the give port
-  CGContextSetShouldAntialias(gc, false);
-  if ( cb )
-  {
-    uchar *tmpBuf = new uchar[ W*4 ];
-    for ( int i=0; i<H; i++ )
-    {
-      uchar *src = tmpBuf;
-      cb( userdata, 0, i, W, tmpBuf );
-      for ( int j=0; j<W; j++ )
-      {
-        if ( mono )
-          { fl_color( src[0], src[0], src[0] ); }
-        else
-          { fl_color( src[0], src[1], src[2] ); }
-        CGContextMoveToPoint(gc, X+j, Y+i);
-        CGContextAddLineToPoint(gc, X+j, Y+i);
-        CGContextStrokePath(gc);
-        src+=delta;
-      }
+  // draw the image into the destination context
+  if (img) {
+    CGContextTranslateCTM(gc, X, Y);
+    if (linedelta < 0) {
+      CGContextTranslateCTM(gc, 0, H-1);
+      CGContextScaleCTM(gc, 1, -1);
     }
-    delete[] tmpBuf;
-  }
-  else
-  {
-    for ( int i=0; i<H; i++ )
-    {
-      const uchar *src = buf+i*linedelta;
-      for ( int j=0; j<W; j++ )
-      {
-        if ( mono )
-          fl_color( src[0], src[0], src[0] );
-        else
-          fl_color( src[0], src[1], src[2] );
-        CGContextMoveToPoint(gc, X+j, Y+i);
-        CGContextAddLineToPoint(gc, X+j, Y+i);
-        CGContextStrokePath(gc);
-        src += delta;
-      }
+    if (delta < 0) {
+      CGContextTranslateCTM(gc, W-1, 0);
+      CGContextScaleCTM(gc, -1, 1);
     }
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img, 0,0,W,H, 0,0,W,H);
+    CGImageRelease(img);
   }
-  CGContextSetShouldAntialias(gc, true);
 }
 
 void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
