@@ -130,7 +130,10 @@ void Fl_Widget_Surface::origin(int *x, int *y)
  @param[in] x Horizontal position in page coordinates of the desired origin of graphics functions.
  @param[in] y Same as above, vertically.
  */
-void Fl_Widget_Surface::origin(int x, int y) {}
+void Fl_Widget_Surface::origin(int x, int y) {
+  x_offset = x;
+  y_offset = y;
+}
 
 /**
  @brief Prints a rectangular part of an on-screen window.
