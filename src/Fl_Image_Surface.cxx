@@ -19,6 +19,7 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl.H>
+#include <FL/x.H>
 
 #include "config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ

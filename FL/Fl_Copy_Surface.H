@@ -19,9 +19,7 @@
 #ifndef Fl_Copy_Surface_H
 #define Fl_Copy_Surface_H
 
-#include <FL/Fl_Paged_Device.H>
-#include <FL/Fl_Printer.H>
-#include <FL/x.H>
+#include <FL/Fl_Widget_Surface.H>
 
 /** Supports copying of graphical data to the clipboard.
  

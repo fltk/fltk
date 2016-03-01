@@ -18,6 +18,7 @@
 
 #include "Fl_Xlib_Copy_Surface.H"
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 
 Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL) {
   width = w;

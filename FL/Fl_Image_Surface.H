@@ -19,9 +19,10 @@
 #ifndef Fl_Image_Surface_H
 #define Fl_Image_Surface_H
 
-#include <FL/Fl_Copy_Surface.H>
+#include <FL/Fl_Widget_Surface.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/x.H>
 
 
 /** Directs all graphics requests to an Fl_Image.
