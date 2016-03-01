@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_QUARTZ_COPY_SURFACE_H
+#if !defined(Fl_Quartz_Copy_Surface_h) && !defined(FL_DOXYGEN)
 #define FL_QUARTZ_COPY_SURFACE_H 1
 
 #include <FL/Fl_Copy_Surface.H>

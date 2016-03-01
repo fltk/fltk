@@ -17,7 +17,7 @@
 //
 
 
-#ifndef Fl_Xlib_Copy_Surface_h
+#if !defined(Fl_Xlib_Copy_Surface_h) && !defined(FL_DOXYGEN)
 #define Fl_Xlib_Copy_Surface_h
 
 #include <FL/Fl_Copy_Surface.H>

@@ -25,7 +25,7 @@
 #elif defined(WIN32)
 #include <src/drivers/GDI/Fl_GDI_Copy_Surface.H>
 
-#elif defined(FL_PORTING)
+#elif defined(FL_PORTING) && !defined(FL_DOXYGEN)
 # pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"
 
 class Fl_Copy_Surface::Helper : public Fl_Widget_Surface { // model
@@ -51,6 +51,7 @@ Fl_Copy_Surface::Helper *Fl_Copy_Surface::newPlatformSurface(int w, int h) {
   return new Helper(w, h);
 }
 
+/** the constructor */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
   platform_surface = newPlatformSurface(w, h);
   driver(platform_surface->driver());
