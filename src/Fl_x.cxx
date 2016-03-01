@@ -689,6 +689,9 @@ void fl_open_display() {
   if (!d) Fl::fatal("Can't open display: %s",XDisplayName(0));
 
   fl_open_display(d);
+  // the unique GC used by all X windows
+  GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
+  Fl_Display_Device::display_device()->driver()->gc(gc);
 }
 
 

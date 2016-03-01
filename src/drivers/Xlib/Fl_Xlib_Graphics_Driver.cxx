@@ -50,14 +50,14 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
 
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
-  if (!gc_) {
-    fl_open_display();
-    // the unique GC used by all X windows
-    gc_ = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
-    fl_gc = gc_;
-  }
   mask_bitmap_ = NULL;
 }
+
+void Fl_Xlib_Graphics_Driver::gc(void *value) {
+  gc_ = (GC)value;
+  fl_gc = gc_;
+}
+
 
 char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
   return Fl_X::xrender_supported();

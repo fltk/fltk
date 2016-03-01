@@ -42,6 +42,7 @@ public:
   Fl_Xlib_Graphics_Driver(void);
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void *gc() { return gc_; }
+  virtual void gc(void *value);
   char can_do_alpha_blending();
   
   // --- bitmap stuff
