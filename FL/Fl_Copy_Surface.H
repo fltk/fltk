@@ -50,27 +50,9 @@
 */
 class FL_EXPORT Fl_Copy_Surface : public Fl_Widget_Surface {
 private:
-  int width;
-  int height;
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform surface driver
-  CFMutableDataRef pdfdata;
-  CGContextRef oldgc;
-  CGContextRef gc;
-  void prepare_copy_pdf_and_tiff(int w, int h);
-  void complete_copy_pdf_and_tiff();
-  void init_PDF_context(int w, int h);
-  static size_t MyPutBytes(void* info, const void* buffer, size_t count);
-#elif defined(WIN32)
-  HDC oldgc;
-  HDC gc;
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define variables to hold a native offscreen bitmap in Fl_Copy_Surface"
-  // no default implementation
-#else // Xlib
-  Fl_Offscreen xid;
-  Window oldwindow;
-  Fl_Surface_Device *_ss;
-#endif
+  class Helper;
+  Helper *platform_surface;
+  static Helper *newPlatformSurface(int w, int h);
 protected:
   void translate(int x, int y);
   void untranslate();
@@ -79,23 +61,11 @@ public:
   ~Fl_Copy_Surface();
   void set_current();
   /** Returns the pixel width of the copy surface */
-  int w() { return width; }
+  int w();
   /** Returns the pixel height of the copy surface */
-  int h() { return height; }
+  int h();
+  void origin(int *x, int *y);
 };
-
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform surface driver
-
-
-#elif defined(WIN32)
-
-#elif defined(FL_PORTING)
-
-# pragma message "FL_PORTING: define a drawing surface for your platform"
-
-#elif !defined(FL_DOXYGEN)
-
-#endif
 
 #endif // Fl_Copy_Surface_H
 

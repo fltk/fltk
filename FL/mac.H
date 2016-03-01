@@ -197,6 +197,7 @@ public:
   static int dnd(int use_selection); // call Fl_X::dnd(1) to support text dragging
   static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
+  static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);
 private:
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
