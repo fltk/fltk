@@ -68,6 +68,11 @@ public:
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors();
   virtual const char *get_system_scheme();
+  // --- global timers
+  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);
+  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
+  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp);
+  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
 };
 
 

@@ -554,7 +554,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
   fl_unlock_function();
 }
 
-void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
+void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
   // check, if this timer slot exists already
   for (int i = 0; i < mac_timer_used; ++i) {
@@ -607,7 +607,7 @@ void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
   }
 }
 
-void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
+void Fl_Cocoa_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
   if (current_timer) {
     // k = how many times 'time' seconds after the last scheduled timeout until the future
@@ -623,7 +623,7 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
   add_timeout(time, cb, data);
 }
 
-int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
+int Fl_Cocoa_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void* data)
 {
   for (int i = 0; i < mac_timer_used; ++i) {
     MacTimeout& t = mac_timers[i];
@@ -634,7 +634,7 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
   return 0;
 }
 
-void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
+void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
 {
   for (int i = 0; i < mac_timer_used; ++i) {
     MacTimeout& t = mac_timers[i];

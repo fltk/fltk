@@ -334,125 +334,35 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 //
 // timer support
 //
-
-#ifdef WIN32
-
-// implementation in Fl_win32.cxx
-
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - core stuff from screen, platform, and window driver
-
-// implementation in Fl_cocoa.mm (was Fl_mac.cxx)
-
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement timers in your platform specific core file"
-
-#else
-
 //
-// X11 timers
-//
-
-#if (0) // *FIXME* moved to src/drivers/X11/Fl_X11_Screen_Driver.cxx
-
-////////////////////////////////////////////////////////////////////////
-// Timeouts are stored in a sorted list (*first_timeout), so only the
-// first one needs to be checked to see if any should be called.
-// Allocated, but unused (free) Timeout structs are stored in another
-// linked list (*free_timeout).
-
-struct Timeout {
-  double time;
-  void (*cb)(void*);
-  void* arg;
-  Timeout* next;
-};
-static Timeout* first_timeout, *free_timeout;
-
-#include <sys/time.h>
-
-// I avoid the overhead of getting the current time when we have no
-// timeouts by setting this flag instead of getting the time.
-// In this case calling elapse_timeouts() does nothing, but records
-// the current time, and the next call will actually elapse time.
-static char reset_clock = 1;
-
-static void elapse_timeouts() {
-  static struct timeval prevclock;
-  struct timeval newclock;
-  gettimeofday(&newclock, NULL);
-  double elapsed = newclock.tv_sec - prevclock.tv_sec +
-    (newclock.tv_usec - prevclock.tv_usec)/1000000.0;
-  prevclock.tv_sec = newclock.tv_sec;
-  prevclock.tv_usec = newclock.tv_usec;
-  if (reset_clock) {
-    reset_clock = 0;
-  } else if (elapsed > 0) {
-    for (Timeout* t = first_timeout; t; t = t->next) t->time -= elapsed;
-  }
-}
-
-// Continuously-adjusted error value, this is a number <= 0 for how late
-// we were at calling the last timeout. This appears to make repeat_timeout
-// very accurate even when processing takes a significant portion of the
-// time interval:
-static double missed_timeout_by;
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  elapse_timeouts();
-  repeat_timeout(time, cb, argp);
+  Fl::screen_driver()->add_timeout(time, cb, argp);
 }
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
-  time += missed_timeout_by; if (time < -.05) time = 0;
-  Timeout* t = free_timeout;
-  if (t) {
-      free_timeout = t->next;
-  } else {
-      t = new Timeout;
-  }
-  t->time = time;
-  t->cb = cb;
-  t->arg = argp;
-  // insert-sort the new timeout:
-  Timeout** p = &first_timeout;
-  while (*p && (*p)->time <= time) p = &((*p)->next);
-  t->next = *p;
-  *p = t;
+  Fl::screen_driver()->repeat_timeout(time, cb, argp);
 }
 
 /**
-  Returns true if the timeout exists and has not been called yet.
-*/
+ Returns true if the timeout exists and has not been called yet.
+ */
 int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
-  for (Timeout* t = first_timeout; t; t = t->next)
-    if (t->cb == cb && t->arg == argp) return 1;
-  return 0;
+  return Fl::screen_driver()->has_timeout(cb, argp);
 }
 
 /**
-  Removes a timeout callback. It is harmless to remove a timeout
-  callback that no longer exists.
+ Removes a timeout callback. It is harmless to remove a timeout
+ callback that no longer exists.
 
-  \note	This version removes all matching timeouts, not just the first one.
+ \note	This version removes all matching timeouts, not just the first one.
 	This may change in the future.
-*/
+ */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
-  for (Timeout** p = &first_timeout; *p;) {
-    Timeout* t = *p;
-    if (t->cb == cb && (t->arg == argp || !argp)) {
-      *p = t->next;
-      t->next = free_timeout;
-      free_timeout = t;
-    } else {
-      p = &(t->next);
-    }
-  }
+  Fl::screen_driver()->remove_timeout(cb, argp);
 }
 
-#endif // *FIXME* moved to src/drivers/X11/Fl_X11_Screen_Driver.cxx
 
-#endif
 
 ////////////////////////////////////////////////////////////////
 // Checks are just stored in a list. They are called in the reverse

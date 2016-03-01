@@ -554,12 +554,12 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
 // X11 timers
 //
 
-void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
+void Fl_X11_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   elapse_timeouts();
   repeat_timeout(time, cb, argp);
 }
 
-void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
+void Fl_X11_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   time += missed_timeout_by; if (time < -.05) time = 0;
   Timeout* t = free_timeout;
   if (t) {
@@ -580,7 +580,7 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
 /**
   Returns true if the timeout exists and has not been called yet.
 */
-int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
+int Fl_X11_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void *argp) {
   for (Timeout* t = first_timeout; t; t = t->next)
     if (t->cb == cb && t->arg == argp) return 1;
   return 0;
@@ -593,7 +593,7 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
   \note	This version removes all matching timeouts, not just the first one.
 	This may change in the future.
 */
-void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
+void Fl_X11_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
   for (Timeout** p = &first_timeout; *p;) {
     Timeout* t = *p;
     if (t->cb == cb && (t->arg == argp || !argp)) {

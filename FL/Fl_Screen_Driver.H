@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Device.H>
 #include <FL/x.H>
+#include <FL/Fl.H>
 
 // TODO: add text composition?
 // TODO: add Fl::display
@@ -84,6 +85,11 @@ public:
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b) = 0;
   virtual void get_system_colors() = 0;
   virtual const char *get_system_scheme();
+  // --- global timers
+  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) = 0;
+  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) = 0;
+  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
+  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
 };
 
 
