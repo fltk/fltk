@@ -95,6 +95,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   CGDataProviderRelease(src);
   // draw the image into the destination context
   if (img) {
+    CGContextSaveGState(gc);
     CGContextTranslateCTM(gc, X, Y);
     if (linedelta < 0) {
       CGContextTranslateCTM(gc, 0, H-1);
@@ -106,6 +107,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     }
     ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img, 0,0,W,H, 0,0,W,H);
     CGImageRelease(img);
+    CGContextRestoreGState(gc);
   }
 }
 
