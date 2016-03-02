@@ -38,13 +38,13 @@ set(CPPFILES
     widget_panel.cxx
 )
 
-if(APPLE AND NOT OPTION_APPLE_X11)
+if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set( ICON_NAME fluid.icns )
   set( ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/Fluid.app/Contents/Resources/${ICON_NAME}" )
   add_executable(fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
 else()
   add_executable(fluid ${CPPFILES})
-endif(APPLE AND NOT OPTION_APPLE_X11)
+endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
@@ -61,7 +61,7 @@ if(HAVE_XRENDER)
    target_link_libraries(fluid ${X11_Xrender_LIB})
 endif(HAVE_XRENDER)
 
-if(APPLE AND NOT OPTION_APPLE_X11)
+if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
   install(TARGETS fluid DESTINATION ${FLTK_BINDIR})
@@ -72,7 +72,7 @@ else()
     LIBRARY DESTINATION ${FLTK_LIBDIR}
     ARCHIVE DESTINATION ${FLTK_LIBDIR}
     )
-endif(APPLE AND NOT OPTION_APPLE_X11)
+endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 if(UNIX)
     install(FILES fluid.desktop

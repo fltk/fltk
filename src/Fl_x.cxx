@@ -16,6 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config.h"
+
 // make this available on all platforms to make code maintainability easier
 class Fl_Widget *fl_selection_requestor;
 
@@ -25,6 +27,8 @@ class Fl_Widget *fl_selection_requestor;
                          // PORTME: Fl_Screen_Driver
                          // PORTME: Fl_Window_Driver
 //#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
+#elif defined(USE_SDL)
+#  pragma message "FL_SDL: implement the FLTK core in its own file"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement the FLTK core in its own file"
 #  include "Fl_porting.cxx"

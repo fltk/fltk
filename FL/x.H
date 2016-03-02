@@ -33,6 +33,25 @@
 #    include "mac.H"
 #  elif defined(ANDROID)
 #    pragma message "A clean port requires a driver-style system for Fl_X"
+#  elif defined(USE_SDL)
+#    pragma message "FL_PORTING: write a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
+
+//typedef void *Window;
+//typedef void *Fl_Region;
+//typedef void *Fl_Bitmask;
+//typedef void *Fl_Offscreen;
+//#include <FL/Fl_Window.H>
+//class FL_EXPORT Fl_X {
+//public:
+//  Window xid;
+//  Window other_xid;
+//  Fl_X *next;
+//  char wait_for_expose;
+//  static Fl_X* first;
+//  static Fl_X* i(const Fl_Window* wi) {return (Fl_X*)wi->i;}
+//};
+
+#    include "porting.H"
 #  elif defined(FL_PORTING)
 #    pragma message "FL_PORTING: write a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
 #    include "porting.H"

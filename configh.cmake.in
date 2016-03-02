@@ -160,6 +160,24 @@
 #cmakedefine USE_X11 1
 
 /*
+ * USE_SDL
+ *
+ * Should we use SDL for the current platform
+ *
+ */
+
+#cmakedefine USE_SDL 1
+
+/*
+ * FL_PORTING
+ *
+ * A little helper that points to locations in the core that still need to be ported to 
+ * the core driver setup.
+ */
+
+#cmakedefine FL_PORTING 0
+
+/*
  * HAVE_OVERLAY:
  *
  * Use the X overlay extension?  FLTK will try to use an overlay

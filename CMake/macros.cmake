@@ -119,7 +119,7 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 	FLTK_RUN_FLUID(FLUID_SOURCES "${flsrcs}")
     endif(flsrcs)
 
-    if(APPLE AND NOT OPTION_APPLE_X11)
+    if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
       unset(RESOURCE_PATH)
       if(${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
         set( ICON_NAME ${tname}.icns )
@@ -138,7 +138,7 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       endif(DEFINED RESOURCE_PATH)
     else()
       add_executable(${tname} WIN32 ${srcs} ${FLUID_SOURCES})
-    endif(APPLE AND NOT OPTION_APPLE_X11)
+    endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
     set_target_properties(${tname}    
       PROPERTIES OUTPUT_NAME ${oname}
@@ -149,9 +149,9 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       endif(NOT ${tname} STREQUAL "demo")
       set_target_properties(${tname} PROPERTIES RESOURCE ${RESOURCE_PATH})
     endif(APPLE AND DEFINED RESOURCE_PATH)
-    if(APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
+    if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND ${tname} STREQUAL "editor")
       set_target_properties("editor" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/test/editor-Info.plist" )
-    endif(APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
+    endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND ${tname} STREQUAL "editor")
     
     target_link_libraries(${tname} ${LIBRARIES})
 

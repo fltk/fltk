@@ -221,6 +221,8 @@ void Fl_Image_Surface::untranslate() {
   ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
 
+#elif defined(USE_SDL)
+
 #else
 
 void Fl_Image_Surface::translate(int x, int y) {

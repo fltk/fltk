@@ -205,7 +205,7 @@ public: // should be private!
 #elif defined(WIN32)
   // not needed in WIN32
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define a type for FL_SOCKET"
+# pragma message "FL_PORTING: add these functions to all platforms?"
   // no default implementation
 #else
   // not needed in X11

@@ -152,7 +152,7 @@ file(GLOB
   "../FL/*.h"
 )
 
-if (USE_X11 AND NOT OPTION_PRINT_SUPPORT)
+if ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
   set(PSFILES
   )
 else()
@@ -160,7 +160,7 @@ else()
     drivers/PostScript/Fl_PostScript.cxx
     drivers/PostScript/Fl_PostScript_image.cxx
   )
-endif(USE_X11 AND NOT OPTION_PRINT_SUPPORT)
+endif((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
 
 set(DRIVER_FILES)
 
@@ -197,6 +197,35 @@ if (USE_X11)
     drivers/X11/Fl_X11_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
     drivers/Xlib/Fl_Xlib_Copy_Surface.H
+  )
+
+elseif (USE_SDL)
+
+  # SDL2 
+
+  set(DRIVER_FILES
+    drivers/Pico/Fl_Pico_System_Driver.cxx
+    drivers/Pico/Fl_Pico_Screen_Driver.cxx
+    drivers/Pico/Fl_Pico_Window_Driver.cxx
+    drivers/Pico/Fl_Pico_Graphics_Driver.cxx
+    drivers/Pico/Fl_Pico_Copy_Surface.cxx
+    drivers/SDL/Fl_SDL_System_Driver.cxx
+    drivers/SDL/Fl_SDL_Screen_Driver.cxx
+    drivers/SDL/Fl_SDL_Window_Driver.cxx
+    drivers/SDL/Fl_SDL_Graphics_Driver.cxx
+    drivers/SDL/Fl_SDL_Copy_Surface.cxx
+  )
+  set(DRIVER_HEADER_FILES
+    drivers/Pico/Fl_Pico_System_Driver.H
+    drivers/Pico/Fl_Pico_Screen_Driver.H
+    drivers/Pico/Fl_Pico_Window_Driver.H
+    drivers/Pico/Fl_Pico_Graphics_Driver.H
+    drivers/Pico/Fl_Pico_Copy_Surface.H
+    drivers/SDL/Fl_SDL_System_Driver.H
+    drivers/SDL/Fl_SDL_Screen_Driver.H
+    drivers/SDL/Fl_SDL_Window_Driver.H
+    drivers/SDL/Fl_SDL_Graphics_Driver.H
+    drivers/SDL/Fl_SDL_Copy_Surface.H
   )
 
 elseif (APPLE)
@@ -340,7 +369,7 @@ set(CFILES
 
 add_definitions(-DFL_LIBRARY)
 
-if(APPLE AND NOT OPTION_APPLE_X11)
+if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
     set(MMFILES
         Fl_cocoa.mm
         Fl_Quartz_Printer.mm
@@ -350,7 +379,7 @@ if(APPLE AND NOT OPTION_APPLE_X11)
 else()
    set(MMFILES
       )
-endif(APPLE AND NOT OPTION_APPLE_X11)
+endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 #######################################################################
 FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${PSFILES};${MMFILES};${CFILES};fl_call_main.c;${HEADER_FILES};${DRIVER_HEADER_FILES}")
@@ -366,6 +395,10 @@ endif(USE_THREADS)
 if(USE_X11)
    target_link_libraries(fltk ${X11_LIBRARIES})
 endif(USE_X11)
+
+if (USE_SDL)
+   target_link_libraries(fltk ${SDL2_LIBRARIES})
+endif(USE_SDL)
 
 if(WIN32)
    target_link_libraries(fltk comctl32)
@@ -445,6 +478,10 @@ endif(USE_THREADS)
 if(USE_X11)
    target_link_libraries(fltk_SHARED ${X11_LIBRARIES})
 endif(USE_X11)
+
+if (USE_SDL)
+   target_link_libraries(fltk ${SDL2_LIBRARIES})
+endif(USE_SDL)
 
 if(WIN32)
    target_link_libraries(fltk_SHARED comctl32)

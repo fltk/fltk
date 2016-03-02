@@ -63,6 +63,7 @@
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: include utf8 support files and define utf8 types"
 #  define xchar unsigned short
+// TODO: the condition below is not portable!
 #else /* X11 */
 #  include <sys/types.h>
 #  include <sys/stat.h>
