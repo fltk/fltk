@@ -20,9 +20,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL) {
-  width = w;
-  height = h;
+Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
   driver(new Fl_Translated_Xlib_Graphics_Driver());
   Fl::first_window()->make_current();
   oldwindow = fl_xid(Fl::first_window());

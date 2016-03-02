@@ -18,9 +18,7 @@
 
 #include "Fl_GDI_Copy_Surface.H"
 
-Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL) {
-  width = w;
-  height = h;
+Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
   driver(new Fl_Translated_GDI_Graphics_Driver);
   oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)

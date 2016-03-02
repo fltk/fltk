@@ -28,18 +28,19 @@
 #elif defined(FL_PORTING) && !defined(FL_DOXYGEN)
 # pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"
 
-class Fl_Copy_Surface::Helper : public Fl_Widget_Surface { // model
+class Fl_Copy_Surface::Helper : public Fl_Widget_Surface { // class model
   friend class Fl_Copy_Surface;
 private:
   int width;
   int height;
-  Helper(int w, int h) : Fl_Widget_Surface(NULL) {}
-  ~Helper() {}
-  void set_current(){}
-  void translate(int x, int y) {}
-  void untranslate() {}
+  Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {} // to implement
+  ~Helper() {} // to implement
+  void set_current(){} // to implement
+  void translate(int x, int y) {} // to implement
+  void untranslate() {} // to implement
   int w() {return width;}
   int h() {return height;}
+  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
 };
 
 #else
@@ -59,6 +60,8 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
 
 Fl_Copy_Surface::~Fl_Copy_Surface() { delete platform_surface; }
 
+void Fl_Copy_Surface::origin(int x, int y) {platform_surface->origin(x, y);}
+
 void Fl_Copy_Surface::origin(int *x, int *y) {platform_surface->origin(x, y);}
 
 void Fl_Copy_Surface::set_current() {platform_surface->set_current();}
@@ -70,6 +73,8 @@ void Fl_Copy_Surface::untranslate() {platform_surface->untranslate();}
 int Fl_Copy_Surface::w() {return platform_surface->w();}
 
 int Fl_Copy_Surface::h() {return platform_surface->h();}
+
+int Fl_Copy_Surface::printable_rect(int *w, int *h)  {return platform_surface->printable_rect(w, h);}
 
 //
 // End of "$Id$".

@@ -23,9 +23,7 @@
 #include "Fl_Quartz_Graphics_Driver.H"
 #endif
 
-Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL) {
-  width = w;
-  height = h;
+Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
   driver(new Fl_Quartz_Graphics_Driver);
   prepare_copy_pdf_and_tiff(w, h);
 }

@@ -63,6 +63,8 @@ public:
   /** Returns the pixel height of the copy surface */
   int h();
   void origin(int *x, int *y);
+  void origin(int x, int y);
+  int printable_rect(int *w, int *h);
 };
 
 #endif // Fl_Copy_Surface_H
