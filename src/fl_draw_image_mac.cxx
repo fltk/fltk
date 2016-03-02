@@ -56,7 +56,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   uchar *tmpBuf = 0;
   if (!cb) {
     if (delta < 0) buf -= (W-1)*(-delta);
-    if (linedelta < 0) buf -= (H-1)*abs(delta)*W;
+    if (linedelta < 0) buf -= (H-1)*(-linedelta);
   }
   const void *array = buf;
   if (cb || Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
