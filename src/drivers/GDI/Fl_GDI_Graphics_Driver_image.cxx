@@ -106,6 +106,8 @@ static void monodither(uchar* to, const uchar* from, int w, int delta) {
 
 #endif // USE_COLORMAP
 
+static int fl_abs(int v) { return v<0 ? -v : v; }
+
 static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int depth,
 		    Fl_Draw_Image_Cb cb, void* userdata, HDC gc)
@@ -120,7 +122,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   if (indexed || !fl_can_do_alpha_blending()) 
     depth = (depth-1)|1;
 
-  if (!linedelta) linedelta = W*delta;
+  if (!linedelta) linedelta = W*fl_abs(delta);
 
   int x, y, w, h;
   fl_clip_box(X,Y,W,H,x,y,w,h);
@@ -280,8 +282,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       }
   }
 }
-
-static int fl_abs(int v) { return v<0 ? -v : v; }
 
 void Fl_GDI_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {

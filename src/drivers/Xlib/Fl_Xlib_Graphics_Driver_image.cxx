@@ -458,7 +458,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    Fl_Draw_Image_Cb cb, void* userdata,
 		    const bool alpha, GC gc)
 {
-  if (!linedelta) linedelta = W*delta;
+  if (!linedelta) linedelta = W*abs(delta);
 
   int dx, dy, w, h;
   fl_clip_box(X,Y,W,H,dx,dy,w,h);
@@ -565,22 +565,27 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 
 void Fl_Xlib_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
 
-  const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
-  d &= ~FL_IMAGE_WITH_ALPHA;
+  const bool alpha = !!(abs(d) & FL_IMAGE_WITH_ALPHA);
+  if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
+  const int mono = (d>-3 && d<3);
 
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,alpha,gc_);
+  innards(buf,x,y,w,h,d,l,mono,0,0,alpha,gc_);
 }
+
 void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
 
-  const bool alpha = !!(d & FL_IMAGE_WITH_ALPHA);
-  d &= ~FL_IMAGE_WITH_ALPHA;
+  const bool alpha = !!(abs(d) & FL_IMAGE_WITH_ALPHA);
+  if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
+  const int mono = (d>-3 && d<3);
 
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,alpha,gc_);
+  innards(0,x,y,w,h,d,0,mono,cb,data,alpha,gc_);
 }
+
 void Fl_Xlib_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,1,0,0,0,gc_);
 }
+
 void Fl_Xlib_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,1,cb,data,0,gc_);
