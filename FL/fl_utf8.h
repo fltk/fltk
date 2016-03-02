@@ -35,6 +35,13 @@
 #include <string.h>
 #include <stdlib.h>
 
+/*
+  *FIXME* -- PORTME: should not be in the header --
+  Many, if not all of the included headers below should not be included
+  here, because this pollutes user space definitions.
+  Note: FL/fl_utf8.h is included in many other header files!
+*/
+
 #ifdef WIN32
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -67,8 +74,10 @@
 #else /* X11 */
 #  include <sys/types.h>
 #  include <sys/stat.h>
-#  include <X11/Xlocale.h>
-#  include <X11/Xlib.h>
+#  if defined(FL_LIBRARY) /* don't expose X11 headers in user space */
+#    include <X11/Xlocale.h>
+#    include <X11/Xlib.h>
+#  endif /* defined(FL_LIBRARY) -- don't expose X11 headers in user space */
 #  include <locale.h>
 #  define xchar unsigned short
 #endif
