@@ -22,7 +22,7 @@
 #include <FL/Fl_Widget_Surface.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Shared_Image.H>
-#include <FL/x.H>
+#include <FL/x.H> // for Fl_Offscreen
 
 
 /** Directs all graphics requests to an Fl_Image.
@@ -46,33 +46,17 @@
  \endcode
 */
 class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
-  friend Fl_Offscreen fl_create_offscreen(int, int);
+  friend Fl_Offscreen fl_create_offscreen(int w, int h);
 #ifndef FL_DOXYGEN
   friend Fl_Offscreen fl_create_offscreen_with_alpha(int, int);//X11 only
 #endif
-  friend void fl_begin_offscreen(Fl_Offscreen);
+  friend void fl_begin_offscreen(Fl_Offscreen ctx);
   friend void fl_end_offscreen(void);
-  friend void fl_delete_offscreen(Fl_Offscreen);
+  friend void fl_delete_offscreen(Fl_Offscreen ctx);
 private:
-  Fl_Offscreen offscreen;
-  int width;
-  int height;
-  Fl_Surface_Device *previous;
-  Window pre_window;
-#if defined(__APPLE__)
-  int was_high;
-#endif
-  Fl_Image_Surface(Fl_Offscreen pixmap, int w, int h); // for X11 only
-  void initialize_(Fl_Offscreen pixmap, int w, int h, int high_res);
-  void end_current();
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform image surface driver
-#elif defined(WIN32)
-  HDC _sgc;
-  int _savedc;
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define variables to hold image data for Fl_Image_Surface"
-#else
-#endif
+  class Helper;
+  Helper *platform_surface;
+  Fl_Offscreen offscreen();
 protected:
   void translate(int x, int y);
   void untranslate();
@@ -80,8 +64,12 @@ public:
   Fl_Image_Surface(int w, int h, int high_res = 0);
   ~Fl_Image_Surface();
   void set_current();
+  void end_current();
   Fl_RGB_Image *image();
   Fl_Shared_Image *highres_image();
+  void origin(int *x, int *y);
+  void origin(int x, int y);
+  int printable_rect(int *w, int *h);
 };
 
 #endif // Fl_Image_Surface_H
