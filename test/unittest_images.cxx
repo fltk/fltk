@@ -3,7 +3,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,20 +27,36 @@
 //------- test the image drawing capabilities of this implementation ----------
 //
 
-// Some parameters for fine tuning for developers - their
-// default values ought to be: CB=1, DX=0, LX=0, IMG=1
-#define CB (1)  // 1 to show the checker board background for alpha images, 0 otherwise
-#define DX (0)	// additional (undefined (0)) pixels per line, must be >= 0
-		// ignored (irrelevant), if LX == 0 (see below)
-#define LX (0)	// 0 for default: ld() = 0, i.e. ld() defaults (internally) to w()*d()
-		// +1: ld() = (w() + DX) * d()
-		// -1 to flip image vertically: ld() = - ((w() + DX) * d())
-#define IMG (1)	// 1 to use Fl_RGB_Image for drawing images,
-		// 0 to use fl_draw_image() instead.
-		// Note: as of April 2011, only 1 (Fl_RGB_Image) works correctly with alpha
-		// channel, 0 (fl_draw_image()) ignores the alpha channel (FLTK 1.3.0).
-		// There are plans to support alpha in fl_draw_image() in FLTK 1.3.x,
-		// but not in FLTK 1.1.x .
+// Parameters for fine tuning for developers.
+// Default values: CB=1, DX=0, IMG=1, LX=0, FLIPH=0
+
+#define CB (1)    // 1 to show the checker board background for alpha images,
+		  // 0 otherwise
+#define DX (0)	  // additional (undefined (0)) pixels per line, must be >= 0
+		  // ignored (irrelevant), if LX == 0 (see below)
+#define IMG (1)	  // 1 to use Fl_RGB_Image for drawing images with transparency,
+		  // 0 to use fl_draw_image() instead.
+		  // Note: as of Feb 2016, only 1 (Fl_RGB_Image) works with
+		  // alpha channel, 0 (fl_draw_image()) ignores the alpha
+		  // channel (FLTK 1.3.x).
+		  // There are plans to support transparency (alpha channel)
+		  // in fl_draw_image() in FLTK 1.4.0 and/or later.
+#define LX (0)	  // 0 for default: ld() = 0, i.e. ld() defaults (internally) to w()*d()
+		  // +1: ld() = (w() + DX) * d()
+		  // -1 to flip image vertically: ld() = - ((w() + DX) * d())
+#define FLIPH (0) // 1 = Flip image horizontally (only if IMG == 0)
+		  // 0 = Draw image normal, w/o horizontal flipping
+
+// ----------------------------------------------------------------------
+//  Test scenario for fl_draw_image() with pos. and neg. d and ld args:
+// ----------------------------------------------------------------------
+//  (1) set IMG   =  0:	normal, but w/o transparency: no checker board
+//  (2) set LX    = -1:	images flipped vertically
+//  (3) set FLIPH =  1:	images flipped vertically and horizontally
+//  (4) set LX    =  0:	images flipped horizontally
+//  (5) set FLIPH =  0, IMG = 1: back to default (with transparency)
+// ----------------------------------------------------------------------
+
 
 class ImageTest : public Fl_Box {
 public: 
@@ -70,6 +86,12 @@ public:
       img_gray_a += 127*(128+DX)*2;
       img_rgb    += 127*(128+DX)*3;
       img_rgba   += 127*(128+DX)*4;
+    }
+    if (FLIPH && !IMG ) {
+      img_gray   += 127;
+      img_gray_a += 127*2;
+      img_rgb    += 127*3;
+      img_rgba   += 127*4;
     }
     i_g    = new Fl_RGB_Image (img_gray  ,128,128,1,LX*(128+DX));
     i_ga   = new Fl_RGB_Image (img_gray_a,128,128,2,LX*(128+DX)*2);
@@ -103,7 +125,10 @@ public:
 #if IMG
     i_rgb->draw(xx+1,yy+1);
 #else
-    fl_draw_image(img_rgb, xx+1, yy+1, 128, 128, 3, LX*((128+DX)*3));
+    if (!FLIPH)
+      fl_draw_image(img_rgb, xx+1, yy+1, 128, 128, 3, LX*((128+DX)*3));
+    else
+      fl_draw_image(img_rgb, xx+1, yy+1, 128, 128,-3, LX*((128+DX)*3));
 #endif
     fl_draw("RGB", xx+134, yy+64);
 
@@ -119,7 +144,10 @@ public:
 #if IMG
     i_rgba->draw(xx+1,yy+1);
 #else
-    fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4, LX*((128+DX)*4));
+    if (!FLIPH)
+      fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4, LX*((128+DX)*4));
+    else
+      fl_draw_image(img_rgba, xx+1, yy+1, 128, 128,-4, LX*((128+DX)*4));
 #endif
     fl_color(FL_BLACK); fl_draw("RGBA", xx+134, yy+64);
 
@@ -130,7 +158,10 @@ public:
 #if IMG
     i_g->draw(xx+1,yy+1);
 #else
-    fl_draw_image(img_gray, xx+1, yy+1, 128, 128, 1, LX*((128+DX)*1));
+    if (!FLIPH)
+      fl_draw_image(img_gray, xx+1, yy+1, 128, 128, 1, LX*((128+DX)*1));
+    else
+      fl_draw_image(img_gray, xx+1, yy+1, 128, 128,-1, LX*((128+DX)*1));
 #endif
     fl_draw("Gray", xx+134, yy+64);
 
@@ -146,7 +177,10 @@ public:
 #if IMG
     i_ga->draw(xx+1,yy+1);
 #else
-    fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2, LX*((128+DX)*2));
+    if (!FLIPH)
+      fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2, LX*((128+DX)*2));
+    else
+      fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128,-2, LX*((128+DX)*2));
 #endif
     fl_color(FL_BLACK); fl_draw("Gray+Alpha", xx+134, yy+64);
   }
