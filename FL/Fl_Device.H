@@ -72,7 +72,7 @@ public:
     return _surface ? _surface : default_surface();
   };
   /** \brief The destructor. */
-  virtual ~Fl_Surface_Device() {}
+  virtual ~Fl_Surface_Device();
 };
 
 /**

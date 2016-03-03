@@ -168,6 +168,11 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
         target_link_libraries(${tname} ${X11_Xrender_LIB})
     endif(HAVE_XRENDER)
 
+    if (OPTION_APPLE_SDL)
+        target_link_libraries(${tname} ${SDL2_LIBRARY})
+    endif(OPTION_APPLE_SDL)
+
+
 endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
 #######################################################################

@@ -397,7 +397,7 @@ if(USE_X11)
 endif(USE_X11)
 
 if (USE_SDL)
-   target_link_libraries(fltk ${SDL2_LIBRARIES})
+   target_link_libraries(fltk ${SDL2_LIBRARY})
 endif(USE_SDL)
 
 if(WIN32)
@@ -480,7 +480,7 @@ if(USE_X11)
 endif(USE_X11)
 
 if (USE_SDL)
-   target_link_libraries(fltk ${SDL2_LIBRARIES})
+   target_link_libraries(fltk ${SDL2_LIBRARY})
 endif(USE_SDL)
 
 if(WIN32)

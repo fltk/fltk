@@ -41,7 +41,7 @@ public:
    Each translate() call must be matched by an untranslate() call.
    Successive translate() calls add up their effects.
    */
-  virtual void translate(int x, int y) {}
+  virtual void translate(int x, int y);
   /**
    Undoes the effect of a previous translate() call.
    */

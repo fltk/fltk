@@ -63,6 +63,11 @@ void Fl_Surface_Device::set_current(void)
 Fl_Surface_Device* Fl_Surface_Device::_surface; // the current target surface of graphics operations
 
 
+Fl_Surface_Device::~Fl_Surface_Device()
+{
+}
+
+
 /**  A constructor that sets the graphics driver used by the display */
 Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device(graphics_driver) {
   this->set_current();
