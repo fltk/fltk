@@ -354,24 +354,23 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
   return s_img;
 }
 
-
+// implementation of the fl_XXX_offscreen() functions
 
 static void **offscreen_api_surface = NULL;
+static int count_offscreens = 0;
+static int current_offscreen;
 
-static int count = 0;
-static int max = 0;
-static int current;
-
-int find_slot(void) { // return an available slot to memorize an Fl_Image_Surface::Helper object
-  for (int num = 0; num < count; num++) {
+static int find_slot(void) { // return an available slot to memorize an Fl_Image_Surface::Helper object
+  static int max = 0;
+  for (int num = 0; num < count_offscreens; num++) {
     if (!offscreen_api_surface[num]) return num;
   }
-  if (count >= max) {
+  if (count_offscreens >= max) {
     max += 20;
     offscreen_api_surface = (void**)realloc(offscreen_api_surface, max * sizeof(void *));
     return find_slot();
   }
-  return count++;
+  return count_offscreens++;
 }
 
 /** \addtogroup fl_drawings
@@ -403,7 +402,7 @@ Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
    */
 void fl_delete_offscreen(Fl_Offscreen ctx) {
   if (!ctx) return;
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < count_offscreens; i++) {
     if (offscreen_api_surface[i] && ((Fl_Image_Surface::Helper**)offscreen_api_surface)[i]->offscreen == ctx) {
       delete ((Fl_Image_Surface::Helper**)offscreen_api_surface)[i];
       offscreen_api_surface[i] = NULL;
@@ -415,9 +414,10 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
    \param ctx     the offscreen buffer.
    */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
-  for (current = 0; current < count; current++) {
-    if (offscreen_api_surface[current] && ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current]->offscreen == ctx) {
-      ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current]->set_current();
+  for (current_offscreen = 0; current_offscreen < count_offscreens; current_offscreen++) {
+    if (offscreen_api_surface[current_offscreen] &&
+        ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current_offscreen]->offscreen == ctx) {
+      ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current_offscreen]->set_current();
       return;
     }
   }
@@ -426,7 +426,7 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
 /** Quit sending drawing commands to the current offscreen buffer.
    */
 void fl_end_offscreen() {
-  ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current]->end_current();
+  ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current_offscreen]->end_current();
 }
 
 /** @} */
