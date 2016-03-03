@@ -50,7 +50,6 @@ class FL_EXPORT Fl_Copy_Surface : public Fl_Widget_Surface {
 private:
   class Helper;
   Helper *platform_surface;
-  static Helper *newPlatformSurface(int w, int h);
 protected:
   void translate(int x, int y);
   void untranslate();

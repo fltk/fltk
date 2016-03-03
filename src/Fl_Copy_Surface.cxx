@@ -48,13 +48,9 @@ private:
 
 #endif
 
-Fl_Copy_Surface::Helper *Fl_Copy_Surface::newPlatformSurface(int w, int h) {
-  return new Helper(w, h);
-}
-
 /** the constructor */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
-  platform_surface = newPlatformSurface(w, h);
+  platform_surface = new Helper(w, h);
   driver(platform_surface->driver());
 }
 
