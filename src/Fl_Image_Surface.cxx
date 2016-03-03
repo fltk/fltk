@@ -46,7 +46,6 @@ public:
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   Fl_RGB_Image *image();
   void end_current();
-  Fl_Offscreen get_offscreen_before_delete();
 };
 
 Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface(NULL), width(w), height(h) {
@@ -144,7 +143,6 @@ public:
   Fl_RGB_Image *image();
   void end_current();
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
-  Fl_Offscreen get_offscreen_before_delete();
 };
 
 Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface(NULL), width(w), height(h) {
@@ -219,7 +217,6 @@ public:
   Fl_RGB_Image *image() {} // to implement
   void end_current() {} // to implement
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
-  Fl_Offscreen get_offscreen_before_delete();
 };
 
 
@@ -246,7 +243,6 @@ public:
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   Fl_RGB_Image *image();
   void end_current();
-  Fl_Offscreen get_offscreen_before_delete();
   public:
 };
 
@@ -306,11 +302,6 @@ void Fl_Image_Surface::Helper::end_current()
 
 #endif
 
-Fl_Offscreen Fl_Image_Surface::Helper::get_offscreen_before_delete() {
-  Fl_Offscreen keep = offscreen;
-  offscreen = 0;
-  return keep;
-}
 
 /** Constructor with optional high resolution.
  \param w and \param h give the size in pixels of the resulting image.
@@ -381,7 +372,9 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
 /** Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen
  */
 Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete() {
-  return platform_surface->get_offscreen_before_delete();
+  Fl_Offscreen keep = platform_surface->offscreen;
+  platform_surface->offscreen = 0;
+  return keep;
 }
 
 // implementation of the fl_XXX_offscreen() functions
