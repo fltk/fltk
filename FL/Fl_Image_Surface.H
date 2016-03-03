@@ -47,9 +47,6 @@
 */
 class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
   friend Fl_Offscreen fl_create_offscreen(int w, int h);
-#ifndef FL_DOXYGEN
-  friend Fl_Offscreen fl_create_offscreen_with_alpha(int, int);//X11 only
-#endif
   friend void fl_begin_offscreen(Fl_Offscreen ctx);
   friend void fl_end_offscreen(void);
   friend void fl_delete_offscreen(Fl_Offscreen ctx);
@@ -62,6 +59,7 @@ protected:
   void untranslate();
 public:
   Fl_Image_Surface(int w, int h, int high_res = 0);
+  Fl_Image_Surface(Fl_Offscreen off, int w, int h);
   ~Fl_Image_Surface();
   void set_current();
   void end_current();
@@ -70,6 +68,7 @@ public:
   void origin(int *x, int *y);
   void origin(int x, int y);
   int printable_rect(int *w, int *h);
+  Fl_Offscreen get_offscreen_before_delete();
 };
 
 #endif // Fl_Image_Surface_H

@@ -46,6 +46,7 @@ public:
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   Fl_RGB_Image *image();
   void end_current();
+  Fl_Offscreen get_offscreen_before_delete();
 };
 
 Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface(NULL), width(w), height(h) {
@@ -69,9 +70,11 @@ Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface
 }
 
 Fl_Image_Surface::Helper::~Helper() {
-  void *data = CGBitmapContextGetData((CGContextRef)offscreen);
-  free(data);
-  CGContextRelease((CGContextRef)offscreen);
+  if (offscreen) {
+    void *data = CGBitmapContextGetData((CGContextRef)offscreen);
+    free(data);
+    CGContextRelease((CGContextRef)offscreen);
+  }
 }
 
 void Fl_Image_Surface::Helper::set_current() {
@@ -141,6 +144,7 @@ public:
   Fl_RGB_Image *image();
   void end_current();
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+  Fl_Offscreen get_offscreen_before_delete();
 };
 
 Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface(NULL), width(w), height(h) {
@@ -151,7 +155,7 @@ Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface
 }
 
 Fl_Image_Surface::Helper::~Helper() {
-  DeleteObject(offscreen);
+  if (offscreen) DeleteObject(offscreen);
 }
 
 void Fl_Image_Surface::Helper::set_current() {
@@ -204,6 +208,7 @@ void Fl_Image_Surface::Helper::end_current()
 class Fl_Image_Surface::Helper : public Fl_Widget_Surface { // class model
   friend class Fl_Image_Surface;
 public:
+  Fl_Offscreen offscreen;
   int width;
   int height;
   Helper(int w, int h, int high_res) : Fl_Widget_Surface(NULL), width(w), height(h) {} // to implement
@@ -214,6 +219,7 @@ public:
   Fl_RGB_Image *image() {} // to implement
   void end_current() {} // to implement
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+  Fl_Offscreen get_offscreen_before_delete();
 };
 
 
@@ -240,6 +246,7 @@ public:
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   Fl_RGB_Image *image();
   void end_current();
+  Fl_Offscreen get_offscreen_before_delete();
   public:
 };
 
@@ -260,7 +267,7 @@ Fl_Image_Surface::Helper::Helper(Fl_Offscreen pixmap, int w, int h) : Fl_Widget_
 }
 
 Fl_Image_Surface::Helper::~Helper() {
-  XFreePixmap(fl_display, offscreen);
+  if (offscreen) XFreePixmap(fl_display, offscreen);
 }
 
 void Fl_Image_Surface::Helper::set_current() {
@@ -299,6 +306,12 @@ void Fl_Image_Surface::Helper::end_current()
 
 #endif
 
+Fl_Offscreen Fl_Image_Surface::Helper::get_offscreen_before_delete() {
+  Fl_Offscreen keep = offscreen;
+  offscreen = 0;
+  return keep;
+}
+
 /** Constructor with optional high resolution.
  \param w and \param h give the size in pixels of the resulting image.
  \param high_res if non-zero, the surface pixel size is twice as high and wide as w and h,
@@ -309,6 +322,17 @@ void Fl_Image_Surface::Helper::end_current()
  */
 Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res) : Fl_Widget_Surface(NULL) {
   platform_surface = new Helper(w, h, high_res);
+  driver(platform_surface->driver());
+}
+
+/** Special constructor that is effective on the Xlib platform only.
+ */
+Fl_Image_Surface::Fl_Image_Surface(Fl_Offscreen pixmap, int w, int h) : Fl_Widget_Surface(NULL) {
+#ifdef FL_CFG_GFX_XLIB
+  platform_surface = new Helper(pixmap, w, h);
+#else
+  platform_surface = new Helper(w, h, 0);
+#endif
   driver(platform_surface->driver());
 }
 
@@ -354,9 +378,15 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
   return s_img;
 }
 
+/** Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen
+ */
+Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete() {
+  return platform_surface->get_offscreen_before_delete();
+}
+
 // implementation of the fl_XXX_offscreen() functions
 
-static void **offscreen_api_surface = NULL;
+static Fl_Image_Surface **offscreen_api_surface = NULL;
 static int count_offscreens = 0;
 static int current_offscreen;
 
@@ -367,7 +397,7 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
   }
   if (count_offscreens >= max) {
     max += 20;
-    offscreen_api_surface = (void**)realloc(offscreen_api_surface, max * sizeof(void *));
+    offscreen_api_surface = (Fl_Image_Surface**)realloc(offscreen_api_surface, max * sizeof(void *));
     return find_slot();
   }
   return count_offscreens++;
@@ -384,18 +414,9 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
    */
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   int rank = find_slot();
-  offscreen_api_surface[rank] = new Fl_Image_Surface::Helper::Helper(w, h, 0);
-  return ((Fl_Image_Surface::Helper**)offscreen_api_surface)[rank]->offscreen;
+  offscreen_api_surface[rank] = new Fl_Image_Surface(w, h, 0);
+  return offscreen_api_surface[rank]->offscreen();
 }
-
-#ifdef USE_X11
-Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
-  int rank = find_slot();
-  Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, 32);
-  offscreen_api_surface[rank] = new Fl_Image_Surface::Helper::Helper(pixmap, w, h);
-  return pixmap;
-}
-#endif
 
 /**  Deletion of an offscreen graphics buffer.
    \param ctx     the buffer to be deleted.
@@ -403,8 +424,8 @@ Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
 void fl_delete_offscreen(Fl_Offscreen ctx) {
   if (!ctx) return;
   for (int i = 0; i < count_offscreens; i++) {
-    if (offscreen_api_surface[i] && ((Fl_Image_Surface::Helper**)offscreen_api_surface)[i]->offscreen == ctx) {
-      delete ((Fl_Image_Surface::Helper**)offscreen_api_surface)[i];
+    if (offscreen_api_surface[i] && offscreen_api_surface[i]->offscreen() == ctx) {
+      delete offscreen_api_surface[i];
       offscreen_api_surface[i] = NULL;
     }
   }
@@ -416,8 +437,8 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
 void fl_begin_offscreen(Fl_Offscreen ctx) {
   for (current_offscreen = 0; current_offscreen < count_offscreens; current_offscreen++) {
     if (offscreen_api_surface[current_offscreen] &&
-        ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current_offscreen]->offscreen == ctx) {
-      ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current_offscreen]->set_current();
+        offscreen_api_surface[current_offscreen]->offscreen() == ctx) {
+      offscreen_api_surface[current_offscreen]->set_current();
       return;
     }
   }
@@ -426,7 +447,7 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
 /** Quit sending drawing commands to the current offscreen buffer.
    */
 void fl_end_offscreen() {
-  ((Fl_Image_Surface::Helper**)offscreen_api_surface)[current_offscreen]->end_current();
+  offscreen_api_surface[current_offscreen]->end_current();
 }
 
 /** @} */

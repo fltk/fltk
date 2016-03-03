@@ -49,6 +49,7 @@
 #  include <FL/Fl.H>
 #  include <FL/fl_draw.H>
 #  include <FL/x.H>
+#  include <FL/Fl_Image_Surface.H>
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
 #include <X11/Xregion.h>
@@ -713,18 +714,20 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     return;
   }
   if (!img->id_) {
-    if (img->d() == 1 || img->d() == 3) {
-      img->id_ = fl_create_offscreen(img->w(), img->h());
-      fl_begin_offscreen((Fl_Offscreen)img->id_);
-      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
-      fl_end_offscreen();
-    } else if (img->d() == 4 && fl_can_do_alpha_blending()) {
-      img->id_ = (fl_uintptr_t)fl_create_offscreen_with_alpha(img->w(), img->h());
-      fl_begin_offscreen((Fl_Offscreen)img->id_);
-      fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d() | FL_IMAGE_WITH_ALPHA,
-                    img->ld());
-      fl_end_offscreen();
+    Fl_Image_Surface *surface;
+    int depth = img->d();
+    if (depth == 1 || depth == 3) {
+      surface = new Fl_Image_Surface(img->w(), img->h());
+    } else if (depth == 4 && fl_can_do_alpha_blending()) {
+      Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
+      surface = new Fl_Image_Surface(pixmap, img->w(), img->h());
+      depth |= FL_IMAGE_WITH_ALPHA;
     }
+    surface->set_current();
+    fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
+    surface->end_current();
+    img->id_ = surface->get_offscreen_before_delete();
+    delete surface;
   }
   if (img->id_) {
     if (img->mask_) {
@@ -759,7 +762,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
 void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
   if (id_) {
-    fl_delete_offscreen((Fl_Offscreen)id_);
+    XFreePixmap(fl_display, (Fl_Offscreen)id_);
     id_ = 0;
   }
 

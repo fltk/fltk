@@ -96,7 +96,6 @@ extern FL_EXPORT const XEvent* fl_xevent;
 extern FL_EXPORT ulong fl_event_time;
 
 typedef ulong Fl_Offscreen;
-extern FL_EXPORT Fl_Offscreen fl_create_offscreen_with_alpha(int,int);
 
 // Bitmap masks
 typedef ulong Fl_Bitmask;
