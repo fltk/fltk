@@ -714,7 +714,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     return;
   }
   if (!img->id_) {
-    Fl_Image_Surface *surface;
+    Fl_Image_Surface *surface = NULL;
     int depth = img->d();
     if (depth == 1 || depth == 3) {
       surface = new Fl_Image_Surface(img->w(), img->h());
@@ -723,11 +723,13 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       surface = new Fl_Image_Surface(pixmap, img->w(), img->h());
       depth |= FL_IMAGE_WITH_ALPHA;
     }
-    surface->set_current();
-    fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
-    surface->end_current();
-    img->id_ = surface->get_offscreen_before_delete();
-    delete surface;
+    if (surface) {
+      surface->set_current();
+      fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
+      surface->end_current();
+      img->id_ = surface->get_offscreen_before_delete();
+      delete surface;
+    }
   }
   if (img->id_) {
     if (img->mask_) {
