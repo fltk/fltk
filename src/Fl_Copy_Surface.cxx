@@ -19,13 +19,14 @@
 #include "config_lib.h"
 #include <FL/Fl_Copy_Surface.H>
 
+#if !defined(FL_DOXYGEN)
 #ifdef __APPLE__
 #include <src/drivers/Quartz/Fl_Quartz_Copy_Surface.H>
 
 #elif defined(WIN32)
 #include <src/drivers/GDI/Fl_GDI_Copy_Surface.H>
 
-#elif defined(FL_PORTING) && !defined(FL_DOXYGEN)
+#elif defined(FL_PORTING)
 # pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"
 
 class Fl_Copy_Surface::Helper : public Fl_Widget_Surface { // class model
@@ -47,6 +48,7 @@ private:
 #include <src/drivers/Xlib/Fl_Xlib_Copy_Surface.H>
 
 #endif
+#endif // !FL_DOXYGEN
 
 /** the constructor */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
