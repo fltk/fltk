@@ -16,6 +16,10 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <src/config_lib.h>
+
+
+#ifdef FL_CFG_GFX_GDI
 #include "Fl_GDI_Copy_Surface.H"
 
 Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
@@ -67,6 +71,7 @@ void Fl_Copy_Surface::Helper::translate(int x, int y) {
 void Fl_Copy_Surface::Helper::untranslate() {
   ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
+#endif // FL_CFG_GFX_GDI
 
 //
 // End of "$Id: Fl_Copy_Surface.H 11220 2016-02-26 12:51:47Z manolo $".

@@ -16,6 +16,9 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config_lib.h"
+
+#ifdef FL_CFG_GFX_XLIB
 #include "Fl_Xlib_Copy_Surface.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -57,6 +60,8 @@ void Fl_Copy_Surface::Helper::translate(int x, int y) {
 void Fl_Copy_Surface::Helper::untranslate() {
   ((Fl_Translated_Xlib_Graphics_Driver*)driver())->untranslate_all();
 }
+
+#endif // FL_CFG_GFX_XLIB
 
 //
 // End of "$Id: Fl_Copy_Surface.H 11220 2016-02-26 12:51:47Z manolo $".

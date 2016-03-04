@@ -21,7 +21,6 @@
 #ifdef FL_CFG_GFX_QUARTZ
 #include "Fl_Quartz_Copy_Surface.H"
 #include "Fl_Quartz_Graphics_Driver.H"
-#endif
 
 Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
   driver(new Fl_Quartz_Graphics_Driver);
@@ -85,6 +84,8 @@ void Fl_Copy_Surface::Helper::translate(int x, int y) {
 void Fl_Copy_Surface::Helper::untranslate() {
   CGContextRestoreGState(gc);
 }
+
+#endif // FL_CFG_GFX_QUARTZ
 
 //
 // End of "$Id: Fl_Copy_Surface.H 11220 2016-02-26 12:51:47Z manolo $".

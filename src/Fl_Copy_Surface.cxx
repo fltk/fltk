@@ -19,12 +19,13 @@
 #include "config_lib.h"
 #include <FL/Fl_Copy_Surface.H>
 
-#if !defined(FL_DOXYGEN)
-#ifdef __APPLE__
+#ifdef FL_CFG_GFX_QUARTZ
 #include <src/drivers/Quartz/Fl_Quartz_Copy_Surface.H>
 
-#elif defined(WIN32)
+#elif defined(FL_CFG_GFX_GDI)
 #include <src/drivers/GDI/Fl_GDI_Copy_Surface.H>
+
+#elif defined(USE_SDL)
 
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"
@@ -44,11 +45,10 @@ private:
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
 };
 
-#else
+#elif defined(FL_CFG_GFX_XLIB)
 #include <src/drivers/Xlib/Fl_Xlib_Copy_Surface.H>
 
 #endif
-#endif // !FL_DOXYGEN
 
 /** the constructor */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
