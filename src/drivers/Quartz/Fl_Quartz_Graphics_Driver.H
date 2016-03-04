@@ -59,6 +59,7 @@ public:
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
   fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
+  void uncache(Fl_Pixmap *img);
   fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
