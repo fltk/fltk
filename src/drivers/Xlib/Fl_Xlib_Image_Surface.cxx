@@ -18,7 +18,7 @@
 
 #include <FL/fl_draw.H>
 
-#include "config_lib.h"
+#include "../../config_lib.h"
 
 
 #ifdef FL_CFG_GFX_XLIB
