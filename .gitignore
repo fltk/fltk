@@ -227,6 +227,7 @@
 /test/minimum
 /test/native-filechooser
 /test/navigation
+/test/offscreen
 /test/output
 /test/overlay
 /test/pack

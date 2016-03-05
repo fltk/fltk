@@ -45,6 +45,7 @@
 		@di:transparency:animated
 	@d:cursor:cursor
 	@d:labels:label
+	@d:offscreen:offscreen
 	@d:rotated text:rotated_text
 	@d:fl_arc:arc
 	@d:fl_curve:curve
