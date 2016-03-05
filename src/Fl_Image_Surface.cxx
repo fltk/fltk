@@ -175,7 +175,7 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
 }
 
 static int stack_current_offscreen[16];
-static int stack_height = 0;
+static unsigned stack_height = 0;
 
 /**  Send all subsequent drawing commands to this offscreen buffer.
    \param ctx     the offscreen buffer.
