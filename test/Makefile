@@ -70,6 +70,7 @@ CPPFILES =\
 	minimum.cxx \
 	native-filechooser.cxx \
 	navigation.cxx \
+	offscreen.cxx \
 	output.cxx \
 	overlay.cxx \
 	pack.cxx \
@@ -142,6 +143,7 @@ ALL =	\
 	minimum$(EXEEXT) \
 	native-filechooser$(EXEEXT) \
 	navigation$(EXEEXT) \
+	offscreen$(EXEEXT) \
 	output$(EXEEXT) \
 	overlay$(EXEEXT) \
 	pack$(EXEEXT) \
@@ -414,6 +416,8 @@ native-filechooser$(EXEEXT): native-filechooser.o $(IMGLIBNAME)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 navigation$(EXEEXT): navigation.o
+
+offscreen$(EXEEXT): offscreen.o
 
 output$(EXEEXT): output.o $(FLLIBNAME)
 	echo Linking $@...
