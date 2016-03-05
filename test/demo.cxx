@@ -242,7 +242,13 @@ void dobut(Fl_Widget *, long arg)
 #ifdef WIN32
     STARTUPINFO		suInfo;		// Process startup information
     PROCESS_INFORMATION	prInfo;		// Process information
-    
+
+# if DEBUG_EXE_WITH_D
+    const char *exe = "d.exe";		// exe name with trailing 'd'
+# else
+    const char *exe = ".exe";		// exe name w/o trailing 'd'
+# endif
+
     memset(&suInfo, 0, sizeof(suInfo));
     suInfo.cb = sizeof(suInfo);
     
@@ -255,22 +261,18 @@ void dobut(Fl_Widget *, long arg)
     // whilst leaving any additional parameters unchanged - this
     // is required to handle the correct conversion of cases such as : 
     // `../fluid/fluid valuators.fl' to '../fluid/fluid.exe valuators.fl'.
-    
+
     // skip leading spaces.
     char* start_command = copy_of_icommand;
-    while(*start_command == ' ') ++start_command;
-    
+    while (*start_command == ' ') ++start_command;
+
     // find the space between the command and parameters if one exists.
     char* start_parameters = strchr(start_command,' ');
-    
+
     char* command = new char[icommand_length+6]; // 6 for extra 'd.exe\0'
-    
+
     if (start_parameters==NULL) { // no parameters required.
-#  if DEBUG_EXE_WITH_D
-      sprintf(command, "%sd.exe", start_command);
-#  else
-      sprintf(command, "%s.exe", start_command);
-#  endif // _DEBUG
+      sprintf(command, "%s%s", start_command, exe);
     } else { // parameters required.
       // break the start_command at the intermediate space between
       // start_command and start_parameters.
@@ -278,11 +280,7 @@ void dobut(Fl_Widget *, long arg)
       // move start_paremeters to skip over the intermediate space.
       ++start_parameters;
       
-#  ifdef _DEBUG
-      sprintf(command, "%sd.exe %s", start_command, start_parameters);
-#  else
-      sprintf(command, "%s.exe %s", start_command, start_parameters);
-#  endif // _DEBUG
+      sprintf(command, "%s%s %s", start_command, exe, start_parameters);
     }
     
     CreateProcess(NULL, command, NULL, NULL, FALSE,
@@ -297,8 +295,8 @@ void dobut(Fl_Widget *, long arg)
     
     char command[2048], path[2048], app_path[2048];
     
-    // this neat litle block of code ensures that the current directory is set 
-    // to the location of the Demo application.
+    // this neat little block of code ensures that the current directory
+    // is set to the location of the Demo application.
     CFBundleRef app = CFBundleGetMainBundle();
     CFURLRef url = CFBundleCopyBundleURL(app);    
     CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
