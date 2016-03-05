@@ -101,11 +101,7 @@ Fl_Pixmap::~Fl_Pixmap() {
 
 void Fl_Pixmap::uncache() {
   if (id_) {
-#ifdef __APPLE__
-    fl_graphics_driver->uncache(this);
-#else
     fl_delete_offscreen((Fl_Offscreen)id_);
-#endif
     id_ = 0;
   }
 

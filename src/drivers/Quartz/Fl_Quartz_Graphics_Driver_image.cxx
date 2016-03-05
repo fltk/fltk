@@ -25,7 +25,6 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Printer.H>
 #include <FL/x.H>
-#include <FL/Fl_Image_Surface.H>
 
 #define MAXBUFFER 0x40000 // 256k
 
@@ -273,23 +272,11 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uc
 }
 
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
-  Fl_Image_Surface *surface = new Fl_Image_Surface(w,h);
-  surface->set_current();
+  Fl_Offscreen id = fl_create_offscreen(w, h);
+  fl_begin_offscreen(id);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
-  surface->end_current();
-  Fl_Offscreen id = surface->get_offscreen_before_delete();
-  delete surface;
+  fl_end_offscreen();
   return (fl_uintptr_t)id;
-}
-
-void Fl_Quartz_Graphics_Driver::uncache(Fl_Pixmap *img)
-{
-  if (img->id_) {
-    void *data = CGBitmapContextGetData((CGContextRef)img->id_);
-    free(data);
-    CGContextRelease((CGContextRef)img->id_);
-    img->id_ = NULL;
-  }
 }
 
 void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh)
