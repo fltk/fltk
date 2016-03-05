@@ -75,6 +75,7 @@ endif(OPTION_APPLE_SDL)
 
 #######################################################################
 option(OPTION_USE_POLL "use poll if available" OFF)
+mark_as_advanced(OPTION_USE_POLL)
 
 if(OPTION_USE_POLL)
    CHECK_FUNCTION_EXISTS(poll USE_POLL)
