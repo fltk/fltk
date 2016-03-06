@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <src/config_lib.h>
+#include "../../config_lib.h"
 
 
 #ifdef FL_CFG_GFX_GDI
