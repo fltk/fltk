@@ -19,6 +19,8 @@
 
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Window_Driver.h"
+#include <FL/Fl_Double_Window.H>
+#include <FL/fl_draw.H>
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
@@ -39,6 +41,15 @@ extern Fl_Window *fl_xfocus;
 void Fl_Cocoa_Window_Driver::take_focus()
 {
   set_key_window();
+}
+
+int Fl_Cocoa_Window_Driver::double_flush(int eraseoverlay) {
+  if ( ((Fl_Double_Window*)w)->as_overlay_window() ) {
+    Fl_Window_Driver::double_flush(eraseoverlay);
+  } else {
+    draw();
+  }
+  return 0;
 }
 
 

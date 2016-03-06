@@ -40,11 +40,11 @@
 class FL_EXPORT Fl_Double_Window : public Fl_Window {
 protected:
   void flush(int eraseoverlay);
+public:
   /**
-    Force double buffering, even if the OS already buffers windows
-    (overlays need that on MacOS and Windows2000)
+    Return non-null if this is an Fl_Overlay_Window object.
   */
-  char force_doublebuffering_;
+  virtual Fl_Double_Window *as_overlay_window() {return NULL; }
 public:
   void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}

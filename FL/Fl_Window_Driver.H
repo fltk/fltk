@@ -40,6 +40,9 @@ public:
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
 
   virtual void take_focus() { }
+  virtual int double_flush(int eraseoverlay);
+  virtual void destroy_double_buffer();
+  void draw() {w->draw();}
 };
 
 

@@ -26,6 +26,7 @@
 #include <src/drivers/GDI/Fl_GDI_Copy_Surface.H>
 
 #elif defined(USE_SDL)
+#include <src/drivers/SDL/Fl_SDL_Copy_Surface.H>
 
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"

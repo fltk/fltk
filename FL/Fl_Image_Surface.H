@@ -53,7 +53,6 @@ class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
 private:
   class Helper;
   Helper *platform_surface;
-  Fl_Offscreen offscreen();
 protected:
   void translate(int x, int y);
   void untranslate();
@@ -69,6 +68,7 @@ public:
   void origin(int x, int y);
   int printable_rect(int *w, int *h);
   Fl_Offscreen get_offscreen_before_delete();
+  Fl_Offscreen offscreen();
 };
 
 #endif // Fl_Image_Surface_H

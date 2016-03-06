@@ -27,6 +27,7 @@
 #include <src/drivers/GDI/Fl_GDI_Image_Surface.H>
 
 #elif defined(USE_SDL)
+#include <src/drivers/SDL/Fl_SDL_Image_Surface.H>
 
 
 #elif defined(FL_PORTING)

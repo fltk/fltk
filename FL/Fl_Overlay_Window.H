@@ -72,6 +72,7 @@ protected:
   Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0);
 public:
   void show(int a, char **b) {Fl_Double_Window::show(a,b);}
+  virtual Fl_Double_Window *as_overlay_window() {return this; }
 };
 
 #endif
