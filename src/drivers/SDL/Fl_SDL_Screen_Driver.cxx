@@ -58,7 +58,6 @@ double Fl_SDL_Screen_Driver::wait(double time_to_wait)
 
 #include <FL/x.H>
 #include <FL/Fl.H>
-#include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Graphics_Driver.H>
 
@@ -143,8 +142,6 @@ void Fl_Window::resize(int, int, int, int) { }
 Fl_Window *Fl_Window::current_;
 char fl_show_iconic;
 Window fl_window;
-void Fl_Image_Surface::translate(int x, int y) { }
-void Fl_Image_Surface::untranslate() { }
 
 /*
  #define __APPLE__
