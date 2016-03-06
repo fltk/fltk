@@ -47,7 +47,6 @@ class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   virtual void take_focus();
-  int double_flush(int eraseoverlay);
 };
 
 

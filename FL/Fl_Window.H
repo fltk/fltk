@@ -37,7 +37,7 @@ class Fl_X;
 class Fl_Window_Driver;
 class Fl_RGB_Image;
 class Fl_Shared_Image;
-
+class Fl_Double_Window;
 
 /**
   This widget produces an actual window.  This can either be a main
@@ -637,6 +637,10 @@ public:
   void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   Fl_Window_Driver *driver() { return i; }
 
+  /**
+   Return non-null if this is an Fl_Overlay_Window object.
+   */
+  virtual Fl_Double_Window *as_double_window() {return NULL; }
 };
 
 #endif

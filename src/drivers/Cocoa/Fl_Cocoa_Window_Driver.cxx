@@ -22,10 +22,22 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
 
+// class used for Fl_Double_Window but not for Fl_Overlay_Window
+class Fl_Cocoa_Double_Window_Driver : public Fl_Cocoa_Window_Driver {
+public:
+  Fl_Cocoa_Double_Window_Driver(Fl_Window *w) : Fl_Cocoa_Window_Driver(w) {}
+  int double_flush(int eraseoverlay) {
+    draw();
+    return 0;
+  }
+};
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
-  return new Fl_Cocoa_Window_Driver(w);
+  if (w->as_double_window() && !w->as_double_window()->as_overlay_window())
+    return new Fl_Cocoa_Double_Window_Driver(w);
+  else
+    return new Fl_Cocoa_Window_Driver(w);
 }
 
 
@@ -42,16 +54,6 @@ void Fl_Cocoa_Window_Driver::take_focus()
 {
   set_key_window();
 }
-
-int Fl_Cocoa_Window_Driver::double_flush(int eraseoverlay) {
-  if ( ((Fl_Double_Window*)w)->as_overlay_window() ) {
-    Fl_Window_Driver::double_flush(eraseoverlay);
-  } else {
-    draw();
-  }
-  return 0;
-}
-
 
 //
 // End of "$Id$".
