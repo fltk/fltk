@@ -211,12 +211,12 @@ elseif (USE_SDL)
     drivers/Pico/Fl_Pico_Window_Driver.cxx
     drivers/Pico/Fl_Pico_Graphics_Driver.cxx
     drivers/Pico/Fl_Pico_Copy_Surface.cxx
-    drivers/SDL/Fl_SDL_System_Driver.cxx
-    drivers/SDL/Fl_SDL_Screen_Driver.cxx
-    drivers/SDL/Fl_SDL_Window_Driver.cxx
-    drivers/SDL/Fl_SDL_Graphics_Driver.cxx
-    drivers/SDL/Fl_SDL_Copy_Surface.cxx
-    drivers/SDL/Fl_SDL_Image_Surface.cxx
+    drivers/PicoSDL/Fl_PicoSDL_System_Driver.cxx
+    drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.cxx
+    drivers/PicoSDL/Fl_PicoSDL_Window_Driver.cxx
+    drivers/PicoSDL/Fl_PicoSDL_Graphics_Driver.cxx
+    drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.cxx
+    drivers/PicoSDL/Fl_PicoSDL_Image_Surface.cxx
   )
   set(DRIVER_HEADER_FILES
     drivers/Pico/Fl_Pico_System_Driver.H
@@ -224,12 +224,12 @@ elseif (USE_SDL)
     drivers/Pico/Fl_Pico_Window_Driver.H
     drivers/Pico/Fl_Pico_Graphics_Driver.H
     drivers/Pico/Fl_Pico_Copy_Surface.H
-    drivers/SDL/Fl_SDL_System_Driver.H
-    drivers/SDL/Fl_SDL_Screen_Driver.H
-    drivers/SDL/Fl_SDL_Window_Driver.H
-    drivers/SDL/Fl_SDL_Graphics_Driver.H
-    drivers/SDL/Fl_SDL_Copy_Surface.H
-    drivers/SDL/Fl_SDL_Image_Surface.H
+    drivers/PicoSDL/Fl_PicoSDL_System_Driver.H
+    drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.H
+    drivers/PicoSDL/Fl_PicoSDL_Window_Driver.H
+    drivers/PicoSDL/Fl_PicoSDL_Graphics_Driver.H
+    drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.H
+    drivers/PicoSDL/Fl_PicoSDL_Image_Surface.H
   )
 
 elseif (APPLE)
