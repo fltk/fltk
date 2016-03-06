@@ -37,7 +37,7 @@ public:
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
 #if USE_XDBE
-  if (can_xdbe()) // strictly necessary only for Fl_Double_Window, but does no harm for Fl_Window
+  if (w->as_double_window() && can_xdbe())
     return new Fl_X11_Dbe_Window_Driver(w);
   else
 #endif
