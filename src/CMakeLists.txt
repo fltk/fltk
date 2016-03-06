@@ -216,6 +216,7 @@ elseif (USE_SDL)
     drivers/SDL/Fl_SDL_Window_Driver.cxx
     drivers/SDL/Fl_SDL_Graphics_Driver.cxx
     drivers/SDL/Fl_SDL_Copy_Surface.cxx
+    drivers/SDL/Fl_SDL_Image_Surface.cxx
   )
   set(DRIVER_HEADER_FILES
     drivers/Pico/Fl_Pico_System_Driver.H
@@ -228,6 +229,7 @@ elseif (USE_SDL)
     drivers/SDL/Fl_SDL_Window_Driver.H
     drivers/SDL/Fl_SDL_Graphics_Driver.H
     drivers/SDL/Fl_SDL_Copy_Surface.H
+    drivers/SDL/Fl_SDL_Image_Surface.H
   )
 
 elseif (APPLE)
