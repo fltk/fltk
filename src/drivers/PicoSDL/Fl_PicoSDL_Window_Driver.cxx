@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_SDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
 //
 // Definition of SDL Window interface based on SDL
 //
@@ -18,26 +18,26 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_SDL_Window_Driver.H"
+#include "Fl_PicoSDL_Window_Driver.H"
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
 {
-  return new Fl_SDL_Window_Driver(win);
+  return new Fl_PicoSDL_Window_Driver(win);
 }
 
 
-Fl_SDL_Window_Driver::Fl_SDL_Window_Driver(Fl_Window *win)
+Fl_PicoSDL_Window_Driver::Fl_PicoSDL_Window_Driver(Fl_Window *win)
 : Fl_Pico_Window_Driver(win)
 {
 }
 
 
-Fl_SDL_Window_Driver::~Fl_SDL_Window_Driver()
+Fl_PicoSDL_Window_Driver::~Fl_PicoSDL_Window_Driver()
 {
 }
 
 
 //
-// End of "$Id: Fl_SDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
 //

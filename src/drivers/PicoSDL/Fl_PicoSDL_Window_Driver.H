@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_SDL_Window_Driver.H 11017 2016-01-20 21:40:12Z matt $"
+// "$Id: Fl_PicoSDL_Window_Driver.H 11017 2016-01-20 21:40:12Z matt $"
 //
 // Definition of SDL Window interface
 // for the Fast Light Tool Kit (FLTK).
@@ -22,22 +22,22 @@
  \brief Definition of SDL Window interface.
  */
 
-#ifndef FL_SDL_WINDOW_DRIVER_H
-#define FL_SDL_WINDOW_DRIVER_H
+#ifndef FL_PICOSDL_WINDOW_DRIVER_H
+#define FL_PICOSDL_WINDOW_DRIVER_H
 
 #include "../Pico/Fl_Pico_Window_Driver.H"
 
 
-class FL_EXPORT Fl_SDL_Window_Driver : public Fl_Pico_Window_Driver
+class FL_EXPORT Fl_PicoSDL_Window_Driver : public Fl_Pico_Window_Driver
 {
 public:
-  Fl_SDL_Window_Driver(Fl_Window *win);
-  virtual ~Fl_SDL_Window_Driver();
+  Fl_PicoSDL_Window_Driver(Fl_Window *win);
+  virtual ~Fl_PicoSDL_Window_Driver();
 };
 
 
-#endif // FL_SDL_WINDOW_DRIVER_H
+#endif // FL_PICOSDL_WINDOW_DRIVER_H
 
 //
-// End of "$Id: Fl_SDL_Window_Driver.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id: Fl_PicoSDL_Window_Driver.H 11017 2016-01-20 21:40:12Z matt $".
 //

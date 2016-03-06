@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_SDL_Screen_Driver.H 11017 2016-01-20 21:40:12Z matt $"
+// "$Id: Fl_PicoSDL_Screen_Driver.H 11017 2016-01-20 21:40:12Z matt $"
 //
 // Definition of SDL Screen interface based on Pico
 // for the Fast Light Tool Kit (FLTK).
@@ -18,27 +18,27 @@
 //
 
 /**
- \file Fl_SDL_Screen_Driver.H
+ \file Fl_PicoSDL_Screen_Driver.H
  \brief Definition of SDL Screen interface based on Pico.
  */
 
-#ifndef FL_SDL_SCREEN_DRIVER_H
-#define FL_SDL_SCREEN_DRIVER_H
+#ifndef FL_PICOSDL_SCREEN_DRIVER_H
+#define FL_PICOSDL_SCREEN_DRIVER_H
 
 #include "../Pico/Fl_Pico_Screen_Driver.H"
 
 
-class FL_EXPORT Fl_SDL_Screen_Driver : public Fl_Pico_Screen_Driver
+class FL_EXPORT Fl_PicoSDL_Screen_Driver : public Fl_Pico_Screen_Driver
 {
 public:
-  Fl_SDL_Screen_Driver();
-  virtual ~Fl_SDL_Screen_Driver();
+  Fl_PicoSDL_Screen_Driver();
+  virtual ~Fl_PicoSDL_Screen_Driver();
   virtual double wait(double time_to_wait);
 };
 
 
-#endif // FL_SDL_SCREEN_DRIVER_H
+#endif // FL_PICOSDL_SCREEN_DRIVER_H
 
 //
-// End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id: Fl_PicoSDL_Screen_Driver.H 11017 2016-01-20 21:40:12Z matt $".
 //

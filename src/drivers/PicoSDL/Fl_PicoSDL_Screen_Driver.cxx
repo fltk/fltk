@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_SDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id: Fl_PicoSDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
 //
 // Definition of SDL Screen interface based on Pico
 //
@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_SDL_Screen_Driver.H"
+#include "Fl_PicoSDL_Screen_Driver.H"
 
 #include <FL/Fl_Window_Driver.H>
 
@@ -29,20 +29,20 @@
 
 Fl_Screen_Driver* Fl_Screen_Driver::newScreenDriver()
 {
-  return new Fl_SDL_Screen_Driver();
+  return new Fl_PicoSDL_Screen_Driver();
 }
 
 
-Fl_SDL_Screen_Driver::Fl_SDL_Screen_Driver()
+Fl_PicoSDL_Screen_Driver::Fl_PicoSDL_Screen_Driver()
 {
 }
 
-Fl_SDL_Screen_Driver::~Fl_SDL_Screen_Driver()
+Fl_PicoSDL_Screen_Driver::~Fl_PicoSDL_Screen_Driver()
 {
 }
 
 
-double Fl_SDL_Screen_Driver::wait(double time_to_wait)
+double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 {
   SDL_Event e;
   if (SDL_PollEvent(&e)) {
@@ -58,6 +58,7 @@ double Fl_SDL_Screen_Driver::wait(double time_to_wait)
 
 #include <FL/x.H>
 #include <FL/Fl.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Graphics_Driver.H>
 
@@ -128,9 +129,9 @@ Fl_X* Fl_X::make(Fl_Window *w)
   x->w = w;
   x->region = 0;
   if (!w->force_position()) {
-    x->xid = SDL_CreateWindow(w->label(), w->x(), w->y(), w->w(), w->h(), 0);
+    x->xid = SDL_CreateWindow(w->label(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w->w(), w->h(), 0);
   } else {
-    x->xid = SDL_CreateWindow(w->label(), 100, 100, w->w(), w->h(), 0);
+    x->xid = SDL_CreateWindow(w->label(), w->x(), w->y(), w->w(), w->h(), 0);
   }
   x->next = Fl_X::first;
   Fl_X::first = x;
@@ -142,6 +143,8 @@ void Fl_Window::resize(int, int, int, int) { }
 Fl_Window *Fl_Window::current_;
 char fl_show_iconic;
 Window fl_window;
+void Fl_Image_Surface::translate(int x, int y) { }
+void Fl_Image_Surface::untranslate() { }
 
 /*
  #define __APPLE__
@@ -188,6 +191,6 @@ Window fl_window;
 
 
 //
-// End of "$Id: Fl_SDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id: Fl_PicoSDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
 //
 
