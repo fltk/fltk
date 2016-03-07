@@ -331,7 +331,7 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   int            _scrollbar_size;		// size of scrollbar trough
 #if FLTK_ABI_VERSION >= 10301
   // NEW: 
-  Fl_Tree_Item *_lastselect;
+  Fl_Tree_Item *_lastselect;			// used to extend selections
 #else /*FLTK_ABI_VERSION*/
   // OLD: static data inside handle() method
 #endif /*FLTK_ABI_VERSION*/

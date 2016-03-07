@@ -267,7 +267,7 @@ int Fl_Tree::handle(int e) {
   // NEW: data inside Fl_Tree
 #else /*FLTK_ABI_VERSION*/
   // OLD:
-  static Fl_Tree_Item *_lastselect = 0;
+  static Fl_Tree_Item *_lastselect = 0;		// used to extend selections
 #endif /*FLTK_ABI_VERSION*/
   // Developer note: Fl_Browser_::handle() used for reference here..
   // #include <FL/names.h>	// for event debugging
@@ -1118,6 +1118,7 @@ Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
 int Fl_Tree::remove(Fl_Tree_Item *item) {
   // Item being removed is focus item? zero focus
   if ( item == _item_focus ) _item_focus = 0;
+  if ( item == _lastselect ) _lastselect = 0;
   if ( item == _root ) {
     clear();
   } else {
@@ -1136,6 +1137,7 @@ void Fl_Tree::clear() {
   _root->clear_children();
   delete _root; _root = 0;
   _item_focus = 0;
+  _lastselect = 0;
 } 
 
 /// Clear all the children for \p 'item'.
