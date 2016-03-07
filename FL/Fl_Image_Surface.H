@@ -25,24 +25,43 @@
 #include <FL/x.H> // for Fl_Offscreen
 
 
-/** Directs all graphics requests to an Fl_Image.
+/** 
+ \brief Directs all graphics requests to an Fl_Image.
  
- After creation of an Fl_Image_Surface object, call set_current() on it, and all subsequent graphics requests
- will be recorded in the image. It's possible to draw widgets (using Fl_Image_Surface::draw()) 
- or to use any of the \ref fl_drawings or the \ref fl_attributes.
- Finally, call image() on the object to obtain a newly allocated Fl_RGB_Image object.
- <br> Fl_GL_Window objects can be drawn in the image as well. 
+ After creation of an Fl_Image_Surface object, call set_current() on it, and all
+ subsequent graphics requests will be recorded in the image. It's possible to 
+ draw widgets (using Fl_Image_Surface::draw()) or to use any of the 
+ \ref fl_drawings or the \ref fl_attributes. Finally, call image() on the object
+ to obtain a newly allocated Fl_RGB_Image object.
  
- <br> Usage example:
+ Fl_GL_Window objects can be drawn in the image as well.
+ 
+ \example
  \code
- Fl_Widget *g = ...; // a widget you want to draw in an image
- Fl_Image_Surface *img_surf = new Fl_Image_Surface(g->w(), g->h()); // create an Fl_Image_Surface object
- img_surf->set_current(); // direct graphics requests to the image
- fl_color(FL_WHITE); fl_rectf(0, 0, g->w(), g->h()); // draw a white background
- img_surf->draw(g); // draw the g widget in the image
- Fl_RGB_Image* image = img_surf->image(); // get the resulting image
- delete img_surf; // delete the img_surf object
- Fl_Display_Device::display_device()->set_current();  // direct graphics requests back to the display
+ // this is the widget that you want to draw into an image
+ Fl_Widget *g = ...;
+
+ // create an Fl_Image_Surface object
+ Fl_Image_Surface *image_surface = new Fl_Image_Surface(g->w(), g->h());
+ 
+ // direct all further graphics requests to the image
+ image_surface->set_current();
+
+ // draw a white background
+ fl_color(FL_WHITE); 
+ fl_rectf(0, 0, g->w(), g->h());
+
+ // draw the g widget in the image
+ image_surface->draw(g);
+
+ // get the resulting image
+ Fl_RGB_Image* image = image_surface->image();
+ 
+ // delete the image_surface object, but not the image itself
+ delete image_surface;
+
+ // direct graphics requests back to the screen
+ Fl_Display_Device::display_device()->set_current();
  \endcode
 */
 class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {

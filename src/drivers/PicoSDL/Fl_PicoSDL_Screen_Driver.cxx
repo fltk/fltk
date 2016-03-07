@@ -143,8 +143,8 @@ void Fl_Window::resize(int, int, int, int) { }
 Fl_Window *Fl_Window::current_;
 char fl_show_iconic;
 Window fl_window;
-void Fl_Image_Surface::translate(int x, int y) { }
-void Fl_Image_Surface::untranslate() { }
+//void Fl_Image_Surface::translate(int x, int y) { }
+//void Fl_Image_Surface::untranslate() { }
 
 /*
  #define __APPLE__

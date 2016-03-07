@@ -55,9 +55,9 @@ bool Fl_Display_Device::high_res_window_ = false;
  This surface will receive all future graphics requests. */
 void Fl_Surface_Device::set_current(void)
 {
-  fl_graphics_driver = _driver;
+  fl_graphics_driver = pGraphicsDriver;
   _surface = this;
-  _driver->global_gc();
+  pGraphicsDriver->global_gc();
 }
 
 Fl_Surface_Device* Fl_Surface_Device::_surface; // the current target surface of graphics operations

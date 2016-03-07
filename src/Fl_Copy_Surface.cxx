@@ -26,9 +26,9 @@
 #include <src/drivers/GDI/Fl_GDI_Copy_Surface.H>
 
 #elif defined(USE_SDL)
-#include <src/drivers/SDL/Fl_SDL_Copy_Surface.H>
+#include <src/drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.H>
 
-#elif defined(FL_PORTING)
+#elif defined(FL_PORTING) || defined(USE_SDL)
 # pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"
 
 class Fl_Copy_Surface::Helper : public Fl_Widget_Surface { // class model

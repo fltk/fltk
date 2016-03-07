@@ -27,10 +27,9 @@
 #include <src/drivers/GDI/Fl_GDI_Image_Surface.H>
 
 #elif defined(USE_SDL)
-#include <src/drivers/SDL/Fl_SDL_Image_Surface.H>
+#include <src/drivers/PicoSDL/Fl_PicoSDL_Image_Surface.H>
 
-
-#elif defined(FL_PORTING)
+#elif defined(FL_PORTING) || defined(USE_SDL)
 # pragma message "FL_PORTING: implement class Fl_Image_Surface::Helper for your platform"
 
 class Fl_Image_Surface::Helper : public Fl_Widget_Surface { // class model

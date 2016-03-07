@@ -54,18 +54,18 @@ class Fl_Widget;
  */
 class FL_EXPORT Fl_Surface_Device {
   /** \brief The graphics driver in use by this surface. */
-  Fl_Graphics_Driver *_driver;
+  Fl_Graphics_Driver *pGraphicsDriver;
   static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
-  static Fl_Surface_Device *default_surface(); // create surface is none exists yet
+  static Fl_Surface_Device *default_surface(); // create surface if none exists yet
 protected:
   /** \brief Constructor that sets the graphics driver to use for the created surface. */
-  Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver; };
+  Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; };
 public:
   virtual void set_current(void);
   /** \brief Sets the graphics driver of this drawing surface. */
-  inline void driver(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver;};
+  inline void driver(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver;};
   /** \brief Returns the graphics driver of this drawing surface. */
-  inline Fl_Graphics_Driver *driver() {return _driver; };
+  inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; };
   /** The current drawing surface.
    In other words, the Fl_Surface_Device object that currently receives all graphics output */
   static inline Fl_Surface_Device *surface() {
