@@ -71,7 +71,8 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 
   friend class Fl_X;
   friend class Fl_Window_Driver;
-  Fl_Window_Driver *i; // points at the system-specific stuff
+  Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
+  Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creatino time
 
   struct icon_data {
     const void *legacy_icon;
@@ -635,7 +636,7 @@ public:
 
   // Captures the titlebar and borders of the window, if they exist.
   void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
-  Fl_Window_Driver *driver() { return i; }
+  Fl_Window_Driver *driver() { return pWindowDriver; }
 
   /**
    Return non-null if this is an Fl_Overlay_Window object.

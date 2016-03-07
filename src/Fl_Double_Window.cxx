@@ -81,9 +81,9 @@ void Fl_Double_Window::flush() {flush(0);}
 void Fl_Double_Window::flush(int eraseoverlay) {
   if (!shown()) return;
   make_current(); // make sure fl_gc is non-zero
-  Fl_Window_Driver *myi = (Fl_Window_Driver*)Fl_X::i(this);
+  Fl_X *myi = Fl_X::i(this);
   if (!myi) return; // window not yet created
-  int retval = myi->double_flush(eraseoverlay);
+  int retval = driver()->double_flush(eraseoverlay);
   if (retval) return;
   if (eraseoverlay) fl_clip_region(0);
   // on Irix (at least) it is faster to reduce the area copied to
@@ -102,13 +102,15 @@ int Fl_Window_Driver::double_flush(int eraseoverlay) {
    Fl_Overlay_Window's which fall back on this implementation.
    - on Xlib, it is reimplemented if the Xdbe extension is available.
    */
-  if (!other_xid) {
-    other_xid = fl_create_offscreen(w->w(), w->h());
-    w->clear_damage(FL_DAMAGE_ALL);
+  Fl_X *i = Fl_X::i(pWindow);
+
+  if (!i->other_xid) {
+    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+    pWindow->clear_damage(FL_DAMAGE_ALL);
   }
-  if (w->damage() & ~FL_DAMAGE_EXPOSE) {
-    fl_clip_region(region); region = 0;
-    fl_begin_offscreen(other_xid);
+  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    fl_clip_region(i->region); i->region = 0;
+    fl_begin_offscreen(i->other_xid);
     fl_graphics_driver->clip_region( 0 );
     draw();
     fl_end_offscreen();
@@ -120,26 +122,27 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int ow = w();
   int oh = h();
   Fl_Window::resize(X,Y,W,H);
-  Fl_Window_Driver *myi = (Fl_Window_Driver*)Fl_X::i(this);
+  Fl_X *myi = Fl_X::i(this);
   if (myi && myi->other_xid && (ow < w() || oh < h()))
-    myi->destroy_double_buffer();
+    driver()->destroy_double_buffer();
 }
 
 void Fl_Double_Window::hide() {
-  Fl_Window_Driver *myi = (Fl_Window_Driver*)Fl_X::i(this);
+  Fl_X *myi = Fl_X::i(this);
   if (myi && myi->other_xid) {
-    myi->destroy_double_buffer();
+    driver()->destroy_double_buffer();
   }
   Fl_Window::hide();
 }
 
 void Fl_Window_Driver::destroy_double_buffer() {
+  Fl_X *i = Fl_X::i(pWindow);
   /* This is a working, platform-independent implementation.
    Some platforms may re-implement it for their own logic:
    - on Xlib, it is reimplemented if the Xdbe extension is available.
    */
-  fl_delete_offscreen(other_xid);
-  other_xid = 0;
+  fl_delete_offscreen(i->other_xid);
+  i->other_xid = 0;
 }
 
 

@@ -33,7 +33,9 @@ class Fl_Window;
 /**
  \brief A base class for platform specific window handling code.
   */
-class FL_EXPORT Fl_Window_Driver : public Fl_X {
+class FL_EXPORT Fl_Window_Driver {
+protected:
+  Fl_Window *pWindow;
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
@@ -42,7 +44,7 @@ public:
   virtual void take_focus() { }
   virtual int double_flush(int eraseoverlay);
   virtual void destroy_double_buffer();
-  void draw() {w->draw();}
+  void draw();
 };
 
 

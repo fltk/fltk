@@ -124,7 +124,7 @@ Fl_X* Fl_X::make(Fl_Window *w)
   } else {
     parent = 0;
   }
-  Fl_Window_Driver *x = Fl_Window_Driver::newWindowDriver(w);
+  Fl_X *x = new Fl_X;
   x->other_xid = 0;
   x->w = w;
   x->region = 0;

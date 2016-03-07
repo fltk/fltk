@@ -24,7 +24,8 @@
 #include <FL/Fl.H>
 
 
-Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win)
+Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win) :
+pWindow(win)
 {
 }
 
@@ -33,6 +34,9 @@ Fl_Window_Driver::~Fl_Window_Driver()
 {
 }
 
+void Fl_Window_Driver::draw() {
+  pWindow->draw();
+}
 
 //
 // End of "$Id$".

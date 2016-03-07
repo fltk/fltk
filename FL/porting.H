@@ -78,7 +78,7 @@ public:
   int wait_for_expose;
 //  NSCursor *cursor;
   static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
+  static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static Fl_X* make(Fl_Window*);
   void flush();

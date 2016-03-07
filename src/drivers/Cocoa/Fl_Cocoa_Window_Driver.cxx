@@ -52,7 +52,7 @@ extern Fl_Window *fl_xfocus;
 
 void Fl_Cocoa_Window_Driver::take_focus()
 {
-  set_key_window();
+  Fl_X::i(pWindow)->set_key_window();
 }
 
 //

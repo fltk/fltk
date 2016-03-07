@@ -2945,7 +2945,7 @@ void Fl_X::make(Fl_Window* w)
       yp -= by+bt;
     }
   
-    Fl_Window_Driver *x = Fl_Window_Driver::newWindowDriver(w);
+    Fl_X *x = new Fl_X;
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
     x->subRect(0);

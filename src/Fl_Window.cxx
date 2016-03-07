@@ -64,17 +64,21 @@ void Fl_Window::_Fl_Window() {
   callback((Fl_Callback*)default_callback);
 }
 
-Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l)
-: Fl_Group(X, Y, W, H, l) {
+Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l) :
+Fl_Group(X, Y, W, H, l),
+pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
+{
   cursor_default = FL_CURSOR_DEFAULT;
 
   _Fl_Window();
   set_flag(FORCE_POSITION);
 }
 
-Fl_Window::Fl_Window(int W, int H, const char *l)
+Fl_Window::Fl_Window(int W, int H, const char *l) :
 // fix common user error of a missing end() with current(0):
-  : Fl_Group((Fl_Group::current(0),0), 0, W, H, l) {
+Fl_Group((Fl_Group::current(0),0), 0, W, H, l),
+pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
+{
   cursor_default = FL_CURSOR_DEFAULT;
 
   _Fl_Window();
