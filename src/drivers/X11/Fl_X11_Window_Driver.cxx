@@ -53,10 +53,11 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 
 void Fl_X11_Window_Driver::take_focus()
 {
+  Fl_X *i = Fl_X::i(pWindow);
   if (!Fl_X::ewmh_supported())
-      w->show(); // Old WMs, XMapRaised
-    else if (x) // New WMs use the NETWM attribute:
-      Fl_X::activate_window(xid);
+      pWindow->show(); // Old WMs, XMapRaised
+    else if (i->x) // New WMs use the NETWM attribute:
+      Fl_X::activate_window(i->xid);
 }
 
 #if USE_XDBE
@@ -83,35 +84,37 @@ static int can_xdbe() { // whether the Xdbe extension is usable
 }
 
 int Fl_X11_Dbe_Window_Driver::double_flush(int eraseoverlay) {
-    if (!other_xid) {
-      other_xid = XdbeAllocateBackBufferName(fl_display, xid, XdbeCopied);
-      backbuffer_bad = 1;
-      w->clear_damage(FL_DAMAGE_ALL);
+  Fl_X *i = Fl_X::i(pWindow);
+    if (!i->other_xid) {
+      i->other_xid = XdbeAllocateBackBufferName(fl_display, i->xid, XdbeCopied);
+      i->backbuffer_bad = 1;
+      pWindow->clear_damage(FL_DAMAGE_ALL);
     }
-    if (backbuffer_bad || eraseoverlay) {
+    if (i->backbuffer_bad || eraseoverlay) {
       // Make sure we do a complete redraw...
-      if (region) {XDestroyRegion(region); region = 0;}
-      w->clear_damage(FL_DAMAGE_ALL);
-      backbuffer_bad = 0;
+      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+      pWindow->clear_damage(FL_DAMAGE_ALL);
+      i->backbuffer_bad = 0;
     }
     // Redraw as needed...
-    if (w->damage()) {
-      fl_clip_region(region); region = 0;
-      fl_window = other_xid;
+    if (pWindow->damage()) {
+      fl_clip_region(i->region); i->region = 0;
+      fl_window = i->other_xid;
       draw();
-      fl_window = xid;
+      fl_window = i->xid;
     }
     // Copy contents of back buffer to window...
     XdbeSwapInfo s;
-    s.swap_window = xid;
+    s.swap_window = i->xid;
     s.swap_action = XdbeCopied;
     XdbeSwapBuffers(fl_display, &s, 1);
     return 1;
 }
 
 void Fl_X11_Dbe_Window_Driver::destroy_double_buffer() {
-    XdbeDeallocateBackBufferName(fl_display, other_xid);
-  other_xid = 0;
+  Fl_X *i = Fl_X::i(pWindow);
+  XdbeDeallocateBackBufferName(fl_display, i->other_xid);
+  i->other_xid = 0;
 }
 
 #endif // USE_XDBE
