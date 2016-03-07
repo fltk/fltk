@@ -1863,7 +1863,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     } else if (Fl::grab()) parent = fl_xid(Fl::grab());
   }
 
-  Fl_Window_Driver *x = Fl_Window_Driver::newWindowDriver(w);
+  Fl_X *x = new Fl_X;
   x->other_xid = 0;
   x->setwindow(w);
   x->region = 0;
