@@ -141,10 +141,10 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
   }
 }
 
+
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
-  if (!info || *(bool*)info) delete[] (unsigned char *)data;
-  delete (bool*)info;
+  delete[] (unsigned char *)data;
 }
 
 static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
@@ -177,16 +177,8 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     int ld = img->ld();
     if (!ld) ld = img->w() * img->d();
-    // If img->alloc_array == 0, the CGImage data provider must not release the image data.
-    // If img->alloc_array != 0, the CGImage data provider will take responsibilty of deleting RGB image data after use:
-    // when the CGImage is deallocated, the release callback of its data provider
-    // (imgProviderReleaseData) is called and can delete the RGB image data.
-    // If the CGImage is printed, it is not deallocated until after the end of the page,
-    // therefore, with img->alloc_array != 0, the RGB image can be safely deleted any time after return from this function.
-    // The previously unused mask_ member allows to make sure the RGB image data is not deleted by Fl_RGB_Image::uncache().
-    if (img->alloc_array) img->mask_ = (fl_uintptr_t)new bool(true);
-    CGDataProviderRef src = CGDataProviderCreateWithData((void*)img->mask_, img->array, ld * img->h(),
-                                                         img->alloc_array?imgProviderReleaseData:NULL);
+    // the CGImage data provider must not release the image data.
+    CGDataProviderRef src = CGDataProviderCreateWithData((void*)img->mask_, img->array, ld * img->h(), NULL);
     img->id_ = (fl_uintptr_t)CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
                                            lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                                            src, 0L, false, kCGRenderingIntentDefault);
@@ -194,9 +186,10 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     CGDataProviderRelease(src);
   }
   if (img->id_ && gc_) {
-    if (!img->alloc_array && has_feature(PRINTER) && !CGImageGetShouldInterpolate((CGImageRef)img->id_)) {
+    CGImageRef cgimg = (CGImageRef)img->id_;
+    if ( has_feature(PRINTER) ) {
       // When printing, the image data is used when the page is completed, that is, after return from this function.
-      // If the image has alloc_array = 0, we must protect against image data being freed before it is used:
+      // We must protect against image data being freed before it is used:
       // we duplicate the image data and have it deleted after use by the release-callback of the CGImage data provider
       Fl_RGB_Image* img2 = (Fl_RGB_Image*)img->copy();
       img2->alloc_array = 0;
@@ -204,16 +197,16 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       int ld = img2->ld();
       if (!ld) ld = img2->w() * img2->d();
       delete img2;
-      img->uncache();
       CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
       CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, ld * img->h(), imgProviderReleaseData);
-      img->id_ = (fl_uintptr_t)CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+      cgimg = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
                                              lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                                              src, 0L, true, kCGRenderingIntentDefault);
       CGColorSpaceRelease(lut);
       CGDataProviderRelease(src);
     }
-    draw_CGImage((CGImageRef)img->id_, X,Y,W,H, cx,cy, img->w(), img->h());
+    draw_CGImage(cgimg, X,Y,W,H, cx,cy, img->w(), img->h());
+    if ( has_feature(PRINTER) ) CGImageRelease(cgimg);
   }
 }
 
@@ -260,10 +253,8 @@ void Fl_Quartz_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 
 void Fl_Quartz_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_) {
   if (id_) {
-    if (mask_) *(bool*)mask_ = false;
     CGImageRelease((CGImageRef)id_);
     id_ = 0;
-    mask_ = 0;
   }
 }
 
