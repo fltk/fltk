@@ -156,6 +156,22 @@ Window fl_window;
 //void Fl_Image_Surface::translate(int x, int y) { }
 //void Fl_Image_Surface::untranslate() { }
 
+void Fl::add_fd(int, void (*)(int, void*), void*)
+{
+}
+
+void Fl::remove_fd(int)
+{
+}
+
+int Fl_Window::decorated_h()
+{
+}
+
+int Fl_Window::decorated_w()
+{
+}
+
 /*
  #define __APPLE__
  #include <SDL2/SDL.h>

@@ -25,6 +25,8 @@
 #endif // !Fl_X_H
 
 
+typedef void *Window;
+
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
 #  include <FL/Fl_Widget.H>
 
@@ -42,8 +44,6 @@ typedef void *Fl_Offscreen;
 // Some random X equivalents
 struct XPoint { int x, y; };
 struct XRectangle {int x, y, width, height;};
-
-typedef void *Window;
 
 //typedef float CGFloat;
 
