@@ -482,10 +482,12 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
                    button ? button->textsize() : FL_NORMAL_SIZE);
     const char *k, *s = fl_shortcut_label(m->shortcut_, &k);
     if (fl_utf_nb_char((const unsigned char*)k, (int) strlen(k))<=4) {
-      // righ-align the modifiers and left-align the key
-      char buf[32]; strcpy(buf, s); buf[k-s] = 0;
+      // right-align the modifiers and left-align the key
+      char *buf = (char*)malloc(k-s+1);
+      memcpy(buf, s, k-s); buf[k-s] = 0;
       fl_draw(buf, xx, yy, ww-shortcutWidth, hh, FL_ALIGN_RIGHT);
       fl_draw(  k, xx+ww-shortcutWidth, yy, shortcutWidth, hh, FL_ALIGN_LEFT);
+      free(buf);
     } else {
       // right-align to the menu
       fl_draw(s, xx, yy, ww-4, hh, FL_ALIGN_RIGHT);

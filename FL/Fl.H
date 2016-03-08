@@ -54,6 +54,14 @@ struct Fl_Label;
 # define FL_SOCKET int
 #endif
 
+
+// Pointers you can use to change FLTK to a foreign language.
+// Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
+extern FL_EXPORT const char* fl_local_ctrl;
+extern FL_EXPORT const char* fl_local_meta;
+extern FL_EXPORT const char* fl_local_alt;
+extern FL_EXPORT const char* fl_local_shift;
+
 /** \defgroup  callback_functions Callback function typedefs
  \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.
 
