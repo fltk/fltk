@@ -41,6 +41,9 @@ public:
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
 
+  virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
+  virtual void flush() { /* FIXME: move Fl_X::flush() here for OSX, MSWin, and X11 */ }
+
   virtual void take_focus() { }
   virtual int double_flush(int eraseoverlay);
   virtual void destroy_double_buffer();

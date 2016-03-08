@@ -44,11 +44,32 @@ Fl_PicoSDL_Screen_Driver::~Fl_PicoSDL_Screen_Driver()
 
 double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 {
+  Fl::flush();
   SDL_Event e;
   if (SDL_PollEvent(&e)) {
-    if (e.type == SDL_QUIT) {
-      exit(0);
-      // TODO: do something
+    switch (e.type) {
+      case SDL_QUIT:
+        exit(0);
+      case SDL_WINDOWEVENT_EXPOSED:
+      case SDL_WINDOWEVENT_SHOWN:
+      { // not happening!
+        //event->window.windowID
+        Fl_Window *window = Fl::first_window();
+        if ( !window ) break;;
+        Fl_X *i = Fl_X::i(Fl::first_window());
+        i->wait_for_expose = 0;
+
+        if ( i->region ) {
+          XDestroyRegion(i->region);
+          i->region = 0;
+        }
+        window->clear_damage(FL_DAMAGE_ALL);
+        i->flush();
+        window->clear_damage();
+        Fl_X::first->wait_for_expose = 0;
+      }
+        break;
+
     }
   }
   return 0.0;
@@ -82,7 +103,7 @@ const char *fl_filename_name(char const*) { return 0; }
 void fl_clipboard_notify_change() { }
 
 //Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() { return 0; }
-Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() { return 0; }
+//Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() { return 0; }
 void Fl_Graphics_Driver::global_gc() { }
 int Fl::dnd() { return 0; }
 void Fl::copy(char const*, int, int, char const*) { }
@@ -92,11 +113,22 @@ void Fl::set_color(unsigned int, unsigned int) { }
 int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 void Fl_X::set_default_icons(Fl_RGB_Image const**, int) { }
-void Fl_X::flush() { }
+
+void Fl_X::flush()
+{
+  w->driver()->flush();
+}
+
 void Fl_X::set_icons() { }
 void Fl_Window::size_range_() { }
 void Fl_Window::fullscreen_x() { }
-void Fl_Window::make_current() { }
+
+void Fl_Window::make_current()
+{
+  fl_window = i->xid;
+  current_ = this;
+}
+
 void Fl_Window::fullscreen_off_x(int, int, int, int) { }
 
 Window fl_xid(const Fl_Window* w)
@@ -113,29 +145,7 @@ void Fl_Window::show() {
 
 Fl_X* Fl_X::make(Fl_Window *w)
 {
-  Fl_Group::current(0);
-  if (w->parent() && !Fl_X::i(w->window())) {
-    w->set_visible();
-    return 0L;
-  }
-  Window parent;
-  if (w->parent()) {
-    parent = fl_xid(w->window());
-  } else {
-    parent = 0;
-  }
-  Fl_X *x = new Fl_X;
-  x->other_xid = 0;
-  x->w = w;
-  x->region = 0;
-  if (!w->force_position()) {
-    x->xid = SDL_CreateWindow(w->label(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w->w(), w->h(), 0);
-  } else {
-    x->xid = SDL_CreateWindow(w->label(), w->x(), w->y(), w->w(), w->h(), 0);
-  }
-  x->next = Fl_X::first;
-  Fl_X::first = x;
-  return x;
+  return w->driver()->makeWindow();
 }
 
 void Fl_Window::label(char const*, char const*) { }

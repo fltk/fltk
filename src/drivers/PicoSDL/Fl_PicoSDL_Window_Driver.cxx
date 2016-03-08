@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_PicoSDL_Window_Driver.H"
+#include <FL/Fl.H>
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
@@ -35,6 +36,53 @@ Fl_PicoSDL_Window_Driver::Fl_PicoSDL_Window_Driver(Fl_Window *win)
 
 Fl_PicoSDL_Window_Driver::~Fl_PicoSDL_Window_Driver()
 {
+}
+
+
+Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
+{
+  Fl_Group::current(0);
+  if (pWindow->parent() && !Fl_X::i(pWindow->window())) {
+    pWindow->set_visible();
+    return 0L;
+  }
+  Window parent;
+  if (pWindow->parent()) {
+    parent = fl_xid(pWindow->window());
+  } else {
+    parent = 0;
+  }
+  Fl_X *x = new Fl_X;
+  x->other_xid = 0;
+  x->w = pWindow;
+  x->region = 0;
+  if (!pWindow->force_position()) {
+    pNativeWindow = SDL_CreateWindow(pWindow->label(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pWindow->w(), pWindow->h(), 0);
+  } else {
+    pNativeWindow = SDL_CreateWindow(pWindow->label(), pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h(), 0);
+  }
+  x->xid = SDL_CreateRenderer(pNativeWindow, -1, SDL_RENDERER_ACCELERATED);
+  x->next = Fl_X::first;
+  x->wait_for_expose = 0;
+  pWindow->i = x;
+  Fl_X::first = x;
+
+  pWindow->set_visible();
+  pWindow->redraw();
+  flush();
+  int old_event = Fl::e_number;
+  pWindow->handle(Fl::e_number = FL_SHOW);
+  Fl::e_number = old_event;
+
+  return x;
+}
+
+
+void Fl_PicoSDL_Window_Driver::flush()
+{
+  SDL_RenderClear((SDL_Renderer*)fl_window);
+  pWindow->flush();
+  SDL_RenderPresent((SDL_Renderer*)fl_window);
 }
 
 
