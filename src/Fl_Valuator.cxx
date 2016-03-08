@@ -51,10 +51,19 @@ void Fl_Valuator::step(double s) {
   while (fabs(s-A/B) > epsilon && B<=(0x7fffffff/10)) {B *= 10; A = rint(s*B);}
 }
 
-/**  Sets the step value to 1/10<SUP>digits</SUP>.*/
-void Fl_Valuator::precision(int p) {
+/** Sets the step value to 1.0 / 10<SUP>digits</SUP>.
+
+    Precision \p digits is limited to 0...9 to avoid internal overflow errors.
+    Values outside this range are clamped.
+
+    \note For negative values of \p digits the step value is set to
+    \p A = 1.0 and \p B = 1, i.e. 1.0/1 = 1.
+*/
+void Fl_Valuator::precision(int digits) {
+  if (digits > 9) digits = 9;
+  else if (digits < 0) digits = 0;
   A = 1.0;
-  for (B = 1; p--;) B *= 10;
+  for (B = 1; digits--;) B *= 10;
 }
 /** Asks for partial redraw */
 void Fl_Valuator::value_damage() {damage(FL_DAMAGE_EXPOSE);} // by default do partial-redraw
