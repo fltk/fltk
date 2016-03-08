@@ -19,6 +19,14 @@
 
 #include "../../config_lib.h"
 #include "Fl_Pico_Graphics_Driver.h"
+#include <FL/fl_draw.H>
+
+
+void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
+  fl_color(r,g,b);
+  fl_rectf(x,y,w,h);
+}
+
 
 void Fl_Pico_Graphics_Driver::point(int x, int y)
 {

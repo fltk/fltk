@@ -39,7 +39,6 @@ void Fl_PicoSDL_Graphics_Driver::rectf(int x, int y, int w, int h)
 {
   uchar r, g, b;
   Fl::get_color(Fl_Graphics_Driver::color(), r, g, b);
-  printf("[] %d %d %d\n", r, g, b);
   SDL_SetRenderDrawColor((SDL_Renderer*)fl_window, r, g, b, SDL_ALPHA_OPAQUE);
   SDL_Rect rect = {x, y, w, h};
   SDL_RenderFillRect((SDL_Renderer*)fl_window, &rect);
@@ -50,7 +49,6 @@ void Fl_PicoSDL_Graphics_Driver::line(int x, int y, int x1, int y1)
 {
   uchar r, g, b;
   Fl::get_color(Fl_Graphics_Driver::color(), r, g, b);
-  printf("-- %d %d %d\n", r, g, b);
   SDL_SetRenderDrawColor((SDL_Renderer*)fl_window, r, g, b, SDL_ALPHA_OPAQUE);
   SDL_RenderDrawLine((SDL_Renderer*)fl_window, x, y, x1, y1);
 }
