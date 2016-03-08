@@ -178,7 +178,7 @@ void print_cb(Fl_Widget *w, void *data)
 // end of printing demo
 
 int main(int argc, char **argv) {
-  //Fl::use_high_res_GL(1);
+  Fl::use_high_res_GL(1);
   makeform(argv[0]);
   // added to demo printing
   form->begin();
