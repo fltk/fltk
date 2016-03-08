@@ -22,6 +22,7 @@
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_RGB_Image.H>
+#include <FL/Fl_Shared_Image.H>
 #include "FL/Fl.H"
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
@@ -97,13 +98,6 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   return img;
 }
 
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform OpenGL management
-static void imgProviderReleaseData (void *info, const void *data, size_t size)
-{
-  delete (Fl_RGB_Image *)info;
-}
-#endif
-
 /**
  This class will make sure that OpenGL printing/screen capture is available if fltk_gl
  was linked to the program
@@ -116,29 +110,21 @@ public:
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
     Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform OpenGL management
-    if (Fl_Surface_Device::surface()->driver()->has_feature(Fl_Graphics_Driver::NATIVE)) {
-      // convert the image to CGImage, and draw it at full res (useful on retina display)
-      CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
-      CGDataProviderRef provider = CGDataProviderCreateWithData(img, img->array, img->ld() * img->h(), imgProviderReleaseData);
-      CGImageRef cgimg = CGImageCreate(img->w(), img->h(), 8, 24, img->ld(), cSpace,
-                                     (CGBitmapInfo)(kCGImageAlphaNone),
-                                     provider, NULL, false, kCGRenderingIntentDefault);
-      CGColorSpaceRelease(cSpace);
-      CGDataProviderRelease(provider);
-      CGContextDrawImage((CGContextRef)Fl_Surface_Device::surface()->driver()->gc(),
-                         CGRectMake(0, 0, glw->w(), glw->h()), cgimg);
-      CFRelease(cgimg);
-      return 1;
-    } else if (img->w() > glw->w()) {
-      Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(glw->w(), glw->h());
-      delete img;
-      img = img2;
-    }
-#endif
+    // turn img upside-down
     int ld = img->ld() ? img->ld() : img->w() * img->d();
-    fl_draw_image(img->array + (img->h() - 1) * ld, x, y , img->w(), img->h(), 3, - ld);
-    delete img;
+    uchar *tmp = new uchar[ld];
+    uchar *p = (uchar*)img->array ;
+    uchar *q = (uchar*)img->array + (img->h()-1)*ld;
+    for (int i = 0; i < img->h()/2; i++, p += ld, q -= ld) {
+      memcpy(tmp, p, ld);
+      memcpy(p, q, ld);
+      memcpy(q, tmp, ld);
+    }
+    delete[] tmp;
+    Fl_Shared_Image *shared = Fl_Shared_Image::get(img);
+    shared->scale(glw->w(), glw->h());
+    shared->draw(x, y);
+    shared->release();
     return 1;
   }
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) {
