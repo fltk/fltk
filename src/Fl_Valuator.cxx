@@ -3,7 +3,7 @@
 //
 // Valuator widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,16 +65,18 @@ void Fl_Valuator::precision(int digits) {
   A = 1.0;
   for (B = 1; digits--;) B *= 10;
 }
-/** Asks for partial redraw */
+
+/**  Asks for partial redraw */
 void Fl_Valuator::value_damage() {damage(FL_DAMAGE_EXPOSE);} // by default do partial-redraw
 
 /**
-    Sets the current value. The new value is <I>not</I>
+    Sets the current value. The new value is \e not
     clamped or otherwise changed before storing it. Use
     clamp() or round() to modify the value before
     calling value(). The widget is redrawn if the new value
     is different than the current one. The initial value is zero.
-    <P>changed() will return true if the user has moved the slider,
+
+    changed() will return true if the user has moved the slider,
     but it will be turned off by value(x) and just before doing a callback
     (the callback can turn it back on if desired).
 */
@@ -147,23 +149,23 @@ double Fl_Valuator::increment(double v, int n) {
 
 /**
   Uses internal rules to format the fields numerical value into
-  the character array pointed to by the passed parameter.</P>
+  the character array pointed to by the passed parameter.
   
-  <P>The actual format used depends on the current step value. If
-  the step value has been set to zero then a %g format is used.
-  If the step value is non-zero, then a %.*f format is used,
+  The actual format used depends on the current step value. If
+  the step value has been set to zero then a \%g format is used.
+  If the step value is non-zero, then a \%.*f format is used,
   where the precision is calculated to show sufficient digits
   for the current step value. An integer step value, such as 1
   or 1.0, gives a precision of 0, so the formatted value will
-  appear as an integer.</P>
-  
-  <P>This method is used by the Fl_Value_... group of widgets to 
-  format the current value into a text string. 
+  appear as an integer.
+
+  This method is used by the Fl_Valuator_... group of widgets to
+  format the current value into a text string.
   The return value is the length of the formatted text.
-  The formatted value is written into in <i>buffer</i>. 
-  <i>buffer</i> should have space for at least 128 bytes.</P>
-  
-  <P>You may override this function to create your own text formatting.
+  The formatted value is written into \p buffer.
+  \p buffer should have space for at least 128 bytes.
+
+  You may override this function to create your own text formatting.
 */
 int Fl_Valuator::format(char* buffer) {
   double v = value();
