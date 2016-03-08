@@ -506,7 +506,10 @@ void Fl_Double_Window::hide() {
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid) {
 #if USE_XDBE
-    if (!use_xdbe)
+    if (use_xdbe) {
+      XdbeDeallocateBackBufferName(fl_display, myi->other_xid);
+    }
+    else
 #endif
       fl_delete_offscreen(myi->other_xid);
   }
