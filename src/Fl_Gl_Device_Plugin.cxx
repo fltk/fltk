@@ -57,7 +57,6 @@ uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
 
 static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
 /* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
- stored from bottom to top.
  */
 {
 #if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
@@ -93,6 +92,18 @@ static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w
   baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
   mByteWidth = 3 * w;
 #endif
+  
+  // GL gives a bottom-to-top image, convert it to top-to-bottom
+  uchar *tmp = new uchar[mByteWidth];
+  uchar *p = baseAddress ;
+  uchar *q = baseAddress + (h-1)*mByteWidth;
+  for (int i = 0; i < h/2; i++, p += mByteWidth, q -= mByteWidth) {
+    memcpy(tmp, p, mByteWidth);
+    memcpy(p, q, mByteWidth);
+    memcpy(q, tmp, mByteWidth);
+  }
+  delete[] tmp;
+  
   Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
   img->alloc_array = 1;
   return img;
@@ -110,17 +121,6 @@ public:
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
     Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
-    // turn img upside-down
-    int ld = img->ld() ? img->ld() : img->w() * img->d();
-    uchar *tmp = new uchar[ld];
-    uchar *p = (uchar*)img->array ;
-    uchar *q = (uchar*)img->array + (img->h()-1)*ld;
-    for (int i = 0; i < img->h()/2; i++, p += ld, q -= ld) {
-      memcpy(tmp, p, ld);
-      memcpy(p, q, ld);
-      memcpy(q, tmp, ld);
-    }
-    delete[] tmp;
     Fl_Shared_Image *shared = Fl_Shared_Image::get(img);
     shared->scale(glw->w(), glw->h());
     shared->draw(x, y);

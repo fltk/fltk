@@ -45,14 +45,14 @@ static uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha
 
 static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y)
 /* Copy the image "from" inside image "to" with its top-left angle at coordinates to_x, to_y.
- Also, exchange top and bottom of "from". Image depth can differ between "to" and "from".
+ Image depth can differ between "to" and "from".
  */
 {
   int to_ld = (to->ld() == 0? to->w() * to->d() : to->ld());
   int from_ld = (from->ld() == 0? from->w() * from->d() : from->ld());
   uchar *tobytes = (uchar*)to->array + to_y * to_ld + to_x * to->d();
-  const uchar *frombytes = from->array + (from->h() - 1) * from_ld;
-  for (int i = from->h() - 1; i >= 0; i--) {
+  const uchar *frombytes = from->array;
+  for (int i = 0; i < from->h(); i++) {
     if (from->d() == to->d()) memcpy(tobytes, frombytes, from->w() * from->d());
     else {
       for (int j = 0; j < from->w(); j++) {
@@ -60,7 +60,7 @@ static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, i
       }
     }
     tobytes += to_ld;
-    frombytes -= from_ld;
+    frombytes += from_ld;
   }
 }
 
@@ -92,9 +92,9 @@ static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int
     Fl_Plugin_Manager pm("fltk:device");
     Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
     if (!pi) return full_img;
-    Fl_RGB_Image *img = pi->rectangle_capture(g, x, y, w, h); // bottom to top image
-    if (full_img) full_img = img; // top and bottom will be exchanged later
-    else { // exchange top and bottom to get a proper FLTK image
+    Fl_RGB_Image *img = pi->rectangle_capture(g, x, y, w, h);
+    if (full_img) full_img = img;
+    else {
       uchar *data = ( p ? p : new uchar[img->w() * img->h() * (alpha?4:3)] );
       full_img = new Fl_RGB_Image(data, img->w(), img->h(), alpha?4:3);
       if (!p) full_img->alloc_array = 1;

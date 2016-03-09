@@ -4091,7 +4091,7 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
   NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:img->w() pixelsHigh:img->h() bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*img->w() bitsPerPixel:32];
   memset([bitmap bitmapData], 0xFF, [bitmap bytesPerPlane]);
   const uchar *from = img->array;
-  for (int r = img->h() - 1; r >= 0; r--) {
+  for (int r = 0; r < img->h(); r++) {
     uchar *to = [bitmap bitmapData] + r * [bitmap bytesPerRow];
     for (int c = 0; c < img->w(); c++) {
       memcpy(to, from, 3);
