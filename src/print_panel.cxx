@@ -549,7 +549,6 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
     }
     pclose(lpstat);
   }
-  fclose(stderr);
   
   if (print_choice->size() == 2 && (lpstat = fopen("/etc/printcap", "r"))) { // try next with BSD printing system
     while (fgets(line, sizeof(line),lpstat)) { // get names of all known printers
@@ -598,7 +597,7 @@ void print_update_status() {
     if ((lpstat = popen(command, "r")) !=  NULL) {
       if (fgets(status, sizeof(status), lpstat) == 0) { // if no reply
         pclose(lpstat);
-        snprintf(command, sizeof(command), "lpq -P%s", printer); // try next with BSD printing system
+        snprintf(command, sizeof(command), "lpq -P%s 2>&-", printer); // try next with BSD printing system
         if ((lpstat = popen(command, "r")) !=  NULL) {
           if (fgets(status, sizeof(status), lpstat)==0) { /* ignore */ }
         }
