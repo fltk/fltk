@@ -16,98 +16,12 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
 #include "config_lib.h"
-#include <FL/Fl_Printer.H>
 #include <FL/Fl_Gl_Window.H>
-#include "Fl_Gl_Choice.H"
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Shared_Image.H>
-#include "FL/Fl.H"
+#include "drivers/OpenGL/Fl_OpenGL_Display_Device.H"
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement code to read OpenGL renderings into RGB maps"
-#else
-#endif
-
-
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
-uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
-{
-  uchar *newimg = new uchar[3*w*h];
-  uchar *to = newimg;
-  for (int i = 0; i < h; i++) {
-    uchar *from = baseAddress + i * mByteWidth;
-    for (int j = 0; j < w; j++, from += 4) {
-#if __ppc__
-      memcpy(to, from + 1, 3);
-      to += 3;
-#else
-      *(to++) = *(from+2);
-      *(to++) = *(from+1);
-      *(to++) = *from;
-#endif
-    }
-  }
-  delete[] baseAddress;
-  return newimg;
-}
-#endif
-
-static Fl_RGB_Image* capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
-/* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
- */
-{
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
-  const int bytesperpixel = 4;
-  int factor = glw->pixels_per_unit();
-  if (factor > 1) {
-    w *= factor; h *= factor; x *= factor; y *= factor;
-  }
-#else
-  const int bytesperpixel = 3;
-#endif
-  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
-  // Read OpenGL context pixels directly.
-  // For extra safety, save & restore OpenGL states that are changed
-  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
-  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-  // Read a block of pixels from the frame buffer
-  int mByteWidth = w * bytesperpixel;
-  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
-  uchar *baseAddress = new uchar[mByteWidth * h];
-  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
-               GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
-#else
-               GL_RGB, GL_UNSIGNED_BYTE,
-#endif
-               baseAddress);
-  glPopClientAttrib();
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver - platform OpenGL management
-  baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
-  mByteWidth = 3 * w;
-#endif
-  
-  // GL gives a bottom-to-top image, convert it to top-to-bottom
-  uchar *tmp = new uchar[mByteWidth];
-  uchar *p = baseAddress ;
-  uchar *q = baseAddress + (h-1)*mByteWidth;
-  for (int i = 0; i < h/2; i++, p += mByteWidth, q -= mByteWidth) {
-    memcpy(tmp, p, mByteWidth);
-    memcpy(p, q, mByteWidth);
-    memcpy(q, tmp, mByteWidth);
-  }
-  delete[] tmp;
-  
-  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
-  img->alloc_array = 1;
-  return img;
-}
 
 /**
  This class will make sure that OpenGL printing/screen capture is available if fltk_gl
@@ -120,7 +34,7 @@ public:
   virtual int print(Fl_Widget *w, int x, int y, int height /*useless*/) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
-    Fl_RGB_Image *img = capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
+    Fl_RGB_Image *img = Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
     Fl_Shared_Image *shared = Fl_Shared_Image::get(img);
     shared->scale(glw->w(), glw->h());
     shared->draw(x, y);
@@ -130,7 +44,7 @@ public:
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) {
     Fl_Gl_Window *glw = widget->as_gl_window();
     if (!glw) return NULL;
-    return capture_gl_rectangle(glw, x, y, w, h);
+    return Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, x, y, w, h);
   }
 };
 

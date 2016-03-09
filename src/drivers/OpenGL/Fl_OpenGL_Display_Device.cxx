@@ -19,8 +19,10 @@
 #include <config.h>
 #include "../../config_lib.h"
 #include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Image.H>
 #include <FL/Fl_Device.H>
 #include <FL/gl.h>
+#include <string.h>
 
 #include "Fl_OpenGL_Graphics_Driver.H"
 #include "Fl_OpenGL_Display_Device.H"
@@ -37,6 +39,120 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 {
 }
 
+#ifdef FL_CFG_GFX_QUARTZ
+
+uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
+{
+  uchar *newimg = new uchar[3*w*h];
+  uchar *to = newimg;
+  for (int i = 0; i < h; i++) {
+    uchar *from = baseAddress + i * mByteWidth;
+    for (int j = 0; j < w; j++, from += 4) {
+#if __ppc__
+      memcpy(to, from + 1, 3);
+      to += 3;
+#else
+      *(to++) = *(from+2);
+      *(to++) = *(from+1);
+      *(to++) = *from;
+#endif
+    }
+  }
+  delete[] baseAddress;
+  return newimg;
+}
+
+Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, int x, int y, int w, int h)
+{
+  const int bytesperpixel = 4;
+  int factor = glw->pixels_per_unit();
+  if (factor > 1) {
+    w *= factor; h *= factor; x *= factor; y *= factor;
+  }
+  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
+  // Read OpenGL context pixels directly.
+  // For extra safety, save & restore OpenGL states that are changed
+  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+  // Read a block of pixels from the frame buffer
+  int mByteWidth = w * bytesperpixel;
+  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
+  uchar *baseAddress = new uchar[mByteWidth * h];
+  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
+               GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
+               baseAddress);
+  glPopClientAttrib();
+  baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
+  mByteWidth = 3 * w;
+  
+  // GL gives a bottom-to-top image, convert it to top-to-bottom
+  uchar *tmp = new uchar[mByteWidth];
+  uchar *p = baseAddress ;
+  uchar *q = baseAddress + (h-1)*mByteWidth;
+  for (int i = 0; i < h/2; i++, p += mByteWidth, q -= mByteWidth) {
+    memcpy(tmp, p, mByteWidth);
+    memcpy(p, q, mByteWidth);
+    memcpy(q, tmp, mByteWidth);
+  }
+  delete[] tmp;
+  
+  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
+  img->alloc_array = 1;
+  return img;
+ 
+}
+#elif defined(FL_CFG_GFX_GDI) || defined(FL_CFG_GFX_XLIB)
+
+Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
+/* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
+ */
+{
+  const int bytesperpixel = 3;
+  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
+  // Read OpenGL context pixels directly.
+  // For extra safety, save & restore OpenGL states that are changed
+  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+  glPixelStorei(GL_PACK_ALIGNMENT, 4); /* Force 4-byte alignment */
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+  glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+  glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+  // Read a block of pixels from the frame buffer
+  int mByteWidth = w * bytesperpixel;
+  mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes
+  uchar *baseAddress = new uchar[mByteWidth * h];
+  glReadPixels(x, glw->pixel_h() - (y+h), w, h,
+               GL_RGB, GL_UNSIGNED_BYTE,
+               baseAddress);
+  glPopClientAttrib();
+  
+  // GL gives a bottom-to-top image, convert it to top-to-bottom
+  uchar *tmp = new uchar[mByteWidth];
+  uchar *p = baseAddress ;
+  uchar *q = baseAddress + (h-1)*mByteWidth;
+  for (int i = 0; i < h/2; i++, p += mByteWidth, q -= mByteWidth) {
+    memcpy(tmp, p, mByteWidth);
+    memcpy(p, q, mByteWidth);
+    memcpy(q, tmp, mByteWidth);
+  }
+  delete[] tmp;
+  
+  Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
+  img->alloc_array = 1;
+  return img;
+}
+
+#elif defined(FL_PORTING)
+
+#  pragma message "FL_PORTING: implement Fl_OpenGL_Display_Device::capture_gl_rectangle() for your platform"
+Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, int x, int y, int w, int h)
+{
+  return NULL;
+}
+
+#endif
 //
 // End of "$Id$".
 //
