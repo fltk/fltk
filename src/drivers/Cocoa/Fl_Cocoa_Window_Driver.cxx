@@ -50,7 +50,6 @@ Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
 {
   if (shape_data_) {
-    if (shape_data_->todelete_) delete shape_data_->todelete_;
     if (shape_data_->mask) {
       CGImageRelease(shape_data_->mask);
     }
@@ -136,7 +135,6 @@ void Fl_Cocoa_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
 void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (shape_data_) {
-    if (shape_data_->todelete_) { delete shape_data_->todelete_; }
     if (shape_data_->mask) { CGImageRelease(shape_data_->mask); }
   }
   else {
