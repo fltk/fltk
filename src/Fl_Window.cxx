@@ -28,9 +28,6 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-#ifdef __APPLE_QUARTZ__
-#include <FL/fl_draw.H>
-#endif
 
 char *Fl_Window::default_xclass_ = 0L;
 
