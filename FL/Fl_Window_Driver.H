@@ -28,14 +28,18 @@
 
 
 class Fl_Window;
+class Fl_Image;
 
 
 /**
  \brief A base class for platform specific window handling code.
   */
 class FL_EXPORT Fl_Window_Driver {
+  friend class Fl_Window;
 protected:
   Fl_Window *pWindow;
+  struct shape_data_type;
+  shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
@@ -47,7 +51,10 @@ public:
   virtual void take_focus() { }
   virtual int double_flush(int eraseoverlay);
   virtual void destroy_double_buffer();
-  void draw();
+  virtual void draw();
+  void shape_pixmap_(Fl_Image* pixmap);
+  virtual void shape(const Fl_Image* img) {}
+  virtual void shape_alpha_(Fl_Image* img, int offset) {}
 };
 
 

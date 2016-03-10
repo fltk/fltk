@@ -101,42 +101,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // cursor stuff
   Fl_Cursor cursor_default;
   
-protected:
-  /** Data supporting a non-rectangular window shape */
-  struct shape_data_type {
-    int lw_; ///<  width of shape image
-    int lh_; ///<  height of shape image
-    Fl_Image* shape_; ///<  shape image
-#if defined(__APPLE__) // PORTME: Fl_Window_Driver - per-window shape information, move to Fl_X/Fl_Window_Driver
-    typedef struct CGImage* CGImageRef;
-    CGImageRef mask;
-#elif defined(WIN32)
-    // not needed
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define storage for a window mask here if needed"
-#else // X11
-      // not needed
-#endif
-    Fl_Bitmap *todelete_; ///<  auxiliary bitmap image
-  };
-
-  shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
-private:
-  void shape_bitmap_(Fl_Image* b);
-  void shape_alpha_(Fl_Image* img, int offset);
-  void shape_pixmap_(Fl_Image* pixmap);
-public:
-  void shape(const Fl_Image* img);
-  /** Set the window's shape with an Fl_Image.
-   \see void shape(const Fl_Image* img)
-   */
-  inline void shape(const Fl_Image& b) { shape(&b); }
-#if defined(WIN32) || defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Window_Driver - per-window shape
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you need a combine_mask() function in Fl_Window?"
-#else // X11
-  void combine_mask(void);
-#endif
 private:
 
   void size_range_();
@@ -152,7 +116,7 @@ protected:
 
   /** Stores the last window that was made current. See current() const */
   static Fl_Window *current_;
-  virtual void draw();
+  void draw();
   /** Forces the window to be drawn, this window is also made current and calls draw(). */
   virtual void flush();
 
@@ -180,6 +144,7 @@ protected:
 
   void free_icons();
 
+  Fl_Window(int x, int y, int w, int h, const char* title, Fl_Window_Driver *driver);
 public:
 
   /**
@@ -640,9 +605,13 @@ public:
   Fl_Window_Driver *driver() { return pWindowDriver; }
 
   /**
-   Return non-null if this is an Fl_Overlay_Window object.
+   Return non-null if this is an Fl_Double_Window object.
    */
-  virtual Fl_Double_Window *as_double_window() {return NULL; }
+  virtual Fl_Double_Window *as_double_window() {return NULL;}
+  void shape(const Fl_Image* img);
+  void shape(const Fl_Image& b) ;
+  int is_shaped();
+
 };
 
 #endif

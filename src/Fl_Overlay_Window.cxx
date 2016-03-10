@@ -26,6 +26,23 @@
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
+#include <FL/Fl_Window_Driver.H>
+
+
+Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l)
+: Fl_Double_Window(0,0,W,H,l,Fl_Window_Driver::newWindowDriver(this))
+{
+  overlay_ = 0;
+  image(0);
+  clear_flag(FORCE_POSITION);
+}
+
+Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l)
+: Fl_Double_Window(X,Y,W,H,l,Fl_Window_Driver::newWindowDriver(this))
+{
+  overlay_ = 0;
+  image(0);
+}
 
 void Fl_Overlay_Window::show() {
   Fl_Double_Window::show();

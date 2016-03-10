@@ -41,6 +41,7 @@ class Fl_Overlay_Window;
 class FL_EXPORT Fl_Double_Window : public Fl_Window {
 protected:
   void flush(int eraseoverlay);
+  Fl_Double_Window(int X, int Y, int W, int H, const char *l, Fl_Window_Driver *driver);
 public:
   /**
     Return non-null if this is an Fl_Overlay_Window object.

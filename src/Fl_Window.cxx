@@ -35,6 +35,7 @@
 char *Fl_Window::default_xclass_ = 0L;
 
 void Fl_Window::_Fl_Window() {
+  cursor_default = FL_CURSOR_DEFAULT;
   type(FL_WINDOW);
   box(FL_FLAT_BOX);
   if (Fl::scheme_bg_) {
@@ -52,7 +53,6 @@ void Fl_Window::_Fl_Window() {
   resizable(0);
   size_range_set = 0;
   minw = maxw = minh = maxh = 0;
-  shape_data_ = NULL;
   no_fullscreen_x = 0;
   no_fullscreen_y = 0;
   no_fullscreen_w = w();
@@ -68,19 +68,22 @@ Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l) :
 Fl_Group(X, Y, W, H, l),
 pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
 {
-  cursor_default = FL_CURSOR_DEFAULT;
-
   _Fl_Window();
   set_flag(FORCE_POSITION);
 }
+
+Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l, Fl_Window_Driver *driver) : Fl_Group(X, Y, W, H, l), pWindowDriver(driver)
+{
+  _Fl_Window();
+  set_flag(FORCE_POSITION);
+}
+
 
 Fl_Window::Fl_Window(int W, int H, const char *l) :
 // fix common user error of a missing end() with current(0):
 Fl_Group((Fl_Group::current(0),0), 0, W, H, l),
 pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
 {
-  cursor_default = FL_CURSOR_DEFAULT;
-
   _Fl_Window();
   clear_visible();
 }
@@ -92,15 +95,6 @@ Fl_Window::~Fl_Window() {
   }
   free_icons();
   delete icon_;
-  if (shape_data_) {
-    if (shape_data_->todelete_) delete shape_data_->todelete_;
-#if defined(__APPLE__) // PORTME: Fl_Window_Driver - platform window driver
-    if (shape_data_->mask) {
-      CGImageRelease(shape_data_->mask);
-    }
-#endif
-    delete shape_data_;
-  }
 }
 
 

@@ -20,8 +20,16 @@
 #include "../../config_lib.h"
 #include "Fl_X11_Window_Driver.H"
 #include <FL/fl_draw.H>
+#include <string.h>
+#if HAVE_DLFCN_H
+#include <dlfcn.h>
+#endif
+#define ShapeBounding			0
+#define ShapeSet			0
+
 #if USE_XDBE
 #include <X11/extensions/Xdbe.h>
+
 static int can_xdbe(); // forward
 
 // class to be used only if Xdbe is used
@@ -31,7 +39,7 @@ public:
   virtual int double_flush(int eraseoverlay);
   virtual void destroy_double_buffer();
 };
-#endif
+#endif // USE_XDBE
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
@@ -68,6 +76,7 @@ static int can_xdbe() { // whether the Xdbe extension is usable
   if (!tried) {
     tried = 1;
     int event_base, error_base;
+    fl_open_display();
     if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
     Drawable root = RootWindow(fl_display,fl_screen);
     int numscreens = 1;
@@ -116,8 +125,107 @@ void Fl_X11_Dbe_Window_Driver::destroy_double_buffer() {
   XdbeDeallocateBackBufferName(fl_display, i->other_xid);
   i->other_xid = 0;
 }
-
 #endif // USE_XDBE
+
+
+void Fl_X11_Window_Driver::shape_bitmap_(Fl_Image* b) {
+  shape_data_->shape_ = b;
+}
+
+void Fl_X11_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
+  int i, j, d = img->d(), w = img->w(), h = img->h(), bytesperrow = (w+7)/8;
+  unsigned u;
+  uchar byte, onebit;
+  // build an Fl_Bitmap covering the non-fully transparent/black part of the image
+  const uchar* bits = new uchar[h*bytesperrow]; // to store the bitmap
+  const uchar* alpha = (const uchar*)*img->data() + offset; // points to alpha value of rgba pixels
+  for (i = 0; i < h; i++) {
+    uchar *p = (uchar*)bits + i * bytesperrow;
+    byte = 0;
+    onebit = 1;
+    for (j = 0; j < w; j++) {
+      if (d == 3) {
+        u = *alpha;
+        u += *(alpha+1);
+        u += *(alpha+2);
+      }
+      else u = *alpha;
+      if (u > 0) { // if the pixel is not fully transparent/black
+        byte |= onebit; // turn on the corresponding bit of the bitmap
+      }
+      onebit = onebit << 1; // move the single set bit one position to the left
+      if (onebit == 0 || j == w-1) {
+        onebit = 1;
+        *p++ = byte; // store in bitmap one pack of bits
+        byte = 0;
+      }
+      alpha += d; // point to alpha value of next pixel
+    }
+  }
+  Fl_Bitmap* bitmap = new Fl_Bitmap(bits, w, h);
+  bitmap->alloc_array = 1;
+  shape_bitmap_(bitmap);
+  shape_data_->todelete_ = bitmap;
+}
+
+void Fl_X11_Window_Driver::shape(const Fl_Image* img) {
+  if (shape_data_) {
+    if (shape_data_->todelete_) { delete shape_data_->todelete_; }
+  }
+  else {
+    shape_data_ = new shape_data_type;
+  }
+  memset(shape_data_, 0, sizeof(shape_data_type));
+  pWindow->border(false);
+  int d = img->d();
+  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  else if (d == 0) shape_bitmap_((Fl_Image*)img);
+  else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
+  else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
+}
+
+
+void Fl_X11_Window_Driver::combine_mask()
+{
+  typedef void (*XShapeCombineMask_type)(Display*, int, int, int, int, Pixmap, int);
+  static XShapeCombineMask_type XShapeCombineMask_f = NULL;
+  static int beenhere = 0;
+  typedef Bool (*XShapeQueryExtension_type)(Display*, int*, int*);
+  if (!beenhere) {
+    beenhere = 1;
+#if HAVE_DLSYM && HAVE_DLFCN_H
+    fl_open_display();
+    void *handle = dlopen(NULL, RTLD_LAZY); // search symbols in executable
+    XShapeQueryExtension_type XShapeQueryExtension_f = (XShapeQueryExtension_type)dlsym(handle, "XShapeQueryExtension");
+    XShapeCombineMask_f = (XShapeCombineMask_type)dlsym(handle, "XShapeCombineMask");
+    // make sure that the X server has the SHAPE extension
+    int error_base, shapeEventBase;
+    if ( !( XShapeQueryExtension_f && XShapeCombineMask_f &&
+           XShapeQueryExtension_f(fl_display, &shapeEventBase, &error_base) ) ) XShapeCombineMask_f = NULL;
+#endif
+  }
+  if (!XShapeCombineMask_f) return;
+  shape_data_->lw_ = pWindow->w();
+  shape_data_->lh_ = pWindow->h();
+  Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
+  Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(pWindow),
+                                         (const char*)*temp->data(),
+                                         temp->w(), temp->h());
+  XShapeCombineMask_f(fl_display, fl_xid(pWindow), ShapeBounding, 0, 0, pbitmap, ShapeSet);
+  if (pbitmap != None) XFreePixmap(fl_display, pbitmap);
+  delete temp;
+}
+
+
+void Fl_X11_Window_Driver::draw() {
+  if (shape_data_) {
+    if (( shape_data_->lw_ != pWindow->w() || shape_data_->lh_ != pWindow->h() ) && shape_data_->shape_) {
+      // size of window has changed since last time
+      combine_mask();
+    }
+  }
+  Fl_Window_Driver::draw();
+}
 
 //
 // End of "$Id$".

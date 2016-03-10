@@ -53,6 +53,7 @@ class Fl_Widget *fl_selection_requestor;
 #  include <stdlib.h>
 #  include "flstring.h"
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
+#  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>
@@ -2557,8 +2558,8 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   }
 #endif
 
-  if (win->shape_data_) {
-    win->combine_mask();
+  if (win->is_shaped()) {
+    ((Fl_X11_Window_Driver*)win->pWindowDriver)->combine_mask();
     }
   XMapWindow(fl_display, xp->xid);
   if (showit) {

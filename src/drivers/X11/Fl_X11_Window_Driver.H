@@ -42,13 +42,26 @@
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 
+struct Fl_Window_Driver::shape_data_type {
+  int lw_; ///<  width of shape image
+  int lh_; ///<  height of shape image
+  Fl_Image* shape_; ///<  shape image
+  Fl_Bitmap *todelete_; ///<  auxiliary bitmap image
+};
+
 class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
 {
+  friend class Fl_X;
+private:
+  void combine_mask();
+  void shape_bitmap_(Fl_Image* b);
+  void shape_alpha_(Fl_Image* img, int offset);
 public:
   Fl_X11_Window_Driver(Fl_Window*);
   virtual void take_focus();
+  virtual void shape(const Fl_Image* img);
+  virtual void draw();
 };
-
 
 
 #endif // FL_X11_WINDOW_DRIVER_H

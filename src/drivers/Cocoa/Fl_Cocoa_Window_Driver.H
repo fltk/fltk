@@ -26,7 +26,10 @@
 #define FL_COCOA_WINDOW_DRIVER_H
 
 #include <FL/Fl_Window_Driver.H>
+#include <ApplicationServices/ApplicationServices.h>
 
+class Fl_Image;
+class Fl_Window;
 /*
  Move everything here that manages the native window interface.
 
@@ -41,12 +44,26 @@
  
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
+struct Fl_Window_Driver::shape_data_type {
+  int lw_; ///<  width of shape image
+  int lh_; ///<  height of shape image
+  Fl_Image* shape_; ///<  shape image
+  typedef struct CGImage* CGImageRef;
+  CGImageRef mask;
+  Fl_Bitmap *todelete_; ///<  auxiliary bitmap image
+};
 
 class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 {
+private:
+  void shape_bitmap_(Fl_Image* b);
+  void shape_alpha_(Fl_Image* img, int offset);
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
+  ~Fl_Cocoa_Window_Driver();
   virtual void take_focus();
+  virtual void shape(const Fl_Image* img);
+  virtual void draw();
 };
 
 

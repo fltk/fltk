@@ -21,7 +21,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Printer.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
@@ -33,14 +32,20 @@
 
 
 Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l)
-: Fl_Window(W,H,l)
+: Fl_Window(0, 0, W, H, l, Fl_Window_Driver::newWindowDriver(this))
 {
   type(FL_DOUBLE_WINDOW);
+  clear_flag(FORCE_POSITION);
 }
 
 
 Fl_Double_Window::Fl_Double_Window(int X, int Y, int W, int H, const char *l)
-: Fl_Window(X,Y,W,H,l)
+: Fl_Window(X,Y,W,H,l, Fl_Window_Driver::newWindowDriver(this))
+{
+  type(FL_DOUBLE_WINDOW);
+}
+
+Fl_Double_Window::Fl_Double_Window(int x, int y, int w, int h, const char* title, Fl_Window_Driver *driver) : Fl_Window(x,y,w,h,title, driver)
 {
   type(FL_DOUBLE_WINDOW);
 }
@@ -51,19 +56,9 @@ void Fl_Double_Window::show() {
 }
 
 
-/** see fl_copy_offscreen() */
-void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
-{
-  fl_begin_offscreen(pixmap);
-  uchar *img = fl_read_image(NULL, srcx, srcy, w, h, 0);
-  fl_end_offscreen();
-  fl_draw_image(img, x, y, w, h, 3, 0);
-  delete[] img;
-}
-
-char fl_can_do_alpha_blending() {
+/*char fl_can_do_alpha_blending() {
   return Fl_Display_Device::display_device()->driver()->can_do_alpha_blending();
-}
+}*/
 
 /**
   Forces the window to be redrawn.
@@ -94,29 +89,6 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   }
 }
 
-int Fl_Window_Driver::double_flush(int eraseoverlay) {
-  /* This is a working, platform-independent implementation.
-   Some platforms may re-implement it for their own logic:
-   - on Mac OS, the system double buffers all windows, so it is
-   reimplemented to do the same as Fl_Window::flush(), except for
-   Fl_Overlay_Window's which fall back on this implementation.
-   - on Xlib, it is reimplemented if the Xdbe extension is available.
-   */
-  Fl_X *i = Fl_X::i(pWindow);
-
-  if (!i->other_xid) {
-    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-  }
-  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-    fl_clip_region(i->region); i->region = 0;
-    fl_begin_offscreen(i->other_xid);
-    fl_graphics_driver->clip_region( 0 );
-    draw();
-    fl_end_offscreen();
-  }
-  return 0;
-}
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int ow = w();
@@ -135,16 +107,6 @@ void Fl_Double_Window::hide() {
   Fl_Window::hide();
 }
 
-void Fl_Window_Driver::destroy_double_buffer() {
-  Fl_X *i = Fl_X::i(pWindow);
-  /* This is a working, platform-independent implementation.
-   Some platforms may re-implement it for their own logic:
-   - on Xlib, it is reimplemented if the Xdbe extension is available.
-   */
-  fl_delete_offscreen(i->other_xid);
-  i->other_xid = 0;
-}
-
 
 /**
   The destructor <I>also deletes all the children</I>. This allows a
@@ -156,20 +118,6 @@ Fl_Double_Window::~Fl_Double_Window() {
 }
 
 
-Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l)
-: Fl_Double_Window(W,H,l)
-{
-  overlay_ = 0;
-  image(0);
-}
-
-
-Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l)
-: Fl_Double_Window(X,Y,W,H,l)
-{
-  overlay_ = 0;
-  image(0);
-}
 
 
 //
