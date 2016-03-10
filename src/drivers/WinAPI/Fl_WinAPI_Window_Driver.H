@@ -56,6 +56,7 @@ private:
   void shape_alpha_(Fl_Image* img, int offset);
 public:
   Fl_WinAPI_Window_Driver(Fl_Window*);
+  ~Fl_WinAPI_Window_Driver();
   virtual void shape(const Fl_Image* img);
   virtual void draw();
 };

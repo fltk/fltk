@@ -32,6 +32,14 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 {
 }
 
+Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
+{
+  if (shape_data_) {
+    delete shape_data_->todelete_;
+    delete shape_data_;
+  }
+}
+
 void Fl_WinAPI_Window_Driver::shape_bitmap_(Fl_Image* b) {
   shape_data_->shape_ = b;
 }
