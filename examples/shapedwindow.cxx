@@ -20,6 +20,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Tiled_Image.H>
