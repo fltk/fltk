@@ -59,6 +59,14 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 }
 
 
+Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
+{
+  if (shape_data_) {
+    delete shape_data_->todelete_;
+    delete shape_data_;
+  }
+}
+
 void Fl_X11_Window_Driver::take_focus()
 {
   Fl_X *i = Fl_X::i(pWindow);

@@ -58,6 +58,7 @@ private:
   void shape_alpha_(Fl_Image* img, int offset);
 public:
   Fl_X11_Window_Driver(Fl_Window*);
+  ~Fl_X11_Window_Driver();
   virtual void take_focus();
   virtual void shape(const Fl_Image* img);
   virtual void draw();

@@ -92,6 +92,7 @@ Fl_Window::~Fl_Window() {
   }
   free_icons();
   delete icon_;
+  delete pWindowDriver;
 }
 
 
