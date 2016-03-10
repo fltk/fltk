@@ -2531,8 +2531,8 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
       fl_show_iconic = 0;
       showit = 0;
     }
-    if (win->icon_->legacy_icon) {
-      hints->icon_pixmap = (Pixmap)win->icon_->legacy_icon;
+    if (win->pWindowDriver->icon_->legacy_icon) {
+      hints->icon_pixmap = (Pixmap)win->pWindowDriver->icon_->legacy_icon;
       hints->flags       |= IconPixmapHint;
     }
     XSetWMHints(fl_display, xp->xid, hints);
@@ -2728,8 +2728,8 @@ void Fl_X::set_icons() {
   unsigned long *net_wm_icons;
   size_t net_wm_icons_size;
 
-  if (w->icon_->count) {
-    icons_to_property((const Fl_RGB_Image **)w->icon_->icons, w->icon_->count,
+  if (w->pWindowDriver->icon_->count) {
+    icons_to_property((const Fl_RGB_Image **)w->pWindowDriver->icon_->icons, w->pWindowDriver->icon_->count,
                       &net_wm_icons, &net_wm_icons_size);
   } else {
     net_wm_icons = default_net_wm_icons;
@@ -2739,7 +2739,7 @@ void Fl_X::set_icons() {
   XChangeProperty (fl_display, xid, fl_NET_WM_ICON, XA_CARDINAL, 32,
       PropModeReplace, (unsigned char*) net_wm_icons, net_wm_icons_size);
 
-  if (w->icon_->count) {
+  if (w->pWindowDriver->icon_->count) {
     delete [] net_wm_icons;
     net_wm_icons = 0L;
     net_wm_icons_size = 0;

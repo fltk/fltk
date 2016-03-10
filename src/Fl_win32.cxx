@@ -25,6 +25,7 @@
 #ifndef FL_DOXYGEN
 #include <FL/Fl.H>
 #include <FL/Fl_Window_Driver.H>
+#include <src/Drivers/WinAPI//Fl_WinAPI_Window_Driver.H>
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -1764,7 +1765,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wcw.lpfnWndProc = (WNDPROC)WndProc;
     wcw.cbClsExtra = wcw.cbWndExtra = 0;
     wcw.hInstance = fl_display;
-    if (!w->icon() && !w->icon_->count)
+    if (!w->icon() && !w->pWindowDriver->icon_->count)
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
     wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
     wcw.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -2175,24 +2176,24 @@ void Fl_X::set_icons() {
   big_icon = NULL;
   small_icon = NULL;
 
-  if (w->icon_->count) {
+  if (w->pWindowDriver->icon_->count) {
     const Fl_RGB_Image *best_big, *best_small;
 
     best_big = find_best_icon(GetSystemMetrics(SM_CXICON),
-                              (const Fl_RGB_Image **)w->icon_->icons,
-                              w->icon_->count);
+                              (const Fl_RGB_Image **)w->pWindowDriver->icon_->icons,
+                              w->pWindowDriver->icon_->count);
     best_small = find_best_icon(GetSystemMetrics(SM_CXSMICON),
-                                (const Fl_RGB_Image **)w->icon_->icons,
-                                w->icon_->count);
+                                (const Fl_RGB_Image **)w->pWindowDriver->icon_->icons,
+                                w->pWindowDriver->icon_->count);
 
     if (best_big != NULL)
       big_icon = image_to_icon(best_big, true, 0, 0);
     if (best_small != NULL)
       small_icon = image_to_icon(best_small, true, 0, 0);
   } else {
-    if ((w->icon_->big_icon != NULL) || (w->icon_->small_icon != NULL)) {
-      big_icon = w->icon_->big_icon;
-      small_icon = w->icon_->small_icon;
+    if ((w->pWindowDriver->icon_->big_icon != NULL) || (w->pWindowDriver->icon_->small_icon != NULL)) {
+      big_icon = w->pWindowDriver->icon_->big_icon;
+      small_icon = w->pWindowDriver->icon_->small_icon;
     } else {
       big_icon = default_big_icon;
       small_icon = default_small_icon;
@@ -2244,16 +2245,8 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
   \see Fl_Window::icons(const Fl_RGB_Image *[], int)
  */
 void Fl_Window::icons(HICON big_icon, HICON small_icon) {
-  free_icons();
-
-  if (big_icon != NULL)
-    icon_->big_icon = CopyIcon(big_icon);
-  if (small_icon != NULL)
-    icon_->small_icon = CopyIcon(small_icon);
-
-  if (i)
-    i->set_icons();
-}
+  ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icons(big_icon, small_icon);
+  }
 
 ////////////////////////////////////////////////////////////////
 

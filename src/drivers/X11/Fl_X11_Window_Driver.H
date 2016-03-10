@@ -42,6 +42,13 @@
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 
+struct Fl_Window_Driver::icon_data {
+  const void *legacy_icon;
+  Fl_RGB_Image **icons;
+  int count;
+};
+
+
 struct Fl_Window_Driver::shape_data_type {
   int lw_; ///<  width of shape image
   int lh_; ///<  height of shape image
@@ -62,6 +69,10 @@ public:
   virtual void take_focus();
   virtual void shape(const Fl_Image* img);
   virtual void draw();
+  virtual void icons(const Fl_RGB_Image *icons[], int count);
+  virtual const void *icon() const;
+  virtual void icon(const void * ic);
+  virtual void free_icons();
 };
 
 

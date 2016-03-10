@@ -26,6 +26,7 @@
 #define FL_WINAPI_WINDOW_DRIVER_H
 
 #include <FL/Fl_Window_Driver.H>
+#include <windows.h>
 
 /*
  Move everything here that manages the native window interface.
@@ -41,6 +42,14 @@
  
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
+
+struct Fl_Window_Driver::icon_data {
+  const void *legacy_icon;
+  Fl_RGB_Image **icons;
+  int count;
+  HICON big_icon;
+  HICON small_icon;
+};
 
 struct Fl_Window_Driver::shape_data_type {
   int lw_; ///<  width of shape image
@@ -59,8 +68,12 @@ public:
   ~Fl_WinAPI_Window_Driver();
   virtual void shape(const Fl_Image* img);
   virtual void draw();
+  virtual void icons(const Fl_RGB_Image *icons[], int count);
+  virtual const void *icon() const;
+  virtual void icon(const void * ic);
+  virtual void free_icons();
+  void icons(HICON big_icon, HICON small_icon);
 };
-
 
 
 #endif // FL_WINAPI_WINDOW_DRIVER_H

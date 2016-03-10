@@ -36,8 +36,11 @@ class Fl_Image;
   */
 class FL_EXPORT Fl_Window_Driver {
   friend class Fl_Window;
+  friend class Fl_X;
 protected:
   Fl_Window *pWindow;
+  struct icon_data;
+  icon_data *icon_;
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
 public:
@@ -55,6 +58,10 @@ public:
   void shape_pixmap_(Fl_Image* pixmap);
   virtual void shape(const Fl_Image* img) {}
   virtual void shape_alpha_(Fl_Image* img, int offset) {}
+  virtual void icons(const Fl_RGB_Image *icons[], int count) {}
+  virtual const void *icon() const {return NULL;}
+  virtual void icon(const void * ic) {}
+  virtual void free_icons() {}
 };
 
 

@@ -44,8 +44,6 @@ void Fl_Window::_Fl_Window() {
   }
   i = 0;
   xclass_ = 0;
-  icon_ = new icon_data;
-  memset(icon_, 0, sizeof(*icon_));
   iconlabel_ = 0;
   resizable(0);
   size_range_set = 0;
@@ -91,7 +89,6 @@ Fl_Window::~Fl_Window() {
     free(xclass_);
   }
   free_icons();
-  delete icon_;
   delete pWindowDriver;
 }
 
@@ -342,61 +339,28 @@ void Fl_Window::icon(const Fl_RGB_Image *icon) {
   \see Fl_Window::icon(const Fl_RGB_Image *)
  */
 void Fl_Window::icons(const Fl_RGB_Image *icons[], int count) {
-  free_icons();
-
-  if (count > 0) {
-    icon_->icons = new Fl_RGB_Image*[count];
-    icon_->count = count;
-    // FIXME: Fl_RGB_Image lacks const modifiers on methods
-    for (int i = 0;i < count;i++)
-      icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
-  }
-
-  if (i)
-    i->set_icons();
+  pWindowDriver->icons(icons, count);
 }
 
 /** Gets the current icon window target dependent data.
   \deprecated in 1.3.3
  */
 const void *Fl_Window::icon() const {
-  return icon_->legacy_icon;
+  return pWindowDriver->icon();
 }
 
 /** Sets the current icon window target dependent data.
   \deprecated in 1.3.3
  */
 void Fl_Window::icon(const void * ic) {
-  free_icons();
-  icon_->legacy_icon = ic;
+  pWindowDriver->icon(ic);
 }
 
 /** Deletes all icons previously attached to the window.
  \see Fl_Window::icons(const Fl_RGB_Image *icons[], int count)
  */
 void Fl_Window::free_icons() {
-  int i;
-
-  icon_->legacy_icon = 0L;
-
-  if (icon_->icons) {
-    for (i = 0;i < icon_->count;i++)
-      delete icon_->icons[i];
-    delete [] icon_->icons;
-    icon_->icons = 0L;
-  }
-
-  icon_->count = 0;
-
-#ifdef WIN32
-  if (icon_->big_icon)
-    DestroyIcon(icon_->big_icon);
-  if (icon_->small_icon)
-    DestroyIcon(icon_->small_icon);
-
-  icon_->big_icon = NULL;
-  icon_->small_icon = NULL;
-#endif
+  pWindowDriver->free_icons();
 }
 
 

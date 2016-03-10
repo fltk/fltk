@@ -23,7 +23,8 @@
 #define Fl_Window_H
 
 #ifdef WIN32
-#include <windows.h>
+//#include <windows.h>
+typedef struct HICON__* HICON;
 #endif
 
 #include "Fl_Group.H"
@@ -74,22 +75,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   friend class Fl_PicoSDL_Window_Driver;
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creatino time
-
-  struct icon_data {
-    const void *legacy_icon;
-    Fl_RGB_Image **icons;
-    int count;
-#ifdef WIN32
-    HICON big_icon;
-    HICON small_icon;
-#elif defined(__APPLE__)  // PORTME: Fl_Window_Driver - per-window icons, move to FL_X/Fl_Window_Driver
-    // not needed
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define storage for per-window icons here if needed"
-#else // X11
-      // not needed
-#endif
-  };
 
   const char* iconlabel_;
   char* xclass_;
@@ -422,12 +407,6 @@ public:
 #ifdef WIN32
   static void default_icons(HICON big_icon, HICON small_icon);
   void icons(HICON big_icon, HICON small_icon);
-#elif defined(__APPLE__) // PORTME: Fl_Window_Driver - per-window icon
-  // not needed
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define functions to handle window icons here if needed"
-#else // X11
-      // not needed
 #endif
 
   /* for legacy compatibility */

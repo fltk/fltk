@@ -56,6 +56,8 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
+  icon_ = new Fl_Window_Driver::icon_data;
+  memset(icon_, 0, sizeof(Fl_Window_Driver::icon_data));
 }
 
 
@@ -65,6 +67,7 @@ Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
     delete shape_data_->todelete_;
     delete shape_data_;
   }
+  delete icon_;
 }
 
 void Fl_X11_Window_Driver::take_focus()
@@ -234,6 +237,43 @@ void Fl_X11_Window_Driver::draw() {
   }
   Fl_Window_Driver::draw();
 }
+
+void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
+  free_icons();
+  
+  if (count > 0) {
+    icon_->icons = new Fl_RGB_Image*[count];
+    icon_->count = count;
+    // FIXME: Fl_RGB_Image lacks const modifiers on methods
+    for (int i = 0;i < count;i++)
+      icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
+  }
+  
+  if (Fl_X::i(pWindow))
+    Fl_X::i(pWindow)->set_icons();
+}
+
+const void *Fl_X11_Window_Driver::icon() const {
+  return icon_->legacy_icon;
+}
+
+void Fl_X11_Window_Driver::icon(const void * ic) {
+  free_icons();
+  icon_->legacy_icon = ic;
+}
+
+void Fl_X11_Window_Driver::free_icons() {
+  int i;
+  icon_->legacy_icon = 0L;
+  if (icon_->icons) {
+    for (i = 0;i < icon_->count;i++)
+      delete icon_->icons[i];
+    delete [] icon_->icons;
+    icon_->icons = 0L;
+  }
+  icon_->count = 0;
+}
+
 
 //
 // End of "$Id$".

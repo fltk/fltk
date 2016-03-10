@@ -30,6 +30,8 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
+  icon_ = new Fl_Window_Driver::icon_data;
+  memset(icon_, 0, sizeof(Fl_Window_Driver::icon_data));
 }
 
 Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
@@ -188,6 +190,61 @@ void Fl_WinAPI_Window_Driver::draw() {
       delete temp;
     }
   }  Fl_Window_Driver::draw();
+}
+
+void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
+  free_icons();
+  
+  if (count > 0) {
+    icon_->icons = new Fl_RGB_Image*[count];
+    icon_->count = count;
+    // FIXME: Fl_RGB_Image lacks const modifiers on methods
+    for (int i = 0;i < count;i++)
+      icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
+  }
+  
+  if (Fl_X::i(pWindow))
+    Fl_X::i(pWindow)->set_icons();
+}
+
+const void *Fl_WinAPI_Window_Driver::icon() const {
+  return icon_->legacy_icon;
+}
+
+void Fl_WinAPI_Window_Driver::icon(const void * ic) {
+  free_icons();
+  icon_->legacy_icon = ic;
+}
+
+void Fl_WinAPI_Window_Driver::free_icons() {
+  int i;
+  icon_->legacy_icon = 0L;
+  if (icon_->icons) {
+    for (i = 0;i < icon_->count;i++)
+      delete icon_->icons[i];
+    delete [] icon_->icons;
+    icon_->icons = 0L;
+  }
+  icon_->count = 0;
+  if (icon_->big_icon)
+    DestroyIcon(icon_->big_icon);
+  if (icon_->small_icon)
+    DestroyIcon(icon_->small_icon);
+  icon_->big_icon = NULL;
+  icon_->small_icon = NULL;
+}
+
+void Fl_WinAPI_Window_Driver::icons(HICON big_icon, HICON small_icon)
+{
+  free_icons();
+  
+  if (big_icon != NULL)
+    icon_->big_icon = CopyIcon(big_icon);
+  if (small_icon != NULL)
+    icon_->small_icon = CopyIcon(small_icon);
+  
+  if (Fl_X::i(pWindow))
+    Fl_X::i(pWindow)->set_icons();
 }
 
 //
