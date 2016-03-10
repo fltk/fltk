@@ -141,7 +141,6 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
   if (count_offscreens >= max) {
     max += 20;
     offscreen_api_surface = (Fl_Image_Surface**)realloc(offscreen_api_surface, max * sizeof(void *));
-    return find_slot();
   }
   return count_offscreens++;
 }
