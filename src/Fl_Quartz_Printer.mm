@@ -18,7 +18,7 @@
 
 #ifdef __APPLE__
 #include <FL/Fl_Printer.H>
-#include "drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.h"
+#include "drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -42,7 +42,7 @@ typedef OSStatus
 
 extern void fl_quartz_restore_line_style_(CGContextRef gc);
 
-Fl_System_Printer::Fl_System_Printer(void)
+Fl_Printer::Helper::Helper(void)
 {
   x_offset = 0;
   y_offset = 0;
@@ -50,11 +50,11 @@ Fl_System_Printer::Fl_System_Printer(void)
   driver(new Fl_Quartz_Printer_Graphics_Driver);
 }
 
-Fl_System_Printer::~Fl_System_Printer(void) {
+Fl_Printer::Helper::~Helper(void) {
   delete driver();
 }
 
-int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
+int Fl_Printer::Helper::start_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
 //returns 0 iff OK
 {
@@ -145,7 +145,7 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
   return 0;
 }
 
-void Fl_System_Printer::margins(int *left, int *top, int *right, int *bottom)
+void Fl_Printer::Helper::margins(int *left, int *top, int *right, int *bottom)
 {
   PMPaper paper;
   PMGetPageFormatPaper(pageFormat, &paper);
@@ -167,7 +167,7 @@ void Fl_System_Printer::margins(int *left, int *top, int *right, int *bottom)
   }
 }
 
-int Fl_System_Printer::printable_rect(int *w, int *h)
+int Fl_Printer::Helper::printable_rect(int *w, int *h)
 //returns 0 iff OK
 {
   OSStatus status;
@@ -184,7 +184,7 @@ int Fl_System_Printer::printable_rect(int *w, int *h)
   return 0;
 }
 
-void Fl_System_Printer::origin(int x, int y)
+void Fl_Printer::Helper::origin(int x, int y)
 {
   x_offset = x;
   y_offset = y;
@@ -198,7 +198,7 @@ void Fl_System_Printer::origin(int x, int y)
   CGContextSaveGState(gc);
 }
 
-void Fl_System_Printer::scale (float s_x, float s_y)
+void Fl_Printer::Helper::scale (float s_x, float s_y)
 {
   if (s_y == 0.) s_y = s_x;
   scale_x = s_x;
@@ -213,7 +213,7 @@ void Fl_System_Printer::scale (float s_x, float s_y)
   CGContextSaveGState(gc);
 }
 
-void Fl_System_Printer::rotate (float rot_angle)
+void Fl_Printer::Helper::rotate (float rot_angle)
 {
   angle = - rot_angle * M_PI / 180.;
   CGContextRef gc = (CGContextRef)driver()->gc();
@@ -226,7 +226,7 @@ void Fl_System_Printer::rotate (float rot_angle)
   CGContextSaveGState(gc);
 }
 
-void Fl_System_Printer::translate(int x, int y)
+void Fl_Printer::Helper::translate(int x, int y)
 {
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextSaveGState(gc);
@@ -234,14 +234,14 @@ void Fl_System_Printer::translate(int x, int y)
   CGContextSaveGState(gc);
 }
 
-void Fl_System_Printer::untranslate(void)
+void Fl_Printer::Helper::untranslate(void)
 {
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
 }
 
-int Fl_System_Printer::start_page (void)
+int Fl_Printer::Helper::start_page (void)
 {	
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
   CGContextRef gc;
@@ -291,7 +291,7 @@ int Fl_System_Printer::start_page (void)
   return status != noErr;
 }
 
-int Fl_System_Printer::end_page (void)
+int Fl_Printer::Helper::end_page (void)
 {	
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextFlush(gc);
@@ -302,7 +302,7 @@ int Fl_System_Printer::end_page (void)
   return status != noErr;
 }
 
-void Fl_System_Printer::end_job (void)
+void Fl_Printer::Helper::end_job (void)
 {
   OSStatus status;
   
@@ -325,7 +325,7 @@ void Fl_System_Printer::end_job (void)
 }
 
 // version that prints at high res if using a retina display
-void Fl_System_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
+void Fl_Printer::Helper::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
@@ -337,6 +337,11 @@ void Fl_System_Printer::print_window_part(Fl_Window *win, int x, int y, int w, i
   current->set_current();
   ((Fl_Quartz_Graphics_Driver*)driver())->draw_CGImage(img,delta_x, delta_y, w, h, 0,0,w,h);
   CFRelease(img);
+}
+
+void Fl_Printer::Helper::origin(int *x, int *y)
+{
+  Fl_Paged_Device::origin(x, y);
 }
 
 #endif // __APPLE__

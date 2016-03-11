@@ -40,88 +40,6 @@
 #include <FL/Fl_PostScript.H>
 #endif
 
-#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN) // PORTME: Fl_Surface_Driver ? - platform printer driver
-/**
- Print support under MSWindows and Mac OS.
-
- Class Fl_System_Printer is implemented only on the MSWindows and Mac OS platforms.
- It has no public constructor.
- Use Fl_Printer instead that is cross-platform and has the same API.
- */
-class Fl_System_Printer : public Fl_Paged_Device {
-  friend class Fl_Printer;
-private:
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform printer driver
-  float scale_x;
-  float scale_y;
-  float angle; // rotation angle in radians
-  PMPrintSession  printSession;
-  PMPageFormat    pageFormat;
-  PMPrintSettings printSettings;
-#elif defined(WIN32)
-  int   abortPrint;
-  PRINTDLG      pd;
-  HDC           hPr;
-  int           prerr;
-  int left_margin;
-  int top_margin;
-  void absolute_printable_rect(int *x, int *y, int *w, int *h);
-#endif
-protected:
-  /** \brief The constructor */
-  Fl_System_Printer(void);
-public:
-  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
-  int start_page (void);
-  int printable_rect(int *w, int *h);
-  void margins(int *left, int *top, int *right, int *bottom);
-  void origin(int *x, int *y);
-  void origin(int x, int y);
-  void scale (float scale_x, float scale_y = 0.);
-  void rotate(float angle);
-  void translate(int x, int y);
-  void untranslate(void);
-  int end_page (void);
-  void end_job (void);
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver ? - platform printer driver
-  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
-  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
-#endif
-  /** \brief The destructor */
-  ~Fl_System_Printer(void);
-}; // class Fl_System_Printer
-#endif
-
-#if defined(FL_PORTING)
-
-# pragma message "FL_PORTING: define your own Fl_xxx_Printer class"
-class Fl_XXX_Printer : public Fl_Paged_Device {
-  friend class Fl_Printer;
-protected:
-  Fl_XXX_Printer(void) { }
-};
-
-#endif
-
-#if defined(FL_DOXYGEN) || !(defined(__APPLE__) || defined(WIN32) || defined(FL_PORTING))
-
-/**
- Print support under Unix/Linux.
- 
- Class Fl_PostScript_Printer is implemented only on the Unix/Linux platform.
- It has no public constructor.
- Use Fl_Printer instead that is cross-platform and has the same API.
- */
-class Fl_PostScript_Printer : public Fl_PostScript_File_Device {
-  friend class Fl_Printer;
-protected:
-  /** The constructor */
-  Fl_PostScript_Printer(void) {};
-public:
-  int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
-};
-
-#endif
 
 /**
  * \brief OS-independent print support.
@@ -183,6 +101,9 @@ public:
  </ul>
  */
 class FL_EXPORT Fl_Printer : public Fl_Paged_Device {
+private:
+  class Helper;
+  Helper *printer;
 public:
   /** \brief The constructor */
   Fl_Printer(void);
@@ -228,17 +149,86 @@ public:
   /** \} */ 
   /** \brief The destructor */
   ~Fl_Printer(void);
-
-private:
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Surface_Driver ? - system printer driver
-  Fl_System_Printer *printer;
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: instantiate your own Fl_xxx_Printer here"
-  Fl_XXX_Printer *printer;
-#else
-  Fl_PostScript_Printer *printer;
-#endif
 };
+
+#if defined(__APPLE__)
+class Fl_Printer::Helper : public Fl_Paged_Device {
+  friend class Fl_Printer;
+private:
+  float scale_x;
+  float scale_y;
+  float angle; // rotation angle in radians
+  PMPrintSession  printSession;
+  PMPageFormat    pageFormat;
+  PMPrintSettings printSettings;
+protected:
+  Helper(void);
+public:
+  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int start_page (void);
+  int printable_rect(int *w, int *h);
+  void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
+  void origin(int x, int y);
+  void scale (float scale_x, float scale_y = 0.);
+  void rotate(float angle);
+  void translate(int x, int y);
+  void untranslate(void);
+  int end_page (void);
+  void end_job (void);
+  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
+  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
+  ~Helper(void);
+};
+
+#elif defined(WIN32)
+
+class Fl_Printer::Helper : public Fl_Paged_Device {
+  friend class Fl_Printer;
+private:
+  int   abortPrint;
+  PRINTDLG      pd;
+  HDC           hPr;
+  int           prerr;
+  int left_margin;
+  int top_margin;
+  void absolute_printable_rect(int *x, int *y, int *w, int *h);
+protected:
+  Helper(void);
+public:
+  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int start_page (void);
+  int printable_rect(int *w, int *h);
+  void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
+  void origin(int x, int y);
+  void scale (float scale_x, float scale_y = 0.);
+  void rotate(float angle);
+  void translate(int x, int y);
+  void untranslate(void);
+  int end_page (void);
+  void end_job (void);
+  ~Helper(void);
+};
+
+#elif defined(FL_PORTING)
+
+# pragma message "FL_PORTING: define your own Fl_Printer::Helper class"
+class Fl_Printer::Helper : public Fl_Paged_Device {
+  friend class Fl_Printer;
+protected:
+  Helper(void) { }
+};
+
+#else
+
+class Fl_Printer::Helper : public Fl_PostScript_File_Device {
+  friend class Fl_Printer;
+public:
+  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+};
+
+#endif
 
 #endif // Fl_Printer_H
 

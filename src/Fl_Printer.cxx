@@ -63,16 +63,6 @@ const char *Fl_Printer::property_cancel = NULL;
 
 #else
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform printing
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the printer device specifics"
-#else
-#endif
-
-#if defined(WIN32)
-#include "Fl_GDI_Printer.cxx"
-#endif
-
 // print dialog customization strings
 /** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_title = "Print";
@@ -113,24 +103,9 @@ const char *Fl_Printer::property_save = "Save";
 /** [this text may be customized at run-time] */
 const char *Fl_Printer::property_cancel = "Cancel";
 
-#if defined(__APPLE__) || defined(WIN32) // PORTME: Fl_Screen_Driver - platform printing
-
-void Fl_System_Printer::origin(int *x, int *y)
-{
-  Fl_Paged_Device::origin(x, y);
-}
-
-#endif
 
 Fl_Printer::Fl_Printer(void) {
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform printing
-  printer = new Fl_System_Printer();
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the printer device specifics"
-  printer = new Fl_XXX_Printer();
-#else
-  printer = new Fl_PostScript_Printer();
-#endif
+  printer = new Helper();
   Fl_Surface_Device::driver(printer->driver());
 }
 

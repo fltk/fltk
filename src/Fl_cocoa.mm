@@ -4373,7 +4373,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
 }
 
 
-void Fl_System_Printer::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
+void Fl_Printer::Helper::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
   if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
     this->print_widget(win, x_offset, y_offset);

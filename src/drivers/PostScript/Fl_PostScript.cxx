@@ -1562,8 +1562,10 @@ void Fl_PostScript_File_Device::end_job (void)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement postscript printing"
 #else // X11
+
+
 /** Starts a print job. */
-int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
+int Fl_Printer::Helper::start_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
 
