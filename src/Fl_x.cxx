@@ -2983,60 +2983,6 @@ int Fl_Window::decorated_w()
   return w;
 }
 
-/* Returns images of the captures of the window title-bar, and the left, bottom and right window borders
- (or NULL if a particular border is absent).
- Returned images can be deleted after use. Their depth and size may be platform-dependent.
- The top and bottom images extend from left of the left border to right of the right border.
- 
- On the X11 platform, this function exploits a feature of fl_read_image() which, when called
- with negative 4th argument, captures the window decoration.
- */
-void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
-{
-  Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
-  top = left = bottom = right = NULL;
-  if (decorated_h() == h()) return;
-  Window from = fl_window;
-  Fl_Surface_Device *previous = Fl_Surface_Device::surface();
-  Fl_Display_Device::display_device()->set_current();
-  show();
-  Fl::check();
-  make_current();
-  Window root, parent, *children, child_win;
-  unsigned n = 0;
-  int do_it;
-  int wsides, htop;
-  do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 &&
-           XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &wsides, &htop, &child_win) == True);
-  if (n) XFree(children);
-  if (!do_it) wsides = htop = 0;
-  int hbottom = wsides;
-  fl_window = parent;
-  uchar *rgb;
-  if (htop) {
-    rgb = fl_read_image(NULL, 0, 0, - (w() + 2 * wsides), htop);
-    r_top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
-    r_top->alloc_array = 1;
-    top = Fl_Shared_Image::get(r_top);
-  }
-  if (wsides) {
-    rgb = fl_read_image(NULL, 0, htop, -wsides, h());
-    r_left = new Fl_RGB_Image(rgb, wsides, h(), 3);
-    r_left->alloc_array = 1;
-    left = Fl_Shared_Image::get(r_left);
-    rgb = fl_read_image(NULL, w() + wsides, htop, -wsides, h());
-    r_right = new Fl_RGB_Image(rgb, wsides, h(), 3);
-    r_right->alloc_array = 1;
-    right = Fl_Shared_Image::get(r_right);
-    rgb = fl_read_image(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom);
-    r_bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
-    r_bottom->alloc_array = 1;
-    bottom = Fl_Shared_Image::get(r_bottom);
-  }
-  fl_window = from;
-  previous->Fl_Surface_Device::set_current();
-}
-
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
 // contains also preparePrintFront call above

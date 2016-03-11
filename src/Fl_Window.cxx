@@ -433,15 +433,6 @@ void Fl_Window::wait_for_expose() {
   }
 }
 
-#if defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement Fl_Window::capture_titlebar_and_borders"
-void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
-{
-  top = left = bottom = right = NULL;
-}
-#endif
-
-
 #endif  // ! __APPLE__ // PORTME: Fl_Window_Driver - platform window driver
 
 //

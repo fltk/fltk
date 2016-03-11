@@ -41,8 +41,9 @@ extern "C" {
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Shared_Image.H>
-#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"
-#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.h"
+#include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
+#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
+#include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -4338,30 +4339,30 @@ static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 /* Returns images of the capture of the window title-bar.
  On the Mac OS platform, left, bottom and right are returned NULL; top is returned with depth 4.
  */
-void Fl_Window::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
+void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
 {
   left = bottom = right = NULL;
-  int htop = decorated_h() - h();
-  CALayer *layer = get_titlebar_layer(this);
+  int htop = pWindow->decorated_h() - pWindow->h();
+  CALayer *layer = get_titlebar_layer(pWindow);
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  uchar *rgba = new uchar[4 * w() * htop * 4];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * w(), 2 * htop, 8, 8 * w(), cspace, kCGImageAlphaPremultipliedLast);
+  uchar *rgba = new uchar[4 * pWindow->w() * htop * 4];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * pWindow->w(), 2 * htop, 8, 8 * pWindow->w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
-    draw_layer_to_context(layer, auxgc, w(), htop);
+    draw_layer_to_context(layer, auxgc, pWindow->w(), htop);
   } else {
-    CGImageRef img = Fl_X::CGImage_from_window_rect(this, 0, -htop, w(), htop);
+    CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, pWindow->w(), htop);
     CGContextSaveGState(auxgc);
-    Fl_X::clip_to_rounded_corners(auxgc, w(), htop);
-    CGContextDrawImage(auxgc, CGRectMake(0, 0, w(), htop), img);
+    Fl_X::clip_to_rounded_corners(auxgc, pWindow->w(), htop);
+    CGContextDrawImage(auxgc, CGRectMake(0, 0, pWindow->w(), htop), img);
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * w(), 2 * htop, 4);
+  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * pWindow->w(), 2 * htop, 4);
   top_rgb->alloc_array = 1;
   top = Fl_Shared_Image::get(top_rgb);
-  top->scale(w(),htop);
+  top->scale(pWindow->w(),htop);
   CGContextRelease(auxgc);
 }
 
@@ -4413,7 +4414,7 @@ void Fl_System_Printer::draw_decorated_window(Fl_Window *win, int x_offset, int 
   Fl::check();
   // capture the window title bar with no title
   Fl_Shared_Image *top, *left, *bottom, *right;
-  win->capture_titlebar_and_borders(top, left, bottom, right);
+  win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
   win->label(title); // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar

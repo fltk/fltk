@@ -20,6 +20,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Window_Driver.H>
 
 
 /** The constructor.
@@ -193,7 +194,7 @@ int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
 void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
   Fl_Shared_Image *top, *left, *bottom, *right;
-  win->capture_titlebar_and_borders(top, left, bottom, right);
+  win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {

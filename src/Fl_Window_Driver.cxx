@@ -156,8 +156,9 @@ void Fl_Window_Driver::shape_pixmap_(Fl_Image* pixmap) {
   delete rgba;
 }
 
-
-
+void Fl_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right) {
+  top = left = bottom = right = NULL;
+}
 
 //
 // End of "$Id$".

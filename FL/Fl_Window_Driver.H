@@ -30,7 +30,7 @@
 class Fl_Window;
 class Fl_X;
 class Fl_Image;
-
+class Fl_Shared_Image;
 
 /**
  \brief A base class for platform specific window handling code.
@@ -63,6 +63,7 @@ public:
   virtual const void *icon() const {return NULL;}
   virtual void icon(const void * ic) {}
   virtual void free_icons() {}
+  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
 };
 
 
