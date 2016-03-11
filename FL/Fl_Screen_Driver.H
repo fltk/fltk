@@ -20,7 +20,6 @@
 #define FL_SCREEN_DRIVER_H
 
 #include <FL/Fl_Device.H>
-#include <FL/x.H>
 #include <FL/Fl.H>
 
 // TODO: add text composition?

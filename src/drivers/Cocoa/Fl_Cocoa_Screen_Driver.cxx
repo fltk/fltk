@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Cocoa_Screen_Driver.h"
+#include "Fl_Cocoa_Screen_Driver.H"
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Graphics_Driver.H>

@@ -26,6 +26,7 @@
 #define FL_X11_WINDOW_DRIVER_H
 
 #include <FL/Fl_Window_Driver.H>
+class Fl_Bitmap;
 
 /*
  Move everything here that manages the native window interface.

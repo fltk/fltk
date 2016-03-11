@@ -24,13 +24,15 @@
 #ifndef FL_WINDOW_DRIVER_H
 #define FL_WINDOW_DRIVER_H
 
-#include <FL/x.H>
+#include <FL/Fl_Export.H>
+#include <stdlib.h>
 
 
 class Fl_Window;
 class Fl_X;
 class Fl_Image;
 class Fl_Shared_Image;
+class Fl_RGB_Image;
 
 /**
  \brief A base class for platform specific window handling code.

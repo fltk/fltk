@@ -26,7 +26,7 @@
 #define FL_COCOA_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
-
+#include <FL/x.H> // for XRectangle
 
 /*
  Move everything here that manages the native screen interface.

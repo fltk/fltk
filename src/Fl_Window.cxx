@@ -22,6 +22,7 @@
 // equivalent (but totally different) crap for MSWindows is in Fl_win32.cxx
 #include <config.h>
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Window.H>

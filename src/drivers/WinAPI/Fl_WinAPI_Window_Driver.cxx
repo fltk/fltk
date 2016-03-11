@@ -19,6 +19,10 @@
 
 #include "../../config_lib.h"
 #include <FL/Fl.H>
+#include <FL/Fl_Image.H>
+#include <FL/Fl_Bitmap.H>
+#include <FL/Fl_Window.H>
+#include <FL/x.H>
 #include "Fl_WinAPI_Window_Driver.H"
 #include <windows.h>
 
