@@ -24,7 +24,6 @@
 #  error "Never use <FL/porting.H> directly; include <FL/x.H> instead."
 #endif // !Fl_X_H
 
-
 typedef void *Window;
 
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
@@ -61,7 +60,6 @@ extern void *fl_default_cursor;
 // This object contains all platform-specific stuff about a window:
 // WARNING: this object is highly subject to change!
 class Fl_X {
-  
 public:
   Window xid;              // pointer to the native window object (FLWindow*)
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)

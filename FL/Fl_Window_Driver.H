@@ -28,6 +28,7 @@
 
 
 class Fl_Window;
+class Fl_X;
 class Fl_Image;
 
 

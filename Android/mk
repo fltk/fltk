@@ -1,0 +1,7 @@
+
+ndk-build
+android update project --path . --name native
+ant debug
+adb install -r bin/native-debug.apk
+./adb-run.sh bin/native-debug.apk 
+adb logcat | grep native-activity
