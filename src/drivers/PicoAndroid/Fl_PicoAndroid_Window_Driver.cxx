@@ -20,6 +20,15 @@
 #include "../../config_lib.h"
 #include "Fl_PicoAndroid_Window_Driver.H"
 
+#include "Fl_PicoAndroid_Screen_Driver.H"
+
+#include <jni.h>
+#include <errno.h>
+
+#include <android/sensor.h>
+#include <android/log.h>
+#include <android_native_app_glue.h>
+
 #include <FL/x.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -45,6 +54,8 @@ Fl_PicoAndroid_Window_Driver::~Fl_PicoAndroid_Window_Driver()
 
 Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
 {
+  Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
+
   Fl_Group::current(0);
   if (pWindow->parent() && !Fl_X::i(pWindow->window())) {
     pWindow->set_visible();
@@ -65,6 +76,7 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
   } else {
 //    pNativeWindow = SDL_CreateWindow(pWindow->label(), pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h(), 0);
   }
+  pNativeWindow = scr->pApp->window;
 //  x->xid = SDL_CreateRenderer(pNativeWindow, -1, SDL_RENDERER_ACCELERATED);
   x->next = Fl_X::first;
   x->wait_for_expose = 0;
@@ -81,12 +93,18 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
   return x;
 }
 
+#include <FL/fl_draw.h>
 
 void Fl_PicoAndroid_Window_Driver::flush()
 {
-//  SDL_RenderClear((SDL_Renderer*)fl_window);
+  Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
+//  LOGI("Flush...");
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
   pWindow->flush();
-//  SDL_RenderPresent((SDL_Renderer*)fl_window);
+//  fl_color(FL_RED);
+//  fl_rectf(10, 10, 300, 400);
+  scr->drawFrame();
 }
 
 

@@ -30,20 +30,35 @@
 #include <jni.h>
 #include <errno.h>
 
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
 
+class Fl_PicoAndroid_Window_Driver;
+
 
 class FL_EXPORT Fl_PicoAndroid_Screen_Driver : public Fl_Pico_Screen_Driver
 {
+  friend class Fl_PicoAndroid_Window_Driver;
+
   struct android_app* pApp;
+  EGLDisplay pDisplay;
+  EGLSurface pSurface;
+  EGLContext pContext;
+  int32_t pWidth;
+  int32_t pHeight;
 
   static void handleAppCmdCB(struct android_app* app, int32_t cmd);
   void handleAppCmd(struct android_app* app, int32_t cmd);
   static int32_t handleInputEventCB(struct android_app* app, AInputEvent* event);
   int32_t handleInputEvent(struct android_app* app, AInputEvent* event);
+  void initDisplay();
+  void termDisplay();
+  void drawFrame();
 
 public:
   Fl_PicoAndroid_Screen_Driver();

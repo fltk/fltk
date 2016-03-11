@@ -16,12 +16,11 @@
 //     http://www.fltk.org/str.php
 //
 
+// http://developer.android.com/ndk/reference/group___native_activity.html
+
 
 #include "../../config_lib.h"
 #include "Fl_PicoAndroid_Screen_Driver.H"
-
-#include <EGL/egl.h>
-#include <GLES/gl.h>
 
 #include <FL/x.H>
 #include <FL/Fl.H>
@@ -30,10 +29,113 @@
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/fl_draw.h>
 
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
+
+
+void Fl_PicoAndroid_Screen_Driver::initDisplay()
+{
+  // initialize OpenGL ES and EGL
+
+  /*
+   * Here specify the attributes of the desired configuration.
+   * Below, we select an EGLConfig with at least 8 bits per color
+   * component compatible with on-screen windows
+   */
+  const EGLint attribs[] = {
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_BLUE_SIZE, 8,
+    EGL_GREEN_SIZE, 8,
+    EGL_RED_SIZE, 8,
+    EGL_NONE
+  };
+  EGLint w, h, dummy, format;
+  EGLint numConfigs;
+  EGLConfig config;
+  EGLSurface surface;
+  EGLContext context;
+
+  EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+  eglInitialize(display, 0, 0);
+
+  /* Here, the application chooses the configuration it desires. In this
+   * sample, we have a very simplified selection process, where we pick
+   * the first EGLConfig that matches our criteria */
+  eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+
+  /* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
+   * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
+   * As soon as we picked a EGLConfig, we can safely reconfigure the
+   * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
+  eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+
+  ANativeWindow_setBuffersGeometry(pApp->window, 0, 0, format);
+
+  surface = eglCreateWindowSurface(display, config, pApp->window, NULL);
+  context = eglCreateContext(display, config, NULL, NULL);
+
+  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+    LOGW("Unable to eglMakeCurrent");
+    return;
+  }
+
+  eglQuerySurface(display, surface, EGL_WIDTH, &w);
+  eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+
+  this->pDisplay = display;
+  pContext = context;
+  pSurface = surface;
+  pWidth = w;
+  pHeight = h;
+
+  // Initialize GL state.
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+  glEnable(GL_CULL_FACE);
+  glShadeModel(GL_SMOOTH);
+  glDisable(GL_DEPTH_TEST);
+
+  glViewport(0, 100, w, h-200);
+
+  // make adjustments for screen ratio
+  float ratio = 3.0 * (float) w / h;
+  glMatrixMode(GL_PROJECTION);        // set matrix to projection mode
+  glLoadIdentity();                        // reset the matrix to its default state
+  // glFrustumf(-ratio, ratio, -3, 3, 3, 30);  // apply the projection matrix
+  glOrthof(0, w/3, h/3, 0, -30, 30);  // apply the projection matrix
+  glLineWidth(3);
+}
+
+
+void Fl_PicoAndroid_Screen_Driver::termDisplay()
+{
+  if (pDisplay != EGL_NO_DISPLAY) {
+    eglMakeCurrent(pDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    if (pContext != EGL_NO_CONTEXT) {
+      eglDestroyContext(pDisplay, pContext);
+    }
+    if (pSurface != EGL_NO_SURFACE) {
+      eglDestroySurface(pDisplay, pSurface);
+    }
+    eglTerminate(pDisplay);
+  }
+  pDisplay = EGL_NO_DISPLAY;
+  pContext = EGL_NO_CONTEXT;
+  pSurface = EGL_NO_SURFACE;
+}
+
+
+void Fl_PicoAndroid_Screen_Driver::drawFrame()
+{
+  if (pDisplay == NULL) {
+    return;
+  }
+  eglSwapBuffers(pDisplay, pSurface);
+  LOGI("Swapping buffers");
+}
 
 
 void Fl_PicoAndroid_Screen_Driver::handleAppCmdCB(struct android_app* app, int32_t cmd)
@@ -56,14 +158,14 @@ void Fl_PicoAndroid_Screen_Driver::handleAppCmd(struct android_app* app, int32_t
       break;
     case APP_CMD_INIT_WINDOW:
       // The window is being shown, get it ready.
-//      if (engine->app->window != NULL) {
-//        engine_init_display(engine);
-//        engine_draw_frame(engine);
-//      }
+      if (pApp->window != NULL) {
+        initDisplay();
+        drawFrame();
+      }
       break;
     case APP_CMD_TERM_WINDOW:
       // The window is being hidden or closed, clean it up.
-//      engine_term_display(engine);
+      termDisplay();
       break;
     case APP_CMD_GAINED_FOCUS:
       // When our app gains focus, we start monitoring the accelerometer.
@@ -103,6 +205,7 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, 
     int x = AMotionEvent_getX(event, 0);
     int y = AMotionEvent_getY(event, 0);
     LOGI("Motion at %d, %d", x, y);
+    Fl_X::first->w->redraw();
     return 1;
   }
   return 0;
@@ -222,6 +325,9 @@ Fl_Screen_Driver* Fl_Screen_Driver::newScreenDriver()
 
 Fl_PicoAndroid_Screen_Driver::Fl_PicoAndroid_Screen_Driver()
 {
+  pDisplay = EGL_NO_DISPLAY;
+  pContext = EGL_NO_CONTEXT;
+  pSurface = EGL_NO_SURFACE;
 }
 
 Fl_PicoAndroid_Screen_Driver::~Fl_PicoAndroid_Screen_Driver()
@@ -232,33 +338,6 @@ Fl_PicoAndroid_Screen_Driver::~Fl_PicoAndroid_Screen_Driver()
 double Fl_PicoAndroid_Screen_Driver::wait(double time_to_wait)
 {
   Fl::flush();
-//  SDL_Event e;
-//  if (SDL_PollEvent(&e)) {
-//    switch (e.type) {
-//      case SDL_QUIT:
-//        exit(0);
-//      case SDL_WINDOWEVENT_EXPOSED:
-//      case SDL_WINDOWEVENT_SHOWN:
-//      { // not happening!
-//        //event->window.windowID
-//        Fl_Window *window = Fl::first_window();
-//        if ( !window ) break;;
-//        Fl_X *i = Fl_X::i(Fl::first_window());
-//        i->wait_for_expose = 0;
-//
-//        if ( i->region ) {
-//          XDestroyRegion(i->region);
-//          i->region = 0;
-//        }
-//        window->clear_damage(FL_DAMAGE_ALL);
-//        i->flush();
-//        window->clear_damage();
-//        Fl_X::first->wait_for_expose = 0;
-//      }
-//        break;
-//
-//    }
-//  }
     // Read all pending events.
     int ident;
     int events;

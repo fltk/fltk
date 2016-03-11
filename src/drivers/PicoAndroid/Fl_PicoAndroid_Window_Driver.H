@@ -27,14 +27,13 @@
 
 #include "../Pico/Fl_Pico_Window_Driver.H"
 
-//#define __APPLE__
-//#include <SDL2/SDL.h>
-//#undef __APPLE__
+#include <jni.h>
+#include <android_native_app_glue.h>
 
 
 class FL_EXPORT Fl_PicoAndroid_Window_Driver : public Fl_Pico_Window_Driver
 {
-//  SDL_Window *pNativeWindow;
+  ANativeWindow *pNativeWindow;
 public:
   Fl_PicoAndroid_Window_Driver(Fl_Window *win);
   virtual ~Fl_PicoAndroid_Window_Driver();
