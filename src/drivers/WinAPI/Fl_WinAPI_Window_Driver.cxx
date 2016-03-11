@@ -18,6 +18,7 @@
 
 
 #include "../../config_lib.h"
+#include <FL/Fl.H>
 #include "Fl_WinAPI_Window_Driver.H"
 #include <windows.h>
 
@@ -245,6 +246,14 @@ void Fl_WinAPI_Window_Driver::icons(HICON big_icon, HICON small_icon)
   
   if (Fl_X::i(pWindow))
     Fl_X::i(pWindow)->set_icons();
+}
+
+void Fl_WinAPI_Window_Driver::wait_for_expose() {
+  if (!pWindow->shown()) return;
+  Fl_X *i = Fl_X::i(pWindow);
+  while (!i || i->wait_for_expose) {
+    Fl::wait();
+  }
 }
 
 //

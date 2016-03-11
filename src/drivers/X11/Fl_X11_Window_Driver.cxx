@@ -331,6 +331,14 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   previous->Fl_Surface_Device::set_current();
 }
 
+void Fl_X11_Window_Driver::wait_for_expose() {
+  if (!pWindow->shown()) return;
+  Fl_X *i = Fl_X::i(pWindow);
+  while (!i || i->wait_for_expose) {
+    Fl::wait();
+  }
+}
+
 //
 // End of "$Id$".
 //

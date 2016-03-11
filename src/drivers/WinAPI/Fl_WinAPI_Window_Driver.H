@@ -75,6 +75,7 @@ public:
   void icons(HICON big_icon, HICON small_icon);
   // this one is implemented in Fl_win32.cxx
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
+  virtual void wait_for_expose();
 };
 
 

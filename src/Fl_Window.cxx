@@ -363,8 +363,6 @@ void Fl_Window::free_icons() {
   pWindowDriver->free_icons();
 }
 
-
-#ifndef __APPLE__ // PORTME: Fl_Window_Driver - platform window driver
 /**
   Waits for the window to be displayed after calling show().
 
@@ -425,15 +423,9 @@ void Fl_Window::free_icons() {
   Note that the window will not be responsive until the event loop
   is started with Fl::run().
 */
-
 void Fl_Window::wait_for_expose() {
-  if (!shown()) return;
-  while (!i || i->wait_for_expose) {
-    Fl::wait();
-  }
+  pWindowDriver->wait_for_expose();
 }
-
-#endif  // ! __APPLE__ // PORTME: Fl_Window_Driver - platform window driver
 
 //
 // End of "$Id$".

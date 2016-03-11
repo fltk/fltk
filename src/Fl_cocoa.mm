@@ -3095,11 +3095,11 @@ void Fl_Window::size_range_() {
   }
 }
 
-void Fl_Window::wait_for_expose()
+void Fl_Cocoa_Window_Driver::wait_for_expose()
 {
-  if (shown()) {
+  if (pWindow->shown()) { //TODO: do that also for pWindow's subwindows
     // this makes freshly created windows appear on the screen, if they are not there already
-    NSModalSession session = [NSApp beginModalSessionForWindow:i->xid];
+    NSModalSession session = [NSApp beginModalSessionForWindow:Fl_X::i(pWindow)->xid];
     [NSApp runModalSession:session];
     [NSApp endModalSession:session];
   }
