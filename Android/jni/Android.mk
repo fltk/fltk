@@ -24,6 +24,18 @@ LOCAL_MODULE     := native-activity
 LOCAL_C_INCLUDES := $(TOP_PATH)
 
 LOCAL_SRC_FILES  := \
+  src/flstring.c \
+  src/scandir.c \
+  src/numericsort.c \
+  src/vsnprintf.c \
+  src/xutf8/is_right2left.c \
+  src/xutf8/is_spacing.c \
+  src/xutf8/case.c \
+  src/xutf8/utf8Input.c \
+  src/xutf8/utf8Utils.c \
+  src/xutf8/utf8Wrap.c \
+  src/xutf8/keysym2Ucs.c \
+  src/fl_utf.c \
   src/Fl.cxx \
   src/Fl_Adjuster.cxx \
   src/Fl_Bitmap.cxx \
@@ -108,7 +120,6 @@ LOCAL_SRC_FILES  := \
   src/Fl_Window_fullscreen.cxx \
   src/Fl_Window_hotspot.cxx \
   src/Fl_Window_iconize.cxx \
-  src/Fl_Window_shape.cxx \
   src/Fl_Wizard.cxx \
   src/Fl_XBM_Image.cxx \
   src/Fl_XPM_Image.cxx \

@@ -254,8 +254,8 @@
  * Do we have POSIX locale support?
  */
 
-#define HAVE_LOCALE_H 1
-#define HAVE_LOCALECONV 1
+//#undef HAVE_LOCALE_H
+//#undef HAVE_LOCALECONV
 
 /*
  * HAVE_SYS_SELECT_H:

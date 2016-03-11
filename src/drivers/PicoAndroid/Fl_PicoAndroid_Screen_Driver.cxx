@@ -88,6 +88,8 @@ double Fl_PicoAndroid_Screen_Driver::wait(double time_to_wait)
  * All this must be refactored into the driver system!
  */
 
+Fl_Fontdesc* fl_fonts = NULL;
+
 /*
 
  The following symbols are not found if we naively compile the core modules and
@@ -156,6 +158,10 @@ Window fl_window;
 //void Fl_Image_Surface::translate(int x, int y) { }
 //void Fl_Image_Surface::untranslate() { }
 
+void Fl::add_fd(int, int, void (*)(int, void*), void*)
+{
+}
+
 void Fl::add_fd(int, void (*)(int, void*), void*)
 {
 }
@@ -172,6 +178,15 @@ int Fl_Window::decorated_h()
 int Fl_Window::decorated_w()
 {
   return w();
+}
+
+// these pointers are set by the Fl::lock() function:
+static void nothing() {}
+void (*fl_lock_function)() = nothing;
+void (*fl_unlock_function)() = nothing;
+
+Fl_Font_Descriptor::~Fl_Font_Descriptor()
+{
 }
 
 
