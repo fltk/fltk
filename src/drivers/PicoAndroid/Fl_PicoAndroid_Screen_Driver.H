@@ -27,13 +27,31 @@
 
 #include "../Pico/Fl_Pico_Screen_Driver.H"
 
+#include <jni.h>
+#include <errno.h>
+
+#include <android/sensor.h>
+#include <android/log.h>
+#include <android_native_app_glue.h>
+
+
 
 class FL_EXPORT Fl_PicoAndroid_Screen_Driver : public Fl_Pico_Screen_Driver
 {
+  struct android_app* pApp;
+
+  static void handleAppCmdCB(struct android_app* app, int32_t cmd);
+  void handleAppCmd(struct android_app* app, int32_t cmd);
+  static int32_t handleInputEventCB(struct android_app* app, AInputEvent* event);
+  int32_t handleInputEvent(struct android_app* app, AInputEvent* event);
+
 public:
   Fl_PicoAndroid_Screen_Driver();
   virtual ~Fl_PicoAndroid_Screen_Driver();
   virtual double wait(double time_to_wait);
+  
+public:
+  void android_main(struct android_app* state);
 };
 
 

@@ -19,7 +19,11 @@
 
 #include "../../config_lib.h"
 #include "Fl_PicoAndroid_Window_Driver.H"
+
+#include <FL/x.H>
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Window_Driver.H>
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
