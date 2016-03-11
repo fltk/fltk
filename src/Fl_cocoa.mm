@@ -654,6 +654,7 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
 - (void)recursivelySendToSubwindows:(SEL)sel;
 - (void)setSubwindowFrame;
 - (void)checkSubwindowFrame;
+- (void)waitForExpose;
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
@@ -771,6 +772,16 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
       if (r->size.width == 0 && r->size.height == 0) r->origin.x = r->origin.y = 0;
     }
     Fl_X::i(w)->subRect(r);
+  }
+}
+
+-(void)waitForExpose
+{
+  if ([self getFl_Window]->shown()) {
+    // this makes freshly created windows appear on the screen, if they are not there already
+    NSModalSession session = [NSApp beginModalSessionForWindow:self];
+    [NSApp runModalSession:session];
+    [NSApp endModalSession:session];
   }
 }
 
@@ -3097,12 +3108,7 @@ void Fl_Window::size_range_() {
 
 void Fl_Cocoa_Window_Driver::wait_for_expose()
 {
-  if (pWindow->shown()) { //TODO: do that also for pWindow's subwindows
-    // this makes freshly created windows appear on the screen, if they are not there already
-    NSModalSession session = [NSApp beginModalSessionForWindow:Fl_X::i(pWindow)->xid];
-    [NSApp runModalSession:session];
-    [NSApp endModalSession:session];
-  }
+  [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose)];
 }
 
 /*
