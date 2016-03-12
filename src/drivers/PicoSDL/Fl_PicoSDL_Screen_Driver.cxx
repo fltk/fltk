@@ -20,6 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_PicoSDL_Screen_Driver.H"
 
+#include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 
 #define __APPLE__
@@ -42,10 +43,66 @@ Fl_PicoSDL_Screen_Driver::~Fl_PicoSDL_Screen_Driver()
 }
 
 
+#if 0
+if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
+  //    fl_lock_function();
+  int x = AMotionEvent_getX(event, 0);
+  int y = AMotionEvent_getY(event, 0);
+  int action = AKeyEvent_getAction(event);
+  Fl_Window *window = Fl::first_window();
+  switch (action) {
+    case AMOTION_EVENT_ACTION_DOWN:
+      Fl::e_is_click = 1;
+      Fl::e_x = Fl::e_x_root = x/3;
+      Fl::e_y = (y-100)/3;
+      if (!window) break;
+      Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
+      Fl::e_state = FL_BUTTON1;
+      Fl::handle(FL_PUSH, window);
+      break;
+    case AMOTION_EVENT_ACTION_MOVE:
+      Fl::e_is_click = 1;
+      Fl::e_x = Fl::e_x_root = x/3;
+      Fl::e_y = (y-100)/3;
+      if (!window) break;
+      Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
+      Fl::e_state = FL_BUTTON1;
+      Fl::handle(FL_DRAG, window);
+      break;
+    case AMOTION_EVENT_ACTION_UP:
+    case AMOTION_EVENT_ACTION_CANCEL:
+      Fl::e_is_click = 1;
+      Fl::e_x = Fl::e_x_root = x/3;
+      Fl::e_y = (y-100)/3;
+      if (!window) break;
+      Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
+      Fl::e_state = 0;
+      Fl::handle(FL_RELEASE, window);
+      break;
+      //      case AMOTION_EVENT_ACTION_HOVER_MOVE:
+      //        Fl::e_is_click = 1;
+      //        Fl::e_x = Fl::e_x_root = x/3;
+      //        Fl::e_y = (y-100)/3;
+      //        if (!window) break;
+      //        Fl::e_keysym = 0;
+      //        Fl::e_state = 0;
+      //        Fl::handle(FL_MOVE, window);
+      //        break;
+  }
+  //    AMOTION_EVENT_ACTION_MASK
+  LOGI("Motion at %d, %d", x, y);
+  //    fl_unlock_function();
+  Fl_X::first->w->redraw();
+  return 1;
+}
+return 0;
+#endif
+
 double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 {
   Fl::flush();
   SDL_Event e;
+  Fl_Window *window = Fl::first_window();
   if (SDL_PollEvent(&e)) {
     switch (e.type) {
       case SDL_QUIT:
@@ -54,7 +111,6 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
       case SDL_WINDOWEVENT_SHOWN:
       { // not happening!
         //event->window.windowID
-        Fl_Window *window = Fl::first_window();
         if ( !window ) break;;
         Fl_X *i = Fl_X::i(Fl::first_window());
         i->wait_for_expose = 0;
@@ -69,7 +125,51 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
         Fl_X::first->wait_for_expose = 0;
       }
         break;
-
+      case SDL_MOUSEBUTTONDOWN:
+        if (!window) break;
+        Fl::e_is_click = e.button.clicks;
+        Fl::e_x = e.button.x;
+        Fl::e_y = e.button.y;
+        Fl::e_x_root = e.button.x + window->x();
+        Fl::e_y_root = e.button.y + window->y();
+        switch (e.button.button) {
+          case SDL_BUTTON_LEFT:   Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;   Fl::e_state |= FL_BUTTON1; break;
+          case SDL_BUTTON_MIDDLE: Fl::e_keysym = FL_Button+FL_MIDDLE_MOUSE; Fl::e_state |= FL_BUTTON2; break;
+          case SDL_BUTTON_RIGHT:  Fl::e_keysym = FL_Button+FL_RIGHT_MOUSE;  Fl::e_state |= FL_BUTTON3; break;
+        }
+        Fl::handle(FL_PUSH, window);
+        break;
+      case SDL_MOUSEBUTTONUP:
+        if (!window) break;
+        Fl::e_is_click = e.button.clicks;
+        Fl::e_x = e.button.x;
+        Fl::e_y = e.button.y;
+        Fl::e_x_root = e.button.x + window->x();
+        Fl::e_y_root = e.button.y + window->y();
+        switch (e.button.button) {
+          case SDL_BUTTON_LEFT:   Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;   Fl::e_state &= ~FL_BUTTON1; break;
+          case SDL_BUTTON_MIDDLE: Fl::e_keysym = FL_Button+FL_MIDDLE_MOUSE; Fl::e_state &= ~FL_BUTTON2; break;
+          case SDL_BUTTON_RIGHT:  Fl::e_keysym = FL_Button+FL_RIGHT_MOUSE;  Fl::e_state &= ~FL_BUTTON3; break;
+        }
+        Fl::handle(FL_RELEASE, window);
+        break;
+      case SDL_MOUSEMOTION: // SDL_BUTTON_LMASK
+        if (!window) break;
+        Fl::e_is_click = e.motion.state;
+        Fl::e_x = e.motion.x;
+        Fl::e_y = e.motion.y;
+        Fl::e_x_root = e.motion.x + window->x();
+        Fl::e_y_root = e.motion.y + window->y();
+        if (e.motion.state & SDL_BUTTON_LMASK) Fl::e_state |= FL_BUTTON1; else Fl::e_state &= ~FL_BUTTON1; break;
+        if (e.motion.state & SDL_BUTTON_MMASK) Fl::e_state |= FL_BUTTON2; else Fl::e_state &= ~FL_BUTTON2; break;
+        if (e.motion.state & SDL_BUTTON_RMASK) Fl::e_state |= FL_BUTTON3; else Fl::e_state &= ~FL_BUTTON3; break;
+        if ((e.motion.state & (SDL_BUTTON_LMASK|SDL_BUTTON_MMASK|SDL_BUTTON_RMASK)) == 0 )
+          Fl::handle(FL_MOVE, window);
+        else
+          Fl::handle(FL_DRAG, window);
+        break;
+      case SDL_MOUSEWHEEL:
+        break;
     }
   }
   return 0.0;

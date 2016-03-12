@@ -217,7 +217,7 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, 
       case AMOTION_EVENT_ACTION_DOWN:
         Fl::e_is_click = 1;
         Fl::e_x = Fl::e_x_root = x/3;
-        Fl::e_y = (y-100)/3;
+        Fl::e_y = Fl::e_y_root = (y-100)/3;
         if (!window) break;
         Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
         Fl::e_state = FL_BUTTON1;
@@ -226,7 +226,7 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, 
       case AMOTION_EVENT_ACTION_MOVE:
         Fl::e_is_click = 1;
         Fl::e_x = Fl::e_x_root = x/3;
-        Fl::e_y = (y-100)/3;
+        Fl::e_y = Fl::e_y_root = (y-100)/3;
         if (!window) break;
         Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
         Fl::e_state = FL_BUTTON1;
@@ -236,7 +236,7 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, 
       case AMOTION_EVENT_ACTION_CANCEL:
         Fl::e_is_click = 1;
         Fl::e_x = Fl::e_x_root = x/3;
-        Fl::e_y = (y-100)/3;
+        Fl::e_y = Fl::e_y_root = (y-100)/3;
         if (!window) break;
         Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
         Fl::e_state = 0;
