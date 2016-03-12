@@ -3,7 +3,7 @@
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,6 +36,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Button.H>
 #include <FL/fl_draw.H>
+#include <stdlib.h>
 #include <ctype.h>
 #include "flstring.h"
 #if !defined(WIN32) && !defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard feel
@@ -125,8 +126,8 @@ static Keyname table[] = {
 };
 #elif defined(__APPLE__)  // PORTME: Fl_Screen_Driver - platform keyboard feel
 static Keyname table[] = {
-                                 // v - this column contains UTF-8 characters
-  {' ', "Space"},
+  //             v - this column may contain UTF-8 characters
+  {' ',         "Space"},
   {FL_BackSpace,"\xe2\x8c\xab"}, // erase to the left
   {FL_Tab,	"\xe2\x87\xa5"}, // rightwards arrow to bar
   {0xff0b,      "\xe2\x8c\xa6"}, // erase to the right
@@ -169,11 +170,74 @@ static Keyname table[] = {
   zero then an empty string is returned. The return value points at
   a static buffer that is overwritten with each call.
 
+  \since FLTK 1.3.4 modifier key names can be localized, but key names
+    can not yet be localized. This may be added to a future FLTK version.
+
+  Modifier key names (human-readable shortcut names) can be defined
+  with the following global const char * pointer variables:
+
+   - fl_local_ctrl  => name of FL_CTRL
+   - fl_local_alt   => name of FL_ALT
+   - fl_local_shift => name of FL_SHIFT
+   - fl_local_meta  => name of FL_META
+
+  \code
+    fl_local_ctrl = "Strg";      // German for "Ctrl"
+    fl_local_shift = "Umschalt"; // German for "Shift"
+  \endcode
+
+  The shortcut name will be constructed by adding all modifier names in the
+  order defined above plus the name of the key. A '+' character is added to
+  each modifier name unless it has a trailing '\' or a trailing '+'.
+
+  Example:
+
+    Ctrl+Alt+Shift+Meta+F12
+
+  The default values for modifier key names are as given above for all
+  platforms except Mac OS X. Mac OS X uses graphical characters that represent
+  the typical OS X modifier names in menus, e.g. cloverleaf, saucepan, etc.
+  You may, however, redefine Mac OS X modifier names as well.
+
   \param [in] shortcut the integer value containing the ascii character or extended keystroke plus modifiers
   \return a pointer to a static buffer containing human readable text for the shortcut
   */
 const char* fl_shortcut_label(unsigned int shortcut) {
   return fl_shortcut_label(shortcut, 0L);
+}
+
+/*
+  This static function adds a modifier key name to a character
+  buffer and returns the pointer behind the modifier name and a
+  trailing '+' character.
+
+  Exceptions:
+   (1) Last character = '\' : remove it, done (don't add '+')
+   (2) Last character = '+' : user added '+', don't add another one
+
+  In case of buffer overflow the modifier key name is replaced with "..."
+  if that fits or not added at all. This should rarely (never) happen.
+*/
+
+static char *add_modifier_key(char *p, const char *end, const char *name) {
+  int ln = strlen(name);
+  if (p+ln > end) {		// string too long
+    if (p+4 <= end) {		// can replace with "..." ?
+      strcpy(p,"...");
+      p += 3;
+    } else
+      return p;
+  } else {
+    strcpy(p,name);
+    p += ln;
+  }
+  if (p[-1] == '\\')		// remove (last) '\' character
+    p--;
+  else if (p[-1] == '+')	// don't add another '+' character
+    {/*empty*/}
+  else				// not a '\' or '+'
+    *p++ = '+';			// add a '+' character
+  return p;
 }
 
 /** 
@@ -182,32 +246,34 @@ const char* fl_shortcut_label(unsigned int shortcut) {
   \param [in] shortcut the integer value containing the ascii character or extended keystroke plus modifiers
   \param [in] eom if this pointer is set, it will receive a pointer to the end of the modifier text
   \return a pointer to a static buffer containing human readable text for the shortcut
+
   \see fl_shortcut_label(unsigned int shortcut)
-  */
+*/
+
 const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
-  static char buf[40];
+  static char buf[80];
   char *p = buf;
+  char *end = &buf[sizeof(buf)-20]; // account for key name (max. ~10 + x)
   if (eom) *eom = p;
   if (!shortcut) {*p = 0; return buf;}
   // fix upper case shortcuts
-  unsigned int v = shortcut & FL_KEY_MASK;
-  if (((unsigned)fl_tolower(v))!=v) {
+  unsigned int key = shortcut & FL_KEY_MASK;
+  if (((unsigned)fl_tolower(key)) != key) {
     shortcut |= FL_SHIFT;
   }
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
-  //   this column contains utf8 characters - v
-  if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;}  // U+21E7 (upwards white arrow)
-  if (shortcut & FL_CTRL)  {strcpy(p,"\xe2\x8c\x83"); p += 3;}  // U+2303 (up arrowhead)
-  if (shortcut & FL_ALT)   {strcpy(p,"\xe2\x8c\xa5"); p += 3;}  // U+2325 (option key)
-  if (shortcut & FL_META)  {strcpy(p,"\xe2\x8c\x98"); p += 3;}  // U+2318 (place of interest sign)
-#else
-  if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
-  if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
-  if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;}
-  if (shortcut & FL_CTRL) {strcpy(p,"Ctrl+"); p += 5;}
-#endif // __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
+
+  // Add modifier key names.
+  // Note: if necessary we could change the order here depending on the platform.
+  // However, as discussed in fltk.development, the order appears to be the
+  // same on all platforms, with exceptions in _some_ Linux applications.
+
+  if (shortcut & FL_CTRL)  {p = add_modifier_key(p, end, fl_local_ctrl);}
+  if (shortcut & FL_ALT)   {p = add_modifier_key(p, end, fl_local_alt);}
+  if (shortcut & FL_SHIFT) {p = add_modifier_key(p, end, fl_local_shift);}
+  if (shortcut & FL_META)  {p = add_modifier_key(p, end, fl_local_meta);}
   if (eom) *eom = p;
-  unsigned int key = shortcut & FL_KEY_MASK;
+
+  // add key name
 #if defined(WIN32) || defined(__APPLE__) // if not X // PORTME: Fl_Screen_Driver - platform keyboard feel
   if (key >= FL_F && key <= FL_F_Last) {
     *p++ = 'F';
@@ -265,8 +331,6 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
 #endif
 }
 
-// Emulation of XForms named shortcuts
-#include <stdlib.h>
 /**
   Emulation of XForms named shortcuts.
 

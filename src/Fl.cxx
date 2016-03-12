@@ -160,8 +160,24 @@ bool Fl::cfg_sys_win32 = 0;
 //
 // Globals...
 //
+
+// Pointers you can use to change FLTK to a foreign language.
+// Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
+#if !defined(__APPLE__) || defined(FL_DOXYGEN)
+  const char* fl_local_alt   = "Alt";	///< string pointer used in shortcuts, you can change it to another language
+  const char* fl_local_ctrl  = "Ctrl";	///< string pointer used in shortcuts, you can change it to another language
+  const char* fl_local_meta  = "Meta";	///< string pointer used in shortcuts, you can change it to another language
+  const char* fl_local_shift = "Shift";	///< string pointer used in shortcuts, you can change it to another language
+#else
+  const char* fl_local_alt   = "\xe2\x8c\xa5\\"; // U+2325 (option key)
+  const char* fl_local_ctrl  = "\xe2\x8c\x83\\"; // U+2303 (up arrowhead)
+  const char* fl_local_meta  = "\xe2\x8c\x98\\"; // U+2318 (place of interest sign)
+  const char* fl_local_shift = "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
+#endif
+
 #if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - platform text
                                               // this should probably be part of Fl_Sys_Menubar
+// Apple App Menu
 const char *Fl_Mac_App_Menu::about = "About %@";
 const char *Fl_Mac_App_Menu::print = "Print Front Window";
 const char *Fl_Mac_App_Menu::services = "Services";
@@ -170,6 +186,7 @@ const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
 const char *Fl_Mac_App_Menu::show = "Show All";
 const char *Fl_Mac_App_Menu::quit = "Quit %@";
 #endif // __APPLE__  // PORTME: Fl_Screen_Driver - platform text, system menu
+
 #ifndef FL_DOXYGEN
 Fl_Widget	*Fl::belowmouse_,
 		*Fl::pushed_,
