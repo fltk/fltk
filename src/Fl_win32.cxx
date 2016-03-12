@@ -2512,46 +2512,6 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
-static RECT border_width_title_bar_height(Fl_Window *win, int &bx, int &by, int &bt)
-{
-  RECT r = {0,0,0,0};
-  bx = by = bt = 0;
-  if (win->shown() && !win->parent() && win->border() && win->visible()) {
-    static HMODULE dwmapi_dll = LoadLibrary("dwmapi.dll");
-    typedef HRESULT (WINAPI* DwmGetWindowAttribute_type)(HWND hwnd, DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
-    static DwmGetWindowAttribute_type DwmGetWindowAttribute = dwmapi_dll ?
-    (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute") : NULL;
-    int need_r = 1;
-    if (DwmGetWindowAttribute) {
-      const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
-      if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
-        need_r = 0;
-      }
-    }
-    if (need_r) {
-      GetWindowRect(fl_xid(win), &r);
-    }
-    bx = (r.right - r.left - win->w())/2;
-    by = bx;
-    bt = r.bottom - r.top - win->h() - 2*by;
-  }
-  return r;
-}
-
-int Fl_Window::decorated_w()
-{
-  int bt, bx, by;
-  border_width_title_bar_height(this, bx, by, bt);
-  return w() + 2 * bx;
-}
-
-int Fl_Window::decorated_h()
-{
-  int bt, bx, by;
-  border_width_title_bar_height(this, bx, by, bt);
-  return h() + bt + 2 * by;
-}
-
 /* Returns images of the captures of the window title-bar, and the left, bottom and right window borders.
  On the WIN32 platform, this function exploits a feature of fl_read_image() which, when called
  with NULL first argument and when fl_gc is set to the screen device context, captures the window decoration.
@@ -2562,7 +2522,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   top = left = bottom = right = NULL;
   if (!pWindow->shown() || pWindow->parent() || !pWindow->border() || !pWindow->visible()) return;
   int wsides, hbottom, bt;
-  RECT r = border_width_title_bar_height(pWindow, wsides, hbottom, bt);
+  RECT r = border_width_title_bar_height(wsides, hbottom, bt);
   int htop = bt + hbottom;
   Fl_Surface_Device *previous = Fl_Surface_Device::surface();
   Window save_win = fl_window;

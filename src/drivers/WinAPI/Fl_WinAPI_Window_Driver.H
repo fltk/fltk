@@ -61,11 +61,17 @@ struct Fl_Window_Driver::shape_data_type {
 class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
 {
 private:
+  RECT border_width_title_bar_height(int &bx, int &by, int &bt);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
 public:
   Fl_WinAPI_Window_Driver(Fl_Window*);
   ~Fl_WinAPI_Window_Driver();
+
+  // --- window data
+  virtual int decorated_w();
+  virtual int decorated_h();
+
   virtual void shape(const Fl_Image* img);
   virtual void draw();
   virtual void icons(const Fl_RGB_Image *icons[], int count);

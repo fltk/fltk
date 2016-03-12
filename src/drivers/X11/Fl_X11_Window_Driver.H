@@ -60,13 +60,21 @@ struct Fl_Window_Driver::shape_data_type {
 class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
+
 private:
+  void decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
+  
 public:
   Fl_X11_Window_Driver(Fl_Window*);
   ~Fl_X11_Window_Driver();
+
+  // --- window data
+  virtual int decorated_w();
+  virtual int decorated_h();
+
   virtual void take_focus();
   virtual void shape(const Fl_Image* img);
   virtual void draw();

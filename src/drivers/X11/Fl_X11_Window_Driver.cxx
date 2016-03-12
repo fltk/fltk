@@ -72,6 +72,48 @@ Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
   delete icon_;
 }
 
+
+// --- private
+
+void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
+{
+  Fl_Window *win = pWindow;
+  w = win->w();
+  h = win->h();
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
+  Window root, parent, *children;
+  unsigned n = 0;
+  Status status = XQueryTree(fl_display, Fl_X::i(win)->xid, &root, &parent, &children, &n);
+  if (status != 0 && n) XFree(children);
+  // when compiz is used, root and parent are the same window
+  // and I don't know where to find the window decoration
+  if (status == 0 || root == parent) return;
+  XWindowAttributes attributes;
+  XGetWindowAttributes(fl_display, parent, &attributes);
+  w = attributes.width;
+  h = attributes.height;
+}
+
+
+// --- window data
+
+int Fl_X11_Window_Driver::decorated_h()
+{
+  int w, h;
+  decorated_win_size(w, h);
+  return h;
+}
+
+int Fl_X11_Window_Driver::decorated_w()
+{
+  int w, h;
+  
+  decorated_win_size(w, h);
+  return w;
+}
+
+
+
 void Fl_X11_Window_Driver::take_focus()
 {
   Fl_X *i = Fl_X::i(pWindow);

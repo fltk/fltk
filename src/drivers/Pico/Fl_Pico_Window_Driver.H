@@ -33,6 +33,10 @@ class FL_EXPORT Fl_Pico_Window_Driver : public Fl_Window_Driver
 public:
   Fl_Pico_Window_Driver(Fl_Window *win);
   virtual ~Fl_Pico_Window_Driver();
+
+  // --- window data
+  virtual int decorated_w();
+  virtual int decorated_h();
 };
 
 

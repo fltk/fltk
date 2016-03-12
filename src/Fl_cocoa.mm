@@ -4289,20 +4289,22 @@ Window fl_xid(const Fl_Window* w)
   return temp ? temp->xid : 0;
 }
 
-int Fl_Window::decorated_w()
+int Fl_Cocoa_Window_Driver::decorated_w()
 {
-  if (!shown() || parent() || !border() || !visible()) return w();
+  if (!pWindow->shown() || pWindow->parent() || !pWindow->border() || !pWindow->visible())
+    return pWindow->w();
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
-  return w() + 2 * bx;
+  return pWindow->w() + 2 * bx;
 }
 
-int Fl_Window::decorated_h()
+int Fl_Cocoa_Window_Driver::decorated_h()
 {
-  if (!shown() || parent() || !border() || !visible()) return h();
+  if (!pWindow->shown() || pWindow->parent() || !pWindow->border() || !pWindow->visible())
+    return pWindow->h();
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
-  return h() + bt + by;
+  return pWindow->h() + bt + by;
 }
 
 // clip the graphics context to rounded corners

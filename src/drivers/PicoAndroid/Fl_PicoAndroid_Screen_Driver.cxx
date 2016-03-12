@@ -561,11 +561,6 @@ int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 void Fl_X::set_default_icons(Fl_RGB_Image const**, int) { }
 
-void Fl_X::flush()
-{
-  w->driver()->flush();
-}
-
 void Fl_X::set_icons() { }
 void Fl_Window::size_range_() { }
 void Fl_Window::fullscreen_x() { }
@@ -613,16 +608,6 @@ void Fl::add_fd(int, void (*)(int, void*), void*)
 
 void Fl::remove_fd(int)
 {
-}
-
-int Fl_Window::decorated_h()
-{
-  return h();
-}
-
-int Fl_Window::decorated_w()
-{
-  return w();
 }
 
 // these pointers are set by the Fl::lock() function:

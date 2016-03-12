@@ -37,36 +37,50 @@ class Fl_RGB_Image;
 /**
  \brief A base class for platform specific window handling code.
   */
-class FL_EXPORT Fl_Window_Driver {
+class FL_EXPORT Fl_Window_Driver
+{
   friend class Fl_Window;
   friend class Fl_X;
+
 protected:
   Fl_Window *pWindow;
   struct icon_data;
   icon_data *icon_;
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
+
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
 
-  virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
-  virtual void flush() { /* FIXME: move Fl_X::flush() here for OSX, MSWin, and X11 */ }
+  // --- window data
+  virtual int decorated_w() = 0;
+  virtual int decorated_h() = 0;
 
-  virtual void take_focus() { }
-  virtual int double_flush(int eraseoverlay);
-  virtual void destroy_double_buffer();
-  virtual void draw();
-  void shape_pixmap_(Fl_Image* pixmap);
-  virtual void shape(const Fl_Image* img) {}
-  virtual void shape_alpha_(Fl_Image* img, int offset) {}
-  virtual void icons(const Fl_RGB_Image *icons[], int count) {}
-  virtual const void *icon() const {return NULL;}
-  virtual void icon(const void * ic) {}
-  virtual void free_icons() {}
-  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
-  virtual void wait_for_expose() {}
+  // --- window management
+  virtual void take_focus();
+  virtual void flush() { }
+
+  virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
+  virtual void wait_for_expose() {} // TODO: check
+  virtual int double_flush(int eraseoverlay); // TODO: check
+  virtual void destroy_double_buffer(); // TODO: check
+  virtual void draw(); // TODO: check
+
+  // --- window shape stuff
+  void shape_pixmap_(Fl_Image* pixmap); // TODO: check
+  virtual void shape(const Fl_Image* img) {} // TODO: check
+  virtual void shape_alpha_(Fl_Image* img, int offset) {} // TODO: check
+
+  // --- window icon stuff
+  virtual void icons(const Fl_RGB_Image *icons[], int count) {} // TODO: check
+  virtual const void *icon() const {return NULL;} // TODO: check
+  virtual void icon(const void * ic) {} // TODO: check
+  virtual void free_icons() {} // TODO: check
+
+  // --- window printing helper
+  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right); // TODO: check
 };
 
 

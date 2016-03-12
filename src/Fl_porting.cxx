@@ -349,11 +349,6 @@ void Fl::get_mouse(int &x, int &y)
   x = 0; y = 0;
 }
 
-void Fl_X::flush()
-{
-#  pragma message "FL_PORTING: implement Fl_X::flush"
-}
-
 #endif // FL_DOXYGEN
 
 //

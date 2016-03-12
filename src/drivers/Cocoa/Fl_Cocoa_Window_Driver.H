@@ -60,6 +60,11 @@ private:
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
+
+  // --- window data
+  virtual int decorated_w();
+  virtual int decorated_h();
+
   virtual void take_focus();
   virtual void shape(const Fl_Image* img);
   virtual void draw();

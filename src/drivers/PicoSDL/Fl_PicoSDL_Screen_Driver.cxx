@@ -43,61 +43,6 @@ Fl_PicoSDL_Screen_Driver::~Fl_PicoSDL_Screen_Driver()
 }
 
 
-#if 0
-if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-  //    fl_lock_function();
-  int x = AMotionEvent_getX(event, 0);
-  int y = AMotionEvent_getY(event, 0);
-  int action = AKeyEvent_getAction(event);
-  Fl_Window *window = Fl::first_window();
-  switch (action) {
-    case AMOTION_EVENT_ACTION_DOWN:
-      Fl::e_is_click = 1;
-      Fl::e_x = Fl::e_x_root = x/3;
-      Fl::e_y = (y-100)/3;
-      if (!window) break;
-      Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
-      Fl::e_state = FL_BUTTON1;
-      Fl::handle(FL_PUSH, window);
-      break;
-    case AMOTION_EVENT_ACTION_MOVE:
-      Fl::e_is_click = 1;
-      Fl::e_x = Fl::e_x_root = x/3;
-      Fl::e_y = (y-100)/3;
-      if (!window) break;
-      Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
-      Fl::e_state = FL_BUTTON1;
-      Fl::handle(FL_DRAG, window);
-      break;
-    case AMOTION_EVENT_ACTION_UP:
-    case AMOTION_EVENT_ACTION_CANCEL:
-      Fl::e_is_click = 1;
-      Fl::e_x = Fl::e_x_root = x/3;
-      Fl::e_y = (y-100)/3;
-      if (!window) break;
-      Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
-      Fl::e_state = 0;
-      Fl::handle(FL_RELEASE, window);
-      break;
-      //      case AMOTION_EVENT_ACTION_HOVER_MOVE:
-      //        Fl::e_is_click = 1;
-      //        Fl::e_x = Fl::e_x_root = x/3;
-      //        Fl::e_y = (y-100)/3;
-      //        if (!window) break;
-      //        Fl::e_keysym = 0;
-      //        Fl::e_state = 0;
-      //        Fl::handle(FL_MOVE, window);
-      //        break;
-  }
-  //    AMOTION_EVENT_ACTION_MASK
-  LOGI("Motion at %d, %d", x, y);
-  //    fl_unlock_function();
-  Fl_X::first->w->redraw();
-  return 1;
-}
-return 0;
-#endif
-
 double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 {
   Fl::flush();
@@ -214,11 +159,6 @@ int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 void Fl_X::set_default_icons(Fl_RGB_Image const**, int) { }
 
-void Fl_X::flush()
-{
-  w->driver()->flush();
-}
-
 void Fl_X::set_icons() { }
 void Fl_Window::size_range_() { }
 void Fl_Window::fullscreen_x() { }
@@ -263,57 +203,6 @@ void Fl::add_fd(int, void (*)(int, void*), void*)
 void Fl::remove_fd(int)
 {
 }
-
-int Fl_Window::decorated_h()
-{
-}
-
-int Fl_Window::decorated_w()
-{
-}
-
-/*
- #define __APPLE__
- #include <SDL2/SDL.h>
- #undef __APPLE__
- 
- SDL_Window *win = NULL;
- SDL_Renderer *renderer = NULL;
- SDL_Texture *bitmapTex = NULL;
- SDL_Surface *bitmapSurface = NULL;
- int posX = 100, posY = 100, width = 320, height = 240;
-
- SDL_Init(SDL_INIT_VIDEO);
-
- win = SDL_CreateWindow("Hello World", posX, posY, width, height, 0);
-
- renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-
- bitmapSurface = SDL_LoadBMP("img/hello.bmp");
- bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
- SDL_FreeSurface(bitmapSurface);
-
- while (1) {
- SDL_Event e;
- if (SDL_PollEvent(&e)) {
- if (e.type == SDL_QUIT) {
- break;
- }
- }
-
- SDL_RenderClear(renderer);
- SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
- SDL_RenderPresent(renderer);
- }
-
- SDL_DestroyTexture(bitmapTex);
- SDL_DestroyRenderer(renderer);
- SDL_DestroyWindow(win);
-
- SDL_Quit();
-
- return 0;
-*/
 
 
 //

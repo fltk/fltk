@@ -20,6 +20,18 @@
 #include "../../config_lib.h"
 #include "Fl_Pico_Window_Driver.H"
 
+#include <FL/x.H>
+#include <FL/Fl_Window.H>
+
+
+
+// TODO: move this to Fl_Window_Driver
+void Fl_X::flush()
+{
+  w->driver()->flush();
+}
+
+
 
 Fl_Pico_Window_Driver::Fl_Pico_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
@@ -29,6 +41,20 @@ Fl_Pico_Window_Driver::Fl_Pico_Window_Driver(Fl_Window *win)
 
 Fl_Pico_Window_Driver::~Fl_Pico_Window_Driver()
 {
+}
+
+
+// --- window data
+
+int Fl_Pico_Window_Driver::decorated_w()
+{
+  return pWindow->w();
+}
+
+
+int Fl_Pico_Window_Driver::decorated_h()
+{
+  return pWindow->h();
 }
 
 

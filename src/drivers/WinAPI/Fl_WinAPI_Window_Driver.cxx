@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Window.H>
@@ -46,6 +47,57 @@ Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
     delete shape_data_;
   }
 }
+
+
+// --- private
+
+RECT Fl_WinAPI_Window_Driver::border_width_title_bar_height(int &bx, int &by, int &bt)
+{
+  Fl_Window *win = pWindow;
+  RECT r = {0,0,0,0};
+  bx = by = bt = 0;
+  if (win->shown() && !win->parent() && win->border() && win->visible()) {
+    static HMODULE dwmapi_dll = LoadLibrary("dwmapi.dll");
+    typedef HRESULT (WINAPI* DwmGetWindowAttribute_type)(HWND hwnd, DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
+    static DwmGetWindowAttribute_type DwmGetWindowAttribute = dwmapi_dll ?
+    (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute") : NULL;
+    int need_r = 1;
+    if (DwmGetWindowAttribute) {
+      const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+      if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
+        need_r = 0;
+      }
+    }
+    if (need_r) {
+      GetWindowRect(fl_xid(win), &r);
+    }
+    bx = (r.right - r.left - win->w())/2;
+    by = bx;
+    bt = r.bottom - r.top - win->h() - 2*by;
+  }
+  return RECT(r);
+}
+
+
+// --- window data
+
+int Fl_WinAPI_Window_Driver::decorated_w()
+{
+  int bt, bx, by;
+  border_width_title_bar_height(bx, by, bt);
+  return pWindow->w() + 2 * bx;
+}
+
+int Fl_WinAPI_Window_Driver::decorated_h()
+{
+  int bt, bx, by;
+  border_width_title_bar_height(bx, by, bt);
+  return pWindow->h() + bt + 2 * by;
+}
+
+
+
+
 
 void Fl_WinAPI_Window_Driver::shape_bitmap_(Fl_Image* b) {
   shape_data_->shape_ = b;

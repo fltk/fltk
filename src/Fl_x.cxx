@@ -2951,38 +2951,6 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
-static void decorated_win_size(Fl_Window *win, int &w, int &h)
-{
-  w = win->w();
-  h = win->h();
-  if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
-  Window root, parent, *children;
-  unsigned n = 0;
-  Status status = XQueryTree(fl_display, Fl_X::i(win)->xid, &root, &parent, &children, &n); 
-  if (status != 0 && n) XFree(children);
-  // when compiz is used, root and parent are the same window 
-  // and I don't know where to find the window decoration
-  if (status == 0 || root == parent) return; 
-  XWindowAttributes attributes;
-  XGetWindowAttributes(fl_display, parent, &attributes);
-  w = attributes.width;
-  h = attributes.height;
-}
-
-int Fl_Window::decorated_h()
-{
-  int w, h;
-  decorated_win_size(this, w, h);
-  return h;
-}
-
-int Fl_Window::decorated_w()
-{
-  int w, h;
-  decorated_win_size(this, w, h);
-  return w;
-}
-
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
 // contains also preparePrintFront call above

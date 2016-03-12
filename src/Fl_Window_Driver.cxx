@@ -36,6 +36,18 @@ Fl_Window_Driver::~Fl_Window_Driver()
 {
 }
 
+
+/*
+ Used in Fl::focus(Fl_Window).
+ Default implementation does not need to do anything.
+ - reimplemented for OS X Cocoa
+ - reimplemented for X11
+ */
+void Fl_Window_Driver::take_focus()
+{
+}
+
+
 int Fl_Window_Driver::double_flush(int eraseoverlay) {
   /* This is a working, platform-independent implementation.
    Some platforms may re-implement it for their own logic:

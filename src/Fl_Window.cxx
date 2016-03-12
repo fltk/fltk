@@ -428,6 +428,19 @@ void Fl_Window::wait_for_expose() {
   pWindowDriver->wait_for_expose();
 }
 
+
+int Fl_Window::decorated_w()
+{
+  return pWindowDriver->decorated_w();
+}
+
+
+int Fl_Window::decorated_h()
+{
+  return pWindowDriver->decorated_h();
+}
+
+
 //
 // End of "$Id$".
 //
