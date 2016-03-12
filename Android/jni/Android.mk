@@ -24,6 +24,7 @@ LOCAL_MODULE     := native-activity
 LOCAL_C_INCLUDES := $(TOP_PATH)
 
 LOCAL_SRC_FILES  := \
+  test/button.cxx \
   src/flstring.c \
   src/scandir.c \
   src/numericsort.c \
@@ -190,8 +191,7 @@ LOCAL_SRC_FILES  := \
   src/drivers/PicoAndroid/Fl_PicoAndroid_Window_Driver.cxx \
   src/drivers/PicoAndroid/Fl_PicoAndroid_Graphics_Driver.cxx \
   src/drivers/PicoAndroid/Fl_PicoAndroid_Copy_Surface.cxx \
-  src/drivers/PicoAndroid/Fl_PicoAndroid_Image_Surface.cxx \
-  test/hello.cxx
+  src/drivers/PicoAndroid/Fl_PicoAndroid_Image_Surface.cxx
 
 #Android/jni/main.c
 

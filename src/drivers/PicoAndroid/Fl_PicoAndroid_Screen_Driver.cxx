@@ -22,6 +22,8 @@
 #include "../../config_lib.h"
 #include "Fl_PicoAndroid_Screen_Driver.H"
 
+#include <android/window.h>
+
 #include <FL/x.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -34,6 +36,7 @@
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
+
 
 
 void Fl_PicoAndroid_Screen_Driver::initDisplay()
@@ -159,6 +162,9 @@ void Fl_PicoAndroid_Screen_Driver::handleAppCmd(struct android_app* app, int32_t
     case APP_CMD_INIT_WINDOW:
       // The window is being shown, get it ready.
       if (pApp->window != NULL) {
+        // the flag below allow for easy development and should be removed when
+        // distributing a final app
+        ANativeActivity_setWindowFlags(pApp->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
         initDisplay();
         drawFrame();
       }
@@ -202,15 +208,145 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEventCB(struct android_app* app
 int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, AInputEvent* event)
 {
   if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
+//    fl_lock_function();
     int x = AMotionEvent_getX(event, 0);
     int y = AMotionEvent_getY(event, 0);
+    int action = AKeyEvent_getAction(event);
+    Fl_Window *window = Fl::first_window();
+    switch (action) {
+      case AMOTION_EVENT_ACTION_DOWN:
+        Fl::e_is_click = 1;
+        Fl::e_x = Fl::e_x_root = x/3;
+        Fl::e_y = (y-100)/3;
+        if (!window) break;
+        Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
+        Fl::e_state = FL_BUTTON1;
+        Fl::handle(FL_PUSH, window);
+        break;
+      case AMOTION_EVENT_ACTION_MOVE:
+        Fl::e_is_click = 1;
+        Fl::e_x = Fl::e_x_root = x/3;
+        Fl::e_y = (y-100)/3;
+        if (!window) break;
+        Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
+        Fl::e_state = FL_BUTTON1;
+        Fl::handle(FL_DRAG, window);
+        break;
+      case AMOTION_EVENT_ACTION_UP:
+      case AMOTION_EVENT_ACTION_CANCEL:
+        Fl::e_is_click = 1;
+        Fl::e_x = Fl::e_x_root = x/3;
+        Fl::e_y = (y-100)/3;
+        if (!window) break;
+        Fl::e_keysym = FL_Button+FL_LEFT_MOUSE;
+        Fl::e_state = 0;
+        Fl::handle(FL_RELEASE, window);
+        break;
+//      case AMOTION_EVENT_ACTION_HOVER_MOVE:
+//        Fl::e_is_click = 1;
+//        Fl::e_x = Fl::e_x_root = x/3;
+//        Fl::e_y = (y-100)/3;
+//        if (!window) break;
+//        Fl::e_keysym = 0;
+//        Fl::e_state = 0;
+//        Fl::handle(FL_MOVE, window);
+//        break;
+    }
+//    AMOTION_EVENT_ACTION_MASK
     LOGI("Motion at %d, %d", x, y);
+//    fl_unlock_function();
     Fl_X::first->w->redraw();
     return 1;
   }
   return 0;
 }
 
+#if 0
+static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
+static int px, py;
+static char suppressed = 0;
+
+fl_lock_function();
+
+Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
+if ( !window->shown() ) {
+  fl_unlock_function();
+  return;
+}
+Fl_Window *first = Fl::first_window();
+if (first != window && !(first->modal() || first->non_modal())) Fl::first_window(window);
+NSPoint pos = [theEvent locationInWindow];
+pos.y = window->h() - pos.y;
+NSInteger btn = [theEvent buttonNumber]  + 1;
+NSUInteger mods = [theEvent modifierFlags];
+int sendEvent = 0;
+
+NSEventType etype = [theEvent type];
+if (etype == NSLeftMouseDown || etype == NSRightMouseDown || etype == NSOtherMouseDown) {
+  if (btn == 1) Fl::e_state |= FL_BUTTON1;
+    else if (btn == 3) Fl::e_state |= FL_BUTTON2;
+      else if (btn == 2) Fl::e_state |= FL_BUTTON3;
+        }
+else if (etype == NSLeftMouseUp || etype == NSRightMouseUp || etype == NSOtherMouseUp) {
+  if (btn == 1) Fl::e_state &= ~FL_BUTTON1;
+    else if (btn == 3) Fl::e_state &= ~FL_BUTTON2;
+      else if (btn == 2) Fl::e_state &= ~FL_BUTTON3;
+        }
+
+switch ( etype ) {
+  case NSLeftMouseDown:
+  case NSRightMouseDown:
+  case NSOtherMouseDown:
+    suppressed = 0;
+    sendEvent = FL_PUSH;
+    Fl::e_is_click = 1;
+    px = (int)pos.x; py = (int)pos.y;
+    if ([theEvent clickCount] > 1)
+      Fl::e_clicks++;
+    else
+      Fl::e_clicks = 0;
+      // fall through
+      case NSLeftMouseUp:
+      case NSRightMouseUp:
+      case NSOtherMouseUp:
+      if (suppressed) {
+        suppressed = 0;
+        break;
+      }
+    if ( !window ) break;
+    if ( !sendEvent ) {
+      sendEvent = FL_RELEASE;
+    }
+    Fl::e_keysym = keysym[ btn ];
+    // fall through
+  case NSMouseMoved:
+    suppressed = 0;
+    if ( !sendEvent ) {
+      sendEvent = FL_MOVE;
+    }
+    // fall through
+  case NSLeftMouseDragged:
+  case NSRightMouseDragged:
+  case NSOtherMouseDragged: {
+    if (suppressed) break;
+    if ( !sendEvent ) {
+      sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
+      if (fabs(pos.x-px)>5 || fabs(pos.y-py)>5)
+        Fl::e_is_click = 0;
+        }
+    mods_to_e_state( mods );
+    update_e_xy_and_e_xy_root([theEvent window]);
+    Fl::handle( sendEvent, window );
+  }
+    break;
+  default:
+    break;
+}
+
+fl_unlock_function();
+
+return;
+#endif
 
 extern int main(int argc, const char **argv);
 
