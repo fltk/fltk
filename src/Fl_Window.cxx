@@ -61,14 +61,8 @@ void Fl_Window::_Fl_Window() {
 }
 
 Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l) :
-Fl_Group(X, Y, W, H, l),
-pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
-{
-  _Fl_Window();
-  set_flag(FORCE_POSITION);
-}
-
-Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l, Fl_Window_Driver *driver) : Fl_Group(X, Y, W, H, l), pWindowDriver(driver)
+  Fl_Group(X, Y, W, H, l),
+  pWindowDriver(Fl_Window_Driver::newWindowDriver(this))
 {
   _Fl_Window();
   set_flag(FORCE_POSITION);

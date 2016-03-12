@@ -130,7 +130,6 @@ protected:
 
   void free_icons();
 
-  Fl_Window(int x, int y, int w, int h, const char* title, Fl_Window_Driver *driver);
 public:
 
   /**

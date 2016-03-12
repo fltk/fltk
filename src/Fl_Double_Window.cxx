@@ -32,7 +32,7 @@
 
 
 Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l)
-: Fl_Window(0, 0, W, H, l, Fl_Window_Driver::newWindowDriver(this))
+: Fl_Window(0, 0, W, H, l)
 {
   type(FL_DOUBLE_WINDOW);
   clear_flag(FORCE_POSITION);
@@ -40,12 +40,7 @@ Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l)
 
 
 Fl_Double_Window::Fl_Double_Window(int X, int Y, int W, int H, const char *l)
-: Fl_Window(X,Y,W,H,l, Fl_Window_Driver::newWindowDriver(this))
-{
-  type(FL_DOUBLE_WINDOW);
-}
-
-Fl_Double_Window::Fl_Double_Window(int x, int y, int w, int h, const char* title, Fl_Window_Driver *driver) : Fl_Window(x,y,w,h,title, driver)
+: Fl_Window(X,Y,W,H,l)
 {
   type(FL_DOUBLE_WINDOW);
 }
@@ -60,10 +55,15 @@ void Fl_Double_Window::show() {
   return Fl_Display_Device::display_device()->driver()->can_do_alpha_blending();
 }*/
 
+
 /**
   Forces the window to be redrawn.
 */
-void Fl_Double_Window::flush() {flush(0);}
+void Fl_Double_Window::flush()
+{
+  flush(0);
+}
+
 
 /**
   Forces the window to be redrawn.
