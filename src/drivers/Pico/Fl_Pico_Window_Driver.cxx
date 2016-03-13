@@ -22,6 +22,7 @@
 
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/fl_draw.h>
 
 
 

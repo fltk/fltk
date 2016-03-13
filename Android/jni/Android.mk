@@ -24,7 +24,7 @@ LOCAL_MODULE     := native-activity
 LOCAL_C_INCLUDES := $(TOP_PATH)
 
 LOCAL_SRC_FILES  := \
-  test/button.cxx \
+  test/unittests.cxx \
   src/flstring.c \
   src/scandir.c \
   src/numericsort.c \

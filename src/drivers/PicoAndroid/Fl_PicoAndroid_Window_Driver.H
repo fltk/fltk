@@ -39,7 +39,18 @@ public:
   virtual ~Fl_PicoAndroid_Window_Driver();
 
   virtual Fl_X *makeWindow();
-  virtual void flush();
+
+  // --- window data
+//  virtual int decorated_w() = 0;
+//  virtual int decorated_h() = 0;
+
+  // --- window management
+//  virtual void take_focus();
+  virtual void flush_single();
+  virtual void flush_double();
+  virtual void flush_overlay();
+//  virtual void draw_begin();
+//  virtual void draw_end();
 };
 
 

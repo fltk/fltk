@@ -33,6 +33,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/fl_draw.h>
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
@@ -85,7 +86,7 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
 
   pWindow->set_visible();
   pWindow->redraw();
-  flush();
+  pWindow->flush();
   int old_event = Fl::e_number;
   pWindow->handle(Fl::e_number = FL_SHOW);
   Fl::e_number = old_event;
@@ -93,19 +94,41 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
   return x;
 }
 
-#include <FL/fl_draw.h>
 
 
-void Fl_Window_Driver::draw_begin()
+void Fl_PicoAndroid_Window_Driver::flush_single()
 {
+  glClearColor(0, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return;
+  fl_clip_region(i->region);
+  i->region = 0;
+  pWindow->draw();
+  Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
+  scr->drawFrame();
 }
 
 
-void Fl_Window_Driver::draw_end()
+void Fl_PicoAndroid_Window_Driver::flush_double()
 {
+  flush_single();
 }
 
 
+void Fl_PicoAndroid_Window_Driver::flush_overlay()
+{
+  flush_single();
+}
+
+
+void Fl_X::flush()
+{
+  w->flush();
+}
+
+
+#if 0
 void Fl_PicoAndroid_Window_Driver::flush()
 {
   Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
@@ -117,7 +140,7 @@ void Fl_PicoAndroid_Window_Driver::flush()
 //  fl_rectf(10, 10, 300, 400);
   scr->drawFrame();
 }
-
+#endif
 
 //
 // End of "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".

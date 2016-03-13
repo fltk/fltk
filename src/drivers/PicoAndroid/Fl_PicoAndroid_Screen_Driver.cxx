@@ -137,7 +137,7 @@ void Fl_PicoAndroid_Screen_Driver::drawFrame()
     return;
   }
   eglSwapBuffers(pDisplay, pSurface);
-  LOGI("Swapping buffers");
+//  LOGI("Swapping buffers");
 }
 
 
@@ -253,7 +253,7 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, 
 //        break;
     }
 //    AMOTION_EVENT_ACTION_MASK
-    LOGI("Motion at %d, %d", x, y);
+//    LOGI("Motion at %d, %d", x, y);
 //    fl_unlock_function();
     Fl_X::first->w->redraw();
     return 1;
@@ -261,98 +261,12 @@ int32_t Fl_PicoAndroid_Screen_Driver::handleInputEvent(struct android_app* app, 
   return 0;
 }
 
-#if 0
-static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
-static int px, py;
-static char suppressed = 0;
-
-fl_lock_function();
-
-Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
-if ( !window->shown() ) {
-  fl_unlock_function();
-  return;
-}
-Fl_Window *first = Fl::first_window();
-if (first != window && !(first->modal() || first->non_modal())) Fl::first_window(window);
-NSPoint pos = [theEvent locationInWindow];
-pos.y = window->h() - pos.y;
-NSInteger btn = [theEvent buttonNumber]  + 1;
-NSUInteger mods = [theEvent modifierFlags];
-int sendEvent = 0;
-
-NSEventType etype = [theEvent type];
-if (etype == NSLeftMouseDown || etype == NSRightMouseDown || etype == NSOtherMouseDown) {
-  if (btn == 1) Fl::e_state |= FL_BUTTON1;
-    else if (btn == 3) Fl::e_state |= FL_BUTTON2;
-      else if (btn == 2) Fl::e_state |= FL_BUTTON3;
-        }
-else if (etype == NSLeftMouseUp || etype == NSRightMouseUp || etype == NSOtherMouseUp) {
-  if (btn == 1) Fl::e_state &= ~FL_BUTTON1;
-    else if (btn == 3) Fl::e_state &= ~FL_BUTTON2;
-      else if (btn == 2) Fl::e_state &= ~FL_BUTTON3;
-        }
-
-switch ( etype ) {
-  case NSLeftMouseDown:
-  case NSRightMouseDown:
-  case NSOtherMouseDown:
-    suppressed = 0;
-    sendEvent = FL_PUSH;
-    Fl::e_is_click = 1;
-    px = (int)pos.x; py = (int)pos.y;
-    if ([theEvent clickCount] > 1)
-      Fl::e_clicks++;
-    else
-      Fl::e_clicks = 0;
-      // fall through
-      case NSLeftMouseUp:
-      case NSRightMouseUp:
-      case NSOtherMouseUp:
-      if (suppressed) {
-        suppressed = 0;
-        break;
-      }
-    if ( !window ) break;
-    if ( !sendEvent ) {
-      sendEvent = FL_RELEASE;
-    }
-    Fl::e_keysym = keysym[ btn ];
-    // fall through
-  case NSMouseMoved:
-    suppressed = 0;
-    if ( !sendEvent ) {
-      sendEvent = FL_MOVE;
-    }
-    // fall through
-  case NSLeftMouseDragged:
-  case NSRightMouseDragged:
-  case NSOtherMouseDragged: {
-    if (suppressed) break;
-    if ( !sendEvent ) {
-      sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
-      if (fabs(pos.x-px)>5 || fabs(pos.y-py)>5)
-        Fl::e_is_click = 0;
-        }
-    mods_to_e_state( mods );
-    update_e_xy_and_e_xy_root([theEvent window]);
-    Fl::handle( sendEvent, window );
-  }
-    break;
-  default:
-    break;
-}
-
-fl_unlock_function();
-
-return;
-#endif
 
 extern int main(int argc, const char **argv);
 
 void android_main(struct android_app* state)
 {
-  LOGI("Android Main call");
+//  LOGI("Android Main call");
   Fl_PicoAndroid_Screen_Driver *This = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
   This->android_main(state);
   static const char *argv[1] = { "native-activity" };

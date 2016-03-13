@@ -58,6 +58,8 @@ class FL_EXPORT Fl_PicoAndroid_Screen_Driver : public Fl_Pico_Screen_Driver
   int32_t handleInputEvent(struct android_app* app, AInputEvent* event);
   void initDisplay();
   void termDisplay();
+  
+public:
   void drawFrame();
 
 public:
