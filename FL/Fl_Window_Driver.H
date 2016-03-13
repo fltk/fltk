@@ -60,11 +60,14 @@ public:
 
   // --- window management
   virtual void take_focus();
-  virtual void flush() { }
+  virtual void flush_single();
+  virtual void flush_double();
+  virtual void flush_overlay();
+  virtual void draw_begin();
+  virtual void draw_end();
 
   virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
   virtual void wait_for_expose() {} // TODO: check
-  virtual int double_flush(int eraseoverlay); // TODO: check
   virtual void destroy_double_buffer(); // TODO: check
   virtual void draw(); // TODO: check
 

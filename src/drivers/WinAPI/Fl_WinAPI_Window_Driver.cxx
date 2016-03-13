@@ -18,11 +18,13 @@
 
 
 #include "../../config_lib.h"
+#include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Overlay_Window.H>
 #include <FL/x.H>
 #include "Fl_WinAPI_Window_Driver.H"
 #include <windows.h>
@@ -39,6 +41,7 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
   icon_ = new Fl_Window_Driver::icon_data;
   memset(icon_, 0, sizeof(Fl_Window_Driver::icon_data));
 }
+
 
 Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 {
@@ -96,6 +99,7 @@ int Fl_WinAPI_Window_Driver::decorated_h()
 }
 
 
+// --- window management
 
 
 
@@ -235,7 +239,8 @@ static HRGN bitmap2region(Fl_Image* image) {
 }
 
 
-void Fl_WinAPI_Window_Driver::draw() {
+void Fl_WinAPI_Window_Driver::draw_begin()
+{
   if (shape_data_) {
     if ((shape_data_->lw_ != pWindow->w() || shape_data_->lh_ != pWindow->h()) && shape_data_->shape_) {
       // size of window has changed since last time
@@ -246,8 +251,83 @@ void Fl_WinAPI_Window_Driver::draw() {
       SetWindowRgn(fl_xid(pWindow), region, TRUE); // the system deletes the region when it's no longer needed
       delete temp;
     }
-  }  Fl_Window_Driver::draw();
+  }
 }
+
+
+void Fl_WinAPI_Window_Driver::draw_end()
+{
+}
+
+
+void Fl_WinAPI_Window_Driver::flush_single()
+{
+  if (!pWindow->shown()) return;
+  pWindow->make_current(); // make sure fl_gc is non-zero
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return;
+  fl_clip_region(i->region);
+  i->region = 0;
+  pWindow->draw();
+}
+
+
+void Fl_WinAPI_Window_Driver::flush_double()
+{
+  if (!pWindow->shown()) return;
+  pWindow->make_current(); // make sure fl_gc is non-zero
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return; // window not yet created
+
+  if (!i->other_xid) {
+    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+    pWindow->clear_damage(FL_DAMAGE_ALL);
+  }
+  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    fl_clip_region(i->region); i->region = 0;
+    fl_begin_offscreen(i->other_xid);
+    fl_graphics_driver->clip_region( 0 );
+    draw();
+    fl_end_offscreen();
+  }
+
+  int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
+  if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+}
+
+
+void Fl_WinAPI_Window_Driver::flush_overlay()
+{
+  Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
+  if (!oWindow) return flush_single();
+
+  if (!pWindow->shown()) return;
+  pWindow->make_current(); // make sure fl_gc is non-zero
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return; // window not yet created
+
+  int eraseoverlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
+  pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
+
+  if (!i->other_xid) {
+    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+    pWindow->clear_damage(FL_DAMAGE_ALL);
+  }
+  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    fl_clip_region(i->region); i->region = 0;
+    fl_begin_offscreen(i->other_xid);
+    fl_graphics_driver->clip_region(0);
+    draw();
+    fl_end_offscreen();
+  }
+
+  if (eraseoverlay) fl_clip_region(0);
+  int X, Y, W, H; fl_clip_box(0, 0, pWindow->w(), pWindow->h(), X, Y, W, H);
+  if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+
+  if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
+}
+
 
 void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   free_icons();

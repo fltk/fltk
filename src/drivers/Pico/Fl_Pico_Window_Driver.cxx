@@ -25,14 +25,6 @@
 
 
 
-// TODO: move this to Fl_Window_Driver
-void Fl_X::flush()
-{
-  w->driver()->flush();
-}
-
-
-
 Fl_Pico_Window_Driver::Fl_Pico_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
@@ -55,6 +47,43 @@ int Fl_Pico_Window_Driver::decorated_w()
 int Fl_Pico_Window_Driver::decorated_h()
 {
   return pWindow->h();
+}
+
+
+// --- window management
+void Fl_Pico_Window_Driver::flush_single()
+{
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return;
+  fl_clip_region(i->region);
+  i->region = 0;
+  pWindow->draw();
+}
+
+
+void Fl_Pico_Window_Driver::flush_double()
+{
+  flush_single();
+}
+
+
+void Fl_Pico_Window_Driver::flush_overlay()
+{
+  flush_single();
+}
+
+
+
+
+void Fl_Pico_Window_Driver::draw_begin()
+{
+  // nothing to do
+}
+
+
+void Fl_Pico_Window_Driver::draw_end()
+{
+  // nothing to do
 }
 
 

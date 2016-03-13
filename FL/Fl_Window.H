@@ -72,6 +72,10 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 
   friend class Fl_X;
   friend class Fl_Window_Driver;
+  friend class Fl_X11_Window_Driver;
+  friend class Fl_Pico_Window_Driver;
+  friend class Fl_Cocoa_Window_Driver;
+  friend class Fl_WinAPI_Window_Driver;
   friend class Fl_PicoSDL_Window_Driver;
   friend class Fl_PicoAndroid_Window_Driver;
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped

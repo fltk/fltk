@@ -84,7 +84,7 @@ static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
 // make this available on all platforms to make code maintainability easier
-class Fl_Widget *fl_selection_requestor;
+extern class Fl_Widget *fl_selection_requestor;
 
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 

@@ -86,7 +86,7 @@
 */
 
 // make this available on all platforms to make code maintainability easier
-class Fl_Widget *fl_selection_requestor;
+extern class Fl_Widget *fl_selection_requestor;
 
 // Internal functions
 static void fl_clipboard_notify_target(HWND wnd);

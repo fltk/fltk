@@ -56,40 +56,6 @@ void Fl_Double_Window::show() {
 }*/
 
 
-/**
-  Forces the window to be redrawn.
-*/
-void Fl_Double_Window::flush()
-{
-  flush(0);
-}
-
-
-/**
-  Forces the window to be redrawn.
-  \param[in] eraseoverlay non-zero to erase overlay, zero to ignore
-
-  Fl_Overlay_Window relies on flush(1) copying the back buffer to the
-  front everywhere, even if damage() == 0, thus erasing the overlay,
-  and leaving the clip region set to the entire window.
-*/
-void Fl_Double_Window::flush(int eraseoverlay) {
-  if (!shown()) return;
-  make_current(); // make sure fl_gc is non-zero
-  Fl_X *myi = Fl_X::i(this);
-  if (!myi) return; // window not yet created
-  int retval = driver()->double_flush(eraseoverlay);
-  if (retval) return;
-  if (eraseoverlay) fl_clip_region(0);
-  // on Irix (at least) it is faster to reduce the area copied to
-  // the current clip region:
-  if (myi->other_xid) {
-    int X,Y,W,H; fl_graphics_driver->clip_box(0,0,w(),h(),X,Y,W,H);
-    fl_graphics_driver->copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
-  }
-}
-
-
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int ow = w();
   int oh = h();
@@ -105,6 +71,12 @@ void Fl_Double_Window::hide() {
     driver()->destroy_double_buffer();
   }
   Fl_Window::hide();
+}
+
+
+void Fl_Double_Window::flush()
+{
+  driver()->flush_double();
 }
 
 

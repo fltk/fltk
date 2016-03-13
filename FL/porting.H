@@ -57,6 +57,8 @@ inline void XDestroyRegion(Fl_Region r) {
 
 extern void *fl_default_cursor;
 
+inline void fl_open_callback(void (*)(const char *)) {}
+
 // This object contains all platform-specific stuff about a window:
 // WARNING: this object is highly subject to change!
 class Fl_X {

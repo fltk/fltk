@@ -95,6 +95,17 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
 
 #include <FL/fl_draw.h>
 
+
+void Fl_Window_Driver::draw_begin()
+{
+}
+
+
+void Fl_Window_Driver::draw_end()
+{
+}
+
+
 void Fl_PicoAndroid_Window_Driver::flush()
 {
   Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();

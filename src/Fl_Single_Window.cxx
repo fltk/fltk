@@ -31,12 +31,6 @@ void Fl_Single_Window::show()
 }
 
 
-void Fl_Single_Window::flush() 
-{
-  Fl_Window::flush();
-}
-
-
 Fl_Single_Window::Fl_Single_Window(int W, int H, const char *l)
 : Fl_Window(W,H,l) 
 {

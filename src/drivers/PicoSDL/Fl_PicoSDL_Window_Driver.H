@@ -40,7 +40,11 @@ public:
   virtual ~Fl_PicoSDL_Window_Driver();
 
   virtual Fl_X *makeWindow();
-  virtual void flush();
+  
+  // --- window management
+  virtual void flush_single();
+  virtual void flush_double();
+  virtual void flush_overlay();
 };
 
 

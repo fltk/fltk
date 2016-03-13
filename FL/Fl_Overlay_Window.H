@@ -38,8 +38,11 @@
 class FL_EXPORT Fl_Overlay_Window : public Fl_Double_Window {
 #ifndef FL_DOXYGEN
   friend class _Fl_Overlay;
+  friend class Fl_X11_Window_Driver;
+  friend class Fl_Cocoa_Window_Driver;
+  friend class Fl_WinAPI_Window_Driver;
 #endif
-protected:
+public:
   /**
    You must subclass Fl_Overlay_Window and provide this method.
    It is just like a draw() method, except it draws the overlay.
@@ -51,8 +54,8 @@ private:
   Fl_Window *overlay_;
 public:
   void show();
-  void flush();
   void hide();
+  void flush();
   void resize(int,int,int,int);
   ~Fl_Overlay_Window();
   /** Returns non-zero if there's hardware overlay support */

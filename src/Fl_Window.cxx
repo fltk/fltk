@@ -435,6 +435,46 @@ int Fl_Window::decorated_h()
 }
 
 
+void Fl_Window::flush()
+{
+  driver()->flush_single();
+}
+
+
+void Fl_Window::draw()
+{
+  pWindowDriver->draw_begin();
+
+  // The following is similar to Fl_Group::draw(), but ...
+  //
+  //  - draws the box at (0,0), i.e. with x=0 and y=0 instead of x() and y()
+  //  - does NOT draw the label (text)
+  //  - draws the image only if FL_ALIGN_INSIDE is set
+  //
+  // Note: The label (text) of top level windows is drawn in the title bar.
+  //   Other windows do not draw their labels at all, unless drawn by their
+  //   parent widgets or by special draw() methods (derived classes).
+
+  if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
+    draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
+
+    if (image() && (align() & FL_ALIGN_INSIDE)) { // draw the image only
+      Fl_Label l1;
+      memset(&l1,0,sizeof(l1));
+      l1.align_ = align();
+      l1.image = image();
+      if (!active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
+      l1.type = labeltype();
+      l1.draw(0,0,w(),h(),align());
+    }
+  }
+  draw_children();
+
+  pWindowDriver->draw_end();
+}
+
+
+
 //
 // End of "$Id$".
 //

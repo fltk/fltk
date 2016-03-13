@@ -52,11 +52,13 @@ struct Fl_Window_Driver::shape_data_type {
   CGImageRef mask;
 };
 
+
 class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 {
 private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
+
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
@@ -65,7 +67,14 @@ public:
   virtual int decorated_w();
   virtual int decorated_h();
 
+  // --- window management
   virtual void take_focus();
+  virtual void flush_single();
+  virtual void flush_double();
+  virtual void flush_overlay();
+  virtual void draw_begin();
+  virtual void draw_end();
+
   virtual void shape(const Fl_Image* img);
   virtual void draw();
   // that one is implemented in Fl_Cocoa.mm because it uses Objective-c

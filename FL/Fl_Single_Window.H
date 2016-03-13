@@ -35,7 +35,7 @@ class FL_EXPORT Fl_Single_Window : public Fl_Window {
 public:
   void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  void flush();
+  
    /**
     Creates a new Fl_Single_Window widget using the given
     size, and label (title) string.

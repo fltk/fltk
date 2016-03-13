@@ -20,25 +20,14 @@
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Window_Driver.h"
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 
-// class used for Fl_Double_Window but not for Fl_Overlay_Window
-class Fl_Cocoa_Double_Window_Driver : public Fl_Cocoa_Window_Driver {
-public:
-  Fl_Cocoa_Double_Window_Driver(Fl_Window *w) : Fl_Cocoa_Window_Driver(w) {}
-  int double_flush(int eraseoverlay) {
-    draw();
-    return 0;
-  }
-};
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
-  if (w->as_double_window() && !w->as_double_window()->as_overlay_window())
-    return new Fl_Cocoa_Double_Window_Driver(w);
-  else
-    return new Fl_Cocoa_Window_Driver(w);
+  return new Fl_Cocoa_Window_Driver(w);
 }
 
 
@@ -46,6 +35,7 @@ Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
 }
+
 
 Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
 {
@@ -57,14 +47,114 @@ Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
   }
 }
 
-extern Fl_Window *fl_xfocus;
-
 
 void Fl_Cocoa_Window_Driver::take_focus()
 {
   Fl_X *x = Fl_X::i(pWindow);
   if (x) x->set_key_window();
 }
+
+
+void Fl_Cocoa_Window_Driver::flush_single()
+{
+  if (!pWindow->shown()) return;
+  pWindow->make_current();
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return; // window not yet created
+  fl_clip_region(i->region); i->region = 0;
+  pWindow->draw();
+}
+
+
+void Fl_Cocoa_Window_Driver::flush_double()
+{
+  if (!pWindow->shown()) return;
+  pWindow->make_current();
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return; // window not yet created
+  fl_clip_region(i->region); i->region = 0;
+  pWindow->draw();
+}
+
+
+void Fl_Cocoa_Window_Driver::flush_overlay()
+{
+  Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
+  if (!oWindow) return flush_single();
+
+  if (!pWindow->shown()) return;
+  pWindow->make_current(); // make sure fl_gc is non-zero
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return; // window not yet created
+
+  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
+  pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
+
+  if (!i->other_xid) {
+      i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+      pWindow->clear_damage(FL_DAMAGE_ALL);
+  }
+  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    fl_clip_region(i->region); i->region = 0;
+    if ( i->other_xid ) {
+      fl_begin_offscreen( i->other_xid );
+      fl_clip_region( 0 );
+      draw();
+      fl_end_offscreen();
+    } else {
+      draw();
+    }
+  }
+  if (erase_overlay) fl_clip_region(0);
+  
+  int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
+  if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+
+  if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
+}
+
+
+void Fl_Cocoa_Window_Driver::draw_begin()
+{
+  if (shape_data_) {
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
+      CGContextClipToMask(fl_gc, CGRectMake(0,0,pWindow->w(),pWindow->h()), shape_data_->mask); // requires Mac OS 10.4
+    }
+    CGContextSaveGState(fl_gc);
+# endif
+  }
+}
+
+
+void Fl_Cocoa_Window_Driver::draw_end()
+{
+  // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
+  // corner. This code draws a little ribbed triangle for dragging.
+  if (fl_mac_os_version < 100700 && fl_gc && !pWindow->parent() && pWindow->resizable() &&
+      (!pWindow->size_range_set || pWindow->minh!=pWindow->maxh || pWindow->minw!=pWindow->maxw)) {
+    int dx = Fl::box_dw(pWindow->box())-Fl::box_dx(pWindow->box());
+    int dy = Fl::box_dh(pWindow->box())-Fl::box_dy(pWindow->box());
+    if (dx<=0) dx = 1;
+    if (dy<=0) dy = 1;
+    int x1 = pWindow->w()-dx-1, x2 = x1, y1 = pWindow->h()-dx-1, y2 = y1;
+    Fl_Color c[4] = {
+      pWindow->color(),
+      fl_color_average(pWindow->color(), FL_WHITE, 0.7f),
+      fl_color_average(pWindow->color(), FL_BLACK, 0.6f),
+      fl_color_average(pWindow->color(), FL_BLACK, 0.8f),
+    };
+    int i;
+    for (i=dx; i<12; i++) {
+      fl_color(c[i&3]);
+      fl_line(x1--, y1, x2, y2--);
+    }
+  }
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (shape_data_) CGContextRestoreGState(fl_gc);
+# endif
+}
+
 
 
 static void MyProviderReleaseData (void *info, const void *data, size_t size) {

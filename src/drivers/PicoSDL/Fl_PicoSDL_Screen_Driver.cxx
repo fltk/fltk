@@ -52,24 +52,27 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
     switch (e.type) {
       case SDL_QUIT:
         exit(0);
-      case SDL_WINDOWEVENT_EXPOSED:
-      case SDL_WINDOWEVENT_SHOWN:
-      { // not happening!
-        //event->window.windowID
-        if ( !window ) break;;
-        Fl_X *i = Fl_X::i(Fl::first_window());
-        i->wait_for_expose = 0;
+      case SDL_WINDOWEVENT:
+        switch (e.window.event) {
+          case SDL_WINDOWEVENT_EXPOSED:
+          case SDL_WINDOWEVENT_SHOWN:
+          {
+            //event->window.windowID
+            if ( !window ) break;;
+            Fl_X *i = Fl_X::i(Fl::first_window());
+            i->wait_for_expose = 0;
 
-        if ( i->region ) {
-          XDestroyRegion(i->region);
-          i->region = 0;
+            if ( i->region ) {
+              XDestroyRegion(i->region);
+              i->region = 0;
+            }
+            window->clear_damage(FL_DAMAGE_ALL);
+            i->flush();
+            window->clear_damage();
+            Fl_X::first->wait_for_expose = 0;
+          }
+            break;
         }
-        window->clear_damage(FL_DAMAGE_ALL);
-        i->flush();
-        window->clear_damage();
-        Fl_X::first->wait_for_expose = 0;
-      }
-        break;
       case SDL_MOUSEBUTTONDOWN:
         if (!window) break;
         Fl::e_is_click = e.button.clicks;
@@ -202,6 +205,11 @@ void Fl::add_fd(int, void (*)(int, void*), void*)
 
 void Fl::remove_fd(int)
 {
+}
+
+void Fl_X::flush()
+{
+  w->flush();
 }
 
 

@@ -37,9 +37,8 @@
   This makes sure you can use Xdbe on servers where double buffering
   does not exist for every visual.
 */
-class FL_EXPORT Fl_Double_Window : public Fl_Window {
-protected:
-  void flush(int eraseoverlay);
+class FL_EXPORT Fl_Double_Window : public Fl_Window
+{
 public:
   /**
     Return non-null if this is an Fl_Overlay_Window object.
@@ -47,9 +46,9 @@ public:
   virtual Fl_Double_Window *as_double_window() {return this; }
   void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}
-  void flush();
   void resize(int,int,int,int);
   void hide();
+  void flush();
   ~Fl_Double_Window();
   
   /**

@@ -22,6 +22,7 @@
 #include "config_lib.h"
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl.H>
+#include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 
 
@@ -37,40 +38,46 @@ Fl_Window_Driver::~Fl_Window_Driver()
 }
 
 
-/*
- Used in Fl::focus(Fl_Window).
- Default implementation does not need to do anything.
- - reimplemented for OS X Cocoa
- - reimplemented for X11
- */
 void Fl_Window_Driver::take_focus()
 {
+  // nothing to do
 }
 
 
-int Fl_Window_Driver::double_flush(int eraseoverlay) {
-  /* This is a working, platform-independent implementation.
-   Some platforms may re-implement it for their own logic:
-   - on Mac OS, the system double buffers all windows, so it is
-   reimplemented to do the same as Fl_Window::flush(), except for
-   Fl_Overlay_Window's which fall back on this implementation.
-   - on Xlib, it is reimplemented if the Xdbe extension is available.
-   */
+void Fl_Window_Driver::flush_single()
+{
   Fl_X *i = Fl_X::i(pWindow);
-  
-  if (!i->other_xid) {
-    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-  }
-  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-    fl_clip_region(i->region); i->region = 0;
-    fl_begin_offscreen(i->other_xid);
-    fl_graphics_driver->clip_region( 0 );
-    draw();
-    fl_end_offscreen();
-  }
-  return 0;
+  if (!i) return;
+  fl_clip_region(i->region);
+  i->region = 0;
+  pWindow->draw();
 }
+
+
+void Fl_Window_Driver::flush_double()
+{
+  flush_single();
+}
+
+
+void Fl_Window_Driver::flush_overlay()
+{
+  flush_single();
+}
+
+
+void Fl_Window_Driver::draw_begin()
+{
+  // nothing to do
+}
+
+
+void Fl_Window_Driver::draw_end()
+{
+  // nothing to do
+}
+
+
 
 void Fl_Window_Driver::destroy_double_buffer() {
   Fl_X *i = Fl_X::i(pWindow);
@@ -113,7 +120,6 @@ void Fl_Window_Driver::draw() {
 # endif
 }
 
-void Fl_Window::draw() {pWindowDriver->draw();}
 
 /** Assigns a non-rectangular shape to the window.
  This function gives an arbitrary shape (not just a rectangular region) to an Fl_Window.

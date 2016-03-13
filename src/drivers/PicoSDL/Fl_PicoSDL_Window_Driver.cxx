@@ -72,7 +72,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
 
   pWindow->set_visible();
   pWindow->redraw();
-  flush();
+  pWindow->flush();
   int old_event = Fl::e_number;
   pWindow->handle(Fl::e_number = FL_SHOW);
   Fl::e_number = old_event;
@@ -81,12 +81,32 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
 }
 
 
-void Fl_PicoSDL_Window_Driver::flush()
+void Fl_PicoSDL_Window_Driver::flush_single()
 {
-  SDL_RenderClear((SDL_Renderer*)fl_window);
-  pWindow->flush();
-  SDL_RenderPresent((SDL_Renderer*)fl_window);
+  if (!pWindow->shown()) return;
+  pWindow->make_current();
+  Fl_X *i = Fl_X::i(pWindow);
+  if (!i) return;
+  fl_clip_region(i->region);
+  i->region = 0;
+//  SDL_RenderClear((SDL_Renderer*)i->xid);
+  pWindow->draw();
+  SDL_RenderPresent((SDL_Renderer*)i->xid);
 }
+
+
+void Fl_PicoSDL_Window_Driver::flush_double()
+{
+  flush_single();
+}
+
+
+void Fl_PicoSDL_Window_Driver::flush_overlay()
+{
+  flush_single();
+  // draw_overlay();
+}
+
 
 
 //
