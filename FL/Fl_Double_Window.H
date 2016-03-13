@@ -23,7 +23,6 @@
 #define Fl_Double_Window_H
 
 #include "Fl_Window.H"
-class Fl_Overlay_Window;
 
 /**
   The Fl_Double_Window provides a double-buffered window.
@@ -45,7 +44,6 @@ public:
   /**
     Return non-null if this is an Fl_Overlay_Window object.
   */
-  virtual Fl_Overlay_Window *as_overlay_window() {return NULL; }
   virtual Fl_Double_Window *as_double_window() {return this; }
   void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}

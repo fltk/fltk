@@ -544,9 +544,6 @@ public:
   */
   void make_current();
 
-  // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
-  virtual Fl_Window* as_window() { return this; }
-
   /**
     Changes the cursor for this window.  This always calls the system, if
     you are changing the cursor a lot you may want to keep track of how
@@ -581,10 +578,19 @@ public:
 
   Fl_Window_Driver *driver() { return pWindowDriver; }
 
+  // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
+  virtual Fl_Window* as_window() { return this; }
+
+  /**
+   Return non-null if this is an Fl_Overlay_Window object.
+   */
+  virtual class Fl_Overlay_Window *as_overlay_window() {return 0L; }
+
   /**
    Return non-null if this is an Fl_Double_Window object.
    */
-  virtual Fl_Double_Window *as_double_window() {return NULL;}
+  virtual class Fl_Double_Window *as_double_window() {return 0L;}
+  
   void shape(const Fl_Image* img);
   void shape(const Fl_Image& b) ;
   int is_shaped();

@@ -1010,8 +1010,8 @@ public:
       \see Fl_Widget::as_group(), Fl_Widget::as_window()
    */
   virtual class Fl_Gl_Window* as_gl_window() {return 0;}
-  
-  /** Returns non zero if MAC_USE_ACCENTS_MENU flag is set, 0 otherwise. 
+
+  /** Returns non zero if MAC_USE_ACCENTS_MENU flag is set, 0 otherwise.
    */
   int use_accents_menu() { return flags() & MAC_USE_ACCENTS_MENU; }
   
