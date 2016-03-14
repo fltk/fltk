@@ -117,6 +117,11 @@ Fl_Tree_Item::~Fl_Tree_Item() {
 #if FLTK_ABI_VERSION >= 10304
   if ( _userdeicon ) delete _userdeicon;	// delete our copy (if any) for deactivated icon
 #endif
+#if FLTK_ABI_VERSION >= 10303
+  // focus item? set to null
+  if ( _tree && this == _tree->_item_focus )
+    { _tree->_item_focus = 0; }
+#endif
   //_children.clear();		// array's destructor handles itself
 }
 
