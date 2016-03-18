@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include "config.h"
+#include <config.h>
 
 // make this available on all platforms to make code maintainability easier
 class Fl_Widget *fl_selection_requestor;

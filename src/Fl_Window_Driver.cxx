@@ -18,7 +18,7 @@
 //
 
 
-#include "config.h"
+#include <config.h>
 #include "config_lib.h"
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl.H>
