@@ -132,7 +132,7 @@ void Fl_X11_Window_Driver::take_focus()
   Fl_X *i = Fl_X::i(pWindow);
   if (!Fl_X::ewmh_supported())
       pWindow->show(); // Old WMs, XMapRaised
-    else if (i->x) // New WMs use the NETWM attribute:
+    else if (i && i->x) // New WMs use the NETWM attribute:
       Fl_X::activate_window(i->xid);
 }
 
