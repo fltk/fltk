@@ -148,11 +148,6 @@ void Fl_X11_Window_Driver::draw_begin()
 }
 
 
-void Fl_X11_Window_Driver::draw_end()
-{
-}
-
-
 void Fl_X11_Window_Driver::flush_single()
 {
   if (!pWindow->shown()) return;
@@ -393,16 +388,6 @@ void Fl_X11_Window_Driver::combine_mask()
   delete temp;
 }
 
-
-void Fl_X11_Window_Driver::draw() {
-  if (shape_data_) {
-    if (( shape_data_->lw_ != pWindow->w() || shape_data_->lh_ != pWindow->h() ) && shape_data_->shape_) {
-      // size of window has changed since last time
-      combine_mask();
-    }
-  }
-  Fl_Window_Driver::draw();
-}
 
 void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   free_icons();

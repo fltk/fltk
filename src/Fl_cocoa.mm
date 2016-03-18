@@ -41,6 +41,7 @@ extern "C" {
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/fl_draw.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
@@ -84,7 +85,7 @@ static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
 // make this available on all platforms to make code maintainability easier
-extern class Fl_Widget *fl_selection_requestor;
+/*extern*/ class Fl_Widget *fl_selection_requestor;
 
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -4330,7 +4331,7 @@ static CALayer *get_titlebar_layer(Fl_Window *win)
 }
 
 
-static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
+void Fl_X::draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   CGContextSaveGState(gc);
@@ -4358,7 +4359,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   CGColorSpaceRelease(cspace);
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
-    draw_layer_to_context(layer, auxgc, pWindow->w(), htop);
+    Fl_X::draw_layer_to_context(layer, auxgc, pWindow->w(), htop);
   } else {
     CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, pWindow->w(), htop);
     CGContextSaveGState(auxgc);
@@ -4374,92 +4375,6 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   CGContextRelease(auxgc);
 }
 
-
-void Fl_Printer::Helper::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
-{
-  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
-    this->print_widget(win, x_offset, y_offset);
-    return;
-  }
-  int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt);
-  BOOL to_quartz =  (this->driver()->has_feature(Fl_Graphics_Driver::NATIVE));
-  CALayer *layer = get_titlebar_layer(win);
-  if (layer) { // if title bar uses a layer
-    if (to_quartz) { // to Quartz printer
-      CGContextRef gc = (CGContextRef)driver()->gc();
-      CGContextSaveGState(gc);
-      CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-      CGContextScaleCTM(gc, 1, -1);
-      draw_layer_to_context(layer, gc, win->w(), bt);
-      CGContextRestoreGState(gc);
-    }
-    else {
-      CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB ();
-      CGContextRef gc = CGBitmapContextCreate(NULL, 2*win->w(), 2*bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
-      CGColorSpaceRelease(cspace);
-      CGContextScaleCTM(gc, 2, 2);
-      draw_layer_to_context(layer, gc, win->w(), bt);
-      Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), 2*win->w(), 2*bt, 4,
-                                             CGBitmapContextGetBytesPerRow(gc)); // 10.2
-      int ori_x, ori_y;
-      origin(&ori_x, &ori_y);
-      scale(0.5);
-      origin(2*ori_x, 2*ori_y);
-      image->draw(2*x_offset, 2*y_offset); // draw title bar as double resolution image
-      scale(1);
-      origin(ori_x, ori_y);
-      delete image;
-      CGContextRelease(gc);
-    }
-    this->print_widget(win, x_offset, y_offset + bt);
-    return;
-  }
-  Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
-  const char *title = win->label();
-  win->label(""); // temporarily set a void window title
-  win->show();
-  Fl::check();
-  // capture the window title bar with no title
-  Fl_Shared_Image *top, *left, *bottom, *right;
-  win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
-  win->label(title); // put back the window title
-  this->set_current(); // back to the Fl_Paged_Device
-  top->draw(x_offset, y_offset); // print the title bar
-  top->release();
-  if (title) { // print the window title
-    const int skip = 65; // approx width of the zone of the 3 window control buttons
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-    if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
-      // the exact font is LucidaGrande 13 pts (and HelveticaNeueDeskInterface-Regular with 10.10)
-      NSGraphicsContext *current = [NSGraphicsContext currentContext];
-      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->gc() flipped:YES]];//10.4
-      NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0]
-                                                       forKey:NSFontAttributeName];
-      NSString *title_s = [fl_xid(win) title];
-      NSSize size = [title_s sizeWithAttributes:attr];
-      int x = x_offset + win->w()/2 - size.width/2;
-      if (x < x_offset+skip) x = x_offset+skip;
-      NSRect r = NSMakeRect(x, y_offset+bt/2+4, win->w() - skip, bt);
-      [[NSGraphicsContext currentContext] setShouldAntialias:YES];
-      [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
-      [[NSGraphicsContext currentContext] setShouldAntialias:NO];
-      [NSGraphicsContext setCurrentContext:current];
-    }
-    else
-#endif
-    {
-      fl_font(FL_HELVETICA, 14);
-      fl_color(FL_BLACK);
-      int x = x_offset + win->w()/2 - fl_width(title)/2;
-      if (x < x_offset+skip) x = x_offset+skip;
-      fl_push_clip(x_offset, y_offset, win->w(), bt);
-      fl_draw(title, x, y_offset+bt/2+4);
-      fl_pop_clip();
-    }
-  }
-  this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
-}
 
 /* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
  Supports old Mac OS X versions that may use a couple of Carbon calls:

@@ -471,6 +471,9 @@ void Fl_Window::draw()
   draw_children();
 
   pWindowDriver->draw_end();
+# if defined(FLTK_USE_CAIRO)
+  Fl::cairo_make_current(this); // checkout if an update is necessary
+# endif
 }
 
 

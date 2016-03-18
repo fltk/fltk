@@ -30,6 +30,7 @@ Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface
   width = w;
   height = h;
   previous = 0;
+  fl_open_display();
   offscreen = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
   driver(new Fl_Translated_Xlib_Graphics_Driver());
 }

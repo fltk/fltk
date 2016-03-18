@@ -91,10 +91,12 @@ typedef unsigned int NSUInteger;
 @class NSCursor;
 @class NSOpenGLPixelFormat;
 @class NSOpenGLContext;
+@class CALayer;
 #else
 class NSCursor;
 class NSOpenGLPixelFormat;
 class NSOpenGLContext;
+class CALayer;
 #endif // __OBJC__
 
 typedef CGContextRef Fl_Offscreen;
@@ -198,6 +200,7 @@ public:
   static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
   static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);
+  static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
 private:
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;

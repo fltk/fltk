@@ -28,12 +28,45 @@
 
 extern HWND fl_window;
 
-Fl_Printer::Helper::Helper(void) : Fl_Paged_Device() {
+/** Support for printing on the MSWindows platform */
+class Fl_WinAPI_Printer_Driver : public Fl_Paged_Device {
+  friend class Fl_Paged_Device;
+private:
+  int   abortPrint;
+  PRINTDLG      pd;
+  HDC           hPr;
+  int           prerr;
+  int left_margin;
+  int top_margin;
+  void absolute_printable_rect(int *x, int *y, int *w, int *h);
+  Fl_WinAPI_Printer_Driver(void);
+  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int start_page (void);
+  int printable_rect(int *w, int *h);
+  void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
+  void origin(int x, int y);
+  void scale (float scale_x, float scale_y = 0.);
+  void rotate(float angle);
+  void translate(int x, int y);
+  void untranslate(void);
+  int end_page (void);
+  void end_job (void);
+  ~Fl_WinAPI_Printer_Driver(void);
+};
+
+Fl_WinAPI_Printer_Driver::Fl_WinAPI_Printer_Driver(void) : Fl_Paged_Device() {
   hPr = NULL;
   driver(new Fl_GDI_Printer_Graphics_Driver);
 }
 
-Fl_Printer::Helper::~Helper(void) {
+Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
+{
+  return new Fl_WinAPI_Printer_Driver();
+}
+
+
+Fl_WinAPI_Printer_Driver::~Fl_WinAPI_Printer_Driver(void) {
   if (hPr) end_job();
   delete driver();
 }
@@ -54,7 +87,7 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 }
 
 
-int Fl_Printer::Helper::start_job (int pagecount, int *frompage, int *topage)
+int Fl_WinAPI_Printer_Driver::start_job (int pagecount, int *frompage, int *topage)
 // returns 0 iff OK
 {
   if (pagecount == 0) pagecount = 10000;
@@ -115,7 +148,7 @@ int Fl_Printer::Helper::start_job (int pagecount, int *frompage, int *topage)
   return err;
 }
 
-void Fl_Printer::Helper::end_job (void)
+void Fl_WinAPI_Printer_Driver::end_job (void)
 {
   Fl_Display_Device::display_device()->set_current();
   if (hPr != NULL) {
@@ -136,7 +169,7 @@ void Fl_Printer::Helper::end_job (void)
   hPr = NULL;
 }
 
-void Fl_Printer::Helper::absolute_printable_rect(int *x, int *y, int *w, int *h)
+void Fl_WinAPI_Printer_Driver::absolute_printable_rect(int *x, int *y, int *w, int *h)
 {
   POINT         physPageSize;
   POINT         pixelsPerInch;
@@ -167,7 +200,7 @@ void Fl_Printer::Helper::absolute_printable_rect(int *x, int *y, int *w, int *h)
   SetWorldTransform(gc, &transform);
 }
 
-void Fl_Printer::Helper::margins(int *left, int *top, int *right, int *bottom)
+void Fl_WinAPI_Printer_Driver::margins(int *left, int *top, int *right, int *bottom)
 {
   int x = 0, y = 0, w = 0, h = 0;
   absolute_printable_rect(&x, &y, &w, &h);
@@ -177,14 +210,14 @@ void Fl_Printer::Helper::margins(int *left, int *top, int *right, int *bottom)
   if (bottom) *bottom = y;
 }
 
-int Fl_Printer::Helper::printable_rect(int *w, int *h)
+int Fl_WinAPI_Printer_Driver::printable_rect(int *w, int *h)
 {
   int x, y;
   absolute_printable_rect(&x, &y, w, h);
   return 0;
 }
 
-int Fl_Printer::Helper::start_page (void)
+int Fl_WinAPI_Printer_Driver::start_page (void)
 {
   int  rsult, w, h;
   
@@ -203,14 +236,14 @@ int Fl_Printer::Helper::start_page (void)
   return rsult;
 }
 
-void Fl_Printer::Helper::origin (int deltax, int deltay)
+void Fl_WinAPI_Printer_Driver::origin (int deltax, int deltay)
 {
   SetWindowOrgEx( (HDC)driver()->gc(), - left_margin - deltax, - top_margin - deltay, NULL);
   x_offset = deltax;
   y_offset = deltay;
 }
 
-void Fl_Printer::Helper::scale (float scalex, float scaley)
+void Fl_WinAPI_Printer_Driver::scale (float scalex, float scaley)
 {
   if (scaley == 0.) scaley = scalex;
   int w, h;
@@ -219,7 +252,7 @@ void Fl_Printer::Helper::scale (float scalex, float scaley)
   origin(0, 0);
 }
 
-void Fl_Printer::Helper::rotate (float rot_angle)
+void Fl_WinAPI_Printer_Driver::rotate (float rot_angle)
 {
   XFORM mat;
   float angle;
@@ -232,7 +265,7 @@ void Fl_Printer::Helper::rotate (float rot_angle)
   SetWorldTransform((HDC)driver()->gc(), &mat);
 }
 
-int Fl_Printer::Helper::end_page (void)
+int Fl_WinAPI_Printer_Driver::end_page (void)
 {
   int  rsult;
   
@@ -263,7 +296,7 @@ static void do_translate(int x, int y, HDC gc)
   ModifyWorldTransform(gc, &tr, MWT_LEFTMULTIPLY);
 }
 
-void Fl_Printer::Helper::translate (int x, int y)
+void Fl_WinAPI_Printer_Driver::translate (int x, int y)
 {
   do_translate(x, y, (HDC)driver()->gc());
   if (translate_stack_depth < translate_stack_max) {
@@ -273,7 +306,7 @@ void Fl_Printer::Helper::translate (int x, int y)
     }
 }
 
-void Fl_Printer::Helper::untranslate (void)
+void Fl_WinAPI_Printer_Driver::untranslate (void)
 {
   if (translate_stack_depth > 0) {
     translate_stack_depth--;
@@ -281,7 +314,7 @@ void Fl_Printer::Helper::untranslate (void)
     }
 }
 
-void Fl_Printer::Helper::origin(int *x, int *y)
+void Fl_WinAPI_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
 }

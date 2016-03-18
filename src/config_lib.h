@@ -45,9 +45,9 @@
 #elif defined(WIN32)
 # define FL_CFG_WIN_WIN32
 #elif defined(FL_PORTING)
-# pragma message "FL_PORTING: please choose a graphics driver library"
+# pragma message "FL_PORTING: please choose a printer driver"
 #else // X11
-# define FL_CFG_GFX_PS
+# define FL_CFG_PRN_PS
 #endif
 
 #endif

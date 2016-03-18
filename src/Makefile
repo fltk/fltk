@@ -272,7 +272,8 @@ GDICPPFILES = \
         drivers/GDI/Fl_GDI_Image_Surface.cxx \
 	drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
-	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx
+	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
+        Fl_GDI_Printer.cxx
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \

@@ -16,8 +16,9 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef __APPLE__
 #include <FL/Fl_Printer.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Window_Driver.H>
 #include "drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
 
 #include <FL/Fl.H>
@@ -42,7 +43,37 @@ typedef OSStatus
 
 extern void fl_quartz_restore_line_style_(CGContextRef gc);
 
-Fl_Printer::Helper::Helper(void)
+
+/** Support for printing on the Apple OS X platform */
+class Fl_Cocoa_Printer_Driver : public Fl_Paged_Device {
+  friend class Fl_Paged_Device;
+private:
+  float scale_x;
+  float scale_y;
+  float angle; // rotation angle in radians
+  PMPrintSession  printSession;
+  PMPageFormat    pageFormat;
+  PMPrintSettings printSettings;
+  Fl_Cocoa_Printer_Driver(void);
+  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int start_page (void);
+  int printable_rect(int *w, int *h);
+  void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
+  void origin(int x, int y);
+  void scale (float scale_x, float scale_y = 0.);
+  void rotate(float angle);
+  void translate(int x, int y);
+  void untranslate(void);
+  int end_page (void);
+  void end_job (void);
+  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
+  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
+  ~Fl_Cocoa_Printer_Driver(void);
+};
+
+
+Fl_Cocoa_Printer_Driver::Fl_Cocoa_Printer_Driver(void)
 {
   x_offset = 0;
   y_offset = 0;
@@ -50,11 +81,17 @@ Fl_Printer::Helper::Helper(void)
   driver(new Fl_Quartz_Printer_Graphics_Driver);
 }
 
-Fl_Printer::Helper::~Helper(void) {
+Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
+{
+  return new Fl_Cocoa_Printer_Driver();
+}
+
+Fl_Cocoa_Printer_Driver::~Fl_Cocoa_Printer_Driver(void) {
   delete driver();
 }
 
-int Fl_Printer::Helper::start_job (int pagecount, int *frompage, int *topage)
+
+int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
 //returns 0 iff OK
 {
@@ -145,7 +182,7 @@ int Fl_Printer::Helper::start_job (int pagecount, int *frompage, int *topage)
   return 0;
 }
 
-void Fl_Printer::Helper::margins(int *left, int *top, int *right, int *bottom)
+void Fl_Cocoa_Printer_Driver::margins(int *left, int *top, int *right, int *bottom)
 {
   PMPaper paper;
   PMGetPageFormatPaper(pageFormat, &paper);
@@ -167,7 +204,7 @@ void Fl_Printer::Helper::margins(int *left, int *top, int *right, int *bottom)
   }
 }
 
-int Fl_Printer::Helper::printable_rect(int *w, int *h)
+int Fl_Cocoa_Printer_Driver::printable_rect(int *w, int *h)
 //returns 0 iff OK
 {
   OSStatus status;
@@ -184,7 +221,7 @@ int Fl_Printer::Helper::printable_rect(int *w, int *h)
   return 0;
 }
 
-void Fl_Printer::Helper::origin(int x, int y)
+void Fl_Cocoa_Printer_Driver::origin(int x, int y)
 {
   x_offset = x;
   y_offset = y;
@@ -198,7 +235,7 @@ void Fl_Printer::Helper::origin(int x, int y)
   CGContextSaveGState(gc);
 }
 
-void Fl_Printer::Helper::scale (float s_x, float s_y)
+void Fl_Cocoa_Printer_Driver::scale (float s_x, float s_y)
 {
   if (s_y == 0.) s_y = s_x;
   scale_x = s_x;
@@ -213,7 +250,7 @@ void Fl_Printer::Helper::scale (float s_x, float s_y)
   CGContextSaveGState(gc);
 }
 
-void Fl_Printer::Helper::rotate (float rot_angle)
+void Fl_Cocoa_Printer_Driver::rotate (float rot_angle)
 {
   angle = - rot_angle * M_PI / 180.;
   CGContextRef gc = (CGContextRef)driver()->gc();
@@ -226,7 +263,7 @@ void Fl_Printer::Helper::rotate (float rot_angle)
   CGContextSaveGState(gc);
 }
 
-void Fl_Printer::Helper::translate(int x, int y)
+void Fl_Cocoa_Printer_Driver::translate(int x, int y)
 {
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextSaveGState(gc);
@@ -234,14 +271,14 @@ void Fl_Printer::Helper::translate(int x, int y)
   CGContextSaveGState(gc);
 }
 
-void Fl_Printer::Helper::untranslate(void)
+void Fl_Cocoa_Printer_Driver::untranslate(void)
 {
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextRestoreGState(gc);
   CGContextRestoreGState(gc);
 }
 
-int Fl_Printer::Helper::start_page (void)
+int Fl_Cocoa_Printer_Driver::start_page (void)
 {	
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
   CGContextRef gc;
@@ -259,6 +296,7 @@ int Fl_Printer::Helper::start_page (void)
 #endif
   }
   driver()->gc(gc);
+  set_current();
   PMRect pmRect;
   float win_scale_x, win_scale_y;
 
@@ -291,7 +329,7 @@ int Fl_Printer::Helper::start_page (void)
   return status != noErr;
 }
 
-int Fl_Printer::Helper::end_page (void)
+int Fl_Cocoa_Printer_Driver::end_page (void)
 {	
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextFlush(gc);
@@ -302,7 +340,7 @@ int Fl_Printer::Helper::end_page (void)
   return status != noErr;
 }
 
-void Fl_Printer::Helper::end_job (void)
+void Fl_Cocoa_Printer_Driver::end_job (void)
 {
   OSStatus status;
   
@@ -325,7 +363,7 @@ void Fl_Printer::Helper::end_job (void)
 }
 
 // version that prints at high res if using a retina display
-void Fl_Printer::Helper::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
+void Fl_Cocoa_Printer_Driver::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
@@ -339,12 +377,99 @@ void Fl_Printer::Helper::print_window_part(Fl_Window *win, int x, int y, int w, 
   CFRelease(img);
 }
 
-void Fl_Printer::Helper::origin(int *x, int *y)
+void Fl_Cocoa_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
 }
 
-#endif // __APPLE__
+void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
+{
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
+    this->print_widget(win, x_offset, y_offset);
+    return;
+  }
+  int bt = win->decorated_h() - win->h();
+  BOOL to_quartz =  (this->driver()->has_feature(Fl_Graphics_Driver::NATIVE));
+  CALayer *layer = nil;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 101000) layer = [[[fl_xid(win) standardWindowButton:NSWindowCloseButton] superview] layer];
+#endif
+  
+  if (layer) { // if title bar uses a layer
+    if (to_quartz) { // to Quartz printer
+      CGContextRef gc = (CGContextRef)driver()->gc();
+      CGContextSaveGState(gc);
+      CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
+      CGContextScaleCTM(gc, 1, -1);
+      Fl_X::draw_layer_to_context(layer, gc, win->w(), bt);
+      CGContextRestoreGState(gc);
+    }
+    else {
+      CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB ();
+      CGContextRef gc = CGBitmapContextCreate(NULL, 2*win->w(), 2*bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
+      CGColorSpaceRelease(cspace);
+      CGContextScaleCTM(gc, 2, 2);
+      Fl_X::draw_layer_to_context(layer, gc, win->w(), bt);
+      Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), 2*win->w(), 2*bt, 4,
+                                             CGBitmapContextGetBytesPerRow(gc)); // 10.2
+      int ori_x, ori_y;
+      origin(&ori_x, &ori_y);
+      scale(0.5);
+      origin(2*ori_x, 2*ori_y);
+      image->draw(2*x_offset, 2*y_offset); // draw title bar as double resolution image
+      scale(1);
+      origin(ori_x, ori_y);
+      delete image;
+      CGContextRelease(gc);
+    }
+    this->print_widget(win, x_offset, y_offset + bt);
+    return;
+  }
+  Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
+  const char *title = win->label();
+  win->label(""); // temporarily set a void window title
+  win->show();
+  Fl::check();
+  // capture the window title bar with no title
+  Fl_Shared_Image *top, *left, *bottom, *right;
+  win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
+  win->label(title); // put back the window title
+  this->set_current(); // back to the Fl_Paged_Device
+  top->draw(x_offset, y_offset); // print the title bar
+  top->release();
+  if (title) { // print the window title
+    const int skip = 65; // approx width of the zone of the 3 window control buttons
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
+      // the exact font is LucidaGrande 13 pts (and HelveticaNeueDeskInterface-Regular with 10.10)
+      NSGraphicsContext *current = [NSGraphicsContext currentContext];
+      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->gc() flipped:YES]];//10.4
+      NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0]
+                                                       forKey:NSFontAttributeName];
+      NSString *title_s = [fl_xid(win) title];
+      NSSize size = [title_s sizeWithAttributes:attr];
+      int x = x_offset + win->w()/2 - size.width/2;
+      if (x < x_offset+skip) x = x_offset+skip;
+      NSRect r = NSMakeRect(x, y_offset+bt/2+4, win->w() - skip, bt);
+      [[NSGraphicsContext currentContext] setShouldAntialias:YES];
+      [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
+      [[NSGraphicsContext currentContext] setShouldAntialias:NO];
+      [NSGraphicsContext setCurrentContext:current];
+    }
+    else
+#endif
+    {
+      fl_font(FL_HELVETICA, 14);
+      fl_color(FL_BLACK);
+      int x = x_offset + win->w()/2 - fl_width(title)/2;
+      if (x < x_offset+skip) x = x_offset+skip;
+      fl_push_clip(x_offset, y_offset, win->w(), bt);
+      fl_draw(title, x, y_offset+bt/2+4);
+      fl_pop_clip();
+    }
+  }
+  this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
+}
 
 //
 // End of "$Id$".

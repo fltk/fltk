@@ -77,7 +77,6 @@ public:
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();
-  virtual void draw_end();
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

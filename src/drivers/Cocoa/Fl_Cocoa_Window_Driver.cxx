@@ -99,10 +99,10 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
     if ( i->other_xid ) {
       fl_begin_offscreen( i->other_xid );
       fl_clip_region( 0 );
-      draw();
+      pWindow->draw();
       fl_end_offscreen();
     } else {
-      draw();
+      pWindow->draw();
     }
   }
   if (erase_overlay) fl_clip_region(0);
@@ -116,12 +116,13 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
 
 void Fl_Cocoa_Window_Driver::draw_begin()
 {
+  CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
   if (shape_data_) {
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
-      CGContextClipToMask(fl_gc, CGRectMake(0,0,pWindow->w(),pWindow->h()), shape_data_->mask); // requires Mac OS 10.4
+      CGContextClipToMask(gc, CGRectMake(0,0,pWindow->w(),pWindow->h()), shape_data_->mask); // requires Mac OS 10.4
     }
-    CGContextSaveGState(fl_gc);
+    CGContextSaveGState(gc);
 # endif
   }
 }
@@ -131,7 +132,8 @@ void Fl_Cocoa_Window_Driver::draw_end()
 {
   // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
   // corner. This code draws a little ribbed triangle for dragging.
-  if (fl_mac_os_version < 100700 && fl_gc && !pWindow->parent() && pWindow->resizable() &&
+  CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
+  if (fl_mac_os_version < 100700 && gc && !pWindow->parent() && pWindow->resizable() &&
       (!pWindow->size_range_set || pWindow->minh!=pWindow->maxh || pWindow->minw!=pWindow->maxw)) {
     int dx = Fl::box_dw(pWindow->box())-Fl::box_dx(pWindow->box());
     int dy = Fl::box_dh(pWindow->box())-Fl::box_dy(pWindow->box());
@@ -151,7 +153,7 @@ void Fl_Cocoa_Window_Driver::draw_end()
     }
   }
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (shape_data_) CGContextRestoreGState(fl_gc);
+  if (shape_data_) CGContextRestoreGState(gc);
 # endif
 }
 
@@ -238,44 +240,6 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
 #endif
-}
-
-
-void Fl_Cocoa_Window_Driver::draw()
-{
-  CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
-  if (shape_data_) {
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-    if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
-      CGContextClipToMask(gc, CGRectMake(0,0, pWindow->w(), pWindow->h()), shape_data_->mask); // requires Mac OS 10.4
-    }
-    CGContextSaveGState(gc);
-# endif
-  }
-  Fl_Window_Driver::draw();
-  // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
-  // corner. This code draws a little ribbed triangle for dragging.
-  if (fl_mac_os_version < 100700 && gc && !pWindow->parent() && pWindow->resizable() ) {
-    int dx = Fl::box_dw(pWindow->box())-Fl::box_dx(pWindow->box());
-    int dy = Fl::box_dh(pWindow->box())-Fl::box_dy(pWindow->box());
-    if (dx<=0) dx = 1;
-    if (dy<=0) dy = 1;
-    int x1 = pWindow->w()-dx-1, x2 = x1, y1 = pWindow->h()-dx-1, y2 = y1;
-    Fl_Color c[4] = {
-      pWindow->color(),
-      fl_color_average(pWindow->color(), FL_WHITE, 0.7f),
-      fl_color_average(pWindow->color(), FL_BLACK, 0.6f),
-      fl_color_average(pWindow->color(), FL_BLACK, 0.8f),
-    };
-    int i;
-    for (i=dx; i<12; i++) {
-      fl_color(c[i&3]);
-      fl_line(x1--, y1, x2, y2--);
-    }
-  }
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  if (shape_data_) CGContextRestoreGState(gc);
-# endif
 }
 
 //

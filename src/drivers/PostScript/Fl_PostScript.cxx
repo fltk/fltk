@@ -17,7 +17,7 @@
 //
 
 #include <FL/Fl_Printer.H>
-#include <config.h>
+#include <src/config_lib.h>
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
@@ -1557,15 +1557,21 @@ void Fl_PostScript_File_Device::end_job (void)
 
 #endif // FL_DOXYGEN
 
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver ? - platform PostScript
-#elif defined(WIN32)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement postscript printing"
-#else // X11
 
+#if defined(FL_CFG_PRN_PS)
+
+/** Support for printing on the Unix/Linux platform */
+class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
+  virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+};
+
+Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
+{
+  return new Fl_Posix_Printer_Driver();
+}
 
 /** Starts a print job. */
-int Fl_Printer::Helper::start_job(int pages, int *firstpage, int *lastpage) {
+int Fl_Posix_Printer_Driver::start_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
 
@@ -1661,7 +1667,7 @@ int Fl_Printer::Helper::start_job(int pages, int *firstpage, int *lastpage) {
   return ps->start_postscript(pages, format, layout); // start printing
 }
 
-#endif // ! (defined(__APPLE__) || defined(WIN32) ) // PORTME: Fl_Surface_Driver - platform PostScript
+#endif // defined(FL_CFG_PRN_PS)
 
 
 //

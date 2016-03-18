@@ -69,7 +69,6 @@ public:
   virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
   virtual void wait_for_expose() {} // TODO: check
   virtual void destroy_double_buffer(); // TODO: check
-  virtual void draw(); // TODO: check
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

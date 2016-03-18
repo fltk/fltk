@@ -36,6 +36,11 @@
  or Fl_PostScript_File_Device instead.
  */
 class FL_EXPORT Fl_Paged_Device : public Fl_Widget_Surface {
+protected:
+  /** \brief The constructor */
+  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
+  /** A platform should implement this function to support printing via the Fl_Printer class. */
+  static Fl_Paged_Device* newPrinterDriver(void);
 public:
   /**
    \brief Possible page formats.
@@ -98,10 +103,6 @@ public:
   /** \brief width, height and name of all elements of the enum \ref Page_Format.
    */
   static const page_format page_formats[NO_PAGE_FORMATS];  
-protected:
-  /** \brief The constructor */
-  Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
-public:
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
@@ -109,14 +110,9 @@ public:
   virtual void margins(int *left, int *top, int *right, int *bottom);
   virtual void scale(float scale_x, float scale_y = 0.);
   virtual void rotate(float angle);
-  virtual void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0) {draw(widget, delta_x, delta_y);}
-  /** Prints a window with its title bar and frame if any.
-   
-   \p x_offset and \p y_offset are optional coordinates of where to position the window top left.
-   Equivalent to print_widget() if \p win is a subwindow or has no border.
-   Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the
-   printed window.
-   */
+  /** Synonym of draw(Fl_Widget*, int, int) */
+  void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0) {draw(widget, delta_x, delta_y);}
+  /** Synonym of draw_decorated_window(Fl_Window*, int, int) */
   void print_window(Fl_Window *win, int x_offset = 0, int y_offset = 0) {
     draw_decorated_window(win, x_offset, y_offset);
   }

@@ -18,8 +18,13 @@
 //
 
 #include <FL/Fl_Printer.H>
+#include "config.h"
 
-#ifdef NO_PRINT_SUPPORT
+#ifdef FL_PORTING
+#  pragma message "FL_PORTING: implement print support for your platform, or define NO_PRINT_SUPPORT"
+#endif
+
+#if defined(NO_PRINT_SUPPORT)
 
 Fl_Printer::Fl_Printer(void) {
   printer = NULL;
@@ -107,8 +112,8 @@ const char *Fl_Printer::property_cancel = "Cancel";
 
 
 Fl_Printer::Fl_Printer(void) {
-  printer = new Helper();
-  Fl_Surface_Device::driver(printer->driver());
+  printer = Fl_Paged_Device::newPrinterDriver();
+  driver(printer->driver());
 }
 
 /**
@@ -209,7 +214,7 @@ Fl_Printer::~Fl_Printer(void)
   delete printer;
 }
 
-#endif // NO_PRINT_SUPPORT
+#endif // defined(NO_PRINT_SUPPORT)
 
 //
 // End of "$Id$".

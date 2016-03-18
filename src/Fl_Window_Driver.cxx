@@ -89,37 +89,6 @@ void Fl_Window_Driver::destroy_double_buffer() {
   i->other_xid = 0;
 }
 
-void Fl_Window_Driver::draw() {
-  // The following is similar to Fl_Group::draw(), but ...
-  //
-  //  - draws the box at (0,0), i.e. with x=0 and y=0 instead of x() and y()
-  //  - does NOT draw the label (text)
-  //  - draws the image only if FL_ALIGN_INSIDE is set
-  //
-  // Note: The label (text) of top level windows is drawn in the title bar.
-  //   Other windows do not draw their labels at all, unless drawn by their
-  //   parent widgets or by special draw() methods (derived classes).
-  
-  if (pWindow->damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
-    pWindow->draw_box(pWindow->box(),0,0,pWindow->w(),pWindow->h(),pWindow->color()); // draw box with x/y = 0
-    
-    if (pWindow->image() && (pWindow->align() & FL_ALIGN_INSIDE)) { // draw the image only
-      Fl_Label l1;
-      memset(&l1,0,sizeof(l1));
-      l1.align_ = pWindow->align();
-      l1.image = pWindow->image();
-      if (!pWindow->active_r() && l1.image && l1.deimage) l1.image = l1.deimage;
-      l1.type = pWindow->labeltype();
-      l1.draw(0,0,pWindow->w(),pWindow->h(),pWindow->align());
-    }
-  }
-  pWindow->draw_children();
-  
-# if defined(FLTK_USE_CAIRO)
-  Fl::cairo_make_current(this); // checkout if an update is necessary
-# endif
-}
-
 
 /** Assigns a non-rectangular shape to the window.
  This function gives an arbitrary shape (not just a rectangular region) to an Fl_Window.
