@@ -251,8 +251,8 @@ XLIBCPPFILES = \
         drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
-	drivers/Posix/Fl_Posix_System_Driver.cxx
-        drivers/Posix/Fl_Posix_Printer_Driver.cxx
+	drivers/Posix/Fl_Posix_System_Driver.cxx \
+	drivers/Posix/Fl_Posix_Printer_Driver.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -303,7 +303,7 @@ IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
 all:	$(LIBNAME) $(DSONAME) \
 	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
-	$(IMGLIBNAME) $(IMGDSONAME) 
+	$(IMGLIBNAME) $(IMGDSONAME)
 
 $(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -578,10 +578,10 @@ Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
-fl_color.o:	
+fl_color.o:
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
-Fl_Printer.o: Fl_GDI_Printer.cxx ../src/drivers/PostScript/Fl_PostScript.cxx
+Fl_Printer.o: ../src/drivers/PostScript/Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H
 Fl_arg.o:	../FL/mac.H ../FL/win32.H
@@ -634,7 +634,7 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 install: $(LIBNAME) $(DSONAME) \
 	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
-	$(IMGLIBNAME) $(IMGDSONAME) 
+	$(IMGLIBNAME) $(IMGDSONAME)
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
