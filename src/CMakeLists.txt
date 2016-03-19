@@ -197,7 +197,6 @@ if (USE_X11)
     drivers/X11/Fl_X11_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
     drivers/Xlib/Fl_Xlib_Copy_Surface.H
-    drivers/Xlib/Fl_Xlib_Image_Surface.H
   )
 
 elseif (USE_SDL)
@@ -224,13 +223,11 @@ elseif (USE_SDL)
     drivers/Pico/Fl_Pico_Window_Driver.H
     drivers/Pico/Fl_Pico_Graphics_Driver.H
     drivers/Pico/Fl_Pico_Copy_Surface.H
-    drivers/Pico/Fl_Pico_Image_Surface.H
     drivers/PicoSDL/Fl_PicoSDL_System_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Window_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Graphics_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.H
-    drivers/PicoSDL/Fl_PicoSDL_Image_Surface.H
   )
 
 elseif (APPLE)
@@ -260,7 +257,6 @@ elseif (APPLE)
     drivers/Cocoa/Fl_Cocoa_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
     drivers/Quartz/Fl_Quartz_Copy_Surface.H
-    drivers/Quartz/Fl_Quartz_Image_Surface.H
   )
 
 else ()
@@ -289,7 +285,6 @@ else ()
     drivers/WinAPI/Fl_WinAPI_Window_Driver.H
     drivers/GDI/Fl_GDI_Graphics_Driver.H
     drivers/GDI/Fl_GDI_Copy_Surface.H
-    drivers/GDI/Fl_GDI_Image_Surface.H
   )
 
 endif (USE_X11)
