@@ -19,24 +19,51 @@
 #include "../../config_lib.h"
 
 #ifdef FL_CFG_GFX_XLIB
-#include "Fl_Xlib_Copy_Surface.H"
+#include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include "Fl_Translated_Xlib_Graphics_Driver.H"
 
-Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
+class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
+  friend class Fl_Copy_Surface_Driver;
+protected:
+  Fl_Offscreen xid;
+  Window oldwindow;
+  Fl_Surface_Device *_ss;
+  Fl_Xlib_Copy_Surface_Driver(int w, int h);
+  ~Fl_Xlib_Copy_Surface_Driver();
+  void set_current();
+  void translate(int x, int y);
+  void untranslate();
+  int w() {return width;}
+  int h() {return height;}
+  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+};
+
+
+Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
+{
+  return new Fl_Xlib_Copy_Surface_Driver(w, h);
+}
+
+
+Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
   driver(new Fl_Translated_Xlib_Graphics_Driver());
   Fl::first_window()->make_current();
   oldwindow = fl_xid(Fl::first_window());
   xid = fl_create_offscreen(w,h);
   _ss = NULL;
   Fl_Surface_Device *present_surface = Fl_Surface_Device::surface();
-  set_current();
-  fl_color(FL_WHITE);
-  fl_rectf(0, 0, w, h);
+  Fl_Surface_Device::set_current();
+  fl_window = xid;
+  driver()->color(FL_WHITE);
+  driver()->rectf(0, 0, w, h);
   present_surface->set_current();
+  fl_window = oldwindow;
 }
 
-Fl_Copy_Surface::Helper::~Helper() {
+
+Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   fl_pop_clip();
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);
   fl_window = oldwindow;
@@ -46,18 +73,21 @@ Fl_Copy_Surface::Helper::~Helper() {
   fl_delete_offscreen(xid);
 }
 
-void Fl_Copy_Surface::Helper::set_current() {
-  fl_window=xid;
+
+void Fl_Xlib_Copy_Surface_Driver::set_current() {
+  fl_window = xid;
   if (!_ss) _ss = Fl_Surface_Device::surface();
   Fl_Surface_Device::set_current();
   fl_push_no_clip();
 }
 
-void Fl_Copy_Surface::Helper::translate(int x, int y) {
+
+void Fl_Xlib_Copy_Surface_Driver::translate(int x, int y) {
   ((Fl_Translated_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
 }
 
-void Fl_Copy_Surface::Helper::untranslate() {
+
+void Fl_Xlib_Copy_Surface_Driver::untranslate() {
   ((Fl_Translated_Xlib_Graphics_Driver*)driver())->untranslate_all();
 }
 

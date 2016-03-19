@@ -19,32 +19,55 @@
 #include "../../config_lib.h"
 
 #ifdef FL_CFG_GFX_QUARTZ
-#include "Fl_Quartz_Copy_Surface.H"
+#include <FL/Fl_Copy_Surface.H>
 #include "Fl_Quartz_Graphics_Driver.H"
 
-Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
+class Fl_Quartz_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
+  friend class Fl_Copy_Surface_Driver;
+protected:
+  CFMutableDataRef pdfdata;
+  CGContextRef gc;
+  void prepare_copy_pdf_and_tiff(int w, int h);
+  void init_PDF_context(int w, int h);
+  static size_t MyPutBytes(void* info, const void* buffer, size_t count);
+  Fl_Quartz_Copy_Surface_Driver(int w, int h);
+  ~Fl_Quartz_Copy_Surface_Driver();
+  void set_current();
+  void translate(int x, int y);
+  void untranslate();
+  int w() {return width;}
+  int h() {return height;}
+  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+};
+
+Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
+{
+  return new Fl_Quartz_Copy_Surface_Driver(w, h);
+}
+
+Fl_Quartz_Copy_Surface_Driver::Fl_Quartz_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
   driver(new Fl_Quartz_Graphics_Driver);
   prepare_copy_pdf_and_tiff(w, h);
 }
 
-Fl_Copy_Surface::Helper::~Helper() {
+Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver() {
   // that code is implemented in Fl_cocoa.mm because it uses some Objective-c
   Fl_X::complete_copy_pdf_and_tiff(gc, pdfdata);
 }
 
-void Fl_Copy_Surface::Helper::set_current() {
+void Fl_Quartz_Copy_Surface_Driver::set_current() {
   driver()->gc(gc);
   fl_window = (Window)1;
   Fl_Surface_Device::set_current();
 }
 
-size_t Fl_Copy_Surface::Helper::MyPutBytes(void* info, const void* buffer, size_t count)
+size_t Fl_Quartz_Copy_Surface_Driver::MyPutBytes(void* info, const void* buffer, size_t count)
 {
   CFDataAppendBytes ((CFMutableDataRef) info, (const UInt8 *)buffer, count);
   return count;
 }
 
-void Fl_Copy_Surface::Helper::init_PDF_context(int w, int h)
+void Fl_Quartz_Copy_Surface_Driver::init_PDF_context(int w, int h)
 {
   CGRect bounds = CGRectMake(0, 0, w, h );
   pdfdata = CFDataCreateMutable(NULL, 0);
@@ -56,14 +79,14 @@ void Fl_Copy_Surface::Helper::init_PDF_context(int w, int h)
   else
 #endif
   {
-    static CGDataConsumerCallbacks callbacks = { Fl_Copy_Surface::Helper::MyPutBytes, NULL };
+    static CGDataConsumerCallbacks callbacks = { Fl_Quartz_Copy_Surface_Driver::MyPutBytes, NULL };
     myconsumer = CGDataConsumerCreate ((void*) pdfdata, &callbacks);
   }
   gc = CGPDFContextCreate (myconsumer, &bounds, NULL);
   CGDataConsumerRelease (myconsumer);
 }
 
-void Fl_Copy_Surface::Helper::prepare_copy_pdf_and_tiff(int w, int h)
+void Fl_Quartz_Copy_Surface_Driver::prepare_copy_pdf_and_tiff(int w, int h)
 {
   init_PDF_context(w, h);
   if (gc == NULL) return;
@@ -74,14 +97,14 @@ void Fl_Copy_Surface::Helper::prepare_copy_pdf_and_tiff(int w, int h)
   CGContextSaveGState(gc);
 }
 
-void Fl_Copy_Surface::Helper::translate(int x, int y) {
+void Fl_Quartz_Copy_Surface_Driver::translate(int x, int y) {
   CGContextRestoreGState(gc);
   CGContextSaveGState(gc);
   CGContextTranslateCTM(gc, x, y);
   CGContextSaveGState(gc);
 }
 
-void Fl_Copy_Surface::Helper::untranslate() {
+void Fl_Quartz_Copy_Surface_Driver::untranslate() {
   CGContextRestoreGState(gc);
 }
 

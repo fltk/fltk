@@ -48,8 +48,7 @@
 */
 class FL_EXPORT Fl_Copy_Surface : public Fl_Widget_Surface {
 private:
-  class Helper;
-  Helper *platform_surface;
+  class Fl_Copy_Surface_Driver *platform_surface;
 protected:
   void translate(int x, int y);
   void untranslate();
@@ -65,6 +64,24 @@ public:
   void origin(int x, int y);
   int printable_rect(int *w, int *h);
 };
+
+
+class Fl_Copy_Surface_Driver : public Fl_Widget_Surface {
+  friend class Fl_Copy_Surface;
+protected:
+  int width;
+  int height;
+  Fl_Copy_Surface_Driver(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {}
+  virtual ~Fl_Copy_Surface_Driver() {}
+  virtual void set_current() {}
+  virtual void translate(int x, int y) {}
+  virtual void untranslate() {}
+  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+  virtual Fl_RGB_Image *image() {return NULL;}
+  virtual void end_current() {}
+  static Fl_Copy_Surface_Driver *newCopySurfaceDriver(int w, int h);
+};
+
 
 #endif // Fl_Copy_Surface_H
 

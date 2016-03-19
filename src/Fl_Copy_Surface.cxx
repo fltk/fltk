@@ -16,44 +16,21 @@
 //     http://www.fltk.org/str.php
 //
 
-#include "config_lib.h"
 #include <FL/Fl_Copy_Surface.H>
 
-#ifdef FL_CFG_GFX_QUARTZ
-#include <src/drivers/Quartz/Fl_Quartz_Copy_Surface.H>
+#if defined(FL_PORTING)
+# pragma message "FL_PORTING: implement class Fl_XXX_Copy_Surface_Driver for your platform"
 
-#elif defined(FL_CFG_GFX_GDI)
-#include <src/drivers/GDI/Fl_GDI_Copy_Surface.H>
-
-#elif defined(USE_SDL)
-#include <src/drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.H>
-
-#elif defined(FL_PORTING) || defined(USE_SDL)
-# pragma message "FL_PORTING: implement class Fl_Copy_Surface::Helper for your platform"
-
-class Fl_Copy_Surface::Helper : public Fl_Widget_Surface { // class model
-  friend class Fl_Copy_Surface;
-private:
-  int width;
-  int height;
-  Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {} // to implement
-  ~Helper() {} // to implement
-  void set_current(){} // to implement
-  void translate(int x, int y) {} // to implement
-  void untranslate() {} // to implement
-  int w() {return width;}
-  int h() {return height;}
-  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
-};
-
-#elif defined(FL_CFG_GFX_XLIB)
-#include <src/drivers/Xlib/Fl_Xlib_Copy_Surface.H>
+Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
+{
+  return NULL;
+}
 
 #endif
 
 /** the constructor */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
-  platform_surface = new Helper(w, h);
+  platform_surface = Fl_Copy_Surface_Driver::newCopySurfaceDriver(w, h);
   driver(platform_surface->driver());
 }
 
@@ -69,9 +46,9 @@ void Fl_Copy_Surface::translate(int x, int y) {platform_surface->translate(x, y)
 
 void Fl_Copy_Surface::untranslate() {platform_surface->untranslate();}
 
-int Fl_Copy_Surface::w() {return platform_surface->w();}
+int Fl_Copy_Surface::w() {return platform_surface->width;}
 
-int Fl_Copy_Surface::h() {return platform_surface->h();}
+int Fl_Copy_Surface::h() {return platform_surface->height;}
 
 int Fl_Copy_Surface::printable_rect(int *w, int *h)  {return platform_surface->printable_rect(w, h);}
 

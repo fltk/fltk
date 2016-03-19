@@ -18,11 +18,34 @@
 
 #include "../../config_lib.h"
 
-
 #ifdef FL_CFG_GFX_GDI
-#include "Fl_GDI_Copy_Surface.H"
+#include <FL/Fl_Copy_Surface.H>
+#include "Fl_GDI_Graphics_Driver.H"
+#include <windows.h>
 
-Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {
+class Fl_GDI_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
+  friend class Fl_Copy_Surface_Driver;
+protected:
+  HDC oldgc;
+  HDC gc;
+  Fl_GDI_Copy_Surface_Driver(int w, int h);
+  ~Fl_GDI_Copy_Surface_Driver();
+  void set_current();
+  void translate(int x, int y);
+  void untranslate();
+  int w() {return width;}
+  int h() {return height;}
+  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+};
+
+
+Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
+{
+  return new Fl_GDI_Copy_Surface_Driver(w, h);
+}
+
+
+Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
   driver(new Fl_Translated_GDI_Graphics_Driver);
   oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)
@@ -43,7 +66,8 @@ Fl_Copy_Surface::Helper::Helper(int w, int h) : Fl_Widget_Surface(NULL), width(w
   }
 }
 
-Fl_Copy_Surface::Helper::~Helper() {
+
+Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
   if (oldgc == (HDC)Fl_Surface_Device::surface()->driver()->gc()) oldgc = NULL;
   HENHMETAFILE hmf = CloseEnhMetaFile (gc);
   if ( hmf != NULL ) {
@@ -58,17 +82,20 @@ Fl_Copy_Surface::Helper::~Helper() {
   Fl_Surface_Device::surface()->driver()->gc(oldgc);
 }
 
-void Fl_Copy_Surface::Helper::set_current() {
+
+void Fl_GDI_Copy_Surface_Driver::set_current() {
   driver()->gc(gc);
   fl_window = (Window)1;
   Fl_Surface_Device::set_current();
 }
 
-void Fl_Copy_Surface::Helper::translate(int x, int y) {
+
+void Fl_GDI_Copy_Surface_Driver::translate(int x, int y) {
   ((Fl_Translated_GDI_Graphics_Driver*)driver())->translate_all(x, y);
 }
 
-void Fl_Copy_Surface::Helper::untranslate() {
+
+void Fl_GDI_Copy_Surface_Driver::untranslate() {
   ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
 #endif // FL_CFG_GFX_GDI
