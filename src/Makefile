@@ -232,8 +232,8 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx \
-        drivers/Quartz/Fl_Quartz_Copy_Surface.cxx \
-        drivers/Quartz/Fl_Quartz_Image_Surface.cxx \
+        drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.cxx \
+        drivers/Quartz/Fl_Quartz_Image_Surface_Driver.cxx \
 	drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx \
 	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
 	drivers/Darwin/Fl_Darwin_System_Driver.cxx
@@ -247,8 +247,8 @@ XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
 	drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.cxx \
-        drivers/Xlib/Fl_Xlib_Copy_Surface.cxx \
-        drivers/Xlib/Fl_Xlib_Image_Surface.cxx \
+        drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
+        drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx
@@ -268,8 +268,8 @@ GDICPPFILES = \
 	drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx \
-        drivers/GDI/Fl_GDI_Copy_Surface.cxx \
-        drivers/GDI/Fl_GDI_Image_Surface.cxx \
+        drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx \
+        drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
