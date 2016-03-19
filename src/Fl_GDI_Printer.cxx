@@ -25,6 +25,7 @@
 
 #include <FL/fl_ask.H>
 #include <FL/math.h>
+#include <FL/fl_draw.H>
 
 extern HWND fl_window;
 
