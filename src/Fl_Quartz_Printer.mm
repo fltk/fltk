@@ -426,18 +426,19 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     return;
   }
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
-  const char *title = win->label();
-  win->label(""); // temporarily set a void window title
+  NSString *title = [fl_xid(win) title];
+  [title retain];
+  [fl_xid(win) setTitle:@""]; // temporarily set a void window title
   win->show();
   Fl::check();
   // capture the window title bar with no title
   Fl_Shared_Image *top, *left, *bottom, *right;
   win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
-  win->label(title); // put back the window title
+  [fl_xid(win) setTitle:title]; // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar
   top->release();
-  if (title) { // print the window title
+  if (win->label()) { // print the window title
     const int skip = 65; // approx width of the zone of the 3 window control buttons
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
@@ -446,13 +447,12 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->gc() flipped:YES]];//10.4
       NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0]
                                                        forKey:NSFontAttributeName];
-      NSString *title_s = [fl_xid(win) title];
-      NSSize size = [title_s sizeWithAttributes:attr];
+      NSSize size = [title sizeWithAttributes:attr];
       int x = x_offset + win->w()/2 - size.width/2;
       if (x < x_offset+skip) x = x_offset+skip;
       NSRect r = NSMakeRect(x, y_offset+bt/2+4, win->w() - skip, bt);
       [[NSGraphicsContext currentContext] setShouldAntialias:YES];
-      [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
+      [title drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];
       [NSGraphicsContext setCurrentContext:current];
     }
@@ -461,13 +461,14 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     {
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_BLACK);
-      int x = x_offset + win->w()/2 - fl_width(title)/2;
+      int x = x_offset + win->w()/2 - fl_width(win->label())/2;
       if (x < x_offset+skip) x = x_offset+skip;
       fl_push_clip(x_offset, y_offset, win->w(), bt);
-      fl_draw(title, x, y_offset+bt/2+4);
+      fl_draw(win->label(), x, y_offset+bt/2+4);
       fl_pop_clip();
     }
   }
+  [title release];
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
