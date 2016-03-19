@@ -70,14 +70,12 @@ class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
   friend void fl_end_offscreen(void);
   friend void fl_delete_offscreen(Fl_Offscreen ctx);
 private:
-  class Helper;
-  Helper *platform_surface;
+  class Fl_Image_Surface_Driver *platform_surface;
 protected:
   void translate(int x, int y);
   void untranslate();
 public:
-  Fl_Image_Surface(int w, int h, int high_res = 0);
-  Fl_Image_Surface(Fl_Offscreen off, int w, int h);
+  Fl_Image_Surface(int w, int h, int high_res = 0, Fl_Offscreen off = 0);
   ~Fl_Image_Surface();
   void set_current();
   void end_current();
@@ -88,6 +86,24 @@ public:
   int printable_rect(int *w, int *h);
   Fl_Offscreen get_offscreen_before_delete();
   Fl_Offscreen offscreen();
+};
+
+
+class Fl_Image_Surface_Driver : public Fl_Widget_Surface {
+  friend class Fl_Image_Surface;
+protected:
+  int width;
+  int height;
+  Fl_Offscreen offscreen;
+  Fl_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {}
+  virtual ~Fl_Image_Surface_Driver() {}
+  virtual void set_current() {}
+  virtual void translate(int x, int y) {}
+  virtual void untranslate() {}
+  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
+  virtual Fl_RGB_Image *image() {return NULL;}
+  virtual void end_current() {}
+  static Fl_Image_Surface_Driver *newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off);
 };
 
 #endif // Fl_Image_Surface_H

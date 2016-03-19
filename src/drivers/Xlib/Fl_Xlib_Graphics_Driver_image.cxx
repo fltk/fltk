@@ -720,7 +720,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       surface = new Fl_Image_Surface(img->w(), img->h());
     } else if (depth == 4 && fl_can_do_alpha_blending()) {
       Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
-      surface = new Fl_Image_Surface(pixmap, img->w(), img->h());
+      surface = new Fl_Image_Surface(img->w(), img->h(), 0, pixmap);
       depth |= FL_IMAGE_WITH_ALPHA;
     }
     if (surface) {

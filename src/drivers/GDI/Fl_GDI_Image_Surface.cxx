@@ -16,28 +16,52 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/fl_draw.H>
 
 #include "../../config_lib.h"
 
-
 #ifdef FL_CFG_GFX_GDI
 #include "Fl_GDI_Graphics_Driver.H"
-#include "Fl_GDI_Image_Surface.H"
+#include <FL/Fl_Image_Surface.H>
+#include <FL/fl_draw.H>
+#include <windows.h>
+
+class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
+  friend class Fl_Image_Surface;
+public:
+  Fl_Surface_Device *previous;
+  Window pre_window;
+  HDC _sgc;
+  int _savedc;
+  Fl_GDI_Image_Surface_Driver(int w, int h, int high_res);
+  ~Fl_GDI_Image_Surface_Driver();
+  void set_current();
+  void translate(int x, int y);
+  void untranslate();
+  Fl_RGB_Image *image();
+  void end_current();
+};
 
 
-Fl_Image_Surface::Helper::Helper(int w, int h, int high_res) : Fl_Widget_Surface(NULL), width(w), height(h) {
+Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
+{
+  return new Fl_GDI_Image_Surface_Driver(w, h, high_res);
+}
+
+
+Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
   previous = 0;
   offscreen = CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h);
   driver(new Fl_Translated_GDI_Graphics_Driver);
   _sgc = NULL;
 }
 
-Fl_Image_Surface::Helper::~Helper() {
+
+Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
   if (offscreen) DeleteObject(offscreen);
 }
 
-void Fl_Image_Surface::Helper::set_current() {
+
+void Fl_GDI_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
   if (!previous) previous = Fl_Surface_Device::surface();
   if (!_sgc) _sgc = (HDC)previous->driver()->gc();
@@ -49,15 +73,18 @@ void Fl_Image_Surface::Helper::set_current() {
   fl_push_no_clip();
 }
 
-void Fl_Image_Surface::Helper::translate(int x, int y) {
+
+void Fl_GDI_Image_Surface_Driver::translate(int x, int y) {
   ((Fl_Translated_GDI_Graphics_Driver*)driver())->translate_all(x, y);
 }
 
-void Fl_Image_Surface::Helper::untranslate() {
+
+void Fl_GDI_Image_Surface_Driver::untranslate() {
   ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
 
-Fl_RGB_Image* Fl_Image_Surface::Helper::image()
+
+Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 {
   unsigned char *data;
   data = fl_read_image(NULL, 0, 0, width, height, 0);
@@ -68,7 +95,8 @@ Fl_RGB_Image* Fl_Image_Surface::Helper::image()
   return image;
 }
 
-void Fl_Image_Surface::Helper::end_current()
+
+void Fl_GDI_Image_Surface_Driver::end_current()
 {
   HDC gc = (HDC)driver()->gc();
   RestoreDC(gc, _savedc);
