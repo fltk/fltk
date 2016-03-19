@@ -179,8 +179,8 @@ if (USE_X11)
     drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx
     drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.cxx
-    drivers/Xlib/Fl_Xlib_Copy_Surface.cxx
-    drivers/Xlib/Fl_Xlib_Image_Surface.cxx
+    drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
+    drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
   )
   if (USE_XFT)
     set(DRIVER_FILES ${DRIVER_FILES}
@@ -196,7 +196,6 @@ if (USE_X11)
     drivers/X11/Fl_X11_Screen_Driver.H
     drivers/X11/Fl_X11_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
-    drivers/Xlib/Fl_Xlib_Copy_Surface.H
   )
 
 elseif (USE_SDL)
@@ -227,7 +226,6 @@ elseif (USE_SDL)
     drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Window_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Graphics_Driver.H
-    drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.H
   )
 
 elseif (APPLE)
@@ -245,8 +243,8 @@ elseif (APPLE)
     drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
-    drivers/Quartz/Fl_Quartz_Copy_Surface.cxx
-    drivers/Quartz/Fl_Quartz_Image_Surface.cxx
+    drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.cxx
+    drivers/Quartz/Fl_Quartz_Image_Surface_Driver.cxx
     drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
@@ -256,7 +254,6 @@ elseif (APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.H
     drivers/Cocoa/Fl_Cocoa_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
-    drivers/Quartz/Fl_Quartz_Copy_Surface.H
   )
 
 else ()
@@ -275,8 +272,8 @@ else ()
     drivers/GDI/Fl_GDI_Graphics_Driver_line_style.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_rect.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
-    drivers/GDI/Fl_GDI_Copy_Surface.cxx
-    drivers/GDI/Fl_GDI_Image_Surface.cxx
+    drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
+    drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
     Fl_GDI_Printer.cxx
   )
   set(DRIVER_HEADER_FILES
@@ -284,7 +281,6 @@ else ()
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.H
     drivers/WinAPI/Fl_WinAPI_Window_Driver.H
     drivers/GDI/Fl_GDI_Graphics_Driver.H
-    drivers/GDI/Fl_GDI_Copy_Surface.H
   )
 
 endif (USE_X11)
