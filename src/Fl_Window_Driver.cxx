@@ -18,11 +18,8 @@
 //
 
 
-#include <config.h>
 #include "config_lib.h"
 #include <FL/Fl_Window_Driver.H>
-#include <FL/Fl.H>
-#include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 
 
@@ -44,25 +41,13 @@ void Fl_Window_Driver::take_focus()
 }
 
 
-void Fl_Window_Driver::flush_single()
-{
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return;
-  fl_clip_region(i->region);
-  i->region = 0;
-  pWindow->draw();
-}
-
-
 void Fl_Window_Driver::flush_double()
 {
-  flush_single();
 }
 
 
 void Fl_Window_Driver::flush_overlay()
 {
-  flush_single();
 }
 
 
@@ -81,10 +66,6 @@ void Fl_Window_Driver::draw_end()
 
 void Fl_Window_Driver::destroy_double_buffer() {
   Fl_X *i = Fl_X::i(pWindow);
-  /* This is a working, platform-independent implementation.
-   Some platforms may re-implement it for their own logic:
-   - on Xlib, it is reimplemented if the Xdbe extension is available.
-   */
   fl_delete_offscreen(i->other_xid);
   i->other_xid = 0;
 }

@@ -437,7 +437,10 @@ int Fl_Window::decorated_h()
 
 void Fl_Window::flush()
 {
-  driver()->flush_single();
+  if (!shown()) return;
+  make_current();
+  fl_clip_region(i->region); i->region = 0;
+  draw();
 }
 
 

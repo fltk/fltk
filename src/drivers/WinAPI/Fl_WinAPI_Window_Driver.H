@@ -73,7 +73,6 @@ public:
   virtual int decorated_h();
 
   // --- window management
-  virtual void flush_single();
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();

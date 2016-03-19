@@ -148,18 +148,6 @@ void Fl_X11_Window_Driver::draw_begin()
 }
 
 
-void Fl_X11_Window_Driver::flush_single()
-{
-  if (!pWindow->shown()) return;
-  pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return;
-  fl_clip_region(i->region);
-  i->region = 0;
-  pWindow->draw();
-}
-
-
 void Fl_X11_Window_Driver::flush_double()
 {
   if (!pWindow->shown()) return;
@@ -215,7 +203,6 @@ void Fl_X11_Window_Driver::flush_double()
 void Fl_X11_Window_Driver::flush_overlay()
 {
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
-  if (!oWindow) return flush_single();
 
   if (!pWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
@@ -289,15 +276,16 @@ void Fl_X11_Window_Driver::flush_overlay()
 }
 
 
-
+void Fl_X11_Window_Driver::destroy_double_buffer() {
 #if USE_XDBE
-
-//void Fl_X11_Dbe_Window_Driver::destroy_double_buffer() {
-//  Fl_X *i = Fl_X::i(pWindow);
-//  XdbeDeallocateBackBufferName(fl_display, i->other_xid);
-//  i->other_xid = 0;
-//}
+  if (can_xdbe()) {
+  Fl_X *i = Fl_X::i(pWindow);
+  XdbeDeallocateBackBufferName(fl_display, i->other_xid);
+  i->other_xid = 0;
+  } else
 #endif // USE_XDBE
+    Fl_Window_Driver::destroy_double_buffer();
+}
 
 
 void Fl_X11_Window_Driver::shape_bitmap_(Fl_Image* b) {

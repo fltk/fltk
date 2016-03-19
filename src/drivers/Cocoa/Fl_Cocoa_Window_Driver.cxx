@@ -55,61 +55,42 @@ void Fl_Cocoa_Window_Driver::take_focus()
 }
 
 
-void Fl_Cocoa_Window_Driver::flush_single()
-{
-  if (!pWindow->shown()) return;
-  pWindow->make_current();
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return; // window not yet created
-  fl_clip_region(i->region); i->region = 0;
-  pWindow->draw();
-}
-
-
-void Fl_Cocoa_Window_Driver::flush_double()
-{
-  if (!pWindow->shown()) return;
-  pWindow->make_current();
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return; // window not yet created
-  fl_clip_region(i->region); i->region = 0;
-  pWindow->draw();
+void Fl_Cocoa_Window_Driver::flush_double() {
+  pWindow->Fl_Window::flush();
 }
 
 
 void Fl_Cocoa_Window_Driver::flush_overlay()
 {
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
-  if (!oWindow) return flush_single();
-
-  if (!pWindow->shown()) return;
-  pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return; // window not yet created
-
-  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
+  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (oWindow->overlay_ == oWindow);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
 
-  if (!i->other_xid) {
-      i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
-      pWindow->clear_damage(FL_DAMAGE_ALL);
+  if (!oWindow->shown()) return;
+  pWindow->make_current(); // make sure fl_gc is non-zero
+  Fl_X *myi = Fl_X::i(pWindow);
+  if (!myi) return; // window not yet created
+  if (!myi->other_xid) {
+      myi->other_xid = fl_create_offscreen(oWindow->w(), oWindow->h());
+      oWindow->clear_damage(FL_DAMAGE_ALL);
   }
-  if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-    fl_clip_region(i->region); i->region = 0;
-    if ( i->other_xid ) {
-      fl_begin_offscreen( i->other_xid );
-      fl_clip_region( 0 );
-      pWindow->draw();
-      fl_end_offscreen();
-    } else {
-      pWindow->draw();
+    if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+      fl_clip_region(myi->region); myi->region = 0;
+      if ( myi->other_xid ) {
+        fl_begin_offscreen( myi->other_xid );
+        fl_clip_region( 0 );
+        oWindow->draw();
+        fl_end_offscreen();
+      } else {
+        oWindow->draw();
+      }
     }
-  }
   if (erase_overlay) fl_clip_region(0);
+  // on Irix (at least) it is faster to reduce the area copied to
+  // the current clip region:
+  int X,Y,W,H; fl_clip_box(0,0,oWindow->w(),oWindow->h(),X,Y,W,H);
+  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
   
-  int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
-  if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
-
   if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
 }
 

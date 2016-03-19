@@ -77,7 +77,6 @@ public:
 
   // --- window management
   virtual void take_focus();
-  virtual void flush_single();
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();
@@ -89,6 +88,7 @@ public:
   virtual void free_icons();
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   virtual void wait_for_expose();
+  virtual void destroy_double_buffer();
 };
 
 
