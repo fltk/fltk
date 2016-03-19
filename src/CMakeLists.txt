@@ -275,7 +275,6 @@ else ()
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
-    Fl_GDI_Printer.cxx
   )
   set(DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H
