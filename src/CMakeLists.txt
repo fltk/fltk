@@ -222,7 +222,6 @@ elseif (USE_SDL)
     drivers/Pico/Fl_Pico_Screen_Driver.H
     drivers/Pico/Fl_Pico_Window_Driver.H
     drivers/Pico/Fl_Pico_Graphics_Driver.H
-    drivers/Pico/Fl_Pico_Copy_Surface.H
     drivers/PicoSDL/Fl_PicoSDL_System_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Screen_Driver.H
     drivers/PicoSDL/Fl_PicoSDL_Window_Driver.H
