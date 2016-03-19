@@ -19,7 +19,7 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window_Driver.H>
-#include "drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
+#include "../Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>

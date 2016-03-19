@@ -165,7 +165,7 @@ CPPFILES = \
 
 OBJCPPFILES = \
 	Fl_cocoa.mm \
-	Fl_Quartz_Printer.mm \
+	drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm \
 	Fl_Native_File_Chooser_MAC.mm \
 	Fl_Sys_Menu_Bar.mm
 
@@ -252,6 +252,7 @@ XLIBCPPFILES = \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx
+        drivers/Posix/Fl_Posix_Printer_Driver.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -273,7 +274,7 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
-        Fl_GDI_Printer.cxx
+        drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \

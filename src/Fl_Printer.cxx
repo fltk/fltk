@@ -68,7 +68,7 @@ const char *Fl_Printer::property_cancel = NULL;
 
 #else
 
-#include "Fl_GDI_Printer.cxx"
+//#include "Fl_GDI_Printer.cxx"
 
 // print dialog customization strings
 /** [this text may be customized at run-time] */

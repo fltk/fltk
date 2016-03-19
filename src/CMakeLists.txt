@@ -169,6 +169,7 @@ if (USE_X11)
 
   set(DRIVER_FILES
     drivers/Posix/Fl_Posix_System_Driver.cxx
+    drivers/Posix/Fl_Posix_Printer_Driver.cxx
     drivers/X11/Fl_X11_Screen_Driver.cxx
     drivers/X11/Fl_X11_Window_Driver.cxx
     drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx
@@ -264,6 +265,7 @@ else ()
     drivers/WinAPI/Fl_WinAPI_System_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx
+    drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx
     drivers/GDI/Fl_GDI_Graphics_Driver_color.cxx
@@ -373,7 +375,7 @@ add_definitions(-DFL_LIBRARY)
 if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
     set(MMFILES
         Fl_cocoa.mm
-        Fl_Quartz_Printer.mm
+        drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
         Fl_Native_File_Chooser_MAC.mm
         Fl_Sys_Menu_Bar.mm
         )
