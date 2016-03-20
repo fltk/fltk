@@ -68,6 +68,7 @@ public:
 };
 
 void Fl_Xdbe_Window_Driver::destroy_double_buffer() {
+  if (pWindow->as_overlay_window()) return Fl_X11_Window_Driver::destroy_double_buffer();
     Fl_X *i = Fl_X::i(pWindow);
     XdbeDeallocateBackBufferName(fl_display, i->other_xid);
     i->other_xid = 0;
