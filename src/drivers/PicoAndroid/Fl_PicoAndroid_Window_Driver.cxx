@@ -95,7 +95,6 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
 }
 
 
-
 void Fl_PicoAndroid_Window_Driver::flush_single()
 {
   glClearColor(0, 0, 0, 1);
@@ -107,18 +106,6 @@ void Fl_PicoAndroid_Window_Driver::flush_single()
   pWindow->draw();
   Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
   scr->drawFrame();
-}
-
-
-void Fl_PicoAndroid_Window_Driver::flush_double()
-{
-  flush_single();
-}
-
-
-void Fl_PicoAndroid_Window_Driver::flush_overlay()
-{
-  flush_single();
 }
 
 

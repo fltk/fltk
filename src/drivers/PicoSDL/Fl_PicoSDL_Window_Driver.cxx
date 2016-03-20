@@ -94,21 +94,6 @@ void Fl_PicoSDL_Window_Driver::flush_single()
   SDL_RenderPresent((SDL_Renderer*)i->xid);
 }
 
-
-void Fl_PicoSDL_Window_Driver::flush_double()
-{
-  flush_single();
-}
-
-
-void Fl_PicoSDL_Window_Driver::flush_overlay()
-{
-  flush_single();
-  // draw_overlay();
-}
-
-
-
 //
 // End of "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
 //

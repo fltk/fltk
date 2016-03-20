@@ -88,7 +88,6 @@ public:
   virtual void free_icons();
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   virtual void wait_for_expose();
-  virtual void destroy_double_buffer();
 };
 
 

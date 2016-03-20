@@ -56,7 +56,7 @@ void Fl_Cocoa_Window_Driver::take_focus()
 
 
 void Fl_Cocoa_Window_Driver::flush_double() {
-  pWindow->Fl_Window::flush();
+  flush_single();
 }
 
 
@@ -115,7 +115,7 @@ void Fl_Cocoa_Window_Driver::draw_end()
   // corner. This code draws a little ribbed triangle for dragging.
   CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
   if (fl_mac_os_version < 100700 && gc && !pWindow->parent() && pWindow->resizable() &&
-      (!pWindow->size_range_set || pWindow->minh!=pWindow->maxh || pWindow->minw!=pWindow->maxw)) {
+      (!size_range_set() || minh() != maxh() || minw() != maxw())) {
     int dx = Fl::box_dw(pWindow->box())-Fl::box_dx(pWindow->box());
     int dy = Fl::box_dh(pWindow->box())-Fl::box_dy(pWindow->box());
     if (dx<=0) dx = 1;

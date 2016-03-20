@@ -54,6 +54,13 @@ public:
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
 
+  // --- accessors to private window data
+  int minw();
+  int minh();
+  int maxw();
+  int maxh();
+  unsigned char size_range_set();
+
   // --- window data
   virtual int decorated_w() = 0;
   virtual int decorated_h() = 0;
@@ -62,8 +69,10 @@ public:
   virtual void take_focus();
   virtual void flush_double();
   virtual void flush_overlay();
+  virtual void flush_single();
   virtual void draw_begin();
   virtual void draw_end();
+  void draw();
 
   virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
   virtual void wait_for_expose() {} // TODO: check

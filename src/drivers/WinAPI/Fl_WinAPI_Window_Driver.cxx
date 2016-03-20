@@ -270,7 +270,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
     fl_clip_region(i->region); i->region = 0;
     fl_begin_offscreen(i->other_xid);
     fl_graphics_driver->clip_region( 0 );
-    pWindow->draw();
+    draw();
     fl_end_offscreen();
   }
 
@@ -299,7 +299,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
     fl_clip_region(i->region); i->region = 0;
     fl_begin_offscreen(i->other_xid);
     fl_graphics_driver->clip_region(0);
-    pWindow->draw();
+    draw();
     fl_end_offscreen();
   }
 

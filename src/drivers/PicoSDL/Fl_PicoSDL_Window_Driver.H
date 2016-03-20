@@ -43,8 +43,6 @@ public:
   
   // --- window management
   virtual void flush_single();
-  virtual void flush_double();
-  virtual void flush_overlay();
 };
 
 
