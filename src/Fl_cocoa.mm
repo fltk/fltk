@@ -94,7 +94,6 @@ void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
-Fl_Window *Fl_Window::current_;
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -3266,14 +3265,14 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
  Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(),
  Fl::check() nor Fl::ready() while in the draw() function of a widget. Use an idle callback instead.
  */
-void Fl_Window::make_current() 
+void Fl_Cocoa_Window_Driver::make_current()
 {
   if (make_current_counts > 1) return;
   if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
+  Fl_X *i = Fl_X::i(pWindow);
   fl_window = i->xid;
   Fl_X::set_high_resolution( i->mapped_to_retina() );
-  current_ = this;
   
   NSGraphicsContext *nsgc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -3299,13 +3298,13 @@ void Fl_Window::make_current()
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(i->gc);
 #if defined(FLTK_USE_CAIRO)
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow); // capture gc changes automatically to update the cairo context adequately
 #endif
   fl_clip_region( 0 );
   
 #if defined(FLTK_USE_CAIRO)
   // update the cairo_t context
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
 #endif
 }
 
@@ -4272,11 +4271,6 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
     CGDataProviderRelease(provider);
   }
   return img;
-}
-
-WindowRef Fl_X::window_ref() // useless with cocoa GL windows
-{
-  return (WindowRef)[xid windowRef];
 }
 
 // so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes

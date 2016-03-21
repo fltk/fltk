@@ -23,6 +23,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_ask.H>
 #include <FL/Fl.H>
 #include <string.h>
 #if HAVE_DLFCN_H
@@ -30,6 +31,9 @@
 #endif
 #define ShapeBounding			0
 #define ShapeSet			0
+
+Window fl_window;
+
 
 #if USE_XDBE
 #include <X11/extensions/Xdbe.h>
@@ -421,6 +425,23 @@ void Fl_X11_Window_Driver::wait_for_expose() {
     Fl::wait();
   }
 }
+
+
+// make X drawing go into this window (called by subclass flush() impl.)
+void Fl_X11_Window_Driver::make_current() {
+  if (!pWindow->shown()) {
+    fl_alert("Fl_Window::make_current(), but window is not shown().");
+    Fl::fatal("Fl_Window::make_current(), but window is not shown().");
+  }
+  fl_window = fl_xid(pWindow);
+  fl_graphics_driver->clip_region(0);
+  
+#ifdef FLTK_USE_CAIRO
+  // update the cairo_t context
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
+#endif
+}
+
 
 //
 // End of "$Id$".

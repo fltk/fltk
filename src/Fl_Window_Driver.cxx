@@ -42,6 +42,7 @@ unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set
 
 void Fl_Window_Driver::flush_single() { pWindow->Fl_Window::flush(); }
 void Fl_Window_Driver::draw() { pWindow->draw(); }
+void Fl_Window_Driver::make_current() { }
 
 
 void Fl_Window_Driver::take_focus()

@@ -29,6 +29,11 @@
 #include "Fl_WinAPI_Window_Driver.H"
 #include <windows.h>
 
+#if USE_COLORMAP
+extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
+#endif
+
+
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
   return new Fl_WinAPI_Window_Driver(w);
@@ -372,6 +377,21 @@ void Fl_WinAPI_Window_Driver::wait_for_expose() {
   while (!i || i->wait_for_expose) {
     Fl::wait();
   }
+}
+
+
+void Fl_WinAPI_Window_Driver::make_current() {
+  fl_GetDC(fl_xid(pWindow));
+  
+#if USE_COLORMAP
+  // Windows maintains a hardware and software color palette; the
+  // SelectPalette() call updates the current soft->hard mapping
+  // for all drawing calls, so we must select it here before any
+  // code does any drawing...
+  fl_select_palette();
+#endif // USE_COLORMAP
+  
+  fl_graphics_driver->clip_region(0);
 }
 
 //

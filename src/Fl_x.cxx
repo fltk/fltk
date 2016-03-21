@@ -2927,24 +2927,6 @@ preparePrintFront();
 #endif
 }
 
-Window fl_window;
-Fl_Window *Fl_Window::current_;
-
-// make X drawing go into this window (called by subclass flush() impl.)
-void Fl_Window::make_current() {
-  if (!shown()) {
-    fl_alert("Fl_Window::make_current(), but window is not shown().");
-    Fl::fatal("Fl_Window::make_current(), but window is not shown().");
-  }
-  fl_window = i->xid;
-  current_ = this;
-  fl_clip_region(0);
-
-#ifdef FLTK_USE_CAIRO
-  // update the cairo_t context
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
-#endif
-}
 
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   Fl_X *temp = Fl_X::i(w);

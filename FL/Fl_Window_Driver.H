@@ -73,6 +73,7 @@ public:
   virtual void draw_begin();
   virtual void draw_end();
   void draw();
+  virtual void make_current();
 
   virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
   virtual void wait_for_expose() {} // TODO: check

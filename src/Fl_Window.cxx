@@ -32,6 +32,8 @@
 
 char *Fl_Window::default_xclass_ = 0L;
 
+Fl_Window *Fl_Window::current_;
+
 void Fl_Window::_Fl_Window() {
   cursor_default = FL_CURSOR_DEFAULT;
   type(FL_WINDOW);
@@ -479,7 +481,11 @@ void Fl_Window::draw()
 # endif
 }
 
-
+void Fl_Window::make_current()
+{
+  pWindowDriver->make_current();
+  current_ = this;
+}
 
 //
 // End of "$Id$".

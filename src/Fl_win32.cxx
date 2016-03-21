@@ -2361,7 +2361,6 @@ void Fl_Window::show() {
 #endif
 }
 
-Fl_Window *Fl_Window::current_;
 // the current context
 // the current window handle, initially set to -1 so we can correctly
 // allocate fl_GetDC(0)
@@ -2385,24 +2384,6 @@ HDC fl_GetDC(HWND w) {
   return gc;
 }
 
-// make X drawing go into this window (called by subclass flush() impl.)
-void Fl_Window::make_current() {
-  fl_GetDC(fl_xid(this));
-
-#if USE_COLORMAP
-  // Windows maintains a hardware and software color palette; the
-  // SelectPalette() call updates the current soft->hard mapping
-  // for all drawing calls, so we must select it here before any
-  // code does any drawing...
-
-  fl_select_palette();
-#endif // USE_COLORMAP
-
-  current_ = this;
-  fl_clip_region(0);
-
-
-}
 
 /* Make sure that all allocated fonts are released. This works only if
    Fl::run() is allowed to exit by closing all windows. Calling 'exit(int)'

@@ -73,6 +73,7 @@ public:
   virtual void flush_overlay();
   virtual void draw_begin();
   virtual void draw_end();
+  virtual void make_current();
 
   virtual void shape(const Fl_Image* img);
   // that one is implemented in Fl_Cocoa.mm because it uses Objective-c
