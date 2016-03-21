@@ -2872,18 +2872,17 @@ const char *fl_filename_name(const char *name) {
   return q;
 }
 
-void Fl_Window::label(const char *name,const char *iname) {
-  Fl_Widget::label(name);
-  iconlabel_ = iname;
-  if (shown() && !parent()) {
+void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
+  if (pWindow->shown() && !pWindow->parent()) {
     if (!name) name = "";
     int namelen = strlen(name);
     if (!iname) iname = fl_filename_name(name);
     int inamelen = strlen(iname);
-    XChangeProperty(fl_display, i->xid, fl_NET_WM_NAME,      fl_XaUtf8String, 8, 0, (uchar*)name,  namelen);	// utf8
-    XChangeProperty(fl_display, i->xid, XA_WM_NAME,          XA_STRING,       8, 0, (uchar*)name,  namelen);	// non-utf8
-    XChangeProperty(fl_display, i->xid, fl_NET_WM_ICON_NAME, fl_XaUtf8String, 8, 0, (uchar*)iname, inamelen);	// utf8
-    XChangeProperty(fl_display, i->xid, XA_WM_ICON_NAME,     XA_STRING,       8, 0, (uchar*)iname, inamelen);	// non-utf8
+    Window win = fl_xid(pWindow);
+    XChangeProperty(fl_display, win, fl_NET_WM_NAME,      fl_XaUtf8String, 8, 0, (uchar*)name,  namelen);	// utf8
+    XChangeProperty(fl_display, win, XA_WM_NAME,          XA_STRING,       8, 0, (uchar*)name,  namelen);	// non-utf8
+    XChangeProperty(fl_display, win, fl_NET_WM_ICON_NAME, fl_XaUtf8String, 8, 0, (uchar*)iname, inamelen);	// utf8
+    XChangeProperty(fl_display, win, XA_WM_ICON_NAME,     XA_STRING,       8, 0, (uchar*)iname, inamelen);	// non-utf8
   }
 }
 

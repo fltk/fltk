@@ -1990,23 +1990,6 @@ const char *fl_filename_name(const char *name) {
   return q;
 }
 
-void Fl_Window::label(const char *name,const char *iname) {
-  Fl_Widget::label(name);
-  iconlabel_ = iname;
-  if (shown() && !parent()) {
-    if (!name) name = "";
-    size_t l = strlen(name);
-//  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
-//  l = fl_utf2unicode((unsigned char*)name, l, (xchar*)lab);
-    unsigned wlen = fl_utf8toUtf16(name, (unsigned) l, NULL, 0); // Pass NULL to query length
-    wlen++;
-    unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
-    wlen = fl_utf8toUtf16(name, (unsigned) l, lab, wlen);
-    lab[wlen] = 0;
-    SetWindowTextW(i->xid, (WCHAR *)lab);
-    free(lab);
-  }
-}
 
 ////////////////////////////////////////////////////////////////
 

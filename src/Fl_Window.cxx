@@ -487,6 +487,12 @@ void Fl_Window::make_current()
   current_ = this;
 }
 
+void Fl_Window::label(const char *name, const char *mininame) {
+  Fl_Widget::label(name);
+  iconlabel_ = mininame;
+  pWindowDriver->label(name, mininame);
+}
+
 //
 // End of "$Id$".
 //

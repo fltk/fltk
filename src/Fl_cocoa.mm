@@ -3135,11 +3135,9 @@ const char *fl_filename_name( const char *name )
 /*
  * set the window title bar name
  */
-void Fl_Window::label(const char *name, const char *mininame) {
-  Fl_Widget::label(name);
-  iconlabel_ = mininame;
-  if (shown() || i) {
-    q_set_window_title(i->xid, name, mininame);
+void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
+  if (pWindow->shown() || Fl_X::i(pWindow)) {
+    q_set_window_title(fl_xid(pWindow), name, mininame);
   }
 }
 
