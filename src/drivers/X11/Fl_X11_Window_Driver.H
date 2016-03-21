@@ -66,10 +66,11 @@ private:
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
+  virtual void flush_double(int);
   
 public:
   Fl_X11_Window_Driver(Fl_Window*);
-  ~Fl_X11_Window_Driver();
+  virtual ~Fl_X11_Window_Driver();
 
   // --- window data
   virtual int decorated_w();

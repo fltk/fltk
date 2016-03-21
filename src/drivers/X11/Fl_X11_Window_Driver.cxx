@@ -60,21 +60,21 @@ static int can_xdbe()
 }
 
 class Fl_Xdbe_Window_Driver : public Fl_X11_Window_Driver {
+  virtual void flush_double(int erase_overlay);
 public:
   Fl_Xdbe_Window_Driver(Fl_Window *win) : Fl_X11_Window_Driver(win) {}
   virtual void destroy_double_buffer();
-  virtual void flush_double();
   virtual ~Fl_Xdbe_Window_Driver() {}
 };
 
 void Fl_Xdbe_Window_Driver::destroy_double_buffer() {
-  if (pWindow->as_overlay_window()) return Fl_X11_Window_Driver::destroy_double_buffer();
-    Fl_X *i = Fl_X::i(pWindow);
-    XdbeDeallocateBackBufferName(fl_display, i->other_xid);
-    i->other_xid = 0;
+  Fl_X *i = Fl_X::i(pWindow);
+  XdbeDeallocateBackBufferName(fl_display, i->other_xid);
+  i->other_xid = 0;
 }
 
-void Fl_Xdbe_Window_Driver::flush_double()
+
+void Fl_Xdbe_Window_Driver::flush_double(int erase_overlay)
 {
   if (!pWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
@@ -85,13 +85,12 @@ void Fl_Xdbe_Window_Driver::flush_double()
     i->backbuffer_bad = 1;
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
-  if (i->backbuffer_bad) {
+  if (i->backbuffer_bad || erase_overlay) {
     // Make sure we do a complete redraw...
     if (i->region) {XDestroyRegion(i->region); i->region = 0;}
     pWindow->clear_damage(FL_DAMAGE_ALL);
     i->backbuffer_bad = 0;
-  }
-  
+  }  
   // Redraw as needed...
   if (pWindow->damage()) {
     fl_clip_region(i->region); i->region = 0;
@@ -99,7 +98,6 @@ void Fl_Xdbe_Window_Driver::flush_double()
     draw();
     fl_window = i->xid;
   }
-  
   // Copy contents of back buffer to window...
   XdbeSwapInfo s;
   s.swap_window = fl_xid(pWindow);
@@ -201,48 +199,15 @@ void Fl_X11_Window_Driver::draw_begin()
 
 void Fl_X11_Window_Driver::flush_double()
 {
-  if (!pWindow->shown()) return;
-  pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return; // window not yet created
-  if (!i->other_xid) {
-      i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
-    pWindow->clear_damage(FL_DAMAGE_ALL);
-  }
-    if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-      fl_clip_region(i->region); i->region = 0;
-      fl_window = i->other_xid;
-      draw();
-      fl_window = i->xid;
-    }
-  int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
-  if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+  flush_double(0);
 }
 
-
-//TODO call flush_double in there
-void Fl_X11_Window_Driver::flush_overlay()
+void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 {
-  Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
-
   if (!pWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
   if (!i) return; // window not yet created
-
-#ifdef BOXX_BUGS
-  if (oWindow->overlay_ && oWindow->overlay_ != oWindow && oWindow->overlay_->shown()) {
-    // all drawing to windows hidden by overlay windows is ignored, fix this
-    XUnmapWindow(fl_display, fl_xid(oWindow->overlay_));
-    flush_double();
-    XMapWindow(fl_display, fl_xid(oWindow->overlay_));
-    return;
-  }
-#endif
-
-  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
-  pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
-
   if (!i->other_xid) {
       i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
     pWindow->clear_damage(FL_DAMAGE_ALL);
@@ -256,7 +221,15 @@ void Fl_X11_Window_Driver::flush_overlay()
   if (erase_overlay) fl_clip_region(0);
   int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
   if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+}
 
+
+void Fl_X11_Window_Driver::flush_overlay()
+{
+  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
+  pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
+  flush_double(erase_overlay);
+  Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
   if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
 }
 
