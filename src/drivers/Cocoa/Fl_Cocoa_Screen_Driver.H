@@ -18,7 +18,7 @@
 //
 
 /**
- \file Fl_Cocoa_Screen_Driver.h
+ \file Fl_Cocoa_Screen_Driver.H
  \brief Definition of Apple Cocoa Screen interface.
  */
 

@@ -192,7 +192,7 @@ int Fl_Tree::extend_selection_dir(Fl_Tree_Item *from, Fl_Tree_Item *to,
 int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
 			      int val, bool visible) {
 #else
-/// \notes Made public in 1.3.3 ABI
+/// \note Made public in 1.3.3 ABI
 // Adding overload if not at least one overload breaks ABI, so avoid
 // by making a private function until ABI can change..
 int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,

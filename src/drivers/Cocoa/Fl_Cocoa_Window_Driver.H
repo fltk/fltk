@@ -18,7 +18,7 @@
 //
 
 /**
- \file Fl_Cocoa_Window_Driver.h
+ \file Fl_Cocoa_Window_Driver.H
  \brief Definition of Apple Cocoa window driver.
  */
 

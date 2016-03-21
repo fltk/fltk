@@ -18,7 +18,7 @@
 //
 
 /**
- \file Fl_SDL_Window_Driver.H
+ \file Fl_PicoSDL_Window_Driver.H
  \brief Definition of SDL Window interface.
  */
 
