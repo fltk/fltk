@@ -38,6 +38,10 @@ int Fl_Window_Driver::minw() {return pWindow->minw;}
 int Fl_Window_Driver::minh() {return pWindow->minh;}
 int Fl_Window_Driver::maxw() {return pWindow->maxw;}
 int Fl_Window_Driver::maxh() {return pWindow->maxh;}
+void Fl_Window_Driver::force_position(int c) { pWindow->force_position(c); }
+void Fl_Window_Driver::x(int X) {pWindow->x(X); }
+void Fl_Window_Driver::y(int Y) {pWindow->y(Y); }
+
 unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set;}
 
 void Fl_Window_Driver::flush_single() { pWindow->Fl_Window::flush(); }

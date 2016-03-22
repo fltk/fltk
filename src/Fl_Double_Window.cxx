@@ -51,11 +51,6 @@ void Fl_Double_Window::show() {
 }
 
 
-/*char fl_can_do_alpha_blending() {
-  return Fl_Display_Device::display_device()->driver()->can_do_alpha_blending();
-}*/
-
-
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int ow = w();
   int oh = h();
@@ -64,6 +59,7 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   if (myi && myi->other_xid && (ow < w() || oh < h()))
     driver()->destroy_double_buffer();
 }
+
 
 void Fl_Double_Window::hide() {
   Fl_X *myi = Fl_X::i(this);
@@ -88,9 +84,6 @@ void Fl_Double_Window::flush()
 Fl_Double_Window::~Fl_Double_Window() {
   hide();
 }
-
-
-
 
 //
 // End of "$Id$".

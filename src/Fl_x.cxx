@@ -2124,34 +2124,34 @@ fprintf(stderr,"\n");*/
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_Window::resize(int X,int Y,int W,int H) {
-  int is_a_move = (X != x() || Y != y());
-  int is_a_resize = (W != w() || H != h());
-  int resize_from_program = (this != resize_bug_fix);
+void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
+  int is_a_move = (X != pWindow->x() || Y != pWindow->y());
+  int is_a_resize = (W != pWindow->w() || H != pWindow->h());
+  int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
-  if (is_a_move && resize_from_program) set_flag(FORCE_POSITION);
+  if (is_a_move && resize_from_program) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
-    Fl_Group::resize(X,Y,W,H);
-    if (shown()) {redraw();}
+    pWindow->Fl_Group::resize(X,Y,W,H);
+    if (pWindow->shown()) {pWindow->redraw();}
   } else {
     x(X); y(Y);
   }
 
-  if (resize_from_program && is_a_resize && !resizable()) {
-    size_range(w(), h(), w(), h());
+  if (resize_from_program && is_a_resize && !pWindow->resizable()) {
+    pWindow->size_range(pWindow->w(), pWindow->h(), pWindow->w(), pWindow->h());
   }
 
-  if (resize_from_program && shown()) {
+  if (resize_from_program && pWindow->shown()) {
     if (is_a_resize) {
-      if (!resizable()) size_range(w(),h(),w(),h());
+      if (!pWindow->resizable()) pWindow->size_range(pWindow->w(), pWindow->h(), pWindow->w(), pWindow->h());
       if (is_a_move) {
-        XMoveResizeWindow(fl_display, i->xid, X, Y, W>0 ? W : 1, H>0 ? H : 1);
+        XMoveResizeWindow(fl_display, fl_xid(pWindow), X, Y, W>0 ? W : 1, H>0 ? H : 1);
       } else {
-        XResizeWindow(fl_display, i->xid, W>0 ? W : 1, H>0 ? H : 1);
+        XResizeWindow(fl_display, fl_xid(pWindow), W>0 ? W : 1, H>0 ? H : 1);
       }
     } else
-      XMoveWindow(fl_display, i->xid, X, Y);
+      XMoveWindow(fl_display, fl_xid(pWindow), X, Y);
   }
 }
 

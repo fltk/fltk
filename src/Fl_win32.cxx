@@ -1560,24 +1560,25 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_Window::resize(int X,int Y,int W,int H) {
+void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
   UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER
              | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
-  int is_a_resize = (W != w() || H != h());
-  int resize_from_program = (this != resize_bug_fix);
+  int is_a_resize = (W != pWindow->w() || H != pWindow->h());
+  int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
-  if (X != x() || Y != y()) {
+  if (X != pWindow->x() || Y != pWindow->y()) {
     force_position(1);
   } else {
     if (!is_a_resize) return;
     flags |= SWP_NOMOVE;
   }
   if (is_a_resize) {
-    Fl_Group::resize(X,Y,W,H);
-    if (visible_r()) {
-      redraw();
+    pWindow->Fl_Group::resize(X,Y,W,H);
+    if (pWindow->visible_r()) {
+      pWindow->redraw();
       // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
+      Fl_X *i = Fl_X::i(pWindow);
       if (i && W>0 && H>0)
         i->wait_for_expose = 1;
     }
@@ -1585,13 +1586,13 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     x(X); y(Y);
     flags |= SWP_NOSIZE;
   }
-  if (!border()) flags |= SWP_NOACTIVATE;
-  if (resize_from_program && shown()) {
-    if (!resizable()) size_range(w(),h(),w(),h());
+  if (!pWindow->border()) flags |= SWP_NOACTIVATE;
+  if (resize_from_program && pWindow->shown()) {
+    if (!pWindow->resizable()) pWindow->size_range(pWindow->w(), pWindow->h(), pWindow->w(), pWindow->h());
     int dummy_x, dummy_y, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
     //specifically menus) can be moved offscreen.
-    if (Fl_X::fake_X_wm(this, dummy_x, dummy_y, bt, bx, by)) {
+    if (Fl_X::fake_X_wm(pWindow, dummy_x, dummy_y, bt, bx, by)) {
       X -= bx;
       Y -= by+bt;
       W += 2*bx;
@@ -1601,7 +1602,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     // will cause continouly  new redraw events.
     if (W<=0) W = 1;
     if (H<=0) H = 1;
-    SetWindowPos(i->xid, 0, X, Y, W, H, flags);
+    SetWindowPos(fl_xid(pWindow), 0, X, Y, W, H, flags);
   }
 }
 

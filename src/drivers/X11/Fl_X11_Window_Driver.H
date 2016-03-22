@@ -88,6 +88,7 @@ public:
   virtual void make_current();
   virtual void show();
   virtual void show_menu();
+  virtual void resize(int X,int Y,int W,int H);
   virtual void label(const char *name, const char *mininame);
   virtual void destroy_double_buffer();
 

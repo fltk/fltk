@@ -58,6 +58,9 @@ public:
   int maxw();
   int maxh();
   unsigned char size_range_set();
+  void force_position(int c);
+  void x(int X);
+  void y(int Y);
 
   // --- window data
   virtual int decorated_w() = 0;
@@ -79,6 +82,7 @@ public:
   virtual void destroy_double_buffer(); // TODO: check
   virtual void show();
   virtual void show_menu();
+  virtual void resize(int X,int Y,int W,int H) {}
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

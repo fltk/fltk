@@ -3169,60 +3169,61 @@ void Fl_Cocoa_Window_Driver::show() {
 /*
  * resize a window
  */
-void Fl_Window::resize(int X,int Y,int W,int H) {
+void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
   int bx, by, bt;
   Fl_Window *parent;
   if (W<=0) W = 1; // OS X does not like zero width windows
   if (H<=0) H = 1;
-  int is_a_resize = (W != w() || H != h());
+  int is_a_resize = (W != pWindow->w() || H != pWindow->h());
   //  printf("Fl_Window::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
   //         X, Y, W, H, is_a_resize, resize_from_system, this);
-  if (X != x() || Y != y()) set_flag(FORCE_POSITION);
+  if (X != pWindow->x() || Y != pWindow->y()) force_position(1);
   else if (!is_a_resize) {
     resize_from_system = 0;
     return;
     }
-  if ( (resize_from_system!=this) && shown()) {
+  if ( (resize_from_system != pWindow) && pWindow->shown()) {
     if (is_a_resize) {
-      if (resizable()) {
-        if (W<minw) minw = W; // user request for resize takes priority
-        if (maxw && W>maxw) maxw = W; // over a previously set size_range
-        if (H<minh) minh = H;
-        if (maxh && H>maxh) maxh = H;
-        size_range(minw, minh, maxw, maxh);
+      if (pWindow->resizable()) {
+        int min_w = minw(), max_w = maxw(), min_h = minh(), max_h = maxh();
+        if (W<min_w) min_w = W; // user request for resize takes priority
+        if (max_w && W>max_w) max_w = W; // over a previously set size_range
+        if (H<min_h) min_h = H;
+        if (max_h && H>max_h) max_h = H;
+        pWindow->size_range(min_w, min_h, max_w, max_h);
       } else {
-        size_range(W, H, W, H);
+        pWindow->size_range(W, H, W, H);
       }
-      Fl_Group::resize(X,Y,W,H);
+      pWindow->Fl_Group::resize(X,Y,W,H);
       // transmit changes in FLTK coords to cocoa
       get_window_frame_sizes(bx, by, bt);
       bx = X; by = Y;
-      parent = window();
+      parent = pWindow->window();
       while (parent) {
         bx += parent->x();
         by += parent->y();
         parent = parent->window();
       }
-      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
-      if (visible_r()) [fl_xid(this) setFrame:r display:YES];
+      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (pWindow->border()?bt:0));
+      if (pWindow->visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
     } else {
       bx = X; by = Y;
-      parent = window();
+      parent = pWindow->window();
       while (parent) {
         bx += parent->x();
         by += parent->y();
         parent = parent->window();
       }
       NSPoint pt = NSMakePoint(bx, main_screen_height - (by + H));
-      if (visible_r()) [fl_xid(this) setFrameOrigin:pt]; // set cocoa coords to FLTK position
+      if (pWindow->visible_r()) [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
     }
   }
   else {
     resize_from_system = 0;
     if (is_a_resize) {
-      Fl_Group::resize(X,Y,W,H);
-      if (shown()) {
-        redraw();
+      pWindow->Fl_Group::resize(X,Y,W,H);
+      if (pWindow->shown()) {
+        pWindow->redraw();
       }
     } else {
       x(X); y(Y);
