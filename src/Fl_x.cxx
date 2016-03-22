@@ -2901,29 +2901,17 @@ void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
 // Fl_Window *fl_boxcheat;
 static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
 
-void Fl_Window::show() {
-  image(Fl::scheme_bg_);
-  if (Fl::scheme_bg_) {
-    labeltype(FL_NORMAL_LABEL);
-    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
-  } else {
-    labeltype(FL_NO_LABEL);
-  }
-  Fl_Tooltip::exit(this);
-  if (!shown()) {
+void Fl_X11_Window_Driver::show() {
+  if (!pWindow->shown()) {
     fl_open_display();
     // Don't set background pixel for double-buffered windows...
-    if (type() != FL_DOUBLE_WINDOW && can_boxcheat(box())) {
-      fl_background_pixel = int(fl_xpixel(color()));
+    if (pWindow->type() != FL_DOUBLE_WINDOW && can_boxcheat(pWindow->box())) {
+      fl_background_pixel = int(fl_xpixel(pWindow->color()));
     }
-    Fl_X::make_xid(this);
+    Fl_X::make_xid(pWindow);
   } else {
-    XMapRaised(fl_display, i->xid);
+    XMapRaised(fl_display, fl_xid(pWindow));
   }
-#ifdef USE_PRINT_BUTTON
-void preparePrintFront(void);
-preparePrintFront();
-#endif
 }
 
 
@@ -2932,11 +2920,13 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
+//#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON
+
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
-// contains also preparePrintFront call above
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Button.H>
+
 void printFront(Fl_Widget *o, void *data)
 {
   Fl_Printer printer;
@@ -2987,11 +2977,7 @@ void copyFront(Fl_Widget *o, void *data)
   o->window()->show();
 }
 
-void preparePrintFront(void)
-{
-  static int first=1;
-  if(!first) return;
-  first=0;
+static int prepare_print_button() {
   static Fl_Window w(0,0,140,60);
   static Fl_Button bp(0,0,w.w(),30, "Print front window");
   bp.callback(printFront);
@@ -2999,7 +2985,11 @@ void preparePrintFront(void)
   bc.callback(copyFront);
   w.end();
   w.show();
+  return 0;
 }
+
+static int unused = prepare_print_button();
+
 #endif // USE_PRINT_BUTTON
 
 #endif

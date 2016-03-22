@@ -86,6 +86,8 @@ public:
   virtual void flush_overlay();
   virtual void draw_begin();
   virtual void make_current();
+  virtual void show();
+  virtual void show_menu();
   virtual void label(const char *name, const char *mininame);
   virtual void destroy_double_buffer();
 

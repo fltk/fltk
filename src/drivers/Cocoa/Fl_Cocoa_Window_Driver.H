@@ -75,6 +75,7 @@ public:
   virtual void draw_end();
   virtual void make_current();
   virtual void label(const char *name, const char *mininame);
+  virtual void show();
 
   virtual void shape(const Fl_Image* img);
   // that one is implemented in Fl_Cocoa.mm because it uses Objective-c

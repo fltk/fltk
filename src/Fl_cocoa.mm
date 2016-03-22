@@ -3145,21 +3145,14 @@ void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
 /*
  * make a window visible
  */
-void Fl_Window::show() {
-  image(Fl::scheme_bg_);
-  if (Fl::scheme_bg_) {
-    labeltype(FL_NORMAL_LABEL);
-    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
-  } else {
-    labeltype(FL_NO_LABEL);
-  }
-  Fl_Tooltip::exit(this);
+void Fl_Cocoa_Window_Driver::show() {
   Fl_X *top = NULL;
-  if (parent()) top = top_window()->i;
-  if (!shown() && (!parent() || (top && ![top->xid isMiniaturized]))) {
-    Fl_X::make(this);
+  if (pWindow->parent()) top = Fl_X::i(pWindow->top_window());
+  if (!pWindow->shown() && (!pWindow->parent() || (top && ![top->xid isMiniaturized]))) {
+    Fl_X::make(pWindow);
   } else {
-    if ( !parent() ) {
+    if ( !pWindow->parent() ) {
+      Fl_X *i = Fl_X::i(pWindow);
       if ([i->xid isMiniaturized]) {
         i->w->redraw();
         [i->xid deminiaturize:nil];
@@ -3168,7 +3161,7 @@ void Fl_Window::show() {
         [i->xid makeKeyAndOrderFront:nil];
       }
     }
-    else set_visible();
+    else pWindow->set_visible();
   }
 }
 

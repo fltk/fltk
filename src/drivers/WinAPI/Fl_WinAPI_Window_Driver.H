@@ -79,6 +79,7 @@ public:
   virtual void flush_overlay();
   virtual void draw_begin();
   virtual void make_current();
+  virtual void show();
   virtual void label(const char *name,const char *iname);
 
   virtual void shape(const Fl_Image* img);

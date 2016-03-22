@@ -2277,20 +2277,13 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 // Fl_Widget *fl_boxcheat;
 //static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}
 
-void Fl_Window::show() {
-  image(Fl::scheme_bg_);
-  if (Fl::scheme_bg_) {
-    labeltype(FL_NORMAL_LABEL);
-    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
-  } else {
-    labeltype(FL_NO_LABEL);
-  }
-  Fl_Tooltip::exit(this);
-  if (!shown()) {
+void Fl_WinAPI_Window_Driver::show() {
+  if (!pWindow->shown()) {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
-    Fl_X::make(this);
+    Fl_X::make(pWindow);
   } else {
     // Once again, we would lose the capture if we activated the window.
+    Fl_X *i = Fl_X::i(pWindow);
     if (IsIconic(i->xid)) OpenIcon(i->xid);
     if (!fl_capture) BringWindowToTop(i->xid);
     //ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);

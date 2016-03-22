@@ -41,10 +41,16 @@ int Fl_Window_Driver::maxh() {return pWindow->maxh;}
 unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set;}
 
 void Fl_Window_Driver::flush_single() { pWindow->Fl_Window::flush(); }
-void Fl_Window_Driver::draw() { pWindow->draw(); }
-void Fl_Window_Driver::make_current() { }
-void Fl_Window_Driver::label(const char *name, const char *mininame) {}
 
+void Fl_Window_Driver::draw() { pWindow->draw(); }
+
+void Fl_Window_Driver::make_current() { }
+
+void Fl_Window_Driver::show() { }
+
+void Fl_Window_Driver::show_menu() { pWindow->Fl_Window::show(); }
+
+void Fl_Window_Driver::label(const char *name, const char *mininame) {}
 
 void Fl_Window_Driver::take_focus()
 {

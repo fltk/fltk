@@ -26,6 +26,7 @@
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Tooltip.H>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -491,6 +492,18 @@ void Fl_Window::label(const char *name, const char *mininame) {
   Fl_Widget::label(name);
   iconlabel_ = mininame;
   pWindowDriver->label(name, mininame);
+}
+
+void Fl_Window::show() {
+  image(Fl::scheme_bg_);
+  if (Fl::scheme_bg_) {
+    labeltype(FL_NORMAL_LABEL);
+    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+  } else {
+    labeltype(FL_NO_LABEL);
+  }
+  Fl_Tooltip::exit(this);
+  pWindowDriver->show();
 }
 
 //

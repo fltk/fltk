@@ -22,6 +22,7 @@
 
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Overlay_Window.H>
+#include <FL/Fl_Menu_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
@@ -31,6 +32,13 @@
 #endif
 #define ShapeBounding			0
 #define ShapeSet			0
+
+#if HAVE_OVERLAY
+extern XVisualInfo *fl_find_overlay_visual();
+extern XVisualInfo *fl_overlay_visual;
+extern Colormap fl_overlay_colormap;
+extern unsigned long fl_transparent_pixel;
+#endif
 
 Window fl_window;
 
@@ -439,6 +447,19 @@ void Fl_X11_Window_Driver::make_current() {
 #endif
 }
 
+
+void Fl_X11_Window_Driver::show_menu()
+{
+#if HAVE_OVERLAY
+  if (!pWindow->shown() && ((Fl_Menu_Window*)pWindow)->overlay() && fl_find_overlay_visual()) {
+    XInstallColormap(fl_display, fl_overlay_colormap);
+    fl_background_pixel = int(fl_transparent_pixel);
+    Fl_X::make_xid(pWindow, fl_overlay_visual, fl_overlay_colormap);
+    fl_background_pixel = -1;
+  } else
+#endif
+    pWindow->Fl_Window::show();
+}
 
 //
 // End of "$Id$".

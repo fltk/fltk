@@ -28,6 +28,7 @@
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
+#include <FL/Fl_Window_Driver.H>
 
 // WIN32 note: HAVE_OVERLAY is false
 #if HAVE_OVERLAY
@@ -41,15 +42,7 @@ extern uchar fl_overlay; // changes how fl_color(x) works
 #include <stdio.h>
 
 void Fl_Menu_Window::show() {
-#if HAVE_OVERLAY
-  if (!shown() && overlay() && fl_find_overlay_visual()) {
-    XInstallColormap(fl_display, fl_overlay_colormap);
-    fl_background_pixel = int(fl_transparent_pixel);
-    Fl_X::make_xid(this, fl_overlay_visual, fl_overlay_colormap);
-    fl_background_pixel = -1;
-  } else
-#endif
-    Fl_Single_Window::show();
+  driver()->show_menu();
 }
 
 void Fl_Menu_Window::flush() {
