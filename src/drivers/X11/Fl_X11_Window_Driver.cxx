@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa window driver.
+// Definition of X11 window driver.
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -38,8 +38,8 @@ Window fl_window;
 #if USE_XDBE
 #include <X11/extensions/Xdbe.h>
 
-// whether the Xdbe extension is usable
-// DO NOT call this if the window is not mapped! [why not? I see it OK on Debian and Darwin (MG)]
+// whether the Xdbe extension is usable.
+// DO NOT call this if the window is not mapped, because we do not want fluid to open the display.
 static int can_xdbe()
 {
   static int tried = 0;
@@ -47,7 +47,6 @@ static int can_xdbe()
   if (!tried) {
     tried = 1;
     int event_base, error_base;
-    fl_open_display();
     if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
     Drawable root = RootWindow(fl_display,fl_screen);
     int numscreens = 1;
@@ -63,27 +62,11 @@ static int can_xdbe()
   return use_xdbe;
 }
 
-class Fl_Xdbe_Window_Driver : public Fl_X11_Window_Driver {
-  virtual void flush_double(int erase_overlay);
-public:
-  Fl_Xdbe_Window_Driver(Fl_Window *win) : Fl_X11_Window_Driver(win) {}
-  virtual void destroy_double_buffer();
-  virtual ~Fl_Xdbe_Window_Driver() {}
-};
 
-void Fl_Xdbe_Window_Driver::destroy_double_buffer() {
-  Fl_X *i = Fl_X::i(pWindow);
-  XdbeDeallocateBackBufferName(fl_display, i->other_xid);
-  i->other_xid = 0;
-}
-
-
-void Fl_Xdbe_Window_Driver::flush_double(int erase_overlay)
+void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
 {
-  if (!pWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return; // window not yet created
   if (!i->other_xid) {
     i->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(pWindow), XdbeCopied);
     i->backbuffer_bad = 1;
@@ -112,13 +95,21 @@ void Fl_Xdbe_Window_Driver::flush_double(int erase_overlay)
 #endif // USE_XDBE
 
 
+void Fl_X11_Window_Driver::destroy_double_buffer() {
+#if USE_XDBE
+  if (can_xdbe()) {
+    Fl_X *i = Fl_X::i(pWindow);
+    XdbeDeallocateBackBufferName(fl_display, i->other_xid);
+    i->other_xid = 0;
+  }
+  else
+#endif // USE_XDBE
+    Fl_Window_Driver::destroy_double_buffer();
+}
+
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
-  return
-#if USE_XDBE
-    can_xdbe() ? new Fl_Xdbe_Window_Driver(w) :
-#endif
-      new Fl_X11_Window_Driver(w);
+  return new Fl_X11_Window_Driver(w);
 }
 
 
@@ -203,15 +194,17 @@ void Fl_X11_Window_Driver::draw_begin()
 
 void Fl_X11_Window_Driver::flush_double()
 {
-  flush_double(0);
+  if (!pWindow->shown()) return;
+#if USE_XDBE
+  if (can_xdbe()) flush_double_dbe(0); else
+#endif
+    flush_double(0);
 }
 
 void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 {
-  if (!pWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return; // window not yet created
   if (!i->other_xid) {
       i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
     pWindow->clear_damage(FL_DAMAGE_ALL);
@@ -230,8 +223,12 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 
 void Fl_X11_Window_Driver::flush_overlay()
 {
+  if (!pWindow->shown()) return;
   int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
+#if USE_XDBE
+  if (can_xdbe()) flush_double_dbe(erase_overlay); else
+#endif
   flush_double(erase_overlay);
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
   if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();

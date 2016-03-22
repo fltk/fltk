@@ -26,6 +26,7 @@
 #define FL_X11_WINDOW_DRIVER_H
 
 #include <FL/Fl_Window_Driver.H>
+#include <config.h> // for USE_XDBE
 class Fl_Bitmap;
 
 /*
@@ -66,7 +67,10 @@ private:
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
-  virtual void flush_double(int);
+  void flush_double(int erase_overlay);
+#ifdef USE_XDBE
+  void flush_double_dbe(int erase_overlay);
+#endif
   
 public:
   Fl_X11_Window_Driver(Fl_Window*);
@@ -83,6 +87,7 @@ public:
   virtual void draw_begin();
   virtual void make_current();
   virtual void label(const char *name, const char *mininame);
+  virtual void destroy_double_buffer();
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);
