@@ -44,11 +44,6 @@ class Fl_Bitmap;
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 
-struct Fl_Window_Driver::icon_data {
-  const void *legacy_icon;
-  Fl_RGB_Image **icons;
-  int count;
-};
 
 
 struct Fl_Window_Driver::shape_data_type {
@@ -63,6 +58,11 @@ class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
   friend class Fl_X;
 
 private:
+  struct icon_data {
+    const void *legacy_icon;
+    Fl_RGB_Image **icons;
+    int count;
+  } *icon_;
   void decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);

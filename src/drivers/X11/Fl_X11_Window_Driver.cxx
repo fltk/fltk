@@ -116,8 +116,8 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
-  icon_ = new Fl_Window_Driver::icon_data;
-  memset(icon_, 0, sizeof(Fl_Window_Driver::icon_data));
+  icon_ = new icon_data;
+  memset(icon_, 0, sizeof(icon_data));
 }
 
 

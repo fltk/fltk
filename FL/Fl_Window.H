@@ -22,11 +22,6 @@
 #ifndef Fl_Window_H
 #define Fl_Window_H
 
-#ifdef WIN32
-//#include <windows.h>
-typedef struct HICON__* HICON;
-#endif
-
 #include "Fl_Group.H"
 #include "Fl_Bitmap.H"
 #include <stdlib.h>
@@ -37,7 +32,6 @@ typedef struct HICON__* HICON;
 class Fl_X;
 class Fl_Window_Driver;
 class Fl_RGB_Image;
-class Fl_Shared_Image;
 class Fl_Double_Window;
 
 /**
@@ -77,7 +71,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 
   const char* iconlabel_;
   char* xclass_;
-  struct icon_data *icon_;
   // size_range stuff:
   int minw, minh, maxw, maxh;
   int dw, dh, aspect;
@@ -403,6 +396,9 @@ public:
   void icons(const Fl_RGB_Image*[], int);
 
 #ifdef WIN32
+  typedef struct HICON__* HICON;
+  // These 2 member functions break the driver model but are kept for back compatibility.
+  // They are implemented in Fl_WinAPI_Window_Driver.cxx
   static void default_icons(HICON big_icon, HICON small_icon);
   void icons(HICON big_icon, HICON small_icon);
 #endif

@@ -44,8 +44,6 @@ class FL_EXPORT Fl_Window_Driver
 
 protected:
   Fl_Window *pWindow;
-  struct icon_data;
-  icon_data *icon_;
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
 

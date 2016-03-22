@@ -43,13 +43,6 @@
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 
-struct Fl_Window_Driver::icon_data {
-  const void *legacy_icon;
-  Fl_RGB_Image **icons;
-  int count;
-  HICON big_icon;
-  HICON small_icon;
-};
 
 struct Fl_Window_Driver::shape_data_type {
   int lw_; ///<  width of shape image
@@ -60,6 +53,14 @@ struct Fl_Window_Driver::shape_data_type {
 
 class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
 {
+  friend class Fl_Window;
+  struct icon_data {
+    const void *legacy_icon;
+    Fl_RGB_Image **icons;
+    int count;
+    HICON big_icon;
+    HICON small_icon;
+  };
 private:
   RECT border_width_title_bar_height(int &bx, int &by, int &bt);
   void shape_bitmap_(Fl_Image* b);
@@ -68,6 +69,7 @@ public:
   Fl_WinAPI_Window_Driver(Fl_Window*);
   ~Fl_WinAPI_Window_Driver();
 
+  struct icon_data *icon_;
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();
@@ -84,7 +86,6 @@ public:
   virtual const void *icon() const;
   virtual void icon(const void * ic);
   virtual void free_icons();
-  void icons(HICON big_icon, HICON small_icon);
   // this one is implemented in Fl_win32.cxx
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   virtual void wait_for_expose();

@@ -1765,7 +1765,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wcw.lpfnWndProc = (WNDPROC)WndProc;
     wcw.cbClsExtra = wcw.cbWndExtra = 0;
     wcw.hInstance = fl_display;
-    if (!w->icon() && !w->pWindowDriver->icon_->count)
+    if (!w->icon() && !((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count)
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
     wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
     wcw.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -2159,24 +2159,24 @@ void Fl_X::set_icons() {
   big_icon = NULL;
   small_icon = NULL;
 
-  if (w->pWindowDriver->icon_->count) {
+  if (((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count) {
     const Fl_RGB_Image *best_big, *best_small;
 
     best_big = find_best_icon(GetSystemMetrics(SM_CXICON),
-                              (const Fl_RGB_Image **)w->pWindowDriver->icon_->icons,
-                              w->pWindowDriver->icon_->count);
+                              (const Fl_RGB_Image **)((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->icons,
+                              ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count);
     best_small = find_best_icon(GetSystemMetrics(SM_CXSMICON),
-                                (const Fl_RGB_Image **)w->pWindowDriver->icon_->icons,
-                                w->pWindowDriver->icon_->count);
+                                (const Fl_RGB_Image **)((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->icons,
+                                ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count);
 
     if (best_big != NULL)
       big_icon = image_to_icon(best_big, true, 0, 0);
     if (best_small != NULL)
       small_icon = image_to_icon(best_small, true, 0, 0);
   } else {
-    if ((w->pWindowDriver->icon_->big_icon != NULL) || (w->pWindowDriver->icon_->small_icon != NULL)) {
-      big_icon = w->pWindowDriver->icon_->big_icon;
-      small_icon = w->pWindowDriver->icon_->small_icon;
+    if ((((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->big_icon != NULL) || (((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->small_icon != NULL)) {
+      big_icon = ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->big_icon;
+      small_icon = ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->small_icon;
     } else {
       big_icon = default_big_icon;
       small_icon = default_small_icon;
@@ -2187,49 +2187,6 @@ void Fl_X::set_icons() {
   SendMessage(xid, WM_SETICON, ICON_SMALL, (LPARAM)small_icon);
 }
 
-/** Sets the default window icons.
-
-  Convenience function to set the default icons using Windows'
-  native HICON icon handles.
-
-  The given icons are copied. You can free the icons immediately after
-  this call.
-
-  \param[in] big_icon default large icon for all windows
-                      subsequently created
-  \param[in] small_icon default small icon for all windows
-                        subsequently created
-
-  \see Fl_Window::default_icon(const Fl_RGB_Image *)
-  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
-  \see Fl_Window::icon(const Fl_RGB_Image *)
-  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
-  \see Fl_Window::icons(HICON, HICON)
- */
-void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
-  Fl_X::set_default_icons(big_icon, small_icon);
-}
-
-/** Sets the window icons.
-
-  Convenience function to set this window's icons using Windows'
-  native HICON icon handles.
-
-  The given icons are copied. You can free the icons immediately after
-  this call.
-
-  \param[in] big_icon large icon for this window
-  \param[in] small_icon small icon for this windows
-
-  \see Fl_Window::default_icon(const Fl_RGB_Image *)
-  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
-  \see Fl_Window::default_icons(HICON, HICON)
-  \see Fl_Window::icon(const Fl_RGB_Image *)
-  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
- */
-void Fl_Window::icons(HICON big_icon, HICON small_icon) {
-  ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icons(big_icon, small_icon);
-  }
 
 ////////////////////////////////////////////////////////////////
 
