@@ -485,6 +485,20 @@ void Fl_X11_Window_Driver::unmap() {
   XUnmapWindow(fl_display, fl_xid(pWindow));
 }
 
+
+// Turning the border on/off by changing the motif_wm_hints property
+// works on Irix 4DWM.  Does not appear to work for any other window
+// manager.  Fullscreen still works on some window managers (fvwm is one)
+// because they allow the border to be placed off-screen.
+
+// Unfortunately most X window managers ignore changes to the border
+// and refuse to position the border off-screen, so attempting to make
+// the window full screen will lose the size of the border off the
+// bottom and right.
+void Fl_X11_Window_Driver::use_border() {
+  if (pWindow->shown()) Fl_X::i(pWindow)->sendxjunk();
+}
+
 //
 // End of "$Id$".
 //

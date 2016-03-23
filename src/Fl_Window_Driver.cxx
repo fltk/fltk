@@ -196,6 +196,14 @@ int Fl_Window_Driver::hide_common() {
   return 0;
 }
 
+
+void Fl_Window_Driver::use_border() {
+  if (pWindow->shown()) {
+    pWindow->hide(); // hide and then show to reflect the new state of the window border
+    pWindow->show();
+  }
+}
+
 //
 // End of "$Id$".
 //
