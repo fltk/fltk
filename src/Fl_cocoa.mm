@@ -91,8 +91,6 @@ int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of t
 
 // public variables
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
-bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
-//int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
 
 // forward declarations of variables in this file
@@ -2882,11 +2880,11 @@ void Fl_X::make(Fl_Window* w)
     NSUInteger winstyle;
     if (w->parent()) {
       w->border(0);
-      fl_show_iconic = 0;
+      Fl_Window::show_iconic_ = 0;
     }
     if (w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
     else winstyle = NSBorderlessWindowMask;
-    if (fl_show_iconic && !w->parent()) { // prevent window from being out of work area when created iconized
+    if (Fl_Window::show_iconic_ && !w->parent()) { // prevent window from being out of work area when created iconized
       int sx, sy, sw, sh;
       Fl::screen_work_area (sx, sy, sw, sh, w->x(), w->y());
       if (w->x() < sx) w->x(sx);
@@ -3047,8 +3045,8 @@ void Fl_X::make(Fl_Window* w)
     w->set_visible();
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
     [cw setDelegate:[FLWindowDelegate singleInstance]];
-  if (fl_show_iconic) {
-    fl_show_iconic = 0;
+  if (Fl_Window::show_iconic_) {
+    Fl_Window::show_iconic_ = 0;
     w->handle(FL_SHOW); // create subwindows if any
     [cw recursivelySendToSubwindows:@selector(display)];  // draw the window and its subwindows before its icon is computed
     [cw miniaturize:nil];
@@ -3560,8 +3558,8 @@ Fl_Region Fl_X::intersect_region_and_rect(Fl_Region current, int x,int y,int w, 
   return outr;
 }
 
-void Fl_X::collapse() {
-  [xid miniaturize:nil];
+void Fl_Cocoa_Window_Driver::iconize() {
+  [fl_xid(pWindow) miniaturize:nil];
 }
 
 static NSImage *CGBitmapContextToNSImage(CGContextRef c)

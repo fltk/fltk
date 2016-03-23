@@ -2313,7 +2313,6 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
 // normally.  The global variables like fl_show_iconic are so that
 // subclasses of *that* class may change the behavior...
 
-char fl_show_iconic;    // hack for iconize()
 int fl_background_pixel = -1; // hack to speed up bg box drawing
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
@@ -2527,10 +2526,10 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     XWMHints *hints = XAllocWMHints();
     hints->input = True;
     hints->flags = InputHint;
-    if (fl_show_iconic) {
+    if (Fl_Window::show_iconic_) {
       hints->flags |= StateHint;
       hints->initial_state = IconicState;
-      fl_show_iconic = 0;
+      Fl_Window::show_iconic_ = 0;
       showit = 0;
     }
     if (((Fl_X11_Window_Driver*)win->pWindowDriver)->icon_->legacy_icon) {

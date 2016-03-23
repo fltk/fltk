@@ -22,6 +22,7 @@
 #ifndef Fl_Window_H
 #define Fl_Window_H
 
+#include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Bitmap.H>
 #include <stdlib.h>
@@ -54,6 +55,7 @@ class Fl_Double_Window;
 class FL_EXPORT Fl_Window : public Fl_Group {
 
   static char *default_xclass_;
+  static char show_iconic_; // 1 means create next window in iconic form
 
   int no_fullscreen_x;
   int no_fullscreen_y;
@@ -64,6 +66,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   int fullscreen_screen_left;
   int fullscreen_screen_right;
 
+  friend int Fl::arg(int argc, char **argv, int &i);
   friend class Fl_X;
   friend class Fl_Window_Driver;
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped

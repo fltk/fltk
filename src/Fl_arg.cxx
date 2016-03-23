@@ -53,7 +53,6 @@ static int fl_match(const char *a, const char *s, int atleast = 1) {
 }
 
 // flags set by previously parsed arguments:
-extern char fl_show_iconic; // in Fl_x.cxx
 static char arg_called;
 static char return_i;
 static const char *name;
@@ -148,7 +147,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   s++; // point after the dash
 
   if (fl_match(s, "iconic")) {
-    fl_show_iconic = 1;
+    Fl_Window::show_iconic_ = 1;
     i++;
     return 1;
   } else if (fl_match(s, "kbd")) {

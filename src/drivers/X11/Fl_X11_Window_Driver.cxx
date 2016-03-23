@@ -504,6 +504,10 @@ void Fl_X11_Window_Driver::size_range() {
   if (pWindow->shown()) Fl_X::i(pWindow)->sendxjunk();
 }
 
+void Fl_X11_Window_Driver::iconize() {
+  XIconifyWindow(fl_display, fl_xid(pWindow), fl_screen);
+}
+
 //
 // End of "$Id$".
 //

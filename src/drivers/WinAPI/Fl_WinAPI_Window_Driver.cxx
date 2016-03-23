@@ -608,6 +608,11 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
+
+void Fl_WinAPI_Window_Driver::iconize() {
+  ShowWindow(fl_xid(pWindow), SW_SHOWMINNOACTIVE);
+}
+
 //
 // End of "$Id$".
 //

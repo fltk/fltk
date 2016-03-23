@@ -1643,7 +1643,6 @@ private:
 
 void fl_fix_focus(); // in Fl.cxx
 
-char fl_show_iconic;	// hack for Fl_Window::iconic()
 // int fl_background_pixel = -1; // color to use for background
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
@@ -1846,7 +1845,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     fl_clipboard_notify_target(x->xid);
 
   x->wait_for_expose = 1;
-  if (fl_show_iconic) {showit = 0; fl_show_iconic = 0;}
+  if (Fl_Window::show_iconic_) {showit = 0; Fl_Window::show_iconic_ = 0;}
   if (showit) {
     w->set_visible();
     int old_event = Fl::e_number;

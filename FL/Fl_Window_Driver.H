@@ -95,6 +95,7 @@ public:
   virtual void fullscreen_off(int X, int Y, int W, int H) {}
   virtual void use_border();
   virtual void size_range();
+  virtual void iconize() {}
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

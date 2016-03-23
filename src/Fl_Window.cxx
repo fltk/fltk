@@ -33,6 +33,8 @@
 
 char *Fl_Window::default_xclass_ = 0L;
 
+char Fl_Window::show_iconic_ = 0;
+
 Fl_Window *Fl_Window::current_;
 
 void Fl_Window::_Fl_Window() {
