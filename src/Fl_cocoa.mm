@@ -2851,23 +2851,6 @@ void Fl_X::GLcontext_makecurrent(NSOpenGLContext* ctxt)
   [ctxt makeCurrentContext];
 }
 
-void Fl_Window::fullscreen_x() {
-  _set_fullscreen();
-  /* On OS X < 10.6, it is necessary to recreate the window. This is done
-     with hide+show. */
-  hide();
-  show();
-  Fl::handle(FL_FULLSCREEN, this);
-}
-
-void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
-  _clear_fullscreen();
-  hide();
-  resize(X, Y, W, H);
-  show();
-  Fl::handle(FL_FULLSCREEN, this);
-}
-
 /*
  * Initialize the given port for redraw and call the window's flush() to actually draw the content
  */ 

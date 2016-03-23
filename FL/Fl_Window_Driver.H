@@ -57,6 +57,10 @@ public:
   int minh();
   int maxw();
   int maxh();
+  int fullscreen_screen_top();
+  int fullscreen_screen_bottom();
+  int fullscreen_screen_left();
+  int fullscreen_screen_right();
   unsigned char size_range_set();
   void force_position(int c);
   void x(int X);
@@ -87,6 +91,8 @@ public:
   int hide_common();
   virtual void map() {}
   virtual void unmap() {}
+  virtual void fullscreen_on() {}
+  virtual void fullscreen_off(int X, int Y, int W, int H) {}
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

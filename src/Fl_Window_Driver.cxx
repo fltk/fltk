@@ -43,6 +43,11 @@ int Fl_Window_Driver::maxh() {return pWindow->maxh;}
 void Fl_Window_Driver::force_position(int c) { pWindow->force_position(c); }
 void Fl_Window_Driver::x(int X) {pWindow->x(X); }
 void Fl_Window_Driver::y(int Y) {pWindow->y(Y); }
+int Fl_Window_Driver::fullscreen_screen_top() {return pWindow->fullscreen_screen_top;}
+int Fl_Window_Driver::fullscreen_screen_bottom() {return pWindow->fullscreen_screen_bottom;}
+int Fl_Window_Driver::fullscreen_screen_left() {return pWindow->fullscreen_screen_left;}
+int Fl_Window_Driver::fullscreen_screen_right() {return pWindow->fullscreen_screen_right;}
+
 
 unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set;}
 

@@ -28,6 +28,7 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl_Window_Driver.H>
 
 #include <config.h>
 
@@ -67,7 +68,7 @@ void Fl_Window::fullscreen() {
   no_fullscreen_w = w();
   no_fullscreen_h = h();
   if (shown() && !(flags() & Fl_Widget::FULLSCREEN)) {
-    fullscreen_x();
+    pWindowDriver->fullscreen_on();
   } else {
     set_flag(FULLSCREEN);
   }
@@ -75,7 +76,7 @@ void Fl_Window::fullscreen() {
 
 void Fl_Window::fullscreen_off(int X,int Y,int W,int H) {
   if (shown() && (flags() & Fl_Widget::FULLSCREEN)) {
-    fullscreen_off_x(X, Y, W, H);
+    pWindowDriver->fullscreen_off(X, Y, W, H);
   } else {
     clear_flag(FULLSCREEN);
   }
@@ -105,7 +106,7 @@ void Fl_Window::fullscreen_screens(int top, int bottom, int left, int right) {
   }
 
   if (shown() && fullscreen_active())
-    fullscreen_x();
+    pWindowDriver->fullscreen_on();
 }
 
 

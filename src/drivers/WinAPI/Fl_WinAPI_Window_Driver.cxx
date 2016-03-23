@@ -531,6 +531,83 @@ void Fl_WinAPI_Window_Driver::unmap() {
   ShowWindow(fl_xid(pWindow), SW_HIDE);
 }
 
+
+void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
+  int top, bottom, left, right;
+  int sx, sy, sw, sh;
+  
+  top = w->fullscreen_screen_top;
+  bottom = w->fullscreen_screen_bottom;
+  left = w->fullscreen_screen_left;
+  right = w->fullscreen_screen_right;
+  
+  if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
+    top = Fl::screen_num(X, Y, W, H);
+    bottom = top;
+    left = top;
+    right = top;
+  }
+  
+  Fl::screen_xywh(sx, sy, sw, sh, top);
+  Y = sy;
+  Fl::screen_xywh(sx, sy, sw, sh, bottom);
+  H = sy + sh - Y;
+  Fl::screen_xywh(sx, sy, sw, sh, left);
+  X = sx;
+  Fl::screen_xywh(sx, sy, sw, sh, right);
+  W = sx + sw - X;
+  
+  DWORD flags = GetWindowLong(xid, GWL_STYLE);
+  flags = flags & ~(WS_THICKFRAME|WS_CAPTION);
+  SetWindowLong(xid, GWL_STYLE, flags);
+  
+  // SWP_NOSENDCHANGING is so that we can override size limits
+  SetWindowPos(xid, HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
+}
+
+
+void Fl_WinAPI_Window_Driver::fullscreen_on() {
+  pWindow->_set_fullscreen();
+  Fl_X::i(pWindow)->make_fullscreen(pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
+  Fl::handle(FL_FULLSCREEN, pWindow);
+}
+
+
+void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
+  pWindow->_clear_fullscreen();
+  DWORD style = GetWindowLong(fl_xid(pWindow), GWL_STYLE);
+  // Remove the xid temporarily so that Fl_X::fake_X_wm() behaves like it
+  // does in Fl_X::make().
+  HWND xid = fl_xid(pWindow);
+  Fl_X::i(pWindow)->xid = NULL;
+  int wx, wy, bt, bx, by;
+  switch (Fl_X::fake_X_wm(pWindow, wx, wy, bt, bx, by)) {
+    case 0:
+      break;
+    case 1:
+      style |= WS_CAPTION;
+      break;
+    case 2:
+      if (pWindow->border()) {
+        style |= WS_THICKFRAME | WS_CAPTION;
+      }
+      break;
+  }
+  Fl_X::i(pWindow)->xid = xid;
+  // Adjust for decorations (but not if that puts the decorations
+  // outside the screen)
+  if ((X != pWindow->x()) || (Y != pWindow->y())) {
+    X -= bx;
+    Y -= by+bt;
+  }
+  W += bx*2;
+  H += by*2+bt;
+  SetWindowLong(fl_xid(pWindow), GWL_STYLE, style);
+  SetWindowPos(fl_xid(pWindow), 0, X, Y, W, H,
+               SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  Fl::handle(FL_FULLSCREEN, pWindow);
+}
+
 //
 // End of "$Id$".
 //
