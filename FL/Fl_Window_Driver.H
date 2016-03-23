@@ -98,6 +98,8 @@ public:
   virtual void iconize() {}
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom) {
     *top = *left = *right = *bottom = 0; }
+  virtual void show_with_args_begin() {}
+  virtual void show_with_args_end(int argc, char **argv) {}
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check
@@ -111,7 +113,7 @@ public:
   virtual void free_icons() {} // TODO: check
 
   // --- window printing helper
-  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right); // TODO: check
+  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
 };
 
 

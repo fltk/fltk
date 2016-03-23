@@ -24,6 +24,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Menu_Window.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
@@ -515,6 +516,42 @@ void Fl_X11_Window_Driver::decoration_sizes(int *top, int *left,  int *right, in
   *left = 4;
   *right = 4;
   *bottom = 8;
+}
+
+void Fl_X11_Window_Driver::show_with_args_begin() {
+  // Get defaults for drag-n-drop and focus...
+  const char *key = 0, *val;
+  
+  if (Fl::first_window()) key = Fl::first_window()->xclass();
+  if (!key) key = "fltk";
+  
+  val = XGetDefault(fl_display, key, "dndTextOps");
+  if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
+                            strcasecmp(val, "on") == 0 ||
+                            strcasecmp(val, "yes") == 0);
+  
+  val = XGetDefault(fl_display, key, "tooltips");
+  if (val) Fl_Tooltip::enable(strcasecmp(val, "true") == 0 ||
+                              strcasecmp(val, "on") == 0 ||
+                              strcasecmp(val, "yes") == 0);
+  
+  val = XGetDefault(fl_display, key, "visibleFocus");
+  if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
+                             strcasecmp(val, "on") == 0 ||
+                             strcasecmp(val, "yes") == 0);
+}
+
+
+void Fl_X11_Window_Driver::show_with_args_end(int argc, char **argv) {
+  // set the command string, used by state-saving window managers:
+  int j;
+  int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
+  char *buffer = new char[n];
+  char *p = buffer;
+  for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
+  XChangeProperty(fl_display, fl_xid(pWindow), XA_WM_COMMAND, XA_STRING, 8, 0,
+                  (unsigned char *)buffer, p-buffer-1);
+  delete[] buffer;
 }
 
 //

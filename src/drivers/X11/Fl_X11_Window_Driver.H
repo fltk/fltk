@@ -100,6 +100,8 @@ public:
   virtual void size_range();
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
+  virtual void show_with_args_begin();
+  virtual void show_with_args_end(int argc, char **argv);
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

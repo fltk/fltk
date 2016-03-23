@@ -20,8 +20,8 @@
 // You do not need to call this!  Feel free to make up your own switches.
 
 #include <FL/Fl.H>
-#include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/filename.H>
 #include <FL/fl_draw.H>
@@ -301,32 +301,7 @@ void Fl_Window::show(int argc, char **argv) {
 
   Fl::get_system_colors();
 
-#if defined(WIN32)
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver- platform default parameters
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: Parse additional default settings"
-#else // X11
-  // Get defaults for drag-n-drop and focus...
-  const char *key = 0, *val;
-
-  if (Fl::first_window()) key = Fl::first_window()->xclass();
-  if (!key) key = "fltk";
-
-  val = XGetDefault(fl_display, key, "dndTextOps");
-  if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
-                            strcasecmp(val, "on") == 0 ||
-                            strcasecmp(val, "yes") == 0);
-
-  val = XGetDefault(fl_display, key, "tooltips");
-  if (val) Fl_Tooltip::enable(strcasecmp(val, "true") == 0 ||
-                              strcasecmp(val, "on") == 0 ||
-                              strcasecmp(val, "yes") == 0);
-
-  val = XGetDefault(fl_display, key, "visibleFocus");
-  if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
-                             strcasecmp(val, "on") == 0 ||
-                             strcasecmp(val, "yes") == 0);
-#endif // !WIN32 && !__APPLE__ // PORTME: platform defaults
+  pWindowDriver->show_with_args_begin();
 
   // set colors first, so background_pixel is correct:
   static char beenhere;
@@ -365,21 +340,7 @@ void Fl_Window::show(int argc, char **argv) {
   // Show the window AFTER we have set the colors and scheme.
   show();
 
-#if defined(WIN32)
-#elif defined(__APPLE__) // PORTME: Fl_System_Driver - platform properties
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: Parse additional default settings"
-#else // X11
-  // set the command string, used by state-saving window managers:
-  int j;
-  int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
-  char *buffer = new char[n];
-  char *p = buffer;
-  for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
-  XChangeProperty(fl_display, fl_xid(this), XA_WM_COMMAND, XA_STRING, 8, 0,
-		  (unsigned char *)buffer, p-buffer-1);
-  delete[] buffer;
-#endif // !WIN32 && !__APPLE__ // PORTME: Fl_System_Driver - platform properties
+  pWindowDriver->show_with_args_end(argc, argv);
 }
 
 // Calls useful for simple demo programs, with automatic help message:
