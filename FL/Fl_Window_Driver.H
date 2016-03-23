@@ -85,6 +85,8 @@ public:
   virtual void resize(int X,int Y,int W,int H) {}
   virtual void hide() {}
   int hide_common();
+  virtual void map() {}
+  virtual void unmap() {}
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

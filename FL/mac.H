@@ -177,8 +177,6 @@ public:
   static void GLcontext_makecurrent(NSOpenGLContext*);
   static void GL_cleardrawable(void);
   void destroy(void);
-  void map(void);
-  void unmap(void);
   void collapse(void);
   WindowRef window_ref(void); // useless with cocoa GL windows
   void set_key_window(void);

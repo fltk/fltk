@@ -475,6 +475,16 @@ void Fl_X11_Window_Driver::hide() {
   delete ip;
 }
 
+
+void Fl_X11_Window_Driver::map() {
+  XMapWindow(fl_display, fl_xid(pWindow)); // extra map calls are harmless
+}
+
+
+void Fl_X11_Window_Driver::unmap() {
+  XUnmapWindow(fl_display, fl_xid(pWindow));
+}
+
 //
 // End of "$Id$".
 //

@@ -92,6 +92,8 @@ public:
   virtual void label(const char *name, const char *mininame);
   virtual void destroy_double_buffer();
   virtual void hide();
+  virtual void map();
+  virtual void unmap();
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

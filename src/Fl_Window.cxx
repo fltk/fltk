@@ -514,6 +514,46 @@ void Fl_Window::hide() {
   pWindowDriver->hide();
 }
 
+
+// FL_SHOW and FL_HIDE are called whenever the visibility of this widget
+// or any parent changes.  We must correctly map/unmap the system's window.
+
+// For top-level windows it is assumed the window has already been
+// mapped or unmapped!!!  This is because this should only happen when
+// Fl_Window::show() or Fl_Window::hide() is called, or in response to
+// iconize/deiconize events from the system.
+int Fl_Window::handle(int ev)
+{
+  if (parent()) {
+    switch (ev) {
+      case FL_SHOW:
+        if (!shown()) show();
+        else {
+          pWindowDriver->map();
+        }
+        break;
+      case FL_HIDE:
+        if (shown()) {
+          // Find what really turned invisible, if it was a parent window
+          // we do nothing.  We need to avoid unnecessary unmap calls
+          // because they cause the display to blink when the parent is
+          // remapped.  However if this or any intermediate non-window
+          // widget has really had hide() called directly on it, we must
+          // unmap because when the parent window is remapped we don't
+          // want to reappear.
+          if (visible()) {
+            Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
+            if (p->type() >= FL_WINDOW) break; // don't do the unmap
+          }
+          pWindowDriver->unmap();
+        }
+        break;
+    }
+  }
+  
+  return Fl_Group::handle(ev);
+}
+
 //
 // End of "$Id$".
 //

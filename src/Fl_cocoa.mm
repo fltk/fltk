@@ -3528,23 +3528,29 @@ void Fl_X::destroy() {
   delete subRect();
 }
 
-void Fl_X::map() {
-  if (w && xid && ![xid parentWindow]) { // 10.2
+
+void Fl_Cocoa_Window_Driver::map() {
+  Window xid = fl_xid(pWindow);
+  if (pWindow && xid && ![xid parentWindow]) { // 10.2
     // after a subwindow has been unmapped, it has lost its parent window and its frame may be wrong
     [xid setSubwindowFrame];
   }
-  if (cursor) {
-    [(NSCursor*)cursor release];
-    cursor = NULL;
+  Fl_X *i = Fl_X::i(pWindow);
+  if (i->cursor) {
+    [(NSCursor*)i->cursor release];
+    i->cursor = NULL;
   }
 }
 
-void Fl_X::unmap() {
-  if (w && xid) {
-    if (w->parent()) [[xid parentWindow] removeChildWindow:xid]; // necessary with at least 10.5
+
+void Fl_Cocoa_Window_Driver::unmap() {
+  Window xid = fl_xid(pWindow);
+  if (pWindow && xid) {
+    if (pWindow->parent()) [[xid parentWindow] removeChildWindow:xid]; // necessary with at least 10.5
     [xid orderOut:nil];
   }
 }
+
 
 // intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
 Fl_Region Fl_X::intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)

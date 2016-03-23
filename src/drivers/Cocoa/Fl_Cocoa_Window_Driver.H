@@ -78,6 +78,8 @@ public:
   virtual void show();
   virtual void resize(int X,int Y,int W,int H);
   virtual void hide();
+  virtual void map();
+  virtual void unmap();
 
   virtual void shape(const Fl_Image* img);
   // that one is implemented in Fl_Cocoa.mm because it uses Objective-c

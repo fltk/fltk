@@ -57,10 +57,6 @@ inline void XClipBox(Fl_Region r,XRectangle* rect) {
     rect->width=win_rect.right-win_rect.left;
     rect->height=win_rect.bottom-win_rect.top;
 }
-#define XDestroyWindow(a,b) DestroyWindow(b)
-#define XMapWindow(a,b) ShowWindow(b, SW_RESTORE)
-#define XUnmapWindow(a,b) ShowWindow(b, SW_HIDE)
-
 // this object contains all win32-specific stuff about a window:
 // Warning: this object is highly subject to change!
 class FL_EXPORT Fl_X {

@@ -504,7 +504,7 @@ void Fl_WinAPI_Window_Driver::hide() {
     ShowWindow(ip->xid, SW_HIDE);
     ShowWindow(p, SW_SHOWNA);
   }
-  XDestroyWindow(fl_display, ip->xid);
+  DestroyWindow(ip->xid);
   // end of fix for STR#3079
   if (count) {
     int ii;
@@ -519,6 +519,16 @@ void Fl_WinAPI_Window_Driver::hide() {
   if (pWindow->non_modal() && Fl::first_window() && Fl::first_window()->shown())
     Fl::first_window()->show();
   delete ip;
+}
+
+
+void Fl_WinAPI_Window_Driver::map() {
+  ShowWindow(fl_xid(pWindow), SW_RESTORE); // extra map calls are harmless
+}
+
+
+void Fl_WinAPI_Window_Driver::unmap() {
+  ShowWindow(fl_xid(pWindow), SW_HIDE);
 }
 
 //
