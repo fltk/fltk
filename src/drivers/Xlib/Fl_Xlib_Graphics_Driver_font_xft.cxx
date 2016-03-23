@@ -958,7 +958,7 @@ static XftDraw* draw_overlay;
 static Window draw_overlay_window;
 #endif
 
-void fl_destroy_xft_draw(Window id) {
+void Fl_Xlib_Graphics_Driver::destroy_xft_draw(Window id) {
   if (id == draw_window)
     XftDrawChange(draw_, draw_window = fl_message_window);
 #if USE_OVERLAY

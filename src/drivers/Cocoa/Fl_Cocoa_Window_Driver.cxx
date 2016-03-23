@@ -223,6 +223,22 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
 #endif
 }
 
+
+void Fl_Cocoa_Window_Driver::hide() {
+  Fl_X* ip = Fl_X::i(pWindow);
+  // MacOS X manages a single pointer per application. Make sure that hiding
+  // a toplevel window will not leave us with some random pointer shape, or
+  // worst case, an invisible pointer
+  if (ip && !pWindow->parent()) pWindow->cursor(FL_CURSOR_DEFAULT);
+  if ( hide_common() ) return;
+  Fl_X::q_release_context(ip);
+  if ( ip->xid == fl_window )
+    fl_window = 0;
+  if (ip->region) XDestroyRegion(ip->region);
+  ip->destroy();
+  delete ip;
+}
+
 //
 // End of "$Id$".
 //

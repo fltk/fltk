@@ -83,6 +83,8 @@ public:
   virtual void show();
   virtual void show_menu();
   virtual void resize(int X,int Y,int W,int H) {}
+  virtual void hide() {}
+  int hide_common();
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

@@ -445,6 +445,82 @@ void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {
   }
 }
 
+
+extern void fl_clipboard_notify_retarget(HWND wnd);
+extern void fl_update_clipboard(void);
+
+void Fl_WinAPI_Window_Driver::hide() {
+  Fl_X* ip = Fl_X::i(pWindow);
+  // STR#3079: if there remains a window and a non-modal window, and the window is deleted,
+  // the app remains running without any apparent window.
+  // Bug mechanism: hiding an owner window unmaps the owned (non-modal) window(s)
+  // but does not delete it(them) in FLTK.
+  // Fix for it:
+  // when hiding a window, build list of windows it owns, and do hide/show on them.
+  int count = 0;
+  Fl_Window *win, **doit = NULL;
+  for (win = Fl::first_window(); win && ip; win = Fl::next_window(win)) {
+    if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == ip->xid) {
+      count++;
+    }
+  }
+  if (count) {
+    doit = new Fl_Window*[count];
+    count = 0;
+    for (win = Fl::first_window(); win && ip; win = Fl::next_window(win)) {
+      if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == ip->xid) {
+        doit[count++] = win;
+      }
+    }
+  }
+
+  if (hide_common()) return;
+  
+  // make sure any custom icons get freed
+  icons(NULL, 0);
+  // this little trick keeps the current clipboard alive, even if we are about
+  // to destroy the window that owns the selection.
+  if (GetClipboardOwner()==ip->xid)
+    fl_update_clipboard();
+  // Make sure we unlink this window from the clipboard chain
+  fl_clipboard_notify_retarget(ip->xid);
+  // Send a message to myself so that I'll get out of the event loop...
+  PostMessage(ip->xid, WM_APP, 0, 0);
+  if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
+  if (ip->xid == fl_window && fl_graphics_driver->gc()) {
+    fl_release_dc(fl_window, (HDC)fl_graphics_driver->gc());
+    fl_window = (HWND)-1;
+    fl_graphics_driver->gc(0);
+# ifdef FLTK_USE_CAIRO
+    if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
+# endif
+  }
+  
+  if (ip->region) XDestroyRegion(ip->region);
+  
+  // this little trickery seems to avoid the popup window stacking problem
+  HWND p = GetForegroundWindow();
+  if (p==GetParent(ip->xid)) {
+    ShowWindow(ip->xid, SW_HIDE);
+    ShowWindow(p, SW_SHOWNA);
+  }
+  XDestroyWindow(fl_display, ip->xid);
+  // end of fix for STR#3079
+  if (count) {
+    int ii;
+    for (ii = 0; ii < count; ii++)  doit[ii]->hide();
+    for (ii = 0; ii < count; ii++)  {
+      if (ii != 0) doit[0]->show(); // Fix for STR#3165
+      doit[ii]->show();
+    }
+    delete[] doit;
+  }
+  // Try to stop the annoying "raise another program" behavior
+  if (pWindow->non_modal() && Fl::first_window() && Fl::first_window()->shown())
+    Fl::first_window()->show();
+  delete ip;
+}
+
 //
 // End of "$Id$".
 //

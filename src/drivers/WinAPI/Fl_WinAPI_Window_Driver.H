@@ -82,6 +82,7 @@ public:
   virtual void show();
   virtual void label(const char *name,const char *iname);
   virtual void resize(int X,int Y,int W,int H);
+  virtual void hide();
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

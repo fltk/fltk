@@ -510,6 +510,10 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   pWindowDriver->resize(X, Y, W, H);
 }
 
+void Fl_Window::hide() {
+  pWindowDriver->hide();
+}
+
 //
 // End of "$Id$".
 //

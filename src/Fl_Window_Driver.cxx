@@ -21,7 +21,9 @@
 #include <config.h>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl.H>
 
+extern void fl_throw_focus(Fl_Widget *o);
 
 Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win) :
 pWindow(win)
@@ -149,6 +151,44 @@ void Fl_Window_Driver::shape_pixmap_(Fl_Image* pixmap) {
 
 void Fl_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right) {
   top = left = bottom = right = NULL;
+}
+
+
+// This function is available for use by platform-specific, Fl_Window_Driver-derived classes
+int Fl_Window_Driver::hide_common() {
+  pWindow->clear_visible();
+  
+  if (!pWindow->shown()) return 1;
+  
+  // remove from the list of windows:
+  Fl_X* ip = Fl_X::i(pWindow);
+  Fl_X** pp = &Fl_X::first;
+  for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return 1;
+  *pp = ip->next;
+  
+  pWindow->i = 0;
+  
+  // recursively remove any subwindows:
+  for (Fl_X *wi = Fl_X::first; wi;) {
+    Fl_Window* W = wi->w;
+    if (W->window() == pWindow) {
+      W->hide();
+      W->set_visible();
+      wi = Fl_X::first;
+    } else wi = wi->next;
+  }
+  
+  if (pWindow == Fl::modal_) { // we are closing the modal window, find next one:
+    Fl_Window* W;
+    for (W = Fl::first_window(); W; W = Fl::next_window(W))
+      if (W->modal()) break;
+    Fl::modal_ = W;
+  }
+  
+  // Make sure no events are sent to this window:
+  fl_throw_focus(pWindow);
+  pWindow->handle(FL_HIDE);
+  return 0;
 }
 
 //

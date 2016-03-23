@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_X11_Window_Driver.H"
+#include "Fl_Xlib_Graphics_Driver.H"
 
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Overlay_Window.H>
@@ -459,6 +460,19 @@ void Fl_X11_Window_Driver::show_menu()
   } else
 #endif
     pWindow->Fl_Window::show();
+}
+
+
+void Fl_X11_Window_Driver::hide() {
+  Fl_X* ip = Fl_X::i(pWindow);
+  if (hide_common()) return;
+  if (ip->region) XDestroyRegion(ip->region);
+# if USE_XFT
+  Fl_Xlib_Graphics_Driver::destroy_xft_draw(ip->xid);
+# endif
+  // this test makes sure ip->xid has not been destroyed already
+  if (ip->xid) XDestroyWindow(fl_display, ip->xid);
+  delete ip;
 }
 
 //

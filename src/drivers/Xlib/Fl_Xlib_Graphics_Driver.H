@@ -44,6 +44,9 @@ public:
   virtual void *gc() { return gc_; }
   virtual void gc(void *value);
   char can_do_alpha_blending();
+#if USE_XFT
+  static void destroy_xft_draw(Window id);
+#endif
   
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
