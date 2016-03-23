@@ -2245,45 +2245,45 @@ void Fl_X::activate_window(Window w) {
 }
 
 /* Change an existing window to fullscreen */
-void Fl_Window::fullscreen_x() {
+void Fl_X11_Window_Driver::fullscreen_on() {
   if (Fl_X::ewmh_supported()) {
     int top, bottom, left, right;
-
-    top = fullscreen_screen_top;
-    bottom = fullscreen_screen_bottom;
-    left = fullscreen_screen_left;
-    right = fullscreen_screen_right;
-
+    
+    top = fullscreen_screen_top();
+    bottom = fullscreen_screen_bottom();
+    left = fullscreen_screen_left();
+    right = fullscreen_screen_right();
+    
     if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
-      top = Fl::screen_num(x(), y(), w(), h());
+      top = Fl::screen_num(pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
       bottom = top;
       left = top;
       right = top;
     }
-
-    send_wm_event(fl_xid(this), fl_NET_WM_FULLSCREEN_MONITORS,
+    
+    send_wm_event(fl_xid(pWindow), fl_NET_WM_FULLSCREEN_MONITORS,
                   top, bottom, left, right);
-    send_wm_state_event(fl_xid(this), 1, fl_NET_WM_STATE_FULLSCREEN);
+    send_wm_state_event(fl_xid(pWindow), 1, fl_NET_WM_STATE_FULLSCREEN);
   } else {
-    _set_fullscreen();
+    pWindow->_set_fullscreen();
     hide();
     show();
     /* We want to grab the window, not a widget, so we cannot use Fl::grab */
-    XGrabKeyboard(fl_display, fl_xid(this), 1, GrabModeAsync, GrabModeAsync, fl_event_time);
-    Fl::handle(FL_FULLSCREEN, this);
+    XGrabKeyboard(fl_display, fl_xid(pWindow), 1, GrabModeAsync, GrabModeAsync, fl_event_time);
+    Fl::handle(FL_FULLSCREEN, pWindow);
   }
 }
 
-void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
+void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   if (Fl_X::ewmh_supported()) {
-    send_wm_state_event(fl_xid(this), 0, fl_NET_WM_STATE_FULLSCREEN);
+    send_wm_state_event(fl_xid(pWindow), 0, fl_NET_WM_STATE_FULLSCREEN);
   } else {
-    _clear_fullscreen();
+    pWindow->_clear_fullscreen();
     /* The grab will be lost when the window is destroyed */
     hide();
     resize(X,Y,W,H);
     show();
-    Fl::handle(FL_FULLSCREEN, this);
+    Fl::handle(FL_FULLSCREEN, pWindow);
   }
 }
 
