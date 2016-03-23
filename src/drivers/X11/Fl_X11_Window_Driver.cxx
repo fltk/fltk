@@ -19,7 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_X11_Window_Driver.H"
-#include "Fl_Xlib_Graphics_Driver.H"
+#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Overlay_Window.H>

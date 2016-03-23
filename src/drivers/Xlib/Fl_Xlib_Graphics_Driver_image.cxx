@@ -45,6 +45,7 @@
 
 ////////////////////////////////////////////////////////////////
 
+#include <config.h>
 #include "Fl_Xlib_Graphics_Driver.H"
 #  include <FL/Fl.H>
 #  include <FL/fl_draw.H>
