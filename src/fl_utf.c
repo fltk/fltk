@@ -73,7 +73,9 @@
    to completely ignore character sets in your code because virtually
    everything is either ISO-8859-1 or UTF-8.
 */
-#define ERRORS_TO_ISO8859_1 1
+#ifndef ERRORS_TO_ISO8859_1
+# define ERRORS_TO_ISO8859_1 1
+#endif
 
 /*!Set to 1 to turn bad UTF-8 bytes in the 0x80-0x9f range into the
    Unicode index for Microsoft's CP1252 character set. You should
@@ -81,7 +83,9 @@
    available text (such as all web pages) are correctly converted
    to Unicode.
 */
-#define ERRORS_TO_CP1252 1
+#ifndef ERRORS_TO_CP1252
+# define ERRORS_TO_CP1252 1
+#endif
 
 /*!A number of Unicode code points are in fact illegal and should not
    be produced by a UTF-8 converter. Turn this on will replace the
@@ -89,7 +93,9 @@
    arbitrary 16-bit data to UTF-8 and then back is not an identity,
    which will probably break a lot of software.
 */
-#define STRICT_RFC3629 0
+#ifndef STRICT_RFC3629
+# define STRICT_RFC3629 0
+#endif
 
 #if ERRORS_TO_CP1252
 /* Codes 0x80..0x9f from the Microsoft CP1252 character set, translated
@@ -109,7 +115,7 @@ static unsigned short cp1252[32] = {
     (adding \e len to \e p will point at the next character).
 
     If \p p points at an illegal UTF-8 encoding, including one that
-    would go past \e end, or where a code is uses more bytes than
+    would go past \e end, or where a code uses more bytes than
     necessary, then *(unsigned char*)p is translated as though it is
     in the Microsoft CP1252 character set and \e len is set to 1.
     Treating errors this way allows this to decode almost any
