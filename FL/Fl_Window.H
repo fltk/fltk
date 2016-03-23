@@ -22,8 +22,8 @@
 #ifndef Fl_Window_H
 #define Fl_Window_H
 
-#include "Fl_Group.H"
-#include "Fl_Bitmap.H"
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Bitmap.H>
 #include <stdlib.h>
 
 #define FL_WINDOW 0xF0		///< window type id all subclasses have type() >= this
@@ -80,7 +80,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   
 private:
 
-  void size_range_();
   void _Fl_Window(); // constructor innards
 
   // unimplemented copy ctor and assignment operator
@@ -324,52 +323,7 @@ public:
     \deprecated please use force_position(0) instead
   */
   void free_position()	{clear_flag(FORCE_POSITION);}
-  /**
-    Sets the allowable range the user can resize this window to.
-    This only works for top-level windows.
-    <UL>
-    <LI>\p minw and \p minh are the smallest the window can be.
-	Either value must be greater than 0.</LI>
-    <LI>\p maxw and \p maxh are the largest the window can be. If either is
-	<I>equal</I> to the minimum then you cannot resize in that direction.
-	If either is zero  then FLTK picks a maximum size in that direction
-	such that the window will fill the screen.</LI>
-    <LI>\p dw and \p dh are size increments.  The  window will be constrained
-	to widths of minw + N * dw,  where N is any non-negative integer.
-	If these are less or equal to 1 they are ignored (this is ignored
-	on WIN32).</LI>
-    <LI>\p aspect is a flag that indicates that the window should preserve its
-	aspect ratio.  This only works if both the maximum and minimum have
-	the same aspect ratio (ignored on WIN32 and by many X window managers).
-	</LI>
-    </UL>
-
-    If this function is not called, FLTK tries to figure out the range
-    from the setting of resizable():
-    <UL>
-    <LI>If resizable() is NULL (this is the  default) then the window cannot
-	be resized and the resize border and max-size control will not be
-	displayed for the window.</LI>
-    <LI>If either dimension of resizable() is less than 100, then that is
-	considered the minimum size.  Otherwise the resizable() has a minimum
-	size of 100.</LI>
-    <LI>If either dimension of resizable() is zero, then that is also the
-	maximum size (so the window cannot resize in that direction).</LI>
-    </UL>
-
-    It is undefined what happens if the current size does not fit in the
-    constraints passed to size_range().
-  */
-  void size_range(int minw, int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0) {
-    this->minw   = minw;
-    this->minh   = minh;
-    this->maxw   = maxw;
-    this->maxh   = maxh;
-    this->dw     = dw;
-    this->dh     = dh;
-    this->aspect = aspect;
-    size_range_();
-  }
+  void size_range(int minw, int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0);
 
   /** See void Fl_Window::label(const char*)   */
   const char* label() const	{return Fl_Widget::label();}

@@ -499,6 +499,11 @@ void Fl_X11_Window_Driver::use_border() {
   if (pWindow->shown()) Fl_X::i(pWindow)->sendxjunk();
 }
 
+void Fl_X11_Window_Driver::size_range() {
+  Fl_Window_Driver::size_range();
+  if (pWindow->shown()) Fl_X::i(pWindow)->sendxjunk();
+}
+
 //
 // End of "$Id$".
 //

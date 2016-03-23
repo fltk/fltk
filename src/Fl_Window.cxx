@@ -554,6 +554,53 @@ int Fl_Window::handle(int ev)
   return Fl_Group::handle(ev);
 }
 
+/**
+ Sets the allowable range the user can resize this window to.
+ This only works for top-level windows.
+ <UL>
+ <LI>\p minw and \p minh are the smallest the window can be.
+	Either value must be greater than 0.</LI>
+ <LI>\p maxw and \p maxh are the largest the window can be. If either is
+	<I>equal</I> to the minimum then you cannot resize in that direction.
+	If either is zero  then FLTK picks a maximum size in that direction
+	such that the window will fill the screen.</LI>
+ <LI>\p dw and \p dh are size increments.  The  window will be constrained
+	to widths of minw + N * dw,  where N is any non-negative integer.
+	If these are less or equal to 1 they are ignored (this is ignored
+	on WIN32).</LI>
+ <LI>\p aspect is a flag that indicates that the window should preserve its
+	aspect ratio.  This only works if both the maximum and minimum have
+	the same aspect ratio (ignored on WIN32 and by many X window managers).
+	</LI>
+ </UL>
+ 
+ If this function is not called, FLTK tries to figure out the range
+ from the setting of resizable():
+ <UL>
+ <LI>If resizable() is NULL (this is the  default) then the window cannot
+	be resized and the resize border and max-size control will not be
+	displayed for the window.</LI>
+ <LI>If either dimension of resizable() is less than 100, then that is
+	considered the minimum size.  Otherwise the resizable() has a minimum
+	size of 100.</LI>
+ <LI>If either dimension of resizable() is zero, then that is also the
+	maximum size (so the window cannot resize in that direction).</LI>
+ </UL>
+ 
+ It is undefined what happens if the current size does not fit in the
+ constraints passed to size_range().
+ */
+void Fl_Window::size_range(int minw, int minh, int maxw, int maxh, int dw, int dh, int aspect) {
+  this->minw   = minw;
+  this->minh   = minh;
+  this->maxw   = maxw;
+  this->maxh   = maxh;
+  this->dw     = dw;
+  this->dh     = dh;
+  this->aspect = aspect;
+  pWindowDriver->size_range();
+}
+
 //
 // End of "$Id$".
 //

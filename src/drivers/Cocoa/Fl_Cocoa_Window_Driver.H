@@ -82,6 +82,7 @@ public:
   virtual void unmap();
   virtual void fullscreen_on();
   virtual void fullscreen_off(int X, int Y, int W, int H);
+  virtual void size_range();
 
   virtual void shape(const Fl_Image* img);
   // that one is implemented in Fl_Cocoa.mm because it uses Objective-c

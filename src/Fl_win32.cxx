@@ -1878,10 +1878,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
 HINSTANCE fl_display = GetModuleHandle(NULL);
 
-void Fl_Window::size_range_() {
-  size_range_set = 1;
-}
-
 void Fl_X::set_minmax(LPMINMAXINFO minmax)
 {
   int td, wd, hd, dummy_x, dummy_y;

@@ -204,6 +204,10 @@ void Fl_Window_Driver::use_border() {
   }
 }
 
+void Fl_Window_Driver::size_range() {
+  pWindow->size_range_set = 1;
+}
+
 //
 // End of "$Id$".
 //

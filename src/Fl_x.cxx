@@ -2656,11 +2656,6 @@ void Fl_X::sendxjunk() {
   XFree(hints);
 }
 
-void Fl_Window::size_range_() {
-  size_range_set = 1;
-  if (shown()) i->sendxjunk();
-}
-
 ////////////////////////////////////////////////////////////////
 
 static unsigned long *default_net_wm_icons = 0L;

@@ -3036,7 +3036,7 @@ void Fl_X::make(Fl_Window* w)
     // Install DnD handlers 
     [myview registerForDraggedTypes:[NSArray arrayWithObjects:UTF8_pasteboard_type,  NSFilenamesPboardType, nil]];
   
-    if (w->size_range_set) w->size_range_();
+    if (w->size_range_set) w->pWindowDriver->size_range();
     
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) {
       Fl_Tooltip::enter(0);
@@ -3077,12 +3077,13 @@ void Fl_X::make(Fl_Window* w)
 /*
  * Tell the OS what window sizes we want to allow
  */
-void Fl_Window::size_range_() {
+void Fl_Cocoa_Window_Driver::size_range() {
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
-  size_range_set = 1;
-  NSSize minSize = NSMakeSize(minw, minh + bt);
-  NSSize maxSize = NSMakeSize(maxw?maxw:32000, maxh?maxh + bt:32000);
+  Fl_Window_Driver::size_range();
+  NSSize minSize = NSMakeSize(minw(), minh() + bt);
+  NSSize maxSize = NSMakeSize(maxw() ? maxw():32000, maxh() ? maxh() + bt:32000);
+  Fl_X *i = Fl_X::i(pWindow);
   if (i && i->xid) {
     [i->xid setMinSize:minSize];
     [i->xid setMaxSize:maxSize];

@@ -97,6 +97,7 @@ public:
   virtual void fullscreen_on();
   virtual void fullscreen_off(int X, int Y, int W, int H);
   virtual void use_border();
+  virtual void size_range();
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);
