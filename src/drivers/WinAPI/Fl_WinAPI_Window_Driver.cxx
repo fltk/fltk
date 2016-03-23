@@ -613,6 +613,18 @@ void Fl_WinAPI_Window_Driver::iconize() {
   ShowWindow(fl_xid(pWindow), SW_SHOWMINNOACTIVE);
 }
 
+
+void Fl_WinAPI_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
+  if (size_range_set() && (maxw() != minw() || maxh() != minh())) {
+    *left = *right = GetSystemMetrics(SM_CXSIZEFRAME);
+    *top = *bottom = GetSystemMetrics(SM_CYSIZEFRAME);
+  } else {
+    *left = *right = GetSystemMetrics(SM_CXFIXEDFRAME);
+    *top = *bottom = GetSystemMetrics(SM_CYFIXEDFRAME);
+  }
+  *top += GetSystemMetrics(SM_CYCAPTION);
+}
+
 //
 // End of "$Id$".
 //

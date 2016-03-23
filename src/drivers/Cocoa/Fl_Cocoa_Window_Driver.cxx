@@ -258,6 +258,14 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
+
+void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
+  *top = 24;
+  *left = 2;
+  *right = 2;
+  *bottom = 2;
+}
+
 //
 // End of "$Id$".
 //

@@ -508,6 +508,15 @@ void Fl_X11_Window_Driver::iconize() {
   XIconifyWindow(fl_display, fl_xid(pWindow), fl_screen);
 }
 
+void Fl_X11_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
+  // Ensure border is on screen; these values are generic enough
+  // to work with many window managers, and are based on KDE defaults.
+  *top = 20;
+  *left = 4;
+  *right = 4;
+  *bottom = 8;
+}
+
 //
 // End of "$Id$".
 //

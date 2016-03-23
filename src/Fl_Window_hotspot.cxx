@@ -18,8 +18,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include <FL/x.H>
-#include <stdio.h>
+#include <FL/Fl_Window_Driver.H>
 
 void Fl_Window::hotspot(int X, int Y, int offscreen) {
   int mx,my;
@@ -40,30 +39,9 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
     int bottom = 0;
 
     if (border()) {
-#ifdef WIN32
-      if (size_range_set && (maxw != minw || maxh != minh)) {
-        left = right = GetSystemMetrics(SM_CXSIZEFRAME);
-        top = bottom = GetSystemMetrics(SM_CYSIZEFRAME);
-      } else {
-        left = right = GetSystemMetrics(SM_CXFIXEDFRAME); 
-        top = bottom = GetSystemMetrics(SM_CYFIXEDFRAME);
-      }
-      top += GetSystemMetrics(SM_CYCAPTION);
-#elif defined(__APPLE__) // PORTME: Fl_Window_Driver - platform window driver
-      top = 24;
-      left = 2;
-      right = 2;
-      bottom = 2;
-#else
-      // Ensure border is on screen; these values are generic enough
-      // to work with many window managers, and are based on KDE defaults.
-      top = 20;
-      left = 4;
-      right = 4;
-      bottom = 8;
-#endif
+      pWindowDriver->decoration_sizes(&top, &left, &right, &bottom);
     }
-    // now insure contents are on-screen (more important than border):
+    // now ensure contents are on-screen (more important than border):
     if (X+w()+right > scr_w+scr_x) X = scr_w+scr_x-right-w();
     if (X-left < scr_x) X = left + scr_x;
     if (Y+h()+bottom > scr_h+scr_y) Y = scr_h+scr_y-bottom-h();
@@ -84,7 +62,6 @@ void Fl_Window::hotspot(const Fl_Widget *o, int offscreen) {
   }
   hotspot(X,Y,offscreen);
 }
-
 
 //
 // End of "$Id$".

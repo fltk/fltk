@@ -96,6 +96,8 @@ public:
   virtual void use_border();
   virtual void size_range();
   virtual void iconize() {}
+  virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom) {
+    *top = *left = *right = *bottom = 0; }
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check
