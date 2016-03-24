@@ -29,7 +29,6 @@
 
 #include <stdlib.h>
 
-
 class Fl_X;
 class Fl_Image;
 class Fl_Shared_Image;
@@ -132,6 +131,8 @@ public:
   virtual const void *icon() const {return NULL;} // TODO: check
   virtual void icon(const void * ic) {} // TODO: check
   virtual void free_icons() {} // TODO: check
+  // each platform implements this its own way
+  static void default_icons(const Fl_RGB_Image *icons[], int count);
 
   // --- window printing helper
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);

@@ -2708,7 +2708,7 @@ static void icons_to_property(const Fl_RGB_Image *icons[], int count,
   }
 }
 
-void Fl_X::set_default_icons(const Fl_RGB_Image *icons[], int count) {
+void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {
   if (default_net_wm_icons) {
     delete [] default_net_wm_icons;
     default_net_wm_icons = 0L;

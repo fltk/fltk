@@ -158,6 +158,8 @@ void fl_set_status(int x, int y, int w, int h)
 {
 }
 
+void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {}
+
 /*
  * Mac keyboard lookup table
  */
