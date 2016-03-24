@@ -40,13 +40,13 @@ Fl_Pico_Window_Driver::~Fl_Pico_Window_Driver()
 
 int Fl_Pico_Window_Driver::decorated_w()
 {
-  return pWindow->w();
+  return w();
 }
 
 
 int Fl_Pico_Window_Driver::decorated_h()
 {
-  return pWindow->h();
+  return h();
 }
 
 //

@@ -163,7 +163,7 @@ void Fl_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Sh
 int Fl_Window_Driver::hide_common() {
   pWindow->clear_visible();
   
-  if (!pWindow->shown()) return 1;
+  if (!shown()) return 1;
   
   // remove from the list of windows:
   Fl_X* ip = Fl_X::i(pWindow);
@@ -198,7 +198,7 @@ int Fl_Window_Driver::hide_common() {
 
 
 void Fl_Window_Driver::use_border() {
-  if (pWindow->shown()) {
+  if (shown()) {
     pWindow->hide(); // hide and then show to reflect the new state of the window border
     pWindow->show();
   }

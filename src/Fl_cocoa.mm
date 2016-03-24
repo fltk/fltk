@@ -3118,7 +3118,7 @@ const char *fl_filename_name( const char *name )
  * set the window title bar name
  */
 void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
-  if (pWindow->shown() || Fl_X::i(pWindow)) {
+  if (shown() || Fl_X::i(pWindow)) {
     q_set_window_title(fl_xid(pWindow), name, mininame);
   }
 }
@@ -3129,11 +3129,11 @@ void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
  */
 void Fl_Cocoa_Window_Driver::show() {
   Fl_X *top = NULL;
-  if (pWindow->parent()) top = Fl_X::i(pWindow->top_window());
-  if (!pWindow->shown() && (!pWindow->parent() || (top && ![top->xid isMiniaturized]))) {
+  if (parent()) top = Fl_X::i(pWindow->top_window());
+  if (!shown() && (!parent() || (top && ![top->xid isMiniaturized]))) {
     Fl_X::make(pWindow);
   } else {
-    if ( !pWindow->parent() ) {
+    if ( !parent() ) {
       Fl_X *i = Fl_X::i(pWindow);
       if ([i->xid isMiniaturized]) {
         i->w->redraw();
@@ -3156,15 +3156,15 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
   Fl_Window *parent;
   if (W<=0) W = 1; // OS X does not like zero width windows
   if (H<=0) H = 1;
-  int is_a_resize = (W != pWindow->w() || H != pWindow->h());
+  int is_a_resize = (W != w() || H != h());
   //  printf("Fl_Window::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
   //         X, Y, W, H, is_a_resize, resize_from_system, this);
-  if (X != pWindow->x() || Y != pWindow->y()) force_position(1);
+  if (X != x() || Y != y()) force_position(1);
   else if (!is_a_resize) {
     resize_from_system = 0;
     return;
     }
-  if ( (resize_from_system != pWindow) && pWindow->shown()) {
+  if ( (resize_from_system != pWindow) && shown()) {
     if (is_a_resize) {
       if (pWindow->resizable()) {
         int min_w = minw(), max_w = maxw(), min_h = minh(), max_h = maxh();
@@ -3186,8 +3186,8 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (pWindow->border()?bt:0));
-      if (pWindow->visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
+      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
+      if (visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
     } else {
       bx = X; by = Y;
       parent = pWindow->window();
@@ -3197,14 +3197,14 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         parent = parent->window();
       }
       NSPoint pt = NSMakePoint(bx, main_screen_height - (by + H));
-      if (pWindow->visible_r()) [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
+      if (visible_r()) [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
     }
   }
   else {
     resize_from_system = 0;
     if (is_a_resize) {
       pWindow->Fl_Group::resize(X,Y,W,H);
-      if (pWindow->shown()) {
+      if (shown()) {
         pWindow->redraw();
       }
     } else {
@@ -3528,7 +3528,7 @@ void Fl_Cocoa_Window_Driver::map() {
 void Fl_Cocoa_Window_Driver::unmap() {
   Window xid = fl_xid(pWindow);
   if (pWindow && xid) {
-    if (pWindow->parent()) [[xid parentWindow] removeChildWindow:xid]; // necessary with at least 10.5
+    if (parent()) [[xid parentWindow] removeChildWindow:xid]; // necessary with at least 10.5
     [xid orderOut:nil];
   }
 }
@@ -4266,20 +4266,20 @@ Window fl_xid(const Fl_Window* w)
 
 int Fl_Cocoa_Window_Driver::decorated_w()
 {
-  if (!pWindow->shown() || pWindow->parent() || !pWindow->border() || !pWindow->visible())
-    return pWindow->w();
+  if (!shown() || parent() || !border() || !visible())
+    return w();
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
-  return pWindow->w() + 2 * bx;
+  return w() + 2 * bx;
 }
 
 int Fl_Cocoa_Window_Driver::decorated_h()
 {
-  if (!pWindow->shown() || pWindow->parent() || !pWindow->border() || !pWindow->visible())
-    return pWindow->h();
+  if (!shown() || parent() || !border() || !visible())
+    return h();
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
-  return pWindow->h() + bt + by;
+  return h() + bt + by;
 }
 
 // clip the graphics context to rounded corners
@@ -4325,27 +4325,27 @@ void Fl_X::draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
 {
   left = bottom = right = NULL;
-  int htop = pWindow->decorated_h() - pWindow->h();
+  int htop = pWindow->decorated_h() - h();
   CALayer *layer = get_titlebar_layer(pWindow);
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  uchar *rgba = new uchar[4 * pWindow->w() * htop * 4];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * pWindow->w(), 2 * htop, 8, 8 * pWindow->w(), cspace, kCGImageAlphaPremultipliedLast);
+  uchar *rgba = new uchar[4 * w() * htop * 4];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * w(), 2 * htop, 8, 8 * w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
-    Fl_X::draw_layer_to_context(layer, auxgc, pWindow->w(), htop);
+    Fl_X::draw_layer_to_context(layer, auxgc, w(), htop);
   } else {
-    CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, pWindow->w(), htop);
+    CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
-    Fl_X::clip_to_rounded_corners(auxgc, pWindow->w(), htop);
-    CGContextDrawImage(auxgc, CGRectMake(0, 0, pWindow->w(), htop), img);
+    Fl_X::clip_to_rounded_corners(auxgc, w(), htop);
+    CGContextDrawImage(auxgc, CGRectMake(0, 0, w(), htop), img);
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * pWindow->w(), 2 * htop, 4);
+  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * w(), 2 * htop, 4);
   top_rgb->alloc_array = 1;
   top = Fl_Shared_Image::get(top_rgb);
-  top->scale(pWindow->w(),htop);
+  top->scale(w(),htop);
   CGContextRelease(auxgc);
 }
 

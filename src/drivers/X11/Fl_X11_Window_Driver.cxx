@@ -194,7 +194,7 @@ void Fl_X11_Window_Driver::take_focus()
 void Fl_X11_Window_Driver::draw_begin()
 {
   if (shape_data_) {
-    if (( shape_data_->lw_ != pWindow->w() || shape_data_->lh_ != pWindow->h() ) && shape_data_->shape_) {
+    if (( shape_data_->lw_ != w() || shape_data_->lh_ != h() ) && shape_data_->shape_) {
       // size of window has changed since last time
       combine_mask();
     }
@@ -204,7 +204,7 @@ void Fl_X11_Window_Driver::draw_begin()
 
 void Fl_X11_Window_Driver::flush_double()
 {
-  if (!pWindow->shown()) return;
+  if (!shown()) return;
 #if USE_XDBE
   if (can_xdbe()) flush_double_dbe(0); else
 #endif
@@ -216,7 +216,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
   if (!i->other_xid) {
-      i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+      i->other_xid = fl_create_offscreen(w(), h());
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
@@ -226,14 +226,14 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
       fl_window = i->xid;
     }
   if (erase_overlay) fl_clip_region(0);
-  int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
+  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
   if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
 }
 
 
 void Fl_X11_Window_Driver::flush_overlay()
 {
-  if (!pWindow->shown()) return;
+  if (!shown()) return;
   int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
 #if USE_XDBE
@@ -322,8 +322,8 @@ void Fl_X11_Window_Driver::combine_mask()
 #endif
   }
   if (!XShapeCombineMask_f) return;
-  shape_data_->lw_ = pWindow->w();
-  shape_data_->lh_ = pWindow->h();
+  shape_data_->lw_ = w();
+  shape_data_->lh_ = h();
   Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
   Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(pWindow),
                                          (const char*)*temp->data(),
@@ -383,7 +383,7 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
 {
   Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
   top = left = bottom = right = NULL;
-  if (pWindow->decorated_h() == pWindow->h()) return;
+  if (pWindow->decorated_h() == h()) return;
   Window from = fl_window;
   Fl_Surface_Device *previous = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
@@ -402,22 +402,22 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   fl_window = parent;
   uchar *rgb;
   if (htop) {
-    rgb = fl_read_image(NULL, 0, 0, - (pWindow->w() + 2 * wsides), htop);
-    r_top = new Fl_RGB_Image(rgb, pWindow->w() + 2 * wsides, htop, 3);
+    rgb = fl_read_image(NULL, 0, 0, - (w() + 2 * wsides), htop);
+    r_top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
     r_top->alloc_array = 1;
     top = Fl_Shared_Image::get(r_top);
   }
   if (wsides) {
-    rgb = fl_read_image(NULL, 0, htop, -wsides, pWindow->h());
-    r_left = new Fl_RGB_Image(rgb, wsides, pWindow->h(), 3);
+    rgb = fl_read_image(NULL, 0, htop, -wsides, h());
+    r_left = new Fl_RGB_Image(rgb, wsides, h(), 3);
     r_left->alloc_array = 1;
     left = Fl_Shared_Image::get(r_left);
-    rgb = fl_read_image(NULL, pWindow->w() + wsides, htop, -wsides, pWindow->h());
-    r_right = new Fl_RGB_Image(rgb, wsides, pWindow->h(), 3);
+    rgb = fl_read_image(NULL, w() + wsides, htop, -wsides, h());
+    r_right = new Fl_RGB_Image(rgb, wsides, h(), 3);
     r_right->alloc_array = 1;
     right = Fl_Shared_Image::get(r_right);
-    rgb = fl_read_image(NULL, 0, htop + pWindow->h(), -(pWindow->w() + 2*wsides), hbottom);
-    r_bottom = new Fl_RGB_Image(rgb, pWindow->w() + 2*wsides, hbottom, 3);
+    rgb = fl_read_image(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom);
+    r_bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
     r_bottom->alloc_array = 1;
     bottom = Fl_Shared_Image::get(r_bottom);
   }
@@ -426,7 +426,7 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
 }
 
 void Fl_X11_Window_Driver::wait_for_expose() {
-  if (!pWindow->shown()) return;
+  if (!shown()) return;
   Fl_X *i = Fl_X::i(pWindow);
   while (!i || i->wait_for_expose) {
     Fl::wait();
@@ -436,7 +436,7 @@ void Fl_X11_Window_Driver::wait_for_expose() {
 
 // make X drawing go into this window (called by subclass flush() impl.)
 void Fl_X11_Window_Driver::make_current() {
-  if (!pWindow->shown()) {
+  if (!shown()) {
     fl_alert("Fl_Window::make_current(), but window is not shown().");
     Fl::fatal("Fl_Window::make_current(), but window is not shown().");
   }
@@ -453,7 +453,7 @@ void Fl_X11_Window_Driver::make_current() {
 void Fl_X11_Window_Driver::show_menu()
 {
 #if HAVE_OVERLAY
-  if (!pWindow->shown() && ((Fl_Menu_Window*)pWindow)->overlay() && fl_find_overlay_visual()) {
+  if (!shown() && ((Fl_Menu_Window*)pWindow)->overlay() && fl_find_overlay_visual()) {
     XInstallColormap(fl_display, fl_overlay_colormap);
     fl_background_pixel = int(fl_transparent_pixel);
     Fl_X::make_xid(pWindow, fl_overlay_visual, fl_overlay_colormap);
@@ -497,12 +497,12 @@ void Fl_X11_Window_Driver::unmap() {
 // the window full screen will lose the size of the border off the
 // bottom and right.
 void Fl_X11_Window_Driver::use_border() {
-  if (pWindow->shown()) Fl_X::i(pWindow)->sendxjunk();
+  if (shown()) Fl_X::i(pWindow)->sendxjunk();
 }
 
 void Fl_X11_Window_Driver::size_range() {
   Fl_Window_Driver::size_range();
-  if (pWindow->shown()) Fl_X::i(pWindow)->sendxjunk();
+  if (shown()) Fl_X::i(pWindow)->sendxjunk();
 }
 
 void Fl_X11_Window_Driver::iconize() {

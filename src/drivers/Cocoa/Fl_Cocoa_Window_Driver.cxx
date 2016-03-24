@@ -101,7 +101,7 @@ void Fl_Cocoa_Window_Driver::draw_begin()
   if (shape_data_) {
 # if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     if (shape_data_->mask && (&CGContextClipToMask != NULL)) {
-      CGContextClipToMask(gc, CGRectMake(0,0,pWindow->w(),pWindow->h()), shape_data_->mask); // requires Mac OS 10.4
+      CGContextClipToMask(gc, CGRectMake(0,0,w(),h()), shape_data_->mask); // requires Mac OS 10.4
     }
     CGContextSaveGState(gc);
 # endif
@@ -114,13 +114,13 @@ void Fl_Cocoa_Window_Driver::draw_end()
   // on OS X, windows have no frame. Before OS X 10.7, to resize a window, we drag the lower right
   // corner. This code draws a little ribbed triangle for dragging.
   CGContextRef gc = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();
-  if (fl_mac_os_version < 100700 && gc && !pWindow->parent() && pWindow->resizable() &&
+  if (fl_mac_os_version < 100700 && gc && !parent() && pWindow->resizable() &&
       (!size_range_set() || minh() != maxh() || minw() != maxw())) {
     int dx = Fl::box_dw(pWindow->box())-Fl::box_dx(pWindow->box());
     int dy = Fl::box_dh(pWindow->box())-Fl::box_dy(pWindow->box());
     if (dx<=0) dx = 1;
     if (dy<=0) dy = 1;
-    int x1 = pWindow->w()-dx-1, x2 = x1, y1 = pWindow->h()-dx-1, y2 = y1;
+    int x1 = w()-dx-1, x2 = x1, y1 = h()-dx-1, y2 = y1;
     Fl_Color c[4] = {
       pWindow->color(),
       fl_color_average(pWindow->color(), FL_WHITE, 0.7f),
@@ -229,7 +229,7 @@ void Fl_Cocoa_Window_Driver::hide() {
   // MacOS X manages a single pointer per application. Make sure that hiding
   // a toplevel window will not leave us with some random pointer shape, or
   // worst case, an invisible pointer
-  if (ip && !pWindow->parent()) pWindow->cursor(FL_CURSOR_DEFAULT);
+  if (ip && !parent()) pWindow->cursor(FL_CURSOR_DEFAULT);
   if ( hide_common() ) return;
   Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window )

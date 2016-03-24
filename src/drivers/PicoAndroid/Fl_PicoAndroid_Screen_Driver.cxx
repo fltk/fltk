@@ -512,11 +512,11 @@ Window fl_window;
 //void Fl_Image_Surface::translate(int x, int y) { }
 //void Fl_Image_Surface::untranslate() { }
 
-void Fl::add_fd(int, int, void (*)(int, void*), void*)
+void Fl::add_fd(int, int, Fl_FD_Handler, void*)
 {
 }
 
-void Fl::add_fd(int, void (*)(int, void*), void*)
+void Fl::add_fd(int, Fl_FD_Handler, void*)
 {
 }
 

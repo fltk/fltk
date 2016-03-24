@@ -1563,10 +1563,10 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
   UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER
              | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
-  int is_a_resize = (W != pWindow->w() || H != pWindow->h());
+  int is_a_resize = (W != w() || H != h());
   int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
-  if (X != pWindow->x() || Y != pWindow->y()) {
+  if (X != x() || Y != y()) {
     force_position(1);
   } else {
     if (!is_a_resize) return;
@@ -1574,7 +1574,7 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
   }
   if (is_a_resize) {
     pWindow->Fl_Group::resize(X,Y,W,H);
-    if (pWindow->visible_r()) {
+    if (visible_r()) {
       pWindow->redraw();
       // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
@@ -1586,9 +1586,9 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
     x(X); y(Y);
     flags |= SWP_NOSIZE;
   }
-  if (!pWindow->border()) flags |= SWP_NOACTIVATE;
-  if (resize_from_program && pWindow->shown()) {
-    if (!pWindow->resizable()) pWindow->size_range(pWindow->w(), pWindow->h(), pWindow->w(), pWindow->h());
+  if (!border()) flags |= SWP_NOACTIVATE;
+  if (resize_from_program && shown()) {
+    if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
     int dummy_x, dummy_y, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
     //specifically menus) can be moved offscreen.
@@ -2200,7 +2200,7 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 //static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}
 
 void Fl_WinAPI_Window_Driver::show() {
-  if (!pWindow->shown()) {
+  if (!shown()) {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
     Fl_X::make(pWindow);
   } else {
@@ -2356,7 +2356,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
 {
   Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
   top = left = bottom = right = NULL;
-  if (!pWindow->shown() || pWindow->parent() || !pWindow->border() || !pWindow->visible()) return;
+  if (!shown() || parent() || !border() || !visible()) return;
   int wsides, hbottom, bt;
   RECT r = border_width_title_bar_height(wsides, hbottom, bt);
   int htop = bt + hbottom;
@@ -2367,7 +2367,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   Fl::check();
   void* save_gc = fl_graphics_driver->gc();
   fl_graphics_driver->gc(GetDC(NULL));
-  int ww = pWindow->w() + 2 * wsides;
+  int ww = w() + 2 * wsides;
   // capture the 4 window sides from screen
   fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
   uchar *rgb;
@@ -2378,12 +2378,12 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
     top = Fl_Shared_Image::get(r_top);
   }
   if (wsides) {
-    rgb = fl_read_image(NULL, r.left, r.top + htop, wsides, pWindow->h());
-    r_left = new Fl_RGB_Image(rgb, wsides, pWindow->h(), 3);
+    rgb = fl_read_image(NULL, r.left, r.top + htop, wsides, h());
+    r_left = new Fl_RGB_Image(rgb, wsides, h(), 3);
     r_left->alloc_array = 1;
     left = Fl_Shared_Image::get(r_left);
-    rgb = fl_read_image(NULL, r.right - wsides, r.top + htop, wsides, pWindow->h());
-    r_right = new Fl_RGB_Image(rgb, wsides, pWindow->h(), 3);
+    rgb = fl_read_image(NULL, r.right - wsides, r.top + htop, wsides, h());
+    r_right = new Fl_RGB_Image(rgb, wsides, h(), 3);
     r_right->alloc_array = 1;
     right = Fl_Shared_Image::get(r_right);
     rgb = fl_read_image(NULL, r.left, r.bottom-hbottom, ww, hbottom);

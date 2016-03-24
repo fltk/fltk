@@ -25,10 +25,11 @@
 #define FL_WINDOW_DRIVER_H
 
 #include <FL/Fl_Export.H>
+#include <FL/Fl_Window.H>
+
 #include <stdlib.h>
 
 
-class Fl_Window;
 class Fl_X;
 class Fl_Image;
 class Fl_Shared_Image;
@@ -51,6 +52,26 @@ public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
+
+  // --- frequently used accessors to public window data
+  /** returns the x coordinate of the window. */
+  int x() const { return pWindow->x(); }
+  /** returns the y coordinate of the window. */
+  int y() const { return pWindow->y(); }
+  /** returns the width of the window. */
+  int w() const { return pWindow->w(); }
+  /** returns the width of the window. */
+  int h() const { return pWindow->h(); }
+  /** returns whether the window has a border. */
+  int border() const { return pWindow->border(); }
+  /** returns whether the window itself is visible(). */
+  int visible() const { return pWindow->visible(); }
+  /** returns whether the window and all its parents is visible(). */
+  int visible_r() const { return pWindow->visible_r(); }
+  /** returns whether the window is shown(). */
+  int shown() const { return pWindow->shown(); }
+  /** returns the parent of the window. */
+  Fl_Group *parent() const { return pWindow->parent(); }
 
   // --- accessors to private window data
   int minw();

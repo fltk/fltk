@@ -2125,26 +2125,26 @@ fprintf(stderr,"\n");*/
 ////////////////////////////////////////////////////////////////
 
 void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
-  int is_a_move = (X != pWindow->x() || Y != pWindow->y());
-  int is_a_resize = (W != pWindow->w() || H != pWindow->h());
+  int is_a_move = (X != x() || Y != y());
+  int is_a_resize = (W != w() || H != h());
   int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
   if (is_a_move && resize_from_program) force_position(1);
   else if (!is_a_resize && !is_a_move) return;
   if (is_a_resize) {
     pWindow->Fl_Group::resize(X,Y,W,H);
-    if (pWindow->shown()) {pWindow->redraw();}
+    if (shown()) {pWindow->redraw();}
   } else {
     x(X); y(Y);
   }
 
   if (resize_from_program && is_a_resize && !pWindow->resizable()) {
-    pWindow->size_range(pWindow->w(), pWindow->h(), pWindow->w(), pWindow->h());
+    pWindow->size_range(w(), h(), w(), h());
   }
 
-  if (resize_from_program && pWindow->shown()) {
+  if (resize_from_program && shown()) {
     if (is_a_resize) {
-      if (!pWindow->resizable()) pWindow->size_range(pWindow->w(), pWindow->h(), pWindow->w(), pWindow->h());
+      if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
       if (is_a_move) {
         XMoveResizeWindow(fl_display, fl_xid(pWindow), X, Y, W>0 ? W : 1, H>0 ? H : 1);
       } else {
@@ -2255,7 +2255,7 @@ void Fl_X11_Window_Driver::fullscreen_on() {
     right = fullscreen_screen_right();
     
     if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
-      top = Fl::screen_num(pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
+      top = Fl::screen_num(x(), y(), w(), h());
       bottom = top;
       left = top;
       right = top;
@@ -2867,7 +2867,7 @@ const char *fl_filename_name(const char *name) {
 }
 
 void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
-  if (pWindow->shown() && !pWindow->parent()) {
+  if (shown() && !parent()) {
     if (!name) name = "";
     int namelen = strlen(name);
     if (!iname) iname = fl_filename_name(name);
@@ -2896,7 +2896,7 @@ void Fl_X11_Window_Driver::label(const char *name, const char *iname) {
 static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
 
 void Fl_X11_Window_Driver::show() {
-  if (!pWindow->shown()) {
+  if (!shown()) {
     fl_open_display();
     // Don't set background pixel for double-buffered windows...
     if (pWindow->type() != FL_DOUBLE_WINDOW && can_boxcheat(pWindow->box())) {

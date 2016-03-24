@@ -58,12 +58,12 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
   Fl_PicoAndroid_Screen_Driver *scr = (Fl_PicoAndroid_Screen_Driver*)Fl::screen_driver();
 
   Fl_Group::current(0);
-  if (pWindow->parent() && !Fl_X::i(pWindow->window())) {
+  if (parent() && !Fl_X::i(pWindow->window())) {
     pWindow->set_visible();
     return 0L;
   }
   Window parent;
-  if (pWindow->parent()) {
+  if (parent()) {
     parent = fl_xid(pWindow->window());
   } else {
     parent = 0;
@@ -73,9 +73,9 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
   x->w = pWindow;
   x->region = 0;
   if (!pWindow->force_position()) {
-//    pNativeWindow = SDL_CreateWindow(pWindow->label(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pWindow->w(), pWindow->h(), 0);
+//    pNativeWindow = SDL_CreateWindow(pWindow->label(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w(), h(), 0);
   } else {
-//    pNativeWindow = SDL_CreateWindow(pWindow->label(), pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h(), 0);
+//    pNativeWindow = SDL_CreateWindow(pWindow->label(), x(), y(), w(), h(), 0);
   }
   pNativeWindow = scr->pApp->window;
 //  x->xid = SDL_CreateRenderer(pNativeWindow, -1, SDL_RENDERER_ACCELERATED);

@@ -94,14 +94,14 @@ int Fl_WinAPI_Window_Driver::decorated_w()
 {
   int bt, bx, by;
   border_width_title_bar_height(bx, by, bt);
-  return pWindow->w() + 2 * bx;
+  return w() + 2 * bx;
 }
 
 int Fl_WinAPI_Window_Driver::decorated_h()
 {
   int bt, bx, by;
   border_width_title_bar_height(bx, by, bt);
-  return pWindow->h() + bt + 2 * by;
+  return h() + bt + 2 * by;
 }
 
 
@@ -248,10 +248,10 @@ static HRGN bitmap2region(Fl_Image* image) {
 void Fl_WinAPI_Window_Driver::draw_begin()
 {
   if (shape_data_) {
-    if ((shape_data_->lw_ != pWindow->w() || shape_data_->lh_ != pWindow->h()) && shape_data_->shape_) {
+    if ((shape_data_->lw_ != w() || shape_data_->lh_ != h()) && shape_data_->shape_) {
       // size of window has changed since last time
-      shape_data_->lw_ = pWindow->w();
-      shape_data_->lh_ = pWindow->h();
+      shape_data_->lw_ = w();
+      shape_data_->lh_ = h();
       Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
       SetWindowRgn(fl_xid(pWindow), region, TRUE); // the system deletes the region when it's no longer needed
@@ -263,13 +263,13 @@ void Fl_WinAPI_Window_Driver::draw_begin()
 
 void Fl_WinAPI_Window_Driver::flush_double()
 {
-  if (!pWindow->shown()) return;
+  if (!shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
   if (!i) return; // window not yet created
 
   if (!i->other_xid) {
-    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+    i->other_xid = fl_create_offscreen(w(), h());
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
@@ -280,7 +280,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
     fl_end_offscreen();
   }
 
-  int X,Y,W,H; fl_clip_box(0,0,pWindow->w(),pWindow->h(),X,Y,W,H);
+  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
   if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
 }
 
@@ -289,7 +289,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
 {
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
 
-  if (!pWindow->shown()) return;
+  if (!shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
   if (!i) return; // window not yet created
@@ -298,7 +298,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
 
   if (!i->other_xid) {
-    i->other_xid = fl_create_offscreen(pWindow->w(), pWindow->h());
+    i->other_xid = fl_create_offscreen(w(), h());
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
   if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
@@ -310,7 +310,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
   }
 
   if (eraseoverlay) fl_clip_region(0);
-  int X, Y, W, H; fl_clip_box(0, 0, pWindow->w(), pWindow->h(), X, Y, W, H);
+  int X, Y, W, H; fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
 
   if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
@@ -407,7 +407,7 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
 
 
 void Fl_WinAPI_Window_Driver::wait_for_expose() {
-  if (!pWindow->shown()) return;
+  if (!shown()) return;
   Fl_X *i = Fl_X::i(pWindow);
   while (!i || i->wait_for_expose) {
     Fl::wait();
@@ -430,7 +430,7 @@ void Fl_WinAPI_Window_Driver::make_current() {
 }
 
 void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {
-  if (pWindow->shown() && !pWindow->parent()) {
+  if (shown() && !parent()) {
     if (!name) name = "";
     size_t l = strlen(name);
     //  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
@@ -568,7 +568,7 @@ void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
 
 void Fl_WinAPI_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
-  Fl_X::i(pWindow)->make_fullscreen(pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h());
+  Fl_X::i(pWindow)->make_fullscreen(x(), y(), w(), h());
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
@@ -588,7 +588,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
       style |= WS_CAPTION;
       break;
     case 2:
-      if (pWindow->border()) {
+      if (border()) {
         style |= WS_THICKFRAME | WS_CAPTION;
       }
       break;
@@ -596,7 +596,7 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   Fl_X::i(pWindow)->xid = xid;
   // Adjust for decorations (but not if that puts the decorations
   // outside the screen)
-  if ((X != pWindow->x()) || (Y != pWindow->y())) {
+  if ((X != x()) || (Y != y())) {
     X -= bx;
     Y -= by+bt;
   }
