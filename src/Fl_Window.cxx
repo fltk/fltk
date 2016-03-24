@@ -20,13 +20,12 @@
 // This is the system-independent portions.  The huge amount of 
 // crap you need to do to communicate with X is in Fl_x.cxx, the
 // equivalent (but totally different) crap for MSWindows is in Fl_win32.cxx
-#include <config.h>
 #include <FL/Fl.H>
-#include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -444,7 +443,8 @@ void Fl_Window::flush()
 {
   if (!shown()) return;
   make_current();
-  fl_clip_region(i->region); i->region = 0;
+  fl_graphics_driver->clip_region(i->region);
+  i->region = 0;
   draw();
 }
 
