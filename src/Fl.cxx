@@ -175,18 +175,6 @@ bool Fl::cfg_sys_win32 = 0;
   const char* fl_local_shift = "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
 #endif
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - platform text
-                                              // this should probably be part of Fl_Sys_Menubar
-// Apple App Menu
-const char *Fl_Mac_App_Menu::about = "About %@";
-const char *Fl_Mac_App_Menu::print = "Print Front Window";
-const char *Fl_Mac_App_Menu::services = "Services";
-const char *Fl_Mac_App_Menu::hide = "Hide %@";
-const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
-const char *Fl_Mac_App_Menu::show = "Show All";
-const char *Fl_Mac_App_Menu::quit = "Quit %@";
-#endif // __APPLE__  // PORTME: Fl_Screen_Driver - platform text, system menu
-
 #ifndef FL_DOXYGEN
 Fl_Widget	*Fl::belowmouse_,
 		*Fl::pushed_,

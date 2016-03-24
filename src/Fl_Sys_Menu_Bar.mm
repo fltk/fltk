@@ -73,6 +73,15 @@ typedef struct {
   BOOL use_rank;
 } sys_menu_item;
 
+// Apple App Menu
+const char *Fl_Mac_App_Menu::about = "About %@";
+const char *Fl_Mac_App_Menu::print = "Print Front Window";
+const char *Fl_Mac_App_Menu::services = "Services";
+const char *Fl_Mac_App_Menu::hide = "Hide %@";
+const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
+const char *Fl_Mac_App_Menu::show = "Show All";
+const char *Fl_Mac_App_Menu::quit = "Quit %@";
+
 
 @interface FLMenuItem : NSMenuItem {
 }
