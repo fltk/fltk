@@ -17,10 +17,6 @@
 //
 
 
-// warning: the Apple Quartz version still uses some Quickdraw calls,
-//          mostly to get around the single active context in QD and
-//          to implement clipping. This should be changed into pure
-//          Quartz calls in the near future.
 #include "config_lib.h"
 
 /* We require Windows 2000 features (e.g. VK definitions) */
@@ -1280,29 +1276,15 @@ int Fl::handle_(int e, Fl_Window* window)
     if (grab()) wi = grab();
     { int ret;
       Fl_Widget* pbm = belowmouse();
-#ifdef __APPLE__  // bug fix
-      if (fl_mac_os_version < 100500) {
-        // before 10.5, mouse moved events aren't sent to borderless windows such as tooltips
-	Fl_Window *tooltip = Fl_Tooltip::current_window();
-	int inside = 0;
-	if (tooltip && tooltip->shown() ) { // check if a tooltip window is currently opened
-	  // check if mouse is inside the tooltip
-	  inside = (Fl::event_x_root() >= tooltip->x() && Fl::event_x_root() < tooltip->x() + tooltip->w() &&
-	  Fl::event_y_root() >= tooltip->y() && Fl::event_y_root() < tooltip->y() + tooltip->h() );
-	}
-	// if inside, send event to tooltip window instead of background window
-	if (inside) ret = send_event(e, tooltip, window);
-	else ret = (wi && send_event(e, wi, window));
-      } else
-#endif
       ret = (wi && send_event(e, wi, window));
-   if (pbm != belowmouse()) {
+      if (pbm != belowmouse()) {
 #ifdef DEBUG
-      printf("Fl::handle(e=%d, window=%p);\n", e, window);
+        printf("Fl::handle(e=%d, window=%p);\n", e, window);
 #endif // DEBUG
-      Fl_Tooltip::enter(belowmouse());
+        Fl_Tooltip::enter(belowmouse());
+      }
+      return ret;
     }
-    return ret;}
 
   case FL_RELEASE: {
 //    printf("FL_RELEASE: window=%p, pushed() = %p, grab() = %p, modal() = %p\n",
@@ -1582,29 +1564,7 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
   if (wi->damage()) {
     // if we already have damage we must merge with existing region:
     if (i->region) {
-#if defined(USE_X11)
-      XRectangle R;
-      R.x = X; R.y = Y; R.width = W; R.height = H;
-      XUnionRectWithRegion(&R, i->region, i->region);
-#elif defined(WIN32)
-      Fl_Region R = XRectangleRegion(X, Y, W, H);
-      CombineRgn(i->region, i->region, R, RGN_OR);
-      XDestroyRegion(R);
-#elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Window_Driver - platform damage region
-      CGRect arg = fl_cgrectmake_cocoa(X, Y, W, H);
-      int j; // don't add a rectangle totally inside the Fl_Region
-      for(j = 0; j < i->region->count; j++) {
-        if(CGRectContainsRect(i->region->rects[j], arg)) break;
-      }
-      if( j >= i->region->count) {
-        i->region->rects = (CGRect*)realloc(i->region->rects, (++(i->region->count)) * sizeof(CGRect));
-        i->region->rects[i->region->count - 1] = arg;
-      }
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: code to merge damage regions"
-#else
-# error unsupported platform
-#endif
+      Fl_Graphics_Driver::add_rectangle_to_region(i->region, X, Y, W, H);
     }
     wi->damage_ |= fl;
   } else {
@@ -1619,7 +1579,6 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
 
 #ifdef WIN32
 #  include "Fl_win32.cxx"
-//#elif defined(__APPLE__) // nothing here to see
 #endif
 
 

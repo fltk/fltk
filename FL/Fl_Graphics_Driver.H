@@ -257,6 +257,8 @@ public:
   virtual uchar **mask_bitmap() { return 0; }
   /** Support for pixmap drawing */
   virtual void mask_bitmap(uchar **) {}
+  // each platform implements that its own way
+  static void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void transformed_vertex0(COORD_T x, COORD_T y);

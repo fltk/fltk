@@ -144,6 +144,12 @@ void Fl_Translated_GDI_Graphics_Driver::untranslate_all() {
   SetWindowOrgEx((HDC)gc(), origins[depth].x, origins[depth].y, NULL);
 }
 
+void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
+  Fl_Region R = XRectangleRegion(X, Y, W, H);
+  CombineRgn(r, r, R, RGN_OR);
+  XDestroyRegion(R);
+}
+
 //
 // End of "$Id$".
 //

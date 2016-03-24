@@ -1139,6 +1139,19 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       }
       mods_to_e_state( mods );
       update_e_xy_and_e_xy_root([theEvent window]);
+      if (fl_mac_os_version < 100500) {
+        // before 10.5, mouse moved events aren't sent to borderless windows such as tooltips
+        Fl_Window *tooltip = Fl_Tooltip::current_window();
+        int inside = 0;
+        if (tooltip && tooltip->shown() ) { // check if a tooltip window is currently opened
+          // check if mouse is inside the tooltip
+          inside = (Fl::event_x_root() >= tooltip->x() && Fl::event_x_root() < tooltip->x() + tooltip->w() &&
+                    Fl::event_y_root() >= tooltip->y() && Fl::event_y_root() < tooltip->y() + tooltip->h() );
+        }
+        // if inside, send event to tooltip window instead of background window
+        if (inside)
+          window = tooltip;
+      }
       Fl::handle( sendEvent, window );
       }
       break;

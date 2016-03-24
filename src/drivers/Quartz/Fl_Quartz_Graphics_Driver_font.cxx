@@ -580,7 +580,8 @@ if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   // activate the current GC
   iSize = sizeof(CGContextRef);
   iTag = kATSUCGContextTag;
-  iValuePtr = &gc_;
+  CGContextRef value = (CGContextRef)fl_graphics_driver->gc();
+  iValuePtr = &value;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
   // now measure the bounding box
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
@@ -657,7 +658,8 @@ else {
         // activate the current GC
   iSize = sizeof(CGContextRef);
   iTag = kATSUCGContextTag;
-  iValuePtr = &gc_;
+  CGContextRef value = (CGContextRef)gc();
+  iValuePtr = &value;
       ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
         // now measure the bounding box
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);

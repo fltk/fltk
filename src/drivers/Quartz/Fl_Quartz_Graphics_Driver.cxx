@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Quartz_Graphics_Driver.h"
+#include "Fl_Quartz_Graphics_Driver.H"
 
 /* Reference to the current CGContext
  For back-compatibility only. The preferred procedure to get this reference is
@@ -68,6 +68,18 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscr
   CGImageRelease(img);
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src_bytes);
+}
+
+void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
+  CGRect arg = fl_cgrectmake_cocoa(X, Y, W, H);
+  int j; // don't add a rectangle totally inside the Fl_Region
+  for(j = 0; j < r->count; j++) {
+    if(CGRectContainsRect(r->rects[j], arg)) break;
+  }
+  if( j >= r->count) {
+    r->rects = (CGRect*)realloc(r->rects, (++(r->count)) * sizeof(CGRect));
+    r->rects[r->count - 1] = arg;
+  }
 }
 
 //
