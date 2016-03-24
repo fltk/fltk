@@ -107,7 +107,6 @@ FL_EXPORT Window fl_xid_(const Fl_Window* w);
 #endif // FL_LIBRARY || FL_INTERNALS
 
 FL_EXPORT Fl_Window* fl_find(Window xid);
-void fl_clip_region(Fl_Region);
 
 // most recent fl_color() or fl_rgbcolor() points at one of these:
 extern FL_EXPORT struct Fl_XMap {

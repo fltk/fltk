@@ -67,8 +67,6 @@ extern FL_EXPORT GC fl_gc;
 extern FL_EXPORT Window fl_window;
 FL_EXPORT ulong fl_xpixel(Fl_Color i);
 FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);
-FL_EXPORT void fl_clip_region(Fl_Region);
-FL_EXPORT Fl_Region fl_clip_region();
 
 // feed events into fltk:
 FL_EXPORT int fl_handle(const XEvent&);

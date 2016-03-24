@@ -215,7 +215,6 @@ extern CGContextRef fl_gc;
 
 extern Window fl_xid(const Fl_Window*);
 extern Fl_Window* fl_find(Window xid);
-void fl_clip_region(Fl_Region);
 
 extern Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
