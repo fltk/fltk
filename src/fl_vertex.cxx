@@ -35,7 +35,6 @@
 #include <config.h>
 #include "config_lib.h"
 #include <FL/fl_draw.H>
-#include <FL/x.H>
 #include <FL/Fl.H>
 #include <FL/math.h>
 #include <stdlib.h>

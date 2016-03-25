@@ -32,7 +32,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
-#include <FL/x.H>
 
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx

@@ -408,7 +408,6 @@ void exit_cb(Fl_Widget *,void *) {
 }
 
 #ifdef __APPLE__
-#  include <FL/x.H>
 
 void
 apple_open_cb(const char *c) {

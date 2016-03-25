@@ -22,7 +22,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Printer.H>
-#include <FL/x.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Window_Driver.H>
 

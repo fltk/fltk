@@ -22,9 +22,6 @@
 #ifndef Fl_Pixmap_H
 #define Fl_Pixmap_H
 #  include "Fl_Image.H"
-#if defined(WIN32)
-#  include "x.H"
-#endif
 
 class Fl_Widget;
 struct Fl_Menu_Item;

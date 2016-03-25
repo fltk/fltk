@@ -19,7 +19,6 @@
 #include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <FL/x.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>

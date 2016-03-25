@@ -25,7 +25,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
-#include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 
 

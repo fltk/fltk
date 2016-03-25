@@ -40,9 +40,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "flstring.h"
-#if !defined(WIN32) && !defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard feel
-#include <FL/x.H>
-#endif
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard feel
 #elif defined(FL_PORTING)

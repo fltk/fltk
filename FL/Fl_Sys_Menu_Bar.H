@@ -19,8 +19,7 @@
 #ifndef Fl_Sys_Menu_Bar_H
 #define Fl_Sys_Menu_Bar_H
 
-#include "Fl_Menu_Bar.H"
-#include "x.H"
+#include <FL/Fl_Menu_Bar.H>
 
 #if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - system menu bar
 

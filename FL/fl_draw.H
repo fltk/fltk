@@ -24,13 +24,12 @@
 #ifndef fl_draw_H
 #define fl_draw_H
 
-#include <FL/x.H>	      // for Fl_Region
 #include <FL/Enumerations.H>  // for the color names
-#include <FL/Fl_Window.H>     // for fl_set_spot()
-#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
+#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver + Fl_Region
 
 // Image class...
 class Fl_Image;
+class Fl_Window;
 
 // Label flags...
 FL_EXPORT extern char fl_draw_shortcut;

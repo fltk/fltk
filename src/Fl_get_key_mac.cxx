@@ -20,9 +20,9 @@
 // which are actually X keysyms.  So this has to translate to macOS
 // symbols.
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <config.h>
 
 // The list of Mac OS virtual keycodes appears with OS 10.5 in
 // ...../Carbon.framework/Frameworks/HIToolbox.framework/Headers/Events.h
