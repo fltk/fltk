@@ -42,6 +42,7 @@
 #endif
 #include <windows.h>
 #include <ole2.h>
+#include <shellapi.h>
 
 void fl_free_fonts(void);
 void fl_release_dc(HWND,HDC);
@@ -85,8 +86,6 @@ void fl_cleanup_dc_list(void);
 # include <wchar.h>
 #endif
 
-#include <ole2.h>
-#include <shellapi.h>
 
 extern bool fl_clipboard_notify_empty(void);
 extern void fl_trigger_clipboard_notify(int source);
