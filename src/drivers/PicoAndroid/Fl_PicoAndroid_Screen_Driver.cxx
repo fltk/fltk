@@ -533,6 +533,37 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor()
 {
 }
 
+#if 0
+
+ld: error: ./obj/local/armeabi-v7a/objs/native-activity/src/drivers/PicoAndroid/Fl_PicoAndroid_Screen_Driver.o: multiple definition of 'Fl_Window::make_current()'
+ld: ./obj/local/armeabi-v7a/objs/native-activity/src/Fl_Window.o: previous definition here
+
+ld: error: ./obj/local/armeabi-v7a/objs/native-activity/src/drivers/PicoAndroid/Fl_PicoAndroid_Screen_Driver.o: multiple definition of 'Fl_Window::current_'
+ld: ./obj/local/armeabi-v7a/objs/native-activity/src/Fl_Window.o: previous definition here
+
+ld: error: ./obj/local/armeabi-v7a/objs/native-activity/src/drivers/PicoAndroid/Fl_PicoAndroid_Screen_Driver.o: multiple definition of 'Fl_Window::show()'
+ld: ./obj/local/armeabi-v7a/objs/native-activity/src/Fl_Window.o: previous definition here
+
+ld: error: ./obj/local/armeabi-v7a/objs/native-activity/src/drivers/PicoAndroid/Fl_PicoAndroid_Screen_Driver.o: multiple definition of 'Fl_Window::label(char const*, char const*)'
+ld: ./obj/local/armeabi-v7a/objs/native-activity/src/Fl_Window.o: previous definition here
+
+ld: error: ./obj/local/armeabi-v7a/objs/native-activity/src/drivers/PicoAndroid/Fl_PicoAndroid_Screen_Driver.o: multiple definition of 'Fl_Window::resize(int, int, int, int)'
+ld: ./obj/local/armeabi-v7a/objs/native-activity/src/Fl_Window.o: previous definition here
+
+jni/../../src/Fl.cxx:1520: error: undefined reference to 'Fl_Graphics_Driver::add_rectangle_to_region(void*, int, int, int, int)'
+jni/../../src/Fl_Printer.cxx:115: error: undefined reference to 'Fl_Paged_Device::newPrinterDriver()'
+jni/../../src/Fl_Window.cxx:312: error: undefined reference to 'Fl_Window_Driver::default_icons(Fl_RGB_Image const**, int)'
+jni/../../src/fl_shortcut.cxx:330: error: undefined reference to 'fl_local_ctrl'
+jni/../../src/fl_shortcut.cxx:330: error: undefined reference to 'fl_local_alt'
+jni/../../src/fl_shortcut.cxx:330: error: undefined reference to 'fl_local_shift'
+jni/../../src/fl_shortcut.cxx:330: error: undefined reference to 'fl_local_meta'
+
+drivers/PicoAndroid/Fl_PicoAndroid_Window_Driver.o:Fl_PicoAndroid_Window_Driver.cxx:vtable for Fl_PicoAndroid_Window_Driver: error: undefined reference to 'Fl_PicoAndroid_Window_Driver::flush_double()'
+drivers/PicoAndroid/Fl_PicoAndroid_Window_Driver.o:Fl_PicoAndroid_Window_Driver.cxx:vtable for Fl_PicoAndroid_Window_Driver: error: undefined reference to 'Fl_PicoAndroid_Window_Driver::flush_overlay()'
+
+#endif
+
+
 
 //
 // End of "$Id: Fl_PicoAndroid_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
