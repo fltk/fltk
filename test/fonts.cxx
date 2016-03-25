@@ -22,12 +22,16 @@
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <FL/fl_ask.H>
+#include <FL/Fl_File_Chooser.H>
 
 Fl_Double_Window *form;
 Fl_Tile *tile;
+Fl_Window *vector_font_editor = 0;
 
 class FontDisplay : public Fl_Widget {
   void draw();
@@ -97,6 +101,188 @@ void size_cb(Fl_Widget *, long) {
 
 char label[0x1000];
 
+unsigned char current_char = 'A';
+unsigned char vec[255][128] = {
+  { 0 }
+};
+
+class LetterBox : public Fl_Group
+{
+public:
+  LetterBox(int x, int y, int w, int h, const char *l)
+  : Fl_Group(x, y, w, h, l) { }
+  void draw() {
+    draw_box();
+    fl_push_clip(x(), y(), w(), h());
+    draw_label(x(), y()-5, w(), h()-16, FL_ALIGN_CENTER);
+
+    fl_color(FL_BLUE);
+    fl_line_style(FL_SOLID|FL_CAP_ROUND|FL_JOIN_ROUND, 10);
+    bool rendering = false;
+    unsigned char *fd = vec[current_char];
+    double px, py;
+    for (;;) {
+      unsigned char cmd = *fd++;
+      if (cmd==0) {
+        if (rendering) {
+          fl_end_line();
+          rendering = false;
+        }
+        break;
+      } else if (cmd>63) {
+        if (cmd=='\100' && rendering) {
+          fl_end_line();
+          rendering = false;
+        }
+      } else {
+        if (!rendering) { fl_begin_line(); rendering = true; }
+        int vx = (cmd & '\70')>>3;
+        int vy = (cmd & '\07');
+        px = (vx*16+8+10);
+        py = (vy*32+16+10);
+        fl_vertex(px, py);
+      }
+    }
+    fl_line_style(FL_SOLID, 1);
+
+    draw_children();
+    fl_pop_clip();
+  }
+};
+
+void add_point_cb(Fl_Widget *w, void *d)
+{
+  unsigned char *fd = vec[current_char];
+  while (*fd) fd++;
+  *fd = (fl_intptr_t)(d);
+  w->parent()->redraw();
+}
+
+void add_gap_cb(Fl_Widget *w, void *d)
+{
+  unsigned char *fd = vec[current_char];
+  while (*fd) fd++;
+  *fd = '\100';
+  w->parent()->redraw();
+}
+
+void clear_cb(Fl_Widget *w, void *d)
+{
+  unsigned char *fd = vec[current_char];
+  memset(fd, 0, 128);
+  w->parent()->redraw();
+}
+
+void prev_cb(Fl_Widget *w, void *d)
+{
+  current_char--;
+  char b[2] = { current_char, 0 };
+  w->parent()->child(0)->copy_label(b);
+  w->parent()->child(0)->redraw();
+}
+
+void next_cb(Fl_Widget *w, void *d)
+{
+  current_char++;
+  char b[2] = { current_char, 0 };
+  w->parent()->child(0)->copy_label(b);
+  w->parent()->child(0)->redraw();
+}
+
+void back_cb(Fl_Widget *w, void *d)
+{
+  unsigned char *fd = vec[current_char];
+  if (*fd==0) return;
+  while (*fd) fd++;
+  *(--fd) = 0;
+  w->parent()->child(0)->redraw();
+}
+
+void save_cb(Fl_Widget *w, void *d)
+{
+  const char *filename = fl_file_chooser("Save font as:", 0, 0);
+  if (!filename) return;
+  FILE *f = fopen(filename, "wb");
+  if (!f) {
+    fl_alert("can't open file for writing");
+    return;
+  }
+  fprintf(f, "\nstatic const char *font_data[128] = {\n  ");
+  for (int i=0; i<128; i++) {
+    unsigned char *fd = vec[i];
+    if (i>=32 && i<127) fprintf(f, "/*%c*/", i); else fprintf(f, "/*%02X*/", i);
+    if (*fd==0) {
+      fprintf(f, "0");
+    } else {
+      fprintf(f, "\"");
+      for (;;) {
+        unsigned char c = *fd++;
+        if (c==0) break;
+        fprintf(f, "\\%02o", c);
+      }
+      fprintf(f, "\"");
+    }
+    if (i<127) fprintf(f, ", ");
+    if ((i&3)==3)fprintf(f, "\n  ");
+  }
+  fprintf(f, "};\n\n");
+  fclose(f);
+}
+
+Fl_Window *create_editor()
+{
+  Fl_Window *win = new Fl_Double_Window(400,400);
+  LetterBox *c = new LetterBox(10, 10, 128, 256, "A");
+  //c->labelfont(FL_COURIER);
+  c->align(FL_ALIGN_CENTER);
+  c->labelsize(200);
+  c->labelcolor(FL_DARK3);
+  c->box(FL_DOWN_BOX);
+  Fl_Button *b;
+  int i, j;
+  for (i=0; i<8; i++) {
+    for (j=0; j<8; j++) {
+      b = new Fl_Button(i*16+8-5+10, j*32+16-5+10, 10, 10);
+      b->box(FL_OVAL_BOX);
+      b->callback(add_point_cb, (void*)(fl_intptr_t)(i*8+j));
+    }
+  }
+  c->end();
+
+  b = new Fl_Button(10, 290, 70, 20, "Gap");
+  b->callback(add_gap_cb);
+  b = new Fl_Button(90, 290, 70, 20, "Clear");
+  b->callback(clear_cb);
+  b = new Fl_Button(10, 315, 70, 20, "<-");
+  b->callback(prev_cb);
+  b->shortcut(FL_Left);
+  b = new Fl_Button(90, 315, 70, 20, "->");
+  b->callback(next_cb);
+  b->shortcut(FL_Right);
+  b = new Fl_Button(10, 340, 70, 20, "Back");
+  b->callback(back_cb);
+  b = new Fl_Button(90, 340, 70, 20, "Save");
+  b->callback(save_cb);
+  b->shortcut(FL_COMMAND+'s');
+  return win;
+}
+
+class MainWindow : public Fl_Double_Window
+{
+public:
+  MainWindow(int w, int h, const char *l=0)
+  : Fl_Double_Window(w, h, l) { }
+  int handle(int event) {
+    if (event==FL_KEYBOARD && Fl::event_key()==FL_F+1) {
+      if (!vector_font_editor) vector_font_editor = create_editor();
+      vector_font_editor->show();
+      return 1;
+    } else {
+      return Fl_Double_Window::handle(event);
+    }
+  }
+};
+
 void create_the_forms() {
   // create the sample string
   int n = 0;
@@ -116,7 +302,7 @@ void create_the_forms() {
   label[i] = 0;
 
   // create the basic layout
-  form = new Fl_Double_Window(550,370);
+  form = new MainWindow(550,370);
 
   tile = new Fl_Tile(0, 0, 550, 370);
 
@@ -146,8 +332,6 @@ void create_the_forms() {
   form->resizable(tile);
   form->end();
 }
-
-#include <FL/fl_ask.H>
 
 int main(int argc, char **argv) {
   Fl::scheme(NULL);

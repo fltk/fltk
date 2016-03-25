@@ -135,7 +135,6 @@ LOCAL_SRC_FILES  := \
   src/Fl_lock.cxx \
   src/Fl_own_colormap.cxx \
   src/Fl_visual.cxx \
-  src/Fl_x.cxx \
   src/filename_absolute.cxx \
   src/filename_expand.cxx \
   src/filename_ext.cxx \

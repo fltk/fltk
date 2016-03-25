@@ -69,6 +69,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   friend int Fl::arg(int argc, char **argv, int &i);
   friend class Fl_X;
   friend class Fl_Window_Driver;
+  friend class Fl_PicoAndroid_Window_Driver;
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creatino time
 

@@ -63,7 +63,7 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
     return 0L;
   }
   Window parent;
-  if (parent()) {
+  if (pWindow->parent()) {
     parent = fl_xid(pWindow->window());
   } else {
     parent = 0;

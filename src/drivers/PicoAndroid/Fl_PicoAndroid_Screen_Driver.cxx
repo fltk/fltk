@@ -476,8 +476,8 @@ int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 void Fl_X::set_default_icons(Fl_RGB_Image const**, int) { }
 
 void Fl_X::set_icons() { }
-void Fl_Window::size_range_() { }
-void Fl_Window::fullscreen_x() { }
+//void Fl_Window::size_range_() { }
+//void Fl_Window::fullscreen_x() { }
 
 void Fl_Window::make_current()
 {
@@ -485,7 +485,7 @@ void Fl_Window::make_current()
   current_ = this;
 }
 
-void Fl_Window::fullscreen_off_x(int, int, int, int) { }
+//void Fl_Window::fullscreen_off_x(int, int, int, int) { }
 
 Window fl_xid(const Fl_Window* w)
 {
