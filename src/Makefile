@@ -117,7 +117,6 @@ CPPFILES = \
 	Fl_lock.cxx \
 	Fl_own_colormap.cxx \
 	Fl_visual.cxx \
-	Fl_x.cxx \
 	filename_absolute.cxx \
 	filename_expand.cxx \
 	filename_ext.cxx \
@@ -252,7 +251,8 @@ XLIBCPPFILES = \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
-	drivers/Posix/Fl_Posix_Printer_Driver.cxx
+	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
+	Fl_x.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -274,7 +274,8 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
-	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx
+	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx \
+	Fl_win32.cxx
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \
@@ -576,7 +577,7 @@ include makedepend
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
 Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
-Fl.o:		Fl_win32.cxx
+Fl_win32.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
@@ -625,7 +626,6 @@ fl_vertex.o:	../FL/mac.H ../FL/win32.H
 Fl_visual.o:	../FL/mac.H ../FL/win32.H
 Fl_Window_fullscreen.o:	../FL/mac.H ../FL/win32.H
 Fl_Window_iconize.o:	../FL/mac.H ../FL/win32.H
-Fl_x.o:	../FL/mac.H ../FL/win32.H
 gl_draw.o:	../FL/mac.H ../FL/win32.H
 gl_start.o:	../FL/mac.H ../FL/win32.H
 

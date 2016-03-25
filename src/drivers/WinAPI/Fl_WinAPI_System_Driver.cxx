@@ -20,6 +20,12 @@
 #include "../../config_lib.h"
 #include "Fl_WinAPI_System_Driver.H"
 
+#if !defined(FL_DOXYGEN)
+const char* fl_local_alt   = "Alt";
+const char* fl_local_ctrl  = "Ctrl";
+const char* fl_local_meta  = "Meta";
+const char* fl_local_shift = "Shift";
+#endif
 
 //
 // End of "$Id$".

@@ -16,25 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
-
-// make this available on all platforms to make code maintainability easier
-class Fl_Widget *fl_selection_requestor;
-
-#ifdef WIN32
-//#  include "Fl_win32.cxx"
-#elif defined(__APPLE__) // PORTME: Fl_System_Driver - platform window driver
-                         // PORTME: Fl_Screen_Driver
-                         // PORTME: Fl_Window_Driver
-//#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
-#elif defined(USE_SDL)
-#  pragma message "FL_SDL: implement the FLTK core in its own file"
-#elif defined(ANDROID)
-#  pragma message "ANDROID: implement the FLTK core in its own file"
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the FLTK core in its own file"
-#  include "Fl_porting.cxx"
-#elif !defined(FL_DOXYGEN)
+#if !defined(FL_DOXYGEN)
 
 #  define CONSOLIDATE_MOTION 1
 /**** Define this if your keyboard lacks a backspace key... ****/
@@ -88,6 +70,8 @@ static bool have_xfixes = false;
 #  if HAVE_XRENDER
 #    include <X11/extensions/Xrender.h>
 #  endif
+
+extern Fl_Widget *fl_selection_requestor;
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -2986,7 +2970,7 @@ static int unused = prepare_print_button();
 
 #endif // USE_PRINT_BUTTON
 
-#endif
+#endif // !defined(FL_DOXYGEN)
 
 //
 // End of "$Id$".

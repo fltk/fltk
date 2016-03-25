@@ -16,29 +16,17 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
 
-#include "config_lib.h"
-
-/* We require Windows 2000 features (e.g. VK definitions) */
-#if defined(WIN32)
-# if !defined(WINVER) || (WINVER < 0x0500)
-#  ifdef WINVER
-#   undef WINVER
-#  endif
-#  define WINVER 0x0500
-# endif
-# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
-#  ifdef _WIN32_WINNT
-#   undef _WIN32_WINNT
-#  endif
-#  define _WIN32_WINNT 0x0500
-# endif
-#endif
-
-// recent versions of MinGW warn: "Please include winsock2.h before windows.h",
-// hence we must include winsock2.h before FL/Fl.H (A.S. Dec. 2010, IMM May 2011)
-#if defined(WIN32) && !defined(__CYGWIN__)
-#  include <winsock2.h>
+#ifdef WIN32
+#elif defined(__APPLE__)
+#elif defined(USE_SDL)
+#  pragma message "FL_SDL: implement the FLTK core in its own file"
+#elif defined(ANDROID)
+#  pragma message "ANDROID: implement the FLTK core in its own file"
+#elif defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement the FLTK core in its own file"
+#  include "Fl_porting.cxx"
 #endif
 
 #include <FL/Fl.H>
@@ -47,6 +35,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/x.H>
+#include <FL/fl_draw.H>
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -56,27 +45,8 @@
 #  include <stdio.h>
 #endif // DEBUG || DEBUG_WATCH
 
-#ifdef WIN32
-#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - window driver and main loop
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement global variables for your platform here"
-#else // X11
-#endif
-
-#ifdef WIN32
-#  include <ole2.h>
-void fl_free_fonts(void);
-HBRUSH fl_brush_action(int action);
-void fl_cleanup_pens(void);
-void fl_release_dc(HWND,HDC);
-void fl_cleanup_dc_list(void);
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform functions
-#endif // WIN32
-
-
 //
-// Runtime configuartion flags
+// Runtime configuration flags
 //
 #ifdef FL_CFG_GFX_XLIB
 bool Fl::cfg_gfx_xlib = 1;
@@ -152,24 +122,11 @@ bool Fl::cfg_sys_win32 = 1;
 bool Fl::cfg_sys_win32 = 0;
 #endif
 
-
 //
 // Globals...
 //
 
-// Pointers you can use to change FLTK to a foreign language.
-// Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
-#if !defined(__APPLE__) || defined(FL_DOXYGEN)
-  const char* fl_local_alt   = "Alt";	///< string pointer used in shortcuts, you can change it to another language
-  const char* fl_local_ctrl  = "Ctrl";	///< string pointer used in shortcuts, you can change it to another language
-  const char* fl_local_meta  = "Meta";	///< string pointer used in shortcuts, you can change it to another language
-  const char* fl_local_shift = "Shift";	///< string pointer used in shortcuts, you can change it to another language
-#else
-  const char* fl_local_alt   = "\xe2\x8c\xa5\\"; // U+2325 (option key)
-  const char* fl_local_ctrl  = "\xe2\x8c\x83\\"; // U+2303 (up arrowhead)
-  const char* fl_local_meta  = "\xe2\x8c\x98\\"; // U+2318 (place of interest sign)
-  const char* fl_local_shift = "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
-#endif
+Fl_Widget *fl_selection_requestor;
 
 #ifndef FL_DOXYGEN
 Fl_Widget	*Fl::belowmouse_,
@@ -1039,7 +996,6 @@ void fl_fix_focus() {
   }
 }
 
-extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 
 // This function is called by ~Fl_Widget() and by Fl_Widget::deactivate()
 // and by Fl_Widget::hide().  It indicates that the widget does not want
@@ -1459,8 +1415,6 @@ void Fl::paste(Fl_Widget &receiver) {
 }
 ////////////////////////////////////////////////////////////////
 
-#include <FL/fl_draw.H>
-
 void Fl_Widget::redraw() {
   damage(FL_DAMAGE_ALL);
 }
@@ -1575,11 +1529,6 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
   }
   Fl::damage(FL_DAMAGE_CHILD);
 }
-
-
-#ifdef WIN32
-#  include "Fl_win32.cxx"
-#endif
 
 
 //

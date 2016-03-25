@@ -20,12 +20,37 @@
 // in.  Search other files for "WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
-// This file must be #include'd in Fl.cxx and not compiled separately.
+#if defined(WIN32) and !defined(FL_DOXYGEN)
 
-#ifndef FL_DOXYGEN
+/* We require Windows 2000 features (e.g. VK definitions) */
+# if !defined(WINVER) || (WINVER < 0x0500)
+#  ifdef WINVER
+#   undef WINVER
+#  endif
+#  define WINVER 0x0500
+# endif
+# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+#  ifdef _WIN32_WINNT
+#   undef _WIN32_WINNT
+#  endif
+#  define _WIN32_WINNT 0x0500
+# endif
+
+// recent versions of MinGW warn: "Please include winsock2.h before windows.h",
+#if !defined(__CYGWIN__)
+#  include <winsock2.h>
+#endif
+#include <windows.h>
+#include <ole2.h>
+
+void fl_free_fonts(void);
+void fl_release_dc(HWND,HDC);
+void fl_cleanup_dc_list(void);
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window_Driver.H>
-#include <src/Drivers/WinAPI//Fl_WinAPI_Window_Driver.H>
+#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
+#include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -63,6 +88,12 @@
 #include <ole2.h>
 #include <shellapi.h>
 
+extern bool fl_clipboard_notify_empty(void);
+extern void fl_trigger_clipboard_notify(int source);
+extern HBRUSH fl_brush_action(int action);
+extern void fl_cleanup_pens(void);
+
+
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 // USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
@@ -84,9 +115,6 @@
   fltk because of this finer granularity and instrumentation code to be added
   for async mode proper operation, not mentioning the side effects...
 */
-
-// make this available on all platforms to make code maintainability easier
-class Fl_Widget *fl_selection_requestor;
 
 // Internal functions
 static void fl_clipboard_notify_target(HWND wnd);
@@ -2467,7 +2495,7 @@ void preparePrintFront(void)
 }
 #endif // USE_PRINT_BUTTON
 
-#endif // FL_DOXYGEN
+#endif // defined(WIN32) and !defined(FL_DOXYGEN)
 
 //
 // End of "$Id$".

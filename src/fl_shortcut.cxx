@@ -36,6 +36,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Button.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_System_Driver.H>
 #include <stdlib.h>
 #include <ctype.h>
 #include "flstring.h"

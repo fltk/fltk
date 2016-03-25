@@ -98,7 +98,6 @@ set(CPPFILES
   Fl_lock.cxx
   Fl_own_colormap.cxx
   Fl_visual.cxx
-  Fl_x.cxx
   filename_absolute.cxx
   filename_expand.cxx
   filename_ext.cxx
@@ -182,6 +181,7 @@ if (USE_X11)
     drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.cxx
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
+    Fl_x.cxx
   )
   if (USE_XFT)
     set(DRIVER_FILES ${DRIVER_FILES}
@@ -275,6 +275,7 @@ else ()
     drivers/GDI/Fl_GDI_Graphics_Driver_vertex.cxx
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
+    Fl_win32.cxx
   )
   set(DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H
