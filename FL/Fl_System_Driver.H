@@ -21,6 +21,11 @@
  \brief declaration of class Fl_System_Driver.
 */
 
+#ifndef FL_SYSTEM_DRIVER_H
+#define FL_SYSTEM_DRIVER_H
+
+#include <FL/Fl_Export.H>
+
 #ifdef __APPLE__
 typedef struct CGContext* Fl_Offscreen;
 typedef struct CGImage* Fl_Bitmask;
@@ -44,11 +49,6 @@ typedef unsigned long Fl_Bitmask;
 typedef struct _XRegion *Fl_Region;
 
 #endif // __APPLE__
-
-#ifndef FL_SYSTEM_DRIVER_H
-#define FL_SYSTEM_DRIVER_H
-
-#include <FL/Fl_Export.H>
 
 /**
  \brief A base class for platform specific window handling code.
