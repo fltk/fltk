@@ -23,6 +23,7 @@
 #include "Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
+#include <FL/x.H>
 #include <windows.h>
 
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
