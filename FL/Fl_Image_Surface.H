@@ -22,7 +22,7 @@
 #include <FL/Fl_Widget_Surface.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Shared_Image.H>
-#include <FL/x.H> // for Fl_Offscreen
+#include <FL/Fl_Graphics_Driver.H> // for Fl_Offscreen
 
 
 /** 

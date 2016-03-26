@@ -19,6 +19,7 @@
 #include "../../config_lib.h"
 
 #ifdef FL_CFG_GFX_QUARTZ
+#include <FL/x.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include "Fl_Quartz_Graphics_Driver.H"
