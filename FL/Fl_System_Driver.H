@@ -27,13 +27,6 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Export.H>
 
-// Pointers you can use to change FLTK to a foreign language.
-// Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
-extern FL_EXPORT const char* fl_local_alt;
-extern FL_EXPORT const char* fl_local_ctrl;
-extern FL_EXPORT const char* fl_local_meta;
-extern FL_EXPORT const char* fl_local_shift;
-
 /**
  \brief A base class for platform specific window handling code.
   */
