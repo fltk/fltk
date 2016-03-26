@@ -866,13 +866,7 @@ void Fl::focus(Fl_Widget *o) {
       while (w1) { win=w1; w1=win->window(); }
       if (win) {
         if (fl_xfocus != win) {
-          Fl_Window_Driver *drvr = win->driver();
-#ifdef USE_X11 // platform fix
-          if (!Fl_X::ewmh_supported()) win->show(); // Old WMs, XMapRaised
-          else if (drvr) drvr->take_focus();
-#else
-          if (drvr) drvr->take_focus();
-#endif
+          win->driver()->take_focus();
           fl_xfocus = win;
         }
       }
