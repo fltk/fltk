@@ -18,23 +18,31 @@
 //
 
 /** \file Fl_System_Driver.H
- \brief declaration of classe Fl_System_Driver.
+ \brief declaration of class Fl_System_Driver.
 */
 
 #ifdef __APPLE__
-#include <src/drivers/Darwin/Fl_Darwin_System_Driver.H>
+typedef struct CGContext* Fl_Offscreen;
+typedef struct CGImage* Fl_Bitmask;
+typedef struct flCocoaRegion* Fl_Region;
 
 #elif defined(WIN32)
-#include <src/drivers/WinAPI/Fl_WinAPI_System_Driver.H>
+typedef struct HBITMAP__ *HBITMAP;
+typedef HBITMAP Fl_Offscreen;
+typedef HBITMAP Fl_Bitmask;
+typedef struct HRGN__ *Fl_Region;
 
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define OS-dependent types"
 typedef void* Fl_Offscreen;
 typedef void* Fl_Bitmask;
 typedef void *Fl_Region;
-#else
 
-#include <src/drivers/Posix/Fl_Posix_System_Driver.H>
+#else
+typedef unsigned long Fl_Offscreen;
+typedef unsigned long Fl_Bitmask;
+typedef struct _XRegion *Fl_Region;
+
 #endif // __APPLE__
 
 #ifndef FL_SYSTEM_DRIVER_H
