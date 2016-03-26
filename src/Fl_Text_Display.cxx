@@ -171,14 +171,12 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mContinuousWrap = 0;
   mWrapMarginPix = 0;
   mSuppressResync = mNLinesDeleted = mModifyingTabDistance = 0;
-#if FLTK_ABI_VERSION >= 10303
   linenumber_font_    = FL_HELVETICA;
   linenumber_size_    = FL_NORMAL_SIZE;
   linenumber_fgcolor_ = FL_INACTIVE_COLOR;
   linenumber_bgcolor_ = 53;	// ~90% gray
   linenumber_align_   = FL_ALIGN_RIGHT;
   linenumber_format_  = strdup("%d");
-#endif
 }
 
 
@@ -199,12 +197,10 @@ Fl_Text_Display::~Fl_Text_Display() {
     mBuffer->remove_predelete_callback(buffer_predelete_cb, this);
   }
   if (mLineStarts) delete[] mLineStarts;
-#if FLTK_ABI_VERSION >= 10303
   if (linenumber_format_) {
     free((void*)linenumber_format_);
     linenumber_format_ = 0;
   }
-#endif
 }
 
 
@@ -230,118 +226,78 @@ int Fl_Text_Display::linenumber_width() const {
  
 /**
  Set the font used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FLTK_ABI_VERSION is 10303 or higher)
+ \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
 */
 void Fl_Text_Display::linenumber_font(Fl_Font val) {
-#if FLTK_ABI_VERSION >= 10303
   linenumber_font_ = val;
-#else
-  // do nothing
-#endif
 }
 
 /**
  Return the font used for line numbers (if enabled).
 */
 Fl_Font Fl_Text_Display::linenumber_font() const {
-#if FLTK_ABI_VERSION >= 10303
   return linenumber_font_;
-#else
-  return FL_HELVETICA;
-#endif
 }
 
 /**
  Set the font size used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FLTK_ABI_VERSION is 10303 or higher)
+ \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
 */
 void Fl_Text_Display::linenumber_size(Fl_Fontsize val) {
-#if FLTK_ABI_VERSION >= 10303
   linenumber_size_ = val;
-#else
-  // do nothing
-#endif
 }
 
 /**
  Return the font size used for line numbers (if enabled).
 */
 Fl_Fontsize Fl_Text_Display::linenumber_size() const {
-#if FLTK_ABI_VERSION >= 10303
   return linenumber_size_;
-#else
-  return FL_NORMAL_SIZE;
-#endif
 }
 
 /**
  Set the foreground color used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FLTK_ABI_VERSION is 10303 or higher)
+ \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
 */
 void Fl_Text_Display::linenumber_fgcolor(Fl_Color val) {
-#if FLTK_ABI_VERSION >= 10303
   linenumber_fgcolor_ = val;
-#else
-  // do nothing
-#endif
 }
 
 /**
  Return the foreground color used for line numbers (if enabled).
 */
 Fl_Color Fl_Text_Display::linenumber_fgcolor() const {
-#if FLTK_ABI_VERSION >= 10303
   return linenumber_fgcolor_;
-#else
-  return FL_INACTIVE_COLOR;
-#endif
 }
 
 /**
  Set the background color used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FLTK_ABI_VERSION is 10303 or higher)
+ \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
 */
 void Fl_Text_Display::linenumber_bgcolor(Fl_Color val) {
-#if FLTK_ABI_VERSION >= 10303
   linenumber_bgcolor_ = val;
-#else
-  // do nothing
-#endif
 }
 
 /**
  Returns the background color used for line numbers (if enabled).
 */
 Fl_Color Fl_Text_Display::linenumber_bgcolor() const {
-#if FLTK_ABI_VERSION >= 10303
   return linenumber_bgcolor_;
-#else
-  return 53;	// hard coded ~90% gray
-#endif
 }
 
 /**
  Set alignment for line numbers (if enabled).
  Valid values are FL_ALIGN_LEFT, FL_ALIGN_CENTER or FL_ALIGN_RIGHT.
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FLTK_ABI_VERSION is 10303 or higher)
+ \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
 */
 void Fl_Text_Display::linenumber_align(Fl_Align val) {
-#if FLTK_ABI_VERSION >= 10303
   linenumber_align_ = val;
-#else
-  // do nothing
-#endif
 }
 
 /**
  Returns the alignment used for line numbers (if enabled).
 */
 Fl_Align Fl_Text_Display::linenumber_align() const {
-#if FLTK_ABI_VERSION >= 10303
   return linenumber_align_;
-#else
-  return FL_ALIGN_RIGHT;
-#endif
 }
 
 /**
@@ -361,26 +317,18 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
      - "%x"   -- For hexadecimal line numbers
      - "%o"   -- For octal line numbers
 
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FLTK_ABI_VERSION is 10303 or higher)
+ \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
 */
 void Fl_Text_Display::linenumber_format(const char* val) {
-#if FLTK_ABI_VERSION >= 10303
   if ( linenumber_format_ ) free((void*)linenumber_format_);
   linenumber_format_ = val ? strdup(val) : 0;
-#else
-  // do nothing
-#endif
 }
 
 /**
  Returns the line number printf() format string.
 */
 const char* Fl_Text_Display::linenumber_format() const {
-#if FLTK_ABI_VERSION >= 10303
   return linenumber_format_;
-#else
-  return "%d";
-#endif
 }
 
 /**

@@ -128,12 +128,8 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   current_row       = -1;
   select_row        = -1;
   select_col        = -1;
-#if FLTK_ABI_VERSION >= 10301
   _scrollbar_size   = 0;
-#endif  
-#if FLTK_ABI_VERSION >= 10303
   flags_            = 0;	// TABCELLNAV off
-#endif
   box(FL_THIN_DOWN_FRAME);
   
   vscrollbar = new Fl_Scrollbar(x()+w()-Fl::scrollbar_size(), y(),
@@ -483,13 +479,7 @@ void Fl_Table::recalc_dimensions() {
     // First pass: can hide via window size?
     int hidev = (table_h <= tih);
     int hideh = (table_w <= tiw); 
-#if FLTK_ABI_VERSION >= 10301
-    // NEW
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-#else
-    // OLD
-    int scrollsize = Fl::scrollbar_size();
-#endif
     // Second pass: Check for interference
     if ( !hideh & hidev ) { hidev = (( table_h - tih + scrollsize ) <= 0 ); } 
     if ( !hidev & hideh ) { hideh = (( table_w - tiw + scrollsize ) <= 0 ); } 
@@ -564,13 +554,7 @@ void Fl_Table::table_resized() {
     // Vertical scrollbar
     float vscrolltab = ( table_h == 0 || tih > table_h ) ? 1 : (float)tih / table_h;
     float hscrolltab = ( table_w == 0 || tiw > table_w ) ? 1 : (float)tiw / table_w;
-#if FLTK_ABI_VERSION >= 10301
-    // NEW
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-#else
-    // OLD
-    int scrollsize = Fl::scrollbar_size();
-#endif
     vscrollbar->bounds(0, table_h-tih);
     vscrollbar->precision(10);
     vscrollbar->slider_size(vscrolltab);
@@ -736,9 +720,7 @@ int Fl_Table::handle(int event) {
   int _event_x      = Fl::event_x();
   int _event_y      = Fl::event_y();
   int _event_key    = Fl::event_key();
-#if FLTK_ABI_VERSION >= 10303
   int _event_state  = Fl::event_state();
-#endif
   Fl_Widget *_focus = Fl::focus();
   switch ( event ) {
     case FL_PUSH:
@@ -1036,7 +1018,6 @@ int Fl_Table::handle(int event) {
           ret = move_cursor(1, 0);
           break;
 	case FL_Tab:
-#if FLTK_ABI_VERSION >= 10303
 	  if ( !tab_cell_nav() ) break;		// not navigating cells? let fltk handle it (STR#2862)
 	  if ( _event_state & FL_SHIFT ) {
             ret = move_cursor(0, -1, 0);	// shift-tab -> left
@@ -1044,9 +1025,6 @@ int Fl_Table::handle(int event) {
 	    ret = move_cursor(0, 1, 0);		// tab -> right
 	  }
           break;
-#else
-          break;				// without tab_cell_nav(), Fl_Table should default to navigating widgets, not cells
-#endif
       }
       if (ret && Fl::focus() != this) {
         do_callback(CONTEXT_TABLE, -1, -1);
@@ -1168,13 +1146,7 @@ void Fl_Table::set_selection(int row_top, int col_left, int row_bot, int col_rig
 //    Then tell the group to draw over us.
 //
 void Fl_Table::draw() {   
-#if FLTK_ABI_VERSION >= 10301
-    // NEW
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-#else
-    // OLD
-    int scrollsize = Fl::scrollbar_size();
-#endif
   // Check if scrollbar size changed
   if ( ( vscrollbar && (scrollsize != vscrollbar->w()) ) || 
        ( hscrollbar && (scrollsize != hscrollbar->h()) ) ) {

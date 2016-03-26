@@ -3,7 +3,7 @@
 //
 // Spinner widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,10 +50,7 @@ class FL_EXPORT Fl_Spinner : public Fl_Group {
   double	step_;			// Amount to add/subtract for up/down
   const char	*format_;		// Format string
 
-#if FLTK_ABI_VERSION >= 10301
-// NEW
 protected:
-#endif
   Fl_Input	input_;			// Input field for the value
   Fl_Repeat_Button
 		up_button_,		// Up button

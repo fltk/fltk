@@ -24,11 +24,6 @@
 #ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
 #include <FL/Enumerations.H>
 
-#if FLTK_ABI_VERSION < 10304
-#define _ofn_ptr (&_ofn)
-#define _binf_ptr (&_binf)
-#endif
-
 #include <stdlib.h>		// malloc
 #include <stdio.h>		// sprintf
 #include <wchar.h>
@@ -133,10 +128,8 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   _btype           = val;
   _options         = NO_OPTIONS;
-#if FLTK_ABI_VERSION >= 10304
   _ofn_ptr = new OPENFILENAMEW;
   _binf_ptr = new BROWSEINFOW;
-#endif
   memset((void*)_ofn_ptr, 0, sizeof(OPENFILENAMEW));
   _ofn_ptr->lStructSize = sizeof(OPENFILENAMEW);
   _ofn_ptr->hwndOwner = 0L;
@@ -167,10 +160,8 @@ Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   clear_pathnames();
   ClearOFN();
   ClearBINF();
-#if FLTK_ABI_VERSION >= 10304
   delete _binf_ptr;
   delete _ofn_ptr;
-#endif
 }
 
 // SET TYPE OF BROWSER

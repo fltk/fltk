@@ -43,12 +43,6 @@ int main(int argc, char **argv) {
     (FL_ABI_VERSION == Fl::abi_version()) ? "" : "***");
 #endif
 
-#ifdef FLTK_ABI_VERSION
-  sprintf(version[versions++],"FLTK_ABI_VERSION  = %6d",FLTK_ABI_VERSION);
-  sprintf(version[versions++],"NOTE: FLTK_ABI_VERSION is deprecated.\n"
-			      "Please use FL_ABI_VERSION instead !");
-#endif
-
   for (int i=0; i<versions; i++) {
     printf("%s\n",version[i]);
   }

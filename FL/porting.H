@@ -67,14 +67,7 @@ public:
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for
   Fl_Region region;
-//#if FLTK_ABI_VERSION < 10304
-//  Fl_Region subRegion;     // for ABI compatibility, recycled to replace subRect_
-//#endif
   Fl_X *next;              // chain of mapped windows
-//#if FLTK_ABI_VERSION < 10304
-//  Fl_X *xidChildren;       // useless with true subwindows, recycled to replace mapped_to_retina_
-//  Fl_X *xidNext;           // useless with true subwindows
-//#endif
   int wait_for_expose;
 //  NSCursor *cursor;
   static Fl_X* first;
@@ -82,13 +75,8 @@ public:
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static Fl_X* make(Fl_Window*);
   void flush();
-//#if FLTK_ABI_VERSION >= 10304
 //  CGRect* subRect() { return subRect_; } // getter
 //  void subRect(CGRect *r) { subRect_ = r; } // setter
-//#else
-//  CGRect* subRect() { return (CGRect*)subRegion; } // getter
-//  void subRect(CGRect *r) { subRegion = (Fl_Region)r; } // setter
-//#endif
 //  bool mapped_to_retina();      // is window mapped to retina display?
 //  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
 //  bool changed_resolution();      // did window just moved to display with another resolution?

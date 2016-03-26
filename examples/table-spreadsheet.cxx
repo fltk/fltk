@@ -250,9 +250,7 @@ void Spreadsheet::event_callback2() {
 int main() {
   Fl_Double_Window *win = new Fl_Double_Window(862, 322, "Fl_Table Spreadsheet");
   Spreadsheet *table = new Spreadsheet(10, 10, win->w()-20, win->h()-20);
-#if FLTK_ABI_VERSION >= 10303
   table->tab_cell_nav(1);		// enable tab navigation of table cells (instead of fltk widgets)
-#endif
   table->tooltip("Use keyboard to navigate cells:\n"
                  "Arrow keys or Tab/Shift-Tab");
   // Table rows

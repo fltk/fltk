@@ -73,11 +73,7 @@
  Note that other features may be available via Fl_Text_Editor
  and Fl_Text_Buffer classes.
 
- \note Line numbers were added in 1.3.3. To avoid breaking ABI,
-       many of its options are read only. To adjust these features
-       in 1.3.x, you must build FLTK with FLTK_ABI_VERSION set to 10303
-       or higher.
-
+ \note Line numbers were added in FLTK 1.3.3.
  */
 class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
@@ -526,14 +522,12 @@ protected:
   int mLineNumLeft, mLineNumWidth;
 
   // Line number font/colors
-#if FLTK_ABI_VERSION >= 10303
   Fl_Font     linenumber_font_;
   Fl_Fontsize linenumber_size_;
   Fl_Color    linenumber_fgcolor_;
   Fl_Color    linenumber_bgcolor_;
   Fl_Align    linenumber_align_;
   const char* linenumber_format_;
-#endif
 };
 
 #endif
