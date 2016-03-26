@@ -48,8 +48,8 @@
 #    endif
 #    include <X11/Xatom.h>
 #    include "Fl_Window.H"
-// Mirror X definition of Region to Fl_Region, for portability...
-typedef Region Fl_Region;
+
+#include <src/drivers/Posix/Fl_Posix_System_Driver.H>
 
 FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);
@@ -74,11 +74,6 @@ FL_EXPORT int fl_handle(const XEvent&);
 // you can use these in Fl::add_handler() to look at events:
 extern FL_EXPORT const XEvent* fl_xevent;
 extern FL_EXPORT ulong fl_event_time;
-
-typedef ulong Fl_Offscreen;
-
-// Bitmap masks
-typedef ulong Fl_Bitmask;
 
 extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern FL_EXPORT Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);

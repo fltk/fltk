@@ -20,8 +20,10 @@
 // You do not need to call this!  Feel free to make up your own switches.
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/filename.H>
 #include <FL/fl_draw.H>

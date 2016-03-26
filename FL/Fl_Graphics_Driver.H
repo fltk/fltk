@@ -24,7 +24,7 @@
 #ifndef FL_GRAPHICS_DRIVER_H
 #define FL_GRAPHICS_DRIVER_H
 
-#include <FL/x.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
@@ -46,25 +46,6 @@ FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
  to this buffer.
  */
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
-
-// typedef what the x,y fields in a point are:
-#ifdef WIN32
-typedef int COORD_T;
-#  define XPOINT XPoint
-#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform specific types
-typedef float COORD_T;
-typedef struct { float x; float y; } QPoint;
-#  define XPOINT QPoint
-extern float fl_quartz_line_width_;
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define types for COORD_T and XPOINT"
-typedef int COORD_T; // default if not ported
-typedef struct { int x; int y; } QPoint;
-#  define XPOINT QPoint
-#else
-typedef short COORD_T;
-#  define XPOINT XPoint
-#endif
 
 
 #define FL_REGION_STACK_SIZE 10
@@ -116,8 +97,7 @@ protected:
   static const int matrix_stack_size = FL_MATRIX_STACK_SIZE;
   matrix stack[FL_MATRIX_STACK_SIZE];
   matrix m;
-  int n, p_size, gap_;
-  XPOINT *p;
+  int n, gap_;
   int what;
   int rstackptr;
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
@@ -126,7 +106,6 @@ protected:
 #ifndef FL_DOXYGEN
   enum {LINE, LOOP, POLYGON, POINT_};
   inline int vertex_no() { return n; }
-  inline XPOINT *vertices() {return p;}
   inline int vertex_kind() {return what;}
 #endif
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
@@ -134,7 +113,7 @@ protected:
   // === all code below in this class has been to the reorganisation FL_PORTING process
 public:
   Fl_Graphics_Driver();
-  virtual ~Fl_Graphics_Driver() { if (p) free(p); }
+  virtual ~Fl_Graphics_Driver() {}
   virtual char can_do_alpha_blending() { return 0; }
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   virtual void point(int x, int y) = 0;
@@ -261,8 +240,6 @@ public:
   static void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  virtual void transformed_vertex0(COORD_T x, COORD_T y);
-  virtual void fixloop();
   void global_gc(void);
 };
 

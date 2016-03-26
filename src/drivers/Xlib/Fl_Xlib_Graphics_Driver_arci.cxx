@@ -19,6 +19,7 @@
 #include <config.h>
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/fl_draw.H>
+#include <FL/x.H>
 
 /**
   \file Fl_Xlib_Graphics_Driver_arci.cxx

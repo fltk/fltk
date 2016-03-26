@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Quartz_Graphics_Driver.H"
+#include <FL/x.H>
 
 /* Reference to the current CGContext
  For back-compatibility only. The preferred procedure to get this reference is

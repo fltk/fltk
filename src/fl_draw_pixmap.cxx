@@ -33,6 +33,7 @@
 // transparency added, color cube not required, etc.      -erco Oct 20 2013
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include "flstring.h"

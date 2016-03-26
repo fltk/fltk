@@ -20,6 +20,7 @@
 #ifdef FL_CFG_GFX_QUARTZ
 
 #include "Fl_Quartz_Graphics_Driver.h"
+#include <FL/x.H>
 
 /**
   \file quartz_arci.cxx

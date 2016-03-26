@@ -17,6 +17,9 @@
 //
 
 #include <FL/Fl.H>
+#ifdef __APPLE__
+#include <FL/x.H> // for fl_open_callback
+#endif
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>

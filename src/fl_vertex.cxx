@@ -125,22 +125,6 @@ double Fl_Graphics_Driver::transform_dy(double x, double y) {
   return x*m.b + y*m.d;
 }
 
-void Fl_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
-  if (!n || x != p[n-1].x || y != p[n-1].y) {
-    if (n >= p_size) {
-      p_size = p ? 2*p_size : 16;
-      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
-    }
-    p[n].x = x;
-    p[n].y = y;
-    n++;
-  }
-}
-
-void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
-  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
-}
-
 //
 // End of "$Id$".
 //

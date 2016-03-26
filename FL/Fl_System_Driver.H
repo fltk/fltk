@@ -21,10 +21,25 @@
  \brief declaration of classe Fl_System_Driver.
 */
 
+#ifdef __APPLE__
+#include <src/drivers/Darwin/Fl_Darwin_System_Driver.H>
+
+#elif defined(WIN32)
+#include <src/drivers/WinAPI/Fl_WinAPI_System_Driver.H>
+
+#elif defined(FL_PORTING)
+# pragma message "FL_PORTING: define OS-dependent types"
+typedef void* Fl_Offscreen;
+typedef void* Fl_Bitmask;
+typedef void *Fl_Region;
+#else
+
+#include <src/drivers/Posix/Fl_Posix_System_Driver.H>
+#endif // __APPLE__
+
 #ifndef FL_SYSTEM_DRIVER_H
 #define FL_SYSTEM_DRIVER_H
 
-#include <FL/Fl_Device.H>
 #include <FL/Fl_Export.H>
 
 /**
@@ -35,7 +50,6 @@ public:
   Fl_System_Driver();
   virtual ~Fl_System_Driver();
 };
-
 
 #endif // FL_SYSTEM_DRIVER_H
 

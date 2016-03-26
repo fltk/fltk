@@ -31,6 +31,7 @@
 
 // WIN32 note: HAVE_OVERLAY is false
 #if HAVE_OVERLAY
+#include <FL/x.H>
 extern XVisualInfo *fl_find_overlay_visual();
 extern XVisualInfo *fl_overlay_visual;
 extern Colormap fl_overlay_colormap;

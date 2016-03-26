@@ -31,15 +31,15 @@
 
 
 void Fl_Xlib_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(COORD_T(rint(xf)), COORD_T(rint(yf)));
+  transformed_vertex0(short(rint(xf)), short(rint(yf)));
 }
 
 void Fl_Xlib_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(COORD_T(x*m.a + y*m.c + m.x), COORD_T(x*m.b + y*m.d + m.y));
+  transformed_vertex0(short(x*m.a + y*m.c + m.x), short(x*m.b + y*m.d + m.y));
 }
 
 void Fl_Xlib_Graphics_Driver::end_points() {
-  if (n>1) XDrawPoints(fl_display, fl_window, gc_, p, n, 0);
+  if (n>1) XDrawPoints(fl_display, fl_window, gc_, (XPoint*)p, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_line() {
@@ -47,12 +47,12 @@ void Fl_Xlib_Graphics_Driver::end_line() {
     end_points();
     return;
   }
-  if (n>1) XDrawLines(fl_display, fl_window, gc_, p, n, 0);
+  if (n>1) XDrawLines(fl_display, fl_window, gc_, (XPoint*)p, n, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::end_loop() {
   fixloop();
-  if (n>2) transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
+  if (n>2) transformed_vertex((short)p[0].x, (short)p[0].y);
   end_line();
 }
 
@@ -62,7 +62,7 @@ void Fl_Xlib_Graphics_Driver::end_polygon() {
     end_line();
     return;
   }
-  if (n>2) XFillPolygon(fl_display, fl_window, gc_, p, n, Convex, 0);
+  if (n>2) XFillPolygon(fl_display, fl_window, gc_, (XPoint*)p, n, Convex, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
@@ -73,7 +73,7 @@ void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
 void Fl_Xlib_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex((COORD_T)p[gap_].x, (COORD_T)p[gap_].y);
+    transformed_vertex((short)p[gap_].x, (short)p[gap_].y);
     gap_ = n;
   } else {
     n = gap_;
@@ -86,7 +86,7 @@ void Fl_Xlib_Graphics_Driver::end_complex_polygon() {
     end_line();
     return;
   }
-  if (n>2) XFillPolygon(fl_display, fl_window, gc_, p, n, 0, 0);
+  if (n>2) XFillPolygon(fl_display, fl_window, gc_, (XPoint*)p, n, 0, 0);
 }
 
 // shortcut the closed circles so they use XDrawArc:

@@ -26,12 +26,7 @@
 #define FL_QUARTZ_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
-
-// typedef what the x,y fields in a point are:
-// FIXME: this is still defined in Fl_Device.H, but should be invisible to the user
-//typedef float COORD_T;
-//typedef struct { float x; float y; } QPoint;
-
+#include <ApplicationServices/ApplicationServices.h>
 
 /**
  \brief The Mac OS X-specific graphics class.
@@ -41,7 +36,12 @@
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 protected:
   CGContextRef gc_;
+  int p_size;
+  typedef struct { float x; float y; } XPOINT;
+  XPOINT *p;
 public:
+  Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {}
+  virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
   virtual void *gc() {return gc_;}
@@ -64,6 +64,8 @@ public:
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
 protected:
+  void transformed_vertex0(float x, float y);
+  void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/quartz_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);
@@ -121,6 +123,8 @@ protected:
   int height();
   int descent();
 };
+
+extern float fl_quartz_line_width_;
 
 #endif // FL_QUARTZ_GRAPHICS_DRIVER_H
 

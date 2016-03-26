@@ -20,6 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/fl_draw.H>
+#include <FL/x.H>
 
 #include <string.h>
 
@@ -51,6 +52,8 @@ GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
 
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
+  p_size = 0;
+  p = NULL;
 }
 
 void Fl_Xlib_Graphics_Driver::gc(void *value) {
@@ -103,6 +106,22 @@ void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int 
   XRectangle R;
   R.x = X; R.y = Y; R.width = W; R.height = H;
   XUnionRectWithRegion(&R, r, r);
+}
+
+void Fl_Xlib_Graphics_Driver::transformed_vertex0(short x, short y) {
+  if (!n || x != p[n-1].x || y != p[n-1].y) {
+    if (n >= p_size) {
+      p_size = p ? 2*p_size : 16;
+      p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
+    }
+    p[n].x = x;
+    p[n].y = y;
+    n++;
+  }
+}
+
+void Fl_Xlib_Graphics_Driver::fixloop() {  // remove equal points from closed path
+  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
 //

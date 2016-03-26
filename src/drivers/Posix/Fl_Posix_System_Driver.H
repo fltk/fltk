@@ -27,10 +27,14 @@
 
 #include <FL/Fl_System_Driver.H>
 
+typedef unsigned long Fl_Offscreen;
+typedef unsigned long Fl_Bitmask;
+typedef struct _XRegion *Fl_Region;
+
 /*
  Move everything here that manages the system interface.
 
- There is excatly one system driver.
+ There is exactly one system driver.
 
  - filename and pathname management
  - directory and file access

@@ -20,6 +20,7 @@
 
 #ifdef FL_CFG_GFX_QUARTZ
 #include <FL/Fl_Copy_Surface.H>
+#include <FL/x.H>
 #include "Fl_Quartz_Graphics_Driver.H"
 
 class Fl_Quartz_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {

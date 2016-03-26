@@ -27,10 +27,15 @@
 
 #include <FL/Fl_System_Driver.H>
 
+typedef struct HBITMAP__ *HBITMAP;
+typedef HBITMAP Fl_Offscreen;
+typedef HBITMAP Fl_Bitmask;
+typedef struct HRGN__ *Fl_Region;
+
 /*
  Move everything here that manages the system interface.
 
- There is excatly one system driver.
+ There is exactly one system driver.
 
  - filename and pathname management
  - directory and file access

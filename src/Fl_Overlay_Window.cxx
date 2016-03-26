@@ -87,6 +87,7 @@ void Fl_Overlay_Window::redraw_overlay() {
 }
 
 #else
+#include <FL/x.H>
 
 extern XVisualInfo *fl_find_overlay_visual();
 extern XVisualInfo *fl_overlay_visual;

@@ -56,7 +56,7 @@ public:
   void pop_clip();
   void restore_clip();
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  void transformed_vertex0(COORD_T x, COORD_T y);
+  //void transformed_vertex0(double x, double y);
   void transformed_vertex(double xf, double yf);
   void vertex(double x, double y);
   void begin_points();

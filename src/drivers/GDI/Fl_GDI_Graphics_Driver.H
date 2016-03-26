@@ -42,8 +42,11 @@ protected:
   uchar **mask_bitmap_;
   uchar **mask_bitmap() {return mask_bitmap_;}
   void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
+  int p_size;
+  POINT *p;
 public:
-  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL;}
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL;}
+  virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (HDC)ctxt;}
@@ -76,6 +79,8 @@ public:
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 protected:
+  void transformed_vertex0(int x, int y);
+  void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);

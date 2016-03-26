@@ -17,6 +17,7 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_draw.H>
 #include "flstring.h"
 

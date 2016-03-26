@@ -20,6 +20,7 @@
 
 #ifdef FL_CFG_GFX_GDI
 #include <FL/Fl_Copy_Surface.H>
+#include <FL/x.H>
 #include "Fl_GDI_Graphics_Driver.H"
 #include <windows.h>
 

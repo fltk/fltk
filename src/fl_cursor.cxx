@@ -23,6 +23,7 @@
 // portable to other systems.
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>

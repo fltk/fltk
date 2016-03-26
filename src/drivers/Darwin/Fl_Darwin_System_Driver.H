@@ -27,10 +27,14 @@
 
 #include <FL/Fl_System_Driver.H>
 
+typedef struct CGContext* Fl_Offscreen;
+typedef struct CGImage* Fl_Bitmask;
+typedef struct flCocoaRegion* Fl_Region;
+
 /*
  Move everything here that manages the system interface.
 
- There is excatly one system driver.
+ There is exactly one system driver.
 
  - filename and pathname management
  - directory and file access

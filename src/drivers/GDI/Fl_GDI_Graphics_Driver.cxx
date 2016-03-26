@@ -21,6 +21,7 @@
 #include "../../config_lib.h"
 #include "Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl.H>
+#include <FL/x.H>
 
 
 /* Reference to the current device context
@@ -149,6 +150,23 @@ void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int 
   CombineRgn(r, r, R, RGN_OR);
   XDestroyRegion(R);
 }
+
+void Fl_GDI_Graphics_Driver::transformed_vertex0(int x, int y) {
+  if (!n || x != p[n-1].x || y != p[n-1].y) {
+    if (n >= p_size) {
+      p_size = p ? 2*p_size : 16;
+      p = (POINT*)realloc((void*)p, p_size*sizeof(*p));
+    }
+    p[n].x = x;
+    p[n].y = y;
+    n++;
+  }
+}
+
+void Fl_GDI_Graphics_Driver::fixloop() {  // remove equal points from closed path
+  while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
+}
+
 
 //
 // End of "$Id$".

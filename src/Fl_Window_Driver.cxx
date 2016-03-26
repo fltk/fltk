@@ -22,6 +22,7 @@
 #include <FL/Fl_Window_Driver.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
+#include <FL/x.H>
 
 extern void fl_throw_focus(Fl_Widget *o);
 

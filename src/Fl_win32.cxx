@@ -49,6 +49,7 @@ void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"

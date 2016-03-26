@@ -33,18 +33,17 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif // __OBJC__
 
 #include <FL/Fl_Device.H>
+#include "src/drivers/Darwin/Fl_Darwin_System_Driver.H"
 
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
 #  include <FL/Fl_Widget.H>
 
-typedef struct flCocoaRegion* Fl_Region;
 typedef struct CGContext* CGContextRef;
 typedef struct OpaquePMPrintSettings*   PMPrintSettings;
 typedef struct OpaquePMPageFormat*      PMPageFormat;
 typedef struct OpaquePMPrintSession*    PMPrintSession;
 typedef struct CGImage* CGImageRef;
 typedef struct __CFData* CFMutableDataRef; // used in Fl_Copy_Surface.H
-typedef CGContextRef Fl_Offscreen;
 
 #else // this part must be compiled when building the FLTK libraries
 
@@ -99,15 +98,14 @@ class NSOpenGLContext;
 class CALayer;
 #endif // __OBJC__
 
-typedef CGContextRef Fl_Offscreen;
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
 typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
-typedef struct flCocoaRegion {
+struct flCocoaRegion {
   int count;
   CGRect *rects;
-} *Fl_Region;  // a region is the union of a series of rectangles
+}; // a region is the union of a series of rectangles
 
 #  include "Fl_Window.H"
 #  include "../src/Fl_Font.H"
@@ -209,7 +207,6 @@ extern Window fl_window;
 
 #endif // FL_LIBRARY || FL_INTERNALS
 
-typedef CGImageRef Fl_Bitmask;
 
 extern CGContextRef fl_gc;
 

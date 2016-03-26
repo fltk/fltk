@@ -99,12 +99,8 @@ void Fl_OpenGL_Graphics_Driver::transformed_vertex(double xf, double yf) {
   glVertex2d(xf, yf);
 }
 
-void Fl_OpenGL_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
-  glVertex2d(x, y);
-}
-
 void Fl_OpenGL_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
+  transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
 }
 
 void Fl_OpenGL_Graphics_Driver::circle(double cx, double cy, double r) {

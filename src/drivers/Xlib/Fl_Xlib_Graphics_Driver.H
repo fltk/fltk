@@ -26,6 +26,7 @@
 #define FL_CFG_GFX_XLIB_H
 
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/x.H>
 
 /**
  \brief The Xlib-specific graphics class.
@@ -38,8 +39,12 @@ protected:
   uchar **mask_bitmap_;
   uchar **mask_bitmap() {return mask_bitmap_;}
   void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
+  int p_size;
+  typedef struct {short x, y;} XPOINT;
+  XPOINT *p;
 public:
   Fl_Xlib_Graphics_Driver(void);
+  virtual ~Fl_Xlib_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void *gc() { return gc_; }
   virtual void gc(void *value);
@@ -75,6 +80,8 @@ public:
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
 protected:
+  void transformed_vertex0(short x, short y);
+  void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
   void point(int x, int y);
   void rect(int x, int y, int w, int h);

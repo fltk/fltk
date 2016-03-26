@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_draw.H>
 #ifdef __APPLE__
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.h"

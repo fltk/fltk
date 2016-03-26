@@ -29,6 +29,7 @@
 #include <config.h>
 #include "config_lib.h"
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>

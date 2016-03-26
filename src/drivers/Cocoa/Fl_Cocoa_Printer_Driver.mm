@@ -22,6 +22,7 @@
 #include "../Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #import <Cocoa/Cocoa.h>

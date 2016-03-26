@@ -28,6 +28,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <string.h>
 #if HAVE_DLFCN_H
 #include <dlfcn.h>

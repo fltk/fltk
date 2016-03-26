@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>

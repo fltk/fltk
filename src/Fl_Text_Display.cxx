@@ -27,6 +27,7 @@
 #include <ctype.h>
 #include <string.h>	// strdup()
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>

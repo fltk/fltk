@@ -22,6 +22,7 @@
 #include "Fl_Quartz_Graphics_Driver.h"
 #include <math.h>
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_utf8.h>
 
 Fl_Fontdesc* fl_fonts = NULL;

@@ -33,11 +33,11 @@
 
 
 void Fl_GDI_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(COORD_T(rint(xf)), COORD_T(rint(yf)));
+  transformed_vertex0(int(rint(xf)), int(rint(yf)));
 }
 
 void Fl_GDI_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(COORD_T(x*m.a + y*m.c + m.x), COORD_T(x*m.b + y*m.d + m.y));
+  transformed_vertex0(int(x*m.a + y*m.c + m.x), int(x*m.b + y*m.d + m.y));
 }
 
 void Fl_GDI_Graphics_Driver::end_points() {
@@ -54,7 +54,7 @@ void Fl_GDI_Graphics_Driver::end_line() {
 
 void Fl_GDI_Graphics_Driver::end_loop() {
   fixloop();
-  if (n>2) transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
+  if (n>2) transformed_vertex((int)p[0].x, (int)p[0].y);
   end_line();
 }
 
@@ -79,7 +79,7 @@ void Fl_GDI_Graphics_Driver::begin_complex_polygon() {
 void Fl_GDI_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex((COORD_T)p[gap_].x, (COORD_T)p[gap_].y);
+    transformed_vertex((int)p[gap_].x, (int)p[gap_].y);
     counts[numcount++] = n-gap_;
     gap_ = n;
   } else {

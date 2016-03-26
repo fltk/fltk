@@ -26,9 +26,8 @@
 #endif // !Fl_X_H
 
 #include <windows.h>
-typedef HRGN Fl_Region;
+#include "src/drivers/WinAPI/Fl_WinAPI_System_Driver.H"
 typedef HWND Window;
-typedef POINT XPoint;
 
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Window.H>
@@ -126,7 +125,6 @@ extern FL_EXPORT MSG fl_msg;
 extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 
-typedef HBITMAP Fl_Offscreen;
 /*#define fl_create_offscreen(w, h) \
   CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h)
 
@@ -143,7 +141,6 @@ Fl_Display_Device::display_device()->set_current(); \
 #define fl_delete_offscreen(bitmap) DeleteObject(bitmap)*/
 
 // Bitmap masks
-typedef HBITMAP Fl_Bitmask;
 
 extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern FL_EXPORT Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);

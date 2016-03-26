@@ -140,7 +140,7 @@ void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, 
 }
 
 void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
-  XPoint p[3];
+  POINT p[3];
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;
@@ -149,7 +149,7 @@ void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y
 }
 
 void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
-  XPoint p[4];
+  POINT p[4];
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
   p[2].x = x2; p[2].y = y2;

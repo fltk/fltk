@@ -21,6 +21,7 @@
 #ifdef FL_CFG_GFX_QUARTZ
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 
 
 /**

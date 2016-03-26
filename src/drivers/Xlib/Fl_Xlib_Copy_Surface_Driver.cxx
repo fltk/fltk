@@ -21,6 +21,7 @@
 #ifdef FL_CFG_GFX_XLIB
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/fl_draw.H>
 #include "Fl_Translated_Xlib_Graphics_Driver.H"
 
