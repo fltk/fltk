@@ -51,7 +51,7 @@ static void dataReleaseCB(void *info, const void *data, size_t size)
  */
 static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int mono,
-		    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc)
+		    Fl_Draw_Image_Cb cb, void* userdata, CGContextRef gc, Fl_Quartz_Graphics_Driver *driver)
 {
   if (!linedelta) linedelta = W*abs(delta);
 
@@ -105,25 +105,25 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
       CGContextTranslateCTM(gc, W-1, 0);
       CGContextScaleCTM(gc, -1, 1);
     }
-    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img, 0,0,W,H, 0,0,W,H);
+    driver->draw_CGImage(img, 0,0,W,H, 0,0,W,H);
     CGImageRelease(img);
     CGContextRestoreGState(gc);
   }
 }
 
 void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc_);
+  innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,gc_);
+  innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0,gc_);
+  innards(buf,x,y,w,h,d,l,1,0,0,gc_,this);
 }
 void Fl_Quartz_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data,gc_);
+  innards(0,x,y,w,h,d,0,1,cb,data,gc_,this);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {

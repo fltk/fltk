@@ -633,11 +633,11 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const c
   id = fl_create_offscreen(w, h);
   fl_begin_offscreen(id);
   uchar *bitmap = 0;
-  fl_graphics_driver->mask_bitmap(&bitmap);
+  Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
   img->pixmap_bg_color = win_pixmap_bg_color;
-  fl_graphics_driver->mask_bitmap(0);
+  Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
     img->mask_ = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
     delete[] bitmap;
