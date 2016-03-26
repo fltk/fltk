@@ -176,7 +176,7 @@ void clear_cb(Fl_Widget *w, void *d)
 void prev_cb(Fl_Widget *w, void *d)
 {
   current_char--;
-  char b[2] = { current_char, 0 };
+  char b[2] = { (char)current_char, 0 };
   w->parent()->child(0)->copy_label(b);
   w->parent()->child(0)->redraw();
 }
@@ -184,7 +184,7 @@ void prev_cb(Fl_Widget *w, void *d)
 void next_cb(Fl_Widget *w, void *d)
 {
   current_char++;
-  char b[2] = { current_char, 0 };
+  char b[2] = { (char)current_char, 0 };
   w->parent()->child(0)->copy_label(b);
   w->parent()->child(0)->redraw();
 }
