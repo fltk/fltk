@@ -17,6 +17,9 @@
 //
 
 #include <FL/Fl.H>
+#ifdef __APPLE__
+#include <FL/x.H> // for Fl_Mac_App_Menu
+#endif
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
