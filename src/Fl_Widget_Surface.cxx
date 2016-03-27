@@ -149,23 +149,17 @@ void Fl_Widget_Surface::origin(int x, int y) {
  */
 void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
-  Fl_Surface_Device *current = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
-  Fl_X::i(win)->flush(); // makes the window current
+  Fl_X::i(win)->flush(); // makes the window current necessary for fl_read_image
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
   if (save_front != win) save_front->show();
-  current->set_current();
+  set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
   delete[] image_data;
-#ifdef WIN32
-  HDC gc = GetDC(fl_xid(win));
-  fl_graphics_driver->gc(gc);
-  ReleaseDC(fl_xid(win), gc);
-#endif
 }
 
 /**
