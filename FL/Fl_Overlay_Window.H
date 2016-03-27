@@ -38,9 +38,7 @@
 class FL_EXPORT Fl_Overlay_Window : public Fl_Double_Window {
 #ifndef FL_DOXYGEN
   friend class _Fl_Overlay;
-  friend class Fl_X11_Window_Driver;
-  friend class Fl_Cocoa_Window_Driver;
-  friend class Fl_WinAPI_Window_Driver;
+  friend class Fl_Window_Driver;
 #endif
 public:
   /**

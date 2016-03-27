@@ -313,7 +313,7 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
   int X, Y, W, H; fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
 
-  if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
+  if (overlay() == oWindow) oWindow->draw_overlay();
 }
 
 

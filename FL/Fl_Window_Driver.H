@@ -26,6 +26,7 @@
 
 #include <FL/Fl_Export.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Overlay_Window.H>
 
 #include <stdlib.h>
 
@@ -71,6 +72,14 @@ public:
   int shown() const { return pWindow->shown(); }
   /** returns the parent of the window. */
   Fl_Group *parent() const { return pWindow->parent(); }
+  /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
+  Fl_Window *overlay() {
+    return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
+  }
+  /** for an Fl_Overlay_Window, sets the value of its overlay_ member variable */
+  void overlay(Fl_Window *o) {
+    if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
+  }
 
   // --- accessors to private window data
   int minw();
@@ -120,6 +129,8 @@ public:
     *top = *left = *right = *bottom = 0; }
   virtual void show_with_args_begin() {}
   virtual void show_with_args_end(int argc, char **argv) {}
+  virtual int can_do_overlay();
+  virtual void redraw_overlay();
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // TODO: check

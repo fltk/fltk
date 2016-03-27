@@ -64,7 +64,7 @@ void Fl_Cocoa_Window_Driver::flush_double() {
 void Fl_Cocoa_Window_Driver::flush_overlay()
 {
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
-  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (oWindow->overlay_ == oWindow);
+  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (overlay() == oWindow);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
 
   if (!oWindow->shown()) return;
@@ -80,10 +80,10 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
       if ( myi->other_xid ) {
         fl_begin_offscreen( myi->other_xid );
         fl_clip_region( 0 );
-        oWindow->draw();
+        draw();
         fl_end_offscreen();
       } else {
-        oWindow->draw();
+        draw();
       }
     }
   if (erase_overlay) fl_clip_region(0);
@@ -92,7 +92,7 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
   int X,Y,W,H; fl_clip_box(0,0,oWindow->w(),oWindow->h(),X,Y,W,H);
   if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
   
-  if (oWindow->overlay_ == oWindow) oWindow->draw_overlay();
+  if (overlay() == oWindow) oWindow->draw_overlay();
 }
 
 

@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -207,6 +208,16 @@ void Fl_Window_Driver::use_border() {
 
 void Fl_Window_Driver::size_range() {
   pWindow->size_range_set = 1;
+}
+
+int Fl_Window_Driver::can_do_overlay() {
+  return 0;
+}
+
+void Fl_Window_Driver::redraw_overlay() {
+  ((Fl_Overlay_Window*)pWindow)->overlay_ = pWindow;
+  pWindow->clear_damage((uchar)(pWindow->damage()|FL_DAMAGE_OVERLAY));
+  Fl::damage(FL_DAMAGE_CHILD);
 }
 
 //
