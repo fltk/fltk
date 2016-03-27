@@ -245,12 +245,17 @@ if(HAVE_XCURSOR)
    target_link_libraries(fltk ${X11_Xcursor_LIB})
 endif(HAVE_XCURSOR)
 
+if (HAVE_XRENDER)
+    target_link_libraries(fltk ${X11_Xrender_LIB})
+endif (HAVE_XRENDER)
+
 if(USE_XFT)
    target_link_libraries(fltk ${X11_Xft_LIB})
    if(LIB_fontconfig)
       target_link_libraries(fltk ${LIB_fontconfig})
    endif(LIB_fontconfig)
 endif(USE_XFT)
+
 
 #######################################################################
 FL_ADD_LIBRARY(fltk_forms STATIC "${FLCPPFILES}")
@@ -323,6 +328,10 @@ endif(HAVE_XFIXES)
 if(HAVE_XCURSOR)
    target_link_libraries(fltk_SHARED ${X11_Xcursor_LIB})
 endif(HAVE_XCURSOR)
+
+if (HAVE_XRENDER)
+    target_link_libraries(fltk_SHARED ${X11_Xrender_LIB})
+endif (HAVE_XRENDER)
 
 if(USE_XFT)
    target_link_libraries(fltk_SHARED ${X11_Xft_LIB})

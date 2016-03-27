@@ -163,19 +163,6 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
     target_link_libraries(${tname} ${LIBRARIES})
 
-    # link in optional libraries
-    if (USE_XFT)
-        target_link_libraries(${tname} ${X11_Xft_LIB})
-    endif (USE_XFT)
-
-    if (HAVE_XINERAMA)
-        target_link_libraries(${tname} ${X11_Xinerama_LIB})
-    endif (HAVE_XINERAMA)
-
-    if (HAVE_XRENDER)
-        target_link_libraries(${tname} ${X11_Xrender_LIB})
-    endif (HAVE_XRENDER)
-
 endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
 #######################################################################
