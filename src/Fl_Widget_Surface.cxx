@@ -64,11 +64,6 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
   // if widget is a main window, clip all drawings to the window area
   if (is_window && !widget->window()) {
     fl_push_clip(0, 0, widget->w(), widget->h() );
-#ifdef __APPLE__ // for Mac OS X 10.6 and above, make window with rounded bottom corners
-    if ( fl_mac_os_version >= 100600 && driver()->has_feature(Fl_Graphics_Driver::NATIVE) ) {
-      Fl_X::clip_to_rounded_corners((CGContextRef)driver()->gc(), widget->w(), widget->h());
-    }
-#endif
   }
   // we do some trickery to recognize OpenGL windows and draw them via a plugin
   int drawn_by_plugin = 0;
@@ -159,12 +154,9 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
-  win->make_current();
+  Fl_X::i(win)->flush(); // makes the window current
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - platform paged device
-  Fl_X::q_release_context(); // matches make_current() call above
-#endif
   if (save_front != win) save_front->show();
   current->set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
