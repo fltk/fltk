@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// WIN32 image reading routines for the Fast Light Tool Kit (FLTK).
+// Mac OS image reading routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
 //
@@ -15,8 +15,6 @@
 //
 //     http://www.fltk.org/str.php
 //
-
-#include <config.h>
 
 //
 // 'fl_read_image()' - Read an image from the current window or off-screen buffer.

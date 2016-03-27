@@ -18,7 +18,6 @@
 //
 
 
-#include <config.h>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>

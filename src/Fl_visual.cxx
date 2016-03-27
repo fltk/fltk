@@ -18,7 +18,6 @@
 
 // Set the default visual according to passed switches:
 
-#include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Screen_Driver.H>
 

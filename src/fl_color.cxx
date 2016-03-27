@@ -26,8 +26,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl.H>
-#include <config.h>
-#include "config_lib.h"
 
 // fl_cmap needs to be defined globally (here) and is used in the device
 // specific graphics drivers

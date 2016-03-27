@@ -32,9 +32,7 @@
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
 
-#include <config.h>
-#include "config_lib.h"
-#include <FL/fl_draw.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl.H>
 #include <FL/math.h>
 #include <stdlib.h>

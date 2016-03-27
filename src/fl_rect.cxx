@@ -26,13 +26,8 @@
 // Also all fl_clip routines, since they are always linked in so
 // that minimal update works.
 
-#include <config.h>
-#include "config_lib.h"
-#include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/Fl_Widget.H>
-#include <FL/Fl_Printer.H>
-#include <FL/fl_draw.H>
+#include <FL/Fl_Graphics_Driver.H>
 
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
@@ -53,7 +48,7 @@ void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
   rstack[rstackptr] = r;
-  fl_restore_clip();
+  restore_clip();
 }
 
 

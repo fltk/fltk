@@ -20,7 +20,6 @@
 // which are actually X keysyms.  So this has to translate to macOS
 // symbols.
 
-#include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 
