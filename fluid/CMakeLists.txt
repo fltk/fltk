@@ -48,22 +48,13 @@ endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
-# link in optional libraries
-if(USE_XFT)
-   target_link_libraries(fluid ${X11_Xft_LIB})
-endif(USE_XFT)
-
-if(HAVE_XINERAMA)
-   target_link_libraries(fluid ${X11_Xinerama_LIB})
-endif(HAVE_XINERAMA)
-
-if(HAVE_XRENDER)
-   target_link_libraries(fluid ${X11_Xrender_LIB})
-endif(HAVE_XRENDER)
+# install fluid
 
 if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+  # create bundle
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
+  # install
   install(TARGETS fluid DESTINATION ${FLTK_BINDIR})
 else()
   install(TARGETS fluid
@@ -73,6 +64,8 @@ else()
     ARCHIVE DESTINATION ${FLTK_LIBDIR}
     )
 endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+
+# install desktop files
 
 if(UNIX)
     install(FILES fluid.desktop

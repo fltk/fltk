@@ -1,5 +1,5 @@
 
-set(CPPFILES
+set (CPPFILES
   Fl.cxx
   Fl_Adjuster.cxx
   Fl_Bitmap.cxx
@@ -144,29 +144,31 @@ set(CPPFILES
   fl_encoding_mac_roman.cxx
 )
 
-file(GLOB
+file (GLOB
   HEADER_FILES
   "../FL/*.H"
   "../FL/*.h"
 )
 
+set (GL_HEADER_FILES)		# FIXME: not (yet?) defined
+
 if ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
-  set(PSFILES
+  set (PSFILES
   )
-else()
-  set(PSFILES
+else ()
+  set (PSFILES
     drivers/PostScript/Fl_PostScript.cxx
     drivers/PostScript/Fl_PostScript_image.cxx
   )
-endif((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
+endif ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
 
-set(DRIVER_FILES)
+set (DRIVER_FILES)
 
 if (USE_X11)
 
   # X11 (including APPLE with X11)
 
-  set(DRIVER_FILES
+  set (DRIVER_FILES
     drivers/Posix/Fl_Posix_System_Driver.cxx
     drivers/Posix/Fl_Posix_Printer_Driver.cxx
     drivers/X11/Fl_X11_Screen_Driver.cxx
@@ -184,15 +186,15 @@ if (USE_X11)
     Fl_x.cxx
   )
   if (USE_XFT)
-    set(DRIVER_FILES ${DRIVER_FILES}
+    set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
     )
   else ()
-    set(DRIVER_FILES ${DRIVER_FILES}
+    set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
     )  
   endif (USE_XFT)
-  set(DRIVER_HEADER_FILES
+  set (DRIVER_HEADER_FILES
     drivers/Posix/Fl_Posix_System_Driver.H
     drivers/X11/Fl_X11_Screen_Driver.H
     drivers/X11/Fl_X11_Window_Driver.H
@@ -203,7 +205,7 @@ elseif (USE_SDL)
 
   # SDL2 
 
-  set(DRIVER_FILES
+  set (DRIVER_FILES
     drivers/Pico/Fl_Pico_System_Driver.cxx
     drivers/Pico/Fl_Pico_Screen_Driver.cxx
     drivers/Pico/Fl_Pico_Window_Driver.cxx
@@ -217,7 +219,7 @@ elseif (USE_SDL)
     drivers/PicoSDL/Fl_PicoSDL_Copy_Surface.cxx
     drivers/PicoSDL/Fl_PicoSDL_Image_Surface.cxx
   )
-  set(DRIVER_HEADER_FILES
+  set (DRIVER_HEADER_FILES
     drivers/Pico/Fl_Pico_System_Driver.H
     drivers/Pico/Fl_Pico_Screen_Driver.H
     drivers/Pico/Fl_Pico_Window_Driver.H
@@ -232,7 +234,7 @@ elseif (APPLE)
 
   # Apple Quartz
 
-  set(DRIVER_FILES
+  set (DRIVER_FILES
     drivers/Quartz/Fl_Quartz_Display_Device.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx
@@ -249,7 +251,7 @@ elseif (APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
   )
-  set(DRIVER_HEADER_FILES
+  set (DRIVER_HEADER_FILES
     drivers/Darwin/Fl_Darwin_System_Driver.H
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.H
     drivers/Cocoa/Fl_Cocoa_Window_Driver.H
@@ -260,7 +262,7 @@ else ()
 
   # Windows (GDI)
 
-  set(DRIVER_FILES
+  set (DRIVER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx
     drivers/WinAPI/Fl_WinAPI_Window_Driver.cxx
@@ -277,7 +279,7 @@ else ()
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
     Fl_win32.cxx
   )
-  set(DRIVER_HEADER_FILES
+  set (DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.H
     drivers/WinAPI/Fl_WinAPI_Window_Driver.H
@@ -290,12 +292,12 @@ source_group("Source Files\\Headers" FILES ${HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
 source_group("Driver Source Files\\Headers" FILES ${DRIVER_HEADER_FILES})
 
-set(CPPFILES
+set (CPPFILES
   ${CPPFILES}
   ${DRIVER_FILES}
 )
 
-set(FLCPPFILES
+set (FLCPPFILES
   forms_compatability.cxx
   forms_bitmap.cxx
   forms_free.cxx
@@ -304,7 +306,7 @@ set(FLCPPFILES
   forms_timer.cxx
 )
 
-set(GLCPPFILES
+set (GLCPPFILES
   Fl_Gl_Choice.cxx
   Fl_Gl_Device_Plugin.cxx
   Fl_Gl_Overlay.cxx
@@ -338,12 +340,12 @@ set (GL_DRIVER_HEADER_FILES
 source_group("Driver Header Files" FILES ${GL_DRIVER_HEADER_FILES})
 source_group("Driver Source Files" FILES ${GL_DRIVER_FILES})
 
-set(GLCPPFILES
+set (GLCPPFILES
   ${GLCPPFILES}
   ${GL_DRIVER_FILES}
 )
 
-set(IMGCPPFILES
+set (IMGCPPFILES
   fl_images_core.cxx
   Fl_BMP_Image.cxx
   Fl_File_Icon2.cxx
@@ -354,7 +356,7 @@ set(IMGCPPFILES
   Fl_PNM_Image.cxx
 )
 
-set(CFILES
+set (CFILES
   flstring.c
   scandir.c
   numericsort.c
@@ -369,189 +371,172 @@ set(CFILES
   fl_utf.c
 )
 
-add_definitions(-DFL_LIBRARY)
-
-if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
-    set(MMFILES
+if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+    set (MMFILES
         Fl_cocoa.mm
         drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
         Fl_Native_File_Chooser_MAC.mm
         Fl_Sys_Menu_Bar.mm
         )
 else()
-   set(MMFILES
+   set (MMFILES
       )
-endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+
 
 #######################################################################
-FL_ADD_LIBRARY(fltk STATIC "${CPPFILES};${PSFILES};${MMFILES};${CFILES};fl_call_main.c;${HEADER_FILES};${DRIVER_HEADER_FILES}")
 
-if(LIB_dl)
-   target_link_libraries(fltk ${LIB_dl})
-endif(LIB_dl)
+# prepare source files for shared and static FLTK libraries
 
-if(USE_THREADS)
-   target_link_libraries(fltk ${CMAKE_THREAD_LIBS_INIT})
-endif(USE_THREADS)
+set (SHARED_FILES ${CPPFILES} ${MMFILES} ${CFILES} ${PSFILES})
+list (APPEND SHARED_FILES ${HEADER_FILES} ${DRIVER_HEADER_FILES})
 
-if(USE_X11)
-   target_link_libraries(fltk ${X11_LIBRARIES})
-endif(USE_X11)
+set (STATIC_FILES ${SHARED_FILES})
+
+if (WIN32)
+    list (APPEND STATIC_FILES fl_call_main.c)
+endif (WIN32)
+
+add_definitions(-DFL_LIBRARY)
+
+#######################################################################
+
+# prepare optional libs for shared and static FLTK libraries
+
+set (OPTIONAL_LIBS)
+
+if (LIB_dl)
+    list (APPEND OPTIONAL_LIBS ${LIB_dl})
+endif (LIB_dl)
+
+if (USE_THREADS)
+    list (APPEND OPTIONAL_LIBS ${CMAKE_THREAD_LIBS_INIT})
+endif (USE_THREADS)
+
+if (USE_X11)
+    list (APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
+endif (USE_X11)
 
 if (USE_SDL)
-   target_link_libraries(fltk ${SDL2_LIBRARY})
+    list (APPEND OPTIONAL_LIBS ${SDL2_LIBRARY})
 endif(USE_SDL)
 
-if(WIN32)
-   target_link_libraries(fltk comctl32)
-endif(WIN32)
+if (WIN32)
+    list (APPEND OPTIONAL_LIBS comctl32)
+endif (WIN32)
 
-if(FLTK_HAVE_CAIRO)
-   target_link_libraries(fltk fltk_cairo ${PKG_CAIRO_LIBRARIES})
-ENDif(FLTK_HAVE_CAIRO)
+if (FLTK_HAVE_CAIRO)
+    list (APPEND OPTIONAL_LIBS fltk_cairo ${PKG_CAIRO_LIBRARIES})
+ENDif (FLTK_HAVE_CAIRO)
 
-if(HAVE_XINERAMA)
-   target_link_libraries(fltk ${X11_Xinerama_LIB})
-endif(HAVE_XINERAMA)
+if (HAVE_XINERAMA)
+    list (APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
+endif (HAVE_XINERAMA)
 
-if(HAVE_XFIXES)
-   target_link_libraries(fltk ${X11_Xfixes_LIB})
-endif(HAVE_XFIXES)
+if (HAVE_XFIXES)
+    list (APPEND OPTIONAL_LIBS ${X11_Xfixes_LIB})
+endif (HAVE_XFIXES)
 
-if(HAVE_XCURSOR)
-   target_link_libraries(fltk ${X11_Xcursor_LIB})
-endif(HAVE_XCURSOR)
+if (HAVE_XCURSOR)
+    list (APPEND OPTIONAL_LIBS ${X11_Xcursor_LIB})
+endif (HAVE_XCURSOR)
 
-if(USE_XFT)
-   target_link_libraries(fltk ${X11_Xft_LIB})
-   if(LIB_fontconfig)
-      target_link_libraries(fltk ${LIB_fontconfig})
-   endif(LIB_fontconfig)
-endif(USE_XFT)
+if (HAVE_XRENDER)
+    list (APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
+endif (HAVE_XRENDER)
+
+if (USE_XFT)
+    list (APPEND OPTIONAL_LIBS ${X11_Xft_LIB})
+    if (LIB_fontconfig)
+	list (APPEND OPTIONAL_LIBS ${LIB_fontconfig})
+    endif (LIB_fontconfig)
+endif (USE_XFT)
 
 #######################################################################
+
+FL_ADD_LIBRARY(fltk STATIC "${STATIC_FILES}")
+target_link_libraries(fltk ${OPTIONAL_LIBS})
+
+#######################################################################
+
 FL_ADD_LIBRARY(fltk_forms STATIC "${FLCPPFILES}")
 target_link_libraries(fltk_forms fltk)
 
 #######################################################################
+
 FL_ADD_LIBRARY(fltk_images STATIC "${IMGCPPFILES}")
 target_link_libraries(fltk_images fltk ${FLTK_PNG_LIBRARIES}
      ${FLTK_JPEG_LIBRARIES} ${FLTK_ZLIB_LIBRARIES})
 
-if(OPTION_USE_SYSTEM_LIBJPEG)
+if (OPTION_USE_SYSTEM_LIBJPEG)
     target_link_libraries(fltk_images ${FLTK_JPEG_LIBRARIES})
 else()
     target_link_libraries(fltk_images fltk_jpeg)
-endif(OPTION_USE_SYSTEM_LIBJPEG)
+endif (OPTION_USE_SYSTEM_LIBJPEG)
 
-if(OPTION_USE_SYSTEM_ZLIB)
+if (OPTION_USE_SYSTEM_ZLIB)
     target_link_libraries(fltk_images ${FLTK_ZLIB_LIBRARIES})
 else()
     target_link_libraries(fltk_images fltk_z)
-endif(OPTION_USE_SYSTEM_ZLIB)
+endif (OPTION_USE_SYSTEM_ZLIB)
 
-if(OPTION_USE_SYSTEM_LIBPNG)
+if (OPTION_USE_SYSTEM_LIBPNG)
     target_link_libraries(fltk_images ${FLTK_PNG_LIBRARIES})
 else()
     target_link_libraries(fltk_images fltk_png)
-endif(OPTION_USE_SYSTEM_LIBPNG)
+endif (OPTION_USE_SYSTEM_LIBPNG)
 
 #######################################################################
-if(OPENGL_FOUND)
-FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES};${GL_HEADER_FILE};${GL_DRIVER_HEADER_FILES}")
+
+if (OPENGL_FOUND)
+    FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
    target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
-endif(OPENGL_FOUND)
+endif (OPENGL_FOUND)
 
 #######################################################################
+# Build shared libraries (optional)
 #######################################################################
-if(OPTION_BUILD_SHARED_LIBS)
 
-#######################################################################
-FL_ADD_LIBRARY(fltk SHARED "${CPPFILES};${MMFILES};${CFILES};${HEADER_FILES};${DRIVER_HEADER_FILES}")
+if (OPTION_BUILD_SHARED_LIBS)
 
-if(LIB_dl)
-   target_link_libraries(fltk_SHARED ${LIB_dl})
-endif(LIB_dl)
+    FL_ADD_LIBRARY(fltk SHARED "${SHARED_FILES}")
+    target_link_libraries(fltk_SHARED ${OPTIONAL_LIBS})
 
-if(USE_THREADS)
-   target_link_libraries(fltk_SHARED ${CMAKE_THREAD_LIBS_INIT})
-endif(USE_THREADS)
+    ###################################################################
 
-if(USE_X11)
-   target_link_libraries(fltk_SHARED ${X11_LIBRARIES})
-endif(USE_X11)
+    FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
+    target_link_libraries(fltk_forms_SHARED fltk_SHARED)
 
-if (USE_SDL)
-   target_link_libraries(fltk ${SDL2_LIBRARY})
-endif(USE_SDL)
+    ###################################################################
 
-if(WIN32)
-   target_link_libraries(fltk_SHARED comctl32)
-endif(WIN32)
+    FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
+    target_link_libraries(fltk_images_SHARED fltk_SHARED)
 
-if(FLTK_HAVE_CAIRO)
-   target_link_libraries(fltk_SHARED fltk_cairo_SHARED ${PKG_CAIRO_LIBRARIES})
-ENDif(FLTK_HAVE_CAIRO)
+    if (OPTION_USE_SYSTEM_LIBJPEG)
+	target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
+    else()
+	target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
+    endif (OPTION_USE_SYSTEM_LIBJPEG)
 
-if(HAVE_XINERAMA)
-   target_link_libraries(fltk_SHARED ${X11_Xinerama_LIB})
-endif(HAVE_XINERAMA)
+    if (OPTION_USE_SYSTEM_LIBPNG)
+	target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
+    else()
+	target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
+    endif (OPTION_USE_SYSTEM_LIBPNG)
 
-if(HAVE_XFIXES)
-   target_link_libraries(fltk_SHARED ${X11_Xfixes_LIB})
-endif(HAVE_XFIXES)
+    if (OPTION_USE_SYSTEM_ZLIB)
+	target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
+    else()
+	target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
+    endif (OPTION_USE_SYSTEM_ZLIB)
 
-if(HAVE_XCURSOR)
-   target_link_libraries(fltk_SHARED ${X11_Xcursor_LIB})
-endif(HAVE_XCURSOR)
+    ###################################################################
 
-if(USE_XFT)
-   target_link_libraries(fltk_SHARED ${X11_Xft_LIB})
-   if(LIB_fontconfig)
-      target_link_libraries(fltk_SHARED ${LIB_fontconfig})
-   endif(LIB_fontconfig)
-endif(USE_XFT)
+    if (OPENGL_FOUND)
+       FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
+       target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+    endif (OPENGL_FOUND)
 
-#######################################################################
-FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
-target_link_libraries(fltk_forms_SHARED fltk_SHARED)
+endif (OPTION_BUILD_SHARED_LIBS)
 
-if(USE_THREADS)
-   target_link_libraries(fltk_forms_SHARED ${CMAKE_THREAD_LIBS_INIT} ${LIB_dl})
-endif(USE_THREADS)
-
-if(USE_X11)
-   target_link_libraries(fltk_forms_SHARED ${X11_LIBRARIES})
-endif(USE_X11)
-
-#######################################################################
-FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
-target_link_libraries(fltk_images_SHARED fltk_SHARED)
-
-if(OPTION_USE_SYSTEM_LIBJPEG)
-    target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
-else()
-    target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
-endif(OPTION_USE_SYSTEM_LIBJPEG)
-
-if(OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
-else()
-    target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
-endif(OPTION_USE_SYSTEM_ZLIB)
-
-if(OPTION_USE_SYSTEM_LIBPNG)
-    target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
-else()
-    target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
-endif(OPTION_USE_SYSTEM_LIBPNG)
-
-#######################################################################
-if(OPENGL_FOUND)
-   FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILE};${GL_DRIVER_HEADER_FILES}")
-   target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
-endif(OPENGL_FOUND)
-
-#######################################################################
-endif(OPTION_BUILD_SHARED_LIBS)
 #######################################################################
