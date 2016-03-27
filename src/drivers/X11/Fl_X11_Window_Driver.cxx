@@ -633,6 +633,30 @@ void Fl_X11_Window_Driver::redraw_overlay() {
   Fl_Window_Driver::redraw_overlay();
 }
 
+void Fl_X11_Window_Driver::flush_menu() {
+#if HAVE_OVERLAY
+   if (!fl_overlay_visual || !overlay()) {flush_single(); return;}
+   Fl_X *myi = Fl_X::i(pWindow);
+   fl_window = myi->xid;
+# if defined(FLTK_USE_CAIRO)
+   // capture gc changes automatically to update the cairo context adequately
+   if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->gc());
+# endif
+   fl_overlay = 1;
+   fl_clip_region(myi->region); myi->region = 0; current(pWindow);
+   draw();
+   fl_overlay = 0;
+#else
+   flush_single();
+#endif
+}
+
+void Fl_X11_Window_Driver::erase_menu() {
+#if HAVE_OVERLAY
+  if (pWindow->shown())  XClearWindow(fl_display, fl_xid(pWindow));
+#endif
+}
+
 //
 // End of "$Id$".
 //

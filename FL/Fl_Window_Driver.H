@@ -72,14 +72,6 @@ public:
   int shown() const { return pWindow->shown(); }
   /** returns the parent of the window. */
   Fl_Group *parent() const { return pWindow->parent(); }
-  /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
-  Fl_Window *overlay() {
-    return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
-  }
-  /** for an Fl_Overlay_Window, sets the value of its overlay_ member variable */
-  void overlay(Fl_Window *o) {
-    if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
-  }
 
   // --- accessors to private window data
   int minw();
@@ -94,6 +86,15 @@ public:
   void force_position(int c);
   void x(int X);
   void y(int Y);
+  void current(Fl_Window *c);
+  /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
+  Fl_Window *overlay() {
+    return pWindow->as_overlay_window() ? pWindow->as_overlay_window()->overlay_ : NULL;
+  }
+  /** for an Fl_Overlay_Window, sets the value of its overlay_ member variable */
+  void overlay(Fl_Window *o) {
+    if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
+  }
 
   // --- window data
   virtual int decorated_w() = 0;
@@ -104,6 +105,8 @@ public:
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void flush_single();
+  virtual void flush_menu();
+  virtual void erase_menu() {}
   virtual void draw_begin();
   virtual void draw_end();
   void draw();

@@ -84,6 +84,8 @@ public:
   virtual void take_focus();
   virtual void flush_double();
   virtual void flush_overlay();
+  virtual void flush_menu();
+  virtual void erase_menu();
   virtual void draw_begin();
   virtual void make_current();
   virtual void show();

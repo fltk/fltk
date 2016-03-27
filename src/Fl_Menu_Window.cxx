@@ -23,20 +23,8 @@
 // which are used so that clicks outside the program's windows
 // can be used to dismiss the menus.
 
-#include <config.h>
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Window_Driver.H>
-
-// WIN32 note: HAVE_OVERLAY is false
-#if HAVE_OVERLAY
-#include <FL/x.H>
-extern XVisualInfo *fl_overlay_visual;
-extern uchar fl_overlay; // changes how fl_color(x) works
-#endif
-
-#include <stdio.h>
 
 void Fl_Menu_Window::show() {
   driver()->show_menu();
@@ -44,31 +32,12 @@ void Fl_Menu_Window::show() {
 
 void Fl_Menu_Window::flush() {
   if (!shown()) return;
-#if HAVE_OVERLAY
-  if (!fl_overlay_visual || !overlay()) {Fl_Single_Window::flush(); return;}
-  Fl_X *myi = Fl_X::i(this);
-  fl_window = myi->xid;
-# if defined(FLTK_USE_CAIRO)
-    // capture gc changes automatically to update the cairo context adequately
-    if(Fl::autolink_context()) Fl::cairo_make_current(fl_graphics_driver->gc());
-# endif
-  fl_overlay = 1;
-  fl_clip_region(myi->region); myi->region = 0; current_ = this;
-  draw();
-  fl_overlay = 0;
-#else
-  Fl_Single_Window::flush();
-#endif
+  driver()->flush_menu();
 }
 
-/** Erases the window, does nothing if HAVE_OVERLAY is not defined config.h */
+/** Erases the window, does nothing if HAVE_OVERLAY is not defined in config.h */
 void Fl_Menu_Window::erase() {
-#if HAVE_OVERLAY
-  if (!shown()) return;
-//XSetForeground(fl_display, gc, 0);
-//XFillRectangle(fl_display, fl_xid(this), gc, 0, 0, w(), h());
-  XClearWindow(fl_display, fl_xid(this));
-#endif
+  driver()->erase_menu();
 }
 
 // Fix the colormap flashing on Maximum Impact Graphics by erasing the

@@ -49,11 +49,15 @@ int Fl_Window_Driver::fullscreen_screen_top() {return pWindow->fullscreen_screen
 int Fl_Window_Driver::fullscreen_screen_bottom() {return pWindow->fullscreen_screen_bottom;}
 int Fl_Window_Driver::fullscreen_screen_left() {return pWindow->fullscreen_screen_left;}
 int Fl_Window_Driver::fullscreen_screen_right() {return pWindow->fullscreen_screen_right;}
+void Fl_Window_Driver::current(Fl_Window *c) {pWindow->current_ = c;}
+
 
 
 unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set;}
 
 void Fl_Window_Driver::flush_single() { pWindow->Fl_Window::flush(); }
+
+void Fl_Window_Driver::flush_menu() { pWindow->Fl_Window::flush(); }
 
 void Fl_Window_Driver::draw() { pWindow->draw(); }
 
