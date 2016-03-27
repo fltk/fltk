@@ -48,11 +48,13 @@ endif(APPLE AND NOT OPTION_APPLE_X11)
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
-# create bundle for Mac OS X
+# install fluid
 
 if(APPLE AND NOT OPTION_APPLE_X11)
+  # create bundle
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
+  # install
   install(TARGETS fluid DESTINATION ${FLTK_BINDIR})
 else()
   install(TARGETS fluid
@@ -62,6 +64,8 @@ else()
     ARCHIVE DESTINATION ${FLTK_LIBDIR}
     )
 endif(APPLE AND NOT OPTION_APPLE_X11)
+
+# install desktop files
 
 if(UNIX)
     install(FILES fluid.desktop
