@@ -54,9 +54,22 @@ typedef struct _XRegion *Fl_Region;
  \brief A base class for platform specific window handling code.
   */
 class FL_EXPORT Fl_System_Driver {
-public:
+protected:
   Fl_System_Driver();
+public:
   virtual ~Fl_System_Driver();
+  static Fl_System_Driver *driver();
+  static const int flNoValue;
+  static const int flWidthValue;
+  static const int flHeightValue;
+  static const int flXValue;
+  static const int flYValue;
+  static const int flXNegative;
+  static const int flYNegative;
+  virtual int single_arg(const char *arg) { return 0; }
+  virtual int arg_and_value(const char *name, const char *value) { return 0; }
+  virtual void display_arg(const char *arg) { }
+  virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

@@ -27,6 +27,11 @@ const char* fl_local_meta  = "Meta";
 const char* fl_local_shift = "Shift";
 #endif
 
+Fl_System_Driver *Fl_System_Driver::driver() {
+  static Fl_System_Driver *d = new Fl_WinAPI_System_Driver();
+  return d;
+}
+
 //
 // End of "$Id$".
 //

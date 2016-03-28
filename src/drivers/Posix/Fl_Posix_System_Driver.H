@@ -41,6 +41,8 @@
 class Fl_Posix_System_Driver : public Fl_System_Driver
 {
 public:
+  virtual void display_arg(const char *arg);
+  virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H
