@@ -3,7 +3,7 @@
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -648,6 +648,29 @@ void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
 */
 int Fl_Browser::topline() const {
   return lineno(top());
+}
+
+/**
+  Sets the default text size (in pixels) for the lines in the browser to \p newSize.
+
+  This method recalculates all item heights and caches the total height
+  internally for optimization of later item changes. This can be slow
+  if there are many items in the browser.
+
+  You \e may need to call redraw() to see the effect and to have the
+  scrollbar positions recalculated.
+
+  You should set the text size \e before populating the browser with items
+  unless you really need to \e change the size later.
+*/
+void Fl_Browser::textsize(Fl_Fontsize newSize) {
+  Fl_Browser_::textsize(newSize);
+  new_list();
+  full_height_ = 0;
+  if (lines == 0) return;
+  for (FL_BLINE* itm=(FL_BLINE *)item_first(); itm; itm=(FL_BLINE *)item_next(itm)) {
+    full_height_ += item_height(itm);
+  }
 }
 
 /**

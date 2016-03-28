@@ -3,7 +3,7 @@
 //
 // Browser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -140,6 +140,17 @@ public:
   */
   int size() const { return lines; }
   void size(int W, int H) { Fl_Widget::size(W, H); }
+
+  /**
+    Gets the default text size (in pixels) for the lines in the browser.
+  */
+  Fl_Fontsize textsize() const { return Fl_Browser_::textsize(); }
+
+  /*
+    Sets the default text size for the lines in the browser to newSize.
+    Defined and documented in Fl_Browser.cxx
+  */
+  void textsize(Fl_Fontsize newSize);
 
   int topline() const ;
   /** For internal use only? */
