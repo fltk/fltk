@@ -20,6 +20,8 @@
 #include "Fl_Posix_System_Driver.H"
 #include <FL/Fl.H>
 
+extern XIC fl_xim_ic; // in Fl_x.cxx
+
 
 // Pointers you can use to change FLTK to a foreign language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
@@ -40,6 +42,24 @@ void Fl_Posix_System_Driver::display_arg(const char *arg) {
 int Fl_Posix_System_Driver::XParseGeometry(const char* string, int* x, int* y,
                                            unsigned int* width, unsigned int* height) {
   return ::XParseGeometry(string, x, y, width, height);
+}
+
+int Fl_Posix_System_Driver::compose(int& del) {
+  int condition;
+  unsigned char ascii = (unsigned char)Fl::e_text[0];
+  condition = (Fl::e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128) ;
+  if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
+  del = Fl::compose_state;
+  Fl::compose_state = 0;
+  // Only insert non-control characters:
+  if ( (!Fl::compose_state) && ! (ascii & ~31 && ascii!=127)) { return 0; }
+  return 1;
+}
+
+void Fl_Posix_System_Driver::compose_reset()
+{
+  Fl::compose_state = 0;
+  if (fl_xim_ic) XmbResetIC(fl_xim_ic);
 }
 
 //

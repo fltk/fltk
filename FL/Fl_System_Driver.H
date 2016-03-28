@@ -25,6 +25,7 @@
 #define FL_SYSTEM_DRIVER_H
 
 #include <FL/Fl_Export.H>
+#include <FL/Fl.H>
 #include <stdarg.h>
 
 #ifdef __APPLE__
@@ -85,6 +86,10 @@ public:
   static void fatal(const char* format, ...);
   // implement to set the default effect of Fl::error()
   virtual void fatal(const char* format, va_list args);
+  // implement so text-editing widgets support dead keys
+  virtual int compose(int &del) {del = 0; return 0;}
+  // default implementation may be enough
+  virtual void compose_reset() { Fl::compose_state = 0; }
 };
 
 #endif // FL_SYSTEM_DRIVER_H
