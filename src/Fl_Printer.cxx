@@ -43,6 +43,7 @@ int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
 void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) {}
 void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y) {}
+void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
 Fl_Printer::~Fl_Printer(void) {}
 
