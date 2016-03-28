@@ -236,7 +236,6 @@ elseif (APPLE)
   # Apple Quartz
 
   set (DRIVER_FILES
-    drivers/Quartz/Fl_Quartz_Display_Device.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_color.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_rect.cxx
