@@ -45,6 +45,7 @@ extern "C" {
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
+#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -3945,12 +3946,8 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
   return image;
 }
 
-int Fl::dnd()
-{
-  return Fl_X::dnd(0);
-}
 
-int Fl_X::dnd(int use_selection)
+int Fl_Darwin_System_Driver::dnd(int use_selection)
 {
   CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[0], fl_selection_length[0]);
   if (text==NULL) return false;

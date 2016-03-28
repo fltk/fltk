@@ -31,6 +31,7 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_System_Driver.H>
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform editor feel
 #elif defined(FL_PORTING)
@@ -3913,11 +3914,7 @@ int Fl_Text_Display::handle(int event) {
       if (dragType==DRAG_START_DND) {
         if (!Fl::event_is_click() && Fl::dnd_text_ops()) {
           const char* copy = buffer()->selection_text();
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform behavior
-          Fl_X::dnd(1);
-#else
-          Fl::dnd();
-#endif
+          Fl_System_Driver::driver()->dnd(1);
           free((void*)copy);
         }
         return 1;

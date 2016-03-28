@@ -34,6 +34,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
@@ -687,11 +688,7 @@ int Fl_Input::handle(int event) {
 	  dnd_save_focus = this;
           // drag the data:
           copy(0);
-#ifdef __APPLE__ // PORTME: dnd
-          Fl_X::dnd(1);
-#else
-          Fl::dnd();
-#endif
+          Fl_System_Driver::driver()->dnd(1);
           return 1;
         }
       }

@@ -113,7 +113,6 @@ set (CPPFILES
   fl_cursor.cxx
   fl_curve.cxx
   fl_diamond_box.cxx
-  fl_dnd.cxx
   fl_draw.cxx
   fl_draw_pixmap.cxx
   fl_engraved_label.cxx
@@ -185,6 +184,7 @@ if (USE_X11)
     drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     Fl_x.cxx
+    fl_dnd_x.cxx
   )
   if (USE_XFT)
     set (DRIVER_FILES ${DRIVER_FILES}
@@ -278,6 +278,7 @@ else ()
     drivers/GDI/Fl_GDI_Copy_Surface_Driver.cxx
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
     Fl_win32.cxx
+    fl_dnd_win32.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H

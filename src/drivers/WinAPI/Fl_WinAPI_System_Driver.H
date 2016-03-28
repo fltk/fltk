@@ -46,6 +46,7 @@ public:
   virtual void error(const char *format, va_list args);
   virtual void fatal(const char *format, va_list args);
   virtual int compose(int &del);
+  virtual int dnd(int unused);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

@@ -191,7 +191,6 @@ public:
   static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
   static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
-  static int dnd(int use_selection); // call Fl_X::dnd(1) to support text dragging
   static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
   static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);

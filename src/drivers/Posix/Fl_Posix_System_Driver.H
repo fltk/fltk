@@ -45,6 +45,7 @@ public:
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
   virtual int compose(int &del);
   virtual void compose_reset();
+  virtual int dnd(int unused);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

@@ -44,6 +44,7 @@ public:
   virtual int single_arg(const char *arg);
   virtual int arg_and_value(const char *name, const char *value);
   virtual int compose(int &del);
+  virtual int dnd(int use_selection);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

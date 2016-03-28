@@ -132,7 +132,6 @@ CPPFILES = \
 	fl_cursor.cxx \
 	fl_curve.cxx \
 	fl_diamond_box.cxx \
-	fl_dnd.cxx \
 	fl_draw.cxx \
 	fl_draw_pixmap.cxx \
 	fl_encoding_latin1.cxx \
@@ -253,7 +252,8 @@ XLIBCPPFILES = \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
-	Fl_x.cxx
+	Fl_x.cxx \
+	fl_dnd_x.cxx
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -276,7 +276,8 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Screen_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx \
-	Fl_win32.cxx
+	Fl_win32.cxx \
+	fl_dnd_win32.cxx
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \

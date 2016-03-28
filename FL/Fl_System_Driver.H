@@ -90,6 +90,9 @@ public:
   virtual int compose(int &del) {del = 0; return 0;}
   // default implementation may be enough
   virtual void compose_reset() { Fl::compose_state = 0; }
+  // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
+  // the selected text during the D&D operation
+  virtual int dnd(int use_selection) {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

@@ -33,6 +33,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
@@ -1876,6 +1877,10 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker()
 
 int Fl::use_high_res_GL_ = 0;
 
+int Fl::dnd()
+{
+  return Fl_System_Driver::driver()->dnd(0);
+}
 
 //
 // End of "$Id$".
