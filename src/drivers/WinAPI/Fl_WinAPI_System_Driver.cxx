@@ -19,6 +19,8 @@
 
 #include "../../config_lib.h"
 #include "Fl_WinAPI_System_Driver.H"
+#include <stdio.h>
+#include <windows.h>
 
 #if !defined(FL_DOXYGEN)
 const char* fl_local_alt   = "Alt";
@@ -31,6 +33,24 @@ Fl_System_Driver *Fl_System_Driver::driver() {
   static Fl_System_Driver *d = new Fl_WinAPI_System_Driver();
   return d;
 }
+
+void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
+  // Show nothing for warnings under WIN32...
+}
+
+void Fl_WinAPI_System_Driver::error(const char *format, va_list args) {
+  char buf[1024];
+  vsnprintf(buf, 1024, format, args);
+  MessageBox(0,buf,"Error",MB_ICONEXCLAMATION|MB_SYSTEMMODAL);
+}
+
+void Fl_WinAPI_System_Driver::fatal(const char *format, va_list args) {
+  char buf[1024];
+  vsnprintf(buf, 1024, format, args);
+  MessageBox(0,buf,"Error",MB_ICONSTOP|MB_SYSTEMMODAL);
+  ::exit(1);
+}
+
 
 //
 // End of "$Id$".

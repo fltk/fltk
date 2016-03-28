@@ -19,6 +19,8 @@
 
 #include <FL/Fl_System_Driver.H>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 const int Fl_System_Driver::flNoValue =	    0x0000;
 const int Fl_System_Driver::flWidthValue =  0x0004;
@@ -36,6 +38,46 @@ Fl_System_Driver::Fl_System_Driver()
 
 Fl_System_Driver::~Fl_System_Driver()
 {
+}
+
+void Fl_System_Driver::warning(const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  driver()->warning(format, args);
+  va_end(args);
+}
+
+void Fl_System_Driver::warning(const char* format, va_list args) {
+  vfprintf(stderr, format, args);
+  fputc('\n', stderr);
+  fflush(stderr);
+}
+
+void Fl_System_Driver::error(const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  driver()->error(format, args);
+  va_end(args);
+}
+
+void Fl_System_Driver::error(const char *format, va_list args) {
+  vfprintf(stderr, format, args);
+  fputc('\n', stderr);
+  fflush(stderr);
+}
+
+void Fl_System_Driver::fatal(const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  driver()->fatal(format, args);
+  va_end(args);
+}
+
+void Fl_System_Driver::fatal(const char *format, va_list args) {
+  vfprintf(stderr, format, args);
+  fputc('\n', stderr);
+  fflush(stderr);
+  exit(1);
 }
 
 /* the following function was stolen from the X sources as indicated. */

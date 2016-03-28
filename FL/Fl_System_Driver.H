@@ -25,6 +25,7 @@
 #define FL_SYSTEM_DRIVER_H
 
 #include <FL/Fl_Export.H>
+#include <stdarg.h>
 
 #ifdef __APPLE__
 typedef struct CGContext* Fl_Offscreen;
@@ -51,13 +52,14 @@ typedef struct _XRegion *Fl_Region;
 #endif // __APPLE__
 
 /**
- \brief A base class for platform specific window handling code.
+ \brief A base class for platform-specific system operations.
   */
 class FL_EXPORT Fl_System_Driver {
 protected:
   Fl_System_Driver();
 public:
   virtual ~Fl_System_Driver();
+  // copy the implementation in Fl_XXX_System_Driver.cxx to the corresponding file for the new platform
   static Fl_System_Driver *driver();
   static const int flNoValue;
   static const int flWidthValue;
@@ -66,10 +68,23 @@ public:
   static const int flYValue;
   static const int flXNegative;
   static const int flYNegative;
+  // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *arg) { return 0; }
+  // implement if the system adds unwanted program argument pair(s)
   virtual int arg_and_value(const char *name, const char *value) { return 0; }
+  // implement to process the -display argument
   virtual void display_arg(const char *arg) { }
+  // default implementation should be enough
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
+  static void warning(const char* format, ...);
+  // implement to set the default effect of Fl::warning()
+  virtual void warning(const char* format, va_list args);
+  static void error(const char* format, ...);
+  // implement to set the default effect of Fl::error()
+  virtual void error(const char* format, va_list args);
+  static void fatal(const char* format, ...);
+  // implement to set the default effect of Fl::error()
+  virtual void fatal(const char* format, va_list args);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

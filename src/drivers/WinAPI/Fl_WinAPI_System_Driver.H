@@ -26,6 +26,7 @@
 #define FL_WINAPI_SYSTEM_DRIVER_H
 
 #include <FL/Fl_System_Driver.H>
+#include <stdarg.h>
 
 /*
  Move everything here that manages the system interface.
@@ -41,6 +42,9 @@
 class Fl_WinAPI_System_Driver : public Fl_System_Driver
 {
 public:
+  virtual void warning(const char *format, va_list args);
+  virtual void error(const char *format, va_list args);
+  virtual void fatal(const char *format, va_list args);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H
