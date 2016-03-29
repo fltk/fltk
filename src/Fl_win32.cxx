@@ -1269,7 +1269,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     static char buffer[1024];
     if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
 
-      xchar u = (xchar) wParam;
+      wchar_t u = (wchar_t) wParam;
 //    Fl::e_length = fl_unicode2utf(&u, 1, buffer);
       Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
       buffer[Fl::e_length] = 0;
@@ -1327,7 +1327,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     } else if ((lParam & (1<<31))==0) {
 #ifdef FLTK_PREVIEW_DEAD_KEYS
       if ((lParam & (1<<24))==0) { // clear if dead key (always?)
-        xchar u = (xchar) wParam;
+        wchar_t u = (wchar_t) wParam;
         Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
         buffer[Fl::e_length] = 0;
       } else { // set if "extended key" (never printable?)
@@ -1831,7 +1831,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   if (w->label()) {
     size_t l = strlen(w->label());
 //  lab = (WCHAR*) malloc((l + 1) * sizeof(short));
-//  l = fl_utf2unicode((unsigned char*)w->label(), l, (xchar*)lab);
+//  l = fl_utf2unicode((unsigned char*)w->label(), l, (wchar_t*)lab);
 //  lab[l] = 0;
     unsigned wlen = fl_utf8toUtf16(w->label(), (unsigned) l, NULL, 0); // Pass NULL to query length
     wlen++;

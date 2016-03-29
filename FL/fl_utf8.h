@@ -47,7 +47,7 @@
 #  include <sys/stat.h>
 #  include <locale.h>
 #  include <ctype.h>
-#  define xchar wchar_t
+//#  define xchar wchar_t
 #  if !defined(FL_DLL) && !defined(__CYGWIN__)
 #    undef strdup
 #    define strdup _strdup
@@ -63,13 +63,13 @@
 #elif defined(__APPLE__) /* PORTME: should not be in the header */
 #  include <wchar.h>
 #  include <sys/stat.h>
-#  define xchar wchar_t
+//#  define xchar wchar_t
 #elif defined(ANDROID)
 #  include <wchar.h>
-#  define xchar wchar_t
+//#  define xchar wchar_t
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: include UTF-8 support files and define UTF-8 types"
-#  define xchar unsigned short
+//#  define xchar unsigned short
 /* TODO: the condition below is not portable! */
 #else /* X11 */
 #  include <sys/types.h>
@@ -79,7 +79,7 @@
 //#    include <X11/Xlib.h>
 #  endif /* defined(FL_LIBRARY) -- don't expose X11 headers in user space */
 #  include <locale.h>
-#  define xchar unsigned short
+//#  define xchar unsigned short
 #endif
 
 #ifdef __cplusplus

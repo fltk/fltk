@@ -93,10 +93,10 @@ enumcbw(CONST LOGFONTW    *lpelf,
   if (!p && lpelf->lfCharSet != ANSI_CHARSET) return 1;
   char *n = NULL;
   size_t l = wcslen(lpelf->lfFaceName);
-  unsigned dstlen = fl_utf8fromwc(n, 0, (xchar*)lpelf->lfFaceName, (unsigned) l) + 1; // measure the string
+  unsigned dstlen = fl_utf8fromwc(n, 0, (wchar_t*)lpelf->lfFaceName, (unsigned) l) + 1; // measure the string
   n = (char*) malloc(dstlen);
-//n[fl_unicode2utf((xchar*)lpelf->lfFaceName, l, n)] = 0;
-  dstlen = fl_utf8fromwc(n, dstlen, (xchar*)lpelf->lfFaceName, (unsigned) l); // convert the string
+//n[fl_unicode2utf((wchar_t*)lpelf->lfFaceName, l, n)] = 0;
+  dstlen = fl_utf8fromwc(n, dstlen, (wchar_t*)lpelf->lfFaceName, (unsigned) l); // convert the string
   n[dstlen] = 0;
   for (int i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
     if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) {free(n);return 1;}
@@ -176,7 +176,7 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 //  int l = fl_utf_nb_char((unsigned char*)s->name+1, strlen(s->name+1));
 //  unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
-//  fl_utf2unicode((unsigned char*)s->name+1, l, (xchar*)b);
+//  fl_utf2unicode((unsigned char*)s->name+1, l, (wchar_t*)b);
   const char *nm = (const char*)s->name+1;
   size_t len = strlen(s->name+1);
   unsigned l = fl_utf8toUtf16(nm, (unsigned) len, NULL, 0); // Pass NULL to query length required

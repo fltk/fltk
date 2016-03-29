@@ -275,8 +275,8 @@ private:
       int i, n, nn = 0, nf = DragQueryFileW( hdrop, (UINT)-1, 0, 0 );
         for ( i=0; i<nf; i++ ) nn += DragQueryFileW( hdrop, i, 0, 0 );
       nn += nf;
-        xchar *dst = (xchar *)malloc(nn * sizeof(xchar));
-        xchar *bu = dst;
+        wchar_t *dst = (wchar_t *)malloc(nn * sizeof(wchar_t));
+        wchar_t *bu = dst;
       for ( i=0; i<nf; i++ ) {
           n = DragQueryFileW( hdrop, i, (WCHAR*)dst, nn );
           dst += n;
@@ -480,7 +480,7 @@ public:
 //
 //        df->fWide = TRUE;
 //        l = fl_utf2unicode((unsigned char*)fl_selection_buffer[0],
-//                             fl_selection_length[0], (xchar*)(((char*)pMem)
+//                             fl_selection_length[0], (wchar_t*)(((char*)pMem)
 //                              + sizeof(DROPFILES)));
 //
 //      pMem[l * sizeof(WCHAR) + sizeof(DROPFILES)] = 0;

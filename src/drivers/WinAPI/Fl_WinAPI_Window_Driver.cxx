@@ -434,7 +434,7 @@ void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {
     if (!name) name = "";
     size_t l = strlen(name);
     //  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
-    //  l = fl_utf2unicode((unsigned char*)name, l, (xchar*)lab);
+    //  l = fl_utf2unicode((unsigned char*)name, l, (wchar_t*)lab);
     unsigned wlen = fl_utf8toUtf16(name, (unsigned) l, NULL, 0); // Pass NULL to query length
     wlen++;
     unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);

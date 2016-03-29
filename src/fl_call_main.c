@@ -60,11 +60,11 @@ extern int main(int, char *[]);
 /* static int mbcs2utf(const char *s, int l, char *dst, unsigned dstlen) */
 static int mbcs2utf(const char *s, int l, char *dst)
 {
-  static xchar *mbwbuf;
+  static wchar_t *mbwbuf;
   unsigned dstlen = 0;
   if (!s) return 0;
   dstlen = (l * 6) + 6;
-  mbwbuf = (xchar*)malloc(dstlen * sizeof(xchar));
+  mbwbuf = (wchar_t*)malloc(dstlen * sizeof(wchar_t));
   l = (int) mbstowcs(mbwbuf, s, l);
 /* l = fl_unicode2utf(mbwbuf, l, dst); */
   l = fl_utf8fromwc(dst, dstlen, mbwbuf, l);

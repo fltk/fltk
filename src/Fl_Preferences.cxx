@@ -1010,15 +1010,15 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
     strcpy(filename, "C:\\FLTK");
   } else {
 #if 0
-    xchar *b = (xchar*)_wcsdup((xchar *)filename);
+    wchar_t *b = (wchar_t*)_wcsdup((wchar_t *)filename);
 #else
     // cygwin does not come with _wcsdup. Use malloc +  wcscpy.
     // For implementation of wcsdup functionality See
     // - http://linenum.info/p/glibc/2.7/wcsmbs/wcsdup.c
-    xchar *b = (xchar*) malloc((wcslen((xchar *) filename) + 1) * sizeof(xchar));
-    wcscpy(b, (xchar *) filename);
+    wchar_t *b = (wchar_t*) malloc((wcslen((wchar_t *) filename) + 1) * sizeof(wchar_t));
+    wcscpy(b, (wchar_t *) filename);
 #endif
-    //  filename[fl_unicode2utf(b, wcslen((xchar*)b), filename)] = 0;
+    //  filename[fl_unicode2utf(b, wcslen((wchar_t*)b), filename)] = 0;
     unsigned len = fl_utf8fromwc(filename, (FL_PATH_MAX-1), b, (unsigned) wcslen(b));
     filename[len] = 0;
     free(b);

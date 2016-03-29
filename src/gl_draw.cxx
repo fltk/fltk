@@ -192,11 +192,11 @@ void gl_draw(const char* str, int n) {
 #ifdef __APPLE__  
   gl_draw_textures(str, n);
 #else
-  static xchar *buf = NULL;
+  static unsigned short *buf = NULL;
   static int l = 0;
   int wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
   if(wn >= l) {
-    buf = (xchar*) realloc(buf, sizeof(xchar) * (wn + 1));
+    buf = (unsigned short*) realloc(buf, sizeof(unsigned short) * (wn + 1));
     l = wn + 1;
     wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
   }
