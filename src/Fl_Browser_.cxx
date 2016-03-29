@@ -113,6 +113,7 @@ void Fl_Browser_::resize(int X, int Y, int W, int H) {
   hscrollbar.resize(
 	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
 	W, scrollsize);
+  max_width = 0;
 }
 
 // Cause minimal update to redraw the given item:
