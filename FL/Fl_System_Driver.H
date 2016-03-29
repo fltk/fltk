@@ -93,6 +93,21 @@ public:
   // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
   // the selected text during the D&D operation
   virtual int dnd(int use_selection = 0) {return 0;}
+  
+  virtual char *utf2mbcs(const char *s) {return (char*)s;}
+  virtual char *getenv(const char* v);
+  virtual int open(const char* f, int oflags, int pmode) {return -1;}
+  virtual FILE *fopen(const char* f, const char *mode) {return NULL;}
+  virtual int system(const char* cmd) {return -1;}
+  virtual int execvp(const char *file, char *const *argv) {return -1;}
+  virtual int chmod(const char* f, int mode) {return -1;}
+  virtual int access(const char* f, int mode) { return -1;}
+  virtual int stat(const char* f, struct stat *b) { return -1;}
+  virtual char *getcwd(char* b, int l) {return NULL;}
+  virtual int unlink(const char* f) {return -1;}
+  virtual int mkdir(const char* f, int mode) {return -1;}
+  virtual int rmdir(const char* f) {return -1;}
+  virtual int rename(const char* f, const char *n) {return -1;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

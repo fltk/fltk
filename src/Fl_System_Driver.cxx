@@ -214,6 +214,10 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
   return (mask);
 }
 
+char *Fl_System_Driver::getenv(const char *v) {
+  return ::getenv(v);
+}
+
 //
 // End of "$Id$".
 //

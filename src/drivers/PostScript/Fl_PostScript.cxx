@@ -25,6 +25,7 @@
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <stdarg.h>
+#include <locale.h>
 #if defined(USE_X11)
 #include <src/Fl_Font.H>
 #if USE_XFT

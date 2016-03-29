@@ -26,6 +26,9 @@
 #define FL_DARWIN_SYSTEM_DRIVER_H
 
 #include <FL/Fl_System_Driver.H>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 /*
  Move everything here that manages the system interface.
@@ -45,6 +48,20 @@ public:
   virtual int arg_and_value(const char *name, const char *value);
   virtual int compose(int &del);
   virtual int dnd(int use_selection);
+  virtual int mkdir(const char* f, int mode) {return ::mkdir(f, mode);}
+  virtual int open(const char* f, int oflags, int pmode) {
+    return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);
+  }
+  virtual FILE *fopen(const char* f, const char *mode) {return ::fopen(f, mode);}
+  virtual int system(const char* cmd) {return ::system(cmd);}
+  virtual int execvp(const char *file, char *const *argv) {return ::execvp(file, argv);}
+  virtual int chmod(const char* f, int mode) {return ::chmod(f, mode);}
+  virtual int access(const char* f, int mode) { return ::access(f, mode);}
+  virtual int stat(const char* f, struct stat *b) { return ::stat(f, b);}
+  virtual char *getcwd(char* b, int l) {return ::getcwd(b, l);}
+  virtual int unlink(const char* f) {return ::unlink(f);}
+  virtual int rmdir(const char* f) {return ::rmdir(f);}
+  virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

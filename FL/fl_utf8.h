@@ -3,6 +3,7 @@
  *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
+ * Copyright 2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -30,57 +31,9 @@
 
 #include "Fl_Export.H"
 #include "fl_types.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-/*
-  *FIXME* -- PORTME: should not be in the header --
-  Many, if not all of the included headers below should not be included
-  here, because this pollutes user space definitions.
-  Note: FL/fl_utf8.h is included in many other header files!
-*/
-
-#ifdef WIN32
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <locale.h>
-#  include <ctype.h>
-//#  define xchar wchar_t
-#  if !defined(FL_DLL) && !defined(__CYGWIN__)
-#    undef strdup
-#    define strdup _strdup
-#    undef putenv
-#    define putenv _putenv
-#    undef stricmp
-#    define stricmp _stricmp
-#    undef strnicmp
-#    define strnicmp _strnicmp
-#    undef chdir
-#    define chdir _chdir
-#  endif
-#elif defined(__APPLE__) /* PORTME: should not be in the header */
-#  include <wchar.h>
-#  include <sys/stat.h>
-//#  define xchar wchar_t
-#elif defined(ANDROID)
-#  include <wchar.h>
-//#  define xchar wchar_t
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: include UTF-8 support files and define UTF-8 types"
-//#  define xchar unsigned short
-/* TODO: the condition below is not portable! */
-#else /* X11 */
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  if defined(FL_LIBRARY) /* don't expose X11 headers in user space */
-#    include <X11/Xlocale.h>
-//#    include <X11/Xlib.h>
-#  endif /* defined(FL_LIBRARY) -- don't expose X11 headers in user space */
-#  include <locale.h>
-//#  define xchar unsigned short
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -169,18 +122,13 @@ FL_EXPORT unsigned fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, u
 
 /*****************************************************************************/
 #ifdef WIN32
+/* these two WIN32-only functions are kept for API compatibility */
 /* OD: Attempt to convert the UTF-8 string to the current locale */
 FL_EXPORT char *fl_utf8_to_locale(const char *s, int len, unsigned int codepage);
 
 /* OD: Attempt to convert a string in the current locale to UTF-8 */
 FL_EXPORT char *fl_locale_to_utf8(const char *s, int len, unsigned int codepage);
-#elif defined(__APPLE__)  /* PORTME: Fl_Screen_Driver ? - platform text encoding and conversion */
-  /* not needed */
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you want to be able to convert from a local charset to UTF-8?"
-#else /* X11 */
-  /* not needed */
-#endif
+#endif /* WIN32 */
 
 /*****************************************************************************
  * The following functions are intended to provide portable, UTF-8 aware
