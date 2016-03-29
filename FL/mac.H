@@ -32,7 +32,6 @@ typedef FLWindow *Window;
 typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif // __OBJC__
 
-#include <FL/Fl_Device.H>
 #include <FL/Fl_System_Driver.H>
 
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
