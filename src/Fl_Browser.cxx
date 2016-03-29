@@ -657,6 +657,9 @@ int Fl_Browser::topline() const {
   internally for optimization of later item changes. This can be slow
   if there are many items in the browser.
 
+  It returns immediately (w/o recalculation) if \p newSize equals
+  the current textsize().
+
   You \e may need to call redraw() to see the effect and to have the
   scrollbar positions recalculated.
 
@@ -664,6 +667,8 @@ int Fl_Browser::topline() const {
   unless you really need to \e change the size later.
 */
 void Fl_Browser::textsize(Fl_Fontsize newSize) {
+  if (newSize == textsize())
+    return; // avoid recalculation
   Fl_Browser_::textsize(newSize);
   new_list();
   full_height_ = 0;
