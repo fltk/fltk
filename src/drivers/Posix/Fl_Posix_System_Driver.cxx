@@ -19,6 +19,7 @@
 
 #include "Fl_Posix_System_Driver.H"
 #include <FL/Fl.H>
+#include <X11/Xlib.h>
 
 extern XIC fl_xim_ic; // in Fl_x.cxx
 

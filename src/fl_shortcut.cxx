@@ -44,6 +44,7 @@
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement keyboard shortcut handling here"
 #else
+#include <X11/Xlib.h>
 #endif
 
 /**

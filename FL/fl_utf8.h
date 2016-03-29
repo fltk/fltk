@@ -76,7 +76,7 @@
 #  include <sys/stat.h>
 #  if defined(FL_LIBRARY) /* don't expose X11 headers in user space */
 #    include <X11/Xlocale.h>
-#    include <X11/Xlib.h>
+//#    include <X11/Xlib.h>
 #  endif /* defined(FL_LIBRARY) -- don't expose X11 headers in user space */
 #  include <locale.h>
 #  define xchar unsigned short
