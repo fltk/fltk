@@ -949,7 +949,7 @@ int fl_utf8test(const char* src, unsigned srclen) {
  */
  static int mk_wcwidth(unsigned int ucs);
 
- /* include the c source directly so it's contents are only visible here
+ /* include the c source directly so its contents are only visible here
   */
 #include "xutf8/mk_wcwidth.c"
 
