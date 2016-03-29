@@ -500,17 +500,17 @@ endif (OPENGL_FOUND)
 
 if (OPTION_BUILD_SHARED_LIBS)
 
-    FL_ADD_LIBRARY(fltk_SHARED SHARED "${SHARED_FILES}")
+    FL_ADD_LIBRARY(fltk SHARED "${SHARED_FILES}")
     target_link_libraries(fltk_SHARED ${OPTIONAL_LIBS})
 
     ###################################################################
 
-    FL_ADD_LIBRARY(fltk_forms_SHARED SHARED "${FLCPPFILES}")
+    FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
     target_link_libraries(fltk_forms_SHARED fltk_SHARED)
 
     ###################################################################
 
-    FL_ADD_LIBRARY(fltk_images_SHARED SHARED "${IMGCPPFILES}")
+    FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
     target_link_libraries(fltk_images_SHARED fltk_SHARED)
 
     if (OPTION_USE_SYSTEM_LIBJPEG)
@@ -534,7 +534,7 @@ if (OPTION_BUILD_SHARED_LIBS)
     ###################################################################
 
     if (OPENGL_FOUND)
-       FL_ADD_LIBRARY(fltk_gl_SHARED SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
+       FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
        target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
     endif (OPENGL_FOUND)
 
