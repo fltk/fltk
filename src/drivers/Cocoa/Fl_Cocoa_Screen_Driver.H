@@ -45,6 +45,7 @@ class Fl_Window;
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
 protected:
+  struct XRectangle {int x, y, width, height;};
   XRectangle screens[MAX_SCREENS];
   float dpi_h[MAX_SCREENS];
   float dpi_v[MAX_SCREENS];

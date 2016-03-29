@@ -33,10 +33,9 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif // __OBJC__
 
 #include <FL/Fl_Device.H>
-#include "src/drivers/Darwin/Fl_Darwin_System_Driver.H"
+#include <FL/Fl_System_Driver.H>
 
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
-#  include <FL/Fl_Widget.H>
 
 typedef struct CGContext* CGContextRef;
 typedef struct OpaquePMPrintSettings*   PMPrintSettings;
@@ -107,12 +106,9 @@ struct flCocoaRegion {
   CGRect *rects;
 }; // a region is the union of a series of rectangles
 
-#  include "Fl_Window.H"
+#  include <FL/Fl_Window.H>
 #  include "../src/Fl_Font.H"
 
-// Some random X equivalents
-struct XPoint { int x, y; };
-struct XRectangle {int x, y, width, height;};
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__
 typedef double CGFloat;
