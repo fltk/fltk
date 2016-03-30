@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_System_Driver.H>
 #include <stdarg.h>
-#include <locale.h>
 #if defined(USE_X11)
 #include <src/Fl_Font.H>
 #if USE_XFT
@@ -151,23 +151,11 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
  */
 int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 {
-#ifdef FL_PORTING
-#  pragma message "FL_PORTING: must define LC_NUMERIC"
   va_list args;
   va_start(args, format);
-  int retval = vfprintf(output, format, args);
+  int retval = Fl_System_Driver::driver()->clocale_printf(output, format, args);
   va_end(args);
   return retval;
-#else
-  char *saved_locale = setlocale(LC_NUMERIC, NULL);
-  setlocale(LC_NUMERIC, "C");
-  va_list args;
-  va_start(args, format);
-  int retval = vfprintf(output, format, args);
-  va_end(args);
-  setlocale(LC_NUMERIC, saved_locale);
-  return retval;
-#endif
 }
 
 #ifndef FL_DOXYGEN

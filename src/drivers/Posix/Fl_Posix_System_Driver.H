@@ -63,6 +63,7 @@ public:
   virtual int unlink(const char* f) {return ::unlink(f);}
   virtual int rmdir(const char* f) {return ::rmdir(f);}
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
+  virtual int clocale_printf(FILE *output, const char *format, va_list args);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

@@ -118,7 +118,8 @@ public:
   virtual int utf8locale();
   virtual unsigned utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen);
   virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
-
+  // implement to shield fprintf() from locale changes in decimal point
+  virtual int clocale_printf(FILE *output, const char *format, va_list args);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

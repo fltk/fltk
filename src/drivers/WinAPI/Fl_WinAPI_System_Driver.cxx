@@ -22,9 +22,11 @@
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <windows.h>
 #include <wchar.h>
 #include <process.h>
+#include <locale.h>
 
 #if !defined(FL_DOXYGEN)
 const char* fl_local_alt   = "Alt";
@@ -428,6 +430,14 @@ unsigned Fl_WinAPI_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const 
   ret = fl_utf8fromwc(dst, dstlen, buf, length);
   if (buf != lbuf) free((void*)buf);
   return ret;
+}
+
+int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vfprintf(output, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+  return retval;
 }
 
 //

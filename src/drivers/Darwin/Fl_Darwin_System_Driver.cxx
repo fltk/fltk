@@ -22,6 +22,12 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <string.h>
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+#include <xlocale.h>
+#else
+#include <locale.h>
+#endif
+#include <stdio.h>
 
 int Fl_X::next_marked_length = 0;
 
@@ -89,6 +95,22 @@ int Fl_Darwin_System_Driver::compose(int &del) {
   Fl::compose_state = Fl_X::next_marked_length;
   return 1;
 }
+
+int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400) {
+    static locale_t postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+    return vfprintf_l(output, postscript_locale, format, args);
+  }
+#else
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vfprintf(output, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+  return retval;
+#endif
+}
+
 
 //
 // End of "$Id$".
