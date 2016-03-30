@@ -96,6 +96,7 @@ public:
   // the selected text during the D&D operation
   virtual int dnd(int use_selection = 0) {return 0;}
   
+  // implement these to support cross-platform file operations
   virtual char *utf2mbcs(const char *s) {return (char*)s;}
   virtual char *getenv(const char* v);
   virtual int open(const char* f, int oflags, int pmode) {return -1;}
@@ -110,6 +111,14 @@ public:
   virtual int mkdir(const char* f, int mode) {return -1;}
   virtual int rmdir(const char* f) {return -1;}
   virtual int rename(const char* f, const char *n) {return -1;}
+  
+  // the default implementation of these utf8... functions should be enough 
+  virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
+  virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
+  virtual int utf8locale();
+  virtual unsigned utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen);
+  virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
+
 };
 
 #endif // FL_SYSTEM_DRIVER_H

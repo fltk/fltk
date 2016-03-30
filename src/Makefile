@@ -210,7 +210,7 @@ IMGCPPFILES = \
 	Fl_PNM_Image.cxx
 
 
-CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c fl_utf.c
+CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
 
 UTF8CFILES = \
 	xutf8/case.c \

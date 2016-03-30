@@ -61,7 +61,11 @@ public:
   virtual int mkdir(const char* f, int mode);
   virtual int rmdir(const char* f);
   virtual int rename(const char* f, const char *n);
-
+  virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
+  virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
+  virtual int utf8locale();
+  virtual unsigned utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen);
+  virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

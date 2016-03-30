@@ -369,7 +369,6 @@ set (CFILES
   xutf8/utf8Utils.c
   xutf8/utf8Wrap.c
   xutf8/keysym2Ucs.c
-  fl_utf.c
 )
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))

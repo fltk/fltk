@@ -20,6 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
+#include <FL/fl_utf8.h>
 #include <stdio.h>
 #include <windows.h>
 #include <wchar.h>
@@ -321,6 +322,113 @@ char *fl_locale_to_utf8(const char *s, int len, UINT codepage)
 }
 
 ///////////////////////////////////
+
+unsigned Fl_WinAPI_System_Driver::utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen) {
+  return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
+}
+
+unsigned Fl_WinAPI_System_Driver::utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen)
+{
+  unsigned i = 0;
+  unsigned count = 0;
+  if (dstlen) for (;;) {
+    unsigned ucs;
+    if (i >= srclen) {
+      dst[count] = 0;
+      return count;
+    }
+    ucs = src[i++];
+    if (ucs < 0x80U) {
+      dst[count++] = ucs;
+      if (count >= dstlen) {dst[count-1] = 0; break;}
+    } else if (ucs < 0x800U) { /* 2 bytes */
+      if (count+2 >= dstlen) {dst[count] = 0; count += 2; break;}
+      dst[count++] = 0xc0 | (ucs >> 6);
+      dst[count++] = 0x80 | (ucs & 0x3F);
+    } else if (ucs >= 0xd800 && ucs <= 0xdbff && i < srclen &&
+               src[i] >= 0xdc00 && src[i] <= 0xdfff) {
+      /* surrogate pair */
+      unsigned ucs2 = src[i++];
+      ucs = 0x10000U + ((ucs&0x3ff)<<10) + (ucs2&0x3ff);
+      /* all surrogate pairs turn into 4-byte UTF-8 */
+      if (count+4 >= dstlen) {dst[count] = 0; count += 4; break;}
+      dst[count++] = 0xf0 | (ucs >> 18);
+      dst[count++] = 0x80 | ((ucs >> 12) & 0x3F);
+      dst[count++] = 0x80 | ((ucs >> 6) & 0x3F);
+      dst[count++] = 0x80 | (ucs & 0x3F);
+    } else {
+      /* all others are 3 bytes: */
+      if (count+3 >= dstlen) {dst[count] = 0; count += 3; break;}
+      dst[count++] = 0xe0 | (ucs >> 12);
+      dst[count++] = 0x80 | ((ucs >> 6) & 0x3F);
+      dst[count++] = 0x80 | (ucs & 0x3F);
+    }
+  }
+  /* we filled dst, measure the rest: */
+  while (i < srclen) {
+    unsigned ucs = src[i++];
+    if (ucs < 0x80U) {
+      count++;
+    } else if (ucs < 0x800U) { /* 2 bytes */
+      count += 2;
+    } else if (ucs >= 0xd800 && ucs <= 0xdbff && i < srclen-1 &&
+               src[i+1] >= 0xdc00 && src[i+1] <= 0xdfff) {
+      /* surrogate pair */
+      ++i;
+      count += 4;
+    } else {
+      count += 3;
+    }
+  }
+  return count;
+}
+
+int Fl_WinAPI_System_Driver::utf8locale()
+{
+  static int ret = 2;
+  if (ret == 2) {
+    ret = GetACP() == CP_UTF8;
+  }
+  return ret;
+}
+
+unsigned Fl_WinAPI_System_Driver::utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen) {
+  wchar_t lbuf[1024];
+  wchar_t* buf = lbuf;
+  unsigned length = fl_utf8towc(src, srclen, buf, 1024);
+  unsigned ret;
+  if (length >= 1024) {
+    buf = (wchar_t*)(malloc((length+1)*sizeof(wchar_t)));
+    fl_utf8towc(src, srclen, buf, length+1);
+  }
+  if (dstlen) {
+    // apparently this does not null-terminate, even though msdn documentation claims it does:
+    ret =
+    WideCharToMultiByte(GetACP(), 0, buf, length, dst, dstlen, 0, 0);
+    dst[ret] = 0;
+  }
+  // if it overflows or measuring length, get the actual length:
+  if (dstlen==0 || ret >= dstlen-1)
+    ret = WideCharToMultiByte(GetACP(), 0, buf, length, 0, 0, 0, 0);
+  if (buf != lbuf) free(buf);
+  return ret;
+}
+
+unsigned Fl_WinAPI_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen) {
+  wchar_t lbuf[1024];
+  wchar_t* buf = lbuf;
+  unsigned length;
+  unsigned ret;
+  length = MultiByteToWideChar(GetACP(), 0, src, srclen, buf, 1024);
+  if ((length == 0)&&(GetLastError()==ERROR_INSUFFICIENT_BUFFER)) {
+    length = MultiByteToWideChar(GetACP(), 0, src, srclen, 0, 0);
+    buf = (wchar_t*)(malloc(length*sizeof(wchar_t)));
+    MultiByteToWideChar(GetACP(), 0, src, srclen, buf, length);
+  }
+  ret = fl_utf8fromwc(dst, dstlen, buf, length);
+  if (buf != lbuf) free((void*)buf);
+  return ret;
+}
 
 //
 // End of "$Id$".
