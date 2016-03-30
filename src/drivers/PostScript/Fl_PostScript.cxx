@@ -16,9 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
 #include <FL/Fl.H>
-#include <FL/x.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
@@ -26,12 +24,6 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_System_Driver.H>
 #include <stdarg.h>
-#if defined(USE_X11)
-#include <src/Fl_Font.H>
-#if USE_XFT
-#include <X11/Xft/Xft.h>
-#endif
-#endif
 
 /** \brief Label of the PostScript file chooser window */
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
@@ -1041,12 +1033,8 @@ static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
 // write to PostScript a bitmap image of a UTF8 string
 void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int n, double x, double y, int w, bool rtl)
 {
-  // scale for bitmask computation
-#if defined(USE_X11) && !USE_XFT
-  float scale = 1; // don't scale because we can't expect to have scalable fonts
-#else
-  float scale = 2;
-#endif
+  // scale for bitmask computation is set to 1 when we can't expect to have scalable fonts
+  float scale = Fl_Display_Device::display_device()->driver()->scale_bitmap_for_PostScript();
   Fl_Fontsize old_size = size();
   Fl_Font fontnum = Fl_Graphics_Driver::font();
   int w_scaled =  (int)(w * (scale + 0.5));
@@ -1060,11 +1048,11 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   // color offscreen background with a shade contrasting with the text color
   fl_rectf(0, 0, w_scaled, (int)(h+3*scale) );
   fl_color(text_color);
-#if defined(USE_X11) && !USE_XFT
-  // force seeing this font as new so it's applied to the offscreen graphics context
-  fl_graphics_driver->font_descriptor(NULL);
-  fl_font(fontnum, 0);
-#endif
+  if (scale < 1.5) {
+    // force seeing this font as new so it's applied to the offscreen graphics context
+    fl_graphics_driver->font_descriptor(NULL);
+    fl_font(fontnum, 0);
+  }
   fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
   int w2 = (int)fl_width(str, n);
   // draw string in offscreen

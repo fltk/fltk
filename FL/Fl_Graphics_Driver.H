@@ -238,6 +238,8 @@ public:
   virtual void mask_bitmap(uchar **) {}
   // default implementation may be enough
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) { return float(s); }
+  // default implementation may be enough
+  virtual float scale_bitmap_for_PostScript() { return 2; }
   // each platform implements that its own way
   static void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
 protected:

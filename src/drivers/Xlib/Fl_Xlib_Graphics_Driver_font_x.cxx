@@ -693,6 +693,10 @@ float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *des
   return ps_size;
 }
 
+float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
+  return 1;
+}
+
 #endif // FL_DOXYGEN
 //
 // End of "$Id$".
