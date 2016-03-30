@@ -82,7 +82,6 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS)
 extern FL_EXPORT Window fl_message_window;
 extern FL_EXPORT void *fl_xftfont;
-FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 // access to core fonts:
 // This class provides a "smart pointer" that returns a pointer to an XFontStruct.

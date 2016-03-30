@@ -680,7 +680,7 @@ void Fl::flush() {
       if (!wi->visible_r()) continue;
       if (wi->damage()) {i->flush(); wi->clear_damage();}
       // destroy damage regions for windows that don't use them:
-      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+      if (i->region) {Fl_Graphics_Driver::XDestroyRegion(i->region); i->region = 0;}
     }
   }
   screen_driver()->flush();
@@ -1479,7 +1479,7 @@ void Fl_Widget::damage(uchar fl) {
     // damage entire window by deleting the region:
     Fl_X* i = Fl_X::i((Fl_Window*)this);
     if (!i) return; // window not mapped, so ignore it
-    if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+    if (i->region) {Fl_Graphics_Driver::XDestroyRegion(i->region); i->region = 0;}
     damage_ |= fl;
     Fl::damage(FL_DAMAGE_CHILD);
   }
@@ -1518,8 +1518,8 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
     wi->damage_ |= fl;
   } else {
     // create a new region:
-    if (i->region) XDestroyRegion(i->region);
-    i->region = XRectangleRegion(X,Y,W,H);
+    if (i->region) Fl_Graphics_Driver::XDestroyRegion(i->region);
+    i->region = Fl_Graphics_Driver::XRectangleRegion(X,Y,W,H);
     wi->damage_ = fl;
   }
   Fl::damage(FL_DAMAGE_CHILD);

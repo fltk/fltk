@@ -86,7 +86,7 @@ void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
   }
   if (i->backbuffer_bad || erase_overlay) {
     // Make sure we do a complete redraw...
-    if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+    if (i->region) {Fl_Graphics_Driver::XDestroyRegion(i->region); i->region = 0;}
     pWindow->clear_damage(FL_DAMAGE_ALL);
     i->backbuffer_bad = 0;
   }  
@@ -469,7 +469,7 @@ void Fl_X11_Window_Driver::show_menu()
 void Fl_X11_Window_Driver::hide() {
   Fl_X* ip = Fl_X::i(pWindow);
   if (hide_common()) return;
-  if (ip->region) XDestroyRegion(ip->region);
+  if (ip->region) Fl_Graphics_Driver::XDestroyRegion(ip->region);
 # if USE_XFT
   Fl_Xlib_Graphics_Driver::destroy_xft_draw(ip->xid);
 # endif

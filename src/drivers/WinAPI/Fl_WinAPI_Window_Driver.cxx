@@ -496,7 +496,7 @@ void Fl_WinAPI_Window_Driver::hide() {
 # endif
   }
   
-  if (ip->region) XDestroyRegion(ip->region);
+  if (ip->region) Fl_Graphics_Driver::XDestroyRegion(ip->region);
   
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();

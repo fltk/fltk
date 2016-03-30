@@ -45,17 +45,6 @@ typedef HWND Window;
 #define VK_APPS 0x5D
 #endif
 
-// some random X equivalents
-struct XRectangle {int x, y, width, height;};
-extern Fl_Region XRectangleRegion(int x, int y, int w, int h);
-inline void XDestroyRegion(Fl_Region r) {DeleteObject(r);}
-inline void XClipBox(Fl_Region r,XRectangle* rect) {
-    RECT win_rect; GetRgnBox(r,&win_rect);
-    rect->x=win_rect.left;
-    rect->y=win_rect.top;
-    rect->width=win_rect.right-win_rect.left;
-    rect->height=win_rect.bottom-win_rect.top;
-}
 // this object contains all win32-specific stuff about a window:
 // Warning: this object is highly subject to change!
 class FL_EXPORT Fl_X {

@@ -63,6 +63,7 @@ public:
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
+  static CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h);
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();

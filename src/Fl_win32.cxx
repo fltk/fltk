@@ -1118,14 +1118,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     R = CreateRectRgn(0,0,0,0);
     int r = GetUpdateRgn(hWnd,R,0);
     if (r==NULLREGION && !redraw_whole_window) {
-      XDestroyRegion(R);
+      Fl_Graphics_Driver::XDestroyRegion(R);
       break;
     }
 
     if (i->region) {
       // Also tell WIN32 that we are drawing someplace else as well...
       CombineRgn(i->region, i->region, R, RGN_OR);
-      XDestroyRegion(R);
+      Fl_Graphics_Driver::XDestroyRegion(R);
     } else {
       i->region = R;
     }
@@ -2361,14 +2361,6 @@ void fl_cleanup_dc_list(void) {          // clean up the list
     delete (t);
     t = win_DC_list;
   } while(t);
-}
-
-Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) return CreateRectRgn(x,y,x+w,y+h);
-  // because rotation may apply, the rectangle becomes a polygon in device coords
-  POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
-  LPtoDP((HDC)fl_graphics_driver->gc(), pt, 4);
-  return CreatePolygonRgn(pt, 4, ALTERNATE);
 }
 
 FL_EXPORT Window fl_xid_(const Fl_Window *w) {

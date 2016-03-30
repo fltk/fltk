@@ -240,8 +240,11 @@ public:
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) { return float(s); }
   // default implementation may be enough
   virtual float scale_bitmap_for_PostScript() { return 2; }
-  // each platform implements that its own way
+  // each platform implements these 3 functions its own way
   static void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
+  static Fl_Region XRectangleRegion(int x, int y, int w, int h);
+  static void XDestroyRegion(Fl_Region r);
+
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   void global_gc(void);

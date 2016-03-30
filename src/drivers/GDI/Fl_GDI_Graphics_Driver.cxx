@@ -166,6 +166,18 @@ void Fl_GDI_Graphics_Driver::fixloop() {  // remove equal points from closed pat
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
+Fl_Region Fl_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
+  if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) return CreateRectRgn(x,y,x+w,y+h);
+  // because rotation may apply, the rectangle becomes a polygon in device coords
+  POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
+  LPtoDP((HDC)fl_graphics_driver->gc(), pt, 4);
+  return CreatePolygonRgn(pt, 4, ALTERNATE);
+}
+
+void Fl_Graphics_Driver::XDestroyRegion(Fl_Region r) {
+  DeleteObject(r);
+}
+
 
 //
 // End of "$Id$".

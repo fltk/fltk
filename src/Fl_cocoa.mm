@@ -36,6 +36,7 @@ extern "C" {
 
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
@@ -1945,7 +1946,7 @@ static void handleUpdateEvent( Fl_Window *window )
   i->wait_for_expose = 0;
 
   if ( i->region ) {
-    XDestroyRegion(i->region);
+    Fl_Graphics_Driver::XDestroyRegion(i->region);
     i->region = 0;
   }
   window->clear_damage(FL_DAMAGE_ALL);
@@ -3550,8 +3551,8 @@ void Fl_Cocoa_Window_Driver::unmap() {
 // intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
 Fl_Region Fl_X::intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)
 {
-  if (current == NULL) return XRectangleRegion(x,y,w,h);
-  CGRect r = fl_cgrectmake_cocoa(x, y, w, h);
+  if (current == NULL) return Fl_Graphics_Driver::XRectangleRegion(x,y,w,h);
+  CGRect r = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->count = current->count;
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
@@ -3565,8 +3566,8 @@ Fl_Region Fl_X::intersect_region_and_rect(Fl_Region current, int x,int y,int w, 
     outr->rects = (CGRect*)realloc(outr->rects, outr->count * sizeof(CGRect));
   }
   else {
-    XDestroyRegion(outr);
-    outr = XRectangleRegion(0,0,0,0);
+    Fl_Graphics_Driver::XDestroyRegion(outr);
+    outr = Fl_Graphics_Driver::XRectangleRegion(0,0,0,0);
   }
   return outr;
 }
@@ -4260,11 +4261,6 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
     CGDataProviderRelease(provider);
   }
   return img;
-}
-
-// so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes
-CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
-  return CGRectMake(x - 0.5, y - 0.5, w, h);
 }
 
 Window fl_xid(const Fl_Window* w)

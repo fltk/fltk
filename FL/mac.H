@@ -117,20 +117,7 @@ typedef float CGFloat;
 #endif
 #endif // CGFLOAT_DEFINED
 
-extern CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h);
-inline Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  Fl_Region R = (Fl_Region)malloc(sizeof(*R));
-  R->count = 1;
-  R->rects = (CGRect *)malloc(sizeof(CGRect));
-  *(R->rects) = fl_cgrectmake_cocoa(x, y, w, h);
-  return R;
-}
-inline void XDestroyRegion(Fl_Region r) {
-  if(r) {
-    free(r->rects);
-    free(r);
-  }
-}
+//extern CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h);
 extern NSCursor *fl_default_cursor;
 
 // This object contains all mac-specific stuff about a window:
