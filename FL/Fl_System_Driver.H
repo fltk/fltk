@@ -62,6 +62,8 @@ public:
   virtual ~Fl_System_Driver();
   // copy the implementation in Fl_XXX_System_Driver.cxx to the corresponding file for the new platform
   static Fl_System_Driver *driver();
+  // These flags are useful after calling XParseGeometry(). They indicate which of its arguments
+  // contain meaningful data upon return.
   static const int flNoValue;
   static const int flWidthValue;
   static const int flHeightValue;
@@ -76,7 +78,7 @@ public:
   // implement to process the -display argument
   virtual void display_arg(const char *arg) { }
   // default implementation should be enough
-  virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
+  virtual int XParseGeometry(const char* string, int* x, int* y, unsigned int* width, unsigned int* height);
   static void warning(const char* format, ...);
   // implement to set the default effect of Fl::warning()
   virtual void warning(const char* format, va_list args);
