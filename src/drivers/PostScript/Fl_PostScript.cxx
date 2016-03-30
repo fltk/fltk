@@ -953,25 +953,8 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
   Fl_Font_Descriptor *desc = driver->font_descriptor();
   this->font_descriptor(desc);
   if (f < FL_FREE_FONT) {
-    float ps_size = (float) s;
     fprintf(output, "/%s SF\n" , _fontNames[f]);
-#if defined(USE_X11) 
-#if USE_XFT
-    // Xft font height is sometimes larger than the required size (see STR 2566).
-    // Increase the PostScript font size by 15% without exceeding the display font height 
-    int max = desc->font->height;
-    ps_size = s * 1.15;
-    if (ps_size > max) ps_size = max;
-#else
-    // Non-Xft fonts can be smaller than required.
-    // Set the PostScript font size to the display font height 
-    char *name = desc->font->font_name_list[0];
-    char *p = strstr(name, "--");
-    if (p) {
-      sscanf(p + 2, "%f", &ps_size);
-    }
-#endif // USE_XFT
-#endif // USE_X11
+    float ps_size = driver->scale_font_for_PostScript(desc, s);
     clocale_printf("%.1f FS\n", ps_size);
   }
 }

@@ -127,6 +127,7 @@ protected:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
+  virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s);
 };
 
 

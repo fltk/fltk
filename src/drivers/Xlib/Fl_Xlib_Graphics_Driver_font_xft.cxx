@@ -1087,7 +1087,17 @@ void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 
   delete[] ucs_txt;
 }
-#endif
+
+float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {
+  // Xft font height is sometimes larger than the required size (see STR 2566).
+  // Increase the PostScript font size by 15% without exceeding the display font height
+  int max = desc->font->height;
+  float ps_size = s * 1.15;
+  if (ps_size > max) ps_size = max;
+  return ps_size;
+}
+
+#endif // FL_DOXYGEN
 
 //
 // End of "$Id$"

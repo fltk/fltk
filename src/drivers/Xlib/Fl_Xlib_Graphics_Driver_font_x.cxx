@@ -680,6 +680,19 @@ void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   }
   if (gc_) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc_, x, y, c, n);
 }
+
+float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {
+  float ps_size = (float) s;
+  // Non-Xft fonts can be smaller than required.
+  // Set the PostScript font size to the display font height
+  char *name = desc->font->font_name_list[0];
+  char *p = strstr(name, "--");
+  if (p) {
+    sscanf(p + 2, "%f", &ps_size);
+  }
+  return ps_size;
+}
+
 #endif // FL_DOXYGEN
 //
 // End of "$Id$".
