@@ -22,9 +22,6 @@
 #include <X11/Xlib.h>
 #include <locale.h>
 #include <stdio.h>
-#ifdef __APPLE_CC__ // allows Darwin + X11
-#include <xlocale.h>
-#endif
 
 extern XIC fl_xim_ic; // in Fl_x.cxx
 
@@ -69,8 +66,11 @@ void Fl_Posix_System_Driver::compose_reset()
 }
 
 int Fl_Posix_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
-  static locale_t postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
-  return vfprintf_l(output, postscript_locale, format, args);
+  char *saved_locale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+  int retval = vfprintf(output, format, args);
+  setlocale(LC_NUMERIC, saved_locale);
+  return retval;
 }
 
 //
