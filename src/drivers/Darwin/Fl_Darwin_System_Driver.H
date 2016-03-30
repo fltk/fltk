@@ -44,6 +44,7 @@
 class Fl_Darwin_System_Driver : public Fl_System_Driver
 {
 public:
+  Fl_Darwin_System_Driver();
   virtual int single_arg(const char *arg);
   virtual int arg_and_value(const char *name, const char *value);
   virtual int compose(int &del);

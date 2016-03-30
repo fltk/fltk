@@ -45,6 +45,10 @@ Fl_System_Driver *Fl_System_Driver::driver() {
   return d;
 }
 
+Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() {
+  if (fl_mac_os_version == 0) fl_mac_os_version = Fl_X::calc_mac_os_version();
+}
+
 int Fl_Darwin_System_Driver::single_arg(const char *arg) {
   // The Finder application in MacOS X passes the "-psn_N_NNNNN" option to all apps.
   return (strncmp(arg, "psn_", 4) == 0);
