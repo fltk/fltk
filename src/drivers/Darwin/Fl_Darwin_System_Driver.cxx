@@ -106,15 +106,13 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
     static locale_t postscript_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
     return vfprintf_l(output, postscript_locale, format, args);
   }
-#else
+#endif
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   int retval = vfprintf(output, format, args);
   setlocale(LC_NUMERIC, saved_locale);
   return retval;
-#endif
 }
-
 
 //
 // End of "$Id$".
