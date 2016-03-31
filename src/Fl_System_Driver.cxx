@@ -18,6 +18,7 @@
 
 
 #include <FL/Fl_System_Driver.H>
+#include <FL/Fl.H>
 #include <FL/fl_utf8.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -369,6 +370,10 @@ unsigned Fl_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const char* s
 
 int Fl_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
   return vfprintf(output, format, args);
+}
+
+void Fl_System_Driver::compose_reset() {
+  Fl::compose_state = 0;
 }
 
 //

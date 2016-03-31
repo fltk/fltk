@@ -23,6 +23,7 @@
 #ifndef Fl_H
 #  define Fl_H
 
+#include <FL/Fl_System_Driver.H>
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
@@ -47,23 +48,6 @@ class Fl_Window;
 class Fl_Image;
 struct Fl_Label;
 class Fl_Screen_Driver;
-
-// Keep avoiding having the socket deps at that level but mke sure it will work in both 32 & 64 bit builds
-#if defined(WIN32) && !defined(__CYGWIN__)
-# if defined(_WIN64)
-#  define FL_SOCKET unsigned __int64
-# else
-#  define FL_SOCKET int
-# endif
-#elif defined(__APPLE__) // PORTME: Fl_System_Driver - socket types
-# define FL_SOCKET int
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define a type for FL_SOCKET"
-# define FL_SOCKET int // default if not ported
-# undef check
-#else
-# define FL_SOCKET int
-#endif
 
 // Pointers you can use to change FLTK to a foreign language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx

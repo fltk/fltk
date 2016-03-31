@@ -25,30 +25,39 @@
 #define FL_SYSTEM_DRIVER_H
 
 #include <FL/Fl_Export.H>
-#include <FL/Fl.H>
+#include <stdio.h>
 #include <stdarg.h>
 
+// platform-dependent types are declared here
 #ifdef __APPLE__
 typedef struct CGContext* Fl_Offscreen;
 typedef struct CGImage* Fl_Bitmask;
 typedef struct flCocoaRegion* Fl_Region;
+typedef int FL_SOCKET;
 
 #elif defined(WIN32)
 typedef struct HBITMAP__ *HBITMAP;
 typedef HBITMAP Fl_Offscreen;
 typedef HBITMAP Fl_Bitmask;
 typedef struct HRGN__ *Fl_Region;
+# if defined(_WIN64)
+typedef  unsigned __int64 FL_SOCKET;
+# else
+typedef  int FL_SOCKET;
+# endif
 
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define OS-dependent types"
 typedef void* Fl_Offscreen;
 typedef void* Fl_Bitmask;
 typedef void *Fl_Region;
+typedef int FL_SOCKET;
 
 #else
 typedef unsigned long Fl_Offscreen;
 typedef unsigned long Fl_Bitmask;
 typedef struct _XRegion *Fl_Region;
+typedef int FL_SOCKET;
 
 #endif // __APPLE__
 
@@ -91,7 +100,7 @@ public:
   // implement so text-editing widgets support dead keys
   virtual int compose(int &del) {del = 0; return 0;}
   // default implementation may be enough
-  virtual void compose_reset() { Fl::compose_state = 0; }
+  virtual void compose_reset();
   // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
   // the selected text during the D&D operation
   virtual int dnd(int use_selection = 0) {return 0;}

@@ -26,6 +26,7 @@
 #define FL_DARWIN_SYSTEM_DRIVER_H
 
 #include <FL/Fl_System_Driver.H>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
