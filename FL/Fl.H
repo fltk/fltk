@@ -908,21 +908,6 @@ int main() {
   */
   static void copy(const char* stuff, int len, int destination = 0, const char *type = Fl::clipboard_plain_text); // platform dependent
 
-#if defined(__APPLE__) // PORTME: Fl_Surface_Driver ? - additional functions
-  // not needed
-  // Fl_Copy_Surface::complete_copy_pdf_and_tiff()
-#elif defined(WIN32)
-  // not needed
-  // Fl_Copy_Surface::~Fl_Copy_Surface()
-#elif defined(FL_DOXYGEN)
-  // don't show in documentation
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: do you need to implement copy_image() ?"
-  // not implemented by default
-#else
-  // takes a raw RGB image and puts it in the copy/paset buffer
-  static void copy_image(const unsigned char* data, int W, int H, int destination = 0); // X11 platform dependent
-#endif
   /**
   Pastes the data from the selection buffer (\p source is 0) or the clipboard 
   (\p source is 1) into \p receiver.  If \p source is 1,

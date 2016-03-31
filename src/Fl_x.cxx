@@ -1021,14 +1021,14 @@ static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *r
   return b;
 }
 
-void Fl::copy_image(const unsigned char *data, int W, int H, int clipboard){
-  if(!data || W<=0 || H<=0) return;
+// takes a raw RGB image and puts it in the copy/paste buffer
+void Fl_X::copy_image(const unsigned char *data, int W, int H, int clipboard){
+  if (!data || W <= 0 || H <= 0) return;
   delete[] fl_selection_buffer[clipboard];
   fl_selection_buffer[clipboard] = (char *) create_bmp(data,W,H,&fl_selection_length[clipboard]);
   fl_selection_buffer_length[clipboard] = fl_selection_length[clipboard];
   fl_i_own_selection[clipboard] = 1;
   fl_selection_type[clipboard] = Fl::clipboard_image;
-
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
   XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
 }

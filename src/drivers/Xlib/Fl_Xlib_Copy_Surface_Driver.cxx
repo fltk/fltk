@@ -69,7 +69,7 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);
   fl_window = oldwindow;
   _ss->set_current();
-  Fl::copy_image(data,width,height,1);
+  Fl_X::copy_image(data,width,height,1);
   delete[] data;
   fl_delete_offscreen(xid);
 }

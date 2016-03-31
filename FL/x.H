@@ -140,6 +140,7 @@ public:
   static int ewmh_supported();
   static int xrender_supported();
   static void activate_window(Window w);
+  static void copy_image(const unsigned char* data, int W, int H, int destination = 0);
 };
 
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
