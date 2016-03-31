@@ -510,7 +510,21 @@ void Fl_WinAPI_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
   }
 }
 
-
+int Fl_WinAPI_Screen_Driver::compose(int &del) {
+  unsigned char ascii = (unsigned char)Fl::e_text[0];
+  int condition = (Fl::e_state & (FL_ALT | FL_META)) && !(ascii & 128) ;
+  if (condition) { // this stuff is to be treated as a function key
+    del = 0;
+    return 0;
+  }
+  del = Fl::compose_state;
+  Fl::compose_state = 0;
+  // Only insert non-control characters:
+  if ( (!Fl::compose_state) && ! (ascii & ~31 && ascii!=127)) {
+    return 0;
+  }
+  return 1;
+}
 
 //
 // End of "$Id$".

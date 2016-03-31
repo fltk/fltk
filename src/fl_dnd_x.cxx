@@ -20,7 +20,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/x.H>
 #include "flstring.h"
-#include "drivers/Posix/Fl_Posix_System_Driver.H"
+#include "drivers/X11/Fl_X11_Screen_Driver.H"
 
 
 extern Atom fl_XdndAware;
@@ -80,7 +80,7 @@ static int local_handle(int event, Fl_Window* window) {
   return ret;
 }
 
-int Fl_Posix_System_Driver::dnd(int unused) {
+int Fl_X11_Screen_Driver::dnd(int unused) {
   Fl_Window *source_fl_win = Fl::first_window();
   Fl::first_window()->cursor(FL_CURSOR_MOVE);
   Window source_window = fl_xid(Fl::first_window());

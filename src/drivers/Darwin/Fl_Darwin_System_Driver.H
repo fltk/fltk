@@ -48,8 +48,6 @@ public:
   Fl_Darwin_System_Driver();
   virtual int single_arg(const char *arg);
   virtual int arg_and_value(const char *name, const char *value);
-  virtual int compose(int &del);
-  virtual int dnd(int use_selection);
   virtual int mkdir(const char* f, int mode) {return ::mkdir(f, mode);}
   virtual int open(const char* f, int oflags, int pmode) {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);

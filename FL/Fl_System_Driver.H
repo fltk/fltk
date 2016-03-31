@@ -97,13 +97,6 @@ public:
   static void fatal(const char* format, ...);
   // implement to set the default effect of Fl::error()
   virtual void fatal(const char* format, va_list args);
-  // implement so text-editing widgets support dead keys
-  virtual int compose(int &del) {del = 0; return 0;}
-  // default implementation may be enough
-  virtual void compose_reset();
-  // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
-  // the selected text during the D&D operation
-  virtual int dnd(int use_selection = 0) {return 0;}
   
   // implement these to support cross-platform file operations
   virtual char *utf2mbcs(const char *s) {return (char*)s;}

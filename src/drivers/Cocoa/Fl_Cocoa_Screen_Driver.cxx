@@ -264,6 +264,18 @@ void Fl_Cocoa_Screen_Driver::insertion_point_location(int x, int y, int height) 
   insertion_point_height = height;
 }
 
+int Fl_Cocoa_Screen_Driver::compose(int &del) {
+  int condition;
+  int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
+  (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
+  condition = Fl::e_state&(FL_META | FL_CTRL) ||
+  (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
+  !has_text_key ;
+  if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
+  del = Fl::compose_state;
+  Fl::compose_state = Fl_X::next_marked_length;
+  return 1;
+}
 
 //
 // End of "$Id$".

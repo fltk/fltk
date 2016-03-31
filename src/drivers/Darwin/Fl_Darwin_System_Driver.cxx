@@ -59,19 +59,6 @@ int Fl_Darwin_System_Driver::arg_and_value(const char *name, const char *value) 
   return strcmp(name, "NSDocumentRevisionsDebugMode") == 0;
 }
 
-int Fl_Darwin_System_Driver::compose(int &del) {
-  int condition;
-  int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
-  (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
-  condition = Fl::e_state&(FL_META | FL_CTRL) ||
-  (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
-  !has_text_key ;
-  if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
-  del = Fl::compose_state;
-  Fl::compose_state = Fl_X::next_marked_length;
-  return 1;
-}
-
 int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400) {

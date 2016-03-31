@@ -22,7 +22,7 @@ Utility functions to support text input.
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 
 #ifndef FL_DOXYGEN
 int Fl::compose_state = 0;
@@ -70,7 +70,7 @@ int Fl::compose_state = 0;
  other user-interface things to allow characters to be selected.
  */
 int Fl::compose(int& del) {
-  return Fl_System_Driver::driver()->compose(del);
+  return Fl::screen_driver()->compose(del);
 }
 
 /**
@@ -81,7 +81,7 @@ int Fl::compose(int& del) {
  */
 void Fl::compose_reset()
 {
-  Fl_System_Driver::driver()->compose_reset();
+  Fl::screen_driver()->compose_reset();
 }
 
 //

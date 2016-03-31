@@ -47,9 +47,6 @@ class Fl_Posix_System_Driver : public Fl_System_Driver
 public:
   virtual void display_arg(const char *arg);
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
-  virtual int compose(int &del);
-  virtual void compose_reset();
-  virtual int dnd(int unused);
   virtual int mkdir(const char* f, int mode) {return ::mkdir(f, mode);}
   virtual int open(const char* f, int oflags, int pmode) {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);

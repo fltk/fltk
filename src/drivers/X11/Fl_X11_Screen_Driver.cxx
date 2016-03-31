@@ -34,6 +34,7 @@
 #endif
 
 extern Atom fl_NET_WORKAREA;
+extern XIC fl_xim_ic; // in Fl_x.cxx
 
 // Add these externs to allow X11 port to build - same as Fl_WinAPI_Screen_Driver.cxx.
 // These should be in an internal header somewhere?
@@ -609,7 +610,23 @@ void Fl_X11_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
   }
 }
 
+int Fl_X11_Screen_Driver::compose(int& del) {
+  int condition;
+  unsigned char ascii = (unsigned char)Fl::e_text[0];
+  condition = (Fl::e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128) ;
+  if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
+  del = Fl::compose_state;
+  Fl::compose_state = 0;
+  // Only insert non-control characters:
+  if ( (!Fl::compose_state) && ! (ascii & ~31 && ascii!=127)) { return 0; }
+  return 1;
+}
 
+void Fl_X11_Screen_Driver::compose_reset()
+{
+  Fl::compose_state = 0;
+  if (fl_xim_ic) XmbResetIC(fl_xim_ic);
+}
 
 //
 // End of "$Id$".

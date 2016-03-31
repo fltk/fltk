@@ -372,10 +372,6 @@ int Fl_System_Driver::clocale_printf(FILE *output, const char *format, va_list a
   return vfprintf(output, format, args);
 }
 
-void Fl_System_Driver::compose_reset() {
-  Fl::compose_state = 0;
-}
-
 //
 // End of "$Id$".
 //

@@ -687,7 +687,7 @@ int Fl_Input::handle(int event) {
 	  dnd_save_focus = this;
           // drag the data:
           copy(0);
-          Fl_System_Driver::driver()->dnd(1);
+          Fl::screen_driver()->dnd(1);
           return 1;
         }
       }

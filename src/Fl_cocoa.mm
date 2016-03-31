@@ -3949,7 +3949,7 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
 }
 
 
-int Fl_Darwin_System_Driver::dnd(int use_selection)
+int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
 {
   CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[0], fl_selection_length[0]);
   if (text==NULL) return false;

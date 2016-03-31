@@ -1879,7 +1879,7 @@ int Fl::use_high_res_GL_ = 0;
 
 int Fl::dnd()
 {
-  return Fl_System_Driver::driver()->dnd();
+  return Fl::screen_driver()->dnd();
 }
 
 void Fl::reset_marked_text() {

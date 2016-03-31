@@ -83,6 +83,8 @@ public:
   virtual void reset_marked_text();
   virtual void insertion_point_location(int x, int y, int height);
   int insertion_point_location(int *px, int *py, int *pheight);
+  virtual int dnd(int use_selection);
+  virtual int compose(int &del);
 };
 
 

@@ -24,7 +24,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/fl_utf8.h>
-#include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
+#include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -521,7 +521,7 @@ public:
 };
 
 
-int Fl_WinAPI_System_Driver::dnd(int unused)
+int Fl_WinAPI_Screen_Driver::dnd(int unused)
 {
   DWORD dropEffect;
   ReleaseCapture();

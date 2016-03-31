@@ -98,6 +98,13 @@ public:
   virtual int has_marked_text() { return 0; }
   virtual void reset_marked_text() {}
   virtual void insertion_point_location(int x, int y, int height) {}
+  // implement so text-editing widgets support dead keys
+  virtual int compose(int &del) {del = 0; return 0;}
+  // default implementation may be enough
+  virtual void compose_reset();
+  // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
+  // the selected text during the D&D operation
+  virtual int dnd(int use_selection = 0) {return 0;}
 };
 
 
