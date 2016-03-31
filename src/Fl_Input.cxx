@@ -368,11 +368,9 @@ int Fl_Input::handle_key() {
       else replace(position(), del ? position()-del : mark(),
 	           Fl::event_text(), Fl::event_length());
     }
-#ifdef __APPLE__ // PORTME: platform compose
-    if (Fl::compose_state) {
+    if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
       this->mark( this->position() - Fl::compose_state );
     }
-#endif
     return 1;
   }
   
@@ -844,11 +842,9 @@ Fl_Secret_Input::Fl_Secret_Input(int X,int Y,int W,int H,const char *l)
 
 int Fl_Secret_Input::handle(int event) {
   int retval = Fl_Input::handle(event);
-#ifdef __APPLE__ // PORTME: compose
-  if (event == FL_KEYBOARD && Fl::compose_state) {
+  if (event == FL_KEYBOARD && Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
     this->mark( this->position() ); // don't underline marked text
   }
-#endif
   return retval;
 }
 
