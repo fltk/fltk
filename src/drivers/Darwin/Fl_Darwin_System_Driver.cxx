@@ -64,7 +64,11 @@ static int insertion_point_y = 0;
 static int insertion_point_height = 0;
 static bool insertion_point_location_is_valid = false;
 
-void Fl::reset_marked_text() {
+int Fl_Darwin_System_Driver::has_marked_text() {
+  return true;
+}
+
+void Fl_Darwin_System_Driver::reset_marked_text() {
   Fl::compose_state = 0;
   Fl_X::next_marked_length = 0;
   insertion_point_location_is_valid = false;
@@ -80,7 +84,7 @@ int Fl_X::insertion_point_location(int *px, int *py, int *pheight)
   return true;
 }
 
-void Fl::insertion_point_location(int x, int y, int height) {
+void Fl_Darwin_System_Driver::insertion_point_location(int x, int y, int height) {
   insertion_point_location_is_valid = true;
   insertion_point_x = x;
   insertion_point_y = y;

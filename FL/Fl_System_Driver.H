@@ -120,6 +120,13 @@ public:
   virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
   // implement to shield fprintf() from locale changes in decimal point
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  /* Implement to indicate whether complex text input may involve marked text.
+   When it does, has_marked_text returns non zero and reset_marked_text() and
+   insertion_point_location() must also be implemented.
+  */
+  virtual int has_marked_text() { return 0; }
+  virtual void reset_marked_text() {}
+  virtual void insertion_point_location(int x, int y, int height) {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

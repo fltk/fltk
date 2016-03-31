@@ -395,9 +395,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       } else {
         fl_rectf((int)(xpos+curx+0.5), Y+ypos, 2, height);
       }
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - compose
       Fl::insertion_point_location(xpos+curx, Y+ypos+height, height);
-#endif
     }
 
   CONTINUE:

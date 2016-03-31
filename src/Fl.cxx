@@ -1882,6 +1882,14 @@ int Fl::dnd()
   return Fl_System_Driver::driver()->dnd();
 }
 
+void Fl::reset_marked_text() {
+  Fl_System_Driver::driver()->reset_marked_text();
+}
+
+void Fl::insertion_point_location(int x, int y, int height) { // sets window coordinates & height of insertion point
+  Fl_System_Driver::driver()->insertion_point_location(x, y, height);
+}
+
 //
 // End of "$Id$".
 //

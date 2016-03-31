@@ -599,14 +599,12 @@ int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
   static Fl_Widget *dnd_save_focus = NULL;
   switch (event) {
-#ifdef __APPLE__ // PORTME: compose text
     case FL_UNFOCUS:
-      if (Fl::compose_state) {
+      if (Fl_System_Driver::driver()->has_marked_text() && Fl::compose_state) {
 	this->mark( this->position() );
 	Fl::reset_marked_text();
       }
       break;
-#endif
     case FL_FOCUS:
       switch (Fl::event_key()) {
         case FL_Right:

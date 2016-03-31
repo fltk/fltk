@@ -207,17 +207,8 @@ public: // should be private!
   static Fl_Window* grab_;
   static int compose_state; // used for dead keys (WIN32) or marked text (MacOS)
   static void call_screen_init(); // recompute screen number and dimensions
-#ifdef __APPLE__ // PORTME: add for all platforms - additional functions
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
-#elif defined(WIN32)
-  // not needed in WIN32
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: add these functions to all platforms?"
-  // no default implementation
-#else
-  // not needed in X11
-#endif
 #endif // FL_DOXYGEN
   
   

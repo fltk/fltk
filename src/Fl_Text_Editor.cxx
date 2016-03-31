@@ -586,13 +586,11 @@ int Fl_Text_Editor::handle(int event) {
 
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform compose
-      if (buffer()->selected() && Fl::compose_state) {
+      if (Fl_System_Driver::driver()->has_marked_text() && buffer()->selected() && Fl::compose_state) {
 	int pos = insert_position();
 	buffer()->select(pos, pos);
 	Fl::reset_marked_text();
       }
-#endif
       if (buffer()->selected()) redraw(); // Redraw selections...
     case FL_HIDE:
       if (when() & FL_WHEN_RELEASE) maybe_do_callback();
