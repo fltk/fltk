@@ -19,6 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Input_.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <math.h>
@@ -35,11 +36,6 @@
 
 
 #define MAXBUF 1024
-#if defined(USE_X11) && !USE_XFT
-const int secret_char = '*'; // asterisk to hide secret input
-#else
-const int secret_char = 0x2022; // bullet to hide secret input
-#endif
 static int l_secret;
 
 extern void fl_draw(const char*, int, float, float);
@@ -72,7 +68,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
   if (input_type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {
       if (fl_utf8len((char)p[0]) >= 1) {
-	l_secret = fl_utf8encode(secret_char, o);
+	l_secret = fl_utf8encode(Fl_Screen_Driver::secret_input_character, o);
 	o += l_secret;
       }
       p++;

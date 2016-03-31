@@ -89,6 +89,8 @@ public:
   virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) = 0;
   virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
+
+  static int secret_input_character;
 };
 
 

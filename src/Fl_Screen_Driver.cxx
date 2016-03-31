@@ -142,6 +142,8 @@ const char *Fl_Screen_Driver::get_system_scheme()
   return 0L;
 }
 
+/** The bullet character used by default by Fl_Secret_Input */
+int Fl_Screen_Driver::secret_input_character = 0x2022;
 
 //
 // End of "$Id$".

@@ -102,6 +102,9 @@ static double missed_timeout_by;
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
+#if !USE_XFT
+  secret_input_character = '*';
+#endif
   return new Fl_X11_Screen_Driver();
 }
 
