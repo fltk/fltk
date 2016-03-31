@@ -91,6 +91,13 @@ public:
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
 
   static int secret_input_character;
+  /* Implement to indicate whether complex text input may involve marked text.
+   When it does, has_marked_text returns non zero and reset_marked_text() and
+   insertion_point_location() must also be implemented.
+   */
+  virtual int has_marked_text() { return 0; }
+  virtual void reset_marked_text() {}
+  virtual void insertion_point_location(int x, int y, int height) {}
 };
 
 

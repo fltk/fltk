@@ -23,6 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Text_Editor.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/fl_ask.H>
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform editor
@@ -586,7 +587,7 @@ int Fl_Text_Editor::handle(int event) {
 
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
-      if (Fl_System_Driver::driver()->has_marked_text() && buffer()->selected() && Fl::compose_state) {
+      if (Fl::screen_driver()->has_marked_text() && buffer()->selected() && Fl::compose_state) {
 	int pos = insert_position();
 	buffer()->select(pos, pos);
 	Fl::reset_marked_text();

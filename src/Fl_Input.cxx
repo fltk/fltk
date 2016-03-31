@@ -35,6 +35,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_System_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
@@ -600,7 +601,7 @@ int Fl_Input::handle(int event) {
   static Fl_Widget *dnd_save_focus = NULL;
   switch (event) {
     case FL_UNFOCUS:
-      if (Fl_System_Driver::driver()->has_marked_text() && Fl::compose_state) {
+      if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
 	this->mark( this->position() );
 	Fl::reset_marked_text();
       }

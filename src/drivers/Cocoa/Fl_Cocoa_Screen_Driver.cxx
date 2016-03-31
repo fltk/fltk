@@ -230,6 +230,39 @@ const char *Fl_Cocoa_Screen_Driver::get_system_scheme()
 }
 
 
+int Fl_Cocoa_Screen_Driver::has_marked_text() {
+  return true;
+}
+
+
+static int insertion_point_x = 0;
+static int insertion_point_y = 0;
+static int insertion_point_height = 0;
+static bool insertion_point_location_is_valid = false;
+
+void Fl_Cocoa_Screen_Driver::reset_marked_text() {
+  Fl::compose_state = 0;
+  Fl_X::next_marked_length = 0;
+  insertion_point_location_is_valid = false;
+}
+
+int Fl_X::insertion_point_location(int *px, int *py, int *pheight)
+// return true if the current coordinates of the insertion point are available
+{
+  if ( ! insertion_point_location_is_valid ) return false;
+  *px = insertion_point_x;
+  *py = insertion_point_y;
+  *pheight = insertion_point_height;
+  return true;
+}
+
+void Fl_Cocoa_Screen_Driver::insertion_point_location(int x, int y, int height) {
+  insertion_point_location_is_valid = true;
+  insertion_point_x = x;
+  insertion_point_y = y;
+  insertion_point_height = height;
+}
+
 
 //
 // End of "$Id$".
