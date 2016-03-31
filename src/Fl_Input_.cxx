@@ -28,13 +28,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#if defined(WIN32) || defined(__APPLE__) // platform editor look and feel
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: manage character composing here"
-#else
-#endif
-
-
 #define MAXBUF 1024
 static int l_secret;
 
@@ -342,25 +335,21 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       int offset2;
       if (pp <= e) x2 = xpos + (float)expandpos(p, pp, buf, &offset2);
       else offset2 = (int) strlen(buf);
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
-      if (Fl::compose_state) {
+      if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
         fl_color(textcolor());
       }
-      else 
-#endif
+      else
       {
-      fl_color(selection_color());
-      fl_rectf((int)(x1+0.5), Y+ypos, (int)(x2-x1+0.5), height);
-      fl_color(fl_contrast(textcolor(), selection_color()));
+        fl_color(selection_color());
+        fl_rectf((int)(x1+0.5), Y+ypos, (int)(x2-x1+0.5), height);
+        fl_color(fl_contrast(textcolor(), selection_color()));
       }
       fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
-      if (Fl::compose_state) {
+      if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
         fl_color( fl_color_average(textcolor(), color(), 0.6) );
         float width = fl_width(buf+offset1, offset2-offset1);
         fl_line(x1, Y+ypos+height-1, x1+width, Y+ypos+height-1);
       }
-#endif
       if (pp < e) {
 	fl_color(tc);
 	fl_draw(buf+offset2, (int) strlen(buf+offset2), x2, (float)(Y+ypos+desc));
@@ -376,9 +365,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   CONTINUE2:
     // draw the cursor:
     if (Fl::focus() == this && (
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - compose
-				Fl::compose_state || 
-#endif
+				(Fl::screen_driver()->has_marked_text() && Fl::compose_state) ||
 				selstart == selend) &&
 	position() >= p-value() && position() <= e-value()) {
       fl_color(cursor_color());
