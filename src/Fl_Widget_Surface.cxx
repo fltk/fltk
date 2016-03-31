@@ -180,8 +180,10 @@ int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
  */
 void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  Fl_Shared_Image *top, *left, *bottom, *right;
-  win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
+  Fl_Shared_Image *top=0, *left=0, *bottom=0, *right=0;
+  if (win->border() && !win->parent()) {
+    win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
+  }
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {
