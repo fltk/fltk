@@ -23,9 +23,6 @@
 #include <locale.h>
 #include <stdio.h>
 
-extern XIC fl_xim_ic; // in Fl_x.cxx
-
-
 // Pointers you can use to change FLTK to a foreign language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
 const char* fl_local_alt   = "Alt";
