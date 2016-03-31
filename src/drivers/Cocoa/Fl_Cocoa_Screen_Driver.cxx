@@ -235,10 +235,10 @@ int Fl_Cocoa_Screen_Driver::has_marked_text() {
 }
 
 
-static int insertion_point_x = 0;
-static int insertion_point_y = 0;
-static int insertion_point_height = 0;
-static bool insertion_point_location_is_valid = false;
+int Fl_Cocoa_Screen_Driver::insertion_point_x = 0;
+int Fl_Cocoa_Screen_Driver::insertion_point_y = 0;
+int Fl_Cocoa_Screen_Driver::insertion_point_height = 0;
+bool Fl_Cocoa_Screen_Driver::insertion_point_location_is_valid = false;
 
 void Fl_Cocoa_Screen_Driver::reset_marked_text() {
   Fl::compose_state = 0;
@@ -246,7 +246,8 @@ void Fl_Cocoa_Screen_Driver::reset_marked_text() {
   insertion_point_location_is_valid = false;
 }
 
-int Fl_X::insertion_point_location(int *px, int *py, int *pheight)
+// computes window coordinates & height of insertion point
+int Fl_Cocoa_Screen_Driver::insertion_point_location(int *px, int *py, int *pheight)
 // return true if the current coordinates of the insertion point are available
 {
   if ( ! insertion_point_location_is_valid ) return false;

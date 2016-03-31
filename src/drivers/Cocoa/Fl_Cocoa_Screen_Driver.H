@@ -48,7 +48,10 @@ protected:
   XRectangle screens[MAX_SCREENS];
   float dpi_h[MAX_SCREENS];
   float dpi_v[MAX_SCREENS];
-
+  static int insertion_point_x;
+  static int insertion_point_y;
+  static int insertion_point_height;
+  static bool insertion_point_location_is_valid;
 public:
   // --- display management
   // --- screen configuration
@@ -79,6 +82,7 @@ public:
   virtual int has_marked_text();
   virtual void reset_marked_text();
   virtual void insertion_point_location(int x, int y, int height);
+  int insertion_point_location(int *px, int *py, int *pheight);
 };
 
 

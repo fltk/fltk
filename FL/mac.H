@@ -171,7 +171,6 @@ public:
   static void *get_carbon_function(const char *name);
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
-  static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
   static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
   static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable

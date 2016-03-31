@@ -38,6 +38,7 @@ extern "C" {
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
@@ -2683,7 +2684,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   glyphRect.size.width = 0;
   
   int x, y, height;
-  if (Fl_X::insertion_point_location(&x, &y, &height)) {
+  if (((Fl_Cocoa_Screen_Driver*)Fl::screen_driver())->insertion_point_location(&x, &y, &height)) {
     glyphRect.origin.x = (CGFloat)x;
     glyphRect.origin.y = (CGFloat)y;
   } else {
