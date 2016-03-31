@@ -20,6 +20,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Tiled_Image.H>
@@ -86,7 +87,7 @@ Fl_RGB_Image* prepare_shape(int w)
   Fl_RGB_Image* img = surf->image();
   delete surf;
   current->set_current();
-  return img; // return depth-3 white image on black background
+  return img; // return white image on black background
 }
 
 int main(int argc, char **argv) {

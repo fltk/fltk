@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <vector>
 #include <algorithm>            // STL sort
 
@@ -45,7 +46,6 @@ static const char *G_header[] = { "Date", "Time", "Size", "Filename", "", "", ""
 #  endif
 #else /*WIN32*/
 // UNIX
-#  include <ctype.h>
 #  define DIRCMD          "ls -l"
 static const char *G_header[] = { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename", 0 };
 #endif /*WIN32*/

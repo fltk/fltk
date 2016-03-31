@@ -25,6 +25,9 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#ifdef WIN32
+#include <windows.h>
+#endif // WIN32
 
 /* Displays and follows the content of the clipboard with either image or text data
  */
