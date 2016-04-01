@@ -628,6 +628,14 @@ void Fl_X11_Screen_Driver::compose_reset()
   if (fl_xim_ic) XmbResetIC(fl_xim_ic);
 }
 
+int Fl_X11_Screen_Driver::text_display_can_leak() {
+#if USE_XFT
+  return 1;
+#else
+  return 0;
+#endif
+}
+
 //
 // End of "$Id$".
 //

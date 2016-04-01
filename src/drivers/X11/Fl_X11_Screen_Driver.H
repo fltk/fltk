@@ -76,6 +76,7 @@ public:
   virtual int dnd(int unused);
   virtual int compose(int &del);
   virtual void compose_reset();
+  virtual int text_display_can_leak();
 };
 
 

@@ -33,12 +33,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Screen_Driver.H>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform editor feel
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: look out for some code that visualizes character composing"
-#else
-#endif
-
 #undef min
 #undef max
 
@@ -2206,18 +2200,16 @@ void Fl_Text_Display::draw_string(int style,
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
     fl_font( font, fsize );
-#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT // PORTME: Fl_Graphics_Driver - platform editor feel (fix this: fonts should not leak!)
-    // makes sure antialiased ÄÖÜ do not leak on line above
-    fl_push_clip(X, Y, toX - X, mMaxsize);
-#endif
+    // Make sure antialiased ÄÖÜ do not leak on line above:
+    // on X11+Xft the antialiased part of characters such as ÄÖÜ leak on the bottom pixel of the line above
+    static int can_leak = Fl::screen_driver()->text_display_can_leak();
+    if (can_leak) fl_push_clip(X, Y, toX - X, mMaxsize);
     fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
     if (Fl::screen_driver()->has_marked_text() && Fl::compose_state && (style & PRIMARY_MASK)) {
       fl_color( fl_color_average(foreground, background, 0.6) );
       fl_line(X, Y + mMaxsize - 1, X + fl_width(string, nChars), Y + mMaxsize - 1);
     }
-#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT // PORTME: platform editor feel
-    fl_pop_clip();
-#endif
+    if (can_leak) fl_pop_clip();
   }
 
   // CET - FIXME
