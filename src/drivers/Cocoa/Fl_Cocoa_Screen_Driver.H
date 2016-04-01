@@ -53,6 +53,7 @@ protected:
   static int insertion_point_height;
   static bool insertion_point_location_is_valid;
 public:
+  Fl_Cocoa_Screen_Driver();
   // --- display management
   // --- screen configuration
   virtual void init();

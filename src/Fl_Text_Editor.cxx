@@ -26,12 +26,6 @@
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/fl_ask.H>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform editor
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: add common shortcut for your platform here"
-#else
-#endif
-
 /* Keyboard Control Matrix
 
 key\modifier   plain  Ctrl   Alt  Meta  
@@ -146,24 +140,6 @@ static struct {
   { 'v',          FL_CTRL,                  Fl_Text_Editor::kf_paste      },
   { FL_Insert,    FL_SHIFT,                 Fl_Text_Editor::kf_paste      },
   { 'a',          FL_CTRL,                  Fl_Text_Editor::kf_select_all },
-
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform editor feel
-  // Define CMD+key accelerators...
-  { 'z',          FL_COMMAND,               Fl_Text_Editor::kf_undo       },
-  { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        },
-  { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       },
-  { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      },
-  { 'a',          FL_COMMAND,               Fl_Text_Editor::kf_select_all },
-  { FL_Left,      FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
-  { FL_Right,     FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
-  { FL_Up,        FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
-  { FL_Down,      FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
-  { FL_Left,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
-  { FL_Right,     FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
-  { FL_Up,        FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
-  { FL_Down,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
-#endif // __APPLE__ // PORTME: Fl_Screen_Driver - platform editor feel
-
   { 0,            0,                        0                             }
 };
 
@@ -174,6 +150,15 @@ void Fl_Text_Editor::add_default_key_bindings(Key_Binding** list) {
                     default_key_bindings[i].state,
                     default_key_bindings[i].func,
                     list);
+  }
+  Key_Binding *extra_key_bindings = Fl::screen_driver()->text_editor_extra_key_bindings;
+  if (extra_key_bindings) { // add platform-specific key bindings, if any
+    for (int i = 0; extra_key_bindings[i].key; i++) {
+      add_key_binding(extra_key_bindings[i].key,
+                      extra_key_bindings[i].state,
+                      extra_key_bindings[i].function,
+                      list);
+    }
   }
 }
 
@@ -544,12 +529,10 @@ int Fl_Text_Editor::handle_key() {
       if (insert_mode()) insert(Fl::event_text());
       else overstrike(Fl::event_text());
     }
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform compose
-    if (Fl::compose_state) {
+    if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
       int pos = this->insert_position();
       this->buffer()->select(pos - Fl::compose_state, pos);
     }
-#endif
     show_insert_position();
     set_changed();
     if (when()&FL_WHEN_CHANGED) do_callback();

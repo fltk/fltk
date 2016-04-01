@@ -28,7 +28,7 @@ char Fl_Screen_Driver::fg_set = 0;
 
 
 Fl_Screen_Driver::Fl_Screen_Driver() :
-num_screens(-1)
+num_screens(-1), text_editor_extra_key_bindings(NULL)
 {
 }
 

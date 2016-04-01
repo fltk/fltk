@@ -22,6 +22,7 @@
 #include <FL/Fl_Device.H>
 #include <FL/fl_types.h>
 #include <FL/Fl.H> // for Fl_Timeout_Handler
+#include <FL/Fl_Text_Editor.H>
 
 
 // TODO: add text composition?
@@ -107,6 +108,8 @@ public:
   // implement to support drag-n-drop. use_selection = 1 means the GUI is welcome to display
   // the selected text during the D&D operation
   virtual int dnd(int use_selection = 0) {return 0;}
+  // null means no platform-specific key bindings for Fl_Text_Editor
+  Fl_Text_Editor::Key_Binding *text_editor_extra_key_bindings;
 };
 
 

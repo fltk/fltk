@@ -43,6 +43,29 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
   return new Fl_Cocoa_Screen_Driver();
 }
 
+static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
+  // Define CMD+key accelerators...
+  { 'z',          FL_COMMAND,               Fl_Text_Editor::kf_undo       ,0},
+  { 'x',          FL_COMMAND,               Fl_Text_Editor::kf_cut        ,0},
+  { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       ,0},
+  { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      ,0},
+  { 'a',          FL_COMMAND,               Fl_Text_Editor::kf_select_all ,0},
+  { FL_Left,      FL_COMMAND,               Fl_Text_Editor::kf_meta_move  ,0},
+  { FL_Right,     FL_COMMAND,               Fl_Text_Editor::kf_meta_move  ,0},
+  { FL_Up,        FL_COMMAND,               Fl_Text_Editor::kf_meta_move  ,0},
+  { FL_Down,      FL_COMMAND,               Fl_Text_Editor::kf_meta_move  ,0},
+  { FL_Left,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   ,0},
+  { FL_Right,     FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   ,0},
+  { FL_Up,        FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   ,0},
+  { FL_Down,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   ,0},
+  { 0,            0,                        0                             ,0}
+};
+
+
+Fl_Cocoa_Screen_Driver::Fl_Cocoa_Screen_Driver() {
+  text_editor_extra_key_bindings =  extra_bindings;
+}
+
 
 void Fl_Cocoa_Screen_Driver::init()
 {
