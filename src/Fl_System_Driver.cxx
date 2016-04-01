@@ -46,7 +46,7 @@ Fl_System_Driver::~Fl_System_Driver()
 void Fl_System_Driver::warning(const char* format, ...) {
   va_list args;
   va_start(args, format);
-  driver()->warning(format, args);
+  Fl::system_driver()->warning(format, args);
   va_end(args);
 }
 
@@ -59,7 +59,7 @@ void Fl_System_Driver::warning(const char* format, va_list args) {
 void Fl_System_Driver::error(const char* format, ...) {
   va_list args;
   va_start(args, format);
-  driver()->error(format, args);
+  Fl::system_driver()->error(format, args);
   va_end(args);
 }
 
@@ -72,7 +72,7 @@ void Fl_System_Driver::error(const char *format, va_list args) {
 void Fl_System_Driver::fatal(const char* format, ...) {
   va_list args;
   va_start(args, format);
-  driver()->fatal(format, args);
+  Fl::system_driver()->fatal(format, args);
   va_end(args);
 }
 

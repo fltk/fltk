@@ -18,6 +18,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <FL/Fl.H>
 #include <FL/Fl_System_Driver.H>
 #include <FL/filename.H>
 #include <stdarg.h>
@@ -282,7 +283,7 @@ unsigned int fl_nonspacing(unsigned int ucs)
 */
 char * fl_utf2mbcs(const char *s)
 {
-  return Fl_System_Driver::driver()->utf2mbcs(s);
+  return Fl::system_driver()->utf2mbcs(s);
 }
 
 /** Cross-platform function to get environment variables with a UTF-8 encoded
@@ -300,7 +301,7 @@ char * fl_utf2mbcs(const char *s)
 */
 
 char *fl_getenv(const char* v) {
-  return Fl_System_Driver::driver()->getenv(v);
+  return Fl::system_driver()->getenv(v);
 }
 
 
@@ -320,7 +321,7 @@ int fl_open(const char* f, int oflags, ...)
   va_start(ap, oflags);
   pmode = va_arg (ap, int);
   va_end(ap);
-  return Fl_System_Driver::driver()->open(f, oflags, pmode);
+  return Fl::system_driver()->open(f, oflags, pmode);
 }
 
 
@@ -334,7 +335,7 @@ int fl_open(const char* f, int oflags, ...)
   \sa fl_open().
 */
 FILE *fl_fopen(const char* f, const char *mode) {
-  return Fl_System_Driver::driver()->fopen(f, mode);
+  return Fl::system_driver()->fopen(f, mode);
 }
 
 /** Cross-platform function to run a system command with a UTF-8 encoded string.
@@ -350,12 +351,12 @@ FILE *fl_fopen(const char* f, const char *mode) {
 
 int fl_system(const char* cmd)
 {
-  return Fl_System_Driver::driver()->system(cmd);
+  return Fl::system_driver()->system(cmd);
 }
 
 int fl_execvp(const char *file, char *const *argv)
 {
-  return Fl_System_Driver::driver()->execvp(file, argv);
+  return Fl::system_driver()->execvp(file, argv);
 }
 
 /** Cross-platform function to set a files mode() with a UTF-8 encoded
@@ -369,7 +370,7 @@ int fl_execvp(const char *file, char *const *argv)
   \return    the return value of _wchmod() on Windows or chmod() on other platforms.
 */
 int fl_chmod(const char* f, int mode) {
-  return Fl_System_Driver::driver()->chmod(f, mode);
+  return Fl::system_driver()->chmod(f, mode);
 }
 
 /** Cross-platform function to test a files access() with a UTF-8 encoded
@@ -383,7 +384,7 @@ int fl_chmod(const char* f, int mode) {
   \return    the return value of _waccess() on Windows or access() on other platforms.
 */
 int fl_access(const char* f, int mode) {
-  return Fl_System_Driver::driver()->access(f, mode);
+  return Fl::system_driver()->access(f, mode);
 }
 
 /** Cross-platform function to stat() a file using a UTF-8 encoded
@@ -397,7 +398,7 @@ int fl_access(const char* f, int mode) {
   \return    the return value of _wstat() on Windows or stat() on other platforms.
 */
 int fl_stat(const char* f, struct stat *b) {
-  return Fl_System_Driver::driver()->stat(f, b);
+  return Fl::system_driver()->stat(f, b);
 }
 
 // TODO: add fl_chdir if we have fl_getcwd
@@ -416,7 +417,7 @@ char *fl_getcwd(char* b, int l) {
   if (b == NULL) {
     b = (char*) malloc(l+1);
   }
-  return Fl_System_Driver::driver()->getcwd(b, l);
+  return Fl::system_driver()->getcwd(b, l);
 }
 
 /** Cross-platform function to unlink() (that is, delete) a file using
@@ -429,7 +430,7 @@ char *fl_getcwd(char* b, int l) {
   \return    the return value of _wunlink() on Windows or unlink() on other platforms.
 */
 int fl_unlink(const char* f) {
-  return Fl_System_Driver::driver()->unlink(f);
+  return Fl::system_driver()->unlink(f);
 }
 
 /** Cross-platform function to create a directory with a UTF-8 encoded
@@ -443,7 +444,7 @@ int fl_unlink(const char* f) {
   \return    the return value of _wmkdir() on Windows or mkdir() on other platforms.
 */
 int fl_mkdir(const char* f, int mode) {
-  return Fl_System_Driver::driver()->mkdir(f, mode);
+  return Fl::system_driver()->mkdir(f, mode);
 }
 
 /** Cross-platform function to remove a directory with a UTF-8 encoded
@@ -456,7 +457,7 @@ int fl_mkdir(const char* f, int mode) {
   \return    the return value of _wrmdir() on Windows or rmdir() on other platforms.
 */
 int fl_rmdir(const char* f) {
-  return Fl_System_Driver::driver()->rmdir(f);
+  return Fl::system_driver()->rmdir(f);
 }
 
 /** Cross-platform function to rename a filesystem object using
@@ -470,7 +471,7 @@ int fl_rmdir(const char* f) {
   \return    the return value of _wrename() on Windows or rename() on other platforms.
 */
 int fl_rename(const char* f, const char *n) {
-  return Fl_System_Driver::driver()->rename(f, n);
+  return Fl::system_driver()->rename(f, n);
 }
 
 /** Cross-platform function to recursively create a path in the file system.
@@ -1144,7 +1145,7 @@ int fl_wcwidth(const char* src) {
 unsigned fl_utf8towc(const char* src, unsigned srclen,
                      wchar_t* dst, unsigned dstlen)
 {
-  return Fl_System_Driver::driver()->utf8towc(src, srclen, dst, dstlen);
+  return Fl::system_driver()->utf8towc(src, srclen, dst, dstlen);
 }
 
 
@@ -1177,7 +1178,7 @@ unsigned fl_utf8towc(const char* src, unsigned srclen,
  */
 unsigned fl_utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen)
 {
-  return Fl_System_Driver::driver()->utf8fromwc(dst, dstlen, src, srclen);
+  return Fl::system_driver()->utf8fromwc(dst, dstlen, src, srclen);
 }
 
 
@@ -1195,7 +1196,7 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned 
  */
 int fl_utf8locale()
 {
-  return Fl_System_Driver::driver()->utf8locale();
+  return Fl::system_driver()->utf8locale();
 }
 
 
@@ -1225,7 +1226,7 @@ unsigned fl_utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstl
     }
     return srclen;
   }
-  return Fl_System_Driver::driver()->utf8to_mb(src, srclen, dst, dstlen);
+  return Fl::system_driver()->utf8to_mb(src, srclen, dst, dstlen);
 }
 
 
@@ -1257,7 +1258,7 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
     }
     return srclen;
   }
-  return Fl_System_Driver::driver()->utf8from_mb(dst, dstlen, src, srclen);
+  return Fl::system_driver()->utf8from_mb(dst, dstlen, src, srclen);
 }
 
 //============================================================

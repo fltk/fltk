@@ -20,7 +20,9 @@
 #define FL_SCREEN_DRIVER_H
 
 #include <FL/Fl_Device.H>
-#include <FL/Fl.H>
+#include <FL/fl_types.h>
+#include <FL/Fl.H> // for Fl_Timeout_Handler
+
 
 // TODO: add text composition?
 // TODO: add Fl::display

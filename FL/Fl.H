@@ -23,7 +23,7 @@
 #ifndef Fl_H
 #  define Fl_H
 
-#include <FL/Fl_System_Driver.H>
+#include <FL/Fl_System_Driver.H> // for FL_SOCKET
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
@@ -135,6 +135,7 @@ private:
 public:
 
   static Fl_Screen_Driver *screen_driver();
+  static Fl_System_Driver *system_driver();
 
 public: // run time information about compile time configuration
   /** \defgroup cfg_gfx runtime graphics driver configuration */

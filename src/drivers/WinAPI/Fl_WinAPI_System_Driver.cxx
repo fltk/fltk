@@ -39,10 +39,14 @@ static wchar_t *mbwbuf = NULL;
 static wchar_t *wbuf = NULL;
 static wchar_t *wbuf1 = NULL;
 
-
-Fl_System_Driver *Fl_System_Driver::driver() {
-  static Fl_System_Driver *d = new Fl_WinAPI_System_Driver();
-  return d;
+/**
+ Creates a driver that manages all screen and display related calls.
+ 
+ This function must be implemented once for every platform.
+ */
+Fl_System_Driver *Fl_System_Driver::newSystemDriver()
+{
+  return new Fl_WinAPI_System_Driver();
 }
 
 void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {

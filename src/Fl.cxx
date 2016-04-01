@@ -181,6 +181,12 @@ Fl_Screen_Driver *Fl::screen_driver()
   return screen_driver_;
 }
 
+Fl_System_Driver *Fl::system_driver()
+{
+  static  Fl_System_Driver* system_driver_ = Fl_System_Driver::newSystemDriver();
+  return system_driver_;
+}
+
 //
 // 'Fl::version()' - Return the API version number...
 //

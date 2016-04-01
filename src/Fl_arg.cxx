@@ -157,7 +157,7 @@ int Fl::arg(int argc, char **argv, int &i) {
     Fl_Tooltip::disable();
     i++;
     return 1;
-  } else if (Fl_System_Driver::driver()->single_arg(s)) {
+  } else if (Fl::system_driver()->single_arg(s)) {
     i++;
   }
 
@@ -168,14 +168,14 @@ int Fl::arg(int argc, char **argv, int &i) {
   if (fl_match(s, "geometry")) {
 
     int flags, gx, gy; unsigned int gw, gh;
-    flags = Fl_System_Driver::driver()->XParseGeometry(v, &gx, &gy, &gw, &gh);
+    flags = Fl::system_driver()->XParseGeometry(v, &gx, &gy, &gw, &gh);
     if (!flags) return 0;
     geometry = v;
 
   } else if (fl_match(s, "display", 2)) {
-    Fl_System_Driver::driver()->display_arg(v);
+    Fl::system_driver()->display_arg(v);
 
-  } else if (Fl_System_Driver::driver()->arg_and_value(s, v)) {
+  } else if (Fl::system_driver()->arg_and_value(s, v)) {
     // nothing to do
 
   } else if (fl_match(s, "title", 2)) {
@@ -283,7 +283,7 @@ void Fl_Window::show(int argc, char **argv) {
   if (!beenhere) {
     if (geometry) {
       int fl = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
-      fl = Fl_System_Driver::driver()->XParseGeometry(geometry, &gx, &gy, &gw, &gh);
+      fl = Fl::system_driver()->XParseGeometry(geometry, &gx, &gy, &gw, &gh);
       if (fl & Fl_System_Driver::flXNegative) gx = Fl::w()-w()+gx;
       if (fl & Fl_System_Driver::flYNegative) gy = Fl::h()-h()+gy;
       //  int mw,mh; minsize(mw,mh);

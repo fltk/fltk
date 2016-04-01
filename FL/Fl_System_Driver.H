@@ -65,12 +65,13 @@ typedef int FL_SOCKET;
  \brief A base class for platform-specific system operations.
   */
 class FL_EXPORT Fl_System_Driver {
+  friend class Fl;
 protected:
+  // implement once for each platform
+  static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
 public:
   virtual ~Fl_System_Driver();
-  // copy the implementation in Fl_XXX_System_Driver.cxx to the corresponding file for the new platform
-  static Fl_System_Driver *driver();
   // These flags are useful after calling XParseGeometry(). They indicate which of its arguments
   // contain meaningful data upon return.
   static const int flNoValue;
@@ -80,6 +81,7 @@ public:
   static const int flYValue;
   static const int flXNegative;
   static const int flYNegative;
+  
   // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *arg) { return 0; }
   // implement if the system adds unwanted program argument pair(s)
