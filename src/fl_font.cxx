@@ -19,19 +19,7 @@
 
 // Select fonts from the FLTK font table.
 #include "flstring.h"
-#include <FL/Fl.H>
-#include <FL/x.H>
 #include <FL/fl_draw.H>
-#if defined(__APPLE__)
-#include "drivers/Quartz/Fl_Font.H"
-#elif defined(WIN32)
-#include "drivers/GDI/Fl_Font.H"
-#elif USE_X11
-#include "drivers/Xlib/Fl_Font.H"
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
 
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
@@ -60,11 +48,7 @@ void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
 
 
 void fl_draw(const char* str, int l, float x, float y) {
-#ifdef __APPLE__ // PORTME: Fl_Graphics_Driver - platform alternative API
   fl_graphics_driver->draw(str, l, x, y);
-#else
-  fl_draw(str, l, (int)x, (int)y);
-#endif
 }
 //
 // End of "$Id$".
