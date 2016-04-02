@@ -21,6 +21,7 @@
 
 #include "Fl_Quartz_Graphics_Driver.h"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
+#include "Fl_Font.H"
 #include <math.h>
 #include <FL/Fl.H>
 #include <FL/x.H>

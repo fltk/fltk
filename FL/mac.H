@@ -107,7 +107,6 @@ struct flCocoaRegion {
 }; // a region is the union of a series of rectangles
 
 #  include <FL/Fl_Window.H>
-#include "../src/drivers/Quartz/Fl_Font.H"
 
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__
