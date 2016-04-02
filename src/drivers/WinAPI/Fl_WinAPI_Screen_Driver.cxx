@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_WinAPI_Screen_Driver.H"
+#include "../GDI/Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Graphics_Driver.H>
@@ -528,6 +529,28 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
 
 struct Fl_Fontdesc *Fl_Screen_Driver::calc_fl_fonts() {
   return NULL;
+}
+
+unsigned Fl_Screen_Driver::font_desc_size() {
+  return (unsigned)sizeof(Fl_Fontdesc);
+}
+
+const char *Fl_Screen_Driver::font_name(int num) {
+  return fl_fonts[num].name;
+}
+
+void Fl_Screen_Driver::font_name(int num, const char *name) {
+  Fl_Fontdesc *s = fl_fonts + num;
+  if (s->name) {
+    if (!strcmp(s->name, name)) {s->name = name; return;}
+    for (Fl_Font_Descriptor* f = s->first; f;) {
+      Fl_Font_Descriptor* n = f->next; delete f; f = n;
+    }
+    s->first = 0;
+  }
+  s->name = name;
+  s->fontname[0] = 0;
+  s->first = 0;
 }
 
 //

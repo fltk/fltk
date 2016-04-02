@@ -114,6 +114,10 @@ public:
   virtual int text_display_can_leak() { return 0; }
   // an implementation which returns NULL may be enough
   static struct Fl_Fontdesc *calc_fl_fonts();
+  // API to the platform-dependent Fl_Fontdesc structure
+  static unsigned font_desc_size();
+  static const char *font_name(int num);
+  static void font_name(int num, const char *name);
 };
 
 

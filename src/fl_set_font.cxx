@@ -24,14 +24,10 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Screen_Driver.H>
 #include "flstring.h"
-#if defined(__APPLE__)
-#include "drivers/Quartz/Fl_Font.H"
-#elif defined(WIN32)
-#include "drivers/GDI/Fl_Font.H"
-#elif USE_X11
-#include "drivers/Xlib/Fl_Font.H"
-#endif
 #include <stdlib.h>
+
+struct Fl_Fontdesc;
+extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
 static int table_size;
 /**
@@ -39,59 +35,40 @@ static int table_size;
   the string is not copied, so the string must be in static memory.
 */    
 void Fl::set_font(Fl_Font fnum, const char* name) {
+  unsigned width = Fl_Screen_Driver::font_desc_size();
   if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   while (fnum >= table_size) {
     int i = table_size;
     if (!i) {	// don't realloc the built-in table
       table_size = 2*FL_FREE_FONT;
       i = FL_FREE_FONT;
-      Fl_Fontdesc* t = (Fl_Fontdesc*)malloc(table_size*sizeof(Fl_Fontdesc));
-      memcpy(t, fl_fonts, FL_FREE_FONT*sizeof(Fl_Fontdesc));
+      Fl_Fontdesc* t = (Fl_Fontdesc*)malloc(table_size*width);
+      memcpy(t, fl_fonts, FL_FREE_FONT*width);
       fl_fonts = t;
     } else {
       table_size = 2*table_size;
-      fl_fonts=(Fl_Fontdesc*)realloc(fl_fonts, table_size*sizeof(Fl_Fontdesc));
+      fl_fonts=(Fl_Fontdesc*)realloc(fl_fonts, table_size*width);
     }
     for (; i < table_size; i++) {
-      fl_fonts[i].fontname[0] = 0;
-      fl_fonts[i].name = 0;
-#if defined(USE_X11)
-      fl_fonts[i].xlist = 0;
-      fl_fonts[i].n = 0;
-#endif // !WIN32 && !__APPLE__ // PORTME: Fl_Graphics_Driver - platform fonts
+      memset((char*)fl_fonts + i * width, 0, width);
     }
   }
-  Fl_Fontdesc* s = fl_fonts+fnum;
-  if (s->name) {
-    if (!strcmp(s->name, name)) {s->name = name; return;}
-#if defined(USE_X11)
-    if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
-#endif
-    for (Fl_Font_Descriptor* f = s->first; f;) {
-      Fl_Font_Descriptor* n = f->next; delete f; f = n;
-    }
-    s->first = 0;
-  }
-  s->name = name;
-  s->fontname[0] = 0;
-#if defined(USE_X11)
-  s->xlist = 0;
-#endif
-  s->first = 0;
+  Fl_Screen_Driver::font_name(fnum, name);
   Fl_Display_Device::display_device()->driver()->font(-1, 0);
 }
+
 /** Copies one face to another. */
 void Fl::set_font(Fl_Font fnum, Fl_Font from) {
   Fl::set_font(fnum, get_font(from));
 }
+
 /**
     Gets the string for this face.  This string is different for each
     face. Under X this value is passed to XListFonts to get all the sizes
     of this face.
 */
 const char* Fl::get_font(Fl_Font fnum) {
-  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
-  return fl_fonts[fnum].name;
+  return Fl_Screen_Driver::font_name(fnum);
 }
 
 //

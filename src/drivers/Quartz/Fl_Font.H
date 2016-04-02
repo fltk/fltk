@@ -63,8 +63,6 @@ struct Fl_Fontdesc {
   const char *name;
   char fontname[128];	// "Pretty" font name
   Fl_Font_Descriptor *first;	// linked list of sizes of this style
-  char **xlist;		// matched X font names
-  int n;		// size of xlist, negative = don't free xlist!
 };
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
