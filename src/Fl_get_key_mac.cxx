@@ -22,6 +22,7 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
 
 // The list of Mac OS virtual keycodes appears with OS 10.5 in
 // ...../Carbon.framework/Frameworks/HIToolbox.framework/Headers/Events.h
@@ -254,7 +255,7 @@ int Fl::get_key(int k) {
   // use the GetKeys Carbon function
   typedef void (*keymap_f)(fl_KeyMap);
   static keymap_f f = NULL;
-  if (!f) f = ( keymap_f )Fl_X::get_carbon_function("GetKeys");
+    if (!f) f = ( keymap_f )Fl_Darwin_System_Driver::get_carbon_function("GetKeys");
   (*f)(foo);
 #ifdef MAC_TEST_FOR_KEYCODES
  static int cnt = 0;

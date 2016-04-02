@@ -28,6 +28,7 @@
 #include <locale.h>
 #endif
 #include <stdio.h>
+#include <dlfcn.h>
 
 int Fl_X::next_marked_length = 0;
 
@@ -77,6 +78,16 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
   int retval = vfprintf(output, format, args);
   setlocale(LC_NUMERIC, saved_locale);
   return retval;
+}
+
+/* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
+ Supports old Mac OS X versions that may use a couple of Carbon calls:
+ GetKeys used by OS X 10.3 or before (in Fl::get_key())
+ PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
+ */
+void *Fl_Darwin_System_Driver::get_carbon_function(const char *function_name) {
+  static void *carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
+  return (carbon ? dlsym(carbon, function_name) : NULL);
 }
 
 //

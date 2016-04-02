@@ -20,6 +20,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window_Driver.H>
 #include "../Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
+#include "../Darwin/Fl_Darwin_System_Driver.H"
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -137,7 +138,7 @@ int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topag
     // get pointer to the PMSessionPageSetupDialog Carbon function
     typedef OSStatus (*dialog_f)(PMPrintSession, PMPageFormat, Boolean *);
     static dialog_f f = NULL;
-    if (!f) f = (dialog_f)Fl_X::get_carbon_function("PMSessionPageSetupDialog");
+    if (!f) f = (dialog_f)Fl_Darwin_System_Driver::get_carbon_function("PMSessionPageSetupDialog");
     status = (*f)(printSession, pageFormat, &accepted);
     if (status != noErr || !accepted) {
       Fl::first_window()->show();
@@ -151,7 +152,7 @@ int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topag
     // get pointer to the PMSessionPrintDialog Carbon function
     typedef OSStatus (*dialog_f2)(PMPrintSession, PMPrintSettings, PMPageFormat, Boolean *);
     static dialog_f2 f2 = NULL;
-    if (!f2) f2 = (dialog_f2)Fl_X::get_carbon_function("PMSessionPrintDialog");
+    if (!f2) f2 = (dialog_f2)Fl_Darwin_System_Driver::get_carbon_function("PMSessionPrintDialog");
     status = (*f2)(printSession, printSettings, pageFormat, &accepted);
     if (!accepted) status = kPMCancel;
     if (status != noErr) {
@@ -168,11 +169,11 @@ int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topag
     mystring[0] = kPMGraphicsContextCoreGraphics;
     CFArrayRef array = CFArrayCreate(NULL, (const void **)mystring, 1, &kCFTypeArrayCallBacks);
     PMSessionSetDocumentFormatGeneration_type PMSessionSetDocumentFormatGeneration =
-      (PMSessionSetDocumentFormatGeneration_type)Fl_X::get_carbon_function("PMSessionSetDocumentFormatGeneration");
+      (PMSessionSetDocumentFormatGeneration_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionSetDocumentFormatGeneration");
     status = PMSessionSetDocumentFormatGeneration(printSession, kPMDocumentFormatDefault, array, NULL);
     CFRelease(array);
     PMSessionBeginDocumentNoDialog_type PMSessionBeginDocumentNoDialog =
-      (PMSessionBeginDocumentNoDialog_type)Fl_X::get_carbon_function("PMSessionBeginDocumentNoDialog");
+      (PMSessionBeginDocumentNoDialog_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionBeginDocumentNoDialog");
     status = PMSessionBeginDocumentNoDialog(printSession, printSettings, pageFormat);
 #endif //__LP64__
   }
@@ -292,7 +293,7 @@ int Fl_Cocoa_Printer_Driver::start_page (void)
   {
 #if ! __LP64_
     PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
-      (PMSessionGetGraphicsContext_type)Fl_X::get_carbon_function("PMSessionGetGraphicsContext");
+      (PMSessionGetGraphicsContext_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionGetGraphicsContext");
     status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&gc);
 #endif
   }

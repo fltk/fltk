@@ -1813,13 +1813,13 @@ static int input_method_startup()
   if (retval == -1) {
     fl_open_display();
     if (fl_mac_os_version >= 100500) {
-      TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_X::get_carbon_function("TSMGetActiveDocument");
-      TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_X::get_carbon_function("TSMSetDocumentProperty");
-      TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_X::get_carbon_function("TSMRemoveDocumentProperty");
-      TISCreateASCIICapableInputSourceList = (TISCreateASCIICapableInputSourceList_type)Fl_X::get_carbon_function("TISCreateASCIICapableInputSourceList");
+      TSMGetActiveDocument = (TSMGetActiveDocument_type)Fl_Darwin_System_Driver::get_carbon_function("TSMGetActiveDocument");
+      TSMSetDocumentProperty = (TSMSetDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMSetDocumentProperty");
+      TSMRemoveDocumentProperty = (TSMRemoveDocumentProperty_type)Fl_Darwin_System_Driver::get_carbon_function("TSMRemoveDocumentProperty");
+      TISCreateASCIICapableInputSourceList = (TISCreateASCIICapableInputSourceList_type)Fl_Darwin_System_Driver::get_carbon_function("TISCreateASCIICapableInputSourceList");
       retval = (TSMGetActiveDocument && TSMSetDocumentProperty && TSMRemoveDocumentProperty && TISCreateASCIICapableInputSourceList ? 1 : 0);
     } else {
-      KeyScript = (KeyScript_type)Fl_X::get_carbon_function("KeyScript");
+      KeyScript = (KeyScript_type)Fl_Darwin_System_Driver::get_carbon_function("KeyScript");
       retval = (KeyScript? 1 : 0);
     }
   }
@@ -4331,17 +4331,6 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   CGContextRelease(auxgc);
 }
 
-
-/* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
- Supports old Mac OS X versions that may use a couple of Carbon calls:
- GetKeys used by OS X 10.3 or before (in Fl::get_key())
- PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
- */
-void *Fl_X::get_carbon_function(const char *function_name) {
-  static void *carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
-  return (carbon ? dlsym(carbon, function_name) : NULL);
-}
-  
 /* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
  */
 int Fl_X::calc_mac_os_version() {

@@ -63,6 +63,7 @@ public:
   virtual int rmdir(const char* f) {return ::rmdir(f);}
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  static void *get_carbon_function(const char *name);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H
