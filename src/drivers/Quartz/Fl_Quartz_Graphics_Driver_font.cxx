@@ -20,6 +20,7 @@
 #ifdef FL_CFG_GFX_QUARTZ
 
 #include "Fl_Quartz_Graphics_Driver.h"
+#include "../Darwin/Fl_Darwin_System_Driver.H"
 #include <math.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -417,7 +418,7 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
 
 Fl_Fontdesc* Fl_X::calc_fl_fonts(void)
 {
-  if (!fl_mac_os_version) fl_mac_os_version = calc_mac_os_version();
+  if (!fl_mac_os_version) fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   return (fl_mac_os_version >= Fl_X::CoreText_threshold ? built_in_table_PS : built_in_table_full);
 #else

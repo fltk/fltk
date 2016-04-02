@@ -64,6 +64,7 @@ public:
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
   static void *get_carbon_function(const char *name);
+  static int calc_mac_os_version(); // computes the fl_mac_os_version global variable
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

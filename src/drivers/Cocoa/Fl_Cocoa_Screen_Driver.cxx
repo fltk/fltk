@@ -31,6 +31,7 @@ extern "C" void NSBeep(void);
 extern double fl_mac_flush_and_wait(double time_to_wait);
 extern int fl_ready();
 
+int Fl_X::next_marked_length = 0;
 
 /**
  Creates a driver that manages all screen and display related calls.

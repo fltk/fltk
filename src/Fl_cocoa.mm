@@ -87,7 +87,7 @@ static void clipboard_check(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
-int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
+int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
 // public variables
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
@@ -4333,7 +4333,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
 
 /* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
  */
-int Fl_X::calc_mac_os_version() {
+int Fl_Darwin_System_Driver::calc_mac_os_version() {
   if (fl_mac_os_version) return fl_mac_os_version;
   int M, m, b = 0;
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];

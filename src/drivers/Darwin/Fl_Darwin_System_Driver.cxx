@@ -20,17 +20,15 @@
 #include "../../config_lib.h"
 #include "Fl_Darwin_System_Driver.H"
 #include <FL/Fl.H>
-#include <FL/x.H>
 #include <string.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 #include <xlocale.h>
-#else
-#include <locale.h>
 #endif
+#include <locale.h>
 #include <stdio.h>
 #include <dlfcn.h>
 
-int Fl_X::next_marked_length = 0;
+extern int fl_mac_os_version;	// the version number of the running Mac OS X
 
 //const char* fl_local_alt   = "\xe2\x8c\xa5\\"; // U+2325 (option key)
 const char* fl_local_alt   = "⌥\\"; // U+2325 (option key)
@@ -53,7 +51,7 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 }
 
 Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() {
-  if (fl_mac_os_version == 0) fl_mac_os_version = Fl_X::calc_mac_os_version();
+  if (fl_mac_os_version == 0) fl_mac_os_version = calc_mac_os_version();
 }
 
 int Fl_Darwin_System_Driver::single_arg(const char *arg) {

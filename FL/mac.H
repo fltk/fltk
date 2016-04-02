@@ -171,7 +171,6 @@ public:
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
   static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
   static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
-  static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
   static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);
   static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
