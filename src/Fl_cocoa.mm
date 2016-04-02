@@ -2106,7 +2106,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  The doCommandBySelector: message allows to process events such as new-line, forward and backward delete, arrows, 
  escape, tab, F1. The message setMarkedText: is sent when marked text, that is, temporary text that gets replaced later 
  by some other text, is inserted. This happens when a dead key is pressed, and also 
- when entering complex scripts (e.g., Chinese). Fl_X::next_marked_length gives the byte
+ when entering complex scripts (e.g., Chinese). Fl_Cocoa_Screen_Driver::next_marked_length gives the byte
  length of marked text before the FL_KEYBOARD event is processed. Fl::compose_state gives this length after this processing.
  Message insertText: is sent to enter text in the focused widget. If there's marked text, Fl::compose_state is > 0, and this
  marked text gets replaced by the inserted text. If there's no marked text, the new text is inserted at the insertion point. 
@@ -2570,14 +2570,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_keysym = saved_keysym;
     }
-  if (in_key_event && Fl_X::next_marked_length && Fl::e_length) {
+  if (in_key_event && Fl_Cocoa_Screen_Driver::next_marked_length && Fl::e_length) {
     // if setMarkedText + insertText is sent during handleEvent, text cannot be concatenated in single FL_KEYBOARD event
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_length = 0;
     }
   if (in_key_event && Fl::e_length) [FLView concatEtext:received];
   else [FLView prepareEtext:received];
-  Fl_X::next_marked_length = 0;
+  Fl_Cocoa_Screen_Driver::next_marked_length = 0;
   // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
   BOOL palette = !(in_key_event || Fl::compose_state);
   if (palette) Fl::e_keysym = 0;
@@ -2618,18 +2618,18 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   while (replacementRange.length--) { // delete replacementRange.length characters before insertion point
     Fl::e_keysym = FL_BackSpace;
     Fl::compose_state = 0;
-    Fl_X::next_marked_length = 0;
+    Fl_Cocoa_Screen_Driver::next_marked_length = 0;
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_keysym = 'a'; // pretend a letter key was hit
   }
-  if (in_key_event && Fl_X::next_marked_length && Fl::e_length) {
+  if (in_key_event && Fl_Cocoa_Screen_Driver::next_marked_length && Fl::e_length) {
     // if setMarkedText + setMarkedText is sent during handleEvent, text cannot be concatenated in single FL_KEYBOARD event
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_length = 0;
   }
   if (in_key_event && Fl::e_length) [FLView concatEtext:received];
   else [FLView prepareEtext:received];
-  Fl_X::next_marked_length = strlen([received UTF8String]);
+  Fl_Cocoa_Screen_Driver::next_marked_length = strlen([received UTF8String]);
   if (!in_key_event) Fl::handle( FL_KEYBOARD, target);
   else need_handle = YES;
   selectedRange = NSMakeRange(100, newSelection.length);

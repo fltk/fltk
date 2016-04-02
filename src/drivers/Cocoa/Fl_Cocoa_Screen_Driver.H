@@ -54,6 +54,7 @@ protected:
   static bool insertion_point_location_is_valid;
 public:
   Fl_Cocoa_Screen_Driver();
+  static int next_marked_length; // next length of marked text after current marked text will have been replaced
   // --- display management
   // --- screen configuration
   virtual void init();

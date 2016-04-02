@@ -31,7 +31,7 @@ extern "C" void NSBeep(void);
 extern double fl_mac_flush_and_wait(double time_to_wait);
 extern int fl_ready();
 
-int Fl_X::next_marked_length = 0;
+int Fl_Cocoa_Screen_Driver::next_marked_length = 0;
 
 /**
  Creates a driver that manages all screen and display related calls.
@@ -266,7 +266,7 @@ bool Fl_Cocoa_Screen_Driver::insertion_point_location_is_valid = false;
 
 void Fl_Cocoa_Screen_Driver::reset_marked_text() {
   Fl::compose_state = 0;
-  Fl_X::next_marked_length = 0;
+  next_marked_length = 0;
   insertion_point_location_is_valid = false;
 }
 
@@ -297,7 +297,7 @@ int Fl_Cocoa_Screen_Driver::compose(int &del) {
   !has_text_key ;
   if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
   del = Fl::compose_state;
-  Fl::compose_state = Fl_X::next_marked_length;
+  Fl::compose_state = next_marked_length;
   return 1;
 }
 
