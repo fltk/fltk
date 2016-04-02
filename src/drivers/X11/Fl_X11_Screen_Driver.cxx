@@ -19,7 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_X11_Screen_Driver.H"
-#include "../xlib/Fl_Font.H"
+#include "../Xlib/Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_ask.H>
