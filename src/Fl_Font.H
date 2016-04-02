@@ -114,19 +114,6 @@ struct Fl_Fontdesc {
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
-#ifdef WIN32
-#elif defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform font stuff
-// functions for parsing X font names:
-FL_EXPORT const char* fl_font_word(const char *p, int n);
-FL_EXPORT char *fl_find_fontsize(char *name);
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you need additional functions for font handling?"
-#else
-// functions for parsing X font names:
-FL_EXPORT const char* fl_font_word(const char *p, int n);
-FL_EXPORT char *fl_find_fontsize(char *name);
-#  endif
-
 #endif
 
 //

@@ -18,6 +18,7 @@
 
 // Select fonts from the FLTK font table.
 #include "../../flstring.h"
+#include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -25,6 +26,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+static char* fl_find_fontsize(char* name);
+static const char* fl_font_word(const char* p, int n);
 
 // This function fills in the fltk font table with all the fonts that
 // are found on the X server.  It tries to place the fonts into families
@@ -429,13 +433,13 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 #define MAXSIZE 32767
 
 // return dash number N, or pointer to ending null if none:
-const char* fl_font_word(const char* p, int n) {
+static const char* fl_font_word(const char* p, int n) {
   while (*p) {if (*p=='-') {if (!--n) break;} p++;}
   return p;
 }
 
 // return a pointer to a number we think is "point size":
-char* fl_find_fontsize(char* name) {
+static char* fl_find_fontsize(char* name) {
   char* c = name;
   // for standard x font names, try after 7th dash:
   if (*c == '-') {
