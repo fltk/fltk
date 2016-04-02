@@ -3549,30 +3549,6 @@ void Fl_Cocoa_Window_Driver::unmap() {
 }
 
 
-// intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
-Fl_Region Fl_X::intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)
-{
-  if (current == NULL) return Fl_Graphics_Driver::XRectangleRegion(x,y,w,h);
-  CGRect r = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
-  Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
-  outr->count = current->count;
-  outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
-  int j = 0;
-  for(int i = 0; i < current->count; i++) {
-    CGRect test = CGRectIntersection(current->rects[i], r);
-    if (!CGRectIsEmpty(test)) outr->rects[j++] = test;
-  }
-  if (j) {
-    outr->count = j;
-    outr->rects = (CGRect*)realloc(outr->rects, outr->count * sizeof(CGRect));
-  }
-  else {
-    Fl_Graphics_Driver::XDestroyRegion(outr);
-    outr = Fl_Graphics_Driver::XRectangleRegion(0,0,0,0);
-  }
-  return outr;
-}
-
 void Fl_Cocoa_Window_Driver::iconize() {
   [fl_xid(pWindow) miniaturize:nil];
 }
