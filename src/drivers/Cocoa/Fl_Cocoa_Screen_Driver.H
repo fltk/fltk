@@ -26,7 +26,6 @@
 #define FL_COCOA_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
-#include <ApplicationServices/ApplicationServices.h>
 
 /*
  Move everything here that manages the native screen interface.
@@ -40,12 +39,6 @@
 
 
 class Fl_Window;
-#ifdef __OBJC__
-@class CALayer;
-#else
-class CALayer;
-#endif // __OBJC__
-
 
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
@@ -93,7 +86,6 @@ public:
   int insertion_point_location(int *px, int *py, int *pheight);
   virtual int dnd(int use_selection);
   virtual int compose(int &del);
-  static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
 };
 
 

@@ -21,7 +21,7 @@
 #include <FL/Fl_Window_Driver.H>
 #include "../Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
-#include "Fl_Cocoa_Screen_Driver.H"
+#include "Fl_Cocoa_Window_Driver.H"
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -404,7 +404,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       CGContextSaveGState(gc);
       CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
       CGContextScaleCTM(gc, 1, -1);
-      Fl_Cocoa_Screen_Driver::draw_layer_to_context(layer, gc, win->w(), bt);
+      Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w(), bt);
       CGContextRestoreGState(gc);
     }
     else {
@@ -412,7 +412,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       CGContextRef gc = CGBitmapContextCreate(NULL, 2*win->w(), 2*bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
       CGColorSpaceRelease(cspace);
       CGContextScaleCTM(gc, 2, 2);
-      Fl_Cocoa_Screen_Driver::draw_layer_to_context(layer, gc, win->w(), bt);
+      Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w(), bt);
       Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), 2*win->w(), 2*bt, 4,
                                              CGBitmapContextGetBytesPerRow(gc)); // 10.2
       int ori_x, ori_y;

@@ -30,6 +30,12 @@
 
 class Fl_Image;
 class Fl_Window;
+#ifdef __OBJC__
+@class CALayer;
+#else
+class CALayer;
+#endif // __OBJC__
+
 /*
  Move everything here that manages the native window interface.
 
@@ -91,6 +97,7 @@ public:
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   //this one is in Fl_cocoa.mm because it uses Objective-c
   virtual void wait_for_expose();
+  static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
 };
 
 
