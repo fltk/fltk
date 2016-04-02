@@ -36,7 +36,7 @@ static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 static CFMutableDictionaryRef attributes = NULL;
 #endif
 
-const int Fl_X::CoreText_threshold = 100500; // this represents Mac OS 10.5
+static const int CoreText_threshold = 100500; // this represents Mac OS 10.5
 // condition when the ATSU API is available at compile time
 #define HAS_ATSU (!__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
 
@@ -52,7 +52,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-    if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
+    if (fl_mac_os_version >= CoreText_threshold) {
       CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
       CTFontRef ctfont = CTFontCreateWithName(cfname, 0, NULL);
       CFRelease(cfname);
@@ -124,7 +124,7 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
 if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(fl_mac_os_version >= Fl_X::CoreText_threshold) {
+if(fl_mac_os_version >= CoreText_threshold) {
   int value[1] = {1};
   CFDictionaryRef dict = CFDictionaryCreate(NULL, 
 					    (const void **)kCTFontCollectionRemoveDuplicatesOption, 
@@ -222,7 +222,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
    // OpenGL needs those for its font handling
   size = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
+if (fl_mac_os_version >= CoreText_threshold) {
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -348,7 +348,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   */
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= Fl_X::CoreText_threshold)  {
+  if (fl_mac_os_version >= CoreText_threshold)  {
     CFRelease(fontref);
     for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) {
       if (width[i]) free(width[i]);
@@ -420,7 +420,7 @@ Fl_Fontdesc* Fl_X::calc_fl_fonts(void)
 {
   if (!fl_mac_os_version) fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  return (fl_mac_os_version >= Fl_X::CoreText_threshold ? built_in_table_PS : built_in_table_full);
+  return (fl_mac_os_version >= CoreText_threshold ? built_in_table_PS : built_in_table_full);
 #else
   return built_in_table_full;
 #endif
@@ -501,7 +501,7 @@ static CGFloat variation_selector_width(CFStringRef str16, Fl_Font_Descriptor *f
 
 static double fl_mac_width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
+if (fl_mac_os_version >= CoreText_threshold) {
   double retval = 0;
   UniChar uni;
   int i;
@@ -628,7 +628,7 @@ void Fl_Quartz_Graphics_Driver::text_extents(const char *str8, int n, int &dx, i
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
+if (fl_mac_os_version >= CoreText_threshold) {
   CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, txt, n,  kCFAllocatorNull);
   CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
   CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
@@ -698,7 +698,7 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Dr
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
   CGContextRef gc = (CGContextRef)driver->gc();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
+  if (fl_mac_os_version >= CoreText_threshold) {
     CFMutableStringRef str16 = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, uniStr, n,  n, kCFAllocatorNull);
     if (str16 == NULL) return; // shd not happen
     CGColorRef color = flcolortocgcolor(driver->color());
