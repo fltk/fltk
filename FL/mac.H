@@ -107,7 +107,7 @@ struct flCocoaRegion {
 }; // a region is the union of a series of rectangles
 
 #  include <FL/Fl_Window.H>
-#  include "../src/Fl_Font.H"
+#include "../src/drivers/Quartz/Fl_Font.H"
 
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__
@@ -167,7 +167,6 @@ public:
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
-  static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
   static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);
   static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);

@@ -526,6 +526,10 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
   return 1;
 }
 
+struct Fl_Fontdesc *Fl_Screen_Driver::calc_fl_fonts() {
+  return NULL;
+}
+
 //
 // End of "$Id$".
 //

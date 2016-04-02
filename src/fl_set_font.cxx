@@ -22,8 +22,15 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Screen_Driver.H>
 #include "flstring.h"
-#include "Fl_Font.H"
+#if defined(__APPLE__)
+#include "drivers/Quartz/Fl_Font.H"
+#elif defined(WIN32)
+#include "drivers/GDI/Fl_Font.H"
+#elif USE_X11
+#include "drivers/Xlib/Fl_Font.H"
+#endif
 #include <stdlib.h>
 
 static int table_size;
@@ -32,9 +39,7 @@ static int table_size;
   the string is not copied, so the string must be in static memory.
 */    
 void Fl::set_font(Fl_Font fnum, const char* name) {
-#ifdef __APPLE__ // PORTME: Fl_Graphics_Driver - platform fonts
-  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
-#endif
+  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   while (fnum >= table_size) {
     int i = table_size;
     if (!i) {	// don't realloc the built-in table
@@ -85,9 +90,7 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
     of this face.
 */
 const char* Fl::get_font(Fl_Font fnum) {
-#ifdef __APPLE__ // PORTME: Fl_Graphics_Driver - platform fonts
-  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
-#endif
+  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   return fl_fonts[fnum].name;
 }
 

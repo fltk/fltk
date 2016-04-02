@@ -636,6 +636,10 @@ int Fl_X11_Screen_Driver::text_display_can_leak() {
 #endif
 }
 
+struct Fl_Fontdesc *Fl_Screen_Driver::calc_fl_fonts() {
+  return NULL;
+}
+
 //
 // End of "$Id$".
 //

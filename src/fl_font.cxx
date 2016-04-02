@@ -22,7 +22,13 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
-#include "Fl_Font.H"
+#if defined(__APPLE__)
+#include "drivers/Quartz/Fl_Font.H"
+#elif defined(WIN32)
+#include "drivers/GDI/Fl_Font.H"
+#elif USE_X11
+#include "drivers/Xlib/Fl_Font.H"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,16 +36,6 @@
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
-
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform font stuff
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you need the XFontStruct ?"
-#else
-XFontStruct *fl_X_core_font()
-{
-  return fl_xfont.value();
-}
-#endif
 
 double fl_width(const char* c) {
   if (c) return fl_width(c, (int) strlen(c));

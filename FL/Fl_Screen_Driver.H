@@ -112,6 +112,8 @@ public:
   Fl_Text_Editor::Key_Binding *text_editor_extra_key_bindings;
   // default implementation may be enough
   virtual int text_display_can_leak() { return 0; }
+  // an implementation which returns NULL may be enough
+  static struct Fl_Fontdesc *calc_fl_fonts();
 };
 
 

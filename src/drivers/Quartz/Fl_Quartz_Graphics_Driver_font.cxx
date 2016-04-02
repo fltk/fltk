@@ -25,6 +25,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_utf8.h>
+#include <FL/Fl_Screen_Driver.H>
 
 Fl_Fontdesc* fl_fonts = NULL;
 
@@ -48,7 +49,7 @@ static const int CoreText_threshold = 100500; // this represents Mac OS 10.5
 
 // turn a stored font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
-  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
+  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -200,7 +201,7 @@ else {
 
 int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   static int array[128];
-  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
+  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
   int cnt = 0;
@@ -416,7 +417,7 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
   return utfWbuf;
 } // mac_Utf8_to_Utf16
 
-Fl_Fontdesc* Fl_X::calc_fl_fonts(void)
+Fl_Fontdesc* Fl_Screen_Driver::calc_fl_fonts(void)
 {
   if (!fl_mac_os_version) fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -427,7 +428,7 @@ Fl_Fontdesc* Fl_X::calc_fl_fonts(void)
 }
 
 static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
-  if (!fl_fonts) fl_fonts = Fl_X::calc_fl_fonts();
+  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_Font_Descriptor* f;

@@ -199,7 +199,7 @@ if (USE_X11)
     drivers/Posix/Fl_Posix_System_Driver.H
     drivers/X11/Fl_X11_Screen_Driver.H
     drivers/X11/Fl_X11_Window_Driver.H
-    drivers/Quartz/Fl_Quartz_Graphics_Driver.H
+    drivers/Xlib/Fl_Font.H
   )
 
 elseif (USE_SDL)
@@ -256,6 +256,7 @@ elseif (APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.H
     drivers/Cocoa/Fl_Cocoa_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
+    drivers/Quartz/Fl_Font.H
   )
 
 else ()
@@ -285,6 +286,7 @@ else ()
     drivers/WinAPI/Fl_WinAPI_Screen_Driver.H
     drivers/WinAPI/Fl_WinAPI_Window_Driver.H
     drivers/GDI/Fl_GDI_Graphics_Driver.H
+    drivers/GDI/Fl_Font.H
   )
 
 endif (USE_X11)

@@ -35,7 +35,13 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Device.H>
 #include "Fl_Gl_Choice.H"
-#include "Fl_Font.H"
+#if defined(__APPLE__)
+#include "drivers/Quartz/Fl_Font.H"
+#elif defined(WIN32)
+#include "drivers/GDI/Fl_Font.H"
+#elif USE_X11
+#include "drivers/Xlib/Fl_Font.H"
+#endif
 #include <FL/fl_utf8.h>
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform opengl
@@ -92,7 +98,7 @@ void  gl_font(int fontid, int size) {
  * then sorting through them at draw time (for normal X rendering) to find which one can
  * render the current glyph... But for now, just use the first font in the list for GL...
  */
-    XFontStruct *font = fl_X_core_font();
+    XFontStruct *font = fl_xfont.value();
     int base = font->min_char_or_byte2;
     int count = font->max_char_or_byte2-base+1;
     fl_fontsize->listbase = glGenLists(256);
