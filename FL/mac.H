@@ -168,7 +168,6 @@ public:
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
   static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);
-  static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
 private:
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;

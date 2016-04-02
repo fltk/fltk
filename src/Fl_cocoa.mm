@@ -4287,7 +4287,7 @@ static CALayer *get_titlebar_layer(Fl_Window *win)
 }
 
 
-void Fl_X::draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
+void Fl_Cocoa_Screen_Driver::draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   CGContextSaveGState(gc);
@@ -4315,7 +4315,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   CGColorSpaceRelease(cspace);
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
-    Fl_X::draw_layer_to_context(layer, auxgc, w(), htop);
+    Fl_Cocoa_Screen_Driver::draw_layer_to_context(layer, auxgc, w(), htop);
   } else {
     CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
