@@ -159,6 +159,7 @@ int Fl::arg(int argc, char **argv, int &i) {
     return 1;
   } else if (Fl::system_driver()->single_arg(s)) {
     i++;
+    return 1;
   }
 
   const char *v = argv[i+1];
