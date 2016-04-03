@@ -22,6 +22,7 @@
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Tooltip.H>
@@ -378,8 +379,8 @@ void Fl_X11_Window_Driver::free_icons() {
  Returned images can be deleted after use. Their depth and size may be platform-dependent.
  The top and bottom images extend from left of the left border to right of the right border.
  
- On the X11 platform, this function exploits a feature of fl_read_image() which, when called
- with negative 4th argument, captures the window decoration.
+ This function exploits a feature of Fl_X11_Screen_Driver::read_win_rectangle() which,
+ when called with negative 4th argument, captures the window decoration.
  */
 void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
 {
@@ -404,21 +405,21 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   fl_window = parent;
   uchar *rgb;
   if (htop) {
-    rgb = fl_read_image(NULL, 0, 0, - (w() + 2 * wsides), htop);
+    rgb = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, - (w() + 2 * wsides), htop, 0);
     r_top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
     r_top->alloc_array = 1;
     top = Fl_Shared_Image::get(r_top);
   }
   if (wsides) {
-    rgb = fl_read_image(NULL, 0, htop, -wsides, h());
+    rgb = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop, -wsides, h(), 0);
     r_left = new Fl_RGB_Image(rgb, wsides, h(), 3);
     r_left->alloc_array = 1;
     left = Fl_Shared_Image::get(r_left);
-    rgb = fl_read_image(NULL, w() + wsides, htop, -wsides, h());
+    rgb = Fl::screen_driver()->read_win_rectangle(NULL, w() + wsides, htop, -wsides, h(), 0);
     r_right = new Fl_RGB_Image(rgb, wsides, h(), 3);
     r_right->alloc_array = 1;
     right = Fl_Shared_Image::get(r_right);
-    rgb = fl_read_image(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom);
+    rgb = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom, 0);
     r_bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
     r_bottom->alloc_array = 1;
     bottom = Fl_Shared_Image::get(r_bottom);

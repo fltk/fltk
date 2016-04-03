@@ -152,7 +152,7 @@ void Fl_Screen_Driver::compose_reset() {
 }
 
 uchar *Fl_Screen_Driver::read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
-  if (w < 0 || fl_find(fl_window) == 0) { // read from off_screen buffer or title bar and frame
+  if (fl_find(fl_window) == 0) { // read from off_screen buffer
     return read_win_rectangle(p, X, Y, w, h, alpha);
   }
   Fl_RGB_Image *img = traverse_to_gl_subwindows(Fl_Window::current(), p, X, Y, w, h, alpha, NULL);
