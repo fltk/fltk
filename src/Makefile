@@ -583,7 +583,6 @@ Fl_win32.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
-fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
 Fl_Printer.o: ../src/drivers/PostScript/Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H
@@ -616,9 +615,6 @@ Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
 Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
 Fl_Printer.o:  ../FL/mac.H ../FL/win32.H
-fl_read_image.o:	../FL/mac.H ../FL/win32.H
-fl_read_image_mac.o:	../FL/mac.H ../FL/win32.H
-fl_read_image_win32.o:	../FL/mac.H ../FL/win32.H
 fl_rect.o:	../FL/mac.H ../FL/win32.H
 fl_scroll_area.o:	../FL/mac.H ../FL/win32.H
 fl_set_font.o:	../FL/mac.H ../FL/win32.H

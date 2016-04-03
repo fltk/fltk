@@ -37,6 +37,8 @@
 // TODO: application shortcuts
 
 class Fl_Window;
+class Fl_RGB_Image;
+class Fl_Group;
 
 
 class FL_EXPORT Fl_Screen_Driver {
@@ -118,6 +120,15 @@ public:
   static unsigned font_desc_size();
   static const char *font_name(int num);
   static void font_name(int num, const char *name);
+  // read raw image from a window or an offscreen buffer
+#if defined(FL_PORTING)
+#  pragma message "FL_PORTING: implement code to read RGB data from screen"
+#endif
+  virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
+  virtual uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) {return NULL;}
+  static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
+  static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int y, int w, int h, int alpha,
+                                                 Fl_RGB_Image *full_img);
 };
 
 
