@@ -114,6 +114,7 @@ public:
   virtual void wait_for_expose();
   virtual int can_do_overlay();
   virtual void redraw_overlay();
+  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
 };
 
 

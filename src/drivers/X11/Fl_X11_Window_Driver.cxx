@@ -658,6 +658,23 @@ void Fl_X11_Window_Driver::erase_menu() {
 #endif
 }
 
+int Fl_X11_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
+                                 void (*draw_area)(void*, int,int,int,int), void* data)
+{
+  XCopyArea(fl_display, fl_window, fl_window, (GC)fl_graphics_driver->gc(),
+            src_x, src_y, src_w, src_h, dest_x, dest_y);
+  // we have to sync the display and get the GraphicsExpose events! (sigh)
+  for (;;) {
+    XEvent e; XWindowEvent(fl_display, fl_window, ExposureMask, &e);
+    if (e.type == NoExpose) break;
+    // otherwise assume it is a GraphicsExpose event:
+    draw_area(data, e.xexpose.x, e.xexpose.y,
+              e.xexpose.width, e.xexpose.height);
+    if (!e.xgraphicsexpose.count) break;
+  }
+  return 0;
+}
+
 //
 // End of "$Id$".
 //

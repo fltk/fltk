@@ -149,7 +149,13 @@ public:
   static void default_icons(const Fl_RGB_Image *icons[], int count);
 
   // --- window printing helper
-  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
+  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left,
+                                            Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
+#if defined(FL_PORTING)
+# pragma message "FL_PORTING: implement scrolling of the screen contents"
+#endif
+  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
+                     void (*draw_area)(void*, int,int,int,int), void* data) { return 0; }
 };
 
 

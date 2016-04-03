@@ -98,6 +98,7 @@ public:
   //this one is in Fl_cocoa.mm because it uses Objective-c
   virtual void wait_for_expose();
   static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
+  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
 };
 
 

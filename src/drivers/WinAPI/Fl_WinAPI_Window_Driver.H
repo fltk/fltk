@@ -98,6 +98,8 @@ public:
   // this one is implemented in Fl_win32.cxx
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   virtual void wait_for_expose();
+  virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
+                     void (*draw_area)(void*, int,int,int,int), void* data);
 };
 
 

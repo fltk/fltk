@@ -18,7 +18,8 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Cocoa_Window_Driver.h"
+#include "Fl_Cocoa_Window_Driver.H"
+#include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
@@ -272,6 +273,16 @@ void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, 
   *left = 2;
   *right = 2;
   *bottom = 2;
+}
+
+int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data)
+{
+  CGImageRef img = Fl_X::CGImage_from_window_rect(Fl_Window::current(), src_x, src_y, src_w, src_h);
+  if (img) {
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,dest_x,dest_y,src_w,src_h,0,0,src_w,src_h);
+    CFRelease(img);
+  }
+  return 0;
 }
 
 //
