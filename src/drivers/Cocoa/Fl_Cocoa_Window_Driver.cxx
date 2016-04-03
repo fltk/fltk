@@ -109,10 +109,6 @@ void Fl_Cocoa_Window_Driver::draw_begin()
     CGContextSaveGState(gc);
 # endif
   }
-  if ( fl_mac_os_version >= 100600 ) {
-    // for Mac OS X 10.6 and above, make window with rounded bottom corners
-    Fl_X::clip_to_rounded_corners(gc, pWindow->w(), pWindow->h());
-  }
 }
 
 
