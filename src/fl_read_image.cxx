@@ -20,7 +20,7 @@
 #include <FL/Fl_Screen_Driver.H>
 
 /**
- Reads an RGB(A) image from the current window or off-screen buffer (if fl_window is null).
+ Reads an RGB(A) image from the current window or off-screen buffer.
  \param[in] p     pixel buffer, or NULL to allocate one
  \param[in] X,Y   position of top-left of image to read
  \param[in] W,H   width and height of image to read
