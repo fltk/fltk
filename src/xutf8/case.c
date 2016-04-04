@@ -19,14 +19,10 @@
  * This file is required on all platforms for UTF-8 support
  */
 
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(ANDROID)
-#  include "../Xutf8.h"
-#endif /* !defined(WIN32) && !defined(__APPLE__) */
-
 #include "headers/case.h"
 #include <stdlib.h>
 
-int 
+int
 XUtf8Tolower(int ucs) {
   int ret;
   if (ucs <= 0x02B6) {
