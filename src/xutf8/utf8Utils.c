@@ -16,21 +16,11 @@
 
 #include <config.h>
 
-#if defined(WIN32) || defined(__APPLE__) /* PORTME: Fl_Screen_Driver - platform unicode */
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: utf8"
-#else
-#endif
-
 /*
  * Unicode to UTF-8 conversion functions.
  */
 
-#if defined(WIN32)
-#elif defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you want to include Xutf8.h?"
-#else
+#if defined(USE_X11)
 
 #include "../Xutf8.h"
 
