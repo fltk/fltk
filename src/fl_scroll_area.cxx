@@ -20,7 +20,7 @@
 // a "callback" which is called to draw rectangular areas that are moved
 // into the drawing area.
 
-#include <Fl/Fl_Window_Driver.H>
+#include <FL/Fl_Window_Driver.H>
 
 // scroll a rectangle and redraw the newly exposed portions:
 /**
