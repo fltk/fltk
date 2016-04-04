@@ -31,6 +31,7 @@
 
 
 #include <FL/Fl_Printer.H>
+#include <FL/Fl_PostScript.H>
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl_Image_Surface.H>
 
@@ -600,9 +601,18 @@ void copy(Fl_Widget *, void *data) {
     Fl_Display_Device::display_device()->set_current();  
     }
   
-  if (strcmp(operation, "Fl_Printer") == 0) {
-    Fl_Printer * p = new Fl_Printer();
-    if (!p->start_job(1)) {
+  if (strcmp(operation, "Fl_Printer") == 0 || strcmp(operation, "Fl_PostScript_File_Device") == 0) {
+    Fl_Paged_Device *p;
+    int err;
+    if (strcmp(operation, "Fl_Printer") == 0) {
+      p = new Fl_Printer();
+      err = p->start_job(1);
+    }
+    else {
+      p = new Fl_PostScript_File_Device();
+      err = ((Fl_PostScript_File_Device*)p)->start_job(1);
+    }
+    if (!err) {
       p->start_page();
       if (target->as_window()) p->print_window(target->as_window());
       else p->print_widget(target);
@@ -715,13 +725,14 @@ int main(int argc, char ** argv) {
   c2->end();
   
   Fl_Radio_Round_Button *rb;
-  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,55);
+  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,60);
   w3->box(FL_DOWN_BOX);
   Fl_Group *g1 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
   rb = new Fl_Radio_Round_Button(5,5,150,12, "Fl_Image_Surface"); 
-  rb->set(); rb->callback(operation_cb, NULL); operation = rb->label();
-  rb = new Fl_Radio_Round_Button(5,22,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL);
-  rb = new Fl_Radio_Round_Button(5,39,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL);
+  rb->set(); rb->callback(operation_cb, NULL); operation = rb->label(); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,18,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,31,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,44,150,12, "Fl_PostScript_File_Device"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   g1->end();
   
   Fl_Group *g2 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
