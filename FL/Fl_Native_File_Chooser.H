@@ -224,7 +224,6 @@ private:
   void set_single_pathname(const char *s);
   int get_saveas_basename(void);
   void clear_filters();
-  void add_filter(const char *, const char *);
   void parse_filter(const char *from);
   int post();
   int runmodal();
