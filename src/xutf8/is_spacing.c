@@ -18,13 +18,9 @@
  * This file is required on all platforms for utf8 support
  */
 
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(ANDROID)
-#  include "../Xutf8.h"
-#endif /* !defined(WIN32) && !defined(__APPLE__) */
-
 #include "headers/spacing.h"
 
-unsigned short 
+unsigned short
 XUtf8IsNonSpacing(unsigned int ucs) {
 
   if (ucs <= 0x0361) {
