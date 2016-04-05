@@ -1023,7 +1023,7 @@ Sudoku::load_game() {
  
       sprintf(name, "readonly%d.%d", j, k);
       prefs_.get(name, val, 0);
-      cell->readonly(val);
+      cell->readonly(val != 0);
 
       if (val) cell->color(FL_GRAY);
       else {
@@ -1084,7 +1084,7 @@ Sudoku::new_game(time_t seed) {
 
   // Generate a new (valid) Sudoku grid...
   seed_ = seed;
-  srand(seed);
+  srand((unsigned int)seed);
 
   memset(grid_values_, 0, sizeof(grid_values_));
 
@@ -1175,7 +1175,7 @@ Sudoku::new_game(time_t seed) {
 // Return the next available value for a cell...
 int
 Sudoku::next_value(SudokuCell *c) {
-  int	j, k, m, n;
+  int	j = 0, k = 0, m = 0, n = 0;
 
 
   for (j = 0; j < 9; j ++) {

@@ -735,7 +735,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
       }
       else if (strcmp(type, Fl::clipboard_image) == 0) { // we want an image from clipboard
 	uchar *rgb = NULL;
-	int width, height, depth;
+	int width = 0, height = 0, depth = 0;
 	if ( (h = GetClipboardData(CF_DIB)) ) { // if there's a DIB in clipboard
 	  LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h) ;
 	  width = lpBI->bmiHeader.biWidth; // bitmap width & height
@@ -1515,7 +1515,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by, DWORD style, DWORD styleEx,
                      int w_maxw, int w_minw, int w_maxh, int w_minh, uchar w_size_range_set) {
-  int W, H, xoff, yoff, dx, dy;
+  int W = 0, H = 0, xoff = 0, yoff = 0, dx = 0, dy = 0;
   int ret = bx = by = bt = 0;
 
   int fallback = 1;
@@ -1592,7 +1592,7 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   //Proceed to positioning the window fully inside the screen, if possible
   //Find screen that contains most of the window
   //FIXME: this ought to be the "work area" instead of the entire screen !
-  int scr_x, scr_y, scr_w, scr_h;
+  int scr_x = 0, scr_y = 0, scr_w = 0, scr_h = 0;
   Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X, Y, W, H);
   //Make border's lower right corner visible
   if (scr_x+scr_w < X+W) X = scr_x+scr_w - W;

@@ -23,6 +23,8 @@
 #ifndef Fl_H
 #  define Fl_H
 
+#include <FL/Fl_Export.H>
+
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
