@@ -373,13 +373,16 @@ set (CFILES
 )
 
 if (USE_X11)
-  set (CFILES
-    ${CFILES}
-    xutf8/utf8Input.c
-    xutf8/utf8Utils.c
-    xutf8/utf8Wrap.c
+  list (APPEND CFILES
     xutf8/keysym2Ucs.c
   )
+  if (NOT USE_XFT)
+    list (APPEND CFILES
+      xutf8/utf8Utils.c
+      xutf8/utf8Wrap.c
+      # xutf8/utf8Input.c  # not used
+    )
+  endif (NOT USE_XFT)
 endif (USE_X11)
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))

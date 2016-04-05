@@ -1,7 +1,7 @@
 #
 # "$Id$"
 #
-# Library makefile for the Fast Light Tool Kit (FLTK).
+# Library Makefile for the Fast Light Tool Kit (FLTK).
 #
 # Copyright 1998-2016 by Bill Spitzak and others.
 #
@@ -233,6 +233,7 @@ QUARTZCPPFILES = \
 	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
 	drivers/Darwin/Fl_Darwin_System_Driver.cxx
 
+# These C++ files are used under condition: BUILD_X11
 XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.cxx \
@@ -253,18 +254,25 @@ XLIBCPPFILES = \
         Fl_Native_File_Chooser_FLTK.cxx \
         Fl_Native_File_Chooser_GTK.cxx
 
+# This C file is used under condition: BUILD_X11
 XLIBCFILES = \
-        xutf8/keysym2Ucs.c \
-        xutf8/utf8Input.c \
+        xutf8/keysym2Ucs.c
+
+# These C files are used under condition: BUILD_X11 AND NOT BUILD_XFT
+XLIBXCFILES = \
         xutf8/utf8Utils.c \
         xutf8/utf8Wrap.c
+#       xutf8/utf8Input.c  # not used
 
+# These C++ files are used under condition: BUILD_X11 AND NOT BUILD_XFT
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
 
+# These C++ files are used under condition: BUILD_X11 AND BUILD_XFT
 XLIBXFTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.cxx
 
+# These C++ files are used under condition: BUILD_GDI
 GDICPPFILES = \
 	drivers/GDI/Fl_GDI_Graphics_Driver.cxx \
 	drivers/GDI/Fl_GDI_Graphics_Driver_arci.cxx \
@@ -303,6 +311,7 @@ CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo
 CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
 
 CFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCFILES); fi)
+CFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo $(XLIBXCFILES); fi)
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
