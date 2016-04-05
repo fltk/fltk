@@ -115,7 +115,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   FILE *fp = NULL;	  // File pointer
   int channels;	  // Number of color channels
   png_structp pp; // PNG read pointer
-  png_infop info; // PNG info pointers
+  png_infop info = 0; // PNG info pointers
   png_bytep *rows;// PNG row pointers
   fl_png_memory png_mem_data;
   int from_memory = (buffer_png != NULL); // true if reading image from memory

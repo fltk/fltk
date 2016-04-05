@@ -269,7 +269,7 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
     }
 
     int xx = mx-offcenter;
-    double v;
+    double v = 0;
     char tryAgain = 1;
     while (tryAgain)
     {
