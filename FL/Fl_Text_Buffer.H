@@ -253,7 +253,7 @@ public:
   /**
    Deletes a range of characters in the buffer.
    \param start byte offset to first character to be removed
-   \param end byte offset to charcater after last character to be removed
+   \param end byte offset to character after last character to be removed
    */
   void remove(int start, int end);
 
