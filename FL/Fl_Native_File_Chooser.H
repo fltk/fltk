@@ -3,7 +3,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -20,42 +20,41 @@
 /** \file
    Fl_Native_File_Chooser widget. */
 
+/* Implementation note:
+ 
+ class Fl_Native_File_Chooser  <== public API used by applications
+ 
+ class Fl_Native_File_Chooser_Driver   <== virtual API that a platform may implement
+                                           this API has a do-nothing default implementation
+ 
+        class Fl_Native_File_Chooser_FLTK_Driver   <== this API implementation is the default FLTK file chooser
+                class Fl_Native_File_Chooser_GTK_Driver  <== this API implementation runs a GTK file chooser
+                                        it is determined at run-time if the GTK dynamic libraries are available
+ 
+        class Fl_Native_File_Chooser_Darwin_Driver  <== this API implementation runs a Mac OS X file chooser
+
+        class Fl_Native_File_Chooser_WinAPI_Driver  <== this API implementation runs a MSWindows file chooser
+ 
+ 
+ Each platform must implement the constructor of the Fl_Native_File_Chooser class.
+ This particular implementation:
+ 
+ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
+  platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
+ }
+ 
+ can be used by any platform. 
+ No more code is required. The cross-platform Fl_Native_File_Chooser_FLTK.cxx file must be compiled in libfltk,
+ and the default FLTK file chooser will be used.
+ */
+
 #ifndef FL_NATIVE_FILE_CHOOSER_H
 #define FL_NATIVE_FILE_CHOOSER_H
 
-// Use Windows' chooser
-#ifdef WIN32
+#include <FL/Fl_Export.H>
+#include <FL/Fl_File_Chooser.H>
 
-// #define _WIN32_WINNT	0x0501	// needed for OPENFILENAME's 'FlagsEx'
-#if defined(FL_LIBRARY)
-#  include <windows.h>
-#  include <commdlg.h>		// OPENFILENAMEW, GetOpenFileName()
-#  include <shlobj.h>		// BROWSEINFOW, SHBrowseForFolder()
-typedef OPENFILENAMEW fl_OPENFILENAMEW;
-typedef BROWSEINFOW fl_BROWSEINFOW;
-#else
-typedef void fl_OPENFILENAMEW;
-typedef void fl_BROWSEINFOW;
-#endif
-#  include <FL/filename.H>	// FL_EXPORT
-
-// Use Apple's chooser
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - native file chooser support
-#  define MAXFILTERS	80
-#  include <FL/filename.H>	// FL_EXPORT
-
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define a file chooser if one is available on your platform"
-#  include <FL/Fl_File_Chooser.H> // default to FLTK file chooser if none id ported
-
-// All else falls back to FLTK's own chooser
-#else
-#  include <FL/Fl_File_Chooser.H>
-
-#endif
-
-class Fl_FLTK_File_Chooser;
-class Fl_GTK_File_Chooser;
+class Fl_Native_File_Chooser_Driver;
 
 /**
  This class lets an FLTK application easily and consistently access 
@@ -113,6 +112,8 @@ class Fl_GTK_File_Chooser;
  
  */
 class FL_EXPORT Fl_Native_File_Chooser {
+private:
+  Fl_Native_File_Chooser_Driver *platform_fnfc;
 public:
   enum Type {
     BROWSE_FILE = 0,			///< browse files (lets user choose one file)
@@ -129,14 +130,15 @@ public:
     PREVIEW        = 0x0004,		///< enable preview mode (if supported)
     USE_FILTER_EXT = 0x0008		///< Chooser filter pilots the output file extension (if supported)
   };
-  /** Localizable message */
   static const char *file_exists_message;
   
-public:
-  Fl_Native_File_Chooser(int val=BROWSE_FILE);
+  /**
+   The constructor. Internally allocates the native widgets.
+   Optional \p val presets the type of browser this will be,
+   which can also be changed with type().
+   */
+  Fl_Native_File_Chooser(int val = BROWSE_FILE); // each platorm implements it
   ~Fl_Native_File_Chooser();
-  
-  // Public methods
   void type(int t);
   int type() const ;
   void options(int o);
@@ -157,95 +159,46 @@ public:
   const char* preset_file() const;
   const char *errmsg() const ;
   int show() ;
-  
-#ifdef WIN32
-private:
-  int  _btype;			// kind-of browser to show()
-  int  _options;		// general options
-  fl_OPENFILENAMEW *_ofn_ptr;		// GetOpenFileName() & GetSaveFileName() struct
-  fl_BROWSEINFOW   *_binf_ptr;		// SHBrowseForFolder() struct
-  char  **_pathnames;		// array of pathnames
-  int     _tpathnames;		// total pathnames
-  char   *_directory;		// default pathname to use
-  char   *_title;		// title for window
-  char   *_filter;		// user-side search filter
-  char   *_parsedfilt;		// filter parsed for Windows dialog
-  int     _nfilters;		// number of filters parse_filter counted
-  char   *_preset_file;		// the file to preselect
-  char   *_errmsg;		// error message
-  
-  // Private methods
-  void errmsg(const char *msg);
-  
-  void clear_pathnames();
-  void set_single_pathname(const char *s);
-  void add_pathname(const char *s);
-  
-  void ClearOFN();
-  void ClearBINF();
-  void Win2Unix(char *s);
-  void Unix2Win(char *s);
-  int showfile();
-  int showdir();
-  
-  void parse_filter(const char *);
-  void clear_filters();
-  void add_filter(const char *, const char *);
-
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - native file chooser support
-private:
-  int             _btype;		// kind-of browser to show()
-  int             _options;		// general options
-  void 	         *_panel;
-  char          **_pathnames;		// array of pathnames
-  int             _tpathnames;	        // total pathnames
-  char           *_directory;		// default pathname to use
-  char           *_title;		// title for window
-  char           *_preset_file;	        // the 'save as' filename
-  
-  char           *_filter;		// user-side search filter, eg:
-  // C Files\t*.[ch]\nText Files\t*.txt"
-  
-  char           *_filt_names;		// filter names (tab delimited)
-  // eg. "C Files\tText Files"
-  
-  char           *_filt_patt[MAXFILTERS];
-  // array of filter patterns, eg:
-  //     _filt_patt[0]="*.{cxx,h}"
-  //     _filt_patt[1]="*.txt"
-  
-  int             _filt_total;		// parse_filter() # of filters loaded
-  int             _filt_value;		// index of the selected filter
-  char           *_errmsg;		// error message
-  
-  // Private methods
-  void errmsg(const char *msg);
-  void clear_pathnames();
-  void set_single_pathname(const char *s);
-  int get_saveas_basename(void);
-  void clear_filters();
-  void parse_filter(const char *from);
-  int post();
-  int runmodal();
-
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define member variables for file chooser if one is available on your platform"
-
-#else
-
-private:
-  static int have_looked_for_GTK_libs;
-  union {
-    Fl_FLTK_File_Chooser *_x11_file_chooser;
-    Fl_GTK_File_Chooser *_gtk_file_chooser;
   };
-#endif
+
+
+class Fl_Native_File_Chooser_Driver {
+protected:
+  static void chrcat(char *s, char c);
+  static char *strapp(char *s, const char *val);
+  static char *strfree(char *val);
+  static char *strnew(const char *val);
+public:
+  Fl_Native_File_Chooser_Driver(int val) {}
+  virtual ~Fl_Native_File_Chooser_Driver() {}
+  virtual void type(int t) {}
+  virtual int type() const  {return 0;}
+  virtual void options(int o) {}
+  virtual int options() const {return 0;}
+  virtual int count() const {return 0;}
+  virtual const char *filename() const  {return 0;}
+  virtual const char *filename(int i) const  {return 0;}
+  virtual void directory(const char *val)  {}
+  virtual const char *directory() const {return 0;}
+  virtual void title(const char *t) {}
+  virtual const char* title() const {return 0;}
+  virtual const char *filter() const  {return 0;}
+  virtual void filter(const char *f) {}
+  virtual int filters() const  {return 0;}
+  virtual void filter_value(int i)  {}
+  virtual int filter_value() const  {return 0;}
+  virtual void preset_file(const char*f)  {}
+  virtual const char* preset_file() const {return 0;}
+  virtual const char *errmsg() const  {return 0;}
+  virtual int show()  {return 1;}
 };
 
-
-#if !defined(__APPLE__) && !defined(WIN32) && !defined(FL_PORTING) // PORTME: Fl_Screen_Driver - FLTK file chooser option
-class FL_EXPORT Fl_FLTK_File_Chooser {
-  friend class Fl_Native_File_Chooser;
+class Fl_Native_File_Chooser_FLTK_Driver : public Fl_Native_File_Chooser_Driver {
+private:
+  void errmsg(const char *msg);
+  int type_fl_file(int val);
+  int exist_dialog();
+  void parse_filter();
 protected:
   int   _btype;			// kind-of browser to show()
   int   _options;		// general options
@@ -257,77 +210,32 @@ protected:
   char *_prevvalue;		// Returned filename
   char *_directory;
   char *_errmsg;		// error message
-  Fl_FLTK_File_Chooser(int val);
-  virtual ~Fl_FLTK_File_Chooser();
-  void errmsg(const char *msg);
-  int type_fl_file(int);
-  void parse_filter();
-  int exist_dialog();
   Fl_File_Chooser *_file_chooser;
-  virtual void type(int);
-  int type() const;
-  void options(int);
-  int options() const;
+public:
+  Fl_Native_File_Chooser_FLTK_Driver(int val);
+  virtual ~Fl_Native_File_Chooser_FLTK_Driver();
+  virtual void type(int t);
+  virtual int type() const ;
+  virtual void options(int o);
+  virtual int options() const;
   virtual int count() const;
-  virtual const char *filename() const;
-  virtual const char *filename(int i) const;
-  void directory(const char *val);
-  const char *directory() const;
-  virtual void title(const char *);
+  virtual const char *filename() const ;
+  virtual const char *filename(int i) const ;
+  virtual void directory(const char *val) ;
+  virtual const char *directory() const;
+  virtual void title(const char *t);
   virtual const char* title() const;
-  const char *filter() const;
-  void filter(const char *);
-  int filters() const;
-  void filter_value(int i);
-  int filter_value() const;
-  void preset_file(const char*);
-  const char* preset_file() const;
-  const char *errmsg() const;
-  virtual int show();
+  virtual const char *filter() const ;
+  virtual void filter(const char *f);
+  virtual int filters() const ;
+  virtual void filter_value(int i) ;
+  virtual int filter_value() const ;
+  virtual void preset_file(const char*f) ;
+  virtual const char* preset_file() const;
+  virtual const char *errmsg() const ;
+  virtual int show() ;
 };
 
-
-class FL_EXPORT Fl_GTK_File_Chooser : public Fl_FLTK_File_Chooser {
-  friend class Fl_Native_File_Chooser;
-private:
-  typedef struct _GtkWidget GtkWidget;
-  typedef struct _GtkFileFilterInfo GtkFileFilterInfo;
-  struct pair {
-    Fl_GTK_File_Chooser* running; // the running Fl_GTK_File_Chooser
-    const char *filter; // a filter string of the chooser
-    pair(Fl_GTK_File_Chooser* c, const char *f) {
-      running = c; 
-      filter = strdup(f);
-    };
-    ~pair() {
-      free((char*)filter);
-    };
-  };
-  GtkWidget *gtkw_ptr; // used to hold a GtkWidget* without pulling GTK into everything...
-  void *gtkw_slist; // used to hold a GLib GSList...
-  unsigned gtkw_count; // number of files read back - if any
-  mutable char *gtkw_filename; // last name we read back
-  char *gtkw_title; // the title to be applied to the dialog
-  const char *previous_filter;
-  
-  int fl_gtk_chooser_wrapper(); // method that wraps the GTK widget
-  Fl_GTK_File_Chooser(int val);
-  virtual ~Fl_GTK_File_Chooser();
-  static int did_find_GTK_libs;
-  static void probe_for_GTK_libs(void);
-  virtual void type(int);
-  virtual int count() const;
-  virtual const char *filename() const;
-  virtual const char *filename(int i) const;
-  virtual void title(const char *);
-  virtual const char* title() const;
-  virtual int show();
-  void changed_output_type(const char *filter);
-  
-  static int custom_gtk_filter_function(const GtkFileFilterInfo*, Fl_GTK_File_Chooser::pair*);
-  static void free_pair(pair *p);
-};
-#endif // !defined(__APPLE__) && !defined(WIN32) // PORTME: Fl_Screen_Driver - native file chooser option
 
 #endif /*FL_NATIVE_FILE_CHOOSER_H*/
 

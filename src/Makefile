@@ -215,11 +215,7 @@ CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
 UTF8CFILES = \
 	xutf8/case.c \
 	xutf8/is_right2left.c \
-	xutf8/is_spacing.c \
-	xutf8/keysym2Ucs.c \
-	xutf8/utf8Input.c \
-	xutf8/utf8Utils.c \
-	xutf8/utf8Wrap.c
+	xutf8/is_spacing.c
 
 QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Graphics_Driver.cxx \
@@ -253,7 +249,15 @@ XLIBCPPFILES = \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
 	Fl_x.cxx \
-	fl_dnd_x.cxx
+	fl_dnd_x.cxx \
+        Fl_Native_File_Chooser_FLTK.cxx \
+        Fl_Native_File_Chooser_GTK.cxx
+
+XLIBCFILES = \
+        xutf8/keysym2Ucs.c \
+        xutf8/utf8Input.c \
+        xutf8/utf8Utils.c \
+        xutf8/utf8Wrap.c
 
 XLIBFONTFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
@@ -277,7 +281,8 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_System_Driver.cxx \
 	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx \
 	Fl_win32.cxx \
-	fl_dnd_win32.cxx
+	fl_dnd_win32.cxx \
+        Fl_Native_File_Chooser_WIN32.cxx
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \
@@ -297,6 +302,7 @@ CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo
 
 CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
 
+CFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCFILES); fi)
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
@@ -565,9 +571,9 @@ clean:
 		libfltk_gl.dylib libfltk_images.dylib \
 		cmap core
 
-depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
+depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES) $(XLIBCFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES) $(MMFILES) $(FLCPPFILES) \
-		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
+		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)  $(XLIBCFILES)
 
 # Automatically generated dependencies... generated on a Linux/Unix host !
 include makedepend
@@ -577,12 +583,15 @@ include makedepend
 # Please add only non-Linux/Unix files or such that are optional
 # (like "*xft*") here:
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
-Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
+Fl_Native_File_Chooser_WIN32.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
+Fl_Native_File_Chooser_FLTK.o:	Fl_Native_File_Chooser_FLTK.cxx
+Fl_Native_File_Chooser_GTK.o:	Fl_Native_File_Chooser_GTK.cxx
 Fl_win32.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:
-fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
+fl_dnd_win32.o:	fl_dnd_win32.cxx
+fl_dnd_x.o:	fl_dnd_x.cxx
 Fl_Printer.o: ../src/drivers/PostScript/Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H
@@ -591,8 +600,6 @@ fl_ask.o:	../FL/mac.H ../FL/win32.H
 Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H
 fl_color.o:	../FL/mac.H ../FL/win32.H
 fl_cursor.o:	../FL/mac.H ../FL/win32.H
-fl_dnd.o:	../FL/mac.H ../FL/win32.H
-Fl.o:	../FL/mac.H ../FL/win32.H
 Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image.o:	../FL/mac.H ../FL/win32.H
 fl_draw_pixmap.o:	../FL/mac.H ../FL/win32.H

@@ -185,6 +185,8 @@ if (USE_X11)
     drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx
     Fl_x.cxx
     fl_dnd_x.cxx
+    Fl_Native_File_Chooser_FLTK.cxx
+    Fl_Native_File_Chooser_GTK.cxx
   )
   if (USE_XFT)
     set (DRIVER_FILES ${DRIVER_FILES}
@@ -280,6 +282,7 @@ else ()
     drivers/GDI/Fl_GDI_Image_Surface_Driver.cxx
     Fl_win32.cxx
     fl_dnd_win32.cxx
+    Fl_Native_File_Chooser_WIN32.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H
@@ -367,11 +370,17 @@ set (CFILES
   xutf8/is_right2left.c
   xutf8/is_spacing.c
   xutf8/case.c
-  xutf8/utf8Input.c
-  xutf8/utf8Utils.c
-  xutf8/utf8Wrap.c
-  xutf8/keysym2Ucs.c
 )
+
+if (USE_X11)
+  set (CFILES
+    ${CFILES}
+    xutf8/utf8Input.c
+    xutf8/utf8Utils.c
+    xutf8/utf8Wrap.c
+    xutf8/keysym2Ucs.c
+  )
+endif (USE_X11)
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
     set (MMFILES

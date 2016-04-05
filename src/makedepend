@@ -380,7 +380,6 @@ Fl_Native_File_Chooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 Fl_Native_File_Chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 Fl_Native_File_Chooser.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
 Fl_Native_File_Chooser.o: ../FL/fl_ask.H ../FL/Fl_File_Icon.H
-Fl_Native_File_Chooser.o: Fl_Native_File_Chooser_common.cxx
 Fl_Native_File_Chooser.o: ../FL/Enumerations.H Fl_Native_File_Chooser_GTK.cxx
 Fl_Native_File_Chooser.o: ../FL/x.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl_Native_File_Chooser.o: ../FL/Fl_Preferences.H
