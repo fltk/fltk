@@ -8,7 +8,7 @@
 #include <FL/Fl.H>
 #include "Fl_Export.H"
 
-class FL_EXPORT Fl_Tree_Item;	// forward decl must *precede* first doxygen comment block
+class Fl_Tree_Item;		// forward decl must *precede* first doxygen comment block
 				// or doxygen will not document our class..
 
 //////////////////////////

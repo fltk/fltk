@@ -69,7 +69,7 @@ void load_file(const char *n) {
     float fw = img->w() / float(b->w());
     float fh = img->h() / float(b->h());
     float f = fw > fh ? fw : fh;
-    b->image(img->copy(img->w()/f, img->h()/f));
+    b->image(img->copy(int(img->w()/f), int(img->h()/f)));
     img->release();
   }
 #endif

@@ -55,9 +55,9 @@ static void make_images() {
     // A fading sphere
     uchar alpha = 255;
     if (i < FRAMES / 2)
-      alpha = 255 * (i / ((float) FRAMES / 2));
+      alpha = (uchar)(255 * (i / ((float) FRAMES / 2)));
     else
-      alpha = 255 * (((FRAMES / 2) - (i - FRAMES / 2)) / ((float) FRAMES / 2));
+      alpha = (uchar)(255 * (((FRAMES / 2) - (i - FRAMES / 2)) / ((float) FRAMES / 2)));
 
     const int spherew = 60;
     const int spherex = (DIM - spherew) / 2;
@@ -73,11 +73,11 @@ static void make_images() {
           continue;
 
         const float fill = dist / maxdist;
-        const uchar grey = fill * 255;
+        const uchar grey = (uchar)(fill * 255);
 
         uchar myalpha = alpha;
         if (fill > 0.9)
-          myalpha *= (1.0f - fill) * 10;
+          myalpha = (uchar)(myalpha * (1.0f - fill) * 10);
 
         data[y * DIM * 4 + x * 4 + 0] = grey;
         data[y * DIM * 4 + x * 4 + 1] = grey;
@@ -89,7 +89,7 @@ static void make_images() {
     // A moving blob
     const float pos = (i / (float) FRAMES) * 2 - 0.5;
 
-    const int xoffset = pos * DIM;
+    const int xoffset = (int)(pos * DIM);
     const int yoffset = 2 * DIM / 3;
     const int w = DIM / 4;
 
