@@ -208,18 +208,18 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
     {
       if (S_ISDIR(fileinfo.st_mode))
         filetype = DIRECTORY;
-#  ifdef S_IFIFO
+#  ifdef S_ISFIFO
       else if (S_ISFIFO(fileinfo.st_mode))
         filetype = FIFO;
-#  endif // S_IFIFO
-#  if defined(S_ICHR) && defined(S_IBLK)
+#  endif // S_ISFIFO
+#  if defined(S_ISCHR) && defined(S_ISBLK)
       else if (S_ISCHR(fileinfo.st_mode) || S_ISBLK(fileinfo.st_mode))
         filetype = DEVICE;
-#  endif // S_ICHR && S_IBLK
-#  ifdef S_ILNK
+#  endif // S_ISCHR && S_ISBLK
+#  ifdef S_ISLNK
       else if (S_ISLNK(fileinfo.st_mode))
         filetype = LINK;
-#  endif // S_ILNK
+#  endif // S_ISLNK
       else
         filetype = PLAIN;
     }
