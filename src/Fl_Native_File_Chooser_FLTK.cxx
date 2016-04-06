@@ -19,12 +19,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Icon.H>
-#define FLTK_CHOOSER_SINGLE    Fl_File_Chooser::SINGLE
-#define FLTK_CHOOSER_DIRECTORY Fl_File_Chooser::DIRECTORY
-#define FLTK_CHOOSER_MULTI     Fl_File_Chooser::MULTI
-#define FLTK_CHOOSER_CREATE    Fl_File_Chooser::CREATE
-
-#include <sys/stat.h>
+#include <FL/Fl_System_Driver.H> // for struct stat
 #include <string.h>
 
 
