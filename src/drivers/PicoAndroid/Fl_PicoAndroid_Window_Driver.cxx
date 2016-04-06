@@ -108,11 +108,14 @@ void Fl_PicoAndroid_Window_Driver::flush_single()
   scr->drawFrame();
 }
 
+#if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
 
 void Fl_X::flush()
 {
   w->flush();
 }
+
+#endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
 
 
 #if 0

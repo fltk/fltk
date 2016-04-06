@@ -1888,13 +1888,27 @@ int Fl::dnd()
   return Fl::screen_driver()->dnd();
 }
 
+#if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warnings
+
+/**
+  Resets marked text.
+
+  \todo Please explain what exactly this does and how to use it.
+*/
 void Fl::reset_marked_text() {
   Fl::screen_driver()->reset_marked_text();
 }
 
-void Fl::insertion_point_location(int x, int y, int height) { // sets window coordinates & height of insertion point
+/**
+  Sets window coordinates and height of insertion point.
+
+  \todo Please explain what exactly this does and how to use it.
+*/
+void Fl::insertion_point_location(int x, int y, int height) {
   Fl::screen_driver()->insertion_point_location(x, y, height);
 }
+
+#endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warnings
 
 int Fl::event_key(int k) {
   return system_driver()->event_key(k);

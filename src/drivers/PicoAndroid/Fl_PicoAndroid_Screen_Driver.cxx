@@ -458,6 +458,8 @@ Fl_Fontdesc* fl_fonts = NULL;
  Undefined symbols for architecture x86_64:
  */
 
+#if !defined(FL_DOXYGEN)	// *FIXME* silence Doxygen warnings
+
 void fl_set_spot(int, int, int, int, int, int, Fl_Window*) { }
 void fl_reset_spot() { }
 const char *fl_filename_name(char const*) { return 0; }
@@ -532,6 +534,8 @@ void (*fl_unlock_function)() = nothing;
 Fl_Font_Descriptor::~Fl_Font_Descriptor()
 {
 }
+
+#endif // !defined(FL_DOXYGEN)
 
 #if 0
 

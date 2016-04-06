@@ -145,6 +145,8 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
  Undefined symbols for architecture x86_64:
  */
 
+#if !defined(FL_DOXYGEN) // FIXME silence Doxygen warnings
+
 void fl_set_spot(int, int, int, int, int, int, Fl_Window*) { }
 void fl_reset_spot() { }
 const char *fl_filename_name(char const*) { return 0; }
@@ -212,6 +214,8 @@ void Fl_X::flush()
 {
   w->flush();
 }
+
+#endif // !defined(FL_DOXYGEN) // FIXME silence Doxygen warnings
 
 
 //

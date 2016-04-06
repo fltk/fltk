@@ -168,6 +168,7 @@ public: // run time information about compile time configuration
   /** @} */
 
 public: // should be private!
+
 #ifndef FL_DOXYGEN
   static int e_number;
   static int e_x;
@@ -197,8 +198,8 @@ public: // should be private!
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #endif // FL_DOXYGEN
-  
-  
+
+
   /**
     If true then flush() will do something.
   */

@@ -360,6 +360,8 @@ void Fl_WinAPI_Window_Driver::free_icons() {
 }
 
 
+#if !defined(FL_DOXYGEN)	// FIXME - silence Doxygen warnings
+
 /** Sets the window icons using Windows' native HICON icon handles.
  
  The given icons are copied. You can free the icons immediately after
@@ -380,7 +382,6 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon)
   if (Fl_X::i(this))
     Fl_X::i(this)->set_icons();
 }
-
 
 /** Sets the default window icons.
  
@@ -405,6 +406,7 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
   Fl_X::set_default_icons(big_icon, small_icon);
 }
 
+#endif // !defined(FL_DOXYGEN)	// FIXME - silence Doxygen warnings
 
 void Fl_WinAPI_Window_Driver::wait_for_expose() {
   if (!shown()) return;
@@ -531,6 +533,7 @@ void Fl_WinAPI_Window_Driver::unmap() {
   ShowWindow(fl_xid(pWindow), SW_HIDE);
 }
 
+#if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
 
 void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
   int top, bottom, left, right;
@@ -564,6 +567,8 @@ void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
   // SWP_NOSENDCHANGING is so that we can override size limits
   SetWindowPos(xid, HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
+
+#endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
 
 
 void Fl_WinAPI_Window_Driver::fullscreen_on() {

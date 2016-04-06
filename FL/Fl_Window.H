@@ -351,7 +351,7 @@ public:
   void icon(const Fl_RGB_Image*);
   void icons(const Fl_RGB_Image*[], int);
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(FL_DOXYGEN)
   typedef struct HICON__* HICON;
   // These 2 member functions break the driver model but are kept for back compatibility.
   // They are implemented in Fl_WinAPI_Window_Driver.cxx
