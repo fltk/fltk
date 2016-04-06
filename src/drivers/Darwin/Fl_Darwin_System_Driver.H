@@ -65,6 +65,9 @@ public:
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
   static void *get_carbon_function(const char *name);
   static int calc_mac_os_version(); // computes the fl_mac_os_version global variable
+  // these 2 are in Fl_get_key_mac.cxx
+  virtual int event_key(int k);
+  virtual int get_key(int k);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

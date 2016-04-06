@@ -93,7 +93,6 @@ set (CPPFILES
   Fl_arg.cxx
   Fl_compose.cxx
   Fl_display.cxx
-  Fl_get_key.cxx
   Fl_get_system_colors.cxx
   Fl_grab.cxx
   Fl_lock.cxx
@@ -187,6 +186,7 @@ if (USE_X11)
     fl_dnd_x.cxx
     Fl_Native_File_Chooser_FLTK.cxx
     Fl_Native_File_Chooser_GTK.cxx
+    Fl_get_key.cxx
   )
   if (USE_XFT)
     set (DRIVER_FILES ${DRIVER_FILES}
@@ -252,6 +252,7 @@ elseif (APPLE)
     drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx
     drivers/Darwin/Fl_Darwin_System_Driver.cxx
+    Fl_get_key_mac.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/Darwin/Fl_Darwin_System_Driver.H
@@ -283,6 +284,7 @@ else ()
     Fl_win32.cxx
     fl_dnd_win32.cxx
     Fl_Native_File_Chooser_WIN32.cxx
+    Fl_get_key_win32.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/WinAPI/Fl_WinAPI_System_Driver.H

@@ -1896,6 +1896,14 @@ void Fl::insertion_point_location(int x, int y, int height) { // sets window coo
   Fl::screen_driver()->insertion_point_location(x, y, height);
 }
 
+int Fl::event_key(int k) {
+  return system_driver()->event_key(k);
+}
+
+int Fl::get_key(int k) {
+  return system_driver()->get_key(k);
+}
+
 //
 // End of "$Id$".
 //

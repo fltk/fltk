@@ -16,24 +16,17 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef WIN32
-#  include "Fl_get_key_win32.cxx"
-#elif defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard stuff
-#  include "Fl_get_key_mac.cxx"
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement keyboard reading and interpretation in its own file"
-#else
-
 // Return the current state of a key.  This is the X version.  I identify
 // keys (mostly) by the X keysym.  So this turns the keysym into a keycode
 // and looks it up in the X key bit vector, which Fl_x.cxx keeps track of.
 
-#  include <FL/Fl.H>
-#  include <FL/x.H>
+#include <FL/Fl.H>
+#include "drivers/Posix/Fl_Posix_System_Driver.H"
+#include <FL/x.H> // for fl_display
 
 extern char fl_key_vector[32]; // in Fl_x.cxx
 
-int Fl::event_key(int k) {
+int Fl_Posix_System_Driver::event_key(int k) {
   if (k > FL_Button && k <= FL_Button+8)
     return Fl::event_state(8<<(k-FL_Button));
   int i;
@@ -49,13 +42,11 @@ int Fl::event_key(int k) {
   return fl_key_vector[i/8] & (1 << (i%8));
 }
 
-int Fl::get_key(int k) {
+int Fl_Posix_System_Driver::get_key(int k) {
   fl_open_display();
   XQueryKeymap(fl_display, fl_key_vector);
   return event_key(k);
 }
-
-#endif
 
 //
 // End of "$Id$".

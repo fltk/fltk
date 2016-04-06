@@ -112,7 +112,6 @@ CPPFILES = \
 	Fl_arg.cxx \
 	Fl_compose.cxx \
 	Fl_display.cxx \
-	Fl_get_key.cxx \
 	Fl_get_system_colors.cxx \
 	Fl_grab.cxx \
 	Fl_lock.cxx \
@@ -231,7 +230,8 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Image_Surface_Driver.cxx \
 	drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx \
 	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
-	drivers/Darwin/Fl_Darwin_System_Driver.cxx
+	drivers/Darwin/Fl_Darwin_System_Driver.cxx \
+        Fl_get_key_mac.cxx
 
 # These C++ files are used under condition: BUILD_X11
 XLIBCPPFILES = \
@@ -252,7 +252,8 @@ XLIBCPPFILES = \
 	Fl_x.cxx \
 	fl_dnd_x.cxx \
         Fl_Native_File_Chooser_FLTK.cxx \
-        Fl_Native_File_Chooser_GTK.cxx
+        Fl_Native_File_Chooser_GTK.cxx \
+        Fl_get_key.cxx
 
 # This C file is used under condition: BUILD_X11
 XLIBCFILES = \
@@ -290,7 +291,8 @@ GDICPPFILES = \
 	drivers/WinAPI/Fl_WinAPI_Printer_Driver.cxx \
 	Fl_win32.cxx \
 	fl_dnd_win32.cxx \
-        Fl_Native_File_Chooser_WIN32.cxx
+        Fl_Native_File_Chooser_WIN32.cxx \
+        Fl_get_key_win32.cxx
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \
@@ -591,7 +593,8 @@ include makedepend
 # they are part of the WIN32 and MacOS code base...
 # Please add only non-Linux/Unix files or such that are optional
 # (like "*xft*") here:
-Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
+Fl_get_key_mac.o:	Fl_get_key_mac.cxx
+Fl_get_key_win32.o:	Fl_get_key_win32.cxx
 Fl_Native_File_Chooser_WIN32.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl_Native_File_Chooser_FLTK.o:	Fl_Native_File_Chooser_FLTK.cxx
@@ -616,7 +619,6 @@ fl_encoding_latin1.o:	../FL/mac.H ../FL/win32.H
 fl_encoding_mac_roman.o:   ../FL/mac.H ../FL/win32.H
 Fl_File_Chooser2.o:	../FL/mac.H ../FL/win32.H
 fl_font.o:	../FL/mac.H ../FL/win32.H
-Fl_get_key.o:	../FL/mac.H ../FL/win32.H
 Fl_get_system_colors.o:	../FL/mac.H ../FL/win32.H
 Fl_Gl_Choice.o:	../FL/mac.H ../FL/win32.H
 Fl_Gl_Overlay.o:	../FL/mac.H ../FL/win32.H

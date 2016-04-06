@@ -62,6 +62,9 @@ public:
   virtual int rmdir(const char* f) {return ::rmdir(f);}
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  // these 2 are in Fl_get_key.cxx
+  virtual int event_key(int k);
+  virtual int get_key(int k);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H
