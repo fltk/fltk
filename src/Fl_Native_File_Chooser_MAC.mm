@@ -23,17 +23,12 @@
 
 #ifdef __APPLE__
 
-#include <libgen.h>		// dirname(3)
-#include <sys/types.h>		// stat(2)
-#include <sys/stat.h>		// stat(2)
-
-
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/x.H> // for fl_mac_os_version
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
-#  define MAXFILTERS	80
+#define MAXFILTERS	80
 
 class Fl_Native_File_Chooser_Darwin_Driver : public Fl_Native_File_Chooser_Driver {
 private:
