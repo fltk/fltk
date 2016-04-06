@@ -219,6 +219,8 @@
   </TD></TR></TABLE>
   */
 class FL_EXPORT Fl_Input : public Fl_Input_ {
+  friend class Fl_Screen_Driver;
+  friend class Fl_Cocoa_Screen_Driver; // Not ideal, but probably no other platform will use it
   int handle_key();
   int shift_position(int p);
   int shift_up_down_position(int p);

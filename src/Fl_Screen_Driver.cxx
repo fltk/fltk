@@ -23,6 +23,7 @@
 #include <FL/Fl_Plugin.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Input.H>
 
 char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
@@ -268,6 +269,74 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, uchar *p,
   return full_img;
 }
 
+
+int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input)
+{
+  switch (key) {
+    case FL_Delete: {
+      int selected = (input->position() != input->mark()) ? 1 : 0;
+      if (mods==0 && shift && selected)
+        return input->kf_copy_cut();		// Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
+      if (mods==0 && shift && !selected)
+        return input->kf_delete_char_right();	// Shift-Delete no selection (WP,NP,WOW,GE,KE,!OF)
+      if (mods==0)          return input->kf_delete_char_right();	// Delete         (Standard)
+      if (mods==FL_CTRL)    return input->kf_delete_word_right();	// Ctrl-Delete    (WP,!NP,WOW,GE,KE,!OF)
+      return 0;							// ignore other combos, pass to parent
+    }
+      
+    case FL_Left:
+      if (mods==0)          return input->kf_move_char_left();		// Left           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_word_left();		// Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return input->kf_move_char_left();		// Meta-Left      (WP,NP,?WOW,GE,KE)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_Right:
+      if (mods==0)          return input->kf_move_char_right();	// Right          (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_word_right();	// Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return input->kf_move_char_right();	// Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_Up:
+      if (mods==0)          return input->kf_lines_up(1);		// Up             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_up_and_sol();	// Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_Down:
+      if (mods==0)          return input->kf_lines_down(1);		// Dn             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_down_and_eol();	// Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_Page_Up:
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      if (mods==0)          return input->kf_page_up();		// PageUp         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return input->kf_page_up();		// Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return input->kf_page_up();		// Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_Page_Down:
+      if (mods==0)          return input->kf_page_down();		// PageDn         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return input->kf_page_down();		// Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return input->kf_page_down();		// Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_Home:
+      if (mods==0)          return input->kf_move_sol();		// Home           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_top();			// Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_End:
+      if (mods==0)          return input->kf_move_eol();		// End            (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_bottom();			// Ctrl-End       (WP,NP,WOW,GE,KE,OF)
+      return 0;							// ignore other combos, pass to parent
+      
+    case FL_BackSpace:
+      if (mods==0)          return input->kf_delete_char_left();	// Backspace      (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_delete_word_left();	// Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
+      return 0;
+      // ignore other combos, pass to parent
+  }
+  return -1;
+}
 
 //
 // End of "$Id$".

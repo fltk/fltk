@@ -39,6 +39,7 @@
 class Fl_Window;
 class Fl_RGB_Image;
 class Fl_Group;
+class Fl_Input;
 
 
 class FL_EXPORT Fl_Screen_Driver {
@@ -129,6 +130,9 @@ public:
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
   static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int y, int w, int h, int alpha,
                                                  Fl_RGB_Image *full_img);
+  // optional platform-specific key handling for Fl_Input widget
+  // the default implementation may be enough
+  virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
 };
 
 

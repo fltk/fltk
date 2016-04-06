@@ -39,6 +39,7 @@
 
 
 class Fl_Window;
+class Fl_Input;
 
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
@@ -87,6 +88,7 @@ public:
   virtual int dnd(int use_selection);
   virtual int compose(int &del);
   virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
+  virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
 };
 
 
