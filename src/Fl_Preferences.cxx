@@ -26,7 +26,6 @@
 #include <stdarg.h>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
-#include <sys/stat.h>
 #include <time.h>
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_System_Driver - platform Preferences
