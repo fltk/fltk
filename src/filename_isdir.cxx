@@ -20,17 +20,10 @@
 
 #include "flstring.h"
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <FL/Fl_System_Driver.H> // for struct stat
 #include <ctype.h>
 #include <FL/filename.H>
 #include <FL/fl_utf8.h>
-
-#ifdef WIN32
-#elif defined(__APPLE__) // PORTME: Fl_System_Driver - directory stuff
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement directory and filename handling for your platform if needed"
-#else // X11
-#endif
 
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
 static inline int isdirsep(char c) {return c=='/' || c=='\\';}
@@ -92,7 +85,7 @@ int fl_filename_isdir(const char* n) {
   }
 #endif
 
-  return !fl_stat(n, &s) && (s.st_mode&0170000)==0040000;
+  return !fl_stat(n, &s) && (s.st_mode & S_IFMT) == S_IFDIR;
 }
 
 //

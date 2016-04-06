@@ -38,24 +38,11 @@
 #include "flstring.h"
 #include <errno.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
-#  include <io.h>
-#  define F_OK	0
-#else
-#  include <unistd.h>
-#endif /* WIN32 || __EMX__ */
-
+#include <FL/Fl_System_Driver.H> // for struct stat
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
-
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform file browser
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement file type interpretation here"
-#else
-#endif
 
 //
 // Define missing POSIX/XPG4 macros as needed...
@@ -187,23 +174,13 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
                    int        filetype)	// I - Enumerated file type
 {
   Fl_File_Icon	*current;		// Current file in list
-#ifndef WIN32
   struct stat	fileinfo;		// Information on file
-#endif // !WIN32
   const char	*name;			// Base name of filename
 
 
   // Get file information if needed...
   if (filetype == ANY)
   {
-#ifdef WIN32
-    if (filename[strlen(filename) - 1] == '/')
-      filetype = DIRECTORY;
-    else if (fl_filename_isdir(filename))
-      filetype = DIRECTORY;
-    else
-      filetype = PLAIN;
-#else
     if (!fl_stat(filename, &fileinfo))
     {
       if (S_ISDIR(fileinfo.st_mode))
@@ -225,7 +202,6 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
     }
     else
       filetype = PLAIN;
-#endif // WIN32
   }
 
   // Look at the base name in the filename

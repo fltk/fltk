@@ -344,6 +344,7 @@
 //
 
 #include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_System_Driver.H> // for struct stat
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 #include <FL/x.H>
@@ -355,7 +356,6 @@
 #include "flstring.h"
 #include <errno.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform file browser
 #elif defined(FL_PORTING)

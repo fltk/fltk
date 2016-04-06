@@ -196,6 +196,7 @@ int Fl_WinAPI_System_Driver::access(const char* f, int mode) {
 
 int Fl_WinAPI_System_Driver::stat(const char* f, struct stat *b) {
   size_t l = strlen(f);
+  if (f[l-1] == '/') l--; // must remove trailing /
   unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
   wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
   wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
