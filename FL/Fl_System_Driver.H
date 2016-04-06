@@ -139,6 +139,9 @@ public:
   virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
   // implement to shield fprintf() from locale changes in decimal point
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
+  // implement functions telling whether a key is pressed
+  virtual int event_key(int k) {return 0;}
+  virtual int get_key(int k) {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
