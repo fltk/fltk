@@ -41,7 +41,6 @@
 #include <errno.h>
 #include <FL/math.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <io.h>
 #  define F_OK	0
@@ -57,20 +56,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
-
-
-//
-// Define missing POSIX/XPG4 macros as needed...
-//
-
-#ifndef S_ISDIR
-#  define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
-#  define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
-#  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
-#  define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
-#  define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
-#endif /* !S_ISDIR */
-
 
 //
 // Local functions...
