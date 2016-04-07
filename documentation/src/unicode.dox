@@ -12,8 +12,9 @@ the current state of Unicode support.
 \section unicode_about About Unicode, ISO 10646 and UTF-8
 
 The summary of Unicode, ISO 10646 and UTF-8 given below is
-deliberately brief, and provides just enough information for
+deliberately brief and provides just enough information for
 the rest of this chapter.
+
 For further information, please see:
 - http://www.unicode.org
 - http://www.iso.org
@@ -21,11 +22,12 @@ For further information, please see:
 - http://www.cl.cam.ac.uk/~mgk25/unicode.html
 - http://www.apps.ietf.org/rfc/rfc3629.html
 
+
 \par The Unicode Standard
 
 The Unicode Standard was originally developed by a consortium of mainly
 US computer manufacturers and developers of multi-lingual software.
-It has now become a defacto standard for character encoding,
+It has now become a defacto standard for character encoding
 and is supported by most of the major computing companies in the world.
 
 Before Unicode, many different systems, on different platforms,
@@ -40,7 +42,8 @@ and typographic publishing systems, such as algorithms for sorting and
 comparing text, composite character and text rendering, right-to-left
 and bi-directional text handling.
 
-<i>There are currently no plans to add this extra functionality to FLTK.</i>
+\note There are currently no plans to add this extra functionality to FLTK.
+
 
 \par ISO 10646
 
@@ -57,8 +60,8 @@ which contains the characters required for almost all known languages.
 The standard also defines three different implementation levels specifying
 how these characters can be combined.
 
-<i>There are currently no plans for handling the different implementation
-levels or the combining characters in FLTK.</i>
+\note There are currently no plans for handling the different implementation
+levels or the combining characters in FLTK.
 
 In UCS, characters have a unique numerical code and an official name,
 and are usually shown using 'U+' and the code in hexadecimal,
@@ -67,15 +70,15 @@ The UCS characters U+0000 to U+007F correspond to US-ASCII,
 and U+0000 to U+00FF correspond to ISO 8859-1 (Latin1).
 
 ISO 10646 was originally designed to handle a 31-bit character set
-from U+00000000 to U+7FFFFFFF, but the current idea is that 21-bits
+from U+00000000 to U+7FFFFFFF, but the current idea is that 21 bits
 will be sufficient for all future needs, giving characters up to
 U+10FFFF.  The complete character set is sub-divided into \e planes.
 <i>Plane 0</i>, also known as the <b>Basic Multilingual Plane</b>
 (BMP), ranges from U+0000 to U+FFFD and consists of the most commonly
 used characters from previous encoding standards. Other planes
 contain characters for specialist applications.
-\todo
-Do we need this info about planes?
+
+\todo Do we need this info about planes?
 
 The UCS also defines various methods of encoding characters as
 a sequence of bytes.
@@ -87,7 +90,7 @@ but this is even more wasteful for ASCII or Latin1.
 
 \par UTF-8
 
-The Unicode standard defines various UCS Transformation Formats.
+The Unicode standard defines various UCS Transformation Formats (UTF).
 UTF-16 and UTF-32 are based on units of two and four bytes.
 UCS characters requiring more than 16 bits are encoded using
 "surrogate pairs" in UTF-16.
@@ -100,8 +103,10 @@ making the transformation to Unicode quick and easy.
 All UCS characters above U+007F are encoded as a sequence of
 several bytes. The top bits of the first byte are set to show
 the length of the byte sequence, and subseqent bytes are
-always in the range 0x80 to 0x8F. This combination provides
+always in the range 0x80 to 0xBF. This combination provides
 some level of synchronisation and error detection.
+
+\par
 
 <table summary="Unicode character byte sequences" align="center">
 <tr>
@@ -133,6 +138,8 @@ some level of synchronisation and error detection.
  <td><tt>1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
 </tr>
 </table>
+
+\par
 
 Moving from ASCII encoding to Unicode will allow all new FLTK
 applications to be easily internationalized and used all over
@@ -176,12 +183,12 @@ the following limitations:
 
 - FLTK will only handle single characters, so composed characters
   consisting of a base character and floating accent characters
-  will be treated as multiple characters; 
+  will be treated as multiple characters.
 
 - FLTK will only compare or sort strings on a byte by byte basis
-  and not on a general Unicode character basis;
+  and not on a general Unicode character basis.
 
-- FLTK will not handle right-to-left or bi-directional text;
+- FLTK will not handle right-to-left or bi-directional text.
   
   \todo
   Verify 16/24 bit Unicode limit for different character sets?
@@ -189,7 +196,7 @@ the following limitations:
   appears to handle a wider set. What about illegal characters?
   See comments in %fl_utf8fromwc() and %fl_utf8toUtf16().
 
-\section unicode_illegals Illegal Unicode and UTF-8 sequences
+\section unicode_illegals Illegal Unicode and UTF-8 Sequences
 
 Three pre-processor variables are defined in the source code [1] that
 determine how %fl_utf8decode() handles illegal UTF-8 sequences:
@@ -240,7 +247,7 @@ of the sequence. Trailing bytes in a UTF-8 sequence will return -1.
 Please see the individual function description for further details
 about error handling and return values.
 
-\section unicode_fltk_calls FLTK Unicode and UTF-8 functions
+\section unicode_fltk_calls FLTK Unicode and UTF-8 Functions
 
 This section currently provides a brief overview of the functions.
 For more details, consult the main text for each function via its link.
@@ -348,8 +355,8 @@ or ISO-8859-1 characters below 0xFF are replaced with '?'.
 \par
 Both functions return the number of bytes that would be written, not
 counting the null terminator.
-\p destlen provides a means of limiting the number of bytes written,
-so setting \p destlen to zero is a means of measuring how much storage
+\p dstlen provides a means of limiting the number of bytes written,
+so setting \p dstlen to zero is a means of measuring how much storage
 would be needed before doing the real conversion.
 
 
@@ -455,7 +462,7 @@ converts the strings to lower case Unicode as part of the comparison.
 \p %flt_utf_strncasecmp() only compares the first \p n characters [bytes?]
 
 
-\section unicode_system_calls FLTK Unicode versions of system calls
+\section unicode_system_calls FLTK Unicode Versions of System Calls
 
 - int fl_access(const char* f, int mode)
   \b OksiD
