@@ -602,7 +602,7 @@ include makedepend
 # (like "*xft*") here:
 Fl_get_key_mac.o:	Fl_get_key_mac.cxx
 Fl_get_key_win32.o:	Fl_get_key_win32.cxx
-scandir_win32.o   scandir_win32.c
+scandir_win32.o:   scandir_win32.c
 Fl_Native_File_Chooser_WIN32.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl_Native_File_Chooser_FLTK.o:	Fl_Native_File_Chooser_FLTK.cxx
