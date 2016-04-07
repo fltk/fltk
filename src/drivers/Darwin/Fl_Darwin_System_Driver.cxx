@@ -28,6 +28,7 @@
 #include <locale.h>
 #include <stdio.h>
 #include <dlfcn.h>
+#include <pwd.h>
 
 extern int fl_mac_os_version;	// the version number of the running Mac OS X
 
@@ -134,6 +135,14 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*
   free(fullname);
   return n;
 }
+
+
+const char *Fl_Darwin_System_Driver::getpwnam(const char *login) {
+  struct passwd *pwd;
+  pwd = ::getpwnam(login);
+  return pwd ? pwd->pw_dir : NULL;
+}
+
 
 //
 // End of "$Id$".

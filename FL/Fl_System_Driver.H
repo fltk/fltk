@@ -98,6 +98,10 @@ public:
   virtual int get_key(int k) {return 0;}
   // implement scandir-like function
   virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {return -1;}
+  // the default implementation of filename_expand may be enough
+  virtual int filename_expand(char *to, int tolen, const char *from);
+  // to implement
+  virtual const char *getpwnam(const char *login) {return NULL;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

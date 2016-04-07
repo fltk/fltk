@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include "flstring.h"
 
 const int Fl_System_Driver::flNoValue =	    0x0000;
 const int Fl_System_Driver::flWidthValue =  0x0004;
@@ -370,6 +371,50 @@ unsigned Fl_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const char* s
 
 int Fl_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
   return vfprintf(output, format, args);
+}
+
+int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {
+  char *temp = new char[tolen];
+  strlcpy(temp,from, tolen);
+  char *start = temp;
+  char *end = temp+strlen(temp);
+  
+  int ret = 0;
+  
+  for (char *a=temp; a<end; ) {	// for each slash component
+    char *e; for (e=a; e<end && *e != '/'; e++) {/*empty*/} // find next slash
+    const char *value = 0; // this will point at substitute value
+    switch (*a) {
+      case '~':	// a home directory name
+        if (e <= a+1) {	// current user's directory
+          value = getenv("HOME");
+        } else {	// another user's directory
+          char t = *e; *(char *)e = 0;
+          value = getpwnam(a+1);
+          *(char *)e = t;
+        }
+        break;
+      case '$':		/* an environment variable */
+      {char t = *e; *(char *)e = 0; value = getenv(a+1); *(char *)e = t;}
+        break;
+    }
+    if (value) {
+      // substitutions that start with slash delete everything before them:
+      if (value[0] == '/') start = a;
+      int t = (int) strlen(value); if (value[t-1] == '/') t--;
+      if ((end+1-e+t) >= tolen) end += tolen - (end+1-e+t);
+      memmove(a+t, e, end+1-e);
+      end = a+t+(end-e);
+      *end = '\0';
+      memcpy(a, value, t);
+      ret++;
+    } else {
+      a = e+1;
+    }
+  }
+  strlcpy(to, start, tolen);
+  delete[] temp;
+  return ret;
 }
 
 //

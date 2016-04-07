@@ -27,6 +27,9 @@
 #include <wchar.h>
 #include <process.h>
 #include <locale.h>
+#include "../../flstring.h"
+
+inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
 #if !defined(FL_DOXYGEN)
 const char* fl_local_alt   = "Alt";
@@ -440,6 +443,47 @@ int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list, int (*
   // the Win32 "wide" functions for lookup, avoiding the code page mess
   // entirely. It also fixes up the trailing '/'.
   return fl_scandir(d, list, 0, sort);
+}
+
+int Fl_WinAPI_System_Driver::filename_expand(char *to,int tolen, const char *from) {
+  char *temp = new char[tolen];
+  strlcpy(temp,from, tolen);
+  char *start = temp;
+  char *end = temp+strlen(temp);
+  int ret = 0;
+  for (char *a=temp; a<end; ) {	// for each slash component
+    char *e; for (e=a; e<end && !isdirsep(*e); e++) {/*empty*/} // find next slash
+    const char *value = 0; // this will point at substitute value
+    switch (*a) {
+      case '~':	// a home directory name
+        if (e <= a+1) {	// current user's directory
+          value = getenv("HOME");
+        }
+        break;
+      case '$':		/* an environment variable */
+      {char t = *e; *(char *)e = 0; value = getenv(a+1); *(char *)e = t;}
+        break;
+    }
+    if (value) {
+      // substitutions that start with slash delete everything before them:
+      if (isdirsep(value[0])) start = a;
+      // also if it starts with "A:"
+      if (value[0] && value[1]==':') start = a;
+      int t = (int) strlen(value); if (isdirsep(value[t-1])) t--;
+      if ((end+1-e+t) >= tolen) end += tolen - (end+1-e+t);
+      memmove(a+t, e, end+1-e);
+      end = a+t+(end-e);
+      *end = '\0';
+      memcpy(a, value, t);
+      ret++;
+    } else {
+      a = e+1;
+      if (*e == '\\') {*e = '/'; ret++;} // ha ha!
+    }
+  }
+  strlcpy(to, start, tolen);
+  delete[] temp;
+  return ret;
 }
 
 //

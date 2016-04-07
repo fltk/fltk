@@ -66,6 +66,7 @@ public:
   virtual int event_key(int k);
   virtual int get_key(int k);
   virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
+  virtual const char *getpwnam(const char *login);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

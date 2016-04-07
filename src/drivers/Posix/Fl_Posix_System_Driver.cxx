@@ -23,6 +23,8 @@
 #include <X11/Xlib.h>
 #include <locale.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 // Pointers you can use to change FLTK to a foreign language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
@@ -138,6 +140,12 @@ int Fl_Posix_System_Driver::filename_list(const char *d, dirent ***list, int (*s
   free(fullname);
   
   return n;
+}
+
+const char *Fl_Posix_System_Driver::getpwnam(const char *login) {
+  struct passwd *pwd;
+  pwd = ::getpwnam(login);
+  return pwd ? pwd->pw_dir : NULL;
 }
 
 //
