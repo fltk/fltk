@@ -19,17 +19,11 @@
  File names and URI utility functions.
  */
 
-/* Xcode on OS X includes files by recursing down into directories.
- * This code catches the cycle and directly includes the required file.
- */
-#ifdef fl_dirent_h_cyclic_include
-#  include "/usr/include/dirent.h"
-#endif
-
 #ifndef FL_FILENAME_H
 #  define FL_FILENAME_H
 
-#  include "Fl_Export.H"
+#include "Fl_Export.H"
+#include <FL/platform_types.h>
 
 /** \addtogroup filenames File names and URI utility functions
  File names and URI functions defined in <FL/filename.H>
@@ -72,39 +66,6 @@ FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const 
 inline int fl_filename_relative(char *to, const char *from) { return fl_filename_relative(to, FL_PATH_MAX, from); }
 #  endif /* __cplusplus */
 
-
-#  if defined(WIN32) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
-
-struct dirent {char d_name[1];};
-
-#  elif defined(__WATCOMC__)
-#    include <sys/types.h>
-#    include <direct.h>
-
-#  elif defined(FL_PORTING)
-#    pragma message "FL_PORTING: insert the equivalent to dirent.h on your system"
-#    include <dirent.h>
-#  else
-/*
- * WARNING: on some systems (very few nowadays?) <dirent.h> may not exist.
- * The correct information is in one of these files:
- *
- *     #include <sys/ndir.h>
- *     #include <sys/dir.h>
- *     #include <ndir.h>
- *
- * plus you must do the following #define:
- *
- *     #define dirent direct
- *
- * It would be best to create a <dirent.h> file that does this...
- */
-#    include <sys/types.h>
-#    define fl_dirent_h_cyclic_include
-#    include <dirent.h>
-#    undef fl_dirent_h_cyclic_include
-#  endif
-
 #  if defined (__cplusplus)
 extern "C" {
 #  endif /* __cplusplus */
@@ -116,7 +77,7 @@ FL_EXPORT int fl_casenumericsort(struct dirent **, struct dirent **);
 FL_EXPORT int fl_numericsort(struct dirent **, struct dirent **);
 #  endif
 
-  typedef int (Fl_File_Sort_F)(struct dirent **, struct dirent **); /**< File sorting function. \see fl_filename_list() */
+typedef int (Fl_File_Sort_F)(struct dirent **, struct dirent **); /**< File sorting function. \see fl_filename_list() */
 
 #  if defined(__cplusplus)
 }

@@ -19,7 +19,7 @@
 #ifndef __CYGWIN__
 /* Emulation of posix scandir() call */
 #include <FL/fl_utf8.h>
-#include <FL/filename.H>
+#include <FL/platform_types.h>
 #include "flstring.h"
 #include <windows.h>
 #include <stdlib.h>

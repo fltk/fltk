@@ -25,56 +25,10 @@
 #define FL_SYSTEM_DRIVER_H
 
 #include <FL/Fl_Export.H>
+#include <FL/platform_types.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-// platform-dependent types are declared here
-#ifdef __APPLE__
-typedef struct CGContext* Fl_Offscreen;
-typedef struct CGImage* Fl_Bitmask;
-typedef struct flCocoaRegion* Fl_Region;
-typedef int FL_SOCKET;
-#include <sys/stat.h>
-
-#elif defined(WIN32)
-typedef struct HBITMAP__ *HBITMAP;
-typedef HBITMAP Fl_Offscreen;
-typedef HBITMAP Fl_Bitmask;
-typedef struct HRGN__ *Fl_Region;
-# if defined(_WIN64)
-typedef  unsigned __int64 FL_SOCKET;
-# else
-typedef  int FL_SOCKET;
-# endif
-#include <sys/stat.h>
-
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define OS-dependent types"
-typedef void* Fl_Offscreen;
-typedef void* Fl_Bitmask;
-typedef void *Fl_Region;
-typedef int FL_SOCKET;
-# pragma message "FL_PORTING: define struct stat and implement stat() for the platform"
-struct stat { // the FLTK source code uses part of the stat() API
-  unsigned st_mode;
-  off_t st_size;
-};
-#define        S_IFMT   0170000  /* type of file */
-#define        S_IFIFO  0010000  /* named pipe (fifo) */
-#define        S_IFCHR  0020000  /* character special */
-#define        S_IFDIR  0040000  /* directory */
-#define        S_IFBLK  0060000  /* block special */
-#define        S_IFREG  0100000  /* regular */
-#define        S_IFLNK  0120000  /* symbolic link */
-
-#else
-typedef unsigned long Fl_Offscreen;
-typedef unsigned long Fl_Bitmask;
-typedef struct _XRegion *Fl_Region;
-typedef int FL_SOCKET;
-#include <sys/stat.h>
-
-#endif // __APPLE__
 
 /**
  \brief A base class for platform-specific system operations.
@@ -142,6 +96,8 @@ public:
   // implement functions telling whether a key is pressed
   virtual int event_key(int k) {return 0;}
   virtual int get_key(int k) {return 0;}
+  // implement scandir-like function
+  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {return -1;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

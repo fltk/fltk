@@ -39,6 +39,12 @@ static wchar_t *mbwbuf = NULL;
 static wchar_t *wbuf = NULL;
 static wchar_t *wbuf1 = NULL;
 
+extern "C" {
+  int fl_scandir(const char *dirname, struct dirent ***namelist,
+                 int (*select)(struct dirent *),
+                 int (*compar)(struct dirent **, struct dirent **));
+}
+
 /**
  Creates a driver that manages all screen and display related calls.
  
@@ -427,6 +433,13 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
   int retval = vfprintf(output, format, args);
   setlocale(LC_NUMERIC, saved_locale);
   return retval;
+}
+
+int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {
+  // For Windows we have a special scandir implementation that uses
+  // the Win32 "wide" functions for lookup, avoiding the code page mess
+  // entirely. It also fixes up the trailing '/'.
+  return fl_scandir(d, list, 0, sort);
 }
 
 //

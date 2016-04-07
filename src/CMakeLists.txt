@@ -366,7 +366,6 @@ set (IMGCPPFILES
 
 set (CFILES
   flstring.c
-  scandir.c
   numericsort.c
   vsnprintf.c
   xutf8/is_right2left.c
@@ -377,6 +376,7 @@ set (CFILES
 if (USE_X11)
   list (APPEND CFILES
     xutf8/keysym2Ucs.c
+    scandir_posix.c
   )
   if (NOT USE_XFT)
     list (APPEND CFILES
@@ -386,6 +386,12 @@ if (USE_X11)
     )
   endif (NOT USE_XFT)
 endif (USE_X11)
+
+if (WIN32)
+  list (APPEND CFILES
+    scandir_win32.c
+  )
+endif (WIN32)
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
     set (MMFILES

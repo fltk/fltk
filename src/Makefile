@@ -209,7 +209,7 @@ IMGCPPFILES = \
 	Fl_PNM_Image.cxx
 
 
-CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
+CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
 
 UTF8CFILES = \
 	xutf8/case.c \
@@ -257,7 +257,8 @@ XLIBCPPFILES = \
 
 # This C file is used under condition: BUILD_X11
 XLIBCFILES = \
-        xutf8/keysym2Ucs.c
+        xutf8/keysym2Ucs.c \
+        scandir_posix.c
 
 # These C files are used under condition: BUILD_X11 AND NOT BUILD_XFT
 XLIBXCFILES = \
@@ -294,6 +295,10 @@ GDICPPFILES = \
         Fl_Native_File_Chooser_WIN32.cxx \
         Fl_get_key_win32.cxx
 
+# These C files are used under condition: BUILD_GDI
+GDICFILES = \
+        scandir_win32.c
+
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \
 	drivers/PostScript/Fl_PostScript_image.cxx
@@ -314,6 +319,8 @@ CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
 
 CFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCFILES); fi)
 CFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo $(XLIBXCFILES); fi)
+
+CFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICFILES); fi)
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
@@ -595,6 +602,7 @@ include makedepend
 # (like "*xft*") here:
 Fl_get_key_mac.o:	Fl_get_key_mac.cxx
 Fl_get_key_win32.o:	Fl_get_key_win32.cxx
+scandir_win32.o   scandir_win32.c
 Fl_Native_File_Chooser_WIN32.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl_Native_File_Chooser_FLTK.o:	Fl_Native_File_Chooser_FLTK.cxx

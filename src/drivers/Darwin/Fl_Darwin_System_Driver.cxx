@@ -20,6 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_Darwin_System_Driver.H"
 #include <FL/Fl.H>
+#include <FL/filename.H>
 #include <string.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 #include <xlocale.h>
@@ -86,6 +87,52 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
 void *Fl_Darwin_System_Driver::get_carbon_function(const char *function_name) {
   static void *carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
   return (carbon ? dlsym(carbon, function_name) : NULL);
+}
+
+int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {
+  int dirlen;
+  char *dirloc;
+  // Assume that locale encoding is no less dense than UTF-8
+  dirlen = strlen(d);
+  dirloc = (char *)d;
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+  int n = scandir(dirloc, list, 0, (int(*)(const struct dirent**,const struct dirent**))sort);
+# else
+  int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
+# endif
+  // convert every filename to utf-8, and append a '/' to all
+  // filenames that are directories
+  int i;
+  char *fullname = (char*)malloc(dirlen+FL_PATH_MAX+3); // Add enough extra for two /'s and a nul
+  // Use memcpy for speed since we already know the length of the string...
+  memcpy(fullname, d, dirlen+1);
+  char *name = fullname + dirlen;
+  if (name!=fullname && name[-1]!='/') *name++ = '/';  
+  for (i=0; i<n; i++) {
+    int newlen;
+    dirent *de = (*list)[i];
+    int len = strlen(de->d_name);
+    newlen = len;
+    dirent *newde = (dirent*)malloc(de->d_name - (char*)de + newlen + 2); // Add space for a / and a nul
+    // Conversion to UTF-8
+    memcpy(newde, de, de->d_name - (char*)de);
+    strcpy(newde->d_name, de->d_name);
+    // Check if dir (checks done on "old" name as we need to interact with
+    // the underlying OS)
+    if (de->d_name[len-1]!='/' && len<=FL_PATH_MAX) {
+      // Use memcpy for speed since we already know the length of the string...
+      memcpy(name, de->d_name, len+1);
+      if (fl_filename_isdir(fullname)) {
+        char *dst = newde->d_name + newlen;
+        *dst++ = '/';
+        *dst = 0;
+      }
+    }
+    free(de);
+    (*list)[i] = newde;
+  }
+  free(fullname);
+  return n;
 }
 
 //

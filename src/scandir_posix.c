@@ -32,6 +32,7 @@
  * http://womble.decadent.org.uk/readdir_r-advisory.html
  */
 
+#include <config.h>
 #ifndef HAVE_PTHREAD
    /* Switch system headers into POSIX.1-1990 mode */
 #  define _POSIX_SOURCE
