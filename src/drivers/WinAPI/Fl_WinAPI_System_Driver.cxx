@@ -21,6 +21,7 @@
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
+#include <FL/filename.H>
 #include <stdio.h>
 #include <stdarg.h>
 #include <windows.h>
@@ -612,6 +613,39 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
   strlcpy(to, temp, tolen);
   delete[] temp;
   return 1;
+}
+
+int Fl_WinAPI_System_Driver::filename_isdir(const char* n)
+{
+  struct stat	s;
+  char		fn[FL_PATH_MAX];
+  int		length;
+  length = (int) strlen(n);
+  // This workaround brought to you by the fine folks at Microsoft!
+  // (read lots of sarcasm in that...)
+  if (length < (int)(sizeof(fn) - 1)) {
+    if (length < 4 && isalpha(n[0]) && n[1] == ':' &&
+        (isdirsep(n[2]) || !n[2])) {
+      // Always use D:/ for drive letters
+      fn[0] = n[0];
+      strcpy(fn + 1, ":/");
+      n = fn;
+    } else if (length > 0 && isdirsep(n[length - 1])) {
+      // Strip trailing slash from name...
+      length --;
+      memcpy(fn, n, length);
+      fn[length] = '\0';
+      n = fn;
+    }
+  }
+  return !stat(n, &s) && (s.st_mode & S_IFMT) == S_IFDIR;
+}
+
+int Fl_WinAPI_System_Driver::filename_isdir_quick(const char* n)
+{
+  // Do a quick optimization for filenames with a trailing slash...
+  if (*n && isdirsep(n[strlen(n) - 1])) return 1;
+  return filename_isdir(n);
 }
 
 //

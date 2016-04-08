@@ -106,6 +106,10 @@ public:
   virtual int filename_relative(char *to, int tolen, const char *from, const char *base);
   // the default implementation of filename_absolute() is in src/filename_absolute.cxx and may be enough
   virtual int filename_absolute(char *to, int tolen, const char *from);
+  // the default implementation of filename_isdir() is in src/filename_isdir.cxx and may be enough
+  virtual int filename_isdir(const char* n);
+  // the default implementation of filename_isdir_quick() is in src/filename_isdir.cxx and may be enough
+  virtual int filename_isdir_quick(const char* n);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

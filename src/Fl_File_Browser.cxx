@@ -37,6 +37,8 @@
 //
 
 #include <FL/Fl_File_Browser.H>
+#include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
 #include <FL/Fl_Image.H>	// icon
@@ -700,7 +702,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
         icon = Fl_File_Icon::find(filename);
 	if ((icon && icon->type() == Fl_File_Icon::DIRECTORY) ||
-	     _fl_filename_isdir_quick(filename)) {
+            Fl::system_driver()->filename_isdir_quick(filename)) {
           num_dirs ++;
           insert(num_dirs, files[i]->d_name, icon);
 	} else if (filetype_ == FILES &&

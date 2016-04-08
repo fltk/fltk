@@ -344,7 +344,8 @@
 //
 
 #include <FL/Fl_File_Chooser.H>
-#include <FL/Fl_System_Driver.H> // for struct stat
+#include <FL/Fl_System_Driver.H>
+#include <FL/Fl.H>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 #include <FL/x.H>
@@ -724,9 +725,9 @@ Fl_File_Chooser::fileListCB()
   if (Fl::event_clicks()) {
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((strlen(pathname) == 2 && pathname[1] == ':') ||
-        _fl_filename_isdir_quick(pathname))
+        Fl::system_driver()->filename_isdir_quick(pathname))
 #else
-    if (_fl_filename_isdir_quick(pathname))
+    if (Fl::system_driver()->filename_isdir_quick(pathname))
 #endif /* WIN32 || __EMX__ */
     {
       // Change directories...
@@ -790,7 +791,7 @@ Fl_File_Chooser::fileListCB()
     if (callback_) (*callback_)(this, data_);
 
     // Activate the OK button as needed...
-    if (!_fl_filename_isdir_quick(pathname) || (type_ & DIRECTORY))
+    if (!Fl::system_driver()->filename_isdir_quick(pathname) || (type_ & DIRECTORY))
       okButton->activate();
     else
       okButton->deactivate();
@@ -857,15 +858,15 @@ Fl_File_Chooser::fileNameCB()
     // Enter pressed - select or change directory...
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((isalpha(pathname[0] & 255) && pathname[1] == ':' && !pathname[2]) ||
-        (_fl_filename_isdir_quick(pathname) &&
+        (Fl::system_driver()->filename_isdir_quick(pathname) &&
 	 compare_dirnames(pathname, directory_))) {
 #else
-    if (_fl_filename_isdir_quick(pathname) &&
+    if (Fl::system_driver()->filename_isdir_quick(pathname) &&
 	compare_dirnames(pathname, directory_)) {
 #endif /* WIN32 || __EMX__ */
       directory(pathname);
     } else if ((type_ & CREATE) || access(pathname, 0) == 0) {
-      if (!_fl_filename_isdir_quick(pathname) || (type_ & DIRECTORY)) {
+      if (!Fl::system_driver()->filename_isdir_quick(pathname) || (type_ & DIRECTORY)) {
 	// Update the preview box...
 	update_preview();
 
