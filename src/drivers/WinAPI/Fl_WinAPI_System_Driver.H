@@ -70,6 +70,8 @@ public:
   virtual int get_key(int k);
   virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
   virtual int filename_expand(char *to,int tolen, const char *from);
+  virtual int filename_relative(char *to, int tolen, const char *from, const char *base);
+  virtual int filename_absolute(char *to, int tolen, const char *from);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

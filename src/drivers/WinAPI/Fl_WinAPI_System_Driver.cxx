@@ -486,6 +486,134 @@ int Fl_WinAPI_System_Driver::filename_expand(char *to,int tolen, const char *fro
   return ret;
 }
 
+int                                                     // O - 0 if no change, 1 if changed
+Fl_WinAPI_System_Driver::filename_relative(char *to,	// O - Relative filename
+                                    int        tolen,   // I - Size of "to" buffer
+                                    const char *from,   // I - Absolute filename
+                                    const char *base)   // I - Find path relative to this path
+{
+  char          *newslash;		// Directory separator
+  const char	*slash;			// Directory separator
+  char          *cwd = 0L, *cwd_buf = 0L;
+  if (base) cwd = cwd_buf = strdup(base);
+  
+  // return if "from" is not an absolute path
+  if (from[0] == '\0' ||
+      (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
+       !isdirsep(from[2]))) {
+        strlcpy(to, from, tolen);
+        if (cwd_buf) free(cwd_buf);
+        return 0;
+      }
+  
+  // return if "cwd" is not an absolute path
+  if (!cwd || cwd[0] == '\0' ||
+      (!isdirsep(*cwd) && !isalpha(*cwd) && cwd[1] != ':' &&
+       !isdirsep(cwd[2]))) {
+        strlcpy(to, from, tolen);
+        if (cwd_buf) free(cwd_buf);
+        return 0;
+      }
+  
+  // convert all backslashes into forward slashes
+  for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
+    *newslash = '/';
+  
+  // test for the exact same string and return "." if so
+  if (!strcasecmp(from, cwd)) {
+    strlcpy(to, ".", tolen);
+    free(cwd_buf);
+    return (1);
+  }
+  
+  // test for the same drive. Return the absolute path if not
+  if (tolower(*from & 255) != tolower(*cwd & 255)) {
+    // Not the same drive...
+    strlcpy(to, from, tolen);
+    free(cwd_buf);
+    return 0;
+  }
+  
+  // compare the path name without the drive prefix
+  from += 2; cwd += 2;
+  
+  // compare both path names until we find a difference
+  for (slash = from, newslash = cwd;
+       *slash != '\0' && *newslash != '\0';
+       slash ++, newslash ++)
+    if (isdirsep(*slash) && isdirsep(*newslash)) continue;
+    else if (tolower(*slash & 255) != tolower(*newslash & 255)) break;
+  
+  // skip over trailing slashes
+  if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
+      &&(newslash==cwd || !isdirsep(newslash[-1])) )
+    newslash--;
+  
+  // now go back to the first character of the first differing paths segment
+  while (!isdirsep(*slash) && slash > from) slash --;
+  if (isdirsep(*slash)) slash ++;
+  
+  // do the same for the current dir
+  if (isdirsep(*newslash)) newslash --;
+  if (*newslash != '\0')
+    while (!isdirsep(*newslash) && newslash > cwd) newslash --;
+  
+  // prepare the destination buffer
+  to[0]         = '\0';
+  to[tolen - 1] = '\0';
+  
+  // now add a "previous dir" sequence for every following slash in the cwd
+  while (*newslash != '\0') {
+    if (isdirsep(*newslash)) strlcat(to, "../", tolen);
+    newslash ++;
+  }
+  
+  // finally add the differing path from "from"
+  strlcat(to, slash, tolen);
+  
+  free(cwd_buf);
+  return 1;
+}
+
+int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
+  if (isdirsep(*from) || *from == '|' || from[1]==':') {
+    strlcpy(to, from, tolen);
+    return 0;
+  }
+  char *a;
+  char *temp = new char[tolen];
+  const char *start = from;
+  a = getcwd(temp, tolen);
+  if (!a) {
+    strlcpy(to, from, tolen);
+    delete[] temp;
+    return 0;
+  }
+  for (a = temp; *a; a++) if (*a=='\\') *a = '/'; // ha ha
+  if (isdirsep(*(a-1))) a--;
+  /* remove intermediate . and .. names: */
+  while (*start == '.') {
+    if (start[1]=='.' && isdirsep(start[2])) {
+      char *b;
+      for (b = a-1; b >= temp && !isdirsep(*b); b--) {/*empty*/}
+      if (b < temp) break;
+      a = b;
+      start += 3;
+    } else if (isdirsep(start[1])) {
+      start += 2;
+    } else if (!start[1]) {
+      start ++; // Skip lone "."
+      break;
+    } else
+      break;
+  }
+  *a++ = '/';
+  strlcpy(a,start,tolen - (a - temp));
+  strlcpy(to, temp, tolen);
+  delete[] temp;
+  return 1;
+}
+
 //
 // End of "$Id$".
 //
