@@ -110,6 +110,8 @@ public:
   virtual int filename_isdir(const char* n);
   // the default implementation of filename_isdir_quick() is in src/filename_isdir.cxx and may be enough
   virtual int filename_isdir_quick(const char* n);
+  // the default implementation of filename_iext() is in src/filename_ext.cxx and may be enough
+  virtual const char *filename_ext(const char *buf);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

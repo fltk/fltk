@@ -648,6 +648,16 @@ int Fl_WinAPI_System_Driver::filename_isdir_quick(const char* n)
   return filename_isdir(n);
 }
 
+const char *Fl_WinAPI_System_Driver::filename_ext(const char *buf) {
+  const char *q = 0;
+  const char *p = buf;
+  for (p = buf; *p; p++) {
+    if (isdirsep(*p) ) q = 0;
+    else if (*p == '.') q = p;
+  }
+  return q ? q : p;
+}
+
 //
 // End of "$Id$".
 //

@@ -16,18 +16,10 @@
 //     http://www.fltk.org/str.php
 //
 
-// returns pointer to the last '.' or to the null if none:
+#include <FL/Fl_System_Driver.H>
+#include <FL/Fl.H>
 
-#include <FL/filename.H>
-
-#ifdef WIN32
-#elif defined(__APPLE__) // PORTME: Fl_System_Driver - filename stuff
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement directory and filename handling for your platform if needed"
-#else // X11
-#endif
-
-/** Gets the extensions of a filename.
+/** Gets the extension of a filename.
    \code
    #include <FL/filename.H>
    [..]
@@ -39,13 +31,14 @@
    \return a pointer to the extension (including '.') if any or NULL otherwise
  */
 const char *fl_filename_ext(const char *buf) {
+  return Fl::system_driver()->filename_ext(buf);
+}
+
+const char *Fl_System_Driver::filename_ext(const char *buf) {
   const char *q = 0;
   const char *p = buf;
   for (p=buf; *p; p++) {
     if (*p == '/') q = 0;
-#if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
-    else if (*p == '\\') q = 0;
-#endif
     else if (*p == '.') q = p;
   }
   return q ? q : p;
