@@ -23,11 +23,13 @@
 
 #include <FL/x.H>
 #include <FL/fl_draw.H>
-#ifdef __APPLE__ // PORTME: Fl_Window_Driver - platform overlay
-#include <config.h>
-#endif
 
 //#define USE_XOR
+// unless USE_XOR is defined, this source file is cross-platform
+
+#ifdef USE_XOR
+#include <config.h>
+#endif
 
 static int px,py,pw,ph;
 
@@ -49,7 +51,7 @@ static void draw_current_rect() {
   int old = SetROP2(fl_graphics_driver->gc(), R2_NOT);
   fl_rect(px, py, pw, ph);
   SetROP2(fl_graphics_driver->gc(), old);
-# elif defined(__APPLE_QUARTZ__) // PORTME: Fl_Window_Driver - platform overlay
+# elif defined(__APPLE_) // PORTME: Fl_Window_Driver - platform overlay
   // warning: Quartz does not support xor drawing
   // Use the Fl_Overlay_Window instead.
   fl_color(FL_WHITE);
@@ -77,7 +79,7 @@ static void draw_current_rect() {
   fl_line_style(FL_DOT);
   fl_rect(px, py, pw, ph);
   fl_line_style(FL_SOLID);
-#endif
+#endif // USE_XOR
 }
 
 static void erase_current_rect() {
