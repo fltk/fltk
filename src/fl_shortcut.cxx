@@ -32,20 +32,16 @@
 // This allows punctuation shortcuts like "#" to work (rather than
 // calling it "shift+3" on a US keyboard)
 
+#include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
 #include <ctype.h>
 #include "flstring.h"
-
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Screen_Driver - platform keyboard feel
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement keyboard shortcut handling here"
-#else
-#include <X11/Xlib.h>
-#endif
 
 /**
   Tests the current event, which must be an FL_KEYBOARD or
@@ -85,79 +81,6 @@ int Fl::test_shortcut(unsigned int shortcut) {
       && firstChar==(key^0x40)) return 1; // firstChar should be within a-z
   return 0;
 }
-
-// This table must be in numeric order by fltk (X) keysym number:
-struct Keyname {unsigned int key; const char* name;};
-#if defined(WIN32)
-static Keyname table[] = {
-  {' ', "Space"},
-  {FL_BackSpace, "Backspace"},
-  {FL_Tab,	"Tab"},
-  {0xff0b/*XK_Clear*/, "Clear"},
-  {FL_Enter,	"Enter"}, // X says "Enter"
-  {FL_Pause,	"Pause"},
-  {FL_Scroll_Lock, "Scroll_Lock"},
-  {FL_Escape,	"Escape"},
-  {FL_Home,	"Home"},
-  {FL_Left,	"Left"},
-  {FL_Up,	"Up"},
-  {FL_Right,	"Right"},
-  {FL_Down,	"Down"},
-  {FL_Page_Up,	"Page_Up"}, // X says "Prior"
-  {FL_Page_Down,"Page_Down"}, // X says "Next"
-  {FL_End,	"End"},
-  {FL_Print,	"Print"},
-  {FL_Insert,	"Insert"},
-  {FL_Menu,	"Menu"},
-  {FL_Num_Lock,	"Num_Lock"},
-  {FL_KP_Enter,	"KP_Enter"},
-  {FL_Shift_L,	"Shift_L"},
-  {FL_Shift_R,	"Shift_R"},
-  {FL_Control_L,"Control_L"},
-  {FL_Control_R,"Control_R"},
-  {FL_Caps_Lock,"Caps_Lock"},
-  {FL_Meta_L,	"Meta_L"},
-  {FL_Meta_R,	"Meta_R"},
-  {FL_Alt_L,	"Alt_L"},
-  {FL_Alt_R,	"Alt_R"},
-  {FL_Delete,	"Delete"}
-};
-#elif defined(__APPLE__)  // PORTME: Fl_Screen_Driver - platform keyboard feel
-static Keyname table[] = {
-  //             v - this column may contain UTF-8 characters
-  {' ',         "Space"},
-  {FL_BackSpace,"\xe2\x8c\xab"}, // erase to the left
-  {FL_Tab,	"\xe2\x87\xa5"}, // rightwards arrow to bar
-  {0xff0b,      "\xe2\x8c\xa6"}, // erase to the right
-  {FL_Enter,	"\xe2\x86\xa9"}, // leftwards arrow with hook
-  {FL_Pause,	"Pause"},
-  {FL_Scroll_Lock, "Scroll_Lock"},
-  {FL_Escape,	"\xe2\x90\x9b"},
-  {FL_Home,	"\xe2\x86\x96"}, // north west arrow
-  {FL_Left,	"\xe2\x86\x90"}, // leftwards arrow
-  {FL_Up,	"\xe2\x86\x91"}, // upwards arrow
-  {FL_Right,	"\xe2\x86\x92"}, // rightwards arrow
-  {FL_Down,	"\xe2\x86\x93"}, // downwards arrow
-  {FL_Page_Up,	"\xe2\x87\x9e"}, // upwards arrow with double stroke
-  {FL_Page_Down,"\xe2\x87\x9f"}, // downwards arrow with double stroke
-  {FL_End,	"\xe2\x86\x98"}, // south east arrow
-  {FL_Print,	"Print"},
-  {FL_Insert,	"Insert"},
-  {FL_Menu,	"Menu"},
-  {FL_Num_Lock,	"Num_Lock"},
-  {FL_KP_Enter,	"\xe2\x8c\xa4"}, // up arrow head between two horizontal bars
-  {FL_Shift_L,	"Shift_L"},
-  {FL_Shift_R,	"Shift_R"},
-  {FL_Control_L,"Control_L"},
-  {FL_Control_R,"Control_R"},
-  {FL_Caps_Lock,"\xe2\x87\xaa"}, // upwards white arrow from bar
-  {FL_Meta_L,	"Meta_L"},
-  {FL_Meta_R,	"Meta_R"},
-  {FL_Alt_L,	"Alt_L"},
-  {FL_Alt_R,	"Alt_R"},
-  {FL_Delete,	"\xe2\x8c\xa7"}  // x in a rectangle box
-};
-#endif
 
 /**
   Get a human-readable string from a shortcut value.
@@ -272,61 +195,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
   if (eom) *eom = p;
 
   // add key name
-#if defined(WIN32) || defined(__APPLE__) // if not X // PORTME: Fl_Screen_Driver - platform keyboard feel
-  if (key >= FL_F && key <= FL_F_Last) {
-    *p++ = 'F';
-    if (key > FL_F+9) *p++ = (key-FL_F)/10+'0';
-    *p++ = (key-FL_F)%10 + '0';
-  } else {
-    // binary search the table for a match:
-    int a = 0;
-    int b = sizeof(table)/sizeof(*table);
-    while (a < b) {
-      int c = (a+b)/2;
-      if (table[c].key == key) {
-        if (p > buf) {
-          strcpy(p,table[c].name); 
-          return buf;
-        } else {
-          const char *sp = table[c].name;
-          if (eom) *eom = sp;
-          return sp;
-        }
-      }
-      if (table[c].key < key) a = c+1;
-      else b = c;
-    }
-    if (key >= FL_KP && key <= FL_KP_Last) {
-      // mark keypad keys with KP_ prefix
-      strcpy(p,"KP_"); p += 3;
-      *p++ = uchar(key & 127);
-    } else {
-      // if none found, use the keystroke as a match:
-      p += fl_utf8encode(fl_toupper(key), p); 
-    }
-  }
-  *p = 0;
-  return buf;
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement fl_shortcut_label"
-#else
-  const char* q;
-  if (key == FL_Enter || key == '\r') q="Enter";  // don't use Xlib's "Return":
-  else if (key > 32 && key < 0x100) q = 0;
-  else q = XKeysymToString(key);
-  if (!q) {
-    p += fl_utf8encode(fl_toupper(key), p); 
-    *p = 0; 
-    return buf;
-  }
-  if (p > buf) {
-    strcpy(p,q); 
-    return buf;
-  } else {
-    if (eom) *eom = q;
-    return q;
-  }
-#endif
+  return Fl::system_driver()->shortcut_add_key_name(key, p, buf, eom);
 }
 
 /**
@@ -459,25 +328,22 @@ unsigned int Fl_Widget::label_shortcut(const char *t) {
   \note Internal use only.
 */
 int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
+  static int extra_test = Fl::system_driver()->need_test_shortcut_extra();
   if (!t) return 0;
   // for menubars etc. shortcuts must work only if the Alt modifier is pressed
   if (require_alt && Fl::event_state(FL_ALT)==0) return 0;
   unsigned int c = fl_utf8decode(Fl::event_text(), Fl::event_text()+Fl::event_length(), 0);
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
   // this line makes underline shortcuts work the same way they do on MSWindow
   // and Linux. 
-  if (c && Fl::event_state(FL_ALT)) 
+  if (extra_test && c && Fl::event_state(FL_ALT))
     c = Fl::event_key();
-#endif
   if (!c) return 0;
   unsigned int ls = label_shortcut(t);
   if (c == ls)
     return 1;
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform keyboard feel
   // On OS X, we need to simulate the upper case keystroke as well
-  if (Fl::event_state(FL_ALT) && c<128 && isalpha(c) && (unsigned)toupper(c)==ls)
+  if (extra_test && Fl::event_state(FL_ALT) && c<128 && isalpha(c) && (unsigned)toupper(c)==ls)
     return 1;
-#endif
   return 0;
 }
 
@@ -499,6 +365,146 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
 int Fl_Widget::test_shortcut() {
   if (!(flags()&SHORTCUT_LABEL)) return 0;
   return test_shortcut(label());
+}
+
+#if defined(FL_CFG_GFX_GDI)
+// This table must be in numeric order by fltk (X) keysym number:
+Fl_System_Driver::Keyname Fl_System_Driver::table[] = {
+  {' ', "Space"},
+  {FL_BackSpace, "Backspace"},
+  {FL_Tab,	"Tab"},
+  {0xff0b/*XK_Clear*/, "Clear"},
+  {FL_Enter,	"Enter"}, // X says "Enter"
+  {FL_Pause,	"Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,	"Escape"},
+  {FL_Home,	"Home"},
+  {FL_Left,	"Left"},
+  {FL_Up,	"Up"},
+  {FL_Right,	"Right"},
+  {FL_Down,	"Down"},
+  {FL_Page_Up,	"Page_Up"}, // X says "Prior"
+  {FL_Page_Down,"Page_Down"}, // X says "Next"
+  {FL_End,	"End"},
+  {FL_Print,	"Print"},
+  {FL_Insert,	"Insert"},
+  {FL_Menu,	"Menu"},
+  {FL_Num_Lock,	"Num_Lock"},
+  {FL_KP_Enter,	"KP_Enter"},
+  {FL_Shift_L,	"Shift_L"},
+  {FL_Shift_R,	"Shift_R"},
+  {FL_Control_L,"Control_L"},
+  {FL_Control_R,"Control_R"},
+  {FL_Caps_Lock,"Caps_Lock"},
+  {FL_Meta_L,	"Meta_L"},
+  {FL_Meta_R,	"Meta_R"},
+  {FL_Alt_L,	"Alt_L"},
+  {FL_Alt_R,	"Alt_R"},
+  {FL_Delete,	"Delete"}
+};
+#endif
+
+#if defined(FL_CFG_GFX_QUARTZ)
+// This table must be in numeric order by fltk (X) keysym number:
+Fl_System_Driver::Keyname Fl_System_Driver::table[] = {
+  //             v - this column may contain UTF-8 characters
+  {' ',         "Space"},
+  {FL_BackSpace,"\xe2\x8c\xab"}, // erase to the left
+  {FL_Tab,	"\xe2\x87\xa5"}, // rightwards arrow to bar
+  {0xff0b,      "\xe2\x8c\xa6"}, // erase to the right
+  {FL_Enter,	"\xe2\x86\xa9"}, // leftwards arrow with hook
+  {FL_Pause,	"Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,	"\xe2\x90\x9b"},
+  {FL_Home,	"\xe2\x86\x96"}, // north west arrow
+  {FL_Left,	"\xe2\x86\x90"}, // leftwards arrow
+  {FL_Up,	"\xe2\x86\x91"}, // upwards arrow
+  {FL_Right,	"\xe2\x86\x92"}, // rightwards arrow
+  {FL_Down,	"\xe2\x86\x93"}, // downwards arrow
+  {FL_Page_Up,	"\xe2\x87\x9e"}, // upwards arrow with double stroke
+  {FL_Page_Down,"\xe2\x87\x9f"}, // downwards arrow with double stroke
+  {FL_End,	"\xe2\x86\x98"}, // south east arrow
+  {FL_Print,	"Print"},
+  {FL_Insert,	"Insert"},
+  {FL_Menu,	"Menu"},
+  {FL_Num_Lock,	"Num_Lock"},
+  {FL_KP_Enter,	"\xe2\x8c\xa4"}, // up arrow head between two horizontal bars
+  {FL_Shift_L,	"Shift_L"},
+  {FL_Shift_R,	"Shift_R"},
+  {FL_Control_L,"Control_L"},
+  {FL_Control_R,"Control_R"},
+  {FL_Caps_Lock,"\xe2\x87\xaa"}, // upwards white arrow from bar
+  {FL_Meta_L,	"Meta_L"},
+  {FL_Meta_R,	"Meta_R"},
+  {FL_Alt_L,	"Alt_L"},
+  {FL_Alt_R,	"Alt_R"},
+  {FL_Delete,	"\xe2\x8c\xa7"}  // x in a rectangle box
+};
+#endif
+
+#if defined(FL_CFG_GFX_XLIB)
+#include "drivers/Posix/Fl_Posix_System_Driver.H"
+#include <X11/Xlib.h>
+
+Fl_System_Driver::Keyname Fl_System_Driver::table[] = {};
+
+const char *Fl_Posix_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
+{
+  const char* q;
+  if (key == FL_Enter || key == '\r') q="Enter";  // don't use Xlib's "Return":
+  else if (key > 32 && key < 0x100) q = 0;
+  else q = XKeysymToString(key);
+  if (!q) {
+    p += fl_utf8encode(fl_toupper(key), p);
+    *p = 0;
+    return buf;
+  }
+  if (p > buf) {
+    strcpy(p,q);
+    return buf;
+  } else {
+    if (eom) *eom = q;
+    return q;
+  }
+}
+#endif
+
+const char *Fl_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
+{
+  if (key >= FL_F && key <= FL_F_Last) {
+    *p++ = 'F';
+    if (key > FL_F+9) *p++ = (key-FL_F)/10+'0';
+    *p++ = (key-FL_F)%10 + '0';
+  } else {
+    // binary search the table for a match:
+    int a = 0;
+    int b = sizeof(table)/sizeof(*table);
+    while (a < b) {
+      int c = (a+b)/2;
+      if (table[c].key == key) {
+        if (p > buf) {
+          strcpy(p,table[c].name);
+          return buf;
+        } else {
+          const char *sp = table[c].name;
+          if (eom) *eom = sp;
+          return sp;
+        }
+      }
+      if (table[c].key < key) a = c+1;
+      else b = c;
+    }
+    if (key >= FL_KP && key <= FL_KP_Last) {
+      // mark keypad keys with KP_ prefix
+      strcpy(p,"KP_"); p += 3;
+      *p++ = uchar(key & 127);
+    } else {
+      // if none found, use the keystroke as a match:
+      p += fl_utf8encode(fl_toupper(key), p);
+    }
+  }
+  *p = 0;
+  return buf;
 }
 
 //

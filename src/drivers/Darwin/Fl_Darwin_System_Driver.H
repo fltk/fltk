@@ -74,6 +74,7 @@ public:
   virtual const char *getpwnam(const char *login);
   virtual int need_menu_handle_part2() {return 1;}
   virtual int open_uri(const char *uri, char *msg, int msglen);
+  virtual int need_test_shortcut_extra() {return 1;}
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

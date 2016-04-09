@@ -73,6 +73,8 @@ public:
   virtual int need_menu_handle_part1_extra() {return 1;}
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int use_tooltip_timeout_condition() {return 1;}
+  // this one is in fl_shortcut.cxx
+  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

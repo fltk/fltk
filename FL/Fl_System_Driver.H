@@ -39,6 +39,8 @@ protected:
   // implement once for each platform
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
+  struct Keyname {unsigned int key; const char* name;};
+  static Keyname table[];
 public:
   virtual ~Fl_System_Driver();
   // These flags are useful after calling XParseGeometry(). They indicate which of its arguments
@@ -122,6 +124,10 @@ public:
   virtual int use_tooltip_timeout_condition() {return 0;}
   // the default implementation of use_recent_tooltip_fix() may be enough
   virtual int use_recent_tooltip_fix() {return 0;}
+  // the default implementation of shortcut_add_key_name() is in src/fl_shortcut.cxx
+  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
+  // the default implementation of need_test_shortcut_extra() may be enough
+  virtual int need_test_shortcut_extra() {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
