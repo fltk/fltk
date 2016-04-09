@@ -104,7 +104,7 @@ FL_EXPORT int fl_utf8test(const char *src, unsigned len);
  * for internal use only */
 FL_EXPORT int fl_wcwidth_(unsigned int ucs);
 
-/* XX: return width of utf-8 character string in columns.
+/* XX: return width of UTF-8 character string in columns.
  * NOTE: this may also do C1 control character (0x80 to 0x9f) to CP1252 mapping,
  * depending on original build options */
 FL_EXPORT int fl_wcwidth(const char *src);

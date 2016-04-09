@@ -93,7 +93,7 @@ XConvertUtf8ToUcs(const unsigned char     *buf,
     return 1;
   } 
 
-  *ucs = (unsigned int) '?'; /* bad utf-8 string */
+  *ucs = (unsigned int) '?'; /* bad UTF-8 string */
   return -1;
 }
 
@@ -220,7 +220,7 @@ XFastConvertUtf8ToUcs(const unsigned char     *buf,
     return 1;
   } 
 
-  *ucs = (unsigned int) '?'; /* bad utf-8 string */
+  *ucs = (unsigned int) '?'; /* bad UTF-8 string */
   return -1;
 }
 

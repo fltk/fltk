@@ -1384,7 +1384,7 @@ fprintf(stderr,"\n");*/
 	    type = t;
 	    break;
 	  }
-	  // rest are only used if no utf-8 available:
+	  // rest are only used if no UTF-8 available:
 	  if (t == fl_XaText ||
 	      t == fl_XaTextUriList ||
 	      t == fl_XaCompoundText) type = t;
@@ -1625,7 +1625,7 @@ fprintf(stderr,"\n");*/
           type = t;
           break;
 	}
-        // rest are only used if no utf-8 available:
+        // rest are only used if no UTF-8 available:
         if (t == fl_XaText ||			// "TEXT"
             t == fl_XaTextUriList ||		// "text/uri-list"
             t == fl_XaCompoundText) type = t;	// "COMPOUND_TEXT"

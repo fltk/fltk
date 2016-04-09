@@ -144,16 +144,16 @@ public: // run time information about compile time configuration
   /** @{ */
   static bool cfg_gfx_xlib;   ///< X11 Xlib rendering available, usually on Linux systems
   static bool cfg_gfx_quartz; ///< Quartz rendering available, usually on OS X systems
-  static bool cfg_gfx_gdi;    ///< GDI redering available, usually on MSWindows systems
-  static bool cfg_gfx_opengl; ///< OpenGL redering available, available on many platforms
-  static bool cfg_gfx_cairo;  ///< Cairo redering available, available on many platforms
-  static bool cfg_gfx_directx;///< DirectX redering available, usually on MSWindows systems
+  static bool cfg_gfx_gdi;    ///< GDI rendering available, usually on MSWindows systems
+  static bool cfg_gfx_opengl; ///< OpenGL rendering available, available on many platforms
+  static bool cfg_gfx_cairo;  ///< Cairo rendering available, available on many platforms
+  static bool cfg_gfx_directx;///< DirectX rendering available, usually on MSWindows systems
   /** @} */
   /** \defgroup cfg_prn runtime printer driver configuration */
   /** @{ */
   static bool cfg_prn_ps;     ///< PostScript rendering available, usually on Linux systems
   static bool cfg_prn_quartz; ///< Quartz rendering available, usually on OS X systems
-  static bool cfg_prn_gdi;    ///< GDI redering available, usually on MSWindows systems
+  static bool cfg_prn_gdi;    ///< GDI rendering available, usually on MSWindows systems
   /** @} */
   /** \defgroup cfg_win runtime window and event manager configuration */
   /** @{ */

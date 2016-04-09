@@ -101,7 +101,7 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*
 # else
   int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
 # endif
-  // convert every filename to utf-8, and append a '/' to all
+  // convert every filename to UTF-8, and append a '/' to all
   // filenames that are directories
   int i;
   char *fullname = (char*)malloc(dirlen+FL_PATH_MAX+3); // Add enough extra for two /'s and a nul

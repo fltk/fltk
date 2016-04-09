@@ -449,7 +449,7 @@ XUtf8LookupString(XIC                 ic,
   }
   return len;
 }
-#endif /* X11 has utf-8 */
+#endif /* X11 has UTF-8 */
 
 #endif /* X11 only */
 

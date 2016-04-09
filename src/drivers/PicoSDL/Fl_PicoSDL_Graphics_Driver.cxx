@@ -26,7 +26,7 @@
 #undef __APPLE__
 
 /*
- * By linking this module, the following static method will instatiate the
+ * By linking this module, the following static method will instantiate the
  * PicoSDL Graphics driver as the main display driver.
  */
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()

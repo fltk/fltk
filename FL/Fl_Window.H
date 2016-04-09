@@ -71,7 +71,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   friend class Fl_Window_Driver;
   friend class Fl_PicoAndroid_Window_Driver;
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
-  Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creatino time
+  Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creation time
 
   const char* iconlabel_;
   char* xclass_;

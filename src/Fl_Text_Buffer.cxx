@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2010 by Bill Spitzak and others.
+// Copyright 2001-2016 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -1569,7 +1569,7 @@ static int general_input_filter(char *buffer, int buflen,
       if (r == 0) return q - buffer;
       p = line;
     }
-    if (q + 4 /*max width of utf-8 char*/ > buffer + buflen) {
+    if (q + 4 /*max width of UTF-8 char*/ > buffer + buflen) {
       memmove(line, p, endline - p);
       endline -= (p - line);
       return q - buffer;
