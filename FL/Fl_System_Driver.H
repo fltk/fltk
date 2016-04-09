@@ -116,6 +116,8 @@ public:
   virtual int need_menu_handle_part2() {return 0;}
   // whether a platform uses additional code in Fl_Menu::handle_part1(int e)
   virtual int need_menu_handle_part1_extra() {return 0;}
+  // implement to support fl_open_uri()
+  virtual int open_uri(const char *uri, char *msg, int msglen) {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

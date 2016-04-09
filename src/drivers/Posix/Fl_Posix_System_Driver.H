@@ -44,6 +44,8 @@
 
 class Fl_Posix_System_Driver : public Fl_System_Driver
 {
+private:
+  int run_program(const char *program, char **argv, char *msg, int msglen);
 public:
   virtual void display_arg(const char *arg);
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
@@ -69,6 +71,7 @@ public:
   virtual const char *getpwnam(const char *login);
   virtual int need_menu_handle_part2() {return 1;}
   virtual int need_menu_handle_part1_extra() {return 1;}
+  virtual int open_uri(const char *uri, char *msg, int msglen);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

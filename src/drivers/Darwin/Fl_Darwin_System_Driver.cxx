@@ -143,6 +143,16 @@ const char *Fl_Darwin_System_Driver::getpwnam(const char *login) {
   return pwd ? pwd->pw_dir : NULL;
 }
 
+int Fl_Darwin_System_Driver::open_uri(const char *uri, char *msg, int msglen)
+{
+  char	*argv[3];			// Command-line arguments
+  argv[0] = (char*)"open";
+  argv[1] = (char*)uri;
+  argv[2] = (char*)0;
+  if (msg) snprintf(msg, msglen, "open %s", uri);
+  return run_program("/usr/bin/open", argv, msg, msglen) != 0;
+}
+
 
 //
 // End of "$Id$".

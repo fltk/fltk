@@ -44,6 +44,8 @@
 
 class Fl_Darwin_System_Driver : public Fl_System_Driver
 {
+private:
+  int run_program(const char *program, char **argv, char *msg, int msglen);
 public:
   Fl_Darwin_System_Driver();
   virtual int single_arg(const char *arg);
@@ -71,6 +73,7 @@ public:
   virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
   virtual const char *getpwnam(const char *login);
   virtual int need_menu_handle_part2() {return 1;}
+  virtual int open_uri(const char *uri, char *msg, int msglen);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

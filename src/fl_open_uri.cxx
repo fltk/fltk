@@ -24,33 +24,13 @@
 // Include necessary headers...
 //
 
+#include "config_lib.h"
 #include <FL/filename.H>
+#include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <sys/types.h>
 #include "flstring.h"
-#ifdef WIN32
-#  include <windows.h>
-#  include <shellapi.h>
-#else
-#  include <sys/wait.h>
-#  include <signal.h>
-#  include <fcntl.h>
-#  include <unistd.h>
-#endif // WIN32
-
-
-//
-// Local functions...
-//
-
-#if !defined(WIN32) && !defined(__APPLE__) // PORTME: Fl_System_Driver - platform open doc
-static char	*path_find(const char *program, char *filename, int filesize);
-#endif // !WIN32 && !__APPLE__ // PORTME: Fl_System_Driver - platform open doc
-#ifndef WIN32
-static int	run_program(const char *program, char **argv, char *msg, int msglen);
-#endif // !WIN32
 
 /** \addtogroup filenames
  @{ */
@@ -93,9 +73,7 @@ static int	run_program(const char *program, char **argv, char *msg, int msglen);
  * @param msglen Length of optional buffer
  * @return 1 on success, 0 on failure
  */
-
-int
-fl_open_uri(const char *uri, char *msg, int msglen) {
+int fl_open_uri(const char *uri, char *msg, int msglen) {
   // Supported URI schemes...
   static const char * const schemes[] = {
     "file://",
@@ -125,126 +103,7 @@ fl_open_uri(const char *uri, char *msg, int msglen) {
 
     return 0;
   }
-
-#ifdef WIN32
-  if (msg) snprintf(msg, msglen, "open %s", uri);
-
-  return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
-
-#elif defined(__APPLE__) // PORTME: Fl_System_Driver - platform open doc
-  char	*argv[3];			// Command-line arguments
-
-  argv[0] = (char*)"open";
-  argv[1] = (char*)uri;
-  argv[2] = (char*)0;
-
-  if (msg) snprintf(msg, msglen, "open %s", uri);
-
-  return run_program("/usr/bin/open", argv, msg, msglen) != 0;
-
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: add code to open any file type with an external app"
-
-#else // !WIN32 && !__APPLE__ // PORTME: Fl_System_Driver - platform open doc
-  // Run any of several well-known commands to open the URI.
-  //
-  // We give preference to the Portland group's xdg-utils
-  // programs which run the user's preferred web browser, etc.
-  // based on the current desktop environment in use.  We fall
-  // back on older standards and then finally test popular programs
-  // until we find one we can use.
-  //
-  // Note that we specifically do not support the MAILER and
-  // BROWSER environment variables because we have no idea whether
-  // we need to run the listed commands in a terminal program.
-
-  char	command[FL_PATH_MAX],		// Command to run...
-	*argv[4],			// Command-line arguments
-	remote[1024];			// Remote-mode command...
-  const char * const *commands;		// Array of commands to check...
-  static const char * const browsers[] = {
-    "xdg-open", // Portland
-    "htmlview", // Freedesktop.org
-    "firefox",
-    "mozilla",
-    "netscape",
-    "konqueror", // KDE
-    "opera",
-    "hotjava", // Solaris
-    "mosaic",
-    NULL
-  };
-  static const char * const readers[] = {
-    "xdg-email", // Portland
-    "thunderbird",
-    "mozilla",
-    "netscape",
-    "evolution", // GNOME
-    "kmailservice", // KDE
-    NULL
-  };
-  static const char * const managers[] = {
-    "xdg-open", // Portland
-    "fm", // IRIX
-    "dtaction", // CDE
-    "nautilus", // GNOME
-    "konqueror", // KDE
-    NULL
-  };
-
-  // Figure out which commands to check for...
-  if (!strncmp(uri, "file://", 7)) commands = managers;
-  else if (!strncmp(uri, "mailto:", 7) ||
-           !strncmp(uri, "news:", 5)) commands = readers;
-  else commands = browsers;
-
-  // Find the command to run...
-  for (i = 0; commands[i]; i ++)
-    if (path_find(commands[i], command, sizeof(command))) break;
-
-  if (!commands[i]) {
-    if (msg) {
-      snprintf(msg, msglen, "No helper application found for \"%s\"", uri);
-    }
-
-    return 0;
-  }
-
-  // Handle command-specific arguments...
-  argv[0] = (char *)commands[i];
-
-  if (!strcmp(commands[i], "firefox") ||
-      !strcmp(commands[i], "mozilla") ||
-      !strcmp(commands[i], "netscape") ||
-      !strcmp(commands[i], "thunderbird")) {
-    // program -remote openURL(uri)
-    snprintf(remote, sizeof(remote), "openURL(%s)", uri);
-
-    argv[1] = (char *)"-remote";
-    argv[2] = remote;
-    argv[3] = 0;
-  } else if (!strcmp(commands[i], "dtaction")) {
-    // dtaction open uri
-    argv[1] = (char *)"open";
-    argv[2] = (char *)uri;
-    argv[3] = 0;
-  } else {
-    // program uri
-    argv[1] = (char *)uri;
-    argv[2] = 0;
-  }
-
-  if (msg) {
-    strlcpy(msg, argv[0], msglen);
-
-    for (i = 1; argv[i]; i ++) {
-      strlcat(msg, " ", msglen);
-      strlcat(msg, argv[i], msglen);
-    }
-  }
-
-  return run_program(command, argv, msg, msglen) != 0;
-#endif // WIN32
+  return Fl::system_driver()->open_uri(uri, msg, msglen);
 }
 
 /** Decodes a URL-encoded string.
@@ -270,45 +129,17 @@ void fl_decode_uri(char *uri)
 
 /**   @} */
 
-#if !defined(WIN32) && !defined(__APPLE__) // PORTME: Fl_System_Driver - platform open doc
-// Find a program in the path...
-static char *path_find(const char *program, char *filename, int filesize) {
-  const char	*path;			// Search path
-  char		*ptr,			// Pointer into filename
-		*end;			// End of filename buffer
 
+#if defined(FL_CFG_GFX_XLIB) || defined(FL_CFG_GFX_QUARTZ)
+// code shared by the Mac OS and USE_X11 platforms
+#  include <unistd.h>
+#  include <sys/wait.h>
+#  include <signal.h>
+#  include <fcntl.h>
+#  include <errno.h>
 
-  if ((path = getenv("PATH")) == NULL) path = "/bin:/usr/bin";
-
-  for (ptr = filename, end = filename + filesize - 1; *path; path ++) {
-    if (*path == ':') {
-      if (ptr > filename && ptr[-1] != '/' && ptr < end) *ptr++ = '/';
-
-      strlcpy(ptr, program, end - ptr + 1);
-
-      if (!access(filename, X_OK)) return filename;
-
-      ptr = filename;
-    } else if (ptr < end) *ptr++ = *path;
-  }
-
-  if (ptr > filename) {
-    if (ptr[-1] != '/' && ptr < end) *ptr++ = '/';
-
-    strlcpy(ptr, program, end - ptr + 1);
-
-    if (!access(filename, X_OK)) return filename;
-  }
-
-  return 0;
-}
-#endif // !WIN32 && !__APPLE__ // PORTME: Fl_System_Driver - platform open doc
-
-
-#ifndef WIN32
 // Run the specified program, returning 1 on success and 0 on failure
-static int
-run_program(const char *program, char **argv, char *msg, int msglen) {
+static int run_program(const char *program, char **argv, char *msg, int msglen) {
   pid_t	pid;				// Process ID of first child
   int status;				// Exit status from first child
   sigset_t set, oldset;			// Signal masks
@@ -379,8 +210,26 @@ run_program(const char *program, char **argv, char *msg, int msglen) {
   // Return indicating success...
   return 1;
 }
-#endif // !WIN32
+#endif
 
+#if defined(FL_CFG_GFX_QUARTZ)
+
+#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
+
+int Fl_Darwin_System_Driver::run_program(const char *program, char **argv, char *msg, int msglen)
+{
+  return ::run_program(program, argv, msg, msglen);
+}
+
+#elif defined(FL_CFG_GFX_XLIB)
+#include "drivers/Posix/Fl_Posix_System_Driver.H"
+
+int Fl_Posix_System_Driver::run_program(const char *program, char **argv, char *msg, int msglen)
+{
+  return ::run_program(program, argv, msg, msglen);
+}
+
+#endif
 
 #ifdef TEST
 //
@@ -403,7 +252,6 @@ int main(int argc, char **argv) {
   } else return 0;
 }
 #endif // TEST
-
 
 //
 // End of "$Id$".

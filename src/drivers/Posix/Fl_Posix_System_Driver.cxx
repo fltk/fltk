@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <pwd.h>
+#include <unistd.h>
 
 // Pointers you can use to change FLTK to a foreign language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
@@ -148,6 +149,140 @@ const char *Fl_Posix_System_Driver::getpwnam(const char *login) {
   return pwd ? pwd->pw_dir : NULL;
 }
 
+// Find a program in the path...
+static char *path_find(const char *program, char *filename, int filesize) {
+  const char	*path;			// Search path
+  char		*ptr,			// Pointer into filename
+		*end;			// End of filename buffer
+  
+  
+  if ((path = getenv("PATH")) == NULL) path = "/bin:/usr/bin";
+  
+  for (ptr = filename, end = filename + filesize - 1; *path; path ++) {
+    if (*path == ':') {
+      if (ptr > filename && ptr[-1] != '/' && ptr < end) *ptr++ = '/';
+      
+      strlcpy(ptr, program, end - ptr + 1);
+      
+      if (!access(filename, X_OK)) return filename;
+      
+      ptr = filename;
+    } else if (ptr < end) *ptr++ = *path;
+  }
+  
+  if (ptr > filename) {
+    if (ptr[-1] != '/' && ptr < end) *ptr++ = '/';
+    
+    strlcpy(ptr, program, end - ptr + 1);
+    
+    if (!access(filename, X_OK)) return filename;
+  }
+  
+  return 0;
+}
+
+
+int Fl_Posix_System_Driver::open_uri(const char *uri, char *msg, int msglen)
+{
+  // Run any of several well-known commands to open the URI.
+  //
+  // We give preference to the Portland group's xdg-utils
+  // programs which run the user's preferred web browser, etc.
+  // based on the current desktop environment in use.  We fall
+  // back on older standards and then finally test popular programs
+  // until we find one we can use.
+  //
+  // Note that we specifically do not support the MAILER and
+  // BROWSER environment variables because we have no idea whether
+  // we need to run the listed commands in a terminal program.
+  char	command[FL_PATH_MAX],		// Command to run...
+  *argv[4],			// Command-line arguments
+  remote[1024];			// Remote-mode command...
+  const char * const *commands;		// Array of commands to check...
+  int i;
+  static const char * const browsers[] = {
+    "xdg-open", // Portland
+    "htmlview", // Freedesktop.org
+    "firefox",
+    "mozilla",
+    "netscape",
+    "konqueror", // KDE
+    "opera",
+    "hotjava", // Solaris
+    "mosaic",
+    NULL
+  };
+  static const char * const readers[] = {
+    "xdg-email", // Portland
+    "thunderbird",
+    "mozilla",
+    "netscape",
+    "evolution", // GNOME
+    "kmailservice", // KDE
+    NULL
+  };
+  static const char * const managers[] = {
+    "xdg-open", // Portland
+    "fm", // IRIX
+    "dtaction", // CDE
+    "nautilus", // GNOME
+    "konqueror", // KDE
+    NULL
+  };
+  
+  // Figure out which commands to check for...
+  if (!strncmp(uri, "file://", 7)) commands = managers;
+  else if (!strncmp(uri, "mailto:", 7) ||
+           !strncmp(uri, "news:", 5)) commands = readers;
+  else commands = browsers;
+  
+  // Find the command to run...
+  for (i = 0; commands[i]; i ++)
+    if (path_find(commands[i], command, sizeof(command))) break;
+  
+  if (!commands[i]) {
+    if (msg) {
+      snprintf(msg, msglen, "No helper application found for \"%s\"", uri);
+    }
+    
+    return 0;
+  }
+  
+  // Handle command-specific arguments...
+  argv[0] = (char *)commands[i];
+  
+  if (!strcmp(commands[i], "firefox") ||
+      !strcmp(commands[i], "mozilla") ||
+      !strcmp(commands[i], "netscape") ||
+      !strcmp(commands[i], "thunderbird")) {
+    // program -remote openURL(uri)
+    snprintf(remote, sizeof(remote), "openURL(%s)", uri);
+    
+    argv[1] = (char *)"-remote";
+    argv[2] = remote;
+    argv[3] = 0;
+  } else if (!strcmp(commands[i], "dtaction")) {
+    // dtaction open uri
+    argv[1] = (char *)"open";
+    argv[2] = (char *)uri;
+    argv[3] = 0;
+  } else {
+    // program uri
+    argv[1] = (char *)uri;
+    argv[2] = 0;
+  }
+  
+  if (msg) {
+    strlcpy(msg, argv[0], msglen);
+    
+    for (i = 1; argv[i]; i ++) {
+      strlcat(msg, " ", msglen);
+      strlcat(msg, argv[i], msglen);
+    }
+  }
+  
+  return run_program(command, argv, msg, msglen) != 0;
+}
 //
 // End of "$Id$".
 //

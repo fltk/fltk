@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <windows.h>
+#include <shellapi.h>
 #include <wchar.h>
 #include <process.h>
 #include <locale.h>
@@ -656,6 +657,12 @@ const char *Fl_WinAPI_System_Driver::filename_ext(const char *buf) {
     else if (*p == '.') q = p;
   }
   return q ? q : p;
+}
+
+int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen)
+{
+  if (msg) snprintf(msg, msglen, "open %s", uri);  
+  return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
 }
 
 //
