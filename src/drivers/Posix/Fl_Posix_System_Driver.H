@@ -72,6 +72,7 @@ public:
   virtual int need_menu_handle_part2() {return 1;}
   virtual int need_menu_handle_part1_extra() {return 1;}
   virtual int open_uri(const char *uri, char *msg, int msglen);
+  virtual int use_tooltip_timeout_condition() {return 1;}
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

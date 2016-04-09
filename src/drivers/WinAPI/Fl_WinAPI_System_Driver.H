@@ -76,6 +76,7 @@ public:
   virtual int filename_isdir_quick(const char* n);
   virtual const char *filename_ext(const char *buf);
   virtual int open_uri(const char *uri, char *msg, int msglen);
+  virtual int use_recent_tooltip_fix() {return 1;}
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

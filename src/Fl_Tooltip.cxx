@@ -19,6 +19,8 @@
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
+#include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 
 #include <stdio.h>
 #include <string.h>	// strdup()
@@ -151,9 +153,8 @@ static void tooltip_timeout(void*) {
       if (window) window->hide();
     } else {
       int condition = 1;
-#if !(defined(__APPLE__) || defined(WIN32)) // bugfix: no need to refactor
-      condition = (Fl::grab() == NULL);
-#endif
+// bugfix: no need to refactor
+      if (Fl::system_driver()->use_tooltip_timeout_condition()) condition = (Fl::grab() == NULL);
       if ( condition ) {
 	if (!window) window = new Fl_TooltipBox;
 	// this cast bypasses the normal Fl_Window label() code:
@@ -287,12 +288,9 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
   if (recent_tooltip) {
     if (window) window->hide();
     Fl::add_timeout(Fl_Tooltip::hoverdelay(), tooltip_timeout);
-  } else if (Fl_Tooltip::delay() < .1) {
-#ifdef WIN32
     // possible fix for the Windows titlebar, it seems to want the
     // window to be destroyed, moving it messes up the parenting:
-    if (window && window->visible()) window->hide();
-#endif // WIN32
+    if (Fl::system_driver()->use_recent_tooltip_fix() && window && window->visible()) window->hide();
     tooltip_timeout(0);
   } else {
     if (window && window->visible()) window->hide();

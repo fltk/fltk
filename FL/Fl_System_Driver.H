@@ -118,6 +118,10 @@ public:
   virtual int need_menu_handle_part1_extra() {return 0;}
   // implement to support fl_open_uri()
   virtual int open_uri(const char *uri, char *msg, int msglen) {return 0;}
+  // the default implementation of use_tooltip_timeout_condition() may be enough
+  virtual int use_tooltip_timeout_condition() {return 0;}
+  // the default implementation of use_recent_tooltip_fix() may be enough
+  virtual int use_recent_tooltip_fix() {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
