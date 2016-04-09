@@ -23,6 +23,7 @@
 // Fl_Menu_ widget.
 
 #include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
@@ -119,12 +120,11 @@ public:
 class menuwindow : public Fl_Menu_Window {
   void draw();
   void drawentry(const Fl_Menu_Item*, int i, int erase);
+  int handle_part1(int);
+  int handle_part2(int e, int ret);
 public:
   menutitle* title;
   int handle(int);
-#if defined (__APPLE__) || defined (USE_X11) // PORTME: Fl_Screen_Driver - menubar
-  int early_hide_handle(int);
-#endif
   int itemheight;	// zero == menubar
   int numitems;
   int selected;
@@ -655,12 +655,41 @@ static int backward(int menu) { // previous item in menu menu if possible
 }
 
 int menuwindow::handle(int e) {
-#if defined (__APPLE__) || defined (USE_X11) // PORTME: Fl_Screen_Driver - menubar
-  // This off-route takes care of the "detached menu" bug on OS X.
+  /* In FLTK 1.3.4, the equivalent of handle_part2() is called for the Mac OS and X11 platforms
+   and "svn blame" shows it is here to fix STR #449.
+   But this STR is Mac OS-specific.
+   So, it is unclear why handle_part2() is called also for X11.
+   
+   Furthermore, calling handle_part2() for X11 renders the
+   fix for STR #2619 below necessary. If handle_part2() is not called under X11,
+   then STR #2619 does not occur. need_menu_handle_part1_extra() activates this fix.
+   
+   FLTK 1.3.4 behavior:
+    Fl::system_driver()->need_menu_handle_part2() returns true on Mac + X11
+    Fl::system_driver()->need_menu_handle_part1_extra() returns true on X11
+   
+   Alternative behavior that seems equally correct:
+    Fl::system_driver()->need_menu_handle_part2() returns true on Mac
+    need_menu_handle_part1_extra() does not exist
+   
+   Other alternative:
+    Neither need_menu_handle_part2() nor need_menu_handle_part1_extra() exist
+    --> the menuwindow code is entirely cross-platform and simpler.
+    It makes a small difference with Mac OS when resizing a window with a menu on:
+    the menu disappears after the end of the resize rather than at its beginning.
+    Apple applications do close popups at the beginning of resizes.
+   */
+  static int use_part2 = Fl::system_driver()->need_menu_handle_part2();
+  int ret = handle_part1(e);
+  if (use_part2) ret = handle_part2(e, ret);
+  return ret;
+}
+
+int menuwindow::handle_part2(int e, int ret) {
+  // This off-route takes care of the "detached menu" bug on OS X (STR #449).
   // Apple event handler requires that we hide all menu windows right
   // now, so that Carbon can continue undisturbed with handling window
   // manager events, like dragging the application window.
-  int ret = early_hide_handle(e);
   menustate &pp = *p;
   if (pp.state == DONE_STATE) {
     hide();
@@ -682,8 +711,7 @@ int menuwindow::handle(int e) {
   return ret;
 }
 
-int menuwindow::early_hide_handle(int e) {
-#endif
+int menuwindow::handle_part1(int e) {
   menustate &pp = *p;
   switch (e) {
   case FL_KEYBOARD:
@@ -748,12 +776,11 @@ int menuwindow::early_hide_handle(int e) {
     }
     break;
     case FL_MOVE:
-#if ! (defined(WIN32) || defined(__APPLE__)) // PORTME: Fl_Screen_Driver - menubar
-      if (pp.state == DONE_STATE) {
+      static int use_part1_extra = Fl::system_driver()->need_menu_handle_part1_extra();
+      if (use_part1_extra && pp.state == DONE_STATE) {
 	return 1; // Fix for STR #2619
       }
       /* FALLTHROUGH */
-#endif
   case FL_ENTER:
   case FL_PUSH:
   case FL_DRAG:

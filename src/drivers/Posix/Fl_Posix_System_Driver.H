@@ -67,6 +67,8 @@ public:
   virtual int get_key(int k);
   virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
   virtual const char *getpwnam(const char *login);
+  virtual int need_menu_handle_part2() {return 1;}
+  virtual int need_menu_handle_part1_extra() {return 1;}
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

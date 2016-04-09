@@ -112,6 +112,10 @@ public:
   virtual int filename_isdir_quick(const char* n);
   // the default implementation of filename_iext() is in src/filename_ext.cxx and may be enough
   virtual const char *filename_ext(const char *buf);
+  // whether a platform uses additional code in Fl_Menu::handle(int e)
+  virtual int need_menu_handle_part2() {return 0;}
+  // whether a platform uses additional code in Fl_Menu::handle_part1(int e)
+  virtual int need_menu_handle_part1_extra() {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
