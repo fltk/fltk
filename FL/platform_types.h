@@ -74,7 +74,7 @@ typedef int FL_SOCKET;
 #include <sys/types.h>
 #include <dirent.h>
 
-#endif // __APPLE__
+#endif /* __APPLE__ */
 
 #endif /* PLATFORM_TYPES_H */
 
