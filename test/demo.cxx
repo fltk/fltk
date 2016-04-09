@@ -361,7 +361,7 @@ void doback(Fl_Widget *, void *) {pop_menu();}
 
 void doexit(Fl_Widget *, void *) {exit(0);}
 
-int load_the_menu(const char* fname)
+int load_the_menu(char* fname)
 /* Loads the menu file. Returns whether successful. */
 {
   FILE *fin = 0;
@@ -373,7 +373,7 @@ int load_the_menu(const char* fname)
     // mac os bundle menu detection:
     char* pos = strrchr(fname,'/');
     if (!pos) return 0;
-    *pos='\0';
+    *pos = '\0';
     pos = strrchr(fname,'/');
     if (!pos) return 0;
     strcpy(pos,"/Resources/demo.menu");
@@ -392,7 +392,7 @@ int load_the_menu(const char* fname)
       *d = *s++;
       if (!*d) break;
     }
-    // interprete the line
+    // interpret the line
     j = 0; i = 0;
     while (line[i] == ' ' || line[i] == '\t') i++;
     if (line[i] == '\n') continue;
@@ -401,8 +401,7 @@ int load_the_menu(const char* fname)
     mname[j] = '\0';
     if (line[i] == ':') i++;
     j = 0; 
-    while (line[i] != ':' && line[i] != '\n')
-    {
+    while (line[i] != ':' && line[i] != '\n') {
       if (line[i] == '\\') {
         i++;
         if (line[i] == 'n') iname[j++] = '\n';
@@ -432,7 +431,7 @@ int main(int argc, char **argv) {
   buf[ strlen(buf)-1 ] = 0;
 #endif
   fl_filename_setext(buf,".menu");
-  const char *fname = buf;
+  char *fname = buf;
   int i = 0;
   if (!Fl::args(argc,argv,i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s",argv[0],Fl::help);
@@ -441,7 +440,7 @@ int main(int argc, char **argv) {
   create_the_forms();
   
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
-  if (buf!=fname)
+  if (buf != fname)
     strcpy(buf,fname);
   const char *c = fl_filename_name(buf);
   if (c > buf) {
