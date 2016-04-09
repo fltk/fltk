@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "Fl_Posix_System_Driver.H"
+#include "../../flstring.h"
 #include <FL/filename.H>
 #include <FL/Fl.H>
 #include <X11/Xlib.h>
