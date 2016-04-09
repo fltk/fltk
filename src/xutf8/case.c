@@ -19,7 +19,7 @@
  * This file is required on all platforms for UTF-8 support
  */
 
-#include "../Xutf8.h"
+#include "../utf8_internal.h"
 #include <stdlib.h>
 
 /* include UCS tables */

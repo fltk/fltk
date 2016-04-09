@@ -14,22 +14,11 @@
  *     http://www.fltk.org/str.php
  */
 
-#if defined(WIN32) || defined(__APPLE__) /* PORTME: Fl_Screen_Driver - platform unicode */
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: utf8 functionality"
-#else
-#endif
-
 /*
- * This file is required on all platforms for utf8 support
+ * This file is required on all platforms for UTF-8 support
  */
 
-#if defined(WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you want to include Xutf8.h? It's written for X11."
-#else
-#  include "../Xutf8.h"
-#endif /* !defined(WIN32) && !defined(__APPLE__) */
+#include "../utf8_internal.h"
 
 unsigned short
 XUtf8IsRightToLeft(unsigned int ucs) {

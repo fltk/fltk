@@ -23,15 +23,12 @@
 #include <FL/filename.H>
 #include <stdarg.h>
 #include <FL/fl_utf8.h>
+#include "utf8_internal.h"
+
 #include <string.h>
 #include <stdlib.h>
 
 #undef fl_open
-extern "C" {
-  int XUtf8Tolower(int ucs); // in src/xutf8/case.c
-  unsigned short XUtf8IsNonSpacing(unsigned int ucs); // in src/xutf8/is_spacing.c
-}
-
 
 /** \addtogroup fl_unicode
     @{

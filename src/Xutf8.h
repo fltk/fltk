@@ -156,24 +156,6 @@ XUtf8LookupString(
     Status*             status_return);
 #endif
 
-unsigned short
-XUtf8IsNonSpacing(
-	unsigned int ucs);
-
-unsigned short
-XUtf8IsRightToLeft(
-        unsigned int ucs);
-
-
-int
-XUtf8Tolower(
-        int ucs);
-
-int
-XUtf8Toupper(
-        int ucs);
-
-
 #  ifdef __cplusplus
 }
 #  endif
