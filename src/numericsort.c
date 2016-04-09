@@ -19,6 +19,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <FL/platform_types.h>
+#include <FL/filename.H>
 
 /*
  * 'numericsort()' - Compare two directory entries, possibly with

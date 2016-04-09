@@ -15,9 +15,12 @@
  */
 
 /*
- * This file is required on all platforms for utf8 support
+ * This file is required on all platforms for UTF-8 support
  */
 
+#include "../Xutf8.h"
+
+/* include UCS tables */
 #include "headers/spacing.h"
 
 unsigned short

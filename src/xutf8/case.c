@@ -19,8 +19,11 @@
  * This file is required on all platforms for UTF-8 support
  */
 
-#include "headers/case.h"
+#include "../Xutf8.h"
 #include <stdlib.h>
+
+/* include UCS tables */
+#include "headers/case.h"
 
 int
 XUtf8Tolower(int ucs) {
