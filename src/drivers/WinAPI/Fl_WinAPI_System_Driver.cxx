@@ -717,16 +717,16 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
   return num_files;
 }
 
-int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, char *filename, dirent ***pfiles,
-                                                         Fl_File_Sort_F *sort)
+int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, char *filename,
+                                                         size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
 {
-  strlcpy(filename, directory, sizeof(filename));
+  strlcpy(filename, directory, name_size);
   int i = (int) (strlen(filename) - 1);
   if (i == 2 && filename[1] == ':' &&
       (filename[2] == '/' || filename[2] == '\\'))
     filename[2] = '/';
   else if (filename[i] != '/' && filename[i] != '\\')
-    strlcat(filename, "/", sizeof(filename));
+    strlcat(filename, "/", name_size);
   return filename_list(filename, pfiles, sort);
 }
 

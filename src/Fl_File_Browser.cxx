@@ -415,7 +415,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
     //
     // Build the file list...
     //
-    num_files = Fl::system_driver()->file_browser_load_directory(directory_, filename, &files, sort);
+    num_files = Fl::system_driver()->file_browser_load_directory(directory_, filename, sizeof(filename), &files, sort);
     if (num_files <= 0)
       return (0);
 

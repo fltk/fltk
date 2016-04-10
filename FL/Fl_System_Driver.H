@@ -135,7 +135,7 @@ public:
   // implement to support Fl_File_Browser::load()
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon) {return 0;}
   // the default implementation of file_browser_load_directory() should be enough
-  virtual int file_browser_load_directory(const char *directory, char *filename, dirent ***pfiles, Fl_File_Sort_F *sort);
+  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort);
   // implement to support Fl_Preferences
   virtual void newUUID(char *uuidBuffer) { uuidBuffer[0] = 0; }
   // implement to support Fl_Preferences
