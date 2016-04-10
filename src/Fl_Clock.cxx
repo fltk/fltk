@@ -22,9 +22,6 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 #include <time.h>
-#ifndef WIN32
-#  include <sys/time.h>
-#endif /* !WIN32 */
 
 // Original clock display written by Paul Haeberli at SGI.
 // Modifications by Mark Overmars for Forms
