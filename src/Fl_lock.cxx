@@ -399,10 +399,12 @@ void lock_ring() {
 
 #else
 
+#if defined(FL_CFG_GFX_QUARTZ) || defined(FL_CFG_GFX_XLIB)
 static void posix_awake(void*) {}
 static int posix_lock() { return 1; }
 static void posix_unlock() {}
 static void* posix_thread_message() { return NULL; }
+#endif
 
 #endif // HAVE_PTHREAD
 
