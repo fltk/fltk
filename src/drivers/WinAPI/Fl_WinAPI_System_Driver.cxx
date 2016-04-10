@@ -877,6 +877,13 @@ void Fl_WinAPI_System_Driver::png_extra_rgba_processing(unsigned char *ptr, int 
   }
 }
 
+const char *Fl_WinAPI_System_Driver::next_dir_sep(const char *start)
+{
+  const char *p = strchr(start, '/');
+  if (!p) p = strchr(start, '\\');
+  return p;
+}
+
 //
 // End of "$Id$".
 //

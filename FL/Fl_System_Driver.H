@@ -30,6 +30,7 @@
 #include <FL/Fl_Preferences.H>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 class Fl_File_Icon;
 class Fl_File_Browser;
@@ -147,6 +148,8 @@ public:
   virtual void *dlopen(const char *filename) {return NULL;}
   // the default implementation is most probably enough
   virtual void png_extra_rgba_processing(unsigned char *array, int w, int h) {}
+  // the default implementation is most probably enough
+  virtual const char *next_dir_sep(const char *start) { return strchr(start, '/');}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

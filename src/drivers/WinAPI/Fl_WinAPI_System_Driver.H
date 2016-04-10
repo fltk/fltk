@@ -84,6 +84,7 @@ public:
                                     const char *application);
   virtual void *dlopen(const char *filename);
   virtual void png_extra_rgba_processing(unsigned char *array, int w, int h);
+  virtual const char *next_dir_sep(const char *start);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H
