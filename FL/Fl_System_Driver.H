@@ -26,9 +26,12 @@
 
 #include <FL/Fl_Export.H>
 #include <FL/platform_types.h>
+#include <FL/filename.H>
 #include <stdio.h>
 #include <stdarg.h>
 
+class Fl_File_Icon;
+class Fl_File_Browser;
 
 /**
  \brief A base class for platform-specific system operations.
@@ -128,6 +131,10 @@ public:
   virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
   // the default implementation of need_test_shortcut_extra() may be enough
   virtual int need_test_shortcut_extra() {return 0;}
+  // implement to support Fl_File_Browser::load()
+  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon) {return 0;}
+  // the default implementation of file_browser_load_directory() should be enough
+  virtual int file_browser_load_directory(const char *directory, char *filename, dirent ***pfiles, Fl_File_Sort_F *sort);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

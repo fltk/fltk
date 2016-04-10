@@ -75,6 +75,7 @@ public:
   virtual int need_menu_handle_part2() {return 1;}
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int need_test_shortcut_extra() {return 1;}
+  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

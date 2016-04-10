@@ -75,6 +75,7 @@ public:
   virtual int use_tooltip_timeout_condition() {return 1;}
   // this one is in fl_shortcut.cxx
   virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
+  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

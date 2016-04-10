@@ -22,6 +22,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
 #include <FL/filename.H>
+#include <FL/Fl_File_Browser.H>
+#include <FL/Fl_File_Icon.H>
 #include <stdio.h>
 #include <stdarg.h>
 #include <windows.h>
@@ -30,6 +32,15 @@
 #include <process.h>
 #include <locale.h>
 #include "../../flstring.h"
+#include <direct.h>
+// Apparently Borland C++ defines DIRECTORY in <direct.h>, which
+// interfers with the Fl_File_Icon enumeration of the same name.
+#  ifdef DIRECTORY
+#    undef DIRECTORY
+#  endif // DIRECTORY
+#ifdef __CYGWIN__
+#  include <mntent.h>
+#endif
 
 inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
@@ -663,6 +674,54 @@ int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen)
 {
   if (msg) snprintf(msg, msglen, "open %s", uri);  
   return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
+}
+
+int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon)
+{
+  int num_files = 0;
+#  ifdef __CYGWIN__
+  //
+  // Cygwin provides an implementation of setmntent() to get the list
+  // of available drives...
+  //
+  FILE          *m = setmntent("/-not-used-", "r");
+  struct mntent *p;
+  while ((p = getmntent (m)) != NULL) {
+    browser->add(p->mnt_dir, icon);
+    num_files ++;
+  }
+  endmntent(m);
+#  else
+  //
+  // Normal WIN32 code uses drive bits...
+  //
+  DWORD	drives;		// Drive available bits
+  drives = GetLogicalDrives();
+  for (int i = 'A'; i <= 'Z'; i ++, drives >>= 1)
+    if (drives & 1)
+    {
+      sprintf(filename, "%c:/", i);
+      if (i < 'C') // see also: GetDriveType and GetVolumeInformation in WIN32
+        browser->add(filename, icon);
+      else
+        browser->add(filename, icon);
+      num_files ++;
+    }
+#  endif // __CYGWIN__
+  return num_files;
+}
+
+int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, char *filename, dirent ***pfiles,
+                                                         Fl_File_Sort_F *sort)
+{
+  strlcpy(filename, directory, sizeof(filename));
+  int i = (int) (strlen(filename) - 1);
+  if (i == 2 && filename[1] == ':' &&
+      (filename[2] == '/' || filename[2] == '\\'))
+    filename[2] = '/';
+  else if (filename[i] != '/' && filename[i] != '\\')
+    strlcat(filename, "/", sizeof(filename));
+  return filename_list(filename, pfiles, sort);
 }
 
 //
