@@ -18,6 +18,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Screen_Driver.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/math.h>
@@ -28,13 +29,6 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tiled_Image.H>
 #include "tile.xpm"
-
-#if defined(WIN32) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
-#  define putenv _putenv
-#endif // WIN32 && !__CYGWIN__
-
 
 /**
     Changes fl_color(FL_BACKGROUND_COLOR) to the given color, 
@@ -184,7 +178,7 @@ int Fl::scheme(const char *s) {
   static char e[1024];
   strcpy(e,"FLTK_SCHEME=");
   if (s) strlcat(e,s,sizeof(e));
-  putenv(e);
+  Fl::system_driver()->putenv(e);
 
   // Load the scheme...
   return reload_scheme();

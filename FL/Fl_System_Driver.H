@@ -29,6 +29,7 @@
 #include <FL/filename.H>
 #include <FL/Fl_Preferences.H>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 
@@ -79,6 +80,7 @@ public:
   // implement these to support cross-platform file operations
   virtual char *utf2mbcs(const char *s) {return (char*)s;}
   virtual char *getenv(const char* v);
+  virtual int putenv(char* v) {return ::putenv(v);}
   virtual int open(const char* f, int oflags, int pmode) {return -1;}
   virtual FILE *fopen(const char* f, const char *mode) {return NULL;}
   virtual int system(const char* cmd) {return -1;}

@@ -47,6 +47,7 @@ public:
   virtual void fatal(const char *format, va_list args);
   virtual char *utf2mbcs(const char *s);
   virtual char *getenv(const char* v);
+  virtual int putenv(char* v) {return _putenv(v);}
   virtual int open(const char* f, int oflags, int pmode);
   virtual FILE *fopen(const char* f, const char *mode);
   virtual int system(const char* cmd);
