@@ -54,6 +54,7 @@ void fl_cleanup_dc_list(void);
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
+#include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -371,7 +372,7 @@ void (*fl_lock_function)() = nothing;
 void (*fl_unlock_function)() = nothing;
 
 static void* thread_message_;
-void* Fl::thread_message() {
+void* Fl_WinAPI_System_Driver::thread_message() {
   void* r = thread_message_;
   thread_message_ = 0;
   return r;

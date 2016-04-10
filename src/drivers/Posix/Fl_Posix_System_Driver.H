@@ -81,6 +81,11 @@ public:
                                    const char *application);
   virtual int preferences_need_protection_check() {return 1;}
   virtual void *dlopen(const char *filename);
+  // these 4 are implemented in Fl_lock.cxx
+  virtual void awake(void*);
+  virtual int lock();
+  virtual void unlock();
+  virtual void* thread_message();
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

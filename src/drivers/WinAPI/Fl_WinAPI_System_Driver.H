@@ -86,6 +86,12 @@ public:
   virtual void *dlopen(const char *filename);
   virtual void png_extra_rgba_processing(unsigned char *array, int w, int h);
   virtual const char *next_dir_sep(const char *start);
+  // these 3 are implemented in Fl_lock.cxx
+  virtual void awake(void*);
+  virtual int lock();
+  virtual void unlock();
+  // this one is implemented in Fl_win32.cxx
+  virtual void* thread_message();
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

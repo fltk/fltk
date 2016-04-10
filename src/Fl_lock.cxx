@@ -16,11 +16,18 @@
 //     http://www.fltk.org/str.php
 //
 
-
+#include "config_lib.h"
 #include <FL/Fl.H>
-#include <config.h>
 
 #include <stdlib.h>
+
+#if defined(FL_CFG_GFX_QUARTZ)
+#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
+#elif defined(FL_CFG_GFX_XLIB)
+#include "drivers/Posix/Fl_Posix_System_Driver.H"
+#elif defined(FL_CFG_SYS_WIN32)
+#include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
+#endif
 
 /*
    From Bill:
@@ -137,8 +144,6 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
   return ret;
 }
 
-////////////////////////////////////////////////////////////////
-// Windows threading...
 /** \fn int Fl::lock()
     The lock() method blocks the current thread until it
     can safely access FLTK widgets and data. Child threads should
@@ -188,7 +193,9 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
     
     See also: \ref advanced_multithreading
 */
-#ifdef WIN32
+#if defined(FL_CFG_SYS_WIN32)
+////////////////////////////////////////////////////////////////
+// Windows threading...
 #  include <windows.h>
 #  include <process.h>
 #  include <FL/x.H>
@@ -232,7 +239,7 @@ static void lock_function() {
   EnterCriticalSection(&cs);
 }
 
-int Fl::lock() {
+int Fl_WinAPI_System_Driver::lock() {
   if (!main_thread) InitializeCriticalSection(&cs);
 
   lock_function();
@@ -245,17 +252,18 @@ int Fl::lock() {
   return 0;
 }
 
-void Fl::unlock() {
+void Fl_WinAPI_System_Driver::unlock() {
   unlock_function();
 }
 
-void Fl::awake(void* msg) {
+void Fl_WinAPI_System_Driver::awake(void* msg) {
   PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);
 }
+#endif // FL_CFG_SYS_WIN32
 
 ////////////////////////////////////////////////////////////////
 // POSIX threading...
-#elif defined(HAVE_PTHREAD)
+#if defined(HAVE_PTHREAD)
 #  include <unistd.h>
 #  include <fcntl.h>
 #  include <pthread.h>
@@ -306,12 +314,12 @@ static void unlock_function_rec() {
 }
 #  endif // PTHREAD_MUTEX_RECURSIVE
 
-void Fl::awake(void* msg) {
+static void posix_awake(void* msg) {
   if (write(thread_filedes[1], &msg, sizeof(void*))==0) { /* ignore */ }
 }
 
 static void* thread_message_;
-void* Fl::thread_message() {
+static void* posix_thread_message() {
   void* r = thread_message_;
   thread_message_ = 0;
   return r;
@@ -332,7 +340,7 @@ static void thread_awake_cb(int fd, void*) {
 extern void (*fl_lock_function)();
 extern void (*fl_unlock_function)();
 
-int Fl::lock() {
+static int posix_lock() {
   if (!thread_filedes[1]) {
     // Initialize thread communication pipe to let threads awake FLTK
     // from Fl::wait()
@@ -370,7 +378,7 @@ int Fl::lock() {
   return 0;
 }
 
-void Fl::unlock() {
+static void posix_unlock() {
   fl_unlock_function();
 }
 
@@ -389,33 +397,75 @@ void lock_ring() {
   pthread_mutex_lock(ring_mutex);
 }
 
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement simple locking and unlocking for basic multithreading support"
-
 #else
 
-void unlock_ring() {
+static void posix_awake(void*) {}
+static int posix_lock() { return 1; }
+static void posix_unlock() {}
+static void* posix_thread_message() { return NULL; }
+
+#endif // HAVE_PTHREAD
+
+#if defined(FL_CFG_GFX_QUARTZ)
+void Fl_Darwin_System_Driver::awake(void *v)
+{
+  posix_awake(v);
 }
 
-void lock_ring() {
+int Fl_Darwin_System_Driver::lock()
+{
+  return posix_lock();
 }
 
-void Fl::awake(void*) {
+void Fl_Darwin_System_Driver::unlock()
+{
+  posix_unlock();
 }
 
-int Fl::lock() {
-  return 1;
+void* Fl_Darwin_System_Driver::thread_message()
+{
+  return posix_thread_message();
+}
+#endif // FL_CFG_GFX_QUARTZ
+
+#if defined(FL_CFG_GFX_XLIB)
+void Fl_Posix_System_Driver::awake(void *v)
+{
+  posix_awake(v);
 }
 
-void Fl::unlock() {
+int Fl_Posix_System_Driver::lock()
+{
+  return posix_lock();
+}
+
+void Fl_Posix_System_Driver::unlock()
+{
+  posix_unlock();
+}
+
+void* Fl_Posix_System_Driver::thread_message()
+{
+  return posix_thread_message();
+}
+#endif // FL_CFG_GFX_XLIB
+
+
+void Fl::awake(void *v) {
+  Fl::system_driver()->awake(v);
 }
 
 void* Fl::thread_message() {
-  return NULL;
+  return Fl::system_driver()->thread_message();
 }
 
-#endif // WIN32
+int Fl::lock() {
+  return Fl::system_driver()->lock();
+}
+
+void Fl::unlock() {
+  Fl::system_driver()->unlock();
+}
 
 //
 // End of "$Id$".

@@ -152,6 +152,11 @@ public:
   virtual void png_extra_rgba_processing(unsigned char *array, int w, int h) {}
   // the default implementation is most probably enough
   virtual const char *next_dir_sep(const char *start) { return strchr(start, '/');}
+  // implement to support threading
+  virtual void awake(void*) {}
+  virtual int lock() {return 1;}
+  virtual void unlock() {}
+  virtual void* thread_message() {return NULL;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

@@ -80,6 +80,11 @@ public:
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                    const char *application);
   virtual void *dlopen(const char *filename);
+  // these 4 are implemented in Fl_lock.cxx
+  virtual void awake(void*);
+  virtual int lock();
+  virtual void unlock();
+  virtual void* thread_message();
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H
