@@ -24,15 +24,21 @@
 #include <FL/filename.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
+#include "../../flstring.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <windows.h>
+#include <rpc.h>
+// function pointer for the UuidCreate Function
+// RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
+typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #include <shellapi.h>
 #include <wchar.h>
 #include <process.h>
 #include <locale.h>
-#include "../../flstring.h"
+#include <time.h>
 #include <direct.h>
+#include <io.h>
 // Apparently Borland C++ defines DIRECTORY in <direct.h>, which
 // interfers with the Fl_File_Icon enumeration of the same name.
 #  ifdef DIRECTORY
@@ -723,6 +729,145 @@ int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, 
     strlcat(filename, "/", sizeof(filename));
   return filename_list(filename, pfiles, sort);
 }
+
+void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)
+{
+  // First try and use the win API function UuidCreate(), but if that is not
+  // available, fall back to making something up from scratch.
+  // We do not want to link against the Rpcrt4.dll, as we will rarely use it,
+  // so we load the DLL dynamically, if it is available, and work from there.
+  static HMODULE hMod = NULL;
+  UUID ud;
+  UUID *pu = &ud;
+  int got_uuid = 0;
+  
+  if (!hMod) {		// first time in?
+    hMod = LoadLibrary("Rpcrt4.dll");
+  }
+  
+  if (hMod) {		// do we have a usable handle to Rpcrt4.dll?
+    uuid_func uuid_crt = (uuid_func)GetProcAddress(hMod, "UuidCreate");
+    if (uuid_crt != NULL) {
+      RPC_STATUS rpc_res = uuid_crt(pu);
+      if ( // is the return status OK for our needs?
+          (rpc_res == RPC_S_OK) ||		// all is well
+          (rpc_res == RPC_S_UUID_LOCAL_ONLY) || // only unique to this machine
+          (rpc_res == RPC_S_UUID_NO_ADDRESS)	// probably only locally unique
+          ) {
+        got_uuid = -1;
+        sprintf(uuidBuffer, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+                pu->Data1, pu->Data2, pu->Data3, pu->Data4[0], pu->Data4[1],
+                pu->Data4[2], pu->Data4[3], pu->Data4[4],
+                pu->Data4[5], pu->Data4[6], pu->Data4[7]);
+      }
+    }
+  }
+  if (got_uuid == 0) {		// did not make a UUID - use fallback logic
+    unsigned char b[16];
+    time_t t = time(0);		// first 4 byte
+    b[0] = (unsigned char)t;
+    b[1] = (unsigned char)(t>>8);
+    b[2] = (unsigned char)(t>>16);
+    b[3] = (unsigned char)(t>>24);
+    int r = rand();		// four more bytes
+    b[4] = (unsigned char)r;
+    b[5] = (unsigned char)(r>>8);
+    b[6] = (unsigned char)(r>>16);
+    b[7] = (unsigned char)(r>>24);
+    // Now we try to find 4 more "random" bytes. We extract the
+    // lower 4 bytes from the address of t - it is created on the
+    // stack so *might* be in a different place each time...
+    // This is now done via a union to make it compile OK on 64-bit systems.
+    union { void *pv; unsigned char a[sizeof(void*)]; } v;
+    v.pv = (void *)(&t);
+    // NOTE: This assume that all WinXX systems are little-endian
+    b[8] = v.a[0];
+    b[9] = v.a[1];
+    b[10] = v.a[2];
+    b[11] = v.a[3];
+    TCHAR name[MAX_COMPUTERNAME_LENGTH + 1]; // only used to make last four bytes
+    DWORD nSize = MAX_COMPUTERNAME_LENGTH + 1;
+    // GetComputerName() does not depend on any extra libs, and returns something
+    // analogous to gethostname()
+    GetComputerName(name, &nSize);
+    //  use the first 4 TCHAR's of the name to create the last 4 bytes of our UUID
+    for (int ii = 0; ii < 4; ii++) {
+      b[12 + ii] = (unsigned char)name[ii];
+    }
+    sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+            b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
+  }
+}
+
+char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+                                                  const char *application)
+{
+#  define FLPREFS_RESOURCE	"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+#  define FLPREFS_RESOURCEW	L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
+  static char filename[ FL_PATH_MAX ];
+  filename[0] = 0;
+  size_t appDataLen = strlen(vendor) + strlen(application) + 8;
+  DWORD type, nn;
+  LONG err;
+  HKEY key;
+  
+  switch (root) {
+    case Fl_Preferences::SYSTEM:
+      err = RegOpenKeyW( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCEW, &key );
+      if (err == ERROR_SUCCESS) {
+        nn = (DWORD) (FL_PATH_MAX - appDataLen);
+        err = RegQueryValueExW( key, L"Common AppData", 0L, &type,
+                               (BYTE*)filename, &nn );
+        if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) ) {
+          filename[0] = 0;
+          filename[1] = 0;
+        }
+        RegCloseKey(key);
+      }
+      break;
+    case Fl_Preferences::USER:
+      err = RegOpenKeyW( HKEY_CURRENT_USER, FLPREFS_RESOURCEW, &key );
+      if (err == ERROR_SUCCESS) {
+        nn = (DWORD) (FL_PATH_MAX - appDataLen);
+        err = RegQueryValueExW( key, L"AppData", 0L, &type,
+                               (BYTE*)filename, &nn );
+        if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) ) {
+          filename[0] = 0;
+          filename[1] = 0;
+        }
+        RegCloseKey(key);
+      }
+      break;
+  }
+  if (!filename[1] && !filename[0]) {
+    strcpy(filename, "C:\\FLTK");
+  } else {
+#if 0
+    wchar_t *b = (wchar_t*)_wcsdup((wchar_t *)filename);
+#else
+    // cygwin does not come with _wcsdup. Use malloc +  wcscpy.
+    // For implementation of wcsdup functionality See
+    // - http://linenum.info/p/glibc/2.7/wcsmbs/wcsdup.c
+    wchar_t *b = (wchar_t*) malloc((wcslen((wchar_t *) filename) + 1) * sizeof(wchar_t));
+    wcscpy(b, (wchar_t *) filename);
+#endif
+    //  filename[fl_unicode2utf(b, wcslen((wchar_t*)b), filename)] = 0;
+    unsigned len = fl_utf8fromwc(filename, (FL_PATH_MAX-1), b, (unsigned) wcslen(b));
+    filename[len] = 0;
+    free(b);
+  }
+  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+           "/%s/%s.prefs", vendor, application);
+  for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
+  return filename;
+}
+
+void *Fl_WinAPI_System_Driver::dlopen(const char *filename)
+{
+  return LoadLibrary(filename);
+}
+
 
 //
 // End of "$Id$".

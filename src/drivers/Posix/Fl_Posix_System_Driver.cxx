@@ -26,9 +26,13 @@
 #include <X11/Xlib.h>
 #include <locale.h>
 #include <stdio.h>
+#if HAVE_DLFCN_H
+#  include <dlfcn.h>
+#endif
 #include <sys/types.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <time.h>
 
 #if defined(_AIX)
 extern "C" {
@@ -434,6 +438,87 @@ int Fl_Posix_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browse
   }
 #endif // _AIX || ...
   return num_files;
+}
+
+void Fl_Posix_System_Driver::newUUID(char *uuidBuffer)
+{
+  // warning Unix implementation of Fl_Preferences::newUUID() incomplete!
+  // #include <uuid/uuid.h>
+  // void uuid_generate(uuid_t out);
+  unsigned char b[16];
+  time_t t = time(0);			// first 4 byte
+  b[0] = (unsigned char)t;
+  b[1] = (unsigned char)(t>>8);
+  b[2] = (unsigned char)(t>>16);
+  b[3] = (unsigned char)(t>>24);
+  int r = rand(); 			// four more bytes
+  b[4] = (unsigned char)r;
+  b[5] = (unsigned char)(r>>8);
+  b[6] = (unsigned char)(r>>16);
+  b[7] = (unsigned char)(r>>24);
+  unsigned long a = (unsigned long)&t;	// four more bytes
+  b[8] = (unsigned char)a;
+  b[9] = (unsigned char)(a>>8);
+  b[10] = (unsigned char)(a>>16);
+  b[11] = (unsigned char)(a>>24);
+  // Now we try to find 4 more "random" bytes. We extract the
+  // lower 4 bytes from the address of t - it is created on the
+  // stack so *might* be in a different place each time...
+  // This is now done via a union to make it compile OK on 64-bit systems.
+  union { void *pv; unsigned char a[sizeof(void*)]; } v;
+  v.pv = (void *)(&t);
+  // NOTE: May need to handle big- or little-endian systems here
+# if WORDS_BIGENDIAN
+  b[8] = v.a[sizeof(void*) - 1];
+  b[9] = v.a[sizeof(void*) - 2];
+  b[10] = v.a[sizeof(void*) - 3];
+  b[11] = v.a[sizeof(void*) - 4];
+# else // data ordered for a little-endian system
+  b[8] = v.a[0];
+  b[9] = v.a[1];
+  b[10] = v.a[2];
+  b[11] = v.a[3];
+# endif
+  char name[80];			// last four bytes
+  gethostname(name, 79);
+  memcpy(b+12, name, 4);
+  sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+          b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+          b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
+}
+
+char *Fl_Posix_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+                                 const char *application)
+{
+  static char filename[ FL_PATH_MAX ]; filename[0] = 0;
+  const char *e;
+  switch (root) {
+    case Fl_Preferences::USER:
+      if ((e = ::getenv("HOME")) != NULL) {
+        strlcpy(filename, e, sizeof(filename));
+        
+        if (filename[strlen(filename)-1] != '/') {
+          strlcat(filename, "/.fltk/", sizeof(filename));
+        } else {
+          strlcat(filename, ".fltk/", sizeof(filename));
+        }
+        break;
+      }
+    case Fl_Preferences::SYSTEM:
+      strcpy(filename, "/etc/fltk/");
+      break;
+  }
+  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+           "%s/%s.prefs", vendor, application);
+  return filename;
+}
+
+void *Fl_Posix_System_Driver::dlopen(const char *filename)
+{
+#if HAVE_DLSYM
+  return ::dlopen(filename, RTLD_LAZY);
+#endif
+  return NULL;
 }
 
 //

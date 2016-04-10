@@ -23,6 +23,7 @@
 #include <FL/Fl_File_Browser.H>
 #include <FL/filename.H>
 #include <FL/Fl_File_Icon.H>
+#include <FL/Fl_Preferences.H>
 #include <string.h>
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 #include <xlocale.h>
@@ -34,6 +35,8 @@
 #include <sys/param.h>
 #include <sys/ucred.h>
 #include <sys/mount.h>
+#include <ApplicationServices/ApplicationServices.h>
+
 
 extern int fl_mac_os_version;	// the version number of the running Mac OS X
 
@@ -91,7 +94,7 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
  PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
  */
 void *Fl_Darwin_System_Driver::get_carbon_function(const char *function_name) {
-  static void *carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
+  static void *carbon = ::dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
   return (carbon ? dlsym(carbon, function_name) : NULL);
 }
 
@@ -192,6 +195,39 @@ int Fl_Darwin_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
   return num_files;
 }
 
+void Fl_Darwin_System_Driver::newUUID(char *uuidBuffer)
+{
+  CFUUIDRef theUUID = CFUUIDCreate(NULL);
+  CFUUIDBytes b = CFUUIDGetUUIDBytes(theUUID);
+  sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+          b.byte0, b.byte1, b.byte2, b.byte3, b.byte4, b.byte5, b.byte6, b.byte7,
+          b.byte8, b.byte9, b.byte10, b.byte11, b.byte12, b.byte13, b.byte14, b.byte15);
+  CFRelease(theUUID);
+}
+
+char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root,
+                                                  const char *vendor, const char *application)
+{
+  static char filename[ FL_PATH_MAX ];
+  // TODO: verify that this is the Apple sanctioned way of finding these folders
+  // (On MSWindows, this frequently leads to issues with internationalized systems)
+  // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
+  switch (root) {
+    case Fl_Preferences::SYSTEM:
+      strcpy(filename, "/Library/Preferences");
+      break;
+    case Fl_Preferences::USER:
+      sprintf(filename, "%s/Library/Preferences", getenv("HOME"));
+      break;
+  }
+  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+           "/%s/%s.prefs", vendor, application);
+  return filename;
+}
+
+void *Fl_Darwin_System_Driver::dlopen(const char *filename) {
+  return ::dlopen(filename, RTLD_LAZY);
+}
 
 //
 // End of "$Id$".

@@ -76,6 +76,11 @@ public:
   // this one is in fl_shortcut.cxx
   virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon);
+  virtual void newUUID(char *uuidBuffer);
+  virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+                                   const char *application);
+  virtual int preferences_need_protection_check() {return 1;}
+  virtual void *dlopen(const char *filename);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

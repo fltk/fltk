@@ -17,6 +17,7 @@
 //
 
 #include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Plugin.H>
 #include <FL/filename.H>
@@ -26,48 +27,7 @@
 #include <stdarg.h>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
-#include <time.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_System_Driver - platform Preferences
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement some file storage in a designated place"
-#else
-#endif
-
-#if defined(WIN32) && !defined(__CYGWIN__)
-#  include <windows.h>
-#  include <direct.h>
-#  include <io.h>
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
-#  define access _access
-#  define mkdir _mkdir
-#elif defined (__APPLE__) // PORTME: Fl_System_Driver - platform Preferences
-#  include <ApplicationServices/ApplicationServices.h>
-#  include <unistd.h>
-#  include <config.h>
-#  include <dlfcn.h>
-#else
-#  include <unistd.h>
-#  include <config.h>
-#  if HAVE_DLFCN_H
-#    include <dlfcn.h>
-#  endif
-#endif
-
-#ifdef WIN32
-#  include <windows.h>
-#  include <rpc.h>
-// function pointer for the UuidCreate Function
-// RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
-typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
-#else
-#  include <sys/time.h>
-#endif // WIN32
-
-#ifdef __CYGWIN__
-#  include <wchar.h>
-#endif
 
 char Fl_Preferences::nameBuffer[128];
 char Fl_Preferences::uuidBuffer[40];
@@ -85,126 +45,7 @@ Fl_Preferences *Fl_Preferences::runtimePrefs = 0;
  *         The buffer is overwritten during every call to this function!
  */
 const char *Fl_Preferences::newUUID() {
-#ifdef __APPLE__ // PORTME: Fl_System_Driver - platform Preferences
-  CFUUIDRef theUUID = CFUUIDCreate(NULL);
-  CFUUIDBytes b = CFUUIDGetUUIDBytes(theUUID);
-  sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-          b.byte0, b.byte1, b.byte2, b.byte3, b.byte4, b.byte5, b.byte6, b.byte7,
-          b.byte8, b.byte9, b.byte10, b.byte11, b.byte12, b.byte13, b.byte14, b.byte15);
-  CFRelease(theUUID);
-#elif defined (WIN32)
-  // First try and use the win API function UuidCreate(), but if that is not
-  // available, fall back to making something up from scratch.
-  // We do not want to link against the Rpcrt4.dll, as we will rarely use it,
-  // so we load the DLL dynamically, if it is available, and work from there.
-  static HMODULE hMod = NULL;
-  UUID ud;
-  UUID *pu = &ud;
-  int got_uuid = 0;
-
-  if (!hMod) {		// first time in?
-    hMod = LoadLibrary("Rpcrt4.dll");
-  }
-
-  if (hMod) {		// do we have a usable handle to Rpcrt4.dll?
-    uuid_func uuid_crt = (uuid_func)GetProcAddress(hMod, "UuidCreate");
-    if (uuid_crt != NULL) {
-      RPC_STATUS rpc_res = uuid_crt(pu);
-      if ( // is the return status OK for our needs?
-          (rpc_res == RPC_S_OK) ||		// all is well
-          (rpc_res == RPC_S_UUID_LOCAL_ONLY) || // only unique to this machine
-          (rpc_res == RPC_S_UUID_NO_ADDRESS)	// probably only locally unique
-        ) {
-        got_uuid = -1;
-        sprintf(uuidBuffer, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-            pu->Data1, pu->Data2, pu->Data3, pu->Data4[0], pu->Data4[1],
-            pu->Data4[2], pu->Data4[3], pu->Data4[4],
-            pu->Data4[5], pu->Data4[6], pu->Data4[7]);
-      }
-    }
-  }
-  if (got_uuid == 0) {		// did not make a UUID - use fallback logic
-    unsigned char b[16];
-    time_t t = time(0);		// first 4 byte
-    b[0] = (unsigned char)t;
-    b[1] = (unsigned char)(t>>8);
-    b[2] = (unsigned char)(t>>16);
-    b[3] = (unsigned char)(t>>24);
-    int r = rand();		// four more bytes
-    b[4] = (unsigned char)r;
-    b[5] = (unsigned char)(r>>8);
-    b[6] = (unsigned char)(r>>16);
-    b[7] = (unsigned char)(r>>24);
-    // Now we try to find 4 more "random" bytes. We extract the
-    // lower 4 bytes from the address of t - it is created on the
-    // stack so *might* be in a different place each time...
-    // This is now done via a union to make it compile OK on 64-bit systems.
-    union { void *pv; unsigned char a[sizeof(void*)]; } v;
-    v.pv = (void *)(&t);
-    // NOTE: This assume that all WinXX systems are little-endian
-    b[8] = v.a[0];
-    b[9] = v.a[1];
-    b[10] = v.a[2];
-    b[11] = v.a[3];
-    TCHAR name[MAX_COMPUTERNAME_LENGTH + 1]; // only used to make last four bytes
-    DWORD nSize = MAX_COMPUTERNAME_LENGTH + 1;
-    // GetComputerName() does not depend on any extra libs, and returns something
-    // analogous to gethostname()
-    GetComputerName(name, &nSize);
-    //  use the first 4 TCHAR's of the name to create the last 4 bytes of our UUID
-    for (int ii = 0; ii < 4; ii++) {
-      b[12 + ii] = (unsigned char)name[ii];
-    }
-    sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-            b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
-  }
-#else
-  // warning Unix implementation of Fl_Preferences::newUUID() incomplete!
-  // #include <uuid/uuid.h>
-  // void uuid_generate(uuid_t out);
-  unsigned char b[16];
-  time_t t = time(0);			// first 4 byte
-  b[0] = (unsigned char)t;
-  b[1] = (unsigned char)(t>>8);
-  b[2] = (unsigned char)(t>>16);
-  b[3] = (unsigned char)(t>>24);
-  int r = rand(); 			// four more bytes
-  b[4] = (unsigned char)r;
-  b[5] = (unsigned char)(r>>8);
-  b[6] = (unsigned char)(r>>16);
-  b[7] = (unsigned char)(r>>24);
-  unsigned long a = (unsigned long)&t;	// four more bytes
-  b[8] = (unsigned char)a;
-  b[9] = (unsigned char)(a>>8);
-  b[10] = (unsigned char)(a>>16);
-  b[11] = (unsigned char)(a>>24);
-  // Now we try to find 4 more "random" bytes. We extract the
-  // lower 4 bytes from the address of t - it is created on the
-  // stack so *might* be in a different place each time...
-  // This is now done via a union to make it compile OK on 64-bit systems.
-  union { void *pv; unsigned char a[sizeof(void*)]; } v;
-  v.pv = (void *)(&t);
-  // NOTE: May need to handle big- or little-endian systems here
-# if WORDS_BIGENDIAN
-  b[8] = v.a[sizeof(void*) - 1];
-  b[9] = v.a[sizeof(void*) - 2];
-  b[10] = v.a[sizeof(void*) - 3];
-  b[11] = v.a[sizeof(void*) - 4];
-# else /* data ordered for a little-endian system */
-  b[8] = v.a[0];
-  b[9] = v.a[1];
-  b[10] = v.a[2];
-  b[11] = v.a[3];
-# endif
-  char name[80];			// last four bytes
-  gethostname(name, 79);
-  memcpy(b+12, name, 4);
-  sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-          b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-          b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
-#endif
-
+  Fl::system_driver()->newUUID(uuidBuffer);
   return uuidBuffer;
 }
 
@@ -968,98 +809,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   vendor_(0L),
   application_(0L) {
 
-  char filename[ FL_PATH_MAX ]; filename[0] = 0;
-#ifdef WIN32
-#  define FLPREFS_RESOURCE	"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
-#  define FLPREFS_RESOURCEW	L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
-  size_t appDataLen = strlen(vendor) + strlen(application) + 8;
-  DWORD type, nn;
-  LONG err;
-  HKEY key;
-
-  switch (root) {
-    case SYSTEM:
-      err = RegOpenKeyW( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCEW, &key );
-      if (err == ERROR_SUCCESS) {
-        nn = (DWORD) (FL_PATH_MAX - appDataLen); 
-        err = RegQueryValueExW( key, L"Common AppData", 0L, &type,
-                                (BYTE*)filename, &nn ); 
-        if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) ) {
-          filename[0] = 0;
-          filename[1] = 0;
-        }
-        RegCloseKey(key);
-      }
-      break;
-    case USER:
-      err = RegOpenKeyW( HKEY_CURRENT_USER, FLPREFS_RESOURCEW, &key );
-      if (err == ERROR_SUCCESS) {
-        nn = (DWORD) (FL_PATH_MAX - appDataLen);
-        err = RegQueryValueExW( key, L"AppData", 0L, &type,
-                                (BYTE*)filename, &nn ); 
-        if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) ) {
-          filename[0] = 0;
-          filename[1] = 0;
-	}
-        RegCloseKey(key);
-      }
-      break;
-  } 
-  if (!filename[1] && !filename[0]) {
-    strcpy(filename, "C:\\FLTK");
-  } else {
-#if 0
-    wchar_t *b = (wchar_t*)_wcsdup((wchar_t *)filename);
-#else
-    // cygwin does not come with _wcsdup. Use malloc +  wcscpy.
-    // For implementation of wcsdup functionality See
-    // - http://linenum.info/p/glibc/2.7/wcsmbs/wcsdup.c
-    wchar_t *b = (wchar_t*) malloc((wcslen((wchar_t *) filename) + 1) * sizeof(wchar_t));
-    wcscpy(b, (wchar_t *) filename);
-#endif
-    //  filename[fl_unicode2utf(b, wcslen((wchar_t*)b), filename)] = 0;
-    unsigned len = fl_utf8fromwc(filename, (FL_PATH_MAX-1), b, (unsigned) wcslen(b));
-    filename[len] = 0;
-    free(b);
-  }
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
-           "/%s/%s.prefs", vendor, application);
-  for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
-#elif defined ( __APPLE__ ) // PORTME: Fl_System_Driver - platform Preferences
-  // TODO: verify that this is the Apple sanctioned way of finding these folders
-  // (On MSWindows, this frequently leads to issues with internationalized systems)
-  // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
-  switch (root) {
-    case SYSTEM:
-      strcpy(filename, "/Library/Preferences");
-      break;
-    case USER:
-      sprintf(filename, "%s/Library/Preferences", fl_getenv("HOME"));
-      break;
-  }
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
-           "/%s/%s.prefs", vendor, application );
-#else
-  const char *e;
-  switch (root) {
-    case USER:
-      if ((e = fl_getenv("HOME")) != NULL) {
-	strlcpy(filename, e, sizeof(filename));
-
-	if (filename[strlen(filename)-1] != '/') {
-	  strlcat(filename, "/.fltk/", sizeof(filename));
-	} else {
-	  strlcat(filename, ".fltk/", sizeof(filename));
-	}
-	break;
-      } 
-    case SYSTEM:
-      strcpy(filename, "/etc/fltk/");
-      break;
-  } 
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
-           "%s/%s.prefs", vendor, application);
-#endif 
+  char *filename = Fl::system_driver()->preference_rootnode(prefs, root, vendor, application);
   filename_    = strdup(filename);
   vendor_      = strdup(vendor);
   application_ = strdup(application); 
@@ -1157,30 +907,30 @@ int Fl_Preferences::RootNode::read() {
 // write the group tree and all entry leafs
 int Fl_Preferences::RootNode::write() {
   if (!filename_)   // RUNTIME preferences
-    return -1; 
+    return -1;
   fl_make_path_for_file(filename_);
   FILE *f = fl_fopen( filename_, "wb" );
   if ( !f )
-    return -1; 
+    return -1;
   fprintf( f, "; FLTK preferences file format 1.0\n" );
   fprintf( f, "; vendor: %s\n", vendor_ );
   fprintf( f, "; application: %s\n", application_ );
   prefs_->node->write( f );
   fclose( f );
-#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: Fl_System_Driver - platform Preferences
-  // unix: make sure that system prefs are user-readable
-  if (strncmp(filename_, "/etc/fltk/", 10) == 0) {
-    char *p;
-    p = filename_ + 9;
-    do {			 // for each directory to the pref file
-      *p = 0;
-      fl_chmod(filename_, 0755); // rwxr-xr-x
-      *p = '/';
-      p = strchr(p+1, '/');
-    } while (p);
-    fl_chmod(filename_, 0644);   // rw-r--r--
+  if (Fl::system_driver()->preferences_need_protection_check()) {
+    // unix: make sure that system prefs are user-readable
+    if (strncmp(filename_, "/etc/fltk/", 10) == 0) {
+      char *p;
+      p = filename_ + 9;
+      do {			 // for each directory to the pref file
+        *p = 0;
+        fl_chmod(filename_, 0755); // rwxr-xr-x
+        *p = '/';
+        p = strchr(p+1, '/');
+      } while (p);
+      fl_chmod(filename_, 0644);   // rw-r--r--
+    }
   }
-#endif
   return 0;
 }
 
@@ -1196,12 +946,10 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
   if ( !s ) return 0;
   *s = 0;
   char ret = fl_make_path( path );
-#if !(defined(__APPLE__) || defined(WIN32)) // PORTME: Fl_System_Driver - platform Preferences
   // unix: make sure that system prefs dir. is user-readable
-  if (strncmp(path, "/etc/fltk/", 10) == 0) {
+  if (Fl::system_driver()->preferences_need_protection_check() && strncmp(path, "/etc/fltk/", 10) == 0) {
     fl_chmod(path, 0755); // rwxr-xr-x
   }
-#endif
   strcpy( s, "/" );
   return ret;
 }
@@ -1738,16 +1486,9 @@ void Fl_Plugin_Manager::removePlugin(Fl_Preferences::ID id) {
 int Fl_Plugin_Manager::load(const char *filename) {
   // the functions below will autmaticaly load plugins that are defined:
   // Fl_My_Plugin plugin();
-#if defined(WIN32) && !defined(__CYGWIN__)
-  HMODULE dl = LoadLibrary(filename);
-#else
-  void * dl = NULL;
-# if HAVE_DLSYM
-    dl = dlopen(filename, RTLD_LAZY);
-# endif
-#endif
+  void *dl = Fl::system_driver()->dlopen(filename);
   // There is no way of unloading a plugin!
-  return (dl!=0) ? 0 : -1;
+  return (dl != 0) ? 0 : -1;
 }
 
 /**

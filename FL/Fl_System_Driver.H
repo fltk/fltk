@@ -27,6 +27,7 @@
 #include <FL/Fl_Export.H>
 #include <FL/platform_types.h>
 #include <FL/filename.H>
+#include <FL/Fl_Preferences.H>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -135,6 +136,15 @@ public:
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon) {return 0;}
   // the default implementation of file_browser_load_directory() should be enough
   virtual int file_browser_load_directory(const char *directory, char *filename, dirent ***pfiles, Fl_File_Sort_F *sort);
+  // implement to support Fl_Preferences
+  virtual void newUUID(char *uuidBuffer) { uuidBuffer[0] = 0; }
+  // implement to support Fl_Preferences
+  virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
+                                    const char *application) {return NULL;}
+  // the default implementation of preferences_need_protection_check() may be enough
+  virtual int preferences_need_protection_check() {return 0;}
+  // implement to support Fl_Plugin_Manager::load()
+  virtual void *dlopen(const char *filename) {return NULL;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
