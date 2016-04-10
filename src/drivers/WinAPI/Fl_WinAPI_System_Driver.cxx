@@ -868,6 +868,14 @@ void *Fl_WinAPI_System_Driver::dlopen(const char *filename)
   return LoadLibrary(filename);
 }
 
+void Fl_WinAPI_System_Driver::png_extra_rgba_processing(unsigned char *ptr, int w, int h)
+{
+  // Some Windows graphics drivers don't honor transparency when RGB == white
+  // Convert RGB to 0 when alpha == 0...
+  for (int i = w * h; i > 0; i --, ptr += 4) {
+    if (!ptr[3]) ptr[0] = ptr[1] = ptr[2] = 0;
+  }
+}
 
 //
 // End of "$Id$".

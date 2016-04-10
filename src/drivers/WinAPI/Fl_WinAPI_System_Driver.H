@@ -83,6 +83,7 @@ public:
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                     const char *application);
   virtual void *dlopen(const char *filename);
+  virtual void png_extra_rgba_processing(unsigned char *array, int w, int h);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

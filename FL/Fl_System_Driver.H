@@ -145,6 +145,8 @@ public:
   virtual int preferences_need_protection_check() {return 0;}
   // implement to support Fl_Plugin_Manager::load()
   virtual void *dlopen(const char *filename) {return NULL;}
+  // the default implementation is most probably enough
+  virtual void png_extra_rgba_processing(unsigned char *array, int w, int h) {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
