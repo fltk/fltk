@@ -19,6 +19,7 @@
 
 #include "Fl_X11_System_Driver.H"
 #include <FL/Fl_File_Browser.H>
+#include "../../flstring.h"
 
 #include <X11/Xlib.h>
 #include <locale.h>
