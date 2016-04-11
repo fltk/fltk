@@ -35,6 +35,7 @@
 #include <sys/param.h>
 #include <sys/ucred.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 #include <ApplicationServices/ApplicationServices.h>
 
 
@@ -227,6 +228,34 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
 
 void *Fl_Darwin_System_Driver::dlopen(const char *filename) {
   return ::dlopen(filename, RTLD_LAZY);
+}
+
+int Fl_Darwin_System_Driver::file_type(const char *filename)
+{
+  int filetype;
+  struct stat fileinfo;		// Information on file
+  if (!stat(filename, &fileinfo))
+  {
+    if (S_ISDIR(fileinfo.st_mode))
+      filetype = Fl_File_Icon::DIRECTORY;
+#  ifdef S_ISFIFO
+    else if (S_ISFIFO(fileinfo.st_mode))
+      filetype = Fl_File_Icon::FIFO;
+#  endif // S_ISFIFO
+#  if defined(S_ISCHR) && defined(S_ISBLK)
+    else if (S_ISCHR(fileinfo.st_mode) || S_ISBLK(fileinfo.st_mode))
+      filetype = Fl_File_Icon::DEVICE;
+#  endif // S_ISCHR && S_ISBLK
+#  ifdef S_ISLNK
+    else if (S_ISLNK(fileinfo.st_mode))
+      filetype = Fl_File_Icon::LINK;
+#  endif // S_ISLNK
+    else
+      filetype = Fl_File_Icon::PLAIN;
+  }
+  else
+    filetype = Fl_File_Icon::PLAIN;
+  return filetype;
 }
 
 //

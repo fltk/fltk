@@ -30,6 +30,7 @@
 #  include <dlfcn.h>
 #endif
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <pwd.h>
 #include <unistd.h>
 #include <time.h>
@@ -59,6 +60,17 @@ extern "C" {
 #  endif  // __NetBSD_Version__
 }
 #endif  // __NetBSD__
+
+//
+// Define missing POSIX/XPG4 macros as needed...
+//
+#ifndef S_ISDIR
+#  define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
+#  define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
+#  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#  define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
+#  define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
+#endif /* !S_ISDIR */
 
 // Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
@@ -519,6 +531,34 @@ void *Fl_Posix_System_Driver::dlopen(const char *filename)
   return ::dlopen(filename, RTLD_LAZY);
 #endif
   return NULL;
+}
+
+int Fl_Posix_System_Driver::file_type(const char *filename)
+{
+  int filetype;
+  struct stat fileinfo;		// Information on file
+  if (!stat(filename, &fileinfo))
+  {
+    if (S_ISDIR(fileinfo.st_mode))
+      filetype = Fl_File_Icon::DIRECTORY;
+#  ifdef S_ISFIFO
+    else if (S_ISFIFO(fileinfo.st_mode))
+      filetype = Fl_File_Icon::FIFO;
+#  endif // S_ISFIFO
+#  if defined(S_ISCHR) && defined(S_ISBLK)
+    else if (S_ISCHR(fileinfo.st_mode) || S_ISBLK(fileinfo.st_mode))
+      filetype = Fl_File_Icon::DEVICE;
+#  endif // S_ISCHR && S_ISBLK
+#  ifdef S_ISLNK
+    else if (S_ISLNK(fileinfo.st_mode))
+      filetype = Fl_File_Icon::LINK;
+#  endif // S_ISLNK
+    else
+      filetype = Fl_File_Icon::PLAIN;
+  }
+  else
+    filetype = Fl_File_Icon::PLAIN;
+  return filetype;
 }
 
 //

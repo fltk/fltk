@@ -884,6 +884,18 @@ const char *Fl_WinAPI_System_Driver::next_dir_sep(const char *start)
   return p;
 }
 
+int Fl_WinAPI_System_Driver::file_type(const char *filename)
+{
+  int filetype;
+  if (filename[strlen(filename) - 1] == '/')
+    filetype = Fl_File_Icon::DIRECTORY;
+  else if (filename_isdir(filename))
+    filetype = Fl_File_Icon::DIRECTORY;
+  else
+    filetype = Fl_File_Icon::PLAIN;
+  return filetype;
+}
+
 //
 // End of "$Id$".
 //

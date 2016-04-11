@@ -157,6 +157,8 @@ public:
   virtual int lock() {return 1;}
   virtual void unlock() {}
   virtual void* thread_message() {return NULL;}
+  // implement to support Fl_File_Icon
+  virtual int file_type(const char *filename);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

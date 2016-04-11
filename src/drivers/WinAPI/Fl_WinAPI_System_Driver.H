@@ -92,6 +92,7 @@ public:
   virtual void unlock();
   // this one is implemented in Fl_win32.cxx
   virtual void* thread_message();
+  virtual int file_type(const char *filename);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

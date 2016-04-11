@@ -86,6 +86,7 @@ public:
   virtual int lock();
   virtual void unlock();
   virtual void* thread_message();
+  virtual int file_type(const char *filename);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

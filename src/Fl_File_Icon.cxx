@@ -36,26 +36,12 @@
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
-#include <errno.h>
-#include <sys/types.h>
-#include <FL/Fl_System_Driver.H> // for struct stat
+#include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
-
-//
-// Define missing POSIX/XPG4 macros as needed...
-//
-
-#ifndef S_ISDIR
-#  define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
-#  define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
-#  define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
-#  define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
-#  define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
-#endif /* !S_ISDIR */
-
 
 //
 // Icon cache...
@@ -178,39 +164,8 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
 
 
   // Get file information if needed...
-  if (filetype == ANY)
-  {
-#ifdef _MSC_VER // was: WIN32
-    if (filename[strlen(filename) - 1] == '/')
-      filetype = DIRECTORY;
-    else if (fl_filename_isdir(filename))
-      filetype = DIRECTORY;
-    else
-      filetype = PLAIN;
-#else
-    struct stat fileinfo;		// Information on file
-    if (!fl_stat(filename, &fileinfo))
-    {
-      if (S_ISDIR(fileinfo.st_mode))
-        filetype = DIRECTORY;
-#  ifdef S_ISFIFO
-      else if (S_ISFIFO(fileinfo.st_mode))
-        filetype = FIFO;
-#  endif // S_ISFIFO
-#  if defined(S_ISCHR) && defined(S_ISBLK)
-      else if (S_ISCHR(fileinfo.st_mode) || S_ISBLK(fileinfo.st_mode))
-        filetype = DEVICE;
-#  endif // S_ISCHR && S_ISBLK
-#  ifdef S_ISLNK
-      else if (S_ISLNK(fileinfo.st_mode))
-        filetype = LINK;
-#  endif // S_ISLNK
-      else
-        filetype = PLAIN;
-    }
-    else
-      filetype = PLAIN;
-#endif // _MSC_VER // was: WIN32
+  if (filetype == ANY) {
+    filetype = Fl::system_driver()->file_type(filename);
   }
 
   // Look at the base name in the filename

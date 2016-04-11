@@ -58,12 +58,8 @@ struct stat { /* the FLTK source code uses part of the stat() API */
   off_t st_size;
 };
 #define        S_IFMT   0170000  /* type of file */
-#define        S_IFIFO  0010000  /* named pipe (fifo) */
-#define        S_IFCHR  0020000  /* character special */
 #define        S_IFDIR  0040000  /* directory */
-#define        S_IFBLK  0060000  /* block special */
 #define        S_IFREG  0100000  /* regular */
-#define        S_IFLNK  0120000  /* symbolic link */
 
 #else
 typedef unsigned long Fl_Offscreen;

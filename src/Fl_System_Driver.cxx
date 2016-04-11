@@ -19,6 +19,7 @@
 
 #include <FL/Fl_System_Driver.H>
 #include <FL/Fl.H>
+#include <FL/Fl_File_Icon.H>
 #include <FL/fl_utf8.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -421,6 +422,11 @@ int Fl_System_Driver::file_browser_load_directory(const char *directory, char *f
                                                   size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
 {
   return filename_list(directory, pfiles, sort);
+}
+
+int Fl_System_Driver::file_type(const char *filename)
+{
+  return Fl_File_Icon::ANY;
 }
 
 //
