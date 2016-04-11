@@ -21,9 +21,7 @@
 
 #include <stdlib.h>
 
-#if defined(FL_CFG_GFX_QUARTZ)
-#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
-#elif defined(FL_CFG_GFX_XLIB)
+#if defined(FL_CFG_SYS_POSIX)
 #include "drivers/Posix/Fl_Posix_System_Driver.H"
 #elif defined(FL_CFG_SYS_WIN32)
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
@@ -261,6 +259,9 @@ void Fl_WinAPI_System_Driver::awake(void* msg) {
 }
 #endif // FL_CFG_SYS_WIN32
 
+
+#if defined(FL_CFG_SYS_POSIX)
+
 ////////////////////////////////////////////////////////////////
 // POSIX threading...
 #if defined(HAVE_PTHREAD)
@@ -314,12 +315,12 @@ static void unlock_function_rec() {
 }
 #  endif // PTHREAD_MUTEX_RECURSIVE
 
-static void posix_awake(void* msg) {
+void Fl_Posix_System_Driver::awake(void* msg) {
   if (write(thread_filedes[1], &msg, sizeof(void*))==0) { /* ignore */ }
 }
 
 static void* thread_message_;
-static void* posix_thread_message() {
+void* Fl_Posix_System_Driver::thread_message() {
   void* r = thread_message_;
   thread_message_ = 0;
   return r;
@@ -340,7 +341,7 @@ static void thread_awake_cb(int fd, void*) {
 extern void (*fl_lock_function)();
 extern void (*fl_unlock_function)();
 
-static int posix_lock() {
+int Fl_Posix_System_Driver::lock() {
   if (!thread_filedes[1]) {
     // Initialize thread communication pipe to let threads awake FLTK
     // from Fl::wait()
@@ -378,7 +379,7 @@ static int posix_lock() {
   return 0;
 }
 
-static void posix_unlock() {
+void Fl_Posix_System_Driver::unlock() {
   fl_unlock_function();
 }
 
@@ -399,58 +400,15 @@ void lock_ring() {
 
 #else
 
-#if defined(FL_CFG_GFX_QUARTZ) || defined(FL_CFG_GFX_XLIB)
-static void posix_awake(void*) {}
-static int posix_lock() { return 1; }
-static void posix_unlock() {}
-static void* posix_thread_message() { return NULL; }
-#endif
+static void Fl_Posix_System_Driver::awake(void*) {}
+static int Fl_Posix_System_Driver::lock() { return 1; }
+static void Fl_Posix_System_Driver::unlock() {}
+static void* Fl_Posix_System_Driver::thread_message() { return NULL; }
 
 #endif // HAVE_PTHREAD
 
-#if defined(FL_CFG_GFX_QUARTZ)
-void Fl_Darwin_System_Driver::awake(void *v)
-{
-  posix_awake(v);
-}
 
-int Fl_Darwin_System_Driver::lock()
-{
-  return posix_lock();
-}
-
-void Fl_Darwin_System_Driver::unlock()
-{
-  posix_unlock();
-}
-
-void* Fl_Darwin_System_Driver::thread_message()
-{
-  return posix_thread_message();
-}
-#endif // FL_CFG_GFX_QUARTZ
-
-#if defined(FL_CFG_GFX_XLIB)
-void Fl_Posix_System_Driver::awake(void *v)
-{
-  posix_awake(v);
-}
-
-int Fl_Posix_System_Driver::lock()
-{
-  return posix_lock();
-}
-
-void Fl_Posix_System_Driver::unlock()
-{
-  posix_unlock();
-}
-
-void* Fl_Posix_System_Driver::thread_message()
-{
-  return posix_thread_message();
-}
-#endif // FL_CFG_GFX_XLIB
+#endif // FL_CFG_SYS_POSIX
 
 
 void Fl::awake(void *v) {

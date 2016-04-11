@@ -21,12 +21,12 @@
 // and looks it up in the X key bit vector, which Fl_x.cxx keeps track of.
 
 #include <FL/Fl.H>
-#include "drivers/Posix/Fl_Posix_System_Driver.H"
+#include "drivers/X11/Fl_X11_System_Driver.H"
 #include <FL/x.H> // for fl_display
 
 extern char fl_key_vector[32]; // in Fl_x.cxx
 
-int Fl_Posix_System_Driver::event_key(int k) {
+int Fl_X11_System_Driver::event_key(int k) {
   if (k > FL_Button && k <= FL_Button+8)
     return Fl::event_state(8<<(k-FL_Button));
   int i;
@@ -42,7 +42,7 @@ int Fl_Posix_System_Driver::event_key(int k) {
   return fl_key_vector[i/8] & (1 << (i%8));
 }
 
-int Fl_Posix_System_Driver::get_key(int k) {
+int Fl_X11_System_Driver::get_key(int k) {
   fl_open_display();
   XQueryKeymap(fl_display, fl_key_vector);
   return event_key(k);

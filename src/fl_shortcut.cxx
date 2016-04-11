@@ -443,12 +443,12 @@ Fl_System_Driver::Keyname Fl_System_Driver::table[] = {
 #endif
 
 #if defined(FL_CFG_GFX_XLIB)
-#include "drivers/Posix/Fl_Posix_System_Driver.H"
+#include "drivers/X11/Fl_X11_System_Driver.H"
 #include <X11/Xlib.h>
 
 Fl_System_Driver::Keyname Fl_System_Driver::table[] = {};
 
-const char *Fl_Posix_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
+const char *Fl_X11_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
 {
   const char* q;
   if (key == FL_Enter || key == '\r') q="Enter";  // don't use Xlib's "Return":

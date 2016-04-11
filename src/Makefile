@@ -230,6 +230,7 @@ QUARTZCPPFILES = \
 	drivers/Quartz/Fl_Quartz_Image_Surface_Driver.cxx \
 	drivers/Cocoa/Fl_Cocoa_Window_Driver.cxx \
 	drivers/Cocoa/Fl_Cocoa_Screen_Driver.cxx \
+        drivers/Posix/Fl_Posix_System_Driver.cxx \
 	drivers/Darwin/Fl_Darwin_System_Driver.cxx \
         Fl_get_key_mac.cxx
 
@@ -248,6 +249,7 @@ XLIBCPPFILES = \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
 	drivers/X11/Fl_X11_Screen_Driver.cxx \
 	drivers/Posix/Fl_Posix_System_Driver.cxx \
+        drivers/X11/Fl_X11_System_Driver.cxx \
 	drivers/Posix/Fl_Posix_Printer_Driver.cxx \
 	Fl_x.cxx \
 	fl_dnd_x.cxx \

@@ -44,15 +44,15 @@
 
 class Fl_Posix_System_Driver : public Fl_System_Driver
 {
-private:
+protected:
   int run_program(const char *program, char **argv, char *msg, int msglen);
 public:
-  virtual void display_arg(const char *arg);
-  virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
+  Fl_Posix_System_Driver() {}
   virtual int mkdir(const char* f, int mode) {return ::mkdir(f, mode);}
   virtual int open(const char* f, int oflags, int pmode) {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);
   }
+  virtual int putenv(char* v) {return ::putenv(v);}
   virtual FILE *fopen(const char* f, const char *mode) {return ::fopen(f, mode);}
   virtual int system(const char* cmd) {return ::system(cmd);}
   virtual int execvp(const char *file, char *const *argv) {return ::execvp(file, argv);}
@@ -63,23 +63,8 @@ public:
   virtual int unlink(const char* f) {return ::unlink(f);}
   virtual int rmdir(const char* f) {return ::rmdir(f);}
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}
-  virtual int clocale_printf(FILE *output, const char *format, va_list args);
-  // these 2 are in Fl_get_key.cxx
-  virtual int event_key(int k);
-  virtual int get_key(int k);
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
   virtual const char *getpwnam(const char *login);
   virtual int need_menu_handle_part2() {return 1;}
-  virtual int need_menu_handle_part1_extra() {return 1;}
-  virtual int open_uri(const char *uri, char *msg, int msglen);
-  virtual int use_tooltip_timeout_condition() {return 1;}
-  // this one is in fl_shortcut.cxx
-  virtual const char *shortcut_add_key_name(unsigned key, char *p, char *buf, const char **);
-  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon);
-  virtual void newUUID(char *uuidBuffer);
-  virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
-                                   const char *application);
-  virtual int preferences_need_protection_check() {return 1;}
   virtual void *dlopen(const char *filename);
   // these 4 are implemented in Fl_lock.cxx
   virtual void awake(void*);

@@ -27,7 +27,6 @@
 #include "config_lib.h"
 #include <FL/filename.H>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -130,8 +129,9 @@ void fl_decode_uri(char *uri)
 /**   @} */
 
 
-#if defined(FL_CFG_GFX_XLIB) || defined(FL_CFG_GFX_QUARTZ)
+#if defined(FL_CFG_SYS_POSIX)
 // code shared by the Mac OS and USE_X11 platforms
+#  include "drivers/Posix/Fl_Posix_System_Driver.H"
 #  include <unistd.h>
 #  include <sys/wait.h>
 #  include <signal.h>
@@ -139,7 +139,7 @@ void fl_decode_uri(char *uri)
 #  include <errno.h>
 
 // Run the specified program, returning 1 on success and 0 on failure
-static int run_program(const char *program, char **argv, char *msg, int msglen) {
+int Fl_Posix_System_Driver::run_program(const char *program, char **argv, char *msg, int msglen) {
   pid_t	pid;				// Process ID of first child
   int status;				// Exit status from first child
   sigset_t set, oldset;			// Signal masks
@@ -163,13 +163,13 @@ static int run_program(const char *program, char **argv, char *msg, int msglen) 
     if (!fork()) {
       // Second child comes here, redirect stdin/out/err to /dev/null...
       close(0);
-      open("/dev/null", O_RDONLY);
+      ::open("/dev/null", O_RDONLY);
 
       close(1);
-      open("/dev/null", O_WRONLY);
+      ::open("/dev/null", O_WRONLY);
 
       close(2);
-      open("/dev/null", O_WRONLY);
+      ::open("/dev/null", O_WRONLY);
 
       // Detach from the current process group...
       setsid();
@@ -210,26 +210,8 @@ static int run_program(const char *program, char **argv, char *msg, int msglen) 
   // Return indicating success...
   return 1;
 }
-#endif
+#endif // FL_CFG_SYS_POSIX
 
-#if defined(FL_CFG_GFX_QUARTZ)
-
-#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
-
-int Fl_Darwin_System_Driver::run_program(const char *program, char **argv, char *msg, int msglen)
-{
-  return ::run_program(program, argv, msg, msglen);
-}
-
-#elif defined(FL_CFG_GFX_XLIB)
-#include "drivers/Posix/Fl_Posix_System_Driver.H"
-
-int Fl_Posix_System_Driver::run_program(const char *program, char **argv, char *msg, int msglen)
-{
-  return ::run_program(program, argv, msg, msglen);
-}
-
-#endif
 
 #ifdef TEST
 //
