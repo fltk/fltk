@@ -29,6 +29,8 @@
 #include <stdarg.h>
 #include <windows.h>
 #include <rpc.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 // function pointer for the UuidCreate Function
 // RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
 typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
@@ -635,7 +637,7 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
 
 int Fl_WinAPI_System_Driver::filename_isdir(const char* n)
 {
-  struct stat	s;
+  struct _stat	s;
   char		fn[FL_PATH_MAX];
   int		length;
   length = (int) strlen(n);
@@ -656,7 +658,7 @@ int Fl_WinAPI_System_Driver::filename_isdir(const char* n)
       n = fn;
     }
   }
-  return !stat(n, &s) && (s.st_mode & S_IFMT) == S_IFDIR;
+  return !_stat(n, &s) && (s.st_mode & _S_IFDIR);
 }
 
 int Fl_WinAPI_System_Driver::filename_isdir_quick(const char* n)

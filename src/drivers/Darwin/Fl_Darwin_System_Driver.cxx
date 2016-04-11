@@ -234,7 +234,7 @@ int Fl_Darwin_System_Driver::file_type(const char *filename)
 {
   int filetype;
   struct stat fileinfo;		// Information on file
-  if (!stat(filename, &fileinfo))
+  if (!::stat(filename, &fileinfo))
   {
     if (S_ISDIR(fileinfo.st_mode))
       filetype = Fl_File_Icon::DIRECTORY;
