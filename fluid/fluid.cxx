@@ -61,6 +61,7 @@
 #    define access _access
 #    define chdir _chdir
 #    define getcwd _getcwd
+#    define unlink _unlink
 #  endif // !__WATCOMC__
 #else
 #  include <unistd.h>

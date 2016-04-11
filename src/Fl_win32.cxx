@@ -20,7 +20,7 @@
 // in.  Search other files for "WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
-#if defined(WIN32) and !defined(FL_DOXYGEN)
+#if defined(WIN32) && !defined(FL_DOXYGEN)
 
 /* We require Windows 2000 features (e.g. VK definitions) */
 # if !defined(WINVER) || (WINVER < 0x0500)

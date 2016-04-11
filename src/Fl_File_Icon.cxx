@@ -174,13 +174,21 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
                    int        filetype)	// I - Enumerated file type
 {
   Fl_File_Icon	*current;		// Current file in list
-  struct stat	fileinfo;		// Information on file
   const char	*name;			// Base name of filename
 
 
   // Get file information if needed...
   if (filetype == ANY)
   {
+#ifdef _MSC_VER // was: WIN32
+    if (filename[strlen(filename) - 1] == '/')
+      filetype = DIRECTORY;
+    else if (fl_filename_isdir(filename))
+      filetype = DIRECTORY;
+    else
+      filetype = PLAIN;
+#else
+    struct stat fileinfo;		// Information on file
     if (!fl_stat(filename, &fileinfo))
     {
       if (S_ISDIR(fileinfo.st_mode))
@@ -202,6 +210,7 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
     }
     else
       filetype = PLAIN;
+#endif // _MSC_VER // was: WIN32
   }
 
   // Look at the base name in the filename

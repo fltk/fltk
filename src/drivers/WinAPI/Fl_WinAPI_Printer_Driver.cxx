@@ -19,13 +19,11 @@
 #ifdef WIN32
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
-
 #include <FL/Fl_Printer.H>
-
-
 #include <FL/fl_ask.H>
 #include <FL/math.h>
 #include <FL/fl_draw.H>
+#include <Commdlg.h>
 
 extern HWND fl_window;
 

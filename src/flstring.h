@@ -48,7 +48,7 @@
  */
 #    ifndef __WATCOMC__
 #      define strdup _strdup
-#      define unlink _unlink
+#      /* define unlink _unlink */
 #    endif /* !__WATCOMC__ */
 #  elif defined(__EMX__)
 #    define strcasecmp(s,t)	stricmp((s), (t))
