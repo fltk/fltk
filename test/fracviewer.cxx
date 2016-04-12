@@ -23,9 +23,9 @@
 #  include <math.h>
 #  include <sys/types.h>
 #  include <time.h>
-#  if !defined(WIN32) && !defined(__EMX__)
+#  if !defined(WIN32)
 #    include <sys/time.h>
-#  endif // !WIN32 && !__EMX__
+#  endif // !WIN32
 
 #  include "fracviewer.h"
 

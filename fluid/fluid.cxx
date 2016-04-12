@@ -3,7 +3,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,9 +65,6 @@
 #  endif // !__WATCOMC__
 #else
 #  include <unistd.h>
-#endif
-#ifdef __EMX__
-#  include <X11/Xlibint.h>
 #endif
 
 #include "about_panel.h"
@@ -202,10 +199,10 @@ void save_cb(Fl_Widget *, void *v) {
       const char *basename;
       if ((basename = strrchr(c, '/')) != NULL)
         basename ++;
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32)
       if ((basename = strrchr(c, '\\')) != NULL)
         basename ++;
-#endif // WIN32 || __EMX__
+#endif // WIN32
       else
         basename = c;
 
@@ -851,17 +848,7 @@ void show_help(const char *name) {
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
   if ((docdir = getenv("FLTK_DOCDIR")) == NULL) {
-#ifdef __EMX__
-    // Doesn't make sense to have a hardcoded fallback
-    static char fltk_docdir[FL_PATH_MAX];
-
-    strlcpy(fltk_docdir, __XOS2RedirRoot("/XFree86/lib/X11/fltk/doc"),
-            sizeof(fltk_docdir));
-
-    docdir = fltk_docdir;
-#else
     docdir = FLTK_DOCDIR;
-#endif // __EMX__
   }
   snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);
 
@@ -1639,9 +1626,9 @@ void set_modflag(int mf) {
   if (main_window) {
     if (!filename) basename = "Untitled.fl";
     else if ((basename = strrchr(filename, '/')) != NULL) basename ++;
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32)
     else if ((basename = strrchr(filename, '\\')) != NULL) basename ++;
-#endif // WIN32 || __EMX__
+#endif // WIN32
     else basename = filename;
 
     if (modflag) {

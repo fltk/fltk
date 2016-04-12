@@ -67,7 +67,7 @@ int main(int, char**) {
 
 #include "fracviewer.h"
 
-#if defined(WIN32) || defined(__EMX__)
+#if defined(WIN32)
 #  define drand48() (((float) rand())/((float) RAND_MAX))
 #  define srand48(x) (srand((x)))
 #elif defined __APPLE__
