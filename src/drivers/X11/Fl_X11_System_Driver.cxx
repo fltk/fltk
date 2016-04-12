@@ -66,7 +66,7 @@ const char* fl_local_meta  = "Meta";
 const char* fl_local_shift = "Shift";
 
 /**
- Creates a driver that manages all screen and display related calls.
+ Creates a driver that manages all system related calls.
  
  This function must be implemented once for every platform.
  */

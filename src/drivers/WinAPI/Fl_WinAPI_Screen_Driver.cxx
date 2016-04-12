@@ -44,11 +44,10 @@ extern const char *fl_bg2;
 #endif // !HMONITOR_DECLARED && _WIN32_WINNT < 0x0500
 
 
-/**
+/*
  Creates a driver that manages all screen and display related calls.
 
- This function must be implemented once for every platform. It is called
- when the static members of the class "Fl" are created.
+ This function must be implemented once for every platform.
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {

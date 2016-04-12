@@ -51,8 +51,8 @@ const char* fl_local_meta  = "⌘\\"; // U+2318 (place of interest sign)
 const char* fl_local_shift = "⇧\\"; // U+21E7 (upwards white arrow)
 
 
-/**
- Creates a driver that manages all screen and display related calls.
+/*
+ Creates a driver that manages all system related calls.
  
  This function must be implemented once for every platform.
  */

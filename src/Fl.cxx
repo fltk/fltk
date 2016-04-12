@@ -175,12 +175,14 @@ char const * const Fl::clipboard_image = "image";
 // Drivers
 //
 
+/** Returns a pointer to the unique Fl_Screen_Driver object of the platform */
 Fl_Screen_Driver *Fl::screen_driver()
 {
   static  Fl_Screen_Driver* screen_driver_ = Fl_Screen_Driver::newScreenDriver();
   return screen_driver_;
 }
 
+/** Returns a pointer to the unique Fl_System_Driver object of the platform */
 Fl_System_Driver *Fl::system_driver()
 {
   static  Fl_System_Driver* system_driver_ = Fl_System_Driver::newSystemDriver();
