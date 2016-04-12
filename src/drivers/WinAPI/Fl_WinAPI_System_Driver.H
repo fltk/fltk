@@ -42,6 +42,7 @@
 class Fl_WinAPI_System_Driver : public Fl_System_Driver
 {
 public:
+  static unsigned win_pixmap_bg_color; // the RGB() of the pixmap background color
   virtual void warning(const char *format, va_list args);
   virtual void error(const char *format, va_list args);
   virtual void fatal(const char *format, va_list args);
@@ -93,6 +94,9 @@ public:
   // this one is implemented in Fl_win32.cxx
   virtual void* thread_message();
   virtual int file_type(const char *filename);
+  virtual int pixmap_extra_transparent_processing() {return 1;}
+  // this one is implemented in fl_draw_pixmap.cxx
+  virtual void make_unused_color(unsigned char &r, unsigned char &g, unsigned char &b);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

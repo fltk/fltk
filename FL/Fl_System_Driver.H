@@ -159,6 +159,9 @@ public:
   virtual void* thread_message() {return NULL;}
   // implement to support Fl_File_Icon
   virtual int file_type(const char *filename);
+  // the default implementations of pixmap_extra_transparent_processing() and make_unused_color() and are most probably enough
+  virtual int pixmap_extra_transparent_processing() {return 0;}
+  virtual void make_unused_color(unsigned char &r, unsigned char &g, unsigned char &b) {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

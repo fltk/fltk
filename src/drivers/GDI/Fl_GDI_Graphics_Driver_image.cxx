@@ -37,6 +37,7 @@
 
 #include <config.h>
 #include "Fl_GDI_Graphics_Driver.H"
+#include "../WinAPI/Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
@@ -635,8 +636,7 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const c
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
-  extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
-  img->pixmap_bg_color = win_pixmap_bg_color;
+  img->pixmap_bg_color = Fl_WinAPI_System_Driver::win_pixmap_bg_color;  // computed by fl_draw_pixmap()
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
     img->mask_ = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);

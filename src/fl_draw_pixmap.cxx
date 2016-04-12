@@ -32,19 +32,23 @@
 // The above comments were checked in as r2, and much has changed since then;
 // transparency added, color cube not required, etc.      -erco Oct 20 2013
 
+#include "config_lib.h"
 #include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
+#if defined(FL_CFG_SYS_WIN32)
+#include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
+#endif
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include "flstring.h"
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform pixmap
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement platform specific about pixmap drawing here"
-#else
-#endif
 
 static int ncolors, chars_per_pixel;
+
+typedef struct { uchar r; uchar g; uchar b; } UsedColor;
+static UsedColor *used_colors;
+static int color_count; 	    // # of non-transparent colors used in pixmap
 
 /**
   Get the dimensions of a pixmap.
@@ -84,16 +88,14 @@ int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
   return fl_draw_pixmap((const char*const*)data,x,y,bg);
 }
 
-#ifdef WIN32
-// to compute an unused color to be used for the pixmap background
-FL_EXPORT UINT win_pixmap_bg_color; // the RGB() of the pixmap background color
-static int     color_count; 	    // # of non-transparent colors used in pixmap
-typedef struct { uchar r; uchar g; uchar b; } UsedColor;
-static UsedColor *used_colors;
+
+#if defined(FL_CFG_SYS_WIN32)
+
+unsigned Fl_WinAPI_System_Driver::win_pixmap_bg_color = 0; // the RGB() of the pixmap background color
 
 // Makes an RGB triplet different from all the colors used in the pixmap
 // and compute win_pixmap_bg_color from this triplet
-static void make_unused_color(uchar &r, uchar &g, uchar &b) {
+void Fl_WinAPI_System_Driver::make_unused_color(uchar &r, uchar &g, uchar &b) {
   int i;
   r = 2; g = 3; b = 4;
   while (1) {
@@ -120,11 +122,14 @@ static void make_unused_color(uchar &r, uchar &g, uchar &b) {
     }
   }
 }
-#endif
+#endif // FL_CFG_SYS_WIN32
+
 
 int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   int w, h;
   const uchar*const* data = (const uchar*const*)(cdata+1);
+  static int use_extra_transparent_processing = Fl::system_driver()->pixmap_extra_transparent_processing();
+  uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
 
   if (!fl_measure_pixmap(cdata, w, h))
     return 0;
@@ -135,11 +140,10 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   typedef uchar uchar4[4];
   uchar4 *colors = new uchar4[1<<(chars_per_pixel*8)];
 
-#ifdef WIN32
-  uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
-  color_count = 0;
-  used_colors = (UsedColor*)malloc(abs(ncolors) * sizeof(UsedColor));
-#endif
+  if (use_extra_transparent_processing) {
+    color_count = 0;
+    used_colors = (UsedColor*)malloc(abs(ncolors) * sizeof(UsedColor));
+  }
 
   if (ncolors < 0) {	// FLTK (non standard) compressed colormap
     ncolors = -ncolors;
@@ -149,21 +153,19 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
     if (*p == ' ') {
       uchar* c = colors[(int)' '];
       Fl::get_color(bg, c[0], c[1], c[2]); c[3] = 0;
-#ifdef WIN32
-      transparent_c = c;
-#endif
+      if (use_extra_transparent_processing) transparent_c = c;
       p += 4;
       ncolors--;
     }
     // read all the rest of the colors:
     for (int i=0; i < ncolors; i++) {
       uchar* c = colors[*p++];
-#ifdef WIN32
-      used_colors[color_count].r = *(p+0);
-      used_colors[color_count].g = *(p+1);
-      used_colors[color_count].b = *(p+2);
-      color_count++;
-#endif
+      if (use_extra_transparent_processing) {
+        used_colors[color_count].r = *(p+0);
+        used_colors[color_count].g = *(p+1);
+        used_colors[color_count].b = *(p+2);
+        color_count++;
+      }
       *c++ = *p++;
       *c++ = *p++;
       *c++ = *p++;
@@ -193,31 +195,29 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
       int parse = fl_parse_color((const char*)p, c[0], c[1], c[2]);
       c[3] = 255;
       if (parse) {
-#ifdef WIN32
-        used_colors[color_count].r = c[0];
-        used_colors[color_count].g = c[1];
-        used_colors[color_count].b = c[2];
-	color_count++;
-#endif
+        if (use_extra_transparent_processing) {
+          used_colors[color_count].r = c[0];
+          used_colors[color_count].g = c[1];
+          used_colors[color_count].b = c[2];
+          color_count++;
+        }
       } else {
         // assume "None" or "#transparent" for any errors
 	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
         c[3] = 0;
-#ifdef WIN32
-	transparent_c = c;
-#endif
+	if (use_extra_transparent_processing) transparent_c = c;
       } // if parse
     } // for ncolors
   } // if ncolors
-#ifdef WIN32
-  if (transparent_c) {
-    make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
-  } else {
-    uchar r, g, b;
-    make_unused_color(r, g, b);
+  if (use_extra_transparent_processing) {
+    if (transparent_c) {
+      Fl::system_driver()->make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
+    } else {
+      uchar r, g, b;
+      Fl::system_driver()->make_unused_color(r, g, b);
+    }
   }
-#endif
 
   U32 *q = (U32*)out;
   for (int Y = 0; Y < h; Y++) {
