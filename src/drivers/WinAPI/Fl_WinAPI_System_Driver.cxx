@@ -898,6 +898,13 @@ int Fl_WinAPI_System_Driver::file_type(const char *filename)
   return filetype;
 }
 
+const char *Fl_WinAPI_System_Driver::home_directory_name()
+{
+  const char *h = getenv("HOME");
+  if (!h) h = getenv("UserProfile");
+  return h;
+}
+
 //
 // End of "$Id$".
 //

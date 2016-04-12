@@ -162,6 +162,16 @@ public:
   // the default implementations of pixmap_extra_transparent_processing() and make_unused_color() and are most probably enough
   virtual int pixmap_extra_transparent_processing() {return 0;}
   virtual void make_unused_color(unsigned char &r, unsigned char &g, unsigned char &b) {}
+  // implement to return the user's home directory name
+  virtual const char *home_directory_name() { return ""; }
+  // the default implementation is most probably enough
+  virtual const char *filesystems_label() { return "File Systems"; }
+  // return TRUE means \ same as / in file names
+  virtual int backslash_as_slash() {return 0;}
+  // return TRUE means : indicates a drive letter in file names
+  virtual int colon_is_drive() {return 0;}
+  // return TRUE means that files whose name begins with dot are hidden
+  virtual int dot_file_hidden() {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

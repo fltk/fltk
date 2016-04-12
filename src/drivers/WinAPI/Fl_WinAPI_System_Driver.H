@@ -97,6 +97,10 @@ public:
   virtual int pixmap_extra_transparent_processing() {return 1;}
   // this one is implemented in fl_draw_pixmap.cxx
   virtual void make_unused_color(unsigned char &r, unsigned char &g, unsigned char &b);
+  virtual const char *home_directory_name();
+  virtual const char *filesystems_label() { return "My Computer"; }
+  virtual int backslash_as_slash() {return 1;}
+  virtual int colon_is_drive() {return 1;}
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

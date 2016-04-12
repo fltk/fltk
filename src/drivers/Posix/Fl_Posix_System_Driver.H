@@ -73,6 +73,8 @@ public:
   virtual void unlock();
   virtual void* thread_message();
   virtual int file_type(const char *filename);
+  virtual const char *home_directory_name() { return ::getenv("HOME"); }
+  virtual int dot_file_hidden() {return 1;}
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H
