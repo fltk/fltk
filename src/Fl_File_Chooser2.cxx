@@ -729,7 +729,7 @@ Fl_File_Chooser::fileListCB()
         Fl::system_driver()->filename_isdir_quick(pathname))
 #else
     if (Fl::system_driver()->filename_isdir_quick(pathname))
-#endif /* WIN32 || __EMX__ */
+#endif / * WIN32 || __EMX__ */
     int condition = 0;
     if (Fl::system_driver()->colon_is_drive() && strlen(pathname) == 2 && pathname[1] == ':') condition = 1;
     if (!condition) condition = Fl::system_driver()->filename_isdir_quick(pathname);
@@ -847,7 +847,7 @@ Fl_File_Chooser::fileNameCB()
       !(isalpha(filename[0] & 255) && (!filename[1] || filename[1] == ':'))) {
 #else
   if (directory_[0] != '\0' && filename[0] != '/') {
-#endif /* WIN32 || __EMX__ */
+#endif / * WIN32 || __EMX__ */
   int condition = directory_[0] != '\0' && filename[0] != '/';
   if (condition && Fl::system_driver()->colon_is_drive()) condition = !(isalpha(filename[0] & 255) && (!filename[1] || filename[1] == ':'));
   if (condition) {
@@ -871,7 +871,7 @@ Fl_File_Chooser::fileNameCB()
 #else
     if (Fl::system_driver()->filename_isdir_quick(pathname) &&
 	compare_dirnames(pathname, directory_)) {
-#endif /* WIN32 || __EMX__ */
+#endif / * WIN32 || __EMX__ */
     int condition = 0;
     if (Fl::system_driver()->colon_is_drive()) condition = isalpha(pathname[0] & 255) && pathname[1] == ':' && !pathname[2];
     if (!condition) condition = ( Fl::system_driver()->filename_isdir_quick(pathname) && compare_dirnames(pathname, directory_) );
@@ -1089,7 +1089,7 @@ Fl_File_Chooser::newdir()
   if (dir[0] != '/' && dir[0] != '\\' && dir[1] != ':')
 #else
   if (dir[0] != '/' && dir[0] != '\\')
-#endif /* WIN32 || __EMX__ */
+#endif / * WIN32 || __EMX__ */
   if (dir[0] != '/' && dir[0] != '\\' && (!Fl::system_driver()->colon_is_drive() || dir[1] != ':') )
     snprintf(pathname, sizeof(pathname), "%s/%s", directory_, dir);
   else
