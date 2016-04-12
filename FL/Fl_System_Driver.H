@@ -79,7 +79,7 @@ public:
   
   // implement these to support cross-platform file operations
   virtual char *utf2mbcs(const char *s) {return (char*)s;}
-  virtual char *getenv(const char* v);
+  virtual char *getenv(const char* v) {return NULL;}
   virtual int putenv(char* v) {return -1;}
   virtual int open(const char* f, int oflags, int pmode) {return -1;}
   virtual FILE *fopen(const char* f, const char *mode) {return NULL;}
@@ -97,7 +97,7 @@ public:
   // the default implementation of these utf8... functions should be enough 
   virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
   virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
-  virtual int utf8locale();
+  virtual int utf8locale() {return 1;}
   virtual unsigned utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen);
   virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
   // implement to shield fprintf() from locale changes in decimal point

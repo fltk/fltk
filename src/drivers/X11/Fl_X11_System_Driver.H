@@ -42,6 +42,7 @@ public:
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                     const char *application);
   virtual int preferences_need_protection_check() {return 1;} 
+  virtual int utf8locale();
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

@@ -52,6 +52,7 @@ public:
   virtual int open(const char* f, int oflags, int pmode) {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);
   }
+  virtual char *getenv(const char *v) { return ::getenv(v); }  
   virtual int putenv(char* v) {return ::putenv(v);}
   virtual FILE *fopen(const char* f, const char *mode) {return ::fopen(f, mode);}
   virtual int system(const char* cmd) {return ::system(cmd);}

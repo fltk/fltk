@@ -219,10 +219,6 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
   return (mask);
 }
 
-char *Fl_System_Driver::getenv(const char *v) {
-  return ::getenv(v);
-}
-
 unsigned Fl_System_Driver::utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen) {
   const char* p = src;
   const char* e = src+srclen;
@@ -301,20 +297,6 @@ J1:
     }
   }
   return count;
-}
-
-int Fl_System_Driver::utf8locale() {
-  static int ret = 2;
-  if (ret == 2) {
-    char* s;
-    ret = 1; // assume UTF-8 if no locale
-    if (((s = getenv("LC_CTYPE")) && *s) ||
-        ((s = getenv("LC_ALL"))   && *s) ||
-        ((s = getenv("LANG"))     && *s)) {
-      ret = (strstr(s,"utf") || strstr(s,"UTF"));
-    }
-  }
-  return ret;
 }
 
 unsigned Fl_System_Driver::utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen) {

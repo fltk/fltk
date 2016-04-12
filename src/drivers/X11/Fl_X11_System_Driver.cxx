@@ -499,6 +499,15 @@ int Fl_X11_System_Driver::filename_list(const char *d, dirent ***list, int (*sor
   return n;
 }
 
+int Fl_X11_System_Driver::utf8locale() {
+  char *s;
+  static int ret = ((s = ::getenv("LC_CTYPE")) && *s) ||
+  ((s = ::getenv("LC_ALL"))   && *s) ||
+  ((s = ::getenv("LANG"))     && *s)
+  ? 1 : 0;
+  return ret;
+}
+
 //
 // End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".
 //
