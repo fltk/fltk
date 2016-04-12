@@ -101,6 +101,7 @@ public:
   virtual const char *filesystems_label() { return "My Computer"; }
   virtual int backslash_as_slash() {return 1;}
   virtual int colon_is_drive() {return 1;}
+  virtual int case_insensitive_filenames() {return 1;}
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

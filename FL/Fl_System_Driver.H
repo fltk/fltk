@@ -172,6 +172,8 @@ public:
   virtual int colon_is_drive() {return 0;}
   // return TRUE means that files whose name begins with dot are hidden
   virtual int dot_file_hidden() {return 0;}
+  // return TRUE when file names are case insensitive
+  virtual int case_insensitive_filenames() {return 0;}
 };
 
 #endif // FL_SYSTEM_DRIVER_H
