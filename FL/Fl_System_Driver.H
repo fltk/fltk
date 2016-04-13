@@ -177,6 +177,9 @@ public:
   // the implementations of local_to_latin1() and latin1_to_local() are in fl_encoding_latin1.cxx
   virtual const char *local_to_latin1(const char *t, int n);
   virtual const char *latin1_to_local(const char *t, int n);
+  // the implementations of local_to_mac_roman() and mac_roman_to_local() are in fl_encoding_mac_roman.cxx
+  virtual const char *local_to_mac_roman(const char *t, int n);
+  virtual const char *mac_roman_to_local(const char *t, int n);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

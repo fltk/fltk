@@ -3,7 +3,7 @@
 //
 // Convert Mac Roman encoded text to the local encoding.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,38 +16,38 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config_lib.h"
 #include <FL/fl_draw.H>
+#include <FL/Fl_System_Driver.H>
+#include <FL/Fl.H>
 #include <FL/Enumerations.H>
 #include <stdlib.h>
 #include "flstring.h"
 
-// These function assume a western code page. If you need to support 
-// scripts that are not part of this code page, you might want to
-// take a look at FLTK2, which uses utf8 for text encoding.
+// These function assume a western code page.
 //
-// By keeping these conversion tables in their own module, they will not
-// be statically linked (by a smart linker) unless actually used.
-//
-// On Mac OS X, nothing need to be converted. We simply return the 
+// On Mac OS X, nothing need to be converted. We simply return the
 // original pointer.
 //
 // MSWindows and X11 render text in ISO or Latin-1 for western settings. The
 // lookup tables below will convert all common character codes and replace
 // unknown characters with an upsidedown question mark.
 
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform text encoding
+#ifdef FL_CFG_WIN_COCOA
 
-const char *fl_mac_roman_to_local(const char *t, int)
+#  include "drivers/Darwin/Fl_Darwin_System_Driver.H"
+
+const char *Fl_Darwin_System_Driver::mac_roman_to_local(const char *t, int)
 {
   return t;
 }
 
-const char *fl_local_to_mac_roman(const char *t, int)
+const char *Fl_Darwin_System_Driver::local_to_mac_roman(const char *t, int)
 {
   return t;
 }
 
-#else
+#endif
 
 // This table converts MSWindows-1252/Latin 1 into MacRoman encoding
 static uchar latin2roman[128] = {
@@ -76,7 +76,7 @@ static uchar roman2latin[128] = {
 static char *buf = 0;
 static int n_buf = 0;
 
-const char *fl_local_to_mac_roman(const char *t, int n)  
+const char *Fl_System_Driver::local_to_mac_roman(const char *t, int n)
 {
   if (n==-1) n = (int) strlen(t);
   if (n<=n_buf) {
@@ -97,7 +97,7 @@ const char *fl_local_to_mac_roman(const char *t, int n)
   return buf;
 }
 
-const char *fl_mac_roman_to_local(const char *t, int n)
+const char *Fl_System_Driver::mac_roman_to_local(const char *t, int n)
 {
   if (n==-1) n = (int) strlen(t);
   if (n<=n_buf) {
@@ -118,7 +118,13 @@ const char *fl_mac_roman_to_local(const char *t, int n)
   return buf;
 }
 
-#endif
+const char *fl_local_to_mac_roman(const char *t, int n) {
+  return Fl::system_driver()->local_to_mac_roman(t, n);
+}
+
+const char *fl_mac_roman_to_local(const char *t, int n) {
+  return Fl::system_driver()->mac_roman_to_local(t, n);
+}
 
 //
 // End of "$Id$".

@@ -61,6 +61,8 @@ public:
                                    const char *application);
   virtual const char *local_to_latin1(const char *t, int n);
   virtual const char *latin1_to_local(const char *t, int n);
+  virtual const char *local_to_mac_roman(const char *t, int n);
+  virtual const char *mac_roman_to_local(const char *t, int n);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H
