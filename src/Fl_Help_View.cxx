@@ -58,15 +58,7 @@
 #include <errno.h>
 #include <math.h>
 
-#if defined(WIN32) && ! defined(__CYGWIN__)
-#  include <io.h>
-#  include <direct.h>
-#else
-#  include <unistd.h>
-#endif // WIN32
-
 #define MAX_COLUMNS	200
-
 
 //
 // Typedef the C API sort function type the only way I know how...
