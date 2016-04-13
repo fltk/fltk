@@ -63,7 +63,7 @@
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a window management library"
 #else // X11
-# define FL_CFG_GFX_X11
+# define FL_CFG_WIN_X11
 #endif
 
 #endif

@@ -16,9 +16,9 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
+#include "config_lib.h"
 
-#ifdef USE_X11
+#ifdef FL_CFG_WIN_X11
 #include <FL/x.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
@@ -796,7 +796,7 @@ void Fl_Native_File_Chooser_GTK_Driver::probe_for_GTK_libs(void) {
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
 } // probe_for_GTK_libs
 
-#endif // USE_X11
+#endif // FL_CFG_WIN_X11
 
 //
 // End of "$Id$".
