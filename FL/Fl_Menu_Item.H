@@ -21,6 +21,7 @@
 
 #  include "Fl_Widget.H"
 #  include "Fl_Image.H"
+#  include <FL/platform_types.h> // for FL_COMMAND and FL_CONTROL
 
 enum { // values for flags:
   FL_MENU_INACTIVE = 1,		///< Deactivate menu item (gray out)

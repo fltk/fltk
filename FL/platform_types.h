@@ -30,6 +30,8 @@ typedef int FL_SOCKET;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#  define FL_COMMAND	FL_META
+#  define FL_CONTROL 	FL_CTRL
 
 #elif defined(WIN32)
 typedef struct HBITMAP__ *HBITMAP;
@@ -71,6 +73,12 @@ typedef int FL_SOCKET;
 #include <dirent.h>
 
 #endif /* __APPLE__ */
+
+
+#ifndef __APPLE__
+#  define FL_COMMAND	FL_CTRL   ///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
+#  define FL_CONTROL	FL_META   ///< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X
+#endif
 
 #endif /* PLATFORM_TYPES_H */
 
