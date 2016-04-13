@@ -43,6 +43,8 @@ public:
                                     const char *application);
   virtual int preferences_need_protection_check() {return 1;} 
   virtual int utf8locale();
+  // this one is in Fl_own_colormap.cxx
+  virtual void own_colormap();
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

@@ -43,7 +43,7 @@
 #ifdef __APPLE__ // default configurations
 # define FL_CFG_PRN_QUARTZ
 #elif defined(WIN32)
-# define FL_CFG_WIN_WIN32
+# define FL_CFG_PRN_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a printer driver"
 #else // X11
