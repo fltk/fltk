@@ -174,6 +174,9 @@ public:
   virtual int dot_file_hidden() {return 0;}
   // return TRUE when file names are case insensitive
   virtual int case_insensitive_filenames() {return 0;}
+  // the implementations of local_to_latin1() and latin1_to_local() are in fl_encoding_latin1.cxx
+  virtual const char *local_to_latin1(const char *t, int n);
+  virtual const char *latin1_to_local(const char *t, int n);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

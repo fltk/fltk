@@ -16,13 +16,17 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config_lib.h"
 #include <FL/fl_draw.H>
+#include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/Enumerations.H>
 #include <stdlib.h>
 #include "flstring.h"
 
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform text encoding
- 
+#ifdef FL_CFG_WIN_COCOA
+#include "drivers/Darwin/Fl_Darwin_System_Driver.H"
+
 // These function assume a western code page. If you need to support 
 // scripts that are not part of this code page, you might want to
 // take a look at FLTK2, which uses utf8 for text encoding.
@@ -67,7 +71,7 @@ static uchar roman2latin[128] = {
 static char *buf = 0;
 static int n_buf = 0;
 
-const char *fl_latin1_to_local(const char *t, int n)  
+const char *Fl_Darwin_System_Driver::latin1_to_local(const char *t, int n)
 {
   if (n==-1) n = strlen(t);
   if (n<=n_buf) {
@@ -88,7 +92,7 @@ const char *fl_latin1_to_local(const char *t, int n)
   return buf;
 }
 
-const char *fl_local_to_latin1(const char *t, int n)
+const char *Fl_Darwin_System_Driver::local_to_latin1(const char *t, int n)
 {
   if (n==-1) n = strlen(t);
   if (n<=n_buf) {
@@ -109,19 +113,28 @@ const char *fl_local_to_latin1(const char *t, int n)
   return buf;
 }
 
-#else 
-
-const char *fl_latin1_to_local(const char *t, int) 
-{
-  return t;
-}
-
-const char *fl_local_to_latin1(const char *t, int)
-{
-  return t;
-}
-
 #endif
+
+const char *Fl_System_Driver::latin1_to_local(const char *t, int)
+{
+  return t;
+}
+
+const char *Fl_System_Driver::local_to_latin1(const char *t, int)
+{
+  return t;
+}
+
+const char *fl_latin1_to_local(const char *t, int n)
+{
+  return Fl::system_driver()->latin1_to_local(t, n);
+}
+
+const char *fl_local_to_latin1(const char *t, int n)
+{
+  return Fl::system_driver()->local_to_latin1(t, n);
+}
+
 
 //
 // End of "$Id$".
