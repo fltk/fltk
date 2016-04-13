@@ -107,7 +107,6 @@ static Fl_Pixmap L_closepixmap(L_close_xpm);
 ///
 void Fl_Tree_Prefs::openicon(Fl_Image *val) {
   _openimage = val ? val : &L_openpixmap;
-#if FLTK_ABI_VERSION >= 10304
   // Update deactivated version of icon..
   if ( _opendeimage ) delete _opendeimage;
   if ( _openimage ) {
@@ -116,7 +115,6 @@ void Fl_Tree_Prefs::openicon(Fl_Image *val) {
   } else {
     _opendeimage = 0;
   }
-#endif
 }
 
 /// Sets the icon to be used as the 'close' icon.
@@ -126,7 +124,6 @@ void Fl_Tree_Prefs::openicon(Fl_Image *val) {
 ///
 void Fl_Tree_Prefs::closeicon(Fl_Image *val) {
   _closeimage = val ? val : &L_closepixmap;
-#if FLTK_ABI_VERSION >= 10304
   // Update deactivated version of icon..
   if ( _closedeimage ) delete _closedeimage;
   if ( _closeimage ) {
@@ -135,7 +132,6 @@ void Fl_Tree_Prefs::closeicon(Fl_Image *val) {
   } else {
     _closedeimage = 0;
   }
-#endif
 }
 
 /// Fl_Tree_Prefs constructor
@@ -144,15 +140,11 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _labelsize              = FL_NORMAL_SIZE;
   _marginleft             = 6;
   _margintop              = 3;
-#if FLTK_ABI_VERSION >= 10301
   _marginbottom           = 20;
-#endif /*FLTK_ABI_VERSION*/
   _openchild_marginbottom = 0;
   _usericonmarginleft     = 3;
   _labelmarginleft        = 3;
-#if FLTK_ABI_VERSION >= 10301
   _widgetmarginleft       = 3;
-#endif /*FLTK_ABI_VERSION*/
   _linespacing            = 0;
   _labelfgcolor           = FL_BLACK;
   _labelbgcolor           = 0xffffffff;		// we use this as 'transparent'
@@ -165,27 +157,21 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _openimage              = &L_openpixmap;
   _closeimage             = &L_closepixmap;
   _userimage              = 0;
-#if FLTK_ABI_VERSION >= 10304
   _opendeimage = _openimage->copy();
   _opendeimage->inactive();
   _closedeimage = _closeimage->copy();
   _closedeimage->inactive();
   _userdeimage            = 0;
-#endif
   _showcollapse           = 1;
   _showroot               = 1;
   _connectorwidth         = 17;
   _sortorder              = FL_TREE_SORT_NONE;
   _selectbox              = FL_FLAT_BOX;
   _selectmode             = FL_TREE_SELECT_SINGLE;
-#if FLTK_ABI_VERSION >= 10301
   _itemreselectmode       = FL_TREE_SELECTABLE_ONCE;
   _itemdrawmode           = FL_TREE_ITEM_DRAW_DEFAULT;
-#endif
-#if FLTK_ABI_VERSION >= 10303
   _itemdrawcallback       = 0;
   _itemdrawuserdata       = 0;
-#endif
   // Let fltk's current 'scheme' affect defaults
   if (Fl::is_scheme("gtk+")) {
     _selectbox = _FL_GTK_THIN_UP_BOX;
@@ -194,14 +180,12 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   }
 }
 
-#if FLTK_ABI_VERSION >= 10304
 /// Fl_Tree_Prefs destructor
 Fl_Tree_Prefs::~Fl_Tree_Prefs() {
   if ( _opendeimage )  delete _opendeimage;
   if ( _closedeimage ) delete _closedeimage;
   if ( _userdeimage )  delete _userdeimage;
 }
-#endif
 
 //
 // End of "$Id$".

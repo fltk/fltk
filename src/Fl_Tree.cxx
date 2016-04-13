@@ -77,11 +77,7 @@ static int find_total_children(Fl_Tree_Item *item, int count=0) {
 
 /// Constructor.
 Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L) { 
-#if FLTK_ABI_VERSION >= 10303
   _root = new Fl_Tree_Item(this);
-#else
-  _root = new Fl_Tree_Item(_prefs);
-#endif
   _root->parent(0);				// we are root of tree
   _root->label("ROOT");
   _item_focus      = 0;
@@ -89,12 +85,7 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _callback_reason = FL_TREE_REASON_NONE;
   _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
 	
-#if FLTK_ABI_VERSION >= 10301
-  // NEW
   _lastselect       = 0;
-#else /*FLTK_ABI_VERSION*/
-  // OLD: data initialized static inside handle()
-#endif /*FLTK_ABI_VERSION*/
 
   box(FL_DOWN_BOX);
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
@@ -105,7 +96,6 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _vscroll->type(FL_VERTICAL);
   _vscroll->step(1);
   _vscroll->callback(scroll_cb, (void*)this);
-#if FLTK_ABI_VERSION >= 10303
   _hscroll = new Fl_Scrollbar(X,Y+H-scrollsize,W,scrollsize);
   _hscroll->hide();
   _hscroll->type(FL_HORIZONTAL);
@@ -117,7 +107,6 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _toh = _tih = H - Fl::box_dh(box());
   _tree_w = -1;
   _tree_h = -1;
-#endif
   end();
 }
 
@@ -131,12 +120,10 @@ Fl_Tree::~Fl_Tree() {
 ///
 /// Efficient: does not walk entire tree; starts with \p 'from' and stops
 /// at \p 'to' while moving in direction \p 'dir'. Dir must be specified though.
-#if FLTK_ABI_VERSION >= 10303
 ///
 /// If dir cannot be known in advance, such as during SHIFT-click operations,
 /// the method extend_selection(Fl_Tree_Item*,Fl_Tree_Item*,int,bool)
 /// should be used.
-#endif
 ///
 /// Handles calling redraw() if anything changed.
 ///
@@ -187,17 +174,9 @@ int Fl_Tree::extend_selection_dir(Fl_Tree_Item *from, Fl_Tree_Item *to,
 /// \param[in] visible true=affect only open(), visible items,<br>
 ///                    false=affect open or closed items (default)
 /// \returns The number of items whose selection states were changed, if any.
-#if FLTK_ABI_VERSION >= 10303
 /// \version 1.3.3 ABI feature
 int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
 			      int val, bool visible) {
-#else
-/// \note Made public in 1.3.3 ABI
-// Adding overload if not at least one overload breaks ABI, so avoid
-// by making a private function until ABI can change..
-int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
-			        int val, bool visible) {
-#endif
   int changed = 0;
   if ( from == to ) {
     if ( visible && !from->is_visible() ) return(0);	// do nothing
@@ -240,20 +219,6 @@ int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
   return(changed);
 }
 
-#if FLTK_ABI_VERSION >= 10303
-// not needed, above overload handles this
-#else
-/// Extend a selection between \p 'from' and \p 'to'.
-/// Extends selection for items and all children, visible ('open') or not.
-/// Walks entire tree from top to bottom looking for \p 'from' and \p 'to'.
-/// \version 1.3.0
-///
-void Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to) {
-  const int val = 1;		// 0=clr, 1=set, 2=toggle
-  const bool visible = false;	// true=only 'open' items, false='open' or 'closed'
-  extend_selection__(from, to, val, visible);	// use private method until we can release it
-}
-#endif
 
 /// Standard FLTK event handler for this widget.
 /// \todo add Fl_Widget_Tracker (see Fl_Browser_.cxx::handle())
@@ -263,12 +228,6 @@ int Fl_Tree::handle(int e) {
   char is_shift   = Fl::event_state() & FL_SHIFT   ? 1 : 0;
   char is_ctrl    = Fl::event_state() & FL_CTRL    ? 1 : 0;
   char is_command = Fl::event_state() & FL_COMMAND ? 1 : 0;	// ctrl on win/lin, 'Command' on mac
-#if FLTK_ABI_VERSION >= 10301
-  // NEW: data inside Fl_Tree
-#else /*FLTK_ABI_VERSION*/
-  // OLD:
-  static Fl_Tree_Item *_lastselect = 0;
-#endif /*FLTK_ABI_VERSION*/
   // Developer note: Fl_Browser_::handle() used for reference here..
   // #include <FL/names.h>	// for event debugging
   // fprintf(stderr, "DEBUG: %s (%d)\n", fl_eventnames[e], e);
@@ -425,11 +384,7 @@ int Fl_Tree::handle(int e) {
     case FL_PUSH: {		// clicked on tree
       last_my = Fl::event_y();	// save for dragging direction..
       if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
-#if FLTK_ABI_VERSION >= 10303
       Fl_Tree_Item *item = _root->find_clicked(_prefs, 0);
-#else
-      Fl_Tree_Item *item = _root->find_clicked(_prefs);
-#endif
       if ( !item ) {		// clicked, but not on an item?
         _lastselect = 0;
 	switch ( _prefs.selectmode() ) {
@@ -463,11 +418,7 @@ int Fl_Tree::handle(int e) {
 	        if ( _lastselect ) {
 		  int val = is_ctrl ? 2 : 1;
 		  bool visible = true;
-#if FLTK_ABI_VERSION >= 10303
 	          extend_selection(_lastselect, item, val, visible);
-#else
-	          extend_selection__(_lastselect, item, val, visible);
-#endif
 	        } else {
 	          select(item);			// add to selection
 		}
@@ -510,11 +461,7 @@ int Fl_Tree::handle(int e) {
       //    During drag, only interested in left-mouse operations.
       //
       if ( Fl::event_button() != FL_LEFT_MOUSE ) break;
-#if FLTK_ABI_VERSION >= 10303
       Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
-#else
-      Fl_Tree_Item *item = _root->find_clicked(_prefs); // item we're on, vertically
-#endif
       if ( !item ) break;			// not near item? ignore drag event
       ret |= 1;					// acknowledge event
       if (_prefs.selectmode() != FL_TREE_SELECT_SINGLE_DRAGGABLE)
@@ -549,11 +496,7 @@ int Fl_Tree::handle(int e) {
     case FL_RELEASE:
       if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
           Fl::event_button() == FL_LEFT_MOUSE) {
-#if FLTK_ABI_VERSION >= 10303
         Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
-#else
-        Fl_Tree_Item *item = _root->find_clicked(_prefs); // item we're on, vertically
-#endif
 
         if (item && _lastselect && item != _lastselect &&
             Fl::event_x() >= item->label_x()) {
@@ -604,19 +547,7 @@ int Fl_Tree::handle(int e) {
   return(ret);
 }
 
-#if FLTK_ABI_VERSION >= 10303
-// nothing
-#else
-// Redraw timeout callback
-// (Only need this hack for old ABI 10302 and older)
-//
-static void redraw_soon(void *data) {
-  ((Fl_Tree*)data)->redraw();
-  Fl::remove_timeout(redraw_soon, data);
-}
-#endif
 
-#if FLTK_ABI_VERSION >= 10303
 /// Recalculate widget dimensions and scrollbar visibility,
 /// normally managed automatically.
 ///
@@ -754,18 +685,14 @@ void Fl_Tree::calc_tree() {
   // Calc tree dims again; now that tree_w/tree_h are known, scrollbars are calculated.
   calc_dimensions();
 }
-#endif
 
 void Fl_Tree::resize(int X,int Y,int W, int H) {
   fix_scrollbar_order();
   Fl_Group::resize(X,Y,W,H);
-#if FLTK_ABI_VERSION >= 10303
   calc_dimensions();
-#endif
   init_sizes();
 }
 
-#if FLTK_ABI_VERSION >= 10303
 /// Standard FLTK draw() method, handles drawing the tree widget.
 void Fl_Tree::draw() {
   fix_scrollbar_order();
@@ -837,128 +764,6 @@ void Fl_Tree::draw() {
     }
   }
 }
-#else
-/// Standard FLTK draw() method, handles drawing the tree widget.
-void Fl_Tree::draw() {
-  int ytoofar = draw_tree();
-
-  // See if we're scrolled below bottom of tree
-  //   This can happen if someone just closed a large item.
-  //   If so, change scroller as needed.
-  //
-  if ( _vscroll->visible() && ytoofar > 0 ) {
-    int scrollval = _vscroll->value();
-    int ch = h() - Fl::box_dh(box());
-    int range2 = scrollval - ytoofar;
-    int size2 = ch + range2;
-    if ( range2 < 0 ) {
-      _vscroll->value(0);
-      _vscroll->hide();
-    } else {
-      _vscroll->slider_size(float(ch)/float(size2));
-      _vscroll->range(0.0,range2);
-      _vscroll->value(range2);
-    }
-    Fl::add_timeout(.10, redraw_soon, (void*)this);	// use timer to trigger redraw; we can't
-  }
-
-  // Draw dragging line
-  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
-      Fl::pushed() == this) {
-
-    Fl_Tree_Item *item = _root->find_clicked(_prefs); // item we're on, vertically
-    if (item && item != _item_focus) {
-      // Are we dropping above or before the target item?
-      const int h = Fl::event_y() - item->y();
-      const int mid = item->h() / 2;
-      const bool before = h < mid;
-
-      fl_color(FL_BLACK);
-
-      int tgt;
-      if (before) {
-        tgt = item->y();
-      } else {
-        tgt = item->y() + item->h();
-      }
-      fl_line(item->x(), tgt, item->x() + item->w(), tgt);
-    }
-  }
-}
-
-// This method is undocumented, and has been removed in ABI 1.3.3
-int Fl_Tree::draw_tree() {
-  int ret = 0;
-  fix_scrollbar_order();
-  // Let group draw box+label but *NOT* children.
-  // We handle drawing children ourselves by calling each item's draw()
-  //
-  int cx = x() + Fl::box_dx(box());
-  int cy = y() + Fl::box_dy(box());
-  int cw = w() - Fl::box_dw(box());
-  int ch = h() - Fl::box_dh(box());
-  {
-    // Handle group's bg
-    if ( damage() & ~FL_DAMAGE_CHILD) {			// redraw entire widget?
-      Fl_Group::draw_box();
-      Fl_Group::draw_label();
-    }
-    if ( ! _root ) return(0);
-    // These values are changed during drawing
-    // By end, 'Y' will be the lowest point on the tree
-    int X = cx + _prefs.marginleft();
-    int Y = cy + _prefs.margintop() - (_vscroll->visible() ? _vscroll->value() : 0);
-    int W = cw - _prefs.marginleft();			// - _prefs.marginright();
-    // Adjust root's X/W if connectors off
-    if (_prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE) {
-      X -= _prefs.openicon()->w();
-      W += _prefs.openicon()->w();
-    }
-    int Ysave = Y;
-    fl_push_clip(cx,cy,cw,ch);
-    {
-      fl_font(_prefs.labelfont(), _prefs.labelsize());
-      _root->draw(X, Y, W, this,
-		  (Fl::focus()==this)?_item_focus:0,	// show focus item ONLY if Fl_Tree has focus
-		  _prefs);
-    }
-    fl_pop_clip();
-    
-    // Show vertical scrollbar?
-    {
-#if FLTK_ABI_VERSION >= 10301
-      // NEW
-      int SY = Y + _prefs.marginbottom();
-#else /*FLTK_ABI_VERSION*/
-      // OLD
-      int SY = Y;
-#endif /*FLTK_ABI_VERSION*/
-      int ydiff = (SY+_prefs.margintop())-Ysave;		// ydiff=size of tree
-      int ytoofar = (cy+ch) - SY;				// ytoofar -- if >0, scrolled beyond bottom
-      if ( ytoofar > 0 ) ydiff += ytoofar;
-      if ( Ysave<cy || ydiff>ch || int(_vscroll->value())>1 ) {
-	_vscroll->visible();
-	int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-	int sx = x()+w()-Fl::box_dx(box())-scrollsize;
-	int sy = y()+Fl::box_dy(box());
-	int sw = scrollsize;
-	int sh = h()-Fl::box_dh(box());
-	_vscroll->show();
-	_vscroll->resize(sx,sy,sw,sh);
-	_vscroll->slider_size(float(ch)/float(ydiff));
-	_vscroll->range(0.0,ydiff-ch);
-	ret = ytoofar;
-      } else {
-	_vscroll->Fl_Slider::value(0);
-	_vscroll->hide();
-	ret = 0;
-      }
-    }
-  }
-  draw_child(*_vscroll);	// draw scroll last
-  return(ret);
-}
-#endif
 
 /// Print the tree as 'ascii art' to stdout.
 /// Used mainly for debugging.
@@ -989,12 +794,10 @@ Fl_Tree_Item* Fl_Tree::root() {
 /// If a root item already exists, clear() is first to clear it
 /// before replacing it with newitem.
 ///
-#if FLTK_ABI_VERSION >= 10303
 /// Use this to install a custom item (derived from Fl_Tree_Item) as the root
 /// of the tree. This allows the derived class to implement custom drawing
 /// by overriding Fl_Tree_Item::draw_item_content().
 ///
-#endif
 /// \version 1.3.3
 ///
 void Fl_Tree::root(Fl_Tree_Item *newitem) {
@@ -1023,11 +826,7 @@ void Fl_Tree::root(Fl_Tree_Item *newitem) {
 Fl_Tree_Item* Fl_Tree::add(const char *path, Fl_Tree_Item *item) {
   // Tree has no root? make one
   if ( ! _root ) {
-#if FLTK_ABI_VERSION >= 10303
     _root = new Fl_Tree_Item(this);
-#else
-    _root = new Fl_Tree_Item(_prefs);
-#endif
     _root->parent(0);
     _root->label("ROOT");
   } 
@@ -1038,20 +837,6 @@ Fl_Tree_Item* Fl_Tree::add(const char *path, Fl_Tree_Item *item) {
   return(item);
 }
 
-#if FLTK_ABI_VERSION >= 10303
-// do nothing here: add(path,item) where item defaults to 0 takes its place
-#else
-/// Adds a new item given a menu style \p 'path'.
-/// Same as calling add(path, NULL);
-/// \param[in] path The path to the item to be created, e.g. "Flintsone/Fred".
-/// \returns The new item added, or 0 on error.
-/// \see add(const char*,Fl_Tree_Item*)
-/// \version 1.3.0 release
-///
-Fl_Tree_Item* Fl_Tree::add(const char *path) {
-  return add(path, 0);
-}
-#endif
 
 /// Add a new child item labeled \p 'name' to the specified \p 'parent_item'.
 ///
@@ -1234,7 +1019,6 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
   return(0);
 }
 
-#if FLTK_ABI_VERSION >= 10303
 /// Find the item that was last clicked on.
 /// You should use callback_item() instead, which is fast,
 /// and is meant to be used within a callback to determine the item clicked.
@@ -1263,33 +1047,6 @@ Fl_Tree_Item *Fl_Tree::find_clicked(int yonly) {
   return(const_cast<Fl_Tree_Item*>(
 	 static_cast<const Fl_Tree&>(*this).find_clicked(yonly)));
 }
-#else
-/// Find the item that was last clicked on.
-/// You should use callback_item() instead, which is fast,
-/// and is meant to be used within a callback to determine the item clicked.
-///
-/// This method walks the entire tree looking for the first item that is
-/// under the mouse, i.e. at Fl::event_x() / Fl::event_y().
-///
-/// Use this method /only/ if you've subclassed Fl_Tree, and are receiving
-/// events before Fl_Tree has been able to process and update callback_item().
-/// 
-/// \returns The item clicked, or NULL if no item was under the current event.
-/// \version 1.3.0
-///
-const Fl_Tree_Item* Fl_Tree::find_clicked() const {
-  if ( ! _root ) return(NULL);
-  return(_root->find_clicked(_prefs));
-}
-
-/// Non-const version of Fl_Tree::find_clicked() const.
-/// \version 1.3.0
-Fl_Tree_Item *Fl_Tree::find_clicked() {
-  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
-  return(const_cast<Fl_Tree_Item*>(
-	 static_cast<const Fl_Tree&>(*this).find_clicked()));
-}
-#endif
 
 /// Set the item that was last clicked.
 /// Should only be used by subclasses needing to change this value.
@@ -1475,28 +1232,6 @@ Fl_Tree_Item *Fl_Tree::first_selected_item() {
   return(next_selected_item(0));
 }
 
-#if FLTK_ABI_VERSION >= 10303
-// nothing
-#else
-/// Returns the next selected item after \p 'item'.
-/// If \p item is 0, search starts at the first item (root).
-///
-/// This is a convenience method; equivalent to next_selected_item(item, FL_Down);
-///
-/// Use this to walk the tree forward (downward) looking for all the selected items, e.g.
-/// \code
-/// for ( Fl_Tree_Item *i = tree->first_selected_item(); i; i = tree->next_selected_item(i) )
-///     printf("Selected item: %s\n", i->label());
-/// \endcode
-///
-/// \param[in] item The item to use to find the next selected item. If NULL, first() is used.
-/// \returns The next selected item, or 0 if there are no more selected items.
-/// \see first_selected_item(), last_selected_item(), next_selected_item()
-///     
-Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item) {
-  return(next_selected_item(item, FL_Down));
-}
-#endif
 
 /// Returns the last selected item in the tree.
 ///
@@ -1634,7 +1369,6 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
   return(0);
 }
 
-#if FLTK_ABI_VERSION >= 10303		/* reason for this: Fl_Tree_Item_Array::manage_item_destroy() */
 /// Returns the currently selected items as an array of \p 'ret_items'.
 ///
 /// Example:
@@ -1661,7 +1395,6 @@ int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
   }
   return ret_items.total();
 }
-#endif
 
 /// Open the specified \p 'item'.
 ///
@@ -1898,14 +1631,12 @@ int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
     redraw();
     return(1);
   }
-#if FLTK_ABI_VERSION >= 10301
   // NEW
   if ( alreadySelected ) {
     if ( (item_reselect_mode() == FL_TREE_SELECTABLE_ALWAYS) && docallback ) {
       do_callback_for_item(item, FL_TREE_REASON_RESELECTED);
     }
   }
-#endif /*FLTK_ABI_VERSION*/
   return(0);
 }
 
@@ -2086,7 +1817,6 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
       ++changed;
     }
   }
-#if FLTK_ABI_VERSION >= 10301
   // Should we 'reselect' item if already selected?
   if ( selitem->is_selected() && (item_reselect_mode()==FL_TREE_SELECTABLE_ALWAYS) ) {
     // Selection unchanged, so no ++change
@@ -2096,13 +1826,6 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
     select(selitem, docallback);
     ++changed;
   }
-#else
-  if ( !selitem->is_selected() ) {
-    // All items deselected, now select the one we want
-    select(selitem, docallback);
-    ++changed;
-  }
-#endif
   return(changed);
 }
 
@@ -2278,7 +2001,6 @@ void Fl_Tree::margintop(int val) {
   recalc_tree();
 }
 
-#if FLTK_ABI_VERSION >= 10301
 /// Get the amount of white space (in pixels) that should appear
 /// below the last visible item when the vertical scroller is scrolled to the bottom.
 ///
@@ -2294,7 +2016,6 @@ void Fl_Tree::marginbottom(int val) {
   redraw();
   recalc_tree();
 }
-#endif /*FLTK_ABI_VERSION*/
 
 /// Get the amount of white space (in pixels) that should appear
 /// between items in the tree.
@@ -2356,7 +2077,6 @@ void Fl_Tree::labelmarginleft(int val) {
   recalc_tree();
 }
 
-#if FLTK_ABI_VERSION >= 10301
 /// Get the amount of white space (in pixels) that should appear
 /// to the left of the child fltk widget (if any).
 int Fl_Tree::widgetmarginleft() const {
@@ -2370,7 +2090,6 @@ void Fl_Tree::widgetmarginleft(int val) {
   redraw();
   recalc_tree();
 }
-#endif /*FLTK_ABI_VERSION*/
 
 /// Gets the width of the horizontal connection lines (in pixels) 
 /// that appear to the left of each tree item's label.
@@ -2538,7 +2257,6 @@ void Fl_Tree::selectmode(Fl_Tree_Select val) {
   _prefs.selectmode(val);
 }
 
-#if FLTK_ABI_VERSION >= 10301
 /// Returns the current item re/selection mode.
 /// \version 1.3.1 ABI feature
 ///
@@ -2582,7 +2300,6 @@ void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode mode) {
 void Fl_Tree::item_draw_mode(int mode) {
   _prefs.item_draw_mode(Fl_Tree_Item_Draw_Mode(mode));
 }
-#endif
 
 /// See if \p 'item' is currently displayed on-screen (visible within the widget).
 ///
@@ -2654,11 +2371,7 @@ void Fl_Tree::show_item_top(Fl_Tree_Item *item) {
 ///
 void Fl_Tree::show_item_middle(Fl_Tree_Item *item) {
   item = item ? item : first();
-#if FLTK_ABI_VERSION >= 10303
   if (item) show_item(item, (_tih/2)-(item->h()/2));
-#else
-  if (item) show_item(item, (h()/2)-(item->h()/2));
-#endif
 }
 
 /// Adjust the vertical scrollbar so that \p 'item' is at the bottom of the display.
@@ -2667,11 +2380,7 @@ void Fl_Tree::show_item_middle(Fl_Tree_Item *item) {
 ///
 void Fl_Tree::show_item_bottom(Fl_Tree_Item *item) {
   item = item ? item : first();
-#if FLTK_ABI_VERSION >= 10303
   if (item) show_item(item, _tih-item->h());
-#else
-  if (item) show_item(item, h()-item->h());
-#endif
 }
 
 /// Displays \p 'item', scrolling the tree as necessary.
@@ -2711,11 +2420,7 @@ void Fl_Tree::vposition(int pos) {
 /// \note Must be using FLTK ABI 1.3.3 or higher for this to be effective.
 ///
 int Fl_Tree::hposition() const {
-#if FLTK_ABI_VERSION >= 10303
   return((int)_hscroll->value());
-#else
-  return(0);
-#endif
 }
 
 /// Sets the horizontal scroll offset to position \p 'pos'.
@@ -2725,13 +2430,11 @@ int Fl_Tree::hposition() const {
 /// \note Must be using FLTK ABI 1.3.3 or higher for this to be effective.
 ///
 void Fl_Tree::hposition(int pos) {
-#if FLTK_ABI_VERSION >= 10303
   if (pos < 0) pos = 0;
   if (pos > _hscroll->maximum()) pos = (int)_hscroll->maximum();
   if (pos == _hscroll->value()) return;
   _hscroll->value(pos);
   redraw();
-#endif
 }
 
 /// See if widget \p 'w' is one of the Fl_Tree widget's scrollbars.
@@ -2748,11 +2451,7 @@ void Fl_Tree::hposition(int pos) {
 /// \todo should be const
 ///
 int Fl_Tree::is_scrollbar(Fl_Widget *w) {
-#if FLTK_ABI_VERSION >= 10303
   return( (w==_vscroll || w==_hscroll) ? 1 : 0 );
-#else
-  return( (w==_vscroll) ? 1 : 0 );
-#endif
 }
 
 /// Gets the default size of scrollbars' troughs for this widget
@@ -2793,14 +2492,12 @@ void Fl_Tree::scrollbar_size(int size) {
   if ( _vscroll->w() != scrollsize ) {
     _vscroll->resize(x()+w()-scrollsize, h(), scrollsize, _vscroll->h());
   }
-#if FLTK_ABI_VERSION >= 10303
   if ( _hscroll->h() != scrollsize ) {
     _hscroll->resize(x(), y()+h()-scrollsize, _hscroll->w(), scrollsize);
   }
   // Changing scrollbar size affects _tiw/_tih + may affect scrollbar visibility
   calc_dimensions();
-#endif
-}   
+}
 
 /// See if the vertical scrollbar is currently visible.
 /// \returns 1 if scrollbar visible, 0 if not.
@@ -2814,11 +2511,7 @@ int Fl_Tree::is_vscroll_visible() const {
 /// \note Must be using FLTK ABI 1.3.3 or higher for this to be effective.
 ///
 int Fl_Tree::is_hscroll_visible() const {
-#if FLTK_ABI_VERSION >= 10303
   return(_hscroll->visible() ? 1 : 0);
-#else
-  return 0;
-#endif
 }
 
 /// Do the callback for the specified \p 'item' using \p 'reason',
@@ -2928,18 +2621,11 @@ void Fl_Tree::fix_scrollbar_order() {
   Fl_Widget** a = (Fl_Widget**)array();
   if (a[children()-1] != _vscroll) {
     int i,j;
-#if FLTK_ABI_VERSION >= 10303
     for (i = j = 0; j < children(); j++) {
       if (a[j] != _vscroll && a[j] != _hscroll ) a[i++] = a[j];
     }
     a[i++] = _hscroll;
     a[i++] = _vscroll;
-#else
-    for (i = j = 0; j < children(); j++) {
-      if (a[j] != _vscroll) a[i++] = a[j];
-    }
-    a[i++] = _vscroll;
-#endif
   }
 }
 
@@ -2947,9 +2633,7 @@ void Fl_Tree::fix_scrollbar_order() {
 /// \note Must be using FLTK ABI 1.3.3 or higher for this to be effective.
 ///
 void Fl_Tree::recalc_tree() {
-#if FLTK_ABI_VERSION >= 10303
   _tree_w = _tree_h = -1;
-#endif
 }
 
 //
