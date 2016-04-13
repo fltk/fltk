@@ -22,10 +22,6 @@
 #  include "Fl_Widget.H"
 #  include "Fl_Image.H"
 
-#  if (defined(__APPLE__) || defined(FL_PORTING)) && defined(check) // name conflict
-#    undef check
-#  endif
-
 enum { // values for flags:
   FL_MENU_INACTIVE = 1,		///< Deactivate menu item (gray out)
   FL_MENU_TOGGLE= 2,		///< Item is a checkbox toggle (shows checkbox for on/off state)
