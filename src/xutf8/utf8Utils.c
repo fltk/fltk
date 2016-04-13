@@ -14,13 +14,13 @@
  *     http://www.fltk.org/str.php
  */
 
-#include <config.h>
+#include "../config_lib.h"
 
 /*
  * Unicode to UTF-8 conversion functions.
  */
 
-#if defined(USE_X11)
+#if defined(FL_CFG_WIN_X11)
 
 #include "../Xutf8.h"
 
@@ -224,7 +224,7 @@ XFastConvertUtf8ToUcs(const unsigned char     *buf,
   return -1;
 }
 
-#endif /* X11 only */
+#endif /* FL_CFG_WIN_X11 */
 
 /*
  * End of "$Id$".

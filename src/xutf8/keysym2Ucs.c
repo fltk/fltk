@@ -16,9 +16,9 @@
 
 #define KEYSYM2UCS_INCLUDED
 
-#include <config.h>
+#include "../config_lib.h"
 
-#if defined(USE_X11)
+#if defined(FL_CFG_WIN_X11)
 
 #include "../Xutf8.h"
 #include "imKStoUCS.c"
@@ -27,7 +27,7 @@ long XKeysymToUcs(KeySym keysym) {
   return (long) KeySymToUcs4(keysym);
 }
 
-#endif /* X11 only */
+#endif /* FL_CFG_WIN_X11 */
 
 /*
  * End of "$Id$".
