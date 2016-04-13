@@ -1,7 +1,7 @@
 /*
  * "$Id: platform_types.h 11467 2016-03-29 19:41:14Z manolo $"
  *
-  * Copyright 2016 by Bill Spitzak and others.
+ * Copyright 2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -17,9 +17,16 @@
 #ifndef PLATFORM_TYPES_H
 #define PLATFORM_TYPES_H
 
-/* Platform-dependent types are defined here
- These types must be defined by any platform:
- Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, struct dirent, struct stat
+/* Platform-dependent types are defined here.
+  These types must be defined by any platform:
+  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, struct dirent, struct stat
+
+  NOTE: *FIXME* AlbrechtS 13 Apr 2016 (concerning FL_SOCKET)
+  ----------------------------------------------------------
+    The socket API is partially inconsistent because some of the methods
+    use int explicitly, but the callback typedefs use FL_SOCKET. With the
+    definition of FL_SOCKET below we can have different data sizes and
+    different signedness of socket numbers on *some* platforms.
  */
 
 #ifdef __APPLE__
@@ -38,8 +45,8 @@ typedef struct HBITMAP__ *HBITMAP;
 typedef HBITMAP Fl_Offscreen;
 typedef HBITMAP Fl_Bitmask;
 typedef struct HRGN__ *Fl_Region;
-# if defined(_WIN64)
-typedef  unsigned __int64 FL_SOCKET;
+# if defined(_WIN64) && defined(_MSC_VER)
+typedef  unsigned __int64 FL_SOCKET;	/* *FIXME* - FL_SOCKET (see above) */
 # else
 typedef  int FL_SOCKET;
 # endif

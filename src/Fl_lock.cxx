@@ -400,10 +400,10 @@ void lock_ring() {
 
 #else
 
-static void Fl_Posix_System_Driver::awake(void*) {}
-static int Fl_Posix_System_Driver::lock() { return 1; }
-static void Fl_Posix_System_Driver::unlock() {}
-static void* Fl_Posix_System_Driver::thread_message() { return NULL; }
+void Fl_Posix_System_Driver::awake(void*) {}
+int Fl_Posix_System_Driver::lock() { return 1; }
+void Fl_Posix_System_Driver::unlock() {}
+void* Fl_Posix_System_Driver::thread_message() { return NULL; }
 
 #endif // HAVE_PTHREAD
 
