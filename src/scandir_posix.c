@@ -33,6 +33,8 @@
  */
 
 #include <config.h>
+#if defined(USE_X11) && !defined(HAVE_SCANDIR)
+
 #ifndef HAVE_PTHREAD
    /* Switch system headers into POSIX.1-1990 mode */
 #  define _POSIX_SOURCE
@@ -200,6 +202,8 @@ fl_scandir(const char *dir, struct dirent ***namelist,
 
   return result;
 }
+
+#endif // defined(USE_X11) && !defined(HAVE_SCANDIR)
 
 /*
  * End of "$Id$".
