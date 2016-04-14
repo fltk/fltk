@@ -63,6 +63,10 @@ public:
   virtual const char *latin1_to_local(const char *t, int n);
   virtual const char *local_to_mac_roman(const char *t, int n);
   virtual const char *mac_roman_to_local(const char *t, int n);
+  virtual Fl_Pixmap *tree_openpixmap();
+  static const char * const tree_open_xpm_darwin[]; // used by tree_openpixmap()
+  virtual Fl_Pixmap *tree_closepixmap();
+  static const char * const tree_close_xpm_darwin[]; // used by tree_closepixmap()
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

@@ -35,6 +35,7 @@
 
 class Fl_File_Icon;
 class Fl_File_Browser;
+class Fl_Pixmap;
 
 /**
  \brief A base class for platform-specific system operations.
@@ -182,6 +183,12 @@ public:
   virtual const char *mac_roman_to_local(const char *t, int n);
   // the default implementation is most probably enough
   virtual void own_colormap() {}
+  // the default implementations of tree_openpixmap() and tree_closepixmap() are
+  // in Fl_Tree_Prefs.cxx and can be enough
+  virtual Fl_Pixmap *tree_openpixmap();
+  virtual Fl_Pixmap *tree_closepixmap();
+  static const char *const tree_open_xpm[]; // used by tree_openpixmap()
+  static const char * const tree_close_xpm[]; // used by tree_closepixmap()
 };
 
 #endif // FL_SYSTEM_DRIVER_H
