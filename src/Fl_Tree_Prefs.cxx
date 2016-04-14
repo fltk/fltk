@@ -81,6 +81,10 @@ Fl_Pixmap *Fl_Darwin_System_Driver::tree_closepixmap() {
   return pixmap;
 }
 
+int Fl_Darwin_System_Driver::tree_connector_style() {
+  return FL_TREE_CONNECTOR_NONE;
+}
+
 #endif // FL_CFG_WIN_COCOA
 
 const char * const Fl_System_Driver::tree_open_xpm[] = {
@@ -128,6 +132,10 @@ Fl_Pixmap *Fl_System_Driver::tree_openpixmap() {
 Fl_Pixmap *Fl_System_Driver::tree_closepixmap() {
   static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_close_xpm);
   return pixmap;
+}
+
+int Fl_System_Driver::tree_connector_style() {
+  return FL_TREE_CONNECTOR_DOTTED;
 }
 
 
@@ -181,11 +189,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _labelfgcolor           = FL_BLACK;
   _labelbgcolor           = 0xffffffff;		// we use this as 'transparent'
   _connectorcolor         = Fl_Color(43);
-#ifdef __APPLE__ // PORTME: Fl_Screen_Driver - platform look and feel
-  _connectorstyle         = FL_TREE_CONNECTOR_NONE;
-#else /* __APPLE__ */
-  _connectorstyle         = FL_TREE_CONNECTOR_DOTTED;
-#endif /* __APPLE__ */
+  _connectorstyle         = (Fl_Tree_Connector)Fl::system_driver()->tree_connector_style();
   _openimage              = Fl::system_driver()->tree_openpixmap();
   _closeimage             = Fl::system_driver()->tree_closepixmap();
   _userimage              = 0;

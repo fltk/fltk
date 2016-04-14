@@ -67,6 +67,7 @@ public:
   static const char * const tree_open_xpm_darwin[]; // used by tree_openpixmap()
   virtual Fl_Pixmap *tree_closepixmap();
   static const char * const tree_close_xpm_darwin[]; // used by tree_closepixmap()
+  virtual int tree_connector_style();
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

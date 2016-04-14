@@ -189,6 +189,8 @@ public:
   virtual Fl_Pixmap *tree_closepixmap();
   static const char *const tree_open_xpm[]; // used by tree_openpixmap()
   static const char * const tree_close_xpm[]; // used by tree_closepixmap()
+  // the default implementation of tree_connector_style() is in Fl_Tree_Prefs.cxx and can be enough
+  virtual int tree_connector_style();
 };
 
 #endif // FL_SYSTEM_DRIVER_H
