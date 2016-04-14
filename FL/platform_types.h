@@ -64,7 +64,7 @@ struct dirent {char d_name[1];};
 # pragma message "FL_PORTING: define struct stat and implement stat() for the platform"
 struct stat { /* the FLTK source code uses part of the stat() API */
   unsigned st_mode;
-  off_t st_size;
+  unsigned st_size;
 };
 #define        S_IFMT   0170000  /* type of file */
 #define        S_IFDIR  0040000  /* directory */

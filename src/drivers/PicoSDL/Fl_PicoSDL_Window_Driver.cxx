@@ -24,6 +24,13 @@
 #include <FL/Fl.H>
 #include <FL/Fl_WIndow.H>
 
+void Fl_Window_Driver::default_icons(Fl_RGB_Image const**, int) { }
+
+const char *fl_local_alt = "alt";
+const char *fl_local_ctrl = "ctrl";
+const char *fl_local_meta = "meta";
+const char *fl_local_shift = "shift";
+
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
 {
@@ -50,7 +57,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
     return 0L;
   }
   Window parent;
-  if (parent()) {
+  if (this->parent()) {
     parent = fl_xid(pWindow->window());
   } else {
     parent = 0;
@@ -62,7 +69,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
   if (!pWindow->force_position()) {
     pNativeWindow = SDL_CreateWindow(pWindow->label(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w(), h(), 0);
   } else {
-    pNativeWindow = SDL_CreateWindow(pWindow->label(), x(), y(), w(), h(), 0);
+    pNativeWindow = SDL_CreateWindow(pWindow->label(), pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h(), 0);
   }
   x->xid = SDL_CreateRenderer(pNativeWindow, -1, SDL_RENDERER_ACCELERATED);
   x->next = Fl_X::first;
@@ -93,6 +100,20 @@ void Fl_PicoSDL_Window_Driver::flush_single()
   pWindow->draw();
   SDL_RenderPresent((SDL_Renderer*)i->xid);
 }
+
+
+void Fl_PicoSDL_Window_Driver::make_current()
+{
+  fl_window = pWindow->i->xid;
+}
+
+void Fl_PicoSDL_Window_Driver::show() {
+  if (!shown()) {
+    makeWindow();
+  }
+}
+
+
 
 //
 // End of "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".

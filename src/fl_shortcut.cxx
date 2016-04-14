@@ -367,7 +367,7 @@ int Fl_Widget::test_shortcut() {
   return test_shortcut(label());
 }
 
-#if defined(FL_CFG_GFX_GDI)
+#if defined(FL_CFG_GFX_GDI) || defined(FL_PORTING)
 // This table must be in numeric order by fltk (X) keysym number:
 Fl_System_Driver::Keyname Fl_System_Driver::table[] = {
   {' ', "Space"},

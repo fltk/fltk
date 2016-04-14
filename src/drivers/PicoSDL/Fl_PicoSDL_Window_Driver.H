@@ -39,7 +39,9 @@ public:
   Fl_PicoSDL_Window_Driver(Fl_Window *win);
   virtual ~Fl_PicoSDL_Window_Driver();
 
+  virtual void show();
   virtual Fl_X *makeWindow();
+  virtual void make_current();
   
   // --- window management
   virtual void flush_single();

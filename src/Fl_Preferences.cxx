@@ -810,7 +810,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   application_(0L) {
 
   char *filename = Fl::system_driver()->preference_rootnode(prefs, root, vendor, application);
-  filename_    = strdup(filename);
+    filename_    = filename ? strdup(filename) : 0L;
   vendor_      = strdup(vendor);
   application_ = strdup(application); 
   read();

@@ -155,7 +155,7 @@ void fl_clipboard_notify_change() { }
 //Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() { return 0; }
 //Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() { return 0; }
 void Fl_Graphics_Driver::global_gc() { }
-int Fl::dnd() { return 0; }
+//int Fl::dnd() { return 0; }
 void Fl::copy(char const*, int, int, char const*) { }
 void Fl::paste(Fl_Widget&, int, char const*) { }
 void Fl::get_mouse(int&, int&) { }
@@ -165,16 +165,10 @@ int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 void Fl_X::set_default_icons(Fl_RGB_Image const**, int) { }
 
 void Fl_X::set_icons() { }
-void Fl_Window::size_range_() { }
-void Fl_Window::fullscreen_x() { }
+//void Fl_Window::size_range_() { }
+//void Fl_Window::fullscreen_x() { }
 
-void Fl_Window::make_current()
-{
-  fl_window = i->xid;
-  current_ = this;
-}
-
-void Fl_Window::fullscreen_off_x(int, int, int, int) { }
+//void Fl_Window::fullscreen_off_x(int, int, int, int) { }
 
 Window fl_xid(const Fl_Window* w)
 {
@@ -182,20 +176,14 @@ Window fl_xid(const Fl_Window* w)
   return temp ? temp->xid : 0;
 }
 
-void Fl_Window::show() {
-  if (!shown()) {
-    Fl_X::make(this);
-  }
-}
-
 Fl_X* Fl_X::make(Fl_Window *w)
 {
   return w->driver()->makeWindow();
 }
 
-void Fl_Window::label(char const*, char const*) { }
-void Fl_Window::resize(int, int, int, int) { }
-Fl_Window *Fl_Window::current_;
+//void Fl_Window::label(char const*, char const*) { }
+//void Fl_Window::resize(int, int, int, int) { }
+//Fl_Window *Fl_Window::current_;
 char fl_show_iconic;
 Window fl_window;
 //void Fl_Image_Surface::translate(int x, int y) { }

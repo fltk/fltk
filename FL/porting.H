@@ -38,7 +38,6 @@ typedef void *Fl_Region;
 typedef void *Fl_Offscreen;
 
 #  include "Fl_Window.H"
-#  include "../src/Fl_Font.H"
 
 // Some random X equivalents
 struct XPoint { int x, y; };

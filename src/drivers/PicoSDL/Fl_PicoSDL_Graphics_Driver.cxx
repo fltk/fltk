@@ -20,10 +20,23 @@
 #include "../../config_lib.h"
 #include "Fl_PicoSDL_Graphics_Driver.h"
 
+#include "Fl_PicoSDL_Screen_Driver.H"
+#include <FL/x.H>
+#include <FL/Fl_Window_Driver.H>
+
 #include <FL/Fl.H>
 #define __APPLE__
 #include <SDL2/SDL.h>
 #undef __APPLE__
+
+extern Window fl_window;
+
+
+void Fl_Graphics_Driver::XDestroyRegion(void*) { }
+//void Fl_Graphics_Driver::clip_region(void*) { }
+Fl_Region Fl_Graphics_Driver::XRectangleRegion(int, int, int, int) { }
+void Fl_Graphics_Driver::add_rectangle_to_region(void*, int, int, int, int) { }
+
 
 /*
  * By linking this module, the following static method will instantiate the
