@@ -42,9 +42,10 @@ public:
   virtual void show();
   virtual Fl_X *makeWindow();
   virtual void make_current();
+  virtual void draw_end();
   
   // --- window management
-  virtual void flush_single();
+//  virtual void flush_single();
 };
 
 

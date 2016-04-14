@@ -88,6 +88,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
 }
 
 
+#if 0
 void Fl_PicoSDL_Window_Driver::flush_single()
 {
   if (!shown()) return;
@@ -96,8 +97,23 @@ void Fl_PicoSDL_Window_Driver::flush_single()
   if (!i) return;
   fl_clip_region(i->region);
   i->region = 0;
-//  SDL_RenderClear((SDL_Renderer*)i->xid);
+  //  SDL_RenderClear((SDL_Renderer*)i->xid);
   pWindow->draw();
+  SDL_RenderPresent((SDL_Renderer*)i->xid);
+}
+#endif
+
+
+void Fl_PicoSDL_Window_Driver::draw_end()
+{
+//  if (!shown()) return;
+//  pWindow->make_current();
+  Fl_X *i = Fl_X::i(pWindow);
+//  if (!i) return;
+//  fl_clip_region(i->region);
+//  i->region = 0;
+//  //  SDL_RenderClear((SDL_Renderer*)i->xid);
+//  pWindow->draw();
   SDL_RenderPresent((SDL_Renderer*)i->xid);
 }
 
