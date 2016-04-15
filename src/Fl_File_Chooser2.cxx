@@ -1333,7 +1333,7 @@ Fl_File_Chooser::update_preview()
   } else {
     struct stat s;
     if (fl_stat(filename, &s)==0) {
-      if ((s.st_mode&S_IFMT)!=S_IFREG) {
+      if ((s.st_mode & S_IFREG) == 0) {
         // this is no regular file, probably some kind of device
         newlabel = "@-3refresh"; // a cross
         set = 1;

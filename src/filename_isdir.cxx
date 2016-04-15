@@ -65,7 +65,7 @@ int Fl_System_Driver::filename_isdir(const char* n) {
     fn[length] = '\0';
     n = fn;
   }
-  return !stat(n, &s) && (s.st_mode & S_IFMT) == S_IFDIR;
+  return !stat(n, &s) && (s.st_mode & S_IFDIR);
 }
 
 //

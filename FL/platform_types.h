@@ -66,7 +66,6 @@ struct stat { /* the FLTK source code uses part of the stat() API */
   unsigned st_mode;
   unsigned st_size;
 };
-#define        S_IFMT   0170000  /* type of file */
 #define        S_IFDIR  0040000  /* directory */
 #define        S_IFREG  0100000  /* regular */
 
