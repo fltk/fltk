@@ -37,7 +37,6 @@ public:
   /**
    Translates the current graphics origin accounting for the current rotation.
    
-   This function is only useful after a rotate() call.
    Each translate() call must be matched by an untranslate() call.
    Successive translate() calls add up their effects.
    */
