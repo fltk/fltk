@@ -3482,7 +3482,7 @@ static Fl_Image* get_image_from_clipboard(Fl_Widget *receiver)
 }
 
 // Call this when a "paste" operation happens:
-void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+void Fl_Darwin_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (type[0] == 0) type = Fl::clipboard_plain_text;
   if (clipboard) {
     Fl::e_clipboard_type = "";

@@ -691,7 +691,7 @@ void Fl_WinAPI_System_Driver::copy(const char *stuff, int len, int clipboard, co
 }
 
 // Call this when a "paste" operation happens:
-void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (!clipboard || (fl_i_own_selection[clipboard] && strcmp(type, Fl::clipboard_plain_text) == 0)) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is

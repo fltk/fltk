@@ -104,8 +104,10 @@ public:
   virtual int case_insensitive_filenames() {return 1;}
   // this one is implemented in Fl_win32.cxx
   virtual const char *filename_name(const char *buf);
-  // this one is in Fl_win32.cxx
+  // this one is implemented in Fl_win32.cxx
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  // this one is implemented in Fl_win32.cxx
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

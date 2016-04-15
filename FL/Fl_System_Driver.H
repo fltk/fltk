@@ -36,6 +36,7 @@
 class Fl_File_Icon;
 class Fl_File_Browser;
 class Fl_Pixmap;
+class Fl_Widget;
 
 /**
  \brief A base class for platform-specific system operations.
@@ -193,8 +194,10 @@ public:
   static const char * const tree_close_xpm[]; // used by tree_closepixmap()
   // the default implementation of tree_connector_style() is in Fl_Tree_Prefs.cxx and can be enough
   virtual int tree_connector_style();
-  //implement to support copy-to-clipboard
+  // implement to support copy-to-clipboard
   virtual void copy(const char *stuff, int len, int clipboard, const char *type) {}
+  // implement to support paste-from-clipboard
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type) {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

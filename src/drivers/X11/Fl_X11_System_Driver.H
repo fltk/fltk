@@ -49,6 +49,8 @@ public:
   virtual const char *filename_name(const char *buf);
   // this one is in Fl_x.cxx
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
+  // this one is in Fl_x.cxx
+  virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

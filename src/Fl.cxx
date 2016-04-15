@@ -1414,8 +1414,14 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
   \see Fl::paste(Fl_Widget &receiver, int clipboard, const char* type)
 */
 void Fl::paste(Fl_Widget &receiver) {
-  Fl::paste(receiver, 0);
+  Fl::system_driver()->paste(receiver, 0, Fl::clipboard_plain_text);
 }
+
+void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type)
+{
+  Fl::system_driver()->paste(receiver, clipboard, type);
+}
+
 ////////////////////////////////////////////////////////////////
 
 void Fl_Widget::redraw() {
