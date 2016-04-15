@@ -167,7 +167,6 @@ public:
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
   static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
-  static void complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata);
 private:
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;

@@ -45,6 +45,7 @@ extern "C" {
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
+#include "drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 #include "drivers/Darwin/Fl_Darwin_System_Driver.H"
@@ -3317,7 +3318,7 @@ void Fl_X::set_high_resolution(bool new_val)
   Fl_Display_Device::high_res_window_ = new_val;
 }
 
-void Fl_X::complete_copy_pdf_and_tiff(CGContextRef gc, CFMutableDataRef pdfdata)
+Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
 {
   CGContextRestoreGState(gc);
   CGContextEndPage(gc);
