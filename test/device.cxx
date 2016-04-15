@@ -439,7 +439,7 @@ protected:
     fl_color(FL_BLACK);
   };
 public:
-  MyWidget4(int x, int y):Fl_Box(x,y,150,150, "Line styles"){
+  MyWidget4(int x, int y):Fl_Box(x,y+10,150,150, "Line styles"){
     labelsize(10);
     align(FL_ALIGN_TOP);
   };
