@@ -66,10 +66,10 @@ public:
   void rectf(int x, int y, int w, int h);
   void line(int x, int y, int x1, int y1);
   //  void line(int x, int y, int x1, int y1, int x2, int y2);
-  //  void xyline(int x, int y, int x1);
+  void xyline(int x, int y, int x1) { line(x, y, x1, y); }
   //  void xyline(int x, int y, int x1, int y2);
   //  void xyline(int x, int y, int x1, int y2, int x3);
-  //  void yxline(int x, int y, int y1);
+  void yxline(int x, int y, int y1) { line(x, y, x, y1); }
   //  void yxline(int x, int y, int y1, int x2);
   //  void yxline(int x, int y, int y1, int x2, int y3);
   //  void loop(int x0, int y0, int x1, int y1, int x2, int y2);

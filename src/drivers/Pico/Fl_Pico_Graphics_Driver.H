@@ -120,10 +120,10 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 //  virtual void scale(double x, double y);
 //  virtual void scale(double x);
 //  virtual void translate(double x,double y);
-//  virtual void begin_points();
-//  virtual void begin_line();
-//  virtual void begin_loop();
-//  virtual void begin_polygon();
+  virtual void begin_points();
+  virtual void begin_line();
+  virtual void begin_loop();
+  virtual void begin_polygon();
   virtual void begin_complex_polygon() ;
 //  virtual double transform_x(double x, double y);
 //  virtual double transform_y(double x, double y);

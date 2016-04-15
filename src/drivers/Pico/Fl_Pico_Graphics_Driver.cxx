@@ -20,6 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_Pico_Graphics_Driver.h"
 #include <FL/fl_draw.H>
+#include <FL/math.h>
 
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -30,26 +31,71 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 
 void Fl_Pico_Graphics_Driver::point(int x, int y)
 {
-  // implement in derived class
+  // This is the one methods that *must* be overiden in the final driver
+  // class. All other methods can be derived from this one method. The
+  // result should work, but will be slow and inefficient.
 }
+
 
 void Fl_Pico_Graphics_Driver::rect(int x, int y, int w, int h)
 {
-  line(x, y, x+w-1, y);
-  line(x+w-1, y, x+w-1, y+h-1);
-  line(x+w-1, y+h-1, x, y+h-1);
-  line(x, y+h-1, x, y);
+  int x1 = x+w-1, y1 = y+h-1;
+  xyline(x, y, x1);
+  xyline(x, y1, x1);
+  yxline(x, y, y1);
+  yxline(x1, y, y1);
 }
+
 
 void Fl_Pico_Graphics_Driver::rectf(int x, int y, int w, int h)
 {
-  // implement in derived class
+  int i = y, n = y+h, xn = x+w-1;
+  for ( ; i<n; i++) {
+    xyline(x, i, xn);
+  }
 }
+
+
+static int sign(int x) { return (x>0)-(x<0); }
+
 
 void Fl_Pico_Graphics_Driver::line(int x, int y, int x1, int y1)
 {
-  // implement in derived class
+  if (x==x1) {
+    return yxline(x, y, y1);
+  }
+  if (y==y1) {
+    return xyline(x, y, x1);
+  }
+  // Bresenham
+  int w = x1 - x, dx = abs(w);
+  int h = y1 - y, dy = abs(h);
+  int dx1 = sign(w), dy1 = sign(h), dx2, dy2;
+  int min, max;
+  if (dx < dy) {
+    min = dx; max = dy;
+    dx2 = 0;
+    dy2 = dy1;
+  } else {
+    min = dy; max = dx;
+    dx2 = dx1;
+    dy2 = 0;
+  }
+  int num = max/2;
+  for (int i=max+1; i>0; i--) {
+    point(x, y);
+    num += min;
+    if (num>=max) {
+      num -= max;
+      x += dx1;
+      y += dy1;
+    } else {
+      x += dx2;
+      y += dy2;
+    }
+  }
 }
+
 
 void Fl_Pico_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2)
 {
@@ -57,37 +103,60 @@ void Fl_Pico_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2)
   line(x1, y1, x2, y2);
 }
 
+
 void Fl_Pico_Graphics_Driver::xyline(int x, int y, int x1)
 {
-  line(x, y, x1, y);
+  int i;
+  if (x1<x) {
+    int tmp = x; x = x1; x1 = tmp;
+  }
+  for (i=x; i<=x1; i++) {
+    point(i, y);
+  }
 }
+
 
 void Fl_Pico_Graphics_Driver::xyline(int x, int y, int x1, int y2)
 {
-  line(x, y, x1, y, x1, y2);
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
 }
+
 
 void Fl_Pico_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3)
 {
-  line(x, y, x1, y, x1, y2);
-  line(x1, y2, x3, y2);
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
+  xyline(x1, y2, x3);
 }
+
 
 void Fl_Pico_Graphics_Driver::yxline(int x, int y, int y1)
 {
-  line(x, y, x, y1);
+  int i;
+  if (y1<y) {
+    int tmp = y; y = y1; y1 = tmp;
+  }
+  for (i=y; i<=y1; i++) {
+    point(x, i);
+  }
 }
+
 
 void Fl_Pico_Graphics_Driver::yxline(int x, int y, int y1, int x2)
 {
-  line(x, y, x, y1, x2, y1);
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
 }
+
 
 void Fl_Pico_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3)
 {
-  line(x, y, x, y1, x2, y1);
-  line(x2, y1, x2, y3);
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
+  yxline(x2, y1, y3);
 }
+
 
 void Fl_Pico_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2)
 {
@@ -95,6 +164,7 @@ void Fl_Pico_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y
   line(x1, y1, x2, y2);
   line(x2, y2, x0, y0);
 }
+
 
 void Fl_Pico_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
 {
@@ -104,106 +174,239 @@ void Fl_Pico_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y
   line(x3, y3, x0, y0);
 }
 
+
 void Fl_Pico_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2)
 {
+  // FIXME: fill
+  line(x0, y0, x1, y1);
+  line(x1, y1, x2, y2);
+  line(x2, y2, x0, y0);
 }
+
 
 void Fl_Pico_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
 {
+  // FIXME: fill
+  line(x0, y0, x1, y1);
+  line(x1, y1, x2, y2);
+  line(x2, y2, x3, y3);
+  line(x3, y3, x0, y0);
 }
+
 
 void Fl_Pico_Graphics_Driver::push_clip(int x, int y, int w, int h)
 {
 }
+
 
 int Fl_Pico_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H)
 {
   return 0;
 }
 
+
 int Fl_Pico_Graphics_Driver::not_clipped(int x, int y, int w, int h)
 {
   return 1;
 }
 
+
 void Fl_Pico_Graphics_Driver::push_no_clip()
 {
 }
+
 
 void Fl_Pico_Graphics_Driver::pop_clip()
 {
 }
 
+
+static double px, py; // FIXME: aaaah!
+static double pxf, pyf;
+static int pn;
+
+
+void Fl_Pico_Graphics_Driver::begin_points()
+{
+  what = POINT_;
+  pn = 0;
+}
+
+
 void Fl_Pico_Graphics_Driver::begin_complex_polygon()
 {
+  what = POLYGON;
+  pn = 0;
 }
+
+
+void Fl_Pico_Graphics_Driver::begin_line()
+{
+  what = LINE;
+  pn = 0;
+}
+
+
+void Fl_Pico_Graphics_Driver::begin_loop()
+{
+  what = LOOP;
+  pn = 0;
+}
+
+
+void Fl_Pico_Graphics_Driver::begin_polygon()
+{
+  what = POLYGON;
+  pn = 0;
+}
+
 
 void Fl_Pico_Graphics_Driver::transformed_vertex(double xf, double yf)
 {
 }
 
-static double px, py; // FIXME: aaaah!
 
 void Fl_Pico_Graphics_Driver::vertex(double x, double y)
 {
-  if (n>0) {
-    if (what==LINE) {
-      line(px, py, x, y);
+  if (pn>0) {
+    switch (what) {
+      case POINT_:  point(x, y); break;
+      case LINE:    line(px, py, x, y); break;
+      case LOOP:    line(px, py, x, y); break;
+      case POLYGON: line(px, py, x, y); break; // FIXME: fill!
     }
   }
-  n++;
+  if (pn==0 ) { pxf = x; pyf = y; }
   px = x; py = y;
+  pn++;
 }
+
 
 void Fl_Pico_Graphics_Driver::end_points()
 {
+  pn = 0;
 }
+
 
 void Fl_Pico_Graphics_Driver::end_line()
 {
-  // nothing to do
+  pn = 0;
 }
+
 
 void Fl_Pico_Graphics_Driver::end_loop()
 {
+  line(px, py, pxf, pyf);
+  pn = 0;
 }
+
 
 void Fl_Pico_Graphics_Driver::end_polygon()
 {
+  line(px, py, pxf, pyf);  // FIXME: fill!
+  pn = 0;
 }
+
 
 void Fl_Pico_Graphics_Driver::end_complex_polygon()
 {
+  line(px, py, pxf, pyf);  // FIXME: fill!
+  pn = 0;
 }
+
 
 void Fl_Pico_Graphics_Driver::gap()
 {
+  pn = 0;
 }
+
+
+static double _fl_hypot(double x, double y) {
+  return sqrt(x*x + y*y);
+}
+
 
 void Fl_Pico_Graphics_Driver::circle(double x, double y, double r)
 {
+  begin_loop();
+  double X = r;
+  double Y = 0;
+  fl_vertex(x+X,y+Y);
+
+  double epsilon; {
+    double r1 = _fl_hypot(fl_transform_dx(r,0), fl_transform_dy(r,0));
+    double r2 = _fl_hypot(fl_transform_dx(0,r), fl_transform_dy(0,r));
+    if (r1 > r2) r1 = r2;
+    if (r1 < 2.) r1 = 2.;
+    epsilon = 2*acos(1.0 - 0.125/r1);
+  }
+  double A = 360.0;
+  int i = int(ceil(fabs(A)/epsilon));	// Segments in approximation
+
+  if (i) {
+    epsilon = A/i;			// Arc length for equal-size steps
+    double cos_e = cos(epsilon);	// Rotation coefficients
+    double sin_e = sin(epsilon);
+    do {
+      double Xnew =  cos_e*X + sin_e*Y;
+      Y = -sin_e*X + cos_e*Y;
+      fl_vertex(x + (X=Xnew), y + Y);
+    } while (--i);
+  }
+  end_loop();
 }
 
-void Fl_Pico_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2)
+
+void Fl_Pico_Graphics_Driver::arc(int xi, int yi, int w, int h, double a1, double a2)
 {
+  if (a2<=a1) return;
+
+  double rx = w/2.0;
+  double ry = h/2.0;
+  double x = xi + rx;
+  double y = yi + ry;
+  double circ = M_PI*0.5*(rx+ry);
+  int i, segs = circ * (a2-a1) / 1000;  // every line is about three pixels long
+  if (segs<3) segs = 3;
+
+  int px, py;
+  a1 = a1/180*M_PI;
+  a2 = a2/180*M_PI;
+  double step = (a2-a1)/segs;
+
+  int nx = x + sin(a1)*rx;
+  int ny = y - cos(a1)*ry;
+  for (i=segs; i>0; i--) {
+    a1+=step;
+    px = nx; py = ny;
+    nx = x + sin(a1)*rx;
+    ny = y - cos(a1)*ry;
+    line(px, py, nx, ny);
+  }
 }
+
 
 void Fl_Pico_Graphics_Driver::pie(int x, int y, int w, int h, double a1, double a2)
 {
+  // FIXME: implement this
 }
+
 
 void Fl_Pico_Graphics_Driver::line_style(int style, int width, char* dashes)
 {
 }
 
+
 void Fl_Pico_Graphics_Driver::color(uchar r, uchar g, uchar b)
 {
 }
+
 
 Fl_Bitmask Fl_Pico_Graphics_Driver::create_bitmask(int w, int h, const uchar *array)
 {
   return 0;
 }
+
 
 void Fl_Pico_Graphics_Driver::delete_bitmask(Fl_Bitmask bm)
 {
@@ -266,13 +469,16 @@ double Fl_Pico_Graphics_Driver::width(const char *str, int n) {
   return size_*n*0.5;
 }
 
+
 int Fl_Pico_Graphics_Driver::descent() {
   return (int)(size_ - size_*0.8);
 }
 
+
 int Fl_Pico_Graphics_Driver::height() {
   return (int)(size_);
 }
+
 
 void Fl_Pico_Graphics_Driver::draw(const char *str, int n, int x, int y)
 {
