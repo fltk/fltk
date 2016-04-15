@@ -274,14 +274,6 @@ int Fl_Pico_Graphics_Driver::height() {
   return (int)(size_);
 }
 
-void Fl_Pico_Graphics_Driver::text_extents(const char *str, int n, int& dx, int& dy, int& w, int& h)
-{
-  dx = 0;
-  dy = descent();
-  w = (int)width(str, n);
-  h = size_;
-}
-
 void Fl_Pico_Graphics_Driver::draw(const char *str, int n, int x, int y)
 {
   int i;

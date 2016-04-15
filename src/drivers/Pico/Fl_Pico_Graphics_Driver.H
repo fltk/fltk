@@ -163,7 +163,6 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 //  virtual Fl_Fontsize size() {return size_; }
   virtual double width(const char *str, int n);
 //  virtual double width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
-  virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual int height();
   virtual int descent();
 //  virtual Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}

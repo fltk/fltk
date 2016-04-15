@@ -149,16 +149,16 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 
 void fl_set_spot(int, int, int, int, int, int, Fl_Window*) { }
 void fl_reset_spot() { }
-const char *fl_filename_name(char const*) { return 0; }
+//const char *fl_filename_name(char const*) { return 0; }
 void fl_clipboard_notify_change() { }
 
 //Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() { return 0; }
 //Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() { return 0; }
 void Fl_Graphics_Driver::global_gc() { }
 //int Fl::dnd() { return 0; }
-void Fl::copy(char const*, int, int, char const*) { }
-void Fl::paste(Fl_Widget&, int, char const*) { }
-void Fl::get_mouse(int&, int&) { }
+//void Fl::copy(char const*, int, int, char const*) { }
+//void Fl::paste(Fl_Widget&, int, char const*) { }
+//void Fl::get_mouse(int&, int&) { }
 void Fl::set_color(Fl_Color, unsigned int) { }
 int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
