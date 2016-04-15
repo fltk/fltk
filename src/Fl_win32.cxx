@@ -548,7 +548,7 @@ static Fl_Win32_At_Exit win32_at_exit;
 
 static char im_enabled = 1;
 
-void Fl::enable_im() {
+void Fl_WinAPI_Screen_Driver::enable_im() {
   fl_open_display();
 
   Fl_X* i = Fl_X::first;
@@ -560,7 +560,7 @@ void Fl::enable_im() {
   im_enabled = 1;
 }
 
-void Fl::disable_im() {
+void Fl_WinAPI_Screen_Driver::disable_im() {
   fl_open_display();
 
   Fl_X* i = Fl_X::first;

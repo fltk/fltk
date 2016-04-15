@@ -653,7 +653,7 @@ void fl_xim_deactivate(void) {
   fl_xim_win = 0;
 }
 
-void Fl::enable_im() {
+void Fl_X11_Screen_Driver::enable_im() {
   Fl_Window *win;
 
   win = Fl::first_window();
@@ -665,7 +665,7 @@ void Fl::enable_im() {
   }
 }
 
-void Fl::disable_im() {
+void Fl_X11_Screen_Driver::disable_im() {
   fl_xim_deactivate();
 }
 

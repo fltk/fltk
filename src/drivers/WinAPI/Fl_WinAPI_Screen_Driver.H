@@ -73,6 +73,8 @@ public:
   virtual int compose(int &del);
   virtual uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
   virtual void get_mouse(int &x, int &y);
+  virtual void enable_im();
+  virtual void disable_im();
 };
 
 

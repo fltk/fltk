@@ -1941,6 +1941,16 @@ int Fl::clipboard_contains(const char *type)
   return Fl::system_driver()->clipboard_contains(type);
 }
 
+void Fl::enable_im()
+{
+  Fl::screen_driver()->enable_im();
+}
+
+void Fl::disable_im()
+{
+  Fl::screen_driver()->disable_im();
+}
+
 //
 // End of "$Id$".
 //

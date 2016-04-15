@@ -1827,7 +1827,7 @@ static int input_method_startup()
   return retval;
 }
 
-void Fl::enable_im() {
+void Fl_Cocoa_Screen_Driver::enable_im() {
   if (!input_method_startup()) return;
 
   im_enabled = 1;
@@ -1840,7 +1840,7 @@ void Fl::enable_im() {
     KeyScript(smKeyEnableKybds);
 }
 
-void Fl::disable_im() {
+void Fl_Cocoa_Screen_Driver::disable_im() {
   if (!input_method_startup()) return;
 
   im_enabled = 0;

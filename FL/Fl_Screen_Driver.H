@@ -135,6 +135,9 @@ public:
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
   // implement to support Fl::get_mouse()
   virtual void get_mouse(int &x, int &y) {}
+  // optional methods to enable/disable input methods for complex scripts
+  virtual void enable_im() {}
+  virtual void disable_im() {}
 };
 
 
