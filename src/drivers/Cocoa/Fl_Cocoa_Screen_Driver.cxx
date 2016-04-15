@@ -94,14 +94,6 @@ void Fl_Cocoa_Screen_Driver::init()
 }
 
 
-void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, int n)
-{
-  if (num_screens < 0) init();
-  if (n < 0 || n >= num_screens) n = 0;
-  Fl_X::screen_work_area(X, Y, W, H, n);
-}
-
-
 void Fl_Cocoa_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
 {
   if (num_screens < 0) init();

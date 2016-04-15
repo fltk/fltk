@@ -263,6 +263,7 @@ elseif (APPLE)
     drivers/Cocoa/Fl_Cocoa_Screen_Driver.H
     drivers/Cocoa/Fl_Cocoa_Window_Driver.H
     drivers/Quartz/Fl_Quartz_Graphics_Driver.H
+    drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H
     drivers/Quartz/Fl_Font.H
   )
 

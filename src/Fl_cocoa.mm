@@ -1905,8 +1905,10 @@ int Fl_Cocoa_Screen_Driver::h() {
 }
 
 // computes the work area of the nth screen (screen #0 has the menubar)
-void Fl_X::screen_work_area(int &X, int &Y, int &W, int &H, int n)
+void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, int n)
 {
+  if (num_screens < 0) init();
+  if (n < 0 || n >= num_screens) n = 0;
   fl_open_display();
   NSRect r = [[[NSScreen screens] objectAtIndex:n] visibleFrame];
   X   = int(r.origin.x);
