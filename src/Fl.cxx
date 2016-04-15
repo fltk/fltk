@@ -447,8 +447,6 @@ struct Clipboard_Notify {
 
 static struct Clipboard_Notify *clip_notify_list = NULL;
 
-extern void fl_clipboard_notify_change(); // in Fl_<platform>.cxx
-
 void Fl::add_clipboard_notify(Fl_Clipboard_Notify_Handler h, void *data) {
   struct Clipboard_Notify *node;
 
@@ -462,7 +460,7 @@ void Fl::add_clipboard_notify(Fl_Clipboard_Notify_Handler h, void *data) {
 
   clip_notify_list = node;
 
-  fl_clipboard_notify_change();
+  Fl::system_driver()->clipboard_notify_change();
 }
 
 void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
@@ -475,7 +473,7 @@ void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
       *prev = node->next;
       delete node;
 
-      fl_clipboard_notify_change();
+      Fl::system_driver()->clipboard_notify_change();
 
       return;
     }

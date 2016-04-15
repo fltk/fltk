@@ -200,6 +200,8 @@ public:
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type) {}
   // implement to support paste-from-clipboard
   virtual int clipboard_contains(const char *type) {return 0;}
+  //  implement to support paste-from-clipboard
+  virtual void clipboard_notify_change() {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

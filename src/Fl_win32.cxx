@@ -892,7 +892,7 @@ void fl_clipboard_notify_retarget(HWND wnd) {
     fl_clipboard_notify_target(fl_xid(Fl::first_window()));
 }
 
-void fl_clipboard_notify_change() {
+void Fl_WinAPI_System_Driver::clipboard_notify_change() {
   // untarget clipboard monitor if no handlers are registered
   if (clipboard_wnd != NULL && fl_clipboard_notify_empty()) {
     fl_clipboard_notify_untarget(clipboard_wnd);

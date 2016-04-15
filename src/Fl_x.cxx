@@ -1116,7 +1116,7 @@ static void handle_clipboard_timestamp(int clipboard, Time time)
   fl_trigger_clipboard_notify(clipboard);
 }
 
-void fl_clipboard_notify_change() {
+void Fl_X11_System_Driver::clipboard_notify_change() {
   // Reset the timestamps if we've going idle so that you don't
   // get a bogus immediate trigger next time they're activated.
   if (fl_clipboard_notify_empty()) {

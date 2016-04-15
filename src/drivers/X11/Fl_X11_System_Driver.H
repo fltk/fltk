@@ -53,6 +53,8 @@ public:
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
   // this one is in Fl_x.cxx
   virtual int clipboard_contains(const char *type);
+  // this one is in Fl_x.cxx
+  virtual void clipboard_notify_change();
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

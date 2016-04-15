@@ -3352,10 +3352,6 @@ static int fl_selection_buffer_length[2];
 
 extern void fl_trigger_clipboard_notify(int source);
 
-void fl_clipboard_notify_change() {
-  // No need to do anything here...
-}
-
 static void clipboard_check(void)
 {
   static NSInteger oldcount = -1;

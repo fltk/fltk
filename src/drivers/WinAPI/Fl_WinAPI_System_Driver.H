@@ -110,6 +110,8 @@ public:
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
   // this one is implemented in Fl_win32.cxx
   virtual int clipboard_contains(const char *type);
+  // this one is implemented in Fl_win32.cxx
+  virtual void clipboard_notify_change();
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H
