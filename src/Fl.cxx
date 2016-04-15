@@ -1938,6 +1938,11 @@ void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   Fl::system_driver()->copy(stuff, len, clipboard, type);
 }
 
+int Fl::clipboard_contains(const char *type)
+{
+  return Fl::system_driver()->clipboard_contains(type);
+}
+
 //
 // End of "$Id$".
 //

@@ -822,7 +822,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
     }
 }
 
-int Fl::clipboard_contains(const char *type)
+int Fl_WinAPI_System_Driver::clipboard_contains(const char *type)
 {
   int retval = 0;
   if (!OpenClipboard(NULL)) return 0;

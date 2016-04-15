@@ -828,7 +828,7 @@ void Fl_X11_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
                     fl_xid(Fl::first_window()), fl_event_time);
 }
 
-int Fl::clipboard_contains(const char *type)
+int Fl_X11_System_Driver::clipboard_contains(const char *type)
 {
   XEvent event;
   Atom actual; int format; unsigned long count, remaining, i = 0;

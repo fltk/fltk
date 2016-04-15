@@ -71,6 +71,7 @@ public:
   virtual const char *filename_name(const char *buf);
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  virtual int clipboard_contains(const char *type);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

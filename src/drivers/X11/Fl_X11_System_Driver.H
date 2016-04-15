@@ -51,6 +51,8 @@ public:
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
   // this one is in Fl_x.cxx
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
+  // this one is in Fl_x.cxx
+  virtual int clipboard_contains(const char *type);
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

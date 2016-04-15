@@ -3510,7 +3510,7 @@ void Fl_Darwin_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
   receiver.handle(FL_PASTE);
 }
 
-int Fl::clipboard_contains(const char *type) {
+int Fl_Darwin_System_Driver::clipboard_contains(const char *type) {
   NSString *found = nil;
   if (strcmp(type, Fl::clipboard_plain_text) == 0) {
     found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:UTF8_pasteboard_type, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
