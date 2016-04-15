@@ -669,7 +669,7 @@ void Fl_X11_Screen_Driver::disable_im() {
   fl_xim_deactivate();
 }
 
-void fl_open_display() {
+void Fl_X11_Screen_Driver::open_display() {
   if (fl_display) return;
 
   setlocale(LC_CTYPE, "");
@@ -782,14 +782,14 @@ void fl_open_display(Display* d) {
   XSelectInput(d, RootWindow(d, fl_screen), PropertyChangeMask);
 }
 
-void fl_close_display() {
+void Fl_X11_Screen_Driver::close_display() {
   Fl::remove_fd(ConnectionNumber(fl_display));
   XCloseDisplay(fl_display);
 }
 
 
 void Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
-  fl_open_display();
+  open_display();
   Window root = RootWindow(fl_display, fl_screen);
   Window c; int mx,my,cx,cy; unsigned int mask;
   XQueryPointer(fl_display,root,&root,&c,&mx,&my,&cx,&cy,&mask);

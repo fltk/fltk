@@ -218,7 +218,7 @@ static void set_selection_color(uchar r, uchar g, uchar b)
 // look-n-feel...
 void Fl_Cocoa_Screen_Driver::get_system_colors()
 {
-  fl_open_display();
+  open_display();
 
   if (!bg2_set) Fl::background2(0xff, 0xff, 0xff);
   if (!fg_set) Fl::foreground(0, 0, 0);

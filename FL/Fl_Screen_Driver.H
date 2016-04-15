@@ -138,6 +138,10 @@ public:
   // optional methods to enable/disable input methods for complex scripts
   virtual void enable_im() {}
   virtual void disable_im() {}
+  // implement to open access to the display
+  virtual void open_display() {}
+  // optional method to close display access
+  virtual void close_display() {}
 };
 
 

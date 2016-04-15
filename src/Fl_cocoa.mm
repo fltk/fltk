@@ -1721,7 +1721,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 }
 */
 
-void fl_open_display() {
+void Fl_Cocoa_Screen_Driver::open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
@@ -1796,12 +1796,6 @@ void fl_open_display() {
   }
 }
 
-
-/*
- * get rid of allocated resources
- */
-void fl_close_display() {
-}
 
 // Force a "Roman" or "ASCII" keyboard, which both the Mozilla and
 // Safari people seem to think implies turning off advanced IME stuff
@@ -1883,7 +1877,7 @@ int Fl_Cocoa_Screen_Driver::x() {
  * smallest y coordinate in screen space of work area of menubar-containing display
  */
 int Fl_Cocoa_Screen_Driver::y() {
-  fl_open_display();
+  open_display();
   NSRect visible = [[[NSScreen screens] objectAtIndex:0] visibleFrame];
   return int(main_screen_height - (visible.origin.y + visible.size.height));
 }
@@ -1909,7 +1903,7 @@ void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, in
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  fl_open_display();
+  open_display();
   NSRect r = [[[NSScreen screens] objectAtIndex:n] visibleFrame];
   X   = int(r.origin.x);
   Y   = main_screen_height - int(r.origin.y + r.size.height);
@@ -1922,7 +1916,7 @@ void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, in
  */
 void Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y) 
 {
-  fl_open_display();
+  open_display();
   NSPoint pt = [NSEvent mouseLocation];
   x = int(pt.x);
   y = int(main_screen_height - pt.y);

@@ -184,7 +184,7 @@ int Fl_X11_Screen_Driver::visual(int flags)
 #if USE_XDBE == 0
   if (flags & FL_DOUBLE) return 0;
 #endif
-  fl_open_display();
+  open_display();
   // always use default if possible:
   if (test_visual(*fl_visual, flags)) return 1;
   // get all the visuals:
@@ -210,7 +210,7 @@ static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
 
 void Fl_X11_Screen_Driver::init_workarea() 
 {
-  fl_open_display();
+  open_display();
 
   Atom actual;
   unsigned long count, remaining;
@@ -267,7 +267,7 @@ int Fl_X11_Screen_Driver::h() {
 
 void Fl_X11_Screen_Driver::init()
 {
-  if (!fl_display) fl_open_display();
+  if (!fl_display) open_display();
   // FIXME: Rewrite using RandR instead
 #if HAVE_XINERAMA
   if (XineramaIsActive(fl_display)) {
@@ -356,11 +356,11 @@ void Fl_X11_Screen_Driver::beep(int type)
   switch (type) {
     case FL_BEEP_DEFAULT :
     case FL_BEEP_ERROR :
-      if (!fl_display) fl_open_display();
+      if (!fl_display) open_display();
       XBell(fl_display, 100);
       break;
     default :
-      if (!fl_display) fl_open_display();
+      if (!fl_display) open_display();
       XBell(fl_display, 50);
       break;
   }
@@ -493,7 +493,7 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
 int Fl_X11_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 {
   XColor x;
-  if (!fl_display) fl_open_display();
+  if (!fl_display) open_display();
   if (XParseColor(fl_display, fl_colormap, p, &x)) {
     r = (uchar)(x.red>>8);
     g = (uchar)(x.green>>8);
@@ -533,7 +533,7 @@ static void getsyscolor(const char *key1, const char* key2, const char *arg, con
 
 void Fl_X11_Screen_Driver::get_system_colors()
 {
-  fl_open_display();
+  open_display();
   const char* key1 = 0;
   if (Fl::first_window()) key1 = Fl::first_window()->xclass();
   if (!key1) key1 = "fltk";
@@ -554,7 +554,7 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
     const char* key = 0;
     if (Fl::first_window()) key = Fl::first_window()->xclass();
     if (!key) key = "fltk";
-    fl_open_display();
+    open_display();
     s = XGetDefault(fl_display, key, "scheme");
   }
   return s;

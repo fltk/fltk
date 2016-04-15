@@ -515,7 +515,7 @@ int fl_ready() {
   return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
 }
 
-void fl_open_display() {
+void Fl_WinAPI_Screen_Driver::open_display() {
   static char beenHereDoneThat = 0;
 
   if (beenHereDoneThat)
@@ -549,7 +549,7 @@ static Fl_Win32_At_Exit win32_at_exit;
 static char im_enabled = 1;
 
 void Fl_WinAPI_Screen_Driver::enable_im() {
-  fl_open_display();
+  open_display();
 
   Fl_X* i = Fl_X::first;
   while (i) {
@@ -561,7 +561,7 @@ void Fl_WinAPI_Screen_Driver::enable_im() {
 }
 
 void Fl_WinAPI_Screen_Driver::disable_im() {
-  fl_open_display();
+  open_display();
 
   Fl_X* i = Fl_X::first;
   while (i) {

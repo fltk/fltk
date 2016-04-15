@@ -75,6 +75,7 @@ public:
   virtual void get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();
+  virtual void open_display();
 };
 
 

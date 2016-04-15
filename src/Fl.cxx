@@ -1941,14 +1941,32 @@ int Fl::clipboard_contains(const char *type)
   return Fl::system_driver()->clipboard_contains(type);
 }
 
+/**
+ Enables the system input methods facilities. This is the default.
+ \see disable_im()
+ */
 void Fl::enable_im()
 {
   Fl::screen_driver()->enable_im();
 }
 
+/**
+ Disables the system input methods facilities.
+ \see enable_im()
+ */
 void Fl::disable_im()
 {
   Fl::screen_driver()->disable_im();
+}
+
+void fl_open_display()
+{
+  Fl::screen_driver()->open_display();
+}
+
+void fl_close_display()
+{
+  Fl::screen_driver()->close_display();
 }
 
 //
