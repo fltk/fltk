@@ -663,7 +663,7 @@ int main() {
     position your first window).  If the display is not open, this will
     open it.
   */
-  static void get_mouse(int &,int &); // platform dependent
+  static void get_mouse(int &,int &);
   /**
     Returns non zero if we had a double click event.
     \retval Non-zero if the most recent FL_PUSH or FL_KEYBOARD was a "double click".  

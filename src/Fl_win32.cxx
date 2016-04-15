@@ -55,6 +55,7 @@ void fl_cleanup_dc_list(void);
 #include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
+#include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -573,7 +574,7 @@ void Fl::disable_im() {
 
 ////////////////////////////////////////////////////////////////
 
-void Fl::get_mouse(int &x, int &y) {
+void Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
   POINT p;
   GetCursorPos(&p);
   x = p.x;
@@ -666,7 +667,7 @@ void fl_update_clipboard(void) {
 }
 
 // call this when you create a selection:
-void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
+void Fl_WinAPI_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
   if (clipboard >= 2)
     clipboard = 1; // Only on X11 do multiple clipboards make sense.
@@ -1928,12 +1929,11 @@ void Fl_X::set_minmax(LPMINMAXINFO minmax)
   }
 }
 
+
 ////////////////////////////////////////////////////////////////
 
-#include <FL/filename.H> // need so FL_EXPORT fl_filename_name works
-
 // returns pointer to the filename, or null if name ends with '/'
-const char *fl_filename_name(const char *name) {
+const char *Fl_WinAPI_System_Driver::filename_name(const char *name) {
   const char *p,*q;
   if (!name) return (0);
   q = name;

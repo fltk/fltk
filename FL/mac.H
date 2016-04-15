@@ -165,7 +165,6 @@ public:
   int set_cursor(const Fl_RGB_Image*, int, int);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
-  static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
 private:
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
   // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;

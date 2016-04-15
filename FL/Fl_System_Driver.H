@@ -122,6 +122,8 @@ public:
   virtual int filename_isdir_quick(const char* n);
   // the default implementation of filename_ext() is in src/filename_ext.cxx and may be enough
   virtual const char *filename_ext(const char *buf);
+  // implement to support fl_filename_name()
+  virtual const char *filename_name(const char *buf) {return buf;}
   // whether a platform uses additional code in Fl_Menu::handle(int e)
   virtual int need_menu_handle_part2() {return 0;}
   // whether a platform uses additional code in Fl_Menu::handle_part1(int e)
@@ -191,6 +193,8 @@ public:
   static const char * const tree_close_xpm[]; // used by tree_closepixmap()
   // the default implementation of tree_connector_style() is in Fl_Tree_Prefs.cxx and can be enough
   virtual int tree_connector_style();
+  //implement to support copy-to-clipboard
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type) {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

@@ -133,6 +133,8 @@ public:
   // optional platform-specific key handling for Fl_Input widget
   // the default implementation may be enough
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
+  // implement to support Fl::get_mouse()
+  virtual void get_mouse(int &x, int &y) {}
 };
 
 

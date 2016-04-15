@@ -102,6 +102,10 @@ public:
   virtual int backslash_as_slash() {return 1;}
   virtual int colon_is_drive() {return 1;}
   virtual int case_insensitive_filenames() {return 1;}
+  // this one is implemented in Fl_win32.cxx
+  virtual const char *filename_name(const char *buf);
+  // this one is in Fl_win32.cxx
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

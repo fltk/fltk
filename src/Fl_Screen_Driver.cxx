@@ -53,7 +53,7 @@ int Fl_Screen_Driver::visual(int) {
 void Fl_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H)
 {
   int x, y;
-  Fl::get_mouse(x, y);
+  get_mouse(x, y);
   screen_xywh(X, Y, W, H, x, y);
 }
 
@@ -67,7 +67,7 @@ void Fl_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int m
 void Fl_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H)
 {
   int x, y;
-  Fl::get_mouse(x, y);
+  get_mouse(x, y);
   screen_work_area(X, Y, W, H, x, y);
 }
 

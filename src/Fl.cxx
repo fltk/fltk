@@ -1920,6 +1920,18 @@ int Fl::get_key(int k) {
   return system_driver()->get_key(k);
 }
 
+void Fl::get_mouse(int &x, int &y) {
+  Fl::screen_driver()->get_mouse(x, y);
+}
+
+const char * fl_filename_name(const char *name) {
+  return Fl::system_driver()->filename_name(name);
+}
+
+void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
+  Fl::system_driver()->copy(stuff, len, clipboard, type);
+}
+
 //
 // End of "$Id$".
 //

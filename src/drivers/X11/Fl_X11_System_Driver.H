@@ -45,6 +45,10 @@ public:
   virtual int utf8locale();
   // this one is in Fl_own_colormap.cxx
   virtual void own_colormap();
+  // this one is in Fl_x.cxx
+  virtual const char *filename_name(const char *buf);
+  // this one is in Fl_x.cxx
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

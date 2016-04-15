@@ -68,6 +68,8 @@ public:
   virtual Fl_Pixmap *tree_closepixmap();
   static const char * const tree_close_xpm_darwin[]; // used by tree_closepixmap()
   virtual int tree_connector_style();
+  virtual const char *filename_name(const char *buf);
+  virtual void copy(const char *stuff, int len, int clipboard, const char *type);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

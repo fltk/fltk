@@ -1920,7 +1920,7 @@ void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, in
 /*
  * get the current mouse pointer world coordinates
  */
-void Fl::get_mouse(int &x, int &y) 
+void Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y) 
 {
   fl_open_display();
   NSPoint pt = [NSEvent mouseLocation];
@@ -3114,7 +3114,7 @@ void Fl_Cocoa_Window_Driver::wait_for_expose()
 /*
  * returns pointer to the filename, or null if name ends with ':'
  */
-const char *fl_filename_name( const char *name ) 
+const char *Fl_Darwin_System_Driver::filename_name( const char *name )
 {
   const char *p, *q;
   if (!name) return (0);
@@ -3379,7 +3379,7 @@ static void resize_selection_buffer(int len, int clipboard) {
  * len: size of selected data
  * type: always "plain/text" for now
  */
-void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
+void Fl_Darwin_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
   if (clipboard >= 2)
     clipboard = 1; // Only on X11 do multiple clipboards make sense.
@@ -4268,7 +4268,7 @@ int Fl_Cocoa_Window_Driver::decorated_h()
 }
 
 // clip the graphics context to rounded corners
-void Fl_X::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
+static void clip_to_rounded_corners(CGContextRef gc, int w, int h) {
   const CGFloat radius = 5;
   CGContextMoveToPoint(gc, 0, 0);
   CGContextAddLineToPoint(gc, 0, h - radius);
@@ -4294,7 +4294,7 @@ void Fl_Cocoa_Window_Driver::draw_layer_to_context(CALayer *layer, CGContextRef 
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   CGContextSaveGState(gc);
-  Fl_X::clip_to_rounded_corners(gc, w, h);
+  clip_to_rounded_corners(gc, w, h);
   CGContextSetRGBFillColor(gc, .79, .79, .79, 1.); // equiv. to FL_DARK1
   CGContextFillRect(gc, CGRectMake(0, 0, w, h));
   CGContextSetShouldAntialias(gc, true);
@@ -4322,7 +4322,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   } else {
     CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
-    Fl_X::clip_to_rounded_corners(auxgc, w(), htop);
+    clip_to_rounded_corners(auxgc, w(), htop);
     CGContextDrawImage(auxgc, CGRectMake(0, 0, w(), htop), img);
     CGContextRestoreGState(auxgc);
     CFRelease(img);

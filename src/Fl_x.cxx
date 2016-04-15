@@ -39,6 +39,7 @@
 #  include "flstring.h"
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
+#  include "drivers/X11/Fl_X11_System_Driver.H"
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>
@@ -787,7 +788,7 @@ void fl_close_display() {
 }
 
 
-void Fl::get_mouse(int &xx, int &yy) {
+void Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
   fl_open_display();
   Window root = RootWindow(fl_display, fl_screen);
   Window c; int mx,my,cx,cy; unsigned int mask;
@@ -940,7 +941,7 @@ static int get_xwinprop(Window wnd, Atom prop, long max_length,
 ////////////////////////////////////////////////////////////////
 // Code for copying to clipboard and DnD out of the program:
 
-void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
+void Fl_X11_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
 
   if (clipboard >= 2) {
@@ -2844,7 +2845,7 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 ////////////////////////////////////////////////////////////////
 
 // returns pointer to the filename, or null if name ends with '/'
-const char *fl_filename_name(const char *name) {
+const char *Fl_X11_System_Driver::filename_name(const char *name) {
   const char *p,*q;
   if (!name) return (0);
   for (p=q=name; *p;) if (*p++ == '/') q = p;

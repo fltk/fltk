@@ -78,6 +78,7 @@ public:
   virtual void compose_reset();
   virtual int text_display_can_leak();
   virtual uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
+  virtual void get_mouse(int &x, int &y);
 };
 
 
