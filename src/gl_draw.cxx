@@ -39,7 +39,7 @@
 #include "drivers/Quartz/Fl_Font.H"
 #elif defined(WIN32)
 #include "drivers/GDI/Fl_Font.H"
-#elif USE_X11
+#elif defined(USE_X11)
 #include "drivers/Xlib/Fl_Font.H"
 #endif
 #include <FL/fl_utf8.h>
