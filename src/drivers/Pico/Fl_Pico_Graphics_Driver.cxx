@@ -31,7 +31,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 
 void Fl_Pico_Graphics_Driver::point(int x, int y)
 {
-  // This is the one methods that *must* be overiden in the final driver
+  // This is the one method that *must* be overridden in the final driver
   // class. All other methods can be derived from this one method. The
   // result should work, but will be slow and inefficient.
 }
