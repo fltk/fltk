@@ -2526,7 +2526,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     XSetWMHints(fl_display, xp->xid, hints);
     XFree(hints);
 
-    xp->set_icons();
+    win->pWindowDriver->set_icons();
   }
 
   // set the window type for menu and tooltip windows to avoid animations (compiz)
@@ -2707,22 +2707,22 @@ void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {
                       &default_net_wm_icons, &default_net_wm_icons_size);
 }
 
-void Fl_X::set_icons() {
+void Fl_X11_Window_Driver::set_icons() {
   unsigned long *net_wm_icons;
   size_t net_wm_icons_size;
 
-  if (((Fl_X11_Window_Driver*)w->pWindowDriver)->icon_->count) {
-    icons_to_property((const Fl_RGB_Image **)((Fl_X11_Window_Driver*)w->pWindowDriver)->icon_->icons, ((Fl_X11_Window_Driver*)w->pWindowDriver)->icon_->count,
+  if (icon_->count) {
+    icons_to_property((const Fl_RGB_Image **)icon_->icons, icon_->count,
                       &net_wm_icons, &net_wm_icons_size);
   } else {
     net_wm_icons = default_net_wm_icons;
     net_wm_icons_size = default_net_wm_icons_size;
   }
 
-  XChangeProperty (fl_display, xid, fl_NET_WM_ICON, XA_CARDINAL, 32,
+  XChangeProperty (fl_display, fl_xid(pWindow), fl_NET_WM_ICON, XA_CARDINAL, 32,
       PropModeReplace, (unsigned char*) net_wm_icons, net_wm_icons_size);
 
-  if (((Fl_X11_Window_Driver*)w->pWindowDriver)->icon_->count) {
+  if (icon_->count) {
     delete [] net_wm_icons;
     net_wm_icons = 0L;
     net_wm_icons_size = 0;

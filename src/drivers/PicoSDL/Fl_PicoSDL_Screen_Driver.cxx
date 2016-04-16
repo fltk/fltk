@@ -163,7 +163,6 @@ void Fl::set_color(Fl_Color, unsigned int) { }
 int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 
-void Fl_X::set_icons() { }
 //void Fl_Window::size_range_() { }
 //void Fl_Window::fullscreen_x() { }
 

@@ -157,8 +157,6 @@ public:
   static void GL_cleardrawable(void);
   void destroy(void);
   void set_key_window(void);
-  // OS X doesn't have per window icons
-  void set_icons() {};
   int set_cursor(Fl_Cursor);
   int set_cursor(const Fl_RGB_Image*, int, int);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);

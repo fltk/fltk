@@ -1856,7 +1856,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->next = Fl_X::first;
   Fl_X::first = x;
 
-  x->set_icons();
+  w->pWindowDriver->set_icons();
 
   if (w->fullscreen_active()) {
   /* We need to make sure that the fullscreen is created on the
@@ -2099,7 +2099,7 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon)
     ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icon_->small_icon = CopyIcon(small_icon);
   
   if (Fl_X::i(this))
-    Fl_X::i(this)->set_icons();
+    pWindowDriver->set_icons();
 }
 
 /** Sets the default window icons.
@@ -2136,47 +2136,47 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
     default_small_icon = CopyIcon(small_icon);
 }
 
-void Fl_X::set_icons() {
+void Fl_WinAPI_Window_Driver::set_icons() {
   HICON big_icon, small_icon;
 
   // Windows doesn't copy the icons, so we have to "leak" them when
   // setting, and clean up when we change to some other icons.
-  big_icon = (HICON)SendMessage(xid, WM_GETICON, ICON_BIG, 0);
+  big_icon = (HICON)SendMessage(fl_xid(pWindow), WM_GETICON, ICON_BIG, 0);
   if ((big_icon != NULL) && (big_icon != default_big_icon))
     DestroyIcon(big_icon);
-  small_icon = (HICON)SendMessage(xid, WM_GETICON, ICON_SMALL, 0);
+  small_icon = (HICON)SendMessage(fl_xid(pWindow), WM_GETICON, ICON_SMALL, 0);
   if ((small_icon != NULL) && (small_icon != default_small_icon))
     DestroyIcon(small_icon);
 
   big_icon = NULL;
   small_icon = NULL;
 
-  if (((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count) {
+  if (icon_->count) {
     const Fl_RGB_Image *best_big, *best_small;
 
     best_big = find_best_icon(GetSystemMetrics(SM_CXICON),
-                              (const Fl_RGB_Image **)((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->icons,
-                              ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count);
+                              (const Fl_RGB_Image **)icon_->icons,
+                              icon_->count);
     best_small = find_best_icon(GetSystemMetrics(SM_CXSMICON),
-                                (const Fl_RGB_Image **)((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->icons,
-                                ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count);
+                                (const Fl_RGB_Image **)icon_->icons,
+                                icon_->count);
 
     if (best_big != NULL)
       big_icon = image_to_icon(best_big, true, 0, 0);
     if (best_small != NULL)
       small_icon = image_to_icon(best_small, true, 0, 0);
   } else {
-    if ((((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->big_icon != NULL) || (((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->small_icon != NULL)) {
-      big_icon = ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->big_icon;
-      small_icon = ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->small_icon;
+    if ((icon_->big_icon != NULL) || (icon_->small_icon != NULL)) {
+      big_icon = icon_->big_icon;
+      small_icon = icon_->small_icon;
     } else {
       big_icon = default_big_icon;
       small_icon = default_small_icon;
     }
   }
 
-  SendMessage(xid, WM_SETICON, ICON_BIG, (LPARAM)big_icon);
-  SendMessage(xid, WM_SETICON, ICON_SMALL, (LPARAM)small_icon);
+  SendMessage(fl_xid(pWindow), WM_SETICON, ICON_BIG, (LPARAM)big_icon);
+  SendMessage(fl_xid(pWindow), WM_SETICON, ICON_SMALL, (LPARAM)small_icon);
 }
 
 

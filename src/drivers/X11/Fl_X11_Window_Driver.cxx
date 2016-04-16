@@ -350,7 +350,7 @@ void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   }
   
   if (Fl_X::i(pWindow))
-    Fl_X::i(pWindow)->set_icons();
+    set_icons();
 }
 
 const void *Fl_X11_Window_Driver::icon() const {
