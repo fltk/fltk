@@ -19,7 +19,7 @@
 #include <FL/Fl_Image_Surface.H>
 
 #if defined(FL_PORTING)
-# pragma message "FL_PORTING: implement class Fl_XXX_Image_Surface_Driver for your platform"
+# pragma message "FL_PORTING: optionally implement class Fl_XXX_Image_Surface_Driver for your platform"
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen)
 {
   return NULL;

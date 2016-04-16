@@ -19,7 +19,7 @@
 #include <FL/Fl_Copy_Surface.H>
 
 #if defined(FL_PORTING)
-# pragma message "FL_PORTING: implement class Fl_XXX_Copy_Surface_Driver for your platform"
+# pragma message "FL_PORTING: optionally implement class Fl_XXX_Copy_Surface_Driver for your platform"
 
 Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int h)
 {
