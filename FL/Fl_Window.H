@@ -355,7 +355,7 @@ public:
 #if defined(WIN32) && !defined(FL_DOXYGEN)
   typedef struct HICON__* HICON;
   // These 2 member functions break the driver model but are kept for back compatibility.
-  // They are implemented in Fl_WinAPI_Window_Driver.cxx
+  // They are implemented in Fl_win32.cxx
   static void default_icons(HICON big_icon, HICON small_icon);
   void icons(HICON big_icon, HICON small_icon);
 #endif

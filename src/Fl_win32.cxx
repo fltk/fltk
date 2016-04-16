@@ -2081,7 +2081,47 @@ void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {
     default_small_icon = image_to_icon(best_small, true, 0, 0);
 }
 
-void Fl_X::set_default_icons(HICON big_icon, HICON small_icon) {
+/** Sets the window icons using Windows' native HICON icon handles.
+ 
+ The given icons are copied. You can free the icons immediately after
+ this call.
+ 
+ \param[in] big_icon large window icon
+ \param[in] small_icon  small window icon
+ */
+void Fl_Window::icons(HICON big_icon, HICON small_icon)
+{
+  free_icons();
+  
+  if (big_icon != NULL)
+    ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icon_->big_icon = CopyIcon(big_icon);
+  if (small_icon != NULL)
+    ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icon_->small_icon = CopyIcon(small_icon);
+  
+  if (Fl_X::i(this))
+    Fl_X::i(this)->set_icons();
+}
+
+/** Sets the default window icons.
+ 
+ Convenience function to set the default icons using Windows'
+ native HICON icon handles.
+ 
+ The given icons are copied. You can free the icons immediately after
+ this call.
+ 
+ \param[in] big_icon default large icon for all windows
+ subsequently created
+ \param[in] small_icon default small icon for all windows
+ subsequently created
+ 
+ \see Fl_Window::default_icon(const Fl_RGB_Image *)
+ \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+ \see Fl_Window::icon(const Fl_RGB_Image *)
+ \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+ \see Fl_Window::icons(HICON, HICON)
+ */
+void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
   if (default_big_icon != NULL)
     DestroyIcon(default_big_icon);
   if (default_small_icon != NULL)
