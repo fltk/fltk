@@ -28,12 +28,12 @@
                                            this API has a do-nothing default implementation
  
         class Fl_Native_File_Chooser_FLTK_Driver   <== this API implementation is the default FLTK file chooser
-                class Fl_Native_File_Chooser_GTK_Driver  <== this API implementation runs a GTK file chooser
+                class Fl_GTK_Native_File_Chooser_Driver  <== this API implementation runs a GTK file chooser
                                         it is determined at run-time if the GTK dynamic libraries are available
  
-        class Fl_Native_File_Chooser_Darwin_Driver  <== this API implementation runs a Mac OS X file chooser
+        class Fl_Quartz_Native_File_Chooser_Driver  <== this API implementation runs a Mac OS X file chooser
 
-        class Fl_Native_File_Chooser_WinAPI_Driver  <== this API implementation runs a MSWindows file chooser
+        class Fl_WinAPI_Native_File_Chooser_Driver  <== this API implementation runs a MSWindows file chooser
  
  
  Each platform must implement the constructor of the Fl_Native_File_Chooser class.
@@ -47,7 +47,7 @@
  No more code is required. The cross-platform Fl_Native_File_Chooser_FLTK.cxx file must be compiled in libfltk,
  and the default FLTK file chooser will be used.
  
- This other implementation
+ This other implementation:
  Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
    platform_fnfc = 0;
  }

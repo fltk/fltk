@@ -30,7 +30,7 @@
 #include <FL/filename.H>
 #define MAXFILTERS	80
 
-class Fl_Native_File_Chooser_Darwin_Driver : public Fl_Native_File_Chooser_Driver {
+class Fl_Quartz_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
 private:
   int             _btype;		// kind-of browser to show()
   int             _options;		// general options
@@ -66,8 +66,8 @@ private:
   int post();
   int runmodal();
 public:
-  Fl_Native_File_Chooser_Darwin_Driver(int val);
-  ~Fl_Native_File_Chooser_Darwin_Driver();
+  Fl_Quartz_Native_File_Chooser_Driver(int val);
+  ~Fl_Quartz_Native_File_Chooser_Driver();
   virtual void type(int t);
   virtual int type() const ;
   virtual void options(int o);
@@ -91,11 +91,11 @@ public:
 };
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-  platform_fnfc = new Fl_Native_File_Chooser_Darwin_Driver(val);
+  platform_fnfc = new Fl_Quartz_Native_File_Chooser_Driver(val);
 }
 
 // FREE PATHNAMES ARRAY, IF IT HAS ANY CONTENTS
-void Fl_Native_File_Chooser_Darwin_Driver::clear_pathnames() {
+void Fl_Quartz_Native_File_Chooser_Driver::clear_pathnames() {
   if ( _pathnames ) {
     while ( --_tpathnames >= 0 ) {
       _pathnames[_tpathnames] = strfree(_pathnames[_tpathnames]);
@@ -107,7 +107,7 @@ void Fl_Native_File_Chooser_Darwin_Driver::clear_pathnames() {
 }
 
 // SET A SINGLE PATHNAME
-void Fl_Native_File_Chooser_Darwin_Driver::set_single_pathname(const char *s) {
+void Fl_Quartz_Native_File_Chooser_Driver::set_single_pathname(const char *s) {
   clear_pathnames();
   _pathnames = new char*[1];
   _pathnames[0] = strnew(s);
@@ -115,7 +115,7 @@ void Fl_Native_File_Chooser_Darwin_Driver::set_single_pathname(const char *s) {
 }
 
 // CONSTRUCTOR
-Fl_Native_File_Chooser_Darwin_Driver::Fl_Native_File_Chooser_Darwin_Driver(int val) :
+Fl_Quartz_Native_File_Chooser_Driver::Fl_Quartz_Native_File_Chooser_Driver(int val) :
   Fl_Native_File_Chooser_Driver(val) {
   _btype          = val;
   _panel = NULL;
@@ -134,7 +134,7 @@ Fl_Native_File_Chooser_Darwin_Driver::Fl_Native_File_Chooser_Darwin_Driver(int v
 }
 
 // DESTRUCTOR
-Fl_Native_File_Chooser_Darwin_Driver::~Fl_Native_File_Chooser_Darwin_Driver() {
+Fl_Quartz_Native_File_Chooser_Driver::~Fl_Quartz_Native_File_Chooser_Driver() {
   // _opts		// nothing to manage
   // _options		// nothing to manage
   // _keepstate		// nothing to manage
@@ -153,17 +153,17 @@ Fl_Native_File_Chooser_Darwin_Driver::~Fl_Native_File_Chooser_Darwin_Driver() {
 }
 
 // GET TYPE OF BROWSER
-int Fl_Native_File_Chooser_Darwin_Driver::type() const {
+int Fl_Quartz_Native_File_Chooser_Driver::type() const {
   return(_btype);
 }
 
 // SET OPTIONS
-void Fl_Native_File_Chooser_Darwin_Driver::options(int val) {
+void Fl_Quartz_Native_File_Chooser_Driver::options(int val) {
   _options = val;
 }
 
 // GET OPTIONS
-int Fl_Native_File_Chooser_Darwin_Driver::options() const {
+int Fl_Quartz_Native_File_Chooser_Driver::options() const {
   return(_options);
 }
 
@@ -173,7 +173,7 @@ int Fl_Native_File_Chooser_Darwin_Driver::options() const {
 //         1 - user cancelled
 //        -1 - failed; errmsg() has reason
 //
-int Fl_Native_File_Chooser_Darwin_Driver::show() {
+int Fl_Quartz_Native_File_Chooser_Driver::show() {
 
   // Make sure fltk interface updates before posting our dialog
   Fl::flush();
@@ -187,37 +187,37 @@ int Fl_Native_File_Chooser_Darwin_Driver::show() {
 // SET ERROR MESSAGE
 //     Internal use only.
 //
-void Fl_Native_File_Chooser_Darwin_Driver::errmsg(const char *msg) {
+void Fl_Quartz_Native_File_Chooser_Driver::errmsg(const char *msg) {
   _errmsg = strfree(_errmsg);
   _errmsg = strnew(msg);
 }
 
 // RETURN ERROR MESSAGE
-const char *Fl_Native_File_Chooser_Darwin_Driver::errmsg() const {
+const char *Fl_Quartz_Native_File_Chooser_Driver::errmsg() const {
   return(_errmsg ? _errmsg : "No error");
 }
 
 // GET FILENAME
-const char* Fl_Native_File_Chooser_Darwin_Driver::filename() const {
+const char* Fl_Quartz_Native_File_Chooser_Driver::filename() const {
   if ( _pathnames && _tpathnames > 0 ) return(_pathnames[0]);
   return("");
 }
 
 // GET FILENAME FROM LIST OF FILENAMES
-const char* Fl_Native_File_Chooser_Darwin_Driver::filename(int i) const {
+const char* Fl_Quartz_Native_File_Chooser_Driver::filename(int i) const {
   if ( _pathnames && i < _tpathnames ) return(_pathnames[i]);
   return("");
 }
 
 // GET TOTAL FILENAMES CHOSEN
-int Fl_Native_File_Chooser_Darwin_Driver::count() const {
+int Fl_Quartz_Native_File_Chooser_Driver::count() const {
   return(_tpathnames);
 }
 
 // PRESET PATHNAME
 //     Value can be NULL for none.
 //
-void Fl_Native_File_Chooser_Darwin_Driver::directory(const char *val) {
+void Fl_Quartz_Native_File_Chooser_Driver::directory(const char *val) {
   _directory = strfree(_directory);
   _directory = strnew(val);
 }
@@ -225,14 +225,14 @@ void Fl_Native_File_Chooser_Darwin_Driver::directory(const char *val) {
 // GET PRESET PATHNAME
 //     Returned value can be NULL if none set.
 //
-const char* Fl_Native_File_Chooser_Darwin_Driver::directory() const {
+const char* Fl_Quartz_Native_File_Chooser_Driver::directory() const {
   return(_directory);
 }
 
 // SET TITLE
 //     Value can be NULL if no title desired.
 //
-void Fl_Native_File_Chooser_Darwin_Driver::title(const char *val) {
+void Fl_Quartz_Native_File_Chooser_Driver::title(const char *val) {
   _title = strfree(_title);
   _title = strnew(val);
 }
@@ -240,14 +240,14 @@ void Fl_Native_File_Chooser_Darwin_Driver::title(const char *val) {
 // GET TITLE
 //     Returned value can be NULL if none set.
 //
-const char *Fl_Native_File_Chooser_Darwin_Driver::title() const {
+const char *Fl_Quartz_Native_File_Chooser_Driver::title() const {
   return(_title);
 }
 
 // SET FILTER
 //     Can be NULL if no filter needed
 //
-void Fl_Native_File_Chooser_Darwin_Driver::filter(const char *val) {
+void Fl_Quartz_Native_File_Chooser_Driver::filter(const char *val) {
   _filter = strfree(_filter);
   _filter = strnew(val);
 
@@ -264,14 +264,14 @@ void Fl_Native_File_Chooser_Darwin_Driver::filter(const char *val) {
 // GET FILTER
 //     Returned value can be NULL if none set.
 //
-const char *Fl_Native_File_Chooser_Darwin_Driver::filter() const {
+const char *Fl_Quartz_Native_File_Chooser_Driver::filter() const {
   return(_filter);
 }
 
 // CLEAR ALL FILTERS
 //    Internal use only.
 //
-void Fl_Native_File_Chooser_Darwin_Driver::clear_filters() {
+void Fl_Quartz_Native_File_Chooser_Driver::clear_filters() {
   _filt_names = strfree(_filt_names);
   for (int i=0; i<_filt_total; i++) {
     _filt_patt[i] = strfree(_filt_patt[i]);
@@ -299,7 +299,7 @@ void Fl_Native_File_Chooser_Darwin_Driver::clear_filters() {
 //             \_____/  \_______/
 //              Name     Wildcard
 //
-void Fl_Native_File_Chooser_Darwin_Driver::parse_filter(const char *in) {
+void Fl_Quartz_Native_File_Chooser_Driver::parse_filter(const char *in) {
   clear_filters();
   if ( ! in ) return;
   int has_name = strchr(in, '\t') ? 1 : 0;
@@ -375,7 +375,7 @@ void Fl_Native_File_Chooser_Darwin_Driver::parse_filter(const char *in) {
 // SET PRESET FILE
 //     Value can be NULL for none.
 //
-void Fl_Native_File_Chooser_Darwin_Driver::preset_file(const char* val) {
+void Fl_Quartz_Native_File_Chooser_Driver::preset_file(const char* val) {
   _preset_file = strfree(_preset_file);
   _preset_file = strnew(val);
 }
@@ -383,26 +383,26 @@ void Fl_Native_File_Chooser_Darwin_Driver::preset_file(const char* val) {
 // PRESET FILE
 //     Returned value can be NULL if none set.
 //
-const char* Fl_Native_File_Chooser_Darwin_Driver::preset_file() const {
+const char* Fl_Quartz_Native_File_Chooser_Driver::preset_file() const {
   return(_preset_file);
 }
 
-void Fl_Native_File_Chooser_Darwin_Driver::filter_value(int val) {
+void Fl_Quartz_Native_File_Chooser_Driver::filter_value(int val) {
   _filt_value = val;
 }
 
-int Fl_Native_File_Chooser_Darwin_Driver::filter_value() const {
+int Fl_Quartz_Native_File_Chooser_Driver::filter_value() const {
   return(_filt_value);
 }
 
-int Fl_Native_File_Chooser_Darwin_Driver::filters() const {
+int Fl_Quartz_Native_File_Chooser_Driver::filters() const {
   return(_filt_total);
 }
 
 #import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 
-int Fl_Native_File_Chooser_Darwin_Driver::get_saveas_basename(void) {
+int Fl_Quartz_Native_File_Chooser_Driver::get_saveas_basename(void) {
   char *q = strdup( [[[(NSSavePanel*)_panel URL] path] UTF8String] );
   if ( !(_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM) ) {
     const char *d = [[[[(NSSavePanel*)_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
@@ -418,7 +418,7 @@ int Fl_Native_File_Chooser_Darwin_Driver::get_saveas_basename(void) {
 }
 
 // SET THE TYPE OF BROWSER
-void Fl_Native_File_Chooser_Darwin_Driver::type(int val) {
+void Fl_Quartz_Native_File_Chooser_Driver::type(int val) {
   _btype = val;
 }
 
@@ -587,7 +587,7 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
   return popup;
 }
 
-int Fl_Native_File_Chooser_Darwin_Driver::runmodal()
+int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
 {
   NSString *dir = nil;
   NSString *fname = nil;
@@ -623,7 +623,7 @@ int Fl_Native_File_Chooser_Darwin_Driver::runmodal()
 //         1 - user cancelled
 //        -1 - failed; errmsg() has reason
 //     
-int Fl_Native_File_Chooser_Darwin_Driver::post() {
+int Fl_Quartz_Native_File_Chooser_Driver::post() {
   // INITIALIZE BROWSER
   if ( _filt_total == 0 ) {	// Make sure they match
     _filt_value = 0;		// TBD: move to someplace more logical?

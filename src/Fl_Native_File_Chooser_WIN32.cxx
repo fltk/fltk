@@ -38,7 +38,7 @@
 #include <FL/x.H> // for fl_open_display
 
 
-class Fl_Native_File_Chooser_WinAPI_Driver : public Fl_Native_File_Chooser_Driver {
+class Fl_WinAPI_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
 private:
   int  _btype;			// kind-of browser to show()
   int  _options;		// general options
@@ -72,8 +72,8 @@ private:
   void clear_filters();
   void add_filter(const char *, const char *);
 public:
-  Fl_Native_File_Chooser_WinAPI_Driver(int val);
-  ~Fl_Native_File_Chooser_WinAPI_Driver();
+  Fl_WinAPI_Native_File_Chooser_Driver(int val);
+  ~Fl_WinAPI_Native_File_Chooser_Driver();
   virtual void type(int t);
   virtual int type() const ;
   virtual void options(int o);
@@ -98,7 +98,7 @@ public:
 
 
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-  platform_fnfc = new Fl_Native_File_Chooser_WinAPI_Driver(val);
+  platform_fnfc = new Fl_WinAPI_Native_File_Chooser_Driver(val);
 }
 
 
@@ -193,7 +193,7 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
 }
 
 // CTOR
-Fl_Native_File_Chooser_WinAPI_Driver::Fl_Native_File_Chooser_WinAPI_Driver(int val) :
+Fl_WinAPI_Native_File_Chooser_Driver::Fl_WinAPI_Native_File_Chooser_Driver(int val) :
   Fl_Native_File_Chooser_Driver(val) {
   _btype           = val;
   _options         = Fl_Native_File_Chooser::NO_OPTIONS;
@@ -215,7 +215,7 @@ Fl_Native_File_Chooser_WinAPI_Driver::Fl_Native_File_Chooser_WinAPI_Driver(int v
 }
 
 // DTOR
-Fl_Native_File_Chooser_WinAPI_Driver::~Fl_Native_File_Chooser_WinAPI_Driver() {
+Fl_WinAPI_Native_File_Chooser_Driver::~Fl_WinAPI_Native_File_Chooser_Driver() {
   //_pathnames                // managed by clear_pathnames()
   //_tpathnames               // managed by clear_pathnames()
   _directory   = strfree(_directory);
@@ -234,33 +234,33 @@ Fl_Native_File_Chooser_WinAPI_Driver::~Fl_Native_File_Chooser_WinAPI_Driver() {
 }
 
 // SET TYPE OF BROWSER
-void Fl_Native_File_Chooser_WinAPI_Driver::type(int val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::type(int val) {
   _btype = val;
 }
 
 // GET TYPE OF BROWSER
-int Fl_Native_File_Chooser_WinAPI_Driver::type() const {
+int Fl_WinAPI_Native_File_Chooser_Driver::type() const {
   return( _btype );
 }
 
 // SET OPTIONS
-void Fl_Native_File_Chooser_WinAPI_Driver::options(int val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::options(int val) {
   _options = val;
 }
 
 // GET OPTIONS
-int Fl_Native_File_Chooser_WinAPI_Driver::options() const {
+int Fl_WinAPI_Native_File_Chooser_Driver::options() const {
   return(_options);
 }
 
 // PRIVATE: SET ERROR MESSAGE
-void Fl_Native_File_Chooser_WinAPI_Driver::errmsg(const char *val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::errmsg(const char *val) {
   _errmsg = strfree(_errmsg);
   _errmsg = strnew(val);
 }
 
 // FREE PATHNAMES ARRAY, IF IT HAS ANY CONTENTS
-void Fl_Native_File_Chooser_WinAPI_Driver::clear_pathnames() {
+void Fl_WinAPI_Native_File_Chooser_Driver::clear_pathnames() {
   if ( _pathnames ) {
     while ( --_tpathnames >= 0 ) {
       _pathnames[_tpathnames] = strfree(_pathnames[_tpathnames]);
@@ -272,7 +272,7 @@ void Fl_Native_File_Chooser_WinAPI_Driver::clear_pathnames() {
 }
 
 // SET A SINGLE PATHNAME
-void Fl_Native_File_Chooser_WinAPI_Driver::set_single_pathname(const char *s) {
+void Fl_WinAPI_Native_File_Chooser_Driver::set_single_pathname(const char *s) {
   clear_pathnames();
   _pathnames = new char*[1];
   _pathnames[0] = strnew(s);
@@ -280,7 +280,7 @@ void Fl_Native_File_Chooser_WinAPI_Driver::set_single_pathname(const char *s) {
 }
 
 // ADD PATHNAME TO EXISTING ARRAY
-void Fl_Native_File_Chooser_WinAPI_Driver::add_pathname(const char *s) {
+void Fl_WinAPI_Native_File_Chooser_Driver::add_pathname(const char *s) {
   if ( ! _pathnames ) {
     // Create first element in array
     ++_tpathnames;
@@ -308,7 +308,7 @@ static void FreePIDL(LPITEMIDLIST pidl) {
 }
 
 // CLEAR MICROSOFT OFN (OPEN FILE NAME) CLASS
-void Fl_Native_File_Chooser_WinAPI_Driver::ClearOFN() {
+void Fl_WinAPI_Native_File_Chooser_Driver::ClearOFN() {
   // Free any previously allocated lpstrFile before zeroing out _ofn_ptr
   if ( _ofn_ptr->lpstrFile ) {
     delete[] _ofn_ptr->lpstrFile;
@@ -326,7 +326,7 @@ void Fl_Native_File_Chooser_WinAPI_Driver::ClearOFN() {
 }
 
 // CLEAR MICROSOFT BINF (BROWSER INFO) CLASS
-void Fl_Native_File_Chooser_WinAPI_Driver::ClearBINF() {
+void Fl_WinAPI_Native_File_Chooser_Driver::ClearBINF() {
   if ( _binf_ptr->pidlRoot ) {
     FreePIDL((ITEMIDLIST*)_binf_ptr->pidlRoot);
     _binf_ptr->pidlRoot = NULL;
@@ -335,19 +335,19 @@ void Fl_Native_File_Chooser_WinAPI_Driver::ClearBINF() {
 }
 
 // CONVERT WINDOWS BACKSLASHES TO UNIX FRONTSLASHES
-void Fl_Native_File_Chooser_WinAPI_Driver::Win2Unix(char *s) {
+void Fl_WinAPI_Native_File_Chooser_Driver::Win2Unix(char *s) {
   for ( ; *s; s++ )
     if ( *s == '\\' ) *s = '/';
 }
 
 // CONVERT UNIX FRONTSLASHES TO WINDOWS BACKSLASHES
-void Fl_Native_File_Chooser_WinAPI_Driver::Unix2Win(char *s) {
+void Fl_WinAPI_Native_File_Chooser_Driver::Unix2Win(char *s) {
   for ( ; *s; s++ )
     if ( *s == '/' ) *s = '\\';
 }
 
 // SHOW FILE BROWSER
-int Fl_Native_File_Chooser_WinAPI_Driver::showfile() {
+int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
   ClearOFN();
   clear_pathnames();
   size_t fsize = FNFC_MAX_PATH;
@@ -538,7 +538,7 @@ static int CALLBACK Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data) {
 }
 
 // SHOW DIRECTORY BROWSER
-int Fl_Native_File_Chooser_WinAPI_Driver::showdir() {
+int Fl_WinAPI_Native_File_Chooser_Driver::showdir() {
   // initialize OLE only once
   fl_open_display();		// init needed by BIF_USENEWUI
   ClearBINF();
@@ -627,7 +627,7 @@ int Fl_Native_File_Chooser_WinAPI_Driver::showdir() {
 //    1 - user cancelled
 //   -1 - failed; errmsg() has reason
 //
-int Fl_Native_File_Chooser_WinAPI_Driver::show() {
+int Fl_WinAPI_Native_File_Chooser_Driver::show() {
   int retval;
   if ( _btype == Fl_Native_File_Chooser::BROWSE_DIRECTORY ||
        _btype == Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY ||
@@ -646,31 +646,31 @@ int Fl_Native_File_Chooser_WinAPI_Driver::show() {
 }
 
 // RETURN ERROR MESSAGE
-const char *Fl_Native_File_Chooser_WinAPI_Driver::errmsg() const {
+const char *Fl_WinAPI_Native_File_Chooser_Driver::errmsg() const {
   return(_errmsg ? _errmsg : "No error");
 }
 
 // GET FILENAME
-const char* Fl_Native_File_Chooser_WinAPI_Driver::filename() const {
+const char* Fl_WinAPI_Native_File_Chooser_Driver::filename() const {
   if ( _pathnames && _tpathnames > 0 ) return(_pathnames[0]);
   return("");
 }
 
 // GET FILENAME FROM LIST OF FILENAMES
-const char* Fl_Native_File_Chooser_WinAPI_Driver::filename(int i) const {
+const char* Fl_WinAPI_Native_File_Chooser_Driver::filename(int i) const {
   if ( _pathnames && i < _tpathnames ) return(_pathnames[i]);
   return("");
 }
 
 // GET TOTAL FILENAMES CHOSEN
-int Fl_Native_File_Chooser_WinAPI_Driver::count() const {
+int Fl_WinAPI_Native_File_Chooser_Driver::count() const {
   return(_tpathnames);
 }
 
 // PRESET PATHNAME
 //     Can be NULL if no preset is desired.
 //
-void Fl_Native_File_Chooser_WinAPI_Driver::directory(const char *val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::directory(const char *val) {
   _directory = strfree(_directory);
   _directory = strnew(val);
 }
@@ -678,14 +678,14 @@ void Fl_Native_File_Chooser_WinAPI_Driver::directory(const char *val) {
 // GET PRESET PATHNAME
 //    Can return NULL if none set.
 //
-const char *Fl_Native_File_Chooser_WinAPI_Driver::directory() const {
+const char *Fl_WinAPI_Native_File_Chooser_Driver::directory() const {
   return(_directory);
 }
 
 // SET TITLE
 //     Can be NULL if no title desired.
 //
-void Fl_Native_File_Chooser_WinAPI_Driver::title(const char *val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::title(const char *val) {
   _title = strfree(_title);
   _title = strnew(val);
 }
@@ -693,14 +693,14 @@ void Fl_Native_File_Chooser_WinAPI_Driver::title(const char *val) {
 // GET TITLE
 //    Can return NULL if none set.
 //
-const char *Fl_Native_File_Chooser_WinAPI_Driver::title() const {
+const char *Fl_WinAPI_Native_File_Chooser_Driver::title() const {
   return(_title);
 }
 
 // SET FILTER
 //     Can be NULL if no filter needed
 //
-void Fl_Native_File_Chooser_WinAPI_Driver::filter(const char *val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::filter(const char *val) {
   _filter = strfree(_filter);
   clear_filters();
   if ( val ) {
@@ -717,18 +717,18 @@ void Fl_Native_File_Chooser_WinAPI_Driver::filter(const char *val) {
 // GET FILTER
 //    Can return NULL if none set.
 //
-const char *Fl_Native_File_Chooser_WinAPI_Driver::filter() const {
+const char *Fl_WinAPI_Native_File_Chooser_Driver::filter() const {
   return(_filter);
 }
 
 // CLEAR FILTERS
-void Fl_Native_File_Chooser_WinAPI_Driver::clear_filters() {
+void Fl_WinAPI_Native_File_Chooser_Driver::clear_filters() {
   _nfilters = 0;
   _parsedfilt = strfree(_parsedfilt);
 }
 
 // ADD A FILTER
-void Fl_Native_File_Chooser_WinAPI_Driver::add_filter(const char *name_in,	// name of filter (optional: can be null)
+void Fl_WinAPI_Native_File_Chooser_Driver::add_filter(const char *name_in,	// name of filter (optional: can be null)
 	                    const char *winfilter) {    	// windows style filter (eg. "*.cxx;*.h")
   // No name? Make one..
   char name[1024];
@@ -818,7 +818,7 @@ static int count_filters(const char *filter) {
 //             \_____/  \_______/
 //              Name     Wildcard
 //
-void Fl_Native_File_Chooser_WinAPI_Driver::parse_filter(const char *in) {
+void Fl_WinAPI_Native_File_Chooser_Driver::parse_filter(const char *in) {
   clear_filters();
   if ( ! in ) return;
 
@@ -965,27 +965,27 @@ void Fl_Native_File_Chooser_WinAPI_Driver::parse_filter(const char *in) {
 }
 
 // SET 'CURRENTLY SELECTED FILTER'
-void Fl_Native_File_Chooser_WinAPI_Driver::filter_value(int i) {
+void Fl_WinAPI_Native_File_Chooser_Driver::filter_value(int i) {
   _ofn_ptr->nFilterIndex = i + 1;
 }
 
 // RETURN VALUE OF 'CURRENTLY SELECTED FILTER'
-int Fl_Native_File_Chooser_WinAPI_Driver::filter_value() const {
+int Fl_WinAPI_Native_File_Chooser_Driver::filter_value() const {
   return(_ofn_ptr->nFilterIndex ? _ofn_ptr->nFilterIndex-1 : _nfilters+1);
 }
 
 // PRESET FILENAME FOR 'SAVE AS' CHOOSER
-void Fl_Native_File_Chooser_WinAPI_Driver::preset_file(const char* val) {
+void Fl_WinAPI_Native_File_Chooser_Driver::preset_file(const char* val) {
   _preset_file = strfree(_preset_file);
   _preset_file = strnew(val);
 }
 
 // GET PRESET FILENAME FOR 'SAVE AS' CHOOSER
-const char* Fl_Native_File_Chooser_WinAPI_Driver::preset_file() const {
+const char* Fl_WinAPI_Native_File_Chooser_Driver::preset_file() const {
   return(_preset_file);
 }
 
-int Fl_Native_File_Chooser_WinAPI_Driver::filters() const {
+int Fl_WinAPI_Native_File_Chooser_Driver::filters() const {
   return(_nfilters);
 }
 
