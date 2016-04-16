@@ -40,6 +40,7 @@
 #  include "drivers/X11/Fl_X11_Screen_Driver.H"
 #  include "drivers/X11/Fl_X11_Window_Driver.H"
 #  include "drivers/X11/Fl_X11_System_Driver.H"
+#  include "drivers/Xlib/Fl_Xlib_Graphics_Driver.H"
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>
@@ -2194,17 +2195,17 @@ int Fl_X::ewmh_supported() {
   return result;
 }
 
-int Fl_X::xrender_supported() {
 #if HAVE_XRENDER
-  static int result = -1;
+static int xrender_supported() {
+  int nop1, nop2;
+  fl_open_display();
+  return XRenderQueryExtension(fl_display, &nop1, &nop2);
+}
+#endif
 
-  if (result == -1) {
-    fl_open_display();
-
-    int nop1, nop2;
-    result = XRenderQueryExtension(fl_display, &nop1, &nop2);
-  }
-
+char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
+#if HAVE_XRENDER
+  static char result = (char)xrender_supported();
   return result;
 #else
   return 0;

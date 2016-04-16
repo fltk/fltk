@@ -61,12 +61,6 @@ void Fl_Xlib_Graphics_Driver::gc(void *value) {
   fl_gc = gc_;
 }
 
-
-char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
-  return Fl_X::xrender_supported();
-}
-
-
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x, y);
 }
