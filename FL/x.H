@@ -114,7 +114,6 @@ extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 // FL_LIBRARY or FL_INTERNALS must be defined to access this class.
 class FL_EXPORT Fl_X {
 public:
-  virtual ~Fl_X() {}       // very important
   Window xid;
   Window other_xid;
   Fl_Window *w;

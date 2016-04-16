@@ -49,7 +49,6 @@ typedef HWND Window;
 // Warning: this object is highly subject to change!
 class FL_EXPORT Fl_X {
 public:
-  virtual ~Fl_X() {}       // very important
   // member variables - add new variables only at the end of this block
   Window xid;
   HBITMAP other_xid; // for double-buffered windows

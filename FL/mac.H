@@ -123,7 +123,6 @@ extern NSCursor *fl_default_cursor;
 // WARNING: this object is highly subject to change!
 class Fl_X {
 public:
-  virtual ~Fl_X() {}       // very important
   Window xid;              // pointer to the Cocoa window object (FLWindow*)
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for 
