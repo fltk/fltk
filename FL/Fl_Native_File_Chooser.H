@@ -46,6 +46,12 @@
  can be used by any platform. 
  No more code is required. The cross-platform Fl_Native_File_Chooser_FLTK.cxx file must be compiled in libfltk,
  and the default FLTK file chooser will be used.
+ 
+ This other implementation
+ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
+   platform_fnfc = 0;
+ }
+ can be used by a platform that needs no file chooser.
  */
 
 #ifndef FL_NATIVE_FILE_CHOOSER_H
