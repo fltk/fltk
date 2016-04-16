@@ -82,8 +82,8 @@ typedef int FL_SOCKET;
 
 
 #ifndef __APPLE__
-#  define FL_COMMAND	FL_CTRL   ///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
-#  define FL_CONTROL	FL_META   ///< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X
+#  define FL_COMMAND	FL_CTRL   /**< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X */
+#  define FL_CONTROL	FL_META   /**< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X */
 #endif
 
 #endif /* PLATFORM_TYPES_H */
