@@ -474,7 +474,7 @@ void Fl_X11_Screen_Driver::grab(Fl_Window* win)
   } else {
     if (Fl::grab()) {
       // We must keep the grab in the non-EWMH fullscreen case
-      if (!fullscreen_win || Fl_X::ewmh_supported()) {
+      if (!fullscreen_win || ewmh_supported()) {
         XUngrabKeyboard(fl_display, fl_event_time);
       }
       XUngrabPointer(fl_display, fl_event_time);

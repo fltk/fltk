@@ -44,6 +44,7 @@ protected:
   float dpi[MAX_SCREENS][2];
 
 public:
+  static int ewmh_supported();
   // --- display management
   virtual void display(const char *disp);
   virtual int visual(int flags);

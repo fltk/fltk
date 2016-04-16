@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_X11_Window_Driver.H"
+#include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 
 #include <FL/Fl_Shared_Image.H>
@@ -187,7 +188,7 @@ int Fl_X11_Window_Driver::decorated_w()
 void Fl_X11_Window_Driver::take_focus()
 {
   Fl_X *i = Fl_X::i(pWindow);
-  if (!Fl_X::ewmh_supported())
+  if (!Fl_X11_Screen_Driver::ewmh_supported())
     pWindow->show();		// Old WMs, XMapRaised
   else if (i)			// New WMs use the NETWM attribute:
     Fl_X::activate_window(i->xid);

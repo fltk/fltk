@@ -2172,7 +2172,7 @@ static void send_wm_state_event(Window wnd, int add, Atom prop) {
                 add ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE, prop);
 }
 
-int Fl_X::ewmh_supported() {
+int Fl_X11_Screen_Driver::ewmh_supported() {
   static int result = -1;
 
   if (result == -1) {
@@ -2215,7 +2215,7 @@ char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
 extern Fl_Window *fl_xfocus;
 
 void Fl_X::activate_window(Window w) {
-  if (!ewmh_supported())
+  if (!Fl_X11_Screen_Driver::ewmh_supported())
     return;
 
   Window prev = 0;
@@ -2233,7 +2233,7 @@ void Fl_X::activate_window(Window w) {
 
 /* Change an existing window to fullscreen */
 void Fl_X11_Window_Driver::fullscreen_on() {
-  if (Fl_X::ewmh_supported()) {
+  if (Fl_X11_Screen_Driver::ewmh_supported()) {
     int top, bottom, left, right;
     
     top = fullscreen_screen_top();
@@ -2262,7 +2262,7 @@ void Fl_X11_Window_Driver::fullscreen_on() {
 }
 
 void Fl_X11_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
-  if (Fl_X::ewmh_supported()) {
+  if (Fl_X11_Screen_Driver::ewmh_supported()) {
     send_wm_state_event(fl_xid(pWindow), 0, fl_NET_WM_STATE_FULLSCREEN);
   } else {
     pWindow->_clear_fullscreen();
@@ -2403,7 +2403,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   // since we do not want save_under, do not want to turn off the
   // border, and cannot grab without an existing window. Besides, 
   // there is no clear_override(). 
-  if (win->fullscreen_active() && !Fl_X::ewmh_supported()) {
+  if (win->fullscreen_active() && !Fl_X11_Screen_Driver::ewmh_supported()) {
     int sx, sy, sw, sh;
     attr.override_redirect = 1;
     mask |= CWOverrideRedirect;
@@ -2493,7 +2493,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     }
 
     // If asked for, create fullscreen
-    if (win->fullscreen_active() && Fl_X::ewmh_supported()) {
+    if (win->fullscreen_active() && Fl_X11_Screen_Driver::ewmh_supported()) {
       unsigned long data[4];
       data[0] = fullscreen_top;
       data[1] = fullscreen_bottom;
@@ -2559,7 +2559,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   }
 
   // non-EWMH fullscreen case, need grab
-  if (win->fullscreen_active() && !Fl_X::ewmh_supported()) {
+  if (win->fullscreen_active() && !Fl_X11_Screen_Driver::ewmh_supported()) {
     XGrabKeyboard(fl_display, xp->xid, 1, GrabModeAsync, GrabModeAsync, fl_event_time);
   }
 
