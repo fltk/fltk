@@ -45,6 +45,7 @@ protected:
 
 public:
   static int ewmh_supported();
+  static void copy_image(const unsigned char* data, int W, int H, int destination);
   // --- display management
   virtual void display(const char *disp);
   virtual int visual(int flags);

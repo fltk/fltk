@@ -1024,7 +1024,7 @@ static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *r
 }
 
 // takes a raw RGB image and puts it in the copy/paste buffer
-void Fl_X::copy_image(const unsigned char *data, int W, int H, int clipboard){
+void Fl_X11_Screen_Driver::copy_image(const unsigned char *data, int W, int H, int clipboard){
   if (!data || W <= 0 || H <= 0) return;
   delete[] fl_selection_buffer[clipboard];
   fl_selection_buffer[clipboard] = (char *) create_bmp(data,W,H,&fl_selection_length[clipboard]);

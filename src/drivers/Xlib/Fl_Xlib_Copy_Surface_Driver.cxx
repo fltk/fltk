@@ -24,6 +24,7 @@
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 #include "Fl_Translated_Xlib_Graphics_Driver.H"
+#include "../X11/Fl_X11_Screen_Driver.H"
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
@@ -69,7 +70,7 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);
   fl_window = oldwindow;
   _ss->set_current();
-  Fl_X::copy_image(data,width,height,1);
+  Fl_X11_Screen_Driver::copy_image(data, width, height, 1);
   delete[] data;
   fl_delete_offscreen(xid);
 }
