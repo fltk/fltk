@@ -26,7 +26,6 @@
 #endif // !Fl_X_H
 
 #include <windows.h>
-#include "src/drivers/WinAPI/Fl_WinAPI_System_Driver.H"
 typedef HWND Window;
 
 #include <FL/Fl_Device.H>
