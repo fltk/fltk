@@ -114,6 +114,7 @@ protected:
 public:
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() {}
+  static Fl_Graphics_Driver &default_driver();
   virtual char can_do_alpha_blending() { return 0; }
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   virtual void point(int x, int y) = 0;
@@ -245,9 +246,9 @@ public:
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
   // each platform implements these 3 functions its own way
-  static void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
-  static Fl_Region XRectangleRegion(int x, int y, int w, int h);
-  static void XDestroyRegion(Fl_Region r);
+  virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
+  virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
+  virtual void XDestroyRegion(Fl_Region r);
 
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx

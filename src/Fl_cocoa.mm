@@ -1936,7 +1936,7 @@ static void handleUpdateEvent( Fl_Window *window )
   i->wait_for_expose = 0;
 
   if ( i->region ) {
-    Fl_Graphics_Driver::XDestroyRegion(i->region);
+    Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
     i->region = 0;
   }
   window->clear_damage(FL_DAMAGE_ALL);

@@ -37,6 +37,18 @@ Fl_Graphics_Driver::Fl_Graphics_Driver() {
   font_descriptor_ = NULL;
 };
 
+
+Fl_Graphics_Driver &Fl_Graphics_Driver::default_driver()
+{
+  static Fl_Graphics_Driver *pMainDriver = 0L;
+  if (!pMainDriver) {
+    pMainDriver = Fl_Display_Device::display_device()->driver();
+  }
+  return *pMainDriver;
+}
+
+
+
 void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int& w, int& h)
 {
   w = (int)width(t, n);
@@ -95,6 +107,25 @@ void Fl_Graphics_Driver::set_color(Fl_Color i, unsigned int c)
 
 
 void Fl_Graphics_Driver::free_color(Fl_Color i, int overlay)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+
+void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+
+Fl_Region Fl_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h)
+{
+  // nothing to do, reimplement in driver if needed
+  return 0;
+}
+
+
+void Fl_Graphics_Driver::XDestroyRegion(Fl_Region r)
 {
   // nothing to do, reimplement in driver if needed
 }

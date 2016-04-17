@@ -202,7 +202,7 @@ void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, in
 // intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
 static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)
 {
-  if (current == NULL) return Fl_Graphics_Driver::XRectangleRegion(x,y,w,h);
+  if (current == NULL) return Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h);
   CGRect r = Fl_Quartz_Graphics_Driver::fl_cgrectmake_cocoa(x, y, w, h);
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->count = current->count;
@@ -217,8 +217,8 @@ static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w,
     outr->rects = (CGRect*)realloc(outr->rects, outr->count * sizeof(CGRect));
   }
   else {
-    Fl_Graphics_Driver::XDestroyRegion(outr);
-    outr = Fl_Graphics_Driver::XRectangleRegion(0,0,0,0);
+    Fl_Graphics_Driver::default_driver().XDestroyRegion(outr);
+    outr = Fl_Graphics_Driver::default_driver().XRectangleRegion(0,0,0,0);
   }
   return outr;
 }

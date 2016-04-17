@@ -79,6 +79,9 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif
+  void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
+  Fl_Region XRectangleRegion(int x, int y, int w, int h);
+  void XDestroyRegion(Fl_Region r);
 protected:
   void transformed_vertex0(short x, short y);
   void fixloop();

@@ -32,12 +32,6 @@
 extern Window fl_window;
 
 
-void Fl_Graphics_Driver::XDestroyRegion(void*) { }
-//void Fl_Graphics_Driver::clip_region(void*) { }
-Fl_Region Fl_Graphics_Driver::XRectangleRegion(int, int, int, int) { }
-void Fl_Graphics_Driver::add_rectangle_to_region(void*, int, int, int, int) { }
-
-
 /*
  * By linking this module, the following static method will instantiate the
  * PicoSDL Graphics driver as the main display driver.

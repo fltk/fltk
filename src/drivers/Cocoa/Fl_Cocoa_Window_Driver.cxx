@@ -239,7 +239,7 @@ void Fl_Cocoa_Window_Driver::hide() {
   q_release_context(this);
   if ( ip->xid == fl_window )
     fl_window = 0;
-  if (ip->region) Fl_Graphics_Driver::XDestroyRegion(ip->region);
+  if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
   ip->destroy();
   delete ip;
 }

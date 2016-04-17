@@ -64,6 +64,9 @@ public:
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   void draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh);
   static CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h);
+  void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
+  Fl_Region XRectangleRegion(int x, int y, int w, int h);
+  void XDestroyRegion(Fl_Region r);
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();

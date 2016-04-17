@@ -144,7 +144,7 @@ void Fl_Translated_GDI_Graphics_Driver::untranslate_all() {
   SetWindowOrgEx((HDC)gc(), origins[depth].x, origins[depth].y, NULL);
 }
 
-void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
+void Fl_GDI_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
   Fl_Region R = XRectangleRegion(X, Y, W, H);
   CombineRgn(r, r, R, RGN_OR);
   XDestroyRegion(R);
@@ -166,7 +166,7 @@ void Fl_GDI_Graphics_Driver::fixloop() {  // remove equal points from closed pat
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
-Fl_Region Fl_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
+Fl_Region Fl_GDI_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) return CreateRectRgn(x,y,x+w,y+h);
   // because rotation may apply, the rectangle becomes a polygon in device coords
   POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
@@ -174,16 +174,16 @@ Fl_Region Fl_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   return CreatePolygonRgn(pt, 4, ALTERNATE);
 }
 
-void Fl_Graphics_Driver::XDestroyRegion(Fl_Region r) {
+void Fl_GDI_Graphics_Driver::XDestroyRegion(Fl_Region r) {
   DeleteObject(r);
 }
 
 
-void Fl_Graphics_Driver::reset_spot()
+void Fl_GDI_Graphics_Driver::reset_spot()
 {
 }
 
-void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
   if (!win) return;
   Fl_Window* tw = win;

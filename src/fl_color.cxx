@@ -69,13 +69,13 @@ void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
 
 void Fl::set_color(Fl_Color i, unsigned int c)
 {
-  fl_graphics_driver->set_color(i, c);
+  Fl_Graphics_Driver::default_driver().set_color(i, c);
 }
 
 
 void Fl::free_color(Fl_Color i, int overlay)
 {
-  fl_graphics_driver->free_color(i, overlay);
+  Fl_Graphics_Driver::default_driver().free_color(i, overlay);
 }
 
 

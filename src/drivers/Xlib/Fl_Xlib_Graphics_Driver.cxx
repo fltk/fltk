@@ -96,7 +96,7 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int
 #endif
 
 
-void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
+void Fl_Xlib_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
   XRectangle R;
   R.x = X; R.y = Y; R.width = W; R.height = H;
   XUnionRectWithRegion(&R, r, r);
