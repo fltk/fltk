@@ -210,7 +210,6 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 //  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
 //  virtual void transformed_vertex0(COORD_T x, COORD_T y);
 //  virtual void fixloop();
-//  void global_gc(void);
 };
 
 #endif // FL_PICO_GRAPHICS_DRIVER_H

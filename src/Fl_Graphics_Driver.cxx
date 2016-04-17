@@ -79,6 +79,11 @@ void Fl_Graphics_Driver::reset_spot()
   // nothing to do
 }
 
+void Fl_Graphics_Driver::global_gc()
+{
+  // nothing to do
+}
+
 //
 // End of "$Id$".
 //

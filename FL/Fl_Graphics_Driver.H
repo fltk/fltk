@@ -249,7 +249,7 @@ public:
 
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  void global_gc(void);
+  virtual void global_gc();
 };
 
 #endif // FL_GRAPHICS_DRIVER_H

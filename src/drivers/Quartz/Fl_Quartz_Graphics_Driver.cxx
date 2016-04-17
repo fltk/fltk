@@ -21,17 +21,6 @@
 #include "Fl_Quartz_Graphics_Driver.H"
 #include <FL/x.H>
 
-/* Reference to the current CGContext
- For back-compatibility only. The preferred procedure to get this reference is
- Fl_Surface_Device::surface()->driver()->gc().
- */
-CGContextRef fl_gc = 0;
-
-void Fl_Graphics_Driver::global_gc()
-{
-  fl_gc = (CGContextRef)gc();
-}
-
 /*
  * By linking this module, the following static method will instantiate the
  * OS X Quartz Graphics driver as the main display driver.
@@ -49,6 +38,17 @@ static void bmProviderRelease (void *src, const void *data, size_t size) {
   CFIndex count = CFGetRetainCount(src);
   CFRelease(src);
   if(count == 1) free((void*)data);
+}
+
+/* Reference to the current CGContext
+ For back-compatibility only. The preferred procedure to get this reference is
+ Fl_Surface_Device::surface()->driver()->gc().
+ */
+CGContextRef fl_gc = 0;
+
+void Fl_Quartz_Graphics_Driver::global_gc()
+{
+  fl_gc = (CGContextRef)gc();
 }
 
 void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {

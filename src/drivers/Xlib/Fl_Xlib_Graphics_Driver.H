@@ -131,6 +131,8 @@ protected:
   virtual float scale_bitmap_for_PostScript();
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
+protected:
+  virtual void global_gc();
 };
 
 

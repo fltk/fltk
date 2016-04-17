@@ -28,16 +28,6 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
-/* Reference to the current graphics context
- For back-compatibility only. The preferred procedure to get this pointer is
- Fl_Surface_Device::surface()->driver()->gc().
- */
-GC fl_gc = 0;
-
-void Fl_Graphics_Driver::global_gc()
-{
-}
-
 
 /*
  * By linking this module, the following static method will instantiate the
@@ -49,6 +39,16 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 }
 
 GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
+
+/* Reference to the current graphics context
+ For back-compatibility only. The preferred procedure to get this pointer is
+ Fl_Surface_Device::surface()->driver()->gc().
+ */
+GC fl_gc = 0;
+
+void Fl_Xlib_Graphics_Driver::global_gc()
+{
+}
 
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;

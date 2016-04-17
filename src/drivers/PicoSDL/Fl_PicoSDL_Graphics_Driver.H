@@ -39,7 +39,6 @@ protected:
   //  CGContextRef gc_;
 public:
   //  virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
-  //  virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
   //  virtual void *gc() {return gc_;}
   //  char can_do_alpha_blending();
   //

@@ -129,6 +129,8 @@ protected:
   void color(uchar r, uchar g, uchar b);
   void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   void reset_spot();
+protected:
+  void global_gc();
 };
 
 

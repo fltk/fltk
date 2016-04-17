@@ -318,10 +318,6 @@ void fl_end_offscreen()
 #  pragma message "FL_PORTING: implement fl_end_offscreen"
 }
 
-void fl_clipboard_notify_change() {
-#  pragma message "FL_PORTING: implement fl_clipboard_notify_change"
-}
-
 Fl_Font_Descriptor::~Fl_Font_Descriptor()
 {
 #  pragma message "FL_PORTING: implement Fl_Font_Descriptor::~Fl_Font_Descriptor"

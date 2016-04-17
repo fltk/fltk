@@ -463,7 +463,6 @@ Fl_Fontdesc* fl_fonts = NULL;
 void fl_set_spot(int, int, int, int, int, int, Fl_Window*) { }
 void fl_reset_spot() { }
 const char *fl_filename_name(char const*) { return 0; }
-void fl_clipboard_notify_change() { }
 
 //Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() { return 0; }
 //Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() { return 0; }

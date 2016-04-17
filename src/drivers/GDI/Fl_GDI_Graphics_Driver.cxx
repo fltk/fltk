@@ -23,17 +23,6 @@
 #include <FL/x.H>
 
 
-/* Reference to the current device context
- For back-compatibility only. The preferred procedure to get this reference is
- Fl_Surface_Device::surface()->driver()->gc().
- */
-HDC fl_gc = 0;
-
-void Fl_Graphics_Driver::global_gc()
-{
-  fl_gc = (HDC)gc();
-}
-
 /*
  * By linking this module, the following static method will instantiate the
  * MSWindows GDI Graphics driver as the main display driver.
@@ -51,6 +40,17 @@ typedef BOOL (WINAPI* fl_alpha_blend_func)
 (HDC,int,int,int,int,HDC,int,int,int,int,FL_BLENDFUNCTION);
 static fl_alpha_blend_func fl_alpha_blend = NULL;
 static FL_BLENDFUNCTION blendfunc = { 0, 0, 255, 1};
+
+/* Reference to the current device context
+ For back-compatibility only. The preferred procedure to get this reference is
+ Fl_Surface_Device::surface()->driver()->gc().
+ */
+HDC fl_gc = 0;
+
+void Fl_GDI_Graphics_Driver::global_gc()
+{
+  fl_gc = (HDC)gc();
+}
 
 /*
  * This function checks if the version of MSWindows that we

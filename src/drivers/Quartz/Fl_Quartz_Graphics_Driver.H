@@ -123,6 +123,8 @@ protected:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
+protected:
+  virtual void global_gc();
 };
 
 extern float fl_quartz_line_width_;
