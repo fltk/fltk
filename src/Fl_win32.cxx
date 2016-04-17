@@ -1856,7 +1856,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->next = Fl_X::first;
   Fl_X::first = x;
 
-  w->pWindowDriver->set_icons();
+  ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->set_icons();
 
   if (w->fullscreen_active()) {
   /* We need to make sure that the fullscreen is created on the
@@ -2099,7 +2099,7 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon)
     ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icon_->small_icon = CopyIcon(small_icon);
   
   if (Fl_X::i(this))
-    pWindowDriver->set_icons();
+    ((Fl_WinAPI_Window_Driver*)pWindowDriver)->set_icons();
 }
 
 /** Sets the default window icons.

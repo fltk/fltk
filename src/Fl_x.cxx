@@ -2526,7 +2526,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     XSetWMHints(fl_display, xp->xid, hints);
     XFree(hints);
 
-    win->pWindowDriver->set_icons();
+    ((Fl_X11_Window_Driver*)win->pWindowDriver)->set_icons();
   }
 
   // set the window type for menu and tooltip windows to avoid animations (compiz)

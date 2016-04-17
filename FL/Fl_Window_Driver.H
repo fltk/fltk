@@ -145,7 +145,6 @@ public:
   virtual const void *icon() const {return NULL;} // TODO: check
   virtual void icon(const void * ic) {} // TODO: check
   virtual void free_icons() {} // TODO: check
-  virtual void set_icons() {}
   // each platform implements this its own way
   static void default_icons(const Fl_RGB_Image *icons[], int count);
 
