@@ -28,6 +28,9 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
+extern XIC fl_xim_ic;
+extern char fl_is_over_the_spot;
+
 
 /*
  * By linking this module, the following static method will instantiate the
@@ -119,14 +122,14 @@ void Fl_Xlib_Graphics_Driver::fixloop() {  // remove equal points from closed pa
 }
 
 // FIXME: should be members of Fl_Xlib_Graphics_Driver
-static XRectangle    spot;
-static int spotf = -1;
-static int spots = -1;
+XRectangle fl_spot;
+int fl_spotf = -1;
+int fl_spots = -1;
 
 void Fl_Xlib_Graphics_Driver::reset_spot(void)
 {
-  spot.x = -1;
-  spot.y = -1;
+  fl_spot.x = -1;
+  fl_spot.y = -1;
   //if (fl_xim_ic) XUnsetICFocus(fl_xim_ic);
 }
 
@@ -145,16 +148,16 @@ void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, 
 
   if (!fl_xim_ic || !fl_is_over_the_spot) return;
   //XSetICFocus(fl_xim_ic);
-  if (X != spot.x || Y != spot.y) {
-    spot.x = X;
-    spot.y = Y;
-    spot.height = H;
-    spot.width = W;
+  if (X != fl_spot.x || Y != fl_spot.y) {
+    fl_spot.x = X;
+    fl_spot.y = Y;
+    fl_spot.height = H;
+    fl_spot.width = W;
     change = 1;
   }
-  if (font != spotf || size != spots) {
-    spotf = font;
-    spots = size;
+  if (font != fl_spotf || size != fl_spots) {
+    fl_spotf = font;
+    fl_spots = size;
     change = 1;
     if (fs) {
       XFreeFontSet(fl_display, fs);
@@ -186,7 +189,7 @@ void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, 
 
 
   preedit_attr = XVaCreateNestedList(0,
-                                     XNSpotLocation, &spot,
+                                     XNSpotLocation, &fl_spot,
                                      XNFontSet, fs, NULL);
   XSetICValues(fl_xim_ic, XNPreeditAttributes, preedit_attr, NULL);
   XFree(preedit_attr);

@@ -321,8 +321,8 @@ XVisualInfo *fl_visual;
 Colormap fl_colormap;
 static XIM fl_xim_im = 0;
 XIC fl_xim_ic = 0;
-static Window fl_xim_win = 0;
-static char fl_is_over_the_spot = 0;
+Window fl_xim_win = 0;
+char fl_is_over_the_spot = 0;
 static XRectangle status_area;
 
 static Atom WM_DELETE_WINDOW;
@@ -550,6 +550,10 @@ static void fl_init_xim() {
 
 void fl_xim_deactivate(void);
 
+extern XRectangle fl_spot;
+extern int fl_spotf;
+extern int fl_spots;
+
 void fl_xim_activate(Window xid) {
   if (!fl_xim_im)
     return;
@@ -568,7 +572,7 @@ void fl_xim_activate(Window xid) {
                  NULL);
   }
 
-  fl_set_spot(spotf, spots, spot.x, spot.y, spot.width, spot.height);
+  fl_set_spot(fl_spotf, fl_spots, fl_spot.x, fl_spot.y, fl_spot.width, fl_spot.height);
 }
 
 void fl_xim_deactivate(void) {
