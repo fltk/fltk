@@ -236,7 +236,7 @@ void Fl_Cocoa_Window_Driver::hide() {
   // worst case, an invisible pointer
   if (ip && !parent()) pWindow->cursor(FL_CURSOR_DEFAULT);
   if ( hide_common() ) return;
-  Fl_X::q_release_context(ip);
+  q_release_context(this);
   if ( ip->xid == fl_window )
     fl_window = 0;
   if (ip->region) Fl_Graphics_Driver::XDestroyRegion(ip->region);

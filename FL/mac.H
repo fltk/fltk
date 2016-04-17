@@ -144,8 +144,6 @@ public:
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
   bool in_windowDidResize();      // is window performing windowDidResize?
   void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
-  // Quartz additions:
-  static void q_release_context(Fl_X *x=0); // free all resources associated with gc
   // Cocoa additions
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);

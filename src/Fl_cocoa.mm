@@ -875,7 +875,7 @@ double fl_mac_flush_and_wait(double time_to_wait) {
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
-  Fl_X::q_release_context();
+  Fl_Cocoa_Window_Driver::q_release_context();
   [pool release];
   return retval;
 }
@@ -2876,7 +2876,7 @@ void Fl_X::flush()
     through_Fl_X_flush = NO;
     if (!through_drawRect) [[xid contentView] unlockFocus];
     make_current_counts = 0;
-    Fl_X::q_release_context();
+    Fl_Cocoa_Window_Driver::q_release_context();
   }
 }
 
@@ -3255,7 +3255,7 @@ void Fl_Cocoa_Window_Driver::make_current()
 {
   if (make_current_counts > 1) return;
   if (make_current_counts) make_current_counts++;
-  Fl_X::q_release_context();
+  q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
   fl_window = i->xid;
   Fl_X::set_high_resolution( i->mapped_to_retina() );
@@ -3295,9 +3295,9 @@ void Fl_Cocoa_Window_Driver::make_current()
 }
 
 // Give the Quartz context back to the system
-void Fl_X::q_release_context(Fl_X *x) {
+void Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver *x) {
   CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
-  if (x && ((Fl_Cocoa_Window_Driver*)x->w->pWindowDriver)->gc != gc) return;
+  if (x && x->shown() && x->gc != gc) return;
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);

@@ -100,7 +100,7 @@ int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topag
 {
   OSStatus status = 0;
   fl_open_display();
-  Fl_X::q_release_context();
+  Fl_Cocoa_Window_Driver::q_release_context();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 100500) {
     NSPrintInfo *info = [NSPrintInfo sharedPrintInfo];
