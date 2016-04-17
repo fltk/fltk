@@ -114,8 +114,8 @@ public:
   virtual void label(const char *name, const char *mininame);
 
   virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
-  virtual void wait_for_expose() {} // TODO: check
-  virtual void destroy_double_buffer(); // TODO: check
+  virtual void wait_for_expose() {}
+  virtual void destroy_double_buffer();
   virtual void show();
   virtual void show_menu();
   virtual void resize(int X,int Y,int W,int H) {}
@@ -136,19 +136,19 @@ public:
   virtual void redraw_overlay();
 
   // --- window shape stuff
-  void shape_pixmap_(Fl_Image* pixmap); // TODO: check
-  virtual void shape(const Fl_Image* img) {} // TODO: check
-  virtual void shape_alpha_(Fl_Image* img, int offset) {} // TODO: check
+  void shape_pixmap_(Fl_Image* pixmap); // platform-independent, support function
+  virtual void shape(const Fl_Image* img) {}
+  virtual void shape_alpha_(Fl_Image* img, int offset) {}
 
   // --- window icon stuff
-  virtual void icons(const Fl_RGB_Image *icons[], int count) {} // TODO: check
-  virtual const void *icon() const {return NULL;} // TODO: check
-  virtual void icon(const void * ic) {} // TODO: check
-  virtual void free_icons() {} // TODO: check
+  virtual void icons(const Fl_RGB_Image *icons[], int count) {}
+  virtual const void *icon() const {return NULL;}
+  virtual void icon(const void * ic) {}
+  virtual void free_icons() {}
   // each platform implements this its own way
   static void default_icons(const Fl_RGB_Image *icons[], int count);
 
-  // --- window printing helper
+  // --- window printing/drawing helper
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left,
                                             Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
 #if defined(FL_PORTING)
@@ -157,7 +157,6 @@ public:
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                      void (*draw_area)(void*, int,int,int,int), void* data) { return 0; }
 };
-
 
 #endif // FL_WINDOW_DRIVER_H
 
