@@ -69,20 +69,36 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   delete[] img;
 }
 
+
 void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
-  // nothing to do
+  // nothing to do, reimplement in driver if needed
 }
+
 
 void Fl_Graphics_Driver::reset_spot()
 {
-  // nothing to do
+  // nothing to do, reimplement in driver if needed
 }
+
 
 void Fl_Graphics_Driver::global_gc()
 {
-  // nothing to do
+  // nothing to do, reimplement in driver if needed
 }
+
+
+void Fl_Graphics_Driver::set_color(Fl_Color i, unsigned int c)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+
+void Fl_Graphics_Driver::free_color(Fl_Color i, int overlay)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
 
 //
 // End of "$Id$".

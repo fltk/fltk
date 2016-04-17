@@ -471,7 +471,6 @@ int Fl::dnd() { return 0; }
 void Fl::copy(char const*, int, int, char const*) { }
 void Fl::paste(Fl_Widget&, int, char const*) { }
 void Fl::get_mouse(int&, int&) { }
-void Fl::set_color(Fl_Color, unsigned int) { }
 int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 

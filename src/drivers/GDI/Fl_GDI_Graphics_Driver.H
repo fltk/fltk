@@ -127,6 +127,8 @@ protected:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
+  void set_color(Fl_Color i, unsigned int c);
+  void free_color(Fl_Color i, int overlay);
   void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   void reset_spot();
 protected:

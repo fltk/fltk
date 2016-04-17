@@ -72,7 +72,7 @@ void Fl_Quartz_Graphics_Driver::color(uchar r, uchar g, uchar b) {
 }
 
 // FIXME: this function should not be here! It's not part of the driver.
-void Fl::set_color(Fl_Color i, unsigned c) {
+void Fl_Quartz_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
   if (fl_cmap[i] != c) {
     fl_cmap[i] = c;
   }

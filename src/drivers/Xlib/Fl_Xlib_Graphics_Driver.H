@@ -125,6 +125,8 @@ protected:
   void line_style(int style, int width=0, char* dashes=0);
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   void color(Fl_Color c);
+  void set_color(Fl_Color i, unsigned int c);
+  void free_color(Fl_Color i, int overlay);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s);

@@ -308,7 +308,7 @@ ulong fl_xpixel(Fl_Color i) {
   \param[in] i color index
   \param[in] overlay 0 for normal, 1 for overlay color
 */
-void Fl::free_color(Fl_Color i, int overlay) {
+void Fl_Xlib_Graphics_Driver::free_color(Fl_Color i, int overlay) {
 #  if HAVE_OVERLAY
 #  else
   if (overlay) return;
@@ -332,7 +332,7 @@ void Fl::free_color(Fl_Color i, int overlay) {
   \param[in] i color index
   \param[in] c color
 */
-void Fl::set_color(Fl_Color i, unsigned c) {
+void Fl_Xlib_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
   if (fl_cmap[i] != c) {
     free_color(i,0);
 #  if HAVE_OVERLAY

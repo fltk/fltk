@@ -178,6 +178,8 @@ public:
   virtual void line_style(int style, int width=0, char* dashes=0) = 0;
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   virtual void color(Fl_Color c) { color_ = c; }
+  virtual void set_color(Fl_Color i, unsigned int c);
+  virtual void free_color(Fl_Color i, int overlay);
   virtual Fl_Color color() { return color_; }
   virtual void color(uchar r, uchar g, uchar b) = 0;
   // --- implementation is in src/fl_font.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx

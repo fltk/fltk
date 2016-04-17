@@ -110,6 +110,7 @@ protected:
   void line_style(int style, int width=0, char* dashes=0);
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   void color(Fl_Color c);
+  void set_color(Fl_Color i, unsigned int c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
   // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx

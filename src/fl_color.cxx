@@ -25,6 +25,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Device.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl.H>
 
 // fl_cmap needs to be defined globally (here) and is used in the device
@@ -64,6 +65,19 @@ void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
   Fl::set_color((Fl_Color)(i & 255),
                 ((unsigned)red<<24)+((unsigned)green<<16)+((unsigned)blue<<8));
 }
+
+
+void Fl::set_color(Fl_Color i, unsigned int c)
+{
+  fl_graphics_driver->set_color(i, c);
+}
+
+
+void Fl::free_color(Fl_Color i, int overlay)
+{
+  fl_graphics_driver->free_color(i, overlay);
+}
+
 
 /**
  Returns the RGB value(s) for the given FLTK color index.

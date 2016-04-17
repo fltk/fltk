@@ -142,7 +142,6 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Graphics_Driver.H>
 
-void Fl::set_color(Fl_Color, unsigned int) { }
 int Fl_X::set_cursor(Fl_Cursor) { return 0; }
 int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 
