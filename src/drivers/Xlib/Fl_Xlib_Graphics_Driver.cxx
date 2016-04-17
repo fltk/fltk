@@ -118,6 +118,81 @@ void Fl_Xlib_Graphics_Driver::fixloop() {  // remove equal points from closed pa
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
+// FIXME: should be members of Fl_Xlib_Graphics_Driver
+static XRectangle    spot;
+static int spotf = -1;
+static int spots = -1;
+
+void Fl_Xlib_Graphics_Driver::reset_spot(void)
+{
+  spot.x = -1;
+  spot.y = -1;
+  //if (fl_xim_ic) XUnsetICFocus(fl_xim_ic);
+}
+
+void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{
+  int change = 0;
+  XVaNestedList preedit_attr;
+  static XFontSet fs = NULL;
+  char **missing_list;
+  int missing_count;
+  char *def_string;
+  char *fnt = NULL;
+  bool must_free_fnt =true;
+
+  static XIC ic = NULL;
+
+  if (!fl_xim_ic || !fl_is_over_the_spot) return;
+  //XSetICFocus(fl_xim_ic);
+  if (X != spot.x || Y != spot.y) {
+    spot.x = X;
+    spot.y = Y;
+    spot.height = H;
+    spot.width = W;
+    change = 1;
+  }
+  if (font != spotf || size != spots) {
+    spotf = font;
+    spots = size;
+    change = 1;
+    if (fs) {
+      XFreeFontSet(fl_display, fs);
+    }
+#if USE_XFT
+
+#if defined(__GNUC__)
+    // FIXME: warning XFT support here
+#endif /*__GNUC__*/
+
+    fnt = NULL; // fl_get_font_xfld(font, size);
+    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
+    fs = XCreateFontSet(fl_display, fnt, &missing_list,
+                        &missing_count, &def_string);
+#else
+    fnt = fl_get_font_xfld(font, size);
+    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
+    fs = XCreateFontSet(fl_display, fnt, &missing_list,
+                        &missing_count, &def_string);
+#endif
+  }
+  if (fl_xim_ic != ic) {
+    ic = fl_xim_ic;
+    change = 1;
+  }
+
+  if (fnt && must_free_fnt) free(fnt);
+  if (!change) return;
+
+
+  preedit_attr = XVaCreateNestedList(0,
+                                     XNSpotLocation, &spot,
+                                     XNFontSet, fs, NULL);
+  XSetICValues(fl_xim_ic, XNPreeditAttributes, preedit_attr, NULL);
+  XFree(preedit_attr);
+}
+
+
 //
 // End of "$Id$".
 //

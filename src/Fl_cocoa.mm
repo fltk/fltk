@@ -147,14 +147,6 @@ static KeyScript_type KeyScript;
 
 
 /* fltk-utf8 placekeepers */
-void fl_reset_spot()
-{
-}
-
-void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
-{
-}
-
 void fl_set_status(int x, int y, int w, int h)
 {
 }

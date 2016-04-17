@@ -127,7 +127,10 @@ protected:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
+  void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  void reset_spot();
 };
+
 
 /**
  The graphics driver used when printing on MSWindows.
@@ -142,6 +145,7 @@ public:
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
 };
 
+
 class Fl_Translated_GDI_Graphics_Driver : public Fl_GDI_Graphics_Driver {
   unsigned depth;
   POINT origins[10];
@@ -150,6 +154,7 @@ public:
   virtual void translate_all(int x, int y);
   virtual void untranslate_all(void);
 };
+
 
 #endif // FL_GDI_GRAPHICS_DRIVER_H
 

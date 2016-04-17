@@ -50,6 +50,17 @@ void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
 void fl_draw(const char* str, int l, float x, float y) {
   fl_graphics_driver->draw(str, l, x, y);
 }
+
+void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{
+  fl_graphics_driver->set_spot(font, size, X, Y, W, H, win);
+}
+
+void fl_reset_spot()
+{
+  fl_graphics_driver->reset_spot();
+}
+
 //
 // End of "$Id$".
 //

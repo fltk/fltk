@@ -24,7 +24,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_WIndow.H>
 
-void Fl_Window_Driver::default_icons(Fl_RGB_Image const**, int) { }
+
 
 const char *fl_local_alt = "alt";
 const char *fl_local_ctrl = "ctrl";
@@ -35,6 +35,10 @@ const char *fl_local_shift = "shift";
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
 {
   return new Fl_PicoSDL_Window_Driver(win);
+}
+
+
+void Fl_Window_Driver::default_icons(Fl_RGB_Image const**, int) {
 }
 
 
@@ -88,32 +92,9 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
 }
 
 
-#if 0
-void Fl_PicoSDL_Window_Driver::flush_single()
-{
-  if (!shown()) return;
-  pWindow->make_current();
-  Fl_X *i = Fl_X::i(pWindow);
-  if (!i) return;
-  fl_clip_region(i->region);
-  i->region = 0;
-  //  SDL_RenderClear((SDL_Renderer*)i->xid);
-  pWindow->draw();
-  SDL_RenderPresent((SDL_Renderer*)i->xid);
-}
-#endif
-
-
 void Fl_PicoSDL_Window_Driver::draw_end()
 {
-//  if (!shown()) return;
-//  pWindow->make_current();
   Fl_X *i = Fl_X::i(pWindow);
-//  if (!i) return;
-//  fl_clip_region(i->region);
-//  i->region = 0;
-//  //  SDL_RenderClear((SDL_Renderer*)i->xid);
-//  pWindow->draw();
   SDL_RenderPresent((SDL_Renderer*)i->xid);
 }
 
@@ -122,6 +103,7 @@ void Fl_PicoSDL_Window_Driver::make_current()
 {
   fl_window = pWindow->i->xid;
 }
+
 
 void Fl_PicoSDL_Window_Driver::show() {
   if (!shown()) {

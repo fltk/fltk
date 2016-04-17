@@ -240,6 +240,8 @@ public:
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) { return float(s); }
   // default implementation may be enough
   virtual float scale_bitmap_for_PostScript() { return 2; }
+  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  virtual void reset_spot();
   // each platform implements these 3 functions its own way
   static void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   static Fl_Region XRectangleRegion(int x, int y, int w, int h);

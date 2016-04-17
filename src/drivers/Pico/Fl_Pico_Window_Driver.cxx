@@ -36,8 +36,6 @@ Fl_Pico_Window_Driver::~Fl_Pico_Window_Driver()
 }
 
 
-// --- window data
-
 int Fl_Pico_Window_Driver::decorated_w()
 {
   return w();

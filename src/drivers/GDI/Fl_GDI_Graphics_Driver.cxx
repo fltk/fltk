@@ -179,6 +179,34 @@ void Fl_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 }
 
 
+void Fl_Graphics_Driver::reset_spot()
+{
+}
+
+void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{
+  if (!win) return;
+  Fl_Window* tw = win;
+  while (tw->parent()) tw = tw->window(); // find top level window
+
+  if (!tw->shown())
+    return;
+
+  HIMC himc = flImmGetContext(fl_xid(tw));
+
+  if (himc) {
+    COMPOSITIONFORM cfs;
+    cfs.dwStyle = CFS_POINT;
+    cfs.ptCurrentPos.x = X;
+    cfs.ptCurrentPos.y = Y - tw->labelsize();
+    MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
+    flImmSetCompositionWindow(himc, &cfs);
+    flImmReleaseContext(fl_xid(tw), himc);
+  }
+}
+
+
+
 //
 // End of "$Id$".
 //

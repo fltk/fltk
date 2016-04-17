@@ -29,7 +29,6 @@
 Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 {
   return new Fl_System_Driver();
-//  return new Fl_PicoSDL_System_Driver();
 }
 
 

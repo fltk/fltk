@@ -38,6 +38,7 @@ Fl_PicoSDL_Screen_Driver::Fl_PicoSDL_Screen_Driver()
 {
 }
 
+
 Fl_PicoSDL_Screen_Driver::~Fl_PicoSDL_Screen_Driver()
 {
 }
@@ -118,12 +119,22 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
         break;
       case SDL_MOUSEWHEEL:
         break;
+      case SDL_KEYDOWN: // full keyboard support is a lot more complex
+      case SDL_KEYUP:
+        if (e.type==SDL_KEYDOWN) Fl::e_number = FL_KEYDOWN; else Fl::e_number = FL_KEYUP;
+        if (!window) break;
+        if (e.key.keysym.sym==SDLK_ESCAPE) {
+          Fl::e_keysym = FL_Escape;
+          Fl::handle(Fl::e_number, window);
+        }
+        break;
     }
   }
   return 0.0;
 }
 
 
+// FIXME: remove the stuff below
 
 #include <FL/x.H>
 #include <FL/Fl.H>
@@ -147,8 +158,6 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 
 #if !defined(FL_DOXYGEN) // FIXME silence Doxygen warnings
 
-void fl_set_spot(int, int, int, int, int, int, Fl_Window*) { }
-void fl_reset_spot() { }
 //const char *fl_filename_name(char const*) { return 0; }
 void fl_clipboard_notify_change() { }
 

@@ -69,6 +69,15 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   delete[] img;
 }
 
+void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
+{
+  // nothing to do
+}
+
+void Fl_Graphics_Driver::reset_spot()
+{
+  // nothing to do
+}
 
 //
 // End of "$Id$".
