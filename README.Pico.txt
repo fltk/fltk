@@ -3,7 +3,9 @@ This documentation will explain how to quickly port FLTK to a new
 platform using the Pico driver system. For now, only the sample 
 SDL Pico driver on OS X compiles and barely runs.
 
-cmake -G Xcode -d OPTION_APPLE_SDL=ON ...
+> mkdir build
+> mkdir XcodeSDL
+> cmake -G Xcode -D OPTION_APPLE_SDL=ON ../..
 
 tl;dr - the recent commit should be transparent to all developers 
 on other platforms. On OS X, the CMake setup add the option OPTION_APPLE_SDL=ON 

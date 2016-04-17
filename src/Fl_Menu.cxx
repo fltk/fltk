@@ -775,11 +775,12 @@ int menuwindow::handle_part1(int e) {
       }
     }
     break;
-    case FL_MOVE:
-      static int use_part1_extra = Fl::system_driver()->need_menu_handle_part1_extra();
-      if (use_part1_extra && pp.state == DONE_STATE) {
-	return 1; // Fix for STR #2619
-      }
+  case FL_MOVE: {
+    static int use_part1_extra = Fl::system_driver()->need_menu_handle_part1_extra();
+    if (use_part1_extra && pp.state == DONE_STATE) {
+      return 1; // Fix for STR #2619
+    }
+  }
       /* FALLTHROUGH */
   case FL_ENTER:
   case FL_PUSH:

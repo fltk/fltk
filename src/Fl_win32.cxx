@@ -163,13 +163,13 @@ static HMODULE get_wsock_mod() {
  */
 static HMODULE s_imm_module = 0;
 typedef BOOL (WINAPI* flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
-static flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
+flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
 typedef HIMC (WINAPI* flTypeImmGetContext)(HWND);
-static flTypeImmGetContext flImmGetContext = 0;
+flTypeImmGetContext flImmGetContext = 0;
 typedef BOOL (WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
-static flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
+flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
 typedef BOOL (WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
-static flTypeImmReleaseContext flImmReleaseContext = 0;
+flTypeImmReleaseContext flImmReleaseContext = 0;
 
 static void get_imm_module() {
   s_imm_module = LoadLibrary("IMM32.DLL");
@@ -1095,14 +1095,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     R = CreateRectRgn(0,0,0,0);
     int r = GetUpdateRgn(hWnd,R,0);
     if (r==NULLREGION && !redraw_whole_window) {
-      Fl_Graphics_Driver::XDestroyRegion(R);
+      Fl_Graphics_Driver::default_driver().XDestroyRegion(R);
       break;
     }
 
     if (i->region) {
       // Also tell WIN32 that we are drawing someplace else as well...
       CombineRgn(i->region, i->region, R, RGN_OR);
-      Fl_Graphics_Driver::XDestroyRegion(R);
+      Fl_Graphics_Driver::default_driver().XDestroyRegion(R);
     } else {
       i->region = R;
     }
@@ -2501,6 +2501,8 @@ void preparePrintFront(void)
   w.show();
 }
 #endif // USE_PRINT_BUTTON
+
+
 
 #endif // defined(WIN32) and !defined(FL_DOXYGEN)
 

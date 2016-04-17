@@ -316,7 +316,7 @@ int Fl_Input::handle_key() {
       Fl::compose_reset(); // ignore any foreign letters...
       
       // initialize the list of legal characters inside a floating point number
-#ifdef HAVE_LOCALECONV
+#if defined(HAVE_LOCALECONV) && defined(HAVE_LOCALE_H)
       if (!legal_fp_chars) {
         size_t len = strlen(standard_fp_chars);
         struct lconv *lc = localeconv();

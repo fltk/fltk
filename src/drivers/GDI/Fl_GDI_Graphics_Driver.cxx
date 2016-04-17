@@ -179,6 +179,16 @@ void Fl_GDI_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 }
 
 
+typedef BOOL(WINAPI* flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
+extern flTypeImmAssociateContextEx flImmAssociateContextEx;
+typedef HIMC(WINAPI* flTypeImmGetContext)(HWND);
+extern flTypeImmGetContext flImmGetContext;
+typedef BOOL(WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
+extern flTypeImmSetCompositionWindow flImmSetCompositionWindow;
+typedef BOOL(WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
+extern flTypeImmReleaseContext flImmReleaseContext;
+
+
 void Fl_GDI_Graphics_Driver::reset_spot()
 {
 }
