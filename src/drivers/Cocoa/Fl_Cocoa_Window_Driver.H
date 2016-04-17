@@ -68,6 +68,7 @@ private:
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
+  CGContextRef gc;                 // graphics context
 
   // --- window data
   virtual int decorated_w();

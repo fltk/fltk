@@ -2955,7 +2955,7 @@ void Fl_X::make(Fl_Window* w)
     x->region = 0;
     x->subRect(0);
     x->cursor = NULL;
-    x->gc = 0;
+    ((Fl_Cocoa_Window_Driver*)w->pWindowDriver)->gc = 0;
     x->mapped_to_retina(false);
     x->changed_resolution(false);
     x->in_windowDidResize(false);
@@ -3267,22 +3267,22 @@ void Fl_Cocoa_Window_Driver::make_current()
   else
 #endif
     nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
-  i->gc = (CGContextRef)[nsgc graphicsPort];
-  Fl_Display_Device::display_device()->driver()->gc(i->gc);
-  CGContextSaveGState(i->gc); // native context
+  gc = (CGContextRef)[nsgc graphicsPort];
+  Fl_Display_Device::display_device()->driver()->gc(gc);
+  CGContextSaveGState(gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
   // it gets activated when needed (e.g., draw text)
-  CGContextSetShouldAntialias(i->gc, false);
+  CGContextSetShouldAntialias(gc, false);
   CGFloat hgt = [[fl_window contentView] frame].size.height;
-  CGContextTranslateCTM(i->gc, 0.5, hgt-0.5f);
-  CGContextScaleCTM(i->gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
+  CGContextTranslateCTM(gc, 0.5, hgt-0.5f);
+  CGContextScaleCTM(gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   // for subwindows, limit drawing to inside of parent window
   // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
-  if (i->subRect()) CGContextClipToRect(i->gc, CGRectOffset(*(i->subRect()), -0.5, -0.5));
+  if (i->subRect()) CGContextClipToRect(gc, CGRectOffset(*(i->subRect()), -0.5, -0.5));
   
 // this is the context with origin at top left of (sub)window
-  CGContextSaveGState(i->gc);
+  CGContextSaveGState(gc);
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow); // capture gc changes automatically to update the cairo context adequately
 #endif
@@ -3297,7 +3297,7 @@ void Fl_Cocoa_Window_Driver::make_current()
 // Give the Quartz context back to the system
 void Fl_X::q_release_context(Fl_X *x) {
   CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
-  if (x && x->gc!=gc) return;
+  if (x && ((Fl_Cocoa_Window_Driver*)x->w->pWindowDriver)->gc != gc) return;
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);
