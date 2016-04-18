@@ -118,7 +118,6 @@ public:
   Fl_Region region;
   Fl_X *next;
   char wait_for_expose;
-  char backbuffer_bad; // used for XDBE
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* wi) {return wi->i;}
   void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}

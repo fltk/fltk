@@ -82,14 +82,14 @@ void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
   Fl_X *i = Fl_X::i(pWindow);
   if (!i->other_xid) {
     i->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(pWindow), XdbeCopied);
-    i->backbuffer_bad = 1;
+    backbuffer_bad = 1;
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
-  if (i->backbuffer_bad || erase_overlay) {
+  if (backbuffer_bad || erase_overlay) {
     // Make sure we do a complete redraw...
     if (i->region) {Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region); i->region = 0;}
     pWindow->clear_damage(FL_DAMAGE_ALL);
-    i->backbuffer_bad = 0;
+    backbuffer_bad = 0;
   }  
   // Redraw as needed...
   if (pWindow->damage()) {

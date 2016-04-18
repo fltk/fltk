@@ -69,6 +69,7 @@ private:
   void shape_alpha_(Fl_Image* img, int offset);
   void flush_double(int erase_overlay);
 #ifdef USE_XDBE
+  char backbuffer_bad;
   void flush_double_dbe(int erase_overlay);
 #endif
   
