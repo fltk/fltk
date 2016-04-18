@@ -32,8 +32,10 @@ class Fl_Image;
 class Fl_Window;
 #ifdef __OBJC__
 @class CALayer;
+@class NSCursor;
 #else
 class CALayer;
+class NSCursor;
 #endif // __OBJC__
 
 /*
@@ -69,6 +71,7 @@ public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
   CGContextRef gc;                 // graphics context
+  NSCursor *cursor;
   static void q_release_context(Fl_Cocoa_Window_Driver *x = 0); // free all resources associated with gc
 
   // --- window data
@@ -94,6 +97,9 @@ public:
   virtual void size_range();
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
+  // --- window cursor stuff
+  virtual int set_cursor(Fl_Cursor);
+  virtual int set_cursor(const Fl_RGB_Image*, int, int);
 
   virtual void shape(const Fl_Image* img);
   // that one is implemented in Fl_Cocoa.mm because it uses Objective-c

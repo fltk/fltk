@@ -232,6 +232,14 @@ void Fl_Window_Driver::flush()
   pWindow->flush();
 }
 
+int Fl_Window_Driver::set_cursor(Fl_Cursor) {
+  return 0;
+}
+
+int Fl_Window_Driver::set_cursor(const Fl_RGB_Image*, int, int) {
+  return 0;
+}
+
 //
 // End of "$Id$".
 //

@@ -36,6 +36,7 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
+  cursor = nil;
 }
 
 

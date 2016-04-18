@@ -1383,7 +1383,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_SETCURSOR:
     if (LOWORD(lParam) == HTCLIENT) {
       while (window->parent()) window = window->window();
-      SetCursor(Fl_X::i(window)->cursor);
+      SetCursor(((Fl_WinAPI_Window_Driver*)window->driver())->cursor);
       return 0;
     }
     break;
@@ -1800,8 +1800,9 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->w = w; w->i = x;
   x->region = 0;
   x->private_dc = 0;
-  x->cursor = LoadCursor(NULL, IDC_ARROW);
-  x->custom_cursor = 0;
+  Fl_WinAPI_Window_Driver *driver = (Fl_WinAPI_Window_Driver*)w->driver();
+  driver->cursor = LoadCursor(NULL, IDC_ARROW);
+  driver->custom_cursor = 0;
   if (!fl_codepage) fl_get_codepage();
 
   WCHAR *lab = NULL;
@@ -2160,7 +2161,7 @@ void Fl_WinAPI_Window_Driver::set_icons() {
 #  define IDC_HAND  MAKEINTRESOURCE(32649)
 #endif // !IDC_HAND
 
-int Fl_X::set_cursor(Fl_Cursor c) {
+int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
   LPSTR n;
   HCURSOR new_cursor;
 
@@ -2211,7 +2212,7 @@ int Fl_X::set_cursor(Fl_Cursor c) {
   return 1;
 }
 
-int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
+int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   HCURSOR new_cursor;
 
   new_cursor = image_to_icon(image, false, hotx, hoty);

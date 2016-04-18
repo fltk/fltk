@@ -131,7 +131,7 @@ void Fl_Window::cursor(Fl_Cursor c) {
   if (!i)
     return;
 
-  ret = i->set_cursor(c);
+  ret = pWindowDriver->set_cursor(c);
   if (ret)
     return;
 
@@ -168,7 +168,7 @@ void Fl_Window::cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   if (!i)
     return;
 
-  ret = i->set_cursor(image, hotx, hoty);
+  ret = pWindowDriver->set_cursor(image, hotx, hoty);
   if (ret)
     return;
 

@@ -2318,8 +2318,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if (!i) return;  // fix for STR #3128
   // We have to have at least one cursor rect for invalidateCursorRectsForView
   // to work, hence the "else" clause.
-  if (i->cursor)
-    [self addCursorRect:[self visibleRect] cursor:(NSCursor*)i->cursor];
+  if (((Fl_Cocoa_Window_Driver*)w->driver())->cursor)
+    [self addCursorRect:[self visibleRect] cursor:((Fl_Cocoa_Window_Driver*)w->driver())->cursor];
   else
     [self addCursorRect:[self visibleRect] cursor:[NSCursor arrowCursor]];
 }
@@ -2947,7 +2947,6 @@ void Fl_X::make(Fl_Window* w)
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
     x->subRect(0);
-    x->cursor = NULL;
     ((Fl_Cocoa_Window_Driver*)w->pWindowDriver)->gc = 0;
     x->mapped_to_retina(false);
     x->changed_resolution(false);
@@ -3519,10 +3518,9 @@ void Fl_Cocoa_Window_Driver::map() {
     // after a subwindow has been unmapped, it has lost its parent window and its frame may be wrong
     [xid setSubwindowFrame];
   }
-  Fl_X *i = Fl_X::i(pWindow);
-  if (i->cursor) {
-    [(NSCursor*)i->cursor release];
-    i->cursor = NULL;
+  if (cursor) {
+    [cursor release];
+    cursor = NULL;
   }
 }
 
@@ -3571,7 +3569,7 @@ static NSImage *CGBitmapContextToNSImage(CGContextRef c)
   return [image autorelease];
 }
 
-int Fl_X::set_cursor(Fl_Cursor c)
+int Fl_Cocoa_Window_Driver::set_cursor(Fl_Cursor c)
 {
   if (cursor) {
     [(NSCursor*)cursor release];
@@ -3596,12 +3594,12 @@ int Fl_X::set_cursor(Fl_Cursor c)
 
   [(NSCursor*)cursor retain];
 
-  [(NSWindow*)xid invalidateCursorRectsForView:[(NSWindow*)xid contentView]];
+  [(NSWindow*)fl_xid(pWindow) invalidateCursorRectsForView:[(NSWindow*)fl_xid(pWindow) contentView]];
 
   return 1;
 }
 
-int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
+int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   if (cursor) {
     [(NSCursor*)cursor release];
     cursor = NULL;
@@ -3665,7 +3663,7 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
             initWithImage:nsimage
             hotSpot:NSMakePoint(hotx, hoty)];
 
-  [(NSWindow*)xid invalidateCursorRectsForView:[(NSWindow*)xid contentView]];
+  [(NSWindow*)fl_xid(pWindow) invalidateCursorRectsForView:[(NSWindow*)fl_xid(pWindow) contentView]];
 
   [bitmap release];
   [nsimage release];

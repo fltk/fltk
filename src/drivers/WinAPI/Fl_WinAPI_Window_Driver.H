@@ -70,6 +70,8 @@ public:
   ~Fl_WinAPI_Window_Driver();
 
   struct icon_data *icon_;
+  HCURSOR cursor;
+  int custom_cursor;
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();
@@ -89,6 +91,9 @@ public:
   virtual void fullscreen_off(int X, int Y, int W, int H);
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);
+  // --- window cursor stuff
+  virtual int set_cursor(Fl_Cursor);
+  virtual int set_cursor(const Fl_RGB_Image*, int, int);
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

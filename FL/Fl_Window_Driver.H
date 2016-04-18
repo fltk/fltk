@@ -139,6 +139,10 @@ public:
   virtual void show_with_args_end(int argc, char **argv) {}
   virtual int can_do_overlay();
   virtual void redraw_overlay();
+  
+  // --- window cursor stuff
+  virtual int set_cursor(Fl_Cursor);
+  virtual int set_cursor(const Fl_RGB_Image*, int, int);
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // platform-independent, support function

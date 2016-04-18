@@ -129,7 +129,6 @@ public:
   Fl_Region region;
   Fl_X *next;              // chain of mapped windows
   int wait_for_expose;
-  NSCursor *cursor;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
@@ -153,8 +152,6 @@ public:
   static void GL_cleardrawable(void);
   void destroy(void);
   void set_key_window(void);
-  int set_cursor(Fl_Cursor);
-  int set_cursor(const Fl_RGB_Image*, int, int);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
 private:

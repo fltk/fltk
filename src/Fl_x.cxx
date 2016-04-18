@@ -2666,7 +2666,7 @@ void Fl_X11_Window_Driver::set_icons() {
 
 ////////////////////////////////////////////////////////////////
 
-int Fl_X::set_cursor(Fl_Cursor c) {
+int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
 
   /* The cursors are cached, because creating one takes 0.5ms including
      opening, reading, and closing theme files. They are kept until program
@@ -2720,12 +2720,12 @@ int Fl_X::set_cursor(Fl_Cursor c) {
 
 #undef cache_cursor
 
-  XDefineCursor(fl_display, xid, xc);
+  XDefineCursor(fl_display, fl_xid(pWindow), xc);
 
   return 1;
 }
 
-int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
+int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 #if ! HAVE_XCURSOR
   return 0;
 #else
@@ -2769,7 +2769,7 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   cursor->yhot = hoty;
 
   xc = XcursorImageLoadCursor(fl_display, cursor);
-  XDefineCursor(fl_display, xid, xc);
+  XDefineCursor(fl_display, fl_xid(pWindow), xc);
   XFreeCursor(fl_display, xc);
 
   XcursorImageDestroy(cursor);
