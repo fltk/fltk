@@ -113,7 +113,6 @@ extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 class FL_EXPORT Fl_X {
 public:
   Window xid;
-  Window other_xid;
   Fl_Window *w;
   Fl_Region region;
   Fl_X *next;

@@ -80,8 +80,8 @@ void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
 {
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
-  if (!i->other_xid) {
-    i->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(pWindow), XdbeCopied);
+  if (!other_xid) {
+    other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(pWindow), XdbeCopied);
     backbuffer_bad = 1;
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
@@ -94,7 +94,7 @@ void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
   // Redraw as needed...
   if (pWindow->damage()) {
     fl_clip_region(i->region); i->region = 0;
-    fl_window = i->other_xid;
+    fl_window = other_xid;
     draw();
     fl_window = i->xid;
   }
@@ -111,9 +111,8 @@ void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
 void Fl_X11_Window_Driver::destroy_double_buffer() {
 #if USE_XDBE
   if (can_xdbe()) {
-    Fl_X *i = Fl_X::i(pWindow);
-    XdbeDeallocateBackBufferName(fl_display, i->other_xid);
-    i->other_xid = 0;
+    XdbeDeallocateBackBufferName(fl_display, other_xid);
+    other_xid = 0;
   }
   else
 #endif // USE_XDBE
@@ -218,19 +217,19 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 {
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *i = Fl_X::i(pWindow);
-  if (!i->other_xid) {
-      i->other_xid = fl_create_offscreen(w(), h());
+  if (!other_xid) {
+      other_xid = fl_create_offscreen(w(), h());
     pWindow->clear_damage(FL_DAMAGE_ALL);
   }
     if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(i->region); i->region = 0;
-      fl_window = i->other_xid;
+      fl_window = other_xid;
       draw();
       fl_window = i->xid;
     }
   if (erase_overlay) fl_clip_region(0);
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-  if (i->other_xid) fl_copy_offscreen(X, Y, W, H, i->other_xid, X, Y);
+  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
 }
 
 

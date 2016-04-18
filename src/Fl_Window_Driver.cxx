@@ -104,9 +104,8 @@ void Fl_Window_Driver::draw_end()
 
 
 void Fl_Window_Driver::destroy_double_buffer() {
-  Fl_X *i = Fl_X::i(pWindow);
-  fl_delete_offscreen(i->other_xid);
-  i->other_xid = 0;
+  fl_delete_offscreen(other_xid);
+  other_xid = 0;
 }
 
 

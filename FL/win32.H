@@ -50,7 +50,6 @@ class FL_EXPORT Fl_X {
 public:
   // member variables - add new variables only at the end of this block
   Window xid;
-  HBITMAP other_xid; // for double-buffered windows
   Fl_Window* w;
   Fl_Region region;
   Fl_X *next;

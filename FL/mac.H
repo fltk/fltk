@@ -124,7 +124,6 @@ extern NSCursor *fl_default_cursor;
 class Fl_X {
 public:
   Window xid;              // pointer to the Cocoa window object (FLWindow*)
-  Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
   Fl_X *next;              // chain of mapped windows

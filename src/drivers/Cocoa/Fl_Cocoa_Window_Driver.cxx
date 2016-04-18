@@ -73,14 +73,14 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
   pWindow->make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(pWindow);
   if (!myi) return; // window not yet created
-  if (!myi->other_xid) {
-      myi->other_xid = fl_create_offscreen(oWindow->w(), oWindow->h());
+  if (!other_xid) {
+      other_xid = fl_create_offscreen(oWindow->w(), oWindow->h());
       oWindow->clear_damage(FL_DAMAGE_ALL);
   }
     if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
       fl_clip_region(myi->region); myi->region = 0;
-      if ( myi->other_xid ) {
-        fl_begin_offscreen( myi->other_xid );
+      if ( other_xid ) {
+        fl_begin_offscreen( other_xid );
         fl_clip_region( 0 );
         draw();
         fl_end_offscreen();
@@ -92,7 +92,7 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
   int X,Y,W,H; fl_clip_box(0,0,oWindow->w(),oWindow->h(),X,Y,W,H);
-  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
   
   if (overlay() == oWindow) oWindow->draw_overlay();
 }

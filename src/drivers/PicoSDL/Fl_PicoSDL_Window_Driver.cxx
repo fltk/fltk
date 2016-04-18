@@ -67,7 +67,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
     parent = 0;
   }
   Fl_X *x = new Fl_X;
-  x->other_xid = 0;
+  other_xid = 0;
   x->w = pWindow;
   x->region = 0;
   if (!pWindow->force_position()) {

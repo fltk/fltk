@@ -53,6 +53,7 @@ public:
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
   int wait_for_expose_value;
+  Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
 
   // --- frequently used accessors to public window data
   /** returns the x coordinate of the window. */
