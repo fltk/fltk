@@ -684,7 +684,10 @@ void Fl::flush() {
       if (i->wait_for_expose) {damage_ = 1; continue;}
       Fl_Window* wi = i->w;
       if (!wi->visible_r()) continue;
-      if (wi->damage()) {i->flush(); wi->clear_damage();}
+      if (wi->damage()) {
+        wi->driver()->flush();
+        wi->clear_damage();
+      }
       // destroy damage regions for windows that don't use them:
       if (i->region) {
         fl_graphics_driver->XDestroyRegion(i->region);

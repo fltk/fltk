@@ -102,6 +102,7 @@ public:
 
   // --- window management
   virtual void take_focus();
+  virtual void flush(); // the default implementation may be enough
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void flush_single();

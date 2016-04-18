@@ -66,7 +66,6 @@ public:
 		                 int &bt,int &bx,int &by);
   void make_fullscreen(int X, int Y, int W, int H);
   void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
-  void flush() {w->flush();}
   void set_minmax(LPMINMAXINFO minmax);
   void mapraise();
   int set_cursor(Fl_Cursor);

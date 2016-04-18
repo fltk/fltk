@@ -153,7 +153,7 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
-  Fl_X::i(win)->flush(); // makes the window current necessary for fl_read_image
+  win->driver()->flush(); // makes the window current necessary for fl_read_image
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
   if (save_front != win) save_front->show();

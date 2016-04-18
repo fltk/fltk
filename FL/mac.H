@@ -134,7 +134,6 @@ public:
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static void make(Fl_Window*);
-  void flush();
   static void set_high_resolution(bool);
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter

@@ -167,11 +167,6 @@ void Fl::remove_fd(int)
 {
 }
 
-void Fl_X::flush()
-{
-  w->flush();
-}
-
 //
 // End of "$Id: Fl_PicoSDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
 //

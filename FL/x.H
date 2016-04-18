@@ -127,8 +127,6 @@ public:
   int set_cursor(const Fl_RGB_Image*, int, int);
   static void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static Fl_X* set_xid(Fl_Window*, Window);
-  // kludges to get around protection:
-  void flush() {w->flush();}
   static void x(Fl_Window* wi, int X) {wi->x(X);}
   static void y(Fl_Window* wi, int Y) {wi->y(Y);}
   static void activate_window(Window w);

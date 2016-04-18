@@ -1116,7 +1116,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Very annoying!
     fl_GetDC(hWnd); // Make sure we have a DC for this window...
     fl_save_pen();
-    i->flush();
+    window->driver()->flush();
     fl_restore_pen();
     window->clear_damage();
     } return 0;

@@ -223,6 +223,11 @@ void Fl_Window_Driver::redraw_overlay() {
   Fl::damage(FL_DAMAGE_CHILD);
 }
 
+void Fl_Window_Driver::flush()
+{
+  pWindow->flush();
+}
+
 //
 // End of "$Id$".
 //

@@ -101,7 +101,7 @@ static int main_screen_height; // height of menubar-containing screen used to co
 // through_drawRect = YES means the drawRect: message was sent to the view, 
 // thus the graphics context was prepared by the system
 static BOOL through_drawRect = NO; 
-// through_Fl_X_flush = YES means Fl_X::flush() was called
+// through_Fl_X_flush = YES means Fl_Cocoa_Window_Driver::flush() was called
 static BOOL through_Fl_X_flush = NO;
 static int im_enabled = -1;
 // OS version-dependent pasteboard type names
@@ -1940,7 +1940,7 @@ static void handleUpdateEvent( Fl_Window *window )
     i->region = 0;
   }
   window->clear_damage(FL_DAMAGE_ALL);
-  i->flush();
+  window->driver()->flush();
   window->clear_damage();
 }     
 
@@ -2856,17 +2856,18 @@ void Fl_X::GLcontext_makecurrent(NSOpenGLContext* ctxt)
 /*
  * Initialize the given port for redraw and call the window's flush() to actually draw the content
  */ 
-void Fl_X::flush()
+void Fl_Cocoa_Window_Driver::flush()
 {
+  Fl_Window *w = pWindow;
   if (w->as_gl_window()) {
-    w->flush();
+    Fl_Window_Driver::flush();
   } else {
     make_current_counts = 1;
-    if (!through_drawRect) [[xid contentView] lockFocus];
+    if (!through_drawRect) [[fl_xid(w) contentView] lockFocus];
     through_Fl_X_flush = YES;
-    w->flush();
+    Fl_Window_Driver::flush();
     through_Fl_X_flush = NO;
-    if (!through_drawRect) [[xid contentView] unlockFocus];
+    if (!through_drawRect) [[fl_xid(w) contentView] unlockFocus];
     make_current_counts = 0;
     Fl_Cocoa_Window_Driver::q_release_context();
   }
@@ -3226,15 +3227,16 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
  1) When a window is created or resized.
  The system sends the drawRect: message to the window's view after having prepared the current 
  graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect 
- to YES and calls handleUpdateEvent() that calls Fl_X::flush(). Fl_X::flush() sets through_Fl_X_flush 
+ to YES and calls handleUpdateEvent() that calls Fl_Cocoa_Window_Driver::flush(). 
+ Fl_Cocoa_Window_Driver::flush() sets through_Fl_X_flush
  to YES and calls Fl_Window::flush() that calls Fl_Window::make_current() that
  uses the window's graphics context. The window's draw() function is then executed.
  
  2) At each round of the FLTK event loop.
- Fl::flush() is called, that calls Fl_X::flush() on each window that needs drawing. Variable 
- through_Fl_X_flush is set to YES. Fl_X::flush() locks the focus to the view and calls Fl_Window::flush()
- that calls Fl_Window::make_current() which uses the window's graphics context.
- Fl_Window::flush() then runs the window's draw() function.
+ Fl::flush() is called, that calls Fl_Cocoa_Window_Driver::flush() on each window that needs drawing.
+ Variable through_Fl_X_flush is set to YES. Fl_Cocoa_Window_Driver::flush() locks the focus to the 
+ view and calls Fl_Window::flush() that calls Fl_Window::make_current() which uses the window's 
+ graphics context. Fl_Window::flush() then runs the window's draw() function.
  
  3) An FLTK application can call Fl_Window::make_current() at any time before it draws to a window.
  This occurs for instance in the idle callback function of the mandelbrot test program. Variable 
