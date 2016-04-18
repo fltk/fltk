@@ -120,7 +120,6 @@ public:
   char wait_for_expose;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* wi) {return wi->i;}
-  void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
   void sendxjunk();
   int set_cursor(Fl_Cursor);
   int set_cursor(const Fl_RGB_Image*, int, int);

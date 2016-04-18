@@ -2216,7 +2216,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X *xp = new Fl_X;
   xp->xid = winxid;
   xp->other_xid = 0;
-  xp->setwindow(win);
+  xp->w = win; win->i = xp;
   xp->next = Fl_X::first;
   xp->region = 0;
   xp->wait_for_expose = 1;

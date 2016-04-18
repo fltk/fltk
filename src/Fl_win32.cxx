@@ -1797,7 +1797,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   Fl_X *x = new Fl_X;
   x->other_xid = 0;
-  x->setwindow(w);
+  x->w = w; w->i = x;
   x->region = 0;
   x->private_dc = 0;
   x->cursor = LoadCursor(NULL, IDC_ARROW);
