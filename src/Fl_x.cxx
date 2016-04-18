@@ -2145,7 +2145,8 @@ char Fl_Xlib_Graphics_Driver::can_do_alpha_blending() {
 
 extern Fl_Window *fl_xfocus;
 
-void Fl_X::activate_window(Window w) {
+void Fl_X11_Window_Driver::activate_window() {
+  Window w = fl_xid(pWindow);
   if (!Fl_X11_Screen_Driver::ewmh_supported())
     return;
 

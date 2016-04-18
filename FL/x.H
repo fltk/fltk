@@ -124,7 +124,6 @@ public:
   int set_cursor(const Fl_RGB_Image*, int, int);
   static void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static Fl_X* set_xid(Fl_Window*, Window);
-  static void activate_window(Window w);
 };
 
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
