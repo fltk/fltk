@@ -428,14 +428,6 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   previous->Fl_Surface_Device::set_current();
 }
 
-void Fl_X11_Window_Driver::wait_for_expose() {
-  if (!shown()) return;
-  Fl_X *i = Fl_X::i(pWindow);
-  while (!i || i->wait_for_expose) {
-    Fl::wait();
-  }
-}
-
 
 // make X drawing go into this window (called by subclass flush() impl.)
 void Fl_X11_Window_Driver::make_current() {

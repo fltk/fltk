@@ -52,6 +52,7 @@ public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
   static Fl_Window_Driver *newWindowDriver(Fl_Window *);
+  int wait_for_expose_value;
 
   // --- frequently used accessors to public window data
   /** returns the x coordinate of the window. */
@@ -119,7 +120,7 @@ public:
   virtual void label(const char *name, const char *mininame);
 
   virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
-  virtual void wait_for_expose() {}
+  virtual void wait_for_expose();
   virtual void destroy_double_buffer();
   virtual void show();
   virtual void show_menu();

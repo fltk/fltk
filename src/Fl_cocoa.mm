@@ -1931,9 +1931,9 @@ static void handleUpdateEvent( Fl_Window *window )
     static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
     NSSize s = addr([i->xid contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
     i->mapped_to_retina( int(s.width + 0.5) > 10 );
-    if (i->wait_for_expose == 0 && previous != i->mapped_to_retina()) i->changed_resolution(true);
+    if (window->driver()->wait_for_expose_value == 0 && previous != i->mapped_to_retina()) i->changed_resolution(true);
   }  
-  i->wait_for_expose = 0;
+  window->driver()->wait_for_expose_value = 0;
 
   if ( i->region ) {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
@@ -3001,7 +3001,7 @@ void Fl_X::make(Fl_Window* w)
       }
     x->xid = cw;
     x->w = w; w->i = x;
-    x->wait_for_expose = 1;
+    w->driver()->wait_for_expose_value = 1;
     if (!w->parent()) {
       x->next = Fl_X::first;
       Fl_X::first = x;

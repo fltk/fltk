@@ -117,7 +117,6 @@ public:
   Fl_Window *w;
   Fl_Region region;
   Fl_X *next;
-  char wait_for_expose;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* wi) {return wi->i;}
   static void make_xid(Fl_Window*,XVisualInfo* =fl_visual, Colormap=fl_colormap);

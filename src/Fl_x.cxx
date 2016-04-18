@@ -1633,7 +1633,7 @@ fprintf(stderr,"\n");*/
     break;
 
   case Expose:
-    Fl_X::i(window)->wait_for_expose = 0;
+    window->driver()->wait_for_expose_value = 0;
 #  if 0
     // try to keep windows on top even if WM_TRANSIENT_FOR does not work:
     // opaque move/resize window managers do not like this, so I disabled it.
@@ -2220,7 +2220,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->w = win; win->i = xp;
   xp->next = Fl_X::first;
   xp->region = 0;
-  xp->wait_for_expose = 1;
+  win->driver()->wait_for_expose_value = 1;
 #ifdef USE_XDBE
   ((Fl_X11_Window_Driver*)win->pWindowDriver)->backbuffer_bad = 1;
 #endif

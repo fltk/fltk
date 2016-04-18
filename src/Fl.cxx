@@ -681,8 +681,8 @@ void Fl::flush() {
   if (damage()) {
     damage_ = 0;
     for (Fl_X* i = Fl_X::first; i; i = i->next) {
-      if (i->wait_for_expose) {damage_ = 1; continue;}
       Fl_Window* wi = i->w;
+      if (wi->driver()->wait_for_expose_value) {damage_ = 1; continue;}
       if (!wi->visible_r()) continue;
       if (wi->damage()) {
         wi->driver()->flush();

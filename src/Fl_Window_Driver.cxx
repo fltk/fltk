@@ -240,6 +240,14 @@ int Fl_Window_Driver::set_cursor(const Fl_RGB_Image*, int, int) {
   return 0;
 }
 
+void Fl_Window_Driver::wait_for_expose() {
+  if (!shown()) return;
+  Fl_X *i = Fl_X::i(pWindow);
+  while (!i || wait_for_expose_value) {
+    Fl::wait();
+  }
+}
+
 //
 // End of "$Id$".
 //

@@ -77,7 +77,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
   }
   x->xid = SDL_CreateRenderer(pNativeWindow, -1, SDL_RENDERER_ACCELERATED);
   x->next = Fl_X::first;
-  x->wait_for_expose = 0;
+  wait_for_expose_value = 0;
   pWindow->i = x;
   Fl_X::first = x;
 

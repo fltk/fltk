@@ -1083,7 +1083,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_PAINT: {
     Fl_Region R;
     Fl_X *i = Fl_X::i(window);
-    i->wait_for_expose = 0;
+    window->driver()->wait_for_expose_value = 0;
     char redraw_whole_window = false;
     if (!i->region && window->damage()) {
       // Redraw the whole window...
@@ -1585,7 +1585,7 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
       // with no width or height will never get an exposure event
       Fl_X *i = Fl_X::i(pWindow);
       if (i && W>0 && H>0)
-        i->wait_for_expose = 1;
+        wait_for_expose_value = 1;
     }
   } else {
     x(X); y(Y);
@@ -1850,7 +1850,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   if (!fl_clipboard_notify_empty() && clipboard_wnd == NULL)
     fl_clipboard_notify_target(x->xid);
 
-  x->wait_for_expose = 1;
+  w->driver()->wait_for_expose_value = 1;
   if (Fl_Window::show_iconic_) {showit = 0; Fl_Window::show_iconic_ = 0;}
   if (showit) {
     w->set_visible();

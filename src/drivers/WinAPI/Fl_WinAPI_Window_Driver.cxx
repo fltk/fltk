@@ -360,15 +360,6 @@ void Fl_WinAPI_Window_Driver::free_icons() {
 }
 
 
-void Fl_WinAPI_Window_Driver::wait_for_expose() {
-  if (!shown()) return;
-  Fl_X *i = Fl_X::i(pWindow);
-  while (!i || i->wait_for_expose) {
-    Fl::wait();
-  }
-}
-
-
 void Fl_WinAPI_Window_Driver::make_current() {
   fl_GetDC(fl_xid(pWindow));
   

@@ -128,7 +128,6 @@ public:
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
   Fl_X *next;              // chain of mapped windows
-  int wait_for_expose;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);

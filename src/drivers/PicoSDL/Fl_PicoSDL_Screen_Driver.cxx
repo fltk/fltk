@@ -61,7 +61,7 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
             //event->window.windowID
             if ( !window ) break;;
             Fl_X *i = Fl_X::i(Fl::first_window());
-            i->wait_for_expose = 0;
+            i->w->driver()->wait_for_expose_value = 0;
 
             if ( i->region ) {
               XDestroyRegion(i->region);
@@ -70,7 +70,7 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
             window->clear_damage(FL_DAMAGE_ALL);
             i->flush();
             window->clear_damage();
-            Fl_X::first->wait_for_expose = 0;
+            Fl_X::first->w->driver()->wait_for_expose_value = 0;
           }
             break;
         }

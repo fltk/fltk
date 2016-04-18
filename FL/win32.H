@@ -54,7 +54,6 @@ public:
   Fl_Window* w;
   Fl_Region region;
   Fl_X *next;
-  int wait_for_expose;
   HDC private_dc; // used for OpenGL
   HDC saved_hdc;  // saves the handle of the DC currently loaded
   // static variables, static functions and member functions
