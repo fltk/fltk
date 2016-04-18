@@ -500,12 +500,12 @@ void Fl_X11_Window_Driver::unmap() {
 // the window full screen will lose the size of the border off the
 // bottom and right.
 void Fl_X11_Window_Driver::use_border() {
-  if (shown()) Fl_X::i(pWindow)->sendxjunk();
+  if (shown()) sendxjunk();
 }
 
 void Fl_X11_Window_Driver::size_range() {
   Fl_Window_Driver::size_range();
-  if (shown()) Fl_X::i(pWindow)->sendxjunk();
+  if (shown()) sendxjunk();
 }
 
 void Fl_X11_Window_Driver::iconize() {

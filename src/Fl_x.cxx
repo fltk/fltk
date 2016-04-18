@@ -2221,7 +2221,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->region = 0;
   xp->wait_for_expose = 1;
 #ifdef USE_XDBE
-  ((Fl_X11_Window_Driver*)win->driver())->backbuffer_bad = 1;
+  ((Fl_X11_Window_Driver*)win->pWindowDriver)->backbuffer_bad = 1;
 #endif
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
@@ -2385,7 +2385,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
                     XA_ATOM, 32, 0, (uchar*)&WM_DELETE_WINDOW, 1);
 
     // send size limits and border:
-    xp->sendxjunk();
+    ((Fl_X11_Window_Driver*)win->pWindowDriver)->sendxjunk();
 
     // set the class property, which controls the icon used:
     if (win->xclass()) {
@@ -2501,10 +2501,11 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 ////////////////////////////////////////////////////////////////
 // Send X window stuff that can be changed over time:
 
-void Fl_X::sendxjunk() {
+void Fl_X11_Window_Driver::sendxjunk() {
+  Fl_Window *w = pWindow;
   if (w->parent() || w->override()) return; // it's not a window manager window!
 
-  if (!w->size_range_set) { // default size_range based on resizable():
+  if (!size_range_set()) { // default size_range based on resizable():
     if (w->resizable()) {
       Fl_Widget *o = w->resizable();
       int minw = o->w(); if (minw > 100) minw = 100;
@@ -2518,12 +2519,12 @@ void Fl_X::sendxjunk() {
 
   XSizeHints *hints = XAllocSizeHints();
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
-  hints->min_width = w->minw;
-  hints->min_height = w->minh;
-  hints->max_width = w->maxw;
-  hints->max_height = w->maxh;
-  hints->width_inc = w->dw;
-  hints->height_inc = w->dh;
+  hints->min_width = minw();
+  hints->min_height = minh();
+  hints->max_width = maxw();
+  hints->max_height = maxh();
+  hints->width_inc = dw();
+  hints->height_inc = dh();
   hints->win_gravity = StaticGravity;
 
   // see the file /usr/include/X11/Xm/MwmUtil.h:
@@ -2544,7 +2545,7 @@ void Fl_X::sendxjunk() {
       if (hints->max_height < hints->min_height) hints->max_height = Fl::h();
     }
     if (hints->width_inc && hints->height_inc) hints->flags |= PResizeInc;
-    if (w->aspect) {
+    if (aspect()) {
       // stupid X!  It could insist that the corner go on the
       // straight line between min and max...
       hints->min_aspect.x = hints->max_aspect.x = hints->min_width;
@@ -2557,7 +2558,7 @@ void Fl_X::sendxjunk() {
     prop[1] = 1|2|16; // MWM_FUNC_ALL | MWM_FUNC_RESIZE | MWM_FUNC_MAXIMIZE
   }
 
-  if (w->force_position()) {
+  if (force_position()) {
     hints->flags |= USPosition;
     hints->x = w->x();
     hints->y = w->y();
@@ -2568,8 +2569,8 @@ void Fl_X::sendxjunk() {
     prop[2] = 0; // no decorations
   }
 
-  XSetWMNormalHints(fl_display, xid, hints);
-  XChangeProperty(fl_display, xid,
+  XSetWMNormalHints(fl_display, fl_xid(w), hints);
+  XChangeProperty(fl_display, fl_xid(w),
                   fl_MOTIF_WM_HINTS, fl_MOTIF_WM_HINTS,
                   32, 0, (unsigned char *)prop, 5);
   XFree(hints);

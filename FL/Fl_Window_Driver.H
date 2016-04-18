@@ -78,11 +78,15 @@ public:
   int minh();
   int maxw();
   int maxh();
+  int dw();
+  int dh();
+  int aspect();
   int fullscreen_screen_top();
   int fullscreen_screen_bottom();
   int fullscreen_screen_left();
   int fullscreen_screen_right();
   unsigned char size_range_set();
+  int force_position();
   void force_position(int c);
   void x(int X);
   void y(int Y);

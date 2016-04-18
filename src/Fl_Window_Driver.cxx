@@ -41,6 +41,10 @@ int Fl_Window_Driver::minw() {return pWindow->minw;}
 int Fl_Window_Driver::minh() {return pWindow->minh;}
 int Fl_Window_Driver::maxw() {return pWindow->maxw;}
 int Fl_Window_Driver::maxh() {return pWindow->maxh;}
+int Fl_Window_Driver::dw() {return pWindow->dw;}
+int Fl_Window_Driver::dh() {return pWindow->dh;}
+int Fl_Window_Driver::aspect() {return pWindow->aspect;}
+int Fl_Window_Driver::force_position() {return pWindow->force_position(); }
 void Fl_Window_Driver::force_position(int c) { pWindow->force_position(c); }
 void Fl_Window_Driver::x(int X) {pWindow->x(X); }
 void Fl_Window_Driver::y(int Y) {pWindow->y(Y); }
