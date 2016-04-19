@@ -35,16 +35,7 @@ typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Widget.H> // for Fl_Callback
 
-#if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
-
-typedef struct CGContext* CGContextRef;
-typedef struct OpaquePMPrintSettings*   PMPrintSettings;
-typedef struct OpaquePMPageFormat*      PMPageFormat;
-typedef struct OpaquePMPrintSession*    PMPrintSession;
-typedef struct CGImage* CGImageRef;
-typedef struct __CFData* CFMutableDataRef; // used in Fl_Copy_Surface.H
-
-#else // this part must be compiled when building the FLTK libraries
+#if (defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part must be compiled when building the FLTK libraries
 
 // Standard MacOS C/C++ includes...
 #include <ApplicationServices/ApplicationServices.h>
@@ -122,7 +113,6 @@ public:
   Fl_X *next;              // chain of mapped windows
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-  static void make(Fl_Window*);
   // Cocoa additions
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);

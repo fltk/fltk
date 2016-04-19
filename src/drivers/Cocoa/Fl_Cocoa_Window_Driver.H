@@ -94,6 +94,7 @@ public:
   virtual int decorated_h();
 
   // --- window management
+  virtual Fl_X *makeWindow();
   virtual void take_focus();
   virtual void flush();
   virtual void flush_double();
