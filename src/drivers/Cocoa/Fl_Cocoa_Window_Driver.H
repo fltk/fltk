@@ -73,6 +73,7 @@ public:
   CGContextRef gc;                 // graphics context
   NSCursor *cursor;
   static void q_release_context(Fl_Cocoa_Window_Driver *x = 0); // free all resources associated with gc
+  void set_key_window();
 
   // --- window data
   virtual int decorated_w();

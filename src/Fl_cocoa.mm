@@ -1945,11 +1945,11 @@ static void handleUpdateEvent( Fl_Window *window )
 }     
 
 
-int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
+static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
   if (w->border() && !w->parent()) {
-    if (w->maxw != w->minw || w->maxh != w->minh) {
+    if (w->driver()->maxw() != w->driver()->minw() || w->driver()->maxh() != w->driver()->minh()) {
       ret = 2;
     } else {
       ret = 1;
@@ -3823,9 +3823,9 @@ static void createAppleMenu(void)
 }
 
 
-void Fl_X::set_key_window()
+void Fl_Cocoa_Window_Driver::set_key_window()
 {
-  [xid makeKeyWindow];
+  [fl_xid(pWindow) makeKeyWindow];
 }
 
 static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)

@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Screen_Driver.H"
+#include "Fl_Cocoa_Window_Driver.H"
 #include "../Quartz/Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -167,7 +168,7 @@ void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
   if (win) {
     if (!Fl::grab_) {
       fl_capture = Fl_X::i(Fl::first_window())->xid;
-      Fl_X::i(Fl::first_window())->set_key_window();
+      ((Fl_Cocoa_Window_Driver*)Fl::first_window()->driver())->set_key_window();
     }
     Fl::grab_ = win;
   } else {

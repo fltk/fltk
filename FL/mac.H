@@ -129,7 +129,6 @@ public:
   Fl_X *next;              // chain of mapped windows
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-  static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static void make(Fl_Window*);
   static void set_high_resolution(bool);
   CGRect* subRect() { return subRect_; } // getter
@@ -149,7 +148,6 @@ public:
   static void GLcontext_makecurrent(NSOpenGLContext*);
   static void GL_cleardrawable(void);
   void destroy(void);
-  void set_key_window(void);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
 private:

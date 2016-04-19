@@ -53,8 +53,7 @@ Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
 
 void Fl_Cocoa_Window_Driver::take_focus()
 {
-  Fl_X *x = Fl_X::i(pWindow);
-  if (x) x->set_key_window();
+  set_key_window();
 }
 
 
