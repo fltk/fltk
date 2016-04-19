@@ -294,7 +294,7 @@ void fl_set_status(int x, int y, int w, int h)
 {
 }
 
-void Fl::add_fd(int n, int events, void (*cb)(FL_SOCKET, void*), void *v) {
+void Fl_WinAPI_System_Driver::add_fd(int n, int events, void (*cb)(FL_SOCKET, void*), void *v) {
   remove_fd(n,events);
   int i = nfds++;
   if (i >= fd_array_size) {
@@ -312,11 +312,11 @@ void Fl::add_fd(int n, int events, void (*cb)(FL_SOCKET, void*), void *v) {
   if (n > maxfd) maxfd = n;
 }
 
-void Fl::add_fd(int fd, void (*cb)(FL_SOCKET, void*), void* v) {
+void Fl_WinAPI_System_Driver::add_fd(int fd, void (*cb)(FL_SOCKET, void*), void* v) {
   Fl::add_fd(fd, FL_READ, cb, v);
 }
 
-void Fl::remove_fd(int n, int events) {
+void Fl_WinAPI_System_Driver::remove_fd(int n, int events) {
   int i,j;
   for (i=j=0; i<nfds; i++) {
     if (fd[i].fd == n) {
@@ -337,7 +337,7 @@ void Fl::remove_fd(int n, int events) {
   if (events & FL_EXCEPT) FD_CLR(unsigned(n), &fdsets[2]);
 }
 
-void Fl::remove_fd(int n) {
+void Fl_WinAPI_System_Driver::remove_fd(int n) {
   remove_fd(n, -1);
 }
 

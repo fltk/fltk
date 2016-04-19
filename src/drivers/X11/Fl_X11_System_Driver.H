@@ -55,6 +55,10 @@ public:
   virtual int clipboard_contains(const char *type);
   // this one is in Fl_x.cxx
   virtual void clipboard_notify_change();
+  virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
+  virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
+  virtual void remove_fd(int, int when);
+  virtual void remove_fd(int);
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */

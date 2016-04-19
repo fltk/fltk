@@ -113,7 +113,7 @@ struct FD {
 
 static FD *fd = 0;
 
-void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
+void Fl_X11_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   remove_fd(n,events);
   int i = nfds++;
   if (i >= fd_array_size) {
@@ -151,11 +151,11 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
 #  endif
 }
 
-void Fl::add_fd(int n, void (*cb)(int, void*), void* v) {
+void Fl_X11_System_Driver::add_fd(int n, void (*cb)(int, void*), void* v) {
   Fl::add_fd(n, POLLIN, cb, v);
 }
 
-void Fl::remove_fd(int n, int events) {
+void Fl_X11_System_Driver::remove_fd(int n, int events) {
   int i,j;
 # if !USE_POLL
   maxfd = -1; // recalculate maxfd on the fly
@@ -192,7 +192,7 @@ void Fl::remove_fd(int n, int events) {
 #  endif
 }
 
-void Fl::remove_fd(int n) {
+void Fl_X11_System_Driver::remove_fd(int n) {
   remove_fd(n, -1);
 }
 

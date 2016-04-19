@@ -72,6 +72,10 @@ public:
   virtual void copy(const char *stuff, int len, int clipboard, const char *type);
   virtual void paste(Fl_Widget &receiver, int clipboard, const char *type);
   virtual int clipboard_contains(const char *type);
+  virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
+  virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
+  virtual void remove_fd(int, int when);
+  virtual void remove_fd(int);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

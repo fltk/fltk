@@ -25,7 +25,7 @@
 
 #include <FL/Fl_Export.H>
 
-#include <FL/Fl_System_Driver.H> // for FL_SOCKET
+#include <FL/platform_types.h> // for FL_SOCKET
 #ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
@@ -50,6 +50,7 @@ class Fl_Window;
 class Fl_Image;
 struct Fl_Label;
 class Fl_Screen_Driver;
+class Fl_System_Driver;
 
 // Pointers you can use to change FLTK to a foreign language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx

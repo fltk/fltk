@@ -411,6 +411,27 @@ int Fl_System_Driver::file_type(const char *filename)
   return Fl_File_Icon::ANY;
 }
 
+void Fl_System_Driver::add_fd(int fd, int when, Fl_FD_Handler cb, void *d)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+void Fl_System_Driver::add_fd(int fd, Fl_FD_Handler cb, void *d)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+void Fl_System_Driver::remove_fd(int fd, int when)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+void Fl_System_Driver::remove_fd(int fd)
+{
+  // nothing to do, reimplement in driver if needed
+}
+
+
 //
 // End of "$Id$".
 //

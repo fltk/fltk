@@ -63,7 +63,7 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
             Fl_X *i = Fl_X::i(Fl::first_window());
             wd->wait_for_expose_value = 0;
             if ( i->region ) {
-              XDestroyRegion(i->region);
+              fl_graphics_driver->XDestroyRegion(i->region);
               i->region = 0;
             }
             window->clear_damage(FL_DAMAGE_ALL);
@@ -155,16 +155,8 @@ Fl_X* Fl_X::make(Fl_Window *w)
   return w->driver()->makeWindow();
 }
 
-char fl_show_iconic;
 Window fl_window;
 
-void Fl::add_fd(int, Fl_FD_Handler, void*)
-{
-}
-
-void Fl::remove_fd(int)
-{
-}
 
 //
 // End of "$Id: Fl_PicoSDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".

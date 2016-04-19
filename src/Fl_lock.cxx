@@ -18,14 +18,17 @@
 
 #include "config_lib.h"
 #include <FL/Fl.H>
+#include <FL/Fl_System_Driver.H>
 
 #include <stdlib.h>
 
+// FIXME: why do we need the lines below?
 #if defined(FL_CFG_SYS_POSIX)
 #include "drivers/Posix/Fl_Posix_System_Driver.H"
 #elif defined(FL_CFG_SYS_WIN32)
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
 #endif
+
 
 /*
    From Bill:

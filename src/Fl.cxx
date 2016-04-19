@@ -1939,6 +1939,27 @@ int Fl::clipboard_contains(const char *type)
   return Fl::system_driver()->clipboard_contains(type);
 }
 
+
+void Fl::add_fd(int fd, int when, Fl_FD_Handler cb, void *d)
+{
+  Fl::system_driver()->add_fd(fd, when, cb, d);
+}
+
+void Fl::add_fd(int fd, Fl_FD_Handler cb, void *d)
+{
+  Fl::system_driver()->add_fd(fd, cb, d);
+}
+
+void Fl::remove_fd(int fd, int when)
+{
+  Fl::system_driver()->remove_fd(fd, when);
+}
+
+void Fl::remove_fd(int fd)
+{
+  Fl::system_driver()->remove_fd(fd);
+}
+
 /**
  Enables the system input methods facilities. This is the default.
  \see disable_im()

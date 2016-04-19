@@ -426,22 +426,22 @@ void DataReady::CancelThread(const char *reason)
   DataUnlock();
 }
 
-void Fl::add_fd( int n, int events, void (*cb)(int, void*), void *v )
+void Fl_Darwin_System_Driver::add_fd( int n, int events, void (*cb)(int, void*), void *v )
 {
   dataready.AddFD(n, events, cb, v);
 }
 
-void Fl::add_fd(int fd, void (*cb)(int, void*), void* v)
+void Fl_Darwin_System_Driver::add_fd(int fd, void (*cb)(int, void*), void* v)
 {
   dataready.AddFD(fd, POLLIN, cb, v);
 }
 
-void Fl::remove_fd(int n, int events)
+void Fl_Darwin_System_Driver::remove_fd(int n, int events)
 {
   dataready.RemoveFD(n, events);
 }
 
-void Fl::remove_fd(int n)
+void Fl_Darwin_System_Driver::remove_fd(int n)
 {
   dataready.RemoveFD(n, -1);
 }

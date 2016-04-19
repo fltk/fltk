@@ -20,7 +20,7 @@
 
 #include <FL/filename.H>
 #include <FL/Fl.H>
-#include <FL/platform_types.h>
+#include <FL/Fl_System_Driver.H>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <stdlib.h>

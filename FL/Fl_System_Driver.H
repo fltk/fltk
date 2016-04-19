@@ -24,8 +24,8 @@
 #ifndef FL_SYSTEM_DRIVER_H
 #define FL_SYSTEM_DRIVER_H
 
+#include <FL/Fl.H>
 #include <FL/Fl_Export.H>
-#include <FL/platform_types.h>
 #include <FL/filename.H>
 #include <FL/Fl_Preferences.H>
 #include <stdio.h>
@@ -202,6 +202,10 @@ public:
   virtual int clipboard_contains(const char *type) {return 0;}
   //  implement to support paste-from-clipboard
   virtual void clipboard_notify_change() {}
+  virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
+  virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
+  virtual void remove_fd(int, int when);
+  virtual void remove_fd(int);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

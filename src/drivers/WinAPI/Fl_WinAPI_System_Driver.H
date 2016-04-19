@@ -112,6 +112,10 @@ public:
   virtual int clipboard_contains(const char *type);
   // this one is implemented in Fl_win32.cxx
   virtual void clipboard_notify_change();
+  virtual void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0);
+  virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
+  virtual void remove_fd(int, int when);
+  virtual void remove_fd(int);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

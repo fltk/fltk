@@ -43,19 +43,6 @@ typedef void *Fl_Offscreen;
 struct XPoint { int x, y; };
 struct XRectangle {int x, y, width, height;};
 
-//typedef float CGFloat;
-
-inline Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  // write code here
-  return 0L;
-}
-
-inline void XDestroyRegion(Fl_Region r) {
-  // write code here
-}
-
-extern void *fl_default_cursor;
-
 inline void fl_open_callback(void (*)(const char *)) {}
 
 // This object contains all platform-specific stuff about a window:
