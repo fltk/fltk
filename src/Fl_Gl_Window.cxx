@@ -114,7 +114,7 @@ void Fl_Gl_Window::show() {
 int Fl_Gl_Window::pixels_per_unit()
 {
   return (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(this) &&
-          ((Fl_Cocoa_Window_Driver*)driver())->mapped_to_retina()) ? 2 : 1;
+          Fl_Cocoa_Window_Driver::driver(this)->mapped_to_retina()) ? 2 : 1;
 }
 
 #endif // __APPLE__ // PORTME: platform OpenGL management
@@ -198,7 +198,7 @@ void Fl_Gl_Window::make_current() {
 //  printf("make_current: context_=%p\n", context_);
 #if defined(__APPLE__) // PORTME: platform OpenGL management
   // detect if the window was moved between low and high resolution displays
-  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)driver();
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(this);
   if (d->changed_resolution()){
     d->changed_resolution(false);
     invalidate();
@@ -443,7 +443,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   
 #ifdef __APPLE__ // PORTME: platform OpenGL management
   Fl_X *flx = Fl_X::i(this);
-  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)driver();
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(this);
   if (flx && d->in_windowDidResize()) Fl_Cocoa_Screen_Driver::GLcontext_update(context_);
 #endif
 

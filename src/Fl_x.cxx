@@ -2222,7 +2222,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->region = 0;
   win->driver()->wait_for_expose_value = 1;
 #ifdef USE_XDBE
-  ((Fl_X11_Window_Driver*)win->pWindowDriver)->backbuffer_bad = 1;
+  Fl_X11_Window_Driver::driver(win)->backbuffer_bad = 1;
 #endif
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
@@ -2386,7 +2386,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
                     XA_ATOM, 32, 0, (uchar*)&WM_DELETE_WINDOW, 1);
 
     // send size limits and border:
-    ((Fl_X11_Window_Driver*)win->pWindowDriver)->sendxjunk();
+    Fl_X11_Window_Driver::driver(win)->sendxjunk();
 
     // set the class property, which controls the icon used:
     if (win->xclass()) {
@@ -2453,14 +2453,14 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
       Fl_Window::show_iconic_ = 0;
       showit = 0;
     }
-    if (((Fl_X11_Window_Driver*)win->pWindowDriver)->icon_->legacy_icon) {
-      hints->icon_pixmap = (Pixmap)((Fl_X11_Window_Driver*)win->pWindowDriver)->icon_->legacy_icon;
+    if (Fl_X11_Window_Driver::driver(win)->icon_->legacy_icon) {
+      hints->icon_pixmap = (Pixmap)Fl_X11_Window_Driver::driver(win)->icon_->legacy_icon;
       hints->flags       |= IconPixmapHint;
     }
     XSetWMHints(fl_display, xp->xid, hints);
     XFree(hints);
 
-    ((Fl_X11_Window_Driver*)win->pWindowDriver)->set_icons();
+    Fl_X11_Window_Driver::driver(win)->set_icons();
   }
 
   // set the window type for menu and tooltip windows to avoid animations (compiz)
@@ -2481,7 +2481,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 #endif
 
   if (win->is_shaped()) {
-    ((Fl_X11_Window_Driver*)win->pWindowDriver)->combine_mask();
+    Fl_X11_Window_Driver::driver(win)->combine_mask();
     }
   XMapWindow(fl_display, xp->xid);
   if (showit) {

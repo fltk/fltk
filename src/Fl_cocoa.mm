@@ -754,7 +754,7 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
     srect = CGRectIntersection(prect, srect); // area of subwindow inside its parent
     from = parent;
   }
-  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)w->driver();
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(w);
   CGRect *r = d->subRect();
   CGRect current_clip = (r ? *r : full); // current subwindow clip
   if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
@@ -1350,7 +1350,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     parent = parent->window();
   }
   resize_from_system = window;
-  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)window->driver();
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
@@ -1925,7 +1925,7 @@ static void handleUpdateEvent( Fl_Window *window )
 {
   if ( !window ) return;
   Fl_X *i = Fl_X::i( window );
-  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)window->driver();
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
     bool previous = d->mapped_to_retina();
     // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
@@ -2321,8 +2321,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if (!i) return;  // fix for STR #3128
   // We have to have at least one cursor rect for invalidateCursorRectsForView
   // to work, hence the "else" clause.
-  if (((Fl_Cocoa_Window_Driver*)w->driver())->cursor)
-    [self addCursorRect:[self visibleRect] cursor:((Fl_Cocoa_Window_Driver*)w->driver())->cursor];
+  if (Fl_Cocoa_Window_Driver::driver(w)->cursor)
+    [self addCursorRect:[self visibleRect] cursor:Fl_Cocoa_Window_Driver::driver(w)->cursor];
   else
     [self addCursorRect:[self visibleRect] cursor:[NSCursor arrowCursor]];
 }

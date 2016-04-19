@@ -168,7 +168,7 @@ void Fl_Cocoa_Screen_Driver::grab(Fl_Window* win)
   if (win) {
     if (!Fl::grab_) {
       fl_capture = Fl_X::i(Fl::first_window())->xid;
-      ((Fl_Cocoa_Window_Driver*)Fl::first_window()->driver())->set_key_window();
+      Fl_Cocoa_Window_Driver::driver(Fl::first_window())->set_key_window();
     }
     Fl::grab_ = win;
   } else {
@@ -339,7 +339,7 @@ Fl_Cocoa_Screen_Driver::read_image(uchar *p,		// I - Pixel buffer or NULL to all
     if( (sw - x < w) || (sh - y < h) )  return NULL;
   }
   else { // reading from current window
-    Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)Fl_Window::current()->driver();
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(Fl_Window::current());
     base = d->bitmap_from_window_rect(x,y,w,h,&delta);
     if (!base) return NULL;
     rowBytes = delta*w;

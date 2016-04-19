@@ -1356,7 +1356,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
 
   case WM_GETMINMAXINFO:
-    ((Fl_WinAPI_Window_Driver*)window->driver())->set_minmax((LPMINMAXINFO)lParam);
+      Fl_WinAPI_Window_Driver::driver(window)->set_minmax((LPMINMAXINFO)lParam);
     break;
 
   case WM_SIZE:
@@ -1383,7 +1383,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_SETCURSOR:
     if (LOWORD(lParam) == HTCLIENT) {
       while (window->parent()) window = window->window();
-      SetCursor(((Fl_WinAPI_Window_Driver*)window->driver())->cursor);
+      SetCursor(Fl_WinAPI_Window_Driver::driver(window)->cursor);
       return 0;
     }
     break;
@@ -2070,12 +2070,12 @@ void Fl_Window::icons(HICON big_icon, HICON small_icon)
   free_icons();
   
   if (big_icon != NULL)
-    ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icon_->big_icon = CopyIcon(big_icon);
+    Fl_WinAPI_Window_Driver::driver(this)->icon_->big_icon = CopyIcon(big_icon);
   if (small_icon != NULL)
-    ((Fl_WinAPI_Window_Driver*)pWindowDriver)->icon_->small_icon = CopyIcon(small_icon);
+    Fl_WinAPI_Window_Driver::driver(this)->icon_->small_icon = CopyIcon(small_icon);
   
   if (Fl_X::i(this))
-    ((Fl_WinAPI_Window_Driver*)pWindowDriver)->set_icons();
+    Fl_WinAPI_Window_Driver::driver(this)->set_icons();
 }
 
 /** Sets the default window icons.

@@ -78,6 +78,7 @@ private:
 public:
   Fl_X11_Window_Driver(Fl_Window*);
   virtual ~Fl_X11_Window_Driver();
+  static inline Fl_X11_Window_Driver* driver(Fl_Window *w) {return (Fl_X11_Window_Driver*)w->driver();}
 
   // --- window data
   virtual int decorated_w();

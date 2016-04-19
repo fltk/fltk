@@ -68,6 +68,7 @@ private:
 public:
   Fl_WinAPI_Window_Driver(Fl_Window*);
   ~Fl_WinAPI_Window_Driver();
+  static inline Fl_WinAPI_Window_Driver* driver(Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)w->driver();}
 
   struct icon_data *icon_;
   HCURSOR cursor;
