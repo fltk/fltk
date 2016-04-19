@@ -25,7 +25,9 @@
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
+#if defined(WIN32) // PORTME: platform OpenGL management
+#include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
+#elif defined(__APPLE__)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement OpenGL hardware overlays if they are availbale in a compatible way. This is rarely needed."
 #else
@@ -148,7 +150,7 @@ void Fl_Gl_Window::make_overlay() {
   GLContext context = fl_create_gl_context(this, g, 1);
   if (!context) {overlay = this; return;} // fake the overlay
 
-  HDC hdc = Fl_X::i(this)->private_dc;
+  HDC hdc = Fl_WinAPI_Window_Driver::driver(this)->private_dc;
   overlay = context;
   LAYERPLANEDESCRIPTOR pfd;
   wglDescribeLayerPlane(hdc, g->pixelformat, 1, sizeof(pfd), &pfd);

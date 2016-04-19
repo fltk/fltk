@@ -29,6 +29,7 @@
 #  include <FL/fl_utf8.h>
 
 #if defined(WIN32)
+#include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #elif defined(__APPLE__) // PORTME: platform OpenGL management
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #elif defined(FL_PORTING)
@@ -227,9 +228,9 @@ GLContext fl_create_gl_context(XVisualInfo* vis) {
 
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   Fl_X* i = Fl_X::i(window);
-  HDC hdc = i->private_dc;
+  HDC hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc;
   if (!hdc) {
-    hdc = i->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
+    hdc = Fl_WinAPI_Window_Driver::driver(window)->private_dc = GetDCEx(i->xid, 0, DCX_CACHE);
     fl_save_dc(i->xid, hdc);
     SetPixelFormat(hdc, g->pixelformat, (PIXELFORMATDESCRIPTOR*)(&g->pfd));
 #    if USE_COLORMAP
@@ -273,7 +274,7 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
 #  if defined(USE_X11)
     glXMakeCurrent(fl_display, fl_xid(w), context);
 #  elif defined(WIN32)
-    wglMakeCurrent(Fl_X::i(w)->private_dc, context);
+    wglMakeCurrent(Fl_WinAPI_Window_Driver::driver(w)->private_dc, context);
 #  elif defined(__APPLE__) // PORTME: platform OpenGL management
     Fl_Cocoa_Screen_Driver::GLcontext_makecurrent(context);
 #  else

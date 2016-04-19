@@ -1801,7 +1801,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   x->w = w;
   i(x);
   x->region = 0;
-  x->private_dc = 0;
+  Fl_WinAPI_Window_Driver::driver(w)->private_dc = 0;
   cursor = LoadCursor(NULL, IDC_ARROW);
   custom_cursor = 0;
   if (!fl_codepage) fl_get_codepage();

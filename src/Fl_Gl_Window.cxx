@@ -32,6 +32,8 @@ extern int fl_gl_load_plugin;
 #include <OpenGL/OpenGL.h>
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
+#elif defined(WIN32)
+#include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #endif
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Device.H>
@@ -257,10 +259,10 @@ void Fl_Gl_Window::swap_buffers() {
 #elif defined(WIN32)
 #  if HAVE_GL_OVERLAY
   // Do not swap the overlay, to match GLX:
-  BOOL ret = wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
+  BOOL ret = wglSwapLayerBuffers(Fl_WinAPI_Window_Driver::driver(this)->private_dc, WGL_SWAP_MAIN_PLANE);
   DWORD err = GetLastError();;
 #  else
-  SwapBuffers(Fl_X::i(this)->private_dc);
+  SwapBuffers(Fl_WinAPI_Window_Driver::driver(this)->private_dc);
 #  endif
 #elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
   if(overlay != NULL) {
@@ -322,14 +324,14 @@ void Fl_Gl_Window::flush() {
       && (damage()&(FL_DAMAGE_OVERLAY|FL_DAMAGE_EXPOSE) || !save_valid)) {
     fl_set_gl_context(this, (GLContext)overlay);
     if (fl_overlay_depth)
-      wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
+      wglRealizeLayerPalette(Fl_WinAPI_Window_Driver::driver(this)->private_dc, 1, TRUE);
     glDisable(GL_SCISSOR_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     fl_overlay = 1;
     draw_overlay();
     fl_overlay = 0;
     valid_f_ = save_valid_f;
-    wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_OVERLAY1);
+    wglSwapLayerBuffers(Fl_WinAPI_Window_Driver::driver(this)->private_dc, WGL_SWAP_OVERLAY1);
     // if only the overlay was damaged we are done, leave main layer alone:
     if (damage() == FL_DAMAGE_OVERLAY) {
       return;

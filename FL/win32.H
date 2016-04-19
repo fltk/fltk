@@ -53,7 +53,6 @@ public:
   Fl_Window* w;
   Fl_Region region;
   Fl_X *next;
-  HDC private_dc; // used for OpenGL
   // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}

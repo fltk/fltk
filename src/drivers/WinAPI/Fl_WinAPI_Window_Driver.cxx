@@ -431,7 +431,7 @@ void Fl_WinAPI_Window_Driver::hide() {
   fl_clipboard_notify_retarget(ip->xid);
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
-  if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
+  if (private_dc) fl_release_dc(ip->xid, private_dc);
   if (ip->xid == fl_window && fl_graphics_driver->gc()) {
     fl_release_dc(fl_window, (HDC)fl_graphics_driver->gc());
     fl_window = (HWND)-1;
