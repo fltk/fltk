@@ -478,14 +478,15 @@ void Fl_WinAPI_Window_Driver::unmap() {
 
 #if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
 
-void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
+void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
+  Fl_Window *w = pWindow;
   int top, bottom, left, right;
   int sx, sy, sw, sh;
   
-  top = w->fullscreen_screen_top;
-  bottom = w->fullscreen_screen_bottom;
-  left = w->fullscreen_screen_left;
-  right = w->fullscreen_screen_right;
+  top = fullscreen_screen_top();
+  bottom = fullscreen_screen_bottom();
+  left = fullscreen_screen_left();
+  right = fullscreen_screen_right();
   
   if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
     top = Fl::screen_num(X, Y, W, H);
@@ -503,12 +504,12 @@ void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
   Fl::screen_xywh(sx, sy, sw, sh, right);
   W = sx + sw - X;
   
-  DWORD flags = GetWindowLong(xid, GWL_STYLE);
+  DWORD flags = GetWindowLong(fl_xid(w), GWL_STYLE);
   flags = flags & ~(WS_THICKFRAME|WS_CAPTION);
-  SetWindowLong(xid, GWL_STYLE, flags);
+  SetWindowLong(fl_xid(w), GWL_STYLE, flags);
   
   // SWP_NOSENDCHANGING is so that we can override size limits
-  SetWindowPos(xid, HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
+  SetWindowPos(fl_xid(w), HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
 
 #endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
@@ -516,7 +517,7 @@ void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
 
 void Fl_WinAPI_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
-  Fl_X::i(pWindow)->make_fullscreen(x(), y(), w(), h());
+  make_fullscreen(x(), y(), w(), h());
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 

@@ -1842,7 +1842,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
      monitor the window was placed on. */
     RECT rect;
     GetWindowRect(x->xid, &rect);
-    x->make_fullscreen(rect.left, rect.top,
+    make_fullscreen(rect.left, rect.top,
                        rect.right - rect.left, rect.bottom - rect.top);
   }
 

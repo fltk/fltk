@@ -74,6 +74,7 @@ public:
   int custom_cursor;
   void set_minmax(LPMINMAXINFO minmax);
   int fake_X_wm(int &X, int &Y, int &bt,int &bx,int &by);
+  void make_fullscreen(int X, int Y, int W, int H);
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();

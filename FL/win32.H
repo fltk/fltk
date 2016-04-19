@@ -54,11 +54,9 @@ public:
   Fl_Region region;
   Fl_X *next;
   HDC private_dc; // used for OpenGL
-  HDC saved_hdc;  // saves the handle of the DC currently loaded
   // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-  void make_fullscreen(int X, int Y, int W, int H);
 };
 extern FL_EXPORT UINT fl_wake_msg;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
