@@ -28,7 +28,9 @@
 #  include "flstring.h"
 #  include <FL/fl_utf8.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform OpenGL management
+#if defined(WIN32)
+#elif defined(__APPLE__) // PORTME: platform OpenGL management
+#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: add code to list and select OpenGL drawing contexts"
 #else
@@ -111,8 +113,8 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     return 0;
   }
 
-#elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
-  NSOpenGLPixelFormat* fmt = Fl_X::mode_to_NSOpenGLPixelFormat(m, alistp);
+#elif defined(__APPLE__) // PORTME: platform OpenGL management
+  NSOpenGLPixelFormat* fmt = Fl_Cocoa_Screen_Driver::mode_to_NSOpenGLPixelFormat(m, alistp);
   if (!fmt) return 0;
   
 #elif defined(WIN32)
@@ -244,7 +246,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   return context;
 }
 
-#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
+#  elif defined(__APPLE__) // PORTME: platform OpenGL management
 
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext context, shared_ctx = 0;
@@ -252,7 +254,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   // resets the pile of string textures used to draw strings
   // necessary before the first context is created
   if (!shared_ctx) gl_texture_reset();
-  context = Fl_X::create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
+  context = Fl_Cocoa_Screen_Driver::create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
   if (!context) return 0;
   add_context((GLContext)context);
   return (context);
@@ -272,8 +274,8 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
     glXMakeCurrent(fl_display, fl_xid(w), context);
 #  elif defined(WIN32)
     wglMakeCurrent(Fl_X::i(w)->private_dc, context);
-#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
-    Fl_X::GLcontext_makecurrent(context);
+#  elif defined(__APPLE__) // PORTME: platform OpenGL management
+    Fl_Cocoa_Screen_Driver::GLcontext_makecurrent(context);
 #  else
 #   error unsupported platform
 #  endif
@@ -287,8 +289,8 @@ void fl_no_gl_context() {
   glXMakeCurrent(fl_display, 0, 0);
 #  elif defined(WIN32)
   wglMakeCurrent(0, 0);
-#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
-  Fl_X::GL_cleardrawable();
+#  elif defined(__APPLE__) // PORTME: platform OpenGL management
+  Fl_Cocoa_Screen_Driver::GL_cleardrawable();
 #  else
 #    error unsupported platform
 #  endif
@@ -300,8 +302,8 @@ void fl_delete_gl_context(GLContext context) {
   glXDestroyContext(fl_display, context);
 #  elif defined(WIN32)
   wglDeleteContext(context);
-#  elif defined(__APPLE_QUARTZ__) // PORTME: platform OpenGL management
-  Fl_X::GLcontext_release(context);
+#  elif defined(__APPLE__) // PORTME: platform OpenGL management
+  Fl_Cocoa_Screen_Driver::GLcontext_release(context);
 #  else
 #    error unsupported platform
 #  endif

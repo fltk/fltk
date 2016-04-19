@@ -41,6 +41,15 @@
 class Fl_Window;
 class Fl_Input;
 
+#ifdef __OBJC__
+@class NSOpenGLPixelFormat;
+@class NSOpenGLContext;
+#else
+class NSOpenGLPixelFormat;
+class NSOpenGLContext;
+#endif // __OBJC__
+
+
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
 protected:
@@ -55,6 +64,15 @@ protected:
 public:
   Fl_Cocoa_Screen_Driver();
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
+  // --- Cocoa-only members
+  // computes NSOpenGLPixelFormat from Gl window's mode
+  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // uses Objective-c
+  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
+  static void GLcontext_update(NSOpenGLContext*);
+  static void GLcontext_flushbuffer(NSOpenGLContext*);
+  static void GLcontext_release(NSOpenGLContext*);
+  static void GLcontext_makecurrent(NSOpenGLContext*);
+  static void GL_cleardrawable(void);
   // --- display management
   // --- screen configuration
   virtual void init();

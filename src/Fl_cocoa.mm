@@ -2726,7 +2726,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 @end
 
 
-NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
+NSOpenGLPixelFormat* Fl_Cocoa_Screen_Driver::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
 {
   NSOpenGLPixelFormatAttribute attribs[32];
   int n = 0;
@@ -2814,7 +2814,7 @@ NSOpenGLPixelFormat* Fl_X::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
   return pixform;
 }
 
-NSOpenGLContext* Fl_X::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat,
+NSOpenGLContext* Fl_Cocoa_Screen_Driver::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat,
                                               NSOpenGLContext *shared_ctx, Fl_Window *window)
 {
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
@@ -2831,27 +2831,27 @@ NSOpenGLContext* Fl_X::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelfor
   return context;
 }
 
-void Fl_X::GLcontext_update(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Screen_Driver::GLcontext_update(NSOpenGLContext* ctxt)
 {
   [ctxt update];
 }
 
-void Fl_X::GLcontext_flushbuffer(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Screen_Driver::GLcontext_flushbuffer(NSOpenGLContext* ctxt)
 {
   [ctxt flushBuffer];
 }
 
-void Fl_X::GLcontext_release(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Screen_Driver::GLcontext_release(NSOpenGLContext* ctxt)
 {
   [ctxt release];
 }
 
-void Fl_X::GL_cleardrawable(void)
+void Fl_Cocoa_Screen_Driver::GL_cleardrawable(void)
 {
   [[NSOpenGLContext currentContext] clearDrawable];
 }
 
-void Fl_X::GLcontext_makecurrent(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Screen_Driver::GLcontext_makecurrent(NSOpenGLContext* ctxt)
 {
   [ctxt makeCurrentContext];
 }
@@ -3504,12 +3504,8 @@ int Fl_Darwin_System_Driver::clipboard_contains(const char *type) {
   return found != nil;
 }
 
-void Fl_Cocoa_Window_Driver::destroy() {
-  FLWindow *xid = fl_xid(pWindow);
-  if (xid) {
-    [xid close];
-  }
-  delete subRect();
+void Fl_Cocoa_Window_Driver::destroy(FLWindow *xid) {
+  [xid close];
 }
 
 

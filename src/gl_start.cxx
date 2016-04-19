@@ -28,7 +28,9 @@
 // be erased when the buffers are swapped (when double buffer hardware
 // is being used)
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: platform opengl
+#if defined(WIN32)  // PORTME: platform opengl
+#elif defined(__APPLE__)
+#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: if possible, add OpenGL rendering in non-OpenGL contexts"
 #else
@@ -72,7 +74,7 @@ void gl_start() {
   }
   fl_set_gl_context(Fl_Window::current(), context);
 #ifdef __APPLE__
-  Fl_X::GLcontext_update(context); // supports window resizing
+  Fl_Cocoa_Screen_Driver::GLcontext_update(context); // supports window resizing
 #elif !defined(WIN32)
   glXWaitX();
 #endif

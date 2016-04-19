@@ -33,9 +33,11 @@ class Fl_Window;
 #ifdef __OBJC__
 @class CALayer;
 @class NSCursor;
+@class FLWindow;
 #else
 class CALayer;
 class NSCursor;
+class FLWindow;
 #endif // __OBJC__
 
 /*
@@ -85,7 +87,7 @@ public:
   void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
-  void destroy();
+  static void destroy(FLWindow*);
   unsigned char *bitmap_from_window_rect(int x, int y, int w, int h, int *bytesPerPixel);
   CGImageRef CGImage_from_window_rect(int x, int y, int w, int h);
 

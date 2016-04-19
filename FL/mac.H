@@ -76,14 +76,6 @@ typedef unsigned int NSUInteger;
 #endif
 #endif
 
-#ifdef __OBJC__
-@class NSOpenGLPixelFormat;
-@class NSOpenGLContext;
-#else
-class NSOpenGLPixelFormat;
-class NSOpenGLContext;
-#endif // __OBJC__
-
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
 typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
@@ -113,14 +105,6 @@ public:
   Fl_X *next;              // chain of mapped windows
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-  // Cocoa additions
-  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
-  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
-  static void GLcontext_update(NSOpenGLContext*);
-  static void GLcontext_flushbuffer(NSOpenGLContext*);
-  static void GLcontext_release(NSOpenGLContext*);
-  static void GLcontext_makecurrent(NSOpenGLContext*);
-  static void GL_cleardrawable(void);
 };
 
 extern Window fl_window;

@@ -240,7 +240,8 @@ void Fl_Cocoa_Window_Driver::hide() {
   if ( ip->xid == fl_window )
     fl_window = 0;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-  destroy();
+  destroy(ip->xid);
+  delete subRect();
   delete ip;
 }
 

@@ -31,6 +31,7 @@ extern int fl_gl_load_plugin;
 #include <FL/gl.h>
 #include <OpenGL/OpenGL.h>
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
+#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #endif
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Device.H>
@@ -201,7 +202,7 @@ void Fl_Gl_Window::make_current() {
   if (d->changed_resolution()){
     d->changed_resolution(false);
     invalidate();
-    Fl_X::GLcontext_update(context_);
+    Fl_Cocoa_Screen_Driver::GLcontext_update(context_);
   }
 #endif
   if (!context_) {
@@ -411,7 +412,7 @@ void Fl_Gl_Window::flush() {
 
     }
 #ifdef __APPLE__ // PORTME: platform OpenGL management
-    Fl_X::GLcontext_flushbuffer(context_);
+    Fl_Cocoa_Screen_Driver::GLcontext_flushbuffer(context_);
 #endif
 
     if (overlay==this && SWAP_TYPE != SWAP) { // fake overlay in front buffer
@@ -443,7 +444,7 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
 #ifdef __APPLE__ // PORTME: platform OpenGL management
   Fl_X *flx = Fl_X::i(this);
   Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)driver();
-  if (flx && d->in_windowDidResize()) Fl_X::GLcontext_update(context_);
+  if (flx && d->in_windowDidResize()) Fl_Cocoa_Screen_Driver::GLcontext_update(context_);
 #endif
 
 #if ! ( defined(__APPLE__) || defined(WIN32) ) // PORTME: platform OpenGL management
