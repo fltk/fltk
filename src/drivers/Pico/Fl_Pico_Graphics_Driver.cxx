@@ -23,10 +23,7 @@
 #include <FL/math.h>
 
 
-void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
-  fl_color(r,g,b);
-  fl_rectf(x,y,w,h);
-}
+static int sign(int x) { return (x>0)-(x<0); }
 
 
 void Fl_Pico_Graphics_Driver::point(int x, int y)
@@ -54,9 +51,6 @@ void Fl_Pico_Graphics_Driver::rectf(int x, int y, int w, int h)
     xyline(x, i, xn);
   }
 }
-
-
-static int sign(int x) { return (x>0)-(x<0); }
 
 
 void Fl_Pico_Graphics_Driver::line(int x, int y, int x1, int y1)
@@ -261,12 +255,7 @@ void Fl_Pico_Graphics_Driver::begin_polygon()
 }
 
 
-void Fl_Pico_Graphics_Driver::transformed_vertex(double xf, double yf)
-{
-}
-
-
-void Fl_Pico_Graphics_Driver::vertex(double x, double y)
+void Fl_Pico_Graphics_Driver::transformed_vertex(double x, double y)
 {
   if (pn>0) {
     switch (what) {
@@ -279,6 +268,12 @@ void Fl_Pico_Graphics_Driver::vertex(double x, double y)
   if (pn==0 ) { pxf = x; pyf = y; }
   px = x; py = y;
   pn++;
+}
+
+
+void Fl_Pico_Graphics_Driver::vertex(double x, double y)
+{
+  transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
 }
 
 
@@ -321,11 +316,6 @@ void Fl_Pico_Graphics_Driver::gap()
 }
 
 
-static double _fl_hypot(double x, double y) {
-  return sqrt(x*x + y*y);
-}
-
-
 void Fl_Pico_Graphics_Driver::circle(double x, double y, double r)
 {
   begin_loop();
@@ -333,18 +323,18 @@ void Fl_Pico_Graphics_Driver::circle(double x, double y, double r)
   double Y = 0;
   fl_vertex(x+X,y+Y);
 
-  double epsilon; {
-    double r1 = _fl_hypot(fl_transform_dx(r,0), fl_transform_dy(r,0));
-    double r2 = _fl_hypot(fl_transform_dx(0,r), fl_transform_dy(0,r));
-    if (r1 > r2) r1 = r2;
-    if (r1 < 2.) r1 = 2.;
-    epsilon = 2*acos(1.0 - 0.125/r1);
-  }
-  double A = 360.0;
-  int i = int(ceil(fabs(A)/epsilon));	// Segments in approximation
+  double rx = fabs(transform_dx(r, r));
+  double ry = fabs(transform_dy(r, r));
+
+  double circ = M_PI*0.5*(rx+ry);
+  int segs = circ * 360 / 1000;  // every line is about three pixels long
+  if (segs<16) segs = 16;
+
+  double A = 2*M_PI;
+  int i = segs;
 
   if (i) {
-    epsilon = A/i;			// Arc length for equal-size steps
+    double epsilon = A/i;			// Arc length for equal-size steps
     double cos_e = cos(epsilon);	// Rotation coefficients
     double sin_e = sin(epsilon);
     do {
