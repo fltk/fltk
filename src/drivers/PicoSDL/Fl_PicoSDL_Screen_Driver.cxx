@@ -28,6 +28,10 @@
 #undef __APPLE__
 
 
+// FIXME: does that have to be here?
+Window fl_window;
+
+
 Fl_Screen_Driver* Fl_Screen_Driver::newScreenDriver()
 {
   return new Fl_PicoSDL_Screen_Driver();
@@ -132,30 +136,6 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
   return 0.0;
 }
 
-
-// FIXME: remove the stuff below
-
-#include <FL/x.H>
-#include <FL/Fl.H>
-#include <FL/Fl_Image_Surface.H>
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Graphics_Driver.H>
-
-//int Fl_X::set_cursor(Fl_Cursor) { return 0; }
-//int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
-
-//Window fl_xid(const Fl_Window* w)
-//{
-//  Fl_X *temp = Fl_X::i(w);
-//  return temp ? temp->xid : 0;
-//}
-
-//Fl_X* Fl_X::make(Fl_Window *w)
-//{
-//  return w->driver()->makeWindow();
-//}
-
-Window fl_window;
 
 
 //
