@@ -373,7 +373,7 @@ void Fl_Cocoa_Printer_Driver::print_window_part(Fl_Window *win, int x, int y, in
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
-  CGImageRef img = Fl_X::CGImage_from_window_rect(win, x, y, w, h);
+  CGImageRef img = ((Fl_Cocoa_Window_Driver*)win->driver())->CGImage_from_window_rect(x, y, w, h);
   if (save_front != win) save_front->show();
   current->set_current();
   ((Fl_Quartz_Graphics_Driver*)driver())->draw_CGImage(img,delta_x, delta_y, w, h, 0,0,w,h);

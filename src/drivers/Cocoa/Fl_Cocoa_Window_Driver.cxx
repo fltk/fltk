@@ -240,7 +240,7 @@ void Fl_Cocoa_Window_Driver::hide() {
   if ( ip->xid == fl_window )
     fl_window = 0;
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
-  ip->destroy();
+  destroy();
   delete ip;
 }
 
@@ -273,7 +273,7 @@ void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, 
 
 int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data)
 {
-  CGImageRef img = Fl_X::CGImage_from_window_rect(Fl_Window::current(), src_x, src_y, src_w, src_h);
+  CGImageRef img = CGImage_from_window_rect(src_x, src_y, src_w, src_h);
   if (img) {
     ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,dest_x,dest_y,src_w,src_h,0,0,src_w,src_h);
     CFRelease(img);

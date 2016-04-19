@@ -86,15 +86,11 @@ typedef unsigned int NSUInteger;
 #endif
 
 #ifdef __OBJC__
-@class NSCursor;
 @class NSOpenGLPixelFormat;
 @class NSOpenGLContext;
-@class CALayer;
 #else
-class NSCursor;
 class NSOpenGLPixelFormat;
 class NSOpenGLContext;
-class CALayer;
 #endif // __OBJC__
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
@@ -116,9 +112,6 @@ typedef float CGFloat;
 #endif
 #endif // CGFLOAT_DEFINED
 
-//extern CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h);
-extern NSCursor *fl_default_cursor;
-
 // This object contains all mac-specific stuff about a window:
 // WARNING: this object is highly subject to change!
 class Fl_X {
@@ -130,14 +123,6 @@ public:
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
   static void make(Fl_Window*);
-  CGRect* subRect() { return subRect_; } // getter
-  void subRect(CGRect *r) { subRect_ = r; } // setter
-  bool mapped_to_retina();      // is window mapped to retina display?
-  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
-  bool changed_resolution();      // did window just moved to display with another resolution?
-  void changed_resolution(bool);// sets whether window just moved to display with another resolution
-  bool in_windowDidResize();      // is window performing windowDidResize?
-  void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
   // Cocoa additions
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
   static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
@@ -146,14 +131,6 @@ public:
   static void GLcontext_release(NSOpenGLContext*);
   static void GLcontext_makecurrent(NSOpenGLContext*);
   static void GL_cleardrawable(void);
-  void destroy(void);
-  static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
-  static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
-private:
-  CGRect* subRect_;           // makes sure subwindow remains inside its parent window
-  // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
-  // whether window is OpenGL and is currently being resized.
-  unsigned mapped_to_retina_;
 };
 
 extern Window fl_window;

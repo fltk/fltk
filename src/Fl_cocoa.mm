@@ -754,7 +754,8 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
     srect = CGRectIntersection(prect, srect); // area of subwindow inside its parent
     from = parent;
   }
-  CGRect *r = Fl_X::i(w)->subRect();
+  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)w->driver();
+  CGRect *r = d->subRect();
   CGRect current_clip = (r ? *r : full); // current subwindow clip
   if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
     delete r;
@@ -764,7 +765,7 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
       r = new CGRect(srect);
       if (r->size.width == 0 && r->size.height == 0) r->origin.x = r->origin.y = 0;
     }
-    Fl_X::i(w)->subRect(r);
+    d->subRect(r);
   }
 }
 
@@ -1229,34 +1230,34 @@ static void orderfront_subwindows(FLWindow *xid)
 
 static const unsigned windowDidResize_mask = 1;
 
-bool Fl_X::in_windowDidResize() {
-  return mapped_to_retina_ & windowDidResize_mask;
+bool Fl_Cocoa_Window_Driver::in_windowDidResize() {
+  return window_flags_ & windowDidResize_mask;
 }
 
-void Fl_X::in_windowDidResize(bool b) {
-  if (b) mapped_to_retina_ |= windowDidResize_mask;
-  else mapped_to_retina_ &= ~windowDidResize_mask;
+void Fl_Cocoa_Window_Driver::in_windowDidResize(bool b) {
+  if (b) window_flags_ |= windowDidResize_mask;
+  else window_flags_ &= ~windowDidResize_mask;
 }
 
 static const unsigned mapped_mask = 2;
 static const unsigned changed_mask = 4;
 
-bool Fl_X::mapped_to_retina() {
-  return mapped_to_retina_ & mapped_mask;
+bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
+  return window_flags_ & mapped_mask;
 }
 
-void Fl_X::mapped_to_retina(bool b) {
-  if (b) mapped_to_retina_ |= mapped_mask;
-  else mapped_to_retina_ &= ~mapped_mask;
+void Fl_Cocoa_Window_Driver::mapped_to_retina(bool b) {
+  if (b) window_flags_ |= mapped_mask;
+  else window_flags_ &= ~mapped_mask;
 }
 
-bool Fl_X::changed_resolution() {
-  return mapped_to_retina_ & changed_mask;
+bool Fl_Cocoa_Window_Driver::changed_resolution() {
+  return window_flags_ & changed_mask;
 }
 
-void Fl_X::changed_resolution(bool b) {
-  if (b) mapped_to_retina_ |= changed_mask;
-  else mapped_to_retina_ &= ~changed_mask;
+void Fl_Cocoa_Window_Driver::changed_resolution(bool b) {
+  if (b) window_flags_ |= changed_mask;
+  else window_flags_ &= ~changed_mask;
 }
 
 
@@ -1349,12 +1350,13 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     parent = parent->window();
   }
   resize_from_system = window;
-  if (window->as_gl_window() && Fl_X::i(window)) Fl_X::i(window)->in_windowDidResize(true);
+  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)window->driver();
+  if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
-  if (window->as_gl_window() && Fl_X::i(window)) Fl_X::i(window)->in_windowDidResize(false);
+  if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
@@ -1923,24 +1925,25 @@ static void handleUpdateEvent( Fl_Window *window )
 {
   if ( !window ) return;
   Fl_X *i = Fl_X::i( window );
+  Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)window->driver();
   if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
-    bool previous = i->mapped_to_retina();
+    bool previous = d->mapped_to_retina();
     // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
     //NSSize s = [[i->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
     typedef NSSize (*convertSizeIMP)(id, SEL, NSSize);
     static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
     NSSize s = addr([i->xid contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
-    i->mapped_to_retina( int(s.width + 0.5) > 10 );
-    if (window->driver()->wait_for_expose_value == 0 && previous != i->mapped_to_retina()) i->changed_resolution(true);
+    d->mapped_to_retina( int(s.width + 0.5) > 10 );
+    if (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina()) d->changed_resolution(true);
   }  
-  window->driver()->wait_for_expose_value = 0;
+  d->wait_for_expose_value = 0;
 
   if ( i->region ) {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
     i->region = 0;
   }
   window->clear_damage(FL_DAMAGE_ALL);
-  window->driver()->flush();
+  d->flush();
   window->clear_damage();
 }     
 
@@ -2944,13 +2947,14 @@ void Fl_X::make(Fl_Window* w)
     }
   
     Fl_X *x = new Fl_X;
-    w->driver()->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
+    Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)w->pWindowDriver;
+    d->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
-    x->subRect(0);
-    ((Fl_Cocoa_Window_Driver*)w->pWindowDriver)->gc = 0;
-    x->mapped_to_retina(false);
-    x->changed_resolution(false);
-    x->in_windowDidResize(false);
+    d->subRect(0);
+    d->gc = 0;
+    d->mapped_to_retina(false);
+    d->changed_resolution(false);
+    d->in_windowDidResize(false);
   
     NSRect crect;
     if (w->fullscreen_active()) {
@@ -3251,7 +3255,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
   fl_window = i->xid;
-  ((Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver())->high_resolution( i->mapped_to_retina() );
+  ((Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver())->high_resolution( mapped_to_retina() );
   
   NSGraphicsContext *nsgc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -3272,7 +3276,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   CGContextScaleCTM(gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   // for subwindows, limit drawing to inside of parent window
   // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
-  if (i->subRect()) CGContextClipToRect(gc, CGRectOffset(*(i->subRect()), -0.5, -0.5));
+  if (subRect()) CGContextClipToRect(gc, CGRectOffset(*(subRect()), -0.5, -0.5));
   
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(gc);
@@ -3498,7 +3502,8 @@ int Fl_Darwin_System_Driver::clipboard_contains(const char *type) {
   return found != nil;
 }
 
-void Fl_X::destroy() {
+void Fl_Cocoa_Window_Driver::destroy() {
+  FLWindow *xid = fl_xid(pWindow);
   if (xid) {
     [xid close];
   }
@@ -4115,7 +4120,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
 }
 
 
-unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
+unsigned char *Fl_Cocoa_Window_Driver::bitmap_from_window_rect(int x, int y, int w, int h, int *bytesPerPixel)
 /* Returns a capture of a rectangle of a mapped window as a pre-multiplied RGBA array of bytes.
  Alpha values are always 1 (except for the angles of a window title bar)
  so pre-multiplication can be ignored.
@@ -4123,6 +4128,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
  delete[] the returned pointer after use
  */
 {
+  Fl_Window *win = pWindow;
   NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
   if (bitmap == nil) return NULL;
   *bytesPerPixel = [bitmap bitsPerPixel]/8;
@@ -4192,12 +4198,13 @@ static void nsbitmapProviderReleaseData (void *info, const void *data, size_t si
   [(NSBitmapImageRep*)info release];
 }
 
-CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h)
+CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w, int h)
 /* Returns a capture of a rectangle of a mapped window as a CGImage.
  With retina displays, the returned image has twice the width and height.
  CFRelease the returned CGImageRef after use
  */
 {
+  Fl_Window *win = pWindow;
   CGImageRef img;
   NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
   if (fl_mac_os_version >= 100500) {
@@ -4296,7 +4303,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   if (layer) {
     Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, w(), htop);
   } else {
-    CGImageRef img = Fl_X::CGImage_from_window_rect(pWindow, 0, -htop, w(), htop);
+    CGImageRef img = CGImage_from_window_rect(0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
     clip_to_rounded_corners(auxgc, w(), htop);
     CGContextDrawImage(auxgc, CGRectMake(0, 0, w(), htop), img);

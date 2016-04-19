@@ -66,7 +66,10 @@ class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
 private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
-
+  CGRect* subRect_;           // makes sure subwindow remains inside its parent window
+  // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
+  // whether window is OpenGL and is currently being resized.
+  unsigned window_flags_;
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
@@ -74,6 +77,17 @@ public:
   NSCursor *cursor;
   static void q_release_context(Fl_Cocoa_Window_Driver *x = 0); // free all resources associated with gc
   void set_key_window();
+  bool mapped_to_retina();      // is window mapped to retina display?
+  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
+  bool changed_resolution();      // did window just moved to display with another resolution?
+  void changed_resolution(bool);// sets whether window just moved to display with another resolution
+  bool in_windowDidResize();      // is window performing windowDidResize?
+  void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
+  CGRect* subRect() { return subRect_; } // getter
+  void subRect(CGRect *r) { subRect_ = r; } // setter
+  void destroy();
+  unsigned char *bitmap_from_window_rect(int x, int y, int w, int h, int *bytesPerPixel);
+  CGImageRef CGImage_from_window_rect(int x, int y, int w, int h);
 
   // --- window data
   virtual int decorated_w();

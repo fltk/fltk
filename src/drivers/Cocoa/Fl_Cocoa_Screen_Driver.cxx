@@ -339,7 +339,8 @@ Fl_Cocoa_Screen_Driver::read_image(uchar *p,		// I - Pixel buffer or NULL to all
     if( (sw - x < w) || (sh - y < h) )  return NULL;
   }
   else { // reading from current window
-    base = Fl_X::bitmap_from_window_rect(Fl_Window::current(),x,y,w,h,&delta);
+    Fl_Cocoa_Window_Driver *d = (Fl_Cocoa_Window_Driver*)Fl_Window::current()->driver();
+    base = d->bitmap_from_window_rect(x,y,w,h,&delta);
     if (!base) return NULL;
     rowBytes = delta*w;
     x = y = 0;
