@@ -123,7 +123,7 @@ public:
   virtual void make_current();
   virtual void label(const char *name, const char *mininame);
 
-  virtual Fl_X *makeWindow() { /* FIXME: move Fl_X::make(Fl_Window*) here for OSX, MSWin, and X11 */ return 0; }
+  virtual Fl_X *makeWindow() { return 0; }
   virtual void wait_for_expose();
   virtual void destroy_double_buffer();
   virtual void show();

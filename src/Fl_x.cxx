@@ -2824,7 +2824,7 @@ void Fl_X11_Window_Driver::show() {
     if (pWindow->type() != FL_DOUBLE_WINDOW && can_boxcheat(pWindow->box())) {
       fl_background_pixel = int(fl_xpixel(pWindow->color()));
     }
-    Fl_X::make_xid(pWindow);
+    makeWindow();
   } else {
     XMapRaised(fl_display, fl_xid(pWindow));
   }
