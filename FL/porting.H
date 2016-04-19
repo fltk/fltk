@@ -68,54 +68,15 @@ public:
   Fl_Region region;
   Fl_X *next;              // chain of mapped windows
   int wait_for_expose;
-//  NSCursor *cursor;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
   static Fl_X* make(Fl_Window*);
   void flush();
-//  CGRect* subRect() { return subRect_; } // getter
-//  void subRect(CGRect *r) { subRect_ = r; } // setter
-//  bool mapped_to_retina();      // is window mapped to retina display?
-//  void mapped_to_retina(bool);  // sets whether window is mapped to retina display
-//  bool changed_resolution();      // did window just moved to display with another resolution?
-//  void changed_resolution(bool);// sets whether window just moved to display with another resolution
-//  bool in_windowDidResize();      // is window performing windowDidResize?
-//  void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
-//  // Quartz additions:
-//  CGContextRef gc;                 // graphics context (NULL when using QD)
-//  static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
-//  // Cocoa additions
-//  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // computes NSOpenGLPixelFormat from Gl window's mode
-//  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
-//  static void GLcontext_update(NSOpenGLContext*);
-//  static void GLcontext_flushbuffer(NSOpenGLContext*);
-//  static void GLcontext_release(NSOpenGLContext*);
-//  static void GLcontext_makecurrent(NSOpenGLContext*);
-//  static void GL_cleardrawable(void);
-//  void destroy(void);
-//  void map(void);
-//  void unmap(void);
-//  void collapse(void);
-//  WindowRef window_ref(void); // useless with cocoa GL windows
-//  void set_key_window(void);
-//  // OS X doesn't have per window icons
   static void set_default_icons(const Fl_RGB_Image*[], int);
   void set_icons();
   int set_cursor(Fl_Cursor);
   int set_cursor(const Fl_RGB_Image*, int, int);
-//  static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
-//  static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
-//  static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h);
-//  static void *get_carbon_function(const char *name);
-//  static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
-//  static int next_marked_length; // next length of marked text after current marked text will have been replaced
-//  static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
-//  static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
-//  static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
-//  static int dnd(int use_selection); // call Fl_X::dnd(1) to support text dragging
-//  static int calc_mac_os_version(void); // computes the fl_mac_os_version global variable
-//  static void clip_to_rounded_corners(CGContextRef gc, int w, int h);
 };
 
 extern Window fl_window;

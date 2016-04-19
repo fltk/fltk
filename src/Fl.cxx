@@ -18,17 +18,6 @@
 
 #include <config.h>
 
-#ifdef WIN32
-#elif defined(__APPLE__)
-#elif defined(USE_SDL)
-#  pragma message "FL_SDL: implement the FLTK core in its own file"
-#elif defined(ANDROID)
-#  pragma message "ANDROID: implement the FLTK core in its own file"
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement the FLTK core in its own file"
-#  include "Fl_porting.cxx"
-#endif
-
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Screen_Driver.H>

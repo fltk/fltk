@@ -58,19 +58,18 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
           case SDL_WINDOWEVENT_EXPOSED:
           case SDL_WINDOWEVENT_SHOWN:
           {
-            //event->window.windowID
             if ( !window ) break;;
+            Fl_Window_Driver *wd = window->driver();
             Fl_X *i = Fl_X::i(Fl::first_window());
-            i->w->driver()->wait_for_expose_value = 0;
-
+            wd->wait_for_expose_value = 0;
             if ( i->region ) {
               XDestroyRegion(i->region);
               i->region = 0;
             }
             window->clear_damage(FL_DAMAGE_ALL);
-            i->flush();
+            wd->flush();
             window->clear_damage();
-            Fl_X::first->w->driver()->wait_for_expose_value = 0;
+            wd->wait_for_expose_value = 0;
           }
             break;
         }
