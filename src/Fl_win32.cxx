@@ -1356,7 +1356,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
 
   case WM_GETMINMAXINFO:
-    Fl_X::i(window)->set_minmax((LPMINMAXINFO)lParam);
+    ((Fl_WinAPI_Window_Driver*)window->driver())->set_minmax((LPMINMAXINFO)lParam);
     break;
 
   case WM_SIZE:
@@ -1559,8 +1559,8 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   return ret;
 }
 
-int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
-  return fake_X_wm_style(w, X, Y, bt, bx, by, 0, 0, w->maxw, w->minw, w->maxh, w->minh, w->size_range_set);
+int Fl_WinAPI_Window_Driver::fake_X_wm(int &X,int &Y, int &bt,int &bx, int &by) {
+  return fake_X_wm_style(pWindow, X, Y, bt, bx, by, 0, 0, maxw(), minw(), maxh(), minh(), size_range_set());
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1597,7 +1597,7 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
     int dummy_x, dummy_y, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
     //specifically menus) can be moved offscreen.
-    if (Fl_X::fake_X_wm(pWindow, dummy_x, dummy_y, bt, bx, by)) {
+    if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
       X -= bx;
       Y -= by+bt;
       W += 2*bx;
@@ -1652,7 +1652,7 @@ void fl_fix_focus(); // in Fl.cxx
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
-Fl_X* Fl_X::make(Fl_Window* w) {
+Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
   fl_open_display();
@@ -1660,6 +1660,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // if the window is a subwindow and our parent is not mapped yet, we
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
+  Fl_Window* w = pWindow;
   if (w->parent() && !Fl_X::i(w->window())) {
     w->set_visible();
     return 0L;
@@ -1696,7 +1697,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wcw.lpfnWndProc = (WNDPROC)WndProc;
     wcw.cbClsExtra = wcw.cbWndExtra = 0;
     wcw.hInstance = fl_display;
-    if (!w->icon() && !((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->icon_->count)
+    if (!w->icon() && !icon_->count)
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
     wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
     wcw.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -1728,7 +1729,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     styleEx |= WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
     parent = fl_xid(w->window());
   } else {
-    if (!w->size_range_set) {
+    if (!size_range_set()) {
       if (w->resizable()) {
 	Fl_Widget *o = w->resizable();
 	int minw = o->w(); if (minw > 100) minw = 100;
@@ -1742,7 +1743,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
     int wintype = 0;
     if (w->border() && !w->parent()) {
-      if (w->size_range_set && (w->maxw != w->minw || w->maxh != w->minh)) wintype = 2;
+      if (size_range_set() && (maxw() != minw() || maxh() != minh())) wintype = 2;
 	  else wintype = 1;
     }
 
@@ -1769,17 +1770,17 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     }
 
     int xwm = xp , ywm = yp , bt, bx, by;
-    fake_X_wm_style(w, xwm, ywm, bt, bx, by, style, styleEx, w->maxw, w->minw, w->maxh, w->minh, w->size_range_set);
+    fake_X_wm_style(w, xwm, ywm, bt, bx, by, style, styleEx, maxw(), minw(), maxh(), minh(), size_range_set());
     if (by+bt) {
       wp += 2*bx;
       hp += 2*by+bt;
     }
-    if (!w->force_position()) {
+    if (!force_position()) {
       xp = yp = CW_USEDEFAULT;
     } else {
       if (!Fl::grab()) {
 	xp = xwm; yp = ywm;
-        w->x(xp);w->y(yp);
+        x(xp); y(yp);
       }
       xp -= bx;
       yp -= by+bt;
@@ -1796,13 +1797,13 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   }
 
   Fl_X *x = new Fl_X;
-  w->driver()->other_xid = 0;
-  x->w = w; w->i = x;
+  other_xid = 0;
+  x->w = w;
+  i(x);
   x->region = 0;
   x->private_dc = 0;
-  Fl_WinAPI_Window_Driver *driver = (Fl_WinAPI_Window_Driver*)w->driver();
-  driver->cursor = LoadCursor(NULL, IDC_ARROW);
-  driver->custom_cursor = 0;
+  cursor = LoadCursor(NULL, IDC_ARROW);
+  custom_cursor = 0;
   if (!fl_codepage) fl_get_codepage();
 
   WCHAR *lab = NULL;
@@ -1831,7 +1832,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->next = Fl_X::first;
   Fl_X::first = x;
 
-  ((Fl_WinAPI_Window_Driver*)w->pWindowDriver)->set_icons();
+  set_icons();
 
   if (w->fullscreen_active()) {
   /* We need to make sure that the fullscreen is created on the
@@ -1850,8 +1851,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   if (!fl_clipboard_notify_empty() && clipboard_wnd == NULL)
     fl_clipboard_notify_target(x->xid);
 
-  w->driver()->wait_for_expose_value = 1;
-  if (Fl_Window::show_iconic_) {showit = 0; Fl_Window::show_iconic_ = 0;}
+  wait_for_expose_value = 1;
+  if (show_iconic()) {showit = 0; show_iconic(0);}
   if (showit) {
     w->set_visible();
     int old_event = Fl::e_number;
@@ -1883,24 +1884,24 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
 HINSTANCE fl_display = GetModuleHandle(NULL);
 
-void Fl_X::set_minmax(LPMINMAXINFO minmax)
+void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax)
 {
   int td, wd, hd, dummy_x, dummy_y;
 
-  fake_X_wm(w, dummy_x, dummy_y, td, wd, hd);
+  fake_X_wm(dummy_x, dummy_y, td, wd, hd);
   wd *= 2;
   hd *= 2;
   hd += td;
 
-  minmax->ptMinTrackSize.x = w->minw + wd;
-  minmax->ptMinTrackSize.y = w->minh + hd;
-  if (w->maxw) {
-    minmax->ptMaxTrackSize.x = w->maxw + wd;
-    minmax->ptMaxSize.x = w->maxw + wd;
+  minmax->ptMinTrackSize.x = minw() + wd;
+  minmax->ptMinTrackSize.y = minh() + hd;
+  if (maxw()) {
+    minmax->ptMaxTrackSize.x = maxw() + wd;
+    minmax->ptMaxSize.x = maxw() + wd;
   }
-  if (w->maxh) {
-    minmax->ptMaxTrackSize.y = w->maxh + hd;
-    minmax->ptMaxSize.y = w->maxh + hd;
+  if (maxh()) {
+    minmax->ptMaxTrackSize.y = maxh() + hd;
+    minmax->ptMaxSize.y = maxh() + hd;
   }
 }
 
@@ -2247,7 +2248,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
 void Fl_WinAPI_Window_Driver::show() {
   if (!shown()) {
     // if (can_boxcheat(box())) fl_background_pixel = fl_xpixel(color());
-    Fl_X::make(pWindow);
+    makeWindow();
   } else {
     // Once again, we would lose the capture if we activated the window.
     Fl_X *i = Fl_X::i(pWindow);

@@ -72,11 +72,14 @@ public:
   struct icon_data *icon_;
   HCURSOR cursor;
   int custom_cursor;
+  void set_minmax(LPMINMAXINFO minmax);
+  int fake_X_wm(int &X, int &Y, int &bt,int &bx,int &by);
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();
 
   // --- window management
+  virtual Fl_X *makeWindow();
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();

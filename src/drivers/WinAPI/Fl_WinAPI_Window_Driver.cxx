@@ -524,12 +524,12 @@ void Fl_WinAPI_Window_Driver::fullscreen_on() {
 void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
   DWORD style = GetWindowLong(fl_xid(pWindow), GWL_STYLE);
-  // Remove the xid temporarily so that Fl_X::fake_X_wm() behaves like it
-  // does in Fl_X::make().
+  // Remove the xid temporarily so that Fl_WinAPI_Window_Driver::fake_X_wm() behaves like it
+  // does in Fl_WinAPI_Window_Driver::makeWindow().
   HWND xid = fl_xid(pWindow);
   Fl_X::i(pWindow)->xid = NULL;
   int wx, wy, bt, bx, by;
-  switch (Fl_X::fake_X_wm(pWindow, wx, wy, bt, bx, by)) {
+  switch (fake_X_wm(wx, wy, bt, bx, by)) {
     case 0:
       break;
     case 1:

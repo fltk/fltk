@@ -58,12 +58,7 @@ public:
   // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-  static int fake_X_wm(const Fl_Window* w,int &X, int &Y,
-		                 int &bt,int &bx,int &by);
   void make_fullscreen(int X, int Y, int W, int H);
-  void set_minmax(LPMINMAXINFO minmax);
-  void mapraise();
-  static Fl_X* make(Fl_Window*);
 };
 extern FL_EXPORT UINT fl_wake_msg;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
