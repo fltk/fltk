@@ -47,24 +47,24 @@ inline void fl_open_callback(void (*)(const char *)) {}
 
 // This object contains all platform-specific stuff about a window:
 // WARNING: this object is highly subject to change!
-class Fl_X {
-public:
-  Window xid;              // pointer to the native window object (FLWindow*)
-  Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
-  Fl_Window *w;            // FLTK window for
-  Fl_Region region;
-  Fl_X *next;              // chain of mapped windows
-  int wait_for_expose;
-  static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return w->i;}
-  static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
-  static Fl_X* make(Fl_Window*);
-  void flush();
-  static void set_default_icons(const Fl_RGB_Image*[], int);
-  void set_icons();
-  int set_cursor(Fl_Cursor);
-  int set_cursor(const Fl_RGB_Image*, int, int);
-};
+//class Fl_X {
+//public:
+//  Window xid;              // pointer to the native window object (FLWindow*)
+//  Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (overlay window)
+//  Fl_Window *w;            // FLTK window for
+//  Fl_Region region;
+//  Fl_X *next;              // chain of mapped windows
+//  int wait_for_expose;
+//  static Fl_X* first;
+//  static Fl_X* i(const Fl_Window* w) {return w->i;}
+//  static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
+//  static Fl_X* make(Fl_Window*);
+//  void flush();
+//  static void set_default_icons(const Fl_RGB_Image*[], int);
+//  void set_icons();
+//  int set_cursor(Fl_Cursor);
+//  int set_cursor(const Fl_RGB_Image*, int, int);
+//};
 
 extern Window fl_window;
 

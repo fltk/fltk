@@ -141,19 +141,19 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Graphics_Driver.H>
 
-int Fl_X::set_cursor(Fl_Cursor) { return 0; }
-int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
+//int Fl_X::set_cursor(Fl_Cursor) { return 0; }
+//int Fl_X::set_cursor(Fl_RGB_Image const*, int, int) { return 0; }
 
-Window fl_xid(const Fl_Window* w)
-{
-  Fl_X *temp = Fl_X::i(w);
-  return temp ? temp->xid : 0;
-}
+//Window fl_xid(const Fl_Window* w)
+//{
+//  Fl_X *temp = Fl_X::i(w);
+//  return temp ? temp->xid : 0;
+//}
 
-Fl_X* Fl_X::make(Fl_Window *w)
-{
-  return w->driver()->makeWindow();
-}
+//Fl_X* Fl_X::make(Fl_Window *w)
+//{
+//  return w->driver()->makeWindow();
+//}
 
 Window fl_window;
 
