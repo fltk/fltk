@@ -95,34 +95,10 @@ typedef float CGFloat;
 #endif
 #endif // CGFLOAT_DEFINED
 
-// This object contains all mac-specific stuff about a window:
-// WARNING: this object is highly subject to change!
-class Fl_X {
-public:
-  Window xid;              // pointer to the Cocoa window object (FLWindow*)
-  Fl_Window *w;            // FLTK window for 
-  Fl_Region region;
-  Fl_X *next;              // chain of mapped windows
-  static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-};
-
-extern Window fl_window;
-
 #endif // FL_LIBRARY || FL_INTERNALS
 
 
 extern CGContextRef fl_gc;
-
-extern Window fl_xid(const Fl_Window*);
-extern Fl_Window* fl_find(Window xid);
-
-extern Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
-extern Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
-extern void fl_delete_bitmask(Fl_Bitmask bm);
-
-extern int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
-extern void fl_open_display();
 
 #endif // FL_DOXYGEN
 /** \file
@@ -134,11 +110,13 @@ extern void fl_open_display();
  \sa \ref osissues_macos
  @{ */
 
+#ifdef FL_DOXYGEN
 /** @brief Register a function called for each file dropped onto an application icon.
  \e cb will be called with a single Unix-style file name and path.
  If multiple files were dropped, \e cb will be called multiple times.
  */
 extern void fl_open_callback(void (*cb)(const char *));
+#endif
 
 /** 
  * \brief Attaches a callback to the "About myprog" item of the system application menu.

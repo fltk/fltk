@@ -2831,10 +2831,8 @@ void Fl_X11_Window_Driver::show() {
 }
 
 
-FL_EXPORT Window fl_xid_(const Fl_Window *w) {
-  Fl_X *temp = Fl_X::i(w);
-  return temp ? temp->xid : 0;
-}
+FL_EXPORT void fl_open_callback(void (*)(const char *)) {}
+
 
 //#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON

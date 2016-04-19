@@ -1967,6 +1967,11 @@ void fl_close_display()
   Fl::screen_driver()->close_display();
 }
 
+FL_EXPORT Window fl_xid_(const Fl_Window *w) {
+  Fl_X *temp = Fl_X::i(w);
+  return temp ? temp->xid : 0;
+}
+
 //
 // End of "$Id$".
 //

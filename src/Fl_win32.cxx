@@ -2381,11 +2381,6 @@ void fl_cleanup_dc_list(void) {          // clean up the list
   } while(t);
 }
 
-FL_EXPORT Window fl_xid_(const Fl_Window *w) {
-  Fl_X *temp = Fl_X::i(w);
-  return temp ? temp->xid : 0;
-}
-
 /* Returns images of the captures of the window title-bar, and the left, bottom and right window borders.
  This function exploits a feature of Fl_WinAPI_Screen_Driver::read_win_rectangle() which,
  when fl_gc is set to the screen device context, captures the window decoration.
@@ -2433,6 +2428,10 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   fl_graphics_driver->gc(save_gc);
   previous->Fl_Surface_Device::set_current();
 }
+
+
+FL_EXPORT void fl_open_callback(void (*)(const char *)) {}
+
 
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window

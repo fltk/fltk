@@ -4224,12 +4224,6 @@ CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w,
   return img;
 }
 
-Window fl_xid(const Fl_Window* w)
-{
-  Fl_X *temp = Fl_X::i(w);
-  return temp ? temp->xid : 0;
-}
-
 int Fl_Cocoa_Window_Driver::decorated_w()
 {
   if (!shown() || parent() || !border() || !visible())

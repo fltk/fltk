@@ -44,19 +44,6 @@ typedef HWND Window;
 #define VK_APPS 0x5D
 #endif
 
-// this object contains all win32-specific stuff about a window:
-// Warning: this object is highly subject to change!
-class FL_EXPORT Fl_X {
-public:
-  // member variables - add new variables only at the end of this block
-  Window xid;
-  Fl_Window* w;
-  Fl_Region region;
-  Fl_X *next;
-  // static variables, static functions and member functions
-  static Fl_X* first;
-  static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-};
 extern FL_EXPORT UINT fl_wake_msg;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_Window::make_xid()
@@ -64,16 +51,8 @@ extern FL_EXPORT HPALETTE fl_palette; // non-zero only on 8-bit displays!
 extern FL_EXPORT void fl_release_dc(HWND w, HDC dc);
 extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
-inline Window fl_xid(const Fl_Window* w) { Fl_X *temp = Fl_X::i(w); return temp ? temp->xid : 0; }
-
-extern FL_EXPORT void fl_open_display();
-
-#else
-FL_EXPORT Window fl_xid_(const Fl_Window* w);
-#define fl_xid(w) fl_xid_(w)
 #endif // FL_LIBRARY || FL_INTERNALS
 
-FL_EXPORT Fl_Window* fl_find(Window xid);
 
 // most recent fl_color() or fl_rgbcolor() points at one of these:
 extern FL_EXPORT struct Fl_XMap {
@@ -87,38 +66,13 @@ FL_EXPORT HBRUSH fl_brush(); // allocates a brush if necessary
 FL_EXPORT HBRUSH fl_brush_action(int); // now does the real work
 
 extern FL_EXPORT HINSTANCE fl_display;
-extern FL_EXPORT Window fl_window;
 extern FL_EXPORT HDC fl_gc;
 extern FL_EXPORT MSG fl_msg;
 extern FL_EXPORT HDC fl_GetDC(Window);
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 
-/*#define fl_create_offscreen(w, h) \
-  CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h)
-
-# define fl_begin_offscreen(b) \
-   void* _sgc=fl_graphics_driver->gc(); Window _sw=fl_window; \
-   Fl_Surface_Device *_ss = Fl_Surface_Device::surface(); \
-HDC _tmp_gc = fl_makeDC(b); int _savedc = SaveDC(_tmp_gc); \
-Fl_Display_Device::display_device()->set_current(); \
-   fl_graphics_driver->gc(_tmp_gc);  fl_window=(HWND)b; fl_push_no_clip()
-
-# define fl_end_offscreen() \
-   fl_pop_clip(); RestoreDC((HDC)fl_graphics_driver->gc(), _savedc); DeleteDC((HDC)fl_graphics_driver->gc()); _ss->set_current(); fl_window=_sw; fl_graphics_driver->gc(_sgc);
-
-#define fl_delete_offscreen(bitmap) DeleteObject(bitmap)*/
-
-// Bitmap masks
-
-extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
-extern FL_EXPORT Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
-extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
-
-// Dummy function to register a function for opening files via the window manager...
-inline void fl_open_callback(void (*)(const char *)) {}
-
-extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 #endif // FL_DOXYGEN
+
 //
 // End of "$Id$".
 //
