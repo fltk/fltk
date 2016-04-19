@@ -78,7 +78,7 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextStrokePath(gc_);
-  if (Fl_Display_Device::high_resolution()) {
+  if (high_resolution()) {
     /* On retina displays, all xyline() and yxline() functions produce lines that are half-unit
      (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
      of size one unit by line-width.
@@ -95,7 +95,7 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextAddLineToPoint(gc_, x1, y2);
   CGContextStrokePath(gc_);
-  if (Fl_Display_Device::high_resolution()) {
+  if (high_resolution()) {
     CGContextFillRect(gc_, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(gc_, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
   }
@@ -109,7 +109,7 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   CGContextAddLineToPoint(gc_, x1, y2);
   CGContextAddLineToPoint(gc_, x3, y2);
   CGContextStrokePath(gc_);
-  if (Fl_Display_Device::high_resolution()) {
+  if (high_resolution()) {
     CGContextFillRect(gc_, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
     CGContextFillRect(gc_, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
@@ -121,7 +121,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1) {
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextStrokePath(gc_);
-  if (Fl_Display_Device::high_resolution()) {
+  if (high_resolution()) {
     CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
   }
@@ -134,7 +134,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextAddLineToPoint(gc_, x2, y1);
   CGContextStrokePath(gc_);
-  if (Fl_Display_Device::high_resolution()) {
+  if (high_resolution()) {
     CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(gc_, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
   }
@@ -148,7 +148,7 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   CGContextAddLineToPoint(gc_, x2, y1);
   CGContextAddLineToPoint(gc_, x2, y3);
   CGContextStrokePath(gc_);
-  if (Fl_Display_Device::high_resolution()) {
+  if (high_resolution()) {
     CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
     CGContextFillRect(gc_, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
   }

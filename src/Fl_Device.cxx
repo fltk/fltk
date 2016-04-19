@@ -48,8 +48,6 @@ TODO:
 
 */
 
-bool Fl_Display_Device::high_res_window_ = false;
-
 
 /** \brief Make this surface the current drawing surface.
  This surface will receive all future graphics requests. */
@@ -80,6 +78,10 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
   return display;
 };
 
+bool Fl_Display_Device::high_resolution()
+{
+  return Fl_Display_Device::display_device()->driver()->high_resolution();
+}
 
 Fl_Surface_Device *Fl_Surface_Device::default_surface()
 {

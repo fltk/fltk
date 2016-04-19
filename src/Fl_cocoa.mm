@@ -3251,7 +3251,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
   fl_window = i->xid;
-  Fl_X::set_high_resolution( i->mapped_to_retina() );
+  ((Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver())->high_resolution( i->mapped_to_retina() );
   
   NSGraphicsContext *nsgc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -3294,17 +3294,11 @@ void Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver *x) {
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);
-//  Fl_X::set_high_resolution(false);
   CGContextFlush(gc);
   Fl_Display_Device::display_device()->driver()->gc(0);
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
 #endif
-}
-
-void Fl_X::set_high_resolution(bool new_val)
-{
-  Fl_Display_Device::high_res_window_ = new_val;
 }
 
 Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()

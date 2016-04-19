@@ -39,8 +39,11 @@ protected:
   int p_size;
   typedef struct { float x; float y; } XPOINT;
   XPOINT *p;
+  bool high_resolution_;
 public:
-  Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {}
+  Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
+    high_resolution_ = false;
+  }
   virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
@@ -67,6 +70,7 @@ public:
   void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);
+  void high_resolution(bool b) { high_resolution_ = b; }
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();
@@ -127,7 +131,7 @@ protected:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
-protected:
+  virtual bool high_resolution() { return high_resolution_; }
   virtual void global_gc();
 };
 

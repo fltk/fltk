@@ -81,14 +81,12 @@ public:
  There is no need to create any other object of this class.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
-  friend class Fl_X;
   friend class Fl_Graphics_Driver;
   static Fl_Display_Device *_display; // the platform display device
-  static bool high_res_window_; //< true when drawing to a window of a retina display (Mac OS X only)
 public:
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
   static Fl_Display_Device *display_device();
-  static bool high_resolution() {return high_res_window_;}
+  static bool high_resolution();
 };
 
 /**

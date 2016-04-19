@@ -130,7 +130,6 @@ public:
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
   static void make(Fl_Window*);
-  static void set_high_resolution(bool);
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   bool mapped_to_retina();      // is window mapped to retina display?

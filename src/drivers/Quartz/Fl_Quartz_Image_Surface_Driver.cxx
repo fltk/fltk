@@ -30,7 +30,6 @@ class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
 public:
   Fl_Surface_Device *previous;
   Window pre_window;
-  int was_high;
   Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res);
   ~Fl_Quartz_Image_Surface_Driver();
   void set_current();
@@ -81,8 +80,7 @@ void Fl_Quartz_Image_Surface_Driver::set_current() {
   driver()->gc(offscreen);
   fl_window = 0;
   Fl_Surface_Device::set_current();
-  was_high = Fl_Display_Device::high_resolution();
-  Fl_X::set_high_resolution( CGBitmapContextGetWidth(offscreen) > width );
+  ((Fl_Quartz_Graphics_Driver*)driver())->high_resolution( CGBitmapContextGetWidth(offscreen) > width );
 }
 
 void Fl_Quartz_Image_Surface_Driver::translate(int x, int y) {
@@ -111,7 +109,6 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
 
 void Fl_Quartz_Image_Surface_Driver::end_current()
 {
-  Fl_X::set_high_resolution(was_high);
   previous->Fl_Surface_Device::set_current();
   fl_window = pre_window;
 }

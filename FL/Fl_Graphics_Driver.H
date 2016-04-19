@@ -249,7 +249,8 @@ public:
   virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
   virtual void XDestroyRegion(Fl_Region r);
-
+  // the default implementation may be enough
+  virtual bool high_resolution() { return false; }
 protected:
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void global_gc();
