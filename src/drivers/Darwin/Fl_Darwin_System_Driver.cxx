@@ -37,10 +37,6 @@
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
-#include <ApplicationServices/ApplicationServices.h>
-
-
-extern int fl_mac_os_version;	// the version number of the running Mac OS X
 
 //const char* fl_local_alt   = "\xe2\x8c\xa5\\"; // U+2325 (option key)
 const char* fl_local_alt   = "⌥\\"; // U+2325 (option key)
