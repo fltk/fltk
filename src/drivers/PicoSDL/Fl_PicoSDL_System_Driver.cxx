@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "../../FL/Fl_System_Driver.H"
+#include <FL/Fl_System_Driver.H>
 //#include "Fl_PicoSDL_System_Driver.h"
 
 
@@ -31,6 +31,7 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
   return new Fl_System_Driver();
 }
 
+void fl_open_callback(void (*cb)(const char *)) {}
 
 //
 // End of "$Id: Fl_PicoSDL_System_Driver.cxx 11241 2016-02-27 13:52:27Z manolo $".

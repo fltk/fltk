@@ -89,7 +89,7 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if defined(USE_X11)
   int i = 1;
 
   Fl::args(argc,argv,i,arg);

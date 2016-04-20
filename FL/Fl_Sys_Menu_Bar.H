@@ -21,7 +21,7 @@
 
 #include <FL/Fl_Menu_Bar.H>
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN) // PORTME: Fl_Screen_Driver - system menu bar
+#if defined(__APPLE__) || defined(FL_DOXYGEN)
 
 /**
   A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
@@ -92,19 +92,11 @@ public:
   void setonly (Fl_Menu_Item *item) { Fl_Menu_::setonly(item); update(); }
 };
 
-#elif defined(WIN32)
-
-typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
-
-#elif defined(FL_PORTING)
-
-# pragma message "FL_PORTING: define your own system menu class"
-
 #else
 
 typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
 
-#endif // defined(__APPLE__) || defined(FL_DOXYGEN)  // PORTME: Fl_Screen_Driver - system menu bar
+#endif // defined(__APPLE__) || defined(FL_DOXYGEN)
 
 #endif // Fl_Sys_Menu_Bar_H
 

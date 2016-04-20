@@ -22,7 +22,8 @@
 #ifdef FL_PORTING
 #  pragma message "Implement a native file chooser (see Fl_Native_File_Chooser_Driver), or use FLTK's chooser, or don't use any chooser"
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-  platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
+  //platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val); // do this to use FLTK's default file chooser
+  platform_fnfc = 0; // do this so class Fl_Native_File_Chooser does nothing
 }
 #endif
 
