@@ -24,8 +24,9 @@
 #if !defined(Fl_X_H) && !defined(FL_DOXYGEN) 
 #  define Fl_X_H
 
-#  include "Enumerations.H"
-#  include <FL/Fl_Device.H>
+#   include <FL/Fl_Export.H>
+#   include <FL/platform_types.h>
+class Fl_Window;
 
 #  ifdef WIN32
 #    include "win32.H"
@@ -38,6 +39,8 @@
 #    pragma message "FL_PORTING: write a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
 #    include "porting.H"
 #  else // X11
+#   include <FL/fl_types.h>
+#   include <FL/Enumerations.H>
 #    ifndef USE_X11
 #      define USE_X11 1
 #    endif
@@ -50,7 +53,6 @@
 #      pragma reset woff 3322
 #    endif
 #    include <X11/Xatom.h>
-#    include "Fl_Window.H"
 
 FL_EXPORT void fl_open_display(Display*);
 
@@ -59,7 +61,6 @@ extern FL_EXPORT Display *fl_display;
 extern FL_EXPORT int fl_screen;
 extern FL_EXPORT XVisualInfo *fl_visual;
 extern FL_EXPORT Colormap fl_colormap;
-
 
 // drawing functions:
 extern FL_EXPORT GC fl_gc;
@@ -114,6 +115,7 @@ extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 // cross-platform declarations
 //
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS)
+#  include <FL/Fl_Window.H>
 
 class FL_EXPORT Fl_X {
 public:

@@ -32,7 +32,6 @@ typedef FLWindow *Window;
 typedef class FLWindow *Window; // pointer to the FLWindow objective-c class
 #endif // __OBJC__
 
-#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Widget.H> // for Fl_Callback
 
 #if (defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part must be compiled when building the FLTK libraries
@@ -85,8 +84,6 @@ struct flCocoaRegion {
   CGRect *rects;
 }; // a region is the union of a series of rectangles
 
-#  include <FL/Fl_Window.H>
-
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__
 typedef double CGFloat;
@@ -96,7 +93,6 @@ typedef float CGFloat;
 #endif // CGFLOAT_DEFINED
 
 #endif // FL_LIBRARY || FL_INTERNALS
-
 
 extern CGContextRef fl_gc;
 

@@ -28,9 +28,6 @@
 #include <windows.h>
 typedef HWND Window;
 
-#include <FL/Fl_Device.H>
-#include <FL/Fl_Window.H>
-
 // this part is included only when compiling the FLTK library or if requested explicitly
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS) 
 
@@ -52,7 +49,6 @@ extern FL_EXPORT void fl_release_dc(HWND w, HDC dc);
 extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
 #endif // FL_LIBRARY || FL_INTERNALS
-
 
 // most recent fl_color() or fl_rgbcolor() points at one of these:
 extern FL_EXPORT struct Fl_XMap {
