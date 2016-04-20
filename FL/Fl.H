@@ -52,7 +52,7 @@ struct Fl_Label;
 class Fl_Screen_Driver;
 class Fl_System_Driver;
 
-// Pointers you can use to change FLTK to a foreign language.
+// Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
 
 extern FL_EXPORT const char* fl_local_alt;   ///< string pointer used in shortcuts, you can change it to another language

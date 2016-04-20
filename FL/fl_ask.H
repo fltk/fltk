@@ -69,7 +69,7 @@ FL_EXPORT int fl_message_hotspot(void);
 FL_EXPORT void fl_message_title(const char *title);
 FL_EXPORT void fl_message_title_default(const char *title);
 
-// pointers you can use to change FLTK to a foreign language:
+// pointers you can use to change FLTK to another language:
 extern FL_EXPORT const char* fl_no;
 extern FL_EXPORT const char* fl_yes;
 extern FL_EXPORT const char* fl_ok;

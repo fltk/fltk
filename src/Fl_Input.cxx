@@ -313,7 +313,7 @@ int Fl_Input::handle_key() {
     
     // Insert characters into numeric fields after checking for legality:
     if (input_type() == FL_FLOAT_INPUT || input_type() == FL_INT_INPUT) {
-      Fl::compose_reset(); // ignore any foreign letters...
+      Fl::compose_reset(); // ignore any composed characters...
       
       // initialize the list of legal characters inside a floating point number
 #if defined(HAVE_LOCALECONV) && defined(HAVE_LOCALE_H)

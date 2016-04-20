@@ -1230,7 +1230,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (GetKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
     if (GetKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
     if (GetKeyState(VK_CONTROL)&~1) state |= FL_CTRL;
-    // Alt gets reported for the Alt-GR switch on foreign keyboards.
+    // Alt gets reported for the Alt-GR switch on non-English keyboards.
     // so we need to check the event as well to get it right:
     if ((lParam&(1<<29)) //same as GetKeyState(VK_MENU)
 	&& uMsg != WM_CHAR) state |= FL_ALT;
