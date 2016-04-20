@@ -92,6 +92,10 @@ typedef float CGFloat;
 #endif
 #endif // CGFLOAT_DEFINED
 
+#else
+
+typedef struct CGContext* CGContextRef;
+
 #endif // FL_LIBRARY || FL_INTERNALS
 
 extern CGContextRef fl_gc;
