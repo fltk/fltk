@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Darwin_System_Driver.H"
+#include <FL/x.H>
 #include <FL/Fl.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/filename.H>
