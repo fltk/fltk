@@ -313,7 +313,7 @@ void Fl_WinAPI_System_Driver::add_fd(int n, int events, void (*cb)(FL_SOCKET, vo
 }
 
 void Fl_WinAPI_System_Driver::add_fd(int fd, void (*cb)(FL_SOCKET, void*), void* v) {
-  Fl::add_fd(fd, FL_READ, cb, v);
+  add_fd(fd, FL_READ, cb, v);
 }
 
 void Fl_WinAPI_System_Driver::remove_fd(int n, int events) {

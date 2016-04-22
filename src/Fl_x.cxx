@@ -152,7 +152,7 @@ void Fl_X11_System_Driver::add_fd(int n, int events, void (*cb)(int, void*), voi
 }
 
 void Fl_X11_System_Driver::add_fd(int n, void (*cb)(int, void*), void* v) {
-  Fl::add_fd(n, POLLIN, cb, v);
+  add_fd(n, POLLIN, cb, v);
 }
 
 void Fl_X11_System_Driver::remove_fd(int n, int events) {
