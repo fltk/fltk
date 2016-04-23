@@ -41,7 +41,7 @@ class Fl_Window;
 #  else // X11
 #   include <FL/fl_types.h>
 #   include <FL/Enumerations.H>
-#    ifndef USE_X11
+#    if !defined(USE_X11)
 #      define USE_X11 1
 #    endif
 #    if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
@@ -126,7 +126,7 @@ public:
   // static variables, static functions and member functions
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return (Fl_X*)w->i;}
-#  if USE_X11 // for backward compatibility
+#  if defined(USE_X11) // for backward compatibility
   static void make_xid(Fl_Window*, XVisualInfo* =fl_visual, Colormap=fl_colormap);
   static Fl_X* set_xid(Fl_Window*, Window);
 #  endif
