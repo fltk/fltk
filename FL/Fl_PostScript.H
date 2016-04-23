@@ -228,6 +228,9 @@ class Clip {
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 protected:
+  /**
+   \brief Returns the PostScript driver of this drawing surface.
+   */
   Fl_PostScript_Graphics_Driver *driver();
 public:
   /**
