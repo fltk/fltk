@@ -25,7 +25,6 @@
 #include <FL/Fl_System_Driver.H>
 #include <stdarg.h>
 
-/** \brief Label of the PostScript file chooser window */
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 
 /**
@@ -47,32 +46,17 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
   if(ps_filename_) free(ps_filename_);
 }
 
-/**
- @brief The constructor.
- */
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
   Fl_Surface_Device::driver( new Fl_PostScript_Graphics_Driver() );
 }
 
-/**
- \brief Returns the PostScript driver of this drawing surface.
- */
 Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
 {
   return (Fl_PostScript_Graphics_Driver*)Fl_Surface_Device::driver();
 }
 
 
-/**
- @brief Begins the session where all graphics requests will go to a local PostScript file.
- *
- Opens a file dialog entitled with Fl_PostScript_File_Device::file_chooser_title to select an output PostScript file.
- @param pagecount The total number of pages to be created. Use 0 if this number is unknown when this function is called.
- @param format Desired page format.
- @param layout Desired page layout.
- @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
- */
 int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::Page_Format format, 
 					  enum Fl_Paged_Device::Page_Layout layout)
 {
@@ -99,17 +83,7 @@ extern "C" {
   }
 }
 
-/**
- @brief Begins the session where all graphics requests will go to FILE pointer.
- *
- @param ps_output A writable FILE pointer that will receive PostScript output and that should not be closed
- until after end_job() has been called.
- @param pagecount The total number of pages to be created. Use 0 if this number is unknown when this function is called.
- @param format Desired page format.
- @param layout Desired page layout.
- @return always 0.
- */
-int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount, 
+int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount,
     enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
@@ -121,15 +95,11 @@ int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount,
   return 0;
 }
 
-/** Don't use with this class. */
 int Fl_PostScript_File_Device::start_job(int pagecount, int* from, int* to)
 {
   return 1;
 }
 
-/**
- @brief The destructor.
- */
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
   Fl_PostScript_Graphics_Driver *ps = driver();
   if (ps) delete ps;

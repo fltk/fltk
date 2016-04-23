@@ -230,12 +230,38 @@ class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 protected:
   Fl_PostScript_Graphics_Driver *driver();
 public:
+  /**
+   @brief The constructor.
+   */
   Fl_PostScript_File_Device();
+  /**
+   @brief The destructor.
+   */
   ~Fl_PostScript_File_Device();
+  /** Don't use with this class. */
   int start_job(int pagecount, int* from, int* to);
+  /**
+   @brief Begins the session where all graphics requests will go to a local PostScript file.
+   *
+   Opens a file dialog entitled with Fl_PostScript_File_Device::file_chooser_title to select an output PostScript file.
+   @param pagecount The total number of pages to be created. Use 0 if this number is unknown when this function is called.
+   @param format Desired page format.
+   @param layout Desired page layout.
+   @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
+   */
   int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
 		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
-  int start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4, 
+  /**
+   @brief Begins the session where all graphics requests will go to FILE pointer.
+   *
+   @param ps_output A writable FILE pointer that will receive PostScript output and that should not be closed
+   until after end_job() has been called.
+   @param pagecount The total number of pages to be created. Use 0 if this number is unknown when this function is called.
+   @param format Desired page format.
+   @param layout Desired page layout.
+   @return always 0.
+   */
+  int start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
 		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
   int start_page (void);
   int printable_rect(int *w, int *h);
@@ -248,7 +274,8 @@ public:
   void untranslate(void);
   int end_page (void);    
   void end_job(void);  
-  static const char *file_chooser_title; 
+  /** \brief Label of the PostScript file chooser window */
+  static const char *file_chooser_title;
 };
 
 #endif // Fl_PostScript_H
