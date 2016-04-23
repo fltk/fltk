@@ -16,6 +16,9 @@
 //     http://www.fltk.org/str.php
 //
 
+#include "config_lib.h"
+#if defined(FL_CFG_SYS_POSIX) && !defined(FL_DOXYGEN)
+
 // Return the current state of a key.  This is the X version.  I identify
 // keys (mostly) by the X keysym.  So this turns the keysym into a keycode
 // and looks it up in the X key bit vector, which Fl_x.cxx keeps track of.
@@ -47,6 +50,8 @@ int Fl_X11_System_Driver::get_key(int k) {
   XQueryKeymap(fl_display, fl_key_vector);
   return event_key(k);
 }
+
+#endif // FL_CFG_SYS_POSIX
 
 //
 // End of "$Id$".
