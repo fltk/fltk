@@ -37,6 +37,8 @@ class Fl_RGB_Image;
 
 /**
  \brief A base class for platform specific window handling code.
+ This class is only for internal use by the FLTK library.
+ Each supported platform implements several of the virtual methods of this class.
   */
 class FL_EXPORT Fl_Window_Driver
 {

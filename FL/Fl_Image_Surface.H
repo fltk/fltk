@@ -33,10 +33,9 @@
  draw widgets (using Fl_Image_Surface::draw()) or to use any of the 
  \ref fl_drawings or the \ref fl_attributes. Finally, call image() on the object
  to obtain a newly allocated Fl_RGB_Image object.
- 
  Fl_GL_Window objects can be drawn in the image as well.
  
- \example
+ Usage example:
  \code
  // this is the widget that you want to draw into an image
  Fl_Widget *g = ...;
@@ -89,6 +88,11 @@ public:
 };
 
 
+/** A base class describing the interface between FLTK and draw-to-image operations.
+ This class is only for internal use by the FLTK library.
+ A supported platform should implement the virtual methods of this class
+ in order to support drawing to an Fl_RGB_Image through class Fl_Image_Surface.
+ */
 class Fl_Image_Surface_Driver : public Fl_Widget_Surface {
   friend class Fl_Image_Surface;
 protected:

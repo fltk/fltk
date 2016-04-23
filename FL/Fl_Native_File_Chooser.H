@@ -167,7 +167,12 @@ public:
   int show() ;
   };
 
-
+/** Represents the interface between FLTK and a native file chooser.
+ This class is only for internal use by the FLTK library.
+ A platform that wants to provide a native file chooser implements all virtual methods
+ of this class. Each platform supported by FLTK must also implement the constructor of the
+ Fl_Native_File_Chooser class.
+ */
 class Fl_Native_File_Chooser_Driver {
 protected:
   static void chrcat(char *s, char c);
@@ -199,6 +204,17 @@ public:
   virtual int show()  {return 1;}
 };
 
+/** A cross-platform implementation of Fl_Native_File_Chooser_Driver.
+ This implementation uses a Fl_File_Chooser object as file chooser.
+ 
+ Any platform can support the Fl_Native_File_Chooser class by implementing
+ its constructor as follows:
+ \code
+ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int type) {
+   platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(type);
+ }
+\endcode
+ */
 class Fl_Native_File_Chooser_FLTK_Driver : public Fl_Native_File_Chooser_Driver {
 private:
   void errmsg(const char *msg);
