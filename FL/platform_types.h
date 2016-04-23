@@ -19,15 +19,38 @@
 
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
-  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, struct dirent, struct stat
+  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, struct dirent, struct stat,
+  fl_intptr_t, fl_uintptr_t
 
   NOTE: *FIXME* AlbrechtS 13 Apr 2016 (concerning FL_SOCKET)
   ----------------------------------------------------------
-    The socket API is partially inconsistent because some of the methods
-    use int explicitly, but the callback typedefs use FL_SOCKET. With the
+    The Fl::add_fd() API is partially inconsistent because some of the methods
+    explicitly use 'int', but the callback typedefs use FL_SOCKET. With the
     definition of FL_SOCKET below we can have different data sizes and
     different signedness of socket numbers on *some* platforms.
  */
+
+/**
+  \todo	typedef's fl_intptr_t and fl_uintptr_t should be documented.
+*/
+#ifdef _WIN64
+
+#if defined(_MSC_VER)
+# include <stddef.h>  /* M$VC */
+#else
+# include <stdint.h>
+#endif
+
+typedef intptr_t fl_intptr_t;
+typedef uintptr_t fl_uintptr_t;
+
+#else /* ! _WIN64 */
+
+typedef long fl_intptr_t;
+typedef unsigned long fl_uintptr_t;
+
+#endif /* _WIN64 */
+
 
 #ifdef __APPLE__
 typedef struct CGContext* Fl_Offscreen;
@@ -69,7 +92,8 @@ struct stat { /* the FLTK source code uses part of the stat() API */
 #define        S_IFDIR  0040000  /* directory */
 #define        S_IFREG  0100000  /* regular */
 
-#else
+#else /* X11 */
+
 typedef unsigned long Fl_Offscreen;
 typedef unsigned long Fl_Bitmask;
 typedef struct _XRegion *Fl_Region;

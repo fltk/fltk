@@ -3,7 +3,7 @@
 //
 // Widget header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,22 +23,6 @@
 #define Fl_Widget_H
 
 #include "Enumerations.H"
-
-/**
-  \todo	typedef's fl_intptr_t and fl_uintptr_t should be documented.
-*/
-#ifdef _WIN64
-#if defined(__GNUC__) || defined(__clang__)
-#include <stdint.h>
-#else
-#include <stddef.h>  // M$VC
-#endif
-typedef intptr_t fl_intptr_t;
-typedef uintptr_t fl_uintptr_t;
-#else
-typedef long fl_intptr_t;
-typedef unsigned long fl_uintptr_t;
-#endif
 
 class Fl_Widget;
 class Fl_Window;
