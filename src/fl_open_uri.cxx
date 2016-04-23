@@ -130,7 +130,7 @@ void fl_decode_uri(char *uri)
 /**   @} */
 
 
-#if defined(FL_CFG_SYS_POSIX)
+#if defined(FL_CFG_SYS_POSIX) && !defined(FL_DOXYGEN)
 // code shared by the Mac OS and USE_X11 platforms
 #  include "drivers/Posix/Fl_Posix_System_Driver.H"
 #  include <unistd.h>

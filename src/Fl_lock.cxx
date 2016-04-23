@@ -263,7 +263,7 @@ void Fl_WinAPI_System_Driver::awake(void* msg) {
 #endif // FL_CFG_SYS_WIN32
 
 
-#if defined(FL_CFG_SYS_POSIX)
+#if defined(FL_CFG_SYS_POSIX) && !defined(FL_DOXYGEN)
 
 ////////////////////////////////////////////////////////////////
 // POSIX threading...

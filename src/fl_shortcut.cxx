@@ -442,7 +442,7 @@ Fl_System_Driver::Keyname Fl_System_Driver::table[] = {
 };
 #endif
 
-#if defined(FL_CFG_GFX_XLIB)
+#if defined(FL_CFG_GFX_XLIB) && !defined(FL_DOXYGEN)
 #include "drivers/X11/Fl_X11_System_Driver.H"
 #include <X11/Xlib.h>
 

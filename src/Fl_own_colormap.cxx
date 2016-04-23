@@ -30,7 +30,7 @@
 #include <FL/Fl_System_Driver.H>
 
 
-#ifdef FL_CFG_WIN_X11
+#if defined(FL_CFG_WIN_X11) && !defined(FL_DOXYGEN)
 // X version
 #include "drivers/X11/Fl_X11_System_Driver.H"
 
