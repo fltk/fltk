@@ -67,7 +67,7 @@ void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
 }
 
 
-void Fl::set_color(Fl_Color i, unsigned int c)
+void Fl::set_color(Fl_Color i, unsigned c)
 {
   Fl_Graphics_Driver::default_driver().set_color(i, c);
 }
