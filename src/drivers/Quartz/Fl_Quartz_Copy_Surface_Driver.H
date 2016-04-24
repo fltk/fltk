@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Quartz_Copy_Surface_Driver.H 11017 2016-01-20 21:40:12Z matt $"
+// "$Id$"
 //
 // Definition of Apple Quartz graphics driver
 // for the Fast Light Tool Kit (FLTK).
@@ -45,5 +45,5 @@ protected:
 #endif /* Fl_Quartz_Copy_Surface_Driver_H */
 
 //
-// End of "$Id: Fl_Quartz_Copy_Surface_Driver.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id$".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Quartz_Copy_Surface.cxx 11241 2016-02-27 13:52:27Z manolo $"
+// "$Id$"
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
@@ -90,5 +90,5 @@ void Fl_Quartz_Copy_Surface_Driver::untranslate() {
 #endif // FL_CFG_GFX_QUARTZ
 
 //
-// End of "$Id: Fl_Copy_Surface.H 11220 2016-02-26 12:51:47Z manolo $".
+// End of "$Id$".
 //
