@@ -105,12 +105,6 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
   if (ps) delete ps;
 }
 
-/** Shields output PostScript data from modifications of the current locale.
- It typically avoids PostScript errors caused if the current locale uses comma instead of dot
- as "decimal point".
- \param format  directives controlling output PostScript data
- \return value returned by vfprintf() call
- */
 int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 {
   va_list args;

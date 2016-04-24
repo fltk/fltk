@@ -77,6 +77,8 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_RGB_Image;
   friend int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
   friend void gl_start();
+  friend Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
+  friend void fl_delete_bitmask(Fl_Bitmask);
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -123,9 +125,17 @@ protected:
   /** Returns whether the graphics driver is currently drawing to a high resolution surface */
   virtual bool high_resolution() { return false; }
   virtual void global_gc();
+  /** Support function for Fl_Pixmap drawing */
   virtual fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array) { return 0; }
+  /** Support function for Fl_Bitmap drawing */
   virtual fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array) { return 0; }
+  /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
+  // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
+  /** Support function for image drawing */
+  virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) = 0;
+  /** Support function for image drawing */
+  virtual void delete_bitmask(Fl_Bitmask bm) = 0;
 
 public:
   Fl_Graphics_Driver();
@@ -266,12 +276,13 @@ public:
   virtual Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   /** Set the current Fl_Font_Descriptor */
   virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
-  // --- implementation is in src/fl_image.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx
-  virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) = 0;
-  virtual void delete_bitmask(Fl_Bitmask bm) = 0;
+  /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
   virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
+  /** see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
   virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
+  /** see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
+  /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
   /** \brief Draws an Fl_RGB_Image object to the device.
    *
