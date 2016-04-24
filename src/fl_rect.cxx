@@ -39,11 +39,12 @@
 extern int fl_line_width_;
 
 
+/** see fl_restore_clip() */
 void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
 }
 
-
+/** see fl_clip_region(Fl_Region) */
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
@@ -52,6 +53,7 @@ void Fl_Graphics_Driver::clip_region(Fl_Region r) {
 }
 
 
+/** see fl_clip_region(void) */
 Fl_Region Fl_Graphics_Driver::clip_region() {
   return rstack[rstackptr];
 }

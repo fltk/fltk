@@ -187,6 +187,11 @@ void Fl_Printer::end_job (void)
   printer->end_job();
 }
 
+/** Prints the widget on the drawing surface. 
+ \param[in] widget Any FLTK widget (e.g., standard, custom, window, GL window).
+ \param[in] delta_x,delta_y Optional offsets for positioning the widget's
+ top-left corner relatively to the current origin of graphics functions.
+ */
 void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
 {
   printer->draw(widget, delta_x, delta_y);

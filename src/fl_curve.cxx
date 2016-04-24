@@ -29,6 +29,7 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 
+/** see fl_curve() */
 void Fl_Graphics_Driver::curve(double X0, double Y0,
 	      double X1, double Y1,
 	      double X2, double Y2,

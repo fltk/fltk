@@ -58,6 +58,7 @@ void Fl_Image_Surface::translate(int x, int y) {platform_surface->translate(x, y
 
 void Fl_Image_Surface::untranslate() {platform_surface->untranslate();}
 
+/** Returns the Fl_Offscreen object associated to the image surface */
 Fl_Offscreen Fl_Image_Surface::offscreen() {return platform_surface->offscreen;}
 
 int Fl_Image_Surface::printable_rect(int *w, int *h)  {return platform_surface->printable_rect(w, h);}

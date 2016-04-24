@@ -37,7 +37,7 @@
 #include <FL/math.h>
 #include <stdlib.h>
 
-
+/** see fl_push_matrix() */
 void Fl_Graphics_Driver::push_matrix() {
   if (sptr==matrix_stack_size)
     Fl::error("fl_push_matrix(): matrix stack overflow.");
@@ -45,6 +45,7 @@ void Fl_Graphics_Driver::push_matrix() {
     stack[sptr++] = m;
 }
 
+/** see fl_pop_matrix() */
 void Fl_Graphics_Driver::pop_matrix() {
   if (sptr==0)
     Fl::error("fl_pop_matrix(): matrix stack underflow.");
@@ -52,6 +53,7 @@ void Fl_Graphics_Driver::pop_matrix() {
     m = stack[--sptr];
 }
 
+/** see fl_mult_matrix() */
 void Fl_Graphics_Driver::mult_matrix(double a, double b, double c, double d, double x, double y) {
   matrix o;
   o.a = a*m.a + b*m.c;
@@ -63,6 +65,7 @@ void Fl_Graphics_Driver::mult_matrix(double a, double b, double c, double d, dou
   m = o;
 }
 
+/** see fl_rotate() */
 void Fl_Graphics_Driver::rotate(double d) {
   if (d) {
     double s, c;
@@ -75,50 +78,61 @@ void Fl_Graphics_Driver::rotate(double d) {
   }
 }
 
+/** see fl_scale(double, double) */
 void Fl_Graphics_Driver::scale(double x, double y) {
   mult_matrix(x,0,0,y,0,0);
 }
 
+/** see fl_scale(double) */
 void Fl_Graphics_Driver::scale(double x) {
   mult_matrix(x,0,0,x,0,0);
 }
 
+/** see fl_translate() */
 void Fl_Graphics_Driver::translate(double x,double y) {
   mult_matrix(1,0,0,1,x,y);
 }
 
+/** see fl_begin_points() */
 void Fl_Graphics_Driver::begin_points() {
   n = 0;
   what = POINT_;
 }
 
+/** see fl_begin_line() */
 void Fl_Graphics_Driver::begin_line() {
   n = 0;
   what = LINE;
 }
 
+/** see fl_begin_loop() */
 void Fl_Graphics_Driver::begin_loop() {
   n = 0;
   what = LOOP;
 }
 
+/** see fl_begin_polygon() */
 void Fl_Graphics_Driver::begin_polygon() {
   n = 0;
   what = POLYGON;
 }
 
+/** see fl_transform_x() */
 double Fl_Graphics_Driver::transform_x(double x, double y) {
   return x*m.a + y*m.c + m.x;
 }
 
+/** see fl_transform_y() */
 double Fl_Graphics_Driver::transform_y(double x, double y) {
   return x*m.b + y*m.d + m.y;
 }
 
+/** see fl_transform_dx() */
 double Fl_Graphics_Driver::transform_dx(double x, double y) {
   return x*m.a + y*m.c;
 }
 
+/** see fl_transform_dy() */
 double Fl_Graphics_Driver::transform_dy(double x, double y) {
   return x*m.b + y*m.d;
 }

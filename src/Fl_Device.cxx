@@ -78,6 +78,7 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
   return display;
 };
 
+/** Returns whether the drawing system is currently targetted to a high resolution display */
 bool Fl_Display_Device::high_resolution()
 {
   return Fl_Display_Device::display_device()->driver()->high_resolution();

@@ -22,11 +22,13 @@
 #include <FL/Fl_Image.H>
 #include <FL/fl_draw.H>
 
-FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current target device of graphics operations
+FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
-Fl_Graphics_Driver::Fl_Graphics_Driver() {
+/** Constructor */
+Fl_Graphics_Driver::Fl_Graphics_Driver()
+{
   font_ = 0;
   size_ = 0;
   sptr=0; rstackptr=0; 
@@ -37,7 +39,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver() {
   font_descriptor_ = NULL;
 };
 
-
+/** Return the graphics driver used when drawing to the platform's display */
 Fl_Graphics_Driver &Fl_Graphics_Driver::default_driver()
 {
   static Fl_Graphics_Driver *pMainDriver = 0L;
@@ -48,7 +50,7 @@ Fl_Graphics_Driver &Fl_Graphics_Driver::default_driver()
 }
 
 
-
+/** see fl_text_extents() */
 void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int& w, int& h)
 {
   w = (int)width(t, n);
@@ -57,6 +59,7 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
   dy = descent();
 }
 
+/** see fl_focus_rect() */
 void Fl_Graphics_Driver::focus_rect(int x, int y, int w, int h)
 {
   line_style(FL_DOT);
@@ -81,50 +84,54 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   delete[] img;
 }
 
-
+/** see fl_set_spot() */
 void Fl_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
   // nothing to do, reimplement in driver if needed
 }
 
 
+/** see fl_reset_spot() */
 void Fl_Graphics_Driver::reset_spot()
 {
   // nothing to do, reimplement in driver if needed
 }
 
 
+/** Sets the value of the fl_gc global variable when it changes */
 void Fl_Graphics_Driver::global_gc()
 {
   // nothing to do, reimplement in driver if needed
 }
 
 
-void Fl_Graphics_Driver::set_color(Fl_Color i, unsigned int c)
+/** see Fl::set_color(Fl_Color, unsigned) */
+void Fl_Graphics_Driver::set_color(Fl_Color i, unsigned c)
 {
   // nothing to do, reimplement in driver if needed
 }
 
 
+/** see Fl::free_color(Fl_Color, int) */
 void Fl_Graphics_Driver::free_color(Fl_Color i, int overlay)
 {
   // nothing to do, reimplement in driver if needed
 }
 
-
+/** Add a rectangle to an Fl_Region */
 void Fl_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h)
 {
   // nothing to do, reimplement in driver if needed
 }
 
-
+/** Create a rectangular Fl_Region */
 Fl_Region Fl_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h)
 {
   // nothing to do, reimplement in driver if needed
   return 0;
 }
 
-
+/** Delete an Fl_Region */
 void Fl_Graphics_Driver::XDestroyRegion(Fl_Region r)
 {
   // nothing to do, reimplement in driver if needed
