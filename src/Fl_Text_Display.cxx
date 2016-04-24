@@ -222,7 +222,7 @@ int Fl_Text_Display::linenumber_width() const {
  
 /**
  Set the font used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
+ \version 1.3.3
 */
 void Fl_Text_Display::linenumber_font(Fl_Font val) {
   linenumber_font_ = val;
@@ -237,7 +237,7 @@ Fl_Font Fl_Text_Display::linenumber_font() const {
 
 /**
  Set the font size used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
+ \version 1.3.3
 */
 void Fl_Text_Display::linenumber_size(Fl_Fontsize val) {
   linenumber_size_ = val;
@@ -252,7 +252,7 @@ Fl_Fontsize Fl_Text_Display::linenumber_size() const {
 
 /**
  Set the foreground color used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
+ \version 1.3.3
 */
 void Fl_Text_Display::linenumber_fgcolor(Fl_Color val) {
   linenumber_fgcolor_ = val;
@@ -267,7 +267,7 @@ Fl_Color Fl_Text_Display::linenumber_fgcolor() const {
 
 /**
  Set the background color used for line numbers (if enabled).
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
+ \version 1.3.3
 */
 void Fl_Text_Display::linenumber_bgcolor(Fl_Color val) {
   linenumber_bgcolor_ = val;
@@ -283,7 +283,7 @@ Fl_Color Fl_Text_Display::linenumber_bgcolor() const {
 /**
  Set alignment for line numbers (if enabled).
  Valid values are FL_ALIGN_LEFT, FL_ALIGN_CENTER or FL_ALIGN_RIGHT.
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
+ \version 1.3.3
 */
 void Fl_Text_Display::linenumber_align(Fl_Align val) {
   linenumber_align_ = val;
@@ -313,7 +313,7 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
      - "%x"   -- For hexadecimal line numbers
      - "%o"   -- For octal line numbers
 
- \version 1.3.3 ABI feature (ignored in 1.3.x unless FL_ABI_VERSION is 10303 or higher)
+ \version 1.3.3
 */
 void Fl_Text_Display::linenumber_format(const char* val) {
   if ( linenumber_format_ ) free((void*)linenumber_format_);

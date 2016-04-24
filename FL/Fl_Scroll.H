@@ -99,7 +99,7 @@ protected:	//  (STR#1895)
     Structure to manage scrollbar and widget interior sizes.
     This is filled out by recalc_scrollbars() for use in calculations
     that need to know the visible scroll area size, etc.
-    \note Availability in FL_ABI_VERSION 10303 or higher.
+    \version 1.3.3
   */
   typedef struct {
     /// A local struct to manage a region defined by xywh

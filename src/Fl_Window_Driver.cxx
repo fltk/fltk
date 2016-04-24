@@ -143,7 +143,7 @@ void Fl_Window_Driver::destroy_double_buffer() {
  
  A usage example is found at example/shapedwindow.cxx.
  
- \version 1.3.3 (and requires compilation with FL_ABI_VERSION >= 10303)
+ \version 1.3.3
  */
 void Fl_Window::shape(const Fl_Image* img) {pWindowDriver->shape(img);}
 

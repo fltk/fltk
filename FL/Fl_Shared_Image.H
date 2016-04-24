@@ -99,7 +99,7 @@ public:
    and then drawing the resized copy. This occurs, e.g., when drawing to screen under Linux or MSWindows
    after having called Fl_Shared_Image::scale().
    This function controls what method is used when the image to be resized is an Fl_RGB_Image.
-   \version 1.3.4 and requires compiling with FL_ABI_VERSION = 10304
+   \version 1.3.4
    */
   static void scaling_algorithm(Fl_RGB_Scaling algorithm) {scaling_algorithm_ = algorithm; }
 };

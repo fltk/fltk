@@ -364,7 +364,7 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
  \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
  \param can_expand  if null, the width and height of the shared image will not exceed those of the original image
  
- \version 1.3.4 and requires compiling with FL_ABI_VERSION = 10304
+ \version 1.3.4
  
  Example code: scale an image to fit in a box
  \code
