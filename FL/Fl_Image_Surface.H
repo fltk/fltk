@@ -107,6 +107,10 @@ protected:
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   virtual Fl_RGB_Image *image() {return NULL;}
   virtual void end_current() {}
+  /** Each platform implements this function its own way.
+   It returns an object implementing all virtual functions
+   of class Fl_Image_Surface_Driver for the plaform.
+   */
   static Fl_Image_Surface_Driver *newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off);
 };
 
