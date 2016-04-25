@@ -24,7 +24,6 @@
 #ifndef FL_GRAPHICS_DRIVER_H
 #define FL_GRAPHICS_DRIVER_H
 
-#include <FL/Fl_System_Driver.H>
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
