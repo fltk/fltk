@@ -77,14 +77,11 @@ public:
 
 /**
  A display to which the computer can draw.
- When the program begins running, an Fl_Display_Device instance has been created and made the current drawing surface.
- There is no need to create any other object of this class.
+ When the program begins running, an object of class Fl_Display_Device has been created and made the current drawing surface.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
-  friend class Fl_Graphics_Driver;
-  static Fl_Display_Device *_display; // the platform display device
-public:
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
+public:
   static Fl_Display_Device *display_device();
   static bool high_resolution();
 };

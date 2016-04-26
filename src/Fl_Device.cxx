@@ -72,7 +72,7 @@ Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_S
 };
 
 
-/** Returns the platform display device. */
+/** Returns a pointer to the unique display device */
 Fl_Display_Device *Fl_Display_Device::display_device() {
   static Fl_Display_Device *display = new Fl_Display_Device(Fl_Graphics_Driver::newMainGraphicsDriver());
   return display;
@@ -88,10 +88,6 @@ Fl_Surface_Device *Fl_Surface_Device::default_surface()
 {
   return Fl_Display_Device::display_device();
 }
-
-
-Fl_Display_Device *Fl_Display_Device::_display;
-
 
 //
 // End of "$Id$".
