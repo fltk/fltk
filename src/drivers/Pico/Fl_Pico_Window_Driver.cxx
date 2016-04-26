@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pico_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id$"
 //
 // Definition of SDL Window interface based on Pico
 //
@@ -48,5 +48,5 @@ int Fl_Pico_Window_Driver::decorated_h()
 }
 
 //
-// End of "$Id: Fl_Pico_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id$".
 //

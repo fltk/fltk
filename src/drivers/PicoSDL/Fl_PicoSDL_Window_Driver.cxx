@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id$"
 //
 // Definition of SDL Window interface based on SDL
 //
@@ -114,5 +114,5 @@ void Fl_PicoSDL_Window_Driver::show() {
 
 
 //
-// End of "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id$".
 //

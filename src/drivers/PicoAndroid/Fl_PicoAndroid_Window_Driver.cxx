@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PicoAndroid_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id$"
 //
 // Definition of Android Window interface based on SDL
 //
@@ -124,5 +124,5 @@ void Fl_PicoAndroid_Window_Driver::flush()
 #endif
 
 //
-// End of "$Id: Fl_PicoSDL_Window_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id$".
 //

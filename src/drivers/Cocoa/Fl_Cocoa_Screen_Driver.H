@@ -1,5 +1,5 @@
 //
-// "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $"
+// "$Id$"
 //
 // Definition of Apple Cocoa Screen interface
 // for the Fast Light Tool Kit (FLTK).
@@ -118,5 +118,5 @@ public:
 #endif // FL_COCOA_SCREEN_DRIVER_H
 
 //
-// End of "$Id: quartz.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id$".
 //

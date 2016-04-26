@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pico_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id$"
 //
 // Definition of SDL Screen interface based on Pico
 //
@@ -141,5 +141,5 @@ void Fl_Pico_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *argp)
 
 
 //
-// End of "$Id: Fl_Pico_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id$".
 //

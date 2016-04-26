@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PicoSDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id$"
 //
 // Definition of SDL Screen interface based on Pico
 //
@@ -139,6 +139,6 @@ double Fl_PicoSDL_Screen_Driver::wait(double time_to_wait)
 
 
 //
-// End of "$Id: Fl_PicoSDL_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id$".
 //
 

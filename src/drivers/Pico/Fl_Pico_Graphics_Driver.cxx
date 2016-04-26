@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pico_Graphics_Driver.cxx 11241 2016-02-27 13:52:27Z manolo $"
+// "$Id$"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -509,5 +509,5 @@ void Fl_Pico_Graphics_Driver::draw(const char *str, int n, int x, int y)
 
 
 //
-// End of "$Id: Fl_Pico_Graphics_Driver.cxx 11241 2016-02-27 13:52:27Z manolo $".
+// End of "$Id$".
 //

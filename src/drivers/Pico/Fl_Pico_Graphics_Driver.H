@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pico_Graphics_Driver.H 11017 2016-01-20 21:40:12Z matt $"
+// "$Id$"
 //
 // Definition of the Pico minimal graphics driver
 // for the Fast Light Tool Kit (FLTK).
@@ -215,5 +215,5 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 #endif // FL_PICO_GRAPHICS_DRIVER_H
 
 //
-// End of "$Id: Fl_Pico_Graphics_Driver.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id$".
 //

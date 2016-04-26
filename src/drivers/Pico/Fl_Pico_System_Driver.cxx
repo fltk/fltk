@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Pico_System_Driver.cxx 11017 2016-01-20 21:40:12Z matt $"
+// "$Id$"
 //
 // Definition of Pico system driver
 // for the Fast Light Tool Kit (FLTK).
@@ -22,5 +22,5 @@
 
 
 //
-// End of "$Id: Fl_Pico_System_Driver.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id$".
 //

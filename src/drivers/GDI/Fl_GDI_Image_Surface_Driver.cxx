@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_GDI_Image_Surface.cxx 11278 2016-03-03 19:16:22Z manolo $"
+// "$Id$"
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
@@ -110,5 +110,5 @@ void Fl_GDI_Image_Surface_Driver::end_current()
 #endif // FL_CFG_GFX_GDI
 
 //
-// End of "$Id: Fl_GDI_Image_Surface.cxx 11220 2016-02-26 12:51:47Z manolo $".
+// End of "$Id$".
 //

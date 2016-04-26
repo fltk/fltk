@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PicoAndroid_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $"
+// "$Id$"
 //
 // Definition of Android Screen interface based on Pico
 //
@@ -566,6 +566,6 @@ drivers/PicoAndroid/Fl_PicoAndroid_Window_Driver.o:Fl_PicoAndroid_Window_Driver.
 
 
 //
-// End of "$Id: Fl_PicoAndroid_Screen_Driver.cxx 11253 2016-03-01 00:54:21Z matt $".
+// End of "$Id$".
 //
 

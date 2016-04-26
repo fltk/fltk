@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Posix_Printer_Driver.cxx 11364 2016-03-18 18:20:11Z manolo $"
+// "$Id$"
 //
 // PostScript priting support for the Fast Light Tool Kit (FLTK).
 //
@@ -137,5 +137,5 @@ int Fl_Posix_Printer_Driver::start_job(int pages, int *firstpage, int *lastpage)
 
 
 //
-// End of "$Id: Fl_Posix_Printer_Driver.cxx 11364 2016-03-18 18:20:11Z manolo $".
+// End of "$Id$".
 //

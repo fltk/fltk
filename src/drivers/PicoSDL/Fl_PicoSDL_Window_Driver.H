@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PicoSDL_Window_Driver.H 11017 2016-01-20 21:40:12Z matt $"
+// "$Id$"
 //
 // Definition of SDL Window interface
 // for the Fast Light Tool Kit (FLTK).
@@ -52,5 +52,5 @@ public:
 #endif // FL_PICOSDL_WINDOW_DRIVER_H
 
 //
-// End of "$Id: Fl_PicoSDL_Window_Driver.H 11017 2016-01-20 21:40:12Z matt $".
+// End of "$Id$".
 //

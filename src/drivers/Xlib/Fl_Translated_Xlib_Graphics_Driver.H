@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Translated_Xlib_Graphics_Driver.H 11217 2016-02-25 17:56:48Z manolo $"
+// "$Id$"
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
@@ -71,5 +71,5 @@ public:
 #endif /* Fl_Translated_Xlib_Graphics_Driver_h */
 
 //
-// End of "$Id: Fl_Translated_Xlib_Graphics_Driver.H 11217 2016-02-25 17:56:48Z manolo $".
+// End of "$Id$".
 //
