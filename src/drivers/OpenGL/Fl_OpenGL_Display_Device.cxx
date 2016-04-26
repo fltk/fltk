@@ -16,11 +16,9 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
 #include "../../config_lib.h"
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Image.H>
-#include <FL/Fl_Device.H>
 #include <FL/gl.h>
 #include <string.h>
 
@@ -42,7 +40,7 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 #ifdef FL_CFG_GFX_QUARTZ
 
 // convert BGRA to RGB and also exchange top and bottom
-uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
+static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
 {
   uchar *newimg = new uchar[3*w*h];
   uchar *to = newimg;
@@ -89,7 +87,12 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
   img->alloc_array = 1;
   return img;
 }
-#elif defined(FL_CFG_GFX_GDI) || defined(FL_CFG_GFX_XLIB)
+
+#else
+
+#if defined(FL_PORTING)
+#  pragma message "FL_PORTING: check whether the default Fl_OpenGL_Display_Device::capture_gl_rectangle() works for your platform"
+#endif
 
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
 /* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
@@ -125,14 +128,6 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, 
   Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, mByteWidth);
   img->alloc_array = 1;
   return img;
-}
-
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: implement Fl_OpenGL_Display_Device::capture_gl_rectangle() for your platform"
-Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, int x, int y, int w, int h)
-{
-  return NULL;
 }
 
 #endif
