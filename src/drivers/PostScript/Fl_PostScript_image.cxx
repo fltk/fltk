@@ -1,5 +1,5 @@
 //
-// "$Id: image.cxx 4324 2005-05-09 21:47:22Z rokan $"
+// "$Id$"
 //
 // Postscript image drawing implementation for the Fast Light Tool Kit (FLTK).
 //
@@ -652,23 +652,5 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
 #endif // FL_DOXYGEN
 
 //
-// End of "$Id: image.cxx 4324 2005-05-09 21:47:22Z rokan $"
+// End of "$Id$"
 //
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
