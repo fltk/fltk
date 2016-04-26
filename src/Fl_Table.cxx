@@ -481,8 +481,8 @@ void Fl_Table::recalc_dimensions() {
     int hideh = (table_w <= tiw); 
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
     // Second pass: Check for interference
-    if ( !hideh & hidev ) { hidev = (( table_h - tih + scrollsize ) <= 0 ); } 
-    if ( !hidev & hideh ) { hideh = (( table_w - tiw + scrollsize ) <= 0 ); } 
+    if ( !hideh && hidev ) { hidev = (( table_h - tih + scrollsize ) <= 0 ); }
+    if ( !hidev && hideh ) { hideh = (( table_w - tiw + scrollsize ) <= 0 ); }
     // Determine scrollbar visibility, trim ti[xywh]/to[xywh]
     if ( hidev ) { vscrollbar->hide(); } 
     else { vscrollbar->show(); tiw -= scrollsize; tow -= scrollsize; }
