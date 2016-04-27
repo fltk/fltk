@@ -574,12 +574,14 @@ void copy(Fl_Widget *, void *data) {
     Fl_Image *img = rgb_surf->highres_image();
     delete rgb_surf;
     Fl_Display_Device::display_device()->set_current();
-    Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10);
-    g2->color(FL_YELLOW);
-    Fl_Box *b = new Fl_Box(FL_NO_BOX,5,5,img->w(), img->h(),0);
-    b->image(img);
-    g2->end();
-    g2->show();
+    if (img) {
+      Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10);
+      g2->color(FL_YELLOW);
+      Fl_Box *b = new Fl_Box(FL_NO_BOX,5,5,img->w(), img->h(),0);
+      b->image(img);
+      g2->end();
+      g2->show();
+    }
     return;
   }
   

@@ -72,7 +72,7 @@ int Fl_Native_File_Chooser::type() const
  */
 void Fl_Native_File_Chooser::options(int o)
 {
-  platform_fnfc->options(o);
+  if (platform_fnfc) platform_fnfc->options(o);
 }
 
 /**

@@ -38,7 +38,7 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
  */
 Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen pixmap) : Fl_Widget_Surface(NULL) {
   platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, high_res, pixmap);
-  driver(platform_surface->driver());
+  if (platform_surface) driver(platform_surface->driver());
 }
 
 
@@ -47,16 +47,24 @@ Fl_Image_Surface::~Fl_Image_Surface() { delete platform_surface; }
 
 void Fl_Image_Surface::origin(int x, int y) {platform_surface->origin(x, y);}
 
-void Fl_Image_Surface::origin(int *x, int *y) {platform_surface->origin(x, y);}
+void Fl_Image_Surface::origin(int *x, int *y) {
+  if (platform_surface) platform_surface->origin(x, y);
+}
 
-void Fl_Image_Surface::set_current() {platform_surface->set_current();}
+void Fl_Image_Surface::set_current() {
+  if (platform_surface) platform_surface->set_current();
+}
 
 /** Stop sending graphics commands to the surface */
 void Fl_Image_Surface::end_current() {platform_surface->end_current();}
 
-void Fl_Image_Surface::translate(int x, int y) {platform_surface->translate(x, y);}
+void Fl_Image_Surface::translate(int x, int y) {
+  if (platform_surface) platform_surface->translate(x, y);
+}
 
-void Fl_Image_Surface::untranslate() {platform_surface->untranslate();}
+void Fl_Image_Surface::untranslate() {
+  if (platform_surface) platform_surface->untranslate();
+}
 
 /** Returns the Fl_Offscreen object associated to the image surface */
 Fl_Offscreen Fl_Image_Surface::offscreen() {return platform_surface->offscreen;}
@@ -78,6 +86,7 @@ Fl_RGB_Image *Fl_Image_Surface::image() {return platform_surface->image();}
  */
 Fl_Shared_Image* Fl_Image_Surface::highres_image()
 {
+  if (!platform_surface) return NULL;
   Fl_Shared_Image *s_img = Fl_Shared_Image::get(platform_surface->image());
   int width, height;
   platform_surface->printable_rect(&width, &height);

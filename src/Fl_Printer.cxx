@@ -22,6 +22,7 @@
 
 #ifdef FL_PORTING
 #  pragma message "FL_PORTING: implement print support for your platform, or define NO_PRINT_SUPPORT"
+#define NO_PRINT_SUPPORT 1
 #endif
 
 #if defined(NO_PRINT_SUPPORT)

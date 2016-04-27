@@ -31,26 +31,41 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 /** the constructor */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
   platform_surface = Fl_Copy_Surface_Driver::newCopySurfaceDriver(w, h);
-  driver(platform_surface->driver());
+  if (platform_surface) driver(platform_surface->driver());
 }
 
 Fl_Copy_Surface::~Fl_Copy_Surface() { delete platform_surface; }
 
 void Fl_Copy_Surface::origin(int x, int y) {platform_surface->origin(x, y);}
 
-void Fl_Copy_Surface::origin(int *x, int *y) {platform_surface->origin(x, y);}
+void Fl_Copy_Surface::origin(int *x, int *y) {
+  if (platform_surface) platform_surface->origin(x, y);
+}
 
-void Fl_Copy_Surface::set_current() {platform_surface->set_current();}
+void Fl_Copy_Surface::set_current() {
+  if (platform_surface) platform_surface->set_current();
+}
 
-void Fl_Copy_Surface::translate(int x, int y) {platform_surface->translate(x, y);}
+void Fl_Copy_Surface::translate(int x, int y) {
+  if (platform_surface) platform_surface->translate(x, y);
+}
 
-void Fl_Copy_Surface::untranslate() {platform_surface->untranslate();}
+void Fl_Copy_Surface::untranslate() {
+  if (platform_surface) platform_surface->untranslate();
+}
 
-int Fl_Copy_Surface::w() {return platform_surface->width;}
+int Fl_Copy_Surface::w() {return platform_surface ? platform_surface->width : 0;}
 
-int Fl_Copy_Surface::h() {return platform_surface->height;}
+int Fl_Copy_Surface::h() {return platform_surface ? platform_surface->height : 0;}
 
-int Fl_Copy_Surface::printable_rect(int *w, int *h)  {return platform_surface->printable_rect(w, h);}
+int Fl_Copy_Surface::printable_rect(int *w, int *h)  {
+  if (platform_surface)
+    return platform_surface->printable_rect(w, h);
+  else {
+    *w  = *h = 0;
+  }
+  return 1;
+}
 
 //
 // End of "$Id$".
