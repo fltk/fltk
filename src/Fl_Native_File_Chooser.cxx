@@ -45,7 +45,7 @@ Fl_Native_File_Chooser::~Fl_Native_File_Chooser()
  */
 void Fl_Native_File_Chooser::type(int t)
 {
-  platform_fnfc->type(t);
+  if (platform_fnfc) platform_fnfc->type(t);
 }
 
 /**
@@ -138,7 +138,7 @@ const char *Fl_Native_File_Chooser::filename(int i) const
  */
 void Fl_Native_File_Chooser::directory(const char *val)
 {
-  platform_fnfc->directory(val);
+  if (platform_fnfc) platform_fnfc->directory(val);
 }
 
 /**
@@ -156,7 +156,7 @@ const char *Fl_Native_File_Chooser::directory() const
  */
 void Fl_Native_File_Chooser::title(const char *t)
 {
-  platform_fnfc->title(t);
+  if (platform_fnfc) platform_fnfc->title(t);
 }
 
 /**
@@ -197,7 +197,7 @@ const char *Fl_Native_File_Chooser::filter() const
  */
 void Fl_Native_File_Chooser::filter(const char *f)
 {
-  platform_fnfc->filter(f);
+  if (platform_fnfc) platform_fnfc->filter(f);
 }
 
 /**
@@ -237,7 +237,7 @@ int Fl_Native_File_Chooser::filter_value() const
  */
 void Fl_Native_File_Chooser::preset_file(const char*f)
 {
-  platform_fnfc->preset_file(f);
+  if (platform_fnfc) platform_fnfc->preset_file(f);
 }
 
 /**
@@ -267,7 +267,7 @@ const char *Fl_Native_File_Chooser::errmsg() const
  */
 int Fl_Native_File_Chooser::show()
 {
-  return platform_fnfc->show();
+  return platform_fnfc? platform_fnfc->show() : 1;
 }
 
 // COPY A STRING WITH 'new'
