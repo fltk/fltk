@@ -431,6 +431,9 @@ void Fl_System_Driver::remove_fd(int fd)
   // nothing to do, reimplement in driver if needed
 }
 
+FILE *Fl_System_Driver::fopen(const char* f, const char *mode) {
+  return ::fopen(f, mode);
+}
 
 //
 // End of "$Id$".

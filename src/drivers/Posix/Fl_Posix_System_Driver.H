@@ -54,7 +54,6 @@ public:
   }
   virtual char *getenv(const char *v) { return ::getenv(v); }  
   virtual int putenv(char* v) {return ::putenv(v);}
-  virtual FILE *fopen(const char* f, const char *mode) {return ::fopen(f, mode);}
   virtual int system(const char* cmd) {return ::system(cmd);}
   virtual int execvp(const char *file, char *const *argv) {return ::execvp(file, argv);}
   virtual int chmod(const char* f, int mode) {return ::chmod(f, mode);}
