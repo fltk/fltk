@@ -37,10 +37,10 @@
 #include <FL/filename.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Printer.H>
+#include <FL/fl_utf8.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <sys/stat.h>
 #include <time.h> // time(), localtime(), etc.
 
 #include "../src/flstring.h"
@@ -125,7 +125,7 @@ void goto_source_dir() {
   if (p <= filename) return; // it is in the current directory
   char buffer[FL_PATH_MAX];
   strlcpy(buffer, filename, sizeof(buffer));
-  int n = p-filename; if (n>1) n--; buffer[n] = 0;
+  int n = (int)(p-filename); if (n>1) n--; buffer[n] = 0;
   if (!pwd) {
     pwd = getcwd(0,FL_PATH_MAX);
     if (!pwd) {fprintf(stderr,"getwd : %s\n",strerror(errno)); return;}
@@ -265,11 +265,7 @@ void save_template_cb(Fl_Widget *, void *) {
   fluid_prefs.getUserdataPath(filename, sizeof(filename));
 
   strlcat(filename, "templates", sizeof(filename));
-#if defined(WIN32) && !defined(__CYGWIN__)
-  if (access(filename, 0)) mkdir(filename);
-#else
-  if (access(filename, 0)) mkdir(filename, 0777);
-#endif // WIN32 && !__CYGWIN__
+  if (fl_access(filename, 0)) fl_mkdir(filename, 0777);
 
   strlcat(filename, "/", sizeof(filename));
   strlcat(filename, safename, sizeof(filename));
@@ -1713,7 +1709,7 @@ int main(int argc,char **argv) {
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n";
-    int len = strlen(msg) + strlen(argv[0]) + strlen(Fl::help);
+    int len = (int)(strlen(msg) + strlen(argv[0]) + strlen(Fl::help));
     Fl_Plugin_Manager pm("commandline");
     int i, n = pm.plugins();
     for (i=0; i<n; i++) {
