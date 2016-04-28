@@ -26,6 +26,7 @@
 #endif
 
 #if defined(NO_PRINT_SUPPORT)
+#include <FL/Fl_PostScript.H>
 
 Fl_Printer::Fl_Printer(void) {
   printer = NULL;
@@ -67,6 +68,25 @@ const char *Fl_Printer::property_mode = NULL;
 const char *Fl_Printer::property_use = NULL;
 const char *Fl_Printer::property_save = NULL;
 const char *Fl_Printer::property_cancel = NULL;
+
+Fl_PostScript_File_Device::Fl_PostScript_File_Device(void) {}
+int Fl_PostScript_File_Device::start_job(int pagecount, int* from, int* to) {return 1;}
+int Fl_PostScript_File_Device::start_job(int pagecount, enum Fl_Paged_Device::Page_Format format,
+                                          enum Fl_Paged_Device::Page_Layout layout) {return 1;}
+int Fl_PostScript_File_Device::start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format,
+              enum Fl_Paged_Device::Page_Layout layout) {return 1;}
+int Fl_PostScript_File_Device::start_page (void) {return 1;}
+int Fl_PostScript_File_Device::printable_rect(int *w, int *h) {return 1;}
+void Fl_PostScript_File_Device::margins(int *left, int *top, int *right, int *bottom) {}
+void Fl_PostScript_File_Device::origin(int *x, int *y) {}
+void Fl_PostScript_File_Device::origin(int x, int y) {}
+void Fl_PostScript_File_Device::scale (float scale_x, float scale_y) {}
+void Fl_PostScript_File_Device::rotate(float angle) {}
+void Fl_PostScript_File_Device::translate(int x, int y) {}
+void Fl_PostScript_File_Device::untranslate(void) {}
+int Fl_PostScript_File_Device::end_page (void) {return 1;}
+void Fl_PostScript_File_Device::end_job(void) {}
+Fl_PostScript_File_Device::~Fl_PostScript_File_Device(void) {}
 
 #else
 
