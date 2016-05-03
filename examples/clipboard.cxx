@@ -19,6 +19,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Image.H>
+#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Tabs.H>
@@ -71,7 +72,7 @@ public:
   virtual int handle(int event) {
     if (event != FL_PASTE) return Fl_Tabs::handle(event);
     if (strcmp(Fl::event_clipboard_type(), Fl::clipboard_image) == 0) { // an image is being pasted
-      Fl_Image *im = (Fl_Image*)Fl::event_clipboard(); // get it as an Fl_Image object
+      Fl_RGB_Image *im = (Fl_RGB_Image*)Fl::event_clipboard(); // get it as an Fl_RGB_Image object
       if (!im) return 1;
       char title[300];
       sprintf(title, "%dx%d",im->w(), im->h()); // display the image original size
@@ -92,18 +93,11 @@ public:
       }
       CloseClipboard();
 #endif
-      float scale_x =  (float)im->w() / image_box->w(); // rescale the image if larger than the display box
-      float scale_y =  (float)im->h() / image_box->h();
-      float scale = scale_x;
-      if (scale_y > scale) scale = scale_y;
-      if (scale > 1) {
-	Fl_Image *im2 = im->copy(im->w()/scale, im->h()/scale);
-	delete im;
-	im = im2;
-      }
-      Fl_Image *oldim = image_box->image();
-      if (oldim) delete oldim;
-      image_box->image(im); // show the scaled image
+      Fl_Shared_Image *oldim = (Fl_Shared_Image*)image_box->image();
+      if (oldim) oldim->release();
+      Fl_Shared_Image *shared = Fl_Shared_Image::get(im);
+      shared->scale(image_box->w(), image_box->h());
+      image_box->image(shared); // show the scaled image
       image_size->copy_label(title);
       value(image_box->parent());
       window()->redraw();

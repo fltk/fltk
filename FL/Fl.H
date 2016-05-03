@@ -828,7 +828,7 @@ int main() {
   static int event_length() {return e_length;}
   
   /** During an FL_PASTE event of non-textual data, returns a pointer to the pasted data.
-   The returned data is an Fl_Image * when the result of Fl::event_clipboard_type() is Fl::clipboard_image.
+   The returned data is an Fl_RGB_Image * when the result of Fl::event_clipboard_type() is Fl::clipboard_image.
    */
   static void *event_clipboard() { return e_clipboard_data; }
   /** Returns the type of the pasted data during an FL_PASTE event.
@@ -900,7 +900,7 @@ int main() {
   and if \p type is Fl::clipboard_plain_text, the text data from the specified \p source are in Fl::event_text()
   with UTF-8 encoding, and the number of bytes in Fl::event_length();
   if \p type is Fl::clipboard_image, Fl::event_clipboard() returns a pointer to the
-  image data, as an Fl_Image *.
+  image data, as an Fl_RGB_Image *.
   The receiver
   should be prepared to be called \e directly by this, or for
   it to happen \e later, or possibly <i>not at all</i>.  This
