@@ -774,8 +774,8 @@ int Fl_X11_System_Driver::clipboard_contains(const char *type)
     if (event.type == SelectionNotify && event.xselection.property == None) return 0;
     i++; 
   }
-  while (i < 10 && event.type != SelectionNotify);
-  if (i >= 10) return 0;
+  while (i < 20 && event.type != SelectionNotify);
+  if (i >= 20) return 0;
   XGetWindowProperty(fl_display,
 		     event.xselection.requestor,
 		     event.xselection.property,

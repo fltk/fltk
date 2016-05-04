@@ -155,9 +155,7 @@ int main(int argc, char **argv)
   win->end();
   win->resizable(tabs);
   win->show(argc,argv);
-#if defined(__APPLE__) || defined(WIN32)
   clip_callback(1, tabs); // use clipboard content at start
-#endif
   Fl::add_clipboard_notify(clip_callback, tabs); // will update with new clipboard content immediately or at application activation
 
   Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR); // set bilinear image scaling method
