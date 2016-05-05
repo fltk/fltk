@@ -3420,7 +3420,7 @@ static int get_plain_text_from_clipboard(int clipboard)
   return length;
 }
 
-static Fl_Image* get_image_from_clipboard(Fl_Widget *receiver)
+static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
 {
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
