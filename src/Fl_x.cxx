@@ -893,8 +893,8 @@ int Fl::clipboard_contains(const char *type)
     if (event.type == SelectionNotify && event.xselection.property == None) return 0;
     i++; 
   }
-  while (i < 10 && event.type != SelectionNotify);
-  if (i >= 10) return 0;
+  while (i < 50 && event.type != SelectionNotify);
+  if (i >= 50) return 0;
   XGetWindowProperty(fl_display,
 		     event.xselection.requestor,
 		     event.xselection.property,
@@ -1478,9 +1478,9 @@ fprintf(stderr,"\n");*/
       sn_buffer[bytesread] = 0;
       convert_crlf(sn_buffer, bytesread);
     }
+    if (!fl_selection_requestor) return 0;
     if (Fl::e_clipboard_type == Fl::clipboard_image) {
       if (bytesread == 0) return 0;
-      Fl_Image *image = 0;
       static char tmp_fname[21];
       static Fl_Shared_Image *shared = 0;
       strcpy(tmp_fname, "/tmp/clipboardXXXXXX");
@@ -1496,18 +1496,23 @@ fprintf(stderr,"\n");*/
       shared = Fl_Shared_Image::get(tmp_fname);
       unlink(tmp_fname);
       if (!shared) return 0;
-      image = shared->copy();
+      uchar *rgb = new uchar[shared->w() * shared->h() * shared->d()];
+      memcpy(rgb, shared->data()[0], shared->w() * shared->h() * shared->d());
+      Fl_RGB_Image *image = new Fl_RGB_Image(rgb, shared->w(), shared->h(), shared->d());
       shared->release();
+      image->alloc_array = 1;
       Fl::e_clipboard_data = (void*)image;
     }
-    if (!fl_selection_requestor) return 0;
-
-    if (Fl::e_clipboard_type == Fl::clipboard_plain_text) {
+    else if (Fl::e_clipboard_type == Fl::clipboard_plain_text) {
       Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
       Fl::e_length = bytesread;
       }
     int old_event = Fl::e_number;
-    fl_selection_requestor->handle(Fl::e_number = FL_PASTE);
+    int retval = fl_selection_requestor->handle(Fl::e_number = FL_PASTE);
+    if (!retval && Fl::e_clipboard_type == Fl::clipboard_image) {
+      delete (Fl_RGB_Image*)Fl::e_clipboard_data;
+      Fl::e_clipboard_data = NULL;
+    }
     Fl::e_number = old_event;
     // Detect if this paste is due to Xdnd by the property name (I use
     // XA_SECONDARY for that) and send an XdndFinished message. It is not
