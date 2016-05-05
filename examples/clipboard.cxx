@@ -128,7 +128,6 @@ void clip_callback(int source, void *data) { // called after clipboard was chang
 int main(int argc, char **argv)
 {
 #if !(defined(__APPLE__) || defined(WIN32))
-  extern void fl_register_images();
   fl_register_images(); // required to allow pasting of images
 #endif
   Fl_Window* win = new Fl_Window(500, 550, "clipboard viewer");
