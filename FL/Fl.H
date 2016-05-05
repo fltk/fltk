@@ -884,18 +884,23 @@ int main() {
   time in the future if the clipboard does contain data of the requested type. During processing of this event,
   and if \p type is Fl::clipboard_plain_text, the text data from the specified \p source are in Fl::event_text()
   with UTF-8 encoding, and the number of bytes in Fl::event_length();
-  if \p type is Fl::clipboard_image, Fl::event_clipboard() returns a pointer to the
-  image data, as an Fl_Image *.
-  The receiver
-  should be prepared to be called \e directly by this, or for
+  if \p type is Fl::clipboard_image, the pointer returned by Fl::event_clipboard() can be safely cast to
+  type Fl_Image * to obtain a pointer to the pasted image.
+   
+  The receiver should be prepared to be called \e directly by this, or for
   it to happen \e later, or possibly <i>not at all</i>.  This
   allows the window system to take as long as necessary to retrieve
   the paste buffer (or even to screw up completely) without complex
   and error-prone synchronization code in FLTK.
    
-  The selection buffer is used for middle-mouse pastes and for 
-  drag-and-drop selections. The clipboard is used for traditional 
-  copy/cut/paste operations.
+  If an image is being pasted, and if the handle function of \p receiver returns 1,
+  \p receiver gets the ownership of the image which should be deleted after use. Conversely,
+  if it returns 0, the image cannot be used. Starting with FLTK 1.3.4, the image is 
+  of type Fl_RGB_Image across all platforms.
+   
+   The selection buffer (\p source is 0) is used for middle-mouse pastes and for
+   drag-and-drop selections. The clipboard (\p source is 1) is used for
+   copy/cut/paste operations.
    
    \par Platform details for image data:
    \li Unix/Linux platform: Image data in PNG or BMP formats are recognized. Requires linking with the fltk_images library.
@@ -903,7 +908,6 @@ int main() {
    can be pasted as image data.
    \li Mac OS X platform: Both bitmap (TIFF) and vectorial (PDF) data from clipboard
    can be pasted as image data.
-    
    */
 #if FLTK_ABI_VERSION >= 10303 || defined(FL_DOXYGEN)
   static void paste(Fl_Widget &receiver, int source, const char *type = Fl::clipboard_plain_text); // platform dependent
