@@ -3,7 +3,7 @@
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,56 +28,31 @@
 // be erased when the buffers are swapped (when double buffer hardware
 // is being used)
 
-#if defined(WIN32)  // PORTME: platform opengl
-#elif defined(__APPLE__)
-#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: if possible, add OpenGL rendering in non-OpenGL contexts"
-#else
-#endif
-
-#include <config.h>
+#include "config_lib.h"
 #if HAVE_GL
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include <FL/x.H>
 #include <FL/fl_draw.H>
 #include <FL/gl.h>
 #include "Fl_Gl_Choice.H"
+#include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Gl_Window_Driver.H>
 
 static GLContext context;
 static int clip_state_number=-1;
 static int pw, ph;
 
-#ifdef WIN32
 static Fl_Gl_Choice* gl_choice;
-#endif
-
-#ifdef __APPLE__
-static Fl_Gl_Choice* gl_choice;
-#endif
 
 /** Creates an OpenGL context */
 void gl_start() {
   if (!context) {
-#if defined(USE_X11)
-    context = fl_create_gl_context(fl_visual);
-#elif defined(WIN32)
     if (!gl_choice) Fl::gl_visual(0);
-    context = fl_create_gl_context(Fl_Window::current(), gl_choice);
-#elif defined(__APPLE_QUARTZ__)
-    context = fl_create_gl_context(Fl_Window::current(), gl_choice);
-#else
-#  error Unsupported platform
-#endif
+    context = Fl_Gl_Window_Driver::global()->create_gl_context(Fl_Window::current(), gl_choice);
   }
-  fl_set_gl_context(Fl_Window::current(), context);
-#ifdef __APPLE__
-  Fl_Cocoa_Screen_Driver::GLcontext_update(context); // supports window resizing
-#elif !defined(WIN32)
-  glXWaitX();
-#endif
+  Fl_Gl_Window_Driver::global()->set_gl_context(Fl_Window::current(), context);
+  Fl_Gl_Window_Driver::global()->gl_start();
   if (pw != Fl_Window::current()->w() || ph != Fl_Window::current()->h()) {
     pw = Fl_Window::current()->w();
     ph = Fl_Window::current()->h();
@@ -103,27 +78,46 @@ void gl_start() {
 /** Releases an OpenGL context */
 void gl_finish() {
   glFlush();
-#if !defined(WIN32) && !defined(__APPLE__)
-  glXWaitGL();
-#endif
+  Fl_Gl_Window_Driver::global()->waitGL();
 }
 
-int Fl::gl_visual(int mode, int *alist) {
-  Fl_Gl_Choice *c = Fl_Gl_Choice::find(mode,alist);
-  if (!c) return 0;
-#if defined(USE_X11)
+void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
+  gl_choice = c;
+}
+
+#ifdef FL_CFG_GFX_QUARTZ
+#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
+
+void Fl_Cocoa_Gl_Window_Driver::gl_start() {
+  Fl_Cocoa_Screen_Driver::GLcontext_update(context); // supports window resizing
+}
+
+#endif
+
+
+#ifdef FL_CFG_GFX_XLIB
+#include <FL/x.H>
+
+void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
+  Fl_Gl_Window_Driver::gl_visual(c);
   fl_visual = c->vis;
   fl_colormap = c->colormap;
-#elif defined(WIN32)
-  gl_choice = c;
-#elif defined(__APPLE_QUARTZ__)
-  gl_choice = c;
-#else
-#  error Unsupported platform
-#endif
+}
+
+void Fl_X11_Gl_Window_Driver::gl_start() {
+  glXWaitX();
+}
+
+#endif // FL_CFG_GFX_XLIB
+
+int Fl::gl_visual(int mode, int *alist) {
+  Fl_Gl_Choice *c = Fl_Gl_Window_Driver::global()->find(mode,alist);
+  if (!c) return 0;
+  Fl_Gl_Window_Driver::global()->gl_visual(c);
   return 1;
 }
-#endif
+
+#endif // HAVE_GL
 
 //
 // End of "$Id$".

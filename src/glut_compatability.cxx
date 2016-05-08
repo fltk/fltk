@@ -28,19 +28,10 @@
 
 #include "flstring.h"
 #if HAVE_GL
-
+#  include <FL/Fl_Gl_Window_Driver.H>
 #  include <FL/glut.H>
-#  ifdef HAVE_GLXGETPROCADDRESSARB
-#    define GLX_GLXEXT_LEGACY
-#    include <GL/glx.h>
-#  endif // HAVE_GLXGETPROCADDRESSARB
-#  if HAVE_DLFCN_H
-#    include <dlfcn.h>
-#  endif // HAVE_DLFCN_H
 #  define MAXWINDOWS 32
-#  ifdef __APPLE__
-#    include <FL/x.H>
-#  endif
+
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
 static void (*glut_idle_func)() = 0; // global glut idle function
@@ -440,33 +431,7 @@ int glutDeviceGet(GLenum type) {
 
 // Get extension function address...
 GLUTproc glutGetProcAddress(const char *procName) {
-#  ifdef WIN32
-  return (GLUTproc)wglGetProcAddress((LPCSTR)procName);
-
-#  elif (HAVE_DLSYM && HAVE_DLFCN_H)
-  char symbol[1024];
-
-  snprintf(symbol, sizeof(symbol), "_%s", procName);
-
-#    ifdef RTLD_DEFAULT
-  return (GLUTproc)dlsym(RTLD_DEFAULT, symbol);
-
-#    else // No RTLD_DEFAULT support, so open the current a.out symbols...
-  static void *rtld_default = 0;
-
-  if (!rtld_default) rtld_default = dlopen(0, RTLD_LAZY);
-
-  if (rtld_default) return (GLUTproc)dlsym(rtld_default, symbol);
-  else return 0;
-
-#    endif // RTLD_DEFAULT
-
-#  elif defined(HAVE_GLXGETPROCADDRESSARB)
-  return (GLUTproc)glXGetProcAddressARB((const GLubyte *)procName);
-
-#  else
-  return (GLUTproc)0;
-#  endif // WIN32
+  return (GLUTproc)Fl_Gl_Window_Driver::global()->GetProcAddress(procName);
 }
 
 // Parse the GL_EXTENSIONS string to see if the named extension is

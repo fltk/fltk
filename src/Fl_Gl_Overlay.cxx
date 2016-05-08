@@ -3,7 +3,7 @@
 //
 // OpenGL overlay code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,30 +16,58 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
+#include "config_lib.h"
 #if HAVE_GL
 
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/gl.h>
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Gl_Window_Driver.H>
 #include <stdlib.h>
 
-#if defined(WIN32) // PORTME: platform OpenGL management
-#include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
-#elif defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement OpenGL hardware overlays if they are availbale in a compatible way. This is rarely needed."
-#else
-#endif
+/**
+ Returns true if the hardware overlay is possible.  If this is false,
+ FLTK will try to simulate the overlay, with significant loss of update
+ speed.  Calling this will cause FLTK to open the display.
+ */
+int Fl_Gl_Window::can_do_overlay() {
+  return pGlWindowDriver->can_do_overlay();
+}
 
-#if !HAVE_GL_OVERLAY
+void Fl_Gl_Window_Driver::make_overlay(void *&o) {
+  o = pWindow;
+}
 
-int Fl_Gl_Window::can_do_overlay() {return 0;}
+/**
+ Causes draw_overlay() to be called at a later time.
+ Initially the overlay is clear. If you want the window to display
+ something in the overlay when it first appears, you must call this
+ immediately after you show() your window.
+ */
+void Fl_Gl_Window::redraw_overlay() {
+  if (!shown()) return;
+  pGlWindowDriver->make_overlay(overlay);
+  pGlWindowDriver->redraw_overlay();
+}
 
-void Fl_Gl_Window::make_overlay() {overlay = this;}
+/**
+ Selects the OpenGL context for the widget's overlay.
+ This method is called automatically prior to the
+ draw_overlay() method being called and can also be used to
+ implement feedback and/or selection within the handle()
+ method.
+ */
+void Fl_Gl_Window::make_overlay_current() {
+  pGlWindowDriver->make_overlay(overlay);
+  pGlWindowDriver->make_overlay_current();
+}
 
-#else
+/** Hides the window if it is not this window, does nothing in WIN32. */
+void Fl_Gl_Window::hide_overlay() {
+  pGlWindowDriver->hide_overlay();
+}
+
 
 // Methods on Fl_Gl_Window that create an overlay window.  Because
 // many programs don't need the overlay, this is separated into this
@@ -56,9 +84,43 @@ void Fl_Gl_Window::make_overlay() {overlay = this;}
 // "faked" by drawing into the main layers.  This is indicated by
 // setting overlay == this.
 
-#ifndef WIN32
+#ifdef FL_CFG_GFX_QUARTZ
+
+void Fl_Cocoa_Gl_Window_Driver::make_overlay_current() {
+  // this is not very useful, but unfortunately, Apple decided
+  // that front buffer drawing can no longer (OS X 10.4) be supported on their platforms.
+  pWindow->make_current();
+}
+
+void Fl_Cocoa_Gl_Window_Driver::redraw_overlay() {
+  pWindow->redraw();
+}
+
+#endif // FL_CFG_GFX_QUARTZ
+
+
+#ifdef FL_CFG_GFX_XLIB
+#include <FL/x.H>
 ////////////////////////////////////////////////////////////////
 // X version
+
+void Fl_X11_Gl_Window_Driver::make_overlay_current() {
+#if HAVE_GL_OVERLAY
+  if (overlay() != pWindow) {
+    ((Fl_Gl_Window*)overlay())->make_current();
+  } else
+#endif
+    glDrawBuffer(GL_FRONT);
+}
+
+void Fl_X11_Gl_Window_Driver::redraw_overlay() {
+  if (overlay() != pWindow)
+    ((Fl_Gl_Window*)overlay())->redraw();
+  else
+    pWindow->damage(FL_DAMAGE_OVERLAY);
+}
+
+#if HAVE_GL_OVERLAY
 
 extern XVisualInfo *fl_find_overlay_visual();
 extern XVisualInfo *fl_overlay_visual;
@@ -100,7 +162,7 @@ void _Fl_Gl_Overlay::draw() {
   uchar save_valid = w->valid();
   w->valid(valid());
   fl_overlay = 1;
-  w->draw_overlay();
+  w->gl_driver()->draw_overlay();
   fl_overlay = 0;
   valid(w->valid());
   w->valid(save_valid);
@@ -115,42 +177,79 @@ void _Fl_Gl_Overlay::show() {
     Fl_Window *w = window();
     for (;;) {Fl_Window *w1 = w->window(); if (!w1) break; w = w1;}
     XSetWMColormapWindows(fl_display, fl_xid(w), &(Fl_X::i(this)->xid), 1);
-    context(fl_create_gl_context(fl_overlay_visual), 1);
+    context(Fl_X11_Gl_Window_Driver::create_gl_context(fl_overlay_visual), 1);
     valid(0);
   }
   Fl_Gl_Window::show();
 }
 
-int Fl_Gl_Window::can_do_overlay() {
+void Fl_X11_Gl_Window_Driver::hide_overlay() {
+  if (overlay() && overlay() != pWindow) ((Fl_Gl_Window*)overlay())->hide();
+}
+
+int Fl_X11_Gl_Window_Driver::can_do_overlay() {
   return fl_find_overlay_visual() != 0;
 }
 
-void Fl_Gl_Window::make_overlay() {
-  if (overlay) return;
+
+void Fl_X11_Gl_Window_Driver::make_overlay(void *&current) {
+  if (current) return;
   if (can_do_overlay()) {
-    _Fl_Gl_Overlay* o = new _Fl_Gl_Overlay(0,0,w(),h());
-    overlay = o;
-    add(*o);
+    _Fl_Gl_Overlay* o = new _Fl_Gl_Overlay(0, 0, pWindow->w(), pWindow->h());
+    current = o;
+    pWindow->add(*o);
     o->show();
   } else {
-    overlay = this; // fake the overlay
+    current = pWindow; // fake the overlay
   }
 }
+#endif // HAVE_GL_OVERLAY
 
-#else
+#endif // FL_CFG_GFX_XLIB
+
+
+#ifdef FL_CFG_GFX_GDI
+#include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
+
 ////////////////////////////////////////////////////////////////
 // WIN32 version:
+
+void Fl_WinAPI_Gl_Window_Driver::hide_overlay(void *& overlay) {
+#if HAVE_GL_OVERLAY
+  if (overlay && overlay != pWindow) {
+    delete_gl_context((GLContext)overlay);
+    overlay = 0;
+  }
+#endif
+}
+
+void Fl_WinAPI_Gl_Window_Driver::make_overlay_current() {
+#if HAVE_GL_OVERLAY
+  if (overlay != this) {
+    pGlWindowDriver->set_gl_context(this, (GLContext)overlay);
+    //  if (fl_overlay_depth)
+    //    wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
+  } else
+#endif
+    glDrawBuffer(GL_FRONT);
+}
+
+void Fl_WinAPI_Gl_Window_Driver::redraw_overlay() {
+  pWindow->damage(FL_DAMAGE_OVERLAY);
+}
+
+#if HAVE_GL_OVERLAY
 
 //static COLORREF *palette;
 extern int fl_overlay_depth;
 
-void Fl_Gl_Window::make_overlay() {
+void Fl_WinAPI_Gl_Window_Driver::make_overlay(void*&overlay) {
   if (overlay) return;
 
-  GLContext context = fl_create_gl_context(this, g, 1);
-  if (!context) {overlay = this; return;} // fake the overlay
+  GLContext context = create_gl_context(pWindow, g, 1);
+  if (!context) {overlay = pWindow; return;} // fake the overlay
 
-  HDC hdc = Fl_WinAPI_Window_Driver::driver(this)->private_dc;
+  HDC hdc = Fl_WinAPI_Window_Driver::driver(pWindow)->private_dc;
   overlay = context;
   LAYERPLANEDESCRIPTOR pfd;
   wglDescribeLayerPlane(hdc, g->pixelformat, 1, sizeof(pfd), &pfd);
@@ -179,68 +278,18 @@ void Fl_Gl_Window::make_overlay() {
   return;
 }
 
-int Fl_Gl_Window::can_do_overlay() {
-  if (!g) {
-    g = Fl_Gl_Choice::find(mode_,alist);
-    if (!g) return 0;
+int Fl_WinAPI_Gl_Window_Driver::can_do_overlay() {
+  if (!g()) {
+    g( find(mode(), alist()) );
+    if (!g()) return 0;
   }
-  return (g->pfd.bReserved & 15) != 0;
+  return (g()->pfd.bReserved & 15) != 0;
 }
+#endif // HAVE_GL_OVERLAY
 
-////////////////////////////////////////////////////////////////
-#endif
+#endif // FL_CFG_GFX_GDI
 
-#endif
-
-void Fl_Gl_Window::redraw_overlay() {
-  if (!shown()) return;
-  make_overlay();
-#ifdef __APPLE__ // PORTME: platform OpenGL management
-  redraw();
-#else
-#ifndef WIN32
-  if (overlay != this)
-    ((Fl_Gl_Window*)overlay)->redraw();
-  else
-#endif
-    damage(FL_DAMAGE_OVERLAY);
-#endif
-}
-
-void Fl_Gl_Window::make_overlay_current() {
-  make_overlay();
-#ifdef __APPLE__ // PORTME: platform OpenGL management
-  // this is not very useful, but unfortunately, Apple decided
-  // that front buffer drawing can no longer (OS X 10.4) be 
-  // supported on their platforms.
-  make_current();
-#else
-#if HAVE_GL_OVERLAY
-  if (overlay != this) {
-#ifdef WIN32
-    fl_set_gl_context(this, (GLContext)overlay);
-//  if (fl_overlay_depth)
-//    wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
-#else
-    ((Fl_Gl_Window*)overlay)->make_current();
-#endif
-  } else
-#endif
-    glDrawBuffer(GL_FRONT);
-#endif
-}
-/** Hides the window if it is not this window, does nothing in WIN32. */
-void Fl_Gl_Window::hide_overlay() {
-#if HAVE_GL_OVERLAY
-#ifdef WIN32
-  // nothing needs to be done?  Or should it be erased?
-#else
-  if (overlay && overlay!=this) ((Fl_Gl_Window*)overlay)->hide();
-#endif
-#endif
-}
-
-#endif
+#endif // HAVE_GL
 
 //
 // End of "$Id$".

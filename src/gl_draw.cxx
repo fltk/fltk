@@ -19,6 +19,7 @@
 // Functions from <FL/gl.h>
 // See also Fl_Gl_Window and gl_start.cxx
 
+#include "config_lib.h"
 #if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform opengl
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement OpenGL text rendering here"

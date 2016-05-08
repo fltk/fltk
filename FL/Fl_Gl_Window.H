@@ -3,7 +3,7 @@
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -33,7 +33,7 @@ typedef void* GLContext; // actually a GLXContext or HGLDC
 #endif
 
 class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
-
+class Fl_Gl_Window_Driver;
 /**
   The Fl_Gl_Window widget sets things up so OpenGL works.
   
@@ -55,6 +55,8 @@ class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
   unless those widgets are modified to draw using OpenGL calls.
 */
 class FL_EXPORT Fl_Gl_Window : public Fl_Window {
+  friend class Fl_Gl_Window_Driver;
+  Fl_Gl_Window_Driver *pGlWindowDriver;
 
   int mode_;
   const int *alist;
@@ -66,21 +68,23 @@ class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   void init();
 
   void *overlay;
-  void make_overlay();
-  friend class _Fl_Gl_Overlay;
 
   static int can_do(int, const int *);
   int mode(int, const int *);
   static int gl_plugin_linkage();
+protected:
+  virtual void draw();
 
 public:
-
   void show();
+  /** Same as Fl_Window::show(int a, char **b) */
   void show(int a, char **b) {Fl_Window::show(a,b);}
   void flush();
   void hide();
   void resize(int,int,int,int);
   int handle(int);
+  /** Returns a pointer to the window's Fl_Gl_Window_Driver object */
+  Fl_Gl_Window_Driver *gl_driver() {return pGlWindowDriver;}
   
   /**
     Is turned off when FLTK creates a new context for this window or 
@@ -204,50 +208,15 @@ public:
   void swap_buffers();
   void ortho();
 
-  /**
-    Returns true if the hardware overlay is possible.  If this is false,
-    FLTK will try to simulate the overlay, with significant loss of update
-    speed.  Calling this will cause FLTK to open the display.
-  */
   int can_do_overlay();
-  /**
-    This method causes draw_overlay() to be called at a later time.
-    Initially the overlay is clear. If you want the window to display
-    something in the overlay when it first appears, you must call this
-    immediately after you show() your window.
-  */
   void redraw_overlay();
   void hide_overlay();
-  /**
-    The make_overlay_current() method selects the OpenGL context
-    for the widget's overlay.  It is called automatically prior to the 
-    draw_overlay() method being called and can also be used to
-    implement feedback and/or selection within the handle()
-    method.
-  */
   void make_overlay_current();
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Gl_Window* as_gl_window() {return this;}
   
-  /** The number of pixels per FLTK unit of length for the window.
-   Returns 1, except for a window mapped to
-   an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
-   when it returns 2. This method dynamically adjusts its value when the window
-   is moved to/from a retina display. This method is useful, e.g., to convert,
-   in a window's handle() method, the FLTK units returned by Fl::event_x() and
-   Fl::event_y() to the pixel units used by the OpenGL source code.
-   \version 1.3.4
-   */
-#ifdef __APPLE__ // PORTME: Fl_Surface_Driver - additional functionality
   int pixels_per_unit();
-#elif defined(WIN32)
-  int pixels_per_unit() { return 1; }
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define multiple resolution OpenGL rendering if your platform supports it"
-#else
-  int pixels_per_unit() { return 1; }
-#endif
   /** Gives the window width in OpenGL pixels.
    Generally identical with the result of the w() function, but for a window mapped to
    an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
@@ -279,17 +248,9 @@ public:
 
   Fl_Gl_Window(int X, int Y, int W, int H, const char *l=0)
     : Fl_Window(X,Y,W,H,l) {init();}
-
-protected:
-  /**
-    Draws the Fl_Gl_Window.
-
-    You \e \b must override the draw() method.
-  */
-  virtual void draw();
 };
 
-#endif
+#endif // Fl_Gl_Window_H
 
 //
 // End of "$Id$".

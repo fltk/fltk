@@ -27,7 +27,7 @@
 # endif
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a core graphics library"
-#else /* X11 */
+#elif defined(USE_X11) /* X11 */
 # define FL_CFG_GFX_XLIB
 # ifdef HAVE_GL
 #  define FL_CFG_GFX_OPENGL
@@ -46,7 +46,7 @@
 # define FL_CFG_PRN_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a printer driver"
-#else /* X11 */
+#elif defined(USE_X11) /* X11 */
 # define FL_CFG_PRN_PS
 #endif
 
@@ -62,7 +62,7 @@
 # define FL_CFG_WIN_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a window management library"
-#else /* X11 */
+#elif defined(USE_X11) /* X11 */
 # define FL_CFG_WIN_X11
 #endif
 
@@ -78,7 +78,7 @@
 # define FL_CFG_SYS_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a system library"
-#else /* X11 */
+#elif defined(USE_X11) /* X11 */
 # define FL_CFG_SYS_POSIX
 #endif
 
