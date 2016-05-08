@@ -20,10 +20,8 @@
 // See also Fl_Gl_Window and gl_start.cxx
 
 #include "config_lib.h"
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform opengl
-#elif defined(FL_PORTING)
+#if defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement OpenGL text rendering here"
-#else
 #endif
 
 #include "flstring.h"
@@ -32,31 +30,17 @@
 #include <FL/Fl.H>
 #include <FL/gl.h>
 #include <FL/gl_draw.H>
-#include <FL/x.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Device.H>
-#include "Fl_Gl_Choice.H"
-#if defined(__APPLE__)
+#include <FL/Fl_Gl_Window_Driver.H>
+#if defined(FL_CFG_GFX_QUARTZ)
 #include "drivers/Quartz/Fl_Font.H"
-#elif defined(WIN32)
+#elif defined(FL_CFG_GFX_GDI)
 #include "drivers/GDI/Fl_Font.H"
-#elif defined(USE_X11)
+#elif defined(FL_CFG_GFX_XLIB)
 #include "drivers/Xlib/Fl_Font.H"
 #endif
 #include <FL/fl_utf8.h>
 
-#if defined(WIN32) || defined(__APPLE__) // PORTME: Fl_Graphics_Driver - platform opengl
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: do you want to include Xutf8.h? It's written for X11."
-#else
-#  include "Xutf8.h"
-#endif
-
-#if defined(__APPLE__) &&  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-#  include <OpenGL/glext.h>
-#  define kCGBitmapByteOrder32Host 0
-#  define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
-#endif // __APPLE__
 
 /** Returns the current font's height */
 int   gl_height() {return fl_height();}
@@ -71,13 +55,6 @@ double gl_width(uchar c) {return fl_width(c);}
 
 static Fl_Font_Descriptor *gl_fontsize;
 
-#ifndef __APPLE__
-#  define USE_OksiD_style_GL_font_selection 1  // Most hosts except OSX
-#endif
-
-#if USE_XFT
-#  undef USE_OksiD_style_GL_font_selection  // turn this off for XFT also
-#endif
 
 /**
   Sets the current OpenGL font to the same font as calling fl_font()
@@ -85,73 +62,15 @@ static Fl_Font_Descriptor *gl_fontsize;
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
   Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-#ifndef __APPLE__
-  if (!fl_fontsize->listbase) {
-
-#ifdef  USE_OksiD_style_GL_font_selection
-    fl_fontsize->listbase = glGenLists(0x10000);
-#else // Fltk-1.1.8 style GL font selection
-
-#if defined (USE_X11) // X-windows options follow, either XFT or "plain" X
-// FIXME:  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
-// FIXME:  warning GL font selection is basically wrong here
-/* OksiD had a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
- * then sorting through them at draw time (for normal X rendering) to find which one can
- * render the current glyph... But for now, just use the first font in the list for GL...
- */
-    XFontStruct *font = fl_xfont.value();
-    int base = font->min_char_or_byte2;
-    int count = font->max_char_or_byte2-base+1;
-    fl_fontsize->listbase = glGenLists(256);
-    glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
-# elif defined(WIN32)
-    // this is unused because USE_OksiD_style_GL_font_selection == 1
-    int base = fl_fontsize->metr.tmFirstChar;
-    int count = fl_fontsize->metr.tmLastChar-base+1;
-    HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->gc(), fl_fontsize->fid);
-    fl_fontsize->listbase = glGenLists(256);
-    wglUseFontBitmaps((HDC)fl_graphics_driver->gc(), base, count, fl_fontsize->listbase+base);
-    SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
-# endif
-
-#endif // USE_OksiD_style_GL_font_selection
-  }
-  glListBase(fl_fontsize->listbase);
-#endif // !__APPLE__
+  Fl_Gl_Window_Driver::global()->gl_bitmap_font(fl_fontsize);
   gl_fontsize = fl_fontsize;
 }
 
-#ifndef __APPLE__
-static void get_list(int r) {
-  gl_fontsize->glok[r] = 1;
-#if defined(USE_X11)
-# if USE_XFT
-// FIXME
-# else
-  unsigned int ii = r * 0x400;
-  for (int i = 0; i < 0x400; i++) {
-    XFontStruct *font = NULL;
-    unsigned short id;
-    fl_XGetUtf8FontAndGlyph(gl_fontsize->font, ii, &font, &id);
-    if (font) glXUseXFont(font->fid, id, 1, gl_fontsize->listbase+ii);
-    ii++;
-   }
-# endif
-#elif defined(WIN32)
-  unsigned int ii = r * 0x400;
-  HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->gc(), gl_fontsize->fid);
-  wglUseFontBitmapsW((HDC)fl_graphics_driver->gc(), ii, ii + 0x03ff, gl_fontsize->listbase+ii);
-  SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
-#else
-#  error unsupported platform
-#endif
-} // get_list
-#endif
+#if defined(FL_CFG_GFX_QUARTZ) || defined(FL_CFG_GFX_GDI) || defined(FL_CFG_GFX_XLIB)
 
 void gl_remove_displaylist_fonts()
 {
 # if HAVE_GL
-
   // clear variables used mostly in fl_font
   fl_graphics_driver->font(0, 0);
 
@@ -169,7 +88,7 @@ void gl_remove_displaylist_fonts()
           past->next = f->next;
         }
 
-        // It would be nice if this next line was in a desctructor somewhere
+        // It would be nice if this next line was in a destructor somewhere
         glDeleteLists(f->listbase, 256);
 
         Fl_Font_Descriptor* tmp = f;
@@ -182,13 +101,10 @@ void gl_remove_displaylist_fonts()
       }
     }
   }
-
-#endif
+#endif // HAVE_GL
 }
-
-#ifdef __APPLE__
-static void gl_draw_textures(const char* str, int n);
 #endif
+
 
 /**
   Draws an array of n characters of the string in the current font
@@ -196,9 +112,10 @@ static void gl_draw_textures(const char* str, int n);
  \see On the Mac OS X platform, see gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int n) {
-#ifdef __APPLE__  
-  gl_draw_textures(str, n);
-#else
+  Fl_Gl_Window_Driver::global()->draw_string(str, n);
+}
+
+void Fl_Gl_Window_Driver::draw_string(const char* str, int n) {
   static unsigned short *buf = NULL;
   static int l = 0;
   int wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
@@ -208,15 +125,15 @@ void gl_draw(const char* str, int n) {
     wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
   }
   n = wn;
-
+  
   int i;
   for (i = 0; i < n; i++) {
     unsigned int r;
     r = (str[i] & 0xFC00) >> 10;
-    if (!gl_fontsize->glok[r]) get_list(r);
+    //if (!gl_fontsize->glok[r]) get_list(r);
+    this->get_list(gl_fontsize, r);
   }
   glCallLists(n, GL_UNSIGNED_SHORT, buf);
-#endif
 }
 
 /**
@@ -301,10 +218,6 @@ void gl_rect(int x, int y, int w, int h) {
   glEnd();
 }
 
-#if HAVE_GL_OVERLAY
-extern uchar fl_overlay;
-extern int fl_overlay_depth;
-#endif
 
 /**
   Sets the curent OpenGL color to an FLTK color.
@@ -313,8 +226,102 @@ extern int fl_overlay_depth;
   right if the window uses the default colormap!
   */
 void gl_color(Fl_Color i) {
+  if (Fl_Gl_Window_Driver::global()->overlay_color(i)) return;
+  uchar red, green, blue;
+  Fl::get_color(i, red, green, blue);
+  glColor3ub(red, green, blue);
+}
+
+
+#if defined(FL_CFG_GFX_XLIB)
+#include <FL/x.H>
+#include <GL/glx.h>
+
+#  define USE_OksiD_style_GL_font_selection 1  // Most X11 hosts except XFT
+#if USE_XFT
+#  undef USE_OksiD_style_GL_font_selection  // turn this off for XFT also
+#endif
+
+void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
+  if (!fl_fontsize->listbase) {
+#ifdef  USE_OksiD_style_GL_font_selection
+    fl_fontsize->listbase = glGenLists(0x10000);
+#else // Fltk-1.1.8 style GL font selection
+    // FIXME:  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
+    // FIXME:  warning GL font selection is basically wrong here
+    /* OksiD had a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
+     * then sorting through them at draw time (for normal X rendering) to find which one can
+     * render the current glyph... But for now, just use the first font in the list for GL...
+     */
+     XFontStruct *font = fl_xfont.value();
+     int base = font->min_char_or_byte2;
+     int count = font->max_char_or_byte2-base+1;
+     fl_fontsize->listbase = glGenLists(256);
+     glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
+#endif // USE_OksiD_style_GL_font_selection
+     }
+     glListBase(fl_fontsize->listbase);
+}
+
+
+void Fl_X11_Gl_Window_Driver::get_list(Fl_Font_Descriptor *gl_fd, int r) {
+  if (gl_fd->glok[r]) return;
+  gl_fd->glok[r] = 1;
+# if USE_XFT
+  // FIXME
+# else
+  unsigned int ii = r * 0x400;
+  for (int i = 0; i < 0x400; i++) {
+    XFontStruct *font = NULL;
+    unsigned short id;
+    fl_XGetUtf8FontAndGlyph(gl_fd->font, ii, &font, &id);
+    if (font) glXUseXFont(font->fid, id, 1, gl_fd->listbase+ii);
+    ii++;
+  }
+# endif
+}
+
 #if HAVE_GL_OVERLAY
-#if defined(WIN32)
+extern uchar fl_overlay;
+int Fl_X11_Gl_Window_Driver::overlay_color(Fl_Color i) {
+  if (fl_overlay) {glIndexi(int(fl_xpixel(i))); return 1;}
+  return 0;
+}
+#endif // HAVE_GL_OVERLAY
+#endif // FL_CFG_GFX_XLIB
+
+
+#if defined(FL_CFG_GFX_GDI)
+
+void Fl_WinAPI_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
+  if (!fl_fontsize->listbase) {
+    fl_fontsize->listbase = glGenLists(0x10000);
+     /* old, unused WIN32 code
+     int base = fl_fontsize->metr.tmFirstChar;
+     int count = fl_fontsize->metr.tmLastChar-base+1;
+     HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->gc(), fl_fontsize->fid);
+     fl_fontsize->listbase = glGenLists(256);
+     wglUseFontBitmaps((HDC)fl_graphics_driver->gc(), base, count, fl_fontsize->listbase+base);
+     SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
+     */
+  }
+  glListBase(fl_fontsize->listbase);
+}
+
+
+void Fl_WinAPI_Gl_Window_Driver::get_list(Fl_Font_Descriptor *gl_fd, int r) {
+  if (gl_fd->glok[r]) return;
+  gl_fd->glok[r] = 1;
+  unsigned int ii = r * 0x400;
+  HFONT oldFid = (HFONT)SelectObject((HDC)fl_graphics_driver->gc(), gl_fd->fid);
+  wglUseFontBitmapsW((HDC)fl_graphics_driver->gc(), ii, ii + 0x03ff, gl_fd->listbase+ii);
+  SelectObject((HDC)fl_graphics_driver->gc(), oldFid);
+}
+
+#if HAVE_GL_OVERLAY
+extern uchar fl_overlay;
+extern int fl_overlay_depth;
+int Fl_WinAPI_Gl_Window_Driver::overlay_color(Fl_Color i) {
   if (fl_overlay && fl_overlay_depth) {
     if (fl_overlay_depth < 8) {
       // only black & white produce the expected colors.  This could
@@ -326,16 +333,13 @@ void gl_color(Fl_Color i) {
     } else {
       glIndexi(i ? i : FL_GRAY_RAMP);
     }
-    return;
+    return 1;
   }
-#else
-  if (fl_overlay) {glIndexi(int(fl_xpixel(i))); return;}
-#endif
-#endif
-  uchar red, green, blue;
-  Fl::get_color(i, red, green, blue);
-  glColor3ub(red, green, blue);
+  return 0;
 }
+#endif // HAVE_GL_OVERLAY
+#endif // FL_CFG_GFX_GDI
+
 
 void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   if (!ld) ld = w*d;
@@ -344,7 +348,15 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN)
+
+#if defined(FL_CFG_GFX_QUARTZ) || defined(FL_DOXYGEN)
+#include <FL/x.H>
+#if  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#  include <OpenGL/glext.h>
+#  define kCGBitmapByteOrder32Host 0
+#  define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED
+
 /* Text drawing to an OpenGL scene under Mac OS X is implemented using textures, as recommended by Apple.
  This allows to use any font at any size, and any Unicode character.
  Some old Apple hardware doesn't implement the required GL_EXT_texture_rectangle extension.
@@ -361,7 +373,7 @@ static int has_texture_rectangle = 0; // true means GL_EXT_texture_rectangle is 
 
 // manages a fifo pile of pre-computed string textures
 class gl_texture_fifo {
-  friend void gl_draw_textures(const char *, int);
+  friend class Fl_Cocoa_Gl_Window_Driver;
 private:
   typedef struct { // information for a pre-computed texture
     GLuint texName; // its name
@@ -540,7 +552,7 @@ int gl_texture_fifo::already_known(const char *str, int n)
 static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class instance
 
 // draws a utf8 string using pre-computed texture if available
-static void gl_draw_textures(const char* str, int n) 
+void Fl_Cocoa_Gl_Window_Driver::draw_string(const char* str, int n)
 {
   gl_scale = Fl_Window::current()->as_gl_window()->pixels_per_unit();
   //fprintf(stderr,"gl_scale=%d\n",gl_scale);
@@ -590,7 +602,7 @@ void gl_texture_reset()
 {
   if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
 }
-#endif // __APPLE__
+#endif // FL_CFG_GFX_QUARTZ
 
 #endif // HAVE_GL
 

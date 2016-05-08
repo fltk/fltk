@@ -27,6 +27,7 @@
 #include <FL/Fl_Gl_Window.H>
 
 class Fl_Gl_Choice;
+class Fl_Font_Descriptor;
 
 /* The constructor of each Fl_Gl_Window object creates also an object from a
  platform-specific derived class from this class.
@@ -78,6 +79,10 @@ public:
   virtual void gl_visual(Fl_Gl_Choice*); // support for Fl::gl_visual() function
   virtual void gl_start() {} // support for gl_start() function
   virtual void* GetProcAddress(const char *procName); // support for glutGetProcAddress()
+  virtual void draw_string(const char* str, int n); // support for gl_draw()
+  virtual void get_list(Fl_Font_Descriptor* fd, int r) {} // support for gl_draw() without textures
+  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {} // support for gl_font() without textures
+  virtual int overlay_color(Fl_Color i) {return 0;} // support for gl_color() with HAVE_GL_OVERLAY
 };
 
 #ifdef FL_CFG_GFX_QUARTZ
@@ -100,6 +105,7 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void make_overlay_current();
   virtual void redraw_overlay();
   virtual void gl_start();
+  virtual void draw_string(const char* str, int n);
 };
 #endif // FL_CFG_GFX_QUARTZ
 
@@ -122,8 +128,11 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void make_overlay_current();
   virtual void redraw_overlay();
   virtual void* GetProcAddress(const char *procName);
+  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize);
+  virtual void get_list(Fl_Font_Descriptor *fd, int r);
 #if HAVE_GL_OVERLAY
   virtual int can_do_overlay();
+  virtual int overlay_color(Fl_Color i);
 #endif
 };
 
@@ -148,12 +157,15 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void make_overlay(void *&o);
   virtual int can_do_overlay();
   virtual void hide_overlay();
+  virtual int overlay_color(Fl_Color i);
 #endif
   virtual void make_overlay_current();
   virtual void redraw_overlay();
   virtual void waitGL();
   virtual void gl_visual(Fl_Gl_Choice*); // support for Fl::gl_visual()
   virtual void gl_start();
+  virtual void gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize);
+  virtual void get_list(Fl_Font_Descriptor *fd, int r);
 public:
   static GLContext create_gl_context(XVisualInfo* vis);
 };
