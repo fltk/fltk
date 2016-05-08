@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Gl_Window_Driver.H 11696 2016-04-25 06:29:36Z manolo $"
+// "$Id$"
 //
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
@@ -163,5 +163,5 @@ public:
 #endif /* Fl_Gl_Window_Driver_H */
 
 //
-// End of "$Id: Fl_Gl_Window_Driver.H 11662 2016-04-19 16:58:17Z manolo $".
+// End of "$Id$".
 //
