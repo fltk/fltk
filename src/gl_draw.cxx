@@ -555,12 +555,8 @@ static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class inst
 // draws a utf8 string using pre-computed texture if available
 void Fl_Cocoa_Gl_Window_Driver::draw_string(const char* str, int n)
 {
-  Fl_Window *win = Fl_Window::current();
-  if (win->as_gl_window())
-    gl_scale = win->as_gl_window()->pixels_per_unit();
-  else
-    gl_scale = (fl_mac_os_version >= 100700 && win->shown() &&
-          Fl_Cocoa_Window_Driver::driver(win)->mapped_to_retina()) ? 2 : 1;
+  Fl_Gl_Window *gwin = Fl_Window::current()->as_gl_window();
+  gl_scale = (gwin ? gwin->pixels_per_unit() : 1);
   
   //fprintf(stderr,"gl_scale=%d\n",gl_scale);
   if (! gl_fifo) gl_fifo = new gl_texture_fifo();
