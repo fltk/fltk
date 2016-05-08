@@ -133,8 +133,7 @@ Fl_Gl_Choice *Fl_WinAPI_Gl_Window_Driver::find(int m, const int *alistp)
   Fl_Gl_Choice *g = Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
   
-  // Replacement for ChoosePixelFormat() that finds one with an overlay
-  // if possible:)
+  // Replacement for ChoosePixelFormat() that finds one with an overlay if possible:
   HDC gc = (HDC)(fl_graphics_driver ? fl_graphics_driver->gc() : 0);
   if (!gc) gc = fl_GetDC(0);
   int pixelformat = 0;
