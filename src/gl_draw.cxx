@@ -350,6 +350,9 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 
 
 #if defined(FL_CFG_GFX_QUARTZ) || defined(FL_DOXYGEN)
+
+#if ! defined(FL_DOXYGEN)
+
 #include <FL/x.H>
 #if  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
 #  include <OpenGL/glext.h>
@@ -572,6 +575,13 @@ void Fl_Cocoa_Gl_Window_Driver::draw_string(const char* str, int n)
   gl_fifo->display_texture(rank);
 }
 
+void gl_texture_reset()
+{
+  if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
+}
+
+#endif  //! defined(FL_DOXYGEN)
+
 /** \addtogroup group_macosx
  @{ */
 
@@ -601,10 +611,6 @@ void gl_texture_pile_height(int max)
 
 /** @} */
 
-void gl_texture_reset()
-{
-  if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
-}
 #endif // FL_CFG_GFX_QUARTZ
 
 #endif // HAVE_GL
