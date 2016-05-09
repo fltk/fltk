@@ -505,7 +505,7 @@ void Fl_Cocoa_Gl_Window_Driver::make_current_before() {
   if (d->changed_resolution()){
     d->changed_resolution(false);
     invalidate();
-    Fl_Cocoa_Screen_Driver::GLcontext_update((GLContext)pWindow->context());
+    GLcontext_update((GLContext)pWindow->context());
   }
 }
 
@@ -549,14 +549,10 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int unused, int also) {
   Fl_X *flx = Fl_X::i(pWindow);
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(pWindow);
-  if (flx && d->in_windowDidResize()) Fl_Cocoa_Screen_Driver::GLcontext_update((GLContext)pWindow->context());
+  if (flx && d->in_windowDidResize()) GLcontext_update((GLContext)pWindow->context());
 }
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return COPY;}
-
-void Fl_Cocoa_Gl_Window_Driver::flush_context() {
-  Fl_Cocoa_Screen_Driver::GLcontext_flushbuffer((GLContext)pWindow->context());
-}
 
 #endif // FL_CFG_GFX_QUARTZ
 

@@ -83,7 +83,7 @@ Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_Gl_Choice *g = Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
-  NSOpenGLPixelFormat* fmt = Fl_Cocoa_Screen_Driver::mode_to_NSOpenGLPixelFormat(m, alistp);
+  NSOpenGLPixelFormat* fmt = mode_to_NSOpenGLPixelFormat(m, alistp);
   if (!fmt) return 0;
   g = new Fl_Gl_Choice(m, alistp, first);
   first = g;
@@ -97,7 +97,7 @@ GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const 
   // resets the pile of string textures used to draw strings
   // necessary before the first context is created
   if (!shared_ctx) gl_texture_reset();
-  context = Fl_Cocoa_Screen_Driver::create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
+  context = create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
   if (!context) return 0;
   add_context((GLContext)context);
   return (context);
@@ -107,7 +107,7 @@ void Fl_Cocoa_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) 
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    Fl_Cocoa_Screen_Driver::GLcontext_makecurrent(context);
+    GLcontext_makecurrent(context);
   }
 }
 
@@ -115,9 +115,9 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
   if (cached_context == context) {
     cached_context = 0;
     cached_window = 0;
-    Fl_Cocoa_Screen_Driver::GL_cleardrawable();
+    GL_cleardrawable();
   }
-  Fl_Cocoa_Screen_Driver::GLcontext_release(context);
+  GLcontext_release(context);
   del_context(context);
 }
 

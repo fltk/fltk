@@ -86,6 +86,14 @@ public:
 };
 
 #ifdef FL_CFG_GFX_QUARTZ
+#ifdef __OBJC__
+@class NSOpenGLPixelFormat;
+@class NSOpenGLContext;
+#else
+class NSOpenGLPixelFormat;
+class NSOpenGLContext;
+#endif // __OBJC__
+
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
@@ -106,6 +114,12 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void redraw_overlay();
   virtual void gl_start();
   virtual void draw_string(const char* str, int n);
+  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
+  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // uses Objective-c
+  static void GLcontext_update(NSOpenGLContext*); // uses Objective-c
+  static void GLcontext_release(NSOpenGLContext*); // uses Objective-c
+  static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
+  static void GL_cleardrawable(void); // uses Objective-c
 };
 #endif // FL_CFG_GFX_QUARTZ
 
