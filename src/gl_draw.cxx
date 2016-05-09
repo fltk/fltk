@@ -40,6 +40,7 @@
 #  include <OpenGL/glext.h>
 #  define kCGBitmapByteOrder32Host 0
 #  define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
+#  include <FL/Fl_Gl_Window.H>
 #endif // __APPLE__
 
 /** Returns the current font's height */
@@ -520,7 +521,8 @@ static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class inst
 // draws a utf8 string using pre-computed texture if available
 static void gl_draw_textures(const char* str, int n) 
 {
-  gl_scale = Fl_Window::current()->as_gl_window()->pixels_per_unit();
+  Fl_Gl_Window *gwin = Fl_Window::current()->as_gl_window();
+  gl_scale = (gwin ? gwin->pixels_per_unit() : 1);
   //fprintf(stderr,"gl_scale=%d\n",gl_scale);
   if (! gl_fifo) gl_fifo = new gl_texture_fifo();
   if (!gl_fifo->textures_generated) {
