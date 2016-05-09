@@ -3,7 +3,7 @@
 //
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file. If this
@@ -58,8 +58,13 @@
   Fl_Tile widget is resized, the resizable() widget will keep its border
   distance to all borders the same (this is normal resize behavior), so
   that you can effectively set a border width that will never change.
+  To ensure correct event delivery to all child widgets the resizable()
+  widget must be the first child of the Fl_Tile widget group. Otherwise
+  some events (e.g. FL_MOVE and FL_ENTER) might be consumed by the resizable()
+  widget so that they are lost for widgets covered (overlapped) by the
+  resizable() widget.
 
-  <b>Note:</b>
+  \note
   You can still resize widgets \b inside the resizable() to zero width and/or
   height, i.e. box \b 2b above to zero width and box \b 3a to zero height.
 
@@ -69,10 +74,10 @@
   \code
     int dx = 20, dy = dx;
     Fl_Tile tile(50,50,300,300);
-    // ... create widgets inside tile (see test/tile.cxx) ...
-    // create resizable() box
+    // create resizable() box first
     Fl_Box r(tile.x()+dx,tile.y()+dy,tile.w()-2*dx,tile.h()-2*dy);
     tile.resizable(r);
+    // ... create widgets inside tile (see test/tile.cxx) ...
     tile.end();
   \endcode
 
@@ -289,8 +294,8 @@ int Fl_Tile::handle(int event) {
   \see class Fl_Group
 */
 
-Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*l)
-: Fl_Group(X,Y,W,H,l)
+Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*L)
+: Fl_Group(X,Y,W,H,L)
 {
 }
 
