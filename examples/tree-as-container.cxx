@@ -23,7 +23,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 
-#define MAX_ROWS     20000
+#define MAX_ROWS     20000	/* test */
 #define MAX_FIELDS   5
 #define FIELD_WIDTH  70
 #define FIELD_HEIGHT 30
