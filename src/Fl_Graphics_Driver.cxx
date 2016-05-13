@@ -3,7 +3,7 @@
 //
 // implementation of Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2012 by Bill Spitzak and others.
+// Copyright 2010-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,10 +42,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
 /** Return the graphics driver used when drawing to the platform's display */
 Fl_Graphics_Driver &Fl_Graphics_Driver::default_driver()
 {
-  static Fl_Graphics_Driver *pMainDriver = 0L;
-  if (!pMainDriver) {
-    pMainDriver = Fl_Display_Device::display_device()->driver();
-  }
+  static Fl_Graphics_Driver *pMainDriver = Fl_Display_Device::display_device()->driver();
   return *pMainDriver;
 }
 
