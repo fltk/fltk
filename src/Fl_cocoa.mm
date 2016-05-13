@@ -2839,7 +2839,7 @@ void Fl_Cocoa_Gl_Window_Driver::GLcontext_update(NSOpenGLContext* ctxt)
 
 void Fl_Cocoa_Gl_Window_Driver::flush_context()
 {
-  [(NSOpenGLContext*)pWindow->context() flushBuffer];
+  [pWindow->context() flushBuffer];
 }
 
 void Fl_Cocoa_Gl_Window_Driver::GLcontext_release(NSOpenGLContext* ctxt)

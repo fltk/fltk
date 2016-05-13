@@ -21,7 +21,7 @@
 
 extern int fl_gl_load_plugin;
 
-#include "Fl_Gl_Choice.H"
+#include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Gl_Window_Driver.H>
 #include <stdlib.h>
@@ -277,9 +277,9 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   fltk when the window is destroyed, or when the mode() is changed, 
   or the next time context(x) is called.
 */
-void Fl_Gl_Window::context(void* v, int destroy_flag) {
+void Fl_Gl_Window::context(GLContext v, int destroy_flag) {
   if (context_ && !(mode_&NON_LOCAL_CONTEXT)) pGlWindowDriver->delete_gl_context(context_);
-  context_ = (GLContext)v;
+  context_ = v;
   if (destroy_flag) mode_ &= ~NON_LOCAL_CONTEXT;
   else mode_ |= NON_LOCAL_CONTEXT;
 }    
@@ -452,11 +452,9 @@ void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 
 
 #ifdef FL_CFG_GFX_QUARTZ
-//#include <FL/gl.h>
 #include <FL/x.H>
 #include <OpenGL/OpenGL.h>
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
-#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {
@@ -505,7 +503,7 @@ void Fl_Cocoa_Gl_Window_Driver::make_current_before() {
   if (d->changed_resolution()){
     d->changed_resolution(false);
     invalidate();
-    GLcontext_update((GLContext)pWindow->context());
+    GLcontext_update(pWindow->context());
   }
 }
 
@@ -549,7 +547,7 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int unused, int also) {
   Fl_X *flx = Fl_X::i(pWindow);
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(pWindow);
-  if (flx && d->in_windowDidResize()) GLcontext_update((GLContext)pWindow->context());
+  if (flx && d->in_windowDidResize()) GLcontext_update(pWindow->context());
 }
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return COPY;}
@@ -643,6 +641,7 @@ void* Fl_WinAPI_Gl_Window_Driver::GetProcAddress(const char *procName) {
 
 #if defined(FL_CFG_GFX_XLIB)
 #include <FL/x.H>
+#include "Fl_Gl_Choice.H"
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {

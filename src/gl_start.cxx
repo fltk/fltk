@@ -35,7 +35,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/gl.h>
-#include "Fl_Gl_Choice.H"
+class Fl_Gl_Choice;
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Gl_Window_Driver.H>
 
@@ -86,7 +86,6 @@ void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
 }
 
 #ifdef FL_CFG_GFX_QUARTZ
-#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 
 void Fl_Cocoa_Gl_Window_Driver::gl_start() {
   GLcontext_update(context); // supports window resizing
@@ -97,6 +96,7 @@ void Fl_Cocoa_Gl_Window_Driver::gl_start() {
 
 #ifdef FL_CFG_GFX_XLIB
 #include <FL/x.H>
+#include "Fl_Gl_Choice.H"
 
 void Fl_X11_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
   Fl_Gl_Window_Driver::gl_visual(c);

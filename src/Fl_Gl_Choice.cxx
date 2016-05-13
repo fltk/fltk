@@ -20,7 +20,6 @@
 #if HAVE_GL
 
 #  include <FL/Fl.H>
-#  include <FL/Fl_Graphics_Driver.H>
 #  include <stdlib.h>
 #  include "Fl_Gl_Choice.H"
 #  include <FL/Fl_Gl_Window.H>
@@ -76,7 +75,6 @@ static Fl_Window* cached_window;
 
 
 #ifdef FL_CFG_GFX_QUARTZ
-#include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 extern void gl_texture_reset();
 
 Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
@@ -97,9 +95,9 @@ GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const 
   // resets the pile of string textures used to draw strings
   // necessary before the first context is created
   if (!shared_ctx) gl_texture_reset();
-  context = create_GLcontext_for_window(g->pixelformat, shared_ctx, window);
+  context = create_GLcontext_for_window((NSOpenGLPixelFormat*)g->pixelformat, shared_ctx, window);
   if (!context) return 0;
-  add_context((GLContext)context);
+  add_context(context);
   return (context);
 }
 
@@ -125,6 +123,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
 
 #ifdef FL_CFG_GFX_GDI
 #  include <FL/x.H>
+#  include <FL/Fl_Graphics_Driver.H>
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 extern void fl_save_dc(HWND, HDC);
 

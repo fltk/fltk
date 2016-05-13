@@ -21,7 +21,6 @@
 
 #include <FL/Fl.H>
 #include <FL/gl.h>
-#include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Gl_Window_Driver.H>
 #include <stdlib.h>

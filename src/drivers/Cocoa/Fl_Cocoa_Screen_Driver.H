@@ -41,15 +41,6 @@
 class Fl_Window;
 class Fl_Input;
 
-#ifdef __OBJC__
-@class NSOpenGLPixelFormat;
-@class NSOpenGLContext;
-#else
-class NSOpenGLPixelFormat;
-class NSOpenGLContext;
-#endif // __OBJC__
-
-
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
 protected:

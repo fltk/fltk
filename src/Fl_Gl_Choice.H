@@ -42,58 +42,34 @@
 #ifndef Fl_Gl_Choice_H
 #define Fl_Gl_Choice_H
 
-
 #ifdef FL_CFG_GFX_QUARTZ
-
 #  include <OpenGL/gl.h>
-#ifdef __OBJC__
-@class NSOpenGLPixelFormat;
-@class NSOpenGLContext;
-#else
-class NSOpenGLPixelFormat;
-class NSOpenGLContext;
-#endif // __OBJC__
-typedef NSOpenGLContext* FLOpenGLContextPtr;
-#  define GLContext FLOpenGLContextPtr
-
-// Describes crap needed to create a GLContext under Mac OS X.
-class Fl_Gl_Choice {
-  friend class Fl_Gl_Window_Driver;
-  int mode;
-  const int *alist;
-  Fl_Gl_Choice *next;
-public:
-  Fl_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : mode(m), alist(alistp), next(n) {}
-  NSOpenGLPixelFormat* pixelformat;
-};
-
+#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  void* pixelformat;
 #endif // FL_CFG_GFX_QUARTZ
 
-#ifdef FL_CFG_GFX_GDI
-
-#  include <FL/gl.h>
-#  define GLContext HGLRC
-
-// Describes crap needed to create a GLContext under MSWindows.
-class Fl_Gl_Choice {
-  friend class Fl_Gl_Window_Driver;
-  int mode;
-  const int *alist;
-  Fl_Gl_Choice *next;
-public:
-  Fl_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : mode(m), alist(alistp), next(n) {}
-  int pixelformat;	// the visual to use
-  PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
-};
-
-#endif // FL_CFG_GFX_GDI
 
 #ifdef FL_CFG_GFX_XLIB
-
 #  include <GL/glx.h>
-#  define GLContext GLXContext
+#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
+      XVisualInfo *vis; /* the visual to use */ \
+      Colormap colormap; // a colormap for that visual
+#endif // FL_CFG_GFX_XLIB*/
 
-// Describes crap needed to create a GLContext under X11.
+
+#ifdef FL_CFG_GFX_GDI
+#  include <FL/gl.h>
+#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
+      int pixelformat;	     /* the visual to use */ \
+      PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
+#endif // FL_CFG_GFX_GDI
+
+
+#if defined(FL_PORTING) && !defined(FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS)
+#  pragma message "Define platform-specific members of the Fl_Gl_Choice class"
+#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
+#endif
+
+// Describes crap needed to create a GLContext.
 class Fl_Gl_Choice {
   friend class Fl_Gl_Window_Driver;
   int mode;
@@ -101,12 +77,10 @@ class Fl_Gl_Choice {
   Fl_Gl_Choice *next;
 public:
   Fl_Gl_Choice(int m, const int *alistp, Fl_Gl_Choice *n) : mode(m), alist(alistp), next(n) {}
-  XVisualInfo *vis;	// the visual to use
-  Colormap colormap;	// a colormap for that visual
+  FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
 };
 
-#endif // FL_CFG_GFX_XLIB
-
+#undef FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
 
 #endif // Fl_Gl_Choice_H
 

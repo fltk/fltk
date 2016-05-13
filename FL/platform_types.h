@@ -19,7 +19,7 @@
 
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
-  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, struct dirent, struct stat,
+  Fl_Offscreen, Fl_Bitmask, Fl_Region, FL_SOCKET, GLContext, struct dirent, struct stat,
   fl_intptr_t, fl_uintptr_t
 
   NOTE: *FIXME* AlbrechtS 13 Apr 2016 (concerning FL_SOCKET)
@@ -57,6 +57,13 @@ typedef struct CGContext* Fl_Offscreen;
 typedef struct CGImage* Fl_Bitmask;
 typedef struct flCocoaRegion* Fl_Region;
 typedef int FL_SOCKET;
+#ifdef __OBJC__
+  @class NSOpenGLContext;
+  typedef NSOpenGLContext* GLContext;
+#elif defined(__cplusplus)
+  typedef class NSOpenGLContext* GLContext;
+#endif // __OBJC__
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -73,6 +80,7 @@ typedef  unsigned __int64 FL_SOCKET;	/* *FIXME* - FL_SOCKET (see above) */
 # else
 typedef  int FL_SOCKET;
 # endif
+typedef struct HGLRC__ *GLContext;
 #include <sys/stat.h>
 struct dirent {char d_name[1];};
 
@@ -82,6 +90,7 @@ typedef void* Fl_Offscreen;
 typedef void* Fl_Bitmask;
 typedef void *Fl_Region;
 typedef int FL_SOCKET;
+typedef void *GLContext;
 # pragma message "FL_PORTING: define struct dirent and implement scandir() for the platform"
 struct dirent {char d_name[1];};
 # pragma message "FL_PORTING: define struct stat and implement stat() for the platform"
@@ -98,6 +107,7 @@ typedef unsigned long Fl_Offscreen;
 typedef unsigned long Fl_Bitmask;
 typedef struct _XRegion *Fl_Region;
 typedef int FL_SOCKET;
+typedef struct __GLXcontextRec *GLContext;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>

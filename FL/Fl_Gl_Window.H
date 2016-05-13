@@ -24,14 +24,6 @@
 
 #include "Fl_Window.H"
 
-
-#ifndef GLContext
-/**
-  Opaque pointer type to hide system specific implementation.
-*/
-typedef void* GLContext; // actually a GLXContext or HGLDC
-#endif
-
 class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
 class Fl_Gl_Window_Driver;
 /**
@@ -201,9 +193,9 @@ public:
    */
   int mode(const int *a) {return mode(0, a);}
   /** Returns a pointer to the GLContext that this window is using.
-   \see void context(void* v, int destroy_flag) */
-  void* context() const {return context_;}
-  void context(void*, int destroy_flag = 0);
+   \see void context(GLContext c, int destroy_flag) */
+  GLContext context() const {return context_;}
+  void context(GLContext, int destroy_flag = 0);
   void make_current();
   void swap_buffers();
   void ortho();

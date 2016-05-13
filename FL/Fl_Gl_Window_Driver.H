@@ -88,10 +88,8 @@ public:
 #ifdef FL_CFG_GFX_QUARTZ
 #ifdef __OBJC__
 @class NSOpenGLPixelFormat;
-@class NSOpenGLContext;
 #else
 class NSOpenGLPixelFormat;
-class NSOpenGLContext;
 #endif // __OBJC__
 
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
