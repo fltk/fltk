@@ -26,26 +26,6 @@
 
 #include <FL/Fl_Help_Dialog.H>
 
-
-#ifdef USING_XCODE
-#include <ApplicationServices/ApplicationServices.h>
-void set_app_dir() {
-  char app_path[2048];
-  CFBundleRef app = CFBundleGetMainBundle();
-  CFURLRef url = CFBundleCopyBundleURL(app);    
-  CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-  CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
-  if (*app_path) {
-    char *n = strrchr(app_path, '/');
-    if (n) {
-      *n = 0;
-      chdir(app_path);
-    }
-  }
-}
-#endif
-
-
 //
 // 'main()' - Display the help GUI...
 //
@@ -63,14 +43,12 @@ main(int  argc,			// I - Number of command-line arguments
   
 #ifdef USING_XCODE
   
-  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0) argn++;
-  else if (argc>argn && strncmp(argv[1], "-NSDocumentRevisionsDebugMode", 29)==0) argn += 2;
-  set_app_dir();
-  
-  if (argc <= argn)
-    help->load("../../../../test/help-test.html");
-  else
-    help->load(argv[argn]);
+    char buf[2048];
+    strcpy(buf, argv[0]);
+    char *slash = strrchr(buf, '/');
+    if (slash)
+      strcpy(slash, "/../Resources/help-test.html");
+    help->load(buf);
   
 #else
   
