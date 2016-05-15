@@ -313,6 +313,8 @@
 		7EA88708B9A088FCEB7CAA27 /* file_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 39CD231E22E0B53E92CABDC9 /* file_chooser.cxx */; };
 		7EC3AD9A56535A54430B8DCD /* Fl_Browser_.cxx in Sources */ = {isa = PBXBuildFile; fileRef = AAD25B747F4122A2C5224708 /* Fl_Browser_.cxx */; };
 		7F12FCC718E1EEB900AB6A11 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F12FCC618E1EEB900AB6A11 /* fl_gleam.cxx */; };
+		7F3421EC1CE8ADB7005FA821 /* help-test.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F3421EB1CE8ADB7005FA821 /* help-test.html */; };
+		7F3421EF1CE8AE00005FA821 /* help-test.html in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7F3421EB1CE8ADB7005FA821 /* help-test.html */; };
 		7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */; };
 		7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A3130FAC4F00E736F3 /* gzclose.c */; };
 		7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A4130FAC4F00E736F3 /* gzlib.c */; };
@@ -3631,6 +3633,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7F3421EE1CE8ADF1005FA821 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				7F3421EF1CE8AE00005FA821 /* help-test.html in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F785E28BCEA44FDC7C10F65 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4536,6 +4548,7 @@
 		7F2A29071338C7450033C0A6 /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngstruct.h; path = ../../png/pngstruct.h; sourceTree = SOURCE_ROOT; };
 		7F2A29081338C7520033C0A6 /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnginfo.h; path = ../../png/pnginfo.h; sourceTree = SOURCE_ROOT; };
 		7F2A29091338C7650033C0A6 /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngdebug.h; path = ../../png/pngdebug.h; sourceTree = SOURCE_ROOT; };
+		7F3421EB1CE8ADB7005FA821 /* help-test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "help-test.html"; path = "../../test/help-test.html"; sourceTree = "<group>"; };
 		7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		7F4B8ADD01CB2F8BFE43ACBA /* Fl_Menu_Bar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Bar.cxx; path = ../../src/Fl_Menu_Bar.cxx; sourceTree = SOURCE_ROOT; };
 		7F54C8A3130FAC4F00E736F3 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = ../../zlib/gzclose.c; sourceTree = SOURCE_ROOT; };
@@ -6813,6 +6826,7 @@
 			isa = PBXGroup;
 			children = (
 				D72D2F219FB1BBA586A03EAC /* help.cxx */,
+				7F3421EB1CE8ADB7005FA821 /* help-test.html */,
 			);
 			name = help;
 			sourceTree = "<group>";
@@ -8288,6 +8302,7 @@
 				6340124B1D917C09718D7D97 /* Sources */,
 				7DC246FF0009EB8FB8593BAC /* Frameworks */,
 				BAA16D4B3709554A4558AF91 /* CopyFiles */,
+				7F3421EE1CE8ADF1005FA821 /* CopyFiles */,
 			);
 			buildRules = (
 				CEB41048C80E70F94752F4BA /* PBXBuildRule */,
@@ -9144,6 +9159,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F3421EC1CE8ADB7005FA821 /* help-test.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
