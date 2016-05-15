@@ -25,26 +25,7 @@
 //
 
 #include <FL/Fl_Help_Dialog.H>
-
-
-#ifdef USING_XCODE
-#include <ApplicationServices/ApplicationServices.h>
-void set_app_dir() {
-  char app_path[2048];
-  CFBundleRef app = CFBundleGetMainBundle();
-  CFURLRef url = CFBundleCopyBundleURL(app);    
-  CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-  CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
-  if (*app_path) {
-    char *n = strrchr(app_path, '/');
-    if (n) {
-      *n = 0;
-      chdir(app_path);
-    }
-  }
-}
-#endif
-
+#include <stdio.h>
 
 //
 // 'main()' - Display the help GUI...
@@ -54,32 +35,28 @@ int				// O - Exit status
 main(int  argc,			// I - Number of command-line arguments
      char *argv[])		// I - Command-line arguments
 {
-  Fl_Help_Dialog	*help;		// Help dialog
-
-
-  help = new Fl_Help_Dialog;
-
-  int argn = 1;
+  Fl_Help_Dialog *help = new Fl_Help_Dialog;
   
-#ifdef USING_XCODE
+#ifdef __APPLE__
   
-  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0) argn++;
-  else if (argc>argn && strncmp(argv[1], "-NSDocumentRevisionsDebugMode", 29)==0) argn += 2;
-  set_app_dir();
+  // bundled apps do not set the current directory
+  char htmlname[1000];
+  strcpy(htmlname, argv[0]);
+  char *slash = strrchr(htmlname, '/');
+  if (slash)
+    strcpy(slash, "/../Resources/help-test.html");
+  FILE *in = fl_fopen(htmlname, "r");
+  if (in) {
+    fclose(in);
+    help->load(htmlname);
+  } else
   
-  if (argc <= argn)
-    help->load("../../../../test/help-test.html");
-  else
-    help->load(argv[argn]);
+#endif
   
-#else
-  
-  if (argc <= argn)
+  if (argc <= 1)
     help->load("help-test.html");
   else
     help->load(argv[1]);
-  
-#endif
   
   help->show(1, argv);
 
@@ -87,9 +64,8 @@ main(int  argc,			// I - Number of command-line arguments
 
   delete help;
 
-  return (0);
+  return 0;
 }
-
 
 //
 // End of "$Id$".
