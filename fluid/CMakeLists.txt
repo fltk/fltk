@@ -3,7 +3,7 @@
 #
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2016 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -39,31 +39,21 @@ set(CPPFILES
 )
 
 if(APPLE AND NOT OPTION_APPLE_X11)
-  set( ICON_NAME fluid.icns )
-  set( ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/Fluid.app/Contents/Resources/${ICON_NAME}" )
-  add_executable(fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+    set(FLUID_ICON "${CMAKE_CURRENT_SOURCE_DIR}/Fluid.app/Contents/Resources/fluid.icns")
+    add_executable(fluid MACOSX_BUNDLE ${CPPFILES} "${FLUID_ICON}")
+    FLTK_SET_BUNDLE_ICON(fluid "${FLUID_ICON}")
 else()
-  add_executable(fluid ${CPPFILES})
+    add_executable(fluid WIN32 ${CPPFILES})
 endif(APPLE AND NOT OPTION_APPLE_X11)
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
 # install fluid
 
-if(APPLE AND NOT OPTION_APPLE_X11)
-  # create bundle
-  set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
-  set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
-  # install
-  install(TARGETS fluid DESTINATION ${FLTK_BINDIR})
-else()
-  install(TARGETS fluid
+install(TARGETS fluid
     EXPORT FLTK-Targets
-    RUNTIME DESTINATION ${FLTK_BINDIR}
-    LIBRARY DESTINATION ${FLTK_LIBDIR}
-    ARCHIVE DESTINATION ${FLTK_LIBDIR}
-    )
-endif(APPLE AND NOT OPTION_APPLE_X11)
+    DESTINATION ${FLTK_BINDIR}
+)
 
 # install desktop files
 

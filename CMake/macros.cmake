@@ -1,7 +1,7 @@
 #
 # "$Id$"
 #
-# macros.cmake defines macros used by the build system
+# macros.cmake
 # Written by Michael Surette
 #
 # Copyright 1998-2016 by Bill Spitzak and others.
@@ -82,32 +82,13 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 endmacro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
 #######################################################################
-# USAGE: FLTK_RUN_FLUID TARGET_NAME "FLUID_SOURCE [.. FLUID_SOURCE]"
-function(FLTK_RUN_FLUID TARGET SOURCES)
-    set (CXX_FILES)
-    foreach(src ${SOURCES})
-        if ("${src}" MATCHES "\\.fl$")
-	    string(REGEX REPLACE "(.*).fl" \\1 basename ${src})
-	    add_custom_command(
-		OUTPUT "${basename}.cxx" "${basename}.h"
-		COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/${src}
-		DEPENDS ${src}
-		MAIN_DEPENDENCY ${src}
-		)
-	    list(APPEND CXX_FILES "${basename}.cxx")
-        endif ("${src}" MATCHES "\\.fl$")
-        set (${TARGET} ${CXX_FILES} PARENT_SCOPE)
-    endforeach(src)
-endfunction(FLTK_RUN_FLUID TARGET SOURCES)
-
-#######################################################################
-macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
+function(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
     set (srcs)			# source files
     set (flsrcs)		# fluid source files
+    set (icns)			# mac icons
 
     set (tname ${NAME})		# target name
-    set (oname ${NAME})		# output (executable) name
 
     # rename reserved target name "help" (CMake 2.8.12 and later)
     if (${tname} MATCHES "^help$")
@@ -117,6 +98,8 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
     foreach(src ${SOURCES})
         if ("${src}" MATCHES "\\.fl$")
             list(APPEND flsrcs ${src})
+        elseif ("${src}" MATCHES "\\.icns$")
+            set(icns "${src}")
         else ()
             list(APPEND srcs ${src})
         endif ("${src}" MATCHES "\\.fl$")
@@ -124,45 +107,28 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
     set (FLUID_SOURCES)
     if (flsrcs)
-	FLTK_RUN_FLUID(FLUID_SOURCES "${flsrcs}")
+        FLTK_RUN_FLUID(FLUID_SOURCES "${flsrcs}")
     endif (flsrcs)
 
     if (APPLE AND NOT OPTION_APPLE_X11)
-      unset (RESOURCE_PATH)
-      if (${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
-        set (ICON_NAME ${tname}.icns)
-        set (RESOURCE_PATH "${PROJECT_SOURCE_DIR}/test/${tname}.app/Contents/Resources/${ICON_NAME}")
-      elseif (${tname} STREQUAL "demo")
-        set (RESOURCE_PATH "${PROJECT_SOURCE_DIR}/test/demo.menu")
-      endif (${tname} STREQUAL "blocks" OR ${tname} STREQUAL "checkers" OR ${tname} STREQUAL "sudoku")
-
-      if (DEFINED RESOURCE_PATH)
-        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES} ${RESOURCE_PATH})
-        if (${tname} STREQUAL "demo")
-          target_compile_definitions(demo PUBLIC USING_XCODE)
-        endif (${tname} STREQUAL "demo")
-      else ()
-        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES})
-      endif (DEFINED RESOURCE_PATH)
+        add_executable(${tname} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES} ${icns})
+        if (icns)
+            FLTK_SET_BUNDLE_ICON(${tname} ${icns})
+        endif (icns)
     else ()
-      add_executable(${tname} WIN32 ${srcs} ${FLUID_SOURCES})
+        add_executable(${tname} WIN32 ${srcs} ${FLUID_SOURCES})
     endif (APPLE AND NOT OPTION_APPLE_X11)
 
     set_target_properties(${tname}
-      PROPERTIES OUTPUT_NAME ${oname}
+        PROPERTIES OUTPUT_NAME ${NAME}
     )
-    if (APPLE AND DEFINED RESOURCE_PATH)
-      if (NOT ${tname} STREQUAL "demo")
-        set_target_properties(${tname} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
-      endif (NOT ${tname} STREQUAL "demo")
-      set_target_properties(${tname} PROPERTIES RESOURCE ${RESOURCE_PATH})
-    endif (APPLE AND DEFINED RESOURCE_PATH)
-    if (APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
-      set_target_properties("editor" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/ide/Xcode4/plists/editor-Info.plist")
-    endif (APPLE AND (NOT OPTION_APPLE_X11) AND ${tname} STREQUAL "editor")
 
     target_link_libraries(${tname} ${LIBRARIES})
 
-endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
+endfunction(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
 #######################################################################
+
+#
+# End of "$Id$".
+#
