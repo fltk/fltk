@@ -93,7 +93,7 @@ typedef int FL_SOCKET;
 typedef void *GLContext;
 # pragma message "FL_PORTING: define struct dirent and implement scandir() for the platform"
 struct dirent {char d_name[1];};
-# pragma message "FL_PORTING: define struct stat and implement stat() for the platform"
+# pragma message "FL_PORTING: define struct stat and implement Fl_XXX_System_Driver::stat() for the platform"
 struct stat { /* the FLTK source code uses part of the stat() API */
   unsigned st_mode;
   unsigned st_size;
