@@ -6,6 +6,9 @@
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
+// Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
+// Copyright 2011-2016 by Bill Spitzak and others.
+//
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
@@ -232,7 +235,7 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
     Fl_Color c = fl_color();
     fl_color(hv_selection_color);
     int w = (int)fl_width(t);
-    if (current_pos+(int)strlen(t)<selection_last) 
+    if (current_pos+(int)strlen(t)<selection_last)
       w += (int)fl_width(' ');
     fl_rectf(x, y+fl_descent()-fl_height(), w, fl_height());
     fl_color(hv_selection_text_color);
@@ -259,6 +262,221 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
   }
 }
 
+#define DEBUG_EDIT_BUFFER 0
+
+#if (DEBUG_EDIT_BUFFER > 1)
+#define DEBUG_FUNCTION(L,F) \
+  printf("\n========\n  [%d] --- %s\n========\n", L, F); \
+  fflush(stdout);
+#else
+#define DEBUG_FUNCTION(L,F)
+#endif
+
+
+/* ** Intentionally not Doxygen docs.
+  HelpView Edit Buffer management class.
+  <b>Internal use only.</b>
+
+  This class is for internal use in this file. Its sole purpose is to
+  allow buffer management to avoid buffer overflows in stack variables
+  used to edit strings for formatting and drawing (STR #3275).
+
+  This class will likely be superseded by an Fl_String or Fl_Buffer class
+  in a later FLTK release (1.4.x).
+
+  Note: The buffer allocation and extension size (chunk size) must be
+  a power of 2, but this is deliberately never checked, because this
+  class is only used here with default values. Using extension sizes
+  that are not a power of 2 may result in unpredictable behavior.
+*/
+
+class HV_Edit_Buffer {
+
+  int size_;				// actually used text size w/o nul
+  int allocated_;			// allocated buffer size
+  int extend_;				// extend size (must be a power of 2)
+
+  char *buf_;				// internal buffer
+
+public:
+
+  HV_Edit_Buffer (int alloc = 1024, int ext = 1024);	// c'tor
+  ~HV_Edit_Buffer ();					// d'tor
+
+  char *c_str() { return buf_; }
+  void clear();
+  int size() { return size_; }
+  void check(int size);
+  const char *add(const char *text, int size = -1);
+  void add(char c);
+  void add(int ucs);
+
+  int cmp(const char * str) { return !strcasecmp(buf_, str); }
+  int width() { return (int)fl_width(buf_); }
+
+  char & operator[] (int idx) { return buf_[idx]; }
+  char const operator[] (int idx) const { return buf_[idx]; }
+
+#if (DEBUG_EDIT_BUFFER)
+  void print(const char *text = "");
+#endif
+};
+
+/*
+  Edit buffer constructor.
+*/
+HV_Edit_Buffer::HV_Edit_Buffer(
+	int	alloc,
+	int	ext)
+{
+  alloc = (alloc + ext-1) & (~(ext-1));	// round to chunk size
+
+  size_ = 0;
+  allocated_ = alloc;
+  extend_ = ext;
+  buf_ = (char *)malloc(alloc);
+}
+
+/*
+  Clears the edit buffer, but doesn't free the buffer.
+*/
+void HV_Edit_Buffer::clear()
+{
+
+  // DEBUG_FUNCTION(__LINE__,__FUNCTION__);
+
+  size_ = 0;
+  buf_[0] = '\0';
+}
+
+/*
+  Adds text to the buffer.
+
+  \param[in]	text	text to be added
+  \param[in]	size	text size, default: -1 => strlen(text)
+  \returns	new input text pointer, i.e. points beyond inserted text
+*/
+const char *HV_Edit_Buffer::add(const char *text, int size) {
+
+  if (size < 0) size = (int)strlen(text);
+  if (!size) return text;
+
+  check(size);
+
+#if (DEBUG_EDIT_BUFFER > 1)
+  printf("HV_Edit_Buffer::add(text,%d), allocated=%d, size=%d\n",
+	 size, allocated_, size_+size);
+  fflush(stdout);
+#endif
+
+  memcpy(buf_+size_, text, size);
+  size_ += size;
+  buf_[size_] = '\0';
+
+  return (text + size);
+
+} // add(const char *text, int size)
+
+/*
+  Adds one byte (character) to the buffer.
+
+  \note It is possible to add partial UTF-8 sequences.
+
+  \param[in]	c	byte (char) to be added
+*/
+void HV_Edit_Buffer::add(char c) {
+
+  check(1);
+
+#if (DEBUG_EDIT_BUFFER > 1)
+  printf("HV_Edit_Buffer::add(char = '%c'), allocated=%d, size=%d\n",
+	 c, allocated_, size_+1);
+  fflush(stdout);
+#endif
+
+  buf_[size_++] = c;
+  buf_[size_] = '\0';
+
+} // add(char c)
+
+/*
+  Adds one Unicode character (int) to the buffer.
+
+  The Unicode character \p ucs is converted to UTF-8 and appended to
+  the buffer.
+
+  \param[in]	ucs	Unicode character (code point) to be added
+*/
+void HV_Edit_Buffer::add(int ucs) {
+
+  int len;
+  char cbuf[6];
+
+  len = fl_utf8encode((unsigned int)ucs, cbuf);
+  if (len < 1) len = 1;
+  add(cbuf,len);
+
+} // add(int ucs)
+
+/*
+  Checks needed buffer size and reallocates the buffer if necessary.
+
+  Tests if the given string \p size can be added to the string buffer.
+  An additional nul byte is also considered in the calculation.
+
+  \p size must be >= 0.
+
+  If the requested \p size doesn't fit in the allocated buffer size,
+  the buffer is extended.
+
+  \param[in]	size	requested text size to be added (w/o trailing nul)
+*/
+void HV_Edit_Buffer::check(int size) {
+
+  if (size_ + size + 1 <= allocated_) return;
+
+  int new_size = (allocated_ + size + extend_) & (~(extend_-1)); // round to chunk size
+
+  buf_ = (char *)realloc(buf_, new_size);
+
+#if (DEBUG_EDIT_BUFFER)
+  printf("HV_Edit_Buffer::check(%d), allocated: %d ->%d\n",
+	 size, allocated_, new_size);
+  fflush(stdout);
+#endif
+
+  allocated_ = new_size;
+
+} // HV_Edit_Buffer::check()
+
+
+/*
+  The destructor frees the edit buffer.
+*/
+HV_Edit_Buffer::~HV_Edit_Buffer() {
+
+  if (buf_) {
+#if (DEBUG_EDIT_BUFFER)
+    printf("~HV_Edit_Buffer(): size = %d, allocated = %d\n",
+      size_, allocated_);
+    fflush(stdout);
+#endif
+    free(buf_);
+  }
+} // ~HV_Edit_Buffer()
+
+
+/*
+  Prints the edit buffer (Debug only).
+*/
+#if (DEBUG_EDIT_BUFFER)
+void HV_Edit_Buffer::print(const char *text) {
+  printf("HV_Edit_Buffer::print(%s), allocated=%d, size=%d\n",
+	 text, allocated_, size_);
+  printf("    \"%s\"\n", buf_ && size_ ? buf_ : "");
+  fflush(stdout);
+} // print()
+#endif
 
 /** Adds a text block to the list. */
 Fl_Help_Block *					// O - Pointer to new block
@@ -272,8 +490,8 @@ Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
   Fl_Help_Block	*temp;				// New block
 
 
-//  printf("add_block(s = %p, xx = %d, yy = %d, ww = %d, hh = %d, border = %d)\n",
-//         s, xx, yy, ww, hh, border);
+  // printf("add_block(s = %p, xx = %d, yy = %d, ww = %d, hh = %d, border = %d)\n",
+  //        s, xx, yy, ww, hh, border);
 
   if (nblocks_ >= ablocks_)
   {
@@ -423,20 +641,21 @@ Fl_Help_View::draw()
   const Fl_Help_Block	*block;		// Pointer to current block
   const char		*ptr,		// Pointer to text in block
 			*attrs;		// Pointer to start of element attributes
-  char			*s,		// Pointer into buffer
-			buf[1024],	// Text buffer
-			attr[1024];	// Attribute buffer
+  HV_Edit_Buffer	buf;		// Text buffer
+  char			attr[1024];	// Attribute buffer
   int			xx, yy, ww, hh;	// Current positions and sizes
   int			line;		// Current line
   Fl_Font               font;
   Fl_Fontsize           fsize;          // Current font and size
-  Fl_Color              fcolor;         // current font color 
+  Fl_Color              fcolor;         // current font color
   int			head, pre,	// Flags for text
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
 					// Box to draw...
   int			underline,	// Underline text?
                         xtra_ww;        // Extra width for underlined space between words
+
+  DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
   // Draw the scrollbar(s) and box first...
   ww = w();
@@ -504,16 +723,14 @@ Fl_Help_View::draw()
 
       initfont(font, fsize, fcolor);
 
-      for (ptr = block->start, s = buf; ptr < block->end;)
+      for (ptr = block->start, buf.clear(); ptr < block->end;)
       {
-	if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf)
+	if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0)
 	{
 	  if (!head && !pre)
 	  {
             // Check width...
-            *s = '\0';
-            s  = buf;
-            ww = (int)fl_width(buf);
+            ww = buf.width();
 
             if (needspace && xx > block->x)
 	      xx += (int)fl_width(' ');
@@ -527,7 +744,8 @@ Fl_Help_View::draw()
 	      hh = 0;
 	    }
 
-            hv_draw(buf, xx + x() - leftline_, yy + y());
+            hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
+	    buf.clear();
 	    if (underline) {
               xtra_ww = isspace((*ptr)&255)?(int)fl_width(' '):0;
               fl_xyline(xx + x() - leftline_, yy + y() + 1,
@@ -547,17 +765,13 @@ Fl_Help_View::draw()
 	    {
 	      if (*ptr == '\n')
 	      {
-	        *s = '\0';
-                s = buf;
-
-                hv_draw(buf, xx + x() - leftline_, yy + y());
+		hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
 		if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
-	                        	 xx + x() - leftline_ +
-					     (int)fl_width(buf));
-
-                current_pos = (int) (ptr-value_);
+					 xx + x() - leftline_ + buf.width());
+		buf.clear();
+		current_pos = (int) (ptr-value_);
 		if (line < 31)
-	          line ++;
+		  line ++;
 		xx = block->line[line];
 		yy += hh;
 		hh = fsize + 2;
@@ -565,25 +779,24 @@ Fl_Help_View::draw()
 	      else if (*ptr == '\t')
 	      {
 		// Do tabs every 8 columns...
-		while (((s - buf) & 7))
-	          *s++ = ' ';
+		buf.add(' '); // add at least one space
+		while (buf.size() & 7)
+	          buf.add(' ');
 	      }
-	      else
-	        *s++ = ' ';
-
+	      else {
+	        buf.add(' ');
+	      }
               if ((fsize + 2) > hh)
 	        hh = fsize + 2;
 
               ptr ++;
 	    }
 
-            if (s > buf)
+            if (buf.size() > 0)
 	    {
-	      *s = '\0';
-	      s = buf;
-
-              hv_draw(buf, xx + x() - leftline_, yy + y());
-	      ww = (int)fl_width(buf);
+              hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
+	      ww = buf.width();
+	      buf.clear();
 	      if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                               xx + x() - leftline_ + ww);
               xx += ww;
@@ -594,7 +807,7 @@ Fl_Help_View::draw()
 	  }
 	  else
 	  {
-            s = buf;
+	    buf.clear();
 
 	    while (isspace((*ptr)&255))
               ptr ++;
@@ -620,13 +833,7 @@ Fl_Help_View::draw()
 	  }
 
 	  while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
-            if (s < (buf + sizeof(buf) - 1))
-	      *s++ = *ptr++;
-	    else
-	      ptr ++;
-
-	  *s = '\0';
-	  s = buf;
+	    buf.add(*ptr++);
 
 	  attrs = ptr;
 	  while (*ptr && *ptr != '>')
@@ -637,9 +844,9 @@ Fl_Help_View::draw()
 
           // end of command reached, set the supposed start of printed eord here
           current_pos = (int) (ptr-value_);
-	  if (strcasecmp(buf, "HEAD") == 0)
+	  if (buf.cmp("HEAD"))
             head = 1;
-	  else if (strcasecmp(buf, "BR") == 0)
+	  else if (buf.cmp("BR"))
 	  {
 	    if (line < 31)
 	      line ++;
@@ -647,7 +854,7 @@ Fl_Help_View::draw()
             yy += hh;
 	    hh = 0;
 	  }
-	  else if (strcasecmp(buf, "HR") == 0)
+	  else if (buf.cmp("HR"))
 	  {
 	    fl_line(block->x + x(), yy + y(), block->w + x(),
 	            yy + y());
@@ -658,64 +865,61 @@ Fl_Help_View::draw()
             yy += 2 * hh;
 	    hh = 0;
 	  }
-	  else if (strcasecmp(buf, "CENTER") == 0 ||
-        	   strcasecmp(buf, "P") == 0 ||
-        	   strcasecmp(buf, "H1") == 0 ||
-		   strcasecmp(buf, "H2") == 0 ||
-		   strcasecmp(buf, "H3") == 0 ||
-		   strcasecmp(buf, "H4") == 0 ||
-		   strcasecmp(buf, "H5") == 0 ||
-		   strcasecmp(buf, "H6") == 0 ||
-		   strcasecmp(buf, "UL") == 0 ||
-		   strcasecmp(buf, "OL") == 0 ||
-		   strcasecmp(buf, "DL") == 0 ||
-		   strcasecmp(buf, "LI") == 0 ||
-		   strcasecmp(buf, "DD") == 0 ||
-		   strcasecmp(buf, "DT") == 0 ||
-		   strcasecmp(buf, "PRE") == 0)
+	  else if (buf.cmp("CENTER") ||
+		   buf.cmp("P") ||
+		   buf.cmp("H1") ||
+		   buf.cmp("H2") ||
+		   buf.cmp("H3") ||
+		   buf.cmp("H4") ||
+		   buf.cmp("H5") ||
+		   buf.cmp("H6") ||
+		   buf.cmp("UL") ||
+		   buf.cmp("OL") ||
+		   buf.cmp("DL") ||
+		   buf.cmp("LI") ||
+		   buf.cmp("DD") ||
+		   buf.cmp("DT") ||
+		   buf.cmp("PRE"))
 	  {
             if (tolower(buf[0]) == 'h')
 	    {
 	      font  = FL_HELVETICA_BOLD;
 	      fsize = textsize_ + '7' - buf[1];
 	    }
-	    else if (strcasecmp(buf, "DT") == 0)
+	    else if (buf.cmp("DT"))
 	    {
 	      font  = textfont_ | FL_ITALIC;
 	      fsize = textsize_;
 	    }
-	    else if (strcasecmp(buf, "PRE") == 0)
+	    else if (buf.cmp("PRE"))
 	    {
 	      font  = FL_COURIER;
 	      fsize = textsize_;
 	      pre   = 1;
 	    }
 
-            if (strcasecmp(buf, "LI") == 0)
+            if (buf.cmp("LI"))
 	    {
-//            fl_font(FL_SYMBOL, fsize); // The default SYMBOL font on my XP box is not Unicode...
-              char buf[8];
-              wchar_t b[] = {0x2022, 0x0};
-//            buf[fl_unicode2utf(b, 1, buf)] = 0;
-              unsigned dstlen = fl_utf8fromwc(buf, 8, b, 1);
-              buf[dstlen] = 0;
-              hv_draw(buf, xx - fsize + x() - leftline_, yy + y());
+	      // draw bullet (&bull;) Unicode: U+2022, UTF-8 (hex): e2 80 a2
+              unsigned char bullet[4] = { 0xe2, 0x80, 0xa2, 0x00 };
+              hv_draw((char *)bullet, xx - fsize + x() - leftline_, yy + y());
 	    }
 
 	    pushfont(font, fsize);
+	    buf.clear();
 	  }
-	  else if (strcasecmp(buf, "A") == 0 &&
+	  else if (buf.cmp("A") &&
 	           get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
 	  {
 	    fl_color(linkcolor_);
 	    underline = 1;
 	  }
-	  else if (strcasecmp(buf, "/A") == 0)
+	  else if (buf.cmp("/A"))
 	  {
 	    fl_color(textcolor_);
 	    underline = 0;
 	  }
-	  else if (strcasecmp(buf, "FONT") == 0)
+	  else if (buf.cmp("FONT"))
 	  {
 	    if (get_attr(attrs, "COLOR", attr, sizeof(attr)) != NULL) {
 	      textcolor_ = get_color(attr, textcolor_);
@@ -743,19 +947,19 @@ Fl_Help_View::draw()
 
             pushfont(font, fsize);
 	  }
-	  else if (strcasecmp(buf, "/FONT") == 0)
+	  else if (buf.cmp("/FONT"))
 	  {
 	    popfont(font, fsize, textcolor_);
 	  }
-	  else if (strcasecmp(buf, "U") == 0)
+	  else if (buf.cmp("U"))
 	    underline = 1;
-	  else if (strcasecmp(buf, "/U") == 0)
+	  else if (buf.cmp("/U"))
 	    underline = 0;
-	  else if (strcasecmp(buf, "B") == 0 ||
-	           strcasecmp(buf, "STRONG") == 0)
+	  else if (buf.cmp("B") ||
+	           buf.cmp("STRONG"))
 	    pushfont(font |= FL_BOLD, fsize);
-	  else if (strcasecmp(buf, "TD") == 0 ||
-	           strcasecmp(buf, "TH") == 0)
+	  else if (buf.cmp("TD") ||
+	           buf.cmp("TH"))
           {
 	    int tx, ty, tw, th;
 
@@ -794,39 +998,39 @@ Fl_Help_View::draw()
             if (block->border)
               fl_rect(tx, ty, tw, th);
 	  }
-	  else if (strcasecmp(buf, "I") == 0 ||
-                   strcasecmp(buf, "EM") == 0)
+	  else if (buf.cmp("I") ||
+                   buf.cmp("EM"))
 	    pushfont(font |= FL_ITALIC, fsize);
-	  else if (strcasecmp(buf, "CODE") == 0 ||
-	           strcasecmp(buf, "TT") == 0)
+	  else if (buf.cmp("CODE") ||
+	           buf.cmp("TT"))
 	    pushfont(font = FL_COURIER, fsize);
-	  else if (strcasecmp(buf, "KBD") == 0)
+	  else if (buf.cmp("KBD"))
 	    pushfont(font = FL_COURIER_BOLD, fsize);
-	  else if (strcasecmp(buf, "VAR") == 0)
+	  else if (buf.cmp("VAR"))
 	    pushfont(font = FL_COURIER_ITALIC, fsize);
-	  else if (strcasecmp(buf, "/HEAD") == 0)
+	  else if (buf.cmp("/HEAD"))
             head = 0;
-	  else if (strcasecmp(buf, "/H1") == 0 ||
-		   strcasecmp(buf, "/H2") == 0 ||
-		   strcasecmp(buf, "/H3") == 0 ||
-		   strcasecmp(buf, "/H4") == 0 ||
-		   strcasecmp(buf, "/H5") == 0 ||
-		   strcasecmp(buf, "/H6") == 0 ||
-		   strcasecmp(buf, "/B") == 0 ||
-		   strcasecmp(buf, "/STRONG") == 0 ||
-		   strcasecmp(buf, "/I") == 0 ||
-		   strcasecmp(buf, "/EM") == 0 ||
-		   strcasecmp(buf, "/CODE") == 0 ||
-		   strcasecmp(buf, "/TT") == 0 ||
-		   strcasecmp(buf, "/KBD") == 0 ||
-		   strcasecmp(buf, "/VAR") == 0)
+	  else if (buf.cmp("/H1") ||
+		   buf.cmp("/H2") ||
+		   buf.cmp("/H3") ||
+		   buf.cmp("/H4") ||
+		   buf.cmp("/H5") ||
+		   buf.cmp("/H6") ||
+		   buf.cmp("/B") ||
+		   buf.cmp("/STRONG") ||
+		   buf.cmp("/I") ||
+		   buf.cmp("/EM") ||
+		   buf.cmp("/CODE") ||
+		   buf.cmp("/TT") ||
+		   buf.cmp("/KBD") ||
+		   buf.cmp("/VAR"))
 	    popfont(font, fsize, fcolor);
-	  else if (strcasecmp(buf, "/PRE") == 0)
+	  else if (buf.cmp("/PRE"))
 	  {
 	    popfont(font, fsize, fcolor);
 	    pre = 0;
 	  }
-	  else if (strcasecmp(buf, "IMG") == 0)
+	  else if (buf.cmp("IMG"))
 	  {
 	    Fl_Shared_Image *img = 0;
 	    int		width, height;
@@ -876,13 +1080,12 @@ Fl_Help_View::draw()
 
 	    needspace = 0;
 	  }
+	  buf.clear();
 	}
 	else if (*ptr == '\n' && pre)
 	{
-	  *s = '\0';
-	  s = buf;
-
-          hv_draw(buf, xx + x() - leftline_, yy + y());
+          hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
+	  buf.clear();
 
 	  if (line < 31)
 	    line ++;
@@ -899,12 +1102,13 @@ Fl_Help_View::draw()
 	  if (pre)
 	  {
 	    if (*ptr == ' ')
-	      *s++ = ' ';
+	      buf.add(' ');
 	    else
 	    {
 	      // Do tabs every 8 columns...
-	      while (((s - buf) & 7))
-	        *s++ = ' ';
+	      buf.add(' '); // at least one space
+	      while (buf.size() & 7)
+	        buf.add(' ');
             }
 	  }
 
@@ -919,12 +1123,9 @@ Fl_Help_View::draw()
           int qch = quote_char(ptr);
 
 	  if (qch < 0)
-	    *s++ = '&';
+	    buf.add('&');
 	  else {
-            int l;
-            l = fl_utf8encode((unsigned int) qch, s);
-            if (l < 1) l = 1;
-            s += l;
+	    buf.add(qch);
 	    ptr = strchr(ptr, ';') + 1;
 	  }
 
@@ -933,18 +1134,16 @@ Fl_Help_View::draw()
 	}
 	else
 	{
-	  *s++ = *ptr++;
+	  buf.add(*ptr++);
 
           if ((fsize + 2) > hh)
 	    hh = fsize + 2;
         }
       }
 
-      *s = '\0';
-
-      if (s > buf && !pre && !head)
+      if (buf.size() > 0 && !pre && !head)
       {
-	ww = (int)fl_width(buf);
+	ww = buf.width();
 
         if (needspace && xx > block->x)
 	  xx += (int)fl_width(' ');
@@ -959,9 +1158,9 @@ Fl_Help_View::draw()
 	}
       }
 
-      if (s > buf && !head)
+      if (buf.size() > 0 && !head)
       {
-        hv_draw(buf, xx + x() - leftline_, yy + y());
+        hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
 	if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                         xx + x() - leftline_ + ww);
         current_pos = (int) (ptr-value_);
@@ -969,7 +1168,7 @@ Fl_Help_View::draw()
     }
 
   fl_pop_clip();
-}
+} // draw()
 
 
 
@@ -988,6 +1187,8 @@ Fl_Help_View::find(const char *s,		// I - String to find
 		*bs,				// Start of current comparison
 		*sp;				// Search string pointer
 
+
+  DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
   // Range check input and value...
   if (!s || !value_) return -1;
@@ -1010,9 +1211,17 @@ Fl_Help_View::find(const char *s,		// I - String to find
 	continue;
       } else if (*bp == '&') {
         // decode HTML entity...
-	if ((c = quote_char(bp + 1)) < 0) c = '&';
+	if ((c = quote_char(bp + 1)) < 0) c = '&';	// *FIXME* UTF-8, see below
 	else bp = strchr(bp + 1, ';') + 1;
       } else c = *bp;
+
+      // *FIXME* *UTF-8* (A.S. 02/14/2016)
+      // At this point c may be an arbitrary Unicode Code Point corresponding
+      // to a quoted character (see above), i.e. it _can_ be a multi byte
+      // UTF-8 sequence and must be compared with the corresponding
+      // multi byte string in (*sp)...
+      // For instance: "&euro;" == 0x20ac -> 0xe2 0x82 0xac (UTF-8: 3 bytes).
+      // Hint: use fl_utf8encode() [see below]
 
       if (tolower(*sp) == tolower(c)) sp ++;
       else {
@@ -1046,9 +1255,8 @@ void Fl_Help_View::format() {
   const char	*ptr,		// Pointer into block
 		*start,		// Pointer to start of element
 		*attrs;		// Pointer to start of element attributes
-  char		*s,		// Pointer into buffer
-		buf[1024],	// Text buffer
-		attr[1024],	// Attribute buffer
+  HV_Edit_Buffer buf;		// Text buffer
+  char		attr[1024],	// Attribute buffer
 		wattr[1024],	// Width attribute buffer
 		hattr[1024],	// Height attribute buffer
 		linkdest[1024];	// Link destination
@@ -1074,6 +1282,7 @@ void Fl_Help_View::format() {
 				// Box to draw...
   fl_margins	margins;	// Left margin stack...
 
+  DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
   // Reset document width...
   int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
@@ -1121,14 +1330,13 @@ void Fl_Help_View::format() {
     table_offset = 0;
 
     // Html text character loop
-    for (ptr = value_, s = buf; *ptr;)
+    for (ptr = value_, buf.clear(); *ptr;)
     {
       // End of word?
-      if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf)
+      if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0)
       {
         // Get width of word parsed so far...
-        *s = '\0';
-        ww = (int)fl_width(buf);
+        ww = buf.width();
 
 	if (!head && !pre)
 	{
@@ -1210,7 +1418,7 @@ void Fl_Help_View::format() {
             ptr ++;
 	}
 
-	s = buf;
+	buf.clear();
       }
 
       if (*ptr == '<')
@@ -1233,15 +1441,7 @@ void Fl_Help_View::format() {
 	}
 
 	while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
-          if (s < (buf + sizeof(buf) - 1))
-            *s++ = *ptr++;
-	  else
-	    ptr ++;
-
-	*s = '\0';
-	s = buf;
-
-//        puts(buf);
+	  buf.add(*ptr++);
 
 	attrs = ptr;
 	while (*ptr && *ptr != '>')
@@ -1250,21 +1450,22 @@ void Fl_Help_View::format() {
 	if (*ptr == '>')
           ptr ++;
 
-	if (strcasecmp(buf, "HEAD") == 0)
+	if (buf.cmp("HEAD"))
           head = 1;
-	else if (strcasecmp(buf, "/HEAD") == 0)
+	else if (buf.cmp("/HEAD"))
           head = 0;
-	else if (strcasecmp(buf, "TITLE") == 0)
+	else if (buf.cmp("TITLE"))
 	{
           // Copy the title in the document...
-          for (s = title_;
-	       *ptr != '<' && *ptr && s < (title_ + sizeof(title_) - 1);
-	       *s++ = *ptr++) {/*empty*/}
+	  char *st;
+          for (st = title_;
+	       *ptr != '<' && *ptr && st < (title_ + sizeof(title_) - 1);
+	       *st++ = *ptr++) {/*empty*/}
 
-	  *s = '\0';
-	  s = buf;
+	  *st = '\0';
+	  buf.clear();
 	}
-	else if (strcasecmp(buf, "A") == 0)
+	else if (buf.cmp("A"))
 	{
           if (get_attr(attrs, "NAME", attr, sizeof(attr)) != NULL)
 	    add_target(attr, yy - fsize - 2);
@@ -1272,9 +1473,9 @@ void Fl_Help_View::format() {
 	  if (get_attr(attrs, "HREF", attr, sizeof(attr)) != NULL)
 	    strlcpy(linkdest, attr, sizeof(linkdest));
 	}
-	else if (strcasecmp(buf, "/A") == 0)
+	else if (buf.cmp("/A"))
           linkdest[0] = '\0';
-	else if (strcasecmp(buf, "BODY") == 0)
+	else if (buf.cmp("BODY"))
 	{
           bgcolor_   = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)),
 	                	 color());
@@ -1283,7 +1484,7 @@ void Fl_Help_View::format() {
           linkcolor_ = get_color(get_attr(attrs, "LINK", attr, sizeof(attr)),
 	                	 fl_contrast(FL_BLUE, color()));
 	}
-	else if (strcasecmp(buf, "BR") == 0)
+	else if (buf.cmp("BR"))
 	{
           line     = do_align(block, line, xx, newalign, links);
           xx       = block->x;
@@ -1291,38 +1492,38 @@ void Fl_Help_View::format() {
           yy       += hh;
 	  hh       = 0;
 	}
-	else if (strcasecmp(buf, "CENTER") == 0 ||
-        	 strcasecmp(buf, "P") == 0 ||
-        	 strcasecmp(buf, "H1") == 0 ||
-		 strcasecmp(buf, "H2") == 0 ||
-		 strcasecmp(buf, "H3") == 0 ||
-		 strcasecmp(buf, "H4") == 0 ||
-		 strcasecmp(buf, "H5") == 0 ||
-		 strcasecmp(buf, "H6") == 0 ||
-		 strcasecmp(buf, "UL") == 0 ||
-		 strcasecmp(buf, "OL") == 0 ||
-		 strcasecmp(buf, "DL") == 0 ||
-		 strcasecmp(buf, "LI") == 0 ||
-		 strcasecmp(buf, "DD") == 0 ||
-		 strcasecmp(buf, "DT") == 0 ||
-		 strcasecmp(buf, "HR") == 0 ||
-		 strcasecmp(buf, "PRE") == 0 ||
-		 strcasecmp(buf, "TABLE") == 0)
+	else if (buf.cmp("CENTER") ||
+		 buf.cmp("P") ||
+		 buf.cmp("H1") ||
+		 buf.cmp("H2") ||
+		 buf.cmp("H3") ||
+		 buf.cmp("H4") ||
+		 buf.cmp("H5") ||
+		 buf.cmp("H6") ||
+		 buf.cmp("UL") ||
+		 buf.cmp("OL") ||
+		 buf.cmp("DL") ||
+		 buf.cmp("LI") ||
+		 buf.cmp("DD") ||
+		 buf.cmp("DT") ||
+		 buf.cmp("HR") ||
+		 buf.cmp("PRE") ||
+		 buf.cmp("TABLE"))
 	{
           block->end = start;
           line       = do_align(block, line, xx, newalign, links);
-	  newalign   = strcasecmp(buf, "CENTER") ? LEFT : CENTER;
+	  newalign   = buf.cmp("CENTER") ? CENTER : LEFT;
           xx         = block->x;
           block->h   += hh;
 
-          if (strcasecmp(buf, "UL") == 0 ||
-	      strcasecmp(buf, "OL") == 0 ||
-	      strcasecmp(buf, "DL") == 0)
+          if (buf.cmp("UL") ||
+	      buf.cmp("OL") ||
+	      buf.cmp("DL"))
           {
 	    block->h += fsize + 2;
 	    xx       = margins.push(4 * fsize);
 	  }
-          else if (strcasecmp(buf, "TABLE") == 0)
+          else if (buf.cmp("TABLE"))
 	  {
 	    if (get_attr(attrs, "BORDER", attr, sizeof(attr)))
 	      border = (uchar)atoi(attr);
@@ -1368,12 +1569,12 @@ void Fl_Help_View::format() {
 	    font  = FL_HELVETICA_BOLD;
 	    fsize = textsize_ + '7' - buf[1];
 	  }
-	  else if (strcasecmp(buf, "DT") == 0)
+	  else if (buf.cmp("DT"))
 	  {
 	    font  = textfont_ | FL_ITALIC;
 	    fsize = textsize_;
 	  }
-	  else if (strcasecmp(buf, "PRE") == 0)
+	  else if (buf.cmp("PRE"))
 	  {
 	    font  = FL_COURIER;
 	    fsize = textsize_;
@@ -1391,11 +1592,11 @@ void Fl_Help_View::format() {
           hh = 0;
 
           if ((tolower(buf[0]) == 'h' && isdigit(buf[1])) ||
-	      strcasecmp(buf, "DD") == 0 ||
-	      strcasecmp(buf, "DT") == 0 ||
-	      strcasecmp(buf, "P") == 0)
+	      buf.cmp("DD") ||
+	      buf.cmp("DT") ||
+	      buf.cmp("P"))
             yy += fsize + 2;
-	  else if (strcasecmp(buf, "HR") == 0)
+	  else if (buf.cmp("HR"))
 	  {
 	    hh += 2 * fsize;
 	    yy += fsize;
@@ -1409,47 +1610,47 @@ void Fl_Help_View::format() {
 	  needspace = 0;
 	  line      = 0;
 
-	  if (strcasecmp(buf, "CENTER") == 0)
+	  if (buf.cmp("CENTER"))
 	    newalign = talign = CENTER;
 	  else
 	    newalign = get_align(attrs, talign);
 	}
-	else if (strcasecmp(buf, "/CENTER") == 0 ||
-		 strcasecmp(buf, "/P") == 0 ||
-		 strcasecmp(buf, "/H1") == 0 ||
-		 strcasecmp(buf, "/H2") == 0 ||
-		 strcasecmp(buf, "/H3") == 0 ||
-		 strcasecmp(buf, "/H4") == 0 ||
-		 strcasecmp(buf, "/H5") == 0 ||
-		 strcasecmp(buf, "/H6") == 0 ||
-		 strcasecmp(buf, "/PRE") == 0 ||
-		 strcasecmp(buf, "/UL") == 0 ||
-		 strcasecmp(buf, "/OL") == 0 ||
-		 strcasecmp(buf, "/DL") == 0 ||
-		 strcasecmp(buf, "/TABLE") == 0)
+	else if (buf.cmp("/CENTER") ||
+		 buf.cmp("/P") ||
+		 buf.cmp("/H1") ||
+		 buf.cmp("/H2") ||
+		 buf.cmp("/H3") ||
+		 buf.cmp("/H4") ||
+		 buf.cmp("/H5") ||
+		 buf.cmp("/H6") ||
+		 buf.cmp("/PRE") ||
+		 buf.cmp("/UL") ||
+		 buf.cmp("/OL") ||
+		 buf.cmp("/DL") ||
+		 buf.cmp("/TABLE"))
 	{
           line       = do_align(block, line, xx, newalign, links);
           xx         = block->x;
           block->end = ptr;
 
-          if (strcasecmp(buf, "/UL") == 0 ||
-	      strcasecmp(buf, "/OL") == 0 ||
-	      strcasecmp(buf, "/DL") == 0)
+          if (buf.cmp("/UL") ||
+	      buf.cmp("/OL") ||
+	      buf.cmp("/DL"))
 	  {
 	    xx       = margins.pop();
 	    block->h += fsize + 2;
 	  }
-          else if (strcasecmp(buf, "/TABLE") == 0) 
+	  else if (buf.cmp("/TABLE"))
           {
 	    block->h += fsize + 2;
             xx       = margins.current();
           }
-	  else if (strcasecmp(buf, "/PRE") == 0)
+	  else if (buf.cmp("/PRE"))
 	  {
 	    pre = 0;
 	    hh  = 0;
 	  }
-	  else if (strcasecmp(buf, "/CENTER") == 0)
+	  else if (buf.cmp("/CENTER"))
 	    talign = LEFT;
 
           popfont(font, fsize, fcolor);
@@ -1476,7 +1677,7 @@ void Fl_Help_View::format() {
 	  line      = 0;
 	  newalign  = talign;
 	}
-	else if (strcasecmp(buf, "TR") == 0)
+	else if (buf.cmp("TR"))
 	{
           block->end = start;
           line       = do_align(block, line, xx, newalign, links);
@@ -1515,7 +1716,7 @@ void Fl_Help_View::format() {
 
           rc = get_color(get_attr(attrs, "BGCOLOR", attr, sizeof(attr)), tc);
 	}
-	else if (strcasecmp(buf, "/TR") == 0 && row)
+	else if (buf.cmp("/TR") && row)
 	{
           line       = do_align(block, line, xx, newalign, links);
           block->end = start;
@@ -1546,8 +1747,8 @@ void Fl_Help_View::format() {
 	  row       = 0;
 	  line      = 0;
 	}
-	else if ((strcasecmp(buf, "TD") == 0 ||
-                  strcasecmp(buf, "TH") == 0) && row)
+	else if ((buf.cmp("TD") ||
+                  buf.cmp("TH")) && row)
 	{
           int	colspan;		// COLSPAN attribute
 
@@ -1556,7 +1757,7 @@ void Fl_Help_View::format() {
           block->end = start;
 	  block->h   += hh;
 
-          if (strcasecmp(buf, "TH") == 0)
+          if (buf.cmp("TH"))
 	    font = textfont_ | FL_BOLD;
 	  else
 	    font = textfont_;
@@ -1600,15 +1801,15 @@ void Fl_Help_View::format() {
           block->bgcolor = get_color(get_attr(attrs, "BGCOLOR", attr,
 	                                      sizeof(attr)), rc);
 	}
-	else if ((strcasecmp(buf, "/TD") == 0 ||
-                  strcasecmp(buf, "/TH") == 0) && row)
+	else if ((buf.cmp("/TD") ||
+                  buf.cmp("/TH")) && row)
 	{
           line = do_align(block, line, xx, newalign, links);
           popfont(font, fsize, fcolor);
 	  xx = margins.pop();
 	  talign = LEFT;
 	}
-	else if (strcasecmp(buf, "FONT") == 0)
+	else if (buf.cmp("FONT"))
 	{
           if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
 	    if (!strncasecmp(attr, "helvetica", 9) ||
@@ -1632,39 +1833,39 @@ void Fl_Help_View::format() {
 
           pushfont(font, fsize);
 	}
-	else if (strcasecmp(buf, "/FONT") == 0)
+	else if (buf.cmp("/FONT"))
 	  popfont(font, fsize, fcolor);
-	else if (strcasecmp(buf, "B") == 0 ||
-        	 strcasecmp(buf, "STRONG") == 0)
+	else if (buf.cmp("B") ||
+		 buf.cmp("STRONG"))
 	  pushfont(font |= FL_BOLD, fsize);
-	else if (strcasecmp(buf, "I") == 0 ||
-        	 strcasecmp(buf, "EM") == 0)
+	else if (buf.cmp("I") ||
+		 buf.cmp("EM"))
 	  pushfont(font |= FL_ITALIC, fsize);
-	else if (strcasecmp(buf, "CODE") == 0 ||
-	         strcasecmp(buf, "TT") == 0)
+	else if (buf.cmp("CODE") ||
+		 buf.cmp("TT"))
 	  pushfont(font = FL_COURIER, fsize);
-	else if (strcasecmp(buf, "KBD") == 0)
+	else if (buf.cmp("KBD"))
 	  pushfont(font = FL_COURIER_BOLD, fsize);
-	else if (strcasecmp(buf, "VAR") == 0)
+	else if (buf.cmp("VAR"))
 	  pushfont(font = FL_COURIER_ITALIC, fsize);
-	else if (strcasecmp(buf, "/B") == 0 ||
-		 strcasecmp(buf, "/STRONG") == 0 ||
-		 strcasecmp(buf, "/I") == 0 ||
-		 strcasecmp(buf, "/EM") == 0 ||
-		 strcasecmp(buf, "/CODE") == 0 ||
-		 strcasecmp(buf, "/TT") == 0 ||
-		 strcasecmp(buf, "/KBD") == 0 ||
-		 strcasecmp(buf, "/VAR") == 0)
+	else if (buf.cmp("/B") ||
+		 buf.cmp("/STRONG") ||
+		 buf.cmp("/I") ||
+		 buf.cmp("/EM") ||
+		 buf.cmp("/CODE") ||
+		 buf.cmp("/TT") ||
+		 buf.cmp("/KBD") ||
+		 buf.cmp("/VAR"))
 	  popfont(font, fsize, fcolor);
-	else if (strcasecmp(buf, "IMG") == 0)
+	else if (buf.cmp("IMG"))
 	{
 	  Fl_Shared_Image	*img = 0;
 	  int		width;
 	  int		height;
 
 
-          get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
-          get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
+	  get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
+	  get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
 	  width  = get_length(wattr);
 	  height = get_length(hattr);
 
@@ -1703,6 +1904,7 @@ void Fl_Help_View::format() {
 
 	  needspace = 0;
 	}
+	buf.clear();
       }
       else if (*ptr == '\n' && pre)
       {
@@ -1730,7 +1932,7 @@ void Fl_Help_View::format() {
         }
 	ptr ++;
       }
-      else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
+      else if (*ptr == '&')
       {
         // Handle html '&' codes, eg. "&amp;"
 	ptr ++;
@@ -1738,12 +1940,9 @@ void Fl_Help_View::format() {
         int qch = quote_char(ptr);
 
 	if (qch < 0)
-	  *s++ = '&';
+	  buf.add('&');
 	else {
-          int l;
-          l = fl_utf8encode((unsigned int) qch, s);
-          if (l < 1) l = 1;
-          s += l;
+	  buf.add(qch);
 	  ptr = strchr(ptr, ';') + 1;
 	}
 
@@ -1752,20 +1951,16 @@ void Fl_Help_View::format() {
       }
       else
       {
-	if (s < (buf + sizeof(buf) - 1))
-          *s++ = *ptr++;
-	else
-          ptr ++;
+        buf.add(*ptr++);
 
 	if ((fsize + 2) > hh)
           hh = fsize + 2;
       }
     }
 
-    if (s > buf && !head)
+    if (buf.size() > 0 && !head)
     {
-      *s = '\0';
-      ww = (int)fl_width(buf);
+      ww = buf.width();
 
   //    printf("line = %d, xx = %d, ww = %d, block->x = %d, block->w = %d\n",
   //	   line, xx, ww, block->x, block->w);
@@ -1870,9 +2065,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 		incell,					// In a table cell?
 		pre,					// <PRE> text?
 		needspace;				// Need whitespace?
-  char		*s,					// Pointer into buffer
-		buf[1024],				// Text buffer
-		attr[1024],				// Other attribute
+  HV_Edit_Buffer buf;					// Text buffer
+  char		attr[1024],				// Other attribute
 		wattr[1024],				// WIDTH attribute
 		hattr[1024];				// HEIGHT attribute
   const char	*ptr,					// Pointer into table
@@ -1882,6 +2076,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   Fl_Font       font;
   Fl_Fontsize   fsize;				        // Current font and size
   Fl_Color      fcolor;                                 // Currrent font color
+
+  DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
   // Clear widths...
   *table_width = 0;
@@ -1899,20 +2095,19 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   fstack_.top(font, fsize, fcolor);
 
   // Scan the table...
-  for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)
+  for (ptr = table, column = -1, width = 0, incell = 0; *ptr;)
   {
-    if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf && incell)
+    if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0 && incell)
     {
       // Check width...
       if (needspace)
       {
-        *s++      = ' ';
+	buf.add(' ');
 	needspace = 0;
       }
 
-      *s         = '\0';
-      temp_width = (int)fl_width(buf);
-      s          = buf;
+      temp_width = buf.width();
+      buf.clear();
 
       if (temp_width > minwidths[column])
         minwidths[column] = temp_width;
@@ -1927,14 +2122,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
     {
       start = ptr;
 
-      for (s = buf, ptr ++; *ptr && *ptr != '>' && !isspace((*ptr)&255);)
-        if (s < (buf + sizeof(buf) - 1))
-          *s++ = *ptr++;
-	else
-	  ptr ++;
-
-      *s = '\0';
-      s = buf;
+      for (buf.clear(), ptr ++; *ptr && *ptr != '>' && !isspace((*ptr)&255);)
+	buf.add(*ptr++);
 
       attrs = ptr;
       while (*ptr && *ptr != '>')
@@ -1943,29 +2132,29 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
       if (*ptr == '>')
         ptr ++;
 
-      if (strcasecmp(buf, "BR") == 0 ||
-	  strcasecmp(buf, "HR") == 0)
+      if (buf.cmp("BR") ||
+	  buf.cmp("HR"))
       {
         width     = 0;
 	needspace = 0;
       }
-      else if (strcasecmp(buf, "TABLE") == 0 && start > table)
+      else if (buf.cmp("TABLE") && start > table)
         break;
-      else if (strcasecmp(buf, "CENTER") == 0 ||
-               strcasecmp(buf, "P") == 0 ||
-               strcasecmp(buf, "H1") == 0 ||
-	       strcasecmp(buf, "H2") == 0 ||
-	       strcasecmp(buf, "H3") == 0 ||
-	       strcasecmp(buf, "H4") == 0 ||
-	       strcasecmp(buf, "H5") == 0 ||
-	       strcasecmp(buf, "H6") == 0 ||
-	       strcasecmp(buf, "UL") == 0 ||
-	       strcasecmp(buf, "OL") == 0 ||
-	       strcasecmp(buf, "DL") == 0 ||
-	       strcasecmp(buf, "LI") == 0 ||
-	       strcasecmp(buf, "DD") == 0 ||
-	       strcasecmp(buf, "DT") == 0 ||
-	       strcasecmp(buf, "PRE") == 0)
+      else if (buf.cmp("CENTER") ||
+               buf.cmp("P") ||
+               buf.cmp("H1") ||
+	       buf.cmp("H2") ||
+	       buf.cmp("H3") ||
+	       buf.cmp("H4") ||
+	       buf.cmp("H5") ||
+	       buf.cmp("H6") ||
+	       buf.cmp("UL") ||
+	       buf.cmp("OL") ||
+	       buf.cmp("DL") ||
+	       buf.cmp("LI") ||
+	       buf.cmp("DD") ||
+	       buf.cmp("DT") ||
+	       buf.cmp("PRE"))
       {
         width     = 0;
 	needspace = 0;
@@ -1975,18 +2164,18 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	  font  = FL_HELVETICA_BOLD;
 	  fsize = textsize_ + '7' - buf[1];
 	}
-	else if (strcasecmp(buf, "DT") == 0)
+	else if (buf.cmp("DT"))
 	{
 	  font  = textfont_ | FL_ITALIC;
 	  fsize = textsize_;
 	}
-	else if (strcasecmp(buf, "PRE") == 0)
+	else if (buf.cmp("PRE"))
 	{
 	  font  = FL_COURIER;
 	  fsize = textsize_;
 	  pre   = 1;
 	}
-	else if (strcasecmp(buf, "LI") == 0)
+	else if (buf.cmp("LI"))
 	{
 	  width  += 4 * fsize;
 	  font   = textfont_;
@@ -2000,29 +2189,29 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
 	pushfont(font, fsize);
       }
-      else if (strcasecmp(buf, "/CENTER") == 0 ||
-	       strcasecmp(buf, "/P") == 0 ||
-	       strcasecmp(buf, "/H1") == 0 ||
-	       strcasecmp(buf, "/H2") == 0 ||
-	       strcasecmp(buf, "/H3") == 0 ||
-	       strcasecmp(buf, "/H4") == 0 ||
-	       strcasecmp(buf, "/H5") == 0 ||
-	       strcasecmp(buf, "/H6") == 0 ||
-	       strcasecmp(buf, "/PRE") == 0 ||
-	       strcasecmp(buf, "/UL") == 0 ||
-	       strcasecmp(buf, "/OL") == 0 ||
-	       strcasecmp(buf, "/DL") == 0)
+      else if (buf.cmp("/CENTER") ||
+	       buf.cmp("/P") ||
+	       buf.cmp("/H1") ||
+	       buf.cmp("/H2") ||
+	       buf.cmp("/H3") ||
+	       buf.cmp("/H4") ||
+	       buf.cmp("/H5") ||
+	       buf.cmp("/H6") ||
+	       buf.cmp("/PRE") ||
+	       buf.cmp("/UL") ||
+	       buf.cmp("/OL") ||
+	       buf.cmp("/DL"))
       {
         width     = 0;
 	needspace = 0;
 
         popfont(font, fsize, fcolor);
       }
-      else if (strcasecmp(buf, "TR") == 0 || strcasecmp(buf, "/TR") == 0 ||
-               strcasecmp(buf, "/TABLE") == 0)
+      else if (buf.cmp("TR") || buf.cmp("/TR") ||
+               buf.cmp("/TABLE"))
       {
 //        printf("%s column = %d, colspan = %d, num_columns = %d\n",
-//	       buf, column, colspan, num_columns);
+//	       buf.c_str(), column, colspan, num_columns);
 
         if (column >= 0)
 	{
@@ -2039,7 +2228,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	  }
 	}
 
-	if (strcasecmp(buf, "/TABLE") == 0)
+	if (buf.cmp("/TABLE"))
 	  break;
 
 	needspace = 0;
@@ -2048,8 +2237,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	max_width = 0;
 	incell    = 0;
       }
-      else if (strcasecmp(buf, "TD") == 0 ||
-               strcasecmp(buf, "TH") == 0)
+      else if (buf.cmp("TD") ||
+               buf.cmp("TH"))
       {
 //        printf("BEFORE column = %d, colspan = %d, num_columns = %d\n",
 //	       column, colspan, num_columns);
@@ -2086,7 +2275,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	width     = 0;
 	incell    = 1;
 
-        if (strcasecmp(buf, "TH") == 0)
+        if (buf.cmp("TH"))
 	  font = textfont_ | FL_BOLD;
 	else
 	  font = textfont_;
@@ -2102,35 +2291,35 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
 //        printf("max_width = %d\n", max_width);
       }
-      else if (strcasecmp(buf, "/TD") == 0 ||
-               strcasecmp(buf, "/TH") == 0)
+      else if (buf.cmp("/TD") ||
+               buf.cmp("/TH"))
       {
 	incell = 0;
         popfont(font, fsize, fcolor);
       }
-      else if (strcasecmp(buf, "B") == 0 ||
-               strcasecmp(buf, "STRONG") == 0)
+      else if (buf.cmp("B") ||
+               buf.cmp("STRONG"))
 	pushfont(font |= FL_BOLD, fsize);
-      else if (strcasecmp(buf, "I") == 0 ||
-               strcasecmp(buf, "EM") == 0)
+      else if (buf.cmp("I") ||
+               buf.cmp("EM"))
 	pushfont(font |= FL_ITALIC, fsize);
-      else if (strcasecmp(buf, "CODE") == 0 ||
-               strcasecmp(buf, "TT") == 0)
+      else if (buf.cmp("CODE") ||
+               buf.cmp("TT"))
 	pushfont(font = FL_COURIER, fsize);
-      else if (strcasecmp(buf, "KBD") == 0)
+      else if (buf.cmp("KBD"))
 	pushfont(font = FL_COURIER_BOLD, fsize);
-      else if (strcasecmp(buf, "VAR") == 0)
+      else if (buf.cmp("VAR"))
 	pushfont(font = FL_COURIER_ITALIC, fsize);
-      else if (strcasecmp(buf, "/B") == 0 ||
-	       strcasecmp(buf, "/STRONG") == 0 ||
-	       strcasecmp(buf, "/I") == 0 ||
-	       strcasecmp(buf, "/EM") == 0 ||
-	       strcasecmp(buf, "/CODE") == 0 ||
-	       strcasecmp(buf, "/TT") == 0 ||
-	       strcasecmp(buf, "/KBD") == 0 ||
-	       strcasecmp(buf, "/VAR") == 0)
+      else if (buf.cmp("/B") ||
+	       buf.cmp("/STRONG") ||
+	       buf.cmp("/I") ||
+	       buf.cmp("/EM") ||
+	       buf.cmp("/CODE") ||
+	       buf.cmp("/TT") ||
+	       buf.cmp("/KBD") ||
+	       buf.cmp("/VAR"))
 	popfont(font, fsize, fcolor);
-      else if (strcasecmp(buf, "IMG") == 0 && incell)
+      else if (buf.cmp("IMG") && incell)
       {
 	Fl_Shared_Image	*img = 0;
 	int		iwidth, iheight;
@@ -2159,6 +2348,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
 	needspace = 0;
       }
+      buf.clear();
     }
     else if (*ptr == '\n' && pre)
     {
@@ -2172,29 +2362,22 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
       ptr ++;
     }
-    else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
+    else if (*ptr == '&' )
     {
       ptr ++;
 
       int qch = quote_char(ptr);
 
       if (qch < 0)
-	*s++ = '&';
+	buf.add('&');
       else {
-//        int l;
-//        l = fl_utf8encode((unsigned int) qch, s);
-//        if (l < 1) l = 1;
-//        s += l;
-	*s++ = qch;
+	buf.add(qch);
 	ptr = strchr(ptr, ';') + 1;
       }
     }
     else
     {
-      if (s < (buf + sizeof(buf) - 1))
-        *s++ = *ptr++;
-      else
-        ptr ++;
+      buf.add(*ptr++);
     }
   }
 
@@ -2296,11 +2479,12 @@ Fl_Help_View::free_data() {
   if (value_) {
     const char	*ptr,		// Pointer into block
 		*attrs;		// Pointer to start of element attributes
-    char	*s,		// Pointer into buffer
-		buf[1024],	// Text buffer
-		attr[1024],	// Attribute buffer
+    HV_Edit_Buffer buf;		// Text buffer
+    char	attr[1024],	// Attribute buffer
 		wattr[1024],	// Width attribute buffer
 		hattr[1024];	// Height attribute buffer
+
+    DEBUG_FUNCTION(__LINE__,__FUNCTION__);
 
     for (ptr = value_; *ptr;)
     {
@@ -2321,15 +2505,10 @@ Fl_Help_View::free_data() {
 	    break;
 	}
 
-        s = buf;
+        buf.clear();
 
 	while (*ptr && *ptr != '>' && !isspace((*ptr)&255))
-          if (s < (buf + sizeof(buf) - 1))
-            *s++ = *ptr++;
-	  else
-	    ptr ++;
-
-	*s = '\0';
+	  buf.add(*ptr++);
 
 	attrs = ptr;
 	while (*ptr && *ptr != '>')
@@ -2338,7 +2517,7 @@ Fl_Help_View::free_data() {
 	if (*ptr == '>')
           ptr ++;
 
-	if (strcasecmp(buf, "IMG") == 0)
+	if (buf.cmp("IMG"))
 	{
 	  Fl_Shared_Image	*img;
 	  int		width;
@@ -2390,7 +2569,7 @@ Fl_Help_View::free_data() {
     ntargets_ = 0;
     targets_  = 0;
   }
-}
+} // free_data()
 
 /** Gets an alignment attribute. */
 int					// O - Alignment
@@ -2842,12 +3021,13 @@ static unsigned int command(const char *cmd)
 
 #define CMD(a, b, c, d) ((a<<24)|(b<<16)|(c<<8)|d)
 
-void Fl_Help_View::end_selection(int clipboard) 
+void Fl_Help_View::end_selection(int clipboard)
 {
-  if (!selected || current_view!=this) 
+  if (!selected || current_view!=this)
     return;
   // convert the select part of our html text into some kind of somewhat readable ASCII
   // and store it in the selection buffer
+  // *FIXME* Should be UTF-8 (not ASCII), including HTML Entities &x; etc.
   char p = 0, pre = 0;;
   int len = (int) strlen(value_);
   char *txt = (char*)malloc(len+1), *d = txt;
@@ -2863,7 +3043,8 @@ void Fl_Help_View::end_selection(int clipboard)
       }
       if (c==0) break;
       // do something with this command... .
-      // the replacement string must not be longer that the command itself plus '<' and '>'
+      // The replacement string must not be longer than the command
+      // itself plus '<' and '>'
       src = 0;
       switch (command(cmd)) {
         case CMD('p','r','e', 0 ): pre = 1; break;
@@ -2899,10 +3080,10 @@ void Fl_Help_View::end_selection(int clipboard)
       }
       continue;
     }
-    if (c=='&') { // special characters
+    if (c=='&') { // special characters (HTML entities)		// *FIXME* *UTF-8*
       int xx = quote_char(s);
       if (xx>=0) {
-        c = (char)xx;
+        c = (char)xx;						// *FIXME* *UTF-8*
         for (;;) {
           char cc = *s++;
           if (!cc || cc==';') break;
@@ -3007,7 +3188,7 @@ Fl_Help_View::handle(int event)	// I - Event to handle
   return (Fl_Group::handle(event));
 }
 
-/** 
+/**
   The constructor creates the Fl_Help_View widget at the specified
   position and size.
 */
@@ -3346,14 +3527,26 @@ Fl_Help_View::value(const char *val)	// I - Text to view
 /*  Returns the Unicode Code Point associated with a quoted character
     (aka "HTML Entity").
 
+    Possible encoding formats:
+     - &name;		named entity
+     - &#nn..;		numeric (decimal) Unicode Code Point
+     - &#xnn..;		numeric (hexadecimal) Unicode Code Point
+     - &#Xnn..;		numeric (hexadecimal) Unicode Code Point
+    'nn..' = decimal or hexadecimal number, resp.
+
+    Contents of the table names[] below:
+
     All printable ASCII (32-126) and ISO-8859-1 (160-255) characters
     are encoded with the same value in Unicode. Special characters
-    outside the range [0-255] are encoded with their Unicode value
+    outside the range [0-255] are encoded with their Unicode Code Point
     as hexadecimal constants. Example:
      - Euro sign: (Unicode) U+20ac = (hex) 0x20ac
 
     Note: Converted to correct Unicode values and tested (compared with
     the display of Firefox). AlbrechtS, 14 Feb. 2016.
+
+    Note to devs: if you add or remove items to/from this list, please
+    update the documentation in FL/Fl_Help_View.H.
 */
 static int			// O - Code or -1 on error
 quote_char(const char *p) {	// I - Quoted string
