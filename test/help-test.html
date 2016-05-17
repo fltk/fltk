@@ -4,6 +4,7 @@
 <H1>Simple HTML Tests</H1>
 <UL>
     <LI> <a href="#Plain Test">Plain Text Test</A>
+    <LI> <a href="#Entity Test">HTML Entity Test</A>
     <LI> <a href="#Pre Test">PRE (preformatted Text) Test</A>
     <LI> <a href="#Headings">Heading Tests</A>
     <LI> <a href="#Lists">UL, OL, DL Lists</A>
@@ -38,7 +39,30 @@
     <FONT FACE="Serif">This should be Serif. 0123456789</FONT><BR>
     <FONT FACE="Courier">This should be Courier. 0123456789</FONT><BR>
     <FONT FACE="Symbol">This should be Symbol. 0123456789</FONT>
-<P>
+    <P>
+
+<A NAME="Entity Test"></A>
+<B>HTML Entities: named, hexadecimal, and decimal</B><P>
+    <b>Special characters, formatted as named "HTML Entities", e.g. "&amp;euro;":</b><br>
+    Euro character: "&euro;"<br>
+    Umlaut characters : "&auml;" "&euml;" "&iuml;" "&ouml;" "&uuml;" "&szlig;"<br>
+    Umlaut characters : "&Auml;" "&Euml;" "&Iuml;" "&Ouml;" "&Uuml;"<br>
+    Special characters : "&bull;" "&permil;" "&copy;" "&trade;" "&reg;"<br>
+    <br>
+    <b>Other scripts, formatted as hexadecimal "HTML Entities", e.g. "&amp;#x20ac;":</b><br>
+    (Should be the same symbols as below)<br>
+    Euro character: "&#x20ac;"<br>
+    Japanese (Hiragana) : "&#x3050;" "&#x306e;"<br>
+    Japanese (Katakana) : "&#x30c0;" "&#x30dd;"<br>
+    Chinese (CJK Unified Ideographs) : "&#x4e2d;" "&#x4e33;"<br>
+    <br>
+    <b>Other scripts, formatted as decimal "HTML Entities", e.g. "&amp;#8364;":</b><br>
+    (Should be the same symbols as above)<br>
+    Euro character: "&#8364;"<br>
+    Japanese (Hiragana) : "&#12368;" "&#12398;"<br>
+    Japanese (Katakana) : "&#12480;" "&#12509;"<br>
+    Chinese (CJK Unified Ideographs) : "&#20013;" "&#20019;"<br>
+    <P>
 
 <A NAME="Pre Test"></A>
 <B>Preformatted paragraphs</B><PRE>
