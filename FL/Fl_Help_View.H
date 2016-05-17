@@ -187,7 +187,7 @@ struct Fl_Help_Target {
      - macr micro middot
      - nbsp not Ntilde ntilde
      - Oacute oacute Ocirc ocirc Ograve ograve ordf ordm Oslash oslash Otilde otilde Ouml ouml
-     - para premil plusmn pound
+     - para permil plusmn pound
      - quot
      - raquo reg
      - sect shy sup1 sup2 sup3 szlig
