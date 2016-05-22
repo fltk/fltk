@@ -62,7 +62,7 @@ typedef int FL_SOCKET;
   typedef NSOpenGLContext* GLContext;
 #elif defined(__cplusplus)
   typedef class NSOpenGLContext* GLContext;
-#endif // __OBJC__
+#endif /* __OBJC__ */
 
 #include <sys/stat.h>
 #include <sys/types.h>
