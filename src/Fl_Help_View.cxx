@@ -324,7 +324,7 @@ public:
   int width() { return (int)fl_width(buf_); }
 
   char & operator[] (int idx) { return buf_[idx]; }
-  char const operator[] (int idx) const { return buf_[idx]; }
+  char operator[] (int idx) const { return buf_[idx]; }
 
 #if (DEBUG_EDIT_BUFFER)
   void print(const char *text = "");
