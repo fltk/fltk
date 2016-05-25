@@ -1251,6 +1251,7 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = FL_DOXYGEN \
+                         FL_ABI_VERSION=99999 \
                          FLTK_HAVE_CAIRO \
                          HAVE_GL \
                          HAVE_GL_OVERLAY \
