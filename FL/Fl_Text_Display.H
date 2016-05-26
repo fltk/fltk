@@ -224,7 +224,7 @@ public:
   
   /**   
    Gets the width/height of the scrollbars.
-   /return width of scrollbars
+   \return width of scrollbars
    */
   int scrollbar_width() const { return scrollbar_width_; }
   
