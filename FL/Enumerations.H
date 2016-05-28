@@ -911,7 +911,7 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
 /** \name Colors 
     The Fl_Color type holds an FLTK color value.
 
-    Colors are either 8-bit indexes into a virtual colormap
+    Colors are either 8-bit indexes into a <a href="fltk-colormap.png">virtual colormap</a>
     or 24-bit RGB color values. (See \ref drawing_colors for the default FLTK colormap)
 
     Color indices occupy the lower 8 bits of the value, while

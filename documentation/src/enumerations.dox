@@ -216,16 +216,18 @@ The following constants define the standard FLTK fonts:
 \section enumerations_colors Colors
 
 The Fl_Color enumeration type holds a FLTK color value.
-Colors are either 8-bit indexes into a virtual colormap or 24-bit RGB
-color values. Color indices occupy the lower 8 bits of the value, while
-RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
+Colors are either 8-bit indexes into a <a href="fltk-colormap.png">virtual colormap</a>
+or 24-bit RGB color values. Color indices occupy the lower 8 bits of the
+value, while RGB colors occupy the upper 24 bits, for a byte organization
+of RGBI.
 
 \subsection enumerations_color_constants Color Constants
 
 Constants are defined for the user-defined foreground and background
 colors, as well as specific colors and the start of the grayscale ramp
-and color cube in the virtual colormap. Inline functions are provided to
-retrieve specific grayscale, color cube, or RGB color values.
+and color cube in the <a href="fltk-colormap.png">virtual colormap</a>.
+Inline functions are provided to retrieve specific grayscale, color cube,
+or RGB color values.
 
 The following color constants can be used to access the user-defined
 colors:
