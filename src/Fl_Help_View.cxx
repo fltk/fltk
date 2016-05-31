@@ -3098,8 +3098,8 @@ void Fl_Help_View::end_selection(int clipboard)
     }
     int n = (int) (s2-value_);
     if (n>selection_first && n<=selection_last) {
-      if (!pre && isspace(c)) c = ' ';
-      if (p!=' ' || c!=' ') {
+      if (!pre && c < 256 && isspace(c)) c = ' ';
+      if (p != ' ' || c != ' ') {
         if (s2 != s) { // c was an HTML entity
           d += fl_utf8encode(c, d);
         }
@@ -3111,7 +3111,7 @@ void Fl_Help_View::end_selection(int clipboard)
   }
   *d = 0;
   Fl::copy(txt, (int) strlen(txt), clipboard);
-//printf("copy [%s]\n", txt);
+  // printf("copy [%s]\n", txt);
   free(txt);
 }
 
