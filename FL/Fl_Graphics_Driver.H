@@ -132,9 +132,9 @@ protected:
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
   /** Support function for image drawing */
-  virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) = 0;
+  virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
   /** Support function for image drawing */
-  virtual void delete_bitmask(Fl_Bitmask bm) = 0;
+  virtual void delete_bitmask(Fl_Bitmask bm) {}
 
 public:
   Fl_Graphics_Driver();
@@ -144,47 +144,47 @@ public:
   virtual char can_do_alpha_blending() { return 0; }
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
   /** see fl_point() */
-  virtual void point(int x, int y) = 0;
+  virtual void point(int x, int y) {}
   /** see fl_rect() */
-  virtual void rect(int x, int y, int w, int h) = 0;
+  virtual void rect(int x, int y, int w, int h) {}
   virtual void focus_rect(int x, int y, int w, int h);
   /** see fl_rectf() */
-  virtual void rectf(int x, int y, int w, int h) = 0;
+  virtual void rectf(int x, int y, int w, int h) {}
   /** see fl_line(int, int, int, int) */
-  virtual void line(int x, int y, int x1, int y1) = 0;
+  virtual void line(int x, int y, int x1, int y1) {}
   /** see fl_line(int, int, int, int, int, int) */
-  virtual void line(int x, int y, int x1, int y1, int x2, int y2) = 0;
+  virtual void line(int x, int y, int x1, int y1, int x2, int y2) {}
   /** see fl_xyline(int, int, int) */
-  virtual void xyline(int x, int y, int x1) = 0;
+  virtual void xyline(int x, int y, int x1) {}
   /** see fl_xyline(int, int, int, int) */
-  virtual void xyline(int x, int y, int x1, int y2) = 0;
+  virtual void xyline(int x, int y, int x1, int y2) {}
   /** see fl_xyline(int, int, int, int, int) */
-  virtual void xyline(int x, int y, int x1, int y2, int x3) = 0;
+  virtual void xyline(int x, int y, int x1, int y2, int x3) {}
   /** see fl_yxline(int, int, int) */
-  virtual void yxline(int x, int y, int y1) = 0;
+  virtual void yxline(int x, int y, int y1) {}
   /** see fl_yxline(int, int, int, int) */
-  virtual void yxline(int x, int y, int y1, int x2) = 0;
+  virtual void yxline(int x, int y, int y1, int x2) {}
   /** see fl_yxline(int, int, int, int, int) */
-  virtual void yxline(int x, int y, int y1, int x2, int y3) = 0;
+  virtual void yxline(int x, int y, int y1, int x2, int y3) {}
   /** see fl_loop(int, int, int, int, int, int) */
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
+  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2) {}
   /** see fl_loop(int, int, int, int, int, int, int, int) */
-  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
+  virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {}
   /** see fl_polygon(int, int, int, int, int, int) */
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2) = 0;
+  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2) {}
   /** see fl_polygon(int, int, int, int, int, int, int, int) */
-  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) = 0;
+  virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {}
   // --- clipping
   /** see fl_push_clip() */
-  virtual void push_clip(int x, int y, int w, int h) = 0;
+  virtual void push_clip(int x, int y, int w, int h) {}
   /** see fl_clip_box() */
-  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) = 0;
+  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {return 0;}
   /** see fl_not_clipped() */
-  virtual int not_clipped(int x, int y, int w, int h) = 0;
+  virtual int not_clipped(int x, int y, int w, int h) {return 1;}
   /** see fl_push_no_clip() */
-  virtual void push_no_clip() = 0;
+  virtual void push_no_clip() {}
   /** see fl_pop_clip() */
-  virtual void pop_clip() = 0;
+  virtual void pop_clip() {}
   virtual Fl_Region clip_region();              // has default implementation
   virtual void clip_region(Fl_Region r);        // has default implementation
   virtual void restore_clip();
@@ -201,41 +201,41 @@ public:
   virtual void begin_loop();
   virtual void begin_polygon();
   /** see fl_begin_complex_polygon() */
-  virtual void begin_complex_polygon() = 0;
+  virtual void begin_complex_polygon() {}
   virtual double transform_x(double x, double y);
   virtual double transform_y(double x, double y);
   virtual double transform_dx(double x, double y);
   virtual double transform_dy(double x, double y);
   /** see fl_transformed_vertex() */
-  virtual void transformed_vertex(double xf, double yf) = 0;
+  virtual void transformed_vertex(double xf, double yf) {}
   /** see fl_vertex() */
-  virtual void vertex(double x, double y) = 0;
+  virtual void vertex(double x, double y) {}
   /** see fl_end_points() */
-  virtual void end_points() = 0;
+  virtual void end_points() {}
   /** see fl_end_line() */
-  virtual void end_line() = 0;
+  virtual void end_line() {}
   /** see fl_end_loop() */
-  virtual void end_loop() = 0;
+  virtual void end_loop() {}
   /** see fl_end_polygon() */
-  virtual void end_polygon() = 0;
+  virtual void end_polygon() {}
   /** see fl_end_complex_polygon() */
-  virtual void end_complex_polygon() = 0;
+  virtual void end_complex_polygon() {}
   /** see fl_gap() */
-  virtual void gap() = 0;
+  virtual void gap() {}
   /** see fl_circle() */
-  virtual void circle(double x, double y, double r) = 0;
+  virtual void circle(double x, double y, double r) {}
   // --- implementation is in src/fl_arc.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arc.cxx if needed
   virtual void arc(double x, double y, double r, double start, double end);
   // --- implementation is in src/fl_arci.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arci.cxx
   /** see fl_arc(int x, int y, int w, int h, double a1, double a2) */
-  virtual void arc(int x, int y, int w, int h, double a1, double a2) = 0;
+  virtual void arc(int x, int y, int w, int h, double a1, double a2) {}
   /** see fl_pie() */
-  virtual void pie(int x, int y, int w, int h, double a1, double a2) = 0;
+  virtual void pie(int x, int y, int w, int h, double a1, double a2) {}
   // --- implementation is in src/fl_curve.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_curve.cxx if needed
   virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   /** see fl_line_style() */
-  virtual void line_style(int style, int width=0, char* dashes=0) = 0;
+  virtual void line_style(int style, int width=0, char* dashes=0) {}
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   /** see fl_color(Fl_Color) */
   virtual void color(Fl_Color c) { color_ = c; }
@@ -244,10 +244,9 @@ public:
   /** see fl_color(void) */
   virtual Fl_Color color() { return color_; }
   /** see fl_color(uchar, uchar, uchar) */
-  virtual void color(uchar r, uchar g, uchar b) = 0;
-  // --- implementation is in src/fl_font.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx
+  virtual void color(uchar r, uchar g, uchar b) {}
   /** see fl_draw(const char *str, int n, int x, int y) */
-  virtual void draw(const char *str, int n, int x, int y) = 0;
+  virtual void draw(const char *str, int n, int x, int y) {}
   /** Draw the first \p n bytes of the string \p str starting at position \p x , \p y */
   virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
   /** see fl_draw(int angle, const char *str, int n, int x, int y) */
