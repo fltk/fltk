@@ -3038,12 +3038,12 @@ void Fl_Help_View::end_selection(int clipboard)
   char *txt = (char*)malloc(len+1), *d = txt;
   const char *s = value_, *cmd, *src;
   for (;;) {
-    int c = *s++;
+    int c = (*s++) & 0xff;
     if (c==0) break;
     if (c=='<') { // begin of some html command. Skip until we find a '>'
       cmd = s;
       for (;;) {
-        c = *s++;
+        c = (*s++) & 0xff;
         if (c==0 || c=='>') break;
       }
       if (c==0) break;
@@ -3080,8 +3080,8 @@ void Fl_Help_View::end_selection(int clipboard)
         while (*src) {
           *d++ = *src++;
         }
-        c = src[-1];
-        p = isspace(c&255) ? ' ' : c;
+        c = src[-1] & 0xff;
+        p = isspace(c) ? ' ' : c;
       }
       continue;
     }
@@ -3098,7 +3098,7 @@ void Fl_Help_View::end_selection(int clipboard)
     }
     int n = (int) (s2-value_);
     if (n>selection_first && n<=selection_last) {
-      if (!pre && isspace(c&255)) c = ' ';
+      if (!pre && isspace(c)) c = ' ';
       if (p!=' ' || c!=' ') {
         if (s2 != s) { // c was an HTML entity
           d += fl_utf8encode(c, d);
