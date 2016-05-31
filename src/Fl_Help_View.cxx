@@ -234,11 +234,9 @@ Fl_Color Fl_Help_View::hv_selection_color;
 Fl_Color Fl_Help_View::hv_selection_text_color;
 
 /*
- * Limitation: if a word contains &code; notations, we will calculate a wrong length.
- *
  * This function must be optimized for speed!
  */
-void Fl_Help_View::hv_draw(const char *t, int x, int y)
+void Fl_Help_View::hv_draw(const char *t, int x, int y, int entity_extra_length)
 {
   if (selected && current_view==this && current_pos<selection_last && current_pos>=selection_first) {
     Fl_Color c = fl_color();
@@ -264,7 +262,7 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
           selection_push_last = l;
         } else {
           selection_drag_first = f;
-          selection_drag_last = l;
+          selection_drag_last = l + entity_extra_length;
         }
       }
     }
@@ -731,7 +729,9 @@ Fl_Help_View::draw()
       underline = 0;
 
       initfont(font, fsize, fcolor);
-
+      // byte length difference between html entity (encoded by &...;) and
+      // UTF-8 encoding of same character
+      int entity_extra_length = 0;
       for (ptr = block->start, buf.clear(); ptr < block->end;)
       {
 	if ((*ptr == '<' || isspace((*ptr)&255)) && buf.size() > 0)
@@ -753,8 +753,9 @@ Fl_Help_View::draw()
 	      hh = 0;
 	    }
 
-            hv_draw(buf.c_str(), xx + x() - leftline_, yy + y());
+            hv_draw(buf.c_str(), xx + x() - leftline_, yy + y(), entity_extra_length);
 	    buf.clear();
+            entity_extra_length = 0;
 	    if (underline) {
               xtra_ww = isspace((*ptr)&255)?(int)fl_width(' '):0;
               fl_xyline(xx + x() - leftline_, yy + y() + 1,
@@ -1125,7 +1126,7 @@ Fl_Help_View::draw()
           if (!pre) current_pos = (int) (ptr-value_);
 	  needspace = 1;
 	}
-	else if (*ptr == '&')
+	else if (*ptr == '&')// process html entity
 	{
 	  ptr ++;
 
@@ -1134,8 +1135,12 @@ Fl_Help_View::draw()
 	  if (qch < 0)
 	    buf.add('&');
 	  else {
+            int utf8l = buf.size();
 	    buf.add(qch);
+            utf8l = buf.size() - utf8l; // length of added UTF-8 text
+            const char *oldptr = ptr;
 	    ptr = strchr(ptr, ';') + 1;
+            entity_extra_length += ptr - (oldptr-1) - utf8l; // extra length between html entity and UTF-8
 	  }
 
           if ((fsize + 2) > hh)
@@ -3034,20 +3039,20 @@ void Fl_Help_View::end_selection(int clipboard)
 {
   if (!selected || current_view!=this)
     return;
-  // convert the select part of our html text into some kind of somewhat readable ASCII
+  // convert the select part of our html text into some kind of somewhat readable UTF-8
   // and store it in the selection buffer
-  // *FIXME* Should be UTF-8 (not ASCII), including HTML Entities &x; etc.
-  char p = 0, pre = 0;;
+  int p = 0;
+  char pre = 0;;
   int len = (int) strlen(value_);
   char *txt = (char*)malloc(len+1), *d = txt;
   const char *s = value_, *cmd, *src;
   for (;;) {
-    char c = *s++;
+    int c = (*s++) & 0xff;
     if (c==0) break;
     if (c=='<') { // begin of some html command. Skip until we find a '>'
       cmd = s;
       for (;;) {
-        c = *s++;
+        c = (*s++) & 0xff;
         if (c==0 || c=='>') break;
       }
       if (c==0) break;
@@ -3084,28 +3089,34 @@ void Fl_Help_View::end_selection(int clipboard)
         while (*src) {
           *d++ = *src++;
         }
-        c = src[-1];
+        c = src[-1] & 0xff;
         p = isspace(c&255) ? ' ' : c;
       }
       continue;
     }
-    if (c=='&') { // special characters (HTML entities)		// *FIXME* *UTF-8*
+    const char *s2 = s;
+    if (c=='&') { // special characters (HTML entities)
       int xx = quote_char(s);
-      if (xx>=0) {
-        c = (char)xx;						// *FIXME* *UTF-8*
+      if (xx >= 0) {
+        c = xx;
         for (;;) {
           char cc = *s++;
           if (!cc || cc==';') break;
         }
       }
     }
-    int n = (int) (s-value_);
+    int n = (int) (s2-value_);
     if (n>selection_first && n<=selection_last) {
-      if (!pre && isspace(c&255)) c = ' ';
-      if (p!=' '||c!=' ')
-        *d++ = c;
+      if (!pre && isspace(c)) c = ' ';
+      if (p!=' ' || c!=' ') {
+        if (s2 != s) { // c was an HTML entity
+          d += fl_utf8encode(c, d);
+        }
+        else *d++ = c;
+      }
       p = c;
     }
+    if (n>selection_last) break; // stop parsing html after end of selection
   }
   *d = 0;
   Fl::copy(txt, (int) strlen(txt), clipboard);

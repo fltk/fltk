@@ -283,7 +283,7 @@ public:
 private:
 #endif
 
-  void          hv_draw(const char *t, int x, int y);
+  void          hv_draw(const char *t, int x, int y, int entity_extra_length = 0);
   char          begin_selection();
   char          extend_selection();
   void          end_selection(int c=0);
