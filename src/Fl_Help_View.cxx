@@ -71,7 +71,6 @@
 
 #define MAX_COLUMNS	200
 
-
 //
 // Typedef the C API sort function type the only way I know how...
 //
@@ -1126,7 +1125,7 @@ Fl_Help_View::draw()
           if (!pre) current_pos = (int) (ptr-value_);
 	  needspace = 1;
 	}
-	else if (*ptr == '&')// process html entity
+	else if (*ptr == '&') // process html entity
 	{
 	  ptr ++;
 
@@ -3042,7 +3041,7 @@ void Fl_Help_View::end_selection(int clipboard)
   // convert the select part of our html text into some kind of somewhat readable UTF-8
   // and store it in the selection buffer
   int p = 0;
-  char pre = 0;;
+  char pre = 0;
   int len = (int) strlen(value_);
   char *txt = (char*)malloc(len+1), *d = txt;
   const char *s = value_, *cmd, *src;
@@ -3090,7 +3089,7 @@ void Fl_Help_View::end_selection(int clipboard)
           *d++ = *src++;
         }
         c = src[-1] & 0xff;
-        p = isspace(c&255) ? ' ' : c;
+        p = isspace(c) ? ' ' : c;
       }
       continue;
     }
@@ -3107,8 +3106,8 @@ void Fl_Help_View::end_selection(int clipboard)
     }
     int n = (int) (s2-value_);
     if (n>selection_first && n<=selection_last) {
-      if (!pre && isspace(c)) c = ' ';
-      if (p!=' ' || c!=' ') {
+      if (!pre && c < 256 && isspace(c)) c = ' ';
+      if (p != ' ' || c != ' ') {
         if (s2 != s) { // c was an HTML entity
           d += fl_utf8encode(c, d);
         }
@@ -3120,6 +3119,7 @@ void Fl_Help_View::end_selection(int clipboard)
   }
   *d = 0;
   Fl::copy(txt, (int) strlen(txt), clipboard);
+  // printf("copy [%s]\n", txt);
   free(txt);
 }
 
