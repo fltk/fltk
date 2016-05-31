@@ -256,8 +256,8 @@ void Fl_WinAPI_Printer_Driver::rotate (float rot_angle)
   XFORM mat;
   float angle;
   angle = (float) - (rot_angle * M_PI / 180.);
-  mat.eM11 = cos(angle);
-  mat.eM12 = sin(angle);
+  mat.eM11 = (float)cos(angle);
+  mat.eM12 = (float)sin(angle);
   mat.eM21 = - mat.eM12;
   mat.eM22 = mat.eM11;
   mat.eDx = mat.eDy = 0;

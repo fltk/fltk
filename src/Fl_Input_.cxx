@@ -346,9 +346,9 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       }
       fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
       if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
-        fl_color( fl_color_average(textcolor(), color(), 0.6) );
-        float width = fl_width(buf+offset1, offset2-offset1);
-        fl_line(x1, Y+ypos+height-1, x1+width, Y+ypos+height-1);
+        fl_color( fl_color_average(textcolor(), color(), 0.6f) );
+        float width = (float)fl_width(buf+offset1, offset2-offset1);
+        fl_line((int)x1, Y+ypos+height-1, (int)(x1+width), Y+ypos+height-1);
       }
       if (pp < e) {
 	fl_color(tc);
@@ -378,7 +378,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       } else {
         fl_rectf((int)(xpos+curx+0.5), Y+ypos, 2, height);
       }
-      Fl::insertion_point_location(xpos+curx, Y+ypos+height, height);
+      Fl::insertion_point_location((int)xpos+curx, Y+ypos+height, height);
     }
 
   CONTINUE:

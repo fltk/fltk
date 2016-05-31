@@ -2206,8 +2206,8 @@ void Fl_Text_Display::draw_string(int style,
     if (can_leak) fl_push_clip(X, Y, toX - X, mMaxsize);
     fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
     if (Fl::screen_driver()->has_marked_text() && Fl::compose_state && (style & PRIMARY_MASK)) {
-      fl_color( fl_color_average(foreground, background, 0.6) );
-      fl_line(X, Y + mMaxsize - 1, X + fl_width(string, nChars), Y + mMaxsize - 1);
+      fl_color( fl_color_average(foreground, background, 0.6f) );
+      fl_line(X, Y + mMaxsize - 1, X + (int)fl_width(string, nChars), Y + mMaxsize - 1);
     }
     if (can_leak) fl_pop_clip();
   }
