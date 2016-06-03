@@ -863,7 +863,7 @@ Fl_Help_View::draw()
 	    if (line < 31)
 	      line ++;
 	    xx = block->line[line];
-            yy += 2 * hh;
+            yy += 2 * fsize;//hh;
 	    hh = 0;
 	  }
 	  else if (buf.cmp("CENTER") ||
