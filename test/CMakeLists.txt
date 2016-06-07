@@ -8,6 +8,9 @@ elseif(APPLE)
    set(AUDIOLIBS "-framework CoreAudio")
 elseif(HAVE_ALSA_ASOUNDLIB_H)
    set(AUDIOLIBS -lasound)
+   if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+     list(INSERT AUDIOLIBS 0 "-L/usr/local/lib")
+   endif(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
 endif(WIN32)
 
 #######################################################################
