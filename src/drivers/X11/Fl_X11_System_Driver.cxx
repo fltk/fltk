@@ -279,7 +279,7 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
     // Get list of statvfs structures
     res = getmntinfo(&list, ST_WAIT);
     if(0 < res) {
-      for (i = 0;  i < res; ++i) {
+      for (int i = 0;  i < res; ++i) {
         strlcpy(filename, list[i].f_mntonname, sizeof(filename));
         // Skip the already added root filesystem
         if (strcmp("/", filename) != 0) {
