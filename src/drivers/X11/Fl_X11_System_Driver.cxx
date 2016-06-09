@@ -223,7 +223,7 @@ int Fl_X11_System_Driver::open_uri(const char *uri, char *msg, int msglen)
 
 int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon)
 {
-  int num_files = 0;
+  int i, num_files = 0;
 #if defined(_AIX)
   // AIX don't write the mounted filesystems to a file like '/etc/mnttab'.
   // But reading the list of mounted filesystems from the kernel is possible:
@@ -279,7 +279,7 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
     // Get list of statvfs structures
     res = getmntinfo(&list, ST_WAIT);
     if(0 < res) {
-      for (int i = 0;  i < res; ++i) {
+      for (i = 0;  i < res; ++i) {
         strlcpy(filename, list[i].f_mntonname, sizeof(filename));
         // Skip the already added root filesystem
         if (strcmp("/", filename) != 0) {
