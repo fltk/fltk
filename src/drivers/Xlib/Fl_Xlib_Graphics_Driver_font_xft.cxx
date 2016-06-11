@@ -393,27 +393,6 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 }
 
 //
-// End of "$Id$".
-//
-//
-// "$Id$"
-//
-// Xft font code for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 2001-2011 Bill Spitzak and others.
-//
-// This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
-// file is missing or damaged, see the license at:
-//
-//     http://www.fltk.org/COPYING.php
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
-
-//
 // Draw fonts using Keith Packard's Xft library to provide anti-
 // aliased text. Yow!
 //
