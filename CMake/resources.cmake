@@ -157,7 +157,7 @@ mark_as_advanced(HAVE_SCANDIR_POSIX)
 
 # restore CMAKE_REQUIRED_LIBRARIES (is this really necessary ?)
 if(DEFINED SAVED_REQUIRED_LIBRARIES)
-  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+  set(CMAKE_REQUIRED_LIBRARIES ${SAVED_REQUIRED_LIBRARIES})
   unset(SAVED_REQUIRED_LIBRARIES)
 else(DEFINED SAVED_REQUIRED_LIBRARIES)
   unset(CMAKE_REQUIRED_LIBRARIES)
@@ -185,3 +185,7 @@ endif (DOXYGEN_FOUND)
 # message("Doxygen  found : ${DOXYGEN_FOUND}")
 # message("LaTex    found : ${LATEX_FOUND}")
 # message("LaTex Compiler : ${LATEX_COMPILER}")
+
+#
+# End of "$Id$".
+#
