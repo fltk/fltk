@@ -185,3 +185,7 @@ endif (DOXYGEN_FOUND)
 # message("Doxygen  found : ${DOXYGEN_FOUND}")
 # message("LaTex    found : ${LATEX_FOUND}")
 # message("LaTex Compiler : ${LATEX_COMPILER}")
+
+#
+# End of "$Id$".
+#
