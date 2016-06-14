@@ -3,14 +3,14 @@ set(EXECUTABLE_OUTPUT_PATH ${FLTK_BINARY_DIR}/bin/examples)
 #######################################################################
 # audio libs for test apps
 if(WIN32)
-   set(AUDIOLIBS winmm)
+  set(AUDIOLIBS winmm)
 elseif(APPLE)
-   set(AUDIOLIBS "-framework CoreAudio")
+  set(AUDIOLIBS "-framework CoreAudio")
 elseif(HAVE_ALSA_ASOUNDLIB_H)
-   set(AUDIOLIBS -lasound)
-   if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-     list(INSERT AUDIOLIBS 0 "-L/usr/local/lib")
-   endif(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+  find_library(LIB_asound asound)
+  if(LIB_asound)
+    set(AUDIOLIBS ${LIB_asound})
+  endif(LIB_asound)
 endif(WIN32)
 
 #######################################################################
