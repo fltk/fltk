@@ -32,12 +32,24 @@
 #include <FL/gl_draw.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Gl_Window_Driver.H>
+
 #if defined(FL_CFG_GFX_QUARTZ)
 #include "drivers/Quartz/Fl_Font.H"
+#  define GENLISTSIZE 0
+
 #elif defined(FL_CFG_GFX_GDI)
 #include "drivers/GDI/Fl_Font.H"
+#define GENLISTSIZE 0x10000
+
 #elif defined(FL_CFG_GFX_XLIB)
 #include "drivers/Xlib/Fl_Font.H"
+#if USE_XFT
+#  define GENLISTSIZE 256
+#else
+#  define USE_OksiD_style_GL_font_selection 1  // Most X11 hosts except XFT
+#  define GENLISTSIZE 0x10000
+#endif // USE_XFT
+
 #endif
 #include <FL/fl_utf8.h>
 
@@ -89,7 +101,7 @@ void gl_remove_displaylist_fonts()
         }
 
         // It would be nice if this next line was in a destructor somewhere
-        glDeleteLists(f->listbase, 256);
+        glDeleteLists(f->listbase, GENLISTSIZE);
 
         Fl_Font_Descriptor* tmp = f;
         f = f->next;
@@ -237,15 +249,11 @@ void gl_color(Fl_Color i) {
 #include <FL/x.H>
 #include <GL/glx.h>
 
-#  define USE_OksiD_style_GL_font_selection 1  // Most X11 hosts except XFT
-#if USE_XFT
-#  undef USE_OksiD_style_GL_font_selection  // turn this off for XFT also
-#endif
 
 void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
   if (!fl_fontsize->listbase) {
 #ifdef  USE_OksiD_style_GL_font_selection
-    fl_fontsize->listbase = glGenLists(0x10000);
+    fl_fontsize->listbase = glGenLists(GENLISTSIZE);
 #else // Fltk-1.1.8 style GL font selection
     // FIXME:  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
     // FIXME:  warning GL font selection is basically wrong here
@@ -256,7 +264,7 @@ void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
      XFontStruct *font = fl_xfont.value();
      int base = font->min_char_or_byte2;
      int count = font->max_char_or_byte2-base+1;
-     fl_fontsize->listbase = glGenLists(256);
+     fl_fontsize->listbase = glGenLists(GENLISTSIZE);
      glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
 #endif // USE_OksiD_style_GL_font_selection
      }
@@ -295,7 +303,7 @@ int Fl_X11_Gl_Window_Driver::overlay_color(Fl_Color i) {
 
 void Fl_WinAPI_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
   if (!fl_fontsize->listbase) {
-    fl_fontsize->listbase = glGenLists(0x10000);
+    fl_fontsize->listbase = glGenLists(GENLISTSIZE);
      /* old, unused WIN32 code
      int base = fl_fontsize->metr.tmFirstChar;
      int count = fl_fontsize->metr.tmLastChar-base+1;
