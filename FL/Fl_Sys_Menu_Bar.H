@@ -30,7 +30,13 @@
  \n To use this class, just replace Fl_Menu_Bar by Fl_Sys_Menu_Bar, and, on the Mac platform,
  a system menu at the top of the screen will be available. This menu will match an array
  of Fl_Menu_Item's exactly as with standard FLTK menus.
-  \n A few FLTK features are not supported by the Mac System menu:
+ 
+ Changes to the menu state are immediately visible in the menubar when they are made
+ using member functions of the Fl_Sys_Menu_Bar class. Other changes (e.g., by a call to
+ Fl_Menu_Item::set()) should be followed by a call to Fl_Sys_Menu_Bar::update() to be
+ visible in the menubar across all platforms.
+ 
+  A few FLTK features are not supported by the Mac System menu:
   \li no symbolic labels
   \li no embossed labels
   \li no font sizes
@@ -39,7 +45,6 @@
  */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
-  void update();
   void draw();
 public:
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
@@ -48,6 +53,7 @@ public:
    */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
+  void update();
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   /** Adds a new menu item. 
    \see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0)
@@ -94,7 +100,12 @@ public:
 
 #else
 
-typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
+class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
+public:
+  Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0) : Fl_Menu_Bar(x,y,w,h,l) {}
+  inline void update() {}
+};
+
 
 #endif // defined(__APPLE__) || defined(FL_DOXYGEN)
 
