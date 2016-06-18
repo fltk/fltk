@@ -111,7 +111,7 @@ public:
   void menu(const Fl_Menu_Item *m);
   void copy(const Fl_Menu_Item *m, void* user_data = 0);
   int insert(int index, const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);
-  int  add(const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);
+  int  add(const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);	// see src/Fl_Menu_add.cxx
   /** See int Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0) */
   int  add(const char* a, const char* b, Fl_Callback* c, void* d = 0, int e = 0) {
       return add(a,fl_old_shortcut(b),c,d,e);

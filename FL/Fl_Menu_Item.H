@@ -26,6 +26,9 @@
 #    undef check
 #  endif
 
+// doxygen needs the following line to enable e.g. ::FL_MENU_TOGGLE to link to the enums
+/// @file
+
 enum { // values for flags:
   FL_MENU_INACTIVE = 1,		///< Deactivate menu item (gray out)
   FL_MENU_TOGGLE= 2,		///< Item is a checkbox toggle (shows checkbox for on/off state)

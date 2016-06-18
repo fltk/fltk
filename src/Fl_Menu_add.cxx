@@ -97,7 +97,10 @@ static int compare(const char* a, const char* b) {
 
 /** Adds an item.  The text is split at '/' characters to automatically
    produce submenus (actually a totally unnecessary feature as you can
-   now add submenu titles directly by setting SUBMENU in the flags):
+   now add submenu titles directly by setting SUBMENU in the flags).
+
+   \returns the index into the menu() array, where the entry was added
+   \see Fl_Menu_Item::insert(int, const char*, int, Fl_Callback*, void*, int myflags)
 */
 int Fl_Menu_Item::add(
   const char *mytext,

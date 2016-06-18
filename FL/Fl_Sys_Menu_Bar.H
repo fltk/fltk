@@ -65,7 +65,7 @@ public:
     return insert(index, label, fl_old_shortcut(shortcut), cb, user_data, flags);
     }
   void remove(int n);
-  void replace(int rank, const char *name);
+  void replace(int index, const char *name);
   /** Set the Fl_Menu_Item array pointer to null, indicating a zero-length menu. 
    \see Fl_Menu_::clear()
    */
