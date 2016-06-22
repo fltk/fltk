@@ -56,6 +56,7 @@ double gl_width(uchar c) {return fl_width(c);}
 
 static Fl_Font_Descriptor *gl_fontsize;
 
+#define GENLISTSIZE 256
 #ifndef __APPLE__
 #  define USE_OksiD_style_GL_font_selection 1  // Most hosts except OSX
 #endif
@@ -74,7 +75,9 @@ void  gl_font(int fontid, int size) {
   if (!fl_fontsize->listbase) {
 
 #ifdef  USE_OksiD_style_GL_font_selection
-    fl_fontsize->listbase = glGenLists(0x10000);
+#undef GENLISTSIZE
+#define GENLISTSIZE 0x10000
+    fl_fontsize->listbase = glGenLists(GENLISTSIZE);
 #else // Fltk-1.1.8 style GL font selection
 
 #if defined (USE_X11) // X-windows options follow, either XFT or "plain" X
@@ -87,14 +90,14 @@ void  gl_font(int fontid, int size) {
     XFontStruct *font = fl_X_core_font();
     int base = font->min_char_or_byte2;
     int count = font->max_char_or_byte2-base+1;
-    fl_fontsize->listbase = glGenLists(256);
+    fl_fontsize->listbase = glGenLists(GENLISTSIZE);
     glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
 # elif defined(WIN32)
     // this is unused because USE_OksiD_style_GL_font_selection == 1
     int base = fl_fontsize->metr.tmFirstChar;
     int count = fl_fontsize->metr.tmLastChar-base+1;
     HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
-    fl_fontsize->listbase = glGenLists(256);
+    fl_fontsize->listbase = glGenLists(GENLISTSIZE);
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
 # endif
@@ -154,8 +157,8 @@ void gl_remove_displaylist_fonts()
           past->next = f->next;
         }
 
-        // It would be nice if this next line was in a desctructor somewhere
-        glDeleteLists(f->listbase, 256);
+        // It would be nice if this next line was in a destructor somewhere
+        glDeleteLists(f->listbase, GENLISTSIZE);
 
         Fl_Font_Descriptor* tmp = f;
         f = f->next;
