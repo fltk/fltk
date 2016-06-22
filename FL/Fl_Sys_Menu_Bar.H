@@ -31,7 +31,14 @@
  \n To use this class, just replace Fl_Menu_Bar by Fl_Sys_Menu_Bar, and, on the Mac platform,
  a system menu at the top of the screen will be available. This menu will match an array
  of Fl_Menu_Item's exactly as with standard FLTK menus.
-  \n A few FLTK features are not supported by the Mac System menu:
+  
+  Changes to the menu state are immediately visible in the menubar when they are made
+  using member functions of the Fl_Sys_Menu_Bar class. Other changes (e.g., by a call to
+  Fl_Menu_Item::set()) should be followed by a call to Fl_Sys_Menu_Bar::update() to be
+  visible in the menubar across all platforms.
+  
+  A few FLTK features are not supported by the Mac System menu:
+
   \li no symbolic labels
   \li no embossed labels
   \li no font sizes
