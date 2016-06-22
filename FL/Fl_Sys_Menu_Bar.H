@@ -39,9 +39,20 @@
   You can configure a callback for the 'About' menu item to invoke your own code with fl_mac_set_about().
  */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
+
+#if FLTK_ABI_VERSION >= 10304
+  // NEW -- update() public (STR#3317)
+public:
+  void update();
+protected:
+  void draw();
+#else
+  // OLD -- update() protected
 protected:
   void update();
   void draw();
+#endif
+
 public:
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
   ~Fl_Sys_Menu_Bar();
@@ -95,7 +106,17 @@ public:
 
 #else
 
+#if FLTK_ABI_VERSION >= 10304
+// NEW -- small class for update()
+class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
+public:
+  Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0) : Fl_Menu_Bar(x,y,w,h,l) {}
+  inline void update() {}
+};
+#else
+// OLD -- simple typedef
 typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
+#endif
 
 #endif // defined(__APPLE__) || defined(FL_DOXYGEN)
 
