@@ -264,11 +264,45 @@ int Fl_X11_Screen_Driver::h() {
   return fl_workarea_xywh[3];
 }
 
+#define USE_XRANDR (HAVE_DLSYM && HAVE_DLFCN_H) // means attempt to dynamically load libXrandr.so
+#if USE_XRANDR
+#include <dlfcn.h>
+typedef struct {
+  int    width, height;
+  int    mwidth, mheight;
+} XRRScreenSize;
+typedef XRRScreenSize* (*XRRSizes_type)(Display *dpy, int screen, int *nsizes);
+#endif // USE_XRANDR
 
 void Fl_X11_Screen_Driver::init()
 {
   if (!fl_display) open_display();
-  // FIXME: Rewrite using RandR instead
+  
+  int dpi_by_randr = 0;
+  float dpih, dpiv;
+#if USE_XRANDR
+  static XRRSizes_type XRRSizes_f = NULL;
+  if (!XRRSizes_f) {
+    void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
+    if (!libxrandr_addr) libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
+#   ifdef __APPLE_CC__ // allows testing on Darwin + X11
+    if (!libxrandr_addr) libxrandr_addr = dlopen("/opt/X11/lib/libXrandr.dylib", RTLD_LAZY);
+#   endif
+    if (libxrandr_addr) XRRSizes_f = (XRRSizes_type)dlsym(libxrandr_addr, "XRRSizes");
+  }
+  if (XRRSizes_f) {
+    int nscreens;
+    XRRScreenSize *ssize = XRRSizes_f(fl_display, fl_screen, &nscreens);
+    //    for(int i=0;i<nscreens;i++)
+    //      printf("width=%d height=%d mwidth=%d mheight=%d\n",ssize[i].width,ssize[i].height,ssize[i].mwidth,ssize[i].mheight);
+    int mm = ssize[0].mwidth;
+    dpih = mm ? ssize[0].width*25.4f/mm : 0.0f;
+    mm = ssize[0].mheight;
+    dpiv = mm ? ssize[0].height*25.4f/mm : 0.0f;
+    dpi_by_randr = 1;
+  }
+#endif // USE_XRANDR
+
 #if HAVE_XINERAMA
   if (XineramaIsActive(fl_display)) {
     XineramaScreenInfo *xsi = XineramaQueryScreens(fl_display, &num_screens);
@@ -281,10 +315,13 @@ void Fl_X11_Screen_Driver::init()
       screens[i].width = xsi[i].width;
       screens[i].height = xsi[i].height;
 
-      int mm = DisplayWidthMM(fl_display, fl_screen);
-      dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
-      mm = DisplayHeightMM(fl_display, fl_screen);
-      dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
+      if (dpi_by_randr) { dpi[i][0] = dpih; dpi[i][1] = dpiv; }
+      else {
+        int mm = DisplayWidthMM(fl_display, fl_screen);
+        dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+        mm = DisplayHeightMM(fl_display, fl_screen);
+        dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
+      }
     }
     if (xsi) XFree(xsi);
   } else
@@ -299,10 +336,13 @@ void Fl_X11_Screen_Driver::init()
       screens[i].width = DisplayWidth(fl_display, i);
       screens[i].height = DisplayHeight(fl_display, i);
  
-      int mm = DisplayWidthMM(fl_display, i);
-      dpi[i][0] = mm ? DisplayWidth(fl_display, i)*25.4f/mm : 0.0f;
-      mm = DisplayHeightMM(fl_display, i);
-      dpi[i][1] = mm ? DisplayHeight(fl_display, i)*25.4f/mm : 0.0f;
+      if (dpi_by_randr) { dpi[i][0] = dpih; dpi[i][1] = dpiv; }
+      else {
+        int mm = DisplayWidthMM(fl_display, fl_screen);
+        dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+        mm = DisplayHeightMM(fl_display, fl_screen);
+        dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
+      }
     }
   }
 }
