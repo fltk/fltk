@@ -96,7 +96,7 @@ void Fl_Gl_Window::show() {
 
 #if defined(__APPLE__)
 
-int Fl_Gl_Window::pixels_per_unit()
+float Fl_Gl_Window::pixels_per_unit()
 {
   return (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(this) && Fl_X::i(this)->mapped_to_retina()) ? 2 : 1;
 }

@@ -83,9 +83,9 @@ int Fl_Glut_Window::handle(int event) {
   make_current();
   int ex = Fl::event_x();
   int ey = Fl::event_y();
-  int factor = pixels_per_unit();
-  ex *= factor;
-  ey *= factor;
+  float factor = pixels_per_unit();
+  ex = int(ex * factor + 0.5);
+  ey = int(ey * factor + 0.5);
   int button;
   switch (event) {
 
