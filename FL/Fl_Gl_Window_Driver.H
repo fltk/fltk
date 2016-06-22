@@ -49,7 +49,7 @@ public:
   virtual ~Fl_Gl_Window_Driver() {}
   static Fl_Gl_Window_Driver *newGlWindowDriver(Fl_Gl_Window *w);
   static Fl_Gl_Window_Driver *global();
-  virtual int pixels_per_unit() {return 1;}
+  virtual float pixels_per_unit() {return 1;}
   virtual void before_show(int& need_redraw) {}
   virtual void after_show(int need_redraw) {}
   virtual void invalidate();
@@ -95,7 +95,7 @@ class NSOpenGLPixelFormat;
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
-  virtual int pixels_per_unit();
+  virtual float pixels_per_unit();
   virtual void before_show(int& need_redraw);
   virtual void after_show(int need_redraw);
   virtual int mode_(int m, const int *a);

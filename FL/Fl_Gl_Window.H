@@ -208,7 +208,7 @@ public:
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Gl_Window* as_gl_window() {return this;}
   
-  int pixels_per_unit();
+  float pixels_per_unit();
   /** Gives the window width in OpenGL pixels.
    Generally identical with the result of the w() function, but for a window mapped to
    an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
@@ -216,7 +216,7 @@ public:
    between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
-  int pixel_w() { return pixels_per_unit() * w(); }
+  int pixel_w() { return int(pixels_per_unit() * w() + 0.5f); }
   /** Gives the window height in OpenGL pixels.
    Generally identical with the result of the h() function, but for a window mapped to
    an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
@@ -224,7 +224,7 @@ public:
    between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
-  int pixel_h() { return pixels_per_unit() * h(); }
+  int pixel_h() { return int(pixels_per_unit() * h() + 0.5f); }
   
   ~Fl_Gl_Window();
   /**

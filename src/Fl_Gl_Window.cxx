@@ -404,7 +404,7 @@ int Fl_Gl_Window::gl_plugin_linkage() {
  Fl::event_y() to the pixel units used by the OpenGL source code.
  \version 1.3.4
  */
-int Fl_Gl_Window::pixels_per_unit() {
+float Fl_Gl_Window::pixels_per_unit() {
   return pGlWindowDriver->pixels_per_unit();
 }
 
@@ -470,7 +470,7 @@ void Fl_Cocoa_Gl_Window_Driver::after_show(int need_redraw) {
   if(need_redraw) pWindow->redraw();//necessary only after creation of a top-level GL window
 }
 
-int Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
+float Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
 {
   return (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(pWindow) &&
           Fl_Cocoa_Window_Driver::driver(pWindow)->mapped_to_retina()) ? 2 : 1;

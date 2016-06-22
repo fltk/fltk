@@ -63,7 +63,7 @@ static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWid
 
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, int x, int y, int w, int h)
 {
-  int factor = glw->pixels_per_unit();
+  float factor = glw->pixels_per_unit();
   if (factor > 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
