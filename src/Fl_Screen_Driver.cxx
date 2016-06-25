@@ -127,6 +127,7 @@ int Fl_Screen_Driver::screen_num(int x, int y, int w, int h)
 {
   int best_screen = 0;
   float best_intersection = 0.;
+  if (num_screens < 0) init();
   for (int i = 0; i < num_screens; i++) {
     int sx = 0, sy = 0, sw = 0, sh = 0;
     screen_xywh(sx, sy, sw, sh, i);
