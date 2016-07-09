@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2016 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -36,7 +36,7 @@ add_definitions(${OPTION_ARCHFLAGS})
 #######################################################################
 set(OPTION_ABI_VERSION ""
    CACHE STRING
-   "FLTK ABI Version (FL_ABI_VERSION - define as 10x0y for 1.x.y)"
+   "FLTK ABI Version FL_ABI_VERSION: 1xxyy for 1.x.y (xx,yy with leading zero)"
    )
 set(FL_ABI_VERSION ${OPTION_ABI_VERSION})
 

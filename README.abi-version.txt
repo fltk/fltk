@@ -5,7 +5,7 @@ FLTK preserves the application binary interface (ABI) throughout
 patch versions, for instance all 1.3.x versions (x = patch version).
 
 This basically means that a program compiled and linked with FLTK 1.3.0
-can run with a FLTK shared library (fltk.dll, fltk.so.1.3.4) of a later
+can run with a FLTK shared library (fltk.dll, fltk.so.1.3.x) of a later
 FLTK version.
 
 Since FLTK 1.3.1 the FLTK team began to introduce ABI-breaking features
@@ -21,8 +21,8 @@ In versions older than 1.3.4 the user had to edit FL/Enumerations.H, but
 since FLTK 1.3.4 the ABI version can be configured when building the
 FLTK library.
 
-Note: This documentation is written for FLTK 1.3.x, but it applies to all
-later versions as well. Replace the version numbers given here by the
+Note: This documentation is written for FLTK 1.3.x. It does not apply to
+later FLTK versions. Replace the version numbers given here by the
 version numbers of the version you are using.
 
 
@@ -44,7 +44,7 @@ previous versions. See CHANGES file.
 
 
 Note: the now deprecated macro FLTK_ABI_VERSION has been used before
-FLTK 1.3.4.  The FLTK 1.3.4 code still uses FLTK_ABI_VERSION, but since
+FLTK 1.3.4. The FLTK 1.3.4 code still uses FLTK_ABI_VERSION, but since
 FLTK 1.3.4 this is identical to FL_ABI_VERSION.
 FLTK_ABI_VERSION will be removed entirely in FLTK 1.4.0.
 
@@ -69,9 +69,9 @@ the version number.
 (2) CMake + make
 ----------------
 
-	FLTK 1.3.4 contains experimental CMake support. This is known	to be
+	FLTK 1.3.4 contains experimental CMake support. This is known to be
 	incomplete, but you can use it for test builds. It "almost works"
-	in many cases, but it is not yet "officially supported". Use on your
+	in many cases, but it is not yet officially supported. Use on your
 	own risk.
 
 	Use CMake to build the Makefile's and run 'make'. To configure the
@@ -108,7 +108,7 @@ the version number.
 Note on CMake:
 
 	CMake generates FL/abi-version.h in the build tree. You may run
-	'make install' to install the FLTK library including the headers in
+	'make install' to install the FLTK library including all headers in
 	the chosen installation directory, although this is not necessary.
 
 	The FLTK team recommends to use the FLTK library directly from the

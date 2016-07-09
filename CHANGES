@@ -30,7 +30,6 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Added Fl_Image::fail() to test if an image was loaded successfully
 	  to make life easier when loading images (STR #2873).
 
-
 	New configuration options (ABI version)
 
 	- FLTK's ABI version can now be configured with configure, CMake, or

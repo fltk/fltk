@@ -3,7 +3,7 @@
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2015 by Bill Spitzak and others.
+ * Copyright 1998-2016 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -22,7 +22,7 @@
   ============================================================================
 */
 
-/* define FL_ABI_VERSION as 10x0y for FLTK ABI version 1.x.y */
+/* define FL_ABI_VERSION: 1xxyy for 1.x.y (xx,yy with leading zero) */
 
 #cmakedefine FL_ABI_VERSION @FL_ABI_VERSION@
 

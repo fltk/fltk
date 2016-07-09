@@ -3,7 +3,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -35,12 +35,11 @@
  *	below by "#include <FL/abi-version.h>".
  *
  * (3)	If you use the provided IDE files (Windows VC++ or Xcode) you should
- *	edit the definition in the provided IDE subdirectory. The correct
- *	file is `/path/to/fltk/ide/<IDE-name>/FL/abi-version.h' .
+ *	edit the definition in the provided file abi-version.ide. The correct
+ *	file is `/path/to/fltk/abi-version.ide' .
  *
  ******************************************************************************
- * For more info on FL_ABI_VERSION, see: http://fltk.org/cmp.php#FL_ABI_VERSION
- * FIXME: Update docs ...
+ * For more informations on FL_ABI_VERSION see README.abi-version.txt.
  ******************************************************************************
  */
 
@@ -90,8 +89,8 @@
     \deprecated This \p double version number is retained for compatibility
     with existing program code. New code should use \em int FL_API_VERSION
     instead. FL_VERSION is deprecated because comparisons of floating point
-    values may fail because of rounding errors. However, there are
-    currently no plans to remove this constant.
+    values may fail due to rounding errors. However, there are currently no
+    plans to remove this deprecated constant.
 
     FL_VERSION is equivalent to <em>(double)FL_API_VERSION / 10000</em>.
 
@@ -151,7 +150,7 @@
     To enable new ABI-breaking features in patch releases you can configure
     FLTK to use a higher FL_ABI_VERSION.
 
-    \todo Configuration of FL_ABI_VERSION needs documentation.
+    \see README.abi-version.txt
  */
 #ifndef FL_ABI_VERSION
 #define FL_ABI_VERSION (FL_MAJOR_VERSION*10000 + FL_MINOR_VERSION*100)
