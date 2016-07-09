@@ -5,7 +5,7 @@ FLTK preserves the application binary interface (ABI) throughout
 patch versions, for instance all 1.3.x versions (x = patch version).
 
 This basically means that a program compiled and linked with FLTK 1.3.0
-can run with a FLTK shared library (fltk.dll, fltk.so.1.3.4) of a later
+can run with a FLTK shared library (fltk.dll, fltk.so.1.3.x) of a later
 FLTK version.
 
 Since FLTK 1.3.1 the FLTK team began to introduce ABI-breaking features
