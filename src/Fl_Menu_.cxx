@@ -3,7 +3,7 @@
 //
 // Common menu code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -154,8 +154,8 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) {
 }
 
 /**
- Find the index the menu array for given \p item.
- 
+ Find the index into the menu array for a given \p item.
+
  A way to convert a menu item pointer into an index.
 
  Does \b not handle items that are in submenu pointers (FL_SUBMENU_POINTER).
@@ -175,7 +175,7 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) {
    if ( index == -1 ) { ..error.. }
  \endcode
 
- \param item The *item to be found
+ \param[in]  item  The item to be found
  \returns    The index of the item, or -1 if not found.
  \see        menu()
 */
@@ -212,7 +212,7 @@ int Fl_Menu_::find_index(Fl_Callback *cb) const {
 
  To get the menu item pointer for a pathname, use find_item()
 
- \param pathname The path and name of the menu item index to find
+ \param[in] pathname The path and name of the menu item to find
  \returns        The index of the matching item, or -1 if not found.
  \see            item_pathname()
 
@@ -254,7 +254,7 @@ int Fl_Menu_::find_index(const char *pathname) const {
  internationalisation and a menu item can not be found using its label. This
  search is also much faster.
  
- \param cb find the first item with this callback
+ \param[in] cb find the first item with this callback
  \returns The item found, or NULL if not found
  \see find_item(const char*)
  */
@@ -482,7 +482,7 @@ void Fl_Menu_::clear() {
  is done to make a private array.
 
  \warning Since this method can change the internal menu array, any menu
- item pointers or indecies the application may have cached can become
+ item pointers or indices the application may have cached can become
  stale, and should be recalculated/refreshed.
 
  \b Example:
