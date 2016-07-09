@@ -3,7 +3,7 @@
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -94,13 +94,14 @@ static int compare(const char* a, const char* b) {
 }
 
 
+/** Adds a menu item.
 
-/** Adds an item.  The text is split at '/' characters to automatically
-   produce submenus (actually a totally unnecessary feature as you can
-   now add submenu titles directly by setting SUBMENU in the flags).
+  The text is split at '/' characters to automatically
+  produce submenus (actually a totally unnecessary feature as you can
+  now add submenu titles directly by setting FL_SUBMENU in the flags).
 
-   \returns the index into the menu() array, where the entry was added
-   \see Fl_Menu_Item::insert(int, const char*, int, Fl_Callback*, void*, int myflags)
+  \returns the index into the menu() array, where the entry was added
+  \see Fl_Menu_Item::insert(int, const char*, int, Fl_Callback*, void*, int)
 */
 int Fl_Menu_Item::add(
   const char *mytext,
@@ -111,7 +112,6 @@ int Fl_Menu_Item::add(
 ) {
   return(insert(-1,mytext,sc,cb,data,myflags));		// -1: append
 }
-
 
 
 /** 
@@ -125,12 +125,13 @@ int Fl_Menu_Item::add(
 
  In all other aspects, the behavior of insert() is the same as add().
  
- \param index insert new items here
- \param mytext new label string, details see above
- \param sc keyboard shortcut for new item
- \param cb callback function for new item
- \param data user data for new item
- \param myflags menu flags as described in FL_Menu_Item
+ \param[in] index	insert new items here
+ \param[in] mytext	new label string, details see above
+ \param[in] sc		keyboard shortcut for new item
+ \param[in] cb		callback function for new item
+ \param[in] data	user data for new item
+ \param[in] myflags	menu flags as described in FL_Menu_Item
+
  \returns the index into the menu() array, where the entry was added
 */
 int Fl_Menu_Item::insert(
@@ -212,30 +213,33 @@ int Fl_Menu_Item::insert(
 }
 
 
-
 /**
   Adds a new menu item.
-  
-  \param[in] label    The text label for the menu item.
-  \param[in] shortcut Optional keyboard shortcut that can be an int or string; (FL_CTRL+'a') or "^a". Default 0 if none.
-  \param[in] callback Optional callback invoked when user clicks the item. Default 0 if none.
-  \param[in] userdata Optional user data passed as an argument to the callback. Default 0 if none.
-  \param[in] flags    Optional flags that control the type of menu item; see below. Default is 0 for none.
-  \returns            The index into the menu() array, where the entry was added.
-  
+
+  \param[in] label	The text label for the menu item.
+  \param[in] shortcut	Optional keyboard shortcut that can be an int or string:
+			(FL_CTRL+'a') or "^a". Default 0 if none.
+  \param[in] callback	Optional callback invoked when user clicks the item.
+			Default 0 if none.
+  \param[in] userdata	Optional user data passed as an argument to the callback.
+			Default 0 if none.
+  \param[in] flags	Optional flags that control the type of menu item;
+			see below. Default is 0 for none.
+  \returns		The index into the menu() array, where the entry was added.
+
   \par Description
   If the menu array was directly set with menu(x), then copy() is done 
   to make a private array.
   \par 
   Since this method can change the internal menu array, any menu item
-  pointers or indecies the application may have cached can become stale,
+  pointers or indices the application may have cached can become stale,
   and should be recalculated/refreshed.
   \par
   A menu item's callback must not add() items to its parent menu during the callback.
 
   <B>Detailed Description of Parameters</B>
   \par label
-  The menu item's label. This option is required.
+  The menu item's label. This argument is required and must not be NULL.
   \par
   The characters "&", "/", "\", and "_" are treated as special characters in the label string. 
   The "&" character specifies that the following character is an accelerator and will be underlined.
@@ -276,7 +280,7 @@ int Fl_Menu_Item::insert(
   \endverbatim
   \par
   ..where \<ascii_value\> is a decimal value representing an
-  ascii character (eg. 97 is the ascii code for 'a'), and the optional
+  ASCII character (eg. 97 is the ascii code for 'a'), and the optional
   prefixes enhance the value that follows. Multiple prefixes must
   appear in the order below.
   \par
@@ -316,13 +320,18 @@ int Fl_Menu_Item::insert(
       FL_MENU_DIVIDER      // Creates divider line below this item. Also ends a group of radio buttons.
   \endcode
 
+  If FL_SUBMENU is set in an item's flags, then actually two items are added:
+  the first item is the menu item (submenu title), as expected, and the second
+  item is the submenu terminating item with the label and all other members
+  set to 0. If you add submenus with the 'path' technique, then the
+  corresponding submenu terminators (maybe more than one) are added as well.
+
   \todo Raw integer shortcut needs examples. 
         Dependent on responses to http://fltk.org/newsgroups.php?gfltk.development+v:10086 and results of STR#2344
  */
 int Fl_Menu_::add(const char *label,int shortcut,Fl_Callback *callback,void *userdata,int flags) {
   return(insert(-1,label,shortcut,callback,userdata,flags));	// -1: append
 }
-
 
 
 /**
@@ -354,8 +363,8 @@ int Fl_Menu_::add(const char *label,int shortcut,Fl_Callback *callback,void *use
   \returns            The index into the menu() array, where the entry was added.
 
   \see                add()
+*/
 
- */
 int Fl_Menu_::insert(
   int index,
   const char *label,
@@ -368,7 +377,7 @@ int Fl_Menu_::insert(
   if (this != fl_menu_array_owner) {
     if (fl_menu_array_owner) {
       Fl_Menu_* o = fl_menu_array_owner;
-      // the previous owner get's its own correctly-sized array:
+      // the previous owner gets its own correctly-sized array:
       int value_offset = (int) (o->value_-local_array);
       int n = local_array_size;
       Fl_Menu_Item* newMenu = o->menu_ = new Fl_Menu_Item[n];
