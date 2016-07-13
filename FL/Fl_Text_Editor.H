@@ -78,10 +78,19 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
     /** Removes all of the key bindings associated with the text editor or list. */
     void remove_all_key_bindings() { remove_all_key_bindings(&key_bindings); }
     void add_default_key_bindings(Key_Binding** list);
+#if FLTK_ABI_VERSION < 10304
+    // OLD: non-const
     Key_Func bound_key_function(int key, int state, Key_Binding* list);
     /**  Returns the function associated with a key binding. */
     Key_Func bound_key_function(int key, int state)
       { return bound_key_function(key, state, key_bindings); }
+#else
+    // NEW: const (STR#3306)
+    Key_Func bound_key_function(int key, int state, Key_Binding* list) const;
+    /**  Returns the function associated with a key binding. */
+    Key_Func bound_key_function(int key, int state) const
+      { return bound_key_function(key, state, key_bindings); }
+#endif
     /**  Sets the default key function for unassigned keys. */
     void default_key_function(Key_Func f) { default_key_function_ = f; }
 
