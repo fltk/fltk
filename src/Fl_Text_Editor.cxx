@@ -770,6 +770,57 @@ int Fl_Text_Editor::handle(int event) {
   return Fl_Text_Display::handle(event);
 }
 
+#if FLTK_ABI_VERSION >= 10304
+/**
+Enables or disables Tab key focus navigation.
+
+When disabled (default), tab characters are inserted into
+Fl_Text_Editor. Only the mouse can change focus.  This behavior is
+desireable when Fl_Text_Editor is used, e.g. in a source code editor.
+
+When enabled, Tab navigates focus to the next widget, and Shift-Tab
+navigates focus to the previous widget. This behavior is desireable
+when Fl_Text_Editor is used e.g. in a database input form.
+
+Currently, this method is implemented as a convenience method
+that adjusts the key bindings for the Tab key. This implementation
+detail may change in the future. Know that changing the editor's
+key bindings for Tab and Shift-Tab may affect tab navigation.
+
+\param [in] val If \p val is 0, Tab inserts a tab character (default).<br>
+		If \p val is 1, Tab navigates widget focus.
+
+\see tab_nav(), Fl::OPTION_ARROW_FOCUS.
+\version 1.3.4 ABI feature
+*/
+void Fl_Text_Editor::tab_nav(int val) {
+  if ( val )
+    add_key_binding(FL_Tab, 0, kf_ignore);
+  else
+    remove_key_binding(FL_Tab, 0);
+}
+
+/**
+Check if Tab focus navigation is enabled.
+
+If disabled (default), hitting Tab inserts a tab character into the
+editor buffer.
+
+If enabled, hitting Tab navigates focus to the next widget,
+and Shift-Tab navigates focus to the previous widget.
+
+\returns	if Tab inserts tab characters or moves the focus
+\retval	0	Tab inserts tab characters (default)
+\retval	1	Tab navigation is enabled.
+
+\see tab_nav(int), Fl::OPTION_ARROW_FOCUS.
+\version 1.3.4 ABI feature
+*/
+int Fl_Text_Editor::tab_nav() const {
+  return (bound_key_function(FL_Tab,0)==kf_ignore) ? 1 : 0;
+}
+#endif
+
 //
 // End of "$Id$".
 //
