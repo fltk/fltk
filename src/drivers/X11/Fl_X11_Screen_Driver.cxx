@@ -279,7 +279,7 @@ void Fl_X11_Screen_Driver::init()
   if (!fl_display) open_display();
   
   int dpi_by_randr = 0;
-  float dpih, dpiv;
+  float dpih = 0.0f, dpiv = 0.0f;
 #if USE_XRANDR
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
