@@ -99,6 +99,7 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 
 	Bug fixes
 
+	- Allow widget callback to be NULL, i.e. no callback (STR #2835).
 	- Fixed Fl_Help_View buffer overflow (STR #3275).
 	- Fl_Browser now correctly adjusts its scrollbars when the default
 	  text size is changed with textsize(int) (STR #3057).
