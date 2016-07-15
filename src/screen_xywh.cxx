@@ -169,7 +169,7 @@ typedef XRRScreenSize* (*XRRSizes_type)(Display *dpy, int screen, int *nsizes);
 static void screen_init() {
   if (!fl_display) fl_open_display();
   int dpi_by_randr = 0;
-  float dpih, dpiv;
+  float dpih = 0.0f, dpiv = 0.0f;
 #if USE_XRANDR
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
