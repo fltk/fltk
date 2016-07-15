@@ -888,10 +888,10 @@ Fl_File_Chooser::fileNameCB()
 
 #if defined(WIN32) || defined(__EMX__)
     if (strcasecmp(pathname, directory_) &&
-        (pathname[0] || strcasecmp("/", directory_))) {
+        (pathname[0] || strcmp("/", directory_))) {
 #else
     if (strcmp(pathname, directory_) &&
-        (pathname[0] || strcasecmp("/", directory_))) {
+        (pathname[0] || strcmp("/", directory_))) {
 #endif // WIN32 || __EMX__
       int p = fileName->position();
       int m = fileName->mark();
