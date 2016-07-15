@@ -321,6 +321,7 @@ Fl_Widget::copy_label(const char *a) {
 */
 void
 Fl_Widget::do_callback(Fl_Widget* o,void* arg) {
+  if (!callback_) return;
   Fl_Widget_Tracker wp(this);
   callback_(o,arg);
   if (wp.deleted()) return;
