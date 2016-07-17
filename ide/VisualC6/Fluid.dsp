@@ -147,6 +147,10 @@ SOURCE=..\..\fluid\file.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\fluid\ExternalCodeEditor_WIN32.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\fluid\fluid.cxx
 # End Source File
 # Begin Source File

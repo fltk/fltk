@@ -27,6 +27,8 @@
 extern void load_history();
 extern void redraw_browser();
 extern int show_comments;
+extern int G_use_external_editor;
+extern char G_external_editor_command[512];
 extern int show_coredevmenus;
 extern struct Fl_Menu_Item *dbmanager_item;
 extern Fl_Preferences fluid_prefs;
@@ -73,6 +75,8 @@ extern Fl_Check_Button *prevpos_button;
 extern Fl_Check_Button *show_comments_button;
 #include <FL/Fl_Spinner.H>
 extern Fl_Spinner *recent_spinner;
+extern Fl_Check_Button *use_external_editor_button;
+extern Fl_Input *editor_command_input;
 Fl_Double_Window* make_settings_window();
 extern Fl_Menu_Item menu_scheme_choice[];
 extern Fl_Double_Window *shell_window;

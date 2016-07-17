@@ -756,6 +756,7 @@ int Fl_Type::is_menu_item() const {return 0;}
 int Fl_Type::is_menu_button() const {return 0;}
 int Fl_Type::is_group() const {return 0;}
 int Fl_Type::is_window() const {return 0;}
+int Fl_Type::is_code() const {return 0;}
 int Fl_Type::is_code_block() const {return 0;}
 int Fl_Type::is_decl_block() const {return 0;}
 int Fl_Type::is_comment() const {return 0;}
