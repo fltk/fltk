@@ -15,16 +15,24 @@
 //
 //     http://www.fltk.org/str.php
 //
-
 #include <FL/Fl.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_File_Chooser.H>
 #include "Fl_Type.h"
 #include <FL/fl_show_input.H>
 #include <FL/Fl_File_Chooser.H>
+#include "alignment_panel.h"
 #include "../src/flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#ifdef WIN32
+  #include "ExternalCodeEditor_WIN32.h"
+#else
+  #include "ExternalCodeEditor_UNIX.h"
+#endif
 
 extern int i18n_type;
 extern const char* i18n_include;
@@ -38,6 +46,7 @@ extern int batch_mode;
 extern void redraw_browser();
 extern void goto_source_dir();
 extern void leave_source_dir();
+extern Fl_Window *main_window;
 
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
@@ -434,6 +443,14 @@ Fl_Type *Fl_Code_Type::make() {
 }
 
 void Fl_Code_Type::open() {
+  // Using an external code editor? Open it..
+  if ( G_use_external_editor && G_external_editor_command[0] ) {
+    const char *cmd = G_external_editor_command;
+    const char *code = name();
+    if ( editor_.open_editor(cmd, code) == 0 )
+      return;   // return if editor opened ok, fallthru to built-in if not
+  }
+  // Use built-in code editor..
   if (!code_panel) make_code_panel();
   const char *text = name();
   code_input->buffer()->text( text ? text : "" );
@@ -459,9 +476,23 @@ BREAK2:
 
 Fl_Code_Type Fl_Code_type;
 
+void Fl_Code_Type::write() {
+  // External editor changes? If so, load changes into ram, update mtime/size
+  if ( handle_editor_changes() == 1 ) {
+    main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
+  }
+  Fl_Type::write();
+}
+
 void Fl_Code_Type::write_code1() {
+  // External editor changes? If so, load changes into ram, update mtime/size
+  if ( handle_editor_changes() == 1 ) {
+    main_window->redraw();    // tell fluid to redraw; edits may affect tree's contents
+  }
+
   const char* c = name();
   if (!c) return;
+
   const char *pch;
   const char *ind = indent();
   while( (pch=strchr(c,'\n')) )

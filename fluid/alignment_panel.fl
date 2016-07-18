@@ -46,6 +46,12 @@ decl {extern void redraw_browser();} {public local
 decl {extern int show_comments;} {public local
 }
 
+decl {extern int G_use_external_editor;} {public local
+}
+
+decl {extern char G_external_editor_command[512];} {public local
+}
+
 decl {extern int show_coredevmenus;} {public local
 }
 
@@ -161,7 +167,8 @@ decl {void scheme_cb(Fl_Choice *, void *);} {public local
 Function {make_settings_window()} {} {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {393 191 349 241} type Double hide non_modal
+    xywh {355 85 360 355} type Double resizable
+    code0 {o->size_range(o->w(), o->h());} non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
@@ -194,7 +201,7 @@ Function {make_settings_window()} {} {
       }
     }
     Fl_Group {} {open
-      xywh {116 43 220 126} labelfont 1 align 0
+      xywh {20 43 330 161} labelfont 1 align 0
     } {
       Fl_Box {} {
         label {Options: }
@@ -254,10 +261,38 @@ load_history();}
       code2 {recent_spinner->maximum(10);}
       code3 {recent_spinner->value(c);}
     }
+    Fl_Group {} {open
+      xywh {10 210 337 95} box THIN_UP_BOX color 47 resizable
+    } {
+      Fl_Check_Button use_external_editor_button {
+        label {Use external editor?}
+        callback {G_use_external_editor = use_external_editor_button->value();
+fluid_prefs.set("use_external_editor", G_use_external_editor);
+redraw_browser();}
+        xywh {25 218 209 22} down_box DOWN_BOX labelsize 12
+        code1 {fluid_prefs.get("use_external_editor", G_use_external_editor, 0);}
+        code2 {use_external_editor_button->value(G_use_external_editor);}
+      }
+      Fl_Input editor_command_input {
+        label {Editor Command}
+        callback {strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
+G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
+fluid_prefs.set("external_editor_command", G_external_editor_command);
+redraw_browser();} selected
+        tooltip {The editor command to open your external text editor.
+Include any necessary flags to ensure your editor does not background itself.
+Examples:
+    gvim -f
+    gedit
+ emacs} xywh {25 264 305 21} labelsize 12 align 5 when 1 textsize 12
+        code1 {fluid_prefs.get("external_editor_command", G_external_editor_command, "", sizeof(G_external_editor_command)-1);}
+        code2 {editor_command_input->value(G_external_editor_command);}
+      }
+    }
     Fl_Button {} {
       label Close
       callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {276 205 64 25}
+      tooltip {Close this dialog.} xywh {285 320 64 25}
     }
   }
 }

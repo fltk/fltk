@@ -18,6 +18,8 @@
 
 CPPFILES = \
 	CodeEditor.cxx \
+	ExternalCodeEditor_UNIX.cxx \
+	ExternalCodeEditor_WIN32.cxx \
 	Fl_Function_Type.cxx \
 	Fl_Group_Type.cxx \
 	Fl_Menu_Type.cxx \

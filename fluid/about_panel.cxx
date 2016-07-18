@@ -251,7 +251,10 @@ static const char *idata_fluid[] = {
 "     ........................................................................\
 ..............     "
 };
-static Fl_Pixmap image_fluid(idata_fluid);
+static Fl_Image *image_fluid() {
+  static Fl_Image *image = new Fl_Pixmap(idata_fluid);
+  return image;
+}
 
 static void cb_View(Fl_Button*, void*) {
   show_help("license.html");
@@ -267,7 +270,7 @@ Fl_Double_Window* make_about_panel() {
     about_panel->selection_color(FL_DARK1);
     about_panel->hotspot(about_panel);
     { Fl_Box* o = new Fl_Box(10, 10, 115, 120);
-      o->image(image_fluid);
+      o->image( image_fluid() );
     } // Fl_Box* o
     { Fl_Box* o = new Fl_Box(135, 10, 205, 75, "FLTK User\nInterface Designer\nVersion x.x.x");
       o->color((Fl_Color)12);

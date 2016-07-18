@@ -197,12 +197,29 @@ static void cb_recent_spinner(Fl_Spinner*, void*) {
 load_history();
 }
 
+Fl_Check_Button *use_external_editor_button=(Fl_Check_Button *)0;
+
+static void cb_use_external_editor_button(Fl_Check_Button*, void*) {
+  G_use_external_editor = use_external_editor_button->value();
+fluid_prefs.set("use_external_editor", G_use_external_editor);
+redraw_browser();
+}
+
+Fl_Input *editor_command_input=(Fl_Input *)0;
+
+static void cb_editor_command_input(Fl_Input*, void*) {
+  strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
+G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
+fluid_prefs.set("external_editor_command", G_external_editor_command);
+redraw_browser();
+}
+
 static void cb_Close1(Fl_Button*, void*) {
   settings_window->hide();
 }
 
 Fl_Double_Window* make_settings_window() {
-  { settings_window = new Fl_Double_Window(349, 241, "GUI Settings");
+  { Fl_Double_Window* o = settings_window = new Fl_Double_Window(360, 355, "GUI Settings");
     { scheme_choice = new Fl_Choice(140, 10, 115, 25, "Scheme: ");
       scheme_choice->down_box(FL_BORDER_BOX);
       scheme_choice->labelfont(1);
@@ -213,7 +230,7 @@ Fl_Double_Window* make_settings_window() {
       scheme_choice->value(s);
       scheme_cb(0, 0);
     } // Fl_Choice* scheme_choice
-    { Fl_Group* o = new Fl_Group(116, 43, 220, 126);
+    { Fl_Group* o = new Fl_Group(20, 43, 330, 161);
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_CENTER));
       { Fl_Box* o = new Fl_Box(140, 43, 1, 25, "Options: ");
@@ -271,10 +288,36 @@ Fl_Double_Window* make_settings_window() {
       recent_spinner->maximum(10);
       recent_spinner->value(c);
     } // Fl_Spinner* recent_spinner
-    { Fl_Button* o = new Fl_Button(276, 205, 64, 25, "Close");
+    { Fl_Group* o = new Fl_Group(10, 210, 337, 95);
+      o->box(FL_THIN_UP_BOX);
+      o->color(FL_DARK1);
+      { use_external_editor_button = new Fl_Check_Button(25, 218, 209, 22, "Use external editor?");
+        use_external_editor_button->down_box(FL_DOWN_BOX);
+        use_external_editor_button->labelsize(12);
+        use_external_editor_button->callback((Fl_Callback*)cb_use_external_editor_button);
+        fluid_prefs.get("use_external_editor", G_use_external_editor, 0);
+        use_external_editor_button->value(G_use_external_editor);
+      } // Fl_Check_Button* use_external_editor_button
+      { editor_command_input = new Fl_Input(25, 264, 305, 21, "Editor Command");
+        editor_command_input->tooltip("The editor command to open your external text editor.\nInclude any necessary \
+flags to ensure your editor does not background itself.\nExamples:\n    gvim -\
+f\n    gedit\n emacs");
+        editor_command_input->labelsize(12);
+        editor_command_input->textsize(12);
+        editor_command_input->callback((Fl_Callback*)cb_editor_command_input);
+        editor_command_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+        editor_command_input->when(FL_WHEN_CHANGED);
+        fluid_prefs.get("external_editor_command", G_external_editor_command, "", sizeof(G_external_editor_command)-1);
+        editor_command_input->value(G_external_editor_command);
+      } // Fl_Input* editor_command_input
+      o->end();
+      Fl_Group::current()->resizable(o);
+    } // Fl_Group* o
+    { Fl_Button* o = new Fl_Button(285, 320, 64, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close1);
     } // Fl_Button* o
+    o->size_range(o->w(), o->h());
     settings_window->set_non_modal();
     settings_window->end();
   } // Fl_Double_Window* settings_window

@@ -32,6 +32,12 @@
 #include <FL/fl_draw.H>
 #include <stdarg.h>
 
+#ifdef WIN32
+  #include "ExternalCodeEditor_WIN32.h"
+#else
+  #include "ExternalCodeEditor_UNIX.h"
+#endif
+
 void set_modflag(int mf);
 
 class Fl_Type {
@@ -109,7 +115,7 @@ public:
   virtual void open();	// what happens when you double-click
 
   // read and write data to a saved file:
-  void write();
+  virtual void write();
   virtual void write_properties();
   virtual void read_property(const char *);
   virtual int read_fdesign(const char*, const char*);
@@ -143,6 +149,7 @@ public:
   virtual int is_menu_button() const;
   virtual int is_group() const;
   virtual int is_window() const;
+  virtual int is_code() const;
   virtual int is_code_block() const;
   virtual int is_decl_block() const;
   virtual int is_comment() const;
@@ -185,15 +192,56 @@ public:
 };
 
 class Fl_Code_Type : public Fl_Type {
+  ExternalCodeEditor editor_;
 public:
   Fl_Type *make();
+  void write();
   void write_code1();
   void write_code2();
   void open();
   virtual const char *type_name() {return "code";}
   int is_code_block() const {return 0;}
+  int is_code() const {return 1;}
   int pixmapID() { return 8; }
   virtual int is_public() const;
+  // See if external editor is open
+  int is_editing() {
+    return editor_.is_editing();
+  }
+  // Reap the editor's pid
+  // Returns:
+  //   -2 -- editor not open
+  //   -1 -- wait failed
+  //    0 -- process still running
+  //   >0 -- process finished + reaped (returns pid)
+  //
+  int reap_editor() {
+    return editor_.reap_editor();
+  }
+  // Handle external editor file modifications
+  // If changed, record keeping is updated and file's contents is loaded into ram
+  //
+  // Returns:
+  //     0 -- file unchanged or not editing
+  //     1 -- file changed, internal records updated, 'code' has new content
+  //    -1 -- error getting file info (get_ms_errmsg() has reason)
+  //
+  // TODO: Figure out how saving a fluid file can be intercepted to grab 
+  //       current contents of editor file..
+  //
+  int handle_editor_changes() {
+    const char *newcode = 0;
+    switch ( editor_.handle_changes(&newcode) ) {
+      case 1: {            // (1)=changed
+        name(newcode);     // update value in ram
+        free((void*)newcode);
+        return 1;
+      }
+      case -1: return -1;  // (-1)=error -- couldn't read file (dialog showed reason)
+      default: break;      // (0)=no change
+    }
+    return 0;
+  }
 };
 
 class Fl_CodeBlock_Type : public Fl_Type {

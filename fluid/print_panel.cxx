@@ -158,7 +158,10 @@ static const char *idata_print_color[] = {
 "   %%%%%%%%\'\'********   ",
 "     %%%%%%  ******     "
 };
-static Fl_Pixmap image_print_color(idata_print_color);
+static Fl_Image *image_print_color() {
+  static Fl_Image *image = new Fl_Pixmap(idata_print_color);
+  return image;
+}
 
 static const char *idata_print_gray[] = {
 "24 24 17 1",
@@ -204,7 +207,10 @@ static const char *idata_print_gray[] = {
 "   %%%%%%%%\'\'********   ",
 "     %%%%%%  ******     "
 };
-static Fl_Pixmap image_print_gray(idata_print_gray);
+static Fl_Image *image_print_gray() {
+  static Fl_Image *image = new Fl_Pixmap(idata_print_gray);
+  return image;
+}
 
 Fl_Button *print_output_mode[4]={(Fl_Button *)0};
 
@@ -457,7 +463,7 @@ Fl_Double_Window* make_print_panel() {
         print_output_mode[0]->value(1);
         print_output_mode[0]->color(FL_BACKGROUND2_COLOR);
         print_output_mode[0]->selection_color(FL_FOREGROUND_COLOR);
-        print_output_mode[0]->image(image_print_color);
+        print_output_mode[0]->image( image_print_color() );
       } // Fl_Button* print_output_mode[0]
       { print_output_mode[1] = new Fl_Button(150, 50, 40, 30);
         print_output_mode[1]->type(102);
@@ -465,7 +471,7 @@ Fl_Double_Window* make_print_panel() {
         print_output_mode[1]->down_box(FL_BORDER_BOX);
         print_output_mode[1]->color(FL_BACKGROUND2_COLOR);
         print_output_mode[1]->selection_color(FL_FOREGROUND_COLOR);
-        print_output_mode[1]->image(image_print_color);
+        print_output_mode[1]->image( image_print_color() );
       } // Fl_Button* print_output_mode[1]
       { print_output_mode[2] = new Fl_Button(200, 45, 30, 40);
         print_output_mode[2]->type(102);
@@ -473,7 +479,7 @@ Fl_Double_Window* make_print_panel() {
         print_output_mode[2]->down_box(FL_BORDER_BOX);
         print_output_mode[2]->color(FL_BACKGROUND2_COLOR);
         print_output_mode[2]->selection_color(FL_FOREGROUND_COLOR);
-        print_output_mode[2]->image(image_print_gray);
+        print_output_mode[2]->image( image_print_gray() );
       } // Fl_Button* print_output_mode[2]
       { print_output_mode[3] = new Fl_Button(240, 50, 40, 30);
         print_output_mode[3]->type(102);
@@ -481,7 +487,7 @@ Fl_Double_Window* make_print_panel() {
         print_output_mode[3]->down_box(FL_BORDER_BOX);
         print_output_mode[3]->color(FL_BACKGROUND2_COLOR);
         print_output_mode[3]->selection_color(FL_FOREGROUND_COLOR);
-        print_output_mode[3]->image(image_print_gray);
+        print_output_mode[3]->image( image_print_gray() );
       } // Fl_Button* print_output_mode[3]
       o->end();
     } // Fl_Group* o

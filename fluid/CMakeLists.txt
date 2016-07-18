@@ -22,6 +22,8 @@ set(CPPFILES
     Fl_Group_Type.cxx
     Fl_Menu_Type.cxx
     Fl_Type.cxx
+    ExternalCodeEditor_UNIX.cxx
+    ExternalCodeEditor_WIN32.cxx
     Fl_Widget_Type.cxx
     Fl_Window_Type.cxx
     Fluid_Image.cxx

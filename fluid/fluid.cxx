@@ -84,6 +84,9 @@ extern "C"
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 
+//
+// Globals..
+//
 static Fl_Help_Dialog *help_dialog = 0;
 
 Fl_Preferences	fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
@@ -92,6 +95,9 @@ int gridy = 5;
 int snap = 1;
 int show_guides = 1;
 int show_comments = 1;
+int G_use_external_editor = 0;
+int G_debug = 0;
+char G_external_editor_command[512];
 int show_coredevmenus = 1;
 
 // File history info...
@@ -184,6 +190,41 @@ static char* cutfname(int which = 0) {
   }
 
   return name[which];
+}
+
+// Timer to watch for external editor modifications
+//    If one or more external editors open, check if their files were modified.
+//    If so: reload to ram, update size/mtime records, and change fluid's 'modified' state.
+//
+static void external_editor_timer(void*) {
+  int editors_open = ExternalCodeEditor::editors_open();
+  if ( G_debug ) printf("--- TIMER --- External editors open=%d\n", editors_open);
+  if ( editors_open > 0 ) {
+    // Walk tree looking for files modified by external editors.
+    int modified = 0;
+    for (Fl_Type *p = Fl_Type::first; p; p = p->next) {
+      if ( p->is_code() ) {
+        Fl_Code_Type *code = (Fl_Code_Type*)p;
+        // Code changed by external editor?
+        if ( code->handle_editor_changes() ) {	// updates ram, file size/mtime
+          modified++;
+        }
+        if ( code->is_editing() ) {             // editor open?
+          code->reap_editor();                  // Try to reap; maybe it recently closed
+        }
+      }
+    }
+    if ( modified ) set_modflag(1);
+  }
+  // Repeat timeout if editors still open
+  //    The ExternalCodeEditor class handles start/stopping timer, we just
+  //    repeat_timeout() if it's already on. NOTE: above code may have reaped
+  //    only open editor, which would disable further timeouts. So *recheck*
+  //    if editors still open, to ensure we don't accidentally re-enable them.
+  //
+  if ( ExternalCodeEditor::editors_open() ) {
+    Fl::repeat_timeout(2.0, external_editor_timer);
+  }
 }
 
 void save_cb(Fl_Widget *, void *v) {
@@ -368,6 +409,10 @@ void revert_cb(Fl_Widget *,void *) {
 }
 
 void exit_cb(Fl_Widget *,void *) {
+
+  // Stop any external editor update timers
+  ExternalCodeEditor::stop_update_timer();
+
   if (modflag)
     switch (fl_choice("Do you want to save changes to this user\n"
                       "interface before exiting?", "Cancel",
@@ -400,6 +445,12 @@ void exit_cb(Fl_Widget *,void *) {
     delete help_dialog;
 
   undo_clear();
+
+  // Destroy tree
+  //    Doing so causes dtors to automatically close all external editors
+  //    and cleans up editor tmp files. Then remove fluid tmpdir /last/.
+  delete_all();
+  ExternalCodeEditor::tmpdir_clear();
 
   exit(0);
 }
@@ -1697,7 +1748,6 @@ static void sigint(SIGARG) {
 }
 #endif
 
-
 int main(int argc,char **argv) {
   int i = 1;
   
@@ -1785,6 +1835,9 @@ int main(int argc,char **argv) {
 #ifndef WIN32
   signal(SIGINT,sigint);
 #endif
+
+  // Set (but do not start) timer callback for external editor updates
+  ExternalCodeEditor::set_update_timer_callback(external_editor_timer);
 
   grid_cb(horizontal_input, 0); // Makes sure that windows get snap params...
 
