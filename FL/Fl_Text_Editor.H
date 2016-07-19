@@ -66,6 +66,11 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
     */
     int insert_mode() { return insert_mode_; }
 
+#if FLTK_ABI_VERSION >= 10304
+    void tab_nav(int val);
+    int tab_nav() const;
+#endif
+
     void add_key_binding(int key, int state, Key_Func f, Key_Binding** list);
     /** Adds a \p key of state \p state with the function \p f. */
     void add_key_binding(int key, int state, Key_Func f)
