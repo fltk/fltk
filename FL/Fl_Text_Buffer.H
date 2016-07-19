@@ -322,11 +322,20 @@ public:
     - non-zero on error (strerror() contains reason)
     - 1 indicates open for write failed (no data saved)
     - 2 indicates error occurred while writing data (data was partially saved)
+
+   \see savefile(const char *file, int buflen)
    */
   int outputfile(const char *file, int start, int end, int buflen = 128*1024);
 
   /**
    Saves a text file from the current buffer
+   Returns
+    - 0 on success
+    - non-zero on error (strerror() contains reason)
+    - 1 indicates open for write failed (no data saved)
+    - 2 indicates error occurred while writing data (data was partially saved)
+
+   \see outputfile(const char *file, int start, int end, int buflen)
    */
   int savefile(const char *file, int buflen = 128*1024)
   { return outputfile(file, 0, length(), buflen); }
