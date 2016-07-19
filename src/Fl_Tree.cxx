@@ -754,12 +754,7 @@ void Fl_Tree::draw() {
 
       fl_color(FL_BLACK);
 
-      int tgt;
-      if (before) {
-        tgt = item->y();
-      } else {
-        tgt = item->y() + item->h();
-      }
+      int tgt = item->y() + (before ? 0 : item->h());
       fl_line(item->x(), tgt, item->x() + item->w(), tgt);
     }
   }
