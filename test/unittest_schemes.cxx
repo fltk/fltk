@@ -176,15 +176,21 @@ public:
 	    o->box(FL_DOWN_BOX);
 	    o->tooltip("Fl_Output with down box");
 	  } // Fl_Output* o
-	  { Fl_Text_Editor* o = new Fl_Text_Editor(220, 160, 90, 55);
+	  { Fl_Text_Editor* o = new Fl_Text_Editor(180, 160, 125, 55);
 	    o->box(FL_DOWN_FRAME);
 	    o->color((Fl_Color)80);
 	    o->tooltip("Fl_Text_Editor with down frame");
+	    o->textsize(8);
+	    o->buffer(new Fl_Text_Buffer());
+	    o->buffer()->text("Text editor");
 	  } // Fl_Text_Editor* o
-	  { Fl_Text_Display* o = new Fl_Text_Display(220, 230, 90, 55);
+	  { Fl_Text_Display* o = new Fl_Text_Display(180, 230, 125, 55);
 	    o->box(FL_DOWN_FRAME);
 	    o->color((Fl_Color)12);
 	    o->tooltip("Fl_Text_Display with down frame");
+	    o->textsize(8);
+	    o->buffer(new Fl_Text_Buffer());
+	    o->buffer()->text("Text display");
 	  } // Fl_Text_Display* o
 	  { Fl_File_Input* o = new Fl_File_Input(40, 290, 265, 30);
 	    o->box(FL_DOWN_BOX);
