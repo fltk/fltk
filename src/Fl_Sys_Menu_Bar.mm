@@ -56,8 +56,12 @@ extern void (*fl_unlock_function)();
 
 /*  Each MacOS system menu item contains a pointer to a record of type sys_menu_item defined below.
     The purpose of these records is to associate each MacOS system menu item with a relevant Fl_Menu_Item.
+
+    Note: in the below, 'rank' is similar to an FLTK menu() 'index'.
+    Let's avoid exposing Mac internal terminology like 'rank' to FLTK users; stick with 'index'.
+
     If use_rank is YES, the "rank" field is used, and fl_sys_menu_bar->menu() + rank is the address 
-	of the relevant Fl_Menu_Item;
+    of the relevant Fl_Menu_Item;
     Otherwise, the "item" field points to the relevant Fl_Menu_Item.
     This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus, 
     the address of which can be relocated by the FLTK menu logic.
@@ -185,7 +189,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 						action:selector
 					 keyEquivalent:@""];
   sys_menu_item smi;
-  // ≥ 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
+  // >= 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
   smi.rank = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
   smi.use_rank = (smi.rank >= 0);
   if (!smi.use_rank) smi.item = mitem;
@@ -363,10 +367,18 @@ void Fl_Sys_Menu_Bar::menu(const Fl_Menu_Item *m)
 
 
 /**
- * @brief add to the system menu bar a new menu item
+ * @brief Add a new menu item to the system menu bar.
  *
- * add to the system menu bar a new menu item, with a title string, shortcut int,
+ * Add to the system menu bar a new menu item, with a title string, shortcut int,
  * callback, argument to the callback, and flags.
+ *
+ * @param label     - new menu item's label
+ * @param shortcut  - new menu item's integer shortcut (can be 0 for none, or e.g. FL_ALT+'x')
+ * @param cb        - callback to be invoked when item selected (can be 0 for none, in which case the menubar's callback() can be used instead)
+ * @param user_data - argument to the callback
+ * @param flags     - item's flags, e.g. ::FL_MENU_TOGGLE, etc.
+ *
+ * \returns the index into the menu() array, where the entry was added
  *
  * @see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags) 
  */
@@ -380,7 +392,8 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 
 /**
  * Forms-compatible procedure to add items to the system menu bar
-*
+ *
+ * \returns the index into the menu() array, where the entry was added
  * @see Fl_Menu_::add(const char* str) 
  */
 int Fl_Sys_Menu_Bar::add(const char* str)
@@ -394,9 +407,10 @@ int Fl_Sys_Menu_Bar::add(const char* str)
 /**
  * @brief insert in the system menu bar a new menu item
  *
- * insert in the system menu bar a new menu item, with a title string, shortcut int,
+ * Insert in the system menu bar a new menu item, with a title string, shortcut int,
  * callback, argument to the callback, and flags.
  *
+ * \returns the index into the menu() array, where the entry was inserted
  * @see Fl_Menu_::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags) 
  */
 int Fl_Sys_Menu_Bar::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
@@ -423,11 +437,11 @@ int Fl_Sys_Menu_Bar::clear_submenu(int index)
 /**
  * @brief remove an item from the system menu bar
  *
- * @param rank		the rank of the item to remove
+ * @param index		the index of the item to remove
  */
-void Fl_Sys_Menu_Bar::remove(int rank)
+void Fl_Sys_Menu_Bar::remove(int index)
 {
-  Fl_Menu_::remove(rank);
+  Fl_Menu_::remove(index);
   update();
 }
 
@@ -435,12 +449,12 @@ void Fl_Sys_Menu_Bar::remove(int rank)
 /**
  * @brief rename an item from the system menu bar
  *
- * @param rank		the rank of the item to rename
+ * @param index		the index of the item to rename
  * @param name		the new item name as a UTF8 string
  */
-void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
+void Fl_Sys_Menu_Bar::replace(int index, const char *name)
 {
-  Fl_Menu_::replace(rank, name);
+  Fl_Menu_::replace(index, name);	// index
   update();
 }
 
