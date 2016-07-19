@@ -227,8 +227,8 @@
 ///     \image html tree-elements.png
 ///     \image latex tree-elements.png "Fl_Tree elements" width=6cm
 /// \par
-///     The following shows the protected 'tree inner' (tix..)
-///     and 'tree outer' (tox..) dimension variables:
+///     The following shows the protected dimension variables 'tree inner' (tix..)
+///     and 'tree outer' (tox..):
 ///     \image html tree-dimensions.png "Fl_Tree inner/outer dimensions" width=6cm
 ///     \image latex tree-dimensions.png "Fl_Tree inner/outer dimensions" width=6cm
 ///
