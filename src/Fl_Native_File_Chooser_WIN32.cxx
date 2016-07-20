@@ -44,6 +44,7 @@ private:
   int  _options;		// general options
   OPENFILENAMEW *_ofn_ptr;	// GetOpenFileName() & GetSaveFileName() struct
   BROWSEINFOW   *_binf_ptr;	// SHBrowseForFolder() struct
+  WCHAR         *_wpattern;	// pattern buffer for filter
   char  **_pathnames;		// array of pathnames
   int     _tpathnames;		// total pathnames
   char   *_directory;		// default pathname to use
@@ -197,8 +198,9 @@ Fl_WinAPI_Native_File_Chooser_Driver::Fl_WinAPI_Native_File_Chooser_Driver(int v
   Fl_Native_File_Chooser_Driver(val) {
   _btype           = val;
   _options         = Fl_Native_File_Chooser::NO_OPTIONS;
-    _ofn_ptr = new OPENFILENAMEW;
-  _binf_ptr = new BROWSEINFOW;
+  _ofn_ptr         = new OPENFILENAMEW;
+  _binf_ptr        = new BROWSEINFOW;
+  _wpattern        = 0;
   memset((void*)_ofn_ptr, 0, sizeof(OPENFILENAMEW));
   _ofn_ptr->lStructSize = sizeof(OPENFILENAMEW);
   _ofn_ptr->hwndOwner = 0L;
@@ -231,6 +233,7 @@ Fl_WinAPI_Native_File_Chooser_Driver::~Fl_WinAPI_Native_File_Chooser_Driver() {
   ClearBINF();
   delete _binf_ptr;
   delete _ofn_ptr;
+  if ( _wpattern ) delete[] _wpattern;
 }
 
 // SET TYPE OF BROWSER
@@ -346,21 +349,42 @@ void Fl_WinAPI_Native_File_Chooser_Driver::Unix2Win(char *s) {
     if ( *s == '/' ) *s = '\\';
 }
 
+// SAVE THE CURRENT WORKING DIRECTORY
+//     Returns a malloc()ed copy of the cwd that can
+//     later be freed with RestoreCWD(). May return 0 on error.
+//
+static char *SaveCWD() {
+  char *thecwd = 0;
+  DWORD thecwdsz = GetCurrentDirectory(0,0);
+  if ( thecwdsz > 0 ) {
+    thecwd = (char*)malloc(thecwdsz);
+    if (GetCurrentDirectory(thecwdsz, thecwd) == 0 ) {
+      free(thecwd); thecwd = 0;
+    }
+  }
+  return thecwd;
+}
+
+// RESTORES THE CWD SAVED BY SaveCWD(), FREES STRING
+//    Always returns NULL (string was freed).
+//
+static void RestoreCWD(char *thecwd) {
+  if ( !thecwd ) return;
+  SetCurrentDirectory(thecwd);
+  free(thecwd);
+}
+
 // SHOW FILE BROWSER
 int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
   ClearOFN();
   clear_pathnames();
   size_t fsize = FNFC_MAX_PATH;
-  _ofn_ptr->Flags |= OFN_NOVALIDATE;		// prevent disabling of front slashes
+  _ofn_ptr->Flags |= OFN_NOVALIDATE;	// prevent disabling of front slashes
   _ofn_ptr->Flags |= OFN_HIDEREADONLY;	// hide goofy readonly flag
   // USE NEW BROWSER
-  _ofn_ptr->Flags |= OFN_EXPLORER;		// use newer explorer windows
+  _ofn_ptr->Flags |= OFN_EXPLORER;	// use newer explorer windows
   _ofn_ptr->Flags |= OFN_ENABLESIZING;	// allow window to be resized (hey, why not?)
-
-  // XXX: The docs for OFN_NOCHANGEDIR says the flag is 'ineffective' on XP/2K/NT!
-  //      But let's set it anyway..
-  //
-  _ofn_ptr->Flags |= OFN_NOCHANGEDIR;	// prevent dialog for messing up the cwd
+  _ofn_ptr->Flags |= OFN_NOCHANGEDIR;	// XXX: docs say ineffective on XP/2K/NT, but set it anyway..
 
   switch ( _btype ) {
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
@@ -396,17 +420,19 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
   }
   // FILTER
   if (_parsedfilt != NULL) {	// to convert a null-containing char string into a widechar string
-    static WCHAR wpattern[FNFC_MAX_PATH];
+    // NEW
+    if ( !_wpattern ) _wpattern = new WCHAR[FNFC_MAX_PATH];
     const char *p = _parsedfilt;
     while(*(p + strlen(p) + 1) != 0) p += strlen(p) + 1;
     p += strlen(p) + 2;
-    MultiByteToWideChar(CP_UTF8, 0, _parsedfilt, (int) (p - _parsedfilt), wpattern, FNFC_MAX_PATH);
-    _ofn_ptr->lpstrFilter = wpattern;
+    MultiByteToWideChar(CP_UTF8, 0, _parsedfilt, (int) (p - _parsedfilt), _wpattern, FNFC_MAX_PATH);
+    _ofn_ptr->lpstrFilter = _wpattern;
   } else {
     _ofn_ptr->lpstrFilter = NULL;
   }
   // PRESET FILE
   //     If set, supercedes _directory. See KB Q86920 for details
+  //     XXX: this doesn't preselect the item in the listview.. why?
   //
   if ( _preset_file ) {
     size_t len = strlen(_preset_file);
@@ -416,7 +442,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
       return(-1);
     }
     wcscpy(_ofn_ptr->lpstrFile, utf8towchar(_preset_file));
-//  Unix2Win(_ofn_ptr->lpstrFile);
+    // Unix2Win(_ofn_ptr->lpstrFile);
     len = wcslen(_ofn_ptr->lpstrFile);
     _ofn_ptr->lpstrFile[len+0] = 0;	// multiselect needs dnull
     _ofn_ptr->lpstrFile[len+1] = 0;
@@ -431,18 +457,9 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
     // Unix2Win((char*)_ofn_ptr->lpstrInitialDir);
   }
   // SAVE THE CURRENT DIRECTORY
-  //     XXX: Save the cwd because GetOpenFileName() is probably going to
-  //     change it, in spite of the OFN_NOCHANGEDIR flag, due to its docs
-  //     saying the flag is 'ineffective'. %^(
+  //     See above warning (XXX) for OFN_NOCHANGEDIR
   //
-  char *oldcwd = 0;
-  DWORD oldcwdsz = GetCurrentDirectory(0,0);
-  if ( oldcwdsz > 0 ) {
-    oldcwd = (char*)malloc(oldcwdsz);
-    if (GetCurrentDirectory(oldcwdsz, oldcwd) == 0 ) {
-      free(oldcwd); oldcwd = 0;
-    }
-  }
+  char *save_cwd = SaveCWD();		// must be freed with RestoreCWD()
   // OPEN THE DIALOG WINDOW
   int err;
   if ( _btype == Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
@@ -452,11 +469,8 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
   }
   // GET EXTENDED ERROR
   int exterr = CommDlgExtendedError();
-  // XXX: RESTORE CWD
-  if ( oldcwd ) {
-    SetCurrentDirectory(oldcwd);
-    free(oldcwd); oldcwd = 0;
-  }
+  // RESTORE CURRENT DIRECTORY
+  RestoreCWD(save_cwd); save_cwd = 0;	// also frees save_cwd
   // ERROR OR CANCEL?
   if ( err == 0 ) {
     if ( exterr == 0 ) return(1);	// user hit cancel
@@ -989,8 +1003,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::filters() const {
   return(_nfilters);
 }
 
-static char *wchartoutf8(LPCWSTR in)
-{
+static char *wchartoutf8(LPCWSTR in) {
   static char *out = NULL;
   static int lchar = 0;
   if (in == NULL)return NULL;
@@ -1003,8 +1016,7 @@ static char *wchartoutf8(LPCWSTR in)
   return out;
 }
 
-static LPCWSTR utf8towchar(const char *in)
-{
+static LPCWSTR utf8towchar(const char *in) {
   static WCHAR *wout = NULL;
   static int lwout = 0;
   if (in == NULL)return NULL;
