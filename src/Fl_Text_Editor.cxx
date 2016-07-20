@@ -226,7 +226,9 @@ static void kill_selection(Fl_Text_Editor* e) {
   }
 }
 
-/** Inserts the text associated with the key */
+/** Inserts the text associated with key \p 'c' in editor \p 'e'.
+    Honors the current selection and insert/overstrike mode.
+*/
 int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   // FIXME: this function is a mess! Fix this!
   if (!c || (!isprint(c) && c != '\t')) return 0;
@@ -241,11 +243,22 @@ int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
   return 1;
 }
 
-/** Ignores the keypress */
+/** Ignores the key \p 'c' in editor \p 'e'.
+    This method can be used as a keyboard binding to disable a key
+    that might otherwise be handled or entered as text.
+
+    An example would be disabling FL_Escape, so that it isn't added
+    to the buffer when invoked by the user.
+*/
 int Fl_Text_Editor::kf_ignore(int, Fl_Text_Editor*) {
   return 0; // don't handle
 }
-/**  Does a backspace in the current buffer.*/
+
+/** Does a backspace for key \p 'c' in the current buffer of editor \p 'e'.
+    Any current selection is deleted.
+    Otherwise, the character left is deleted and the cursor moved.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_backspace(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected() && e->move_left()) {
     int p1 = e->insert_position();
@@ -259,7 +272,9 @@ int Fl_Text_Editor::kf_backspace(int, Fl_Text_Editor* e) {
   return 1;
 }
 
-/** Inserts a newline at the current cursor position */
+/** Inserts a newline for key \p 'c' at the current cursor position in editor \p 'e'.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_enter(int, Fl_Text_Editor* e) {
   kill_selection(e);
   e->insert("\n");
@@ -270,7 +285,19 @@ int Fl_Text_Editor::kf_enter(int, Fl_Text_Editor* e) {
 }
 
 extern void fl_text_drag_me(int pos, Fl_Text_Display* d);
-/**  Moves the text cursor in the direction indicated by key c.*/
+/** Moves the text cursor in the direction indicated by key \p 'c' in editor \p 'e'.
+    Supported values for 'c' are currently:
+    \code
+        FL_Home      -- moves the cursor to the beginning of the current line
+        FL_End       -- moves the cursor to the end of the current line
+        FL_Left      -- moves the cursor left one character
+        FL_Right     -- moves the cursor right one character
+        FL_Up        -- moves the cursor up one line
+        FL_Down      -- moves the cursor down one line
+        FL_Page_Up   -- moves the cursor up one page
+        FL_Page_Down -- moves the cursor down one page
+    \endcode
+*/
 int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
   int i;
   int selected = e->buffer()->selected();
@@ -308,7 +335,9 @@ int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
   return 1;
 }
 
-/**  Extends the current selection in the direction of key c.*/
+/** Extends the current selection in the direction of key \p 'c' in editor \p 'e'.
+    \see kf_move()
+*/
 int Fl_Text_Editor::kf_shift_move(int c, Fl_Text_Editor* e) {
   kf_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
@@ -319,7 +348,20 @@ int Fl_Text_Editor::kf_shift_move(int c, Fl_Text_Editor* e) {
     }
   return 1;
 }
-/** Moves the current text cursor in the direction indicated by control key */
+
+/** Moves the current text cursor in the direction indicated by control key \p 'c' in editor \p 'e'.
+    Supported values for 'c' are currently:
+    \code
+        FL_Home      -- moves the cursor to the beginning of the document
+        FL_End       -- moves the cursor to the end of the document
+        FL_Left      -- moves the cursor left one word
+        FL_Right     -- moves the cursor right one word
+        FL_Up        -- scrolls up one line, without moving cursor
+        FL_Down      -- scrolls down one line, without moving cursor
+        FL_Page_Up   -- moves the cursor to the beginning of the top line on the current page
+        FL_Page_Down -- moves the cursor to the beginning of the last line on the current page
+    \endcode
+*/
 int Fl_Text_Editor::kf_ctrl_move(int c, Fl_Text_Editor* e) {
   if (!e->buffer()->selected())
     e->dragPos = e->insert_position();
@@ -359,7 +401,15 @@ int Fl_Text_Editor::kf_ctrl_move(int c, Fl_Text_Editor* e) {
   return 1;
 }
 
-/** Moves the current text cursor in the direction indicated by meta key */
+/** Moves the current text cursor in the direction indicated by meta key \p 'c' in editor \p 'e'.
+    Supported values for 'c' are currently:
+    \code
+        FL_Up        -- moves cursor to the beginning of the current document
+        FL_Down      -- moves cursor to the end of the current document
+        FL_Left      -- moves the cursor to the beginning of the current line
+        FL_Right     -- moves the cursor to the end of the current line
+    \endcode
+*/
 int Fl_Text_Editor::kf_meta_move(int c, Fl_Text_Editor* e) {
   if (!e->buffer()->selected())
     e->dragPos = e->insert_position();
@@ -387,65 +437,99 @@ int Fl_Text_Editor::kf_meta_move(int c, Fl_Text_Editor* e) {
   return 1;
 }
 
-/** Extends the current selection in the direction indicated by meta key c. */
+/** Extends the current selection in the direction indicated by meta key \p 'c' in editor \p 'e'.
+    \see kf_meta_move().
+*/
 int Fl_Text_Editor::kf_m_s_move(int c, Fl_Text_Editor* e) {
   kf_meta_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
   return 1;
 }
 
-/** Extends the current selection in the direction indicated by control key c. */
+/** Extends the current selection in the direction indicated by control key \p 'c' in editor \p 'e'.
+    \see kf_ctrl_move().
+*/
 int Fl_Text_Editor::kf_c_s_move(int c, Fl_Text_Editor* e) {
   kf_ctrl_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
   return 1;
 }
 
-/**  Moves the text cursor to the beginning of the current line.*/
+/** Moves the text cursor to the beginning of the current line in editor \p 'e'.
+    Same as kf_move(FL_Home, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_home(int, Fl_Text_Editor* e) {
     return kf_move(FL_Home, e);
 }
 
-/**  Moves the text cursor to the end of the current line.*/
+/** Moves the text cursor to the end of the current line in editor \p 'e'.
+    Same as kf_move(FL_End, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_end(int, Fl_Text_Editor* e) {
   return kf_move(FL_End, e);
 }
 
-/**  Moves the text cursor one character to the left.*/
+/** Moves the text cursor one character to the left in editor \p 'e'.
+    Same as kf_move(FL_Left, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_left(int, Fl_Text_Editor* e) {
   return kf_move(FL_Left, e);
 }
 
-/**  Moves the text cursor one line up.*/
+/** Moves the text cursor one line up for editor \p 'e'.
+    Same as kf_move(FL_Up, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_up(int, Fl_Text_Editor* e) {
   return kf_move(FL_Up, e);
 }
 
-/**  Moves the text cursor one character to the right.*/
+/** Moves the text cursor one character to the right for editor \p 'e'.
+    Same as kf_move(FL_Right, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_right(int, Fl_Text_Editor* e) {
   return kf_move(FL_Right, e);
 }
-/**  Moves the text cursor one line down.*/
+
+/** Moves the text cursor one line down for editor \p 'e'.
+    Same as kf_move(FL_Down, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_down(int, Fl_Text_Editor* e) {
   return kf_move(FL_Down, e);
 }
 
-/**  Moves the text cursor up one page.*/
+/** Moves the text cursor up one page for editor \p 'e'.
+    Same as kf_move(FL_Page_Up, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_page_up(int, Fl_Text_Editor* e) {
   return kf_move(FL_Page_Up, e);
 }
 
-/**  Moves the text cursor down one page.*/
+/** Moves the text cursor down one page for editor \p 'e'.
+    Same as kf_move(FL_Page_Down, e).
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_page_down(int, Fl_Text_Editor* e) {
   return kf_move(FL_Page_Down, e);
 }
-/**  Toggles the insert mode in the text editor.*/
+
+/** Toggles the insert mode for editor \p 'e'.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_insert(int, Fl_Text_Editor* e) {
   e->insert_mode(e->insert_mode() ? 0 : 1);
   return 1;
 }
 
-/**  Does a delete of selected text or the current character in the current buffer.*/
+/** Does a delete of selected text or the current character in the current buffer of editor \p 'e'.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected()) {
     int p1 = e->insert_position();
@@ -460,7 +544,9 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
   return 1;
 }
 
-/**  Does a copy of selected text or the current character in the current buffer.*/
+/** Does a copy of selected text or the current character in the current buffer of editor \p 'e'.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected()) return 1;
   const char *copy = e->buffer()->selection_text();
@@ -470,7 +556,9 @@ int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
   return 1;
 }
 
-/**  Does a cut of selected text in the current buffer.*/
+/** Does a cut of selected text in the current buffer of editor \p 'e'.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_cut(int c, Fl_Text_Editor* e) {
   kf_copy(c, e);
   kill_selection(e);
@@ -479,7 +567,10 @@ int Fl_Text_Editor::kf_cut(int c, Fl_Text_Editor* e) {
   return 1;
 }
 
-/**  Does a paste of selected text in the current buffer.*/
+/** Does a paste of selected text in the current buffer of editor \p 'e'.
+    Any current selection is replaced with the pasted content.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
   kill_selection(e);
   Fl::paste(*e, 1);
@@ -489,7 +580,9 @@ int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
   return 1;
 }
 
-/**  Selects all text in the current buffer.*/
+/** Selects all text in the current buffer in editor \p 'e'.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_select_all(int, Fl_Text_Editor* e) {
   e->buffer()->select(0, e->buffer()->length());
   const char *copy = e->buffer()->selection_text();
@@ -497,7 +590,11 @@ int Fl_Text_Editor::kf_select_all(int, Fl_Text_Editor* e) {
   free((void*)copy);
   return 1;
 }
-/**  Undo last edit in the current buffer. Also deselect previous selection. */
+
+/** Undo last edit in the current buffer of editor \p 'e'.
+    Also deselects previous selection.
+    The key value \p 'c' is currently unused.
+*/
 int Fl_Text_Editor::kf_undo(int , Fl_Text_Editor* e) {
   e->buffer()->unselect();
   Fl::copy("", 0, 0);
