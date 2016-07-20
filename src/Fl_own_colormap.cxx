@@ -63,7 +63,7 @@ void Fl_X11_System_Driver::own_colormap() {
 #endif // FL_CFG_WIN_X11
 
 /** \fn Fl::own_colormap()
- Makes FLTK use its own colormap.  This may make FLTK display better
+ Makes FLTK use its <a href="fltk-colormap.png">own colormap</a>.  This may make FLTK display better
  and will reduce conflicts with other programs that want lots of colors.
  However the colors may flash as you move the cursor between windows.
  
