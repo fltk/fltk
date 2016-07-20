@@ -328,7 +328,7 @@ public:
   int outputfile(const char *file, int start, int end, int buflen = 128*1024);
 
   /**
-   Saves a text file from the current buffer
+   Saves a text file from the current buffer.
    Returns
     - 0 on success
     - non-zero on error (strerror() contains reason)
@@ -628,7 +628,7 @@ public:
 
   /**
    Search backwards in buffer for string \p searchString, starting with
-   the character \e before \p startPos, returning the result in \p foundPos.
+   the character \e at \p startPos, returning the result in \p foundPos.
 
    Returns 1 if found, 0 if not.
    \param startPos byte offset to start position
