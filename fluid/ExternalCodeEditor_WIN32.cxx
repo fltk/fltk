@@ -1,5 +1,5 @@
 //
-// "$Id: ExternalCodeEditor_WIN32.cxx 10800 2016-07-10 00:00:00Z greg.ercolano $".
+// "$Id$".
 //
 //       External code editor management class for Windows
 //
@@ -544,5 +544,5 @@ int ExternalCodeEditor::editors_open() {
 
 #endif /* WIN32 */
 //
-// End of "$Id: ExternalCodeEditor_WIN32.cxx 10800 2016-07-10 00:00:00Z greg.ercolano $".
+// End of "$Id$".
 //
