@@ -6,6 +6,8 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 	- Added full support of true subwindows to the Mac OS X platform.
 	  Window nesting to any depth is possible. An Fl_Gl_Window window or
 	  subwindow can contain Fl_Window's as subwindows.
+        - Fluid now supports external editors (STR#3213)
+	  See: Edit -> GUI Settings -> Use external editor
 	- Added method Fl_Widget::is_label_copied().
 	- Added methods Fl_Copy_Surface::w(), Fl_Copy_Surface::h(),
 	  and Fl_Copy_Surface::draw_decorated_window().
