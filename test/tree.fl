@@ -98,7 +98,7 @@ Function {AssignUserIcons()} {
     "@xxxxxxxxx@",
     "@xxxxxxxxx@",
     "@@@@@@@@@@@"};
-static Fl_Pixmap L_folderpixmap(L_folder_xpm);
+static Fl_Pixmap L_folder_pixmap(L_folder_xpm);
 
 static const char *L_document_xpm[] = {
     "11 11 3 1",
@@ -116,18 +116,38 @@ static const char *L_document_xpm[] = {
     ".@xxxxxxx@.",
     ".@xxxxxxx@.",
     ".@@@@@@@@@."};
-static Fl_Pixmap L_documentpixmap(L_document_xpm);
+static Fl_Pixmap L_document_pixmap(L_document_xpm);
+
+// Create deactivated version of document icon
+static Fl_Pixmap L_folder_deicon_pixmap(L_folder_xpm); // copy
+static Fl_Pixmap L_document_deicon_pixmap(L_document_xpm); // copy
+static int first = 1;
+if ( first ) {
+    L_folder_deicon_pixmap.inactive();
+    L_document_deicon_pixmap.inactive();
+    first = 0;
+}
 
 // Assign user icons to tree items
-for ( Fl_Tree_Item *item = tree->first(); item; item=item->next())
-    if ( usericon_radio->value() )
+for ( Fl_Tree_Item *item = tree->first(); item; item=item->next()) {
+    if ( usericon_radio->value() ) {
         // Assign custom icons
-        item->usericon(item->has_children() ? &L_folderpixmap : &L_documentpixmap);
-    else
+        if ( item->has_children() ) {
+            item->usericon(&L_folder_pixmap);
+            item->userdeicon(&L_folder_deicon_pixmap);
+        } else {
+            item->usericon(&L_document_pixmap);
+            item->userdeicon(&L_document_deicon_pixmap);
+	}
+    } else {
     	// Don't assign custom icons
         item->usericon(0);
 
-tree->redraw();} {}
+        item->userdeicon(0);
+    }
+}
+tree->redraw();} {selected
+  }
 }
 
 Function {RebuildTree()} {
@@ -1233,7 +1253,7 @@ If none are selected, all are set.} xywh {758 134 100 16} selection_color 1 labe
         callback {if ( deactivate_tree_toggle->value() )
     tree->deactivate();
 else
-    tree->activate();} selected
+    tree->activate();}
         tooltip {Deactivates the entire tree widget} xywh {758 154 100 16} selection_color 1 labelsize 9
       }
       Fl_Light_Button bold_toggle {
