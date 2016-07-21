@@ -115,7 +115,7 @@ Fl_Tree_Item::~Fl_Tree_Item() {
   _widget = 0;			// Fl_Group will handle destruction
   _usericon = 0;		// user handled allocation
 #if FLTK_ABI_VERSION >= 10304
-  if ( _userdeicon ) delete _userdeicon;	// delete our copy (if any) for deactivated icon
+  _userdeicon = 0;		// user handled allocation
 #endif
 #if FLTK_ABI_VERSION >= 10303
   // focus item? set to null
@@ -1206,12 +1206,12 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
 	  // Item has user icon? Use it
 	  int uicon_y = item_y_center - (usericon()->h() >> 1);
 	  if ( active ) usericon()->draw(uicon_x,uicon_y);
-	  else          userdeicon()->draw(uicon_x,uicon_y);
+	  else if ( userdeicon() ) userdeicon()->draw(uicon_x,uicon_y);
 	} else if ( render && prefs.usericon() ) {
 	  // Prefs has user icon? Use it
 	  int uicon_y = item_y_center - (prefs.usericon()->h() >> 1);
 	  if ( active ) prefs.usericon()->draw(uicon_x,uicon_y);
-	  else          prefs.userdeicon()->draw(uicon_x,uicon_y);
+	  else if ( prefs.userdeicon() ) prefs.userdeicon()->draw(uicon_x,uicon_y);
 	}
 #else
 	if ( render && usericon() ) {
@@ -1441,12 +1441,12 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 	  // Item has user icon? Use it
 	  int uicon_y = item_y_center - (usericon()->h() >> 1);
 	  if ( active ) usericon()->draw(uicon_x,uicon_y);
-	  else          userdeicon()->draw(uicon_x,uicon_y);
+	  else if ( userdeicon() ) userdeicon()->draw(uicon_x,uicon_y);
 	} else if ( prefs.usericon() ) {
 	  // Prefs has user icon? Use it
 	  int uicon_y = item_y_center - (prefs.usericon()->h() >> 1);
 	  if ( active ) prefs.usericon()->draw(uicon_x,uicon_y);
-	  else          prefs.userdeicon()->draw(uicon_x,uicon_y);
+	  else if ( userdeicon() ) prefs.userdeicon()->draw(uicon_x,uicon_y);
 	}
 #else
 	if ( usericon() ) {

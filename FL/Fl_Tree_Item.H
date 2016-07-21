@@ -425,26 +425,53 @@ public:
   }
   int visible_r() const;
 
-  /// Set the item's user icon to an Fl_Image. '0' will disable.
+  /// Set the item's user icon to an Fl_Image. Use '0' to disable.
+  /// No internal copy is made, caller must manage icon's memory.
+  ///
+  /// Note, if you expect your items to be deactivated(),
+  /// use userdeicon(Fl_Image*) to set up a 'grayed out' version of your icon
+  /// to be used for display.
+  ///
+  /// \see userdeicon(Fl_Image*)
+  ///
   void usericon(Fl_Image *val) {
     _usericon = val;
-#if FLTK_ABI_VERSION >= 10304
-    // Update deactivated version of icon..
-    if ( _userdeicon ) delete _userdeicon;
-    if ( _usericon ) {
-      _userdeicon = _usericon->copy();
-      _userdeicon->inactive();
-    } else {
-      _userdeicon = 0;
-    }
-#endif
     recalc_tree();		// may change tree geometry
   }
   /// Get the item's user icon as an Fl_Image. Returns '0' if disabled.
   Fl_Image *usericon() const {
     return(_usericon);
   }
+  /// Set the usericon to draw when the item is deactivated. Use '0' to disable.
+  /// No internal copy is made; caller must manage icon's memory.
+  ///
+  /// To create a typical 'grayed out' version of your usericon image,
+  /// you can do the following:
+  ///
+  /// \code
+  ///      // Create tree + usericon for items
+  ///      Fl_Tree *tree = new Fl_Tree(..);
+  ///      Fl_Image *usr_icon = new Fl_Pixmap(..); // your usericon
+  ///      Fl_Image *de_icon  = usr_icon->copy();  // make a copy, and..
+  ///      de_icon->inactive();                    // make it 'grayed out'
+  ///      ...
+  ///      for ( .. ) {                 // item loop..
+  ///        item = tree->add("...");   // create new item
+  ///        item->usericon(usr_icon);  // assign usericon to items
+  ///        item->userdeicon(de_icon); // assign userdeicon to items
+  ///        ..
+  ///      }
+  /// \endcode
+  ///
+  /// In the above example, the app should 'delete' the two icons
+  /// when they're no longer needed (e.g. after the tree is destroyed)
+  ///
+  /// \version 1.3.4
+  ///
 #if FLTK_ABI_VERSION >= 10304
+  void userdeicon(Fl_Image* val) {
+    _userdeicon = val;
+  }
   /// Return the deactivated version of the user icon, if any.
   /// Returns 0 if none.
   Fl_Image* userdeicon() const {
