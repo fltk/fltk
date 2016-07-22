@@ -402,53 +402,59 @@ int fl_ask(const char *fmt, ...) {
   return r;
 }
 
-/** Shows a dialog displaying the \p fmt message,
+/** Shows a dialog displaying the printf style \p fmt message,
     this dialog features up to 3 customizable choice buttons
 
    \note Common dialog boxes are application modal. No more than one common dialog box
     can be open at any time. Requests for additional dialog boxes are ignored.
    \note \#include <FL/fl_ask.H>
 
-   Three choice example:
-   \code
-       switch ( fl_choice("How many musketeers?", "One", "Two", "Three") ) {
-         case 0: .. // One (default)
-	 case 1: .. // Two
-	 case 2: .. // Three
-       }
-   \endcode
-
    Three choices with printf() style formatting:
    \code
        int num_msgs = GetNumberOfMessages();
        switch ( fl_choice("What to do with %d messages?", "Send", "Save", "Delete", num_msgs) ) {
-         case 0: .. // Send (default)
-	 case 1: .. // Save
-	 case 2: .. // Delete
-	   ..
+         case 0: .. // Send
+         case 1: .. // Save (default)
+         case 2: .. // Delete
+         ..
+       }
+   \endcode
+
+   Three choice example:
+   \image html  fl_choice_three.png
+   \image latex fl_choice_three.png  "fl_choice() three choices" width=4cm
+   \code
+       switch ( fl_choice("How many musketeers?", "One", "Two", "Three") ) {
+         case 0: .. // One
+         case 1: .. // Two (default)
+         case 2: .. // Three
        }
    \endcode
 
    Two choice example:
+   \image html  fl_choice_two.png
+   \image latex fl_choice_two.png  "fl_choice() two choices" width=4cm
    \code
        switch ( fl_choice("Empty trash?", "Yes", "No", 0) ) {
-         case 0: .. // Yes (default)
-	 case 1: .. // No
+         case 0: .. // Yes
+         case 1: .. // No (default)
        }
    \endcode
 
    One choice example:
+   \image html  fl_choice_one.png
+   \image latex fl_choice_one.png  "fl_choice() one choice" width=4cm
    \code
-       fl_choice("All hope is lost.", "OK", 0, 0);
+       fl_choice("All hope is lost.", "OK", 0, 0);   // "OK" default
    \endcode
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] b0 text label of button 0
    \param[in] b1 text label of button 1 (can be 0)
    \param[in] b2 text label of button 2 (can be 0)
-   \retval 0 if the first button with \p b0 text is selected or another dialog box is still open
-   \retval 1 if the second button with \p b1 text is selected
-   \retval 2 if the third button with \p b2 text is selected
+   \retval 0 if the first button with \p b0 text is pushed or another dialog box is still open
+   \retval 1 if the second button with \p b1 text is pushed
+   \retval 2 if the third button with \p b2 text is pushed
  */
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
 
