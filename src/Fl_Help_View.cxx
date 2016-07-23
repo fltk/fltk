@@ -1901,7 +1901,7 @@ void Fl_Help_View::format() {
 	  }
 
 	  if (linkdest[0])
-	    add_link(linkdest, xx, yy - height, ww, height);
+	    add_link(linkdest, xx, yy-fsize, ww, height);
 
 	  xx += ww;
 	  if ((height + 2) > hh)
