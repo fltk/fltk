@@ -406,10 +406,7 @@ unsigned Fl_WinAPI_System_Driver::utf8fromwc(char* dst, unsigned dstlen, const w
 
 int Fl_WinAPI_System_Driver::utf8locale()
 {
-  static int ret = 2;
-  if (ret == 2) {
-    ret = GetACP() == CP_UTF8;
-  }
+  static int ret = (GetACP() == CP_UTF8);
   return ret;
 }
 

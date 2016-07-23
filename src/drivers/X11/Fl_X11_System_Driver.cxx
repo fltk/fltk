@@ -500,11 +500,16 @@ int Fl_X11_System_Driver::filename_list(const char *d, dirent ***list, int (*sor
 }
 
 int Fl_X11_System_Driver::utf8locale() {
-  char *s;
-  static int ret = ((s = ::getenv("LC_CTYPE")) && *s) ||
-  ((s = ::getenv("LC_ALL"))   && *s) ||
-  ((s = ::getenv("LANG"))     && *s)
-  ? 1 : 0;
+  static int ret = 2;
+  if (ret == 2) {
+    char* s;
+    ret = 1; /* assume UTF-8 if no locale */
+    if (((s = getenv("LC_CTYPE")) && *s) ||
+        ((s = getenv("LC_ALL"))   && *s) ||
+        ((s = getenv("LANG"))     && *s)) {
+      ret = (strstr(s,"utf") || strstr(s,"UTF"));
+    }
+  }
   return ret;
 }
 
