@@ -659,19 +659,21 @@ white space in the string, kerning, etc.
 \par
 If the incoming \p w is non-zero it will wrap to that width.
 \par
+This will probably give unexpected values unless you have called
+\ref drawing_fl_font "fl_font()" explicitly in your own code.
 Refer to the full documentation for fl_measure() for details
 on usage and how to avoid common pitfalls.
 
 \see fl_text_extents() -- measure the 'inked' area of a string
 \see fl_width() -- measure the pixel width of a string or single character
-\see fl_height() -- measure the pixel height of the current font
-\see fl_descent() -- the height of the descender for the current font
+\see fl_height() -- measure the pixel height of the \ref drawing_fl_font "current font"
+\see fl_descent() -- the height of the descender for the \ref drawing_fl_font "current font"
 
 int fl_height()
 
 \par
-Recommended minimum line spacing for the current font.  You
-can also just use the value of \p size passed to
+Recommended minimum line spacing for the \ref drawing_fl_font "current font".
+You can also just use the value of \p size passed to
 \ref drawing_fl_font "fl_font()".
 
 \see fl_text_extents(), fl_measure(), fl_width(), fl_descent()
@@ -688,7 +690,7 @@ double fl_width(unsigned int unicode_char)
 
 \par
 Return the pixel width of a nul-terminated string, a sequence of \p n
-characters, or a single character in the current font.
+characters, or a single character in the \ref drawing_fl_font "current font".
 
 \see fl_measure(), fl_text_extents(), fl_height(), fl_descent()
 
@@ -732,6 +734,15 @@ FL_BOLD and FL_ITALIC which can be added to
 these, and FL_SYMBOL and FL_ZAPF_DINGBATS.
 Faces greater than 255 cannot be used in Fl_Widget
 labels, since Fl_Widget stores the index as a byte.
+
+One important thing to note about 'current font' is that there
+are so many paths through the GUI event handling code as widgets
+are partially or completely hidden, exposed and then re-drawn
+and therefore you can not guarantee that 'current font' contains
+the same value that you set on the other side of the event loop.
+Your value may have been superseded when a widget was redrawn.
+You are strongly advised to set the font explicitly before you
+draw any text or query the width and height of text strings, etc.
 
 \anchor drawing_fl_font
 void fl_font(int face, int size)
