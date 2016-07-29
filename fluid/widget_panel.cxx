@@ -27,30 +27,30 @@ static void cb_(Fl_Tabs* o, void* v) {
 
 Fl_Menu_Item menu_[] = {
  {"   Image Alignment   ", 0,  0, (void*)(0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
- {"image over text", 0,  0, (void*)(FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"text over image", 0,  0, (void*)(FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"text next to image", 0,  0, (void*)(FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"image next to text", 0,  0, (void*)(FL_ALIGN_IMAGE_NEXT_TO_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"image is backdrop", 0,  0, (void*)(FL_ALIGN_IMAGE_BACKDROP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"image over text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"text over image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"text next to image", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"image next to text", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"image is backdrop", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
 Fl_Menu_Item menu_1[] = {
  {"   Inside && Outside   ", 0,  0, (void*)(0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
- {"top left", 0,  0, (void*)(FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"top", 0,  0, (void*)(FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"top right", 0,  0, (void*)(FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"left", 0,  0, (void*)(FL_ALIGN_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"center", 0,  0, (void*)(FL_ALIGN_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"right", 0,  0, (void*)(FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom left", 0,  0, (void*)(FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom", 0,  0, (void*)(FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"bottom right", 0,  0, (void*)(FL_ALIGN_BOTTOM_RIGHT), 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"top left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"top right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_TOP_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"center", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_CENTER), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"bottom left", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_LEFT), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"bottom right", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT), 128, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {"   Outside Alignment   ", 0,  0, (void*)(0xFFFFFFFF), 1, (uchar)FL_NORMAL_LABEL, 2, 11, 0},
- {"left top", 0,  0, (void*)(FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"right top", 0,  0, (void*)(FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"left bottom", 0,  0, (void*)(FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
- {"right bottom", 0,  0, (void*)(FL_ALIGN_RIGHT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"left top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"right top", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_TOP), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"left bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_LEFT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
+ {"right bottom", 0,  0, (void*)((fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM), 0, (uchar)FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -185,7 +185,7 @@ Fl_Double_Window* make_widget_panel() {
             o->type(1);
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_CLIP));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_CLIP));
             o->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
           } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(130, 115, 38, 20, "Wrap");
@@ -193,7 +193,7 @@ Fl_Double_Window* make_widget_panel() {
             o->type(1);
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_WRAP));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_WRAP));
           } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(278, 115, 20, 20, "@-1<-");
             o->tooltip("Left-align the label.");
@@ -201,7 +201,7 @@ Fl_Double_Window* make_widget_panel() {
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
             o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_LEFT));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_LEFT));
             o->hide();
           } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(303, 115, 20, 20, "@-1->");
@@ -210,7 +210,7 @@ Fl_Double_Window* make_widget_panel() {
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
             o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_RIGHT));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_RIGHT));
             o->hide();
           } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(328, 115, 20, 20, "@-18");
@@ -219,7 +219,7 @@ Fl_Double_Window* make_widget_panel() {
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
             o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_TOP));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_TOP));
             o->hide();
           } // Fl_Button* o
           { Fl_Button* o = new Fl_Button(353, 115, 20, 20, "@-12");
@@ -228,7 +228,7 @@ Fl_Double_Window* make_widget_panel() {
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
             o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_BOTTOM));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_BOTTOM));
             o->hide();
           } // Fl_Button* o
           { Fl_Choice* o = new Fl_Choice(172, 115, 110, 20);
@@ -251,7 +251,7 @@ Fl_Double_Window* make_widget_panel() {
             o->selection_color(FL_INACTIVE_COLOR);
             o->labelsize(11);
             o->labelcolor(FL_INACTIVE_COLOR);
-            o->callback((Fl_Callback*)align_cb, (void*)(FL_ALIGN_INSIDE));
+            o->callback((Fl_Callback*)align_cb, (void*)((fl_intptr_t)FL_ALIGN_INSIDE));
           } // Fl_Button* o
           { Fl_Box* o = new Fl_Box(404, 115, 0, 20);
             o->labelsize(11);
