@@ -96,37 +96,37 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         } {
           Fl_Button {} {
             label Clip
-            user_data FL_ALIGN_CLIP
+            user_data {(fl_intptr_t)FL_ALIGN_CLIP}
             callback align_cb
             tooltip {Clip the label to the inside of the widget.} xywh {95 115 30 20} type Toggle selection_color 8 labelsize 11 align 16
           }
           Fl_Button {} {
             label Wrap
-            user_data FL_ALIGN_WRAP
+            user_data {(fl_intptr_t)FL_ALIGN_WRAP}
             callback align_cb
             tooltip {Wrap the label text.} xywh {130 115 38 20} type Toggle selection_color 8 labelsize 11
           }
           Fl_Button {} {
             label {@-1<-}
-            user_data FL_ALIGN_LEFT
+            user_data {(fl_intptr_t)FL_ALIGN_LEFT}
             callback align_cb
             tooltip {Left-align the label.} xywh {278 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Button {} {
             label {@-1->}
-            user_data FL_ALIGN_RIGHT
+            user_data {(fl_intptr_t)FL_ALIGN_RIGHT}
             callback align_cb
             tooltip {Right-align the label.} xywh {303 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Button {} {
             label {@-18}
-            user_data FL_ALIGN_TOP
+            user_data {(fl_intptr_t)FL_ALIGN_TOP}
             callback align_cb
             tooltip {Top-align the label.} xywh {328 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Button {} {
             label {@-12}
-            user_data FL_ALIGN_BOTTOM
+            user_data {(fl_intptr_t)FL_ALIGN_BOTTOM}
             callback align_cb
             tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
@@ -141,27 +141,27 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             }
             MenuItem {} {
               label {image over text}
-              user_data FL_ALIGN_IMAGE_OVER_TEXT
+              user_data {(fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT} selected
               xywh {25 25 100 20} labelsize 11
             }
             MenuItem {} {
               label {text over image}
-              user_data FL_ALIGN_TEXT_OVER_IMAGE
+              user_data {(fl_intptr_t)FL_ALIGN_TEXT_OVER_IMAGE}
               xywh {15 15 100 20} labelsize 11
             }
             MenuItem {} {
               label {text next to image}
-              user_data FL_ALIGN_TEXT_NEXT_TO_IMAGE
+              user_data {(fl_intptr_t)FL_ALIGN_TEXT_NEXT_TO_IMAGE}
               xywh {35 35 100 20} labelsize 11
             }
             MenuItem {} {
               label {image next to text}
-              user_data FL_ALIGN_IMAGE_NEXT_TO_TEXT
+              user_data {(fl_intptr_t)FL_ALIGN_IMAGE_NEXT_TO_TEXT}
               xywh {45 45 100 20} labelsize 11
             }
             MenuItem {} {
               label {image is backdrop}
-              user_data FL_ALIGN_IMAGE_BACKDROP
+              user_data {(fl_intptr_t)FL_ALIGN_IMAGE_BACKDROP}
               xywh {55 55 100 20} labelsize 11
             }
           }
@@ -176,47 +176,47 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             }
             MenuItem {} {
               label {top left}
-              user_data FL_ALIGN_TOP_LEFT
+              user_data {(fl_intptr_t)FL_ALIGN_TOP_LEFT}
               xywh {45 45 100 20} labelsize 11
             }
             MenuItem {} {
               label top
-              user_data FL_ALIGN_TOP
+              user_data {(fl_intptr_t)FL_ALIGN_TOP}
               xywh {55 55 100 20} labelsize 11
             }
             MenuItem {} {
               label {top right}
-              user_data FL_ALIGN_TOP_RIGHT
+              user_data {(fl_intptr_t)FL_ALIGN_TOP_RIGHT}
               xywh {65 65 100 20} labelsize 11
             }
             MenuItem {} {
               label left
-              user_data FL_ALIGN_LEFT
+              user_data {(fl_intptr_t)FL_ALIGN_LEFT}
               xywh {75 75 100 20} labelsize 11
             }
             MenuItem {} {
               label center
-              user_data FL_ALIGN_CENTER
+              user_data {(fl_intptr_t)FL_ALIGN_CENTER}
               xywh {35 35 100 20} labelsize 11
             }
             MenuItem {} {
               label right
-              user_data FL_ALIGN_RIGHT
+              user_data {(fl_intptr_t)FL_ALIGN_RIGHT}
               xywh {85 85 100 20} labelsize 11
             }
             MenuItem {} {
               label {bottom left}
-              user_data FL_ALIGN_BOTTOM_LEFT
+              user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_LEFT}
               xywh {95 95 100 20} labelsize 11
             }
             MenuItem {} {
               label bottom
-              user_data FL_ALIGN_BOTTOM
+              user_data {(fl_intptr_t)FL_ALIGN_BOTTOM}
               xywh {105 105 100 20} labelsize 11
             }
             MenuItem {} {
               label {bottom right}
-              user_data FL_ALIGN_BOTTOM_RIGHT
+              user_data {(fl_intptr_t)FL_ALIGN_BOTTOM_RIGHT}
               xywh {115 115 100 20} labelsize 11 divider
             }
             MenuItem {} {
@@ -226,28 +226,28 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             }
             MenuItem {} {
               label {left top}
-              user_data FL_ALIGN_LEFT_TOP
+              user_data {(fl_intptr_t)FL_ALIGN_LEFT_TOP}
               xywh {135 135 100 20} labelsize 11
             }
             MenuItem {} {
               label {right top}
-              user_data FL_ALIGN_RIGHT_TOP
+              user_data {(fl_intptr_t)FL_ALIGN_RIGHT_TOP}
               xywh {145 145 100 20} labelsize 11
             }
             MenuItem {} {
               label {left bottom}
-              user_data FL_ALIGN_LEFT_BOTTOM
+              user_data {(fl_intptr_t)FL_ALIGN_LEFT_BOTTOM}
               xywh {155 155 100 20} labelsize 11
             }
             MenuItem {} {
               label {right bottom}
-              user_data FL_ALIGN_RIGHT_BOTTOM
+              user_data {(fl_intptr_t)FL_ALIGN_RIGHT_BOTTOM}
               xywh {45 45 100 20} labelsize 11
             }
           }
           Fl_Button {} {
             label {@-3square}
-            user_data FL_ALIGN_INSIDE
+            user_data {(fl_intptr_t)FL_ALIGN_INSIDE}
             callback align_cb
             tooltip {Show the label inside the widget.} xywh {378 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
           }
@@ -363,7 +363,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         Fl_Button {} {
           label {Shortcut:}
           callback shortcut_in_cb
-          comment {This is a special button that grabs keystrokes directly} selected
+          comment {This is a special button that grabs keystrokes directly}
           tooltip {The shortcut key for the widget.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
           code0 {\#include "Shortcut_Button.h"}
           class Shortcut_Button
