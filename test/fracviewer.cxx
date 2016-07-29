@@ -483,8 +483,9 @@ static void normalize(GLfloat v[3])
 
   if (d == 0)
     fprintf(stderr, "Zero length vector in normalize\n");
-  else
+  else {
     v[0] /= d; v[1] /= d; v[2] /= d;
+  }
 }
 
   /* calculates a normalized crossproduct to v1, v2 */
