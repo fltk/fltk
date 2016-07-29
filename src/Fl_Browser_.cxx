@@ -3,7 +3,7 @@
 //
 // Base Browser widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -714,8 +714,9 @@ int Fl_Browser_::handle(int event) {
       if (type()==FL_HOLD_BROWSER) {
         switch (Fl::event_key()) {
         case FL_Down:
-          while ((l = item_next(l)))
+	  while ((l = item_next(l))) {
             if (item_height(l)>0) {select_only(l, when()); break;}
+	  }
             return 1;
         case FL_Up:
           while ((l = item_prev(l))) {

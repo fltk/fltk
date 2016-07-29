@@ -35,10 +35,14 @@ static void drawhand(double ang,const float v[][2],Fl_Color fill,Fl_Color line)
 {
   fl_push_matrix();
   fl_rotate(ang);
-  fl_color(fill); fl_begin_polygon();
-  int i; for (i=0; i<4; i++) fl_vertex(v[i][0],v[i][1]); fl_end_polygon();
-  fl_color(line); fl_begin_loop();
-  for (i=0; i<4; i++) fl_vertex(v[i][0],v[i][1]); fl_end_loop();
+  fl_color(fill);
+  fl_begin_polygon();
+  int i; for (i=0; i<4; i++) fl_vertex(v[i][0],v[i][1]);
+  fl_end_polygon();
+  fl_color(line);
+  fl_begin_loop();
+  for (i=0; i<4; i++) fl_vertex(v[i][0],v[i][1]);
+  fl_end_loop();
   fl_pop_matrix();
 }
 
