@@ -19,7 +19,7 @@ dnl      http://www.fltk.org/str.php
 dnl
 
 dnl We need at least autoconf 2.50...
-AC_PREREQ(2.50)
+AC_PREREQ([2.50])
 
 dnl Required file in package...
 AC_INIT(src/Fl.cxx)
@@ -934,7 +934,7 @@ case $host_os_gui in
 	fi
 
 	if test "x$X_PRE_LIBS" != x; then
-	    AC_MSG_WARN([Ignoring libraries \"$X_PRE_LIBS\" requested by configure.])
+	    AC_MSG_WARN([Ignoring libraries "$X_PRE_LIBS" requested by configure.])
 	fi
 
 	LIBS="$LIBS -lX11 $X_EXTRA_LIBS"
@@ -1313,7 +1313,7 @@ else
 		#     MAKEDEPEND="CC -M"
 
 		if test "x`grep abi=n32 /etc/compiler.defaults`" = x; then
-			AC_MSG_WARN([FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI \"-n32 -mips3\"])
+			AC_MSG_WARN([FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI "-n32 -mips3"])
 		fi
 
         	OPTIM="-fullwarn $OPTIM"
