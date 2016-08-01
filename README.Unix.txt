@@ -38,7 +38,7 @@ README.Unix.txt - 2010-11-14 - Building FLTK on Unix
  1  INTRODUCTION
 =================
 
-FLTK currently supports the following development environments on vmost Unix 
+FLTK currently supports the following development environments on most Unix
 platforms:
 
     - gcc command line tools
@@ -143,6 +143,7 @@ has no permission to call "sudo", so we will change user a few times:
   su root
   yum groupinstall "Development Tools"
   yum groupinstall "X Software Development"
+  yum groupinstall "C Development Tools and Libraries"
 
 If you are planning to use the Code::Blocks IDE, also install this
 
@@ -304,13 +305,13 @@ Now configure your FLTK installation:
   ./configure
   
 ADVANCED: type "./configure --help" to get a complete list of optional 
-configurations parameters. These should be pretty self-explanatory. Some
+configuration parameters. These should be pretty self-explanatory. Some
 more details can be found in README. 
 :END_ADVANCED
 
 The configuration script will check your machine for the required resources
-which you should have installed as described in the Prerequisites chapter. Review
-the Configuration Summary, maybe take some notes.
+which you should have installed as described in the Prerequisites chapter.
+Review the Configuration Summary, maybe take some notes.
 
 
  3.3  Building FLTK
@@ -324,8 +325,8 @@ The entire FLTK toolkit including many test programs will be built for you. No
 warnings should appear. If some do, please let the FLTK developer team know via
 the mailing list or the bug reporting template at www.fltk.org .
 
-Actually, as of Oct 28 2010, quite a bunch of warnings will show, mostly about 
-suggested parenthesis. Please ignore them until we can fix them.
+Actually, as of Apr 13 2016, one or two warnings will show, mostly about
+deprecated declarations. Please ignore them.
 
 
  3.4  Testing FLTK
@@ -358,11 +359,11 @@ installation path to a location within the user account by adding the
  3.6  Creating new Projects
 ----------------------------
 
-FLTK provides a neat script named "fltk-config" that can provide all the flags 
+FLTK provides a neat script named "fltk-config" that can provide all the flags
 needed to build FLTK applications using the same flags that were used to build
 the library itself. Running "fltk-config" without arguments will print a list
-options. The easiest call to compile an FLTK application from a single source 
-file is: 
+of options. The easiest call to compile an FLTK application from a single
+source file is:
 
   fltk-config --compile myProgram.cxx
 
@@ -389,20 +390,20 @@ version 10.05:
 Start Code::Blocks. Select File > New > Project. In the "New from template"
 dialog box, click on "FLTK project" and follow the instructions.
 
-The default project support basic fltk. If you would like to add support for
+The default project supports basic fltk. If you would like to add support for
 images, OpenGL, GLUT, or Forms, add the corresponding flags --use-images,
 --use-gl, --use-glut, and --use-forms respectively.
 
-The flags are located in the "Project Build Options" dialog. To change the 
+The flags are located in the "Project Build Options" dialog. To change the
 compiler flags, select your project in the tree view, then select the
-"Compiler Settings" tab, then "Other Options" and add the flags to 
-`fltk-config --cxxflags` in front of the second "`". 
+"Compiler Settings" tab, then "Other Options" and add the flags to
+`fltk-config --cxxflags` in front of the second "`".
 
 The linker flags are located in the "Linker Settings" tab under "Other Linker
 Options". Add the flags to `fltk-config --ldstaticflags` in front of the 
 second "`".
 
-CodeBlocks can be set up to use fluid to manage modules..
+CodeBlocks can be set up to use fluid to manage modules.
 The following info is from mingodad@gmail.com posted on fltk.general 06/17/2013:
 
 """
