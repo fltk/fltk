@@ -429,7 +429,7 @@ AC_PROG_RANLIB
 AC_PATH_TOOL(AR, ar)
 
 if test "x$AR" = "x:"; then
-    AC_MSG_ERROR(Configure could not find the library archiver, aborting.)
+    AC_MSG_ERROR(Configure could not find the library archiver, 1)
 fi
 
 if test "x$RANLIB" != "x:"; then
@@ -925,7 +925,7 @@ case $host_os_gui in
 	AC_PATH_XTRA
 
 	if test x$no_x = xyes; then
-	    AC_MSG_ERROR(Configure could not find required X11 libraries, aborting.)
+	    AC_MSG_ERROR(Configure could not find required X11 libraries, 1)
 	fi
 
 	if test "x$X_PRE_LIBS" != x; then
