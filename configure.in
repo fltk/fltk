@@ -67,6 +67,9 @@ AC_SUBST(FL_VERSION)
 AC_SUBST(ARCHFLAGS)
 AC_SUBST(OPTIM)
 
+dnl FLTK build options to be used in Makefiles (defined in makeinclude)
+USEMMFILES="No"
+
 dnl OS-specific pre-tests...
 dnl host_os_gui equals $host_os unless we target Cygwin or Darwin in combination with X11.
 host_os_gui=$host_os
@@ -355,7 +358,7 @@ if test x$enable_shared = xyes; then
 		-Wl,--enable-auto-image-base -o \$@"
 	    ;;
 	*)
-            AC_MSG_WARN(Shared libraries may not be supported.  Trying -shared option with compiler.)
+            AC_MSG_WARN([Shared libraries may not be supported. Trying -shared option with compiler.])
             DSONAME="libfltk.so.$FL_DSO_VERSION"
             FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
@@ -429,7 +432,7 @@ AC_PROG_RANLIB
 AC_PATH_TOOL(AR, ar)
 
 if test "x$AR" = "x:"; then
-    AC_MSG_ERROR(Configure could not find the library archiver, 1)
+    AC_MSG_ERROR([Configure could not find the library archiver, aborting.])
 fi
 
 if test "x$RANLIB" != "x:"; then
@@ -526,7 +529,7 @@ else
     AC_CHECK_FUNC(scandir,[
         case $host_os in
             solaris* | *qnx*)
-                AC_MSG_WARN(Not using $host_os scandir emulation function.)
+                AC_MSG_WARN([Not using $host_os scandir emulation function.])
                 ;;
             *)
                 AC_DEFINE(HAVE_SCANDIR)
@@ -537,10 +540,10 @@ fi
 AC_CHECK_FUNC(vsnprintf,[
     case $host_os in
         hpux1020)
-            AC_MSG_WARN(Not using built-in vsnprintf function because you are running HP-UX 10.20.)
+            AC_MSG_WARN([Not using built-in vsnprintf function because you are running HP-UX 10.20.])
             ;;
         osf4)
-            AC_MSG_WARN(Not using built-in vsnprintf function because you are running Tru64 4.0.)
+            AC_MSG_WARN([Not using built-in vsnprintf function because you are running Tru64 4.0.])
             ;;
         *)
             AC_DEFINE(HAVE_VSNPRINTF)
@@ -549,10 +552,10 @@ AC_CHECK_FUNC(vsnprintf,[
 AC_CHECK_FUNC(snprintf,[
     case $host_os in
         hpux1020)
-            AC_MSG_WARN(Not using built-in snprintf function because you are running HP-UX 10.20.)
+            AC_MSG_WARN([Not using built-in snprintf function because you are running HP-UX 10.20.])
             ;;
         osf4)
-            AC_MSG_WARN(Not using built-in snprintf function because you are running Tru64 4.0.)
+            AC_MSG_WARN([Not using built-in snprintf function because you are running Tru64 4.0.])
             ;;
         *)
             AC_DEFINE(HAVE_SNPRINTF)
@@ -658,7 +661,7 @@ if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
     #ac_cv_lib_jpeg_jpeg_CreateCompress=no # from ima: should not be necessary
     # Finally, warn user if system lib was requested but not found
     if test x$enable_localjpeg = xno; then
-	AC_MSG_WARN(Cannot find system jpeg lib or header: choosing the local lib mode.)
+	AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
     fi
 else
     JPEGINC=""
@@ -694,7 +697,7 @@ if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
     ac_cv_lib_z_gzgets=no # fc: is still necessary ?
     # Finally, warn user if system lib was requested but not found
     if test x$enable_localzlib = xno; then
-	AC_MSG_WARN(Cannot find system z lib or header: choosing the local lib mode.)
+	AC_MSG_WARN([Cannot find system z lib or header: choosing the local lib mode.])
     fi
 else
     ZLIBINC=""
@@ -739,7 +742,7 @@ if test x$enable_localpng = xyes -o x$syspnglib_ok = xno ; then
     AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA)
     # Finally, warn user if system lib was requested but not found
     if test x$enable_localpng = xno; then
-	AC_MSG_WARN(Cannot find system png lib or header: choosing the local lib mode.)
+	AC_MSG_WARN([Cannot find system png lib or header: choosing the local lib mode.])
     fi
 else
     PNGINC=""
@@ -828,8 +831,6 @@ AC_ARG_WITH(links, [  --with-links            make header links for common missp
 
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
-
-USEMMFILES="No"
 
 case $host_os_gui in
     cygwin* | mingw*)
@@ -925,11 +926,11 @@ case $host_os_gui in
 	AC_PATH_XTRA
 
 	if test x$no_x = xyes; then
-	    AC_MSG_ERROR(Configure could not find required X11 libraries, 1)
+	    AC_MSG_ERROR([Configure could not find required X11 libraries, aborting.])
 	fi
 
 	if test "x$X_PRE_LIBS" != x; then
-	    AC_MSG_WARN(Ignoring libraries \"$X_PRE_LIBS\" requested by configure.)
+	    AC_MSG_WARN([Ignoring libraries \"$X_PRE_LIBS\" requested by configure.])
 	fi
 
 	LIBS="$LIBS -lX11 $X_EXTRA_LIBS"
@@ -1213,49 +1214,49 @@ if test -n "$GCC"; then
     fi
 
     # See if GCC supports -fno-exceptions...
-    AC_MSG_CHECKING(if GCC supports -fno-exceptions)
+    AC_MSG_CHECKING([if GCC supports -fno-exceptions])
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
     AC_TRY_COMPILE(,,
 	OPTIM="$OPTIM -fno-exceptions"
-	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no))
+	AC_MSG_RESULT([yes]),
+	AC_MSG_RESULT([no]))
     CFLAGS="$OLDCFLAGS"
 
     # See if GCC supports -fno-strict-aliasing...
-    AC_MSG_CHECKING(if GCC supports -fno-strict-aliasing)
+    AC_MSG_CHECKING([if GCC supports -fno-strict-aliasing])
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-strict-aliasing"
     AC_TRY_COMPILE(,,
 	OPTIM="$OPTIM -fno-strict-aliasing"
-	AC_MSG_RESULT(yes),
-	AC_MSG_RESULT(no))
+	AC_MSG_RESULT([yes]),
+	AC_MSG_RESULT([no]))
     CFLAGS="$OLDCFLAGS"
 
 dnl Experimental (as of 17 Feb 2015):
 dnl Make sure that shared libraries don't have undefined references
     # See if ld supports -no-undefined...
-    AC_MSG_CHECKING(if ld supports -no-undefined)
+    AC_MSG_CHECKING([if ld supports -no-undefined])
     OLDLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -Wl,-no-undefined"
     AC_TRY_LINK(,,
         [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"]
-        AC_MSG_RESULT(yes),
-        AC_MSG_RESULT(no))
+        AC_MSG_RESULT([yes]),
+        AC_MSG_RESULT([no]))
     LDFLAGS="$OLDLDFLAGS"
 
     # See if ld supports -Bsymbolic-functions...
-    AC_MSG_CHECKING(if ld supports -Bsymbolic-functions)
+    AC_MSG_CHECKING([if ld supports -Bsymbolic-functions])
     OLDLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -Wl,-Bsymbolic-functions"
     AC_TRY_LINK(,,
         [DSOFLAGS="$DSOFLAGS -Wl,-Bsymbolic-functions"]
-        AC_MSG_RESULT(yes),
-        AC_MSG_RESULT(no))
+        AC_MSG_RESULT([yes]),
+        AC_MSG_RESULT([no]))
     LDFLAGS="$OLDLDFLAGS"
 
     # See if toolchain supports a sectioned build...
-    AC_MSG_CHECKING(if toolchain supports sections)
+    AC_MSG_CHECKING([if toolchain supports sections])
     OLDLDFLAGS="$LDFLAGS"
     OLDCFLAGS="$CFLAGS"
     LDFLAGS="$LDFLAGS -Wl,-gc-sections"
@@ -1263,8 +1264,8 @@ dnl Make sure that shared libraries don't have undefined references
     AC_TRY_LINK(,,
         [DSOFLAGS="$DSOFLAGS -Wl,-gc-sections"
         OPTIM="$OPTIM -ffunction-sections -fdata-sections"]
-        AC_MSG_RESULT(yes),
-        AC_MSG_RESULT(no))
+        AC_MSG_RESULT([yes]),
+        AC_MSG_RESULT([no]))
     LDFLAGS="$OLDLDFLAGS"
     CFLAGS="$OLDCFLAGS"
 
@@ -1277,15 +1278,15 @@ dnl Make sure that shared libraries don't have undefined references
     # to clients - otherwise client apps will not compile properly...
     case $host_os in
         solaris*)
-	    AC_MSG_CHECKING(if GCC supports -fpermissive)
+	    AC_MSG_CHECKING([if GCC supports -fpermissive])
 
 	    OLDCFLAGS="$CFLAGS"
 	    CFLAGS="$CFLAGS -fpermissive"
 	    AC_TRY_COMPILE(,,
 	        CXXFLAGS="$CXXFLAGS -fpermissive"
-	        AC_MSG_RESULT(yes),
+	        AC_MSG_RESULT([yes]),
 	        CFLAGS="$OLDCFLAGS"
-	        AC_MSG_RESULT(no))
+	        AC_MSG_RESULT([no]))
 	    ;;
     esac
 else
@@ -1303,7 +1304,7 @@ else
 		#     MAKEDEPEND="CC -M"
 
 		if test "x`grep abi=n32 /etc/compiler.defaults`" = x; then
-			AC_MSG_WARN(FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI \"-n32 -mips3\")
+			AC_MSG_WARN([FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI \"-n32 -mips3\"])
 		fi
 
         	OPTIM="-fullwarn $OPTIM"
@@ -1369,13 +1370,13 @@ else
 		fi
 	    fi
 
-	    AC_MSG_WARN(The AIX C and C++ compilers are known not to correctly compile the FLTK library.)
+	    AC_MSG_WARN([The AIX C and C++ compilers are known not to correctly compile the FLTK library.])
 	    ;;
 	*)
 	    # Running some other operating system; inform the user they
 	    # should contribute the necessary options via the STR form..
-	    AC_MSG_WARN(Building FLTK with default compiler optimizations)
-	    AC_MSG_WARN(Send the FLTK developers your uname and compiler options via http://www.fltk.org/str.php)
+	    AC_MSG_WARN([Building FLTK with default compiler optimizations])
+	    AC_MSG_WARN([Send the FLTK developers your uname and compiler options via http://www.fltk.org/str.php])
 	    ;;
     esac
 fi
