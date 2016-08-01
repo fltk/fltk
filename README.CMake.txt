@@ -58,7 +58,7 @@ More information on CMake can be found on its web site http://www.cmake.org.
 ---------------
 
 The prerequisites for building FLTK with CMake are staightforward:
-CMake 2.6 or later and a recent FLTK 1.3 release, snapshot, or subversion
+CMake 2.6.3 or later and a recent FLTK 1.3 release, snapshot, or subversion
 download (working copy).  Installation of CMake is covered on its web site.
 
 This howto will cover building FLTK with the default options using cmake
@@ -85,7 +85,7 @@ CMAKE_BUILD_TYPE
     by CMake depending on this value.
 
 CMAKE_INSTALL_PREFIX
-    Where everything will go on install.  Defaults are /usr/local for unix
+    Where everything will go on install.  Defaults are /usr/local for Unix
     and C:\Program Files\FLTK for Windows.
 
 The following are the FLTK specific options.  Platform specific options
@@ -136,7 +136,19 @@ OPTION_USE_SYSTEM_LIBPNG - default ON
 OPTION_USE_XINERAMA - default ON
 OPTION_USE_XFT - default ON
 OPTION_USE_XDBE - default ON
+OPTION_USE_XCURSOR - default ON
+OPTION_USE_XRENDER - default ON
    These are X11 extended libraries.
+
+OPTION_ABI_VERSION - default EMPTY
+   Use a numeric value corresponding to the FLTK ABI version you want to
+   build in the form 1xxyy for FLTK 1.x.y (xx and yy with leading zeroes).
+   The default ABI version is 1xx00 (the stable ABI throughout all patch
+   releases of one minor FLTK version). The highest ABI version you may
+   choose is 1xxyy for FLTK 1.x.y (again with leading zeroes).
+   Please see README.abi-version.txt for more information about which
+   ABI version to select.
+
 OPTION_PRINT_SUPPORT - default ON
    When turned off, the Fl_Printer class does nothing and the 
    Fl_PostScript_File_Device class cannot be used, but the FLTK library
@@ -153,7 +165,7 @@ the following.
     cd build
     cmake ..
     make
-    sudo make install
+    sudo make install (optional)
 
 This will build and install a default configuration FLTK.
 
@@ -162,6 +174,18 @@ Some flags can be changed during the 'make' command, such as:
     make VERBOSE=on
 
 ..which builds in verbose mode, so you can see all the compile/link commands.
+
+Hint: if you intend to build several different versions of FLTK, e.g. a Debug
+and a Release version, or multiple libraries with different ABI versions,
+then use subdirectories in the build directory, like this:
+
+    mkdir build
+    cd build
+    mkdir Debug
+    cd Debug
+    cmake ../..
+    make
+    sudo make install (optional)
 
 
  CROSSCOMPILING
@@ -228,7 +252,7 @@ Here is a basic CMakeLists.txt file using FLTK.
 
 ------
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6.3)
 
 project(hello)
 
@@ -269,7 +293,7 @@ a gui app.  It is ignored on other platforms.
  LIBRARY NAMES
 ---------------
 
-When you use the target_link_libraries command, CMake uses it's own
+When you use the target_link_libraries command, CMake uses its own
 internal names for libraries.  The fltk library names are:
 
     fltk     fltk_forms     fltk_images    fltk_gl
@@ -295,11 +319,11 @@ Here is a sample CMakeLists.txt which compiles the CubeView example from
 a directory you've copied the test/Cube* files to.
 
 ---
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6.3)
 
 project(CubeView)
 
-# change this to your fltk buid directory
+# change this to your fltk build directory
 set(FLTK_DIR /home/msurette/build/fltk-release/)
 
 find_package(FLTK REQUIRED NO_MODULE)
@@ -313,7 +337,7 @@ add_custom_command(
 
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR})
-add_executable(CubeView WIN32 CubeMain.cxx  CubeView.cxx  CubeViewUI.cxx)
+add_executable(CubeView WIN32 CubeMain.cxx CubeView.cxx CubeViewUI.cxx)
 
 target_link_libraries(CubeView fltk fltk_gl)
 ---
