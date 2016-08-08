@@ -38,6 +38,15 @@ find_file(HAVE_SYS_STDTYPES_H sys/stdtypes.h)
 find_file(HAVE_X11_XREGION_H X11/Xregion.h)
 find_path(HAVE_XDBE_H Xdbe.h PATH_SUFFIXES X11/extensions extensions)
 
+if (MSVC)
+  message(STATUS "Note: The following three headers should all be found!")
+  message(STATUS "HAVE_GL_GL_H = '${HAVE_GL_GL_H}'")
+  message(STATUS "HAVE_GL_GLU_H = '${HAVE_GL_GLU_H}'")
+  message(STATUS "HAVE_LOCALE_H = '${HAVE_LOCALE_H}'")
+  message(STATUS "If one of these headers was not found, run cmake-gui ...")
+  message(STATUS "... again from a Visual Studio developer command prompt!")
+endif (MSVC)
+
 # Simulate the behavior of autoconf macro AC_HEADER_DIRENT, see:
 # https://www.gnu.org/software/autoconf/manual/autoconf-2.69/html_node/Particular-Headers.html
 # "Check for the following header files. For the first one that is found

@@ -285,8 +285,7 @@ target_link_libraries(fltk_forms fltk)
 #######################################################################
 
 FL_ADD_LIBRARY(fltk_images STATIC "${IMGCPPFILES}")
-target_link_libraries(fltk_images fltk ${FLTK_PNG_LIBRARIES}
-     ${FLTK_JPEG_LIBRARIES} ${FLTK_ZLIB_LIBRARIES})
+target_link_libraries(fltk_images fltk)
 
 if (OPTION_USE_SYSTEM_LIBJPEG)
     target_link_libraries(fltk_images ${FLTK_JPEG_LIBRARIES})
@@ -325,12 +324,12 @@ if (OPTION_BUILD_SHARED_LIBS)
     ###################################################################
 
     FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
-    target_link_libraries(fltk_forms_SHARED fltk_SHARED)
+    target_link_libraries(fltk_forms_SHARED fltk)
 
     ###################################################################
 
     FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
-    target_link_libraries(fltk_images_SHARED fltk_SHARED)
+    target_link_libraries(fltk_images_SHARED fltk)
 
     if (OPTION_USE_SYSTEM_LIBJPEG)
 	target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
@@ -354,7 +353,7 @@ if (OPTION_BUILD_SHARED_LIBS)
 
     if (OPENGL_FOUND)
        FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES}")
-       target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+       target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
     endif (OPENGL_FOUND)
 
 endif (OPTION_BUILD_SHARED_LIBS)
