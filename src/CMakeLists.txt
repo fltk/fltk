@@ -316,6 +316,13 @@ endif (OPENGL_FOUND)
 # Build shared libraries (optional)
 #######################################################################
 
+# Note to devs: As of 08 Aug 2016 we can build shared libs (dlls)
+# under Windows with Visual Studio (MSVC) but we can't link for instance
+# fltk_images_SHARED with fltk_SHARED - we have to use fltk, i.e. the
+# "static" object library instead. I don't know how to fix this, but
+# at least we can build shared libraries (dlls) with Visual Studio.
+# AlbrechtS
+
 if (OPTION_BUILD_SHARED_LIBS)
 
     FL_ADD_LIBRARY(fltk SHARED "${SHARED_FILES}")
@@ -324,12 +331,20 @@ if (OPTION_BUILD_SHARED_LIBS)
     ###################################################################
 
     FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
-    target_link_libraries(fltk_forms_SHARED fltk)
+    if (MSVC)
+      target_link_libraries(fltk_forms_SHARED fltk)
+    else ()
+      target_link_libraries(fltk_forms_SHARED fltk_SHARED)
+    endif (MSVC)
 
     ###################################################################
 
     FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
-    target_link_libraries(fltk_images_SHARED fltk)
+    if (MSVC)
+      target_link_libraries(fltk_images_SHARED fltk)
+    else ()
+      target_link_libraries(fltk_images_SHARED fltk_SHARED)
+    endif (MSVC)
 
     if (OPTION_USE_SYSTEM_LIBJPEG)
 	target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
@@ -352,8 +367,12 @@ if (OPTION_BUILD_SHARED_LIBS)
     ###################################################################
 
     if (OPENGL_FOUND)
-       FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES}")
-       target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
+      FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES}")
+      if (MSVC)
+	target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
+      else ()
+	target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+      endif (MSVC)
     endif (OPENGL_FOUND)
 
 endif (OPTION_BUILD_SHARED_LIBS)
