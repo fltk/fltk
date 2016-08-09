@@ -243,7 +243,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy, 
+int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
 		 int &X, int &Y, int &W, int &H)
 {
   if (!array) {
@@ -419,7 +419,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 		xstep, ystep;	// X & Y step increments
 
 
-  // Figure out Bresenheim step/modulus values...
+  // Figure out Bresenham step/modulus values...
   xmod   = w() % W;
   xstep  = w() / W;
   ymod   = h() % H;

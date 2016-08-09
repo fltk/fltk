@@ -349,31 +349,33 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   }
   if (W <= 0 || H <= 0) return 0;
 
-  // OK, need to resize the image data; allocate memory and 
+  // OK, need to resize the image data; allocate memory and create new image
   uchar		*new_ptr;	// Pointer into new array
   const uchar	*old_ptr;	// Pointer into old array
-  int		c,		// Channel number
-		sy,		// Source coordinate
-		dx, dy,		// Destination coordinates
-		xerr, yerr,	// X & Y errors
-		xmod, ymod,	// X & Y moduli
-		xstep, ystep,	// X & Y step increments
-    line_d; // stride from line to line
-
-
-  // Figure out Bresenheim step/modulus values...
-  xmod   = w() % W;
-  xstep  = (w() / W) * d();
-  ymod   = h() % H;
-  ystep  = h() / H;
-  line_d = ld() ? ld() : w() * d();
+  int		dx, dy,		// Destination coordinates
+		line_d;		// stride from line to line
 
   // Allocate memory for the new image...
   new_array = new uchar [W * H * d()];
   new_image = new Fl_RGB_Image(new_array, W, H, d());
   new_image->alloc_array = 1;
 
+  line_d = ld() ? ld() : w() * d();
+
   if (Fl_Image::RGB_scaling() == FL_RGB_SCALING_NEAREST) {
+
+    int		c,		// Channel number
+		sy,		// Source coordinate
+		xerr, yerr,	// X & Y errors
+		xmod, ymod,	// X & Y moduli
+		xstep, ystep;	// X & Y step increments
+
+    // Figure out Bresenham step/modulus values...
+    xmod   = w() % W;
+    xstep  = (w() / W) * d();
+    ymod   = h() % H;
+    ystep  = h() / H;
+
     // Scale the image using a nearest-neighbor algorithm...
     for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
       for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
