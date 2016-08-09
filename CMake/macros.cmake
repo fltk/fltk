@@ -1,7 +1,7 @@
 #
 # "$Id$"
 #
-# macros.cmake defines macros used by the build system
+# macros.cmake defines macros used by the CMake build system
 # Written by Michael Surette
 #
 # Copyright 1998-2016 by Bill Spitzak and others.
@@ -29,17 +29,17 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
     endif (${LIBTYPE} STREQUAL "SHARED")
 
     if (MSVC)
-	set (LIBNAME_DEBUG "${LIBNAME}d")
+	set (LIBRARY_NAME_DEBUG "${LIBRARY_NAME}d")
     else ()
-	set (LIBNAME_DEBUG "${LIBNAME}")
+	set (LIBRARY_NAME_DEBUG "${LIBRARY_NAME}")
     endif (MSVC)
 
     add_library(${LIBRARY_NAME} ${LIBTYPE} ${LIBFILES})
 
     set_target_properties(${LIBRARY_NAME}
         PROPERTIES
-        OUTPUT_NAME ${LIBNAME}
-        DEBUG_OUTPUT_NAME "${LIBNAME_DEBUG}"
+        OUTPUT_NAME ${LIBRARY_NAME}
+        DEBUG_OUTPUT_NAME ${LIBRARY_NAME_DEBUG}
         CLEAN_DIRECT_OUTPUT TRUE
         COMPILE_DEFINITIONS "FL_LIBRARY"
 	)
@@ -55,7 +55,7 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
     if (MSVC)
 	if (OPTION_LARGE_FILE)
-	    set_target_properties(${LIBNAME}
+	    set_target_properties(${LIBRARYNAME}
 		PROPERTIES
 		LINK_FLAGS /LARGEADDRESSAWARE
 		)

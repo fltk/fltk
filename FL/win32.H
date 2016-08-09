@@ -45,7 +45,7 @@ extern FL_EXPORT UINT fl_wake_msg;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_Window::make_xid()
 extern FL_EXPORT HPALETTE fl_palette; // non-zero only on 8-bit displays!
-extern FL_EXPORT void fl_release_dc(HWND w, HDC dc);
+extern void fl_release_dc(HWND w, HDC dc);
 extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
 #endif // FL_LIBRARY || FL_INTERNALS

@@ -64,10 +64,10 @@
  \endcode
 */
 class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
-  friend Fl_Offscreen fl_create_offscreen(int w, int h);
-  friend void fl_begin_offscreen(Fl_Offscreen ctx);
-  friend void fl_end_offscreen(void);
-  friend void fl_delete_offscreen(Fl_Offscreen ctx);
+  friend FL_EXPORT Fl_Offscreen fl_create_offscreen(int w, int h);
+  friend FL_EXPORT void fl_begin_offscreen(Fl_Offscreen ctx);
+  friend FL_EXPORT void fl_end_offscreen(void);
+  friend FL_EXPORT void fl_delete_offscreen(Fl_Offscreen ctx);
 private:
   class Fl_Image_Surface_Driver *platform_surface;
 protected:
