@@ -189,7 +189,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 		xstep, ystep;	// X & Y step increments
 
 
-  // Figure out Bresenheim step/modulus values...
+  // Figure out Bresenham step/modulus values...
   xmod   = w() % W;
   xstep  = w() / W;
   ymod   = h() % H;

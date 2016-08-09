@@ -204,7 +204,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
 
   sprintf(new_info, "%d %d %d %d", W, H, ncolors, chars_per_pixel);
 
-  // Figure out Bresenheim step/modulus values...
+  // Figure out Bresenham step/modulus values...
   xmod   = w() % W;
   xstep  = (w() / W) * chars_per_pixel;
   ymod   = h() % H;
