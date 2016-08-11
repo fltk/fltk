@@ -44,7 +44,9 @@
 FILE *G_fp = NULL;
 
 // Handler for add_fd() -- called whenever the ping command outputs a new line of data
-void HandleFD(int fd, void *data) {
+// Note: FL_SOCKET as 1st argument is used to fix a compiler error(!) on Windows 64-bit.
+// Unfortunately we need this in FLTK 1.3 - should hopefully be fixed in 1.4 with a better solution.
+void HandleFD(FL_SOCKET fd, void *data) {
   Fl_Multi_Browser *brow = (Fl_Multi_Browser*)data;
   char s[1024];
   if ( fgets(s, 1023, G_fp) == NULL ) {		// read the line of data

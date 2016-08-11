@@ -29,7 +29,7 @@ Fl_Tree *G_tree = 0;
 
 // Resort the tree
 void MySortCallback(Fl_Widget*, void *data) {
-  int dir = int(long(data));		// forward or reverse
+  int dir = int(fl_intptr_t(data));		// forward or reverse
   Fl_Tree_Item *i = G_tree->root();
   // Bubble sort
   for ( int ax=0; ax<i->children(); ax++ ) {
