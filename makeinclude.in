@@ -28,10 +28,7 @@ FL_VERSION		= @FL_VERSION@
 
 # FLTK configuration options
 
-BUILD_GDI	= @BUILD_GDI@
-BUILD_X11	= @BUILD_X11@
-BUILD_XFT	= @BUILD_XFT@
-USEMMFILES	= @USEMMFILES@
+BUILD		= @BUILD@
 
 # Standard configure variables
 

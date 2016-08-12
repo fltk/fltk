@@ -68,10 +68,7 @@ AC_SUBST(ARCHFLAGS)
 AC_SUBST(OPTIM)
 
 dnl FLTK build options to be used in Makefiles (defined in makeinclude)
-BUILD_GDI="No"
-BUILD_X11="No"
-BUILD_XFT="No"
-USEMMFILES="No"
+BUILD=""
 
 dnl OS-specific pre-tests...
 dnl host_os_gui equals $host_os unless we target Cygwin or Darwin in combination with X11.
@@ -847,7 +844,8 @@ case $host_os_gui in
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32"
-	BUILD_GDI="Yes"
+	#BUILD_GDI="Yes"
+	BUILD="WIN"
 	if test "x$with_optim" = x; then
 	    dnl Avoid -Os optimization on Cygwin/MinGW
 	    with_optim="-O3"
@@ -884,7 +882,8 @@ case $host_os_gui in
     darwin*)
 	AC_DEFINE(__APPLE_QUARTZ__)
 
-        USEMMFILES="Yes"
+        #USEMMFILES="Yes"
+        BUILD="OSX"
 
         # MacOS X uses Cocoa for graphics.
         LIBS="$LIBS -framework Cocoa"
@@ -943,7 +942,8 @@ case $host_os_gui in
 	LDFLAGS="$X_LIBS $LDFLAGS"
 	DSOFLAGS="$X_LIBS $DSOFLAGS"
 	AC_DEFINE(USE_X11)
-	BUILD_X11="Yes"
+	#BUILD_X11="Yes"
+	BUILD="X11"
 	if test "x$x_includes" != x; then
 	    ac_cpp="$ac_cpp -I$x_includes"
 	fi
@@ -1008,7 +1008,8 @@ case $host_os_gui in
 		AC_CHECK_HEADER(X11/Xft/Xft.h,
 		    AC_CHECK_LIB(Xft, XftDrawCreate,
 			AC_DEFINE(USE_XFT)
-			BUILD_XFT="Yes"
+			#BUILD_XFT="Yes"
+			BUILD="XFT"
 			LIBS="-lXft $LIBS"))
 	    fi
 	fi
@@ -1104,10 +1105,7 @@ AC_SUBST(THREADS)
 AC_SUBST(INSTALL_DESKTOP)
 AC_SUBST(UNINSTALL_DESKTOP)
 
-AC_SUBST(BUILD_GDI)
-AC_SUBST(BUILD_X11)
-AC_SUBST(BUILD_XFT)
-AC_SUBST(USEMMFILES)
+AC_SUBST(BUILD)
 
 dnl Figure out the appropriate formatted man page extension...
 case "$host_os" in
