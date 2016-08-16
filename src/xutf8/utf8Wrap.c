@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "../utf8_internal.h"
 
 /* External auto generated functions : */
 #include "ucs2fontmap.c"
