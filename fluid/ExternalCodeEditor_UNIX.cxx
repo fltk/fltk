@@ -54,7 +54,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
   if ( G_debug )
     printf("ExternalCodeEditor() DTOR CALLED (this=%p, pid=%ld)\n",
            (void*)this, (long)pid_);
-  kill_editor();    // Kill open editor, deletes tmp file
+  close_editor();   // close editor, delete tmp file
   set_filename(0);  // free()s filename
 }
 
@@ -69,6 +69,35 @@ void ExternalCodeEditor::set_filename(const char *val) {
 // [Public] Is editor running?
 int ExternalCodeEditor::is_editing() {
   return( (pid_ != -1) ? 1 : 0 );
+}
+
+// [Protected] Wait for editor to close
+void ExternalCodeEditor::close_editor() {
+  if ( G_debug ) printf("close_editor() called: pid=%ld\n", long(pid_));
+  // Wait until editor is closed + reaped
+  while ( is_editing() ) {
+    switch ( reap_editor() ) {
+      case -1:  // error
+        fl_alert("Error reaping external editor\n"
+                 "pid=%ld file=%s", long(pid_), filename());
+        break;
+      case 0:   // process still running
+	switch ( fl_choice("Please close external editor\npid=%ld file=%s",
+			   "Force Close",	// button 0
+			   "Closed",		// button 1
+			   0,			// button 2
+			   long(pid_), filename() ) ) {
+	  case 0: 	// Force Close
+	    kill_editor();
+	    continue;
+	  case 1: 	// Closed? try to reap
+	    continue;
+	}
+        break;
+      default:  // process reaped
+        return;
+    }
+  }
 }
 
 // [Protected] Kill the running editor (if any)
