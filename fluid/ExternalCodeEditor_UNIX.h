@@ -32,6 +32,7 @@ public:
   ~ExternalCodeEditor();
   int is_editing();
   pid_t reap_editor();
+  void close_editor();
   const char *filename() { return filename_; }
   int open_editor(const char *editor_cmd, const char *code);
   int handle_changes(const char **code, int force=0);
