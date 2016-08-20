@@ -2587,6 +2587,8 @@ void Fl_X11_Window_Driver::sendxjunk() {
 static unsigned long *default_net_wm_icons = 0L;
 static size_t default_net_wm_icons_size = 0;
 
+// Note: icons[] *must* contain at least <count> valid image pointers (!NULL),
+//  but: <count> *may* be 0
 static void icons_to_property(const Fl_RGB_Image *icons[], int count,
                               unsigned long **property, size_t *len) {
   size_t sz;
