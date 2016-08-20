@@ -103,6 +103,9 @@ CHANGES IN FLTK 1.3.4					RELEASED: ??? ?? 2016
 
 	Bug fixes
 
+	- Fix potential crash if Fl_Window::icon(NULL) was called to clear
+	  (reset) a window icon. This is now legal and documented behavior.
+	  The same applies to Fl_Window::default_icon().
 	- Allow widget callback to be NULL, i.e. no callback (STR #2835).
 	- Fixed Fl_Help_View buffer overflow (STR #3275).
 	- Fl_Browser now correctly adjusts its scrollbars when the default

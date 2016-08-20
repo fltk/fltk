@@ -295,14 +295,19 @@ const char *Fl_Window::xclass() const
 
 /** Sets a single default window icon.
 
-  \param[in] icon default icon for all windows subsequently created
+  If \p icon is NULL the current default icons are removed.
+
+  \param[in] icon default icon for all windows subsequently created or NULL
 
   \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
   \see Fl_Window::icon(const Fl_RGB_Image *)
   \see Fl_Window::icons(const Fl_RGB_Image *[], int)
  */
 void Fl_Window::default_icon(const Fl_RGB_Image *icon) {
-  default_icons(&icon, 1);
+  if (icon)
+    default_icons(&icon, 1);
+  else
+    default_icons(&icon, 0);
 }
 
 /** Sets the default window icons.
@@ -316,7 +321,7 @@ void Fl_Window::default_icon(const Fl_RGB_Image *icon) {
   variable or free the images immediately after this call.
 
   \param[in] icons default icons for all windows subsequently created
-  \param[in] count number of images in \p icons. set to 0 to remove
+  \param[in] count number of images in \p icons. Set to 0 to remove
                    the current default icons
 
   \see Fl_Window::default_icon(const Fl_RGB_Image *)
@@ -327,25 +332,45 @@ void Fl_Window::default_icons(const Fl_RGB_Image *icons[], int count) {
   Fl_X::set_default_icons(icons, count);
 }
 
-/** Sets a single window icon.
+/** Sets or resets a single window icon.
 
-  \param[in] icon icon for this window
+  A window icon \e can be changed while the window is shown, but this
+  \e may be platform and/or window manager dependent. To be sure that
+  the window displays the correct window icon you should always set the
+  icon before the window is shown.
+
+  If a window icon has not been set for a particular window, then the
+  default window icon (see links below) or the system default icon will
+  be used.
+
+  \param[in] icon icon for this window, NULL to reset window icon.
 
   \see Fl_Window::default_icon(const Fl_RGB_Image *)
   \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
   \see Fl_Window::icons(const Fl_RGB_Image *[], int)
  */
 void Fl_Window::icon(const Fl_RGB_Image *icon) {
-  icons(&icon, 1);
+  if (icon)
+    icons(&icon, 1);
+  else
+    icons(&icon, 0);
 }
 
 /** Sets the window icons.
 
+  You may set multiple window icons with different sizes. Dependent on
+  the platform and system settings the best (or the first) icon will be
+  chosen.
+
   The given images in \p icons are copied. You can use a local
   variable or free the images immediately after this call.
 
+  If \p count is zero, current icons are removed. If \p count is greater than
+  zero (must not be negative), then \p icons[] must contain at least \p count
+  valid image pointers (not NULL). Otherwise the behavior is undefined.
+
   \param[in] icons icons for this window
-  \param[in] count number of images in \p icons. set to 0 to remove
+  \param[in] count number of images in \p icons. Set to 0 to remove
                    the current icons
 
   \see Fl_Window::default_icon(const Fl_RGB_Image *)
