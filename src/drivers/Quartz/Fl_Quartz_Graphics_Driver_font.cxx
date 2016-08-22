@@ -39,7 +39,7 @@ static CFMutableDictionaryRef attributes = NULL;
 #endif
 
 static const int CoreText_threshold = 100500; // this represents Mac OS 10.5
-// condition when the ATSU API is available at compile time
+// condition for the ATSU API to be available at compile time
 #define HAS_ATSU (!__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
 
 // Bug: older versions calculated the value for *ap as a side effect of
@@ -158,7 +158,7 @@ if(fl_mac_os_version >= CoreText_threshold) {
 }
 else {
 #endif
-#if (!__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
+#if HAS_ATSU
   ItemCount oFontCount, oCountAgain;
   ATSUFontID *oFontIDs;
   // How many fonts?
@@ -193,7 +193,7 @@ else {
   }
   free(oFontIDs);
   return (Fl_Font)fl_free_font;
-#endif //__LP64__
+#endif // HAS_ATSU
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
 #endif
