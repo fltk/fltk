@@ -3,7 +3,7 @@
 //
 // Screen/monitor bounding box API for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -142,7 +142,7 @@ static void screen_init() {
   num_screens = count;
 }
 
-#else
+#else // X11
 
 #if HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
@@ -168,9 +168,12 @@ typedef XRRScreenSize* (*XRRSizes_type)(Display *dpy, int screen, int *nsizes);
 
 static void screen_init() {
   if (!fl_display) fl_open_display();
+
   int dpi_by_randr = 0;
   float dpih = 0.0f, dpiv = 0.0f;
+
 #if USE_XRANDR
+
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
     void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
@@ -183,17 +186,24 @@ static void screen_init() {
   if (XRRSizes_f) {
     int nscreens;
     XRRScreenSize *ssize = XRRSizes_f(fl_display, fl_screen, &nscreens);
-//    for(int i=0;i<nscreens;i++)
-//      printf("width=%d height=%d mwidth=%d mheight=%d\n",ssize[i].width,ssize[i].height,ssize[i].mwidth,ssize[i].mheight);
-    int mm = ssize[0].mwidth;
-    dpih = mm ? ssize[0].width*25.4f/mm : 0.0f;
-    mm = ssize[0].mheight;
-    dpiv = mm ? ssize[0].height*25.4f/mm : 0.0f;
-    dpi_by_randr = 1;
+
+    //for (int i=0; i<nscreens; i++)
+    //  printf("width=%d height=%d mwidth=%d mheight=%d\n",
+    //         ssize[i].width,ssize[i].height,ssize[i].mwidth,ssize[i].mheight);
+
+    if (nscreens > 0) { // Note: XRRSizes() *may* return nscreens == 0, see docs
+      int mm = ssize[0].mwidth;
+      dpih = mm ? ssize[0].width*25.4f/mm : 0.0f;
+      mm = ssize[0].mheight;
+      dpiv = mm ? ssize[0].height*25.4f/mm : 0.0f;
+      dpi_by_randr = 1;
+    }
   }
+
 #endif // USE_XRANDR
-  
+
 #if HAVE_XINERAMA
+
   if (XineramaIsActive(fl_display)) {
     XineramaScreenInfo *xsi = XineramaQueryScreens(fl_display, &num_screens);
     if (num_screens > MAX_SCREENS) num_screens = MAX_SCREENS;
@@ -204,8 +214,11 @@ static void screen_init() {
       screens[i].y_org = xsi[i].y_org;
       screens[i].width = xsi[i].width;
       screens[i].height = xsi[i].height;
-      if (dpi_by_randr) { dpi[i][0] = dpih; dpi[i][1] = dpiv; }
-      else {
+
+      if (dpi_by_randr) {
+	dpi[i][0] = dpih;
+	dpi[i][1] = dpiv;
+      } else {
         int mm = DisplayWidthMM(fl_display, fl_screen);
         dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
         mm = DisplayHeightMM(fl_display, fl_screen);
@@ -213,27 +226,34 @@ static void screen_init() {
       }
     }
     if (xsi) XFree(xsi);
-  } else 
-#endif
-  { // ! XineramaIsActive()
+  } else
+
+#endif // HAVE_XINERAMA
+
+  { // ! HAVE_XINERAMA || ! XineramaIsActive()
     num_screens = ScreenCount(fl_display);
     if (num_screens > MAX_SCREENS) num_screens = MAX_SCREENS;
-    
+
     for (int i=0; i<num_screens; i++) {
       screens[i].x_org = 0;
       screens[i].y_org = 0;
       screens[i].width = DisplayWidth(fl_display, i);
       screens[i].height = DisplayHeight(fl_display, i);
-  
-      int mm = DisplayWidthMM(fl_display, i);
-      dpi[i][0] = mm ? DisplayWidth(fl_display, i)*25.4f/mm : 0.0f;
-      mm = DisplayHeightMM(fl_display, i);
-      dpi[i][1] = mm ? DisplayHeight(fl_display, i)*25.4f/mm : 0.0f;
+
+      if (dpi_by_randr) {
+	dpi[i][0] = dpih;
+	dpi[i][1] = dpiv;
+      } else {
+	int mm = DisplayWidthMM(fl_display, i);
+	dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+	mm = DisplayHeightMM(fl_display, fl_screen);
+	dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
+      }
     }
   }
 }
 
-#endif // WIN32
+#endif // ( WIN32 || __APPLE__ || ) X11
 
 #ifndef FL_DOXYGEN
 void Fl::call_screen_init() {
