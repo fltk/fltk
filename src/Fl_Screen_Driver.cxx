@@ -238,10 +238,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, uchar *p,
     // the starting window or one inside a GL window
     if (full_img) g->as_window()->make_current();
     int alloc_img = (full_img != NULL || p == NULL); // false means use p, don't alloc new memory for image
-    // on Darwin + X11, read_win_rectangle() sometimes returns NULL when there are subwindows,
-    // thus the call is repeated
-    do full_img = Fl::screen_driver()->read_win_rectangle( (alloc_img ? NULL : p), x, y, w, h, alpha);
-    while (!full_img);
+    full_img = Fl::screen_driver()->read_win_rectangle( (alloc_img ? NULL : p), x, y, w, h, alpha);
   }
   int n = g->children();
   for (int i = 0; i < n; i++) {
