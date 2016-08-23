@@ -129,7 +129,7 @@ public:
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"
 #endif
   virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
-  virtual uchar *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) {return NULL;}
+  virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) {return NULL;}
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
   static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int y, int w, int h, int alpha,
                                                  Fl_RGB_Image *full_img);

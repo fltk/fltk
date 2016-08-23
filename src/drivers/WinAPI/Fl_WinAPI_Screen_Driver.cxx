@@ -23,6 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/Fl_RGB_Image.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
 
@@ -553,7 +554,7 @@ void Fl_Screen_Driver::font_name(int num, const char *name) {
 }
 
 
-uchar *				// O - Pixel buffer or NULL if failed
+Fl_RGB_Image *				// O - Pixel buffer or NULL if failed
 Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate
                                             int   X,		// I - Left position
                                             int   Y,		// I - Top position
@@ -566,6 +567,7 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NU
   // Allocate the image data array as needed...
   d = alpha ? 4 : 3;
   
+  const uchar *oldp = p;
   if (!p) p = new uchar[w * h * d];
   
   // Initialize the default colors/alpha in the whole image...
@@ -593,7 +595,7 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NU
     Y = 0;
   }
   
-  if (h < 1 || w < 1) return p;		// nothing to copy
+  if (h < 1 || w < 1) return 0/*p*/;		// nothing to copy
   
   int line_size = ((3*w+3)/4) * 4;	// each line is aligned on a DWORD (4 bytes)
   uchar *dib = new uchar[line_size*h];	// create temporary buffer to read DIB
@@ -649,7 +651,9 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NU
   DeleteObject(hbm);
   delete[] dib;		// delete DIB temporary buffer
   
-  return p;
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
+  if (!oldp) rgb->alloc_array = 1;
+  return rgb;
 }
 
 //

@@ -154,12 +154,21 @@ void Fl_Screen_Driver::compose_reset() {
 }
 
 uchar *Fl_Screen_Driver::read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
+  uchar *image_data;
+  Fl_RGB_Image *img;
   if (fl_find(fl_window) == 0) { // read from off_screen buffer
-    return read_win_rectangle(p, X, Y, w, h, alpha);
+    img = read_win_rectangle(p, X, Y, w, h, alpha);
+    img->alloc_array = 1;
+  } else {
+    img = traverse_to_gl_subwindows(Fl_Window::current(), p, X, Y, w, h, alpha, NULL);
   }
-  Fl_RGB_Image *img = traverse_to_gl_subwindows(Fl_Window::current(), p, X, Y, w, h, alpha, NULL);
-  uchar *image_data = (uchar*)img->array;
+  if (img->w() > w) {
+    Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w, h);
+    delete img;
+    img = img2;
+  }
   img->alloc_array = 0;
+  image_data = (uchar*)img->array;
   delete img;
   return image_data;
 }
@@ -228,13 +237,11 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, uchar *p,
   else if ( g->as_window() && (!full_img || (g->window() && g->window()->as_gl_window())) ) {
     // the starting window or one inside a GL window
     if (full_img) g->as_window()->make_current();
-    uchar *image_data;
     int alloc_img = (full_img != NULL || p == NULL); // false means use p, don't alloc new memory for image
     // on Darwin + X11, read_win_rectangle() sometimes returns NULL when there are subwindows,
     // thus the call is repeated
-    do image_data = Fl::screen_driver()->read_win_rectangle( (alloc_img ? NULL : p), x, y, w, h, alpha); while (!image_data);
-    full_img = new Fl_RGB_Image(image_data, w, h, alpha?4:3);
-    if (alloc_img) full_img->alloc_array = 1;
+    do full_img = Fl::screen_driver()->read_win_rectangle( (alloc_img ? NULL : p), x, y, w, h, alpha);
+    while (!full_img);
   }
   int n = g->children();
   for (int i = 0; i < n; i++) {

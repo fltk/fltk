@@ -402,26 +402,23 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   if (!do_it) wsides = htop = 0;
   int hbottom = wsides;
   fl_window = parent;
-  uchar *rgb;
   if (htop) {
-    rgb = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, - (w() + 2 * wsides), htop, 0);
-    r_top = new Fl_RGB_Image(rgb, w() + 2 * wsides, htop, 3);
-    r_top->alloc_array = 1;
+    r_top = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, - (w() + 2 * wsides), htop, 0);
     top = Fl_Shared_Image::get(r_top);
   }
   if (wsides) {
-    rgb = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop, -wsides, h(), 0);
-    r_left = new Fl_RGB_Image(rgb, wsides, h(), 3);
-    r_left->alloc_array = 1;
-    left = Fl_Shared_Image::get(r_left);
-    rgb = Fl::screen_driver()->read_win_rectangle(NULL, w() + wsides, htop, -wsides, h(), 0);
-    r_right = new Fl_RGB_Image(rgb, wsides, h(), 3);
-    r_right->alloc_array = 1;
-    right = Fl_Shared_Image::get(r_right);
-    rgb = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom, 0);
-    r_bottom = new Fl_RGB_Image(rgb, w() + 2*wsides, hbottom, 3);
-    r_bottom->alloc_array = 1;
-    bottom = Fl_Shared_Image::get(r_bottom);
+    r_left = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop, -wsides, h(), 0);
+    if (r_left) {
+      left =  Fl_Shared_Image::get(r_left);
+    }
+    r_right = Fl::screen_driver()->read_win_rectangle(NULL, w() + wsides, htop, -wsides, h(), 0);
+    if (r_right) {
+      right = Fl_Shared_Image::get(r_right);
+    }
+    r_bottom = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom, 0);
+    if (r_bottom) {
+      bottom = Fl_Shared_Image::get(r_bottom);
+    }
   }
   fl_window = from;
   previous->Fl_Surface_Device::set_current();

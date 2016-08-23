@@ -750,7 +750,7 @@ extern "C" {
   }
 }
 
-uchar *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha)
+Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha)
 {
   XImage	*image;		// Captured image
   int		i, maxindex;	// Looping vars
@@ -858,6 +858,7 @@ uchar *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, int w, i
   d = alpha ? 4 : 3;
   
   // Allocate the image data array as needed...
+  const uchar *oldp = p;
   if (!p) p = new uchar[w * h * d];
   
   // Initialize the default colors/alpha in the whole image...
@@ -1157,7 +1158,9 @@ uchar *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, int w, i
   // Destroy the X image we've read and return the RGB(A) image...
   XDestroyImage(image);
   
-  return p;
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, d);
+  if (!oldp) rgb->alloc_array = 1;
+  return rgb;
 }
 
 //
