@@ -554,7 +554,7 @@ void Fl_Screen_Driver::font_name(int num, const char *name) {
 }
 
 
-Fl_RGB_Image *				// O - Pixel buffer or NULL if failed
+Fl_RGB_Image *				// O - image or NULL if failed
 Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate
                                             int   X,		// I - Left position
                                             int   Y,		// I - Top position
