@@ -648,10 +648,6 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
   return new Fl_X11_Gl_Window_Driver(w);
 }
 
-void Fl_X11_Gl_Window_Driver::make_current_before() {
-  fl_window = fl_xid(pWindow);
-}
-
 void Fl_X11_Gl_Window_Driver::before_show(int& need_redraw) {
   Fl_X::make_xid(pWindow, g()->vis, g()->colormap);
   if (overlay() && overlay() != pWindow) ((Fl_Gl_Window*)overlay())->show();

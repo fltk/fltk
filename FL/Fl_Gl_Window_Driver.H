@@ -158,7 +158,6 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
   virtual void before_show(int& need_redraw);
   virtual int mode_(int m, const int *a);
-  virtual void make_current_before();
   virtual void swap_buffers();
   virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();
