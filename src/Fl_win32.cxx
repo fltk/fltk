@@ -2402,7 +2402,6 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   fl_graphics_driver->gc(GetDC(NULL));
   int ww = w() + 2 * wsides;
   // capture the 4 window sides from screen
-  uchar *rgb;
   if (htop) {
     r_top = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.top, ww, htop, 0);
     top = Fl_Shared_Image::get(r_top);
