@@ -3321,6 +3321,7 @@ Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
   CFRelease(pdfdata);
   [clip setData:[image TIFFRepresentation] forType:TIFF_pasteboard_type];
   [image release];
+  delete driver();
 }
 
 ////////////////////////////////////////////////////////////////

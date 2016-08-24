@@ -73,6 +73,7 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   Fl_X11_Screen_Driver::copy_image(data, width, height, 1);
   delete[] data;
   fl_delete_offscreen(xid);
+  delete driver();
 }
 
 

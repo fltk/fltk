@@ -81,6 +81,7 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
   }
   DeleteDC(gc);
   Fl_Surface_Device::surface()->driver()->gc(oldgc);
+  delete driver();
 }
 
 

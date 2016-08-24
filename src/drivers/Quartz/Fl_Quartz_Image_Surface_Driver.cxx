@@ -72,6 +72,7 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
     free(data);
     CGContextRelease((CGContextRef)offscreen);
   }
+  delete driver();
 }
 
 void Fl_Quartz_Image_Surface_Driver::set_current() {

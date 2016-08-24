@@ -56,6 +56,7 @@ Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int hig
 
 Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
   if (offscreen) XFreePixmap(fl_display, offscreen);
+  delete driver();
 }
 
 void Fl_Xlib_Image_Surface_Driver::set_current() {
