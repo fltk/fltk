@@ -62,7 +62,7 @@ class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     HICON small_icon;
   };
 private:
-  RECT border_width_title_bar_height(int &bx, int &by, int &bt);
+  RECT border_width_title_bar_height(int &bx, int &by, int &bt, float *pscaling = NULL);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
 public:

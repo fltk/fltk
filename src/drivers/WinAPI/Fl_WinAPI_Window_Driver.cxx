@@ -60,7 +60,13 @@ Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 
 // --- private
 
-RECT Fl_WinAPI_Window_Driver::border_width_title_bar_height(int &bx, int &by, int &bt)
+RECT // frame of the decorated window in screen coordinates
+  Fl_WinAPI_Window_Driver::border_width_title_bar_height(
+                                                         int &bx, // left and right border width
+                                                         int &by, // bottom border height (=bx)
+                                                         int &bt, // height of window title bar
+                                                         float *pscaling // display scaling factor
+                                                         )
 {
   Fl_Window *win = pWindow;
   RECT r = {0,0,0,0};
@@ -71,20 +77,42 @@ RECT Fl_WinAPI_Window_Driver::border_width_title_bar_height(int &bx, int &by, in
     static DwmGetWindowAttribute_type DwmGetWindowAttribute = dwmapi_dll ?
     (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute") : NULL;
     int need_r = 1;
+    float scaling = 1;
     if (DwmGetWindowAttribute) {
       const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
       if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
         need_r = 0;
+        // Compute the global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
+        // This factor can be set in Windows 10 by
+        // "Change the size of text, apps and other items" in display settings.
+        HDC hdc = GetDC(NULL);
+        int hs = GetDeviceCaps(hdc, HORZSIZE);
+        int hr = GetDeviceCaps(hdc, HORZRES);
+        int px = GetDeviceCaps(hdc, LOGPIXELSX);
+        //int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES);
+        //int vs = GetDeviceCaps(hdc, VERTSIZE);
+        //int vr = GetDeviceCaps(hdc, VERTRES);
+        //int py = GetDeviceCaps(hdc, LOGPIXELSY);
+        //int dvr = GetDeviceCaps(hdc, DESKTOPVERTRES);
+        ReleaseDC(NULL, hdc);
+        scaling = (hs * px) / (hr * 25.4); scaling = int(scaling * 100 + 0.5)/100.;
       }
     }
     if (need_r) {
       GetWindowRect(fl_xid(win), &r);
     }
-    bx = (r.right - r.left - win->w())/2;
+    if (pscaling) *pscaling = scaling;
+    
+    bx = (r.right - r.left - int(win->w() * scaling))/2;
+    if (bx < 1) bx = 1;
     by = bx;
-    bt = r.bottom - r.top - win->h() - 2*by;
+    bt = r.bottom - r.top - int(win->h() * scaling) - 2 * by;
+    
+    //fprintf(LOG,
+    //      "HORZSIZE=%d %d, HORZRES=%d %d, LOGPIXELSX=%d %d, DESKTOPHORZRES=%d %d scaling=%f bx=%d bt=%d\n",
+    //        hs,vs,hr,vr,px,py,dhr,dvr,scaling, bx,bt);fflush(LOG);
   }
-  return RECT(r);
+  return r;
 }
 
 
@@ -100,8 +128,9 @@ int Fl_WinAPI_Window_Driver::decorated_w()
 int Fl_WinAPI_Window_Driver::decorated_h()
 {
   int bt, bx, by;
-  border_width_title_bar_height(bx, by, bt);
-  return h() + bt + 2 * by;
+  float scaling;
+  border_width_title_bar_height(bx, by, bt, &scaling);
+  return h() + bt/scaling + 2 * by;
 }
 
 

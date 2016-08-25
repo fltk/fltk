@@ -2391,7 +2391,8 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   top = left = bottom = right = NULL;
   if (!shown() || parent() || !border() || !visible()) return;
   int wsides, hbottom, bt;
-  RECT r = border_width_title_bar_height(wsides, hbottom, bt);
+  float scaling;
+  RECT r = border_width_title_bar_height(wsides, hbottom, bt, &scaling);
   int htop = bt + hbottom;
   Fl_Surface_Device *previous = Fl_Surface_Device::surface();
   Window save_win = fl_window;
@@ -2403,8 +2404,9 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   int ww = w() + 2 * wsides;
   // capture the 4 window sides from screen
   if (htop) {
-    r_top = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.top, ww, htop, 0);
+    r_top = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.top, r.right - r.left + 1, htop, 0);
     top = Fl_Shared_Image::get(r_top);
+    if (scaling >= 1.1) top->scale(ww, htop/scaling, 0);
   }
   if (wsides) {
     r_left = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.top + htop, wsides, h(), 0);
