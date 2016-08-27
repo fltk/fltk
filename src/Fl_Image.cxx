@@ -249,6 +249,10 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
  \param[in] LD     Line data size (default=0).<br>
     Line data is extra data that is included after each line
     of color image data and is normally not present.
+ 
+  This constructor sets Fl_RGB_Image::alloc_array to 0.
+  To have the image object control the deallocation of the data array,
+  set alloc_array to non-zero after construction.
  \see Fl_Image::data(), Fl_Image::w(), Fl_Image::h(), Fl_Image::d(), Fl_Image::ld()
  */
 Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
@@ -268,6 +272,7 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
  
  The RGBA image is built fully opaque except for the transparent area
  of the pixmap that is assigned the \p bg color with full transparency 
+ This constructor sets Fl_RGB_Image::alloc_array to 1.
  */
 Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
   Fl_Image(pxm->w(), pxm->h(), 4),
