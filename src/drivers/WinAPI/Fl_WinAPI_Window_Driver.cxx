@@ -86,31 +86,39 @@ RECT // frame of the decorated window in screen coordinates
         // This factor can be set in Windows 10 by
         // "Change the size of text, apps and other items" in display settings.
         HDC hdc = GetDC(NULL);
-        int hs = GetDeviceCaps(hdc, HORZSIZE);
-        int hr = GetDeviceCaps(hdc, HORZRES);
-        int px = GetDeviceCaps(hdc, LOGPIXELSX);
-        //int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES);
+        //int hs = GetDeviceCaps(hdc, HORZSIZE);
+        int hr = GetDeviceCaps(hdc, HORZRES); // pixels visible to the app
+        //int px = GetDeviceCaps(hdc, LOGPIXELSX);
+#ifndef DESKTOPHORZRES
+#define DESKTOPHORZRES 118
+        /* As of 27 august 2016, the DESKTOPHORZRES flag for GetDeviceCaps() 
+         has disappeared from Microsoft online doc, but is quoted in numerous coding examples
+         e.g., https://social.msdn.microsoft.com/Forums/en-US/6acc3b21-23a4-4a00-90b4-968a43e1ccc8/capture-screen-with-high-dpi?forum=vbgeneral
+         It is necessary for the computation of the scaling factor at runtime as done here.
+         */
+#endif
+        int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
         //int vs = GetDeviceCaps(hdc, VERTSIZE);
         //int vr = GetDeviceCaps(hdc, VERTRES);
         //int py = GetDeviceCaps(hdc, LOGPIXELSY);
         //int dvr = GetDeviceCaps(hdc, DESKTOPVERTRES);
         ReleaseDC(NULL, hdc);
-        scaling = (hs * px) / (hr * 25.4); scaling = int(scaling * 100 + 0.5)/100.;
+        scaling = dhr/float(hr);
+        scaling = int(scaling * 100 + 0.5)/100.; // round to 2 digits after decimal point
+        //fprintf(LOG,
+        //        "HORZSIZE=%d %d, HORZRES=%d %d, LOGPIXELSX=%d %d, DESKTOPHORZRES=%d %d scaling=%f bx=%d bt=%d ",
+        //        hs,vs,hr,vr,px,py,dhr,dvr,scaling);fflush(LOG);
       }
     }
     if (need_r) {
       GetWindowRect(fl_xid(win), &r);
     }
     if (pscaling) *pscaling = scaling;
-    
+
     bx = (r.right - r.left - int(win->w() * scaling))/2;
     if (bx < 1) bx = 1;
     by = bx;
     bt = r.bottom - r.top - int(win->h() * scaling) - 2 * by;
-    
-    //fprintf(LOG,
-    //      "HORZSIZE=%d %d, HORZRES=%d %d, LOGPIXELSX=%d %d, DESKTOPHORZRES=%d %d scaling=%f bx=%d bt=%d\n",
-    //        hs,vs,hr,vr,px,py,dhr,dvr,scaling, bx,bt);fflush(LOG);
   }
   return r;
 }
