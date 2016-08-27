@@ -2697,10 +2697,11 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
-static RECT border_width_title_bar_height(Fl_Window *win, int &bx, int &by, int &bt)
+static RECT border_width_title_bar_height(Fl_Window *win, int &bx, int &by, int &bt, float *pscaling=0)
 {
   RECT r = {0,0,0,0};
   bx = by = bt = 0;
+  float scaling = 1;
   if (win->shown() && !win->parent() && win->border() && win->visible()) {
     static HMODULE dwmapi_dll = LoadLibrary("dwmapi.dll");
     typedef HRESULT (WINAPI* DwmGetWindowAttribute_type)(HWND hwnd, DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
@@ -2711,15 +2712,29 @@ static RECT border_width_title_bar_height(Fl_Window *win, int &bx, int &by, int 
       const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
       if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
         need_r = 0;
+        // Compute the global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
+        // This factor can be set in Windows 10 by
+        // "Change the size of text, apps and other items" in display settings.
+        HDC hdc = GetDC(NULL);
+        int hr = GetDeviceCaps(hdc, HORZRES); // pixels visible to the app
+#ifndef DESKTOPHORZRES
+#define DESKTOPHORZRES 118
+#endif
+        int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
+        ReleaseDC(NULL, hdc);
+        scaling = dhr/float(hr); // display scaling factor
+        scaling = int(scaling * 100 + 0.5)/100.; // round to 2 digits after decimal point
       }
     }
     if (need_r) {
       GetWindowRect(fl_xid(win), &r);
     }
-    bx = (r.right - r.left - win->w())/2;
+    bx = (r.right - r.left - int(win->w() * scaling))/2;
+    if (bx < 1) bx = 1;
     by = bx;
-    bt = r.bottom - r.top - win->h() - 2*by;
+    bt = r.bottom - r.top - int(win->h() * scaling) - 2 * by;
   }
+  if (pscaling) *pscaling = scaling;
   return r;
 }
 
@@ -2733,8 +2748,9 @@ int Fl_Window::decorated_w()
 int Fl_Window::decorated_h()
 {
   int bt, bx, by;
-  border_width_title_bar_height(this, bx, by, bt);
-  return h() + bt + 2 * by;
+  float scaling;
+  border_width_title_bar_height(this, bx, by, bt, &scaling);
+  return h() + bt/scaling + 2 * by;
 }
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
@@ -2745,7 +2761,8 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset, Fl_Surface_Device *toset)
 {
   int bt, bx, by; // border width and title bar height of window
-  RECT r = border_width_title_bar_height(win, bx, by, bt);
+  float scaling;
+  RECT r = border_width_title_bar_height(win, bx, by, bt, &scaling);
   if (bt) {
     Fl_Display_Device::display_device()->set_current(); // make window current
     win->show();
@@ -2758,7 +2775,7 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
     // capture the 4 window sides from screen
     Window save_win = fl_window;
     fl_window = NULL; // force use of read_win_rectangle() by fl_read_image()
-    uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
+    uchar *top_image = fl_read_image(NULL, r.left, r.top, r.right - r.left + 1, bt + by);
     uchar *left_image = bx ? fl_read_image(NULL, r.left, r.top, bx, wh) : NULL;
     uchar *right_image = bx ? fl_read_image(NULL, r.right - bx, r.top, bx, wh) : NULL;
     uchar *bottom_image = by ? fl_read_image(NULL, r.left, r.bottom-by, ww, by) : NULL;
@@ -2766,13 +2783,26 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
     ReleaseDC(NULL, fl_gc);  fl_gc = save_gc;
     toset->set_current();
     // draw the 4 window sides
-    fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3); delete[] top_image;
+    //fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3);
+    Fl_RGB_Image *top_r = new Fl_RGB_Image(top_image, r.right - r.left + 1, bt + by, 3);
+    top_r->alloc_array = 1;
+    if (scaling > 1) {
+      Fl_RGB_Scaling current = Fl_Image::RGB_scaling();
+      Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR);
+      Fl_Image *tmp_img = top_r->copy(ww, (bt + by)/scaling);
+      Fl_Image::RGB_scaling(current);
+      delete top_r;
+      top_r = tmp_img;
+    }
+    top_r->draw(x_offset, y_offset);
+    delete top_r;
+    
     if (left_image) { fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3); delete left_image; }
     if (right_image) { fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3); delete right_image; }
     if (bottom_image) { fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3); delete bottom_image; }
   }
   // draw the window inner part
-  this->print_widget(win, x_offset + bx, y_offset + bt + by);
+  this->print_widget(win, x_offset + bx, y_offset + (bt + by)/scaling);
 }
 
 #ifdef USE_PRINT_BUTTON
