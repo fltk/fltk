@@ -201,8 +201,12 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   static size_t max_size_;
 public:
 
+  /** Points to the start of the object's data array
+   */
   const uchar *array;
-  int alloc_array; // Non-zero if array was allocated
+  /** If non-zero, the object's data array is delete[]'d when deleting the object.
+   */
+  int alloc_array;
 
 private:
   // These two variables are used to cache the image and mask for the main display graphics driver
