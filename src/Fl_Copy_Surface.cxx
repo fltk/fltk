@@ -87,11 +87,14 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
   int hdots = GetDeviceCaps(hdc, HORZRES);
   int vmm = GetDeviceCaps(hdc, VERTSIZE);
   int vdots = GetDeviceCaps(hdc, VERTRES);
+  int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
   ReleaseDC(NULL, hdc);
   float factorw = (100.f * hmm) / hdots;
   float factorh = (100.f * vmm) / vdots;
+  // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
+  float scaling = dhr/float(hdots);
   
-  RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)(w * factorw); rect.bottom = (LONG)(h * factorh);
+  RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)(w * factorw / scaling); rect.bottom = (LONG)(h * factorh / scaling);
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
   if (gc != NULL) {
     SetTextAlign(gc, TA_BASELINE|TA_LEFT);
