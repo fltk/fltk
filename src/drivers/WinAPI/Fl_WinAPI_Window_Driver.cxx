@@ -27,6 +27,7 @@
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/x.H>
 #include "Fl_WinAPI_Window_Driver.H"
+#include "Fl_WinAPI_Screen_Driver.H"
 #include <windows.h>
 
 #if USE_COLORMAP
@@ -82,32 +83,7 @@ RECT // frame of the decorated window in screen coordinates
       const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
       if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
         need_r = 0;
-        // Compute the global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
-        // This factor can be set in Windows 10 by
-        // "Change the size of text, apps and other items" in display settings.
-        HDC hdc = GetDC(NULL);
-        //int hs = GetDeviceCaps(hdc, HORZSIZE);
-        int hr = GetDeviceCaps(hdc, HORZRES); // pixels visible to the app
-        //int px = GetDeviceCaps(hdc, LOGPIXELSX);
-#ifndef DESKTOPHORZRES
-#define DESKTOPHORZRES 118
-        /* As of 27 august 2016, the DESKTOPHORZRES flag for GetDeviceCaps() 
-         has disappeared from Microsoft online doc, but is quoted in numerous coding examples
-         e.g., https://social.msdn.microsoft.com/Forums/en-US/6acc3b21-23a4-4a00-90b4-968a43e1ccc8/capture-screen-with-high-dpi?forum=vbgeneral
-         It is necessary for the computation of the scaling factor at runtime as done here.
-         */
-#endif
-        int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
-        //int vs = GetDeviceCaps(hdc, VERTSIZE);
-        //int vr = GetDeviceCaps(hdc, VERTRES);
-        //int py = GetDeviceCaps(hdc, LOGPIXELSY);
-        //int dvr = GetDeviceCaps(hdc, DESKTOPVERTRES);
-        ReleaseDC(NULL, hdc);
-        scaling = dhr/float(hr);
-        scaling = int(scaling * 100 + 0.5)/100.; // round to 2 digits after decimal point
-        //fprintf(LOG,
-        //        "HORZSIZE=%d %d, HORZRES=%d %d, LOGPIXELSX=%d %d, DESKTOPHORZRES=%d %d scaling=%f bx=%d bt=%d ",
-        //        hs,vs,hr,vr,px,py,dhr,dvr,scaling);fflush(LOG);
+        scaling = Fl_WinAPI_Screen_Driver::desktop_scaling_factor();
       }
     }
     if (need_r) {

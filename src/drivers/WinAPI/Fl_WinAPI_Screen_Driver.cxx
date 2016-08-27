@@ -656,6 +656,30 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NU
   return rgb;
 }
 
+/** Returns the current desktop scaling factor (1.75 for example)
+ */
+float Fl_WinAPI_Screen_Driver::desktop_scaling_factor() {
+  // Compute the global desktop scaling factor: 1, 1.25, 1.5, 1.75, etc...
+  // This factor can be set in Windows 10 by
+  // "Change the size of text, apps and other items" in display settings.
+  // We don't cache this value because it can change while the app is running.
+  HDC hdc = GetDC(NULL);
+  int hr = GetDeviceCaps(hdc, HORZRES); // pixels visible to the app
+#ifndef DESKTOPHORZRES
+#define DESKTOPHORZRES 118
+  /* As of 27 august 2016, the DESKTOPHORZRES flag for GetDeviceCaps()
+   has disappeared from Microsoft online doc, but is quoted in numerous coding examples
+   e.g., https://social.msdn.microsoft.com/Forums/en-US/6acc3b21-23a4-4a00-90b4-968a43e1ccc8/capture-screen-with-high-dpi?forum=vbgeneral
+   It is necessary for the computation of the scaling factor at runtime as done here.
+   */
+#endif
+  int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
+  ReleaseDC(NULL, hdc);
+  float scaling = dhr/float(hr);
+  scaling = int(scaling * 100 + 0.5)/100.; // round to 2 digits after decimal point
+  return scaling;
+}
+
 //
 // End of "$Id$".
 //

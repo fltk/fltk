@@ -52,6 +52,7 @@ public:
   virtual int h();
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
   virtual void screen_dpi(float &h, float &v, int n=0);
+  static float desktop_scaling_factor();
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
   // --- audible output
   virtual void beep(int type);

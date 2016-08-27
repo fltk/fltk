@@ -22,6 +22,7 @@
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/x.H>
 #include "Fl_GDI_Graphics_Driver.H"
+#include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include <windows.h>
 
 class Fl_GDI_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
@@ -58,8 +59,10 @@ Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_S
   ReleaseDC(NULL, hdc);
   float factorw = (100.f * hmm) / hdots;
   float factorh = (100.f * vmm) / vdots;
+  // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
+  float scaling = Fl_WinAPI_Screen_Driver::desktop_scaling_factor();
   
-  RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)(w * factorw); rect.bottom = (LONG)(h * factorh);
+  RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)((w/scaling) * factorw); rect.bottom = (LONG)((h/scaling) * factorh);
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
   if (gc != NULL) {
     SetTextAlign(gc, TA_BASELINE|TA_LEFT);
