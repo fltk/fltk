@@ -769,6 +769,8 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	  float factorw =  (100.f * hmm) / hdots;
 	  float factorh =  (100.f * vmm) / vdots + 0.5f;
 	  width = (int)(width/factorw); height = (int)(height/factorh); // convert to screen pixel unit
+          float scaling = Fl_WinAPI_Screen_Driver::desktop_scaling_factor();
+          width *= scaling; height *= scaling;
 	  RECT rect = {0, 0, width, height};
 	  Fl_Offscreen off = fl_create_offscreen(width, height);
 	  fl_begin_offscreen(off);
