@@ -784,15 +784,12 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 	  HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
 	  int hmm = GetDeviceCaps(hdc, HORZSIZE);
 	  int hdots = GetDeviceCaps(hdc, HORZRES);
-	  int vmm = GetDeviceCaps(hdc, VERTSIZE);
-	  int vdots = GetDeviceCaps(hdc, VERTRES);
           int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
 	  ReleaseDC(NULL, hdc);
           // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
           float scaling = dhr/float(hdots);
-	  float factorw = (100.f * hmm) / hdots;
-	  float factorh = (100.f * vmm) / vdots + 0.5f;
-	  width = (int)(width*scaling/factorw); height = (int)(height*scaling/factorh); // convert to screen pixel unit
+	  float factor = (100.f * hmm) / hdots;
+	  width = (int)(width*scaling/factor); height = (int)(height*scaling/factor); // convert to screen pixel unit
 	  RECT rect = {0, 0, width, height};
 	  Fl_Offscreen off = fl_create_offscreen(width, height);
 	  fl_begin_offscreen(off);
