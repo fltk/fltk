@@ -763,14 +763,11 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	  HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
 	  int hmm = GetDeviceCaps(hdc, HORZSIZE);
 	  int hdots = GetDeviceCaps(hdc, HORZRES);
-	  int vmm = GetDeviceCaps(hdc, VERTSIZE);
-	  int vdots = GetDeviceCaps(hdc, VERTRES);
 	  ReleaseDC(NULL, hdc);
-	  float factorw =  (100.f * hmm) / hdots;
-	  float factorh =  (100.f * vmm) / vdots + 0.5f;
-	  width = (int)(width/factorw); height = (int)(height/factorh); // convert to screen pixel unit
+	  float factor =  (100.f * hmm) / hdots;
           float scaling = Fl_WinAPI_Screen_Driver::desktop_scaling_factor();
-          width *= scaling; height *= scaling;
+	  width = int(width * scaling / factor);  // convert to screen pixel unit
+          height = int(height * scaling / factor);
 	  RECT rect = {0, 0, width, height};
 	  Fl_Offscreen off = fl_create_offscreen(width, height);
 	  fl_begin_offscreen(off);
