@@ -2792,7 +2792,7 @@ void Fl_Paged_Device::draw_decorated_window(Fl_Window *win, int x_offset, int y_
     if (scaling > 1) {
       Fl_RGB_Scaling current = Fl_Image::RGB_scaling();
       Fl_Image::RGB_scaling(FL_RGB_SCALING_BILINEAR);
-      Fl_Image *tmp_img = top_r->copy(ww, (bt + by)/scaling);
+      Fl_RGB_Image *tmp_img = (Fl_RGB_Image*)top_r->copy(ww, (bt + by)/scaling);
       Fl_Image::RGB_scaling(current);
       delete top_r;
       top_r = tmp_img;
