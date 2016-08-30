@@ -197,6 +197,9 @@ Fl_Double_Window* make_code_panel() {
     code_panel->set_modal();
     code_panel->end();
   } // Fl_Double_Window* code_panel
+  // Enable line numbers
+  code_input->linenumber_width(60);
+  code_input->linenumber_size(code_input->Fl_Text_Display::textsize());
   return code_panel;
 }
 

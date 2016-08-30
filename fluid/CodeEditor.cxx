@@ -405,8 +405,6 @@ CodeEditor::CodeEditor(int X, int Y, int W, int H, const char *L) :
   mBuffer->add_modify_callback(style_update, this);
   add_key_binding(FL_Enter, FL_TEXT_EDITOR_ANY_STATE,
                   (Fl_Text_Editor::Key_Func)auto_indent);
-  linenumber_width(60);
-  linenumber_size(Fl_Text_Display::textsize());
 }
 
 // Destroy a CodeEditor widget...
