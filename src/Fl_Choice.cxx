@@ -26,19 +26,32 @@
 // button: it draws the text of the current pick and a down-arrow.
 
 void Fl_Choice::draw() {
-  int dx = Fl::box_dx(FL_DOWN_BOX);
-  int dy = Fl::box_dy(FL_DOWN_BOX);
+  Fl_Boxtype btype = Fl::scheme() ? FL_UP_BOX		// non-default uses up box
+                                  : FL_DOWN_BOX;	// default scheme uses down box
+  int dx = Fl::box_dx(btype);
+  int dy = Fl::box_dy(btype);
+
+  // Arrow area
   int H = h() - 2 * dy;
-  int W = (H > 20) ? 20 : H;
+  int W = Fl::is_scheme("gtk+")    ? 20 :			// gtk+  -- fixed size
+          Fl::is_scheme("gleam")   ? 20 :			// gleam -- fixed size
+          Fl::is_scheme("plastic") ? ((H > 20) ? 20 : H)	// plastic: shrink if H<20
+                                   : ((H > 20) ? 20 : H);	// default: shrink if H<20
   int X = x() + w() - W - dx;
   int Y = y() + dy;
+
+  // Arrow object
   int w1 = (W - 4) / 3; if (w1 < 1) w1 = 1;
   int x1 = X + (W - 2 * w1 - 1) / 2;
   int y1 = Y + (H - w1 - 1) / 2;
 
   if (Fl::scheme()) {
-    draw_box(FL_UP_BOX, color());
+    // NON-DEFAULT SCHEME
 
+    // Draw widget box
+    draw_box(btype, color());
+
+    // Draw arrow area
     fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
     if (Fl::is_scheme("plastic")) {
       // Show larger up/down arrows...
@@ -58,26 +71,30 @@ void Fl_Choice::draw() {
       fl_yxline(x1 - 6, y1 - 8, y1 + 8);
     }
   } else {
-    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor()) {
-      draw_box(FL_DOWN_BOX, FL_BACKGROUND2_COLOR);
-    } else {
-      draw_box(FL_DOWN_BOX, fl_lighter(color()));
-    }
-    draw_box(FL_UP_BOX,X,Y,W,H,color());
+    // DEFAULT SCHEME
 
+    // Draw widget box
+    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor()) {
+      draw_box(btype, FL_BACKGROUND2_COLOR);
+    } else {
+      draw_box(btype, fl_lighter(color()));
+    }
+
+    // Draw arrow area
+    draw_box(FL_UP_BOX,X,Y,W,H,color());
     fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
     fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
   }
 
   W += 2 * dx;
 
+  // Draw menu item's label
   if (mvalue()) {
     Fl_Menu_Item m = *mvalue();
     if (active_r()) m.activate(); else m.deactivate();
 
-    // ERCO
+    // Clip
     int xx = x() + dx, yy = y() + dy + 1, ww = w() - W, hh = H - 2;
-
     fl_push_clip(xx, yy, ww, hh);
 
     if ( Fl::scheme()) {
@@ -104,6 +121,7 @@ void Fl_Choice::draw() {
     fl_pop_clip();
   }
 
+  // Widget's label
   draw_label();
 }
 
