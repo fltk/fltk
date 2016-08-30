@@ -164,6 +164,9 @@ code_panel->hide(); // otherwise hide..} open
       }
     }
   }
+  code {// Enable line numbers
+code_input->linenumber_width(60);
+code_input->linenumber_size(code_input->Fl_Text_Display::textsize());} {}
 }
 
 Function {make_codeblock_panel()} {} {
