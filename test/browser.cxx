@@ -149,16 +149,13 @@ int main(int argc, char **argv) {
       done = browser->load(fname);
     }
 #elif defined(__APPLE__)
-    if ( i == argc ) 
-    {
-      char buf[2048];
-      strcpy(buf, argv[0]);
-      char *slash = strrchr(buf, '/');
-      if (slash) {
-	strcpy(slash, "/../../../browser.cxx");
-      }
-      done = browser->load(buf);
+    char buf[2048];
+    strcpy(buf, argv[0]);
+    char *slash = strrchr(buf, '/');
+    if (slash) {
+      strcpy(slash, "/../../../browser.cxx");
     }
+    done = browser->load(buf);
 #endif
     if ( !done )
     {
