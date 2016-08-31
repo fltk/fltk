@@ -306,13 +306,11 @@ void dobut(Fl_Widget *, long arg)
     CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
     CFRelease(cc_app_path);
     if (*app_path) {
-      char *n = strrchr(app_path, '/');
-      if (n) {
-#if defined USING_XCODE
-        *n = 0;
-#endif
-        chdir(app_path);
+      if (memcmp(app_path + strlen(app_path) - 4, ".app", 4) == 0) {
+        char *n = strrchr(app_path, '/');
+        if (n) *n = 0;
       }
+      chdir(app_path);
     }
     
     char *name = new char[strlen(cmd) + 5];
