@@ -154,12 +154,9 @@ int main(int argc, char **argv) {
       char buf[2048];
       strcpy(buf, argv[0]);
       char *slash = strrchr(buf, '/');
-      if (slash)
-#if defined(USING_XCODE)
-        strcpy(slash, "/../Resources/browser.cxx");
-#else
+      if (slash) {
 	strcpy(slash, "/../../../browser.cxx");
-#endif
+      }
       done = browser->load(buf);
     }
 #endif
