@@ -370,7 +370,7 @@ int load_the_menu(char* fname)
   char line[256], mname[64],iname[64],cname[64];
   int i, j;
   fin = fl_fopen(fname,"r");
-#if defined ( USING_XCODE )
+#if defined ( __APPLE__ )
   if (fin == NULL) {
     // mac os bundle menu detection:
     char* pos = strrchr(fname,'/');
