@@ -581,9 +581,9 @@ public:
     char *o;
     int lencount;
     // Predict size of \r\n conversion buffer
-    for ( i=in, lencount = inlen; lencount--; ) {
-      if ( *i == '\r' && *(i+1) == '\n' )	// leave \r\n untranslated
-	{ i+=2; outlen+=2; }
+    for (i = in, lencount = inlen; lencount > 0; lencount--) {
+      if ( *i == '\r' && *(i+1) == '\n' && lencount >= 2 )	// leave \r\n untranslated
+	{ i+=2; outlen+=2; lencount--; }
       else if ( *i == '\n' )			// \n by itself? leave room to insert \r
 	{ i++; outlen+=2; }
       else
@@ -592,9 +592,9 @@ public:
     // Alloc conversion buffer + NULL
     out = new char[outlen+1];
     // Handle \n -> \r\n conversion
-    for ( i=in, o=out, lencount = inlen; lencount--; ) {
-      if ( *i == '\r' && *(i+1) == '\n' )	// leave \r\n untranslated
-        { *o++ = *i++; *o++ = *i++; }
+    for (i = in, o=out, lencount = inlen; lencount > 0; lencount--) {
+      if ( *i == '\r' && *(i+1) == '\n' && lencount >= 2 )	// leave \r\n untranslated
+        { *o++ = *i++; *o++ = *i++; lencount--; }
       else if ( *i == '\n' )			// \n by itself? insert \r
         { *o++ = '\r'; *o++ = *i++; }
       else
