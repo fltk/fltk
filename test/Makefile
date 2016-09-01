@@ -332,6 +332,9 @@ curve$(EXEEXT): curve.o
 demo$(EXEEXT): demo.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+	$(OSX_ONLY) mkdir -p demo.app/Contents/Resources
+	$(OSX_ONLY) cp -f demo.menu demo.app/Contents/Resources/
 
 device$(EXEEXT): device.o $(IMGLIBNAME)
 	echo Linking $@...
