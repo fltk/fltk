@@ -62,8 +62,8 @@ int main(int argc, char *argv[])
   
   create_form_cl();
   
-#ifdef USING_XCODE
-  // Xcode apps do not set the current directory
+#ifdef __APPLE__
+  // search for rgb.txt within the bundle
   strcpy(dbname, argv[0]);
   char *slash = strrchr(dbname, '/');
   if (slash)

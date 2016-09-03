@@ -322,6 +322,8 @@ colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ colbrowser.o $(LINKFLTKFORMS) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+	$(OSX_ONLY) mkdir -p colbrowser.app/Contents/Resources
+	$(OSX_ONLY) cp -f rgb.txt colbrowser.app/Contents/Resources/
 
 color_chooser$(EXEEXT): color_chooser.o
 
