@@ -296,7 +296,7 @@ void dobut(Fl_Widget *, long arg)
     char command[2048], path[2048], app_path[2048];
     
     // this neat little block of code ensures that the current directory
-    // is set to the location of the Demo application.
+    // is set to the location of the Demo bundled application.
     CFBundleRef app = CFBundleGetMainBundle();
     CFURLRef url = CFBundleCopyBundleURL(app);    
     CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
@@ -306,9 +306,7 @@ void dobut(Fl_Widget *, long arg)
     if (*app_path) {
       char *n = strrchr(app_path, '/');
       if (n) {
-#if defined USING_XCODE
         *n = 0;
-#endif
         chdir(app_path);
       }
     }
@@ -368,7 +366,7 @@ int load_the_menu(char* fname)
   char line[256], mname[64],iname[64],cname[64];
   int i, j;
   fin = fl_fopen(fname,"r");
-#if defined ( USING_XCODE )
+#if defined ( __APPLE__ )
   if (fin == NULL) {
     // mac os bundle menu detection:
     char* pos = strrchr(fname,'/');
