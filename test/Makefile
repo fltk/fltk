@@ -367,6 +367,8 @@ help$(EXEEXT): help.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+	$(OSX_ONLY) mkdir -p help.app/Contents/Resources
+	$(OSX_ONLY) cp -f help-test.html help.app/Contents/Resources/
 
 icon$(EXEEXT): icon.o
 

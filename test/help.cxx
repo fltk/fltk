@@ -39,10 +39,9 @@ main(int  argc,			// I - Number of command-line arguments
 
   help = new Fl_Help_Dialog;
 
-  int argn = 1;
   
-#ifdef USING_XCODE
-  
+#ifdef __APPLE__
+
     char buf[2048];
     strcpy(buf, argv[0]);
     char *slash = strrchr(buf, '/');
@@ -52,7 +51,7 @@ main(int  argc,			// I - Number of command-line arguments
   
 #else
   
-  if (argc <= argn)
+  if (argc <= 1)
     help->load("help-test.html");
   else
     help->load(argv[1]);
