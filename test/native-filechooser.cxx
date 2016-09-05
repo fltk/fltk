@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 #define TAB "&lt;Tab&gt;"
     view->textfont(FL_HELVETICA);
     view->textsize(10);
-    view->value("The Filter can be one or more filters patterns, one per line.\n"
+    view->value("The Filter can be one or more filter patterns, one per line.\n"
 		"Patterns can be:<ul>\n"
 		"  <li>A single wildcard (e.g. <tt>\"*.txt\"</tt>)</li>\n"
 		"  <li>Multiple wildcards (e.g. <tt>\"*.{cxx,h,H}\"</tt>)</li>\n"
