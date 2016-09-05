@@ -778,7 +778,7 @@ static int count_filters(const char *filter) {
 //
 void Fl_Native_File_Chooser::parse_filter(const char *in) {
   clear_filters();
-  if ( ! in ) return;
+  if ( ! in || in[0] == '\0' ) return;
 
   int has_name = strchr(in, '\t') ? 1 : 0;
   char mode = has_name ? 'n' : 'w';		// parse mode: n=name, w=wildcard
@@ -786,9 +786,9 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
   // whatever input string is, our output won't be much longer in length..
   // use double length just for safety.
   size_t slen = strlen(in);
-  char *wildprefix = new char[slen*2]; wildprefix[0] = 0;
-  char *comp       = new char[slen*2]; comp[0] = 0;
-  char *name       = new char[slen*2]; name[0] = 0;
+  char *wildprefix = new char[(slen+1)*2]; wildprefix[0] = 0;
+  char *comp       = new char[(slen+1)*2]; comp[0] = 0;
+  char *name       = new char[(slen+1)*2]; name[0] = 0;
 
   // Init
   int nwildcards = 0;
@@ -796,7 +796,7 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
   char **wildcards = new char*[maxfilters];	// parsed wildcards (can be several)
   int t;
   for ( t=0; t<maxfilters; t++ ) {
-    wildcards[t] = new char[slen];
+    wildcards[t] = new char[slen+1];
     wildcards[t][0] = '\0';
   }
 
