@@ -101,62 +101,62 @@ int Fl_Native_File_Chooser_FLTK_Driver::options() const {
 int Fl_Native_File_Chooser_FLTK_Driver::show() {
 
   // FILTER
-    if ( _parsedfilt ) {
-      _file_chooser->filter(_parsedfilt);
-    }
+  if ( _parsedfilt ) {
+    _file_chooser->filter(_parsedfilt);
+  }
 
-    // FILTER VALUE
-    //     Set this /after/ setting the filter
-    //
-    _file_chooser->filter_value(_filtvalue);
+  // FILTER VALUE
+  //     Set this /after/ setting the filter
+  //
+  _file_chooser->filter_value(_filtvalue);
 
-    // DIRECTORY
-    if ( _directory && _directory[0] ) {
-      _file_chooser->directory(_directory);
-    } else {
-      _file_chooser->directory(_prevvalue);
-    }
+  // DIRECTORY
+  if ( _directory && _directory[0] ) {
+    _file_chooser->directory(_directory);
+  } else {
+    _file_chooser->directory(_prevvalue);
+  }
 
-    // PRESET FILE
-    if ( _preset_file ) {
-      _file_chooser->value(_preset_file);
-    }
+  // PRESET FILE
+  if ( _preset_file ) {
+    _file_chooser->value(_preset_file);
+  }
 
-    // OPTIONS: PREVIEW
-    _file_chooser->preview( (options() & Fl_Native_File_Chooser::PREVIEW) ? 1 : 0);
+  // OPTIONS: PREVIEW
+  _file_chooser->preview( (options() & Fl_Native_File_Chooser::PREVIEW) ? 1 : 0);
 
-    // OPTIONS: NEW FOLDER
-    if ( options() & Fl_Native_File_Chooser::NEW_FOLDER )
-      _file_chooser->type(_file_chooser->type() | Fl_File_Chooser::CREATE);	// on
+  // OPTIONS: NEW FOLDER
+  if ( options() & Fl_Native_File_Chooser::NEW_FOLDER )
+    _file_chooser->type(_file_chooser->type() | Fl_File_Chooser::CREATE);	// on
   
-    // SHOW
-    _file_chooser->show();
+  // SHOW
+  _file_chooser->show();
 
-    // BLOCK WHILE BROWSER SHOWN
-    while ( _file_chooser->shown() ) {
-      Fl::wait();
-    }
+  // BLOCK WHILE BROWSER SHOWN
+  while ( _file_chooser->shown() ) {
+    Fl::wait();
+  }
 
-    if ( _file_chooser->value() && _file_chooser->value()[0] ) {
-      _prevvalue = strfree(_prevvalue);
-      _prevvalue = strnew(_file_chooser->value());
-      _filtvalue = _file_chooser->filter_value(); // update filter value
+  if ( _file_chooser->value() && _file_chooser->value()[0] ) {
+    _prevvalue = strfree(_prevvalue);
+    _prevvalue = strnew(_file_chooser->value());
+    _filtvalue = _file_chooser->filter_value(); // update filter value
 
-      // HANDLE SHOWING 'SaveAs' CONFIRM
-      if ( options() & Fl_Native_File_Chooser::SAVEAS_CONFIRM && type() == Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
-        struct stat buf;
-        if ( fl_stat(_file_chooser->value(), &buf) != -1 ) {
-          if ( buf.st_mode & S_IFREG ) {    // Regular file + exists?
-            if ( exist_dialog() == 0 ) {
-              return(1);
-            }
+    // HANDLE SHOWING 'SaveAs' CONFIRM
+    if ( options() & Fl_Native_File_Chooser::SAVEAS_CONFIRM && type() == Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
+      struct stat buf;
+      if ( stat(_file_chooser->value(), &buf) != -1 ) {
+        if ( buf.st_mode & S_IFREG ) {    // Regular file + exists?
+          if ( exist_dialog() == 0 ) {
+            return(1);
           }
         }
       }
     }
+  }
 
-    if ( _file_chooser->count() ) return(0);
-    else return(1);
+  if ( _file_chooser->count() ) return(0);
+  else return(1);
 }
 
 const char *Fl_Native_File_Chooser_FLTK_Driver::errmsg() const {
@@ -171,8 +171,8 @@ const char* Fl_Native_File_Chooser_FLTK_Driver::filename() const {
 }
 
 const char* Fl_Native_File_Chooser_FLTK_Driver::filename(int i) const {
-    if ( i < _file_chooser->count() )
-        return(_file_chooser->value(i+1));  // convert fltk 1 based to our 0 based
+  if ( i < _file_chooser->count() )
+    return(_file_chooser->value(i+1));  // convert fltk 1 based to our 0 based
   return("");
 }
 
@@ -181,7 +181,7 @@ void Fl_Native_File_Chooser_FLTK_Driver::title(const char *val) {
 }
 
 const char *Fl_Native_File_Chooser_FLTK_Driver::title() const {
-    return(_file_chooser->label());
+  return(_file_chooser->label());
 }
 
 void Fl_Native_File_Chooser_FLTK_Driver::filter(const char *val) {

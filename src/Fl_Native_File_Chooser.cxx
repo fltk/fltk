@@ -34,25 +34,21 @@ const char *Fl_Native_File_Chooser::file_exists_message = "File exists. Are you 
  Destructor.
  Deallocates any resources allocated to this widget.
  */
-Fl_Native_File_Chooser::~Fl_Native_File_Chooser()
-{
+Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   delete platform_fnfc;
 }
-
 
 /**
  Sets the current Fl_Native_File_Chooser::Type of browser.
  */
-void Fl_Native_File_Chooser::type(int t)
-{
+void Fl_Native_File_Chooser::type(int t) {
   if (platform_fnfc) platform_fnfc->type(t);
 }
 
 /**
  Gets the current Fl_Native_File_Chooser::Type of browser.
  */
-int Fl_Native_File_Chooser::type() const
-{
+int Fl_Native_File_Chooser::type() const {
   return platform_fnfc->type();
 }
 
@@ -70,16 +66,14 @@ int Fl_Native_File_Chooser::type() const
  USE_FILTER_EXT    Chooser filter pilots the output file extension.  Ignored   Used      Used (GTK)
  \endcode
  */
-void Fl_Native_File_Chooser::options(int o)
-{
+void Fl_Native_File_Chooser::options(int o) {
   if (platform_fnfc) platform_fnfc->options(o);
 }
 
 /**
  Gets the platform specific Fl_Native_File_Chooser::Option flags.
  */
-int Fl_Native_File_Chooser::options() const
-{
+int Fl_Native_File_Chooser::options() const {
   return platform_fnfc->options();
 }
 
@@ -89,15 +83,14 @@ int Fl_Native_File_Chooser::options() const
  \b Example:
  \code
  if ( fnfc->show() == 0 ) {
- // Print all filenames user selected
- for (int n=0; n<fnfc->count(); n++ ) {
- printf("%d) '%s'\n", n, fnfc->filename(n));
- }
+     // Print all filenames user selected
+     for (int n=0; n<fnfc->count(); n++ ) {
+         printf("%d) '%s'\n", n, fnfc->filename(n));
+     }
  }
  \endcode
  */
-int Fl_Native_File_Chooser::count() const
-{
+int Fl_Native_File_Chooser::count() const {
   return platform_fnfc->count();
 }
 
@@ -107,8 +100,7 @@ int Fl_Native_File_Chooser::count() const
  If more than one filename is expected, use filename(int) instead.
  Return value may be "" if no filename was chosen (eg. user cancelled).
  */
-const char *Fl_Native_File_Chooser::filename() const
-{
+const char *Fl_Native_File_Chooser::filename() const {
   return platform_fnfc->filename();
 }
 
@@ -119,15 +111,14 @@ const char *Fl_Native_File_Chooser::filename() const
  \b Example:
  \code
  if ( fnfc->show() == 0 ) {
- // Print all filenames user selected
- for (int n=0; n<fnfc->count(); n++ ) {
- printf("%d) '%s'\n", n, fnfc->filename(n));
- }
+     // Print all filenames user selected
+     for (int n=0; n<fnfc->count(); n++ ) {
+         printf("%d) '%s'\n", n, fnfc->filename(n));
+     }
  }
  \endcode
  */
-const char *Fl_Native_File_Chooser::filename(int i) const
-{
+const char *Fl_Native_File_Chooser::filename(int i) const {
   return platform_fnfc->filename(i);
 }
 
@@ -136,16 +127,14 @@ const char *Fl_Native_File_Chooser::filename(int i) const
  If \p val is NULL, or no directory is specified, the chooser will attempt
  to use the last non-cancelled folder.
  */
-void Fl_Native_File_Chooser::directory(const char *val)
-{
+void Fl_Native_File_Chooser::directory(const char *val) {
   if (platform_fnfc) platform_fnfc->directory(val);
 }
 
 /**
  Returns the current preset directory() value.
  */
-const char *Fl_Native_File_Chooser::directory() const
-{
+const char *Fl_Native_File_Chooser::directory() const {
   return platform_fnfc->directory();
 }
 
@@ -154,8 +143,7 @@ const char *Fl_Native_File_Chooser::directory() const
  Can be NULL if no title desired.
  The default title varies according to the platform, so you are advised to set the title explicitly.
  */
-void Fl_Native_File_Chooser::title(const char *t)
-{
+void Fl_Native_File_Chooser::title(const char *t) {
   if (platform_fnfc) platform_fnfc->title(t);
 }
 
@@ -163,8 +151,7 @@ void Fl_Native_File_Chooser::title(const char *t)
  Get the title of the file chooser's dialog window.
  Return value may be NULL if no title was set.
  */
-const char* Fl_Native_File_Chooser::title() const
-{
+const char* Fl_Native_File_Chooser::title() const {
   return platform_fnfc->title();
 }
 
@@ -172,8 +159,7 @@ const char* Fl_Native_File_Chooser::title() const
  Returns the filter string last set.
  Can be NULL if no filter was set.
  */
-const char *Fl_Native_File_Chooser::filter() const
-{
+const char *Fl_Native_File_Chooser::filter() const {
   return platform_fnfc->filter();
 }
 
@@ -195,16 +181,14 @@ const char *Fl_Native_File_Chooser::filter() const
  On most platforms, each filter is available to the user via a pulldown menu
  in the file chooser. The 'All Files' option is always available to the user.
  */
-void Fl_Native_File_Chooser::filter(const char *f)
-{
+void Fl_Native_File_Chooser::filter(const char *f) {
   if (platform_fnfc) platform_fnfc->filter(f);
 }
 
 /**
  Gets how many filters were available, not including "All Files"
  */
-int Fl_Native_File_Chooser::filters() const
-{
+int Fl_Native_File_Chooser::filters() const {
   return platform_fnfc->filters();
 }
 
@@ -215,8 +199,7 @@ int Fl_Native_File_Chooser::filters() const
  If filter_value()==filters(), then "All Files" was chosen.
  If filter_value() > filters(), then a custom filter was set.
  */
-void Fl_Native_File_Chooser::filter_value(int i)
-{
+void Fl_Native_File_Chooser::filter_value(int i) {
   platform_fnfc->filter_value(i);
 }
 
@@ -224,8 +207,7 @@ void Fl_Native_File_Chooser::filter_value(int i)
  Returns which filter value was last selected by the user.
  This is only valid if the chooser returns success.
  */
-int Fl_Native_File_Chooser::filter_value() const
-{
+int Fl_Native_File_Chooser::filter_value() const {
   return platform_fnfc->filters();
 }
 
@@ -235,16 +217,14 @@ int Fl_Native_File_Chooser::filter_value() const
  Mainly used to preset the filename for save dialogs,
  and on most platforms can be used for opening files as well.
  */
-void Fl_Native_File_Chooser::preset_file(const char*f)
-{
+void Fl_Native_File_Chooser::preset_file(const char*f) {
   if (platform_fnfc) platform_fnfc->preset_file(f);
 }
 
 /**
  Get the preset filename.
  */
-const char* Fl_Native_File_Chooser::preset_file() const
-{
+const char* Fl_Native_File_Chooser::preset_file() const {
   return platform_fnfc->preset_file();
 }
 
@@ -253,8 +233,7 @@ const char* Fl_Native_File_Chooser::preset_file() const
  This message should at least be flagged to the user in a dialog box, or to some kind of error log.
  Contents will be valid only for methods that document errmsg() will have info on failures.
  */
-const char *Fl_Native_File_Chooser::errmsg() const
-{
+const char *Fl_Native_File_Chooser::errmsg() const {
   return platform_fnfc->errmsg();
 }
 
@@ -265,9 +244,8 @@ const char *Fl_Native_File_Chooser::errmsg() const
  - 1  -- user cancelled
  - -1 -- failed; errmsg() has reason
  */
-int Fl_Native_File_Chooser::show()
-{
-  return platform_fnfc? platform_fnfc->show() : 1;
+int Fl_Native_File_Chooser::show() {
+  return platform_fnfc ? platform_fnfc->show() : 1;
 }
 
 // COPY A STRING WITH 'new'
