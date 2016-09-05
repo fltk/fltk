@@ -17,25 +17,27 @@
 //     http://www.fltk.org/str.php
 //
 #include <stdio.h>
+#include <string.h>		/* strstr() */
 #include <FL/Fl.H>
-#include <FL/fl_ask.H>		// fl_beep()
+#include <FL/fl_ask.H>		/* fl_beep() */
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Multiline_Input.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_Help_View.H>
 
 // GLOBALS
 Fl_Input *G_filename = NULL;
+Fl_Multiline_Input *G_filter = NULL;
 
 void PickFile_CB(Fl_Widget*, void*) {
   // Create native chooser
   Fl_Native_File_Chooser native;
   native.title("Pick a file");
   native.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  native.filter("Text\t*.txt\n"
-                "C Files\t*.{cxx,h,c}\n"
-                "Apps\t*.{app}\n");		// TODO: need to add kNavSupportPackages to non-cocoa <FNFC>_MAC.cxx
+  native.filter(G_filter->value());		// TODO: need to add kNavSupportPackages to non-cocoa <FNFC>_MAC.cxx
   native.preset_file(G_filename->value());
   // Show native chooser
   switch ( native.show() ) {
@@ -89,19 +91,51 @@ int main(int argc, char **argv) {
     argn++;
 #endif
   
-  Fl_Window *win = new Fl_Window(600, 100, "Native File Chooser Test");
+  Fl_Window *win = new Fl_Window(680, 400, "Native File Chooser Test");
   win->size_range(300, 100, 0, 100);
   win->begin();
   {
-    int y = 10;
-    G_filename = new Fl_Input(80, y, win->w()-80-10, 25, "Filename");
+    int x = 80, y = 10;
+    G_filename = new Fl_Input(x, y, win->w()-80-10, 25, "Filename");
     G_filename->value(argc <= argn ? "." : argv[argn]);
     G_filename->tooltip("Default filename");
-    y += G_filename->h() + 5;
-    Fl_Button *but = new Fl_Button(win->w()-80-10, win->h()-25-10, 80, 25, "Pick File");
+
+    y += G_filename->h() + 10;
+    G_filter = new Fl_Multiline_Input(x, y, G_filename->w(), 100, "Filter");
+    G_filter->value("Text\t*.txt\n"
+                    "C Files\t*.{cxx,h,c,cpp}\n"
+                    "Tars\t*.{tar,tar.gz}\n"
+		    "Apps\t*.app");		// TODO: need to add kNavSupportPackages to non-cocoa <FNFC>_MAC.cxx
+    G_filter->tooltip("Filter to be used for browser.\n"
+                      "An empty string may be used.\n");
+
+    y += G_filter->h() + 3;
+    Fl_Help_View *view = new Fl_Help_View(x, y, G_filename->w(), 180);
+    view->box(FL_FLAT_BOX);
+    view->color(win->color());
+#define TAB "&lt;Tab&gt;"
+    view->textfont(FL_HELVETICA);
+    view->textsize(10);
+    view->value("The Filter can be one or more filters patterns, one per line.\n"
+		"Patterns can be:<ul>\n"
+		"  <li>A single wildcard (e.g. <tt>\"*.txt\"</tt>)</li>\n"
+		"  <li>Multiple wildcards (e.g. <tt>\"*.{cxx,h,H}\"</tt>)</li>\n"
+		"  <li>A descriptive name followed by a "TAB" and a wildcard (e.g. <tt>\"Text Files"TAB"*.txt\"</tt>)</li>\n"
+		"</ul>\n"
+                "In the above \"Filter\" field, you can use <b><font color=#55f face=Courier>Ctrl-I</font></b> to enter "TAB" characters as needed.<br>\n"
+		"Example:<pre>\n"
+		"\n"
+		"    Text<font color=#55f>&lt;Ctrl-I&gt;</font>*.txt\n"
+		"    C Files<font color=#55f>&lt;Ctrl-I&gt;</font>*.{cxx,h,c,cpp}\n"
+		"    Tars<font color=#55f>&lt;Ctrl-I&gt;</font>*.{tar,tar.gz}\n"
+		"    Apps<font color=#55f>&lt;Ctrl-I&gt;</font>*.app\n");
+
+    Fl_Button *but = new Fl_Button(win->w()-x-10, win->h()-25-10, 80, 25, "Pick File");
     but->callback(PickFile_CB);
-    Fl_Button *butdir = new Fl_Button(but->x()-80-10, win->h()-25-10, 80, 25, "Pick Dir");
+
+    Fl_Button *butdir = new Fl_Button(but->x()-x-10, win->h()-25-10, 80, 25, "Pick Dir");
     butdir->callback(PickDir_CB);
+
     Fl_Box *dummy = new Fl_Box(80, 0, 430, 100);
     dummy->hide();
     win->resizable(dummy);
@@ -114,4 +148,3 @@ int main(int argc, char **argv) {
 //
 // End of "$Id$".
 //
-
