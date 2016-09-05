@@ -75,10 +75,12 @@ Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
  Sets the current Fl_Native_File_Chooser::Type of browser.
  */
 void Fl_Native_File_Chooser::type(int t) { return _x11_file_chooser->type(t); }
+
 /**
  Gets the current Fl_Native_File_Chooser::Type of browser.
  */
 int Fl_Native_File_Chooser::type() const { return _x11_file_chooser->type(); }
+
 /**
  Sets the platform specific chooser options to \p val.
  \p val is expected to be one or more Fl_Native_File_Chooser::Option flags ORed together.
@@ -94,6 +96,7 @@ int Fl_Native_File_Chooser::type() const { return _x11_file_chooser->type(); }
 \endcode
  */
 void Fl_Native_File_Chooser::options(int o) {  _x11_file_chooser->options(o); }
+
 /**
  Gets the platform specific Fl_Native_File_Chooser::Option flags.
  */
@@ -105,14 +108,15 @@ int Fl_Native_File_Chooser::options() const {  return _x11_file_chooser->options
  \b Example:
  \code
  if ( fnfc->show() == 0 ) {
- // Print all filenames user selected
- for (int n=0; n<fnfc->count(); n++ ) {
- printf("%d) '%s'\n", n, fnfc->filename(n));
- }
+     // Print all filenames user selected
+     for (int n=0; n<fnfc->count(); n++ ) {
+         printf("%d) '%s'\n", n, fnfc->filename(n));
+     }
  }
  \endcode
  */
 int Fl_Native_File_Chooser::count() const { return _x11_file_chooser->count(); }
+
 /**
  Return the filename the user chose.
  Use this if only expecting a single filename.
@@ -120,6 +124,7 @@ int Fl_Native_File_Chooser::count() const { return _x11_file_chooser->count(); }
  Return value may be "" if no filename was chosen (eg. user cancelled).
  */
 const char *Fl_Native_File_Chooser::filename() const { return _x11_file_chooser->filename(); }
+
 /**
  Return one of the filenames the user selected.
  Use count() to determine how many filenames the user selected.
@@ -127,40 +132,46 @@ const char *Fl_Native_File_Chooser::filename() const { return _x11_file_chooser-
  \b Example:
  \code
  if ( fnfc->show() == 0 ) {
- // Print all filenames user selected
- for (int n=0; n<fnfc->count(); n++ ) {
- printf("%d) '%s'\n", n, fnfc->filename(n));
- }
+     // Print all filenames user selected
+     for (int n=0; n<fnfc->count(); n++ ) {
+         printf("%d) '%s'\n", n, fnfc->filename(n));
+     }
  }
  \endcode
  */
 const char *Fl_Native_File_Chooser::filename(int i) const { return _x11_file_chooser->filename(i); }
+
 /**
  Preset the directory the browser will show when opened.
  If \p val is NULL, or no directory is specified, the chooser will attempt
  to use the last non-cancelled folder.
  */
 void Fl_Native_File_Chooser::directory(const char *val) {  _x11_file_chooser->directory(val); }
+
 /**
  Returns the current preset directory() value.
  */
 const char *Fl_Native_File_Chooser::directory() const { return _x11_file_chooser->directory(); }
+
 /**
  Set the title of the file chooser's dialog window.
  Can be NULL if no title desired.
  The default title varies according to the platform, so you are advised to set the title explicitly.
  */
 void Fl_Native_File_Chooser::title(const char *t) {  _x11_file_chooser->title(t); }
+
 /**
  Get the title of the file chooser's dialog window.
  Return value may be NULL if no title was set.
  */
 const char* Fl_Native_File_Chooser::title() const { return _x11_file_chooser->title(); }
+
 /**
  Returns the filter string last set.
  Can be NULL if no filter was set.
  */
 const char *Fl_Native_File_Chooser::filter() const { return _x11_file_chooser->filter(); }
+
 /**
  Sets the filename filters used for browsing. 
  The default is NULL, which browses all files.
@@ -180,10 +191,12 @@ const char *Fl_Native_File_Chooser::filter() const { return _x11_file_chooser->f
  in the file chooser. The 'All Files' option is always available to the user. 
  */
 void Fl_Native_File_Chooser::filter(const char *f) {  _x11_file_chooser->filter(f); }
+
 /**
  Gets how many filters were available, not including "All Files" 
  */
 int Fl_Native_File_Chooser::filters() const { return _x11_file_chooser->filters(); }
+
 /**
  Sets which filter will be initially selected.
  
@@ -192,11 +205,13 @@ int Fl_Native_File_Chooser::filters() const { return _x11_file_chooser->filters(
  If filter_value() > filters(), then a custom filter was set.
  */
 void Fl_Native_File_Chooser::filter_value(int i) {  _x11_file_chooser->filter_value(i); }
+
 /**
  Returns which filter value was last selected by the user.
  This is only valid if the chooser returns success.
  */
 int Fl_Native_File_Chooser::filter_value() const { return _x11_file_chooser->filter_value(); }
+
 /**
  Sets the default filename for the chooser.
  Use directory() to set the default directory.
@@ -204,16 +219,19 @@ int Fl_Native_File_Chooser::filter_value() const { return _x11_file_chooser->fil
  and on most platforms can be used for opening files as well. 
  */
 void Fl_Native_File_Chooser::preset_file(const char* f) {  _x11_file_chooser->preset_file(f); }
+
 /**
  Get the preset filename.
  */
 const char* Fl_Native_File_Chooser::preset_file() const { return _x11_file_chooser->preset_file(); }
+
 /**
  Returns a system dependent error message for the last method that failed. 
  This message should at least be flagged to the user in a dialog box, or to some kind of error log. 
  Contents will be valid only for methods that document errmsg() will have info on failures.
  */
 const char *Fl_Native_File_Chooser::errmsg() const { return _x11_file_chooser->errmsg(); }
+
 /**
  Post the chooser's dialog. Blocks until dialog has been completed or cancelled.
  \returns
@@ -222,7 +240,6 @@ const char *Fl_Native_File_Chooser::errmsg() const { return _x11_file_chooser->e
  - -1 -- failed; errmsg() has reason
  */
 int Fl_Native_File_Chooser::show() { return _x11_file_chooser->show(); }
-
 
 Fl_FLTK_File_Chooser::Fl_FLTK_File_Chooser(int val) {
   _btype       = 0;
@@ -300,62 +317,62 @@ int Fl_FLTK_File_Chooser::options() const {
 int Fl_FLTK_File_Chooser::show() {
 
   // FILTER
-    if ( _parsedfilt ) {
-      _file_chooser->filter(_parsedfilt);
-    }
+  if ( _parsedfilt ) {
+    _file_chooser->filter(_parsedfilt);
+  }
 
-    // FILTER VALUE
-    //     Set this /after/ setting the filter
-    //
-    _file_chooser->filter_value(_filtvalue);
+  // FILTER VALUE
+  //     Set this /after/ setting the filter
+  //
+  _file_chooser->filter_value(_filtvalue);
 
-    // DIRECTORY
-    if ( _directory && _directory[0] ) {
-      _file_chooser->directory(_directory);
-    } else {
-      _file_chooser->directory(_prevvalue);
-    }
+  // DIRECTORY
+  if ( _directory && _directory[0] ) {
+    _file_chooser->directory(_directory);
+  } else {
+    _file_chooser->directory(_prevvalue);
+  }
 
-    // PRESET FILE
-    if ( _preset_file ) {
-      _file_chooser->value(_preset_file);
-    }
+  // PRESET FILE
+  if ( _preset_file ) {
+    _file_chooser->value(_preset_file);
+  }
 
-    // OPTIONS: PREVIEW
-    _file_chooser->preview( (options() & Fl_Native_File_Chooser::PREVIEW) ? 1 : 0);
+  // OPTIONS: PREVIEW
+  _file_chooser->preview( (options() & Fl_Native_File_Chooser::PREVIEW) ? 1 : 0);
 
-    // OPTIONS: NEW FOLDER
-    if ( options() & Fl_Native_File_Chooser::NEW_FOLDER )
-      _file_chooser->type(_file_chooser->type() | Fl_File_Chooser::CREATE);	// on
+  // OPTIONS: NEW FOLDER
+  if ( options() & Fl_Native_File_Chooser::NEW_FOLDER )
+    _file_chooser->type(_file_chooser->type() | Fl_File_Chooser::CREATE);	// on
   
-    // SHOW
-    _file_chooser->show();
+  // SHOW
+  _file_chooser->show();
 
-    // BLOCK WHILE BROWSER SHOWN
-    while ( _file_chooser->shown() ) {
-      Fl::wait();
-    }
+  // BLOCK WHILE BROWSER SHOWN
+  while ( _file_chooser->shown() ) {
+    Fl::wait();
+  }
 
-    if ( _file_chooser->value() && _file_chooser->value()[0] ) {
-      _prevvalue = strfree(_prevvalue);
-      _prevvalue = strnew(_file_chooser->value());
-      _filtvalue = _file_chooser->filter_value(); // update filter value
+  if ( _file_chooser->value() && _file_chooser->value()[0] ) {
+    _prevvalue = strfree(_prevvalue);
+    _prevvalue = strnew(_file_chooser->value());
+    _filtvalue = _file_chooser->filter_value(); // update filter value
 
-      // HANDLE SHOWING 'SaveAs' CONFIRM
-      if ( options() & Fl_Native_File_Chooser::SAVEAS_CONFIRM && type() == Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
-        struct stat buf;
-        if ( stat(_file_chooser->value(), &buf) != -1 ) {
-          if ( buf.st_mode & S_IFREG ) {    // Regular file + exists?
-            if ( exist_dialog() == 0 ) {
-              return(1);
-            }
+    // HANDLE SHOWING 'SaveAs' CONFIRM
+    if ( options() & Fl_Native_File_Chooser::SAVEAS_CONFIRM && type() == Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
+      struct stat buf;
+      if ( stat(_file_chooser->value(), &buf) != -1 ) {
+        if ( buf.st_mode & S_IFREG ) {    // Regular file + exists?
+          if ( exist_dialog() == 0 ) {
+            return(1);
           }
         }
       }
     }
+  }
 
-    if ( _file_chooser->count() ) return(0);
-    else return(1);
+  if ( _file_chooser->count() ) return(0);
+  else return(1);
 }
 
 const char *Fl_FLTK_File_Chooser::errmsg() const {
@@ -370,8 +387,8 @@ const char* Fl_FLTK_File_Chooser::filename() const {
 }
 
 const char* Fl_FLTK_File_Chooser::filename(int i) const {
-    if ( i < _file_chooser->count() )
-        return(_file_chooser->value(i+1));  // convert fltk 1 based to our 0 based
+  if ( i < _file_chooser->count() )
+    return(_file_chooser->value(i+1));  // convert fltk 1 based to our 0 based
   return("");
 }
 
@@ -380,7 +397,7 @@ void Fl_FLTK_File_Chooser::title(const char *val) {
 }
 
 const char *Fl_FLTK_File_Chooser::title() const {
-    return(_file_chooser->label());
+  return(_file_chooser->label());
 }
 
 void Fl_FLTK_File_Chooser::filter(const char *val) {
