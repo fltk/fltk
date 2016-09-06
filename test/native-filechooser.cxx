@@ -37,7 +37,7 @@ void PickFile_CB(Fl_Widget*, void*) {
   Fl_Native_File_Chooser native;
   native.title("Pick a file");
   native.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  native.filter(G_filter->value());		// TODO: need to add kNavSupportPackages to non-cocoa <FNFC>_MAC.cxx
+  native.filter(G_filter->value());
   native.preset_file(G_filename->value());
   // Show native chooser
   switch ( native.show() ) {
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
     G_filter->value("Text\t*.txt\n"
                     "C Files\t*.{cxx,h,c,cpp}\n"
                     "Tars\t*.{tar,tar.gz}\n"
-		    "Apps\t*.app");		// TODO: need to add kNavSupportPackages to non-cocoa <FNFC>_MAC.cxx
+		    "Apps\t*.app");
     G_filter->tooltip("Filter to be used for browser.\n"
                       "An empty string may be used.\n");
 
