@@ -208,6 +208,8 @@ public:
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
+  // the default implementation of open_callback() may be enough
+  virtual void open_callback(void (*)(const char *));
 };
 
 #endif // FL_SYSTEM_DRIVER_H

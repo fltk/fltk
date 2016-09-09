@@ -435,6 +435,9 @@ FILE *Fl_System_Driver::fopen(const char* f, const char *mode) {
   return ::fopen(f, mode);
 }
 
+void Fl_System_Driver::open_callback(void (*)(const char *)) {
+}
+
 //
 // End of "$Id$".
 //

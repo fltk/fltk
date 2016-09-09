@@ -2422,9 +2422,6 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
 }
 
 
-FL_EXPORT void fl_open_callback(void (*)(const char *)) {}
-
-
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
 // contains also preparePrintFront call above

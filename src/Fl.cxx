@@ -1993,6 +1993,17 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
+/** Register a function called for each file dropped onto an application icon.
+ 
+ This function is effective only on the Mac OS X platform.
+ \e cb will be called with a single Unix-style file name and path.
+ If multiple files were dropped, \e cb will be called multiple times.
+ */
+void fl_open_callback(void (*cb)(const char *))
+{
+  Fl::system_driver()->open_callback(cb);
+}
+
 //
 // End of "$Id$".
 //

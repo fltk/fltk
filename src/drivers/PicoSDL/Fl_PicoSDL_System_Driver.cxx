@@ -31,8 +31,6 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
   return new Fl_System_Driver();
 }
 
-void fl_open_callback(void (*cb)(const char *)) {}
-
 //
 // End of "$Id$".
 //

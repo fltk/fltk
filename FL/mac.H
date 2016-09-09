@@ -110,14 +110,6 @@ extern CGContextRef fl_gc;
  \sa \ref osissues_macos
  @{ */
 
-#ifdef FL_DOXYGEN
-/** @brief Register a function called for each file dropped onto an application icon.
- \e cb will be called with a single Unix-style file name and path.
- If multiple files were dropped, \e cb will be called multiple times.
- */
-extern void fl_open_callback(void (*cb)(const char *));
-#endif
-
 /** 
  * \brief Attaches a callback to the "About myprog" item of the system application menu.
  *

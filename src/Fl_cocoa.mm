@@ -1668,7 +1668,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 /*
  * Install an open documents event handler...
  */
-void fl_open_callback(void (*cb)(const char *)) {
+void Fl_Darwin_System_Driver::open_callback(void (*cb)(const char *)) {
   fl_open_display();
   [(FLAppDelegate*)[NSApp delegate] open_cb:cb];
 }

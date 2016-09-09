@@ -2838,9 +2838,6 @@ void Fl_X11_Window_Driver::show() {
 }
 
 
-FL_EXPORT void fl_open_callback(void (*)(const char *)) {}
-
-
 //#define USE_PRINT_BUTTON 1
 #ifdef USE_PRINT_BUTTON
 
