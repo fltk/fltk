@@ -107,6 +107,20 @@ extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
+#if HAVE_X11_XREGION_H
+#   include <X11/Xregion.h>
+#else // if the X11/Xregion.h header is not available, we assume this is the layout of an X11 Region:
+typedef struct {
+  short x1, x2, y1, y2;
+} BOX;
+struct _XRegion {
+  long size;
+  long numRects;
+  BOX *rects;
+  BOX extents;
+};
+#endif // HAVE_X11_XREGION_H
+
 #endif // FL_LIBRARY || FL_INTERNALS
 
 #  endif // X11

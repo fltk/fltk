@@ -54,20 +54,6 @@
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
 
-#if HAVE_X11_XREGION_H
-#   include <X11/Xregion.h>
-#else // if the X11/Xregion.h header is not available, we assume this is the layout of an X11 Region:
-typedef struct {
-  short x1, x2, y1, y2;
-} BOX;
-struct _XRegion {
-  long size;
-  long numRects;
-  BOX *rects;
-  BOX extents;
-};
-#endif // HAVE_X11_XREGION_H
-
 static XImage xi;	// template used to pass info to X
 static int bytes_per_pixel;
 static int scanline_add;
