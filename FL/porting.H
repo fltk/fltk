@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// Mac header file for the Fast Light Tool Kit (FLTK).
+// Template header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,59 +18,21 @@
 
 // Do not directly include this file, instead use <FL/x.H>.
 
-// This file can be used as a template when porting FLTK to a new platform
+// These types and variables give access to internal, platform-specific data through the public API.
+// They require to include x.H (in contrast to types defined in platform_types.h)
 
 #if !defined(Fl_X_H)
 #  error "Never use <FL/porting.H> directly; include <FL/x.H> instead."
 #endif // !Fl_X_H
 
-typedef void *Window;
+typedef void *Window; // used by fl_find(), fl_xid() and class Fl_X
 
-#if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
-#  include <FL/Fl_Widget.H>
-
-typedef void *Fl_Region;
-typedef void *Fl_Offscreen;
-
-#else // this part must be compiled when building the FLTK libraries
-
-typedef void *Fl_Region;
-typedef void *Fl_Offscreen;
-
-#  include "Fl_Window.H"
-
-// Some random X equivalents
-struct XPoint { int x, y; };
-struct XRectangle {int x, y, width, height;};
-
-inline void fl_open_callback(void (*)(const char *)) {}
-
-extern Window fl_window;
-
-#endif // FL_LIBRARY || FL_INTERNALS
-
-typedef void *Fl_Bitmask;
-
+/* Reference to the current device context
+ For back-compatibility only. The preferred procedure to get this reference is
+ Fl_Surface_Device::surface()->driver()->gc().
+ */
 extern void *fl_gc;
-
-extern Window fl_xid(const Fl_Window*);
-extern Fl_Window* fl_find(Window xid);
-void fl_clip_region(Fl_Region);
-
-extern Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
-extern Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
-extern void fl_delete_bitmask(Fl_Bitmask bm);
-extern Fl_Offscreen fl_create_offscreen(int w, int h);
-extern void fl_copy_offscreen(int x,int y,int w,int h, Fl_Offscreen gWorld, int srcx,int srcy);
-extern void fl_delete_offscreen(Fl_Offscreen gWorld);
-extern void fl_begin_offscreen(Fl_Offscreen gWorld);
-extern void fl_end_offscreen();
-
-extern int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
-extern void fl_open_display();
-
 
 //
 // End of "$Id$".
 //
-
