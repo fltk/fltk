@@ -145,7 +145,7 @@ int Fl_Native_File_Chooser_FLTK_Driver::show() {
     // HANDLE SHOWING 'SaveAs' CONFIRM
     if ( options() & Fl_Native_File_Chooser::SAVEAS_CONFIRM && type() == Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
       struct stat buf;
-      if ( stat(_file_chooser->value(), &buf) != -1 ) {
+      if ( fl_stat(_file_chooser->value(), &buf) != -1 ) {
         if ( buf.st_mode & S_IFREG ) {    // Regular file + exists?
           if ( exist_dialog() == 0 ) {
             return(1);
