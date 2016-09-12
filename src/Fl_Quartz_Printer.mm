@@ -246,7 +246,7 @@ int Fl_System_Printer::start_page (void)
   else
 #endif
   {
-#if ! __LP64_
+#if ! __LP64__
     PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
       (PMSessionGetGraphicsContext_type)Fl_X::get_carbon_function("PMSessionGetGraphicsContext");
     status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&fl_gc);
