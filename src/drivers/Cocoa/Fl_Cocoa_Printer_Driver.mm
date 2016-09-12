@@ -292,7 +292,7 @@ int Fl_Cocoa_Printer_Driver::start_page (void)
   else
 #endif
   {
-#if ! __LP64_
+#if ! __LP64__
     PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
       (PMSessionGetGraphicsContext_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionGetGraphicsContext");
     status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&gc);
