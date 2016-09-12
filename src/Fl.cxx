@@ -1992,6 +1992,8 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   Fl_X *temp = Fl_X::i(w);
   return temp ? temp->xid : 0;
 }
+/** \addtogroup group_macosx
+ @{ */
 
 /** Register a function called for each file dropped onto an application icon.
  
@@ -2003,6 +2005,7 @@ void fl_open_callback(void (*cb)(const char *))
 {
   Fl::system_driver()->open_callback(cb);
 }
+/** @} */
 
 //
 // End of "$Id$".
