@@ -482,20 +482,24 @@ or if it is clipped.
 
 \section subclassing_cutnpaste Cut and Paste Support
 
-FLTK provides routines to cut and paste 8-bit text (in the future this
-may be UTF-8) between applications:
-
+FLTK provides routines to cut and paste UTF-8 encoded text between applications:
+\li Fl::copy()
 \li Fl::paste()
 \li Fl::selection()
 \li Fl::selection_owner()
 
-It may be possible to cut/paste non-text data by using Fl::add_handler().
+It is also possible to copy and paste image data between applications:
+\li Fl_Copy_Surface
+\li Fl::clipboard_contains()
+\li Fl::paste()
+
+It may be possible to cut/paste other kinds of data by using Fl::add_handler().
 Note that handling events beyond those provided by FLTK may be operating
 system specific. See \ref osissues for more details.
 
 \section subclassing_dragndrop Drag And Drop Support
 
-FLTK provides routines to drag and drop 8-bit text between applications:
+FLTK provides routines to drag and drop UTF-8 encoded text between applications:
 
 Drag'n'drop operations are initiated by copying data to the 
 clipboard and calling the function Fl::dnd().
