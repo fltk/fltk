@@ -25,8 +25,23 @@
 #ifndef FL_CFG_GFX_XLIB_H
 #define FL_CFG_GFX_XLIB_H
 
+#include <config.h>
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/x.H>
+
+#if HAVE_X11_XREGION_H
+#   include <X11/Xregion.h>
+#else // if the X11/Xregion.h header is not available, we assume this is the layout of an X11 Region:
+typedef struct {
+  short x1, x2, y1, y2;
+} BOX;
+struct _XRegion {
+  long size;
+  long numRects;
+  BOX *rects;
+  BOX extents;
+};
+#endif // HAVE_X11_XREGION_H
 
 /**
  \brief The Xlib-specific graphics class.
