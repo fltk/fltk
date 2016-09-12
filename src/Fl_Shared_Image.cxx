@@ -326,30 +326,39 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     Fl_Image::draw(X, Y, W, H, cx, cy);
     return;
   }
-  if (w() == image_->w() && h() == image_->h()) {
-    image_->draw(X, Y, W, H, cx, cy);
-    return;
-  }
   fl_push_clip(X, Y, W, H);
+  fl_graphics_driver->draw(this, X-cx, Y-cy);
+  fl_pop_clip();
+}
+
+/** Draws the shared image to the current surface with its top-left at X,Y */
+void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
+  bool zero_scaled = false;
   int done = 0;
   // don't call Fl_Graphics_Driver::draw_scaled(Fl_Image*,...) for an enlarged Fl_Bitmap or Fl_Pixmap
-  if ((d() != 0 && count() < 2) || (w() <= image_->w() && h() <= image_->h())) {
-    done = fl_graphics_driver->draw_scaled(image_, X-cx, Y-cy, w(), h());
+  if ((shared->d() != 0 && shared->count() < 2) || (shared->w() <= shared->image_->w() && shared->h() <= shared->image_->h())) {
+    done = fl_graphics_driver->draw_scaled(shared->image_, X, Y, shared->w(), shared->h());
   }
   if (!done) {
-    if (scaled_image_ && (scaled_image_->w() != w() || scaled_image_->h() != h())) {
-      delete scaled_image_;
-      scaled_image_ = NULL;
+    if (shared->scaled_image_ && (shared->scaled_image_->w() != shared->w() || shared->scaled_image_->h() != shared->h())) {
+      delete shared->scaled_image_;
+      shared->scaled_image_ = NULL;
     }
-    if (!scaled_image_) {
-      Fl_RGB_Scaling previous = RGB_scaling();
-      RGB_scaling(scaling_algorithm_); // useless but no harm if image_ is not an Fl_RGB_Image
-      scaled_image_ = image_->copy(w(), h());
-      RGB_scaling(previous);
+    if (!shared->scaled_image_) {
+      if ( shared->w() == shared->image_->w() && shared->h() == shared->image_->h()) {
+        shared->scaled_image_ = shared->image_;
+        zero_scaled = true;
+      }
+      else {
+        Fl_RGB_Scaling previous = Fl_Shared_Image::RGB_scaling();
+        Fl_Shared_Image::RGB_scaling(shared->scaling_algorithm_); // useless but no harm if image_ is not an Fl_RGB_Image
+        shared->scaled_image_ = shared->image_->copy(shared->w(), shared->h());
+        Fl_Shared_Image::RGB_scaling(previous);
+      }
     }
-    scaled_image_->draw(X-cx, Y-cy, scaled_image_->w(), scaled_image_->h(), 0, 0);
+    shared->scaled_image_->draw(X, Y, shared->scaled_image_->w(), shared->scaled_image_->h(), 0, 0);
+    if (zero_scaled) shared->scaled_image_ = NULL;
   }
-  fl_pop_clip();
 }
 
 /** Sets the drawing size of the shared image.

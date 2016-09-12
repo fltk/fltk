@@ -41,7 +41,8 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
   
   friend class Fl_JPEG_Image;
   friend class Fl_PNG_Image;
-  
+  friend class Fl_Graphics_Driver;
+
 private:
   static Fl_RGB_Scaling scaling_algorithm_; // method used to rescale RGB source images
   Fl_Image *scaled_image_;

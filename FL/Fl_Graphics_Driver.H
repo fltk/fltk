@@ -32,6 +32,7 @@
 #include <stdlib.h>
 
 class Fl_Graphics_Driver;
+class Fl_Shared_Image;
 /** a platform-specific class implementing a system font */
 class Fl_Font_Descriptor
 #ifdef FL_DOXYGEN
@@ -300,6 +301,7 @@ public:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw(Fl_Shared_Image *img, int x, int y);
   virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
