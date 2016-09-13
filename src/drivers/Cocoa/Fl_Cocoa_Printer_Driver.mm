@@ -129,7 +129,7 @@ int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topag
   else
 #endif
   {
-#if !__LP64__
+#if !defined(__LP64__) || !__LP64__
     Boolean accepted;
     status = PMCreateSession(&printSession);
     if (status != noErr) return 1;
@@ -292,7 +292,7 @@ int Fl_Cocoa_Printer_Driver::start_page (void)
   else
 #endif
   {
-#if ! __LP64__
+#if !defined(__LP64__) || !__LP64__
     PMSessionGetGraphicsContext_type PMSessionGetGraphicsContext =
       (PMSessionGetGraphicsContext_type)Fl_Darwin_System_Driver::get_carbon_function("PMSessionGetGraphicsContext");
     status = PMSessionGetGraphicsContext(printSession, NULL, (void **)&gc);
@@ -352,7 +352,7 @@ void Fl_Cocoa_Printer_Driver::end_job (void)
     fl_alert ("PM Session error %d", (int)status);
   }
   PMSessionEndDocumentNoDialog(printSession);
-#if !__LP64__
+#if !defined(__LP64__) || !__LP64__
   if (fl_mac_os_version < 100500) {
     PMRelease(printSettings);
     PMRelease(pageFormat);

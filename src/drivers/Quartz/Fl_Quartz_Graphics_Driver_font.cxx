@@ -40,7 +40,7 @@ static CFMutableDictionaryRef attributes = NULL;
 
 static const int CoreText_threshold = 100500; // this represents Mac OS 10.5
 // condition for the ATSU API to be available at compile time
-#define HAS_ATSU (!__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
+#define HAS_ATSU (!defined(__LP64__) || !__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
 
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change

@@ -47,7 +47,7 @@ static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWid
   for (int i = h-1; i >= 0; i--) {
     uchar *from = baseAddress + i * mByteWidth;
     for (int j = 0; j < w; j++, from += 4) {
-#if __ppc__
+#if defined(__ppc__) && __ppc__
       memcpy(to, from + 1, 3);
       to += 3;
 #else
