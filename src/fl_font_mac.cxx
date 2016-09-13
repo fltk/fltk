@@ -31,7 +31,7 @@ static CFMutableDictionaryRef attributes = NULL;
 
 const int Fl_X::CoreText_threshold = 100500; // this represents Mac OS 10.5
 // condition when the ATSU API is available at compile time
-#define HAS_ATSU (!__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
+#define HAS_ATSU (!defined(__LP64__) || !__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
