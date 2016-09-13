@@ -3,7 +3,7 @@
 //
 // Simple test of the Fl_Native_File_Chooser.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -91,8 +91,8 @@ int main(int argc, char **argv) {
     argn++;
 #endif
   
-  Fl_Window *win = new Fl_Window(680, 400, "Native File Chooser Test");
-  win->size_range(300, 100, 0, 100);
+  Fl_Window *win = new Fl_Window(600, 380, "Native File Chooser Test");
+  win->size_range(600, 380, 0, 0);
   win->begin();
   {
     int x = 80, y = 10;
@@ -120,9 +120,9 @@ int main(int argc, char **argv) {
 		"Patterns can be:<ul>\n"
 		"  <li>A single wildcard (e.g. <tt>\"*.txt\"</tt>)</li>\n"
 		"  <li>Multiple wildcards (e.g. <tt>\"*.{cxx,h,H}\"</tt>)</li>\n"
-		"  <li>A descriptive name followed by a "TAB" and a wildcard (e.g. <tt>\"Text Files"TAB"*.txt\"</tt>)</li>\n"
+		"  <li>A descriptive name followed by a " TAB " and a wildcard (e.g. <tt>\"Text Files" TAB "*.txt\"</tt>)</li>\n"
 		"</ul>\n"
-                "In the above \"Filter\" field, you can use <b><font color=#55f face=Courier>Ctrl-I</font></b> to enter "TAB" characters as needed.<br>\n"
+                "In the above \"Filter\" field, you can use <b><font color=#55f face=Courier>Ctrl-I</font></b> to enter " TAB " characters as needed.<br>\n"
 		"Example:<pre>\n"
 		"\n"
 		"    Text<font color=#55f>&lt;Ctrl-I&gt;</font>*.txt\n"
@@ -136,9 +136,7 @@ int main(int argc, char **argv) {
     Fl_Button *butdir = new Fl_Button(but->x()-x-10, win->h()-25-10, 80, 25, "Pick Dir");
     butdir->callback(PickDir_CB);
 
-    Fl_Box *dummy = new Fl_Box(80, 0, 430, 100);
-    dummy->hide();
-    win->resizable(dummy);
+    win->resizable(G_filter);
   }
   win->end();
   win->show(argc, argv);
