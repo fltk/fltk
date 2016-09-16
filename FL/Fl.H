@@ -890,42 +890,44 @@ int main() {
   static void copy(const char* stuff, int len, int destination = 0, const char *type = Fl::clipboard_plain_text); // platform dependent
 
   /**
-  Pastes the data from the selection buffer (\p source is 0) or the clipboard 
-  (\p source is 1) into \p receiver.  If \p source is 1,
-  the optional \p type argument indicates what type of data is requested from the clipboard
-  (at present, Fl::clipboard_plain_text - requesting text data - and 
-  Fl::clipboard_image - requesting image data - are possible).
-  Set things up so the handle function of the \p receiver widget will be called with an FL_PASTE event some
-  time in the future if the clipboard does contain data of the requested type. During processing of this event,
-  and if \p type is Fl::clipboard_plain_text, the text data from the specified \p source are in Fl::event_text()
-  with UTF-8 encoding, and the number of bytes in Fl::event_length();
-  if \p type is Fl::clipboard_image, the pointer returned by Fl::event_clipboard() can be safely cast to 
-  type Fl_RGB_Image * to obtain a pointer to the pasted image.
+   Pastes the data from the selection buffer (\p source is 0) or the clipboard
+   (\p source is 1) into \p receiver.
    
-  The receiver
-  should be prepared to be called \e directly by this, or for
-  it to happen \e later, or possibly <i>not at all</i>.  This
-  allows the window system to take as long as necessary to retrieve
-  the paste buffer (or even to screw up completely) without complex
-  and error-prone synchronization code in FLTK.
-  
-  If an image is being pasted, and if the handle function of \p receiver returns 1,
-  \p receiver gets the ownership of the image which should be deleted after use. Conversely,
-  if it returns 0, the image cannot be used.
+   The selection buffer (\p source is 0) is used for middle-mouse pastes and for
+   drag-and-drop selections. The clipboard (\p source is 1) is used for
+   copy/cut/paste operations.
    
-  The selection buffer (\p source is 0) is used for middle-mouse pastes and for
-  drag-and-drop selections. The clipboard (\p source is 1) is used for
-  copy/cut/paste operations.
+   If \p source is 1, the optional \p type argument indicates what type of data is requested from the clipboard.
+   At present, Fl::clipboard_plain_text (requesting text data) and
+   Fl::clipboard_image (requesting image data) are possible.
+   Set things up so the handle function of the \p receiver widget will be called with an FL_PASTE event some
+   time in the future if the clipboard does contain data of the requested type.
+   While processing the FL_PASTE event:
+   \li if \p type is Fl::clipboard_plain_text, the text string from the specified \p source is in Fl::event_text()
+   with UTF-8 encoding, and the number of bytes in Fl::event_length().
+   If Fl::paste() gets called during the drop step of a files-drag-and-drop operation,
+   Fl::event_text() contains a list of filenames (see \ref events_dnd).
+   \li if \p type is Fl::clipboard_image, the pointer returned by Fl::event_clipboard() can be safely cast to
+   type Fl_RGB_Image * to obtain a pointer to the pasted image.
+   If \p receiver accepts the clipboard image, receiver.handle() should return 1 and the
+   application should take ownership of this image (that is, delete it after use).
+   Conversely, if receiver.handle() returns 0, the application must not use the image.
+   
+   The receiver should be prepared to be called \e directly by this, or for
+   it to happen \e later, or possibly <i>not at all</i>.  This
+   allows the window system to take as long as necessary to retrieve
+   the paste buffer (or even to screw up completely) without complex
+   and error-prone synchronization code in FLTK.
    
    \par Platform details for image data:
-   \li Unix/Linux platform: Image data in PNG or BMP formats are recognized. Requires linking with the fltk_images library.
+   \li Unix/Linux platform: Clipboard images in PNG or BMP formats are recognized. Requires linking with the fltk_images library.
    \li MSWindows platform: Both bitmap and vectorial (Enhanced metafile) data from clipboard
    can be pasted as image data.
    \li Mac OS X platform: Both bitmap (TIFF) and vectorial (PDF) data from clipboard
    can be pasted as image data.
-    
    */
-  static void paste(Fl_Widget &receiver, int source, const char *type = Fl::clipboard_plain_text); // platform dependent
+  static void paste(Fl_Widget &receiver, int source, const char *type = Fl::clipboard_plain_text);
+  
   /**
   FLTK will call the registered callback whenever there is a change to the
   selection buffer or the clipboard. The source argument indicates which
