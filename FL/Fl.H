@@ -877,15 +877,19 @@ int main() {
   /**
   Pastes the data from the selection buffer (\p source is 0) or the clipboard 
   (\p source is 1) into \p receiver.  If \p source is 1,
-  the optional \p type argument indicates what type of data is requested from the clipboard
-  (at present, Fl::clipboard_plain_text - requesting text data - and 
-  Fl::clipboard_image - requesting image data - are possible).
+  the optional \p type argument indicates what type of data is requested from the clipboard.
+  At present, Fl::clipboard_plain_text (requesting text data) and
+  Fl::clipboard_image (requesting image data) are possible.
   Set things up so the handle function of the \p receiver widget will be called with an FL_PASTE event some
-  time in the future if the clipboard does contain data of the requested type. During processing of this event,
-  and if \p type is Fl::clipboard_plain_text, the text data from the specified \p source are in Fl::event_text()
+  time in the future if the clipboard does contain data of the requested type. 
+  While processing the FL_PASTE event:
+  \li if \p type is Fl::clipboard_plain_text, the text string from the specified \p source is in Fl::event_text()
   with UTF-8 encoding, and the number of bytes in Fl::event_length();
-  if \p type is Fl::clipboard_image, the pointer returned by Fl::event_clipboard() can be safely cast to
-  type Fl_Image * to obtain a pointer to the pasted image.
+  \li if \p type is Fl::clipboard_image, the pointer returned by Fl::event_clipboard() can be safely cast to
+   type Fl_Image * to obtain a pointer to the pasted image. Furthermore, starting with FLTK 1.3.4, the image is
+   of type Fl_RGB_Image across all platforms. If the handle function of \p receiver returns 1,
+   \p receiver gets the ownership of the image which should be deleted after use. Conversely,
+   if it returns 0, the image cannot be used by the application.
    
   The receiver should be prepared to be called \e directly by this, or for
   it to happen \e later, or possibly <i>not at all</i>.  This
@@ -893,10 +897,7 @@ int main() {
   the paste buffer (or even to screw up completely) without complex
   and error-prone synchronization code in FLTK.
    
-  If an image is being pasted, and if the handle function of \p receiver returns 1,
-  \p receiver gets the ownership of the image which should be deleted after use. Conversely,
-  if it returns 0, the image cannot be used. Starting with FLTK 1.3.4, the image is 
-  of type Fl_RGB_Image across all platforms.
+  
    
    The selection buffer (\p source is 0) is used for middle-mouse pastes and for
    drag-and-drop selections. The clipboard (\p source is 1) is used for
