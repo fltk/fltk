@@ -91,8 +91,8 @@ int main(int argc, char **argv) {
     argn++;
 #endif
   
-  Fl_Window *win = new Fl_Window(600, 380, "Native File Chooser Test");
-  win->size_range(600, 380, 0, 0);
+  Fl_Window *win = new Fl_Window(640, 400, "Native File Chooser Test");
+  win->size_range(win->w(), win->h(), 0, 0);
   win->begin();
   {
     int x = 80, y = 10;
@@ -109,8 +109,8 @@ int main(int argc, char **argv) {
     G_filter->tooltip("Filter to be used for browser.\n"
                       "An empty string may be used.\n");
 
-    y += G_filter->h() + 3;
-    Fl_Help_View *view = new Fl_Help_View(x, y, G_filename->w(), 180);
+    y += G_filter->h() + 10;
+    Fl_Help_View *view = new Fl_Help_View(x, y, G_filename->w(), 200);
     view->box(FL_FLAT_BOX);
     view->color(win->color());
 #define TAB "&lt;Tab&gt;"
