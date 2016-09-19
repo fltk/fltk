@@ -42,6 +42,7 @@ protected:
   } FLScreenInfo;
   FLScreenInfo screens[MAX_SCREENS];
   float dpi[MAX_SCREENS][2];
+  int poll_or_select();
 
 public:
   static int ewmh_supported();

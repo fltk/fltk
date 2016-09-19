@@ -51,7 +51,6 @@ extern XIC fl_xim_ic; // in Fl_x.cxx
 // Add these externs to allow X11 port to build - same as Fl_WinAPI_Screen_Driver.cxx.
 // These should be in an internal header somewhere?
 // AlbrechtS (Comment by Ian, modified...)
-extern int fl_ready(); // in Fl_x.cxx
 extern int fl_wait(double time); // in Fl_x.cxx
 
 // these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
@@ -452,7 +451,6 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
     reset_clock = 1; // we are not going to check the clock
   }
   Fl::run_checks();
-  //  if (idle && !fl_ready()) {
   if (Fl::idle) {
     if (!in_idle) {
       in_idle = 1;
@@ -487,7 +485,7 @@ int Fl_X11_Screen_Driver::ready()
   } else {
     reset_clock = 1;
   }
-  return fl_ready();
+  return this->poll_or_select();
 }
 
 

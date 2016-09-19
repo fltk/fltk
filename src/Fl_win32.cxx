@@ -477,8 +477,8 @@ int fl_wait(double time_to_wait) {
   return 1;
 }
 
-// fl_ready() is just like fl_wait(0.0) except no callbacks are done:
-int fl_ready() {
+// just like fl_wait(0.0) except no callbacks are done:
+int Fl_WinAPI_Screen_Driver::ready() {
   if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
   if (!nfds) return 0;
   timeval t;

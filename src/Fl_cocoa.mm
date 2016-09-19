@@ -450,7 +450,8 @@ void Fl_Darwin_System_Driver::remove_fd(int n)
 /*
  * Check if there is actually a message pending
  */
-int fl_ready()
+int Fl_Cocoa_Screen_Driver::ready()
+
 {
   NSEvent *retval = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
 				    inMode:NSDefaultRunLoopMode dequeue:NO];

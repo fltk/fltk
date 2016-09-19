@@ -29,7 +29,6 @@
 
 // Add these externs to allow Win32 port to build - suspect that Fl_X11_Screen_Driver.cxx also might need these
 // but I don't have a X11 box to hand for testing. These should be in an internal header somewhere?
-extern int fl_ready(); // in Fl_win32.cxx
 extern int fl_wait(double time); // in Fl_win32.cxx
 
 // these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
@@ -271,12 +270,6 @@ void Fl_WinAPI_Screen_Driver::flush()
 double Fl_WinAPI_Screen_Driver::wait(double time_to_wait)
 {
   return fl_wait(time_to_wait);
-}
-
-
-int Fl_WinAPI_Screen_Driver::ready()
-{
-  return fl_ready();
 }
 
 

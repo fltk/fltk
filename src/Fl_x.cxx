@@ -283,8 +283,8 @@ int fl_wait(double time_to_wait) {
   return n;
 }
 
-// fl_ready() is just like fl_wait(0.0) except no callbacks are done:
-int fl_ready() {
+// just like fl_wait(0.0) except no callbacks are done:
+int Fl_X11_Screen_Driver::poll_or_select() {
   if (XQLength(fl_display)) return 1;
   if (!nfds) return 0; // nothing to select or poll
 #  if USE_POLL
