@@ -122,8 +122,6 @@ protected:
   inline int vertex_kind() {return what;}
 #endif
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
-  /** Returns whether the graphics driver is currently drawing to a high resolution surface */
-  virtual bool high_resolution() { return false; }
   virtual void global_gc();
   /** Support function for Fl_Pixmap drawing */
   virtual fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array) { return 0; }
