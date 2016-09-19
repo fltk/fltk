@@ -83,7 +83,6 @@ class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
 public:
   static Fl_Display_Device *display_device();
-  static bool high_resolution();
 };
 
 /**
