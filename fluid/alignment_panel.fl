@@ -7,7 +7,7 @@ comment {//
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -167,8 +167,8 @@ decl {void scheme_cb(Fl_Choice *, void *);} {public local
 Function {make_settings_window()} {} {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {355 85 360 355} type Double resizable
-    code0 {o->size_range(o->w(), o->h());} non_modal visible
+    xywh {355 85 360 355} type Double hide resizable
+    code0 {o->size_range(o->w(), o->h());} non_modal
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
