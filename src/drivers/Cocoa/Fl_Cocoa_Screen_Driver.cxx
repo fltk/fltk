@@ -31,8 +31,6 @@
 
 extern "C" void NSBeep(void);
 
-extern double fl_mac_flush_and_wait(double time_to_wait);
-
 int Fl_Cocoa_Screen_Driver::next_marked_length = 0;
 
 /*
@@ -141,13 +139,6 @@ void Fl_Cocoa_Screen_Driver::flush() {
   CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
   if (gc)
     CGContextFlush(gc);
-}
-
-
-double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
-{
-  Fl::run_checks();
-  return fl_mac_flush_and_wait(time_to_wait);
 }
 
 

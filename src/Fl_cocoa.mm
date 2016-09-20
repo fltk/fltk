@@ -96,7 +96,6 @@ void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(
 Window fl_window;
 
 // forward declarations of variables in this file
-static int got_events = 0;
 static Fl_Window* resize_from_system;
 static int main_screen_height; // height of menubar-containing screen used to convert between Cocoa and FLTK global screen coordinates
 // through_drawRect = YES means the drawRect: message was sent to the view, 
@@ -802,10 +801,10 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
 /*
  * This function is the central event handler.
  * It reads events from the event queue using the given maximum time
- * Funny enough, it returns the same time that it got as the argument. 
  */
-static double do_queued_events( double time = 0.0 ) 
+static int do_queued_events( double time = 0.0 )
 {
+  static int got_events; // not sure the static is necessary here
   got_events = 0;
   
   // Check for re-entrant condition
@@ -834,12 +833,12 @@ static double do_queued_events( double time = 0.0 )
     Fl::handle(FL_MOVE, fl_xmousewin);
   }
 #endif
-  
-  return time;
+  return got_events;
 }
 
-
-double fl_mac_flush_and_wait(double time_to_wait) {
+double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
+{
+  Fl::run_checks();
   static int in_idle = 0;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   if (Fl::idle) {
@@ -856,14 +855,12 @@ double fl_mac_flush_and_wait(double time_to_wait) {
   NSEnableScreenUpdates(); // 10.3
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
-  do_queued_events( time_to_wait );
-  double retval = got_events;
+  int retval = do_queued_events(time_to_wait);
 
   Fl_Cocoa_Window_Driver::q_release_context();
   [pool release];
   return retval;
 }
-
 
 static NSInteger max_normal_window_level(void)
 {
