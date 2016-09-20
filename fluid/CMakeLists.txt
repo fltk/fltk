@@ -3,7 +3,7 @@
 #
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2016 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -45,7 +45,7 @@ if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set( ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/Fluid.app/Contents/Resources/${ICON_NAME}" )
   add_executable(fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
 else()
-  add_executable(fluid ${CPPFILES})
+  add_executable(fluid WIN32 ${CPPFILES})
 endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)
