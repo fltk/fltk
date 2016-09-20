@@ -230,7 +230,7 @@ void (*fl_unlock_function)() = nothing;
 // This is never called with time_to_wait < 0.0:
 // It should return negative on error, 0 if nothing happens before
 // timeout, and >0 if any callbacks were done.
-int fl_wait(double time_to_wait) {
+int Fl_X11_Screen_Driver::poll_or_select_with_delay(double time_to_wait) {
 
   // OpenGL and other broken libraries call XEventsQueued
   // unnecessarily and thus cause the file descriptor to not be ready,
@@ -283,7 +283,7 @@ int fl_wait(double time_to_wait) {
   return n;
 }
 
-// just like fl_wait(0.0) except no callbacks are done:
+// just like Fl_X11_Screen_Driver::poll_or_select_with_delay(0.0) except no callbacks are done:
 int Fl_X11_Screen_Driver::poll_or_select() {
   if (XQLength(fl_display)) return 1;
   if (!nfds) return 0; // nothing to select or poll

@@ -48,11 +48,6 @@
 extern Atom fl_NET_WORKAREA;
 extern XIC fl_xim_ic; // in Fl_x.cxx
 
-// Add these externs to allow X11 port to build - same as Fl_WinAPI_Screen_Driver.cxx.
-// These should be in an internal header somewhere?
-// AlbrechtS (Comment by Ian, modified...)
-extern int fl_wait(double time); // in Fl_x.cxx
-
 // these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
 extern const char *fl_fg;
 extern const char *fl_bg;
@@ -464,7 +459,7 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
     time_to_wait = first_timeout->time;
   if (time_to_wait <= 0.0) {
     // do flush second so that the results of events are visible:
-    int ret = fl_wait(0.0);
+    int ret = this->poll_or_select_with_delay(0.0);
     Fl::flush();
     return ret;
   } else {
@@ -472,7 +467,7 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
     Fl::flush();
     if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
       time_to_wait = 0.0;
-    return fl_wait(time_to_wait);
+    return this->poll_or_select_with_delay(time_to_wait);
   }
 }
 

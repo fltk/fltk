@@ -492,8 +492,6 @@ void fl_trigger_clipboard_notify(int source) {
 
 void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
 
-extern int fl_wait(double time); // in Fl_<platform>.cxx
-
 /**
   See int Fl::wait()
 */

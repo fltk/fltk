@@ -369,10 +369,10 @@ static void process_awake_handler_requests(void) {
 
 // This is never called with time_to_wait < 0.0.
 // It *should* return negative on error, 0 if nothing happens before
-// timeout, and >0 if any callbacks were done.  This version only
-// returns zero if nothing happens during a 0.0 timeout, otherwise
-// it returns 1.
-int fl_wait(double time_to_wait) {
+// timeout, and >0 if any callbacks were done.  This version
+// always returns 1.
+double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
+
   int have_message = 0;
 
   Fl::run_checks();
@@ -477,7 +477,7 @@ int fl_wait(double time_to_wait) {
   return 1;
 }
 
-// just like fl_wait(0.0) except no callbacks are done:
+// just like Fl_WinAPI_Screen_Driver::wait(0.0) except no callbacks are done:
 int Fl_WinAPI_Screen_Driver::ready() {
   if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
   if (!nfds) return 0;

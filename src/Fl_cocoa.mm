@@ -839,19 +839,6 @@ static double do_queued_events( double time = 0.0 )
 }
 
 
-/*
- * This public function handles all events. It wait a maximum of 
- * 'time' seconds for an event. This version returns 1 if events
- * other than the timeout timer were processed.
- *
- * \todo there is no socket handling in this code whatsoever
- */
-int fl_wait( double time ) 
-{
-  do_queued_events( time );
-  return (got_events);
-}
-
 double fl_mac_flush_and_wait(double time_to_wait) {
   static int in_idle = 0;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -869,7 +856,9 @@ double fl_mac_flush_and_wait(double time_to_wait) {
   NSEnableScreenUpdates(); // 10.3
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
-  double retval = fl_wait(time_to_wait);
+  do_queued_events( time_to_wait );
+  double retval = got_events;
+
   Fl_Cocoa_Window_Driver::q_release_context();
   [pool release];
   return retval;
