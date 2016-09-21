@@ -1064,7 +1064,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 {
   static int keysym[] = { 0, FL_Button+1, FL_Button+3, FL_Button+2 };
   static int px, py;
-  static char suppressed = 0;
   
   fl_lock_function();
   
@@ -1097,7 +1096,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSLeftMouseDown:
     case NSRightMouseDown:
     case NSOtherMouseDown:
-      suppressed = 0;
       sendEvent = FL_PUSH;
       Fl::e_is_click = 1; 
       px = (int)pos.x; py = (int)pos.y;
@@ -1109,10 +1107,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSLeftMouseUp:
     case NSRightMouseUp:
     case NSOtherMouseUp:
-      if (suppressed) {
-        suppressed = 0;
-        break;
-      }
       if ( !window ) break;
       if ( !sendEvent ) {
         sendEvent = FL_RELEASE; 
@@ -1120,15 +1114,13 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       Fl::e_keysym = keysym[ btn ];
       // fall through
     case NSMouseMoved:
-      suppressed = 0;
-      if ( !sendEvent ) { 
+      if ( !sendEvent ) {
         sendEvent = FL_MOVE; 
       }
       // fall through
     case NSLeftMouseDragged:
     case NSRightMouseDragged:
     case NSOtherMouseDragged: {
-      if (suppressed) break;
       if ( !sendEvent ) {
         sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
         if (fabs(pos.x-px)>5 || fabs(pos.y-py)>5) 
