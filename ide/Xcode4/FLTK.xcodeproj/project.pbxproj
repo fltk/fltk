@@ -316,6 +316,9 @@
 		7F12FCC718E1EEB900AB6A11 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F12FCC618E1EEB900AB6A11 /* fl_gleam.cxx */; };
 		7F3421EC1CE8ADB7005FA821 /* help-test.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F3421EB1CE8ADB7005FA821 /* help-test.html */; };
 		7F3421EF1CE8AE00005FA821 /* help-test.html in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7F3421EB1CE8ADB7005FA821 /* help-test.html */; };
+		7F419DFC1D92857E0098B602 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
+		7F419DFE1D92857E0098B602 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
+		7F419E071D9285D90098B602 /* offscreen.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F419E061D9285D90098B602 /* offscreen.cxx */; };
 		7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */; };
 		7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A3130FAC4F00E736F3 /* gzclose.c */; };
 		7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A4130FAC4F00E736F3 /* gzlib.c */; };
@@ -1409,6 +1412,18 @@
 			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ${INPUT_FILE_DIR} && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		7DC98686048519016A24090E /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.fl";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
+				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
+			);
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ${INPUT_FILE_DIR} && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+		};
+		7F419DFF1D92857E0098B602 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			filePatterns = "*.fl";
@@ -2554,6 +2569,20 @@
 			remoteGlobalIDString = A58BB416AAFDCFF08D7C7E41;
 			remoteInfo = fltk_png;
 		};
+		7F419DF71D92857E0098B602 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A57FDE871C99A52BEEDEE68C;
+			remoteInfo = fltk;
+		};
+		7F419E081D9287A50098B602 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7F419DF51D92857E0098B602;
+			remoteInfo = offscreen;
+		};
 		7F7CF8171AB97D8F00E12B22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
@@ -3644,6 +3673,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7F419DFD1D92857E0098B602 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7F419DFE1D92857E0098B602 /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F785E28BCEA44FDC7C10F65 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4552,6 +4591,8 @@
 		7F2A29081338C7520033C0A6 /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnginfo.h; path = ../../png/pnginfo.h; sourceTree = SOURCE_ROOT; };
 		7F2A29091338C7650033C0A6 /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngdebug.h; path = ../../png/pngdebug.h; sourceTree = SOURCE_ROOT; };
 		7F3421EB1CE8ADB7005FA821 /* help-test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "help-test.html"; path = "../../test/help-test.html"; sourceTree = "<group>"; };
+		7F419E031D92857E0098B602 /* offscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = offscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F419E061D9285D90098B602 /* offscreen.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = offscreen.cxx; path = ../../test/offscreen.cxx; sourceTree = "<group>"; };
 		7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		7F4B8ADD01CB2F8BFE43ACBA /* Fl_Menu_Bar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Bar.cxx; path = ../../src/Fl_Menu_Bar.cxx; sourceTree = SOURCE_ROOT; };
 		7F54C8A3130FAC4F00E736F3 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = ../../zlib/gzclose.c; sourceTree = SOURCE_ROOT; };
@@ -5249,6 +5290,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7F419DFB1D92857E0098B602 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F419DFC1D92857E0098B602 /* fltk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F7CF7F21AB97CEF00E12B22 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5656,6 +5705,7 @@
 				4CFC33FF0912AD90F925070C /* minimum */,
 				5F80128158C61B4A1774BBC0 /* navigation */,
 				2E4F8B7048EB2BA0C1B7FB20 /* native-filechooser */,
+				7F419E051D9285AC0098B602 /* offscreen */,
 				473F52C6337C2FCD8856CF7D /* output */,
 				4B0B665042B427F6FCF5B050 /* overlay */,
 				B41ED46FB39CBC4D7E97E288 /* pack */,
@@ -6234,6 +6284,14 @@
 				451D01896EFDD83277515630 /* glut.H */,
 			);
 			name = Headers;
+			sourceTree = "<group>";
+		};
+		7F419E051D9285AC0098B602 /* offscreen */ = {
+			isa = PBXGroup;
+			children = (
+				7F419E061D9285D90098B602 /* offscreen.cxx */,
+			);
+			name = offscreen;
 			sourceTree = "<group>";
 		};
 		7F7CF7F61AB97CEF00E12B22 /* animated */ = {
@@ -6927,6 +6985,7 @@
 				C9165EAF1291A304003FF4F0 /* unittests.app */,
 				7F7CF7F51AB97CEF00E12B22 /* animated.app */,
 				7FBCECC81B1D8AA500AB970D /* libfltk.a */,
+				7F419E031D92857E0098B602 /* offscreen.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7861,6 +7920,7 @@
 				648522D67008E57EE761EBE6 /* PBXTargetDependency */,
 				A837FE62FDBE075199EC03EB /* PBXTargetDependency */,
 				E88689D66B4DD81CCB47FEBD /* PBXTargetDependency */,
+				7F419E091D9287A50098B602 /* PBXTargetDependency */,
 				A38B12D81DECB90550BD8749 /* PBXTargetDependency */,
 				5785D96AD8898E14CCB5641F /* PBXTargetDependency */,
 				407AF98C503EBF9FC84FC85D /* PBXTargetDependency */,
@@ -7909,6 +7969,26 @@
 			name = threads;
 			productName = threads;
 			productReference = BFEF05C334B87B518BFFEC1F /* threads.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7F419DF51D92857E0098B602 /* offscreen */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F419E001D92857E0098B602 /* Build configuration list for PBXNativeTarget "offscreen" */;
+			buildPhases = (
+				7F419DF81D92857E0098B602 /* Resources */,
+				7F419DF91D92857E0098B602 /* Sources */,
+				7F419DFB1D92857E0098B602 /* Frameworks */,
+				7F419DFD1D92857E0098B602 /* CopyFiles */,
+			);
+			buildRules = (
+				7F419DFF1D92857E0098B602 /* PBXBuildRule */,
+			);
+			dependencies = (
+				7F419DF61D92857E0098B602 /* PBXTargetDependency */,
+			);
+			name = offscreen;
+			productName = "native-filechooser";
+			productReference = 7F419E031D92857E0098B602 /* offscreen.app */;
 			productType = "com.apple.product-type.application";
 		};
 		7F7CF7F41AB97CEF00E12B22 /* animated */ = {
@@ -8886,6 +8966,7 @@
 				5FF6CC4785D964CE080FB494 /* minimum */,
 				51EB382683C25DBDD02CBF33 /* navigation */,
 				EE40189E3B7BB6337ABA74C7 /* native-filechooser */,
+				7F419DF51D92857E0098B602 /* offscreen */,
 				78DE657148EC00153D1103A8 /* output */,
 				89DAC07651B4C516C173A1C1 /* overlay */,
 				35F2A3666BFB337E150860D9 /* pack */,
@@ -9184,6 +9265,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7E2F13E3024D0010203CE197 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F419DF81D92857E0098B602 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -9998,6 +10086,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE4DBBE6653EF8D85096E098 /* tabs.fl in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F419DF91D92857E0098B602 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F419E071D9285D90098B602 /* offscreen.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11033,6 +11129,16 @@
 			isa = PBXTargetDependency;
 			target = A57FDE871C99A52BEEDEE68C /* fltk */;
 			targetProxy = E243DFACCE7A653F30C860F6 /* PBXContainerItemProxy */;
+		};
+		7F419DF61D92857E0098B602 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A57FDE871C99A52BEEDEE68C /* fltk */;
+			targetProxy = 7F419DF71D92857E0098B602 /* PBXContainerItemProxy */;
+		};
+		7F419E091D9287A50098B602 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7F419DF51D92857E0098B602 /* offscreen */;
+			targetProxy = 7F419E081D9287A50098B602 /* PBXContainerItemProxy */;
 		};
 		7F7CF8181AB97D8F00E12B22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13838,6 +13944,66 @@
 				);
 			};
 			name = Debug;
+		};
+		7F419E011D92857E0098B602 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = fltk.pch;
+				HEADER_SEARCH_PATHS = (
+					../../ide/Xcode4/,
+					../../,
+					../../png,
+					../../jpeg,
+				);
+				INFOPLIST_FILE = "plists/offscreen-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.fltk.offscreen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				WARNING_CFLAGS = (
+					"-Wno-format-security",
+					"-Wall",
+				);
+			};
+			name = Debug;
+		};
+		7F419E021D92857E0098B602 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = fltk.pch;
+				HEADER_SEARCH_PATHS = (
+					../../ide/Xcode4/,
+					../../,
+					../../png,
+					../../jpeg,
+				);
+				INFOPLIST_FILE = "plists/offscreen-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.fltk.offscreen;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				WARNING_CFLAGS = (
+					"-Wno-format-security",
+					"-Wall",
+				);
+			};
+			name = Release;
 		};
 		7F7CF80F1AB97CF000E12B22 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -16879,6 +17045,15 @@
 			buildConfigurations = (
 				8251F5D32F144C4A3B38611A /* Debug */,
 				7FEBA7A2E6CBD42A2CB9EC6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7F419E001D92857E0098B602 /* Build configuration list for PBXNativeTarget "offscreen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F419E011D92857E0098B602 /* Debug */,
+				7F419E021D92857E0098B602 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
