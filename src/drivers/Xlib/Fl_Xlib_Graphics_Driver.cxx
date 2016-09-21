@@ -30,7 +30,9 @@
 
 extern XIC fl_xim_ic;
 extern char fl_is_over_the_spot;
-
+#if !USE_XFT
+extern char *fl_get_font_xfld(int fnum, int size);
+#endif
 
 /*
  * By linking this module, the following static method will instantiate the
