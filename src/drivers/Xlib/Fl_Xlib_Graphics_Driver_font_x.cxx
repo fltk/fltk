@@ -350,26 +350,7 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return numsizes;
 }
 
-//
-// End of "$Id$".
-//
-//
-// "$Id$"
-//
-// Standard X11 font selection code for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2011 by Bill Spitzak and others.
-//
-// This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
-// file is missing or damaged, see the license at:
-//
-//     http://www.fltk.org/COPYING.php
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
+
 #ifndef FL_DOXYGEN
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
@@ -702,6 +683,7 @@ float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
 }
 
 #endif // FL_DOXYGEN
+
 //
 // End of "$Id$".
 //
