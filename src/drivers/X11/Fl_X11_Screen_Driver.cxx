@@ -694,19 +694,15 @@ int Fl_X11_Screen_Driver::text_display_can_leak() {
 #endif
 }
 
-struct Fl_Fontdesc *Fl_Screen_Driver::calc_fl_fonts() {
-  return NULL;
-}
-
-unsigned Fl_Screen_Driver::font_desc_size() {
+unsigned Fl_X11_Screen_Driver::font_desc_size() {
   return (unsigned)sizeof(Fl_Fontdesc);
 }
 
-const char *Fl_Screen_Driver::font_name(int num) {
+const char *Fl_X11_Screen_Driver::font_name(int num) {
   return fl_fonts[num].name;
 }
 
-void Fl_Screen_Driver::font_name(int num, const char *name) {
+void Fl_X11_Screen_Driver::font_name(int num, const char *name) {
   Fl_Fontdesc *s = fl_fonts + num;
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}

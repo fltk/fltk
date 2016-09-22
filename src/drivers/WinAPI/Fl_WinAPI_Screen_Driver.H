@@ -80,6 +80,9 @@ public:
   virtual Fl_Font set_fonts(const char *name);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
+  virtual const char *font_name(int num);
+  virtual void font_name(int num, const char *name);
+  virtual unsigned font_desc_size();
 };
 
 

@@ -119,11 +119,11 @@ public:
   // default implementation may be enough
   virtual int text_display_can_leak() { return 0; }
   // an implementation which returns NULL may be enough
-  static struct Fl_Fontdesc *calc_fl_fonts();
+  virtual struct Fl_Fontdesc *calc_fl_fonts() {return NULL;}
   // API to the platform-dependent Fl_Fontdesc structure
-  static unsigned font_desc_size();
-  static const char *font_name(int num);
-  static void font_name(int num, const char *name);
+  virtual unsigned font_desc_size() {return 0;}
+  virtual const char *font_name(int num) {return NULL;}
+  virtual void font_name(int num, const char *name) {}
   // to support Fl::set_fonts(), Fl::get_font_sizes(), Fl::get_font_name()
   virtual Fl_Font set_fonts(const char *name) {return 0;}
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep) {return 0;}

@@ -35,8 +35,8 @@ static int table_size;
   the string is not copied, so the string must be in static memory.
 */    
 void Fl::set_font(Fl_Font fnum, const char* name) {
-  unsigned width = Fl_Screen_Driver::font_desc_size();
-  if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
+  unsigned width = Fl::screen_driver()->font_desc_size();
+  if (!fl_fonts) fl_fonts = Fl::screen_driver()->calc_fl_fonts();
   while (fnum >= table_size) {
     int i = table_size;
     if (!i) {	// don't realloc the built-in table
@@ -53,7 +53,7 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
       memset((char*)fl_fonts + i * width, 0, width);
     }
   }
-  Fl_Screen_Driver::font_name(fnum, name);
+  Fl::screen_driver()->font_name(fnum, name);
   Fl_Display_Device::display_device()->driver()->font(-1, 0);
 }
 
@@ -68,7 +68,7 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
     of this face.
 */
 const char* Fl::get_font(Fl_Font fnum) {
-  return Fl_Screen_Driver::font_name(fnum);
+  return Fl::screen_driver()->font_name(fnum);
 }
 
 //

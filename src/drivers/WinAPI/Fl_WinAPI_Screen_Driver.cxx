@@ -511,19 +511,15 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
   return 1;
 }
 
-struct Fl_Fontdesc *Fl_Screen_Driver::calc_fl_fonts() {
-  return NULL;
-}
-
-unsigned Fl_Screen_Driver::font_desc_size() {
+unsigned Fl_WinAPI_Screen_Driver::font_desc_size() {
   return (unsigned)sizeof(Fl_Fontdesc);
 }
 
-const char *Fl_Screen_Driver::font_name(int num) {
+const char *Fl_WinAPI_Screen_Driver::font_name(int num) {
   return fl_fonts[num].name;
 }
 
-void Fl_Screen_Driver::font_name(int num, const char *name) {
+void Fl_WinAPI_Screen_Driver::font_name(int num, const char *name) {
   Fl_Fontdesc *s = fl_fonts + num;
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}
