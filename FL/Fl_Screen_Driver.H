@@ -124,6 +124,11 @@ public:
   static unsigned font_desc_size();
   static const char *font_name(int num);
   static void font_name(int num, const char *name);
+  // to support Fl::set_fonts(), Fl::get_font_sizes(), Fl::get_font_name()
+  virtual Fl_Font set_fonts(const char *name) {return 0;}
+  virtual int get_font_sizes(Fl_Font fnum, int*& sizep) {return 0;}
+  virtual const char* get_font_name(Fl_Font fnum, int* ap) {return NULL;}
+
   // read raw image from a window or an offscreen buffer
 #if defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"

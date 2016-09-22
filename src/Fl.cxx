@@ -2004,6 +2004,18 @@ void fl_open_callback(void (*cb)(const char *))
 }
 /** @} */
 
+Fl_Font Fl::set_fonts(const char* xstarname) {
+  return Fl::screen_driver()->set_fonts(xstarname);
+}
+
+const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
+  return Fl::screen_driver()->get_font_name(fnum, ap);
+}
+
+int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
+  return Fl::screen_driver()->get_font_sizes(fnum, sizep);
+}
+
 //
 // End of "$Id$".
 //

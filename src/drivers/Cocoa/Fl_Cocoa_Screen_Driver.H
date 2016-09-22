@@ -94,6 +94,9 @@ public:
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display();
+  virtual Fl_Font set_fonts(const char *name);
+  virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
+  virtual const char* get_font_name(Fl_Font fnum, int* ap);
 };
 
 

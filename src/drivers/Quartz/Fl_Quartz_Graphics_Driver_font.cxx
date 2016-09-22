@@ -21,17 +21,15 @@
 
 #include "Fl_Quartz_Graphics_Driver.h"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
+#include "../Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include "Fl_Font.H"
 #include <math.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/fl_utf8.h>
+#include <FL/fl_utf8.h> // for fl_utf8toUtf16()
 #include <FL/Fl_Screen_Driver.H>
 
 Fl_Fontdesc* fl_fonts = NULL;
-
-/* from fl_utf.c */
-extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short* dst, unsigned dstlen);
 
 static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -49,7 +47,7 @@ static const int CoreText_threshold = 100500; // this represents Mac OS 10.5
 #define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
 
 // turn a stored font name into a pretty name:
-const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
+const char* Fl_Cocoa_Screen_Driver::get_font_name(Fl_Font fnum, int* ap) {
   if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
@@ -121,7 +119,7 @@ static int fl_free_font = FL_FREE_FONT;
 // and to sort them so the first 4 in a family are normal, bold, italic,
 // and bold italic.
 
-Fl_Font Fl::set_fonts(const char* xstarname) {
+Fl_Font Fl_Cocoa_Screen_Driver::set_fonts(const char* xstarname) {
 #pragma unused ( xstarname )
 if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
 
@@ -200,7 +198,7 @@ else {
   return 0;
 }
 
-int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
+int Fl_Cocoa_Screen_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   static int array[128];
   if (!fl_fonts) fl_fonts = Fl_Screen_Driver::calc_fl_fonts();
   Fl_Fontdesc *s = fl_fonts+fnum;
