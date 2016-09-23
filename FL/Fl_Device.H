@@ -28,7 +28,6 @@
 #include <stdlib.h>
 
 class Fl_Graphics_Driver;
-class Fl_Font_Descriptor;
 class Fl_RGB_Image;
 class Fl_Widget;
 
