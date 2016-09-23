@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Quartz_Graphics_Driver.H"
+#include "../Darwin/Fl_Darwin_System_Driver.H"
 #include <FL/x.H>
 
 /*
@@ -27,7 +28,20 @@
  */
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
-  return new Fl_Quartz_Graphics_Driver();
+#if HAS_ATSU
+  static int option = 0; // 0: not initialized, 1: use CoreText, 2: use ATSU
+  if (!option) {
+    option = 2;
+    if (Fl_Darwin_System_Driver::calc_mac_os_version() >= Fl_Quartz_Graphics_Driver::CoreText_threshold) {
+      option = 1;
+    }
+  }
+  if (option == 2) return new Fl_ATSU_Graphics_Driver();
+#endif // HAS_ATSU
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  return new Fl_CoreText_Graphics_Driver();
+#endif
+  return NULL; // should not happen
 }
 
 char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {

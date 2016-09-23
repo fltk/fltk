@@ -25,8 +25,14 @@
 #ifndef FL_QUARTZ_GRAPHICS_DRIVER_H
 #define FL_QUARTZ_GRAPHICS_DRIVER_H
 
+#include <FL/x.H>
 #include <FL/Fl_Graphics_Driver.H>
 #include <ApplicationServices/ApplicationServices.h>
+
+// condition for the ATSU API to be available at compile time
+#define HAS_ATSU (!defined(__LP64__) || !__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
+
+struct Fl_Fontdesc;
 
 /**
  \brief The Mac OS X-specific graphics class.
@@ -40,10 +46,12 @@ protected:
   typedef struct { float x; float y; } XPOINT;
   XPOINT *p;
   bool high_resolution_;
-public:
+// protected constructor to ensure only derived classes are allocated
   Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
     high_resolution_ = false;
   }
+public:
+  static const int CoreText_threshold; // min Mac OS version for CoreText
   virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
@@ -128,12 +136,44 @@ protected:
   void font(Fl_Font face, Fl_Fontsize fsize);
   double width(const char *str, int n);
   double width(unsigned int c);
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
   virtual bool high_resolution() { return high_resolution_; }
   virtual void global_gc();
+  // Next group of virtual functions have at least one alternative
+  // CoreText- or ATSU-based implementation.
+  virtual void draw_float(float x, float y, const char *str, int n) {}
+  virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {return 0;}
+public:
+  virtual Fl_Font set_fonts(const char* xstarname) {return 0;}
+  virtual Fl_Fontdesc* calc_fl_fonts(void) {return NULL;}
+  virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
+  virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d) {}
+  // end of function group
 };
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+class Fl_CoreText_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  virtual void draw_float(float x, float y, const char *str, int n);
+  virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize);
+  Fl_Font set_fonts(const char* xstarname);
+  virtual Fl_Fontdesc* calc_fl_fonts(void);
+  virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
+  virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+};
+#endif
+
+#ifdef HAS_ATSU
+class Fl_ATSU_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  virtual void draw_float(float x, float y, const char *str, int n);
+  virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize);
+  Fl_Font set_fonts(const char* xstarname);
+  virtual Fl_Fontdesc* calc_fl_fonts(void);
+  virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+};
+#endif
 
 extern float fl_quartz_line_width_;
 
