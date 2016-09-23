@@ -3,7 +3,7 @@
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -41,7 +41,7 @@
 // Return value is the index of the selected item.
 
 int Fl_Tabs::tab_positions() {
-  int nc = children();
+  const int nc = children();
   if (nc != tab_count) {
     clear_tab_positions();
     if (nc) {
@@ -86,7 +86,7 @@ int Fl_Tabs::tab_positions() {
   for (i = 0; i<nc; i++) {
     if (tab_pos[i] >= i*EXTRASPACE) break;
     tab_pos[i] = i*EXTRASPACE;
-    int W = w()-1-EXTRASPACE*(children()-i) - tab_pos[i];
+    int W = w()-1-EXTRASPACE*(nc-i) - tab_pos[i];
     if (tab_width[i] > W) tab_width[i] = W;
   }
   // adjust edges according to visiblity:
@@ -130,7 +130,7 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   }
   if (event_x < x()) return 0;
   Fl_Widget *ret = 0L;
-  int nc = children();
+  const int nc = children();
   tab_positions();
   for (int i=0; i<nc; i++) {
     if (event_x < x()+tab_pos[i+1]) {
@@ -223,6 +223,7 @@ int Fl_Tabs::handle(int event) {
   case FL_KEYBOARD:
     switch (Fl::event_key()) {
       case FL_Left:
+	if (!children()) return 0;
         if (child(0)->visible()) return 0;
 	for (i = 1; i < children(); i ++)
 	  if (child(i)->visible()) break;
@@ -231,6 +232,7 @@ int Fl_Tabs::handle(int event) {
 	do_callback();
         return 1;
       case FL_Right:
+	if (!children()) return 0;
         if (child(children() - 1)->visible()) return 0;
 	for (i = 0; i < children(); i ++)
 	  if (child(i)->visible()) break;
@@ -350,7 +352,7 @@ void Fl_Tabs::draw() {
     if (v) update_child(*v);
   }
   if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
-    int nc = children();
+    const int nc = children();
     int selected = tab_positions();
     int i;
     Fl_Widget*const* a = array();
