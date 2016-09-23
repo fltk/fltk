@@ -151,6 +151,12 @@ protected:
   virtual float scale_bitmap_for_PostScript();
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
   virtual void reset_spot();
+  virtual const char* get_font_name(Fl_Font fnum, int* ap);
+  virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
+  virtual unsigned font_desc_size();
+  virtual const char *font_name(int num);
+  virtual void font_name(int num, const char *name);
+  virtual Fl_Font set_fonts(const char* xstarname);
 protected:
   virtual void global_gc();
 };

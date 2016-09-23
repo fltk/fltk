@@ -19,7 +19,6 @@
 // Select fonts from the FLTK font table.
 #include "../../flstring.h"
 #include "Fl_Xlib_Graphics_Driver.H"
-#include "../X11/Fl_X11_Screen_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -44,7 +43,7 @@
 #define USE_OVERLAY 0
 
 // turn a stored font name in "fltk format" into a pretty name:
-const char* Fl_X11_Screen_Driver::get_font_name(Fl_Font fnum, int* ap) {
+const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     const char* p = f->name;
@@ -218,7 +217,7 @@ static int fl_free_font = FL_FREE_FONT;
 // Also, for now I'm ignoring the "pattern_name" and just getting everything...
 // AND I don't try and skip the fonts we've already loaded in the defaults.
 // Blimey! What a hack!
-Fl_Font Fl_X11_Screen_Driver::set_fonts(const char* pattern_name)
+Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
 {
   FcFontSet  *fnt_set;     // Will hold the list of fonts we find
   FcPattern   *fnt_pattern; // Holds the generic "match all names" pattern
@@ -364,11 +363,11 @@ static int int_sort(const void *aa, const void *bb) {
 // Return all the point sizes supported by this font:
 // Suprisingly enough Xft works exactly like fltk does and returns
 // the same list. Except there is no way to tell if the font is scalable.
-int Fl_X11_Screen_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
 
-  open_display();
+  fl_open_display();
   XftFontSet* fs = XftListFonts(fl_display, fl_screen,
                                 XFT_FAMILY, XftTypeString, s->name+1,
 				(void *)0,

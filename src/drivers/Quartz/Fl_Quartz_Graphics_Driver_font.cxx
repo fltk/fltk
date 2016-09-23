@@ -87,12 +87,11 @@ static Fl_Fontdesc built_in_table_full[] = { // full font names used before 10.5
 #define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
 
 // turn a stored font name into a pretty name:
-const char* Fl_Cocoa_Screen_Driver::get_font_name(Fl_Font fnum, int* ap) {
+const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   if (!fl_fonts) fl_fonts = calc_fl_fonts();
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
-    Fl_Quartz_Graphics_Driver *d = (Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
-    d->set_fontname_in_fontdesc(f);
+    this->set_fontname_in_fontdesc(f);
     const char* p = f->name;
     if (!p || !*p) {if (ap) *ap = 0; return "";}
     int type = 0;
@@ -105,18 +104,7 @@ const char* Fl_Cocoa_Screen_Driver::get_font_name(Fl_Font fnum, int* ap) {
 }
 
 
-// This function fills in the fltk font table with all the fonts that
-// are found on the X server.  It tries to place the fonts into families
-// and to sort them so the first 4 in a family are normal, bold, italic,
-// and bold italic.
-
-Fl_Font Fl_Cocoa_Screen_Driver::set_fonts(const char* xstarname) {
-  Fl_Quartz_Graphics_Driver *d = (Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
-  return d->set_fonts(xstarname);
-}
-
-
-int Fl_Cocoa_Screen_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   static int array[128];
   if (!fl_fonts) fl_fonts = calc_fl_fonts();
   Fl_Fontdesc *s = fl_fonts+fnum;
@@ -194,14 +182,8 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
 }
 
 
-Fl_Fontdesc* Fl_Cocoa_Screen_Driver::calc_fl_fonts(void) {
-  Fl_Quartz_Graphics_Driver *d = (Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
-  return d->calc_fl_fonts();
-}
-
-
 static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
-  if (!fl_fonts) fl_fonts = Fl::screen_driver()->calc_fl_fonts();
+  if (!fl_fonts) fl_fonts = Fl_Graphics_Driver::default_driver().calc_fl_fonts();
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_Font_Descriptor* f;
@@ -287,6 +269,31 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
 void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
   strlcpy(f->fontname, f->name, ENDOFBUFFER);
 }
+
+
+unsigned Fl_Quartz_Graphics_Driver::font_desc_size() {
+  return (unsigned)sizeof(Fl_Fontdesc);
+}
+
+const char *Fl_Quartz_Graphics_Driver::font_name(int num) {
+  if (!fl_fonts) fl_fonts = calc_fl_fonts();
+  return fl_fonts[num].name;
+}
+
+void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
+  Fl_Fontdesc *s = fl_fonts + num;
+  if (s->name) {
+    if (!strcmp(s->name, name)) {s->name = name; return;}
+    for (Fl_Font_Descriptor* f = s->first; f;) {
+      Fl_Font_Descriptor* n = f->next; delete f; f = n;
+    }
+    s->first = 0;
+  }
+  s->name = name;
+  s->fontname[0] = 0;
+  s->first = 0;
+}
+
 
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5

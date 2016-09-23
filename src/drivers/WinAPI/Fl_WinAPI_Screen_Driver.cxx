@@ -511,28 +511,6 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
   return 1;
 }
 
-unsigned Fl_WinAPI_Screen_Driver::font_desc_size() {
-  return (unsigned)sizeof(Fl_Fontdesc);
-}
-
-const char *Fl_WinAPI_Screen_Driver::font_name(int num) {
-  return fl_fonts[num].name;
-}
-
-void Fl_WinAPI_Screen_Driver::font_name(int num, const char *name) {
-  Fl_Fontdesc *s = fl_fonts + num;
-  if (s->name) {
-    if (!strcmp(s->name, name)) {s->name = name; return;}
-    for (Fl_Font_Descriptor* f = s->first; f;) {
-      Fl_Font_Descriptor* n = f->next; delete f; f = n;
-    }
-    s->first = 0;
-  }
-  s->name = name;
-  s->fontname[0] = 0;
-  s->first = 0;
-}
-
 
 Fl_RGB_Image *				// O - image or NULL if failed
 Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate

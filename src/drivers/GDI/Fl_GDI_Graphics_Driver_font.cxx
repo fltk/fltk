@@ -37,7 +37,6 @@
 
 // Select fonts from the FLTK font table.
 #include "Fl_GDI_Graphics_Driver.H"
-#include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "../../flstring.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -63,7 +62,7 @@
 #define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
 
 // turn a stored font name into a pretty name:
-const char* Fl_WinAPI_Screen_Driver::get_font_name(Fl_Font fnum, int* ap) {
+const char* Fl_GDI_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     const char* p = f->name;
@@ -113,7 +112,7 @@ enumcbw(CONST LOGFONTW    *lpelf,
   return 1;
 } /* enumcbw */
 
-Fl_Font Fl_WinAPI_Screen_Driver::set_fonts(const char* xstarname) {
+Fl_Font Fl_GDI_Graphics_Driver::set_fonts(const char* xstarname) {
   HDC gc = (HDC)fl_graphics_driver->gc();
   if (fl_free_font == FL_FREE_FONT) {// if not already been called
     if (!gc) gc = fl_GetDC(0);
@@ -164,7 +163,7 @@ EnumSizeCbW(CONST LOGFONTW    * /*lpelf*/,
 }
 
 
-int Fl_WinAPI_Screen_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+int Fl_GDI_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   nbSize = 0;
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
@@ -190,29 +189,28 @@ int Fl_WinAPI_Screen_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return nbSize;
 }
 
+unsigned Fl_GDI_Graphics_Driver::font_desc_size() {
+  return (unsigned)sizeof(Fl_Fontdesc);
+}
 
-//
-// End of "$Id$".
-//
-//
-// "$Id$"
-//
-// WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2016 by Bill Spitzak and others.
-//
-// This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
-// file is missing or damaged, see the license at:
-//
-//     http://www.fltk.org/COPYING.php
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
+const char *Fl_GDI_Graphics_Driver::font_name(int num) {
+  return fl_fonts[num].name;
+}
 
-#include <FL/Fl_Printer.H>
+void Fl_GDI_Graphics_Driver::font_name(int num, const char *name) {
+  Fl_Fontdesc *s = fl_fonts + num;
+  if (s->name) {
+    if (!strcmp(s->name, name)) {s->name = name; return;}
+    for (Fl_Font_Descriptor* f = s->first; f;) {
+      Fl_Font_Descriptor* n = f->next; delete f; f = n;
+    }
+    s->first = 0;
+  }
+  s->name = name;
+  s->fontname[0] = 0;
+  s->first = 0;
+}
+
 
 static int fl_angle_ = 0;
 
@@ -642,6 +640,7 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   SetTextColor(gc_, oldColor);
 }
 #endif
+
 //
 // End of "$Id$".
 //

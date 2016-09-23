@@ -140,13 +140,17 @@ protected:
   int descent();
   virtual bool high_resolution() { return high_resolution_; }
   virtual void global_gc();
+  virtual const char* get_font_name(Fl_Font fnum, int* ap);
+  virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
+  virtual unsigned font_desc_size();
+  virtual const char *font_name(int num);
+  virtual void font_name(int num, const char *name);
   // Next group of virtual functions have at least one alternative
   // CoreText- or ATSU-based implementation.
   virtual void draw_float(float x, float y, const char *str, int n) {}
   virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {return 0;}
 public:
   virtual Fl_Font set_fonts(const char* xstarname) {return 0;}
-  virtual Fl_Fontdesc* calc_fl_fonts(void) {return NULL;}
   virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
   virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d) {}
   // end of function group
@@ -157,7 +161,7 @@ class Fl_CoreText_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual void draw_float(float x, float y, const char *str, int n);
   virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize);
-  Fl_Font set_fonts(const char* xstarname);
+  virtual Fl_Font set_fonts(const char* xstarname);
   virtual Fl_Fontdesc* calc_fl_fonts(void);
   virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
   virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
@@ -169,7 +173,7 @@ class Fl_ATSU_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual void draw_float(float x, float y, const char *str, int n);
   virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize);
-  Fl_Font set_fonts(const char* xstarname);
+  virtual Fl_Font set_fonts(const char* xstarname);
   virtual Fl_Fontdesc* calc_fl_fonts(void);
   virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
 };

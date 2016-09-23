@@ -279,29 +279,6 @@ int Fl_Cocoa_Screen_Driver::compose(int &del) {
   return 1;
 }
 
-unsigned Fl_Cocoa_Screen_Driver::font_desc_size() {
-  return (unsigned)sizeof(Fl_Fontdesc);
-}
-
-const char *Fl_Cocoa_Screen_Driver::font_name(int num) {
-  if (!fl_fonts) fl_fonts = calc_fl_fonts();
-  return fl_fonts[num].name;
-}
-
-void Fl_Cocoa_Screen_Driver::font_name(int num, const char *name) {
-  Fl_Fontdesc *s = fl_fonts + num;
-  if (s->name) {
-    if (!strcmp(s->name, name)) {s->name = name; return;}
-    for (Fl_Font_Descriptor* f = s->first; f;) {
-      Fl_Font_Descriptor* n = f->next; delete f; f = n;
-    }
-    s->first = 0;
-  }
-  s->name = name;
-  s->fontname[0] = 0;
-  s->first = 0;
-}
-
 uchar *                                                 // O - Pixel buffer or NULL if failed
 Fl_Cocoa_Screen_Driver::read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
                                    int   x,		// I - Left position

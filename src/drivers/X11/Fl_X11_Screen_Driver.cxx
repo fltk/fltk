@@ -694,29 +694,6 @@ int Fl_X11_Screen_Driver::text_display_can_leak() {
 #endif
 }
 
-unsigned Fl_X11_Screen_Driver::font_desc_size() {
-  return (unsigned)sizeof(Fl_Fontdesc);
-}
-
-const char *Fl_X11_Screen_Driver::font_name(int num) {
-  return fl_fonts[num].name;
-}
-
-void Fl_X11_Screen_Driver::font_name(int num, const char *name) {
-  Fl_Fontdesc *s = fl_fonts + num;
-  if (s->name) {
-    if (!strcmp(s->name, name)) {s->name = name; return;}
-    if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
-    for (Fl_Font_Descriptor* f = s->first; f;) {
-      Fl_Font_Descriptor* n = f->next; delete f; f = n;
-    }
-    s->first = 0;
-  }
-  s->name = name;
-  s->fontname[0] = 0;
-  s->xlist = 0;
-  s->first = 0;
-}
 
 //
 // 'fl_subimage_offsets()' - Calculate subimage offsets for an axis

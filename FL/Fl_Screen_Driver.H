@@ -118,16 +118,6 @@ public:
   Fl_Text_Editor::Key_Binding *text_editor_extra_key_bindings;
   // default implementation may be enough
   virtual int text_display_can_leak() { return 0; }
-  // an implementation which returns NULL may be enough
-  virtual struct Fl_Fontdesc *calc_fl_fonts() {return NULL;}
-  // API to the platform-dependent Fl_Fontdesc structure
-  virtual unsigned font_desc_size() {return 0;}
-  virtual const char *font_name(int num) {return NULL;}
-  virtual void font_name(int num, const char *name) {}
-  // to support Fl::set_fonts(), Fl::get_font_sizes(), Fl::get_font_name()
-  virtual Fl_Font set_fonts(const char *name) {return 0;}
-  virtual int get_font_sizes(Fl_Font fnum, int*& sizep) {return 0;}
-  virtual const char* get_font_name(Fl_Font fnum, int* ap) {return NULL;}
 
   // read raw image from a window or an offscreen buffer
 #if defined(FL_PORTING)

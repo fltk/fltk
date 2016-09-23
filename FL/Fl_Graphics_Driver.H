@@ -52,6 +52,7 @@ FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
  */
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
+struct Fl_Fontdesc;
 
 #define FL_REGION_STACK_SIZE 10
 #define FL_MATRIX_STACK_SIZE 32
@@ -323,6 +324,15 @@ public:
   virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
   virtual void XDestroyRegion(Fl_Region r);
+  // font support
+  virtual const char* get_font_name(Fl_Font fnum, int* ap) {return NULL;}
+  virtual int get_font_sizes(Fl_Font fnum, int*& sizep) {return 0;}
+  virtual Fl_Font set_fonts(const char *name) {return 0;}
+  // an implementation which returns NULL may be enough
+  virtual Fl_Fontdesc* calc_fl_fonts(void) {return NULL;}
+  virtual unsigned font_desc_size() {return 0;}
+  virtual const char *font_name(int num) {return NULL;}
+  virtual void font_name(int num, const char *name) {}
 };
 
 #endif // FL_GRAPHICS_DRIVER_H

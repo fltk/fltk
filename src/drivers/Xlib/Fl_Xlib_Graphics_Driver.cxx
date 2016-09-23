@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Xlib_Graphics_Driver.H"
+#include "Fl_Font.H"
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
@@ -197,6 +198,29 @@ void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, 
   XFree(preedit_attr);
 }
 
+unsigned Fl_Xlib_Graphics_Driver::font_desc_size() {
+  return (unsigned)sizeof(Fl_Fontdesc);
+}
+
+const char *Fl_Xlib_Graphics_Driver::font_name(int num) {
+  return fl_fonts[num].name;
+}
+
+void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
+  Fl_Fontdesc *s = fl_fonts + num;
+  if (s->name) {
+    if (!strcmp(s->name, name)) {s->name = name; return;}
+    if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
+    for (Fl_Font_Descriptor* f = s->first; f;) {
+      Fl_Font_Descriptor* n = f->next; delete f; f = n;
+    }
+    s->first = 0;
+  }
+  s->name = name;
+  s->fontname[0] = 0;
+  s->xlist = 0;
+  s->first = 0;
+}
 
 //
 // End of "$Id$".

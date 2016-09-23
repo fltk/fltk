@@ -19,7 +19,6 @@
 // Select fonts from the FLTK font table.
 #include "../../flstring.h"
 #include "Fl_Xlib_Graphics_Driver.H"
-#include "../X11/Fl_X11_Screen_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -94,7 +93,7 @@ static int use_registry(const char *p) {
 #define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
 
 // turn a stored (with *'s) X font name into a pretty name:
-const char* Fl_X11_Screen_Driver::get_font_name(Fl_Font fnum, int* ap) {
+const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     int type = 0;
@@ -265,7 +264,12 @@ static int to_canonical(char *to, const char *from, size_t tolen) {
 
 static unsigned int fl_free_font = FL_FREE_FONT;
 
-Fl_Font Fl_X11_Screen_Driver::set_fonts(const char* xstarname) {
+
+// This function fills in the fltk font table with all the fonts that
+// are found on the X server.  It tries to place the fonts into families
+// and to sort them so the first 4 in a family are normal, bold, italic,
+// and bold italic.
+Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* xstarname) {
   if (fl_free_font > (unsigned)FL_FREE_FONT) // already been here
     return (Fl_Font)fl_free_font;
   fl_open_display();
@@ -318,7 +322,7 @@ Fl_Font Fl_X11_Screen_Driver::set_fonts(const char* xstarname) {
   return (Fl_Font)fl_free_font;
 }
 
-int Fl_X11_Screen_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
   if (!s->xlist) {
