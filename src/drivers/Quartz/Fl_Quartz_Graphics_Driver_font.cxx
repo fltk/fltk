@@ -126,8 +126,12 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 #  endif
   // OpenGL needs those for its font handling
   size = Size;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   fontref = NULL;
+#endif
+#if HAS_ATSU
   layout = NULL;
+#endif
   Fl_Quartz_Graphics_Driver *driver = (Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
   driver->descriptor_init(name, size, this);
 }
@@ -149,12 +153,14 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #endif
   */
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fontref) {
     CFRelease(fontref);
     for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) {
       if (width[i]) free(width[i]);
     }
   }
+#endif
 #if HAS_ATSU
   if (layout) {
     ATSUDisposeTextLayout(layout);

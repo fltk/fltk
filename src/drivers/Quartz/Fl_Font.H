@@ -25,6 +25,7 @@
 #define FL_FONT_
 
 #include <config.h>
+#include "Fl_Quartz_Graphics_Driver.H"
 #include <ApplicationServices/ApplicationServices.h>
 
 /**
@@ -40,19 +41,20 @@ public:
   Fl_Fontsize size; /**< font size */
 #ifndef FL_DOXYGEN // don't bother with platorm dependant details in the doc. 
   Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
-  ATSUTextLayout layout;
-#     if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  FL_EXPORT ~Fl_Font_Descriptor();
+  short ascent, descent, q_width;
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   CTFontRef fontref;
   // the unicode span is divided in 512 blocks of 128 characters
   float *width[512]; // array of arrays of character widths
-#     endif
+# endif
+# if HAS_ATSU
+  ATSUTextLayout layout;
   ATSUStyle style;
-  short ascent, descent, q_width;
-#  if HAVE_GL
+# endif
+# if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
-#  endif // HAVE_GL
-
-  FL_EXPORT ~Fl_Font_Descriptor();
+# endif // HAVE_GL
 
 #endif // FL_DOXYGEN
 };

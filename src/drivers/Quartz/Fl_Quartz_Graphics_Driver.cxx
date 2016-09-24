@@ -40,8 +40,9 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 #endif // HAS_ATSU
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   return new Fl_CoreText_Graphics_Driver();
-#endif
+#else
   return NULL; // should not happen
+#endif
 }
 
 char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {
