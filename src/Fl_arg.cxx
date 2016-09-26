@@ -285,15 +285,15 @@ void Fl_Window::show(int argc, char **argv) {
     if (geometry) {
       int fl = 0, gx = x(), gy = y(); unsigned int gw = w(), gh = h();
       fl = Fl::system_driver()->XParseGeometry(geometry, &gx, &gy, &gw, &gh);
-      if (fl & Fl_System_Driver::flXNegative) gx = Fl::w()-w()+gx;
-      if (fl & Fl_System_Driver::flYNegative) gy = Fl::h()-h()+gy;
+      if (fl & Fl_System_Driver::fl_XNegative) gx = Fl::w()-w()+gx;
+      if (fl & Fl_System_Driver::fl_YNegative) gy = Fl::h()-h()+gy;
       //  int mw,mh; minsize(mw,mh);
       //  if (mw > gw) gw = mw;
       //  if (mh > gh) gh = mh;
       Fl_Widget *r = resizable();
       if (!r) resizable(this);
       // for WIN32 we assume window is not mapped yet:
-      if (fl & (Fl_System_Driver::flXValue | Fl_System_Driver::flYValue))
+      if (fl & (Fl_System_Driver::fl_XValue | Fl_System_Driver::fl_YValue))
 	x(-1), resize(gx,gy,gw,gh);
       else
 	size(gw,gh);

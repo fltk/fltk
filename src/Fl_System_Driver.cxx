@@ -27,13 +27,13 @@
 #include <string.h>
 #include "flstring.h"
 
-const int Fl_System_Driver::flNoValue =	    0x0000;
-const int Fl_System_Driver::flWidthValue =  0x0004;
-const int Fl_System_Driver::flHeightValue = 0x0008;
-const int Fl_System_Driver::flXValue =      0x0001;
-const int Fl_System_Driver::flYValue =      0x0002;
-const int Fl_System_Driver::flXNegative =   0x0010;
-const int Fl_System_Driver::flYNegative =   0x0020;
+const int Fl_System_Driver::fl_NoValue =     0x0000;
+const int Fl_System_Driver::fl_WidthValue =  0x0004;
+const int Fl_System_Driver::fl_HeightValue = 0x0008;
+const int Fl_System_Driver::fl_XValue =      0x0001;
+const int Fl_System_Driver::fl_YValue =      0x0002;
+const int Fl_System_Driver::fl_XNegative =   0x0010;
+const int Fl_System_Driver::fl_YNegative =   0x0020;
 
 
 Fl_System_Driver::Fl_System_Driver()
@@ -138,7 +138,7 @@ static int ReadInteger(char* string, char** NextString)
 int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
                    unsigned int* width, unsigned int* height)
 {
-  int mask = Fl_System_Driver::flNoValue;
+  int mask = Fl_System_Driver::fl_NoValue;
   char *strind;
   unsigned int tempWidth = 0, tempHeight = 0;
   int tempX = 0, tempY = 0;
@@ -154,7 +154,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
     if (strind == nextCharacter)
       return (0);
     strind = nextCharacter;
-    mask |= flWidthValue;
+    mask |= fl_WidthValue;
   }
   
   if (*strind == 'x' || *strind == 'X') {
@@ -163,7 +163,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
     if (strind == nextCharacter)
       return (0);
     strind = nextCharacter;
-    mask |= flHeightValue;
+    mask |= fl_HeightValue;
   }
   
   if ((*strind == '+') || (*strind == '-')) {
@@ -173,7 +173,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
       if (strind == nextCharacter)
         return (0);
       strind = nextCharacter;
-      mask |= flXNegative;
+      mask |= fl_XNegative;
       
     } else {
       strind++;
@@ -182,7 +182,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
         return(0);
       strind = nextCharacter;
     }
-    mask |= flXValue;
+    mask |= fl_XValue;
     if ((*strind == '+') || (*strind == '-')) {
       if (*strind == '-') {
         strind++;
@@ -190,7 +190,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
         if (strind == nextCharacter)
           return(0);
         strind = nextCharacter;
-        mask |= flYNegative;
+        mask |= fl_YNegative;
         
       } else {
         strind++;
@@ -199,7 +199,7 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
           return(0);
         strind = nextCharacter;
       }
-      mask |= flYValue;
+      mask |= fl_YValue;
     }
   }
   
@@ -208,13 +208,13 @@ int Fl_System_Driver::XParseGeometry(const char* string, int* x, int* y,
   
   if (*strind != '\0') return (0);
   
-  if (mask & flXValue)
+  if (mask & fl_XValue)
     *x = tempX;
-  if (mask & flYValue)
+  if (mask & fl_YValue)
     *y = tempY;
-  if (mask & flWidthValue)
+  if (mask & fl_WidthValue)
     *width = tempWidth;
-  if (mask & flHeightValue)
+  if (mask & fl_HeightValue)
     *height = tempHeight;
   return (mask);
 }

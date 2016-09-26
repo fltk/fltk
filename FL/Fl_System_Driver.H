@@ -55,13 +55,13 @@ public:
   virtual ~Fl_System_Driver();
   // These flags are useful after calling XParseGeometry(). They indicate which of its arguments
   // contain meaningful data upon return.
-  static const int flNoValue;
-  static const int flWidthValue;
-  static const int flHeightValue;
-  static const int flXValue;
-  static const int flYValue;
-  static const int flXNegative;
-  static const int flYNegative;
+  static const int fl_NoValue;
+  static const int fl_WidthValue;
+  static const int fl_HeightValue;
+  static const int fl_XValue;
+  static const int fl_YValue;
+  static const int fl_XNegative;
+  static const int fl_YNegative;
   
   // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *arg) { return 0; }
