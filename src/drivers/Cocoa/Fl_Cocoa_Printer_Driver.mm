@@ -44,8 +44,6 @@ typedef OSStatus
                             CFStringRef      graphicsContextType,
                             void **          graphicsContext);
 
-extern void fl_quartz_restore_line_style_(CGContextRef gc);
-
 
 /** Support for printing on the Apple OS X platform */
 class Fl_Cocoa_Printer_Driver : public Fl_Paged_Device {
@@ -324,7 +322,7 @@ int Fl_Cocoa_Printer_Driver::start_page (void)
   else
     CGContextTranslateCTM(gc, margins.top, margins.right + h);
   CGContextScaleCTM(gc, win_scale_x, - win_scale_y);
-  fl_quartz_restore_line_style_(gc);
+  ((Fl_Quartz_Graphics_Driver*)driver())->quartz_restore_line_style();
   CGContextSetShouldAntialias(gc, false);
   CGContextSaveGState(gc);
   CGContextSaveGState(gc);

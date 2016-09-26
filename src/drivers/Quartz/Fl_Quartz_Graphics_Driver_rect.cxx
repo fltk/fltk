@@ -33,9 +33,6 @@
 #include "Fl_Quartz_Graphics_Driver.h"
 
 
-extern float fl_quartz_line_width_;
-
-
 // --- line and polygon drawing with integer coordinates
 
 void Fl_Quartz_Graphics_Driver::point(int x, int y) {
@@ -44,10 +41,10 @@ void Fl_Quartz_Graphics_Driver::point(int x, int y) {
 
 void Fl_Quartz_Graphics_Driver::rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  if ( (!has_feature(PRINTER)) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(gc_, rect);
-  if ( (!has_feature(PRINTER)) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if ( (!has_feature(PRINTER)) && quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
@@ -57,24 +54,24 @@ void Fl_Quartz_Graphics_Driver::rectf(int x, int y, int w, int h) {
 }
 
 void Fl_Quartz_Graphics_Driver::line(int x, int y, int x1, int y1) {
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y1);
   CGContextStrokePath(gc_);
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y1);
   CGContextAddLineToPoint(gc_, x2, y2);
   CGContextStrokePath(gc_);
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextStrokePath(gc_);
@@ -83,76 +80,76 @@ void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1) {
      (or one pixel) too short at both ends. This is corrected by filling at both ends rectangles
      of size one unit by line-width.
      */
-    CGContextFillRect(gc_, CGRectMake(x-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    CGContextFillRect(gc_, CGRectMake(x1-0.5 , y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(gc_, CGRectMake(x-0.5 , y  - quartz_line_width_/2, 1 , quartz_line_width_));
+    CGContextFillRect(gc_, CGRectMake(x1-0.5 , y  - quartz_line_width_/2, 1 , quartz_line_width_));
   }
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextAddLineToPoint(gc_, x1, y2);
   CGContextStrokePath(gc_);
   if (high_resolution()) {
-    CGContextFillRect(gc_, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    CGContextFillRect(gc_, CGRectMake(x1  -  fl_quartz_line_width_/2, y2-0.5, fl_quartz_line_width_, 1));
+    CGContextFillRect(gc_, CGRectMake(x-0.5, y  - quartz_line_width_/2, 1 , quartz_line_width_));
+    CGContextFillRect(gc_, CGRectMake(x1  -  quartz_line_width_/2, y2-0.5, quartz_line_width_, 1));
   }
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y);
   CGContextAddLineToPoint(gc_, x1, y2);
   CGContextAddLineToPoint(gc_, x3, y2);
   CGContextStrokePath(gc_);
   if (high_resolution()) {
-    CGContextFillRect(gc_, CGRectMake(x-0.5, y  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
-    CGContextFillRect(gc_, CGRectMake(x3-0.5, y2  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(gc_, CGRectMake(x-0.5, y  - quartz_line_width_/2, 1 , quartz_line_width_));
+    CGContextFillRect(gc_, CGRectMake(x3-0.5, y2  - quartz_line_width_/2, 1 , quartz_line_width_));
   }
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1) {
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextStrokePath(gc_);
   if (high_resolution()) {
-    CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
-    CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y1-0.5, fl_quartz_line_width_, 1));
+    CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y-0.5, quartz_line_width_, 1));
+    CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y1-0.5, quartz_line_width_, 1));
   }
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextAddLineToPoint(gc_, x2, y1);
   CGContextStrokePath(gc_);
   if (high_resolution()) {
-    CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
-    CGContextFillRect(gc_, CGRectMake(x2-0.5, y1  - fl_quartz_line_width_/2, 1 , fl_quartz_line_width_));
+    CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y-0.5, quartz_line_width_, 1));
+    CGContextFillRect(gc_, CGRectMake(x2-0.5, y1  - quartz_line_width_/2, 1 , quartz_line_width_));
   }
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x, y1);
   CGContextAddLineToPoint(gc_, x2, y1);
   CGContextAddLineToPoint(gc_, x2, y3);
   CGContextStrokePath(gc_);
   if (high_resolution()) {
-    CGContextFillRect(gc_, CGRectMake(x  -  fl_quartz_line_width_/2, y-0.5, fl_quartz_line_width_, 1));
-    CGContextFillRect(gc_, CGRectMake(x2  -  fl_quartz_line_width_/2, y3-0.5, fl_quartz_line_width_, 1));
+    CGContextFillRect(gc_, CGRectMake(x  -  quartz_line_width_/2, y-0.5, quartz_line_width_, 1));
+    CGContextFillRect(gc_, CGRectMake(x2  -  quartz_line_width_/2, y3-0.5, quartz_line_width_, 1));
   }
-  if (has_feature(PRINTER) || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (has_feature(PRINTER) || quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
@@ -291,9 +288,6 @@ void Fl_Quartz_Graphics_Driver::pop_clip() {
   restore_clip();
 }
 
-// helper function to manage the current CGContext gc
-extern void fl_quartz_restore_line_style_(CGContextRef gc);
-
 void Fl_Quartz_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
@@ -316,7 +310,7 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
       CGContextScaleCTM(gc_, 1.0f, -1.0f); // now 0,0 is top-left point of the context
     }
     color(color());
-    fl_quartz_restore_line_style_(gc_);
+    quartz_restore_line_style();
     if (r) { //apply program clip
       CGContextClipToRects(gc_, r->rects, r->count);
     }

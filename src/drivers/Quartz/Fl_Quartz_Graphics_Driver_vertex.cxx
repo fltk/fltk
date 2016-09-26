@@ -41,13 +41,13 @@ void Fl_Quartz_Graphics_Driver::vertex(double x,double y) {
 }
 
 void Fl_Quartz_Graphics_Driver::end_points() {
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   for (int i=0; i<n; i++) { 
     CGContextMoveToPoint(gc_, p[i].x, p[i].y);
     CGContextAddLineToPoint(gc_, p[i].x, p[i].y);
     CGContextStrokePath(gc_);
   }
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::end_line() {

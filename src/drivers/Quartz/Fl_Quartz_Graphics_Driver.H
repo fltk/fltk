@@ -49,8 +49,18 @@ protected:
   XPOINT *p;
   bool high_resolution_;
   driver_feature is_printer_;
+  float quartz_line_width_;
+  CGLineCap quartz_line_cap_;
+  CGLineJoin quartz_line_join_;
+  CGFloat *quartz_line_pattern;
+  int quartz_line_pattern_size;
 // protected constructor to ensure only derived classes are allocated
   Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
+    quartz_line_width_ = 1.f;
+    quartz_line_cap_ = kCGLineCapButt;
+    quartz_line_join_ = kCGLineJoinMiter;
+    quartz_line_pattern = 0;
+    quartz_line_pattern_size = 0;
     high_resolution_ = false;
     is_printer_ = (driver_feature)0;
   }
@@ -157,6 +167,7 @@ protected:
   virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
   virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d) {}
   // end of function group
+  void quartz_restore_line_style();
 };
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -182,7 +193,6 @@ class Fl_ATSU_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
 };
 #endif
 
-extern float fl_quartz_line_width_;
 
 #endif // FL_QUARTZ_GRAPHICS_DRIVER_H
 
