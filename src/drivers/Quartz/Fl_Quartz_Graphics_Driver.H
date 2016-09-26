@@ -40,6 +40,7 @@ struct Fl_Fontdesc;
  This class is implemented only on the Mac OS X platform.
  */
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
+  friend class Fl_Font_Descriptor;
 protected:
   CGContextRef gc_;
   int p_size;
@@ -140,6 +141,7 @@ protected:
   int descent();
   virtual bool high_resolution() { return high_resolution_; }
   virtual void global_gc();
+  inline Fl_Font_Descriptor *valid_font_descriptor();
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual unsigned font_desc_size();
@@ -147,9 +149,7 @@ protected:
   virtual void font_name(int num, const char *name);
   // Next group of virtual functions have at least one alternative
   // CoreText- or ATSU-based implementation.
-  virtual void draw_float(float x, float y, const char *str, int n) {}
-  virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {return 0;}
-public:
+  virtual double width(const UniChar* txt, int n) {return 0;}
   virtual Fl_Font set_fonts(const char* xstarname) {return 0;}
   virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
   virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d) {}
@@ -159,8 +159,8 @@ public:
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 class Fl_CoreText_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  virtual void draw_float(float x, float y, const char *str, int n);
-  virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize);
+  virtual void draw(const char *str, int n, float x, float y);
+  virtual double width(const UniChar* txt, int n);
   virtual Fl_Font set_fonts(const char* xstarname);
   virtual Fl_Fontdesc* calc_fl_fonts(void);
   virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
@@ -171,8 +171,8 @@ class Fl_CoreText_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
 #ifdef HAS_ATSU
 class Fl_ATSU_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  virtual void draw_float(float x, float y, const char *str, int n);
-  virtual double width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize);
+  virtual void draw(const char *str, int n, float x, float y);
+  virtual double width(const UniChar* txt, int n);
   virtual Fl_Font set_fonts(const char* xstarname);
   virtual Fl_Fontdesc* calc_fl_fonts(void);
   virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);

@@ -271,7 +271,7 @@ public:
   /** Return the current line descent */
   virtual int descent() { return 0; }
   /** Return the current Fl_Font_Descriptor */
-  virtual Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
+  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   /** Set the current Fl_Font_Descriptor */
   virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */

@@ -132,7 +132,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 #if HAS_ATSU
   layout = NULL;
 #endif
-  Fl_Quartz_Graphics_Driver *driver = (Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
+  Fl_Quartz_Graphics_Driver *driver = (Fl_Quartz_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
   driver->descriptor_init(name, size, this);
 }
 
@@ -203,37 +203,35 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 
 
 void Fl_Quartz_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
-  if (fnum==-1) {
+  if (fnum == -1) {
     Fl_Graphics_Driver::font(0, 0);
     return;
   }
   Fl_Graphics_Driver::font(fnum, size);
-  this->font_descriptor( find(fnum, size) );
+  font_descriptor( find(fnum, size) );
+}
+
+Fl_Font_Descriptor *Fl_Quartz_Graphics_Driver::valid_font_descriptor() {
+  // avoid a crash if no font has been selected by user yet
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  return font_descriptor();
 }
 
 int Fl_Quartz_Graphics_Driver::height() {
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   return fl_fontsize->ascent + fl_fontsize->descent;
 }
 
 int Fl_Quartz_Graphics_Driver::descent() {
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
-  return fl_fontsize->descent+1;
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  return fl_fontsize->descent + 1;
 }
 
-void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) {
-  // avoid a crash if no font has been selected by user yet !
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  draw_float(x, y, str, n);
+void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) { // is never called
 }
 
 void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
-  // avoid a crash if no font has been selected by user yet !
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  //fl_mac_draw(str, n, (float)x-0.0f, (float)y+0.5f, this);
-  draw_float((float)x, y+0.5f, str, n);
+  draw(str, n, (float)x, y+0.5f);
 }
 
 void Fl_Quartz_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
@@ -253,13 +251,10 @@ void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 double Fl_Quartz_Graphics_Driver::width(const char* txt, int n) {
   int wc_len = n;
   UniChar *uniStr = mac_Utf8_to_Utf16(txt, n, &wc_len);
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  return width(uniStr, wc_len, font_descriptor());
+  return width(uniStr, wc_len);
 }
 
 double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  
   UniChar utf16[3];
   int l = 1;
   if (wc <= 0xFFFF) {
@@ -268,7 +263,7 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
   else {
     l = (int)fl_ucs_to_Utf16(wc, utf16, 3);
   }
-  return width(utf16, l, font_descriptor());
+  return width(utf16, l);
 }
 
 
@@ -392,10 +387,11 @@ static CGFloat variation_selector_width(CFStringRef str16, Fl_Font_Descriptor *f
   return retval;
 }
 
-double Fl_CoreText_Graphics_Driver::width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
+double Fl_CoreText_Graphics_Driver::width(const UniChar* txt, int n) {
   double retval = 0;
   UniChar uni;
   int i;
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   for (i = 0; i < n; i++) { // loop over txt
     uni = txt[i];
     if (uni >= 0xD800 && uni <= 0xDBFF) { // handles the surrogate range
@@ -462,8 +458,7 @@ double Fl_CoreText_Graphics_Driver::width(const UniChar* txt, int n, Fl_Font_Des
 
 // text extent calculation
 void Fl_CoreText_Graphics_Driver::text_extents(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, txt, n,  kCFAllocatorNull);
   CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
@@ -495,14 +490,15 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
   return CGColorCreate(cspace, components);
 }
 
-void Fl_CoreText_Graphics_Driver::draw_float(float x, float y, const char *str, int n) {
+void Fl_CoreText_Graphics_Driver::draw(const char *str, int n, float x, float y) {
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
   CGContextRef gc = (CGContextRef)this->gc();
   CFMutableStringRef str16 = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, uniStr, n,  n, kCFAllocatorNull);
   if (str16 == NULL) return; // shd not happen
   CGColorRef color = flcolortocgcolor(this->color());
-  CFDictionarySetValue (attributes, kCTFontAttributeName, font_descriptor()->fontref);
+  CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
   CFDictionarySetValue (attributes, kCTForegroundColorAttributeName, color);
   CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
   CFRelease(str16);
@@ -654,13 +650,14 @@ void Fl_ATSU_Graphics_Driver::descriptor_init(const char* name, Fl_Fontsize size
   ATSUSetTransientFontMatching (d->layout, true);
 }
 
-void Fl_ATSU_Graphics_Driver::draw_float(float x, float y, const char *str, int n) {
+void Fl_ATSU_Graphics_Driver::draw(const char *str, int n, float x, float y) {
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
   CGContextRef gc = (CGContextRef)this->gc();
   OSStatus err;
   // now collect our ATSU resources
-  ATSUTextLayout layout = font_descriptor()->layout;
+  ATSUTextLayout layout = fl_fontsize->layout;
   
   ByteCount iSize = sizeof(CGContextRef);
   ATSUAttributeTag iTag = kATSUCGContextTag;
@@ -673,7 +670,7 @@ void Fl_ATSU_Graphics_Driver::draw_float(float x, float y, const char *str, int 
   CGContextSetShouldAntialias(gc, false);
 }
 
-double Fl_ATSU_Graphics_Driver::width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
+double Fl_ATSU_Graphics_Driver::width(const UniChar* txt, int n) {
   OSStatus err;
   Fixed bBefore, bAfter, bAscent, bDescent;
   ATSUTextLayout layout;
@@ -681,6 +678,7 @@ double Fl_ATSU_Graphics_Driver::width(const UniChar* txt, int n, Fl_Font_Descrip
   ATSUAttributeTag iTag;
   ATSUAttributeValuePtr iValuePtr;
   
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // Here's my ATSU text measuring attempt... This seems to do the Right Thing
   // now collect our ATSU resources and measure our text string
   layout = fl_fontsize->layout;
@@ -699,8 +697,7 @@ double Fl_ATSU_Graphics_Driver::width(const UniChar* txt, int n, Fl_Font_Descrip
 }
 
 void Fl_ATSU_Graphics_Driver::text_extents(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
-  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
+  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   OSStatus err;
   ATSUTextLayout layout;
