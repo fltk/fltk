@@ -246,7 +246,6 @@ elseif (APPLE)
     drivers/Quartz/Fl_Quartz_Graphics_Driver_font.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_vertex.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_image.cxx
-    drivers/Quartz/Fl_Quartz_Printer_Graphics_Driver.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_arci.cxx
     drivers/Quartz/Fl_Quartz_Graphics_Driver_line_style.cxx
     drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.cxx
