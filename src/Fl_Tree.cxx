@@ -786,7 +786,7 @@ Fl_Tree_Item* Fl_Tree::root() {
 
 /// Sets the root item to \p 'newitem'.
 ///
-/// If a root item already exists, clear() is first to clear it
+/// If a root item already exists, clear() is called first to clear it
 /// before replacing it with newitem.
 ///
 /// Use this to install a custom item (derived from Fl_Tree_Item) as the root
