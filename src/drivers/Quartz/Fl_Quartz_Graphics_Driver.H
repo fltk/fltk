@@ -41,20 +41,23 @@ struct Fl_Fontdesc;
  */
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
   friend class Fl_Font_Descriptor;
+  friend class Fl_Cocoa_Printer_Driver;
 protected:
   CGContextRef gc_;
   int p_size;
   typedef struct { float x; float y; } XPOINT;
   XPOINT *p;
   bool high_resolution_;
+  driver_feature is_printer_;
 // protected constructor to ensure only derived classes are allocated
   Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
     high_resolution_ = false;
+    is_printer_ = (driver_feature)0;
   }
 public:
   static const int CoreText_threshold; // min Mac OS version for CoreText
   virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
-  virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
+  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | is_printer_); }
   virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
   virtual void *gc() {return gc_;}
   char can_do_alpha_blending();

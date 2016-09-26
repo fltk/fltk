@@ -19,7 +19,7 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window_Driver.H>
-#include "../Quartz/Fl_Quartz_Printer_Graphics_Driver.H"
+#include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
 #include "Fl_Cocoa_Window_Driver.H"
 
@@ -81,7 +81,9 @@ Fl_Cocoa_Printer_Driver::Fl_Cocoa_Printer_Driver(void)
   x_offset = 0;
   y_offset = 0;
   scale_x = scale_y = 1.;
-  driver(new Fl_Quartz_Printer_Graphics_Driver);
+  Fl_Quartz_Graphics_Driver *d = (Fl_Quartz_Graphics_Driver*)Fl_Graphics_Driver::newMainGraphicsDriver();
+  d->is_printer_ = Fl_Graphics_Driver::PRINTER;
+  driver(d);
 }
 
 Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
