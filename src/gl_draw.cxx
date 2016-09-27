@@ -362,9 +362,12 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 #if ! defined(FL_DOXYGEN)
 
 #include <FL/x.H>
+#if !defined(kCGBitmapByteOrder32Host) // doc says available 10.4 but some 10.4 don't have it
+#  define kCGBitmapByteOrder32Host 0
+#endif
+
 #if  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
 #  include <OpenGL/glext.h>
-#  define kCGBitmapByteOrder32Host 0
 #  define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
 #endif // MAC_OS_X_VERSION_MAX_ALLOWED
 
