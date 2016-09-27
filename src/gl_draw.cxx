@@ -36,11 +36,18 @@
 #include "Xutf8.h"
 #endif
 
-#if defined(__APPLE__) &&  MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-#  include <OpenGL/glext.h>
+#if defined(__APPLE__)
+
+#if !defined(kCGBitmapByteOrder32Host) // doc says available 10.4 but some 10.4 don't have it
 #  define kCGBitmapByteOrder32Host 0
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#  include <OpenGL/glext.h>
 #  define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
 #  include <FL/Fl_Gl_Window.H>
+#endif // < MAC_OS_X_VERSION_10_4
+
 #endif // __APPLE__
 
 /** Returns the current font's height */
