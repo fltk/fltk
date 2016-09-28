@@ -1824,15 +1824,15 @@ void Fl_Cocoa_Screen_Driver::disable_im() {
 
 // Gets the border sizes and the titlebar size
 static void get_window_frame_sizes(int &bx, int &by, int &bt) {
-  static bool first = true;
-  static int top, left, bottom;
-  if (first) {
-    first = false;
+  static int top = 0, left, bottom;
+  if (!top) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSRect inside = { {20,20}, {100,100} };
     NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
     left = int(outside.origin.x - inside.origin.x);
     bottom = int(outside.origin.y - inside.origin.y);
     top = int(outside.size.height - inside.size.height) - bottom;
+    [pool release];
     }
   bx = left;
   by = bottom;
