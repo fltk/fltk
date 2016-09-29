@@ -2390,7 +2390,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   top = left = bottom = right = NULL;
   if (!shown() || parent() || !border() || !visible()) return;
   int wsides, hbottom, bt;
-  float scaling;
+  float scaling = 1;
   RECT r = border_width_title_bar_height(wsides, hbottom, bt, &scaling);
   int htop = bt + hbottom;
   Fl_Surface_Device *previous = Fl_Surface_Device::surface();

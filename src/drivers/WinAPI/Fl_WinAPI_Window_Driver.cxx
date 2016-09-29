@@ -112,7 +112,7 @@ int Fl_WinAPI_Window_Driver::decorated_w()
 int Fl_WinAPI_Window_Driver::decorated_h()
 {
   int bt, bx, by;
-  float scaling;
+  float scaling = 1;
   border_width_title_bar_height(bx, by, bt, &scaling);
   return h() + bt/scaling + 2 * by;
 }
