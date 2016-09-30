@@ -5,7 +5,7 @@ dnl "$Id$"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2015 by Bill Spitzak and others.
+dnl Copyright 1998-2016 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -44,10 +44,10 @@ AC_PROG_CXX
 dnl So --with-archflags option is used during "checking size of long"
 case $host_os in
     darwin*)
-        if test "x$with_archflags" != x ; then
-            CFLAGS="$CFLAGS $with_archflags"
-        fi
-        ;;
+	if test "x$with_archflags" != x ; then
+	    CFLAGS="$CFLAGS $with_archflags"
+	fi
+	;;
 esac
 
 dnl FLTK library versions...
@@ -76,7 +76,7 @@ dnl host_os_gui equals $host_os unless we target Cygwin or Darwin in combination
 host_os_gui=$host_os
 case $host_os in
     cygwin*)
-        # Handle Cygwin option *first*, before all other tests.
+	# Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [[default=no]]])
 	AC_ARG_ENABLE(x11,    [  --enable-x11            with Cygwin or Mac OS, use X11 [[default=no]]])
 	if test x$enable_cygwin = xyes; then
@@ -132,23 +132,23 @@ if test x$enable_cairoext = xyes; then
 	  dnl FIXME This part should be fixed so configure do not depend on
 	  dnl we do not rely on pkg-config .
 	  CAIRODIR="cairo"
-          CAIROFLAGS="`pkg-config --cflags cairo`"
-          CAIROLIBS="-lcairo -lpixman-1"
-          CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
+	  CAIROFLAGS="`pkg-config --cflags cairo`"
+	  CAIROLIBS="-lcairo -lpixman-1"
+	  CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
 	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
 	  FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
-	  LIBS="$CAIROLIBS $LIBS" 
-	  dnl $LINKFLTKCAIRO 
+	  LIBS="$CAIROLIBS $LIBS"
+	  dnl $LINKFLTKCAIRO
 	  LINKFLTK+=" $LINKFLTKCAIRO"
-else 
+else
     if test x$enable_cairo = xyes; then
 	  AC_DEFINE(FLTK_HAVE_CAIRO)
 	  dnl FIXME This part should be fixed so configure do not depend on
 	  dnl we do not rely on pkg-config .
 	  CAIRODIR="cairo"
-          CAIROFLAGS="`pkg-config --cflags cairo`"
-          CAIROLIBS="-lcairo -lpixman-1"
-          CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
+	  CAIROFLAGS="`pkg-config --cflags cairo`"
+	  CAIROLIBS="-lcairo -lpixman-1"
+	  CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
 	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
 	  FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
     fi
@@ -159,7 +159,6 @@ AC_SUBST(CAIROFLAGS)
 AC_SUBST(CAIROLIBS)
 AC_SUBST(LINKFLTKCAIRO)
 AC_SUBST(FLTKCAIROOPTION)
-
 
 AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
@@ -207,7 +206,6 @@ if test x$enable_cp936 = xyes; then
     CFLAGS="$CFLAGS -DCP936"
 fi
 
-
 AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [[default=yes]]])
 
 AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [[default=no]]])
@@ -218,112 +216,114 @@ if test x$enable_shared = xyes; then
 
     case $host_os in
 	darwin*)
-            DSONAME="libfltk.$FL_DSO_VERSION.dylib"
-            FLDSONAME="libfltk_forms.$FL_DSO_VERSION.dylib"
-            GLDSONAME="libfltk_gl.$FL_DSO_VERSION.dylib"
-            IMGDSONAME="libfltk_images.$FL_DSO_VERSION.dylib"
-            CAIRODSONAME="libfltk_cairo.$FL_DSO_VERSION.dylib"
+	    DSONAME="libfltk.$FL_DSO_VERSION.dylib"
+	    FLDSONAME="libfltk_forms.$FL_DSO_VERSION.dylib"
+	    GLDSONAME="libfltk_gl.$FL_DSO_VERSION.dylib"
+	    IMGDSONAME="libfltk_images.$FL_DSO_VERSION.dylib"
+	    CAIRODSONAME="libfltk_cairo.$FL_DSO_VERSION.dylib"
 	    DSOCOMMAND="\$(CXX) \$(ARCHFLAGS) \$(DSOFLAGS) -dynamiclib -lc -o"
 	    ;;
 
 	solaris*)
-            DSONAME="libfltk.so.$FL_DSO_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
+	    DSONAME="libfltk.so.$FL_DSO_VERSION"
+	    FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
+	    GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
+	    IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
+	    CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-R$libdir"
-            fi
+	    fi
 	    ;;
 	hpux*)
-            DSONAME="libfltk.sl.$FL_DSO_VERSION"
-            FLDSONAME="libfltk_forms.sl.$FL_DSO_VERSION"
-            GLDSONAME="libfltk_gl.sl.$FL_DSO_VERSION"
-            IMGDSONAME="libfltk_images.sl.$FL_DSO_VERSION"
-            CAIRODSONAME="libfltk_cairo.sl.$FL_DSO_VERSION"
+	    DSONAME="libfltk.sl.$FL_DSO_VERSION"
+	    FLDSONAME="libfltk_forms.sl.$FL_DSO_VERSION"
+	    GLDSONAME="libfltk_gl.sl.$FL_DSO_VERSION"
+	    IMGDSONAME="libfltk_images.sl.$FL_DSO_VERSION"
+	    CAIRODSONAME="libfltk_cairo.sl.$FL_DSO_VERSION"
 	    DSOCOMMAND="ld \$(DSOFLAGS) -b -z +h \$@ $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
-            fi
+	    fi
 	    ;;
 	irix*)
-            DSONAME="libfltk.so.$FL_DSO_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
-            DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    DSONAME="libfltk.so.$FL_DSO_VERSION"
+	    FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
+	    GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
+	    IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
+	    CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
+	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
-            fi
+	    fi
 	    ;;
 	osf*)
-            DSONAME="libfltk.so.$FL_DSO_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
-            DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    DSONAME="libfltk.so.$FL_DSO_VERSION"
+	    FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
+	    GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
+	    IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
+	    CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
+	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
-            fi
+	    fi
 	    ;;
 	linux* | *bsd*)
-            DSONAME="libfltk.so.$FL_DSO_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
-            DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
+	    DSONAME="libfltk.so.$FL_DSO_VERSION"
+	    FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
+	    GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
+	    IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
+	    CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
+	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 
-            # See if the compiler supports -fvisibility...
-            AC_CACHE_CHECK([if the compiler supports -fvisibility],
-                ac_cv_cxx_fvisibility, [
-                    OLDCXXFLAGS="$CXXFLAGS"
-                    CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+	    # See if the compiler supports -fvisibility...
+	    AC_CACHE_CHECK([if the compiler supports -fvisibility],
+		ac_cv_cxx_fvisibility, [
+		    OLDCXXFLAGS="$CXXFLAGS"
+		    CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
 		    AC_LANG_PUSH([C++])
-                    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+		    AC_COMPILE_IFELSE(
+			[AC_LANG_PROGRAM([[]], [[]])],
 			[ac_cv_cxx_fvisibility=yes],
 			[ac_cv_cxx_fvisibility=no])
-                    CXXFLAGS="$OLDCXXFLAGS"
-                    AC_LANG_POP([])
-            ])
-            if test x"$ac_cv_cxx_fvisibility" = xyes; then
-                OPTIM="$OPTIM -fvisibility=hidden"
-            fi
+		    CXXFLAGS="$OLDCXXFLAGS"
+		    AC_LANG_POP([])
+	    ])
+	    if test x"$ac_cv_cxx_fvisibility" = xyes; then
+		OPTIM="$OPTIM -fvisibility=hidden"
+	    fi
 
-            # See if the compiler supports -fvisibility-inlines-hidden...
-            AC_CACHE_CHECK([if the compiler supports -fvisibility-inlines-hidden],
-                ac_cv_cxx_fvisibility_inlines, [
-                    OLDCXXFLAGS="$CXXFLAGS"
-                    CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+	    # See if the compiler supports -fvisibility-inlines-hidden...
+	    AC_CACHE_CHECK([if the compiler supports -fvisibility-inlines-hidden],
+		ac_cv_cxx_fvisibility_inlines, [
+		    OLDCXXFLAGS="$CXXFLAGS"
+		    CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
 		    AC_LANG_PUSH([C++])
-                    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+		    AC_COMPILE_IFELSE(
+			[AC_LANG_PROGRAM([[]], [[]])],
 			[ac_cv_cxx_fvisibility_inlines=yes],
 			[ac_cv_cxx_fvisibility_inlines=no])
-                    CXXFLAGS="$OLDCXXFLAGS"
-                    AC_LANG_POP([])
-            ])
-            if test x"$ac_cv_cxx_fvisibility_inlines" = xyes; then
-                CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
-            fi
+		    CXXFLAGS="$OLDCXXFLAGS"
+		    AC_LANG_POP([])
+	    ])
+	    if test x"$ac_cv_cxx_fvisibility_inlines" = xyes; then
+		CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+	    fi
 
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
-            fi
+	    fi
 	    ;;
 	aix*)
-            DSONAME="libfltk_s.a"
-            FLDSONAME="libfltk_forms_s.a"
-            GLDSONAME="libfltk_gl_s.a"
-            IMGDSONAME="libfltk_images_s.a"
-            CAIRODSONAME="libfltk_cairo_s.a"
-            DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
-            SHAREDSUFFIX="_s"
-            ;;
-        cygwin* | mingw*)
+	    DSONAME="libfltk_s.a"
+	    FLDSONAME="libfltk_forms_s.a"
+	    GLDSONAME="libfltk_gl_s.a"
+	    IMGDSONAME="libfltk_images_s.a"
+	    CAIRODSONAME="libfltk_cairo_s.a"
+	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
+	    SHAREDSUFFIX="_s"
+	    ;;
+	cygwin* | mingw*)
 	    PICFLAG=0
 	    if test x$enable_cygwin != xyes; then
 		DSONAME="mgwfltknox-$FL_DSO_VERSION.dll"
@@ -350,20 +350,20 @@ if test x$enable_shared = xyes; then
 	    # -Wl,--enable-runtime-pseudo-reloc: See str 1585
 	    # appears to be necessary for older binutils versions < 2.16
 	    #-----------------------------------------------------------
-            LDFLAGS="$LDFLAGS -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc"
+	    LDFLAGS="$LDFLAGS -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -shared \
-	    	-Wl,--whole-archive -Wl,--export-all-symbols \
+		-Wl,--whole-archive -Wl,--export-all-symbols \
 		-Wl,--enable-runtime-pseudo-reloc -Wl,--enable-auto-import \
 		-Wl,--enable-auto-image-base -o \$@"
 	    ;;
 	*)
-            AC_MSG_WARN([Shared libraries may not be supported. Trying -shared option with compiler.])
-            DSONAME="libfltk.so.$FL_DSO_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
-            DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
+	    AC_MSG_WARN([Shared libraries may not be supported. Trying -shared option with compiler.])
+	    DSONAME="libfltk.so.$FL_DSO_VERSION"
+	    FLDSONAME="libfltk_forms.so.$FL_DSO_VERSION"
+	    GLDSONAME="libfltk_gl.so.$FL_DSO_VERSION"
+	    IMGDSONAME="libfltk_images.so.$FL_DSO_VERSION"
+	    CAIRODSONAME="libfltk_cairo.so.$FL_DSO_VERSION"
+	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
     esac
 
@@ -399,7 +399,7 @@ AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support
 AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
 
 AC_ARG_WITH(archflags, [  --with-archflags="flags"
-                          use custom architecture flags 
+			  use custom architecture flags
 			  (possible Mac OS X values include -arch i386, -arch x86_64, -arch ppc)],
     ARCHFLAGS="$withval")
 
@@ -419,9 +419,9 @@ if test "x$NROFF" = "x:"; then
     # Try groff instead of nroff...
     AC_PATH_PROG(GROFF,groff)
     if test "x$GROFF" = "x:"; then
-        NROFF="echo"
+	NROFF="echo"
     else
-        NROFF="$GROFF -T ascii"
+	NROFF="$GROFF -T ascii"
     fi
 fi
 AC_PATH_PROG(DOXYDOC,doxygen)
@@ -457,14 +457,14 @@ if test $ac_cv_sizeof_int -eq 4; then
     AC_DEFINE(U32,unsigned)
 else
     if test $ac_cv_sizeof_long -eq 4; then
-        AC_DEFINE(U32,unsigned long)
+	AC_DEFINE(U32,unsigned long)
     fi
 fi
 case $host_os in
     darwin*)
-        ;;
+	;;
     *)
-        AC_C_BIGENDIAN
+	AC_C_BIGENDIAN
 
 	if test $ac_cv_sizeof_int -eq 8; then
 		AC_DEFINE(U64,unsigned)
@@ -473,18 +473,19 @@ case $host_os in
 			AC_DEFINE(U64,unsigned long)
 		fi
 	fi
-        ;;
+	;;
 esac
 
 dnl Does the C++ compiler support the bool type?
 AC_CACHE_CHECK(whether the compiler recognizes bool as a built-in type,
     ac_cv_cxx_bool,[
 	AC_LANG_PUSH([C++])
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+	AC_COMPILE_IFELSE(
+	    [AC_LANG_PROGRAM([[
 		int f(int  x){return 1;}
 		int f(char x){return 1;}
 		int f(bool x){return 1;}
-	    ]], [[
+	      ]], [[
 		bool b = true;
 		return f(b);
 	    ]])],
@@ -529,39 +530,39 @@ if test "$ac_cv_cxx_scandir_posix" = yes; then
     AC_DEFINE(HAVE_SCANDIR_POSIX)
 else
     AC_CHECK_FUNC(scandir,[
-        case $host_os in
-            solaris* | *qnx*)
-                AC_MSG_WARN([Not using $host_os scandir emulation function.])
-                ;;
-            *)
-                AC_DEFINE(HAVE_SCANDIR)
-                ;;
-        esac])
+	case $host_os in
+	    solaris* | *qnx*)
+		AC_MSG_WARN([Not using $host_os scandir emulation function.])
+		;;
+	    *)
+		AC_DEFINE(HAVE_SCANDIR)
+		;;
+	esac])
 fi
 
 AC_CHECK_FUNC(vsnprintf,[
     case $host_os in
-        hpux1020)
-            AC_MSG_WARN([Not using built-in vsnprintf function because you are running HP-UX 10.20.])
-            ;;
-        osf4)
-            AC_MSG_WARN([Not using built-in vsnprintf function because you are running Tru64 4.0.])
-            ;;
-        *)
-            AC_DEFINE(HAVE_VSNPRINTF)
-            ;;
+	hpux1020)
+	    AC_MSG_WARN([Not using built-in vsnprintf function because you are running HP-UX 10.20.])
+	    ;;
+	osf4)
+	    AC_MSG_WARN([Not using built-in vsnprintf function because you are running Tru64 4.0.])
+	    ;;
+	*)
+	    AC_DEFINE(HAVE_VSNPRINTF)
+	    ;;
     esac])
 AC_CHECK_FUNC(snprintf,[
     case $host_os in
-        hpux1020)
-            AC_MSG_WARN([Not using built-in snprintf function because you are running HP-UX 10.20.])
-            ;;
-        osf4)
-            AC_MSG_WARN([Not using built-in snprintf function because you are running Tru64 4.0.])
-            ;;
-        *)
-            AC_DEFINE(HAVE_SNPRINTF)
-            ;;
+	hpux1020)
+	    AC_MSG_WARN([Not using built-in snprintf function because you are running HP-UX 10.20.])
+	    ;;
+	osf4)
+	    AC_MSG_WARN([Not using built-in snprintf function because you are running Tru64 4.0.])
+	    ;;
+	*)
+	    AC_DEFINE(HAVE_SNPRINTF)
+	    ;;
     esac])
 AC_CHECK_HEADERS(strings.h)
 AC_CHECK_FUNCS(strcasecmp strlcat strlcpy)
@@ -627,7 +628,7 @@ case $host_os in
 	AC_CHECK_HEADER(alsa/asoundlib.h,
 	    AC_DEFINE(HAVE_ALSA_ASOUNDLIB_H)
 	    AUDIOLIBS="-lasound")
-        ;;
+	;;
 esac
 
 AC_SUBST(AUDIOLIBS)
@@ -655,7 +656,7 @@ if test x$enable_localjpeg != xyes; then
 		sysjpeglib_ok=yes
 		fi])
 fi
-# Now set the jpeg lib and include flags according to the requested mode and availability 
+# Now set the jpeg lib and include flags according to the requested mode and availability
 if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
     JPEGINC="-I../jpeg"
     JPEG="jpeg"
@@ -684,13 +685,13 @@ syszlib_ok=no
 syszinc_ok=no
 if test x$enable_localzlib != xyes; then
     AC_CHECK_LIB(z,gzgets,
-	[AC_CHECK_HEADER(zlib.h, 
+	[AC_CHECK_HEADER(zlib.h,
 		syszinc_ok=yes)
 	if test x$syszinc_ok = xyes; then
 	    syszlib_ok=yes
 	    fi])
 fi
-# Now set the Z lib and include flags according to the requested mode and availability 
+# Now set the Z lib and include flags according to the requested mode and availability
 if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
     ZLIBINC="-I../zlib"
     ZLIB="zlib"
@@ -722,11 +723,11 @@ AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library  [[defa
 syspnglib_ok=no
 syspnginc_ok=no
 if test x$enable_localpng != xyes; then
-  AC_CHECK_LIB(png, png_read_info, 
-    [AC_CHECK_HEADER(png.h, 
+  AC_CHECK_LIB(png, png_read_info,
+    [AC_CHECK_HEADER(png.h,
 	AC_DEFINE(HAVE_PNG_H)
 	syspnginc_ok=yes)
-    AC_CHECK_HEADER(libpng/png.h, 
+    AC_CHECK_HEADER(libpng/png.h,
 	AC_DEFINE(HAVE_LIBPNG_PNG_H)
 	syspnginc_ok=yes)
     if test x$syspnginc_ok = xyes; then
@@ -798,27 +799,27 @@ if test "x$enable_threads" != xno -a x$check_pthread = xyes; then
     if test x$ac_cv_header_pthread_h = xyes; then
 	dnl Check various threading options for the platforms we support
 	for flag in -lpthreads -lpthread -pthread; do
-            AC_MSG_CHECKING([for pthread_create using $flag])
+	    AC_MSG_CHECKING([for pthread_create using $flag])
 	    SAVELIBS="$LIBS"
 	    LIBS="$flag $LIBS"
-            AC_LINK_IFELSE(
+	    AC_LINK_IFELSE(
 		[AC_LANG_PROGRAM(
 		    [[#include <pthread.h>]],
 		    [[pthread_create(0, 0, 0, 0);]])],
 		[have_pthread=yes],
 		[LIBS="$SAVELIBS"])
-            AC_MSG_RESULT([$have_pthread])
+	    AC_MSG_RESULT([$have_pthread])
 
 	    if test $have_pthread = yes; then
-	        AC_DEFINE(HAVE_PTHREAD)
+		AC_DEFINE(HAVE_PTHREAD)
 		PTHREAD_FLAGS="-D_THREAD_SAFE -D_REENTRANT"
 
 		# Solaris requires -D_POSIX_PTHREAD_SEMANTICS to
 		# be POSIX-compliant... :(
 		case $host_os in
 		    solaris*)
-		        PTHREAD_FLAGS="$PTHREAD_FLAGS -D_POSIX_PTHREAD_SEMANTICS"
-		        ;;
+			PTHREAD_FLAGS="$PTHREAD_FLAGS -D_POSIX_PTHREAD_SEMANTICS"
+			;;
 		esac
 		break
 	    fi
@@ -844,7 +845,7 @@ case $host_os_gui in
 	# Recent versions of Cygwin are seriously broken and the size
 	# checks don't work because the shell puts out \r\n instead of
 	# \n.  Here we just force U32 to be defined to "unsigned"...
-        AC_DEFINE(U32,unsigned)
+	AC_DEFINE(U32,unsigned)
 	CFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CFLAGS"
 	CXXFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
@@ -857,10 +858,10 @@ case $host_os_gui in
 
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
-	        AC_DEFINE(HAVE_GL)
+		AC_DEFINE(HAVE_GL)
 		GLLIB="-lopengl32")
 	    AC_CHECK_HEADER(GL/glu.h,
-        	AC_DEFINE(HAVE_GL_GLU_H)
+		AC_DEFINE(HAVE_GL_GLU_H)
 		GLLIB="-lglu32 $GLLIB")
 	else
 	    LINKFLTKGL=""
@@ -873,7 +874,7 @@ case $host_os_gui in
 	    if test x$have_pthread = xyes; then
 		AC_DEFINE(HAVE_PTHREAD)
 	    fi
-        fi
+	fi
 
 	THREADS="threads$EXEEXT"
 
@@ -886,10 +887,10 @@ case $host_os_gui in
     darwin*)
 	AC_DEFINE(__APPLE_QUARTZ__)
 
-        USEMMFILES="Yes"
+	USEMMFILES="Yes"
 
-        # MacOS X uses Cocoa for graphics.
-        LIBS="$LIBS -framework Cocoa"
+	# MacOS X uses Cocoa for graphics.
+	LIBS="$LIBS -framework Cocoa"
 
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
@@ -897,15 +898,15 @@ case $host_os_gui in
 	fi
 
 	if test x$enable_gl != xno; then
-            AC_DEFINE(HAVE_GL)
-            AC_DEFINE(HAVE_GL_GLU_H)
-            GLLIB="-framework OpenGL"
-        else
+	    AC_DEFINE(HAVE_GL)
+	    AC_DEFINE(HAVE_GL_GLU_H)
+	    GLLIB="-framework OpenGL"
+	else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
 	    GLDSONAME=""
 	    GLDEMOS=""
-        fi
+	fi
 
 	# Don't make symlinks because HFS+ is not case sensitive...
 	if test "x$with_links" != xyes; then
@@ -960,10 +961,10 @@ case $host_os_gui in
 			-lm),
 		    -lm)
 		AC_CHECK_LIB(GL, glXGetProcAddressARB,
-		             AC_DEFINE(HAVE_GLXGETPROCADDRESSARB),, -lm)
+			     AC_DEFINE(HAVE_GLXGETPROCADDRESSARB),, -lm)
 	    )
 	    AC_CHECK_HEADER(GL/glu.h,
-        	AC_DEFINE(HAVE_GL_GLU_H)
+		AC_DEFINE(HAVE_GL_GLU_H)
 		if test x$ac_cv_lib_GL_glXMakeCurrent = xyes; then
 		    GLLIB="-lGLU $GLLIB"
 		fi
@@ -986,7 +987,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for Xinerama support unless disabled...
-        AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [[default=yes]]])
+	AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [[default=yes]]])
 
 	if test x$enable_xinerama != xno; then
 	    AC_CHECK_LIB(Xinerama,XineramaIsActive,
@@ -995,17 +996,17 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xft library unless disabled...
-        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [[default=yes]]])
+	AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [[default=yes]]])
 
 	if test x$enable_xft != xno; then
-            AC_PATH_PROG(FTCONFIG,freetype-config)
+	    AC_PATH_PROG(FTCONFIG,freetype-config)
 
 	    if test "x$FTCONFIG" != x; then
 		CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
 		CFLAGS="`$FTCONFIG --cflags` $CFLAGS"
-	        CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
+		CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
 
-	        AC_CHECK_LIB(fontconfig, FcPatternCreate)
+		AC_CHECK_LIB(fontconfig, FcPatternCreate)
 		AC_CHECK_HEADER(X11/Xft/Xft.h,
 		    AC_CHECK_LIB(Xft, XftDrawCreate,
 			AC_DEFINE(USE_XFT)
@@ -1014,7 +1015,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xdbe extension unless disabled...
-        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
+	AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
 
 	if test x$enable_xdbe != xno; then
 	    AC_CHECK_HEADER(
@@ -1027,7 +1028,7 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xfixes extension unless disabled...
-        AC_ARG_ENABLE(xfixes, [  --enable-xfixes         turn on Xfixes support [[default=yes]]])
+	AC_ARG_ENABLE(xfixes, [  --enable-xfixes         turn on Xfixes support [[default=yes]]])
 
 	if test x$enable_xfixes != xno; then
 	    AC_CHECK_HEADER(
@@ -1040,21 +1041,21 @@ case $host_os_gui in
 	fi
 
 	dnl Check for the Xcursor library unless disabled...
-        AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [[default=yes]]])
+	AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [[default=yes]]])
 
 	if test x$enable_xcursor != xno; then
 	    AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, AC_DEFINE(HAVE_XCURSOR),,
-	        [#include <X11/Xlib.h>])
+		[#include <X11/Xlib.h>])
 	    AC_CHECK_LIB(Xcursor, XcursorImageCreate,
 		LIBS="-lXcursor $LIBS")
 	fi
 
 	dnl Check for the Xrender library unless disabled...
-        AC_ARG_ENABLE(xrender, [  --enable-xrender        turn on Xrender support [[default=yes]]])
+	AC_ARG_ENABLE(xrender, [  --enable-xrender        turn on Xrender support [[default=yes]]])
 
 	if test x$enable_xrender != xno; then
 	    AC_CHECK_HEADER(X11/extensions/Xrender.h, AC_DEFINE(HAVE_XRENDER),,
-	        [#include <X11/Xlib.h>])
+		[#include <X11/Xlib.h>])
 	    AC_CHECK_LIB(Xrender, XRenderQueryVersion,
 		LIBS="-lXrender $LIBS")
 	fi
@@ -1068,15 +1069,15 @@ case $host_os_gui in
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,
 	    if test "x$XPROP" != x; then
 		if $XPROP -root 2>/dev/null | grep -c "SERVER_OVERLAY_VISUALS" >/dev/null; then
-        	    ac_cv_have_overlay=yes
+		    ac_cv_have_overlay=yes
 		else
-        	    ac_cv_have_overlay=no
+		    ac_cv_have_overlay=no
 		fi
 	    else
-        	ac_cv_have_overlay=no
+		ac_cv_have_overlay=no
 	    fi)
 
-        if test x$ac_cv_have_overlay = xyes; then
+	if test x$ac_cv_have_overlay = xyes; then
 	    AC_DEFINE(HAVE_OVERLAY)
 	fi
 
@@ -1141,14 +1142,14 @@ AC_SUBST(CAT6EXT)
 dnl Fix "mandir" variable...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
     case "$host_os" in
-        *bsd* | darwin* | linux*)
-            # *BSD, Darwin, and Linux
-            mandir="\${prefix}/share/man"
-            ;;
-        irix*)
-            # SGI IRIX
-            mandir="\${prefix}/share/catman"
-            ;;
+	*bsd* | darwin* | linux*)
+	    # *BSD, Darwin, and Linux
+	    mandir="\${prefix}/share/man"
+	    ;;
+	irix*)
+	    # SGI IRIX
+	    mandir="\${prefix}/share/catman"
+	    ;;
     esac
 fi
 
@@ -1163,12 +1164,12 @@ fi
 
 case $host_os in
     irix[1-5]*)
-        ;;
+	;;
     irix*)
-        if test "$libdir" = "\${exec_prefix}/lib" -a "$exec_prefix" = "\${prefix}" -a "$prefix" = "/usr"; then
-            libdir="/usr/lib32"
-        fi
-        ;;
+	if test "$libdir" = "\${exec_prefix}/lib" -a "$exec_prefix" = "\${prefix}" -a "$prefix" = "/usr"; then
+	    libdir="/usr/lib32"
+	fi
+	;;
 esac
 
 dnl Define the command used to update the dependencies (this option
@@ -1190,46 +1191,47 @@ if test -n "$GCC"; then
     # We know that Carbon is deprecated on OS X 10.4. To avoid hundreds of warnings
     # we will temporarily disable 'deprecated' warnings on OS X.
     case $host_os in
-        darwin[1-7])
-            ;;
-        darwin*)
-            OPTIM="-Wno-deprecated-declarations $OPTIM"
-            ;;
+	darwin[1-7])
+	    ;;
+	darwin*)
+	    OPTIM="-Wno-deprecated-declarations $OPTIM"
+	    ;;
     esac
 
     # Set the default compiler optimizations...
     if test -z "$DEBUGFLAG"; then
-    	#
+	#
 	# Note: Can't use -fomit-frame-pointer - prevents tools like
 	#       libsafe from working!
-        #
+	#
 	#       Don't use -fforce-mem, -fforce-addr, or -fcaller-saves.
 	#       They all seem to make either no difference or enlarge
 	#       the code by a few hundred bytes.
-        #
+	#
 	#       "-Os" seems to be the best compromise between speed and
 	#       code size.  "-O3" and higher seem to make no effective
 	#       difference in the speed of the code, but does bloat the
 	#       library 10+%.
 	#
 
-        if test "x$with_optim" != x; then
+	if test "x$with_optim" != x; then
 	    OPTIM="$with_optim $OPTIM"
 	else
-            OPTIM="-Os $OPTIM"
+	    OPTIM="-Os $OPTIM"
 	fi
     fi
 
     # Generate position-independent code when needed...
     if test $PICFLAG = 1; then
-    	OPTIM="$OPTIM -fPIC"
+	OPTIM="$OPTIM -fPIC"
     fi
 
     # See if GCC supports -fno-exceptions...
     AC_MSG_CHECKING([if GCC supports -fno-exceptions])
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+    AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM([[]], [[]])],
 	[OPTIM="$OPTIM -fno-exceptions"
 	 AC_MSG_RESULT(yes)],
 	[AC_MSG_RESULT(no)])
@@ -1292,7 +1294,7 @@ dnl Make sure that shared libraries don't have undefined references
     # in CFLAGS and CXXFLAGS so that fltk-config will provide the option
     # to clients - otherwise client apps will not compile properly...
     case $host_os in
-        solaris*)
+	solaris*)
 	    AC_MSG_CHECKING([if GCC supports -fpermissive])
 
 	    OLDCFLAGS="$CFLAGS"
@@ -1307,11 +1309,11 @@ dnl Make sure that shared libraries don't have undefined references
     esac
 else
     case "$host_os" in
-        irix*)
+	irix*)
 	    # Running some flavor of IRIX; see which version and
 	    # set things up according...
 	    if test "$uversion" -ge 62; then
-	        # We are running IRIX 6.2 or higher; uncomment the following
+		# We are running IRIX 6.2 or higher; uncomment the following
 		# lines if you don't have IDO 7.2 or higher:
 		#
 		#     CXX="CC -n32 -mips3"
@@ -1323,26 +1325,26 @@ else
 			AC_MSG_WARN([FOR BEST RESULTS BEFORE COMPILING: setenv SGI_ABI "-n32 -mips3"])
 		fi
 
-        	OPTIM="-fullwarn $OPTIM"
+		OPTIM="-fullwarn $OPTIM"
 	    fi
 	    if test -z "$DEBUGFLAG"; then
-        	if test "x$with_optim" != x; then
+		if test "x$with_optim" != x; then
 		    OPTIM="$with_optim $OPTIM"
 		else
-        	    OPTIM="-O2 $OPTIM"
+		    OPTIM="-O2 $OPTIM"
 		    if test $uversion -gt 62; then
-        	        OPTIM="-OPT:Olimit=4000 $OPTIM"
-	            fi
+			OPTIM="-OPT:Olimit=4000 $OPTIM"
+		    fi
 		fi
 	    fi
 	    ;;
 	hpux*)
 	    # Running HP-UX; these options should work for the HP compilers.
 	    if test -z "$DEBUGFLAG"; then
-        	if test "x$with_optim" != x; then
+		if test "x$with_optim" != x; then
 		    OPTIM="$with_optim $OPTIM"
 		else
-        	    OPTIM="+O2 $OPTIM"
+		    OPTIM="+O2 $OPTIM"
 		fi
 	    fi
 
@@ -1356,20 +1358,20 @@ else
 	    # Running Digital/Tru64 UNIX; these options should work for the
 	    # Digital/Compaq/NewHP compilers.
 	    if test -z "$DEBUGFLAG"; then
-        	if test "x$with_optim" != x; then
+		if test "x$with_optim" != x; then
 		    OPTIM="$with_optim $OPTIM"
 		else
-        	    OPTIM="-O2 $OPTIM"
+		    OPTIM="-O2 $OPTIM"
 		fi
 	    fi
 	    ;;
 	solaris*)
 	    # Solaris
 	    if test -z "$DEBUGFLAG"; then
-        	if test "x$with_optim" != x; then
+		if test "x$with_optim" != x; then
 		    OPTIM="$with_optim $OPTIM"
 		else
-        	    OPTIM="-xO3 $OPTIM"
+		    OPTIM="-xO3 $OPTIM"
 		fi
 	    fi
 
@@ -1379,10 +1381,10 @@ else
 	    ;;
 	aix*)
 	    if test -z "$DEBUGFLAG"; then
-        	if test "x$with_optim" != x; then
+		if test "x$with_optim" != x; then
 		    OPTIM="$with_optim $OPTIM"
 		else
-        	    OPTIM="-O2 $OPTIM"
+		    OPTIM="-O2 $OPTIM"
 		fi
 	    fi
 
@@ -1402,19 +1404,19 @@ OPTIM="$DEBUGFLAG $OPTIM"
 dnl Take archflags away from CFLAGS (makefiles use ARCHFLAGS explicitly)
 case $host_os in
     darwin*)
-        if test "x$with_archflags" != x ; then
-            CFLAGS="`echo $CFLAGS | sed -e "s/$with_archflags//g"`"
-        fi
-        ;;
+	if test "x$with_archflags" != x ; then
+	    CFLAGS="`echo $CFLAGS | sed -e "s/$with_archflags//g"`"
+	fi
+	;;
 esac
 
 dnl Define the FLTK documentation directory...
 case $host_os in
   mingw*)
      # Determine the path where MSys has /usr installed
- 	msyspath=`mount | grep '\/usr ' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
+	msyspath=`mount | grep '\/usr ' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
      # Then substitute that in the WIN32 path instead of /usr
- 	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$msyspath/local/share/doc/fltk")
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$msyspath/local/share/doc/fltk")
     ;;
   *)
     if test x$prefix = xNONE; then
@@ -1439,13 +1441,13 @@ echo "-------------------------------------------------------------------------"
 
 case $host_os_gui in
     cygwin* | mingw*)
-        graphics="GDI"
+	graphics="GDI"
 	;;
     darwin*)
-        graphics="Quartz"
-        ;;
+	graphics="Quartz"
+	;;
     *)
-        graphics="X11"
+	graphics="X11"
 	if test x$enable_xft != xno; then
 	    graphics="$graphics+Xft"
 	fi
@@ -1455,7 +1457,7 @@ case $host_os_gui in
 	if test x$enable_xinerama != xno; then
 	    graphics="$graphics+Xinerama"
 	fi
-        ;;
+	;;
 esac
 
 echo "    Directories: prefix=$prefix"
