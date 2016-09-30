@@ -654,7 +654,7 @@ if test x$enable_localjpeg != xyes; then
 	    sysjpeginc_ok=yes)
 	    if test x$sysjpeginc_ok = xyes; then
 		sysjpeglib_ok=yes
-		fi])
+	    fi])
 fi
 # Now set the jpeg lib and include flags according to the requested mode and availability
 if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
@@ -689,7 +689,7 @@ if test x$enable_localzlib != xyes; then
 		syszinc_ok=yes)
 	if test x$syszinc_ok = xyes; then
 	    syszlib_ok=yes
-	    fi])
+	fi])
 fi
 # Now set the Z lib and include flags according to the requested mode and availability
 if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
@@ -956,12 +956,16 @@ case $host_os_gui in
 	if test x$enable_gl != xno; then
 	    AC_SEARCH_LIBS(dlopen, dl)
 	    AC_CHECK_HEADER(GL/gl.h,
-		AC_CHECK_LIB(GL, glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB="-lGL",
-		    AC_CHECK_LIB(MesaGL,glXMakeCurrent, AC_DEFINE(HAVE_GL) GLLIB=" -lMesaGL",,
-			-lm),
-		    -lm)
+		AC_CHECK_LIB(GL, glXMakeCurrent,
+		    [AC_DEFINE(HAVE_GL)
+		     GLLIB="-lGL"],
+		    AC_CHECK_LIB(MesaGL, glXMakeCurrent,
+			[AC_DEFINE(HAVE_GL)
+			 GLLIB="-lMesaGL"],,
+			[-lm]),
+		    [-lm])
 		AC_CHECK_LIB(GL, glXGetProcAddressARB,
-			     AC_DEFINE(HAVE_GLXGETPROCADDRESSARB),, -lm)
+		    AC_DEFINE(HAVE_GLXGETPROCADDRESSARB),, [-lm])
 	    )
 	    AC_CHECK_HEADER(GL/glu.h,
 		AC_DEFINE(HAVE_GL_GLU_H)
@@ -974,10 +978,10 @@ case $host_os_gui in
 	    )
 
 	    if test x$ac_cv_lib_GL_glXMakeCurrent != xyes -a x$ac_cv_lib_MesaGL_glXMakeCurrent != xyes; then
-		    LINKFLTKGL=""
-		    GLLIBNAME=""
-		    GLDSONAME=""
-		    GLDEMOS=""
+		LINKFLTKGL=""
+		GLLIBNAME=""
+		GLDSONAME=""
+		GLDEMOS=""
 	    fi
 	else
 	    LINKFLTKGL=""
@@ -989,17 +993,20 @@ case $host_os_gui in
 	dnl Check for Xinerama support unless disabled...
 	AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [[default=yes]]])
 
+	xinerama_found=no
 	if test x$enable_xinerama != xno; then
-	    AC_CHECK_LIB(Xinerama,XineramaIsActive,
-		    AC_DEFINE(HAVE_XINERAMA)
-		    LIBS="-lXinerama $LIBS")
+	    AC_CHECK_LIB(Xinerama, XineramaIsActive,
+		[AC_DEFINE(HAVE_XINERAMA)
+		 LIBS="-lXinerama $LIBS"
+		 xinerama_found=yes])
 	fi
 
 	dnl Check for the Xft library unless disabled...
 	AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [[default=yes]]])
 
+	xft_found=no
 	if test x$enable_xft != xno; then
-	    AC_PATH_PROG(FTCONFIG,freetype-config)
+	    AC_PATH_PROG(FTCONFIG, freetype-config)
 
 	    if test "x$FTCONFIG" != x; then
 		CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
@@ -1009,20 +1016,33 @@ case $host_os_gui in
 		AC_CHECK_LIB(fontconfig, FcPatternCreate)
 		AC_CHECK_HEADER(X11/Xft/Xft.h,
 		    AC_CHECK_LIB(Xft, XftDrawCreate,
-			AC_DEFINE(USE_XFT)
-			LIBS="-lXft $LIBS"))
+			[AC_DEFINE(USE_XFT)
+			 LIBS="-lXft $LIBS"
+			 xft_found=yes] ))
+	    fi
+	fi
+
+	dnl Issue a warning message if Xft was not found, abort configure
+	dnl if Xft was requested explicitly (but not found)
+	if test x$enable_xft != xno -a x$xft_found != xyes; then
+	    AC_MSG_WARN([could not find the required Xft headers and/or libraries.])
+	    AC_MSG_NOTICE([please install Xft headers and libraries or use 'configure --disable-xft'.])
+	    if test x$enable_xft = xyes; then
+		AC_MSG_ERROR([Aborting.])
 	    fi
 	fi
 
 	dnl Check for the Xdbe extension unless disabled...
 	AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
 
+	xdbe_found=no
 	if test x$enable_xdbe != xno; then
 	    AC_CHECK_HEADER(
 		[X11/extensions/Xdbe.h],
 		[AC_CHECK_LIB(Xext, XdbeQueryExtension,
 		    [AC_DEFINE(HAVE_XDBE)
-		     LIBS="-lXext $LIBS"])],
+		     LIBS="-lXext $LIBS"
+		     xdbe_found=yes])],
 		[],
 		[#include <X11/Xlib.h>])
 	fi
@@ -1030,12 +1050,14 @@ case $host_os_gui in
 	dnl Check for the Xfixes extension unless disabled...
 	AC_ARG_ENABLE(xfixes, [  --enable-xfixes         turn on Xfixes support [[default=yes]]])
 
+	xfixes_found=no
 	if test x$enable_xfixes != xno; then
 	    AC_CHECK_HEADER(
 		[X11/extensions/Xfixes.h],
 		[AC_CHECK_LIB(Xfixes, XFixesQueryExtension,
 		    [AC_DEFINE(HAVE_XFIXES)
-		     LIBS="-lXfixes $LIBS"])],
+		     LIBS="-lXfixes $LIBS"
+		     xfixes_found=yes])],
 		[],
 		[#include <X11/Xlib.h>])
 	fi
@@ -1043,21 +1065,31 @@ case $host_os_gui in
 	dnl Check for the Xcursor library unless disabled...
 	AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [[default=yes]]])
 
+	xcursor_found=no
 	if test x$enable_xcursor != xno; then
-	    AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, AC_DEFINE(HAVE_XCURSOR),,
+	    AC_CHECK_HEADER(
+		[X11/Xcursor/Xcursor.h],
+		[AC_CHECK_LIB(Xcursor, XcursorImageCreate,
+		    [AC_DEFINE(HAVE_XCURSOR)
+		     LIBS="-lXcursor $LIBS"
+		     xcursor_found=yes])],
+		[],
 		[#include <X11/Xlib.h>])
-	    AC_CHECK_LIB(Xcursor, XcursorImageCreate,
-		LIBS="-lXcursor $LIBS")
 	fi
 
 	dnl Check for the Xrender library unless disabled...
 	AC_ARG_ENABLE(xrender, [  --enable-xrender        turn on Xrender support [[default=yes]]])
 
+	xrender_found=no
 	if test x$enable_xrender != xno; then
-	    AC_CHECK_HEADER(X11/extensions/Xrender.h, AC_DEFINE(HAVE_XRENDER),,
+	    AC_CHECK_HEADER(
+		[X11/extensions/Xrender.h],
+		[AC_CHECK_LIB(Xrender, XRenderQueryVersion,
+		    [AC_DEFINE(HAVE_XRENDER)
+		     LIBS="-lXrender $LIBS"
+		     xrender_found=yes])],
+		[],
 		[#include <X11/Xlib.h>])
-	    AC_CHECK_LIB(Xrender, XRenderQueryVersion,
-		LIBS="-lXrender $LIBS")
 	fi
 
 	dnl Check for the X11/Xregion.h header file...
@@ -1448,14 +1480,23 @@ case $host_os_gui in
 	;;
     *)
 	graphics="X11"
-	if test x$enable_xft != xno; then
-	    graphics="$graphics+Xft"
+	if test x$xft_found = xyes; then
+	    graphics="$graphics + Xft"
 	fi
-	if test x$enable_xdbe != xno; then
-	    graphics="$graphics+Xdbe"
+	if test x$xdbe_found = xyes; then
+	    graphics="$graphics + Xdbe"
 	fi
-	if test x$enable_xinerama != xno; then
-	    graphics="$graphics+Xinerama"
+	if test x$xfixes_found = xyes; then
+	    graphics="$graphics + Xfixes"
+	fi
+	if test x$xinerama_found = xyes; then
+	    graphics="$graphics + Xinerama"
+	fi
+	if test x$xcursor_found = xyes; then
+	    graphics="$graphics + Xcursor"
+	fi
+	if test x$xrender_found = xyes; then
+	    graphics="$graphics + Xrender"
 	fi
 	;;
 esac
@@ -1496,7 +1537,6 @@ fi
 if test x$enable_cairoext = xyes; then
     echo "                 CAIRO=internal_use"
 fi
-
 
 if test x$enable_largefile != xno; then
     echo "    Large Files: YES"
