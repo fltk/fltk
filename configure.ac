@@ -22,7 +22,8 @@ dnl We need at least autoconf 2.50...
 AC_PREREQ([2.50])
 
 dnl Required file in package...
-AC_INIT(src/Fl.cxx)
+AC_INIT
+AC_CONFIG_SRCDIR([src/Fl.cxx])
 
 AC_CANONICAL_HOST
 
@@ -282,13 +283,12 @@ if test x$enable_shared = xyes; then
                 ac_cv_cxx_fvisibility, [
                     OLDCXXFLAGS="$CXXFLAGS"
                     CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
-                    AC_LANG_SAVE
-                    AC_LANG_CPLUSPLUS
-                    AC_TRY_COMPILE(,,
-                        ac_cv_cxx_fvisibility=yes,
-                        ac_cv_cxx_fvisibility=no)
+		    AC_LANG_PUSH([C++])
+                    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+			[ac_cv_cxx_fvisibility=yes],
+			[ac_cv_cxx_fvisibility=no])
                     CXXFLAGS="$OLDCXXFLAGS"
-                    AC_LANG_RESTORE
+                    AC_LANG_POP([])
             ])
             if test x"$ac_cv_cxx_fvisibility" = xyes; then
                 OPTIM="$OPTIM -fvisibility=hidden"
@@ -299,13 +299,12 @@ if test x$enable_shared = xyes; then
                 ac_cv_cxx_fvisibility_inlines, [
                     OLDCXXFLAGS="$CXXFLAGS"
                     CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
-                    AC_LANG_SAVE
-                    AC_LANG_CPLUSPLUS
-                    AC_TRY_COMPILE(,,
-                        ac_cv_cxx_fvisibility_inlines=yes,
-                        ac_cv_cxx_fvisibility_inlines=no)
+		    AC_LANG_PUSH([C++])
+                    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+			[ac_cv_cxx_fvisibility_inlines=yes],
+			[ac_cv_cxx_fvisibility_inlines=no])
                     CXXFLAGS="$OLDCXXFLAGS"
-                    AC_LANG_RESTORE
+                    AC_LANG_POP([])
             ])
             if test x"$ac_cv_cxx_fvisibility_inlines" = xyes; then
                 CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
@@ -480,17 +479,18 @@ esac
 dnl Does the C++ compiler support the bool type?
 AC_CACHE_CHECK(whether the compiler recognizes bool as a built-in type,
     ac_cv_cxx_bool,[
-	AC_LANG_SAVE
-	AC_LANG_CPLUSPLUS
-	AC_TRY_COMPILE([
-	    int f(int  x){return 1;}
-	    int f(char x){return 1;}
-	    int f(bool x){return 1;}
-	],[
-	    bool b = true;
-	    return f(b);
-	], ac_cv_cxx_bool=yes, ac_cv_cxx_bool=no)
-	AC_LANG_RESTORE
+	AC_LANG_PUSH([C++])
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+		int f(int  x){return 1;}
+		int f(char x){return 1;}
+		int f(bool x){return 1;}
+	    ]], [[
+		bool b = true;
+		return f(b);
+	    ]])],
+	    [ac_cv_cxx_bool=yes],
+	    [ac_cv_cxx_bool=no])
+	AC_LANG_POP([])
     ])
 
 if test "$ac_cv_cxx_bool" != yes; then
@@ -499,22 +499,24 @@ fi
 
 dnl Standard headers and functions...
 AC_HEADER_DIRENT
-AC_CHECK_HEADER(sys/select.h,AC_DEFINE(HAVE_SYS_SELECT_H))
-AC_CHECK_HEADER(sys/stdtypes.h,AC_DEFINE(HAVE_SYS_SELECT_H))
+AC_CHECK_HEADERS([sys/select.h sys/stdtypes.h])
 
 dnl Do we have the POSIX compatible scandir() prototype?
 AC_CACHE_CHECK([whether we have the POSIX compatible scandir() prototype],
     ac_cv_cxx_scandir_posix,[
-	AC_LANG_SAVE
-	AC_LANG_CPLUSPLUS
-	AC_TRY_COMPILE([
-	  #include <dirent.h>
-	  int func (const char *d, dirent ***list, void *sort) {
-	    int n = scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
-	  }
-	],[
-	], ac_cv_cxx_scandir_posix=yes, ac_cv_cxx_scandir_posix=no)
-	AC_LANG_RESTORE
+	AC_LANG_PUSH([C++])
+	AC_COMPILE_IFELSE(
+	    [AC_LANG_PROGRAM(
+		[[#include <dirent.h>
+		  int func (const char *d, dirent ***list, void *sort) {
+		    int n = scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
+		    return n;
+		  }
+		]], [[
+		]])],
+	    [ac_cv_cxx_scandir_posix=yes],
+	    [ac_cv_cxx_scandir_posix=no])
+	AC_LANG_POP([])
     ])
 
 dnl Define both HAVE_SCANDIR... macros, if the POSIX compatible function is
@@ -561,10 +563,10 @@ AC_CHECK_FUNC(snprintf,[
             AC_DEFINE(HAVE_SNPRINTF)
             ;;
     esac])
-AC_CHECK_HEADER(strings.h, AC_DEFINE(HAVE_STRINGS_H))
+AC_CHECK_HEADERS(strings.h)
 AC_CHECK_FUNCS(strcasecmp strlcat strlcpy)
 
-AC_CHECK_HEADER(locale.h, AC_DEFINE(HAVE_LOCALE_H))
+AC_CHECK_HEADERS(locale.h)
 AC_CHECK_FUNCS(localeconv)
 
 dnl FLTK library uses math library functions...
@@ -593,9 +595,11 @@ AC_CACHE_CHECK(for long long int, ac_cv_c_long_long,
 	[if test "$GCC" = yes; then
 		ac_cv_c_long_long=yes
 	else
-		AC_TRY_COMPILE(,[long long int i;],
-			ac_cv_c_long_long=yes,
-			ac_cv_c_long_long=no)
+		AC_COMPILE_IFELSE(
+		    [AC_LANG_PROGRAM([[]],
+			[[long long int i;]])],
+		    [ac_cv_c_long_long=yes],
+		    [ac_cv_c_long_long=no])
 	fi])
 
 if test $ac_cv_c_long_long = yes; then
@@ -789,7 +793,7 @@ case $host_os in
 esac
 
 if test "x$enable_threads" != xno -a x$check_pthread = xyes; then
-    AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
+    AC_CHECK_HEADERS(pthread.h)
 
     if test x$ac_cv_header_pthread_h = xyes; then
 	dnl Check various threading options for the platforms we support
@@ -797,10 +801,12 @@ if test "x$enable_threads" != xno -a x$check_pthread = xyes; then
             AC_MSG_CHECKING([for pthread_create using $flag])
 	    SAVELIBS="$LIBS"
 	    LIBS="$flag $LIBS"
-            AC_TRY_LINK([#include <pthread.h>],
-		[pthread_create(0, 0, 0, 0);],
-        	have_pthread=yes,
-		LIBS="$SAVELIBS")
+            AC_LINK_IFELSE(
+		[AC_LANG_PROGRAM(
+		    [[#include <pthread.h>]],
+		    [[pthread_create(0, 0, 0, 0);]])],
+		[have_pthread=yes],
+		[LIBS="$SAVELIBS"])
             AC_MSG_RESULT([$have_pthread])
 
 	    if test $have_pthread = yes; then
@@ -995,8 +1001,8 @@ case $host_os_gui in
             AC_PATH_PROG(FTCONFIG,freetype-config)
 
 	    if test "x$FTCONFIG" != x; then
-	        CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
-	        CFLAGS="`$FTCONFIG --cflags` $CFLAGS"
+		CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
+		CFLAGS="`$FTCONFIG --cflags` $CFLAGS"
 	        CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
 
 	        AC_CHECK_LIB(fontconfig, FcPatternCreate)
@@ -1011,20 +1017,26 @@ case $host_os_gui in
         AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
 
 	if test x$enable_xdbe != xno; then
-	    AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE),,
-	        [#include <X11/Xlib.h>])
-	    AC_CHECK_LIB(Xext, XdbeQueryExtension,
-		LIBS="-lXext $LIBS")
+	    AC_CHECK_HEADER(
+		[X11/extensions/Xdbe.h],
+		[AC_CHECK_LIB(Xext, XdbeQueryExtension,
+		    [AC_DEFINE(HAVE_XDBE)
+		     LIBS="-lXext $LIBS"])],
+		[],
+		[#include <X11/Xlib.h>])
 	fi
 
 	dnl Check for the Xfixes extension unless disabled...
         AC_ARG_ENABLE(xfixes, [  --enable-xfixes         turn on Xfixes support [[default=yes]]])
 
 	if test x$enable_xfixes != xno; then
-	    AC_CHECK_HEADER(X11/extensions/Xfixes.h, AC_DEFINE(HAVE_XFIXES),,
-	        [#include <X11/Xlib.h>])
-	    AC_CHECK_LIB(Xfixes, XFixesQueryExtension,
-		LIBS="-lXfixes $LIBS")
+	    AC_CHECK_HEADER(
+		[X11/extensions/Xfixes.h],
+		[AC_CHECK_LIB(Xfixes, XFixesQueryExtension,
+		    [AC_DEFINE(HAVE_XFIXES)
+		     LIBS="-lXfixes $LIBS"])],
+		[],
+		[#include <X11/Xlib.h>])
 	fi
 
 	dnl Check for the Xcursor library unless disabled...
@@ -1217,42 +1229,44 @@ if test -n "$GCC"; then
     AC_MSG_CHECKING([if GCC supports -fno-exceptions])
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-exceptions"
-    AC_TRY_COMPILE(,,
-	OPTIM="$OPTIM -fno-exceptions"
-	AC_MSG_RESULT([yes]),
-	AC_MSG_RESULT([no]))
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+	[OPTIM="$OPTIM -fno-exceptions"
+	 AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)])
     CFLAGS="$OLDCFLAGS"
 
     # See if GCC supports -fno-strict-aliasing...
     AC_MSG_CHECKING([if GCC supports -fno-strict-aliasing])
     OLDCFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -fno-strict-aliasing"
-    AC_TRY_COMPILE(,,
-	OPTIM="$OPTIM -fno-strict-aliasing"
-	AC_MSG_RESULT([yes]),
-	AC_MSG_RESULT([no]))
+    AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM([[]], [[]])],
+	[OPTIM="$OPTIM -fno-strict-aliasing"
+	 AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)])
     CFLAGS="$OLDCFLAGS"
 
-dnl Experimental (as of 17 Feb 2015):
 dnl Make sure that shared libraries don't have undefined references
     # See if ld supports -no-undefined...
     AC_MSG_CHECKING([if ld supports -no-undefined])
     OLDLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -Wl,-no-undefined"
-    AC_TRY_LINK(,,
-        [DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"]
-        AC_MSG_RESULT([yes]),
-        AC_MSG_RESULT([no]))
+    AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM([[]], [[]])],
+	[DSOFLAGS="$DSOFLAGS -Wl,-no-undefined"
+	 AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)])
     LDFLAGS="$OLDLDFLAGS"
 
     # See if ld supports -Bsymbolic-functions...
     AC_MSG_CHECKING([if ld supports -Bsymbolic-functions])
     OLDLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -Wl,-Bsymbolic-functions"
-    AC_TRY_LINK(,,
-        [DSOFLAGS="$DSOFLAGS -Wl,-Bsymbolic-functions"]
-        AC_MSG_RESULT([yes]),
-        AC_MSG_RESULT([no]))
+    AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM([[]], [[]])],
+	[DSOFLAGS="$DSOFLAGS -Wl,-Bsymbolic-functions"
+	 AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)])
     LDFLAGS="$OLDLDFLAGS"
 
     # See if toolchain supports a sectioned build...
@@ -1261,11 +1275,12 @@ dnl Make sure that shared libraries don't have undefined references
     OLDCFLAGS="$CFLAGS"
     LDFLAGS="$LDFLAGS -Wl,-gc-sections"
     CFLAGS="$CFLAGS -ffunction-sections -fdata-sections"
-    AC_TRY_LINK(,,
-        [DSOFLAGS="$DSOFLAGS -Wl,-gc-sections"
-        OPTIM="$OPTIM -ffunction-sections -fdata-sections"]
-        AC_MSG_RESULT([yes]),
-        AC_MSG_RESULT([no]))
+    AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM([[]], [[]])],
+	[DSOFLAGS="$DSOFLAGS -Wl,-gc-sections"
+	 OPTIM="$OPTIM -ffunction-sections -fdata-sections"
+	 AC_MSG_RESULT(yes)],
+	[AC_MSG_RESULT(no)])
     LDFLAGS="$OLDLDFLAGS"
     CFLAGS="$OLDCFLAGS"
 
@@ -1282,11 +1297,12 @@ dnl Make sure that shared libraries don't have undefined references
 
 	    OLDCFLAGS="$CFLAGS"
 	    CFLAGS="$CFLAGS -fpermissive"
-	    AC_TRY_COMPILE(,,
-	        CXXFLAGS="$CXXFLAGS -fpermissive"
-	        AC_MSG_RESULT([yes]),
-	        CFLAGS="$OLDCFLAGS"
-	        AC_MSG_RESULT([no]))
+	    AC_COMPILE_IFELSE(
+		[AC_LANG_PROGRAM([[]], [[]])],
+		[CXXFLAGS="$CXXFLAGS -fpermissive"
+		 AC_MSG_RESULT(yes)],
+		[CFLAGS="$OLDCFLAGS"
+		 AC_MSG_RESULT(no)])
 	    ;;
     esac
 else
@@ -1505,7 +1521,8 @@ AC_SUBST(BINARY_DIR)
 dnl Write all of the files...
 AC_CONFIG_HEADER(config.h:configh.in)
 AC_CONFIG_HEADER(FL/abi-version.h:abi-version.in)
-AC_OUTPUT(makeinclude fltk.list fltk-config fltk.spec FL/Makefile)
+AC_CONFIG_FILES([makeinclude fltk.list fltk-config fltk.spec FL/Makefile])
+AC_OUTPUT
 
 dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
