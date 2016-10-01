@@ -1077,7 +1077,9 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   int lineStartPos, fontHeight;
   int visLineNum;
   /* If position is not displayed, return false */
-  if (pos < mFirstChar || (pos > mLastChar && !empty_vlines())) {
+  if ((pos < mFirstChar) || 
+      (pos > mLastChar && !empty_vlines()) ||
+      (pos > buffer()->length()) ) {		// STR #3231
     return (*X=*Y=0); // make sure X & Y are set when it is out of view
   }
 
