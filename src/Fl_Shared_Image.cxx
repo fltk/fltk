@@ -3,7 +3,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,16 +54,49 @@ extern "C" {
 Fl_Shared_Image **Fl_Shared_Image::images() {
   return images_;
 }
+
+
 /** Returns the total number of shared images in the array. */
 int Fl_Shared_Image::num_images() {
   return num_images_;
 }
 
 
-//
-// 'Fl_Shared_Image::compare()' - Compare two shared images...
-//
+/**
+  Compares two shared images.
 
+  The order of comparison is:
+
+    -# Image name, usually the filename used to load it
+    -# Image width
+    -# Image height
+
+  A special case is considered if the width of one of the images is zero
+  and the other image is marked \p original. In this case the images match,
+  i.e. the comparison returns success (0).
+
+  An image is marked \p original if it was directly loaded from a file or
+  from memory as opposed to copied and resized images.
+
+  This comparison is used in Fl_Shared_Image::find() to find an image that
+  matches the requested one or to find the position where a new image
+  should be entered into the sorted list of shared images.
+
+  It is usually used in two steps:
+
+    -# search with exact width and height
+    -# if not found, search again with width = 0 (and height = 0)
+
+  The first step will only return a match if the image exists with the
+  same width and height. The second step will match if there is an image
+  marked \p original with the same name, regardless of width and height.
+
+  \returns	Whether the images match or their relative sort order (see text).
+
+  \retval	0	the images match
+  \retval	<0	Image \p i0 is \e less than image \p i1
+  \retval	>0	Image \p i0 is \e greater than image \p i1
+*/
 int
 Fl_Shared_Image::compare(Fl_Shared_Image **i0,		// I - First image
                          Fl_Shared_Image **i1) {	// I - Second image
@@ -77,11 +110,11 @@ Fl_Shared_Image::compare(Fl_Shared_Image **i0,		// I - First image
 }
 
 
-/** 
+/**
   Creates an empty shared image.
   The constructors create a new shared image record in the image cache.
-  
-  <P>The constructors are protected and cannot be used directly
+
+  The constructors are protected and cannot be used directly
   from a program. Use the get() method instead.
 */
 Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
@@ -94,11 +127,11 @@ Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
 }
 
 
-/** 
+/**
   Creates a shared image from its filename and its corresponding Fl_Image* img.
   The constructors create a new shared image record in the image cache.
-  
-  <P>The constructors are protected and cannot be used directly
+
+  The constructors are protected and cannot be used directly
   from a program. Use the get() method instead.
 */
 Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
@@ -118,10 +151,14 @@ Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
 }
 
 
-//
-// 'Fl_Shared_Image::add()' - Add a shared image to the array.
-//
+/**
+  Adds a shared image to the image cache.
 
+  This \b protected method adds an image to the cache, an ordered list
+  of shared images. The cache is searched for a matching image whenever
+  one is requested, for instance with Fl_Shared_Image::get() or
+  Fl_Shared_Image::find().
+*/
 void
 Fl_Shared_Image::add() {
   Fl_Shared_Image	**temp;		// New image pointer array...
@@ -165,10 +202,11 @@ Fl_Shared_Image::update() {
 }
 
 /**
-  The destructor free all memory and server resources that are
-  used by the image. The destructor is protected and cannot be
-  used directly from a program. Use the Fl_Shared_Image::release() method
-  instead.
+  The destructor frees all memory and server resources that are
+  used by the image.
+
+  The destructor is protected and cannot be used directly from a program.
+  Use the Fl_Shared_Image::release() method instead.
 */
 Fl_Shared_Image::~Fl_Shared_Image() {
   if (name_) delete[] (char *)name_;
@@ -177,10 +215,11 @@ Fl_Shared_Image::~Fl_Shared_Image() {
 }
 
 
-//
-/** 
-  Releases and possibly destroys (if refcount <=0) a shared image. 
-  In the latter case, it will reorganize the shared image array so that no hole will occur.
+/**
+  Releases and possibly destroys (if refcount <= 0) a shared image.
+
+  In the latter case, it will reorganize the shared image array
+  so that no hole will occur.
 */
 void Fl_Shared_Image::release() {
   int	i;	// Looping var...
@@ -211,8 +250,7 @@ void Fl_Shared_Image::release() {
 }
 
 
-//
-/** Reloads the shared image from disk */
+/** Reloads the shared image from disk. */
 void Fl_Shared_Image::reload() {
   // Load image from disk...
   int		i;		// Looping var
@@ -265,6 +303,8 @@ void Fl_Shared_Image::reload() {
 //
 // 'Fl_Shared_Image::copy()' - Copy and resize a shared image...
 //
+// Note: intentionally no doxygen docs here.
+// For doxygen docs see Fl_Image::copy().
 
 Fl_Image *
 Fl_Shared_Image::copy(int W, int H) {
@@ -372,9 +412,9 @@ void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
  \param width,height   maximum width and height (in drawing units) to use when drawing the shared image
  \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
  \param can_expand  if null, the width and height of the shared image will not exceed those of the original image
- 
+
  \version 1.3.4
- 
+
  Example code: scale an image to fit in a box
  \code
  Fl_Box *b = ...  // a box
@@ -399,8 +439,8 @@ void Fl_Shared_Image::scale(int width, int height, int proportional, int can_exp
     if (fw < 1) fw = 1;
     if (fh < 1) fh = 1;
   }
-  w((int)(image_->w() / fw));
-  h((int)(image_->h() / fh));
+  w(int(image_->w() / fw));
+  h(int(image_->h() / fh));
 }
 
 
@@ -418,15 +458,28 @@ void Fl_Shared_Image::uncache()
 
 
 
-/** Finds a shared image from its named and size specifications */
-Fl_Shared_Image* Fl_Shared_Image::find(const char *n, int W, int H) {
+/** Finds a shared image from its name and size specifications.
+
+  This uses a binary search in the image cache.
+
+  If the image \p name exists with the exact width \p W and height \p H,
+  then it is returned.
+
+  If \p W == 0 and the image \p name exists with another size, then the
+  \b original image with that \p name is returned.
+
+  In either case the refcount of the returned image is increased.
+  The found image should be released with Fl_Shared_Image::release()
+  when no longer needed.
+*/
+Fl_Shared_Image* Fl_Shared_Image::find(const char *name, int W, int H) {
   Fl_Shared_Image	*key,		// Image key
 			**match;	// Matching image
 
   if (num_images_) {
     key = new Fl_Shared_Image();
-    key->name_ = new char[strlen(n) + 1];
-    strcpy((char *)key->name_, n);
+    key->name_ = new char[strlen(name) + 1];
+    strcpy((char *)key->name_, name);
     key->w(W);
     key->h(H);
 
@@ -446,33 +499,48 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *n, int W, int H) {
 }
 
 
-/** 
- \brief Find or load an image that can be shared by multiple widgets.
- 
- Gets a shared image, if it exists already ; it will return it.
- If it does not exist or if it exists but with other size, 
- then the existing image is deleted and replaced
- by a new image from the n filename of the proper dimension.
- If n is not a valid image filename, then get() will return NULL.
- 
- Shared JPEG and PNG images can also be created from memory by using their 
- named memory access constructor.
- 
- \param n name of the image
- \param W, H desired size
- 
- \see Fl_Shared_Image::find(const char *n, int W, int H)
- \see Fl_Shared_Image::release() 
- \see Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
- \see Fl_PNG_Image::Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int maxsize)
+/**
+  Find or load an image that can be shared by multiple widgets.
+
+  If the image exists with the requested size, this image will be returned.
+
+  If the image exists, but only with another size, then a new copy with the
+  requested size (width \p W and height \p H) will be created as a resized
+  copy of the original image. The new image is added to the internal list
+  of shared images.
+
+  If the image does not yet exist, then a new image of the proper
+  dimension is created from the filename \p name. The original image
+  from filename \p name is always added to the list of shared images in
+  its original size. If the requested size differs, then the resized
+  copy with width \p W and height \p H is also added to the list of
+  shared images.
+
+  \note	If the sizes differ, then \e two images are created as mentioned above.
+	This is intentional so the original image is cached and preserved.
+	If you request the same image with another size later, then the
+	\b original image will be found, copied, resized, and returned.
+
+  Shared JPEG and PNG images can also be created from memory by using their
+  named memory access constructor.
+
+  You should release() the image when you're done with it.
+
+  \param name name of the image
+  \param W, H desired size
+
+  \see Fl_Shared_Image::find(const char *name, int W, int H)
+  \see Fl_Shared_Image::release()
+  \see Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
+  \see Fl_PNG_Image::Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int maxsize)
 */
-Fl_Shared_Image* Fl_Shared_Image::get(const char *n, int W, int H) {
+Fl_Shared_Image* Fl_Shared_Image::get(const char *name, int W, int H) {
   Fl_Shared_Image	*temp;		// Image
 
-  if ((temp = find(n, W, H)) != NULL) return temp;
+  if ((temp = find(name, W, H)) != NULL) return temp;
 
-  if ((temp = find(n)) == NULL) {
-    temp = new Fl_Shared_Image(n);
+  if ((temp = find(name)) == NULL) {
+    temp = new Fl_Shared_Image(name);
 
     if (!temp->image_) {
       delete temp;
@@ -490,11 +558,14 @@ Fl_Shared_Image* Fl_Shared_Image::get(const char *n, int W, int H) {
   return temp;
 }
 
-/** Builds a shared image from a pre-existing Fl_RGB_Image
- \param rgb  an Fl_RGB_Image used to build a new shared image.
- \param own_it 1 if the shared image should delete \p rgb when it is itself deleted, 0 otherwise
+/** Builds a shared image from a pre-existing Fl_RGB_Image.
+
+ \param[in] rgb		an Fl_RGB_Image used to build a new shared image.
+ \param[in] own_it	1 if the shared image should delete \p rgb when
+			it is itself deleted, 0 otherwise
+
  \version 1.3.4
- */
+*/
 Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
 {
   Fl_Shared_Image *shared = new Fl_Shared_Image(Fl_Preferences::newUUID(), rgb);
@@ -504,7 +575,9 @@ Fl_Shared_Image *Fl_Shared_Image::get(Fl_RGB_Image *rgb, int own_it)
 }
 
 
-/** Adds a shared image handler, which is basically a test function for adding new formats */
+/** Adds a shared image handler, which is basically a test function
+    for adding new formats.
+*/
 void Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
   int			i;		// Looping var...
   Fl_Shared_Handler	*temp;		// New image handler array...
@@ -533,8 +606,7 @@ void Fl_Shared_Image::add_handler(Fl_Shared_Handler f) {
 }
 
 
-
-/** Removes a shared image handler */
+/** Removes a shared image handler. */
 void Fl_Shared_Image::remove_handler(Fl_Shared_Handler f) {
   int	i;				// Looping var...
 
