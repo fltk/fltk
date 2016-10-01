@@ -3,7 +3,7 @@
 //
 // Shared image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,19 +29,29 @@
 typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
                                        int headerlen);
 
-// Shared images class. 
+// Shared images class.
 /**
-  This class supports caching, loading, scaling,
-  and drawing of image files. Most applications will also want to
-  link against the fltk_images library and call the
-  fl_register_images()
-  function to support standard image formats such as BMP, GIF, JPEG, and PNG.
+  This class supports caching, loading, scaling, and drawing of image files.
+
+  Most applications will also want to link against the fltk_images library
+  and call the fl_register_images() function to support standard image
+  formats such as BMP, GIF, JPEG, and PNG.
+
+  Images can be requested (loaded) with Fl_Shared_Image::get(), find(),
+  and some other methods. All images are cached in an internal list of
+  shared images and should be released when they are no longer needed.
+  A refcount is used to determine if a released image is to be destroyed
+  with delete.
+
+  \see Fl_Shared_Image::get()
+  \see Fl_Shared_Image::find()
+  \see Fl_Shared_Image::release()
 */
 class FL_EXPORT Fl_Shared_Image : public Fl_Image {
-  
+
   friend class Fl_JPEG_Image;
   friend class Fl_PNG_Image;
-  
+
 private:
   static Fl_RGB_Scaling scaling_algorithm_; // method used to rescale RGB source images
 #if FLTK_ABI_VERSION >= 10304
@@ -88,8 +98,8 @@ public:
   void scale(int width, int height, int proportional = 1, int can_expand = 0);
   virtual void uncache();
 
-  static Fl_Shared_Image *find(const char *n, int W = 0, int H = 0);
-  static Fl_Shared_Image *get(const char *n, int W = 0, int H = 0);
+  static Fl_Shared_Image *find(const char *name, int W = 0, int H = 0);
+  static Fl_Shared_Image *get(const char *name, int W = 0, int H = 0);
   static Fl_Shared_Image *get(Fl_RGB_Image *rgb, int own_it = 1);
   static Fl_Shared_Image **images();
   static int		num_images();
