@@ -116,6 +116,13 @@ and type
 
   ./configure
 
+CAVEAT: if configure sends this error message :
+   configure: error: cannot run /bin/sh ./config.sub
+type
+  make
+and interrupt the building process. Then, run ./configure again.
+:END CAVEAT
+
 ADVANCED: type "./configure --help" to get a complete list of optional
 configurations parameters. These should be pretty self-explanatory. Some
 more details can be found in README.
