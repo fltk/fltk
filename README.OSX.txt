@@ -348,7 +348,7 @@ follow the instructions.
  4.1  Prerequisites
 --------------------
 
-In order to build FLTK from within Xcode 4, 5, 6 or 7, you need to install
+In order to build FLTK from within Xcode 4, 5, 6, 7, or 8 you need to install
 the Xcode developer environment via the Apple App Store that comes with
 Lion and up. If you also want the command line version of gcc, you can use
 the Download section in the Preferences dialog.
