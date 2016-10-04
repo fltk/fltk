@@ -3606,6 +3606,7 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   // Alpha needs to be premultiplied for this format
 
   const uchar *i = (const uchar*)*image->data();
+  const int extra_data = image->ld() ? (image->ld() - image->w() * image->d()) : 0;
   unsigned char *o = [bitmap bitmapData];
   for (int y = 0;y < image->h();y++) {
     if (!(image->d() & 1)) {
@@ -3629,7 +3630,7 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
       o += len;
       i += len;
     }
-    i += image->ld();
+    i += extra_data;
   }
 
   NSImage *nsimage = [[NSImage alloc]
