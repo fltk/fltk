@@ -642,10 +642,12 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       _panel =  [NSSavePanel savePanel];
       break;
   }
-  NSString *nstitle = [NSString stringWithUTF8String: (_title ? _title : "No Title")];
   BOOL is_open_panel = [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]];
-  if (is_open_panel && fl_mac_os_version >= 101200 ) [(NSOpenPanel*)_panel setMessage:nstitle]; // 10.3
-  else [(NSSavePanel*)_panel setTitle:nstitle];
+  if (_title) {
+    SEL title_or_message = (is_open_panel && fl_mac_os_version >= 101200) ?
+          @selector(setMessage:) : @selector(setTitle:);
+    [(NSSavePanel*)_panel performSelector:title_or_message withObject:[NSString stringWithUTF8String:_title]];
+  }
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
       [(NSOpenPanel*)_panel setAllowsMultipleSelection:YES];
