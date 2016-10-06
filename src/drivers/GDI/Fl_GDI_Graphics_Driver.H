@@ -49,7 +49,7 @@ public:
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
-  virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (HDC)ctxt;}
+  virtual void gc(void *ctxt) { gc_ = (HDC)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
 
   // --- bitmap stuff
