@@ -88,6 +88,10 @@ public:
     menu items.
   */
   Fl_Menu_Bar(int X, int Y, int W, int H, const char *l=0);
+  /** Updates the menu bar after any change to its items.
+   This is useful when the menu bar can be an Fl_Sys_Menu_Bar object.
+   */
+  virtual void update() {}
 };
 
 #endif

@@ -458,8 +458,6 @@ void Fl_Sys_Menu_Bar::replace(int index, const char *name)
   update();
 }
 
-/** Updates the system menu after any change to its items.
- */
 void Fl_Sys_Menu_Bar::update()
 {
   convertToMenuBar(Fl_Menu_::menu());
