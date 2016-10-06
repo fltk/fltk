@@ -68,7 +68,7 @@ public:
   static const int CoreText_threshold; // min Mac OS version for CoreText
   virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
   virtual int has_feature(driver_feature mask) { return mask & (NATIVE | is_printer_); }
-  virtual void gc(void *ctxt) {if (ctxt != gc_) global_gc(); gc_ = (CGContextRef)ctxt; }
+  virtual void gc(void *ctxt) { gc_ = (CGContextRef)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
   char can_do_alpha_blending();
 
