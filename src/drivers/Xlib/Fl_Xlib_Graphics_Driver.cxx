@@ -52,10 +52,6 @@ GC Fl_Xlib_Graphics_Driver::gc_ = NULL;
  */
 GC fl_gc = 0;
 
-void Fl_Xlib_Graphics_Driver::global_gc()
-{
-}
-
 Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
   p_size = 0;

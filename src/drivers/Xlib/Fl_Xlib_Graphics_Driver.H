@@ -157,8 +157,6 @@ protected:
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
   virtual Fl_Font set_fonts(const char* xstarname);
-protected:
-  virtual void global_gc();
 };
 
 
