@@ -466,7 +466,7 @@ const char *fl_filename_name(char const*) { return 0; }
 
 //Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver() { return 0; }
 //Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver() { return 0; }
-void Fl_Graphics_Driver::global_gc() { }
+//void Fl_Graphics_Driver::global_gc() { }
 int Fl::dnd() { return 0; }
 void Fl::copy(char const*, int, int, char const*) { }
 void Fl::paste(Fl_Widget&, int, char const*) { }
