@@ -79,9 +79,7 @@ Fl_Cocoa_Printer_Driver::Fl_Cocoa_Printer_Driver(void)
   x_offset = 0;
   y_offset = 0;
   scale_x = scale_y = 1.;
-  Fl_Quartz_Graphics_Driver *d = (Fl_Quartz_Graphics_Driver*)Fl_Graphics_Driver::newMainGraphicsDriver();
-  d->is_printer_ = Fl_Graphics_Driver::PRINTER;
-  driver(d);
+  driver(new Fl_Quartz_Printer_Graphics_Driver);
 }
 
 Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)

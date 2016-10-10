@@ -48,26 +48,15 @@ protected:
   typedef struct { float x; float y; } XPOINT;
   XPOINT *p;
   bool high_resolution_;
-  driver_feature is_printer_;
   float quartz_line_width_;
   CGLineCap quartz_line_cap_;
   CGLineJoin quartz_line_join_;
   CGFloat *quartz_line_pattern;
   int quartz_line_pattern_size;
-// protected constructor to ensure only derived classes are allocated
-  Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), gc_(NULL), p_size(0), p(NULL) {
-    quartz_line_width_ = 1.f;
-    quartz_line_cap_ = kCGLineCapButt;
-    quartz_line_join_ = kCGLineJoinMiter;
-    quartz_line_pattern = 0;
-    quartz_line_pattern_size = 0;
-    high_resolution_ = false;
-    is_printer_ = (driver_feature)0;
-  }
 public:
-  static const int CoreText_threshold; // min Mac OS version for CoreText
+  Fl_Quartz_Graphics_Driver();
   virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }
-  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | is_printer_); }
+  virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void gc(void *ctxt) { gc_ = (CGContextRef)ctxt; global_gc(); }
   virtual void *gc() {return gc_;}
   char can_do_alpha_blending();
@@ -146,6 +135,7 @@ protected:
   void draw(const char *str, int n, int x, int y);
   void draw(const char *str, int n, float x, float y);
   void draw(int angle, const char *str, int n, int x, int y);
+  double width(const UniChar* txt, int n);
   void rtl_draw(const char *str, int n, int x, int y);
   void font(Fl_Font face, Fl_Fontsize fsize);
   double width(const char *str, int n);
@@ -154,45 +144,46 @@ protected:
   int descent();
   virtual bool high_resolution() { return high_resolution_; }
   virtual void global_gc();
+  void quartz_restore_line_style();
   inline Fl_Font_Descriptor *valid_font_descriptor();
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
   virtual unsigned font_desc_size();
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
-  // Next group of virtual functions have at least one alternative
-  // CoreText- or ATSU-based implementation.
-  virtual double width(const UniChar* txt, int n) {return 0;}
-  virtual Fl_Font set_fonts(const char* xstarname) {return 0;}
-  virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
-  virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d) {}
-  // end of function group
-  void quartz_restore_line_style();
-};
-
+  Fl_Fontdesc* calc_fl_fonts(void);
+  enum {use_CoreText = 1, use_ATSU};
+  static int CoreText_or_ATSU;
+  static void init_CoreText_or_ATSU();
+  // Next group of functions have alternative CoreText- and ATSU-based implementations.
+  virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  virtual Fl_Font set_fonts(const char* xstarname);
+  void set_fontname_in_fontdesc(Fl_Fontdesc *f);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-class Fl_CoreText_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  virtual void draw(const char *str, int n, float x, float y);
-  virtual double width(const UniChar* txt, int n);
-  virtual Fl_Font set_fonts(const char* xstarname);
-  virtual Fl_Fontdesc* calc_fl_fonts(void);
-  virtual void set_fontname_in_fontdesc(Fl_Fontdesc *f);
-  virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
-};
+  void draw_CoreText(const char *str, int n, float x, float y);
+  double width_CoreText(const UniChar* txt, int n);
+  void text_extents_CoreText(const char*, int n, int& dx, int& dy, int& w, int& h);
+  void descriptor_init_CoreText(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  Fl_Font set_fonts_CoreText(const char* xstarname);
 #endif
-
-#ifdef HAS_ATSU
-class Fl_ATSU_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  virtual void draw(const char *str, int n, float x, float y);
-  virtual double width(const UniChar* txt, int n);
-  virtual Fl_Font set_fonts(const char* xstarname);
-  virtual Fl_Fontdesc* calc_fl_fonts(void);
-  virtual void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
-};
+#if HAS_ATSU
+  void draw_ATSU(const char *str, int n, float x, float y);
+  double width_ATSU(const UniChar* txt, int n);
+  void text_extents_ATSU(const char*, int n, int& dx, int& dy, int& w, int& h);
+  void descriptor_init_ATSU(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  Fl_Font set_fonts_ATSU(const char* xstarname);
 #endif
+  // end of function group
+  // define 2 kinds of pointers to member function
+  typedef void (Fl_Quartz_Graphics_Driver::*pter_to_draw_member)(const char *str, int n, float x, float y);
+  typedef double (Fl_Quartz_Graphics_Driver::*pter_to_width_member)(const UniChar *str, int n);
+  static pter_to_draw_member CoreText_or_ATSU_draw;
+  static pter_to_width_member CoreText_or_ATSU_width;
+};
 
+class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
+  virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
+};
 
 #endif // FL_QUARTZ_GRAPHICS_DRIVER_H
 
