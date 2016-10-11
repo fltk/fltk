@@ -182,6 +182,7 @@ protected:
 };
 
 class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
+public:
   virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
 };
 
