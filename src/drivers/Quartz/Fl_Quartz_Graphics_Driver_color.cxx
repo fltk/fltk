@@ -27,7 +27,7 @@
 // matt: Neither Quartz nor Quickdraw support colormaps in this implementation
 // matt: Quartz support done
 
-#include "Fl_Quartz_Graphics_Driver.h"
+#include "Fl_Quartz_Graphics_Driver.H"
 
 #include <config.h>
 #include <FL/Fl.H>

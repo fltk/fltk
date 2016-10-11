@@ -18,7 +18,7 @@
 
 #include "../../config_lib.h"
 
-#include "Fl_Quartz_Graphics_Driver.h"
+#include "Fl_Quartz_Graphics_Driver.H"
 
 #include <config.h>
 #include <FL/Fl.H>

@@ -29,7 +29,7 @@ extern int fl_line_width_;
   \brief Line style drawing utility hiding different platforms.
 */
 
-#include "Fl_Quartz_Graphics_Driver.h"
+#include "Fl_Quartz_Graphics_Driver.H"
 
 void Fl_Quartz_Graphics_Driver::quartz_restore_line_style() {
   CGContextSetLineWidth(gc_, quartz_line_width_);

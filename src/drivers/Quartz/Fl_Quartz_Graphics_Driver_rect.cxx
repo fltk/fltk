@@ -30,7 +30,7 @@
 */
 
 
-#include "Fl_Quartz_Graphics_Driver.h"
+#include "Fl_Quartz_Graphics_Driver.H"
 
 
 // --- line and polygon drawing with integer coordinates
