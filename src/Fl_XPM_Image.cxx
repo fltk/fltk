@@ -3,7 +3,7 @@
 //
 // Fl_XPM_Image routines.
 //
-// Copyright 1997-2010 by Bill Spitzak and others.
+// Copyright 1997-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,7 +46,8 @@ static int hexdigit(int x) {	// I - Hex digit...
 #define INITIALLINES 256
 /**
   The constructor loads the XPM image from the name filename.
-  <P>The destructor free all memory and server resources that are used by
+
+  The destructor frees all memory and server resources that are used by
   the image.
 */
 Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {

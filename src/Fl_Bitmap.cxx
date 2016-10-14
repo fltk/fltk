@@ -3,7 +3,7 @@
 //
 // Bitmap drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -363,7 +363,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP
 #endif
 
 /**
-  The destructor free all memory and server resources that are used by
+  The destructor frees all memory and server resources that are used by
   the bitmap.
 */
 Fl_Bitmap::~Fl_Bitmap() {
