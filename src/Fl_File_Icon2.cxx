@@ -330,9 +330,10 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 		temp;		// Temporary color
     const uchar *row;		// Pointer into image
 
+    const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
 
     // Loop through grayscale or RGB image...
-    for (y = 0, row = (const uchar *)(*(img->data())); y < img->h(); y ++, row += img->ld())
+    for (y = 0, row = (const uchar *)(*(img->data())); y < img->h(); y ++, row += extra_data)
     {
       for (x = 0, startx = 0, c = (Fl_Color)-1;
            x < img->w();
@@ -403,7 +404,6 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
     int		red, green, blue;	// Red, green, and blue values
     int		x, y;			// X & Y in image
     int		startx;			// Starting X coord
-
 
     // Get the pixmap data...
     ptr = img->data();

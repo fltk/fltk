@@ -2612,9 +2612,11 @@ static void icons_to_property(const Fl_RGB_Image *icons[], int count,
     data[1] = image->h();
     data += 2;
 
+    const int extra_data = image->ld() ? (image->ld()-image->w()*image->d()) : 0;
+
     const uchar *in = (const uchar*)*image->data();
-    for (int y = 0;y < image->h();y++) {
-      for (int x = 0;x < image->w();x++) {
+    for (int y = 0; y < image->h(); y++) {
+      for (int x = 0; x < image->w(); x++) {
         switch (image->d()) {
         case 1:
           *data = ( 0xff<<24) | (in[0]<<16) | (in[0]<<8) | in[0];
@@ -2632,7 +2634,7 @@ static void icons_to_property(const Fl_RGB_Image *icons[], int count,
         in += image->d();
         data++;
       }
-      in += image->ld();
+      in += extra_data;
     }
   }
 }
@@ -2748,6 +2750,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
   if (!cursor)
     return 0;
 
+  const int extra_data = image->ld() ? (image->ld()-image->w()*image->d()) : 0;
   const uchar *i = (const uchar*)*image->data();
   XcursorPixel *o = cursor->pixels;
   for (int y = 0;y < image->h();y++) {
@@ -2769,7 +2772,7 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
       i += image->d();
       o++;
     }
-    i += image->ld();
+    i += extra_data;
   }
 
   cursor->xhot = hotx;

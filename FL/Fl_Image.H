@@ -3,7 +3,7 @@
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -85,6 +85,14 @@ protected:
   void d(int D) {d_ = D;}
   /**
    Sets the current line data size in bytes.
+
+   Color images may contain extra data that is included after every
+   line of color image data and is normally not present.
+
+   If \p LD is zero, then line data size is assumed to be w() * d() bytes.
+
+   If \p LD is non-zero, then it must be positive and larger than w() * d()
+   to account for the extra data per line.
    */
   void ld(int LD) {ld_ = LD;}
   /** 
@@ -114,8 +122,7 @@ public:
   int d() const {return d_;}
   /**
    Returns the current line data size in bytes.
-   Line data is extra data that is included
-   after each line of color image data and is normally not present.
+   \see ld(int)
    */
   int ld() const {return ld_;}
   /**

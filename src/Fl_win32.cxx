@@ -1957,8 +1957,10 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
     return NULL;
 
   const uchar *i = (const uchar*)*image->data();
-  for (int y = 0;y < image->h();y++) {
-    for (int x = 0;x < image->w();x++) {
+  const int extra_data = image->ld() ? (image->ld()-image->w()*image->d()) : 0;
+
+  for (int y = 0; y < image->h(); y++) {
+    for (int x = 0; x < image->w(); x++) {
       switch (image->d()) {
       case 1:
         *bits = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
@@ -1976,7 +1978,7 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
       i += image->d();
       bits++;
     }
-    i += image->ld();
+    i += extra_data;
   }
 
   // A mask bitmap is still needed even though it isn't used
@@ -1998,9 +2000,6 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
 
   DeleteObject(bitmap);
   DeleteObject(mask);
-
-  if (icon == NULL)
-    return NULL;
 
   return icon;
 }
