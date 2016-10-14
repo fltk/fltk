@@ -3,7 +3,7 @@
 //
 // Pixmap (and other images) label support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -123,7 +123,8 @@ void Fluid_Image::write_static() {
       image_header_written = write_number;
     } 
     write_c("static const unsigned char %s[] =\n", idata_name);
-    write_cdata(img->data()[0], (img->w() * img->d() + img->ld()) * img->h());
+    const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
+    write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
     write_c(";\n");
     write_initializer("Fl_RGB_Image", "%s, %d, %d, %d, %d", idata_name, img->w(), img->h(), img->d(), img->ld());
   }

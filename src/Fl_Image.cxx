@@ -237,24 +237,39 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
 
 
 /**
- The constructor creates a new image from the specified data.
- \param[in] bits   The image data array.
- \param[in] W      The width of the image in pixels
- \param[in] H      The height of the image in pixels
- \param[in] D      The image depth, or 'number of channels'. Default=3<br>
-    If D=1, each uchar in bits[] is a grayscale pixel value.<br>
-    If D=2, each uchar pair in bits[] is a grayscale + alpha pixel value.<br>
-    If D=3, each uchar triplet in bits[] is an R/G/B pixel value<br>
-    If D=4, each uchar quad in bits[] is an R/G/B/A pixel value.
- \param[in] LD     Line data size (default=0).<br>
-    Line data is extra data that is included after each line
-    of color image data and is normally not present.
- 
+  The constructor creates a new image from the specified data.
+
+  The data array \p bits must contain sufficient data to provide
+  \p W * \p H * \p D image bytes and optional line padding, see \p LD.
+
+  \p W and \p H are the width and height of the image in pixels, resp.
+
+  \p D is the image depth and can be:
+    - D=1: each uchar in \p bits[] is a grayscale pixel value
+    - D=2: each uchar pair in \p bits[] is a grayscale + alpha pixel value
+    - D=3: each uchar triplet in \p bits[] is an R/G/B pixel value
+    - D=4: each uchar quad in \p bits[] is an R/G/B/A pixel value
+
+  \p LD specifies the line data size of the array, see Fl_Image::ld(int).
+  If \p LD is zero, then \p W * \p D is assumed, otherwise \p LD must be
+  greater than or equal to \p W * \p D to account for (unused) extra data
+  per line (padding).
+
+  The caller is responsible that the image data array \p bits persists as
+  long as the image is used.
+
   This constructor sets Fl_RGB_Image::alloc_array to 0.
-  To have the image object control the deallocation of the data array,
-  set alloc_array to non-zero after construction.
- \see Fl_Image::data(), Fl_Image::w(), Fl_Image::h(), Fl_Image::d(), Fl_Image::ld()
- */
+  To have the image object control the deallocation of the data array
+  \p bits, set alloc_array to non-zero after construction.
+
+  \param[in] bits   The image data array.
+  \param[in] W      The width of the image in pixels.
+  \param[in] H      The height of the image in pixels.
+  \param[in] D      The image depth, or 'number of channels' (default=3).
+  \param[in] LD     Line data size (default=0).
+
+  \see Fl_Image::data(), Fl_Image::w(), Fl_Image::h(), Fl_Image::d(), Fl_Image::ld(int)
+*/
 Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
   Fl_Image(W,H,D),
   array(bits),
@@ -268,12 +283,15 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
 
 
 /** 
- The constructor creates a new RGBA image from the specified Fl_Pixmap.
- 
- The RGBA image is built fully opaque except for the transparent area
- of the pixmap that is assigned the \p bg color with full transparency 
- This constructor sets Fl_RGB_Image::alloc_array to 1.
- */
+  The constructor creates a new RGBA image from the specified Fl_Pixmap.
+
+  The RGBA image is built fully opaque except for the transparent area
+  of the pixmap that is assigned the \p bg color with full transparency.
+
+  This constructor creates a new internal data array and sets
+  Fl_RGB_Image::alloc_array to 1 so the data array is deleted when the
+  image is destroyed.
+*/
 Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
   Fl_Image(pxm->w(), pxm->h(), 4),
   id_(0),
@@ -286,10 +304,10 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
 }
 
 
-/**  
- The destructor frees all memory and server resources that are used by 
- the image. 
- */
+/**
+  The destructor frees all memory and server resources that are used by
+  the image.
+*/
 Fl_RGB_Image::~Fl_RGB_Image() {
 #ifdef __APPLE__
   if (id_) CGImageRelease((CGImageRef)id_);
@@ -409,7 +427,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
     for (dy = 0; dy < H; dy++) {
       float oldy = dy * yscale;
       if (oldy >= h())
-        oldy = h() - 1;
+        oldy = float(h() - 1);
       const float yfract = oldy - (unsigned) oldy;
 
       for (dx = 0; dx < W; dx++) {
@@ -417,17 +435,17 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
         float oldx = dx * xscale;
         if (oldx >= w())
-          oldx = w() - 1;
+          oldx = float(w() - 1);
         const float xfract = oldx - (unsigned) oldx;
 
-        const unsigned leftx = oldx;
-        const unsigned lefty = oldy;
-        const unsigned rightx = oldx + 1 >= w() ? oldx : oldx + 1;
-        const unsigned righty = oldy;
-        const unsigned dleftx = oldx;
-        const unsigned dlefty = oldy + 1 >= h() ? oldy : oldy + 1;
-        const unsigned drightx = rightx;
-        const unsigned drighty = dlefty;
+        const unsigned leftx = (unsigned)oldx;
+        const unsigned lefty = (unsigned)oldy;
+        const unsigned rightx = (unsigned)(oldx + 1 >= w() ? oldx : oldx + 1);
+        const unsigned righty = (unsigned)oldy;
+        const unsigned dleftx = (unsigned)oldx;
+        const unsigned dlefty = (unsigned)(oldy + 1 >= h() ? oldy : oldy + 1);
+        const unsigned drightx = (unsigned)rightx;
+        const unsigned drighty = (unsigned)dlefty;
 
         uchar left[4], right[4], downleft[4], downright[4];
         memcpy(left, array + lefty * line_d + leftx * d(), d());
@@ -438,10 +456,10 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
         int i;
         if (d() == 4) {
           for (i = 0; i < 3; i++) {
-            left[i] *= left[3] / 255.0f;
-            right[i] *= right[3] / 255.0f;
-            downleft[i] *= downleft[3] / 255.0f;
-            downright[i] *= downright[3] / 255.0f;
+            left[i] = (uchar)(left[i] * left[3] / 255.0f);
+            right[i] = (uchar)(right[i] * right[3] / 255.0f);
+            downleft[i] = (uchar)(downleft[i] * downleft[3] / 255.0f);
+            downright[i] = (uchar)(downright[i] * downright[3] / 255.0f);
           }
         }
 
@@ -451,15 +469,15 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 	const float downf = yfract;
 
         for (i = 0; i < d(); i++) {
-          new_ptr[i] = (left[i] * leftf +
+          new_ptr[i] = (uchar)((left[i] * leftf +
                    right[i] * rightf) * upf +
                    (downleft[i] * leftf +
-                   downright[i] * rightf) * downf;
+                   downright[i] * rightf) * downf);
         }
 
         if (d() == 4 && new_ptr[3]) {
           for (i = 0; i < 3; i++) {
-            new_ptr[i] /= new_ptr[3] / 255.0f;
+            new_ptr[i] = (uchar)(new_ptr[i] / (new_ptr[3] / 255.0f));
           }
         }
       }
