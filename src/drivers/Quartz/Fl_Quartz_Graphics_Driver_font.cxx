@@ -16,6 +16,62 @@
 //     http://www.fltk.org/str.php
 //
 
+/* Implementation of support for two text drawing APIs: Core Text (current) and ATSU (legacy)
+ 
+ The HAS_ATSU macro (defined in Fl_Quartz_Graphics_Driver.H) is true 
+ if and only if ATSU is available at compile time.
+ The condition
+   #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+ is true if and only if both APIs are available at compile time.
+ Depending on what MacOS SDK and what deployment target are used, the code can be
+ compiled in 2 ways: 
+    1) both APIs are available at compile time and which one is used
+       is determined at runtime,
+ or
+    2) only one API is available.
+ 
+ When both APIs are compiled in, the choice of which one is used at runtime is done
+ the first time the Fl_Quartz_Graphics_Driver constructor runs, and remains unchanged.
+ Core Text is selected if the running Mac OS version is ≥ 10.5.
+ The static function init_CoreText_or_ATSU() does this by setting the value 
+ of the class variable CoreText_or_ATSU to either use_CoreText or use_ATSU.
+ 
+ If both APIs are available, several member functions come in groups of 3.
+ For example, functions draw(), draw_CoreText() and draw_ATSU() are defined. The only
+ task of draw() is to call either draw_CoreText() or draw_ATSU() depending on 
+ what API has been selected at program start.
+ 
+ If the compilation condition authorizes a single API, one member function
+ is defined instead of 3 in the other case. For example, a single draw() function
+ is compiled, and contains the same code as what is called either draw_CoreText()
+ or draw_ATSU() in the other case.
+ 
+ The ADD_SUFFIX(name, suffix) macro is used so that each function has the 
+ short (e.g., draw) or long (e.g., draw_CoreText) name adequate for
+ each compilation condition.
+ 
+ The 2 most often used text functions are draw() and width(). Two pointers to member
+ function are defined. Function init_CoreText_or_ATSU() assigns one with either
+ draw_CoreText() or draw_ATSU(), and the other with either width_CoreText() or width_ATSU().
+ The draw() and width() functions only have to dereference one pointer to member
+ function to call the adequate code.
+ 
+ If the compilation condition authorizes a single text API, only the code related
+ to this API (say, CoreText) is compiled whereas all code related to the other API
+ (thus, ATSU) is excluded from compilation. Furthermore, none of the code to
+ choose API at runtime and to select which member function is called is compiled.
+ Consequently, no pointer to member function is used.
+ 
+ The condition for both APIs to be compiled-in is
+ - target i386 or ppc architectures
+ and
+ - use SDK ≥ 10.5 and < 10.11
+ and
+ - set MacOS deployment target < 10.5 (through the -mmacosx-version-min= compilation option)
+ 
+ */
+
+
 #include "../../config_lib.h"
 #ifdef FL_CFG_GFX_QUARTZ
 
@@ -32,6 +88,12 @@ Fl_Fontdesc* fl_fonts = NULL;
 static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 
 static int fl_free_font = FL_FREE_FONT;
+
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#  define ADD_SUFFIX(name, suffix) name##suffix
+#else
+#  define ADD_SUFFIX(name, suffix) name
+#endif
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 
@@ -131,14 +193,14 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   layout = NULL;
 #endif
   Fl_Quartz_Graphics_Driver *driver = (Fl_Quartz_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
-#if HAS_ATSU
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (Fl_Quartz_Graphics_Driver::CoreText_or_ATSU == Fl_Quartz_Graphics_Driver::use_ATSU) {
       driver->descriptor_init_ATSU(name, size, this);
       return;
     }
-#endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
     driver->descriptor_init_CoreText(name, size, this);
+#else
+  driver->descriptor_init(name, size, this);
 #endif
 }
 
@@ -233,14 +295,6 @@ int Fl_Quartz_Graphics_Driver::descent() {
   return fl_fontsize->descent + 1;
 }
 
-void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) {
-  (this->*CoreText_or_ATSU_draw)(str, n, x, y);
-}
-
-double Fl_Quartz_Graphics_Driver::width(const UniChar* txt, int n) {
-  return (this->*CoreText_or_ATSU_width)(txt, n);
-}
-
 void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   draw(str, n, (float)x, y+0.5f);
 }
@@ -278,14 +332,8 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
 }
 
 
-void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
-#if HAS_ATSU
-  if (CoreText_or_ATSU == use_ATSU) {
-    strlcpy(f->fontname, f->name, ENDOFBUFFER);
-    return;
-  }
-#endif
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+static void set_fontname_CoreText(Fl_Fontdesc *f) {
   CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
   CTFontRef ctfont = CTFontCreateWithName(cfname, 0, NULL);
   CFRelease(cfname);
@@ -293,6 +341,19 @@ void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
   CFRelease(ctfont);
   CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
   CFRelease(cfname);
+}
+#endif
+
+void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  if (CoreText_or_ATSU == use_ATSU)
+    strlcpy(f->fontname, f->name, ENDOFBUFFER);
+  else
+    set_fontname_CoreText(f);
+#elif HAS_ATSU
+  strlcpy(f->fontname, f->name, ENDOFBUFFER);
+#else
+  set_fontname_CoreText(f);
 #endif
 }
 
@@ -323,44 +384,51 @@ void Fl_Quartz_Graphics_Driver::font_name(int num, const char *name) {
 
 Fl_Fontdesc* Fl_Quartz_Graphics_Driver::calc_fl_fonts(void)
 {
-#if HAS_ATSU
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (CoreText_or_ATSU == use_ATSU) return built_in_table_full;
-#endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  return  built_in_table_PS;
+#elif HAS_ATSU
+  return built_in_table_full;
+#else
   return  built_in_table_PS;
 #endif
 }
 
 
-Fl_Font Fl_Quartz_Graphics_Driver::set_fonts(const char* xstarname)
-{
-#if HAS_ATSU
-  if (CoreText_or_ATSU == use_ATSU) return set_fonts_ATSU(xstarname);
-#endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  return  set_fonts_CoreText(xstarname);
-#endif
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+
+void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) {
+  (this->*CoreText_or_ATSU_draw)(str, n, x, y);
 }
 
+double Fl_Quartz_Graphics_Driver::width(const UniChar* txt, int n) {
+  return (this->*CoreText_or_ATSU_width)(txt, n);
+}
+
+Fl_Font Fl_Quartz_Graphics_Driver::set_fonts(const char* xstarname)
+{
+  if (CoreText_or_ATSU == use_ATSU) return set_fonts_ATSU(xstarname);
+  return  set_fonts_CoreText(xstarname);
+}
 
 void Fl_Quartz_Graphics_Driver::text_extents(const char* txt, int n, int& dx, int& dy, int& w, int& h)
 {
-#if HAS_ATSU
   if (CoreText_or_ATSU == use_ATSU) {
     text_extents_ATSU(txt, n, dx, dy, w, h);
     return;
   }
-#endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   text_extents_CoreText(txt, n, dx, dy, w, h);
-#endif
 }
 
+#endif
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+
 /// CoreText-based code
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 
-void Fl_Quartz_Graphics_Driver::descriptor_init_CoreText(const char* name, Fl_Fontsize size, Fl_Font_Descriptor *d) {
+void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _CoreText)(const char* name,
+                                                      Fl_Fontsize size, Fl_Font_Descriptor *d)
+{
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   d->fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -441,7 +509,8 @@ static CGFloat variation_selector_width(CFStringRef str16, Fl_Font_Descriptor *f
   return retval;
 }
 
-double Fl_Quartz_Graphics_Driver::width_CoreText(const UniChar* txt, int n) {
+double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* txt, int n)
+{
   double retval = 0;
   UniChar uni;
   int i;
@@ -511,7 +580,8 @@ double Fl_Quartz_Graphics_Driver::width_CoreText(const UniChar* txt, int n) {
 
 
 // text extent calculation
-void Fl_Quartz_Graphics_Driver::text_extents_CoreText(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
+void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _CoreText)(const char *str8, int n,
+                                                                    int &dx, int &dy, int &w, int &h) {
   Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, txt, n,  kCFAllocatorNull);
@@ -544,7 +614,8 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
   return CGColorCreate(cspace, components);
 }
 
-void Fl_Quartz_Graphics_Driver::draw_CoreText(const char *str, int n, float x, float y) {
+void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _CoreText)(const char *str, int n, float x, float y)
+{
   Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
@@ -601,7 +672,8 @@ static int name_compare(const void *a, const void *b)
   }
 }
 
-Fl_Font Fl_Quartz_Graphics_Driver::set_fonts_CoreText(const char* xstarname) {
+Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* xstarname)
+{
 #pragma unused ( xstarname )
   if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
   
@@ -639,10 +711,13 @@ Fl_Font Fl_Quartz_Graphics_Driver::set_fonts_CoreText(const char* xstarname) {
 #endif // >= 10.5
 
 
-#if HAS_ATSU
-/// ATSU-based code to support Mac OS < 10.5
 
-void Fl_Quartz_Graphics_Driver::descriptor_init_ATSU(const char* name, Fl_Fontsize size, Fl_Font_Descriptor *d) {
+/// ATSU-based code to support Mac OS < 10.5
+#if HAS_ATSU
+
+void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _ATSU)(const char* name,
+                                                      Fl_Fontsize size, Fl_Font_Descriptor *d)
+{
   OSStatus err;
   // fill our structure with a few default values
   d->ascent = size*3/4.;
@@ -695,7 +770,8 @@ void Fl_Quartz_Graphics_Driver::descriptor_init_ATSU(const char* name, Fl_Fontsi
   ATSUSetTransientFontMatching (d->layout, true);
 }
 
-void Fl_Quartz_Graphics_Driver::draw_ATSU(const char *str, int n, float x, float y) {
+void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _ATSU)(const char *str, int n, float x, float y)
+{
   Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
@@ -715,7 +791,7 @@ void Fl_Quartz_Graphics_Driver::draw_ATSU(const char *str, int n, float x, float
   CGContextSetShouldAntialias(gc, false);
 }
 
-double Fl_Quartz_Graphics_Driver::width_ATSU(const UniChar* txt, int n) {
+double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _ATSU)(const UniChar* txt, int n) {
   OSStatus err;
   Fixed bBefore, bAfter, bAscent, bDescent;
   ATSUTextLayout layout;
@@ -741,7 +817,9 @@ double Fl_Quartz_Graphics_Driver::width_ATSU(const UniChar* txt, int n) {
   return len;
 }
 
-void Fl_Quartz_Graphics_Driver::text_extents_ATSU(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
+void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _ATSU)(const char *str8, int n,
+                                                                int &dx, int &dy, int &w, int &h)
+{
   Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   OSStatus err;
@@ -770,7 +848,8 @@ void Fl_Quartz_Graphics_Driver::text_extents_ATSU(const char *str8, int n, int &
   //printf("r: %d l: %d t: %d b: %d w: %d h: %d\n", bbox.right, bbox.left, bbox.top, bbox.bottom, w, h);
 }
 
-Fl_Font Fl_Quartz_Graphics_Driver::set_fonts_ATSU(const char* xstarname) {
+Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xstarname)
+{
 #pragma unused ( xstarname )
   if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
   

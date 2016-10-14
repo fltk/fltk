@@ -30,7 +30,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 
 // condition for the ATSU API to be available at compile time
-#define HAS_ATSU (!defined(__LP64__) || !__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11
+#define HAS_ATSU ((!defined(__LP64__) || !__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11 && \
+    MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5)
 
 struct Fl_Fontdesc;
 
@@ -152,33 +153,35 @@ protected:
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
   Fl_Fontdesc* calc_fl_fonts(void);
-  enum {use_CoreText = 1, use_ATSU};
-  static int CoreText_or_ATSU;
-  static void init_CoreText_or_ATSU();
-  // Next group of functions have alternative CoreText- and ATSU-based implementations.
+
   virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual Fl_Font set_fonts(const char* xstarname);
   void set_fontname_in_fontdesc(Fl_Fontdesc *f);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  enum {use_CoreText = 1, use_ATSU};
+  static int CoreText_or_ATSU;
+  static void init_CoreText_or_ATSU();
   void draw_CoreText(const char *str, int n, float x, float y);
   double width_CoreText(const UniChar* txt, int n);
-  void text_extents_CoreText(const char*, int n, int& dx, int& dy, int& w, int& h);
   void descriptor_init_CoreText(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  void text_extents_CoreText(const char*, int n, int& dx, int& dy, int& w, int& h);
   Fl_Font set_fonts_CoreText(const char* xstarname);
-#endif
-#if HAS_ATSU
+
   void draw_ATSU(const char *str, int n, float x, float y);
   double width_ATSU(const UniChar* txt, int n);
-  void text_extents_ATSU(const char*, int n, int& dx, int& dy, int& w, int& h);
   void descriptor_init_ATSU(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  void text_extents_ATSU(const char*, int n, int& dx, int& dy, int& w, int& h);
   Fl_Font set_fonts_ATSU(const char* xstarname);
-#endif
-  // end of function group
+
   // define 2 kinds of pointers to member function
   typedef void (Fl_Quartz_Graphics_Driver::*pter_to_draw_member)(const char *str, int n, float x, float y);
   typedef double (Fl_Quartz_Graphics_Driver::*pter_to_width_member)(const UniChar *str, int n);
   static pter_to_draw_member CoreText_or_ATSU_draw;
   static pter_to_width_member CoreText_or_ATSU_width;
+#else
+  void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+#endif
 };
 
 class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {

@@ -21,6 +21,7 @@
 #include "../Darwin/Fl_Darwin_System_Driver.H"
 #include <FL/x.H>
 
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 Fl_Quartz_Graphics_Driver::pter_to_draw_member Fl_Quartz_Graphics_Driver::CoreText_or_ATSU_draw;
 Fl_Quartz_Graphics_Driver::pter_to_width_member Fl_Quartz_Graphics_Driver::CoreText_or_ATSU_width;
 
@@ -28,7 +29,6 @@ int Fl_Quartz_Graphics_Driver::CoreText_or_ATSU = 0;
 
 void Fl_Quartz_Graphics_Driver::init_CoreText_or_ATSU()
 {
-#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (Fl_Darwin_System_Driver::calc_mac_os_version() < 100500) {
     // before Mac OS 10.5, only ATSU is available
     CoreText_or_ATSU = use_ATSU;
@@ -39,16 +39,8 @@ void Fl_Quartz_Graphics_Driver::init_CoreText_or_ATSU()
     CoreText_or_ATSU_draw = &Fl_Quartz_Graphics_Driver::draw_CoreText;
     CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_CoreText;    
   }
-#elif MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-  CoreText_or_ATSU = use_ATSU;
-  CoreText_or_ATSU_draw = &Fl_Quartz_Graphics_Driver::draw_ATSU;
-  CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_ATSU;
-#else
-  CoreText_or_ATSU = use_CoreText;
-  CoreText_or_ATSU_draw = &Fl_Quartz_Graphics_Driver::draw_CoreText;
-  CoreText_or_ATSU_width = &Fl_Quartz_Graphics_Driver::width_CoreText;
-#endif
 }
+#endif
 
 /*
  * By linking this module, the following static method will instantiate the
@@ -66,7 +58,9 @@ Fl_Quartz_Graphics_Driver::Fl_Quartz_Graphics_Driver() : Fl_Graphics_Driver(), g
   quartz_line_pattern = 0;
   quartz_line_pattern_size = 0;
   high_resolution_ = false;
+#if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (!CoreText_or_ATSU) init_CoreText_or_ATSU();
+#endif
 }
 
 char Fl_Quartz_Graphics_Driver::can_do_alpha_blending() {
