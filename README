@@ -137,13 +137,6 @@ INTERNET RESOURCES
 	         http://www.fltk.org/str.php [for reporting bugs]
 	         http://www.fltk.org/software.php [source code]
 
-	- FTP:   (offline Apr 20 '13) http://ftp.easysw.com/pub/fltk
-	         (offline Apr 20 '13) ftp://ftp.easysw.com/pub/fltk
-	         (offline Apr 20 '13) ftp://ftp2.easysw.com/pub/fltk
-	         ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk
-	         ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk
-	         ftp://gd.tuwien.ac.at/hci/fltk
-
     To join the FLTK mailing list, go the following web page:
 
         http://www.fltk.org/newsgroups.php
@@ -169,8 +162,7 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2013 by Bill Spitzak
-    (spitzak@users.sourceforge.net) and others,
+    FLTK is copyright 1998-2016 by Bill Spitzak and others,
     see the CREDITS file for more info.
 
     This library is free software. Distribution and use rights are

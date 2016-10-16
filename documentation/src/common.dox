@@ -264,13 +264,6 @@ Figure 3-3 is the area that is not drawn by the frame types.
 You can define your own boxtypes by making a small function that draws
 the box and adding it to the table of boxtypes.
 
-<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
-<TR>
-	<TD><B>Note:</B>
-	<P>This interface has changed in FLTK 2.0!
-	</TD>
-</TR>
-</TABLE></CENTER>
 
 \par The Drawing Function
 
