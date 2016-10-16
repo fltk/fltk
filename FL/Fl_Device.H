@@ -600,7 +600,9 @@ public:
 
 /**
  This plugin socket allows the integration of new device drivers for special
- window or screen types. It is currently used to provide an automated printing
+ window or screen types. 
+ This class is not intended for use outside the FLTK library.
+ It is currently used to provide an automated printing
  service and screen capture for OpenGL windows, if linked with fltk_gl.
  */
 class FL_EXPORT Fl_Device_Plugin : public Fl_Plugin {
@@ -621,7 +623,10 @@ public:
   /** captures a rectangle of a widget as an image
    \return The captured pixels as an RGB image
    */
-  virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) = 0;
+#ifdef FL_LIBRARY
+    virtual
+#endif
+  Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) {return NULL;}
 };
 
 #endif // Fl_Device_H
