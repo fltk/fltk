@@ -309,7 +309,15 @@ public:
 #if FLTK_ABI_VERSION >= 10303
   const Fl_Tree_Prefs& prefs() const;
   /// Return the tree for this item.
+  /// \version 1.3.3 (ABI feature)
   const Fl_Tree *tree() const {
+    return(_tree);
+  }
+#endif
+#if FLTK_ABI_VERSION >= 10304
+  /// Return the tree for this item.
+  /// \version 1.3.4 (ABI feature)
+  Fl_Tree *tree() {
     return(_tree);
   }
 #endif
