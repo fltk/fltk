@@ -1088,7 +1088,7 @@ Fl_Double_Window* make_sourceview() {
       sv_tab->callback((Fl_Callback*)update_sourceview_position_cb);
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Source");
         o->labelsize(13);
-        { sv_source = new CodeViewer(20, 50, 480, 390);
+        { CodeViewer* o = sv_source = new CodeViewer(20, 50, 480, 390);
           sv_source->box(FL_DOWN_FRAME);
           sv_source->color(FL_BACKGROUND2_COLOR);
           sv_source->selection_color(FL_SELECTION_COLOR);
@@ -1101,6 +1101,8 @@ Fl_Double_Window* make_sourceview() {
           sv_source->align(Fl_Align(FL_ALIGN_TOP));
           sv_source->when(FL_WHEN_RELEASE);
           Fl_Group::current()->resizable(sv_source);
+          o->linenumber_width(60);
+          o->linenumber_size(o->Fl_Text_Display::textsize());
         } // CodeViewer* sv_source
         o->end();
         Fl_Group::current()->resizable(o);
@@ -1108,7 +1110,7 @@ Fl_Double_Window* make_sourceview() {
       { Fl_Group* o = new Fl_Group(10, 35, 500, 415, "Header");
         o->labelsize(13);
         o->hide();
-        { sv_header = new CodeViewer(20, 50, 480, 390);
+        { CodeViewer* o = sv_header = new CodeViewer(20, 50, 480, 390);
           sv_header->box(FL_DOWN_FRAME);
           sv_header->color(FL_BACKGROUND2_COLOR);
           sv_header->selection_color(FL_SELECTION_COLOR);
@@ -1121,6 +1123,8 @@ Fl_Double_Window* make_sourceview() {
           sv_header->align(Fl_Align(FL_ALIGN_TOP));
           sv_header->when(FL_WHEN_RELEASE);
           Fl_Group::current()->resizable(sv_header);
+          o->linenumber_width(60);
+          o->linenumber_size(o->Fl_Text_Display::textsize());
         } // CodeViewer* sv_header
         o->end();
       } // Fl_Group* o
