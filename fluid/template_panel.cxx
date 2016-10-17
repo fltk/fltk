@@ -147,13 +147,13 @@ Fl_Double_Window* make_template_panel() {
       template_preview->align(Fl_Align(69|FL_ALIGN_INSIDE));
       Fl_Group::current()->resizable(template_preview);
     } // Fl_Box* template_preview
-    { template_name = new Fl_Input(144, 288, 306, 25, "Template Name:");
+    { template_name = new Fl_Input(198, 288, 252, 25, "Template Name:");
       template_name->labelfont(1);
       template_name->textfont(4);
       template_name->callback((Fl_Callback*)cb_template_name);
       template_name->when(3);
     } // Fl_Input* template_name
-    { template_instance = new Fl_Input(124, 288, 326, 25, "Instance Name:");
+    { template_instance = new Fl_Input(198, 288, 252, 25, "Instance Name:");
       template_instance->labelfont(1);
       template_instance->textfont(4);
       template_instance->hide();

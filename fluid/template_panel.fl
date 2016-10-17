@@ -130,11 +130,11 @@ if (img) {
   template_submit->activate();
   if (Fl::event_key() == FL_Enter) template_panel->hide();
 } else template_submit->deactivate();} selected
-      xywh {144 288 306 25} labelfont 1 when 3 textfont 4
+      xywh {198 288 252 25} labelfont 1 when 3 textfont 4
     }
     Fl_Input template_instance {
       label {Instance Name:}
-      xywh {124 288 326 25} labelfont 1 textfont 4 hide
+      xywh {198 288 252 25} labelfont 1 textfont 4 hide
     }
     Fl_Group {} {
       xywh {10 323 440 25}

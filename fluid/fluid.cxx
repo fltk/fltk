@@ -610,6 +610,11 @@ void new_cb(Fl_Widget *, void *v) {
 
   template_panel->label("New");
 
+  if ( template_browser->size() == 1 ) { // only one item?
+    template_browser->value(1);          // select it
+    template_browser->do_callback();
+  }
+
   // Show the panel and wait for the user to do something...
   template_panel->show();
   while (template_panel->shown()) Fl::wait();
