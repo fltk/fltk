@@ -275,7 +275,13 @@ public:
   }
   const Fl_Tree_Prefs& prefs() const;
   /// Return the tree for this item.
+  /// \version 1.3.3
   const Fl_Tree *tree() const {
+    return(_tree);
+  }
+  /// Return the tree for this item.
+  /// \version 1.3.4
+  Fl_Tree *tree() {
     return(_tree);
   }
   //////////////////
