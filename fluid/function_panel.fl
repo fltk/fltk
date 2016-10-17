@@ -905,6 +905,8 @@ Function {make_sourceview()} {} {
         Fl_Text_Editor sv_source {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
+          code1 {o->linenumber_width(60);}
+          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
           class CodeViewer
         }
       }
@@ -915,6 +917,8 @@ Function {make_sourceview()} {} {
         Fl_Text_Editor sv_header {
           xywh {20 50 480 390} textfont 4 textsize 11 resizable
           code0 {\#include "CodeEditor.h"}
+          code1 {o->linenumber_width(60);}
+          code2 {o->linenumber_size(o->Fl_Text_Display::textsize());}
           class CodeViewer
         }
       }
