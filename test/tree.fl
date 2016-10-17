@@ -181,6 +181,7 @@ tree->add("Bbb/child-04");
 	    in->tooltip("Fl_Input inside tree.\\n"
 	                "The widget's label 'Fl_Input test' should appear to the widget's right.");
         }
+        in->show();
         i->widget(in);
         tree->end();
     }
@@ -200,6 +201,7 @@ tree->add("Bbb/child-04");
 	                 "If 'Item h() from widget' enabled, "
 	                 "pressing button enlarges it.");
         }
+        but->show();
         i->widget(but);
         tree->end();
     }
@@ -231,6 +233,7 @@ tree->add("Bbb/child-04");
               grp->resizable(grp);
             tree->end();
         }
+        grp->show();
         i->widget(grp);
     }
 }
@@ -274,7 +277,8 @@ tree->close("500 Items");	// close the 500 items by default
 
 AssignUserIcons();
 
-tree->redraw();} {}
+tree->redraw();
+Fl_Group::current(0);} {}
 }
 
 Function {EditColor(Fl_Color &val)} {
