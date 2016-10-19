@@ -634,6 +634,9 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
     if (mtab != NULL)
     {
+      // We always have the root filesystem
+      add("/", icon);
+      num_files ++;
       while (fgets(line, sizeof(line), mtab) != NULL)
       {
         if (line[0] == '#' || line[0] == '\n')
@@ -641,10 +644,9 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
         if (sscanf(line, "%*s%4095s", filename) != 1)
 	  continue;
 
+        if (strcmp("/", filename) == 0) continue; // root was added before
         // Add a trailing slash (except for the root filesystem)
-        if (strcmp("/", filename) != 0) {
-          strlcat(filename, "/", sizeof(filename));
-        }
+        strlcat(filename, "/", sizeof(filename));
 
 //        printf("Fl_File_Browser::load() - adding \"%s\" to list...\n", filename);
         add(filename, icon);
