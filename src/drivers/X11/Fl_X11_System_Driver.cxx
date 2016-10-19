@@ -249,10 +249,10 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
       } else {
         for (int i = 0, vp = (struct vmount *) list; i < res; ++i) {
           name = (char *) vp + vp->vmt_data[VMT_STUB].vmt_off;
-          strlcpy(filename, name, sizeof(filename));
+          strlcpy(filename, name, lname);
           // Skip the already added root filesystem
           if (strcmp("/", filename) != 0) {
-            strlcat(filename, "/", sizeof(filename));
+            strlcat(filename, "/", lname);
             browser->add(filename, icon);
           }
           vp = (struct vmount *) ((char *) vp + vp->vmt_length);
@@ -280,10 +280,10 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
     res = getmntinfo(&list, ST_WAIT);
     if (0 < res) {
       for (int i = 0;  i < res; ++i) {
-        strlcpy(filename, list[i].f_mntonname, sizeof(filename));
+        strlcpy(filename, list[i].f_mntonname, lname);
         // Skip the already added root filesystem
         if (strcmp("/", filename) != 0) {
-          strlcat(filename, "/", sizeof(filename));
+          strlcat(filename, "/", lname);
           browser->add(filename, icon);
         }
       }
@@ -333,7 +333,7 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
         continue; // "/" was added before
       
       // Add a trailing slash (except for the root filesystem)
-      strlcat(filename, "/", sizeof(filename));
+      strlcat(filename, "/", lname);
       
       //        printf("Fl_File_Browser::load() - adding \"%s\" to list...\n", filename);
       browser->add(filename, icon);
