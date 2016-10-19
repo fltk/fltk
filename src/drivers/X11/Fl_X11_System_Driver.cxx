@@ -300,9 +300,17 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
   //
   FILE	*mtab;		// /etc/mtab or /etc/mnttab file
   char	line[FL_PATH_MAX];	// Input line
-  
+
+  // Every Unix has a root filesystem '/'.
+  // This ensures that the user don't get an empty
+  // window after requesting filesystem list.
+  browser->add("/", icon);
+  num_files ++;
+
   //
   // Open the file that contains a list of mounted filesystems...
+  //
+  // Note: this misses automounted filesystems on FreeBSD if absent from /etc/fstab
   //
   
   mtab = fopen("/etc/mnttab", "r");	// Fairly standard
@@ -321,11 +329,11 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
         continue;
       if (sscanf(line, "%*s%4095s", filename) != 1)
         continue;
+      if (strcmp("/", filename) == 0)
+        continue; // "/" was added before
       
       // Add a trailing slash (except for the root filesystem)
-      if (strcmp("/", filename) != 0) {
-        strlcat(filename, "/", sizeof(filename));
-      }
+      strlcat(filename, "/", sizeof(filename));
       
       //        printf("Fl_File_Browser::load() - adding \"%s\" to list...\n", filename);
       browser->add(filename, icon);
@@ -333,11 +341,6 @@ int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser,
     }
     
     fclose(mtab);
-  } else {
-    // Every Unix has a root filesystem '/'.
-    // This last stage fallback ensures that the user don't get an empty
-    // window after requesting filesystem list.
-    browser->add("/", icon);
   }
 #endif // _AIX || ...
   return num_files;
