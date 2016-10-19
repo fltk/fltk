@@ -79,7 +79,7 @@ public:
   virtual const char *filename_ext(const char *buf);
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int use_recent_tooltip_fix() {return 1;}
-  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon);
+  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon);
   virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort);
   virtual void newUUID(char *uuidBuffer);
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,

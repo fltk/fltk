@@ -221,7 +221,7 @@ int Fl_X11_System_Driver::open_uri(const char *uri, char *msg, int msglen)
 }
 
 
-int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon)
+int Fl_X11_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon)
 {
   int num_files = 0;
 #if defined(_AIX)

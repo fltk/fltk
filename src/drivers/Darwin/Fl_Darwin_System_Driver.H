@@ -55,7 +55,7 @@ public:
   virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int need_test_shortcut_extra() {return 1;}
-  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon);
+  virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon);
   virtual void newUUID(char *uuidBuffer);
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                    const char *application);

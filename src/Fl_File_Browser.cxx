@@ -407,7 +407,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
     //
     if ((icon = Fl_File_Icon::find("any", Fl_File_Icon::DEVICE)) == NULL)
       icon = Fl_File_Icon::find("any", Fl_File_Icon::DIRECTORY);
-    num_files = Fl::system_driver()->file_browser_load_filesystem(this, filename, icon);
+    num_files = Fl::system_driver()->file_browser_load_filesystem(this, filename, (int)sizeof(filename), icon);
   }
   else
   {

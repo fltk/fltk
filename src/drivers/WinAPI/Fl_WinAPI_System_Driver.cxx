@@ -681,7 +681,7 @@ int Fl_WinAPI_System_Driver::open_uri(const char *uri, char *msg, int msglen)
   return (int)(ShellExecute(HWND_DESKTOP, "open", uri, NULL, NULL, SW_SHOW) > (void *)32);
 }
 
-int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, Fl_File_Icon *icon)
+int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon)
 {
   int num_files = 0;
 #  ifdef __CYGWIN__
