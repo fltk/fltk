@@ -373,32 +373,26 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
 
 /** Draws the shared image to the current surface with its top-left at X,Y */
 void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
-  bool zero_scaled = false;
-  int done = 0;
+  if ( shared->w() == shared->image_->w() && shared->h() == shared->image_->h()) {
+    shared->image_->draw(X, Y, shared->w(), shared->h(), 0, 0);
+    return;
+  }
   // don't call Fl_Graphics_Driver::draw_scaled(Fl_Image*,...) for an enlarged Fl_Bitmap or Fl_Pixmap
   if ((shared->d() != 0 && shared->count() < 2) || (shared->w() <= shared->image_->w() && shared->h() <= shared->image_->h())) {
-    done = fl_graphics_driver->draw_scaled(shared->image_, X, Y, shared->w(), shared->h());
+    int done = fl_graphics_driver->draw_scaled(shared->image_, X, Y, shared->w(), shared->h());
+    if (done) return;
   }
-  if (!done) {
-    if (shared->scaled_image_ && (shared->scaled_image_->w() != shared->w() || shared->scaled_image_->h() != shared->h())) {
-      delete shared->scaled_image_;
-      shared->scaled_image_ = NULL;
-    }
-    if (!shared->scaled_image_) {
-      if ( shared->w() == shared->image_->w() && shared->h() == shared->image_->h()) {
-        shared->scaled_image_ = shared->image_;
-        zero_scaled = true;
-      }
-      else {
-        Fl_RGB_Scaling previous = Fl_Shared_Image::RGB_scaling();
-        Fl_Shared_Image::RGB_scaling(shared->scaling_algorithm_); // useless but no harm if image_ is not an Fl_RGB_Image
-        shared->scaled_image_ = shared->image_->copy(shared->w(), shared->h());
-        Fl_Shared_Image::RGB_scaling(previous);
-      }
-    }
-    shared->scaled_image_->draw(X, Y, shared->scaled_image_->w(), shared->scaled_image_->h(), 0, 0);
-    if (zero_scaled) shared->scaled_image_ = NULL;
+  if (shared->scaled_image_ && (shared->scaled_image_->w() != shared->w() || shared->scaled_image_->h() != shared->h())) {
+    delete shared->scaled_image_;
+    shared->scaled_image_ = NULL;
   }
+  if (!shared->scaled_image_) {
+    Fl_RGB_Scaling previous = Fl_Shared_Image::RGB_scaling();
+    Fl_Shared_Image::RGB_scaling(shared->scaling_algorithm_); // useless but no harm if image_ is not an Fl_RGB_Image
+    shared->scaled_image_ = shared->image_->copy(shared->w(), shared->h());
+    Fl_Shared_Image::RGB_scaling(previous);
+  }
+  shared->scaled_image_->draw(X, Y, shared->scaled_image_->w(), shared->scaled_image_->h(), 0, 0);
 }
 
 /** Sets the drawing size of the shared image.
