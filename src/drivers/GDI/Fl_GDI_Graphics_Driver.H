@@ -35,6 +35,8 @@
  This class is implemented only on the MSWindows platform.
  */
 class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
+private:
+  BOOL alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch);
 protected:
   HDC gc_;
   int numcount;
@@ -62,6 +64,7 @@ public:
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);

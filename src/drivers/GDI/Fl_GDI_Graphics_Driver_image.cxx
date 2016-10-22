@@ -541,6 +541,25 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, i
   return 1;
 }
 
+int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
+  if (img->d() == 0 || img->count() >= 2) return 0; // for bitmaps and pixmaps
+  
+  Fl_RGB_Image *rgb = (Fl_RGB_Image*)img;
+  if (!rgb->id_) rgb->id_ = (fl_uintptr_t)build_id(rgb, (void**)&(rgb->mask_));
+  HDC new_gc = CreateCompatibleDC(gc_);
+  int save = SaveDC(new_gc);
+  SelectObject(new_gc, (HBITMAP)rgb->id_);
+  if ((img->d() % 2) == 0 & can_do_alpha_blending()) {
+    alpha_blend_(XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h());
+  } else {
+    SetStretchBltMode(gc_, HALFTONE);
+    StretchBlt(gc_, XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h(), SRCCOPY);
+  }
+  RestoreDC(new_gc, save);
+  DeleteDC(new_gc);
+  return 1;
+}
+
 void Fl_GDI_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
   if (id_) {

@@ -113,6 +113,10 @@ void Fl_GDI_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,HBITMAP bitm
   DeleteDC(new_gc);
 }
 
+BOOL Fl_GDI_Graphics_Driver::alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch) {
+  return fl_alpha_blend(gc_, x, y, w, h, src_gc, srcx, srcy, srcw, srch, blendfunc);
+}
+
 #if ! defined(FL_DOXYGEN)
 void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(gc_);
@@ -121,7 +125,7 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   BOOL alpha_ok = 0;
   // first try to alpha blend
   if ( can_do_alpha_blending() ) {
-    alpha_ok = fl_alpha_blend(gc_, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
+    alpha_ok = alpha_blend_(x, y, w, h, new_gc, srcx, srcy, w, h);
   }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
   if (!alpha_ok) {
