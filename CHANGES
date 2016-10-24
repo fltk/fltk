@@ -1,8 +1,12 @@
-CHANGES IN FLTK 1.3.4rc2				RELEASED: Oct ?? 2016
+CHANGES IN FLTK 1.3.4rc2				RELEASED: Oct 24 2016
 
-	Bug fixes
+	Bug fixes and other improvements
+
 	- Make sure the "File Systems" menu item of Fl_File_Chooser
 	  lists "/" as the first mounted file system (Linux/Unix platform).
+	- Added line numbers to Edit -> Show Source Code viewer.
+	- Improved fluid's template handling (STR #3335).
+
 
 CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 
