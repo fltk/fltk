@@ -628,6 +628,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
   if ( _filt_total == 0 ) {	// Make sure they match
     _filt_value = 0;		// TBD: move to someplace more logical?
   }
+  fl_open_display();
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init];
   switch (_btype) {
