@@ -168,24 +168,28 @@ extern int show_comments;
 
 // Copy the given string str to buffer p with no more than maxl characters.
 // Add "..." if string was truncated.
-// If parameter quote is true (1) the string is quoted with "".
+// If parameter quote is true (not 0) the string is quoted with "".
 // Quote characters are NOT counted.
 // The returned buffer (string) is terminated with a null byte.
 // Returns pointer to end of string (before terminating null byte).
-// Note: the buffer p must be large enough to hold (3 * (maxl+1) + 1) bytes
-// or (3 * (maxl+1) + 3) bytes if quoted, e.g. "369..." because each UTF-8
-// character can be 3 bytes, "..." adds 3 bytes, quotes '""' add 2 bytes,
-// and the terminating null byte adds another byte.
+// Note: the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
+// or (4 * (maxl+1) + 3) bytes if quoted, e.g. "123..." because each UTF-8
+// character can consist of 4 bytes, "..." adds 3 bytes, quotes '""' add two
+// bytes, and the terminating null byte adds another byte.
+// This supports Unicode code points up to U+10FFFF (standard as of 10/2016).
+// Sanity checks for illegal UTF-8 sequences are included.
 
 static char *copy_trunc(char *p, const char *str, int maxl, int quote) {
 
   int size = 0;				// truncated string size in characters
   int bs;				// size of UTF-8 character in bytes
+  const char *end = str + strlen(str);	// end of input string
   if (quote) *p++ = '"';		// opening quote
   while (size < maxl) {			// maximum <maxl> characters
-    if (!(*str&(-32))) break;		// end of string (0 or control char.)
+    if (!(*str & (-32))) break;		// end of string (0 or control char)
     bs = fl_utf8len(*str);		// size of next character
     if (bs <= 0) break;			// some error - leave
+    if (str + bs > end) break;		// UTF-8 sequence beyond end of string
     while (bs--) *p++ = *str++;		// copy that character into the buffer
     size++;				// count copied characters
   }
@@ -320,7 +324,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
 
-  char buf[256]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
+  char buf[340]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
   // calculate the horizontal start position of this item
   // 3 is the edge of the browser
@@ -415,7 +419,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
 
 int Widget_Browser::item_width(void *v) const {
 
-  char buf[256]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
+  char buf[340]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
 
   Fl_Type *l = (Fl_Type *)v;
 
