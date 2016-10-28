@@ -166,6 +166,43 @@ extern int show_comments;
 
 ////////////////////////////////////////////////////////////////
 
+// Copy the given string str to buffer p with no more than maxl characters.
+// Add "..." if string was truncated.
+// If parameter quote is true (not 0) the string is quoted with "".
+// Quote characters are NOT counted.
+// The returned buffer (string) is terminated with a null byte.
+// Returns pointer to end of string (before terminating null byte).
+// Note: the buffer p must be large enough to hold (4 * (maxl+1) + 1) bytes
+// or (4 * (maxl+1) + 3) bytes if quoted, e.g. "123..." because each UTF-8
+// character can consist of 4 bytes, "..." adds 3 bytes, quotes '""' add two
+// bytes, and the terminating null byte adds another byte.
+// This supports Unicode code points up to U+10FFFF (standard as of 10/2016).
+// Sanity checks for illegal UTF-8 sequences are included.
+
+static char *copy_trunc(char *p, const char *str, int maxl, int quote) {
+
+  int size = 0;				// truncated string size in characters
+  int bs;				// size of UTF-8 character in bytes
+  const char *end = str + strlen(str);	// end of input string
+  if (quote) *p++ = '"';		// opening quote
+  while (size < maxl) {			// maximum <maxl> characters
+    if (!(*str & (-32))) break;		// end of string (0 or control char)
+    bs = fl_utf8len(*str);		// size of next character
+    if (bs <= 0) break;			// some error - leave
+    if (str + bs > end) break;		// UTF-8 sequence beyond end of string
+    while (bs--) *p++ = *str++;		// copy that character into the buffer
+    size++;				// count copied characters
+  }
+  if (*str) {				// string was truncated
+    strcpy(p,"..."); p += 3;
+  }
+  if (quote) *p++ = '"';		// closing quote
+  *p = 0;				// terminating null byte
+  return p;
+}
+
+////////////////////////////////////////////////////////////////
+
 class Widget_Browser : public Fl_Browser_ {
   friend class Fl_Type;
 
@@ -287,6 +324,8 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
   Fl_Type *l = (Fl_Type *)v;
 
+  char buf[340]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
+
   // calculate the horizontal start position of this item
   // 3 is the edge of the browser
   // 13 is the width of the arrow that indicates children for the item
@@ -302,14 +341,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // line inside this browser line
   int comment_incr = 0;
   if (show_comments && l->comment()) {
-    char buf[82], *d = buf;
-    const char *s = l->comment();
-    for (int i=0; i<80; i++) {
-      char c = *s++;
-      if (c==0 || c=='\n') break;
-      *d++ = c;
-    }
-    *d = 0;
+    copy_trunc(buf, l->comment(), 80, 0);
     comment_incr = textsize()-1;
     if (l->new_selected) fl_color(fl_contrast(FL_DARK_GREEN,FL_SELECTION_COLOR));
     else fl_color(fl_contrast(FL_DARK_GREEN,color()));
@@ -367,31 +399,12 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
     if (c) {
       fl_font(textfont()|FL_BOLD, textsize());
       fl_draw(c, X, Y+13);
-    } else if ((c=l->label())) {
-      char buf[100]; char* p = buf;
-      *p++ = '"';
-      int b,l=strlen(c);           // size in bytes
-      for (int i = 20; i>0;i--) {  // maximum 20 characters
-        if (*c==0) break;          // end of string
-        fl_utf8decode(c, c+l, &b); // b=size of char in bytes
-        if (b==-1) break;          // some error - leave
-        l-=b;                      // l = bytes left in string
-        while (b--)*p++ = *c++;    // copy that character into the buffer
-      }
-      if (*c) {strcpy(p,"..."); p+=3;} // there would be more to this string
-      *p++ = '"';
-      *p = 0;
+    } else if ((c = l->label())) {
+      copy_trunc(buf, c, 20, 1); // quoted string
       fl_draw(buf, X, Y+13);
     }
   } else {
-    const char* c = l->title();
-    char buf[60]; char* p = buf;
-    for (int i = 55; i--;) {
-      if (! (*c & -32)) break;
-      *p++ = *c++;
-    }
-    if (*c) {strcpy(p,"..."); p+=3;}
-    *p = 0;
+    copy_trunc(buf, l->title(), 55, 0);
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     fl_draw(buf, X, Y+13);
   }
@@ -405,6 +418,9 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
 }
 
 int Widget_Browser::item_width(void *v) const {
+
+  char buf[340]; // edit buffer: large enough to hold 80 UTF-8 chars + nul
+
   Fl_Type *l = (Fl_Type *)v;
 
   if (!l->visible) return 0;
@@ -420,27 +436,12 @@ int Widget_Browser::item_width(void *v) const {
     if (c) {
       fl_font(textfont()|FL_BOLD, textsize());
       W += int(fl_width(c));
-    } else if ((c=l->label())) {
-      char buf[50]; char* p = buf;
-      *p++ = '"';
-      for (int i = 20; i--;) {
-	if (! (*c & -32)) break;
-	*p++ = *c++;
-      }
-      if (*c) {strcpy(p,"..."); p+=3;}
-      *p++ = '"';
-      *p = 0;
+    } else if (l->label()) {
+      copy_trunc(buf, l->label(), 20, 1); // quoted string
       W += int(fl_width(buf));
     }
   } else {
-    const char* c = l->title();
-    char buf[60]; char* p = buf;
-    for (int i = 55; i--;) {
-      if (! (*c & -32)) break;
-      *p++ = *c++;
-    }
-    if (*c) {strcpy(p,"..."); p+=3;}
-    *p = 0;
+    copy_trunc(buf, l->title(), 55, 0);
     fl_font(textfont() | (l->is_code_block() && (l->level==0 || l->parent->is_class())?0:FL_BOLD), textsize());
     W += int(fl_width(buf));
   }
