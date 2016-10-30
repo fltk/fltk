@@ -30,6 +30,7 @@ class Fl_Widget;
 class Fl_Pixmap;
 struct Fl_Menu_Item;
 struct Fl_Label;
+class Fl_RGB_Image;
 
 
 /** \enum Fl_RGB_Scaling
@@ -186,6 +187,12 @@ public:
 
   // get RGB image scaling method
   static Fl_RGB_Scaling RGB_scaling();
+  /** Use this method if you have an Fl_Image object and want to know whether it is derived 
+   from class Fl_RGB_Image. 
+   If the method returns non-NULL, then the image in question is
+   derived from Fl_RGB_Image, and the returned value is a pointer to this image.
+   */
+  virtual Fl_RGB_Image *as_rgb_image() {return NULL;}
 };
 
 
@@ -249,6 +256,7 @@ public:
    \sa  void Fl_RGB_Image::max_size(size_t)
    */
   static size_t max_size() {return max_size_;}
+  virtual Fl_RGB_Image *as_rgb_image() {return this;}
 };
 
 #endif // !Fl_Image_H

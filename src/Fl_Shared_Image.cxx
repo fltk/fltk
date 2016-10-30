@@ -378,7 +378,7 @@ void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
     return;
   }
   // don't call Fl_Graphics_Driver::draw_scaled(Fl_Image*,...) for an enlarged Fl_Bitmap or Fl_Pixmap
-  if ((shared->d() != 0 && shared->count() < 2) || (shared->w() <= shared->image_->w() && shared->h() <= shared->image_->h())) {
+  if (shared->as_rgb_image() || (shared->w() <= shared->image_->w() && shared->h() <= shared->image_->h())) {
     int done = fl_graphics_driver->draw_scaled(shared->image_, X, Y, shared->w(), shared->h());
     if (done) return;
   }

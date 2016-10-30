@@ -542,9 +542,9 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, i
 }
 
 int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
-  if (img->d() == 0 || img->count() >= 2) return 0; // for bitmaps and pixmaps
+  Fl_RGB_Image *rgb = img->as_rgb_image();
+  if (!rgb || !rgb->array) return 0; // for bitmaps and pixmaps
   
-  Fl_RGB_Image *rgb = (Fl_RGB_Image*)img;
   if (!rgb->id_) rgb->id_ = (fl_uintptr_t)build_id(rgb, (void**)&(rgb->mask_));
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
