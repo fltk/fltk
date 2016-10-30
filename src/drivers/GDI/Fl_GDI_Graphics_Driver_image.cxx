@@ -549,7 +549,7 @@ int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, i
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)rgb->id_);
-  if ((img->d() % 2) == 0 & can_do_alpha_blending()) {
+  if ((img->d() % 2) == 0 && can_do_alpha_blending()) {
     alpha_blend_(XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
