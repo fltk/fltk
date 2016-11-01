@@ -5,20 +5,21 @@ README.CMake.txt - Building and using FLTK with CMake
  CONTENTS
 ==========
 
-  1	INTRODUCTION TO CMAKE
-  2	USING CMAKE TO BUILD FLTK
+  1	Introduction to CMake
+  2	Using CMake to Build FLTK
     2.1   Prerequisites
     2.2   Options
     2.3   Building under Linux with Unix Makefiles
-    2.4   Crosscompiling
-  3	USING CMAKE WITH FLTK
-    3.1   Library names
-    3.2   Using Fluid files
-  4	DOCUMENT HISTORY
+    2.4   Building under Windows with MinGW using Makefiles
+    2.5   Crosscompiling
+  3	Using CMake with FLTK
+    3.1   Library Names
+    3.2   Using Fluid Files
+  4	Document History
 
 
- INTRODUCTION TO CMAKE
-=======================
+ 1.  INTRODUCTION TO CMAKE
+===========================
 
 CMake was designed to let you create build files for a project once and
 then compile the project on multiple platforms.
@@ -50,24 +51,25 @@ More information on CMake can be found on its web site http://www.cmake.org.
 
 
 
- USING CMAKE TO BUILD FLTK
-===========================
+ 2.  Using CMake to Build FLTK
+===============================
 
 
- PREREQUISITES
----------------
+ 2.1  Prerequisites
+--------------------
 
 The prerequisites for building FLTK with CMake are staightforward:
 CMake 2.6.3 or later and a recent FLTK 1.3 release, snapshot, or subversion
 download (working copy).  Installation of CMake is covered on its web site.
 
-This howto will cover building FLTK with the default options using cmake
-under Linux with both the default Unix Makefiles and a MinGW cross compiling
-toolchain.  Other platforms are just as easy to use.
+This howto will cover building FLTK with the default options using CMake
+under Linux and MinGW with Unix Makefiles. Chapter 2.5 shows how to use
+a MinGW cross compiling toolchain to build a FLTK library for Windows
+under Linux.  Other platforms are just as easy to use.
 
 
- OPTIONS
----------
+ 2.2  Options
+--------------
 Options can be specified to cmake with the -D flag:
 
     cmake -D <OPTION_NAME>=<OPTION_VALUE>
@@ -155,8 +157,8 @@ OPTION_PRINT_SUPPORT - default ON
    is somewhat smaller. This option makes sense only on the Unix/Linux
    platform or when OPTION_APPLE_X11 is ON.
 
- BUILDING UNDER LINUX WITH UNIX MAKEFILES
-------------------------------------------
+ 2.3  Building under Linux with Unix Makefiles
+-----------------------------------------------
 
 After untaring the FLTK source, go to the root of the FLTK tree and type
 the following.
@@ -188,8 +190,32 @@ then use subdirectories in the build directory, like this:
     sudo make install (optional)
 
 
- CROSSCOMPILING
-----------------
+ 2.4  Building under Windows with MinGW using Makefiles
+--------------------------------------------------------
+
+Building with CMake under MinGW requires you to specify the CMake Generator
+with the -G command line switch. Using
+
+  cmake -G "Unix Makefiles" /path/to/fltk
+
+is recommended by the FLTK team if you have installed MinGW with the MSYS
+environment. You can use the stock Windows CMake executables, but you must
+run the CMake executables from within the MinGW environment so CMake can
+use your MinGW PATH to find the compilers and build tools. Example:
+
+  alias cmake='/c/CMake/bin/cmake'
+  alias cmake-gui='/c/CMake/bin/cmake-gui'
+
+  mkdir build
+  cd build
+  cmake -G "Unix Makefiles" ..
+
+Note the path to FLTK ".." in the last command line. Depending on where you
+installed CMake you may need to adjust the path's in the alias commands.
+
+
+ 2.5  Crosscompiling
+---------------------
 
 Once you have a crosscompiler going, to use CMake to build FLTK you need
 two more things.  You need a toolchain file which tells CMake where your
@@ -235,13 +261,13 @@ install it in the /usr/i486-mingw32/usr tree.
 
 
 
- USING CMAKE WITH FLTK
-=======================
+ 3.  Using CMake with FLTK
+===========================
 
 The CMake Export/Import facility can be thought of as an automated
-fltk-config.  For example, if you link your program to the fltk
+fltk-config.  For example, if you link your program to the FLTK
 library, it will automatically link in all of its dependencies.  This
-includes any special flags.  ie on Linux it includes the -lpthread flag.
+includes any special flags, i.e. on Linux it includes the -lpthread flag.
 
 This howto assumes that you have FLTK libraries which were built using
 CMake, installed.  Building them with CMake generates some CMake helper
@@ -268,9 +294,11 @@ project(hello)
 set(FLTK_DIR /path/to/fltk)
 
 find_package(FLTK REQUIRED NO_MODULE)
-include(${FLTK_USE_FILE})
+
+include_directories(${FLTK_INCLUDE_DIRS})
 
 add_executable(hello WIN32 hello.cxx)
+# target_include_directories(hello PUBLIC ${FLTK_INCLUDE_DIRS})
 
 target_link_libraries(hello fltk)
 
@@ -283,15 +311,24 @@ means that it is an error if it's not found.  NO_MODULE tells it to search
 only for the FLTKConfig file, not using the FindFLTK.cmake supplied with
 CMake, which doesn't work with this version of FLTK.
 
-Once the package is found we include the ${FLTK_USE_FILE} which adds the
-FLTK include directories to its knowledge base.  After that your programs
-will be able to find FLTK headers.
+Once the package is found the CMake variable FLTK_INCLUDE_DIRS is defined
+which can be used to add the FLTK include directories to the definitions
+used to compile your program. In older CMake versions you may need to use
+`include_directories()` as shown above. In more recent CMake versions you
+can use the (commented) `target_include_directories()` command. The latter
+should be preferred (YMMV, see the CMake docs).
 
 The WIN32 in the add_executable tells your Windows compiler that this is
-a gui app.  It is ignored on other platforms.
+a Windows GUI app.  It is ignored on other platforms and should always be
+present with FLTK GUI programs for better portability.
 
- LIBRARY NAMES
----------------
+Note: the variable FLTK_USE_FILE used to include another file in
+previous FLTK versions was deprecated since FLTK 1.3.4 and was removed
+in FLTK 1.4.0.
+
+
+ 3.1  Library Names
+--------------------
 
 When you use the target_link_libraries command, CMake uses its own
 internal names for libraries.  The fltk library names are:
@@ -307,8 +344,8 @@ The built-in libraries (if built):
     fltk_jpeg      fltk_png    fltk_z
 
 
- USING FLUID FILES
--------------------
+ 3.2  Using Fluid Files
+------------------------
 
 CMake has a command named fltk_wrap_ui which helps deal with fluid *.fl
 files. Unfortunately it is broken in CMake 3.4.x. You can however use
@@ -327,7 +364,7 @@ project(CubeView)
 set(FLTK_DIR /home/msurette/build/fltk-release/)
 
 find_package(FLTK REQUIRED NO_MODULE)
-include(${FLTK_USE_FILE})
+include_directories(${FLTK_INCLUDE_DIRS})
 
 #run fluid -c to generate CubeViewUI.cxx and CubeViewUI.h files
 add_custom_command(
@@ -354,3 +391,4 @@ May 15 2013 - erco: small formatting tweaks, added some examples
 Feb 23 2014 - msurette: updated to reflect changes to the CMake files
 Apr 07 2015 - AlbrechtS: update use example and more docs
 Jan 31 2016 - msurette: custom command instead of fltk_wrap_ui
+Nov 01 2016 - AlbrechtS: remove deprecated FLTK_USE_FILE, add MinGW build
