@@ -1354,8 +1354,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)windowDidResize:(NSNotification *)notif
 {
-  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
+  if (![nsw isVisible]) return;
+  fl_lock_function();
   Fl_Window *window = [nsw getFl_Window];
   NSRect r; NSPoint pt2;
   r = [[nsw contentView] frame];
