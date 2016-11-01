@@ -372,8 +372,9 @@ add_custom_command(
 	COMMAND fluid -c ${CMAKE_CURRENT_SOURCE_DIR}/CubeViewUI.fl
 )
 
-include_directories(${CMAKE_BINARY_DIR})
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 add_executable(CubeView WIN32 CubeMain.cxx CubeView.cxx CubeViewUI.cxx)
 
 target_link_libraries(CubeView fltk fltk_gl)
@@ -382,6 +383,17 @@ target_link_libraries(CubeView fltk fltk_gl)
 You can repeat the add_custom_command for each fluid file or if you have
 a large number of them see the CMake/macros.cmake function FLTK_RUN_FLUID
 for an example of how to run it in a loop.
+
+The two lines
+
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add the current build ("binary") and source directories as include directories.
+This is necessary for the compiler to find the local header files since the
+fluid-generated files (CubeViewUI.cxx and CubeViewUI.h) are created in the
+current build directory.
+
 
  DOCUMENT HISTORY
 ==================
