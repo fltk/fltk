@@ -135,6 +135,22 @@ protected:
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
   /** Support function for image drawing */
   virtual void delete_bitmask(Fl_Bitmask bm) {}
+  // accessor functions to protected image members
+  static fl_uintptr_t* id(Fl_RGB_Image *rgb) {return &(rgb->id_);}
+  static fl_uintptr_t* id(Fl_Pixmap *pm) {return &(pm->id_);}
+  static fl_uintptr_t* id(Fl_Bitmap *bm) {return &(bm->id_);}
+  static fl_uintptr_t* mask(Fl_RGB_Image *rgb) {return &(rgb->mask_);}
+  static fl_uintptr_t* mask(Fl_Pixmap *pm) {return &(pm->mask_);}
+  static Fl_Color* pixmap_bg_color(Fl_Pixmap *pm) {return &(pm->pixmap_bg_color);}
+  static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
+  static int start(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int &cx, int &cy,
+                   int &X, int &Y, int &W, int &H) {
+    return bm->start(XP,YP,WP,HP,cx,cy,X,Y,W,H);
+  }
+  static int prepare(Fl_Pixmap *pm, int XP, int YP, int WP, int HP, int &cx, int &cy,
+                     int &X, int &Y, int &W, int &H) {
+    return pm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
+  }
 
 public:
   Fl_Graphics_Driver();

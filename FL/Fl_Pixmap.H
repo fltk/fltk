@@ -36,10 +36,7 @@ struct Fl_Menu_Item;
   (pixmap) images, including transparency.
 */
 class FL_EXPORT Fl_Pixmap : public Fl_Image {
-  friend class Fl_Quartz_Graphics_Driver;
-  friend class Fl_GDI_Graphics_Driver;
-  friend class Fl_GDI_Printer_Graphics_Driver;
-  friend class Fl_Xlib_Graphics_Driver;
+  friend class Fl_Graphics_Driver;
   void copy_data();
   void delete_data();
   void set_data(const char * const *p);

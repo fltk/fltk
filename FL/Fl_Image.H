@@ -55,7 +55,7 @@ enum Fl_RGB_Scaling {
  a box with an X in it being drawn instead.
 */
 class FL_EXPORT Fl_Image {
-    
+  friend class Fl_Graphics_Driver;
 public:
   static const int ERR_NO_IMAGE    = -1;
   static const int ERR_FILE_ACCESS = -2;
@@ -208,10 +208,7 @@ public:
   &lt;FL/Fl_RGB_Image.H&gt; should be included.
 */
 class FL_EXPORT Fl_RGB_Image : public Fl_Image {
-  friend class Fl_Quartz_Graphics_Driver;
-  friend class Fl_GDI_Graphics_Driver;
-  friend class Fl_GDI_Printer_Graphics_Driver;
-  friend class Fl_Xlib_Graphics_Driver;
+  friend class Fl_Graphics_Driver;
   static size_t max_size_;
 public:
 

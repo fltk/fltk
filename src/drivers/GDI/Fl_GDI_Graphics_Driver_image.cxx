@@ -401,13 +401,13 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 
 void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (Fl_Graphics_Driver::start(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
-  SelectObject(tempdc, (HGDIOBJ)bm->id_);
+  SelectObject(tempdc, (HGDIOBJ)*Fl_Graphics_Driver::id(bm));
   SelectObject(gc_, fl_brush());
   // secret bitblt code found in old MSWindows reference manual:
   BitBlt(gc_, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
@@ -429,7 +429,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
     Fl_GDI_Graphics_Driver::draw(bm,  XP,  YP,  WP,  HP,  cx,  cy);
     return;
   }
-  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (Fl_Graphics_Driver::start(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
 
@@ -451,7 +451,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
   HDC off_gc = (HDC)fl_graphics_driver->gc();
   tempdc = CreateCompatibleDC(off_gc);
   save = SaveDC(tempdc);
-  SelectObject(tempdc, (HGDIOBJ)bm->id_);
+  SelectObject(tempdc, (HGDIOBJ)*Fl_Graphics_Driver::id(bm));
   SelectObject(off_gc, fl_brush()); // use bitmap's desired color
   BitBlt(off_gc, 0, 0, W, H, tempdc, 0, 0, 0xE20746L); // draw bitmap to offscreen
   fl_end_offscreen(); // offscreen data is in tmp_id
@@ -504,26 +504,26 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
   int X, Y, W, H;
   // Don't draw an empty image...
   if (!img->d() || !img->array) {
-    img->draw_empty(XP, YP);
+    Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
-  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+  if (::start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
     return;
   }
-  if (!img->id_) img->id_ = (fl_uintptr_t)build_id(img, (void**)&(img->mask_));
-  if (img->mask_) {
+  if (!*Fl_Graphics_Driver::id(img)) *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));
+  if (*Fl_Graphics_Driver::mask(img)) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)img->mask_);
+    SelectObject(new_gc, (void*)*Fl_Graphics_Driver::mask(img));
     BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)img->id_);
+    SelectObject(new_gc, (void*)*Fl_Graphics_Driver::id(img));
     BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else if (img->d()==2 || img->d()==4) {
-    copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
+    copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(img), cx, cy);
   } else {
-    copy_offscreen(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(img), cx, cy);
   }
 }
 
@@ -545,10 +545,11 @@ int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, i
   Fl_RGB_Image *rgb = img->as_rgb_image();
   if (!rgb || !rgb->array) return 0; // for bitmaps and pixmaps
   
-  if (!rgb->id_) rgb->id_ = (fl_uintptr_t)build_id(rgb, (void**)&(rgb->mask_));
+  if (!*Fl_Graphics_Driver::id(rgb)) *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)build_id(rgb,
+                                                    (void**)(Fl_Graphics_Driver::mask(rgb)));
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
-  SelectObject(new_gc, (HBITMAP)rgb->id_);
+  SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ((img->d() % 2) == 0 && can_do_alpha_blending()) {
     alpha_blend_(XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h());
   } else {
@@ -607,25 +608,25 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar
 
 void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  if (pxm->mask_) {
+  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)pxm->mask_);
+    SelectObject(new_gc, (void*)*Fl_Graphics_Driver::mask(pxm));
     BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)pxm->id_);
+    SelectObject(new_gc, (void*)*Fl_Graphics_Driver::id(pxm));
     BitBlt(gc_, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
-    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
   }
 }
 
 
 void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
   static HMODULE hMod = NULL;
   static fl_transp_func fl_TransparentBlt = NULL;
@@ -636,14 +637,14 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
   if (fl_TransparentBlt) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)pxm->id_);
+    SelectObject(new_gc, (void*)*Fl_Graphics_Driver::id(pxm));
     // print all of offscreen but its parts in background color
-    fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx, cy, W, H, pxm->pixmap_bg_color );
+    fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx, cy, W, H, *Fl_Graphics_Driver::pixmap_bg_color(pxm) );
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   }
   else {
-    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
   }
 }
 
@@ -655,10 +656,10 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const c
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
-  img->pixmap_bg_color = Fl_WinAPI_System_Driver::win_pixmap_bg_color;  // computed by fl_draw_pixmap()
+  *Fl_Graphics_Driver::pixmap_bg_color(img) = Fl_WinAPI_System_Driver::win_pixmap_bg_color;  // computed by fl_draw_pixmap()
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
-    img->mask_ = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
+    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
     delete[] bitmap;
   }
   fl_end_offscreen();
