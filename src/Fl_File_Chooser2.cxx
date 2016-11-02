@@ -1364,6 +1364,7 @@ Fl_File_Chooser::update_preview()
                         (image->h() <= 0) ||
                         (image->d() < 0)  ||
                         (image->count() <= 0))) {
+    image->release();
     // Image has errors? Show big 'X'
     previewBox->label("X");
     previewBox->align(FL_ALIGN_CLIP);
