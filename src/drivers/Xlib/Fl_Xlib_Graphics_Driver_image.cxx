@@ -628,7 +628,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP
 }
 
 
-static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
+/*static int start_rgb(int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
                  int &X, int &Y, int &W, int &H)
 {
   // account for current clip region (faster on Irix):
@@ -642,7 +642,7 @@ static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h
   if (cy+H > h) H = h-cy;
   if (H <= 0) return 1;
   return 0;
-}
+}*/
 
 
 // Composite an image with alpha on systems that don't have accelerated
@@ -710,7 +710,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
-  if (::start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+  if (start_image(XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
     return;
   }
   if (!*Fl_Graphics_Driver::id(img)) {

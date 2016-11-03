@@ -121,16 +121,7 @@ int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
     draw_empty(XP, YP);
     return 1;
   }
-  // account for current clip region (faster on Irix):
-  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
-  cx += X-XP; cy += Y-YP;
-  // clip the box down to the size of image, quit if empty:
-  if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if (cx+W > w()) W = w()-cx;
-  if (W <= 0) return 1;
-  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if (cy+H > h()) H = h()-cy;
-  if (H <= 0) return 1;
+  if (fl_graphics_driver->start_image(XP,YP,WP,HP,w(),h(),cx,cy,X,Y,W,H)) return 1;
   if (!id_)
     id_ = fl_graphics_driver->cache(this, w(), h(), array);
   return 0;

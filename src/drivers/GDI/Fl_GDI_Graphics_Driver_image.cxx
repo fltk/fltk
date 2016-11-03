@@ -483,23 +483,6 @@ static Fl_Offscreen build_id(Fl_RGB_Image *img, void **pmask)
 }
 
 
-static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
-                 int &X, int &Y, int &W, int &H)
-{
-  // account for current clip region (faster on Irix):
-  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
-  cx += X-XP; cy += Y-YP;
-  // clip the box down to the size of image, quit if empty:
-  if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if (cx+W > w) W = w-cx;
-  if (W <= 0) return 1;
-  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if (cy+H > h) H = h-cy;
-  if (H <= 0) return 1;
-  return 0;
-}
-
-
 void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   // Don't draw an empty image...
@@ -507,7 +490,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
-  if (::start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+  if (start_image(XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
     return;
   }
   if (!*Fl_Graphics_Driver::id(img)) *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));

@@ -134,6 +134,22 @@ void Fl_Graphics_Driver::XDestroyRegion(Fl_Region r)
   // nothing to do, reimplement in driver if needed
 }
 
+/** Helper function for image drawing by platform-specific graphics drivers */
+int Fl_Graphics_Driver::start_image(int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
+                     int &X, int &Y, int &W, int &H)
+{
+  // account for current clip region (faster on Irix):
+  clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
+  // clip the box down to the size of image, quit if empty:
+  if (cx < 0) {W += cx; X -= cx; cx = 0;}
+  if (cx+W > w) W = w-cx;
+  if (W <= 0) return 1;
+  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
+  if (cy+H > h) H = h-cy;
+  if (H <= 0) return 1;
+  return 0;
+}
 
 //
 // End of "$Id$".
