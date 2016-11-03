@@ -145,9 +145,9 @@ protected:
   static fl_uintptr_t* mask(Fl_Pixmap *pm) {return &(pm->mask_);}
   static Fl_Color* pixmap_bg_color(Fl_Pixmap *pm) {return &(pm->pixmap_bg_color);}
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
-  static int start(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int &cx, int &cy,
+  static int prepare(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int &cx, int &cy,
                    int &X, int &Y, int &W, int &H) {
-    return bm->start(XP,YP,WP,HP,cx,cy,X,Y,W,H);
+    return bm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
   }
   static int prepare(Fl_Pixmap *pm, int XP, int YP, int WP, int HP, int &cx, int &cy,
                      int &X, int &Y, int &W, int &H) {

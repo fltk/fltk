@@ -133,7 +133,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 
 void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (Fl_Graphics_Driver::start(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
   if (*Fl_Graphics_Driver::id(bm) && gc_) {

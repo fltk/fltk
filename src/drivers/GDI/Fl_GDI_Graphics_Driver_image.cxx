@@ -401,7 +401,7 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 
 void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (Fl_Graphics_Driver::start(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
 
@@ -429,7 +429,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
     Fl_GDI_Graphics_Driver::draw(bm,  XP,  YP,  WP,  HP,  cx,  cy);
     return;
   }
-  if (Fl_Graphics_Driver::start(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
 

@@ -114,7 +114,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy,
+int Fl_Bitmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
 		 int &X, int &Y, int &W, int &H)
 {
   if (!array) {
