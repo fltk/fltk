@@ -135,9 +135,9 @@ protected:
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
   /** Support function for image drawing */
   virtual void delete_bitmask(Fl_Bitmask bm) {}
-  int start_image(int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
-                int &X, int &Y, int &W, int &H);
   // accessor functions to protected image members
+  int start_image(Fl_Image *img, int XP, int YP, int WP, int HP, int &cx, int &cy,
+                int &X, int &Y, int &W, int &H);
   static fl_uintptr_t* id(Fl_RGB_Image *rgb) {return &(rgb->id_);}
   static fl_uintptr_t* id(Fl_Pixmap *pm) {return &(pm->id_);}
   static fl_uintptr_t* id(Fl_Bitmap *bm) {return &(bm->id_);}

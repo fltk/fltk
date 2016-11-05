@@ -121,7 +121,7 @@ int Fl_Bitmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
     draw_empty(XP, YP);
     return 1;
   }
-  if (fl_graphics_driver->start_image(XP,YP,WP,HP,w(),h(),cx,cy,X,Y,W,H)) return 1;
+  if (fl_graphics_driver->start_image(this, XP,YP,WP,HP,cx,cy,X,Y,W,H)) return 1;
   if (!id_)
     id_ = fl_graphics_driver->cache(this, w(), h(), array);
   return 0;

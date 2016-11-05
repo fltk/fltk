@@ -490,7 +490,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
     return;
   }
-  if (start_image(XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
   if (!*Fl_Graphics_Driver::id(img)) *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));
