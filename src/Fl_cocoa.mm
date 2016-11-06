@@ -1543,7 +1543,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   int count = [windows count];
   for (int i = 0; i < count; i++) {
     NSWindow *win = [windows objectAtIndex:i];
-    if ([win isKindOfClass:[FLWindow class]] && ![win parentWindow]) {
+    if ([win isKindOfClass:[FLWindow class]] && ![win parentWindow] && [win isVisible]) {
       [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidMoveNotification object:win];
       }
     }
