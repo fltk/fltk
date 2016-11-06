@@ -656,6 +656,13 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
 @end
 
 @implementation FLWindow
+- (void)close
+{
+  [super close];
+  // when a fullscreen window is closed, windowDidResize may be sent after the close message was sent
+  // and before the FLWindow receives the final dealloc message
+  w = NULL;
+}
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
 {
@@ -1317,9 +1324,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (void)windowDidResize:(NSNotification *)notif
 {
   FLWindow *nsw = (FLWindow*)[notif object];
-  if (![nsw isVisible]) return;
-  fl_lock_function();
   Fl_Window *window = [nsw getFl_Window];
+  if (!window) return;
+  fl_lock_function();
   NSRect r; NSPoint pt2;
   r = [[nsw contentView] frame];
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, r.size.height)];
