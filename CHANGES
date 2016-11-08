@@ -5,6 +5,8 @@ Bug fixes and other improvements
 	- Fix test/native-filechooser help display artefact (STR #3349).
 	- MacOS: fix a crash when closing a fullscreen window.
 	- Accept empty Fl_Pixmap in Fl_RGB_Image c'tor (STR #3348).
+	- MacOS: fix drawing error when turning fullscreen a window containing a hidden 
+	  subwindow (error visible with the tabs test program).
 
 CHANGES IN FLTK 1.3.4rc3				RELEASED: Oct 31 2016
 
