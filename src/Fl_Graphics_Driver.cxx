@@ -151,6 +151,11 @@ int Fl_Graphics_Driver::start_image(Fl_Image *img, int XP, int YP, int WP, int H
   return 0;
 }
 
+/** Support function for image drawing */
+void Fl_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
+  fl_delete_offscreen((Fl_Offscreen)p);
+}
+
 //
 // End of "$Id$".
 //

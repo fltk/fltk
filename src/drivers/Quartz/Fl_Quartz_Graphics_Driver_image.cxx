@@ -25,6 +25,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Printer.H>
 #include <FL/x.H>
+#include <FL/Fl_Image_Surface.H>
 
 #define MAXBUFFER 0x40000 // 256k
 
@@ -142,7 +143,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
 }
 
 
-static void imgProviderReleaseData (void *info, const void *data, size_t size)
+static void rgbProviderReleaseData (void *info, const void *data, size_t size)
 {
   delete[] (unsigned char *)data;
 }
@@ -158,40 +159,40 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (!*Fl_Graphics_Driver::id(img)) {
+  CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(img);
+  if (cgimg && has_feature(PRINTER) && !*Fl_Graphics_Driver::mask(img)) {
+    CGImageRelease(cgimg);
+    *Fl_Graphics_Driver::id(img) = NULL;
+    cgimg = NULL;
+  }
+  if (!cgimg) {
     CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     int ld = img->ld();
     if (!ld) ld = img->w() * img->d();
-    // the CGImage data provider must not release the image data.
-    CGDataProviderRef src = CGDataProviderCreateWithData((void*)*Fl_Graphics_Driver::mask(img), img->array, ld * img->h(), NULL);
-    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+    CGDataProviderRef src;
+    if ( has_feature(PRINTER) ) {
+      // When printing, the image data is used when the printed page is completed.
+      // At that stage, the image has possibly been deleted. It is therefore necessary
+      // to print a copy of the image data. The mask_ member of the Fl_RGB_Image is used to avoid
+      // repeating the copy operation if the image is printed again.
+      // The CGImage data provider deletes the copy when the Fl_RGB_Image is deleted.
+      uchar *copy = new uchar[ld * img->h()];
+      memcpy(copy, img->array, ld * img->h());
+      src = CGDataProviderCreateWithData(NULL, copy, ld * img->h(), rgbProviderReleaseData);
+      *Fl_Graphics_Driver::mask(img) = 1;
+    } else {
+    // the CGImage data provider need not release the image data.
+      src = CGDataProviderCreateWithData(NULL, img->array, ld * img->h(), NULL);
+      }
+    cgimg = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
                                            lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                                            src, 0L, false, kCGRenderingIntentDefault);
+    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
     CGColorSpaceRelease(lut);
     CGDataProviderRelease(src);
   }
-  if (*Fl_Graphics_Driver::id(img) && gc_) {
-    CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(img);
-    if ( has_feature(PRINTER) ) {
-      // When printing, the image data is used when the page is completed, that is, after return from this function.
-      // We must protect against image data being freed before it is used:
-      // we duplicate the image data and have it deleted after use by the release-callback of the CGImage data provider
-      Fl_RGB_Image* img2 = (Fl_RGB_Image*)img->copy();
-      img2->alloc_array = 0;
-      const uchar *img_bytes = img2->array;
-      int ld = img2->ld();
-      if (!ld) ld = img2->w() * img2->d();
-      delete img2;
-      CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-      CGDataProviderRef src = CGDataProviderCreateWithData( NULL, img_bytes, ld * img->h(), imgProviderReleaseData);
-      cgimg = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
-                                             lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
-                                             src, 0L, true, kCGRenderingIntentDefault);
-      CGColorSpaceRelease(lut);
-      CGDataProviderRelease(src);
-    }
+  if (cgimg && gc_) {
     draw_CGImage(cgimg, X,Y,W,H, cx,cy, img->w(), img->h());
-    if ( has_feature(PRINTER) ) CGImageRelease(cgimg);
   }
 }
 
@@ -213,7 +214,12 @@ int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP
 void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
+  CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(pxm);
+  draw_CGImage(cgimg, X,Y,W,H, cx,cy, pxm->w(), pxm->h());
+}
+
+static void bmProviderRelease (void *ctxt, const void *data, size_t size) {
+  free((void*)data);
 }
 
 Fl_Bitmask Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *array) {
@@ -226,7 +232,7 @@ Fl_Bitmask Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *
   for ( int i=rowBytes*h; i>0; i--,src++ ) {
     *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
   }
-  CGDataProviderRef srcp = CGDataProviderCreateWithData( 0L, bmask, rowBytes*h, 0L);
+  CGDataProviderRef srcp = CGDataProviderCreateWithData( NULL, bmask, rowBytes*h, bmProviderRelease);
   CGImageRef id_ = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
   CGDataProviderRelease(srcp);
   return (Fl_Bitmask)id_;
@@ -247,12 +253,29 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uc
   return (fl_uintptr_t)create_bitmask(w, h, array);
 }
 
+
+static void pmProviderRelease (void *ctxt, const void *data, size_t size) {
+  CFRelease(ctxt);
+}
+
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
-  Fl_Offscreen id = fl_create_offscreen(w, h);
-  fl_begin_offscreen(id);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+  surf->set_current();
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
-  fl_end_offscreen();
-  return (fl_uintptr_t)id;
+  CGContextRef src = surf->get_offscreen_before_delete();
+  surf->end_current();
+  delete surf;
+  void *cgdata = CGBitmapContextGetData(src);
+  int sw = CGBitmapContextGetWidth(src);
+  int sh = CGBitmapContextGetHeight(src);
+  CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  CGDataProviderRef src_bytes = CGDataProviderCreateWithData(src, cgdata, sw*sh*4, pmProviderRelease);
+  CGImageRef cgimg = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
+                                 src_bytes, 0L, false, kCGRenderingIntentDefault);
+  CGColorSpaceRelease(lut);
+  CGDataProviderRelease(src_bytes);
+  return (fl_uintptr_t)cgimg;
 }
 
 void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh)
@@ -290,6 +313,10 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
   }
   CGContextDrawImage(gc_, CGRectMake(0, 0, sw, sh), cgimg);
   CGContextRestoreGState(gc_);
+}
+
+void Fl_Quartz_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
+  CGImageRelease((CGImageRef)p);
 }
 
 //

@@ -157,6 +157,7 @@ protected:
   virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual Fl_Font set_fonts(const char* xstarname);
   void set_fontname_in_fontdesc(Fl_Fontdesc *f);
+  virtual void uncache_pixmap(fl_uintptr_t p);
   
 #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   enum {use_CoreText = 1, use_ATSU};
