@@ -143,12 +143,6 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
 }
 
 
-static void rgbProviderReleaseData (void *info, const void *data, size_t size)
-{
-  delete[] (unsigned char *)data;
-}
-
-
 void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   // Don't draw an empty image...
@@ -178,7 +172,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       // The CGImage data provider deletes the copy when the Fl_RGB_Image is deleted.
       uchar *copy = new uchar[ld * img->h()];
       memcpy(copy, img->array, ld * img->h());
-      src = CGDataProviderCreateWithData(NULL, copy, ld * img->h(), rgbProviderReleaseData);
+      src = CGDataProviderCreateWithData(NULL, copy, ld * img->h(), dataReleaseCB);
       *Fl_Graphics_Driver::mask(img) = 1;
     } else {
     // the CGImage data provider need not release the image data.
@@ -218,21 +212,18 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int
   draw_CGImage(cgimg, X,Y,W,H, cx,cy, pxm->w(), pxm->h());
 }
 
-static void bmProviderRelease (void *ctxt, const void *data, size_t size) {
-  free((void*)data);
-}
-
 Fl_Bitmask Fl_Quartz_Graphics_Driver::create_bitmask(int w, int h, const uchar *array) {
   static uchar reverse[16] =    /* Bit reversal lookup table */
   { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
     0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
   int rowBytes = (w+7)>>3 ;
-  uchar *bmask = (uchar*)malloc(rowBytes*h), *dst = bmask;
+  uchar *bmask = new uchar[rowBytes*h];
+  uchar *dst = bmask;
   const uchar *src = array;
   for ( int i=rowBytes*h; i>0; i--,src++ ) {
     *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
   }
-  CGDataProviderRef srcp = CGDataProviderCreateWithData( NULL, bmask, rowBytes*h, bmProviderRelease);
+  CGDataProviderRef srcp = CGDataProviderCreateWithData( NULL, bmask, rowBytes*h, dataReleaseCB);
   CGImageRef id_ = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
   CGDataProviderRelease(srcp);
   return (Fl_Bitmask)id_;
