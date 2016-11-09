@@ -4248,6 +4248,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   NSEnumerator *enumerator = [children objectEnumerator];
   id child;
   while ((child = [enumerator nextObject]) != nil) {
+    if (![child isKindOfClass:[FLWindow class]]) continue;
     Fl_Window *sub = [(FLWindow*)child getFl_Window];
     CGRect rsub = CGRectMake(sub->x(), win->h() -(sub->y()+sub->h()), sub->w(), sub->h());
     CGRect clip = CGRectMake(x, win->h()-(y+h), w, h);
