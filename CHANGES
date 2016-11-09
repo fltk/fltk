@@ -7,6 +7,7 @@ Bug fixes and other improvements
 	- Accept empty Fl_Pixmap in Fl_RGB_Image c'tor (STR #3348).
 	- MacOS: fix drawing error when turning fullscreen a window containing a hidden 
 	  subwindow (error visible with the tabs test program).
+	- MacOS: fix possible crash when turning fullscreen the scroll test program.
 
 CHANGES IN FLTK 1.3.4rc3				RELEASED: Oct 31 2016
 
