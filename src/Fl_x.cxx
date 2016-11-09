@@ -616,7 +616,7 @@ void Fl_X11_Screen_Driver::open_display() {
   fl_open_display(d);
   // the unique GC used by all X windows
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
-  Fl_Display_Device::display_device()->driver()->gc(gc);
+  Fl_Graphics_Driver::default_driver().gc(gc);
 }
 
 

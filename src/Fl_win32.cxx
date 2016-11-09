@@ -2267,13 +2267,13 @@ HWND fl_window = NULL;
 
 // Here we ensure only one GetDC is ever in place.
 HDC fl_GetDC(HWND w) {
-  HDC gc = (HDC)Fl_Display_Device::display_device()->driver()->gc();
+  HDC gc = (HDC)Fl_Graphics_Driver::default_driver().gc();
   if (gc) {
     if (w == fl_window  &&  fl_window != NULL) return gc;
     if (fl_window) fl_release_dc(fl_window, gc); // ReleaseDC
   }
   gc = GetDC(w);
-  Fl_Display_Device::display_device()->driver()->gc(gc);
+  Fl_Graphics_Driver::default_driver().gc(gc);
   fl_save_dc(w, gc);
   fl_window = w;
   // calling GetDC seems to always reset these: (?)

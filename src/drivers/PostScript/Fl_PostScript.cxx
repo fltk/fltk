@@ -903,36 +903,36 @@ static const char *_fontNames[] = {
 };
 
 void Fl_PostScript_Graphics_Driver::font(int f, int s) {
-  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
-  driver->font(f,s); // Use display fonts for font measurement
+  Fl_Graphics_Driver& driver = Fl_Graphics_Driver::default_driver();
+  driver.font(f,s); // Use display fonts for font measurement
   Fl_Graphics_Driver::font(f, s);
-  Fl_Font_Descriptor *desc = driver->font_descriptor();
+  Fl_Font_Descriptor *desc = driver.font_descriptor();
   this->font_descriptor(desc);
   if (f < FL_FREE_FONT) {
     fprintf(output, "/%s SF\n" , _fontNames[f]);
-    float ps_size = driver->scale_font_for_PostScript(desc, s);
+    float ps_size = driver.scale_font_for_PostScript(desc, s);
     clocale_printf("%.1f FS\n", ps_size);
   }
 }
 
 double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
-  return Fl_Display_Device::display_device()->driver()->width(s, n);
+  return Fl_Graphics_Driver::default_driver().width(s, n);
 }
 
 double Fl_PostScript_Graphics_Driver::width(unsigned u) {
-  return Fl_Display_Device::display_device()->driver()->width(u);
+  return Fl_Graphics_Driver::default_driver().width(u);
 }
 
 int Fl_PostScript_Graphics_Driver::height() {
-  return Fl_Display_Device::display_device()->driver()->height();
+  return Fl_Graphics_Driver::default_driver().height();
 }
 
 int Fl_PostScript_Graphics_Driver::descent() {
-  return Fl_Display_Device::display_device()->driver()->descent();
+  return Fl_Graphics_Driver::default_driver().descent();
 }
 
 void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
-  Fl_Display_Device::display_device()->driver()->text_extents(c, n, dx, dy, w, h);
+  Fl_Graphics_Driver::default_driver().text_extents(c, n, dx, dy, w, h);
 }
 
 
@@ -998,7 +998,7 @@ static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
 void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int n, double x, double y, int w, bool rtl)
 {
   // scale for bitmask computation is set to 1 when we can't expect to have scalable fonts
-  float scale = Fl_Display_Device::display_device()->driver()->scale_bitmap_for_PostScript();
+  float scale = Fl_Graphics_Driver::default_driver().scale_bitmap_for_PostScript();
   Fl_Fontsize old_size = size();
   Fl_Font fontnum = Fl_Graphics_Driver::font();
   int w_scaled =  (int)(w * (scale + 0.5));

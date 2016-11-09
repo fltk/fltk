@@ -3245,7 +3245,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
   fl_window = i->xid;
-  ((Fl_Quartz_Graphics_Driver*)Fl_Display_Device::display_device()->driver())->high_resolution( mapped_to_retina() );
+  ((Fl_Quartz_Graphics_Driver&)Fl_Graphics_Driver::default_driver()).high_resolution( mapped_to_retina() );
   
   NSGraphicsContext *nsgc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -3255,7 +3255,7 @@ void Fl_Cocoa_Window_Driver::make_current()
 #endif
     nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
   gc = (CGContextRef)[nsgc graphicsPort];
-  Fl_Display_Device::display_device()->driver()->gc(gc);
+  Fl_Graphics_Driver::default_driver().gc(gc);
   CGContextSaveGState(gc); // native context
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
@@ -3283,13 +3283,13 @@ void Fl_Cocoa_Window_Driver::make_current()
 
 // Give the Quartz context back to the system
 void Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver *x) {
-  CGContextRef gc = (CGContextRef)Fl_Display_Device::display_device()->driver()->gc();
+  CGContextRef gc = (CGContextRef)Fl_Graphics_Driver::default_driver().gc();
   if (x && x->shown() && x->gc != gc) return;
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);
   CGContextFlush(gc);
-  Fl_Display_Device::display_device()->driver()->gc(0);
+  Fl_Graphics_Driver::default_driver().gc(0);
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
 #endif

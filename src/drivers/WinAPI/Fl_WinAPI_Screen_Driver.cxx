@@ -56,7 +56,7 @@ int Fl_WinAPI_Screen_Driver::visual(int flags)
 {
   fl_GetDC(0);
   if (flags & FL_DOUBLE) return 0;
-  HDC gc = (HDC)Fl_Display_Device::display_device()->driver()->gc();
+  HDC gc = (HDC)Fl_Graphics_Driver::default_driver().gc();
   if (!(flags & FL_INDEX) &&
       GetDeviceCaps(gc,BITSPIXEL) <= 8) return 0;
   if ((flags & FL_RGB8) && GetDeviceCaps(gc,BITSPIXEL)<24) return 0;

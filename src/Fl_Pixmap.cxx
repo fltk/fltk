@@ -79,7 +79,7 @@ Fl_Pixmap::~Fl_Pixmap() {
 
 void Fl_Pixmap::uncache() {
   if (id_) {
-    Fl_Display_Device::display_device()->driver()->uncache_pixmap(id_);
+    Fl_Graphics_Driver::default_driver().uncache_pixmap(id_);
     id_ = 0;
   }
 

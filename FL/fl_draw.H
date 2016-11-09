@@ -759,7 +759,7 @@ inline void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int 
   \returns 1 if true alpha blending supported by platform
   \returns 0 not supported so FLTK will use screen door transparency
   */
-inline char fl_can_do_alpha_blending() {return Fl_Display_Device::display_device()->driver()->can_do_alpha_blending();}
+inline char fl_can_do_alpha_blending() {return Fl_Graphics_Driver::default_driver().can_do_alpha_blending();}
 
 FL_EXPORT uchar *fl_read_image(uchar *p,int X,int Y,int W,int H,int alpha=0);
 
