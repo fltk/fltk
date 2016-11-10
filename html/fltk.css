@@ -1,0 +1,156 @@
+BODY {
+  color: #181818;
+  background-color: #bbbbee;
+  font-family: sans-serif;
+}
+
+P, H1, H2, H3, H4, H5, H6 {
+  font-family: sans-serif;
+}
+
+SUP, SUB {
+  font-size: 50%;
+}
+
+A:link {
+  text-decoration: none;
+  font-weight: bold;
+  color: #cc2020;
+}
+
+A:visited {
+  text-decoration: none;
+  font-weight: bold;
+  color: #991010;
+}
+
+A:link:hover {
+  text-decoration: underline;
+  color: #0000ff;
+  font-weight: bold;
+}
+
+A.sel, TR.sel {
+  background-color: #dddddd;
+}
+
+TR.sel TD {
+  padding: 4;
+}
+
+A.unsel {
+  background-color: #aaaadd;
+  color: #000000;
+}
+
+A.title {
+  color: #990000;
+}
+
+A.title:hover {
+  color: #0000cc;
+}
+
+INPUT[TYPE="TEXT"], TEXTAREA {
+  font-family: monospace;
+}
+
+TR.header, TR.header TH, TH.header {
+  background-color: #cccccc;
+}
+
+TR.page, TD.page {
+  background-color: #ccccff;
+}
+
+TR.data0, TR.data0 TD, TD.data0 {
+  background-color: #aaaadd;
+  padding: 2;
+}
+
+TR.data1, TR.data1 TD, TD.data1 {
+  background-color: #9999cc;
+  padding: 2;
+}
+
+TR.header-red, TR.header-red TH, TH.header-red {
+  background-color: #ddaaaa;
+}
+
+TR.data0-red, TR.data0-red TD, TD.data0-red {
+  background-color: #dd7777;
+  padding: 2;
+}
+
+TR.data1-red, TR.data1-red TD, TD.data1-red {
+  background-color: #dd6666;
+  padding: 2;
+}
+
+DL {
+  margin-left: 2em;
+}
+
+PRE.command {
+  margin-left: 2em;
+}
+
+LI {
+  list-style-image: none;
+}
+
+LI.C {
+  list-style-image: url(images/wiki-category.gif);
+}
+
+LI.F {
+  list-style-image: url(images/wiki-faq.gif);
+}
+
+LI.H {
+  list-style-image: url(images/wiki-howto.gif);
+}
+
+LI.L {
+  list-style-image: url(images/wiki-listing.gif);
+}
+
+LI.N {
+  list-style-image: url(images/wiki-news.gif);
+}
+
+.search {
+  background-color: #996633;
+  color: #ddddaa;
+}
+
+.valid {
+}
+
+.invalid {
+  color: red;
+}
+
+.new {
+  color: #880000;
+}
+
+table.simple-table
+{
+  border:2px solid black;
+  border-collapse:collapse;
+}
+
+table.simple-table th
+{
+  border:2px solid black;
+  padding: 3px;
+}
+
+table.simple-table td 
+{
+  border:2px solid black;
+  padding: 3px;
+}
+
+
