@@ -2,12 +2,12 @@ CHANGES IN FLTK 1.3.4					RELEASED: Nov 11 2016
 
 Bug fixes and other improvements
 
-	- Fix test/native-filechooser help display artefact (STR #3349).
+	- Fix test/native-filechooser help display artifact (STR #3349).
 	- MacOS: fix a crash when closing a fullscreen window.
 	- Accept empty Fl_Pixmap in Fl_RGB_Image c'tor (STR #3348).
-	- MacOS: fix drawing error when turning fullscreen a window containing
-	  a hidden subwindow (error visible with the tabs test program).
-	- MacOS: fix possible crash when turning fullscreen the scroll test program.
+	- MacOS: fix drawing error when a window containing a hidden subwindow 
+	  is changed to fullscreen (error visible with the tabs test program).
+	- MacOS: fix possible crash when enabling fullscreen in test/scroll.
 	- Add a snapshot of known STR's and RFE's (KNOWN_BUGS.html).
 
 CHANGES IN FLTK 1.3.4rc3				RELEASED: Oct 31 2016
@@ -15,8 +15,8 @@ CHANGES IN FLTK 1.3.4rc3				RELEASED: Oct 31 2016
 	Bug fixes and other improvements
 
 	- Fix string truncation in fluid (STR #2722 continued).
-	- MacOS: fix a small problem where command Quit of the application
-	  menu may not work if Fl_Native_File_Chooser is used before any
+	- MacOS: fix a small problem where the Command-Quit menu hotkey
+	  may not work if Fl_Native_File_Chooser is used before any
 	  window is shown.
 
 
@@ -26,7 +26,7 @@ CHANGES IN FLTK 1.3.4rc2				RELEASED: Oct 24 2016
 
 	- Make sure the "File Systems" menu item of Fl_File_Chooser
 	  lists "/" as the first mounted file system (Linux/Unix platform).
-	- Added line numbers to Edit -> Show Source Code viewer.
+	- Added line numbers to fluid Edit -> Show Source Code viewer.
 	- Improved fluid's template handling (STR #3335).
 
 
@@ -48,7 +48,7 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	  to draw into a high-resolution bitmap image (Mac OS X only).
 	- Added support for OpenGL version 3 and later.
 	- Added method Fl_Mac_App_Menu::custom_application_menu_items()
-	  allowing to customize the application menu on the Mac OS X platform.
+	  allowing customization of the application menu (Mac OS X only).
 	- Added 'fluid -u' command-line switch to upgrade fluid files in
 	  batch mode. This option opens a fluid ('.fl') file and saves it
 	  overwriting the old file with the current syntax and library version
@@ -56,28 +56,27 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	- Added FL_ZOOM_GESTURE gesture for OS X (only). Needs implementation
 	  on other platforms.
 	- Added FL_ABI_VERSION, FL_API_VERSION, Fl::abi_version(), and
-	  Fl::api_version(). The constants can be used to determine the
-	  compiled FLTK version, whereas the functions can be used to
-	  find the version of the linked library.
+	  Fl::api_version(). Constants can be used to determine the compiled
+	  FLTK version. Functions can be used to find the linked library version.
 	- Added Fl::abi_check() method to test if the runtime (linked)
 	  ABI version is correct.
 	- Added Fl_Image::fail() to test if an image was loaded successfully
-	  to make life easier when loading images (STR #2873).
-	- Added line numbers to fluid Edit -> Show Source Code
+	  to allow for easier error detection when loading images (STR #2873).
+	- Added line numbers to fluid's source code viewer for New -> Code
 
 	New configuration options (ABI version)
 
-	- FLTK's ABI version can now be configured with configure, CMake, or
+	- FLTK's ABI version can now be configured with 'configure', CMake, or
 	  by editing a supplied file when using the bundled IDE projects.
 	  See documentation in README.abi-version.txt.
 
 	1.3.4 ABI FEATURES
 
 	- Added deactivated user icon to Fl_Tree.
-	- Added the Fl_Shared_Image::scale(width, height) function which gives
-	  a shared image its own drawing size, independently of the size of the
-	  underlying image. This improves much image drawing on high resolution
-	  surfaces such as Laser printers, PDF files, or Apple retina displays.
+	- Added Fl_Shared_Image::scale(width, height) which gives a shared
+	  image its own drawing size, independently of the size of the
+	  underlying image. This improves image drawing on high resolution
+	  surfaces such as Laser printers, PDF files, and Apple retina displays.
 
 	Other improvements
 
@@ -91,7 +90,7 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	  corresponds to two pixels.
 	- The Mac OS X platform no longer uses the deprecated AGL
 	  (Apple GL library) to draw OpenGL data. Instead, it uses standard
-	  cocoa APIs. This allows FLTK to support drawing GL scenes at high
+	  Cocoa APIs. This allows FLTK to support drawing GL scenes at high
 	  resolution when an Fl_Gl_Window is mapped to a 'retina' display.
 	- Added Fl_Gl_Window::pixel_w(), Fl_Gl_Window::pixel_h(), and
 	  Fl_Gl_Window::pixels_per_unit() useful for high resolution OpenGL windows.
@@ -103,7 +102,7 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	- FLTK header files don't expose X11 definitions in user code any more
 	  unless requested by including FL/x.H explicitly or implicitly.
 	- The PostScript code output when printing images under Linux/Unix
-	  is quite smaller due to use of lossless compression techniques.
+	  is now much smaller by using lossless compression techniques.
 	- The Linux/Unix printer dialog now uses BSD-style printing commands
 	  (lpr/lpq) when SystemV-style commands (lp/lpstat) are not available.
 	- Drawing alpha-blended images under X11 is now accelerated with
@@ -118,10 +117,10 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	  version of the FLTK library (Mac OS X).
 	- Restored the possibility to call Fl::set_font() before main() starts.
 	- Allow using the --enable-x11 configure option on the Mac OS platform
-	  which produces an X11 version of the FLTK library (don't use that
-	  unless you know what you do).
+	  which produces an X11 version of the FLTK library (don't use unless
+	  you know what you're doing).
 	- FLTK code and fluid-generated code can be used in static initializers.
-	- Added light gray separator line to fluid widget browser (STR #2997).
+	- Added light gray separator line to fluid's widget browser (STR #2997).
 	- Improved tooltip behavior for huge tooltips: remove flicker, support
 	  key/mouse dismiss (STR #2650).
 	- Modifier key names displayed in shortcut labels can now be localized.
@@ -129,7 +128,7 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	  names for Ctrl, Alt, Shift, and Meta by assigning global string
 	  pointers to your translated modifier key names.
 	- Many documentation improvements and fixes.
-	- Removed many compilation warnings (STR #2988).
+	- Fixed many compiler warnings (STR #2988).
 	- Fluid now generates code with less compiler warnings (STR #2813).
 	- Many CMake improvements and fixes. Note: CMake is mostly operating
 	  now, but not yet recommended for production use. Please test and
@@ -140,8 +139,8 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 
 	Bug fixes
 
-	- Fix potential crash when using keyboard navigation on an Fl_Tabs
-	  widget w/o children (STR #3333).
+	- Fix potential crash when using keyboard navigation on Fl_Tabs
+	  widget without children (STR #3333).
 	- Fix potential crash if Fl_Window::icon(NULL) was called to clear
 	  (reset) a window icon. This is now legal and documented behavior.
 	  The same applies to Fl_Window::default_icon().
@@ -171,8 +170,8 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	  documentation of Fl_Image and Fl_RGB_Image for more information.
 	- Fixed Fl_Pixmap (background) drawing to respect the clip region
 	  (STR #3206).
-	- Reading of .pbm image files is fixed: 1 is now interpreted as
-	  black, and images of width a multiple of 8 are correctly read.
+	- Fixed reading .pbm image files: 1 is now interpreted as black,
+	  and images whose width are a multiple of 8 are correctly read.
 	  Note: if you relied on the faulty behavior you may need to fix
 	  your image files.
 	- Restored window background drawing, particularly the 'plastic'
@@ -198,8 +197,8 @@ CHANGES IN FLTK 1.3.4rc1				RELEASED: Oct 17 2016
 	- Fix for deactivate colors issue with Fl_Text_Display/Editor (STR #3219).
 	- Fixed issue with MSWindows platform where the program kept running
 	  after closing all its windows (STR #3165).
-	- Fix potential buffer overflow (Windows: BEX64 error) and home
-	  directory (STR #3166).
+	- Fix potential buffer overflow (MSWindows: BEX64 error) and problem with
+	  MSWindows environment variables "HOME"(MinGW) vs. "UserProfile"(DOS)
 	- Fix issue with MSWindows platform where a window would decrease
 	  in size after each close/open (STR #3167).
 	- Fix undefined reference XGetUtf8FontAndGlyph (STR #3191).
