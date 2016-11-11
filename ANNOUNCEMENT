@@ -23,4 +23,15 @@ FLTK 1.3.4 and previous versions contain many improvements and bug fixes.
 
 FLTK 1.3.4 is expected to be the last release in the 1.3.x series.
 
-  All currently open STR's for 1.3.x will be fixed in FLTK 1.4.x, if possible. 
+  All currently open STR's for 1.3.x will be fixed in FLTK 1.4.x, if possible.
+
+--------------------------------------------------------------------------------
+
+Note to svn (subversion) users: This branch (branch-1.3) is end of life
+since the release of FLTK 1.3.4. Only very serious bug fixes will be
+available if FLTK 1.4.0 is not yet released or not (yet) stable enough.
+
+The new development branch is now branch-1.4 -- please checkout a new,
+clean working copy if you want to get branch-1.4.
+
+--------------------------------------------------------------------------------
