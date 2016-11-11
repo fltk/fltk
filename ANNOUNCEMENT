@@ -1,2 +1,26 @@
-The initial FLTK 1.3 is based on the final 1.1.8.
+The initial FLTK 1.3.0 is based on the final 1.1.10.
 
+  It adds internationalization, UTF-8 (Unicode), printing support,
+  Doxygen based documentation, and several new widgets including
+  Fl_Native_File_Chooser, Fl_Table, and Fl_Tree.
+
+FLTK 1.3.4 and previous versions contain many improvements and bug fixes.
+
+  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.4.
+
+  Even though FLTK 1.3.4 does not fix all STRs, we decided to release
+  FLTK 1.3.4 as it contains many new features, bug fixes, and adaptations
+  to new compiler releases.
+
+  Open bugs and feature requests can be viewed (offline) in KNOWN_BUGS.html
+  with your browser. Links in this file direct you to the current state
+  (online) of all listed bugs and feature requests.
+
+  Note: This file is a snapshot of http://www.fltk.org/roadmap.php at the
+  date of this release (Nov. 11, 2016). Please take into account that some
+  bugs and/or feature requests in this list might have been fixed without
+  notice.
+
+FLTK 1.3.4 is expected to be the last release in the 1.3.x series.
+
+  All currently open STR's for 1.3.x will be fixed in FLTK 1.4.x, if possible. 
