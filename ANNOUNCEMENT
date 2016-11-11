@@ -3,3 +3,12 @@ FLTK 1.4 is based on the final release of FLTK 1.3.4.
 Technically the branch was forked earlier, but all changes in FLTK 1.3.4
 have also been (modified and) committed in branch-1.3-porting, which is
 the base of branch-1.4.
+
+FLTK 1.4 is intended to be mostly API compatible with FLTK 1.3.4 so
+you don't need to change source code when you switch to FLTK 1.4.
+
+However, the platform dependent code in FLTK 1.4 was rewritten to enable
+better porting to new platforms. Basically all platform dependent code
+has been isolated and implement in virtual methods of "driver" classes.
+
+More to come ...
