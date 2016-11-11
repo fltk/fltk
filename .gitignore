@@ -6,6 +6,7 @@
 
 # /
 /autom4te*.cache
+/build
 /clang
 /config.cache
 /config.guess
@@ -106,20 +107,6 @@
 
 # /fluid/pixmaps/
 /fluid/pixmaps/*.bck
-
-# /ide/Xcode3/
-/ide/Xcode3/build
-
-# /ide/Xcode3/FLTK.xcodeproj/
-/ide/Xcode3/FLTK.xcodeproj/*.pbxuser
-/ide/Xcode3/FLTK.xcodeproj/*.perspectivev3
-
-# /ide/Xcode4/
-/ide/Xcode4/build
-
-# /ide/Xcode4/FLTK.xcodeproj/
-/ide/Xcode4/FLTK.xcodeproj/*.pbxuser
-/ide/Xcode4/FLTK.xcodeproj/*.perspectivev3
 
 # /lib/
 /lib/lib*

@@ -9,6 +9,7 @@ you don't need to change source code when you switch to FLTK 1.4.
 
 However, the platform dependent code in FLTK 1.4 was rewritten to enable
 better porting to new platforms. Basically all platform dependent code
-has been isolated and implement in virtual methods of "driver" classes.
+has been isolated and implemented in virtual methods of "driver" classes.
+See src/drivers and subdirectories.
 
 More to come ...
