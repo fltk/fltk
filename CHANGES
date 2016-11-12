@@ -1,39 +1,43 @@
-Changes in FLTK 1.4.0                                   RELEASED: ??? ?? 2017
+Changes in FLTK 1.4.0					RELEASED: ??? ?? 2017
+
 
   New features and extensions
 
-    - CMake is the primary supported build system in FLTK 1.4.0 and later.
-      CMake can be used to generate Makefiles, IDE project files, and
-      several other build systems by using different "generators" provided
-      by CMake (for instance Ninja, CodeBlocks, Eclipse, KDevelop3, etc).
-      See README.CMake.txt for more information.
-      autoconf/configure is still supported by the FLTK team for backwards
-      compatibility with older systems that lack CMake support.
+  - CMake is the primary supported build system in FLTK 1.4.0 and later.
+    CMake can be used to generate Makefiles, IDE project files, and
+    several other build systems by using different "generators" provided
+    by CMake (for instance Ninja, CodeBlocks, Eclipse, KDevelop3, etc.).
+    See README.CMake.txt for more information.
+    autoconf/configure is still supported by the FLTK team for backwards
+    compatibility with older systems that lack CMake support.
 
 
   New configuration options (ABI version)
-    
-    - FLTK's ABI version can be configured with 'configure' and CMake.
-      See documentation in README.abi-version.txt.
+
+  - FLTK's ABI version can be configured with 'configure' and CMake.
+    See documentation in README.abi-version.txt.
+
 
   1.4.0 ABI FEATURES
 
-    - None. 1.4.0 is a new ABI version (breaking 1.3.x ABI).
+  - None. FLTK 1.4.0 has a new ABI, breaking 1.3.x ABI.
 
 
   Other improvements
 
-    - ...
+  - (add here)
+
 
   Bug fixes
 
-    - ...
+  - (add here)
+
 
   Removed Features
 
-    - Bundled IDE project files (Xcode and Visual Studio) have been
-      removed. Please use CMake to generate your IDE project files.
-      See README.CMake.txt for more information.
+  - Bundled IDE project files (Xcode and Visual Studio) have been
+    removed. Please use CMake to generate your IDE project files.
+    See README.CMake.txt for more information.
 
 
 

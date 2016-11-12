@@ -981,7 +981,9 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_RGB_Image.H ../FL/x.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_Export.H ../FL/fl_types.h
-drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Enumerations.H ../FL/fl_draw.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Enumerations.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: drivers/Xlib/Fl_Font.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/fl_draw.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_Graphics_Driver.H
