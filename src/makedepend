@@ -1432,38 +1432,38 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Fl.H ../FL/fl_utf8.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/fl_draw.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: drivers/Xlib/Fl_Font.H
-forms_compatability.o: ../FL/forms.H ../FL/Fl.H ../FL/Fl_Export.H
-forms_compatability.o: ../FL/platform_types.h ../FL/fl_utf8.h
-forms_compatability.o: ../FL/Fl_Export.H ../FL/fl_types.h
-forms_compatability.o: ../FL/Enumerations.H ../FL/abi-version.h
-forms_compatability.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/fl_draw.H
-forms_compatability.o: ../FL/Enumerations.H ../FL/Fl_Graphics_Driver.H
-forms_compatability.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
-forms_compatability.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H
-forms_compatability.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-forms_compatability.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-forms_compatability.o: ../FL/Fl_FormsBitmap.H ../FL/Fl_Bitmap.H
-forms_compatability.o: ../FL/Fl_FormsPixmap.H ../FL/Fl_Pixmap.H
-forms_compatability.o: ../FL/Fl_Box.H ../FL/Fl_Browser.H ../FL/Fl_Button.H
-forms_compatability.o: ../FL/Fl_Light_Button.H ../FL/Fl_Round_Button.H
-forms_compatability.o: ../FL/Fl_Check_Button.H ../FL/Fl_Chart.H
-forms_compatability.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
-forms_compatability.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H
-forms_compatability.o: ../FL/Fl_Counter.H ../FL/Fl_Dial.H ../FL/Fl_Free.H
-forms_compatability.o: ../FL/fl_ask.H ../FL/fl_show_colormap.H
-forms_compatability.o: ../FL/filename.H ../FL/Fl_File_Chooser.H ../FL/Fl.H
-forms_compatability.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
-forms_compatability.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
-forms_compatability.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H
-forms_compatability.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
-forms_compatability.o: ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
-forms_compatability.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
-forms_compatability.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H
-forms_compatability.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
-forms_compatability.o: ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
-forms_compatability.o: ../FL/Fl_Positioner.H ../FL/Fl_Slider.H
-forms_compatability.o: ../FL/Fl_Valuator.H ../FL/Fl_Value_Slider.H
-forms_compatability.o: ../FL/Fl_Timer.H ../FL/Fl_Repeat_Button.H
+forms_compatibility.o: ../FL/forms.H ../FL/Fl.H ../FL/Fl_Export.H
+forms_compatibility.o: ../FL/platform_types.h ../FL/fl_utf8.h
+forms_compatibility.o: ../FL/Fl_Export.H ../FL/fl_types.h
+forms_compatibility.o: ../FL/Enumerations.H ../FL/abi-version.h
+forms_compatibility.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/fl_draw.H
+forms_compatibility.o: ../FL/Enumerations.H ../FL/Fl_Graphics_Driver.H
+forms_compatibility.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+forms_compatibility.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+forms_compatibility.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+forms_compatibility.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+forms_compatibility.o: ../FL/Fl_FormsBitmap.H ../FL/Fl_Bitmap.H
+forms_compatibility.o: ../FL/Fl_FormsPixmap.H ../FL/Fl_Pixmap.H
+forms_compatibility.o: ../FL/Fl_Box.H ../FL/Fl_Browser.H ../FL/Fl_Button.H
+forms_compatibility.o: ../FL/Fl_Light_Button.H ../FL/Fl_Round_Button.H
+forms_compatibility.o: ../FL/Fl_Check_Button.H ../FL/Fl_Chart.H
+forms_compatibility.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_compatibility.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H
+forms_compatibility.o: ../FL/Fl_Counter.H ../FL/Fl_Dial.H ../FL/Fl_Free.H
+forms_compatibility.o: ../FL/fl_ask.H ../FL/fl_show_colormap.H
+forms_compatibility.o: ../FL/filename.H ../FL/Fl_File_Chooser.H ../FL/Fl.H
+forms_compatibility.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
+forms_compatibility.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_compatibility.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H
+forms_compatibility.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
+forms_compatibility.o: ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_compatibility.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_compatibility.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H
+forms_compatibility.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
+forms_compatibility.o: ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_compatibility.o: ../FL/Fl_Positioner.H ../FL/Fl_Slider.H
+forms_compatibility.o: ../FL/Fl_Valuator.H ../FL/Fl_Value_Slider.H
+forms_compatibility.o: ../FL/Fl_Timer.H ../FL/Fl_Repeat_Button.H
 forms_bitmap.o: ../FL/forms.H ../FL/Fl.H ../FL/Fl_Export.H
 forms_bitmap.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 forms_bitmap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
@@ -1631,14 +1631,14 @@ gl_start.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/gl.h
 gl_start.o: ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
 gl_start.o: ../FL/Fl_Gl_Window_Driver.H ../FL/x.H ../FL/fl_types.h
 gl_start.o: ../FL/Enumerations.H Fl_Gl_Choice.H
-glut_compatability.o: flstring.h ../FL/Fl_Export.H ../config.h
-glut_compatability.o: ../FL/Fl_Gl_Window_Driver.H ../FL/Fl_Gl_Window.H
-glut_compatability.o: ../FL/Fl_Window.H ../FL/glut.H ../FL/gl.h
-glut_compatability.o: ../FL/Enumerations.H ../FL/abi-version.h
-glut_compatability.o: ../FL/Fl_Export.H ../FL/fl_types.h
-glut_compatability.o: ../FL/platform_types.h ../FL/Fl.H ../FL/fl_utf8.h
-glut_compatability.o: ../FL/Fl_Gl_Window.H ../FL/Fl_Menu_Item.H
-glut_compatability.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H
+glut_compatibility.o: flstring.h ../FL/Fl_Export.H ../config.h
+glut_compatibility.o: ../FL/Fl_Gl_Window_Driver.H ../FL/Fl_Gl_Window.H
+glut_compatibility.o: ../FL/Fl_Window.H ../FL/glut.H ../FL/gl.h
+glut_compatibility.o: ../FL/Enumerations.H ../FL/abi-version.h
+glut_compatibility.o: ../FL/Fl_Export.H ../FL/fl_types.h
+glut_compatibility.o: ../FL/platform_types.h ../FL/Fl.H ../FL/fl_utf8.h
+glut_compatibility.o: ../FL/Fl_Gl_Window.H ../FL/Fl_Menu_Item.H
+glut_compatibility.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H
 glut_font.o: ../config.h ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
 glut_font.o: ../FL/abi-version.h ../FL/Fl_Export.H ../FL/fl_types.h
 glut_font.o: ../FL/platform_types.h ../FL/Fl.H ../FL/Fl_Export.H

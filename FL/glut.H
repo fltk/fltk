@@ -39,7 +39,7 @@
 
 /** 
   GLUT is emulated using this window class and these static variables
-  (plus several more static variables hidden in glut_compatability.cxx):
+  (plus several more static variables hidden in glut_compatibility.cxx):
 */
 class FL_EXPORT Fl_Glut_Window : public Fl_Gl_Window {
   void _init();

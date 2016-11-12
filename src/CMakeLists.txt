@@ -310,7 +310,7 @@ set (CPPFILES
 )
 
 set (FLCPPFILES
-  forms_compatability.cxx
+  forms_compatibility.cxx
   forms_bitmap.cxx
   forms_free.cxx
   forms_fselect.cxx
@@ -329,7 +329,7 @@ set (GLCPPFILES
   freeglut_teapot.cxx
   gl_draw.cxx
   gl_start.cxx
-  glut_compatability.cxx
+  glut_compatibility.cxx
   glut_font.cxx
 )
 

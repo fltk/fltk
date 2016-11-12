@@ -168,7 +168,7 @@ OBJCPPFILES = \
 	Fl_Sys_Menu_Bar.mm
 
 FLCPPFILES = \
-	forms_compatability.cxx \
+	forms_compatibility.cxx \
 	forms_bitmap.cxx \
 	forms_free.cxx \
 	forms_fselect.cxx \
@@ -186,7 +186,7 @@ GLCPPFILES = \
 	freeglut_teapot.cxx \
 	gl_draw.cxx \
 	gl_start.cxx \
-	glut_compatability.cxx \
+	glut_compatibility.cxx \
 	glut_font.cxx \
 	drivers/OpenGL/Fl_OpenGL_Display_Device.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx \
