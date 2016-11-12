@@ -203,6 +203,13 @@ fl_scandir(const char *dir, struct dirent ***namelist,
   return result;
 }
 
+#else /* defined(USE_X11) && !defined(HAVE_SCANDIR) */
+
+/* avoid (gcc) compiler warning [-Wpedantic]
+   "ISO C forbids an empty translation unit" */
+
+typedef int dummy;
+
 #endif /* defined(USE_X11) && !defined(HAVE_SCANDIR) */
 
 /*
