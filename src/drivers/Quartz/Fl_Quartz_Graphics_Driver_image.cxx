@@ -156,7 +156,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(img);
   if (cgimg && has_feature(PRINTER) && !*Fl_Graphics_Driver::mask(img)) {
     CGImageRelease(cgimg);
-    *Fl_Graphics_Driver::id(img) = NULL;
+    *Fl_Graphics_Driver::id(img) = 0;
     cgimg = NULL;
   }
   if (!cgimg) {
