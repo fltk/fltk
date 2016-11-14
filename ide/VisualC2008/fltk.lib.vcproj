@@ -26,7 +26,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
+				CommandLine="copy /Y &quot;$(SolutionDir)..\..\abi-version.ide&quot; &quot;$(SolutionDir)..\..\FL\abi-version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -98,7 +98,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
+				CommandLine="copy /Y &quot;$(SolutionDir)..\..\abi-version.ide&quot; &quot;$(SolutionDir)..\..\FL\abi-version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -170,7 +170,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
+				CommandLine="copy /Y &quot;$(SolutionDir)..\..\abi-version.ide&quot; &quot;$(SolutionDir)..\..\FL\abi-version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -242,7 +242,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h"
+				CommandLine="copy /Y &quot;$(SolutionDir)..\..\abi-version.ide&quot; &quot;$(SolutionDir)..\..\FL\abi-version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

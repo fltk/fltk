@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug Cairo|Win32">
@@ -94,7 +94,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PreBuildEvent>
-      <Command>copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h</Command>
+      <Command>copy /Y "$(SolutionDir)..\..\abi-version.ide" "$(SolutionDir)..\..\FL\abi-version.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,7 +121,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PreBuildEvent>
-      <Command>copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h</Command>
+      <Command>copy /Y "$(SolutionDir)..\..\abi-version.ide" "$(SolutionDir)..\..\FL\abi-version.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Cairo|Win32'">
@@ -149,7 +149,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PreBuildEvent>
-      <Command>copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h</Command>
+      <Command>copy /Y "$(SolutionDir)..\..\abi-version.ide" "$(SolutionDir)..\..\FL\abi-version.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Cairo|Win32'">
@@ -177,7 +177,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PreBuildEvent>
-      <Command>copy /Y $(SolutionDir)..\..\abi-version.ide $(SolutionDir)..\..\FL\abi-version.h</Command>
+      <Command>copy /Y "$(SolutionDir)..\..\abi-version.ide" "$(SolutionDir)..\..\FL\abi-version.h"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
