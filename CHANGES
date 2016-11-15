@@ -1,3 +1,17 @@
+CHANGES IN FLTK 1.3.4-1					RELEASED: Nov 15 2016
+
+Bug fixes and other improvements
+
+	- Fix Windows IDE solutions VisualC2008 and VisualC2010 to
+	  build properly if the FLTK source directory is located
+	  in a path that contains spaces.
+	
+	Note: this is a source tar file update that is only necessary
+	if you build one of the above mentioned Visual Studio IDE
+	solutions in a path with spaces. Nothing else changed, no
+	documentation updates.
+
+
 CHANGES IN FLTK 1.3.4					RELEASED: Nov 11 2016
 
 Bug fixes and other improvements
