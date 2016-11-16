@@ -265,7 +265,6 @@ XLIBCFILES = \
 XLIBXCFILES = \
         xutf8/utf8Utils.c \
         xutf8/utf8Wrap.c
-#       xutf8/utf8Input.c  # not used
 
 # These C++ files are used under condition: BUILD_X11 AND NOT BUILD_XFT
 XLIBFONTFILES = \
@@ -311,32 +310,23 @@ include ../makeinclude
 # makeinclude has set this variable:
 # BUILD = {WIN|X11|XFT|OSX}
 
-#MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
 MMFILES_OSX = $(OBJCPPFILES)
 MMFILES = $(MMFILES_$(BUILD))
 
 CPPFILES += $(PSCPPFILES)
-#CPPFILES += $(shell if test $(USEMMFILES) = Yes; then echo $(QUARTZCPPFILES); fi)
 CPPFILES_OSX = $(QUARTZCPPFILES)
 
-#CPPFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCPPFILES); fi)
-#CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) = Yes; then echo $(XLIBXFTFILES); fi)
 CPPFILES_XFT = $(XLIBCPPFILES) $(XLIBXFTFILES)
-#CPPFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo $(XLIBFONTFILES); fi)
 CPPFILES_X11 = $(XLIBCPPFILES) $(XLIBFONTFILES)
 
-#CPPFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICPPFILES); fi)
 CPPFILES_WIN = $(GDICPPFILES)
 
 CPPFILES += $(CPPFILES_$(BUILD))
 
 
-#CFILES += $(shell if test $(BUILD_X11) = Yes; then echo $(XLIBCFILES); fi)
-#CFILES += $(shell if test $(BUILD_X11) = Yes -a $(BUILD_XFT) != Yes; then echo $(XLIBXCFILES); fi)
 CFILES_X11 = $(XLIBCFILES) $(XLIBXCFILES)
 CFILES_XFT = $(XLIBCFILES)
 
-#CFILES += $(shell if test $(BUILD_GDI) = Yes; then echo $(GDICFILES); fi)
 CFILES_WIN = $(GDICFILES)
 
 CFILES += $(CFILES_$(BUILD))
