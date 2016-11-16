@@ -21,10 +21,12 @@
   \brief Line style drawing utility hiding different platforms.
 */
 
+#include <FL/Fl_Export.H>
+
 // We save the current line width (absolute value) here.
 // This is currently used only for X11 clipping, see src/fl_rect.cxx.
 // FIXME: this would probably better be in class Fl::
-int fl_line_width_ = 0;
+FL_EXPORT int fl_line_width_ = 0;
 
 // -----------------------------------------------------------------------------
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx

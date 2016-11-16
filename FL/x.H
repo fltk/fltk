@@ -85,7 +85,7 @@ extern FL_EXPORT void *fl_xftfont;
 // With Xlib / X11 fonts, fl_xfont will return the current selected font.
 // With XFT / X11 fonts, fl_xfont will attempt to return the bitmap "core" font most
 // similar to (usually the same as) the current XFT font.
-class Fl_XFont_On_Demand
+class FL_EXPORT Fl_XFont_On_Demand
 {
 public:
   Fl_XFont_On_Demand(XFontStruct* p = NULL) : ptr(p) { }
