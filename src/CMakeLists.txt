@@ -120,7 +120,6 @@ set (CPPFILES
   fl_gleam.cxx
   fl_gtk.cxx
   fl_labeltype.cxx
-  fl_line_style.cxx
   fl_open_uri.cxx
   fl_oval_box.cxx
   fl_overlay.cxx
