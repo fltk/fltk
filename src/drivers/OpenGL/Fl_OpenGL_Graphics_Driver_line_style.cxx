@@ -33,17 +33,10 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-extern int fl_line_width_;
-
 // OpenGL implementation does not support custom patterns
 // OpenGL implementation does not support cap and join types
 
 void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
-
-  // save line width in global variable for X11 clipping
-  // FIXME: what does this code do?
-  if (width == 0) fl_line_width_ = 1;
-  else fl_line_width_ = width>0 ? width : -width;
 
   if (width<1) width = 1;
 

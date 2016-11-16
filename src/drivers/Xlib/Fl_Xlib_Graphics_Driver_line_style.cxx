@@ -34,16 +34,11 @@
 
 #include "Fl_Xlib_Graphics_Driver.H"
 
-// We save the current line width (absolute value) here.
-// This is currently used only for X11 clipping, see src/fl_rect.cxx.
-// FIXME: this would probably better be in class Fl::
-extern int fl_line_width_;
-
 void Fl_Xlib_Graphics_Driver::line_style(int style, int width, char* dashes) {
 
-  // save line width in global variable for X11 clipping
-  if (width == 0) fl_line_width_ = 1;
-  else fl_line_width_ = width>0 ? width : -width;
+  // save line width for X11 clipping
+  if (width == 0) line_width_ = 1;
+  else line_width_ = width>0 ? width : -width;
 
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the WIN32 dash patterns on X

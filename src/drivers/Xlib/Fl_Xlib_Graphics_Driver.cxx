@@ -56,6 +56,7 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
   p_size = 0;
   p = NULL;
+  line_width_ = 0;
 }
 
 void Fl_Xlib_Graphics_Driver::gc(void *value) {

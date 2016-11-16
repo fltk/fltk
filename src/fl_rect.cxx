@@ -33,12 +33,6 @@
 // all driver code is now in drivers/XXX/Fl_XXX_Graphics_Driver_xyz.cxx
 // -----------------------------------------------------------------------------
 
-// fl_line_width_ must contain the absolute value of the current
-// line width to be used for X11 clipping (see driver code).
-// This is defined in src/fl_line_style.cxx
-extern int fl_line_width_;
-
-
 /** see fl_restore_clip() */
 void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;

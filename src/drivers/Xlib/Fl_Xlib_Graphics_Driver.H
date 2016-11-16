@@ -57,6 +57,8 @@ protected:
   int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
+  int line_width_;
+  int clip_x(int x);
 public:
   Fl_Xlib_Graphics_Driver(void);
   virtual ~Fl_Xlib_Graphics_Driver() { if (p) free(p); }

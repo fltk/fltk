@@ -22,7 +22,6 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-extern int fl_line_width_;
 
 /**
   \file quartz_line_style.cxx
@@ -39,10 +38,6 @@ void Fl_Quartz_Graphics_Driver::quartz_restore_line_style() {
 }
 
 void Fl_Quartz_Graphics_Driver::line_style(int style, int width, char* dashes) {
-
-  // save line width in global variable for X11 clipping
-  if (width == 0) fl_line_width_ = 1;
-  else fl_line_width_ = width>0 ? width : -width;
 
   static CGLineCap Cap[4] = { kCGLineCapButt, kCGLineCapButt,
                                    kCGLineCapRound, kCGLineCapSquare };

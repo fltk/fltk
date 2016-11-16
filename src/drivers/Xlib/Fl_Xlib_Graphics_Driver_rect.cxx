@@ -41,10 +41,8 @@
 #define SHRT_MAX (32767)
 #endif
 
-// fl_line_width_ must contain the absolute value of the current
+// line_width_ must contain the absolute value of the current
 // line width to be used for X11 clipping (see below).
-// This is defined in src/fl_line_style.cxx
-extern int fl_line_width_;
 
 /*
  We need to check some coordinates for areas for clipping before we
@@ -71,7 +69,7 @@ extern int fl_line_width_;
  In this example case, no clipping would be done, because X can
  handle it and clip unneeded pixels.
 
- Note that we must also take care of the case where fl_line_width_
+ Note that we must also take care of the case where line_width_
  is zero (maybe unitialized). If this is the case, we assume a line
  width of 1.
 
@@ -109,9 +107,9 @@ extern int fl_line_width_;
  Use this for clipping rectangles, as used in fl_rect() and
  fl_rectf().
  */
-static int clip_to_short(int &x, int &y, int &w, int &h) {
+static int clip_to_short(int &x, int &y, int &w, int &h, int line_width) {
 
-  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int lw = (line_width > 0) ? line_width : 1;
   int kmin = -lw;
   int kmax = SHRT_MAX - lw;
 
@@ -135,9 +133,9 @@ static int clip_to_short(int &x, int &y, int &w, int &h) {
  in fl_xyline() and fl_yxline(). Note that this can't be used for
  arbitrary lines (not horizontal or vertical).
  */
-static int clip_x (int x) {
+int Fl_Xlib_Graphics_Driver::clip_x (int x) {
 
-  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int lw = (line_width_ > 0) ? line_width_ : 1;
   int kmin = -lw;
   int kmax = SHRT_MAX - lw;
 
@@ -152,7 +150,7 @@ static int clip_x (int x) {
 // MSWindows equivalent exists, implemented inline in win32.H
 Fl_Region Fl_Xlib_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
-  clip_to_short(x, y, w, h);
+  clip_to_short(x, y, w, h, line_width_);
   R.x = x; R.y = y; R.width = w; R.height = h;
   Fl_Region r = XCreateRegion();
   XUnionRectWithRegion(&R, r, r);
@@ -171,13 +169,13 @@ void Fl_Xlib_Graphics_Driver::point(int x, int y) {
 
 void Fl_Xlib_Graphics_Driver::rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  if (!clip_to_short(x, y, w, h))
+  if (!clip_to_short(x, y, w, h, line_width_))
     XDrawRectangle(fl_display, fl_window, gc_, x, y, w-1, h-1);
 }
 
 void Fl_Xlib_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
-  if (!clip_to_short(x, y, w, h))
+  if (!clip_to_short(x, y, w, h, line_width_))
     XFillRectangle(fl_display, fl_window, gc_, x, y, w, h);
 }
 
@@ -321,7 +319,7 @@ int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   Fl_Region r = rstack[rstackptr];
   if (!r) return 1;
   // get rid of coordinates outside the 16-bit range the X calls take.
-  if (clip_to_short(x,y,w,h)) return 0;	// clipped
+  if (clip_to_short(x,y,w,h, line_width_)) return 0;	// clipped
   return XRectInRegion(r, x, y, w, h);
 }
 

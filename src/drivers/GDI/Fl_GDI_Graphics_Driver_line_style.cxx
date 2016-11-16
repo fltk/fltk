@@ -34,14 +34,8 @@
 
 #include "Fl_GDI_Graphics_Driver.H"
 
-extern int fl_line_width_;  // defined in src/fl_line_style.cxx
-
 
 void Fl_GDI_Graphics_Driver::line_style(int style, int width, char* dashes) {
-
-  // save line width in global variable for X11 clipping
-  if (width == 0) fl_line_width_ = 1;
-  else fl_line_width_ = width>0 ? width : -width;
 
   // According to Bill, the "default" cap and join should be the
   // "fastest" mode supported for the platform.  I don't know why
