@@ -158,6 +158,9 @@ uchar *Fl_Screen_Driver::read_image(uchar *p, int X, int Y, int w, int h, int al
   Fl_RGB_Image *img;
   if (fl_find(fl_window) == 0) { // read from off_screen buffer
     img = read_win_rectangle(p, X, Y, w, h, alpha);
+    if (!img) {
+      return NULL;
+    }
     img->alloc_array = 1;
   } else {
     img = traverse_to_gl_subwindows(Fl_Window::current(), p, X, Y, w, h, alpha, NULL);
