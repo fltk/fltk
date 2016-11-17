@@ -527,13 +527,14 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, i
 int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   Fl_RGB_Image *rgb = img->as_rgb_image();
   if (!rgb || !rgb->array) return 0; // for bitmaps and pixmaps
+  if ((rgb->d() % 2) == 0 && !can_do_alpha_blending()) return 0;
   
   if (!*Fl_Graphics_Driver::id(rgb)) *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)build_id(rgb,
                                                     (void**)(Fl_Graphics_Driver::mask(rgb)));
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
-  if ((img->d() % 2) == 0 && can_do_alpha_blending()) {
+  if ( (rgb->d() % 2) == 0 ) {
     alpha_blend_(XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
