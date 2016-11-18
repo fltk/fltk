@@ -701,7 +701,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     int depth = img->d();
     if (depth == 1 || depth == 3) {
       surface = new Fl_Image_Surface(img->w(), img->h());
-    } else if (depth == 4 && fl_can_do_alpha_blending()) {
+    } else if (can_do_alpha_blending()) {
       Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
       surface = new Fl_Image_Surface(img->w(), img->h(), 0, pixmap);
       depth |= FL_IMAGE_WITH_ALPHA;
@@ -715,7 +715,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     }
   }
   if (*Fl_Graphics_Driver::id(img)) {
-    if (img->d() == 4 && fl_can_do_alpha_blending())
+    if (img->d() == 4 || img->d() == 2)
       copy_offscreen_with_alpha(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
     else
       copy_offscreen(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
