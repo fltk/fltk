@@ -715,29 +715,10 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     }
   }
   if (*Fl_Graphics_Driver::id(img)) {
-    if (*Fl_Graphics_Driver::mask(img)) {
-      // I can't figure out how to combine a mask with existing region,
-      // so cut the image down to a clipped rectangle:
-      int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
-      cx += nx-X; X = nx;
-      cy += ny-Y; Y = ny;
-      // make X use the bitmap as a mask:
-      XSetClipMask(fl_display, gc_, *Fl_Graphics_Driver::mask(img));
-      int ox = X-cx; if (ox < 0) ox += img->w();
-      int oy = Y-cy; if (oy < 0) oy += img->h();
-      XSetClipOrigin(fl_display, gc_, X-cx, Y-cy);
-    }
-
     if (img->d() == 4 && fl_can_do_alpha_blending())
       copy_offscreen_with_alpha(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
     else
       copy_offscreen(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
-
-    if (*Fl_Graphics_Driver::mask(img)) {
-      // put the old clip region back
-      XSetClipOrigin(fl_display, gc_, 0, 0);
-      fl_restore_clip();
-    }
   } else {
     // Composite image with alpha manually each time...
     alpha_blend(img, X, Y, W, H, cx, cy);
@@ -749,11 +730,6 @@ void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintp
   if (id_) {
     XFreePixmap(fl_display, (Fl_Offscreen)id_);
     id_ = 0;
-  }
-
-  if (mask_) {
-    fl_delete_bitmask((Fl_Bitmask)mask_);
-    mask_ = 0;
   }
 }
 
