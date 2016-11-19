@@ -25,15 +25,8 @@
 
 /*
  ******************************************************************************
- * Notes on FL_ABI_VERSION and deprecated (obsolete) FLTK_ABI_VERSION:
- *
- * (1)	FLTK_ABI_VERSION is deprecated, but still defined below.
- *	Do NOT define FLTK_ABI_VERSION here - it would be overwritten later.
- *
- * (2)	FL_ABI_VERSION is now (as of FLTK 1.3.4) defined by configure
- *	or CMake. Do NOT define it here. Its definition will be included
- *	below by "#include <FL/abi-version.h>".
- *
+ * FL_ABI_VERSION is defined by configure or CMake since FLTK 1.3.4.
+ * It is written to FL/abi-version.h and #included here.
  ******************************************************************************
  * For more informations on FL_ABI_VERSION see README.abi-version.txt.
  ******************************************************************************
@@ -181,19 +174,6 @@
 
 #endif
 
-/*
-  FLTK_ABI_VERSION is deprecated (replaced by FL_ABI_VERSION).
-
-  This deprecated constant will be removed in FLTK 1.4.0 and later.
-  Please use FL_ABI_VERSION when FLTK 1.4.0 has been released.
-*/
-
-#ifdef FLTK_ABI_VERSION
-#undef FLTK_ABI_VERSION
-#endif
-
-#define FLTK_ABI_VERSION FL_ABI_VERSION
-
 /*@}*/	// group: Version Numbers
 
 /**
@@ -214,7 +194,7 @@
 
     \sa Fl::event_text(), Fl::event_key(), class Fl::
  */
-// DEV NOTE: Keep this list in sync with FL/names.H
+// DEV NOTE: Keep this list in sync with FL/names.h
 enum Fl_Event {	// events
   /** No event. */
   FL_NO_EVENT		= 0,
@@ -424,6 +404,8 @@ enum Fl_Event {	// events
       Fl::event_x() and Fl::event_y() are set as well.
      */
   FL_ZOOM_GESTURE	= 26
+
+// DEV NOTE: Keep this list in sync with FL/names.h
 };
 
 /** \name When Conditions */

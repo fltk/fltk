@@ -3,7 +3,7 @@
 //
 // Event names header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2016 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -69,10 +69,10 @@ const char * const fl_eventnames[] =
   "FL_SCREEN_CONFIGURATION_CHANGED",
   "FL_FULLSCREEN",
   "FL_ZOOM_GESTURE",
-  "FL_EVENT_27",  // not yet defined, just in case they /will/ be defined ...
-  "FL_EVENT_28",
-  "FL_EVENT_29",
-  "FL_EVENT_30"
+  "FL_EVENT_27", // not yet defined, just in case it /will/ be defined ...
+  "FL_EVENT_28", // not yet defined, just in case it /will/ be defined ...
+  "FL_EVENT_29", // not yet defined, just in case it /will/ be defined ...
+  "FL_EVENT_30"  // not yet defined, just in case it /will/ be defined ...
 };
 
 /**
