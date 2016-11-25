@@ -1,18 +1,26 @@
-Changes in FLTK 1.4.0					RELEASED: ??? ?? 2017
+Changes in FLTK 1.4.0					Released: ??? ?? 2017
 
+  General Information about this Release
 
-  New features and extensions
+  - FLTK 1.4.0 is based on FLTK 1.3.4 (released Nov 15 2016),
+    see CHANGES_1.3 for more information.
 
   - CMake is the primary supported build system in FLTK 1.4.0 and later.
     CMake can be used to generate Makefiles, IDE project files, and
     several other build systems by using different "generators" provided
     by CMake (for instance Ninja, CodeBlocks, Eclipse, KDevelop3, etc.).
     See README.CMake.txt for more information.
-    autoconf/configure is still supported by the FLTK team for backwards
+
+  - autoconf/configure is still supported by the FLTK team for backwards
     compatibility with older systems that lack CMake support.
 
 
-  New configuration options (ABI version)
+  New Features and Extensions
+
+  - (add here)
+
+
+  New Configuration Options (ABI Version)
 
   - FLTK's ABI version can be configured with 'configure' and CMake.
     See documentation in README.abi-version.txt.
@@ -23,14 +31,17 @@ Changes in FLTK 1.4.0					RELEASED: ??? ?? 2017
   - None. FLTK 1.4.0 has a new ABI, breaking 1.3.x ABI.
 
 
-  Other improvements
+  Other Improvements
 
   - (add here)
 
 
-  Bug fixes
+  Bug Fixes
 
   - (add here)
+  - Fix build with configure --enable-cairo --enable-cairoext,
+    see this report in fltk.general:
+    https://groups.google.com/forum/#!topic/fltkgeneral/x80qQ6wt0s4
 
 
   Removed Features
@@ -38,7 +49,6 @@ Changes in FLTK 1.4.0					RELEASED: ??? ?? 2017
   - Bundled IDE project files (Xcode and Visual Studio) have been
     removed. Please use CMake to generate your IDE project files.
     See README.CMake.txt for more information.
-
 
 
 Changes in FLTK 1.3
