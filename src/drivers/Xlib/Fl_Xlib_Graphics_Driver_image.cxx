@@ -33,7 +33,7 @@
 
 // scanline_pad must be a power of 2 and greater or equal to 8.
 
-// PsuedoColor visuals must have 8 bits_per_pixel (although the depth
+// PseudoColor visuals must have 8 bits_per_pixel (although the depth
 // may be less than 8).  This is the only limitation that affects any
 // modern X displays, you can't use 12 or 16 bit colormaps.
 
@@ -321,6 +321,13 @@ static void argb_premul_converter(const uchar *from, uchar *to, int w, int delta
              ((from[2] * from[3]) / 255));
 }
 
+static void depth2_to_argb_premul_converter(const uchar *from, uchar *to, int w, int delta) {
+  INNARDS32((unsigned(from[1]) << 24) +
+            (((from[0] * from[1]) / 255) << 16) +
+            (((from[0] * from[1]) / 255) << 8) +
+            ((from[0] * from[1]) / 255));
+}
+
 static void bgrx_converter(const uchar *from, uchar *to, int w, int delta) {
   INNARDS32((from[0]<<8)+(from[1]<<16)+(unsigned(from[2])<<24));
 }
@@ -478,7 +485,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   if (alpha) {
     // This flag states the destination format is ARGB32 (big-endian), pre-multiplied.
     bytes_per_pixel = 4;
-    conv = argb_premul_converter;
+    conv = (mono ? depth2_to_argb_premul_converter : argb_premul_converter);
     xi.depth = 32;
     xi.bits_per_pixel = 32;
 
@@ -701,7 +708,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     int depth = img->d();
     if (depth == 1 || depth == 3) {
       surface = new Fl_Image_Surface(img->w(), img->h());
-    } else if (depth == 4 && can_do_alpha_blending()) {
+    } else if (can_do_alpha_blending()) {
       Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
       surface = new Fl_Image_Surface(img->w(), img->h(), 0, pixmap);
       depth |= FL_IMAGE_WITH_ALPHA;
@@ -715,7 +722,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     }
   }
   if (*Fl_Graphics_Driver::id(img)) {
-    if (img->d() == 4)
+    if (img->d() == 4 || img->d() == 2)
       copy_offscreen_with_alpha(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
     else
       copy_offscreen(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
