@@ -83,7 +83,6 @@ protected:
   virtual void untranslate() {}
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   virtual Fl_RGB_Image *image() {return NULL;}
-  virtual void end_current() {}
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Copy_Surface_Driver for the plaform.

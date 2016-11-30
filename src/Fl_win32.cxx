@@ -2417,7 +2417,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   ReleaseDC(NULL, (HDC)fl_graphics_driver->gc());
   fl_window = save_win;
   fl_graphics_driver->gc(save_gc);
-  previous->Fl_Surface_Device::set_current();
+  previous->set_current();
 }
 
 

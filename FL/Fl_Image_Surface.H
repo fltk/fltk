@@ -77,7 +77,6 @@ public:
   Fl_Image_Surface(int w, int h, int high_res = 0, Fl_Offscreen off = 0);
   ~Fl_Image_Surface();
   void set_current();
-  void end_current();
   Fl_RGB_Image *image();
   Fl_Shared_Image *highres_image();
   void origin(int *x, int *y);
@@ -106,7 +105,6 @@ protected:
   virtual void untranslate() {}
   int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
   virtual Fl_RGB_Image *image() {return NULL;}
-  virtual void end_current() {}
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Image_Surface_Driver for the plaform.

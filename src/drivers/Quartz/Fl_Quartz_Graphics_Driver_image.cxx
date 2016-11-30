@@ -251,11 +251,12 @@ static void pmProviderRelease (void *ctxt, const void *data, size_t size) {
 }
 
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
+  Fl_Surface_Device *old = Fl_Surface_Device::surface();
   Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
   surf->set_current();
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   CGContextRef src = surf->get_offscreen_before_delete();
-  surf->end_current();
+  old->set_current();
   delete surf;
   void *cgdata = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);

@@ -28,6 +28,7 @@
 
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
+  virtual void end_current_();
 public:
   Fl_Surface_Device *previous;
   Window pre_window;
@@ -39,7 +40,6 @@ public:
   void translate(int x, int y);
   void untranslate();
   Fl_RGB_Image *image();
-  void end_current();
 };
 
 
@@ -90,7 +90,6 @@ Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 {
   unsigned char *data;
   data = fl_read_image(NULL, 0, 0, width, height, 0);
-  end_current();
   previous->driver()->gc(_sgc);
   Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height);
   image->alloc_array = 1;
@@ -98,13 +97,12 @@ Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 }
 
 
-void Fl_GDI_Image_Surface_Driver::end_current()
+void Fl_GDI_Image_Surface_Driver::end_current_()
 {
   HDC gc = (HDC)driver()->gc();
   RestoreDC(gc, _savedc);
   DeleteDC(gc);
   fl_pop_clip();
-  previous->Fl_Surface_Device::set_current();
   fl_window = pre_window;
 }
 

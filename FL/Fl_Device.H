@@ -52,13 +52,17 @@ class Fl_Widget;
  </ol>
  */
 class FL_EXPORT Fl_Surface_Device {
-  /** \brief The graphics driver in use by this surface. */
+  /** The graphics driver in use by this surface. */
   Fl_Graphics_Driver *pGraphicsDriver;
   static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
   static Fl_Surface_Device *default_surface(); // create surface if none exists yet
+  static Fl_Surface_Device *pre_surface_;
+  // Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) need to re-implement this.
+  // Gets called each time a surface ceases to be the current drawing surface.
+  virtual void end_current_() {}
 protected:
-  /** \brief Constructor that sets the graphics driver to use for the created surface. */
-  Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; };
+  /** Constructor that sets the graphics driver to use for the created surface. */
+  Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }
 public:
   virtual void set_current(void);
   /** \brief Sets the graphics driver of this drawing surface. */

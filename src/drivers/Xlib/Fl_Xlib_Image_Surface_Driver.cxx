@@ -27,6 +27,7 @@
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
+  virtual void end_current_();
 public:
   Fl_Surface_Device *previous;
   Window pre_window;
@@ -37,7 +38,6 @@ public:
   void translate(int x, int y);
   void untranslate();
   Fl_RGB_Image *image();
-  void end_current();
 };
 
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
@@ -62,8 +62,8 @@ Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
 void Fl_Xlib_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
   if (!previous) previous = Fl_Surface_Device::surface();
-  fl_window = offscreen;
   Fl_Surface_Device::set_current();
+  fl_window = offscreen;
   fl_push_no_clip();
 }
 
@@ -78,16 +78,14 @@ void Fl_Xlib_Image_Surface_Driver::untranslate() {
 Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
 {
   unsigned char *data = fl_read_image(NULL, 0, 0, width, height, 0);
-  end_current();
   Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height);
   image->alloc_array = 1;
   return image;
 }
 
-void Fl_Xlib_Image_Surface_Driver::end_current()
+void Fl_Xlib_Image_Surface_Driver::end_current_()
 {
   fl_pop_clip();
-  previous->Fl_Surface_Device::set_current();
   fl_window = pre_window;
 }
 

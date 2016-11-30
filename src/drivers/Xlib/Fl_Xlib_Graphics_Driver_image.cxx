@@ -714,9 +714,10 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       depth |= FL_IMAGE_WITH_ALPHA;
     }
     if (surface) {
+      Fl_Surface_Device *old_surf = Fl_Surface_Device::surface();
       surface->set_current();
       fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
-      surface->end_current();
+      old_surf->set_current();
       *Fl_Graphics_Driver::id(img) = surface->get_offscreen_before_delete();
       delete surface;
     }

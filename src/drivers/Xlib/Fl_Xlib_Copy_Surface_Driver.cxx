@@ -57,6 +57,7 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
   _ss = NULL;
   Fl_Surface_Device *present_surface = Fl_Surface_Device::surface();
   Fl_Surface_Device::set_current();
+  fl_push_no_clip();
   fl_window = xid;
   driver()->color(FL_WHITE);
   driver()->rectf(0, 0, w, h);
@@ -81,7 +82,6 @@ void Fl_Xlib_Copy_Surface_Driver::set_current() {
   fl_window = xid;
   if (!_ss) _ss = Fl_Surface_Device::surface();
   Fl_Surface_Device::set_current();
-  fl_push_no_clip();
 }
 
 
