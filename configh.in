@@ -159,6 +159,26 @@
 #undef USE_X11
 
 /*
+ * USE_SDL
+ *
+ * Should we use SDL for the current platform
+ * *FIXME* Not yet implemented in configure !
+ *
+ */
+
+#undef USE_SDL
+
+/*
+ * FL_PORTING
+ *
+ * A little helper that points to locations in the core that still need
+ * to be ported to the core driver setup.
+ * *FIXME* Not yet implemented in configure !
+ */
+
+#undef FL_PORTING
+
+/*
  * HAVE_OVERLAY:
  *
  * Use the X overlay extension?  FLTK will try to use an overlay
@@ -334,6 +354,20 @@
 
 #define HAVE_DLFCN_H 0
 #define HAVE_DLSYM 0
+
+/*
+ * Do we want print support?
+ * *FIXME* Not yet implemented in configure !
+ */
+
+#undef NO_PRINT_SUPPORT
+
+/*
+ * Do we want filename handling and a filechooser?
+ * *FIXME* Not yet implemented in configure !
+ */
+
+#undef FL_CFG_NO_FILESYSTEM_SUPPORT
 
 /*
  * End of "$Id$".

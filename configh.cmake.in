@@ -171,8 +171,8 @@
 /*
  * FL_PORTING
  *
- * A little helper that points to locations in the core that still need to be ported to 
- * the core driver setup.
+ * A little helper that points to locations in the core that still need
+ * to be ported to the core driver setup.
  */
 
 #cmakedefine FL_PORTING 0
