@@ -546,6 +546,11 @@ void make_image() {
   }
 }
 
+void close_tmp_win(Fl_Widget *win, void *data) {
+  ((Fl_Shared_Image*)data)->release();
+  Fl::delete_widget(win);
+}
+
 
 Fl_Widget *target;
 const  char *operation;
@@ -580,6 +585,7 @@ void copy(Fl_Widget *, void *data) {
       Fl_Box *b = new Fl_Box(FL_NO_BOX,5,5,img->w(), img->h(),0);
       b->image(img);
       g2->end();
+      g2->callback(close_tmp_win, img);
       g2->show();
     }
     return;
@@ -751,6 +757,9 @@ int main(int argc, char ** argv) {
   w2->show(argc, argv);
   
   Fl::run();
+  delete pixmap;
+  delete b_bitmap.image();
+  
   return 0;
 }
 
