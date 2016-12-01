@@ -56,12 +56,12 @@ void Fl_Surface_Device::set_current(void)
 {
   if (pre_surface_) pre_surface_->end_current_();
   fl_graphics_driver = pGraphicsDriver;
-  _surface = this;
+  surface_ = this;
   pGraphicsDriver->global_gc();
   pre_surface_ = this;
 }
 
-Fl_Surface_Device* Fl_Surface_Device::_surface; // the current target surface of graphics operations
+Fl_Surface_Device* Fl_Surface_Device::surface_; // the current target surface of graphics operations
 
 
 Fl_Surface_Device::~Fl_Surface_Device()

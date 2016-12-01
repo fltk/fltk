@@ -54,7 +54,7 @@ class Fl_Widget;
 class FL_EXPORT Fl_Surface_Device {
   /** The graphics driver in use by this surface. */
   Fl_Graphics_Driver *pGraphicsDriver;
-  static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
+  static Fl_Surface_Device *surface_; // the surface that currently receives graphics output
   static Fl_Surface_Device *default_surface(); // create surface if none exists yet
   static Fl_Surface_Device *pre_surface_;
   // Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) need to re-implement this.
@@ -72,7 +72,7 @@ public:
   /** The current drawing surface.
    In other words, the Fl_Surface_Device object that currently receives all graphics output */
   static inline Fl_Surface_Device *surface() {
-    return _surface ? _surface : default_surface();
+    return surface_ ? surface_ : default_surface();
   };
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device();
