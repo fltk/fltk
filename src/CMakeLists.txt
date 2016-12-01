@@ -157,7 +157,6 @@ else ()
   set (PSFILES
     drivers/PostScript/Fl_PostScript.cxx
     drivers/PostScript/Fl_PostScript_image.cxx
-    drivers/Posix/Fl_Posix_Printer_Driver.cxx
   )
 endif ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
 
@@ -169,6 +168,7 @@ if (USE_X11)
 
   set (DRIVER_FILES
     drivers/Posix/Fl_Posix_System_Driver.cxx
+    drivers/Posix/Fl_Posix_Printer_Driver.cxx
     drivers/X11/Fl_X11_Screen_Driver.cxx
     drivers/X11/Fl_X11_Window_Driver.cxx
     drivers/X11/Fl_X11_System_Driver.cxx
