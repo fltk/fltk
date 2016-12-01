@@ -16,6 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
+#if !defined(FL_NO_PRINT_SUPPORT)
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
@@ -1476,6 +1478,8 @@ void Fl_PostScript_File_Device::end_job (void)
 }
 
 #endif // FL_DOXYGEN
+
+#endif // !defined(FL_NO_PRINT_SUPPORT)
 
 //
 // End of "$Id$".

@@ -376,9 +376,9 @@ else()
 endif(OPTION_USE_XDBE AND HAVE_XDBE_H)
 
 #######################################################################
-set(NO_PRINT_SUPPORT FALSE)
+set(FL_NO_PRINT_SUPPORT FALSE)
 if(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
-   set(NO_PRINT_SUPPORT TRUE)
+   set(FL_NO_PRINT_SUPPORT TRUE)
 endif(X11_FOUND AND NOT OPTION_PRINT_SUPPORT)
 #######################################################################
 

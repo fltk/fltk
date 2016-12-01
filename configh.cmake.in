@@ -358,7 +358,7 @@
  * Do we want print support?
  */
 
-#cmakedefine NO_PRINT_SUPPORT 1
+#cmakedefine FL_NO_PRINT_SUPPORT 1
 
 /*
  * Do we want filename handling and a filechooser?

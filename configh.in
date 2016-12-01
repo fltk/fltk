@@ -357,10 +357,9 @@
 
 /*
  * Do we want print support?
- * *FIXME* Not yet implemented in configure !
  */
 
-#undef NO_PRINT_SUPPORT
+#undef FL_NO_PRINT_SUPPORT
 
 /*
  * Do we want filename handling and a filechooser?

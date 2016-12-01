@@ -992,6 +992,12 @@ case $host_os_gui in
 	    GLDEMOS=""
 	fi
 
+	dnl Check whether print support was disabled...
+	AC_ARG_ENABLE(print,    [  --enable-print          turn on print support (X11 platform) [[default=yes]]])
+	if test x$enable_print != xyes; then
+	    AC_DEFINE(FL_NO_PRINT_SUPPORT)
+	fi
+
 	dnl Check for Xinerama support unless disabled...
 	AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [[default=yes]]])
 

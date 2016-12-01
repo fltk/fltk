@@ -21,11 +21,11 @@
 #include <config.h>
 
 #ifdef FL_PORTING
-#  pragma message "FL_PORTING: implement print support for your platform, or define NO_PRINT_SUPPORT"
-#define NO_PRINT_SUPPORT 1
+#  pragma message "FL_PORTING: implement print support for your platform, or define FL_NO_PRINT_SUPPORT"
+#define FL_NO_PRINT_SUPPORT 1
 #endif
 
-#if defined(NO_PRINT_SUPPORT)
+#if defined(FL_NO_PRINT_SUPPORT)
 #include <FL/Fl_PostScript.H>
 
 Fl_Printer::Fl_Printer(void) {
@@ -239,7 +239,7 @@ Fl_Printer::~Fl_Printer(void)
   delete printer;
 }
 
-#endif // defined(NO_PRINT_SUPPORT)
+#endif // defined(FL_NO_PRINT_SUPPORT)
 
 //
 // End of "$Id$".

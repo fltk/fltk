@@ -18,7 +18,7 @@
 
 #include "../../config_lib.h"
 
-#if defined(FL_CFG_PRN_PS)
+#if defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
 
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Printer.H>
@@ -133,7 +133,7 @@ int Fl_Posix_Printer_Driver::start_job(int pages, int *firstpage, int *lastpage)
   return ps->start_postscript(pages, format, layout); // start printing
 }
 
-#endif // defined(FL_CFG_PRN_PS)
+#endif // defined(FL_CFG_PRN_PS) && !defined(FL_NO_PRINT_SUPPORT)
 
 
 //

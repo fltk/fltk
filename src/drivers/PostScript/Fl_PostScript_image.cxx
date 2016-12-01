@@ -16,7 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_DOXYGEN
+#include <config.h>
+#if !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
 
 #include <stdio.h>
 #include <math.h>
@@ -649,7 +650,8 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
   pop_clip();
 }
 
-#endif // FL_DOXYGEN
+#endif // !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)
+
 
 //
 // End of "$Id$"
