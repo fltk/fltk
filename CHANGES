@@ -18,6 +18,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add here)
+  - Added '--enable-print' option to configure effective under X11 platforms
+    and with 'yes' default value. Using '--enable-print=no' removes print
+    and PostScript support from the FLTK library, thus reducing its size.
 
 
   New Configuration Options (ABI Version)
