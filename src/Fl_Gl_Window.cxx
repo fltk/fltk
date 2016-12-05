@@ -26,9 +26,9 @@ extern int fl_gl_load_plugin;
 #include <FL/Fl_Gl_Window_Driver.H>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
-#  if HAVE_DLFCN_H
+#  if (HAVE_DLSYM && HAVE_DLFCN_H)
 #    include <dlfcn.h>
-#  endif // HAVE_DLFCN_H
+#  endif // (HAVE_DLSYM && HAVE_DLFCN_H)
 #  ifdef HAVE_GLXGETPROCADDRESSARB
 #    define GLX_GLXEXT_LEGACY
 #    include <GL/glx.h>
