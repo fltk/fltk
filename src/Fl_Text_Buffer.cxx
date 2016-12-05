@@ -108,7 +108,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPreferredGapSize = preferredGapSize;
   mBuf = (char *) malloc(requestedSize + mPreferredGapSize);
   mGapStart = 0;
-  mGapEnd = mPreferredGapSize;
+  mGapEnd = requestedSize + mPreferredGapSize;
   mTabDist = 8;
   mPrimary.mSelected = 0;
   mPrimary.mStart = mPrimary.mEnd = 0;
@@ -1421,7 +1421,7 @@ void Fl_Text_Buffer::reallocate_with_gap(int newGapStart, int newGapLen)
   mBuf = newBuf;
   mGapStart = newGapStart;
   mGapEnd = newGapEnd;
-  }
+}
 
 
 /*

@@ -42,6 +42,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Bug Fixes
 
   - (add here)
+  - Fix ignored buffer pre-allocation (requestedSize) in Fl_Text_Buffer.
+    See fltk.general "Fl_Text_Buffer constructor bug" on Dec 5, 2016.
   - Fix build with configure --enable-cairo --enable-cairoext,
     see this report in fltk.general:
     https://groups.google.com/forum/#!topic/fltkgeneral/x80qQ6wt0s4
