@@ -176,13 +176,15 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
 }
 
 
-
 /**
- Free a text display and release its associated memory.
+  Free a text display and release its associated memory.
 
- Note, the text BUFFER that the text display displays is a separate
- entity and is not freed, nor are the style buffer or style table.
- */
+  \note The text buffer that the text display displays is a separate entity
+	and is not freed, nor are the style buffer or style table.
+
+  \see Fl_Text_Display::buffer(Fl_Text_Buffer* buf)
+*/
+
 Fl_Text_Display::~Fl_Text_Display() {
   if (scroll_direction) {
     Fl::remove_timeout(scroll_timer_cb, this);
@@ -201,11 +203,11 @@ Fl_Text_Display::~Fl_Text_Display() {
 
 
 /**
- Set width of screen area for line numbers.
- Use to also enable/disable line numbers.
- A value of 0 disables line numbering, values >0 enable the line number display.
- \param width The new width of the area for line numbers to appear, in pixels.
-              0 disables line numbers (default)
+  Set width of screen area for line numbers.
+  Use to also enable/disable line numbers.
+  A value of 0 disables line numbering, values >0 enable the line number display.
+  \param width The new width of the area for line numbers to appear, in pixels.
+	      0 disables line numbers (default)
 */
 void Fl_Text_Display::linenumber_width(int width) {
   if (width < 0) return;
@@ -328,9 +330,15 @@ const char* Fl_Text_Display::linenumber_format() const {
 }
 
 /**
- Attach a text buffer to display, replacing the current buffer (if any)
- \param buf attach this text buffer
- */
+  Attach a text buffer to display, replacing the current buffer (if any).
+
+  Multiple text widgets can be associated with the same text buffer.
+
+  \note The caller is responsible for the old (replaced) buffer (if any).
+	This method does not delete the old buffer.
+
+  \param buf attach this text buffer
+*/
 void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   /* If the text display is already displaying a buffer, clear it off
    of the display and remove our callback from it */

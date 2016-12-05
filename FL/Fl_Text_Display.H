@@ -159,6 +159,7 @@ public:
    Sets the current text buffer associated with the text widget.
    Multiple text widgets can be associated with the same text buffer.
    \param buf new text buffer
+   \see Fl_Text_Display::buffer(Fl_Text_Buffer* buf)
    */
   void buffer(Fl_Text_Buffer& buf) { buffer(&buf); }
   
@@ -166,6 +167,8 @@ public:
    Gets the current text buffer associated with the text widget.
    Multiple text widgets can be associated with the same text buffer.
    \return current text buffer
+   \see Fl_Text_Display::buffer(Fl_Text_Buffer* buf)
+   \see Fl_Text_Display::buffer(Fl_Text_Buffer& buf)
    */
   Fl_Text_Buffer* buffer() const { return mBuffer; }
   
