@@ -35,6 +35,7 @@
 class FL_EXPORT Fl_PicoSDL_Window_Driver : public Fl_Pico_Window_Driver
 {
   SDL_Window *pNativeWindow;
+  SDL_Texture *pNativeTexture;
 public:
   Fl_PicoSDL_Window_Driver(Fl_Window *win);
   virtual ~Fl_PicoSDL_Window_Driver();

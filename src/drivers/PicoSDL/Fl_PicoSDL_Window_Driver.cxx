@@ -76,6 +76,7 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
     pNativeWindow = SDL_CreateWindow(pWindow->label(), pWindow->x(), pWindow->y(), pWindow->w(), pWindow->h(), 0);
   }
   x->xid = SDL_CreateRenderer(pNativeWindow, -1, SDL_RENDERER_ACCELERATED);
+  pNativeTexture = SDL_CreateTexture((SDL_Renderer*)x->xid, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_TARGET, w(), h());
   x->next = Fl_X::first;
   wait_for_expose_value = 0;
   pWindow->i = x;
@@ -95,6 +96,9 @@ Fl_X *Fl_PicoSDL_Window_Driver::makeWindow()
 void Fl_PicoSDL_Window_Driver::draw_end()
 {
   Fl_X *i = Fl_X::i(pWindow);
+  SDL_SetRenderTarget((SDL_Renderer*)pWindow->i->xid, 0L);
+  //SDL_RenderClear((SDL_Renderer*)i->xid);
+  SDL_RenderCopy((SDL_Renderer*)i->xid, pNativeTexture, 0L, 0L);
   SDL_RenderPresent((SDL_Renderer*)i->xid);
 }
 
@@ -102,6 +106,7 @@ void Fl_PicoSDL_Window_Driver::draw_end()
 void Fl_PicoSDL_Window_Driver::make_current()
 {
   fl_window = pWindow->i->xid;
+  SDL_SetRenderTarget((SDL_Renderer*)pWindow->i->xid, pNativeTexture);
 }
 
 
@@ -110,7 +115,6 @@ void Fl_PicoSDL_Window_Driver::show() {
     makeWindow();
   }
 }
-
 
 
 //
