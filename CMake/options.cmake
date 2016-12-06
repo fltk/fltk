@@ -63,6 +63,7 @@ if((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
       endif(X11_Xext_FOUND)
    endif(X11_FOUND)
 endif((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
+
 if (OPTION_APPLE_X11)
   include_directories(AFTER SYSTEM /opt/X11/include/freetype2)
 endif (OPTION_APPLE_X11)
@@ -175,33 +176,69 @@ else()
 endif(OPENGL_FOUND)
 
 #######################################################################
-option(OPTION_USE_THREADS "use multi-threading" ON)
+# Create an option whether we want to check for pthreads.
+# We must not do it on Windows unless we run under Cygwin, since we
+# always use native threads on Windows (even if libpthread is available).
 
-if(OPTION_USE_THREADS)
-   include(FindThreads)
-endif(OPTION_USE_THREADS)
+# Note: HAVE_PTHREAD_H has already been determined in resources.cmake
+# before this file is included (or set to 0 for WIN32).
 
-if(OPTION_USE_THREADS AND CMAKE_HAVE_THREADS_LIBRARY)
-   add_definitions("-D_THREAD_SAFE -D_REENTRANT")
-   set(USE_THREADS 1)
-   set(FLTK_THREADS_FOUND TRUE)
-else()
-   set(FLTK_THREADS_FOUND FALSE)
-endif(OPTION_USE_THREADS AND CMAKE_HAVE_THREADS_LIBRARY)
+if (WIN32 AND NOT CYGWIN)
+  # set(HAVE_PTHREAD_H 0) # (see resources.cmake)
+  set(OPTION_USE_THREADS FALSE)
+else ()
+  option(OPTION_USE_THREADS "use multi-threading with pthreads" ON)
+endif (WIN32 AND NOT CYGWIN)
 
-if(OPTION_USE_THREADS AND CMAKE_USE_PTHREADS_INIT)
-   set(HAVE_PTHREAD 1)
-   if(NOT APPLE)
-     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
-   endif(NOT APPLE)
-   list(APPEND FLTK_LDLIBS -lpthread)
-   list(APPEND FLTK_CFLAGS -D_THREAD_SAFE -D_REENTRANT)
-   set(FLTK_PTHREADS_FOUND TRUE)
-else()
-   set(HAVE_PTHREAD 0)
-   set(HAVE_PTHREAD_H 0)
-   set(FLTK_PTHREADS_FOUND FALSE)
-endif(OPTION_USE_THREADS AND CMAKE_USE_PTHREADS_INIT)
+# initialize more variables
+set(USE_THREADS 0)
+set(HAVE_PTHREAD 0)
+set(FLTK_PTHREADS_FOUND FALSE)
+
+if (OPTION_USE_THREADS)
+
+  include(FindThreads)
+
+  if (CMAKE_HAVE_THREADS_LIBRARY)
+    add_definitions("-D_THREAD_SAFE -D_REENTRANT")
+    set(USE_THREADS 1)
+    set(FLTK_THREADS_FOUND TRUE)
+  endif (CMAKE_HAVE_THREADS_LIBRARY)
+
+  if (CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
+    set(HAVE_PTHREAD 1)
+    if (NOT APPLE)
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+    endif (NOT APPLE)
+    list(APPEND FLTK_LDLIBS -lpthread)
+    list(APPEND FLTK_CFLAGS -D_THREAD_SAFE -D_REENTRANT)
+    set(FLTK_PTHREADS_FOUND TRUE)
+  else()
+    set(HAVE_PTHREAD 0)
+    set(HAVE_PTHREAD_H 0)
+    set(FLTK_PTHREADS_FOUND FALSE)
+  endif(CMAKE_USE_PTHREADS_INIT AND NOT WIN32)
+
+else (OPTION_USE_THREADS)
+
+  set(HAVE_PTHREAD_H 0)
+
+endif (OPTION_USE_THREADS)
+
+set(debug_threads FALSE) # set to true to show debug info
+if (debug_threads)
+  message ("")
+  message (STATUS "NOTE: set debug_threads to FALSE to disable this info!")
+  message (STATUS "WIN32                  = '${WIN32}'")
+  message (STATUS "MINGW                  = '${MINGW}'")
+  message (STATUS "CYGWIN                 = '${CYGWIN}'")
+  message (STATUS "OPTION_USE_THREADS     = '${OPTION_USE_THREADS}'")
+  message (STATUS "HAVE_PTHREAD           = '${HAVE_PTHREAD}'")
+  message (STATUS "HAVE_PTHREAD_H         = '${HAVE_PTHREAD_H}'")
+  message (STATUS "FLTK_THREADS_FOUND     = '${FLTK_THREADS_FOUND}'")
+  message (STATUS "CMAKE_EXE_LINKER_FLAGS = '${CMAKE_EXE_LINKER_FLAGS}'")
+endif (debug_threads)
+unset(debug_threads)
 
 #######################################################################
 option(OPTION_LARGE_FILE "enable large file support" ON)
