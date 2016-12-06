@@ -401,12 +401,15 @@ void lock_ring() {
   pthread_mutex_lock(ring_mutex);
 }
 
-#else
+#else // ! HAVE_PTHREAD
 
 void Fl_Posix_System_Driver::awake(void*) {}
 int Fl_Posix_System_Driver::lock() { return 1; }
 void Fl_Posix_System_Driver::unlock() {}
 void* Fl_Posix_System_Driver::thread_message() { return NULL; }
+
+void lock_ring() {}
+void unlock_ring() {}
 
 #endif // HAVE_PTHREAD
 
