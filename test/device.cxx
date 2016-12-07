@@ -570,7 +570,7 @@ void copy(Fl_Widget *, void *data) {
       decorated = 0;
     }
     rgb_surf = new Fl_Image_Surface(W, H, 1);
-    rgb_surf->set_current();
+    Fl_Surface_Device::push_current(rgb_surf);
     fl_color(FL_YELLOW);fl_rectf(0,0,W,H);
     if (decorated)
       rgb_surf->draw_decorated_window(target->as_window());
@@ -578,7 +578,7 @@ void copy(Fl_Widget *, void *data) {
       rgb_surf->draw(target);
     Fl_Image *img = rgb_surf->highres_image();
     delete rgb_surf;
-    Fl_Display_Device::display_device()->set_current();
+    Fl_Surface_Device::pop_current();
     if (img) {
       Fl_Window* g2 = new Fl_Window(img->w()+10, img->h()+10);
       g2->color(FL_YELLOW);
@@ -596,17 +596,17 @@ void copy(Fl_Widget *, void *data) {
     Fl_Copy_Surface *copy_surf;
     if (target->as_window() && !target->parent()) {
       copy_surf = new Fl_Copy_Surface(target->as_window()->decorated_w(), target->as_window()->decorated_h());
-      copy_surf->set_current();
+      Fl_Surface_Device::push_current(copy_surf);
       copy_surf->draw_decorated_window(target->as_window(), 0, 0);
     }
     else {
       copy_surf = new Fl_Copy_Surface(target->w()+10, target->h()+20);
-      copy_surf->set_current();
+      Fl_Surface_Device::push_current(copy_surf);
       fl_color(FL_YELLOW);fl_rectf(0,0,copy_surf->w(), copy_surf->h());
       copy_surf->draw(target, 5, 10);
     }
     delete copy_surf;
-    Fl_Display_Device::display_device()->set_current();  
+    Fl_Surface_Device::pop_current();
     }
   
   if (strcmp(operation, "Fl_Printer") == 0 || strcmp(operation, "Fl_PostScript_File_Device") == 0) {

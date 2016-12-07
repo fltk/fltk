@@ -28,10 +28,10 @@
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
+  virtual void end_current_();
 protected:
   Fl_Offscreen xid;
   Window oldwindow;
-  Fl_Surface_Device *_ss;
   Fl_Xlib_Copy_Surface_Driver(int w, int h);
   ~Fl_Xlib_Copy_Surface_Driver();
   void set_current();
@@ -51,26 +51,22 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
   driver(new Fl_Translated_Xlib_Graphics_Driver());
-  Fl::first_window()->make_current();
-  oldwindow = fl_xid(Fl::first_window());
+  oldwindow = fl_window;
   xid = fl_create_offscreen(w,h);
-  _ss = NULL;
-  Fl_Surface_Device *present_surface = Fl_Surface_Device::surface();
-  Fl_Surface_Device::set_current();
-  fl_push_no_clip();
+  driver()->push_no_clip();
   fl_window = xid;
   driver()->color(FL_WHITE);
   driver()->rectf(0, 0, w, h);
-  present_surface->set_current();
   fl_window = oldwindow;
 }
 
 
 Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
-  fl_pop_clip();
+  driver()->pop_clip();
+  bool need_push = (Fl_Surface_Device::surface() != this);
+  if (need_push) Fl_Surface_Device::push_current(this);
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);
-  fl_window = oldwindow;
-  _ss->set_current();
+  if (need_push) Fl_Surface_Device::pop_current();
   Fl_X11_Screen_Driver::copy_image(data, width, height, 1);
   delete[] data;
   fl_delete_offscreen(xid);
@@ -79,11 +75,14 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
 
 
 void Fl_Xlib_Copy_Surface_Driver::set_current() {
+  oldwindow = fl_window;
   fl_window = xid;
-  if (!_ss) _ss = Fl_Surface_Device::surface();
   Fl_Surface_Device::set_current();
 }
 
+void Fl_Xlib_Copy_Surface_Driver::end_current_() {
+  fl_window = oldwindow;
+}
 
 void Fl_Xlib_Copy_Surface_Driver::translate(int x, int y) {
   ((Fl_Translated_Xlib_Graphics_Driver*)driver())->translate_all(x, y);

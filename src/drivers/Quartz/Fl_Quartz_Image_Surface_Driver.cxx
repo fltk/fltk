@@ -29,7 +29,6 @@ class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
   virtual void end_current_();
 public:
-  Fl_Surface_Device *previous;
   Window pre_window;
   Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res);
   ~Fl_Quartz_Image_Surface_Driver();
@@ -47,7 +46,6 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 
 
 Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
-  previous = 0;
   int W = high_res ? 2*w : w;
   int H = high_res ? 2*h : h;
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
@@ -77,7 +75,6 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
 
 void Fl_Quartz_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
-  if (!previous) previous = Fl_Surface_Device::surface();
   driver()->gc(offscreen);
   fl_window = 0;
   Fl_Surface_Device::set_current();

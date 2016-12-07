@@ -146,21 +146,13 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
   }
 }
 
-static Fl_Surface_Device* stack_surface[16];
-static unsigned stack_height = 0;
-
 /**  Send all subsequent drawing commands to this offscreen buffer.
    \param ctx     the offscreen buffer.
    */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
   for (int i = 0; i < count_offscreens; i++) {
     if (offscreen_api_surface[i] && offscreen_api_surface[i]->offscreen() == ctx) {
-      if (stack_height < sizeof(stack_surface)/sizeof(void*)) {
-        stack_surface[stack_height++] = Fl_Surface_Device::surface();
-      } else {
-        fprintf(stderr, "FLTK fl_begin_offscreen Stack overflow error\n");
-      }
-      offscreen_api_surface[i]->set_current();
+      Fl_Surface_Device::push_current(offscreen_api_surface[i]);
       return;
     }
   }
@@ -169,9 +161,7 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
 /** Quit sending drawing commands to the current offscreen buffer.
    */
 void fl_end_offscreen() {
-  if (stack_height > 0) {
-    stack_surface[--stack_height]->set_current();
-  }
+  Fl_Surface_Device::pop_current();
 }
 
 /** @} */

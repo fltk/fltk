@@ -29,7 +29,6 @@ class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
   virtual void end_current_();
 public:
-  Fl_Surface_Device *previous;
   Window pre_window;
   int was_high;
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
@@ -46,7 +45,6 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 }
 
 Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
-  previous = 0;
   if (!off) {
     fl_open_display();
     offscreen = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
@@ -61,7 +59,6 @@ Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
 
 void Fl_Xlib_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
-  if (!previous) previous = Fl_Surface_Device::surface();
   Fl_Surface_Device::set_current();
   fl_window = offscreen;
   fl_push_no_clip();

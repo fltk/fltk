@@ -387,8 +387,7 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   top = left = bottom = right = NULL;
   if (pWindow->decorated_h() == h()) return;
   Window from = fl_window;
-  Fl_Surface_Device *previous = Fl_Surface_Device::surface();
-  Fl_Display_Device::display_device()->set_current();
+  Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
   pWindow->show();
   Fl::check();
   pWindow->make_current();
@@ -421,7 +420,7 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
     }
   }
   fl_window = from;
-  previous->Fl_Surface_Device::set_current();
+  Fl_Surface_Device::pop_current();
 }
 
 

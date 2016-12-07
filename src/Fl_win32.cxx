@@ -2392,9 +2392,8 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   float scaling = 1;
   RECT r = border_width_title_bar_height(wsides, hbottom, bt, &scaling);
   int htop = bt + hbottom;
-  Fl_Surface_Device *previous = Fl_Surface_Device::surface();
   Window save_win = fl_window;
-  Fl_Display_Device::display_device()->set_current();
+  Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
   pWindow->show();
   Fl::check();
   void* save_gc = fl_graphics_driver->gc();
@@ -2417,7 +2416,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   ReleaseDC(NULL, (HDC)fl_graphics_driver->gc());
   fl_window = save_win;
   fl_graphics_driver->gc(save_gc);
-  previous->set_current();
+  Fl_Surface_Device::pop_current();
 }
 
 

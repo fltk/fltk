@@ -42,23 +42,18 @@
       |
       +- Fl_..._Graphics_Driver: platform specific graphics driver
 
-TODO:
-  Window Device to handle creation of surfaces and manage events
-  System Device to handle file system acces, standard dialogs, etc.
-
 */
 
-Fl_Surface_Device *Fl_Surface_Device::pre_surface_ = NULL;
-
-/** \brief Make this surface the current drawing surface.
- This surface will receive all future graphics requests. */
+/** Make this surface the current drawing surface.
+ This surface will receive all future graphics requests. 
+ \p Starting from FLTK 1.4.0, another convenient API to set/unset the current drawing surface
+ is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().*/
 void Fl_Surface_Device::set_current(void)
 {
-  if (pre_surface_) pre_surface_->end_current_();
+  if (surface_) surface_->end_current_();
   fl_graphics_driver = pGraphicsDriver;
   surface_ = this;
   pGraphicsDriver->global_gc();
-  pre_surface_ = this;
 }
 
 Fl_Surface_Device* Fl_Surface_Device::surface_; // the current target surface of graphics operations
@@ -66,7 +61,7 @@ Fl_Surface_Device* Fl_Surface_Device::surface_; // the current target surface of
 
 Fl_Surface_Device::~Fl_Surface_Device()
 {
-  if (pre_surface_ == this) pre_surface_ = NULL;
+  if (surface_ == this) surface_ = NULL;
 }
 
 
@@ -86,6 +81,31 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
 Fl_Surface_Device *Fl_Surface_Device::default_surface()
 {
   return Fl_Display_Device::display_device();
+}
+
+static int surface_stack_height = 0;
+static Fl_Surface_Device *surface_stack[16];
+
+/** Pushes \p new_current on top of the stack of current drawing surfaces, and makes it current.
+ \p new_current will receive all future graphics requests.
+ \version 1.4.0 */
+void Fl_Surface_Device::push_current(Fl_Surface_Device *new_current)
+{
+  if (surface_stack_height < sizeof(surface_stack)/sizeof(void*)) {
+    surface_stack[surface_stack_height++] = surface();
+  } else {
+    fprintf(stderr, "FLTK Fl_Surface_Device::push_current Stack overflow error\n");
+  }
+  new_current->set_current();
+}
+
+/** Removes the top element from the current drawing surface stack, and makes the new top element current.
+ \return A pointer to the new current drawing surface. 
+ \version 1.4.0 */
+Fl_Surface_Device *Fl_Surface_Device::pop_current()
+{
+  if (surface_stack_height > 0) surface_stack[--surface_stack_height]->set_current();
+  return surface_;
 }
 
 //

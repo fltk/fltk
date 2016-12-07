@@ -40,24 +40,24 @@ class Fl_Widget;
 
  A drawing surface other than the computer's display, is typically used as follows:
  <ol><li> Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
- <li> Memorize what is the current drawing surface with <tt> Fl_Surface_Device *old_current = Fl_Surface_Device::surface();</tt>
- <li> Call \c surface->set_current(); to redirect all graphics requests to \c surface which becomes the new
+ <li> Call \c Fl_Surface_Device::push_current(surface); to redirect all graphics requests to \c surface which becomes the new
  current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::start_job()).
- <li> At this point any of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
- (e.g., fl_draw_image(), Fl_Image::draw()) operates on the new current drawing surface.
+ <li> At this point all of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
+ (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface.
  Certain drawing surfaces allow additional ways to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
  <li> After all drawing requests have been performed, redirect graphics requests back to their previous destination
- with \c old_current->set_current();.
+ with \c Fl_Surface_Device::pop_current();.
  <li> Delete \c surface.
  </ol>
+ For back-compatibility, it is also possible to use the Fl_Surface_Device::set_current() member function
+ to change the current drawing surface, once to the new surface, once to the previous one.
  */
 class FL_EXPORT Fl_Surface_Device {
   /** The graphics driver in use by this surface. */
   Fl_Graphics_Driver *pGraphicsDriver;
-  static Fl_Surface_Device *surface_; // the surface that currently receives graphics output
+  static Fl_Surface_Device *surface_; // the surface that currently receives graphics requests
   static Fl_Surface_Device *default_surface(); // create surface if none exists yet
-  static Fl_Surface_Device *pre_surface_;
-  // Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) need to re-implement this.
+  // Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) re-implement this.
   // Gets called each time a surface ceases to be the current drawing surface.
   virtual void end_current_() {}
 protected:
@@ -70,12 +70,14 @@ public:
   /** \brief Returns the graphics driver of this drawing surface. */
   inline Fl_Graphics_Driver *driver() {return pGraphicsDriver; };
   /** The current drawing surface.
-   In other words, the Fl_Surface_Device object that currently receives all graphics output */
+   In other words, the Fl_Surface_Device object that currently receives all graphics requests */
   static inline Fl_Surface_Device *surface() {
     return surface_ ? surface_ : default_surface();
   };
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device();
+  static void push_current(Fl_Surface_Device *new_current);
+  static Fl_Surface_Device *pop_current();
 };
 
 /**

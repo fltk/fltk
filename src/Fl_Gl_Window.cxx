@@ -359,8 +359,7 @@ void Fl_Gl_Window::draw_overlay() {}
 */
 void Fl_Gl_Window::draw() {
 #ifdef FL_CFG_GFX_OPENGL
-  Fl_Surface_Device *prev_device = Fl_Surface_Device::surface();
-  Fl_OpenGL_Display_Device::display_device()->set_current();
+  Fl_Surface_Device::push_current( Fl_OpenGL_Display_Device::display_device() );
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
   glPushMatrix();
@@ -375,7 +374,7 @@ void Fl_Gl_Window::draw() {
 
   glPopMatrix();
   glPushAttrib(GL_ENABLE_BIT);
-  prev_device->set_current();
+  Fl_Surface_Device::pop_current();
 #else
   Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
 #endif

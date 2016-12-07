@@ -76,8 +76,7 @@ Fl_RGB_Image* prepare_shape(int w)
 {
   // draw a white circle with a hole in it on black background
   Fl_Image_Surface *surf = new Fl_Image_Surface(w, w);
-  Fl_Surface_Device* current = Fl_Surface_Device::surface();
-  surf->set_current();
+  Fl_Surface_Device::push_current(surf);
   fl_color(FL_BLACK);
   fl_rectf(-1, -1, w+2, w+2);
   fl_color(FL_WHITE);
@@ -86,7 +85,7 @@ Fl_RGB_Image* prepare_shape(int w)
   fl_pie(0.7*w,w/2,w/4,w/4,0,360);
   Fl_RGB_Image* img = surf->image();
   delete surf;
-  current->set_current();
+  Fl_Surface_Device::pop_current();
   return img; // return white image on black background
 }
 
