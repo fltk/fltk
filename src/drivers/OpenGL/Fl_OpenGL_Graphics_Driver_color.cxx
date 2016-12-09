@@ -58,7 +58,7 @@ void Fl_OpenGL_Graphics_Driver::color(Fl_Color i) {
 */
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;
-    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
+    color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
     Fl_Graphics_Driver::color(i);
     uchar red, green, blue;

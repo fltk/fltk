@@ -90,7 +90,7 @@ static void set_xmap(Fl_XMap& xmap, COLORREF c) {
 void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;
-    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
+    color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
     Fl_Graphics_Driver::color(i);
     Fl_XMap &xmap = fl_xmap[i];

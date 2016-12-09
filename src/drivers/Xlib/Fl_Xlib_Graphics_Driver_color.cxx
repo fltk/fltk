@@ -113,7 +113,7 @@ Fl_XColor fl_xmap[1][256];
 void Fl_Xlib_Graphics_Driver::color(Fl_Color i) {
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;
-    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
+    color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
     Fl_Graphics_Driver::color(i);
     if(!gc_) return; // don't get a default gc if current window is not yet created/valid
