@@ -63,7 +63,9 @@ void Fl_Image_Surface::untranslate() {
   if (platform_surface) platform_surface->untranslate();
 }
 
-/** Returns the Fl_Offscreen object associated to the image surface */
+/** Returns the Fl_Offscreen object associated to the image surface.
+ The returned Fl_Offscreen object is deleted when the Fl_Image_Surface object is deleted.
+ */
 Fl_Offscreen Fl_Image_Surface::offscreen() { 
   return platform_surface ? platform_surface->offscreen : (Fl_Offscreen)0;
 }
@@ -93,7 +95,8 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
   return s_img;
 }
 
-/** Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen
+/** Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen.
+ This member function is intended for internal use by the FLTK library.
  */
 Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete() {
   Fl_Offscreen keep = platform_surface->offscreen;
@@ -135,6 +138,7 @@ Fl_Offscreen fl_create_offscreen(int w, int h) {
 
 /**  Deletion of an offscreen graphics buffer.
    \param ctx     the buffer to be deleted.
+   \note The \p ctx argument must have been created by fl_create_offscreen().
    */
 void fl_delete_offscreen(Fl_Offscreen ctx) {
   if (!ctx) return;
