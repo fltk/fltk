@@ -74,11 +74,7 @@ int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
 /** see fl_copy_offscreen() */
 void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
 {
-  fl_begin_offscreen(pixmap);
-  uchar *img = fl_read_image(NULL, srcx, srcy, w, h, 0);
-  fl_end_offscreen();
-  fl_draw_image(img, x, y, w, h, 3, 0);
-  delete[] img;
+  // nothing to do, reimplement in driver if needed
 }
 
 /** see fl_set_spot() */
