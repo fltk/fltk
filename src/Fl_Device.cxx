@@ -83,7 +83,7 @@ Fl_Surface_Device *Fl_Surface_Device::default_surface()
   return Fl_Display_Device::display_device();
 }
 
-static int surface_stack_height = 0;
+static unsigned int surface_stack_height = 0;
 static Fl_Surface_Device *surface_stack[16];
 
 /** Pushes \p new_current on top of the stack of current drawing surfaces, and makes it current.
