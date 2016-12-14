@@ -1143,6 +1143,17 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, i
   return rgb;
 }
 
+
+void Fl_X11_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
+{
+  int px, py;
+  unsigned w, h, b, d;
+  Window root;
+  XGetGeometry(fl_display, off, &root, &px, &py, &w, &h, &b, &d);
+  width = (int)w;
+  height = (int)h;
+}
+
 //
 // End of "$Id$".
 //

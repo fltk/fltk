@@ -77,6 +77,7 @@ public:
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display();
+  virtual void offscreen_size(Fl_Offscreen off, int &width, int &height);
 };
 
 

@@ -19,6 +19,7 @@
 #include <FL/Fl.H>
 #include "config_lib.h"
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Image.H>
 #include <FL/fl_draw.H>
 
@@ -74,7 +75,22 @@ int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
 /** see fl_copy_offscreen() */
 void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
 {
-  // nothing to do, reimplement in driver if needed
+  // This platform-independent version is used when the current graphics driver is PostScript.
+  // It requires that pixmap has been created by fl_create_offscreen().
+  int px_width = w, px_height = h;
+  Fl::screen_driver()->offscreen_size(pixmap, px_width, px_height);
+  int px = srcx, py = srcy, pw = w, ph = h;
+  if (px < 0) {px = 0; pw += srcx; x -= srcx;}
+  if (py < 0) {py = 0; ph += srcy; y -= srcy;}
+  if (px + pw > px_width) {pw = px_width - px;}
+  if (py + ph > px_height) {ph = px_height - py;}
+  fl_begin_offscreen(pixmap);
+  uchar *img = fl_read_image(NULL, px, py, pw, ph, 0);
+  fl_end_offscreen();
+  if (img) {
+    fl_draw_image(img, x, y, pw, ph, 3, 0);
+    delete[] img;
+  }
 }
 
 /** see fl_set_spot() */

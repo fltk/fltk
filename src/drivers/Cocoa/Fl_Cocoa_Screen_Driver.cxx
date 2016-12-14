@@ -400,6 +400,12 @@ int Fl_Cocoa_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsi
   return -1;
 }
 
+void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
+{
+  width = CGBitmapContextGetWidth(off);
+  height = CGBitmapContextGetHeight(off);
+}
+
 //
 // End of "$Id$".
 //

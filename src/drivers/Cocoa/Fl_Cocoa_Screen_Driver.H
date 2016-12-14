@@ -94,6 +94,8 @@ public:
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display();
+  // --- compute dimensions of an Fl_Offscreen
+  virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
 };
 
 

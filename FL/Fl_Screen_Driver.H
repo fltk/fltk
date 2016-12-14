@@ -140,6 +140,8 @@ public:
   virtual void open_display() {}
   // optional method to close display access
   virtual void close_display() {}
+  // compute dimensions of an Fl_Offscreen
+  virtual void offscreen_size(Fl_Offscreen off, int &width, int &height) {}
 };
 
 

@@ -638,6 +638,15 @@ float Fl_WinAPI_Screen_Driver::desktop_scaling_factor() {
   return scaling;
 }
 
+void Fl_WinAPI_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
+{
+  BITMAP bitmap;
+  if ( GetObject(off, sizeof(BITMAP), &bitmap) ) {
+    width = bitmap.bmWidth;
+    height = bitmap.bmHeight;
+  }
+}
+
 //
 // End of "$Id$".
 //
