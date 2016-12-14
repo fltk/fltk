@@ -220,6 +220,7 @@ void oscr_box::oscr_drawing(void)
     ox = ex;
     oy = ey;
   }
+  fl_line_style(FL_SOLID, 0);
   fl_end_offscreen(); // close the offscreen context
   redraw();
 } // oscr_drawing
