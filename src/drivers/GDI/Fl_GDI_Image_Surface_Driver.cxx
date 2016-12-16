@@ -34,7 +34,7 @@ public:
   Window pre_window;
   HDC _sgc;
   int _savedc;
-  Fl_GDI_Image_Surface_Driver(int w, int h, int high_res);
+  Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_GDI_Image_Surface_Driver();
   void set_current();
   void translate(int x, int y);
@@ -45,13 +45,13 @@ public:
 
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
-  return new Fl_GDI_Image_Surface_Driver(w, h, high_res);
+  return new Fl_GDI_Image_Surface_Driver(w, h, high_res, off);
 }
 
 
-Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
+Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
   previous = 0;
-  offscreen = CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h);
+  offscreen = off ? off : CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h);
   driver(new Fl_Translated_GDI_Graphics_Driver);
   _sgc = NULL;
 }

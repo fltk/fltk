@@ -22,6 +22,7 @@
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Image.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Image_Surface.H>
 
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
@@ -75,8 +76,10 @@ int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
 /** see fl_copy_offscreen() */
 void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
 {
-  // This platform-independent version is used when the current graphics driver is PostScript.
-  // It requires that pixmap has been created by fl_create_offscreen().
+  // This platform-independent version can be used by any graphics driver,
+  // noticeably the PostScript driver.
+  // More efficient platform-specific implementations exist for other graphics drivers.
+  Fl_Image_Surface *surface = NULL;
   int px_width = w, px_height = h;
   Fl::screen_driver()->offscreen_size(pixmap, px_width, px_height);
   int px = srcx, py = srcy, pw = w, ph = h;
@@ -84,9 +87,19 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   if (py < 0) {py = 0; ph += srcy; y -= srcy;}
   if (px + pw > px_width) {pw = px_width - px;}
   if (py + ph > px_height) {ph = px_height - py;}
+  Fl_Surface_Device *current = Fl_Surface_Device::surface();
   fl_begin_offscreen(pixmap);
+  // test whether pixmap was not created by fl_create_offscreen()
+  if (current == Fl_Surface_Device::surface()) {
+    surface = new Fl_Image_Surface(px_width, px_height, 0, pixmap);
+    Fl_Surface_Device::push_current(surface);
+  }
   uchar *img = fl_read_image(NULL, px, py, pw, ph, 0);
-  fl_end_offscreen();
+  if (surface) {
+    Fl_Surface_Device::pop_current();
+    surface->get_offscreen_before_delete(); // so deleting surface does not touch pixmap
+    delete surface;
+  } else fl_end_offscreen();
   if (img) {
     fl_draw_image(img, x, y, pw, ph, 3, 0);
     delete[] img;

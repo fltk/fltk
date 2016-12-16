@@ -30,7 +30,7 @@ class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current_();
 public:
   Window pre_window;
-  Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res);
+  Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Quartz_Image_Surface_Driver();
   void set_current();
   void translate(int x, int y);
@@ -39,17 +39,17 @@ public:
 };
 
 
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen)
+Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
-  return new Fl_Quartz_Image_Surface_Driver(w, h, high_res);
+  return new Fl_Quartz_Image_Surface_Driver(w, h, high_res, off);
 }
 
 
-Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
+Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
   int W = high_res ? 2*w : w;
   int H = high_res ? 2*h : h;
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  offscreen = CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
+  offscreen = off ? off : CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
   driver(new Fl_Quartz_Graphics_Driver);
   CGContextTranslateCTM(offscreen, 0.5, -0.5); // as when drawing to a window

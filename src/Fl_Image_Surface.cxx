@@ -146,6 +146,7 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
     if (offscreen_api_surface[i] && offscreen_api_surface[i]->offscreen() == ctx) {
       delete offscreen_api_surface[i];
       offscreen_api_surface[i] = NULL;
+      return;
     }
   }
 }
