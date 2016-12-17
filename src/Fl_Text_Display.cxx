@@ -1537,24 +1537,17 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
 
 
 
-static inline int fl_isseparator(unsigned int c) {
-  // FIXME: this does not take UCS-4 encoding into account
-  return c != '$' && c != '_' && (isspace(c) || ispunct(c));
-}
-
-
-
 /**
  \brief Moves the current insert position right one word.
  */
 void Fl_Text_Display::next_word() {
   int pos = insert_position();
 
-  while (pos < buffer()->length() && !fl_isseparator(buffer()->char_at(pos))) {
+  while (pos < buffer()->length() && !buffer()->is_word_separator(pos)) {
     pos = buffer()->next_char(pos);
   }
 
-  while (pos < buffer()->length() && fl_isseparator(buffer()->char_at(pos))) {
+  while (pos < buffer()->length() && buffer()->is_word_separator(pos)) {
     pos = buffer()->next_char(pos);
   }
 
@@ -1571,15 +1564,15 @@ void Fl_Text_Display::previous_word() {
   if (pos==0) return;
   pos = buffer()->prev_char(pos);
 
-  while (pos && fl_isseparator(buffer()->char_at(pos))) {
+  while (pos && buffer()->is_word_separator(pos)) {
     pos = buffer()->prev_char(pos);
   }
 
-  while (pos && !fl_isseparator(buffer()->char_at(pos))) {
+  while (pos && !buffer()->is_word_separator(pos)) {
     pos = buffer()->prev_char(pos);
   }
 
-  if (fl_isseparator(buffer()->char_at(pos))) {
+  if (buffer()->is_word_separator(pos)) {
     pos = buffer()->next_char(pos);
   }
 

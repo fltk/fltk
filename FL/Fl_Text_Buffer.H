@@ -699,6 +699,7 @@ public:
    to be informed if file input required transcoding to UTF-8.
    */
   void (*transcoding_warning_action)(Fl_Text_Buffer*);
+  bool is_word_separator(int pos) const;
 
 protected:
 

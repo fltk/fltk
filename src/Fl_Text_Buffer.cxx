@@ -825,17 +825,29 @@ int Fl_Text_Buffer::line_end(int pos) const {
 } 
 
 
+/** Returns whether character at position \p pos is a word separator.
+ Pos must be at a character boundary.
+ */
+bool Fl_Text_Buffer::is_word_separator(int pos) const {
+  int c = char_at(pos);
+  if (c < 128) {
+    return !(isalnum(c) || c == '_');  // non alphanumeric ASCII
+  }
+  return (c == 0xA0 ||                 // NO-BREAK SPACE
+          (c >= 0x3000 && c <= 0x301F) // IDEOGRAPHIC punctuation
+         );
+}
+
+
 /*
  Find the beginning of a word.
- NOT UNICODE SAFE.
  */
 int Fl_Text_Buffer::word_start(int pos) const {
-  // FIXME: character is ucs-4
-  while (pos>0 && (isalnum(char_at(pos)) || char_at(pos) == '_')) {
+  while (pos > 0 && !is_word_separator(pos))
+  {
     pos = prev_char(pos);
-  } 
-  // FIXME: character is ucs-4
-  if (!(isalnum(char_at(pos)) || char_at(pos) == '_'))
+  }
+  if (is_word_separator(pos))
     pos = next_char(pos);
   return pos;
 }
@@ -843,11 +855,9 @@ int Fl_Text_Buffer::word_start(int pos) const {
 
 /*
  Find the end of a word.
- NOT UNICODE SAFE.
  */
 int Fl_Text_Buffer::word_end(int pos) const {
-  // FIXME: character is ucs-4
-  while (pos < length() && (isalnum(char_at(pos)) || char_at(pos) == '_'))
+  while (pos < length() && !is_word_separator(pos))
   {
     pos = next_char(pos);
   }
