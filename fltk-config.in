@@ -291,7 +291,14 @@ if test -n "$compile"; then
 fi
 
 if test -n "$post"; then
-    case "`uname`" in
+    running=`uname`
+    if test "$running" = "Darwin"; then
+   	# if FLTK targets MacOS+X11, apps need not be bundled
+    	if test `echo $LDLIBS | fgrep -c -e " -lX11"` = 1; then
+    		running=""
+    	fi
+    fi
+    case $running in
 	Darwin)
 	    echo Creating "'$post.app'" bundle for desktop...
 	    id=`echo $post | tr ' ' '_'`
