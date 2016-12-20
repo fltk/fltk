@@ -62,8 +62,8 @@ public: // so the inline functions work
   void (*entry)(int);
   void (*visibility)(int);
   void (*special)(int, int x, int y);
-  Fl_Glut_Window(int w, int h, const char *);
-  Fl_Glut_Window(int x, int y, int w, int h, const char *);
+  Fl_Glut_Window(int w, int h, const char *t=0);
+  Fl_Glut_Window(int x, int y, int w, int h, const char *t=0);
   ~Fl_Glut_Window();
 };
 
