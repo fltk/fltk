@@ -616,7 +616,7 @@ Fl_Bitmask Fl_Xlib_Graphics_Driver::create_bitmask(int w, int h, const uchar *da
 }
 
 void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
-  fl_delete_offscreen((Fl_Offscreen)bm);
+  XFreePixmap(fl_display, bm);
 }
 
 void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
