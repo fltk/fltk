@@ -85,10 +85,18 @@
 /*
  * USE_XFT
  *
- * Use the new Xft library to draw anti-aliased text.
+ * Use the Xft library to draw anti-aliased text.
  */
 
 #define USE_XFT 0
+
+/*
+ * USE_PANGO
+ *
+ * Use the pango library to draw UTF-8 text.
+ */
+
+#define USE_PANGO 0
 
 /*
  * HAVE_XDBE:

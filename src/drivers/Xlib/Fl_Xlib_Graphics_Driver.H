@@ -1,8 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
-// for the Fast Light Tool Kit (FLTK).
+// Definition of class Fl_Xlib_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
 //
@@ -43,12 +42,31 @@ struct _XRegion {
 };
 #endif // HAVE_X11_XREGION_H
 
+#if USE_PANGO
+#include <pango/pangoxft.h>
+#endif
+
+
 /**
  \brief The Xlib-specific graphics class.
  *
  This class is implemented only on the Xlib platform.
  */
 class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
+#if USE_XFT
+  void drawUCS4(const void *str, int n, int x, int y);
+#endif
+#if USE_PANGO
+  friend class Fl_X11_Screen_Driver;
+  static PangoContext *pctxt_;
+  static PangoFontMap *pfmap_;
+  static PangoLayout *playout_;
+protected:
+  PangoFontDescription *pfd_;
+  void do_draw(int from_right, const char *str, int n, int x, int y);
+  static PangoContext *context();
+  static void init_built_in_fonts();
+#endif
 protected:
   static GC gc_;
   uchar **mask_bitmap_;
@@ -59,9 +77,13 @@ protected:
   XPOINT *p;
   int line_width_;
   int clip_x(int x);
+#if USE_XFT
+  static Window draw_window;
+  static struct _XftDraw* draw_;
+#endif
 public:
   Fl_Xlib_Graphics_Driver(void);
-  virtual ~Fl_Xlib_Graphics_Driver() { if (p) free(p); }
+  virtual ~Fl_Xlib_Graphics_Driver();
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void *gc() { return gc_; }
   virtual void gc(void *value);
@@ -100,7 +122,7 @@ public:
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);
 protected:
-  void transformed_vertex0(short x, short y);
+  virtual void transformed_vertex0(short x, short y);
   void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/xlib_rect.cxx
   void point(int x, int y);

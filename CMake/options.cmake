@@ -372,7 +372,45 @@ endif(OPTION_USE_XCURSOR)
 #######################################################################
 if(X11_Xft_FOUND)
    option(OPTION_USE_XFT "use lib Xft" ON)
+   option(OPTION_USE_PANGO "use lib Pango" OFF)
 endif(X11_Xft_FOUND)
+
+#######################################################################
+if(X11_Xft_FOUND AND OPTION_USE_PANGO)
+#this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
+   if(APPLE AND OPTION_APPLE_X11)
+	list(APPEND CMAKE_INCLUDE_PATH  /sw/include)
+    	list(APPEND CMAKE_LIBRARY_PATH  /sw/lib)
+   endif(APPLE AND OPTION_APPLE_X11)
+   find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})
+   find_file(HAVE_PANGOXFT_H pango-1.0/pango/pangoxft.h ${CMAKE_INCLUDE_PATH})
+
+  if(HAVE_PANGO_H AND HAVE_PANGOXFT_H)
+    find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
+    find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
+    if(APPLE)
+    	set(HAVE_LIB_GOBJECT TRUE)
+    else()
+    	find_library(HAVE_LIB_GOBJECT gobject-2.0 ${CMAKE_LIBRARY_PATH})
+    endif(APPLE)
+  endif(HAVE_PANGO_H AND HAVE_PANGOXFT_H)
+  if(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+    set(USE_PANGO TRUE)
+    message(STATUS "USE_PANGO=" ${USE_PANGO})
+    #remove last 3 components of HAVE_PANGO_H and put in PANGO_H_PREFIX
+    get_filename_component(PANGO_H_PREFIX ${HAVE_PANGO_H} PATH)
+    get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
+    get_filename_component(PANGO_H_PREFIX ${PANGO_H_PREFIX} PATH)
+
+    get_filename_component(PANGOLIB_DIR ${HAVE_LIB_PANGO} PATH)
+    #glib.h is usually in ${PANGO_H_PREFIX}/glib-2.0/ ...
+    find_path(GLIB_H_PATH glib.h ${PANGO_H_PREFIX}/glib-2.0)
+    if(NOT GLIB_H_PATH) # ... but not under NetBSD
+		find_path(GLIB_H_PATH glib.h ${PANGO_H_PREFIX}/glib/glib-2.0)
+    endif(NOT GLIB_H_PATH)
+    include_directories(${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
+  endif(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+endif(X11_Xft_FOUND AND OPTION_USE_PANGO)
 
 if(OPTION_USE_XFT)
    set(USE_XFT X11_Xft_FOUND)

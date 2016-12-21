@@ -16,7 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-// Select fonts from the FLTK font table.
+#ifndef FL_DOXYGEN
+
 #include "../../flstring.h"
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
@@ -26,45 +27,106 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include <X11/Xft/Xft.h>
-
-// This function fills in the fltk font table with all the fonts that
-// are found on the X server.  It tries to place the fonts into families
-// and to sort them so the first 4 in a family are normal, bold, italic,
-// and bold italic.
-
-// Bug: older versions calculated the value for *ap as a side effect of
-// making the name, and then forgot about it. To avoid having to change
-// the header files I decided to store this value in the last character
-// of the font name array.
-#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
+#include <X11/Xft/XftCompat.h>
 
 #define USE_OVERLAY 0
 
-// turn a stored font name in "fltk format" into a pretty name:
-const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
-  Fl_Fontdesc *f = fl_fonts + fnum;
-  if (!f->fontname[0]) {
-    const char* p = f->name;
-    int type;
-    switch (p[0]) {
-    case 'B': type = FL_BOLD; break;
-    case 'I': type = FL_ITALIC; break;
-    case 'P': type = FL_BOLD | FL_ITALIC; break;
-    default:  type = 0; break;
-    }
+#if USE_OVERLAY
+// Currently Xft does not work with colormapped visuals, so this probably
+// does not work unless you have a true-color overlay.
+extern bool fl_overlay;
+extern Colormap fl_overlay_colormap;
+extern XVisualInfo* fl_overlay_visual;
+#endif
 
-  // NOTE: This can cause duplications in fonts that already have Bold or Italic in
-  // their "name". Maybe we need to find a cleverer way?
-    strlcpy(f->fontname, p+1, ENDOFBUFFER);
-    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
-    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
-    f->fontname[ENDOFBUFFER] = (char)type;
-  }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
-  return f->fontname;
-}
+Fl_XFont_On_Demand fl_xfont = 0;
+
+static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle);
+
+// For some reason Xft produces errors if you destroy a window whose id
+// still exists in an XftDraw structure. It would be nice if this is not
+// true, a lot of junk is needed to try to stop this:
+
+XftDraw* Fl_Xlib_Graphics_Driver::draw_ = 0;
+Window Fl_Xlib_Graphics_Driver::draw_window = (Window)0;
+#if USE_OVERLAY
+static XftDraw* draw_overlay;
+static Window draw_overlay_window;
+#endif
+
+
+#if ! USE_PANGO
+
+// The predefined fonts that FLTK has:
+static Fl_Fontdesc built_in_table[] = {
+#if 1
+  {" sans"},
+  {"Bsans"},
+  {"Isans"},
+  {"Psans"},
+  {" mono"},
+  {"Bmono"},
+  {"Imono"},
+  {"Pmono"},
+  {" serif"},
+  {"Bserif"},
+  {"Iserif"},
+  {"Pserif"},
+  {" symbol"},
+  {" screen"},
+  {"Bscreen"},
+  {" zapf dingbats"},
+#else
+  {" helvetica"},
+  {"Bhelvetica"},
+  {"Ihelvetica"},
+  {"Phelvetica"},
+  {" courier"},
+  {"Bcourier"},
+  {"Icourier"},
+  {"Pcourier"},
+  {" times"},
+  {"Btimes"},
+  {"Itimes"},
+  {"Ptimes"},
+  {" symbol"},
+  {" lucidatypewriter"},
+  {"Blucidatypewriter"},
+  {" zapf dingbats"},
+#endif
+};
+
+#else
+
+// The predefined fonts that FLTK has with Pango:
+static Fl_Fontdesc built_in_table[] = {
+  {" Sans"},
+  {" Sans Bold"},
+  {" Sans Italic"},
+  {" Sans Bold Italic"},
+  {" Monospace"},
+  {" Monospace Bold"},
+  {" Monospace Italic"},
+  {" Monospace Bold Italic"},
+  {" Serif"},
+  {" Serif Bold"},
+  {" Serif Italic"},
+  {" Serif Bold Italic"},
+  {" Sans"},
+  {" Monospace"},
+  {" Monospace Bold"},
+  {" Sans"},
+};
+
+#endif // USE_PANGO
+
+Fl_Fontdesc* fl_fonts = built_in_table;
+
+
+#if ! USE_PANGO
 
 ///////////////////////////////////////////////////////////
 #define LOCAL_RAW_NAME_MAX 256
@@ -349,48 +411,8 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
   }
   return (Fl_Font)fl_free_font;
 } // ::set_fonts
-////////////////////////////////////////////////////////////////
-
-
-extern "C" {
-static int int_sort(const void *aa, const void *bb) {
-  return (*(int*)aa)-(*(int*)bb);
-}
-}
 
 ////////////////////////////////////////////////////////////////
-
-// Return all the point sizes supported by this font:
-// Suprisingly enough Xft works exactly like fltk does and returns
-// the same list. Except there is no way to tell if the font is scalable.
-int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
-  Fl_Fontdesc *s = fl_fonts+fnum;
-  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
-
-  fl_open_display();
-  XftFontSet* fs = XftListFonts(fl_display, fl_screen,
-                                XFT_FAMILY, XftTypeString, s->name+1,
-				(void *)0,
-                                XFT_PIXEL_SIZE,
-				(void *)0);
-  static int* array = 0;
-  static int array_size = 0;
-  if (fs->nfont >= array_size) {
-    delete[] array;
-    array = new int[array_size = fs->nfont+1];
-  }
-  array[0] = 0; int j = 1; // claim all fonts are scalable
-  for (int i = 0; i < fs->nfont; i++) {
-    double v;
-    if (XftPatternGetDouble(fs->fonts[i], XFT_PIXEL_SIZE, 0, &v) == XftResultMatch) {
-      array[j++] = int(v);
-    }
-  }
-  qsort(array+1, j-1, sizeof(int), int_sort);
-  XftFontSetDestroy(fs);
-  sizep = array;
-  return j;
-}
 
 //
 // Draw fonts using Keith Packard's Xft library to provide anti-
@@ -428,92 +450,16 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 // itself. You should edit the ~/.xftconfig file to "fix" things, there
 // are several web pages of information on how to do this.
 //
-#ifndef FL_DOXYGEN
 
-#include <X11/Xft/Xft.h>
-
-#include <math.h>
-
-// The predefined fonts that FLTK has:
-static Fl_Fontdesc built_in_table[] = {
-#if 1
-{" sans"},
-{"Bsans"},
-{"Isans"},
-{"Psans"},
-{" mono"},
-{"Bmono"},
-{"Imono"},
-{"Pmono"},
-{" serif"},
-{"Bserif"},
-{"Iserif"},
-{"Pserif"},
-{" symbol"},
-{" screen"},
-{"Bscreen"},
-{" zapf dingbats"},
-#else
-{" helvetica"},
-{"Bhelvetica"},
-{"Ihelvetica"},
-{"Phelvetica"},
-{" courier"},
-{"Bcourier"},
-{"Icourier"},
-{"Pcourier"},
-{" times"},
-{"Btimes"},
-{"Itimes"},
-{"Ptimes"},
-{" symbol"},
-{" lucidatypewriter"},
-{"Blucidatypewriter"},
-{" zapf dingbats"},
-#endif
-};
-
-Fl_Fontdesc* fl_fonts = built_in_table;
-
-Fl_XFont_On_Demand fl_xfont;
-void *fl_xftfont = 0;
 //static const char* fl_encoding_ = "iso8859-1";
 static const char* fl_encoding_ = "iso10646-1";
 
-static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
-  if (fnum==-1) { // special case to stop font caching
-    driver->Fl_Graphics_Driver::font(0, 0);
-    return;
-  }
-  Fl_Font_Descriptor* f = driver->font_descriptor();
-  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size() && f && f->angle == angle)
-    return;
-  driver->Fl_Graphics_Driver::font(fnum, size);
-  Fl_Fontdesc *font = fl_fonts + fnum;
-  // search the fontsizes we have generated already
-  for (f = font->first; f; f = f->next) {
-    if (f->size == size && f->angle == angle)// && !strcasecmp(f->encoding, fl_encoding_))
-      break;
-  }
-  if (!f) {
-    f = new Fl_Font_Descriptor(font->name, size, angle);
-    f->next = font->first;
-    font->first = f;
-  }
-  driver->font_descriptor(f);
-#if XFT_MAJOR < 2
-  fl_xfont    = f->font->u.core.font;
-#else
-  fl_xfont    = NULL; // invalidate
-#endif // XFT_MAJOR < 2
-  fl_xftfont = (void*)f->font;
-}
 
 void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_xft_font(this,fnum,size,0);
 }
 
-static XftFont* fontopen(const char* name, Fl_Fontsize size, bool core, int angle) {
+static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core, int angle) {
   // Check: does it look like we have been passed an old-school XLFD fontname?
   bool is_xlfd = false;
   int hyphen_count = 0;
@@ -710,10 +656,6 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize, int 
   font = fontopen(name, fsize, false, angle);
 }
 
-Fl_Font_Descriptor::~Fl_Font_Descriptor() {
-  if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
-//  XftFontClose(fl_display, font);
-}
 
 /* decodes the input UTF-8 string into a series of wchar_t characters.
  n is set upon return to the number of characters.
@@ -766,10 +708,6 @@ double Fl_Xlib_Graphics_Driver::width(const char* str, int n) {
   return i.xOff;
 }
 
-/*double fl_width(uchar c) {
-  return fl_graphics_driver->width((const char *)(&c), 1);
-}*/
-
 static double fl_xft_width(Fl_Font_Descriptor *desc, FcChar32 *str, int n) {
   if (!desc) return -1.0;
   XGlyphInfo i;
@@ -796,155 +734,6 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &d
   dy = -gi.y;
 } // fl_text_extents
 
-
-/* This code is used (mainly by opengl) to get a bitmapped font. The
- * original XFT-1 code used XFT's "core" fonts methods to load an XFT
- * font that was actually a X-bitmap font, that could then be readily
- * used with GL.  But XFT-2 does not provide that ability, and there
- * is no easy method to use an XFT font directly with GL. So...
-*/
-
-#  if XFT_MAJOR > 1
-// This function attempts, on XFT2 systems, to find a suitable "core" Xfont
-// for GL or other bitmap font needs (we dont have an XglUseXftFont(...) function.)
-// There's probably a better way to do this. I can't believe it is this hard...
-// Anyway... This code attempts to make an XLFD out of the fltk-style font
-// name it is passed, then tries to load that font. Surprisingly, this quite
-// often works - boxes that have XFT generally also have a fontserver that
-// can serve TTF and other fonts to X, and so the font name that fltk makes
-// from the XFT name often also "exists" as an "core" X font...
-// If this code fails to load the requested font, it falls back through a
-// series of tried 'n tested alternatives, ultimately resorting to what the
-// original fltk code did.
-// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04, 9.04, 9.10) this works
-//       well for the fltk "built-in" font names.
-static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
-  XFontStruct* xgl_font = 0;
-  int size = driver->size();
-  int fnum = driver->font();
-  const char *wt_med = "medium";
-  const char *wt_bold = "bold";
-  const char *weight = wt_med; // no specifc weight requested - accept any
-  char slant = 'r';   // regular non-italic by default
-  char xlfd[128];     // we will put our synthetic XLFD in here
-  char *pc = strdup(fl_fonts[fnum].name); // what font were we asked for?
-  const char *name = pc;    // keep a handle to the original name for freeing later
-  // Parse the "fltk-name" of the font
-  switch (*name++) {
-  case 'I': slant = 'i'; break;       // italic
-  case 'P': slant = 'i';              // bold-italic (falls-through)
-  case 'B': weight = wt_bold; break;  // bold
-  case ' ': break;                    // regular
-  default: name--;                    // no prefix, restore name
-  }
-
-  // first, we do a query with no prefered size, to see if the font exists at all
-  snprintf(xlfd, 128, "-*-%s-%s-%c-*--*-*-*-*-*-*-*-*", name, weight, slant); // make up xlfd style name
-  xgl_font = XLoadQueryFont(fl_display, xlfd);
-  if(xgl_font) { // the face exists, but can we get it in a suitable size?
-    XFreeFont(fl_display, xgl_font); // release the non-sized version
-    snprintf(xlfd, 128, "-*-%s-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
-    xgl_font = XLoadQueryFont(fl_display, xlfd); // attempt to load the font at the right size
-  }
-//puts(xlfd);
-
-  // try alternative names
-  if (!xgl_font) {
-    if (!strcmp(name, "sans")) {
-      name = "helvetica";
-    } else if (!strcmp(name, "mono")) {
-      name = "courier";
-    } else if (!strcmp(name, "serif")) {
-      name = "times";
-    } else if (!strcmp(name, "screen")) {
-      name = "lucidatypewriter";
-    } else if (!strcmp(name, "dingbats")) {
-      name = "zapf dingbats";
-    }
-    snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
-    xgl_font = XLoadQueryFont(fl_display, xlfd);
-  }
-  free(pc); // release our copy of the font name
-
-  // if we have nothing loaded, try a generic proportional font
-  if(!xgl_font) {
-    snprintf(xlfd, 128, "-*-helvetica-*-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
-    xgl_font = XLoadQueryFont(fl_display, xlfd);
-  }
-  // If that still didn't work, try this instead
-  if(!xgl_font) {
-    snprintf(xlfd, 128, "-*-courier-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
-    xgl_font = XLoadQueryFont(fl_display, xlfd);
-  }
-//printf("glf: %d\n%s\n%s\n", size, xlfd, fl_fonts[fl_font_].name);
-//if(xgl_font) puts("ok");
-
-  // Last chance fallback - this usually loads something...
-  if (!xgl_font) xgl_font = XLoadQueryFont(fl_display, "fixed");
-
-  return xgl_font;
-} // end of load_xfont_for_xft2
-#  endif
-
-static XFontStruct* fl_xxfont(Fl_Graphics_Driver *driver) {
-#  if XFT_MAJOR > 1
-  // kludge! XFT 2 and later does not provide core fonts for us to use with GL
-  // try to load a bitmap X font instead
-  static XFontStruct* xgl_font = 0;
-  static int glsize = 0;
-  static int glfont = -1;
-  // Do we need to load a new font?
-  if ((!xgl_font) || (glsize != driver->size()) || (glfont != driver->font())) {
-    // create a dummy XLFD for some font of the appropriate size...
-    if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it - this *might* be a Bad Idea
-    glsize = driver->size(); // record current font size
-    glfont = driver->font(); // and face
-    xgl_font = load_xfont_for_xft2(driver);
-  }
-  return xgl_font;
-#  else // XFT-1 provides a means to load a "core" font directly
-  if (driver->font_descriptor()->font->core) {
-    return driver->font_descriptor()->font->u.core.font; // is the current font a "core" font? If so, use it.
-    }
-  static XftFont* xftfont;
-  if (xftfont) XftFontClose (fl_display, xftfont);
-  xftfont = fontopen(fl_fonts[driver->font()].name, driver->size(), true, 0); // else request XFT to load a suitable "core" font instead.
-  return xftfont->u.core.font;
-#  endif // XFT_MAJOR > 1
-}
-
-XFontStruct* Fl_XFont_On_Demand::value() {
-  if (!ptr) ptr = fl_xxfont(fl_graphics_driver);
-  return ptr;
-}
-
-#if USE_OVERLAY
-// Currently Xft does not work with colormapped visuals, so this probably
-// does not work unless you have a true-color overlay.
-extern bool fl_overlay;
-extern Colormap fl_overlay_colormap;
-extern XVisualInfo* fl_overlay_visual;
-#endif
-
-// For some reason Xft produces errors if you destroy a window whose id
-// still exists in an XftDraw structure. It would be nice if this is not
-// true, a lot of junk is needed to try to stop this:
-
-static XftDraw* draw_;
-static Window draw_window;
-#if USE_OVERLAY
-static XftDraw* draw_overlay;
-static Window draw_overlay_window;
-#endif
-
-void Fl_Xlib_Graphics_Driver::destroy_xft_draw(Window id) {
-  if (id == draw_window)
-    XftDrawChange(draw_, draw_window = fl_message_window);
-#if USE_OVERLAY
-  if (id == draw_overlay_window)
-    XftDrawChange(draw_overlay, draw_overlay_window = fl_message_window);
-#endif
-}
 
 void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   if ( !this->font_descriptor() ) {
@@ -994,7 +783,7 @@ void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int
   fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size(), 0);
 }
 
-static void fl_drawUCS4(Fl_Graphics_Driver *driver, const FcChar32 *str, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
@@ -1018,14 +807,14 @@ static void fl_drawUCS4(Fl_Graphics_Driver *driver, const FcChar32 *str, int n, 
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
   XftColor color;
-  color.pixel = fl_xpixel(driver->color());
-  uchar r,g,b; Fl::get_color(driver->color(), r,g,b);
+  color.pixel = fl_xpixel(this->color());
+  uchar r,g,b; Fl::get_color(this->color(), r,g,b);
   color.color.red   = ((int)r)*0x101;
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, driver->font_descriptor()->font, x, y, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, font_descriptor()->font, x, y, (FcChar32 *)str, n);
 }
 
 
@@ -1062,23 +851,511 @@ void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   }
   // Now we have a UCS4 version of the input text, reversed, in ucs_txt
   int offs = (int)fl_xft_width(font_descriptor(), ucs_txt, n);
-  fl_drawUCS4(this, ucs_txt, n, (x-offs), y);
+  drawUCS4(ucs_txt, n, (x-offs), y);
 
   delete[] ucs_txt;
 }
 
+
+extern "C" {
+  static int int_sort(const void *aa, const void *bb) {
+    return (*(int*)aa)-(*(int*)bb);
+  }
+}
+
+////////////////////////////////////////////////////////////////
+
+// Return all the point sizes supported by this font:
+// Suprisingly enough Xft works exactly like fltk does and returns
+// the same list. Except there is no way to tell if the font is scalable.
+int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+  Fl_Fontdesc *s = fl_fonts+fnum;
+  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+  
+  fl_open_display();
+  XftFontSet* fs = XftListFonts(fl_display, fl_screen,
+                                XFT_FAMILY, XftTypeString, s->name+1,
+                                (void *)0,
+                                XFT_PIXEL_SIZE,
+                                (void *)0);
+  static int* array = 0;
+  static int array_size = 0;
+  if (fs->nfont >= array_size) {
+    delete[] array;
+    array = new int[array_size = fs->nfont+1];
+  }
+  array[0] = 0; int j = 1; // claim all fonts are scalable
+  for (int i = 0; i < fs->nfont; i++) {
+    double v;
+    if (XftPatternGetDouble(fs->fonts[i], XFT_PIXEL_SIZE, 0, &v) == XftResultMatch) {
+      array[j++] = int(v);
+    }
+  }
+  qsort(array+1, j-1, sizeof(int), int_sort);
+  XftFontSetDestroy(fs);
+  sizep = array;
+  return j;
+}
+
+#endif // !USE_PANGO
+
 float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {
   // Xft font height is sometimes larger than the required size (see STR 2566).
   // Increase the PostScript font size by 15% without exceeding the display font height
-  int max = desc->font->height;
+  int max = height();
   float ps_size = s * 1.15;
   if (ps_size > max) ps_size = max;
   return ps_size;
 }
 
+
+// This function fills in the fltk font table with all the fonts that
+// are found on the X server.  It tries to place the fonts into families
+// and to sort them so the first 4 in a family are normal, bold, italic,
+// and bold italic.
+
+// Bug: older versions calculated the value for *ap as a side effect of
+// making the name, and then forgot about it. To avoid having to change
+// the header files I decided to store this value in the last character
+// of the font name array.
+#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
+
+
+// turn a stored font name in "fltk format" into a pretty name:
+const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  if (!f->fontname[0]) {
+    const char* p = f->name;
+    int type;
+    switch (p[0]) {
+      case 'B': type = FL_BOLD; break;
+      case 'I': type = FL_ITALIC; break;
+      case 'P': type = FL_BOLD | FL_ITALIC; break;
+      default:  type = 0; break;
+    }
+    
+    // NOTE: This can cause duplications in fonts that already have Bold or Italic in
+    // their "name". Maybe we need to find a cleverer way?
+    strlcpy(f->fontname, p+1, ENDOFBUFFER);
+    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
+    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
+    f->fontname[ENDOFBUFFER] = (char)type;
+  }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
+  return f->fontname;
+}
+
+
 float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
   return 2;
 }
+
+Fl_Font_Descriptor::~Fl_Font_Descriptor() {
+  if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
+  //  XftFontClose(fl_display, font);
+}
+
+
+void Fl_Xlib_Graphics_Driver::destroy_xft_draw(Window id) {
+  if (id == draw_window)
+    XftDrawChange(draw_, draw_window = fl_message_window);
+#if USE_OVERLAY
+  if (id == draw_overlay_window)
+    XftDrawChange(draw_overlay, draw_overlay_window = fl_message_window);
+#endif
+}
+
+void *fl_xftfont = 0; // always 0 under Pango
+static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
+  if (fnum==-1) { // special case to stop font caching
+    driver->Fl_Graphics_Driver::font(0, 0);
+    return;
+  }
+  Fl_Font_Descriptor* f = driver->font_descriptor();
+  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size() && f && f->angle == angle)
+    return;
+  driver->Fl_Graphics_Driver::font(fnum, size);
+  Fl_Fontdesc *font = fl_fonts + fnum;
+  // search the fontsizes we have generated already
+  for (f = font->first; f; f = f->next) {
+    if (f->size == size && f->angle == angle)// && !strcasecmp(f->encoding, fl_encoding_))
+      break;
+  }
+  if (!f) {
+    f = new Fl_Font_Descriptor(font->name, size, angle);
+    f->next = font->first;
+    font->first = f;
+  }
+  driver->font_descriptor(f);
+#if XFT_MAJOR < 2 && ! USE_PANGO
+  fl_xfont    = f->font->u.core.font;
+#else
+  fl_xfont    = NULL; // invalidate
+#endif // XFT_MAJOR < 2
+#if USE_PANGO
+  fl_xftfont = NULL;
+#else
+  fl_xftfont = (void*)f->font;
+#endif
+}
+
+/* This code is used (mainly by opengl) to get a bitmapped font. The
+ * original XFT-1 code used XFT's "core" fonts methods to load an XFT
+ * font that was actually a X-bitmap font, that could then be readily
+ * used with GL.  But XFT-2 does not provide that ability, and there
+ * is no easy method to use an XFT font directly with GL. So...
+ */
+#  if XFT_MAJOR > 1 || USE_PANGO
+// This function attempts, on XFT2 systems, to find a suitable "core" Xfont
+// for GL or other bitmap font needs (we dont have an XglUseXftFont(...) function.)
+// There's probably a better way to do this. I can't believe it is this hard...
+// Anyway... This code attempts to make an XLFD out of the fltk-style font
+// name it is passed, then tries to load that font. Surprisingly, this quite
+// often works - boxes that have XFT generally also have a fontserver that
+// can serve TTF and other fonts to X, and so the font name that fltk makes
+// from the XFT name often also "exists" as an "core" X font...
+// If this code fails to load the requested font, it falls back through a
+// series of tried 'n tested alternatives, ultimately resorting to what the
+// original fltk code did.
+// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04, 9.04, 9.10) this works
+//       well for the fltk "built-in" font names.
+static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
+  XFontStruct* xgl_font = 0;
+  int size = driver->size();
+  int fnum = driver->font();
+  const char *wt_med = "medium";
+  const char *wt_bold = "bold";
+  const char *weight = wt_med; // no specifc weight requested - accept any
+  char slant = 'r';   // regular non-italic by default
+  char xlfd[128];     // we will put our synthetic XLFD in here
+  char *pc = strdup(fl_fonts[fnum].name); // what font were we asked for?
+#if USE_PANGO
+  char *p = pc;
+  while (*p) { *p = tolower(*p); p++; }
+  p = pc + strlen(pc) - 12;
+  if (memcmp(p, " bold italic\0", 13) == 0) {
+    *pc = 'P'; *p = 0;
+  }
+  p = pc + strlen(pc) - 5;
+  if (memcmp(p, " bold\0", 6) == 0) {
+    *pc = 'B'; *p = 0;
+  }
+  p = pc + strlen(pc) - 7;
+  if (memcmp(p, " italic\0", 8) == 0) {
+    *pc = 'I'; *p = 0;
+  }
+#endif // USE_PANGO
+  const char *name = pc;    // keep a handle to the original name for freeing later
+  // Parse the "fltk-name" of the font
+  switch (*name++) {
+    case 'I': slant = 'i'; break;       // italic
+    case 'P': slant = 'i';              // bold-italic (falls-through)
+    case 'B': weight = wt_bold; break;  // bold
+    case ' ': break;                    // regular
+    default: name--;                    // no prefix, restore name
+  }
+
+  // first, we do a query with no prefered size, to see if the font exists at all
+  snprintf(xlfd, 128, "-*-%s-%s-%c-*--*-*-*-*-*-*-*-*", name, weight, slant); // make up xlfd style name
+  xgl_font = XLoadQueryFont(fl_display, xlfd);
+  if(xgl_font) { // the face exists, but can we get it in a suitable size?
+    XFreeFont(fl_display, xgl_font); // release the non-sized version
+    snprintf(xlfd, 128, "-*-%s-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd); // attempt to load the font at the right size
+  }
+//puts(xlfd);
+
+  // try alternative names
+  if (!xgl_font) {
+    if (!strcmp(name, "sans")) {
+      name = "helvetica";
+      if (slant == 'i') slant = 'o';
+    } else if (!strcmp(name, "mono") || !strcmp(name, "monospace")) {
+      name = "courier";
+    } else if (!strcmp(name, "serif")) {
+      name = "times";
+    } else if (!strcmp(name, "screen")) {
+      name = "lucidatypewriter";
+    } else if (!strcmp(name, "dingbats")) {
+      name = "zapf dingbats";
+    }
+    snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd);
+  }
+  free(pc); // release our copy of the font name
+
+  // if we have nothing loaded, try a generic proportional font
+  if(!xgl_font) {
+    snprintf(xlfd, 128, "-*-helvetica-*-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd);
+  }
+  // If that still didn't work, try this instead
+  if(!xgl_font) {
+    snprintf(xlfd, 128, "-*-courier-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd);
+  }
+//printf("glf: %d\n%s\n%s\n", size, xlfd, fl_fonts[fl_font_].name);
+//if(xgl_font) puts("ok");
+
+  // Last chance fallback - this usually loads something...
+  if (!xgl_font) xgl_font = XLoadQueryFont(fl_display, "fixed");
+
+  return xgl_font;
+} // end of load_xfont_for_xft2
+#  endif
+
+static XFontStruct* fl_xxfont(Fl_Graphics_Driver *driver) {
+#  if XFT_MAJOR > 1 || USE_PANGO
+  // kludge! XFT 2 and later does not provide core fonts for us to use with GL
+  // try to load a bitmap X font instead
+  static XFontStruct* xgl_font = 0;
+  static int glsize = 0;
+  static int glfont = -1;
+  // Do we need to load a new font?
+  if ((!xgl_font) || (glsize != driver->size()) || (glfont != driver->font())) {
+    // create a dummy XLFD for some font of the appropriate size...
+    if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it - this *might* be a Bad Idea
+    glsize = driver->size(); // record current font size
+    glfont = driver->font(); // and face
+    xgl_font = load_xfont_for_xft2(driver);
+  }
+  return xgl_font;
+#  else // XFT-1 provides a means to load a "core" font directly
+  if (driver->font_descriptor()->font->core) {
+    return driver->font_descriptor()->font->u.core.font; // is the current font a "core" font? If so, use it.
+  }
+  static XftFont* xftfont;
+  if (xftfont) XftFontClose (fl_display, xftfont);
+  xftfont = fontopen(fl_fonts[driver->font()].name, driver->size(), true, 0); // else request XFT to load a suitable "core" font instead.
+  return xftfont->u.core.font;
+#  endif // XFT_MAJOR > 1
+}
+
+XFontStruct* Fl_XFont_On_Demand::value() {
+  if (!ptr) ptr = fl_xxfont(fl_graphics_driver);
+  return ptr;
+}
+
+#if USE_PANGO
+
+#include <pango/pangoxft.h>
+#include <pango/pango.h>
+#if ! PANGO_VERSION_CHECK(1,8,0)
+#error "Requires Pango 1.8 or higher"
+#endif
+
+PangoFontMap *Fl_Xlib_Graphics_Driver::pfmap_ = 0;
+PangoContext *Fl_Xlib_Graphics_Driver::pctxt_ = 0;
+PangoLayout *Fl_Xlib_Graphics_Driver::playout_ = 0;
+
+PangoContext *Fl_Xlib_Graphics_Driver::context() {
+  if (fl_display && !pctxt_) {
+    pfmap_ = pango_xft_get_font_map(fl_display, fl_screen); // 1.2
+#if PANGO_VERSION_CHECK(1,22,0)
+    pctxt_ = pango_font_map_create_context(pfmap_); // 1.22
+#else
+    pctxt_ = pango_xft_get_context(fl_display, fl_screen); // deprecated since 1.22
+#endif
+    playout_ = pango_layout_new(pctxt_);
+  }
+  return pctxt_;
+}
+
+void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
+  if (!size) return;
+  if (this->Fl_Graphics_Driver::font() == fnum && this->size() == size) return;
+  fl_xft_font(this, fnum, size, 0);
+  init_built_in_fonts();
+  if (pfd_) pango_font_description_free(pfd_);
+  pfd_ = pango_font_description_from_string(Fl::get_font_name(fnum));
+  pango_font_description_set_absolute_size(pfd_, size*PANGO_SCALE); // 1.8
+  if (!pctxt_) context();
+  Fl_Font_Descriptor *fd = font_descriptor();
+  if (!fd->height_) {
+    PangoFont *pfont = pango_font_map_load_font(pfmap_, pctxt_, pfd_);
+    PangoRectangle ink_rect, logical_rect;
+    pango_font_get_glyph_extents(pfont, /*PangoGlyph glyph*/'p', &ink_rect, &logical_rect);
+    fd->descent_ = PANGO_DESCENT(logical_rect)/PANGO_SCALE;
+    fd->height_ = logical_rect.height/PANGO_SCALE;
+  }
+}
+
+void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
+  do_draw(0, str, n, x, y);
+}
+
+void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
+  PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
+  pango_matrix_translate(&mat, x, y); // 1.6
+  pango_matrix_rotate(&mat, angle); // 1.6
+  pango_context_set_matrix(pctxt_, &mat); // 1.6
+  do_draw(0, str, n, 0, 0);
+  pango_context_set_matrix(pctxt_, NULL); // 1.6
+}
+
+void Fl_Xlib_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
+  do_draw(1, str, n, x, y);
+}
+
+void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, int x, int y) {
+  if (!fl_display || n == 0) return;
+  Region region = clip_region();
+  if (region && XEmptyRegion(region)) return;
+  if (!playout_) context();
+  
+  char *str2 = NULL;
+  const char *tmpv = (const char *)memchr(str, '\n', n);
+  if (tmpv == str + n - 1) { // ignore final '\n'
+    if (--n == 0) return;
+    tmpv = NULL;
+  }
+  pango_layout_set_font_description(playout_, pfd_);
+  if (tmpv) { // replace newlines by spaces in a copy of str
+    str2 = (char*)malloc(n);
+    memcpy(str2, str, n);
+    do {
+      str2[tmpv - str] = ' ';
+      if (tmpv >= str + n - 1) break;
+      tmpv = (const char *)memchr(tmpv + 1, '\n', n - (tmpv - str + 1));
+    }
+    while (tmpv);
+    str = str2;
+  }
+  const char *old = 0;
+  if (!str2) old = pango_layout_get_text(playout_);
+  if (!old || strlen(old) != n || memcmp(str, old, n)) // do not re-set text if equal to text already in layout
+        pango_layout_set_text(playout_, str, n);
+  if (str2) free(str2);
+  int found=0;
+  if(strstr(str, "α")) {
+    found=1;
+  }
+  
+  XftColor color;
+  Fl_Color c = this->color();
+  color.pixel = fl_xpixel(c);
+  uchar r,g,b; Fl::get_color(c, r,g,b);
+  color.color.red   = ((int)r)*0x101;
+  color.color.green = ((int)g)*0x101;
+  color.color.blue  = ((int)b)*0x101;
+  color.color.alpha = 0xffff;
+  if (from_right) {
+    int width, height;
+    pango_layout_get_pixel_size(playout_, &width, &height);
+    x -= width;
+  }
+  if (!draw_)
+    draw_ = XftDrawCreate(fl_display, draw_window = fl_window, fl_visual->visual, fl_colormap);
+  else
+    XftDrawChange(draw_, draw_window = fl_window);
+  XftDrawSetClip(draw_, region);
+  pango_xft_render_layout(draw_, &color, playout_, x*PANGO_SCALE, (y-height()+descent())*PANGO_SCALE ); // 1.8
+}
+
+double Fl_Xlib_Graphics_Driver::width(const char* str, int n) {
+  if (!n) return 0;
+  if (!fl_display || fl_size() == 0) return -1;
+  if (!playout_) context();
+  int width, height;
+  pango_layout_set_font_description(playout_, pfd_);
+  pango_layout_set_text(playout_, str, n);
+  pango_layout_get_pixel_size(playout_, &width, &height);
+  return (double)width;
+}
+
+void Fl_Xlib_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h) {
+  if (!playout_) context();
+  pango_layout_set_font_description(playout_, pfd_);
+  pango_layout_set_text(playout_, str, n);
+  PangoRectangle ink_rect, logical_rect;
+  pango_layout_get_pixel_extents(playout_, &ink_rect, &logical_rect);
+  dx = ink_rect.x;
+  dy = ink_rect.y - height() + descent();
+  w = ink_rect.width;
+  h = ink_rect.height;
+}
+
+int Fl_Xlib_Graphics_Driver::height() {
+  return font_descriptor()->height_;
+}
+
+double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
+  char buf4[4];
+  int n = fl_utf8encode(c, buf4);
+  return width(buf4, n);
+}
+
+int Fl_Xlib_Graphics_Driver::descent() {
+  return font_descriptor()->descent_;
+}
+
+typedef int (*sort_f_type)(const void *aa, const void *bb);
+
+static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
+  return strcmp(fa->name, fb->name);
+}
+
+Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
+{
+  fl_open_display();
+  int n_families, count = 0;
+  PangoFontFamily **families;
+  Fl_Xlib_Graphics_Driver::context();
+  Fl_Xlib_Graphics_Driver::init_built_in_fonts();
+  pango_font_map_list_families(Fl_Xlib_Graphics_Driver::pfmap_, &families, &n_families);
+  for (int fam = 0; fam < n_families; fam++) {
+    PangoFontFace **faces;
+    int n_faces;
+    const char *fam_name = pango_font_family_get_name (families[fam]);
+    int l = strlen(fam_name);
+    pango_font_family_list_faces(families[fam], &faces, &n_faces);
+    for (int j = 0; j < n_faces; j++) {
+      const char *p =  pango_font_face_get_face_name(faces[j]);
+      if (strcmp(p, "Regular") == 0) p = NULL;
+      int lq = l+2;
+      if (p) lq += strlen(p) + 1;
+      char *q = new char[lq];
+      sprintf(q, " %s", fam_name);
+      if (p) sprintf(q + strlen(q), " %s", p);
+      // at this point, q contains " family-name[ face-name-except-Regular]"
+      Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
+    }
+    /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
+  }
+  /*g_*/free(families);
+  // Sort the list into alphabetic order
+  qsort(fl_fonts + FL_FREE_FONT, count, sizeof(Fl_Fontdesc), (sort_f_type)font_sort);
+  return FL_FREE_FONT + count;
+}
+
+
+void Fl_Xlib_Graphics_Driver::init_built_in_fonts() {
+  static int i = 0;
+  while (i < FL_FREE_FONT) {
+    Fl::set_font((Fl_Font)i, built_in_table[i].name);
+    i++;
+  }
+}
+
+
+int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+  static int array[1] = {0};
+  sizep = array;
+  return 1;
+}
+
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) {
+  fl_open_display();
+  size = fsize;
+  angle = fangle;
+#if HAVE_GL
+  listbase = 0;
+#endif // HAVE_GL
+  height_ = 0;
+  descent_ = 0;
+}
+
+#endif // USE_PANGO
 
 #endif // FL_DOXYGEN
 

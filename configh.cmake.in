@@ -92,6 +92,14 @@
 #cmakedefine01 USE_XFT
 
 /*
+* USE_PANGO:
+*
+* Use the pango library to draw UTF8 text.
+*/
+
+#cmakedefine USE_PANGO 1
+
+/*
  * HAVE_XDBE:
  *
  * Do we have the X double-buffer extension?

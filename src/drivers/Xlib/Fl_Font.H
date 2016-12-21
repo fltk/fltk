@@ -45,8 +45,12 @@ public:
   Fl_Fontsize size; /**< font size */
 #ifndef FL_DOXYGEN // don't bother with platorm dependant details in the doc. 
 #  if USE_XFT
-  XftFont* font;
-  //const char* encoding;
+#    if USE_PANGO
+        int descent_;
+        int height_;
+#    else
+        XftFont* font;
+#    endif
   int angle;
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle);
 #  else

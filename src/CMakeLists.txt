@@ -470,6 +470,13 @@ if (HAVE_XRENDER)
     list (APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
 endif (HAVE_XRENDER)
 
+if (USE_PANGO)
+  list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOXFT})
+  if(NOT APPLE)
+  	list (APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT} )
+  endif(NOT APPLE)
+endif(USE_PANGO)
+
 if (USE_XFT)
     list (APPEND OPTIONAL_LIBS ${X11_Xft_LIB})
     if (LIB_fontconfig)

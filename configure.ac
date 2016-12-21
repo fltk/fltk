@@ -1041,6 +1041,41 @@ case $host_os_gui in
 	    fi
 	fi
 
+	dnl Check for the pango library unless disabled...
+        AC_ARG_ENABLE(pango, [  --enable-pango          turn on Pango support [[default=no]]])
+
+        pango_found=no
+	if test x$enable_pango = xyes; then
+	    case $host_os in
+    		darwin*)
+	    	  CXXFLAGS="-I/sw/include/pango-1.0 -I/sw/include/glib-2.0 -I/sw/lib/glib-2.0/include $CXXFLAGS"
+	    	  PANGOLIBDIR="-L/sw/lib"
+	    	  ;;
+    		linux*)
+	    	  CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
+	    	  CXXFLAGS="-I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include $CXXFLAGS"
+    	    	  ;;
+    	    	freebsd*)
+	    	  CXXFLAGS="-I/usr/local/include/pango-1.0 -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include $CXXFLAGS"
+	    	  ;;
+     	    	netbsd*)
+	    	  CXXFLAGS="-I/usr/pkg/include/pango-1.0 -I/usr/pkg/include/glib-2.0 -I/usr/pkg/lib/glib-2.0/include $CXXFLAGS"
+	    	  CXXFLAGS="-I/usr/pkg/include/glib/glib-2.0 $CXXFLAGS"
+	    	  PANGOLIBDIR="-L/usr/pkg/lib"
+	    	  LDFLAGS="-Wl,-rpath,/usr/pkg/lib $LDFLAGS"
+	    	  ;;
+   	    esac
+	        CPPFLAGS="$PANGOLIBDIR $CXXFLAGS"
+	        AC_CHECK_HEADER(pango/pango.h,
+		  AC_CHECK_HEADER(pango/pangoxft.h,
+		   AC_CHECK_LIB(pango-1.0, pango_layout_new,
+		    AC_CHECK_LIB(pangoxft-1.0, pango_xft_render_layout,
+			AC_DEFINE(USE_PANGO)
+                        pango_found=yes
+			LIBS="$PANGOLIBDIR -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0 $LIBS"))))
+		CPPFLAGS=$CXXFLAGS
+	fi
+
 	dnl Check for the Xdbe extension unless disabled...
 	AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [[default=yes]]])
 
@@ -1507,6 +1542,9 @@ case $host_os_gui in
 	if test x$xrender_found = xyes; then
 	    graphics="$graphics + Xrender"
 	fi
+        if test x$pango_found = xyes; then
+            graphics="$graphics + pango"
+        fi
 	;;
 esac
 

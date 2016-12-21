@@ -17,13 +17,17 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
 
   New Features and Extensions
 
-  - (add here)
   - Added '--enable-print' option to configure effective under X11 platforms
     and with 'yes' default value. Using '--enable-print=no' removes print
     and PostScript support from the FLTK library, thus reducing its size.
   - Added Fl_Surface_Device::push_current(new_surface) and
     Fl_Surface_Device::pop_current() to set/unset the current surface
     receiving graphics commands.
+  - X11 platform: Added support for drawing text with the pango library
+    which allows to draw most scripts supported by Unicode, including CJK
+    and right-to-left scripts. The corresponding CMake option is
+    OPTION_USE_PANGO. The corresponding configure option is --enable-pango.
+    This option is OFF by default.
 
   New Configuration Options (ABI Version)
 

@@ -620,14 +620,20 @@ void fl_draw(const char *, int x, int y) <br>
 void fl_draw(const char *, int n, int x, int y)
 
 \par
-Draw a nul-terminated string or an array of \p n characters
-starting at the given location. Text is aligned to the left and to
+Draw a nul-terminated string or an array of \p n bytes
+starting at the given location. In both cases, the text must be UTF-8 encoded.
+Text is aligned to the left and to
 the baseline of the font. To align to the bottom, subtract
 \p %fl_descent() from \p y.
 To align to the top, subtract \p %fl_descent() and add \p %fl_height().
 This version of \p %fl_draw()  provides direct access to
 the text drawing function of the underlying OS. It does not apply any 
 special handling to control characters. 
+
+void fl_rtl_draw(const char *str, int n, int x, int y)
+
+\par
+Draw a UTF-8 string of length n bytes right to left starting at the given x, y location. 
 
 void fl_draw(const char* str, int x, int y, int w, int h, Fl_Align align, Fl_Image* img, int draw_symbols)
 
@@ -774,6 +780,17 @@ characters are encoded in multibyte sequences.
 FLTK expects individual characters, characters that are not part of 
 a string, in UCS-4 encoding, which is also ASCII compatible, but 
 requires 4 bytes to store a Unicode character.
+
+FLTK can draw accurately any Unicode-supported script for which the system
+contains relevant fonts. Under X11 platforms, this requires
+to build the library with the OPTION_USE_PANGO CMake option turned On 
+(or with configure --enable-pango).
+
+Plain text drawing starting at a user-given coordinate
+is well supported by FLTK, including for right-to-left scripts. 
+Further text-related operations
+(i.e., selection, formatting, input, and editing) are functional with
+left-to-right scripts only.
 
 For more information about character encodings, see the chapter on
 \ref unicode.

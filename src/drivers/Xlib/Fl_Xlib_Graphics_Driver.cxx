@@ -57,7 +57,19 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   p_size = 0;
   p = NULL;
   line_width_ = 0;
+#if USE_PANGO
+  pfd_ = pango_font_description_new();
+  Fl_Graphics_Driver::font(0, 0);
+#endif
 }
+
+Fl_Xlib_Graphics_Driver::~Fl_Xlib_Graphics_Driver() {
+  if (p) free(p);
+#if USE_PANGO
+  pango_font_description_free(pfd_);
+#endif
+}
+
 
 void Fl_Xlib_Graphics_Driver::gc(void *value) {
   gc_ = (GC)value;
