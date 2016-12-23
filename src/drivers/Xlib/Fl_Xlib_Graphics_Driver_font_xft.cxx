@@ -1223,14 +1223,10 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   }
   const char *old = 0;
   if (!str2) old = pango_layout_get_text(playout_);
-  if (!old || strlen(old) != n || memcmp(str, old, n)) // do not re-set text if equal to text already in layout
+  if (!old || (int)strlen(old) != n || memcmp(str, old, n)) // do not re-set text if equal to text already in layout
         pango_layout_set_text(playout_, str, n);
   if (str2) free(str2);
-  int found=0;
-  if(strstr(str, "α")) {
-    found=1;
-  }
-  
+
   XftColor color;
   Fl_Color c = this->color();
   color.pixel = fl_xpixel(c);

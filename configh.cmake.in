@@ -86,18 +86,18 @@
 /*
  * USE_XFT
  *
- * Use the new Xft library to draw anti-aliased text.
+ * Use the Xft library to draw anti-aliased text.
  */
 
 #cmakedefine01 USE_XFT
 
 /*
-* USE_PANGO:
-*
-* Use the pango library to draw UTF8 text.
-*/
+ * USE_PANGO
+ *
+ * Use the pango library to draw UTF-8 text.
+ */
 
-#cmakedefine USE_PANGO 1
+#cmakedefine01 USE_PANGO
 
 /*
  * HAVE_XDBE:
@@ -183,7 +183,7 @@
  * to be ported to the core driver setup.
  */
 
-#cmakedefine FL_PORTING 0
+#cmakedefine FL_PORTING 1
 
 /*
  * HAVE_OVERLAY:
