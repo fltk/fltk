@@ -994,7 +994,7 @@ case $host_os_gui in
 
 	dnl Check whether print support was disabled...
 	AC_ARG_ENABLE(print,    [  --enable-print          turn on print support (X11 platform) [[default=yes]]])
-	if test x$enable_print != xyes; then
+	if test x$enable_print = xno; then
 	    AC_DEFINE(FL_NO_PRINT_SUPPORT)
 	fi
 
