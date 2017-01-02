@@ -107,7 +107,7 @@ public:
   /** Sets what algorithm is used when resizing a source image.
    The default algorithm is FL_RGB_SCALING_BILINEAR.
    Drawing an Fl_Shared_Image is sometimes performed by first resizing the source image
-   and then drawing the resized copy. This occurs, e.g., when drawing to screen under Linux or MSWindows
+   and then drawing the resized copy. This occurs, e.g., when drawing to screen under Linux
    after having called Fl_Shared_Image::scale().
    This function controls what method is used when the image to be resized is an Fl_RGB_Image.
    \version 1.3.4
