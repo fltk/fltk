@@ -123,6 +123,21 @@ public:
 #if defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"
 #endif
+  /* Both member functions read_image() and read_win_rectangle() support
+   the public function fl_read_image() which captures pixel data either from
+   the current window or from an offscreen buffer.
+
+   A platform re-implements either read_image() or read_win_rectangle().
+   In the 1st case and for capture from a window, the returned pixel array 
+   also contains data from any embedded sub-window.
+   In the 2nd case and for capture from a window, only data from the current 
+   window is collected, and read_image()'s default implementation captures 
+   pixels from any subwindow.
+   
+   A platform may also use its read_win_rectangle() implementation to capture
+   window decorations (e.g., title bar). In that case, it is called by
+   Fl_XXX_Window_Driver::capture_titlebar_and_borders().
+   */
   virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
   virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) {return NULL;}
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
