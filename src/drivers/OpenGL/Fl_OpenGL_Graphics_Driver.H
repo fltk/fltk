@@ -83,7 +83,8 @@ public:
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
   void color(uchar r, uchar g, uchar b);
-  // --- implementation is in src/fl_font.cxx which includes src/cfg_gfx/xxx_font.cxx
+  // --- implementation is in Fl_OpenGL_Graphics_Driver_font.cxx
+  void font(Fl_Font face, Fl_Fontsize fsize);
   void draw(const char *str, int n, int x, int y);
   double width(const char *str, int n);
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);

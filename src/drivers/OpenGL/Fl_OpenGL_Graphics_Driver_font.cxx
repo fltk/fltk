@@ -93,6 +93,9 @@ static const char *font_data[128] = {
 };
 
 
+void Fl_OpenGL_Graphics_Driver::font(Fl_Font face, Fl_Fontsize fsize) {
+  Fl_Graphics_Driver::font(face, fsize);
+}
 
 double Fl_OpenGL_Graphics_Driver::width(const char *str, int n) {
   return size_*n*0.5;
@@ -169,8 +172,44 @@ FL_EXPORT int glutStrokeWidth(void *font, int character);
 
 #else
 
+// use gl_font()/gl_draw() to draw GL text
+
+void Fl_OpenGL_Graphics_Driver::font(Fl_Font face, Fl_Fontsize fsize) {
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+  gl_font(face, fsize);
+  Fl_Surface_Device::pop_current();
+}
+
 void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   gl_draw(str, n, x, y);
+}
+
+double Fl_OpenGL_Graphics_Driver::width(const char *str, int n) {
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+  double w = fl_width(str, n);
+  Fl_Surface_Device::pop_current();
+  return w;
+}
+
+int Fl_OpenGL_Graphics_Driver::descent() {
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+  int d = fl_descent();
+  Fl_Surface_Device::pop_current();
+  return d;
+}
+
+int Fl_OpenGL_Graphics_Driver::height() {
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+  int h = fl_height();
+  Fl_Surface_Device::pop_current();
+  return h;
+}
+
+void Fl_OpenGL_Graphics_Driver::text_extents(const char *str, int n, int& dx, int& dy, int& w, int& h)
+{
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+  fl_text_extents(str, n, dx, dy, w, h);
+  Fl_Surface_Device::pop_current();
 }
 
 #endif
