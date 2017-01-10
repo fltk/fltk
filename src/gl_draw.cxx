@@ -383,8 +383,6 @@ static int has_texture_rectangle = 0; // true means GL_EXT_texture_rectangle is 
 
 #include <FL/glu.h>  // for gluUnProject() and gluCheckExtension()
 #include <FL/glut.H> // for glutStrokeString() and glutStrokeLength()
-#include <src/drivers/Quartz/Fl_Quartz_Graphics_Driver.H>
-#include <src/drivers/Cocoa/Fl_Cocoa_Window_Driver.H>
 
 // manages a fifo pile of pre-computed string textures
 class gl_texture_fifo {
