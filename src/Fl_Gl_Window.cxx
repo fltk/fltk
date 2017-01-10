@@ -373,7 +373,7 @@ void Fl_Gl_Window::draw() {
   Fl_Window::draw();
 
   glPopMatrix();
-  glPushAttrib(GL_ENABLE_BIT);
+  glPopAttrib();
   Fl_Surface_Device::pop_current();
 #else
   Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
