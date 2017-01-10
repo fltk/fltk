@@ -40,7 +40,7 @@
 // FIXME: check out FreeGlut:
 // FIXME: implement font-to-RGBA in the main graphics driver
 
-#if 1
+#if 0
 
 /*
   |01234567|
@@ -181,7 +181,9 @@ void Fl_OpenGL_Graphics_Driver::font(Fl_Font face, Fl_Fontsize fsize) {
 }
 
 void Fl_OpenGL_Graphics_Driver::draw(const char* str, int n, int x, int y) {
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
   gl_draw(str, n, x, y);
+  Fl_Surface_Device::pop_current();
 }
 
 double Fl_OpenGL_Graphics_Driver::width(const char *str, int n) {
