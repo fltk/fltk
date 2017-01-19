@@ -46,7 +46,6 @@
 #if USE_XFT
 #  define GENLISTSIZE 256
 #else
-#  define USE_OksiD_style_GL_font_selection 1  // Most X11 hosts except XFT
 #  define GENLISTSIZE 0x10000
 #endif // USE_XFT
 
@@ -252,7 +251,7 @@ void gl_color(Fl_Color i) {
 
 void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
   if (!fl_fontsize->listbase) {
-#ifdef  USE_OksiD_style_GL_font_selection
+#if !USE_XFT
     fl_fontsize->listbase = glGenLists(GENLISTSIZE);
 #else // Fltk-1.1.8 style GL font selection
     // FIXME:  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
@@ -266,7 +265,7 @@ void Fl_X11_Gl_Window_Driver::gl_bitmap_font(Fl_Font_Descriptor *fl_fontsize) {
      int count = font->max_char_or_byte2-base+1;
      fl_fontsize->listbase = glGenLists(GENLISTSIZE);
      glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
-#endif // USE_OksiD_style_GL_font_selection
+#endif // !USE_XFT
      }
      glListBase(fl_fontsize->listbase);
 }
