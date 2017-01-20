@@ -364,6 +364,11 @@ void Fl_Gl_Window::draw() {
   glDisable(GL_DEPTH_TEST);
   glPushMatrix();
   glLoadIdentity();
+  GLint viewport[4];
+  glGetIntegerv (GL_VIEWPORT, viewport);
+  if (viewport[2] != pixel_w() || viewport[3] != pixel_h()) {
+    glViewport(0, 0, pixel_w(), pixel_h());
+  }
   glOrtho(-0.5, w()-0.5, h()-0.5, -0.5, -1, 1);
 //  glOrtho(0, w(), h(), 0, -1, 1);
   glLineWidth((GLfloat)pixels_per_unit()); // should be 1 or 2 (2 if highres OpenGL)
@@ -408,6 +413,7 @@ float Fl_Gl_Window::pixels_per_unit() {
 }
 
 // creates a unique, dummy Fl_Gl_Window_Driver object used when no Fl_Gl_Window is around
+// necessary to support gl_start()/gl_finish()
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::global() {
   static Fl_Gl_Window_Driver *gwd = newGlWindowDriver(NULL);
   return gwd;
