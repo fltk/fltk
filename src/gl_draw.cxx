@@ -391,7 +391,6 @@ private:
     GLuint texName; // its name
     char *utf8; //its text
     Fl_Font_Descriptor *fdesc; // its font
-    int width; // its width
     float ratio; // used without rectangle texture
     int scale; // 1 or 2 for low/high resolution
   } data;
@@ -454,12 +453,14 @@ void gl_texture_fifo::display_texture(int rank)
   }
   glScalef (R/winw, R/winh, 1.0f);
   glTranslatef (-winw/R, -winh/R, 0.0f);
+  GLint width;
   if (has_texture_rectangle) {
     glEnable (GL_TEXTURE_RECTANGLE_ARB);
     glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[rank].texName);
     GLint height;
+    glGetTexLevelParameteriv(GL_TEXTURE_RECTANGLE_ARB, 0, GL_TEXTURE_WIDTH, &width);
     glGetTexLevelParameteriv(GL_TEXTURE_RECTANGLE_ARB, 0, GL_TEXTURE_HEIGHT, &height);
-    CGRect bounds = CGRectMake (pos[0], pos[1] - gl_scale*fl_descent(), fifo[rank].width, height);
+    CGRect bounds = CGRectMake (pos[0], pos[1] - gl_scale*fl_descent(), width, height);
     //write the texture on screen
     glBegin (GL_QUADS);
     glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
@@ -468,15 +469,16 @@ void gl_texture_fifo::display_texture(int rank)
     glTexCoord2f (0.0f, height); // draw upper left in world coordinates
     glVertex2f (bounds.origin.x, bounds.origin.y + bounds.size.height);
     
-    glTexCoord2f (fifo[rank].width, height); // draw upper right in world coordinates
+    glTexCoord2f (width, height); // draw upper right in world coordinates
     glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
     
-    glTexCoord2f (fifo[rank].width, 0.0f); // draw lower right in world coordinates
+    glTexCoord2f (width, 0.0f); // draw lower right in world coordinates
     glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y);
     glEnd ();
   } else {
     glTranslatef(pos[0]*2/R, pos[1]*2/R, 0.0);
     glutStrokeString(GLUT_STROKE_ROMAN, (uchar*)fifo[rank].utf8);
+    width = fl_width(fifo[rank].utf8);
   }
   glPopAttrib();
   
@@ -487,7 +489,7 @@ void gl_texture_fifo::display_texture(int rank)
   glMatrixMode (matrixMode);
   
   //set the raster position to end of string
-  pos[0] += fifo[rank].width;
+  pos[0] += width;
   GLdouble modelmat[16];
   glGetDoublev (GL_MODELVIEW_MATRIX, modelmat);
   GLdouble projmat[16];
@@ -511,19 +513,18 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   memcpy(fifo[current].utf8, str, n);
   fifo[current].utf8[n] = 0;
   fl_graphics_driver->font_descriptor(gl_fontsize);
-  int h;
-  fl_measure(fifo[current].utf8, fifo[current].width, h, 0);
-  fifo[current].width *= gl_scale;
-  h *= gl_scale;
+  int w, h;
+  w = fl_width(fifo[current].utf8, n) * gl_scale;
+  h = fl_height() * gl_scale;
   fifo[current].scale = gl_scale;
   fifo[current].fdesc = gl_fontsize;
   if (has_texture_rectangle) {
     //write str to a bitmap just big enough
     CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
     void *base = NULL;
-    if (fl_mac_os_version < 100600) base = calloc(4*fifo[current].width, h);
+    if (fl_mac_os_version < 100600) base = calloc(4*w, h);
     void* save_gc = fl_graphics_driver->gc();
-    CGContextRef gc = CGBitmapContextCreate(base, fifo[current].width, h, 8, fifo[current].width*4, lut,
+    CGContextRef gc = CGBitmapContextCreate(base, w, h, 8, w*4, lut,
                                   (CGBitmapInfo)(kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
     fl_graphics_driver->gc(gc);
     CGColorSpaceRelease(lut);
@@ -537,14 +538,14 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
     glPushAttrib(GL_TEXTURE_BIT);
     glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[current].texName);
     glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, fifo[current].width);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, fifo[current].width, h, 0,  GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(gc));
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, w);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, w, h, 0,  GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, CGBitmapContextGetData(gc));
     glPopAttrib();
     CGContextRelease(gc);
     fl_graphics_driver->gc(save_gc);
     if (base) free(base);
   } else {
-    fifo[current].ratio = float(fifo[current].width)/glutStrokeLength(GLUT_STROKE_ROMAN, (uchar*)fifo[current].utf8);
+    fifo[current].ratio = float(w)/glutStrokeLength(GLUT_STROKE_ROMAN, (uchar*)fifo[current].utf8);
   }
   fl_graphics_driver = prev_driver;
   return current;
