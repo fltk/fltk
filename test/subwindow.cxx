@@ -94,6 +94,7 @@ int testwindow::handle(int e) {
   if (e == FL_FOCUS) return 1;
   if (e == FL_PUSH) {Fl::focus(this); return 1;}
   if (e == FL_KEYBOARD && Fl::event_text()[0]) {
+    if (Fl::event_key() == FL_Escape || Fl::event_ctrl()) return 0;
     key = Fl::event_text()[0];
     cx = Fl::event_x();
     cy = Fl::event_y();
