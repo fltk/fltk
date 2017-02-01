@@ -3,7 +3,7 @@
 //
 // Header file for Fl_Text_Display class.
 //
-// Copyright 2001-2016 by Bill Spitzak and others.
+// Copyright 2001-2017 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -138,14 +138,14 @@ public:
 
    The style table is associated with an Fl_Text_Display by using
    Fl_Text_Display::highlight_data().
-   
+
    \see Fl_Text_Display::highlight_data()
    */
   struct Style_Table_Entry {
     Fl_Color    color;	///< text color
     Fl_Font     font;	///< text font
     Fl_Fontsize size;	///< text font size
-    unsigned    attr;	///< currently unused (this may be change in the future)
+    unsigned    attr;	///< currently unused (this may be changed in the future)
   };
   
   Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);
