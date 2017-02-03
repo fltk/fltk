@@ -1905,37 +1905,6 @@ void Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y)
 }
 
 
-/*
- * Gets called when a window is created or resized, or moved into/out a retina display
- * (with Mac OS 10.11 also when deminiaturized)
- */    
-static void handleUpdateEvent( Fl_Window *window ) 
-{
-  if ( !window ) return;
-  Fl_X *i = Fl_X::i( window );
-  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-  if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
-    bool previous = d->mapped_to_retina();
-    // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
-    //NSSize s = [[i->xid contentView] convertSizeToBacking:NSMakeSize(10, 10)];
-    typedef NSSize (*convertSizeIMP)(id, SEL, NSSize);
-    static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
-    NSSize s = addr([i->xid contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
-    d->mapped_to_retina( int(s.width + 0.5) > 10 );
-    if (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina()) d->changed_resolution(true);
-  }  
-  d->wait_for_expose_value = 0;
-
-  if ( i->region ) {
-    Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
-    i->region = 0;
-  }
-  window->clear_damage(FL_DAMAGE_ALL);
-  d->flush();
-  window->clear_damage();
-}     
-
-
 static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
@@ -2255,13 +2224,37 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     }
   return self;
 }
+
+/*
+ * Gets called when a window is created or resized, or moved between retina and non-retina displays
+ * (with Mac OS ≥ 10.11 also when deminiaturized)
+ */
 - (void)drawRect:(NSRect)rect
 {
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
-  Fl_Window *w = [cw getFl_Window];
+  Fl_Window *window = [cw getFl_Window];
   through_drawRect = YES;
-  handleUpdateEvent(w);
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
+    bool previous = d->mapped_to_retina();
+    // rewrite next call that requires 10.7 and therefore triggers a compiler warning on old SDKs
+    //NSSize s = [[cw contentView] convertSizeToBacking:NSMakeSize(10, 10)];
+    typedef NSSize (*convertSizeIMP)(id, SEL, NSSize);
+    static convertSizeIMP addr = (convertSizeIMP)[NSView instanceMethodForSelector:@selector(convertSizeToBacking:)];
+    NSSize s = addr([cw contentView], @selector(convertSizeToBacking:), NSMakeSize(10, 10));
+    d->mapped_to_retina( int(s.width + 0.5) > 10 );
+    if (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina()) d->changed_resolution(true);
+  }
+  d->wait_for_expose_value = 0;
+  Fl_X *i = Fl_X::i(window);
+  if ( i->region ) {
+    Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
+    i->region = 0;
+  }
+  window->clear_damage(FL_DAMAGE_ALL);
+  d->flush();
+  window->clear_damage();
   through_drawRect = NO;
   fl_unlock_function();
 }
@@ -3220,7 +3213,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
  1) When a window is created or resized.
  The system sends the drawRect: message to the window's view after having prepared the current 
  graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect 
- to YES and calls handleUpdateEvent() that calls Fl_Cocoa_Window_Driver::flush(). 
+ to YES and calls Fl_Cocoa_Window_Driver::flush().
  Fl_Cocoa_Window_Driver::flush() sets through_Fl_X_flush
  to YES and calls Fl_Window::flush() that calls Fl_Window::make_current() that
  uses the window's graphics context. The window's draw() function is then executed.
