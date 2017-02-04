@@ -2914,7 +2914,7 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
   // Take scrollbars and positions into account.
   int hscroll_h = mHScrollBar->visible() ? mHScrollBar->h() : 0;
   int xoff = Fl::box_dx(box());
-  int yoff = Fl::box_dy(box()) + ((scrollbar_align()&FL_ALIGN_TOP)?hscroll_h:0);
+  int yoff = text_area.y - y();
 
 #ifndef LINENUM_LEFT_OF_VSCROLL
   int vscroll_w = mVScrollBar->visible() ? mVScrollBar->w() : 0;
@@ -2951,7 +2951,7 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
       if (lineStart != -1 && (lineStart==0 || buffer()->char_at(lineStart-1)=='\n')) {
 	sprintf(lineNumString, linenumber_format(), line);
 	int xx = x() + xoff + 3,
-	    yy = Y + 3,
+	    yy = Y,
 	    ww = mLineNumWidth - (3*2),
 	    hh = lineHeight;
 	fl_draw(lineNumString, xx, yy, ww, hh, linenumber_align(), 0, 0);

@@ -42,13 +42,14 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
 
   Other Improvements
 
-  - (add here)
+  - (add new items here)
   - Many documentation fixes, clarifications, and enhancements.
 
 
   Bug Fixes
 
-  - (add here)
+  - (add new items here)
+  - Fix line number alignment in Fl_Text_Display/Editor (STR #3363).
   - Fix ignored buffer pre-allocation (requestedSize) in Fl_Text_Buffer.
     See fltk.general "Fl_Text_Buffer constructor bug" on Dec 5, 2016.
   - Fix build with configure --enable-cairo --enable-cairoext,
