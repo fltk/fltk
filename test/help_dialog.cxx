@@ -4,6 +4,7 @@
 // Fl_Help_Dialog test program.
 //
 // Copyright 1999-2010 by Easy Software Products.
+// Copyright 2011-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -44,7 +45,7 @@ main(int  argc,			// I - Number of command-line arguments
   strcpy(htmlname, argv[0]);
   char *slash = strrchr(htmlname, '/');
   if (slash)
-    strcpy(slash, "/../Resources/help-test.html");
+    strcpy(slash, "/../Resources/help_dialog.html");
   FILE *in = fl_fopen(htmlname, "r");
   if (in) {
     fclose(in);
@@ -54,7 +55,7 @@ main(int  argc,			// I - Number of command-line arguments
 #endif
   
   if (argc <= 1)
-    help->load("help-test.html");
+    help->load("help_dialog.html");
   else
     help->load(argv[1]);
   

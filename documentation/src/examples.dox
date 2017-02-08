@@ -60,7 +60,7 @@ you build FLTK, unlike those in the 'test' directory shown below.
 </tr>
 <tr>
 <td> \ref examples_hello           </td>
-<td> \ref examples_help            </td>
+<td> \ref examples_help_dialog     </td>
 <td> \ref examples_iconize         </td>
 <td> \ref examples_image           </td>
 <td> \ref examples_inactive        </td>
@@ -326,13 +326,13 @@ easily under FLTK.
 tiny demo shows how little is needed to get a functioning application
 running with FLTK. Quite impressive, I'd say.
 
-\subsection examples_help help
+\subsection examples_help_dialog help_dialog
 
 \par
-\c help displays the built-in FLTK help browser. The 
+\c help_dialog displays the built-in FLTK help browser. The
 Fl_Help_Dialog understands a subset of html and renders
 various image formats. This widget makes it easy to provide help
-pages to the user without depending on the operating system's 
+pages to the user without depending on the operating system's
 html browser.
 
 \subsection examples_iconize iconize

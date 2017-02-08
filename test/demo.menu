@@ -77,7 +77,7 @@
 	@o:Font Tests...:@of
 		@of:Fonts:fonts
 		@of:UTF-8:utf8
-	@o:HelpDialog:help
+	@o:HelpDialog:help_dialog
 	@o:Input Choice:input_choice
 	@o:Preferences:preferences
 	@o:Threading:threads

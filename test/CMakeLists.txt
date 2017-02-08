@@ -1,3 +1,22 @@
+#
+# "$Id$"
+#
+# CMakeLists.txt used to build test and demo apps by the CMake build system
+#
+# Copyright 2004-2017 by Bill Spitzak and others.
+#
+# This library is free software. Distribution and use rights are outlined in
+# the file "COPYING" which should have been included with this file.  If this
+# file is missing or damaged, see the license at:
+#
+#     http://www.fltk.org/COPYING.php
+#
+# Please report all bugs and problems on the following page:
+#
+#     http://www.fltk.org/str.php
+#
+#######################################################################
+
 set(EXECUTABLE_OUTPUT_PATH ${FLTK_BINARY_DIR}/bin/examples)
 
 #######################################################################
@@ -45,7 +64,7 @@ CREATE_EXAMPLE(file_chooser file_chooser.cxx "fltk;fltk_images")
 CREATE_EXAMPLE(fonts fonts.cxx fltk)
 CREATE_EXAMPLE(forms forms.cxx "fltk;fltk_forms")
 CREATE_EXAMPLE(hello hello.cxx fltk)
-CREATE_EXAMPLE(help help.cxx "fltk;fltk_images")
+CREATE_EXAMPLE(help_dialog help_dialog.cxx "fltk;fltk_images")
 CREATE_EXAMPLE(icon icon.cxx fltk)
 CREATE_EXAMPLE(iconize iconize.cxx fltk)
 CREATE_EXAMPLE(image image.cxx fltk)
@@ -112,7 +131,7 @@ endif(FLTK_HAVE_CAIRO)
 # Note: this is incomplete as of 11 Feb 2015
 # Todo: currently all files are copied, but some of them need configuration:
 # - demo.menu: fluid can't be started (wrong path)
-# - demo.menu: help (help-test.html) can't find its images (not copied)
+# - demo.menu: help_dialog (help_dialog.html) can't find its images (not copied)
 # - maybe more ...
 
 # prepare for a "better" test file installation path
@@ -127,12 +146,12 @@ configure_file(demo.menu ${TESTFILE_PATH}/demo.menu COPYONLY)
 
 # use target directory only to avoid redundancy
 configure_file(rgb.txt ${TESTFILE_PATH} COPYONLY)
-configure_file(help-test.html ${TESTFILE_PATH} COPYONLY)
+configure_file(help_dialog.html ${TESTFILE_PATH} COPYONLY)
 configure_file(browser.cxx ${TESTFILE_PATH} COPYONLY)
 configure_file(editor.cxx ${TESTFILE_PATH} COPYONLY)
 if(APPLE AND NOT OPTION_APPLE_X11)
     configure_file(demo.menu "${TESTFILE_PATH}/demo.app/Contents/Resources/demo.menu" COPYONLY)
     configure_file(browser.cxx "${TESTFILE_PATH}/browser.app/Contents/Resources/browser.cxx" COPYONLY)
     configure_file(rgb.txt ${TESTFILE_PATH}/colbrowser.app/Contents/Resources/rgb.txt COPYONLY)
-    configure_file(help-test.html ${TESTFILE_PATH}/help.app/Contents/Resources/help-test.html COPYONLY)
+    configure_file(help_dialog.html ${TESTFILE_PATH}/help_dialog.app/Contents/Resources/help_dialog.html COPYONLY)
 endif(APPLE AND NOT OPTION_APPLE_X11)

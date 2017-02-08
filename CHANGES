@@ -43,6 +43,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
+  - Renamed test/help demo program to test/help_dialog to avoid name
+    conflict with CMake auto-generated target 'help'.
   - Many documentation fixes, clarifications, and enhancements.
 
 

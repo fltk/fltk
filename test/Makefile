@@ -3,7 +3,7 @@
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2010 by Bill Spitzak and others.
+# Copyright 1998-2017 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -53,7 +53,7 @@ CPPFILES =\
 	gl_overlay.cxx \
 	glpuzzle.cxx \
 	hello.cxx \
-	help.cxx \
+	help_dialog.cxx \
 	icon.cxx \
 	iconize.cxx \
 	image.cxx \
@@ -126,7 +126,7 @@ ALL =	\
 	fonts$(EXEEXT) \
 	forms$(EXEEXT) \
 	hello$(EXEEXT) \
-	help$(EXEEXT) \
+	help_dialog$(EXEEXT) \
 	icon$(EXEEXT) \
 	iconize$(EXEEXT) \
 	image$(EXEEXT) \
@@ -368,12 +368,12 @@ forms$(EXEEXT): forms.o
 
 hello$(EXEEXT): hello.o
 
-help$(EXEEXT): help.o $(IMGLIBNAME)
+help_dialog$(EXEEXT): help_dialog.o $(IMGLIBNAME)
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) help_dialog.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
-	$(OSX_ONLY) mkdir -p help.app/Contents/Resources
-	$(OSX_ONLY) cp -f help-test.html help.app/Contents/Resources/
+	$(OSX_ONLY) mkdir -p help_dialog.app/Contents/Resources
+	$(OSX_ONLY) cp -f help_dialog.html help_dialog.app/Contents/Resources/
 
 icon$(EXEEXT): icon.o
 

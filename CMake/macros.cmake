@@ -109,11 +109,6 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
     set (tname ${NAME})		# target name
     set (oname ${NAME})		# output (executable) name
 
-    # rename reserved target name "help" (CMake 2.8.12 and later)
-    if (${tname} MATCHES "^help$")
-        set (tname "test_help")
-    endif (${tname} MATCHES "^help$")
-
     foreach(src ${SOURCES})
         if ("${src}" MATCHES "\\.fl$")
             list(APPEND flsrcs ${src})
