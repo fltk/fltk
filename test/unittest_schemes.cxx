@@ -42,6 +42,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Radio_Round_Button.H>
 
 class SchemesTest : public Fl_Group {
   Fl_Choice *schemechoice;
@@ -196,6 +197,25 @@ public:
 	    o->box(FL_DOWN_BOX);
 	    o->tooltip("Fl_File_Input with down box");
 	  } // Fl_File_Input* o
+	  o->end();
+	} // Fl_Group* o
+	{ Fl_Group* o = new Fl_Group(15, 140, 310, 190, "tab4");
+	  //o->box(FL_THIN_UP_BOX);
+	  o->color(FL_DARK1);
+	  o->hide();
+	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 160, 120, 25, "Choice 1");
+	    o->tooltip("Fl_Radio_Round_Button");
+	    o->value(1); // selected
+	  } // Fl_Radio_Round_Button* o
+	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 190, 120, 25, "Choice 2");
+	    o->tooltip("Fl_Radio_Round_Button");
+	  } // Fl_Radio_Round_Button* o
+	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 220, 120, 25, "Choice 3");
+	    o->tooltip("Fl_Radio_Round_Button");
+	  } // Fl_Radio_Round_Button* o
+	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 250, 120, 25, "Choice 4");
+	    o->tooltip("Fl_Radio_Round_Button");
+	  } // Fl_Radio_Round_Button* o
 	  o->end();
 	} // Fl_Group* o
 	o->end();
