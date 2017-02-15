@@ -1,10 +1,9 @@
 //
 // "$Id$".
 //
-//       External code editor management class for Windows
+//	External code editor management class for Windows
 //
-
-#ifdef WIN32	        /* This entire file windows only */
+//	Note: This entire file Windows only.
 
 #include <stdio.h>      // snprintf()
 
@@ -571,7 +570,6 @@ int ExternalCodeEditor::editors_open() {
   return L_editors_open;
 }
 
-#endif /* WIN32 */
 //
 // End of "$Id$".
 //

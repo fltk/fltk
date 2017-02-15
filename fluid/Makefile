@@ -3,7 +3,7 @@
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2016 by Bill Spitzak and others.
+# Copyright 1998-2017 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -16,10 +16,10 @@
 #      http://www.fltk.org/str.php
 #
 
+include ../makeinclude
+
 CPPFILES = \
 	CodeEditor.cxx \
-	ExternalCodeEditor_UNIX.cxx \
-	ExternalCodeEditor_WIN32.cxx \
 	Fl_Function_Type.cxx \
 	Fl_Group_Type.cxx \
 	Fl_Menu_Type.cxx \
@@ -39,11 +39,18 @@ CPPFILES = \
 	undo.cxx \
 	widget_panel.cxx
 
+# ExternalCodeEditor: platform specific files
+
+CPPFILES_WIN = ExternalCodeEditor_WIN32.cxx
+CPPFILES_OSX = ExternalCodeEditor_UNIX.cxx
+CPPFILES_X11 = ExternalCodeEditor_UNIX.cxx
+CPPFILES_XFT = ExternalCodeEditor_UNIX.cxx
+
+CPPFILES += $(CPPFILES_$(BUILD))
+
 ################################################################
 
 OBJECTS = $(CPPFILES:.cxx=.o)
-
-include ../makeinclude
 
 all:	$(FLUID) fluid$(EXEEXT)
 
@@ -116,12 +123,12 @@ uninstall-osx:
 #
 
 rebuild:
-	./fluid -c about_panel.fl
-	./fluid -c alignment_panel.fl
-	./fluid -c function_panel.fl
-	./fluid -c print_panel.fl
-	./fluid -c template_panel.fl
-	./fluid -c widget_panel.fl
+	./fluid -u -c about_panel.fl
+	./fluid -u -c alignment_panel.fl
+	./fluid -u -c function_panel.fl
+	./fluid -u -c print_panel.fl
+	./fluid -u -c template_panel.fl
+	./fluid -u -c widget_panel.fl
 
 #
 # End of "$Id$".

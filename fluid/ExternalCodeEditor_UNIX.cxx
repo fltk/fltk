@@ -1,9 +1,9 @@
 //
 // "$Id$".
 //
-//       External code editor management class for Unix
+//	External code editor management class for Unix
 //
-#ifndef WIN32           /* This entire file unix only */
+//	Note: This entire file Unix only
 
 #include <errno.h>      /* errno */
 #include <string.h>     /* strerror() */
@@ -459,7 +459,6 @@ int ExternalCodeEditor::editors_open() {
   return L_editors_open;
 }
 
-#endif /* !WIN32 */
 //
 // End of "$Id$".
 //

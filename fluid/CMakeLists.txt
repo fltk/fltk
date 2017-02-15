@@ -22,8 +22,6 @@ set(CPPFILES
     Fl_Group_Type.cxx
     Fl_Menu_Type.cxx
     Fl_Type.cxx
-    ExternalCodeEditor_UNIX.cxx
-    ExternalCodeEditor_WIN32.cxx
     Fl_Widget_Type.cxx
     Fl_Window_Type.cxx
     Fluid_Image.cxx
@@ -39,6 +37,14 @@ set(CPPFILES
     undo.cxx
     widget_panel.cxx
 )
+
+# ExternalCodeEditor: platform specific files
+
+if (WIN32)
+    list(APPEND CPPFILES ExternalCodeEditor_WIN32.cxx)
+else ()
+    list(APPEND CPPFILES ExternalCodeEditor_UNIX.cxx)
+endif (WIN32)
 
 if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set( ICON_NAME fluid.icns )

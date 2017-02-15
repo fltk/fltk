@@ -26,7 +26,7 @@ FL_DSO_VERSION		= @FL_DSO_VERSION@
 FL_ABI_VERSION		= @FL_ABI_VERSION@
 FL_VERSION		= @FL_VERSION@
 
-# FLTK configuration options
+# FLTK configuration options: BUILD = { WIN | OSX | X11 | XFT }
 
 BUILD		= @BUILD@
 
