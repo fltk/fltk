@@ -741,7 +741,7 @@ Apple "Open" Event
 \par
 Whenever the user drops a file onto an application icon, OS X
 generates an Apple Event of the type "Open". You can have FLTK
-notify you of an Open event by calling the \ref fl_open_callback 
+notify you of an Open event by calling the \ref fl_open_callback()
 function.
 
 void fl_open_display()
