@@ -64,7 +64,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
       // test for word-wrap:
       if (word_start < p && wrap) {
 	double newwidth = w + fl_width(word_end, (int) (o-word_end) );
-	if (word_end > buf && newwidth > maxw) { // break before this word
+	if (word_end > buf && int(newwidth) > maxw) { // break before this word
 	  o = word_end;
 	  p = word_start;
 	  break;
