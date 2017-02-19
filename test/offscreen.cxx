@@ -68,6 +68,7 @@ private:
   int page_x, page_y; // top left of view area
   // Width and height of the offscreen surface
   int offsc_w, offsc_h;
+  int iters; // Must be set on first pass!
 };
 
 /*****************************************************************************/
@@ -77,7 +78,8 @@ oscr_box::oscr_box(int x, int y, int w, int h) :
   x1(0), y1(0), drag_state(0), // not dragging view
   page_x((offscreen_size - win_size) / 2), // roughly centred in view
   page_y((offscreen_size - win_size) / 2),
-  offsc_w(0), offsc_h(0) // offscreen size - initially none
+  offsc_w(0), offsc_h(0), // offscreen size - initially none
+  iters(num_iterations + 1)
 { } // Constructor
 
 /*****************************************************************************/
@@ -110,6 +112,12 @@ void oscr_box::draw()
 int oscr_box::handle(int ev)
 {
   int ret = Fl_Box::handle(ev);
+  
+  if (ev == FL_HIDE && oscr) {
+      fl_delete_offscreen(oscr);
+      oscr = 0;
+      iters = num_iterations + 1;
+  }
   // handle dragging of visible page area - if a valid context exists
   if (has_oscr())
   {
@@ -184,7 +192,6 @@ void oscr_box::oscr_drawing(void)
   static int icol = first_useful_color;
   static int ox = (offscreen_size / 2);
   static int oy = (offscreen_size / 2);
-  static int iters = num_iterations + 1; // Must be set on first pass!
 
   if (!has_oscr())
   {
