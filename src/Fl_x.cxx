@@ -2755,20 +2755,37 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
   XcursorPixel *o = cursor->pixels;
   for (int y = 0;y < image->h();y++) {
     for (int x = 0;x < image->w();x++) {
+      uchar r, g, b, a;
       switch (image->d()) {
       case 1:
-        *o = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        r = g = b = i[0];
+        a = 0xff;
         break;
       case 2:
-        *o = (i[1]<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        r = g = b = i[0];
+        a = i[1];
         break;
       case 3:
-        *o = (0xff<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        r = i[0];
+        g = i[1];
+        b = i[2];
+        a = 0xff;
         break;
       case 4:
-        *o = (i[3]<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        r = i[0];
+        g = i[1];
+        b = i[2];
+        a = i[3];
         break;
+      default:
+        return 0;
       }
+      // Alpha needs to be pre-multiplied for X11
+      r = (uchar)((unsigned)r * a / 255);
+      g = (uchar)((unsigned)g * a / 255);
+      b = (uchar)((unsigned)b * a / 255);
+
+      *o = (a<<24) | (r<<16) | (g<<8) | b;
       i += image->d();
       o++;
     }
