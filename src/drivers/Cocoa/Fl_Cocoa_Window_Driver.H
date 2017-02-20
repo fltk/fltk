@@ -55,8 +55,6 @@ class FLWindow;
  ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
  */
 struct Fl_Window_Driver::shape_data_type {
-  int lw_; ///<  width of shape image
-  int lh_; ///<  height of shape image
   Fl_Image* shape_; ///<  shape image
   typedef struct CGImage* CGImageRef;
   CGImageRef mask;
