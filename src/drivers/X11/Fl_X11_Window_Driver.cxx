@@ -533,15 +533,17 @@ void Fl_X11_Window_Driver::show_with_args_begin() {
 
 
 void Fl_X11_Window_Driver::show_with_args_end(int argc, char **argv) {
-  // set the command string, used by state-saving window managers:
-  int j;
-  int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
-  char *buffer = new char[n];
-  char *p = buffer;
-  for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
-  XChangeProperty(fl_display, fl_xid(pWindow), XA_WM_COMMAND, XA_STRING, 8, 0,
-                  (unsigned char *)buffer, p-buffer-1);
-  delete[] buffer;
+  if (argc) {
+    // set the command string, used by state-saving window managers:
+    int j;
+    int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
+    char *buffer = new char[n];
+    char *p = buffer;
+    for (j=0; j<argc; j++) for (const char *q = argv[j]; (*p++ = *q++););
+    XChangeProperty(fl_display, fl_xid(pWindow), XA_WM_COMMAND, XA_STRING, 8, 0,
+                    (unsigned char *)buffer, p-buffer-1);
+    delete[] buffer;
+  }
 }
 
 
