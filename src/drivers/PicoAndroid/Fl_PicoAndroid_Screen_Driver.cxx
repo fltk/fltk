@@ -31,7 +31,7 @@
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Graphics_Driver.H>
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))

@@ -22,7 +22,7 @@
 
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 
 Fl_Pico_Window_Driver::Fl_Pico_Window_Driver(Fl_Window *win)

@@ -33,7 +33,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Window_Driver.H>
-#include <FL/fl_draw.h>
+#include <FL/fl_draw.H>
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
