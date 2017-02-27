@@ -766,7 +766,7 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 
     Flags can be or'd to achieve a combination of alignments, but there
     are some "magic values" (e.g. combinations of TOP and BOTTOM and of
-    LEFT and RIGHT) that have special meanings (see below). For instance:<BR>
+    LEFT and RIGHT) that have special meanings (see below). For instance:\n
     FL_ALIGN_TOP_LEFT == (FL_ALIGN_TOP|FL_ALIGN_LEFT) != FL_ALIGN_LEFT_TOP.
 
     \code
@@ -793,50 +793,95 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
                +---------------------------------+
     \endcode
     \see #FL_ALIGN_CENTER, etc.
+
+    \note
+      -# Bit positions not defined in the following constants of type
+	 \p Fl_Align are reserved for future extensions. Do not use.
+      -# The \e "magic" values (FL_ALIGN_)LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM,
+	 and RIGHT_BOTTOM must not be used together with FL_ALIGN_INSIDE.
+	 Use TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, or BOTTOM_RIGHT instead.
+      -# Although bits can be or'd together there are some unused/illegal
+	 combinations, for instance:
+	- setting both FL_ALIGN_TOP and FL_ALIGN_BOTTOM in combinations other
+	  than those given in the \p Fl_Align constants below (magic values)
+	- setting both FL_ALIGN_LEFT and FL_ALIGN_RIGHT in combinations other
+	  than those given in the \p Fl_Align constants below (magic values)
+    \note
+      Using illegal bit combinations or undefined bits may yield unexpected
+      behavior, and this behavior may be changed in future FLTK versions
+      without notice.
  */
 /*@{*/
-/** FLTK type for alignment control */
+/** FLTK type for alignment control. */
 typedef unsigned Fl_Align;
+
   /** Align the label horizontally in the middle. */
-const Fl_Align FL_ALIGN_CENTER		= (Fl_Align)0;
+const Fl_Align FL_ALIGN_CENTER		= 0x0000;
+
   /** Align the label at the top of the widget. Inside labels appear below the top,
       outside labels are drawn on top of the widget. */
-const Fl_Align FL_ALIGN_TOP		= (Fl_Align)1;
+const Fl_Align FL_ALIGN_TOP		= 0x0001;
+
   /** Align the label at the bottom of the widget. */
-const Fl_Align FL_ALIGN_BOTTOM		= (Fl_Align)2;
+const Fl_Align FL_ALIGN_BOTTOM		= 0x0002;
+
   /** Align the label at the left of the widget. Inside labels appear left-justified
       starting at the left side of the widget, outside labels are right-justified and
       drawn to the left of the widget. */
-const Fl_Align FL_ALIGN_LEFT		= (Fl_Align)4;
+const Fl_Align FL_ALIGN_LEFT		= 0x0004;
+
   /** Align the label to the right of the widget. */
-const Fl_Align FL_ALIGN_RIGHT		= (Fl_Align)8;
+const Fl_Align FL_ALIGN_RIGHT		= 0x0008;
+
   /** Draw the label inside of the widget. */
-const Fl_Align FL_ALIGN_INSIDE		= (Fl_Align)16;
+const Fl_Align FL_ALIGN_INSIDE		= 0x0010;
+
   /** If the label contains an image, draw the text on top of the image. */
-const Fl_Align FL_ALIGN_TEXT_OVER_IMAGE	= (Fl_Align)0x0020;
+const Fl_Align FL_ALIGN_TEXT_OVER_IMAGE	= 0x0020;
+
   /** If the label contains an image, draw the text below the image. */
-const Fl_Align FL_ALIGN_IMAGE_OVER_TEXT	= (Fl_Align)0x0000;
-  /** All parts of the label that are lager than the widget will not be drawn . */
-const Fl_Align FL_ALIGN_CLIP		= (Fl_Align)64;
+const Fl_Align FL_ALIGN_IMAGE_OVER_TEXT	= 0x0000;
+
+  /** All parts of the label that are larger than the widget will not be drawn. */
+const Fl_Align FL_ALIGN_CLIP		= 0x0040;
+
   /** Wrap text that does not fit the width of the widget. */
-const Fl_Align FL_ALIGN_WRAP		= (Fl_Align)128;
+const Fl_Align FL_ALIGN_WRAP		= 0x0080;
+
   /** If the label contains an image, draw the text to the right of the image. */
-const Fl_Align FL_ALIGN_IMAGE_NEXT_TO_TEXT = (Fl_Align)0x0100;
+const Fl_Align FL_ALIGN_IMAGE_NEXT_TO_TEXT = 0x0100;
+
   /** If the label contains an image, draw the text to the left of the image. */
-const Fl_Align FL_ALIGN_TEXT_NEXT_TO_IMAGE = (Fl_Align)0x0120;
+const Fl_Align FL_ALIGN_TEXT_NEXT_TO_IMAGE = 0x0120;
+
 /** If the label contains an image, draw the image or deimage in the background. */
-const Fl_Align FL_ALIGN_IMAGE_BACKDROP  = (Fl_Align)0x0200;
+const Fl_Align FL_ALIGN_IMAGE_BACKDROP  = 0x0200;
+
 const Fl_Align FL_ALIGN_TOP_LEFT	= FL_ALIGN_TOP | FL_ALIGN_LEFT;
 const Fl_Align FL_ALIGN_TOP_RIGHT	= FL_ALIGN_TOP | FL_ALIGN_RIGHT;
 const Fl_Align FL_ALIGN_BOTTOM_LEFT	= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT;
 const Fl_Align FL_ALIGN_BOTTOM_RIGHT	= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT;
-const Fl_Align FL_ALIGN_LEFT_TOP	= 0x0007; // magic value
-const Fl_Align FL_ALIGN_RIGHT_TOP	= 0x000b; // magic value
-const Fl_Align FL_ALIGN_LEFT_BOTTOM	= 0x000d; // magic value
-const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= 0x000e; // magic value
-const Fl_Align FL_ALIGN_NOWRAP		= (Fl_Align)0; // for back compatibility
-const Fl_Align FL_ALIGN_POSITION_MASK   = 0x000f; // left, right, top, bottom
-const Fl_Align FL_ALIGN_IMAGE_MASK      = 0x0320; // l/r, t/b, backdrop
+
+/** Outside only, left of widget, top position, magic value: TOP | BOTTOM | LEFT. */
+const Fl_Align FL_ALIGN_LEFT_TOP	= 0x0007;
+
+/** Outside only, right of widget, top position, magic value: TOP | BOTTOM | RIGHT. */
+const Fl_Align FL_ALIGN_RIGHT_TOP	= 0x000b;
+
+/** Outside only, left of widget, bottom position, magic value: TOP | LEFT | RIGHT. */
+const Fl_Align FL_ALIGN_LEFT_BOTTOM	= 0x000d;
+
+/** Outside only, right of widget, bottom position, magic value: BOTTOM | LEFT | RIGHT. */
+const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= 0x000e;
+
+/** Nothing, same as FL_ALIGN_CENTER, for back compatibility. */
+const Fl_Align FL_ALIGN_NOWRAP		= 0x0000;
+
+/** Mask value to test for TOP, BOTTOM, LEFT, and RIGHT flags. */
+const Fl_Align FL_ALIGN_POSITION_MASK   = 0x000f;
+
+/** Mask value to test for image alignment flags. */
+const Fl_Align FL_ALIGN_IMAGE_MASK      = 0x0320;
 /*@}*/
 
 

@@ -42,8 +42,16 @@ fl_normal_measure(const Fl_Label* o, int& W, int& H) {
   fl_font(o->font, o->size);
   fl_measure(o->value, W, H);
   if (o->image) {
-    if (o->image->w() > W) W = o->image->w();
-    H += o->image->h();
+    int iw = o->image->w(), ih = o->image->h();
+    if (o->align_ & FL_ALIGN_IMAGE_BACKDROP) {		// backdrop: ignore
+      // ignore backdrop image for calculation
+    } else if (o->align_ & FL_ALIGN_IMAGE_NEXT_TO_TEXT) { // text and image side by side
+      W += iw;
+      if (ih > H) H = ih;
+    } else {
+      if (iw > W) W = iw;
+      H += ih;
+    }
   }
 }
 

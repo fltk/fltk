@@ -793,36 +793,40 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   } else {
     wx = x(); wy = y();
   }
-  if ( (a & 0x0f) == FL_ALIGN_LEFT_TOP ) {
-    a = (a &~0x0f ) | FL_ALIGN_TOP_RIGHT;
+  if ( (a & FL_ALIGN_POSITION_MASK) == FL_ALIGN_LEFT_TOP ) {
+    a = (a &(~FL_ALIGN_POSITION_MASK) ) | FL_ALIGN_TOP_RIGHT;
     X = wx;
     W = widget.x()-X-3;
-  } else if ( (a & 0x0f) == FL_ALIGN_LEFT_BOTTOM ) {
-    a = (a &~0x0f ) | FL_ALIGN_BOTTOM_RIGHT; 
+  } else if ( (a & FL_ALIGN_POSITION_MASK) == FL_ALIGN_LEFT_BOTTOM ) {
+    a = (a &(~FL_ALIGN_POSITION_MASK) ) | FL_ALIGN_BOTTOM_RIGHT;
     X = wx;
     W = widget.x()-X-3;
-  } else if ( (a & 0x0f) == FL_ALIGN_RIGHT_TOP ) {
-    a = (a &~0x0f ) | FL_ALIGN_TOP_LEFT; 
+  } else if ( (a & FL_ALIGN_POSITION_MASK) == FL_ALIGN_RIGHT_TOP ) {
+    a = (a &(~FL_ALIGN_POSITION_MASK) ) | FL_ALIGN_TOP_LEFT;
     X = X+W+3;
     W = wx+this->w()-X;
-  } else if ( (a & 0x0f) == FL_ALIGN_RIGHT_BOTTOM ) {
-    a = (a &~0x0f ) | FL_ALIGN_BOTTOM_LEFT; 
+  } else if ( (a & FL_ALIGN_POSITION_MASK) == FL_ALIGN_RIGHT_BOTTOM ) {
+    a = (a &(~FL_ALIGN_POSITION_MASK) ) | FL_ALIGN_BOTTOM_LEFT;
     X = X+W+3;
     W = wx+this->w()-X;
   } else if (a & FL_ALIGN_TOP) {
-    a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
+    a ^= FL_ALIGN_TOP;
+    a |= FL_ALIGN_BOTTOM;
     Y = wy;
     H = widget.y()-Y;
   } else if (a & FL_ALIGN_BOTTOM) {
-    a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
+    a ^= FL_ALIGN_BOTTOM;
+    a |= FL_ALIGN_TOP;
     Y = Y+H;
     H = wy+h()-Y;
   } else if (a & FL_ALIGN_LEFT) {
-    a ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
+    a ^= FL_ALIGN_LEFT;
+    a |= FL_ALIGN_RIGHT;
     X = wx;
     W = widget.x()-X-3;
   } else if (a & FL_ALIGN_RIGHT) {
-    a ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
+    a ^= FL_ALIGN_RIGHT;
+    a |= FL_ALIGN_LEFT;
     X = X+W+3;
     W = wx+this->w()-X;
   }
