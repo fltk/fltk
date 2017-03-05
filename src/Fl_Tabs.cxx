@@ -377,7 +377,11 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   char prev_draw_shortcut = fl_draw_shortcut;
   fl_draw_shortcut = 1;
 
-  Fl_Boxtype bt = (o==push_ &&!sel) ? fl_down(box()) : box();
+  Fl_Boxtype bt = (o == push_ && !sel) ? fl_down(box()) : box();
+  Fl_Color bc = sel ? selection_color() : o->selection_color();
+
+  // Save the label color
+  Fl_Color oc = o->labelcolor();
 
   // compute offsets to make selected tab look bigger
   int yofs = sel ? 0 : BORDER;
@@ -390,19 +394,11 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     H += dh;
 
-    Fl_Color c = sel ? selection_color() : o->selection_color();
-
-    draw_box(bt, x1, y() + yofs, W, H + 10 - yofs, c);
-
-    // Save the previous label color
-    Fl_Color oc = o->labelcolor();
+    draw_box(bt, x1, y() + yofs, W, H + 10 - yofs, bc);
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
     o->draw_label(x1, y() + yofs, W, H - yofs, FL_ALIGN_CENTER);
-
-    // Restore the original label color...
-    o->labelcolor(oc);
 
     if (Fl::focus() == this && o->visible())
       draw_focus(box(), x1, y(), W, H);
@@ -416,19 +412,11 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     H += dh;
 
-    Fl_Color c = sel ? selection_color() : o->selection_color();
-
-    draw_box(bt, x1, y() + h() - H - 10, W, H + 10 - yofs, c);
-
-    // Save the previous label color
-    Fl_Color oc = o->labelcolor();
+    draw_box(bt, x1, y() + h() - H - 10, W, H + 10 - yofs, bc);
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
     o->draw_label(x1, y() + h() - H, W, H - yofs, FL_ALIGN_CENTER);
-
-    // Restore the original label color...
-    o->labelcolor(oc);
 
     if (Fl::focus() == this && o->visible())
       draw_focus(box(), x1, y() + h() - H, W, H);
@@ -436,6 +424,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     fl_pop_clip();
   }
   fl_draw_shortcut = prev_draw_shortcut;
+
+  // Restore the original label color
+  o->labelcolor(oc);
 }
 
 /**
