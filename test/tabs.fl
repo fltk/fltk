@@ -177,7 +177,7 @@ Function {} {open
       }
       Fl_Group {} {
         label tab3
-        tooltip {tab3 checks for correct keyboard navigation} xywh {330 50 320 245} selection_color 3 hide
+        tooltip {tab3 checks for correct keyboard navigation} xywh {330 60 320 235} selection_color 3 hide
       } {
         Fl_Button {} {
           label button2
@@ -210,8 +210,8 @@ Function {} {open
         }
       }
       Fl_Group {} {
-        label {     tab5      }
-        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {330 65 320 230} labeltype ENGRAVED_LABEL
+        label {     tab5      } open
+        tooltip {tab5 verifies if visibility requests are handled correctly} xywh {330 60 320 235} labeltype ENGRAVED_LABEL
       } {
         Fl_Button {} {
           label button2
