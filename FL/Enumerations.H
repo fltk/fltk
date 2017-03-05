@@ -744,8 +744,8 @@ enum Fl_Labeltype {	// labeltypes:
   FL_FREE_LABELTYPE    ///< first free labeltype to use for creating own labeltypes
 };
 
-/** 
-  Sets the current label type and return its corresponding Fl_Labeltype value. 
+/**
+  Sets the current label type and returns its corresponding Fl_Labeltype value.
   @{
 */
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
@@ -757,19 +757,22 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
 /** @} */
 
-/** \name Alignment Flags 
-    Flags to control the label alignment. 
+/** \name Alignment Flags
+  Flags to control the label alignment.
 
-    This controls how the label is displayed next to or inside the widget. 
-    The default value is FL_ALIGN_CENTER (0) for most widgets, which centers
-    the label inside the widget.
+  This controls how the label is displayed next to or inside the widget.
+  The default value is FL_ALIGN_CENTER (0) for most widgets, which centers
+  the label inside the widget.
 
-    Flags can be or'd to achieve a combination of alignments, but there
-    are some "magic values" (e.g. combinations of TOP and BOTTOM and of
-    LEFT and RIGHT) that have special meanings (see below). For instance:\n
-    FL_ALIGN_TOP_LEFT == (FL_ALIGN_TOP|FL_ALIGN_LEFT) != FL_ALIGN_LEFT_TOP.
+  All alignment flags use the common prefix "FL_ALIGN_". In the following
+  descriptions this prefix is sometimes omitted for brevity.
 
-    \code
+  Flags can be or'd to achieve a combination of alignments, but there
+  are some \e "magic values" (e.g. combinations of TOP and BOTTOM and of
+  LEFT and RIGHT) that have special meanings (see below). For instance:\n
+  FL_ALIGN_TOP_LEFT == (FL_ALIGN_TOP | FL_ALIGN_LEFT) != FL_ALIGN_LEFT_TOP.
+
+  \code
     Outside alignments (FL_ALIGN_INSIDE is not set):
 
                TOP_LEFT        TOP       TOP_RIGHT
@@ -791,25 +794,26 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
                |                                 |
                |BOTTOM_LEFT  BOTTOM  BOTTOM_RIGHT|
                +---------------------------------+
-    \endcode
-    \see #FL_ALIGN_CENTER, etc.
+  \endcode
+  \see Fl_Align, #FL_ALIGN_CENTER, etc.
 
-    \note
-      -# Bit positions not defined in the following constants of type
-	 \p Fl_Align are reserved for future extensions. Do not use.
-      -# The \e "magic" values (FL_ALIGN_)LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM,
-	 and RIGHT_BOTTOM must not be used together with FL_ALIGN_INSIDE.
-	 Use TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, or BOTTOM_RIGHT instead.
-      -# Although bits can be or'd together there are some unused/illegal
-	 combinations, for instance:
-	- setting both FL_ALIGN_TOP and FL_ALIGN_BOTTOM in combinations other
-	  than those given in the \p Fl_Align constants below (magic values)
-	- setting both FL_ALIGN_LEFT and FL_ALIGN_RIGHT in combinations other
-	  than those given in the \p Fl_Align constants below (magic values)
-    \note
-      Using illegal bit combinations or undefined bits may yield unexpected
-      behavior, and this behavior may be changed in future FLTK versions
-      without notice.
+  \note
+    -# Bit positions not defined in the following constants of type
+       \p Fl_Align are reserved for future extensions. Do not use.
+    -# The \e "magic values" (FL_ALIGN_)LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM,
+       and RIGHT_BOTTOM must not be used together with FL_ALIGN_INSIDE.
+       Use TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, or BOTTOM_RIGHT instead.
+    -# Although bits can be or'd together there are some unused/illegal
+       combinations, for instance:
+      - setting both FL_ALIGN_TOP and FL_ALIGN_BOTTOM in combinations other
+	than those given in the \p Fl_Align constants below (magic values)
+      - setting both FL_ALIGN_LEFT and FL_ALIGN_RIGHT in combinations other
+	than those given in the \p Fl_Align constants below (magic values)
+      - using one of the "magic values" (2) together with FL_ALIGN_INSIDE
+  \note
+    Using illegal bit combinations or undefined bits may yield unexpected
+    behavior, and this behavior may be changed without notice in future
+    FLTK versions.
  */
 /*@{*/
 /** FLTK type for alignment control. */
