@@ -17,6 +17,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
 
   New Features and Extensions
 
+  - New method Fl_Tabs::tab_align() allows to set alignment of tab labels,
+    particularly to support icons on tab labels (STR #3076).
   - Added '--enable-print' option to configure effective under X11 platforms
     and with 'yes' default value. Using '--enable-print=no' removes print
     and PostScript support from the FLTK library, thus reducing its size.
@@ -51,6 +53,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Bug Fixes
 
   - (add new items here)
+  - Fix Fl_Tabs label drawing for Fl_Window children (STR #3075).
   - Fix line number alignment in Fl_Text_Display/Editor (STR #3363).
   - Fix ignored buffer pre-allocation (requestedSize) in Fl_Text_Buffer.
     See fltk.general "Fl_Text_Buffer constructor bug" on Dec 5, 2016.

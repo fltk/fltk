@@ -63,7 +63,15 @@ int Fl_Tabs::tab_positions() {
     if (o->visible()) selected = i;
 
     int wt = 0; int ht = 0;
+    Fl_Labeltype ot = o->labeltype();
+    Fl_Align oa = o->align();
+    if (ot == FL_NO_LABEL) {
+      o->labeltype(FL_NORMAL_LABEL);
+    }
+    o->align(tab_align());
     o->measure_label(wt,ht);
+    o->labeltype(ot);
+    o->align(oa);
 
     tab_width[i] = wt + EXTRASPACE;
     tab_pos[i+1] = tab_pos[i] + tab_width[i] + BORDER;
@@ -380,8 +388,13 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   Fl_Boxtype bt = (o == push_ && !sel) ? fl_down(box()) : box();
   Fl_Color bc = sel ? selection_color() : o->selection_color();
 
-  // Save the label color
+  // Save the label color and label type
   Fl_Color oc = o->labelcolor();
+  Fl_Labeltype ot = o->labeltype();
+
+  // Set a labeltype that really draws a label
+  if (ot == FL_NO_LABEL)
+    o->labeltype(FL_NORMAL_LABEL);
 
   // compute offsets to make selected tab look bigger
   int yofs = sel ? 0 : BORDER;
@@ -398,7 +411,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
-    o->draw_label(x1, y() + yofs, W, H - yofs, FL_ALIGN_CENTER);
+    o->draw_label(x1, y() + yofs, W, H - yofs, tab_align());
 
     if (Fl::focus() == this && o->visible())
       draw_focus(box(), x1, y(), W, H);
@@ -425,8 +438,9 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   }
   fl_draw_shortcut = prev_draw_shortcut;
 
-  // Restore the original label color
+  // Restore the original label color and label type
   o->labelcolor(oc);
+  o->labeltype(ot);
 }
 
 /**
@@ -458,6 +472,7 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
   tab_pos = 0;
   tab_width = 0;
   tab_count = 0;
+  tab_align_ = FL_ALIGN_CENTER;
 }
 
 Fl_Tabs::~Fl_Tabs() {
