@@ -429,7 +429,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
 
     // Draw the label using the current color...
     o->labelcolor(sel ? labelcolor() : o->labelcolor());
-    o->draw_label(x1, y() + h() - H, W, H - yofs, FL_ALIGN_CENTER);
+    o->draw_label(x1, y() + h() - H, W, H - yofs, tab_align());
 
     if (Fl::focus() == this && o->visible())
       draw_focus(box(), x1, y() + h() - H, W, H);
