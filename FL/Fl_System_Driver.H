@@ -4,7 +4,7 @@
 // A base class for platform specific system calls
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <time.h>
 
 class Fl_File_Icon;
 class Fl_File_Browser;
@@ -210,6 +211,8 @@ public:
   virtual void remove_fd(int);
   // the default implementation of open_callback() may be enough
   virtual void open_callback(void (*)(const char *));
+  // get elapsed time since Jan 1st, 1970
+  virtual void gettime(time_t *sec, int *usec) {}
 };
 
 #endif // FL_SYSTEM_DRIVER_H

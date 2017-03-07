@@ -3,7 +3,7 @@
 //
 // Definition of Apple Darwin system driver.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,6 +30,7 @@
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <pwd.h>
 #include <unistd.h>
 #include <time.h>
@@ -88,6 +89,14 @@ const char *Fl_Posix_System_Driver::getpwnam(const char *login) {
   struct passwd *pwd;
   pwd = ::getpwnam(login);
   return pwd ? pwd->pw_dir : NULL;
+}
+
+
+void Fl_Posix_System_Driver::gettime(time_t *sec, int *usec) {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  *sec = tv.tv_sec;
+  *usec = tv.tv_usec;
 }
 
 //

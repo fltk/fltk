@@ -4,7 +4,7 @@
 // Definition of MSWindows system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -116,6 +116,7 @@ public:
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
+  virtual void gettime(time_t *sec, int *usec);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

@@ -3,7 +3,7 @@
 //
 // Definition of Apple Darwin system driver.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,7 @@
 #include <rpc.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/timeb.h>
 // function pointer for the UuidCreate Function
 // RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
 typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
@@ -900,6 +901,13 @@ const char *Fl_WinAPI_System_Driver::home_directory_name()
   const char *h = getenv("HOME");
   if (!h) h = getenv("UserProfile");
   return h;
+}
+
+void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
+  struct _timeb t;
+  _ftime(&t);
+  *sec = t.time;
+  *usec = t.millitm * 1000;
 }
 
 //
