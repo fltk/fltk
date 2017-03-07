@@ -3,7 +3,7 @@
 //
 // Clock widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,6 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Clock.H>
 #include <FL/Fl_Round_Clock.H>
+#include <FL/Fl_System_Driver.H>
 #include <FL/fl_draw.H>
 #include <math.h>
 #include <time.h>
@@ -183,8 +184,11 @@ Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char *L)
 }
 
 static void tick(void *v) {
-  ((Fl_Clock*)v)->value((ulong) time(0));
-  Fl::add_timeout(1.0, tick, v);
+  time_t sec;
+  int usec;
+  Fl::system_driver()->gettime(&sec, &usec);
+  ((Fl_Clock*)v)->value((ulong)sec);
+  Fl::add_timeout((1000000 - usec)/1000000., tick, v); // time till next second
 }
 
 int Fl_Clock::handle(int event) {
