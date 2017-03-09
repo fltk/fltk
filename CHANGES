@@ -45,8 +45,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
-  - Renamed test/help demo program to test/help_dialog to avoid name
-    conflict with CMake auto-generated target 'help'.
+  - Separated Fl_Spinner.H and Fl_Spinner.cxx (STR #2776).
+  - Renamed test/help.cxx demo program to test/help_dialog.cxx to avoid
+    name conflict with CMake auto-generated target 'help'.
   - Many documentation fixes, clarifications, and enhancements.
 
 
