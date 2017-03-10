@@ -52,7 +52,18 @@ private:
 
 protected:
 
-  Fl_Input	input_;			// Input field for the value
+  // This class works like Fl_Input but ignores FL_Up and FL_Down key
+  // presses so they are handled by its parent, the Fl_Spinner widget.
+  // See STR #2989.
+
+  class Fl_Spinner_Input : public Fl_Input {
+  public:
+    Fl_Spinner_Input(int X, int Y, int W, int H)
+    : Fl_Input(X, Y, W, H) {}
+    int handle(int event);		// implemented in src/Fl_Spinner.cxx
+  };
+
+  Fl_Spinner_Input input_;		// Input field for the value
   Fl_Repeat_Button
 		up_button_,		// Up button
 		down_button_;		// Down button
@@ -99,15 +110,21 @@ public:
 
   /** Sets whether the spinner wraps around at upper and lower bounds.
 
-    If wrap mode is on (default) the spinner value is set to the minimum()
-    or maximum() when the value exceeds the upper or lower bounds, resp.,
-    if the value was changed by one of the buttons.
+    If wrap mode is on the spinner value is set to the minimum() or
+    maximum() if the value exceeds the upper or lower bounds, resp., if
+    it was changed by one of the buttons or the FL_Up or FL_Down keys.
 
-    If wrap mode is off, the spinner value stops at the upper and lower bounds.
+    The spinner stops at the upper and lower bounds if wrap mode is off.
+
+    The default wrap mode is on for backwards compatibility with
+    FLTK 1.3.x and older versions.
+
+    \note Wrap mode does not apply to the input field if the input value
+	  is edited directly as a number. The input value is always
+	  clipped to the allowed range as if wrap mode was off when the
+	  input field is left (i.e. loses focus).
+
     \see minimum(), maximum()
-
-    \note This does not apply to the input field. The input value is always
-	  clipped to the allowed range as if wrap mode was off.
 
     \param[in] set non-zero sets wrap mode, zero resets wrap mode
 

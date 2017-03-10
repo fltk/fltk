@@ -154,6 +154,7 @@ Function {} {open
     Fl_Spinner {} {
       label FL_FLOAT_INPUT
       xywh {465 216 80 24} type Float labelsize 8 align 2 minimum 0 maximum 1 step 0.01 value 0.05
+      code0 {o->wrap(0); // disable wrap mode}
     }
     Fl_Box {} {
       label Fl_Dial

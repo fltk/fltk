@@ -196,6 +196,24 @@ void Fl_Spinner::type(uchar v) {
 }
 
 
+/**
+  Handles events of Fl_Spinner's embedded input widget.
+
+  Works like Fl_Input::handle() but ignores FL_Up and FL_Down keys
+  so they can be handled by the parent widget (Fl_Spinner).
+*/
+int Fl_Spinner::Fl_Spinner_Input::handle(int event) {
+  if (event == FL_KEYBOARD) {
+    const int key = Fl::event_key();
+    if (key == FL_Up || key == FL_Down) {
+      Fl_Input::handle(FL_UNFOCUS); // sets and potentially clips the input value
+      return 0;
+    }
+  }
+  return Fl_Input::handle(event);
+}
+
+
 //
 // End of "$Id$".
 //
