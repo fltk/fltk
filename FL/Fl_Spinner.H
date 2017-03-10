@@ -43,6 +43,7 @@ class FL_EXPORT Fl_Spinner : public Fl_Group {
   double	maximum_;		// Maximum value
   double	step_;			// Amount to add/subtract for up/down
   const char	*format_;		// Format string for input field
+  int		wrap_;			// wrap around at bounds (1/0)
 
 private:
 
@@ -95,6 +96,30 @@ public:
     \see Fl_Spinner::step(double)
   */
   double step() const { return (step_); }
+
+  /** Sets whether the spinner wraps around at upper and lower bounds.
+
+    If wrap mode is on (default) the spinner value is set to the minimum()
+    or maximum() when the value exceeds the upper or lower bounds, resp.,
+    if the value was changed by one of the buttons.
+
+    If wrap mode is off, the spinner value stops at the upper and lower bounds.
+    \see minimum(), maximum()
+
+    \note This does not apply to the input field. The input value is always
+	  clipped to the allowed range as if wrap mode was off.
+
+    \param[in] set non-zero sets wrap mode, zero resets wrap mode
+
+    \since 1.4.0
+  */
+  void wrap(int set) { wrap_ = set ? 1 : 0; }
+
+  /** Gets the wrap mode of the Fl_Spinner widget.
+    \see void wrap(int)
+    \since 1.4.0
+  */
+  int wrap() const { return wrap_; }
 
   /** Gets the color of the text in the input field. */
   Fl_Color textcolor() const { return (input_.textcolor()); }

@@ -31,7 +31,7 @@
   change the value.
 */
 
-void  Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
+void Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
   double v;				// New value
 
   if (w == &(sb->input_)) {
@@ -48,18 +48,24 @@ void  Fl_Spinner::sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
   } else if (w == &(sb->up_button_)) {
     // Up button pressed...
     v = sb->value_ + sb->step_;
-
-    if (v > sb->maximum_) sb->value_ = sb->minimum_;
-    else sb->value_ = v;
-
+    if (v > sb->maximum_) {
+      if (sb->wrap_)
+	v = sb->minimum_;
+      else
+	v = sb->maximum_;
+    }
+    sb->value_ = v;
     sb->update();
   } else if (w == &(sb->down_button_)) {
     // Down button pressed...
     v = sb->value_ - sb->step_;
-
-    if (v < sb->minimum_) sb->value_ = sb->maximum_;
-    else sb->value_ = v;
-
+    if (v < sb->minimum_) {
+      if (sb->wrap_)
+	v = sb->maximum_;
+      else
+	v = sb->minimum_;
+    }
+    sb->value_ = v;
     sb->update();
   }
 
@@ -110,6 +116,7 @@ Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
   minimum_ = 1.0;
   maximum_ = 100.0;
   step_    = 1.0;
+  wrap_    = 1;
   format_  = "%g";
 
   align(FL_ALIGN_LEFT);

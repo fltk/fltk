@@ -46,6 +46,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
 
   - (add new items here)
   - Separated Fl_Spinner.H and Fl_Spinner.cxx (STR #2776).
+  - New method Fl_Spinner::wrap(int) allows to set wrap mode at bounds if
+    value is changed by pressing or holding one of the buttons (STR #3365).
   - Renamed test/help.cxx demo program to test/help_dialog.cxx to avoid
     name conflict with CMake auto-generated target 'help'.
   - Many documentation fixes, clarifications, and enhancements.
