@@ -51,6 +51,7 @@ CPPFILES = \
 	Fl_Image_Surface.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
+	Fl_Input_Choice.cxx \
 	Fl_Light_Button.cxx \
 	Fl_Menu.cxx \
 	Fl_Menu_.cxx \

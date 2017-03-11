@@ -3,7 +3,7 @@
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,10 +27,6 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
-
-#include <FL/Fl_Input_Choice.H>
-#include <FL/Fl_Spinner.H>
-
 
 Fl_Group* Fl_Group::current_;
 
@@ -831,24 +827,6 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
     W = wx+this->w()-X;
   }
   widget.draw_label(X,Y,W,H,(Fl_Align)a);
-}
-
-
-Fl_Input_Choice::Fl_Input_Choice (int X,int Y,int W,int H,const char*L) 
-: Fl_Group(X,Y,W,H,L) 
-{
-  Fl_Group::box(FL_DOWN_BOX);
-  align(FL_ALIGN_LEFT);				// default like Fl_Input
-  inp_ = new Fl_Input(inp_x(), inp_y(),
-                      inp_w(), inp_h());
-  inp_->callback(inp_cb, (void*)this);
-  inp_->box(FL_FLAT_BOX);		// cosmetic
-  inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED);
-  menu_ = new InputMenuButton(menu_x(), menu_y(),
-                              menu_w(), menu_h());
-  menu_->callback(menu_cb, (void*)this);
-  menu_->box(FL_FLAT_BOX);				// cosmetic
-  end();
 }
 
 
