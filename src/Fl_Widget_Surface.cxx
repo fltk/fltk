@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Widget_Surface.cxx 11217 2016-02-25 17:56:48Z manolo $"
+// "$Id$"
 //
 // Drivers code for the Fast Light Tool Kit (FLTK).
 //
@@ -206,5 +206,5 @@ void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int 
 }
 
 //
-// End of "$Id: Fl_Widget_Surface.cxx 11217 2016-02-25 17:56:48Z manolo $".
+// End of "$Id$".
 //

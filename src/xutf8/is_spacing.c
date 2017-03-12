@@ -1,4 +1,4 @@
-/* "$Id: $"
+/* "$Id$"
  *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
