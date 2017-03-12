@@ -96,7 +96,7 @@ Fl_Input_Choice::InputMenuButton::InputMenuButton(int x,int y,int w,int h,const 
                                  :Fl_Menu_Button(x,y,w,h,l)
 {
   box(FL_UP_BOX);
-};
+}
 
 /** Draws the private menu button. */
 
