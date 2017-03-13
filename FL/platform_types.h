@@ -1,5 +1,5 @@
 /*
- * "$Id: platform_types.h 11467 2016-03-29 19:41:14Z manolo $"
+ * "$Id$"
  *
  * Copyright 2016 by Bill Spitzak and others.
  *
@@ -123,5 +123,5 @@ typedef struct __GLXcontextRec *GLContext;
 #endif /* PLATFORM_TYPES_H */
 
 /*
- * End of "$Id: platform_types.h 11467 2016-03-29 19:41:14Z manolo $".
+ * End of "$Id$".
  */

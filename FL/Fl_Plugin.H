@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Plugin.H 6995 2010-01-12 08:48:55Z matt $"
+// "$Id$"
 //
 // A Plugin system for FLTK, implemented in Fl_Preferences.cxx.
 //
@@ -91,5 +91,5 @@ public:
 #endif // !Fl_Preferences_H
 
 //
-// End of "$Id: Fl_Preferences.H 6995 2010-01-12 08:48:55Z matt $".
+// End of "$Id$".
 //

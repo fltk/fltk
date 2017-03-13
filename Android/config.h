@@ -1,6 +1,6 @@
 /* config.h.  Generated from configh.cmake.in by CMake.  */
 /*
- * "$Id: configh.cmake.in 11262 2016-03-02 00:54:37Z matt $"
+ * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -367,5 +367,5 @@
 /* #undef FL_CFG_NO_FILESYSTEM_SUPPORT */
 
 /*
- * End of "$Id: configh.cmake.in 11262 2016-03-02 00:54:37Z matt $".
+ * End of "$Id$".
  */

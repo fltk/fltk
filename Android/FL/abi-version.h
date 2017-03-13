@@ -1,5 +1,5 @@
 /*
- * "$Id: abi-version.cmake.in 10788 2015-07-13 18:17:33Z AlbrechtS $"
+ * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -27,5 +27,5 @@
 /* #undef FL_ABI_VERSION */
 
 /*
- * End of "$Id: abi-version.cmake.in 10788 2015-07-13 18:17:33Z AlbrechtS $".
+ * End of "$Id$".
  */
