@@ -22,7 +22,7 @@
 
 #include <FL/x.H>
 #include <FL/Fl.H>
-#include <FL/Fl_WIndow.H>
+#include <FL/Fl_Window.H>
 
 
 

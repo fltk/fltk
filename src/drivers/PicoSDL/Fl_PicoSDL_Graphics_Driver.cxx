@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_PicoSDL_Graphics_Driver.h"
+#include "Fl_PicoSDL_Graphics_Driver.H"
 
 #include "Fl_PicoSDL_Screen_Driver.H"
 #include <FL/x.H>
