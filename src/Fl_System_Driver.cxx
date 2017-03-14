@@ -26,6 +26,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "flstring.h"
+#include <time.h>
 
 const int Fl_System_Driver::fl_NoValue =     0x0000;
 const int Fl_System_Driver::fl_WidthValue =  0x0004;
@@ -436,6 +437,12 @@ FILE *Fl_System_Driver::fopen(const char* f, const char *mode) {
 }
 
 void Fl_System_Driver::open_callback(void (*)(const char *)) {
+}
+
+// Get elapsed time since Jan 1st, 1970.
+void Fl_System_Driver::gettime(time_t *sec, int *usec) {
+  *sec =  time(NULL);
+  *usec = 0;
 }
 
 //

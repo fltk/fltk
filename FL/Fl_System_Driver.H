@@ -211,8 +211,8 @@ public:
   virtual void remove_fd(int);
   // the default implementation of open_callback() may be enough
   virtual void open_callback(void (*)(const char *));
-  // get elapsed time since Jan 1st, 1970
-  virtual void gettime(time_t *sec, int *usec) {}
+  // The default implementation may be enough.
+  virtual void gettime(time_t *sec, int *usec);
 };
 
 #endif // FL_SYSTEM_DRIVER_H
