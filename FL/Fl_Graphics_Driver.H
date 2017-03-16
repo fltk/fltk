@@ -4,7 +4,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -76,10 +76,16 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
-  friend FL_EXPORT int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
-  friend FL_EXPORT void gl_start();
-  friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
-  friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
+  friend class Fl_Shared_Image;
+  friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
+  friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
+  friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  friend int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
+  friend void gl_start();
+  friend Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
+  friend void fl_delete_bitmask(Fl_Bitmask);
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -88,10 +94,6 @@ public:
    Each platform implements this method its own way.
    */
   static Fl_Graphics_Driver *newMainGraphicsDriver();
-  //static Fl_Graphics_Driver *newOpenGLGraphicsDriver();
-  //static Fl_Graphics_Driver *newPrinterGraphicsDriver();
-  //static Fl_Graphics_Driver *new...;
-public:
   /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
   /** Features that a derived class may possess.  */
@@ -131,6 +133,36 @@ protected:
   /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
+  /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
+  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
+  /** see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
+  virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
+  /** see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
+  virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
+  /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
+  virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
+  /** \brief Draws an Fl_RGB_Image object to the device.
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+   the image offset by the cx and cy arguments.
+   */
+  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  /** \brief Draws an Fl_Pixmap object to the device.
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+   the image offset by the cx and cy arguments.
+   */
+  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  /** \brief Draws an Fl_Bitmap object to the device.
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+   the image offset by the cx and cy arguments.
+   */
+  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw(Fl_Shared_Image *img, int x, int y);
+  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
+  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+
   /** Support function for image drawing */
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
   /** Support function for image drawing */
@@ -294,36 +326,6 @@ public:
   inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
   /** Set the current Fl_Font_Descriptor */
   virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
-  /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
-  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
-  /** see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
-  virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
-  /** see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
-  virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
-  /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
-  virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
-  /** \brief Draws an Fl_RGB_Image object to the device.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
-  /** \brief Draws an Fl_Pixmap object to the device.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
-  /** \brief Draws an Fl_Bitmap object to the device.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual void draw(Fl_Shared_Image *img, int x, int y);
-  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
-  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-
   /** Sets the value of the driver-specific graphics context. */
   virtual void gc(void*) {}
   /** Returns the driver-specific graphics context, of NULL if there's none. */
