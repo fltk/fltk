@@ -3,7 +3,7 @@
 //
 // Definition of class Fl_Xlib_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -106,6 +106,9 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+#if HAVE_XRENDER
+  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
+#endif
   fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
   fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);

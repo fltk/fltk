@@ -3,7 +3,7 @@
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -53,6 +53,9 @@
 #  include <FL/Fl_Image_Surface.H>
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
+#if HAVE_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif
 
 static XImage xi;	// template used to pass info to X
 static int bytes_per_pixel;
@@ -692,6 +695,25 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
   delete[] dst;
 }
 
+static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
+  Fl_Image_Surface *surface;
+  int depth = img->d();
+  if (depth == 1 || depth == 3) {
+    surface = new Fl_Image_Surface(img->w(), img->h());
+  } else if (fl_can_do_alpha_blending()) {
+    Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
+    surface = new Fl_Image_Surface(img->w(), img->h(), 0, pixmap);
+    depth |= FL_IMAGE_WITH_ALPHA;
+  } else {
+    return 0;
+  }
+  Fl_Surface_Device::push_current(surface);
+  fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
+  Fl_Surface_Device::pop_current();
+  Fl_Offscreen off = surface->get_offscreen_before_delete();
+  delete surface;
+  return off;
+}
 
 void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
@@ -704,22 +726,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     return;
   }
   if (!*Fl_Graphics_Driver::id(img)) {
-    Fl_Image_Surface *surface = NULL;
-    int depth = img->d();
-    if (depth == 1 || depth == 3) {
-      surface = new Fl_Image_Surface(img->w(), img->h());
-    } else if (can_do_alpha_blending()) {
-      Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
-      surface = new Fl_Image_Surface(img->w(), img->h(), 0, pixmap);
-      depth |= FL_IMAGE_WITH_ALPHA;
-    }
-    if (surface) {
-      Fl_Surface_Device::push_current(surface);
-      fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
-      Fl_Surface_Device::pop_current();
-      *Fl_Graphics_Driver::id(img) = surface->get_offscreen_before_delete();
-      delete surface;
-    }
+    *Fl_Graphics_Driver::id(img) = cache_rgb(img);
   }
   if (*Fl_Graphics_Driver::id(img)) {
     if (img->d() == 4 || img->d() == 2)
@@ -798,6 +805,37 @@ fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const 
   fl_end_offscreen();
   return (fl_uintptr_t)id;
 }
+
+
+#if HAVE_XRENDER
+int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
+  Fl_RGB_Image *rgb = img->as_rgb_image();
+  if (!rgb || !can_do_alpha_blending()) return 0;
+  if (!*Fl_Graphics_Driver::id(rgb)) {
+    *Fl_Graphics_Driver::id(rgb) = cache_rgb(rgb);
+  }
+  XRenderPictureAttributes srcattr;
+  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
+  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+  static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
+  Picture src = XRenderCreatePicture(fl_display, *Fl_Graphics_Driver::id(rgb),
+                                     rgb->d()%2 == 0 ?fmt32:fmt24, 0, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
+  if (!src || !dst) {
+    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
+    return 0;
+  }
+  const Fl_Region clipr = fl_clip_region();
+  if (clipr)
+    XRenderSetPictureClipRegion(fl_display, dst, clipr);
+  XTransform mat = {rgb->w()/float(WP),0,0,0,rgb->h()/float(HP),0,0,0,1};
+  XRenderSetPictureTransform(fl_display, src, &mat);
+  XRenderComposite(fl_display, rgb->d()%2==0 ? PictOpOver: PictOpSrc, src, None, dst, 0, 0, 0, 0, XP, YP, WP, HP);
+  XRenderFreePicture(fl_display, src);
+  XRenderFreePicture(fl_display, dst);
+  return 1;
+}
+#endif
 
 
 //
