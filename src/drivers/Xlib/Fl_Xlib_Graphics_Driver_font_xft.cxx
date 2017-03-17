@@ -771,9 +771,9 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
 
   const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-  XftDrawString16(draw_, &color, font_descriptor()->font, x, y, (XftChar16 *)buffer, n);
+  XftDrawString16(draw_, &color, font_descriptor()->font, x+offset_x_, y+offset_y_, (XftChar16 *)buffer, n);
 #else
-  XftDrawString32(draw_, &color, font_descriptor()->font, x, y, (XftChar32 *)buffer, n);
+  XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_, y+offset_y_, (XftChar32 *)buffer, n);
 #endif
 }
 
@@ -814,7 +814,7 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, font_descriptor()->font, x, y, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_, y+offset_x_, (FcChar32 *)str, n);
 }
 
 
