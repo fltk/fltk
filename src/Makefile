@@ -243,7 +243,6 @@ XLIBCPPFILES = \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.cxx \
 	drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.cxx \
-	drivers/Xlib/Fl_Translated_Xlib_Graphics_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.cxx \
 	drivers/Xlib/Fl_Xlib_Image_Surface_Driver.cxx \
 	drivers/X11/Fl_X11_Window_Driver.cxx \
