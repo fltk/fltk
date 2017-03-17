@@ -43,12 +43,49 @@ else ()
   find_file(HAVE_PTHREAD_H pthread.h)
 endif (WIN32 AND NOT CYGWIN)
 
+# Special case for Microsoft Visual Studio generator (MSVC):
+#
+# The header files <GL/glu.h> and <locale.h> are located in the SDK's
+# for Visual Studio. If CMake is invoked from a desktop icon or the Windows
+# menu it doesn't have the correct paths to find these header files.
+# The CMake folks recommend not to search for these files at all, because
+# they must always be there, but we do anyway.
+# If we don't find them we issue a warning and suggest to rerun CMake from
+# a "Developer Command Prompt for Visual Studio xxxx", but we fix the issue
+# by setting the *local* instance (not the cache variable) of the corresponding
+# CMake variable to '1' since we "know" the header file is available.
+#
+# If the user builds the solution, everything should run smoothly despite
+# the fact that the header files were not found.
+#
+# If the configuration is changed somehow (e.g. by editing CMakeLists.txt)
+# CMake will be rerun from within Visual Studio, find the header file, and
+# set the cache variable for the header file to its correct path. The latter is
+# only informational so you can see that (and where) the headers were found.
+#
+# Note: these cache variables can only be seen in "advanced" mode.
+
 if (MSVC)
-  message(STATUS "Note: The following two headers should be found!")
-  message(STATUS "HAVE_GL_GLU_H = '${HAVE_GL_GLU_H}'")
-  message(STATUS "HAVE_LOCALE_H = '${HAVE_LOCALE_H}'")
-  message(STATUS "If one of these headers was not found, run cmake-gui ...")
-  message(STATUS "... again from a Visual Studio developer command prompt!")
+  set (MSVC_RERUN_MESSAGE FALSE)
+
+  if (NOT HAVE_GL_GLU_H)
+    message(STATUS "Warning: Header file GL/glu.h was not found.")
+    set (HAVE_GL_GLU_H 1)
+    set (MSVC_RERUN_MESSAGE TRUE)
+  endif (NOT HAVE_GL_GLU_H)
+
+  if (NOT HAVE_LOCALE_H)
+    message(STATUS "Warning: Header file locale.h was not found.")
+    set (HAVE_LOCALE_H 1)
+    set (MSVC_RERUN_MESSAGE TRUE)
+  endif (NOT HAVE_LOCALE_H)
+
+  if (MSVC_RERUN_MESSAGE)
+    message(STATUS "The FLTK team recommends to rerun CMake from a")
+    message(STATUS "\"Developer Command Prompt for Visual Studio xxxx\"")
+  endif (MSVC_RERUN_MESSAGE)
+
+  unset (MSVC_RERUN_MESSAGE)
 endif (MSVC)
 
 # Simulate the behavior of autoconf macro AC_HEADER_DIRENT, see:
