@@ -828,7 +828,11 @@ int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, 
   const Fl_Region clipr = fl_clip_region();
   if (clipr)
     XRenderSetPictureClipRegion(fl_display, dst, clipr);
-  XTransform mat = {rgb->w()/float(WP),0,0,0,rgb->h()/float(HP),0,0,0,1};
+  XTransform mat = {{
+    { XDoubleToFixed( rgb->w()/double(WP) ), XDoubleToFixed( 0 ), XDoubleToFixed(     0 ) },
+    { XDoubleToFixed( 0 ), XDoubleToFixed( rgb->h()/double(HP) ), XDoubleToFixed(     0 ) },
+    { XDoubleToFixed( 0 ), XDoubleToFixed( 0 ), XDoubleToFixed( 1 ) }
+  }};
   XRenderSetPictureTransform(fl_display, src, &mat);
   XRenderComposite(fl_display, rgb->d()%2==0 ? PictOpOver: PictOpSrc, src, None, dst, 0, 0, 0, 0, XP, YP, WP, HP);
   XRenderFreePicture(fl_display, src);
