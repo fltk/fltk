@@ -836,7 +836,8 @@ int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, 
     { XDoubleToFixed( 0 ), XDoubleToFixed( 0 ), XDoubleToFixed( 1 ) }
   }};
   XRenderSetPictureTransform(fl_display, src, &mat);
-  XRenderComposite(fl_display, rgb->d()%2==0 ? PictOpOver: PictOpSrc, src, None, dst, 0, 0, 0, 0, XP, YP, WP, HP);
+  XRenderComposite(fl_display, rgb->d()%2==0 ? PictOpOver: PictOpSrc, src, None, dst, 0, 0, 0, 0,
+                   XP + offset_x_, YP + offset_y_, WP, HP);
   XRenderFreePicture(fl_display, src);
   XRenderFreePicture(fl_display, dst);
   return 1;
