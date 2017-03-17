@@ -731,10 +731,13 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
     *Fl_Graphics_Driver::id(img) = cache_rgb(img);
   }
   if (*Fl_Graphics_Driver::id(img)) {
-    if (img->d() == 4 || img->d() == 2)
-      copy_offscreen_with_alpha(X - offset_x_, Y - offset_y_, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
-    else
+    if (img->d() == 4 || img->d() == 2) {
+#if HAVE_XRENDER
+      scale_and_render_pixmap(*Fl_Graphics_Driver::id(img), 4, 1, 1, cx, cy, X - offset_x_, Y - offset_y_, W, H);
+#endif
+    } else {
       copy_offscreen(X - offset_x_, Y - offset_y_, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
+    }
   } else {
     // Composite image with alpha manually each time...
     alpha_blend(img, X, Y, W, H, cx, cy);
@@ -810,39 +813,47 @@ fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const 
 
 
 #if HAVE_XRENDER
+int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP) {
+  XRenderPictureAttributes srcattr;
+  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
+  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+  static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
+  Picture src = XRenderCreatePicture(fl_display, pixmap,
+                                     depth%2 == 0 ?fmt32:fmt24, 0, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
+  if (!src || !dst) {
+    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
+    return 0;
+  }
+  const Fl_Region clipr = clip_region();
+  if (clipr)
+    XRenderSetPictureClipRegion(fl_display, dst, clipr);
+  if (scale_x != 1 || scale_y != 1) {
+    XTransform mat = {{
+      { XDoubleToFixed( scale_x ), XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ) },
+      { XDoubleToFixed( 0 ),       XDoubleToFixed( scale_y ), XDoubleToFixed( 0 ) },
+      { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
+    }};
+    XRenderSetPictureTransform(fl_display, src, &mat);
+  }
+  XRenderComposite(fl_display, (depth%2 == 0 ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
+                   XP + offset_x_, YP + offset_y_, WP, HP);
+  XRenderFreePicture(fl_display, src);
+  XRenderFreePicture(fl_display, dst);
+  return 1;
+}
+
+
 int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   Fl_RGB_Image *rgb = img->as_rgb_image();
   if (!rgb || !can_do_alpha_blending()) return 0;
   if (!*Fl_Graphics_Driver::id(rgb)) {
     *Fl_Graphics_Driver::id(rgb) = cache_rgb(rgb);
   }
-  XRenderPictureAttributes srcattr;
-  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
-  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
-  static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
-  Picture src = XRenderCreatePicture(fl_display, *Fl_Graphics_Driver::id(rgb),
-                                     rgb->d()%2 == 0 ?fmt32:fmt24, 0, &srcattr);
-  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
-  if (!src || !dst) {
-    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
-    return 0;
-  }
-  const Fl_Region clipr = fl_clip_region();
-  if (clipr)
-    XRenderSetPictureClipRegion(fl_display, dst, clipr);
-  XTransform mat = {{
-    { XDoubleToFixed( rgb->w()/double(WP) ), XDoubleToFixed( 0 ), XDoubleToFixed(     0 ) },
-    { XDoubleToFixed( 0 ), XDoubleToFixed( rgb->h()/double(HP) ), XDoubleToFixed(     0 ) },
-    { XDoubleToFixed( 0 ), XDoubleToFixed( 0 ), XDoubleToFixed( 1 ) }
-  }};
-  XRenderSetPictureTransform(fl_display, src, &mat);
-  XRenderComposite(fl_display, rgb->d()%2==0 ? PictOpOver: PictOpSrc, src, None, dst, 0, 0, 0, 0,
-                   XP + offset_x_, YP + offset_y_, WP, HP);
-  XRenderFreePicture(fl_display, src);
-  XRenderFreePicture(fl_display, dst);
-  return 1;
+  return scale_and_render_pixmap(*Fl_Graphics_Driver::id(rgb), rgb->d(), rgb->w()/double(WP), rgb->h()/double(HP),
+                          0, 0, XP, YP, WP, HP);
 }
-#endif
+#endif // HAVE_XRENDER
 
 
 //

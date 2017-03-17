@@ -71,6 +71,9 @@ protected:
   static PangoContext *context();
   static void init_built_in_fonts();
 #endif
+#if HAVE_XRENDER
+  int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP);
+#endif
 protected:
   static GC gc_;
   uchar **mask_bitmap_;
@@ -124,9 +127,6 @@ public:
   int height();
   int descent();
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-#if ! defined(FL_DOXYGEN)
-  void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-#endif
   void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);

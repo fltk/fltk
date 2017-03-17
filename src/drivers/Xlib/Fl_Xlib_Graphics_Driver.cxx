@@ -82,37 +82,6 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offs
   XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x+offset_x_, y+offset_y_);
 }
 
-#ifndef FL_DOXYGEN
-void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int h,
-                                                        Fl_Offscreen pixmap, int srcx, int srcy) {
-#if HAVE_XRENDER
-  XRenderPictureAttributes srcattr;
-  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
-  static XRenderPictFormat *srcfmt = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
-  static XRenderPictFormat *dstfmt = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
-
-  Picture src = XRenderCreatePicture(fl_display, pixmap, srcfmt, 0, &srcattr);
-  Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
-
-  if (!src || !dst) {
-    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
-    return;
-  }
-
-  const Fl_Region clipr = fl_clip_region();
-  if (clipr)
-    XRenderSetPictureClipRegion(fl_display, dst, clipr);
-
-  XRenderComposite(fl_display, PictOpOver, src, None, dst, srcx, srcy, 0, 0,
-                   x+offset_x_, y+offset_y_, w, h);
-
-  XRenderFreePicture(fl_display, src);
-  XRenderFreePicture(fl_display, dst);
-#endif
-}
-#endif
-
-
 void Fl_Xlib_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
   XRectangle R;
   R.x = X; R.y = Y; R.width = W; R.height = H;
