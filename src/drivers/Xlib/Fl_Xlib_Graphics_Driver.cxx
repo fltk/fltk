@@ -61,6 +61,8 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   pfd_ = pango_font_description_new();
   Fl_Graphics_Driver::font(0, 0);
 #endif
+  offset_x_ = 0; offset_y_ = 0;
+  depth_ = 0;
 }
 
 Fl_Xlib_Graphics_Driver::~Fl_Xlib_Graphics_Driver() {
@@ -77,7 +79,7 @@ void Fl_Xlib_Graphics_Driver::gc(void *value) {
 }
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x, y);
+  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x+offset_x_, y+offset_y_);
 }
 
 #ifndef FL_DOXYGEN
@@ -102,7 +104,7 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int
     XRenderSetPictureClipRegion(fl_display, dst, clipr);
 
   XRenderComposite(fl_display, PictOpOver, src, None, dst, srcx, srcy, 0, 0,
-                   x, y, w, h);
+                   x+offset_x_, y+offset_y_, w, h);
 
   XRenderFreePicture(fl_display, src);
   XRenderFreePicture(fl_display, dst);
@@ -229,6 +231,24 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
   s->fontname[0] = 0;
   s->xlist = 0;
   s->first = 0;
+}
+
+void Fl_Xlib_Graphics_Driver::translate_all(int dx, int dy) { // reversibly adds dx,dy to the offset between user and graphical coordinates
+  stack_x_[depth_] = offset_x_;
+  stack_y_[depth_] = offset_y_;
+  offset_x_ = stack_x_[depth_] + dx;
+  offset_y_ = stack_y_[depth_] + dy;
+  push_matrix();
+  translate(dx, dy);
+  if (depth_ < sizeof(stack_x_)/sizeof(int)) depth_++;
+  else Fl::warning("%s: translate stack overflow!", "Fl_Xlib_Graphics_Driver");
+}
+
+void Fl_Xlib_Graphics_Driver::untranslate_all() { // undoes previous translate_all()
+  if (depth_ > 0) depth_--;
+  offset_x_ = stack_x_[depth_];
+  offset_y_ = stack_y_[depth_];
+  pop_matrix();
 }
 
 //

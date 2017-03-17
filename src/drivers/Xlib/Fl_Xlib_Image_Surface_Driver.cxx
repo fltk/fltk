@@ -23,7 +23,7 @@
 #ifdef FL_CFG_GFX_XLIB
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl_Image_Surface.H>
-#include "Fl_Translated_Xlib_Graphics_Driver.H"
+#include "Fl_Xlib_Graphics_Driver.H"
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
@@ -49,7 +49,7 @@ Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int hig
     fl_open_display();
     offscreen = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
   }
-  driver(new Fl_Translated_Xlib_Graphics_Driver());
+  driver(new Fl_Xlib_Graphics_Driver());
 }
 
 Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
@@ -65,11 +65,11 @@ void Fl_Xlib_Image_Surface_Driver::set_current() {
 }
 
 void Fl_Xlib_Image_Surface_Driver::translate(int x, int y) {
-  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
+  ((Fl_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
 }
 
 void Fl_Xlib_Image_Surface_Driver::untranslate() {
-  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->untranslate_all();
+  ((Fl_Xlib_Graphics_Driver*)driver())->untranslate_all();
 }
 
 Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()

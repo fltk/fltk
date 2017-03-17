@@ -53,6 +53,10 @@ struct _XRegion {
  This class is implemented only on the Xlib platform.
  */
 class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
+private:
+  int offset_x_, offset_y_; // translation between user and graphical coordinates: graphical = user + offset
+  unsigned depth_; // depth of translation stack
+  int stack_x_[20], stack_y_[20]; // translation stack allowing cumulative translations
 #if USE_XFT
   void drawUCS4(const void *str, int n, int x, int y);
 #endif
@@ -84,6 +88,8 @@ protected:
 public:
   Fl_Xlib_Graphics_Driver(void);
   virtual ~Fl_Xlib_Graphics_Driver();
+  void translate_all(int dx, int dy);
+  void untranslate_all();
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void *gc() { return gc_; }
   virtual void gc(void *value);

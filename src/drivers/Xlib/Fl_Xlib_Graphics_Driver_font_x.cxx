@@ -655,7 +655,7 @@ void Fl_Xlib_Graphics_Driver::draw(const char* c, int n, int x, int y) {
     font_gc = gc_;
     XSetFont(fl_display, gc_, font_descriptor()->font->fid);
   }
-  if (gc_) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc_, x, y, c, n);
+  if (gc_) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc_, x+offset_x_, y+offset_y_, c, n);
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
@@ -674,7 +674,7 @@ void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
   }
-  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc_, x, y, c, n);
+  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc_, x+offset_x_, y+offset_y_, c, n);
 }
 
 float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {

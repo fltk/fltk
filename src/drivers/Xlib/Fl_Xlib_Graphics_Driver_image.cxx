@@ -580,7 +580,7 @@ void Fl_Xlib_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, 
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
   const int mono = (d>-3 && d<3);
 
-  innards(buf,x,y,w,h,d,l,mono,0,0,alpha,gc_);
+  innards(buf,x+offset_x_,y+offset_y_,w,h,d,l,mono,0,0,alpha,gc_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
@@ -590,16 +590,16 @@ void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
   const int mono = (d>-3 && d<3);
 
-  innards(0,x,y,w,h,d,0,mono,cb,data,alpha,gc_);
+  innards(0,x+offset_x_,y+offset_y_,w,h,d,0,mono,cb,data,alpha,gc_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x,y,w,h,d,l,1,0,0,0,gc_);
+  innards(buf,x+offset_x_,y+offset_y_,w,h,d,l,1,0,0,0,gc_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x,y,w,h,d,0,1,cb,data,0,gc_);
+  innards(0,x+offset_x_,y+offset_y_,w,h,d,0,1,cb,data,0,gc_);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -624,7 +624,7 @@ void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 
 void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (Fl_Graphics_Driver::prepare(bm, XP+offset_x_, YP+offset_y_, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
 
@@ -717,6 +717,8 @@ static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
 
 void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
+  XP += offset_x_;
+  YP += offset_y_;
   // Don't draw an empty image...
   if (!img->d() || !img->array) {
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
@@ -730,9 +732,9 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
   }
   if (*Fl_Graphics_Driver::id(img)) {
     if (img->d() == 4 || img->d() == 2)
-      copy_offscreen_with_alpha(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
+      copy_offscreen_with_alpha(X - offset_x_, Y - offset_y_, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
     else
-      copy_offscreen(X, Y, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
+      copy_offscreen(X - offset_x_, Y - offset_y_, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
   } else {
     // Composite image with alpha manually each time...
     alpha_blend(img, X, Y, W, H, cx, cy);
@@ -753,7 +755,7 @@ fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const ucha
 
 void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (Fl_Graphics_Driver::prepare(pxm, XP+offset_x_, YP+offset_y_, WP, HP, cx, cy, X, Y, W, H)) return;
   if (*Fl_Graphics_Driver::mask(pxm)) {
     // make X use the bitmap as a mask:
     XSetClipMask(fl_display, gc_, *Fl_Graphics_Driver::mask(pxm));
@@ -776,17 +778,17 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
         Y1 = r->rects[i].y1;
         W1 = r->rects[i].x2 - r->rects[i].x1;
         H1 = r->rects[i].y2 - r->rects[i].y1;
-        copy_offscreen(X1, Y1, W1, H1, *Fl_Graphics_Driver::id(pxm), cx + (X1 - X), cy + (Y1 - Y));
+        copy_offscreen(X1-offset_x_, Y1-offset_y_, W1, H1, *Fl_Graphics_Driver::id(pxm), cx + (X1 - X), cy + (Y1 - Y));
       }
       XDestroyRegion(r);
     } else {
-      copy_offscreen(X, Y, W, H, *Fl_Graphics_Driver::id(pxm), cx, cy);
+      copy_offscreen(X-offset_x_, Y-offset_y_, W, H, *Fl_Graphics_Driver::id(pxm), cx, cy);
     }
     // put the old clip region back
     XSetClipOrigin(fl_display, gc_, 0, 0);
     restore_clip();
   }
-  else copy_offscreen(X, Y, W, H, *Fl_Graphics_Driver::id(pxm), cx, cy);
+  else copy_offscreen(X-offset_x_, Y-offset_y_, W, H, *Fl_Graphics_Driver::id(pxm), cx, cy);
 }
 
 

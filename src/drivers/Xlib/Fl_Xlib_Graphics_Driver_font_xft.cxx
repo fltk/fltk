@@ -1181,12 +1181,12 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
-  do_draw(0, str, n, x, y);
+  do_draw(0, str, n, x+offset_x_, y+offset_y_);
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
-  pango_matrix_translate(&mat, x, y); // 1.6
+  pango_matrix_translate(&mat, x+offset_x_, y+offset_y_); // 1.6
   pango_matrix_rotate(&mat, angle); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
   do_draw(0, str, n, 0, 0);
@@ -1194,7 +1194,7 @@ void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
-  do_draw(1, str, n, x, y);
+  do_draw(1, str, n, x+offset_x_, y+offset_y_);
 }
 
 void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, int x, int y) {

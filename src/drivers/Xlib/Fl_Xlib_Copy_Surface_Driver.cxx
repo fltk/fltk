@@ -23,7 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
-#include "Fl_Translated_Xlib_Graphics_Driver.H"
+#include "Fl_Xlib_Graphics_Driver.H"
 #include "../X11/Fl_X11_Screen_Driver.H"
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
@@ -50,7 +50,7 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 
 Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  driver(new Fl_Translated_Xlib_Graphics_Driver());
+  driver(new Fl_Xlib_Graphics_Driver());
   oldwindow = fl_window;
   xid = fl_create_offscreen(w,h);
   driver()->push_no_clip();
@@ -85,12 +85,12 @@ void Fl_Xlib_Copy_Surface_Driver::end_current_() {
 }
 
 void Fl_Xlib_Copy_Surface_Driver::translate(int x, int y) {
-  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
+  ((Fl_Xlib_Graphics_Driver*)driver())->translate_all(x, y);
 }
 
 
 void Fl_Xlib_Copy_Surface_Driver::untranslate() {
-  ((Fl_Translated_Xlib_Graphics_Driver*)driver())->untranslate_all();
+  ((Fl_Xlib_Graphics_Driver*)driver())->untranslate_all();
 }
 
 #endif // FL_CFG_GFX_XLIB
