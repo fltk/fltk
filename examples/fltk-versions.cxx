@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
   for (int i=0; i<versions; i++) {
     printf("%s\n",version[i]);
   }
+  fflush(stdout);
 
 #ifdef FL_ABI_VERSION
   if (FL_ABI_VERSION != Fl::abi_version()) {
