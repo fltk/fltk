@@ -20,14 +20,14 @@ drawing your widgets.  To do this you use the
 \ref opengl_gl_finish "gl_finish()"
 functions around your OpenGL code.
 
-You must include FLTK's \p <FL/gl.h> header
-file. It will include the file \p <GL/gl.h>, define
+You must include FLTK's \p <FL/gl.h> header file. It will include
+the file \p <GL/gl.h> (on macOS: \p <OpenGL/gl.h>), define
 some extra drawing functions provided by FLTK, and include the
-\p <windows.h> header file needed by WIN32
-applications.
+\p <windows.h> header file needed by WIN32 applications.
 
-Some simple coding rules (see \ref osissues_retina) allow to write cross-platform code that will draw high resolution
-OpenGL graphics if run on 'retina' displays with Mac OS X.
+Some simple coding rules (see \ref osissues_retina) allow to write
+cross-platform code that will draw high resolution
+OpenGL graphics if run on 'retina' displays with MacOS.
 
 \section opengl_subclass Making a Subclass of Fl_Gl_Window
 
@@ -118,7 +118,7 @@ int MyWindow::handle(int event) {
   case FL_DRAG:
     ... mouse moved while down event ...
     return 1;
-  case FL_RELEASE:   
+  case FL_RELEASE:
     ... mouse up event ...
     return 1;
   case FL_FOCUS :
@@ -146,7 +146,7 @@ set up! If your display changes, you should call
 call any OpenGL drawing functions from inside \p handle()!
 
 You can call \e some OpenGL stuff like hit detection and texture
-loading functions by doing: 
+loading functions by doing:
 
 \code
   case FL_PUSH:
@@ -224,7 +224,7 @@ get the drawable height so that you can flip the Y
 coordinates.
 
 Unfortunately, there are a bunch of limitations you must
-adhere to for maximum portability: 
+adhere to for maximum portability:
 
 \li You must choose a default visual with Fl::gl_visual().
 
@@ -253,7 +253,7 @@ void gl_rect(int x, int y, int w, int h) <br>
 void gl_rectf(int x, int y, int w, int h)
 
 \par
-Outlines or fills a rectangle with the current color. If 
+Outlines or fills a rectangle with the current color. If
 Fl_Gl_Window::ortho() has been called, then the rectangle will exactly
 fill the pixel rectangle passed.
 
@@ -407,7 +407,7 @@ void OptimizerWindow::draw() {
     context_->makeCurrent(fl_display, fl_window);
 #endif // WIN32
 
-    ... perform other context setup as desired ...   
+    ... perform other context setup as desired ...
 
     // Then create the draw action to handle drawing things...
 
@@ -456,21 +456,26 @@ showing how to use OpenGL 3.0 (or higher versions) with FLTK in a cross-platform
 It contains also OpenGL3-glut-test.cxx which shows how to use FLTK's GLUT compatibility
 and OpenGL 3.
 
-<b>On the MSWindows and Unix/Linux platforms</b>, FLTK creates contexts implementing 
-the highest OpenGL version supported by the hardware,
+<b>On the MSWindows and Unix/Linux platforms</b>, FLTK creates contexts
+implementing the highest OpenGL version supported by the hardware,
 which are also compatible with lower OpenGL versions. Thus, FLTK allows
-source code targeting any version of OpenGL. Access to functions from OpenGL versions above 1.1 requires to load function pointers at runtime on these platforms. FLTK recommends to use the GLEW library to perform this. It is therefore
-necessary to install the GLEW library (see below).  <b>On the Mac OS X platform</b>, 
-FLTK creates by default contexts implementing OpenGL versions 1 or 2. 
+source code targeting any version of OpenGL. Access to functions from OpenGL
+versions above 1.1 requires to load function pointers at runtime on these platforms.
+FLTK recommends to use the GLEW library to perform this. It is therefore
+necessary to install the GLEW library (see below).  <b>On the macOS platform</b>,
+FLTK creates by default contexts implementing OpenGL versions 1 or 2.
 To access OpenGL 3.0 (or higher versions), use the <tt>FL_OPENGL3</tt> flag (see below).
 Mac OS 10.7 or above is required; GLEW is possible but not necessary.
 
 \par GLEW installation (Unix/Linux and MSWindows platforms)
-GLEW is available as a package for most Linux distributions and in source form at http://glew.sourceforge.net/.
-For the MSWindows platform, a Visual Studio static library (glew32.lib) can be downloaded from the same web site; a MinGW-style static library (libglew32.a) can be built from source with the make command.
+GLEW is available as a package for most Linux distributions and in source
+form at http://glew.sourceforge.net/.
+For the MSWindows platform, a Visual Studio static library (glew32.lib) can
+be downloaded from the same web site; a MinGW-style static library (libglew32.a)
+can be built from source with the make command.
 
 \par  Source-level changes for OpenGL 3:
-\li Put this in all OpenGL-using source files (instead of \#include <FL/gl.h>, 
+\li Put this in all OpenGL-using source files (instead of \#include <FL/gl.h>,
 and before \#include <FL/glut.h> if you use GLUT):
 \code
 #if defined(__APPLE__)
@@ -484,8 +489,8 @@ and before \#include <FL/glut.h> if you use GLUT):
 \endcode
 \li Add the <tt>FL_OPENGL3</tt> flag when calling Fl_Gl_Window::mode(int a)
 or glutInitDisplayMode().
-\li Put this in the <tt>handle(int event)</tt> member function of the first to be created 
-among your Fl_Gl_Window-derived classes:
+\li Put this in the <tt>handle(int event)</tt> member function of the first
+to be created among your Fl_Gl_Window-derived classes:
 \code
 #ifndef __APPLE__
     static int first = 1;
@@ -504,7 +509,7 @@ among your Fl_Gl_Window-derived classes:
 \endcode
 after the first glutCreateWindow() call.
 
-If GLEW is installed on the Mac OS development platform, it is possible 
+If GLEW is installed on the Mac OS development platform, it is possible
 to use the same code for all platforms, with one exception: put
 \code
 #ifdef __APPLE__
@@ -514,7 +519,7 @@ glewExperimental = GL_TRUE;
 before the glewInit() call.
 
 \par Changes in the build process
-Link with libGLEW.so (on Unix/Linux), libglew32.a (with MinGW) or glew32.lib 
+Link with libGLEW.so (on Unix/Linux), libglew32.a (with MinGW) or glew32.lib
 (with MS Visual Studio); no change is needed on the Mac OS platform.
 
 \htmlonly
