@@ -10,11 +10,6 @@ CodeEditor.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 CodeEditor.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 CodeEditor.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
 CodeEditor.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
-ExternalCodeEditor_UNIX.o: ../FL/Fl.H ../FL/Fl_Export.H
-ExternalCodeEditor_UNIX.o: ../FL/platform_types.h ../FL/fl_utf8.h
-ExternalCodeEditor_UNIX.o: ../FL/Fl_Export.H ../FL/fl_types.h
-ExternalCodeEditor_UNIX.o: ../FL/Enumerations.H ../FL/abi-version.h
-ExternalCodeEditor_UNIX.o: ../FL/fl_ask.H ExternalCodeEditor_UNIX.h
 Fl_Function_Type.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Function_Type.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Function_Type.o: ../FL/Enumerations.H ../FL/abi-version.h
@@ -438,3 +433,8 @@ widget_panel.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 widget_panel.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Text_Buffer.H
 widget_panel.o: CodeEditor.h ../FL/Fl_Text_Buffer.H ../FL/Fl_Return_Button.H
 widget_panel.o: ../FL/Fl_Button.H
+ExternalCodeEditor_UNIX.o: ../FL/Fl.H ../FL/Fl_Export.H
+ExternalCodeEditor_UNIX.o: ../FL/platform_types.h ../FL/fl_utf8.h
+ExternalCodeEditor_UNIX.o: ../FL/Fl_Export.H ../FL/fl_types.h
+ExternalCodeEditor_UNIX.o: ../FL/Enumerations.H ../FL/abi-version.h
+ExternalCodeEditor_UNIX.o: ../FL/fl_ask.H ExternalCodeEditor_UNIX.h

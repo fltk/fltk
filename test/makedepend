@@ -30,7 +30,8 @@ unittests.o: ../FL/Fl_Value_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 unittests.o: ../FL/Fl_Input.H ../FL/Fl_Output.H ../FL/Fl_Text_Editor.H
 unittests.o: ../FL/Fl_Text_Display.H ../FL/Fl_Text_Buffer.H
 unittests.o: ../FL/Fl_Text_Display.H ../FL/Fl_File_Input.H
-unittests.o: ../FL/Fl_Light_Button.H
+unittests.o: ../FL/Fl_Light_Button.H ../FL/Fl_Radio_Round_Button.H
+unittests.o: ../FL/Fl_Round_Button.H
 animated.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 animated.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 animated.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Double_Window.H
@@ -339,18 +340,18 @@ hello.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
 hello.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 hello.o: ../FL/abi-version.h ../FL/Fl_Window.H ../FL/Fl_Group.H
 hello.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Box.H
-help.o: ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/Fl_Export.H
-help.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
-help.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
-help.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-help.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-help.o: ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Box.H
-help.o: ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
-help.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/fl_draw.H
-help.o: ../FL/Enumerations.H ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
-help.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
-help.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H
-help.o: ../FL/filename.H
+help_dialog.o: ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/Fl_Export.H
+help_dialog.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
+help_dialog.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
+help_dialog.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+help_dialog.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+help_dialog.o: ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Box.H
+help_dialog.o: ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Fl_Group.H
+help_dialog.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+help_dialog.o: ../FL/fl_draw.H ../FL/Enumerations.H
+help_dialog.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+help_dialog.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+help_dialog.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H ../FL/filename.H
 icon.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
 icon.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 icon.o: ../FL/abi-version.h ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
@@ -398,7 +399,6 @@ input_choice.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Group.H
 input_choice.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 input_choice.o: ../FL/Fl_Input_Choice.H ../FL/Fl_Input.H
 input_choice.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
-input_choice.o: ../FL/fl_draw.H
 keyboard.o: keyboard_ui.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 keyboard.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 keyboard.o: ../FL/Enumerations.H ../FL/abi-version.h keyboard.h
