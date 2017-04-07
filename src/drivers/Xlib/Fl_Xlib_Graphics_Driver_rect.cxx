@@ -332,7 +332,7 @@ int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 // make there be no clip (used by fl_begin_offscreen() only!)
 void Fl_Xlib_Graphics_Driver::push_no_clip() {
   if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
-  else Fl::warning("fl_push_no_cFl_Xlib_Graphics_Driver::push_no_cliplip: clip stack overflow!\n");
+  else Fl::warning("Fl_Xlib_Graphics_Driver::push_no_clip: clip stack overflow!\n");
   restore_clip();
 }
 
