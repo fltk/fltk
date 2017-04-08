@@ -143,6 +143,12 @@ OPTION_USE_XCURSOR - default ON
 OPTION_USE_XRENDER - default ON
    These are X11 extended libraries.
 
+OPTION_USE_PANGO - default OFF
+   Enables use of the Pango library for drawing text. Pango supports
+   all unicode-defined scripts with limited support of right-to-left
+   scripts.
+   This option makes sense only under X11, and also requires Xft.
+
 OPTION_ABI_VERSION - default EMPTY
    Use a numeric value corresponding to the FLTK ABI version you want to
    build in the form 1xxyy for FLTK 1.x.y (xx and yy with leading zeroes).
