@@ -111,7 +111,7 @@ BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r)
         dpi[num_screens][0] = (float)GetDeviceCaps(screen, LOGPIXELSX);
         dpi[num_screens][1] = (float)GetDeviceCaps(screen, LOGPIXELSY);
       }
-      ReleaseDC(0L, screen);
+      DeleteDC(screen);
     }
 
     num_screens++;
