@@ -187,6 +187,9 @@ const char *Fl_Xlib_Graphics_Driver::font_name(int num) {
 }
 
 void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
+#if USE_PANGO
+    init_built_in_fonts();
+#endif
   Fl_Fontdesc *s = fl_fonts + num;
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}

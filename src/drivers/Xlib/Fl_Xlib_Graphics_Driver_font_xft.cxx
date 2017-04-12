@@ -1272,7 +1272,8 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *str, int n, int &dx, int 
 }
 
 int Fl_Xlib_Graphics_Driver::height() {
-  return font_descriptor()->height_;
+  if (font_descriptor())  return font_descriptor()->height_;
+  else return -1;
 }
 
 double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
@@ -1282,7 +1283,8 @@ double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
 }
 
 int Fl_Xlib_Graphics_Driver::descent() {
-  return font_descriptor()->descent_;
+  if (font_descriptor()) return font_descriptor()->descent_;
+  else return -1;
 }
 
 typedef int (*sort_f_type)(const void *aa, const void *bb);
@@ -1327,9 +1329,11 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
 
 void Fl_Xlib_Graphics_Driver::init_built_in_fonts() {
   static int i = 0;
-  while (i < FL_FREE_FONT) {
-    Fl::set_font((Fl_Font)i, built_in_table[i].name);
-    i++;
+  if (!i) {
+    while (i < FL_FREE_FONT) {
+      i++;
+      Fl::set_font((Fl_Font)i-1, built_in_table[i-1].name);
+    }
   }
 }
 
