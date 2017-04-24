@@ -3,7 +3,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,6 @@ class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current_();
 public:
   Window pre_window;
-  int was_high;
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Xlib_Image_Surface_Driver();
   void set_current();
