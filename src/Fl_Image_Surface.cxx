@@ -78,8 +78,8 @@ int Fl_Image_Surface::printable_rect(int *w, int *h)  {return platform_surface->
  The caller is responsible for deleting the image.
  */
 Fl_RGB_Image *Fl_Image_Surface::image() {
-  bool need_push = (Fl_Surface_Device::surface() != this);
-  if (need_push) Fl_Surface_Device::push_current(this);
+  bool need_push = (Fl_Surface_Device::surface() != platform_surface);
+  if (need_push) Fl_Surface_Device::push_current(platform_surface);
   Fl_RGB_Image *img = platform_surface->image();
   if (need_push) Fl_Surface_Device::pop_current();
   return img;
