@@ -74,9 +74,7 @@ void Fl_Xlib_Image_Surface_Driver::untranslate() {
 
 Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
 {
-  push_current(this);
   unsigned char *data = fl_read_image(NULL, 0, 0, width, height, 0);
-  pop_current();
   Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height);
   image->alloc_array = 1;
   return image;
