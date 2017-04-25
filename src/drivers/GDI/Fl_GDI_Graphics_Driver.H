@@ -4,7 +4,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -37,6 +37,8 @@
 class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 private:
   BOOL alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch);
+  int depth; // to support translation
+  POINT *origins; // to support translation
 protected:
   HDC gc_;
   int numcount;
@@ -47,8 +49,8 @@ protected:
   int p_size;
   POINT *p;
 public:
-  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL;}
-  virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); }
+  Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
+  virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   char can_do_alpha_blending();
   virtual void gc(void *ctxt) { gc_ = (HDC)ctxt; global_gc(); }
@@ -84,6 +86,8 @@ public:
   void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);
+  void translate_all(int x, int y);
+  void untranslate_all(void);
 protected:
   void transformed_vertex0(int x, int y);
   void fixloop();
@@ -143,7 +147,6 @@ protected:
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
   virtual unsigned font_desc_size();
-protected:
   void global_gc();
 };
 
@@ -159,16 +162,6 @@ public:
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
-};
-
-
-class Fl_Translated_GDI_Graphics_Driver : public Fl_GDI_Graphics_Driver {
-  unsigned depth;
-  POINT origins[10];
-public:
-  Fl_Translated_GDI_Graphics_Driver() {depth = 0;}
-  virtual void translate_all(int x, int y);
-  virtual void untranslate_all(void);
 };
 
 

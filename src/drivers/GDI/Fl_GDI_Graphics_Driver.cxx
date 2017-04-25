@@ -3,7 +3,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -134,19 +134,27 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
-#endif
 
-void Fl_Translated_GDI_Graphics_Driver::translate_all(int x, int y) {
+void Fl_GDI_Graphics_Driver::translate_all(int x, int y) {
+  const int stack_height = 10;
+  if (depth == -1) {
+    origins = new POINT[stack_height];
+    depth = 0;
+  }
+  if (depth >= stack_height)  {
+    Fl::warning("Fl_Copy/Image_Surface: translate stack overflow!");
+    depth = stack_height - 1;
+  }
   GetWindowOrgEx((HDC)gc(), origins+depth);
   SetWindowOrgEx((HDC)gc(), origins[depth].x - x, origins[depth].y - y, NULL);
-  if (depth < sizeof(origins)/sizeof(POINT)) depth++;
-  else Fl::warning("Fl_Copy_Surface: translate stack overflow!");
+  depth++;
 }
 
-void Fl_Translated_GDI_Graphics_Driver::untranslate_all() {
+void Fl_GDI_Graphics_Driver::untranslate_all() {
   if (depth > 0) depth--;
   SetWindowOrgEx((HDC)gc(), origins[depth].x, origins[depth].y, NULL);
 }
+#endif
 
 void Fl_GDI_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
   Fl_Region R = XRectangleRegion(X, Y, W, H);

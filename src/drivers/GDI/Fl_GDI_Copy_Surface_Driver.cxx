@@ -3,7 +3,7 @@
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -48,7 +48,7 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 
 Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  driver(new Fl_Translated_GDI_Graphics_Driver);
+  driver(new Fl_GDI_Graphics_Driver);
   oldgc = (HDC)Fl_Surface_Device::surface()->driver()->gc();
   // exact computation of factor from screen units to EnhMetaFile units (0.01 mm)
   HDC hdc = GetDC(NULL);
@@ -96,12 +96,12 @@ void Fl_GDI_Copy_Surface_Driver::set_current() {
 
 
 void Fl_GDI_Copy_Surface_Driver::translate(int x, int y) {
-  ((Fl_Translated_GDI_Graphics_Driver*)driver())->translate_all(x, y);
+  ((Fl_GDI_Graphics_Driver*)driver())->translate_all(x, y);
 }
 
 
 void Fl_GDI_Copy_Surface_Driver::untranslate() {
-  ((Fl_Translated_GDI_Graphics_Driver*)driver())->untranslate_all();
+  ((Fl_GDI_Graphics_Driver*)driver())->untranslate_all();
 }
 #endif // FL_CFG_GFX_GDI
 
