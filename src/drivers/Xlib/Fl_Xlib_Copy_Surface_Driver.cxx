@@ -3,7 +3,7 @@
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -28,7 +28,7 @@
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
-  virtual void end_current_();
+  virtual void end_current_(Fl_Surface_Device*);
 protected:
   Fl_Offscreen xid;
   Window oldwindow;
@@ -80,7 +80,7 @@ void Fl_Xlib_Copy_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
 }
 
-void Fl_Xlib_Copy_Surface_Driver::end_current_() {
+void Fl_Xlib_Copy_Surface_Driver::end_current_(Fl_Surface_Device*) {
   fl_window = oldwindow;
 }
 

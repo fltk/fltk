@@ -4,7 +4,7 @@
 // Definition of classes Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,9 +57,10 @@ class FL_EXPORT Fl_Surface_Device {
   Fl_Graphics_Driver *pGraphicsDriver;
   static Fl_Surface_Device *surface_; // the surface that currently receives graphics requests
   static Fl_Surface_Device *default_surface(); // create surface if none exists yet
-  // Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) re-implement this.
-  // Gets called each time a surface ceases to be the current drawing surface.
-  virtual void end_current_() {}
+  /* Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) re-implement this.
+   Gets called each time a surface ceases to be the current drawing surface.
+   The next_current argument gives the drawing surface that will become current next */
+  virtual void end_current_(Fl_Surface_Device *next_current) {}
 protected:
   /** Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }

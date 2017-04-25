@@ -3,7 +3,7 @@
 //
 // implementation of Fl_Device class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,7 +50,7 @@
  is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().*/
 void Fl_Surface_Device::set_current(void)
 {
-  if (surface_) surface_->end_current_();
+  if (surface_) surface_->end_current_(this);
   fl_graphics_driver = pGraphicsDriver;
   surface_ = this;
   pGraphicsDriver->global_gc();

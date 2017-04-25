@@ -27,7 +27,7 @@
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
-  virtual void end_current_();
+  virtual void end_current_(Fl_Surface_Device *next_current);
 public:
   Window pre_window;
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
@@ -79,9 +79,10 @@ Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
   return image;
 }
 
-void Fl_Xlib_Image_Surface_Driver::end_current_()
+void Fl_Xlib_Image_Surface_Driver::end_current_(Fl_Surface_Device *next_current)
 {
   fl_pop_clip();
+  next_current->driver()->restore_clip();
   fl_window = pre_window;
 }
 
