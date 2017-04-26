@@ -25,7 +25,9 @@
 #include <FL/fl_utf8.H>	// currently only Windows and Linux
 #endif
 
-// Scroll display so 'row' is at top
+/** Sets the vertical scroll position so 'row' is at the top,
+    and causes the screen to redraw.
+*/
 void Fl_Table::row_position(int row) {
   if ( _row_position == row ) return;		// OPTIMIZATION: no change? avoid redraw
   if ( row < 0 ) row = 0;
@@ -41,7 +43,10 @@ void Fl_Table::row_position(int row) {
   _row_position = row;	// HACK: override what table_scrolled() came up with
 }
 
-// Scroll display so 'col' is at left
+/**
+  Sets the horizontal scroll position so 'col' is at the left,
+  and causes the screen to redraw.
+*/
 void Fl_Table::col_position(int col) {
   if ( _col_position == col ) return;	// OPTIMIZATION: no change? avoid redraw
   if ( col < 0 ) col = 0;
@@ -57,7 +62,9 @@ void Fl_Table::col_position(int col) {
   _col_position = col;	// HACK: override what table_scrolled() came up with
 }
 
-// Find scroll position of a row (in pixels)
+/**
+  Returns the scroll position (in pixels) of the specified 'row'.
+*/
 long Fl_Table::row_scroll_position(int row) {
   int startrow = 0;
   long scroll = 0; 
@@ -74,7 +81,9 @@ long Fl_Table::row_scroll_position(int row) {
   return(scroll);
 }
 
-// Find scroll position of a column (in pixels)
+/**
+  Returns the scroll position (in pixels) of the specified column 'col'.
+*/
 long Fl_Table::col_scroll_position(int col) {
   int startcol = 0;
   long scroll = 0;
@@ -91,7 +100,11 @@ long Fl_Table::col_scroll_position(int col) {
   return(scroll);
 }
 
-// Ctor
+/**
+  The constructor for Fl_Table.
+  This creates an empty table with no rows or columns,
+  with headers and row/column resize behavior disabled.
+*/
 Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H,l) {
   _rows             = 0;
   _cols             = 0;
@@ -156,12 +169,21 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   table->begin();		// leave with fltk children getting added to the scroll
 }
 
-// Dtor
+  
+/**
+  The destructor for Fl_Table.
+  Destroys the table and its associated widgets.
+*/
 Fl_Table::~Fl_Table() {
   // The parent Fl_Group takes care of destroying scrollbars
 }
 
-// Set height of a row
+/**
+  Sets the height of the specified row in pixels,
+  and the table is redrawn.
+  callback() will be invoked with CONTEXT_RC_RESIZE
+  if the row's height was actually changed, and when() is FL_WHEN_CHANGED.
+*/
 void Fl_Table::row_height(int row, int height) {
   if ( row < 0 ) return;
   if ( row < (int)_rowheights.size() && _rowheights[row] == height ) {
@@ -185,7 +207,11 @@ void Fl_Table::row_height(int row, int height) {
   }
 }
 
-// Set width of a column
+/**
+  Sets the width of the specified column in pixels, and the table is redrawn.
+  callback() will be invoked with CONTEXT_RC_RESIZE
+  if the column's width was actually changed, and when() is FL_WHEN_CHANGED.
+*/   
 void Fl_Table::col_width(int col, int width)
 {
   if ( col < 0 ) return;
@@ -211,7 +237,11 @@ void Fl_Table::col_width(int col, int width)
   }
 }
 
-// Return row/col clamped to reality
+/**
+  Return specfied row/col values R and C to within the table's
+  current row/col limits.
+  \returns 0 if no changes were made, or 1 if they were.
+*/
 int Fl_Table::row_col_clamp(TableContext context, int &R, int &C) {
   int clamped = 0;
   if ( R < 0 ) { R = 0; clamped = 1; }
@@ -237,7 +267,9 @@ int Fl_Table::row_col_clamp(TableContext context, int &R, int &C) {
   return(clamped);
 }
 
-// Return bounding region for given context
+/**
+  Returns the (X,Y,W,H) bounding region for the specified 'context'.
+*/
 void Fl_Table::get_bounds(TableContext context, int &X, int &Y, int &W, int &H) {
   switch ( context ) {
     case CONTEXT_COL_HEADER:
@@ -269,11 +301,11 @@ void Fl_Table::get_bounds(TableContext context, int &X, int &Y, int &W, int &H) 
   //NOTREACHED
 }
 
-// Find row/col beneath cursor
-//
-//    Returns R/C and context.
-//    Also returns resizeflag, if mouse is hovered over a resize boundary.
-//
+/**
+  Find row/col for the recent mouse event.
+  Returns the context, and the row/column values in R/C.
+  Also returns 'resizeflag' if mouse is hovered over a resize boundary.
+*/
 Fl_Table::TableContext Fl_Table::cursor2rowcol(int &R, int &C, ResizeFlag &resizeflag) {
   // return values
   R = C = 0;
@@ -350,10 +382,12 @@ Fl_Table::TableContext Fl_Table::cursor2rowcol(int &R, int &C, ResizeFlag &resiz
   return(CONTEXT_NONE);
 }
 
-// Find X/Y/W/H for cell at R/C
-//     If R or C are out of range, returns -1 
-//     with X/Y/W/H set to zero.
-//
+/**
+  Find a cell's X/Y/W/H region for the specified cell in row 'R', column 'C'.
+  \returns
+    - 0 -- on success, XYWH returns the region of the specified cell.
+    - -1 -- if R or C are out of range, and X/Y/W/H will be set to zero.
+*/
 int Fl_Table::find_cell(TableContext context, int R, int C, int &X, int &Y, int &W, int &H) {
   if ( row_col_clamp(context, R, C) ) {		// row or col out of range? error
     X=Y=W=H=0;
@@ -458,7 +492,10 @@ void Fl_Table::_auto_drag_cb() {
   }
 }
 
-// Recalculate the window dimensions
+/**
+  Recalculate the dimensions of the table, and affect any children.
+  Internally, Fl_Group::resize() and init_sizes() are called.
+*/
 void Fl_Table::recalc_dimensions() {
   // Recalc to* (Table Outer), ti* (Table Inner), wi* ( Widget Inner)
   wix = ( x() + Fl::box_dx(box())); tox = wix; tix = tox + Fl::box_dx(table->box());
@@ -494,12 +531,12 @@ void Fl_Table::recalc_dimensions() {
   table->init_sizes();
 }
 
-// Recalculate internals after a scroll.
-//
-//    Call this if table has been scrolled or resized.
-//    Does not handle redraw().
-//    TODO: Assumes ti[xywh] has already been recalculated.
-//
+/**
+  Recalculate internals after a scroll.
+  Call this if table has been scrolled or resized.
+  Does not handle redraw().
+  TODO: Assumes ti[xywh] has already been recalculated.
+*/
 void Fl_Table::table_scrolled() {
   // Find top row
   int y, row, voff = vscrollbar->value();
@@ -537,11 +574,10 @@ void Fl_Table::table_scrolled() {
   draw_cell(CONTEXT_RC_RESIZE, 0,0,0,0,0,0);
 }
 
-// Table resized: recalc internal data
-//    Call this whenever the window is resized.
-//    Recalculates the scrollbar sizes.
-//    Makes no assumptions about any pre-initialized data.
-//
+/**
+  Call this if table was resized, to recalculate internal data.
+  Calls recall_dimensions(), and recalculates scrollbar sizes.
+*/
 void Fl_Table::table_resized() {
   table_h = row_scroll_position(rows());
   table_w = col_scroll_position(cols()); 
@@ -582,7 +618,9 @@ void Fl_Table::table_resized() {
   // redraw();
 }
 
-// Someone moved a scrollbar
+/**
+  Callback for when someone moves a scrollbar.
+*/
 void Fl_Table::scroll_cb(Fl_Widget*w, void *data) {
   Fl_Table *o = (Fl_Table*)data;
   o->recalc_dimensions();	// recalc tix, tiy, etc.
@@ -590,7 +628,9 @@ void Fl_Table::scroll_cb(Fl_Widget*w, void *data) {
   o->redraw();
 }
 
-// Set number of rows
+/**
+  Sets the number of rows in the table, and the table is redrawn.
+*/
 void Fl_Table::rows(int val) {
   int oldrows = _rows;
   _rows = val;
@@ -612,7 +652,9 @@ void Fl_Table::rows(int val) {
   }
 }
 
-// Set number of cols
+/**
+  Set the number of columns in the table and redraw.
+*/
 void Fl_Table::cols(int val) {
   _cols = val;
   {
@@ -627,7 +669,9 @@ void Fl_Table::cols(int val) {
   redraw();
 }
 
-// Change mouse cursor to different type
+/**
+  Change mouse cursor to different type
+*/
 void Fl_Table::change_cursor(Fl_Cursor newcursor) {
   if ( newcursor != _last_cursor ) {
     fl_cursor(newcursor, FL_BLACK, FL_WHITE);
@@ -635,6 +679,10 @@ void Fl_Table::change_cursor(Fl_Cursor newcursor) {
   }
 }
 
+/**
+  Sets the damage zone to the specified row/col values.
+  Calls redraw_range().
+*/
 void Fl_Table::damage_zone(int r1, int c1, int r2, int c2, int r3, int c3) {
   int R1 = r1, C1 = c1;
   int R2 = r2, C2 = c2;
@@ -661,6 +709,32 @@ void Fl_Table::damage_zone(int r1, int c1, int r2, int c2, int r3, int c3) {
   redraw_range(R1, R2, C1, C2);
 }
 
+/**
+  Moves the selection cursor a relative number of rows/columns specifed by R/C.
+  R/C can be positive or negative, depending on the direction to move.
+  A value of 0 for R or C prevents cursor movement on that axis.
+
+  If shiftselect is set, the selection range is extended to the new
+  cursor position. If clear, the cursor is simply moved, and any previous
+  selection is cancelled.
+
+  Used mainly by keyboard events (e.g. Fl_Right, FL_Home, FL_End..)
+  to let the user keyboard navigate the selection cursor around.
+
+  The scroll positions may be modified if the selection cursor traverses
+  into cells off the screen's edge.
+
+  Internal variables select_row/select_col and current_row/current_col
+  are modified, among others.
+
+  \code
+  Examples:
+      R=1, C=0  -- moves the selection cursor one row downward.
+      R=5, C=0  -- moves the selection cursor 5 rows downward.
+      R=-5, C=0 -- moves the cursor 5 rows upward.
+      R=2, C=2  -- moves the cursor 2 rows down and 2 columns to the right.
+  \endcode
+*/
 int Fl_Table::move_cursor(int R, int C, int shiftselect) {
   if (select_row == -1) R++;
   if (select_col == -1) C++;
@@ -683,6 +757,9 @@ int Fl_Table::move_cursor(int R, int C, int shiftselect) {
   return 1;
 }
 
+/**
+  Same as move_cursor(R,C,1);
+*/
 int Fl_Table::move_cursor(int R, int C) {
   return move_cursor(R,C,1);
 }
@@ -696,7 +773,9 @@ int Fl_Table::move_cursor(int R, int C) {
 #define PRINTEVENT
 #endif
 
-// Handle FLTK events
+/**
+  Handle FLTK events.
+*/
 int Fl_Table::handle(int event) {
   PRINTEVENT;
   int ret = Fl_Group::handle(event);	// let FLTK group handle events first
@@ -1051,9 +1130,10 @@ int Fl_Table::handle(int event) {
   return(ret);
 }
 
-// Resize FLTK override
-//     Handle resize events if user resizes parent window.
-//
+/**
+  Handle resize events if user resizes parent window.
+  This changes the size of Fl_Table, causing it to redraw.
+*/
 void Fl_Table::resize(int X, int Y, int W, int H) {
   // Tell group to resize, and recalc our own widget as well
   Fl_Group::resize(X, Y, W, H);
@@ -1070,9 +1150,9 @@ void Fl_Table::_redraw_cell(TableContext context, int r, int c) {
 }
 
 /**
- See if the cell at row \p r and column \p c is selected.
- \returns 1 if the cell is selected, 0 if not.
- */
+  See if the cell at row \p r and column \p c is selected.
+  \returns 1 if the cell is selected, 0 if not.
+*/
 int Fl_Table::is_selected(int r, int c) {
   int s_left, s_right, s_top, s_bottom;
   
@@ -1141,10 +1221,11 @@ void Fl_Table::set_selection(int row_top, int col_left, int row_bot, int col_rig
   damage_zone(current_row, current_col, select_row, select_col);
 }
 
-// Draw the entire Fl_Table
-//    Override the draw() routine to draw the table.
-//    Then tell the group to draw over us.
-//
+/**
+  Draws the entire Fl_Table.
+  Lets fltk widgets draw themselves first, followed by the cells
+  via calls to draw_cell().
+*/
 void Fl_Table::draw() {   
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
   // Check if scrollbar size changed
