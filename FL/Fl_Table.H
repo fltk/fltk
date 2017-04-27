@@ -122,17 +122,18 @@ public:
   /**
     The context bit flags for Fl_Table related callbacks.
 
-    Used in draw_cell(), callback(), etc.
+    Should be used in draw_cell() to determine what's being drawn,
+    or in a callback() to determine where a recent event occurred.
   */
   enum TableContext {
     CONTEXT_NONE       = 0,	///< no known context
-    CONTEXT_STARTPAGE  = 0x01,	///< before a page is redrawn
-    CONTEXT_ENDPAGE    = 0x02,	///< after a page is redrawn
-    CONTEXT_ROW_HEADER = 0x04,	///< in the row header
-    CONTEXT_COL_HEADER = 0x08,	///< in the col header
-    CONTEXT_CELL       = 0x10,	///< in one of the cells
-    CONTEXT_TABLE      = 0x20,	///< in a dead zone of table
-    CONTEXT_RC_RESIZE  = 0x40 	///< column or row being resized
+    CONTEXT_STARTPAGE  = 0x01,	///< before the table is redrawn
+    CONTEXT_ENDPAGE    = 0x02,	///< after the table is redrawn
+    CONTEXT_ROW_HEADER = 0x04,	///< drawing or event occurred in the row header
+    CONTEXT_COL_HEADER = 0x08,	///< drawing or event occurred in the col header
+    CONTEXT_CELL       = 0x10,	///< drawing or event occurred in a cell
+    CONTEXT_TABLE      = 0x20,	///< drawing or event occurred in a dead zone of table
+    CONTEXT_RC_RESIZE  = 0x40 	///< column or row is being resized
   };
   
 private:
