@@ -74,6 +74,7 @@
  
   The following variables are available to classes deriving from Fl_Table:
  
+  \anchor table_dimensions_diagram 
   \image html table-dimensions.png
   \image latex table-dimensions.png "Fl_Table Dimensions" width=6cm
  
@@ -236,26 +237,45 @@ protected:
     RESIZE_ROW_ABOVE = 3,
     RESIZE_ROW_BELOW = 4
   };
-  
-  int table_w, table_h;				// table's virtual size (in pixels)
-  int toprow, botrow, leftcol, rightcol;	// four corners of viewable table
+
+  int table_w;				///< table's virtual width (in pixels)
+  int table_h;				///< table's virtual height (in pixels)
+  int toprow;				///< top row# of currently visible table on screen
+  int botrow;				///< bottom row# of currently visible table on screen
+  int leftcol;				///< left column# of currently visible table on screen
+  int rightcol;				///< right column# of currently visible table on screen
   
   // selection
-  int current_row, current_col;
-  int select_row, select_col;
+  int current_row;			///< selection cursor's current row (-1 if none)
+  int current_col;			///< selection cursor's current column (-1 if none)
+  int select_row;			///< extended selection row (-1 if none)
+  int select_col;			///< extended selection column (-1 if none)
   
   // OPTIMIZATION: Precomputed scroll positions for the toprow/leftcol
-  int toprow_scrollpos;
-  int leftcol_scrollpos;
+  int toprow_scrollpos;			///< precomputed scroll position for top row
+  int leftcol_scrollpos;		///< precomputed scroll position for left column
   
-  // Dimensions
-  int tix, tiy, tiw, tih;			// data table inner dimension xywh
-  int tox, toy, tow, toh;			// data table outer dimension xywh
-  int wix, wiy, wiw, wih;			// widget inner dimension xywh
+  // Data table's inner dimension
+  int tix;	///< Data table's inner x dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int tiy;	///< Data table's inner y dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int tiw;	///< Data table's inner w dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int tih;	///< Data table's inner h dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+
+  // Data table's outer dimension
+  int tox;	///< Data table's outer x dimension, outside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int toy;	///< Data table's outer y dimension, outside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int tow;	///< Data table's outer w dimension, outside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int toh;	///< Data table's outer h dimension, outside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+
+  // Table widget's inner dimension
+  int wix;	///< Table widget's inner x dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int wiy;	///< Table widget's inner y dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int wiw;	///< Table widget's inner w dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
+  int wih;	///< Table widget's inner h dimension, inside bounding box. See \ref table_dimensions_diagram "Table Dimension Diagram"
   
-  Fl_Scroll *table;				// container for child fltk widgets (if any)
-  Fl_Scrollbar *vscrollbar; 			// vertical scrollbar
-  Fl_Scrollbar *hscrollbar;			// horizontal scrollbar
+  Fl_Scroll *table;				///< child Fl_Scroll widget container for child fltk widgets (if any)
+  Fl_Scrollbar *vscrollbar; 			///< child vertical scrollbar widget
+  Fl_Scrollbar *hscrollbar;			///< child horizontal scrollbar widget
   
   // Fltk
   int handle(int e);				// fltk handle() override
