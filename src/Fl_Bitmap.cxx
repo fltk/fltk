@@ -29,10 +29,12 @@
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Printer.H>
 
+/** Create a bit mask */
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
   return fl_graphics_driver->create_bitmask(w, h, array);
 }
 
+/** delete a bit mask */
 void fl_delete_bitmask(Fl_Bitmask bm) {
   return Fl_Graphics_Driver::default_driver().delete_bitmask(bm);
 }
