@@ -1207,6 +1207,8 @@ void Fl_Table::get_selection(int& row_top, int& col_left, int& row_bot, int& col
   So for instance, set_selection(0,0,0,0) selects the top/left cell in the table.
   And set_selection(0,0,1,1) selects the four cells in rows 0 and 1, column 0 and 1.
 
+  To deselect all cells, use set_selection(-1,-1,-1,-1);
+
   \param[in] row_top   Top row of selection area
   \param[in] col_left  Left column of selection area
   \param[in] row_bot   Bottom row of selection area
