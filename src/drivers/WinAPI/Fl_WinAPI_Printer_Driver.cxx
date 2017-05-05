@@ -23,7 +23,7 @@
 #include <FL/fl_ask.H>
 #include <FL/math.h>
 #include <FL/fl_draw.H>
-#include <Commdlg.h>
+#include <commdlg.h>
 
 extern HWND fl_window;
 
