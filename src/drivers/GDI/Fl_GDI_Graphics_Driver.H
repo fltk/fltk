@@ -157,6 +157,9 @@ protected:
  This class is implemented only on the MSWindows platform. It 's extremely similar to Fl_GDI_Graphics_Driver.
  */
 class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+private:
+  typedef BOOL (WINAPI* transparent_f_type) (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
+  transparent_f_type TransparentBlt();
 public:
   virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);

@@ -415,16 +415,17 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP,
   DeleteDC(tempdc);
 }
 
-// TODO: move this into a file with the printer implementations
+Fl_GDI_Printer_Graphics_Driver::transparent_f_type Fl_GDI_Printer_Graphics_Driver::TransparentBlt() {
+  HMODULE hMod;
+  static transparent_f_type fpter = ( (hMod = LoadLibrary("MSIMG32.DLL")) ?
+                                             (transparent_f_type)GetProcAddress(hMod, "TransparentBlt") : NULL
+                                             );
+  return fpter;
+}
+
 void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
-  static fl_transp_func fl_TransparentBlt = NULL;
-  static HMODULE hMod = NULL;
-  if (!hMod) {
-    hMod = LoadLibrary("MSIMG32.DLL");
-    if (hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-  }
+  transparent_f_type fl_TransparentBlt = TransparentBlt();
   if (!fl_TransparentBlt) {
     Fl_GDI_Graphics_Driver::draw(bm,  XP,  YP,  WP,  HP,  cx,  cy);
     return;
@@ -611,13 +612,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
 void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
-  typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
-  static HMODULE hMod = NULL;
-  static fl_transp_func fl_TransparentBlt = NULL;
-  if (!hMod) {
-    hMod = LoadLibrary("MSIMG32.DLL");
-    if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-  }
+  transparent_f_type fl_TransparentBlt = TransparentBlt();
   if (fl_TransparentBlt) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
