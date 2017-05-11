@@ -342,7 +342,7 @@ void Fl_Gl_Window::draw_overlay() {}
 
 #endif // HAVE_GL
 
-  /** Draws the Fl_Gl_Window.   
+/** Draws the Fl_Gl_Window.   
   You \e \b must subclass Fl_Gl_Window and provide an implementation for 
   draw().  You may also provide an implementation of draw_overlay()
   if you want to draw into the overlay planes.  You can avoid
@@ -356,6 +356,44 @@ void Fl_Gl_Window::draw_overlay() {}
 
   If double-buffering is enabled in the window, the back and front
   buffers are swapped after this function is completed.
+
+  The following pseudo-code shows how to use "if (!valid())"
+  to initialize the viewport:
+
+  \code
+    void mywindow::draw() {
+     if (!valid()) {
+         glViewport(0,0,pixel_w(),pixel_h());
+         glFrustum(...) or glOrtho(...)
+         ...other initialization...
+     }
+     if (!context_valid()) {
+         ...load textures, etc. ...
+     }
+     // clear screen
+     glClearColor(...);
+     glClear(...);
+     ... draw your geometry here ...
+    }
+  \endcode
+
+  Actual example code to clear screen to black and draw a 2D white "X":
+  \code
+    void mywindow::draw() {
+        if (!valid()) {
+            glLoadIdentity();
+            glViewport(0,0,w(),h());
+            glOrtho(-w(),w(),-h(),h(),-1,1);
+        }
+        // Clear screen
+        glClear(GL_COLOR_BUFFER_BIT);
+        // Draw white 'X'
+        glColor3f(1.0, 1.0, 1.0);
+        glBegin(GL_LINE_STRIP); glVertex2f(w(), h()); glVertex2f(-w(),-h()); glEnd();
+        glBegin(GL_LINE_STRIP); glVertex2f(w(),-h()); glVertex2f(-w(), h()); glEnd();
+    } 
+  \endcode
+
 */
 void Fl_Gl_Window::draw() {
 #ifdef FL_CFG_GFX_OPENGL
