@@ -117,7 +117,7 @@ public:
   /**
     Sets the shadow drawing mode of the hands.
 
-    Enable (1) or disable (0) drawing the hands with shadows.
+    Enables (1) or disables (0) drawing the hands with shadows.
 
     Values except 0 and 1 are reserved for future extensions and
     yield undefined behavior.
