@@ -3,7 +3,7 @@
 //
 // Clock header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,19 +26,22 @@
 #include "Fl_Widget.H"
 #endif
 
-// values for type:
+// Values for type():
+// Please change doxygen documentation below (class Fl_Clock_Output)
+// accordingly as well when changing the following type values:
+
 #define FL_SQUARE_CLOCK		0	/**< type() of Square Clock variant */
 #define FL_ROUND_CLOCK		1	/**< type() of Round Clock variant */
 #define FL_ANALOG_CLOCK FL_SQUARE_CLOCK	/**< An analog clock is square */
 #define FL_DIGITAL_CLOCK FL_SQUARE_CLOCK /**< Not yet implemented */
 
 // fabien: Please keep the horizontal formatting of both images in class desc, 
-// don't lose vert. space for nothing!
+// don't lose vertical space for nothing!
 
 /**
   \class Fl_Clock_Output
   \brief This widget can be used to display a program-supplied time.
-  
+
   The time shown on the clock is not updated. To display the current time,
   use Fl_Clock instead.
 
@@ -50,6 +53,16 @@
   \htmlonly </TD> </TR> </table> \endhtmlonly
   \image latex clock.png "FL_SQUARE_CLOCK type" width=4cm
   \image latex round_clock.png "FL_ROUND_CLOCK type" width=4cm
+
+  Values for clock type() (\#include \<FL/Clock.H\>):
+
+  \code
+    #define FL_SQUARE_CLOCK		0	// Square Clock variant
+    #define FL_ROUND_CLOCK		1	// Round Clock variant
+    #define FL_ANALOG_CLOCK FL_SQUARE_CLOCK	// An analog clock is square
+    #define FL_DIGITAL_CLOCK FL_SQUARE_CLOCK	// Not yet implemented
+  \endcode
+
  */
 class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   int hour_, minute_, second_;
@@ -100,7 +113,9 @@ public:
 
   Fl_Clock is provided for Forms compatibility. 
   It installs a 1-second timeout callback using Fl::add_timeout().
-  You can choose the rounded or square type of the clock with type(), see below.
+  You can choose the rounded or square type of the clock with type().
+  Please see Fl_Clock_Output widget for applicable values.
+
   \htmlonly <BR>  <table align=CENTER border=1 cellpadding=5 >  
   <caption align=bottom>type() FL_SQUARE_CLOCK and FL_ROUND_CLOCK </caption> <TR><TD> \endhtmlonly
   \image html clock.png  
@@ -109,6 +124,8 @@ public:
   \htmlonly </TD> </TR> </table> \endhtmlonly
   \image latex clock.png "FL_SQUARE_CLOCK type" width=4cm  
   \image latex round_clock.png "FL_ROUND_CLOCK type" width=4cm
+
+  \see class Fl_Clock_Output
  */
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:

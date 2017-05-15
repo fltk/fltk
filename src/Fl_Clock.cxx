@@ -144,7 +144,10 @@ void Fl_Clock_Output::value(ulong v) {
 
 /**
   Create a new Fl_Clock_Output widget with the given position, size and label.
-  The default boxtype is \c FL_NO_BOX.
+
+  The default clock type is \c FL_SQUARE_CLOCK and the default boxtype is
+  \c FL_UP_BOX.
+
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
  */
@@ -163,7 +166,10 @@ Fl_Clock_Output::Fl_Clock_Output(int X, int Y, int W, int H, const char *L)
 
 /**
   Create an Fl_Clock widget using the given position, size, and label string.
-  The default boxtype is \c FL_NO_BOX.
+
+  The default clock type is FL_SQUARE_CLOCK and the default
+  boxtype is \c FL_UP_BOX.
+
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
  */
@@ -171,12 +177,25 @@ Fl_Clock::Fl_Clock(int X, int Y, int W, int H, const char *L)
   : Fl_Clock_Output(X, Y, W, H, L) {}
 
 /**
-  Create an Fl_Clock widget using the given boxtype, position, size, and
-  label string.
-  \param[in] t boxtype
+  Create an Fl_Clock widget using the given clock type \p t,
+  position, size, and label string.
+
+  The default clock type \p t is \c FL_SQUARE_CLOCK. You can set the
+  clock type to FL_ROUND_CLOCK or any other valid clock type.
+  See Fl_Clock_Output widget for applicable values.
+
+  The default boxtype is \c FL_UP_BOX for \c FL_SQUARE_CLOCK
+  and \c FL_NO_BOX for \c FL_ROUND_CLOCK, if set by the constructor.
+  If you change the clock type with type() later you should also set
+  the boxtype with box().
+
+  \param[in] t type of clock: FL_ROUND_CLOCK or FL_SQUARE_CLOCK (0)
   \param[in] X, Y, W, H position and size of the widget
   \param[in] L widget label, default is no label
- */
+
+  \see class Fl_Clock_Output
+*/
+
 Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char *L)
   : Fl_Clock_Output(X, Y, W, H, L) {
   type(t);
@@ -202,7 +221,7 @@ int Fl_Clock::handle(int event) {
   }
   return Fl_Clock_Output::handle(event);
 }
-  
+
 /**
   The destructor removes the clock.
  */
@@ -211,10 +230,23 @@ Fl_Clock::~Fl_Clock() {
 }
 
 
+/**
+  Create an Fl_Round_Clock widget using the given
+  position, size, and label string.
+
+  The clock type is \c FL_ROUND_CLOCK and the boxtype is \c FL_NO_BOX.
+
+  This construcktor is the same as Fl_Clock(FL_ROUND_CLOCK, X, Y, W, H, L).
+  \see Fl_Clock(uchar, int, int, int, int, const char *)
+
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+*/
+
 Fl_Round_Clock::Fl_Round_Clock(int X,int Y,int W,int H, const char *L)
-: Fl_Clock(X, Y, W, H, L) 
+: Fl_Clock(X, Y, W, H, L)
 {
-  type(FL_ROUND_CLOCK); 
+  type(FL_ROUND_CLOCK);
   box(FL_NO_BOX);
 }
 
