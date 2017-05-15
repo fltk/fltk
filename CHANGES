@@ -17,6 +17,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
 
   New Features and Extensions
 
+  - (add new items here)
+  - New method shadow(int) allows to disable the shadows of the hands
+    of Fl_Clock, Fl_Clock_Output, and derived widgets.
   - New method Fl_Tabs::tab_align() allows to set alignment of tab labels,
     particularly to support icons on tab labels (STR #3076).
   - Added '--enable-print' option to configure effective under X11 platforms
@@ -52,7 +55,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   - Fl_Spinner now handles Up and Down keys when the input field has
     keyboard focus (STR #2989).
   - Renamed test/help.cxx demo program to test/help_dialog.cxx to avoid
-    name conflict with CMake auto-generated target 'help'.
+    name conflict with CMake's auto-generated target 'help'.
   - Many documentation fixes, clarifications, and enhancements.
 
 

@@ -67,6 +67,7 @@
 class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   int hour_, minute_, second_;
   ulong value_;
+  int shadow_; // draw shadows of hands
   void drawhands(Fl_Color,Fl_Color); // part of draw
 protected:
   void draw();
@@ -103,6 +104,29 @@ public:
     \see value(), hour(), minute()
    */
   int second() const {return second_;}
+
+  /**
+    Returns the shadow drawing mode of the hands.
+
+    \returns	shadow drawing mode of the hands
+    \retval 0	no shadows
+    \retval 1	draw shadows of hands (default)
+  */
+  int shadow() const {return shadow_;}
+
+  /**
+    Sets the shadow drawing mode of the hands.
+
+    Enable (1) or disable (0) drawing the hands with shadows.
+
+    Values except 0 and 1 are reserved for future extensions and
+    yield undefined behavior.
+
+    The default is to draw the shadows (1).
+
+    \param[in]	mode	1 = shadows (default), 0 = no shadows
+  */
+  void shadow(int mode) { shadow_ = mode ? 1 : 0; }
 };
 
 // a Fl_Clock displays the current time always by using a timeout:
