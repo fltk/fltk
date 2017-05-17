@@ -3,7 +3,7 @@
 //
 // Bitmap header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -45,15 +45,16 @@ private:
 	    int &X, int &Y, int &W, int &H);
   /** for internal use */
   fl_uintptr_t id_;
+  float cache_scale_; // graphics scaling value when id_ was computed
 
 public:
 
   /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const uchar *bits, int W, int H) :
-    Fl_Image(W,H,0), array(bits), alloc_array(0), id_(0) {data((const char **)&array, 1);}
+    Fl_Image(W,H,0), array(bits), alloc_array(0), id_(0), cache_scale_(1) {data((const char **)&array, 1);}
   /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const char *bits, int W, int H) :
-    Fl_Image(W,H,0), array((const uchar *)bits), alloc_array(0), id_(0) {data((const char **)&array, 1);}
+    Fl_Image(W,H,0), array((const uchar *)bits), alloc_array(0), id_(0), cache_scale_(1) {data((const char **)&array, 1);}
   virtual ~Fl_Bitmap();
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return copy(w(), h()); }

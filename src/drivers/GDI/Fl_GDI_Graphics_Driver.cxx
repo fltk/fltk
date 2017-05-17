@@ -104,7 +104,7 @@ HDC fl_makeDC(HBITMAP bitmap) {
   return new_gc;
 }
 
-void Fl_GDI_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
+void Fl_GDI_Graphics_Driver::copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen bitmap, float srcx, float srcy) {
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
@@ -162,7 +162,7 @@ void Fl_GDI_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, 
   XDestroyRegion(R);
 }
 
-void Fl_GDI_Graphics_Driver::transformed_vertex0(int x, int y) {
+void Fl_GDI_Graphics_Driver::transformed_vertex0(float x, float y) {
   if (!n || x != p[n-1].x || y != p[n-1].y) {
     if (n >= p_size) {
       p_size = p ? 2*p_size : 16;
@@ -228,6 +228,45 @@ void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, i
 }
 
 
+void Fl_GDI_Graphics_Driver::scale(float f) {
+  if (f != scale_) {
+    size_ = 0;
+    scale_ = f;
+    //line_style(FL_SOLID); // scale also default line width
+  }
+}
+
+
+/* Rescale region r with factor f and returns the scaled region.
+ The input region is deleted if keep is false.
+ The input region is inflated by 1 unit before rescaling if inflate is true.
+ Region r is returned unchanged if r is null or f is 1.
+ */
+HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, bool keep, bool inflate) {
+  if (r && f != 1) {
+    DWORD size = GetRegionData(r, 0, NULL);
+    RGNDATA *pdata = (RGNDATA*)malloc(size);
+    GetRegionData(r, size, pdata);
+    if (!keep) DeleteObject(r);
+    if (inflate) {
+      RECT *rects = (RECT*)&(pdata->Buffer);
+      for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
+        InflateRect(rects+i, 1, 1);
+      }
+    }
+    XFORM xform = {f, 0, 0, f, 0, 0};
+    r = ExtCreateRegion(&xform, size, pdata);
+    free(pdata);
+  }
+  return r;
+}
+
+
+Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
+  HRGN r = rstack[rstackptr];
+  HRGN r2 = scale_region(r, f, true);
+  return (r == r2 ? NULL : (rstack[rstackptr] = r2, r));
+}
 
 //
 // End of "$Id$".

@@ -3,7 +3,7 @@
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -125,6 +125,30 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
+Fl_Fontsize Fl_Xlib_Graphics_Driver::size_unscaled() {
+  return (Fl_Fontsize)(size_);
+}
+
+static void correct_extents (float scale_, int &dx, int &dy, int &w, int &h) {
+  if (int(scale_) == scale_) { // correct for extents non divisible by integral scale_
+    int delta = dx - int(dx/scale_)*scale_;
+    if (delta) {
+      dx -= delta; w += delta;
+    }
+    delta = -dy - int((-dy)/scale_)*scale_;
+    if (delta) {
+      dy -= delta; h += delta;
+    }
+    delta = h - int(h/scale_)*scale_;
+    if (delta) {
+      h += delta;
+    }
+    delta = w - int(w/scale_)*scale_;
+    if (delta) {
+      w += delta;
+    }
+  }
+}
 
 #if ! USE_PANGO
 
@@ -455,8 +479,8 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
 static const char* fl_encoding_ = "iso10646-1";
 
 
-void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
-  fl_xft_font(this,fnum,size,0);
+void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
+  fl_xft_font(this, fnum, size, 0);
 }
 
 static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core, int angle) {
@@ -691,17 +715,17 @@ static void utf8extents(Fl_Font_Descriptor *desc, const char *str, int n, XGlyph
 #endif
 }
 
-int Fl_Xlib_Graphics_Driver::height() {
+int Fl_Xlib_Graphics_Driver::height_unscaled() {
   if (font_descriptor()) return font_descriptor()->font->ascent + font_descriptor()->font->descent;
   else return -1;
 }
 
-int Fl_Xlib_Graphics_Driver::descent() {
+int Fl_Xlib_Graphics_Driver::descent_unscaled() {
   if (font_descriptor()) return font_descriptor()->font->descent;
   else return -1;
 }
 
-double Fl_Xlib_Graphics_Driver::width(const char* str, int n) {
+double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
   if (!font_descriptor()) return -1.0;
   XGlyphInfo i;
   utf8extents(font_descriptor(), str, n, &i);
@@ -715,11 +739,12 @@ static double fl_xft_width(Fl_Font_Descriptor *desc, FcChar32 *str, int n) {
   return i.xOff;
 }
 
-double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
+double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
+  if (!font_descriptor()) return -1.0;
   return fl_xft_width(font_descriptor(), (FcChar32 *)(&c), 1);
 }
 
-void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   if (!font_descriptor()) {
     w = h = 0;
     dx = dy = 0;
@@ -730,15 +755,12 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &d
 
   w = gi.width;
   h = gi.height;
-  dx = -gi.x;
-  dy = -gi.y;
-} // fl_text_extents
+  dx = -gi.x + line_delta_;
+  dy = -gi.y + line_delta_;
+  correct_extents(scale_, dx, dy, w, h);
+}
 
-
-void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
-  if ( !this->font_descriptor() ) {
-    this->font(FL_HELVETICA, FL_NORMAL_SIZE);
-  }
+void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
@@ -756,31 +778,32 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
     XftDrawChange(draw_, draw_window = fl_window);
 
   Region region = fl_clip_region();
-  if (region && XEmptyRegion(region)) return;
-  XftDrawSetClip(draw_, region);
-
-  // Use fltk's color allocator, copy the results to match what
-  // XftCollorAllocValue returns:
-  XftColor color;
-  color.pixel = fl_xpixel(Fl_Graphics_Driver::color());
-  uchar r,g,b; Fl::get_color(Fl_Graphics_Driver::color(), r,g,b);
-  color.color.red   = ((int)r)*0x101;
-  color.color.green = ((int)g)*0x101;
-  color.color.blue  = ((int)b)*0x101;
-  color.color.alpha = 0xffff;
-
-  const wchar_t *buffer = utf8reformat(str, n);
+  if (!(region && XEmptyRegion(region))) {
+    XftDrawSetClip(draw_, region);
+    
+    // Use fltk's color allocator, copy the results to match what
+    // XftCollorAllocValue returns:
+    XftColor color;
+    color.pixel = fl_xpixel(Fl_Graphics_Driver::color());
+    uchar r,g,b; Fl::get_color(Fl_Graphics_Driver::color(), r,g,b);
+    color.color.red   = ((int)r)*0x101;
+    color.color.green = ((int)g)*0x101;
+    color.color.blue  = ((int)b)*0x101;
+    color.color.alpha = 0xffff;
+    
+    const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-  XftDrawString16(draw_, &color, font_descriptor()->font, x+offset_x_, y+offset_y_, (XftChar16 *)buffer, n);
+    XftDrawString16(draw_, &color, font_descriptor()->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar16 *)buffer, n);
 #else
-  XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_, y+offset_y_, (XftChar32 *)buffer, n);
+    XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar32 *)buffer, n);
 #endif
+  }
 }
 
-void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
-  fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size(), angle);
-  this->draw(str, n, (int)x, (int)y);
-  fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size(), 0);
+void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
+  fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size_unscaled(), angle);
+  this->draw_unscaled(str, n, x, y);
+  fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size_unscaled(), 0);
 }
 
 void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
@@ -814,11 +837,11 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_, y+offset_x_, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (FcChar32 *)str, n);
 }
 
 
-void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int y) {
 
 #if defined(__GNUC__)
 // FIXME: warning Need to improve this XFT right to left draw function
@@ -902,7 +925,7 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {
   // Xft font height is sometimes larger than the required size (see STR 2566).
   // Increase the PostScript font size by 15% without exceeding the display font height
-  int max = height();
+  int max = height_unscaled();
   float ps_size = s * 1.15;
   if (ps_size > max) ps_size = max;
   return ps_size;
@@ -972,7 +995,7 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
     return;
   }
   Fl_Font_Descriptor* f = driver->font_descriptor();
-  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size() && f && f->angle == angle)
+  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size_unscaled() && f && f->angle == angle)
     return;
   driver->Fl_Graphics_Driver::font(fnum, size);
   Fl_Fontdesc *font = fl_fonts + fnum;
@@ -1021,7 +1044,7 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
 //       well for the fltk "built-in" font names.
 static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   XFontStruct* xgl_font = 0;
-  int size = driver->size();
+  int size = ((Fl_Xlib_Graphics_Driver*)driver)->size_unscaled();
   int fnum = driver->font();
   const char *wt_med = "medium";
   const char *wt_bold = "bold";
@@ -1112,10 +1135,10 @@ static XFontStruct* fl_xxfont(Fl_Graphics_Driver *driver) {
   static int glsize = 0;
   static int glfont = -1;
   // Do we need to load a new font?
-  if ((!xgl_font) || (glsize != driver->size()) || (glfont != driver->font())) {
+  if ((!xgl_font) || (glsize != ((Fl_Xlib_Graphics_Driver*)driver)->size_unscaled()) || (glfont != driver->font())) {
     // create a dummy XLFD for some font of the appropriate size...
     if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it - this *might* be a Bad Idea
-    glsize = driver->size(); // record current font size
+    glsize = ((Fl_Xlib_Graphics_Driver*)driver)->size_unscaled(); // record current font size
     glfont = driver->font(); // and face
     xgl_font = load_xfont_for_xft2(driver);
   }
@@ -1126,7 +1149,7 @@ static XFontStruct* fl_xxfont(Fl_Graphics_Driver *driver) {
   }
   static XftFont* xftfont;
   if (xftfont) XftFontClose (fl_display, xftfont);
-  xftfont = fontopen(fl_fonts[driver->font()].name, driver->size(), true, 0); // else request XFT to load a suitable "core" font instead.
+  xftfont = fontopen(fl_fonts[driver->font()].name, ((Fl_Xlib_Graphics_Driver*)driver)->size_unscaled(), true, 0); // else request XFT to load a suitable "core" font instead.
   return xftfont->u.core.font;
 #  endif // XFT_MAJOR > 1
 }
@@ -1161,9 +1184,13 @@ PangoContext *Fl_Xlib_Graphics_Driver::context() {
   return pctxt_;
 }
 
-void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   if (!size) return;
-  if (this->Fl_Graphics_Driver::font() == fnum && this->size() == size) return;
+  if (size < 0) {
+    Fl_Graphics_Driver::font(0, 0);
+    return;
+  }
+  if (this->Fl_Graphics_Driver::font() == fnum && this->size_unscaled() == size) return;
   fl_xft_font(this, fnum, size, 0);
   init_built_in_fonts();
   if (pfd_) pango_font_description_free(pfd_);
@@ -1180,21 +1207,21 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   }
 }
 
-void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
-  do_draw(0, str, n, x+offset_x_, y+offset_y_);
+void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
+  do_draw(0, str, n, x+offset_x_*scale_, y+offset_y_*scale_);
 }
 
-void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
   PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
-  pango_matrix_translate(&mat, x+offset_x_, y+offset_y_); // 1.6
+  pango_matrix_translate(&mat, x+offset_x_*scale_, y+offset_y_*scale_); // 1.6
   pango_matrix_rotate(&mat, angle); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
   do_draw(0, str, n, 0, 0);
   pango_context_set_matrix(pctxt_, NULL); // 1.6
 }
 
-void Fl_Xlib_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
-  do_draw(1, str, n, x+offset_x_, y+offset_y_);
+void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* str, int n, int x, int y) {
+  do_draw(1, str, n, x+offset_x_*scale_, y+offset_y_*scale_);
 }
 
 void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, int x, int y) {
@@ -1245,12 +1272,13 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   else
     XftDrawChange(draw_, draw_window = fl_window);
   XftDrawSetClip(draw_, region);
-  pango_xft_render_layout(draw_, &color, playout_, x*PANGO_SCALE, (y-height()+descent())*PANGO_SCALE ); // 1.8
-}
+  pango_xft_render_layout(draw_, &color, playout_, (x + line_delta_)*PANGO_SCALE,
+                          (y+line_delta_-height_unscaled()+descent_unscaled())*PANGO_SCALE ); // 1.8
+  }
 
-double Fl_Xlib_Graphics_Driver::width(const char* str, int n) {
+double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
   if (!n) return 0;
-  if (!fl_display || fl_size() == 0) return -1;
+  if (!fl_display || size_ == 0) return -1;
   if (!playout_) context();
   int width, height;
   pango_layout_set_font_description(playout_, pfd_);
@@ -1259,30 +1287,31 @@ double Fl_Xlib_Graphics_Driver::width(const char* str, int n) {
   return (double)width;
 }
 
-void Fl_Xlib_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h) {
+void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h) {
   if (!playout_) context();
   pango_layout_set_font_description(playout_, pfd_);
   pango_layout_set_text(playout_, str, n);
   PangoRectangle ink_rect, logical_rect;
   pango_layout_get_pixel_extents(playout_, &ink_rect, &logical_rect);
-  dx = ink_rect.x;
-  dy = ink_rect.y - height() + descent();
+  dx = ink_rect.x + line_delta_;
+  dy = ink_rect.y + line_delta_ - height_unscaled() + descent_unscaled();
   w = ink_rect.width;
   h = ink_rect.height;
+  correct_extents(scale_, dx, dy, w, h);
 }
 
-int Fl_Xlib_Graphics_Driver::height() {
+int Fl_Xlib_Graphics_Driver::height_unscaled() {
   if (font_descriptor())  return font_descriptor()->height_;
   else return -1;
 }
 
-double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
+double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
   char buf4[4];
   int n = fl_utf8encode(c, buf4);
-  return width(buf4, n);
+  return width_unscaled(buf4, n);
 }
 
-int Fl_Xlib_Graphics_Driver::descent() {
+int Fl_Xlib_Graphics_Driver::descent_unscaled() {
   if (font_descriptor()) return font_descriptor()->descent_;
   else return -1;
 }

@@ -3,7 +3,7 @@
 //
 // Overlay support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,6 +36,12 @@ static int px,py,pw,ph;
 #ifndef USE_XOR
 #include <stdlib.h>
 static uchar *bgN = 0L, *bgS = 0L, *bgE = 0L, *bgW = 0L;
+
+#include <FL/Fl_Screen_Driver.H>
+#include <FL/Fl_RGB_Image.H>
+#include <FL/Fl_Shared_Image.H>
+static Fl_Shared_Image *s_bgN = 0, *s_bgS = 0, *s_bgE = 0, *s_bgW = 0;
+
 static int bgx, bgy, bgw, bgh;
 #endif
 
@@ -60,24 +66,58 @@ static void draw_current_rect() {
 #  error unsupported platform
 # endif
 #else
-  if (bgN) { free(bgN); bgN = 0L; }
-  if (bgS) { free(bgS); bgS = 0L; }
-  if (bgE) { free(bgE); bgE = 0L; }
-  if (bgW) { free(bgW); bgW = 0L; }
+  float s = fl_graphics_driver->scale();
+  if (s == int(s)) {
+    if (bgN) { free(bgN); bgN = 0L; }
+    if (bgS) { free(bgS); bgS = 0L; }
+    if (bgE) { free(bgE); bgE = 0L; }
+    if (bgW) { free(bgW); bgW = 0L; }
+  } else {
+    if (s_bgN) { s_bgN->release(); s_bgN = 0; }
+    if (s_bgS) { s_bgS->release(); s_bgS = 0; }
+    if (s_bgE) { s_bgE->release(); s_bgE = 0; }
+    if (s_bgW) { s_bgW->release(); s_bgW = 0; }
+  }
   if (pw>0 && ph>0) {
-    bgE = fl_read_image(0L, px+pw-1, py, 1, ph);
-    bgW = fl_read_image(0L, px, py, 1, ph);
-    bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
-    bgN = fl_read_image(0L, px, py, pw, 1);
+    if (s == int(s)) {
+      bgE = fl_read_image(0L, px+pw-1, py, 1, ph);
+      bgW = fl_read_image(0L, px, py, 1, ph);
+      bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
+      bgN = fl_read_image(0L, px, py, pw, 1);
+    } else {
+      Fl_RGB_Image *tmp;
+      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px+pw-1, py, 1, ph, 0);
+      if(tmp && tmp->w() && tmp->h()) {
+        s_bgE = Fl_Shared_Image::get(tmp);
+        s_bgE->scale(1, ph,0,1);
+      }
+      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px, py, 1, ph, 0);
+      if(tmp && tmp->w() && tmp->h()) {
+        s_bgW = Fl_Shared_Image::get(tmp);
+        s_bgW->scale(1, ph,0,1);
+      }
+      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px, py+ph-1, pw, 1, 0);
+      if(tmp && tmp->w() && tmp->h()) {
+        s_bgS = Fl_Shared_Image::get(tmp);
+        s_bgS->scale(pw, 1,0,1);
+      }
+      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px, py, pw, 1, 0);
+      if(tmp && tmp->w() && tmp->h()) {
+        s_bgN = Fl_Shared_Image::get(tmp);
+        s_bgN->scale(pw, 1,0,1);
+      }
+    }
     bgx = px; bgy = py;
     bgw = pw; bgh = ph;
   }
   fl_color(FL_WHITE);
   fl_line_style(FL_SOLID);
-  fl_rect(px, py, pw, ph);
+  if (s == int(s)) fl_rect(px, py, pw, ph);
+  else fl_loop(px, py, px+pw-1, py, px+pw-1, py+ph-1, px, py+ph-1);
   fl_color(FL_BLACK);
   fl_line_style(FL_DOT);
-  fl_rect(px, py, pw, ph);
+  if (s == int(s)) fl_rect(px, py, pw, ph);
+  else fl_loop(px, py, px+pw-1, py, px+pw-1, py+ph-1, px, py+ph-1);
   fl_line_style(FL_SOLID);
 #endif // USE_XOR
 }
@@ -90,10 +130,18 @@ static void erase_current_rect() {
   draw_current_rect();
 # endif
 #else
-  if (bgN) fl_draw_image(bgN, bgx, bgy, bgw, 1);
-  if (bgS) fl_draw_image(bgS, bgx, bgy+bgh-1, bgw, 1);
-  if (bgW) fl_draw_image(bgW, bgx, bgy, 1, bgh);
-  if (bgE) fl_draw_image(bgE, bgx+bgw-1, bgy, 1, bgh);
+  float s = fl_graphics_driver->scale();
+  if (s == int(s)) {
+    if (bgN) fl_draw_image(bgN, bgx, bgy, bgw, 1);
+    if (bgS) fl_draw_image(bgS, bgx, bgy+bgh-1, bgw, 1);
+    if (bgW) fl_draw_image(bgW, bgx, bgy, 1, bgh);
+    if (bgE) fl_draw_image(bgE, bgx+bgw-1, bgy, 1, bgh);
+  } else {
+    if (s_bgN) s_bgN->draw(bgx, bgy);
+    if (s_bgS) s_bgS->draw(bgx, (bgy+bgh-1));
+    if (s_bgW) s_bgW->draw(bgx, bgy);
+    if (s_bgE) s_bgE->draw((bgx+bgw-1), bgy);
+  }
 #endif
 }
 

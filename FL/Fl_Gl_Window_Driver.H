@@ -4,7 +4,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2016 by Bill Spitzak and others.
+// Copyright 2016-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -127,6 +127,7 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
   Fl_WinAPI_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
+  virtual float pixels_per_unit();
   virtual int mode_(int m, const int *a);
   virtual void make_current_after();
   virtual void swap_buffers();
@@ -156,6 +157,7 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
   Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
+  virtual float pixels_per_unit();
   virtual void before_show(int& need_redraw);
   virtual int mode_(int m, const int *a);
   virtual void swap_buffers();

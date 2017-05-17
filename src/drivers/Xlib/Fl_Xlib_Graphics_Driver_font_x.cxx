@@ -3,7 +3,7 @@
 //
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -596,7 +596,7 @@ XFontStruct* Fl_XFont_On_Demand::value() {
   return ptr;
 }
 
-void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
     Fl_Graphics_Driver::font(0, 0);
     return;
@@ -611,27 +611,32 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   }
 }
 
-int Fl_Xlib_Graphics_Driver::height() {
+int Fl_Xlib_Graphics_Driver::height_unscaled() {
   if (font_descriptor()) return font_descriptor()->font->ascent + font_descriptor()->font->descent;
   else return -1;
 }
 
-int Fl_Xlib_Graphics_Driver::descent() {
+int Fl_Xlib_Graphics_Driver::descent_unscaled() {
   if (font_descriptor()) return font_descriptor()->font->descent;
   else return -1;
 }
 
-double Fl_Xlib_Graphics_Driver::width(const char* c, int n) {
+Fl_Fontsize Fl_Xlib_Graphics_Driver::size_unscaled() {
+  if (font_descriptor()) return size_;
+  return -1;
+}
+
+double Fl_Xlib_Graphics_Driver::width_unscaled(const char* c, int n) {
   if (font_descriptor()) return (double) XUtf8TextWidth(font_descriptor()->font, c, n);
   else return -1;
 }
 
-double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
+double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
   if (font_descriptor()) return (double) XUtf8UcsWidth(font_descriptor()->font, c);
   else return -1;
 }
 
-void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
+void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &dx, int &dy, int &W, int &H) {
   if (font_gc != gc_) {
     if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
@@ -649,7 +654,7 @@ void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &d
 //  dy = fl_descent() - H;
 }
 
-void Fl_Xlib_Graphics_Driver::draw(const char* c, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::draw_unscaled(const char* c, int n, int x, int y) {
   if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
@@ -658,7 +663,7 @@ void Fl_Xlib_Graphics_Driver::draw(const char* c, int n, int x, int y) {
   if (gc_) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc_, x+offset_x_, y+offset_y_, c, n);
 }
 
-void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
   static char warning = 0; // issue warning only once
   if (!warning && angle != 0) {
     warning = 1;
@@ -669,7 +674,7 @@ void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int
   this->draw(str, n, (int)x, (int)y);
 }
 
-void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int y) {
   if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;

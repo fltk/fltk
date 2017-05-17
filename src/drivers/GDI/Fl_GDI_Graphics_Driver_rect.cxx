@@ -35,11 +35,11 @@
 
 // --- line and polygon drawing with integer coordinates
 
-void Fl_GDI_Graphics_Driver::point(int x, int y) {
+void Fl_GDI_Graphics_Driver::point_unscaled(float x, float y) {
   SetPixel(gc_, x, y, fl_RGB());
 }
 
-void Fl_GDI_Graphics_Driver::rect(int x, int y, int w, int h) {
+void Fl_GDI_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {
   if (w<=0 || h<=0) return;
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x+w-1, y);
@@ -59,7 +59,7 @@ void Fl_GDI_Graphics_Driver::focus_rect(int x, int y, int w, int h) {
   for (yy = h; yy > 0; yy--, i++) if (i & 1) point(x, y + yy);
 }
 
-void Fl_GDI_Graphics_Driver::rectf(int x, int y, int w, int h) {
+void Fl_GDI_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {
   if (w<=0 || h<=0) return;
   RECT rect;
   rect.left = x; rect.top = y;
@@ -67,24 +67,24 @@ void Fl_GDI_Graphics_Driver::rectf(int x, int y, int w, int h) {
   FillRect(gc_, &rect, fl_brush());
 }
 
-void Fl_GDI_Graphics_Driver::line(int x, int y, int x1, int y1) {
+void Fl_GDI_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1) {
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y1);
   SetPixel(gc_, x1, y1, fl_RGB());
 }
 
-void Fl_GDI_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
+void Fl_GDI_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y1);
   LineTo(gc_, x2, y2);
   SetPixel(gc_, x2, y2, fl_RGB());
 }
 
-void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1) {
+void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
   MoveToEx(gc_, x, y, 0L); LineTo(gc_, x1+1, y);
 }
 
-void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
+void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2) {
   if (y2 < y) y2--;
   else y2++;
   MoveToEx(gc_, x, y, 0L);
@@ -92,7 +92,7 @@ void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
   LineTo(gc_, x1, y2);
 }
 
-void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
+void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2, float x3) {
   if(x3 < x1) x3--;
   else x3++;
   MoveToEx(gc_, x, y, 0L);
@@ -101,13 +101,13 @@ void Fl_GDI_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(gc_, x3, y2);
 }
 
-void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1) {
+void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
   if (y1 < y) y1--;
   else y1++;
   MoveToEx(gc_, x, y, 0L); LineTo(gc_, x, y1);
 }
 
-void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
+void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2) {
   if (x2 > x) x2++;
   else x2--;
   MoveToEx(gc_, x, y, 0L);
@@ -115,7 +115,7 @@ void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
   LineTo(gc_, x2, y1);
 }
 
-void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
+void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2, float y3) {
   if(y3<y1) y3--;
   else y3++;
   MoveToEx(gc_, x, y, 0L);
@@ -124,14 +124,14 @@ void Fl_GDI_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(gc_, x2, y3);
 }
 
-void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
+void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y1);
   LineTo(gc_, x2, y2);
   LineTo(gc_, x, y);
 }
 
-void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y1);
   LineTo(gc_, x2, y2);
@@ -139,7 +139,7 @@ void Fl_GDI_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, 
   LineTo(gc_, x, y);
 }
 
-void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
+void Fl_GDI_Graphics_Driver::polygon_unscaled(float x, float y, float x1, float y1, float x2, float y2) {
   POINT p[3];
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
@@ -148,7 +148,7 @@ void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y
   Polygon(gc_, p, 3);
 }
 
-void Fl_GDI_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+void Fl_GDI_Graphics_Driver::polygon_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
   POINT p[4];
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
@@ -244,8 +244,10 @@ void Fl_GDI_Graphics_Driver::pop_clip() {
 void Fl_GDI_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   if (gc_) {
-    Fl_Region r = rstack[rstackptr];
-    SelectClipRgn(gc_, r); // if r is NULL, clip is automatically cleared
+    HRGN r = NULL;
+    if (rstack[rstackptr]) r = scale_clip(scale_);
+    SelectClipRgn(gc_, rstack[rstackptr]); // if region is NULL, clip is automatically cleared
+    if (r) unscale_clip(r);
   }
 }
 

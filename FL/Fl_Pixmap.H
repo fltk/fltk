@@ -3,7 +3,7 @@
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -56,6 +56,7 @@ private:
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
   Fl_Color pixmap_bg_color;
+  float cache_scale_; // graphics scaling value when id_ was computed
 
 public:
 

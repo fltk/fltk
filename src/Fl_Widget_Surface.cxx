@@ -3,7 +3,7 @@
 //
 // Drivers code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +22,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 
 
 /** The constructor.
@@ -153,13 +154,19 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
-  win->driver()->flush(); // makes the window current necessary for fl_read_image
-  uchar *image_data;
-  image_data = fl_read_image(NULL, x, y, w, h);
+  win->driver()->flush(); // makes the window current
+  const uchar *image_data;
+  Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, NULL, x, y, w, h, 0, NULL);
+  if (img->w() > w) {
+    Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w, h);
+    delete img;
+    img = img2;
+  }
+  image_data = img->array;
   if (save_front != win) save_front->show();
   set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
-  delete[] image_data;
+  delete img;
 }
 
 /**

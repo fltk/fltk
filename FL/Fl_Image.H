@@ -3,7 +3,7 @@
 //
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -223,6 +223,7 @@ private:
   // These two variables are used to cache the image and mask for the main display graphics driver
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
+  float cache_scale_; // graphics scaling value when id_ was computed
 
 public:
 

@@ -78,6 +78,13 @@ public:
   virtual void disable_im();
   virtual void open_display();
   virtual void offscreen_size(Fl_Offscreen off, int &width, int &height);
+  
+  virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
+  virtual float scale(int n) {return scale_;}
+  virtual void scale(int n, float f) { scale_ = f;}
+  virtual float desktop_scale_factor();
+private:
+  float scale_;
 };
 
 

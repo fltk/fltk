@@ -3,7 +3,7 @@
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,10 +34,9 @@
 
 #include "Fl_Xlib_Graphics_Driver.H"
 
-void Fl_Xlib_Graphics_Driver::line_style(int style, int width, char* dashes) {
-
+void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
   // save line width for X11 clipping
-  if (width == 0) line_width_ = 1;
+  if (width == 0) line_width_ = scale_ < 2 ? 0 : scale_;
   else line_width_ = width>0 ? width : -width;
 
   int ndashes = dashes ? strlen(dashes) : 0;
@@ -63,10 +62,12 @@ void Fl_Xlib_Graphics_Driver::line_style(int style, int width, char* dashes) {
     case FL_DASHDOTDOT: *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; *p++ = dot; *p++ = gap; break;
     }
     ndashes = p-buf;
+if (*dashes == 0) ndashes = 0;//against error with very small scaling
   }
   static int Cap[4] = {CapButt, CapButt, CapRound, CapProjecting};
   static int Join[4] = {JoinMiter, JoinMiter, JoinRound, JoinBevel};
-  XSetLineAttributes(fl_display, gc_, width,
+  XSetLineAttributes(fl_display, gc_,
+                     line_width_,
 		     ndashes ? LineOnOffDash : LineSolid,
 		     Cap[(style>>8)&3], Join[(style>>12)&3]);
   if (ndashes) XSetDashes(fl_display, gc_, 0, dashes, ndashes);

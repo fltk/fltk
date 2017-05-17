@@ -56,6 +56,7 @@ void fl_cleanup_dc_list(void);
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
+#include "drivers/GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -489,6 +490,8 @@ int Fl_WinAPI_Screen_Driver::ready() {
   return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
 }
 
+//FILE *LOG=fopen("log.log","w");
+
 void Fl_WinAPI_Screen_Driver::open_display() {
   static char beenHereDoneThat = 0;
 
@@ -496,11 +499,42 @@ void Fl_WinAPI_Screen_Driver::open_display() {
     return;
 
   beenHereDoneThat = 1;
-
+#ifdef FLTK_HIDPI_SUPPORT
+  typedef HRESULT WINAPI (*SetProcessDpiAwareness_type)(int);
+  HMODULE hMod  = LoadLibrary("Shcore.DLL");
+  if (hMod) {
+    SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
+    HRESULT r = 0;
+    const int PROCESS_PER_MONITOR_DPI_AWARE  = 2;
+    if (fl_SetProcessDpiAwareness) r = fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+//fprintf(LOG,"SetProcessDpiAwareness=%p result=%d\n",fl_SetProcessDpiAwareness,r);fflush(LOG);
+  }
+#endif // FLTK_HIDPI_SUPPORT
   OleInitialize(0L);
 
   get_imm_module();
 }
+
+
+float Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
+  typedef HRESULT WINAPI (*GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
+  float f = 1;
+#ifdef FLTK_HIDPI_SUPPORT
+  HMODULE hMod  = LoadLibrary("Shcore.DLL");
+  GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
+  if (hMod) fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
+  if (fl_GetDpiForMonitor) {
+    RECT rect = {0, 0, 0, 0};
+    HMONITOR hm = MonitorFromRect(&rect, MONITOR_DEFAULTTOPRIMARY);
+    UINT dpiX, dpiY;
+    HRESULT r = fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
+    if (r == S_OK) f = dpiX/96.;
+//fprintf(LOG, "result=%d dpiX=%d dpiY=%d factor=%.2f\n", r, dpiX, dpiY, f);fflush(LOG);
+  }
+#endif // FLTK_HIDPI_SUPPORT
+  return f;
+}
+
 
 class Fl_Win32_At_Exit {
 public:
@@ -896,11 +930,14 @@ static int mouse_event(Fl_Window *window, int what, int button,
 {
   static int px, py, pmx, pmy;
   POINT pt;
+  float scale = Fl_Graphics_Driver::default_driver().scale();
   Fl::e_x = pt.x = (signed short)LOWORD(lParam);
   Fl::e_y = pt.y = (signed short)HIWORD(lParam);
+  Fl::e_x /= scale;
+  Fl::e_y /= scale;
   ClientToScreen(fl_xid(window), &pt);
-  Fl::e_x_root = pt.x;
-  Fl::e_y_root = pt.y;
+  Fl::e_x_root = pt.x / scale;
+  Fl::e_y_root = pt.y / scale;
 #ifdef USE_CAPTURE_MOUSE_WIN
   Fl_Window *mouse_window = window;	// save "mouse window"
 #endif
@@ -1061,9 +1098,24 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   //fl_msg.lPrivate = ???
 
   Fl_Window *window = fl_find(hWnd);
+  float scale = Fl_Graphics_Driver::default_driver().scale();
 
   if (window) switch (uMsg) {
-
+      
+#ifdef FLTK_HIDPI_SUPPORT
+    case 0x02E0: { // WM_DPICHANGED:
+      float f = HIWORD(wParam)/96.;
+      Fl::screen_driver()->scale(0, f);
+      Fl_Graphics_Driver::default_driver().scale(f);
+//fprintf(LOG,"WM_DPICHANGED f=%.2f\n", f);fflush(LOG);
+      if (!window->parent()) {
+        window->hide();
+        window->show();
+      }
+    }
+    return 0;
+#endif // FLTK_HIDPI_SUPPORT
+      
   case WM_QUIT: // this should not happen?
     Fl::fatal("WM_QUIT message");
 
@@ -1080,7 +1132,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
 
   case WM_PAINT: {
-    Fl_Region R;
+    Fl_Region R, R2;
     Fl_X *i = Fl_X::i(window);
     window->driver()->wait_for_expose_value = 0;
     char redraw_whole_window = false;
@@ -1094,19 +1146,27 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     R = CreateRectRgn(0,0,0,0);
     int r = GetUpdateRgn(hWnd,R,0);
     if (r==NULLREGION && !redraw_whole_window) {
-      Fl_Graphics_Driver::default_driver().XDestroyRegion(R);
+      DeleteObject(R);
       break;
     }
 
-    if (i->region) {
+    // convert i->region in FLTK units to R2 in drawing units
+    R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, false);
+
+    if (R2) {
       // Also tell WIN32 that we are drawing someplace else as well...
-      CombineRgn(i->region, i->region, R, RGN_OR);
-      Fl_Graphics_Driver::default_driver().XDestroyRegion(R);
+      CombineRgn(R2, R2, R, RGN_OR);
+      DeleteObject(R);
     } else {
-      i->region = R;
+      R2 = R;
     }
     if (window->type() == FL_DOUBLE_WINDOW) ValidateRgn(hWnd,0);
-    else ValidateRgn(hWnd,i->region);
+    else {
+      ValidateRgn(hWnd, R2);
+    }
+    
+    // convert R2 in drawing units to i->region in FLTK units
+    i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1/scale, false, true);
 
     window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
     // These next two statements should not be here, so that all update
@@ -1365,7 +1425,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       } else {
 	Fl::handle(FL_SHOW, window);
 	resize_bug_fix = window;
-	window->size(LOWORD(lParam), HIWORD(lParam));
+	window->size(LOWORD(lParam)/scale, HIWORD(lParam)/scale);
+//fprintf(LOG,"WM_SIZE parent size(%d,%d) s=%.2f\n",int(LOWORD(lParam)/scale),int(HIWORD(lParam)/scale),scale);
       }
     }
     break;
@@ -1376,7 +1437,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     int ny = HIWORD(lParam);
     if (nx & 0x8000) nx -= 65536;
     if (ny & 0x8000) ny -= 65536;
-    window->position(nx, ny); }
+//fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
+    window->position(nx/scale, ny/scale); }
     break;
 
   case WM_SETCURSOR:
@@ -1606,7 +1668,8 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
     // will cause continouly  new redraw events.
     if (W<=0) W = 1;
     if (H<=0) H = 1;
-    SetWindowPos(fl_xid(pWindow), 0, X, Y, W, H, flags);
+    float s = Fl::screen_driver()->scale(0);
+    SetWindowPos(fl_xid(pWindow), 0, X*s, Y*s, W*s, H*s, flags);
   }
 }
 
@@ -1716,10 +1779,11 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
   DWORD styleEx = WS_EX_LEFT;
 
-  int xp = w->x();
-  int yp = w->y();
-  int wp = w->w();
-  int hp = w->h();
+  float s = Fl::screen_driver()->scale(0);
+  int xp = w->x() * s;
+  int yp = w->y() * s;
+  int wp = w->w() * s;
+  int hp = w->h() * s;
 
   int showit = 1;
 
@@ -1779,7 +1843,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
     } else {
       if (!Fl::grab()) {
 	xp = xwm; yp = ywm;
-        x(xp); y(yp);
+        x(xp/s); y(yp/s);
       }
       xp -= bx;
       yp -= by+bt;
@@ -1892,15 +1956,16 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax)
   hd *= 2;
   hd += td;
 
-  minmax->ptMinTrackSize.x = minw() + wd;
-  minmax->ptMinTrackSize.y = minh() + hd;
+  float s = Fl::screen_driver()->scale(0);
+  minmax->ptMinTrackSize.x = s*minw() + wd;
+  minmax->ptMinTrackSize.y = s*minh() + hd;
   if (maxw()) {
-    minmax->ptMaxTrackSize.x = maxw() + wd;
-    minmax->ptMaxSize.x = maxw() + wd;
+    minmax->ptMaxTrackSize.x = s*maxw() + wd;
+    minmax->ptMaxSize.x = s*maxw() + wd;
   }
   if (maxh()) {
-    minmax->ptMaxTrackSize.y = maxh() + hd;
-    minmax->ptMaxSize.y = maxh() + hd;
+    minmax->ptMaxTrackSize.y = s*maxh() + hd;
+    minmax->ptMaxSize.y = s*maxh() + hd;
   }
 }
 

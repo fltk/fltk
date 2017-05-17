@@ -3,7 +3,7 @@
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -57,6 +57,7 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   p_size = 0;
   p = NULL;
   line_width_ = 0;
+  line_delta_ = 0;
 #if USE_PANGO
   pfd_ = pango_font_description_new();
   Fl_Graphics_Driver::font(0, 0);
@@ -78,8 +79,30 @@ void Fl_Xlib_Graphics_Driver::gc(void *value) {
   fl_gc = gc_;
 }
 
-void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x+offset_x_, y+offset_y_);
+void Fl_Xlib_Graphics_Driver::scale(float f) {
+#if USE_XFT
+  if (f != scale_) {
+    size_ = 0;
+    scale_ = f;
+    //fprintf(stderr, "scale=%.2f\n", scale_);
+    line_style(FL_SOLID); // scale also default line width
+    /* Scaling >= 2 transforms 1-pixel wide lines into wider lines.
+     X11 draws 2-pixel wide lines so that half of the line width is above or at left
+     of a 1-pixel wide line that would be drawn with the same coordinates.
+     Thus, if the line starts at coordinates (0,0) half of the line width is invisible.
+     Similarly, if the line ends at w()-1 the last pixel of the window is not drawn.
+     What is wanted when scale_ == 2 is a visible 2-pixel wide line in the first case,
+     and a line at the window's edge in the 2nd case.
+     Setting line_delta_ to 1 and offsetting all line, rectangle, text and clip
+     coordinates by line_delta_ achieves what is wanted until scale_ <= 3.5.
+     */
+    line_delta_ =  (scale_ > 1.75 ? 1 : 0);
+  }
+#endif
+}
+
+void Fl_Xlib_Graphics_Driver::copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy) {
+  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x+offset_x_*scale_, y+offset_y_*scale_);
 }
 
 void Fl_Xlib_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {
@@ -88,7 +111,8 @@ void Fl_Xlib_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y,
   XUnionRectWithRegion(&R, r, r);
 }
 
-void Fl_Xlib_Graphics_Driver::transformed_vertex0(short x, short y) {
+void Fl_Xlib_Graphics_Driver::transformed_vertex0(float fx, float fy) {
+  short x = short(fx), y = short(fy);
   if (!n || x != p[n-1].x || y != p[n-1].y) {
     if (n >= p_size) {
       p_size = p ? 2*p_size : 16;
@@ -204,6 +228,25 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
   s->xlist = 0;
   s->first = 0;
 }
+
+
+Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
+  Region r = rstack[rstackptr];
+  if (r == 0 || (f == 1 && offset_x_ == 0 && offset_y_ == 0) ) return 0;
+  float delta = (f >= 2 ? f/3 : 0);
+  Region r2 = XCreateRegion();
+  XRectangle R;
+  for (int i = 0; i < r->numRects; i++) {
+    R.x = short((r->rects[i].x1 + offset_x_)*f-delta + line_delta_);
+    R.y = short((r->rects[i].y1 + offset_y_)*f-delta + line_delta_);
+    R.width = short(r->rects[i].x2*f) - short(r->rects[i].x1*f);
+    R.height = short(r->rects[i].y2*f) - short(r->rects[i].y1*f);
+    XUnionRectWithRegion(&R, r2, r2);
+  }
+  rstack[rstackptr] = r2;
+  return r;
+}
+
 
 void Fl_Xlib_Graphics_Driver::translate_all(int dx, int dy) { // reversibly adds dx,dy to the offset between user and graphical coordinates
   stack_x_[depth_] = offset_x_;

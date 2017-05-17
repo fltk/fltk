@@ -27,7 +27,6 @@
 #include <windows.h>
 
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  friend class Fl_Image_Surface;
   virtual void end_current_(Fl_Surface_Device*);
 public:
   Fl_Surface_Device *previous;
@@ -51,8 +50,14 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 
 Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
   previous = 0;
+  float d =  fl_graphics_driver->scale();
+  if (!off && d != 1 && high_res) {
+    w = int(w*d);
+    h = int(h*d);
+  }
   offscreen = off ? off : CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h);
   driver(new Fl_GDI_Graphics_Driver);
+  if (d != 1 && high_res) driver()->scale(d);
   _sgc = NULL;
 }
 

@@ -35,7 +35,7 @@
 #include <FL/math.h>
 #include <FL/x.H>
 
-void Fl_GDI_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
+void Fl_GDI_Graphics_Driver::arc_unscaled(float x, float y, float w, float h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
   int xa = x+w/2+int(w*cos(a1/180.0*M_PI));
   int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
@@ -47,7 +47,7 @@ void Fl_GDI_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   } else Arc(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
 }
 
-void Fl_GDI_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
+void Fl_GDI_Graphics_Driver::pie_unscaled(float x, float y, float w, float h, double a1, double a2) {
   if (w <= 0 || h <= 0) return;
   if (a1 == a2) return;
   int xa = x+w/2+int(w*cos(a1/180.0*M_PI));

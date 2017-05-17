@@ -261,10 +261,11 @@ static HRGN bitmap2region(Fl_Image* image) {
 void Fl_WinAPI_Window_Driver::draw_begin()
 {
   if (shape_data_) {
-    if ((shape_data_->lw_ != w() || shape_data_->lh_ != h()) && shape_data_->shape_) {
+    float s = Fl::screen_driver()->scale(screen_num());
+    if ((shape_data_->lw_ != s*w() || shape_data_->lh_ != s*h()) && shape_data_->shape_) {
       // size of window has changed since last time
-      shape_data_->lw_ = w();
-      shape_data_->lh_ = h();
+      shape_data_->lw_ = s*w();
+      shape_data_->lh_ = s*h();
       Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
       SetWindowRgn(fl_xid(pWindow), region, TRUE); // the system deletes the region when it's no longer needed
@@ -385,6 +386,7 @@ void Fl_WinAPI_Window_Driver::make_current() {
 #endif // USE_COLORMAP
   
   fl_graphics_driver->clip_region(0);
+fl_graphics_driver->scale(Fl::screen_driver()->scale(0));
 }
 
 void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {

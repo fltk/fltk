@@ -24,12 +24,13 @@
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include "Fl_Xlib_Graphics_Driver.H"
+#include <FL/Fl_Screen_Driver.H>
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  friend class Fl_Image_Surface;
   virtual void end_current_(Fl_Surface_Device *next_current);
 public:
   Window pre_window;
+  int was_high;
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_Xlib_Image_Surface_Driver();
   void set_current();
@@ -44,11 +45,18 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 }
 
 Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {
+  float d = 1;
   if (!off) {
     fl_open_display();
+    d =  fl_graphics_driver->scale();
+    if (d != 1 && high_res) {
+      w = int(w*d);
+      h = int(h*d);
+    }
     offscreen = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), w, h, fl_visual->depth);
   }
   driver(new Fl_Xlib_Graphics_Driver());
+  if (d != 1 && high_res) ((Fl_Xlib_Graphics_Driver*)driver())->scale(d);
 }
 
 Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
@@ -73,9 +81,7 @@ void Fl_Xlib_Image_Surface_Driver::untranslate() {
 
 Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
 {
-  unsigned char *data = fl_read_image(NULL, 0, 0, width, height, 0);
-  Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height);
-  image->alloc_array = 1;
+  Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, width, height, 0);
   return image;
 }
 

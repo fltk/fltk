@@ -3,7 +3,7 @@
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -76,16 +76,6 @@ void Fl_Graphics_Driver::rotate(double d) {
     else {s = sin(d*M_PI/180); c = cos(d*M_PI/180);}
     mult_matrix(c,-s,s,c,0,0);
   }
-}
-
-/** see fl_scale(double, double) */
-void Fl_Graphics_Driver::scale(double x, double y) {
-  mult_matrix(x,0,0,y,0,0);
-}
-
-/** see fl_scale(double) */
-void Fl_Graphics_Driver::scale(double x) {
-  mult_matrix(x,0,0,x,0,0);
 }
 
 /** see fl_translate() */

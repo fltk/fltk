@@ -3,7 +3,7 @@
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,15 +26,15 @@
   \brief Utility functions for drawing circles using integers
 */
 
-void Fl_Xlib_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
+void Fl_Xlib_Graphics_Driver::arc_unscaled(float x,float y,float w,float h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
-  XDrawArc(fl_display, fl_window, gc_, x+offset_x_,y+offset_y_,w-1,h-1, int(a1*64),int((a2-a1)*64));
+  XDrawArc(fl_display, fl_window, gc_, int(x+offset_x_*scale_), int(y+offset_y_*scale_), int(w-1), int(h-1), int(a1*64),int((a2-a1)*64));
 }
 
-void Fl_Xlib_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
+void Fl_Xlib_Graphics_Driver::pie_unscaled(float x,float y,float w,float h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
-  x += offset_x_;
-  y += offset_y_;
+  x += offset_x_*scale_;
+  y += offset_y_*scale_;
   XDrawArc(fl_display, fl_window, gc_, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
   XFillArc(fl_display, fl_window, gc_, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 }

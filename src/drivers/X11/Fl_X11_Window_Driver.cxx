@@ -3,7 +3,7 @@
 //
 // Definition of X11 window driver.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -112,11 +112,11 @@ void Fl_X11_Window_Driver::destroy_double_buffer() {
 #if USE_XDBE
   if (can_xdbe()) {
     XdbeDeallocateBackBufferName(fl_display, other_xid);
-    other_xid = 0;
   }
   else
 #endif // USE_XDBE
-    Fl_Window_Driver::destroy_double_buffer();
+    fl_delete_offscreen(other_xid);
+  other_xid = 0;
 }
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
@@ -130,6 +130,10 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 {
   icon_ = new icon_data;
   memset(icon_, 0, sizeof(icon_data));
+  current_cursor_ = None;
+#if USE_XFT
+  screen_num_ = -1;
+#endif
 }
 
 
@@ -160,8 +164,10 @@ void Fl_X11_Window_Driver::decorated_win_size(int &w, int &h)
   if (status == 0 || root == parent) return;
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
-  w = attributes.width;
-  h = attributes.height;
+  int nscreen = screen_num();
+  float s = Fl::screen_driver()->scale(nscreen);
+  w = attributes.width / s;
+  h = attributes.height / s;
 }
 
 
@@ -196,7 +202,9 @@ void Fl_X11_Window_Driver::take_focus()
 void Fl_X11_Window_Driver::draw_begin()
 {
   if (shape_data_) {
-    if (( shape_data_->lw_ != w() || shape_data_->lh_ != h() ) && shape_data_->shape_) {
+    int nscreen = screen_num();
+    float s = Fl::screen_driver()->scale(nscreen);
+    if (( shape_data_->lw_ != int(s*w()) || shape_data_->lh_ != int(s*h()) ) && shape_data_->shape_) {
       // size of window has changed since last time
       combine_mask();
     }
@@ -324,8 +332,9 @@ void Fl_X11_Window_Driver::combine_mask()
 #endif
   }
   if (!XShapeCombineMask_f) return;
-  shape_data_->lw_ = w();
-  shape_data_->lh_ = h();
+  float s = Fl::screen_driver()->scale(screen_num());
+  shape_data_->lw_ = w()*s;
+  shape_data_->lh_ = h()*s;
   Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
   Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(pWindow),
                                          (const char*)*temp->data(),
@@ -400,25 +409,30 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   if (n) XFree(children);
   if (!do_it) wsides = htop = 0;
   int hbottom = wsides;
+  float s = Fl::screen_driver()->scale(screen_num());
+  htop /= s; wsides /= s;
   fl_window = parent;
   if (htop) {
     r_top = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, - (w() + 2 * wsides), htop, 0);
     top = Fl_Shared_Image::get(r_top);
+    top->scale(w() + 2 * wsides, htop, 0, 1);
   }
   if (wsides) {
     r_left = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop, -wsides, h(), 0);
     if (r_left) {
       left =  Fl_Shared_Image::get(r_left);
+      left->scale(wsides, h(), 0, 1);
     }
     r_right = Fl::screen_driver()->read_win_rectangle(NULL, w() + wsides, htop, -wsides, h(), 0);
     if (r_right) {
       right = Fl_Shared_Image::get(r_right);
+      right->scale(wsides, h(), 0, 1);
     }
     r_bottom = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom, 0);
     if (r_bottom) {
       bottom = Fl_Shared_Image::get(r_bottom);
-    }
-  }
+      bottom->scale(w() + 2*wsides, wsides, 0, 1);
+    }  }
   fl_window = from;
   Fl_Surface_Device::pop_current();
 }
@@ -432,6 +446,9 @@ void Fl_X11_Window_Driver::make_current() {
   }
   fl_window = fl_xid(pWindow);
   fl_graphics_driver->clip_region(0);
+#if USE_XFT
+  ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
+#endif
   
 #ifdef FLTK_USE_CAIRO
   // update the cairo_t context
@@ -460,6 +477,7 @@ void Fl_X11_Window_Driver::hide() {
   if (ip->region) Fl_Graphics_Driver::default_driver().XDestroyRegion(ip->region);
 # if USE_XFT
   Fl_Xlib_Graphics_Driver::destroy_xft_draw(ip->xid);
+  screen_num_ = -1;
 # endif
   // this test makes sure ip->xid has not been destroyed already
   if (ip->xid) XDestroyWindow(fl_display, ip->xid);
@@ -650,8 +668,9 @@ void Fl_X11_Window_Driver::erase_menu() {
 int Fl_X11_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                                  void (*draw_area)(void*, int,int,int,int), void* data)
 {
+  float s = Fl::screen_driver()->scale(screen_num());
   XCopyArea(fl_display, fl_window, fl_window, (GC)fl_graphics_driver->gc(),
-            src_x, src_y, src_w, src_h, dest_x, dest_y);
+            int(src_x*s), int(src_y*s), int(src_w*s), int(src_h*s), int(dest_x*s), int(dest_y*s));
   // we have to sync the display and get the GraphicsExpose events! (sigh)
   for (;;) {
     XEvent e; XWindowEvent(fl_display, fl_window, ExposureMask, &e);
@@ -669,6 +688,40 @@ Fl_X *Fl_X11_Window_Driver::makeWindow()
   Fl_X::make_xid(pWindow, fl_visual, fl_colormap);
   return Fl_X::i(pWindow);
 }
+
+
+#if USE_XFT
+
+Fl_X11_Window_Driver::type_for_resize_window_between_screens Fl_X11_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
+
+void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
+  Fl_Window *win = (Fl_Window*)data;
+  int oldx, oldy;
+  XWindowAttributes actual;
+  XGetWindowAttributes(fl_display, fl_xid(win), &actual);
+  Window cr;
+  XTranslateCoordinates(fl_display, fl_xid(win), actual.root, 0, 0, &oldx, &oldy, &cr);
+  win->hide();
+  float f = Fl::screen_driver()->scale(data_for_resize_window_between_screens_.screen);
+  Fl_X11_Window_Driver::driver(win)->screen_num(data_for_resize_window_between_screens_.screen);
+  win->position(oldx/f, oldy/f);
+  win->driver()->force_position(1);
+  Fl_Xlib_Graphics_Driver *d = (Fl_Xlib_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
+  d->scale(f);
+  win->show();
+  win->wait_for_expose();
+  data_for_resize_window_between_screens_.busy = false;
+}
+
+
+int Fl_X11_Window_Driver::screen_num() {
+  if (pWindow->parent()) {
+    screen_num_ = pWindow->top_window()->driver()->screen_num();
+  }
+  return screen_num_ >= 0 ? screen_num_ : 0;
+}
+#endif // USE_XFT
+
 
 //
 // End of "$Id$".

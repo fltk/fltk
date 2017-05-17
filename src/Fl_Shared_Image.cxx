@@ -3,7 +3,7 @@
 //
 // Shared image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -366,9 +366,10 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     Fl_Image::draw(X, Y, W, H, cx, cy);
     return;
   }
-  fl_push_clip(X, Y, W, H);
+  bool need_clip = (W != w() || H != h() || cx || cy);
+  if (need_clip) fl_push_clip(X, Y, W, H);
   fl_graphics_driver->draw(this, X-cx, Y-cy);
-  fl_pop_clip();
+  if (need_clip) fl_pop_clip();
 }
 
 /** Draws the shared image to the current surface with its top-left at X,Y */
@@ -379,7 +380,7 @@ void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
   }
   // don't call Fl_Graphics_Driver::draw_scaled(Fl_Image*,...) for an enlarged Fl_Bitmap or Fl_Pixmap
   if (shared->image_->as_rgb_image() || (shared->w() <= shared->image_->w() && shared->h() <= shared->image_->h())) {
-    int done = fl_graphics_driver->draw_scaled(shared->image_, X, Y, shared->w(), shared->h());
+    int done = draw_scaled(shared->image_, X, Y, shared->w(), shared->h());
     if (done) return;
   }
   if (shared->scaled_image_ && (shared->scaled_image_->w() != shared->w() || shared->scaled_image_->h() != shared->h())) {
@@ -401,7 +402,7 @@ void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
  This can be useful to draw a shared image on a drawing surface whose resolution is higher
  than the drawing unit for this surface: all pixels of the original image become available to fill
  an area of the drawing surface sized at <tt>width,height</tt>.
- Examples of such drawing surfaces: laser printers, PostScript files, PDF printers, retina displays on Apple hardware.
+ Examples of such drawing surfaces: laser printers, PostScript files, PDF printers, HiDPI displays.
 
  \param width,height   maximum width and height (in drawing units) to use when drawing the shared image
  \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
@@ -413,7 +414,7 @@ void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
  \code
  Fl_Box *b = ...  // a box
  Fl_Shared_Image *shared = Fl_Shared_Image::get("/path/to/picture.jpeg"); // read a picture file
- shared->scale(b->w(), b->h(), 1); // set the drawing size of the shared image to the size of the box
+ shared->scale(b->w(), b->h()); // set the drawing size of the shared image to the size of the box
  b->image(shared); // use the shared image as the box image
  b->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_CLIP); // the image is to be drawn centered in the box
  \endcode

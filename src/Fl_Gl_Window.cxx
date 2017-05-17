@@ -3,7 +3,7 @@
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -601,11 +601,18 @@ char Fl_Cocoa_Gl_Window_Driver::swap_type() {return COPY;}
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include <FL/x.H>
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {
   return new Fl_WinAPI_Gl_Window_Driver(w);
 }
+
+float Fl_WinAPI_Gl_Window_Driver::pixels_per_unit()
+{
+  return Fl::screen_driver()->scale(0);
+}
+
 
 int Fl_WinAPI_Gl_Window_Driver::mode_(int m, const int *a) {
   int oldmode = mode();
@@ -685,6 +692,8 @@ void* Fl_WinAPI_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #if defined(FL_CFG_GFX_XLIB)
 #include <FL/x.H>
 #include "Fl_Gl_Choice.H"
+#include <FL/Fl_Screen_Driver.H>
+#include <FL/Fl_Window_Driver.H>
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {
@@ -694,6 +703,12 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 void Fl_X11_Gl_Window_Driver::before_show(int& need_redraw) {
   Fl_X::make_xid(pWindow, g()->vis, g()->colormap);
   if (overlay() && overlay() != pWindow) ((Fl_Gl_Window*)overlay())->show();
+}
+
+float Fl_X11_Gl_Window_Driver::pixels_per_unit()
+{
+  int ns = pWindow->driver()->screen_num();
+  return Fl::screen_driver()->scale(ns);
 }
 
 int Fl_X11_Gl_Window_Driver::mode_(int m, const int *a) {

@@ -3,7 +3,7 @@
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -335,12 +335,16 @@ inline void fl_pop_matrix() { fl_graphics_driver->pop_matrix(); }
  Concatenates scaling transformation onto the current one.
  \param[in] x,y scale factors in x-direction and y-direction
  */
-inline void fl_scale(double x, double y) { fl_graphics_driver->scale(x, y); }
+inline void fl_scale(double x, double y) {
+  fl_graphics_driver->mult_matrix(x,0,0,y,0,0);
+}
 /**
  Concatenates scaling transformation onto the current one.
  \param[in] x scale factor in both x-direction and y-direction
  */
-inline void fl_scale(double x) { fl_graphics_driver->scale(x, x); }
+inline void fl_scale(double x) {
+  fl_graphics_driver->mult_matrix(x,0,0,x,0,0);
+}
 /**
  Concatenates translation transformation onto the current one.
  \param[in] x,y translation factor in x-direction and y-direction

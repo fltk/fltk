@@ -3,7 +3,7 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1978,6 +1978,19 @@ void Fl::disable_im()
 void fl_open_display()
 {
   Fl::screen_driver()->open_display();
+  static bool been_here = false;
+  if (!been_here) {
+    been_here = true;
+    Fl_Screen_Driver *dr = Fl::screen_driver();
+    if (dr->rescalable()) {
+      float factor = dr->default_scale_factor();
+      for (int i = 0; i < dr->screen_count(); i++) dr->scale(i, factor);
+#if defined(FLTK_HIDPI_SUPPORT) || !(defined(WIN32) || defined(__APPLE__))
+      Fl::add_handler(Fl_Screen_Driver::scale_handler);
+#endif
+      Fl_Graphics_Driver::default_driver().scale(factor);
+    }
+  }
 }
 
 void fl_close_display()

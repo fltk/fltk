@@ -35,7 +35,7 @@
 #include "Fl_GDI_Graphics_Driver.H"
 
 
-void Fl_GDI_Graphics_Driver::line_style(int style, int width, char* dashes) {
+void Fl_GDI_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
 
   // According to Bill, the "default" cap and join should be the
   // "fastest" mode supported for the platform.  I don't know why

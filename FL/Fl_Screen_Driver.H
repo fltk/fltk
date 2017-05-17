@@ -3,7 +3,7 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -54,6 +54,8 @@ protected:
   static const int MAX_SCREENS = 16;
 
   int num_screens;
+  static  float fl_intersection(int x1, int y1, int w1, int h1,
+                                      int x2, int y2, int w2, int h2);
 
 public:
   static char bg_set;
@@ -61,6 +63,8 @@ public:
   static char fg_set;
 
 public:
+  virtual float scale(int n) {return 1;}
+  virtual void scale(int n, float f) { }
   static Fl_Screen_Driver *newScreenDriver();
   // --- display management
   virtual void display(const char *disp);
@@ -157,6 +161,21 @@ public:
   virtual void close_display() {}
   // compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen off, int &width, int &height) {}
+  
+  void rescale_all_windows_from_screen(int screen, float f);
+  static void transient_scale_display(float f, int nscreen);
+  static int scale_handler(int event);
+  virtual void init_workarea() {}
+  virtual float desktop_scale_factor() {return 1;}
+  float default_scale_factor();
+  enum APP_SCALING_CAPABILITY {
+    NO_APP_SCALING = 0, ///< The platform does not support rescaling.
+    SYSTEMWIDE_APP_SCALING, ///< The platform supports rescaling with the same factor for all screens.
+    PER_SCREEN_APP_SCALING ///< The platform supports rescaling with one factor for each screen.
+  };
+  /** Returns the platform's support for rescaling the application with ctrl-/+/-/0/ keys.
+   */
+  virtual APP_SCALING_CAPABILITY rescalable() { return NO_APP_SCALING; }
 };
 
 

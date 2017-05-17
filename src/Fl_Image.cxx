@@ -3,7 +3,7 @@
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -271,7 +271,8 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
   array(bits),
   alloc_array(0),
   id_(0),
-  mask_(0)
+  mask_(0),
+  cache_scale_(1)
 {
     data((const char **)&array, 1);
     ld(LD);
@@ -293,7 +294,8 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
   array(0),
   alloc_array(0),
   id_(0),
-  mask_(0)
+  mask_(0),
+  cache_scale_(1)
 {
   if (pxm && pxm->w() > 0 && pxm->h() > 0) {
     array = new uchar[w() * h() * d()];

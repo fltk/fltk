@@ -4,7 +4,7 @@
 // Definition of X11 window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,6 +27,7 @@
 
 #include <FL/Fl_Window_Driver.H>
 #include <config.h> // for USE_XDBE
+#include <FL/x.H> // for Cursor
 class Fl_Bitmap;
 
 /*
@@ -56,6 +57,8 @@ struct Fl_Window_Driver::shape_data_type {
 class FL_EXPORT Fl_X11_Window_Driver : public Fl_Window_Driver
 {
   friend class Fl_X;
+  friend class Fl_X11_Screen_Driver;
+  friend int fl_handle(const XEvent&);
 
 private:
   struct icon_data {
@@ -63,6 +66,17 @@ private:
     Fl_RGB_Image **icons;
     int count;
   } *icon_;
+  Cursor current_cursor_;
+#if  USE_XFT
+  // --- support for screen-specific scaling factors
+  struct type_for_resize_window_between_screens {
+    int screen;
+    bool busy;
+  };
+  static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
+  int screen_num_;
+  void screen_num(int n) { screen_num_ = n; }
+#endif // USE_XFT
   void decorated_win_size(int &w, int &h);
   void combine_mask();
   void shape_bitmap_(Fl_Image* b);
@@ -79,7 +93,11 @@ public:
   Fl_X11_Window_Driver(Fl_Window*);
   virtual ~Fl_X11_Window_Driver();
   static inline Fl_X11_Window_Driver* driver(Fl_Window *w) {return (Fl_X11_Window_Driver*)w->driver();}
-
+#if  USE_XFT
+  virtual int screen_num();
+  static void resize_after_screen_change(void *data);
+#endif // USE_XFT
+  
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();

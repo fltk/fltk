@@ -3,7 +3,7 @@
 //
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,9 +20,14 @@
 #include "../../config_lib.h"
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Font.H"
+#include "Fl_X11_Window_Driver.H"
+#include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_ask.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Image_Surface.H>
+#include <FL/Fl_Tooltip.H>
 
 #include <sys/time.h>
 
@@ -229,10 +234,15 @@ void Fl_X11_Screen_Driver::init_workarea()
   }
   else
   {
-    fl_workarea_xywh[0] = (int)xywh[0];
-    fl_workarea_xywh[1] = (int)xywh[1];
-    fl_workarea_xywh[2] = (int)xywh[2];
-    fl_workarea_xywh[3] = (int)xywh[3];
+#if USE_XFT
+    float s = screens[0].scale;
+#else
+    float s = 1;
+#endif
+    fl_workarea_xywh[0] = xywh[0] / s;
+    fl_workarea_xywh[1] = xywh[1] / s;
+    fl_workarea_xywh[2] = xywh[2] / s;
+    fl_workarea_xywh[3] = xywh[3] / s;
   }
   if ( xywh ) { XFree(xywh); xywh = 0; }
 }
@@ -316,7 +326,9 @@ void Fl_X11_Screen_Driver::init() {
       screens[i].y_org = xsi[i].y_org;
       screens[i].width = xsi[i].width;
       screens[i].height = xsi[i].height;
-
+#if USE_XFT
+      screens[i].scale = 1;
+#endif
       if (dpi_by_randr) {
 	dpi[i][0] = dpih;
 	dpi[i][1] = dpiv;
@@ -341,7 +353,9 @@ void Fl_X11_Screen_Driver::init() {
       screens[i].y_org = 0;
       screens[i].width = DisplayWidth(fl_display, i);
       screens[i].height = DisplayHeight(fl_display, i);
-
+#if USE_XFT
+      screens[i].scale = 1;
+#endif
       if (dpi_by_randr) {
 	dpi[i][0] = dpih;
 	dpi[i][1] = dpiv;
@@ -353,6 +367,17 @@ void Fl_X11_Screen_Driver::init() {
       }
     }
   }
+/*#if __APPLE_CC__ && USE_XFT // TMP simulate 2 screens under XQuartz
+  if (strstr(getenv("DISPLAY"), "xquartz")) {
+    num_screens = 2;
+    screens[1].x_org = screens[0].width/2;;
+    screens[1].y_org = screens[0].y_org;
+    screens[1].width = screens[0].width = screens[0].width/2;
+    screens[1].height = screens[0].height;
+    screens[1].scale = screens[0].scale = 1;
+  }
+#endif*/
+  init_workarea();
 }
 
 
@@ -379,10 +404,15 @@ void Fl_X11_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-    X = screens[n].x_org;
-    Y = screens[n].y_org;
-    W = screens[n].width;
-    H = screens[n].height;
+#if USE_XFT
+    float s = screens[n].scale;
+#else
+    float s = 1;
+#endif
+    X = screens[n].x_org / s;
+    Y = screens[n].y_org / s;
+    W = screens[n].width / s;
+    H = screens[n].height / s;
   }
 }
 
@@ -765,26 +795,29 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, i
     image = 0;
 #  endif // __sgi
   
+  float s = Fl_Surface_Device::surface()->driver()->scale();
+
   if (!image) {
     // fetch absolute coordinates
     int dx, dy, sx, sy, sw, sh;
     Window child_win;
     
     Fl_Window *win;
-    if (allow_outside) win = (Fl_Window*)1;
+    if (allow_outside) win = Fl_Window::current();
     else win = fl_find(fl_window);
     if (win) {
       XTranslateCoordinates(fl_display, fl_window,
-                            RootWindow(fl_display, fl_screen), X, Y, &dx, &dy, &child_win);
+                            RootWindow(fl_display, fl_screen), X*s, Y*s, &dx, &dy, &child_win);
+      dx /= s; dy /= s;
       // screen dimensions
-      Fl::screen_xywh(sx, sy, sw, sh, fl_screen);
+      Fl::screen_xywh(sx, sy, sw, sh, win->driver()->screen_num());
     }
     if (!win || (dx >= sx && dy >= sy && dx + w <= sx+sw && dy + h <= sy+sh)) {
       // the image is fully contained, we can use the traditional method
       // however, if the window is obscured etc. the function will still fail. Make sure we
       // catch the error and continue, otherwise an exception will be thrown.
       XErrorHandler old_handler = XSetErrorHandler(xgetimageerrhandler);
-      image = XGetImage(fl_display, fl_window, X, Y, w, h, AllPlanes, ZPixmap);
+      image = XGetImage(fl_display, fl_window, int(X*s), int(Y*s), w*s < 1 ? 1 : int(w*s), h*s < 1 ? 1 : int(h*s), AllPlanes, ZPixmap);
       XSetErrorHandler(old_handler);
     } else {
       // image is crossing borders, determine visible region
@@ -795,17 +828,17 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, i
       
       // allocate the image
       int bpp = fl_visual->depth + ((fl_visual->depth / 8) % 2) * 8;
-      char* buf = (char*)malloc(bpp / 8 * w * h);
+      char* buf = (char*)malloc(bpp / 8 * int(w*s) * int(h*s));
       image = XCreateImage(fl_display, fl_visual->visual,
-                           fl_visual->depth, ZPixmap, 0, buf, w, h, bpp, 0);
+                           fl_visual->depth, ZPixmap, 0, buf, w*s, h*s, bpp, 0);
       if (!image) {
         if (buf) free(buf);
         return 0;
       }
       
       XErrorHandler old_handler = XSetErrorHandler(xgetimageerrhandler);
-      XImage *subimg = XGetSubImage(fl_display, fl_window, X + noffx, Y + noffy,
-                                    nw, nh, AllPlanes, ZPixmap, image, noffx, noffy);
+      XImage *subimg = XGetSubImage(fl_display, fl_window, (X + noffx)*s, (Y + noffy)*s,
+                                    nw*s, nh*s, AllPlanes, ZPixmap, image, noffx*s, noffy*s);
       XSetErrorHandler(old_handler);
       if (!subimg) {
         XDestroyImage(image);
@@ -815,6 +848,10 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, i
   }
   
   if (!image) return 0;
+  if (s != 1) {
+    w = w*s < 1 ? 1 : int(w*s);
+    h = h*s < 1 ? 1 : int(h*s);
+  }
   
 #ifdef DEBUG
   printf("width            = %d\n", image->width);
@@ -1153,6 +1190,244 @@ void Fl_X11_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &hei
   width = (int)w;
   height = (int)h;
 }
+
+#if USE_XFT
+int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
+{
+  int screen = 0;
+  if (num_screens < 0) init();
+  
+  for (int i = 0; i < num_screens; i ++) {
+    int sx = screens[i].x_org, sy = screens[i].y_org, sw = screens[i].width, sh = screens[i].height;
+    if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
+      screen = i;
+      break;
+    }
+  }
+  return screen;
+}
+
+int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y, int w, int h)
+{
+  int best_screen = 0;
+  float best_intersection = 0.;
+  if (num_screens < 0) init();
+  for (int i = 0; i < num_screens; i++) {
+    float sintersection = fl_intersection(x, y, w, h, screens[i].x_org, screens[i].y_org,
+                                          screens[i].width, screens[i].height);
+    if (sintersection > best_intersection) {
+      best_screen = i;
+      best_intersection = sintersection;
+    }
+  }
+  return best_screen;
+}
+#endif
+
+#if USE_XFT
+void Fl_X11_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H)
+{
+  int xx, yy;
+  int ns = get_mouse_unscaled(xx,yy);
+  float s = screens[ns].scale;
+  X = screens[ns].x_org / s;
+  Y = screens[ns].y_org / s;
+  W = screens[ns].width / s;
+  H = screens[ns].height / s;
+}
+
+
+#if HAVE_DLSYM && HAVE_DLFCN_H
+
+// returns true when schema is among the list of available schemas
+static bool is_schema_valid(const char *schema, const char **known) {
+  int i = 0;
+  while (known[i]) {
+    if (strcmp(known[i++], schema) == 0) return true;
+  }
+  return false;
+}
+
+
+/*
+ returns true under Ubuntu or Debian or FreeBSD and when the gnome scaling value has been found
+ 
+ Ubuntu:
+ Change the gnome scaling factor with:
+ System Settings ==> Displays ==> Scale for menu and title bars
+ Read the current gnome scaling factor with:
+ gsettings get com.ubuntu.user-interface scale-factor
+ Example value: {'VGA-0': 10}
+ Its type is "a{si}". This value should be divided by 8 to get the correct scaling factor.
+ 
+ Debian or FreeBSD :
+ Change the gnome scaling factor with:
+ Tweak tools ==> Windows ==> Window scaling
+ Read the current gnome scaling factor with:
+ gsettings get org.gnome.settings-daemon.plugins.xsettings overrides
+ Example value: {'Gdk/WindowScalingFactor': <2>}
+ Its type is "a{sv}" and v itself is of type i
+ 
+ It's also possible to use 'Tweak tools' under Ubuntu. With the standard Ubuntu desktop,
+ the modified value goes to "org.gnome.settings-daemon.plugins.xsettings" as above.
+ 
+ With Gnome session flashback under Ubuntu  'Tweak tools' puts the scaling value (1 or 2)
+ in "org.gnome.desktop.interface scaling-factor".
+ Read the current gnome scaling factor with:
+ gsettings get org.gnome.desktop.interface scaling-factor
+ Its type is "u"
+ 
+ Thus, under Ubuntu, we read the 3 possible factor values and 
+ return the first value different from 1 to get the scaling factor.
+ 
+ =================================================================================================
+ Ubuntu | default ubuntu desktop | System Settings => Displays => Scale for menu and title bars
+                                              com.ubuntu.user-interface scale-factor
+                                   -----------------------
+                                   Tweak tools => Windows => Window scaling
+                                              org.gnome.settings-daemon.plugins.xsettings overrides
+                                   -----------------------
+          Gnome session flashback | System Settings => Displays => Scale for menu and title bars
+                                              no effect
+                                   -----------------------
+                                   Tweak tools => Windows => Window scaling
+                                              org.gnome.desktop.interface scaling-factor
+ =================================================================================================
+ Debian or FreeBSD | gnome | Tweak tools => Windows => Window scaling
+                                            org.gnome.settings-daemon.plugins.xsettings overrides
+ =================================================================================================
+ */
+static bool gnome_scale_factor(float& factor) {
+  // define types needed for dynamic lib functions
+  typedef const char** (*g_settings_list_schemas_ftype)(void);
+  typedef void* (*g_settings_new_ftype)(const char *);
+  typedef void* (*g_settings_get_value_ftype)(void *settings, const char *key);
+  typedef void (*g_variant_get_ftype)(void *value, const char *format_string, ...);
+  typedef bool (*g_variant_iter_loop_ftype)(void *iter, const char *format_string, ...);
+  typedef void (*pter_ftype)(void*);
+  //typedef void* (*g_variant_get_type_ftype)(void *variant);
+  
+  // open dynamic libs
+  void *glib = dlopen("libglib-2.0.so", RTLD_LAZY);
+  void *gio = dlopen("libgio-2.0.so", RTLD_LAZY);
+  void *gobj = dlopen("libgobject-2.0.so", RTLD_LAZY);
+  //fprintf(stderr,"glib=%p gio=%p gobj=%p\n",glib,gio,gobj);
+  if (!glib || !gio || !gobj) return false;
+  
+  bool ubuntu = false;
+  // determine whether we run Ubuntu
+  char line[400] = "";
+  FILE *in = fopen("/proc/version", "r");
+  if (in) {
+    fgets(line, sizeof(line), in);
+    fclose(in);
+    if (strstr(line, "Ubuntu")) ubuntu = true;
+  }
+  
+  // define pters to used functions
+  g_settings_list_schemas_ftype g_settings_list_schemas_f = (g_settings_list_schemas_ftype)dlsym(gio, "g_settings_list_schemas"); // 2.26
+  g_settings_new_ftype g_settings_new_f = (g_settings_new_ftype)dlsym(gio, "g_settings_new"); // 2.26
+  g_settings_get_value_ftype g_settings_get_value_f =
+		(g_settings_get_value_ftype)dlsym(gio, "g_settings_get_value"); // 2.26
+  if (!g_settings_list_schemas_f || !g_settings_new_f || !g_settings_get_value_f) return false;
+  g_variant_get_ftype g_variant_get_f = (g_variant_get_ftype)dlsym(glib, "g_variant_get"); //2.24
+  g_variant_iter_loop_ftype g_variant_iter_loop_f = (g_variant_iter_loop_ftype)dlsym(glib, "g_variant_iter_loop"); // 2.24
+  pter_ftype g_variant_iter_free_f = (pter_ftype)dlsym(glib, "g_variant_iter_free"); // 2.24
+  pter_ftype g_object_unref_f = (pter_ftype)dlsym(gobj, "g_object_unref");
+  pter_ftype g_variant_unref_f = (pter_ftype)dlsym(glib, "g_variant_unref"); // 2.24
+  //g_variant_get_type_ftype g_variant_get_type_f = (g_variant_get_type_ftype)dlsym(glib, "g_variant_get_type"); // 2.24
+  
+  // call dynamic lib functions
+  const char **known = g_settings_list_schemas_f(); // list of available GSettings schemas
+  const char *schema;
+  float ubuntu_f = 1, ubuntu_desktop_f = 1, gnome_f = 1;
+  bool found = false;
+  
+  if (ubuntu) {
+    schema = "com.ubuntu.user-interface";
+    if (is_schema_valid(schema, known)) {
+      found = true;
+      void *gset = g_settings_new_f(schema);
+      void *gvar = g_settings_get_value_f(gset, "scale-factor");
+      void *iter;
+      char str[10], *str2; int v=8, v2;
+      g_variant_get_f(gvar, "a{si}", &iter);
+      while (g_variant_iter_loop_f(iter, "{si}", &str2, &v2)) { // read the last couple of values
+        strcpy(str, str2);  v = v2;
+      }
+      ubuntu_f = v/8.;
+      printf("com.ubuntu.user-interface  scale-factor name=%s value=%d factor=%g\n", str, v, ubuntu_f);
+      g_variant_iter_free_f(iter);
+      g_variant_unref_f(gvar);
+      g_object_unref_f(gset);
+      if (ubuntu_f != 1) {
+        factor = ubuntu_f;
+        return true;
+      }
+    }
+    schema = "org.gnome.desktop.interface";
+    if (is_schema_valid(schema, known)) {
+      found = true;
+      void *gset = g_settings_new_f(schema);
+      void *gvar = g_settings_get_value_f(gset, "scaling-factor");
+      unsigned v;
+      g_variant_get_f(gvar, "u", &v);
+      ubuntu_desktop_f = v;
+      printf("org.gnome.desktop.interface  scaling-factor value=%u factor=%g\n", v, ubuntu_desktop_f);
+      g_variant_unref_f(gvar);
+      g_object_unref_f(gset);
+      if (ubuntu_desktop_f != 1) {
+        factor = ubuntu_desktop_f;
+        return true;
+      }
+    }
+  }
+  schema = "org.gnome.settings-daemon.plugins.xsettings";
+  if (is_schema_valid(schema, known)) {
+    void *gset = g_settings_new_f(schema);
+    void *gvar = g_settings_get_value_f(gset, "overrides");
+    void *iter;
+    char *str; int v;
+    //str = (char*)g_variant_get_type_f(gvar); // -> "a{sv}"
+    g_variant_get_f(gvar, "a{sv}", &iter);
+    g_variant_unref_f(gvar);
+    gvar = NULL;
+    while (g_variant_iter_loop_f(iter, "{sv}", &str, &gvar)) {
+      if (strstr(str, "WindowScalingFactor") == NULL) continue;
+      found = true;
+      //str = (char*)g_variant_get_type_f(gvar); // -> "i"
+      g_variant_get_f(gvar, "i", &v);
+      gnome_f = v;
+      printf("org.gnome.settings-daemon.plugins.xsettings  overrides name=%s value=%d factor=%g\n", str, v, gnome_f);
+      free(str);
+      break;
+    }
+    g_variant_iter_free_f(iter);
+    if (gvar) g_variant_unref_f(gvar);
+    g_object_unref_f(gset);
+  }
+  if (!found) return false;
+  //factor = ubuntu_f * ubuntu_desktop_f * gnome_f;
+  factor = gnome_f;
+  return true;
+}
+#endif // HAVE_DLSYM && HAVE_DLFCN_H
+
+
+// return the desktop's default scaling value
+float Fl_X11_Screen_Driver::desktop_scale_factor()
+{
+  float factor = 1;
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  gnome_scale_factor(factor);
+#endif
+  return factor;
+}
+
+
+
+
+#endif // USE_XFT
 
 //
 // End of "$Id$".

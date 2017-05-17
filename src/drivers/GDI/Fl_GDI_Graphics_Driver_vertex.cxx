@@ -32,14 +32,6 @@
 #include <FL/math.h>
 
 
-void Fl_GDI_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(int(rint(xf)), int(rint(yf)));
-}
-
-void Fl_GDI_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(int(x*m.a + y*m.c + m.x), int(x*m.b + y*m.d + m.y));
-}
-
 void Fl_GDI_Graphics_Driver::end_points() {
   for (int i=0; i<n; i++) SetPixel(gc_, p[i].x, p[i].y, fl_RGB());
 }
@@ -54,7 +46,7 @@ void Fl_GDI_Graphics_Driver::end_line() {
 
 void Fl_GDI_Graphics_Driver::end_loop() {
   fixloop();
-  if (n>2) transformed_vertex((int)p[0].x, (int)p[0].y);
+  if (n>2) transformed_vertex0(p[0].x, p[0].y);
   end_line();
 }
 
@@ -79,7 +71,7 @@ void Fl_GDI_Graphics_Driver::begin_complex_polygon() {
 void Fl_GDI_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex((int)p[gap_].x, (int)p[gap_].y);
+    transformed_vertex0(p[gap_].x, p[gap_].y);
     counts[numcount++] = n-gap_;
     gap_ = n;
   } else {
@@ -99,15 +91,7 @@ void Fl_GDI_Graphics_Driver::end_complex_polygon() {
   }
 }
 
-// shortcut the closed circles so they use XDrawArc:
-// warning: these do not draw rotated ellipses correctly!
-// See fl_arc.c for portable version.
-
-void Fl_GDI_Graphics_Driver::circle(double x, double y,double r) {
-  double xt = transform_x(x,y);
-  double yt = transform_y(x,y);
-  double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
-  double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
+void Fl_GDI_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, double ry) {
   int llx = (int)rint(xt-rx);
   int w = (int)rint(xt+rx)-llx;
   int lly = (int)rint(yt-ry);

@@ -3,7 +3,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -719,14 +719,23 @@ void Fl_X11_Screen_Driver::close_display() {
   XCloseDisplay(fl_display);
 }
 
-
-void Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
+int Fl_X11_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
   open_display();
   Window root = RootWindow(fl_display, fl_screen);
-  Window c; int mx,my,cx,cy; unsigned int mask;
-  XQueryPointer(fl_display,root,&root,&c,&mx,&my,&cx,&cy,&mask);
-  xx = mx;
-  yy = my;
+  Window c; int cx,cy; unsigned int mask;
+  XQueryPointer(fl_display, root, &root, &c, &mx, &my, &cx, &cy, &mask);
+#if USE_XFT
+  return screen_num_unscaled(mx, my);
+#else
+  return screen_num(mx, my);
+#endif
+}
+
+
+void Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
+  float s = scale(get_mouse_unscaled(xx, yy));
+  xx = xx/s;
+  yy = yy/s;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1079,14 +1088,18 @@ char fl_key_vector[32]; // used by Fl::get_key()
 static int px, py;
 static ulong ptime;
 
-static void set_event_xy() {
+static void set_event_xy(Fl_Window *win) {
 #  if CONSOLIDATE_MOTION
   send_motion = 0;
 #  endif
-  Fl::e_x_root  = fl_xevent->xbutton.x_root;
-  Fl::e_x       = fl_xevent->xbutton.x;
-  Fl::e_y_root  = fl_xevent->xbutton.y_root;
-  Fl::e_y       = fl_xevent->xbutton.y;
+  float s = 1;
+#if USE_XFT
+  s = Fl::screen_driver()->scale(win->driver()->screen_num());
+#endif
+  Fl::e_x_root  = fl_xevent->xbutton.x_root/s;
+  Fl::e_x       = fl_xevent->xbutton.x/s;
+  Fl::e_y_root  = fl_xevent->xbutton.y_root/s;
+  Fl::e_y       = fl_xevent->xbutton.y/s;
   Fl::e_state   = fl_xevent->xbutton.state << 16;
   fl_event_time = fl_xevent->xbutton.time;
 #  ifdef __sgi
@@ -1203,12 +1216,6 @@ static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
   return XKeycodeToKeysym(d, k, i);
 }
 
-static void fl_init_workarea()
-{
-  Fl_X11_Screen_Driver *drv = (Fl_X11_Screen_Driver*)Fl::screen_driver();
-  drv->init_workarea();
-}
-
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
@@ -1241,13 +1248,17 @@ int fl_handle(const XEvent& thisevent)
   if( XRRUpdateConfiguration_f && xevent.type == randrEventBase + RRScreenChangeNotify) {
     XRRUpdateConfiguration_f(&xevent);
     Fl::call_screen_init();
-    fl_init_workarea();
+#if USE_XFT
+    float factor = Fl::screen_driver()->default_scale_factor();
+    for (int screen = 0; screen <= Fl::screen_count(); screen++)
+      Fl::screen_driver()->rescale_all_windows_from_screen(screen, factor);
+#endif // USE_XFT
     Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
   }
-#endif
+#endif // USE_XRANDR
 
   if (xevent.type == PropertyNotify && xevent.xproperty.atom == fl_NET_WORKAREA) {
-    fl_init_workarea();
+    Fl::screen_driver()->init_workarea();
   }
   
   switch (xevent.type) {
@@ -1647,8 +1658,17 @@ fprintf(stderr,"\n");*/
 #  endif
 
   case GraphicsExpose:
-    window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
-                   xevent.xexpose.width, xevent.xexpose.height);
+    {
+#if USE_XFT
+      int ns = window->driver()->screen_num();
+      float s = Fl::screen_driver()->scale(ns);
+      window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x/s, xevent.xexpose.y/s,
+                     xevent.xexpose.width/s + 2, xevent.xexpose.height/s + 2);
+#else
+      window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x, xevent.xexpose.y,
+                     xevent.xexpose.width, xevent.xexpose.height);
+#endif
+     }
     return 1;
 
   case FocusIn:
@@ -1867,13 +1887,13 @@ fprintf(stderr,"\n");*/
     // replace XK_ISO_Left_Tab (Shift-TAB) with FL_Tab (modifier flags are set correctly by X11)
     if (Fl::e_keysym == 0xfe20) Fl::e_keysym = FL_Tab;
 
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_is_click = 0; }
     break;
   
   case ButtonPress:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_dx = Fl::e_dy = 0;
     if (xevent.xbutton.button == Button4) {
       Fl::e_dy = -1; // Up
@@ -1924,7 +1944,7 @@ fprintf(stderr,"\n");*/
     break;
 
   case MotionNotify:
-    set_event_xy();
+    set_event_xy(window);
 #  if CONSOLIDATE_MOTION
     send_motion = fl_xmousewin = window;
     in_a_window = true;
@@ -1938,7 +1958,7 @@ fprintf(stderr,"\n");*/
 
   case ButtonRelease:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_state &= ~(FL_BUTTON1 << (xevent.xbutton.button-1));
     if (xevent.xbutton.button == Button4 ||
         xevent.xbutton.button == Button5) return 0;
@@ -1951,7 +1971,7 @@ fprintf(stderr,"\n");*/
   case EnterNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
     // XInstallColormap(fl_display, Fl_X::i(window)->colormap);
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
     event = FL_ENTER;
 
@@ -1967,7 +1987,7 @@ fprintf(stderr,"\n");*/
 
   case LeaveNotify:
     if (xevent.xcrossing.detail == NotifyInferior) break;
-    set_event_xy();
+    set_event_xy(window);
     Fl::e_state = xevent.xcrossing.state << 16;
     fl_xmousewin = 0;
     in_a_window = false; // make do_queued_events produce FL_LEAVE event
@@ -1992,10 +2012,39 @@ fprintf(stderr,"\n");*/
     Window cr; int X, Y, W = actual.width, H = actual.height;
     XTranslateCoordinates(fl_display, fl_xid(window), actual.root,
                           0, 0, &X, &Y, &cr);
+#if USE_XFT // detect when window changes screen
+    int num = 0;
+    Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
+    num = d->screen_num_unscaled(X, Y, actual.width, actual.height);
+    Fl_X11_Window_Driver *wd = Fl_X11_Window_Driver::driver(window);
+    int olds = wd->screen_num();
+    float s = d->scale(num);
+    if (num != olds) {
+      if (s != d->scale(olds) &&
+          !Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
+          window->user_data() != &Fl_X11_Screen_Driver::transient_scale_display) {
+        Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy = true;
+        Fl_X11_Window_Driver::data_for_resize_window_between_screens_.screen = num;
+        // resize_after_screen_change() works also if called here, but calling it
+        // a second later gives a more pleasant user experience when moving windows between distinct screens
+        Fl::add_timeout(1, Fl_X11_Window_Driver::resize_after_screen_change, window);
+      }
+      wd->screen_num(num);
+    }
+#endif // USE_XFT
 
     // tell Fl_Window about it and set flag to prevent echoing:
     resize_bug_fix = window;
+#if USE_XFT    
+    if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
+       ( W != int(window->w()*s) || H != int(window->h()*s) ) ) {
+        window->resize(X/s, Y/s, W/s, H/s);
+    } else {
+      window->position(X/s, Y/s);
+    }
+#else
     window->resize(X, Y, W, H);
+#endif
     break; // allow add_handler to do something too
     }
 
@@ -2017,7 +2066,13 @@ fprintf(stderr,"\n");*/
     // tell Fl_Window about it and set flag to prevent echoing:
     if ( !wasXExceptionRaised() ) {
       resize_bug_fix = window;
-      window->position(xpos, ypos);
+#if USE_XFT
+      int ns = window->driver()->screen_num();
+      float s = Fl::screen_driver()->scale(ns);
+#else
+      float s = 1;
+#endif
+      window->position(xpos/s, ypos/s);
     }
     break;
     }
@@ -2066,15 +2121,16 @@ void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
   }
 
   if (resize_from_program && shown()) {
+    float s = Fl::screen_driver()->scale(screen_num());
     if (is_a_resize) {
       if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
       if (is_a_move) {
-        XMoveResizeWindow(fl_display, fl_xid(pWindow), X, Y, W>0 ? W : 1, H>0 ? H : 1);
+        XMoveResizeWindow(fl_display, fl_xid(pWindow), X*s, Y*s, W>0 ? W*s : 1, H>0 ? H*s : 1);
       } else {
-        XResizeWindow(fl_display, fl_xid(pWindow), W>0 ? W : 1, H>0 ? H : 1);
+        XResizeWindow(fl_display, fl_xid(pWindow), W>0 ? W*s : 1, H>0 ? H*s : 1);
       }
     } else
-      XMoveWindow(fl_display, fl_xid(pWindow), X, Y);
+      XMoveWindow(fl_display, fl_xid(pWindow), X*s, Y*s);
   }
 }
 
@@ -2179,7 +2235,7 @@ void Fl_X11_Window_Driver::fullscreen_on() {
     right = fullscreen_screen_right();
     
     if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
-      top = Fl::screen_num(x(), y(), w(), h());
+      top = screen_num();
       bottom = top;
       left = top;
       right = top;
@@ -2361,11 +2417,31 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     fl_background_pixel = -1;
     mask |= CWBackPixel;
   }
-
+  // reproduce the window cursor if a window is hidden and then recreated (e.g., rescaled)
+  attr.cursor = Fl_X11_Window_Driver::driver(win)->current_cursor_;
+  mask |= CWCursor;
+  float s = 1;
+#if USE_XFT
+  //compute adequate screen where to put the window
+  int nscreen = 0;
+  if (win->parent()) {
+    nscreen = win->top_window()->driver()->screen_num();
+  } else if (win->force_position() && Fl_X11_Window_Driver::driver(win)->screen_num_ >= 0) {
+    nscreen = win->driver()->screen_num();
+  } else {
+    Fl_Window *hint = Fl::first_window();
+    if (hint) {
+      nscreen = hint->top_window()->driver()->screen_num();
+    }
+  }
+  Fl_X11_Window_Driver::driver(win)->screen_num(nscreen);
+  s = Fl::screen_driver()->scale(nscreen);
+//if (!win->parent()) printf("win creation on screen #%d\n", nscreen);
+#endif
   Fl_X* xp =
     set_xid(win, XCreateWindow(fl_display,
                                root,
-                               X, Y, W, H,
+                               X*s, Y*s, W*s, H*s,
                                0, // borderwidth
                                visual->depth,
                                InputOutput,
@@ -2525,12 +2601,20 @@ void Fl_X11_Window_Driver::sendxjunk() {
 
   XSizeHints *hints = XAllocSizeHints();
   // memset(&hints, 0, sizeof(hints)); jreiser suggestion to fix purify?
-  hints->min_width = minw();
-  hints->min_height = minh();
-  hints->max_width = maxw();
-  hints->max_height = maxh();
-  hints->width_inc = dw();
-  hints->height_inc = dh();
+  float s = Fl::screen_driver()->scale(screen_num());
+
+  hints->min_width = s*minw();
+  hints->min_height = s*minh();
+  hints->max_width = s*maxw();
+  hints->max_height = s*maxh();
+  if (int(s) == s) { // use win size increment value only if scale is an integer. Is it possible to do better?
+    hints->width_inc = s*dw();
+    hints->height_inc = s*dh();
+  } else {
+    hints->width_inc = 0;
+    hints->height_inc = 0;
+  }
+  
   hints->win_gravity = StaticGravity;
 
   // see the file /usr/include/X11/Xm/MwmUtil.h:
@@ -2547,8 +2631,8 @@ void Fl_X11_Window_Driver::sendxjunk() {
       // unfortunately we can't set just one maximum size.  Guess a
       // value for the other one.  Some window managers will make the
       // window fit on screen when maximized, others will put it off screen:
-      if (hints->max_width < hints->min_width) hints->max_width = Fl::w();
-      if (hints->max_height < hints->min_height) hints->max_height = Fl::h();
+      if (hints->max_width < hints->min_width) hints->max_width = Fl::w()*s;
+      if (hints->max_height < hints->min_height) hints->max_height = Fl::h()*s;
     }
     if (hints->width_inc && hints->height_inc) hints->flags |= PResizeInc;
     if (aspect()) {
@@ -2566,8 +2650,8 @@ void Fl_X11_Window_Driver::sendxjunk() {
 
   if (force_position()) {
     hints->flags |= USPosition;
-    hints->x = w->x();
-    hints->y = w->y();
+    hints->x = s*w->x();
+    hints->y = s*w->y();
   }
 
   if (!w->border()) {
@@ -2730,6 +2814,7 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
 #undef cache_cursor
 
   XDefineCursor(fl_display, fl_xid(pWindow), xc);
+  current_cursor_ = xc;
 
   return 1;
 }
@@ -2895,6 +2980,7 @@ void printFront(Fl_Widget *o, void *data)
   //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
 #else  
   printer.print_window(win);
+  //printer.print_window_part( win, 0,0, win->w(), win->h(), 0,0 );
 #endif
 
   printer.end_page();
@@ -2909,8 +2995,9 @@ void copyFront(Fl_Widget *o, void *data)
   Fl_Window *win = Fl::first_window();
   if (!win) return;
   Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
-  surf->set_current();
+  Fl_Surface_Device::push_current(surf);
   surf->draw_decorated_window(win); // draw the window content
+  Fl_Surface_Device::pop_current();
   delete surf; // put the window on the clipboard
   o->window()->show();
 }

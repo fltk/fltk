@@ -42,6 +42,7 @@
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
+#include <FL/Fl_Image_Surface.H>
 
 #define MAXBUFFER 0x40000 // 256k
 
@@ -284,7 +285,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   }
 }
 
-void Fl_GDI_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_GDI_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(buf,x,y,w,h,d,l,fl_abs(d),0,0, gc_);
@@ -293,7 +294,7 @@ void Fl_GDI_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, i
   }
 }
 
-void Fl_GDI_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
+void Fl_GDI_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
@@ -303,7 +304,7 @@ void Fl_GDI_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
   }
 }
 
-void Fl_GDI_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(buf,x,y,w,h,d,l,1,0,0, gc_);
@@ -312,7 +313,7 @@ void Fl_GDI_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int
   }
 }
 
-void Fl_GDI_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
+void Fl_GDI_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
@@ -399,11 +400,15 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
   DeleteObject((HGDIOBJ)bm);
 }
 
-void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
+  X = X*s;
+  Y = Y*s;
+  cache_size(bm, W, H);
+  cx *= s; cy *= s;
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
@@ -423,7 +428,7 @@ Fl_GDI_Printer_Graphics_Driver::transparent_f_type Fl_GDI_Printer_Graphics_Drive
   return fpter;
 }
 
-void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_GDI_Printer_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   transparent_f_type fl_TransparentBlt = TransparentBlt();
   if (!fl_TransparentBlt) {
@@ -467,34 +472,33 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
 
 static Fl_Offscreen build_id(Fl_RGB_Image *img, void **pmask)
 {
-  Fl_Offscreen offs = fl_create_offscreen(img->w(), img->h());
+  Fl_Image_Surface *surface = new Fl_Image_Surface(img->w(), img->h());
+  Fl_Surface_Device::push_current(surface);
   if ((img->d() == 2 || img->d() == 4) && fl_can_do_alpha_blending()) {
-    fl_begin_offscreen(offs);
     fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d()|FL_IMAGE_WITH_ALPHA, img->ld());
-    fl_end_offscreen();
   } else {
-    fl_begin_offscreen(offs);
     fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d(), img->ld());
-    fl_end_offscreen();
     if (img->d() == 2 || img->d() == 4) {
       *pmask = fl_create_alphamask(img->w(), img->h(), img->d(), img->ld(), img->array);
     }
   }
+  Fl_Surface_Device::pop_current();
+  Fl_Offscreen offs = surface->get_offscreen_before_delete();
+  delete surface;
   return offs;
 }
 
 
-void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  // Don't draw an empty image...
-  if (!img->d() || !img->array) {
-    Fl_Graphics_Driver::draw_empty(img, XP, YP);
-    return;
+void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, int Y, int W, int H, int cx, int cy) {
+  X = X*s;
+  Y = Y*s;
+  cache_size(img, W, H);
+  cx *= s; cy *= s;
+  if (!*Fl_Graphics_Driver::id(img)) {
+    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));
+    *cache_scale(img) = 1;
   }
-  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (!*Fl_Graphics_Driver::id(img)) *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));
+  Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::mask(img)) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
@@ -509,6 +513,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
   } else {
     copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(img), cx, cy);
   }
+  unscale_clip(r2);
 }
 
 int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
@@ -525,21 +530,26 @@ int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, i
   return 1;
 }
 
+
 int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   Fl_RGB_Image *rgb = img->as_rgb_image();
   if (!rgb || !rgb->array) return 0; // for bitmaps and pixmaps
   if ((rgb->d() % 2) == 0 && !can_do_alpha_blending()) return 0;
   
-  if (!*Fl_Graphics_Driver::id(rgb)) *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)build_id(rgb,
+  if (!*Fl_Graphics_Driver::id(rgb)) {
+    *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)build_id(rgb,
                                                     (void**)(Fl_Graphics_Driver::mask(rgb)));
+    *cache_scale(rgb) = 1;
+  }
+  cache_size(img, WP, HP);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h());
+    alpha_blend_(XP*scale_, YP*scale_, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, XP, YP, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h(), SRCCOPY);
+    StretchBlt(gc_, XP*scale_, YP*scale_, WP, HP, new_gc, 0, 0, rgb->w(), rgb->h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
@@ -587,13 +597,17 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   return bm;
 }
 
-fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
+fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm, int w, int h, const uchar *array) {
+  *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
   return (fl_uintptr_t)fl_create_bitmap(w, h, array);
 }
 
-void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int Y, int W, int H, int cx, int cy) {
+  X = X*s;
+  Y = Y*s;
+  cache_size(pxm, W, H);
+  cx *= s; cy *= s;
+  Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
@@ -606,10 +620,11 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
   } else {
     copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
   }
+  unscale_clip(r2);
 }
 
 
-void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_GDI_Printer_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   transparent_f_type fl_TransparentBlt = TransparentBlt();
@@ -642,6 +657,7 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const c
     delete[] bitmap;
   }
   fl_end_offscreen();
+  *cache_scale(img) =  Fl_Scalable_Graphics_Driver::scale();
   return (fl_uintptr_t)id;
 }
 

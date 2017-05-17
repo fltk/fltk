@@ -3,7 +3,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +17,7 @@
 //
 
 #include <FL/Fl_Image_Surface.H>
+#include <FL/Fl_Device.H>
 
 #if defined(FL_PORTING)
 # pragma message "FL_PORTING: optionally implement class Fl_XXX_Image_Surface_Driver for your platform"
@@ -97,7 +98,7 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
   Fl_Shared_Image *s_img = Fl_Shared_Image::get(platform_surface->image());
   int width, height;
   platform_surface->printable_rect(&width, &height);
-  s_img->scale(width, height);
+  s_img->scale(width, height, 1, 1);
   return s_img;
 }
 
@@ -138,7 +139,9 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
    */
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   int rank = find_slot();
-  offscreen_api_surface[rank] = new Fl_Image_Surface(w, h, 0);
+  float d = Fl_Graphics_Driver::default_driver().scale();
+  int high_res = d != 1;
+  offscreen_api_surface[rank] = new Fl_Image_Surface(w, h, high_res);
   return offscreen_api_surface[rank]->offscreen();
 }
 

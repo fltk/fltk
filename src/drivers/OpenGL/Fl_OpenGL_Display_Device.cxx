@@ -3,7 +3,7 @@
 //
 // implementation of class Fl_Gl_Device_Plugin for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2014 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -94,6 +94,8 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
 #  pragma message "FL_PORTING: check whether the default Fl_OpenGL_Display_Device::capture_gl_rectangle() works for your platform"
 #endif
 
+#include <FL/Fl_Screen_Driver.H>
+#include <FL/Fl_Window_Driver.H>
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
 /* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image
  */
@@ -106,6 +108,12 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, 
   glPixelStorei(GL_PACK_ROW_LENGTH, 0);
   glPixelStorei(GL_PACK_SKIP_ROWS, 0);
   glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+  //
+  int ns = glw->driver()->screen_num();
+  float s = Fl::screen_driver()->scale(ns);
+  if (s != 1) {
+    x *= s; y *= s; w *= s; h *= s;
+  }
   // Read a block of pixels from the frame buffer
   int mByteWidth = w * 3;
   mByteWidth = (mByteWidth + 3) & ~3;    // Align to 4 bytes

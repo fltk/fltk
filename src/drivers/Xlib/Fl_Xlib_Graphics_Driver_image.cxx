@@ -47,10 +47,13 @@
 
 #include <config.h>
 #include "Fl_Xlib_Graphics_Driver.H"
+#include "../X11/Fl_X11_Screen_Driver.H"
+#include "../X11/Fl_X11_Window_Driver.H"
 #  include <FL/Fl.H>
 #  include <FL/fl_draw.H>
 #  include <FL/x.H>
 #  include <FL/Fl_Image_Surface.H>
+#  include <FL/Fl_Screen_Driver.H>
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
 #if HAVE_XRENDER
@@ -476,7 +479,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   if (w<=0 || h<=0) return;
   dx -= X;
   dy -= Y;
-
   if (!bytes_per_pixel) figure_out_visual();
   const unsigned oldbpp = bytes_per_pixel;
   static GC gc32 = None;
@@ -574,32 +576,32 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   }
 }
 
-void Fl_Xlib_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Xlib_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
 
   const bool alpha = !!(abs(d) & FL_IMAGE_WITH_ALPHA);
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
   const int mono = (d>-3 && d<3);
 
-  innards(buf,x+offset_x_,y+offset_y_,w,h,d,l,mono,0,0,alpha,gc_);
+  innards(buf,x+offset_x_*scale_,y+offset_y_*scale_,w,h,d,l,mono,0,0,alpha,gc_);
 }
 
-void Fl_Xlib_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Xlib_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
 
   const bool alpha = !!(abs(d) & FL_IMAGE_WITH_ALPHA);
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
   const int mono = (d>-3 && d<3);
 
-  innards(0,x+offset_x_,y+offset_y_,w,h,d,0,mono,cb,data,alpha,gc_);
+  innards(0,x+offset_x_*scale_,y+offset_y_*scale_,w,h,d,0,mono,cb,data,alpha,gc_);
 }
 
-void Fl_Xlib_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
-  innards(buf,x+offset_x_,y+offset_y_,w,h,d,l,1,0,0,0,gc_);
+void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l){
+  innards(buf,x+offset_x_*scale_,y+offset_y_*scale_,w,h,d,l,1,0,0,0,gc_);
 }
 
-void Fl_Xlib_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
-  innards(0,x+offset_x_,y+offset_y_,w,h,d,0,1,cb,data,0,gc_);
+  innards(0,x+offset_x_*scale_,y+offset_y_*scale_,w,h,d,0,1,cb,data,0,gc_);
 }
 
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
@@ -622,15 +624,14 @@ void Fl_Xlib_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
   XFreePixmap(fl_display, bm);
 }
 
-void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(bm, XP+offset_x_, YP+offset_y_, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-
+void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int X, int Y, int W, int H, int cx, int cy) {
+  X = (X+offset_x_)*s;
+  Y = (Y+offset_y_)*s;
+  cache_size(bm, W, H);
+  cx *= s; cy *= s;
   XSetStipple(fl_display, gc_, *Fl_Graphics_Driver::id(bm));
-  int ox = X-cx; if (ox < 0) ox += bm->w();
-  int oy = Y-cy; if (oy < 0) oy += bm->h();
+  int ox = X-cx; if (ox < 0) ox += bm->w()*s;
+  int oy = Y-cy; if (oy < 0) oy += bm->h()*s;
   XSetTSOrigin(fl_display, gc_, ox, oy);
   XSetFillStyle(fl_display, gc_, FillStippled);
   XFillRectangle(fl_display, fl_window, gc_, X, Y, W, H);
@@ -715,33 +716,42 @@ static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
   return off;
 }
 
-void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  XP += offset_x_;
-  YP += offset_y_;
-  // Don't draw an empty image...
-  if (!img->d() || !img->array) {
-    Fl_Graphics_Driver::draw_empty(img, XP, YP);
-    return;
-  }
-  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
+// X,Y,W,H,cx,cy are in FLTK units
+// if s != 1 and id(img) != 0, the offscreen has been previously scaled by s
+// if s != 1 and id(img) == 0, img has been previously scaled by s
+void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, int Y, int W, int H, int cx, int cy) {
+  X = (X+offset_x_)*s;
+  Y = (Y+offset_y_)*s;
+  cache_size(img, W, H);
+  cx *= s; cy *= s;
   if (!*Fl_Graphics_Driver::id(img)) {
     *Fl_Graphics_Driver::id(img) = cache_rgb(img);
+    *cache_scale(img) = 1;
   }
+  Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::id(img)) {
     if (img->d() == 4 || img->d() == 2) {
 #if HAVE_XRENDER
-      scale_and_render_pixmap(*Fl_Graphics_Driver::id(img), 4, 1, 1, cx, cy, X - offset_x_, Y - offset_y_, W, H);
+      scale_and_render_pixmap(*Fl_Graphics_Driver::id(img), img->d(), 1, 1, cx, cy, X, Y, W, H);
 #endif
     } else {
-      copy_offscreen(X - offset_x_, Y - offset_y_, W, H, *Fl_Graphics_Driver::id(img), cx, cy);
+      XCopyArea(fl_display, *Fl_Graphics_Driver::id(img), fl_window, gc_, cx, cy, W, H, X, Y);
     }
   } else {
     // Composite image with alpha manually each time...
+    scale_ = 1;
+    int ox = offset_x_, oy = offset_y_;
+    offset_x_ = offset_y_ = 0;
+    Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
+    int nscreen = Fl_Window::current()->driver()->screen_num();
+    float keep = d->scale(nscreen);
+    d->scale(nscreen, 1);
     alpha_blend(img, X, Y, W, H, cx, cy);
+    d->scale(nscreen, keep);
+    scale_ = s;
+    offset_x_ = ox; offset_y_ = oy;
   }
+  unscale_clip(r2);
 }
 
 void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
@@ -752,13 +762,17 @@ void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintp
   }
 }
 
-fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
+fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm, int w, int h, const uchar *array) {
+  *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
   return (fl_uintptr_t)create_bitmask(w, h, array);
 }
 
-void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(pxm, XP+offset_x_, YP+offset_y_, WP, HP, cx, cy, X, Y, W, H)) return;
+void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int Y, int W, int H, int cx, int cy) {
+  X = (X+offset_x_)*s;
+  Y = (Y+offset_y_)*s;
+  cache_size(pxm, W, H);
+  cx *= s; cy *= s;
+  Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::mask(pxm)) {
     // make X use the bitmap as a mask:
     XSetClipMask(fl_display, gc_, *Fl_Graphics_Driver::mask(pxm));
@@ -781,21 +795,24 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
         Y1 = r->rects[i].y1;
         W1 = r->rects[i].x2 - r->rects[i].x1;
         H1 = r->rects[i].y2 - r->rects[i].y1;
-        copy_offscreen(X1-offset_x_, Y1-offset_y_, W1, H1, *Fl_Graphics_Driver::id(pxm), cx + (X1 - X), cy + (Y1 - Y));
+        XCopyArea(fl_display, *Fl_Graphics_Driver::id(pxm), fl_window, gc_, cx + (X1 - X), cy + (Y1 - Y), W1, H1, X1, Y1);
       }
       XDestroyRegion(r);
     } else {
-      copy_offscreen(X-offset_x_, Y-offset_y_, W, H, *Fl_Graphics_Driver::id(pxm), cx, cy);
+      XCopyArea(fl_display, *Fl_Graphics_Driver::id(pxm), fl_window, gc_, cx, cy, W, H, X, Y);
     }
     // put the old clip region back
     XSetClipOrigin(fl_display, gc_, 0, 0);
+    s = scale_; scale_ = 1;
     restore_clip();
+    scale_ = s;
   }
-  else copy_offscreen(X-offset_x_, Y-offset_y_, W, H, *Fl_Graphics_Driver::id(pxm), cx, cy);
+  else XCopyArea(fl_display, *Fl_Graphics_Driver::id(pxm), fl_window, gc_, cx, cy, W, H, X, Y);
+  unscale_clip(r2);
 }
 
 
-fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
+fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm, int w, int h, const char *const*data) {
   Fl_Offscreen id;
   id = fl_create_offscreen(w, h);
   fl_begin_offscreen(id);
@@ -804,22 +821,26 @@ fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const 
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
+    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(w * scale_, h * scale_, bitmap);
     delete[] bitmap;
   }
   fl_end_offscreen();
+  *cache_scale(pxm) =  Fl_Scalable_Graphics_Driver::scale();
   return (fl_uintptr_t)id;
 }
 
 
 #if HAVE_XRENDER
+/* Draws with Xrender an Fl_Offscreen with optional scaling and accounting for transparency if necessary.
+ XP,YP,WP,HP are in drawing units
+ */
 int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP) {
+  bool has_alpha = (depth == 2 || depth == 4);
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
-  Picture src = XRenderCreatePicture(fl_display, pixmap,
-                                     depth%2 == 0 ?fmt32:fmt24, 0, &srcattr);
+  Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
   Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
@@ -836,22 +857,24 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
   }
-  XRenderComposite(fl_display, (depth%2 == 0 ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
-                   XP + offset_x_, YP + offset_y_, WP, HP);
+  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
+                   XP, YP, WP, HP);
   XRenderFreePicture(fl_display, src);
   XRenderFreePicture(fl_display, dst);
   return 1;
 }
 
-
+// XP,YP,WP,HP are in FLTK units
 int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   Fl_RGB_Image *rgb = img->as_rgb_image();
   if (!rgb || !can_do_alpha_blending()) return 0;
   if (!*Fl_Graphics_Driver::id(rgb)) {
     *Fl_Graphics_Driver::id(rgb) = cache_rgb(rgb);
+    *cache_scale(rgb) = 1;
   }
-  return scale_and_render_pixmap(*Fl_Graphics_Driver::id(rgb), rgb->d(), rgb->w()/double(WP), rgb->h()/double(HP),
-                          0, 0, XP, YP, WP, HP);
+  cache_size(img, WP, HP);
+  return scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
+                                 rgb->w() / double(WP), rgb->h() / double(HP), 0, 0, (XP + offset_x_)*scale_, (YP + offset_y_)*scale_, WP, HP);
 }
 #endif // HAVE_XRENDER
 

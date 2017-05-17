@@ -3,7 +3,7 @@
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,14 +30,6 @@
 #include <FL/math.h>
 
 
-void Fl_Xlib_Graphics_Driver::transformed_vertex(double xf, double yf) {
-  transformed_vertex0(short(rint(xf)), short(rint(yf)));
-}
-
-void Fl_Xlib_Graphics_Driver::vertex(double x,double y) {
-  transformed_vertex0(short(x*m.a + y*m.c + m.x), short(x*m.b + y*m.d + m.y));
-}
-
 void Fl_Xlib_Graphics_Driver::end_points() {
   if (n>1) XDrawPoints(fl_display, fl_window, gc_, (XPoint*)p, n, 0);
 }
@@ -52,7 +44,9 @@ void Fl_Xlib_Graphics_Driver::end_line() {
 
 void Fl_Xlib_Graphics_Driver::end_loop() {
   fixloop();
-  if (n>2) transformed_vertex((short)p[0].x, (short)p[0].y);
+  if (n>2) {
+    transformed_vertex0(p[0].x, p[0].y);
+  }
   end_line();
 }
 
@@ -73,7 +67,7 @@ void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
 void Fl_Xlib_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex((short)p[gap_].x, (short)p[gap_].y);
+    transformed_vertex0(p[gap_].x, p[gap_].y);
     gap_ = n;
   } else {
     n = gap_;
@@ -92,12 +86,7 @@ void Fl_Xlib_Graphics_Driver::end_complex_polygon() {
 // shortcut the closed circles so they use XDrawArc:
 // warning: these do not draw rotated ellipses correctly!
 // See fl_arc.c for portable version.
-
-void Fl_Xlib_Graphics_Driver::circle(double x, double y,double r) {
-  double xt = transform_x(x,y);
-  double yt = transform_y(x,y);
-  double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
-  double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
+void Fl_Xlib_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, double ry) {
   int llx = (int)rint(xt-rx);
   int w = (int)rint(xt+rx)-llx;
   int lly = (int)rint(yt-ry);

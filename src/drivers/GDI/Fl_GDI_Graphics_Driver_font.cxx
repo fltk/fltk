@@ -323,34 +323,40 @@ static void fl_font(Fl_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, 
     driver->Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size() && angle == fl_angle_) return;
+  if (fnum == driver->Fl_Graphics_Driver::font() && size == ((Fl_GDI_Graphics_Driver*)driver)->size_unscaled() && angle == fl_angle_) return;
   fl_angle_ = angle;
   driver->Fl_Graphics_Driver::font(fnum, size);
   driver->font_descriptor( find(fnum, size, angle) );
 }
 
-void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_GDI_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(this, fnum, size, 0);
 }
 
-int Fl_GDI_Graphics_Driver::height() {
+int Fl_GDI_Graphics_Driver::height_unscaled() {
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   if (fl_fontsize) return (fl_fontsize->metr.tmAscent + fl_fontsize->metr.tmDescent);
   else return -1;
 }
 
-int Fl_GDI_Graphics_Driver::descent() {
+int Fl_GDI_Graphics_Driver::descent_unscaled() {
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   if (fl_fontsize) return fl_fontsize->metr.tmDescent;
   else return -1;
 }
+
+Fl_Fontsize Fl_GDI_Graphics_Driver::size_unscaled() {
+  if (font_descriptor()) return size_;
+  return -1;
+}
+
 
 // Unicode string buffer
 static unsigned short *wstr = NULL;
 static int wstr_len    = 0;
 
 
-double Fl_GDI_Graphics_Driver::width(const char* c, int n) {
+double Fl_GDI_Graphics_Driver::width_unscaled(const char* c, int n) {
   int i = 0;
   if (!font_descriptor()) return -1.0;
   double w = 0.0;
@@ -362,13 +368,13 @@ double Fl_GDI_Graphics_Driver::width(const char* c, int n) {
 //  if (l < 1) l = 1;
     i += l;
     if (!fl_nonspacing(ucs)) {
-      w += width(ucs);
+      w += width_unscaled(ucs);
     }
   }
   return w;
 }
 
-double Fl_GDI_Graphics_Driver::width(unsigned int c) {
+double Fl_GDI_Graphics_Driver::width_unscaled(unsigned int c) {
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   unsigned int r;
   SIZE s;
@@ -466,7 +472,7 @@ static void on_printer_extents_update(int &dx, int &dy, int &w, int &h, HDC gc)
     }
 
 // Function to determine the extent of the "inked" area of the glyphs in a string
-void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+void Fl_GDI_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   if (!fl_fontsize) { // no valid font, nothing to measure
@@ -571,14 +577,14 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
 exit_error:
   // some error here - just return fl_measure values
   w = (int)width(c, n);
-  h = height();
+  h = height_unscaled();
   dx = 0;
-  dy = descent() - h;
+  dy = descent_unscaled() - h;
   EXTENTS_UPDATE(dx, dy, w, h, gc_);
   return;
 } // fl_text_extents
 
-void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
+void Fl_GDI_Graphics_Driver::draw_unscaled(const char* str, int n, int x, int y) {
   COLORREF oldColor = SetTextColor(gc_, fl_RGB());
   // avoid crash if no font has been set yet
   if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
@@ -593,8 +599,8 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   SetTextColor(gc_, oldColor); // restore initial state
 }
 
-void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
-  fl_font(this, Fl_Graphics_Driver::font(), size(), angle);
+void Fl_GDI_Graphics_Driver::draw_unscaled(int angle, const char* str, int n, int x, int y) {
+  fl_font(this, Fl_Graphics_Driver::font(), size_unscaled(), angle);
   int wn = 0; // count of UTF16 cells to render full string
   COLORREF oldColor = SetTextColor(gc_, fl_RGB());
   SelectObject(gc_, font_descriptor()->fid);
@@ -606,10 +612,10 @@ void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int 
   }
   TextOutW(gc_, x, y, (WCHAR*)wstr, wn);
   SetTextColor(gc_, oldColor);
-  fl_font(this, Fl_Graphics_Driver::font(), size(), 0);
+  fl_font(this, Fl_Graphics_Driver::font(), size_unscaled(), 0);
 }
 
-void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
+void Fl_GDI_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int y) {
   int wn;
   wn = fl_utf8toUtf16(c, n, wstr, wstr_len);
   if(wn >= wstr_len) {
@@ -634,7 +640,7 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   }
 #else
   UINT old_align = SetTextAlign(gc_, TA_RIGHT | TA_RTLREADING);
-  TextOutW(gc_, x, y - height() + descent(), (WCHAR*)wstr, wn);
+  TextOutW(gc_, x, y - height_unscaled() + descent_unscaled(), (WCHAR*)wstr, wn);
   SetTextAlign(gc_, old_align);
 #endif
   SetTextColor(gc_, oldColor);

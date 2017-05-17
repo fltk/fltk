@@ -3,7 +3,7 @@
 //
 // Scroll widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -243,7 +243,8 @@ void Fl_Scroll::draw() {
 
   uchar d = damage();
 
-  if (d & FL_DAMAGE_ALL) { // full redraw
+  float scale = Fl_Surface_Device::surface()->driver()->scale();
+  if ((d & FL_DAMAGE_ALL) || scale != int(scale)) { // full redraw
     draw_box(box(),x(),y(),w(),h(),color());
     draw_clip(this, X, Y, W, H);
   } else {

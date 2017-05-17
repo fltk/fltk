@@ -34,7 +34,7 @@
  *
  This class is implemented only on the MSWindows platform.
  */
-class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Scalable_Graphics_Driver {
 private:
   BOOL alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch);
   int depth; // to support translation
@@ -59,55 +59,58 @@ public:
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
   void delete_bitmask(Fl_Bitmask bm);
-  void draw(const char* str, int n, int x, int y);
-  void draw(int angle, const char *str, int n, int x, int y);
-  void rtl_draw(const char* str, int n, int x, int y);
-  void font(Fl_Font face, Fl_Fontsize size);
-  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
+  virtual void draw_unscaled(const char* str, int n, int x, int y);
+  virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
+  virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
+  virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
+  void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
-  void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
-  void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
-  void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
-  void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+  virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+  virtual void draw_image_mono_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+  virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
   fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
   fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
-  double width(const char *str, int n);
-  double width(unsigned int c);
-  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
-  int height();
-  int descent();
+  virtual double width_unscaled(const char *str, int n);
+  virtual double width_unscaled(unsigned int c);
+  void text_extents_unscaled(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height_unscaled();
+  int descent_unscaled();
+  Fl_Fontsize size_unscaled();
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
-  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  virtual void copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy);
   void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);
   void translate_all(int x, int y);
   void untranslate_all(void);
+  static HRGN scale_region(HRGN r, float f, bool keep, bool inflate=false);
+  virtual void scale(float f);
 protected:
-  void transformed_vertex0(int x, int y);
+  void transformed_vertex0(float x, float y);
   void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
-  void point(int x, int y);
-  void rect(int x, int y, int w, int h);
+  virtual void point_unscaled(float x, float y);
+  void rect_unscaled(float x, float y, float w, float h);
   void focus_rect(int x, int y, int w, int h);
-  void rectf(int x, int y, int w, int h);
-  void line(int x, int y, int x1, int y1);
-  void line(int x, int y, int x1, int y1, int x2, int y2);
-  void xyline(int x, int y, int x1);
-  void xyline(int x, int y, int x1, int y2);
-  void xyline(int x, int y, int x1, int y2, int x3);
-  void yxline(int x, int y, int y1);
-  void yxline(int x, int y, int y1, int x2);
-  void yxline(int x, int y, int y1, int x2, int y3);
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
+  void rectf_unscaled(float x, float y, float w, float h);
+  virtual void line_unscaled(float x, float y, float x1, float y1);
+  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
+  virtual void xyline_unscaled(float x, float y, float x1);
+  virtual void xyline_unscaled(float x, float y, float x1, float y2);
+  virtual void xyline_unscaled(float x, float y, float x1, float y2, float x3);
+  virtual void yxline_unscaled(float x, float y, float y1);
+  virtual void yxline_unscaled(float x, float y, float y1, float x2);
+  virtual void yxline_unscaled(float x, float y, float y1, float x2, float y3);
+  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
+  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
+  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   // --- clipping
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
@@ -115,24 +118,23 @@ protected:
   void push_no_clip();
   void pop_clip();
   void restore_clip();
+  virtual Fl_Region scale_clip(float f);
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   void begin_complex_polygon();
-  void transformed_vertex(double xf, double yf);
-  void vertex(double x, double y);
   void end_points();
   void end_line();
   void end_loop();
   void end_polygon();
   void end_complex_polygon();
   void gap();
-  void circle(double x, double y, double r);
+  virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
   // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
   // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  void arc(int x, int y, int w, int h, double a1, double a2);
-  void pie(int x, int y, int w, int h, double a1, double a2);
+  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
-  void line_style(int style, int width=0, char* dashes=0);
+  virtual void line_style_unscaled(int style, float width, char* dashes);
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   void color(Fl_Color c);
   Fl_Color color() { return color_; }
@@ -162,8 +164,8 @@ private:
   transparent_f_type TransparentBlt();
 public:
   virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
-  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
 };
 
