@@ -178,6 +178,30 @@ void fl_end_offscreen() {
   Fl_Surface_Device::pop_current();
 }
 
+/** Adapts an offscreen buffer to a changed value of the graphical scaling factor.
+ The \p ctx argument must have been created by fl_create_offscreen()
+ and the calling context must not be between fl_begin_offscreen() and fl_end_offscreen().
+ */
+void fl_scale_offscreen(Fl_Offscreen &ctx) {
+  int i, w, h;
+  for (i = 0; i < count_offscreens; i++) {
+    if (offscreen_api_surface[i] && offscreen_api_surface[i]->offscreen() == ctx) {
+      break;
+    }
+  }
+  if (i >= count_offscreens) return;
+  Fl_RGB_Image *rgb = offscreen_api_surface[i]->image();
+  offscreen_api_surface[i]->printable_rect(&w, &h);
+  fl_delete_offscreen(ctx);
+  Fl_Shared_Image *shared = Fl_Shared_Image::get(rgb);
+  shared->scale(w, h, 0, 1);
+  ctx = fl_create_offscreen(w, h);
+  fl_begin_offscreen(ctx);
+  shared->draw(0, 0);
+  fl_end_offscreen();
+  shared->release();
+}
+
 /** @} */
 
 

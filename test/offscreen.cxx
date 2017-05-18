@@ -114,9 +114,7 @@ int oscr_box::handle(int ev)
   int ret = Fl_Box::handle(ev);
   
   if (ev == FL_HIDE && oscr) {
-      fl_delete_offscreen(oscr);
-      oscr = 0;
-      iters = num_iterations + 1;
+    fl_scale_offscreen(oscr);
   }
   // handle dragging of visible page area - if a valid context exists
   if (has_oscr())
