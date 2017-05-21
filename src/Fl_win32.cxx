@@ -500,7 +500,7 @@ void Fl_WinAPI_Screen_Driver::open_display() {
 
   beenHereDoneThat = 1;
 #ifdef FLTK_HIDPI_SUPPORT
-  typedef HRESULT WINAPI (*SetProcessDpiAwareness_type)(int);
+  typedef HRESULT (WINAPI* SetProcessDpiAwareness_type)(int);
   HMODULE hMod  = LoadLibrary("Shcore.DLL");
   if (hMod) {
     SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
@@ -517,7 +517,7 @@ void Fl_WinAPI_Screen_Driver::open_display() {
 
 
 float Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
-  typedef HRESULT WINAPI (*GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
+  typedef HRESULT (WINAPI* GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
   float f = 1;
 #ifdef FLTK_HIDPI_SUPPORT
   HMODULE hMod  = LoadLibrary("Shcore.DLL");
