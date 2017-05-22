@@ -91,6 +91,7 @@ public:
   void untranslate_all(void);
   static HRGN scale_region(HRGN r, float f, bool keep, bool inflate=false);
   virtual void scale(float f);
+  virtual float scale();
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();

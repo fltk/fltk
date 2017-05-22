@@ -101,6 +101,11 @@ void Fl_Xlib_Graphics_Driver::scale(float f) {
 #endif
 }
 
+
+float Fl_Xlib_Graphics_Driver::scale() {
+  return scale_;
+}
+
 void Fl_Xlib_Graphics_Driver::copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy) {
   XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x+offset_x_*scale_, y+offset_y_*scale_);
 }
