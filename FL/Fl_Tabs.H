@@ -3,7 +3,7 @@
 //
 // Tab header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -199,20 +199,29 @@
 	such as using the arrow keys while at the left or right end of the tabs.
 */
 class FL_EXPORT Fl_Tabs : public Fl_Group {
+
   Fl_Widget *push_;
+
+protected:
+
   int *tab_pos;		// array of x-offsets of tabs per child + 1
   int *tab_width;	// array of widths of tabs per child + 1
   int tab_count;	// array size
-  int tab_positions();	// allocate and calculate tab positions
-  void clear_tab_positions();
-  int tab_height();
-  void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
-protected:
   Fl_Align tab_align_;	// tab label alignment
-  void redraw_tabs();
+
+  virtual void redraw_tabs();
+  virtual int tab_positions();	// allocate and calculate tab positions
+  virtual void clear_tab_positions();
+  virtual void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
+  virtual int tab_height();
+
   void draw();
 
 public:
+
+  Fl_Tabs(int,int,int,int,const char * = 0);
+  virtual ~Fl_Tabs();
+
   int handle(int);
   Fl_Widget *value();
   int value(Fl_Widget *);
@@ -228,10 +237,13 @@ public:
   */
   Fl_Widget *push() const {return push_;}
   int push(Fl_Widget *);
-  Fl_Tabs(int,int,int,int,const char * = 0);
-  Fl_Widget *which(int event_x, int event_y);
-  ~Fl_Tabs();
+
+  // Returns the widget of the tab the user clicked on at event_x/event_y.
+  virtual Fl_Widget *which(int event_x, int event_y);
+
+  // Returns the position and size available to be used by its children.
   void client_area(int &rx, int &ry, int &rw, int &rh, int tabh=0);
+
   /**
     Sets the tab label alignment.
 

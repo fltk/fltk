@@ -48,6 +48,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
+  - Some methods of Fl_Tabs are now virtual and/or protected for easier
+    subclassing without code duplication (STR #3211 and others).
+    To be continued...
   - Separated Fl_Input_Choice.H and Fl_Input_Choice.cxx (STR #2750, #2752).
   - Separated Fl_Spinner.H and Fl_Spinner.cxx (STR #2776).
   - New method Fl_Spinner::wrap(int) allows to set wrap mode at bounds if
