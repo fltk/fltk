@@ -1214,7 +1214,13 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
 void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
   PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
   pango_matrix_translate(&mat, x+offset_x_*scale_, y+offset_y_*scale_); // 1.6
+  double l = width_unscaled(str, n);
   pango_matrix_rotate(&mat, angle); // 1.6
+  pango_context_set_matrix(pctxt_, &mat); // 1.6
+  pango_layout_set_text(playout_, str, n);
+  int w, h;
+  pango_layout_get_pixel_size(playout_, &w, &h);
+  pango_matrix_scale(&mat, l/w, l/w); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
   do_draw(0, str, n, 0, 0);
   pango_context_set_matrix(pctxt_, NULL); // 1.6
