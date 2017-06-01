@@ -355,8 +355,6 @@ int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned s
 }
 
 
-#if defined(FLTK_HIDPI_SUPPORT) || !(defined(WIN32) || defined(__APPLE__))
-
 void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
 {
   float old_f = this->scale(screen);
@@ -482,22 +480,18 @@ int Fl_Screen_Driver::scale_handler(int event)
   return 0;
 }
 
-#endif // FLTK_HIDPI_SUPPORT
-
 
 // determine the scaling value used at startup time (helps supporting HiDPI displays)
 float Fl_Screen_Driver::default_scale_factor()
 {
   float factor = 1;
-#if defined(FLTK_HIDPI_SUPPORT) || !(defined(WIN32) || defined(__APPLE__))
   char *p = 0;
-  if ((p = getenv("FLTK_SCALING_FACTOR"))) {
+  if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
     sscanf(p, "%f", &factor);
   }
   else {
     factor = desktop_scale_factor();
   }
-#endif // FLTK_HIDPI_SUPPORT
   return factor;
 }
 
@@ -511,9 +505,7 @@ void Fl_Screen_Driver::open_display()
     if (rescalable()) {
       float factor = default_scale_factor();
       for (int i = 0; i < screen_count(); i++) scale(i, factor);
-#if defined(FLTK_HIDPI_SUPPORT) || !(defined(WIN32) || defined(__APPLE__))
       Fl::add_handler(Fl_Screen_Driver::scale_handler);
-#endif
       Fl_Graphics_Driver::default_driver().scale(factor);
     }
   }
