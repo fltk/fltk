@@ -502,6 +502,23 @@ float Fl_Screen_Driver::default_scale_factor()
 }
 
 
+void Fl_Screen_Driver::open_display()
+{
+  open_display_platform();
+  static bool been_here = false;
+  if (!been_here) {
+    been_here = true;
+    if (rescalable()) {
+      float factor = default_scale_factor();
+      for (int i = 0; i < screen_count(); i++) scale(i, factor);
+#if defined(FLTK_HIDPI_SUPPORT) || !(defined(WIN32) || defined(__APPLE__))
+      Fl::add_handler(Fl_Screen_Driver::scale_handler);
+#endif
+      Fl_Graphics_Driver::default_driver().scale(factor);
+    }
+  }
+}
+
 //
 // End of "$Id$".
 //

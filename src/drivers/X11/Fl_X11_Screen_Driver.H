@@ -99,7 +99,7 @@ public:
   virtual void get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();
-  virtual void open_display();
+  virtual void open_display_platform();
   virtual void close_display();
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);

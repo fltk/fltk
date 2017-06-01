@@ -601,7 +601,7 @@ void Fl_X11_Screen_Driver::disable_im() {
   fl_xim_deactivate();
 }
 
-void Fl_X11_Screen_Driver::open_display() {
+void Fl_X11_Screen_Driver::open_display_platform() {
   if (fl_display) return;
 
   setlocale(LC_CTYPE, "");

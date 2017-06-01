@@ -76,7 +76,7 @@ public:
   virtual void get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();
-  virtual void open_display();
+  virtual void open_display_platform();
   virtual void offscreen_size(Fl_Offscreen off, int &width, int &height);
   
   virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }

@@ -155,8 +155,10 @@ public:
   // optional methods to enable/disable input methods for complex scripts
   virtual void enable_im() {}
   virtual void disable_im() {}
+  // calls open_display_platform() and then does platform-independent work
+  void open_display();
   // implement to open access to the display
-  virtual void open_display() {}
+  virtual void open_display_platform() {}
   // optional method to close display access
   virtual void close_display() {}
   // compute dimensions of an Fl_Offscreen

@@ -492,7 +492,7 @@ int Fl_WinAPI_Screen_Driver::ready() {
 
 //FILE *LOG=fopen("log.log","w");
 
-void Fl_WinAPI_Screen_Driver::open_display() {
+void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
 
   if (beenHereDoneThat)

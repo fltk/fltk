@@ -1703,7 +1703,7 @@ void Fl_Darwin_System_Driver::open_callback(void (*cb)(const char *)) {
 }
 */
 
-void Fl_Cocoa_Screen_Driver::open_display() {
+void Fl_Cocoa_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
