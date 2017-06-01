@@ -1190,7 +1190,7 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
     Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  if (this->Fl_Graphics_Driver::font() == fnum && this->size_unscaled() == size) return;
+  if (this->Fl_Graphics_Driver::font() == fnum && this->size_unscaled() == size && this->font_descriptor()) return;
   fl_xft_font(this, fnum, size, 0);
   init_built_in_fonts();
   if (pfd_) pango_font_description_free(pfd_);
