@@ -42,6 +42,7 @@ protected:
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
 
 public:
+  Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() { scale_ = 1; }
   // --- display management
   virtual int visual(int flags);
   // --- screen configuration
