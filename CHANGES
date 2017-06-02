@@ -8,7 +8,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   - CMake is the primary supported build system in FLTK 1.4.0 and later.
     CMake can be used to generate Makefiles, IDE project files, and
     several other build systems by using different "generators" provided
-    by CMake (for instance Ninja, CodeBlocks, Eclipse, KDevelop3, etc.).
+    by CMake (for instance Ninja, CodeBlocks, Eclipse, KDevelop3, Xcode, etc.).
     See README.CMake.txt for more information.
 
   - autoconf/configure is still supported by the FLTK team for backwards
@@ -20,7 +20,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   - (add new items here)
   - X11 platform: Added support for HiDPI displays and for rescaling any window
     at run-time under user control. Under the gnome desktop, FLTK applications
-    detect the current gnome scaling fator and use it to scale all FLTK windows.
+    detect the current gnome scaling factor and use it to scale all FLTK windows.
     Under other desktops, the FLTK_SCALING_FACTOR environment variable can be
     used to set the starting scaling factor of all FLTK applications.
     In addition, it is possible to rescale all FLTK windows mapped to a screen
