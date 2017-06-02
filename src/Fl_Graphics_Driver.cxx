@@ -24,6 +24,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/math.h>
+#include <FL/x.H>
 
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graphics operations
 
@@ -377,6 +378,7 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
 
 
 void Fl_Scalable_Graphics_Driver::font(Fl_Font face, Fl_Fontsize size) {
+  if (!font_descriptor()) fl_open_display(); // to catch the correct initial value of scale_
   font_unscaled(face, size * scale_);
 }
 
