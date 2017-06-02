@@ -18,6 +18,16 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - X11 platform: Added support for HiDPI displays and for rescaling any window
+    at run-time under user control. Under the gnome desktop, FLTK applications
+    detect the current gnome scaling fator and use it to scale all FLTK windows.
+    Under other desktops, the FLTK_SCALING_FACTOR environment variable can be
+    used to set the starting scaling factor of all FLTK applications.
+    In addition, it is possible to rescale all FLTK windows mapped to a screen
+    by typing ctrl-'+' (enlarge), ctrl-'-' (shrink) or ctrl-'0' (back to starting
+    factor value). Windows moved between screens adjust to the scaling factor of
+    their screen. This supports desktops mixing screens with distinct resolutions.
+    [HiDPI displays have been supported since FLTK 1.3.3 for the WIN32 and MacOS platforms].
   - New method shadow(int) allows to disable the shadows of the hands
     of Fl_Clock, Fl_Clock_Output, and derived widgets.
   - New method Fl_Tabs::tab_align() allows to set alignment of tab labels,
