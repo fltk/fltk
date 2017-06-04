@@ -3,7 +3,7 @@
 //
 // Browser widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -545,12 +545,12 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
       case 'r': talign = FL_ALIGN_RIGHT; break;
       case 'B': 
 	if (!(l->flags & SELECTED)) {
-	  fl_color((Fl_Color)strtol(str, &str, 10));
+	  fl_color((Fl_Color)strtoul(str, &str, 10));
 	  fl_rectf(X, Y, w1, H);
 	} else while (isdigit(*str & 255)) str++; // skip digits
         break;
       case 'C':
-	lcol = (Fl_Color)strtol(str, &str, 10);
+	lcol = (Fl_Color)strtoul(str, &str, 10);
 	break;
       case 'F':
 	font = (Fl_Font)strtol(str, &str, 10);

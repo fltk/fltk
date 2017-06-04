@@ -75,6 +75,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Bug Fixes
 
   - (add new items here)
+  - Fix Fl_Browser background and text color parsing (STR #3376).
   - Fix STR #3374, a regression introduced when adding pango support.
   - Fix Windows CreateDC/DeleteDC mismatch (STR #3373).
   - Fix Fl_Tabs label drawing for Fl_Window children (STR #3075).
