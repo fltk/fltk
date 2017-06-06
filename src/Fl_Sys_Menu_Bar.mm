@@ -57,10 +57,7 @@ extern void (*fl_unlock_function)();
 /*  Each MacOS system menu item contains a pointer to a record of type sys_menu_item defined below.
     The purpose of these records is to associate each MacOS system menu item with a relevant Fl_Menu_Item.
 
-    Note: in the below, 'rank' is similar to an FLTK menu() 'index'.
-    Let's avoid exposing Mac internal terminology like 'rank' to FLTK users; stick with 'index'.
-
-    If use_rank is YES, the "rank" field is used, and fl_sys_menu_bar->menu() + rank is the address 
+    If use_index is YES, the "index" field is used, and fl_sys_menu_bar->menu() + index is the address
     of the relevant Fl_Menu_Item;
     Otherwise, the "item" field points to the relevant Fl_Menu_Item.
     This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus, 
@@ -71,10 +68,10 @@ extern void (*fl_unlock_function)();
 */
 typedef struct {
   union {
-    int rank;
+    int index;
     const Fl_Menu_Item *item;
   };
-  BOOL use_rank;
+  BOOL use_index;
 } sys_menu_item;
 
 // Apple App Menu
@@ -104,7 +101,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 // returns the Fl_Menu_Item corresponding to this system menu item
 {
   sys_menu_item *smi = (sys_menu_item*)[(NSData*)[self representedObject] bytes];
-  if (smi->use_rank) return fl_sys_menu_bar->menu() + smi->rank;
+  if (smi->use_index) return fl_sys_menu_bar->menu() + smi->index;
   return smi->item;
 }
 - (void) itemCallback:(Fl_Menu_*)menu
@@ -190,9 +187,9 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 					 keyEquivalent:@""];
   sys_menu_item smi;
   // >= 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
-  smi.rank = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
-  smi.use_rank = (smi.rank >= 0);
-  if (!smi.use_rank) smi.item = mitem;
+  smi.index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
+  smi.use_index = (smi.index >= 0);
+  if (!smi.use_index) smi.item = mitem;
   NSData *pointer = [NSData dataWithBytes:&smi length:sizeof(smi)];
   [item setRepresentedObject:pointer];
   [menu addItem:item];
@@ -385,9 +382,9 @@ void Fl_Sys_Menu_Bar::menu(const Fl_Menu_Item *m)
 int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
 {
   fl_open_display();
-  int rank = Fl_Menu_::add(label, shortcut, cb, user_data, flags);
+  int index = Fl_Menu_::add(label, shortcut, cb, user_data, flags);
   update();
-  return rank;
+  return index;
 }
 
 /**
@@ -399,9 +396,9 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 int Fl_Sys_Menu_Bar::add(const char* str)
 {
   fl_open_display();
-  int rank = Fl_Menu_::add(str);
+  int index = Fl_Menu_::add(str);
   update();
-  return rank;
+  return index;
 }
 
 /**
@@ -416,9 +413,9 @@ int Fl_Sys_Menu_Bar::add(const char* str)
 int Fl_Sys_Menu_Bar::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
 {
   fl_open_display();
-  int rank = Fl_Menu_::insert(index, label, shortcut, cb, user_data, flags);
+  int menu_index = Fl_Menu_::insert(index, label, shortcut, cb, user_data, flags);
   update();
-  return rank;
+  return menu_index;
 }
 
 void Fl_Sys_Menu_Bar::clear()
@@ -529,11 +526,11 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
   custom_menu = new Fl_Menu_Bar(0,0,0,0);
   custom_menu->menu(m);
   NSMenu *menu = [[[NSApp mainMenu] itemAtIndex:0] submenu]; // the application menu
-  NSInteger to_rank;
+  NSInteger to_index;
   if ([[menu itemAtIndex:2] action] != @selector(printPanel)) { // the 'Print' item was removed
     [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
-    to_rank = 2;
-  } else to_rank = 3; // after the "Print Front Window" item
+    to_index = 2;
+  } else to_index = 3; // after the "Print Front Window" item
   NSInteger count = [menu numberOfItems];
   createSubMenu(menu, m, NULL, @selector(customCallback)); // add new items at end of application menu
   NSInteger count2 = [menu numberOfItems];
@@ -541,7 +538,7 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
     NSMenuItem *item = [menu itemAtIndex:i];
     [item retain];
     [menu removeItemAtIndex:i];
-    [menu insertItem:item atIndex:to_rank++];
+    [menu insertItem:item atIndex:to_index++];
     [item release];
   }
 }
