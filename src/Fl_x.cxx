@@ -44,6 +44,7 @@
 #  include <unistd.h>
 #  include <time.h>
 #  include <sys/time.h>
+#  include <math.h>
 #  include <X11/Xmd.h>
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
@@ -2037,8 +2038,8 @@ fprintf(stderr,"\n");*/
     resize_bug_fix = window;
 #if USE_XFT    
     if (!Fl_X11_Window_Driver::data_for_resize_window_between_screens_.busy &&
-       ( W != int(window->w()*s) || H != int(window->h()*s) ) ) {
-        window->resize(X/s, Y/s, W/s, H/s);
+      ( ceil(W/s) != window->w() || ceil(H/s) != window->h() ) ) {
+        window->resize(X/s, Y/s, ceil(W/s), ceil(H/s));
     } else {
       window->position(X/s, Y/s);
     }
