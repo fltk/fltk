@@ -468,7 +468,8 @@ int Fl_Screen_Driver::scale_handler(int event)
         }
       }
       if (key == '-') i--; else i++;
-      if (i < 0) i = 0; if (i >= count) i = count - 1;
+      if (i < 0) i = 0;
+      else if (i >= count) i = count - 1;
       f = scaling_values[i];
     }
     if (f == old_f) return 1;
