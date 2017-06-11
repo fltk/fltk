@@ -43,6 +43,7 @@
 #include <windows.h>
 #include <ole2.h>
 #include <shellapi.h>
+#include <math.h> // for ceil()
 
 void fl_free_fonts(void);
 void fl_release_dc(HWND,HDC);
@@ -1425,7 +1426,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       } else {
 	Fl::handle(FL_SHOW, window);
 	resize_bug_fix = window;
-	window->size(LOWORD(lParam)/scale, HIWORD(lParam)/scale);
+	window->size( ceil(LOWORD(lParam)/scale), ceil(HIWORD(lParam)/scale) );
 //fprintf(LOG,"WM_SIZE parent size(%d,%d) s=%.2f\n",int(LOWORD(lParam)/scale),int(HIWORD(lParam)/scale),scale);
       }
     }
