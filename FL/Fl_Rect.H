@@ -52,15 +52,11 @@ public:
   Fl_Rect(int X, int Y, int W, int H)
   : x_(X), y_(Y), w_(W), h_(H) {}
 
-  /** Copy constructor. */
-  Fl_Rect (const Fl_Rect& r)
-  : x_(r.x()), y_(r.y()), w_(r.w()), h_(r.h()) {}
-
- /** This constructor creates a rectangle based a widget's position and size. */
+ /** This constructor creates a rectangle based on a widget's position and size. */
   Fl_Rect (const Fl_Widget& widget)
   : x_(widget.x()), y_(widget.y()), w_(widget.w()), h_(widget.h()) {}
 
- /** This constructor creates a rectangle based a widget's position and size. */
+ /** This constructor creates a rectangle based on a widget's position and size. */
   Fl_Rect (const Fl_Widget* const widget)
   : x_(widget->x()), y_(widget->y()), w_(widget->w()), h_(widget->h()) {}
 
