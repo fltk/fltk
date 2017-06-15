@@ -1346,7 +1346,7 @@ static bool gnome_scale_factor(float& factor) {
         strcpy(str, str2);  v = v2;
       }
       ubuntu_f = v/8.;
-      printf("com.ubuntu.user-interface  scale-factor name=%s value=%d factor=%g\n", str, v, ubuntu_f);
+      // printf("com.ubuntu.user-interface  scale-factor name=%s value=%d factor=%g\n", str, v, ubuntu_f);
       g_variant_iter_free_f(iter);
       g_variant_unref_f(gvar);
       g_object_unref_f(gset);
@@ -1363,7 +1363,7 @@ static bool gnome_scale_factor(float& factor) {
       unsigned v;
       g_variant_get_f(gvar, "u", &v);
       ubuntu_desktop_f = v;
-      printf("org.gnome.desktop.interface  scaling-factor value=%u factor=%g\n", v, ubuntu_desktop_f);
+      // printf("org.gnome.desktop.interface  scaling-factor value=%u factor=%g\n", v, ubuntu_desktop_f);
       g_variant_unref_f(gvar);
       g_object_unref_f(gset);
       if (ubuntu_desktop_f != 1) {
@@ -1388,7 +1388,7 @@ static bool gnome_scale_factor(float& factor) {
       //str = (char*)g_variant_get_type_f(gvar); // -> "i"
       g_variant_get_f(gvar, "i", &v);
       gnome_f = v;
-      printf("org.gnome.settings-daemon.plugins.xsettings  overrides name=%s value=%d factor=%g\n", str, v, gnome_f);
+      // printf("org.gnome.settings-daemon.plugins.xsettings  overrides name=%s value=%d factor=%g\n", str, v, gnome_f);
       free(str);
       break;
     }

@@ -493,6 +493,9 @@ float Fl_Screen_Driver::default_scale_factor()
   else {
     factor = desktop_scale_factor();
   }
+  // checks to prevent potential crash (factor <= 0) or very large factors
+  if (factor < 0.25) factor = 0.25;
+  else if (factor > 10.0) factor = 10.0;
   return factor;
 }
 
