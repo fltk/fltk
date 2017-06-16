@@ -519,15 +519,16 @@ public:
    
    Same as w() if applied to a subwindow.
    */
-  int decorated_w();
+  int decorated_w() const;
+
   /** Returns the window height including any window title bar and any frame 
    added by the window manager.
    
    Same as h() if applied to a subwindow.
    */
-  int decorated_h();
+  int decorated_h() const;
 
-  Fl_Window_Driver *driver() { return pWindowDriver; }
+  Fl_Window_Driver *driver() const { return pWindowDriver; }
 
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Window* as_window() { return this; }
