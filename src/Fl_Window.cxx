@@ -455,13 +455,13 @@ void Fl_Window::wait_for_expose() {
 }
 
 
-int Fl_Window::decorated_w()
+int Fl_Window::decorated_w() const
 {
   return pWindowDriver->decorated_w();
 }
 
 
-int Fl_Window::decorated_h()
+int Fl_Window::decorated_h() const
 {
   return pWindowDriver->decorated_h();
 }
