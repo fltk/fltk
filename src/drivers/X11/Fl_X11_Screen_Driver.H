@@ -57,7 +57,6 @@ public:
   virtual float desktop_scale_factor();
   int screen_num_unscaled(int x, int y);
   int screen_num_unscaled(int x, int y, int w, int h);
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H);
 #endif
   
   static int ewmh_supported();
@@ -96,7 +95,7 @@ public:
   virtual void compose_reset();
   virtual int text_display_can_leak();
   virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
-  virtual void get_mouse(int &x, int &y);
+  virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display_platform();

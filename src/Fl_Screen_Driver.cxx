@@ -54,25 +54,9 @@ int Fl_Screen_Driver::visual(int) {
 }
 
 
-void Fl_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H)
-{
-  int x, y;
-  get_mouse(x, y);
-  screen_xywh(X, Y, W, H, x, y);
-}
-
-
 void Fl_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my)
 {
   screen_xywh(X, Y, W, H, screen_num(mx, my));
-}
-
-
-void Fl_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H)
-{
-  int x, y;
-  get_mouse(x, y);
-  screen_work_area(X, Y, W, H, x, y);
 }
 
 
@@ -103,7 +87,7 @@ int Fl_Screen_Driver::screen_num(int x, int y)
 
   for (int i = 0; i < num_screens; i ++) {
     int sx, sy, sw, sh;
-    Fl::screen_xywh(sx, sy, sw, sh, i);
+    screen_xywh(sx, sy, sw, sh, i);
     if ((x >= sx) && (x < (sx+sw)) && (y >= sy) && (y < (sy+sh))) {
       screen = i;
       break;

@@ -74,7 +74,7 @@ public:
   virtual int dnd(int unused);
   virtual int compose(int &del);
   virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
-  virtual void get_mouse(int &x, int &y);
+  virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display_platform();

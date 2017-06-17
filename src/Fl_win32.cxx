@@ -583,11 +583,12 @@ void Fl_WinAPI_Screen_Driver::disable_im() {
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
+int Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
   POINT p;
   GetCursorPos(&p);
   x = p.x;
   y = p.y;
+  return screen_num(x, y);
 }
 
 ////////////////////////////////////////////////////////////////

@@ -733,10 +733,12 @@ int Fl_X11_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
 }
 
 
-void Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
-  float s = scale(get_mouse_unscaled(xx, yy));
+int Fl_X11_Screen_Driver::get_mouse(int &xx, int &yy) {
+  int snum = get_mouse_unscaled(xx, yy);
+  float s = scale(snum);
   xx = xx/s;
   yy = yy/s;
+  return snum;
 }
 
 ////////////////////////////////////////////////////////////////

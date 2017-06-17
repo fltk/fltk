@@ -90,7 +90,7 @@ public:
   virtual int compose(int &del);
   virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
-  virtual void get_mouse(int &x, int &y);
+  virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display_platform();

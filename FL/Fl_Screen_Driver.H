@@ -76,16 +76,14 @@ public:
   virtual int w() = 0;
   virtual int h() = 0;
   virtual int screen_count();
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H);
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
+  void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) = 0;
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
+  void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
   virtual int screen_num(int x, int y);
   virtual int screen_num(int x, int y, int w, int h);
   virtual void screen_dpi(float &h, float &v, int n=0) = 0;
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
+  void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) = 0;
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H);
   // --- audible output
   virtual void beep(int type) = 0;
   // --- global events
@@ -151,7 +149,7 @@ public:
   // the default implementation may be enough
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
   // implement to support Fl::get_mouse()
-  virtual void get_mouse(int &x, int &y) {}
+  virtual int get_mouse(int &x, int &y) {return 0;}
   // optional methods to enable/disable input methods for complex scripts
   virtual void enable_im() {}
   virtual void disable_im() {}

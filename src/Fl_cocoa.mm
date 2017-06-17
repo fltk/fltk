@@ -1896,12 +1896,13 @@ void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, in
 /*
  * get the current mouse pointer world coordinates
  */
-void Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y) 
+int Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y)
 {
   open_display();
   NSPoint pt = [NSEvent mouseLocation];
   x = int(pt.x);
   y = int(main_screen_height - pt.y);
+  return screen_num(x, y);
 }
 
 

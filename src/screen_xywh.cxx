@@ -171,7 +171,9 @@ void Fl::screen_dpi(float &h, float &v, int n)
  */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H)
 {
-  Fl::screen_driver()->screen_xywh(X, Y, W, H);
+  int mx, my;
+  int nscreen = Fl::screen_driver()->get_mouse(mx, my);
+  Fl::screen_driver()->screen_xywh(X, Y, W, H, nscreen);
 }
 
 
@@ -182,7 +184,9 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H)
  */
 void Fl::screen_work_area(int &X, int &Y, int &W, int &H)
 {
-  Fl::screen_driver()->screen_xywh(X, Y, W, H);
+  int mx, my;
+  int nscreen = Fl::screen_driver()->get_mouse(mx, my);
+  Fl::screen_driver()->screen_work_area(X, Y, W, H, nscreen);
 }
 
 

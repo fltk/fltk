@@ -1215,17 +1215,6 @@ int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y, int w, int h)
 #endif
 
 #if USE_XFT
-void Fl_X11_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H)
-{
-  int xx, yy;
-  int ns = get_mouse_unscaled(xx,yy);
-  float s = screens[ns].scale;
-  X = screens[ns].x_org / s;
-  Y = screens[ns].y_org / s;
-  W = screens[ns].width / s;
-  H = screens[ns].height / s;
-}
-
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 
