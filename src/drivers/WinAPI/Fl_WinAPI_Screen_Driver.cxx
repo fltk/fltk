@@ -159,10 +159,10 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  X = work_area[n].left;
-  Y = work_area[n].top;
-  W = work_area[n].right - X;
-  H = work_area[n].bottom - Y;
+  X = work_area[n].left/scale_;
+  Y = work_area[n].top/scale_;
+  W = (work_area[n].right - X)/scale_;
+  H = (work_area[n].bottom - Y)/scale_;
 }
 
 
@@ -174,10 +174,10 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-    X = screens[n].left;
-    Y = screens[n].top;
-    W = screens[n].right - screens[n].left;
-    H = screens[n].bottom - screens[n].top;
+    X = screens[n].left/scale_;
+    Y = screens[n].top/scale_;
+    W = (screens[n].right - screens[n].left)/scale_;
+    H = (screens[n].bottom - screens[n].top)/scale_;
   } else {
     /* Fallback if something is broken... */
     X = 0;
@@ -512,13 +512,19 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
 }
 
 
-Fl_RGB_Image *				// O - image or NULL if failed
+Fl_RGB_Image *                                                  // O - image or NULL if failed
 Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate
                                             int   X,		// I - Left position
                                             int   Y,		// I - Top position
                                             int   w,		// I - Width of area to read
                                             int   h,		// I - Height of area to read
                                             int   alpha) 	// I - Alpha value for image (0 for none)
+{
+  float s = Fl_Surface_Device::surface()->driver()->scale();
+  return read_win_rectangle_unscaled(p, X*s, Y*s, w*s, h*s, alpha);
+}
+
+Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(uchar *p, int X, int Y, int w, int h, int alpha)
 {
   int	d;			// Depth of image
   
@@ -614,11 +620,11 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NU
   return rgb;
 }
 
-/** Returns the current desktop scaling factor (1.75 for example)
+/* Returns the current desktop scaling factor for screen_num (1.75 for example)
  */
-float Fl_WinAPI_Screen_Driver::desktop_scaling_factor() {
+float Fl_WinAPI_Screen_Driver::DWM_scaling_factor(int screen_num) {
 #ifdef FLTK_HIDPI_SUPPORT
-  return 1;// this becomes useless if FLTK app are made DPI-aware by calling SetProcessDpiAwareness()
+  return scale(screen_num);
 #else
   // Compute the global desktop scaling factor: 1, 1.25, 1.5, 1.75, etc...
   // This factor can be set in Windows 10 by
@@ -649,6 +655,20 @@ void Fl_WinAPI_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &
     width = bitmap.bmWidth;
     height = bitmap.bmHeight;
   }
+}
+
+int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
+{
+  int screen = 0;
+  if (num_screens < 0) init();
+  for (int i = 0; i < num_screens; i ++) {
+    if (x >= screens[i].left && x < screens[i].right &&
+        y >= screens[i].top && y < screens[i].bottom) {
+      screen = i;
+      break;
+    }
+  }
+  return screen;
 }
 
 //

@@ -21,6 +21,7 @@
 
 #ifdef FL_CFG_GFX_GDI
 #include "Fl_GDI_Graphics_Driver.H"
+#include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -55,7 +56,9 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
     w = int(w*d);
     h = int(h*d);
   }
-  offscreen = off ? off : CreateCompatibleBitmap( (fl_graphics_driver->gc() ? (HDC)fl_graphics_driver->gc() : fl_GetDC(0) ) , w, h);
+  HDC gc = (HDC)Fl_Graphics_Driver::default_driver().gc();
+  offscreen = off ? off : CreateCompatibleBitmap( (gc ? gc : fl_GetDC(0) ) , w, h);
+  if (!offscreen) offscreen = CreateCompatibleBitmap(fl_GetDC(0), w, h);
   driver(new Fl_GDI_Graphics_Driver);
   if (d != 1 && high_res) driver()->scale(d);
   _sgc = NULL;
@@ -93,11 +96,8 @@ void Fl_GDI_Image_Surface_Driver::untranslate() {
 
 Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 {
-  unsigned char *data;
-  data = fl_read_image(NULL, 0, 0, width, height, 0);
+  Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, width, height, 0);
   previous->driver()->gc(_sgc);
-  Fl_RGB_Image *image = new Fl_RGB_Image(data, width, height);
-  image->alloc_array = 1;
   return image;
 }
 

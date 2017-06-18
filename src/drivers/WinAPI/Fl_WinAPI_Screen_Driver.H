@@ -40,6 +40,8 @@ protected:
 
   static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
+  int screen_num_unscaled(int x, int y);
+  int get_mouse_unscaled(int &mx, int &my);
 
 public:
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() { scale_ = 1; }
@@ -53,7 +55,7 @@ public:
   virtual int h();
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
   virtual void screen_dpi(float &h, float &v, int n=0);
-  static float desktop_scaling_factor();
+  float DWM_scaling_factor(int screen_num);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
   // --- audible output
   virtual void beep(int type);
@@ -74,6 +76,7 @@ public:
   virtual int dnd(int unused);
   virtual int compose(int &del);
   virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
+  Fl_RGB_Image *read_win_rectangle_unscaled(uchar *p, int X, int Y, int w, int h, int alpha);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();

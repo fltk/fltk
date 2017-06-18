@@ -59,14 +59,11 @@ Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 }
 
 
-// --- private
-
 RECT // frame of the decorated window in screen coordinates
   Fl_WinAPI_Window_Driver::border_width_title_bar_height(
                                                          int &bx, // left and right border width
                                                          int &by, // bottom border height (=bx)
-                                                         int &bt, // height of window title bar
-                                                         float *pscaling // display scaling factor
+                                                         int &bt  // height of window title bar
                                                          )
 {
   Fl_Window *win = pWindow;
@@ -83,14 +80,12 @@ RECT // frame of the decorated window in screen coordinates
       const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
       if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
         need_r = 0;
-        scaling = Fl_WinAPI_Screen_Driver::desktop_scaling_factor();
+        scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(screen_num());
       }
     }
     if (need_r) {
       GetWindowRect(fl_xid(win), &r);
     }
-    if (pscaling) *pscaling = scaling;
-
     bx = (r.right - r.left - int(win->w() * scaling))/2;
     if (bx < 1) bx = 1;
     by = bx;
@@ -105,16 +100,24 @@ RECT // frame of the decorated window in screen coordinates
 int Fl_WinAPI_Window_Driver::decorated_w()
 {
   int bt, bx, by;
+  float s = Fl::screen_driver()->scale(screen_num());
   border_width_title_bar_height(bx, by, bt);
-  return w() + 2 * bx;
+  int mini_bx = bx/s; if (mini_bx < 1) mini_bx = 1;
+  return w() + 2 * mini_bx;
 }
 
 int Fl_WinAPI_Window_Driver::decorated_h()
 {
   int bt, bx, by;
-  float scaling = 1;
-  border_width_title_bar_height(bx, by, bt, &scaling);
-  return h() + bt/scaling + 2 * by;
+  border_width_title_bar_height(bx, by, bt);
+#ifdef FLTK_HIDPI_SUPPORT
+  float s = Fl::screen_driver()->scale(screen_num());
+  int mini_by = by/s; if (mini_by < 1) mini_by = 1;
+  return h() + (bt + by)/s + mini_by;
+#else
+  float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+  return h() + bt/scaling + 2 * by +1;
+#endif
 }
 
 
@@ -596,7 +599,7 @@ int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, 
   static fl_GetRandomRgn_func fl_GetRandomRgn = 0L;
   static char first_time = 1;
   // We will have to do some Region magic now, so let's see if the
-  // required function is available (and it should be staring w/Win95)
+  // required function is available (and it should be starting w/Win95)
   if (first_time) {
     HMODULE hMod = GetModuleHandle("GDI32.DLL");
     if (hMod) {
@@ -604,6 +607,8 @@ int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, 
     }
     first_time = 0;
   }
+  float s = Fl::screen_driver()->scale(screen_num());
+  src_x *= s; src_y *= s; src_w *= s; src_h *= s; dest_x *= s; dest_y *= s;
   // Now check if the source scrolling area is fully visible.
   // If it is, we will do a quick scroll and just update the
   // newly exposed area. If it is not, we go the safe route and

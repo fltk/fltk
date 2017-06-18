@@ -62,7 +62,6 @@ class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     HICON small_icon;
   };
 private:
-  RECT border_width_title_bar_height(int &bx, int &by, int &bt, float *pscaling = NULL);
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
 public:
@@ -70,6 +69,7 @@ public:
   ~Fl_WinAPI_Window_Driver();
   static inline Fl_WinAPI_Window_Driver* driver(Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)w->driver();}
   HDC private_dc; // used for OpenGL
+  RECT border_width_title_bar_height(int &bx, int &by, int &bt);
 
   struct icon_data *icon_;
   HCURSOR cursor;

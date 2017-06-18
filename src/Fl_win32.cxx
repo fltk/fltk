@@ -505,10 +505,8 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
   HMODULE hMod  = LoadLibrary("Shcore.DLL");
   if (hMod) {
     SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
-    HRESULT r = 0;
     const int PROCESS_PER_MONITOR_DPI_AWARE  = 2;
-    if (fl_SetProcessDpiAwareness) r = fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-//fprintf(LOG,"SetProcessDpiAwareness=%p result=%d\n",fl_SetProcessDpiAwareness,r);fflush(LOG);
+    if (fl_SetProcessDpiAwareness) fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
   }
 #endif // FLTK_HIDPI_SUPPORT
   OleInitialize(0L);
@@ -583,12 +581,19 @@ void Fl_WinAPI_Screen_Driver::disable_im() {
 
 ////////////////////////////////////////////////////////////////
 
-int Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
+int Fl_WinAPI_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
   POINT p;
   GetCursorPos(&p);
-  x = p.x;
-  y = p.y;
-  return screen_num(x, y);
+  mx = p.x; my = p.y;
+  return screen_num_unscaled(mx, my);
+}
+
+int Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
+  int n = get_mouse_unscaled(x, y);
+  float s = scale(n);
+  x = x/s;
+  y = y/s;
+  return n;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -801,7 +806,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	  int hdots = GetDeviceCaps(hdc, HORZRES);
 	  ReleaseDC(NULL, hdc);
 	  float factor =  (100.f * hmm) / hdots;
-          float scaling = Fl_WinAPI_Screen_Driver::desktop_scaling_factor();
+          float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(receiver.top_window()->driver()->screen_num());
 	  width = int(width * scaling / factor);  // convert to screen pixel unit
           height = int(height * scaling / factor);
 	  RECT rect = {0, 0, width, height};
@@ -1153,7 +1158,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
 
     // convert i->region in FLTK units to R2 in drawing units
-    R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, false);
+    R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL, false);
 
     if (R2) {
       // Also tell WIN32 that we are drawing someplace else as well...
@@ -1168,7 +1173,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     
     // convert R2 in drawing units to i->region in FLTK units
-    i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1/scale, false, true);
+    i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1/scale, NULL, false /*, true*/);
 
     window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
     // These next two statements should not be here, so that all update
@@ -1524,8 +1529,20 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   int ret = bx = by = bt = 0;
 
   int fallback = 1;
+  float s = Fl::screen_driver()->scale(((Fl_Window*)w)->driver()->screen_num());
   if (!w->parent()) {
-    if (fl_xid(w) || style) {
+    if (fl_xid(w)) {
+      Fl_WinAPI_Window_Driver *dr = (Fl_WinAPI_Window_Driver*)w->driver();
+      dr->border_width_title_bar_height(bx, by, bt);
+      xoff = bx;
+      yoff = by + bt;
+      dx = 2*bx;
+      dy = 2*by + bt;
+      X = w->x()*s - bx;
+      Y = w->y()*s - bt - by;
+      W = w->w()*s + dx;
+      H = w->h()*s + dy;
+    } else if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
       // required decorated window rectangle for a desired client rectangle.
       // If any part of the function above fails, we will drop to a
@@ -1539,10 +1556,10 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
 	 }
 
       RECT r;
-      r.left = w->x();
-      r.top = w->y();
-      r.right = w->x()+w->w();
-      r.bottom = w->y()+w->h();
+      r.left = w->x() * s;
+      r.top = w->y() * s;
+      r.right = (w->x()+w->w())*s;
+      r.bottom = (w->y()+w->h())*s;
       // get the decoration rectangle for the desired client rectangle
       BOOL ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
       if (ok) {
@@ -1550,13 +1567,13 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
         Y = r.top;
         W = r.right - r.left;
         H = r.bottom - r.top;
-        bx = w->x() - r.left;
-        by = r.bottom - w->y() - w->h(); // height of the bottom frame
-        bt = w->y() - r.top - by; // height of top caption bar
+        bx = w->x() *s - r.left;
+        by = r.bottom - (w->y() + w->h())*s; // height of the bottom frame
+        bt = w->y() * s - r.top - by; // height of top caption bar
         xoff = bx;
         yoff = by + bt;
-        dx = W - w->w();
-        dy = H - w->h();
+        dx = W - w->w() * s;
+        dy = H - w->h() * s;
         if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh))
           ret = 2;
         else
@@ -1598,7 +1615,8 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   //Find screen that contains most of the window
   //FIXME: this ought to be the "work area" instead of the entire screen !
   int scr_x = 0, scr_y = 0, scr_w = 0, scr_h = 0;
-  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X, Y, W, H);
+  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X/s, Y/s, W/s, H/s);
+  scr_x *= s; scr_y *= s; scr_w *= s; scr_h *= s;
   //Make border's lower right corner visible
   if (scr_x+scr_w < X+W) X = scr_x+scr_w - W;
   if (scr_y+scr_h < Y+H) Y = scr_y+scr_h - H;
@@ -1606,8 +1624,8 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   if (X<scr_x) X = scr_x;
   if (Y<scr_y) Y = scr_y;
   //Make client area's lower right corner visible
-  if (scr_x+scr_w < X+dx+ w->w()) X = scr_x+scr_w - w->w() - dx;
-  if (scr_y+scr_h < Y+dy+ w->h()) Y = scr_y+scr_h - w->h() - dy;
+  if (scr_x+scr_w < X+dx+ w->w()) X = scr_x+scr_w - w->w()*s - dx;
+  if (scr_y+scr_h < Y+dy+ w->h()) Y = scr_y+scr_h - w->h()*s - dy;
   //Make client area's upper left corner visible
   if (X+xoff < scr_x) X = scr_x-xoff;
   if (Y+yoff < scr_y) Y = scr_y-yoff;
@@ -1659,6 +1677,8 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
     if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
     int dummy_x, dummy_y, bt, bx, by;
     //Ignore window managing when resizing, so that windows (and more
+    float s = Fl::screen_driver()->scale(screen_num());
+    X *= s; Y *= s; W *= s; H *= s;
     //specifically menus) can be moved offscreen.
     if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
       X -= bx;
@@ -1670,8 +1690,8 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
     // will cause continouly  new redraw events.
     if (W<=0) W = 1;
     if (H<=0) H = 1;
-    float s = Fl::screen_driver()->scale(0);
-    SetWindowPos(fl_xid(pWindow), 0, X*s, Y*s, W*s, H*s, flags);
+    SetWindowPos(fl_xid(pWindow), 0, X, Y, W, H, flags);
+//fprintf(LOG,"parent=%p bt=%d X=%d W=%d H=%d s=%f\n",pWindow->parent(),bt,int(X),int(W),int(H),s);fflush(LOG);
   }
 }
 
@@ -1782,7 +1802,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   DWORD styleEx = WS_EX_LEFT;
 
   float s = Fl::screen_driver()->scale(0);
-  int xp = w->x() * s;
+  int xp = w->x() * s; // these are in graphical units
   int yp = w->y() * s;
   int wp = w->w() * s;
   int hp = w->h() * s;
@@ -1834,7 +1854,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
         break;
     }
 
-    int xwm = xp , ywm = yp , bt, bx, by;
+    int xwm = xp , ywm = yp , bt, bx, by; // these are in graphical units
     fake_X_wm_style(w, xwm, ywm, bt, bx, by, style, styleEx, maxw(), minw(), maxh(), minh(), size_range_set());
     if (by+bt) {
       wp += 2*bx;
@@ -2456,8 +2476,8 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   top = left = bottom = right = NULL;
   if (!shown() || parent() || !border() || !visible()) return;
   int wsides, hbottom, bt;
-  float scaling = 1;
-  RECT r = border_width_title_bar_height(wsides, hbottom, bt, &scaling);
+  float scaling = Fl::screen_driver()->scale(screen_num());
+  RECT r = border_width_title_bar_height(wsides, hbottom, bt);
   int htop = bt + hbottom;
   Window save_win = fl_window;
   Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
@@ -2465,20 +2485,33 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   Fl::check();
   void* save_gc = fl_graphics_driver->gc();
   fl_graphics_driver->gc(GetDC(NULL));
-  int ww = w() + 2 * wsides;
+  int ww = w()*scaling + 2 * wsides;
+  wsides /= scaling; if (wsides < 1) wsides = 1;
+  ww /= scaling; if (wsides <= 1) ww = w() + 2*wsides;
+#ifdef FLTK_HIDPI_SUPPORT
+  float DWMscaling = scaling;
+#else
+  float DWMscaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+#endif
   // capture the 4 window sides from screen
+  Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
   if (htop) {
-    r_top = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.top, r.right - r.left + 1, htop, 0);
+    r_top = dr->read_win_rectangle_unscaled(NULL, r.left, r.top, r.right - r.left, htop, 0);
     top = Fl_Shared_Image::get(r_top);
-    if (scaling >= 1.1) top->scale(ww, htop/scaling, 0);
+    if (DWMscaling >= 1.1) top->scale(ww, htop/DWMscaling, 0, 1);
   }
   if (wsides) {
-    r_left = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.top + htop, wsides, h(), 0);
+    r_left = dr->read_win_rectangle_unscaled(NULL, r.left, r.top + htop, wsides, h()*scaling, 0);
     left = Fl_Shared_Image::get(r_left);
-    r_right = Fl::screen_driver()->read_win_rectangle(NULL, r.right - wsides, r.top + htop, wsides, h(), 0);
+    r_right = dr->read_win_rectangle_unscaled(NULL, r.right - wsides, r.top + htop, wsides, h()*scaling, 0);
     right = Fl_Shared_Image::get(r_right);
-    r_bottom = Fl::screen_driver()->read_win_rectangle(NULL, r.left, r.bottom-hbottom, ww, hbottom, 0);
+    r_bottom = dr->read_win_rectangle_unscaled(NULL, r.left, r.bottom-hbottom, ww, hbottom, 0);
     bottom = Fl_Shared_Image::get(r_bottom);
+    if (scaling >= 1.1) {
+      left->scale(wsides, h(), 0, 1);
+      right->scale(wsides, h(), 0, 1);
+      bottom->scale(ww, hbottom, 0, 1);
+    }
   }
   ReleaseDC(NULL, (HDC)fl_graphics_driver->gc());
   fl_window = save_win;
