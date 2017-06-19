@@ -1676,22 +1676,22 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
   if (resize_from_program && shown()) {
     if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
     int dummy_x, dummy_y, bt, bx, by;
-    //Ignore window managing when resizing, so that windows (and more
+    // compute window position and size in scaled units
     float s = Fl::screen_driver()->scale(screen_num());
-    X *= s; Y *= s; W *= s; H *= s;
+    int scaledX = ceil(X*s), scaledY= ceil(Y*s), scaledW = ceil(W*s), scaledH = ceil(H*s);
+    //Ignore window managing when resizing, so that windows (and more
     //specifically menus) can be moved offscreen.
     if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
-      X -= bx;
-      Y -= by+bt;
-      W += 2*bx;
-      H += 2*by+bt;
+      scaledX -= bx;
+      scaledY -= by+bt;
+      scaledW += 2*bx;
+      scaledH += 2*by+bt;
     }
     // avoid zero size windows. A zero sized window on Win32
     // will cause continouly  new redraw events.
-    if (W<=0) W = 1;
-    if (H<=0) H = 1;
-    SetWindowPos(fl_xid(pWindow), 0, X, Y, W, H, flags);
-//fprintf(LOG,"parent=%p bt=%d X=%d W=%d H=%d s=%f\n",pWindow->parent(),bt,int(X),int(W),int(H),s);fflush(LOG);
+    if (scaledW<=0) scaledW = 1;
+    if (scaledH<=0) scaledH = 1;
+    SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH, flags);
   }
 }
 

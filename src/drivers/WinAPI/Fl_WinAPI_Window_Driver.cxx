@@ -29,6 +29,7 @@
 #include "Fl_WinAPI_Window_Driver.H"
 #include "Fl_WinAPI_Screen_Driver.H"
 #include <windows.h>
+#include <math.h>  // for ceil()
 
 #if USE_COLORMAP
 extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
@@ -561,16 +562,19 @@ void Fl_WinAPI_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
       break;
   }
   Fl_X::i(pWindow)->xid = xid;
+  // compute window position and size in scaled units
+  float s = Fl::screen_driver()->scale(screen_num());
+  int scaledX = ceil(X*s), scaledY= ceil(Y*s), scaledW = ceil(W*s), scaledH = ceil(H*s);
   // Adjust for decorations (but not if that puts the decorations
   // outside the screen)
   if ((X != x()) || (Y != y())) {
-    X -= bx;
-    Y -= by+bt;
+    scaledX -= bx;
+    scaledY -= by+bt;
   }
-  W += bx*2;
-  H += by*2+bt;
+  scaledW += bx*2;
+  scaledH += by*2+bt;
   SetWindowLong(fl_xid(pWindow), GWL_STYLE, style);
-  SetWindowPos(fl_xid(pWindow), 0, X, Y, W, H,
+  SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH,
                SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
