@@ -526,7 +526,8 @@ void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   SetWindowLong(fl_xid(w), GWL_STYLE, flags);
   
   // SWP_NOSENDCHANGING is so that we can override size limits
-  SetWindowPos(fl_xid(w), HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
+  float s = Fl::screen_driver()->scale(screen_num());
+  SetWindowPos(fl_xid(w), HWND_TOP, X*s, Y*s, W*s, H*s, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
 
 #endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
