@@ -2498,7 +2498,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
   if (htop) {
     r_top = dr->read_win_rectangle_unscaled(NULL, r.left, r.top, r.right - r.left, htop, 0);
     top = Fl_Shared_Image::get(r_top);
-    if (DWMscaling >= 1.1) top->scale(ww, htop/DWMscaling, 0, 1);
+    if (DWMscaling != 1) top->scale(ww, htop/DWMscaling, 0, 1);
   }
   if (wsides) {
     r_left = dr->read_win_rectangle_unscaled(NULL, r.left, r.top + htop, wsides, h()*scaling, 0);
@@ -2507,7 +2507,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
     right = Fl_Shared_Image::get(r_right);
     r_bottom = dr->read_win_rectangle_unscaled(NULL, r.left, r.bottom-hbottom, ww, hbottom, 0);
     bottom = Fl_Shared_Image::get(r_bottom);
-    if (scaling >= 1.1) {
+    if (scaling != 1) {
       left->scale(wsides, h(), 0, 1);
       right->scale(wsides, h(), 0, 1);
       bottom->scale(ww, hbottom, 0, 1);

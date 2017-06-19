@@ -75,12 +75,11 @@ RECT // frame of the decorated window in screen coordinates
     static DwmGetWindowAttribute_type DwmGetWindowAttribute = dwmapi_dll ?
     (DwmGetWindowAttribute_type)GetProcAddress(dwmapi_dll, "DwmGetWindowAttribute") : NULL;
     int need_r = 1;
-    float scaling = 1;
+    float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(screen_num());
     if (DwmGetWindowAttribute) {
       const DWORD DWMWA_EXTENDED_FRAME_BOUNDS = 9;
       if ( DwmGetWindowAttribute(fl_xid(win), DWMWA_EXTENDED_FRAME_BOUNDS, &r, sizeof(RECT)) == S_OK ) {
         need_r = 0;
-        scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(screen_num());
       }
     }
     if (need_r) {
