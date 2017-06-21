@@ -168,13 +168,15 @@ int Fl_Tabs::handle(int event) {
 
   switch (event) {
 
-  case FL_PUSH: {
-    int H = tab_height();
-    if (H >= 0) {
-      if (Fl::event_y() > y()+H) return Fl_Group::handle(event);
-    } else {
-      if (Fl::event_y() < y()+h()+H) return Fl_Group::handle(event);
-    }}
+  case FL_PUSH:
+    {
+      int H = tab_height();
+      if (H >= 0) {
+        if (Fl::event_y() > y()+H) return Fl_Group::handle(event);
+      } else {
+        if (Fl::event_y() < y()+h()+H) return Fl_Group::handle(event);
+      }
+    }
     /* FALLTHROUGH */
   case FL_DRAG:
   case FL_RELEASE:
@@ -464,8 +466,8 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
   can be automatic (local) variables, but you must declare the
   Fl_Tabs widget <I>first</I> so that it is destroyed last.
 */
-Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
-  Fl_Group(X,Y,W,H,l)
+Fl_Tabs::Fl_Tabs(int X, int Y, int W, int H, const char *L) :
+  Fl_Group(X,Y,W,H,L)
 {
   box(FL_THIN_UP_BOX);
   push_ = 0;
@@ -518,7 +520,7 @@ void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
 
     if (tabh == 0)			// use default (at top)
       y_offset = label_height;
-    else if (tabh == -1)	 	// use default (at bottom)
+    else if (tabh == -1)		// use default (at bottom)
       y_offset = -label_height;
     else
       y_offset = tabh;			// user given value

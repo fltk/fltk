@@ -219,7 +219,7 @@ protected:
 
 public:
 
-  Fl_Tabs(int,int,int,int,const char * = 0);
+  Fl_Tabs(int X, int Y, int W, int H, const char *L = 0);
   virtual ~Fl_Tabs();
 
   int handle(int);
