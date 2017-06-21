@@ -56,7 +56,6 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   mask_bitmap_ = NULL;
   p_size = 0;
   p = NULL;
-  line_width_ = 0;
   line_delta_ = 0;
 #if USE_PANGO
   pfd_ = pango_font_description_new();

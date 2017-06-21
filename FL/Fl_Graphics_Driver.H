@@ -410,6 +410,7 @@ public:
   float scale() { return scale_; }
 protected:
   float scale_; // scale between user and graphical coordinates: graphical = user * scale_
+  int line_width_;
   void cache_size(Fl_Image *img, int &width, int &height);
   virtual Fl_Region scale_clip(float f)=0;
   void unscale_clip(Fl_Region r);

@@ -187,6 +187,7 @@ void Fl_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
 #ifndef FL_DOXYGEN
 Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver() {
   scale_ = 1;
+  line_width_ = 0;
 }
 
 void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
@@ -438,7 +439,9 @@ void Fl_Scalable_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a
 }
 
 void Fl_Scalable_Graphics_Driver::line_style(int style, int width, char* dashes) {
-  line_style_unscaled(style, width * scale_, dashes);
+  if (width == 0) line_width_ = scale_ < 2 ? 0 : scale_;
+  else line_width_ = width>0 ? width*scale_ : -width*scale_;
+  line_style_unscaled(style, line_width_, dashes);
 }
 
 void Fl_Scalable_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {

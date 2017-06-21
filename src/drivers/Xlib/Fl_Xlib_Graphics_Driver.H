@@ -93,7 +93,6 @@ protected:
   int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
-  int line_width_;
   int clip_x(int x);
 #if USE_XFT
   static Window draw_window;

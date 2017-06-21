@@ -35,9 +35,6 @@
 #include "Fl_Xlib_Graphics_Driver.H"
 
 void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
-  // save line width for X11 clipping
-  if (width == 0) line_width_ = scale_ < 2 ? 0 : scale_;
-  else line_width_ = width>0 ? width : -width;
 
   int ndashes = dashes ? strlen(dashes) : 0;
   // emulate the WIN32 dash patterns on X
