@@ -505,7 +505,7 @@ struct MacTimeout {
 static MacTimeout* mac_timers;
 static int mac_timer_alloc;
 static int mac_timer_used;
-static MacTimeout* current_timer;  // the timer that triggered its callback function, or NULL
+static MacTimeout* current_timer;  // the timer that triggered its callback function
 
 static void realloc_timers()
 {
@@ -530,14 +530,14 @@ static void delete_timer(MacTimeout& t)
 		      kCFRunLoopDefaultMode);
     CFRelease(t.timer);
     memset(&t, 0, sizeof(MacTimeout));
-    if (&t == current_timer) current_timer = NULL;
   }
 }
 
 static void do_timer(CFRunLoopTimerRef timer, void* data)
 {
   fl_lock_function();
-  current_timer = (MacTimeout*)data;
+  fl_intptr_t timerId = (fl_intptr_t)data;
+  current_timer = &mac_timers[timerId];
   current_timer->pending = 0;
   (current_timer->callback)(current_timer->data);
   if (current_timer && current_timer->pending == 0)
@@ -562,7 +562,7 @@ void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, voi
     }
   }
   // no existing timer to use. Create a new one:
-  int timer_id = -1;
+  fl_intptr_t timer_id = -1;
   // find an empty slot in the timer array
   for (int i = 0; i < mac_timer_used; ++i) {
     if ( !mac_timers[i].timer ) {
@@ -580,7 +580,7 @@ void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, voi
   }
   // now install a brand new timer
   MacTimeout& t = mac_timers[timer_id];
-  CFRunLoopTimerContext context = {0, &t, NULL,NULL,NULL};
+  CFRunLoopTimerContext context = {0, (void*)timer_id, NULL,NULL,NULL};
   CFRunLoopTimerRef timerRef = CFRunLoopTimerCreate(kCFAllocatorDefault, 
 						    CFAbsoluteTimeGetCurrent() + time,
 						    1E30,  
@@ -603,18 +603,14 @@ void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, voi
 
 void Fl_Cocoa_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
-  if (current_timer) {
-    // k = how many times 'time' seconds after the last scheduled timeout until the future
-    double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
-    if (k < 1) k = 1;
-    current_timer->next_timeout += k * time;
-    CFRunLoopTimerSetNextFireDate(current_timer->timer, current_timer->next_timeout );
-    current_timer->callback = cb;
-    current_timer->data = data;
-    current_timer->pending = 1;
-    return;
-  }
-  add_timeout(time, cb, data);
+  // k = how many times 'time' seconds after the last scheduled timeout until the future
+  double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
+  if (k < 1) k = 1;
+  current_timer->next_timeout += k * time;
+  CFRunLoopTimerSetNextFireDate(current_timer->timer, current_timer->next_timeout );
+  current_timer->callback = cb;
+  current_timer->data = data;
+  current_timer->pending = 1;
 }
 
 int Fl_Cocoa_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void* data)
