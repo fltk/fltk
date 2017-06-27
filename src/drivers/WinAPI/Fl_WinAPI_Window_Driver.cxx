@@ -389,7 +389,8 @@ void Fl_WinAPI_Window_Driver::make_current() {
 #endif // USE_COLORMAP
   
   fl_graphics_driver->clip_region(0);
-fl_graphics_driver->scale(Fl::screen_driver()->scale(0));
+  fl_graphics_driver->scale(Fl::screen_driver()->scale(0));
+  fl_graphics_driver->line_style(FL_SOLID); // scale also default line width
 }
 
 void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {

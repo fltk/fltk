@@ -491,7 +491,7 @@ int Fl_WinAPI_Screen_Driver::ready() {
   return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
 }
 
-//FILE *LOG=fopen("log.log","w");
+//extern FILE*LOG;
 
 void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
@@ -1158,7 +1158,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
 
     // convert i->region in FLTK units to R2 in drawing units
-    R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL, false);
+    R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL);
 
     if (R2) {
       // Also tell WIN32 that we are drawing someplace else as well...
@@ -1173,7 +1173,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     
     // convert R2 in drawing units to i->region in FLTK units
-    i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1/scale, NULL, false /*, true*/);
+    i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1/scale, NULL);
 
     window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
     // These next two statements should not be here, so that all update
@@ -1433,7 +1433,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	Fl::handle(FL_SHOW, window);
 	resize_bug_fix = window;
 	window->size( ceil(LOWORD(lParam)/scale), ceil(HIWORD(lParam)/scale) );
-//fprintf(LOG,"WM_SIZE parent size(%d,%d) s=%.2f\n",int(LOWORD(lParam)/scale),int(HIWORD(lParam)/scale),scale);
+//fprintf(LOG,"WM_SIZE size(%.0f,%.0f) graph(%d,%d) s=%.2f\n",ceil(LOWORD(lParam)/scale),ceil(HIWORD(lParam)/scale),LOWORD(lParam),HIWORD(lParam),scale);
       }
     }
     break;

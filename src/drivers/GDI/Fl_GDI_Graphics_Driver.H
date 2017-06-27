@@ -89,7 +89,7 @@ public:
   void XDestroyRegion(Fl_Region r);
   void translate_all(int x, int y);
   void untranslate_all(void);
-  static HRGN scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr, bool keep/*, bool inflate=false*/);
+  static HRGN scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr);
   virtual void scale(float f);
   virtual float scale();
 protected:

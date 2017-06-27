@@ -41,10 +41,13 @@ void Fl_GDI_Graphics_Driver::point_unscaled(float x, float y) {
 
 void Fl_GDI_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {
   if (w<=0 || h<=0) return;
+  int line_delta_ =  (scale_ > 1.75 ? 1 : 0);//TMP
+  x += line_delta_; y += line_delta_;
+  int tw = line_width_ ? line_width_ : 1; // true line width
   MoveToEx(gc_, x, y, 0L);
-  LineTo(gc_, x+w-1, y);
-  LineTo(gc_, x+w-1, y+h-1);
-  LineTo(gc_, x, y+h-1);
+  LineTo(gc_, x+w-tw, y);
+  LineTo(gc_, x+w-tw, y+h-tw);
+  LineTo(gc_, x, y+h-tw);
   LineTo(gc_, x, y);
 }
 
@@ -80,16 +83,31 @@ void Fl_GDI_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1,
   SetPixel(gc_, x2, y2, fl_RGB());
 }
 
+//extern FILE*LOG;
 void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
-  MoveToEx(gc_, x, y, 0L); LineTo(gc_, x1+1, y);
+  int line_delta_ =  (scale_ > 1.75 ? 1 : 0);
+  int tw = line_width_ ? line_width_ : 1; // true line width
+  if (x > x1) { float exch = x; x = x1; x1 = exch; }
+  int ix = x+line_delta_; if (scale_ >= 2) ix -= int(scale_/2);
+  int iy = y+line_delta_;
+  int ix1 = int(x1/scale_+1.5)*scale_-1; // extend line to pixel before line beginning at x1/scale_ + 1
+  ix1 += line_delta_; if (scale_ >= 2) ix1 -= 1;; if (scale_ >= 4) ix1 -= 1;
+  MoveToEx(gc_, ix, iy, 0L); LineTo(gc_, ix1+1, iy);
+  // try and make sure no unfilled area lies between xyline(x,y,x1) and xyline(x,y+1,x1)
+  if (int(scale_) != scale_ && y+line_delta_ + scale_ >= iy + tw+1 - 0.001 ) {
+    MoveToEx(gc_, ix, iy+1, 0L); LineTo(gc_, ix1+1, iy+1);
+  }
+//fprintf(LOG,"xyline_unscaled tw=%d s=%f gc_=%p\n",tw,scale_,gc_);fflush(LOG);
 }
 
 void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2) {
-  if (y2 < y) y2--;
+  /*if (y2 < y) y2--;
   else y2++;
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y);
-  LineTo(gc_, x1, y2);
+  LineTo(gc_, x1, y2);*/
+  xyline_unscaled(x, y, x1);
+  yxline_unscaled(x1, y, y2);
 }
 
 void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2, float x3) {
@@ -102,17 +120,30 @@ void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y
 }
 
 void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
-  if (y1 < y) y1--;
-  else y1++;
-  MoveToEx(gc_, x, y, 0L); LineTo(gc_, x, y1);
+  if (y1 < y) { float exch = y; y = y1; y1 = exch;}
+  int line_delta_ =  (scale_ > 1.75 ? 1 : 0);
+  int tw = line_width_ ? line_width_ : 1; // true line width
+
+  int ix = x+line_delta_;
+  int iy = y+line_delta_; if (scale_ >= 2) iy -= int(scale_/2);
+  int iy1 = int(y1/scale_+1.5)*scale_-1;
+  iy1 += line_delta_; if (scale_ >= 2) iy1 -= 1;; if (scale_ >= 4) iy1 -= 1; // extend line to pixel before line beginning at y1/scale_ + 1
+  MoveToEx(gc_, ix, iy, 0L); LineTo(gc_, ix, iy1+1);
+  // try and make sure no unfilled area lies between yxline(x,y,y1) and yxline(x+1,y,y1)
+  if (int(scale_) != scale_ && x+line_delta_+scale_ >= ix + tw+1 -0.001) {
+    MoveToEx(gc_, ix+1, iy, 0L); LineTo(gc_, ix+1, iy1+1);
+  }
+
 }
 
 void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2) {
-  if (x2 > x) x2++;
+  /*if (x2 > x) x2++;
   else x2--;
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x, y1);
-  LineTo(gc_, x2, y1);
+  LineTo(gc_, x2, y1);*/
+  yxline_unscaled(x, y, y1);
+  xyline_unscaled(x, y1, x2);
 }
 
 void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2, float y3) {

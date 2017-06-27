@@ -232,7 +232,7 @@ void Fl_GDI_Graphics_Driver::scale(float f) {
   if (f != scale_) {
     size_ = 0;
     scale_ = f;
-    //line_style(FL_SOLID); // scale also default line width
+//fprintf(LOG,"set scale to %f\n",f);fflush(LOG);
   }
 }
 
@@ -242,45 +242,35 @@ float Fl_GDI_Graphics_Driver::scale() {
 
 
 /* Rescale region r with factor f and returns the scaled region.
- The input region is deleted if keep is false.
- //The input region is inflated by 1 unit before rescaling if inflate is true.
  Region r is returned unchanged if r is null or f is 1.
+ The input region is deleted if dr is null.
  */
-HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr, bool keep/*, bool inflate*/) {
+HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr) {
   if (r && f != 1) {
     DWORD size = GetRegionData(r, 0, NULL);
     RGNDATA *pdata = (RGNDATA*)malloc(size);
     GetRegionData(r, size, pdata);
-    if (!keep) DeleteObject(r);
-    /*if (inflate) { // seems no longer useful
-      RECT *rects = (RECT*)&(pdata->Buffer);
-      for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
-        InflateRect(rects+i, 1, 1);
-      }
-    }*/
+    if (!dr) DeleteObject(r);
     POINT pt = {0, 0};
-    if (dr && dr->depth >= 1) { // account for both scaling and translation
+    if (dr && dr->depth >= 1) { // account for translation
       GetWindowOrgEx((HDC)dr->gc(), &pt);
       pt.x *= (f - 1);
       pt.y *= (f - 1);
     }
-    XFORM xform = {f, 0, 0, f, (FLOAT)pt.x , (FLOAT)pt.y};
-    r = ExtCreateRegion(&xform, size, pdata);
-    free(pdata);
-    
-    if (dr && int(f) != f && f > 1) { // needed for clean checkers demo
-      DWORD size = GetRegionData(r, 0, NULL);
-      RGNDATA *pdata = (RGNDATA*)malloc(size);
-      GetRegionData(r, size, pdata);
-      DeleteObject(r);
-      RECT *rects = (RECT*)&(pdata->Buffer);
-      for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
-        InflateRect(rects+i, 1, 1);
-      }
-      r = ExtCreateRegion(NULL, size, pdata);
-      free(pdata);
+    RECT *rects = (RECT*)&(pdata->Buffer);
+    int delta = (f > 1.75 ? 1 : 0) - int(f/2);
+    for (DWORD i = 0; i < pdata->rdh.nCount; i++) {
+      int x = rects[i].left * f + pt.x;
+      int y = rects[i].top * f + pt.y;
+      RECT R2;
+      R2.left = x + delta;
+      R2.top  = y + delta;
+      R2.right = int(rects[i].right * f) + pt.x - x + R2.left;
+      R2.bottom = int(rects[i].bottom * f) + pt.y - y + R2.top;
+      rects[i] = R2;
     }
-
+    r = ExtCreateRegion(NULL, size, pdata);
+    free(pdata);
   }
   return r;
 }
@@ -288,7 +278,7 @@ HRGN Fl_GDI_Graphics_Driver::scale_region(HRGN r, float f, Fl_GDI_Graphics_Drive
 
 Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
   HRGN r = rstack[rstackptr];
-  HRGN r2 = scale_region(r, f, this, true);
+  HRGN r2 = scale_region(r, f, this);
   return (r == r2 ? NULL : (rstack[rstackptr] = r2, r));
 }
 

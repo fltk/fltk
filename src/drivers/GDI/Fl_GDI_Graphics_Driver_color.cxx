@@ -75,7 +75,7 @@ static void clear_xmap(Fl_XMap& xmap) {
   }
 }
 
-static void set_xmap(Fl_XMap& xmap, COLORREF c) {
+static void set_xmap(Fl_XMap& xmap, COLORREF c, int lw) {
   xmap.rgb = c;
   if (xmap.pen) {
       HDC gc = (HDC)fl_graphics_driver->gc();
@@ -83,7 +83,12 @@ static void set_xmap(Fl_XMap& xmap, COLORREF c) {
       if (oldpen != xmap.pen)SelectObject(gc,oldpen);              // if old one not xmap.pen, need to put it back
       DeleteObject(xmap.pen);                                         // delete pen
   }
-  xmap.pen = CreatePen(PS_SOLID, 1, xmap.rgb);                        // get a pen into xmap.pen
+//  xmap.pen = CreatePen(PS_SOLID, 1, xmap.rgb);                        // get a pen into xmap.pen
+  LOGBRUSH penbrush = {BS_SOLID, xmap.rgb, 0};
+  xmap.pen = ExtCreatePen(PS_GEOMETRIC | PS_ENDCAP_FLAT | PS_JOIN_ROUND, lw, &penbrush, 0, 0);
+#ifdef FLTK_HIDPI_SUPPORT
+  xmap.pwidth = lw;
+#endif
   xmap.brush = -1;
 }
 
@@ -94,14 +99,19 @@ void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
   } else {
     Fl_Graphics_Driver::color(i);
     Fl_XMap &xmap = fl_xmap[i];
-    if (!xmap.pen) {
+    int tw = line_width_ ? line_width_ : int(scale_); if (!tw) tw = 1;
+    if (!xmap.pen
+#ifdef FLTK_HIDPI_SUPPORT
+        || xmap.pwidth != tw
+#endif
+        ) {
 #if USE_COLORMAP
       if (fl_palette) {
-	set_xmap(xmap, PALETTEINDEX(i));
+	set_xmap(xmap, PALETTEINDEX(i), tw);
       } else {
 #endif
 	unsigned c = fl_cmap[i];
-	set_xmap(xmap, RGB(uchar(c>>24), uchar(c>>16), uchar(c>>8)));
+	set_xmap(xmap, RGB(uchar(c>>24), uchar(c>>16), uchar(c>>8)), tw);
 #if USE_COLORMAP
       }
 #endif
@@ -115,9 +125,14 @@ void Fl_GDI_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   static Fl_XMap xmap;
   COLORREF c = RGB(r,g,b);
   Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
-  if (!xmap.pen || c != xmap.rgb) {
+  int tw = line_width_ ? line_width_ : int(scale_); if (!tw) tw = 1;
+  if (!xmap.pen || c != xmap.rgb
+#ifdef FLTK_HIDPI_SUPPORT
+      || tw != xmap.pwidth
+#endif
+      ) {
     clear_xmap(xmap);
-    set_xmap(xmap, c);
+    set_xmap(xmap, c, tw);
   }
   fl_current_xmap = &xmap;
   SelectObject(gc_, (HGDIOBJ)(xmap.pen));
