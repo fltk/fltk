@@ -30,8 +30,8 @@ Function {make_widget_panel()} {
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {468 187 420 400} type Double labelsize 11 align 80 hide resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0}
+    xywh {560 60 420 400} type Double labelsize 11 align 80 resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
@@ -91,7 +91,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         }
         Fl_Group {} {
           label {Alignment:}
-          callback propagate_load open
+          callback propagate_load
           xywh {95 115 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Button {} {
@@ -141,7 +141,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             }
             MenuItem {} {
               label {image over text}
-              user_data {(fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT} selected
+              user_data {(fl_intptr_t)FL_ALIGN_IMAGE_OVER_TEXT}
               xywh {25 25 100 20} labelsize 11
             }
             MenuItem {} {
@@ -520,7 +520,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       }
       Fl_Group {} {
         label {C++}
-        callback propagate_load open
+        callback propagate_load
         xywh {10 30 400 330} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
@@ -666,35 +666,38 @@ wCallback->do_callback(wCallback, v);} open
       }
     }
     Fl_Group {} {open
-      xywh {9 370 400 20} labelsize 11
+      xywh {10 370 400 20} labelsize 11
     } {
       Fl_Box {} {
-        xywh {9 370 20 20} labelsize 11 resizable
-      }
-      Fl_Button {} {
-        label {Hide &Overlays}
-        callback overlay_cb
-        tooltip {Hide the widget overlay box.} xywh {240 370 99 20} labelsize 11 labelcolor 1
+        comment {Hidden resizable box}
+        xywh {10 370 75 20} labelsize 11 hide resizable
       }
       Fl_Button {} {
         label Revert
         callback revert_cb
-        xywh {66 370 80 20} labelsize 11 hide
-      }
-      Fl_Return_Button {} {
-        label Close
-        callback ok_cb
-        xywh {344 370 64 20} labelsize 11
-      }
-      Fl_Button {} {
-        label Cancel
-        callback cancel_cb
-        xywh {339 370 70 20} labelsize 11 hide
+        comment {Hidden Revert button}
+        xywh {90 370 60 20} labelsize 11 hide
       }
       Fl_Button wLiveMode {
         label {Live &Mode}
         callback live_mode_cb
-        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {151 370 84 20} type Toggle labelsize 11
+        tooltip {Create a live duplicate of the selected widgets to test resizing and menu behavior.} xywh {155 370 80 20} type Toggle labelsize 11
+      }
+      Fl_Button {} {
+        label {Hide &Overlays}
+        callback overlay_cb
+        tooltip {Hide the widget overlay box.} xywh {240 370 100 20} labelsize 11 labelcolor 1
+      }
+      Fl_Return_Button {} {
+        label Close
+        callback ok_cb
+        xywh {345 370 65 20} labelsize 11
+      }
+      Fl_Button {} {
+        label Cancel
+        callback cancel_cb
+        comment {Hidden cancel button}
+        xywh {345 370 65 20} labelsize 11 hide
       }
     }
   }

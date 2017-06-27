@@ -823,39 +823,43 @@ access the Widget pointer and \'v\' to access the user value.");
       o->end();
       Fl_Group::current()->resizable(o);
     } // Fl_Tabs* o
-    { Fl_Group* o = new Fl_Group(9, 370, 400, 20);
+    { Fl_Group* o = new Fl_Group(10, 370, 400, 20);
       o->labelsize(11);
-      { Fl_Box* o = new Fl_Box(9, 370, 20, 20);
+      { // Hidden resizable box
+        Fl_Box* o = new Fl_Box(10, 370, 75, 20);
         o->labelsize(11);
+        o->hide();
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
-      { Fl_Button* o = new Fl_Button(240, 370, 99, 20, "Hide &Overlays");
-        o->tooltip("Hide the widget overlay box.");
-        o->labelsize(11);
-        o->labelcolor((Fl_Color)1);
-        o->callback((Fl_Callback*)overlay_cb);
-      } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(66, 370, 80, 20, "Revert");
+      { // Hidden Revert button
+        Fl_Button* o = new Fl_Button(90, 370, 60, 20, "Revert");
         o->labelsize(11);
         o->callback((Fl_Callback*)revert_cb);
         o->hide();
       } // Fl_Button* o
-      { Fl_Return_Button* o = new Fl_Return_Button(344, 370, 64, 20, "Close");
-        o->labelsize(11);
-        o->callback((Fl_Callback*)ok_cb);
-      } // Fl_Return_Button* o
-      { Fl_Button* o = new Fl_Button(339, 370, 70, 20, "Cancel");
-        o->labelsize(11);
-        o->callback((Fl_Callback*)cancel_cb);
-        o->hide();
-      } // Fl_Button* o
-      { wLiveMode = new Fl_Button(151, 370, 84, 20, "Live &Mode");
+      { wLiveMode = new Fl_Button(155, 370, 80, 20, "Live &Mode");
         wLiveMode->tooltip("Create a live duplicate of the selected widgets to test resizing and menu beh\
 avior.");
         wLiveMode->type(1);
         wLiveMode->labelsize(11);
         wLiveMode->callback((Fl_Callback*)live_mode_cb);
       } // Fl_Button* wLiveMode
+      { Fl_Button* o = new Fl_Button(240, 370, 100, 20, "Hide &Overlays");
+        o->tooltip("Hide the widget overlay box.");
+        o->labelsize(11);
+        o->labelcolor((Fl_Color)1);
+        o->callback((Fl_Callback*)overlay_cb);
+      } // Fl_Button* o
+      { Fl_Return_Button* o = new Fl_Return_Button(345, 370, 65, 20, "Close");
+        o->labelsize(11);
+        o->callback((Fl_Callback*)ok_cb);
+      } // Fl_Return_Button* o
+      { // Hidden cancel button
+        Fl_Button* o = new Fl_Button(345, 370, 65, 20, "Cancel");
+        o->labelsize(11);
+        o->callback((Fl_Callback*)cancel_cb);
+        o->hide();
+      } // Fl_Button* o
       o->end();
     } // Fl_Group* o
     o->size_range(o->w(), o->h());
