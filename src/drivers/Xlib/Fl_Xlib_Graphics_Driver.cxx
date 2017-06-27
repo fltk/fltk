@@ -237,14 +237,16 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
 Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
   Region r = rstack[rstackptr];
   if (r == 0 || (f == 1 && offset_x_ == 0 && offset_y_ == 0) ) return 0;
-  float delta = (f >= 2 ? f/3 : 0);
+  int deltaf = f/2;
   Region r2 = XCreateRegion();
   XRectangle R;
   for (int i = 0; i < r->numRects; i++) {
-    R.x = short((r->rects[i].x1 + offset_x_)*f-delta + line_delta_);
-    R.y = short((r->rects[i].y1 + offset_y_)*f-delta + line_delta_);
-    R.width = short(r->rects[i].x2*f) - short(r->rects[i].x1*f);
-    R.height = short(r->rects[i].y2*f) - short(r->rects[i].y1*f);
+    int x = (r->rects[i].x1 + offset_x_)*f;
+    int y = (r->rects[i].y1 + offset_y_)*f;
+    R.x = x - deltaf + line_delta_;
+    R.y = y - deltaf + line_delta_;
+    R.width = int((r->rects[i].x2 + offset_x_) * f) - x;
+    R.height = int((r->rects[i].y2 + offset_y_) * f) - y;
     XUnionRectWithRegion(&R, r2, r2);
   }
   rstack[rstackptr] = r2;
