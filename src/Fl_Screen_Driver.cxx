@@ -365,6 +365,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   for (i = count - 1; i >= 0; i--) { // rescale all top-level windows, finishing with front one
     win = win_array[i];
     int oldx = win->x(), oldy = win->y();
+    fl_uintptr_t current = win->driver()->current_cursor();
     win->hide();
     win->driver()->screen_num(screen);
     win->position(oldx*old_f/f, oldy*old_f/f);
@@ -373,6 +374,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
       win->size(win->w() * old_f/f, win->h() * old_f/f);
     }
     win->show();
+    win->driver()->reuse_cursor(current);
     win->wait_for_expose();
   }
   delete[] win_array;

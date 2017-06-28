@@ -2420,9 +2420,6 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     fl_background_pixel = -1;
     mask |= CWBackPixel;
   }
-  // reproduce the window cursor if a window is hidden and then recreated (e.g., rescaled)
-  attr.cursor = Fl_X11_Window_Driver::driver(win)->current_cursor_;
-  mask |= CWCursor;
   float s = 1;
 #if USE_XFT
   //compute adequate screen where to put the window
@@ -2885,12 +2882,20 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
 
   xc = XcursorImageLoadCursor(fl_display, cursor);
   XDefineCursor(fl_display, fl_xid(pWindow), xc);
+  current_cursor_ = xc;
   XFreeCursor(fl_display, xc);
 
   XcursorImageDestroy(cursor);
 
   return 1;
 #endif
+}
+
+void Fl_X11_Window_Driver::reuse_cursor(fl_uintptr_t c)
+{
+  if (c) {
+    XDefineCursor(fl_display, fl_xid(pWindow), (Cursor)c);
+  }
 }
 
 ////////////////////////////////////////////////////////////////

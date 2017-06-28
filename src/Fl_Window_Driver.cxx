@@ -239,6 +239,14 @@ int Fl_Window_Driver::set_cursor(const Fl_RGB_Image*, int, int) {
   return 0;
 }
 
+void Fl_Window_Driver::reuse_cursor(fl_uintptr_t) {
+}
+
+fl_uintptr_t Fl_Window_Driver::current_cursor() {
+  return 0;
+}
+
+
 void Fl_Window_Driver::wait_for_expose() {
   if (!shown()) return;
   Fl_X *i = Fl_X::i(pWindow);

@@ -152,6 +152,8 @@ public:
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
+  virtual void reuse_cursor(fl_uintptr_t);
+  virtual fl_uintptr_t current_cursor();
 
   // --- window shape stuff
   void shape_pixmap_(Fl_Image* pixmap); // platform-independent, support function

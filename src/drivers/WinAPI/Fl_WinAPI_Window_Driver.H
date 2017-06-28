@@ -61,6 +61,7 @@ class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     HICON big_icon;
     HICON small_icon;
   };
+  Fl_Cursor current_cursor_;
 private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
@@ -100,6 +101,8 @@ public:
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
+  virtual void reuse_cursor(fl_uintptr_t);
+  virtual fl_uintptr_t current_cursor();
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

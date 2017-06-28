@@ -2294,6 +2294,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
   custom_cursor = 0;
 
   SetCursor(cursor);
+  current_cursor_ = c;
 
   return 1;
 }
@@ -2315,6 +2316,16 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
 
   return 1;
 }
+
+void Fl_WinAPI_Window_Driver::reuse_cursor(fl_uintptr_t c) {
+  // calling SetCursor(cursor) does not work, so we call the crossplatform API
+  pWindow->cursor((Fl_Cursor)c);
+}
+
+fl_uintptr_t Fl_WinAPI_Window_Driver::current_cursor() {
+  return (fl_uintptr_t)current_cursor_;
+}
+
 
 ////////////////////////////////////////////////////////////////
 // Implement the virtual functions for the base Fl_Window class:
