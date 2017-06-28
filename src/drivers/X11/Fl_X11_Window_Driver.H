@@ -135,6 +135,7 @@ public:
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);
+  virtual void reuse_icons();
   virtual const void *icon() const;
   virtual void icon(const void * ic);
   virtual void free_icons();

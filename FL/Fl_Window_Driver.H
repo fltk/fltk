@@ -162,6 +162,7 @@ public:
 
   // --- window icon stuff
   virtual void icons(const Fl_RGB_Image *icons[], int count) {}
+  virtual void reuse_icons() {}
   virtual const void *icon() const {return NULL;}
   virtual void icon(const void * ic) {}
   virtual void free_icons() {}

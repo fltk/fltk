@@ -375,6 +375,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
     }
     win->show();
     win->driver()->reuse_cursor(current);
+    win->driver()->reuse_icons();
     win->wait_for_expose();
   }
   delete[] win_array;

@@ -347,6 +347,11 @@ void Fl_WinAPI_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
       icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
   }
   
+  reuse_icons();
+}
+
+void Fl_WinAPI_Window_Driver::reuse_icons()
+{
   if (Fl_X::i(pWindow))
     set_icons();
 }
@@ -443,7 +448,7 @@ void Fl_WinAPI_Window_Driver::hide() {
   if (hide_common()) return;
   
   // make sure any custom icons get freed
-  icons(NULL, 0);
+//  icons(NULL, 0); // free_icons() is called by the Fl_Window destructor
   // this little trick keeps the current clipboard alive, even if we are about
   // to destroy the window that owns the selection.
   if (GetClipboardOwner()==ip->xid)
