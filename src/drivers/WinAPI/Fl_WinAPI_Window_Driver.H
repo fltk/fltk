@@ -61,7 +61,6 @@ class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     HICON big_icon;
     HICON small_icon;
   };
-  Fl_Cursor current_cursor_;
 private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);

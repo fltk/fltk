@@ -48,7 +48,6 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
   icon_ = new icon_data;
   memset(icon_, 0, sizeof(icon_data));
   cursor = NULL;
-  current_cursor_ = FL_CURSOR_DEFAULT;
 }
 
 
