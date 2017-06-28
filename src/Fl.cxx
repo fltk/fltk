@@ -193,18 +193,18 @@ double Fl::version() {
 }
 
 /**
-  Returns the compiled-in value of the FL_API_VERSION constant. This
-  is useful for checking the version of a shared library.
+  Returns the compiled-in value of the FL_API_VERSION constant.
+  This is useful for checking the version of a shared library.
 */
 int Fl::api_version() {
   return FL_API_VERSION;
 }
 
 /**
-  Returns the compiled-in value of the FL_ABI_VERSION constant. This
-  is useful for checking the version of a shared library.
+  Returns the compiled-in value of the FL_ABI_VERSION constant.
+  This is useful for checking the version of a shared library.
 */
-int  Fl::abi_version() {
+int Fl::abi_version() {
   return FL_ABI_VERSION;
 }
 
@@ -598,8 +598,8 @@ Fl_X* Fl_X::first;
 
 Fl_Window* fl_find(Window xid) {
   Fl_X *window;
-  for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next)
-   if (window->xid == xid) {
+  for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next) {
+    if (window->xid == xid) {
       if (window != Fl_X::first && !Fl::modal()) {
         // make this window be first to speed up searches
         // this is not done if modal is true to avoid messing up modal stack
@@ -609,6 +609,7 @@ Fl_Window* fl_find(Window xid) {
       }
       return window->w;
     }
+  }
   return 0;
 }
 
@@ -737,7 +738,9 @@ void Fl::remove_handler(Fl_Event_Handler ha) {
   handler_link *l, *p;
 
   // Search for the handler in the list...
-  for (l = handlers, p = 0; l && l->handle != ha; p = l, l = l->next) {/*empty*/}
+  for (l = handlers, p = 0; l && l->handle != ha; p = l, l = l->next) {
+    /* empty */
+  }
 
   if (l) {
     // Found it, so remove it from the list...
@@ -813,7 +816,9 @@ void Fl::remove_system_handler(Fl_System_Handler ha) {
   system_handler_link *l, *p;
 
   // Search for the handler in the list...
-  for (l = sys_handlers, p = 0; l && l->handle != ha; p = l, l = l->next);
+  for (l = sys_handlers, p = 0; l && l->handle != ha; p = l, l = l->next) {
+    /* empty */
+  }
 
   if (l) {
     // Found it, so remove it from the list...
@@ -1059,8 +1064,12 @@ static int send_event(int event, Fl_Widget* to, Fl_Window* window) {
   } else {
     dx = dy = 0;
   }
-  for (const Fl_Widget* w = to; w; w = w->parent())
-    if (w->type()>=FL_WINDOW) {dx -= w->x(); dy -= w->y();}
+  for (const Fl_Widget* w = to; w; w = w->parent()) {
+    if (w->type() >= FL_WINDOW) {
+      dx -= w->x();
+      dy -= w->y();
+    }
+  }
   int save_x = Fl::e_x; Fl::e_x += dx;
   int save_y = Fl::e_y; Fl::e_y += dy;
   int ret = to->handle(Fl::e_number = event);
@@ -1267,8 +1276,10 @@ int Fl::handle_(int e, Fl_Window* window)
     // make sure that the widget still exists before sending
     // a KEYUP there. I believe that the current solution is
     // "close enough".
-    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
-      if (send_event(FL_KEYUP, wi, window)) return 1;
+    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent()) {
+      if (send_event(FL_KEYUP, wi, window))
+	return 1;
+    }
     return 0;
 
   case FL_KEYBOARD:
@@ -1281,17 +1292,20 @@ int Fl::handle_(int e, Fl_Window* window)
     fl_xfocus = window; // this should not happen!  But maybe it does:
 
     // Try it as keystroke, sending it to focus and all parents:
-    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent())
+    for (wi = grab() ? grab() : focus(); wi; wi = wi->parent()) {
       if (send_event(FL_KEYBOARD, wi, window)) return 1;
+    }
 
     // recursive call to try shortcut:
     if (handle(FL_SHORTCUT, window)) return 1;
 
     // and then try a shortcut with the case of the text swapped, by
     // changing the text and falling through to FL_SHORTCUT case:
-    {unsigned char* c = (unsigned char*)event_text(); // cast away const
-    if (!isalpha(*c)) return 0;
-    *c = isupper(*c) ? tolower(*c) : toupper(*c);}
+    {
+      unsigned char* c = (unsigned char*)event_text(); // cast away const
+      if (!isalpha(*c)) return 0;
+      *c = isupper(*c) ? tolower(*c) : toupper(*c);
+    }
     e_number = e = FL_SHORTCUT;
 
   case FL_SHORTCUT:
@@ -1356,7 +1370,7 @@ int Fl::handle_(int e, Fl_Window* window)
       send_event(FL_MOUSEWHEEL, modal(), window);
       return 1;
     }
-    // Finally try sending it to the window, the event occured in
+    // Finally try sending it to the window, the event occurred in
     if (send_event(FL_MOUSEWHEEL, window, window)) return 1;
   default:
     break;

@@ -548,7 +548,7 @@ void Fl_GDI_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &dx
     } else goto exit_error;
   } else {
     if (fl_GetGlyphIndices(gc_, (WCHAR*)ext_buff, len, w_buff, GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) {
-      // some error occured here - just return fl_measure values
+      // some error occurred here - just return fl_measure values
       goto exit_error;
     }
   }
