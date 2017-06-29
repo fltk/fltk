@@ -48,6 +48,7 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
   icon_ = new icon_data;
   memset(icon_, 0, sizeof(icon_data));
   cursor = NULL;
+  screen_num_ = -1;
 }
 
 
@@ -58,6 +59,13 @@ Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
     delete shape_data_;
   }
   delete icon_;
+}
+
+int Fl_WinAPI_Window_Driver::screen_num() {
+  if (pWindow->parent()) {
+    screen_num_ = pWindow->top_window()->driver()->screen_num();
+  }
+  return screen_num_ >= 0 ? screen_num_ : 0;
 }
 
 
@@ -395,7 +403,7 @@ void Fl_WinAPI_Window_Driver::make_current() {
 #endif // USE_COLORMAP
   
   fl_graphics_driver->clip_region(0);
-  fl_graphics_driver->scale(Fl::screen_driver()->scale(0));
+  fl_graphics_driver->scale(Fl::screen_driver()->scale(screen_num()));
   fl_graphics_driver->line_style(FL_SOLID); // scale also default line width
 }
 
@@ -489,6 +497,7 @@ void Fl_WinAPI_Window_Driver::hide() {
   if (pWindow->non_modal() && Fl::first_window() && Fl::first_window()->shown())
     Fl::first_window()->show();
   delete ip;
+  screen_num_ = -1;
 }
 
 

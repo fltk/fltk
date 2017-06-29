@@ -37,14 +37,14 @@ protected:
   RECT screens[MAX_SCREENS];
   RECT work_area[MAX_SCREENS];
   float dpi[MAX_SCREENS][2];
+  float scale_of_screen[MAX_SCREENS];
 
   static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
-  int screen_num_unscaled(int x, int y);
   int get_mouse_unscaled(int &mx, int &my);
 
 public:
-  Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() { scale_ = 1; }
+  Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() { }
   // --- display management
   virtual int visual(int flags);
   // --- screen configuration
@@ -55,6 +55,7 @@ public:
   virtual int h();
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
   virtual void screen_dpi(float &h, float &v, int n=0);
+  int screen_num_unscaled(int x, int y);
   float DWM_scaling_factor(int screen_num);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
   // --- audible output
@@ -87,11 +88,9 @@ public:
     return SYSTEMWIDE_APP_SCALING;
   }
 #endif
-  virtual float scale(int n) {return scale_;}
-  virtual void scale(int n, float f) { scale_ = f;}
+  virtual float scale(int n) {return scale_of_screen[n];}
+  virtual void scale(int n, float f) { scale_of_screen[n] = f;}
   virtual float desktop_scale_factor();
-private:
-  float scale_;
 };
 
 

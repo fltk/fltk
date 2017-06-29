@@ -1112,7 +1112,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #ifdef FLTK_HIDPI_SUPPORT
     case 0x02E0: { // WM_DPICHANGED:
       float f = HIWORD(wParam)/96.;
-      Fl::screen_driver()->scale(0, f);
+      //for now, same scale factor for each screen
+      for (int i = 0; i < Fl::screen_count(); i++) Fl::screen_driver()->scale(i, f);
       Fl_Graphics_Driver::default_driver().scale(f);
 //fprintf(LOG,"WM_DPICHANGED f=%.2f\n", f);fflush(LOG);
       if (!window->parent()) {
@@ -1445,7 +1446,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (nx & 0x8000) nx -= 65536;
     if (ny & 0x8000) ny -= 65536;
 //fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
-    window->position(nx/scale, ny/scale); }
+    window->position(nx/scale, ny/scale);
+// detect when window changes screen
+    Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+    int news = sd->screen_num_unscaled(nx + window->w()*scale, ny + window->h()*scale);
+    Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
+    int olds = wd->screen_num();
+    if (olds != news) {
+      wd->screen_num(news);
+//fprintf(LOG,"olds=%d news=%d\n",olds,news);
+    }
+  }
     break;
 
   case WM_SETCURSOR:
@@ -1529,7 +1540,7 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   int ret = bx = by = bt = 0;
 
   int fallback = 1;
-  float s = Fl::screen_driver()->scale(((Fl_Window*)w)->driver()->screen_num());
+  float s = Fl::screen_driver()->scale(w->driver()->screen_num());
   if (!w->parent()) {
     if (fl_xid(w)) {
       Fl_WinAPI_Window_Driver *dr = (Fl_WinAPI_Window_Driver*)w->driver();
@@ -1801,7 +1812,19 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
   DWORD styleEx = WS_EX_LEFT;
 
-  float s = Fl::screen_driver()->scale(0);
+  //compute adequate screen where to put the window
+  int nscreen = 0;
+  if (w->parent()) {
+    nscreen = w->top_window()->driver()->screen_num();
+  } else if (w->driver()->force_position() && Fl_WinAPI_Window_Driver::driver(w)->screen_num_ >= 0) {
+    nscreen = w->driver()->screen_num();
+  } else {
+    Fl_Window *hint = Fl::first_window();
+    if (hint) {
+      nscreen = hint->top_window()->driver()->screen_num();
+    }
+  }
+  float s = Fl::screen_driver()->scale(nscreen);
   int xp = w->x() * s; // these are in graphical units
   int yp = w->y() * s;
   int wp = w->w() * s;
@@ -1978,7 +2001,7 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax)
   hd *= 2;
   hd += td;
 
-  float s = Fl::screen_driver()->scale(0);
+  float s = Fl::screen_driver()->scale(screen_num());
   minmax->ptMinTrackSize.x = s*minw() + wd;
   minmax->ptMinTrackSize.y = s*minh() + hd;
   if (maxw()) {

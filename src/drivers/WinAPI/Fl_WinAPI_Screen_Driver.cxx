@@ -100,6 +100,7 @@ BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r)
     screens[num_screens] = mi.rcMonitor;
     // If we also want to record the work area, we would also store mi.rcWork at this point
     work_area[num_screens] = mi.rcWork;
+    scale_of_screen[num_screens] = 1;
     /*fl_alert("screen %d %d,%d,%d,%d work %d,%d,%d,%d",num_screens,
     screens[num_screens].left,screens[num_screens].right,screens[num_screens].top,screens[num_screens].bottom,
     work_area[num_screens].left,work_area[num_screens].right,work_area[num_screens].top,work_area[num_screens].bottom);
@@ -152,6 +153,7 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].right = GetSystemMetrics(SM_CXSCREEN);
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
+  scale_of_screen[0] = 1;
 }
 
 
@@ -159,10 +161,10 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
 {
   if (num_screens < 0) init();
   if (n < 0 || n >= num_screens) n = 0;
-  X = work_area[n].left/scale_;
-  Y = work_area[n].top/scale_;
-  W = (work_area[n].right - X)/scale_;
-  H = (work_area[n].bottom - Y)/scale_;
+  X = work_area[n].left/scale_of_screen[n];
+  Y = work_area[n].top/scale_of_screen[n];
+  W = (work_area[n].right - X)/scale_of_screen[n];
+  H = (work_area[n].bottom - Y)/scale_of_screen[n];
 }
 
 
@@ -174,10 +176,10 @@ void Fl_WinAPI_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
     n = 0;
 
   if (num_screens > 0) {
-    X = screens[n].left/scale_;
-    Y = screens[n].top/scale_;
-    W = (screens[n].right - screens[n].left)/scale_;
-    H = (screens[n].bottom - screens[n].top)/scale_;
+    X = screens[n].left/scale_of_screen[n];
+    Y = screens[n].top/scale_of_screen[n];
+    W = (screens[n].right - screens[n].left)/scale_of_screen[n];
+    H = (screens[n].bottom - screens[n].top)/scale_of_screen[n];
   } else {
     /* Fallback if something is broken... */
     X = 0;

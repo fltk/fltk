@@ -61,6 +61,7 @@ class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
     HICON big_icon;
     HICON small_icon;
   };
+  int screen_num_;
 private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
@@ -70,6 +71,8 @@ public:
   static inline Fl_WinAPI_Window_Driver* driver(Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)w->driver();}
   HDC private_dc; // used for OpenGL
   RECT border_width_title_bar_height(int &bx, int &by, int &bt);
+  virtual void screen_num(int n) { screen_num_ = n; }
+  virtual int screen_num();
 
   struct icon_data *icon_;
   HCURSOR cursor;
