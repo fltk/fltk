@@ -187,8 +187,8 @@ if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
    message(STATUS "Looking for ${MSG}")
    try_compile(V
-      ${FLTK_BINARY_DIR}
-      ${FLTK_SOURCE_DIR}/CMake/posixScandir.cxx
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/CMake/posixScandir.cxx
       )
    if(V)
       message(STATUS "${MSG} - found")

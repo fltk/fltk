@@ -20,6 +20,7 @@
 #######################################################################
 # basic setup
 #######################################################################
+
 # The FLTK version
 set(FLTK_VERSION_MAJOR "1")
 set(FLTK_VERSION_MINOR "4")
@@ -27,14 +28,14 @@ set(FLTK_VERSION_PATCH "0")
 set(FLTK_VERSION "${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}")
 set(FLTK_VERSION_FULL "${FLTK_VERSION}.${FLTK_VERSION_PATCH}")
 
-set(EXECUTABLE_OUTPUT_PATH ${FLTK_BINARY_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${FLTK_BINARY_DIR}/lib)
-set(ARCHIVE_OUTPUT_PATH ${FLTK_BINARY_DIR}/lib)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+set(ARCHIVE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 # Search for modules in the FLTK source dir first
-set(CMAKE_MODULE_PATH "${FLTK_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
-set(FLTK_INCLUDE_DIRS ${FLTK_BINARY_DIR} ${FLTK_SOURCE_DIR})
+set(FLTK_INCLUDE_DIRS ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR})
 include_directories(${FLTK_INCLUDE_DIRS})
 
 # Setup install locations

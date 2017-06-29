@@ -31,17 +31,17 @@ add_custom_target(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 )
 
-install(DIRECTORY ${FLTK_SOURCE_DIR}/FL
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/FL
    DESTINATION ${FLTK_INCLUDEDIR} USE_SOURCE_PERMISSIONS
    PATTERN ".svn" EXCLUDE
 )
 
-install(DIRECTORY ${FLTK_BINARY_DIR}/FL
+install(DIRECTORY ${CMAKE_BINARY_DIR}/FL
    DESTINATION ${FLTK_INCLUDEDIR} USE_SOURCE_PERMISSIONS
 )
 
 if(OPTION_CREATE_LINKS)
-   install(SCRIPT ${FLTK_BINARY_DIR}/install-symlinks.cmake)
+   install(SCRIPT ${CMAKE_BINARY_DIR}/install-symlinks.cmake)
 endif(OPTION_CREATE_LINKS)
 
 # generate FLTKConfig.cmake for installed directory use
@@ -55,22 +55,22 @@ install(EXPORT FLTK-Targets
 )
 
 configure_file(
-   ${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
-   ${FLTK_BINARY_DIR}/etc/FLTKConfig.cmake
+   ${CMAKE_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
+   ${CMAKE_BINARY_DIR}/etc/FLTKConfig.cmake
    @ONLY
 )
 
-install(FILES ${FLTK_BINARY_DIR}/etc/FLTKConfig.cmake
+install(FILES ${CMAKE_BINARY_DIR}/etc/FLTKConfig.cmake
    DESTINATION ${FLTK_CONFIG_PATH}
 )
 
 configure_file(
-   ${FLTK_SOURCE_DIR}/CMake/UseFLTK.cmake.in
-   ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
+   ${CMAKE_SOURCE_DIR}/CMake/UseFLTK.cmake.in
+   ${CMAKE_BINARY_DIR}/etc/UseFLTK.cmake
    @ONLY
 )
 
-install(FILES ${FLTK_BINARY_DIR}/etc/UseFLTK.cmake
+install(FILES ${CMAKE_BINARY_DIR}/etc/UseFLTK.cmake
    DESTINATION ${FLTK_CONFIG_PATH}
 )
 
@@ -85,24 +85,24 @@ set(srcdir ".")
 set(LIBNAME "${libdir}/libfltk.a")
 
 configure_file(
-   "${FLTK_SOURCE_DIR}/fltk-config.in"
-   "${FLTK_BINARY_DIR}/bin/fltk-config"
+   "${CMAKE_SOURCE_DIR}/fltk-config.in"
+   "${CMAKE_BINARY_DIR}/bin/fltk-config"
    @ONLY
 )
 if(UNIX)
    execute_process(COMMAND chmod 755 fltk-config
-      WORKING_DIRECTORY "${FLTK_BINARY_DIR}/bin"
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
    )
 endif(UNIX)
 
-install(PROGRAMS ${FLTK_BINARY_DIR}/bin/fltk-config
+install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/fltk-config
    DESTINATION ${FLTK_BINDIR}
 )
 
 if(UNIX OR MSYS OR (MINGW AND CMAKE_CROSSCOMPILING))
    macro(INSTALL_MAN FILE LEVEL)
    install(FILES
-      ${FLTK_SOURCE_DIR}/documentation/src/${FILE}.man
+      ${CMAKE_SOURCE_DIR}/documentation/src/${FILE}.man
       DESTINATION ${FLTK_MANDIR}/man${LEVEL}
       RENAME ${FILE}.${LEVEL}
    )

@@ -46,39 +46,39 @@ export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_BINARY_DIR}/FLTK-Targets.
 
 # generate FLTKConfig.cmake for build directory use
 set(INCLUDE_DIRS "${FLTK_INCLUDE_DIRS}")
-set(CONFIG_PATH ${FLTK_BINARY_DIR})
+set(CONFIG_PATH ${CMAKE_BINARY_DIR})
 
 configure_file(
-   ${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
-   ${FLTK_BINARY_DIR}/FLTKConfig.cmake
+   ${CMAKE_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
+   ${CMAKE_BINARY_DIR}/FLTKConfig.cmake
    @ONLY
 )
 
 # generate UseFLTK.cmake for build directory use
 configure_file(
-   ${FLTK_SOURCE_DIR}/CMake/UseFLTK.cmake.in
-   ${FLTK_BINARY_DIR}/UseFLTK.cmake
+   ${CMAKE_SOURCE_DIR}/CMake/UseFLTK.cmake.in
+   ${CMAKE_BINARY_DIR}/UseFLTK.cmake
    @ONLY
 )
 
 # generate fltk-config for build directory use
-set(prefix ${FLTK_BINARY_DIR})
+set(prefix ${CMAKE_BINARY_DIR})
 set(exec_prefix "\${prefix}")
-set(includedir "${FLTK_SOURCE_DIR}")
-set(BINARY_DIR "${FLTK_BINARY_DIR}")
+set(includedir "${CMAKE_SOURCE_DIR}")
+set(BINARY_DIR "${CMAKE_BINARY_DIR}")
 set(libdir "\${exec_prefix}/lib")
 set(srcdir ".")
 
 set(LIBNAME "${libdir}/libfltk.a")
 
 configure_file(
-   "${FLTK_SOURCE_DIR}/fltk-config.in"
-   "${FLTK_BINARY_DIR}/fltk-config"
+   "${CMAKE_SOURCE_DIR}/fltk-config.in"
+   "${CMAKE_BINARY_DIR}/fltk-config"
    @ONLY
 )
 if(UNIX)
    execute_process(COMMAND chmod 755 fltk-config
-      WORKING_DIRECTORY "${FLTK_BINARY_DIR}"
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
    )
 endif(UNIX)
 
@@ -102,8 +102,8 @@ set(CONFIG_H config.h)
 # generate config.h
 
 configure_file(
-   "${FLTK_SOURCE_DIR}/${CONFIG_H_IN}"
-   "${FLTK_BINARY_DIR}/${CONFIG_H}"
+   "${CMAKE_SOURCE_DIR}/${CONFIG_H_IN}"
+   "${CMAKE_BINARY_DIR}/${CONFIG_H}"
    @ONLY
 )
 
@@ -115,8 +115,8 @@ if(OPTION_CREATE_LINKS)
       set(PREFIX_INCLUDE "${CMAKE_INSTALL_PREFIX}/${FLTK_INCLUDEDIR}")
    endif(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
    configure_file(
-      "${FLTK_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
-      "${FLTK_BINARY_DIR}/install-symlinks.cmake"
+      "${CMAKE_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
+      "${CMAKE_BINARY_DIR}/install-symlinks.cmake"
       @ONLY
    )
 endif(OPTION_CREATE_LINKS)
