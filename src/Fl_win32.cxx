@@ -516,9 +516,9 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 
 
 float Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
-  typedef HRESULT (WINAPI* GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
   float f = 1;
 #ifdef FLTK_HIDPI_SUPPORT
+  typedef HRESULT (WINAPI* GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
   HMODULE hMod  = LoadLibrary("Shcore.DLL");
   GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
   if (hMod) fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
