@@ -610,7 +610,8 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 
 float Fl_WinAPI_Gl_Window_Driver::pixels_per_unit()
 {
-  return Fl::screen_driver()->scale(0);
+  int ns = pWindow->driver()->screen_num();
+  return Fl::screen_driver()->scale(ns);
 }
 
 
