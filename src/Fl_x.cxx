@@ -1252,7 +1252,7 @@ int fl_handle(const XEvent& thisevent)
     XRRUpdateConfiguration_f(&xevent);
     Fl::call_screen_init();
 #if USE_XFT
-    float factor = Fl::screen_driver()->default_scale_factor();
+    float factor = Fl::screen_driver()->desktop_scale_factor();
     for (int screen = 0; screen <= Fl::screen_count(); screen++)
       Fl::screen_driver()->rescale_all_windows_from_screen(screen, factor);
 #endif // USE_XFT

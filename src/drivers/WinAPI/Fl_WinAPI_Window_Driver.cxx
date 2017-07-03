@@ -68,6 +68,13 @@ int Fl_WinAPI_Window_Driver::screen_num() {
   return screen_num_ >= 0 ? screen_num_ : 0;
 }
 
+//FILE*LOG=fopen("log.log","w");
+
+void Fl_WinAPI_Window_Driver::screen_num(int n) {
+//fprintf(LOG, "screen_num setter old=%d new=%d\n",screen_num_, n);fflush(LOG);
+  screen_num_ = n;
+}
+
 
 RECT // frame of the decorated window in screen coordinates
   Fl_WinAPI_Window_Driver::border_width_title_bar_height(
@@ -667,6 +674,19 @@ int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, 
   // Great, we can do an accelerated scroll instead of re-rendering
   BitBlt(gc, dest_x, dest_y, src_w, src_h, gc, src_x, src_y,SRCCOPY);
   return 0;
+}
+
+Fl_WinAPI_Window_Driver::type_for_resize_window_between_screens Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
+
+void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
+  Fl_Window *win = (Fl_Window*)data;
+  RECT r;
+  GetClientRect(fl_xid(win), &r);
+  float old_f = float(r.right)/win->w();
+  int ns = data_for_resize_window_between_screens_.screen;
+  win->driver()->resize_after_scale_change(ns, old_f, Fl::screen_driver()->scale(ns));
+  win->wait_for_expose();
+  data_for_resize_window_between_screens_.busy = false;
 }
 
 //

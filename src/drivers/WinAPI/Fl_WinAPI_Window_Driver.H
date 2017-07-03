@@ -71,12 +71,17 @@ public:
   static inline Fl_WinAPI_Window_Driver* driver(Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)w->driver();}
   HDC private_dc; // used for OpenGL
   RECT border_width_title_bar_height(int &bx, int &by, int &bt);
-  virtual void screen_num(int n) { screen_num_ = n; }
+  virtual void screen_num(int n);
   virtual int screen_num();
 
   struct icon_data *icon_;
   HCURSOR cursor;
   int custom_cursor;
+  struct type_for_resize_window_between_screens {
+    int screen;
+    bool busy;
+  };
+  static type_for_resize_window_between_screens data_for_resize_window_between_screens_;
   void set_minmax(LPMINMAXINFO minmax);
   int fake_X_wm(int &X, int &Y, int &bt,int &bx,int &by);
   void make_fullscreen(int X, int Y, int W, int H);
@@ -117,6 +122,7 @@ public:
   virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                      void (*draw_area)(void*, int,int,int,int), void* data);
+  static void resize_after_screen_change(void *data);
 };
 
 

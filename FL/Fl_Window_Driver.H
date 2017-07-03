@@ -108,6 +108,8 @@ public:
   void overlay(Fl_Window *o) {
     if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
   }
+  
+  void resize_after_scale_change(int ns, float old_f, float new_f);
 
   // --- window data
   virtual int decorated_w() = 0;

@@ -364,18 +364,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   }
   for (i = count - 1; i >= 0; i--) { // rescale all top-level windows, finishing with front one
     win = win_array[i];
-    int oldx = win->x(), oldy = win->y();
-    fl_uintptr_t current = win->driver()->current_cursor();
-    win->hide();
-    win->driver()->screen_num(screen);
-    win->position(oldx*old_f/f, oldy*old_f/f);
-    win->driver()->force_position(1);
-    if (win->fullscreen_active()) {
-      win->size(win->w() * old_f/f, win->h() * old_f/f);
-    }
-    win->show();
-    win->driver()->reuse_cursor(current);
-    win->driver()->reuse_icons();
+    win->driver()->resize_after_scale_change(screen, old_f, f);
     win->wait_for_expose();
   }
   delete[] win_array;
@@ -469,21 +458,23 @@ int Fl_Screen_Driver::scale_handler(int event)
 }
 
 
-// determine the scaling value used at startup time (helps supporting HiDPI displays)
-float Fl_Screen_Driver::default_scale_factor()
+// use the startup time scaling value
+void Fl_Screen_Driver::use_startup_scale_factor()
 {
-  float factor = 1;
+  float factor;
   char *p = 0;
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
     sscanf(p, "%f", &factor);
+    // checks to prevent potential crash (factor <= 0) or very large factors
+    if (factor < 0.25) factor = 0.25;
+    else if (factor > 10.0) factor = 10.0;
   }
   else {
     factor = desktop_scale_factor();
   }
-  // checks to prevent potential crash (factor <= 0) or very large factors
-  if (factor < 0.25) factor = 0.25;
-  else if (factor > 10.0) factor = 10.0;
-  return factor;
+  if (factor) {
+    for (int i = 0; i < screen_count(); i++)  scale(i, factor);
+  }
 }
 
 
@@ -495,10 +486,11 @@ void Fl_Screen_Driver::open_display()
     been_here = true;
     int ns = screen_count();
     if (rescalable()) {
-      float factor = default_scale_factor();
-      for (int i = 0; i < ns; i++) scale(i, factor);
+      use_startup_scale_factor();
       Fl::add_handler(Fl_Screen_Driver::scale_handler);
-      Fl_Graphics_Driver::default_driver().scale(factor);
+      int mx, my;
+      int ns = Fl::screen_driver()->get_mouse(mx, my);
+      Fl_Graphics_Driver::default_driver().scale(scale(ns));
     }
   }
 }

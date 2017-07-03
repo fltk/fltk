@@ -100,7 +100,7 @@ BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r)
     screens[num_screens] = mi.rcMonitor;
     // If we also want to record the work area, we would also store mi.rcWork at this point
     work_area[num_screens] = mi.rcWork;
-    scale_of_screen[num_screens] = 1;
+//extern FILE*LOG;fprintf(LOG,"screen_cb ns=%d\n",num_screens);fflush(LOG);
     /*fl_alert("screen %d %d,%d,%d,%d work %d,%d,%d,%d",num_screens,
     screens[num_screens].left,screens[num_screens].right,screens[num_screens].top,screens[num_screens].bottom,
     work_area[num_screens].left,work_area[num_screens].right,work_area[num_screens].top,work_area[num_screens].bottom);
@@ -141,6 +141,9 @@ void Fl_WinAPI_Screen_Driver::init()
         //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, (LPARAM)this);
+#ifdef FLTK_HIDPI_SUPPORT
+        init_screen_scale_factors();
+#endif
         return;
       }
     }
@@ -154,6 +157,11 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
   scale_of_screen[0] = 1;
+}
+
+
+float Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
+  return 0; //indicates each screen has already been assigned its scale factor value
 }
 
 

@@ -167,7 +167,7 @@ public:
   static int scale_handler(int event);
   virtual void init_workarea() {}
   virtual float desktop_scale_factor() {return 1;}
-  float default_scale_factor();
+  void use_startup_scale_factor();
   enum APP_SCALING_CAPABILITY {
     NO_APP_SCALING = 0, ///< The platform does not support rescaling.
     SYSTEMWIDE_APP_SCALING, ///< The platform supports rescaling with the same factor for all screens.

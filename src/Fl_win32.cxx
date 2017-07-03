@@ -515,24 +515,24 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 }
 
 
-float Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
-  float f = 1;
 #ifdef FLTK_HIDPI_SUPPORT
+void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
   typedef HRESULT (WINAPI* GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
   HMODULE hMod  = LoadLibrary("Shcore.DLL");
   GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
   if (hMod) fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
   if (fl_GetDpiForMonitor) {
-    RECT rect = {0, 0, 0, 0};
-    HMONITOR hm = MonitorFromRect(&rect, MONITOR_DEFAULTTOPRIMARY);
-    UINT dpiX, dpiY;
-    HRESULT r = fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
-    if (r == S_OK) f = dpiX/96.;
-//fprintf(LOG, "result=%d dpiX=%d dpiY=%d factor=%.2f\n", r, dpiX, dpiY, f);fflush(LOG);
+    for (int ns = 0; ns < screen_count(); ns++) {
+      HMONITOR hm = MonitorFromRect(&screens[ns], MONITOR_DEFAULTTONEAREST);
+      UINT dpiX, dpiY;
+      HRESULT r = fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
+      float f = (r == S_OK ? dpiX/96. : 1);
+      scale(ns, f);
+//fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f\n", ns, f);fflush(LOG);
+    }
   }
-#endif // FLTK_HIDPI_SUPPORT
-  return f;
 }
+#endif // FLTK_HIDPI_SUPPORT
 
 
 class Fl_Win32_At_Exit {
@@ -1111,14 +1111,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       
 #ifdef FLTK_HIDPI_SUPPORT
     case 0x02E0: { // WM_DPICHANGED:
-      float f = HIWORD(wParam)/96.;
-      //for now, same scale factor for each screen
-      for (int i = 0; i < Fl::screen_count(); i++) Fl::screen_driver()->scale(i, f);
-      Fl_Graphics_Driver::default_driver().scale(f);
-//fprintf(LOG,"WM_DPICHANGED f=%.2f\n", f);fflush(LOG);
-      if (!window->parent()) {
-        window->hide();
-        window->show();
+      if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+        RECT r;
+        float f = HIWORD(wParam)/96.;
+        GetClientRect(hWnd, &r);
+        float old_f = float(r.right)/window->w();
+        int ns = window->driver()->screen_num();
+        Fl::screen_driver()->scale(ns, f);
+        window->driver()->resize_after_scale_change(ns, old_f,  f);
       }
     }
     return 0;
@@ -1446,16 +1446,24 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (nx & 0x8000) nx -= 65536;
     if (ny & 0x8000) ny -= 65536;
 //fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
-    window->position(nx/scale, ny/scale);
 // detect when window changes screen
     Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-    int news = sd->screen_num_unscaled(nx + window->w()*scale, ny + window->h()*scale);
+    int news = sd->screen_num_unscaled(nx + window->w()*scale/2, ny + window->h()*scale/2);
     Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
     int olds = wd->screen_num();
+    float s = sd->scale(news);
+//fprintf(LOG,"WM_MOVE olds=%d(%.2f) news=%d(%.2f) busy=%d\n",olds, sd->scale(olds),news, s, Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);fflush(LOG);
     if (olds != news) {
-      wd->screen_num(news);
-//fprintf(LOG,"olds=%d news=%d\n",olds,news);
+      if (s != sd->scale(olds) &&
+          !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
+          window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
+        Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
+        Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
+        Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+      }
+      else if(!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) wd->screen_num(news);
     }
+      window->position(nx/scale, ny/scale);
   }
     break;
 
@@ -1822,8 +1830,12 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
     Fl_Window *hint = Fl::first_window();
     if (hint) {
       nscreen = hint->top_window()->driver()->screen_num();
+    } else {
+      int mx, my;
+      nscreen = Fl::screen_driver()->get_mouse(mx, my);
     }
   }
+  w->driver()->screen_num(nscreen);
   float s = Fl::screen_driver()->scale(nscreen);
   int xp = w->x() * s; // these are in graphical units
   int yp = w->y() * s;
@@ -2340,6 +2352,7 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
 }
 
 void Fl_WinAPI_Window_Driver::reuse_cursor(fl_uintptr_t c) {
+  cursor = (HCURSOR)c;
   SetCursor((HCURSOR)c);
 }
 
