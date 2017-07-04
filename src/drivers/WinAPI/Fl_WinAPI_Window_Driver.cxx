@@ -102,10 +102,12 @@ RECT // frame of the decorated window in screen coordinates
     if (need_r) {
       GetWindowRect(fl_xid(win), &r);
     }
-    bx = (r.right - r.left - int(win->w() * scaling))/2;
+    RECT  rc;
+    GetClientRect(fl_xid(win), &rc);
+    bx = (r.right - r.left - rc.right)/2;
     if (bx < 1) bx = 1;
     by = bx;
-    bt = r.bottom - r.top - int(win->h() * scaling) - 2 * by;
+    bt = r.bottom - r.top - rc.bottom - 2 * by;
   }
   return r;
 }
