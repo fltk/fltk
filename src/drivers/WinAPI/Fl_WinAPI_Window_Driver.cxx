@@ -532,7 +532,7 @@ void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   right = fullscreen_screen_right();
   
   if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
-    top = Fl::screen_num(X, Y, W, H);
+    top = screen_num();
     bottom = top;
     left = top;
     right = top;
