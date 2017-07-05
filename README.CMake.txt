@@ -95,10 +95,11 @@ CMAKE_INSTALL_PREFIX
 The following are the FLTK specific options.  Platform specific options
 are ignored on other platforms.
 
-OPTION_OPTIM
-   Extra optimization flags.
+OPTION_OPTIM - default EMPTY
+   Extra optimization flags for the C and C++ compilers, for instance
+   "-Wall -Wno-deprecated-declarations".
 
-OPTION_ARCHFLAGS
+OPTION_ARCHFLAGS - default EMPTY
    Extra architecture flags.
 
 OPTION_APPLE_X11 - default OFF
@@ -116,25 +117,25 @@ OPTION_BUILD_EXAMPLES - default ON
    Builds the many fine example programs.
 
 OPTION_CAIRO - default OFF
-   Enables libcairo support
+   Enables libcairo support - see README.CMake.txt.
 
 OPTION_CAIROEXT - default OFF
-   Enables extended libcairo support
+   Enables extended libcairo support - see README.CMake.txt.
 
 OPTION_USE_GL - default ON
-   Enables OpenGL support
+   Enables OpenGL support.
 
 OPTION_USE_THREADS - default ON
-   Enables multithreaded support
+   Enables multithreaded support.
 
 OPTION_LARGE_FILE - default ON
-   Enables large file (>2G) support
+   Enables large file (>2G) support.
 
 OPTION_USE_SYSTEM_LIBJPEG - default ON
 OPTION_USE_SYSTEM_ZLIB - default ON
 OPTION_USE_SYSTEM_LIBPNG - default ON
-   FLTK has built in jpeg, zlib, and png libraries.  These let you use
-   system libraries instead, unless CMake can't find them.  If you set
+   FLTK has built in jpeg, zlib, and png libraries.  These options let you
+   use system libraries instead, unless CMake can't find them.  If you set
    any of these options to OFF, then the built in library will be used.
 
 OPTION_USE_XINERAMA - default ON
@@ -145,9 +146,8 @@ OPTION_USE_XRENDER - default ON
    These are X11 extended libraries.
 
 OPTION_USE_PANGO - default OFF
-   Enables use of the Pango library for drawing text. Pango supports
-   all unicode-defined scripts with limited support of right-to-left
-   scripts.
+   Enables use of the Pango library for drawing text. Pango supports all
+   unicode-defined scripts with limited support of right-to-left scripts.
    This option makes sense only under X11, and also requires Xft.
 
 OPTION_ABI_VERSION - default EMPTY
@@ -160,7 +160,7 @@ OPTION_ABI_VERSION - default EMPTY
    ABI version to select.
 
 OPTION_PRINT_SUPPORT - default ON
-   When turned off, the Fl_Printer class does nothing and the 
+   When turned off, the Fl_Printer class does nothing and the
    Fl_PostScript_File_Device class cannot be used, but the FLTK library
    is somewhat smaller. This option makes sense only on the Unix/Linux
    platform or when OPTION_APPLE_X11 is ON.
@@ -168,7 +168,7 @@ OPTION_PRINT_SUPPORT - default ON
  2.3  Building under Linux with Unix Makefiles
 -----------------------------------------------
 
-After untaring the FLTK source, go to the root of the FLTK tree and type
+After unpacking the FLTK source, go to the root of the FLTK tree and type
 the following.
 
     mkdir build
@@ -186,14 +186,14 @@ Some flags can be changed during the 'make' command, such as:
 ..which builds in verbose mode, so you can see all the compile/link commands.
 
 Hint: if you intend to build several different versions of FLTK, e.g. a Debug
-and a Release version, or multiple libraries with different ABI versions,
-then use subdirectories in the build directory, like this:
+and a Release version, or multiple libraries with different ABI versions or
+options, then use subdirectories in the build directory, like this:
 
     mkdir build
     cd build
     mkdir Debug
     cd Debug
-    cmake ../..
+    cmake -D 'CMAKE_BUILD_TYPE=Debug' ../..
     make
     sudo make install (optional)
 
@@ -201,8 +201,9 @@ then use subdirectories in the build directory, like this:
  2.4  Building under Windows with Visual Studio
 ------------------------------------------------
 
-Building with CMake under Visual Studio requires the CMake generator
-with the -G command line switch. 
+Building with CMake under Visual Studio requires the CMake generator with
+the -G command line switch, or the generator can be selected interactively
+in the GUI (cmake-gui).
 
      2.4.1 Visual Studio 7 / .NET
     ------------------------------
@@ -239,6 +240,7 @@ with the -G command line switch.
        ..and in the popup menu, choose "Build Solution"
 
     5) That's it, that should build FLTK.
+
        The test programs (*.exe) can be found in e.g.
 
 	    Release: C:\fltk-1.4.x\build\bin\examples\release\*.exe
@@ -246,14 +248,20 @@ with the -G command line switch.
 
        ..and the FLTK include files (*.H & *.h) your own apps can
        compile with can be found in:
-       
+
 	    Release & Debug: C:\fltk-1.4.x\build\FL
+	    *and* [1] in:    C:\fltk-1.4.x\FL
 
        ..and the FLTK library files (*.lib) which your own apps can
        link with can be found in:
 
 	    Release: C:\fltk-1.4.x\build\lib\release\*.lib
 	      Debug: C:\fltk-1.4.x\build\lib\debug\*.lib
+
+      [1] If you want to build your own FLTK application directly using
+	  the build directories (i.e. without "installation") you need
+	  to include both the build tree (first) and then the FLTK source
+	  tree in the compiler's header search list.
 
 
  2.5  Building under Windows with MinGW using Makefiles
@@ -274,7 +282,7 @@ use your MinGW PATH to find the compilers and build tools. Example:
 
   mkdir build
   cd build
-  cmake -G "Unix Makefiles" ..
+  cmake -G "Unix Makefiles" -D 'CMAKE_BUILD_TYPE=Debug' ..
 
 Note the path to FLTK ".." in the last command line. Depending on where you
 installed CMake you may need to adjust the path's in the alias commands.
@@ -337,7 +345,7 @@ of the cmake related files are updated, Xcode wil rerun cmake for you.
 Once you have a crosscompiler going, to use CMake to build FLTK you need
 two more things.  You need a toolchain file which tells CMake where your
 build tools are.  The CMake website is a good source of information on
-this file.  Here's mine for MinGW under Linux.
+this file.  Here's one for MinGW under Linux.
 
 ----
 # the name of the target operating system

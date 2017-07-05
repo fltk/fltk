@@ -86,7 +86,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
 
 
 SVN USERS
-    
+
     If you've just checked out a fresh copy of FLTK from SVN,
     you'll need to generate an initial version of 'configure'
     by running 'make makeinclude'. (We don't include a copy
@@ -94,7 +94,7 @@ SVN USERS
 
 
 MAKE TARGETS
-    
+
     make            -- builds the library + test programs (does not install)
     make install    -- builds and installs
     make clean      -- clean for a rebuild
@@ -124,7 +124,7 @@ BUILDING HTML DOCUMENTATION
     If you want to build the PDF documentation:
 
     	( cd documentation && make pdf )
-    
+
     FLTK uses doxygen for documentation, so you'll at least need doxygen
     installed for creating html docs, and LaTeX for creating PDF docs.
 
