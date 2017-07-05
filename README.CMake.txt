@@ -12,7 +12,8 @@ README.CMake.txt - Building and using FLTK with CMake
     2.3   Building under Linux with Unix Makefiles
     2.4   Building under Windows with Visual Studio [SUGGESTED DOCS -erco]
     2.5   Building under Windows with MinGW using Makefiles
-    2.6   Crosscompiling
+    2.6   Building under MacOS with Xcode
+    2.7   Crosscompiling
   3	Using CMake with FLTK
     3.1   Library Names
     3.2   Using Fluid Files
@@ -279,7 +280,58 @@ Note the path to FLTK ".." in the last command line. Depending on where you
 installed CMake you may need to adjust the path's in the alias commands.
 
 
- 2.6  Crosscompiling
+2.6  Building under MacOS with Xcode
+------------------------------------
+
+Building with CMake under Xcode requires the CMake generator
+with the -G command line switch. This step need to be done only once. If any
+of the cmake related files are updated, Xcode wil rerun cmake for you.
+
+1) Open the MacOS Terminal
+
+2) Change to the directory containing the FLTK project. For example:
+     > cd ~/dev/fltk-1.4.x
+
+3) Create a build directory
+     > mkdir build
+     > cd build
+
+4) If you plan different build versions, it is useful to create another
+   subdirectory level
+     > mkdir Xcode
+     > cd Xcode
+
+5) Let CMake create the require IDE files
+     > cmake -G Xcode ../..
+   This step should end in the message:
+     -- Build files have been written to: .../dev/fltk-1.4.x/build/Xcode
+
+5a) To build the Release version of FLTK, use
+      > cmake -G Xcode -D CMAKE_BUILD_TYPE=Release ../..
+
+5b) To create all included libraries instead of using those that come
+    with MacOS, use:
+      > cmake -G Xcode -D OPTION_USE_SYSTEM_LIBJPEG=Off \
+                       -D OPTION_USE_SYSTEM_ZLIB=Off \
+                       -D OPTION_USE_SYSTEM_LIBPNG=Off \
+                       ../..
+
+6) Launch Xcode for the Finder or from the Terminal:
+     > open ./FLTK.xcodeproj
+   When Xcode starts, it ask if it should "Autocreate Shemes". Click on
+   "Automatically Create Schemes" to confirm.
+
+7) To build and test FLTK, select the scheme "ALL_BUILD" and hit Cmd-B to
+   build. Then select the scheme "demo" and hit Cmd-R to run the FLTK Demo.
+
+8) The interactive user interface tool "Fluid" will be loacted in
+   build/Xcode/bin/Debug. The example apps are in .../bin/examples/debug.
+   Static libraries are in .../lib/Debug/
+
+9) The "install" Scheme currently fails because it is run with user permission.
+
+
+ 2.7  Crosscompiling
 ---------------------
 
 Once you have a crosscompiler going, to use CMake to build FLTK you need
@@ -469,3 +521,4 @@ Feb 23 2014 - msurette: updated to reflect changes to the CMake files
 Apr 07 2015 - AlbrechtS: update use example and more docs
 Jan 31 2016 - msurette: custom command instead of fltk_wrap_ui
 Nov 01 2016 - AlbrechtS: remove deprecated FLTK_USE_FILE, add MinGW build
+Jul 05 2017 - matt: added instructions for MacOS and Xcode
