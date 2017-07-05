@@ -484,7 +484,7 @@ void Fl_Screen_Driver::open_display()
   static bool been_here = false;
   if (!been_here) {
     been_here = true;
-    int ns = screen_count();
+    screen_count(); // initialize, but ignore return value
     if (rescalable()) {
       use_startup_scale_factor();
       Fl::add_handler(Fl_Screen_Driver::scale_handler);
