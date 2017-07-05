@@ -6,7 +6,7 @@
 // This also demonstrates how to trap attempts by the user to
 // close the last window by overriding Fl::exit
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -20,7 +20,9 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input.H>
@@ -29,7 +31,6 @@
 #include <FL/Fl_Box.H>
 
 #include <FL/fl_ask.H>
-#include <stdlib.h>
 
 void update_input_text(Fl_Widget* o, const char *input) {
   if (input) {
@@ -64,7 +65,7 @@ void window_callback(Fl_Widget*, void*) {
 /*
   This timer callback shows a message dialog (fl_choice) window
   every 5 seconds to test "recursive" common dialogs.
-  
+
   The timer can be stopped by clicking the button "Stop these funny popups"
   or pressing the Enter key. As it is currently implemented, clicking the
   "Close" button will reactivate the popups (only possible if "recursive"
@@ -74,14 +75,11 @@ void window_callback(Fl_Widget*, void*) {
   is already open because the window used is a static (i.e. permanently
   allocated) Fl_Window instance. This should be fixed in FLTK 1.4.0.
   See STR #334 (sic !) and also STR #2751 ("Limit input field characters").
-
-  Note 2: Chances are that this /might/ be fixed in FLTK 1.3.4, but
-  this is not decided yet. AlbrechtS - July 21, 2015.
 */
 void timer_cb(void *) {
 
   static int stop = 0;
-  double delta = 5.0;
+  static const double delta = 5.0;
 
   Fl_Box *message_icon = (Fl_Box *)fl_message_icon();
 
@@ -100,23 +98,25 @@ void timer_cb(void *) {
 
   // pop up a message:
   stop = fl_choice("Timeout. Click the 'Close' button.\n"
-	     "Note: this message is blocked in FLTK 1.3\n"
-	     "if another message window is open.\n"
-	     "This message should pop up every 5 seconds.",
-	     "Close","Stop these funny popups",NULL);
+		   "Note: this message was blocked in FLTK 1.3\n"
+		   "if another message window is open.\n"
+		   "This *should* be fixed in FLTK 1.4.0!\n"
+		   "This message should pop up every 5 seconds.",
+		   "Close", "Stop these funny popups", NULL);
 }
 
 int main(int argc, char **argv) {
   char buffer[128] = "Test text";
   char buffer2[128] = "MyPassword";
 
-// this is a test to make sure automatic destructors work.  Pop up
-// the question dialog several times and make sure it doesn't crash.
-// fc: added more fl_ask common dialogs for test cases purposes.
+  // This is a test to make sure automatic destructors work. Pop up
+  // the question dialog several times and make sure it doesn't crash.
 
   Fl_Double_Window window(200, 105);
-  Fl_Return_Button b(20, 10, 160, 35, buffer); b.callback(rename_me);
-  Fl_Button b2(20, 50, 160, 35, buffer2); b2.callback(rename_me_pwd);
+  Fl_Return_Button b(20, 10, 160, 35, buffer);
+  b.callback(rename_me);
+  Fl_Button b2(20, 50, 160, 35, buffer2);
+  b2.callback(rename_me_pwd);
   window.end();
   window.resizable(&b);
   window.show(argc, argv);
