@@ -630,12 +630,10 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(uchar *p, int
   return rgb;
 }
 
+#ifndef FLTK_HIDPI_SUPPORT
 /* Returns the current desktop scaling factor for screen_num (1.75 for example)
  */
-float Fl_WinAPI_Screen_Driver::DWM_scaling_factor(int screen_num) {
-#ifdef FLTK_HIDPI_SUPPORT
-  return scale(screen_num);
-#else
+float Fl_WinAPI_Screen_Driver::DWM_scaling_factor() {
   // Compute the global desktop scaling factor: 1, 1.25, 1.5, 1.75, etc...
   // This factor can be set in Windows 10 by
   // "Change the size of text, apps and other items" in display settings.
@@ -655,8 +653,9 @@ float Fl_WinAPI_Screen_Driver::DWM_scaling_factor(int screen_num) {
   float scaling = dhr/float(hr);
   scaling = int(scaling * 100 + 0.5)/100.; // round to 2 digits after decimal point
   return scaling;
-#endif // FLTK_HIDPI_SUPPORT
 }
+
+#endif // ! FLTK_HIDPI_SUPPORT
 
 void Fl_WinAPI_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &height)
 {

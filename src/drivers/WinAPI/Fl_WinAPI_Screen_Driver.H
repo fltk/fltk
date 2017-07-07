@@ -61,7 +61,6 @@ public:
   virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
   virtual void screen_dpi(float &h, float &v, int n=0);
   int screen_num_unscaled(int x, int y);
-  float DWM_scaling_factor(int screen_num);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
   // --- audible output
   virtual void beep(int type);
@@ -92,14 +91,14 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() {
     return PER_SCREEN_APP_SCALING;
   }
-#endif
-#if defined(FLTK_HIDPI_SUPPORT)
   virtual float scale(int n) {
     return scale_of_screen[n];
   }
   virtual void scale(int n, float f) {
     scale_of_screen[n] = f;
   }
+#else
+  float DWM_scaling_factor();
 #endif
   virtual float desktop_scale_factor();
 };

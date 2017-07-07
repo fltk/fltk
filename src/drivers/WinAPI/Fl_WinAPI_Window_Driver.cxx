@@ -108,7 +108,7 @@ RECT // frame of the decorated window in screen coordinates
     width = rc.right;
     height = rc.bottom;
 #else
-    float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+    float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
     width = int(win->w() * scaling);
     height = int(win->h() * scaling);
 #endif
@@ -141,7 +141,7 @@ int Fl_WinAPI_Window_Driver::decorated_h()
   int mini_by = by/s; if (mini_by < 1) mini_by = 1;
   return h() + (bt + by)/s + mini_by;
 #else
-  float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+  float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
   return h() + bt/scaling + 2 * by +1;
 #endif
 }

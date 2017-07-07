@@ -813,7 +813,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
           width = int(width / (scaling * factor));  // convert to screen pixel unit
           height = int(height / (scaling * factor));
 #else
-          float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+          float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
           width = int(width * scaling / factor);  // convert to screen pixel unit
           height = int(height * scaling / factor);
           scaling = 1;
@@ -2547,7 +2547,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
 #ifdef FLTK_HIDPI_SUPPORT
   float DWMscaling = scaling;
 #else
-  float DWMscaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+  float DWMscaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
 #endif
   // capture the 4 window sides from screen
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();

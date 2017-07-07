@@ -64,7 +64,7 @@ Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_S
   float scaling = Fl_Graphics_Driver::default_driver().scale();
   driver()->scale(scaling);
 #else
-  float scaling = 1/((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+  float scaling = 1/((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
 #endif
   RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)((w*scaling) * factorw); rect.bottom = (LONG)((h*scaling) * factorh);
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
