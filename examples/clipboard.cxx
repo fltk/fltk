@@ -37,6 +37,9 @@ Fl_Box *image_box;
 Fl_Box *image_size;
 Fl_Text_Display *display;
 
+inline int fl_min(int a, int b) { return (a < b ? a : b); }
+
+
 class chess : public Fl_Box { // a box with a chess-like pattern below its image
 public:
   chess(int x, int y, int w, int h) : Fl_Box(FL_FLAT_BOX,x,y,w,h,0) {
@@ -95,8 +98,11 @@ public:
 #endif
       Fl_Shared_Image *oldim = (Fl_Shared_Image*)image_box->image();
       if (oldim) oldim->release();
+      float scale = fl_graphics_driver->scale();
       Fl_Shared_Image *shared = Fl_Shared_Image::get(im);
-      shared->scale(image_box->w(), image_box->h());
+      int width = fl_min(image_box->w(), im->w()/scale);
+      int height = fl_min(image_box->h(), im->h()/scale);
+      shared->scale(width, height);
       image_box->image(shared); // show the scaled image
       image_size->copy_label(title);
       value(image_box->parent());

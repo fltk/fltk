@@ -65,6 +65,7 @@ void fl_cleanup_dc_list(void);
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Paged_Device.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Image_Surface.H>
 #include "flstring.h"
 #include "drivers/GDI/Fl_Font.H"
 #include <stdio.h>
@@ -755,6 +756,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       }
       else if (strcmp(type, Fl::clipboard_image) == 0) { // we want an image from clipboard
 	uchar *rgb = NULL;
+        Fl_RGB_Image *image = NULL;
 	int width = 0, height = 0, depth = 0;
 	if ( (h = GetClipboardData(CF_DIB)) ) { // if there's a DIB in clipboard
 	  LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h) ;
@@ -806,22 +808,31 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	  int hdots = GetDeviceCaps(hdc, HORZRES);
 	  ReleaseDC(NULL, hdc);
 	  float factor =  (100.f * hmm) / hdots;
-          float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(receiver.top_window()->driver()->screen_num());
-	  width = int(width * scaling / factor);  // convert to screen pixel unit
+#ifdef FLTK_HIDPI_SUPPORT
+          float scaling = Fl::screen_driver()->scale( receiver.top_window()->driver()->screen_num() );
+          width = int(width / (scaling * factor));  // convert to screen pixel unit
+          height = int(height / (scaling * factor));
+#else
+          float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor(0);
+          width = int(width * scaling / factor);  // convert to screen pixel unit
           height = int(height * scaling / factor);
+          scaling = 1;
+#endif
 	  RECT rect = {0, 0, width, height};
-	  Fl_Offscreen off = fl_create_offscreen(width, height);
-	  fl_begin_offscreen(off);
+          Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
+          Fl_Surface_Device::push_current(surf);
 	  fl_color(FL_WHITE); fl_rectf(0,0,width, height); // draw white background
+          rect.right *= scaling; rect.bottom *= scaling; // apply scaling to the metafile draw operation
 	  PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
-	  rgb = fl_read_image(NULL, 0, 0, width, height); // read pixels from offscreen buffer
-	  depth = 3;
-	  fl_end_offscreen();
-	  fl_delete_offscreen(off);
+          image = surf->image();
+          Fl_Surface_Device::pop_current();
+          delete surf;
 	}
-	if (rgb) {
-	  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
-	  image->alloc_array = 1;
+	if (rgb || image) {
+          if (!image) {
+            Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
+            image->alloc_array = 1;
+          }
 	  Fl::e_clipboard_data = image;
 	  Fl::e_clipboard_type = Fl::clipboard_image;  // indicates that the paste event is for image data
 	  int done = receiver.handle(FL_PASTE); // send FL_PASTE event to widget
