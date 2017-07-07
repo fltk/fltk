@@ -1264,7 +1264,7 @@ Fl_File_Chooser::update_preview()
         newlabel = "@-3refresh"; // a cross
         set = 1;
       } else if (s.st_size==0) {
-        // this file is emty
+        // this file is empty
         newlabel = "<empty file>";
         set = 1;
       } else {

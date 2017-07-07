@@ -293,7 +293,7 @@ installed CMake you may need to adjust the path's in the alias commands.
 
 Building with CMake under Xcode requires the CMake generator
 with the -G command line switch. This step need to be done only once. If any
-of the cmake related files are updated, Xcode wil rerun cmake for you.
+of the cmake related files are updated, Xcode will rerun cmake for you.
 
 1) Open the MacOS Terminal
 
@@ -309,7 +309,7 @@ of the cmake related files are updated, Xcode wil rerun cmake for you.
      > mkdir Xcode
      > cd Xcode
 
-5) Let CMake create the require IDE files
+5) Let CMake create the required IDE files
      > cmake -G Xcode ../..
    This step should end in the message:
      -- Build files have been written to: .../dev/fltk-1.4.x/build/Xcode
@@ -324,16 +324,16 @@ of the cmake related files are updated, Xcode wil rerun cmake for you.
                        -D OPTION_USE_SYSTEM_LIBPNG=Off \
                        ../..
 
-6) Launch Xcode for the Finder or from the Terminal:
+6) Launch Xcode from the Finder or from the Terminal:
      > open ./FLTK.xcodeproj
-   When Xcode starts, it ask if it should "Autocreate Shemes". Click on
+   When Xcode starts, it asks if it should "Autocreate Schemes". Click on
    "Automatically Create Schemes" to confirm.
 
 7) To build and test FLTK, select the scheme "ALL_BUILD" and hit Cmd-B to
    build. Then select the scheme "demo" and hit Cmd-R to run the FLTK Demo.
 
-8) The interactive user interface tool "Fluid" will be loacted in
-   build/Xcode/bin/Debug. The example apps are in .../bin/examples/debug.
+8) The interactive user interface tool "Fluid" will be located in
+   build/Xcode/bin/Debug. The example apps are in .../bin/examples/Debug.
    Static libraries are in .../lib/Debug/
 
 9) The "install" Scheme currently fails because it is run with user permission.
