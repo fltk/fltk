@@ -18,6 +18,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - New method Fl_Group::bounds() replaces Fl_Group::sizes() which is now
+    deprecated. Fl_Group::bounds() uses the new class Fl_Rect that contains
+    widget coordinates and sizes x(), y(), w(), and h() (STR #3385).
+    Documentation for bounds() and its internal structure was added.
   - X11 platform: Added support for HiDPI displays and for rescaling any window
     at run-time under user control. Under the gnome desktop, FLTK applications
     detect the current gnome scaling factor and use it to scale all FLTK windows.

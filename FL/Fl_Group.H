@@ -3,7 +3,7 @@
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,9 +22,8 @@
 #ifndef Fl_Group_H
 #define Fl_Group_H
 
-#ifndef Fl_Widget_H
 #include "Fl_Widget.H"
-#endif
+#include "Fl_Rect.H"
 
 /**
   The Fl_Group class is the FLTK container widget. It maintains
@@ -44,7 +43,8 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
   Fl_Widget* savedfocus_;
   Fl_Widget* resizable_;
   int children_;
-  int *sizes_; // remembered initial sizes of children
+  Fl_Rect *bounds_; // remembered initial sizes of children
+  int *sizes_; // remembered initial sizes of children (FLTK 1.3 compat.)
 
   int navigation(int);
   static Fl_Group *current_;
@@ -59,7 +59,8 @@ protected:
   void draw_children();
   void draw_outside_label(const Fl_Widget& widget) const ;
   void update_child(Fl_Widget& widget) const;
-  int  *sizes();
+  Fl_Rect *bounds();
+  int  *sizes(); // FLTK 1.3 compatibility
 
 public:
 
