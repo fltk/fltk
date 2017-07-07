@@ -935,22 +935,53 @@ int Fl_Preferences::RootNode::write() {
 }
 
 // get the path to the preferences directory
+// - copy the path into the buffer at "path"
+// - if the resulting path is longer than "pathlen", it will be cropped
 char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
   if (!filename_)   // RUNTIME preferences
     return 1; // return 1 (not -1) to be consistent with fl_make_path()
+
+  if (pathlen<=0)
+    return 1;
+
+  // copy the root filepath into the provided buffer
   strlcpy( path, filename_, pathlen); 
 
-  char *s;
-  for ( s = path; *s; s++ ) if ( *s == '\\' ) *s = '/';
-  s = strrchr( path, '.' );
-  if ( !s ) return 0;
-  *s = 0;
+  char *name = 0L, *ext = 0L;
+
+  // use Unix style separators
+  { char *s; for ( s = path; *s; s++ ) if ( *s == '\\' ) *s = '/'; }
+
+  // find the start of the filename inside the path
+  name = strrchr( path, '/' );
+  // this is a safety measure. The root path should be absolute and contain '/'s
+  if (name)
+    name++; // point right after the '/' character
+  else
+    name = path; // point at the first character of a filename-only path
+
+  // find the last '.' which may be the start of a file extension
+  ext = strrchr( path, '.' );
+
+  if ( (ext==0L) || (ext<name) ) {
+    if (strlen(name)==0) {
+      // emty filenames will create a path with "prefs/" as a driectory name
+      strlcat( path, "prefs", pathlen );
+    } else {
+      // filenames without extension will create a path with a ".data" extension
+      strlcat( path, ".data", pathlen );
+    }
+  } else {
+    // filenames with an existing extension will create a path without it
+    *ext = 0; // end the string right here
+  }
+
   char ret = fl_make_path( path );
   // unix: make sure that system prefs dir. is user-readable
   if (Fl::system_driver()->preferences_need_protection_check() && strncmp(path, "/etc/fltk/", 10) == 0) {
     fl_chmod(path, 0755); // rwxr-xr-x
   }
-  strcpy( s, "/" );
+  strlcat( path, "/", pathlen );
   return ret;
 }
 
