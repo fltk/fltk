@@ -965,8 +965,8 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
 
   if ( (ext==0L) || (ext<name) ) {
     if (strlen(name)==0) {
-      // emty filenames will create a path with "prefs/" as a driectory name
-      strlcat( path, "prefs", pathlen );
+      // emty filenames will create a path with "data/" as a driectory name
+      strlcat( path, "data", pathlen );
     } else {
       // filenames without extension will create a path with a ".data" extension
       strlcat( path, ".data", pathlen );
