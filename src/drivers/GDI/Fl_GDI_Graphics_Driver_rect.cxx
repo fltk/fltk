@@ -35,8 +35,12 @@
 
 // --- line and polygon drawing with integer coordinates
 
-void Fl_GDI_Graphics_Driver::point_unscaled(float x, float y) {
-  SetPixel(gc_, x, y, fl_RGB());
+void Fl_GDI_Graphics_Driver::point_unscaled(float fx, float fy) {
+  int width = scale_ >= 1 ? scale_ : 1;
+  RECT rect;
+  rect.left = fx; rect.top = fy;
+  rect.right = fx + width; rect.bottom = fy + width;
+  FillRect(gc_, &rect, fl_brush());
 }
 
 void Fl_GDI_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {
