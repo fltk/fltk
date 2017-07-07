@@ -226,6 +226,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     RootNode *findRoot();
     char remove();
     char dirty();
+    void clearDirtyFlags();
     void deleteAllChildren();
     // entry methods
     int nChildren();

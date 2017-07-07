@@ -889,18 +889,19 @@ int Fl_Preferences::RootNode::read() {
     } else if ( buf[0]=='+' ) {			// value of previous name/value pair spans multiple lines
       size_t end = strcspn( buf+1, "\n\r" );
       if ( end != 0 ) {				// if entry is not empty
-	buf[ end+1 ] = 0;
-	nd->add( buf+1 );
+        buf[ end+1 ] = 0;
+        nd->add( buf+1 );
       }
     } else {					 // read a name/value pair
       size_t end = strcspn( buf, "\n\r" );
       if ( end != 0 ) {				// if entry is not empty
-	buf[ end ] = 0;
-	nd->set( buf );
+        buf[ end ] = 0;
+        nd->set( buf );
       }
     }
   }
   fclose( f );
+  prefs_->node->clearDirtyFlags();
   return 0;
 }
 
@@ -1051,6 +1052,16 @@ char Fl_Preferences::Node::dirty() {
   return 0;
 }
 
+// recursively clear all dirty flags
+void Fl_Preferences::Node::clearDirtyFlags() {
+  Fl_Preferences::Node *nd = this;
+  while (nd) {
+    nd->dirty_ = 0;
+    if ( nd->child_ ) nd->child_->clearDirtyFlags();
+    nd = nd->next_;
+  }
+}
+
 // write this node (recursively from the last neighbor back to this)
 // write all entries
 // write all children
@@ -1111,7 +1122,6 @@ Fl_Preferences::Node *Fl_Preferences::Node::addChild( const char *path ) {
   char *name = strdup( nameBuffer );
   Node *nd = find( name );
   free( name );
-  dirty_ = 1;
   updateIndex();
   return nd;
 }
@@ -1213,8 +1223,8 @@ Fl_Preferences::Node *Fl_Preferences::Node::find( const char *path ) {
     if ( path[ len ] == '/' ) {
       Node *nd;
       for ( nd = child_; nd; nd = nd->next_ ) {
-	Node *nn = nd->find( path );
-	if ( nn ) return nn;
+        Node *nn = nd->find( path );
+        if ( nn ) return nn;
       }
       const char *s = path+len+1;
       const char *e = strchr( s, '/' );
@@ -1222,6 +1232,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::find( const char *path ) {
       else strlcpy( nameBuffer, s, sizeof(nameBuffer));
       nd = new Node( nameBuffer );
       nd->setParent( this );
+      dirty_ = 1;
       return nd->find( path );
     }
   }
