@@ -23,6 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Window_Driver.H>
 #include <FL/fl_utf8.h>
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "flstring.h"
@@ -89,6 +90,9 @@ public:
     HWND hWnd = WindowFromPoint( ppt );
     Fl_Window *target = fl_find( hWnd );
     if (target) {
+      float s = Fl::screen_driver()->scale(target->driver()->screen_num());
+      Fl::e_x_root /= s;
+      Fl::e_y_root /= s;
       Fl::e_x = Fl::e_x_root-target->x();
       Fl::e_y = Fl::e_y_root-target->y();
     }
@@ -121,6 +125,9 @@ public:
     Fl::e_x_root = pt.x;
     Fl::e_y_root = pt.y;
     if (fl_dnd_target_window) {
+      float s = Fl::screen_driver()->scale(fl_dnd_target_window->driver()->screen_num());
+      Fl::e_x_root /= s;
+      Fl::e_y_root /= s;
       Fl::e_x = Fl::e_x_root-fl_dnd_target_window->x();
       Fl::e_y = Fl::e_y_root-fl_dnd_target_window->y();
     }
@@ -155,6 +162,9 @@ public:
     fl_dnd_target_window = 0;
     Fl::e_x_root = pt.x;
     Fl::e_y_root = pt.y;
+    float s = Fl::screen_driver()->scale(target->driver()->screen_num());
+    Fl::e_x_root /= s;
+    Fl::e_y_root /= s;
     if (target) {
       Fl::e_x = Fl::e_x_root-target->x();
       Fl::e_y = Fl::e_y_root-target->y();
