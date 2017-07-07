@@ -1165,7 +1165,8 @@ void Fl_Preferences::Node::set( const char *line ) {
   dirty_ = dirt;
 }
 
-// add more data to an existing entry
+// Append data to an existing node. This is only used in read operations when
+// a single entry stretches over multiple lines in the prefs file.
 void Fl_Preferences::Node::add( const char *line ) {
   if ( lastEntrySet<0 || lastEntrySet>=nEntry_ ) return;
   char *&dst = entry_[ lastEntrySet ].value;
@@ -1173,7 +1174,6 @@ void Fl_Preferences::Node::add( const char *line ) {
   size_t b = strlen( line );
   dst = (char*)realloc( dst, a+b+1 );
   memcpy( dst+a, line, b+1 );
-  dirty_ = 1;
 }
 
 // get the value for a name, returns 0 if no such name
