@@ -3,7 +3,7 @@
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -84,6 +84,20 @@ public:
     if( !pDataObj ) return E_INVALIDARG;
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
+/* Tricky point here: Not DPI–aware applications use different units for the 'POINTL pt' argument
+of the DragEnter, DragOver, and Drop member functions.
+DragEnter receives the mouse coordinates in unscaled screen units,
+whereas DragOver and Drop receive the mouse coordinates in scaled units.
+In the first case, dividing coordinates by DWM_scaling_factor() gives the scaled units used everywhere else.
+     
+DPI–aware applications transmit unscaled screen units to all 3 member functions.
+These coordinates should be divided by the window's scale to get FLTK units.
+*/
+#ifndef FLTK_HIDPI_SUPPORT
+    float dwm_s = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
+    pt.x /= dwm_s;
+    pt.y /= dwm_s;
+#endif
     POINT ppt;
     Fl::e_x_root = ppt.x = pt.x;
     Fl::e_y_root = ppt.y = pt.y;
