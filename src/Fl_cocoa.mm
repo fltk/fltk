@@ -517,6 +517,10 @@ static void realloc_timers()
   MacTimeout* new_timers = new MacTimeout[mac_timer_alloc];
   memset(new_timers, 0, sizeof(MacTimeout)*mac_timer_alloc);
   memcpy(new_timers, mac_timers, sizeof(MacTimeout) * mac_timer_used);
+  if (current_timer) {
+    MacTimeout* newCurrent = new_timers + (current_timer - mac_timers);
+    current_timer = newCurrent;
+  }
   MacTimeout* delete_me = mac_timers;
   mac_timers = new_timers;
   delete [] delete_me;
