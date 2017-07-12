@@ -80,6 +80,22 @@ public:
   }
   HRESULT STDMETHODCALLTYPE DragEnter( IDataObject *pDataObj, DWORD /*grfKeyState*/, POINTL pt, DWORD *pdwEffect) {
     if( !pDataObj ) return E_INVALIDARG;
+    /* Tricky point here: Not DPI-aware applications use different units for the 'POINTL pt' argument
+     of the DragEnter, DragOver, and Drop member functions.
+     DragEnter receives the mouse coordinates in unscaled screen units,
+     whereas DragOver and Drop receive the mouse coordinates in scaled units.
+     In the first case, dividing coordinates by the scaling factor gives the scaled units used everywhere else.
+    */
+    HDC hdc = GetDC(NULL);
+    int hr = GetDeviceCaps(hdc, HORZRES); // pixels visible to the app
+#ifndef DESKTOPHORZRES
+#define DESKTOPHORZRES 118
+#endif
+    int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
+    ReleaseDC(NULL, hdc);
+    float dwm_s = dhr/float(hr); // display scaling factor
+    pt.x /= dwm_s;
+    pt.y /= dwm_s;
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
     POINT ppt;
