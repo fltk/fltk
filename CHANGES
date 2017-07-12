@@ -1,3 +1,9 @@
+Bug fixes and other improvements
+
+        - Fix for MacOS timer implementation (STR #3387).
+        - Fix for drop-to-FLTK-widget under MSWindows when the desktop is
+          rescaled (STR #3390).
+
 CHANGES IN FLTK 1.3.4-1					RELEASED: Nov 15 2016
 
 Bug fixes and other improvements
