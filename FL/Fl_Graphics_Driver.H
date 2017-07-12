@@ -86,10 +86,10 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  friend int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
-  friend void gl_start();
-  friend Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
-  friend void fl_delete_bitmask(Fl_Bitmask);
+  friend FL_EXPORT int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
+  friend FL_EXPORT void gl_start();
+  friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
+  friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -404,7 +404,7 @@ public:
  This class is presently used on the X11 platform to support HiDPI displays.
  In the future, it may also be used on the WIN32 platform.
  */
-class Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   Fl_Scalable_Graphics_Driver();
   float scale() { return scale_; }

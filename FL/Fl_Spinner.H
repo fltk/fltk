@@ -56,7 +56,7 @@ protected:
   // presses so they are handled by its parent, the Fl_Spinner widget.
   // See STR #2989.
 
-  class Fl_Spinner_Input : public Fl_Input {
+  class FL_EXPORT Fl_Spinner_Input : public Fl_Input {
   public:
     Fl_Spinner_Input(int X, int Y, int W, int H)
     : Fl_Input(X, Y, W, H) {}
