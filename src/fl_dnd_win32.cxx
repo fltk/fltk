@@ -84,18 +84,14 @@ public:
      of the DragEnter, DragOver, and Drop member functions.
      DragEnter receives the mouse coordinates in unscaled screen units,
      whereas DragOver and Drop receive the mouse coordinates in scaled units.
-     In the first case, dividing coordinates by the scaling factor gives the scaled units used everywhere else.
+     This looks like a Windows bug because these apps are supposed to always receive
+     scaled units from the OS.
+     Therefore, we ask here for the mouse coordinates.
     */
-    HDC hdc = GetDC(NULL);
-    int hr = GetDeviceCaps(hdc, HORZRES); // pixels visible to the app
-#ifndef DESKTOPHORZRES
-#define DESKTOPHORZRES 118
-#endif
-    int dhr = GetDeviceCaps(hdc, DESKTOPHORZRES); // true number of pixels on display
-    ReleaseDC(NULL, hdc);
-    float dwm_s = dhr/float(hr); // display scaling factor
-    pt.x /= dwm_s;
-    pt.y /= dwm_s;
+    int mx, my;
+    Fl::get_mouse(mx, my);
+    pt.x = mx; pt.y = my;
+    
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
     POINT ppt;
