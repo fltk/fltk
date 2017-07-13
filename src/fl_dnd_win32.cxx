@@ -88,15 +88,14 @@ public:
 of the DragEnter, DragOver, and Drop member functions.
 DragEnter receives the mouse coordinates in unscaled screen units,
 whereas DragOver and Drop receive the mouse coordinates in scaled units.
-In the first case, dividing coordinates by DWM_scaling_factor() gives the scaled units used everywhere else.
-     
+ 
 DPI–aware applications transmit unscaled screen units to all 3 member functions.
 These coordinates should be divided by the window's scale to get FLTK units.
 */
 #ifndef FLTK_HIDPI_SUPPORT
-    float dwm_s = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
-    pt.x /= dwm_s;
-    pt.y /= dwm_s;
+    int mx, my;
+    Fl::screen_driver()->get_mouse(mx, my); // bypass Windows bug that gives mouse coordinates in unscaled screen units
+    pt.x = mx; pt.y = my;
 #endif
     POINT ppt;
     Fl::e_x_root = ppt.x = pt.x;
