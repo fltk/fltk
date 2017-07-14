@@ -88,9 +88,9 @@ public:
      scaled units from the OS.
      Therefore, we ask here for the mouse coordinates.
     */
-    int mx, my;
-    Fl::get_mouse(mx, my);
-    pt.x = mx; pt.y = my;
+    POINT mp;
+    GetCursorPos(&mp);
+    pt.x = mp.x; pt.y = mp.y;
     
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
