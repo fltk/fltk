@@ -93,9 +93,9 @@ DPI–aware applications transmit unscaled screen units to all 3 member function
 These coordinates should be divided by the window's scale to get FLTK units.
 */
 #ifndef FLTK_HIDPI_SUPPORT
-    int mx, my;
-    Fl::screen_driver()->get_mouse(mx, my); // bypass Windows bug that gives mouse coordinates in unscaled screen units
-    pt.x = mx; pt.y = my;
+    POINT mp;
+    GetCursorPos(&mp); // bypass Windows bug that gives mouse coordinates in unscaled screen units
+    pt.x = mp.x; pt.y = mp.y;
 #endif
     POINT ppt;
     Fl::e_x_root = ppt.x = pt.x;
