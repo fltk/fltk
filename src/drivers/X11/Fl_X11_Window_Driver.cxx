@@ -244,7 +244,7 @@ void Fl_X11_Window_Driver::flush_double(int erase_overlay)
 void Fl_X11_Window_Driver::flush_overlay()
 {
   if (!shown()) return;
-  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY);
+  int erase_overlay = (pWindow->damage()&FL_DAMAGE_OVERLAY) | (overlay() == pWindow);
   pWindow->clear_damage((uchar)(pWindow->damage()&~FL_DAMAGE_OVERLAY));
 #if USE_XDBE
   if (can_xdbe()) flush_double_dbe(erase_overlay); else
