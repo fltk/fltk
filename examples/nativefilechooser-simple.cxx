@@ -21,6 +21,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/fl_message.H>
 #include <stdlib.h>		/* exit() */
+#include <string.h>		/* strcmp() */
 
 Fl_Window *G_win = 0;
 Fl_Menu_Button *G_menu = 0;
