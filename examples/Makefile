@@ -13,6 +13,7 @@ ALL = clipboard$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
+      nativefilechooser-simple$(EXEEXT) \
       nativefilechooser-simple-app$(EXEEXT) \
       progress-simple$(EXEEXT) \
       shapedwindow$(EXEEXT) \
