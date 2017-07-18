@@ -18,6 +18,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - Added support for MacOS 10.13 "High Sierra".
   - New method Fl_Group::bounds() replaces Fl_Group::sizes() which is now
     deprecated. Fl_Group::bounds() uses the new class Fl_Rect that contains
     widget coordinates and sizes x(), y(), w(), and h() (STR #3385).
