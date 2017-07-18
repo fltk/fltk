@@ -48,6 +48,17 @@ if(UNIX)
 endif(UNIX)
 
 #######################################################################
+##  Add a TEMPORARY OPTION to enable high-DPI support under Windows.
+##  May be removed once high-DPI support under Windows is complete.
+#######################################################################
+if (WIN32)
+  option(OPTION_HIDPI "build with experimental high-DPI support" OFF)
+  if (OPTION_HIDPI)
+    add_definitions("-DFLTK_HIDPI_SUPPORT")
+  endif (OPTION_HIDPI)
+endif (WIN32)
+
+#######################################################################
 if(APPLE)
    option(OPTION_APPLE_X11 "use X11" OFF)
    option(OPTION_APPLE_SDL "use SDL" OFF)
