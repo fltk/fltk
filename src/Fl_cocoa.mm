@@ -1348,13 +1348,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (parent && window->as_gl_window()) parent->redraw();
   }
   resize_from_system = NULL;
-  // before 10.13: OS sends windowDidMove to parent window only,
-  // FLTK recursively sends setSubwindowFrame to children,
-  // setSubwindowFrame sends setFrame, this triggers windowDidMove to child which sets child position.
-  //
-  // with 10.13: OS sends windowDidMove to parent window and then to children
+  // at least since MacOS 10.10: OS sends windowDidMove to parent window and then to children
   // FLTK sets position of parent and children. setSubwindowFrame is no longer necessary.
-  if (fl_mac_os_version < 101300) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+  if (fl_mac_os_version < 101000) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw checkSubwindowFrame];
   fl_unlock_function();
 }
