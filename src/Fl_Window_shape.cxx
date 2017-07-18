@@ -16,6 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
