@@ -4,13 +4,14 @@ The initial FLTK 1.3.0 is based on the final 1.1.10.
   Doxygen based documentation, and several new widgets including
   Fl_Native_File_Chooser, Fl_Table, and Fl_Tree.
 
-FLTK 1.3.4 and previous versions contain many improvements and bug fixes.
+FLTK 1.3.5 and previous versions contain many improvements and bug fixes.
 
-  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.4.
+  Please see CHANGES for a list of changes in FLTK 1.3.0 to 1.3.5.
 
-  Even though FLTK 1.3.4 does not fix all STRs, we decided to release
-  FLTK 1.3.4 as it contains many new features, bug fixes, and adaptations
-  to new compiler releases.
+  Even though FLTK 1.3.5 does not fix all STRs, we decided to release
+  FLTK 1.3.5 as it contains many new features, bug fixes, and adaptations
+  to new compiler releases and OS versions (e.g. macOS 10.13 "High Sierra"
+  and better configure support for some Linux platforms).
 
   Open bugs and feature requests can be viewed (offline) in KNOWN_BUGS.html
   with your browser. Links in this file direct you to the current state
@@ -21,7 +22,7 @@ FLTK 1.3.4 and previous versions contain many improvements and bug fixes.
   bugs and/or feature requests in this list might have been fixed without
   notice.
 
-FLTK 1.3.4 is expected to be the last release in the 1.3.x series.
+FLTK 1.3.5 is expected to be the last release in the 1.3.x series.
 
   All currently open STR's for 1.3.x will be fixed in FLTK 1.4.x, if possible.
 
@@ -30,8 +31,10 @@ FLTK 1.3.4 is expected to be the last release in the 1.3.x series.
 Note to svn (subversion) users: This branch (branch-1.3) is end of life
 since the release of FLTK 1.3.4. Only very serious bug fixes will be
 available if FLTK 1.4.0 is not yet released or not (yet) stable enough.
+This release (1.3.5) is a bug fix and maintenance release without new
+FLTK features.
 
-The new development branch is now branch-1.4 -- please checkout a new,
+The current development branch is branch-1.4 -- please checkout a new,
 clean working copy if you want to get branch-1.4.
 
 --------------------------------------------------------------------------------

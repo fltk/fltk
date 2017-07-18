@@ -61,7 +61,7 @@ Other IDE's are not supported by the FLTK team. See below for changes
 in the next release (FLTK 1.4.0) and later versions.
 
 
-Using CMake to generate IDE project files (FLTK 1.3.4)
+Using CMake to generate IDE project files (FLTK 1.3.4 and higher)
 ------------------------------------------------------------------------
 
 Other IDE files can likely be created using CMake and the provided
