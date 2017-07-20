@@ -46,7 +46,7 @@ public:
 
   // --- window management
 //  virtual void take_focus();
-  virtual void flush_single();
+  virtual void flush();
   virtual void flush_double();
   virtual void flush_overlay();
 //  virtual void draw_begin();

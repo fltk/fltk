@@ -95,7 +95,7 @@ Fl_X *Fl_PicoAndroid_Window_Driver::makeWindow()
 }
 
 
-void Fl_PicoAndroid_Window_Driver::flush_single()
+void Fl_PicoAndroid_Window_Driver::flush()
 {
   glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT);

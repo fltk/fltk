@@ -58,7 +58,7 @@ void Fl_Window_Driver::current(Fl_Window *c) {pWindow->current_ = c;}
 
 unsigned char Fl_Window_Driver::size_range_set() {return pWindow->size_range_set;}
 
-void Fl_Window_Driver::flush_single() { pWindow->Fl_Window::flush(); }
+void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
 
 void Fl_Window_Driver::flush_menu() { pWindow->Fl_Window::flush(); }
 
@@ -80,13 +80,13 @@ void Fl_Window_Driver::take_focus()
 
 void Fl_Window_Driver::flush_double()
 {
-  flush_single();
+  flush_Fl_Window();
 }
 
 
 void Fl_Window_Driver::flush_overlay()
 {
-  flush_single();
+  flush_Fl_Window();
 }
 
 

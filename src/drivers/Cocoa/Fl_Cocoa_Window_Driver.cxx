@@ -58,7 +58,7 @@ void Fl_Cocoa_Window_Driver::take_focus()
 
 
 void Fl_Cocoa_Window_Driver::flush_double() {
-  flush_single();
+  flush_Fl_Window();
 }
 
 

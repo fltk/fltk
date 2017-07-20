@@ -46,7 +46,7 @@ public:
   virtual void draw_end();
   
   // --- window management
-//  virtual void flush_single();
+//  virtual void flush();
 };
 
 

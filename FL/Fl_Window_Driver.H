@@ -49,6 +49,7 @@ protected:
   Fl_Window *pWindow;
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
+  void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
 
 public:
   Fl_Window_Driver(Fl_Window *);
@@ -120,7 +121,6 @@ public:
   virtual void flush(); // the default implementation may be enough
   virtual void flush_double();
   virtual void flush_overlay();
-  virtual void flush_single();
   virtual void flush_menu();
   virtual void erase_menu() {}
   virtual void draw_begin();

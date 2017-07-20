@@ -648,7 +648,7 @@ void Fl_X11_Window_Driver::redraw_overlay() {
 
 void Fl_X11_Window_Driver::flush_menu() {
 #if HAVE_OVERLAY
-   if (!fl_overlay_visual || !overlay()) {flush_single(); return;}
+   if (!fl_overlay_visual || !overlay()) {flush_Fl_Window(); return;}
    Fl_X *myi = Fl_X::i(pWindow);
    fl_window = myi->xid;
 # if defined(FLTK_USE_CAIRO)
@@ -660,7 +660,7 @@ void Fl_X11_Window_Driver::flush_menu() {
    draw();
    fl_overlay = 0;
 #else
-   flush_single();
+   flush_Fl_Window();
 #endif
 }
 
