@@ -1319,39 +1319,41 @@ public:
   This class should be used to control safe widget deletion.
 
   You can use an Fl_Widget_Tracker object to watch another widget, if you
-  need to know, if this widget has been deleted during a callback.
+  need to know whether this widget has been deleted during a callback.
 
   This simplifies the use of the "safe widget deletion" methods
   Fl::watch_widget_pointer() and Fl::release_widget_pointer() and
-  makes their use more reliable, because the destructor autmatically
+  makes their use more reliable, because the destructor automatically
   releases the widget pointer from the widget watch list.
 
-  It is intended to be used as an automatic (local/stack) variable,
-  such that the automatic destructor is called when the object's
+  Fl_Widget_Tracker is intended to be used as an automatic (local/stack)
+  variable, such that its destructor is called when the object's
   scope is left. This ensures that no stale widget pointers are
   left in the widget watch list (see example below).
   
   You can also create Fl_Widget_Tracker objects with \c new, but then it
   is your responsibility to delete the object (and thus remove the
-  widget pointer from the watch list) when it is not needed any more.
+  widget pointer from the watch list) when it is no longer needed.
 
   Example:
 
   \code
-    int MyClass::handle (int event) {
+  int MyClass::handle (int event) {
 
-      if (...) {
-	Fl_Widget_Tracker wp(this);	// watch myself
-	do_callback();			// call the callback
+    if (...) {
+      Fl_Widget_Tracker wp(this);           // watch myself
+      do_callback();                        // call the callback
 
-	if (wp.deleted()) return 1;	// exit, if deleted
+      if (wp.deleted()) return 1;           // exit, if deleted
 
-	// Now we are sure that the widget has not been deleted.
-	// It is safe to access the widget
+      // Now we are sure that the widget has not been deleted,
+      // and it is safe to access the widget:
 
-	clear_changed();		// access the widget
-      }
+      box(FL_FLAT_BOX);
+      color(FL_WHITE);
+      redraw();
     }
+  }
   \endcode
 
 */
