@@ -2845,16 +2845,16 @@ void Fl_Cocoa_Gl_Window_Driver::GLcontext_makecurrent(NSOpenGLContext* ctxt)
  */ 
 void Fl_Cocoa_Window_Driver::flush()
 {
-  Fl_Window *w = pWindow;
-  if (w->as_gl_window()) {
+  if (pWindow->as_gl_window()) {
     Fl_Window_Driver::flush();
   } else {
     make_current_counts = 1;
-    if (!through_drawRect) [[fl_xid(w) contentView] lockFocus];
+    NSView *view = (through_drawRect ? nil : [fl_xid(pWindow) contentView]);
+    [view lockFocus];
     through_Fl_X_flush = YES;
     Fl_Window_Driver::flush();
     through_Fl_X_flush = NO;
-    if (!through_drawRect) [[fl_xid(w) contentView] unlockFocus];
+    [view unlockFocus];
     make_current_counts = 0;
     Fl_Cocoa_Window_Driver::q_release_context();
   }
