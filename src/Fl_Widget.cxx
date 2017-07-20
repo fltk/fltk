@@ -3,7 +3,7 @@
 //
 // Base widget class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -36,17 +36,8 @@ const int QUEUE_SIZE = 20;
 static Fl_Widget *obj_queue[QUEUE_SIZE];
 static int obj_head, obj_tail;
 
-void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
-#if 0
-  // This is necessary for strict forms compatibility but is confusing.
-  // Use the parent's callback if this widget does not have one.
-  for (Fl_Widget *p = o->parent(); p; p = p->parent())
-    if (p->callback() != default_callback) {
-      p->do_callback(o,v);
-      return;
-    }
-#endif
-  obj_queue[obj_head++] = o;
+void Fl_Widget::default_callback(Fl_Widget *widget, void * /*v*/) {
+  obj_queue[obj_head++] = widget;
   if (obj_head >= QUEUE_SIZE) obj_head = 0;
   if (obj_head == obj_tail) {
     obj_tail++;
@@ -75,9 +66,9 @@ void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
 */
 Fl_Widget *Fl::readqueue() {
   if (obj_tail==obj_head) return 0;
-  Fl_Widget *o = obj_queue[obj_tail++];
+  Fl_Widget *widget = obj_queue[obj_tail++];
   if (obj_tail >= QUEUE_SIZE) obj_tail = 0;
-  return o;
+  return widget;
 }
 /*
     This static internal function removes all pending callbacks for a
@@ -89,7 +80,7 @@ Fl_Widget *Fl::readqueue() {
 static void cleanup_readqueue(Fl_Widget *w) {
 
   if (obj_tail==obj_head) return;
-  
+
   // Read the entire queue and copy over all valid entries.
   // The new head will be determined after the last copied entry.
 
@@ -192,9 +183,9 @@ Fl_Widget::~Fl_Widget() {
   if (callback_ == default_callback) cleanup_readqueue(this);
 }
 
-/** Draws a focus box for the widget at the given position and size */
-void
-Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
+/** Draws a focus box for the widget at the given position and size. */
+
+void Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   if (!Fl::visible_focus()) return;
   switch (B) {
     case FL_DOWN_BOX:
@@ -284,8 +275,7 @@ int Fl_Widget::contains(const Fl_Widget *o) const {
 }
 
 
-void
-Fl_Widget::label(const char *a) {
+void Fl_Widget::label(const char *a) {
   if (flags() & COPIED_LABEL) {
     // reassigning a copied label remains the same copied label
     if (label_.value == a)
@@ -298,8 +288,7 @@ Fl_Widget::label(const char *a) {
 }
 
 
-void
-Fl_Widget::copy_label(const char *a) {
+void Fl_Widget::copy_label(const char *a) {
   // reassigning a copied label remains the same copied label
   if ((flags() & COPIED_LABEL) && (label_.value == a))
     return;
@@ -311,19 +300,33 @@ Fl_Widget::copy_label(const char *a) {
   }
 }
 
-/** Calls the widget callback.
+/** Calls the widget callback function with arbitrary arguments.
 
-  Causes a widget to invoke its callback function with arbitrary arguments.
+  All overloads of do_callback() call this method.
+  It does nothing if the widget's callback() is NULL.
+  It clears the widget's \e changed flag \b after the callback was
+  called unless the callback is the default callback. Hence it is not
+  necessary to call clear_changed() after calling do_callback()
+  in your own widget's handle() method.
 
-  \param[in] o call the callback with \p o as the widget argument
-  \param[in] arg use \p arg as the user data argument
+  \note It is legal to delete the widget in the callback (i.e. in user code),
+	but you must not access the widget in the handle() method after
+	calling do_callback() if the widget was deleted in the callback.
+	We recommend to use Fl_Widget_Tracker to check whether the widget
+	was deleted in the callback.
+
+  \param[in] widget call the callback with \p widget as the first argument
+  \param[in] arg use \p arg as the user data (second) argument
+
+  \see default_callback()
   \see callback()
+  \see class Fl_Widget_Tracker
 */
-void
-Fl_Widget::do_callback(Fl_Widget* o,void* arg) {
+
+void Fl_Widget::do_callback(Fl_Widget *widget, void *arg) {
   if (!callback_) return;
   Fl_Widget_Tracker wp(this);
-  callback_(o,arg);
+  callback_(widget, arg);
   if (wp.deleted()) return;
   if (callback_ != default_callback)
     clear_changed();

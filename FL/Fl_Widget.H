@@ -549,26 +549,29 @@ public:
       \param[in] cb new callback
       \param[in] p user data
    */
-  void callback(Fl_Callback* cb, void* p) {callback_=cb; user_data_=p;}
+  void callback(Fl_Callback* cb, void* p) {callback_ = cb; user_data_ = p;}
 
   /** Sets the current callback function for the widget.
       Each widget has a single callback.
       \param[in] cb new callback
    */
-  void callback(Fl_Callback* cb) {callback_=cb;}
+  void callback(Fl_Callback* cb) {callback_ = cb;}
 
   /** Sets the current callback function for the widget.
       Each widget has a single callback.
       \param[in] cb new callback
    */
-  void callback(Fl_Callback0*cb) {callback_=(Fl_Callback*)cb;}
+  void callback(Fl_Callback0* cb) {callback_ = (Fl_Callback*)cb;}
 
   /** Sets the current callback function for the widget.
       Each widget has a single callback.
       \param[in] cb new callback
       \param[in] p user data
    */
-  void callback(Fl_Callback1*cb, long p=0) {callback_=(Fl_Callback*)cb; user_data_=(void*)(fl_intptr_t)p;}
+  void callback(Fl_Callback1* cb, long p = 0) {
+    callback_ = (Fl_Callback*)cb;
+    user_data_ = (void*)(fl_intptr_t)p;
+  }
 
   /** Gets the user data for this widget.
       Gets the current user data (void *) argument that is passed to the callback function.
@@ -583,14 +586,24 @@ public:
   void user_data(void* v) {user_data_ = v;}
 
   /** Gets the current user data (long) argument that is passed to the callback function.
-      \todo The user data value must be implemented using \em intptr_t or similar
-      to avoid 64-bit machine incompatibilities.
-   */
+
+    \note On platforms with <tt>sizeof(long) \< sizeof(void*)</tt>, particularly
+	  on Windows 64-bit platforms, this method can truncate stored addresses
+	  \p (void*) to the size of a \p long value. Use with care and only
+	  if you are sure that the stored user_data value fits in a \p long
+	  value because it was stored with argument(long) or another method
+	  using only \p long values. You may want to use user_data() instead.
+
+    \see user_data()
+
+    \todo [Internal] The user_data value must be implemented using
+	  \p fl_intptr_t or similar to avoid 64-bit platform incompatibilities.
+  */
   long argument() const {return (long)(fl_intptr_t)user_data_;}
 
   /** Sets the current user data (long) argument that is passed to the callback function.
-      \todo The user data value must be implemented using \em intptr_t or similar
-      to avoid 64-bit machine incompatibilities.
+
+    \see argument()
    */
   void argument(long v) {user_data_ = (void*)(fl_intptr_t)v;}
 
@@ -747,22 +760,25 @@ public:
    */
   unsigned int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
-  /** 
+  /**
       Checks if the widget value changed since the last callback.
 
-      "Changed" is a flag that is turned on when the user changes the value 
-      stored in the widget. This is only used by subclasses of Fl_Widget that 
-      store values, but is in the base class so it is easier to scan all the 
-      widgets in a panel and do_callback() on the changed ones in response 
+      "Changed" is a flag that is turned on when the user changes the value
+      stored in the widget. This is only used by subclasses of Fl_Widget that
+      store values, but is in the base class so it is easier to scan all the
+      widgets in a panel and do_callback() on the changed ones in response
       to an "OK" button.
 
-      Most widgets turn this flag off when they do the callback, and when 
+      Most widgets turn this flag off when they do the callback, and when
       the program sets the stored value.
 
-     \retval 0 if the value did not change
-     \see set_changed(), clear_changed()
+      \note do_callback() turns this flag off after the callback.
+
+      \retval 0 if the value did not change
+      \see set_changed(), clear_changed()
+      \see do_callback(Fl_Widget *widget, void *data)
    */
-  unsigned int changed() const {return flags_&CHANGED;}
+  unsigned int changed() const {return flags_ & CHANGED;}
 
   /** Marks the value of the widget as changed.
       \see changed(), clear_changed()
@@ -819,42 +835,54 @@ public:
       \retval 0 if this widget has no visible focus.
       \see visible_focus(int), set_visible_focus(), clear_visible_focus()
    */
-  unsigned int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
+  unsigned int visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
   /** The default callback for all widgets that don't set a callback.
 
     This callback function puts a pointer to the widget on the queue
-    returned by Fl::readqueue().
+    returned by Fl::readqueue(). This is the default for all widgets
+    if you don't set a callback.
+
+    You can avoid the overhead of this default handling if you set the
+    callback to \p NULL explicitly.
 
     Relying on the default callback and reading the callback queue with
     Fl::readqueue() is not recommended. If you need a callback, you should
     set one with Fl_Widget::callback(Fl_Callback *cb, void *data)
     or one of its variants.
 
-    \param[in] cb the widget given to the callback
-    \param[in] d user data associated with that callback
+    \param[in] widget the Fl_Widget given to the callback
+    \param[in] data user data associated with that callback
 
-    \see callback(), do_callback(), Fl::readqueue()
+    \see callback(), Fl::readqueue()
+    \see do_callback(Fl_Widget *widget, void *data)
    */
-  static void default_callback(Fl_Widget *cb, void *d);
+  static void default_callback(Fl_Widget *widget, void *data);
 
-  /** Calls the widget callback.
-      Causes a widget to invoke its callback function with default arguments.
-      \see callback()
-   */
-  void do_callback() {do_callback(this,user_data_);}
+  /** Calls the widget callback function with default arguments.
 
-  /** Calls the widget callback.
-      Causes a widget to invoke its callback function with arbitrary arguments.
-      \param[in] o call the callback with \p o as the widget argument
-      \param[in] arg call the callback with \p arg as the user data argument
-      \see callback()
-   */
-  void do_callback(Fl_Widget* o,long arg) {do_callback(o,(void*)(fl_intptr_t)arg);}
+    This is the same as calling
+    \code
+      do_callback(this, user_data());
+    \endcode
+    \see callback()
+    \see do_callback(Fl_Widget *widget, void *data)
+  */
+  void do_callback() {do_callback(this, user_data_);}
+
+  /** Calls the widget callback function with arbitrary arguments.
+    \param[in] widget call the callback with \p widget as the first argument
+    \param[in] arg call the callback with \p arg as the user data (second) argument
+    \see callback()
+    \see do_callback(Fl_Widget *widget, void *data)
+  */
+  void do_callback(Fl_Widget *widget, long arg) {
+    do_callback(widget, (void*)(fl_intptr_t)arg);
+  }
 
   // Causes a widget to invoke its callback function with arbitrary arguments.
   // Documentation and implementation in Fl_Widget.cxx
-  void do_callback(Fl_Widget* o,void* arg=0);
+  void do_callback(Fl_Widget *widget, void *arg = 0);
 
   /* Internal use only. */
   int test_shortcut();
@@ -879,7 +907,7 @@ public:
       \param[in] wgt the possible parent widget.
       \see contains()
    */
-  int inside(const Fl_Widget* wgt) const {return wgt ? wgt->contains(this) : 0;}
+  int inside(const Fl_Widget *wgt) const {return wgt ? wgt->contains(this) : 0;}
 
   /** Schedules the drawing of the widget.
       Marks the widget as needing its draw() routine called.
@@ -957,7 +985,7 @@ public:
       void my_callback (Fl_Widget *w, void *) {
         Fl_Group *g = w->as_group();
 	if (g)
-	  printf ("This group has %d children\n",g->children());
+	  printf ("This group has %d children\n", g->children());
 	else
 	  printf ("This widget is not a group!\n");
       }
