@@ -98,7 +98,6 @@ public:
   virtual Fl_X *makeWindow();
   virtual void take_focus();
   virtual void flush();
-  virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();
   virtual void draw_end();

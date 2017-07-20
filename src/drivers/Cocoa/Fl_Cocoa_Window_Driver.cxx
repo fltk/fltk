@@ -57,11 +57,6 @@ void Fl_Cocoa_Window_Driver::take_focus()
 }
 
 
-void Fl_Cocoa_Window_Driver::flush_double() {
-  flush_Fl_Window();
-}
-
-
 void Fl_Cocoa_Window_Driver::flush_overlay()
 {
   Fl_Overlay_Window *oWindow = pWindow->as_overlay_window();
