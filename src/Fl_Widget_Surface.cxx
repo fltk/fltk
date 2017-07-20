@@ -77,6 +77,8 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
   }
   if (!drawn_by_plugin) {
     widget->draw();
+    Fl_Overlay_Window *over = (is_window ? widget->as_window()->as_overlay_window() : NULL);
+    if (over) over->draw_overlay();
   }
   if (is_window && !widget->window()) fl_pop_clip();
   // find subwindows of widget and print them
