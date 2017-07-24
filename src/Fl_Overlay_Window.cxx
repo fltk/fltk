@@ -27,11 +27,10 @@
 
 
 Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l)
-: Fl_Double_Window(0,0,W,H,l)
+: Fl_Double_Window(W,H,l)
 {
   overlay_ = 0;
   image(0);
-  clear_flag(FORCE_POSITION);
 }
 
 Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l)
