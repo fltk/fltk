@@ -35,7 +35,6 @@ Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l)
 : Fl_Window(W, H, l)
 {
   type(FL_DOUBLE_WINDOW);
-  clear_flag(FORCE_POSITION);
 }
 
 
