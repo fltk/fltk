@@ -56,12 +56,24 @@
 #  include <mmsystem.h>
 #endif // WIN32
 
-#define DEBUG_TIMER	0	// 0 = do not ..., 1 = debug timer callback
-
 #define BLOCK_COLS	20
 #define BLOCK_ROWS	10
 #define BLOCK_SIZE	32
 #define BLOCK_BLAST	100
+
+// These factors are used to fine-tune the game when these events
+// occur by multiplying the timer interval with the given factor:
+//
+// (a) enter the next game level
+// (b) click on a "normal block", destroy this one and adjacent blocks
+// (c) click on a "bomb", destroy all blocks of the same color
+
+#define LEVEL_FACTOR	0.90	// was: 0.95
+#define NORMAL_FACTOR	0.999
+#define BOMB_FACTOR	0.995
+
+// Set this to 1 to debug the timer callback (should be 0)
+#define DEBUG_TIMER	0
 
 #include "pixmaps/blast.xpm"
 Fl_Pixmap blast_pixmap(blast_xpm);
@@ -770,12 +782,12 @@ int BlockWindow::handle(int event) {
 	if (b->bomb) {
 	  sound_->play_explosion(0.19 + 0.005 * count);
 
-	  interval_ *= 0.995;
+	  interval_ *= BOMB_FACTOR;
 	  score_ += count;
 	} else {
 	  sound_->play_explosion(0.09 + 0.005 * count);
 
-	  interval_ *= 0.999;
+	  interval_ *= NORMAL_FACTOR;
 	  score_ += count * count;
 	}
 
@@ -851,13 +863,12 @@ void BlockWindow::play_cb(Fl_Widget *wi, BlockWindow *bw) {
 }
 
 void BlockWindow::up_level() {
-  interval_ *= 0.95;
+  interval_ *= LEVEL_FACTOR;
   opened_columns_ = 0;
   if (num_colors_ < 7) num_colors_ ++;
   level_ ++;
   sprintf(title_, "Level: %d", level_);
   title_y_ = h();
-  Fl::repeat_timeout(interval_, (Fl_Timeout_Handler)timeout_cb, (void *)this);
 }
 
 // Animate the game...
