@@ -63,6 +63,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
+  - The blocks demo program got a new keyboard shortcut (ALT+SHIFT+H) to
+    reset the user's high score. It is now slower than before in higher
+    levels, hence you can expect higher scores (due to a bug fix in the
+    timer code). You can use the '+' key to increase the level at all times.
   - Some methods of Fl_Tabs are now virtual and/or protected for easier
     subclassing without code duplication (STR #3211 and others).
     To be continued...

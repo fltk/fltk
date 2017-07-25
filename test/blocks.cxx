@@ -751,9 +751,22 @@ int BlockWindow::handle(int event) {
   switch (event) {
 
     case FL_KEYBOARD:
-      if (Fl::event_text()) {
-        if (strcmp(Fl::event_text(), "+") == 0)
-          up_level();
+
+      // '+': raise level
+      if (Fl::event_text() &&
+	  !Fl::event_state(FL_CTRL | FL_ALT | FL_META) &&
+	  !strcmp(Fl::event_text(), "+")) {
+	up_level();
+	return (1);
+      }
+
+      // ALT + SHIFT + 'H': clear highscore
+      if (Fl::event_text() &&
+	  (Fl::event_state() & (FL_ALT | FL_SHIFT)) == (FL_ALT | FL_SHIFT) &&
+	  !strcmp(Fl::event_text(), "H")) {
+	high_score_ = score_;
+	prefs_.set("high_score", high_score_);
+	return (1);
       }
       break;
 
