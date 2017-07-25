@@ -260,21 +260,21 @@ int Fl_Window_Driver::screen_num() {
   return Fl::screen_num(x(), y(), w(), h());
 }
 
+bool Fl_Window_Driver::in_resize_after_scale_change = false;
+
 void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_f) {
-  int oldx = pWindow->x(), oldy = pWindow->y();
-  fl_uintptr_t current = current_cursor();
-  pWindow->hide();
   screen_num(ns);
-  pWindow->position(oldx*old_f/new_f, oldy*old_f/new_f);
-  force_position(1);
-  if (pWindow->fullscreen_active()) {
-    pWindow->size(pWindow->w() * old_f/new_f, pWindow->h() * old_f/new_f);
-  }
   Fl_Graphics_Driver::default_driver().scale(new_f);
-  pWindow->show();
-  reuse_cursor(current);
-  reuse_icons();
-//extern FILE*LOG;fprintf(LOG,"ns=%d old_f%.2f new_f=%.2f\n",ns,old_f,new_f);fflush(LOG);
+  int W, H;
+  if (pWindow->fullscreen_active()) {
+    W = pWindow->w() * old_f/new_f; H = pWindow->h() * old_f/new_f;
+  } else {
+    W = pWindow->w(); H = pWindow->h();
+  }
+  in_resize_after_scale_change = true;
+  pWindow->resize(pWindow->x()*old_f/new_f,  pWindow->y()*old_f/new_f, W, H);
+  size_range();
+  in_resize_after_scale_change = false;
 }
 
 //

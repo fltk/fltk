@@ -25,6 +25,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Window_Driver.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
 
@@ -699,7 +700,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   Fl_Widget::resize(X,Y,W,H); // make new xywh values visible for children
 
-  if (!resizable() || (dw==0 && dh==0) ) {
+  if ((!resizable() || (dw==0 && dh==0 )) && !Fl_Window_Driver::in_resize_after_scale_change) {
 
     if (!as_window()) {
       Fl_Widget*const* a = array();

@@ -44,13 +44,16 @@ class FL_EXPORT Fl_Window_Driver
 {
   friend class Fl_Window;
   friend class Fl_X;
+  friend class Fl_Group;
+  friend class Fl_Gl_Window;
+  friend class Fl_Double_Window;
 
 protected:
   Fl_Window *pWindow;
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
   void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
-
+  static bool in_resize_after_scale_change;
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();

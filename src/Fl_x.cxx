@@ -2106,8 +2106,8 @@ fprintf(stderr,"\n");*/
 ////////////////////////////////////////////////////////////////
 
 void Fl_X11_Window_Driver::resize(int X,int Y,int W,int H) {
-  int is_a_move = (X != x() || Y != y());
-  int is_a_resize = (W != w() || H != h());
+  int is_a_move = (X != x() || Y != y() || in_resize_after_scale_change);
+  int is_a_resize = (W != w() || H != h() || in_resize_after_scale_change);
   int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
   if (is_a_move && resize_from_program) force_position(1);
