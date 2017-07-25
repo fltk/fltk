@@ -2362,11 +2362,6 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
   return 1;
 }
 
-void Fl_WinAPI_Window_Driver::reuse_cursor(fl_uintptr_t c) {
-  cursor = (HCURSOR)c;
-  SetCursor((HCURSOR)c);
-}
-
 fl_uintptr_t Fl_WinAPI_Window_Driver::current_cursor() {
   return (fl_uintptr_t)cursor;
 }

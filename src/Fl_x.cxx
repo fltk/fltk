@@ -2891,13 +2891,6 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
 #endif
 }
 
-void Fl_X11_Window_Driver::reuse_cursor(fl_uintptr_t c)
-{
-  if (c) {
-    XDefineCursor(fl_display, fl_xid(pWindow), (Cursor)c);
-  }
-}
-
 ////////////////////////////////////////////////////////////////
 
 // returns pointer to the filename, or null if name ends with '/'
