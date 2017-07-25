@@ -356,11 +356,6 @@ void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
       icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
   }
   
-  reuse_icons();
-}
-
-void Fl_X11_Window_Driver::reuse_icons()
-{
   if (Fl_X::i(pWindow))
     set_icons();
 }
