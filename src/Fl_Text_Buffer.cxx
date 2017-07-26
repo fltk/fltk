@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2016 by Bill Spitzak and others.
+// Copyright 2001-2017 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -1214,36 +1214,66 @@ void Fl_Text_Buffer::remove_(int start, int end)
 }
 
   
-/*
- simple setter.
- Unicode safe. Start and end must be at a character boundary.
- */
+/**
+ \brief Sets the selection range.
+
+  \p startpos and \p endpos must be at a character boundary.
+
+  If \p startpos != \p endpos selected() is set to true, else to false.
+
+  If \p startpos is greater than \p endpos they are swapped so that
+  \p startpos \<= \p endpos.
+
+  \param[in] startpos  byte offset to first selected character
+  \param[in] endpos    byte offset pointing after last selected character
+*/
 void Fl_Text_Selection::set(int startpos, int endpos)
 {
-  mSelected = startpos != endpos;
+  mSelected = (startpos != endpos);
   mStart = min(startpos, endpos);
   mEnd = max(startpos, endpos);
 }
 
 
-/*
- simple getter.
- Unicode safe. Start and end will be at a character boundary.
- */
+/**
+  \brief Returns the status and the positions of this selection.
+
+  This method returns the same as \p selected() as an \p int (0 or 1)
+  in its return value and the offsets to the start of the selection
+  in \p startpos and to the byte after the last selected character
+  in \p endpos, if selected() is \p true.
+
+  If selected() is \p false, both offsets are set to 0.
+
+  \note In FLTK 1.3.x \p startpos and \p endpos were \b not \b modified
+    if selected() was false.
+
+  \param startpos  return byte offset to first selected character
+  \param endpos    return byte offset pointing after last selected character
+
+  \return whether the selection is active (selected()) or not
+  \retval 0 if not selected
+  \retval 1 if selected
+
+  \see selected(), start(), end()
+*/
 int Fl_Text_Selection::position(int *startpos, int *endpos) const {
-  if (!mSelected)
+  if (!mSelected) {
+    *startpos = 0;
+    *endpos = 0;
     return 0;
+  }
   *startpos = mStart;
   *endpos = mEnd;
-  
   return 1;
 } 
 
 
-/*
- Return if a position is inside the selected area.
- Unicode safe. Pos must be at a character boundary.
- */
+/**
+  Returns true if position \p pos is in the Fl_Text_Selection.
+
+  \p pos must be at a character boundary.
+*/
 int Fl_Text_Selection::includes(int pos) const {
   return (selected() && pos >= start() && pos < end() );
 }
@@ -1447,7 +1477,17 @@ void Fl_Text_Buffer::update_selections(int pos, int nDeleted,
 }
 
 
+/**
+  \brief Updates a selection after text was modified.
+
+  Updates an individual selection for changes in the corresponding text.
+
+  \param pos byte offset into text buffer at which the change occurred
+  \param nDeleted number of bytes deleted from the buffer
+  \param nInserted number of bytes inserted into the buffer
+*/
 // unicode safe, assuming the arguments are on character boundaries
+
 void Fl_Text_Selection::update(int pos, int nDeleted, int nInserted)
 {
   if (!mSelected || pos > mEnd)

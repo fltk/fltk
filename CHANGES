@@ -18,6 +18,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - Fl_Text_Selection got a new method length() and returns 0 in length()
+    and in all offsets (start(), end(), position()) if no text is selected
+    (selected() == false). The behavior in FLTK 1.3 and earlier versions
+    (returning undefined values if !selected()) was confusing.
   - Added support for MacOS 10.13 "High Sierra".
   - New method Fl_Group::bounds() replaces Fl_Group::sizes() which is now
     deprecated. Fl_Group::bounds() uses the new class Fl_Rect that contains

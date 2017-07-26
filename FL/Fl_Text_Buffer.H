@@ -3,7 +3,7 @@
 //
 // Header file for Fl_Text_Buffer class.
 //
-// Copyright 2001-2016 by Bill Spitzak and others.
+// Copyright 2001-2017 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -61,71 +61,108 @@
 
 
 /**
- \class Fl_Text_Selection
- \brief This is an internal class for Fl_Text_Buffer to manage text selections.
- This class works correctly with UTF-8 strings assuming that the parameters
- for all calls are on character boundaries.
- */
+  \class Fl_Text_Selection
+  \brief This is an internal class for Fl_Text_Buffer to manage text selections.
+
+  All methods use byte (not UTF-8 character) offsets and start at 0. This
+  class works correctly with UTF-8 strings assuming that the parameters
+  for all calls are on character boundaries.
+
+  If the selection is inactive (not currently used), then selected()
+  returns \p false and start() and end() return 0 (zero).
+
+  The stored offsets are in ascending order, hence the following conditions
+  are true (pseudo code):
+  \code
+    if ( !selected() ) :  (start() == 0) && (end() == 0) && (start() == end())
+    if (  selected() ) :  start() < end()
+    always             :  0 <= start() <= end()
+    always             :  length() == end() - start()
+  \endcode
+
+  The selection size in bytes can always (unconditionally) be computed by
+  \code
+    int size = sel->end() - sel->start();
+  \endcode
+
+  \see length()
+
+  \note
+    The \b protected member variables \p mStart and \p mEnd are not
+    necessarily 0 (zero) if mSelected == \p false because they are
+    not cleared when \p selected(false) is called (as of Jul 2017).
+    This may be changed in the future.
+*/
 class FL_EXPORT Fl_Text_Selection {
   friend class Fl_Text_Buffer;
 
 public:
 
-  /**
-   \brief Set the selection range.
-   \param start byte offset to first selected character
-   \param end byte offset pointing after last selected character
-   */
-  void set(int start, int end);
+  // Sets the selection range and selected().
+  void set(int startpos, int endpos);
 
-  /**
-   \brief Updates a selection after text was modified.
-
-   Updates an individual selection for changes in the corresponding text
-   \param pos byte offset into text buffer at which the change occurred
-   \param nDeleted number of bytes deleted from the buffer
-   \param nInserted number of bytes inserted into the buffer
-   */
+  // Updates a selection after text was modified.
   void update(int pos, int nDeleted, int nInserted);
 
   /**
-   \brief Return the byte offset to the first selected character.
-   \return byte offset
-   */
-  int start() const { return mStart; }
+    \brief Returns the byte offset to the first selected character.
+
+    The returned offset is only valid if selected() returns true.
+    If the selection is not valid the returned offset is 0 since FLTK 1.4.0.
+
+    \note In FLTK 1.3.x the returned offset could be non-zero even if
+      selected() would have returned 0.
+
+    \return byte offset or 0 if not selected.
+  */
+  int start() const { return mSelected ? mStart : 0; }
 
   /**
-   \brief Return the byte offset to the character after the last selected character.
-   \return byte offset
-   */
-  int end() const { return mEnd; }
+    \brief Returns the byte offset to the character after the last selected character.
+
+    The returned offset is only valid if selected() returns true (non-zero).
+    The offset is 0 if no text is selected (since FLTK 1.4.0).
+
+    \note In FLTK 1.3.x the returned offset could be non-zero even if
+      selected() would have returned 0.
+
+    \return byte offset or 0 if not selected.
+  */
+  int end() const { return mSelected ? mEnd : 0; }
 
   /**
    \brief Returns true if any text is selected.
-   \return a non-zero number if any text has been selected, or 0
-   if no text is selected.
-   */
+   \return  \p true if any text has been selected, or \p false
+	    if no text is selected.
+  */
   bool selected() const { return mSelected; }
 
   /**
-   \brief Modify the 'selected' flag.
-   \param b new flag
-   */
+    \brief Modifies the 'selected' flag.
+    \param b new flag
+  */
   void selected(bool b) { mSelected = b; }
 
   /**
-   Return true if position \p pos with indentation \p dispIndex is in
-   the Fl_Text_Selection.
-   */
+    \brief Returns the size in bytes of the selection.
+
+    This is a convenience method. It always returns the same as
+    \code
+      end() - start()
+    \endcode
+    and it returns 0 if selected() == false.
+
+    \return size in bytes or 0 if not selected.
+
+    \since FLTK 1.4.0
+  */
+  int length() const { return mSelected ? mEnd - mStart : 0; }
+
+  // Returns true if position \p pos is in this Fl_Text_Selection.
   int includes(int pos) const;
 
-  /**
-   \brief Return the positions of this selection.
-   \param start return byte offset to first selected character
-   \param end return byte offset pointing after last selected character
-   \return true if selected
-   */
-  int position(int* start, int* end) const;
+  // Returns true if selected() and the positions of this selection.
+  int position(int *startpos, int *endpos) const;
 
 protected:
 
