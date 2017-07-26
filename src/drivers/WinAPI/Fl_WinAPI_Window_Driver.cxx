@@ -690,7 +690,6 @@ void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
   float old_f = float(r.right)/win->w();
   int ns = data_for_resize_window_between_screens_.screen;
   win->driver()->resize_after_scale_change(ns, old_f, Fl::screen_driver()->scale(ns));
-  win->wait_for_expose();
   data_for_resize_window_between_screens_.busy = false;
 }
 

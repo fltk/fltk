@@ -701,15 +701,13 @@ void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
   XGetWindowAttributes(fl_display, fl_xid(win), &actual);
   Window cr;
   XTranslateCoordinates(fl_display, fl_xid(win), actual.root, 0, 0, &oldx, &oldy, &cr);
-  win->hide();
   float f = Fl::screen_driver()->scale(data_for_resize_window_between_screens_.screen);
   Fl_X11_Window_Driver::driver(win)->screen_num(data_for_resize_window_between_screens_.screen);
-  win->position(oldx/f, oldy/f);
-  win->driver()->force_position(1);
-  Fl_Xlib_Graphics_Driver *d = (Fl_Xlib_Graphics_Driver*)Fl_Display_Device::display_device()->driver();
-  d->scale(f);
-  win->show();
-  win->wait_for_expose();
+  Fl_Display_Device::display_device()->driver()->scale(f);
+  in_resize_after_scale_change = true;
+  win->driver()->size_range();
+  win->resize(oldx/f, oldy/f, win->w(), win->h());
+  in_resize_after_scale_change = false;
   data_for_resize_window_between_screens_.busy = false;
 }
 
