@@ -53,7 +53,7 @@ protected:
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
   void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
-  static bool in_resize_after_scale_change;
+  static bool is_a_rescale; // true when the window is rescaling
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();

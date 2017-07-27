@@ -55,7 +55,7 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int oh = h();
   Fl_Window::resize(X,Y,W,H);
   Fl_X *myi = Fl_X::i(this);
-  if (myi && driver()->other_xid && (ow < w() || oh < h() || Fl_Window_Driver::in_resize_after_scale_change))
+  if (myi && driver()->other_xid && (ow < w() || oh < h() || Fl_Window_Driver::is_a_rescale))
     driver()->destroy_double_buffer();
 }
 

@@ -1683,10 +1683,10 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X,int &Y, int &bt,int &bx, int &by) 
 void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
   UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER
              | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
-  int is_a_resize = (W != w() || H != h() || in_resize_after_scale_change);
+  int is_a_resize = (W != w() || H != h() || is_a_rescale);
   int resize_from_program = (pWindow != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
-  if (X != x() || Y != y() || in_resize_after_scale_change) {
+  if (X != x() || Y != y() || is_a_rescale) {
     force_position(1);
   } else {
     if (!is_a_resize) return;

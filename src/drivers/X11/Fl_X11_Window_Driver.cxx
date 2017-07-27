@@ -704,10 +704,10 @@ void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
   float f = Fl::screen_driver()->scale(data_for_resize_window_between_screens_.screen);
   Fl_X11_Window_Driver::driver(win)->screen_num(data_for_resize_window_between_screens_.screen);
   Fl_Display_Device::display_device()->driver()->scale(f);
-  in_resize_after_scale_change = true;
+  is_a_rescale = true;
   win->driver()->size_range();
   win->resize(oldx/f, oldy/f, win->w(), win->h());
-  in_resize_after_scale_change = false;
+  is_a_rescale = false;
   data_for_resize_window_between_screens_.busy = false;
 }
 

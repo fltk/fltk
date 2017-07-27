@@ -367,6 +367,16 @@ void Fl_X11_Screen_Driver::init() {
       }
     }
   }
+#if __APPLE_CC__ && USE_XFT // TMP simulate 2 screens under XQuartz
+  if (strstr(getenv("DISPLAY"), "xquartz")) {
+    num_screens = 2;
+    screens[1].x_org = screens[0].width/2;;
+    screens[1].y_org = screens[0].y_org;
+    screens[1].width = screens[0].width = screens[0].width/2;
+    screens[1].height = screens[0].height;
+    screens[1].scale = screens[0].scale = 1;
+  }
+#endif
   init_workarea();
 }
 
