@@ -1116,7 +1116,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   //fl_msg.lPrivate = ???
 
   Fl_Window *window = fl_find(hWnd);
-  float scale = window ? Fl::screen_driver()->scale(window->driver()->screen_num()) : Fl_Graphics_Driver::default_driver().scale();
+  float scale = (window ? Fl::screen_driver()->scale(window->driver()->screen_num()) : 1);
 
   if (window) switch (uMsg) {
       
