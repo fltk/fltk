@@ -1116,7 +1116,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   //fl_msg.lPrivate = ???
 
   Fl_Window *window = fl_find(hWnd);
-  float scale = Fl_Graphics_Driver::default_driver().scale();
+  float scale = window ? Fl::screen_driver()->scale(window->driver()->screen_num()) : Fl_Graphics_Driver::default_driver().scale();
 
   if (window) switch (uMsg) {
       
@@ -1454,6 +1454,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     resize_bug_fix = window;
     int nx = LOWORD(lParam);
     int ny = HIWORD(lParam);
+    bool iconized = (nx >= 0x8000 && ny >= 0x8000);
+    if (iconized) {
+      break;
+    }
     if (nx & 0x8000) nx -= 65536;
     if (ny & 0x8000) ny -= 65536;
 //fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
