@@ -208,7 +208,7 @@ void Fl_Native_File_Chooser::filter_value(int i) {
  This is only valid if the chooser returns success.
  */
 int Fl_Native_File_Chooser::filter_value() const {
-  return platform_fnfc->filters();
+  return platform_fnfc->filter_value();
 }
 
 /**
