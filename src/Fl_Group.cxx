@@ -700,7 +700,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   Fl_Widget::resize(X,Y,W,H); // make new xywh values visible for children
 
-  if ((!resizable() || (dw==0 && dh==0 )) && !Fl_Window_Driver::is_a_rescale) {
+  if ((!resizable() || (dw==0 && dh==0 )) && !Fl_Window_Driver::is_a_rescale()) {
 
     if (!as_window()) {
       Fl_Widget*const* a = array();

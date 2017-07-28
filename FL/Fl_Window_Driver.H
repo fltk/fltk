@@ -44,16 +44,14 @@ class FL_EXPORT Fl_Window_Driver
 {
   friend class Fl_Window;
   friend class Fl_X;
-  friend class Fl_Group;
-  friend class Fl_Gl_Window;
-  friend class Fl_Double_Window;
+private:
+  static bool is_a_rescale_; // true when a top-level window is being rescaled
 
 protected:
   Fl_Window *pWindow;
   struct shape_data_type;
   shape_data_type *shape_data_; ///< non-null means the window has a non-rectangular shape
   void flush_Fl_Window(); // accessor to protected Fl_Window::flush()
-  static bool is_a_rescale; // true when the window is rescaling
 public:
   Fl_Window_Driver(Fl_Window *);
   virtual ~Fl_Window_Driver();
@@ -62,6 +60,8 @@ public:
   Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
   virtual int screen_num();
   virtual void screen_num(int) {}
+  static bool is_a_rescale() {return is_a_rescale_;};
+
 
   // --- frequently used accessors to public window data
   /** returns the x coordinate of the window. */

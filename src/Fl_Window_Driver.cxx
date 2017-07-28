@@ -257,7 +257,7 @@ int Fl_Window_Driver::screen_num() {
   return Fl::screen_num(x(), y(), w(), h());
 }
 
-bool Fl_Window_Driver::is_a_rescale = false;
+bool Fl_Window_Driver::is_a_rescale_ = false;
 
 void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_f) {
   screen_num(ns);
@@ -268,10 +268,10 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
   } else {
     W = pWindow->w(); H = pWindow->h();
   }
-  is_a_rescale = true;
+  is_a_rescale_ = true;
   size_range();
   pWindow->resize(pWindow->x()*old_f/new_f,  pWindow->y()*old_f/new_f, W, H);
-  is_a_rescale = false;
+  is_a_rescale_ = false;
 }
 
 //
