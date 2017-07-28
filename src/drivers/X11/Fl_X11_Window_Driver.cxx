@@ -696,18 +696,8 @@ Fl_X11_Window_Driver::type_for_resize_window_between_screens Fl_X11_Window_Drive
 
 void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
   Fl_Window *win = (Fl_Window*)data;
-  int oldx, oldy;
-  XWindowAttributes actual;
-  XGetWindowAttributes(fl_display, fl_xid(win), &actual);
-  Window cr;
-  XTranslateCoordinates(fl_display, fl_xid(win), actual.root, 0, 0, &oldx, &oldy, &cr);
   float f = Fl::screen_driver()->scale(data_for_resize_window_between_screens_.screen);
-  Fl_X11_Window_Driver::driver(win)->screen_num(data_for_resize_window_between_screens_.screen);
-  Fl_Display_Device::display_device()->driver()->scale(f);
-  is_a_rescale = true;
-  win->driver()->size_range();
-  win->resize(oldx/f, oldy/f, win->w(), win->h());
-  is_a_rescale = false;
+  win->driver()->resize_after_scale_change(data_for_resize_window_between_screens_.screen, f, f);
   data_for_resize_window_between_screens_.busy = false;
 }
 
