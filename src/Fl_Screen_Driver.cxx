@@ -154,7 +154,7 @@ uchar *Fl_Screen_Driver::read_image(uchar *p, int X, int Y, int w, int h, int al
     img = traverse_to_gl_subwindows(Fl_Window::current(), p, X, Y, w, h, alpha, NULL);
   }
   if (img) {
-    if (img->w() > w) {
+    if (img->w() != w) {
       Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w, h);
       delete img;
       img = img2;
