@@ -262,15 +262,23 @@ bool Fl_Window_Driver::is_a_rescale_ = false;
 void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_f) {
   screen_num(ns);
   Fl_Graphics_Driver::default_driver().scale(new_f);
+  int X = pWindow->x()*old_f/new_f, Y = pWindow->y()*old_f/new_f;
   int W, H;
   if (pWindow->fullscreen_active()) {
     W = pWindow->w() * old_f/new_f; H = pWindow->h() * old_f/new_f;
   } else {
     W = pWindow->w(); H = pWindow->h();
+    int sX, sY, sW, sH;
+    Fl::screen_xywh(sX, sY, sW, sH, ns); // bounding box of new screen
+    const int d = 5; // make sure new window centre is located in new screen
+    if (X+W/2 < sX) X = sX-W/2+d;
+    else if (X+W/2 > sX+sW-1) X = sX+sW-1-W/2-d;
+    if (Y+H/2 < sY) Y = sY-H/2+d;
+    else if (Y+H/2 > sY+sH-1) Y = sY+sH-1-H/2-d;
   }
   is_a_rescale_ = true;
   size_range();
-  pWindow->resize(pWindow->x()*old_f/new_f,  pWindow->y()*old_f/new_f, W, H);
+  pWindow->resize(X, Y, W, H);
   is_a_rescale_ = false;
 }
 

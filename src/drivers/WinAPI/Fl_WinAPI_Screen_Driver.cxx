@@ -666,9 +666,10 @@ void Fl_WinAPI_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &
   }
 }
 
+//NOTICE: returns -1 if x,y is not in any screen
 int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
 {
-  int screen = 0;
+  int screen = -1;
   if (num_screens < 0) init();
   for (int i = 0; i < num_screens; i ++) {
     if (x >= screens[i].left && x < screens[i].right &&

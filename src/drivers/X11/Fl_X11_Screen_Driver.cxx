@@ -1182,9 +1182,10 @@ void Fl_X11_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &hei
 }
 
 #if USE_XFT
+//NOTICE: returns -1 if x,y is not in any screen
 int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
 {
-  int screen = 0;
+  int screen = -1;
   if (num_screens < 0) init();
   
   for (int i = 0; i < num_screens; i ++) {
@@ -1196,25 +1197,6 @@ int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
   }
   return screen;
 }
-
-int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y, int w, int h)
-{
-  int best_screen = 0;
-  float best_intersection = 0.;
-  if (num_screens < 0) init();
-  for (int i = 0; i < num_screens; i++) {
-    float sintersection = fl_intersection(x, y, w, h, screens[i].x_org, screens[i].y_org,
-                                          screens[i].width, screens[i].height);
-    if (sintersection > best_intersection) {
-      best_screen = i;
-      best_intersection = sintersection;
-    }
-  }
-  return best_screen;
-}
-#endif
-
-#if USE_XFT
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 
@@ -1402,8 +1384,6 @@ float Fl_X11_Screen_Driver::desktop_scale_factor()
 #endif
   return factor;
 }
-
-
 
 
 #endif // USE_XFT

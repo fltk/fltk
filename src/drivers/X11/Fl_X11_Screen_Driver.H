@@ -56,7 +56,6 @@ public:
   virtual void scale(int n, float f) { screens[n].scale = f;}
   virtual float desktop_scale_factor();
   int screen_num_unscaled(int x, int y);
-  int screen_num_unscaled(int x, int y, int w, int h);
 #endif
   
   static int ewmh_supported();

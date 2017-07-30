@@ -726,7 +726,8 @@ int Fl_X11_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
   Window c; int cx,cy; unsigned int mask;
   XQueryPointer(fl_display, root, &root, &c, &mx, &my, &cx, &cy, &mask);
 #if USE_XFT
-  return screen_num_unscaled(mx, my);
+  int screen = screen_num_unscaled(mx, my);
+  return screen >= 0 ? screen : 0;
 #else
   return screen_num(mx, my);
 #endif
@@ -2015,12 +2016,12 @@ fprintf(stderr,"\n");*/
     Window cr; int X, Y, W = actual.width, H = actual.height;
     XTranslateCoordinates(fl_display, fl_xid(window), actual.root,
                           0, 0, &X, &Y, &cr);
-#if USE_XFT // detect when window changes screen
-    int num = 0;
+#if USE_XFT // detect when window centre changes screen
     Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
-    num = d->screen_num_unscaled(X, Y, actual.width, actual.height);
     Fl_X11_Window_Driver *wd = Fl_X11_Window_Driver::driver(window);
     int olds = wd->screen_num();
+    int num = d->screen_num_unscaled(X+ actual.width/2, Y +actual.height/2);
+    if (num == -1) num = olds;
     float s = d->scale(num);
     if (num != olds) {
       if (s != d->scale(olds) &&

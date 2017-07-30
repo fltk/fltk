@@ -586,7 +586,8 @@ int Fl_WinAPI_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
   POINT p;
   GetCursorPos(&p);
   mx = p.x; my = p.y;
-  return screen_num_unscaled(mx, my);
+  int screen = screen_num_unscaled(mx, my);
+  return screen >= 0 ? screen : 0;
 }
 
 int Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
@@ -1460,11 +1461,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (nx & 0x8000) nx -= 65536;
     if (ny & 0x8000) ny -= 65536;
 //fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
-// detect when window changes screen
+// detect when window centre changes screen
     Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-    int news = sd->screen_num_unscaled(nx + window->w()*scale/2, ny + window->h()*scale/2);
     Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
     int olds = wd->screen_num();
+    int news = sd->screen_num_unscaled(nx + window->w()*scale/2, ny + window->h()*scale/2);
+    if (news == -1) news = olds;
     float s = sd->scale(news);
 //fprintf(LOG,"WM_MOVE olds=%d(%.2f) news=%d(%.2f) busy=%d\n",olds, sd->scale(olds),news, s, Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);fflush(LOG);
     if (olds != news) {
