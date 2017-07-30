@@ -159,7 +159,7 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   win->driver()->flush(); // makes the window current
   const uchar *image_data;
   Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, NULL, x, y, w, h, 0, NULL);
-  if (img->w() > w) {
+  if (img->w() != w) {
     Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w, h);
     delete img;
     img = img2;
