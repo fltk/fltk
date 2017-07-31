@@ -152,23 +152,18 @@ void Fl_Widget_Surface::origin(int x, int y) {
  */
 void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
-  Fl_Display_Device::display_device()->set_current();
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
   win->driver()->flush(); // makes the window current
-  const uchar *image_data;
   Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, NULL, x, y, w, h, 0, NULL);
-  if (img->w() != w) {
-    Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w, h);
-    delete img;
-    img = img2;
-  }
-  image_data = img->array;
+  Fl_Shared_Image *shared = Fl_Shared_Image::get(img);
+  shared->scale(w, h, 1, 1);
   if (save_front != win) save_front->show();
-  set_current();
-  fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
-  delete img;
+  Fl_Surface_Device::pop_current();
+  shared->draw(delta_x, delta_y);
+  shared->release();
 }
 
 /**
