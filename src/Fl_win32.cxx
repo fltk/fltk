@@ -718,17 +718,18 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       Fl::e_text = 0;
       return;
     }
-    Fl::e_text = new char[fl_selection_length[clipboard]+1];
-    char *o = Fl::e_text;
+    char *clip_text = new char[fl_selection_length[clipboard]+1];
+    char *o = clip_text;
     while (*i) { // Convert \r\n -> \n
       if ( *i == '\r' && *(i+1) == '\n') i++;
       else *o++ = *i++;
     }
     *o = 0;
+    Fl::e_text = clip_text;
     Fl::e_length = (int) (o - Fl::e_text);
     Fl::e_clipboard_type = Fl::clipboard_plain_text;
-    receiver.handle(FL_PASTE);
-    delete [] Fl::e_text;
+    receiver.handle(FL_PASTE); // this may change Fl::e_text
+    delete [] clip_text;
     Fl::e_text = 0;
   } else if (clipboard) {
     HANDLE h;
@@ -737,21 +738,22 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       if ((h = GetClipboardData(CF_UNICODETEXT))) { // there's text in the clipboard
 	wchar_t *memLock = (wchar_t*) GlobalLock(h);
 	size_t utf16_len = wcslen(memLock);
-	Fl::e_text = new char[utf16_len * 4 + 1];
-	unsigned utf8_len = fl_utf8fromwc(Fl::e_text, (unsigned) (utf16_len * 4), memLock, (unsigned) utf16_len);
-	*(Fl::e_text + utf8_len) = 0;
+	char *clip_text = new char[utf16_len * 4 + 1];
+	unsigned utf8_len = fl_utf8fromwc(clip_text, (unsigned) (utf16_len * 4), memLock, (unsigned) utf16_len);
+	*(clip_text + utf8_len) = 0;
 	GlobalUnlock(h);
 	LPSTR a,b;
-	a = b = Fl::e_text;
+	a = b = clip_text;
 	while (*a) { // strip the CRLF pairs ($%$#@^)
 	  if (*a == '\r' && a[1] == '\n') a++;
 	  else *b++ = *a++;
 	}
 	*b = 0;
+        Fl::e_text = clip_text;
 	Fl::e_length = (int) (b - Fl::e_text);
 	Fl::e_clipboard_type = Fl::clipboard_plain_text;  // indicates that the paste event is for plain UTF8 text
-	receiver.handle(FL_PASTE); // send the FL_PASTE event to the widget
-	delete[] Fl::e_text;
+	receiver.handle(FL_PASTE); // send the FL_PASTE event to the widget. May change Fl::e_text
+	delete[] clip_text;
 	Fl::e_text = 0;
 	}
       }
