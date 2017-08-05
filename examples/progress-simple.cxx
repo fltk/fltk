@@ -1,16 +1,10 @@
-#include <stdio.h>
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Progress.H>
-
 //
 // "$Id$"
 //
 // Demonstrate using the Fl_Progress widget in an application - erco 05/02/2005
 //
 // Copyright 2005,2012 Greg Ercolano.
-// Copyright 1998-2012 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,6 +16,12 @@
 //
 //     http://www.fltk.org/str.php
 //
+
+#include <stdio.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Progress.H>
 
 #ifdef WIN32
 // WINDOWS
@@ -36,7 +36,7 @@
 void butt_cb(Fl_Widget *butt, void *data) {
 
     // Deactivate the button
-    butt->deactivate();                        // prevent button from being pressed again                   
+    butt->deactivate();                        // prevent button from being pressed again
     Fl::check();                               // give fltk some cpu to gray out button
     // Make the progress bar
     Fl_Window *w = (Fl_Window*)data;           // access parent window
