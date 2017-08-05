@@ -6,6 +6,7 @@ SHELL = /bin/sh
 
 # Executables
 ALL = clipboard$(EXEEXT) \
+      draggable-group$(EXEEXT) \
       fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
@@ -41,4 +42,3 @@ clean:
 	$(RM) $(ALL)
 	$(RM) *.o
 	$(RM) core
-
