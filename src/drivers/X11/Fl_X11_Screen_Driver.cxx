@@ -1280,9 +1280,9 @@ static bool gnome_scale_factor(float& factor) {
   char line[400] = "";
   FILE *in = fopen("/proc/version", "r");
   if (in) {
-    fgets(line, sizeof(line), in);
+    char *s = fgets(line, sizeof(line), in);
     fclose(in);
-    if (strstr(line, "Ubuntu")) ubuntu = true;
+    if (s && strstr(line, "Ubuntu")) ubuntu = true;
   }
   
   // define pters to used functions
