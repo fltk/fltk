@@ -187,12 +187,23 @@ void button_cb(Fl_Widget *w, void *v) {
   Fl::add_timeout(2.0, clear_status, v);
 }
 
+// tooltips:
+
+const char *tt_drag =	"Drag this DraggableGroup and/or its child groups and squares. "
+			"Use the right mouse button (MB3) to drag objects.";
+const char *tt_group =	"You can drag this Fl_Group, but not its children (squares).";
+const char *tt_button = "You can drag this button with the right mouse button "
+			"and you can click it with the left mouse button.";
+
+// main program:
+
 int main() {
 
   Fl_Double_Window win(500, 500, "Drag children within their parent group");
 
   DraggableGroup area(0, 0, 500, 400, "Use the right mouse button (MB3)\nto drag objects");
   area.align(FL_ALIGN_INSIDE);
+  area.tooltip(tt_drag);
 
   // draggable group inside draggable area
   DraggableGroup dobj(5, 5, 140, 140, "DraggableGroup");
@@ -204,6 +215,7 @@ int main() {
   b2.color(FL_GREEN);
   b2.box(FL_FLAT_BOX);
   dobj.end();
+  dobj.tooltip(tt_drag);
 
   // regular group inside draggable area
   Fl_Group dobj2(5, 280, 110, 110, "Fl_Group");
@@ -216,10 +228,12 @@ int main() {
   b4.color(FL_YELLOW);
   b4.box(FL_FLAT_BOX);
   dobj2.end();
+  dobj2.tooltip(tt_group);
 
   // draggable group inside draggable area
   DraggableGroup dobj3(245, 5, 150, 150, "DraggableGroup");
   dobj3.align(FL_ALIGN_INSIDE);
+  dobj3.tooltip(tt_drag);
 
   // nested draggable group
   DraggableGroup dobj4(250, 10, 50, 50);
@@ -230,16 +244,19 @@ int main() {
   b6.color(FL_WHITE);
   b6.box(FL_FLAT_BOX);
   dobj4.end();
+  dobj4.tooltip(tt_drag);
 
   dobj3.end();
 
   Fl_Button button1(200, 350, 180, 40, "Fl_Button inside DraggableGroup");
   button1.align(FL_ALIGN_INSIDE | FL_ALIGN_WRAP);
+  button1.tooltip(tt_button);
 
   area.end();
 
   Fl_Button button2(200, 410, 180, 40, "Fl_Button outside DraggableGroup");
   button2.align(FL_ALIGN_INSIDE | FL_ALIGN_WRAP);
+  button2.tooltip("This is a normal button and can't be dragged.");
 
   Fl_Box *status = new Fl_Box(0, 460, win.w(), 40, "Messages ...");
   status->box(FL_DOWN_BOX);
