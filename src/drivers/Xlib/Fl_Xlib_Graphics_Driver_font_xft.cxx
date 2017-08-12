@@ -1344,7 +1344,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     pango_font_family_list_faces(families[fam], &faces, &n_faces);
     for (int j = 0; j < n_faces; j++) {
       char prefix = ' ', *q;
-      const char *p =  pango_font_face_get_face_name(faces[j]);
+      char *p =  (char*)pango_font_face_get_face_name(faces[j]);
       // build the font's FLTK name
       if (strcmp(p, "Regular") == 0) p = NULL;
       else if (strcmp(p, "Bold Italic") == 0 || strcmp(p, "Bold Oblique") == 0) {p = NULL; prefix = 'P';}
