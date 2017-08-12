@@ -104,20 +104,20 @@ static Fl_Fontdesc built_in_table[] = {
 // The predefined fonts that FLTK has with Pango:
 static Fl_Fontdesc built_in_table[] = {
   {" Sans"},
-  {" Sans Bold"},
-  {" Sans Italic"},
-  {" Sans Bold Italic"},
+  {"BSans"},
+  {"ISans"},
+  {"PSans"},
   {" Monospace"},
-  {" Monospace Bold"},
-  {" Monospace Italic"},
-  {" Monospace Bold Italic"},
+  {"BMonospace"},
+  {"IMonospace"},
+  {"PMonospace"},
   {" Serif"},
-  {" Serif Bold"},
-  {" Serif Italic"},
-  {" Serif Bold Italic"},
+  {"BSerif"},
+  {"ISerif"},
+  {"PSerif"},
   {" Sans"},
   {" Monospace"},
-  {" Monospace Bold"},
+  {"BMonospace"},
   {" Sans"},
 };
 
@@ -1325,7 +1325,7 @@ int Fl_Xlib_Graphics_Driver::descent_unscaled() {
 typedef int (*sort_f_type)(const void *aa, const void *bb);
 
 static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
-  return strcmp(fa->name, fb->name);
+  return strcmp(fa->name+1, fb->name+1);
 }
 
 Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
@@ -1343,14 +1343,18 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     int l = strlen(fam_name);
     pango_font_family_list_faces(families[fam], &faces, &n_faces);
     for (int j = 0; j < n_faces; j++) {
+      char prefix = ' ', *q;
       const char *p =  pango_font_face_get_face_name(faces[j]);
+      // build the font's FLTK name
       if (strcmp(p, "Regular") == 0) p = NULL;
+      else if (strcmp(p, "Bold Italic") == 0 || strcmp(p, "Bold Oblique") == 0) {p = NULL; prefix = 'P';}
+      else if ((q=strstr(p, "Italic")) || (q=strstr(p, "Oblique")) ) {*q = 0; prefix = 'I';}
+      else if ((q=strstr(p, "Bold")) ) {*q = 0; prefix = 'B';}
       int lq = l+2;
       if (p) lq += strlen(p) + 1;
-      char *q = new char[lq];
-      sprintf(q, " %s", fam_name);
-      if (p) sprintf(q + strlen(q), " %s", p);
-      // at this point, q contains " family-name[ face-name-except-Regular]"
+      q = new char[lq];
+      sprintf(q, "%c%s", prefix, fam_name);
+      if (p && *p) sprintf(q + strlen(q), " %s", p);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
