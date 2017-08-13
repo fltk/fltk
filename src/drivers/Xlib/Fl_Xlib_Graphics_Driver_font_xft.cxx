@@ -1347,7 +1347,9 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
       char *p = strdup(pango_font_face_get_face_name(faces[j]));
       int lp = strlen(p);
       // build the font's FLTK name
-      if (strcmp(p, "Regular") == 0) *p = 0;
+      if (strcmp(p + lp - 7, "Regular") == 0 ) {
+        *(p+lp-7) = 0;
+      }
       else if (strcmp(p + lp - 12, "Bold Oblique") == 0 ) {
         *(p+lp-12) = 0; prefix = 'P';
       }
