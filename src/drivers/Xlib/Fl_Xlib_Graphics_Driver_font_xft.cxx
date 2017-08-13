@@ -1343,18 +1343,34 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
     int l = strlen(fam_name);
     pango_font_family_list_faces(families[fam], &faces, &n_faces);
     for (int j = 0; j < n_faces; j++) {
-      char prefix = ' ', *q;
-      char *p =  (char*)pango_font_face_get_face_name(faces[j]);
+      char prefix = ' ';
+      char *p = strdup(pango_font_face_get_face_name(faces[j]));
+      int lp = strlen(p);
       // build the font's FLTK name
-      if (strcmp(p, "Regular") == 0) p = NULL;
-      else if (strcmp(p, "Bold Italic") == 0 || strcmp(p, "Bold Oblique") == 0) {p = NULL; prefix = 'P';}
-      else if ((q=strstr(p, "Italic")) || (q=strstr(p, "Oblique")) ) {*q = 0; prefix = 'I';}
-      else if ((q=strstr(p, "Bold")) ) {*q = 0; prefix = 'B';}
+      if (strcmp(p, "Regular") == 0) *p = 0;
+      else if (strcmp(p + lp - 12, "Bold Oblique") == 0 ) {
+        *(p+lp-12) = 0; prefix = 'P';
+      }
+      else if (strcmp(p + lp - 11, "Bold Italic") == 0 ) {
+        *(p+lp-11) = 0; prefix = 'P';
+      }
+      else if (strcmp(p + lp - 6, "Italic") == 0 ) {
+        *(p+lp-6) = 0; prefix = 'I';
+      }
+      else if (strcmp(p + lp - 7, "Oblique") == 0 ) {
+        *(p+lp-7) = 0; prefix = 'I';
+      }
+      else if (strcmp(p + lp - 4, "Bold") == 0 ) {
+        *(p+lp-4) = 0; prefix = 'B';
+      }
+      char *q = p + strlen(p) - 1;
+      while (*q == ' ' && q > p) q--;
       int lq = l+2;
-      if (p) lq += strlen(p) + 1;
+      if (*p) lq += strlen(p) + 1;
       q = new char[lq];
       sprintf(q, "%c%s", prefix, fam_name);
-      if (p && *p) sprintf(q + strlen(q), " %s", p);
+      if (*p) sprintf(q + strlen(q), " %s", p);
+      free(p);
       Fl::set_font((Fl_Font)(count++ + FL_FREE_FONT), q);
     }
     /*g_*/free(faces); // glib source code shows that g_free is equivalent to free
