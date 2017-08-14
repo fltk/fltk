@@ -22,11 +22,10 @@
  \brief Definition of OpenGL graphics driver.
  */
 
-#ifndef FL_CFG_GFX_OPENGL_H
-#define FL_CFG_GFX_OPENGL_H
+#ifndef FL_OPENGL_GRAPHICS_DRIVER_H
+#define FL_OPENGL_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
-
 
 /**
  \brief OpenGL specific graphics class.
@@ -95,8 +94,7 @@ public:
   void delete_bitmask(Fl_Bitmask bm) { };
 };
 
-
-#endif // FL_CFG_GFX_OPENGL_H
+#endif // FL_OPENGL_GRAPHICS_DRIVER_H
 
 //
 // End of "$Id$".

@@ -21,8 +21,8 @@
  \brief Definition of X11 Xlib graphics driver.
  */
 
-#ifndef FL_CFG_GFX_XLIB_H
-#define FL_CFG_GFX_XLIB_H
+#ifndef FL_XLIB_GRAPHICS_DRIVER_H
+#define FL_XLIB_GRAPHICS_DRIVER_H
 
 #include <config.h>
 #include <FL/Fl_Graphics_Driver.H>
@@ -189,8 +189,7 @@ protected:
   virtual Fl_Font set_fonts(const char* xstarname);
 };
 
-
-#endif // FL_CFG_GFX_XLIB_H
+#endif // FL_XLIB_GRAPHICS_DRIVER_H
 
 //
 // End of "$Id$".
