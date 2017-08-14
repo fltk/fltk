@@ -206,7 +206,9 @@ Fl_Group.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Group.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Group.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Group.H
 Fl_Group.o: ../FL/Fl_Window.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-Fl_Group.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_Group.o: ../FL/Fl_Widget.H ../FL/Fl_Window_Driver.H
+Fl_Group.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
+Fl_Group.o: ../FL/Fl_Window.H ../FL/fl_draw.H
 Fl_Help_View.o: ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/Fl_Export.H
 Fl_Help_View.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Help_View.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
@@ -1671,20 +1673,20 @@ Fl_Gl_Device_Plugin.o: ../FL/Fl_Preferences.H ../FL/Fl_Export.H
 Fl_Gl_Window.o: config_lib.h ../config.h ../FL/gl.h ../FL/Enumerations.H
 Fl_Gl_Window.o: ../FL/abi-version.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Gl_Window.o: ../FL/platform_types.h ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
-Fl_Gl_Window.o: ../FL/Fl_Gl_Window_Driver.H ../FL/fl_utf8.h
+Fl_Gl_Window.o: ../FL/Fl_Gl_Window_Driver.H ../FL/Fl_Window_Driver.H
+Fl_Gl_Window.o: ../FL/Fl_Export.H ../FL/Fl_Window.H ../FL/Fl.H
+Fl_Gl_Window.o: ../FL/fl_utf8.h ../FL/Fl_Group.H ../FL/Fl_Bitmap.H
+Fl_Gl_Window.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl_Overlay_Window.H
+Fl_Gl_Window.o: ../FL/Fl_Double_Window.H ../FL/fl_utf8.h
 Fl_Gl_Window.o: drivers/OpenGL/Fl_OpenGL_Display_Device.H ../FL/Fl_Device.H
 Fl_Gl_Window.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/x.H
-Fl_Gl_Window.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_Gl_Window.o: Fl_Gl_Choice.H ../FL/Fl_Screen_Driver.H ../FL/Fl.H
-Fl_Gl_Window.o: ../FL/fl_utf8.h ../FL/Fl_Text_Editor.H
+Fl_Gl_Window.o: ../FL/fl_types.h ../FL/Enumerations.H Fl_Gl_Choice.H
+Fl_Gl_Window.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Text_Editor.H
 Fl_Gl_Window.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
-Fl_Gl_Window.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
-Fl_Gl_Window.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Gl_Window.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 Fl_Gl_Window.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H ../FL/Fl_Rect.H
 Fl_Gl_Window.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 Fl_Gl_Window.o: ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
-Fl_Gl_Window.o: ../FL/Fl_Window_Driver.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_Gl_Window.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
 freeglut_geometry.o: ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
 freeglut_geometry.o: ../FL/abi-version.h ../FL/Fl_Export.H ../FL/fl_types.h
 freeglut_geometry.o: ../FL/platform_types.h ../FL/Fl.H ../FL/Fl_Export.H
@@ -1969,12 +1971,12 @@ Fl_PNM_Image.o: ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h ../config.h
 flstring.o: flstring.h ../FL/Fl_Export.H ../config.h
 numericsort.o: ../FL/platform_types.h ../FL/filename.H ../FL/Fl_Export.H
 vsnprintf.o: flstring.h ../FL/Fl_Export.H ../config.h
-xutf8/keysym2Ucs.o: config_lib.h ../config.h Xutf8.h ../FL/Fl_Export.H
-xutf8/keysym2Ucs.o: xutf8/imKStoUCS.c xutf8/Xlibint.h xutf8/Ximint.h
+xutf8/keysym2Ucs.o: Xutf8.h ../FL/Fl_Export.H xutf8/imKStoUCS.c
+xutf8/keysym2Ucs.o: xutf8/Xlibint.h xutf8/Ximint.h
 scandir_posix.o: ../config.h
 xutf8/case.o: utf8_internal.h xutf8/headers/case.h
 xutf8/is_right2left.o: utf8_internal.h
 xutf8/is_spacing.o: utf8_internal.h xutf8/headers/spacing.h
-xutf8/keysym2Ucs.o: config_lib.h ../config.h Xutf8.h ../FL/Fl_Export.H
-xutf8/keysym2Ucs.o: xutf8/imKStoUCS.c xutf8/Xlibint.h xutf8/Ximint.h
+xutf8/keysym2Ucs.o: Xutf8.h ../FL/Fl_Export.H xutf8/imKStoUCS.c
+xutf8/keysym2Ucs.o: xutf8/Xlibint.h xutf8/Ximint.h
 scandir_posix.o: ../config.h
