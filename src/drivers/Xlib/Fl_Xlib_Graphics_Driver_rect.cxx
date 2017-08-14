@@ -16,11 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-
-#ifndef FL_CFG_GFX_XLIB_RECT_CXX
-#define FL_CFG_GFX_XLIB_RECT_CXX
-
-
 /**
  \file Fl_Xlib_Graphics_Driver_rect.cxx
  \brief X11 Xlib specific line and polygon drawing with integer coordinates.
@@ -410,8 +405,6 @@ void Fl_Xlib_Graphics_Driver::restore_clip() {
     else XSetClipMask(fl_display, gc_, 0);
   }
 }
-
-#endif // FL_CFG_GFX_XLIB_RECT_CXX
 
 //
 // End of "$Id$".

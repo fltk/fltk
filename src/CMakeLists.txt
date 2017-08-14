@@ -335,7 +335,8 @@ set (GLCPPFILES
 
 set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Display_Device.cxx
-  drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
+  # the following file doesn't contribute any code:
+  # drivers/OpenGL/Fl_OpenGL_Graphics_Driver.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx

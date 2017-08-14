@@ -3,7 +3,7 @@
 //
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,9 +15,6 @@
 //
 //     http://www.fltk.org/str.php
 //
-
-#ifndef FL_CFG_GFX_OPENGL_LINE_STYLE_CXX
-#define FL_CFG_GFX_OPENGL_LINE_STYLE_CXX
 
 /**
   \file Fl_OpenGL_Graphics_Driver_line_style.cxx
@@ -61,8 +58,6 @@ void Fl_OpenGL_Graphics_Driver::line_style(int style, int width, char* dashes) {
     glEnable(GL_LINE_STIPPLE);
   }
 }
-
-#endif // FL_CFG_GFX_OPENGL_LINE_STYLE_CXX
 
 //
 // End of "$Id$".

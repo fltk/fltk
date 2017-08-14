@@ -16,21 +16,16 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_XLIB_LINE_STYLE_CXX
-#define FL_CFG_GFX_XLIB_LINE_STYLE_CXX
-
 /**
   \file Fl_Xlib_Graphics_Driver_line_style.cxx
   \brief Line style drawing utility hiding different platforms.
 */
 
-#include "../../config_lib.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/Fl_Printer.H>
 #include "../../flstring.h"
-#include <stdio.h>
 
 #include "Fl_Xlib_Graphics_Driver.H"
 
@@ -69,8 +64,6 @@ if (*dashes == 0) ndashes = 0;//against error with very small scaling
 		     Cap[(style>>8)&3], Join[(style>>12)&3]);
   if (ndashes) XSetDashes(fl_display, gc_, 0, dashes, ndashes);
 }
-
-#endif // FL_CFG_GFX_XLIB_LINE_STYLE_CXX
 
 //
 // End of "$Id$".

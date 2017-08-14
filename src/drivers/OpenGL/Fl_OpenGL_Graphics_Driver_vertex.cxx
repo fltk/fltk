@@ -16,9 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifndef FL_CFG_GFX_OPENGL_VERTEX_CXX
-#define FL_CFG_GFX_OPENGL_VERTEX_CXX
-
 /**
   \file Fl_OpenGL_Graphics_Driver_vertex.cxx
   \brief  Portable drawing code for drawing arbitrary shapes with
@@ -130,8 +127,6 @@ void Fl_OpenGL_Graphics_Driver::circle(double cx, double cy, double r) {
   glEnd(); 
 
 }
-
-#endif // FL_CFG_GFX_OPENGL_VERTEX_CXX
 
 //
 // End of "$Id$".

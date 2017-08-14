@@ -3,7 +3,7 @@
 //
 // Arc (integer) drawing functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -15,9 +15,6 @@
 //
 //     http://www.fltk.org/str.php
 //
-
-#ifndef FL_CFG_GFX_GDI_ARCI_CXX
-#define FL_CFG_GFX_GDI_ARCI_CXX
 
 /**
   \file Fl_GDI_Graphics_Driver_arci.cxx
@@ -61,10 +58,8 @@ void Fl_GDI_Graphics_Driver::pie_unscaled(float x, float y, float w, float h, do
       LineTo(gc_, xa, ya);
       SetPixel(gc_, xa, ya, fl_RGB());
     } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
-  } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb); 
+  } else Pie(gc_, x, y, x+w, y+h, xa, ya, xb, yb);
 }
-
-#endif // FL_CFG_GFX_GDI_ARCI_CXX
 
 //
 // End of "$Id$".

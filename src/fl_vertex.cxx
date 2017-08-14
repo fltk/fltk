@@ -49,7 +49,7 @@ void Fl_Graphics_Driver::push_matrix() {
 void Fl_Graphics_Driver::pop_matrix() {
   if (sptr==0)
     Fl::error("fl_pop_matrix(): matrix stack underflow.");
-  else 
+  else
     m = stack[--sptr];
 }
 

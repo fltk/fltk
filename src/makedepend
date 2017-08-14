@@ -1132,7 +1132,6 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Image_Surface.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Widget_Surface.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Shared_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: Fl_XColor.H flstring.h
-drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: config_lib.h ../config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/platform_types.h
@@ -1155,7 +1154,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Group.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Widget.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: flstring.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: flstring.h ../config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Graphics_Driver.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Image.H
@@ -1768,22 +1767,6 @@ drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Window_Driver.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Window.H ../FL/Fl_Group.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Overlay_Window.H
 drivers/OpenGL/Fl_OpenGL_Display_Device.o: ../FL/Fl_Double_Window.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/gl.h ../FL/Enumerations.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/abi-version.h
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Export.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/fl_types.h
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/platform_types.h
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Graphics_Driver.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Device.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Plugin.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Preferences.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Image.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Widget.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Bitmap.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Image.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_Pixmap.H
-drivers/OpenGL/Fl_OpenGL_Graphics_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../config.h config_lib.h
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: drivers/OpenGL/Fl_OpenGL_Graphics_Driver.H
 drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.o: ../FL/Fl_Graphics_Driver.H
