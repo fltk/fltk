@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <config.h>
+#include "config_lib.h"
 
 #include <FL/Fl.H>
 #include <FL/x.H>
