@@ -69,6 +69,7 @@ private:
   // Width and height of the offscreen surface
   int offsc_w, offsc_h;
   int iters; // Must be set on first pass!
+  float scale; // current screen scaling factor value 
 };
 
 /*****************************************************************************/
