@@ -32,7 +32,6 @@ class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
 public:
   Fl_Surface_Device *previous;
   Window pre_window;
-  HDC _sgc;
   int _savedc;
   Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
   ~Fl_GDI_Image_Surface_Driver();
@@ -61,7 +60,6 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
   if (!offscreen) offscreen = CreateCompatibleBitmap(fl_GetDC(0), w, h);
   driver(new Fl_GDI_Graphics_Driver);
   if (d != 1 && high_res) driver()->scale(d);
-  _sgc = NULL;
 }
 
 
@@ -74,7 +72,6 @@ Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
 void Fl_GDI_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
   if (!previous) previous = Fl_Surface_Device::surface();
-  if (!_sgc) _sgc = (HDC)previous->driver()->gc();
   HDC gc = fl_makeDC(offscreen);
   Fl_Surface_Device::set_current();
   driver()->gc(gc);
@@ -97,7 +94,6 @@ void Fl_GDI_Image_Surface_Driver::untranslate() {
 Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 {
   Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, width, height, 0);
-  previous->driver()->gc(_sgc);
   return image;
 }
 
