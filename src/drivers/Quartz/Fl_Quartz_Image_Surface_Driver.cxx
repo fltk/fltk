@@ -77,7 +77,6 @@ void Fl_Quartz_Image_Surface_Driver::set_current() {
   pre_window = fl_window;
   driver()->gc(offscreen);
   fl_window = 0;
-  Fl_Surface_Device::set_current();
   ((Fl_Quartz_Graphics_Driver*)driver())->high_resolution( CGBitmapContextGetWidth(offscreen) > width );
 }
 

@@ -77,9 +77,9 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
 
 
 void Fl_Xlib_Copy_Surface_Driver::set_current() {
+  Fl_Surface_Device::set_current();
   oldwindow = fl_window;
   fl_window = xid;
-  Fl_Surface_Device::set_current();
 }
 
 void Fl_Xlib_Copy_Surface_Driver::end_current_(Fl_Surface_Device*) {
