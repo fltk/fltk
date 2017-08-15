@@ -74,6 +74,7 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
 }
 
 void Fl_Quartz_Image_Surface_Driver::set_current() {
+  Fl_Surface_Device::set_current();
   pre_window = fl_window;
   driver()->gc(offscreen);
   fl_window = 0;
