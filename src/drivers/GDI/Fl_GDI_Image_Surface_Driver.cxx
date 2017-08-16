@@ -30,7 +30,6 @@
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current_(Fl_Surface_Device*);
 public:
-  Fl_Surface_Device *previous;
   Window pre_window;
   int _savedc;
   Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
@@ -49,7 +48,6 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 
 
 Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
-  previous = 0;
   float d =  fl_graphics_driver->scale();
   if (!off && d != 1 && high_res) {
     w = int(w*d);
@@ -70,10 +68,9 @@ Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
 
 
 void Fl_GDI_Image_Surface_Driver::set_current() {
-  pre_window = fl_window;
-  if (!previous) previous = Fl_Surface_Device::surface();
   HDC gc = fl_makeDC(offscreen);
   Fl_Surface_Device::set_current();
+  pre_window = fl_window;
   driver()->gc(gc);
   _savedc = SaveDC(gc);
   fl_window=(HWND)offscreen;
