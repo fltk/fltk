@@ -501,7 +501,6 @@ converts the strings to lower case Unicode as part of the comparison.
 \li write something about filename encoding on OS X...
 \li explain the fl_utf8_... commands
 \li explain issues with Fl_Preferences
-\li why FLTK has no Fl_String class
 
 \htmlonly
 <hr>
