@@ -24,10 +24,40 @@
 //    o Row headings (only column headings supported currently)
 //
 
-#include <stdio.h>		// for debugging
+#include <FL/Fl_Table_Row.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Table_Row.H>
+
+// for debugging...
+// #define DEBUG 1
+#ifdef DEBUG
+#include <FL/names.h>
+#include <stdio.h>		// fprintf()
+#define PRINTEVENT \
+    fprintf(stderr,"TableRow %s: ** Event: %s --\n", (label()?label():"none"), fl_eventnames[event]);
+#else
+#define PRINTEVENT
+#endif
+
+// An STL-ish vector without templates (private to Fl_Table_Row)
+
+void Fl_Table_Row::CharVector::copy(char *newarr, int newsize) {
+  size(newsize);
+  memcpy(arr, newarr, newsize * sizeof(char));
+}
+
+Fl_Table_Row::CharVector::~CharVector() {	// DTOR
+  if (arr) free(arr);
+  arr = 0;
+}
+
+void Fl_Table_Row::CharVector::size(int count) {
+  if (count != _size) {
+    arr = (char*)realloc(arr, count * sizeof(char));
+    _size = count;
+  }
+}
+
 
 // Is row selected?
 int Fl_Table_Row::row_selected(int row) {
@@ -154,15 +184,6 @@ void Fl_Table_Row::rows(int val) {
   while ( val > (int)_rowselect.size() ) { _rowselect.push_back(0); }	// enlarge
   while ( val < (int)_rowselect.size() ) { _rowselect.pop_back(); }	// shrink
 }
-
-//#define DEBUG 1
-#ifdef DEBUG
-#include <FL/names.h>
-#define PRINTEVENT \
-    fprintf(stderr,"TableRow %s: ** Event: %s --\n", (label()?label():"none"), fl_eventnames[event]);
-#else
-#define PRINTEVENT
-#endif
 
 // Handle events
 int Fl_Table_Row::handle(int event) {

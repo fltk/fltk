@@ -22,7 +22,7 @@
 // Please report all bugs and problems to "erco at seriss dot com".
 //
 
-#include "Fl_Table.H"
+#include <FL/Fl_Table.H>
 
 /**
  A table with row selection capabilities.
@@ -54,21 +54,15 @@ private:
     char *arr;
     int _size;
     void init() {
-      arr = NULL;
+      arr = 0;
       _size = 0;
     }
-    void copy(char *newarr, int newsize) {
-      size(newsize);
-      memcpy(arr, newarr, newsize * sizeof(char));
-    }
+    void copy(char *newarr, int newsize);
   public:
     CharVector() {				// CTOR
       init();
     }
-    ~CharVector() {				// DTOR
-      if ( arr ) free(arr);
-      arr = NULL;
-    }
+    ~CharVector();				// DTOR
     CharVector(CharVector&o) {			// COPY CTOR
       init();
       copy(o.arr, o._size);
@@ -87,12 +81,7 @@ private:
     int size() {
       return(_size);
     }
-    void size(int count) {
-      if ( count != _size ) {
-        arr = (char*)realloc(arr, count * sizeof(char));
-        _size = count;
-      }
-    }
+    void size(int count);
     char pop_back() {
       char tmp = arr[_size-1];
       _size--;
@@ -107,6 +96,7 @@ private:
       return(arr[_size-1]);
     }
   };
+
   CharVector _rowselect;		// selection flag for each row
   
   // handle() state variables.

@@ -17,13 +17,42 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <stdio.h>		// fprintf
-#include <FL/fl_draw.H>
 #include <FL/Fl_Table.H>
 
-#if defined(USE_UTF8) && ( defined(MICROSOFT) || defined(LINUX) )
-#include <FL/fl_utf8.H>	// currently only Windows and Linux
-#endif
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+
+#include <sys/types.h>
+#include <string.h>		// memcpy
+#include <stdio.h>		// fprintf
+
+#ifdef WIN32
+#include <malloc.h>		// WINDOWS: malloc/realloc
+#else /*WIN32*/
+#include <stdlib.h>		// UNIX: malloc/realloc
+#endif /*WIN32*/
+
+
+// An STL-ish vector without templates (private to Fl_Table)
+
+void Fl_Table::IntVector::copy(int *newarr, unsigned int newsize) {
+    size(newsize);
+    memcpy(arr, newarr, newsize * sizeof(int));
+}
+
+Fl_Table::IntVector::~IntVector() { // DTOR
+  if (arr)
+    free(arr);
+  arr = 0;
+}
+
+void Fl_Table::IntVector::size(unsigned int count) {
+  if (count != _size) {
+    arr = (int*)realloc(arr, count * sizeof(int));
+    _size = count;
+  }
+}
+
 
 /** Sets the vertical scroll position so 'row' is at the top,
     and causes the screen to redraw.

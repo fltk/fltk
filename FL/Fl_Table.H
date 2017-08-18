@@ -20,19 +20,8 @@
 #ifndef _FL_TABLE_H
 #define _FL_TABLE_H
 
-#include <sys/types.h>
-#include <string.h>		// memcpy
-#ifdef WIN32
-#include <malloc.h>		// WINDOWS: malloc/realloc
-#else /*WIN32*/
-#include <stdlib.h>		// UNIX: malloc/realloc
-#endif /*WIN32*/
-
-#include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Scrollbar.H>
 
 /**
   A table of widgets or other content.
@@ -172,16 +161,13 @@ private:
     int *arr;
     unsigned int _size;
     void init() {
-      arr = NULL;
+      arr = 0;
       _size = 0;
     }
-    void copy(int *newarr, unsigned int newsize) {
-      size(newsize);
-      memcpy(arr, newarr, newsize * sizeof(int));
-    }
+    void copy(int *newarr, unsigned int newsize);
   public:
     IntVector() { init(); }					// CTOR
-    ~IntVector() { if ( arr ) free(arr); arr = NULL; }		// DTOR
+    ~IntVector();						// DTOR
     IntVector(IntVector&o) { init(); copy(o.arr, o._size); }	// COPY CTOR
     IntVector& operator=(IntVector&o) {				// ASSIGN
       init();
@@ -191,12 +177,7 @@ private:
     int operator[](int x) const { return(arr[x]); }
     int& operator[](int x) { return(arr[x]); }
     unsigned int size() { return(_size); }
-    void size(unsigned int count) {
-      if ( count != _size ) {
-        arr = (int*)realloc(arr, count * sizeof(int));
-        _size = count;
-      }
-    }
+    void size(unsigned int count);
     int pop_back() { int tmp = arr[_size-1]; _size--; return(tmp); }
     void push_back(int val) { unsigned int x = _size; size(_size+1); arr[x] = val; }
     int back() { return(arr[_size-1]); }
