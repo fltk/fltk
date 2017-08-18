@@ -698,8 +698,7 @@ table.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 table.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
 table.o: ../FL/fl_draw.H ../FL/fl_ask.H ../FL/Fl_Table_Row.H ../FL/Fl_Table.H
 table.o: ../FL/Fl_Scroll.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
-table.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Box.H
-table.o: ../FL/Fl_Scrollbar.H
+table.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 tabs.o: tabs.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 tabs.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 tabs.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Double_Window.H
