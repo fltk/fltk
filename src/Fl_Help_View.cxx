@@ -50,8 +50,10 @@
 //
 
 #include <FL/Fl_Help_View.H>
+#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>

@@ -21,28 +21,23 @@
    Fl_Help_View widget . */
 
 #ifndef Fl_Help_View_H
-#  define Fl_Help_View_H
+#define Fl_Help_View_H
 
 //
 // Include necessary header files...
 //
 
-#  include <stdio.h>
-#  include "Fl.H"
-#  include "Fl_Group.H"
-#  include "Fl_Scrollbar.H"
-#  include "fl_draw.H"
-#  include "Fl_Shared_Image.H"
-#  include "filename.H"
-
+#include "Fl.H"
+#include "Fl_Group.H"
+#include "Fl_Scrollbar.H"
+#include "fl_draw.H"
+#include "filename.H"
 
 //
 // Fl_Help_Func type - link callback function for files...
 //
 
-
 typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
-
 
 //
 // Fl_Help_Block structure...
@@ -122,7 +117,7 @@ struct FL_EXPORT Fl_Help_Font_Stack {
 
 protected:
   size_t nfonts_;		///< current number of fonts in stack
-  Fl_Help_Font_Style elts_[100]; ///< font elements
+  Fl_Help_Font_Style elts_[MAX_FL_HELP_FS_ELTS]; ///< font elements
 };
 
 /** Fl_Help_Target structure */
