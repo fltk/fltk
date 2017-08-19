@@ -123,6 +123,7 @@ BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r)
 
 void Fl_WinAPI_Screen_Driver::init()
 {
+  open_display();
   // Since not all versions of Windows include multiple monitor support,
   // we do a run-time check for the required functions...
   HMODULE hMod = GetModuleHandle("USER32.DLL");
@@ -141,9 +142,6 @@ void Fl_WinAPI_Screen_Driver::init()
         //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, (LPARAM)this);
-#ifdef FLTK_HIDPI_SUPPORT
-        init_screen_scale_factors();
-#endif
         return;
       }
     }

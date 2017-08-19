@@ -508,6 +508,7 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
     SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
     const int PROCESS_PER_MONITOR_DPI_AWARE  = 2;
     if (fl_SetProcessDpiAwareness) fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+    init_screen_scale_factors();
   }
 #endif // FLTK_HIDPI_SUPPORT
   OleInitialize(0L);
