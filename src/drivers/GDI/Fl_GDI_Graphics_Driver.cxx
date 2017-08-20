@@ -104,11 +104,11 @@ HDC fl_makeDC(HBITMAP bitmap) {
   return new_gc;
 }
 
-void Fl_GDI_Graphics_Driver::copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen bitmap, float srcx, float srcy) {
+void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy) {
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
-  BitBlt(gc_, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+  BitBlt(gc_, x*scale_, y*scale_, w*scale_, h*scale_, new_gc, srcx*scale_, srcy*scale_, SRCCOPY);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }

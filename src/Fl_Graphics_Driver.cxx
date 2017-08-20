@@ -444,10 +444,6 @@ void Fl_Scalable_Graphics_Driver::line_style(int style, int width, char* dashes)
   line_style_unscaled(style, line_width_, dashes);
 }
 
-void Fl_Scalable_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  copy_offscreen_unscaled(x * scale_, y * scale_, w * scale_, h * scale_, pixmap, srcx * scale_, srcy * scale_);
-}
-
 /* read the image data from a pointer or with a callback, scale it, and draw it */
 void Fl_Scalable_Graphics_Driver::draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb,
                                                      int X, int Y, int W, int H, int D, int L, bool mono, float s) {

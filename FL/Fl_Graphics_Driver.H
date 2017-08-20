@@ -479,8 +479,6 @@ protected:
   virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2)=0;
   virtual void line_style(int style, int width=0, char* dashes=0);
   virtual void line_style_unscaled(int style, float width, char* dashes)=0;
-  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  virtual void copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy)=0;
   void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono, float s);
   virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0)=0;
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3)=0;

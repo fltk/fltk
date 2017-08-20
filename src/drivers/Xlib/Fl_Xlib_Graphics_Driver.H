@@ -127,7 +127,7 @@ public:
   virtual double width_unscaled(unsigned int c);
   virtual void text_extents_unscaled(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual Fl_Fontsize size_unscaled();
-  virtual void copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy);
+  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #endif

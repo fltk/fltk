@@ -105,8 +105,9 @@ float Fl_Xlib_Graphics_Driver::scale() {
   return scale_;
 }
 
-void Fl_Xlib_Graphics_Driver::copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx, srcy, w, h, x+offset_x_*scale_, y+offset_y_*scale_);
+void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx*scale_, srcy*scale_, w*scale_, h*scale_, (x+offset_x_)*scale_, (y+offset_y_)*scale_);
+
 }
 
 void Fl_Xlib_Graphics_Driver::add_rectangle_to_region(Fl_Region r, int X, int Y, int W, int H) {

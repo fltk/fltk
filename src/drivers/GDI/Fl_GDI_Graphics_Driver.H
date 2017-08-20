@@ -83,7 +83,7 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
-  virtual void copy_offscreen_unscaled(float x, float y, float w, float h, Fl_Offscreen pixmap, float srcx, float srcy);
+  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);
