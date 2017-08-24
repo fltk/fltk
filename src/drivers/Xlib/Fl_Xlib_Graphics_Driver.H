@@ -58,6 +58,7 @@ private:
   unsigned depth_; // depth of translation stack
   int stack_x_[20], stack_y_[20]; // translation stack allowing cumulative translations
   int line_delta_;
+  virtual void set_current_();
 protected:
   virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);

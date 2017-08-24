@@ -273,6 +273,10 @@ void Fl_Xlib_Graphics_Driver::untranslate_all() { // undoes previous translate_a
   pop_matrix();
 }
 
+void Fl_Xlib_Graphics_Driver::set_current_() {
+  restore_clip();
+}
+
 //
 // End of "$Id$".
 //

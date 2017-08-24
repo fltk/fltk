@@ -90,6 +90,9 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend FL_EXPORT void gl_start();
   friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
   friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
+private:
+  // some platforms may need to reimplement this
+  virtual void set_current_();
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,

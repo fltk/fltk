@@ -68,7 +68,6 @@ void Fl_Xlib_Image_Surface_Driver::set_current() {
   Fl_Surface_Device::set_current();
   pre_window = fl_window;
   fl_window = offscreen;
-  fl_push_no_clip();
 }
 
 void Fl_Xlib_Image_Surface_Driver::translate(int x, int y) {
@@ -87,8 +86,6 @@ Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
 
 void Fl_Xlib_Image_Surface_Driver::end_current_(Fl_Surface_Device *next_current)
 {
-  fl_pop_clip();
-  next_current->driver()->restore_clip();
   fl_window = pre_window;
 }
 

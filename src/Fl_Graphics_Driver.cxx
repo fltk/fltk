@@ -184,6 +184,10 @@ void Fl_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
 }
 
 
+void Fl_Graphics_Driver::set_current_() {
+}
+
+
 #ifndef FL_DOXYGEN
 Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver() {
   scale_ = 1;

@@ -54,6 +54,7 @@ void Fl_Surface_Device::set_current(void)
   fl_graphics_driver = pGraphicsDriver;
   surface_ = this;
   pGraphicsDriver->global_gc();
+  driver()->set_current_();
 }
 
 Fl_Surface_Device* Fl_Surface_Device::surface_; // the current target surface of graphics operations
