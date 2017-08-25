@@ -813,20 +813,25 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int 
 
 
 fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm, int w, int h, const char *const*data) {
-  Fl_Offscreen id;
-  id = fl_create_offscreen(w, h);
-  fl_begin_offscreen(id);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+  Fl_Surface_Device::push_current(surf);
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(w * scale_, h * scale_, bitmap);
+    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(w, h, bitmap);
     delete[] bitmap;
   }
-  fl_end_offscreen();
-  *cache_scale(pxm) =  Fl_Scalable_Graphics_Driver::scale();
+  Fl_Surface_Device::pop_current();
+  Fl_Offscreen id = surf->get_offscreen_before_delete();
+  delete surf;
+  *cache_scale(pxm) =  1;
   return (fl_uintptr_t)id;
+}
+
+void Fl_Xlib_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {
+  XFreePixmap(fl_display, (Fl_Offscreen)offscreen);
 }
 
 

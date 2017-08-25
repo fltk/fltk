@@ -644,9 +644,8 @@ void Fl_GDI_Printer_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int 
 
 
 fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
-  Fl_Offscreen id;
-  id = fl_create_offscreen(w, h);
-  fl_begin_offscreen(id);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+  Fl_Surface_Device::push_current(surf);
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
   fl_draw_pixmap(data, 0, 0, FL_BLACK);
@@ -656,9 +655,15 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const c
     *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)fl_create_bitmask(w, h, bitmap);
     delete[] bitmap;
   }
-  fl_end_offscreen();
-  *cache_scale(img) =  Fl_Scalable_Graphics_Driver::scale();
+  Fl_Surface_Device::pop_current();
+  Fl_Offscreen id = surf->get_offscreen_before_delete();
+  delete surf;
+  *cache_scale(img) =  1;
   return (fl_uintptr_t)id;
+}
+
+void Fl_GDI_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {
+  DeleteObject((Fl_Offscreen)offscreen);
 }
 
 //

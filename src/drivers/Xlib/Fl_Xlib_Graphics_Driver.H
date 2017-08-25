@@ -122,6 +122,7 @@ public:
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
   virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
   fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
+  virtual void uncache_pixmap(fl_uintptr_t p);
   fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   virtual double width_unscaled(const char *str, int n);

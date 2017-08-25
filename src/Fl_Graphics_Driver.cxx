@@ -289,9 +289,7 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, i
       int w2=pxm->w(), h2=pxm->h();
       cache_size(pxm, w2, h2);
       Fl_Pixmap *pxm2 = (Fl_Pixmap*)pxm->copy(w2, h2);
-      float s = scale_; scale_ = 1;
       *id(pxm) = cache(pxm2, pxm2->w(), pxm2->h(), pxm2->data());
-      scale_ = s;
       *cache_scale(pxm) = scale_;
       *mask(pxm) = *mask(pxm2);
       *mask(pxm2) = 0;
