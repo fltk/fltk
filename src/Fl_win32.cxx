@@ -49,6 +49,7 @@ void fl_free_fonts(void);
 void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
 
+#include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
