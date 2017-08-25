@@ -337,9 +337,7 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
   }
   if (scale() != 1 && can_do_alpha_blending()) { // try and use the system's scaled image drawing
     push_clip(XP, YP, WP, HP);
-    Fl_Region r = scale_clip(scale_);
     int done = draw_scaled(img, XP-cx, YP-cy, img->w(), img->h());
-    unscale_clip(r);
     pop_clip();
     if (done) return;
   }

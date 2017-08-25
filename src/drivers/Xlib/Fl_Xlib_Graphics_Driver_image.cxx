@@ -851,9 +851,11 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
     return 0;
   }
+  Fl_Region r = scale_clip(scale_);
   const Fl_Region clipr = clip_region();
   if (clipr)
     XRenderSetPictureClipRegion(fl_display, dst, clipr);
+  unscale_clip(r);
   if (scale_x != 1 || scale_y != 1) {
     XTransform mat = {{
       { XDoubleToFixed( scale_x ), XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ) },
