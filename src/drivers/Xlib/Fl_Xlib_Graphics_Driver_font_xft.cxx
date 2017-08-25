@@ -248,9 +248,20 @@ static void make_raw_name(char *raw, char *pretty)
       case 'B':
         if (strncasecmp(style, "Bold", 4) == 0)
         {
-          mods |= BOLD;
+          if (!strstr(raw, " Demi Bold")) mods |= BOLD;
         }
+        else if (strncasecmp(style, "Black", 5) == 0)
+          {
+            if (!strstr(raw, " Black")) strcat(raw, " Black");
+          }
         goto NEXT_STYLE;
+
+        case 'D':
+          if (strncasecmp(style, "Demi Bold", 7) == 0)
+          {
+            if (!strstr(raw, " Demi Bold")) strcat(raw, " Demi Bold");
+          }
+          goto NEXT_STYLE;
 
       case 'O':
         if (strncasecmp(style, "Oblique", 7) == 0)
@@ -265,6 +276,20 @@ static void make_raw_name(char *raw, char *pretty)
           mods |= BOLD;
         }
         goto NEXT_STYLE;
+          
+        case 'L':
+          if (strncasecmp(style, "Light", 5) == 0)
+          {
+            if (!strstr(raw, " Light")) strcat(raw, " Light");
+          }
+          goto NEXT_STYLE;
+
+        case 'M':
+          if (strncasecmp(style, "Medium", 6) == 0)
+          {
+            if (!strstr(raw, " Medium")) strcat(raw, " Medium");
+          }
+          goto NEXT_STYLE;
 
       default: // find the next gap
         goto NEXT_STYLE;
