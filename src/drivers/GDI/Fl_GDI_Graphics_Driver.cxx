@@ -94,7 +94,7 @@ char Fl_GDI_Graphics_Driver::can_do_alpha_blending() {
 }
 
 HDC fl_makeDC(HBITMAP bitmap) {
-  HDC new_gc = CreateCompatibleDC((HDC)fl_graphics_driver->gc());
+  HDC new_gc = CreateCompatibleDC((HDC)Fl_Graphics_Driver::default_driver().gc());
   SetTextAlign(new_gc, TA_BASELINE|TA_LEFT);
   SetBkMode(new_gc, TRANSPARENT);
 #if USE_COLORMAP
@@ -280,6 +280,10 @@ Fl_Region Fl_GDI_Graphics_Driver::scale_clip(float f) {
   HRGN r = rstack[rstackptr];
   HRGN r2 = scale_region(r, f, this);
   return (r == r2 ? NULL : (rstack[rstackptr] = r2, r));
+}
+
+void Fl_GDI_Graphics_Driver::set_current_() {
+  restore_clip();
 }
 
 //

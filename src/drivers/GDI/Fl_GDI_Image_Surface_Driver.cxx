@@ -38,6 +38,7 @@ public:
   void translate(int x, int y);
   void untranslate();
   Fl_RGB_Image *image();
+  POINT origin;
 };
 
 
@@ -58,6 +59,7 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
   if (!offscreen) offscreen = CreateCompatibleBitmap(fl_GetDC(0), w, h);
   driver(new Fl_GDI_Graphics_Driver);
   if (d != 1 && high_res) driver()->scale(d);
+  origin.x = origin.y = 0;
 }
 
 
@@ -69,12 +71,12 @@ Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
 
 void Fl_GDI_Image_Surface_Driver::set_current() {
   HDC gc = fl_makeDC(offscreen);
+  driver()->gc(gc);
+  SetWindowOrgEx(gc, origin.x, origin.y, NULL);
   Fl_Surface_Device::set_current();
   pre_window = fl_window;
-  driver()->gc(gc);
   _savedc = SaveDC(gc);
   fl_window=(HWND)offscreen;
-  fl_push_no_clip();
 }
 
 
@@ -98,9 +100,9 @@ Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 void Fl_GDI_Image_Surface_Driver::end_current_(Fl_Surface_Device*)
 {
   HDC gc = (HDC)driver()->gc();
+  GetWindowOrgEx(gc, &origin);
   RestoreDC(gc, _savedc);
   DeleteDC(gc);
-  fl_pop_clip();
   fl_window = pre_window;
 }
 

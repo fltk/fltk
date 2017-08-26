@@ -39,6 +39,7 @@ private:
   BOOL alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch);
   int depth; // to support translation
   POINT *origins; // to support translation
+  void set_current_();
 protected:
   HDC gc_;
   int numcount;
