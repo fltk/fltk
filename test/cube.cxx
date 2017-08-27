@@ -98,7 +98,6 @@ void cube_box::draw() {
     glEnable(GL_DEPTH_TEST);
     glFrustum(-1,1,-1,1,2,10000);
     glTranslatef(0,0,-10);
-    gl_font(FL_HELVETICA_BOLD, 16 );
     glClearColor(0.4, 0.4, 0.4, 0);
   }
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,6 +111,7 @@ void cube_box::draw() {
   glPopMatrix();
   gl_color(FL_GRAY);
   glDisable(GL_DEPTH_TEST);
+  gl_font(FL_HELVETICA_BOLD, 16 );
   gl_draw(wire ? "Cube: wire" : "Cube: flat", -4.5f, -4.5f );
   glEnable(GL_DEPTH_TEST);
 
