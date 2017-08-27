@@ -497,9 +497,14 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
     snprintf(xlfd, 128, "-*-helvetica-*-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
   }
+  // If that still didn't work, try courier with resquested weight and slant
+  if(!xgl_font && weight != wt_med) {
+    snprintf(xlfd, 128, "-*-courier*-%s-%c-*--*-%d-*-*-*-*-*-*", weight, slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd);
+  }
   // If that still didn't work, try this instead
   if(!xgl_font) {
-    snprintf(xlfd, 128, "-*-courier-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
+    snprintf(xlfd, 128, "-*-courier*-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
   }
 //printf("glf: %d\n%s\n%s\n", size, xlfd, fl_fonts[fl_font_].name);
