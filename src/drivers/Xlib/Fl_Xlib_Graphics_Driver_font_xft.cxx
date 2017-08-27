@@ -1078,20 +1078,8 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   char xlfd[128];     // we will put our synthetic XLFD in here
   char *pc = strdup(fl_fonts[fnum].name); // what font were we asked for?
 #if USE_PANGO
-  char *p = pc;
+  char *p = pc + 1;
   while (*p) { *p = tolower(*p); p++; }
-  p = pc + strlen(pc) - 12;
-  if (memcmp(p, " bold italic\0", 13) == 0) {
-    *pc = 'P'; *p = 0;
-  }
-  p = pc + strlen(pc) - 5;
-  if (memcmp(p, " bold\0", 6) == 0) {
-    *pc = 'B'; *p = 0;
-  }
-  p = pc + strlen(pc) - 7;
-  if (memcmp(p, " italic\0", 8) == 0) {
-    *pc = 'I'; *p = 0;
-  }
 #endif // USE_PANGO
   const char *name = pc;    // keep a handle to the original name for freeing later
   // Parse the "fltk-name" of the font
@@ -1137,9 +1125,14 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
     snprintf(xlfd, 128, "-*-helvetica-*-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
   }
+  // If that still didn't work, try courier with resquested weight and slant
+  if(!xgl_font && weight != wt_med) {
+    snprintf(xlfd, 128, "-*-courier*-%s-%c-*--*-%d-*-*-*-*-*-*", weight, slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd);
+  }
   // If that still didn't work, try this instead
   if(!xgl_font) {
-    snprintf(xlfd, 128, "-*-courier-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
+    snprintf(xlfd, 128, "-*-courier*-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
   }
 //printf("glf: %d\n%s\n%s\n", size, xlfd, fl_fonts[fl_font_].name);
