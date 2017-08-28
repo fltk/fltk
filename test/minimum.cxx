@@ -3,7 +3,7 @@
 //
 // Minimal update test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,8 +18,8 @@
 
 //
 // This is a test of the minimal update code.  The right slider has a
-// label that extends outside it's border, and the minimal update
-// assummes this does not happen.  Thus there is *supposed* to be
+// label that extends outside its border, and the minimal update
+// assumes this does not happen.  Thus there is *supposed* to be
 // display errors when you move the right-most or any other slider.
 // If you *don't* see these errors, then the minimal update is
 // broken!!!

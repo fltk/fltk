@@ -259,7 +259,7 @@ CHANGES IN FLTK 1.0.10
 	      hardware emulation on systems with lots of memory.
 
 	  All other values for GL_SWAP_TYPE, and not setting
-	  the variable, cause fltk to assumme that the back
+	  the variable, cause fltk to assume that the back
 	  buffer must be completely redrawn after a swap.
 
 	  This is easily tested by running the gl_overlay demo
@@ -397,7 +397,7 @@ CHANGES IN FLTK 1.0.9
 	  for DD's code, I'm not sure if these fixes are good enough to
 	  enable this in our general release.  Hardware overlay still
 	  only works on SGI Irix.
-	- Some patches to turn off the MSVC++ -Oa (assumme no aliasing)
+	- Some patches to turn off the MSVC++ -Oa (assume no aliasing)
 	  optimization flag.  Suprisingly this only broke a few parts
 	  of fltk, or at least these are the only ones I found.
 	- Does not unmap child windows when the main window is
