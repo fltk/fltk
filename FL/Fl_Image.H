@@ -164,7 +164,7 @@ public:
   virtual void label(Fl_Widget*w);
   virtual void label(Fl_Menu_Item*m);
   /**
-   Draws the image with a bounding box.
+   Draws the image to the current drawing surface with a bounding box.
    Arguments <tt>X,Y,W,H</tt> specify
    a bounding box for the image, with the origin        
    (upper-left corner) of the image offset by the \c cx
@@ -176,8 +176,8 @@ public:
    */
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0); // platform dependent
   /**
-   Draws the image.
-   This form specifies the upper-lefthand corner of the image.
+   Draws the image to the current drawing surface.
+   \param X, Y specify the upper-lefthand corner of the image.
    */
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);} // platform dependent
   virtual void uncache();

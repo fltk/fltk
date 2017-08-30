@@ -148,25 +148,25 @@ protected:
   virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
   /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
-  /** \brief Draws an Fl_RGB_Image object to the device.
+  /** \brief Draws an Fl_RGB_Image object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
-  /** \brief Draws an Fl_Pixmap object to the device.
+  /** \brief Draws an Fl_Pixmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
-  /** \brief Draws an Fl_Bitmap object to the device.
+  /** \brief Draws an Fl_Bitmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual void draw(Fl_Shared_Image *img, int x, int y);
+  virtual void draw(Fl_Shared_Image *shared, int X, int Y);
   virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
@@ -423,7 +423,7 @@ protected:
   virtual void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy)=0;
   virtual void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy)=0;
-  void draw(Fl_Shared_Image *shared, int X, int Y);
+  virtual void draw(Fl_Shared_Image *shared, int X, int Y);
   virtual void point(int x, int y);
   virtual void point_unscaled(float x, float y) = 0;
   virtual void rect(int x, int y, int w, int h);

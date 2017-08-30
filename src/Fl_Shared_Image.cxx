@@ -372,7 +372,9 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
   if (need_clip) fl_pop_clip();
 }
 
-/** Draws the shared image to the current surface with its top-left at X,Y */
+/** Draws an Fl_Shared_Image object using this graphics driver.
+ \param shared shared image to be drawn
+ \param X,Y top-left position of the drawn image */
 void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
   if ( shared->w() == shared->image_->w() && shared->h() == shared->image_->h()) {
     shared->image_->draw(X, Y, shared->w(), shared->h(), 0, 0);
