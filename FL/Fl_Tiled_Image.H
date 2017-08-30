@@ -46,7 +46,7 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   Fl_Image *copy() { return copy(w(), h()); }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
-  virtual void draw(int X, int Y, int W, int H, int cx, int cy);
+  virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
   /** Gets The image that is tiled */
   Fl_Image *image() { return image_; }

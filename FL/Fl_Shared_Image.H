@@ -92,7 +92,7 @@ public:
   Fl_Image *copy() { return copy(w(), h()); }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
-  virtual void draw(int X, int Y, int W, int H, int cx, int cy);
+  virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
   void scale(int width, int height, int proportional = 1, int can_expand = 0);
   virtual void uncache();
