@@ -69,6 +69,7 @@ private:
   // Forbid use of copy constructor and assign operator
   Fl_Image & operator=(const Fl_Image &);
   Fl_Image(const Fl_Image &);
+  virtual int draw_scaled_(int X, int Y, int W, int H);
 
 protected:
 
@@ -224,6 +225,7 @@ private:
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
   float cache_scale_; // graphics scaling value when id_ was computed
+  virtual int draw_scaled_(int X, int Y, int W, int H);
 
 public:
 

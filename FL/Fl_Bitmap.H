@@ -46,6 +46,7 @@ private:
   /** for internal use */
   fl_uintptr_t id_;
   float cache_scale_; // graphics scaling value when id_ was computed
+  virtual int draw_scaled_(int X, int Y, int W, int H);
 
 public:
 

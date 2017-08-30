@@ -394,6 +394,10 @@ void Fl_Pixmap::desaturate() {
   }
 }
 
+int Fl_Pixmap::draw_scaled_(int X, int Y, int W, int H) {
+  return (W <= w() && H <= h()) ?  fl_graphics_driver->draw_scaled(this, X, Y, W, H) : 0;
+}
+
 //
 // End of "$Id$".
 //
