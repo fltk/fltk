@@ -329,6 +329,14 @@
 #cmakedefine HAVE_PNG_SET_TRNS_TO_ALPHA 1
 
 /*
+* FLTK_USE_NANOSVG
+*
+* Do we want FLTK to support SVG images with nanosvg ?
+*/
+
+#cmakedefine FLTK_USE_NANOSVG 1
+
+/*
  * Do we have POSIX threading?
  */
 

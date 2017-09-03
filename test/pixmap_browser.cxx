@@ -16,6 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
@@ -75,7 +76,11 @@ void file_cb(const char *n) {
 
 void button_cb(Fl_Widget *,void *) {
   fl_file_chooser_callback(file_cb);
-  const char *fname = fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name);
+  const char *fname = fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm"
+#ifdef FLTK_USE_NANOSVG
+                                      ",svg"
+#endif
+                                      "}", name);
   puts(fname ? fname : "(null)"); fflush(stdout);
   fl_file_chooser_callback(0);
 }

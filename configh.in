@@ -297,6 +297,7 @@
 #undef HAVE_LIBPNG
 #undef HAVE_LIBZ
 #undef HAVE_LIBJPEG
+#undef FLTK_USE_NANOSVG
 
 /*
  * FLTK_USE_CAIRO

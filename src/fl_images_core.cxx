@@ -31,6 +31,7 @@
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_PNM_Image.H>
+#include <FL/Fl_SVG_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -63,7 +64,7 @@ void fl_register_images() {
 Fl_Image *					// O - Image, if found
 fl_check_images(const char *name,		// I - Filename
                 uchar      *header,		// I - Header data from file
-		int) {				// I - Amount of data (not used)
+		int headerlen) {		// I - Amount of data
   if (memcmp(header, "GIF87a", 6) == 0 ||
       memcmp(header, "GIF89a", 6) == 0)	// GIF file
     return new Fl_GIF_Image(name);
@@ -87,6 +88,12 @@ fl_check_images(const char *name,		// I - Filename
 	   				// APPn for JPEG file
     return new Fl_JPEG_Image(name);
 #endif // HAVE_LIBJPEG
+
+#ifdef FLTK_USE_NANOSVG
+  if ( (headerlen > 5 && memcmp(header, "<?xml", 5) == 0) ||
+      memcmp(header, "<svg", 4) == 0)
+    return new Fl_SVG_Image(name);
+#endif // FLTK_USE_NANOSVG
 
   return 0;
 }

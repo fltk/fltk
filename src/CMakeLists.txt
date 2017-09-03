@@ -367,6 +367,7 @@ set (IMGCPPFILES
   Fl_JPEG_Image.cxx
   Fl_PNG_Image.cxx
   Fl_PNM_Image.cxx
+  Fl_SVG_Image.cxx
 )
 
 set (CFILES

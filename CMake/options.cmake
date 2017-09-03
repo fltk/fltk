@@ -149,6 +149,13 @@ else()
 endif(LIB_CAIRO AND OPTION_CAIROEXT AND PKG_CAIRO_FOUND)
 
 #######################################################################
+option(OPTION_USE_NANOSVG "support SVG images" ON)
+
+if(OPTION_USE_NANOSVG)
+  set(FLTK_USE_NANOSVG 1)
+endif(OPTION_USE_NANOSVG)
+
+#######################################################################
 set(HAVE_GL LIB_GL OR LIB_MesaGL)
 
 if(HAVE_GL)

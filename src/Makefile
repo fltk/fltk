@@ -209,7 +209,8 @@ IMGCPPFILES = \
 	Fl_Help_Dialog.cxx \
 	Fl_JPEG_Image.cxx \
 	Fl_PNG_Image.cxx \
-	Fl_PNM_Image.cxx
+	Fl_PNM_Image.cxx \
+	Fl_SVG_Image.cxx
 
 
 CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
