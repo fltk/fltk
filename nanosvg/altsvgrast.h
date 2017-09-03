@@ -1,5 +1,5 @@
 //
-// "$Id: altsvgrast.h 12239 2017-05-17 11:54:18Z XX $"
+// "$Id$"
 //
 
 /* Modified by FLTK from original sources to support non-square X,Y axes scaling */
@@ -1473,5 +1473,5 @@ void nsvgRasterize(NSVGrasterizer* r,
 
 
 //
-// End of "$Id: altsvgrast.h 12239 2017-05-17 11:54:18Z XX $".
+// End of "$Id$".
 //

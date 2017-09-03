@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_SVG_Image.cxx 12239 2017-05-17 11:54:18Z manolo $"
+// "$Id$"
 //
 // SVG image code for the Fast Light Tool Kit (FLTK).
 //
@@ -202,5 +202,5 @@ int Fl_SVG_Image::draw_scaled_(int X, int Y, int W, int H) {
 
 
 //
-// End of "$Id: Fl_SVG_Image.cxx 12239 2017-05-17 11:54:18Z manolo $".
+// End of "$Id$".
 //

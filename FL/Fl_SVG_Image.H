@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_SVG_Image.H 12239 2017-05-17 11:54:18Z manolo $"
+// "$Id$"
 //
 // SVG Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -78,5 +78,5 @@ public:
 #endif // FL_SVG_IMAGE_H
 
 //
-// End of "$Id: Fl_SVG_Image.H 12239 2017-05-17 11:54:18Z manolo $".
+// End of "$Id$".
 //
