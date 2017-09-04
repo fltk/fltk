@@ -149,10 +149,10 @@ Fl_Image *Fl_SVG_Image::copy(int W, int H) {
 
 
 /** Have the svg data (re-)rasterized using the given width and height values.
- By default, the resulting image width and height will preserve the width/height ratio
+ By default, the resulting image w() and h() will preserve the width/height ratio
  of the SVG data.
  If \ref proportional was set to false, the image is rasterized to the given \c width
- and \v height values.*/
+ and \c height values.*/
 void Fl_SVG_Image::resize(int width, int height) {
   if (ld() < 0) {
     return;
