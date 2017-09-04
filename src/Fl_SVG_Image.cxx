@@ -21,6 +21,7 @@
 #if defined(FLTK_USE_NANOSVG) || defined(FL_DOXYGEN)
 
 #include <FL/Fl_SVG_Image.H>
+#include <FL/fl_utf8.h>
 #include <stdio.h>
 
 #define NANOSVG_ALL_COLOR_KEYWORDS	// Include full list of color keywords.
@@ -79,7 +80,7 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
   proportional = true;
   if (filename) {
     filedata = NULL;
-    FILE *fp = fopen(filename, "rb");
+    FILE *fp = fl_fopen(filename, "rb");
     if (fp) {
       fseek(fp, 0, SEEK_END);
       size_t size = ftell(fp);
@@ -141,6 +142,7 @@ Fl_Image *Fl_SVG_Image::copy(int W, int H) {
   svg2->to_desaturate_ = to_desaturate_;
   svg2->average_weight_ = average_weight_;
   svg2->average_color_ = average_color_;
+  svg2->proportional = proportional;
   svg2->w(W); svg2->h(H);
   return svg2;
 }
