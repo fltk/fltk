@@ -33,9 +33,9 @@
 
 
 /** The constructor loads the SVG image from the given .svg filename or in-memory data.
- \param filename A full path and name pointing to an SVG file.
+ \param filename A full path and name pointing to an SVG file, or NULL.
  \param filedata A pointer to the memory location of the SVG image data.
- This parameter allows to load an SVG image from in-memory data, and requires that \p filename is NULL.
+ This parameter allows to load an SVG image from in-memory data, and is used when \p filename is NULL.
  \note In-memory SVG data is modified by the object constructor and is no longer used after construction.
  */
 Fl_SVG_Image::Fl_SVG_Image(const char *filename, char *filedata) : Fl_RGB_Image(NULL, 0, 0, 4) {
