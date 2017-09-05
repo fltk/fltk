@@ -177,6 +177,9 @@ the following.
     make
     sudo make install (optional)
 
+IMPORTANT: The trailing ".." on the cmake command must be specified
+(it is NOT an elipsis).                           ^^^^^^^^^^^^^^^^^
+
 This will build and install a default configuration FLTK.
 
 Some flags can be changed during the 'make' command, such as:
@@ -221,6 +224,9 @@ in the GUI (cmake-gui).
            mkdir build			<-- create an empty directory
            cd build
            cmake -G "Visual Studio 7" -D CMAKE_BUILD_TYPE=Release ..
+
+       IMPORTANT: The trailing ".." on the cmake command must be specified
+       (it is NOT an elipsis).                           ^^^^^^^^^^^^^^^^^
 
 	This will create the file FLTK.sln in the current 'build' directory.
 
@@ -380,6 +386,9 @@ So, again from the FLTK tree root.
     cmake -DCMAKE_TOOLCHAIN_FILE=~/projects/toolchain/Toolchain-mingw32.cmake ..
     make
     sudo make install
+
+IMPORTANT: The trailing ".." on the cmake command must be specified
+(it is NOT an elipsis).                           ^^^^^^^^^^^^^^^^^
 
 This will create a default configuration FLTK suitable for mingw/msys and
 install it in the /usr/i486-mingw32/usr tree.
