@@ -23,10 +23,19 @@
 #include <FL/Fl_SVG_Image.H>
 #include <FL/fl_utf8.h>
 #include <stdio.h>
+#if HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
+static double nsvg__atof(const char* s) { // replace nanosvg's version of this function
+  double value;
+  sscanf(s, "%lg", &value);
+  return value;
+}
 
 #define NANOSVG_ALL_COLOR_KEYWORDS	// Include full list of color keywords.
 #define NANOSVG_IMPLEMENTATION		// Expands implementation
-#include "../nanosvg/nanosvg.h"
+#include "../nanosvg/fl_nanosvg.h"
 
 #define NANOSVGRAST_IMPLEMENTATION	// Expands implementation
 #include "../nanosvg/altsvgrast.h"
@@ -97,7 +106,14 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
     } else ld(ERR_FILE_ACCESS);
   }
   if (filedata) {
+#if HAVE_LOCALE_H
+    char *saved_locale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
+#endif
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);
+#if HAVE_LOCALE_H
+    setlocale(LC_NUMERIC, saved_locale);
+#endif
     if (filename) free(filedata);
     if (counted_svg_image_->svg_image->width == 0 || counted_svg_image_->svg_image->height == 0) {
       d(-1);
