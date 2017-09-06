@@ -1,6 +1,6 @@
 1,10d0
 < //
-< // "$Id: fl_nanosvg.h 12425 2017-09-06 16:49:05Z manolo $"
+< // "$Id$"
 < //
 < 
 < /* Modified by FLTK from original source file "nanosvg.h" to support compilation 
@@ -73,5 +73,5 @@
 2876,2879d2925
 < 
 < //
-< // End of "$Id: fl_nanosvg.h 12425 2017-09-06 16:49:05Z manolo $".
+< // End of "$Id$".
 < //
