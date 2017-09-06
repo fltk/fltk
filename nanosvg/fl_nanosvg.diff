@@ -1,0 +1,77 @@
+1,10d0
+< //
+< // "$Id: fl_nanosvg.h 12425 2017-09-06 16:49:05Z manolo $"
+< //
+< 
+< /* Modified by FLTK from original source file "nanosvg.h" to support compilation 
+<  with Visual Studio 7:
+<  remove the implementation of function nsvg__atof() that uses 
+<  unsupported "long long" type and strtoll() function.
+<  */
+< 
+1087a1078,1137
+> // We roll our own string to float because the std library one uses locale and messes things up.
+> static double nsvg__atof(const char* s)
+> {
+> 	char* cur = (char*)s;
+> 	char* end = NULL;
+> 	double res = 0.0, sign = 1.0;
+> 	long long intPart = 0, fracPart = 0;
+> 	char hasIntPart = 0, hasFracPart = 0;
+> 
+> 	// Parse optional sign
+> 	if (*cur == '+') {
+> 		cur++;
+> 	} else if (*cur == '-') {
+> 		sign = -1;
+> 		cur++;
+> 	}
+> 
+> 	// Parse integer part
+> 	if (nsvg__isdigit(*cur)) {
+> 		// Parse digit sequence
+> 		intPart = (double)strtoll(cur, &end, 10);
+> 		if (cur != end) {
+> 			res = (double)intPart;
+> 			hasIntPart = 1;
+> 			cur = end;
+> 		}
+> 	}
+> 
+> 	// Parse fractional part.
+> 	if (*cur == '.') {
+> 		cur++; // Skip '.'
+> 		if (nsvg__isdigit(*cur)) {
+> 			// Parse digit sequence
+> 			fracPart = strtoll(cur, &end, 10);
+> 			if (cur != end) {
+> 				res += (double)fracPart / pow(10.0, (double)(end - cur));
+> 				hasFracPart = 1;
+> 				cur = end;
+> 			}
+> 		}
+> 	}
+> 
+> 	// A valid number should have integer or fractional part.
+> 	if (!hasIntPart && !hasFracPart)
+> 		return 0.0;
+> 
+> 	// Parse optional exponent
+> 	if (*cur == 'e' || *cur == 'E') {
+> 		int expPart = 0;
+> 		cur++; // skip 'E'
+> 		expPart = strtol(cur, &end, 10); // Parse digit sequence with sign
+> 		if (cur != end) {
+> 			res *= pow(10.0, (double)expPart);
+> 		}
+> 	}
+> 
+> 	return res * sign;
+> }
+> 
+> 
+2876,2879d2925
+< 
+< //
+< // End of "$Id: fl_nanosvg.h 12425 2017-09-06 16:49:05Z manolo $".
+< //
