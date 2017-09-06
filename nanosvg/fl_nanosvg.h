@@ -1,5 +1,5 @@
 //
-// "$Id: fl_nanosvg.h 12415 2017-09-03 13:20:52Z manolo $"
+// "$Id$"
 //
 
 /* Modified by FLTK from original source file "nanosvg.h" to support compilation 
@@ -2878,5 +2878,5 @@ void nsvgDelete(NSVGimage* image)
 
 
 //
-// End of "$Id: fl_nanosvg.h 12415 2017-09-03 13:20:52Z manolo $".
+// End of "$Id$".
 //
