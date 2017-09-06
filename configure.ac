@@ -1078,7 +1078,7 @@ case $host_os_gui in
 		    AC_CHECK_LIB(pangoxft-1.0, pango_xft_render_layout,
 			AC_DEFINE(USE_PANGO)
                         pango_found=yes
-			LIBS="$PANGOLIBDIR -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0 $LIBS"))))
+			LIBS="$PANGOLIBDIR -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0 $LIBS")))
 		CPPFLAGS=$CXXFLAGS
 	fi
 
