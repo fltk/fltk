@@ -138,6 +138,10 @@ OPTION_USE_SYSTEM_LIBPNG - default ON
    use system libraries instead, unless CMake can't find them.  If you set
    any of these options to OFF, then the built in library will be used.
 
+OPTION_USE_NANOSVG - default ON
+   FLTK has a built in nano svg library. Turning this option off
+   disables nano SVG support.
+
 OPTION_USE_XINERAMA - default ON
 OPTION_USE_XFT - default ON
 OPTION_USE_XDBE - default ON
