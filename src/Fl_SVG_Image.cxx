@@ -23,15 +23,13 @@
 #include <FL/Fl_SVG_Image.H>
 #include <FL/fl_utf8.h>
 #include <stdio.h>
+#include <stdlib.h>
 #if HAVE_LOCALE_H
 #include <locale.h>
 #endif
 
-static double nsvg__atof(const char* s) { // replace nanosvg's version of this function
-  double value;
-  sscanf(s, "%lg", &value);
-  return value;
-}
+// the C locale is set in init_() before calling nsvgParse(), therefore plain atof() can be used
+#define nsvg__atof(s) atof(s)
 
 #define NANOSVG_ALL_COLOR_KEYWORDS	// Include full list of color keywords.
 #define NANOSVG_IMPLEMENTATION		// Expands implementation
