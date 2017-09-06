@@ -1072,8 +1072,7 @@ case $host_os_gui in
 	    	  ;;
    	    esac
 	        CPPFLAGS="$PANGOLIBDIR $CXXFLAGS"
-	        AC_CHECK_HEADER(pango/pango.h,
-		  AC_CHECK_HEADER(pango/pangoxft.h,
+	        AC_CHECK_HEADERS([pango/pango.h pango/pangoxft.h],
 		   AC_CHECK_LIB(pango-1.0, pango_layout_new,
 		    AC_CHECK_LIB(pangoxft-1.0, pango_xft_render_layout,
 			AC_DEFINE(USE_PANGO)
