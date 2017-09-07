@@ -28,8 +28,13 @@
 #include <locale.h>
 #endif
 
-// the C locale is set in init_() before calling nsvgParse(), therefore plain atof() can be used
-#define nsvg__atof(s) atof(s)
+#ifdef HAVE_LONG_LONG
+  typedef long long fl_nsvg_int;
+#else
+  typedef long fl_nsvg_int;
+# define strtoll(a, b, c) strtol(a, b, c)
+#endif
+
 
 #define NANOSVG_ALL_COLOR_KEYWORDS	// Include full list of color keywords.
 #define NANOSVG_IMPLEMENTATION		// Expands implementation
@@ -104,14 +109,7 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
     } else ld(ERR_FILE_ACCESS);
   }
   if (filedata) {
-#if HAVE_LOCALE_H
-    char *saved_locale = setlocale(LC_NUMERIC, NULL);
-    setlocale(LC_NUMERIC, "C");
-#endif
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);
-#if HAVE_LOCALE_H
-    setlocale(LC_NUMERIC, saved_locale);
-#endif
     if (filename) free(filedata);
     if (counted_svg_image_->svg_image->width == 0 || counted_svg_image_->svg_image->height == 0) {
       d(-1);
