@@ -25,17 +25,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_LONG_LONG
-  typedef long long fl_nsvg_int;
-#else
-  typedef long fl_nsvg_int;
-# define strtoll(a, b, c) strtol(a, b, c)
+#if !defined(HAVE_LONG_LONG)
+static double strtoll(const char *str, char **endptr, int base) {
+  return (double)strtol(str, endptr, base);
+}
 #endif
-
 
 #define NANOSVG_ALL_COLOR_KEYWORDS	// Include full list of color keywords.
 #define NANOSVG_IMPLEMENTATION		// Expands implementation
-#include "../nanosvg/fl_nanosvg.h"
+#include "../nanosvg/nanosvg.h"
 
 #define NANOSVGRAST_IMPLEMENTATION	// Expands implementation
 #include "../nanosvg/altsvgrast.h"
