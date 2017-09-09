@@ -24,9 +24,6 @@
 #include <FL/fl_utf8.h>
 #include <stdio.h>
 #include <stdlib.h>
-#if HAVE_LOCALE_H
-#include <locale.h>
-#endif
 
 #ifdef HAVE_LONG_LONG
   typedef long long fl_nsvg_int;
