@@ -59,8 +59,9 @@ private:
   float svg_scaling_(int W, int H);
   void rasterize_(int W, int H);
   void init_(const char *filename, char *filedata, Fl_SVG_Image *copy_source);
-  virtual int draw_scaled_(int X, int Y, int W, int H);
   Fl_SVG_Image(Fl_SVG_Image *source);
+protected:
+  virtual int draw_scaled(int X, int Y, int W, int H);
 public:
   /** Set this to \c false to allow image re-scaling that alters the image aspect ratio.
    Upon object creation, \c proportional is set to \c true, and the aspect ratio is kept constant.*/

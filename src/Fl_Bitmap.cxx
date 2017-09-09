@@ -232,7 +232,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 }
 
 
-int Fl_Bitmap::draw_scaled_(int X, int Y, int W, int H) {
+int Fl_Bitmap::draw_scaled(int X, int Y, int W, int H) {
   return (W <= w() && H <= h()) ?  fl_graphics_driver->draw_scaled(this, X, Y, W, H) : 0;
 }
 

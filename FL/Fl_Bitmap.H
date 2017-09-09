@@ -34,7 +34,6 @@ struct Fl_Menu_Item;
 class FL_EXPORT Fl_Bitmap : public Fl_Image {
   friend class Fl_Graphics_Driver;
 public:
-
   /** pointer to raw bitmap data */
   const uchar *array;
   /** Non-zero if array points to bitmap data allocated internally */
@@ -46,10 +45,11 @@ private:
   /** for internal use */
   fl_uintptr_t id_;
   float cache_scale_; // graphics scaling value when id_ was computed
-  virtual int draw_scaled_(int X, int Y, int W, int H);
+  
+protected:
+  virtual int draw_scaled(int X, int Y, int W, int H);
 
 public:
-
   /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const uchar *bits, int W, int H) :
     Fl_Image(W,H,0), array(bits), alloc_array(0), id_(0), cache_scale_(1) {data((const char **)&array, 1);}

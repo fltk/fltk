@@ -205,7 +205,7 @@ void Fl_SVG_Image::color_average(Fl_Color c, float i) {
 }
 
 
-int Fl_SVG_Image::draw_scaled_(int X, int Y, int W, int H) {
+int Fl_SVG_Image::draw_scaled(int X, int Y, int W, int H) {
   w(W);
   h(H);
   draw(X, Y, W, H, 0, 0);

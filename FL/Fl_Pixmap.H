@@ -42,11 +42,10 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   void set_data(const char * const *p);
   int prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
 			 int &X, int &Y, int &W, int &H);
-  virtual int draw_scaled_(int X, int Y, int W, int H);
 
 protected:
-
   void measure();
+  virtual int draw_scaled(int X, int Y, int W, int H);
 
 public:
 

@@ -69,7 +69,6 @@ private:
   // Forbid use of copy constructor and assign operator
   Fl_Image & operator=(const Fl_Image &);
   Fl_Image(const Fl_Image &);
-  virtual int draw_scaled_(int X, int Y, int W, int H);
 
 protected:
 
@@ -105,6 +104,7 @@ protected:
 
   static void labeltype(const Fl_Label *lo, int lx, int ly, int lw, int lh, Fl_Align la);
   static void measure(const Fl_Label *lo, int &lw, int &lh);
+  virtual int draw_scaled(int X, int Y, int W, int H);
 
 public:
 
@@ -225,7 +225,9 @@ private:
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
   float cache_scale_; // graphics scaling value when id_ was computed
-  virtual int draw_scaled_(int X, int Y, int W, int H);
+  
+protected:
+  virtual int draw_scaled(int X, int Y, int W, int H);
 
 public:
 

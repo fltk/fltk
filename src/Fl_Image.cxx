@@ -578,14 +578,17 @@ void Fl_RGB_Image::label(Fl_Menu_Item* m) {
   m->label(_FL_IMAGE_LABEL, (const char*)this);
 }
 
-int Fl_RGB_Image::draw_scaled_(int X, int Y, int W, int H) {
+int Fl_RGB_Image::draw_scaled(int X, int Y, int W, int H) {
   return fl_graphics_driver->draw_scaled(this, X, Y, W, H);
 }
 
-// Draws the image scaled to W and H, and returns 1,
-// or returns 0 if scaled drawing is not implemented for this image.
-// Image classes can re-implement this function for specific image types.
-int Fl_Image::draw_scaled_(int X, int Y, int W, int H) {
+/** Attempts to draw the image to the current drawing surface rescaled to a given width and height.
+ This virtual member function is mostly intended for use by the FLTK library.
+ \param X,Y position of the image's top-left
+ \param W,H width and height for the drawn image
+ \return 0 if scaled drawing is not implemented for this image, non-zero if it is implemented.
+ */
+int Fl_Image::draw_scaled(int X, int Y, int W, int H) {
   return 0;
 }
 
