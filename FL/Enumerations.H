@@ -3,7 +3,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -558,7 +558,13 @@ enum Fl_When { // Fl_Widget::when():
     \brief FLTK standard box types
     
     This enum defines the standard box types included with FLTK.
-    
+
+   \note The documented \p enum \p Fl_Boxtype contains some values (names)
+      with leading underscores, e.g. \p \b _FL_SHADOW_BOX. This is due to
+      technical reasons - please use the same values (names) without the
+      leading underscore in your code! Enum values with leading underscores
+      are reserved for internal use and subject to change without notice!
+
     FL_NO_BOX means nothing is drawn at all, so whatever is already 
     on the screen remains. The FL_..._FRAME types only draw their edges, 
     leaving the interior unchanged. The blue color in Figure 1 
@@ -722,6 +728,12 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
 /**
    The labeltype() method sets the type of the label.
 
+   \note The documented \p enum \p Fl_Labeltype contains some values (names)
+      with leading underscores, e.g. \p \b _FL_IMAGE_LABEL. This is due to
+      technical reasons - please use the same values (names) without the
+      leading underscore in your code! Enum values with leading underscores
+      are reserved for internal use and subject to change without notice!
+
    The following standard label types are included:
 
    \todo	The doxygen comments are incomplete, and some labeltypes
@@ -748,13 +760,78 @@ enum Fl_Labeltype {	// labeltypes:
   Sets the current label type and returns its corresponding Fl_Labeltype value.
   @{
 */
+
+/** FL_SYMBOL_LABEL is an alias for FL_NORMAL_LABEL.
+
+  '@' symbols can be drawn with normal labels as well.\n
+  This definition is for historical reasons only (forms compatibility).
+  You should use FL_NORMAL_LABEL instead.
+*/
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
+/**
+  Initializes the internal table entry for FL_SHADOW_LABEL and returns
+  its internal value. Internal use only.
+*/
 extern Fl_Labeltype FL_EXPORT fl_define_FL_SHADOW_LABEL();
+/**
+  Draws a label with shadows behind the text.
+*/
 #define FL_SHADOW_LABEL fl_define_FL_SHADOW_LABEL()
+
+/**
+  Initializes the internal table entry for FL_ENGRAVED_LABEL and returns
+  its internal value. Internal use only.
+*/
 extern Fl_Labeltype FL_EXPORT fl_define_FL_ENGRAVED_LABEL();
+/**
+  Draws a label with engraved text.
+*/
 #define FL_ENGRAVED_LABEL fl_define_FL_ENGRAVED_LABEL()
+
+/**
+  Initializes the internal table entry for FL_EMBOSSED_LABEL and returns
+  its internal value. Internal use only.
+*/
 extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
+/**
+  Draws a label with embossed text.
+*/
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
+
+/**
+  Initializes the internal table entry for FL_MULTI_LABEL and returns
+  its internal value. Internal use only.
+*/
+extern Fl_Labeltype FL_EXPORT fl_define_FL_MULTI_LABEL();
+/**
+  Draws a label that can comprise several parts like text and images.
+  \see Fl_Multi_Label
+*/
+#define FL_MULTI_LABEL fl_define_FL_MULTI_LABEL()
+
+/**
+  Initializes the internal table entry for FL_ICON_LABEL and returns
+  its internal value. Internal use only.
+*/
+extern Fl_Labeltype FL_EXPORT fl_define_FL_ICON_LABEL();
+/**
+  Draws an icon as the label.
+*/
+#define FL_ICON_LABEL fl_define_FL_ICON_LABEL()
+
+/**
+  Initializes the internal table entry for FL_IMAGE_LABEL and returns
+  its internal value. Internal use only.
+*/
+extern Fl_Labeltype FL_EXPORT fl_define_FL_IMAGE_LABEL();
+/**
+  Draws an image (Fl_Image) as the label.
+  This is useful for one particular part of an Fl_Multi_Label.
+  Use Fl_Widget::image() and/or Fl_Widget::deimage() for normal widgets
+  with images as labels.
+*/
+#define FL_IMAGE_LABEL fl_define_FL_IMAGE_LABEL()
+
 /** @} */
 
 /** \name Alignment Flags

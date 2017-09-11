@@ -183,6 +183,9 @@ public:
   void draw(int X, int Y) {draw(X, Y, w(), h(), 0, 0);} // platform dependent
   virtual void uncache();
 
+  // used by fl_define_FL_IMAGE_LABEL() to avoid 'friend' declaration
+  static Fl_Labeltype define_FL_IMAGE_LABEL();
+
   // set RGB image scaling method
   static void RGB_scaling(Fl_RGB_Scaling);
 

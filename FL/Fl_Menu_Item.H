@@ -348,11 +348,19 @@ struct FL_EXPORT Fl_Menu_Item {
 
   // compatibility for FLUID so it can set the image of a menu item...
 
-  /** compatibility api for FLUID, same as a->label(this) */
-  void image(Fl_Image* a) {a->label(this);}
+  /** Compatibility API for FLUID, same as image->label(this).
 
-  /** compatibility api for FLUID, same as a.label(this) */
-  void image(Fl_Image& a) {a.label(this);}
+    \note This method is intended for internal use by fluid and may
+      not do what you expect.
+  */
+  void image(Fl_Image* image) {image->label(this);}
+
+  /** Compatibility API for FLUID, same as image.label(this).
+
+    \note This method is intended for internal use by fluid and may
+      not do what you expect.
+  */
+  void image(Fl_Image& image) {image.label(this);}
 
   // used by menubar:
   int measure(int* h, const Fl_Menu_*) const;

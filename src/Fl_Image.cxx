@@ -113,6 +113,16 @@ void Fl_Image::color_average(Fl_Color, float) {
 void Fl_Image::desaturate() {
 }
 
+// Doxygen documentation in FL/Enumerations.H
+Fl_Labeltype fl_define_FL_IMAGE_LABEL() {
+  return Fl_Image::define_FL_IMAGE_LABEL();
+}
+
+Fl_Labeltype Fl_Image::define_FL_IMAGE_LABEL() {
+  Fl::set_labeltype(_FL_IMAGE_LABEL, Fl_Image::labeltype, Fl_Image::measure);
+  return _FL_IMAGE_LABEL;
+}
+
 /**
   The label() methods are an obsolete way to set the
   image attribute of a widget or menu item. Use the

@@ -71,6 +71,13 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
+  - The Fl_Boxtype and Fl_Labeltype definitions contained enum values
+    (names) with a leading underscore (e.g. _FL_MULTI_LABEL) that had to
+    be used in this form. Now all boxtypes and labeltypes can and should
+    be used without the leading underscore. A note was added to the enum
+    documentations to make clear that the leading underscore must not be
+    used in user code, although the enum documentation still contains
+    leading underscores for technical reasons (internal use).
   - The blocks demo program got a new keyboard shortcut (ALT+SHIFT+H) to
     reset the user's high score. It is now slower than before in higher
     levels, hence you can expect higher scores (due to a bug fix in the
