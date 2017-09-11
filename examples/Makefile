@@ -11,6 +11,7 @@ ALL = clipboard$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
+      howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
