@@ -113,14 +113,18 @@ int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
   Fl_Multi_Label *ml = new Fl_Multi_Label;
 
   // Left side of label is image
-  ml->typea  = _FL_IMAGE_LABEL;
+  ml->typea  = FL_IMAGE_LABEL;
   ml->labela = (const char*)pixmap;
 
   // Right side of label is text
   ml->typeb  = FL_NORMAL_LABEL;
   ml->labelb = item->label();
 
-  // Assign multilabel to item
+  // Assign multilabel to item.
+  // Note: There are two documented ways to achieve this. Both of them
+  // are supported, but one of them is commented out intentionally.
+
+  // item->label(FL_MULTI_LABEL, (const char *)ml);
   ml->label(item);
 
   return i;
