@@ -43,7 +43,31 @@ struct Fl_Menu_Item;
     When assigning a label element to one of labela or labelb, they should be explicitly cast
     to (const char*) if they are not of that type already.
 
-    \see Fl_Label and Fl_Labeltype
+    Example Use: Fl_Menu_Bar
+    \code
+      Fl_Pixmap *image = new Fl_Pixmap(..);	// image for menu item; can be any Fl_Image based widget
+      Fl_Menu_Bar *menu = new Fl_Menu_Bar(..);	// can be any Fl_Menu_ oriented widget (Fl_Choice, Fl_Menu_Button..)
+
+      // Create a menu item
+      int i = menu->add("File/New", ..);
+      Fl_Menu_Item *item = (Fl_Menu_Item*)&(menu->menu()[i]);
+
+      // Create a multi label, assign it an image + text
+      Fl_Multi_Label *ml = new Fl_Multi_Label;
+
+      // Left side of label is an image
+      ml->typea  = FL_IMAGE_LABEL;
+      ml->labela = (const char*)image;
+
+      // Right side of label is label text
+      ml->typeb  = FL_NORMAL_LABEL;
+      ml->labelb = item->label();
+
+      // Assign the multilabel to the menu item
+      ml->label(item);
+    \endcode
+
+    \see Fl_Label and Fl_Labeltype and examples/howto-menu-with-images.cxx
  */
 struct FL_EXPORT Fl_Multi_Label {
   /** Holds the "leftmost" of the two elements in the composite label.
