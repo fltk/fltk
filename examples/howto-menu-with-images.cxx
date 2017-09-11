@@ -88,20 +88,11 @@ static Fl_Pixmap L_redx_pixmap(L_redx_xpm);
 
 // Handle the different menu items..
 void Menu_CB(Fl_Widget *w, void* data) {
-  const char *itemname = (const char*)data;             // "New", "Open", etc
-  //DEBUG printf("Clicked on '%s'\n", itemname);
-  if (        strcmp(itemname, "New")  == 0 ) {
-    fl_message("File/New would happen here..");
-  } else if ( strcmp(itemname, "Open") == 0 ) {
-    fl_message("File/Open would happen here..");
-  } else if ( strcmp(itemname, "Quit") == 0 ) {
+  const char *itemname = (const char*)data;   // "New", "Open", etc
+  if ( strcmp(itemname, "Quit") == 0 ) {      // handle Quit
     exit(0);
-  } else if ( strcmp(itemname, "Copy") == 0 ) {
-    fl_message("Edit/Copy would happen here..");
-  } else if ( strcmp(itemname, "Paste") == 0 ) {
-    fl_message("Edit/Paste would happen here..");
-  } else {
-    fl_message("'Image' operation '%s'..", itemname);
+  } else {                                    // just show a message for other items
+    fl_message("'%s' would happen here", itemname);
   }
 }
 
