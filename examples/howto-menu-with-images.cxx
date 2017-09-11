@@ -117,10 +117,6 @@ int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
 
   if ( !pixmap ) return i;
   Fl_Menu_Item *item = (Fl_Menu_Item*)&(menu->menu()[i]);
-  const char *itemtext = item->label();	 // keep item's label() -- item->image() clobbers it!
-
-  // Assign image to menu item
-  item->image(*pixmap);                  // note: clobbers item->label()
 
   // Create a multi label, assign it an image + text
   Fl_Multi_Label *ml = new Fl_Multi_Label;
@@ -131,7 +127,7 @@ int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
 
   // Right side of label is text
   ml->typeb  = FL_NORMAL_LABEL;
-  ml->labelb = itemtext;
+  ml->labelb = item->label();
 
   // Assign multilabel to item
   ml->label(item);
