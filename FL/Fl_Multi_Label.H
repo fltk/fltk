@@ -33,6 +33,9 @@ struct Fl_Menu_Item;
     not normally be possible for an Fl_Menu_Item.
     For example, Fl_Multi_Label is used in the New->Code submenu in fluid, and others.
 
+    \image html Fl_Multi_Label-menu-item.png "Menu items with icons using Fl_Multi_Label"
+    \image latex Fl_Multi_Label-menu-item.png "Menu items with icons using Fl_Multi_Label" width=4cm
+
     Each Fl_Multi_Label holds two elements, labela and labelb; each may hold either a
     text label (const char*) or an image (Fl_Image*). When displayed, labela is drawn first
     and labelb is drawn immediately to its right.
