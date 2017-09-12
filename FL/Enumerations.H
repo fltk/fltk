@@ -42,14 +42,14 @@
 
     FLTK defines some constants to help the programmer to
     find out, for which FLTK version a program is compiled.
-    
+
     The following constants are defined:
  */
 /*@{*/
 
 /**
    The major release version of this FLTK library.
-   \sa FL_VERSION
+   \see FL_VERSION
  */
 #define FL_MAJOR_VERSION	1
 
@@ -192,7 +192,7 @@
     Event numbers can be converted to their actual names using the
     \ref fl_eventnames[] array defined in \#include &lt;FL/names.h&gt;
 
-    \sa Fl::event_text(), Fl::event_key(), class Fl::
+    \see Fl::event_text(), Fl::event_key(), class Fl::
  */
 // DEV NOTE: Keep this list in sync with FL/names.h
 enum Fl_Event {	// events
@@ -412,7 +412,7 @@ enum Fl_Event {	// events
 /*@{*/
 /** These constants determine when a callback is performed.
 
-    \sa Fl_Widget::when();
+    \see Fl_Widget::when();
     \todo doxygen comments for values are incomplete and maybe wrong or unclear
  */
 enum Fl_When { // Fl_Widget::when():
@@ -430,13 +430,13 @@ enum Fl_When { // Fl_Widget::when():
 
 /** \name Mouse and Keyboard Events
 
-	This and the following constants define the non-ASCII keys on the
-	keyboard for FL_KEYBOARD and FL_SHORTCUT events.
+    This and the following constants define the non-ASCII keys on the
+    keyboard for FL_KEYBOARD and FL_SHORTCUT events.
 
-	\todo	FL_Button and FL_key... constants could be structured better
-		(use an enum or some doxygen grouping ?)
-  
-	\sa	Fl::event_key() and Fl::get_key(int) (use ascii letters for all other keys):
+    \see Fl::event_key() and Fl::get_key(int) (use ASCII letters for all other keys):
+
+    \todo FL_Button and FL_key... constants could be structured better
+	  (use an enum or some doxygen grouping ?)
  */
 
 /*@{*/
@@ -509,9 +509,9 @@ enum Fl_When { // Fl_Widget::when():
 
 /** \name Mouse Buttons
 
-	These constants define the button numbers for FL_PUSH and FL_RELEASE events.
-	
-	\sa Fl::event_button()
+    These constants define the button numbers for FL_PUSH and FL_RELEASE events.
+
+    \see Fl::event_button()
 */
 
 /*@{*/
@@ -531,7 +531,7 @@ enum Fl_When { // Fl_Widget::when():
 /*@{*/		// group: Event States
 
 // FIXME: it would be nice to have the modifiers in the upper 8 bit so that
-//        a unicode ke (24bit) can be sent as an unsigned with the modifiers.
+//        a unicode key (24bit) can be sent as an unsigned with the modifiers.
 
 #define FL_SHIFT	0x00010000	///< One of the shift keys is down
 #define FL_CAPS_LOCK	0x00020000	///< The caps lock is on
@@ -556,7 +556,7 @@ enum Fl_When { // Fl_Widget::when():
 
 /** \name Box Types
     \brief FLTK standard box types
-    
+
     This enum defines the standard box types included with FLTK.
 
    \note The documented \p enum \p Fl_Boxtype contains some values (names)
@@ -569,9 +569,10 @@ enum Fl_When { // Fl_Widget::when():
     on the screen remains. The FL_..._FRAME types only draw their edges, 
     leaving the interior unchanged. The blue color in Figure 1 
     is the area that is not drawn by the frame types.
-    
+
     \image html boxtypes.png "Figure 1: FLTK standard box types"
     \image latex boxtypes.png "FLTK standard box types" width=10cm
+
     \todo	Description of boxtypes is incomplete.
     		See below for the defined enum Fl_Boxtype.
 		\see src/Fl_get_system_colors.cxx

@@ -182,22 +182,22 @@ for implementation details.
 
 There are symbols for naming some of the more common colors:
 
-\li \p FL_BLACK
-\li \p FL_RED
-\li \p FL_GREEN
-\li \p FL_YELLOW
-\li \p FL_BLUE
-\li \p FL_MAGENTA
-\li \p FL_CYAN
-\li \p FL_WHITE
-\li \p FL_WHITE
+  - \p FL_BLACK
+  - \p FL_RED
+  - \p FL_GREEN
+  - \p FL_YELLOW
+  - \p FL_BLUE
+  - \p FL_MAGENTA
+  - \p FL_CYAN
+  - \p FL_WHITE
+  - \p FL_WHITE
 
 Other symbols are used as the default colors for all FLTK widgets.
 
-\li \p FL_FOREGROUND_COLOR
-\li \p FL_BACKGROUND_COLOR
-\li \p FL_INACTIVE_COLOR
-\li \p FL_SELECTION_COLOR
+  - \p FL_FOREGROUND_COLOR
+  - \p FL_BACKGROUND_COLOR
+  - \p FL_INACTIVE_COLOR
+  - \p FL_SELECTION_COLOR
 
 The full list of named color values can be found in
 \ref enumerations_colors "FLTK Enumerations".
@@ -380,36 +380,49 @@ label string "@+92->".
 The \p align() method positions the label. The following
 constants are defined and may be OR'd together as needed:
 
-\li \p FL_ALIGN_CENTER - center the label in the widget.
-\li \p FL_ALIGN_TOP - align the label at the top of the widget.
-\li \p FL_ALIGN_BOTTOM - align the label at the bottom of the widget.
-\li \p FL_ALIGN_LEFT - align the label to the left of the widget.
-\li \p FL_ALIGN_RIGHT - align the label to the right of the widget.
-\li \p FL_ALIGN_LEFT_TOP - The label appears to the left of the widget, aligned at the top. Outside labels only.
-\li \p FL_ALIGN_RIGHT_TOP - The label appears to the right of the widget, aligned at the top. Outside labels only.
-\li \p FL_ALIGN_LEFT_BOTTOM - The label appears to the left of the widget, aligned at the bottom. Outside labels only.
-\li \p FL_ALIGN_RIGHT_BOTTOM - The label appears to the right of the widget, aligned at the bottom. Outside labels only.
-\li \p FL_ALIGN_INSIDE - align the label inside the widget.
-\li \p FL_ALIGN_CLIP - clip the label to the widget's bounding box.
-\li \p FL_ALIGN_WRAP - wrap the label text as needed.
-\li \p FL_ALIGN_TEXT_OVER_IMAGE - show the label text over the image.
-\li \p FL_ALIGN_IMAGE_OVER_TEXT - show the label image over the text (default).
-\li \p FL_ALIGN_IMAGE_NEXT_TO_TEXT - The image will appear to the left of the text.
-\li \p FL_ALIGN_TEXT_NEXT_TO_IMAGE - The image will appear to the right of the text.
-\li \p FL_ALIGN_IMAGE_BACKDROP - The image will be used as a background for the widget.
+  - \p FL_ALIGN_CENTER - center the label in the widget.
+  - \p FL_ALIGN_TOP - align the label at the top of the widget.
+  - \p FL_ALIGN_BOTTOM - align the label at the bottom of the widget.
+  - \p FL_ALIGN_LEFT - align the label to the left of the widget.
+  - \p FL_ALIGN_RIGHT - align the label to the right of the widget.
+  - \p FL_ALIGN_LEFT_TOP - The label appears to the left of the widget, aligned at the top. Outside labels only.
+  - \p FL_ALIGN_RIGHT_TOP - The label appears to the right of the widget, aligned at the top. Outside labels only.
+  - \p FL_ALIGN_LEFT_BOTTOM - The label appears to the left of the widget, aligned at the bottom. Outside labels only.
+  - \p FL_ALIGN_RIGHT_BOTTOM - The label appears to the right of the widget, aligned at the bottom. Outside labels only.
+  - \p FL_ALIGN_INSIDE - align the label inside the widget.
+  - \p FL_ALIGN_CLIP - clip the label to the widget's bounding box.
+  - \p FL_ALIGN_WRAP - wrap the label text as needed.
+  - \p FL_ALIGN_TEXT_OVER_IMAGE - show the label text over the image.
+  - \p FL_ALIGN_IMAGE_OVER_TEXT - show the label image over the text (default).
+  - \p FL_ALIGN_IMAGE_NEXT_TO_TEXT - The image will appear to the left of the text.
+  - \p FL_ALIGN_TEXT_NEXT_TO_IMAGE - The image will appear to the right of the text.
+  - \p FL_ALIGN_IMAGE_BACKDROP - The image will be used as a background for the widget.
 
 \anchor common_labeltype
 \par labeltype()
 
-The \p labeltype() method sets the type of the label.  The
-following standard label types are included:
+The \p labeltype() method sets the type of the label.
+The following standard label types are included:
 
-\li \p FL_NORMAL_LABEL - draws the text.
-\li \p FL_NO_LABEL - does nothing.
-\li \p FL_SHADOW_LABEL - draws a drop shadow under the text.
-\li \p FL_ENGRAVED_LABEL - draws edges as though the text is engraved.
-\li \p FL_EMBOSSED_LABEL - draws edges as thought the text is raised.
-\li \p FL_ICON_LABEL - draws the icon associated with the text.
+  - \p FL_NORMAL_LABEL - draws the text.
+  - \p FL_NO_LABEL - does nothing.
+  - \p FL_SHADOW_LABEL - draws a drop shadow under the text.
+  - \p FL_ENGRAVED_LABEL - draws edges as though the text is engraved.
+  - \p FL_EMBOSSED_LABEL - draws edges as though the text is raised.
+  - \p FL_ICON_LABEL - draws the icon (Fl_Image) associated with the text.
+  - \p FL_IMAGE_LABEL - draws the image (Fl_Image) associated with the text.
+  - \p FL_MULTI_LABEL - draws multiple parts side by side, see Fl_Multi_Label.
+
+  \note Some of these labeltypes are no longer necessary for normal widgets.
+    Widgets allow for an image and a text side by side, depending on
+    the widget's align() flag. FL_MULTI_LABEL was designed to be used with
+    Fl_Menu_Item's to support icons or small images, typically left of the
+    menu text.\n
+    As of this writing (FLTK 1.4.0, Sep 2017) Fl_Menu_Items support only
+    one label part (text \b or image), but using Fl_Multi_Label as the
+    label can extend this to more than one part.
+
+  \see class Fl_Multi_Label, Fl_Widget::align()
 
 \par image() and deimage()
 
