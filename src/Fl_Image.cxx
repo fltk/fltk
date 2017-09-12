@@ -142,8 +142,7 @@ void Fl_Image::label(Fl_Widget* widget) {
   instead.
 */
 void Fl_Image::label(Fl_Menu_Item* m) {
-  Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
-  m->label(_FL_IMAGE_LABEL, (const char*)this);
+  m->label(FL_IMAGE_LABEL, (const char*)this);
 }
 
 /**
@@ -584,8 +583,7 @@ void Fl_RGB_Image::label(Fl_Widget* widget) {
 }
 
 void Fl_RGB_Image::label(Fl_Menu_Item* m) {
-  Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
-  m->label(_FL_IMAGE_LABEL, (const char*)this);
+  m->label(FL_IMAGE_LABEL, (const char*)this);
 }
 
 int Fl_RGB_Image::draw_scaled(int X, int Y, int W, int H) {

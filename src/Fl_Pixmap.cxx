@@ -95,8 +95,7 @@ void Fl_Pixmap::label(Fl_Widget* widget) {
 }
 
 void Fl_Pixmap::label(Fl_Menu_Item* m) {
-  Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, Fl_Image::measure);
-  m->label(_FL_IMAGE_LABEL, (const char*)this);
+  m->label(FL_IMAGE_LABEL, (const char*)this);
 }
 
 void Fl_Pixmap::copy_data() {

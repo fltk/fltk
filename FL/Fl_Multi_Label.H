@@ -80,12 +80,12 @@ struct FL_EXPORT Fl_Multi_Label {
   const char* labelb;
   /** Holds the "type" of labela.
     Typically this is set to FL_NORMAL_LABEL for a text label,
-    _FL_IMAGE_LABEL for an image (based on Fl_image) or _FL_MULTI_LABEL
+    FL_IMAGE_LABEL for an image (based on Fl_image) or FL_MULTI_LABEL
     if "chaining" multiple Fl_Multi_Label elements together. */
   uchar typea;
   /** Holds the "type" of labelb.
     Typically this is set to FL_NORMAL_LABEL for a text label,
-    _FL_IMAGE_LABEL for an image (based on Fl_image) or _FL_MULTI_LABEL
+    FL_IMAGE_LABEL for an image (based on Fl_image) or FL_MULTI_LABEL
     if "chaining" multiple Fl_Multi_Label elements together. */
   uchar typeb;
 
