@@ -102,9 +102,10 @@ int AddItemToMenu(Fl_Menu_   *menu,                   // menu to add item to
                  int         shortcut,                // shortcut (e.g. FL_COMMAND+'a')
                  Fl_Callback *cb,                     // callback to invoke
                  void        *userdata,               // userdata for callback
-                 Fl_Pixmap*  pixmap) {                // image (if any) to add to item
+                 Fl_Pixmap*  pixmap,                  // image (if any) to add to item
+                 int         flags=0) {               // menu flags (e.g. FL_MENU_DIVIDER..)
   // Add a new menu item
-  int i = menu->add(labeltext, shortcut, cb, userdata);
+  int i = menu->add(labeltext, shortcut, cb, userdata, flags);
 
   if ( !pixmap ) return i;
   Fl_Menu_Item *item = (Fl_Menu_Item*)&(menu->menu()[i]);
@@ -138,7 +139,7 @@ void CreateMenuItems(Fl_Menu_* menu) {
 
   // Add items with LABLES AND IMAGES using Fl_Multi_Label..
   AddItemToMenu(menu, "File/New",  FL_COMMAND+'n', Menu_CB, (void*)"New",  &L_document_pixmap);
-  AddItemToMenu(menu, "File/Open", FL_COMMAND+'o', Menu_CB, (void*)"Open", &L_folder_pixmap);
+  AddItemToMenu(menu, "File/Open", FL_COMMAND+'o', Menu_CB, (void*)"Open", &L_folder_pixmap, FL_MENU_DIVIDER);
   AddItemToMenu(menu, "File/Quit", FL_COMMAND+'q', Menu_CB, (void*)"Quit", &L_redx_pixmap);
 
   // Create menu bar items with JUST LABELS
