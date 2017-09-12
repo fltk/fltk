@@ -1046,23 +1046,25 @@ Fl_Menu_Item New_Menu[] = {
 
 #include <FL/Fl_Multi_Label.H>
 
-// modify a menuitem to display an icon in front of the label
-static void make_iconlabel( Fl_Menu_Item *mi, Fl_Image *ic, const char *txt )
+// Modify a menuitem to display an icon in front of the label. This is
+// implemented using Fl_Multi_Label as the labeltype (FL_MULTI_LABEL).
+// The icon (ic) may be null. If ic is null only the text (txt) is assigned
+// to the label - Fl_Multi_Label is not used. txt must not be null.
+static void make_iconlabel(Fl_Menu_Item *mi, Fl_Image *ic, const char *txt)
 {
   if (ic) {
     char *t1 = new char[strlen(txt)+6];
-    strcpy( t1, " " );
+    strcpy(t1, " ");
     strcat(t1, txt);
     strcat(t1, "...");
-    mi->image( ic );
     Fl_Multi_Label *ml = new Fl_Multi_Label;
     ml->labela = (char*)ic;
     ml->labelb = t1;
-    ml->typea = _FL_IMAGE_LABEL;
+    ml->typea = FL_IMAGE_LABEL;
     ml->typeb = FL_NORMAL_LABEL;
-    ml->label( mi );
+    ml->label(mi);
   }
-  else if (txt!=mi->text)
+  else if (txt != mi->text)
     mi->label(txt);
 }
 
