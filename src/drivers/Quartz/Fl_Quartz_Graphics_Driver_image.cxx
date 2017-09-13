@@ -165,19 +165,22 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     if (!ld) ld = img->w() * img->d();
     CGDataProviderRef src;
     if ( has_feature(PRINTER) ) {
-      // When printing, the image data is used when the printed page is completed.
-      // At that stage, the image has possibly been deleted. It is therefore necessary
-      // to print a copy of the image data. The mask_ member of the Fl_RGB_Image is used to avoid
-      // repeating the copy operation if the image is printed again.
-      // The CGImage data provider deletes the copy when the Fl_RGB_Image is deleted.
-      uchar *copy = new uchar[ld * img->h()];
-      memcpy(copy, img->array, ld * img->h());
-      src = CGDataProviderCreateWithData(NULL, copy, ld * img->h(), dataReleaseCB);
+      // When printing, the data at img->array are used when the printed page is completed,
+      // that is, after return from this function.
+      // At that stage, the img object has possibly been deleted. It is therefore necessary
+      // to use a copy of img->array for printing. The mask_ member of img
+      // is used to avoid repeating the copy operation if img is printed again.
+      // The CGImage data provider deletes the copy at the latest of these two events:
+      // deletion of img, and completion of the page where img was printed.
+      size_t total = ld * img->h();
+      uchar *copy = new uchar[total];
+      memcpy(copy, img->array, total);
+      src = CGDataProviderCreateWithData(NULL, copy, total, dataReleaseCB);
       *Fl_Graphics_Driver::mask(img) = 1;
     } else {
-    // the CGImage data provider need not release the image data.
+    // the CGImage data provider must not release the image data.
       src = CGDataProviderCreateWithData(NULL, img->array, ld * img->h(), NULL);
-      }
+    }
     cgimg = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
                                            lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                                            src, 0L, false, kCGRenderingIntentDefault);
