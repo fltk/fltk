@@ -62,7 +62,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     if (linedelta < 0) buf -= (H-1)*abs(linedelta);
   }
   const void *array = buf;
-  if (cb || Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
+  if (cb || driver->has_feature(Fl_Quartz_Graphics_Driver::PRINTER)) {
     tmpBuf = new uchar[ H*W*abs(delta) ];
     if (cb) {
       for (int i=0; i<H; i++) {
