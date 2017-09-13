@@ -167,7 +167,6 @@ protected:
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw(Fl_Shared_Image *shared, int X, int Y);
-  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
   /** Support function for image drawing */
@@ -389,6 +388,8 @@ public:
   virtual const char *font_name(int num) {return NULL;}
   /** Support for Fl::set_font() */
   virtual void font_name(int num, const char *name) {}
+  /** Support function for Fl_Shared_Image drawing */
+  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
 };
 
 #ifndef FL_DOXYGEN

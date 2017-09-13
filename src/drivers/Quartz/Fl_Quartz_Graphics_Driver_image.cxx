@@ -202,7 +202,8 @@ int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP
   CGContextClipToRect(gc_, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
   CGContextTranslateCTM(gc_, XP, YP);
   CGContextScaleCTM(gc_, float(WP)/img->w(), float(HP)/img->h());
-  img->draw(0, 0, img->w(), img->h(), 0, 0);
+  if (img->as_rgb_image()) draw(img->as_rgb_image(), 0, 0, img->w(), img->h(), 0, 0);
+  else img->draw(0, 0, img->w(), img->h(), 0, 0);
   CGContextRestoreGState(gc_);
   fl_pop_clip(); // restore FLTK's clip
   return 1;

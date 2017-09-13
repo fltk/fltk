@@ -96,6 +96,7 @@ public:
   virtual void open_display_platform();
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
+  virtual float retina_factor() { return 2; }
 };
 
 
