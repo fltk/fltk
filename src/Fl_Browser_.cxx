@@ -601,7 +601,7 @@ void* Fl_Browser_::find_item(int ypos) {
 
   \param[in] item The item whose selection state is to be changed
   \param[in] val The new selection state (1=select, 0=de-select)
-  \param[in] docallbacks If 1, invokes widget callback if item changed.\n
+  \param[in] docallbacks If non-zero, invokes widget callback if item changed.\n
                          If 0, doesn't do callback (default).
   \returns 1 if state was changed, 0 if not.
 */
@@ -644,7 +644,7 @@ int Fl_Browser_::select(void* item, int val, int docallbacks) {
   If the optional \p docallbacks parameter is non-zero, deselect tries
   to call the callback function for the widget.
 
-  \param[in] docallbacks If 1, invokes widget callback if item changed.\n
+  \param[in] docallbacks If non-zero, invokes widget callback if item changed.\n
                          If 0, doesn't do callback (default).
 */
 int Fl_Browser_::deselect(int docallbacks) {
@@ -666,7 +666,7 @@ int Fl_Browser_::deselect(int docallbacks) {
   Selects \p item and returns 1 if the state changed or 0 if it did not.
   Any other items in the list are deselected.
   \param[in] item The \p item to select.
-  \param[in] docallbacks If 1, invokes widget callback if item changed.\n
+  \param[in] docallbacks If non-zero, invokes widget callback if item changed.\n
                          If 0, doesn't do callback (default).
 */
 int Fl_Browser_::select_only(void* item, int docallbacks) {
