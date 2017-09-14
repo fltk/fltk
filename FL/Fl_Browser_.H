@@ -55,7 +55,9 @@
   accessing image data or doing stat() on a file or doing some
   other slow operation.
 
-  <B>Keyboard navigation of browser items</B><BR>
+Keyboard navigation of browser items
+------------------------------------
+
   The keyboard navigation of browser items is only possible if
   visible_focus() is enabled. If disabled, the widget rejects keyboard focus;
   Tab and Shift-Tab focus navigation will skip the widget.
