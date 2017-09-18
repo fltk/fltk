@@ -608,7 +608,8 @@ int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, in
   push_no_clip(); // remove the FLTK clip that can't be rescaled
   clocale_printf("%d %d %i %i CL\n", X, Y, W, H);
   clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->w(), float(HP)/img->h());
-  img->draw(0, 0, img->w(), img->h(), 0, 0);
+  if (img->as_rgb_image()) draw(img->as_rgb_image(), 0, 0, img->w(), img->h(), 0, 0);
+  else img->draw(0, 0, img->w(), img->h(), 0, 0);
   clocale_printf("GR GR\n");
   pop_clip(); // restore FLTK's clip
   return 1;

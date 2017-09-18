@@ -218,6 +218,9 @@ void Fl_SVG_Image::color_average(Fl_Color c, float i) {
 
 
 int Fl_SVG_Image::draw_scaled(int X, int Y, int W, int H) {
+  if (rasterized_ && raster_w_ >= W && raster_h_ >= H) {
+    return fl_graphics_driver->draw_scaled(this, X, Y, W, H);
+  }
   w(W);
   h(H);
   draw(X, Y, W, H, 0, 0);
