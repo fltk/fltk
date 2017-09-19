@@ -450,10 +450,15 @@ unsigned Fl_WinAPI_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const 
 }
 
 int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+#if defined(_MSC_VER) && (_MSC_VER >= 1400 /*Visual Studio 2005*/)
+  static _locale_t c_locale = _create_locale(LC_NUMERIC, "C");
+  int retval = _vfprintf_l(output, format, c_locale, args);
+#else
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   int retval = vfprintf(output, format, args);
   setlocale(LC_NUMERIC, saved_locale);
+#endif
   return retval;
 }
 

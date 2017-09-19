@@ -77,10 +77,17 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 
 
 int Fl_X11_System_Driver::clocale_printf(FILE *output, const char *format, va_list args) {
+#if defined(__linux__) && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE >= 700
+  static locale_t c_locale = newlocale(LC_NUMERIC_MASK, "C", duplocale(LC_GLOBAL_LOCALE));
+  locale_t previous_locale = uselocale(c_locale);
+  int retval = vfprintf(output, format, args);
+  uselocale(previous_locale);
+#else
   char *saved_locale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   int retval = vfprintf(output, format, args);
   setlocale(LC_NUMERIC, saved_locale);
+#endif
   return retval;
 }
 
