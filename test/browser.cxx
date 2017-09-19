@@ -72,7 +72,27 @@ Fl_Button	*top,
 		*swap,
 		*sort;
 Fl_Choice       *btype;
+Fl_Choice       *wtype;
 Fl_Int_Input	*field;
+
+typedef struct {
+  const char *name;
+  Fl_When wvalue;
+} WhenItem;
+
+// FL_WHEN chooser..
+WhenItem when_items[] = {
+  { "FL_WHEN_NEVER",             FL_WHEN_NEVER },
+  { "FL_WHEN_CHANGED",           FL_WHEN_CHANGED },
+  { "FL_WHEN_NOT_CHANGED",       FL_WHEN_NOT_CHANGED },
+  { "FL_WHEN_RELEASE",           FL_WHEN_RELEASE },
+  { "FL_WHEN_RELEASE_ALWAYS",    FL_WHEN_RELEASE_ALWAYS },
+  { "FL_WHEN_ENTER_KEY",         FL_WHEN_ENTER_KEY },
+  { "FL_WHEN_ENTER_KEY_ALWAYS",  FL_WHEN_ENTER_KEY_ALWAYS },
+  { "FL_WHEN_ENTER_KEY_CHANGED", FL_WHEN_ENTER_KEY_CHANGED },
+  { "FL_WHEN_ENTER_KEY + FL_WHEN_RELEASE_ALWAYS", Fl_When(int(FL_WHEN_ENTER_KEY_CHANGED)+int(FL_WHEN_RELEASE_ALWAYS)) }
+  // TODO: Perhaps other FL_WHEN_* combos are relevant
+};
 
 void b_cb(Fl_Widget* o, void*) {
   printf("callback, selection = %d, event_clicks = %d\n",
@@ -125,12 +145,17 @@ void btype_cb(Fl_Widget *, void *) {
   browser->redraw();
 }
 
+void wtype_cb(Fl_Widget *, void *) {
+  if ( wtype->value() < 0 ) return;
+  browser->when( when_items[wtype->value()].wvalue );	// when value based on array
+}
+
 int main(int argc, char **argv) {
   int i;
   if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
   const char* fname = (i < argc) ? argv[i] : "browser.cxx";
-  Fl_Double_Window window(560,400,fname);
-  browser = new Fl_Select_Browser(0,0,560,350,0);
+  Fl_Double_Window window(720,400,fname);
+  browser = new Fl_Select_Browser(0,0,window.w(),350,0);
   browser->type(FL_MULTI_BROWSER);
   //browser->type(FL_HOLD_BROWSER);
   //browser->color(42);
@@ -165,7 +190,7 @@ int main(int argc, char **argv) {
   }
   browser->position(0);
 
-  field = new Fl_Int_Input(55, 350, 505, 25, "Line #:");
+  field = new Fl_Int_Input(55, 350, window.w()-55, 25, "Line #:");
   field->callback(show_cb);
 
   top = new Fl_Button(0, 375, 80, 25, "Top");
@@ -195,6 +220,17 @@ int main(int argc, char **argv) {
   btype->callback(btype_cb);
   btype->value(3);
   btype->tooltip("Changes the browser type()");
+
+  wtype = new Fl_Choice(560, 375, 160, 25);
+  wtype->textsize(8);
+  // Append items from when_items[] array
+  {
+    int len = sizeof(when_items) / sizeof(WhenItem);
+    for ( int i=0; i<len; i++ )
+      wtype->add(when_items[i].name);
+  }
+  wtype->callback(wtype_cb);
+  wtype->value(4);                          // FL_WHEN_RELEASE_ALWAYS is Fl_Browser's default
 
   window.resizable(browser);
   window.show(argc,argv);
