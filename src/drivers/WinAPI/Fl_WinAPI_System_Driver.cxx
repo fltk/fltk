@@ -53,13 +53,6 @@ typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 
 inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
-#if !defined(FL_DOXYGEN)
-const char* fl_local_alt   = "Alt";
-const char* fl_local_ctrl  = "Ctrl";
-const char* fl_local_meta  = "Meta";
-const char* fl_local_shift = "Shift";
-#endif
-
 static wchar_t *mbwbuf = NULL;
 static wchar_t *wbuf = NULL;
 static wchar_t *wbuf1 = NULL;

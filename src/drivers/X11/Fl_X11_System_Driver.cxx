@@ -58,12 +58,6 @@ extern "C" {
 }
 #endif
 
-// Pointers you can use to change FLTK to another language.
-// Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
-const char* fl_local_alt   = "Alt";
-const char* fl_local_ctrl  = "Ctrl";
-const char* fl_local_meta  = "Meta";
-const char* fl_local_shift = "Shift";
 
 /**
  Creates a driver that manages all system related calls.

@@ -77,6 +77,10 @@ public:
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
   virtual void open_callback(void (*)(const char *));
+  virtual const char *shift_name();
+  virtual const char *meta_name();
+  virtual const char *alt_name();
+  virtual const char *control_name();
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H

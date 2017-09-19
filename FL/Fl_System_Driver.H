@@ -213,6 +213,11 @@ public:
   virtual void open_callback(void (*)(const char *));
   // The default implementation may be enough.
   virtual void gettime(time_t *sec, int *usec);
+  // The default implementation of the next 4 functions may be enough.
+  virtual const char *shift_name() { return "Shift"; }
+  virtual const char *meta_name() { return "Meta"; }
+  virtual const char *alt_name() { return "Alt"; }
+  virtual const char *control_name() { return "Ctrl"; }
 };
 
 #endif // FL_SYSTEM_DRIVER_H

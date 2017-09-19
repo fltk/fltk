@@ -2030,6 +2030,13 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return Fl_Graphics_Driver::default_driver().get_font_sizes(fnum, sizep);
 }
 
+// Pointers you can use to change FLTK to another language.
+// Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
+FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();
+FL_EXPORT const char* fl_local_meta  = Fl::system_driver()->meta_name();
+FL_EXPORT const char* fl_local_alt   = Fl::system_driver()->alt_name();
+FL_EXPORT const char* fl_local_ctrl  = Fl::system_driver()->control_name();
+
 //
 // End of "$Id$".
 //

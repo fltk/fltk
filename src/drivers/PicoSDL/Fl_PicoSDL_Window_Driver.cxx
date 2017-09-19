@@ -25,13 +25,6 @@
 #include <FL/Fl_Window.H>
 
 
-
-const char *fl_local_alt = "alt";
-const char *fl_local_ctrl = "ctrl";
-const char *fl_local_meta = "meta";
-const char *fl_local_shift = "shift";
-
-
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
 {
   return new Fl_PicoSDL_Window_Driver(win);
