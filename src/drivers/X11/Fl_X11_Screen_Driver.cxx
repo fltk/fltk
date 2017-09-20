@@ -1299,6 +1299,13 @@ static bool gnome_scale_factor(float& factor) {
   //g_variant_get_type_ftype g_variant_get_type_f = (g_variant_get_type_ftype)dlsym(glib, "g_variant_get_type"); // 2.24
   
   // call dynamic lib functions
+  const unsigned *glib_major_version = (const unsigned *)dlsym(glib, "glib_major_version");
+  const unsigned *glib_minor_version = (const unsigned *)dlsym(glib, "glib_minor_version");
+  if (*glib_major_version >= 2 && *glib_minor_version < 36) {
+    typedef void (*init_ftype)(void);
+    init_ftype g_type_init_f = (init_ftype)dlsym(gobj, "g_type_init");
+    g_type_init_f(); // necessary only if GLib version < 2.36
+  }
   const char **known = g_settings_list_schemas_f(); // list of available GSettings schemas
   const char *schema;
   float ubuntu_f = 1, ubuntu_desktop_f = 1, gnome_f = 1;
