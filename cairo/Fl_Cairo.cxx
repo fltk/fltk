@@ -22,9 +22,6 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
-#ifdef __APPLE__
-#include <Carbon/Carbon.h>
-#endif
 
 // Cairo is currently supported for the following platforms:
 // Win32, Apple Quartz, X11
@@ -131,7 +128,7 @@ cairo_t * Fl::cairo_make_current(void *gc) {
       H = Fl_Window::current()->h();
     }
     else {
-      W = CGBitmapContextGetHeight(fl_gc);
+      W = CGBitmapContextGetWidth(fl_gc);
       H = CGBitmapContextGetHeight(fl_gc);
     }
 #elif defined(WIN32)
