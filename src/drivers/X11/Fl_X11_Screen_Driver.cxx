@@ -1200,15 +1200,43 @@ int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 
-// returns true when schema is among the list of available schemas
-static bool is_schema_valid(const char *schema, const char **known) {
+// returns true when name is among the list of known names
+static bool is_name_in_list(const char *name, const char **list) {
   int i = 0;
-  while (known[i]) {
-    if (strcmp(known[i++], schema) == 0) return true;
+  while (list[i]) {
+    if (strcmp(list[i++], name) == 0) return true;
   }
   return false;
 }
 
+
+// define types needed for dynamic lib functions
+typedef const char** (*g_settings_list_schemas_ftype)(void);
+typedef void (*g_variant_get_ftype)(void *value, const char *format_string, ...);
+typedef bool (*g_variant_iter_loop_ftype)(void *iter, const char *format_string, ...);
+typedef const char **(*g_settings_list_keys_ftype)(void *);
+typedef void* (*g_settings_new_ftype)(const char *);
+typedef void* (*g_settings_get_value_ftype)(void *settings, const char *key);
+typedef void (*pter_ftype)(void*);
+
+// define run-time pointers to functions from dynamic libs
+static g_settings_new_ftype g_settings_new_f;
+static g_settings_list_keys_ftype g_settings_list_keys_f;
+static pter_ftype g_object_unref_f;
+static pter_ftype g_strfreev_f;
+static g_settings_get_value_ftype g_settings_get_value_f;
+
+static void* value_of_key_in_schema(const char **known, const char *schema, const char *key) {
+  void *retval = NULL;
+  if (is_name_in_list(schema, known)) {
+    void *gset = g_settings_new_f(schema);
+    const char **list = g_settings_list_keys_f(gset);
+    if (is_name_in_list(key, list)) retval = g_settings_get_value_f(gset, key);
+    g_strfreev_f(list);
+    g_object_unref_f(gset);
+  }
+  return retval;
+}
 
 /*
  returns true under Ubuntu or Debian or FreeBSD and when the gnome scaling value has been found
@@ -1259,21 +1287,40 @@ static bool is_schema_valid(const char *schema, const char **known) {
  =================================================================================================
  */
 static bool gnome_scale_factor(float& factor) {
-  // define types needed for dynamic lib functions
-  typedef const char** (*g_settings_list_schemas_ftype)(void);
-  typedef void* (*g_settings_new_ftype)(const char *);
-  typedef void* (*g_settings_get_value_ftype)(void *settings, const char *key);
-  typedef void (*g_variant_get_ftype)(void *value, const char *format_string, ...);
-  typedef bool (*g_variant_iter_loop_ftype)(void *iter, const char *format_string, ...);
-  typedef void (*pter_ftype)(void*);
-  //typedef void* (*g_variant_get_type_ftype)(void *variant);
-  
   // open dynamic libs
   void *glib = dlopen("libglib-2.0.so", RTLD_LAZY);
   void *gio = dlopen("libgio-2.0.so", RTLD_LAZY);
   void *gobj = dlopen("libgobject-2.0.so", RTLD_LAZY);
   //fprintf(stderr,"glib=%p gio=%p gobj=%p\n",glib,gio,gobj);
   if (!glib || !gio || !gobj) return false;
+  
+  // define pters to used functions and variables
+  g_settings_list_schemas_ftype g_settings_list_schemas_f = (g_settings_list_schemas_ftype)dlsym(gio, "g_settings_list_schemas"); // 2.26
+  g_settings_new_f = (g_settings_new_ftype)dlsym(gio, "g_settings_new"); // 2.26
+  g_settings_get_value_f =
+		(g_settings_get_value_ftype)dlsym(gio, "g_settings_get_value"); // 2.26
+  if (!g_settings_list_schemas_f || !g_settings_new_f || !g_settings_get_value_f) return false;
+  g_variant_get_ftype g_variant_get_f = (g_variant_get_ftype)dlsym(glib, "g_variant_get"); //2.24
+  g_variant_iter_loop_ftype g_variant_iter_loop_f = (g_variant_iter_loop_ftype)dlsym(glib, "g_variant_iter_loop"); // 2.24
+  pter_ftype g_variant_iter_free_f = (pter_ftype)dlsym(glib, "g_variant_iter_free"); // 2.24
+  g_object_unref_f = (pter_ftype)dlsym(gobj, "g_object_unref");
+  pter_ftype g_variant_unref_f = (pter_ftype)dlsym(glib, "g_variant_unref"); // 2.24
+  g_settings_list_keys_f = (g_settings_list_keys_ftype)dlsym(gio, "g_settings_list_keys");
+  g_strfreev_f = (pter_ftype)dlsym(glib, "g_strfreev");
+  //g_variant_get_type_ftype g_variant_get_type_f = (g_variant_get_type_ftype)dlsym(glib, "g_variant_get_type"); // 2.24
+  const unsigned *glib_major_version = (const unsigned *)dlsym(glib, "glib_major_version");
+  const unsigned *glib_minor_version = (const unsigned *)dlsym(glib, "glib_minor_version");
+  
+  // call dynamic lib functions
+  if (*glib_major_version * 1000 + *glib_minor_version < 2036) {
+    typedef void (*init_ftype)(void);
+    init_ftype g_type_init_f = (init_ftype)dlsym(gobj, "g_type_init");
+    g_type_init_f(); // necessary only if GLib version < 2.36
+  }
+  const char **known = g_settings_list_schemas_f(); // list of available GSettings schemas
+  float ubuntu_f = 1, ubuntu_desktop_f = 1, gnome_f = 1;
+  bool found = false;
+  void *gvar;
   
   bool ubuntu = false;
   // determine whether we run Ubuntu
@@ -1285,38 +1332,10 @@ static bool gnome_scale_factor(float& factor) {
     if (s && strstr(line, "Ubuntu")) ubuntu = true;
   }
   
-  // define pters to used functions
-  g_settings_list_schemas_ftype g_settings_list_schemas_f = (g_settings_list_schemas_ftype)dlsym(gio, "g_settings_list_schemas"); // 2.26
-  g_settings_new_ftype g_settings_new_f = (g_settings_new_ftype)dlsym(gio, "g_settings_new"); // 2.26
-  g_settings_get_value_ftype g_settings_get_value_f =
-		(g_settings_get_value_ftype)dlsym(gio, "g_settings_get_value"); // 2.26
-  if (!g_settings_list_schemas_f || !g_settings_new_f || !g_settings_get_value_f) return false;
-  g_variant_get_ftype g_variant_get_f = (g_variant_get_ftype)dlsym(glib, "g_variant_get"); //2.24
-  g_variant_iter_loop_ftype g_variant_iter_loop_f = (g_variant_iter_loop_ftype)dlsym(glib, "g_variant_iter_loop"); // 2.24
-  pter_ftype g_variant_iter_free_f = (pter_ftype)dlsym(glib, "g_variant_iter_free"); // 2.24
-  pter_ftype g_object_unref_f = (pter_ftype)dlsym(gobj, "g_object_unref");
-  pter_ftype g_variant_unref_f = (pter_ftype)dlsym(glib, "g_variant_unref"); // 2.24
-  //g_variant_get_type_ftype g_variant_get_type_f = (g_variant_get_type_ftype)dlsym(glib, "g_variant_get_type"); // 2.24
-  
-  // call dynamic lib functions
-  const unsigned *glib_major_version = (const unsigned *)dlsym(glib, "glib_major_version");
-  const unsigned *glib_minor_version = (const unsigned *)dlsym(glib, "glib_minor_version");
-  if (*glib_major_version >= 2 && *glib_minor_version < 36) {
-    typedef void (*init_ftype)(void);
-    init_ftype g_type_init_f = (init_ftype)dlsym(gobj, "g_type_init");
-    g_type_init_f(); // necessary only if GLib version < 2.36
-  }
-  const char **known = g_settings_list_schemas_f(); // list of available GSettings schemas
-  const char *schema;
-  float ubuntu_f = 1, ubuntu_desktop_f = 1, gnome_f = 1;
-  bool found = false;
-  
   if (ubuntu) {
-    schema = "com.ubuntu.user-interface";
-    if (is_schema_valid(schema, known)) {
+    gvar = value_of_key_in_schema(known, "com.ubuntu.user-interface", "scale-factor");
+    if (gvar) {
       found = true;
-      void *gset = g_settings_new_f(schema);
-      void *gvar = g_settings_get_value_f(gset, "scale-factor");
       void *iter;
       char str[10], *str2; int v=8, v2;
       g_variant_get_f(gvar, "a{si}", &iter);
@@ -1327,33 +1346,27 @@ static bool gnome_scale_factor(float& factor) {
       // printf("com.ubuntu.user-interface  scale-factor name=%s value=%d factor=%g\n", str, v, ubuntu_f);
       g_variant_iter_free_f(iter);
       g_variant_unref_f(gvar);
-      g_object_unref_f(gset);
       if (ubuntu_f != 1) {
         factor = ubuntu_f;
         return true;
       }
     }
-    schema = "org.gnome.desktop.interface";
-    if (is_schema_valid(schema, known)) {
+    gvar = value_of_key_in_schema(known, "org.gnome.desktop.interface", "scaling-factor");
+    if (gvar) {
       found = true;
-      void *gset = g_settings_new_f(schema);
-      void *gvar = g_settings_get_value_f(gset, "scaling-factor");
       unsigned v;
       g_variant_get_f(gvar, "u", &v);
       ubuntu_desktop_f = v;
       // printf("org.gnome.desktop.interface  scaling-factor value=%u factor=%g\n", v, ubuntu_desktop_f);
       g_variant_unref_f(gvar);
-      g_object_unref_f(gset);
       if (ubuntu_desktop_f != 1) {
         factor = ubuntu_desktop_f;
         return true;
       }
     }
   }
-  schema = "org.gnome.settings-daemon.plugins.xsettings";
-  if (is_schema_valid(schema, known)) {
-    void *gset = g_settings_new_f(schema);
-    void *gvar = g_settings_get_value_f(gset, "overrides");
+  gvar = value_of_key_in_schema(known, "org.gnome.settings-daemon.plugins.xsettings", "overrides");
+  if (gvar) {
     void *iter;
     char *str; int v;
     //str = (char*)g_variant_get_type_f(gvar); // -> "a{sv}"
@@ -1372,10 +1385,8 @@ static bool gnome_scale_factor(float& factor) {
     }
     g_variant_iter_free_f(iter);
     if (gvar) g_variant_unref_f(gvar);
-    g_object_unref_f(gset);
   }
   if (!found) return false;
-  //factor = ubuntu_f * ubuntu_desktop_f * gnome_f;
   factor = gnome_f;
   return true;
 }
