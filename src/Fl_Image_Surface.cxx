@@ -29,13 +29,19 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 
 
 /** Constructor with optional high resolution.
- \param w and \param h give the size in pixels of the resulting image.
- \param high_res if non-zero, the surface pixel size is twice as high and wide as w and h,
- which is useful to draw it later on a high resolution display (e.g., retina display).
- This is implemented for the Mac OS platform only.
- If \p highres is non-zero, use Fl_Image_Surface::highres_image() to get the image data.
- \param pixmap is used internally by FLTK; applications just use its default value.
- \version 1.3.4 (1.3.3 without the highres parameter)
+ \param w and \param h set the size of the resulting image. The value of the \p high_res
+ parameter controls whether \p w and \p h are interpreted as pixel or drawing units.
+ 
+ \param high_res If zero, the created image surface is sized at \p w x \p h pixels.
+ If non-zero, the pixel size of the created image surface follows
+ the value of the display scaling factor (see Fl_Graphics_Driver::scale()). This gives
+ the created image surface the same number of pixels as an area of the display of size 
+ \p w x \p h expressed in drawing units. On the Mac OS platform, the image surface pixel 
+ size is always twice as high and wide as \p w and \p h.
+ If \p highres is non-zero, always use Fl_Image_Surface::highres_image() to get the image data.
+
+ \param pixmap Is used internally by FLTK; applications just use its default value.
+ \version 1.3.4 (1.3.3 without the \p highres parameter)
  */
 Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen pixmap) : Fl_Widget_Surface(NULL) {
   platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, high_res, pixmap);
@@ -88,7 +94,8 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
 
 /** Returns a possibly high resolution image made of all drawings sent to the Fl_Image_Surface object.
  The Fl_Image_Surface object should have been constructed with Fl_Image_Surface(W, H, 1).
- The returned image is scaled to a size of WxH drawing units and may have a pixel size twice as wide and high.
+ The returned Fl_Shared_Image object is scaled to a size of WxH drawing units and may have a 
+ pixel size larger than these values.
  The returned object should be deallocated with Fl_Shared_Image::release() after use.
  \version 1.3.4
  */
