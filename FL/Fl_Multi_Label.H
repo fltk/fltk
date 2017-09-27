@@ -48,7 +48,7 @@ struct Fl_Menu_Item;
 
     Example Use: Fl_Menu_Bar
     \code
-      Fl_Pixmap *image = new Fl_Pixmap(..);	// image for menu item; can be any Fl_Image based widget
+      Fl_Pixmap *image = new Fl_Pixmap(..);	// image for menu item; any Fl_Image based widget
       Fl_Menu_Bar *menu = new Fl_Menu_Bar(..);	// can be any Fl_Menu_ oriented widget (Fl_Choice, Fl_Menu_Button..)
 
       // Create a menu item
@@ -60,7 +60,7 @@ struct Fl_Menu_Item;
 
       // Left side of label is an image
       ml->typea  = FL_IMAGE_LABEL;
-      ml->labela = (const char*)image;
+      ml->labela = (const char*)image;           // any Fl_Image widget: Fl_Pixmap, Fl_PNG_Image, etc..
 
       // Right side of label is label text
       ml->typeb  = FL_NORMAL_LABEL;
