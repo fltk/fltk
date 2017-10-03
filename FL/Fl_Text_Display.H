@@ -208,6 +208,7 @@ public:
   void hide_cursor() { show_cursor(0); }
   
   void cursor_style(int style);
+  int cursor_style() const { return mCursorStyle; }
   
   /**
    Gets the text cursor color.  
