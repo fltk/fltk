@@ -75,6 +75,7 @@ public:
   virtual const char *home_directory_name() { return ::getenv("HOME"); }
   virtual int dot_file_hidden() {return 1;}
   virtual void gettime(time_t *sec, int *usec);
+  virtual void* gzopen(const char *fname, const char *mode);
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

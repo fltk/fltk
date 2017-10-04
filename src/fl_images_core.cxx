@@ -32,10 +32,13 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_PNM_Image.H>
 #include <FL/Fl_SVG_Image.H>
+#include <FL/Fl_System_Driver.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
-
+#if defined(HAVE_LIBZ)
+#include <zlib.h>
+#endif
 
 //
 // Define a simple global image registration function that registers
@@ -90,6 +93,15 @@ fl_check_images(const char *name,		// I - Filename
 #endif // HAVE_LIBJPEG
 
 #ifdef FLTK_USE_NANOSVG
+#  if defined(HAVE_LIBZ)
+  if (header[0] == 0x1f && header[1] == 0x8b) {
+    gzFile gzf = (gzFile)fl_gzopen(name, "r");
+    if (gzf) {
+      gzread(gzf, header, headerlen);
+      gzclose(gzf);
+    }
+  }
+#  endif // HAVE_LIBZ
   if ( (headerlen > 5 && memcmp(header, "<?xml", 5) == 0) ||
       memcmp(header, "<svg", 4) == 0)
     return new Fl_SVG_Image(name);
