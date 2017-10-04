@@ -117,7 +117,6 @@ public:
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
   virtual void gettime(time_t *sec, int *usec);
-  virtual void* gzopen(const char *fname, const char *mode);
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

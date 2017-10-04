@@ -50,9 +50,6 @@ typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #ifdef __CYGWIN__
 #  include <mntent.h>
 #endif
-#if defined(HAVE_LIBZ)
-# include <zlib.h>
-#endif
 
 inline int isdirsep(char c) { return c == '/' || c == '\\'; }
 
@@ -909,19 +906,6 @@ void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
   _ftime(&t);
   *sec = t.time;
   *usec = t.millitm * 1000;
-}
-
-void* Fl_WinAPI_System_Driver::gzopen(const char *fname, const char *mode) {
-#if defined(HAVE_LIBZ)
-  unsigned wl = fl_utf8towc(fname, strlen(fname), NULL, 0) + 1;
-  wchar_t *wc = new wchar_t[wl];
-  fl_utf8towc(fname, strlen(fname), wc, wl);
-  gzFile gzf = gzopen_w(wc, mode);
-  delete[] wc;
-  return gzf;
-#else
-  return NULL;
-#endif
 }
 
 //

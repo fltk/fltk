@@ -34,9 +34,6 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <time.h>
-#if defined(HAVE_LIBZ)
-# include <zlib.h>
-#endif
 
 //
 // Define missing POSIX/XPG4 macros as needed...
@@ -100,18 +97,6 @@ void Fl_Posix_System_Driver::gettime(time_t *sec, int *usec) {
   gettimeofday(&tv, NULL);
   *sec = tv.tv_sec;
   *usec = tv.tv_usec;
-}
-
-void* Fl_Posix_System_Driver::gzopen(const char *fname, const char *mode) {
-#if defined(HAVE_LIBZ)
-  FILE *in = fl_fopen(fname, mode);
-  if (!in) return NULL;
-  int fd = dup(fileno(in));
-  fclose(in);
-  return gzdopen(fd, mode);
-#else
-  return NULL;
-#endif
 }
 
 //

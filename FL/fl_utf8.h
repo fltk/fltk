@@ -176,9 +176,6 @@ FL_EXPORT int fl_execvp(const char *file, char *const *argv);
 
 /* OD: Portable UTF-8 aware open wrapper */
 FL_EXPORT int fl_open(const char* f, int o, ...);
-  
-/* OD: Portable UTF-8 aware gzopen wrapper */
-FL_EXPORT  void* fl_gzopen(const char* fname, const char *mode);
 
 /* OD: Portable UTF-8 aware unlink wrapper */
 FL_EXPORT int fl_unlink(const char *f);

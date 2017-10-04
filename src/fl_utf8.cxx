@@ -335,15 +335,6 @@ FILE *fl_fopen(const char* f, const char *mode) {
   return Fl::system_driver()->fopen(f, mode);
 }
 
-/** Same as function gzopen() of zlib, but accepts a UTF-8 encoded filename.
- \param fname The UTF-8 encoded filename.
- \param mode as in the standard fopen() function
- \return  A pointer of type gzFile, or NULL if the file can't be opened.
- */
-void* fl_gzopen(const char* fname, const char *mode) {
-  return Fl::system_driver()->gzopen(fname, mode);
-}
-
 /** Cross-platform function to run a system command with a UTF-8 encoded string.
 
   This function is especially useful under the MSWindows platform where

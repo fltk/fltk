@@ -218,7 +218,6 @@ public:
   virtual const char *meta_name() { return "Meta"; }
   virtual const char *alt_name() { return "Alt"; }
   virtual const char *control_name() { return "Ctrl"; }
-  virtual void* gzopen(const char *fname, const char *mode) { return NULL; }
 };
 
 #endif // FL_SYSTEM_DRIVER_H

@@ -24,12 +24,8 @@
 #include <FL/fl_utf8.h>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Screen_Driver.H>
-#include <FL/Fl_System_Driver.H>
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(HAVE_LIBZ)
-#include <zlib.h>
-#endif
 
 #if !defined(HAVE_LONG_LONG)
 static double strtoll(const char *str, char **endptr, int base) {
@@ -45,8 +41,8 @@ static double strtoll(const char *str, char **endptr, int base) {
 #include "../nanosvg/altsvgrast.h"
 
 
-/** The constructor loads the SVG image from the given .svg/.svgz filename or in-memory data.
- \param filename A full path and name pointing to a .svg or .svgz file, or NULL.
+/** The constructor loads the SVG image from the given .svg filename or in-memory data.
+ \param filename A full path and name pointing to an SVG file, or NULL.
  \param filedata A pointer to the memory location of the SVG image data.
  This parameter allows to load an SVG image from in-memory data, and is used when \p filename is NULL.
  \note In-memory SVG data is modified by the object constructor and is no longer used after construction.
@@ -77,35 +73,6 @@ float Fl_SVG_Image::svg_scaling_(int W, int H) {
   return (f1 < f2) ? f1 : f2;
 }
 
-#if defined(HAVE_LIBZ)
-
-static char *svg_inflate(const char *fname) {
-  struct stat b;
-  fl_stat(fname, &b);
-  long size = b.st_size;
-  gzFile gzf = (gzFile)fl_gzopen(fname, "r");
-  int l;
-  bool direct = gzdirect(gzf);
-  long out_size = direct ? size + 1 : 3*size + 1;
-  char *out = (char*)malloc(out_size);
-  char *p = out;
-  do {
-    if ((!direct) && p + size > out + out_size) {
-      out_size += size;
-      char *tmp = (char*)realloc(out, out_size + 1);
-      p = tmp + (p - out);
-      out = tmp;
-    }
-    l = gzread(gzf, p, size);
-    if (l > 0) {
-      p += l; *p = 0;
-    }
-  } while ((!direct) && l >0);
-  gzclose(gzf);
-  if (!direct) out = (char*)realloc(out, (p-out)+1);
-  return out;
-}
-#endif
 
 void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *copy_source) {
   if (copy_source) {
@@ -121,29 +88,22 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
   average_weight_ = 1;
   proportional = true;
   if (filename) {
-#if defined(HAVE_LIBZ)
-    filedata = svg_inflate(filename);
-#else
     filedata = NULL;
     FILE *fp = fl_fopen(filename, "rb");
     if (fp) {
       fseek(fp, 0, SEEK_END);
-      long size = ftell(fp);
+      size_t size = ftell(fp);
       fseek(fp, 0, SEEK_SET);
       filedata = (char*)malloc(size+1);
       if (filedata) {
-        if (fread(filedata, 1, size, fp) == size) {
-          filedata[size] = '\0';
-        }
+        if (fread(filedata, 1, size, fp) == size) filedata[size] = '\0';
         else {
           free(filedata);
           filedata = NULL;
         }
       }
       fclose(fp);
-    }
-#endif // HAVE_LIBZ
-    if (!filedata) ld(ERR_FILE_ACCESS);
+    } else ld(ERR_FILE_ACCESS);
   }
   if (filedata) {
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);

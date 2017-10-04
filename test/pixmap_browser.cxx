@@ -79,9 +79,6 @@ void button_cb(Fl_Widget *,void *) {
   const char *fname = fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm"
 #ifdef FLTK_USE_NANOSVG
                                       ",svg"
-#  if defined(HAVE_LIBZ)
-                                      ",svgz"
-#  endif
 #endif
                                       "}", name);
   puts(fname ? fname : "(null)"); fflush(stdout);
