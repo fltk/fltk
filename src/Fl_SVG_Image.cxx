@@ -103,6 +103,7 @@ static char *svg_inflate(const char *fname) {
   fl_stat(fname, &b);
   long size = b.st_size;
   gzFile gzf = (gzFile)Fl_SVG_Image::gzopen(fname);
+  if (!gzf) return NULL;
   int l;
   bool direct = gzdirect(gzf);
   long out_size = direct ? size + 1 : 3*size + 1;
@@ -287,7 +288,6 @@ int Fl_SVG_Image::draw_scaled(int X, int Y, int W, int H) {
 }
 
 #endif // FLTK_USE_NANOSVG
-
 
 //
 // End of "$Id$".
