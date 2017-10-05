@@ -74,7 +74,7 @@ public:
   virtual void color_average(Fl_Color c, float i);
   virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
-  static void* gzopen(const char *fname);
+  static void* fl_gzopen(const char *fname);
 };
 
 #endif // FL_SVG_IMAGE_H

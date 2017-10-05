@@ -94,7 +94,7 @@ fl_check_images(const char *name,		// I - Filename
 #ifdef FLTK_USE_NANOSVG
 #  if defined(HAVE_LIBZ)
   if (header[0] == 0x1f && header[1] == 0x8b) { // denotes gzip'ed data
-    gzFile gzf = (gzFile)Fl_SVG_Image::gzopen(name);
+    gzFile gzf = (gzFile)Fl_SVG_Image::fl_gzopen(name);
     if (gzf) {
       gzread(gzf, header, headerlen);
       gzclose(gzf);
