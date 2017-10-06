@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #if defined(HAVE_LIBZ)
 #include <zlib.h>
+#  ifdef _WIN32
+#    include <fcntl.h>
+#  endif
 #endif
 
 #if !defined(HAVE_LONG_LONG)
@@ -79,18 +82,13 @@ float Fl_SVG_Image::svg_scaling_(int W, int H) {
 /** Opens for reading a potentially gzip'ed file identified by a UTF-8 encoded filename. */
 void* Fl_SVG_Image::fl_gzopen(const char *fname) {
 #if defined(HAVE_LIBZ)
+  int flags = 0;
 #  ifdef _WIN32
-  unsigned wl = fl_utf8towc(fname, strlen(fname), NULL, 0) + 1;
-  wchar_t *wc = new wchar_t[wl];
-  fl_utf8towc(fname, strlen(fname), wc, wl);
-  gzFile gzf = gzopen_w(wc, "r");
-  delete[] wc;
-  return gzf;
-#  else
-  int fd = fl_open(fname, 0);
+  flags = _O_BINARY;
+#  endif
+  int fd = fl_open(fname, flags);
   if (fd < 0) return NULL;
   return gzdopen(fd, "r");
-#  endif
 #else
   return NULL;
 #endif // HAVE_LIBZ
