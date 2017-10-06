@@ -103,7 +103,7 @@ static char *svg_inflate(const char *fname) {
   gzFile gzf = (gzFile)Fl_SVG_Image::fl_gzopen(fname);
   if (!gzf) return NULL;
   int l;
-  bool direct = gzdirect(gzf);
+  int direct = gzdirect(gzf);
   long out_size = direct ? size + 1 : 3*size + 1;
   char *out = (char*)malloc(out_size);
   char *p = out;
