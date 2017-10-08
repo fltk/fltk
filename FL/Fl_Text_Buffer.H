@@ -22,6 +22,7 @@
 #ifndef FL_TEXT_BUFFER_H
 #define FL_TEXT_BUFFER_H
 
+#include <stdarg.h>	/* va_start/end */
 
 #undef ASSERT_UTF8
 
@@ -286,6 +287,9 @@ public:
    \param t UTF-8 encoded and nul terminated text
    */
   void append(const char* t) { insert(length(), t); }
+
+  void vprintf(const char *fmt, va_list ap);
+  void printf(const char* fmt, ...);
 
   /**
    Deletes a range of characters in the buffer.
