@@ -456,7 +456,8 @@ protected:
                                  the number of redraw calls */
   int mCursorStyle;             /* One of enum cursorStyles above */
   int mCursorPreferredXPos;     /* Pixel position for vert. cursor movement */
-  int mNVisibleLines;           /* # of visible (displayed) lines */
+  int mNVisibleLines;           /* # of visible (displayed) lines. This is
+                                   also the size of the mLineStarts[] array. */
   int mNBufferLines;            /* # of newlines in the buffer */
   Fl_Text_Buffer* mBuffer;      /* Contains text to be displayed */
   Fl_Text_Buffer* mStyleBuffer; /* Optional parallel buffer containing
@@ -468,7 +469,15 @@ protected:
   int mContinuousWrap;          /* Wrap long lines when displaying */
   int mWrapMarginPix; 	    	/* Margin in # of pixels for
                                  wrapping in continuousWrap mode */
-  int* mLineStarts;
+  int* mLineStarts;             /* Array of the size mNVisibleLines.
+                                   This array only keeps track of lines
+                                   within the display area. Each entry
+                                   contains the starting character offset
+                                   (from the beginning of the text buffer)
+                                   for each /visible/ line.
+                                   If wrap enabled, points to the beginning
+                                   of each wrap. So a long line wrapping
+                                   3 times will take up 3 entries. */
   int mTopLineNum;              /* Line number of top displayed line
                                  of file (first line of file is 1) */
   int mAbsTopLineNum;           /* In continuous wrap mode, the line
