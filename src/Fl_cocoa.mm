@@ -3138,7 +3138,14 @@ void Fl_Window::size_range_() {
 
 void Fl_Window::wait_for_expose()
 {
-  [fl_xid(this) recursivelySendToSubwindows:@selector(waitForExpose)];
+    if (fl_mac_os_version < 101300) {
+        [fl_xid(this) recursivelySendToSubwindows:@selector(waitForExpose)];
+    } else {
+        NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
+                                            untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
+                                               inMode:NSDefaultRunLoopMode dequeue:YES];
+        if (event) [NSApp postEvent:event atStart:NO];
+    }
 }
 
 /*
