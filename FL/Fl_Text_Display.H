@@ -477,7 +477,8 @@ protected:
                                    for each /visible/ line.
                                    If wrap enabled, points to the beginning
                                    of each wrap. So a long line wrapping
-                                   3 times will take up 3 entries. */
+                                   into 3 separate lines in the display
+                                   will take up 3 separate array entries. */
   int mTopLineNum;              /* Line number of top displayed line
                                  of file (first line of file is 1) */
   int mAbsTopLineNum;           /* In continuous wrap mode, the line
