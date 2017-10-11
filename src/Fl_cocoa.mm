@@ -3084,7 +3084,14 @@ void Fl_Cocoa_Window_Driver::size_range() {
 
 void Fl_Cocoa_Window_Driver::wait_for_expose()
 {
-  [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose)];
+    if (fl_mac_os_version < 101300) {
+        [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose)];
+    } else {
+        NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
+                                            untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
+                                               inMode:NSDefaultRunLoopMode dequeue:YES];
+        if (event) [NSApp postEvent:event atStart:NO];
+    }
 }
 
 /*
