@@ -401,6 +401,8 @@ void Fl_Shared_Image::scale(int width, int height, int proportional, int can_exp
   w(width);
   h(height);
   if (!image_ || image_->fail()) return;
+  if (!proportional && can_expand) return;
+  if (!proportional && width <= image_->w() && height <= image_->h()) return;
   float fw = image_->w() / float(width);
   float fh = image_->h() / float(height);
   if (proportional) {
