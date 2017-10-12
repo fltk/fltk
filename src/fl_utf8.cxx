@@ -309,7 +309,7 @@ char *fl_getenv(const char* v) {
  \param f  the UTF-8 encoded filename
  \param oflags  other arguments are as in the standard open() function
  \return  a file descriptor upon successful completion, or -1 in case of error.
- \sa fl_fopen().
+ \sa fl_fopen(), fl_open_ext().
  */
 int fl_open(const char* f, int oflags, ...)
 {
@@ -319,6 +319,28 @@ int fl_open(const char* f, int oflags, ...)
   pmode = va_arg (ap, int);
   va_end(ap);
   return Fl::system_driver()->open(f, oflags, pmode);
+}
+
+/** Cross-platform function to open files with a UTF-8 encoded name.
+ In comparison with fl_open(), this function allows to control whether
+ the file is opened in binary (a.k.a. untranslated) mode. This is especially
+ useful under the MSWindows platform where files are by default opened in
+ text (translated) mode.
+ \param fname  the UTF-8 encoded filename
+ \param translation if zero, the file is to be accessed in untranslated (a.k.a. binary)
+ mode.
+ \param oflags,...  these arguments are as in the standard open() function.
+ Setting \p oflags to zero opens the file for reading.
+ \return  a file descriptor upon successful completion, or -1 in case of error.
+ */
+int fl_open_ext(const char* fname, int translation, int oflags, ...)
+{
+  int pmode;
+  va_list ap;
+  va_start(ap, oflags);
+  pmode = va_arg (ap, int);
+  va_end(ap);
+  return Fl::system_driver()->open_ext(fname, translation, oflags, pmode);
 }
 
 

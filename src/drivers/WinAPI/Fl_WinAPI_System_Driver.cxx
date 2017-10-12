@@ -42,6 +42,7 @@ typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #include <time.h>
 #include <direct.h>
 #include <io.h>
+#include <fcntl.h>
 // Apparently Borland C++ defines DIRECTORY in <direct.h>, which
 // interfers with the Fl_File_Icon enumeration of the same name.
 #  ifdef DIRECTORY
@@ -134,6 +135,12 @@ int Fl_WinAPI_System_Driver::open(const char* f, int oflags, int pmode) {
   wbuf[wn] = 0;
   if (pmode == -1) return _wopen(wbuf, oflags);
   else return _wopen(wbuf, oflags, pmode);
+}
+
+int Fl_WinAPI_System_Driver::open_ext(const char* f, int translation, int oflags, int pmode) {
+  if (oflags == 0) oflags = _O_RDONLY;
+  oflags |= (translation ? _O_TEXT : _O_BINARY);
+  return this->open(f, oflags, pmode);
 }
 
 FILE *Fl_WinAPI_System_Driver::fopen(const char* f, const char *mode) {

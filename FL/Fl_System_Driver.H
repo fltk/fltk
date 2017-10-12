@@ -87,6 +87,7 @@ public:
   virtual char *getenv(const char* v) {return NULL;}
   virtual int putenv(char* v) {return -1;}
   virtual int open(const char* f, int oflags, int pmode) {return -1;}
+  virtual int open_ext(const char* f, int translation, int oflags, int pmode) {return this->open(f, oflags, pmode);}
   virtual FILE *fopen(const char* f, const char *mode);
   virtual int system(const char* cmd) {return -1;}
   virtual int execvp(const char *file, char *const *argv) {return -1;}
