@@ -5,7 +5,7 @@
 //
 // Author: Jean-Marc Lienher ( http://oksid.ch )
 // Copyright 2000-2010 by O'ksi'D.
-// Copyright 2016 by Bill Spitzak and others.
+// Copyright 2016-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -286,12 +286,24 @@ char * fl_utf2mbcs(const char *s)
 /** Cross-platform function to get environment variables with a UTF-8 encoded
   name or value.
 
-  This function is especially useful under the MSWindows platform where
+  This function is especially useful under the Windows platform where
   non-ASCII environment variables are encoded as wide characters.
   The returned value of the variable is encoded in UTF-8 as well.
 
-  On platforms other than MSWindows this function calls getenv directly.
+  On platforms other than Windows this function calls getenv directly.
   The return value is returned as-is.
+
+  The return value is a pointer to an implementation defined buffer:
+    - an internal buffer that is (re)allocated as needed (Windows) or
+    - the string in the environment itself (Unix, Linux, MaOS) or
+    - any other implementation (other platforms).
+  This string must be considered read-only and must not be freed by the caller.
+
+  If the resultant string is to be used later it must be copied to a safe
+  place. The next call to fl_getenv() or any other environment changes may
+  overwrite the string.
+
+  \note This function is not thread-safe.
 
   \param[in] v the UTF-8 encoded environment variable
   \return  the environment variable in UTF-8 encoding, or NULL in case of error.

@@ -3,7 +3,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -899,7 +899,7 @@ void show_help(const char *name) {
 
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
-  if ((docdir = getenv("FLTK_DOCDIR")) == NULL) {
+  if ((docdir = fl_getenv("FLTK_DOCDIR")) == NULL) {
     docdir = FLTK_DOCDIR;
   }
   snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);

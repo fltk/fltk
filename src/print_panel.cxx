@@ -3,7 +3,7 @@
 //
 // Print panel for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -565,7 +565,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
       }
     }
     fclose(lpstat);
-    p = getenv("PRINTER"); // get name of default printer
+    p = fl_getenv("PRINTER"); // get name of default printer
     if (p == NULL) p = (char*)"lp";
     strcpy(defname, p);
   }

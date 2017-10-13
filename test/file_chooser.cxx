@@ -4,6 +4,7 @@
 // File chooser test program.
 //
 // Copyright 1999-2010 by Michael Sweet.
+// Copyright 2011-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -256,7 +257,7 @@ pdf_check(const char *name,	// I - Name of file
   if (memcmp(header, "%PDF", 4) != 0)
     return 0;
 
-  home = getenv("HOME");
+  home = fl_getenv("HOME");
   sprintf(preview, "%s/.preview.ppm", home ? home : "");
 
   sprintf(command,

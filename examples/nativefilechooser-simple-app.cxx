@@ -4,7 +4,7 @@
 //	An example of how to use Fl_Native_File_Chooser to open & save files.
 //
 // Copyright 2010 Greg Ercolano.
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,7 +46,7 @@ class Application : public Fl_Window {
   void save(const char *filename) {
     printf("Saving '%s'\n", filename);
     if ( !exist(filename) ) {
-      FILE *fp = fl_fopen(filename, "w");				// create file if it doesn't exist
+      FILE *fp = fl_fopen(filename, "w"); // create file if it doesn't exist
       if ( fp ) {
         // A real app would do something useful here.
         fprintf(fp, "Hello world.\n");
@@ -103,9 +103,9 @@ class Application : public Fl_Window {
     static char *filename = 0;
     if ( !filename ) {
       const char *home =
-        getenv("HOME") ? getenv("HOME") :		 // unix
-	getenv("HOME_PATH") ? getenv("HOME_PATH") :	 // windows
-	".";						 // other
+	fl_getenv("HOME") ? fl_getenv("HOME") :            // unix
+	fl_getenv("HOME_PATH") ? fl_getenv("HOME_PATH") :  // windows
+	".";						   // other
       filename = (char*)malloc(strlen(home)+20);
       sprintf(filename, "%s/untitled.txt", home);
     }

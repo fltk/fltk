@@ -6,7 +6,7 @@
 // Hours of fun: the FLTK checkers game!
 // Based on a very old algorithm, but it still works!
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1346,7 +1346,7 @@ int main(int argc, char **argv) {
     fprintf(stderr," -t : use VT100 display\n", Fl::help);
     exit(1);
   }
-  if (!getenv("DISPLAY")) terminal = 1;
+  if (!fl_getenv("DISPLAY")) terminal = 1;
   if (!terminal)
 #endif
 #ifdef FLTK
