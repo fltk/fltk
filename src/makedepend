@@ -219,7 +219,7 @@ Fl_Help_View.o: ../FL/Fl_Valuator.H ../FL/fl_draw.H ../FL/Enumerations.H
 Fl_Help_View.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
 Fl_Help_View.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 Fl_Help_View.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_Help_View.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H ../FL/filename.H
+Fl_Help_View.o: ../FL/Fl_RGB_Image.H ../FL/filename.H ../FL/Fl_Shared_Image.H
 Fl_Help_View.o: ../FL/Fl_Window.H ../FL/Fl.H ../FL/Fl_Group.H ../FL/fl_utf8.h
 Fl_Help_View.o: ../FL/filename.H flstring.h ../config.h
 Fl_Image.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
@@ -1904,8 +1904,10 @@ drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.o: ../FL/math.h
 fl_images_core.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
 fl_images_core.o: ../FL/Fl_BMP_Image.H ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H
 fl_images_core.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_PNG_Image.H
-fl_images_core.o: ../FL/Fl_PNM_Image.H flstring.h ../FL/Fl_Export.H
-fl_images_core.o: ../config.h
+fl_images_core.o: ../FL/Fl_PNM_Image.H ../FL/Fl_SVG_Image.H ../FL/Fl_Image.H
+fl_images_core.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Export.H
+fl_images_core.o: ../FL/fl_types.h ../FL/platform_types.h ../FL/Fl_Widget.H
+fl_images_core.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_BMP_Image.o: ../FL/Fl_BMP_Image.H ../FL/Fl_Image.H ../FL/fl_utf8.h
 Fl_BMP_Image.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_BMP_Image.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -1933,8 +1935,9 @@ Fl_Help_Dialog.o: ../FL/Fl_Valuator.H ../FL/fl_draw.H ../FL/Enumerations.H
 Fl_Help_Dialog.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
 Fl_Help_Dialog.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 Fl_Help_Dialog.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_Help_Dialog.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H
-Fl_Help_Dialog.o: ../FL/filename.H flstring.h ../config.h ../FL/fl_ask.H
+Fl_Help_Dialog.o: ../FL/Fl_RGB_Image.H ../FL/filename.H
+Fl_Help_Dialog.o: ../FL/Fl_Shared_Image.H flstring.h ../config.h
+Fl_Help_Dialog.o: ../FL/fl_ask.H
 Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H
 Fl_JPEG_Image.o: ../FL/Fl_Shared_Image.H ../FL/fl_utf8.h ../FL/Fl.H
 Fl_JPEG_Image.o: ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
@@ -1950,6 +1953,19 @@ Fl_PNM_Image.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_PNM_Image.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_PNM_Image.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_PNM_Image.H
 Fl_PNM_Image.o: ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h ../config.h
+Fl_SVG_Image.o: ../config.h ../FL/Fl_SVG_Image.H ../FL/Fl_Image.H
+Fl_SVG_Image.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Export.H
+Fl_SVG_Image.o: ../FL/fl_types.h ../FL/platform_types.h ../FL/Fl_Widget.H
+Fl_SVG_Image.o: ../FL/fl_utf8.h ../FL/fl_draw.H ../FL/Fl_Screen_Driver.H
+Fl_SVG_Image.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_SVG_Image.o: ../FL/fl_types.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/fl_utf8.h
+Fl_SVG_Image.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H
+Fl_SVG_Image.o: ../FL/fl_draw.H ../FL/Enumerations.H
+Fl_SVG_Image.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_SVG_Image.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
+Fl_SVG_Image.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
+Fl_SVG_Image.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
+Fl_SVG_Image.o: ../nanosvg/nanosvg.h ../nanosvg/altsvgrast.h
 flstring.o: flstring.h ../FL/Fl_Export.H ../config.h
 numericsort.o: ../FL/platform_types.h ../FL/filename.H ../FL/Fl_Export.H
 vsnprintf.o: flstring.h ../FL/Fl_Export.H ../config.h

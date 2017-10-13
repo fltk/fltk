@@ -312,9 +312,9 @@ factory.o: ../FL/filename.H ../FL/Fl_Counter.H ../FL/Fl_Spinner.H
 factory.o: ../FL/Fl_File_Input.H ../FL/Fl_Text_Display.H ../FL/fl_draw.H
 factory.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Editor.H
 factory.o: ../FL/Fl_Text_Display.H ../FL/Fl_Clock.H ../FL/Fl_Help_View.H
-factory.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Progress.H ../FL/Fl_Adjuster.H
-factory.o: ../FL/Fl_Dial.H ../FL/Fl_Roller.H ../FL/Fl_Output.H
-factory.o: ../FL/Fl_Input.H ../FL/Fl_Value_Input.H ../FL/Fl_Value_Output.H
+factory.o: ../FL/Fl_Progress.H ../FL/Fl_Adjuster.H ../FL/Fl_Dial.H
+factory.o: ../FL/Fl_Roller.H ../FL/Fl_Output.H ../FL/Fl_Input.H
+factory.o: ../FL/Fl_Value_Input.H ../FL/Fl_Value_Output.H
 factory.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Multi_Label.H
 file.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h alignment_panel.h
 file.o: ../FL/Fl.H ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
@@ -350,16 +350,15 @@ fluid.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/fl_draw.H
 fluid.o: ../FL/Enumerations.H ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
 fluid.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 fluid.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-fluid.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H ../FL/filename.H
-fluid.o: ../FL/Fl_Hold_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
-fluid.o: ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
-fluid.o: ../FL/fl_ask.H ../FL/fl_draw.H ../FL/Fl_File_Chooser.H
-fluid.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H ../FL/Fl_Preferences.H
-fluid.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H
-fluid.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
-fluid.o: ../FL/Fl_File_Input.H ../FL/Fl_Return_Button.H ../FL/Fl_PNG_Image.H
-fluid.o: ../FL/fl_message.H ../FL/fl_ask.H ../FL/filename.H
-fluid.o: ../FL/Fl_Native_File_Chooser.H ../FL/Fl_Printer.H
+fluid.o: ../FL/Fl_RGB_Image.H ../FL/filename.H ../FL/Fl_Hold_Browser.H
+fluid.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Menu_Bar.H
+fluid.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/fl_ask.H ../FL/fl_draw.H
+fluid.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+fluid.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
+fluid.o: ../FL/Fl_File_Icon.H ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
+fluid.o: ../FL/Fl_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Return_Button.H
+fluid.o: ../FL/Fl_PNG_Image.H ../FL/fl_message.H ../FL/fl_ask.H
+fluid.o: ../FL/filename.H ../FL/Fl_Native_File_Chooser.H ../FL/Fl_Printer.H
 fluid.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H ../FL/Fl_Window.H
 fluid.o: ../FL/fl_utf8.h ../src/flstring.h ../config.h alignment_panel.h
 fluid.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Display.H
