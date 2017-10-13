@@ -76,24 +76,15 @@ float Fl_SVG_Image::svg_scaling_(int W, int H) {
   return (f1 < f2) ? f1 : f2;
 }
 
-/** Opens for reading a potentially gzip'ed file identified by a UTF-8 encoded filename. */
-void* Fl_SVG_Image::fl_gzopen(const char *fname) {
-#if defined(HAVE_LIBZ)
-  int fd = fl_open_ext(fname, 0, 0);
-  if (fd < 0) return NULL;
-  return gzdopen(fd, "r");
-#else
-  return NULL;
-#endif // HAVE_LIBZ
-}
-
 #if defined(HAVE_LIBZ)
 
 static char *svg_inflate(const char *fname) {
   struct stat b;
   fl_stat(fname, &b);
   long size = b.st_size;
-  gzFile gzf = (gzFile)Fl_SVG_Image::fl_gzopen(fname);
+  int fd = fl_open_ext(fname, 0, 0);
+  if (fd < 0) return NULL;
+  gzFile gzf =  gzdopen(fd, "r");
   if (!gzf) return NULL;
   int l;
   int direct = gzdirect(gzf);
