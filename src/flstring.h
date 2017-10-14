@@ -3,7 +3,7 @@
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2016 by Bill Spitzak and others.
+ * Copyright 1998-2017 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -42,14 +42,14 @@
 #  if defined(WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #    define strcasecmp(s,t)	_stricmp((s), (t))
 #    define strncasecmp(s,t,n)	_strnicmp((s), (t), (n))
-/* Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
- * on Windows, which is supposed to be POSIX compliant...  Some of these
- * functions are also defined in ISO C99...
+/*
+ *   Visual C++ 2005 incorrectly displays a warning about the use of
+ *   POSIX APIs on Windows, which is supposed to be POSIX compliant...
+ *   Some of these functions are also defined in ISO C99...
  */
-#    ifndef __WATCOMC__
+#    if defined(_MSC_VER) /* Visual C++ aka Visual Studio */
 #      define strdup _strdup
-#      /* define unlink _unlink */
-#    endif /* !__WATCOMC__ */
+#    endif /* _MSC_VER */
 #  endif /* WIN32 */
 
 #  ifdef __cplusplus
