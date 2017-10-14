@@ -2,7 +2,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
 // API changes + filter improvements by Nathan Vander Wilt 2005
 //
@@ -28,14 +28,14 @@
 #include <stdio.h>		// sprintf
 #include <wchar.h>
 
-#define FNFC_MAX_PATH 32768		// XXX: MAX_PATH under win32 is 260, too small for modern use
+#define FNFC_MAX_PATH 32768	// XXX: MAX_PATH under win32 is 260, too small for modern use
 
 #include <FL/Fl_Native_File_Chooser.H>
 #  include <windows.h>
 #  include <commdlg.h>		// OPENFILENAMEW, GetOpenFileName()
 #  include <shlobj.h>		// BROWSEINFOW, SHBrowseForFolder()
 #  include <FL/filename.H>	// FL_EXPORT
-#include <FL/x.H> // for fl_open_display
+#include <FL/x.H>		// fl_open_display
 
 
 class Fl_WinAPI_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
@@ -1029,7 +1029,7 @@ static LPCWSTR utf8towchar(const char *in) {
   return wout;
 }
 
-#endif /*!FL_DOXYGEN*/
+#endif /* !FL_DOXYGEN */
 
 //
 // End of "$Id$".
