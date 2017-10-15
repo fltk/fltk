@@ -286,7 +286,7 @@ char * fl_utf2mbcs(const char *s)
 /** Cross-platform function to get environment variables with a UTF-8 encoded
   name or value.
 
-  This function is especially useful under the Windows platform where
+  This function is especially useful on the Windows platform where
   non-ASCII environment variables are encoded as wide characters.
   The returned value of the variable is encoded in UTF-8 as well.
 
@@ -316,13 +316,13 @@ char *fl_getenv(const char* v) {
 
 /** Cross-platform function to open files with a UTF-8 encoded name.
 
- This function is especially useful under the MSWindows platform where the
- standard open() function fails with UTF-8 encoded non-ASCII filenames.
- \param f  the UTF-8 encoded filename
- \param oflags  other arguments are as in the standard open() function
- \return  a file descriptor upon successful completion, or -1 in case of error.
- \sa fl_fopen(), fl_open_ext().
- */
+  This function is especially useful on the Windows platform where the
+  standard open() function fails with UTF-8 encoded non-ASCII filenames.
+  \param f  the UTF-8 encoded filename
+  \param oflags  other arguments are as in the standard open() function
+  \return  a file descriptor upon successful completion, or -1 in case of error.
+  \sa fl_fopen(), fl_open_ext().
+*/
 int fl_open(const char* f, int oflags, ...)
 {
   int pmode;
@@ -334,17 +334,17 @@ int fl_open(const char* f, int oflags, ...)
 }
 
 /** Cross-platform function to open files with a UTF-8 encoded name.
- In comparison with fl_open(), this function allows to control whether
- the file is opened in binary (a.k.a. untranslated) mode. This is especially
- useful under the MSWindows platform where files are by default opened in
- text (translated) mode.
- \param fname  the UTF-8 encoded filename
- \param translation if zero, the file is to be accessed in untranslated (a.k.a. binary)
- mode.
- \param oflags,...  these arguments are as in the standard open() function.
- Setting \p oflags to zero opens the file for reading.
- \return  a file descriptor upon successful completion, or -1 in case of error.
- */
+  In comparison with fl_open(), this function allows to control whether
+  the file is opened in binary (a.k.a. untranslated) mode. This is especially
+  useful on the Windows platform where files are by default opened in
+  text (translated) mode.
+  \param fname  the UTF-8 encoded filename
+  \param translation if zero, the file is to be accessed in untranslated (a.k.a. binary)
+  mode.
+  \param oflags,...  these arguments are as in the standard open() function.
+  Setting \p oflags to zero opens the file for reading.
+  \return  a file descriptor upon successful completion, or -1 in case of error.
+*/
 int fl_open_ext(const char* fname, int translation, int oflags, ...)
 {
   int pmode;
@@ -358,7 +358,7 @@ int fl_open_ext(const char* fname, int translation, int oflags, ...)
 
 /** Cross-platform function to open files with a UTF-8 encoded name.
 
-  This function is especially useful under the MSWindows platform where the
+  This function is especially useful on the Windows platform where the
   standard fopen() function fails with UTF-8 encoded non-ASCII filenames.
   \param f  the UTF-8 encoded filename
   \param mode  same as the second argument of the standard fopen() function
@@ -371,10 +371,10 @@ FILE *fl_fopen(const char* f, const char *mode) {
 
 /** Cross-platform function to run a system command with a UTF-8 encoded string.
 
-  This function is especially useful under the MSWindows platform where
+  This function is especially useful on the Windows platform where
   non-ASCII program (file) names must be encoded as wide characters.
 
-  On platforms other than MSWindows this function calls system() directly.
+  On platforms other than Windows this function calls system() directly.
 
   \param[in] cmd the UTF-8 encoded command string
   \return the return value of _wsystem() on Windows or system() on other platforms.
@@ -393,7 +393,7 @@ int fl_execvp(const char *file, char *const *argv)
 /** Cross-platform function to set a files mode() with a UTF-8 encoded
   name or value.
 
- This function is especially useful under the MSWindows platform where the
+ This function is especially useful on the Windows platform where the
  standard chmod() function fails with UTF-8 encoded non-ASCII filenames.
 
   \param[in] f the UTF-8 encoded filename
@@ -407,7 +407,7 @@ int fl_chmod(const char* f, int mode) {
 /** Cross-platform function to test a files access() with a UTF-8 encoded
   name or value.
 
- This function is especially useful under the MSWindows platform where the
+ This function is especially useful on the Windows platform where the
  standard access() function fails with UTF-8 encoded non-ASCII filenames.
 
   \param[in] f the UTF-8 encoded filename
@@ -421,8 +421,8 @@ int fl_access(const char* f, int mode) {
 /** Cross-platform function to stat() a file using a UTF-8 encoded
   name or value.
 
- This function is especially useful under the MSWindows platform where the
- standard stat() function fails with UTF-8 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard stat() function fails with UTF-8 encoded non-ASCII filenames.
 
   \param[in] f the UTF-8 encoded filename
   \param     b the stat struct to populate
@@ -437,8 +437,8 @@ int fl_stat(const char* f, struct stat *b) {
 /** Cross-platform function to get the current working directory
     as a UTF-8 encoded value.
 
- This function is especially useful under the MSWindows platform where the
- standard _wgetcwd() function returns UTF-16 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard _wgetcwd() function returns UTF-16 encoded non-ASCII filenames.
 
   \param     b the buffer to populate
   \param     l the length of the buffer
@@ -464,11 +464,10 @@ int fl_unlink(const char* fname) {
   return Fl::system_driver()->unlink(fname);
 }
 
-/** Cross-platform function to create a directory with a UTF-8 encoded
-  name.
+/** Cross-platform function to create a directory with a UTF-8 encoded name.
 
- This function is especially useful on the MSWindows platform where the
- standard _wmkdir() function expects UTF-16 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard _wmkdir() function expects UTF-16 encoded non-ASCII filenames.
 
   \param[in] f the UTF-8 encoded filename
   \param[in] mode the mode of the directory
@@ -481,8 +480,8 @@ int fl_mkdir(const char* f, int mode) {
 /** Cross-platform function to remove a directory with a UTF-8 encoded
   name.
 
- This function is especially useful on the MSWindows platform where the
- standard _wrmdir() function expects UTF-16 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard _wrmdir() function expects UTF-16 encoded non-ASCII filenames.
 
   \param[in] f the UTF-8 encoded filename to remove
   \return    the return value of _wrmdir() on Windows or rmdir() on other platforms.
@@ -494,8 +493,8 @@ int fl_rmdir(const char* f) {
 /** Cross-platform function to rename a filesystem object using
     UTF-8 encoded names.
 
- This function is especially useful on the MSWindows platform where the
- standard _wrename() function expects UTF-16 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where the
+  standard _wrename() function expects UTF-16 encoded non-ASCII filenames.
 
   \param[in] f the UTF-8 encoded filename to change
   \param[in] n the new UTF-8 encoded filename to set
@@ -546,34 +545,34 @@ void fl_make_path_for_file( const char *path ) {
 // this part comes from file src/fl_utf.c of FLTK 1.3
 //============================================================
 
-/*!Set to 1 to turn bad UTF-8 bytes into ISO-8859-1. If this is zero
- they are instead turned into the Unicode REPLACEMENT CHARACTER, of
- value 0xfffd.
- If this is on fl_utf8decode() will correctly map most (perhaps all)
- human-readable text that is in ISO-8859-1. This may allow you
- to completely ignore character sets in your code because virtually
- everything is either ISO-8859-1 or UTF-8.
- */
+/** Set to 1 to turn bad UTF-8 bytes into ISO-8859-1. If this is zero
+  they are instead turned into the Unicode REPLACEMENT CHARACTER, of
+  value 0xfffd.
+  If this is on fl_utf8decode() will correctly map most (perhaps all)
+  human-readable text that is in ISO-8859-1. This may allow you
+  to completely ignore character sets in your code because virtually
+  everything is either ISO-8859-1 or UTF-8.
+*/
 #ifndef ERRORS_TO_ISO8859_1
 # define ERRORS_TO_ISO8859_1 1
 #endif
 
-/*!Set to 1 to turn bad UTF-8 bytes in the 0x80-0x9f range into the
- Unicode index for Microsoft's CP1252 character set. You should
- also set ERRORS_TO_ISO8859_1. With this a huge amount of more
- available text (such as all web pages) are correctly converted
- to Unicode.
- */
+/** Set to 1 to turn bad UTF-8 bytes in the 0x80-0x9f range into the
+  Unicode index for Microsoft's CP1252 character set. You should
+  also set ERRORS_TO_ISO8859_1. With this a huge amount of more
+  available text (such as all web pages) are correctly converted
+  to Unicode.
+*/
 #ifndef ERRORS_TO_CP1252
 # define ERRORS_TO_CP1252 1
 #endif
 
-/*!A number of Unicode code points are in fact illegal and should not
- be produced by a UTF-8 converter. Turn this on will replace the
- bytes in those encodings with errors. If you do this then converting
- arbitrary 16-bit data to UTF-8 and then back is not an identity,
- which will probably break a lot of software.
- */
+/** A number of Unicode code points are in fact illegal and should not
+  be produced by a UTF-8 converter. Turn this on will replace the
+  bytes in those encodings with errors. If you do this then converting
+  arbitrary 16-bit data to UTF-8 and then back is not an identity,
+  which will probably break a lot of software.
+*/
 #ifndef STRICT_RFC3629
 # define STRICT_RFC3629 0
 #endif
@@ -590,37 +589,37 @@ static unsigned short cp1252[32] = {
 };
 #endif
 
-/*! Decode a single UTF-8 encoded character starting at \e p. The
- resulting Unicode value (in the range 0-0x10ffff) is returned,
- and \e len is set to the number of bytes in the UTF-8 encoding
- (adding \e len to \e p will point at the next character).
- 
- If \p p points at an illegal UTF-8 encoding, including one that
- would go past \e end, or where a code uses more bytes than
- necessary, then *(unsigned char*)p is translated as though it is
- in the Microsoft CP1252 character set and \e len is set to 1.
- Treating errors this way allows this to decode almost any
- ISO-8859-1 or CP1252 text that has been mistakenly placed where
- UTF-8 is expected, and has proven very useful.
- 
- If you want errors to be converted to error characters (as the
- standards recommend), adding a test to see if the length is
- unexpectedly 1 will work:
- 
- \code
- if (*p & 0x80) {              // what should be a multibyte encoding
- code = fl_utf8decode(p,end,&len);
- if (len<2) code = 0xFFFD;   // Turn errors into REPLACEMENT CHARACTER
- } else {                      // handle the 1-byte UTF-8 encoding:
- code = *p;
- len = 1;
- }
- \endcode
- 
- Direct testing for the 1-byte case (as shown above) will also
- speed up the scanning of strings where the majority of characters
- are ASCII.
- */
+/** Decode a single UTF-8 encoded character starting at \e p. The
+  resulting Unicode value (in the range 0-0x10ffff) is returned,
+  and \e len is set to the number of bytes in the UTF-8 encoding
+  (adding \e len to \e p will point at the next character).
+
+  If \p p points at an illegal UTF-8 encoding, including one that
+  would go past \e end, or where a code uses more bytes than
+  necessary, then *(unsigned char*)p is translated as though it is
+  in the Microsoft CP1252 character set and \e len is set to 1.
+  Treating errors this way allows this to decode almost any
+  ISO-8859-1 or CP1252 text that has been mistakenly placed where
+  UTF-8 is expected, and has proven very useful.
+
+  If you want errors to be converted to error characters (as the
+  standards recommend), adding a test to see if the length is
+  unexpectedly 1 will work:
+
+  \code
+  if (*p & 0x80) {              // what should be a multibyte encoding
+    code = fl_utf8decode(p,end,&len);
+    if (len<2) code = 0xFFFD;   // Turn errors into REPLACEMENT CHARACTER
+  } else {                      // handle the 1-byte UTF-8 encoding:
+    code = *p;
+    len = 1;
+  }
+  \endcode
+
+  Direct testing for the 1-byte case (as shown above) will also
+  speed up the scanning of strings where the majority of characters
+  are ASCII.
+*/
 unsigned fl_utf8decode(const char* p, const char* end, int* len)
 {
   unsigned char c = *(const unsigned char*)p;
@@ -695,24 +694,24 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   }
 }
 
-/*! Move \p p forward until it points to the start of a UTF-8
- character. If it already points at the start of one then it
- is returned unchanged. Any UTF-8 errors are treated as though each
- byte of the error is an individual character.
- 
- \e start is the start of the string and is used to limit the
- backwards search for the start of a UTF-8 character.
- 
- \e end is the end of the string and is assumed to be a break
- between characters. It is assumed to be greater than p.
- 
- This function is for moving a pointer that was jumped to the
- middle of a string, such as when doing a binary search for
- a position. You should use either this or fl_utf8back() depending
- on which direction your algorithm can handle the pointer
- moving. Do not use this to scan strings, use fl_utf8decode()
- instead.
- */
+/** Move \p p forward until it points to the start of a UTF-8
+  character. If it already points at the start of one then it
+  is returned unchanged. Any UTF-8 errors are treated as though each
+  byte of the error is an individual character.
+
+  \e start is the start of the string and is used to limit the
+  backwards search for the start of a UTF-8 character.
+
+  \e end is the end of the string and is assumed to be a break
+  between characters. It is assumed to be greater than p.
+
+  This function is for moving a pointer that was jumped to the
+  middle of a string, such as when doing a binary search for
+  a position. You should use either this or fl_utf8back() depending
+  on which direction your algorithm can handle the pointer
+  moving. Do not use this to scan strings, use fl_utf8decode()
+  instead.
+*/
 const char* fl_utf8fwd(const char* p, const char* start, const char* end)
 {
   const char* a;
@@ -731,19 +730,19 @@ const char* fl_utf8fwd(const char* p, const char* start, const char* end)
   return p;
 }
 
-/*! Move \p p backward until it points to the start of a UTF-8
- character. If it already points at the start of one then it
- is returned unchanged. Any UTF-8 errors are treated as though each
- byte of the error is an individual character.
- 
- \e start is the start of the string and is used to limit the
- backwards search for the start of a UTF-8 character.
- 
- \e end is the end of the string and is assumed to be a break
- between characters. It is assumed to be greater than p.
- 
- If you wish to decrement a UTF-8 pointer, pass p-1 to this.
- */
+/** Move \p p backward until it points to the start of a UTF-8
+  character. If it already points at the start of one then it
+  is returned unchanged. Any UTF-8 errors are treated as though each
+  byte of the error is an individual character.
+
+  \e start is the start of the string and is used to limit the
+  backwards search for the start of a UTF-8 character.
+
+  \e end is the end of the string and is assumed to be a break
+  between characters. It is assumed to be greater than p.
+
+  If you wish to decrement a UTF-8 pointer, pass p-1 to this.
+*/
 const char* fl_utf8back(const char* p, const char* start, const char* end)
 {
   const char* a;
@@ -761,8 +760,9 @@ const char* fl_utf8back(const char* p, const char* start, const char* end)
   return p;
 }
 
-/*! Returns number of bytes that utf8encode() will use to encode the
- character \p ucs. */
+/** Returns number of bytes that utf8encode() will use to encode the
+  character \p ucs.
+*/
 int fl_utf8bytes(unsigned ucs) {
   if (ucs < 0x000080U) {
     return 1;
@@ -777,22 +777,22 @@ int fl_utf8bytes(unsigned ucs) {
   }
 }
 
-/*! Write the UTF-8 encoding of \e ucs into \e buf and return the
- number of bytes written. Up to 4 bytes may be written. If you know
- that \p ucs is less than 0x10000 then at most 3 bytes will be written.
- If you wish to speed this up, remember that anything less than 0x80
- is written as a single byte.
- 
- If ucs is greater than 0x10ffff this is an illegal character
- according to RFC 3629. These are converted as though they are
- 0xFFFD (REPLACEMENT CHARACTER).
- 
- RFC 3629 also says many other values for \p ucs are illegal (in
- the range 0xd800 to 0xdfff, or ending with 0xfffe or
- 0xffff). However I encode these as though they are legal, so that
- utf8encode/fl_utf8decode will be the identity for all codes between 0
- and 0x10ffff.
- */
+/** Write the UTF-8 encoding of \e ucs into \e buf and return the
+  number of bytes written. Up to 4 bytes may be written. If you know
+  that \p ucs is less than 0x10000 then at most 3 bytes will be written.
+  If you wish to speed this up, remember that anything less than 0x80
+  is written as a single byte.
+
+  If ucs is greater than 0x10ffff this is an illegal character
+  according to RFC 3629. These are converted as though they are
+  0xFFFD (REPLACEMENT CHARACTER).
+
+  RFC 3629 also says many other values for \p ucs are illegal (in
+  the range 0xd800 to 0xdfff, or ending with 0xfffe or
+  0xffff). However I encode these as though they are legal, so that
+  utf8encode/fl_utf8decode will be the identity for all codes between 0
+  and 0x10ffff.
+*/
 int fl_utf8encode(unsigned ucs, char* buf) {
   if (ucs < 0x000080U) {
     buf[0] = ucs;
@@ -821,32 +821,32 @@ int fl_utf8encode(unsigned ucs, char* buf) {
   }
 }
 
-/*! Convert a single 32-bit Unicode codepoint into an array of 16-bit
- characters. These are used by some system calls, especially on Windows.
- 
- \p ucs is the value to convert.
- 
- \p dst points at an array to write, and \p dstlen is the number of
- locations in this array. At most \p dstlen words will be
- written, and a 0 terminating word will be added if \p dstlen is
- large enough. Thus this function will never overwrite the buffer
- and will attempt return a zero-terminated string if space permits.
- If \p dstlen is zero then \p dst can be set to NULL and no data
- is written, but the length is returned.
- 
- The return value is the number of 16-bit words that \e would be written
- to \p dst if it is large enough, not counting any terminating
- zero.
- 
- If the return value is greater than \p dstlen it indicates truncation,
- you should then allocate a new array of size return+1 and call this again.
- 
- Unicode characters in the range 0x10000 to 0x10ffff are converted to
- "surrogate pairs" which take two words each (in UTF-16 encoding).
- Typically, setting \p dstlen to 2 will ensure that any valid Unicode
- value can be converted, and setting \p dstlen to 3 or more will allow
- a NULL terminated sequence to be returned.
- */
+/** Convert a single 32-bit Unicode codepoint into an array of 16-bit
+  characters. These are used by some system calls, especially on Windows.
+
+  \p ucs is the value to convert.
+
+  \p dst points at an array to write, and \p dstlen is the number of
+  locations in this array. At most \p dstlen words will be
+  written, and a 0 terminating word will be added if \p dstlen is
+  large enough. Thus this function will never overwrite the buffer
+  and will attempt return a zero-terminated string if space permits.
+  If \p dstlen is zero then \p dst can be set to NULL and no data
+  is written, but the length is returned.
+
+  The return value is the number of 16-bit words that \e would be written
+  to \p dst if it is large enough, not counting any terminating
+  zero.
+
+  If the return value is greater than \p dstlen it indicates truncation,
+  you should then allocate a new array of size return+1 and call this again.
+
+  Unicode characters in the range 0x10000 to 0x10ffff are converted to
+  "surrogate pairs" which take two words each (in UTF-16 encoding).
+  Typically, setting \p dstlen to 2 will ensure that any valid Unicode
+  value can be converted, and setting \p dstlen to 3 or more will allow
+  a NULL terminated sequence to be returned.
+*/
 unsigned fl_ucs_to_Utf16(const unsigned ucs, unsigned short *dst, const unsigned dstlen)
 {
   /* The rule for direct conversion from UCS to UTF16 is:
@@ -888,34 +888,34 @@ unsigned fl_ucs_to_Utf16(const unsigned ucs, unsigned short *dst, const unsigned
   return count;
 } /* fl_ucs_to_Utf16 */
 
-/*! Convert a UTF-8 sequence into an array of 16-bit characters. These
- are used by some system calls, especially on Windows.
- 
- \p src points at the UTF-8, and \p srclen is the number of bytes to
- convert.
- 
- \p dst points at an array to write, and \p dstlen is the number of
- locations in this array. At most \p dstlen-1 words will be
- written there, plus a 0 terminating word. Thus this function
- will never overwrite the buffer and will always return a
- zero-terminated string. If \p dstlen is zero then \p dst can be
- null and no data is written, but the length is returned.
- 
- The return value is the number of 16-bit words that \e would be written
- to \p dst if it were long enough, not counting the terminating
- zero. If the return value is greater or equal to \p dstlen it
- indicates truncation, you can then allocate a new array of size
- return+1 and call this again.
- 
- Errors in the UTF-8 are converted as though each byte in the
- erroneous string is in the Microsoft CP1252 encoding. This allows
- ISO-8859-1 text mistakenly identified as UTF-8 to be printed
- correctly.
- 
- Unicode characters in the range 0x10000 to 0x10ffff are converted to
- "surrogate pairs" which take two words each (this is called UTF-16
- encoding).
- */
+/** Convert a UTF-8 sequence into an array of 16-bit characters. These
+  are used by some system calls, especially on Windows.
+
+  \p src points at the UTF-8, and \p srclen is the number of bytes to
+  convert.
+
+  \p dst points at an array to write, and \p dstlen is the number of
+  locations in this array. At most \p dstlen-1 words will be
+  written there, plus a 0 terminating word. Thus this function
+  will never overwrite the buffer and will always return a
+  zero-terminated string. If \p dstlen is zero then \p dst can be
+  null and no data is written, but the length is returned.
+
+  The return value is the number of 16-bit words that \e would be written
+  to \p dst if it were long enough, not counting the terminating
+  zero. If the return value is greater or equal to \p dstlen it
+  indicates truncation, you can then allocate a new array of size
+  return+1 and call this again.
+
+  Errors in the UTF-8 are converted as though each byte in the
+  erroneous string is in the Microsoft CP1252 encoding. This allows
+  ISO-8859-1 text mistakenly identified as UTF-8 to be printed
+  correctly.
+
+  Unicode characters in the range 0x10000 to 0x10ffff are converted to
+  "surrogate pairs" which take two words each (this is called UTF-16
+  encoding).
+*/
 unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
                         unsigned short* dst, unsigned dstlen)
 {
@@ -954,26 +954,26 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
 }
 
 
-/*! Convert a UTF-8 sequence into an array of 1-byte characters.
- 
- If the UTF-8 decodes to a character greater than 0xff then it is
- replaced with '?'.
- 
- Errors in the UTF-8 sequence are converted as individual bytes, same as
- fl_utf8decode() does. This allows ISO-8859-1 text mistakenly identified
- as UTF-8 to be printed correctly (and possibly CP1252 on Windows).
- 
- \p src points at the UTF-8 sequence, and \p srclen is the number of
- bytes to convert.
- 
- Up to \p dstlen bytes are written to \p dst, including a null
- terminator. The return value is the number of bytes that would be
- written, not counting the null terminator. If greater or equal to
- \p dstlen then if you malloc a new array of size n+1 you will have
- the space needed for the entire string. If \p dstlen is zero then
- nothing is written and this call just measures the storage space
- needed.
- */
+/** Convert a UTF-8 sequence into an array of 1-byte characters.
+
+  If the UTF-8 decodes to a character greater than 0xff then it is
+  replaced with '?'.
+
+  Errors in the UTF-8 sequence are converted as individual bytes, same as
+  fl_utf8decode() does. This allows ISO-8859-1 text mistakenly identified
+  as UTF-8 to be printed correctly (and possibly CP1252 on Windows).
+
+  \p src points at the UTF-8 sequence, and \p srclen is the number of
+  bytes to convert.
+
+  Up to \p dstlen bytes are written to \p dst, including a null
+  terminator. The return value is the number of bytes that would be
+  written, not counting the null terminator. If greater or equal to
+  \p dstlen then if you malloc a new array of size n+1 you will have
+  the space needed for the entire string. If \p dstlen is zero then
+  nothing is written and this call just measures the storage space
+  needed.
+*/
 unsigned fl_utf8toa(const char* src, unsigned srclen,
                     char* dst, unsigned dstlen)
 {
@@ -1009,26 +1009,26 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
 }
 
 
-/*! Convert an ISO-8859-1 (ie normal c-string) byte stream to UTF-8.
- 
- It is possible this should convert Microsoft's CP1252 to UTF-8
- instead. This would translate the codes in the range 0x80-0x9f
- to different characters. Currently it does not do this.
- 
- Up to \p dstlen bytes are written to \p dst, including a null
- terminator. The return value is the number of bytes that would be
- written, not counting the null terminator. If greater or equal to
- \p dstlen then if you malloc a new array of size n+1 you will have
- the space needed for the entire string. If \p dstlen is zero then
- nothing is written and this call just measures the storage space
- needed.
- 
- \p srclen is the number of bytes in \p src to convert.
- 
- If the return value equals \p srclen then this indicates that
- no conversion is necessary, as only ASCII characters are in the
- string.
- */
+/** Convert an ISO-8859-1 (ie normal c-string) byte stream to UTF-8.
+
+  It is possible this should convert Microsoft's CP1252 to UTF-8
+  instead. This would translate the codes in the range 0x80-0x9f
+  to different characters. Currently it does not do this.
+
+  Up to \p dstlen bytes are written to \p dst, including a null
+  terminator. The return value is the number of bytes that would be
+  written, not counting the null terminator. If greater or equal to
+  \p dstlen then if you malloc a new array of size n+1 you will have
+  the space needed for the entire string. If \p dstlen is zero then
+  nothing is written and this call just measures the storage space
+  needed.
+
+  \p srclen is the number of bytes in \p src to convert.
+
+  If the return value equals \p srclen then this indicates that
+  no conversion is necessary, as only ASCII characters are in the
+  string.
+*/
 unsigned fl_utf8froma(char* dst, unsigned dstlen,
                       const char* src, unsigned srclen) {
   const char* p = src;
@@ -1060,26 +1060,26 @@ unsigned fl_utf8froma(char* dst, unsigned dstlen,
 }
 
 
-/*! Examines the first \p srclen bytes in \p src and returns a verdict
- on whether it is UTF-8 or not.
- - Returns 0 if there is any illegal UTF-8 sequences, using the
- same rules as fl_utf8decode(). Note that some UCS values considered
- illegal by RFC 3629, such as 0xffff, are considered legal by this.
- - Returns 1 if there are only single-byte characters (ie no bytes
- have the high bit set). This is legal UTF-8, but also indicates
- plain ASCII. It also returns 1 if \p srclen is zero.
- - Returns 2 if there are only characters less than 0x800.
- - Returns 3 if there are only characters less than 0x10000.
- - Returns 4 if there are characters in the 0x10000 to 0x10ffff range.
- 
- Because there are many illegal sequences in UTF-8, it is almost
- impossible for a string in another encoding to be confused with
- UTF-8. This is very useful for transitioning Unix to UTF-8
- filenames, you can simply test each filename with this to decide
- if it is UTF-8 or in the locale encoding. My hope is that if
- this is done we will be able to cleanly transition to a locale-less
- encoding.
- */
+/** Examines the first \p srclen bytes in \p src and returns a verdict
+  on whether it is UTF-8 or not.
+  - Returns 0 if there is any illegal UTF-8 sequences, using the
+  same rules as fl_utf8decode(). Note that some UCS values considered
+  illegal by RFC 3629, such as 0xffff, are considered legal by this.
+  - Returns 1 if there are only single-byte characters (ie no bytes
+  have the high bit set). This is legal UTF-8, but also indicates
+  plain ASCII. It also returns 1 if \p srclen is zero.
+  - Returns 2 if there are only characters less than 0x800.
+  - Returns 3 if there are only characters less than 0x10000.
+  - Returns 4 if there are characters in the 0x10000 to 0x10ffff range.
+
+  Because there are many illegal sequences in UTF-8, it is almost
+  impossible for a string in another encoding to be confused with
+  UTF-8. This is very useful for transitioning Unix to UTF-8
+  filenames, you can simply test each filename with this to decide
+  if it is UTF-8 or in the locale encoding. My hope is that if
+  this is done we will be able to cleanly transition to a locale-less
+  encoding.
+*/
 int fl_utf8test(const char* src, unsigned srclen) {
   int ret = 1;
   const char* p = src;
@@ -1105,36 +1105,36 @@ static int mk_wcwidth(unsigned int ucs);
  */
 #include "xutf8/mk_wcwidth.c"
 
-/** wrapper to adapt Markus Kuhn's implementation of wcwidth() for FLTK
- \param [in] ucs Unicode character value
- \returns width of character in columns
- 
- See http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c for Markus Kuhn's
- original implementation of wcwidth() and wcswidth()
- (defined in IEEE Std 1002.1-2001) for Unicode.
- 
- \b WARNING: this function returns widths for "raw" Unicode characters.
- It does not even try to map C1 control characters (0x80 to 0x9F) to
- CP1252, and C0/C1 control characters and DEL will return -1.
- You are advised to use fl_width(const char* src) instead.
- */
+/** Wrapper to adapt Markus Kuhn's implementation of wcwidth() for FLTK.
+  \param [in] ucs Unicode character value
+  \returns width of character in columns
+
+  See http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c for Markus Kuhn's
+  original implementation of wcwidth() and wcswidth()
+  (defined in IEEE Std 1002.1-2001) for Unicode.
+
+  \b WARNING: this function returns widths for "raw" Unicode characters.
+  It does not even try to map C1 control characters (0x80 to 0x9F) to
+  CP1252, and C0/C1 control characters and DEL will return -1.
+  You are advised to use fl_width(const char* src) instead.
+*/
 int fl_wcwidth_(unsigned int ucs) {
   return mk_wcwidth(ucs);
 }
 
 /** extended wrapper around  fl_wcwidth_(unsigned int ucs) function.
- \param[in] src pointer to start of UTF-8 byte sequence
- \returns width of character in columns
- 
- Depending on build options, this function may map C1 control
- characters (0x80 to 0x9f) to CP1252, and return the width of
- that character instead. This is not the same behaviour as
- fl_wcwidth_(unsigned int ucs) .
- 
- Note that other control characters and DEL will still return -1,
- so if you want different behaviour, you need to test for those
- characters before calling fl_wcwidth(), and handle them separately.
- */
+  \param[in] src pointer to start of UTF-8 byte sequence
+  \returns width of character in columns
+
+  Depending on build options, this function may map C1 control
+  characters (0x80 to 0x9f) to CP1252, and return the width of
+  that character instead. This is not the same behaviour as
+  fl_wcwidth_(unsigned int ucs) .
+
+  Note that other control characters and DEL will still return -1,
+  so if you want different behaviour, you need to test for those
+  characters before calling fl_wcwidth(), and handle them separately.
+*/
 int fl_wcwidth(const char* src) {
   int len = fl_utf8len(*src);
   int ret = 0;
@@ -1144,35 +1144,35 @@ int fl_wcwidth(const char* src) {
 }
 
 /**
- Converts a UTF-8 string into a wide character string.
- 
- This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except
- on Windows where it is equivalent to fl_utf8toUtf16 and returns
- UTF-16.
- 
- \p src points at the UTF-8, and \p srclen is the number of bytes to
- convert.
- 
- \p dst points at an array to write, and \p dstlen is the number of
- locations in this array. At most \p dstlen-1 wchar_t will be
- written there, plus a 0 terminating wchar_t.
- 
- The return value is the number of wchar_t that \e would be written
- to \p dst if it were long enough, not counting the terminating
- zero. If the return value is greater or equal to \p dstlen it
- indicates truncation, you can then allocate a new array of size
- return+1 and call this again.
- 
- Notice that sizeof(wchar_t) is 2 on Windows and is 4 on Linux
- and most other systems. Where wchar_t is 16 bits, Unicode
- characters in the range 0x10000 to 0x10ffff are converted to
- "surrogate pairs" which take two words each (this is called UTF-16
- encoding). If wchar_t is 32 bits this rather nasty problem is
- avoided.
- 
- Note that Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
- layer (cygwin1.dll, --enable-cygwin), either native (GDI) or X11.
- */
+  Converts a UTF-8 string into a wide character string.
+
+  This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except
+  on Windows where it is equivalent to fl_utf8toUtf16 and returns
+  UTF-16.
+
+  \p src points at the UTF-8, and \p srclen is the number of bytes to
+  convert.
+
+  \p dst points at an array to write, and \p dstlen is the number of
+  locations in this array. At most \p dstlen-1 wchar_t will be
+  written there, plus a 0 terminating wchar_t.
+
+  The return value is the number of wchar_t that \e would be written
+  to \p dst if it were long enough, not counting the terminating
+  zero. If the return value is greater or equal to \p dstlen it
+  indicates truncation, you can then allocate a new array of size
+  return+1 and call this again.
+
+  Notice that sizeof(wchar_t) is 2 on Windows and is 4 on Linux
+  and most other systems. Where wchar_t is 16 bits, Unicode
+  characters in the range 0x10000 to 0x10ffff are converted to
+  "surrogate pairs" which take two words each (this is called UTF-16
+  encoding). If wchar_t is 32 bits this rather nasty problem is
+  avoided.
+
+  Note that Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
+  layer (cygwin1.dll, --enable-cygwin), either native (GDI) or X11.
+*/
 unsigned fl_utf8towc(const char* src, unsigned srclen,
                      wchar_t* dst, unsigned dstlen)
 {
@@ -1180,72 +1180,72 @@ unsigned fl_utf8towc(const char* src, unsigned srclen,
 }
 
 
-/*! Turn "wide characters" as returned by some system calls
- (especially on Windows) into UTF-8.
- 
- Up to \p dstlen bytes are written to \p dst, including a null
- terminator. The return value is the number of bytes that would be
- written, not counting the null terminator. If greater or equal to
- \p dstlen then if you malloc a new array of size n+1 you will have
- the space needed for the entire string. If \p dstlen is zero then
- nothing is written and this call just measures the storage space
- needed.
- 
- \p srclen is the number of words in \p src to convert. On Windows
- this is not necessarily the number of characters, due to there
- possibly being "surrogate pairs" in the UTF-16 encoding used.
- On Unix wchar_t is 32 bits and each location is a character.
- 
- On Unix if a \p src word is greater than 0x10ffff then this is an
- illegal character according to RFC 3629. These are converted as
- though they are 0xFFFD (REPLACEMENT CHARACTER). Characters in the
- range 0xd800 to 0xdfff, or ending with 0xfffe or 0xffff are also
- illegal according to RFC 3629. However I encode these as though
- they are legal, so that fl_utf8towc will return the original data.
- 
- On Windows "surrogate pairs" are converted to a single character
- and UTF-8 encoded (as 4 bytes). Mismatched halves of surrogate
- pairs are converted as though they are individual characters.
- */
+/** Turn "wide characters" as returned by some system calls
+  (especially on Windows) into UTF-8.
+
+  Up to \p dstlen bytes are written to \p dst, including a null
+  terminator. The return value is the number of bytes that would be
+  written, not counting the null terminator. If greater or equal to
+  \p dstlen then if you malloc a new array of size n+1 you will have
+  the space needed for the entire string. If \p dstlen is zero then
+  nothing is written and this call just measures the storage space
+  needed.
+
+  \p srclen is the number of words in \p src to convert. On Windows
+  this is not necessarily the number of characters, due to there
+  possibly being "surrogate pairs" in the UTF-16 encoding used.
+  On Unix wchar_t is 32 bits and each location is a character.
+
+  On Unix if a \p src word is greater than 0x10ffff then this is an
+  illegal character according to RFC 3629. These are converted as
+  though they are 0xFFFD (REPLACEMENT CHARACTER). Characters in the
+  range 0xd800 to 0xdfff, or ending with 0xfffe or 0xffff are also
+  illegal according to RFC 3629. However I encode these as though
+  they are legal, so that fl_utf8towc will return the original data.
+
+  On Windows "surrogate pairs" are converted to a single character
+  and UTF-8 encoded (as 4 bytes). Mismatched halves of surrogate
+  pairs are converted as though they are individual characters.
+*/
 unsigned fl_utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen)
 {
   return Fl::system_driver()->utf8fromwc(dst, dstlen, src, srclen);
 }
 
 
-/*! Return true if the "locale" seems to indicate that UTF-8 encoding
- is used. If true the fl_utf8to_mb and fl_utf8from_mb don't do anything
- useful.
- 
- <i>It is highly recommended that you change your system so this
- does return true.</i> On Windows this is done by setting the
- "codepage" to CP_UTF8.  On Unix this is done by setting $LC_CTYPE
- to a string containing the letters "utf" or "UTF" in it, or by
- deleting all $LC* and $LANG environment variables. In the future
- it is likely that all non-Asian Unix systems will return true,
- due to the compatibility of UTF-8 with ISO-8859-1.
- */
+/** Return true if the "locale" seems to indicate that UTF-8 encoding
+  is used. If true the fl_utf8to_mb and fl_utf8from_mb don't do anything
+  useful.
+
+  <i>It is highly recommended that you change your system so this
+  does return true.</i> On Windows this is done by setting the
+  "codepage" to CP_UTF8.  On Unix this is done by setting $LC_CTYPE
+  to a string containing the letters "utf" or "UTF" in it, or by
+  deleting all $LC* and $LANG environment variables. In the future
+  it is likely that all non-Asian Unix systems will return true,
+  due to the compatibility of UTF-8 with ISO-8859-1.
+*/
 int fl_utf8locale()
 {
   return Fl::system_driver()->utf8locale();
 }
 
 
-/*! Convert the UTF-8 used by FLTK to the locale-specific encoding
- used for filenames (and sometimes used for data in files).
- Unfortunately due to stupid design you will have to do this as
- needed for filenames. This is a bug on both Unix and Windows.
- 
- Up to \p dstlen bytes are written to \p dst, including a null
- terminator. The return value is the number of bytes that would be
- written, not counting the null terminator. If greater or equal to
- \p dstlen then if you malloc a new array of size n+1 you will have
- the space needed for the entire string. If \p dstlen is zero then
- nothing is written and this call just measures the storage space
- needed.
- 
- If fl_utf8locale() returns true then this does not change the data.
- */
+/** Convert the UTF-8 used by FLTK to the locale-specific encoding
+  used for filenames (and sometimes used for data in files).
+  Unfortunately due to stupid design you will have to do this as
+  needed for filenames. This is a bug on both Unix and Windows.
+
+  Up to \p dstlen bytes are written to \p dst, including a null
+  terminator. The return value is the number of bytes that would be
+  written, not counting the null terminator. If greater or equal to
+  \p dstlen then if you malloc a new array of size n+1 you will have
+  the space needed for the entire string. If \p dstlen is zero then
+  nothing is written and this call just measures the storage space
+  needed.
+
+  If fl_utf8locale() returns true then this does not change the data.
+*/
 unsigned fl_utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen) {
   if (fl_utf8locale()) {
     /* identity transform: */
@@ -1261,23 +1261,23 @@ unsigned fl_utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstl
 }
 
 
-/*! Convert a filename from the locale-specific multibyte encoding
- used by Windows to UTF-8 as used by FLTK.
- 
- Up to \p dstlen bytes are written to \p dst, including a null
- terminator. The return value is the number of bytes that would be
- written, not counting the null terminator. If greater or equal to
- \p dstlen then if you malloc a new array of size n+1 you will have
- the space needed for the entire string. If \p dstlen is zero then
- nothing is written and this call just measures the storage space
- needed.
- 
- On Unix or on Windows when a UTF-8 locale is in effect, this
- does not change the data.
- You may also want to check if fl_utf8test() returns non-zero, so that
- the filesystem can store filenames in UTF-8 encoding regardless of
- the locale.
- */
+/** Convert a filename from the locale-specific multibyte encoding
+  used by Windows to UTF-8 as used by FLTK.
+
+  Up to \p dstlen bytes are written to \p dst, including a null
+  terminator. The return value is the number of bytes that would be
+  written, not counting the null terminator. If greater or equal to
+  \p dstlen then if you malloc a new array of size n+1 you will have
+  the space needed for the entire string. If \p dstlen is zero then
+  nothing is written and this call just measures the storage space
+  needed.
+
+  On Unix or on Windows when a UTF-8 locale is in effect, this
+  does not change the data.
+  You may also want to check if fl_utf8test() returns non-zero, so that
+  the filesystem can store filenames in UTF-8 encoding regardless of
+  the locale.
+*/
 unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen) {
   if (fl_utf8locale()) {
     /* identity transform: */
