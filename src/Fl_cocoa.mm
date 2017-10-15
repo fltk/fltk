@@ -1474,7 +1474,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 @implementation FLAppDelegate
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    if (fl_mac_os_version >= 101300) [NSApp stop:nil];
+    if (fl_mac_os_version >= 101300 && [NSApp isRunning]) [NSApp stop:nil];
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
