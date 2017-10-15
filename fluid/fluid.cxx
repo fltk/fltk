@@ -52,7 +52,6 @@
 // POSIX APIs on Windows, which is supposed to be POSIX compliant...
 // Some of these functions are also defined in ISO C99...
 #if defined(_MSC_VER)
-#  define access _access
 #  define chdir _chdir
 #  define getcwd _getcwd
 #endif // _MSC_VER
@@ -237,7 +236,7 @@ void save_cb(Fl_Widget *, void *v) {
     fnfc.filter("FLUID Files\t*.f[ld]");
     if (fnfc.show() != 0) return;
     c = fnfc.filename();
-    if (!access(c, 0)) {
+    if (!fl_access(c, 0)) {
       const char *basename;
       if ((basename = strrchr(c, '/')) != NULL)
         basename ++;
@@ -321,7 +320,7 @@ void save_template_cb(Fl_Widget *, void *) {
   // Save the .fl file...
   strcpy(ext, ".fl");
 
-  if (!access(filename, 0)) {
+  if (!fl_access(filename, 0)) {
     if (fl_choice("The template \"%s\" already exists.\n"
                   "Do you want to replace it?", "Cancel",
 		  "Replace", NULL, c) == 0) return;
