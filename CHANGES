@@ -18,7 +18,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
-  - New function: int fl_open_ext(const char* fname, int translation, int oflags, ...)
+  - New function: int fl_open_ext(const char* fname, int binary, int oflags, ...)
     to control the opening of files in binary/text mode in a cross-platform way.
   - New Fl_SVG_Image class: gives support of scalable vector graphics images
     to FLTK using the nanosvg software.

@@ -95,7 +95,7 @@ fl_check_images(const char *name,		// I - Filename
 #ifdef FLTK_USE_NANOSVG
 #  if defined(HAVE_LIBZ)
   if (header[0] == 0x1f && header[1] == 0x8b) { // denotes gzip'ed data
-    int fd = fl_open_ext(name, 0, 0);
+    int fd = fl_open_ext(name, 1, 0);
     if (fd < 0) return NULL;
     gzFile gzf =  gzdopen(fd, "r");
     if (gzf) {

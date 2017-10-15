@@ -82,7 +82,7 @@ static char *svg_inflate(const char *fname) {
   struct stat b;
   fl_stat(fname, &b);
   long size = b.st_size;
-  int fd = fl_open_ext(fname, 0, 0);
+  int fd = fl_open_ext(fname, 1, 0);
   if (fd < 0) return NULL;
   gzFile gzf =  gzdopen(fd, "r");
   if (!gzf) return NULL;

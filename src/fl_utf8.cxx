@@ -339,20 +339,20 @@ int fl_open(const char* f, int oflags, ...)
   useful on the Windows platform where files are by default opened in
   text (translated) mode.
   \param fname  the UTF-8 encoded filename
-  \param translation if zero, the file is to be accessed in untranslated (a.k.a. binary)
-  mode.
+  \param binary if non-zero, the file is to be accessed in binary (a.k.a.
+		untranslated) mode.
   \param oflags,...  these arguments are as in the standard open() function.
   Setting \p oflags to zero opens the file for reading.
   \return  a file descriptor upon successful completion, or -1 in case of error.
 */
-int fl_open_ext(const char* fname, int translation, int oflags, ...)
+int fl_open_ext(const char* fname, int binary, int oflags, ...)
 {
   int pmode;
   va_list ap;
   va_start(ap, oflags);
   pmode = va_arg (ap, int);
   va_end(ap);
-  return Fl::system_driver()->open_ext(fname, translation, oflags, pmode);
+  return Fl::system_driver()->open_ext(fname, binary, oflags, pmode);
 }
 
 

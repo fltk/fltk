@@ -137,9 +137,9 @@ int Fl_WinAPI_System_Driver::open(const char* f, int oflags, int pmode) {
   else return _wopen(wbuf, oflags, pmode);
 }
 
-int Fl_WinAPI_System_Driver::open_ext(const char* f, int translation, int oflags, int pmode) {
+int Fl_WinAPI_System_Driver::open_ext(const char* f, int binary, int oflags, int pmode) {
   if (oflags == 0) oflags = _O_RDONLY;
-  oflags |= (translation ? _O_TEXT : _O_BINARY);
+  oflags |= (binary ? _O_BINARY : _O_TEXT);
   return this->open(f, oflags, pmode);
 }
 
