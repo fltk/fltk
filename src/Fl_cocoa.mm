@@ -1490,6 +1490,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   @public
   TSMDocumentID currentDoc;
 }
+- (void)applicationDidFinishLaunching:(NSNotification *)notification;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationDidChangeScreenParameters:(NSNotification *)aNotification;
@@ -1501,6 +1502,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (void)open_cb:(void (*)(const char*))cb;
 @end
 @implementation FLAppDelegate
+- (void)applicationDidFinishLaunching:(NSNotification *)notification
+{
+  if (fl_mac_os_version >= 101300 && [NSApp isRunning]) [NSApp stop:nil];
+}
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
   fl_lock_function();
@@ -1746,7 +1751,7 @@ void fl_open_display() {
     localPool = [[NSAutoreleasePool alloc] init]; // never released
     FLAppDelegate *delegate = (fl_mac_os_version < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
-    if (need_new_nsapp) [NSApp finishLaunching];
+    if (need_new_nsapp) (fl_mac_os_version >= 101300 ? [NSApp run] : [NSApp finishLaunching]);
 
     // empty the event queue but keep system events for drag&drop of files at launch
     NSEvent *ign_event;
