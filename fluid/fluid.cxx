@@ -53,7 +53,6 @@
 // Some of these functions are also defined in ISO C99...
 #if defined(_MSC_VER)
 #  define chdir _chdir
-#  define getcwd _getcwd
 #endif // _MSC_VER
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -133,11 +132,11 @@ void goto_source_dir() {
   strlcpy(buffer, filename, sizeof(buffer));
   int n = (int)(p-filename); if (n>1) n--; buffer[n] = 0;
   if (!pwd) {
-    pwd = getcwd(0,FL_PATH_MAX);
-    if (!pwd) {fprintf(stderr,"getwd : %s\n",strerror(errno)); return;}
+    pwd = fl_getcwd(0, FL_PATH_MAX);
+    if (!pwd) {fprintf(stderr, "getwd : %s\n",strerror(errno)); return;}
   }
-  if (chdir(buffer)<0) {fprintf(stderr, "Can't chdir to %s : %s\n",
-				buffer, strerror(errno)); return;}
+  if (chdir(buffer) < 0) {fprintf(stderr, "Can't chdir to %s : %s\n",
+				  buffer, strerror(errno)); return;}
   in_source_dir = 1;
 }
 
