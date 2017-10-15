@@ -3,7 +3,7 @@
  *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
- * Copyright 2016 by Bill Spitzak and others.
+ * Copyright 2016-2017 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -180,7 +180,7 @@ FL_EXPORT int fl_open(const char* f, int o, ...);
 FL_EXPORT int fl_open_ext(const char* fname, int translation, int oflags, ...);
 
 /* OD: Portable UTF-8 aware unlink wrapper */
-FL_EXPORT int fl_unlink(const char *f);
+FL_EXPORT int fl_unlink(const char *fname);
 
 /* OD: Portable UTF-8 aware rmdir wrapper */
 FL_EXPORT int fl_rmdir(const char *f);

@@ -61,7 +61,6 @@
 #    define access _access
 #    define chdir _chdir
 #    define getcwd _getcwd
-#    define unlink _unlink
 #  endif // !__WATCOMC__
 #else
 #  include <unistd.h>
@@ -671,7 +670,7 @@ void new_cb(Fl_Widget *, void *v) {
 
       undo_suspend();
       read_file(cutfname(1), 0);
-      unlink(cutfname(1));
+      fl_unlink(cutfname(1));
       undo_resume();
     } else {
       // No instance name, so read the template without replacements...
@@ -864,7 +863,7 @@ void duplicate_cb(Fl_Widget*, void*) {
   if (!read_file(cutfname(1), 1)) {
     fl_message("Can't read %s: %s", cutfname(1), strerror(errno));
   }
-  unlink(cutfname(1));
+  fl_unlink(cutfname(1));
   undo_resume();
 
   force_parent = 0;

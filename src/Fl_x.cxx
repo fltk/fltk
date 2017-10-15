@@ -1396,7 +1396,7 @@ fprintf(stderr,"\n");*/
       close(fd);
       free(sn_buffer); sn_buffer = 0;
       shared = Fl_Shared_Image::get(tmp_fname);
-      unlink(tmp_fname);
+      fl_unlink(tmp_fname);
       if (!shared) return 0;
       uchar *rgb = new uchar[shared->w() * shared->h() * shared->d()];
       memcpy(rgb, shared->data()[0], shared->w() * shared->h() * shared->d());

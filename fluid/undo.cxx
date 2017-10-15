@@ -3,7 +3,7 @@
 //
 // FLUID undo support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,15 +22,11 @@
 #include <FL/Fl_Preferences.H>
 #include <FL/filename.H>
 #include "../src/flstring.h"
+
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <io.h>
 #  include <windows.h>
 #  define getpid (int)GetCurrentProcessId
-#  ifndef __WATCOMC__
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
-#    define unlink _unlink
-#  endif // !__WATCOMC__
 #else
 #  include <unistd.h>
 #endif // WIN32 && !__CYGWIN__
@@ -159,7 +155,7 @@ void undo_clear() {
 
   // Remove old checkpoint files...
   for (int i = 0; i <= undo_max; i ++) {
-    unlink(undo_filename(i, filename, sizeof(filename)));
+    fl_unlink(undo_filename(i, filename, sizeof(filename)));
   }
 
   // Reset current, last, and save indices...

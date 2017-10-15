@@ -454,14 +454,14 @@ char *fl_getcwd(char* b, int l) {
 /** Cross-platform function to unlink() (that is, delete) a file using
     a UTF-8 encoded filename.
 
- This function is especially useful under the MSWindows platform where the
- standard function expects UTF-16 encoded non-ASCII filenames.
+  This function is especially useful on the Windows platform where
+  the standard function expects UTF-16 encoded non-ASCII filenames.
 
-  \param     f the filename to unlink
+  \param     fname the filename to unlink
   \return    the return value of _wunlink() on Windows or unlink() on other platforms.
 */
-int fl_unlink(const char* f) {
-  return Fl::system_driver()->unlink(f);
+int fl_unlink(const char* fname) {
+  return Fl::system_driver()->unlink(fname);
 }
 
 /** Cross-platform function to create a directory with a UTF-8 encoded

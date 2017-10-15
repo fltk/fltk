@@ -95,7 +95,7 @@ public:
   virtual int access(const char* f, int mode) { return -1;}
   virtual int stat(const char* f, struct stat *b) { return -1;}
   virtual char *getcwd(char* b, int l) {return NULL;}
-  virtual int unlink(const char* f) {return -1;}
+  virtual int unlink(const char* fname) {return -1;}
   virtual int mkdir(const char* f, int mode) {return -1;}
   virtual int rmdir(const char* f) {return -1;}
   virtual int rename(const char* f, const char *n) {return -1;}

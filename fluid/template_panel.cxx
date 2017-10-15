@@ -202,7 +202,7 @@ void template_delete_cb(Fl_Button *, void *) {
   if (!fl_choice("Are you sure you want to delete the template \"%s\"?",
                  "Cancel", "Delete", 0, name)) return;
   
-  if (unlink(flfile)) {
+  if (fl_unlink(flfile)) {
     fl_alert("Unable to delete template \"%s\":\n%s", name, strerror(errno));
     return;
   }
