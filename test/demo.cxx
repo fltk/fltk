@@ -3,7 +3,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,14 +19,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#if defined(WIN32) && !defined(__CYGWIN__)
-#  include <direct.h>
-#  ifndef __WATCOMC__
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
+
+// *FIXME* Implement fl_chdir() and fl_putenv() !
+// *FIXME* Check whether directory related headers can be removed (i.e. not
+// *FIXME* included) if fl_chdir() is implemented and called in demo.cxx
+
+// Visual C++ 2005 incorrectly displays a warning about the use of
+// POSIX APIs on Windows, which is supposed to be POSIX compliant...
+#  if defined(_MSC_VER)
 #    define chdir _chdir
 #    define putenv _putenv
-#  endif // !__WATCOMC__
+#  endif // _MSC_VER
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+#  include <direct.h>
 #elif defined __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
 #include <unistd.h> // for chdir()

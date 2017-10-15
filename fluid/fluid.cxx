@@ -48,6 +48,15 @@
 #include "function_panel.h"
 #include "template_panel.h"
 
+// Visual C++ 2005 incorrectly displays a warning about the use of
+// POSIX APIs on Windows, which is supposed to be POSIX compliant...
+// Some of these functions are also defined in ISO C99...
+#if defined(_MSC_VER)
+#  define access _access
+#  define chdir _chdir
+#  define getcwd _getcwd
+#endif // _MSC_VER
+
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>
@@ -55,13 +64,6 @@
 #  include <fcntl.h>
 #  include <commdlg.h>
 #  include <FL/x.H>
-#  ifndef __WATCOMC__
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
-#    define access _access
-#    define chdir _chdir
-#    define getcwd _getcwd
-#  endif // !__WATCOMC__
 #else
 #  include <unistd.h>
 #endif
