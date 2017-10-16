@@ -267,7 +267,7 @@ void Fl_Table::col_width(int col, int width)
 }
 
 /**
-  Return specfied row/col values R and C to within the table's
+  Return specified row/col values R and C to within the table's
   current row/col limits.
   \returns 0 if no changes were made, or 1 if they were.
 */
