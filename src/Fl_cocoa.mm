@@ -110,7 +110,10 @@ static NSString *TIFF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPastebo
 static NSString *PDF_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypePDF : NSPDFPboardType);
 static NSString *PICT_pasteboard_type = (fl_mac_os_version >= 100600 ? @"com.apple.pict" : NSPICTPboardType);
 static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPasteboardTypeString : NSStringPboardType);
-
+static bool in_nsapp_run = false; // true during execution of [NSApp run]
+static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
+typedef void (*open_cb_f_type)(const char *);
+static open_cb_f_type get_open_cb();
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
 extern Fl_Window* fl_xmousewin;
@@ -852,6 +855,18 @@ int fl_wait( double time )
 }
 
 double fl_mac_flush_and_wait(double time_to_wait) {
+  if (dropped_files_list) { // when the list of dropped files is not empty, open one and remove it from list
+    open_cb_f_type open_cb = get_open_cb();
+    NSString *s;
+    if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
+      if (open_cb) open_cb([s UTF8String]);
+      [dropped_files_list removeObjectAtIndex:0];
+    }
+    if ([dropped_files_list count] == 0) {
+      [dropped_files_list release];
+      dropped_files_list = nil;
+    }
+  }
   static int in_idle = 0;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   if (Fl::idle) {
@@ -1486,8 +1501,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 <NSApplicationDelegate>
 #endif
 {
-  void (*open_cb)(const char*);
   @public
+  open_cb_f_type open_cb;
   TSMDocumentID currentDoc;
 }
 - (void)applicationDidFinishLaunching:(NSNotification *)notification;
@@ -1499,7 +1514,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (void)applicationWillHide:(NSNotification *)notify;
 - (void)applicationWillUnhide:(NSNotification *)notify;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
-- (void)open_cb:(void (*)(const char*))cb;
 @end
 @implementation FLAppDelegate
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
@@ -1650,10 +1664,16 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-  // without the next two statements, the opening of the 1st window is delayed by several seconds
-  // under Mac OS ≥ 10.8 when a file is dragged on the application icon
-  Fl_Window *firstw = Fl::first_window();
-  if (firstw) firstw->wait_for_expose();
+  if (fl_mac_os_version < 101300) {
+    // without the next two statements, the opening of the 1st window is delayed by several seconds
+    // under 10.8 ≤ Mac OS < 10.13 when a file is dragged on the application icon
+    Fl_Window *firstw = Fl::first_window();
+    if (firstw) firstw->wait_for_expose();
+  } else if (in_nsapp_run) { // memorize all dropped filenames
+    if (!dropped_files_list) dropped_files_list = [[NSMutableArray alloc] initWithCapacity:1];
+    [dropped_files_list addObject:filename];
+    return YES;
+  }
   if (open_cb) {
     fl_lock_function();
     (*open_cb)([filename UTF8String]);
@@ -1662,10 +1682,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     return YES;
   }
   return NO;
-}
-- (void)open_cb:(void (*)(const char*))cb
-{
-  open_cb = cb;
 }
 @end
 
@@ -1689,12 +1705,16 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 @end
 
+static open_cb_f_type get_open_cb() {
+  return ((FLAppDelegate*)[NSApp delegate])->open_cb;
+}
+
 /*
  * Install an open documents event handler...
  */
 void fl_open_callback(void (*cb)(const char *)) {
   fl_open_display();
-  [(FLAppDelegate*)[NSApp delegate] open_cb:cb];
+  ((FLAppDelegate*)[NSApp delegate])->open_cb = cb;
 }
 
 @implementation FLApplication
@@ -1751,8 +1771,14 @@ void fl_open_display() {
     localPool = [[NSAutoreleasePool alloc] init]; // never released
     FLAppDelegate *delegate = (fl_mac_os_version < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
-    if (need_new_nsapp) (fl_mac_os_version >= 101300 ? [NSApp run] : [NSApp finishLaunching]);
-
+    if (need_new_nsapp) {
+      if (fl_mac_os_version >= 101300 ) {
+        in_nsapp_run = true;
+        [NSApp run];
+        in_nsapp_run = false;
+      }
+      else [NSApp finishLaunching];
+    }
     // empty the event queue but keep system events for drag&drop of files at launch
     NSEvent *ign_event;
     do ign_event = [NSApp nextEventMatchingMask:(NSAnyEventMask & ~NSSystemDefinedMask)
