@@ -180,11 +180,10 @@ private:
   //
   void insert(const char*) { }
 
-public:
+protected:
   // Fltk
   virtual void draw();
 
-protected:
   // Internal methods
   void enforce_stay_at_bottom();
   void enforce_history_lines();
