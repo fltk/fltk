@@ -26,6 +26,7 @@ ALL = clipboard$(EXEEXT) \
       table-spreadsheet-with-keyboard-nav$(EXEEXT) \
       table-with-keynav$(EXEEXT) \
       tabs-simple$(EXEEXT) \
+      simple-terminal$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \

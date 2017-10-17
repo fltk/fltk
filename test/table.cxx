@@ -16,6 +16,12 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Table_Row.H>
+#include <FL/Fl_Simple_Terminal.H>
+
+#define TERMINAL_HEIGHT 120
+
+// Globals
+Fl_Simple_Terminal *G_tty = 0;
 
 // Simple demonstration class to derive from Fl_Table_Row
 class DemoTable : public Fl_Table_Row
@@ -99,7 +105,7 @@ void DemoTable::draw_cell(TableContext context,
 	}
 
 	case CONTEXT_TABLE:
-	    fprintf(stderr, "TABLE CONTEXT CALLED\n");
+	    G_tty->printf("TABLE CONTEXT CALLED\n");
 	    return;
 
 	case CONTEXT_ENDPAGE:
@@ -121,9 +127,9 @@ void DemoTable::event_callback2()
     int R = callback_row(),
         C = callback_col();
     TableContext context = callback_context();
-    printf("'%s' callback: ", (label() ? label() : "?"));
-    printf("Row=%d Col=%d Context=%d Event=%d InteractiveResize? %d\n",
-	    R, C, (int)context, (int)Fl::event(), (int)is_interactive_resize());
+    const char *name = label() ? label() : "?";
+    G_tty->printf("'%s' callback: Row=%d Col=%d Context=%d Event=%d InteractiveResize? %d\n",
+                  name, R, C, (int)context, (int)Fl::event(), (int)is_interactive_resize());
 }
 
 // GLOBAL TABLE WIDGET
@@ -339,7 +345,9 @@ Fl_Menu_Item type_choices[] = {
 
 int main(int argc, char **argv)
 {
-    Fl_Window win(900, 730);
+    Fl_Window win(900, 730+TERMINAL_HEIGHT);
+
+    G_tty = new Fl_Simple_Terminal(0,730,win.w(),TERMINAL_HEIGHT);
 
     G_table = new DemoTable(20, 20, 860, 460, "Demo");
     G_table->selection_color(FL_YELLOW);

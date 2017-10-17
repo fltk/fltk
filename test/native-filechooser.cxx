@@ -27,10 +27,14 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Help_View.H>
+#include <FL/Fl_Simple_Terminal.H>
+
+#define TERMINAL_HEIGHT 120
 
 // GLOBALS
 Fl_Input *G_filename = NULL;
 Fl_Multiline_Input *G_filter = NULL;
+Fl_Simple_Terminal *G_tty = NULL;
 
 void PickFile_CB(Fl_Widget*, void*) {
   // Create native chooser
@@ -41,13 +45,15 @@ void PickFile_CB(Fl_Widget*, void*) {
   native.preset_file(G_filename->value());
   // Show native chooser
   switch ( native.show() ) {
-    case -1: fprintf(stderr, "ERROR: %s\n", native.errmsg()); break;	// ERROR
-    case  1: fprintf(stderr, "*** CANCEL\n"); fl_beep(); break;		// CANCEL
+    case -1: G_tty->printf("ERROR: %s\n", native.errmsg()); break;	// ERROR
+    case  1: G_tty->printf("*** CANCEL\n"); fl_beep(); break;		// CANCEL
     default: 								// PICKED FILE
       if ( native.filename() ) {
         G_filename->value(native.filename());
+	G_tty->printf("filename='%s'\n", native.filename());
       } else {
 	G_filename->value("NULL");
+	G_tty->printf("filename='(null)'\n");
       }
       break;
   }
@@ -61,13 +67,15 @@ void PickDir_CB(Fl_Widget*, void*) {
   native.type(Fl_Native_File_Chooser::BROWSE_DIRECTORY);
   // Show native chooser
   switch ( native.show() ) {
-    case -1: fprintf(stderr, "ERROR: %s\n", native.errmsg()); break;	// ERROR
-    case  1: fprintf(stderr, "*** CANCEL\n"); fl_beep(); break;		// CANCEL
+    case -1: G_tty->printf("ERROR: %s\n", native.errmsg()); break;	// ERROR
+    case  1: G_tty->printf("*** CANCEL\n"); fl_beep(); break;		// CANCEL
     default: 								// PICKED DIR
       if ( native.filename() ) {
         G_filename->value(native.filename());
+	G_tty->printf("dirname='%s'\n", native.filename());
       } else {
 	G_filename->value("NULL");
+	G_tty->printf("dirname='(null)'\n");
       }
       break;
   }
@@ -91,10 +99,12 @@ int main(int argc, char **argv) {
     argn++;
 #endif
   
-  Fl_Window *win = new Fl_Window(640, 400, "Native File Chooser Test");
+  Fl_Window *win = new Fl_Window(640, 400+TERMINAL_HEIGHT, "Native File Chooser Test");
   win->size_range(win->w(), win->h(), 0, 0);
   win->begin();
   {
+    G_tty = new Fl_Simple_Terminal(0,400,win->w(),TERMINAL_HEIGHT);
+
     int x = 80, y = 10;
     G_filename = new Fl_Input(x, y, win->w()-80-10, 25, "Filename");
     G_filename->value(argc <= argn ? "." : argv[argn]);
@@ -131,10 +141,10 @@ int main(int argc, char **argv) {
 		"    Apps<font color=#55f>&lt;Ctrl-I&gt;</font>*.app\n"
 		"</pre>\n");
 
-    Fl_Button *but = new Fl_Button(win->w()-x-10, win->h()-25-10, 80, 25, "Pick File");
+    Fl_Button *but = new Fl_Button(win->w()-x-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick File");
     but->callback(PickFile_CB);
 
-    Fl_Button *butdir = new Fl_Button(but->x()-x-10, win->h()-25-10, 80, 25, "Pick Dir");
+    Fl_Button *butdir = new Fl_Button(but->x()-x-10, win->h()-TERMINAL_HEIGHT-25-10, 80, 25, "Pick Dir");
     butdir->callback(PickDir_CB);
 
     win->resizable(G_filter);

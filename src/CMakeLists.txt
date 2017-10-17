@@ -59,6 +59,7 @@ set (CPPFILES
   Fl_Scroll.cxx
   Fl_Scrollbar.cxx
   Fl_Shared_Image.cxx
+  Fl_Simple_Terminal.cxx
   Fl_Single_Window.cxx
   Fl_Slider.cxx
   Fl_Spinner.cxx

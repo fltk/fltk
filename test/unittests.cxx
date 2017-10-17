@@ -153,6 +153,7 @@ public:
 #include "unittest_viewport.cxx"
 #include "unittest_scrollbarsize.cxx"
 #include "unittest_schemes.cxx"
+#include "unittest_simple_terminal.cxx"
 
 // callback whenever the browser value changes
 void Browser_CB(Fl_Widget*, void*) {

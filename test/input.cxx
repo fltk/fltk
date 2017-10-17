@@ -28,9 +28,15 @@
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Simple_Terminal.H>
+
+#define TERMINAL_HEIGHT 120
+
+// Globals
+Fl_Simple_Terminal *G_tty = 0;
 
 void cb(Fl_Widget *ob) {
-  printf("Callback for %s '%s'\n",ob->label(),((Fl_Input*)ob)->value());
+  G_tty->printf("Callback for %s '%s'\n",ob->label(),((Fl_Input*)ob)->value());
 }
 
 int when = 0;
@@ -43,11 +49,11 @@ void toggle_cb(Fl_Widget *o, long v) {
 
 void test(Fl_Input *i) {
   if (i->changed()) {
-    i->clear_changed(); printf("%s '%s'\n",i->label(),i->value());
+    i->clear_changed(); G_tty->printf("%s '%s'\n",i->label(),i->value());
     char utf8buf[10];
     int last = fl_utf8encode(i->index(i->position()), utf8buf);
     utf8buf[last] = 0;
-    printf("Symbol at cursor position: %s\n", utf8buf);
+    G_tty->printf("Symbol at cursor position: %s\n", utf8buf);
   }
 }
 
@@ -86,7 +92,8 @@ int main(int argc, char **argv) {
   // calling fl_contrast below will return good results
   Fl::args(argc, argv);
   Fl::get_system_colors();
-  Fl_Window *window = new Fl_Window(400,420);
+  Fl_Window *window = new Fl_Window(400,420+TERMINAL_HEIGHT);
+  G_tty = new Fl_Simple_Terminal(0,420,window->w(),TERMINAL_HEIGHT);
 
   int y = 10;
   input[0] = new Fl_Input(70,y,300,30,"Normal:"); y += 35;
@@ -153,6 +160,7 @@ int main(int argc, char **argv) {
   b->tooltip("Color of the text");
 
   window->end();
+  window->resizable(G_tty);
   window->show(argc,argv);
   return Fl::run();
 }

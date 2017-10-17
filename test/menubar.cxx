@@ -30,9 +30,15 @@
 #include <stdlib.h>
 #include "../src/flstring.h"
 #include <FL/fl_draw.H>
+#include <FL/Fl_Simple_Terminal.H>
+
+#define TERMINAL_HEIGHT 120
+
+// Globals
+Fl_Simple_Terminal *G_tty = 0;
 
 void window_cb(Fl_Widget* w, void*) {
-  puts("window callback called");
+  puts("window callback called");	// end of program, so stdout instead of G_tty
   ((Fl_Double_Window *)w)->hide();
 }
 
@@ -40,11 +46,11 @@ void test_cb(Fl_Widget* w, void*) {
   Fl_Menu_* mw = (Fl_Menu_*)w;
   const Fl_Menu_Item* m = mw->mvalue();
   if (!m)
-    printf("NULL\n");
+    G_tty->printf("NULL\n");
   else if (m->shortcut())
-    printf("%s - %s\n", m->label(), fl_shortcut_label(m->shortcut()));
+    G_tty->printf("%s - %s\n", m->label(), fl_shortcut_label(m->shortcut()));
   else
-    printf("%s\n", m->label());
+    G_tty->printf("%s\n", m->label());
 }
 
 void quit_cb(Fl_Widget*, void*) {exit(0);}
@@ -211,7 +217,9 @@ int main(int argc, char **argv) {
     sprintf(buf,"item %d",i);
     hugemenu[i].text = strdup(buf);
   }
-  Fl_Double_Window window(WIDTH,400);
+  Fl_Double_Window window(WIDTH,400+TERMINAL_HEIGHT);
+  G_tty = new Fl_Simple_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);
+
   window.callback(window_cb);
   Fl_Menu_Bar menubar(0,0,WIDTH,30); menubar.menu(menutable);
   menubar.callback(test_cb);

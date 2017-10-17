@@ -38,6 +38,9 @@ decl {\#include <FL/Fl_Color_Chooser.H>} {public global
 decl {\#include <FL/Fl_Text_Display.H>} {public global
 }
 
+decl {\#include <FL/Fl_Simple_Terminal.H>} {public global
+}
+
 decl {int G_cb_counter = 0;} {
   comment {// Global callback event counter} private local
 }
@@ -74,7 +77,7 @@ height += 10;
 if ( height > 50 ) height = 20;
 cw->resize(cw->x(), cw->y(), cw->w(), height);
 tree->redraw();	// adjusted height
-fprintf(stderr, "'%s' button pushed (height=%d)\\n", w->label(), height);} {}
+tty->printf("'%s' button pushed (height=%d)\\n", w->label(), height);} {}
 }
 
 Function {AssignUserIcons()} {
@@ -144,8 +147,7 @@ for ( Fl_Tree_Item *item = tree->first(); item; item=item->next()) {
         item->userdeicon(0);
     }
 }
-tree->redraw();} {selected
-  }
+tree->redraw();} {}
 }
 
 Function {RebuildTree()} {
@@ -360,7 +362,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {600 253 1045 580} type Double hide
+    xywh {539 25 1045 730} type Double visible
   } {
     Fl_Group tree {
       label Tree
@@ -368,7 +370,7 @@ Function {} {open
       callback {G_cb_counter++; // Increment callback counter whenever tree callback is invoked
 Fl_Tree_Item *item = tree->callback_item();
 if ( item ) {
-  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld reason=%s, changed=%d",
+  tty->printf("TREE CALLBACK: label='%s' userdata=%ld reason=%s, changed=%d",
           item->label(),
           (long)(fl_intptr_t)tree->user_data(),
 	  reason_as_name(tree->callback_reason()),
@@ -377,12 +379,12 @@ if ( item ) {
   //    Should only happen if reason==FL_TREE_REASON_RESELECTED.
   //
   if ( Fl::event_clicks() > 0 ) {
-    fprintf(stderr, ", clicks=%d\\n", (Fl::event_clicks()+1));
+    tty->printf(", clicks=%d\\n", (Fl::event_clicks()+1));
   } else {
-    fprintf(stderr, "\\n");
+    tty->printf("\\n");
   } 
 } else {
-  fprintf(stderr, "TREE CALLBACK: reason=%s, changed=%d, item=(no item -- probably multiple items were changed at once)\\n",
+  tty->printf("TREE CALLBACK: reason=%s, changed=%d, item=(no item -- probably multiple items were changed at once)\\n",
           reason_as_name(tree->callback_reason()),
           tree->changed() ? 1 : 0);
 }
@@ -896,7 +898,7 @@ Clears all items} xywh {570 471 95 16} labelsize 9
       Fl_Button testcallbackflag_button {
         label {Test Callback Flag}
         callback {Fl_Tree_Item *root = tree->root();
-fprintf(stderr, "--- Checking docallback off\\n");
+tty->printf("--- Checking docallback off\\n");
 if (!root) return;
 
 //// "OFF" TEST
@@ -961,7 +963,7 @@ fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");
       Fl_Button testrootshowself_button {
         label {Root Show Self}
         callback {Fl_Tree_Item *root = tree->root();
-fprintf(stderr, "--- Show Tree\\n");
+tty->printf("--- Show Tree\\n");
 if (root) root->show_self();}
         tooltip {Test the root->'show_self() method to show the entire tree on stdout} xywh {570 511 95 16} labelsize 9
       }
@@ -1231,11 +1233,11 @@ If nothing selected, all are changed} xywh {758 174 100 16} selection_color 1 la
       }
       Fl_Button showselected_button {
         label {Show Selected}
-        callback {fprintf(stderr, "--- SELECTED ITEMS\\n");
+        callback {tty->printf("--- SELECTED ITEMS\\n");
 for ( Fl_Tree_Item *item = tree->first_selected_item();
       item;
       item = tree->next_selected_item(item) ) {
-  fprintf(stderr, "\\t%s\\n", item->label() ? item->label() : "???");
+  tty->printf("\\t%s\\n", item->label() ? item->label() : "???");
 }}
         tooltip {Clears the selected items} xywh {864 134 95 16} labelsize 9
       }
@@ -1298,15 +1300,15 @@ tree->redraw();}
       }
       Fl_Button nextselected_button {
         label {next_selected()}
-        callback {printf("--- TEST next_selected():\\n");
-printf("    // Walk down the tree (forwards)\\n");
+        callback {tty->printf("--- TEST next_selected():\\n");
+tty->printf("    // Walk down the tree (forwards)\\n");
  for ( Fl_Tree_Item *i=tree->first_selected_item(); i; i=tree->next_selected_item(i, FL_Down) ) {
-     printf("    Selected item: %s\\n", i->label()?i->label():"<nolabel>");
+     tty->printf("    Selected item: %s\\n", i->label()?i->label():"<nolabel>");
  }
 
-printf("    // Walk up the tree (backwards)\\n");
+tty->printf("    // Walk up the tree (backwards)\\n");
  for ( Fl_Tree_Item *i=tree->last_selected_item(); i; i=tree->next_selected_item(i, FL_Up) ) {
-     printf("    Selected item: %s\\n", i->label()?i->label():"<nolabel>");
+     tty->printf("    Selected item: %s\\n", i->label()?i->label():"<nolabel>");
  }}
         tooltip {Tests the Fl_Tree::next_selected() function} xywh {713 239 95 16} labelsize 9
       }
@@ -1703,7 +1705,7 @@ if ( !helpwin ) {
 }
 helpwin->resizable(helpdisp);
 helpwin->show();}
-        tooltip {Suggestions on how to do tests} xywh {935 554 95 16} labelsize 9
+        tooltip {Suggestions on how to do tests} xywh {935 545 95 16} labelsize 9
       }
       Fl_Value_Slider tree_scrollbar_size_slider {
         label {Fl_Tree::scrollbar_size()}
@@ -1729,6 +1731,11 @@ tree->redraw();}
     }
     Fl_Box resizer_box {
       xywh {0 263 15 14}
+    }
+    Fl_Box tty {
+      label label selected
+      xywh {16 571 1014 149} box DOWN_BOX color 0
+      class Fl_Simple_Terminal
     }
   }
   code {// Initialize Tree
