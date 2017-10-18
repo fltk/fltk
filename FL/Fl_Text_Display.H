@@ -378,7 +378,8 @@ protected:
     DRAW_LINE, 
     FIND_INDEX,
     FIND_INDEX_FROM_ZERO,
-    GET_WIDTH 
+    GET_WIDTH,
+    FIND_CURSOR_INDEX	// STR #2788
   };
   
   int handle_vline(int mode, 

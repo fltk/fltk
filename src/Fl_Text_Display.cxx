@@ -516,7 +516,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 	      text_area.w, oldTAWidth, text_area.w - oldTAWidth);
 #endif // DEBUG2
 
-    if (mContinuousWrap && !mWrapMarginPix && text_area.w != oldTAWidth) {
+    if (mContinuousWrap && !mWrapMarginPix ) {
+    //if (mContinuousWrap && !mWrapMarginPix && text_area.w != oldTAWidth) {
 
       int oldFirstChar = mFirstChar;
       mNBufferLines = count_lines(0, buffer()->length(), true);
@@ -1922,7 +1923,7 @@ int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
   \li return the width of a text range in pixels
   \li return the index of a character that is at a pixel position
 
- \param[in] mode DRAW_LINE, GET_WIDTH, FIND_INDEX, or FIND_INDEX_FROM_ZERO
+ \param[in] mode DRAW_LINE, GET_WIDTH, FIND_INDEX, FIND_INDEX_FROM_ZERO, or FIND_CURSOR_INDEX
  \param[in] lineStartPos index of first character
  \param[in] lineLen size of string in bytes
  \param[in] leftChar, rightChar
@@ -1954,6 +1955,13 @@ int Fl_Text_Display::handle_vline(
     lineStr = NULL;
   } else {
     lineStr = mBuffer->text_range( lineStartPos, lineStartPos + lineLen );
+  }
+
+  // STR #2788
+  int cursor_pos = 0;
+  if (mode==FIND_CURSOR_INDEX) {
+    mode = FIND_INDEX;
+    cursor_pos = 1;
   }
 
   if (mode==GET_WIDTH) {
@@ -2001,6 +2009,8 @@ int Fl_Text_Display::handle_vline(
         if (mode==FIND_INDEX && startX+w>rightClip) {
           // find x pos inside block
           free(lineStr);
+          if (cursor_pos && (startX+w/2<rightClip))  // STR #2788
+            return lineStartPos + startIndex + len;  // STR #2788
           return lineStartPos + startIndex;
         }
       } else {
@@ -2010,7 +2020,7 @@ int Fl_Text_Display::handle_vline(
           draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
         if (mode==FIND_INDEX && startX+w>rightClip) {
           // find x pos inside block
-          int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
+	  int di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
           free(lineStr);
           IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
           return lineStartPos + startIndex + di;
@@ -2034,6 +2044,8 @@ int Fl_Text_Display::handle_vline(
     if (mode==FIND_INDEX) {
       // find x pos inside block
       free(lineStr);
+      if (cursor_pos) // STR #2788
+        return lineStartPos + startIndex + ( rightClip-startX>w/2 ? 1 : 0 ); // STR #2788
       return lineStartPos + startIndex + ( rightClip-startX>w ? 1 : 0 );
     }
   } else {
@@ -2042,7 +2054,7 @@ int Fl_Text_Display::handle_vline(
       draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
     if (mode==FIND_INDEX) {
       // find x pos inside block
-      int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
+      int di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
       free(lineStr);
       IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
       return lineStartPos + startIndex + di;
@@ -2066,24 +2078,31 @@ int Fl_Text_Display::handle_vline(
 
 
 /**
- \brief Find the index of the character that lies at the given x position.
+ \brief Find the index of the character that lies at the given x position / closest cursor position.
 
  \param s UTF-8 text string
  \param len length of string
  \param style index into style lookup table
- \param x position in pixels
+ \param x position in pixels - negative returns closest cursor position
  \return index into buffer
  */
 int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
   IS_UTF8_ALIGNED(s)
 
+  int cursor_pos = x<0; // STR #2788
+  x = x<0 ? -x : x;     // STR #2788
+
   // TODO: use binary search which may be quicker.
   int i = 0;
+  int last_w = 0;       // STR #2788
   while (i<len) {
     int cl = fl_utf8len1(s[i]);
     int w = int( string_width(s, i+cl, style) );
-    if (w>x)
+    if (w>x) {
+      if (cursor_pos && (w-x < x-last_w)) return i+cl; // STR #2788
       return i;
+    }
+    last_w = w;        // STR #2788
     i += cl;
   }
   return len;
@@ -2496,7 +2515,8 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) const {
   /* Get the line text and its length */
   lineLen = vline_length( visLineNum );
 
-  return handle_vline(FIND_INDEX,
+  int mode = (posType == CURSOR_POS) ? FIND_CURSOR_INDEX : FIND_INDEX; // STR #2788
+  return handle_vline(mode,
                       lineStart, lineLen, 0, 0,
                       0, 0,
                       text_area.x, X);
