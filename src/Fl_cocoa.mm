@@ -847,19 +847,23 @@ static int do_queued_events( double time = 0.0 )
   return got_events;
 }
 
+static void drain_dropped_files_list() {
+  open_cb_f_type open_cb = get_open_cb();
+  NSString *s;
+  if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
+    if (open_cb) open_cb([s UTF8String]);
+    [dropped_files_list removeObjectAtIndex:0];
+  }
+  if ([dropped_files_list count] == 0) {
+    [dropped_files_list release];
+    dropped_files_list = nil;
+  }
+}
+
 double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
 {
   if (dropped_files_list) { // when the list of dropped files is not empty, open one and remove it from list
-    open_cb_f_type open_cb = get_open_cb();
-    NSString *s;
-    if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
-      if (open_cb) open_cb([s UTF8String]);
-      [dropped_files_list removeObjectAtIndex:0];
-    }
-    if ([dropped_files_list count] == 0) {
-      [dropped_files_list release];
-      dropped_files_list = nil;
-    }
+    drain_dropped_files_list();
   }
   Fl::run_checks();
   static int in_idle = 0;
@@ -3120,6 +3124,9 @@ void Fl_Cocoa_Window_Driver::wait_for_expose()
     if (fl_mac_os_version < 101300) {
         [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose)];
     } else {
+      while (dropped_files_list) {
+        drain_dropped_files_list();
+      }
        [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil
                              inMode:NSDefaultRunLoopMode dequeue:NO];
     }
