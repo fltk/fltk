@@ -854,18 +854,22 @@ int fl_wait( double time )
   return (got_events);
 }
 
+static void drain_dropped_files_list() {
+  open_cb_f_type open_cb = get_open_cb();
+  NSString *s;
+  if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
+    if (open_cb) open_cb([s UTF8String]);
+    [dropped_files_list removeObjectAtIndex:0];
+  }
+  if ([dropped_files_list count] == 0) {
+    [dropped_files_list release];
+    dropped_files_list = nil;
+  }
+}
+
 double fl_mac_flush_and_wait(double time_to_wait) {
   if (dropped_files_list) { // when the list of dropped files is not empty, open one and remove it from list
-    open_cb_f_type open_cb = get_open_cb();
-    NSString *s;
-    if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
-      if (open_cb) open_cb([s UTF8String]);
-      [dropped_files_list removeObjectAtIndex:0];
-    }
-    if ([dropped_files_list count] == 0) {
-      [dropped_files_list release];
-      dropped_files_list = nil;
-    }
+    drain_dropped_files_list();
   }
   static int in_idle = 0;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -3172,10 +3176,11 @@ void Fl_Window::wait_for_expose()
     if (fl_mac_os_version < 101300) {
         [fl_xid(this) recursivelySendToSubwindows:@selector(waitForExpose)];
     } else {
-        NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                            untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
-                                               inMode:NSDefaultRunLoopMode dequeue:YES];
-        if (event) [NSApp postEvent:event atStart:NO];
+      while (dropped_files_list) {
+        drain_dropped_files_list();
+      }
+      [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil
+                            inMode:NSDefaultRunLoopMode dequeue:NO];
     }
 }
 
