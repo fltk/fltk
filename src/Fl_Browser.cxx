@@ -376,22 +376,24 @@ int Fl_Browser::item_height(void *item) const {
     // do each column separately as they may all set different fonts:
     for (char* str = l->txt; str && *str; str++) {
       Fl_Font font = textfont(); // default font
-      int tsize = textsize(); // default size
-      while (*str==format_char()) {
-	str++;
-	switch (*str++) {
-	case 'l': case 'L': tsize = 24; break;
-	case 'm': case 'M': tsize = 18; break;
-	case 's': tsize = 11; break;
-	case 'b': font = (Fl_Font)(font|FL_BOLD); break;
-	case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
-	case 'f': case 't': font = FL_COURIER; break;
-	case 'B':
-	case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
-	case 'F': font = (Fl_Font)strtol(str,&str,10); break;
-	case 'S': tsize = strtol(str,&str,10); break;
-	case 0: case '@': str--;
-	case '.': goto END_FORMAT;
+      int tsize = textsize();    // default size
+      if ( format_char() ) {     // can be NULL
+	while (*str==format_char()) {
+	  str++;
+	  switch (*str++) {
+	  case 'l': case 'L': tsize = 24; break;
+	  case 'm': case 'M': tsize = 18; break;
+	  case 's': tsize = 11; break;
+	  case 'b': font = (Fl_Font)(font|FL_BOLD); break;
+	  case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
+	  case 'f': case 't': font = FL_COURIER; break;
+	  case 'B':
+	  case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
+	  case 'F': font = (Fl_Font)strtol(str,&str,10); break;
+	  case 'S': tsize = strtol(str,&str,10); break;
+	  case 0: case '@': str--;
+	  case '.': goto END_FORMAT;
+	  }
 	}
       }
       END_FORMAT:
@@ -439,33 +441,34 @@ int Fl_Browser::item_width(void *item) const {
   Fl_Font font = textfont();
   int done = 0;
 
-  while (*str == format_char_ && str[1] && str[1] != format_char_) {
-    str ++;
-    switch (*str++) {
-    case 'l': case 'L': tsize = 24; break;
-    case 'm': case 'M': tsize = 18; break;
-    case 's': tsize = 11; break;
-    case 'b': font = (Fl_Font)(font|FL_BOLD); break;
-    case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
-    case 'f': case 't': font = FL_COURIER; break;
-    case 'B':
-    case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
-    case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
-    case 'S': tsize = strtol(str, &str, 10); break;
-    case '.':
-      done = 1;
-      break;
-    case '@':
-      str--;
-      done = 1;
-    }
+  if ( format_char() ) {	// can be NULL
+    while (*str == format_char_ && str[1] && str[1] != format_char_) {
+      str ++;
+      switch (*str++) {
+      case 'l': case 'L': tsize = 24; break;
+      case 'm': case 'M': tsize = 18; break;
+      case 's': tsize = 11; break;
+      case 'b': font = (Fl_Font)(font|FL_BOLD); break;
+      case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
+      case 'f': case 't': font = FL_COURIER; break;
+      case 'B':
+      case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
+      case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
+      case 'S': tsize = strtol(str, &str, 10); break;
+      case '.':
+	done = 1;
+	break;
+      case '@':
+	str--;
+	done = 1;
+      }
 
     if (done)
       break;
+    }
+    if (*str == format_char_ && str[1])
+      str ++;
   }
-
-  if (*str == format_char_ && str[1])
-    str ++;
 
   if (ww==0 && l->icon) ww = l->icon->w();
 
@@ -533,49 +536,51 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
     //#if defined(__GNUC__)
     //#warning FIXME This maybe needs to be more UTF8 aware now...?
     //#endif /*__GNUC__*/
-    while (*str == format_char() && *++str && *str != format_char()) {
-      switch (*str++) {
-      case 'l': case 'L': tsize = 24; break;
-      case 'm': case 'M': tsize = 18; break;
-      case 's': tsize = 11; break;
-      case 'b': font = (Fl_Font)(font|FL_BOLD); break;
-      case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
-      case 'f': case 't': font = FL_COURIER; break;
-      case 'c': talign = FL_ALIGN_CENTER; break;
-      case 'r': talign = FL_ALIGN_RIGHT; break;
-      case 'B': 
-	if (!(l->flags & SELECTED)) {
-	  fl_color((Fl_Color)strtoul(str, &str, 10));
-	  fl_rectf(X, Y, w1, H);
-	} else while (isdigit(*str & 255)) str++; // skip digits
-        break;
-      case 'C':
-	lcol = (Fl_Color)strtoul(str, &str, 10);
-	break;
-      case 'F':
-	font = (Fl_Font)strtol(str, &str, 10);
-	break;
-      case 'N':
-	lcol = FL_INACTIVE_COLOR;
-	break;
-      case 'S':
-	tsize = strtol(str, &str, 10);
-	break;
-      case '-':
-	fl_color(FL_DARK3);
-	fl_line(X+3, Y+H/2, X+w1-3, Y+H/2);
-	fl_color(FL_LIGHT3);
-	fl_line(X+3, Y+H/2+1, X+w1-3, Y+H/2+1);
-	break;
-      case 'u':
-      case '_':
-	fl_color(lcol);
-	fl_line(X+3, Y+H-1, X+w1-3, Y+H-1);
-	break;
-      case '.':
-	goto BREAK;
-      case '@':
-	str--; goto BREAK;
+    if ( format_char() ) {	// can be NULL
+      while (*str == format_char() && *++str && *str != format_char()) {
+	switch (*str++) {
+	case 'l': case 'L': tsize = 24; break;
+	case 'm': case 'M': tsize = 18; break;
+	case 's': tsize = 11; break;
+	case 'b': font = (Fl_Font)(font|FL_BOLD); break;
+	case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
+	case 'f': case 't': font = FL_COURIER; break;
+	case 'c': talign = FL_ALIGN_CENTER; break;
+	case 'r': talign = FL_ALIGN_RIGHT; break;
+	case 'B': 
+	  if (!(l->flags & SELECTED)) {
+	    fl_color((Fl_Color)strtoul(str, &str, 10));
+	    fl_rectf(X, Y, w1, H);
+	  } else while (isdigit(*str & 255)) str++; // skip digits
+	  break;
+	case 'C':
+	  lcol = (Fl_Color)strtoul(str, &str, 10);
+	  break;
+	case 'F':
+	  font = (Fl_Font)strtol(str, &str, 10);
+	  break;
+	case 'N':
+	  lcol = FL_INACTIVE_COLOR;
+	  break;
+	case 'S':
+	  tsize = strtol(str, &str, 10);
+	  break;
+	case '-':
+	  fl_color(FL_DARK3);
+	  fl_line(X+3, Y+H/2, X+w1-3, Y+H/2);
+	  fl_color(FL_LIGHT3);
+	  fl_line(X+3, Y+H/2+1, X+w1-3, Y+H/2+1);
+	  break;
+	case 'u':
+	case '_':
+	  fl_color(lcol);
+	  fl_line(X+3, Y+H-1, X+w1-3, Y+H-1);
+	  break;
+	case '.':
+	  goto BREAK;
+	case '@':
+	  str--; goto BREAK;
+	}
       }
     }
   BREAK:
