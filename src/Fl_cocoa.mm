@@ -1748,6 +1748,7 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
     [(NSApplication*)NSApp setDelegate:[delegate init]];
     if (need_new_nsapp) {
       if (fl_mac_os_version >= 101300 ) {
+        [NSApp activateIgnoringOtherApps:YES]; // necessary to run app from command line
         in_nsapp_run = true;
         [NSApp run];
         in_nsapp_run = false;
