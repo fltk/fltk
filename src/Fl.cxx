@@ -2009,8 +2009,14 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
 /** Register a function called for each file dropped onto an application icon.
  
  This function is effective only on the Mac OS X platform.
- \e cb will be called with a single Unix-style file name and path.
- If multiple files were dropped, \e cb will be called multiple times.
+ \c cb will be called with a single Unix-style file name and path.
+ If multiple files were dropped, \c cb will be called multiple times.
+ 
+ This function should be called before \c fl_open_display() is called,
+ either directly or indirectly (this happens at the first \c show() of a window),
+ to be effective for files dropped on the application icon at launch time.
+ It can also be called at any point to change the function used to open dropped files.
+ A call with a NULL argument, after a previous call, makes the app ignore files dropped later.
  */
 void fl_open_callback(void (*cb)(const char *))
 {
