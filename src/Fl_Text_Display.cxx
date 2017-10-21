@@ -516,8 +516,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 	      text_area.w, oldTAWidth, text_area.w - oldTAWidth);
 #endif // DEBUG2
 
-    if (mContinuousWrap && !mWrapMarginPix ) {
-    //if (mContinuousWrap && !mWrapMarginPix && text_area.w != oldTAWidth) {
+    if (mContinuousWrap && !mWrapMarginPix && text_area.w != oldTAWidth) {
 
       int oldFirstChar = mFirstChar;
       mNBufferLines = count_lines(0, buffer()->length(), true);
