@@ -79,15 +79,19 @@ float Fl_SVG_Image::svg_scaling_(int W, int H) {
 #if defined(HAVE_LIBZ)
 
 static char *svg_inflate(const char *fname) {
-  struct stat b;
-  fl_stat(fname, &b);
-  long size = b.st_size;
+  FILE *in = fl_fopen(fname, "r");
+  if (!in) return NULL;
+  unsigned char header[2];
+  fread(header, 2, 1, in);
+  int direct = (header[0] != 0x1f || header[1] != 0x8b);
+  fseek(in, 0, SEEK_END);
+  long size = ftell(in);
+  fclose(in);
   int fd = fl_open_ext(fname, 1, 0);
   if (fd < 0) return NULL;
   gzFile gzf =  gzdopen(fd, "r");
   if (!gzf) return NULL;
   int l;
-  int direct = gzdirect(gzf);
   long out_size = direct ? size + 1 : 3*size + 1;
   char *out = (char*)malloc(out_size);
   char *p = out;
