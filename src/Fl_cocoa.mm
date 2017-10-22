@@ -856,15 +856,21 @@ int fl_wait( double time )
 
 static void drain_dropped_files_list() {
   open_cb_f_type open_cb = get_open_cb();
-  NSString *s;
-  if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
-    if (open_cb) open_cb([s UTF8String]);
-    [dropped_files_list removeObjectAtIndex:0];
+  if (!open_cb) {
+    [dropped_files_list removeAllObjects];
+    [dropped_files_list release];
+    dropped_files_list = nil;
+    return;
   }
+  NSString *s = (NSString*)[dropped_files_list objectAtIndex:0];
+  char *fname = strdup([s UTF8String]);
+  [dropped_files_list removeObjectAtIndex:0];
   if ([dropped_files_list count] == 0) {
     [dropped_files_list release];
     dropped_files_list = nil;
   }
+  open_cb(fname);
+  free(fname);
 }
 
 double fl_mac_flush_and_wait(double time_to_wait) {
