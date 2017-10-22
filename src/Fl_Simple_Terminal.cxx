@@ -374,13 +374,13 @@ int Fl_Simple_Terminal::current_style_index() const {
  ansi(bool) must be set to 'true' for the defined style table
  to be used at all.
 
- If 'table' and 'size' are 0, then the "built in" style table is used.
+ If 'stable' is NULL, then the "built in" style table is used.
  For info about the built-in colors, see ansi(bool).
 
  Which style table entry used for drawing depends on the value last set
  by current_style_index(), or by the ANSI sequence "\033[#m", where '#'
- is the index into the style table, limited to the size of the table
- via modulus.
+ is the index into the style table array, the index limited to the size
+ of the array via modulus.
 
  If the index# passed via "\033[#m" is larger than the number of elements
  in the table, the value is clamped via modulus. So for a 10 element table,
@@ -431,8 +431,10 @@ int Fl_Simple_Terminal::current_style_index() const {
        style table's font size != textsize()
 
  \param stable - the style table, an array of structs of the type
-                 Fl_Text_Display::Style_Table_Entry
- \param stable_size - the sizeof() the style table (in bytes)
+                 Fl_Text_Display::Style_Table_Entry. Can be NULL
+		 to use the default style table (see ansi(bool)).
+ \param stable_size - the sizeof() the style table (in bytes).
+                      Set this to 0 if 'stable' is NULL.
  \param normal_style_index - the style table index# used when the special
                              ANSI sequence "\033[0m" is encountered.
 			     Normally use 0 so that sequence selects the
@@ -441,7 +443,8 @@ int Fl_Simple_Terminal::current_style_index() const {
 			     should be the default. This value should
 			     not be larger than the number of items in
 			     the table, or it will be clamped with a
-			     modulus operation.
+			     modulus operation. This value is ignored
+			     if stable is NULL.
 */
 void Fl_Simple_Terminal::style_table(Fl_Text_Display::Style_Table_Entry *stable,
                                      int stable_size, int normal_style_index) {
