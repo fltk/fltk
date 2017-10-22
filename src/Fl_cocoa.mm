@@ -88,6 +88,7 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
+static void drain_dropped_files_list(void);
 
 int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -117,7 +118,6 @@ static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPastebo
 static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
 typedef void (*open_cb_f_type)(const char *);
-static open_cb_f_type get_open_cb();
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -845,19 +845,6 @@ static int do_queued_events( double time = 0.0 )
   }
 #endif
   return got_events;
-}
-
-static void drain_dropped_files_list() {
-  open_cb_f_type open_cb = get_open_cb();
-  NSString *s;
-  if ( (s = (NSString*)[dropped_files_list firstObject]) != nil) {
-    if (open_cb) open_cb([s UTF8String]);
-    [dropped_files_list removeObjectAtIndex:0];
-  }
-  if ([dropped_files_list count] == 0) {
-    [dropped_files_list release];
-    dropped_files_list = nil;
-  }
 }
 
 double Fl_Cocoa_Screen_Driver::wait(double time_to_wait)
@@ -1680,8 +1667,23 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 @end
 
-static open_cb_f_type get_open_cb() {
-  return ((FLAppDelegate*)[NSApp delegate])->open_cb;
+static void drain_dropped_files_list() {
+  open_cb_f_type open_cb = ((FLAppDelegate*)[NSApp delegate])->open_cb;
+  if (!open_cb) {
+    [dropped_files_list removeAllObjects];
+    [dropped_files_list release];
+    dropped_files_list = nil;
+    return;
+  }
+  NSString *s = (NSString*)[dropped_files_list objectAtIndex:0];
+  char *fname = strdup([s UTF8String]);
+  [dropped_files_list removeObjectAtIndex:0];
+  if ([dropped_files_list count] == 0) {
+    [dropped_files_list release];
+    dropped_files_list = nil;
+  }
+  open_cb(fname);
+  free(fname);
 }
 
 /*
