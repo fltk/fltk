@@ -27,13 +27,12 @@ In contrast, code that draws to other drawing surfaces than the display
 (i.e., instances of derived classes of the Fl_Surface_Device class, except 
 Fl_Display_Device, such as Fl_Printer and Fl_Copy_Surface) can be executed 
 at any time as follows:
-<ol><li> Memorize what is the current drawing surface calling Fl_Surface_Device::surface(),
-and make your surface the new current drawing surface calling the surface's 
-set_current() function;
+<ol><li> Make your surface the new current drawing surface calling the 
+Fl_Surface_Device::push_current(Fl_Surface_Device*) function.
 <li> Make a series of calls to any of the drawing functions described below;
 these will operate on the new current drawing surface;
 <li> Set the current drawing surface back to its previous state calling 
-the previous surface's set_current().
+Fl_Surface_Device::pop_current().
 </ol>
 
 \subsection ssect_DrawingUnit What Drawing Unit do FLTK drawing functions use?
