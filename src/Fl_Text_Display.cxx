@@ -492,6 +492,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   // for large buffers that suffer from slow calculations of character width
   // to determine line wrapping.
 
+  oldTAWidth = -1; // force _first_ calculation in loop (STR #3412)
+
   if (mContinuousWrap && !mWrapMarginPix) {
 
     int nvlines = (text_area.h + mMaxsize - 1) / mMaxsize;
