@@ -2190,6 +2190,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 , NSTextInputClient
 #endif
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+,NSDraggingSource
+#endif
 > {
   BOOL in_key_event; // YES means keypress is being processed by handleEvent
   BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
@@ -2231,6 +2234,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange;
 - (NSRect)firstRectForCharacterRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange;
 - (NSInteger)windowLevel;
+#endif
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context;
 #endif
 @end
 
@@ -2444,8 +2450,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   breakMacEventLoop();
   fl_unlock_function();
   // if the DND started in the same application, Fl::dnd() will not return until 
-  // the the DND operation is finished. The call below causes the drop indicator
-  // to be draw correctly (a full event handling would be better...)
+  // the DND operation is finished. The call below causes the drop indicator
+  // to be drawn correctly (a full event handling would be better...)
   Fl::flush();
   return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
@@ -2730,6 +2736,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 )conversationIdentifier {
   return identifier;
 }
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+{
+  return NSDragOperationCopy;
+}
+#endif
+
 @end
 
 
@@ -3930,13 +3944,9 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
   if (text==NULL) return false;
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init]; 
-  NSPasteboard *mypasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-  [mypasteboard declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
-  [mypasteboard setData:(NSData*)text forType:UTF8_pasteboard_type];
-  CFRelease(text);
   Fl_Widget *w = Fl::pushed();
   Fl_Window *win = w->top_window();
-  NSView *myview = [Fl_X::i(win)->xid contentView];
+  FLView *myview = (FLView*)[Fl_X::i(win)->xid contentView];
   NSEvent *theEvent = [NSApp currentEvent];
   
   int width, height;
@@ -3948,13 +3958,29 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
     image = defaultDragImage(&width, &height);
   }
   
-  static NSSize offset={0,0};
   NSPoint pt = [theEvent locationInWindow];
   pt.x -= width/2;
   pt.y -= height/2;
-  [myview dragImage:image  at:pt  offset:offset 
-              event:theEvent  pasteboard:mypasteboard  
-             source:myview  slideBack:YES];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
+  if (fl_mac_os_version >= 100700) {
+    NSPasteboardItem *pbItem = [[[NSPasteboardItem alloc] init] autorelease];
+    [pbItem setData:(NSData*)text forType:UTF8_pasteboard_type];
+    NSDraggingItem *dragItem = [[[NSDraggingItem alloc] initWithPasteboardWriter:pbItem] autorelease];
+    NSRect r = {pt, {width, height}};
+    [dragItem setDraggingFrame:r contents:image];
+    [myview beginDraggingSessionWithItems:[NSArray arrayWithObject:dragItem] event:theEvent source:myview];
+  } else
+#endif
+  {
+    static NSSize offset={0,0};
+    NSPasteboard *mypasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    [mypasteboard declareTypes:[NSArray arrayWithObject:UTF8_pasteboard_type] owner:nil];
+    [mypasteboard setData:(NSData*)text forType:UTF8_pasteboard_type];
+    [myview dragImage:image  at:pt  offset:offset // deprecated in 10.7
+                event:theEvent  pasteboard:mypasteboard
+               source:myview  slideBack:YES];
+  }
+  CFRelease(text);
   if ( w ) {
     int old_event = Fl::e_number;
     w->handle(Fl::e_number = FL_RELEASE);
