@@ -293,7 +293,7 @@ public:
    Sets the default font used when drawing text in the widget.
    \param s default text font face
    */
-  void textfont(Fl_Font s) {textfont_ = s; mColumnScale = 0;}
+  void textfont(Fl_Font s) {textfont_ = s; mColumnScale = 0; recalc_display(); }
   
   /**
    Gets the default size of text in the widget.
@@ -305,7 +305,7 @@ public:
    Sets the default size of text in the widget.
    \param s new text size
    */
-  void textsize(Fl_Fontsize s) {textsize_ = s; mColumnScale = 0;}
+  void textsize(Fl_Fontsize s) {textsize_ = s; mColumnScale = 0; recalc_display(); }
   
   /**
    Gets the default color of text in the widget.
@@ -323,6 +323,7 @@ public:
   int wrapped_row(int row) const;
   void wrap_mode(int wrap, int wrap_margin);
   
+  virtual void recalc_display();
   virtual void resize(int X, int Y, int W, int H);
 
   /**

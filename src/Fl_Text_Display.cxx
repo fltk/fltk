@@ -212,7 +212,7 @@ Fl_Text_Display::~Fl_Text_Display() {
 void Fl_Text_Display::linenumber_width(int width) {
   if (width < 0) return;
   mLineNumWidth = width;
-  resize(x(), y(), w(), h());	// triggers code to recalculate line#s
+  recalc_display();		// recalc line#s	// resize(x(), y(), w(), h());
 }
 
 /**
@@ -365,7 +365,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   }
 
   /* Resize the widget to update the screen... */
-  resize(x(), y(), w(), h());
+  recalc_display();		// resize(x(), y(), w(), h());
 }
 
 
@@ -431,8 +431,6 @@ int Fl_Text_Display::longest_vline() const {
   return longest;
 }
 
-
-
 /**
  \brief Change the size of the displayed text area.
 
@@ -456,6 +454,13 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 #endif // DEBUG2
 
   Fl_Widget::resize(X,Y,W,H);
+  recalc_display();
+}
+
+/**
+ Recalculate the display's visible lines and scrollbar sizes.
+ */
+void Fl_Text_Display::recalc_display() {
   if (!buffer()) return;
 
   // did we have scrollbars initially?
@@ -464,10 +469,10 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 
   int oldTAWidth = text_area.w;
 
-  X += Fl::box_dx(box());
-  Y += Fl::box_dy(box());
-  W -= Fl::box_dw(box());
-  H -= Fl::box_dh(box());
+  int X = x() + Fl::box_dx(box());
+  int Y = y() + Fl::box_dy(box());
+  int W = w() - Fl::box_dw(box());
+  int H = h() - Fl::box_dh(box());
 
   text_area.x = X + LEFT_MARGIN + mLineNumWidth;
   text_area.y = Y + TOP_MARGIN;
@@ -678,7 +683,6 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   update_v_scrollbar();
   update_h_scrollbar();
 }
-
 
 
 /**
@@ -941,7 +945,7 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
     mAbsTopLineNum = 1;		// changed from 0 to 1 -- LZA / STR#2621
   }
 
-  resize(x(), y(), w(), h());
+  recalc_display();		// resize(x(), y(), w(), h());
 }
 
 
@@ -1250,7 +1254,7 @@ void Fl_Text_Display::display_insert() {
  */
 void Fl_Text_Display::show_insert_position() {
   display_insert_position_hint = 1;
-  resize(x(), y(), w(), h());
+  recalc_display();		// resize(x(), y(), w(), h());
 }
 
 
@@ -2817,7 +2821,7 @@ void Fl_Text_Display::calc_last_char() {
 void Fl_Text_Display::scroll(int topLineNum, int horizOffset) {
   mTopLineNumHint = topLineNum;
   mHorizOffsetHint = horizOffset;
-  resize(x(), y(), w(), h());
+  recalc_display();	// resize(x(), y(), w(), h());
 }
 
 
