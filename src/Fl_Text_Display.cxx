@@ -3663,6 +3663,7 @@ void Fl_Text_Display::draw(void) {
 
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
+    recalc_display();
     //    printf("drawing all (box = %d)\n", box());
     if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
       // if to printer, draw the background
