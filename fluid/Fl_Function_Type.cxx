@@ -275,6 +275,8 @@ void Fl_Function_Type::write_code1() {
     if (rtype) {
       if (!strcmp(rtype,"static")) {is_static = 1; rtype = 0;}
       else if (!strncmp(rtype, "static ",7)) {is_static = 1; rtype += 7;}
+    }
+    if (rtype) {
       if (!strcmp(rtype, "virtual")) {is_virtual = 1; rtype = 0;}
       else if (!strncmp(rtype, "virtual ",8)) {is_virtual = 1; rtype += 8;}
     }
