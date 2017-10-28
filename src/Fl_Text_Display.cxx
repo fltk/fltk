@@ -557,7 +557,7 @@ void Fl_Text_Display::recalc_display() {
       /* Decide if the vertical scrollbar needs to be visible */
       if (!mVScrollBar->visible() &&
 	  scrollbar_align() & (FL_ALIGN_LEFT|FL_ALIGN_RIGHT) &&
-	  mNBufferLines >= mNVisibleLines-1)
+	  mNBufferLines >= mNVisibleLines-(mContinuousWrap?0:1))
       {
 	mVScrollBar->set_visible();
 	text_area.w -= scrollbar_width();
@@ -2877,7 +2877,7 @@ void Fl_Text_Display::update_v_scrollbar() {
 	 mTopLineNum, mNVisibleLines, mNBufferLines);
 #endif // DEBUG
 
-  mVScrollBar->value(mTopLineNum, mNVisibleLines, 1, mNBufferLines+2);
+  mVScrollBar->value(mTopLineNum, mNVisibleLines, 1, mNBufferLines+1+(mContinuousWrap?0:1));
   mVScrollBar->linesize(3);
 }
 
