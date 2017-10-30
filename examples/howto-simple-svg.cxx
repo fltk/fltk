@@ -16,11 +16,13 @@
 //
 //     http://www.fltk.org/str.php
 //
+#include <config.h>	/* needed only to detect FLTK_USE_NANOSVG */
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_SVG_Image.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/fl_message.H>
 
 /* svg logo */
 const char *svg_logo =
@@ -53,6 +55,10 @@ const char *svg_logo =
     "</svg>\n";
 
 int main(int argc, char **argv) {
+#ifndef FLTK_USE_NANOSVG
+    fl_message("You need to build fltk with --enable-nanosvg to use this example.");
+    return(1);
+#else
     Fl_SVG_Image *svg = new Fl_SVG_Image(NULL, (char*)strdup(svg_logo)); // XXX: strdup() shouldn't be needed -- see STR #3421
     Fl_Window    *win = new Fl_Window(720, 486, "svg test");
     Fl_Box       *box = new Fl_Box(10,10,720-20,486-20);
@@ -60,6 +66,7 @@ int main(int argc, char **argv) {
     win->end();
     win->show(argc,argv);
     return(Fl::run());
+#endif
 }
 
 //
