@@ -13,6 +13,7 @@ ALL = clipboard$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
       howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
+      howto-simple-svg$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
       nativefilechooser-simple$(EXEEXT) \
