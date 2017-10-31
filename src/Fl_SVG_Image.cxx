@@ -48,9 +48,9 @@ static double strtoll(const char *str, char **endptr, int base) {
  \param filename A full path and name pointing to a .svg or .svgz file, or NULL.
  \param filedata A pointer to the memory location of the SVG image data.
  This parameter allows to load an SVG image from in-memory data, and is used when \p filename is NULL.
- \note In-memory SVG data is modified by the object constructor and is no longer used after construction.
+ \note In-memory SVG data is parsed by the object constructor and is no longer used after construction.
  */
-Fl_SVG_Image::Fl_SVG_Image(const char *filename, char *filedata) : Fl_RGB_Image(NULL, 0, 0, 4) {
+Fl_SVG_Image::Fl_SVG_Image(const char *filename, const char *filedata) : Fl_RGB_Image(NULL, 0, 0, 4) {
   init_(filename, filedata, NULL);
 }
 
@@ -113,9 +113,9 @@ static char *svg_inflate(const char *fname) {
 }
 #endif
 
-void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *copy_source) {
+void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, Fl_SVG_Image *copy_source) {
   if (copy_source) {
-    filename = filedata = NULL;
+    filename = in_filedata = NULL;
     counted_svg_image_ = copy_source->counted_svg_image_;
     counted_svg_image_->ref_count++;
   } else {
@@ -123,6 +123,7 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
     counted_svg_image_->svg_image = NULL;
     counted_svg_image_->ref_count = 1;
   }
+  char *filedata = NULL;
   to_desaturate_ = false;
   average_weight_ = 1;
   proportional = true;
@@ -130,7 +131,6 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
 #if defined(HAVE_LIBZ)
     filedata = svg_inflate(filename);
 #else
-    filedata = NULL;
     FILE *fp = fl_fopen(filename, "rb");
     if (fp) {
       fseek(fp, 0, SEEK_END);
@@ -140,8 +140,7 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
       if (filedata) {
         if (fread(filedata, 1, size, fp) == size) {
           filedata[size] = '\0';
-        }
-        else {
+        } else {
           free(filedata);
           filedata = NULL;
         }
@@ -150,10 +149,13 @@ void Fl_SVG_Image::init_(const char *filename, char *filedata, Fl_SVG_Image *cop
     }
 #endif // HAVE_LIBZ
     if (!filedata) ld(ERR_FILE_ACCESS);
+  } else {
+    // XXX: Make internal copy -- nsvgParse() modifies filedata during parsing (!)
+    filedata = in_filedata ? strdup(in_filedata) : NULL;
   }
   if (filedata) {
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);
-    if (filename) free(filedata);
+    free(filedata);	// made with svg_inflate|malloc|strdup
     if (counted_svg_image_->svg_image->width == 0 || counted_svg_image_->svg_image->height == 0) {
       d(-1);
       ld(ERR_FORMAT);

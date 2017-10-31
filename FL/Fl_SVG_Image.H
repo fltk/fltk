@@ -43,6 +43,64 @@ struct NSVGimage;
  
  The FLTK library can optionally be built without SVG support; in that case, 
  class Fl_SVG_Image is unavailable.
+
+ Example of displaying a hard-coded svg file:
+ \code
+ #include <FL/Fl.H>
+ #include <FL/Fl_Window.H>
+ #include <FL/Fl_Box.H>
+ #include <FL/Fl_SVG_Image.H>
+
+ // A black rotated rectangle
+ const char *svg_data = "<svg viewBox=\"0 0 200 200\" version = \"1.1\">\n"
+                        "<rect x=\"25\" y=\"50\" width=\"150\" height=\"100\" fill=\"black\" "
+                        "transform=\"rotate(45 100 100)\"> </svg>\n";
+
+ int main(int argc, char **argv) {
+     Fl_SVG_Image *svg = new Fl_SVG_Image(0, svg_data);       // create SVG object
+     Fl_Window    *win = new Fl_Window(720, 486, "svg test");
+     Fl_Box       *box = new Fl_Box(0,0,win->w(),win->h());
+     box->image(svg);  // assign svg object to Fl_Box
+     win->end();
+     win->show(argc,argv);
+     return(Fl::run());
+ }
+ \endcode
+
+ Example of displaying an svg image from a file:
+ \code
+ #include <errno.h>   // errno
+ #include <string.h>  // strerror
+ #include <FL/Fl.H>
+ #include <FL/Fl_Window.H>
+ #include <FL/Fl_Box.H>
+ #include <FL/Fl_SVG_Image.H>
+ #include <FL/fl_message.H>
+ int main(int argc, char **argv) {
+     Fl_Window *win = new Fl_Window(720, 486, "svg test");
+     Fl_Box    *box = new Fl_Box(0,0,win->w(),win->h());
+ 
+     // Load svg image from disk, assign to a box
+     const char *svgpath = "/var/tmp/simple.svg";
+     Fl_SVG_Image *svg = new Fl_SVG_Image(svgpath);  // load SVG object from disk
+     switch ( svg->fail() ) {
+         case Fl_Image::ERR_FILE_ACCESS:
+            // File couldn't load? show path + os error to user
+            fl_alert("%s: %s", svgpath, strerror(errno));
+            return 1;
+         case Fl_Image::ERR_FORMAT:
+            // Parsing error
+            fl_alert("%s: couldn't decode image", svgpath);
+            return 1;
+     }
+     box->image(svg);  // assign svg object to box
+ 
+     win->end();
+     win->show(argc,argv);
+     return(Fl::run());
+ }
+ \endcode
+
  */
 class FL_EXPORT Fl_SVG_Image : public Fl_RGB_Image {
 private:
@@ -58,7 +116,7 @@ private:
   float average_weight_;
   float svg_scaling_(int W, int H);
   void rasterize_(int W, int H);
-  void init_(const char *filename, char *filedata, Fl_SVG_Image *copy_source);
+  void init_(const char *filename, const char *filedata, Fl_SVG_Image *copy_source);
   Fl_SVG_Image(Fl_SVG_Image *source);
 protected:
   virtual int draw_scaled(int X, int Y, int W, int H);
@@ -66,7 +124,7 @@ public:
   /** Set this to \c false to allow image re-scaling that alters the image aspect ratio.
    Upon object creation, \c proportional is set to \c true, and the aspect ratio is kept constant.*/
   bool proportional;
-  Fl_SVG_Image(const char *filename, char *filedata = NULL);
+  Fl_SVG_Image(const char *filename, const char *filedata = NULL);
   virtual ~Fl_SVG_Image();
   virtual Fl_Image *copy(int W, int H);
   void resize(int width, int height);

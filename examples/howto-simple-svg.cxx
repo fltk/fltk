@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     fl_message("You need to build fltk with --enable-nanosvg to use this example.");
     return(1);
 #else
-    Fl_SVG_Image *svg = new Fl_SVG_Image(NULL, (char*)strdup(svg_logo)); // XXX: strdup() shouldn't be needed -- see STR #3421
+    Fl_SVG_Image *svg = new Fl_SVG_Image(NULL, svg_logo);
     Fl_Window    *win = new Fl_Window(720, 486, "svg test");
     Fl_Box       *box = new Fl_Box(10,10,720-20,486-20);
     box->image(svg);
