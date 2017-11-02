@@ -24,6 +24,7 @@
 #ifndef FL_TEXT_DISPLAY_H
 #define FL_TEXT_DISPLAY_H
 
+#include <FL/Fl.H>		// Fl::scrollbar_size()
 #include "fl_draw.H"
 #include "Fl_Group.H"
 #include "Fl_Widget.H"
@@ -222,18 +223,65 @@ public:
    */
   void cursor_color(Fl_Color n) {mCursor_color = n;}
   
-  /**   
-   Gets the width/height of the scrollbars.
-   \return width of scrollbars
-   */
-  int scrollbar_width() const { return scrollbar_width_; }
+  /**
+    This method has been deprecated, existing for backwards compatibility only.
+    Use scrollbar_size() instead.
+    This method returns the global value Fl::scrollbar_size() unless
+    a specific scrollbar_width_ has been set.
+    \todo This method should eventually be removed.
+  */
+  int scrollbar_width() const {
+      return scrollbar_width_ ? scrollbar_width_ : Fl::scrollbar_size();
+  }
+
+  /**
+    This method has been deprecated, existing for backwards compatibility only.
+    Use scrollbar_size(int) instead.
+    This method sets the global Fl::scrollbar_size(), and forces this
+    instance of the widget to use it.
+    \todo This method should eventually be removed
+  */
+  void scrollbar_width(int width) {
+      Fl::scrollbar_size(width);
+      scrollbar_width_ = 0;
+  }
   
   /**
-   Sets the width/height of the scrollbars.
-   \param W width of scrollbars
-   */
-  void scrollbar_width(int W) { scrollbar_width_ = W; }
+    Gets the current size of the scrollbars' troughs, in pixels.
+
+    If this value is zero (default), this widget will use the 
+    Fl::scrollbar_size() value as the scrollbar's width.
   
+    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
+    \see Fl::scrollbar_size(int)
+  */
+  int scrollbar_size() const {
+      return(scrollbar_width_);
+  }
+
+  /**
+    Sets the pixel size of the scrollbars' troughs to \p newSize, in pixels.
+
+    Normally you should not need this method, and should use
+    Fl::scrollbar_size(int) instead to manage the size of ALL 
+    your widgets' scrollbars. This ensures your application 
+    has a consistent UI, is the default behavior, and is normally
+    what you want.
+
+    Only use THIS method if you really need to override the global
+    scrollbar size. The need for this should be rare.
+    
+    Setting \p newSize to the special value of 0 causes the widget to
+    track the global Fl::scrollbar_size(), which is the default.
+    
+    \param[in] newSize Sets the scrollbar size in pixels.\n
+                    If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
+    \see Fl::scrollbar_size()
+  */
+  void scrollbar_size(int newSize) {
+      scrollbar_width_ = newSize;
+  }   
+
   /**
    Gets the scrollbar alignment type.
    \return scrollbar alignment
@@ -522,7 +570,7 @@ protected:
   
   Fl_Scrollbar* mHScrollBar;
   Fl_Scrollbar* mVScrollBar;
-  int scrollbar_width_;
+  int scrollbar_width_;		// size of scrollbar trough (behavior changed in 1.4)
   Fl_Align scrollbar_align_;
   int dragPos, dragType, dragging;
   int display_insert_position_hint;

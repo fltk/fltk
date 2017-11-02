@@ -20,6 +20,7 @@
 #include <FL/Fl_Browser.H>
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Table.H>
+#include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Value_Slider.H>
 
 //
@@ -67,50 +68,37 @@ class MyTable : public Fl_Table {
   ~MyTable() { }
 };
 
+static const char *phonetics[] = {
+  "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot",
+  "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike",
+  "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango",
+  "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu", NULL
+};
+
 class ScrollBarSizeTest : public Fl_Group {
-    Fl_Browser *brow_a, *brow_b, *brow_c;
-    Fl_Tree    *tree_a, *tree_b, *tree_c;
-    MyTable    *table_a,*table_b,*table_c;
+    Fl_Browser      *brow_a, *brow_b, *brow_c;
+    Fl_Tree         *tree_a, *tree_b, *tree_c;
+    MyTable         *table_a,*table_b,*table_c;
+    Fl_Text_Display *text_a, *text_b, *text_c;
 
     Fl_Browser *makebrowser(int X,int Y,int W,int H,const char*L=0) {
 	Fl_Browser *b = new Fl_Browser(X,Y,W,H,L);
 	b->type(FL_MULTI_BROWSER);
 	b->align(FL_ALIGN_TOP);
-	b->add("Papa");     b->add("Delta"); b->add("Hotel");
-        b->add("Long entry will show h-bar");
-	b->add("Charlie");  b->add("Echo");  b->add("Foxtrot");
-	b->add("Golf");     b->add("Lima");  b->add("Victor");
-	b->add("Alpha");    b->add("Xray");  b->add("Yankee");
-	b->add("Oscar");    b->add("India"); b->add("Juliet");
-	b->add("Kilo");     b->add("Mike");  b->add("Sierra");
-	b->add("November"); b->add("Tango"); b->add("Quebec");
-	b->add("Bravo");    b->add("Romeo"); b->add("Uniform");
-	b->add("Whisky");   b->add("Zulu");
-	b->add("Papa");     b->add("Delta"); b->add("Hotel");
-	b->add("Charlie");  b->add("Echo");  b->add("Foxtrot");
-	b->add("Golf");     b->add("Lima");  b->add("Victor");
-	b->add("Alpha");    b->add("Xray");  b->add("Yankee");
-	b->add("Oscar");    b->add("India"); b->add("Juliet");
-	b->add("Kilo");     b->add("Mike");  b->add("Sierra");
-	b->add("November"); b->add("Tango"); b->add("Quebec");
-	b->add("Bravo");    b->add("Romeo"); b->add("Uniform");
-	b->add("Whisky");   b->add("Zulu");
+	for (int t=0; phonetics[t]; t++ ) {
+	  b->add(phonetics[t]);
+	  if ( phonetics[t][0] == 'C' ) b->add("Long entry will show h-bar");
+	}
 	return(b);
     }
     Fl_Tree *maketree(int X,int Y,int W,int H,const char*L=0) {
 	Fl_Tree *b = new Fl_Tree(X,Y,W,H,L);
 	b->type(FL_TREE_SELECT_MULTI);
 	b->align(FL_ALIGN_TOP);
-	b->add("Papa");     b->add("Delta"); b->add("Hotel");
-        b->add("Long entry will show h-bar");
-	b->add("Charlie");  b->add("Echo");  b->add("Foxtrot");
-	b->add("Golf");     b->add("Lima");  b->add("Victor");
-	b->add("Alpha");    b->add("Xray");  b->add("Yankee");
-	b->add("Oscar");    b->add("India"); b->add("Juliet");
-	b->add("Kilo");     b->add("Mike");  b->add("Sierra");
-	b->add("November"); b->add("Tango"); b->add("Quebec");
-	b->add("Bravo");    b->add("Romeo"); b->add("Uniform");
-	b->add("Whisky");   b->add("Zulu");
+	for (int t=0; phonetics[t]; t++ ) {
+	  b->add(phonetics[t]);
+	  if ( phonetics[t][0] == 'C' ) b->add("Long entry will show h-bar");
+	}
 	return(b);
     }
     MyTable *maketable(int X,int Y,int W,int H,const char*L=0) {
@@ -118,6 +106,16 @@ class ScrollBarSizeTest : public Fl_Group {
 	mta->align(FL_ALIGN_TOP);
 	mta->end();
 	return(mta);
+    }
+    Fl_Text_Display *maketextdisplay(int X,int Y,int W,int H,const char*L=0) {
+	Fl_Text_Display *dpy = new Fl_Text_Display(X,Y,W,H,L);
+	Fl_Text_Buffer  *buf = new Fl_Text_Buffer();
+	dpy->buffer(buf);
+	for (int t=0; phonetics[t]; t++ ) {
+	  buf->printf("%s\n", phonetics[t]);
+	  if ( phonetics[t][0] == 'C' ) buf->printf("Long entry will show h-bar\n");
+	}
+	return(dpy);
     }
     void slide_cb2(Fl_Value_Slider *in) {
 	const char *label = in->label();
@@ -127,6 +125,7 @@ class ScrollBarSizeTest : public Fl_Group {
 	    brow_a->scrollbar_size(val);
 	    tree_a->scrollbar_size(val);
 	    table_a->scrollbar_size(val);
+	    text_a->scrollbar_size(val);
 	} else {
 	    Fl::scrollbar_size(val);
 	}
@@ -173,6 +172,8 @@ public:
         int treeh = browh;
         int tabley = treey + treeh + 20;
         int tableh = browh;
+        int texty = tabley + tableh + 20;
+        int texth = browh;
         brow_a = makebrowser(X+ 10,browy,100,browh,"Browser A");
         brow_b = makebrowser(X+120,browy,100,browh,"Browser B");
         brow_c = makebrowser(X+230,browy,100,browh,"Browser C");
@@ -182,6 +183,9 @@ public:
         table_a = maketable(X+ 10,tabley,100,tableh,"Table A");
         table_b = maketable(X+120,tabley,100,tableh,"Table B");
         table_c = maketable(X+230,tabley,100,tableh,"Table C");
+        text_a = maketextdisplay(X+ 10,texty,100,texth,"Text Display A");
+        text_b = maketextdisplay(X+120,texty,100,texth,"Text Display B");
+        text_c = maketextdisplay(X+230,texty,100,texth,"Text Display C");
         Fl_Value_Slider *slide_glob = new Fl_Value_Slider(X+100,Y,100,18,"Global Scroll Size");
         slide_glob->value(16);
         slide_glob->type(FL_HORIZONTAL);
@@ -198,14 +202,19 @@ public:
         slide_browa->step(1.0);
         slide_browa->callback(slide_cb, (void*)this);
         slide_browa->labelsize(12);
+        int msgbox_x = brow_c->x() + brow_c->w() + 20;
+	int msgbox_w = W-(msgbox_x-X);
+        Fl_Box *msgbox = new Fl_Box(msgbox_x,browy,msgbox_w,H-Y-48);
+        msgbox->label("\nVerify global scroll sizing and per-widget scroll sizing. "
+                      "Scrollbar's size should change interactively as size sliders are changed. "
+                      "Changing 'Global Scroll Size' should affect all three browser's scrollbars UNLESS "
+                      "the 'A: Scroll Size' slider is changed, in which case its value will take precedence "
+                      "for the 'A' group of widgets.");
+        msgbox->labelsize(10);
+        msgbox->align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
+	msgbox->box(FL_FLAT_BOX);
+	msgbox->color(53); // 90% gray
       end();
-      label("Verify global scroll sizing and per-widget scroll sizing.\n"
-	    "Scrollbar's size should change interactively as size sliders are changed.\n"
-            "Changing 'Global Scroll Size' should affect all three browser's scrollbars UNLESS\n"
-	    "the 'A: Scroll Size' slider is changed, in which case its value will take precedence\n"
-	    "for the 'A' group of widgets.");
-      labelsize(10);
-      align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     }
 };
 

@@ -127,8 +127,8 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
 
   end();
 
-  scrollbar_width(Fl::scrollbar_size());
-  scrollbar_align(FL_ALIGN_BOTTOM_RIGHT);
+  scrollbar_width_ = 0;		// 0: uses Fl::scrollbar_size()
+  scrollbar_align_ = FL_ALIGN_BOTTOM_RIGHT;
 
   mCursorOn = 0;
   mCursorPos = 0;
@@ -466,6 +466,7 @@ void Fl_Text_Display::recalc_display() {
   // did we have scrollbars initially?
   unsigned int hscrollbarvisible = mHScrollBar->visible();
   unsigned int vscrollbarvisible = mVScrollBar->visible();
+  int scrollsize = scrollbar_width_ ? scrollbar_width_ : Fl::scrollbar_size();
 
   int oldTAWidth = text_area.w;
 
@@ -506,7 +507,7 @@ void Fl_Text_Display::recalc_display() {
     if (nvlines < 1) nvlines = 1;
     if (nlines >= nvlines-1) {
       mVScrollBar->set_visible(); // we need a vertical scrollbar
-      text_area.w -= scrollbar_width();
+      text_area.w -= scrollsize;
     }
   }
 
@@ -552,7 +553,7 @@ void Fl_Text_Display::recalc_display() {
     calc_last_char();
 
     // figure the scrollbars
-    if (scrollbar_width()) {
+    if (scrollsize) {
 
       /* Decide if the vertical scrollbar needs to be visible */
       if (!mVScrollBar->visible() &&
@@ -560,7 +561,7 @@ void Fl_Text_Display::recalc_display() {
 	  mNBufferLines >= mNVisibleLines-(mContinuousWrap?0:1))
       {
 	mVScrollBar->set_visible();
-	text_area.w -= scrollbar_width();
+	text_area.w -= scrollsize;
 	again = 1;
       }
 
@@ -594,7 +595,7 @@ void Fl_Text_Display::recalc_display() {
         char wrap_at_bounds = mContinuousWrap && (mWrapMarginPix<text_area.w);
         if (!wrap_at_bounds) {
           mHScrollBar->set_visible();
-          text_area.h -= scrollbar_width();
+          text_area.h -= scrollsize;
           again = 1; // loop again to see if we now need vert. & recalc sizes
         }
       }
@@ -605,28 +606,28 @@ void Fl_Text_Display::recalc_display() {
   // Note: width and height have been calculated above.
   text_area.x = X + mLineNumWidth + LEFT_MARGIN;
   if (mVScrollBar->visible() && scrollbar_align() & FL_ALIGN_LEFT)
-    text_area.x += scrollbar_width();
+    text_area.x += scrollsize;
 
   text_area.y = Y + TOP_MARGIN;
   if (mHScrollBar->visible() &&
       scrollbar_align() & FL_ALIGN_TOP)
-    text_area.y += scrollbar_width();
+    text_area.y += scrollsize;
 
   // position and resize scrollbars
   if (mVScrollBar->visible()) {
     if (scrollbar_align() & FL_ALIGN_LEFT) {
 #ifdef LINENUM_LEFT_OF_VSCROLL
-      mVScrollBar->resize(text_area.x - LEFT_MARGIN - scrollbar_width(),
+      mVScrollBar->resize(text_area.x - LEFT_MARGIN - scrollsize,
 #else
       mVScrollBar->resize(X,
 #endif
 			  text_area.y - TOP_MARGIN,
-			  scrollbar_width(),
+			  scrollsize,
 			  text_area.h + TOP_MARGIN + BOTTOM_MARGIN);
     } else {
-      mVScrollBar->resize(X+W-scrollbar_width(),
+      mVScrollBar->resize(X+W-scrollsize,
 			  text_area.y - TOP_MARGIN,
-			  scrollbar_width(),
+			  scrollsize,
 			  text_area.h + TOP_MARGIN + BOTTOM_MARGIN);
     }
   }
@@ -636,12 +637,12 @@ void Fl_Text_Display::recalc_display() {
       mHScrollBar->resize(text_area.x - LEFT_MARGIN,
 			  Y,
 			  text_area.w + LEFT_MARGIN + RIGHT_MARGIN,
-			  scrollbar_width());
+			  scrollsize);
     } else {
       mHScrollBar->resize(text_area.x - LEFT_MARGIN,
-			  Y + H - scrollbar_width(),
+			  Y + H - scrollsize,
 			  text_area.w + LEFT_MARGIN + RIGHT_MARGIN,
-			  scrollbar_width());
+			  scrollsize);
     }
   }
 
@@ -3661,6 +3662,9 @@ void Fl_Text_Display::draw(void) {
   // background color -- change if inactive
   Fl_Color bgcolor = active_r() ? color() : fl_inactive(color());
 
+  // scrollbar size
+  int scrollsize = scrollbar_width_ ? scrollbar_width_ : Fl::scrollbar_size();
+
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
     recalc_display();
@@ -3674,9 +3678,9 @@ void Fl_Text_Display::draw(void) {
     draw_box(box(), x(), y(), W, H, bgcolor);
 
     if (mHScrollBar->visible())
-      W -= scrollbar_width();
+      W -= scrollsize;
     if (mVScrollBar->visible())
-      H -= scrollbar_width();
+      H -= scrollsize;
 
     // left margin
     fl_rectf(text_area.x-LEFT_MARGIN, text_area.y-TOP_MARGIN,
