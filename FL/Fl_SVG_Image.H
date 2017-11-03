@@ -122,9 +122,9 @@ protected:
   virtual int draw_scaled(int X, int Y, int W, int H);
 public:
   /** Set this to \c false to allow image re-scaling that alters the image aspect ratio.
-   Upon object creation, \c proportional is set to \c true, and the aspect ratio is kept constant.*/
+   Upon object creation, proportional is set to \c true, and the aspect ratio is kept constant.*/
   bool proportional;
-  Fl_SVG_Image(const char *filename, const char *filedata = NULL);
+  Fl_SVG_Image(const char *filename, const char *svg_data = NULL);
   virtual ~Fl_SVG_Image();
   virtual Fl_Image *copy(int W, int H);
   void resize(int width, int height);

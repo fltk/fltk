@@ -45,13 +45,13 @@ static double strtoll(const char *str, char **endptr, int base) {
 
 
 /** The constructor loads the SVG image from the given .svg/.svgz filename or in-memory data.
- \param filename A full path and name pointing to a .svg or .svgz file, or NULL.
- \param filedata A pointer to the memory location of the SVG image data.
+ \param filename The full path and name of a .svg or .svgz file, or NULL.
+ \param svg_data A pointer to the memory location of the SVG image data.
  This parameter allows to load an SVG image from in-memory data, and is used when \p filename is NULL.
- \note In-memory SVG data is parsed by the object constructor and is no longer used after construction.
+ \note In-memory SVG data is parsed by the object constructor and is not used after construction.
  */
-Fl_SVG_Image::Fl_SVG_Image(const char *filename, const char *filedata) : Fl_RGB_Image(NULL, 0, 0, 4) {
-  init_(filename, filedata, NULL);
+Fl_SVG_Image::Fl_SVG_Image(const char *filename, const char *svg_data) : Fl_RGB_Image(NULL, 0, 0, 4) {
+  init_(filename, svg_data, NULL);
 }
 
 
@@ -208,7 +208,7 @@ Fl_Image *Fl_SVG_Image::copy(int W, int H) {
 /** Have the svg data (re-)rasterized using the given width and height values.
  By default, the resulting image w() and h() will preserve the width/height ratio
  of the SVG data.
- If \ref proportional was set to false, the image is rasterized to the given \c width
+ If \ref proportional was set to \c false, the image is rasterized to the given \c width
  and \c height values.*/
 void Fl_SVG_Image::resize(int width, int height) {
   if (ld() < 0) {
