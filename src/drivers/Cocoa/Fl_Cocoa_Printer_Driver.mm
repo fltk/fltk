@@ -427,7 +427,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     return;
   }
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
-  NSString *title = [fl_xid(win) title];
+  NSString *title = [(NSWindow*)fl_xid(win) title];
   [title retain];
   [(NSWindow*)fl_xid(win) setTitle:@""]; // temporarily set a void window title
   win->show();
