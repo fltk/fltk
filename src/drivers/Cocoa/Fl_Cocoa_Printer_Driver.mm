@@ -429,13 +429,13 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
   NSString *title = [fl_xid(win) title];
   [title retain];
-  [fl_xid(win) setTitle:@""]; // temporarily set a void window title
+  [(NSWindow*)fl_xid(win) setTitle:@""]; // temporarily set a void window title
   win->show();
   Fl::check();
   // capture the window title bar with no title
   Fl_Shared_Image *top, *left, *bottom, *right;
   win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
-  [fl_xid(win) setTitle:title]; // put back the window title
+  [(NSWindow*)fl_xid(win) setTitle:title]; // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar
   top->release();
