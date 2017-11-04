@@ -205,12 +205,12 @@ public:
         int msgbox_x = brow_c->x() + brow_c->w() + 20;
 	int msgbox_w = W-(msgbox_x-X);
         Fl_Box *msgbox = new Fl_Box(msgbox_x,browy,msgbox_w,H-Y-48);
-        msgbox->label("\nVerify global scroll sizing and per-widget scroll sizing. "
+        msgbox->label("\nVerify global scrollbar sizing and per-widget scrollbar sizing. "
                       "Scrollbar's size should change interactively as size sliders are changed. "
-                      "Changing 'Global Scroll Size' should affect all three browser's scrollbars UNLESS "
-                      "the 'A: Scroll Size' slider is changed, in which case its value will take precedence "
-                      "for the 'A' group of widgets.");
-        msgbox->labelsize(10);
+                      "Changing 'Global Scroll Size' should affect all scrollbars AS LONG AS the "
+                      "'A: Scroll Size' slider is 0. Otherwise its value takes precedence "
+                      "for all the 'A' group widgets.");
+        msgbox->labelsize(12);
         msgbox->align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
 	msgbox->box(FL_FLAT_BOX);
 	msgbox->color(53); // 90% gray
