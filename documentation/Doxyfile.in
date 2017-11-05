@@ -614,6 +614,8 @@ RECURSIVE              = YES
 EXCLUDE  = @CMAKE_SOURCE_DIR@/src/drivers/
 EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_dnd_win32.cxx
 EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_dnd_x.cxx
+EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_font_mac.cxx
+EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_font_win32.cxx
 EXCLUDE += @CMAKE_SOURCE_DIR@/src/Fl_get_key_mac.cxx
 EXCLUDE += @CMAKE_SOURCE_DIR@/src/Fl_get_key_win32.cxx
 
@@ -652,7 +654,8 @@ EXCLUDE_SYMBOLS +=  Fl_Native_File_Chooser_FLTK_Driver
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = ../test ../examples
+EXAMPLE_PATH           = @CMAKE_CURRENT_SOURCE_DIR@/../test \
+                         @CMAKE_CURRENT_SOURCE_DIR@/../examples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
