@@ -566,7 +566,8 @@ inline double fl_width(const char* txt, int n) {return fl_graphics_driver->width
     \note if a valid fl_gc is NOT found then it uses the first window gc,
     or the screen gc if no fltk window is available when called. */
 inline double fl_width(unsigned int c)  {return fl_graphics_driver->width(c);}
-/** Determines the minimum pixel dimensions of a nul-terminated string.
+/** Determines the minimum pixel dimensions of a nul-terminated string 
+    using the current fl_font().
 
   Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine
   its pixel extents on the display using fl_text_extents(txt, dx, dy, wo, ho)
@@ -574,10 +575,27 @@ inline double fl_width(unsigned int c)  {return fl_graphics_driver->width(c);}
   fl_rect(x+dx, y+dy, wo, ho). Note the dx, dy values hold the offset of the first
   "colored in" pixel of the string, from the draw origin.
 
+  Note the desired font and font size must be set with fl_font() before calling
+  this function.
+
+  This differs slightly from fl_measure() in that the dx/dy values are also
+  returned.
+
   No FLTK symbol expansion will be performed.
+
+  Example use:
+  \code
+  :
+  int dx,dy,W,H;
+  fl_font(FL_HELVETICA, 12);               // set font face+size first
+  fl_text_extents("Some text",dx,dy,W,H);  // get width and height of string
+  printf("text's width=%d, height=%d\n", W,H);
+  :
+  \endcode
 */
 FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion will be performed
-/** Determines the minimum pixel dimensions of a sequence of \p n characters.
+/** Determines the minimum pixel dimensions of a sequence of \p n characters
+    using the current fl_font().
 \see fl_text_extents(const char*, int& dx, int& dy, int& w, int& h)
 */
 inline void fl_text_extents(const char *t, int n, int& dx, int& dy, int& w, int& h)
