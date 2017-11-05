@@ -454,6 +454,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 #endif // DEBUG2
 
   Fl_Widget::resize(X,Y,W,H);
+  mColumnScale = 0; // force recomputation of the width of a column when display is rescaled
   recalc_display();
 }
 
@@ -1954,8 +1955,9 @@ int Fl_Text_Display::handle_vline(
 
   // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the
   // FIXME: character for selection, and one on the character center for cursors.
-  int i, X, startX, startIndex, style, charStyle;
+  int i, X, startIndex, style, charStyle;
   char *lineStr;
+  double startX;
 
   if ( lineStartPos == -1 ) {
     lineStr = NULL;
@@ -2004,12 +2006,12 @@ int Fl_Text_Display::handle_vline(
     charStyle = position_style(lineStartPos, lineLen, i);
     if (charStyle!=style || currChar=='\t' || prevChar=='\t') {
       // draw a segment whenever the style changes or a Tab is found
-      int w = 0;
+      double w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
-        int tab = (int)col_to_x(mBuffer->tab_distance());
-        int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
-        w = (((xAbs/tab)+1)*tab) - xAbs;
+        double tab = col_to_x(mBuffer->tab_distance());
+        double xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
+        w = ((int(xAbs/tab)+1)*tab) - xAbs;
         if (mode==DRAW_LINE)
           draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
         if (mode==FIND_INDEX && startX+w>rightClip) {
@@ -2021,7 +2023,7 @@ int Fl_Text_Display::handle_vline(
         }
       } else {
         // draw a text segment
-        w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
+        w = string_width( lineStr+startIndex, i-startIndex, style );
         if (mode==DRAW_LINE)
           draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
         if (mode==FIND_INDEX && startX+w>rightClip) {
@@ -2042,9 +2044,9 @@ int Fl_Text_Display::handle_vline(
   int w = 0;
   if (currChar=='\t') {
     // draw a single Tab space
-    int tab = (int)col_to_x(mBuffer->tab_distance());
-    int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
-    w = (((xAbs/tab)+1)*tab) - xAbs;
+    double tab = col_to_x(mBuffer->tab_distance());
+    double xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
+    w = ((int(xAbs/tab)+1)*tab) - xAbs;
     if (mode==DRAW_LINE)
       draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
     if (mode==FIND_INDEX) {
@@ -2055,7 +2057,7 @@ int Fl_Text_Display::handle_vline(
       return lineStartPos + startIndex + ( rightClip-startX>w ? 1 : 0 );
     }
   } else {
-    w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
+    w = string_width( lineStr+startIndex, i-startIndex, style );
     if (mode==DRAW_LINE)
       draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
     if (mode==FIND_INDEX) {
