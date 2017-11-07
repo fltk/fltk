@@ -4335,9 +4335,25 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   uchar *rgba = new uchar[4 * w() * htop * 4];
   CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * w(), 2 * htop, 8, 8 * w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
+  memset(rgba, 0xff, 4 * w() * htop * 4); // initialize to opaque white
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
     Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, w(), htop);
+    if (fl_mac_os_version >= 101300) {
+      // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
+      uchar *p = rgba;
+      uchar *last = rgba + 4 * w() * htop * 4;
+      while (p < last) {
+        uchar q = *(p+3);
+        if (q) {
+          float m = 255./q;
+          *p++ *= m;
+          *p++ *= m;
+          *p++ *= m;
+          *p++ = 0xff;
+        } else p += 4;
+      }
+    }
   } else {
     CGImageRef img = CGImage_from_window_rect(0, -htop, w(), htop);
     CGContextSaveGState(auxgc);
