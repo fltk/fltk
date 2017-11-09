@@ -4335,7 +4335,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   uchar *rgba = new uchar[4 * w() * htop * 4];
   CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * w(), 2 * htop, 8, 8 * w(), cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  memset(rgba, 0xff, 4 * w() * htop * 4); // initialize to opaque white
+  CGContextClearRect(auxgc, CGRectMake(0,0,2*w(),2*htop));
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
     Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, w(), htop);
