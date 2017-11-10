@@ -160,10 +160,13 @@ FL_EXPORT int fl_chmod(const char* f, int mode);
 FL_EXPORT int fl_access(const char* f, int mode);
 
 /* OD: Portable UTF-8 aware stat wrapper */
-FL_EXPORT int fl_stat( const char *path, struct stat *buffer );
+FL_EXPORT int fl_stat(const char *path, struct stat *buffer);
 
 /* OD: Portable UTF-8 aware getcwd wrapper */
-FL_EXPORT char* fl_getcwd( char *buf, int maxlen);
+FL_EXPORT char *fl_getcwd(char *buf, int len);
+
+/* Portable UTF-8 aware chdir wrapper */
+FL_EXPORT int fl_chdir(const char *path);
 
 /* OD: Portable UTF-8 aware fopen wrapper */
 FL_EXPORT FILE *fl_fopen(const char *f, const char *mode);
@@ -175,9 +178,9 @@ FL_EXPORT int fl_system(const char* f);
 FL_EXPORT int fl_execvp(const char *file, char *const *argv);
 
 /* OD: Portable UTF-8 aware open wrapper */
-FL_EXPORT int fl_open(const char* f, int o, ...);
+FL_EXPORT int fl_open(const char *fname, int oflags, ...);
 
-FL_EXPORT int fl_open_ext(const char* fname, int binary, int oflags, ...);
+FL_EXPORT int fl_open_ext(const char *fname, int binary, int oflags, ...);
 
 /* OD: Portable UTF-8 aware unlink wrapper */
 FL_EXPORT int fl_unlink(const char *fname);

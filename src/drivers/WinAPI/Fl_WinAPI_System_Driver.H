@@ -58,6 +58,7 @@ public:
   virtual int access(const char* f, int mode);
   virtual int stat(const char* f, struct stat *b);
   virtual char *getcwd(char* b, int l);
+  virtual int chdir(const char* path);
   virtual int unlink(const char* f);
   virtual int mkdir(const char* f, int mode);
   virtual int rmdir(const char* f);

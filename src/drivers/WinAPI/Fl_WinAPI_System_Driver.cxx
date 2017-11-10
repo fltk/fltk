@@ -65,6 +65,42 @@ extern "C" {
 }
 
 /*
+  Convert a filename or path from UTF-8 to Windows wide character encoding (UTF-16).
+
+  This helper function is used througout this file to convert UTF-8 strings
+  to Windows specific UTF-8 encoding for filenames and paths.
+
+  The argument 'wbuf' must have been initialized with NULL or a previous call
+  to malloc() or realloc(). The global static variables above, particularly
+  wbuf, may be used to share one static pointer for many calls. Ideally
+  every call to this function would have its own static pointer though.
+
+  If the converted string doesn't fit into the allocated size of 'wbuf' or
+  'wbuf' is NULL a new buffer is allocated with realloc(). Hence, the pointer
+  'wbuf' can be shared among multiple calls of this function if it has been
+  initialized with NULL (or malloc or realloc) before the first call.
+
+  The return value is either the old value of 'wbuf' (if the string fits)
+  or a pointer at the (re)allocated buffer.
+
+  Pseudo doxygen docs (static function intentionally not documented):
+
+  param[in]	path	path to new working directory
+  param[in,out]	wbuf	pointer to string buffer (in)
+			new string (out, pointer may be changed)
+
+  returns	pointer to (new) string (buffer); may be changed
+*/
+static wchar_t *path_to_wchar(const char *path, wchar_t *&wbuf) {
+  unsigned len = (unsigned)strlen(path);
+  unsigned wn = fl_utf8toUtf16(path, len, NULL, 0) + 1; // Query length
+  wbuf = (wchar_t *)realloc(wbuf, sizeof(wchar_t) * wn);
+  wn = fl_utf8toUtf16(path, len, (unsigned short *)wbuf, wn); // Convert string
+  wbuf[wn] = 0;
+  return wbuf;
+}
+
+/*
  Creates a driver that manages all system related calls.
  
  This function must be implemented once for every platform.
@@ -250,11 +286,15 @@ char *Fl_WinAPI_System_Driver::getcwd(char* b, int l) {
   }
 }
 
-int Fl_WinAPI_System_Driver::unlink(const char* f) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
+int Fl_WinAPI_System_Driver::chdir(const char *path) {
+  return _wchdir(path_to_wchar(path, wbuf));
+}
+
+int Fl_WinAPI_System_Driver::unlink(const char *fname) {
+  size_t len = strlen(fname);
+  unsigned wn = fl_utf8toUtf16(fname, (unsigned)len, NULL, 0) + 1; // Query length
   wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
+  wn = fl_utf8toUtf16(fname, (unsigned)len, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
   return _wunlink(wbuf);
 }

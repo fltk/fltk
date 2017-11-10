@@ -60,6 +60,7 @@ public:
   virtual int access(const char* f, int mode) { return ::access(f, mode);}
   virtual int stat(const char* f, struct stat *b) { return ::stat(f, b);}
   virtual char *getcwd(char* b, int l) {return ::getcwd(b, l);}
+  virtual int chdir(const char* path) {return ::chdir(path);}
   virtual int unlink(const char* f) {return ::unlink(f);}
   virtual int rmdir(const char* f) {return ::rmdir(f);}
   virtual int rename(const char* f, const char *n) {return ::rename(f, n);}

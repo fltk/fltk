@@ -63,7 +63,7 @@ public:
   static const int fl_YValue;
   static const int fl_XNegative;
   static const int fl_YNegative;
-  
+
   // implement if the system adds unwanted program argument(s)
   virtual int single_arg(const char *arg) { return 0; }
   // implement if the system adds unwanted program argument pair(s)
@@ -81,7 +81,7 @@ public:
   static void fatal(const char* format, ...);
   // implement to set the default effect of Fl::error()
   virtual void fatal(const char* format, va_list args);
-  
+
   // implement these to support cross-platform file operations
   virtual char *utf2mbcs(const char *s) {return (char*)s;}
   virtual char *getenv(const char* v) {return NULL;}
@@ -100,12 +100,13 @@ public:
   virtual int access(const char* f, int mode) { return -1;}
   virtual int stat(const char* f, struct stat *b) { return -1;}
   virtual char *getcwd(char* b, int l) {return NULL;}
+  virtual int chdir(const char* path) {return -1;}
   virtual int unlink(const char* fname) {return -1;}
   virtual int mkdir(const char* f, int mode) {return -1;}
   virtual int rmdir(const char* f) {return -1;}
   virtual int rename(const char* f, const char *n) {return -1;}
-  
-  // the default implementation of these utf8... functions should be enough 
+
+  // the default implementation of these utf8... functions should be enough
   virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
   virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
   virtual int utf8locale() {return 1;}

@@ -318,35 +318,38 @@ char *fl_getenv(const char* v) {
 
   This function is especially useful on the Windows platform where the
   standard open() function fails with UTF-8 encoded non-ASCII filenames.
-  \param f  the UTF-8 encoded filename
-  \param oflags  other arguments are as in the standard open() function
-  \return  a file descriptor upon successful completion, or -1 in case of error.
-  \sa fl_fopen(), fl_open_ext().
+
+  \param[in] fname  the UTF-8 encoded filename
+  \param[in] oflags other arguments are as in the standard open() function
+  \return    a file descriptor upon successful completion, or -1 in case of error.
+
+  \see fl_fopen(), fl_open_ext().
 */
-int fl_open(const char* f, int oflags, ...)
-{
+int fl_open(const char* fname, int oflags, ...) {
   int pmode;
   va_list ap;
   va_start(ap, oflags);
   pmode = va_arg (ap, int);
   va_end(ap);
-  return Fl::system_driver()->open(f, oflags, pmode);
+  return Fl::system_driver()->open(fname, oflags, pmode);
 }
 
 /** Cross-platform function to open files with a UTF-8 encoded name.
+
   In comparison with fl_open(), this function allows to control whether
   the file is opened in binary (a.k.a. untranslated) mode. This is especially
   useful on the Windows platform where files are by default opened in
   text (translated) mode.
-  \param fname  the UTF-8 encoded filename
-  \param binary if non-zero, the file is to be accessed in binary (a.k.a.
-		untranslated) mode.
-  \param oflags,...  these arguments are as in the standard open() function.
-  Setting \p oflags to zero opens the file for reading.
+
+  \param[in] fname  the UTF-8 encoded filename
+  \param[in] binary if non-zero, the file is to be accessed in binary
+		    (a.k.a. untranslated) mode.
+  \param[in] oflags,...  these arguments are as in the standard open() function.
+			 Setting \p oflags to zero opens the file for reading.
+
   \return  a file descriptor upon successful completion, or -1 in case of error.
 */
-int fl_open_ext(const char* fname, int binary, int oflags, ...)
-{
+int fl_open_ext(const char* fname, int binary, int oflags, ...) {
   int pmode;
   va_list ap;
   va_start(ap, oflags);
@@ -432,7 +435,36 @@ int fl_stat(const char* f, struct stat *b) {
   return Fl::system_driver()->stat(f, b);
 }
 
-// TODO: add fl_chdir if we have fl_getcwd
+/** Cross-platform function to change the current working directory,
+    given as a UTF-8 encoded string.
+
+  This function is especially useful on the Windows platform where the
+  standard _wchdir() function needs a \p path in UTF-16 encoding.
+
+  The \p path is converted to a system specific encoding if necessary
+  and the system specific \p chdir(converted_path) function is called.
+
+  The function returns 0 on success and -1 on error. Depending on the
+  platform, \p errno \b may be set if an error occurs.
+
+  \note The possible errno values are platform specific. Refer to the
+  documentation of the platform specific chdir() function.
+
+  If the function is not implemented on a particular platform the
+  default implementation returns -1 and \p errno is \b not set.
+
+  If the \p path is \p NULL the function returns -1, but \p errno is
+  \b not changed. This is a convenience feature of fl_chdir() as
+  opposed to chdir().
+
+  \param[in] path the target directory for chdir (may be \p NULL)
+  \return    0 if successful, -1 on error (errno may be set)
+*/
+int fl_chdir(const char* path) {
+  if (!path)
+    return -1;
+  return Fl::system_driver()->chdir(path);
+}
 
 /** Cross-platform function to get the current working directory
     as a UTF-8 encoded value.
@@ -440,15 +472,19 @@ int fl_stat(const char* f, struct stat *b) {
   This function is especially useful on the Windows platform where the
   standard _wgetcwd() function returns UTF-16 encoded non-ASCII filenames.
 
-  \param     b the buffer to populate
-  \param     l the length of the buffer
-  \return    the CWD encoded as UTF-8.
+  If \p buf is \p NULL a buffer of size \p (len+1) is allocated, filled with
+  the current working directory, and returned. In this case the buffer must
+  be released by the caller with free() to prevent memory leaks.
+
+  \param[in] buf the buffer to populate (may be NULL)
+  \param[in] len the length of the buffer
+  \return    the CWD encoded as UTF-8
 */
-char *fl_getcwd(char* b, int l) {
-  if (b == NULL) {
-    b = (char*) malloc(l+1);
+char *fl_getcwd(char *buf, int len) {
+  if (buf == NULL) {
+    buf = (char*)malloc(len + 1);
   }
-  return Fl::system_driver()->getcwd(b, l);
+  return Fl::system_driver()->getcwd(buf, len);
 }
 
 /** Cross-platform function to unlink() (that is, delete) a file using
