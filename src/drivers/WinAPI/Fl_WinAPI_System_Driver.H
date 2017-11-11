@@ -47,27 +47,27 @@ public:
   virtual void error(const char *format, va_list args);
   virtual void fatal(const char *format, va_list args);
   virtual char *utf2mbcs(const char *s);
-  virtual char *getenv(const char* v);
-  virtual int putenv(char* v) {return _putenv(v);}
-  virtual int open(const char* f, int oflags, int pmode);
-  virtual int open_ext(const char* f, int binary, int oflags, int pmode);
-  virtual FILE *fopen(const char* f, const char *mode);
-  virtual int system(const char* cmd);
+  virtual char *getenv(const char *var);
+  virtual int putenv(char *var) {return _putenv(var);} // *FIXME* needs string conversion
+  virtual int open(const char *fnam, int oflags, int pmode);
+  virtual int open_ext(const char *fnam, int binary, int oflags, int pmode);
+  virtual FILE *fopen(const char *fnam, const char *mode);
+  virtual int system(const char *cmd);
   virtual int execvp(const char *file, char *const *argv);
-  virtual int chmod(const char* f, int mode);
-  virtual int access(const char* f, int mode);
-  virtual int stat(const char* f, struct stat *b);
-  virtual char *getcwd(char* b, int l);
-  virtual int chdir(const char* path);
-  virtual int unlink(const char* f);
-  virtual int mkdir(const char* f, int mode);
-  virtual int rmdir(const char* f);
-  virtual int rename(const char* f, const char *n);
-  virtual unsigned utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen);
-  virtual unsigned utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
+  virtual int chmod(const char *fnam, int mode);
+  virtual int access(const char *fnam, int mode);
+  virtual int stat(const char *fnam, struct stat *b);
+  virtual char *getcwd(char *b, int l);
+  virtual int chdir(const char *path);
+  virtual int unlink(const char *fnam);
+  virtual int mkdir(const char *fnam, int mode);
+  virtual int rmdir(const char *fnam);
+  virtual int rename(const char *fnam, const char *newnam);
+  virtual unsigned utf8towc(const char *src, unsigned srclen, wchar_t* dst, unsigned dstlen);
+  virtual unsigned utf8fromwc(char *dst, unsigned dstlen, const wchar_t* src, unsigned srclen);
   virtual int utf8locale();
-  virtual unsigned utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen);
-  virtual unsigned utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen);
+  virtual unsigned utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen);
+  virtual unsigned utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen);
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
   // these 2 are in Fl_get_key_win32.cxx
   virtual int event_key(int k);
@@ -76,8 +76,8 @@ public:
   virtual int filename_expand(char *to,int tolen, const char *from);
   virtual int filename_relative(char *to, int tolen, const char *from, const char *base);
   virtual int filename_absolute(char *to, int tolen, const char *from);
-  virtual int filename_isdir(const char* n);
-  virtual int filename_isdir_quick(const char* n);
+  virtual int filename_isdir(const char *n);
+  virtual int filename_isdir_quick(const char *n);
   virtual const char *filename_ext(const char *buf);
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int use_recent_tooltip_fix() {return 1;}

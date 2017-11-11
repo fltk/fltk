@@ -16,7 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-
 #include "../../config_lib.h"
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
@@ -32,9 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/timeb.h>
-// function pointer for the UuidCreate Function
-// RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
-typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #include <shellapi.h>
 #include <wchar.h>
 #include <process.h>
@@ -43,11 +39,17 @@ typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #include <direct.h>
 #include <io.h>
 #include <fcntl.h>
+
+// function pointer for the UuidCreate Function
+// RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
+typedef RPC_STATUS (WINAPI *uuid_func)(UUID __RPC_FAR *Uuid);
+
 // Apparently Borland C++ defines DIRECTORY in <direct.h>, which
-// interfers with the Fl_File_Icon enumeration of the same name.
+// interferes with the Fl_File_Icon enumeration of the same name.
 #  ifdef DIRECTORY
 #    undef DIRECTORY
 #  endif // DIRECTORY
+
 #ifdef __CYGWIN__
 #  include <mntent.h>
 #endif
@@ -65,39 +67,81 @@ extern "C" {
 }
 
 /*
-  Convert a filename or path from UTF-8 to Windows wide character encoding (UTF-16).
+  Convert a UTF-8 string to Windows wide character encoding (UTF-16).
 
-  This helper function is used througout this file to convert UTF-8 strings
-  to Windows specific UTF-8 encoding for filenames and paths.
+  This helper function is used throughout this file to convert UTF-8
+  strings to Windows specific UTF-16 encoding for filenames, paths, or
+  other strings to be used by system functions.
 
-  The argument 'wbuf' must have been initialized with NULL or a previous call
-  to malloc() or realloc(). The global static variables above, particularly
-  wbuf, may be used to share one static pointer for many calls. Ideally
-  every call to this function would have its own static pointer though.
+  The input string can be a null-terminated string or its length can be
+  provided by the optional argument 'lg'. If 'lg' is omitted or less than 0
+  (default = -1) the string length is determined with strlen(), otherwise
+  'lg' takes precedence. Zero (0) is a valid string length (an empty string).
 
-  If the converted string doesn't fit into the allocated size of 'wbuf' or
-  'wbuf' is NULL a new buffer is allocated with realloc(). Hence, the pointer
-  'wbuf' can be shared among multiple calls of this function if it has been
+  The argument 'wbuf' must have been initialized with NULL or a previous
+  call to malloc() or realloc().
+
+  If the converted string doesn't fit into the allocated size of 'wbuf' or if
+  'wbuf' is NULL a new buffer is allocated with realloc(). Hence the pointer
+  'wbuf' can be shared among multiple calls to this function if it has been
   initialized with NULL (or malloc or realloc) before the first call.
+  Ideally every call to this function has its own static pointer though.
 
   The return value is either the old value of 'wbuf' (if the string fits)
   or a pointer at the (re)allocated buffer.
 
   Pseudo doxygen docs (static function intentionally not documented):
 
-  param[in]	path	path to new working directory
-  param[in,out]	wbuf	pointer to string buffer (in)
-			new string (out, pointer may be changed)
+  param[in]	utf8	input string (UTF-8)
+  param[in,out]	wbuf	in:  pointer to output string buffer
+			out: new string (the pointer may be changed)
+  param[in]	lg	optional: input string length (default = -1)
 
-  returns	pointer to (new) string (buffer); may be changed
+  returns	pointer to string buffer
 */
-static wchar_t *path_to_wchar(const char *path, wchar_t *&wbuf) {
-  unsigned len = (unsigned)strlen(path);
-  unsigned wn = fl_utf8toUtf16(path, len, NULL, 0) + 1; // Query length
+static wchar_t *utf8_to_wchar(const char *utf8, wchar_t *&wbuf, int lg = -1) {
+  unsigned len = (lg >= 0) ? (unsigned)lg : (unsigned)strlen(utf8);
+  unsigned wn = fl_utf8toUtf16(utf8, len, NULL, 0) + 1; // Query length
   wbuf = (wchar_t *)realloc(wbuf, sizeof(wchar_t) * wn);
-  wn = fl_utf8toUtf16(path, len, (unsigned short *)wbuf, wn); // Convert string
+  wn = fl_utf8toUtf16(utf8, len, (unsigned short *)wbuf, wn); // Convert string
   wbuf[wn] = 0;
   return wbuf;
+}
+
+/*
+  Convert a Windows wide character (UTF-16) string to UTF-8 encoding.
+
+  This helper function is used throughout this file to convert Windows
+  wide character strings as returned by system functions to UTF-8
+  encoding for internal usage.
+
+  The argument 'utf8' must have been initialized with NULL or a previous
+  call to malloc() or realloc().
+
+  If the converted string doesn't fit into the allocated size of 'utf8' or if
+  'utf8' is NULL a new buffer is allocated with realloc(). Hence the pointer
+  'utf8' can be shared among multiple calls to this function if it has been
+  initialized with NULL (or malloc or realloc) before the first call.
+  Ideally every call to this function has its own static pointer though.
+
+  The return value is either the old value of 'utf8' (if the string fits)
+  or a pointer at the (re)allocated buffer.
+
+  Pseudo doxygen docs (static function intentionally not documented):
+
+  param[in]	wstr	input string (wide character, UTF-16)
+  param[in,out]	utf8	in:  pointer to output string buffer
+			out: new string (pointer may be changed)
+
+  returns	pointer to string buffer
+*/
+static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
+  unsigned len = (unsigned)wcslen(wstr);
+  unsigned wn = fl_utf8fromwc(NULL, 0, wstr, len) + 1; // query length
+  utf8 = (char *)realloc(utf8, wn);
+  wn = fl_utf8fromwc(utf8, wn, wstr, len); // convert string
+  utf8[wn] = 0;
+  return utf8;
 }
 
 /*
@@ -115,94 +159,66 @@ void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
 }
 
 void Fl_WinAPI_System_Driver::error(const char *format, va_list args) {
+
   char buf[1024];
   vsnprintf(buf, 1024, format, args);
-  MessageBox(0,buf,"Error",MB_ICONEXCLAMATION|MB_SYSTEMMODAL);
+  MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_SYSTEMMODAL);
 }
 
 void Fl_WinAPI_System_Driver::fatal(const char *format, va_list args) {
   char buf[1024];
   vsnprintf(buf, 1024, format, args);
-  MessageBox(0,buf,"Error",MB_ICONSTOP|MB_SYSTEMMODAL);
+  MessageBox(0, buf, "Error", MB_ICONSTOP | MB_SYSTEMMODAL);
   ::exit(1);
 }
 
-char *Fl_WinAPI_System_Driver::utf2mbcs(const char *s) {
-  if (!s) return NULL;
-  size_t l = strlen(s);
+char *Fl_WinAPI_System_Driver::utf2mbcs(const char *utf8) {
   static char *buf = NULL;
-  
-  unsigned wn = fl_utf8toUtf16(s, (unsigned) l, NULL, 0) + 7; // Query length
-  mbwbuf = (wchar_t*)realloc(mbwbuf, sizeof(wchar_t)*wn);
-  l = fl_utf8toUtf16(s, (unsigned) l, (unsigned short *)mbwbuf, wn); // Convert string
-  mbwbuf[l] = 0;
-  
-  buf = (char*)realloc(buf, (unsigned) (l * 6 + 1));
-  l = (unsigned) wcstombs(buf, mbwbuf, (unsigned) l * 6);
-  buf[l] = 0;
+  if (!utf8) return NULL;
+
+  unsigned len = (unsigned)strlen(utf8);
+
+  unsigned wn = fl_utf8toUtf16(utf8, len, NULL, 0) + 7; // Query length
+  mbwbuf = (wchar_t *)realloc(mbwbuf, sizeof(wchar_t) * wn);
+  len = fl_utf8toUtf16(utf8, len, (unsigned short *)mbwbuf, wn); // Convert string
+  mbwbuf[len] = 0;
+
+  buf = (char*)realloc(buf, len * 6 + 1);
+  len = (unsigned)wcstombs(buf, mbwbuf, len * 6);
+  buf[len] = 0;
   return buf;
 }
 
-char *Fl_WinAPI_System_Driver::getenv(const char* v) {
-  size_t l =  strlen(v);
-  unsigned wn = fl_utf8toUtf16(v, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(v, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  wchar_t *ret = _wgetenv(wbuf);
+char *Fl_WinAPI_System_Driver::getenv(const char *var) {
   static char *buf = NULL;
-  if (ret) {
-    l = (unsigned) wcslen(ret);
-    wn = fl_utf8fromwc(NULL, 0, ret, (unsigned) l) + 1; // query length
-    buf = (char*) realloc(buf, wn);
-    wn = fl_utf8fromwc(buf, wn, ret, (unsigned) l); // convert string
-    buf[wn] = 0;
-    return buf;
-  } else {
-    return NULL;
-  }
+  wchar_t *ret = _wgetenv(utf8_to_wchar(var, wbuf));
+  if (!ret) return NULL;
+  return wchar_to_utf8(ret, buf);
 }
 
-int Fl_WinAPI_System_Driver::open(const char* f, int oflags, int pmode) {
-  unsigned l = (unsigned) strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
+int Fl_WinAPI_System_Driver::open(const char *fnam, int oflags, int pmode) {
+  utf8_to_wchar(fnam, wbuf);
   if (pmode == -1) return _wopen(wbuf, oflags);
   else return _wopen(wbuf, oflags, pmode);
 }
 
-int Fl_WinAPI_System_Driver::open_ext(const char* f, int binary, int oflags, int pmode) {
+int Fl_WinAPI_System_Driver::open_ext(const char *fnam, int binary, int oflags, int pmode) {
   if (oflags == 0) oflags = _O_RDONLY;
   oflags |= (binary ? _O_BINARY : _O_TEXT);
-  return this->open(f, oflags, pmode);
+  return open(fnam, oflags, pmode);
 }
 
-FILE *Fl_WinAPI_System_Driver::fopen(const char* f, const char *mode) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  l = strlen(mode);
-  wn = fl_utf8toUtf16(mode, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf1 = (wchar_t*)realloc(wbuf1, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(mode, (unsigned) l, (unsigned short *)wbuf1, wn); // Convert string
-  wbuf1[wn] = 0;
+FILE *Fl_WinAPI_System_Driver::fopen(const char *fnam, const char *mode) {
+  utf8_to_wchar(fnam, wbuf);
+  utf8_to_wchar(mode, wbuf1);
   return _wfopen(wbuf, wbuf1);
 }
 
-int Fl_WinAPI_System_Driver::system(const char* cmd) {
+int Fl_WinAPI_System_Driver::system(const char *cmd) {
 # ifdef __MINGW32__
-  return system(fl_utf2mbcs(cmd));
+  return ::system(fl_utf2mbcs(cmd));
 # else
-  size_t l = strlen(cmd);
-  unsigned wn = fl_utf8toUtf16(cmd, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(cmd, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _wsystem(wbuf);
+  return _wsystem(utf8_to_wchar(cmd, wbuf));
 # endif
 }
 
@@ -210,31 +226,26 @@ int Fl_WinAPI_System_Driver::execvp(const char *file, char *const *argv) {
 # ifdef __MINGW32__
   return _execvp(fl_utf2mbcs(file), argv);
 # else
-  size_t l = strlen(file);
-  int i, n;
   wchar_t **ar;
-  unsigned wn = fl_utf8toUtf16(file, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(file, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
+  utf8_to_wchar(file, wbuf);
   
-  i = 0; n = 0;
+  int i = 0, n = 0;
   while (argv[i]) {i++; n++;}
-  ar = (wchar_t**) malloc(sizeof(wchar_t*) * (n + 1));
+  ar = (wchar_t **)malloc(sizeof(wchar_t *) * (n + 1));
   i = 0;
   while (i <= n) {
     unsigned wn;
-    l = strlen(argv[i]);
-    wn = fl_utf8toUtf16(argv[i], (unsigned) l, NULL, 0) + 1; // Query length
-    ar[i] = (wchar_t *)malloc(sizeof(wchar_t)*wn);
-    wn = fl_utf8toUtf16(argv[i], (unsigned) l, (unsigned short *)ar[i], wn); // Convert string
+    unsigned len = (unsigned)strlen(argv[i]);
+    wn = fl_utf8toUtf16(argv[i], len, NULL, 0) + 1; // Query length
+    ar[i] = (wchar_t *)malloc(sizeof(wchar_t) * wn);
+    wn = fl_utf8toUtf16(argv[i], len, (unsigned short *)ar[i], wn); // Convert string
     ar[i][wn] = 0;
     i++;
   }
   ar[n] = NULL;
   _wexecvp(wbuf, ar);	// STR #3040
   i = 0;
-  while (i <= n) {
+  while (i < n) {
     free(ar[i]);
     i++;
   }
@@ -243,91 +254,57 @@ int Fl_WinAPI_System_Driver::execvp(const char *file, char *const *argv) {
 #endif
 }
 
-int Fl_WinAPI_System_Driver::chmod(const char* f, int mode) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _wchmod(wbuf, mode);
+int Fl_WinAPI_System_Driver::chmod(const char *fnam, int mode) {
+  return _wchmod(utf8_to_wchar(fnam, wbuf), mode);
 }
 
-int Fl_WinAPI_System_Driver::access(const char* f, int mode) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _waccess(wbuf, mode);
+int Fl_WinAPI_System_Driver::access(const char *fnam, int mode) {
+  return _waccess(utf8_to_wchar(fnam, wbuf), mode);
 }
 
-int Fl_WinAPI_System_Driver::stat(const char* f, struct stat *b) {
-  size_t l = strlen(f);
-  if (f[l-1] == '/') l--; // must remove trailing /
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _wstat(wbuf, (struct _stat*)b);
+int Fl_WinAPI_System_Driver::stat(const char *fnam, struct stat *b) {
+
+  // remove trailing '/' or '\'
+  unsigned len = (unsigned)strlen(fnam);
+  if (len > 0 && (fnam[len-1] == '/' || fnam[len-1] == '\\'))
+    len--;
+  // convert filename and execute _wstat()
+  return _wstat(utf8_to_wchar(fnam, wbuf, len), (struct _stat *)b);
 }
 
-char *Fl_WinAPI_System_Driver::getcwd(char* b, int l) {
+char *Fl_WinAPI_System_Driver::getcwd(char *buf, int len) {
+
   static wchar_t *wbuf = NULL;
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t) * (l+1));
-  wchar_t *ret = _wgetcwd(wbuf, l);
-  if (ret) {
-    unsigned dstlen = l;
-    l = (int) wcslen(wbuf);
-    dstlen = fl_utf8fromwc(b, dstlen, wbuf, (unsigned) l);
-    b[dstlen] = 0;
-    return b;
-  } else {
-    return NULL;
-  }
+  wbuf = (wchar_t *)realloc(wbuf, sizeof(wchar_t) * (len + 1));
+  wchar_t *ret = _wgetcwd(wbuf, len);
+  if (!ret) return NULL;
+
+  unsigned dstlen = (unsigned)len;
+  len = (int)wcslen(wbuf);
+  dstlen = fl_utf8fromwc(buf, dstlen, wbuf, (unsigned)len);
+  buf[dstlen] = 0;
+  return buf;
 }
 
 int Fl_WinAPI_System_Driver::chdir(const char *path) {
-  return _wchdir(path_to_wchar(path, wbuf));
+  return _wchdir(utf8_to_wchar(path, wbuf));
 }
 
-int Fl_WinAPI_System_Driver::unlink(const char *fname) {
-  size_t len = strlen(fname);
-  unsigned wn = fl_utf8toUtf16(fname, (unsigned)len, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(fname, (unsigned)len, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _wunlink(wbuf);
+int Fl_WinAPI_System_Driver::unlink(const char *fnam) {
+  return _wunlink(utf8_to_wchar(fnam, wbuf));
 }
 
-int Fl_WinAPI_System_Driver::mkdir(const char* f, int mode) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _wmkdir(wbuf);
+int Fl_WinAPI_System_Driver::mkdir(const char *fnam, int mode) {
+  return _wmkdir(utf8_to_wchar(fnam, wbuf));
 }
 
-int Fl_WinAPI_System_Driver::rmdir(const char* f) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  return _wrmdir(wbuf);
+int Fl_WinAPI_System_Driver::rmdir(const char *fnam) {
+  return _wrmdir(utf8_to_wchar(fnam, wbuf));
 }
 
-int Fl_WinAPI_System_Driver::rename(const char* f, const char *n) {
-  size_t l = strlen(f);
-  unsigned wn = fl_utf8toUtf16(f, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf = (wchar_t*)realloc(wbuf, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(f, (unsigned) l, (unsigned short *)wbuf, wn); // Convert string
-  wbuf[wn] = 0;
-  l = strlen(n);
-  wn = fl_utf8toUtf16(n, (unsigned) l, NULL, 0) + 1; // Query length
-  wbuf1 = (wchar_t*)realloc(wbuf1, sizeof(wchar_t)*wn);
-  wn = fl_utf8toUtf16(n, (unsigned) l, (unsigned short *)wbuf1, wn); // Convert string
-  wbuf1[wn] = 0;
+int Fl_WinAPI_System_Driver::rename(const char *fnam, const char *newnam) {
+  utf8_to_wchar(fnam, wbuf);
+  utf8_to_wchar(newnam, wbuf1);
   return _wrename(wbuf, wbuf1);
 }
 
@@ -385,11 +362,11 @@ char *fl_locale_to_utf8(const char *s, int len, UINT codepage)
 
 ///////////////////////////////////
 
-unsigned Fl_WinAPI_System_Driver::utf8towc(const char* src, unsigned srclen, wchar_t* dst, unsigned dstlen) {
+unsigned Fl_WinAPI_System_Driver::utf8towc(const char *src, unsigned srclen, wchar_t *dst, unsigned dstlen) {
   return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
 }
 
-unsigned Fl_WinAPI_System_Driver::utf8fromwc(char* dst, unsigned dstlen, const wchar_t* src, unsigned srclen)
+unsigned Fl_WinAPI_System_Driver::utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
 {
   unsigned i = 0;
   unsigned count = 0;
@@ -451,9 +428,9 @@ int Fl_WinAPI_System_Driver::utf8locale()
   return ret;
 }
 
-unsigned Fl_WinAPI_System_Driver::utf8to_mb(const char* src, unsigned srclen, char* dst, unsigned dstlen) {
+unsigned Fl_WinAPI_System_Driver::utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen) {
   wchar_t lbuf[1024];
-  wchar_t* buf = lbuf;
+  wchar_t *buf = lbuf;
   unsigned length = fl_utf8towc(src, srclen, buf, 1024);
   unsigned ret;
   if (length >= 1024) {
@@ -473,9 +450,9 @@ unsigned Fl_WinAPI_System_Driver::utf8to_mb(const char* src, unsigned srclen, ch
   return ret;
 }
 
-unsigned Fl_WinAPI_System_Driver::utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned srclen) {
+unsigned Fl_WinAPI_System_Driver::utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen) {
   wchar_t lbuf[1024];
-  wchar_t* buf = lbuf;
+  wchar_t *buf = lbuf;
   unsigned length;
   unsigned ret;
   length = MultiByteToWideChar(GetACP(), 0, src, srclen, buf, 1024);
@@ -509,7 +486,7 @@ int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list, int (*
   return fl_scandir(d, list, 0, sort);
 }
 
-int Fl_WinAPI_System_Driver::filename_expand(char *to,int tolen, const char *from) {
+int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *from) {
   char *temp = new char[tolen];
   strlcpy(temp,from, tolen);
   char *start = temp;
@@ -678,7 +655,7 @@ int Fl_WinAPI_System_Driver::filename_absolute(char *to, int tolen, const char *
   return 1;
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir(const char* n)
+int Fl_WinAPI_System_Driver::filename_isdir(const char *n)
 {
   struct _stat	s;
   char		fn[FL_PATH_MAX];
@@ -704,7 +681,7 @@ int Fl_WinAPI_System_Driver::filename_isdir(const char* n)
   return !_stat(n, &s) && (s.st_mode & _S_IFDIR);
 }
 
-int Fl_WinAPI_System_Driver::filename_isdir_quick(const char* n)
+int Fl_WinAPI_System_Driver::filename_isdir_quick(const char *n)
 {
   // Do a quick optimization for filenames with a trailing slash...
   if (*n && isdirsep(n[strlen(n) - 1])) return 1;
@@ -894,7 +871,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
     // cygwin does not come with _wcsdup. Use malloc +  wcscpy.
     // For implementation of wcsdup functionality See
     // - http://linenum.info/p/glibc/2.7/wcsmbs/wcsdup.c
-    wchar_t *b = (wchar_t*) malloc((wcslen((wchar_t *) filename) + 1) * sizeof(wchar_t));
+    wchar_t *b = (wchar_t *)malloc((wcslen((wchar_t *)filename) + 1) * sizeof(wchar_t));
     wcscpy(b, (wchar_t *) filename);
 #endif
     //  filename[fl_unicode2utf(b, wcslen((wchar_t*)b), filename)] = 0;
@@ -908,9 +885,8 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   return filename;
 }
 
-void *Fl_WinAPI_System_Driver::dlopen(const char *filename)
-{
-  return LoadLibrary(filename);
+void *Fl_WinAPI_System_Driver::dlopen(const char *filename) {
+  return LoadLibraryW(utf8_to_wchar(filename, wbuf));
 }
 
 void Fl_WinAPI_System_Driver::png_extra_rgba_processing(unsigned char *ptr, int w, int h)
