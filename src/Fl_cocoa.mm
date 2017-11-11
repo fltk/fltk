@@ -1756,7 +1756,7 @@ static void foreground_and_activate_if_needed() {
   [NSApp activateIgnoringOtherApps:YES];
 }
 
-// simpler way to activate app tested OK on MacOS 10.3 10.6 10.9 and 10.13
+// simpler way to activate application tested OK on MacOS 10.3 10.6 10.9 and 10.13
 
 void Fl_Cocoa_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
