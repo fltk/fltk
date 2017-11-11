@@ -4308,7 +4308,6 @@ static CALayer *get_titlebar_layer(Fl_Window *win)
 #endif
 }
 
-
 void Fl_Cocoa_Window_Driver::draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
