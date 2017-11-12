@@ -20,28 +20,28 @@
 #include <string.h>
 #include <stdlib.h>
 
-// *FIXME* Implement fl_chdir() and fl_putenv() !
-// *FIXME* Check whether directory related headers can be removed (i.e. not
-// *FIXME* included) if fl_chdir() is implemented and called in demo.cxx
+// *FIXME*
+// Implement fl_putenv(). Then remove the following comment
+// and the #define's of fl_putenv below
 
 // Visual C++ 2005 incorrectly displays a warning about the use of
 // POSIX APIs on Windows, which is supposed to be POSIX compliant...
-#  if defined(_MSC_VER)
-#    define chdir _chdir
-#    define putenv _putenv
-#  endif // _MSC_VER
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-#  include <direct.h>
-#elif defined __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#include <unistd.h> // for chdir()
-#include <stdio.h>
-#include <stdlib.h> // for system()
-#include <string.h>
+#if defined(_MSC_VER)
+#  define fl_putenv _putenv
 #else
-#  include <unistd.h>
+#  define fl_putenv putenv
+#endif // _MSC_VER
+
+// *FIXME* To do:
+// Check whether '#include <unistd.h>' can be removed since chdir()
+// has been replaced with fl_chdir() (AlbrechtS, Nov 12, 2017)
+
+#if defined __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#include <unistd.h> // no longer necessary with fl_chdir() ?
 #endif
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -137,27 +137,24 @@ typedef struct {
 MENU menus[MAXMENU];
 int mennumb = 0;
 
-int find_menu(const char* nnn)
-/* Returns the number of a given menu name. */
-{
+/* Return the number of a given menu name. */
+int find_menu(const char* nnn) {
   int i;
   for (i=0; i<mennumb; i++)
     if (strcmp(menus[i].name,nnn) == 0) return i;
   return -1;
 }
 
-void create_menu(const char* nnn)
-/* Creates a new menu with name nnn */
-{
+/* Create a new menu with name nnn */
+void create_menu(const char* nnn) {
   if (mennumb == MAXMENU -1) return;
   strcpy(menus[mennumb].name,nnn);
   menus[mennumb].numb = 0;
   mennumb++;
 }
 
-void addto_menu(const char* men, const char* item, const char* comm)
-/* Adds an item to a menu */
-{
+/* Add an item to a menu */
+void addto_menu(const char* men, const char* item, const char* comm) {
   int n = find_menu(men);
   if (n<0) { create_menu(men); n = find_menu(men); }
   if (menus[n].numb == 9) return;
@@ -191,14 +188,14 @@ int n2b[][9] = {
 	{  0,  1,  2,  3,  4,  5,  6,  7,  8}
 };
 
+/* Transform a button number to an item number when there are
+  maxnumb items in total. -1 if the button should not exist. */
 int but2numb(int bnumb, int maxnumb)
-/* Transforms a button number to an item number when there are
- maxnumb items in total. -1 if the button should not exist. */
 { return b2n[maxnumb][bnumb]; }
 
+/* Transform an item number to a button number when there are
+  maxnumb items in total. -1 if the item should not exist. */
 int numb2but(int inumb, int maxnumb)
-/* Transforms an item number to a button number when there are
- maxnumb items in total. -1 if the item should not exist. */
 { return n2b[maxnumb][inumb]; }
 
 /* Pushing and Popping menus */
@@ -206,9 +203,8 @@ int numb2but(int inumb, int maxnumb)
 char stack[64][32];
 int stsize = 0;
 
-void push_menu(const char* nnn)
-/* Pushes a menu to be visible */
-{
+/* Push a menu to be visible */
+void push_menu(const char* nnn) {
   int n,i,bn;
   int men = find_menu(nnn);
   if (men < 0) return;
@@ -227,9 +223,8 @@ void push_menu(const char* nnn)
   stsize++;
 }
 
-void pop_menu()
-/* Pops a menu */
-{
+/* Pop a menu */
+void pop_menu() {
   if (stsize<=1) return;
   stsize -= 2;
   push_menu(stack[stsize]);
@@ -237,17 +232,17 @@ void pop_menu()
 
 /* The callback Routines */
 
-void dobut(Fl_Widget *, long arg)
-/* handles a button push */
-{
+/* Handle a button push */
+void dobut(Fl_Widget *, long arg) {
   int men = find_menu(stack[stsize-1]);
   int n = menus[men].numb;
   int bn = but2numb( (int) arg, n-1);
-  if (menus[men].icommand[bn][0] == '@')
+  if (menus[men].icommand[bn][0] == '@') {
     push_menu(menus[men].icommand[bn]);
-  else {
-    
+  } else {
+
 #ifdef WIN32
+
     STARTUPINFO		suInfo;		// Process startup information
     PROCESS_INFORMATION	prInfo;		// Process information
 
@@ -298,6 +293,7 @@ void dobut(Fl_Widget *, long arg)
     delete[] copy_of_icommand;
     
 #elif defined __APPLE__
+
     char *cmd = strdup(menus[men].icommand[bn]);
     char *arg = strchr(cmd, ' ');
     
@@ -316,7 +312,7 @@ void dobut(Fl_Widget *, long arg)
         char *n = strrchr(app_path, '/');
         if (n) *n = 0;
       }
-      chdir(app_path);
+      fl_chdir(app_path);
     }
     
     char *name = new char[strlen(cmd) + 5];
@@ -346,19 +342,20 @@ void dobut(Fl_Widget *, long arg)
       sprintf(command, "open %s", name);
     }
     delete[] name;
-//    puts(command);    
+    // puts(command);
     system(command);
-    
     free(cmd);
+
 #else // NON WIN32 systems.
-    
+
     int icommand_length = strlen(menus[men].icommand[bn]);
     char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0' 
-    
+
     sprintf(command, "./%s &", menus[men].icommand[bn]);
     if (system(command)==-1) { /* ignore */ }
-    
+
     delete[] command;
+
 #endif // WIN32
   }
 }
@@ -367,9 +364,8 @@ void doback(Fl_Widget *, void *) {pop_menu();}
 
 void doexit(Fl_Widget *, void *) {exit(0);}
 
-int load_the_menu(char* fname)
-/* Loads the menu file. Returns whether successful. */
-{
+/* Load the menu file. Returns whether successful. */
+int load_the_menu(char* fname) {
   FILE *fin = 0;
   char line[256], mname[64],iname[64],cname[64];
   int i, j;
@@ -428,11 +424,11 @@ int load_the_menu(char* fname)
 }
 
 int main(int argc, char **argv) {
-  putenv((char *)"FLTK_DOCDIR=../documentation/html");
+  fl_putenv((char *)"FLTK_DOCDIR=../documentation/html");
   char buf[FL_PATH_MAX];
   strcpy(buf, argv[0]);
 #if DEBUG_EXE_WITH_D
-  // MS_VisualC appends a 'd' to debugging executables. remove it.
+  // MS_VisualC appends a 'd' to debugging executables. Remove it.
   fl_filename_setext( buf, "" );
   buf[ strlen(buf)-1 ] = 0;
 #endif
@@ -451,7 +447,7 @@ int main(int argc, char **argv) {
   const char *c = fl_filename_name(buf);
   if (c > buf) {
     buf[c-buf] = 0; 
-    if (chdir(buf)==-1) { /* ignore */ }
+    if (fl_chdir(buf) == -1) { /* ignore */ }
   }
   push_menu("@main");
   form->show(argc,argv);
@@ -462,4 +458,3 @@ int main(int argc, char **argv) {
 //
 // End of "$Id$".
 //
-

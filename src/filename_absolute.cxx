@@ -3,7 +3,7 @@
 //
 // Filename expansion routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -34,7 +34,7 @@ inline int isdirsep(char c) {return c == '/';}
     \code
     #include <FL/filename.H>
     [..]
-    chdir("/var/tmp");
+    fl_chdir("/var/tmp");
     fl_filename_absolute(out, sizeof(out), "foo.txt");         // out="/var/tmp/foo.txt"
     fl_filename_absolute(out, sizeof(out), "./foo.txt");       // out="/var/tmp/foo.txt"
     fl_filename_absolute(out, sizeof(out), "../log/messages"); // out="/var/log/messages"
@@ -92,7 +92,7 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
     \code
     #include <FL/filename.H>
     [..]
-    chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
+    fl_chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
     [..]
     char out[FL_PATH_MAX];
     fl_filename_relative(out, sizeof(out), "/var/tmp/somedir/foo.txt");  // out="foo.txt",    return=1

@@ -48,13 +48,6 @@
 #include "function_panel.h"
 #include "template_panel.h"
 
-// Visual C++ 2005 incorrectly displays a warning about the use of
-// POSIX APIs on Windows, which is supposed to be POSIX compliant...
-// Some of these functions are also defined in ISO C99...
-#if defined(_MSC_VER)
-#  define chdir _chdir
-#endif // _MSC_VER
-
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>
@@ -135,15 +128,18 @@ void goto_source_dir() {
     pwd = fl_getcwd(0, FL_PATH_MAX);
     if (!pwd) {fprintf(stderr, "getwd : %s\n",strerror(errno)); return;}
   }
-  if (chdir(buffer) < 0) {fprintf(stderr, "Can't chdir to %s : %s\n",
-				  buffer, strerror(errno)); return;}
+  if (fl_chdir(buffer) < 0) {
+    fprintf(stderr, "Can't chdir to %s : %s\n", buffer, strerror(errno));
+    return;
+  }
   in_source_dir = 1;
 }
 
 void leave_source_dir() {
   if (!in_source_dir) return;
-  if (chdir(pwd)<0) {fprintf(stderr, "Can't chdir to %s : %s\n",
-			     pwd, strerror(errno));}
+  if (fl_chdir(pwd) < 0) {
+    fprintf(stderr, "Can't chdir to %s : %s\n", pwd, strerror(errno));
+  }
   in_source_dir = 0;
 }
 
