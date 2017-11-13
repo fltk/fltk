@@ -1430,8 +1430,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (BOOL)windowShouldClose:(id)fl
 {
   fl_lock_function();
-  Fl::handle( FL_CLOSE, [(FLWindow *)fl getFl_Window] ); // this might or might not close the window
-  fl_unlock_function();
+  Fl_Window *win = [(FLWindow *)fl getFl_Window];
+  if (win) Fl::handle(FL_CLOSE, win); // this might or might not close the window  fl_unlock_function();
   // the system doesn't need to send [fl close] because FLTK does it when needed
   return NO; 
 }
