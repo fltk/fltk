@@ -617,7 +617,7 @@ void Fl_X11_Screen_Driver::get_system_colors()
 const char *Fl_X11_Screen_Driver::get_system_scheme()
 {
   const char *s = 0L;
-  if ((s = getenv("FLTK_SCHEME")) == NULL) {
+  if ((s = fl_getenv("FLTK_SCHEME")) == NULL) {
     const char* key = 0;
     if (Fl::first_window()) key = Fl::first_window()->xclass();
     if (!key) key = "fltk";

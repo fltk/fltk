@@ -4,7 +4,7 @@
 // Definition of Posix system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -93,7 +93,7 @@ static char *path_find(const char *program, char *filename, int filesize) {
 		*end;			// End of filename buffer
   
   
-  if ((path = getenv("PATH")) == NULL) path = "/bin:/usr/bin";
+  if ((path = fl_getenv("PATH")) == NULL) path = "/bin:/usr/bin";
   
   for (ptr = filename, end = filename + filesize - 1; *path; path ++) {
     if (*path == ':') {
@@ -401,7 +401,7 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Prefer
   const char *e;
   switch (root) {
     case Fl_Preferences::USER:
-      if ((e = ::getenv("HOME")) != NULL) {
+      if ((e = getenv("HOME")) != NULL) {
         strlcpy(filename, e, sizeof(filename));
         
         if (filename[strlen(filename)-1] != '/') {

@@ -18,13 +18,11 @@
 //
 // Contents:
 //
-//   main()           - Create a file chooser and wait for a selection to
-//                      be made.
+//   main()           - Create a file chooser and wait for a selection to be made.
 //   close_callback() - Close the main window...
 //   fc_callback()    - Handle choices in the file chooser...
 //   pdf_check()      - Check for and load the first page of a PDF file.
-//   ps_check()       - Check for and load the first page of a PostScript
-//                      file.
+//   ps_check()       - Check for and load the first page of a PostScript file.
 //   show_callback()  - Show the file chooser...
 //
 //   extra_callback() - circle extra groups (none,group1,check_button);
@@ -301,7 +299,7 @@ ps_check(const char *name,	// I - Name of file
   if (memcmp(header, "%!", 2) != 0)
     return 0;
 
-  home = getenv("HOME");
+  home = fl_getenv("HOME");
   sprintf(preview, "%s/.preview.ppm", home ? home : "");
 
   if (memcmp(header, "%!PS", 4) == 0) {
