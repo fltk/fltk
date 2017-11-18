@@ -3,6 +3,7 @@ CHANGES IN FLTK 1.3.5					RELEASED: ??? ?? 2017
 
 Bug fixes and other improvements
 
+	- Fix crash when closing fluid with Fl_Table (STR #3427).
 	- Fix ignored buffer pre-allocation (requestedSize) in Fl_Text_Buffer.
 	  See fltk.general "Fl_Text_Buffer constructor bug" on Dec 5, 2016.
 	- Fix Fl_Browser background and text color parsing (STR #3376).
