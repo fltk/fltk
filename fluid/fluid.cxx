@@ -433,6 +433,7 @@ void exit_cb(Fl_Widget *,void *) {
     svp.set("tab", sv_tab->find(sv_tab->value()));
     save_position(sourceview_panel,"sourceview_pos");
     delete sourceview_panel;
+    sourceview_panel = 0;
   }
   if (about_panel)
     delete about_panel;
