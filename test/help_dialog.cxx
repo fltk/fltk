@@ -26,7 +26,8 @@
 //
 
 #include <FL/Fl_Help_Dialog.H>
-#include <stdio.h>
+#include <FL/filename.H>	/* FL_PATH_MAX */
+#include <string.h>		/* strcpy(), etc */
 
 //
 // 'main()' - Display the help GUI...
@@ -37,28 +38,22 @@ main(int  argc,			// I - Number of command-line arguments
      char *argv[])		// I - Command-line arguments
 {
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
-  
+  char htmlname[FL_PATH_MAX];
+  if (argc > 1) {
+    strcpy(htmlname, argv[1]);
+  } else {
 #ifdef __APPLE__
-  
-  // bundled apps do not set the current directory
-  char htmlname[1000];
-  strcpy(htmlname, argv[0]);
-  char *slash = strrchr(htmlname, '/');
-  if (slash)
-    strcpy(slash, "/../Resources/help_dialog.html");
-  FILE *in = fl_fopen(htmlname, "r");
-  if (in) {
-    fclose(in);
-    help->load(htmlname);
-  } else
-  
+    // bundled apps do not set the current directory
+    strcpy(htmlname, argv[0]);
+    char *slash = strrchr(htmlname, '/');
+    if (slash) strcpy(slash, "/../Resources/help_dialog.html");
+#else
+    strcpy(htmlname, "help_dialog.html");
 #endif
-  
-  if (argc <= 1)
-    help->load("help_dialog.html");
-  else
-    help->load(argv[1]);
-  
+  }
+
+  help->load(htmlname);	// TODO: add error check (when load() returns int instead of void)
+
   help->show(1, argv);
 
   Fl::run();
