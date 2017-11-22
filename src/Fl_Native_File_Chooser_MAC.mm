@@ -602,14 +602,18 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
   }
   if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
   if (fl_mac_os_version >= 100600) {
-    if (dir && fname) {
+    bool usepath = false;
+    NSString *path = nil;
+    if (dir && fname && [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]]) {
       // STR #3406: If both dir + fname specified, combine and pass to setDirectoryURL
-      NSString *path = [[NSString alloc] initWithFormat:@"%@/%@", dir, fname];  // dir+fname -> path
+      path = [[NSString alloc] initWithFormat:@"%@/%@", dir, fname];  // dir+fname -> path
       // See if full path to file exists
       //    If dir exists but fname doesn't, avoid using setDirectoryURL,
       //    otherwise NSSavePanel falls back to showing user's Documents dir.
       //
-      if ( [[NSFileManager defaultManager] fileExistsAtPath:path] ) {
+      if ( [[NSFileManager defaultManager] fileExistsAtPath:path] ) usepath = true;
+    }
+      if (usepath) {
         // Set only if full path exists
         [(NSSavePanel*)_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:path]];
       } else { // didn't setDirectoryURL to full path? Set dir + fname separately..
@@ -617,7 +621,6 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
         if (fname) [(NSSavePanel*)_panel performSelector:@selector(setNameFieldStringValue:) withObject:fname];
       }
       [path release];
-    }
     retval = [(NSSavePanel*)_panel runModal];
   }
   else {
