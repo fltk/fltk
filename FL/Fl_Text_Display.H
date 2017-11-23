@@ -558,9 +558,8 @@ protected:
   int mNLinesDeleted;           /* Number of lines deleted during
                                  buffer modification (only used
                                  when resynchronization is suppressed) */
-  int mModifyingTabDistance;    /* Whether tab distance is being
-                                 modified */
-  
+  int mModifyingTabDistance;    /* Whether tab distance is being modified XXX: UNUSED */
+
   mutable double mColumnScale; /* Width in pixels of an average character. This
                                  value is calculated as needed (lazy eval); it 
                                  needs to be mutable so that it can be calculated
