@@ -303,7 +303,7 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     miCnt = [FLMenuItem addNewItem:mm menu:submenu action:selector];
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
-    if ( mm->flags & FL_MENU_INACTIVE || (mitem && (mitem->flags & FL_MENU_INACTIVE))) {
+    if (mitem && (mm->flags & FL_MENU_INACTIVE || mitem->flags & FL_MENU_INACTIVE)) {
       NSMenuItem *item = [submenu itemAtIndex:miCnt];
       [item setEnabled:NO];
     }
