@@ -62,9 +62,9 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
   if (new_x != old_x || new_y != old_y) {
     translate(new_x - old_x, new_y - old_y );
   }
-  // if widget is a main window, clip all drawings to the window area
-  if (is_window && !widget->window()) {
-    fl_push_clip(0, 0, widget->w(), widget->h() );
+  // if widget is a window, clip all drawings to the window area
+  if (is_window) {
+    fl_push_clip(0, 0, widget->w(), widget->h());
   }
   // we do some trickery to recognize OpenGL windows and draw them via a plugin
   int drawn_by_plugin = 0;
@@ -80,7 +80,7 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
     Fl_Overlay_Window *over = (is_window ? widget->as_window()->as_overlay_window() : NULL);
     if (over) over->draw_overlay();
   }
-  if (is_window && !widget->window()) fl_pop_clip();
+  if (is_window) fl_pop_clip();
   // find subwindows of widget and print them
   traverse(widget);
   // reset origin to where it was
