@@ -423,7 +423,18 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       delete image;
       CGContextRelease(gc);
     }
+    bool clip_corners = fl_mac_os_version >= 100600 && to_quartz && !win->parent();
+    if (clip_corners) {
+      CGContextRef gc = (CGContextRef)driver()->gc();
+      CGContextSaveGState(gc);
+      CGContextTranslateCTM(gc, x_offset, y_offset + bt );
+      Fl_Cocoa_Window_Driver::clip_to_rounded_corners(gc, win->w(), win->h());
+      CGContextTranslateCTM(gc, -x_offset, -y_offset - bt);
+    }
     this->print_widget(win, x_offset, y_offset + bt);
+    if (clip_corners) {
+      CGContextRestoreGState((CGContextRef)driver()->gc());
+    }
     return;
   }
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current

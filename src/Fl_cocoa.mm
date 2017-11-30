@@ -4287,7 +4287,7 @@ int Fl_Cocoa_Window_Driver::decorated_h()
 }
 
 // clip the graphics context to rounded corners
-static void clip_to_rounded_corners(CGContextRef gc, int w, int h) {
+void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
   const CGFloat radius = 7.5;
   CGContextMoveToPoint(gc, 0, 0);
   CGContextAddLineToPoint(gc, 0, h - radius);
