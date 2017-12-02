@@ -63,6 +63,7 @@ set (CPPFILES
   Fl_Single_Window.cxx
   Fl_Slider.cxx
   Fl_Spinner.cxx
+  Fl_Sys_Menu_Bar.cxx
   Fl_System_Driver.cxx
   Fl_Table.cxx
   Fl_Table_Row.cxx
@@ -405,7 +406,7 @@ if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
         Fl_cocoa.mm
         drivers/Cocoa/Fl_Cocoa_Printer_Driver.mm
         Fl_Native_File_Chooser_MAC.mm
-        Fl_Sys_Menu_Bar.mm
+        Fl_MacOS_Sys_Menu_Bar.mm
         )
 else()
    set (MMFILES

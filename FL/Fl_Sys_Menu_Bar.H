@@ -3,7 +3,7 @@
 //
 // MacOS system menu bar header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,7 +21,7 @@
 
 #include <FL/Fl_Menu_Bar.H>
 
-#if defined(__APPLE__) || defined(FL_DOXYGEN)
+class Fl_Sys_Menu_Bar_Driver;
 
 /**
   A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
@@ -41,14 +41,15 @@
   \li no embossed labels
   \li no font sizes
  
-  You can configure a callback for the 'About' menu item to invoke your own code with fl_mac_set_about().
+ You can configure a callback for the 'About' menu item to invoke your own code with Fl_Sys_Menu_Bar::about().
  */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
-  void draw();
+  virtual void draw();
 public:
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
-  ~Fl_Sys_Menu_Bar();
+  virtual ~Fl_Sys_Menu_Bar();
+  Fl_Sys_Menu_Bar_Driver *driver();
   /** Return the system menu's array of Fl_Menu_Item's 
    */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
@@ -71,38 +72,25 @@ public:
     }
   void remove(int n);
   void replace(int index, const char *name);
-  /** Set the Fl_Menu_Item array pointer to null, indicating a zero-length menu. 
-   \see Fl_Menu_::clear()
-   */
   void clear();
-  /** Clears the specified submenu pointed to by index of all menu items.
-   \see Fl_Menu_::clear_submenu(int index)
-   */
   int clear_submenu(int index);
-  /** Make the shortcuts for this menu work no matter what window has the focus when you type it.
-   */
-  void global() {};
-  /** Sets the flags of item i
-   \see Fl_Menu_::mode(int i, int fl) */
-  void 	mode (int i, int fl) {
-    Fl_Menu_::mode(i, fl);
-    update();
-    }
+  void 	mode (int i, int fl);
   /** Gets the flags of item i.
    */
   int mode(int i) const { return Fl_Menu_::mode(i); }
-  /** Changes the shortcut of item i to n.
-   */
-  void shortcut (int i, int s) { Fl_Menu_::shortcut(i, s); update(); }
-  /** Turns the radio item "on" for the menu item and turns "off" adjacent radio items of the same group.*/
-  void setonly (Fl_Menu_Item *item) { Fl_Menu_::setonly(item); update(); }
+  void shortcut (int i, int s);
+  void setonly (Fl_Menu_Item *item);
+  static void about(Fl_Callback *cb, void *data);
 };
 
-#else
+extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
-typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
+/**
+ *  Attaches a callback to the "About myprog" item of the system application menu.
+ For back-compatibility. Equivalent to Fl_Sys_Menu_Bar::about(cb, user_data).
+ */
+inline void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut = 0) { Fl_Sys_Menu_Bar::about(cb, user_data);}
 
-#endif // defined(__APPLE__) || defined(FL_DOXYGEN)
 
 #endif // Fl_Sys_Menu_Bar_H
 

@@ -3,7 +3,7 @@
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -113,15 +113,6 @@ extern CGContextRef fl_gc;
  \sa \ref osissues_macos
  @{ */
 
-/** 
- * \brief Attaches a callback to the "About myprog" item of the system application menu.
- *
- * \param cb   a callback that will be called by "About myprog" menu item
- *		   with NULL 1st argument.
- * \param user_data   a pointer transmitted as 2nd argument to the callback.
- * \param shortcut    optional shortcut to attach to the "About myprog" menu item (e.g., FL_META+'a')
- */
-extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
 
 /** \brief The version number of the running Mac OS X (e.g., 100604 for 10.6.4)
  */
@@ -129,7 +120,7 @@ extern int fl_mac_os_version;
 
 /** The system menu bar.
  */
-extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
+//extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 struct Fl_Menu_Item;
 

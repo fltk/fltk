@@ -3,7 +3,7 @@
 //
 // Menu bar header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,6 +65,7 @@
   callbacks exactly the same as when you pick the item with the mouse.
 */
 class FL_EXPORT Fl_Menu_Bar : public Fl_Menu_ {
+  friend class Fl_Sys_Menu_Bar_Driver;
 protected:
     void draw();
 public:
