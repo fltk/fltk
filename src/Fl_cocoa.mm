@@ -3776,7 +3776,7 @@ static void createAppleMenu(void)
   NSMenuItem *menuItem;
   NSString *title;
   
-  SEL infodictSEL = (fl_mac_os_version >= 100200 ? @selector(localizedInfoDictionary) : @selector(infoDictionary));
+  SEL infodictSEL = (Fl_Darwin_System_Driver::calc_mac_os_version() >= 100200 ? @selector(localizedInfoDictionary) : @selector(infoDictionary));
   NSString *nsappname = [[[NSBundle mainBundle] performSelector:infodictSEL] objectForKey:@"CFBundleName"];  
   if (nsappname == nil)
     nsappname = [[NSProcessInfo processInfo] processName];
@@ -4389,7 +4389,7 @@ int Fl_Darwin_System_Driver::calc_mac_os_version() {
     sscanf(s, "%d.%d.%d", &M, &m, &b);
   }
   [localPool release];
-  return M*10000 + m*100 + b;
+  return fl_mac_os_version = M*10000 + m*100 + b;
 }
 
 //
