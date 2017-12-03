@@ -578,7 +578,6 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/development.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/license.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/examples.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/faq.dox
-INPUT += @CMAKE_SOURCE_DIR@/src/Fl_Sys_Menu_Bar.mm
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
