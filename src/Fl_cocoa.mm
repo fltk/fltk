@@ -50,6 +50,7 @@ extern "C" {
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 #include "drivers/Darwin/Fl_Darwin_System_Driver.H"
+#include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -2907,6 +2908,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   fl_open_display();
   NSInteger winlevel = NSNormalWindowLevel;
   NSUInteger winstyle;
+  Fl_MacOS_Sys_Menu_Bar_Driver::new_driver(); // useful if run in a static initializer
   Fl_Window* w = pWindow;
   if (w->parent()) {
     w->border(0);

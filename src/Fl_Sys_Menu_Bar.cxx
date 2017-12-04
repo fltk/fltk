@@ -24,11 +24,19 @@
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 
 // initialize this static variable if it was not initialized previously
-Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ =
-    ( driver_ ? driver_ : new Fl_Sys_Menu_Bar_Driver() );
+Fl_Sys_Menu_Bar_Driver* Fl_Sys_Menu_Bar_Driver::new_driver() {
+  if (!driver_) { // initialize this static variable if it was not initialized previously
+    static Fl_Sys_Menu_Bar_Driver *once = new Fl_Sys_Menu_Bar_Driver();
+    driver_ = once;
+  }
+  return driver_;
+}
 
-Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {return Fl_Sys_Menu_Bar_Driver::driver_;}
+inline Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {
+  return Fl_Sys_Menu_Bar_Driver::new_driver();
+}
 
+Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ = Fl_Sys_Menu_Bar_Driver::new_driver();
 
 /**
  The constructor.
@@ -39,7 +47,7 @@ Fl_Sys_Menu_Bar::Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l)
 {
   if (fl_sys_menu_bar) delete fl_sys_menu_bar;
   fl_sys_menu_bar = this;
-  Fl_Sys_Menu_Bar_Driver::driver_->bar = this;
+  driver()->bar = this;
 }
 
 /** The destructor */

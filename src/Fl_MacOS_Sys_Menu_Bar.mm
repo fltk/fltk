@@ -16,50 +16,30 @@
 //     http://www.fltk.org/str.php
 //
 
-/*
- * This code has been tested on the "menubar" sample program and provides
- * basic functionality. 
- * 
- * To use the System Menu Bar, simply replace the main Fl_Menu_Bar
- * in an application with Fl_Sys_Menu_Bar.
- *
- * FLTK features not supported by the Mac System menu
- *
- * - no symbolic labels
- * - no embossed labels
- * - no font sizes
- *
- * Many other calls of the parent class don't work.
- */
-#include <FL/Fl_Sys_Menu_Bar_Driver.H>
-#include <FL/x.H>
-
-
 #if defined(__APPLE__)
 
-class Fl_MacOS_Sys_Menu_Bar_Driver : public Fl_Sys_Menu_Bar_Driver {
-public:
-  Fl_MacOS_Sys_Menu_Bar_Driver();
-  virtual ~Fl_MacOS_Sys_Menu_Bar_Driver();
-  virtual void update();
-  virtual void draw() {}
-  virtual void about(Fl_Callback *cb, void *data);
-  virtual int add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags);
-  virtual int add(const char* str);
-  virtual int insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags);
-  virtual void menu(const Fl_Menu_Item *m);
-  virtual void shortcut (int i, int s);
-  virtual void setonly (Fl_Menu_Item *item);
-  virtual void clear();
-  virtual int clear_submenu(int index);
-  virtual void remove(int index);
-  virtual void replace(int index, const char *name);
-  virtual void mode(int i, int fl);
-};
+#include <FL/Fl_Sys_Menu_Bar_Driver.H>
+#include <FL/x.H>
+#include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
+
+
+Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::new_driver() {
+  static Fl_MacOS_Sys_Menu_Bar_Driver *once = new Fl_MacOS_Sys_Menu_Bar_Driver();
+  if (Fl_Sys_Menu_Bar_Driver::driver_ != once) {
+    if (Fl_Sys_Menu_Bar_Driver::driver_) {
+      once->bar = Fl_Sys_Menu_Bar_Driver::driver_->bar;
+      delete Fl_Sys_Menu_Bar_Driver::driver_;
+    }
+    Fl_Sys_Menu_Bar_Driver::driver_ = once;
+    if (Fl_Sys_Menu_Bar_Driver::driver_->bar) Fl_Sys_Menu_Bar_Driver::driver_->bar->update();
+  }
+  return once;
+}
 
 // this runs once if this source file is linked in, and initializes the
 // static variable Fl_Sys_Menu_Bar_Driver::driver_ with an object of class Fl_MacOS_Sys_Menu_Bar_Driver
-static int unused = (Fl_Sys_Menu_Bar_Driver::driver_ = new Fl_MacOS_Sys_Menu_Bar_Driver(), 0);
+static Fl_MacOS_Sys_Menu_Bar_Driver *unused = Fl_MacOS_Sys_Menu_Bar_Driver::new_driver();
+
 
 #import <Cocoa/Cocoa.h>
 

@@ -23,9 +23,8 @@
 
 class Fl_Sys_Menu_Bar_Driver {
   friend class Fl_Sys_Menu_Bar;
-protected:
-  Fl_Sys_Menu_Bar *bar;
 public:
+  Fl_Sys_Menu_Bar *bar;
   Fl_Sys_Menu_Bar_Driver();
   virtual ~Fl_Sys_Menu_Bar_Driver();
   virtual void update() {}
@@ -48,6 +47,7 @@ public:
   virtual void mode(int i, int fl) { bar->Fl_Menu_Bar::mode(i, fl); }
   
   static Fl_Sys_Menu_Bar_Driver *driver_; // to be assigned with a unique object of this class or of a derived class
+  static Fl_Sys_Menu_Bar_Driver* new_driver();
 };
 
 
