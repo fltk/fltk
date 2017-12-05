@@ -25,13 +25,13 @@
 
 Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::new_driver() {
   static Fl_MacOS_Sys_Menu_Bar_Driver *once = new Fl_MacOS_Sys_Menu_Bar_Driver();
-  if (Fl_Sys_Menu_Bar_Driver::driver_ != once) {
-    if (Fl_Sys_Menu_Bar_Driver::driver_) {
-      once->bar = Fl_Sys_Menu_Bar_Driver::driver_->bar;
-      delete Fl_Sys_Menu_Bar_Driver::driver_;
+  if (driver_ != once) {
+    if (driver_) {
+      once->bar = driver_->bar;
+      delete driver_;
     }
-    Fl_Sys_Menu_Bar_Driver::driver_ = once;
-    if (Fl_Sys_Menu_Bar_Driver::driver_->bar) Fl_Sys_Menu_Bar_Driver::driver_->bar->update();
+    driver_ = once;
+    if (driver_->bar) driver_->update();
   }
   return once;
 }

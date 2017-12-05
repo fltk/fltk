@@ -23,21 +23,6 @@
 
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 
-// initialize this static variable if it was not initialized previously
-Fl_Sys_Menu_Bar_Driver* Fl_Sys_Menu_Bar_Driver::new_driver() {
-  if (!driver_) { // initialize this static variable if it was not initialized previously
-    static Fl_Sys_Menu_Bar_Driver *once = new Fl_Sys_Menu_Bar_Driver();
-    driver_ = once;
-  }
-  return driver_;
-}
-
-inline Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {
-  return Fl_Sys_Menu_Bar_Driver::new_driver();
-}
-
-Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ = Fl_Sys_Menu_Bar_Driver::new_driver();
-
 /**
  The constructor.
  On Mac OS X, all arguments are unused. On other platforms they are used as by Fl_Menu_Bar::Fl_Menu_Bar().
@@ -56,10 +41,6 @@ Fl_Sys_Menu_Bar::~Fl_Sys_Menu_Bar()
   fl_sys_menu_bar = 0;
   clear();
 }
-
-Fl_Sys_Menu_Bar_Driver::Fl_Sys_Menu_Bar_Driver() {bar = NULL;}
-
-Fl_Sys_Menu_Bar_Driver::~Fl_Sys_Menu_Bar_Driver() {}
 
 void Fl_Sys_Menu_Bar::update() {
   driver()->update();
@@ -191,6 +172,21 @@ void Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *data) {
 void Fl_Sys_Menu_Bar::draw() {
   driver()->draw();
 }
+
+#if !defined(FL_DOXYGEN)
+Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {
+  if (!Fl_Sys_Menu_Bar_Driver::driver_) { // initialize this static variable if it was not initialized previously
+    Fl_Sys_Menu_Bar_Driver::driver_ = new Fl_Sys_Menu_Bar_Driver();
+  }
+  return Fl_Sys_Menu_Bar_Driver::driver_;
+}
+
+Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ = Fl_Sys_Menu_Bar::driver();
+
+Fl_Sys_Menu_Bar_Driver::Fl_Sys_Menu_Bar_Driver() {bar = NULL;}
+
+Fl_Sys_Menu_Bar_Driver::~Fl_Sys_Menu_Bar_Driver() {}
+#endif // !defined(FL_DOXYGEN)
 
 //
 // End of "$Id$".

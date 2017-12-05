@@ -49,7 +49,7 @@ protected:
 public:
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
   virtual ~Fl_Sys_Menu_Bar();
-  Fl_Sys_Menu_Bar_Driver *driver();
+  static Fl_Sys_Menu_Bar_Driver *driver();
   /** Return the system menu's array of Fl_Menu_Item's 
    */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
