@@ -163,7 +163,7 @@ void Fl_Sys_Menu_Bar::replace(int index, const char *name)
  * This cross-platform function is effective only under the MacOS platform.
  * \param cb   a callback that will be called by "About myprog" menu item
  *       with NULL 1st argument.
- * \param user_data   a pointer transmitted as 2nd argument to the callback.
+ * \param data   a pointer transmitted as 2nd argument to the callback.
  */
 void Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *data) {
   if (fl_sys_menu_bar) fl_sys_menu_bar->driver()->about(cb, data);
