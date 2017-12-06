@@ -1768,7 +1768,7 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
     if (need_new_nsapp) [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; // never released
-    FLAppDelegate *delegate = (fl_mac_os_version < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
+    FLAppDelegate *delegate = (Fl_Darwin_System_Driver::calc_mac_os_version() < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
     if (need_new_nsapp) {
       if (fl_mac_os_version >= 101300 ) {
@@ -3778,7 +3778,7 @@ static void createAppleMenu(void)
   NSMenuItem *menuItem;
   NSString *title;
   
-  SEL infodictSEL = (Fl_Darwin_System_Driver::calc_mac_os_version() >= 100200 ? @selector(localizedInfoDictionary) : @selector(infoDictionary));
+  SEL infodictSEL = (fl_mac_os_version >= 100200 ? @selector(localizedInfoDictionary) : @selector(infoDictionary));
   NSString *nsappname = [[[NSBundle mainBundle] performSelector:infodictSEL] objectForKey:@"CFBundleName"];  
   if (nsappname == nil)
     nsappname = [[NSProcessInfo processInfo] processName];
