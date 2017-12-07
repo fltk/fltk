@@ -36,10 +36,6 @@ Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::new_driver() {
   return once;
 }
 
-// this runs once if this source file is linked in, and initializes the
-// static variable Fl_Sys_Menu_Bar_Driver::driver_ with an object of class Fl_MacOS_Sys_Menu_Bar_Driver
-static Fl_MacOS_Sys_Menu_Bar_Driver *unused = Fl_MacOS_Sys_Menu_Bar_Driver::new_driver();
-
 
 #import <Cocoa/Cocoa.h>
 

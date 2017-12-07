@@ -2908,7 +2908,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   fl_open_display();
   NSInteger winlevel = NSNormalWindowLevel;
   NSUInteger winstyle;
-  Fl_MacOS_Sys_Menu_Bar_Driver::new_driver(); // useful if run in a static initializer
   Fl_Window* w = pWindow;
   if (w->parent()) {
     w->border(0);
@@ -3850,6 +3849,7 @@ static void createAppleMenu(void)
   [mainmenu release];
   [appleMenu release];
   [menuItem release];
+  Fl_MacOS_Sys_Menu_Bar_Driver::new_driver();
 }
 
 

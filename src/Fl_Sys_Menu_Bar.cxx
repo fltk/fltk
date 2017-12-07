@@ -181,7 +181,7 @@ Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar::driver() {
   return Fl_Sys_Menu_Bar_Driver::driver_;
 }
 
-Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ = Fl_Sys_Menu_Bar::driver();
+Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ = 0;
 
 Fl_Sys_Menu_Bar_Driver::Fl_Sys_Menu_Bar_Driver() {bar = NULL;}
 
