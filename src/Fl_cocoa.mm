@@ -3849,7 +3849,7 @@ static void createAppleMenu(void)
   [mainmenu release];
   [appleMenu release];
   [menuItem release];
-  Fl_MacOS_Sys_Menu_Bar_Driver::new_driver();
+  Fl_MacOS_Sys_Menu_Bar_Driver::driver();
 }
 
 

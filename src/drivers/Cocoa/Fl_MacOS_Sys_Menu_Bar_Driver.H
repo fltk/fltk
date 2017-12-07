@@ -39,7 +39,7 @@ public:
   virtual void remove(int index);
   virtual void replace(int index, const char *name);
   virtual void mode(int i, int fl);
-  static Fl_MacOS_Sys_Menu_Bar_Driver* new_driver();
+  static Fl_Sys_Menu_Bar_Driver* driver();
 };
 
 

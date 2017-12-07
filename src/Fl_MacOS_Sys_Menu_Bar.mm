@@ -23,7 +23,7 @@
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 
 
-Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::new_driver() {
+Fl_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
   static Fl_MacOS_Sys_Menu_Bar_Driver *once = new Fl_MacOS_Sys_Menu_Bar_Driver();
   if (driver_ != once) {
     if (driver_) {
