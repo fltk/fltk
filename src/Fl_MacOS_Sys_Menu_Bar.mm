@@ -110,6 +110,7 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 {
   const Fl_Menu_Item *item = [self getFlItem];
   menu->picked(item);
+  Fl::flush();
   if ( item->flags & FL_MENU_TOGGLE ) {	// update the menu toggle symbol
     [self setState:(item->value() ? NSOnState : NSOffState)];
   }
