@@ -3,7 +3,7 @@
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -107,6 +107,12 @@ int Fl::test_shortcut(unsigned int shortcut) {
     fl_local_shift = "Umschalt"; // German for "Shift"
   \endcode
 
+  \note Due to \b random static initialization order this should always
+    be done from code in main() or called by main() as opposed to static
+    initialization since the default strings in the FLTK library are set by
+    static initializers. Otherwise this \b might result in the wrong order
+    so FLTK's internal initialization overwrites your strings.
+
   The shortcut name will be constructed by adding all modifier names in the
   order defined above plus the name of the key. A '+' character is added to
   each modifier name unless it has a trailing '\' or a trailing '+'.
@@ -116,11 +122,11 @@ int Fl::test_shortcut(unsigned int shortcut) {
     Ctrl+Alt+Shift+Meta+F12
 
   The default values for modifier key names are as given above for all
-  platforms except Mac OS X. Mac OS X uses graphical characters that represent
-  the typical OS X modifier names in menus, e.g. cloverleaf, saucepan, etc.
-  You may, however, redefine Mac OS X modifier names as well.
+  platforms except macOS. macOS uses graphical characters that represent
+  the typical macOS modifier names in menus, e.g. cloverleaf, saucepan, etc.
+  You may, however, redefine macOS modifier names as well.
 
-  \param [in] shortcut the integer value containing the ascii character or extended keystroke plus modifiers
+  \param [in] shortcut the integer value containing the ASCII character or extended keystroke plus modifiers
   \return a pointer to a static buffer containing human readable text for the shortcut
   */
 const char* fl_shortcut_label(unsigned int shortcut) {
@@ -161,10 +167,10 @@ static char *add_modifier_key(char *p, const char *end, const char *name) {
   return p;
 }
 
-/** 
+/**
   Get a human-readable string from a shortcut value.
 
-  \param [in] shortcut the integer value containing the ascii character or extended keystroke plus modifiers
+  \param [in] shortcut the integer value containing the ASCII character or extended keystroke plus modifiers
   \param [in] eom if this pointer is set, it will receive a pointer to the end of the modifier text
   \return a pointer to a static buffer containing human readable text for the shortcut
 
@@ -201,10 +207,10 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
 /**
   Emulation of XForms named shortcuts.
 
-  Converts ascii shortcut specifications (eg. "^c") 
+  Converts ASCII shortcut specifications (eg. "^c")
   into the FLTK integer equivalent (eg. FL_CTRL+'c')
 
-  These ascii characters are used to specify the various keyboard modifier keys:
+  These ASCII characters are used to specify the various keyboard modifier keys:
   \verbatim
    # - Alt
    + - Shift
@@ -333,15 +339,15 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   // for menubars etc. shortcuts must work only if the Alt modifier is pressed
   if (require_alt && Fl::event_state(FL_ALT)==0) return 0;
   unsigned int c = fl_utf8decode(Fl::event_text(), Fl::event_text()+Fl::event_length(), 0);
-  // this line makes underline shortcuts work the same way they do on MSWindow
-  // and Linux. 
+  // this line makes underline shortcuts work the same way they do on Windows
+  // and Linux.
   if (extra_test && c && Fl::event_state(FL_ALT))
     c = Fl::event_key();
   if (!c) return 0;
   unsigned int ls = label_shortcut(t);
   if (c == ls)
     return 1;
-  // On OS X, we need to simulate the upper case keystroke as well
+  // On macOS, we need to simulate the upper case keystroke as well
   if (extra_test && Fl::event_state(FL_ALT) && c<128 && isalpha(c) && (unsigned)toupper(c)==ls)
     return 1;
   return 0;
