@@ -35,7 +35,8 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
 
   Most applications will also want to link against the fltk_images library
   and call the fl_register_images() function to support standard image
-  formats such as BMP, GIF, JPEG, and PNG.
+  formats such as BMP, GIF, JPEG, PNG, and SVG (unless the library was built
+  with the option removing SVG support).
 
   Images can be requested (loaded) with Fl_Shared_Image::get(), find(),
   and some other methods. All images are cached in an internal list of
