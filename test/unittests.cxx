@@ -3,7 +3,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,7 +49,7 @@ class MainWindow *mainwin = 0;
 Fl_Hold_Browser *browser = 0;
 
 // This class helps to automagically register a new test with the unittest app.
-// Please see the examples on how this is used. 
+// Please see the examples on how this is used.
 class UnitTest {
 public:
   UnitTest(const char *label, Fl_Widget* (*create)()) :
@@ -95,7 +95,7 @@ int UnitTest::nTest = 0;
 UnitTest *UnitTest::fTest[200];
 
 
-// The main window needs an additional drawing feature in order to support 
+// The main window needs an additional drawing feature in order to support
 // the viewport alignment test.
 class MainWindow : public Fl_Double_Window {
 public:
@@ -168,14 +168,14 @@ void Browser_CB(Fl_Widget*, void*) {
 }
 
 
-// this is the main call. It creates the window and adds all previously
+// This is the main call. It creates the window and adds all previously
 // registered tests to the browser widget.
 int main(int argc, char **argv) {
   Fl::args(argc,argv);
   Fl::get_system_colors();
   Fl::scheme(Fl::scheme()); // init scheme before instantiating tests
   Fl::visual(FL_RGB);
-  mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "Fltk Unit Tests");
+  mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "FLTK Unit Tests");
   browser = new Fl_Hold_Browser(BROWSER_X, BROWSER_Y, BROWSER_W, BROWSER_H, "Unit Tests");
   browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
   browser->when(FL_WHEN_CHANGED);
@@ -190,7 +190,6 @@ int main(int argc, char **argv) {
     browser->add(t->label(), (void*)t);
   }
 
-  /////
   mainwin->resizable(mainwin);
   mainwin->show(argc,argv);
   // Select first test in browser, and show that test.

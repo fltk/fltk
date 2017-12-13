@@ -3,7 +3,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // Nods to Edmanuel Torres for the widget layout (STR#2672)
 //
@@ -200,21 +200,25 @@ public:
 	  o->end();
 	} // Fl_Group* o
 	{ Fl_Group* o = new Fl_Group(15, 140, 310, 190, "tab4");
-	  //o->box(FL_THIN_UP_BOX);
+	  // o->box(FL_THIN_UP_BOX);
 	  o->color(FL_DARK1);
 	  o->hide();
 	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 160, 120, 25, "Choice 1");
-	    o->tooltip("Fl_Radio_Round_Button");
+	    o->tooltip("Fl_Radio_Round_Button (default)");
+	    // don't set selection color (use default selection color)
 	    o->value(1); // selected
 	  } // Fl_Radio_Round_Button* o
 	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 190, 120, 25, "Choice 2");
-	    o->tooltip("Fl_Radio_Round_Button");
+	    o->tooltip("Fl_Radio_Round_Button (red)");
+	    o->selection_color(FL_RED);
 	  } // Fl_Radio_Round_Button* o
 	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 220, 120, 25, "Choice 3");
-	    o->tooltip("Fl_Radio_Round_Button");
+	    o->tooltip("Fl_Radio_Round_Button (green)");
+	    o->selection_color(FL_GREEN);
 	  } // Fl_Radio_Round_Button* o
 	  { Fl_Radio_Round_Button* o = new Fl_Radio_Round_Button(40, 250, 120, 25, "Choice 4");
-	    o->tooltip("Fl_Radio_Round_Button");
+	    o->tooltip("Fl_Radio_Round_Button (blue)");
+	    o->selection_color(FL_BLUE);
 	  } // Fl_Radio_Round_Button* o
 	  o->end();
 	} // Fl_Group* o
@@ -281,12 +285,14 @@ public:
 	o->box(FL_DOWN_BOX);
 	o->color(FL_BACKGROUND2_COLOR);
 	o->selection_color((Fl_Color)30);
+	o->selection_color((Fl_Color)FL_RED);
 	o->tooltip("Fl_Light_Button with down box");
       } // Fl_Light_Button* o
       { Fl_Check_Button* o = new Fl_Check_Button(110, 37, 105, 25, "Check");
 	o->box(FL_DOWN_FRAME);
 	o->down_box(FL_DOWN_BOX);
 	o->color(FL_DARK1);
+	o->selection_color((Fl_Color)FL_GREEN);
 	o->tooltip("Fl_Check_Button with down frame");
       } // Fl_Check_Button* o
       { Fl_Input* o = new Fl_Input(220, 10, 100, 25);
