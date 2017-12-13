@@ -250,6 +250,7 @@ void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     if (need_clip) fl_push_clip(X, Y, W, H);
     fl_graphics_driver->draw_scaled(this, X-cx, Y-cy, w1, h1);
     if (need_clip) fl_pop_clip();
+    w(w1); h(h1); // restore the previous image size
   }
 }
 
