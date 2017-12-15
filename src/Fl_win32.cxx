@@ -3,7 +3,7 @@
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -81,13 +81,6 @@ void fl_cleanup_dc_list(void);
 
 #if !defined(NO_TRACK_MOUSE)
 #  include <commctrl.h>	// TrackMouseEvent
-// fabien: Ms Visual Studio >= 2003 permit embedded lib reference
-// that makes fltk use easier as only fltk libs are now requested
-// This idea could be extended to fltk libs themselves,
-// implementer should then care about DLL linkage flags ...
-#  if defined(_MSC_VER) && (_MSC_VER>=1310)
-#    pragma comment (lib, "comctl32.lib")
-#  endif
 #endif
 
 #if defined(__GNUC__)
