@@ -30,6 +30,8 @@ Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win) :
 pWindow(win)
 {
   shape_data_ = NULL;
+  wait_for_expose_value = 1;
+  other_xid = 0;
 }
 
 
