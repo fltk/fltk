@@ -104,25 +104,6 @@ void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
 //fprintf(LOG,"xyline_unscaled tw=%d s=%f gc_=%p\n",tw,scale_,gc_);fflush(LOG);
 }
 
-void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2) {
-  /*if (y2 < y) y2--;
-  else y2++;
-  MoveToEx(gc_, x, y, 0L);
-  LineTo(gc_, x1, y);
-  LineTo(gc_, x1, y2);*/
-  xyline_unscaled(x, y, x1);
-  yxline_unscaled(x1, y, y2);
-}
-
-void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2, float x3) {
-  if(x3 < x1) x3--;
-  else x3++;
-  MoveToEx(gc_, x, y, 0L);
-  LineTo(gc_, x1, y);
-  LineTo(gc_, x1, y2);
-  LineTo(gc_, x3, y2);
-}
-
 void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
   if (y1 < y) { float exch = y; y = y1; y1 = exch;}
   int line_delta_ =  (scale_ > 1.75 ? 1 : 0);
@@ -138,25 +119,6 @@ void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
     MoveToEx(gc_, ix+1, iy, 0L); LineTo(gc_, ix+1, iy1+1);
   }
 
-}
-
-void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2) {
-  /*if (x2 > x) x2++;
-  else x2--;
-  MoveToEx(gc_, x, y, 0L);
-  LineTo(gc_, x, y1);
-  LineTo(gc_, x2, y1);*/
-  yxline_unscaled(x, y, y1);
-  xyline_unscaled(x, y1, x2);
-}
-
-void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2, float y3) {
-  if(y3<y1) y3--;
-  else y3++;
-  MoveToEx(gc_, x, y, 0L);
-  LineTo(gc_, x, y1);
-  LineTo(gc_, x2, y1);
-  LineTo(gc_, x2, y3);
 }
 
 void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2) {

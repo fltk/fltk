@@ -158,14 +158,14 @@ void Fl_Xlib_Graphics_Driver::XDestroyRegion(Fl_Region r) {
 
 // --- line and polygon drawing
 
-
+// called only when scale_ has integer value
 void Fl_Xlib_Graphics_Driver::rect_unscaled(float fx, float fy, float fw, float fh) {
   if (fw<=0 || fh<=0) return;
   int deltaf = scale_ >= 2 ? scale_-1 : 0;
   fx += offset_x_*scale_; fy += offset_y_*scale_;
   int x = fx; int y = fy;
-  int w = int(int(fx/scale_+fw/scale_+0.5)*scale_) - x - 1 - deltaf;
-  int h = int(int(fy/scale_+fh/scale_+0.5)*scale_) - y - 1 - deltaf;
+  int w = int(fw) - 1 - deltaf;
+  int h = int(fh) - 1 - deltaf;
   if (!clip_to_short(x, y, w, h, line_width_))
     XDrawRectangle(fl_display, fl_window, gc_, x+line_delta_, y+line_delta_, w, h);
 }
@@ -203,84 +203,32 @@ void Fl_Xlib_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1
   XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
 }
 
-void Fl_Xlib_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {//OK
+void Fl_Xlib_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
   x+=offset_x_*scale_; y+=offset_y_*scale_; x1 += offset_x_*scale_;
   int tw = line_width_ ? line_width_ : 1; // true line width
   if (x > x1) { float exch = x; x = x1; x1 = exch; }
   int ix = clip_x(x+line_delta_); if (scale_ >= 2) ix -= int(scale_/2);
   int iy = clip_x(y+line_delta_);
-  int ix1 = int(x1/scale_+1.5)*scale_-1; // extend line to pixel before line beginning at x1/scale_ + 1
+  // make sure that line output by xyline(a,b,c) extends to pixel just at left of where xyline(c+1,b,d) begins
+  int ix1 = int(x1/scale_+1.5)*scale_-1;
   ix1 += line_delta_; if (scale_ >= 4) ix1 -= 1;
   XDrawLine(fl_display, fl_window, gc_, ix, iy, ix1, iy);
-  // try and make sure no unfilled area lies between xyline(x,y,x1) and xyline(x,y+1,x1)
+  // make sure no unfilled area lies between xyline(x,y,x1) and xyline(x,y+1,x1)
   if (y+line_delta_ + scale_ >= iy + tw+1 - 0.001 ) XDrawLine(fl_display, fl_window, gc_, ix, iy+1, ix1, iy+1);
 }
 
-void Fl_Xlib_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2) {//OK
-  x+=offset_x_*scale_; y+=offset_y_*scale_; x1 += offset_x_*scale_; y2+=offset_y_*scale_;
-  if (scale_ >= 2) {
-    int delta = int(scale_/2 + 0.5);
-    if (x > x1) x += delta; else x -= delta;
-    if (y2 > y) y2 += delta; else y2 -= delta;
-  }
-  XPoint p[3];
-  p[0].x = clip_x(x+line_delta_);  p[0].y = p[1].y = clip_x(y+line_delta_);
-  p[1].x = p[2].x = clip_x(x1+line_delta_); p[2].y = clip_x(y2+line_delta_);
-  XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
-}
-
-void Fl_Xlib_Graphics_Driver::xyline_unscaled(float x, float y, float x1, float y2, float x3) {
-  x+=offset_x_*scale_; y+=offset_y_*scale_; x1 += offset_x_*scale_; y2+=offset_y_*scale_; x3 += offset_x_*scale_;
-  if (scale_ >= 2) {
-    int delta = int(scale_/2 + 0.5);
-    if (x > x1) x += delta; else x -= delta;
-    if (x3 > x1) x3 += delta; else x3 -= delta;
-  }
-  XPoint p[4];
-  p[0].x = clip_x(x+line_delta_);  p[0].y = p[1].y = clip_x(y+line_delta_);
-  p[1].x = p[2].x = clip_x(x1+line_delta_); p[2].y = p[3].y = clip_x(y2+line_delta_);
-  p[3].x = clip_x(x3+line_delta_);
-  XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
-}
-
-void Fl_Xlib_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {//OK
+void Fl_Xlib_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
   x+=offset_x_*scale_; y+=offset_y_*scale_; y1 += offset_y_*scale_;
   int tw = line_width_ ? line_width_ : 1; // true line width
   if (y > y1) { float exch = y; y = y1; y1 = exch; }
   int ix = clip_x(x+line_delta_);
   int iy = clip_x(y+line_delta_); if (scale_ >= 2) iy -= int(scale_/2);
   int iy1 = int(y1/scale_+1.5)*scale_-1;
-  iy1 += line_delta_; if (scale_ >= 4) iy1 -= 1; // extend line to pixel before line beginning at y1/scale_ + 1
+  // make sure that line output by yxline(a,b,c) extends to pixel just above where yxline(a,c+1,d) begins
+  iy1 += line_delta_; if (scale_ >= 4) iy1 -= 1;
   XDrawLine(fl_display, fl_window, gc_, ix, iy, ix, iy1);
-  // try and make sure no unfilled area lies between yxline(x,y,y1) and yxline(x+1,y,y1)
+  // make sure no unfilled area lies between yxline(x,y,y1) and yxline(x+1,y,y1)
   if (x+line_delta_+scale_ >= ix + tw+1 -0.001) XDrawLine(fl_display, fl_window, gc_, ix+1, iy, ix+1, iy1);
-}
-
-void Fl_Xlib_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2) {
-  x+=offset_x_*scale_; y+=offset_y_*scale_; y1 += offset_y_*scale_; x2+=offset_x_*scale_;
-  if (scale_ >= 2) {
-    int delta = int(scale_/2 + 0.5);
-    if (y > y1) y += delta; else y -= delta;
-    if (x2 > x) x2 += delta; else x2 -= delta;
-  }
-  XPoint p[3];
-  p[0].x = p[1].x = clip_x(x+line_delta_);  p[0].y = clip_x(y+line_delta_);
-  p[1].y = p[2].y = clip_x(y1+line_delta_); p[2].x = clip_x(x2+line_delta_);
-  XDrawLines(fl_display, fl_window, gc_, p, 3, 0);
-}
-
-void Fl_Xlib_Graphics_Driver::yxline_unscaled(float x, float y, float y1, float x2, float y3) {
-  x+=offset_x_*scale_; y+=offset_y_*scale_; y1 += offset_y_*scale_; x2+=offset_x_*scale_; y3 += offset_y_*scale_;
-  if (scale_ >= 2) {
-    int delta = int(scale_/2 + 0.5);
-    if (y > y1) y += delta; else y -= delta;
-    if (y3 > y1) y3 += delta; else y3 -= delta;
-  }
-  XPoint p[4];
-  p[0].x = p[1].x = clip_x(x+line_delta_);  p[0].y = clip_x(y+line_delta_);
-  p[1].y = p[2].y = clip_x(y1+line_delta_); p[2].x = p[3].x = clip_x(x2+line_delta_);
-  p[3].y = clip_x(y3+line_delta_);
-  XDrawLines(fl_display, fl_window, gc_, p, 4, 0);
 }
 
 void Fl_Xlib_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2) {

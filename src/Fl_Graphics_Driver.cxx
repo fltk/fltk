@@ -220,7 +220,14 @@ Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver(
 
 void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
 {
-  rect_unscaled(x * scale_, y * scale_, w * scale_, h * scale_);
+  if (int(scale_) == scale_) {
+    rect_unscaled(x * scale_, y * scale_, w * scale_, h * scale_);
+  } else {
+    xyline(x, y, x+w-1);
+    yxline(x, y, y+h-1);
+    yxline(x+w-1, y, y+h-1);
+    xyline(x, y+h-1, x+w-1);
+  }
 }
 
 void Fl_Scalable_Graphics_Driver::rectf(int x, int y, int w, int h)
@@ -233,31 +240,46 @@ void Fl_Scalable_Graphics_Driver::point(int x, int y) {
 }
 
 void Fl_Scalable_Graphics_Driver::line(int x, int y, int x1, int y1) {
-  line_unscaled( x*scale_, y*scale_, x1*scale_, y1*scale_);
+  if (y == y1) xyline(x, y, x1);
+  else if (x == x1) yxline(x, y, y1);
+  else line_unscaled( x*scale_, y*scale_, x1*scale_, y1*scale_);
 }
 
 void Fl_Scalable_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
-  line_unscaled( x*scale_, y*scale_, x1*scale_, y1*scale_, x2*scale_, y2*scale_);
+  if ( (y == y1 || x == x1) && (y2 == y1 || x2 == x1) ) { // only horizontal or vertical lines
+    line(x, y, x1, y1);
+    line(x1, y1, x2, y2);
+  } else line_unscaled( x*scale_, y*scale_, x1*scale_, y1*scale_, x2*scale_, y2*scale_);
 }
 
 void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1) {
   xyline_unscaled(x*scale_, y*scale_, x1*scale_);
 }
+
 void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
-  xyline_unscaled(x*scale_, y*scale_, x1*scale_, y2*scale_);
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
 }
+
 void Fl_Scalable_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
-  xyline_unscaled(x*scale_, y*scale_, x1*scale_, y2*scale_, x3*scale_);
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
+  xyline(x1, y2, x3);
 }
 
 void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1) {
   yxline_unscaled(x*scale_, y*scale_, y1*scale_);
 }
+
 void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
-  yxline_unscaled(x*scale_, y*scale_, y1*scale_, x2*scale_);
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
 }
+
 void Fl_Scalable_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
-  yxline_unscaled(x*scale_, y*scale_, y1*scale_, x2*scale_, y3*scale_);
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
+  yxline(x2, y1, y3);
 }
 
 void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
@@ -265,7 +287,15 @@ void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, i
 }
 
 void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-  loop_unscaled(x0*scale_, y0*scale_, x1*scale_, y1*scale_, x2*scale_, y2*scale_, x3*scale_, y3*scale_);
+  if ( (x0==x1 || y0==y1) && (x2==x1 || y2==y1) && (x2==x3 || y2==y3) && (x0==x3 || y0==y3) ) {
+    // only horizontal and vertical lines
+    line(x0, y0, x1, y1);
+    line(x1, y1, x2, y2);
+    line(x2, y2, x3, y3);
+    line(x3, y3, x0, y0);
+  } else {
+    loop_unscaled(x0*scale_, y0*scale_, x1*scale_, y1*scale_, x2*scale_, y2*scale_, x3*scale_, y3*scale_);
+  }
 }
 
 void Fl_Scalable_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {

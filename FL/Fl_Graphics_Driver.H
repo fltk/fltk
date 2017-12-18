@@ -441,14 +441,10 @@ protected:
   virtual void xyline(int x, int y, int x1, int y2);
   virtual void xyline(int x, int y, int x1, int y2, int x3);
   virtual void xyline_unscaled(float x, float y, float x1)=0;
-  virtual void xyline_unscaled(float x, float y, float x1, float y2)=0;
-  virtual void xyline_unscaled(float x, float y, float x1, float y2, float x3)=0;
   virtual void yxline(int x, int y, int y1);
   virtual void yxline(int x, int y, int y1, int x2);
   virtual void yxline(int x, int y, int y1, int x2, int y3);
   virtual void yxline_unscaled(float x, float y, float y1)=0;
-  virtual void yxline_unscaled(float x, float y, float y1, float x2)=0;
-  virtual void yxline_unscaled(float x, float y, float y1, float x2, float y3)=0;
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)=0;
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);

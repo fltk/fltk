@@ -104,11 +104,7 @@ protected:
   virtual void line_unscaled(float x, float y, float x1, float y1);
   virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
   virtual void xyline_unscaled(float x, float y, float x1);
-  virtual void xyline_unscaled(float x, float y, float x1, float y2);
-  virtual void xyline_unscaled(float x, float y, float x1, float y2, float x3);
   virtual void yxline_unscaled(float x, float y, float y1);
-  virtual void yxline_unscaled(float x, float y, float y1, float x2);
-  virtual void yxline_unscaled(float x, float y, float y1, float x2, float y3);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
