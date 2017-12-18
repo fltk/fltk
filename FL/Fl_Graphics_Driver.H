@@ -77,6 +77,8 @@ struct Fl_Fontdesc;
 class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Surface_Device;
   friend class Fl_Display_Device;
+  friend class Fl_Screen_Driver;
+  friend class Fl_Window_Driver;
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
@@ -93,6 +95,10 @@ class FL_EXPORT Fl_Graphics_Driver {
 private:
   // some platforms may need to reimplement this
   virtual void set_current_();
+protected:
+  float scale_; // scale between user and graphical coordinates: graphical = user * scale_
+  /** Sets the current value of the scaling factor */
+  virtual void scale(float f) { scale_ = f; }
 public:
   // The following functions create the various graphics drivers that are required
   // for core operations. They must be implemented as members of Fl_Graphics_Driver,
@@ -218,6 +224,8 @@ public:
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
   static Fl_Graphics_Driver &default_driver();
+  /** Current scale factor between FLTK and graphical coordinates: graphical = FLTK * scale() */
+  float scale() { return scale_; }
   /** Return whether the graphics driver can do alpha blending */
   virtual char can_do_alpha_blending() { return 0; }
   // --- implementation is in src/fl_rect.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_rect.cxx
@@ -370,10 +378,6 @@ public:
   virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
   virtual void XDestroyRegion(Fl_Region r);
-  /** Returns the current value of the scaling factor (usually > 1 on HiDPI displays) */
-  virtual float scale() {return 1;}
-  /** Sets the current value of the scaling factor */
-  virtual void scale(float f) {}
   /** Support for Fl::get_font_name() */
   virtual const char* get_font_name(Fl_Font fnum, int* ap) {return NULL;}
   /** Support for Fl::get_font_sizes() */
@@ -411,9 +415,7 @@ public:
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   Fl_Scalable_Graphics_Driver();
-  float scale() { return scale_; }
 protected:
-  float scale_; // scale between user and graphical coordinates: graphical = user * scale_
   int line_width_;
   void cache_size(Fl_Image *img, int &width, int &height);
   virtual Fl_Region scale_clip(float f)=0;

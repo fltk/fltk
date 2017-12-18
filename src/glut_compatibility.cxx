@@ -29,6 +29,7 @@
 #include "flstring.h"
 #if HAVE_GL
 #  include <FL/Fl_Gl_Window_Driver.H>
+#  include <FL/Fl_Screen_Driver.H>
 #  include <FL/glut.H>
 #  define MAXWINDOWS 32
 
@@ -130,6 +131,9 @@ int Fl_Glut_Window::handle(int event) {
     if (!keyboard && !special) break;
 
   case FL_KEYBOARD:
+      // keyboard() does not distinguish between recognized and unrecognized keystrokes
+      // so check for window scaling keystroke before normal keystroke processing
+    if ( Fl::event_command() && Fl_Screen_Driver::scale_handler(FL_SHORTCUT) ) return 1;
     if (Fl::event_text()[0]) {
       if (keyboard) {keyboard(Fl::event_text()[0],ex,ey); return 1;}
       break;

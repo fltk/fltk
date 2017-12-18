@@ -62,7 +62,7 @@ Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_S
   // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
 #ifdef FLTK_HIDPI_SUPPORT
   float scaling = Fl_Graphics_Driver::default_driver().scale();
-  driver()->scale(scaling);
+  ((Fl_GDI_Graphics_Driver*)driver())->scale(scaling);
 #else
   float scaling = 1/((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
 #endif

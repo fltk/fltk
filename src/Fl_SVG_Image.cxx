@@ -193,6 +193,7 @@ void Fl_SVG_Image::rasterize_(int W, int H) {
   rasterized_ = true;
   raster_w_ = W;
   raster_h_ = H;
+//printf("rasterize to %dx%d\n",W, H);
 }
 
 
@@ -234,10 +235,14 @@ void Fl_SVG_Image::resize(int width, int height) {
 
 
 void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
-  static float f = Fl::screen_driver()->retina_factor();
+  float f = 1;
+  if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
+    f = Fl::screen_driver()->retina_factor() * fl_graphics_driver->scale();
+  }
   int w1 = w(), h1 = h();
   /* When f > 1, there may be several pixels per drawing unit in an area
-   of size w() x h() of the display. This occurs, e.g., with Apple retina displays.
+   of size w() x h() of the display. This occurs, e.g., with Apple retina displays
+   and when the display is rescaled.
    The SVG is rasterized to the area dimension in pixels. The image is then drawn
    scaled to its size expressed in drawing units. With this procedure,
    the SVG image is drawn using the full resolution of the display.
@@ -269,9 +274,6 @@ void Fl_SVG_Image::color_average(Fl_Color c, float i) {
 
 
 int Fl_SVG_Image::draw_scaled(int X, int Y, int W, int H) {
-  if (rasterized_ && raster_w_ >= W && raster_h_ >= H) {
-    return fl_graphics_driver->draw_scaled(this, X, Y, W, H);
-  }
   w(W);
   h(H);
   draw(X, Y, W, H, 0, 0);

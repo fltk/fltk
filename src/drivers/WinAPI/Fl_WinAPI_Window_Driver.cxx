@@ -28,6 +28,7 @@
 #include <FL/x.H>
 #include "Fl_WinAPI_Window_Driver.H"
 #include "Fl_WinAPI_Screen_Driver.H"
+#include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <windows.h>
 #include <math.h>  // for ceil()
 
@@ -415,7 +416,7 @@ void Fl_WinAPI_Window_Driver::make_current() {
 #endif // USE_COLORMAP
   
   fl_graphics_driver->clip_region(0);
-  fl_graphics_driver->scale(Fl::screen_driver()->scale(screen_num()));
+  ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 }
 
 void Fl_WinAPI_Window_Driver::label(const char *name,const char *iname) {

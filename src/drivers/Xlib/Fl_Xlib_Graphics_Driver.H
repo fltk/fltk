@@ -105,7 +105,6 @@ public:
   void translate_all(int dx, int dy);
   void untranslate_all();
   virtual void scale(float f);
-  virtual float scale();
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
   virtual void *gc() { return gc_; }
   virtual void gc(void *value);

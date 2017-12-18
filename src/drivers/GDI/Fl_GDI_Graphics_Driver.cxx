@@ -236,10 +236,6 @@ void Fl_GDI_Graphics_Driver::scale(float f) {
   }
 }
 
-float Fl_GDI_Graphics_Driver::scale() {
-  return scale_;
-}
-
 
 /* Rescale region r with factor f and returns the scaled region.
  Region r is returned unchanged if r is null or f is 1.

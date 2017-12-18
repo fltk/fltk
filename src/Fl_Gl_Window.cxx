@@ -25,6 +25,7 @@ extern int fl_gl_load_plugin;
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Gl_Window_Driver.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Graphics_Driver.H>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 #  if (HAVE_DLSYM && HAVE_DLFCN_H)
@@ -516,8 +517,9 @@ void Fl_Cocoa_Gl_Window_Driver::after_show(int need_redraw) {
 
 float Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
 {
-  return (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(pWindow) &&
+  int retina = (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(pWindow) &&
           Fl_Cocoa_Window_Driver::driver(pWindow)->mapped_to_retina()) ? 2 : 1;
+  return retina * Fl_Graphics_Driver::default_driver().scale();
 }
 
 int Fl_Cocoa_Gl_Window_Driver::mode_(int m, const int *a) {

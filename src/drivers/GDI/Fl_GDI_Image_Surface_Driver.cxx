@@ -58,7 +58,7 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
   offscreen = off ? off : CreateCompatibleBitmap( (gc ? gc : fl_GetDC(0) ) , w, h);
   if (!offscreen) offscreen = CreateCompatibleBitmap(fl_GetDC(0), w, h);
   driver(new Fl_GDI_Graphics_Driver);
-  if (d != 1 && high_res) driver()->scale(d);
+  if (d != 1 && high_res) ((Fl_GDI_Graphics_Driver*)driver())->scale(d);
   origin.x = origin.y = 0;
 }
 

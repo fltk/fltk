@@ -3,7 +3,7 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -742,7 +742,10 @@ void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
     by += parent->y();
     parent = parent->window();
   }
-  NSRect rp = NSMakeRect(bx, main_screen_height - (by + w->h()), w->w(), w->h());
+  float s = Fl::screen_driver()->scale(0);
+  NSRect rp = NSMakeRect(int(s * bx + 0.5), main_screen_height - int(s * (by + w->h()) + 0.5),
+                         int(s * w->w() + 0.5), int(s * w->h() + 0.5));
+
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
   }
@@ -982,11 +985,12 @@ static void update_e_xy_and_e_xy_root(NSWindow *nsw)
 {
   NSPoint pt;
   pt = [nsw mouseLocationOutsideOfEventStream];
-  Fl::e_x = int(pt.x);
-  Fl::e_y = int([[nsw contentView] frame].size.height - pt.y);
+  float s = Fl::screen_driver()->scale(0);
+  Fl::e_x = int(pt.x / s);
+  Fl::e_y = int(([[nsw contentView] frame].size.height - pt.y)/s);
   pt = [NSEvent mouseLocation];
-  Fl::e_x_root = int(pt.x);
-  Fl::e_y_root = int(main_screen_height - pt.y);
+  Fl::e_x_root = int(pt.x/s);
+  Fl::e_y_root = int((main_screen_height - pt.y)/s);
 }
 
 
@@ -1074,6 +1078,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   Fl_Window *first = Fl::first_window();
   if (first != window && !(first->modal() || first->non_modal())) Fl::first_window(window);
   NSPoint pos = [theEvent locationInWindow];
+  float s = Fl::screen_driver()->scale(0);
+  pos.x /= s; pos.y /= s;
   pos.y = window->h() - pos.y;
   NSInteger btn = [theEvent buttonNumber]  + 1;
   NSUInteger mods = [theEvent modifierFlags];  
@@ -1311,6 +1317,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
   update_e_xy_and_e_xy_root(nsw);
   pt2.y = main_screen_height - pt2.y;
+  float s = Fl::screen_driver()->scale(0);
+  pt2.x = int(pt2.x / s + 0.5);
+  pt2.y = int(pt2.y / s + 0.5);
   Fl_Window *parent = window->window();
   while (parent) {
     pt2.x -= parent->x();
@@ -1340,6 +1349,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   r = [[nsw contentView] frame];
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, r.size.height)];
   pt2.y = main_screen_height - pt2.y;
+  float s = Fl::screen_driver()->scale(window->driver()->screen_num());
+  pt2.x = int(pt2.x/s + 0.5); pt2.y = int(pt2.y/s + 0.5);
   Fl_Window *parent = window->window();
   while (parent) {
     pt2.x -= parent->x();
@@ -1350,7 +1361,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
-  window->resize((int)pt2.x, (int)pt2.y, (int)r.size.width, (int)r.size.height);
+  window->resize((int)(pt2.x), (int)(pt2.y), (int)(r.size.width/s +0.5), (int)(r.size.height/s +0.5));
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
@@ -3009,10 +3020,11 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     winstyle = NSBorderlessWindowMask;
     winlevel = NSStatusWindowLevel;
   }
-  crect.origin.x = w->x(); // correct origin set later for subwindows
-  crect.origin.y = main_screen_height - (w->y() + w->h());
-  crect.size.width=w->w();
-  crect.size.height=w->h();
+  float s = Fl::screen_driver()->scale(0);
+  crect.origin.x = int(s * w->x()); // correct origin set later for subwindows
+  crect.origin.y = main_screen_height - int(s * (w->y() + w->h()));
+  crect.size.width = int(s * w->w());
+  crect.size.height = int(s * w->h());
   FLWindow *cw = [[FLWindow alloc] initWithFl_W:w
                                     contentRect:crect
                                       styleMask:winstyle];
@@ -3056,8 +3068,8 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
       delta = [cw cascadeTopLeftFromPoint:delta];
     }
     crect = [cw frame]; // synchronize FLTK's and the system's window coordinates
-    this->x(int(crect.origin.x));
-    this->y(int(main_screen_height - (crect.origin.y + w->h())));
+    this->x(int(crect.origin.x/s));
+    this->y( main_screen_height/s - (crect.origin.y/s + w->h()) );
   }
   if(w->menu_window()) { // make menu windows slightly transparent
     [cw setAlphaValue:0.97];
@@ -3196,7 +3208,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
   Fl_Window *parent;
   if (W<=0) W = 1; // OS X does not like zero width windows
   if (H<=0) H = 1;
-  int is_a_resize = (W != w() || H != h());
+  int is_a_resize = (W != w() || H != h() || is_a_rescale());
   //  printf("Fl_Window::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
   //         X, Y, W, H, is_a_resize, resize_from_system, this);
   if (X != x() || Y != y()) force_position(1);
@@ -3226,7 +3238,8 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
+      float s = Fl::screen_driver()->scale(screen_num());
+      NSRect r = NSMakeRect(int(bx*s+0.5), main_screen_height - int((by + H)*s +0.5), int(W*s+0.5), int(H*s+0.5) + (border()?bt:0));
       if (visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
     } else {
       bx = X; by = Y;
@@ -3309,6 +3322,9 @@ void Fl_Cocoa_Window_Driver::make_current()
   // for subwindows, limit drawing to inside of parent window
   // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
   if (subRect()) CGContextClipToRect(gc, CGRectOffset(*(subRect()), -0.5, -0.5));
+  
+  float s = Fl::screen_driver()->scale(0);
+  CGContextScaleCTM(gc, s, s); // apply current scaling factor
   
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(gc);
@@ -4333,17 +4349,19 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   int htop = pWindow->decorated_h() - h();
   CALayer *layer = get_titlebar_layer(pWindow);
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  uchar *rgba = new uchar[4 * w() * htop * 4];
-  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * w(), 2 * htop, 8, 8 * w(), cspace, kCGImageAlphaPremultipliedLast);
+  float s = Fl::screen_driver()->scale(screen_num());
+  int scaled_w = int(w() * s);
+  uchar *rgba = new uchar[4 * scaled_w * htop * 4];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * scaled_w, 2 * htop, 8, 8 * scaled_w, cspace, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(cspace);
-  CGContextClearRect(auxgc, CGRectMake(0,0,2*w(),2*htop));
+  CGContextClearRect(auxgc, CGRectMake(0,0,2*scaled_w,2*htop));
   CGContextScaleCTM(auxgc, 2, 2);
   if (layer) {
-    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, w(), htop);
+    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, scaled_w, htop);
     if (fl_mac_os_version >= 101300) {
       // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
       uchar *p = rgba;
-      uchar *last = rgba + 4 * w() * htop * 4;
+      uchar *last = rgba + 4 * scaled_w * htop * 4;
       while (p < last) {
         uchar q = *(p+3);
         if (q) {
@@ -4356,14 +4374,14 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
       }
     }
   } else {
-    CGImageRef img = CGImage_from_window_rect(0, -htop, w(), htop);
+    CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop);
     CGContextSaveGState(auxgc);
-    clip_to_rounded_corners(auxgc, w(), htop);
-    CGContextDrawImage(auxgc, CGRectMake(0, 0, w(), htop), img);
+    clip_to_rounded_corners(auxgc, scaled_w, htop);
+    CGContextDrawImage(auxgc, CGRectMake(0, 0, scaled_w, htop), img);
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * w(), 2 * htop, 4);
+  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
   top_rgb->alloc_array = 1;
   top = Fl_Shared_Image::get(top_rgb);
   top->scale(w(),htop);

@@ -41,6 +41,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
   m = m0; 
   fl_matrix = &m; 
   font_descriptor_ = NULL;
+  scale_ = 1;
 };
 
 /** Return the graphics driver used when drawing to the platform's display */

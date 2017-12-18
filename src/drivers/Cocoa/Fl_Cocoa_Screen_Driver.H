@@ -4,7 +4,7 @@
 // Definition of Apple Cocoa Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -97,6 +97,12 @@ public:
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
   virtual float retina_factor() { return 2; }
+  
+  virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
+  virtual float scale(int n) {return scale_;}
+  virtual void scale(int n, float f) { scale_ = f;}
+private:
+  float scale_;
 };
 
 

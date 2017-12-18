@@ -19,6 +19,7 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Screen_Driver.H>
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
 #include "Fl_Cocoa_Window_Driver.H"
@@ -401,8 +402,9 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       CGContextRef gc = (CGContextRef)driver()->gc();
       CGContextSaveGState(gc);
       CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-      CGContextScaleCTM(gc, 1, -1);
-      Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w(), bt);
+      float s = Fl::screen_driver()->scale(win->driver()->screen_num());
+      CGContextScaleCTM(gc, 1/s, -1/s);
+      Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt);
       CGContextRestoreGState(gc);
     }
     else {

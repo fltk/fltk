@@ -99,10 +99,11 @@ void Fl_Cocoa_Screen_Driver::screen_xywh(int &X, int &Y, int &W, int &H, int n)
   if ((n < 0) || (n >= num_screens))
     n = 0;
 
-  X = screens[n].x;
-  Y = screens[n].y;
-  W = screens[n].width;
-  H = screens[n].height;
+  float s = scale(0);
+  X = screens[n].x/s;
+  Y = screens[n].y/s;
+  W = screens[n].width/s;
+  H = screens[n].height/s;
 }
 
 
