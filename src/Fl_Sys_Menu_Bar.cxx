@@ -166,11 +166,56 @@ void Fl_Sys_Menu_Bar::replace(int index, const char *name)
  * \param data   a pointer transmitted as 2nd argument to the callback.
  */
 void Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *data) {
-  if (fl_sys_menu_bar) fl_sys_menu_bar->driver()->about(cb, data);
+  driver()->about(cb, data);
 }
 
 void Fl_Sys_Menu_Bar::draw() {
   driver()->draw();
+}
+
+
+
+/** Get the style of the Window menu in the system menu bar */
+Fl_Sys_Menu_Bar::window_menu_style_enum Fl_Sys_Menu_Bar::window_menu_style() {
+  return Fl_Sys_Menu_Bar_Driver::window_menu_style();
+}
+
+/** Set the desired style of the Window menu in the system menu bar.
+ This function, to be called before the first call to Fl_Window::show(), allows to
+ control whether the system menu bar should contain a Window menu,
+ and if yes, whether new windows should be displayed in tabbed form. These are
+ the effects of various values for \p style :
+ \li \c  no_window_menu : don't add a Window menu to the system menu bar
+ \li \c tabbing_mode_none :   add a simple Window menu to the system menu bar
+ \li \c  tabbing_mode_automatic : the window menu also contains "Merge All Windows" to group
+ all windows in a single tabbed display mode. This is the \b default Window menu style
+ for FLTK apps.
+ \li \c tabbing_mode_preferred : new windows are displayed in tabbed mode when first created
+ 
+ The Window menu, if present, is entirely created and controlled by the FLTK library.
+ Mac OS version 10.12 or later must be running for windows to be displayed in tabbed form.
+ Under non MacOS platforms, this function does nothing.
+ \version 1.4
+ */
+void Fl_Sys_Menu_Bar::window_menu_style(Fl_Sys_Menu_Bar::window_menu_style_enum style) {
+  Fl_Sys_Menu_Bar_Driver::window_menu_style(style);
+}
+
+/** Adds a Window menu, to the end of the system menu bar.
+ FLTK apps typically don't need to call this function which is automatically
+ called by the library the first time a window is shown. The default system menu bar
+ contains a Window menu with a "Merge All Windows" item.
+ Other Window menu styles can be obtained calling
+ Fl_Sys_Menu_Bar::window_menu_style(window_menu_style_enum) before the first Fl_Window::show().
+ Alternatively, an app can call create_window_menu() after having populated the system menu bar,
+ for example with menu(const Fl_Menu_Item *), and before the first Fl_Window::show().
+ 
+ This function does nothing on non MacOS platforms.
+ \version 1.4
+ */
+void Fl_Sys_Menu_Bar::create_window_menu() {
+  fl_open_display();
+  driver()->create_window_menu();
 }
 
 #if !defined(FL_DOXYGEN)
@@ -186,6 +231,8 @@ Fl_Sys_Menu_Bar_Driver *Fl_Sys_Menu_Bar_Driver::driver_ = 0;
 Fl_Sys_Menu_Bar_Driver::Fl_Sys_Menu_Bar_Driver() {bar = NULL;}
 
 Fl_Sys_Menu_Bar_Driver::~Fl_Sys_Menu_Bar_Driver() {}
+
+Fl_Sys_Menu_Bar::window_menu_style_enum Fl_Sys_Menu_Bar_Driver::window_menu_style_ = Fl_Sys_Menu_Bar::tabbing_mode_automatic;
 #endif // !defined(FL_DOXYGEN)
 
 //

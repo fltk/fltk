@@ -1309,9 +1309,14 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)windowDidMove:(NSNotification *)notif
 {
-  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
+  if (abs([[nsw contentView] frame].size.height - window->h() * fl_graphics_driver->scale()) > 0.5) {
+    // the contentView, but not the window frame, is resized. This happens with tabbed windows.
+    [self windowDidResize:notif];
+    return;
+  }
+  fl_lock_function();
   resize_from_system = window;
   NSPoint pt2;
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
@@ -1402,6 +1407,19 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   Fl::first_window(window);
   update_e_xy_and_e_xy_root(nsw);
+  if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style()) {
+    // select the corresponding Window menu item
+    int index = Fl_MacOS_Sys_Menu_Bar_Driver::driver()->find_first_window() + 1;
+    while (index > 0) {
+      Fl_Menu_Item *item = (Fl_Menu_Item*)fl_sys_menu_bar->menu() + index;
+      if (!item->label()) break;
+      if (item->user_data() == window) {
+        fl_sys_menu_bar->setonly(item);
+        break;
+      }
+      index++;
+    }
+  }
   fl_unlock_function();
 }
 - (void)windowDidDeminiaturize:(NSNotification *)notif
@@ -1868,7 +1886,13 @@ void Fl_Cocoa_Screen_Driver::disable_im() {
 
 
 // Gets the border sizes and the titlebar size
-static void get_window_frame_sizes(int &bx, int &by, int &bt) {
+static void get_window_frame_sizes(int &bx, int &by, int &bt, Fl_Window *win) {
+  FLWindow *flw = fl_xid(win);
+  if (flw) {
+    bt = [flw frame].size.height - [[flw contentView] frame].size.height;
+    bx = by = 0;
+    return;
+  }
   static int top = 0, left, bottom;
   if (!top) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -1952,7 +1976,7 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
     } else {
       ret = 1;
     }
-    get_window_frame_sizes(bx, by, bt);
+    get_window_frame_sizes(bx, by, bt, w);
   }
   // The coordinates of the whole window, including non-client area
   xoff = bx;
@@ -2278,6 +2302,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
+  if ( !window->parent() && window->border() && abs(rect.size.height - window->h() * fl_graphics_driver->scale()) > 0.5 ) { // this happens with tabbed window
+        window->resize([cw frame].origin.x/fl_graphics_driver->scale(),
+                       (main_screen_height - ([cw frame].origin.y + rect.size.height))/fl_graphics_driver->scale(),
+                       rect.size.width/fl_graphics_driver->scale(), rect.size.height/fl_graphics_driver->scale());
+  }
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
@@ -2919,6 +2948,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   fl_open_display();
   NSInteger winlevel = NSNormalWindowLevel;
   NSUInteger winstyle;
+  Fl_Sys_Menu_Bar::driver()->create_window_menu(); // effective once at most
   Fl_Window* w = pWindow;
   if (w->parent()) {
     w->border(0);
@@ -3029,6 +3059,18 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
                                     contentRect:crect
                                       styleMask:winstyle];
   [cw setFrameOrigin:crect.origin];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  if (fl_mac_os_version >= 101200) {
+    if (!w->parent() && (winstyle & NSTitledWindowMask) && (winstyle & NSResizableWindowMask)
+        && !w->modal() && !w->non_modal() && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() > Fl_Sys_Menu_Bar::tabbing_mode_none) {
+      if (Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() == Fl_Sys_Menu_Bar::tabbing_mode_preferred)
+        [cw setTabbingMode:NSWindowTabbingModePreferred];
+      else [cw setTabbingMode:NSWindowTabbingModeAutomatic];
+    } else {
+      [cw setTabbingMode:NSWindowTabbingModeDisallowed];
+    }
+  }
+#endif
   if (!w->parent()) {
     [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
@@ -3105,7 +3147,10 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   } else { // a top-level window
     [cw makeKeyAndOrderFront:nil];
   }
-  
+  if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style() && !w->parent() && w->border() &&
+      !w->modal() && !w->non_modal()) {
+    Fl_MacOS_Sys_Menu_Bar_Driver::driver()->new_window(w);
+  }
   int old_event = Fl::e_number;
   w->handle(Fl::e_number = FL_SHOW);
   Fl::e_number = old_event;
@@ -3121,7 +3166,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
  */
 void Fl_Cocoa_Window_Driver::size_range() {
   int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt);
+  get_window_frame_sizes(bx, by, bt, pWindow);
   Fl_Window_Driver::size_range();
   NSSize minSize = NSMakeSize(minw(), minh() + bt);
   NSSize maxSize = NSMakeSize(maxw() ? maxw():32000, maxh() ? maxh() + bt:32000);
@@ -3172,6 +3217,8 @@ const char *Fl_Darwin_System_Driver::filename_name( const char *name )
 void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
   if (shown() || Fl_X::i(pWindow)) {
     q_set_window_title(fl_xid(pWindow), name, mininame);
+    if (fl_sys_menu_bar && Fl_Sys_Menu_Bar_Driver::window_menu_style())
+      Fl_MacOS_Sys_Menu_Bar_Driver::driver()->rename_window(pWindow);
   }
 }
 
@@ -3230,7 +3277,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
       }
       pWindow->Fl_Group::resize(X,Y,W,H);
       // transmit changes in FLTK coords to cocoa
-      get_window_frame_sizes(bx, by, bt);
+      get_window_frame_sizes(bx, by, bt, pWindow);
       bx = X; by = Y;
       parent = pWindow->window();
       while (parent) {
@@ -3552,6 +3599,8 @@ int Fl_Darwin_System_Driver::clipboard_contains(const char *type) {
 }
 
 void Fl_Cocoa_Window_Driver::destroy(FLWindow *xid) {
+  if (fl_sys_menu_bar && Fl_Sys_Menu_Bar_Driver::window_menu_style())
+    Fl_MacOS_Sys_Menu_Bar_Driver::driver()->remove_window([xid getFl_Window]);
   [xid close];
 }
 
@@ -4291,7 +4340,7 @@ int Fl_Cocoa_Window_Driver::decorated_w()
   if (!shown() || parent() || !border() || !visible())
     return w();
   int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt);
+  get_window_frame_sizes(bx, by, bt, pWindow);
   return w() + 2 * bx;
 }
 
@@ -4300,7 +4349,7 @@ int Fl_Cocoa_Window_Driver::decorated_h()
   if (!shown() || parent() || !border() || !visible())
     return h();
   int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt);
+  get_window_frame_sizes(bx, by, bt, pWindow);
   return h() + bt + by;
 }
 

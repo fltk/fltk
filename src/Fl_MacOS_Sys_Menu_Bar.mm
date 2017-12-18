@@ -21,9 +21,30 @@
 #include <FL/Fl_Sys_Menu_Bar_Driver.H>
 #include <FL/x.H>
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
+#include "flstring.h"
+#include <stdio.h>
+#include <ctype.h>
+#include <stdarg.h>
 
+#import <Cocoa/Cocoa.h> // keep this after include of Fl_Sys_Menu_Bar_Driver.H because of check() conflict
 
-Fl_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
+typedef const Fl_Menu_Item *pFl_Menu_Item;
+
+static Fl_Menu_Bar *custom_menu;
+static NSString *localized_Window = nil;
+
+static char *remove_ampersand(const char *s);
+extern void (*fl_lock_function)();
+extern void (*fl_unlock_function)();
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+static void previous_tab_cb(Fl_Widget *, void *data);
+static void next_tab_cb(Fl_Widget *, void *data);
+static void move_tab_cb(Fl_Widget *, void *data);
+static void merge_all_windows_cb(Fl_Widget *, void *data);
+#endif
+
+Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
   static Fl_MacOS_Sys_Menu_Bar_Driver *once = new Fl_MacOS_Sys_Menu_Bar_Driver();
   if (driver_ != once) {
     if (driver_) {
@@ -35,22 +56,6 @@ Fl_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
   }
   return once;
 }
-
-
-#import <Cocoa/Cocoa.h>
-
-#include "flstring.h"
-#include <stdio.h>
-#include <ctype.h>
-#include <stdarg.h>
-
-typedef const Fl_Menu_Item *pFl_Menu_Item;
-
-static Fl_Menu_Bar *custom_menu;
-
-static char *remove_ampersand(const char *s);
-extern void (*fl_lock_function)();
-extern void (*fl_unlock_function)();
 
 /*  Each MacOS system menu item contains a pointer to a record of type sys_menu_item defined below.
     The purpose of these records is to associate each MacOS system menu item with a relevant Fl_Menu_Item.
@@ -92,6 +97,9 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 - (void) setKeyEquivalentModifierMask:(int)value;
 - (void) setFltkShortcut:(int)key;
 + (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu action:(SEL)selector;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+- (BOOL)validateMenuItem:(NSMenuItem *)item;
+#endif
 @end
 
 @implementation FLMenuItem
@@ -197,6 +205,37 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   [item release];
   return retval;
 }
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+- (BOOL)validateMenuItem:(NSMenuItem *)item {
+  // return YES for all but items of the Window menu
+  if (fl_mac_os_version < 101200 ||
+      Fl_Sys_Menu_Bar::window_menu_style() <= Fl_Sys_Menu_Bar::tabbing_mode_none ||
+      [item hasSubmenu]) return YES;
+  NSString *title = [[item parentItem] title]; // 10.6
+  if (!title || !localized_Window || [title compare:localized_Window] != NSOrderedSame) return YES;
+  const Fl_Menu_Item *flitem = [(FLMenuItem*)item getFlItem];
+  Fl_Callback *item_cb = flitem->callback();
+  if (item_cb == previous_tab_cb || item_cb == next_tab_cb || item_cb == move_tab_cb) {
+    // is the current window tabbed?
+    Fl_Window *win = Fl::first_window();
+    NSWindow *main = win ? (NSWindow*)fl_xid(win) : nil;
+    return (main && [main tabbedWindows] != nil);
+  } else if (item_cb == merge_all_windows_cb) {
+    // is there any untabbed, tabbable window?
+    int total = 0, untabbed = 0;
+    while ((++flitem)->label()) {
+      total++;
+      NSWindow *nsw = (NSWindow*)fl_xid( (Fl_Window*)flitem->user_data() );
+      if (![nsw tabbedWindows] && [nsw tabbingMode] != NSWindowTabbingModeDisallowed) {
+        untabbed++;
+      }
+    }
+    return (untabbed > 0 && total >= 2);
+  }
+  return YES;
+}
+#endif
 @end
 
  
@@ -341,6 +380,12 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
     [fl_system_menu removeItem:[fl_system_menu itemAtIndex:i]];
   }
   if (mm) createSubMenu(fl_system_menu, mm, NULL, @selector(doCallback));
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  if (localized_Window) {
+    NSMenuItem *item = [fl_system_menu itemWithTitle:localized_Window];
+    if (item) [[item submenu] setAutoenablesItems:YES];
+  }
+#endif
 }
 
 void Fl_MacOS_Sys_Menu_Bar_Driver::update()
@@ -483,6 +528,145 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
     [item release];
   }
 }
+
+
+static void minimize_win_cb(Fl_Widget *, void *data)
+{
+  [[NSApp mainWindow] miniaturize:nil];
+}
+
+static void window_menu_cb(Fl_Widget *, void *data)
+{
+  if (data) ((Fl_Window*)data)->show();
+}
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+
+static void previous_tab_cb(Fl_Widget *, void *data)
+{
+  [[NSApp mainWindow] selectPreviousTab:nil];
+}
+
+static void next_tab_cb(Fl_Widget *, void *data)
+{
+  [[NSApp mainWindow] selectNextTab:nil];
+}
+
+static void move_tab_cb(Fl_Widget *, void *data)
+{
+  [[NSApp mainWindow] moveTabToNewWindow:nil];
+}
+
+static void merge_all_windows_cb(Fl_Widget *, void *)
+{
+    Fl_Window *first = Fl::first_window();
+    if (first) {
+        [(NSWindow*)fl_xid(first) mergeAllWindows:nil];
+      }
+}
+
+#endif
+
+
+static bool window_menu_installed = false;
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::create_window_menu(void)
+{
+  if (window_menu_style() == Fl_Sys_Menu_Bar::no_window_menu) return;
+  if (window_menu_installed) return;
+  window_menu_installed = true;
+  int rank = 0;
+  if (fl_sys_menu_bar && fl_sys_menu_bar->menu()) {
+    if (fl_sys_menu_bar->find_index("Window") >= 0) { // there's already a "Window" menu -> don't create another
+      window_menu_style_ = Fl_Sys_Menu_Bar::no_window_menu;
+      return;
+    }
+    // put the Window menu last in menu bar or before Help if it's present
+    const Fl_Menu_Item *item = fl_sys_menu_bar->menu();
+    while (item->label() && strcmp(item->label(), "Help") != 0) {
+      item = item->next();
+    }
+    rank = fl_sys_menu_bar->find_index(item);
+  } else if (!fl_sys_menu_bar) {
+    fl_open_display();
+    new Fl_Sys_Menu_Bar(0,0,0,0);
+  }
+  rank = fl_sys_menu_bar->Fl_Menu_::insert(rank, "Window", 0, NULL, 0, FL_SUBMENU);
+  localized_Window = NSLocalizedString(@"Window", nil);
+
+  fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Minimize", FL_COMMAND+'m', minimize_win_cb, 0, FL_MENU_DIVIDER);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+  if (fl_mac_os_version >= 101200 && window_menu_style() != Fl_Sys_Menu_Bar::tabbing_mode_none) {
+    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Show Previous Tab", FL_SHIFT+FL_CTRL+0x9, previous_tab_cb, 0, 0);
+    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Show Next Tab", FL_CTRL+0x9, next_tab_cb, 0, 0);
+    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Move Tab To New Window", 0, move_tab_cb, 0, 0);
+    fl_sys_menu_bar->Fl_Menu_::insert(++rank, "Merge All Windows", 0, merge_all_windows_cb, 0, FL_MENU_DIVIDER);
+  }
+#endif
+  ((Fl_Menu_Item*)fl_sys_menu_bar->menu()+rank)->user_data(&window_menu_style_);
+  fl_sys_menu_bar->update();
+}
+
+int Fl_MacOS_Sys_Menu_Bar_Driver::find_first_window()
+{
+  int count = bar->size(), i;
+  for (i = 0; i < count; i++) {
+    if (bar->menu()[i].user_data() == &window_menu_style_) break;
+  }
+  return i < count ? i : -1;
+}
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::new_window(Fl_Window *win)
+{
+  if (!window_menu_style() || !win->label()) return;
+  int index = find_first_window();
+  if (index < 0) return;
+  while ((bar->menu()+index+1)->label()) index++;
+  const char *p = win->iconlabel() ? win->iconlabel() : win->label();
+  int index2 = bar->Fl_Menu_::insert(index+1, p, 0, window_menu_cb, win, FL_MENU_RADIO);
+  setonly((Fl_Menu_Item*)bar->menu()+index2);
+}
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
+{
+  if (!window_menu_style()) return;
+  int index = find_first_window() + 1;
+  if (index < 1) return;
+  while (true) {
+    Fl_Menu_Item *item = (Fl_Menu_Item*)bar->menu() + index;
+    if (!item->label()) return;
+    if (item->user_data() == win) {
+      bool doit = item->value();
+      remove(index);
+      if (doit) {
+        item = (Fl_Menu_Item*)bar->menu() + find_first_window() + 1;
+        if (item->label()) {
+          ((Fl_Window*)item->user_data())->show();
+          setonly(item);
+        }
+      }
+      break;
+    }
+    index++;
+  }
+}
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
+{
+  if (!window_menu_style()) return;
+  int index = find_first_window() + 1;
+  if (index < 1) return;
+  while (true) {
+    Fl_Menu_Item *item = (Fl_Menu_Item*)bar->menu() + index;
+    if (!item->label()) return;
+    if (item->user_data() == win) {
+      replace(index, win->iconlabel() ? win->iconlabel() : win->label());
+      return;
+    }
+    index++;
+  }
+}
+
 #endif /* __APPLE__ */
 
 //

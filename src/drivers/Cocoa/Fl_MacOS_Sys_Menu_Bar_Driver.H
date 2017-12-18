@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// system menu bar widget for the Fast Light Tool Kit (FLTK).
+// Definition of class Fl_MacOS_Sys_Menu_Bar_Driver for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2017 by Bill Spitzak and others.
 //
@@ -39,7 +39,12 @@ public:
   virtual void remove(int index);
   virtual void replace(int index, const char *name);
   virtual void mode(int i, int fl);
-  static Fl_Sys_Menu_Bar_Driver* driver();
+  virtual void create_window_menu();
+  int find_first_window();
+  void new_window(Fl_Window *win);
+  void remove_window(Fl_Window *win);
+  void rename_window(Fl_Window *win);
+  static Fl_MacOS_Sys_Menu_Bar_Driver* driver();
 };
 
 

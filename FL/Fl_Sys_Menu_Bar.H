@@ -24,33 +24,48 @@
 class Fl_Sys_Menu_Bar_Driver;
 
 /**
-  A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
+ A class to create and modify menus that appear on Mac OS X in the menu bar at the top of the screen.
+ To use this class, just replace Fl_Menu_Bar by Fl_Sys_Menu_Bar, and, on the Mac platform,
+ a system menu at the top of the screen will be available. This menu will match an array
+ of Fl_Menu_Item's exactly as in all other FLTK menus.
  
   On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
- \n To use this class, just replace Fl_Menu_Bar by Fl_Sys_Menu_Bar, and, on the Mac platform,
- a system menu at the top of the screen will be available. This menu will match an array
- of Fl_Menu_Item's exactly as with standard FLTK menus.
+ 
+  On the MacOS platform, the system menu bar of any FLTK app begins with the Application
+  menu which the FLTK library automatically constructs. Functions
+  Fl_Mac_App_Menu::custom_application_menu_items() and fl_mac_set_about() can be used to further customize
+  the Application menu. The FLTK library also automatically constructs and handles a Window menu which can be
+  further customized (or even removed) calling
+  Fl_Sys_Menu_Bar::window_menu_style(window_menu_style_enum style).
+  Other member functions of this class allow the app to generate the rest of the system menu bar.
+  It is recommended to localize the system menu bar using the standard Mac OS X localization procedure
+  (see \ref osissues_localize).
  
  Changes to the menu state are immediately visible in the menubar when they are made
  using member functions of the Fl_Sys_Menu_Bar class. Other changes (e.g., by a call to
  Fl_Menu_Item::set()) should be followed by a call to update() to be
  visible in the menubar across all platforms.
  
-  A few FLTK features are not supported by the Mac System menu:
+ A few FLTK menu features are not supported by the Mac System menu:
   \li no symbolic labels
   \li no embossed labels
   \li no font sizes
- 
- You can configure a callback for the 'About' menu item to invoke your own code with Fl_Sys_Menu_Bar::about().
- */
+  */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
   virtual void draw();
 public:
+  /** Possible styles of the Window menu in the system menu bar */
+  typedef enum {
+    no_window_menu = 0,     ///< No Window menu in the system menu bar
+    tabbing_mode_none,      ///< No tabbed windows, but the system menu bar contains a Window menu
+    tabbing_mode_automatic, ///< Windows are created by themselves but can be tabbed later
+    tabbing_mode_preferred  ///< Windows are tabbed when created
+  } window_menu_style_enum;
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
   virtual ~Fl_Sys_Menu_Bar();
   static Fl_Sys_Menu_Bar_Driver *driver();
-  /** Return the system menu's array of Fl_Menu_Item's 
+  /** Return the system menu's array of Fl_Menu_Item's
    */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
@@ -81,6 +96,10 @@ public:
   void shortcut (int i, int s);
   void setonly (Fl_Menu_Item *item);
   static void about(Fl_Callback *cb, void *data);
+  
+  static window_menu_style_enum window_menu_style();
+  static void window_menu_style(window_menu_style_enum style);
+  static void create_window_menu();
 };
 
 extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;

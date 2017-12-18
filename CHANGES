@@ -18,6 +18,18 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - MacOS platform: Added support for rescaling the GUI of any app at run-time
+    using the command/+/-/0/ keystrokes.
+  - MSWindows platform: Added optional support for rescaling the GUI of any app
+    at run-time using the ctrl/+/-/0/ keystrokes. This requires to build the
+    FLTK library with -DFLTK_HIDPI_SUPPORT (for now). This option also makes
+    app detect the desktop scaling factor and automatically scale their GUI
+    accordingly. This effectively renders WIN32 FLTK apps "per-monitor DPI-aware"
+    whereas they were "DPI-unaware" with FLTK 1.3.4.
+  - FLTK apps on the MacOS platform contain automatically a Window menu, which,
+    under MacOS ≥ 10.12, allows to group/ungroup windows in tabbed form. The new
+    Fl_Sys_Menu_Bar::window_menu_style() function allows to specify various
+    styles for the Window menu, even not to create it.
   - New function: int fl_open_ext(const char* fname, int binary, int oflags, ...)
     to control the opening of files in binary/text mode in a cross-platform way.
   - New Fl_SVG_Image class: gives support of scalable vector graphics images

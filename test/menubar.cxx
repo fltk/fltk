@@ -3,7 +3,7 @@
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -199,6 +199,7 @@ void menu_location_cb(Fl_Widget* w, void* data)
     smenubar->callback(test_cb);
     }
   else { // switch to window menu bar
+    menubar->menu(smenubar->menu());
     smenubar->clear();
     delete smenubar;
     menubar->show();
@@ -246,6 +247,8 @@ int main(int argc, char **argv) {
   Fl_Choice ch2(500,100,150,25,"Use:"); 
   ch2.menu(menu_location);
   ch2.callback(menu_location_cb, &menubar);
+  ch2.value(1);
+  menu_location_cb(&ch2, &menubar);
 #endif
   window.end();
   
@@ -257,6 +260,7 @@ int main(int argc, char **argv) {
     {0}
   };
   Fl_Mac_App_Menu::custom_application_menu_items(custom);
+  //Fl_Sys_Menu_Bar::window_menu_style(Fl_Sys_Menu_Bar::no_window_menu);
 #endif
   window.show(argc, argv);
   return Fl::run();
