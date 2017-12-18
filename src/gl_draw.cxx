@@ -377,7 +377,7 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
  but not text font, and only ASCII characters can be drawn.
  */
 
-static int gl_scale = 1; // set to 2 for high resolution Fl_Gl_Window
+static float gl_scale = 1; // set to 2 for high resolution Fl_Gl_Window
 static int has_texture_rectangle = 0; // true means GL_EXT_texture_rectangle is available
 
 #include <FL/glu.h>  // for gluUnProject() and gluCheckExtension()
