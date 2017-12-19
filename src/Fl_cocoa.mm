@@ -4177,15 +4177,16 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
 {
   NSBitmapImageRep *bitmap = nil;
   NSRect rect;
+  float s = Fl_Graphics_Driver::default_driver().scale();
   if (win->as_gl_window() && y >= 0) {
     bitmap = GL_rect_to_nsbitmap(win, x, y, w, h);
   } else {
     NSView *winview = nil;
     if ( through_Fl_X_flush  && Fl_Window::current() == win ) {
-      rect = NSMakeRect(x - 0.5, y - 0.5, w, h);
+      rect = NSMakeRect(s*x - 0.5, s*y - 0.5, s*w, s*h);
     }
     else {
-      rect = NSMakeRect(x, win->h()-(y+h), w, h);
+      rect = NSMakeRect(x*s, win->h()*s-(y+h)*s, w*s, h*s);
       // lock focus to win's view
       winview = [fl_xid(win) contentView];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -4220,8 +4221,8 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     if (childbitmap) {
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
       if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
-      write_bitmap_inside(bitmap, w, childbitmap,
-                          clip.origin.x - x, win->h() - clip.origin.y - clip.size.height - y );
+      write_bitmap_inside(bitmap, w*s, childbitmap,
+                          (clip.origin.x - x)*s, (win->h() - clip.origin.y - clip.size.height - y)*s );
     }
     [childbitmap release];
   }
