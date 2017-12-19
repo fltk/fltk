@@ -16,111 +16,95 @@
 #     http://www.fltk.org/str.php
 #
 #
-#  Important notes:
+# Important notes:
 #
-#  This is a preliminary, experimental version of a clang-format control file.
-#  To use all options including embedded comments to switch formatting on
-#  and off in source files (see below) clang-format 3.6 or later is required.
+# This is a preliminary, experimental version of a clang-format control file.
+# To use all options including embedded comments to switch formatting
+# temporarily off and on in source files (see below) clang-format 3.6
+# or later is required.
 #
-#  DO NOT USE WITHOUT CHECKING THE RESULT OF FORMATTING FOR CORRECTNESS
-#  AND COMPATIBILITY WITH THE FLTK CMP!
+# DO NOT USE WITHOUT CHECKING THE RESULT OF FORMATTING FOR CORRECTNESS
+# AND COMPATIBILITY WITH THE FLTK CMP!
 #
-#  For more information about clang-format please refer to the online docs at:
-#  http://clang.llvm.org/docs/ClangFormat.html
-#  http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# For more information about clang-format please refer to the online docs at:
+# http://clang.llvm.org/docs/ClangFormat.html
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
 #
-#  Embedded comments ("pragma"s) in the source code:
-#    // clang-format on
-#    // clang-format off
-#  The above comments or their C equivalents /* clang-format on|off */
-#  can be used to switch clang-format(ting) temporary off in a source file.
-#  This is particularly useful for embedded pixmaps and other tables
-#  like menu arrays that are pre-formatted for better readability.
+# Embedded comments ("clang-format pragma's") in the source code:
+#   // clang-format off
+#   // clang-format on
+#   /* clang-format off */
+#   /* clang-format on */
+# can be used to switch clang-format(ting) temporarily off in a source file.
+# This is particularly useful for embedded pixmaps and other tables
+# like menu arrays that are pre-formatted for better readability.
 
+# The options used for FLTK are based on pre-defined style options of LLVM,
+# which are also the default settings of clang-format.
+# For a full list of LLVM settings please use
+#  clang-format -style=llvm -dump-config
 
-#  The options used for FLTK are based on pre-defined style options of LLVM
+# FLTK settings (currently experimental).
 
-BasedOnStyle:		LLVM
+BasedOnStyle:					LLVM
 
-#  The Language tag marks C++ options
+# The Language tag marks C++ options
 
-Language:					Cpp
+# Language:					Cpp
 
-# The following block of commented options is an excerpt of all
-# LLVM style options with their respective values.
-# For a full list of LLVM options please use:
-#   clang-format -style=llvm -dump-config
+# The following options override the LLVM style definitions, if set.
 
-# Please do not change the following block of comments unless the LLVM
-# default values have changed or to add or remove (ir)relevant options.
+# Uncomment one of the following option lines if indenting with tabs
+# shall be used. Note: tab spacing is still 8 columns, tabs are only
+# used for indents of 8 columns or more.
+#
+# Option "Always" seems to fail counting columns: comments may not be
+# adjusted as expected (as of clang-format 3.6 and 3.8).
+# This applies only if "AlignTrailingComments: true" is also set (default).
+#
+# UseTab can be set to 'Never' (default) or 'ForIndentation' to avoid
+# this annoying bug of clang-format.
+#
+# UseTab:					Always
+UseTab:						ForIndentation
 
-# IndentWidth:					2
-# TabWidth:					8
-# ColumnLimit:					80
-# UseTab:					Never
-# AccessModifierOffset:				-2
+# Should we extend code lines beyond 80 columns ?
+# Default: 80
+ColumnLimit:					120
+
+# The FLTK CMP requires that case labels are indented (LLVM: false)
+IndentCaseLabels:				true
+
+# There are sometimes more than 1 empty lines; should we keep 2 or more ?
+# LLVM default is 1.
+
+MaxEmptyLinesToKeep:				2
+
+# Present FLTK source code contains some short blocks and if statements
+# in one line, but we should better make it consistent and NOT use the
+# following "Allow..." statements (leave them commented out):
+#
+# LLVM default values:
 # AllowShortBlocksOnASingleLine:		false
 # AllowShortFunctionsOnASingleLine:		All
 # AllowShortIfStatementsOnASingleLine:		false
 # AllowShortLoopsOnASingleLine:			false
-# MaxEmptyLinesToKeep:				1
-# KeepEmptyLinesAtTheStartOfBlocks:		true
-# PenaltyBreakBeforeFirstCallParameter:		19
-# PenaltyBreakComment:				300
-# PenaltyBreakString:				1000
-# PenaltyBreakFirstLessLess:			120
-# PenaltyExcessCharacter:			1000000
-# PenaltyReturnTypeOnItsOwnLine:		60
-# PointerAlignment:				Right
-# BreakBeforeBraces:				Attach
-# ContinuationIndentWidth:			4
-# SpaceBeforeParens:				ControlStatements
-
-# FLTK specific settings (currently experimental).
-# The following options override the LLVM style definitions, if set.
-# Refer to the default values above.
-
-# Uncomment the next option if indenting with tabs should be used.
-# Note: tab spacing is still 8 columns, tabs are only used for
-# indents of 8 columns or more.
-# Might have bugs counting columns, comments may not be adjusted
-# as expected (as of clang-format 3.6 and 3.8).
-# UseTab can be set to 'Never' or 'ForIndentation' to avoid this
-# annoying bug of clang-format.
-# UseTab:					Always
-# UseTab:					Never
-UseTab:						ForIndentation
-
-# Should we extend beyond 80 columns ?
-# ColumnLimit:					100
-ColumnLimit:					120
-
-# LLVM: IndentCaseLabels:			false
-IndentCaseLabels:				true
-
-# There are sometimes more than 1 empty lines; should we keep 2 or more ?
-
-# Default (LLVM):				1
-MaxEmptyLinesToKeep:				2
-
-# The existent FLTK source code has some short blocks and if statements
-# in one line, but we should better make it consistent and NOT use the
-# following two "Allow..." statements (leave them commented out):
-
+#
+# FLTK values:
 # AllowShortBlocksOnASingleLine:		true
 # AllowShortIfStatementsOnASingleLine:		true
 
 # Short inline functions in header files are an exception to the above "rule":
 
-# LLVM: AllowShortFunctionsOnASingleLine:	All
 AllowShortFunctionsOnASingleLine:		Inline
 
-# This is particularly useful for macros with continuation lines:
+# The following is particularly useful for macros with continuation lines.
+# LLVM default:	AlignEscapedNewlinesLeft:	false
 
 AlignEscapedNewlinesLeft:			true
 
 # Include files should be left as-is until we know we can sort them
-# without any bad side effects:
+# without any bad side effects (LLVM: true)
 
 SortIncludes:					false
 
@@ -128,16 +112,27 @@ SortIncludes:					false
 
 BreakConstructorInitializersBeforeComma:	true
 
-# Constructor initializers will be indented by 2 spaces:
+# Constructor initializers will be indented by 2 spaces (LLVM: 4):
 
-# LLVM: ConstructorInitializerIndentWidth:	4
 ConstructorInitializerIndentWidth:		2
 
-# *FIXME* Default (LLVM):			4
+# Continuation lines (if automatically wrapped) may be indented differently.
+# This does not apply to function call arguments which are aligned to the
+# opening bracket. LLVM (default): 4
 # ContinuationIndentWidth:			2
 
-PointerAlignment:				Right
+# Most of FLTK's code uses 'void *p' as opposed to 'void* p'.
+# This is particularly useful in combined declarations like:
+# int var, var2, *pv, **pp;
+# Note: clang-format uses "Right" in such combined declarations anyway,
+# so to be consistent the best setting appears to be "Right".
+# clang-format can try to derive the setting from code in the file, but this
+# is error-prone and can lead to inconsistent settings in different files.
+# Note: this also applies to references like 'int &w, int &h', for instance
+# in function parameter lists.
+
 DerivePointerAlignment:				false
+PointerAlignment:				Right
 
 #
 # End of "$Id$".
