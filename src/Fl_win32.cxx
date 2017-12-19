@@ -46,7 +46,7 @@
 #include <math.h> // for ceil()
 
 void fl_free_fonts(void);
-void fl_release_dc(HWND,HDC);
+void fl_release_dc(HWND, HDC);
 void fl_cleanup_dc_list(void);
 
 #include "config_lib.h"
@@ -54,7 +54,7 @@ void fl_cleanup_dc_list(void);
 #include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Screen_Driver.H>
-#include <FL/Fl_Graphics_Driver.H>     // for fl_graphics_driver
+#include <FL/Fl_Graphics_Driver.H> // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_System_Driver.H"
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
@@ -134,8 +134,8 @@ static bool initial_clipboard = true;
 // note: winsock2.h has been #include'd in Fl.cxx
 #define WSCK_DLL_NAME "WS2_32.DLL"
 
-typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
-typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
+typedef int(WINAPI *fl_wsk_select_f)(int, fd_set *, fd_set *, fd_set *, const struct timeval *);
+typedef int(WINAPI *fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 
 static HMODULE s_wsock_mod = 0;
 static fl_wsk_select_f s_wsock_select = 0;
@@ -144,10 +144,10 @@ static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
 static HMODULE get_wsock_mod() {
   if (!s_wsock_mod) {
     s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
-    if (s_wsock_mod==NULL)
-      Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n",WSCK_DLL_NAME);
-    s_wsock_select = (fl_wsk_select_f) GetProcAddress(s_wsock_mod, "select");
-    fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f) GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
+    if (s_wsock_mod == NULL)
+      Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n", WSCK_DLL_NAME);
+    s_wsock_select = (fl_wsk_select_f)GetProcAddress(s_wsock_mod, "select");
+    fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f)GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
   }
   return s_wsock_mod;
 }
@@ -159,20 +159,20 @@ static HMODULE get_wsock_mod() {
  * size and link dependencies.
  */
 static HMODULE s_imm_module = 0;
-typedef BOOL (WINAPI* flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
+typedef BOOL(WINAPI *flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
 flTypeImmAssociateContextEx flImmAssociateContextEx = 0;
-typedef HIMC (WINAPI* flTypeImmGetContext)(HWND);
+typedef HIMC(WINAPI *flTypeImmGetContext)(HWND);
 flTypeImmGetContext flImmGetContext = 0;
-typedef BOOL (WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
+typedef BOOL(WINAPI *flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
 flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
-typedef BOOL (WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
+typedef BOOL(WINAPI *flTypeImmReleaseContext)(HWND, HIMC);
 flTypeImmReleaseContext flImmReleaseContext = 0;
 
 static void get_imm_module() {
   s_imm_module = LoadLibrary("IMM32.DLL");
   if (!s_imm_module)
     Fl::fatal("FLTK Lib Error: IMM32.DLL file not found!\n\n"
-      "Please check your input method manager library accessibility.");
+              "Please check your input method manager library accessibility.");
   flImmAssociateContextEx = (flTypeImmAssociateContextEx)GetProcAddress(s_imm_module, "ImmAssociateContextEx");
   flImmGetContext = (flTypeImmGetContext)GetProcAddress(s_imm_module, "ImmGetContext");
   flImmSetCompositionWindow = (flTypeImmSetCompositionWindow)GetProcAddress(s_imm_module, "ImmSetCompositionWindow");
@@ -206,7 +206,7 @@ static void get_imm_module() {
 # define USE_TRACK_MOUSE
 #endif // NO_TRACK_MOUSE
 
-static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
+static Fl_Window *track_mouse_win = 0; // current TrackMouseEvent() window
 
 // USE_CAPTURE_MOUSE_WIN - this must be defined for TrackMouseEvent to work
 // correctly with subwindows - otherwise a single mouse click and release
@@ -241,8 +241,18 @@ static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
 #  define WHEEL_DELTA 120	// according to MSDN.
 #endif
 
+// This is only defined on Vista and upwards...
+#ifndef WM_MOUSEHWHEEL
+#  define WM_MOUSEHWHEEL 0x020E
+#endif
+
 #ifndef SM_CXPADDEDBORDER
 #  define SM_CXPADDEDBORDER (92) // STR #3061
+#endif
+
+// https://msdn.microsoft.com/en-us/library/windows/desktop/dn312083(v=vs.85).aspx
+#ifndef WM_DPICHANGED
+#  define WM_DPICHANGED 0x02E0
 #endif
 
 //
@@ -250,7 +260,7 @@ static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
 // the sockets has pending data, etc.
 //
 
-#define WM_FLSELECT	(WM_APP+1)	// WM_APP is used for hide-window
+#define WM_FLSELECT (WM_APP + 1) // WM_APP is used for hide-window
 
 
 ////////////////////////////////////////////////////////////////
@@ -281,57 +291,63 @@ static int fd_array_size = 0;
 static struct FD {
   int fd;
   short events;
-  void (*cb)(FL_SOCKET, void*); // keep socket api opaque at this level to reduce multiplatform deps headaches
-  void* arg;
+  void (*cb)(FL_SOCKET, void *); // keep socket api opaque at this level to reduce multiplatform deps headaches
+  void *arg;
 } *fd = 0;
 
 extern unsigned int fl_codepage;
 
-void fl_set_status(int x, int y, int w, int h)
-{
-}
+void fl_set_status(int x, int y, int w, int h) {}
 
-void Fl_WinAPI_System_Driver::add_fd(int n, int events, void (*cb)(FL_SOCKET, void*), void *v) {
-  remove_fd(n,events);
+void Fl_WinAPI_System_Driver::add_fd(int n, int events, void (*cb)(FL_SOCKET, void *), void *v) {
+  remove_fd(n, events);
   int i = nfds++;
   if (i >= fd_array_size) {
-    fd_array_size = 2*fd_array_size+1;
-    fd = (FD*)realloc(fd, fd_array_size*sizeof(FD));
+    fd_array_size = 2 * fd_array_size + 1;
+    fd = (FD *)realloc(fd, fd_array_size * sizeof(FD));
   }
   fd[i].fd = n;
   fd[i].events = (short)events;
   fd[i].cb = cb;
   fd[i].arg = v;
 
-  if (events & FL_READ) FD_SET((unsigned)n, &fdsets[0]);
-  if (events & FL_WRITE) FD_SET((unsigned)n, &fdsets[1]);
-  if (events & FL_EXCEPT) FD_SET((unsigned)n, &fdsets[2]);
-  if (n > maxfd) maxfd = n;
+  if (events & FL_READ)
+    FD_SET((unsigned)n, &fdsets[0]);
+  if (events & FL_WRITE)
+    FD_SET((unsigned)n, &fdsets[1]);
+  if (events & FL_EXCEPT)
+    FD_SET((unsigned)n, &fdsets[2]);
+  if (n > maxfd)
+    maxfd = n;
 }
 
-void Fl_WinAPI_System_Driver::add_fd(int fd, void (*cb)(FL_SOCKET, void*), void* v) {
+void Fl_WinAPI_System_Driver::add_fd(int fd, void (*cb)(FL_SOCKET, void *), void *v) {
   add_fd(fd, FL_READ, cb, v);
 }
 
 void Fl_WinAPI_System_Driver::remove_fd(int n, int events) {
-  int i,j;
-  for (i=j=0; i<nfds; i++) {
+  int i, j;
+  for (i = j = 0; i < nfds; i++) {
     if (fd[i].fd == n) {
       short e = fd[i].events & ~events;
-      if (!e) continue; // if no events left, delete this fd
+      if (!e)
+	continue; // if no events left, delete this fd
       fd[i].events = e;
     }
     // move it down in the array if necessary:
-    if (j<i) {
-      fd[j]=fd[i];
+    if (j < i) {
+      fd[j] = fd[i];
     }
     j++;
   }
   nfds = j;
 
-  if (events & FL_READ) FD_CLR(unsigned(n), &fdsets[0]);
-  if (events & FL_WRITE) FD_CLR(unsigned(n), &fdsets[1]);
-  if (events & FL_EXCEPT) FD_CLR(unsigned(n), &fdsets[2]);
+  if (events & FL_READ)
+    FD_CLR(unsigned(n), &fdsets[0]);
+  if (events & FL_WRITE)
+    FD_CLR(unsigned(n), &fdsets[1]);
+  if (events & FL_EXCEPT)
+    FD_CLR(unsigned(n), &fdsets[2]);
 }
 
 void Fl_WinAPI_System_Driver::remove_fd(int n) {
@@ -343,9 +359,9 @@ static void nothing() {}
 void (*fl_lock_function)() = nothing;
 void (*fl_unlock_function)() = nothing;
 
-static void* thread_message_;
-void* Fl_WinAPI_System_Driver::thread_message() {
-  void* r = thread_message_;
+static void *thread_message_;
+void *Fl_WinAPI_System_Driver::thread_message() {
+  void *r = thread_message_;
   thread_message_ = 0;
   return r;
 }
@@ -391,20 +407,25 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
 
     fd_set fdt[3];
     memcpy(fdt, fdsets, sizeof fdt); // one shot faster fdt init
-    if (get_wsock_mod()&& s_wsock_select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t)) {
+    if (get_wsock_mod() && s_wsock_select(maxfd + 1, &fdt[0], &fdt[1], &fdt[2], &t)) {
       // We got something - do the callback!
-      for (int i = 0; i < nfds; i ++) {
+      for (int i = 0; i < nfds; i++) {
 	SOCKET f = fd[i].fd;
 	short revents = 0;
-	if (fl_wsk_fd_is_set(f, &fdt[0])) revents |= FL_READ;
-	if (fl_wsk_fd_is_set(f, &fdt[1])) revents |= FL_WRITE;
-	if (fl_wsk_fd_is_set(f, &fdt[2])) revents |= FL_EXCEPT;
-	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
+	if (fl_wsk_fd_is_set(f, &fdt[0]))
+	  revents |= FL_READ;
+	if (fl_wsk_fd_is_set(f, &fdt[1]))
+	  revents |= FL_WRITE;
+	if (fl_wsk_fd_is_set(f, &fdt[2]))
+	  revents |= FL_EXCEPT;
+	if (fd[i].events & revents)
+	  fd[i].cb(f, fd[i].arg);
       }
       time_to_wait = 0.0; // just peek for any messages
     } else {
       // we need to check them periodically, so set a short timeout:
-      if (time_to_wait > .001) time_to_wait = .001;
+      if (time_to_wait > .001)
+	time_to_wait = .001;
     }
   }
 
@@ -413,13 +434,13 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
 
   // if there are no more windows and this timer is set
   // to FOREVER, continue through or look up indefinitely
-  if (!Fl::first_window() && time_to_wait==1e20)
+  if (!Fl::first_window() && time_to_wait == 1e20)
     time_to_wait = 0.0;
 
   fl_unlock_function();
 
   time_to_wait = (time_to_wait > 10000 ? 10000 : time_to_wait);
-  int t_msec = (int) (time_to_wait * 1000.0 + 0.5);
+  int t_msec = (int)(time_to_wait * 1000.0 + 0.5);
   MsgWaitForMultipleObjects(0, NULL, FALSE, t_msec, QS_ALLINPUT);
 
   fl_lock_function();
@@ -436,7 +457,7 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
 
     if (fl_msg.message == fl_wake_msg) {
       // Used for awaking wait() from another thread
-      thread_message_ = (void*)fl_msg.wParam;
+      thread_message_ = (void *)fl_msg.wParam;
       process_awake_handler_requests();
     }
 
@@ -476,17 +497,19 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
 
 // just like Fl_WinAPI_Screen_Driver::wait(0.0) except no callbacks are done:
 int Fl_WinAPI_Screen_Driver::ready() {
-  if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
-  if (!nfds) return 0;
+  if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE))
+    return 1;
+  if (!nfds)
+    return 0;
   timeval t;
   t.tv_sec = 0;
   t.tv_usec = 0;
   fd_set fdt[3];
   memcpy(fdt, fdsets, sizeof fdt);
-  return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
+  return get_wsock_mod() ? s_wsock_select(0, &fdt[0], &fdt[1], &fdt[2], &t) : 0;
 }
 
-//extern FILE*LOG;
+// extern FILE *LOG;
 
 void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
@@ -496,12 +519,13 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 
   beenHereDoneThat = 1;
 #ifdef FLTK_HIDPI_SUPPORT
-  typedef HRESULT (WINAPI* SetProcessDpiAwareness_type)(int);
-  HMODULE hMod  = LoadLibrary("Shcore.DLL");
+  typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
+  HMODULE hMod = LoadLibrary("Shcore.DLL");
   if (hMod) {
     SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
-    const int PROCESS_PER_MONITOR_DPI_AWARE  = 2;
-    if (fl_SetProcessDpiAwareness) fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+    const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
+    if (fl_SetProcessDpiAwareness)
+      fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
     init_screen_scale_factors();
   }
 #endif // FLTK_HIDPI_SUPPORT
@@ -513,18 +537,19 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 
 #ifdef FLTK_HIDPI_SUPPORT
 void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
-  typedef HRESULT (WINAPI* GetDpiForMonitor_type)(HMONITOR, int, UINT*, UINT*);
-  HMODULE hMod  = LoadLibrary("Shcore.DLL");
+  typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
+  HMODULE hMod = LoadLibrary("Shcore.DLL");
   GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
-  if (hMod) fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
+  if (hMod)
+    fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
   if (fl_GetDpiForMonitor) {
     for (int ns = 0; ns < screen_count(); ns++) {
       HMONITOR hm = MonitorFromRect(&screens[ns], MONITOR_DEFAULTTONEAREST);
       UINT dpiX, dpiY;
       HRESULT r = fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
-      float f = (r == S_OK ? dpiX/96. : 1);
+      float f = (r == S_OK ? dpiX / 96. : 1);
       scale(ns, f);
-//fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f\n", ns, f);fflush(LOG);
+      // fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f\n", ns, f);fflush(LOG);
     }
   }
 }
@@ -533,9 +558,9 @@ void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
 
 class Fl_Win32_At_Exit {
 public:
-  Fl_Win32_At_Exit() { }
+  Fl_Win32_At_Exit() {}
   ~Fl_Win32_At_Exit() {
-    fl_free_fonts();        // do some WIN32 cleanup
+    fl_free_fonts(); // do some WIN32 cleanup
     fl_cleanup_pens();
     OleUninitialize();
     fl_brush_action(1);
@@ -554,7 +579,7 @@ static char im_enabled = 1;
 void Fl_WinAPI_Screen_Driver::enable_im() {
   open_display();
 
-  Fl_X* i = Fl_X::first;
+  Fl_X *i = Fl_X::first;
   while (i) {
     flImmAssociateContextEx(i->xid, 0, IACE_DEFAULT);
     i = i->next;
@@ -566,7 +591,7 @@ void Fl_WinAPI_Screen_Driver::enable_im() {
 void Fl_WinAPI_Screen_Driver::disable_im() {
   open_display();
 
-  Fl_X* i = Fl_X::first;
+  Fl_X *i = Fl_X::first;
   while (i) {
     flImmAssociateContextEx(i->xid, 0, 0);
     i = i->next;
@@ -580,7 +605,8 @@ void Fl_WinAPI_Screen_Driver::disable_im() {
 int Fl_WinAPI_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
   POINT p;
   GetCursorPos(&p);
-  mx = p.x; my = p.y;
+  mx = p.x;
+  my = p.y;
   int screen = screen_num_unscaled(mx, my);
   return screen >= 0 ? screen : 0;
 }
@@ -588,8 +614,8 @@ int Fl_WinAPI_Screen_Driver::get_mouse_unscaled(int &mx, int &my) {
 int Fl_WinAPI_Screen_Driver::get_mouse(int &x, int &y) {
   int n = get_mouse_unscaled(x, y);
   float s = scale(n);
-  x = x/s;
-  y = y/s;
+  x = x / s;
+  y = y / s;
   return n;
 }
 
@@ -601,8 +627,7 @@ int fl_selection_length[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2];
 
-UINT fl_get_lcid_codepage(LCID id)
-{
+UINT fl_get_lcid_codepage(LCID id) {
   char buf[8];
   buf[GetLocaleInfo(id, LOCALE_IDEFAULTANSICODEPAGE, buf, 8)] = 0;
   return atol(buf);
@@ -612,6 +637,7 @@ UINT fl_get_lcid_codepage(LCID id)
 class Lf2CrlfConvert {
   char *out;
   int outlen;
+
 public:
   Lf2CrlfConvert(const char *in, int inlen) {
     outlen = 0;
@@ -620,31 +646,40 @@ public:
     int lencount;
     // Predict size of \r\n conversion buffer
     for (i = in, lencount = inlen; lencount > 0; lencount--) {
-      if ( *i == '\r' && *(i+1) == '\n' && lencount >= 2 )	// leave \r\n untranslated
-	{ i+=2; outlen+=2; lencount--; }
-      else if ( *i == '\n' )			// \n by itself? leave room to insert \r
-	{ i++; outlen+=2; }
-      else
-	{ ++i; ++outlen; }
+      if (*i == '\r' && *(i + 1) == '\n' && lencount >= 2) { // leave \r\n untranslated
+	i += 2;
+	outlen += 2;
+	lencount--;
+      } else if (*i == '\n') { // \n by itself? leave room to insert \r
+	i++;
+	outlen += 2;
+      } else {
+	++i;
+	++outlen;
+      }
     }
     // Alloc conversion buffer + NULL
-    out = new char[outlen+1];
+    out = new char[outlen + 1];
     // Handle \n -> \r\n conversion
-    for (i = in, o=out, lencount = inlen; lencount > 0; lencount--) {
-      if ( *i == '\r' && *(i+1) == '\n' && lencount >= 2 )	// leave \r\n untranslated
-        { *o++ = *i++; *o++ = *i++; lencount--; }
-      else if ( *i == '\n' )			// \n by itself? insert \r
-        { *o++ = '\r'; *o++ = *i++; }
-      else
-        { *o++ = *i++; }
+    for (i = in, o = out, lencount = inlen; lencount > 0; lencount--) {
+      if (*i == '\r' && *(i + 1) == '\n' && lencount >= 2) { // leave \r\n untranslated
+	*o++ = *i++;
+	*o++ = *i++;
+	lencount--;
+      } else if (*i == '\n') { // \n by itself? insert \r
+	*o++ = '\r';
+	*o++ = *i++;
+      } else {
+	*o++ = *i++;
+      }
     }
     *o++ = 0;
   }
   ~Lf2CrlfConvert() {
     delete[] out;
   }
-  int GetLength() const { return(outlen); }
-  const char* GetValue() const { return(out); }
+  int GetLength() const { return (outlen); }
+  const char *GetValue() const { return (out); }
 };
 
 void fl_update_clipboard(void) {
@@ -659,14 +694,12 @@ void fl_update_clipboard(void) {
 
   EmptyClipboard();
 
-  int utf16_len = fl_utf8toUtf16(fl_selection_buffer[1],
-                                 fl_selection_length[1], 0, 0);
+  int utf16_len = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], 0, 0);
 
   HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
   LPVOID memLock = GlobalLock(hMem);
 
-  fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1],
-                 (unsigned short*) memLock, utf16_len + 1);
+  fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], (unsigned short *)memLock, utf16_len + 1);
 
   GlobalUnlock(hMem);
   SetClipboardData(CF_UNICODETEXT, hMem);
@@ -680,7 +713,8 @@ void fl_update_clipboard(void) {
 
 // call this when you create a selection:
 void Fl_WinAPI_System_Driver::copy(const char *stuff, int len, int clipboard, const char *type) {
-  if (!stuff || len<0) return;
+  if (!stuff || len < 0)
+    return;
   if (clipboard >= 2)
     clipboard = 1; // Only on X11 do multiple clipboards make sense.
 
@@ -689,10 +723,10 @@ void Fl_WinAPI_System_Driver::copy(const char *stuff, int len, int clipboard, co
   len = buf.GetLength();
   stuff = buf.GetValue();
 
-  if (len+1 > fl_selection_buffer_length[clipboard]) {
+  if (len + 1 > fl_selection_buffer_length[clipboard]) {
     delete[] fl_selection_buffer[clipboard];
-    fl_selection_buffer[clipboard] = new char[len+100];
-    fl_selection_buffer_length[clipboard] = len+100;
+    fl_selection_buffer[clipboard] = new char[len + 100];
+    fl_selection_buffer_length[clipboard] = len + 100;
   }
   memcpy(fl_selection_buffer[clipboard], stuff, len);
   fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
@@ -709,150 +743,158 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
     char *i = fl_selection_buffer[clipboard];
-    if (i==0L) {
+    if (i == 0L) {
       Fl::e_text = 0;
       return;
     }
-    char *clip_text = new char[fl_selection_length[clipboard]+1];
+    char *clip_text = new char[fl_selection_length[clipboard] + 1];
     char *o = clip_text;
     while (*i) { // Convert \r\n -> \n
-      if ( *i == '\r' && *(i+1) == '\n') i++;
-      else *o++ = *i++;
+      if (*i == '\r' && *(i + 1) == '\n')
+	i++;
+      else
+	*o++ = *i++;
     }
     *o = 0;
     Fl::e_text = clip_text;
-    Fl::e_length = (int) (o - Fl::e_text);
+    Fl::e_length = (int)(o - Fl::e_text);
     Fl::e_clipboard_type = Fl::clipboard_plain_text;
     receiver.handle(FL_PASTE); // this may change Fl::e_text
-    delete [] clip_text;
+    delete[] clip_text;
     Fl::e_text = 0;
   } else if (clipboard) {
     HANDLE h;
-    if (!OpenClipboard(NULL)) return;
+    if (!OpenClipboard(NULL))
+      return;
     if (strcmp(type, Fl::clipboard_plain_text) == 0) { // we want plain text from clipboard
-      if ((h = GetClipboardData(CF_UNICODETEXT))) { // there's text in the clipboard
-	wchar_t *memLock = (wchar_t*) GlobalLock(h);
+      if ((h = GetClipboardData(CF_UNICODETEXT))) {    // there's text in the clipboard
+	wchar_t *memLock = (wchar_t *)GlobalLock(h);
 	size_t utf16_len = wcslen(memLock);
 	char *clip_text = new char[utf16_len * 4 + 1];
-	unsigned utf8_len = fl_utf8fromwc(clip_text, (unsigned) (utf16_len * 4), memLock, (unsigned) utf16_len);
+	unsigned utf8_len = fl_utf8fromwc(clip_text, (unsigned)(utf16_len * 4), memLock, (unsigned)utf16_len);
 	*(clip_text + utf8_len) = 0;
 	GlobalUnlock(h);
-	LPSTR a,b;
+	LPSTR a, b;
 	a = b = clip_text;
 	while (*a) { // strip the CRLF pairs ($%$#@^)
-	  if (*a == '\r' && a[1] == '\n') a++;
-	  else *b++ = *a++;
+	  if (*a == '\r' && a[1] == '\n')
+	    a++;
+	  else
+	    *b++ = *a++;
 	}
 	*b = 0;
-        Fl::e_text = clip_text;
-	Fl::e_length = (int) (b - Fl::e_text);
-	Fl::e_clipboard_type = Fl::clipboard_plain_text;  // indicates that the paste event is for plain UTF8 text
-	receiver.handle(FL_PASTE); // send the FL_PASTE event to the widget. May change Fl::e_text
+	Fl::e_text = clip_text;
+	Fl::e_length = (int)(b - Fl::e_text);
+	Fl::e_clipboard_type = Fl::clipboard_plain_text; // indicates that the paste event is for plain UTF8 text
+	receiver.handle(FL_PASTE);                       // send the FL_PASTE event to the widget. May change Fl::e_text
 	delete[] clip_text;
 	Fl::e_text = 0;
-	}
       }
-      else if (strcmp(type, Fl::clipboard_image) == 0) { // we want an image from clipboard
-	uchar *rgb = NULL;
-        Fl_RGB_Image *image = NULL;
-	int width = 0, height = 0, depth = 0;
-	if ( (h = GetClipboardData(CF_DIB)) ) { // if there's a DIB in clipboard
-	  LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h) ;
-	  width = lpBI->bmiHeader.biWidth; // bitmap width & height
-	  height = lpBI->bmiHeader.biHeight;
-	  if ( (lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) &&
-	      lpBI->bmiHeader.biCompression == BI_RGB &&
-	      lpBI->bmiHeader.biClrUsed == 0) { // direct use of the DIB data if it's RGB or RGBA
-	    int linewidth; // row length
-	    depth = lpBI->bmiHeader.biBitCount/8; // 3 or 4
-	    if (depth == 3) linewidth = 4 * ((3*width + 3)/4); // row length: series of groups of 3 bytes, rounded to multiple of 4 bytes
-	    else linewidth = 4*width;
-	    rgb = new uchar[width * height * depth]; // will hold the image data
-	    uchar *p = rgb, *r, rr, gg, bb;
-	    for (int i=height-1; i>=0; i--) { // for each row, from last to first
-	      r = (uchar*)(lpBI->bmiColors) + i*linewidth; // beginning of pixel data for the ith row
-	      for (int j=0; j<width; j++) { // for each pixel in a row
-		bb = *r++; // BGR is in DIB
-		gg = *r++;
-		rr = *r++;
-		*p++ = rr; // we want RGB
-		*p++ = gg;
-		*p++ = bb;
-		if (depth == 4) *p++ = *r++; // copy alpha if present
-	      }
+    } else if (strcmp(type, Fl::clipboard_image) == 0) { // we want an image from clipboard
+      uchar *rgb = NULL;
+      Fl_RGB_Image *image = NULL;
+      int width = 0, height = 0, depth = 0;
+      if ((h = GetClipboardData(CF_DIB))) { // if there's a DIB in clipboard
+	LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
+	width = lpBI->bmiHeader.biWidth; // bitmap width & height
+	height = lpBI->bmiHeader.biHeight;
+	if ((lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) &&
+	    lpBI->bmiHeader.biCompression == BI_RGB &&
+	    lpBI->bmiHeader.biClrUsed == 0) {      // direct use of the DIB data if it's RGB or RGBA
+	  int linewidth;                           // row length
+	  depth = lpBI->bmiHeader.biBitCount / 8;  // 3 or 4
+	  if (depth == 3)
+	    linewidth = 4 * ((3 * width + 3) / 4); // row length: series of groups of 3 bytes, rounded to multiple of 4 bytes
+	  else
+	    linewidth = 4 * width;
+	  rgb = new uchar[width * height * depth]; // will hold the image data
+	  uchar *p = rgb, *r, rr, gg, bb;
+	  for (int i = height - 1; i >= 0; i--) {           // for each row, from last to first
+	    r = (uchar *)(lpBI->bmiColors) + i * linewidth; // beginning of pixel data for the ith row
+	    for (int j = 0; j < width; j++) {               // for each pixel in a row
+	      bb = *r++;                                    // BGR is in DIB
+	      gg = *r++;
+	      rr = *r++;
+	      *p++ = rr; // we want RGB
+	      *p++ = gg;
+	      *p++ = bb;
+	      if (depth == 4)
+		*p++ = *r++; // copy alpha if present
 	    }
 	  }
-	  else { // the system will decode a complex DIB
-	    void *pDIBBits = (void*)(lpBI->bmiColors);
-	    if (lpBI->bmiHeader.biCompression == BI_BITFIELDS) pDIBBits = (void*)(lpBI->bmiColors + 3);
-	    else if (lpBI->bmiHeader.biClrUsed > 0) pDIBBits = (void*)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
-	    Fl_Offscreen off = fl_create_offscreen(width, height);
-	    fl_begin_offscreen(off);
-	    SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
-	    rgb = fl_read_image(NULL, 0, 0, width, height);
-	    depth = 3;
-	    fl_end_offscreen();
-	    fl_delete_offscreen(off);
-	  }
-	  GlobalUnlock(h);
+	} else { // the system will decode a complex DIB
+	  void *pDIBBits = (void *)(lpBI->bmiColors);
+	  if (lpBI->bmiHeader.biCompression == BI_BITFIELDS)
+	    pDIBBits = (void *)(lpBI->bmiColors + 3);
+	  else if (lpBI->bmiHeader.biClrUsed > 0)
+	    pDIBBits = (void *)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
+	  Fl_Offscreen off = fl_create_offscreen(width, height);
+	  fl_begin_offscreen(off);
+	  SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
+	  rgb = fl_read_image(NULL, 0, 0, width, height);
+	  depth = 3;
+	  fl_end_offscreen();
+	  fl_delete_offscreen(off);
 	}
-	else if ((h = GetClipboardData(CF_ENHMETAFILE))) { // if there's an enhanced metafile in clipboard
-	  ENHMETAHEADER header;
-	  GetEnhMetaFileHeader((HENHMETAFILE)h, sizeof(header), &header); // get structure containing metafile dimensions
-	  width = (header.rclFrame.right - header.rclFrame.left + 1); // in .01 mm units
-	  height = (header.rclFrame.bottom - header.rclFrame.top + 1);
-	  HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
-	  int hmm = GetDeviceCaps(hdc, HORZSIZE);
-	  int hdots = GetDeviceCaps(hdc, HORZRES);
-	  ReleaseDC(NULL, hdc);
-	  float factor =  (100.f * hmm) / hdots;
+	GlobalUnlock(h);
+      } else if ((h = GetClipboardData(CF_ENHMETAFILE))) { // if there's an enhanced metafile in clipboard
+	ENHMETAHEADER header;
+	GetEnhMetaFileHeader((HENHMETAFILE)h, sizeof(header), &header); // get structure containing metafile dimensions
+	width = (header.rclFrame.right - header.rclFrame.left + 1);     // in .01 mm units
+	height = (header.rclFrame.bottom - header.rclFrame.top + 1);
+	HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
+	int hmm = GetDeviceCaps(hdc, HORZSIZE);
+	int hdots = GetDeviceCaps(hdc, HORZRES);
+	ReleaseDC(NULL, hdc);
+	float factor = (100.f * hmm) / hdots;
 #ifdef FLTK_HIDPI_SUPPORT
-          float scaling = Fl::screen_driver()->scale( receiver.top_window()->driver()->screen_num() );
-          width = int(width / (scaling * factor));  // convert to screen pixel unit
-          height = int(height / (scaling * factor));
+	float scaling = Fl::screen_driver()->scale(receiver.top_window()->driver()->screen_num());
+	width = int(width / (scaling * factor)); // convert to screen pixel unit
+	height = int(height / (scaling * factor));
 #else
-          float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
-          width = int(width * scaling / factor);  // convert to screen pixel unit
-          height = int(height * scaling / factor);
-          scaling = 1;
+	float scaling = ((Fl_WinAPI_Screen_Driver *)Fl::screen_driver())->DWM_scaling_factor();
+	width = int(width * scaling / factor); // convert to screen pixel unit
+	height = int(height * scaling / factor);
+	scaling = 1;
 #endif
-	  RECT rect = {0, 0, width, height};
-          Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
-          Fl_Surface_Device::push_current(surf);
-	  fl_color(FL_WHITE); fl_rectf(0,0,width, height); // draw white background
-          rect.right *= scaling; rect.bottom *= scaling; // apply scaling to the metafile draw operation
-	  PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
-          image = surf->image();
-          Fl_Surface_Device::pop_current();
-          delete surf;
+	RECT rect = {0, 0, width, height};
+	Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
+	Fl_Surface_Device::push_current(surf);
+	fl_color(FL_WHITE);		// draw white background
+	fl_rectf(0, 0, width, height);
+	rect.right *= scaling;		// apply scaling to the metafile draw operation
+	rect.bottom *= scaling;
+	PlayEnhMetaFile((HDC)fl_graphics_driver->gc(), (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
+	image = surf->image();
+	Fl_Surface_Device::pop_current();
+	delete surf;
+      }
+      if (rgb || image) {
+	if (!image) {
+	  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
+	  image->alloc_array = 1;
 	}
-	if (rgb || image) {
-          if (!image) {
-            Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
-            image->alloc_array = 1;
-          }
-	  Fl::e_clipboard_data = image;
-	  Fl::e_clipboard_type = Fl::clipboard_image;  // indicates that the paste event is for image data
-	  int done = receiver.handle(FL_PASTE); // send FL_PASTE event to widget
-	  Fl::e_clipboard_type = "";
-	  if (done == 0) { // if widget did not handle the event, delete the image
-	    Fl::e_clipboard_data = NULL;
-	    delete image;
-	  }
+	Fl::e_clipboard_data = image;
+	Fl::e_clipboard_type = Fl::clipboard_image; // indicates that the paste event is for image data
+	int done = receiver.handle(FL_PASTE);       // send FL_PASTE event to widget
+	Fl::e_clipboard_type = "";
+	if (done == 0) { // if widget did not handle the event, delete the image
+	  Fl::e_clipboard_data = NULL;
+	  delete image;
 	}
       }
-     CloseClipboard();
     }
+    CloseClipboard();
+  }
 }
 
-int Fl_WinAPI_System_Driver::clipboard_contains(const char *type)
-{
+int Fl_WinAPI_System_Driver::clipboard_contains(const char *type) {
   int retval = 0;
-  if (!OpenClipboard(NULL)) return 0;
+  if (!OpenClipboard(NULL))
+    return 0;
   if (strcmp(type, Fl::clipboard_plain_text) == 0 || type[0] == 0) {
     retval = IsClipboardFormatAvailable(CF_UNICODETEXT);
-  }
-  else if (strcmp(type, Fl::clipboard_image) == 0) {
+  } else if (strcmp(type, Fl::clipboard_image) == 0) {
     retval = IsClipboardFormatAvailable(CF_DIB) || IsClipboardFormatAvailable(CF_ENHMETAFILE);
   }
   CloseClipboard();
@@ -883,8 +925,7 @@ static void fl_clipboard_notify_untarget(HWND wnd) {
   else {
     HWND tmp, head;
 
-    tmp = CreateWindow("STATIC", "Temporary FLTK Clipboard Window", 0,
-                       0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
+    tmp = CreateWindow("STATIC", "Temporary FLTK Clipboard Window", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
     if (tmp == NULL)
       return;
 
@@ -929,12 +970,11 @@ void Fl_WinAPI_System_Driver::clipboard_notify_change() {
 }
 
 ////////////////////////////////////////////////////////////////
-void fl_get_codepage()
-{
+void fl_get_codepage() {
   HKL hkl = GetKeyboardLayout(0);
   TCHAR ld[8];
 
-  GetLocaleInfo (LOWORD(hkl), LOCALE_IDEFAULTANSICODEPAGE, ld, 6);
+  GetLocaleInfo(LOWORD(hkl), LOCALE_IDEFAULTANSICODEPAGE, ld, 6);
   DWORD ccp = atol(ld);
   fl_codepage = ccp;
 }
@@ -942,8 +982,7 @@ void fl_get_codepage()
 HWND fl_capture;
 
 static int mouse_event(Fl_Window *window, int what, int button,
-		       WPARAM wParam, LPARAM lParam)
-{
+		       WPARAM wParam, LPARAM lParam) {
   static int px, py, pmx, pmy;
   POINT pt;
   float scale = Fl_Graphics_Driver::default_driver().scale();
@@ -955,7 +994,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
   Fl::e_x_root = pt.x / scale;
   Fl::e_y_root = pt.y / scale;
 #ifdef USE_CAPTURE_MOUSE_WIN
-  Fl_Window *mouse_window = window;	// save "mouse window"
+  Fl_Window *mouse_window = window; // save "mouse window"
 #endif
   while (window->parent()) {
     Fl::e_x += window->x();
@@ -975,41 +1014,52 @@ static int mouse_event(Fl_Window *window, int what, int button,
   Fl::e_state = state;
 
   switch (what) {
-  case 1: // double-click
-    if (Fl::e_is_click) {Fl::e_clicks++; goto J1;}
-  case 0: // single-click
-    Fl::e_clicks = 0;
-  J1:
+    case 1: // double-click
+      if (Fl::e_is_click) {
+	Fl::e_clicks++;
+	goto J1;
+      }
+    case 0: // single-click
+      Fl::e_clicks = 0;
+    J1:
 #ifdef USE_CAPTURE_MOUSE_WIN
-    if (!fl_capture) SetCapture(fl_xid(mouse_window));  // use mouse window
+      if (!fl_capture)
+	SetCapture(fl_xid(mouse_window)); // use mouse window
 #else
-    if (!fl_capture) SetCapture(fl_xid(window));	// use main window
+      if (!fl_capture)
+	SetCapture(fl_xid(window)); // use main window
 #endif
-    Fl::e_keysym = FL_Button + button;
-    Fl::e_is_click = 1;
-    px = pmx = Fl::e_x_root; py = pmy = Fl::e_y_root;
-    return Fl::handle(FL_PUSH,window);
+      Fl::e_keysym = FL_Button + button;
+      Fl::e_is_click = 1;
+      px = pmx = Fl::e_x_root;
+      py = pmy = Fl::e_y_root;
+      return Fl::handle(FL_PUSH, window);
 
-  case 2: // release:
-    if (!fl_capture) ReleaseCapture();
-    Fl::e_keysym = FL_Button + button;
-    return Fl::handle(FL_RELEASE,window);
+    case 2: // release:
+      if (!fl_capture)
+	ReleaseCapture();
+      Fl::e_keysym = FL_Button + button;
+      return Fl::handle(FL_RELEASE, window);
 
-  case 3: // move:
-  default: // avoid compiler warning
-    // MSWindows produces extra events even if mouse does not move, ignore em:
-    if (Fl::e_x_root == pmx && Fl::e_y_root == pmy) return 1;
-    pmx = Fl::e_x_root; pmy = Fl::e_y_root;
-    if (abs(Fl::e_x_root-px)>5 || abs(Fl::e_y_root-py)>5) Fl::e_is_click = 0;
-    return Fl::handle(FL_MOVE,window);
-
+    case 3:  // move:
+    default: // avoid compiler warning
+      // MSWindows produces extra events even if mouse does not move, ignore em:
+      if (Fl::e_x_root == pmx && Fl::e_y_root == pmy)
+	return 1;
+      pmx = Fl::e_x_root;
+      pmy = Fl::e_y_root;
+      if (abs(Fl::e_x_root - px) > 5 || abs(Fl::e_y_root - py) > 5)
+	Fl::e_is_click = 0;
+      return Fl::handle(FL_MOVE, window);
   }
 }
 
 // convert a MSWindows VK_x to an Fltk (X) Keysym:
 // See also the inverse converter in Fl_get_key_win32.cxx
 // This table is in numeric order by VK:
-static const struct {unsigned short vk, fltk, extended;} vktab[] = {
+static const struct {
+  unsigned short vk, fltk, extended;
+} vktab[] = {
   {VK_BACK,	FL_BackSpace},
   {VK_TAB,	FL_Tab},
   {VK_CLEAR,	FL_KP+'5',	0xff0b/*XK_Clear*/},
@@ -1043,22 +1093,22 @@ static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_DIVIDE,	FL_KP+'/'},
   {VK_NUMLOCK,	FL_Num_Lock},
   {VK_SCROLL,	FL_Scroll_Lock},
-# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0500)
-  {VK_BROWSER_BACK, FL_Back},
-  {VK_BROWSER_FORWARD, FL_Forward},
-  {VK_BROWSER_REFRESH, FL_Refresh},
-  {VK_BROWSER_STOP, FL_Stop},
-  {VK_BROWSER_SEARCH, FL_Search},
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0500)
+  {VK_BROWSER_BACK,	FL_Back},
+  {VK_BROWSER_FORWARD,	FL_Forward},
+  {VK_BROWSER_REFRESH,	FL_Refresh},
+  {VK_BROWSER_STOP,	FL_Stop},
+  {VK_BROWSER_SEARCH,	FL_Search},
   {VK_BROWSER_FAVORITES, FL_Favorites},
-  {VK_BROWSER_HOME, FL_Home_Page},
-  {VK_VOLUME_MUTE, FL_Volume_Mute},
-  {VK_VOLUME_DOWN, FL_Volume_Down},
-  {VK_VOLUME_UP, FL_Volume_Up},
-  {VK_MEDIA_NEXT_TRACK, FL_Media_Next},
-  {VK_MEDIA_PREV_TRACK, FL_Media_Prev},
-  {VK_MEDIA_STOP, FL_Media_Stop},
-  {VK_MEDIA_PLAY_PAUSE, FL_Media_Play},
-  {VK_LAUNCH_MAIL, FL_Mail},
+  {VK_BROWSER_HOME,	FL_Home_Page},
+  {VK_VOLUME_MUTE,	FL_Volume_Mute},
+  {VK_VOLUME_DOWN,	FL_Volume_Down},
+  {VK_VOLUME_UP,	FL_Volume_Up},
+  {VK_MEDIA_NEXT_TRACK,	FL_Media_Next},
+  {VK_MEDIA_PREV_TRACK,	FL_Media_Prev},
+  {VK_MEDIA_STOP,	FL_Media_Stop},
+  {VK_MEDIA_PLAY_PAUSE,	FL_Media_Play},
+  {VK_LAUNCH_MAIL,	FL_Mail},
 #endif
   {0xba,	';'},
   {0xbb,	'='},
@@ -1078,14 +1128,19 @@ static int ms2fltk(WPARAM vk, int extended) {
   static unsigned short extendedlut[256];
   if (!vklut[1]) { // init the table
     unsigned int i;
-    for (i = 0; i < 256; i++) vklut[i] = tolower(i);
-    for (i=VK_F1; i<=VK_F16; i++) vklut[i] = i+(FL_F-(VK_F1-1));
-    for (i=VK_NUMPAD0; i<=VK_NUMPAD9; i++) vklut[i] = i+(FL_KP+'0'-VK_NUMPAD0);
-    for (i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
+    for (i = 0; i < 256; i++)
+      vklut[i] = tolower(i);
+    for (i = VK_F1; i <= VK_F16; i++)
+      vklut[i] = i + (FL_F - (VK_F1 - 1));
+    for (i = VK_NUMPAD0; i <= VK_NUMPAD9; i++)
+      vklut[i] = i + (FL_KP + '0' - VK_NUMPAD0);
+    for (i = 0; i < sizeof(vktab) / sizeof(*vktab); i++) {
       vklut[vktab[i].vk] = vktab[i].fltk;
       extendedlut[vktab[i].vk] = vktab[i].extended;
     }
-    for (i = 0; i < 256; i++) if (!extendedlut[i]) extendedlut[i] = vklut[i];
+    for (i = 0; i < 256; i++)
+      if (!extendedlut[i])
+	extendedlut[i] = vklut[i];
   }
   return extended ? extendedlut[vk] : vklut[vk];
 }
@@ -1095,452 +1150,492 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 #endif
 
 
-static Fl_Window* resize_bug_fix;
+static Fl_Window *resize_bug_fix;
 
 extern void fl_save_pen(void);
 extern void fl_restore_pen(void);
 
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  // Copy the message to fl_msg so add_handler code can see it, it is
-  // already there if this is called by DispatchMessage, but not if
-  // Windows calls this directly.
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
+  // Copy the message to fl_msg so add_handler code can see it.
+  // It is already there if this is called by DispatchMessage,
+  // but not if Windows calls this directly.
+
   fl_msg.hwnd = hWnd;
   fl_msg.message = uMsg;
   fl_msg.wParam = wParam;
   fl_msg.lParam = lParam;
-  //fl_msg.time = ???
-  //fl_msg.pt = ???
-  //fl_msg.lPrivate = ???
+  // fl_msg.time = ???
+  // fl_msg.pt = ???
+  // fl_msg.lPrivate = ???
 
   Fl_Window *window = fl_find(hWnd);
   float scale = (window ? Fl::screen_driver()->scale(window->driver()->screen_num()) : 1);
 
-  if (window) switch (uMsg) {
-      
+  if (window) {
+    switch (uMsg) {
+
 #ifdef FLTK_HIDPI_SUPPORT
-    case 0x02E0: { // WM_DPICHANGED:
-      if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
-        RECT r;
-        float f = HIWORD(wParam)/96.;
-        GetClientRect(hWnd, &r);
-        float old_f = float(r.right)/window->w();
-        int ns = window->driver()->screen_num();
-        Fl::screen_driver()->scale(ns, f);
-        window->driver()->resize_after_scale_change(ns, old_f,  f);
-      }
-    }
-    return 0;
-#endif // FLTK_HIDPI_SUPPORT
-      
-  case WM_QUIT: // this should not happen?
-    Fl::fatal("WM_QUIT message");
-
-  case WM_CLOSE: // user clicked close box
-    Fl::handle(FL_CLOSE, window);
-    return 0;
-
-  case WM_SYNCPAINT :
-  case WM_NCPAINT :
-  case WM_ERASEBKGND :
-    // Andreas Weitl - WM_SYNCPAINT needs to be passed to DefWindowProc
-    // so that Windows can generate the proper paint messages...
-    // Similarly, WM_NCPAINT and WM_ERASEBKGND need this, too...
-    break;
-
-  case WM_PAINT: {
-    Fl_Region R, R2;
-    Fl_X *i = Fl_X::i(window);
-    window->driver()->wait_for_expose_value = 0;
-    char redraw_whole_window = false;
-    if (!i->region && window->damage()) {
-      // Redraw the whole window...
-      i->region = CreateRectRgn(0, 0, window->w(), window->h());
-      redraw_whole_window = true;
-    }
-
-    // We need to merge WIN32's damage into FLTK's damage.
-    R = CreateRectRgn(0,0,0,0);
-    int r = GetUpdateRgn(hWnd,R,0);
-    if (r==NULLREGION && !redraw_whole_window) {
-      DeleteObject(R);
-      break;
-    }
-
-    // convert i->region in FLTK units to R2 in drawing units
-    R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL);
-
-    if (R2) {
-      // Also tell WIN32 that we are drawing someplace else as well...
-      CombineRgn(R2, R2, R, RGN_OR);
-      DeleteObject(R);
-    } else {
-      R2 = R;
-    }
-    if (window->type() == FL_DOUBLE_WINDOW) ValidateRgn(hWnd,0);
-    else {
-      ValidateRgn(hWnd, R2);
-    }
-    
-    // convert R2 in drawing units to i->region in FLTK units
-    i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1/scale, NULL);
-
-    window->clear_damage((uchar)(window->damage()|FL_DAMAGE_EXPOSE));
-    // These next two statements should not be here, so that all update
-    // is deferred until Fl::flush() is called during idle.  However WIN32
-    // apparently is very unhappy if we don't obey it and draw right now.
-    // Very annoying!
-    fl_GetDC(hWnd); // Make sure we have a DC for this window...
-    fl_save_pen();
-    window->driver()->flush();
-    fl_restore_pen();
-    window->clear_damage();
-    } return 0;
-
-  case WM_LBUTTONDOWN:  mouse_event(window, 0, 1, wParam, lParam); return 0;
-  case WM_LBUTTONDBLCLK:mouse_event(window, 1, 1, wParam, lParam); return 0;
-  case WM_LBUTTONUP:    mouse_event(window, 2, 1, wParam, lParam); return 0;
-  case WM_MBUTTONDOWN:  mouse_event(window, 0, 2, wParam, lParam); return 0;
-  case WM_MBUTTONDBLCLK:mouse_event(window, 1, 2, wParam, lParam); return 0;
-  case WM_MBUTTONUP:    mouse_event(window, 2, 2, wParam, lParam); return 0;
-  case WM_RBUTTONDOWN:  mouse_event(window, 0, 3, wParam, lParam); return 0;
-  case WM_RBUTTONDBLCLK:mouse_event(window, 1, 3, wParam, lParam); return 0;
-  case WM_RBUTTONUP:    mouse_event(window, 2, 3, wParam, lParam); return 0;
-
-  case WM_MOUSEMOVE:
-#ifdef USE_TRACK_MOUSE
-    if (track_mouse_win != window) {
-      TRACKMOUSEEVENT tme;
-      tme.cbSize    = sizeof(TRACKMOUSEEVENT);
-      tme.dwFlags   = TME_LEAVE;
-      tme.hwndTrack = hWnd;
-      _TrackMouseEvent(&tme);
-      track_mouse_win = window;
-    }
-#endif // USE_TRACK_MOUSE
-    mouse_event(window, 3, 0, wParam, lParam);
-    return 0;
-
-  case WM_MOUSELEAVE:
-    if (track_mouse_win == window) { // we left the top level window !
-      Fl_Window *tw = window;
-      while (tw->parent()) tw = tw->window(); // find top level window
-      Fl::belowmouse(0);
-      Fl::handle(FL_LEAVE, tw);
-    }
-    track_mouse_win = 0; // force TrackMouseEvent() restart
-    break;
-
-  case WM_SETFOCUS:
-    if ((Fl::modal_) && (Fl::modal_ != window)) {
-      SetFocus(fl_xid(Fl::modal_));
-      return 0;
-    }
-    Fl::handle(FL_FOCUS, window);
-    break;
-
-  case WM_KILLFOCUS:
-    Fl::handle(FL_UNFOCUS, window);
-    Fl::flush(); // it never returns to main loop when deactivated...
-    break;
-
-  case WM_SHOWWINDOW:
-    if (!window->parent()) {
-      Fl::handle(wParam ? FL_SHOW : FL_HIDE, window);
-    }
-    break;
-
-  case WM_ACTIVATEAPP:
-    // From eric@vfx.sel.sony.com, we should process WM_ACTIVATEAPP
-    // messages to restore the correct state of the shift/ctrl/alt/lock
-    // keys...  Added control, shift, alt, and meta keys, and changed
-    // to use GetAsyncKeyState and do it when wParam is 1
-    // (that means we have focus...)
-    if (wParam)
-    {
-      ulong state = 0;
-      if (GetAsyncKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
-      if (GetAsyncKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
-      if (GetAsyncKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
-      if (GetAsyncKeyState(VK_CONTROL)&~1) state |= FL_CTRL;
-      if (GetAsyncKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
-      if (GetAsyncKeyState(VK_MENU)) state |= FL_ALT;
-      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1) state |= FL_META;
-      Fl::e_state = state;
-      return 0;
-    }
-    break;
-
-  case WM_INPUTLANGCHANGE:
-    fl_get_codepage();
-    break;
-  case WM_IME_COMPOSITION:
-//	if (!fl_is_nt4() && lParam & GCS_RESULTCLAUSE) {
-//		HIMC himc = ImmGetContext(hWnd);
-//		wlen = ImmGetCompositionStringW(himc, GCS_RESULTSTR,
-//			wbuf, sizeof(wbuf)) / sizeof(short);
-//		if (wlen < 0) wlen = 0;
-//		wbuf[wlen] = 0;
-//		ImmReleaseContext(hWnd, himc);
-//	}
-	break;
-  case WM_KEYDOWN:
-  case WM_SYSKEYDOWN:
-  case WM_KEYUP:
-  case WM_SYSKEYUP:
-    // save the keysym until we figure out the characters:
-    Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam,lParam&(1<<24));
-    // See if TranslateMessage turned it into a WM_*CHAR message:
-    if (PeekMessageW(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE))
-    {
-      uMsg = fl_msg.message;
-      wParam = fl_msg.wParam;
-      lParam = fl_msg.lParam;
-    }
-  case WM_DEADCHAR:
-  case WM_SYSDEADCHAR:
-  case WM_CHAR:
-  case WM_SYSCHAR: {
-    ulong state = Fl::e_state & 0xff000000; // keep the mouse button state
-    // if GetKeyState is expensive we might want to comment some of these out:
-    if (GetKeyState(VK_SHIFT)&~1) state |= FL_SHIFT;
-    if (GetKeyState(VK_CAPITAL)) state |= FL_CAPS_LOCK;
-    if (GetKeyState(VK_CONTROL)&~1) state |= FL_CTRL;
-    // Alt gets reported for the Alt-GR switch on non-English keyboards.
-    // so we need to check the event as well to get it right:
-    if ((lParam&(1<<29)) //same as GetKeyState(VK_MENU)
-	&& uMsg != WM_CHAR) state |= FL_ALT;
-    if (GetKeyState(VK_NUMLOCK)) state |= FL_NUM_LOCK;
-    if ((GetKeyState(VK_LWIN)|GetKeyState(VK_RWIN))&~1) {
-      // WIN32 bug?  GetKeyState returns garbage if the user hit the
-      // meta key to pop up start menu.  Sigh.
-      if ((GetAsyncKeyState(VK_LWIN)|GetAsyncKeyState(VK_RWIN))&~1)
-	state |= FL_META;
-    }
-    if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
-    Fl::e_state = state;
-    static char buffer[1024];
-    if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
-
-      wchar_t u = (wchar_t) wParam;
-//    Fl::e_length = fl_unicode2utf(&u, 1, buffer);
-      Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
-      buffer[Fl::e_length] = 0;
-
-
-    } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
-      if (state & FL_NUM_LOCK) {
-        // Convert to regular keypress...
-	buffer[0] = Fl::e_keysym-FL_KP;
-	Fl::e_length = 1;
-      } else {
-        // Convert to special keypress...
-	buffer[0] = 0;
-	Fl::e_length = 0;
-	switch (Fl::e_keysym) {
-	  case FL_KP + '0' :
-	    Fl::e_keysym = FL_Insert;
-	    break;
-	  case FL_KP + '1' :
-	    Fl::e_keysym = FL_End;
-	    break;
-	  case FL_KP + '2' :
-	    Fl::e_keysym = FL_Down;
-	    break;
-	  case FL_KP + '3' :
-	    Fl::e_keysym = FL_Page_Down;
-	    break;
-	  case FL_KP + '4' :
-	    Fl::e_keysym = FL_Left;
-	    break;
-	  case FL_KP + '6' :
-	    Fl::e_keysym = FL_Right;
-	    break;
-	  case FL_KP + '7' :
-	    Fl::e_keysym = FL_Home;
-	    break;
-	  case FL_KP + '8' :
-	    Fl::e_keysym = FL_Up;
-	    break;
-	  case FL_KP + '9' :
-	    Fl::e_keysym = FL_Page_Up;
-	    break;
-	  case FL_KP + '.' :
-	    Fl::e_keysym = FL_Delete;
-	    break;
-	  case FL_KP + '/' :
-	  case FL_KP + '*' :
-	  case FL_KP + '-' :
-	  case FL_KP + '+' :
-	    buffer[0] = Fl::e_keysym-FL_KP;
-	    Fl::e_length = 1;
-	    break;
+      case WM_DPICHANGED: { // 0x02E0
+	if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+	  RECT r;
+	  float f = HIWORD(wParam) / 96.;
+	  GetClientRect(hWnd, &r);
+	  float old_f = float(r.right) / window->w();
+	  int ns = window->driver()->screen_num();
+	  Fl::screen_driver()->scale(ns, f);
+	  window->driver()->resize_after_scale_change(ns, old_f, f);
 	}
+	return 0;
       }
-    } else if ((lParam & (1<<31))==0) {
-#ifdef FLTK_PREVIEW_DEAD_KEYS
-      if ((lParam & (1<<24))==0) { // clear if dead key (always?)
-        wchar_t u = (wchar_t) wParam;
-        Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
-        buffer[Fl::e_length] = 0;
-      } else { // set if "extended key" (never printable?)
-        buffer[0] = 0;
-        Fl::e_length = 0;
-      }
-#else
-      buffer[0] = 0;
-      Fl::e_length = 0;
-#endif
-    }
-    Fl::e_text = buffer;
-    if (lParam & (1<<31)) { // key up events.
-      if (Fl::handle(FL_KEYUP, window)) return 0;
-      break;
-    }
-    // for (int i = lParam&0xff; i--;)
-    while (window->parent()) window = window->window();
-    if (Fl::handle(FL_KEYBOARD,window)) {
-	  if (uMsg==WM_DEADCHAR || uMsg==WM_SYSDEADCHAR)
-		Fl::compose_state = 1;
+#endif // FLTK_HIDPI_SUPPORT
+
+      case WM_QUIT: // this should not happen?
+	Fl::fatal("WM_QUIT message");
+
+      case WM_CLOSE: // user clicked close box
+	Fl::handle(FL_CLOSE, window);
+	return 0;
+
+      case WM_SYNCPAINT:
+      case WM_NCPAINT:
+      case WM_ERASEBKGND:
+	// Andreas Weitl - WM_SYNCPAINT needs to be passed to DefWindowProc
+	// so that Windows can generate the proper paint messages...
+	// Similarly, WM_NCPAINT and WM_ERASEBKGND need this, too...
+	break;
+
+      case WM_PAINT: {
+	Fl_Region R, R2;
+	Fl_X *i = Fl_X::i(window);
+	window->driver()->wait_for_expose_value = 0;
+	char redraw_whole_window = false;
+	if (!i->region && window->damage()) {
+	  // Redraw the whole window...
+	  i->region = CreateRectRgn(0, 0, window->w(), window->h());
+	  redraw_whole_window = true;
+	}
+
+	// We need to merge WIN32's damage into FLTK's damage.
+	R = CreateRectRgn(0, 0, 0, 0);
+	int r = GetUpdateRgn(hWnd, R, 0);
+	if (r == NULLREGION && !redraw_whole_window) {
+	  DeleteObject(R);
+	  break;
+	}
+
+	// convert i->region in FLTK units to R2 in drawing units
+	R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL);
+
+	if (R2) {
+	  // Also tell WIN32 that we are drawing someplace else as well...
+	  CombineRgn(R2, R2, R, RGN_OR);
+	  DeleteObject(R);
+	} else {
+	  R2 = R;
+	}
+	if (window->type() == FL_DOUBLE_WINDOW)
+	  ValidateRgn(hWnd, 0);
+	else {
+	  ValidateRgn(hWnd, R2);
+	}
+
+	// convert R2 in drawing units to i->region in FLTK units
+	i->region = Fl_GDI_Graphics_Driver::scale_region(R2, 1 / scale, NULL);
+
+	window->clear_damage((uchar)(window->damage() | FL_DAMAGE_EXPOSE));
+	// These next two statements should not be here, so that all update
+	// is deferred until Fl::flush() is called during idle.  However WIN32
+	// apparently is very unhappy if we don't obey it and draw right now.
+	// Very annoying!
+	fl_GetDC(hWnd); // Make sure we have a DC for this window...
+	fl_save_pen();
+	window->driver()->flush();
+	fl_restore_pen();
+	window->clear_damage();
+	return 0;
+      } // case WM_PAINT
+
+      case WM_LBUTTONDOWN:
+	mouse_event(window, 0, 1, wParam, lParam);
+	return 0;
+      case WM_LBUTTONDBLCLK:
+	mouse_event(window, 1, 1, wParam, lParam);
+	return 0;
+      case WM_LBUTTONUP:
+	mouse_event(window, 2, 1, wParam, lParam);
+	return 0;
+      case WM_MBUTTONDOWN:
+	mouse_event(window, 0, 2, wParam, lParam);
+	return 0;
+      case WM_MBUTTONDBLCLK:
+	mouse_event(window, 1, 2, wParam, lParam);
+	return 0;
+      case WM_MBUTTONUP:
+	mouse_event(window, 2, 2, wParam, lParam);
+	return 0;
+      case WM_RBUTTONDOWN:
+	mouse_event(window, 0, 3, wParam, lParam);
+	return 0;
+      case WM_RBUTTONDBLCLK:
+	mouse_event(window, 1, 3, wParam, lParam);
+	return 0;
+      case WM_RBUTTONUP:
+	mouse_event(window, 2, 3, wParam, lParam);
+	return 0;
+
+      case WM_MOUSEMOVE:
+#ifdef USE_TRACK_MOUSE
+	if (track_mouse_win != window) {
+	  TRACKMOUSEEVENT tme;
+	  tme.cbSize    = sizeof(TRACKMOUSEEVENT);
+	  tme.dwFlags   = TME_LEAVE;
+	  tme.hwndTrack = hWnd;
+	  _TrackMouseEvent(&tme);
+	  track_mouse_win = window;
+	}
+#endif	// USE_TRACK_MOUSE
+	mouse_event(window, 3, 0, wParam, lParam);
+	return 0;
+
+      case WM_MOUSELEAVE:
+	if (track_mouse_win == window) { // we left the top level window !
+	  Fl_Window *tw = window;
+	  while (tw->parent()) // find top level window
+	    tw = tw->window();
+	  Fl::belowmouse(0);
+	  Fl::handle(FL_LEAVE, tw);
+	}
+	track_mouse_win = 0; // force TrackMouseEvent() restart
+	break;
+
+      case WM_SETFOCUS:
+	if ((Fl::modal_) && (Fl::modal_ != window)) {
+	  SetFocus(fl_xid(Fl::modal_));
 	  return 0;
 	}
-    break;}
+	Fl::handle(FL_FOCUS, window);
+	break;
 
-  case WM_MOUSEWHEEL: {
-    static int delta = 0; // running total of all motion
-    delta += (SHORT)(HIWORD(wParam));
-    Fl::e_dx = 0;
-    Fl::e_dy = -delta / WHEEL_DELTA;
-    delta += Fl::e_dy * WHEEL_DELTA;
-    if (Fl::e_dy) Fl::handle(FL_MOUSEWHEEL, window);
-    return 0;
-  }
+      case WM_KILLFOCUS:
+	Fl::handle(FL_UNFOCUS, window);
+	Fl::flush(); // it never returns to main loop when deactivated...
+	break;
 
-// This is only defined on Vista and upwards...
-#ifndef WM_MOUSEHWHEEL
-#define WM_MOUSEHWHEEL 0x020E
+      case WM_SHOWWINDOW:
+	if (!window->parent()) {
+	  Fl::handle(wParam ? FL_SHOW : FL_HIDE, window);
+	}
+	break;
+
+      case WM_ACTIVATEAPP:
+	// From eric@vfx.sel.sony.com, we should process WM_ACTIVATEAPP
+	// messages to restore the correct state of the shift/ctrl/alt/lock
+	// keys...  Added control, shift, alt, and meta keys, and changed
+	// to use GetAsyncKeyState and do it when wParam is 1
+	// (that means we have focus...)
+	if (wParam) {
+	  ulong state = 0;
+	  if (GetAsyncKeyState(VK_CAPITAL))
+	    state |= FL_CAPS_LOCK;
+	  if (GetAsyncKeyState(VK_NUMLOCK))
+	    state |= FL_NUM_LOCK;
+	  if (GetAsyncKeyState(VK_SCROLL))
+	    state |= FL_SCROLL_LOCK;
+	  if (GetAsyncKeyState(VK_CONTROL) & ~1)
+	    state |= FL_CTRL;
+	  if (GetAsyncKeyState(VK_SHIFT) & ~1)
+	    state |= FL_SHIFT;
+	  if (GetAsyncKeyState(VK_MENU))
+	    state |= FL_ALT;
+	  if ((GetAsyncKeyState(VK_LWIN) | GetAsyncKeyState(VK_RWIN)) & ~1)
+	    state |= FL_META;
+	  Fl::e_state = state;
+	  return 0;
+	}
+	break;
+
+      case WM_INPUTLANGCHANGE:
+	fl_get_codepage();
+	break;
+      case WM_IME_COMPOSITION:
+	// if (!fl_is_nt4() && lParam & GCS_RESULTCLAUSE) {
+	//   HIMC himc = ImmGetContext(hWnd);
+	//     wlen = ImmGetCompositionStringW(himc, GCS_RESULTSTR,
+	//				       wbuf, sizeof(wbuf)) / sizeof(short);
+	//     if (wlen < 0) wlen = 0;
+	//	 wbuf[wlen] = 0;
+	//	 ImmReleaseContext(hWnd, himc);
+	//     }
+	break;
+
+      case WM_KEYDOWN:
+      case WM_SYSKEYDOWN:
+      case WM_KEYUP:
+      case WM_SYSKEYUP:
+	// save the keysym until we figure out the characters:
+	Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam, lParam & (1 << 24));
+	// See if TranslateMessage turned it into a WM_*CHAR message:
+	if (PeekMessageW(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE)) {
+	  uMsg = fl_msg.message;
+	  wParam = fl_msg.wParam;
+	  lParam = fl_msg.lParam;
+	}
+	// FALLTHROUGH ...
+
+      case WM_DEADCHAR:
+      case WM_SYSDEADCHAR:
+      case WM_CHAR:
+      case WM_SYSCHAR: {
+	ulong state = Fl::e_state & 0xff000000; // keep the mouse button state
+	// if GetKeyState is expensive we might want to comment some of these out:
+	if (GetKeyState(VK_SHIFT) & ~1)
+	  state |= FL_SHIFT;
+	if (GetKeyState(VK_CAPITAL))
+	  state |= FL_CAPS_LOCK;
+	if (GetKeyState(VK_CONTROL) & ~1)
+	  state |= FL_CTRL;
+	// Alt gets reported for the Alt-GR switch on non-English keyboards.
+	// so we need to check the event as well to get it right:
+	if ((lParam & (1 << 29)) // same as GetKeyState(VK_MENU)
+	    && uMsg != WM_CHAR)
+	  state |= FL_ALT;
+	if (GetKeyState(VK_NUMLOCK))
+	  state |= FL_NUM_LOCK;
+	if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & ~1) {
+	  // WIN32 bug?  GetKeyState returns garbage if the user hit the
+	  // meta key to pop up start menu.  Sigh.
+	  if ((GetAsyncKeyState(VK_LWIN) | GetAsyncKeyState(VK_RWIN)) & ~1)
+	    state |= FL_META;
+	}
+	if (GetKeyState(VK_SCROLL))
+	  state |= FL_SCROLL_LOCK;
+	Fl::e_state = state;
+	static char buffer[1024];
+	if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
+	  wchar_t u = (wchar_t)wParam;
+	  Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+	  buffer[Fl::e_length] = 0;
+	} else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
+	  if (state & FL_NUM_LOCK) {
+	    // Convert to regular keypress...
+	    buffer[0] = Fl::e_keysym - FL_KP;
+	    Fl::e_length = 1;
+	  } else {
+	    // Convert to special keypress...
+	    buffer[0] = 0;
+	    Fl::e_length = 0;
+	    switch (Fl::e_keysym) {
+	      case FL_KP + '0':
+		Fl::e_keysym = FL_Insert;
+		break;
+	      case FL_KP + '1':
+		Fl::e_keysym = FL_End;
+		break;
+	      case FL_KP + '2':
+		Fl::e_keysym = FL_Down;
+		break;
+	      case FL_KP + '3':
+		Fl::e_keysym = FL_Page_Down;
+		break;
+	      case FL_KP + '4':
+		Fl::e_keysym = FL_Left;
+		break;
+	      case FL_KP + '6':
+		Fl::e_keysym = FL_Right;
+		break;
+	      case FL_KP + '7':
+		Fl::e_keysym = FL_Home;
+		break;
+	      case FL_KP + '8':
+		Fl::e_keysym = FL_Up;
+		break;
+	      case FL_KP + '9':
+		Fl::e_keysym = FL_Page_Up;
+		break;
+	      case FL_KP + '.':
+		Fl::e_keysym = FL_Delete;
+		break;
+	      case FL_KP + '/':
+	      case FL_KP + '*':
+	      case FL_KP + '-':
+	      case FL_KP + '+':
+		buffer[0] = Fl::e_keysym - FL_KP;
+		Fl::e_length = 1;
+		break;
+	    }
+	  }
+	} else if ((lParam & (1 << 31)) == 0) {
+#ifdef FLTK_PREVIEW_DEAD_KEYS
+	  if ((lParam & (1 << 24)) == 0) { // clear if dead key (always?)
+	    wchar_t u = (wchar_t)wParam;
+	    Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+	    buffer[Fl::e_length] = 0;
+	  } else { // set if "extended key" (never printable?)
+	    buffer[0] = 0;
+	    Fl::e_length = 0;
+	  }
+#else
+	  buffer[0] = 0;
+	  Fl::e_length = 0;
 #endif
+	}
+	Fl::e_text = buffer;
+	if (lParam & (1 << 31)) { // key up events.
+	  if (Fl::handle(FL_KEYUP, window))
+	    return 0;
+	  break;
+	}
+	while (window->parent())
+	  window = window->window();
+	if (Fl::handle(FL_KEYBOARD, window)) {
+	  if (uMsg == WM_DEADCHAR || uMsg == WM_SYSDEADCHAR)
+	    Fl::compose_state = 1;
+	  return 0;
+	}
+	break; // WM_KEYDOWN ... WM_SYSKEYUP, WM_DEADCHAR ... WM_SYSCHAR
+      } // case WM_DEADCHAR ... WM_SYSCHAR
 
-  case WM_MOUSEHWHEEL: {
-      static int delta = 0; // running total of all motion
-      delta += (SHORT)(HIWORD(wParam));
-      Fl::e_dy = 0;
-      Fl::e_dx = delta / WHEEL_DELTA;
-      delta -= Fl::e_dx * WHEEL_DELTA;
-      if (Fl::e_dx) Fl::handle(FL_MOUSEWHEEL, window);
-      return 0;
-    }
+      case WM_MOUSEWHEEL: {
+	static int delta = 0; // running total of all motion
+	delta += (SHORT)(HIWORD(wParam));
+	Fl::e_dx = 0;
+	Fl::e_dy = -delta / WHEEL_DELTA;
+	delta += Fl::e_dy * WHEEL_DELTA;
+	if (Fl::e_dy)
+	  Fl::handle(FL_MOUSEWHEEL, window);
+	return 0;
+      }
 
-  case WM_GETMINMAXINFO:
-      Fl_WinAPI_Window_Driver::driver(window)->set_minmax((LPMINMAXINFO)lParam);
-    break;
+      case WM_MOUSEHWHEEL: {
+	static int delta = 0; // running total of all motion
+	delta += (SHORT)(HIWORD(wParam));
+	Fl::e_dy = 0;
+	Fl::e_dx = delta / WHEEL_DELTA;
+	delta -= Fl::e_dx * WHEEL_DELTA;
+	if (Fl::e_dx)
+	  Fl::handle(FL_MOUSEWHEEL, window);
+	return 0;
+      }
 
-  case WM_SIZE:
-    if (!window->parent()) {
-      if (wParam == SIZE_MINIMIZED || wParam == SIZE_MAXHIDE) {
-	Fl::handle(FL_HIDE, window);
-      } else {
-	Fl::handle(FL_SHOW, window);
+      case WM_GETMINMAXINFO:
+	Fl_WinAPI_Window_Driver::driver(window)->set_minmax((LPMINMAXINFO)lParam);
+	break;
+
+      case WM_SIZE:
+	if (!window->parent()) {
+	  if (wParam == SIZE_MINIMIZED || wParam == SIZE_MAXHIDE) {
+	    Fl::handle(FL_HIDE, window);
+	  } else {
+	    Fl::handle(FL_SHOW, window);
+	    resize_bug_fix = window;
+	    window->size(ceil(LOWORD(lParam) / scale), ceil(HIWORD(lParam) / scale));
+	    // fprintf(LOG,"WM_SIZE size(%.0f,%.0f) graph(%d,%d) s=%.2f\n",
+	    // 	       ceil(LOWORD(lParam)/scale),ceil(HIWORD(lParam)/scale),
+	    //	       LOWORD(lParam),HIWORD(lParam),scale);
+	  }
+	}
+	break;
+
+      case WM_MOVE: {
+	if (IsIconic(hWnd)) {
+	  break;
+	}
 	resize_bug_fix = window;
-	window->size( ceil(LOWORD(lParam)/scale), ceil(HIWORD(lParam)/scale) );
-//fprintf(LOG,"WM_SIZE size(%.0f,%.0f) graph(%d,%d) s=%.2f\n",ceil(LOWORD(lParam)/scale),ceil(HIWORD(lParam)/scale),LOWORD(lParam),HIWORD(lParam),scale);
-      }
-    }
-    break;
+	int nx = LOWORD(lParam);
+	int ny = HIWORD(lParam);
+	if (nx & 0x8000) nx -= 65536;
+	if (ny & 0x8000) ny -= 65536;
+	// fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
+	// detect when window centre changes screen
+	Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
+	Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
+	int olds = wd->screen_num();
+	int news = sd->screen_num_unscaled(nx + window->w() * scale / 2, ny + window->h() * scale / 2);
+	if (news == -1)
+	  news = olds;
+	float s = sd->scale(news);
+	// fprintf(LOG,"WM_MOVE olds=%d(%.2f) news=%d(%.2f) busy=%d\n",olds,
+	//	       sd->scale(olds),news, s,
+	//	       Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);
+	// fflush(LOG);
+	if (olds != news) {
+	  if (s != sd->scale(olds) &&
+	      !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
+	      window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
+	    Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
+	    Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
+	    Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
+	  }
+	  else if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy)
+	    wd->screen_num(news);
+	}
+	window->position(nx / scale, ny / scale);
+	break;
+      } // case WM_MOVE
 
-  case WM_MOVE: {
-    if (IsIconic(hWnd)) {
-      break;
-    }
-    resize_bug_fix = window;
-    int nx = LOWORD(lParam);
-    int ny = HIWORD(lParam);
-    if (nx & 0x8000) nx -= 65536;
-    if (ny & 0x8000) ny -= 65536;
-//fprintf(LOG,"WM_MOVE position(%d,%d) s=%.2f\n",int(nx/scale),int(ny/scale),scale);
-// detect when window centre changes screen
-    Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
-    Fl_WinAPI_Window_Driver *wd = Fl_WinAPI_Window_Driver::driver(window);
-    int olds = wd->screen_num();
-    int news = sd->screen_num_unscaled(nx + window->w()*scale/2, ny + window->h()*scale/2);
-    if (news == -1) news = olds;
-    float s = sd->scale(news);
-//fprintf(LOG,"WM_MOVE olds=%d(%.2f) news=%d(%.2f) busy=%d\n",olds, sd->scale(olds),news, s, Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy);fflush(LOG);
-    if (olds != news) {
-      if (s != sd->scale(olds) &&
-          !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy &&
-          window->user_data() != &Fl_WinAPI_Screen_Driver::transient_scale_display) {
-        Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy = true;
-        Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.screen = news;
-        Fl::add_timeout(1, Fl_WinAPI_Window_Driver::resize_after_screen_change, window);
-      }
-      else if(!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) wd->screen_num(news);
-    }
-      window->position(nx/scale, ny/scale);
-  }
-    break;
-
-  case WM_SETCURSOR:
-    if (LOWORD(lParam) == HTCLIENT) {
-      while (window->parent()) window = window->window();
-      SetCursor(Fl_WinAPI_Window_Driver::driver(window)->cursor);
-      return 0;
-    }
-    break;
+      case WM_SETCURSOR:
+	if (LOWORD(lParam) == HTCLIENT) {
+	  while (window->parent())
+	    window = window->window();
+	  SetCursor(Fl_WinAPI_Window_Driver::driver(window)->cursor);
+	  return 0;
+	}
+	break;
 
 #if USE_COLORMAP
-  case WM_QUERYNEWPALETTE :
-    fl_GetDC(hWnd);
-    if (fl_select_palette()) InvalidateRect(hWnd, NULL, FALSE);
-    break;
+      case WM_QUERYNEWPALETTE:
+	fl_GetDC(hWnd);
+	if (fl_select_palette())
+	  InvalidateRect(hWnd, NULL, FALSE);
+	break;
 
-  case WM_PALETTECHANGED:
-    //fl_GetDC(hWnd);
-    //if ((HWND)wParam != hWnd && fl_select_palette()) UpdateColors(fl_gc);
-    if ((HWND)wParam != hWnd && fl_select_palette()) UpdateColors(fl_GetDC(hWnd));
-    break;
+      case WM_PALETTECHANGED:
+	if ((HWND)wParam != hWnd && fl_select_palette())
+	  UpdateColors(fl_GetDC(hWnd));
+	break;
 
-  case WM_CREATE :
-    fl_GetDC(hWnd);
-    fl_select_palette();
-    break;
+      case WM_CREATE:
+	fl_GetDC(hWnd);
+	fl_select_palette();
+	break;
 #endif
 
-  case WM_DESTROYCLIPBOARD:
-    fl_i_own_selection[1] = 0;
-    return 1;
+      case WM_DESTROYCLIPBOARD:
+	fl_i_own_selection[1] = 0;
+	return 1;
 
-  case WM_DISPLAYCHANGE: // occurs when screen configuration (number, position) changes
-    Fl::call_screen_init();
-    Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
-    return 0;
+      case WM_DISPLAYCHANGE: // occurs when screen configuration (number, position) changes
+	Fl::call_screen_init();
+	Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+	return 0;
 
-  case WM_CHANGECBCHAIN:
-    if ((hWnd == clipboard_wnd) && (next_clipboard_wnd == (HWND)wParam))
-      next_clipboard_wnd = (HWND)lParam;
-    else
-      SendMessage(next_clipboard_wnd, WM_CHANGECBCHAIN, wParam, lParam);
-    return 0;
+      case WM_CHANGECBCHAIN:
+	if ((hWnd == clipboard_wnd) && (next_clipboard_wnd == (HWND)wParam))
+	  next_clipboard_wnd = (HWND)lParam;
+	else
+	  SendMessage(next_clipboard_wnd, WM_CHANGECBCHAIN, wParam, lParam);
+	return 0;
 
-  case WM_DRAWCLIPBOARD:
-    // When the clipboard moves between two FLTK windows,
-    // fl_i_own_selection will temporarily be false as we are
-    // processing this message. Hence the need to use fl_find().
-    if (!initial_clipboard && !fl_find(GetClipboardOwner()))
-      fl_trigger_clipboard_notify(1);
-    initial_clipboard = false;
+      case WM_DRAWCLIPBOARD:
+	// When the clipboard moves between two FLTK windows,
+	// fl_i_own_selection will temporarily be false as we are
+	// processing this message. Hence the need to use fl_find().
+	if (!initial_clipboard && !fl_find(GetClipboardOwner()))
+	  fl_trigger_clipboard_notify(1);
+	initial_clipboard = false;
 
-    if (next_clipboard_wnd)
-      SendMessage(next_clipboard_wnd, WM_DRAWCLIPBOARD, wParam, lParam);
+	if (next_clipboard_wnd)
+	  SendMessage(next_clipboard_wnd, WM_DRAWCLIPBOARD, wParam, lParam);
 
-    return 0;
+	return 0;
 
-  default:
-    if (Fl::handle(0,0)) return 0;
-    break;
-  }
-
-
+      default:
+	if (Fl::handle(0, 0))
+	  return 0;
+	break;
+    } // switch (uMsg)
+  } // if (window)
   return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
@@ -1555,8 +1650,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 //   1   |  fix   |   yes
 //   2   |  size  |   yes
 
-static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by, DWORD style, DWORD styleEx,
-                     int w_maxw, int w_minw, int w_maxh, int w_minh, uchar w_size_range_set) {
+static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx, int &by, DWORD style, DWORD styleEx,
+                           int w_maxw, int w_minw, int w_maxh, int w_minh, uchar w_size_range_set) {
   int W = 0, H = 0, xoff = 0, yoff = 0, dx = 0, dy = 0;
   int ret = bx = by = bt = 0;
 
@@ -1564,53 +1659,53 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   float s = Fl::screen_driver()->scale(w->driver()->screen_num());
   if (!w->parent()) {
     if (fl_xid(w)) {
-      Fl_WinAPI_Window_Driver *dr = (Fl_WinAPI_Window_Driver*)w->driver();
+      Fl_WinAPI_Window_Driver *dr = (Fl_WinAPI_Window_Driver *)w->driver();
       dr->border_width_title_bar_height(bx, by, bt);
       xoff = bx;
       yoff = by + bt;
-      dx = 2*bx;
-      dy = 2*by + bt;
-      X = w->x()*s - bx;
-      Y = w->y()*s - bt - by;
-      W = w->w()*s + dx;
-      H = w->h()*s + dy;
+      dx = 2 * bx;
+      dy = 2 * by + bt;
+      X = w->x() * s - bx;
+      Y = w->y() * s - bt - by;
+      W = w->w() * s + dx;
+      H = w->h() * s + dy;
     } else if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
       // required decorated window rectangle for a desired client rectangle.
       // If any part of the function above fails, we will drop to a
       // fallback to get the best guess which is always available.
 
-	 if (!style) {
-	     HWND hwnd = fl_xid(w);
-          // request the style flags of this window, as WIN32 sees them
-          style = GetWindowLong(hwnd, GWL_STYLE);
-          styleEx = GetWindowLong(hwnd, GWL_EXSTYLE);
-	 }
+      if (!style) {
+	HWND hwnd = fl_xid(w);
+	// request the style flags of this window, as WIN32 sees them
+	style = GetWindowLong(hwnd, GWL_STYLE);
+	styleEx = GetWindowLong(hwnd, GWL_EXSTYLE);
+      }
 
       RECT r;
       r.left = w->x() * s;
       r.top = w->y() * s;
-      r.right = (w->x()+w->w())*s;
-      r.bottom = (w->y()+w->h())*s;
+      r.right = (w->x() + w->w()) * s;
+      r.bottom = (w->y() + w->h()) * s;
       // get the decoration rectangle for the desired client rectangle
       BOOL ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
       if (ok) {
-        X = r.left;
-        Y = r.top;
-        W = r.right - r.left;
-        H = r.bottom - r.top;
-        bx = w->x() *s - r.left;
-        by = r.bottom - (w->y() + w->h())*s; // height of the bottom frame
-        bt = w->y() * s - r.top - by; // height of top caption bar
-        xoff = bx;
-        yoff = by + bt;
-        dx = W - w->w() * s;
-        dy = H - w->h() * s;
-        if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh))
-          ret = 2;
-        else
-          ret = 1;
-        fallback = 0;
+	X = r.left;
+	Y = r.top;
+	W = r.right - r.left;
+	H = r.bottom - r.top;
+	bx = w->x() * s - r.left;
+	by = r.bottom - (w->y() + w->h()) * s; // height of the bottom frame
+	bt = w->y() * s - r.top - by;          // height of top caption bar
+	xoff = bx;
+	yoff = by + bt;
+	dx = W - w->w() * s;
+	dy = H - w->h() * s;
+	if (w_size_range_set && (w_maxw != w_minw || w_maxh != w_minh))
+	  ret = 2;
+	else
+	  ret = 1;
+	fallback = 0;
       }
     }
   }
@@ -1632,38 +1727,49 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
       }
       bt = GetSystemMetrics(SM_CYCAPTION);
     }
-    //The coordinates of the whole window, including non-client area
+    // The coordinates of the whole window, including non-client area
     xoff = bx;
     yoff = by + bt;
-    dx = 2*bx;
-    dy = 2*by + bt;
-    X = w->x()-xoff;
-    Y = w->y()-yoff;
-    W = w->w()+dx;
-    H = w->h()+dy;
+    dx = 2 * bx;
+    dy = 2 * by + bt;
+    X = w->x() - xoff;
+    Y = w->y() - yoff;
+    W = w->w() + dx;
+    H = w->h() + dy;
   }
 
-  //Proceed to positioning the window fully inside the screen, if possible
-  //Find screen that contains most of the window
-  //FIXME: this ought to be the "work area" instead of the entire screen !
+  // Proceed to positioning the window fully inside the screen, if possible
+  // Find screen that contains most of the window
+  // FIXME: this ought to be the "work area" instead of the entire screen !
   int scr_x = 0, scr_y = 0, scr_w = 0, scr_h = 0;
-  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X/s, Y/s, W/s, H/s);
-  scr_x *= s; scr_y *= s; scr_w *= s; scr_h *= s;
-  //Make border's lower right corner visible
-  if (scr_x+scr_w < X+W) X = scr_x+scr_w - W;
-  if (scr_y+scr_h < Y+H) Y = scr_y+scr_h - H;
-  //Make border's upper left corner visible
-  if (X<scr_x) X = scr_x;
-  if (Y<scr_y) Y = scr_y;
-  //Make client area's lower right corner visible
-  if (scr_x+scr_w < X+dx+ w->w()) X = scr_x+scr_w - w->w()*s - dx;
-  if (scr_y+scr_h < Y+dy+ w->h()) Y = scr_y+scr_h - w->h()*s - dy;
-  //Make client area's upper left corner visible
-  if (X+xoff < scr_x) X = scr_x-xoff;
-  if (Y+yoff < scr_y) Y = scr_y-yoff;
-  //Return the client area's top left corner in (X,Y)
-  X+=xoff;
-  Y+=yoff;
+  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X / s, Y / s, W / s, H / s);
+  scr_x *= s;
+  scr_y *= s;
+  scr_w *= s;
+  scr_h *= s;
+  // Make border's lower right corner visible
+  if (scr_x + scr_w < X + W)
+    X = scr_x + scr_w - W;
+  if (scr_y + scr_h < Y + H)
+    Y = scr_y + scr_h - H;
+  // Make border's upper left corner visible
+  if (X < scr_x)
+    X = scr_x;
+  if (Y < scr_y)
+    Y = scr_y;
+  // Make client area's lower right corner visible
+  if (scr_x + scr_w < X + dx + w->w())
+    X = scr_x + scr_w - w->w() * s - dx;
+  if (scr_y + scr_h < Y + dy + w->h())
+    Y = scr_y + scr_h - w->h() * s - dy;
+  // Make client area's upper left corner visible
+  if (X + xoff < scr_x)
+    X = scr_x - xoff;
+  if (Y + yoff < scr_y)
+    Y = scr_y - yoff;
+  // Return the client area's top left corner in (X,Y)
+  X += xoff;
+  Y += yoff;
 
   if (w->fullscreen_active()) {
     bx = by = bt = 0;
@@ -1672,57 +1778,63 @@ static int fake_X_wm_style(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, in
   return ret;
 }
 
-int Fl_WinAPI_Window_Driver::fake_X_wm(int &X,int &Y, int &bt,int &bx, int &by) {
+int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by) {
   return fake_X_wm_style(pWindow, X, Y, bt, bx, by, 0, 0, maxw(), minw(), maxh(), minh(), size_range_set());
 }
 
 ////////////////////////////////////////////////////////////////
 
-void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
-  UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER
-             | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
+void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
+  UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
   int is_a_resize = (W != w() || H != h() || is_a_rescale());
   int resize_from_program = (pWindow != resize_bug_fix);
-  if (!resize_from_program) resize_bug_fix = 0;
+  if (!resize_from_program)
+    resize_bug_fix = 0;
   if (X != x() || Y != y() || is_a_rescale()) {
     force_position(1);
   } else {
-    if (!is_a_resize) return;
+    if (!is_a_resize)
+      return;
     flags |= SWP_NOMOVE;
   }
   if (is_a_resize) {
-    pWindow->Fl_Group::resize(X,Y,W,H);
+    pWindow->Fl_Group::resize(X, Y, W, H);
     if (visible_r()) {
       pWindow->redraw();
       // only wait for exposure if this window has a size - a window
       // with no width or height will never get an exposure event
       Fl_X *i = Fl_X::i(pWindow);
-      if (i && W>0 && H>0)
-        wait_for_expose_value = 1;
+      if (i && W > 0 && H > 0)
+	wait_for_expose_value = 1;
     }
   } else {
-    x(X); y(Y);
+    x(X);
+    y(Y);
     flags |= SWP_NOSIZE;
   }
-  if (!border()) flags |= SWP_NOACTIVATE;
+  if (!border())
+    flags |= SWP_NOACTIVATE;
   if (resize_from_program && shown()) {
-    if (!pWindow->resizable()) pWindow->size_range(w(), h(), w(), h());
+    if (!pWindow->resizable())
+      pWindow->size_range(w(), h(), w(), h());
     int dummy_x, dummy_y, bt, bx, by;
     // compute window position and size in scaled units
     float s = Fl::screen_driver()->scale(screen_num());
-    int scaledX = ceil(X*s), scaledY= ceil(Y*s), scaledW = ceil(W*s), scaledH = ceil(H*s);
-    //Ignore window managing when resizing, so that windows (and more
-    //specifically menus) can be moved offscreen.
+    int scaledX = ceil(X * s), scaledY = ceil(Y * s), scaledW = ceil(W * s), scaledH = ceil(H * s);
+    // Ignore window managing when resizing, so that windows (and more
+    // specifically menus) can be moved offscreen.
     if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
       scaledX -= bx;
-      scaledY -= by+bt;
-      scaledW += 2*bx;
-      scaledH += 2*by+bt;
+      scaledY -= by + bt;
+      scaledW += 2 * bx;
+      scaledH += 2 * by + bt;
     }
     // avoid zero size windows. A zero sized window on Win32
     // will cause continouly  new redraw events.
-    if (scaledW<=0) scaledW = 1;
-    if (scaledH<=0) scaledH = 1;
+    if (scaledW <= 0)
+      scaledW = 1;
+    if (scaledH <= 0)
+      scaledH = 1;
     SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH, flags);
   }
 }
@@ -1737,26 +1849,34 @@ void Fl_WinAPI_Window_Driver::resize(int X,int Y,int W,int H) {
  */
 class NameList {
 public:
-  NameList() { name = (char**)malloc(sizeof(char**)); NName = 1; nName = 0; }
+  NameList() {
+    name = (char **)malloc(sizeof(char **));
+    NName = 1;
+    nName = 0;
+  }
   ~NameList() {
     int i;
-    for (i=0; i<nName; i++) free(name[i]);
-    if (name) free(name);
+    for (i = 0; i < nName; i++)
+      free(name[i]);
+    if (name)
+      free(name);
   }
   void add_name(const char *n) {
-    if (NName==nName) {
+    if (NName == nName) {
       NName += 5;
-      name = (char**)realloc(name, NName * sizeof(char*));
+      name = (char **)realloc(name, NName * sizeof(char *));
     }
     name[nName++] = strdup(n);
   }
   char has_name(const char *n) {
     int i;
-    for (i=0; i<nName; i++) {
-      if (strcmp(name[i], n)==0) return 1;
+    for (i = 0; i < nName; i++) {
+      if (strcmp(name[i], n) == 0)
+	return 1;
     }
     return 0;
   }
+
 private:
   char **name;
   int nName, NName;
@@ -1768,7 +1888,7 @@ void fl_fix_focus(); // in Fl.cxx
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
-Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
+Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
   fl_open_display();
@@ -1776,7 +1896,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   // if the window is a subwindow and our parent is not mapped yet, we
   // mark this window visible, so that mapping the parent at a later
   // point in time will call this function again to finally map the subwindow.
-  Fl_Window* w = pWindow;
+  Fl_Window *w = pWindow;
   if (w->parent() && !Fl_X::i(w->window())) {
     w->set_visible();
     return 0L;
@@ -1785,8 +1905,10 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   static NameList class_name_list;
   static const char *first_class_name = 0L;
   const char *class_name = w->xclass();
-  if (!class_name) class_name = first_class_name; // reuse first class name used
-  if (!class_name) class_name = "FLTK"; // default to create a "FLTK" WNDCLASS
+  if (!class_name)
+    class_name = first_class_name; // reuse first class name used
+  if (!class_name)
+    class_name = "FLTK"; // default to create a "FLTK" WNDCLASS
   if (!first_class_name) {
     first_class_name = class_name;
   }
@@ -1796,9 +1918,9 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   // convert UTF-8 class_name to wchar_t for RegisterClassExW and CreateWindowExW
 
   fl_utf8toUtf16(class_name,
-		 (unsigned)strlen(class_name),		// in
-		 (unsigned short*)class_namew,		// out
-		 (unsigned)sizeof(class_namew)/sizeof(wchar_t));	// max. size
+		 (unsigned)strlen(class_name),                     // in
+		 (unsigned short *)class_namew,                    // out
+		 (unsigned)sizeof(class_namew) / sizeof(wchar_t)); // max. size
 
   if (!class_name_list.has_name(class_name)) {
     WNDCLASSEXW wcw;
@@ -1808,7 +1930,6 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
     // Documentation states a device context consumes about 800 bytes
     // of memory... so who cares? If 800 bytes per window is what it
     // takes to speed things up, I'm game.
-    //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
     wcw.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
     wcw.lpfnWndProc = (WNDPROC)WndProc;
     wcw.cbClsExtra = wcw.cbWndExtra = 0;
@@ -1817,8 +1938,6 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
     wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
     wcw.hCursor = LoadCursor(NULL, IDC_ARROW);
-    //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
-    //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
     wcw.hbrBackground = NULL;
     wcw.lpszMenuName = NULL;
     wcw.lpszClassName = class_namew;
@@ -1826,14 +1945,15 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
     class_name_list.add_name(class_name);
   }
 
-  const wchar_t* message_namew = L"FLTK::ThreadWakeup";
-  if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessageW(message_namew);
+  const wchar_t *message_namew = L"FLTK::ThreadWakeup";
+  if (!fl_wake_msg)
+    fl_wake_msg = RegisterWindowMessageW(message_namew);
 
   HWND parent;
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
   DWORD styleEx = WS_EX_LEFT;
 
-  //compute adequate screen where to put the window
+  // compute adequate screen where to put the window
   int nscreen = 0;
   if (w->parent()) {
     nscreen = w->top_window()->driver()->screen_num();
@@ -1865,8 +1985,12 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
     if (!size_range_set()) {
       if (w->resizable()) {
 	Fl_Widget *o = w->resizable();
-	int minw = o->w(); if (minw > 100) minw = 100;
-	int minh = o->h(); if (minh > 100) minh = 100;
+	int minw = o->w();
+	if (minw > 100)
+	  minw = 100;
+	int minh = o->h();
+	if (minh > 100)
+	  minh = 100;
 	w->size_range(w->w() - o->w() + minw, w->h() - o->h() + minh, 0, 0);
       } else {
 	w->size_range(w->w(), w->h(), w->w(), w->h());
@@ -1876,57 +2000,64 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
 
     int wintype = 0;
     if (w->border() && !w->parent()) {
-      if (size_range_set() && (maxw() != minw() || maxh() != minh())) wintype = 2;
-	  else wintype = 1;
+      if (size_range_set() && (maxw() != minw() || maxh() != minh()))
+	wintype = 2;
+      else
+	wintype = 1;
     }
 
     switch (wintype) {
       // No border (used for menus)
       case 0:
-        style |= WS_POPUP;
-        styleEx |= WS_EX_TOOLWINDOW;
-	      break;
+	style |= WS_POPUP;
+	styleEx |= WS_EX_TOOLWINDOW;
+	break;
 
       // Thin border and title bar
       case 1:
-        style |= WS_DLGFRAME | WS_CAPTION;
-        if (!w->modal())
-          style |= WS_SYSMENU | WS_MINIMIZEBOX;
-        break;
+	style |= WS_DLGFRAME | WS_CAPTION;
+	if (!w->modal())
+	  style |= WS_SYSMENU | WS_MINIMIZEBOX;
+	break;
 
       // Thick, resizable border and title bar, with maximize button
       case 2:
-        style |= WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_CAPTION;
-        if (!w->modal())
-          style |= WS_MINIMIZEBOX;
-        break;
+	style |= WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_CAPTION;
+	if (!w->modal())
+	  style |= WS_MINIMIZEBOX;
+	break;
     }
 
-    int xwm = xp , ywm = yp , bt, bx, by; // these are in graphical units
+    int xwm = xp, ywm = yp, bt, bx, by; // these are in graphical units
     fake_X_wm_style(w, xwm, ywm, bt, bx, by, style, styleEx, maxw(), minw(), maxh(), minh(), size_range_set());
-    if (by+bt) {
-      wp += 2*bx;
-      hp += 2*by+bt;
+    if (by + bt) {
+      wp += 2 * bx;
+      hp += 2 * by + bt;
     }
     if (!force_position()) {
       xp = yp = CW_USEDEFAULT;
     } else {
       if (!Fl::grab()) {
-	xp = xwm; yp = ywm;
-        x(xp/s); y(yp/s);
+	xp = xwm;
+	yp = ywm;
+	x(xp / s);
+	y(yp / s);
       }
       xp -= bx;
-      yp -= by+bt;
+      yp -= by + bt;
     }
 
     parent = 0;
     if (w->non_modal() && Fl_X::first && !fl_disable_transient_for) {
       // find some other window to be "transient for":
-      Fl_Window* w = Fl_X::first->w;
-      while (w->parent()) w = w->window();
+      Fl_Window *w = Fl_X::first->w;
+      while (w->parent())
+	w = w->window();
       parent = fl_xid(w);
-      if (!w->visible()) showit = 0;
-    } else if (Fl::grab()) parent = fl_xid(Fl::grab());
+      if (!w->visible())
+	showit = 0;
+    } else if (Fl::grab())
+      parent = fl_xid(Fl::grab());
   }
 
   Fl_X *x = new Fl_X;
@@ -1937,30 +2068,28 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   Fl_WinAPI_Window_Driver::driver(w)->private_dc = 0;
   cursor = LoadCursor(NULL, IDC_ARROW);
   custom_cursor = 0;
-  if (!fl_codepage) fl_get_codepage();
+  if (!fl_codepage)
+    fl_get_codepage();
 
   WCHAR *lab = NULL;
   if (w->label()) {
     size_t l = strlen(w->label());
-//  lab = (WCHAR*) malloc((l + 1) * sizeof(short));
-//  l = fl_utf2unicode((unsigned char*)w->label(), l, (wchar_t*)lab);
-//  lab[l] = 0;
-    unsigned wlen = fl_utf8toUtf16(w->label(), (unsigned) l, NULL, 0); // Pass NULL to query length
+    unsigned wlen = fl_utf8toUtf16(w->label(), (unsigned)l, NULL, 0); // Pass NULL to query length
     wlen++;
-    lab = (WCHAR *) malloc(sizeof(WCHAR)*wlen);
-    wlen = fl_utf8toUtf16(w->label(), (unsigned) l, (unsigned short*)lab, wlen);
+    lab = (WCHAR *)malloc(sizeof(WCHAR) * wlen);
+    wlen = fl_utf8toUtf16(w->label(), (unsigned)l, (unsigned short *)lab, wlen);
     lab[wlen] = 0;
   }
-  x->xid = CreateWindowExW(
-    styleEx,
-    class_namew, lab, style,
-    xp, yp, wp, hp,
-    parent,
-    NULL, // menu
-    fl_display,
-    NULL // creation parameters
-  );
-  if (lab) free(lab);
+  x->xid = CreateWindowExW(styleEx,
+			   class_namew, lab, style,
+			   xp, yp, wp, hp,
+			   parent,
+			   NULL, // menu
+			   fl_display,
+			   NULL // creation parameters
+			  );
+  if (lab)
+    free(lab);
 
   x->next = Fl_X::first;
   Fl_X::first = x;
@@ -1968,15 +2097,14 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
   set_icons();
 
   if (w->fullscreen_active()) {
-  /* We need to make sure that the fullscreen is created on the
-     default monitor, ie the desktop where the shortcut is located
-     etc. This requires that CreateWindow is called with CW_USEDEFAULT
-     for x and y. We can then use GetWindowRect to determine which
-     monitor the window was placed on. */
+    /* We need to make sure that the fullscreen is created on the
+       default monitor, ie the desktop where the shortcut is located
+       etc. This requires that CreateWindow is called with CW_USEDEFAULT
+       for x and y. We can then use GetWindowRect to determine which
+       monitor the window was placed on. */
     RECT rect;
     GetWindowRect(x->xid, &rect);
-    make_fullscreen(rect.left, rect.top,
-                       rect.right - rect.left, rect.bottom - rect.top);
+    make_fullscreen(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
   }
 
   // Setup clipboard monitor target if there are registered handlers and
@@ -1985,7 +2113,10 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
     fl_clipboard_notify_target(x->xid);
 
   wait_for_expose_value = 1;
-  if (show_iconic()) {showit = 0; show_iconic(0);}
+  if (show_iconic()) {
+    showit = 0;
+    show_iconic(0);
+  }
   if (showit) {
     w->set_visible();
     int old_event = Fl::e_number;
@@ -1996,7 +2127,10 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
 
   // Needs to be done before ShowWindow() to get the correct behaviour
   // when we get WM_SETFOCUS.
-  if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
+  if (w->modal()) {
+    Fl::modal_ = w;
+    fl_fix_focus();
+  }
 
   // If we've captured the mouse, we dont want to activate any
   // other windows from the code, or we lose the capture.
@@ -2017,8 +2151,7 @@ Fl_X* Fl_WinAPI_Window_Driver::makeWindow() {
 
 HINSTANCE fl_display = GetModuleHandle(NULL);
 
-void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax)
-{
+void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax) {
   int td, wd, hd, dummy_x, dummy_y;
 
   fake_X_wm(dummy_x, dummy_y, td, wd, hd);
@@ -2027,15 +2160,15 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax)
   hd += td;
 
   float s = Fl::screen_driver()->scale(screen_num());
-  minmax->ptMinTrackSize.x = s*minw() + wd;
-  minmax->ptMinTrackSize.y = s*minh() + hd;
+  minmax->ptMinTrackSize.x = s * minw() + wd;
+  minmax->ptMinTrackSize.y = s * minh() + hd;
   if (maxw()) {
-    minmax->ptMaxTrackSize.x = s*maxw() + wd;
-    minmax->ptMaxSize.x = s*maxw() + wd;
+    minmax->ptMaxTrackSize.x = s * maxw() + wd;
+    minmax->ptMaxSize.x = s * maxw() + wd;
   }
   if (maxh()) {
-    minmax->ptMaxTrackSize.y = s*maxh() + hd;
-    minmax->ptMaxSize.y = s*maxh() + hd;
+    minmax->ptMaxTrackSize.y = s * maxh() + hd;
+    minmax->ptMaxSize.y = s * maxh() + hd;
   }
 }
 
@@ -2044,19 +2177,23 @@ void Fl_WinAPI_Window_Driver::set_minmax(LPMINMAXINFO minmax)
 
 // returns pointer to the filename, or null if name ends with '/'
 const char *Fl_WinAPI_System_Driver::filename_name(const char *name) {
-  const char *p,*q;
-  if (!name) return (0);
+  const char *p, *q;
+  if (!name)
+    return (0);
   q = name;
-  if (q[0] && q[1]==':') q += 2; // skip leading drive letter
-  for (p = q; *p; p++) if (*p == '/' || *p == '\\') q = p+1;
+  if (q[0] && q[1] == ':')
+    q += 2; // skip leading drive letter
+  for (p = q; *p; p++) {
+    if (*p == '/' || *p == '\\')
+      q = p + 1;
+  }
   return q;
 }
 
 
 ////////////////////////////////////////////////////////////////
 
-static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
-                           int hotx, int hoty) {
+static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon, int hotx, int hoty) {
   BITMAPV5HEADER bi;
   HBITMAP bitmap, mask;
   DWORD *bits;
@@ -2085,30 +2222,30 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
   HDC hdc;
 
   hdc = GetDC(NULL);
-  bitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+  bitmap = CreateDIBSection(hdc, (BITMAPINFO *)&bi, DIB_RGB_COLORS, (void **)&bits, NULL, 0);
   ReleaseDC(NULL, hdc);
 
   if (bits == NULL)
     return NULL;
 
-  const uchar *i = (const uchar*)*image->data();
-  const int extra_data = image->ld() ? (image->ld()-image->w()*image->d()) : 0;
+  const uchar *i = (const uchar *)*image->data();
+  const int extra_data = image->ld() ? (image->ld() - image->w() * image->d()) : 0;
 
   for (int y = 0; y < image->h(); y++) {
     for (int x = 0; x < image->w(); x++) {
       switch (image->d()) {
-      case 1:
-        *bits = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
-        break;
-      case 2:
-        *bits = (i[1]<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
-        break;
-      case 3:
-        *bits = (0xff<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
-        break;
-      case 4:
-        *bits = (i[3]<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
-        break;
+	case 1:
+	  *bits = (0xff << 24) | (i[0] << 16) | (i[0] << 8) | i[0];
+	  break;
+	case 2:
+	  *bits = (i[1] << 24) | (i[0] << 16) | (i[0] << 8) | i[0];
+	  break;
+	case 3:
+	  *bits = (0xff << 24) | (i[0] << 16) | (i[1] << 8) | i[2];
+	  break;
+	case 4:
+	  *bits = (i[3] << 24) | (i[0] << 16) | (i[1] << 8) | i[2];
+	  break;
       }
       i += image->d();
       bits++;
@@ -2117,7 +2254,7 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
   }
 
   // A mask bitmap is still needed even though it isn't used
-  mask = CreateBitmap(image->w(),image->h(),1,1,NULL);
+  mask = CreateBitmap(image->w(), image->h(), 1, 1, NULL);
   if (mask == NULL) {
     DeleteObject(bitmap);
     return NULL;
@@ -2144,24 +2281,21 @@ static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
 static HICON default_big_icon = NULL;
 static HICON default_small_icon = NULL;
 
-static const Fl_RGB_Image *find_best_icon(int ideal_width,
-                                          const Fl_RGB_Image *icons[],
-                                          int count) {
+static const Fl_RGB_Image *find_best_icon(int ideal_width, const Fl_RGB_Image *icons[], int count) {
   const Fl_RGB_Image *best;
 
   best = NULL;
 
-  for (int i = 0;i < count;i++) {
+  for (int i = 0; i < count; i++) {
     if (best == NULL)
       best = icons[i];
     else {
       if (best->w() < ideal_width) {
-        if (icons[i]->w() > best->w())
-          best = icons[i];
+	if (icons[i]->w() > best->w())
+	  best = icons[i];
       } else {
-        if ((icons[i]->w() >= ideal_width) &&
-            (icons[i]->w() < best->w()))
-          best = icons[i];
+	if ((icons[i]->w() >= ideal_width) && (icons[i]->w() < best->w()))
+	  best = icons[i];
       }
     }
   }
@@ -2191,39 +2325,36 @@ void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {
 }
 
 /** Sets the window icons using Windows' native HICON icon handles.
- 
+
  The given icons are copied. You can free the icons immediately after
  this call.
- 
+
  \param[in] big_icon large window icon
  \param[in] small_icon  small window icon
  */
-void Fl_Window::icons(HICON big_icon, HICON small_icon)
-{
+void Fl_Window::icons(HICON big_icon, HICON small_icon) {
   free_icons();
-  
   if (big_icon != NULL)
     Fl_WinAPI_Window_Driver::driver(this)->icon_->big_icon = CopyIcon(big_icon);
   if (small_icon != NULL)
     Fl_WinAPI_Window_Driver::driver(this)->icon_->small_icon = CopyIcon(small_icon);
-  
   if (Fl_X::i(this))
     Fl_WinAPI_Window_Driver::driver(this)->set_icons();
 }
 
 /** Sets the default window icons.
- 
+
  Convenience function to set the default icons using Windows'
  native HICON icon handles.
- 
+
  The given icons are copied. You can free the icons immediately after
  this call.
- 
+
  \param[in] big_icon default large icon for all windows
  subsequently created
  \param[in] small_icon default small icon for all windows
  subsequently created
- 
+
  \see Fl_Window::default_icon(const Fl_RGB_Image *)
  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
  \see Fl_Window::icon(const Fl_RGB_Image *)
@@ -2264,11 +2395,11 @@ void Fl_WinAPI_Window_Driver::set_icons() {
     const Fl_RGB_Image *best_big, *best_small;
 
     best_big = find_best_icon(GetSystemMetrics(SM_CXICON),
-                              (const Fl_RGB_Image **)icon_->icons,
-                              icon_->count);
+			      (const Fl_RGB_Image **)icon_->icons,
+			      icon_->count);
     best_small = find_best_icon(GetSystemMetrics(SM_CXSMICON),
-                                (const Fl_RGB_Image **)icon_->icons,
-                                icon_->count);
+				(const Fl_RGB_Image **)icon_->icons,
+				icon_->count);
 
     if (best_big != NULL)
       big_icon = image_to_icon(best_big, true, 0, 0);
@@ -2292,7 +2423,7 @@ void Fl_WinAPI_Window_Driver::set_icons() {
 ////////////////////////////////////////////////////////////////
 
 #ifndef IDC_HAND
-#  define IDC_HAND  MAKEINTRESOURCE(32649)
+#define IDC_HAND MAKEINTRESOURCE(32649)
 #endif // !IDC_HAND
 
 int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
@@ -2303,31 +2434,53 @@ int Fl_WinAPI_Window_Driver::set_cursor(Fl_Cursor c) {
     new_cursor = NULL;
   else {
     switch (c) {
-    case FL_CURSOR_ARROW:   n = IDC_ARROW; break;
-    case FL_CURSOR_CROSS:   n = IDC_CROSS; break;
-    case FL_CURSOR_WAIT:    n = IDC_WAIT; break;
-    case FL_CURSOR_INSERT:  n = IDC_IBEAM; break;
-    case FL_CURSOR_HAND:    n = IDC_HAND; break;
-    case FL_CURSOR_HELP:    n = IDC_HELP; break;
-    case FL_CURSOR_MOVE:    n = IDC_SIZEALL; break;
-    case FL_CURSOR_N:
-    case FL_CURSOR_S:
+      case FL_CURSOR_ARROW:
+	n = IDC_ARROW;
+	break;
+      case FL_CURSOR_CROSS:
+	n = IDC_CROSS;
+	break;
+      case FL_CURSOR_WAIT:
+	n = IDC_WAIT;
+	break;
+      case FL_CURSOR_INSERT:
+	n = IDC_IBEAM;
+	break;
+      case FL_CURSOR_HAND:
+	n = IDC_HAND;
+	break;
+      case FL_CURSOR_HELP:
+	n = IDC_HELP;
+	break;
+      case FL_CURSOR_MOVE:
+	n = IDC_SIZEALL;
+	break;
+      case FL_CURSOR_N:
+      case FL_CURSOR_S:
       // FIXME: Should probably have fallbacks for these instead
-    case FL_CURSOR_NS:      n = IDC_SIZENS; break;
-    case FL_CURSOR_NE:
-    case FL_CURSOR_SW:
+      case FL_CURSOR_NS:
+	n = IDC_SIZENS;
+	break;
+      case FL_CURSOR_NE:
+      case FL_CURSOR_SW:
       // FIXME: Dito.
-    case FL_CURSOR_NESW:    n = IDC_SIZENESW; break;
-    case FL_CURSOR_E:
-    case FL_CURSOR_W:
+      case FL_CURSOR_NESW:
+	n = IDC_SIZENESW;
+	break;
+      case FL_CURSOR_E:
+      case FL_CURSOR_W:
       // FIXME: Dito.
-    case FL_CURSOR_WE:      n = IDC_SIZEWE; break;
-    case FL_CURSOR_SE:
-    case FL_CURSOR_NW:
+      case FL_CURSOR_WE:
+	n = IDC_SIZEWE;
+	break;
+      case FL_CURSOR_SE:
+      case FL_CURSOR_NW:
       // FIXME: Dito.
-    case FL_CURSOR_NWSE:    n = IDC_SIZENWSE; break;
-    default:
-      return 0;
+      case FL_CURSOR_NWSE:
+	n = IDC_SIZENWSE;
+	break;
+      default:
+	return 0;
     }
 
     new_cursor = LoadCursor(NULL, n);
@@ -2381,7 +2534,7 @@ fl_uintptr_t Fl_WinAPI_Window_Driver::current_cursor() {
 // that color.
 // Actually it is totally disabled.
 // Fl_Widget *fl_boxcheat;
-//static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}
+// static inline int can_boxcheat(uchar b) {return (b == 1 || (b & 2) && b <= 15);}
 
 void Fl_WinAPI_Window_Driver::show() {
   if (!shown()) {
@@ -2390,9 +2543,11 @@ void Fl_WinAPI_Window_Driver::show() {
   } else {
     // Once again, we would lose the capture if we activated the window.
     Fl_X *i = Fl_X::i(pWindow);
-    if (IsIconic(i->xid)) OpenIcon(i->xid);
-    if (!fl_capture) BringWindowToTop(i->xid);
-    //ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
+    if (IsIconic(i->xid))
+      OpenIcon(i->xid);
+    if (!fl_capture)
+      BringWindowToTop(i->xid);
+    // ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
 #ifdef USE_PRINT_BUTTON
   void preparePrintFront(void);
@@ -2409,15 +2564,17 @@ HWND fl_window = NULL;
 HDC fl_GetDC(HWND w) {
   HDC gc = (HDC)Fl_Graphics_Driver::default_driver().gc();
   if (gc) {
-    if (w == fl_window  &&  fl_window != NULL) return gc;
-    if (fl_window) fl_release_dc(fl_window, gc); // ReleaseDC
+    if (w == fl_window && fl_window != NULL)
+      return gc;
+    if (fl_window)
+      fl_release_dc(fl_window, gc); // ReleaseDC
   }
   gc = GetDC(w);
   Fl_Graphics_Driver::default_driver().gc(gc);
   fl_save_dc(w, gc);
   fl_window = w;
   // calling GetDC seems to always reset these: (?)
-  SetTextAlign(gc, TA_BASELINE|TA_LEFT);
+  SetTextAlign(gc, TA_BASELINE | TA_LEFT);
   SetBkMode(gc, TRANSPARENT);
 
   return gc;
@@ -2427,16 +2584,15 @@ HDC fl_GetDC(HWND w) {
 /* Make sure that all allocated fonts are released. This works only if
    Fl::run() is allowed to exit by closing all windows. Calling 'exit(int)'
    will not automatically free any fonts. */
-void fl_free_fonts(void)
-{
-// remove the Fl_Font_Descriptor chains
+void fl_free_fonts(void) {
+  // remove the Fl_Font_Descriptor chains
   int i;
-  Fl_Fontdesc * s;
-  Fl_Font_Descriptor * f;
-  Fl_Font_Descriptor * ff;
-  for (i=0; i<FL_FREE_FONT; i++) {
+  Fl_Fontdesc *s;
+  Fl_Font_Descriptor *f;
+  Fl_Font_Descriptor *ff;
+  for (i = 0; i < FL_FREE_FONT; i++) {
     s = fl_fonts + i;
-    for (f=s->first; f; f=ff) {
+    for (f = s->first; f; f = ff) {
       ff = f->next;
       delete f;
       s->first = ff;
@@ -2463,17 +2619,17 @@ void fl_free_fonts(void)
 //  the initial state and releases the DC. When the program exits, 'fl_cleanup_dc_list'
 //  frees any remaining nodes in the list.
 
-struct Win_DC_List {      // linked list
-  HWND    window;         // window handle
-  HDC     dc;             // device context handle
-  int     saved_dc;       // initial state of DC
-  Win_DC_List * next;     // pointer to next item
+struct Win_DC_List { // linked list
+  HWND window;       // window handle
+  HDC dc;            // device context handle
+  int saved_dc;      // initial state of DC
+  Win_DC_List *next; // pointer to next item
 };
 
-static Win_DC_List * win_DC_list = 0;
+static Win_DC_List *win_DC_list = 0;
 
-void fl_save_dc( HWND w, HDC dc) {
-  Win_DC_List * t;
+void fl_save_dc(HWND w, HDC dc) {
+  Win_DC_List *t;
   t = new Win_DC_List;
   t->window = w;
   t->dc = dc;
@@ -2486,8 +2642,8 @@ void fl_save_dc( HWND w, HDC dc) {
 }
 
 void fl_release_dc(HWND w, HDC dc) {
-  Win_DC_List * t= win_DC_list;
-  Win_DC_List * prev = 0;
+  Win_DC_List *t = win_DC_list;
+  Win_DC_List *prev = 0;
   if (!t)
     return;
   do {
@@ -2495,9 +2651,9 @@ void fl_release_dc(HWND w, HDC dc) {
       RestoreDC(dc, t->saved_dc);
       ReleaseDC(w, dc);
       if (!prev) {
-        win_DC_list = t->next;   // delete first item
+	win_DC_list = t->next; // delete first item
       } else {
-        prev->next = t->next;       // one in the middle
+	prev->next = t->next; // one in the middle
       }
       delete (t);
       return;
@@ -2507,56 +2663,64 @@ void fl_release_dc(HWND w, HDC dc) {
   } while (t);
 }
 
-void fl_cleanup_dc_list(void) {          // clean up the list
-  Win_DC_List * t = win_DC_list;
-  if (!t)return;
+void fl_cleanup_dc_list(void) { // clean up the list
+  Win_DC_List *t = win_DC_list;
+  if (!t)
+    return;
   do {
     RestoreDC(t->dc, t->saved_dc);
     ReleaseDC(t->window, t->dc);
     win_DC_list = t->next;
     delete (t);
     t = win_DC_list;
-  } while(t);
+  } while (t);
 }
 
 /* Returns images of the captures of the window title-bar, and the left, bottom and right window borders.
  This function exploits a feature of Fl_WinAPI_Screen_Driver::read_win_rectangle() which,
  when fl_gc is set to the screen device context, captures the window decoration.
  */
-void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
-{
+void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top, Fl_Shared_Image *&left,
+                                                           Fl_Shared_Image *&bottom, Fl_Shared_Image *&right) {
   Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
   top = left = bottom = right = NULL;
-  if (!shown() || parent() || !border() || !visible()) return;
+  if (!shown() || parent() || !border() || !visible())
+    return;
   int wsides, hbottom, bt;
   float scaling = Fl::screen_driver()->scale(screen_num());
   RECT r = border_width_title_bar_height(wsides, hbottom, bt);
   int htop = bt + hbottom;
-  Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
+  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
   pWindow->show();
-  while (Fl::ready()) Fl::check();
+  while (Fl::ready())
+    Fl::check();
   fl_graphics_driver->gc(GetDC(NULL));
-  int ww = w()*scaling + 2 * wsides;
-  wsides /= scaling; if (wsides < 1) wsides = 1;
-  ww /= scaling; if (wsides <= 1) ww = w() + 2*wsides;
+  int ww = w() * scaling + 2 * wsides;
+  wsides /= scaling;
+  if (wsides < 1)
+    wsides = 1;
+  ww /= scaling;
+  if (wsides <= 1)
+    ww = w() + 2 * wsides;
 #ifdef FLTK_HIDPI_SUPPORT
   float DWMscaling = scaling;
 #else
-  float DWMscaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
+  float DWMscaling = ((Fl_WinAPI_Screen_Driver *)Fl::screen_driver())->DWM_scaling_factor();
 #endif
   // capture the 4 window sides from screen
-  Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+  Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
   if (htop) {
     r_top = dr->read_win_rectangle_unscaled(NULL, r.left, r.top, r.right - r.left, htop, 0);
     top = Fl_Shared_Image::get(r_top);
-    if (DWMscaling != 1) top->scale(ww, htop/DWMscaling, 0, 1);
+    if (DWMscaling != 1)
+      top->scale(ww, htop / DWMscaling, 0, 1);
   }
   if (wsides) {
-    r_left = dr->read_win_rectangle_unscaled(NULL, r.left, r.top + htop, wsides, h()*scaling, 0);
+    r_left = dr->read_win_rectangle_unscaled(NULL, r.left, r.top + htop, wsides, h() * scaling, 0);
     left = Fl_Shared_Image::get(r_left);
-    r_right = dr->read_win_rectangle_unscaled(NULL, r.right - wsides, r.top + htop, wsides, h()*scaling, 0);
+    r_right = dr->read_win_rectangle_unscaled(NULL, r.right - wsides, r.top + htop, wsides, h() * scaling, 0);
     right = Fl_Shared_Image::get(r_right);
-    r_bottom = dr->read_win_rectangle_unscaled(NULL, r.left, r.bottom-hbottom, ww, hbottom, 0);
+    r_bottom = dr->read_win_rectangle_unscaled(NULL, r.left, r.bottom - hbottom, ww, hbottom, 0);
     bottom = Fl_Shared_Image::get(r_bottom);
     if (scaling != 1) {
       left->scale(wsides, h(), 0, 1);
@@ -2574,34 +2738,41 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top
 // contains also preparePrintFront call above
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Button.H>
-void printFront(Fl_Widget *o, void *data)
-{
+void printFront(Fl_Widget *o, void *data) {
   Fl_Printer printer;
   o->window()->hide();
   Fl_Window *win = Fl::first_window();
-  if(!win) return;
+  if (!win)
+    return;
   int w, h;
-  if( printer.start_job(1) ) { o->window()->show(); return; }
-  if( printer.start_page() ) { o->window()->show(); return; }
-  printer.printable_rect(&w,&h);
-  int  wh, ww;
+  if (printer.start_job(1)) {
+    o->window()->show();
+    return;
+  }
+  if (printer.start_page()) {
+    o->window()->show();
+    return;
+  }
+  printer.printable_rect(&w, &h);
+  int wh, ww;
   wh = win->decorated_h();
   ww = win->decorated_w();
   // scale the printer device so that the window fits on the page
   float scale = 1;
   if (ww > w || wh > h) {
-    scale = (float)w/ww;
-    if ((float)h/wh < scale) scale = (float)h/wh;
+    scale = (float)w / ww;
+    if ((float)h / wh < scale)
+      scale = (float)h / wh;
     printer.scale(scale, scale);
   }
 // #define ROTATE 20.0
 #ifdef ROTATE
   printer.scale(scale * 0.8, scale * 0.8);
   printer.printable_rect(&w, &h);
-  printer.origin(w/2, h/2 );
+  printer.origin(w / 2, h / 2);
   printer.rotate(ROTATE);
-  printer.print_widget( win, - win->w()/2, - win->h()/2 );
-  //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
+  printer.print_widget(win, -win->w() / 2, -win->h() / 2);
+  // printer.print_window_part(win, 0, 0, win->w(), win->h(), -win->w() / 2, -win->h() / 2);
 #else
   printer.print_window(win);
 #endif
@@ -2611,35 +2782,33 @@ void printFront(Fl_Widget *o, void *data)
 }
 
 #include <FL/Fl_Copy_Surface.H>
-void copyFront(Fl_Widget *o, void *data)
-{
+void copyFront(Fl_Widget *o, void *data) {
   o->window()->hide();
   Fl_Window *win = Fl::first_window();
-  if (!win) return;
+  if (!win)
+    return;
   Fl_Copy_Surface *surf = new Fl_Copy_Surface(win->decorated_w(), win->decorated_h());
   surf->set_current();
   surf->draw_decorated_window(win); // draw the window content
-  delete surf; // put the window on the clipboard
+  delete surf;                      // put the window on the clipboard
   Fl_Display_Device::display_device()->set_current();
   o->window()->show();
 }
 
-void preparePrintFront(void)
-{
-  static BOOL first=TRUE;
-  if(!first) return;
-  first=FALSE;
-  static Fl_Window w(0,0,120,60);
-  static Fl_Button bp(0,0,w.w(),30, "Print front window");
+void preparePrintFront(void) {
+  static BOOL first = TRUE;
+  if (!first)
+    return;
+  first = FALSE;
+  static Fl_Window w(0, 0, 120, 60);
+  static Fl_Button bp(0, 0, w.w(), 30, "Print front window");
   bp.callback(printFront);
-  static Fl_Button bc(0,30,w.w(),30, "Copy front window");
+  static Fl_Button bc(0, 30, w.w(), 30, "Copy front window");
   bc.callback(copyFront);
   w.end();
   w.show();
 }
 #endif // USE_PRINT_BUTTON
-
-
 
 #endif // defined(WIN32) and !defined(FL_DOXYGEN)
 
