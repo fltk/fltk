@@ -3,7 +3,7 @@
 //
 // WIN32 image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -559,7 +559,7 @@ int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, i
 void Fl_GDI_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
   if (id_) {
-    fl_delete_offscreen((Fl_Offscreen)id_);
+    DeleteObject((Fl_Offscreen)id_);
     id_ = 0;
   }
 
