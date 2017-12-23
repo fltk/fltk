@@ -3,7 +3,7 @@
 //
 // Definition of Apple Cocoa window driver.
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2017 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -22,10 +22,11 @@
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Overlay_Window.H>
+#include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/x.H>
-
+#include <ApplicationServices/ApplicationServices.h>
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
@@ -65,30 +66,41 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
 
   if (!oWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_X *myi = Fl_X::i(pWindow);
-  if (!myi) return; // window not yet created
-  if (!other_xid) {
-      other_xid = fl_create_offscreen(oWindow->w(), oWindow->h());
-      oWindow->clear_damage(FL_DAMAGE_ALL);
+  Fl_Quartz_Graphics_Driver *g_driver = (Fl_Quartz_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
+  float s = g_driver->scale() * (mapped_to_retina() ? 2 : 1);
+  if (!other_xid) { // create offscreen accounting for GUI scaling and retina
+    other_xid = (Fl_Offscreen)new Fl_Image_Surface(s * oWindow->w(), s * oWindow->h());
+    oWindow->clear_damage(FL_DAMAGE_ALL);
+    // scale the offscreen buffer's graphics context
+    Fl_Surface_Device::push_current((Fl_Image_Surface*)other_xid);
+    CGContextRestoreGState(fl_gc);
+    CGContextScaleCTM(fl_gc, s, s);
+    CGContextSaveGState(fl_gc);
+    Fl_Surface_Device::pop_current();
   }
-    if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
-      fl_clip_region(myi->region); myi->region = 0;
-      if ( other_xid ) {
-        fl_begin_offscreen( other_xid );
-        fl_clip_region( 0 );
-        draw();
-        fl_end_offscreen();
-      } else {
-        draw();
-      }
-    }
+  if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
+    Fl_X *myi = Fl_X::i(pWindow);
+    fl_clip_region(myi->region); myi->region = 0;
+    Fl_Surface_Device::push_current((Fl_Image_Surface*)other_xid);
+    draw();
+    Fl_Surface_Device::pop_current();
+  }
   if (erase_overlay) fl_clip_region(0);
-  // on Irix (at least) it is faster to reduce the area copied to
-  // the current clip region:
-  int X,Y,W,H; fl_clip_box(0,0,oWindow->w(),oWindow->h(),X,Y,W,H);
-  if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
-  
+  if (other_xid) {
+    CGContextSaveGState(fl_gc);
+    CGContextScaleCTM(fl_gc, 1/s, 1/s);
+    // copy offscreen to window using adequate scaling
+    fl_copy_offscreen(0, 0, s * oWindow->w(),s * oWindow->h(), ((Fl_Image_Surface*)other_xid)->offscreen(), 0, 0);
+    CGContextRestoreGState(fl_gc);
+  }
   if (overlay() == oWindow) oWindow->draw_overlay();
+}
+
+
+void Fl_Cocoa_Window_Driver::destroy_double_buffer()
+{
+  if (pWindow->as_overlay_window()) delete (Fl_Image_Surface*)other_xid;
+  other_xid = 0;
 }
 
 

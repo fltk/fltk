@@ -3349,6 +3349,10 @@ void Fl_Cocoa_Window_Driver::make_current()
   fl_window = i->xid;
   ((Fl_Quartz_Graphics_Driver&)Fl_Graphics_Driver::default_driver()).high_resolution( mapped_to_retina() );
   
+  if (pWindow->as_overlay_window() && other_xid && changed_resolution()) {
+    destroy_double_buffer();
+    changed_resolution(false);
+  }
   NSGraphicsContext *nsgc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400)

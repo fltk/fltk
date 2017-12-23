@@ -57,9 +57,9 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
     CGContextScaleCTM(offscreen, 2, 2);
   }
   CGContextSetShouldAntialias(offscreen, false);
-  CGContextSaveGState(offscreen);
-  CGContextTranslateCTM(offscreen, 0, height);
+  CGContextTranslateCTM(offscreen, 0, height);  
   CGContextScaleCTM(offscreen, 1.0f, -1.0f);
+  CGContextSaveGState(offscreen);
   CGContextSetRGBFillColor(offscreen, 1, 1, 1, 0);
   CGContextFillRect(offscreen, CGRectMake(0,0,w,h));
 }
@@ -84,10 +84,8 @@ void Fl_Quartz_Image_Surface_Driver::set_current() {
 void Fl_Quartz_Image_Surface_Driver::translate(int x, int y) {
   CGContextRestoreGState(offscreen);
   CGContextSaveGState(offscreen);
-  CGContextTranslateCTM(offscreen, x, -y);
+  CGContextTranslateCTM(offscreen, x, y);
   CGContextSaveGState(offscreen);
-  CGContextTranslateCTM(offscreen, 0, height);
-  CGContextScaleCTM(offscreen, 1.0f, -1.0f);
 }
 
 void Fl_Quartz_Image_Surface_Driver::untranslate() {

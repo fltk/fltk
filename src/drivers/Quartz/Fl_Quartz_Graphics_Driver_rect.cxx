@@ -296,19 +296,6 @@ void Fl_Quartz_Graphics_Driver::restore_clip() {
       CGContextRestoreGState(gc_);
       CGContextSaveGState(gc_);
     }
-    // FLTK has only one global graphics state.
-    // This copies the FLTK state into the current Quartz context
-    if ( ! fl_window ) { // a bitmap context
-      CGFloat hgt = CGBitmapContextGetHeight(gc_);
-      CGAffineTransform at = CGContextGetCTM(gc_);
-      CGFloat offset = 0.5;
-      if (at.a != 1 && at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
-        hgt /= at.a;
-        offset /= at.a;
-      }
-      CGContextTranslateCTM(gc_, offset, hgt-offset);
-      CGContextScaleCTM(gc_, 1.0f, -1.0f); // now 0,0 is top-left point of the context
-    }
     color(color());
     quartz_restore_line_style();
     if (r) { //apply program clip
