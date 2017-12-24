@@ -4438,7 +4438,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
   Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
   top_rgb->alloc_array = 1;
   top = Fl_Shared_Image::get(top_rgb);
-  top->scale(w(),htop);
+  top->scale(w(),htop, s <1 ? 0 : 1, 1);
   CGContextRelease(auxgc);
 }
 
