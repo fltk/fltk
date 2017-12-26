@@ -26,7 +26,6 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <ApplicationServices/ApplicationServices.h>
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
@@ -66,32 +65,20 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
 
   if (!oWindow->shown()) return;
   pWindow->make_current(); // make sure fl_gc is non-zero
-  Fl_Quartz_Graphics_Driver *g_driver = (Fl_Quartz_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
-  float s = g_driver->scale() * (mapped_to_retina() ? 2 : 1);
-  if (!other_xid) { // create offscreen accounting for GUI scaling and retina
-    other_xid = (Fl_Offscreen)new Fl_Image_Surface(s * oWindow->w(), s * oWindow->h());
+  if (!other_xid) {
+    other_xid = fl_create_offscreen(oWindow->w(), oWindow->h());
     oWindow->clear_damage(FL_DAMAGE_ALL);
-    // scale the offscreen buffer's graphics context
-    Fl_Surface_Device::push_current((Fl_Image_Surface*)other_xid);
-    CGContextRestoreGState(fl_gc);
-    CGContextScaleCTM(fl_gc, s, s);
-    CGContextSaveGState(fl_gc);
-    Fl_Surface_Device::pop_current();
   }
   if (oWindow->damage() & ~FL_DAMAGE_EXPOSE) {
     Fl_X *myi = Fl_X::i(pWindow);
     fl_clip_region(myi->region); myi->region = 0;
-    Fl_Surface_Device::push_current((Fl_Image_Surface*)other_xid);
+    fl_begin_offscreen(other_xid);
     draw();
-    Fl_Surface_Device::pop_current();
+    fl_end_offscreen();
   }
   if (erase_overlay) fl_clip_region(0);
   if (other_xid) {
-    CGContextSaveGState(fl_gc);
-    CGContextScaleCTM(fl_gc, 1/s, 1/s);
-    // copy offscreen to window using adequate scaling
-    fl_copy_offscreen(0, 0, s * oWindow->w(),s * oWindow->h(), ((Fl_Image_Surface*)other_xid)->offscreen(), 0, 0);
-    CGContextRestoreGState(fl_gc);
+    fl_copy_offscreen(0, 0, oWindow->w(), oWindow->h(), other_xid, 0, 0);
   }
   if (overlay() == oWindow) oWindow->draw_overlay();
 }
@@ -99,7 +86,7 @@ void Fl_Cocoa_Window_Driver::flush_overlay()
 
 void Fl_Cocoa_Window_Driver::destroy_double_buffer()
 {
-  if (pWindow->as_overlay_window()) delete (Fl_Image_Surface*)other_xid;
+  if (pWindow->as_overlay_window()) fl_delete_offscreen(other_xid);
   other_xid = 0;
 }
 

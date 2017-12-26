@@ -102,7 +102,7 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
 Fl_Shared_Image* Fl_Image_Surface::highres_image()
 {
   if (!platform_surface) return NULL;
-  Fl_Shared_Image *s_img = Fl_Shared_Image::get(platform_surface->image());
+  Fl_Shared_Image *s_img = Fl_Shared_Image::get(image());
   int width, height;
   platform_surface->printable_rect(&width, &height);
   s_img->scale(width, height, 1, 1);
@@ -146,9 +146,7 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
    */
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   int rank = find_slot();
-  float d = Fl_Graphics_Driver::default_driver().scale();
-  int high_res = d != 1;
-  offscreen_api_surface[rank] = new Fl_Image_Surface(w, h, high_res);
+  offscreen_api_surface[rank] = new Fl_Image_Surface(w, h, 1/*high_res*/);
   return offscreen_api_surface[rank]->offscreen();
 }
 
@@ -197,11 +195,9 @@ void fl_scale_offscreen(Fl_Offscreen &ctx) {
     }
   }
   if (i >= count_offscreens) return;
-  Fl_RGB_Image *rgb = offscreen_api_surface[i]->image();
+  Fl_Shared_Image *shared = offscreen_api_surface[i]->highres_image();
   offscreen_api_surface[i]->printable_rect(&w, &h);
   fl_delete_offscreen(ctx);
-  Fl_Shared_Image *shared = Fl_Shared_Image::get(rgb);
-  shared->scale(w, h, 0, 1);
   ctx = fl_create_offscreen(w, h);
   fl_begin_offscreen(ctx);
   shared->draw(0, 0);

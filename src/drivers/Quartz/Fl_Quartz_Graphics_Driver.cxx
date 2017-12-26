@@ -20,6 +20,8 @@
 #include "Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
 #include <FL/x.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Image_Surface.H>
 
 #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 Fl_Quartz_Graphics_Driver::pter_to_draw_member Fl_Quartz_Graphics_Driver::CoreText_or_ATSU_draw;
@@ -84,7 +86,8 @@ void Fl_Quartz_Graphics_Driver::global_gc()
   fl_gc = (CGContextRef)gc();
 }
 
-void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
+void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy) {
+  // draw portion srcx,srcy,w,h of osrc to position x,y (top-left) of the graphics driver's surface
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);
@@ -92,16 +95,26 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscr
   CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   // when output goes to a Quartz printercontext, release of the bitmap must be
-  // delayed after the end of the print page
+  // delayed after the end of the printed page
   CFRetain(src);
   CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
   CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
                                  src_bytes, 0L, false, kCGRenderingIntentDefault);
-  draw_CGImage(img, x, y, w, h, srcx, srcy,  sw, sh);
-
-  CGImageRelease(img);
-  CGColorSpaceRelease(lut);
   CGDataProviderRelease(src_bytes);
+  CGColorSpaceRelease(lut);
+  float s = scale_;
+  Fl_Surface_Device *current = Fl_Surface_Device::surface();
+  // test whether osrc was created by fl_create_offscreen()
+  fl_begin_offscreen(osrc); // does nothing if osrc was not created by fl_create_offscreen()
+  if (current != Fl_Surface_Device::surface()) { // osrc was created by fl_create_offscreen()
+    Fl_Image_Surface *imgs = (Fl_Image_Surface*)Fl_Surface_Device::surface();
+    int pw, ph;
+    imgs->printable_rect(&pw, &ph);
+    s = sw / float(pw);
+    fl_end_offscreen();
+  }
+  draw_CGImage(img, x, y, w, h, srcx, srcy, sw/s, sh/s);
+  CGImageRelease(img);
 }
 
 // so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes

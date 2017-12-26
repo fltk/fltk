@@ -23,6 +23,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include "Fl_Quartz_Graphics_Driver.H"
+#include "../Cocoa/Fl_Cocoa_Window_Driver.H"
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
@@ -46,15 +47,21 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 
 
 Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, 0) {
-  int W = high_res ? 2*w : w;
-  int H = high_res ? 2*h : h;
+  int W = w, H = h;
+  float s = 1;
+  if (high_res) {
+    s = Fl_Graphics_Driver::default_driver().scale();
+    Fl_Window *cw = Fl_Window::current();
+    if (cw && ((Fl_Cocoa_Window_Driver*)cw->driver())->mapped_to_retina()) s *= 2;
+    W *= s; H *= s;
+  }
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   offscreen = off ? off : CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
   driver(new Fl_Quartz_Graphics_Driver);
   CGContextTranslateCTM(offscreen, 0.5, -0.5); // as when drawing to a window
   if (high_res) {
-    CGContextScaleCTM(offscreen, 2, 2);
+    CGContextScaleCTM(offscreen, s, s);
   }
   CGContextSetShouldAntialias(offscreen, false);
   CGContextTranslateCTM(offscreen, 0, height);  
