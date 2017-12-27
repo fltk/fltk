@@ -3264,6 +3264,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
     return;
     }
   if ( (resize_from_system != pWindow) && shown()) {
+    float s = Fl::screen_driver()->scale(screen_num());
     if (is_a_resize) {
       if (pWindow->resizable()) {
         int min_w = minw(), max_w = maxw(), min_h = minh(), max_h = maxh();
