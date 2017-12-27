@@ -26,6 +26,7 @@
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl_Input.H>
 #include <FL/fl_ask.H>
+#include <FL/Fl_Image_Surface.H>
 #include <stdio.h>
 
 
