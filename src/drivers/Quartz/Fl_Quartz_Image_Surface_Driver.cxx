@@ -104,7 +104,10 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
   CGContextFlush(offscreen);
   int W = CGBitmapContextGetWidth(offscreen);
   int H = CGBitmapContextGetHeight(offscreen);
+  int save_w = width, save_h = height;
+  width = W; height = H;
   unsigned char *data = fl_read_image(NULL, 0, 0, W, H, 0);
+  width = save_w; height = save_h;
   Fl_RGB_Image *image = new Fl_RGB_Image(data, W, H);
   image->alloc_array = 1;
   return image;
