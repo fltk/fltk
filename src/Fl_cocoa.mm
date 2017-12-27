@@ -3285,7 +3285,6 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      float s = Fl::screen_driver()->scale(screen_num());
       NSRect r = NSMakeRect(int(bx*s+0.5), main_screen_height - int((by + H)*s +0.5), int(W*s+0.5), int(H*s+0.5) + (border()?bt:0));
       if (visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
     } else {
@@ -3296,7 +3295,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      NSPoint pt = NSMakePoint(bx, main_screen_height - (by + H));
+      NSPoint pt = NSMakePoint(int(bx*s+0.5), main_screen_height - int((by + H)*s +0.5));
       if (visible_r()) [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
     }
   }
