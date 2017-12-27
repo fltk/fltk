@@ -85,18 +85,25 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   Fl_Image_Surface *surface = NULL;
   int px_width = w, px_height = h;
   Fl::screen_driver()->offscreen_size(pixmap, px_width, px_height);
-  int px = srcx, py = srcy, pw = w, ph = h;
-  if (px < 0) {px = 0; pw += srcx; x -= srcx;}
-  if (py < 0) {py = 0; ph += srcy; y -= srcy;}
-  if (px + pw > px_width) {pw = px_width - px;}
-  if (py + ph > px_height) {ph = px_height - py;}
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
-  fl_begin_offscreen(pixmap);
-  // test whether pixmap was not created by fl_create_offscreen()
-  if (current == Fl_Surface_Device::surface()) {
+  fl_begin_offscreen(pixmap); // does nothing if pixmap was not created by fl_create_offscreen()
+  float s = 1;
+  if (current == Fl_Surface_Device::surface()) {// pixmap was not created by fl_create_offscreen()
+    // happens, e.g., when drawing images under WIN32
     surface = new Fl_Image_Surface(px_width, px_height, 0, pixmap);
     Fl_Surface_Device::push_current(surface);
   }
+  else { // pixmap was created by fl_create_offscreen()
+    Fl_Image_Surface *imgs = (Fl_Image_Surface*)Fl_Surface_Device::surface();
+    int sw, sh;
+    imgs->printable_rect(&sw, &sh);
+    s = px_width / float(sw);
+  }
+  int px = srcx, py = srcy, pw = w, ph = h;
+  if (px < 0) {px = 0; pw += srcx; x -= srcx;}
+  if (py < 0) {py = 0; ph += srcy; y -= srcy;}
+  if (px + pw > px_width/s) {pw = px_width/s - px;}
+  if (py + ph > px_height/s) {ph = px_height/s - py;}
   uchar *img = fl_read_image(NULL, px, py, pw, ph, 0);
   if (surface) {
     Fl_Surface_Device::pop_current();
