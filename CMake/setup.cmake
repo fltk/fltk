@@ -4,7 +4,7 @@
 # CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2017 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -68,6 +68,8 @@ set(FLTK_DOCDIR ${CMAKE_INSTALL_DATADIR}/doc CACHE PATH
 # platform dependent information
 #######################################################################
 
+# The following part is probably wrong but does no harm.
+# This will be removed in FLTK 1.4.0. AlbrechtS, Dec 28, 2017.
 # fix no WIN32 defined issue
 if(NOT WIN32)
     if(_WIN32)
@@ -107,6 +109,7 @@ if(APPLE)
 endif(APPLE)
 
 if(WIN32)
+    add_definitions(-DWIN32)
     if(MSVC)
         add_definitions(-DWIN32_LEAN_AND_MEAN)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
