@@ -225,18 +225,22 @@ void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int del
     void *layer = Fl_X::get_titlebar_layer(win);
     if (layer) {
       CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-      // for unknown reason, rendering the layer to the Fl_Copy_Surface pdf graphics context does not work;
-      // we use an auxiliary bitmap context
-      CGContextRef auxgc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
-      CGColorSpaceRelease(cspace);
-      CGContextTranslateCTM(auxgc, 0, bt);
-      CGContextScaleCTM(auxgc, 1, -1);
-      Fl_X::draw_layer_to_context(layer, auxgc, win->w(), bt);
-      Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(auxgc), win->w(), bt, 4,
-                                             CGBitmapContextGetBytesPerRow(auxgc)); // 10.2
-      image->draw(0, 0);
-      delete image;
-      CGContextRelease(auxgc);
+      if (fl_mac_os_version < 101300) {
+        // for unknown reason, rendering the layer to the Fl_Copy_Surface pdf graphics context does not work;
+        // we use an auxiliary bitmap context
+        CGContextRef auxgc = CGBitmapContextCreate(NULL, win->w(), bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
+        CGColorSpaceRelease(cspace);
+        CGContextTranslateCTM(auxgc, 0, bt);
+        CGContextScaleCTM(auxgc, 1, -1);
+        Fl_X::draw_layer_to_context(layer, auxgc, win->w(), bt);
+        Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(auxgc), win->w(), bt, 4,
+                                               CGBitmapContextGetBytesPerRow(auxgc)); // 10.2
+        image->draw(0, 0);
+        delete image;
+        CGContextRelease(auxgc);
+      } else {
+        Fl_X::draw_layer_to_context(layer, gc, win->w(), bt);
+      }
     } else {
       CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
       CGContextDrawImage(gc, CGRectMake(0, 0, win->w(), bt), img);
