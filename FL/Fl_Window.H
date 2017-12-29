@@ -53,6 +53,9 @@ class Fl_Double_Window;
   window. Fl_Window has a default callback that calls Fl_Window::hide().
 */
 class FL_EXPORT Fl_Window : public Fl_Group {
+  friend int Fl::arg(int argc, char **argv, int &i);
+  friend class Fl_X;
+  friend class Fl_Window_Driver;
 private:
   static char *default_xclass_;
   static char show_iconic_; // 1 means create next window in iconic form
@@ -66,11 +69,6 @@ private:
   int fullscreen_screen_left;
   int fullscreen_screen_right;
 
-  friend int Fl::arg(int argc, char **argv, int &i);
-  friend class Fl_X;
-  friend class Fl_Window_Driver;
-  friend class Fl_PicoAndroid_Window_Driver;
-  friend class Fl_PicoSDL_Window_Driver;
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creation time
 

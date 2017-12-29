@@ -82,7 +82,6 @@ public:
   int shown() const { return pWindow->shown(); }
   /** returns the parent of the window. */
   Fl_Group *parent() const { return pWindow->parent(); }
-  char show_iconic() { return pWindow->show_iconic_; }
 
   // --- accessors to private window data
   int minw();
@@ -102,7 +101,8 @@ public:
   void x(int X);
   void y(int Y);
   void current(Fl_Window *c);
-  void show_iconic(char c) { pWindow->show_iconic_ = c; }
+  char show_iconic() { return Fl_Window::show_iconic_; }
+  void show_iconic(char c) { Fl_Window::show_iconic_ = c; }
   void i(Fl_X *x) { pWindow->i = x; }
   /** for an Fl_Overlay_Window, returns the value of its overlay_ member variable */
   Fl_Window *overlay() {
