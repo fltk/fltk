@@ -53,7 +53,7 @@ class Fl_Double_Window;
   window. Fl_Window has a default callback that calls Fl_Window::hide().
 */
 class FL_EXPORT Fl_Window : public Fl_Group {
-
+private:
   static char *default_xclass_;
   static char show_iconic_; // 1 means create next window in iconic form
 
@@ -83,8 +83,6 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // cursor stuff
   Fl_Cursor cursor_default;
   
-private:
-
   void _Fl_Window(); // constructor innards
 
   // unimplemented copy ctor and assignment operator
