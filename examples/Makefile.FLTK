@@ -32,4 +32,4 @@ LINKFLTK_ALL = $(shell $(FLTKCONFIG) --use-images --use-gl --ldstaticflags)
 # HOW TO LINK
 .o$(EXEEXT):
 	@echo "*** Linking $@..."
-	$(CXX) $< $(LINKFLTK_ALL) -o $@
+	$(CXX) $< $(LINKFLTK) $(LINKFLTK_IMG) -o $@
