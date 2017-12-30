@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of class Fl_Gl_Window_Driver, and of its platform-specific derived classes
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2016-2017 by Bill Spitzak and others.
