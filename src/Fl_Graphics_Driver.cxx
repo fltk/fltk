@@ -293,15 +293,7 @@ void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, i
 }
 
 void Fl_Scalable_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-  if ( (x0==x1 || y0==y1) && (x2==x1 || y2==y1) && (x2==x3 || y2==y3) && (x0==x3 || y0==y3) ) {
-    // only horizontal and vertical lines
-    line(x0, y0, x1, y1);
-    line(x1, y1, x2, y2);
-    line(x2, y2, x3, y3);
-    line(x3, y3, x0, y0);
-  } else {
     loop_unscaled(x0*scale_, y0*scale_, x1*scale_, y1*scale_, x2*scale_, y2*scale_, x3*scale_, y3*scale_);
-  }
 }
 
 void Fl_Scalable_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
