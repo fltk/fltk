@@ -126,7 +126,9 @@ public:
   virtual void flush_overlay();
   virtual void flush_menu();
   virtual void erase_menu() {}
+  /** Usable for platform-specific code executed before the platform-independent part of Fl_Window::draw() */
   virtual void draw_begin();
+  /** Usable for platform-specific code executed after the platform-independent part of Fl_Window::draw() */
   virtual void draw_end();
   void draw();
   virtual void make_current();
