@@ -3,7 +3,7 @@
 //
 // WIN32 font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -263,12 +263,6 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
 // of "free" routine pointer, or a subclass?
-// if (listbase) {
-//  int base = font->min_char_or_byte2;
-//  int size = font->max_char_or_byte2-base+1;
-//  int base = 0; int size = 256;
-//  glDeleteLists(listbase+base,size);
-// }
 #endif
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   DeleteObject(fid);

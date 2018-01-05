@@ -3,7 +3,7 @@
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,58 +17,58 @@
 //
 
 /* Implementation of support for two text drawing APIs: Core Text (current) and ATSU (legacy)
- 
- The HAS_ATSU macro (defined in Fl_Quartz_Graphics_Driver.H) is true 
+
+ The HAS_ATSU macro (defined in Fl_Quartz_Graphics_Driver.H) is true
  if and only if ATSU is available at compile time.
  The condition
    #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
  is true if and only if both APIs are available at compile time.
  Depending on what MacOS SDK and what deployment target are used, the code can be
- compiled in 2 ways: 
+ compiled in 2 ways:
     1) both APIs are available at compile time and which one is used
        is determined at runtime,
  or
     2) only one API is available.
- 
+
  When both APIs are compiled in, the choice of which one is used at runtime is done
  the first time the Fl_Quartz_Graphics_Driver constructor runs, and remains unchanged.
  Core Text is selected if the running Mac OS version is ≥ 10.5.
- The static function init_CoreText_or_ATSU() does this by setting the value 
+ The static function init_CoreText_or_ATSU() does this by setting the value
  of the class variable CoreText_or_ATSU to either use_CoreText or use_ATSU.
- 
+
  If both APIs are available, several member functions come in groups of 3.
  For example, functions draw(), draw_CoreText() and draw_ATSU() are defined. The only
- task of draw() is to call either draw_CoreText() or draw_ATSU() depending on 
+ task of draw() is to call either draw_CoreText() or draw_ATSU() depending on
  what API has been selected at program start.
- 
+
  If the compilation condition authorizes a single API, one member function
  is defined instead of 3 in the other case. For example, a single draw() function
  is compiled, and contains the same code as what is called either draw_CoreText()
  or draw_ATSU() in the other case.
- 
- The ADD_SUFFIX(name, suffix) macro is used so that each function has the 
+
+ The ADD_SUFFIX(name, suffix) macro is used so that each function has the
  short (e.g., draw) or long (e.g., draw_CoreText) name adequate for
  each compilation condition.
- 
+
  The 2 most often used text functions are draw() and width(). Two pointers to member
  function are defined. Function init_CoreText_or_ATSU() assigns one with either
  draw_CoreText() or draw_ATSU(), and the other with either width_CoreText() or width_ATSU().
  The draw() and width() functions only have to dereference one pointer to member
  function to call the adequate code.
- 
+
  If the compilation condition authorizes a single text API, only the code related
  to this API (say, CoreText) is compiled whereas all code related to the other API
  (thus, ATSU) is excluded from compilation. Furthermore, none of the code to
  choose API at runtime and to select which member function is called is compiled.
  Consequently, no pointer to member function is used.
- 
+
  The condition for both APIs to be compiled-in is
  - target i386 or ppc architectures
  and
  - use SDK ≥ 10.5 and < 10.11
  and
  - set MacOS deployment target < 10.5 (through the -mmacosx-version-min= compilation option)
- 
+
  */
 
 
@@ -171,7 +171,7 @@ int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
   int cnt = 0;
 
-  // ATS supports all font size 
+  // ATS supports all font size
   array[0] = 0;
   sizep = array;
   cnt = 1;
@@ -212,12 +212,6 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
 // of "free" routine pointer, or a subclass?
-// if (listbase) {
-//  int base = font->min_char_or_byte2;
-//  int size = font->max_char_or_byte2-base+1;
-//  int base = 0; int size = 256;
-//  glDeleteLists(listbase+base,size);
-// }
 #endif
   */
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
@@ -542,9 +536,9 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
       for (int j = 0; j < block; j++) { // loop over the block
 	// ii spans all characters of this block
 	bool b = CTFontGetGlyphsForCharacters(fl_fontsize->fontref, &ii, &glyph, 1);
-	if (b) 
+	if (b)
 	  CTFontGetAdvancesForGlyphs(fl_fontsize->fontref, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
-	else 
+	else
 	  advance_size.width = -1e9; // calculate this later
 	// the width of one character of this block of characters
 	fl_fontsize->width[r][j] = advance_size.width;
@@ -676,7 +670,7 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
 {
 #pragma unused ( xstarname )
   if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
-  
+
   int value[1] = {1};
   CFDictionaryRef dict = CFDictionaryCreate(NULL,
                                             (const void **)kCTFontCollectionRemoveDuplicatesOption,
@@ -736,7 +730,7 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _ATSU)(const char* n
   Fixed fsize = IntToFixed(size);
   ATSUFontID fontID;
   ATSUFindFontFromName(name, strlen(name), kFontFullName, kFontMacintoshPlatform, kFontNoScriptCode, kFontEnglishLanguage, &fontID);
-  
+
   // draw the font upside-down... Compensate for fltk/OSX origin differences
   ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
   ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed), sizeof(CGAffineTransform) };
@@ -764,7 +758,7 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _ATSU)(const char* n
   int w = FixedToInt(bAfter);
   if (w)
     d->q_width = FixedToInt(bAfter);
-  
+
   // Now, by way of experiment, try enabling Transient Font Matching, this will
   // cause ATSU to find a suitable font to render any chars the current font can't do...
   ATSUSetTransientFontMatching (d->layout, true);
@@ -779,12 +773,12 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _ATSU)(const char *str, int n, 
   OSStatus err;
   // now collect our ATSU resources
   ATSUTextLayout layout = fl_fontsize->layout;
-  
+
   ByteCount iSize = sizeof(CGContextRef);
   ATSUAttributeTag iTag = kATSUCGContextTag;
   ATSUAttributeValuePtr iValuePtr=&gc;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-  
+
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
   CGContextSetShouldAntialias(gc, true);
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
@@ -798,7 +792,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _ATSU)(const UniChar* txt, i
   ByteCount iSize;
   ATSUAttributeTag iTag;
   ATSUAttributeValuePtr iValuePtr;
-  
+
   Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // Here's my ATSU text measuring attempt... This seems to do the Right Thing
   // now collect our ATSU resources and measure our text string
@@ -827,7 +821,7 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _ATSU)(const char *str8
   ByteCount iSize;
   ATSUAttributeTag iTag;
   ATSUAttributeValuePtr iValuePtr;
-  
+
   // Here's my ATSU text measuring attempt... This seems to do the Right Thing
   // now collect our ATSU resources and measure our text string
   layout = fl_fontsize->layout;
@@ -852,7 +846,7 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xsta
 {
 #pragma unused ( xstarname )
   if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
-  
+
   ItemCount oFontCount, oCountAgain;
   ATSUFontID *oFontIDs;
   // How many fonts?
