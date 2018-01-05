@@ -153,24 +153,24 @@ void Fl_Quartz_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
 }
 
 void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2) {
-  CGContextSetShouldAntialias(gc_, true);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y1);
   CGContextAddLineToPoint(gc_, x2, y2);
   CGContextClosePath(gc_);
   CGContextStrokePath(gc_);
-  CGContextSetShouldAntialias(gc_, false);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
-  CGContextSetShouldAntialias(gc_, true);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);
   CGContextAddLineToPoint(gc_, x1, y1);
   CGContextAddLineToPoint(gc_, x2, y2);
   CGContextAddLineToPoint(gc_, x3, y3);
   CGContextClosePath(gc_);
   CGContextStrokePath(gc_);
-  CGContextSetShouldAntialias(gc_, false);
+  if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
 void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
