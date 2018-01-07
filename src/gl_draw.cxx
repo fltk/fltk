@@ -210,7 +210,7 @@ void gl_draw(const char* str, int n) {
     if (!gl_fontsize->glok[r]) get_list(r);
   }
 #endif
-  glCallLists(n, GL_UNSIGNED_SHORT, buf);
+  glCallLists(wn, GL_UNSIGNED_SHORT, buf);
 #endif
 }
 
