@@ -3,7 +3,7 @@
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -135,7 +135,7 @@ static void get_list(int r) {
 #elif defined(WIN32)
   unsigned int ii = r * 0x400;
   HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
-  wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
+  wglUseFontBitmapsW(fl_gc, ii, 0x400, gl_fontsize->listbase+ii);
   SelectObject(fl_gc, oldFid);
 #else
 #  error unsupported platform
@@ -194,22 +194,22 @@ void gl_draw(const char* str, int n) {
 #ifdef __APPLE__  
   gl_draw_textures(str, n);
 #else
-  static xchar *buf = NULL;
-  static int l = 0;
-  int wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
-  if(wn >= l) {
-    buf = (xchar*) realloc(buf, sizeof(xchar) * (wn + 1));
+  static unsigned short *buf = NULL;
+  static unsigned l = 0;
+  unsigned wn = fl_utf8toUtf16(str, n, buf, l);
+  if (wn >= l) {
+    buf = (unsigned short*) realloc(buf, sizeof(unsigned short) * (wn + 1));
     l = wn + 1;
-    wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
+    wn = fl_utf8toUtf16(str, n, buf, l);
   }
-  n = wn;
 
-  int i;
-  for (i = 0; i < n; i++) {
+#if !( defined(USE_X11) || USE_XFT )
+  for (unsigned i = 0; i < wn; i++) {
     unsigned int r;
-    r = (str[i] & 0xFC00) >> 10;
+    r = (buf[i] & 0xFC00) >> 10;
     if (!gl_fontsize->glok[r]) get_list(r);
   }
+#endif
   glCallLists(n, GL_UNSIGNED_SHORT, buf);
 #endif
 }
