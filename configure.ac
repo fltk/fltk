@@ -90,6 +90,10 @@ case $host_os in
 	if test x$enable_x11 = xyes; then
 		host_os_gui="X11"
 		OPTIM="-U__APPLE__ $OPTIM"
+    		macosversion=`sw_vers -productVersion | cut -d. -f2`
+		if  test $macosversion -ge "13" ; then
+	    		CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.8"
+		fi
 	fi
 	;;
    *)
