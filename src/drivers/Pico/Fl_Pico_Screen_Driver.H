@@ -48,7 +48,6 @@ public:
   virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors
-  virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors();
   // --- global timers
   virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);

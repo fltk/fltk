@@ -108,12 +108,6 @@ void Fl_Pico_Screen_Driver::grab(Fl_Window* win)
 }
 
 
-int Fl_Pico_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
-{
-  return 0;
-}
-
-
 void Fl_Pico_Screen_Driver::get_system_colors()
 {
 }

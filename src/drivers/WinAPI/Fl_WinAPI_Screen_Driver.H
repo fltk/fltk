@@ -70,7 +70,6 @@ public:
   virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors
-  virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors();
   virtual const char *get_system_scheme();
   // --- global timers
