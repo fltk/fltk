@@ -44,6 +44,11 @@ static void move_tab_cb(Fl_Widget *, void *data);
 static void merge_all_windows_cb(Fl_Widget *, void *data);
 #endif
 
+
+void Fl_MacOS_Sys_Menu_Bar_Driver::draw() {
+  bar->deactivate(); // prevent Fl_Sys_Menu_Bar object from receiving events
+}
+
 Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
   static Fl_MacOS_Sys_Menu_Bar_Driver *once = new Fl_MacOS_Sys_Menu_Bar_Driver();
   if (driver_ != once) {

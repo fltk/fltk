@@ -26,7 +26,7 @@ public:
   Fl_MacOS_Sys_Menu_Bar_Driver();
   virtual ~Fl_MacOS_Sys_Menu_Bar_Driver();
   virtual void update();
-  virtual void draw() {}
+  virtual void draw();
   virtual void about(Fl_Callback *cb, void *data);
   virtual int add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags);
   virtual int add(const char* str);
