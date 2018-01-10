@@ -3,7 +3,7 @@
 #
 # CMakeLists.txt to build docs for the FLTK project using CMake (www.cmake.org)
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2018 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -123,7 +123,7 @@ endif (DOCS)
 
 if(OPTION_INSTALL_HTML_DOCUMENTATION AND OPTION_BUILD_HTML_DOCUMENTATION)
 
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/documentation/html
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
 	DESTINATION ${FLTK_DATADIR}/doc/fltk
 	)
 
@@ -131,7 +131,7 @@ endif(OPTION_INSTALL_HTML_DOCUMENTATION AND OPTION_BUILD_HTML_DOCUMENTATION)
 
 if(OPTION_INSTALL_PDF_DOCUMENTATION AND OPTION_BUILD_PDF_DOCUMENTATION)
 
-    install(FILES ${CMAKE_BINARY_DIR}/documentation/fltk.pdf
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fltk.pdf
 	DESTINATION ${FLTK_DATADIR}/doc/fltk/
 	)
 

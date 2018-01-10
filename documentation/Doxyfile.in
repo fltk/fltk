@@ -565,9 +565,9 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/opengl.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/fluid.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/advanced.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/unicode.dox
-INPUT += @CMAKE_SOURCE_DIR@/FL
-INPUT += @CMAKE_SOURCE_DIR@/src
-INPUT += @CMAKE_SOURCE_DIR@/cairo
+INPUT += @FLTK_SOURCE_DIR@/FL
+INPUT += @FLTK_SOURCE_DIR@/src
+INPUT += @FLTK_SOURCE_DIR@/cairo
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/enumerations.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/glut.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/forms.dox
@@ -610,13 +610,13 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE  = @CMAKE_SOURCE_DIR@/src/drivers/
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_dnd_win32.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_dnd_x.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_font_mac.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/fl_font_win32.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/Fl_get_key_mac.cxx
-EXCLUDE += @CMAKE_SOURCE_DIR@/src/Fl_get_key_win32.cxx
+EXCLUDE  = @FLTK_SOURCE_DIR@/src/drivers/
+EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_dnd_win32.cxx
+EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_dnd_x.cxx
+EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_font_mac.cxx
+EXCLUDE += @FLTK_SOURCE_DIR@/src/fl_font_win32.cxx
+EXCLUDE += @FLTK_SOURCE_DIR@/src/Fl_get_key_mac.cxx
+EXCLUDE += @FLTK_SOURCE_DIR@/src/Fl_get_key_win32.cxx
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded

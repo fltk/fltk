@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2017 by Bill Spitzak and others.
+# Copyright 1998-2018 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -42,43 +42,43 @@ endif(CMAKE_CROSSCOMPILING)
 add_subdirectory(src)
 
 # generate FLTK-Targets.cmake for build directory use
-export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_BINARY_DIR}/FLTK-Targets.cmake)
+export(TARGETS ${FLUID} ${FLTK_LIBRARIES} FILE ${CMAKE_CURRENT_BINARY_DIR}/FLTK-Targets.cmake)
 
 # generate FLTKConfig.cmake for build directory use
 set(INCLUDE_DIRS "${FLTK_INCLUDE_DIRS}")
-set(CONFIG_PATH ${CMAKE_BINARY_DIR})
+set(CONFIG_PATH ${CMAKE_CURRENT_BINARY_DIR})
 
 configure_file(
-   ${CMAKE_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
-   ${CMAKE_BINARY_DIR}/FLTKConfig.cmake
+   ${CMAKE_CURRENT_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
+   ${CMAKE_CURRENT_BINARY_DIR}/FLTKConfig.cmake
    @ONLY
 )
 
 # generate UseFLTK.cmake for build directory use
 configure_file(
-   ${CMAKE_SOURCE_DIR}/CMake/UseFLTK.cmake.in
-   ${CMAKE_BINARY_DIR}/UseFLTK.cmake
+   ${CMAKE_CURRENT_SOURCE_DIR}/CMake/UseFLTK.cmake.in
+   ${CMAKE_CURRENT_BINARY_DIR}/UseFLTK.cmake
    @ONLY
 )
 
 # generate fltk-config for build directory use
-set(prefix ${CMAKE_BINARY_DIR})
+set(prefix ${CMAKE_CURRENT_BINARY_DIR})
 set(exec_prefix "\${prefix}")
-set(includedir "${CMAKE_SOURCE_DIR}")
-set(BINARY_DIR "${CMAKE_BINARY_DIR}")
+set(includedir "${CMAKE_CURRENT_SOURCE_DIR}")
+set(BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 set(libdir "\${exec_prefix}/lib")
 set(srcdir ".")
 
 set(LIBNAME "${libdir}/libfltk.a")
 
 configure_file(
-   "${CMAKE_SOURCE_DIR}/fltk-config.in"
-   "${CMAKE_BINARY_DIR}/fltk-config"
+   "${CMAKE_CURRENT_SOURCE_DIR}/fltk-config.in"
+   "${CMAKE_CURRENT_BINARY_DIR}/fltk-config"
    @ONLY
 )
 if(UNIX)
    execute_process(COMMAND chmod 755 fltk-config
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
    )
 endif(UNIX)
 
@@ -102,8 +102,8 @@ set(CONFIG_H config.h)
 # generate config.h
 
 configure_file(
-   "${CMAKE_SOURCE_DIR}/${CONFIG_H_IN}"
-   "${CMAKE_BINARY_DIR}/${CONFIG_H}"
+   "${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_H_IN}"
+   "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_H}"
    @ONLY
 )
 
@@ -115,8 +115,8 @@ if(OPTION_CREATE_LINKS)
       set(PREFIX_INCLUDE "${CMAKE_INSTALL_PREFIX}/${FLTK_INCLUDEDIR}")
    endif(IS_ABSOLUTE ${FLTK_INCLUDEDIR})
    configure_file(
-      "${CMAKE_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
-      "${CMAKE_BINARY_DIR}/install-symlinks.cmake"
+      "${CMAKE_CURRENT_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/install-symlinks.cmake"
       @ONLY
    )
 endif(OPTION_CREATE_LINKS)

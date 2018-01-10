@@ -4,7 +4,7 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2017 by Bill Spitzak and others.
+# Copyright 1998-2018 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -282,8 +282,8 @@ if(OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
 else()
    add_subdirectory(zlib)
    set(FLTK_ZLIB_LIBRARIES fltk_z)
-   set(ZLIB_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/zlib)
-   include_directories(${CMAKE_SOURCE_DIR}/zlib)
+   set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/zlib)
    set(FLTK_BUILTIN_ZLIB_FOUND TRUE)
 endif(OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
 
@@ -307,7 +307,7 @@ if(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
 else()
    add_subdirectory(jpeg)
    set(FLTK_JPEG_LIBRARIES fltk_jpeg)
-   include_directories(${CMAKE_SOURCE_DIR}/jpeg)
+   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
    set(FLTK_BUILTIN_JPEG_FOUND TRUE)
 endif(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
 
@@ -335,7 +335,7 @@ else()
    set(HAVE_PNG_H 1)
    set(HAVE_PNG_GET_VALID 1)
    set(HAVE_PNG_SET_TRNS_TO_ALPHA 1)
-   include_directories(${CMAKE_SOURCE_DIR}/png)
+   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/png)
    set(FLTK_BUILTIN_PNG_FOUND TRUE)
 endif(OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
 
