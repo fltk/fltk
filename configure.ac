@@ -120,6 +120,10 @@ GLLIBBASENAME="libfltk_gl.a"
 IMGLIBBASENAME="libfltk_images.a"
 CAIROLIBBASENAME="libfltk_cairo.a"
 
+if test x$enable_pango = xyes -a x$enable_xft = xno; then
+  AC_MSG_ERROR([--disable-xft and --enable-pango are incompatible because Xft is necessary for pango. Aborting.])
+fi
+
 dnl Check for Cairo library unless disabled...
 CAIRODIR=""
 CAIROFLAGS=""
@@ -1047,9 +1051,16 @@ case $host_os_gui in
 	    AC_MSG_WARN([could not find the required Xft headers and/or libraries.])
 	    AC_MSG_NOTICE([please install Xft headers and libraries or use 'configure --disable-xft'.])
 	    if test x$enable_xft = xyes; then
-		AC_MSG_ERROR([Aborting.])
+		    AC_MSG_ERROR([Aborting.])
 	    fi
 	fi
+
+  dnl test if pango is asked but xft was not found
+  if test x$enable_pango = xyes -a x$xft_found = xno; then
+      AC_MSG_WARN([could not find the Xft headers and/or libraries required for pango.])
+      AC_MSG_NOTICE([please install Xft headers and libraries or don't use configure with '--enable-pango'.])
+      AC_MSG_ERROR([Aborting.])
+  fi
 
 	dnl Check for the pango library unless disabled...
         AC_ARG_ENABLE(pango, [  --enable-pango          turn on Pango support [[default=no]]])
