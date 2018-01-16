@@ -139,7 +139,6 @@ Doxyfile: Doxyfile.in
 	    -e's,@GENERATE_LATEX@,NO,' \
 	    -e's, @LATEX_HEADER@,,' \
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
-	    -e's,@CMAKE_SOURCE_DIR@/,../,' \
 	    -e's,@FLTK_SOURCE_DIR@/,../,' \
 	    < $< > $@
 
@@ -150,7 +149,6 @@ Doxybook: Doxyfile.in
 	    -e's,@GENERATE_LATEX@,YES,' \
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
-	    -e's,@CMAKE_SOURCE_DIR@/,../,' \
 	    -e's,@FLTK_SOURCE_DIR@/,../,' \
 	    < $< > $@
 
