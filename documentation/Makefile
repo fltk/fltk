@@ -140,6 +140,7 @@ Doxyfile: Doxyfile.in
 	    -e's, @LATEX_HEADER@,,' \
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
 	    -e's,@CMAKE_SOURCE_DIR@/,../,' \
+	    -e's,@FLTK_SOURCE_DIR@/,../,' \
 	    < $< > $@
 
 Doxybook: Doxyfile.in
@@ -150,6 +151,7 @@ Doxybook: Doxyfile.in
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
 	    -e's,@CMAKE_CURRENT_SOURCE_DIR@/,,' \
 	    -e's,@CMAKE_SOURCE_DIR@/,../,' \
+	    -e's,@FLTK_SOURCE_DIR@/,../,' \
 	    < $< > $@
 
 # The HTML files are generated using doxygen, and this needs
