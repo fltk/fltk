@@ -3,7 +3,7 @@
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -149,7 +149,9 @@ void Fl_Pixmap::copy_data() {
 
 Fl_Image *Fl_Pixmap::copy(int W, int H) {
   Fl_Pixmap	*new_image;	// New pixmap
-
+  if (!data()) { // happens with bad pixmap data
+    return new Fl_Pixmap((char *const*)0);
+  }
   // Optimize the simple copy where the width and height are the same...
   if (W == w() && H == h()) {
     // Make an exact copy of the image and return it...
