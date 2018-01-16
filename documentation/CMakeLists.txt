@@ -31,6 +31,7 @@ if(OPTION_BUILD_HTML_DOCUMENTATION)
     set(GENERATE_HTML	YES)
     set(GENERATE_LATEX	NO)
     set(LATEX_HEADER	"")
+    set(FL_VERSION	"${FLTK_VERSION_FULL}")
 
     configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
@@ -63,6 +64,7 @@ if (OPTION_BUILD_PDF_DOCUMENTATION)
     set(GENERATE_HTML	NO)
     set(GENERATE_LATEX	YES)
     set(LATEX_HEADER	"${CMAKE_CURRENT_BINARY_DIR}/fltk-book.tex")
+    set(FL_VERSION	"${FLTK_VERSION_FULL}")
 
     configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
