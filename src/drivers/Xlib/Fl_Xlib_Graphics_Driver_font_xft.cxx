@@ -1218,8 +1218,8 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Font_Descriptor *fd = font_descriptor();
   if (!fd->height_) {
     PangoFont *pfont = pango_font_map_load_font(pfmap_, pctxt_, pfd_);
-    PangoRectangle ink_rect, logical_rect;
-    pango_font_get_glyph_extents(pfont, /*PangoGlyph glyph*/'p', &ink_rect, &logical_rect);
+    PangoRectangle logical_rect;
+    pango_font_get_glyph_extents(pfont, /*PangoGlyph glyph*/'p', NULL, &logical_rect);
     fd->descent_ = PANGO_DESCENT(logical_rect)/PANGO_SCALE;
     fd->height_ = logical_rect.height/PANGO_SCALE;
   }
@@ -1246,6 +1246,22 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* str, int n, int x, int y) {
   do_draw(1, str, n, x+offset_x_*scale_, y+offset_y_*scale_);
+}
+
+/* Compute dx, dy, w, h so that fl_rect(x+dx, y+dy, w, h) is the bounding box
+ of text drawn by fl_draw(str, n, x, y).
+ Also, compute y_correction to be used to correct the text's y coordinate to make sure
+ drawn text does not extend below the bottom of the line of text.
+ */
+static void fl_pango_layout_get_pixel_extents(PangoLayout *layout, int &dx, int &dy, int &w, int &h, int desc, int lheight, int &y_correction) {
+  PangoRectangle ink_rect;
+  pango_layout_get_pixel_extents(layout, &ink_rect, NULL);
+  dx = ink_rect.x;
+  dy = ink_rect.y - lheight + desc;
+  w = ink_rect.width;
+  h = ink_rect.height;
+  int y = ink_rect.y + ink_rect.height;
+  y_correction = (y > lheight ? y - lheight : 0);
 }
 
 void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, int x, int y) {
@@ -1286,18 +1302,19 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
-  if (from_right) {
-    int width, height;
-    pango_layout_get_pixel_size(playout_, &width, &height);
-    x -= width;
-  }
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window, fl_visual->visual, fl_colormap);
   else
     XftDrawChange(draw_, draw_window = fl_window);
   XftDrawSetClip(draw_, region);
+  
+  int  dx, dy, w, h, y_correction, desc = descent_unscaled(), lheight = height_unscaled();
+  fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, desc, lheight, y_correction);
+  if (from_right) {
+    x -= w;
+  }
   pango_xft_render_layout(draw_, &color, playout_, (x + line_delta_)*PANGO_SCALE,
-                          (y+line_delta_-height_unscaled()+descent_unscaled())*PANGO_SCALE ); // 1.8
+                          (y - y_correction + line_delta_ - lheight + desc)*PANGO_SCALE ); // 1.8
   }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
@@ -1315,12 +1332,9 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int 
   if (!playout_) context();
   pango_layout_set_font_description(playout_, pfd_);
   pango_layout_set_text(playout_, str, n);
-  PangoRectangle ink_rect, logical_rect;
-  pango_layout_get_pixel_extents(playout_, &ink_rect, &logical_rect);
-  dx = ink_rect.x + line_delta_;
-  dy = ink_rect.y + line_delta_ - height_unscaled() + descent_unscaled();
-  w = ink_rect.width;
-  h = ink_rect.height;
+  int y_correction;
+  fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, descent_unscaled(), height_unscaled(), y_correction);
+  dy -= y_correction;
   correct_extents(scale_, dx, dy, w, h);
 }
 
