@@ -80,7 +80,7 @@
 #include "Fl_Font.H"
 #include <math.h>
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/fl_utf8.h> // for fl_utf8toUtf16()
 
 Fl_Fontdesc* fl_fonts = NULL;

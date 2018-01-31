@@ -3,7 +3,7 @@
 //
 // More Fl_File_Chooser routines.
 //
-// Copyright 1999-2011 by Michael Sweet.
+// Copyright 1999-2018 by Michael Sweet.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -348,7 +348,7 @@
 #include <FL/Fl.H>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
 

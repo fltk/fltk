@@ -7,7 +7,7 @@
 // as an icon or postage stamp.  Use fl_draw_image to go directly
 // from an buffered image that changes often.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -72,7 +72,7 @@ void button_cb(Fl_Widget *,void *) {
   w->redraw();
 }
 
-#include <FL/x.H>
+#include <FL/platform.H>
 #if !defined(WIN32) && !defined(__APPLE__)
 #include "list_visuals.cxx"
 #endif

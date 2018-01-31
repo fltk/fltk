@@ -3,7 +3,7 @@
 //
 // Definition of MSWindows Win32/64 Screen interface
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,7 +21,7 @@
 #include "Fl_WinAPI_Screen_Driver.H"
 #include "../GDI/Fl_Font.H"
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/fl_ask.H>

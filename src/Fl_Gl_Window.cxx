@@ -3,7 +3,7 @@
 //
 // OpenGL window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -497,7 +497,7 @@ void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 
 
 #ifdef FL_CFG_GFX_QUARTZ
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <OpenGL/OpenGL.h>
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 
@@ -602,7 +602,7 @@ char Fl_Cocoa_Gl_Window_Driver::swap_type() {return COPY;}
 
 #if defined(FL_CFG_GFX_GDI)
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/Fl_Screen_Driver.H>
 
@@ -694,7 +694,7 @@ void* Fl_WinAPI_Gl_Window_Driver::GetProcAddress(const char *procName) {
 
 
 #if defined(FL_CFG_GFX_XLIB)
-#include <FL/x.H>
+#include <FL/platform.H>
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Window_Driver.H>

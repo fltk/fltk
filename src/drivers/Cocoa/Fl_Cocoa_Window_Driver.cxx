@@ -3,7 +3,7 @@
 //
 // Definition of Apple Cocoa window driver.
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,7 @@
 #include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {

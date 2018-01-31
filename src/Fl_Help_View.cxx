@@ -7,7 +7,7 @@
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2016 by Bill Spitzak and others.
+// Copyright 2011-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -209,7 +209,7 @@ img->draw()
 */
 
 // We don't put the offscreen buffer in the help view class because
-// we'd need to include x.H in the header...
+// we'd need to include platform.H in the header...
 static Fl_Offscreen fl_help_view_buffer;
 int Fl_Help_View::selection_first = 0;
 int Fl_Help_View::selection_last = 0;

@@ -2,7 +2,7 @@
 //
 // FLTK native file chooser widget wrapper for GTK's GtkFileChooserDialog 
 //
-// Copyright 1998-2014 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 // Copyright 2012 IMM
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -19,7 +19,7 @@
 #include "config_lib.h"
 
 #ifdef FL_CFG_WIN_X11
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
 #if HAVE_DLSYM && HAVE_DLFCN_H

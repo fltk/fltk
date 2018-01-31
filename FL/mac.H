@@ -3,7 +3,7 @@
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,13 +16,13 @@
 //     http://www.fltk.org/str.php
 //
 
-// Do not directly include this file, instead use <FL/x.H>.  It will
+// Do not directly include this file, instead use <FL/platform.H>.  It will
 // include this file if "__APPLE__" is defined.  This is to encourage
 // portability of even the system-specific code...
 #ifndef FL_DOXYGEN
 
 #if !defined(Fl_X_H)
-#  error "Never use <FL/mac.H> directly; include <FL/x.H> instead."
+#  error "Never use <FL/mac.H> directly; include <FL/platform.H> instead."
 #endif // !Fl_X_H
 
 #ifdef __OBJC__
@@ -109,7 +109,7 @@ extern CGContextRef fl_gc;
  */
 
 /** \defgroup group_macosx Mac OS X-specific symbols
- Mac OS X-specific symbols declared in <FL/x.H> or <FL/gl.h>
+ Mac OS X-specific symbols declared in <FL/platform.H> or <FL/gl.h>
  \sa \ref osissues_macos
  @{ */
 

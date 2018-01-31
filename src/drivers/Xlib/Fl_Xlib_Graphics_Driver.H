@@ -3,7 +3,7 @@
 //
 // Definition of class Fl_Xlib_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,7 +26,7 @@
 
 #include <config.h>
 #include <FL/Fl_Graphics_Driver.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 
 #if HAVE_X11_XREGION_H
 #   include <X11/Xregion.h>

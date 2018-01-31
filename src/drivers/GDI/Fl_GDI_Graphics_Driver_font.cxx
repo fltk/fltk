@@ -40,7 +40,7 @@
 #include "../../flstring.h"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include "Fl_Font.H"
 
 #include <stdio.h>

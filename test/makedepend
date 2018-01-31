@@ -37,7 +37,7 @@ animated.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 animated.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Double_Window.H
 animated.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 animated.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
-animated.o: ../FL/Fl_Image.H ../FL/Fl_Button.H ../FL/Fl_Image.H ../FL/x.H
+animated.o: ../FL/Fl_Image.H ../FL/Fl_Button.H ../FL/Fl_Image.H
 animated.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
 animated.o: ../FL/fl_draw.H
 adjuster.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -73,7 +73,7 @@ blocks.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Rect.H
 blocks.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 blocks.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_XPM_Image.H
 blocks.o: ../FL/Fl_Pixmap.H ../FL/Fl_XBM_Image.H ../FL/Fl_Bitmap.H
-blocks.o: ../FL/Fl_Tiled_Image.H ../FL/fl_draw.H ../FL/x.H ../FL/platform.H
+blocks.o: ../FL/Fl_Tiled_Image.H ../FL/fl_draw.H ../FL/platform.H
 blocks.o: ../FL/fl_types.h ../FL/Enumerations.H ../config.h pixmaps/blast.xpm
 blocks.o: pixmaps/red.xpm pixmaps/red_bomb.xpm pixmaps/green.xpm
 blocks.o: pixmaps/green_bomb.xpm pixmaps/blue.xpm pixmaps/blue_bomb.xpm
@@ -158,7 +158,7 @@ color_chooser.o: ../FL/Fl_Color_Chooser.H ../FL/Fl_Return_Button.H
 color_chooser.o: ../FL/Fl_Button.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
 color_chooser.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Value_Input.H
 color_chooser.o: ../FL/Fl_Valuator.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
-color_chooser.o: ../FL/Fl_Image.H ../FL/x.H ../FL/platform.H ../FL/fl_types.h
+color_chooser.o: ../FL/Fl_Image.H ../FL/platform.H ../FL/fl_types.h
 color_chooser.o: ../FL/Enumerations.H ../FL/fl_draw.H list_visuals.cxx
 color_chooser.o: ../config.h
 cube.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -209,7 +209,7 @@ demo.o: ../FL/abi-version.h ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 demo.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Rect.H ../FL/Fl_Widget.H
 demo.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Box.H ../FL/Fl_Button.H
 demo.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
-demo.o: ../FL/filename.H ../FL/x.H ../FL/platform.H ../FL/fl_types.h
+demo.o: ../FL/filename.H ../FL/platform.H ../FL/fl_types.h
 demo.o: ../FL/Enumerations.H
 device.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
 device.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
@@ -244,7 +244,7 @@ doublebuffer.o: ../FL/Fl_Box.H ../FL/fl_draw.H ../FL/Fl_Hor_Slider.H
 doublebuffer.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/math.h
 editor.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
 editor.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
-editor.o: ../FL/abi-version.h ../FL/x.H ../FL/platform.H ../FL/fl_types.h
+editor.o: ../FL/abi-version.h ../FL/platform.H ../FL/fl_types.h
 editor.o: ../FL/Enumerations.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 editor.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Double_Window.H
 editor.o: ../FL/Fl_Window.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/fl_ask.H
@@ -394,7 +394,7 @@ image.o: ../FL/abi-version.h ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 image.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Rect.H ../FL/Fl_Widget.H
 image.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Button.H
 image.o: ../FL/Fl_Image.H ../FL/Fl_Toggle_Button.H ../FL/Fl_Button.H
-image.o: ../FL/x.H ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+image.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
 image.o: list_visuals.cxx ../config.h
 inactive.o: inactive.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 inactive.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -545,7 +545,7 @@ offscreen.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 offscreen.o: ../FL/Enumerations.H ../FL/abi-version.h
 offscreen.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 offscreen.o: ../FL/Fl_Widget.H ../FL/Fl_Rect.H ../FL/Fl_Widget.H
-offscreen.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/x.H ../FL/platform.H
+offscreen.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/platform.H
 offscreen.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Box.H
 offscreen.o: ../FL/fl_draw.H
 output.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
@@ -708,7 +708,7 @@ sudoku.o: ../FL/fl_draw.H ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
 sudoku.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 sudoku.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/filename.H
 sudoku.o: ../FL/Fl_Preferences.H ../FL/Fl_Sys_Menu_Bar.H ../FL/Fl_Menu_Bar.H
-sudoku.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/x.H ../FL/platform.H
+sudoku.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/platform.H
 sudoku.o: ../FL/fl_types.h ../FL/math.h pixmaps/sudoku.xbm ../config.h
 symbols.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 symbols.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -759,8 +759,8 @@ tiled_image.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 tiled_image.o: ../FL/Fl_Widget.H ../FL/Fl_Rect.H ../FL/Fl_Widget.H
 tiled_image.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Button.H
 tiled_image.o: ../FL/Fl_Pixmap.H ../FL/Fl_Tiled_Image.H pixmaps/tile.xpm
-tiled_image.o: ../FL/x.H ../FL/platform.H ../FL/fl_types.h
-tiled_image.o: ../FL/Enumerations.H list_visuals.cxx ../config.h
+tiled_image.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+tiled_image.o: list_visuals.cxx ../config.h
 tree.o: tree.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 tree.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 tree.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Tooltip.H

@@ -3,7 +3,7 @@
 //
 // Template header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2016 by Bill Spitzak and others.
+// Copyright 2016-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,13 +16,13 @@
 //     http://www.fltk.org/str.php
 //
 
-// Do not directly include this file, instead use <FL/x.H>.
+// Do not directly include this file, instead use <FL/platform.H>.
 
 // These types and variables give access to internal, platform-specific data through the public API.
-// They require to include x.H (in contrast to types defined in platform_types.h)
+// They require to include platform.H (in contrast to types defined in platform_types.h)
 
 #if !defined(Fl_X_H)
-#  error "Never use <FL/porting.H> directly; include <FL/x.H> instead."
+#  error "Never use <FL/porting.H> directly; include <FL/platform.H> instead."
 #endif // !Fl_X_H
 
 typedef void *Window; // used by fl_find(), fl_xid() and class Fl_X

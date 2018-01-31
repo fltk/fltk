@@ -3,7 +3,7 @@
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -122,7 +122,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
 #endif // FL_CFG_GFX_QUARTZ
 
 #ifdef FL_CFG_GFX_GDI
-#  include <FL/x.H>
+#  include <FL/platform.H>
 #  include <FL/Fl_Graphics_Driver.H>
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 extern void fl_save_dc(HWND, HDC);
@@ -219,7 +219,7 @@ void Fl_WinAPI_Gl_Window_Driver::delete_gl_context(GLContext context) {
 #endif // FL_CFG_GFX_GDI
 
 #ifdef FL_CFG_GFX_XLIB
-#  include <FL/x.H>
+#  include <FL/platform.H>
 
 Fl_Gl_Choice *Fl_X11_Gl_Window_Driver::find(int m, const int *alistp)
 {

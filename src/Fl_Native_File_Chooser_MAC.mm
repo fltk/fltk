@@ -2,7 +2,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -24,7 +24,7 @@
 #ifdef __APPLE__
 
 #include <FL/Fl.H>
-#include <FL/x.H> // for fl_mac_os_version
+#include <FL/platform.H> // for fl_mac_os_version
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>

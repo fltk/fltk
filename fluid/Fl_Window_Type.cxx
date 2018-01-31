@@ -7,7 +7,7 @@
 // for interacting with the overlay, which allows the user to
 // select, move, and resize the children widgets.
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,7 @@
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_message.H>
 #include <FL/fl_draw.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Round_Button.H>
 #include "Fl_Widget_Type.h"

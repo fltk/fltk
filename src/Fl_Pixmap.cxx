@@ -24,7 +24,7 @@
 // it interferes with the color cube used by fl_draw_image).
 
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>

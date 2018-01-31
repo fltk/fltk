@@ -3,7 +3,7 @@
 //
 // Menubar test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 
 #include <FL/Fl.H>
 #ifdef __APPLE__
-#include <FL/x.H> // for Fl_Mac_App_Menu
+#include <FL/platform.H> // for Fl_Mac_App_Menu
 #endif
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>

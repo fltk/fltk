@@ -3,7 +3,7 @@
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -245,7 +245,7 @@ void gl_color(Fl_Color i) {
 
 
 #if defined(FL_CFG_GFX_XLIB)
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <GL/glx.h>
 
 
@@ -360,7 +360,7 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
 
 #if ! defined(FL_DOXYGEN)
 
-#include <FL/x.H>
+#include <FL/platform.H>
 #if !defined(kCGBitmapByteOrder32Host) // doc says available 10.4 but some 10.4 don't have it
 #  define kCGBitmapByteOrder32Host 0
 #endif

@@ -2,7 +2,7 @@
 
 Fl.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
-Fl.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
+Fl.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl.o: ../FL/Fl_Preferences.H ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H
@@ -122,8 +122,8 @@ Fl_Device.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 Fl_Device.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 Fl_Double_Window.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Double_Window.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_Double_Window.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-Fl_Double_Window.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+Fl_Double_Window.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+Fl_Double_Window.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Double_Window.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
 Fl_Double_Window.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 Fl_Double_Window.o: ../FL/Fl_Widget_Surface.H ../FL/Fl_Device.H
@@ -168,7 +168,7 @@ Fl_File_Chooser2.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
 Fl_File_Chooser2.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 Fl_File_Chooser2.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 Fl_File_Chooser2.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
-Fl_File_Chooser2.o: ../FL/Fl_System_Driver.H ../FL/filename.H ../FL/x.H
+Fl_File_Chooser2.o: ../FL/Fl_System_Driver.H ../FL/filename.H
 Fl_File_Chooser2.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl_File_Chooser2.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H flstring.h
 Fl_File_Chooser2.o: ../config.h
@@ -202,8 +202,7 @@ Fl_Graphics_Driver.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Graphics_Driver.o: ../FL/Fl_Text_Buffer.H ../FL/fl_draw.H
 Fl_Graphics_Driver.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Widget_Surface.H
 Fl_Graphics_Driver.o: ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_Graphics_Driver.o: ../FL/Fl_Shared_Image.H ../FL/math.h ../FL/x.H
-Fl_Graphics_Driver.o: ../FL/platform.H
+Fl_Graphics_Driver.o: ../FL/Fl_Shared_Image.H ../FL/math.h ../FL/platform.H
 Fl_Group.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Group.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Group.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Group.H
@@ -244,13 +243,13 @@ Fl_Image_Surface.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Pixmap.H
 Fl_Image_Surface.o: ../FL/Fl_RGB_Image.H
 Fl_Input.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Input.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_Input.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-Fl_Input.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_Input.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Bitmap.H
-Fl_Input.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl_System_Driver.H
-Fl_Input.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/Fl_Screen_Driver.H
-Fl_Input.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-Fl_Input.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H ../FL/fl_draw.H
+Fl_Input.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+Fl_Input.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Input.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Input.o: ../FL/Fl_Widget.H ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_Input.o: ../FL/Fl_Preferences.H ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H
+Fl_Input.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Text_Editor.H
+Fl_Input.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
 Fl_Input.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 Fl_Input.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H ../FL/Fl_Rect.H
 Fl_Input.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
@@ -366,14 +365,14 @@ Fl_Paged_Device.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Paged_Device.o: ../FL/Fl_Widget.H ../FL/Fl_Shared_Image.H ../FL/fl_draw.H
 Fl_Pixmap.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Pixmap.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_Pixmap.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-Fl_Pixmap.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_Pixmap.o: ../FL/fl_draw.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
-Fl_Pixmap.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_Pixmap.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
-Fl_Pixmap.o: ../FL/Fl_Widget_Surface.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
-Fl_Pixmap.o: ../FL/Fl_Preferences.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_Pixmap.o: ../FL/Fl_Bitmap.H flstring.h ../config.h
+Fl_Pixmap.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+Fl_Pixmap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/fl_draw.H
+Fl_Pixmap.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
+Fl_Pixmap.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_Printer.H
+Fl_Pixmap.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Widget_Surface.H
+Fl_Pixmap.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Pixmap.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Bitmap.H flstring.h
+Fl_Pixmap.o: ../config.h
 Fl_Positioner.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Positioner.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Positioner.o: ../FL/Enumerations.H ../FL/abi-version.h
@@ -427,13 +426,12 @@ Fl_Screen_Driver.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Screen_Driver.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
 Fl_Screen_Driver.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
 Fl_Screen_Driver.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-Fl_Screen_Driver.o: ../FL/Fl_Text_Buffer.H ../FL/x.H ../FL/platform.H
-Fl_Screen_Driver.o: ../FL/Fl_Group.H ../FL/Fl_Window.H ../FL/Fl_Input.H
-Fl_Screen_Driver.o: ../FL/Fl_Input_.H ../FL/Fl_Window_Driver.H
-Fl_Screen_Driver.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
-Fl_Screen_Driver.o: ../FL/Fl_Window.H ../FL/Fl_Image_Surface.H
-Fl_Screen_Driver.o: ../FL/Fl_Widget_Surface.H ../FL/Fl_Shared_Image.H
-Fl_Screen_Driver.o: ../FL/Fl_Box.H ../FL/Fl_Tooltip.H
+Fl_Screen_Driver.o: ../FL/Fl_Text_Buffer.H ../FL/platform.H ../FL/Fl_Group.H
+Fl_Screen_Driver.o: ../FL/Fl_Window.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_Screen_Driver.o: ../FL/Fl_Window_Driver.H ../FL/Fl_Overlay_Window.H
+Fl_Screen_Driver.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
+Fl_Screen_Driver.o: ../FL/Fl_Image_Surface.H ../FL/Fl_Widget_Surface.H
+Fl_Screen_Driver.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Box.H ../FL/Fl_Tooltip.H
 Fl_Scroll.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Scroll.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Scroll.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Tiled_Image.H
@@ -483,9 +481,8 @@ Fl_Sys_Menu_Bar.o: ../FL/Fl_Sys_Menu_Bar_Driver.H ../FL/Fl_Sys_Menu_Bar.H
 Fl_Sys_Menu_Bar.o: ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H ../FL/Fl_Widget.H
 Fl_Sys_Menu_Bar.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Export.H
 Fl_Sys_Menu_Bar.o: ../FL/fl_types.h ../FL/platform_types.h
-Fl_Sys_Menu_Bar.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/x.H
-Fl_Sys_Menu_Bar.o: ../FL/platform.H ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_Sys_Menu_Bar.o: ../FL/Enumerations.H
+Fl_Sys_Menu_Bar.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/platform.H
+Fl_Sys_Menu_Bar.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl_System_Driver.o: ../FL/Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
 Fl_System_Driver.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_System_Driver.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
@@ -517,15 +514,15 @@ Fl_Text_Buffer.o: ../FL/abi-version.h ../FL/Fl_Text_Buffer.H ../FL/fl_ask.H
 Fl_Text_Display.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Text_Display.o: ../FL/Fl.H ../FL/platform_types.h ../FL/fl_utf8.h
 Fl_Text_Display.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_Text_Display.o: ../FL/abi-version.h ../FL/x.H ../FL/platform.H
-Fl_Text_Display.o: ../FL/fl_types.h ../FL/Enumerations.H
-Fl_Text_Display.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Display.H
-Fl_Text_Display.o: ../FL/fl_draw.H ../FL/Fl_Graphics_Driver.H
-Fl_Text_Display.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-Fl_Text_Display.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
-Fl_Text_Display.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-Fl_Text_Display.o: ../FL/Fl_Group.H ../FL/Fl_Rect.H ../FL/Fl_Widget.H
-Fl_Text_Display.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Text_Display.o: ../FL/abi-version.h ../FL/platform.H ../FL/fl_types.h
+Fl_Text_Display.o: ../FL/Enumerations.H ../FL/Fl_Text_Buffer.H
+Fl_Text_Display.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
+Fl_Text_Display.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
+Fl_Text_Display.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Text_Display.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Text_Display.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
+Fl_Text_Display.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
+Fl_Text_Display.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Text_Display.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Text_Display.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Text_Editor.H
 Fl_Text_Display.o: ../FL/Fl_Text_Display.H
@@ -619,34 +616,32 @@ Fl_Widget_Surface.o: ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
 Fl_Widget_Surface.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Widget_Surface.o: ../FL/abi-version.h ../FL/Fl_Group.H ../FL/Fl_Bitmap.H
 Fl_Widget_Surface.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/fl_draw.H
-Fl_Widget_Surface.o: ../FL/x.H ../FL/platform.H ../FL/fl_types.h
-Fl_Widget_Surface.o: ../FL/Enumerations.H ../FL/Fl_Shared_Image.H
-Fl_Widget_Surface.o: ../FL/Fl_Window_Driver.H ../FL/Fl_Overlay_Window.H
-Fl_Widget_Surface.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
-Fl_Widget_Surface.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Text_Editor.H
-Fl_Widget_Surface.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
-Fl_Widget_Surface.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H
-Fl_Widget_Surface.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
-Fl_Widget_Surface.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
-Fl_Widget_Surface.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-Fl_Widget_Surface.o: ../FL/Fl_Text_Buffer.H
+Fl_Widget_Surface.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+Fl_Widget_Surface.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Window_Driver.H
+Fl_Widget_Surface.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
+Fl_Widget_Surface.o: ../FL/Fl_Window.H ../FL/Fl_Screen_Driver.H
+Fl_Widget_Surface.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H
+Fl_Widget_Surface.o: ../FL/fl_draw.H ../FL/Fl_Graphics_Driver.H
+Fl_Widget_Surface.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Widget_Surface.o: ../FL/Fl_Group.H ../FL/Fl_Rect.H ../FL/Fl_Widget.H
+Fl_Widget_Surface.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Widget_Surface.o: ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
 Fl_Window.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Window.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_Window.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-Fl_Window.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_Window.o: ../FL/Fl_Window_Driver.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_Window.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
-Fl_Window.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
-Fl_Window.o: ../FL/Fl_Window.H ../FL/Fl_RGB_Image.H ../FL/Fl_Tooltip.H
-Fl_Window.o: ../FL/Fl_Widget.H ../FL/fl_draw.H flstring.h
+Fl_Window.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+Fl_Window.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Window_Driver.H
+Fl_Window.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Bitmap.H
+Fl_Window.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl_Overlay_Window.H
+Fl_Window.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_RGB_Image.H
+Fl_Window.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H ../FL/fl_draw.H flstring.h
 Fl_Window_Driver.o: ../FL/Fl_Window_Driver.H ../FL/Fl_Export.H
 Fl_Window_Driver.o: ../FL/Fl_Window.H ../FL/Fl.H ../FL/platform_types.h
 Fl_Window_Driver.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Window_Driver.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Group.H
 Fl_Window_Driver.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 Fl_Window_Driver.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
-Fl_Window_Driver.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/x.H
-Fl_Window_Driver.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+Fl_Window_Driver.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/platform.H
+Fl_Window_Driver.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Window_fullscreen.o: ../FL/Fl_Window.H ../FL/Fl.H ../FL/Fl_Export.H
 Fl_Window_fullscreen.o: ../FL/platform_types.h ../FL/fl_utf8.h
 Fl_Window_fullscreen.o: ../FL/Fl_Export.H ../FL/fl_types.h
@@ -736,8 +731,8 @@ Fl_get_system_colors.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
 Fl_get_system_colors.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_get_system_colors.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_System_Driver.H
 Fl_get_system_colors.o: ../FL/filename.H ../FL/Fl_Preferences.H
-Fl_get_system_colors.o: ../FL/fl_draw.H ../FL/x.H ../FL/platform.H
-Fl_get_system_colors.o: ../FL/math.h ../FL/fl_utf8.h flstring.h ../config.h
+Fl_get_system_colors.o: ../FL/fl_draw.H ../FL/platform.H ../FL/math.h
+Fl_get_system_colors.o: ../FL/fl_utf8.h flstring.h ../config.h
 Fl_get_system_colors.o: ../FL/Fl_Tiled_Image.H tile.xpm
 Fl_grab.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_grab.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -758,10 +753,9 @@ Fl_lock.o: drivers/Posix/Fl_Posix_System_Driver.H
 Fl_own_colormap.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_own_colormap.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_own_colormap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
-Fl_own_colormap.o: ../FL/x.H ../FL/platform.H ../FL/fl_types.h
-Fl_own_colormap.o: ../FL/Enumerations.H ../FL/Fl_System_Driver.H
-Fl_own_colormap.o: ../FL/filename.H ../FL/Fl_Preferences.H
-Fl_own_colormap.o: drivers/X11/Fl_X11_System_Driver.H
+Fl_own_colormap.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+Fl_own_colormap.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_own_colormap.o: ../FL/Fl_Preferences.H drivers/X11/Fl_X11_System_Driver.H
 Fl_own_colormap.o: drivers/Posix/Fl_Posix_System_Driver.H
 Fl_visual.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_visual.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -808,7 +802,7 @@ fl_ask.o: ../FL/fl_ask.H ../FL/Fl_Box.H ../FL/Fl_Widget.H ../FL/Fl_Button.H
 fl_ask.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H ../FL/Fl_Window.H
 fl_ask.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 fl_ask.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Secret_Input.H
-fl_ask.o: ../FL/Fl_Input.H ../FL/x.H ../FL/platform.H ../FL/fl_types.h
+fl_ask.o: ../FL/Fl_Input.H ../FL/platform.H ../FL/fl_types.h
 fl_ask.o: ../FL/Enumerations.H ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H
 fl_ask.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Text_Editor.H
 fl_ask.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/Fl_Graphics_Driver.H
@@ -829,15 +823,14 @@ fl_color.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 fl_color.o: ../FL/Fl_RGB_Image.H fl_cmap.h
 fl_cursor.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_cursor.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-fl_cursor.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-fl_cursor.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-fl_cursor.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Bitmap.H
-fl_cursor.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl_Pixmap.H
-fl_cursor.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Window_Driver.H
-fl_cursor.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
-fl_cursor.o: ../FL/Fl_Window.H ../FL/fl_draw.H fl_cursor_wait.xpm
-fl_cursor.o: fl_cursor_help.xpm fl_cursor_nwse.xpm fl_cursor_nesw.xpm
-fl_cursor.o: fl_cursor_none.xpm
+fl_cursor.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+fl_cursor.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_cursor.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_cursor.o: ../FL/Fl_Widget.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_cursor.o: ../FL/Fl_Window_Driver.H ../FL/Fl_Overlay_Window.H
+fl_cursor.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/fl_draw.H
+fl_cursor.o: fl_cursor_wait.xpm fl_cursor_help.xpm fl_cursor_nwse.xpm
+fl_cursor.o: fl_cursor_nesw.xpm fl_cursor_none.xpm
 fl_curve.o: ../FL/fl_draw.H
 fl_diamond_box.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_diamond_box.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -851,9 +844,8 @@ fl_draw_pixmap.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 fl_draw_pixmap.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 fl_draw_pixmap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 fl_draw_pixmap.o: ../FL/Fl_System_Driver.H ../FL/filename.H
-fl_draw_pixmap.o: ../FL/Fl_Preferences.H ../FL/x.H ../FL/platform.H
-fl_draw_pixmap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/fl_draw.H
-fl_draw_pixmap.o: flstring.h
+fl_draw_pixmap.o: ../FL/Fl_Preferences.H ../FL/platform.H ../FL/fl_types.h
+fl_draw_pixmap.o: ../FL/Enumerations.H ../FL/fl_draw.H flstring.h
 fl_encoding_latin1.o: config_lib.h ../config.h ../FL/fl_draw.H ../FL/Fl.H
 fl_encoding_latin1.o: ../FL/Fl_Export.H ../FL/platform_types.h
 fl_encoding_latin1.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -906,12 +898,12 @@ fl_open_uri.o: drivers/Posix/Fl_Posix_System_Driver.H
 fl_oval_box.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_oval_box.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_oval_box.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/fl_draw.H
-fl_overlay.o: ../FL/x.H ../FL/platform.H ../FL/Fl_Export.H
-fl_overlay.o: ../FL/platform_types.h ../FL/fl_types.h ../FL/Enumerations.H
-fl_overlay.o: ../FL/fl_draw.H ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H
-fl_overlay.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Export.H
-fl_overlay.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/fl_types.h
-fl_overlay.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Text_Editor.H
+fl_overlay.o: ../FL/platform.H ../FL/Fl_Export.H ../FL/platform_types.h
+fl_overlay.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/fl_draw.H
+fl_overlay.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_overlay.o: ../FL/Fl_Preferences.H ../FL/Fl_Export.H ../FL/Fl.H
+fl_overlay.o: ../FL/fl_utf8.h ../FL/fl_types.h ../FL/Enumerations.H
+fl_overlay.o: ../FL/abi-version.h ../FL/Fl_Text_Editor.H
 fl_overlay.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
 fl_overlay.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 fl_overlay.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
@@ -936,13 +928,13 @@ fl_read_image.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 fl_read_image.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
 fl_read_image.o: ../FL/Fl_Rect.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
 fl_read_image.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
-fl_rect.o: ../FL/x.H ../FL/platform.H ../FL/Fl_Export.H
-fl_rect.o: ../FL/platform_types.h ../FL/fl_types.h ../FL/Enumerations.H
-fl_rect.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
-fl_rect.o: ../FL/Fl_Preferences.H ../FL/Fl_Export.H ../FL/Fl_Image.H
-fl_rect.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/fl_types.h
-fl_rect.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-fl_rect.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_rect.o: ../FL/platform.H ../FL/Fl_Export.H ../FL/platform_types.h
+fl_rect.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Graphics_Driver.H
+fl_rect.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_rect.o: ../FL/Fl_Export.H ../FL/Fl_Image.H ../FL/Enumerations.H
+fl_rect.o: ../FL/abi-version.h ../FL/fl_types.h ../FL/Fl_Widget.H
+fl_rect.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_rect.o: ../FL/Fl_RGB_Image.H
 fl_round_box.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_round_box.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_round_box.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/fl_draw.H
@@ -951,11 +943,11 @@ fl_rounded_box.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_rounded_box.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/fl_draw.H
 fl_set_font.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_set_font.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-fl_set_font.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-fl_set_font.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-fl_set_font.o: ../FL/fl_draw.H ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H
-fl_set_font.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-fl_set_font.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H ../FL/fl_draw.H
+fl_set_font.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+fl_set_font.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/fl_draw.H
+fl_set_font.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_set_font.o: ../FL/Fl_Preferences.H ../FL/Fl_Text_Editor.H
+fl_set_font.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
 fl_set_font.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 fl_set_font.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 fl_set_font.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H ../FL/Fl_Rect.H
@@ -997,11 +989,10 @@ fl_vertex.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 fl_vertex.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/fl_utf8.h ../FL/math.h
 screen_xywh.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 screen_xywh.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-screen_xywh.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H
-screen_xywh.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-screen_xywh.o: ../FL/Fl_Screen_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
-screen_xywh.o: ../FL/Fl_Preferences.H ../FL/Fl_Text_Editor.H
-screen_xywh.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
+screen_xywh.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
+screen_xywh.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Screen_Driver.H
+screen_xywh.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+screen_xywh.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H ../FL/fl_draw.H
 screen_xywh.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 screen_xywh.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 screen_xywh.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H ../FL/Fl_Rect.H
@@ -1066,9 +1057,9 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/abi-version.h ../FL/fl_types.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/platform_types.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_RGB_Image.H ../FL/x.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/platform.H ../FL/Fl_Export.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/fl_types.h ../FL/Enumerations.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_RGB_Image.H ../FL/platform.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Fl_Export.H ../FL/fl_types.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: drivers/Xlib/Fl_Font.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver.o: ../FL/fl_draw.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../config.h
@@ -1087,7 +1078,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_Widget.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_Pixmap.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_RGB_Image.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_arci.o: ../FL/fl_types.h
@@ -1109,7 +1100,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_Widget.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_Pixmap.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_RGB_Image.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_color.o: ../FL/fl_types.h
@@ -1132,7 +1123,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Widget.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Pixmap.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_RGB_Image.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_image.o: ../FL/fl_types.h
@@ -1170,7 +1161,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/fl_types.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/abi-version.h
-drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/fl_draw.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/fl_draw.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/fl_types.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_line_style.o: ../FL/Enumerations.H
@@ -1211,8 +1202,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/Fl_Group.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/Fl_Widget.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/fl_draw.H ../FL/x.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/platform.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/fl_draw.H ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/fl_types.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_rect.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
@@ -1236,7 +1226,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_Widget.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_Pixmap.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_RGB_Image.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_vertex.o: ../FL/fl_types.h
@@ -1258,7 +1248,7 @@ drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/abi-version.h
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Group.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Image.H
-drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Widget.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Fl_Widget.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/platform.H ../FL/fl_types.h
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Copy_Surface_Driver.o: ../FL/fl_draw.H
@@ -1294,7 +1284,7 @@ drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Widget.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Pixmap.H
-drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_RGB_Image.H ../FL/x.H
+drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_RGB_Image.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Image_Surface_Driver.o: ../FL/fl_types.h
@@ -1326,9 +1316,8 @@ drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Widget.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Overlay_Window.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Double_Window.H
-drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Window.H ../FL/x.H
-drivers/X11/Fl_X11_Window_Driver.o: ../FL/platform.H ../FL/fl_types.h
-drivers/X11/Fl_X11_Window_Driver.o: ../FL/Enumerations.H
+drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Window.H ../FL/platform.H
+drivers/X11/Fl_X11_Window_Driver.o: ../FL/fl_types.h ../FL/Enumerations.H
 drivers/X11/Fl_X11_Window_Driver.o: drivers/X11/Fl_X11_Screen_Driver.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Screen_Driver.H
 drivers/X11/Fl_X11_Window_Driver.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
@@ -1374,8 +1363,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Window_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Window.H ../FL/Fl_Group.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Overlay_Window.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Double_Window.H
-drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Window.H ../FL/x.H
-drivers/X11/Fl_X11_Screen_Driver.o: ../FL/platform.H
+drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Window.H ../FL/platform.H
 drivers/X11/Fl_X11_Screen_Driver.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/fl_ask.H ../FL/Fl_Box.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Image_Surface.H
@@ -1443,7 +1431,7 @@ drivers/Posix/Fl_Posix_Printer_Driver.o: ../FL/Fl_Int_Input.H
 drivers/Posix/Fl_Posix_Printer_Driver.o: ../FL/Fl_Input.H ../FL/Fl_Pixmap.H
 Fl_x.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_x.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_x.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/x.H ../FL/platform.H
+Fl_x.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
 Fl_x.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Window_Driver.H
 Fl_x.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_x.o: ../FL/Fl_Widget.H ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
@@ -1464,7 +1452,7 @@ fl_dnd_x.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_dnd_x.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_dnd_x.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Window.H
 fl_dnd_x.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-fl_dnd_x.o: ../FL/Fl_Widget.H ../FL/x.H ../FL/platform.H ../FL/fl_types.h
+fl_dnd_x.o: ../FL/Fl_Widget.H ../FL/platform.H ../FL/fl_types.h
 fl_dnd_x.o: ../FL/Enumerations.H flstring.h ../config.h
 fl_dnd_x.o: drivers/X11/Fl_X11_Screen_Driver.H ../FL/Fl_Screen_Driver.H
 fl_dnd_x.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
@@ -1495,10 +1483,9 @@ Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
 Fl_Native_File_Chooser_FLTK.o: ../FL/fl_ask.H ../FL/Fl_File_Icon.H
 Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_System_Driver.H ../FL/filename.H
-Fl_Native_File_Chooser_GTK.o: config_lib.h ../config.h ../FL/x.H
-Fl_Native_File_Chooser_GTK.o: ../FL/platform.H ../FL/Fl_Export.H
-Fl_Native_File_Chooser_GTK.o: ../FL/platform_types.h ../FL/fl_types.h
-Fl_Native_File_Chooser_GTK.o: ../FL/Enumerations.H
+Fl_Native_File_Chooser_GTK.o: config_lib.h ../config.h ../FL/platform.H
+Fl_Native_File_Chooser_GTK.o: ../FL/Fl_Export.H ../FL/platform_types.h
+Fl_Native_File_Chooser_GTK.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Native_File_Chooser_GTK.o: ../FL/Fl_Native_File_Chooser.H
 Fl_Native_File_Chooser_GTK.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H
 Fl_Native_File_Chooser_GTK.o: ../FL/fl_utf8.h ../FL/Fl_Export.H
@@ -1523,8 +1510,8 @@ Fl_get_key.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_get_key.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_get_key.o: drivers/X11/Fl_X11_System_Driver.H
 Fl_get_key.o: drivers/Posix/Fl_Posix_System_Driver.H ../FL/Fl_System_Driver.H
-Fl_get_key.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/x.H
-Fl_get_key.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+Fl_get_key.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/platform.H
+Fl_get_key.o: ../FL/fl_types.h ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: flstring.h ../FL/Fl_Export.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../config.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
@@ -1543,7 +1530,7 @@ drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Fl_Bitmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Fl_Image.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Fl_Pixmap.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Fl_RGB_Image.H
-drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/x.H ../FL/platform.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/platform.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/fl_types.h
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: ../FL/Fl.H ../FL/fl_utf8.h
@@ -1693,13 +1680,13 @@ Fl_Gl_Choice.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Gl_Choice.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_Gl_Choice.o: Fl_Gl_Choice.H ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
 Fl_Gl_Choice.o: ../FL/Fl_Gl_Window_Driver.H ../FL/gl_draw.H ../FL/gl.h
-Fl_Gl_Choice.o: flstring.h ../FL/fl_utf8.h ../FL/x.H ../FL/platform.H
-Fl_Gl_Choice.o: ../FL/fl_types.h ../FL/Enumerations.H
+Fl_Gl_Choice.o: flstring.h ../FL/fl_utf8.h ../FL/platform.H ../FL/fl_types.h
+Fl_Gl_Choice.o: ../FL/Enumerations.H
 Fl_Gl_Overlay.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_Gl_Overlay.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Gl_Overlay.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_Gl_Overlay.o: ../FL/gl.h ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
-Fl_Gl_Overlay.o: ../FL/Fl_Gl_Window_Driver.H ../FL/x.H ../FL/platform.H
+Fl_Gl_Overlay.o: ../FL/Fl_Gl_Window_Driver.H ../FL/platform.H
 Fl_Gl_Overlay.o: ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Gl_Device_Plugin.o: config_lib.h ../config.h ../FL/Fl_Gl_Window.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Window.H ../FL/Fl_RGB_Image.H
@@ -1718,8 +1705,8 @@ Fl_Gl_Window.o: ../FL/Fl_Double_Window.H ../FL/Fl_Graphics_Driver.H
 Fl_Gl_Window.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Gl_Window.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 Fl_Gl_Window.o: ../FL/fl_utf8.h drivers/OpenGL/Fl_OpenGL_Display_Device.H
-Fl_Gl_Window.o: ../FL/x.H ../FL/platform.H ../FL/fl_types.h
-Fl_Gl_Window.o: ../FL/Enumerations.H Fl_Gl_Choice.H ../FL/Fl_Screen_Driver.H
+Fl_Gl_Window.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
+Fl_Gl_Window.o: Fl_Gl_Choice.H ../FL/Fl_Screen_Driver.H
 Fl_Gl_Window.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H
 Fl_Gl_Window.o: ../FL/fl_draw.H ../FL/Fl_Group.H ../FL/Fl_Rect.H
 Fl_Gl_Window.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
@@ -1749,7 +1736,7 @@ gl_draw.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 gl_draw.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 gl_draw.o: ../FL/gl.h ../FL/gl_draw.H ../FL/gl.h ../FL/fl_draw.H
 gl_draw.o: ../FL/Fl_Gl_Window_Driver.H ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
-gl_draw.o: drivers/Xlib/Fl_Font.H ../FL/fl_utf8.h ../FL/x.H ../FL/platform.H
+gl_draw.o: drivers/Xlib/Fl_Font.H ../FL/fl_utf8.h ../FL/platform.H
 gl_draw.o: ../FL/fl_types.h ../FL/Enumerations.H
 gl_start.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 gl_start.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
@@ -1757,8 +1744,8 @@ gl_start.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 gl_start.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Bitmap.H
 gl_start.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/gl.h
 gl_start.o: ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
-gl_start.o: ../FL/Fl_Gl_Window_Driver.H ../FL/x.H ../FL/platform.H
-gl_start.o: ../FL/fl_types.h ../FL/Enumerations.H Fl_Gl_Choice.H
+gl_start.o: ../FL/Fl_Gl_Window_Driver.H ../FL/platform.H ../FL/fl_types.h
+gl_start.o: ../FL/Enumerations.H Fl_Gl_Choice.H
 glut_compatibility.o: flstring.h ../FL/Fl_Export.H ../config.h
 glut_compatibility.o: ../FL/Fl_Gl_Window_Driver.H ../FL/Fl_Gl_Window.H
 glut_compatibility.o: ../FL/Fl_Window.H ../FL/Fl_Screen_Driver.H

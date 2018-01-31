@@ -3,7 +3,7 @@
 //
 // Mac OS X-specific printing support (objective-c++) for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -25,7 +25,7 @@
 #include "Fl_Cocoa_Window_Driver.H"
 
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #import <Cocoa/Cocoa.h>

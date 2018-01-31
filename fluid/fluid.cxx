@@ -3,7 +3,7 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 
 #include <FL/Fl.H>
 #ifdef __APPLE__
-#include <FL/x.H> // for fl_open_callback
+#include <FL/platform.H> // for fl_open_callback
 #endif
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -54,7 +54,7 @@
 #  include <io.h>
 #  include <fcntl.h>
 #  include <commdlg.h>
-#  include <FL/x.H>
+#  include <FL/platform.H>
 #else
 #  include <unistd.h>
 #endif

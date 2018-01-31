@@ -3,7 +3,7 @@
 //
 // Definition of X11 Screen interface
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -23,7 +23,7 @@
 #include "Fl_X11_Window_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Image_Surface.H>

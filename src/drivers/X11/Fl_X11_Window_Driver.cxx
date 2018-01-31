@@ -3,7 +3,7 @@
 //
 // Definition of X11 window driver.
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -30,7 +30,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <string.h>
 #if HAVE_DLFCN_H
 #include <dlfcn.h>

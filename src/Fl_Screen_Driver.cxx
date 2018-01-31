@@ -3,7 +3,7 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,7 @@
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl.H>
-#include <FL/x.H> // for fl_window
+#include <FL/platform.H> // for fl_window
 #include <FL/Fl_Plugin.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>

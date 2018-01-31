@@ -3,7 +3,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -48,7 +48,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/filename.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 
 /* Define a macro to decide if a trailing 'd' needs to be removed
    from the executable file name. Previous versions of Visual Studio

@@ -3,7 +3,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1084,7 +1084,7 @@ int main() {
  /** \defgroup  fl_drawings  Drawing functions
   FLTK global graphics and GUI drawing functions.
   These functions are declared in <FL/fl_draw.H>, 
-  and in <FL/x.H> for offscreen buffer-related ones.
+  and in <FL/platform.H> for offscreen buffer-related ones.
      @{ */
   // <Hack to re-order the 'Drawing functions' group>
  /** @} */

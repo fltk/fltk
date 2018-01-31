@@ -3,7 +3,7 @@
 //
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2005-2010 by Michael Sweet.
+// Copyright 2005-2018 by Michael Sweet.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -26,7 +26,7 @@
 #include <FL/Fl_Help_Dialog.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

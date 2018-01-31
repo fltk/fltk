@@ -4,7 +4,7 @@
 // Definition of X11 window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -27,7 +27,7 @@
 
 #include <FL/Fl_Window_Driver.H>
 #include <config.h> // for USE_XDBE
-#include <FL/x.H> // for Cursor
+#include <FL/platform.H> // for Cursor
 class Fl_Bitmap;
 
 /*

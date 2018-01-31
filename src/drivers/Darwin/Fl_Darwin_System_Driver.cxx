@@ -3,7 +3,7 @@
 //
 // Definition of Apple Darwin system driver.
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Darwin_System_Driver.H"
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/filename.H>

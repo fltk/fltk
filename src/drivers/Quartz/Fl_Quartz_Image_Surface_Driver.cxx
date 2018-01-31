@@ -3,7 +3,7 @@
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,7 @@
 #include "../../config_lib.h"
 
 #ifdef FL_CFG_GFX_QUARTZ
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image_Surface.H>
 #include "Fl_Quartz_Graphics_Driver.H"

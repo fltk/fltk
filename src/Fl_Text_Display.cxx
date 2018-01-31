@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2017 by Bill Spitzak and others.
+// Copyright 2001-2018 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -27,7 +27,7 @@
 #include <ctype.h>
 #include <string.h>	// strdup()
 #include <FL/Fl.H>
-#include <FL/x.H>
+#include <FL/platform.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>

@@ -2,7 +2,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 // Copyright 2004 Greg Ercolano.
 // API changes + filter improvements by Nathan Vander Wilt 2005
 //
@@ -35,7 +35,7 @@
 #  include <commdlg.h>		// OPENFILENAMEW, GetOpenFileName()
 #  include <shlobj.h>		// BROWSEINFOW, SHBrowseForFolder()
 #  include <FL/filename.H>	// FL_EXPORT
-#include <FL/x.H>		// fl_open_display
+#include <FL/platform.H>	// fl_open_display
 
 
 class Fl_WinAPI_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
