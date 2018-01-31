@@ -21,9 +21,9 @@
 // portability of even the system-specific code...
 #ifndef FL_DOXYGEN
 
-#if !defined(Fl_X_H)
+#if !defined(FL_PLATFORM_H)
 #  error "Never use <FL/mac.H> directly; include <FL/platform.H> instead."
-#endif // !Fl_X_H
+#endif // !FL_PLATFORM_H
 
 #ifdef __OBJC__
 @class FLWindow; // a subclass of the NSWindow Cocoa class

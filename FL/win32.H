@@ -21,9 +21,9 @@
 // portability of even the system-specific code...
 
 #ifndef FL_DOXYGEN
-#ifndef Fl_X_H
+#ifndef FL_PLATFORM_H
 #  error "Never use <FL/win32.H> directly; include <FL/platform.H> instead."
-#endif // !Fl_X_H
+#endif // !FL_PLATFORM_H
 
 #include <windows.h>
 typedef HWND Window;
