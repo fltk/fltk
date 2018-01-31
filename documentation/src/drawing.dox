@@ -1066,11 +1066,11 @@ where img is a pointer to any Fl_Image type.
 
 Sometimes it can be very useful to generate a complex drawing
 in memory first and copy it to the screen at a later point in 
-time. This technique can significantly reduce the amount of
-repeated drawing. Offscreen drawing functions are declared in <FL/x.H>.
-Fl_Double_Window uses offscreen rendering
-to avoid flickering on systems that don't support 
-double-buffering natively. 
+time. This technique can significantly reduce the amount of repeated
+drawing. Offscreen drawing functions are declared in <FL/platform.H>.
+
+Fl_Double_Window uses offscreen rendering to avoid flickering on
+systems that don't support double-buffering natively.
 
 Fl_Offscreen fl_create_offscreen(int w, int h)
 

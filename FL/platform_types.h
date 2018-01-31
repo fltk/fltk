@@ -1,7 +1,7 @@
 /*
  * "$Id$"
  *
- * Copyright 2016 by Bill Spitzak and others.
+ * Copyright 2016-2018 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -14,8 +14,8 @@
  *     http://www.fltk.org/str.php
  */
 
-#ifndef PLATFORM_TYPES_H
-#define PLATFORM_TYPES_H
+#ifndef FL_PLATFORM_TYPES_H
+#define FL_PLATFORM_TYPES_H
 
 /* Platform-dependent types are defined here.
   These types must be defined by any platform:
@@ -120,7 +120,7 @@ typedef struct __GLXcontextRec *GLContext;
 #  define FL_CONTROL	FL_META   /**< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X */
 #endif
 
-#endif /* PLATFORM_TYPES_H */
+#endif /* FL_PLATFORM_TYPES_H */
 
 /*
  * End of "$Id$".

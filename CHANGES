@@ -85,6 +85,11 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
+  - The include file for platform specific functions and definitions
+    (FL/x.H) has been replaced with FL/platform.H. FL/x.H is deprecated
+    but still available for backwards compatibility (STR #3435).
+    FL/x.H will be removed in a (not yet specified) future FLTK release.
+    We recommend to change your #include statements accordingly.
   - The Fl_Boxtype and Fl_Labeltype definitions contained enum values
     (names) with a leading underscore (e.g. _FL_MULTI_LABEL) that had to
     be used in this form. Now all boxtypes and labeltypes can and should

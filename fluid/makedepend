@@ -170,7 +170,7 @@ Fl_Window_Type.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H
 Fl_Window_Type.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 Fl_Window_Type.o: ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Window_Type.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/x.H
-Fl_Window_Type.o: ../FL/fl_types.h ../FL/Fl_Menu_Item.H
+Fl_Window_Type.o: ../FL/platform.H ../FL/fl_types.h ../FL/Fl_Menu_Item.H
 Fl_Window_Type.o: ../FL/Fl_Round_Button.H ../FL/Fl_Light_Button.H
 Fl_Window_Type.o: ../FL/Fl_Button.H Fl_Widget_Type.h Fl_Type.h
 Fl_Window_Type.o: ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
