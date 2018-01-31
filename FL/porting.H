@@ -21,9 +21,9 @@
 // These types and variables give access to internal, platform-specific data through the public API.
 // They require to include platform.H (in contrast to types defined in platform_types.h)
 
-#if !defined(Fl_X_H)
+#if !defined(FL_PLATFORM_H)
 #  error "Never use <FL/porting.H> directly; include <FL/platform.H> instead."
-#endif // !Fl_X_H
+#endif // !FL_PLATFORM_H
 
 typedef void *Window; // used by fl_find(), fl_xid() and class Fl_X
 
