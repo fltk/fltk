@@ -4,7 +4,7 @@
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,7 @@
 //
 
 /** \file Fl_Window_Driver.H
- \brief declaration of classe Fl_Window_Driver.
+ \brief declaration of class Fl_Window_Driver.
 */
 
 #ifndef FL_WINDOW_DRIVER_H
@@ -39,7 +39,7 @@ class Fl_RGB_Image;
  \brief A base class for platform specific window handling code.
  This class is only for internal use by the FLTK library.
  Each supported platform implements several of the virtual methods of this class.
-  */
+*/
 class FL_EXPORT Fl_Window_Driver
 {
   friend class Fl_Window;
@@ -70,13 +70,13 @@ public:
   int y() const { return pWindow->y(); }
   /** returns the width of the window. */
   int w() const { return pWindow->w(); }
-  /** returns the width of the window. */
+  /** returns the height of the window. */
   int h() const { return pWindow->h(); }
   /** returns whether the window has a border. */
   int border() const { return pWindow->border(); }
   /** returns whether the window itself is visible(). */
   int visible() const { return pWindow->visible(); }
-  /** returns whether the window and all its parents is visible(). */
+  /** returns whether the window and all its parents are visible(). */
   int visible_r() const { return pWindow->visible_r(); }
   /** returns whether the window is shown(). */
   int shown() const { return pWindow->shown(); }
@@ -150,7 +150,8 @@ public:
   virtual void size_range();
   virtual void iconize() {}
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom) {
-    *top = *left = *right = *bottom = 0; }
+    *top = *left = *right = *bottom = 0;
+  }
   virtual void show_with_args_begin() {}
   virtual void show_with_args_end(int argc, char **argv) {}
   virtual int can_do_overlay();
