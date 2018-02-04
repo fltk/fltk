@@ -1081,7 +1081,7 @@ static double nsvg__atof(const char* s)
 	char* cur = (char*)s;
 	char* end = NULL;
 	double res = 0.0, sign = 1.0;
-	double intPart = 0, fracPart = 0;
+	double intPart = 0.0, fracPart = 0.0;
 	char hasIntPart = 0, hasFracPart = 0;
 
 	// Parse optional sign
@@ -1096,12 +1096,12 @@ static double nsvg__atof(const char* s)
 	if (nsvg__isdigit(*cur)) {
 		// Parse digit sequence
 #ifdef _MSC_VER
-          intPart = (double)_strtoi64(cur, &end, 10);
+		intPart = (double)_strtoi64(cur, &end, 10);
 #else
-          intPart = (double)strtoll(cur, &end, 10);
+		intPart = (double)strtoll(cur, &end, 10);
 #endif
 		if (cur != end) {
-			res = (double)intPart;
+			res = intPart;
 			hasIntPart = 1;
 			cur = end;
 		}
@@ -1113,12 +1113,12 @@ static double nsvg__atof(const char* s)
 		if (nsvg__isdigit(*cur)) {
 			// Parse digit sequence
 #ifdef _MSC_VER
-                        fracPart = (double)_strtoi64(cur, &end, 10);
+			fracPart = (double)_strtoi64(cur, &end, 10);
 #else
-                        fracPart = (double)strtoll(cur, &end, 10);
+			fracPart = (double)strtoll(cur, &end, 10);
 #endif
 			if (cur != end) {
-				res += (double)fracPart / pow(10.0, (double)(end - cur));
+				res += fracPart / pow(10.0, (double)(end - cur));
 				hasFracPart = 1;
 				cur = end;
 			}
@@ -1131,7 +1131,7 @@ static double nsvg__atof(const char* s)
 
 	// Parse optional exponent
 	if (*cur == 'e' || *cur == 'E') {
-		double expPart = 0;
+		double expPart = 0.0;
 		cur++; // skip 'E'
 		expPart = (double)strtol(cur, &end, 10); // Parse digit sequence with sign
 		if (cur != end) {

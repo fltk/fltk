@@ -41,7 +41,7 @@ static double strtoll(const char *str, char **endptr, int base) {
 #include "../nanosvg/nanosvg.h"
 
 #define NANOSVGRAST_IMPLEMENTATION	// Expands implementation
-#include "../nanosvg/altsvgrast.h"
+#include "../nanosvg/nanosvgrast.h"
 
 
 /** The constructor loads the SVG image from the given .svg/.svgz filename or in-memory data.
@@ -184,7 +184,7 @@ void Fl_SVG_Image::rasterize_(int W, int H) {
     fy = (double)H / counted_svg_image_->svg_image->height;
   }
   array = new uchar[W*H*4];
-  nsvgAltRasterize(rasterizer, counted_svg_image_->svg_image, 0, 0, fx, fy, (uchar* )array, W, H, W*4);
+  nsvgRasterizeXY(rasterizer, counted_svg_image_->svg_image, 0, 0, fx, fy, (uchar* )array, W, H, W*4);
   alloc_array = 1;
   data((const char * const *)&array, 1);
   d(4);

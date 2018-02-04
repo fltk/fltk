@@ -1,9 +1,3 @@
-//
-// "$Id$"
-//
-
-/* Modified by FLTK from original sources to support non-square X,Y axes scaling */
-
 /*
  * Copyright (c) 2013-14 Mikko Mononen memon@inside.org
  *
@@ -28,6 +22,11 @@
  *
  */
 
+/* Modified by FLTK to support non-square X,Y axes scaling.
+ *
+ * Added: nsvgRasterizeXY()
+*/
+
 
 #ifndef NANOSVGRAST_H
 #define NANOSVGRAST_H
@@ -50,7 +49,7 @@ typedef struct NSVGrasterizer NSVGrasterizer;
 	nsvgRasterize(rast, image, 0,0,1, img, w, h, w*4);
 
 	// For non-square X,Y scaling, use
-	nsvgAltRasterize(rast, image, 0,0,1,1, img, w, h, w*4);
+	nsvgRasterizeXY(rast, image, 0,0,1,1, img, w, h, w*4);
 */
 
 // Allocated rasterizer context.
@@ -70,7 +69,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 				   unsigned char* dst, int w, int h, int stride);
 
 // As above, but allow X and Y axes to scale independently for non-square aspects
-void nsvgAltRasterize(NSVGrasterizer* r,
+void nsvgRasterizeXY(NSVGrasterizer* r,
 				   NSVGimage* image, float tx, float ty,
 				   float sx, float sy,
 				   unsigned char* dst, int w, int h, int stride);
@@ -1374,7 +1373,7 @@ static void dumpEdges(NSVGrasterizer* r, const char* name)
 }
 */
 
-void nsvgAltRasterize(NSVGrasterizer* r,
+void nsvgRasterizeXY(NSVGrasterizer* r,
 				   NSVGimage* image, float tx, float ty,
 				   float sx, float sy,
 				   unsigned char* dst, int w, int h, int stride)
@@ -1466,7 +1465,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 				   NSVGimage* image, float tx, float ty, float scale,
 				   unsigned char* dst, int w, int h, int stride)
 {
-	nsvgAltRasterize(r,image, tx, ty, scale, scale, dst, w, h, stride);
+	nsvgRasterizeXY(r,image, tx, ty, scale, scale, dst, w, h, stride);
 }
 
 #endif // NANOSVGRAST_IMPLEMENTATION
