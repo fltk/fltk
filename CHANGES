@@ -18,6 +18,12 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - New member functions FL::run_also_windowless(),
+    and FL::wait_also_windowless(double secnds) to run the event
+    loop even without any mapped window if the platform supports it.
+  - New member functions Fl::program_should_quit(void),
+    and Fl::program_should_quit(int) to support detection by the library
+    of a request to terminate cleanly the program.
   - MacOS platform: Added support for rescaling the GUI of any app at run-time
     using the command/+/-/0/ keystrokes.
   - MSWindows platform: Added optional support for rescaling the GUI of any app

@@ -259,7 +259,8 @@ public:
 private:  
   static unsigned char options_[OPTION_LAST];
   static unsigned char options_read_;
-  
+  static int program_should_quit_; // non-zero means the program was asked to cleanly terminate
+
 public:  
   /*
    Return a global setting for all FLTK applications, possibly overridden
@@ -412,6 +413,19 @@ public:
   static int check();
   static int ready();
   static int run();
+  static int run_also_windowless();
+  static int wait_also_windowless(double delay = 1e20);
+  /** Returns non-zero when a request for program termination was received and accepted.
+   On the MacOS platform, the "Quit xxx" item of the application menu is such a request,
+   that is considered accepted when all windows are closed. On other platforms, this function
+   returns 0 until \p Fl::program_should_quit(1) is called.
+   */
+  static int program_should_quit() {return program_should_quit_;}
+  /** Indicate to the FLTK library whether a program termination request was received and accepted.
+  A program may set this to 1, for example, while performing a platform-independent command asking the program to cleanly
+  terminate, similarly to the "Quit xxx" item of the application menu under MacOS. */
+  static void program_should_quit(int should_i) { program_should_quit_ = should_i; }
+
   static Fl_Widget* readqueue();
   /**
   Adds a one-shot timeout callback.  The function will be called by

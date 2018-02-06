@@ -832,9 +832,9 @@ static int do_queued_events( double time = 0.0 )
   }
   
   fl_unlock_function();
-  NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask 
-                                      untilDate:[NSDate dateWithTimeIntervalSinceNow:time] 
-                                         inMode:NSDefaultRunLoopMode dequeue:YES];  
+  NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
+                                      untilDate:[NSDate dateWithTimeIntervalSinceNow:time]
+                                         inMode:NSDefaultRunLoopMode dequeue:YES];
   if (event != nil) {
     got_events = 1;
     [FLApplication sendEvent:event]; // will then call [NSApplication sendevent:]
@@ -1507,6 +1507,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (void)applicationWillUnhide:(NSNotification *)notify;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 @end
+
 @implementation FLAppDelegate
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
@@ -1515,19 +1516,21 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
   fl_lock_function();
-  NSApplicationTerminateReply reply = NSTerminateNow;
   while ( Fl_X::first ) {
     Fl_Window *win = Fl::first_window();
     if (win->parent()) win = win->top_window();
     Fl_Widget_Tracker wt(win); // track the window object
     Fl::handle(FL_CLOSE, win);
     if (wt.exists() && win->shown()) { // the user didn't close win
-      reply = NSTerminateCancel; // so we return to the main program now
       break;
     }
   }
   fl_unlock_function();
-  return reply;
+  if ( ! Fl::first_window() ) {
+    Fl::program_should_quit(1);
+    breakMacEventLoop(); // necessary when called through menu and in Fl::wait()
+  }
+  return NSTerminateCancel;
 }
 - (void)applicationDidBecomeActive:(NSNotification *)notify
 {
@@ -1714,6 +1717,18 @@ static void drain_dropped_files_list() {
   }
   open_cb(fname);
   free(fname);
+}
+
+int Fl_Darwin_System_Driver::run_also_windowless() {
+  while (!Fl::program_should_quit()) {
+    Fl::wait(1e20);
+  }
+  return 0;
+}
+
+int Fl_Darwin_System_Driver::wait_also_windowless(double delay) {
+  if (!Fl::program_should_quit()) Fl::wait(delay);
+  return !Fl::program_should_quit();
 }
 
 /*

@@ -4,7 +4,7 @@
 // A base class for platform specific system calls
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -225,6 +225,9 @@ public:
   virtual const char *meta_name() { return "Meta"; }
   virtual const char *alt_name() { return "Alt"; }
   virtual const char *control_name() { return "Ctrl"; }
+  // The default implementation of the next 2 functions may be enough.
+  virtual int run_also_windowless();
+  virtual int wait_also_windowless(double delay);
 };
 
 #endif // FL_SYSTEM_DRIVER_H
