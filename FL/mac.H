@@ -281,6 +281,14 @@ extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0
  */
 extern int fl_mac_os_version;
 
+/** Determines whether cmd-Q or the "Quit xxx" item of application menu terminates the app or only the event loop.
+ By default, fl_mac_quit_early = 1, and cmd-Q or "Quit xxx" terminate the app when all windows are closed
+ without Fl::run() returning. If fl_mac_quit_early is set to 0, cmd-Q or "Quit xxx" terminate only the event loop
+ when all windows are closed, and Fl::run() returns.
+ \note This OS-specific variable will not be part of the API of FLTK 1.4.
+ */
+extern int fl_mac_quit_early;
+
 /** The system menu bar.
  */
 extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;

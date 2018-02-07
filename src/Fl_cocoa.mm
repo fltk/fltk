@@ -81,6 +81,7 @@ static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
 
 int fl_mac_os_version = Fl_X::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
+int fl_mac_quit_early = 1; // set it to 0 so cmd-Q does not terminate app but merely terminates the event loop
 
 // public variables
 CGContextRef fl_gc = 0;
@@ -1533,7 +1534,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
   fl_lock_function();
-  NSApplicationTerminateReply reply = NSTerminateNow;
+  NSApplicationTerminateReply reply = (fl_mac_quit_early ? NSTerminateNow : NSTerminateCancel);
   while ( Fl_X::first ) {
     Fl_Window *win = Fl::first_window();
     if (win->parent()) win = win->top_window();

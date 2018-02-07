@@ -732,9 +732,20 @@ Apple "Quit" Event
 
 \par
 When the user presses Cmd-Q or requests a termination of the
-application, OS X will send a "Quit" Apple Event. FLTK handles
-this event by sending an \c FL_CLOSE event to all open
-windows. If all windows close, the application will terminate.
+application, FLTK reacts sending an \c FL_CLOSE event to all open
+windows. If any window remains open, the termination request aborts,
+and the app continues. If all windows close, FLTK default behaviour
+is to terminate the application immediately, without letting Fl::run()
+return. Consequently, potential cleanup code placed after the Fl::run()
+call does not run, and potential global destructors that would run
+after main() would return do not run. All code that should run so
+the app cleanly terminates must therefore be placed in
+window callbacks (which run when windows are closed) or in atexit()
+functions.
+Alternatively, FLTK can be directed to just terminate the event loop
+and therefore let potential cleanup code placed after return from Fl::run()
+and from main() execute. This is obtained setting global variable
+\ref fl_mac_quit_early to 0.
 
 Apple "Open" Event
 
