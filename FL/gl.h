@@ -3,7 +3,7 @@
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // You must include this instead of GL/gl.h to get the Microsoft
 // APIENTRY stuff included (from <windows.h>) prior to the OpenGL
@@ -28,10 +28,11 @@
  *
  *  To use OpenGL from within an FLTK application you MUST use gl_visual()
  *  to select the default visual before doing show() on any windows. Mesa
- *  will crash if yoy try to use a visual not returned by glxChooseVidual.
+ *  will crash if you try to use a visual not returned by glxChooseVisual.
  *
- *  This does not work with Fl_Double_Window's!  It will try to draw
- *  into the front buffer.  Depending on the system this will either
+ *  Historically, this did not always work well with Fl_Double_Window's!
+ *  It can try to draw into the front buffer.
+ *  Depending on the system this might either
  *  crash or do nothing (when pixmaps are being used as back buffer
  *  and GL is being done by hardware), work correctly (when GL is done
  *  with software, such as Mesa), or draw into the front buffer and
@@ -89,16 +90,8 @@ FL_EXPORT void gl_draw(const char*, int n, int x, int y);
 FL_EXPORT void gl_draw(const char*, int n, float x, float y);
 FL_EXPORT void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 FL_EXPORT void gl_measure(const char*, int& x, int& y);
-#ifdef __APPLE__ // PORTME: OpenGL platform texture
-extern FL_EXPORT void gl_texture_pile_height(int max);
-extern FL_EXPORT int gl_texture_pile_height();
-#elif defined(WIN32)
-  // not needed
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: define functions to control OpenGL texture pile height if supported"
-#else // X11
-  // not needed
-#endif
+FL_EXPORT void gl_texture_pile_height(int max);
+FL_EXPORT int  gl_texture_pile_height();
 
 FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 

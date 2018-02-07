@@ -42,23 +42,25 @@ class Fl_Gl_Choice;
 static GLContext context;
 static int clip_state_number=-1;
 static int pw, ph;
+float gl_start_scale = 1;
 
 static Fl_Gl_Choice* gl_choice;
 
 /** Creates an OpenGL context */
 void gl_start() {
+  gl_start_scale = Fl_Display_Device::display_device()->driver()->scale();
   if (!context) {
     if (!gl_choice) Fl::gl_visual(0);
     context = Fl_Gl_Window_Driver::global()->create_gl_context(Fl_Window::current(), gl_choice);
   }
   Fl_Gl_Window_Driver::global()->set_gl_context(Fl_Window::current(), context);
   Fl_Gl_Window_Driver::global()->gl_start();
-  if (pw != Fl_Window::current()->w() || ph != Fl_Window::current()->h()) {
-    pw = Fl_Window::current()->w();
-    ph = Fl_Window::current()->h();
+  if (pw != int(Fl_Window::current()->w() * gl_start_scale) || ph != int(Fl_Window::current()->h() * gl_start_scale)) {
+    pw = int(Fl_Window::current()->w() * gl_start_scale);
+    ph = int(Fl_Window::current()->h() * gl_start_scale);
     glLoadIdentity();
     glViewport(0, 0, pw, ph);
-    glOrtho(0, pw, 0, ph, -1, 1);
+    glOrtho(0, Fl_Window::current()->w(), 0, Fl_Window::current()->h(), -1, 1);
     glDrawBuffer(GL_FRONT);
   }
   if (clip_state_number != fl_graphics_driver->fl_clip_state_number) {
@@ -67,18 +69,21 @@ void gl_start() {
     if (fl_clip_box(0, 0, Fl_Window::current()->w(), Fl_Window::current()->h(),
 		    x, y, w, h)) {
       fl_clip_region(Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h));
-      glScissor(x, Fl_Window::current()->h()-(y+h), w, h);
+      glScissor(x*gl_start_scale, (Fl_Window::current()->h()-(y+h))*gl_start_scale, w*gl_start_scale, h*gl_start_scale);
       glEnable(GL_SCISSOR_TEST);
     } else {
       glDisable(GL_SCISSOR_TEST);
     }
   }
+  Fl_Display_Device::display_device()->driver()->scale(1);
 }
 
 /** Releases an OpenGL context */
 void gl_finish() {
   glFlush();
   Fl_Gl_Window_Driver::global()->waitGL();
+  Fl_Display_Device::display_device()->driver()->scale(gl_start_scale);
+  gl_start_scale = 1;
 }
 
 void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {

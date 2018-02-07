@@ -202,22 +202,34 @@ void Fl_Xlib_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, 
   XFree(preedit_attr);
 }
 
+#if !USE_XFT
 unsigned Fl_Xlib_Graphics_Driver::font_desc_size() {
-  return (unsigned)sizeof(Fl_Fontdesc);
+  return (unsigned)sizeof(Fl_Xlib_Fontdesc);
 }
+#endif
 
 const char *Fl_Xlib_Graphics_Driver::font_name(int num) {
+#if USE_XFT
   return fl_fonts[num].name;
+#else
+  return ((Fl_Xlib_Fontdesc*)fl_fonts)[num].name;
+#endif
 }
 
 void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
-#if USE_PANGO
+#if USE_XFT
+#  if USE_PANGO
     init_built_in_fonts();
-#endif
+#  endif
   Fl_Fontdesc *s = fl_fonts + num;
+#else
+    Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts) + num;
+#endif
   if (s->name) {
     if (!strcmp(s->name, name)) {s->name = name; return;}
+#if !USE_XFT
     if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
+#endif
     for (Fl_Font_Descriptor* f = s->first; f;) {
       Fl_Font_Descriptor* n = f->next; delete f; f = n;
     }
@@ -225,7 +237,9 @@ void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
   }
   s->name = name;
   s->fontname[0] = 0;
+#if !USE_XFT
   s->xlist = 0;
+#endif
   s->first = 0;
 }
 

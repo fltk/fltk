@@ -217,8 +217,20 @@ void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
   shared->scaled_image_->draw(X, Y, shared->scaled_image_->w(), shared->scaled_image_->h(), 0, 0);
 }
 
+unsigned Fl_Graphics_Driver::font_desc_size() {
+  return (unsigned)sizeof(Fl_Fontdesc);
+}
 
 #ifndef FL_DOXYGEN
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
+  next = 0;
+#  if HAVE_GL
+  listbase = 0;
+#  endif
+  // OpenGL needs those for its font handling
+  size = Size;
+}
+
 Fl_Scalable_Graphics_Driver::Fl_Scalable_Graphics_Driver() : Fl_Graphics_Driver() {
   scale_ = 1;
   line_width_ = 0;

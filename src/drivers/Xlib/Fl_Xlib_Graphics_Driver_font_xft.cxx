@@ -695,13 +695,9 @@ puts("Font Opened"); fflush(stdout);
   }
 } // end of fontopen
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) {
+Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) : Fl_Font_Descriptor(name, fsize) {
 //  encoding = fl_encoding_;
-  size = fsize;
   angle = fangle;
-#if HAVE_GL
-  listbase = 0;
-#endif // HAVE_GL
   font = fontopen(name, fsize, false, angle);
 }
 
@@ -729,7 +725,7 @@ static const wchar_t *utf8reformat(const char *str, int& n)
   return buffer;
 }
 
-static void utf8extents(Fl_Font_Descriptor *desc, const char *str, int n, XGlyphInfo *extents)
+static void utf8extents(Fl_Xlib_Font_Descriptor *desc, const char *str, int n, XGlyphInfo *extents)
 {
   memset(extents, 0, sizeof(XGlyphInfo));
   const wchar_t *buffer = utf8reformat(str, n);
@@ -741,26 +737,26 @@ static void utf8extents(Fl_Font_Descriptor *desc, const char *str, int n, XGlyph
 }
 
 int Fl_Xlib_Graphics_Driver::height_unscaled() {
-  if (font_descriptor()) return font_descriptor()->font->ascent + font_descriptor()->font->descent;
+  if (font_descriptor()) return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->ascent + ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->descent;
   else return -1;
 }
 
 int Fl_Xlib_Graphics_Driver::descent_unscaled() {
-  if (font_descriptor()) return font_descriptor()->font->descent;
+  if (font_descriptor()) return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->descent;
   else return -1;
 }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
   if (!font_descriptor()) return -1.0;
   XGlyphInfo i;
-  utf8extents(font_descriptor(), str, n, &i);
+  utf8extents((Fl_Xlib_Font_Descriptor*)font_descriptor(), str, n, &i);
   return i.xOff;
 }
 
 static double fl_xft_width(Fl_Font_Descriptor *desc, FcChar32 *str, int n) {
   if (!desc) return -1.0;
   XGlyphInfo i;
-  XftTextExtents32(fl_display, desc->font, str, n, &i);
+  XftTextExtents32(fl_display, ((Fl_Xlib_Font_Descriptor*)desc)->font, str, n, &i);
   return i.xOff;
 }
 
@@ -776,7 +772,7 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
     return;
   }
   XGlyphInfo gi;
-  utf8extents(font_descriptor(), c, n, &gi);
+  utf8extents((Fl_Xlib_Font_Descriptor*)font_descriptor(), c, n, &gi);
 
   w = gi.width;
   h = gi.height;
@@ -818,9 +814,9 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
     
     const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-    XftDrawString16(draw_, &color, font_descriptor()->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar16 *)buffer, n);
+    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar16 *)buffer, n);
 #else
-    XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar32 *)buffer, n);
+    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar32 *)buffer, n);
 #endif
   }
 }
@@ -862,7 +858,7 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, font_descriptor()->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (FcChar32 *)str, n);
 }
 
 
@@ -998,7 +994,7 @@ float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
   return 2;
 }
 
-Fl_Font_Descriptor::~Fl_Font_Descriptor() {
+Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   //  XftFontClose(fl_display, font);
 }
@@ -1019,18 +1015,18 @@ static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsi
     driver->Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  Fl_Font_Descriptor* f = driver->font_descriptor();
+  Fl_Xlib_Font_Descriptor* f = (Fl_Xlib_Font_Descriptor*)driver->font_descriptor();
   if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size_unscaled() && f && f->angle == angle)
     return;
   driver->Fl_Graphics_Driver::font(fnum, size);
   Fl_Fontdesc *font = fl_fonts + fnum;
   // search the fontsizes we have generated already
-  for (f = font->first; f; f = f->next) {
+  for (f = (Fl_Xlib_Font_Descriptor*)font->first; f; f = (Fl_Xlib_Font_Descriptor*)f->next) {
     if (f->size == size && f->angle == angle)// && !strcasecmp(f->encoding, fl_encoding_))
       break;
   }
   if (!f) {
-    f = new Fl_Font_Descriptor(font->name, size, angle);
+    f = new Fl_Xlib_Font_Descriptor(font->name, size, angle);
     f->next = font->first;
     font->first = f;
   }
@@ -1202,6 +1198,7 @@ PangoContext *Fl_Xlib_Graphics_Driver::context() {
   return pctxt_;
 }
 
+
 void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   if (!size) return;
   if (size < 0) {
@@ -1215,7 +1212,7 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   pfd_ = pango_font_description_from_string(Fl::get_font_name(fnum));
   pango_font_description_set_absolute_size(pfd_, size*PANGO_SCALE); // 1.8
   if (!pctxt_) context();
-  Fl_Font_Descriptor *fd = font_descriptor();
+  Fl_Xlib_Font_Descriptor *fd = (Fl_Xlib_Font_Descriptor*)font_descriptor();
   if (!fd->height_) {
     PangoFont *pfont = pango_font_map_load_font(pfmap_, pctxt_, pfd_);
     PangoRectangle logical_rect;
@@ -1339,7 +1336,7 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int 
 }
 
 int Fl_Xlib_Graphics_Driver::height_unscaled() {
-  if (font_descriptor())  return font_descriptor()->height_;
+  if (font_descriptor())  return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->height_;
   else return -1;
 }
 
@@ -1350,7 +1347,7 @@ double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
 }
 
 int Fl_Xlib_Graphics_Driver::descent_unscaled() {
-  if (font_descriptor()) return font_descriptor()->descent_;
+  if (font_descriptor()) return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->descent_;
   else return -1;
 }
 
@@ -1433,13 +1430,9 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return 1;
 }
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) {
+Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) : Fl_Font_Descriptor(name, fsize) {
   fl_open_display();
-  size = fsize;
   angle = fangle;
-#if HAVE_GL
-  listbase = 0;
-#endif // HAVE_GL
   height_ = 0;
   descent_ = 0;
 }

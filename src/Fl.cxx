@@ -1914,6 +1914,8 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker()
 
 int Fl::use_high_res_GL_ = 0;
 
+int Fl::draw_GL_text_with_textures_ = 1;
+
 int Fl::dnd()
 {
   return Fl::screen_driver()->dnd();

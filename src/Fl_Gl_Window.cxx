@@ -495,6 +495,10 @@ void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #endif // HAVE_DLSYM
 }
 
+Fl_Font_Descriptor** Fl_Gl_Window_Driver::fontnum_to_fontdescriptor(int fnum) {
+  extern FL_EXPORT Fl_Fontdesc *fl_fonts;
+  return &(fl_fonts[fnum].first);
+}
 
 #ifdef FL_CFG_GFX_QUARTZ
 #include <FL/platform.H>

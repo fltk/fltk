@@ -94,7 +94,7 @@ static int use_registry(const char *p) {
 
 // turn a stored (with *'s) X font name into a pretty name:
 const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
-  Fl_Fontdesc *f = fl_fonts + fnum;
+  Fl_Xlib_Fontdesc *f = ((Fl_Xlib_Fontdesc*)fl_fonts) + fnum;
   if (!f->fontname[0]) {
     int type = 0;
     const char* p = f->name;
@@ -312,9 +312,10 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* xstarname) {
 	break;
       }
     }
-    if (!fl_fonts[j].xlist) {
-      fl_fonts[j].xlist = xlist+first_xlist;
-      fl_fonts[j].n = -(i-first_xlist);
+    Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts)+j;
+    if (!s->xlist) {
+      s->xlist = xlist+first_xlist;
+      s->n = -(i-first_xlist);
       used_xlist = 1;
     }
   }
@@ -323,8 +324,8 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* xstarname) {
 }
 
 int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
-  Fl_Fontdesc *s = fl_fonts+fnum;
-  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+  Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts)+fnum;
+  if (!s->name) s = ((Fl_Xlib_Fontdesc*)fl_fonts); // empty slot in table, use entry 0
   if (!s->xlist) {
     fl_open_display();
     s->xlist = XListFonts(fl_display, s->name, 100, &(s->n));
@@ -358,7 +359,7 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 #ifndef FL_DOXYGEN
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
+Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name) : Fl_Font_Descriptor(name, 0) {
   font = XCreateUtf8FontStruct(fl_display, name);
   if (!font) {
     Fl::warning("bad font: %s", name);
@@ -372,7 +373,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
 
 Fl_XFont_On_Demand fl_xfont;
 
-Fl_Font_Descriptor::~Fl_Font_Descriptor() {
+Fl_Xlib_Font_Descriptor::~Fl_Xlib_Font_Descriptor() {
 #  if HAVE_GL
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
@@ -389,7 +390,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 
 // WARNING: if you add to this table, you must redefine FL_FREE_FONT
 // in Enumerations.H & recompile!!
-static Fl_Fontdesc built_in_table[] = {
+static Fl_Xlib_Fontdesc built_in_table[] = {
 {"-*-helvetica-medium-r-normal--*"},
 {"-*-helvetica-bold-r-normal--*"},
 {"-*-helvetica-medium-o-normal--*"},
@@ -408,7 +409,7 @@ static Fl_Fontdesc built_in_table[] = {
 {"-*-*zapf dingbats-*"}
 };
 
-Fl_Fontdesc* fl_fonts = built_in_table;
+Fl_Fontdesc* fl_fonts = (Fl_Fontdesc*)built_in_table;
 
 #define MAXSIZE 32767
 
@@ -554,8 +555,8 @@ static char *put_font_size(const char *n, int size)
 
 
 char *fl_get_font_xfld(int fnum, int size) {
-  Fl_Fontdesc* s = fl_fonts+fnum;
-  if (!s->name) s = fl_fonts; // use font 0 if still undefined
+  Fl_Xlib_Fontdesc* s = ((Fl_Xlib_Fontdesc*)fl_fonts)+fnum;
+  if (!s->name) s = (Fl_Xlib_Fontdesc*)fl_fonts; // use font 0 if still undefined
   fl_open_display();
   return put_font_size(s->name, size);
 }
@@ -563,15 +564,15 @@ char *fl_get_font_xfld(int fnum, int size) {
 // locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
 static Fl_Font_Descriptor* find(int fnum, int size) {
   char *name;
-  Fl_Fontdesc* s = fl_fonts+fnum;
-  if (!s->name) s = fl_fonts; // use font 0 if still undefined
+  Fl_Xlib_Fontdesc* s = ((Fl_Xlib_Fontdesc*)fl_fonts)+fnum;
+  if (!s->name) s = (Fl_Xlib_Fontdesc*)fl_fonts; // use font 0 if still undefined
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->size == size) return f;
   fl_open_display();
 
   name = put_font_size(s->name, size);
-  f = new Fl_Font_Descriptor(name);
+  f = new Fl_Xlib_Font_Descriptor(name);
   f->size = size;
   f->next = s->first;
   s->first = f;
@@ -597,7 +598,7 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   }
   if (fnum == Fl_Graphics_Driver::font() && size == Fl_Graphics_Driver::size()) return;
   Fl_Graphics_Driver::font(fnum, size);
-  Fl_Font_Descriptor* f = find(fnum, size);
+  Fl_Xlib_Font_Descriptor* f = (Fl_Xlib_Font_Descriptor*)find(fnum, size);
   if (f != this->font_descriptor()) {
     this->font_descriptor(f);
     fl_xfont = f->font->fonts[0];
@@ -606,12 +607,12 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 int Fl_Xlib_Graphics_Driver::height_unscaled() {
-  if (font_descriptor()) return font_descriptor()->font->ascent + font_descriptor()->font->descent;
+  if (font_descriptor()) return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->ascent + ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->descent;
   else return -1;
 }
 
 int Fl_Xlib_Graphics_Driver::descent_unscaled() {
-  if (font_descriptor()) return font_descriptor()->font->descent;
+  if (font_descriptor()) return ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->descent;
   else return -1;
 }
 
@@ -621,12 +622,12 @@ Fl_Fontsize Fl_Xlib_Graphics_Driver::size_unscaled() {
 }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(const char* c, int n) {
-  if (font_descriptor()) return (double) XUtf8TextWidth(font_descriptor()->font, c, n);
+  if (font_descriptor()) return (double) XUtf8TextWidth(((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, c, n);
   else return -1;
 }
 
 double Fl_Xlib_Graphics_Driver::width_unscaled(unsigned int c) {
-  if (font_descriptor()) return (double) XUtf8UcsWidth(font_descriptor()->font, c);
+  if (font_descriptor()) return (double) XUtf8UcsWidth(((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, c);
   else return -1;
 }
 
@@ -634,11 +635,11 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
   if (font_gc != gc_) {
     if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
-    XSetFont(fl_display, gc_, font_descriptor()->font->fid);
+    XSetFont(fl_display, gc_, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->fid);
   }
   int xx, yy, ww, hh;
   xx = yy = ww = hh = 0;
-  if (gc_) XUtf8_measure_extents(fl_display, fl_window, font_descriptor()->font, gc_, &xx, &yy, &ww, &hh, c, n);
+  if (gc_) XUtf8_measure_extents(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, &xx, &yy, &ww, &hh, c, n);
 
   W = ww; H = hh; dx = xx; dy = yy;
 // This is the safe but mostly wrong thing we used to do...
@@ -652,9 +653,9 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char* c, int n, int x, int y) 
   if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
-    XSetFont(fl_display, gc_, font_descriptor()->font->fid);
+    XSetFont(fl_display, gc_, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->fid);
   }
-  if (gc_) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, gc_, x+offset_x_, y+offset_y_, c, n);
+  if (gc_) XUtf8DrawString(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, x+offset_x_, y+offset_y_, c, n);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
@@ -673,14 +674,14 @@ void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
   }
-  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, gc_, x+offset_x_, y+offset_y_, c, n);
+  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, x+offset_x_, y+offset_y_, c, n);
 }
 
 float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {
   float ps_size = (float) s;
   // Non-Xft fonts can be smaller than required.
   // Set the PostScript font size to the display font height
-  char *name = desc->font->font_name_list[0];
+  char *name = ((Fl_Xlib_Font_Descriptor*)desc)->font->font_name_list[0];
   char *p = strstr(name, "--");
   if (p) {
     sscanf(p + 2, "%f", &ps_size);

@@ -34,6 +34,7 @@
     MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5)
 
 struct Fl_Fontdesc;
+class Fl_Quartz_Font_Descriptor;
 
 /**
  \brief The Mac OS X-specific graphics class.
@@ -43,6 +44,7 @@ struct Fl_Fontdesc;
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
   friend class Fl_Font_Descriptor;
   friend class Fl_Cocoa_Printer_Driver;
+  friend class Fl_Quartz_Font_Descriptor;
 protected:
   CGContextRef gc_;
   int p_size;
@@ -146,10 +148,9 @@ protected:
   virtual bool high_resolution() { return high_resolution_; }
   virtual void global_gc();
   void quartz_restore_line_style();
-  inline Fl_Font_Descriptor *valid_font_descriptor();
+  inline Fl_Quartz_Font_Descriptor *valid_font_descriptor();
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep);
-  virtual unsigned font_desc_size();
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
   Fl_Fontdesc* calc_fl_fonts(void);
@@ -165,13 +166,13 @@ protected:
   static void init_CoreText_or_ATSU();
   void draw_CoreText(const char *str, int n, float x, float y);
   double width_CoreText(const UniChar* txt, int n);
-  void descriptor_init_CoreText(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  void descriptor_init_CoreText(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
   void text_extents_CoreText(const char*, int n, int& dx, int& dy, int& w, int& h);
   Fl_Font set_fonts_CoreText(const char* xstarname);
 
   void draw_ATSU(const char *str, int n, float x, float y);
   double width_ATSU(const UniChar* txt, int n);
-  void descriptor_init_ATSU(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  void descriptor_init_ATSU(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
   void text_extents_ATSU(const char*, int n, int& dx, int& dy, int& w, int& h);
   Fl_Font set_fonts_ATSU(const char* xstarname);
 
@@ -181,7 +182,7 @@ protected:
   static pter_to_draw_member CoreText_or_ATSU_draw;
   static pter_to_width_member CoreText_or_ATSU_width;
 #else
-  void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Font_Descriptor *d);
+  void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
 #endif
 };
 

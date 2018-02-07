@@ -18,6 +18,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - OpenGL draws text using textures on all platforms, when the necessary
+    hardware support is present (a backup mechanism is available in absence
+    of this support). Thus, all text drawable in Fl_Window's can be drawn
+    in Fl_GL_Window's (STR#3450).
   - New member functions FL::run_also_windowless(),
     and FL::wait_also_windowless(double secnds) to run the event
     loop even without any mapped window if the platform supports it.

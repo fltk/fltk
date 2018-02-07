@@ -4,7 +4,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -146,7 +146,6 @@ protected:
   virtual const char* get_font_name(Fl_Font fnum, int* ap);
   virtual const char *font_name(int num);
   virtual void font_name(int num, const char *name);
-  virtual unsigned font_desc_size();
   void global_gc();
 };
 

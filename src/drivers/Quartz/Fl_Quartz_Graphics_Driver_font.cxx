@@ -179,13 +179,7 @@ int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return cnt;
 }
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
-  next = 0;
-#  if HAVE_GL
-  listbase = 0;
-#  endif
-  // OpenGL needs those for its font handling
-  size = Size;
+Fl_Quartz_Font_Descriptor::Fl_Quartz_Font_Descriptor(const char* name, Fl_Fontsize Size) : Fl_Font_Descriptor(name, Size) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   fontref = NULL;
 #endif
@@ -205,7 +199,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 }
 
 
-Fl_Font_Descriptor::~Fl_Font_Descriptor() {
+Fl_Quartz_Font_Descriptor::~Fl_Quartz_Font_Descriptor() {
 /*
 #if HAVE_GL
  // ++ todo: remove OpenGL font allocations
@@ -257,7 +251,7 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->size == size) return f;
-  f = new Fl_Font_Descriptor(s->name, size);
+  f = new Fl_Quartz_Font_Descriptor(s->name, size);
   f->next = s->first;
   s->first = f;
   return f;
@@ -273,19 +267,19 @@ void Fl_Quartz_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   font_descriptor( find(fnum, size) );
 }
 
-Fl_Font_Descriptor *Fl_Quartz_Graphics_Driver::valid_font_descriptor() {
+Fl_Quartz_Font_Descriptor *Fl_Quartz_Graphics_Driver::valid_font_descriptor() {
   // avoid a crash if no font has been selected by user yet
   if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  return font_descriptor();
+  return (Fl_Quartz_Font_Descriptor*)font_descriptor();
 }
 
 int Fl_Quartz_Graphics_Driver::height() {
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   return fl_fontsize->ascent + fl_fontsize->descent;
 }
 
 int Fl_Quartz_Graphics_Driver::descent() {
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   return fl_fontsize->descent + 1;
 }
 
@@ -349,11 +343,6 @@ void Fl_Quartz_Graphics_Driver::set_fontname_in_fontdesc(Fl_Fontdesc *f) {
 #else
   set_fontname_CoreText(f);
 #endif
-}
-
-
-unsigned Fl_Quartz_Graphics_Driver::font_desc_size() {
-  return (unsigned)sizeof(Fl_Fontdesc);
 }
 
 const char *Fl_Quartz_Graphics_Driver::font_name(int num) {
@@ -421,7 +410,7 @@ void Fl_Quartz_Graphics_Driver::text_extents(const char* txt, int n, int& dx, in
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 
 void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _CoreText)(const char* name,
-                                                      Fl_Fontsize size, Fl_Font_Descriptor *d)
+                                                      Fl_Fontsize size, Fl_Quartz_Font_Descriptor *d)
 {
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   d->fontref = CTFontCreateWithName(str, size, NULL);
@@ -470,7 +459,7 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _CoreText)(const cha
 }
 
 // returns width of a pair of UniChar's in the surrogate range
-static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsize)
+static CGFloat surrogate_width(const UniChar *txt, Fl_Quartz_Font_Descriptor *fl_fontsize)
 {
   CTFontRef font2 = fl_fontsize->fontref;
   bool must_release = false;
@@ -491,7 +480,7 @@ static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsi
   return a.width;
 }
 
-static CGFloat variation_selector_width(CFStringRef str16, Fl_Font_Descriptor *fl_fontsize)
+static CGFloat variation_selector_width(CFStringRef str16, Fl_Quartz_Font_Descriptor *fl_fontsize)
 {
   CGFloat retval;
   CFDictionarySetValue(attributes, kCTFontAttributeName, fl_fontsize->fontref);
@@ -508,7 +497,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
   double retval = 0;
   UniChar uni;
   int i;
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   for (i = 0; i < n; i++) { // loop over txt
     uni = txt[i];
     if (uni >= 0xD800 && uni <= 0xDBFF) { // handles the surrogate range
@@ -576,7 +565,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _CoreText)(const UniChar* tx
 // text extent calculation
 void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _CoreText)(const char *str8, int n,
                                                                     int &dx, int &dy, int &w, int &h) {
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, txt, n,  kCFAllocatorNull);
   CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
@@ -610,7 +599,7 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 
 void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _CoreText)(const char *str, int n, float x, float y)
 {
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
   CGContextRef gc = (CGContextRef)this->gc();
@@ -710,7 +699,7 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
 #if HAS_ATSU
 
 void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _ATSU)(const char* name,
-                                                      Fl_Fontsize size, Fl_Font_Descriptor *d)
+                                                      Fl_Fontsize size, Fl_Quartz_Font_Descriptor *d)
 {
   OSStatus err;
   // fill our structure with a few default values
@@ -766,7 +755,7 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(descriptor_init, _ATSU)(const char* n
 
 void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _ATSU)(const char *str, int n, float x, float y)
 {
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
   CGContextRef gc = (CGContextRef)this->gc();
@@ -793,7 +782,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _ATSU)(const UniChar* txt, i
   ATSUAttributeTag iTag;
   ATSUAttributeValuePtr iValuePtr;
 
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   // Here's my ATSU text measuring attempt... This seems to do the Right Thing
   // now collect our ATSU resources and measure our text string
   layout = fl_fontsize->layout;
@@ -814,7 +803,7 @@ double Fl_Quartz_Graphics_Driver::ADD_SUFFIX(width, _ATSU)(const UniChar* txt, i
 void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(text_extents, _ATSU)(const char *str8, int n,
                                                                 int &dx, int &dy, int &w, int &h)
 {
-  Fl_Font_Descriptor *fl_fontsize = valid_font_descriptor();
+  Fl_Quartz_Font_Descriptor *fl_fontsize = valid_font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   OSStatus err;
   ATSUTextLayout layout;

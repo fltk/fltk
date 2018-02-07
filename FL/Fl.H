@@ -134,6 +134,7 @@ class FL_EXPORT Fl {
 private:
 
   static int use_high_res_GL_;
+  static int draw_GL_text_with_textures_;
 
 public:
 
@@ -1279,6 +1280,27 @@ int main() {
    \version 1.3.4
    */
   static int use_high_res_GL() { return use_high_res_GL_; }
+  
+  /**  sets whether OpenGL uses textures to draw all text.
+   By default, FLTK draws OpenGL text using textures, if the necessary
+   hardware support is available. Call \p Fl::draw_GL_text_with_textures(0)
+   once in your program before the first call to gl_font() to have FLTK
+   draw instead OpenGL text using a legacy, platform-dependent procedure.
+   It's recommended not to deactivate textures under the MacOS platform
+   because the MacOS legacy procedure is extremely rudimentary.
+   \param val use 0 to prevent FLTK from drawing GL text with textures
+   \see gl_texture_pile_height(int max)
+   \version 1.4.0
+   */
+  static void draw_GL_text_with_textures(int val) { draw_GL_text_with_textures_ = val; }
+  
+  /**  returns whether whether OpenGL uses textures to draw all text.
+   Default is yes.
+   \see draw_GL_text_with_textures(int val)
+   \version 1.4.0
+   */
+  static int draw_GL_text_with_textures() { return draw_GL_text_with_textures_; }
+
 
 #ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo Support Functions and Classes

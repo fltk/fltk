@@ -4,7 +4,7 @@
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -90,6 +90,7 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   friend FL_EXPORT int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
   friend FL_EXPORT void gl_start();
+  friend FL_EXPORT void gl_finish();
   friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
   friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
 private:
@@ -387,7 +388,7 @@ public:
   /** Some platforms may need to implement this to support fonts */
   virtual Fl_Fontdesc* calc_fl_fonts(void) {return NULL;}
   /** Support for Fl::set_font() */
-  virtual unsigned font_desc_size() {return 0;}
+  virtual unsigned font_desc_size();
   /** Support for Fl::get_font() */
   virtual const char *font_name(int num) {return NULL;}
   /** Support for Fl::set_font() */
@@ -397,6 +398,33 @@ public:
 };
 
 #ifndef FL_DOXYGEN
+
+/* This class is not part of FLTK's public API.
+ Platforms usually define a derived class called Fl_XXX_Font_Descriptor
+ containing extra platform-specific data/functions.
+ This is a class for an actual system font, with junk to
+ help choose it and info on character sizes.  Each Fl_Fontdesc has a
+ linked list of these.  These are created the first time each system
+ font/size combination is used.
+ */
+class Fl_Font_Descriptor {
+public:
+  /** linked list for this Fl_Fontdesc */
+  Fl_Font_Descriptor *next;
+  Fl_Fontsize size; /**< font size */
+  Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  FL_EXPORT ~Fl_Font_Descriptor() {}
+  short ascent, descent, q_width;
+  unsigned int listbase;// base of display list, 0 = none
+};
+
+// This struct is not part of FLTK's public API.
+struct Fl_Fontdesc {
+  const char *name;
+  char fontname[128];  // "Pretty" font name
+  Fl_Font_Descriptor *first;  // linked list of sizes of this style
+};
+
 /* Abstract class Fl_Scalable_Graphics_Driver is platform-independent.
  It supports the scaling of all graphics coordinates by a
  float factor helpful to support HiDPI displays.

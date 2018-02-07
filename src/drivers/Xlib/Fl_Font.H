@@ -3,7 +3,7 @@
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -32,18 +32,8 @@ typedef struct _XftFont XftFont;
 #  include "../../Xutf8.h"
 #endif // USE_XFT
 
-/**
-   This a structure for an actual system font, with junk to
-   help choose it and info on character sizes.  Each Fl_Fontdesc has a
-   linked list of these.  These are created the first time each system
-   font/size combination is used.
-*/
-class Fl_Font_Descriptor {
+class Fl_Xlib_Font_Descriptor : public Fl_Font_Descriptor {
 public:
-  /** linked list for this Fl_Fontdesc */
-  Fl_Font_Descriptor *next;	
-  Fl_Fontsize size; /**< font size */
-#ifndef FL_DOXYGEN // don't bother with platorm dependant details in the doc. 
 #  if USE_XFT
 #    if USE_PANGO
         int descent_;
@@ -52,30 +42,28 @@ public:
         XftFont* font;
 #    endif
   int angle;
-  FL_EXPORT Fl_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle);
+  FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname, Fl_Fontsize size, int angle);
 #  else
   XUtf8FontStruct* font;	// X UTF-8 font information
-  FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
+  FL_EXPORT Fl_Xlib_Font_Descriptor(const char* xfontname);
 #  endif
 #  if HAVE_GL
-  unsigned int listbase;// base of display list, 0 = none
   char glok[64];
 #  endif // HAVE_GL
-
-  FL_EXPORT ~Fl_Font_Descriptor();
-
-#endif // FL_DOXYGEN
+  FL_EXPORT ~Fl_Xlib_Font_Descriptor();
 };
 
 //extern FL_EXPORT Fl_Font_Descriptor *fl_fontsize; // the currently selected one
 
-struct Fl_Fontdesc {
+#if !USE_XFT
+struct Fl_Xlib_Fontdesc { // replaces Fl_Fontdesc
   const char *name;
   char fontname[128];	// "Pretty" font name
   Fl_Font_Descriptor *first;	// linked list of sizes of this style
   char **xlist;		// matched X font names
   int n;		// size of xlist, negative = don't free xlist!
 };
+#endif
 
 extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 
