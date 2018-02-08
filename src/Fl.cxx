@@ -591,6 +591,7 @@ int Fl::ready()
 
 /** Run the event loop even without any mapped window if the platform supports it.
  \return zero indicates the event loop has been terminated.
+ \version 1.4.0
  */
 int Fl::run_also_windowless() {
   return Fl::system_driver()->run_also_windowless();
@@ -598,6 +599,7 @@ int Fl::run_also_windowless() {
 
 /** Wait for \p delay seconds or until an event occurs, even without any mapped window if the platform supports it.
  \return non zero indicates the event loop should be terminated
+ \version 1.4.0
  */
 int Fl::wait_also_windowless(double delay) {
   return Fl::system_driver()->wait_also_windowless(delay);
