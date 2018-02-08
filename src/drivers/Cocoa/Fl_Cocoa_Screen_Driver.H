@@ -100,6 +100,8 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
   virtual float scale(int n) {return scale_;}
   virtual void scale(int n, float f) { scale_ = f;}
+  virtual int run_also_windowless();
+  virtual int wait_also_windowless(double delay);
 private:
   float scale_;
 };

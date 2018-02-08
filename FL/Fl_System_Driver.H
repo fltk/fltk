@@ -225,9 +225,6 @@ public:
   virtual const char *meta_name() { return "Meta"; }
   virtual const char *alt_name() { return "Alt"; }
   virtual const char *control_name() { return "Ctrl"; }
-  // The default implementation of the next 2 functions may be enough.
-  virtual int run_also_windowless();
-  virtual int wait_also_windowless(double delay);
 };
 
 #endif // FL_SYSTEM_DRIVER_H

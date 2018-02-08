@@ -1719,14 +1719,14 @@ static void drain_dropped_files_list() {
   free(fname);
 }
 
-int Fl_Darwin_System_Driver::run_also_windowless() {
+int Fl_Cocoa_Screen_Driver::run_also_windowless() {
   while (!Fl::program_should_quit()) {
     Fl::wait(1e20);
   }
   return 0;
 }
 
-int Fl_Darwin_System_Driver::wait_also_windowless(double delay) {
+int Fl_Cocoa_Screen_Driver::wait_also_windowless(double delay) {
   if (!Fl::program_should_quit()) Fl::wait(delay);
   return !Fl::program_should_quit();
 }

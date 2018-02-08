@@ -594,7 +594,7 @@ int Fl::ready()
  \version 1.4.0
  */
 int Fl::run_also_windowless() {
-  return Fl::system_driver()->run_also_windowless();
+  return Fl::screen_driver()->run_also_windowless();
 }
 
 /** Wait for \p delay seconds or until an event occurs, even without any mapped window if the platform supports it.
@@ -602,7 +602,7 @@ int Fl::run_also_windowless() {
  \version 1.4.0
  */
 int Fl::wait_also_windowless(double delay) {
-  return Fl::system_driver()->wait_also_windowless(delay);
+  return Fl::screen_driver()->wait_also_windowless(delay);
 }
 
 int Fl::program_should_quit_ = 0;

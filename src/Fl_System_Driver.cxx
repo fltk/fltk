@@ -445,15 +445,6 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
   *usec = 0;
 }
 
-int Fl_System_Driver::run_also_windowless() {
-  return Fl::run();
-}
-
-int Fl_System_Driver::wait_also_windowless(double delay) {
-  Fl::wait(delay);
-  return Fl::first_window() != NULL;
-}
-
 //
 // End of "$Id$".
 //

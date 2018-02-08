@@ -81,8 +81,6 @@ public:
   virtual const char *meta_name();
   virtual const char *alt_name();
   virtual const char *control_name();
-  virtual int run_also_windowless();
-  virtual int wait_also_windowless(double delay);
 };
 
 #endif // FL_DARWIN_SYSTEM_DRIVER_H
