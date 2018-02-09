@@ -1,7 +1,8 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2010 by Bill Spitzak and others.
+// Copyright 2001-2018 by Bill Spitzak and others.
+//
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -696,8 +697,8 @@ int Fl_Text_Editor::handle(int event) {
       return 1;
 
     case FL_ENTER:
-// MRS: WIN32 only?  Need to test!
-//    case FL_MOVE:
+// MRS: Windows only?  Need to test!
+//  case FL_MOVE:
       show_cursor(mCursorOn);
       return 1;
 

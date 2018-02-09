@@ -23,13 +23,13 @@
 #include <FL/filename.H>
 #include "../src/flstring.h"
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #  include <io.h>
 #  include <windows.h>
 #  define getpid (int)GetCurrentProcessId
 #else
 #  include <unistd.h>
-#endif // WIN32 && !__CYGWIN__
+#endif // _WIN32 && !__CYGWIN__
 
 
 extern Fl_Preferences	fluid_prefs;	// FLUID preferences

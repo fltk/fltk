@@ -333,9 +333,12 @@ find the FLTK header files. This can be done by selecting
 "Preprocessor" settings under the "C/C++" tab. You will also 
 need to add the FLTK (<tt>FLTK.LIB</tt> or <tt>FLTKD.LIB</tt>) and the Windows
 Common Controls (<tt>COMCTL32.LIB</tt>) libraries to the "Link" settings.
-You must also define <tt>WIN32</tt>.
 
-More information can be found in <tt>README.MSWindows.txt</tt>.
+You must also define <tt>_WIN32</tt> if the compiler doesn't do this.
+Currently all known Windows compilers define _WIN32 - unless you use Cygwin.
+You must not define _WIN32 if you use Cygwin.
+
+More information can be found in <tt>README.Windows.txt</tt>.
 
 You can build your Microsoft Windows applications as Console or
 Desktop applications.  If you want to use the standard C \p main()

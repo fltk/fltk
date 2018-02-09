@@ -70,7 +70,7 @@ typedef int FL_SOCKET;
 #  define FL_COMMAND	FL_META
 #  define FL_CONTROL 	FL_CTRL
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 typedef struct HBITMAP__ *HBITMAP;
 typedef HBITMAP Fl_Offscreen;
 typedef HBITMAP Fl_Bitmask;
@@ -116,8 +116,8 @@ typedef struct __GLXcontextRec *GLContext;
 
 
 #ifndef __APPLE__
-#  define FL_COMMAND	FL_CTRL   /**< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X */
-#  define FL_CONTROL	FL_META   /**< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X */
+#  define FL_COMMAND	FL_CTRL   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
+#  define FL_CONTROL	FL_META   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
 #endif
 
 #endif /* FL_PLATFORM_TYPES_H */

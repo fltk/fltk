@@ -154,7 +154,7 @@ value:
   - FL_ALT - One of the alt keys is down.
   - FL_NUM_LOCK - The num lock is on.
   - FL_META - One of the meta/Windows keys is down.
-  - FL_COMMAND - An alias for FL_CTRL on WIN32 and X11,
+  - FL_COMMAND - An alias for FL_CTRL on Windows and X11,
     or FL_META on MacOS X.
   - FL_SCROLL_LOCK - The scroll lock is on.
   - FL_BUTTON1 - Mouse button 1 is pushed.
@@ -289,7 +289,7 @@ cursors.
   - FL_CURSOR_CROSS - crosshair
   - FL_CURSOR_WAIT - watch or hourglass
   - FL_CURSOR_INSERT - I-beam
-  - FL_CURSOR_HAND - hand (uparrow on MSWindows)
+  - FL_CURSOR_HAND - hand (uparrow on Windows)
   - FL_CURSOR_HELP - question mark
   - FL_CURSOR_MOVE - 4-pointed arrow
   - FL_CURSOR_NS - up/down arrow

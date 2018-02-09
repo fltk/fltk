@@ -23,7 +23,7 @@ functions around your OpenGL code.
 You must include FLTK's \p <FL/gl.h> header file. It will include
 the file \p <GL/gl.h> (on macOS: \p <OpenGL/gl.h>), define
 some extra drawing functions provided by FLTK, and include the
-\p <windows.h> header file needed by WIN32 applications.
+\p <windows.h> header file needed by Windows applications.
 
 Some simple coding rules (see \ref osissues_retina) allow to write
 cross-platform code that will draw high resolution
@@ -206,7 +206,7 @@ context with an orthographic projection so that 0,0 is the
 lower-left corner of the window and each pixel is one unit. The
 current clipping is reproduced with OpenGL \p glScissor()
 commands. These functions also synchronize the OpenGL graphics stream
-with the drawing done by other X, WIN32, or FLTK functions.
+with the drawing done by other X, Windows, or FLTK functions.
 
 \code
 gl_start();
@@ -397,7 +397,7 @@ void OptimizerWindow::draw() {
     // This is the first time we've been asked to draw; create the
     // Optimizer context for the scene...
 
-#ifdef WIN32
+#ifdef _WIN32
     context_ = new csContext((HDC)fl_getHDC());
     context_->ref();
     context_->makeCurrent((HDC)fl_getHDC());
@@ -405,7 +405,7 @@ void OptimizerWindow::draw() {
     context_ = new csContext(fl_display, fl_visual);
     context_->ref();
     context_->makeCurrent(fl_display, fl_window);
-#endif // WIN32
+#endif // _WIN32
 
     ... perform other context setup as desired ...
 
@@ -417,11 +417,11 @@ void OptimizerWindow::draw() {
       camera_->draw(draw_action_);
     }
   } else {
-#ifdef WIN32
+#ifdef _WIN32
     context_->makeCurrent((HDC)fl_getHDC());
 #else
     context_->makeCurrent(fl_display, fl_window);
-#endif // WIN32
+#endif // _WIN32
   }
 
   if (!valid()) {
@@ -456,7 +456,7 @@ showing how to use OpenGL 3.0 (or higher versions) with FLTK in a cross-platform
 It contains also OpenGL3-glut-test.cxx which shows how to use FLTK's GLUT compatibility
 and OpenGL 3.
 
-<b>On the MSWindows and Unix/Linux platforms</b>, FLTK creates contexts
+<b>On the Windows and Unix/Linux platforms</b>, FLTK creates contexts
 implementing the highest OpenGL version supported by the hardware,
 which are also compatible with lower OpenGL versions. Thus, FLTK allows
 source code targeting any version of OpenGL. Access to functions from OpenGL
@@ -467,10 +467,10 @@ FLTK creates by default contexts implementing OpenGL versions 1 or 2.
 To access OpenGL 3.0 (or higher versions), use the <tt>FL_OPENGL3</tt> flag (see below).
 Mac OS 10.7 or above is required; GLEW is possible but not necessary.
 
-\par GLEW installation (Unix/Linux and MSWindows platforms)
+\par GLEW installation (Unix/Linux and Windows platforms)
 GLEW is available as a package for most Linux distributions and in source
 form at http://glew.sourceforge.net/.
-For the MSWindows platform, a Visual Studio static library (glew32.lib) can
+For the Windows platform, a Visual Studio static library (glew32.lib) can
 be downloaded from the same web site; a MinGW-style static library (libglew32.a)
 can be built from source with the make command.
 
@@ -481,7 +481,7 @@ and before \#include <FL/glut.h> if you use GLUT):
 #if defined(__APPLE__)
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
-#  if defined(WIN32)
+#  if defined(_WIN32)
 #    define GLEW_STATIC 1
 #  endif
 #  include <GL/glew.h>

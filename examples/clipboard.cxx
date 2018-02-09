@@ -26,9 +26,9 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
-#endif // WIN32
+#endif // _WIN32
 
 /* Displays and follows the content of the clipboard with either image or text data
  */
@@ -79,7 +79,7 @@ public:
       if (!im) return 1;
       char title[300];
       sprintf(title, "%dx%d",im->w(), im->h()); // display the image original size
-#ifdef WIN32
+#ifdef _WIN32
       OpenClipboard(NULL); // display extra technical info about clipboard content
       char *p=title + strlen(title);
       int format = EnumClipboardFormats(0);
@@ -133,7 +133,7 @@ void clip_callback(int source, void *data) { // called after clipboard was chang
 
 int main(int argc, char **argv)
 {
-#if !(defined(__APPLE__) || defined(WIN32))
+#if !(defined(__APPLE__) || defined(_WIN32))
   fl_register_images(); // required to allow pasting of images
 #endif
   Fl_Window* win = new Fl_Window(500, 550, "clipboard viewer");

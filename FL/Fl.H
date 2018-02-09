@@ -146,27 +146,27 @@ public: // run time information about compile time configuration
   /** @{ */
   static bool cfg_gfx_xlib;   ///< X11 Xlib rendering available, usually on Linux systems
   static bool cfg_gfx_quartz; ///< Quartz rendering available, usually on OS X systems
-  static bool cfg_gfx_gdi;    ///< GDI rendering available, usually on MSWindows systems
+  static bool cfg_gfx_gdi;    ///< GDI rendering available, usually on Windows systems
   static bool cfg_gfx_opengl; ///< OpenGL rendering available, available on many platforms
   static bool cfg_gfx_cairo;  ///< Cairo rendering available, available on many platforms
-  static bool cfg_gfx_directx;///< DirectX rendering available, usually on MSWindows systems
+  static bool cfg_gfx_directx;///< DirectX rendering available, usually on Windows systems
   /** @} */
   /** \defgroup cfg_prn runtime printer driver configuration */
   /** @{ */
   static bool cfg_prn_ps;     ///< PostScript rendering available, usually on Linux systems
   static bool cfg_prn_quartz; ///< Quartz rendering available, usually on OS X systems
-  static bool cfg_prn_gdi;    ///< GDI rendering available, usually on MSWindows systems
+  static bool cfg_prn_gdi;    ///< GDI rendering available, usually on Windows systems
   /** @} */
   /** \defgroup cfg_win runtime window and event manager configuration */
   /** @{ */
   static bool cfg_win_x11;    ///< X11 window management available, usually on Linux systems
   static bool cfg_win_cocoa;  ///< Cocoa window management available, usually on OS X systems
-  static bool cfg_win_win32;  ///< WIN32 window management available, on low level MSWindows
+  static bool cfg_win_win32;  ///< Windows window management available, on low level Windows
   /** @} */
   /** \defgroup cfg_sys runtime system configuration */
   /** @{ */
   static bool cfg_sys_posix;  ///< Posix system available, usually on Linux and OS X systems, but also Cygwin
-  static bool cfg_sys_win32;  ///< WIN32 system available, on MSWindows
+  static bool cfg_sys_win32;  ///< Windows system available, on Windows
   /** @} */
 
 public: // should be private!
@@ -195,7 +195,7 @@ public: // should be private!
   static Fl_Widget* selection_owner_;
   static Fl_Window* modal_;
   static Fl_Window* grab_;
-  static int compose_state; // used for dead keys (WIN32) or marked text (MacOS)
+  static int compose_state; // used for dead keys (Windows) or marked text (MacOS)
   static void call_screen_init(); // recompute screen number and dimensions
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
@@ -507,7 +507,7 @@ int main() {
     
     Under UNIX <I>any</I> file descriptor can be monitored (files,
     devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
-    WIN32 applications can only monitor sockets.
+    Windows applications can only monitor sockets.
   */
   static void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0); // platform dependent
   /** See void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0) */
@@ -609,7 +609,7 @@ int main() {
    focus is (including in other programs). The window <I>does not have
    to be shown()</I> , this lets the handle() method of a
    "dummy" window override all event handling and allows you to
-   map and unmap a complex set of windows (under both X and WIN32
+   map and unmap a complex set of windows (under both X and Windows
    <I>some</I> window must be mapped because the system interface needs a
    window id).
    
@@ -813,7 +813,7 @@ int main() {
 
     On X Fl::get_key(FL_Button+n) does not work.
     
-    On WIN32 Fl::get_key(FL_KP_Enter) and Fl::event_key(FL_KP_Enter) do not work.
+    On Windows Fl::get_key(FL_KP_Enter) and Fl::event_key(FL_KP_Enter) do not work.
   */
   static int event_key(int key);
   /** 
@@ -939,7 +939,7 @@ int main() {
    
    \par Platform details for image data:
    \li Unix/Linux platform: Clipboard images in PNG or BMP formats are recognized. Requires linking with the fltk_images library.
-   \li MSWindows platform: Both bitmap and vectorial (Enhanced metafile) data from clipboard
+   \li Windows platform: Both bitmap and vectorial (Enhanced metafile) data from clipboard
    can be pasted as image data.
    \li Mac OS X platform: Both bitmap (TIFF) and vectorial (PDF) data from clipboard
    can be pasted as image data.
@@ -1090,7 +1090,7 @@ int main() {
     "-*" will select all fonts with any encoding as long as they have
     normal X font names with dashes in them.  Passing "*" will list every
     font that exists (on X this may produce some strange output).  Other
-    values may be useful but are system dependent.  With WIN32 NULL
+    values may be useful but are system dependent.  With Windows NULL
     selects fonts with ISO8859-1 encoding and non-NULL selects
     all fonts.
     

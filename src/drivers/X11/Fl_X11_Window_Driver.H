@@ -42,7 +42,7 @@ class Fl_Bitmap;
  - window types and styles, depth, etc.
  - decorations
  
- ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
+ ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
 
 

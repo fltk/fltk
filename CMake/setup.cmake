@@ -73,20 +73,6 @@ set(FLTK_DOCDIR ${CMAKE_INSTALL_DATADIR}/doc CACHE PATH
 # platform dependent information
 #######################################################################
 
-# I think this code is useless, so I disabled it by commenting it out.
-# Let's wait and see if it does any harm (user complaints).
-# The real fix is below: add_definitions(-DWIN32).
-# AlbrechtS, Dec 28, 2017.
-# fix no WIN32 defined issue
-# if(NOT WIN32)
-#     if(_WIN32)
-#         set(WIN32 _WIN32)
-#     elseif(__WIN32__)
-#         set(WIN32 __WIN32__)
-#     endif(_WIN32)
-# endif(NOT WIN32)
-# End of code commented out on Dec 28, 2017
-
 # set where config files go
 if(WIN32 AND NOT CYGWIN)
    set(FLTK_CONFIG_PATH CMake)
@@ -124,13 +110,13 @@ if(APPLE)
 endif(APPLE)
 
 if(WIN32)
-    add_definitions(-DWIN32)
+    # we do no longer define WIN32 or _WIN32 (since FLTK 1.4.0)
+    # ... but if we did, we'd define _WIN32 (since FLTK 1.4.0)
+    # add_definitions(-D_WIN32)
     if(MSVC)
         add_definitions(-DWIN32_LEAN_AND_MEAN)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-######## from ide/VisualC2010/config.h
         set(BORDER_WIDTH 2)
-########
     endif(MSVC)
     if(CMAKE_C_COMPILER_ID STREQUAL GNU)
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")

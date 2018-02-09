@@ -19,7 +19,7 @@
 
 /**
  \file Fl_GDI_Graphics_Driver.H
- \brief Definition of MSWindows GDI graphics driver.
+ \brief Definition of Windows GDI graphics driver.
  */
 
 #ifndef FL_GDI_GRAPHICS_DRIVER_H
@@ -30,10 +30,10 @@
 
 
 /**
- \brief The MSWindows-specific graphics class.
- *
- This class is implemented only on the MSWindows platform.
- */
+  \brief The Windows-specific graphics driver class.
+
+  This class is implemented only on the Windows platform.
+*/
 class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Scalable_Graphics_Driver {
 private:
   BOOL alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch);
@@ -151,10 +151,11 @@ protected:
 
 
 /**
- The graphics driver used when printing on MSWindows.
- *
- This class is implemented only on the MSWindows platform. It 's extremely similar to Fl_GDI_Graphics_Driver.
- */
+  The graphics driver used when printing on Windows.
+
+  This class is implemented only on the Windows platform.
+  It is extremely similar to Fl_GDI_Graphics_Driver.
+*/
 class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
 private:
   typedef BOOL (WINAPI* transparent_f_type) (HDC,int,int,int,int,HDC,int,int,int,int,UINT);

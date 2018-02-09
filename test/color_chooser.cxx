@@ -28,7 +28,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(FL_PORTING)
+#if !defined(_WIN32) && !defined(__APPLE__) && !defined(FL_PORTING)
 #include "list_visuals.cxx"
 #endif
 
@@ -114,7 +114,7 @@ int main(int argc, char ** argv) {
            " - : default visual\n"
            " r : call Fl::visual(FL_RGB)\n"
            " c : call Fl::own_colormap()\n",argv[0]);
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(FL_PORTING)
+#if !defined(_WIN32) && !defined(__APPLE__) && !defined(FL_PORTING)
     printf(" # : use this visual with an empty colormap:\n");
     list_visuals();
 #endif
@@ -127,7 +127,7 @@ int main(int argc, char ** argv) {
     } else if (argv[i][0] == 'c') {
       Fl::own_colormap();
     } else if (argv[i][0] != '-') {
-#if !defined(WIN32) && !defined(__APPLE__) && !defined(FL_PORTING)
+#if !defined(_WIN32) && !defined(__APPLE__) && !defined(FL_PORTING)
       int visid = atoi(argv[i]);
       fl_open_display();
       XVisualInfo templt; int num;
@@ -138,7 +138,7 @@ int main(int argc, char ** argv) {
                                     fl_visual->visual, AllocNone);
       fl_xpixel(FL_BLACK); // make sure black is allocated
 #else
-      Fl::fatal("Visual id's not supported on MSWindows or MacOS.");
+      Fl::fatal("Visual id's not supported on Windows or MacOS.");
 #endif
     }
   }

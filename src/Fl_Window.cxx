@@ -19,7 +19,7 @@
 // The Fl_Window is a window in the fltk library.
 // This is the system-independent portions.  The huge amount of 
 // crap you need to do to communicate with X is in Fl_x.cxx, the
-// equivalent (but totally different) crap for MSWindows is in Fl_win32.cxx
+// equivalent (but totally different) crap for Windows is in Fl_win32.cxx
 
 #include <config.h>
 #include <FL/Fl.H>
@@ -597,10 +597,10 @@ int Fl_Window::handle(int ev)
  <LI>\p dw and \p dh are size increments.  The  window will be constrained
 	to widths of minw + N * dw,  where N is any non-negative integer.
 	If these are less or equal to 1 they are ignored (this is ignored
-	on WIN32).</LI>
+	on Windows).</LI>
  <LI>\p aspect is a flag that indicates that the window should preserve its
 	aspect ratio.  This only works if both the maximum and minimum have
-	the same aspect ratio (ignored on WIN32 and by many X window managers).
+	the same aspect ratio (ignored on Windows and by many X window managers).
 	</LI>
  </UL>
  

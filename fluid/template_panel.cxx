@@ -27,11 +27,11 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Preferences.H>
-#if defined(WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #include <io.h>
 #else
 #include <unistd.h>
-#endif // WIN32 && !__CYGWIN__
+#endif // _WIN32 && !__CYGWIN__
 extern Fl_Preferences fluid_prefs;
 
 Fl_Double_Window *template_panel=(Fl_Double_Window *)0;

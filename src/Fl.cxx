@@ -101,12 +101,12 @@ bool Fl::cfg_win_win32 = 1;
 bool Fl::cfg_win_win32 = 0;
 #endif
 
-#ifdef FL_SYS_POSIX
+#ifdef FL_CFG_SYS_POSIX
 bool Fl::cfg_sys_posix = 1;
 #else
 bool Fl::cfg_sys_posix = 0;
 #endif
-#ifdef FL_SYS_WIN32
+#ifdef FL_CFG_SYS_WIN32
 bool Fl::cfg_sys_win32 = 1;
 #else
 bool Fl::cfg_sys_win32 = 0;

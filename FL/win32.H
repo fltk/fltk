@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// WIN32 header file for the Fast Light Tool Kit (FLTK).
+// Windows system header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -17,7 +17,7 @@
 //
 
 // Do not directly include this file, instead use <FL/platform.H>.  It will
-// include this file if WIN32 is defined.  This is to encourage
+// include this file if _WIN32 is defined.  This is to encourage
 // portability of even the system-specific code...
 
 #ifndef FL_DOXYGEN

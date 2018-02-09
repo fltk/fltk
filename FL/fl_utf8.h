@@ -3,7 +3,7 @@
  *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
- * Copyright 2016-2017 by Bill Spitzak and others.
+ * Copyright 2016-2018 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -121,14 +121,14 @@ FL_EXPORT char* fl_utf2mbcs(const char *src);
 FL_EXPORT unsigned fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen);
 
 /*****************************************************************************/
-#ifdef WIN32
-/* these two WIN32-only functions are kept for API compatibility */
+#ifdef _WIN32
+/* these two Windows-only functions are kept for API compatibility */
 /* OD: Attempt to convert the UTF-8 string to the current locale */
 FL_EXPORT char *fl_utf8_to_locale(const char *s, int len, unsigned int codepage);
 
 /* OD: Attempt to convert a string in the current locale to UTF-8 */
 FL_EXPORT char *fl_locale_to_utf8(const char *s, int len, unsigned int codepage);
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
 /*****************************************************************************
  * The following functions are intended to provide portable, UTF-8 aware

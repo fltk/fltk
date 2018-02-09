@@ -62,7 +62,7 @@ void Fl_Gl_Window::make_overlay_current() {
   pGlWindowDriver->make_overlay_current();
 }
 
-/** Hides the window if it is not this window, does nothing in WIN32. */
+/** Hides the window if it is not this window, does nothing in Windows. */
 void Fl_Gl_Window::hide_overlay() {
   pGlWindowDriver->hide_overlay();
 }
@@ -211,7 +211,7 @@ void Fl_X11_Gl_Window_Driver::make_overlay(void *&current) {
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 
 ////////////////////////////////////////////////////////////////
-// WIN32 version:
+// Windows version:
 
 void Fl_WinAPI_Gl_Window_Driver::hide_overlay(void *& overlay) {
 #if HAVE_GL_OVERLAY

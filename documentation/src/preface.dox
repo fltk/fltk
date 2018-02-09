@@ -65,8 +65,9 @@ The X Window System interface library.
 
 \par MS Windows, <tt>WIN32</tt>
 The Microsoft Windows Application Programmer's Interface for Windows 2000, 
-Windows XP, Windows Vista, and Windows 7. FLTK uses the preprocessor definition
-<tt>WIN32</tt> for the 32 bit and 64 bit MS Windows API.
+Windows XP, Windows Vista, Windows 7 and later Windows versions.
+FLTK uses the preprocessor definition <tt>_WIN32</tt> for the 32 bit
+and 64 bit MS Windows API.
 
 \par OS X, <tt>__APPLE__</tt>
 The Apple desktop operating sytem OS X 10.0 and later. MacOS 8 and 9 support

@@ -5,7 +5,7 @@ dnl "$Id$"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2016 by Bill Spitzak and others.
+dnl Copyright 1998-2018 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
@@ -860,8 +860,11 @@ case $host_os_gui in
 	# checks don't work because the shell puts out \r\n instead of
 	# \n.  Here we just force U32 to be defined to "unsigned"...
 	AC_DEFINE(U32,unsigned)
-	CFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CFLAGS"
-	CXXFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CXXFLAGS"
+	# We do no longer define WIN32 or _WIN32 (since FLTK 1.4.0)
+	# CFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CFLAGS"
+	# CXXFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CXXFLAGS"
+	CFLAGS="-mwindows -DUSE_OPENGL32 $CFLAGS"
+	CXXFLAGS="-mwindows -DUSE_OPENGL32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32"
@@ -1511,7 +1514,7 @@ case $host_os in
   mingw*)
      # Determine the path where MSys has /usr installed
 	msyspath=`mount | grep '\/usr ' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
-     # Then substitute that in the WIN32 path instead of /usr
+     # Then substitute that in the Windows path instead of /usr
 	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$msyspath/local/share/doc/fltk")
     ;;
   *)

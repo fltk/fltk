@@ -37,18 +37,18 @@
 
 #define MARGIN 20
 
-#ifdef WIN32
+#ifdef _WIN32
 // WINDOWS
 #  define DIRCMD          "dir"
 static const char *G_header[] = { "Date", "Time", "Size", "Filename", "", "", "", "", "", 0 };
 #  ifdef _MSC_VER
 #    define popen           _popen
 #  endif
-#else /*WIN32*/
+#else /* _WIN32 */
 // UNIX
 #  define DIRCMD          "ls -l"
 static const char *G_header[] = { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename", 0 };
-#endif /*WIN32*/
+#endif /* _WIN32 */
 
 // Font face/sizes for header and rows
 #define HEADER_FONTFACE FL_HELVETICA_BOLD

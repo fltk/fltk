@@ -32,7 +32,7 @@
 #include <FL/fl_draw.H>
 #include <stdarg.h>
 
-#ifdef WIN32
+#ifdef _WIN32
   #include "ExternalCodeEditor_WIN32.h"
 #else
   #include "ExternalCodeEditor_UNIX.h"

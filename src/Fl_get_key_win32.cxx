@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// WIN32 keyboard state routines for the Fast Light Tool Kit (FLTK).
+// Windows keyboard state routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -17,15 +17,15 @@
 //
 
 // Return the current state of a key.  Keys are named by fltk symbols,
-// which are actually X keysyms.  So this has to translate to MSWindows
+// which are actually X keysyms.  So this has to translate to Windows
 // VK_x symbols.
 
 #include "drivers/WinAPI//Fl_WinAPI_System_Driver.H"
 #include <FL/platform.H>
 
-// convert an Fltk (X) keysym to a MSWindows VK symbol:
+// Convert an FLTK (X) keysym to a Windows VK symbol:
 // See also the inverse converter in Fl_win32.cxx
-// This table is in numeric order by Fltk symbol order for binary search:
+// This table is in numeric order by FLTK symbol order for binary search:
 
 static const struct {unsigned short vk, fltk;} vktab[] = {
   {VK_SPACE,	' '},

@@ -48,7 +48,7 @@
 #include "function_panel.h"
 #include "template_panel.h"
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__)
 #  include <direct.h>
 #  include <windows.h>
 #  include <io.h>
@@ -235,10 +235,10 @@ void save_cb(Fl_Widget *, void *v) {
       const char *basename;
       if ((basename = strrchr(c, '/')) != NULL)
         basename ++;
-#if defined(WIN32)
+#if defined(_WIN32)
       if ((basename = strrchr(c, '\\')) != NULL)
         basename ++;
-#endif // WIN32
+#endif // _WIN32
       else
         basename = c;
 
@@ -1000,7 +1000,7 @@ void print_menu_cb(Fl_Widget *, void *) {
     fl_draw(date, w - (int)fl_width(date), fl_height());
     // Get the base filename...
     const char *basename = strrchr(filename, 
-#ifdef WIN32
+#ifdef _WIN32
 				   '\\'
 #else
 				   '/'
@@ -1287,11 +1287,11 @@ void update_history(const char *flname) {
   fl_filename_absolute(absolute, sizeof(absolute), flname);
 
   for (i = 0; i < max_files; i ++)
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(_WIN32) || defined(__APPLE__)
     if (!strcasecmp(absolute, absolute_history[i])) break;
 #else
     if (!strcmp(absolute, absolute_history[i])) break;
-#endif // WIN32 || __APPLE__
+#endif // _WIN32 || __APPLE__
 
   if (i == 0) return;
 
@@ -1342,7 +1342,7 @@ public:
   FILE * desc() const { return _fpt;} // non null if file is open
   char * get_line(char * line, size_t s) const {return _fpt ? fgets(line, s, _fpt) : NULL;}
 
-#if defined(WIN32)  && !defined(__CYGWIN__)
+#if defined(_WIN32)  && !defined(__CYGWIN__)
 protected:
   HANDLE pin[2], pout[2], perr[2];
   char ptmode;
@@ -1365,7 +1365,7 @@ protected:
   FILE * _fpt;
 };
 
-#if defined(WIN32)  && !defined(__CYGWIN__)
+#if defined(_WIN32)  && !defined(__CYGWIN__)
 bool Fl_Process::createPipe(HANDLE * h, BOOL bInheritHnd) {
   SECURITY_ATTRIBUTES sa;
   sa.nLength = sizeof(sa);
@@ -1376,7 +1376,7 @@ bool Fl_Process::createPipe(HANDLE * h, BOOL bInheritHnd) {
 #endif
 // portable open process:
 FILE * Fl_Process::popen(const char *cmd, const char *mode) {
-#if defined(WIN32)  && !defined(__CYGWIN__)
+#if defined(_WIN32)  && !defined(__CYGWIN__)
   // PRECONDITIONS
   if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return NULL;
   if (_fpt) close(); // close first before reuse
@@ -1417,7 +1417,7 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
 }
 
 int Fl_Process::close() {
-#if defined(WIN32)  && !defined(__CYGWIN__)
+#if defined(_WIN32)  && !defined(__CYGWIN__)
   if (_fpt) {
     fclose(_fpt);
     clean_close(perr[0]);
@@ -1434,7 +1434,7 @@ int Fl_Process::close() {
 #endif
 }
 
-#if defined(WIN32)  && !defined(__CYGWIN__)
+#if defined(_WIN32)  && !defined(__CYGWIN__)
 void Fl_Process::clean_close(HANDLE& h) {
   if (h!= INVALID_HANDLE_VALUE) CloseHandle(h);
   h = INVALID_HANDLE_VALUE;
@@ -1674,9 +1674,9 @@ void set_modflag(int mf) {
   if (main_window) {
     if (!filename) basename = "Untitled.fl";
     else if ((basename = strrchr(filename, '/')) != NULL) basename ++;
-#if defined(WIN32)
+#if defined(_WIN32)
     else if ((basename = strrchr(filename, '\\')) != NULL) basename ++;
-#endif // WIN32
+#endif // _WIN32
     else basename = filename;
 
     if (modflag) {
@@ -1727,7 +1727,7 @@ static int arg(int argc, char** argv, int& i) {
   return 0;
 }
 
-#if ! (defined(WIN32) && !defined (__CYGWIN__))
+#if ! (defined(_WIN32) && !defined (__CYGWIN__))
 
 int quit_flag = 0;
 #include <signal.h>
@@ -1833,7 +1833,7 @@ int main(int argc,char **argv) {
   }
   set_modflag(0);
   undo_clear();
-#ifndef WIN32
+#ifndef _WIN32
   signal(SIGINT,sigint);
 #endif
 
@@ -1842,13 +1842,13 @@ int main(int argc,char **argv) {
 
   grid_cb(horizontal_input, 0); // Makes sure that windows get snap params...
 
-#ifdef WIN32
+#ifdef _WIN32
   Fl::run();
 #else
   while (!quit_flag) Fl::wait();
 
   if (quit_flag) exit_cb(0,0);
-#endif // WIN32
+#endif // _WIN32
 
   undo_clear();
 

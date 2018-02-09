@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// implementation of Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
+// Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2018 by Bill Spitzak and others.
 //
@@ -89,7 +89,7 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   fl_begin_offscreen(pixmap); // does nothing if pixmap was not created by fl_create_offscreen()
   float s = 1;
   if (current == Fl_Surface_Device::surface()) {// pixmap was not created by fl_create_offscreen()
-    // happens, e.g., when drawing images under WIN32
+    // happens, e.g., when drawing images under Windows
     surface = new Fl_Image_Surface(px_width, px_height, 0, pixmap);
     Fl_Surface_Device::push_current(surface);
   }

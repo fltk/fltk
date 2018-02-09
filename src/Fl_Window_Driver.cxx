@@ -131,7 +131,7 @@ void Fl_Window_Driver::destroy_double_buffer() {
  Platform details:
  \li On the unix/linux platform, the SHAPE extension of the X server is required.
  This function does control the shape of Fl_Gl_Window instances.
- \li On the MSWindows platform, this function does nothing with class Fl_Gl_Window.
+ \li On the Windows platform, this function does nothing with class Fl_Gl_Window.
  \li On the Mac platform, OS version 10.4 or above is required.
  An 8-bit shape-mask is used when \p img is an Fl_RGB_Image:
  with depths 2 or 4, the image alpha channel becomes the shape mask such that areas with alpha = 0

@@ -3,7 +3,7 @@
 //
 // Color functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -21,8 +21,8 @@
   \brief Color handling
 */
 
-#include <config.h>
 #include "../../config_lib.h"
+// #include <config.h>
 #include "Fl_OpenGL_Graphics_Driver.H"
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
@@ -37,7 +37,7 @@ void Fl_OpenGL_Graphics_Driver::color(Fl_Color i) {
   // FIXME: do we need the code below?
   /*
 #if HAVE_GL_OVERLAY
-#if defined(WIN32)
+#if defined(_WIN32)
   if (fl_overlay && fl_overlay_depth) {
     if (fl_overlay_depth < 8) {
       // only black & white produce the expected colors.  This could

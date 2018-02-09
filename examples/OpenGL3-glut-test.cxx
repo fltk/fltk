@@ -21,7 +21,7 @@
 #  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED 1
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
-#  if defined(WIN32)
+#  if defined(_WIN32)
 #    define GLEW_STATIC 1
 #  endif
 #  include <GL/glew.h>

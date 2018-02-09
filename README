@@ -54,7 +54,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
     You can run configure yourself to get the exact setup you
     need. Type "./configure <options>".  Options include:
 
-	--enable-cygwin         - Enable the Cygwin libraries (WIN32)
+	--enable-cygwin         - Enable the Cygwin libraries (Windows)
 	--enable-debug          - Enable debugging code & symbols
 	--disable-gl            - Disable OpenGL support
 	--enable-shared         - Enable generation of shared libraries

@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of MSWindows Win32/64 Screen interface
+// Definition of Windows screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2018 by Bill Spitzak and others.
@@ -19,7 +19,7 @@
 
 /**
  \file Fl_WinAPI_Screen_Driver.H
- \brief Definition of MSWindows Win32/64 Screen interface.
+ \brief Definition of Windows screen interface.
  */
 
 #ifndef FL_WINAPI_SCREEN_DRIVER_H

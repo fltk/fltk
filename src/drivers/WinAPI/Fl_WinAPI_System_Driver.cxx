@@ -3,7 +3,7 @@
 //
 // Definition of Apple Darwin system driver.
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -155,7 +155,7 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 }
 
 void Fl_WinAPI_System_Driver::warning(const char *format, va_list args) {
-  // Show nothing for warnings under WIN32...
+  // Show nothing for warnings under Windows...
 }
 
 void Fl_WinAPI_System_Driver::error(const char *format, va_list args) {
@@ -308,7 +308,7 @@ int Fl_WinAPI_System_Driver::rename(const char *fnam, const char *newnam) {
   return _wrename(wbuf, wbuf1);
 }
 
-// Two WIN32-specific functions fl_utf8_to_locale() and fl_locale_to_utf8()
+// Two Windows-specific functions fl_utf8_to_locale() and fl_locale_to_utf8()
 // from file fl_utf8.cxx are put here for API compatibility
 
 static char *buf = NULL;
@@ -721,7 +721,7 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
   endmntent(m);
 #  else
   //
-  // Normal WIN32 code uses drive bits...
+  // Normal Windows code uses drive bits...
   //
   DWORD	drives;		// Drive available bits
   drives = GetLogicalDrives();
@@ -729,7 +729,7 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
     if (drives & 1)
     {
       sprintf(filename, "%c:/", i);
-      if (i < 'C') // see also: GetDriveType and GetVolumeInformation in WIN32
+      if (i < 'C') // see also: GetDriveType and GetVolumeInformation in Windows
         browser->add(filename, icon);
       else
         browser->add(filename, icon);

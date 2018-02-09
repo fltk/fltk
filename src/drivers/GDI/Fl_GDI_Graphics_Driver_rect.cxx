@@ -19,7 +19,7 @@
 
 /**
  \file Fl_GDI_Graphics_Driver_rect.cxx
- \brief MSWindows GDI specific line and polygon drawing with integer coordinates.
+ \brief Windows GDI specific line and polygon drawing with integer coordinates.
  */
 
 #include <config.h>

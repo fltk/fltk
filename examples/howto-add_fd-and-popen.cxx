@@ -27,7 +27,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Multi_Browser.H>
 
-#ifdef WIN32
+#ifdef _WIN32
 #  define PING_CMD "ping -n 10 localhost"	// 'slow command' under windows
 #  ifdef _MSC_VER
 #    define popen _popen

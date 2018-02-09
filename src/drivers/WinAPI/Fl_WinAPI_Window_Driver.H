@@ -4,7 +4,7 @@
 // Definition of Apple Cocoa window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,7 +19,7 @@
 
 /**
  \file Fl_WinAPI_Window_Driver.H
- \brief Definition of MSWindows window driver.
+ \brief Definition of Windows window driver.
  */
 
 #ifndef FL_WINAPI_WINDOW_DRIVER_H
@@ -40,7 +40,7 @@
  - window types and styles, depth, etc.
  - decorations
  
- ? where do we handle the interface between OpenGL/DirectX and Cocoa/WIN32/Glx?
+ ? where do we handle the interface between OpenGL/DirectX and Cocoa/Windows/Glx?
  */
 
 

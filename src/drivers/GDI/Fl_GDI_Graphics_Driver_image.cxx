@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// WIN32 image drawing code for the Fast Light Tool Kit (FLTK).
+// Windows image drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -414,7 +414,7 @@ void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int XP, int Y
   int save = SaveDC(tempdc);
   SelectObject(tempdc, (HGDIOBJ)*Fl_Graphics_Driver::id(bm));
   SelectObject(gc_, fl_brush());
-  // secret bitblt code found in old MSWindows reference manual:
+  // secret bitblt code found in old Windows reference manual:
   BitBlt(gc_, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);

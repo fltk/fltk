@@ -198,7 +198,7 @@ Set which X display to use.  This actually does
 <tt>putenv("DISPLAY=...")</tt> so that child programs
 will display on the same screen if called with \c exec().
 This must be done before the display is opened. This call is
-provided under MacOS and WIN32 but it has no effect.
+provided under MacOS and Windows but it has no effect.
 
 extern Display *fl_display
 
@@ -474,9 +474,9 @@ the class "fltk" is used (e.g. <tt>fltk.background</tt>). If no
 match is found, a global search is done (e.g.
 <tt>*background</tt>).
 
-\section osissues_win32 The Windows (WIN32) Interface
+\section osissues_win32 The Windows Interface
 
-The Windows interface provides access to the WIN32 GDI
+The Windows interface provides access to the Windows GDI
 state information and data structures.
 
 \subsection non_ascii_filenames Using filenames with non-ASCII characters
@@ -494,15 +494,15 @@ requests with the same code on both Windows and UNIX systems.
 Other processes can send this message via \c PostThreadMessage() in
 order to request, rather than force your application to terminate.
 
-\subsection osissues_win32_messages Handling Other WIN32 Messages
+\subsection osissues_win32_messages Handling Other Windows API Messages
 
 By default a single WNDCLASSEX called "FLTK" is
-created. All Fl_Window 's are of this class unless you
+created. All Fl_Window's are of this class unless you
 use Fl_Window::xclass(). The window class is created
 the first time Fl_Window::show() is called.
 
 You can probably combine FLTK with other libraries that make
-their own WIN32 window classes. The easiest way is to call
+their own window classes. The easiest way is to call
 Fl::wait(), as it will call \c DispatchMessage()
 for all messages to the other windows. If necessary you can let
 the other library take over as long as it calls
@@ -517,7 +517,7 @@ extern MSG fl_msg
 This variable contains the most recent message read by
 \c GetMessage(), which is called by Fl::wait().
 This may not be the
-most recent message sent to an FLTK window, because silly WIN32
+most recent message sent to an FLTK window, because silly Windows
 calls the handle procedures directly for some events (sigh).
 
 void Fl::add_handler(int (*f)(int))
@@ -545,7 +545,7 @@ window handle, or \c NULL if not found. This function uses
 a cache so it is slightly faster than iterating through the
 windows yourself.
 
-\subsection osissues_win32_gdi Drawing Things Using the WIN32 GDI
+\subsection osissues_win32_gdi Drawing Things Using the Windows GDI
 
 When the virtual function Fl_Widget::draw() is
 called, FLTK stores all the extra arguments you need to
@@ -614,13 +614,13 @@ bitmap data.
 
 \subsection osissues_msdos_console How to Not Get a MSDOS Console Window
 
-WIN32 has a really stupid mode switch stored in the
+Windows has a really stupid mode switch stored in the
 executables that controls whether or not to make a console
 window.
 
 To always get a console window you simply create a console
 application (the "/SUBSYSTEM:CONSOLE" option for the
-linker). For a GUI-only application create a WIN32 application
+linker). For a GUI-only application create a Windows application
 (the "/SUBSYSTEM:WINDOWS" option for the linker).
 
 FLTK includes a \c WinMain() function that calls the
@@ -630,16 +630,16 @@ This function creates a console window when you use the debug
 version of the library.
 </I>
 
-WIN32 applications without a console cannot write to
+Windows applications without a console cannot write to
 \c stdout or \c stderr, even if they are run from a
 console window. Any output is silently thrown away.
-Additionally, WIN32 applications are run in the background by
+Additionally, Windows applications are run in the background by
 the console, although you can use "start /wait program" to run
 them in the foreground.
 
-\subsection osissues_win32_problems Known WIN32 Bugs and Problems
+\subsection osissues_win32_problems Known Windows Bugs and Problems
 
-The following is a list of known bugs and problems in the WIN32
+The following is a list of known bugs and problems in the Windows
 version of FLTK:
 
 \li	If a program is deactivated, <tt>Fl::wait()</tt>
@@ -650,7 +650,7 @@ version of FLTK:
 	windows or otherwise holding the mouse down. We were
 	forced to remove most of the efficiency FLTK uses for
 	redrawing in order to get windows to update while being
-	moved. This is a design error in WIN32 and probably
+	moved. This is a design error in Windows and probably
 	impossible to get around.
 
 \li	<tt>Fl_Gl_Window::can_do_overlay()</tt> returns true

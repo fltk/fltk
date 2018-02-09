@@ -24,7 +24,7 @@
 #include <FL/Fl_Timer.H>
 #include <FL/fl_draw.H>
 #include <FL/forms.H>
-#ifdef WIN32
+#ifdef _WIN32
 #  ifdef __MWERKS__
 #    include <time.h>
 #  else
@@ -40,7 +40,7 @@
 #define FL_TIMER_BLINKRATE	0.2
 
 void fl_gettime(long* sec, long* usec) {
-#ifdef WIN32
+#ifdef _WIN32
 # ifdef __MWERKS__
   time_t localTime = time(NULL);
   struct tm *now = localtime(&localTime);

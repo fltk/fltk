@@ -33,20 +33,20 @@
 #include <time.h>
 #include <FL/math.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #  include "sudokurc.h"
 #elif !defined(__APPLE__)
 #  include "pixmaps/sudoku.xbm"
-#endif // WIN32
+#endif // _WIN32
 
 // Audio headers...
 #include <config.h>
 
-#ifndef WIN32
+#ifndef _WIN32
 #  include <unistd.h>
-#endif // !WIN32
+#endif // !_WIN32
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(_WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: FLTK does not provide cross platform sound support"
 #else
@@ -59,9 +59,9 @@
 #ifdef __APPLE__
 #  include <CoreAudio/AudioHardware.h>
 #endif // __APPLE__
-#ifdef WIN32
+#ifdef _WIN32
 #  include <mmsystem.h>
-#endif // WIN32
+#endif // _WIN32
 
 
 //
@@ -113,7 +113,7 @@ class SudokuSound {
 			   AudioBufferList *data_out,
 			   const AudioTimeStamp *time_out,
 			   void *client_data);
-#elif defined(WIN32)
+#elif defined(_WIN32)
   HWAVEOUT	device;
   HGLOBAL	header_handle;
   LPWAVEHDR	header_ptr;
@@ -259,7 +259,7 @@ SudokuSound::SudokuSound() {
   
   sample_size = (int)format.mSampleRate / 20;
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   WAVEFORMATEX	format;
 
   memset(&format, 0, sizeof(format));
@@ -364,7 +364,7 @@ SudokuSound::~SudokuSound() {
 #  endif
   }
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if (sample_size) {
     waveOutClose(device);
 
@@ -438,7 +438,7 @@ void SudokuSound::play(char note) {
   // Wait for the sound to complete...
   usleep(NOTE_DURATION*1000);
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if (sample_size) {
     memcpy(data_ptr, sample_data[note - 'A'], sample_size * 4);
 
@@ -711,14 +711,14 @@ Sudoku::Sudoku()
     }
 
   // Set icon for window (MacOS uses app bundle for icon...)
-#ifdef WIN32
+#ifdef _WIN32
   icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
 #elif !defined(__APPLE__)
   fl_open_display();
   icon((char *)XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
                                      (char *)sudoku_bits, sudoku_width,
 				     sudoku_height));
-#endif // WIN32
+#endif // _WIN32
 
   // Catch window close events...
   callback(close_cb);

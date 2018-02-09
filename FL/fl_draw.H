@@ -3,7 +3,7 @@
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -286,7 +286,7 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_graphics_driver-
  Draw ellipse sections using integer coordinates.
  
  These functions match the rather limited circle drawing code provided by X
- and WIN32. The advantage over using fl_arc with floating point coordinates
+ and Windows. The advantage over using fl_arc with floating point coordinates
  is that they are faster because they often use the hardware, and they draw
  much nicer small circles, since the small sizes are often hard-coded bitmaps.
  

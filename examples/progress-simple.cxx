@@ -23,14 +23,14 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Progress.H>
 
-#ifdef WIN32
+#ifdef _WIN32
 // WINDOWS
 #include <windows.h>
 #define usleep(v) Sleep(v/1000)
-#else /*WIN32*/
+#else /* _WIN32 */
 // UNIX
 #include <unistd.h>                            // usleep
-#endif /*WIN32*/
+#endif /* _WIN32 */
 
 // Button callback
 void butt_cb(Fl_Widget *butt, void *data) {

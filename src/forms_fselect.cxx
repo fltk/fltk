@@ -32,7 +32,7 @@ char* fl_show_file_selector(const char *message,const char *dir,
   if (fname && fname[0]) strlcpy(fl_filename,fname,sizeof(fl_filename));
   char *p = fl_directory+strlen(fl_directory);
   if (p > fl_directory && *(p-1)!='/'
-#ifdef WIN32
+#ifdef _WIN32
       && *(p-1)!='\\' && *(p-1)!=':'
 #endif
       ) *p++ = '/';

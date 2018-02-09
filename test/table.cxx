@@ -4,9 +4,9 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <stdlib.h>	// atoi
-#endif /*WIN32*/
+#endif /* _WIN32 */
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>

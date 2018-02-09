@@ -205,7 +205,7 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
 {
   static char filename[ FL_PATH_MAX ];
   // TODO: verify that this is the Apple sanctioned way of finding these folders
-  // (On MSWindows, this frequently leads to issues with internationalized systems)
+  // (On Windows, this frequently leads to issues with internationalized systems)
   // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
   switch (root) {
     case Fl_Preferences::SYSTEM:

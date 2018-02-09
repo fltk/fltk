@@ -44,7 +44,7 @@
 #  define FL_gl_H
 
 #  include "Enumerations.H" // for color names
-#  ifdef WIN32
+#  ifdef _WIN32
 #    include <windows.h>
 #  endif
 #  ifndef APIENTRY

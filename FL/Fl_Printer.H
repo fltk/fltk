@@ -78,7 +78,7 @@
  before creation of the Fl_Printer object.
  Use Fl_PostScript_File_Device::file_chooser_title to customize the title of the file chooser dialog that opens
  when using the "Print To File" option of the print dialog. 
- <li>MSWindows platform: Transparent Fl_RGB_Image 's don't print with exact transparency on most printers
+ <li>Windows platform: Transparent Fl_RGB_Image 's don't print with exact transparency on most printers
  (a workaround is to use print_window_part() ).
  Fl_RGB_Image 's don't rotate() well.
  <li>Mac OS X platform: all graphics requests print as on display and accept rotation and scaling.

@@ -39,9 +39,9 @@
 // updated header file for the INT32 data type; the following define
 // from Shane Hill seems to be a usable workaround...
 
-#if defined(WIN32) && defined(__CYGWIN__)
+#if defined(__CYGWIN__)
 #  define XMD_H
-#endif // WIN32 && __CYGWIN__
+#endif // __CYGWIN__
 
 
 extern "C"

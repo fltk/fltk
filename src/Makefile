@@ -3,7 +3,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2017 by Bill Spitzak and others.
+# Copyright 1998-2018 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -612,7 +612,7 @@ depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFIL
 include makedepend
 
 # These dependencies aren't part of the makedepend file since
-# they are part of the WIN32 and MacOS code base...
+# they are part of the Windows and MacOS code base...
 # Please add only non-Linux/Unix files or such that are optional
 # (like "*xft*") here:
 Fl_get_key_mac.o:	Fl_get_key_mac.cxx

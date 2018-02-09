@@ -3,7 +3,7 @@
 //
 // Optional argument initialization code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-// OPTIONAL initialization code for a program using fltk.
+// OPTIONAL initialization code for a program using FLTK.
 // You do not need to call this!  Feel free to make up your own switches.
 
 #include <FL/Fl.H>
@@ -69,7 +69,7 @@ extern const char *fl_bg2;
   \li -display host:n.n
   <br>
   Sets the X display to use; this option is silently
-  ignored under WIN32 and MacOS.
+  ignored under Windows and MacOS.
   
   \li -dnd and -nodnd
   <br>
@@ -292,7 +292,7 @@ void Fl_Window::show(int argc, char **argv) {
       //  if (mh > gh) gh = mh;
       Fl_Widget *r = resizable();
       if (!r) resizable(this);
-      // for WIN32 we assume window is not mapped yet:
+      // for Windows we assume window is not mapped yet:
       if (fl & (Fl_System_Driver::fl_XValue | Fl_System_Driver::fl_YValue))
 	x(-1), resize(gx,gy,gw,gh);
       else

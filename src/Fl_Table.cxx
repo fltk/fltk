@@ -26,11 +26,11 @@
 #include <string.h>		// memcpy
 #include <stdio.h>		// fprintf
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <malloc.h>		// WINDOWS: malloc/realloc
-#else /*WIN32*/
+#else /* _WIN32 */
 #include <stdlib.h>		// UNIX: malloc/realloc
-#endif /*WIN32*/
+#endif /* _WIN32 */
 
 
 // An STL-ish vector without templates (private to Fl_Table)

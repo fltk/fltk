@@ -28,7 +28,7 @@
 
 #if defined(USE_X11) // X11
 #  include <cairo-xlib.h>
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #  include <cairo-win32.h>
 #elif defined(__APPLE_QUARTZ__) // PORTME: Cairo Support
 #  include <cairo-quartz.h>
@@ -95,14 +95,14 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
 
 /* 
     Creates transparently a cairo_surface_t object.
-    gc is an HDC context in  WIN32, a CGContext* in Quartz, and
+    gc is an HDC context in Windows, a CGContext* in Quartz, and
     a display on X11 (not used on this platform)
  */
 
 static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 # if defined(USE_X11)
     return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
-# elif   defined(WIN32)
+# elif   defined(_WIN32)
     return cairo_win32_surface_create((HDC) gc);
 # elif defined(__APPLE_QUARTZ__)
     return cairo_quartz_surface_create_for_cg_context((CGContext*) gc, W, H);
@@ -131,8 +131,8 @@ cairo_t * Fl::cairo_make_current(void *gc) {
       W = CGBitmapContextGetWidth(fl_gc);
       H = CGBitmapContextGetHeight(fl_gc);
     }
-#elif defined(WIN32)
-    // we don't need any W,H for WIN32
+#elif defined(_WIN32)
+    // we don't need any W,H for Windows
 #else
 # error Cairo is not supported on this platform.
 #endif

@@ -34,16 +34,16 @@
 // Audio headers...
 #include <config.h>
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(_WIN32) || defined(__APPLE__)
 #elif defined(FL_PORTING)
 #  pragma message "FL_PORTING: FLTK does not provide cross platform sound support"
 #else
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 #  include <unistd.h>
 #  include <sys/time.h> // gettimeofday()
-#endif // !WIN32
+#endif // !_WIN32
 
 #ifdef HAVE_ALSA_ASOUNDLIB_H
 #  define ALSA_PCM_NEW_HW_PARAMS_API
@@ -52,9 +52,9 @@
 #ifdef __APPLE__
 #  include <CoreAudio/AudioHardware.h>
 #endif // __APPLE__
-#ifdef WIN32
+#ifdef _WIN32
 #  include <mmsystem.h>
-#endif // WIN32
+#endif // _WIN32
 
 #define BLOCK_COLS	20
 #define BLOCK_ROWS	10
@@ -175,7 +175,7 @@ class BlockSound {
 			   AudioBufferList *data_out,
 			   const AudioTimeStamp *time_out,
 			   void *client_data);
-#elif defined(WIN32)
+#elif defined(_WIN32)
   HWAVEOUT	device;
   HGLOBAL	header_handle;
   LPWAVEHDR	header_ptr;
@@ -243,7 +243,7 @@ BlockSound::BlockSound() {
 
   sample_size = (int)format.mSampleRate;
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   WAVEFORMATEX	format;
 
   memset(&format, 0, sizeof(format));
@@ -340,7 +340,7 @@ BlockSound::~BlockSound() {
 #  endif
   }
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if (sample_size) {
     waveOutClose(device);
 
@@ -405,20 +405,20 @@ void BlockSound::play_explosion(float duration) {
   if (duration <= 0.0)
     return;
 
-#if defined(__APPLE__) || defined(WIN32) || defined(HAVE_ALSA_ASOUNDLIB_H)
+#if defined(__APPLE__) || defined(_WIN32) || defined(HAVE_ALSA_ASOUNDLIB_H)
   if (duration > 1.0)
     duration = 1.0;
 
   int samples = (int)(duration * sample_size);
   short *sample_ptr = sample_data + 2 * (sample_size - samples);
-#endif // __APPLE__ || WIN32 || HAVE_ALSA_ASOUNDLIB_H
+#endif // __APPLE__ || _WIN32 || HAVE_ALSA_ASOUNDLIB_H
 
 #ifdef __APPLE__
   // Point to the next note...
   data      = sample_ptr;
   remaining = samples * 2;
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if (sample_size) {
     memcpy(data_ptr, sample_ptr, samples * 4);
 
@@ -899,19 +899,19 @@ void BlockWindow::timeout_cb(BlockWindow *bw) {
   static int ntime = 0;
   static int level = 0;
 
-#if !defined(WIN32)
+#if !defined(_WIN32)
   {
     struct timeval atime;
     gettimeofday(&atime, NULL);
     curtime = atime.tv_sec % 60 + 0.000001 * atime.tv_usec;
   }
-#else // (WIN32)
+#else // (_WIN32)
   {
     SYSTEMTIME atime;
     GetLocalTime(&atime);
     curtime = atime.wSecond + 0.001 * atime.wMilliseconds;
   }
-#endif // (WIN32)
+#endif // (_WIN32)
 
   // platform independent part of timer debugging code
   if (bw->interval_ > 0) { // game is active

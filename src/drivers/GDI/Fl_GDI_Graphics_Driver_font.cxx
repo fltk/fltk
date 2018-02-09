@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// WIN32 font utilities for the Fast Light Tool Kit (FLTK).
+// Windows font utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -16,23 +16,21 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef WIN32
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-# endif
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
 /* We require Windows 2000 features such as GetGlyphIndices */
-# if !defined(WINVER) || (WINVER < 0x0500)
-#  ifdef WINVER
-#   undef WINVER
-#  endif
-#  define WINVER 0x0500
+#if !defined(WINVER) || (WINVER < 0x0500)
+# ifdef WINVER
+#  undef WINVER
 # endif
-# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
-#  ifdef _WIN32_WINNT
-#   undef _WIN32_WINNT
-#  endif
-#  define _WIN32_WINNT 0x0500
+# define WINVER 0x0500
+#endif
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+# ifdef _WIN32_WINNT
+#  undef _WIN32_WINNT
 # endif
+# define _WIN32_WINNT 0x0500
 #endif
 
 // Select fonts from the FLTK font table.

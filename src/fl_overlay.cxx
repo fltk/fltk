@@ -53,7 +53,7 @@ static void draw_current_rect() {
   XSetForeground(fl_display, gc, 0xffffffff);
   XDrawRectangle(fl_display, fl_window, gc, px, py, pw, ph);
   XSetFunction(fl_display, gc, GXcopy);
-# elif defined(WIN32)
+# elif defined(_WIN32)
   int old = SetROP2(fl_graphics_driver->gc(), R2_NOT);
   fl_rect(px, py, pw, ph);
   SetROP2(fl_graphics_driver->gc(), old);

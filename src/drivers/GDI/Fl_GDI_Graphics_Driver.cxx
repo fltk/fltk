@@ -25,7 +25,7 @@
 
 /*
  * By linking this module, the following static method will instantiate the
- * MSWindows GDI Graphics driver as the main display driver.
+ * Windows GDI Graphics driver as the main display driver.
  */
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
@@ -53,7 +53,7 @@ void Fl_GDI_Graphics_Driver::global_gc()
 }
 
 /*
- * This function checks if the version of MSWindows that we
+ * This function checks if the version of Windows that we
  * curently run on supports alpha blending for bitmap transfers
  * and finds the required function if so.
  */

@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// Support for WIN32 printing for the Fast Light Tool Kit (FLTK).
+// Printing support for Windows for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_Printer.H>
@@ -27,7 +27,7 @@
 
 extern HWND fl_window;
 
-/** Support for printing on the MSWindows platform */
+/** Support for printing on the Windows platform */
 class Fl_WinAPI_Printer_Driver : public Fl_Paged_Device {
   friend class Fl_Paged_Device;
 private:
@@ -318,7 +318,7 @@ void Fl_WinAPI_Printer_Driver::origin(int *x, int *y)
   Fl_Paged_Device::origin(x, y);
 }
 
-#endif // WIN32
+#endif // _WIN32
 
 //
 // End of "$Id$".

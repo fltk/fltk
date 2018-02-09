@@ -166,7 +166,7 @@ public:
    mode() must not be called within draw() since it
    changes the current context.
    
-   \note On the <b>MSWindows and Unix/Linux platforms</b>, FLTK produces
+   \note On the <b>Windows and Unix/Linux platforms</b>, FLTK produces
    contexts for the highest OpenGL version supported by the hardware. Such contexts
    are also compatible with lower OpenGL versions. On the <b>Apple OS X
    platform</b>, it is necessary to decide whether the source code targets
@@ -186,7 +186,7 @@ public:
    the <tt>glXChooseVisual()</tt> function (e.g., <tt>GLX_DOUBLEBUFFER</tt>, defined by including <GL/glx.h>).
    \note What attributes are adequate here is subject to change.
    The preferred, stable public API is Fl_Gl_Window::mode(int a).
-   <p><b>MSWindows platform</b>: this member function is of no use.
+   <p><b>Windows platform</b>: this member function is of no use.
    <p><b>Mac OS X platform</b>: attributes belong to the <tt>CGLPixelFormatAttribute</tt> enumeration
    (defined by including <tt><OpenGL/OpenGL.h></tt>, e.g., <tt>kCGLPFADoubleBuffer</tt>)
    and may be followed by adequate attribute values.

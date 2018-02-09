@@ -3,7 +3,7 @@
  *
  * Filename header file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2018 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -56,7 +56,7 @@ FL_EXPORT int fl_filename_isdir(const char *name);
 
 #  if defined(__cplusplus) && !defined(FL_DOXYGEN)
 /*
- * Under WIN32, we include filename.H from numericsort.c; this should probably change...
+ * Under Windows, we include filename.H from numericsort.c; this should probably change...
  */
 
 inline char *fl_filename_setext(char *to, const char *ext) { return fl_filename_setext(to, FL_PATH_MAX, ext); }

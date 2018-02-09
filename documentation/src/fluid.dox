@@ -109,9 +109,9 @@ immediately, losing any changes.
 
 \section fluid_fluid_under_windows Running FLUID Under Microsoft Windows
 
-To run FLUID under WIN32, double-click on the \e FLUID.exe
+To run FLUID under Windows, double-click on the \e FLUID.exe
 file. You can also run FLUID from the Command Prompt window.
-FLUID always runs in the background under WIN32.
+FLUID always runs in the background under Windows.
 
 \section fluid_compiling_fl_files Compiling .fl files
 
@@ -1407,7 +1407,7 @@ and the KDE icon editor.
 
 \par
 FLUID reads Windows BMP image files which are often used in
-WIN32 applications for icons. FLUID converts BMP files into
+Windows applications for icons. FLUID converts BMP files into
 (modified) XPM format and uses a Fl_BMP_Image image to label the
 widget. Transparency is handled the same as for XPM files. All
 image data is uncompressed when written to the source file, so

@@ -20,7 +20,7 @@
   \file Fl_GDI_Graphics_Driver_vertex.cxx
 
   \brief  Portable drawing code for drawing arbitrary shapes with
-	  simple 2D transformations, implemented for MSWindows GDI.
+	  simple 2D transformations, implemented for Windows GDI.
 */
 
 #include "Fl_GDI_Graphics_Driver.H"

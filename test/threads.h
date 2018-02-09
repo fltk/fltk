@@ -48,7 +48,7 @@ static int fl_create_thread(Fl_Thread& t, Fl_Thread_Func* f, void* p) {
   return pthread_create((pthread_t*)&t, 0, f, p);
 }
 
-#  elif defined(WIN32) && !defined(__WATCOMC__) // Use Windows threading...
+#  elif defined(_WIN32) && !defined(__WATCOMC__) // Use Windows threading...
 
 #    include <windows.h>
 #    include <process.h>

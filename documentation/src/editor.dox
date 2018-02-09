@@ -543,7 +543,7 @@ void set_title(Fl_Window* w) {
   else {
     char *slash;
     slash = strrchr(filename, '/');
-#ifdef WIN32
+#ifdef _WIN32
     if (slash == NULL) slash = strrchr(filename, '\\');
 #endif
     if (slash != NULL) strcpy(title, slash + 1);

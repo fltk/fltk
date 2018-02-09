@@ -142,7 +142,7 @@ int Fl_Xlib_Graphics_Driver::clip_x (int x) {
 }
 
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
-// MSWindows equivalent exists, implemented inline in win32.H
+// Windows equivalent exists, implemented inline in win32.H
 Fl_Region Fl_Xlib_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
   clip_to_short(x, y, w, h, line_width_);

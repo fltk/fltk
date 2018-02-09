@@ -46,7 +46,7 @@ decl {\#include <FL/Fl_Shared_Image.H>} {private local
 decl {\#include <FL/Fl_Preferences.H>} {private local
 }
 
-declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {after {\#endif // WIN32 && !__CYGWIN__}
+declblock {\#if defined(_WIN32) && !defined(__CYGWIN__)} {after {\#endif // _WIN32 && !__CYGWIN__}
 } {
   decl {\#include <io.h>} {private local
   }

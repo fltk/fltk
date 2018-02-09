@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// WIN32-specific code for the Fast Light Tool Kit (FLTK).
+// Windows-specific code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -16,11 +16,11 @@
 //     http://www.fltk.org/str.php
 //
 
-// This file contains win32-specific code for fltk which is always linked
-// in.  Search other files for "WIN32" or filenames ending in _win32.cxx
+// This file contains Windows-specific code for FLTK which is always linked
+// in.  Search other files for "_WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
-#if defined(WIN32) && !defined(FL_DOXYGEN)
+#if defined(_WIN32) && !defined(FL_DOXYGEN)
 
 /* We require Windows 2000 features (e.g. VK definitions) */
 # if !defined(WINVER) || (WINVER < 0x0500)
@@ -271,7 +271,7 @@ static Fl_Window *track_mouse_win = 0; // current TrackMouseEvent() window
 // devices, or pipes...
 //
 // Microsoft provides the Berkeley select() call and an asynchronous
-// select function that sends a WIN32 message when the select condition
+// select function that sends a Windows message when the select condition
 // exists. However, we don't try to use the asynchronous WSAAsyncSelect()
 // any more for good reasons (see above).
 //
@@ -399,7 +399,7 @@ double Fl_WinAPI_Screen_Driver::wait(double time_to_wait) {
   }
 
   if (nfds) {
-    // For WIN32 we need to poll for socket input FIRST, since
+    // For Windows we need to poll for socket input FIRST, since
     // the event queue is not something we can select() on...
     timeval t;
     t.tv_sec = 0;
@@ -560,7 +560,7 @@ class Fl_Win32_At_Exit {
 public:
   Fl_Win32_At_Exit() {}
   ~Fl_Win32_At_Exit() {
-    fl_free_fonts(); // do some WIN32 cleanup
+    fl_free_fonts(); // do some Windows cleanup
     fl_cleanup_pens();
     OleUninitialize();
     fl_brush_action(1);
@@ -1043,7 +1043,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
 
     case 3:  // move:
     default: // avoid compiler warning
-      // MSWindows produces extra events even if mouse does not move, ignore em:
+      // Windows produces extra events even if the mouse does not move, ignore em:
       if (Fl::e_x_root == pmx && Fl::e_y_root == pmy)
 	return 1;
       pmx = Fl::e_x_root;
@@ -1054,7 +1054,7 @@ static int mouse_event(Fl_Window *window, int what, int button,
   }
 }
 
-// convert a MSWindows VK_x to an Fltk (X) Keysym:
+// Convert a Windows VK_x to an FLTK (X) Keysym:
 // See also the inverse converter in Fl_get_key_win32.cxx
 // This table is in numeric order by VK:
 static const struct {
@@ -1216,7 +1216,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	  redraw_whole_window = true;
 	}
 
-	// We need to merge WIN32's damage into FLTK's damage.
+	// We need to merge Windows' damage into FLTK's damage.
 	R = CreateRectRgn(0, 0, 0, 0);
 	int r = GetUpdateRgn(hWnd, R, 0);
 	if (r == NULLREGION && !redraw_whole_window) {
@@ -1228,7 +1228,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	R2 = Fl_GDI_Graphics_Driver::scale_region(i->region, scale, NULL);
 
 	if (R2) {
-	  // Also tell WIN32 that we are drawing someplace else as well...
+	  // Also tell Windows that we are drawing someplace else as well...
 	  CombineRgn(R2, R2, R, RGN_OR);
 	  DeleteObject(R);
 	} else {
@@ -1245,7 +1245,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 	window->clear_damage((uchar)(window->damage() | FL_DAMAGE_EXPOSE));
 	// These next two statements should not be here, so that all update
-	// is deferred until Fl::flush() is called during idle.  However WIN32
+	// is deferred until Fl::flush() is called during idle.  However Windows
 	// apparently is very unhappy if we don't obey it and draw right now.
 	// Very annoying!
 	fl_GetDC(hWnd); // Make sure we have a DC for this window...
@@ -1403,7 +1403,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	if (GetKeyState(VK_NUMLOCK))
 	  state |= FL_NUM_LOCK;
 	if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & ~1) {
-	  // WIN32 bug?  GetKeyState returns garbage if the user hit the
+	  // Windows bug?  GetKeyState returns garbage if the user hit the
 	  // meta key to pop up start menu.  Sigh.
 	  if ((GetAsyncKeyState(VK_LWIN) | GetAsyncKeyState(VK_RWIN)) & ~1)
 	    state |= FL_META;
@@ -1677,7 +1677,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
 
       if (!style) {
 	HWND hwnd = fl_xid(w);
-	// request the style flags of this window, as WIN32 sees them
+	// request the style flags of this window, as Windows sees them
 	style = GetWindowLong(hwnd, GWL_STYLE);
 	styleEx = GetWindowLong(hwnd, GWL_EXSTYLE);
       }
@@ -2529,7 +2529,7 @@ fl_uintptr_t Fl_WinAPI_Window_Driver::current_cursor() {
 // faster by using X's background pixel erasing.  We can make it
 // actually *be* faster by drawing the frame only, this is done by
 // setting fl_boxcheat, which is seen by code in fl_drawbox.cxx:
-// For WIN32 it looks like all windows share a background color, so
+// For Windows it looks like all windows share a background color, so
 // I use FL_GRAY for this and only do this cheat for windows that are
 // that color.
 // Actually it is totally disabled.
@@ -2810,7 +2810,7 @@ void preparePrintFront(void) {
 }
 #endif // USE_PRINT_BUTTON
 
-#endif // defined(WIN32) and !defined(FL_DOXYGEN)
+#endif // defined(_WIN32) and !defined(FL_DOXYGEN)
 
 //
 // End of "$Id$".

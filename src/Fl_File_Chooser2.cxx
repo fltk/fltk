@@ -23,85 +23,85 @@
 /** \class Fl_File_Chooser
   The Fl_File_Chooser widget displays a standard file selection
   dialog that supports various selection modes.
-  
+
   \image html Fl_File_Chooser.jpg 
   \image latex  Fl_File_Chooser.jpg "Fl_File_Chooser" width=12cm
- 
- The Fl_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
- recommended to open files that may have non-ASCII names with the fl_fopen() or
- fl_open() utility functions that handle these names in a cross-platform way 
- (whereas the standard fopen()/open() functions fail on the MSWindows platform 
- to open files with a non-ASCII name).
- 
+
+  The Fl_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
+  recommended to open files that may have non-ASCII names with the fl_fopen() or
+  fl_open() utility functions that handle these names in a cross-platform way
+  (whereas the standard fopen()/open() functions fail on the Windows platform
+  to open files with a non-ASCII name).
+
   The Fl_File_Chooser class also exports several static values
   that may be used to localize or customize the appearance of all file chooser
   dialogs:
   
   <CENTER><TABLE BORDER="1">
   <TR>
-  	<TH>Member</TH>
-  	<TH>Default value</TH>
+	<TH>Member</TH>
+	<TH>Default value</TH>
   </TR>
   <TR>
-  	<TD>add_favorites_label</TD>
-  	<TD>"Add to Favorites"</TD>
+	<TD>add_favorites_label</TD>
+	<TD>"Add to Favorites"</TD>
   </TR>
   <TR>
-  	<TD>all_files_label</TD>
-  	<TD>"All Files (*)"</TD>
+	<TD>all_files_label</TD>
+	<TD>"All Files (*)"</TD>
   </TR>
   <TR>
-  	<TD>custom_filter_label</TD>
-  	<TD>"Custom Filter"</TD>
+	<TD>custom_filter_label</TD>
+	<TD>"Custom Filter"</TD>
   </TR>
   <TR>
-  	<TD>existing_file_label</TD>
-  	<TD>"Please choose an existing file!"</TD>
+	<TD>existing_file_label</TD>
+	<TD>"Please choose an existing file!"</TD>
   </TR>
   <TR>
-  	<TD>favorites_label</TD>
-  	<TD>"Favorites"</TD>
+	<TD>favorites_label</TD>
+	<TD>"Favorites"</TD>
   </TR>
   <TR>
-  	<TD>filename_label</TD>
-  	<TD>"Filename:"</TD>
+	<TD>filename_label</TD>
+	<TD>"Filename:"</TD>
   </TR>
   <TR>
-  	<TD>filesystems_label</TD>
-  	<TD>"My Computer" (WIN32)<BR>
-  	"File Systems" (all others)</TD>
+	<TD>filesystems_label</TD>
+	<TD>"My Computer" (Windows)<BR>
+	"File Systems" (all others)</TD>
   </TR>
- <TR>
+  <TR>
 	<TD>hidden_label</TD>
 	<TD>"Show hidden files:"</TD>
- </TR>
- <TR>
-  	<TD>manage_favorites_label</TD>
-  	<TD>"Manage Favorites"</TD>
   </TR>
   <TR>
-  	<TD>new_directory_label</TD>
-  	<TD>"New Directory?"</TD>
+	<TD>manage_favorites_label</TD>
+	<TD>"Manage Favorites"</TD>
   </TR>
   <TR>
-  	<TD>new_directory_tooltip</TD>
-  	<TD>"Create a new directory."</TD>
+	<TD>new_directory_label</TD>
+	<TD>"New Directory?"</TD>
   </TR>
   <TR>
-  	<TD>preview_label</TD>
-  	<TD>"Preview"</TD>
+	<TD>new_directory_tooltip</TD>
+	<TD>"Create a new directory."</TD>
   </TR>
   <TR>
-  	<TD>save_label</TD>
-  	<TD>"Save"</TD>
+	<TD>preview_label</TD>
+	<TD>"Preview"</TD>
   </TR>
   <TR>
-  	<TD>show_label</TD>
-  	<TD>"Show:"</TD>
+	<TD>save_label</TD>
+	<TD>"Save"</TD>
   </TR>
- <TR>
-  	<TD>sort</TD>
-  	<TD>fl_numericsort</TD>
+  <TR>
+	<TD>show_label</TD>
+	<TD>"Show:"</TD>
+  </TR>
+  <TR>
+	<TD>sort</TD>
+	<TD>fl_numericsort</TD>
   </TR>
   </TABLE></CENTER>
 

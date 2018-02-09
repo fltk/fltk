@@ -73,7 +73,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/platform.H>
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(_WIN32) && !defined(__APPLE__)
 #include "list_visuals.cxx"
 #endif
 

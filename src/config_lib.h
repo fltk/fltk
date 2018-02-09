@@ -3,7 +3,7 @@
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2016 by Bill Spitzak and others.
+ * Copyright 1998-2018 by Bill Spitzak and others.
  */
 
 #ifndef FL_CONFIG_LIB_H
@@ -20,7 +20,7 @@
 # ifdef HAVE_GL
 #  define FL_CFG_GFX_OPENGL
 # endif
-#elif defined(WIN32)
+#elif defined(_WIN32)
 # define FL_CFG_GFX_GDI
 # ifdef HAVE_GL
 #  define FL_CFG_GFX_OPENGL
@@ -42,7 +42,7 @@
 
 #ifdef __APPLE__ /* default configurations */
 # define FL_CFG_PRN_QUARTZ
-#elif defined(WIN32)
+#elif defined(_WIN32)
 # define FL_CFG_PRN_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a printer driver"
@@ -58,7 +58,7 @@
 
 #ifdef __APPLE__ /* default configurations */
 # define FL_CFG_WIN_COCOA
-#elif defined(WIN32)
+#elif defined(_WIN32)
 # define FL_CFG_WIN_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a window management library"
@@ -74,7 +74,7 @@
 
 #ifdef __APPLE__ /* default configurations */
 # define FL_CFG_SYS_POSIX
-#elif defined(WIN32)
+#elif defined(_WIN32)
 # define FL_CFG_SYS_WIN32
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: please choose a system library"

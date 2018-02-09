@@ -21,21 +21,21 @@
    Fl_Native_File_Chooser widget. */
 
 /* Implementation note:
- 
+
  class Fl_Native_File_Chooser  <== public API used by applications
- 
+
  class Fl_Native_File_Chooser_Driver   <== virtual API that a platform may implement
                                            this API has a do-nothing default implementation
- 
+
         class Fl_Native_File_Chooser_FLTK_Driver   <== this API implementation is the default FLTK file chooser
                 class Fl_GTK_Native_File_Chooser_Driver  <== this API implementation runs a GTK file chooser
                                         it is determined at run-time if the GTK dynamic libraries are available
- 
+
         class Fl_Quartz_Native_File_Chooser_Driver  <== this API implementation runs a Mac OS X file chooser
 
-        class Fl_WinAPI_Native_File_Chooser_Driver  <== this API implementation runs a MSWindows file chooser
- 
- 
+        class Fl_WinAPI_Native_File_Chooser_Driver  <== this API implementation runs a Windows file chooser
+
+
  Each platform must implement the constructor of the Fl_Native_File_Chooser class.
  This particular implementation:
  
@@ -97,8 +97,8 @@ class Fl_Native_File_Chooser_Driver;
  
  The Fl_Native_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
  recommended to open files that may have non-ASCII names with the fl_fopen() or
- fl_open() utility functions that handle these names in a cross-platform way 
- (whereas the standard fopen()/open() functions fail on the MSWindows platform 
+ fl_open() utility functions that handle these names in a cross-platform way
+ (whereas the standard fopen()/open() functions fail on the Windows platform
  to open files with a non-ASCII name).
  
  <B>Platform Specific Caveats</B>

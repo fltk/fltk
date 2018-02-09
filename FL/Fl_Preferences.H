@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Preferences .
+// Preferences implementation for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002-2010 by Matthias Melcher.
 //
@@ -30,7 +30,7 @@
    settings between application starts.
 
    It is similar to the
-   Registry on WIN32 and Preferences on MacOS, and provides a
+   Registry on Windows and Preferences on MacOS, and provides a
    simple configuration mechanism for UNIX.
 
    Fl_Preferences uses a hierarchy to store data. It

@@ -62,7 +62,7 @@
 
 // #if ( defined _MSC_VER || defined __MWERKS__ ) && defined _DEBUG
 
-#if defined(WIN32) && defined(__MWERKS__) && defined(_DEBUG)
+#if defined(_WIN32) && defined(__MWERKS__) && defined(_DEBUG)
 # define DEBUG_EXE_WITH_D 1
 #else
 # define DEBUG_EXE_WITH_D 0
@@ -241,7 +241,7 @@ void dobut(Fl_Widget *, long arg) {
     push_menu(menus[men].icommand[bn]);
   } else {
 
-#ifdef WIN32
+#ifdef _WIN32
 
     STARTUPINFO		suInfo;		// Process startup information
     PROCESS_INFORMATION	prInfo;		// Process information
@@ -260,7 +260,7 @@ void dobut(Fl_Widget *, long arg) {
     char* copy_of_icommand = new char[icommand_length+1];
     strcpy(copy_of_icommand,menus[men].icommand[bn]);
     
-    // On WIN32 the .exe suffix needs to be appended to the command
+    // On Windows the .exe suffix needs to be appended to the command
     // whilst leaving any additional parameters unchanged - this
     // is required to handle the correct conversion of cases such as : 
     // `../fluid/fluid valuators.fl' to '../fluid/fluid.exe valuators.fl'.
@@ -346,7 +346,7 @@ void dobut(Fl_Widget *, long arg) {
     system(command);
     free(cmd);
 
-#else // NON WIN32 systems.
+#else // Non Windows systems.
 
     int icommand_length = strlen(menus[men].icommand[bn]);
     char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0' 
@@ -356,7 +356,7 @@ void dobut(Fl_Widget *, long arg) {
 
     delete[] command;
 
-#endif // WIN32
+#endif // _WIN32
   }
 }
 

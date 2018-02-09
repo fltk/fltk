@@ -16,8 +16,8 @@
 //     http://www.fltk.org/str.php
 //
 
-// This file contains win32-specific code for fltk which is always linked
-// in.  Search other files for "WIN32" or filenames ending in _win32.cxx
+// This file contains Windows-specific code for FLTK which is always linked
+// in.  Search other files for "_WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
 #include <FL/Fl.H>

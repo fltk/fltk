@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of MSWindows Win32/64 Screen interface
+// Windows screen interface for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -275,7 +275,7 @@ void Fl_WinAPI_Screen_Driver::flush()
 extern void fl_fix_focus(); // in Fl.cxx
 
 // We have to keep track of whether we have captured the mouse, since
-// MSWindows shows little respect for this... Grep for fl_capture to
+// Windows shows little respect for this... Grep for fl_capture to
 // see where and how this is used.
 extern HWND fl_capture;
 

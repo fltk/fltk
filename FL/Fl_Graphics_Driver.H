@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2018 by Bill Spitzak and others.
@@ -444,7 +444,7 @@ struct Fl_Fontdesc {
  - scale and unscale the clipping region.
  
  This class is presently used on the X11 platform to support HiDPI displays.
- In the future, it may also be used on the WIN32 platform.
+ In the future, it may also be used on the Windows platform.
  */
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
 public:

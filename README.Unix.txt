@@ -376,7 +376,7 @@ recommend that you add it to the command search path.
 ===========================================
 
 Code::Blocks is a free and popular C++ IDE in the Linux world. It also runs on
-OS X and MSWindows. Configured correctly, it can also cross-compile between
+OS X and Windows. Configured correctly, it can also cross-compile between
 these platforms. This chapter focuses on creating a new FLTK project for Linux, 
 assuming that FLTK 1.3 was previously built and installed in its default 
 location from the command line.

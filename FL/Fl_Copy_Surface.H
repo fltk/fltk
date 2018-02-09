@@ -39,7 +39,7 @@
  Fl_Display_Device::display_device()->set_current();  // direct graphics requests back to the display
  \endcode
  Platform details:
- \li MSWindows: Transparent RGB images copy without transparency.
+ \li Windows: Transparent RGB images copy without transparency.
  The graphical data are copied to the clipboard as an 'enhanced metafile'.
  \li Mac OS: The graphical data are copied to the clipboard (a.k.a. pasteboard) in two 'flavors':
  1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image. 

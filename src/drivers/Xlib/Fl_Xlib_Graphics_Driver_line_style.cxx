@@ -32,7 +32,7 @@
 void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes) {
 
   int ndashes = dashes ? strlen(dashes) : 0;
-  // emulate the WIN32 dash patterns on X
+  // emulate the Windows dash patterns on X
   char buf[7];
   if (!ndashes && (style&0xff)) {
     int w = width ? width : 1;

@@ -42,12 +42,12 @@
 #    define M_SQRT1_2       0.70710678118654752440
 #  endif // !M_SQRT2
 
-#  if (defined(WIN32) || defined(CRAY)) && !defined(__MINGW32__) && !defined(__MWERKS__)
+#  if (defined(_WIN32) || defined(CRAY)) && !defined(__MINGW32__) && !defined(__MWERKS__)
 
 inline double rint(double v) {return floor(v+.5);}
 inline double copysign(double a, double b) {return b<0 ? -a : a;}
 
-#  endif // (WIN32 || CRAY) && !__MINGW32__ && !__MWERKS__
+#  endif // (_WIN32 || CRAY) && !__MINGW32__ && !__MWERKS__
 
 #endif // !fl_math_h
 
