@@ -243,20 +243,18 @@ else (OPTION_USE_THREADS)
 
 endif (OPTION_USE_THREADS)
 
-set(debug_threads FALSE) # set to true to show debug info
+set (debug_threads 0) # set to 1 to show debug info
 if (debug_threads)
   message ("")
-  message (STATUS "NOTE: set debug_threads to FALSE to disable this info!")
-  message (STATUS "WIN32                  = '${WIN32}'")
-  message (STATUS "MINGW                  = '${MINGW}'")
-  message (STATUS "CYGWIN                 = '${CYGWIN}'")
-  message (STATUS "OPTION_USE_THREADS     = '${OPTION_USE_THREADS}'")
-  message (STATUS "HAVE_PTHREAD           = '${HAVE_PTHREAD}'")
-  message (STATUS "HAVE_PTHREAD_H         = '${HAVE_PTHREAD_H}'")
-  message (STATUS "FLTK_THREADS_FOUND     = '${FLTK_THREADS_FOUND}'")
-  message (STATUS "CMAKE_EXE_LINKER_FLAGS = '${CMAKE_EXE_LINKER_FLAGS}'")
+  message (STATUS "options.cmake: set debug_threads to 0 to disable the following info:")
+  fl_debug_var(OPTION_USE_THREADS)
+  fl_debug_var(HAVE_PTHREAD)
+  fl_debug_var(HAVE_PTHREAD_H)
+  fl_debug_var(FLTK_THREADS_FOUND)
+  fl_debug_var(CMAKE_EXE_LINKER_FLAGS)
+  message (STATUS "options.cmake: end of debug_threads info.")
 endif (debug_threads)
-unset(debug_threads)
+unset (debug_threads)
 
 #######################################################################
 option(OPTION_LARGE_FILE "enable large file support" ON)

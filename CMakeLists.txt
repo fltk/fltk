@@ -45,6 +45,30 @@ include(CMake/resources.cmake)
 include(CMake/options.cmake)
 
 #######################################################################
+# print (debug) several build variables and options
+#######################################################################
+
+set (debug_build 0) # set to 1 to show debug info
+if (debug_build)
+  message ("")
+  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: set debug_build to 0 to disable the following info:")
+  fl_debug_var(WIN32)
+  fl_debug_var(MINGW)
+  fl_debug_var(CYGWIN)
+  fl_debug_var(MSVC)
+  fl_debug_var(UNIX)
+  fl_debug_var(APPLE)
+  fl_debug_var(CMAKE_BUILD_TYPE)
+  fl_debug_var(CMAKE_SIZEOF_VOID_P)
+  fl_debug_var(OPTION_OPTIM)
+  fl_debug_var(CMAKE_C_FLAGS)
+  fl_debug_var(CMAKE_CXX_FLAGS)
+  fl_debug_var(CMAKE_EXE_LINKER_FLAGS)
+  message (STATUS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt: end of debug_build info.")
+endif (debug_build)
+unset (debug_build)
+
+#######################################################################
 # variables shared by export and install
 # export.cmake creates configuration files for direct use in a built but uninstalled FLTK
 # install.cmake creates these files for an installed FLTK
