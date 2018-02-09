@@ -146,10 +146,16 @@ set (CPPFILES
   fl_encoding_mac_roman.cxx
 )
 
+# find all header files in source directory <FL/...>
 file (GLOB
   HEADER_FILES
-  "../FL/*.H"
-  "../FL/*.h"
+  "../FL/*.[hH]"
+)
+
+# add generated header files in build directory
+list (APPEND HEADER_FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/../FL/abi-version.h
+  ${CMAKE_CURRENT_BINARY_DIR}/../config.h
 )
 
 set (GL_HEADER_FILES)		# FIXME: not (yet?) defined
@@ -303,9 +309,9 @@ else ()
 
 endif (USE_X11)
 
-source_group("Source Files\\Headers" FILES ${HEADER_FILES})
+source_group("Header Files" FILES ${HEADER_FILES})
 source_group("Driver Source Files" FILES ${DRIVER_FILES})
-source_group("Driver Source Files\\Headers" FILES ${DRIVER_HEADER_FILES})
+source_group("Driver Header Files" FILES ${DRIVER_HEADER_FILES})
 
 set (CPPFILES
   ${CPPFILES}
