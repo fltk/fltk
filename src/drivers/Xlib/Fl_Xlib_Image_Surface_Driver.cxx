@@ -80,7 +80,7 @@ void Fl_Xlib_Image_Surface_Driver::untranslate() {
 
 Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
 {
-  Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, width, height, 0);
+  Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle(0, 0, width, height);
   return image;
 }
 

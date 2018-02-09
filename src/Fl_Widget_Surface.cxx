@@ -157,7 +157,7 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   win->show();
   Fl::check();
   win->driver()->flush(); // makes the window current
-  Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, NULL, x, y, w, h, 0, NULL);
+  Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, x, y, w, h, NULL);
   Fl_Shared_Image *shared = Fl_Shared_Image::get(img);
   shared->scale(w, h, 1, 1);
   if (save_front != win) save_front->show();

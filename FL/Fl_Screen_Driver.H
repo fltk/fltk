@@ -3,7 +3,7 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -126,25 +126,23 @@ public:
 #if defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"
 #endif
-  /* Both member functions read_image() and read_win_rectangle() support
-   the public function fl_read_image() which captures pixel data either from
+  /* Member function read_win_rectangle() supports the public function
+   fl_read_image() which captures pixel data either from
    the current window or from an offscreen buffer.
 
-   A platform re-implements either read_image() or read_win_rectangle().
-   In the 1st case and for capture from a window, the returned pixel array 
+   With fl_read_image() and for capture from a window, the returned pixel array
    also contains data from any embedded sub-window.
-   In the 2nd case and for capture from a window, only data from the current 
-   window is collected, and read_image()'s default implementation captures 
-   pixels from any subwindow.
+   
+   In the case of read_win_rectangle() and for capture from a window, only data
+   from the current window is collected.
    
    A platform may also use its read_win_rectangle() implementation to capture
    window decorations (e.g., title bar). In that case, it is called by
    Fl_XXX_Window_Driver::capture_titlebar_and_borders().
    */
-  virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
-  virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha) {return NULL;}
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h) {return NULL;}
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
-  static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int y, int w, int h, int alpha,
+  static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                  Fl_RGB_Image *full_img);
   // optional platform-specific key handling for Fl_Input widget
   // the default implementation may be enough

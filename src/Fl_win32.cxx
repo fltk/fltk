@@ -2710,17 +2710,17 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top
   // capture the 4 window sides from screen
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
   if (htop) {
-    r_top = dr->read_win_rectangle_unscaled(NULL, r.left, r.top, r.right - r.left, htop, 0);
+    r_top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop);
     top = Fl_Shared_Image::get(r_top);
     if (DWMscaling != 1)
       top->scale(ww, htop / DWMscaling, 0, 1);
   }
   if (wsides) {
-    r_left = dr->read_win_rectangle_unscaled(NULL, r.left, r.top + htop, wsides, h() * scaling, 0);
+    r_left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling);
     left = Fl_Shared_Image::get(r_left);
-    r_right = dr->read_win_rectangle_unscaled(NULL, r.right - wsides, r.top + htop, wsides, h() * scaling, 0);
+    r_right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling);
     right = Fl_Shared_Image::get(r_right);
-    r_bottom = dr->read_win_rectangle_unscaled(NULL, r.left, r.bottom - hbottom, ww, hbottom, 0);
+    r_bottom = dr->read_win_rectangle_unscaled(r.left, r.bottom - hbottom, ww, hbottom);
     bottom = Fl_Shared_Image::get(r_bottom);
     if (scaling != 1) {
       left->scale(wsides, h(), 0, 1);

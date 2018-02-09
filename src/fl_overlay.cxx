@@ -57,7 +57,7 @@ static void draw_current_rect() {
   int old = SetROP2(fl_graphics_driver->gc(), R2_NOT);
   fl_rect(px, py, pw, ph);
   SetROP2(fl_graphics_driver->gc(), old);
-# elif defined(__APPLE_) // PORTME: Fl_Window_Driver - platform overlay
+# elif defined(__APPLE__)
   // warning: Quartz does not support xor drawing
   // Use the Fl_Overlay_Window instead.
   fl_color(FL_WHITE);
@@ -66,8 +66,8 @@ static void draw_current_rect() {
 #  error unsupported platform
 # endif
 #else
-  float s = fl_graphics_driver->scale();
-  if (s == int(s)) {
+  bool unscaled = fl_graphics_driver->overlay_rect_unscaled();
+  if (unscaled) {
     if (bgN) { free(bgN); bgN = 0L; }
     if (bgS) { free(bgS); bgS = 0L; }
     if (bgE) { free(bgE); bgE = 0L; }
@@ -79,29 +79,29 @@ static void draw_current_rect() {
     if (s_bgW) { s_bgW->release(); s_bgW = 0; }
   }
   if (pw>0 && ph>0) {
-    if (s == int(s)) {
+    if (unscaled) {
       bgE = fl_read_image(0L, px+pw-1, py, 1, ph);
       bgW = fl_read_image(0L, px, py, 1, ph);
       bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
       bgN = fl_read_image(0L, px, py, pw, 1);
     } else {
       Fl_RGB_Image *tmp;
-      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px+pw-1, py, 1, ph, 0);
+      tmp = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph);
       if(tmp && tmp->w() && tmp->h()) {
         s_bgE = Fl_Shared_Image::get(tmp);
         s_bgE->scale(1, ph,0,1);
       }
-      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px, py, 1, ph, 0);
+      tmp = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph);
       if(tmp && tmp->w() && tmp->h()) {
         s_bgW = Fl_Shared_Image::get(tmp);
         s_bgW->scale(1, ph,0,1);
       }
-      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px, py+ph-1, pw, 1, 0);
+      tmp = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1);
       if(tmp && tmp->w() && tmp->h()) {
         s_bgS = Fl_Shared_Image::get(tmp);
         s_bgS->scale(pw, 1,0,1);
       }
-      tmp = Fl::screen_driver()->read_win_rectangle(NULL, px, py, pw, 1, 0);
+      tmp = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1);
       if(tmp && tmp->w() && tmp->h()) {
         s_bgN = Fl_Shared_Image::get(tmp);
         s_bgN->scale(pw, 1,0,1);
@@ -112,12 +112,13 @@ static void draw_current_rect() {
   }
   fl_color(FL_WHITE);
   fl_line_style(FL_SOLID);
-  if (s == int(s)) fl_rect(px, py, pw, ph);
-  else fl_loop(px, py, px+pw-1, py, px+pw-1, py+ph-1, px, py+ph-1);
+  if (unscaled) fl_rect(px, py, pw, ph);
+  else fl_graphics_driver->overlay_rect(px, py, pw, ph);
+
   fl_color(FL_BLACK);
   fl_line_style(FL_DOT);
-  if (s == int(s)) fl_rect(px, py, pw, ph);
-  else fl_loop(px, py, px+pw-1, py, px+pw-1, py+ph-1, px, py+ph-1);
+  if (unscaled) fl_rect(px, py, pw, ph);
+  else fl_graphics_driver->overlay_rect(px, py, pw, ph);
   fl_line_style(FL_SOLID);
 #endif // USE_XOR
 }
@@ -130,8 +131,8 @@ static void erase_current_rect() {
   draw_current_rect();
 # endif
 #else
-  float s = fl_graphics_driver->scale();
-  if (s == int(s)) {
+  bool unscaled = fl_graphics_driver->overlay_rect_unscaled();
+  if (unscaled) {
     if (bgN) fl_draw_image(bgN, bgx, bgy, bgw, 1);
     if (bgS) fl_draw_image(bgS, bgx, bgy+bgh-1, bgw, 1);
     if (bgW) fl_draw_image(bgW, bgx, bgy, 1, bgh);

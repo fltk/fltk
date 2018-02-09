@@ -88,7 +88,6 @@ public:
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   static void destroy(FLWindow*);
-  unsigned char *bitmap_from_window_rect(int x, int y, int w, int h, int *bytesPerPixel);
   CGImageRef CGImage_from_window_rect(int x, int y, int w, int h);
 
   // --- window data

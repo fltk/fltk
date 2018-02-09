@@ -413,22 +413,22 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   htop /= s; wsides /= s;
   fl_window = parent;
   if (htop) {
-    r_top = Fl::screen_driver()->read_win_rectangle(NULL, 0, 0, - (w() + 2 * wsides), htop, 0);
+    r_top = Fl::screen_driver()->read_win_rectangle(0, 0, - (w() + 2 * wsides), htop);
     top = Fl_Shared_Image::get(r_top);
     top->scale(w() + 2 * wsides, htop, 0, 1);
   }
   if (wsides) {
-    r_left = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop, -wsides, h(), 0);
+    r_left = Fl::screen_driver()->read_win_rectangle(0, htop, -wsides, h());
     if (r_left) {
       left =  Fl_Shared_Image::get(r_left);
       left->scale(wsides, h(), 0, 1);
     }
-    r_right = Fl::screen_driver()->read_win_rectangle(NULL, w() + wsides, htop, -wsides, h(), 0);
+    r_right = Fl::screen_driver()->read_win_rectangle(w() + wsides, htop, -wsides, h());
     if (r_right) {
       right = Fl_Shared_Image::get(r_right);
       right->scale(wsides, h(), 0, 1);
     }
-    r_bottom = Fl::screen_driver()->read_win_rectangle(NULL, 0, htop + h(), -(w() + 2*wsides), hbottom, 0);
+    r_bottom = Fl::screen_driver()->read_win_rectangle(0, htop + h(), -(w() + 2*wsides), hbottom);
     if (r_bottom) {
       bottom = Fl_Shared_Image::get(r_bottom);
       bottom->scale(w() + 2*wsides, wsides, 0, 1);

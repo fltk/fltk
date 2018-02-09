@@ -4,7 +4,7 @@
 // Definition of MSWindows Win32/64 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -79,8 +79,8 @@ public:
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual int dnd(int unused);
   virtual int compose(int &del);
-  virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
-  Fl_RGB_Image *read_win_rectangle_unscaled(uchar *p, int X, int Y, int w, int h, int alpha);
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
+  Fl_RGB_Image *read_win_rectangle_unscaled(int X, int Y, int w, int h);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();

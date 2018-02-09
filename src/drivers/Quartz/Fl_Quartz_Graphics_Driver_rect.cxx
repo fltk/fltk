@@ -173,6 +173,30 @@ void Fl_Quartz_Graphics_Driver::loop(int x, int y, int x1, int y1, int x2, int y
   if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, false);
 }
 
+// returns y of horizontal line corresponding to pixels of current window
+// read by Fl_Cocoa_Screen_Driver::read_win_rectangle(  -,  y, -, 1)
+// when GUI is scaled by s
+static float overlay_y(int y, float s, int H) {
+  int a, b, c;
+  a = int(H*s) - (y+1)*s; // in Cocoa units from window bottom
+  c = (s > 1 ? s : 1); // height of pixels read in Cocoa units
+  b = H*s - (a+c); // top of read image from window top in Cocoa units
+  return b/s; // top of read image from window top in FLTK units
+}
+
+void Fl_Quartz_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
+  float s = scale();
+  CGContextSetLineWidth(gc_, 0.01);
+  int H = Fl_Window::current()->h();
+  CGContextMoveToPoint(gc_, x, overlay_y(y, s, H));
+  CGContextAddLineToPoint(gc_, x+w-1, overlay_y(y, s, H));
+  CGContextAddLineToPoint(gc_, x+w-1, overlay_y(y+h-1, s, H));
+  CGContextAddLineToPoint(gc_, x, overlay_y(y+h-1, s, H));
+  CGContextClosePath(gc_);
+  CGContextStrokePath(gc_);
+  CGContextSetLineWidth(gc_, quartz_line_width_);
+}
+
 void Fl_Quartz_Graphics_Driver::polygon(int x, int y, int x1, int y1, int x2, int y2) {
   CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, x, y);

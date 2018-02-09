@@ -750,7 +750,7 @@ extern "C" {
   }
 }
 
-Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha)
+Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h)
 {
   XImage	*image;		// Captured image
   int		i, maxindex;	// Looping vars
@@ -862,14 +862,14 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(uchar *p, int X, int Y, i
   printf("map_entries      = %d\n", fl_visual->visual->map_entries);
 #endif // DEBUG
   
-  d = alpha ? 4 : 3;
-  
+  d = 3;
+  uchar *p = NULL;
   // Allocate the image data array as needed...
   const uchar *oldp = p;
   if (!p) p = new uchar[w * h * d];
   
   // Initialize the default colors/alpha in the whole image...
-  memset(p, alpha, w * h * d);
+  memset(p, 0, w * h * d);
   
   // Check that we have valid mask/shift values...
   if (!image->red_mask && image->bits_per_pixel > 12) {

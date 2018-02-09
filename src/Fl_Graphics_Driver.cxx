@@ -221,6 +221,11 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
   return (unsigned)sizeof(Fl_Fontdesc);
 }
 
+bool Fl_Graphics_Driver::overlay_rect_unscaled()
+{
+  return (scale() == int(scale()));
+}
+
 #ifndef FL_DOXYGEN
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;

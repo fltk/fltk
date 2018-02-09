@@ -496,24 +496,21 @@ int Fl_WinAPI_Screen_Driver::compose(int &del) {
 
 
 Fl_RGB_Image *                                                  // O - image or NULL if failed
-Fl_WinAPI_Screen_Driver::read_win_rectangle(uchar *p,		// I - Pixel buffer or NULL to allocate
+Fl_WinAPI_Screen_Driver::read_win_rectangle(
                                             int   X,		// I - Left position
                                             int   Y,		// I - Top position
                                             int   w,		// I - Width of area to read
-                                            int   h,		// I - Height of area to read
-                                            int   alpha) 	// I - Alpha value for image (0 for none)
+                                            int   h)		// I - Height of area to read
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
-  return read_win_rectangle_unscaled(p, X*s, Y*s, w*s, h*s, alpha);
+  return read_win_rectangle_unscaled(X*s, Y*s, w*s, h*s);
 }
 
-Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(uchar *p, int X, int Y, int w, int h, int alpha)
+Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h)
 {
-  int	d;			// Depth of image
-  
-  // Allocate the image data array as needed...
-  d = alpha ? 4 : 3;
-  
+  int	d = 3;			// Depth of image
+  int alpha = 0; uchar *p = NULL;
+  // Allocate the image data array as needed...  
   const uchar *oldp = p;
   if (!p) p = new uchar[w * h * d];
   

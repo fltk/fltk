@@ -4,7 +4,7 @@
 // Definition of X11 Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -93,7 +93,7 @@ public:
   virtual int compose(int &del);
   virtual void compose_reset();
   virtual int text_display_can_leak();
-  virtual Fl_RGB_Image *read_win_rectangle(uchar *p, int X, int Y, int w, int h, int alpha);
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
   virtual void disable_im();

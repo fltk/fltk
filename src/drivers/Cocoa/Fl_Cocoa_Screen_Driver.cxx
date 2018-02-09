@@ -256,70 +256,6 @@ int Fl_Cocoa_Screen_Driver::compose(int &del) {
   return 1;
 }
 
-uchar *                                       // O - Pixel buffer or NULL if failed
-Fl_Cocoa_Screen_Driver::read_image(uchar *p,	// I - Pixel buffer or NULL to allocate
-                                   int   x,		// I - Left position
-                                   int   y,		// I - Top position
-                                   int   w,		// I - Width of area to read
-                                   int   h,		// I - Height of area to read
-                                   int   alpha)// I - Alpha value for image (0 for none)
-{
-  uchar *base;
-  int rowBytes, delta;
-  float s = 1;
-  int ori_w = w, ori_h = h;
-  if (fl_window == NULL) { // reading from an offscreen buffer
-    CGContextRef src = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();  // get bitmap context
-    base = (uchar *)CGBitmapContextGetData(src);  // get data
-    if(!base) return NULL;
-    int sw = CGBitmapContextGetWidth(src);
-    int sh = CGBitmapContextGetHeight(src);
-    if( (sw - x < w) || (sh - y < h) )  return NULL;
-    rowBytes = CGBitmapContextGetBytesPerRow(src);
-    delta = CGBitmapContextGetBitsPerPixel(src)/8;
-    Fl_Image_Surface *imgs = (Fl_Image_Surface*)Fl_Surface_Device::surface();
-    int fltk_w, fltk_h;
-    imgs->printable_rect(&fltk_w, &fltk_h);
-    s = sw / float(fltk_w);
-    x *= s; y *= s; w *= s; h *= s;
-    if (x + w > sw) w = sw - x;
-    if (y + h > sh) h = sh - y;
-  }
-  else { // reading from current window
-    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(Fl_Window::current());
-    base = d->bitmap_from_window_rect(x,y,w,h,&delta);
-    if (!base) return NULL;
-    rowBytes = delta*w;
-    x = y = 0;
-  }
-  // Allocate the image data array as needed...
-  int d = alpha ? 4 : 3;
-  if (!p) p = new uchar[w * h * d];
-  // Initialize the default colors/alpha in the whole image...
-  memset(p, alpha, w * h * d);
-  // Copy the image from the off-screen buffer to the memory buffer.
-  int idx, idy;	// Current X & Y in image
-  uchar *pdst, *psrc;
-  for (idy = y, pdst = p; idy < h + y; idy ++) {
-    for (idx = 0, psrc = base + idy * rowBytes + x * delta; idx < w; idx ++, psrc += delta, pdst += d) {
-      pdst[0] = psrc[0];  // R
-      pdst[1] = psrc[1];  // G
-      pdst[2] = psrc[2];  // B
-    }
-  }
-  if (fl_window != NULL) delete[] base;
-  if (s != 1) {
-    Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, alpha ? 4 : 3);
-    rgb->alloc_array = 1;
-    Fl_RGB_Image *rgb2 = (Fl_RGB_Image*)rgb->copy(ori_w, ori_h);
-    rgb2->alloc_array = 0;
-    delete rgb;
-    p = (uchar*)rgb2->array;
-    delete rgb2;
-  }
-  return p;
-}
-
 
 int Fl_Cocoa_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input)
 {
@@ -399,6 +335,67 @@ void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &h
 {
   width = CGBitmapContextGetWidth(off);
   height = CGBitmapContextGetHeight(off);
+}
+
+Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h)
+{
+  int bpp, bpr, depth = 4;
+  uchar *base, *p;
+  if (!fl_window) { // read from offscreen buffer
+    float s = 1;
+    CGContextRef src = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();  // get bitmap context
+    base = (uchar *)CGBitmapContextGetData(src);  // get data
+    if(!base) return NULL;
+    int sw = CGBitmapContextGetWidth(src);
+    int sh = CGBitmapContextGetHeight(src);
+    if( (sw - X < w) || (sh - Y < h) )  return NULL;
+    bpr = CGBitmapContextGetBytesPerRow(src);
+    bpp = CGBitmapContextGetBitsPerPixel(src)/8;
+    Fl_Image_Surface *imgs = (Fl_Image_Surface*)Fl_Surface_Device::surface();
+    int fltk_w, fltk_h;
+    imgs->printable_rect(&fltk_w, &fltk_h);
+    s = sw / float(fltk_w);
+    X *= s; Y *= s; w *= s; h *= s;
+    if (X + w > sw) w = sw - X;
+    if (Y + h > sh) h = sh - Y;
+    // Copy the image from the off-screen buffer to the memory buffer.
+    int idx, idy;  // Current X & Y in image
+    uchar *pdst, *psrc;
+    p = new uchar[w * h * depth];
+    for (idy = Y, pdst = p; idy < h + Y; idy ++) {
+      for (idx = 0, psrc = base + idy * bpr + X * bpp; idx < w; idx ++, psrc += bpp, pdst += depth) {
+        pdst[0] = psrc[0];  // R
+        pdst[1] = psrc[1];  // G
+        pdst[2] = psrc[2];  // B
+      }
+    }
+    bpr = 0;
+  } else { // read from window
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(Fl_Window::current());
+    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h);
+    if (!cgimg) {
+      return NULL;
+    }
+    w = CGImageGetWidth(cgimg);
+    h = CGImageGetHeight(cgimg);
+    Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+    Fl_Surface_Device::push_current(surf);
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(cgimg, 0, 0, w, h, 0, 0, w, h);
+    CGContextRef gc = (CGContextRef)fl_graphics_driver->gc();
+    w = CGBitmapContextGetWidth(gc);
+    h = CGBitmapContextGetHeight(gc);
+    bpr = CGBitmapContextGetBytesPerRow(gc);
+    bpp = CGBitmapContextGetBitsPerPixel(gc)/8;
+    base = (uchar*)CGBitmapContextGetData(gc);
+    p = new uchar[bpr * h];
+    memcpy(p, base, bpr * h);
+    Fl_Surface_Device::pop_current();
+    delete surf;
+    CFRelease(cgimg);
+  }
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(p, w, h, depth, bpr);
+  rgb->alloc_array = 1;
+  return rgb;
 }
 
 //

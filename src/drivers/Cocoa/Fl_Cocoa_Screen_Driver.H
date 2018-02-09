@@ -4,7 +4,7 @@
 // Definition of Apple Cocoa Screen interface
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -40,6 +40,7 @@
 
 class Fl_Window;
 class Fl_Input;
+class Fl_RGB_Image;
 
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
@@ -87,7 +88,6 @@ public:
   int insertion_point_location(int *px, int *py, int *pheight);
   virtual int dnd(int use_selection);
   virtual int compose(int &del);
-  virtual uchar *read_image(uchar *p, int x, int y, int w, int h, int alpha);
   virtual int input_widget_handle_key(int key, unsigned mods, unsigned shift, Fl_Input *input);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();
@@ -100,6 +100,7 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
   virtual float scale(int n) {return scale_;}
   virtual void scale(int n, float f) { scale_ = f;}
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
   virtual int run_also_windowless();
   virtual int wait_also_windowless(double delay);
 private:

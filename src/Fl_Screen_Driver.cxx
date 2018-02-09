@@ -141,45 +141,22 @@ void Fl_Screen_Driver::compose_reset() {
   Fl::compose_state = 0;
 }
 
-uchar *Fl_Screen_Driver::read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
-  uchar *image_data = NULL;
-  Fl_RGB_Image *img;
-  if (fl_find(fl_window) == 0) { // read from off_screen buffer
-    img = read_win_rectangle(p, X, Y, w, h, alpha);
-    if (!img) {
-      return NULL;
-    }
-    img->alloc_array = 1;
-  } else {
-    img = traverse_to_gl_subwindows(Fl_Window::current(), p, X, Y, w, h, alpha, NULL);
-  }
-  if (img) {
-    if (img->w() != w) {
-      Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w, h);
-      delete img;
-      img = img2;
-    }
-    img->alloc_array = 0;
-    image_data = (uchar*)img->array;
-    delete img;
-  }
-  return image_data;
-}
-
 void Fl_Screen_Driver::write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y)
 /* Copy the image "from" inside image "to" with its top-left angle at coordinates to_x, to_y.
-Image depth can differ between "to" and "from".
+Image depths can differ between "to" and "from".
 */
 {
   int to_ld = (to->ld() == 0? to->w() * to->d() : to->ld());
   int from_ld = (from->ld() == 0? from->w() * from->d() : from->ld());
   uchar *tobytes = (uchar*)to->array + to_y * to_ld + to_x * to->d();
   const uchar *frombytes = from->array;
+  int need_alpha = (from->d() == 3 && to->d() == 4);
   for (int i = 0; i < from->h(); i++) {
     if (from->d() == to->d()) memcpy(tobytes, frombytes, from->w() * from->d());
     else {
       for (int j = 0; j < from->w(); j++) {
         memcpy(tobytes + j * to->d(), frombytes + j * from->d(), from->d());
+        if (need_alpha) *(tobytes + j * to->d() + 3) = 0xff;
       }
     }
     tobytes += to_ld;
@@ -193,45 +170,31 @@ Image depth can differ between "to" and "from".
  
  Arguments when this function is initially called:
  g: a window or GL window
- p: as in fl_read_image()
  x,y,w,h: a rectangle in window g's coordinates
- alpha: as in fl_read_image()
  full_img: NULL
  
  Arguments when this function recursively calls itself:
  g: an Fl_Group
- p: as above
  x,y,w,h: a rectangle in g's coordinates if g is a window, or in g's parent window coords if g is a group
- alpha: as above
  full_img: NULL, or a previously captured image that encompasses the x,y,w,h rectangle and that
  will be partially overwritten with the new capture
  
  Return value:
- An Fl_RGB_Image* of depth 4 if alpha>0 or 3 if alpha = 0 containing the captured pixels.
+ An Fl_RGB_Image*, the depth of which is platform-dependent, containing the captured pixels.
  */
-Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, uchar *p, int x, int y, int w, int h, int alpha,
+Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                           Fl_RGB_Image *full_img)
 {
   if ( g->as_gl_window() ) {
     Fl_Plugin_Manager pm("fltk:device");
     Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
     if (!pi) return full_img;
-    Fl_RGB_Image *img = pi->rectangle_capture(g, x, y, w, h);
-    if (full_img) full_img = img;
-    else {
-      uchar *data = ( p ? p : new uchar[img->w() * img->h() * (alpha?4:3)] );
-      full_img = new Fl_RGB_Image(data, img->w(), img->h(), alpha?4:3);
-      if (!p) full_img->alloc_array = 1;
-      if (alpha) memset(data, alpha, img->w() * img->h() * 4);
-      write_image_inside(full_img, img, 0, 0);
-      delete img;
-    }
+    full_img = pi->rectangle_capture(g, x, y, w, h);
   }
   else if ( g->as_window() && (!full_img || (g->window() && g->window()->as_gl_window())) ) {
     // the starting window or one inside a GL window
     if (full_img) g->as_window()->make_current();
-    int alloc_img = (full_img != NULL || p == NULL); // false means use p, don't alloc new memory for image
-    full_img = Fl::screen_driver()->read_win_rectangle( (alloc_img ? NULL : p), x, y, w, h, alpha);
+    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h);
   }
   int n = g->children();
   for (int i = 0; i < n; i++) {
@@ -249,8 +212,8 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, uchar *p,
       if (origin_y + height > c->y() + c->h()) height = c->y() + c->h() - origin_y;
       if (origin_y + height > y + h) height = y + h - origin_y;
       if (width > 0 && height > 0) {
-        Fl_RGB_Image *img = traverse_to_gl_subwindows(c->as_window(), p, origin_x - c->x(),
-                                                      origin_y - c->y(), width, height, alpha, full_img);
+        Fl_RGB_Image *img = traverse_to_gl_subwindows(c->as_window(),  origin_x - c->x(),
+                                                      origin_y - c->y(), width, height, full_img);
         if (img == full_img) continue;
         int top;
         if (c->as_gl_window()) {
@@ -264,7 +227,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, uchar *p,
         delete img;
       }
     }
-    else traverse_to_gl_subwindows(c->as_group(), p, x, y, w, h, alpha, full_img);
+    else traverse_to_gl_subwindows(c->as_group(), x, y, w, h, full_img);
   }
   return full_img;
 }

@@ -184,6 +184,8 @@ protected:
 #else
   void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
 #endif
+  virtual bool overlay_rect_unscaled() {return false; }
+  virtual void overlay_rect(int x, int y, int w , int h);
 };
 
 class Fl_Quartz_Printer_Graphics_Driver : public Fl_Quartz_Graphics_Driver {
