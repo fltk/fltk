@@ -43,6 +43,12 @@ void Fl_GDI_Graphics_Driver::point_unscaled(float fx, float fy) {
   FillRect(gc_, &rect, fl_brush());
 }
 
+void Fl_GDI_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
+  // make pen have a one-pixel width
+  line_style_unscaled( (color()==FL_WHITE?FL_SOLID:FL_DOT), 1, NULL);
+  loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1);
+}
+
 void Fl_GDI_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {
   if (w<=0 || h<=0) return;
   int line_delta_ =  (scale_ > 1.75 ? 1 : 0);//TMP
@@ -247,7 +253,6 @@ void Fl_GDI_Graphics_Driver::restore_clip() {
     if (r) unscale_clip(r);
   }
 }
-
 
 //
 // End of "$Id$".
