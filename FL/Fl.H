@@ -490,27 +490,7 @@ int main() {
   static void remove_check(Fl_Timeout_Handler, void* = 0);
   // private
   static void run_checks();
-  /**
-    Adds file descriptor fd to listen to.
-    
-    When the fd becomes ready for reading Fl::wait() will call the
-    callback and then return. The callback is passed the fd and the
-    arbitrary void* argument.
-    
-    The second version takes a when bitfield, with the bits
-    FL_READ, FL_WRITE, and FL_EXCEPT defined,
-    to indicate when the callback should be done.
-    
-    There can only be one callback of each type for a file descriptor. 
-    Fl::remove_fd() gets rid of <I>all</I> the callbacks for a given
-    file descriptor.
-    
-    Under UNIX <I>any</I> file descriptor can be monitored (files,
-    devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
-    Windows applications can only monitor sockets.
-  */
   static void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0); // platform dependent
-  /** See void add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0) */
   static void add_fd(int fd, Fl_FD_Handler cb, void* = 0); // platform dependent
   /** Removes a file descriptor handler. */
   static void remove_fd(int, int when); // platform dependent

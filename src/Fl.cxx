@@ -1974,11 +1974,33 @@ int Fl::clipboard_contains(const char *type)
 }
 
 
+/**
+ Adds file descriptor fd to listen to.
+ 
+ When the fd becomes ready for reading Fl::wait() will call the
+ callback and then return. The callback is passed the fd and the
+ arbitrary void* argument.
+ 
+ This version takes a when bitfield, with the bits
+ FL_READ, FL_WRITE, and FL_EXCEPT defined,
+ to indicate when the callback should be done.
+ 
+ There can only be one callback of each type for a file descriptor.
+ Fl::remove_fd() gets rid of <I>all</I> the callbacks for a given
+ file descriptor.
+ 
+ Under UNIX/Linux/MacOS <I>any</I> file descriptor can be monitored (files,
+ devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
+ Windows applications can only monitor sockets.
+ */
 void Fl::add_fd(int fd, int when, Fl_FD_Handler cb, void *d)
 {
   Fl::system_driver()->add_fd(fd, when, cb, d);
 }
 
+/** Adds file descriptor fd to listen to.
+ See Fl::add_fd(int fd, int when, Fl_FD_Handler cb, void* = 0)
+ for details */
 void Fl::add_fd(int fd, Fl_FD_Handler cb, void *d)
 {
   Fl::system_driver()->add_fd(fd, cb, d);
