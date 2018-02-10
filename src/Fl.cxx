@@ -493,7 +493,14 @@ void fl_trigger_clipboard_notify(int source) {
 void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
 
 /**
-  See int Fl::wait()
+ Waits a maximum of \e time seconds or until "something happens".
+ 
+ See Fl::wait() for the description of operations performed when
+ "something happens".
+\return Always 1 on Windows. Otherwise, it is positive
+ if an event or fd happens before the time elapsed.
+ It is zero if nothing happens.  It is negative if an error
+ occurs (this will happen on X11 if a signal happens).
 */
 double Fl::wait(double time_to_wait) {
   // delete all widgets that were listed during callbacks
@@ -504,8 +511,8 @@ double Fl::wait(double time_to_wait) {
 #define FOREVER 1e20
 
 /**
-  As long as any windows are displayed this calls Fl::wait()
-  repeatedly.  When all the windows are closed it returns zero
+  Calls Fl::wait()repeatedly as long as any windows are displayed.
+  When all the windows are closed it returns zero
   (supposedly it would return non-zero on any errors, but FLTK calls
   exit directly for these).  A normal program will end main()
   with return Fl::run();.
@@ -528,16 +535,8 @@ int Fl::run() {
   any Fl::add_fd() callbacks.  It then handles the events and
   calls the callbacks and then returns.
 
-  The return value of Fl::wait() is non-zero if there are any
+  \return non-zero if there are any
   visible windows - this may change in future versions of FLTK.
-
-  Fl::wait(time) waits a maximum of \e time seconds.
-  <i>It can return much sooner if something happens.</i>
-
-  The return value is positive if an event or fd happens before the
-  time elapsed.  It is zero if nothing happens (on Win32 this will only
-  return zero if \e time is zero).  It is negative if an error
-  occurs (this will happen on UNIX if a signal happens).
 */
 int Fl::wait() {
   if (!Fl_X::first) return 0;
@@ -590,6 +589,8 @@ int Fl::ready()
 }
 
 /** Run the event loop even without any mapped window if the platform supports it.
+ Identical to Fl::run() for platforms that don't support running windowless.
+ The MacOS platform supports it.
  \return zero indicates the event loop has been terminated.
  \version 1.4.0
  */
@@ -598,6 +599,8 @@ int Fl::run_also_windowless() {
 }
 
 /** Wait for \p delay seconds or until an event occurs, even without any mapped window if the platform supports it.
+ Identical to Fl::wait(delay) for platforms that don't support running windowless.
+ The MacOS platform supports it.
  \return non zero indicates the event loop should be terminated
  \version 1.4.0
  */
