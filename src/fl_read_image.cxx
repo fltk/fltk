@@ -29,7 +29,7 @@
  \returns pointer to pixel buffer, or NULL if allocation failed.
 
  The \p p argument points to a buffer that can hold the image and must
- be at least \p W*H*3 bytes when reading RGB images, or \p W*H*4 bytes
+ be at least \p w*h*3 bytes when reading RGB images, or \p w*h*4 bytes
  when reading RGBA images. If NULL, fl_read_image() will create an
  array of the proper size which can be freed using <tt>delete[]</tt>.
 
