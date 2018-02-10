@@ -24,15 +24,15 @@
  Reads an RGB(A) image from the current window or off-screen buffer.
  \param[in] p     pixel buffer, or NULL to allocate one
  \param[in] X,Y   position of top-left of image to read
- \param[in] W,H   width and height of image to read
+ \param[in] w,h   width and height of image to read
  \param[in] alpha alpha value for image (0 for none)
  \returns pointer to pixel buffer, or NULL if allocation failed.
- 
+
  The \p p argument points to a buffer that can hold the image and must
  be at least \p W*H*3 bytes when reading RGB images, or \p W*H*4 bytes
  when reading RGBA images. If NULL, fl_read_image() will create an
  array of the proper size which can be freed using <tt>delete[]</tt>.
- 
+
  The \p alpha parameter controls whether an alpha channel is created
  and the value that is placed in the alpha channel. If 0, no alpha
  channel is generated.
