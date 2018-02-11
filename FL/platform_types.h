@@ -17,8 +17,8 @@
 /** \file
  Definitions of platform-dependent types.
  The exact nature of these types varies with the platform.
- FLTK applications should only receive and transmit values of these
- types from/to functions belonging to the public FLTK API.
+ Therefore, portable FLTK applications should not assume these types
+ have a specific size, or that they are pointers.
  */
 
 #ifdef FL_DOXYGEN
