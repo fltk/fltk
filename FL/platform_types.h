@@ -14,6 +14,37 @@
  *     http://www.fltk.org/str.php
  */
 
+/** \file
+ Definitions of platform-dependent types.
+ The exact nature of these types varies with the platform.
+ FLTK applications should only receive and transmit values of these
+ types from/to functions belonging to the public FLTK API.
+ */
+
+#ifdef FL_DOXYGEN
+
+/** An integral type large enough to store a pointer.
+ A pointer value can be safely cast to fl_intptr_t, and later cast back
+ to its initial pointer type without changing the pointer's value.
+ A variable of type fl_intptr_t can also store a long int value. */
+typedef opaque fl_intptr_t;
+/** An unsigned integral type large enough to store a pointer.
+ A pointer value can be safely cast to fl_uintptr_t, and later cast back
+ to its initial pointer type without changing the pointer's value.
+ A variable of type fl_uintptr_t can also store an unsigned long int value. */
+typedef opaque fl_uintptr_t;
+
+typedef opaque Fl_Offscreen; /**< an offscreen drawing buffer */
+typedef opaque Fl_Bitmask; /**< mask */
+typedef opaque Fl_Region; /**< a region made of several rectangles */
+typedef opaque FL_SOCKET; /**< socket or file descriptor */
+typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL calls are rendered */
+
+#  define FL_COMMAND  opaque   /**< An alias for FL_CTRL on Windows and X11, or FL_META on MacOS X */
+#  define FL_CONTROL  opaque   /**< An alias for FL_META on Windows and X11, or FL_CTRL on MacOS X */
+
+#else
+
 #ifndef FL_PLATFORM_TYPES_H
 #define FL_PLATFORM_TYPES_H
 
@@ -30,9 +61,6 @@
     different signedness of socket numbers on *some* platforms.
  */
 
-/**
-  \todo	typedef's fl_intptr_t and fl_uintptr_t should be documented.
-*/
 #ifdef _WIN64
 
 #if defined(_MSC_VER)
@@ -121,6 +149,8 @@ typedef struct __GLXcontextRec *GLContext;
 #endif
 
 #endif /* FL_PLATFORM_TYPES_H */
+
+#endif // FL_DOXYGEN
 
 /*
  * End of "$Id$".

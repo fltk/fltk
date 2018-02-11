@@ -156,6 +156,8 @@ value:
   - FL_META - One of the meta/Windows keys is down.
   - FL_COMMAND - An alias for FL_CTRL on Windows and X11,
     or FL_META on MacOS X.
+  - FL_CONTROL - An alias for FL_META on Windows and X11,
+    or FL_CTRL on MacOS X.
   - FL_SCROLL_LOCK - The scroll lock is on.
   - FL_BUTTON1 - Mouse button 1 is pushed.
   - FL_BUTTON2 - Mouse button 2 is pushed.
