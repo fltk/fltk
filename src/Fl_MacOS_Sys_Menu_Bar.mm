@@ -505,12 +505,6 @@ int Fl_MacOS_Sys_Menu_Bar_Driver::insert(int index, const char* label, int short
  \see \ref osissues_macos for another way to localization.
  */
 
-
-/** Adds custom menu item(s) to the application menu of the system menu bar.
- They are positioned after the "Print Front Window" item, or at its place
- if it was removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
- \param m zero-ending array of Fl_Menu_Item 's.
- */
 void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
 {
   fl_open_display(); // create the system menu, if needed
@@ -533,7 +527,6 @@ void Fl_Mac_App_Menu::custom_application_menu_items(const Fl_Menu_Item *m)
     [item release];
   }
 }
-
 
 static void minimize_win_cb(Fl_Widget *, void *data)
 {

@@ -109,7 +109,7 @@ extern CGContextRef fl_gc;
  */
 
 /** \defgroup group_macosx Mac OS X-specific symbols
- Mac OS X-specific symbols declared in <FL/platform.H> or <FL/gl.h>
+ Mac OS X-specific symbols declared in <FL/platform.H>
  \sa \ref osissues_macos
  @{ */
 
@@ -143,6 +143,11 @@ public:
   static const char *show;
   /** Localizable text for the "Quit xxx" application menu item */
   static const char *quit;
+  /** Adds custom menu item(s) to the application menu of the system menu bar.
+   They are positioned after the "Print Front Window" item, or at its place
+   if it was removed with <tt>Fl_Mac_App_Menu::print = ""</tt>.
+   \param m zero-ending array of Fl_Menu_Item 's.
+   */
   static void custom_application_menu_items(const Fl_Menu_Item *m);
 };
 
