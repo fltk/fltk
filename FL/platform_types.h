@@ -23,14 +23,14 @@
 
 #ifdef FL_DOXYGEN
 
-/** An integral type large enough to store a pointer.
+/** An integral type large enough to store a pointer or a long value.
  A pointer value can be safely cast to fl_intptr_t, and later cast back
- to its initial pointer type without changing the pointer's value.
+ to its initial pointer type without change to the pointer value.
  A variable of type fl_intptr_t can also store a long int value. */
 typedef opaque fl_intptr_t;
-/** An unsigned integral type large enough to store a pointer.
+/** An unsigned integral type large enough to store a pointer or an unsigned long value.
  A pointer value can be safely cast to fl_uintptr_t, and later cast back
- to its initial pointer type without changing the pointer's value.
+ to its initial pointer type without change to the pointer value.
  A variable of type fl_uintptr_t can also store an unsigned long int value. */
 typedef opaque fl_uintptr_t;
 
