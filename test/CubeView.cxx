@@ -139,7 +139,7 @@ void CubeView::drawCube() {
 void CubeView::draw() {
     if (!valid()) {
         glLoadIdentity();
-        glViewport(0,0,w(),h());
+        glViewport(0,0,pixel_w(),pixel_h());
         glOrtho(-10,10,-10,10,-20050,10000);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
