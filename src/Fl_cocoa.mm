@@ -1937,7 +1937,7 @@ int Fl_Cocoa_Screen_Driver::x() {
 int Fl_Cocoa_Screen_Driver::y() {
   open_display();
   NSRect visible = [[[NSScreen screens] objectAtIndex:0] visibleFrame];
-  return int(main_screen_height - (visible.origin.y + visible.size.height));
+  return int(main_screen_height - (visible.origin.y + visible.size.height)) / scale(0);
 }
 
 
@@ -1945,7 +1945,8 @@ int Fl_Cocoa_Screen_Driver::y() {
  * width of work area of menubar-containing display
  */
 int Fl_Cocoa_Screen_Driver::w() {
-  return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].size.width);
+  open_display();
+  return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].size.width) / scale(0);
 }
 
 
@@ -1953,7 +1954,8 @@ int Fl_Cocoa_Screen_Driver::w() {
  * height of work area of menubar-containing display
  */
 int Fl_Cocoa_Screen_Driver::h() {
-  return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].size.height);
+  open_display();
+  return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].size.height) / scale(0);
 }
 
 // computes the work area of the nth screen (screen #0 has the menubar)
@@ -1963,10 +1965,10 @@ void Fl_Cocoa_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, in
   if (n < 0 || n >= num_screens) n = 0;
   open_display();
   NSRect r = [[[NSScreen screens] objectAtIndex:n] visibleFrame];
-  X   = int(r.origin.x);
-  Y   = main_screen_height - int(r.origin.y + r.size.height);
-  W   = int(r.size.width);
-  H   = int(r.size.height);
+  X   = int(r.origin.x) / scale(0);
+  Y   = (main_screen_height - int(r.origin.y + r.size.height)) / scale(0);
+  W   = int(r.size.width) / scale(0);
+  H   = int(r.size.height) / scale(0);
 }
 
 /*
