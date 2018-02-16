@@ -130,7 +130,6 @@ public:
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
-  virtual fl_uintptr_t current_cursor() {return current_cursor_;}
 
   virtual void shape(const Fl_Image* img);
   virtual void icons(const Fl_RGB_Image *icons[], int count);

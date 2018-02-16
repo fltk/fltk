@@ -2517,10 +2517,6 @@ int Fl_WinAPI_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int
   return 1;
 }
 
-fl_uintptr_t Fl_WinAPI_Window_Driver::current_cursor() {
-  return (fl_uintptr_t)cursor;
-}
-
 
 ////////////////////////////////////////////////////////////////
 // Implement the virtual functions for the base Fl_Window class:
