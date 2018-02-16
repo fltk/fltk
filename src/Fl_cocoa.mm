@@ -1927,7 +1927,8 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt, Fl_Window *win) {
  * smallest x coordinate in screen space of work area of menubar-containing display
  */
 int Fl_Cocoa_Screen_Driver::x() {
-  return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].origin.x);
+  open_display();
+  return int([[[NSScreen screens] objectAtIndex:0] visibleFrame].origin.x) / scale(0);
 }
 
 
