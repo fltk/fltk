@@ -493,11 +493,11 @@ void fl_trigger_clipboard_notify(int source) {
 void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
 
 /**
- Waits a maximum of \e time seconds or until "something happens".
+ Waits a maximum of \p time_to_wait seconds or until "something happens".
  
  See Fl::wait() for the description of operations performed when
  "something happens".
-\return Always 1 on Windows. Otherwise, it is positive
+ \return Always 1 on Windows. Otherwise, it is positive
  if an event or fd happens before the time elapsed.
  It is zero if nothing happens.  It is negative if an error
  occurs (this will happen on X11 if a signal happens).
