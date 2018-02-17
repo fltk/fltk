@@ -33,7 +33,7 @@ class Fl_Sys_Menu_Bar_Driver;
  
   On the MacOS platform, the system menu bar of any FLTK app begins with the Application
   menu which the FLTK library automatically constructs. Functions
-  Fl_Mac_App_Menu::custom_application_menu_items() and fl_mac_set_about() can be used to further customize
+  Fl_Mac_App_Menu::custom_application_menu_items() and Fl_Sys_Menu_Bar::about() can be used to further customize
   the Application menu. The FLTK library also automatically constructs and handles a Window menu which can be
   further customized (or even removed) calling
   Fl_Sys_Menu_Bar::window_menu_style(window_menu_style_enum style).
