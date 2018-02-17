@@ -48,14 +48,14 @@ int main(int argc, char **argv) {
 "MINIMUM UPDATE TEST\n"
 "\n"
 "The slider on the right purposely\n"
-"draws outside it's boundaries.\n"
+"draws outside its boundaries.\n"
 "Moving it should leave old copies\n"
 "of the label.  These copies should\n"
 "*not* be erased by any actions\n"
 "other than hiding and showing\n"
 "of that portion of the window\n"
 "or changing the button that\n"
-"intesects them.")));
+"intersects them.")));
 
   Fl_Slider *s;
   s = new Fl_Slider(320,10,20,300,"Too_Big_Label");
