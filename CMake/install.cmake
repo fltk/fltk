@@ -84,6 +84,11 @@ set(srcdir ".")
 
 set(LIBNAME "${libdir}/libfltk.a")
 
+if (WIN32)
+  set (LDFLAGS "-mwindows")
+  set (LIBS "-lole32 -luuid -lcomctl32")
+endif ()
+
 configure_file(
    "${CMAKE_CURRENT_SOURCE_DIR}/fltk-config.in"
    "${CMAKE_CURRENT_BINARY_DIR}/bin/fltk-config"
