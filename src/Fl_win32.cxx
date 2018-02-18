@@ -524,9 +524,10 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
   if (hMod) {
     SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
     const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
-    if (fl_SetProcessDpiAwareness)
-      fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-    init_screen_scale_factors();
+    if (fl_SetProcessDpiAwareness) {
+      HRESULT hr = fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+      if (hr == S_OK) init_screen_scale_factors();
+    }
   }
 #endif // FLTK_HIDPI_SUPPORT
   OleInitialize(0L);
@@ -549,7 +550,7 @@ void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
       HRESULT r = fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
       float f = (r == S_OK ? dpiX / 96. : 1);
       scale(ns, f);
-      // fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f\n", ns, f);fflush(LOG);
+  //fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f\n", ns, scale(ns));fflush(LOG);
     }
   }
 }
