@@ -3183,13 +3183,14 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
  * Tell the OS what window sizes we want to allow
  */
 void Fl_Cocoa_Window_Driver::size_range() {
-  int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt, pWindow);
   Fl_Window_Driver::size_range();
-  NSSize minSize = NSMakeSize(minw(), minh() + bt);
-  NSSize maxSize = NSMakeSize(maxw() ? maxw():32000, maxh() ? maxh() + bt:32000);
   Fl_X *i = Fl_X::i(pWindow);
   if (i && i->xid) {
+    float s = Fl::screen_driver()->scale(0);
+    int bx, by, bt;
+    get_window_frame_sizes(bx, by, bt, pWindow);
+    NSSize minSize = NSMakeSize(int(minw() * s +.5) , int(minh() * s +.5) + bt);
+    NSSize maxSize = NSMakeSize(maxw() ? int(maxw() * s + .5):32000, maxh() ? int(maxh() * s +.5) + bt:32000);
     [i->xid setMinSize:minSize];
     [i->xid setMaxSize:maxSize];
   }
