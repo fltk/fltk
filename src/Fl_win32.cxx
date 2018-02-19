@@ -87,6 +87,10 @@ void fl_cleanup_dc_list(void);
 # include <wchar.h>
 #endif
 
+#ifdef FLTK_HIDPI_SUPPORT
+  typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
+  static SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = NULL;
+#endif
 
 extern bool fl_clipboard_notify_empty(void);
 extern void fl_trigger_clipboard_notify(int source);
@@ -519,14 +523,14 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 
   beenHereDoneThat = 1;
 #ifdef FLTK_HIDPI_SUPPORT
-  typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
   HMODULE hMod = LoadLibrary("Shcore.DLL");
   if (hMod) {
-    SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
+    fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
     const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
     if (fl_SetProcessDpiAwareness) {
       HRESULT hr = fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
       if (hr == S_OK) init_screen_scale_factors();
+      else fl_SetProcessDpiAwareness = NULL;
     }
   }
 #endif // FLTK_HIDPI_SUPPORT
@@ -1178,7 +1182,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #ifdef FLTK_HIDPI_SUPPORT
       case WM_DPICHANGED: { // 0x02E0
-	if (!Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+	if (fl_SetProcessDpiAwareness && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
 	  RECT r;
 	  float f = HIWORD(wParam) / 96.;
 	  GetClientRect(hWnd, &r);
