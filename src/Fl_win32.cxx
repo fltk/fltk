@@ -3,7 +3,7 @@
 //
 // WIN32-specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -60,6 +60,11 @@
 #include <ole2.h>
 #include <shellapi.h>
 
+// New versions of MinGW (as of Feb 2018) need to include winerror.h to
+// #define S_OK which used to be defined in ole2.h (STR #3454)
+
+#include <winerror.h>
+
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 // USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
@@ -100,14 +105,24 @@ static bool initial_clipboard = true;
 // note: winsock2.h has been #include'd in Fl.cxx
 #define WSCK_DLL_NAME "WS2_32.DLL"
 
+// Patch for MinGW (__MINGW32__): see STR #3454 and src/Fl.cxx
+#ifdef __MINGW32__
+typedef int(WINAPI *fl_wsk_fd_is_set_f)(unsigned int, void *);
+#else
+typedef int(WINAPI *fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
+static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
+#endif
+
 typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
-typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 
 static HMODULE s_wsock_mod = 0;
 static fl_wsk_select_f s_wsock_select = 0;
-static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
 
+#ifdef __MINGW32__
+static void * get_wsock_mod() {
+#else
 static HMODULE get_wsock_mod() {
+#endif
   if (!s_wsock_mod) {
     s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
     if (s_wsock_mod==NULL)
