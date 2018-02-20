@@ -16,8 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef _WIN32
-
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_Printer.H>
 #include <FL/fl_ask.H>
@@ -317,8 +315,6 @@ void Fl_WinAPI_Printer_Driver::origin(int *x, int *y)
 {
   Fl_Paged_Device::origin(x, y);
 }
-
-#endif // _WIN32
 
 //
 // End of "$Id$".
