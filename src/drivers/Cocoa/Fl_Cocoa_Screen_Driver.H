@@ -101,8 +101,6 @@ public:
   virtual float scale(int n) {return scale_;}
   virtual void scale(int n, float f) { scale_ = f;}
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
-  virtual int run_also_windowless();
-  virtual int wait_also_windowless(double delay);
 private:
   float scale_;
 };

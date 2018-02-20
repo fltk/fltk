@@ -414,8 +414,6 @@ public:
   static int check();
   static int ready();
   static int run();
-  static int run_also_windowless();
-  static int wait_also_windowless(double delay = 1e20);
   /** Returns non-zero when a request for program termination was received and accepted.
    On the MacOS platform, the "Quit xxx" item of the application menu is such a request,
    that is considered accepted when all windows are closed. On other platforms, this function

@@ -178,9 +178,6 @@ public:
   /* Number of pixels per drawing unit for the display.
      The default implementation may be enough. */
   virtual float retina_factor() { return 1; }
-  // The default implementation of the next 2 functions may be enough.
-  virtual int run_also_windowless();
-  virtual int wait_also_windowless(double delay);
 };
 
 

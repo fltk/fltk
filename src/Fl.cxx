@@ -516,6 +516,13 @@ double Fl::wait(double time_to_wait) {
   (supposedly it would return non-zero on any errors, but FLTK calls
   exit directly for these).  A normal program will end main()
   with return Fl::run();.
+ 
+  \note Fl::run() and Fl::wait() (but not Fl::wait(double)) both
+  return when all FLTK windows are closed. Therefore, a MacOS FLTK
+  application possessing Fl_Sys_Menu_Bar items able to create new windows
+  and expected to keep running without any open window cannot use
+  these two functions. One solution is to run the event loop as follows:
+  \code    while (!Fl::program_should_quit()) Fl::wait(1e20); \endcode
 */
 int Fl::run() {
   while (Fl_X::first) wait(FOREVER);
@@ -586,26 +593,6 @@ int Fl::check() {
 int Fl::ready()
 {
   return screen_driver()->ready();
-}
-
-/** Run the event loop even without any mapped window if the platform supports it.
- Identical to Fl::run() for platforms that don't support running windowless.
- The MacOS platform supports it.
- \return zero indicates the event loop has been terminated.
- \version 1.4.0
- */
-int Fl::run_also_windowless() {
-  return Fl::screen_driver()->run_also_windowless();
-}
-
-/** Wait for \p delay seconds or until an event occurs, even without any mapped window if the platform supports it.
- Identical to Fl::wait(delay) for platforms that don't support running windowless.
- The MacOS platform supports it.
- \return non zero indicates the event loop should be terminated
- \version 1.4.0
- */
-int Fl::wait_also_windowless(double delay) {
-  return Fl::screen_driver()->wait_also_windowless(delay);
 }
 
 int Fl::program_should_quit_ = 0;
