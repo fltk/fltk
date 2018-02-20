@@ -1311,7 +1311,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  if (abs([[nsw contentView] frame].size.height - window->h() * fl_graphics_driver->scale()) > 0.5) {
+  if (fabs([[nsw contentView] frame].size.height - window->h() * fl_graphics_driver->scale()) > 5.) {
     // the contentView, but not the window frame, is resized. This happens with tabbed windows.
     [self windowDidResize:notif];
     return;
@@ -2308,10 +2308,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
-  if ( !window->parent() && window->border() && abs(rect.size.height - window->h() * fl_graphics_driver->scale()) > 0.5 ) { // this happens with tabbed window
-        window->resize([cw frame].origin.x/fl_graphics_driver->scale(),
-                       (main_screen_height - ([cw frame].origin.y + rect.size.height))/fl_graphics_driver->scale(),
-                       rect.size.width/fl_graphics_driver->scale(), rect.size.height/fl_graphics_driver->scale());
+  float s = fl_graphics_driver->scale();
+  if ( !window->parent() && window->border() && fabs(rect.size.height - window->h() * s) > 5. ) { // this happens with tabbed windows
+        window->resize([cw frame].origin.x/s,
+                       (main_screen_height - ([cw frame].origin.y + rect.size.height))/s,
+                       rect.size.width/s, rect.size.height/s);
   }
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
