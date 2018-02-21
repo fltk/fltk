@@ -25,12 +25,7 @@
 #include <sys/types.h>
 #include <string.h>		// memcpy
 #include <stdio.h>		// fprintf
-
-#ifdef _WIN32
-#include <malloc.h>		// WINDOWS: malloc/realloc
-#else /* _WIN32 */
-#include <stdlib.h>		// UNIX: malloc/realloc
-#endif /* _WIN32 */
+#include <stdlib.h>		// realloc/free
 
 
 // An STL-ish vector without templates (private to Fl_Table)
