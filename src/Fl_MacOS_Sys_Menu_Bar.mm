@@ -665,6 +665,10 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::rename_window(Fl_Window *win)
   }
 }
 
+void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut) {
+  Fl_Sys_Menu_Bar::about(cb, user_data);
+}
+
 #endif /* __APPLE__ */
 
 //

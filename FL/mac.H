@@ -113,6 +113,13 @@ extern CGContextRef fl_gc;
  \sa \ref osissues_macos
  @{ */
 
+/**
+ *  Attaches a callback to the "About myprog" item of the system application menu.
+ For back-compatibility.
+ Equivalent to Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *user_data).
+ */
+void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut = 0);
+
 
 /** \brief The version number of the running Mac OS X (e.g., 100604 for 10.6.4)
  */

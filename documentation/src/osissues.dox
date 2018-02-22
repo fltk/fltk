@@ -780,6 +780,8 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
 \par
 Attaches the callback \c cb to the "About myprog" item of the system application menu.
 \c cb will be called with NULL first argument and \c user_data second argument.
+This MacOS-specific function is deprecated in FLTK 1.4 and replaced by
+Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *data) which is cross-platform.
 
 Fl_Sys_Menu_Bar class
 

@@ -104,13 +104,6 @@ public:
 
 extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
-/**
- *  Attaches a callback to the "About myprog" item of the system application menu.
- For back-compatibility. Equivalent to Fl_Sys_Menu_Bar::about(cb, user_data).
- */
-inline void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut = 0) { Fl_Sys_Menu_Bar::about(cb, user_data);}
-
-
 #endif // Fl_Sys_Menu_Bar_H
 
 //
