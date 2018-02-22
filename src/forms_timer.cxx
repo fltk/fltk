@@ -24,43 +24,17 @@
 #include <FL/Fl_Timer.H>
 #include <FL/fl_draw.H>
 #include <FL/forms.H>
-#ifdef _WIN32
-#  ifdef __MWERKS__
-#    include <time.h>
-#  else
-#    include <sys/types.h> 
-#    include <sys/timeb.h>
-#  endif
-#else
-#  include <time.h>
-#  include <sys/time.h>
-#endif
+#include <FL/Fl_System_Driver.H>
 #include <stdio.h>
 
 #define FL_TIMER_BLINKRATE	0.2
 
 void fl_gettime(long* sec, long* usec) {
-#ifdef _WIN32
-# ifdef __MWERKS__
-  time_t localTime = time(NULL);
-  struct tm *now = localtime(&localTime);
-  *sec = now->tm_sec + 60*now->tm_min + 3600*now->tm_hour + 24*3600*now->tm_yday;
-  *usec = 0;
-# else
-  struct timeb tp;
-  ftime(&tp);
-  *sec = (long) tp.time;
-  *usec = tp.millitm * 1000;
-# endif
-#elif defined(FL_PORTING) && !defined(__APPLE__) // PORTME: platform timer
-#  pragma message "FL_PORTING: implement time, rarely needed, if ever."
-#else
-  struct timeval tp;
-  struct timezone tzp;
-  gettimeofday(&tp, &tzp);
-  *sec = tp.tv_sec;
-  *usec = tp.tv_usec;
-#endif
+  time_t tt_sec;
+  int i_usec;
+  Fl::system_driver()->gettime(&tt_sec, &i_usec);
+  *sec = (long)tt_sec;
+  *usec = i_usec;
 }
 
 void Fl_Timer::draw() {
