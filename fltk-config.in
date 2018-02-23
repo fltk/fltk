@@ -243,8 +243,8 @@ if test x$use_forms = xyes; then
     LDSTATIC="$libdir/libfltk_forms.a $LDSTATIC"
 fi
 if test x$use_gl = xyes; then
-    LDLIBS="-lfltk_gl$SHAREDSUFFIX @GLLIB@ $LDLIBS"
-    LDSTATIC="$libdir/libfltk_gl.a @GLLIB@ $LDSTATIC"
+    LDLIBS="-lfltk_gl$SHAREDSUFFIX @GLLIBS@ $LDLIBS"
+    LDSTATIC="$libdir/libfltk_gl.a @GLLIBS@ $LDSTATIC"
 fi
 if test x$use_images = xyes; then
     LDLIBS="-lfltk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"

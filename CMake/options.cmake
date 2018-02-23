@@ -17,6 +17,22 @@
 #     http://www.fltk.org/str.php
 #
 
+set (DEBUG_OPTIONS_CMAKE 0)
+if (DEBUG_OPTIONS_CMAKE)
+  message (STATUS "[** options.cmake **]")
+  fl_debug_var (WIN32)
+  fl_debug_var (FLTK_LDLIBS)
+endif (DEBUG_OPTIONS_CMAKE)
+
+#######################################################################
+# *temporary* option to modify header searches
+#######################################################################
+option(USE_FIND_FILE
+  "Deprecated: use find_file() for header searches"
+  OFF
+)
+mark_as_advanced(USE_FIND_FILE)
+
 #######################################################################
 # options
 #######################################################################
@@ -42,10 +58,14 @@ set(FL_ABI_VERSION ${OPTION_ABI_VERSION})
 
 #######################################################################
 #######################################################################
-if(UNIX)
+if (UNIX)
    option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
    list(APPEND FLTK_LDLIBS -lm)
-endif(UNIX)
+endif (UNIX)
+
+if (WIN32)
+   list(APPEND FLTK_LDLIBS -lole32 -luuid -lcomctl32)
+endif (WIN32)
 
 #######################################################################
 ##  Add a TEMPORARY OPTION to enable high-DPI support under Windows.
@@ -177,21 +197,31 @@ if(OPTION_USE_GL)
    endif(OPTION_APPLE_X11)
 endif(OPTION_USE_GL)
 
-if(OPENGL_FOUND)
-   set(CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
-   set(GLLIB "-lGLU -lGL")
+if (DEBUG_OPTIONS_CMAKE)
+  fl_debug_var(OPENGL_FOUND)
+  fl_debug_var(OPENGL_INCLUDE_DIR)
+  fl_debug_var(OPENGL_LIBRARIES)
+endif (DEBUG_OPTIONS_CMAKE)
 
-   # check if function glXGetProcAddressARB exists
-   set(TEMP_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-   set(CMAKE_REQUIRED_LIBRARIES GLU GL)
-   CHECK_FUNCTION_EXISTS(glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
-   set(CMAKE_REQUIRED_LIBRARIES ${TEMP_REQUIRED_LIBRARIES})
-   unset(TEMP_REQUIRED_LIBRARIES)
+if (OPENGL_FOUND)
+  set (CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
+  if (WIN32)
+    set (GLLIBS "-lglu32 -lopengl32")
+  else ()
+    set (GLLIBS "-lGLU -lGL")
+  endif ()
 
-   set(FLTK_GL_FOUND TRUE)
-else()
-   set(FLTK_GL_FOUND FALSE)
-endif(OPENGL_FOUND)
+  # check if function glXGetProcAddressARB exists
+  set (TEMP_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+  set (CMAKE_REQUIRED_LIBRARIES ${OPENGL_LIBRARIES})
+  CHECK_FUNCTION_EXISTS (glXGetProcAddressARB HAVE_GLXGETPROCADDRESSARB)
+  set (CMAKE_REQUIRED_LIBRARIES ${TEMP_REQUIRED_LIBRARIES})
+  unset (TEMP_REQUIRED_LIBRARIES)
+
+  set (FLTK_GL_FOUND TRUE)
+else ()
+  set (FLTK_GL_FOUND FALSE)
+endif (OPENGL_FOUND)
 
 #######################################################################
 # Create an option whether we want to check for pthreads.
@@ -257,91 +287,91 @@ endif (debug_threads)
 unset (debug_threads)
 
 #######################################################################
-option(OPTION_LARGE_FILE "enable large file support" ON)
+option (OPTION_LARGE_FILE "enable large file support" ON)
 
-if(OPTION_LARGE_FILE)
-   if(NOT MSVC)
-      add_definitions(-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE)
-      list(APPEND FLTK_CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE)
-   endif(NOT MSVC)
-endif(OPTION_LARGE_FILE)
-
-#######################################################################
-option(OPTION_USE_SYSTEM_ZLIB "use system zlib" ON)
-
-if(OPTION_USE_SYSTEM_ZLIB AND LIB_zlib)
-   include(FindZLIB)
-endif(OPTION_USE_SYSTEM_ZLIB AND LIB_zlib)
-
-if(OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
-   set(FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
-   include_directories(${ZLIB_INCLUDE_DIRS})
-   set(FLTK_BUILTIN_ZLIB_FOUND FALSE)
-else()
-   add_subdirectory(zlib)
-   set(FLTK_ZLIB_LIBRARIES fltk_z)
-   set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-   set(FLTK_BUILTIN_ZLIB_FOUND TRUE)
-endif(OPTION_USE_SYSTEM_ZLIB AND ZLIB_FOUND)
-
-if(OPTION_USE_SYSTEM_ZLIB AND NOT ZLIB_FOUND)
-   message(STATUS "\ncannot find system zlib library - using built-in\n")
-endif(OPTION_USE_SYSTEM_ZLIB AND NOT ZLIB_FOUND)
-
-set(HAVE_LIBZ 1)
+if (OPTION_LARGE_FILE)
+  if (NOT MSVC)
+    add_definitions (-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE)
+    list (APPEND FLTK_CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE)
+  endif (NOT MSVC)
+endif (OPTION_LARGE_FILE)
 
 #######################################################################
-option(OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+option (OPTION_USE_SYSTEM_ZLIB "use system zlib" ON)
 
-if(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
-   include(FindJPEG)
-endif(OPTION_USE_SYSTEM_LIBJPEG AND LIB_jpeg)
+if (OPTION_USE_SYSTEM_ZLIB)
+  include (FindZLIB)
+endif (OPTION_USE_SYSTEM_ZLIB)
 
-if(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
-   set(FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
-   include_directories(${JPEG_INCLUDE_DIR})
-   set(FLTK_BUILTIN_JPEG_FOUND FALSE)
+if (ZLIB_FOUND)
+  set (FLTK_ZLIB_LIBRARIES ${ZLIB_LIBRARIES})
+  include_directories (${ZLIB_INCLUDE_DIRS})
+  set (FLTK_BUILTIN_ZLIB_FOUND FALSE)
 else()
-   add_subdirectory(jpeg)
-   set(FLTK_JPEG_LIBRARIES fltk_jpeg)
-   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
-   set(FLTK_BUILTIN_JPEG_FOUND TRUE)
-endif(OPTION_USE_SYSTEM_LIBJPEG AND JPEG_FOUND)
+  if (OPTION_USE_SYSTEM_ZLIB)
+    message(STATUS "\ncannot find system zlib library - using built-in\n")
+  endif (OPTION_USE_SYSTEM_ZLIB)
 
-if(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
-   message(STATUS "\ncannot find system jpeg library - using built-in\n")
-endif(OPTION_USE_SYSTEM_LIBJPEG AND NOT JPEG_FOUND)
+  add_subdirectory (zlib)
+  set (FLTK_ZLIB_LIBRARIES fltk_z)
+  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zlib)
+  set (FLTK_BUILTIN_ZLIB_FOUND TRUE)
+endif (ZLIB_FOUND)
 
-set(HAVE_LIBJPEG 1)
+set (HAVE_LIBZ 1)
 
 #######################################################################
-option(OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
+option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
 
-if(OPTION_USE_SYSTEM_LIBPNG AND LIB_png)
-   include(FindPNG)
-endif(OPTION_USE_SYSTEM_LIBPNG AND LIB_png)
+if (OPTION_USE_SYSTEM_LIBJPEG)
+  include (FindJPEG)
+endif (OPTION_USE_SYSTEM_LIBJPEG)
 
-if(OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
-   set(FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
-   include_directories(${PNG_INCLUDE_DIR})
-   add_definitions(${PNG_DEFINITIONS})
-   set(FLTK_BUILTIN_PNG_FOUND FALSE)
+if (JPEG_FOUND)
+  set(FLTK_JPEG_LIBRARIES ${JPEG_LIBRARIES})
+  include_directories(${JPEG_INCLUDE_DIR})
+  set(FLTK_BUILTIN_JPEG_FOUND FALSE)
+else ()
+  if (OPTION_USE_SYSTEM_LIBJPEG)
+    message (STATUS "\ncannot find system jpeg library - using built-in\n")
+  endif (OPTION_USE_SYSTEM_LIBJPEG)
+
+  add_subdirectory (jpeg)
+  set (FLTK_JPEG_LIBRARIES fltk_jpeg)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/jpeg)
+  set (FLTK_BUILTIN_JPEG_FOUND TRUE)
+endif (JPEG_FOUND)
+
+set (HAVE_LIBJPEG 1)
+
+#######################################################################
+option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
+
+if (OPTION_USE_SYSTEM_LIBPNG)
+  include (FindPNG)
+endif (OPTION_USE_SYSTEM_LIBPNG)
+
+if (PNG_FOUND)
+  set (FLTK_PNG_LIBRARIES ${PNG_LIBRARIES})
+  include_directories (${PNG_INCLUDE_DIR})
+  add_definitions (${PNG_DEFINITIONS})
+  set (FLTK_BUILTIN_PNG_FOUND FALSE)
 else()
-   add_subdirectory(png)
-   set(FLTK_PNG_LIBRARIES fltk_png)
-   set(HAVE_PNG_H 1)
-   set(HAVE_PNG_GET_VALID 1)
-   set(HAVE_PNG_SET_TRNS_TO_ALPHA 1)
-   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/png)
-   set(FLTK_BUILTIN_PNG_FOUND TRUE)
-endif(OPTION_USE_SYSTEM_LIBPNG AND PNG_FOUND)
+  if (OPTION_USE_SYSTEM_LIBPNG)
+    message (STATUS "\ncannot find system png library - using built-in\n")
+  endif (OPTION_USE_SYSTEM_LIBPNG)
 
-if(OPTION_USE_SYSTEM_LIBPNG AND NOT PNG_FOUND)
-   message(STATUS "\ncannot find system png library - using built-in\n")
-endif(OPTION_USE_SYSTEM_LIBPNG AND NOT PNG_FOUND)
+  add_subdirectory (png)
+  set (FLTK_PNG_LIBRARIES fltk_png)
+  set (HAVE_PNG_H 1)
+  set (HAVE_PNG_GET_VALID 1)
+  set (HAVE_PNG_SET_TRNS_TO_ALPHA 1)
+  include_directories (${CMAKE_CURRENT_SOURCE_DIR}/png)
+  set (FLTK_BUILTIN_PNG_FOUND TRUE)
+endif (PNG_FOUND)
 
-set(HAVE_LIBPNG 1)
+set (HAVE_LIBPNG 1)
 
 #######################################################################
 if(X11_Xinerama_FOUND)
@@ -440,6 +470,7 @@ if(X11_Xft_FOUND AND OPTION_USE_PANGO)
       find_path(GLIB_H_PATH glib.h ${PANGO_H_PREFIX}/glib/glib-2.0)
     endif(NOT GLIB_H_PATH)
     include_directories(${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
+    list(APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
   endif(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
 endif(X11_Xft_FOUND AND OPTION_USE_PANGO)
 
@@ -505,3 +536,16 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0.0)
 	   "suppress rules to re-run CMake on rebuild" OFF)
     mark_as_advanced(CMAKE_SUPPRESS_REGENERATION)
 endif(NOT CMAKE_VERSION VERSION_LESS 3.0.0)
+
+#######################################################################
+# Debugging ...
+
+if (DEBUG_OPTIONS_CMAKE)
+  fl_debug_var (WIN32)
+  fl_debug_var (LIBS)
+  fl_debug_var (GLLIBS)
+  fl_debug_var (FLTK_LDLIBS)
+  fl_debug_var (USE_FIND_FILE)
+  message (STATUS "[** end of options.cmake **]")
+endif (DEBUG_OPTIONS_CMAKE)
+unset (DEBUG_OPTIONS_CMAKE)

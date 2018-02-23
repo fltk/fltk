@@ -71,21 +71,17 @@ set(srcdir ".")
 
 set(LIBNAME "${libdir}/libfltk.a")
 
-if (WIN32)
-  set (LDFLAGS "-mwindows")
-  set (LIBS "-lole32 -luuid -lcomctl32")
-endif ()
-
 configure_file(
    "${CMAKE_CURRENT_SOURCE_DIR}/fltk-config.in"
    "${CMAKE_CURRENT_BINARY_DIR}/fltk-config"
    @ONLY
 )
-if(UNIX)
-   execute_process(COMMAND chmod 755 fltk-config
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-   )
-endif(UNIX)
+
+if (UNIX)
+  execute_process(COMMAND chmod 755 fltk-config
+		  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  )
+endif (UNIX)
 
 # prepare some variables for config.h
 

@@ -20,27 +20,71 @@
 #######################################################################
 # check for headers, libraries and functions
 #######################################################################
-# headers
-find_file(HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
-find_file(HAVE_DLFCN_H dlfcn.h)
-find_file(HAVE_FREETYPE_H freetype.h PATH_SUFFIXES freetype2 freetype2/freetype)
-find_file(HAVE_GL_GLU_H GL/glu.h)
-find_file(HAVE_LIBPNG_PNG_H libpng/png.h)
-find_file(HAVE_LOCALE_H locale.h)
-find_file(HAVE_OPENGL_GLU_H OpenGL/glu.h)
-find_file(HAVE_PNG_H png.h)
-find_file(HAVE_STDIO_H stdio.h)
-find_file(HAVE_STRINGS_H strings.h)
-find_file(HAVE_SYS_SELECT_H sys/select.h)
-find_file(HAVE_SYS_STDTYPES_H sys/stdtypes.h)
-find_file(HAVE_X11_XREGION_H X11/Xregion.h)
-find_path(HAVE_XDBE_H Xdbe.h PATH_SUFFIXES X11/extensions extensions)
+
+# The following code is work in progress (as of Feb 2018) - AlbrechtS
+
+# The cache option USE_FIND_FILE can be set to ON to switch back to the old
+# behavior that tries to find headers by find_file() which appears to be
+# error prone at least under Windows when MSYS2 and MinGW are both
+# installed on one system.
+# If USE_FIND_FILE is OFF (new behavior), then headers are searched for by
+# check_include_files() which tries to compile a small file to test if
+# the header file can be used. In some cases this needs more than one
+# header in a list because another header must be included before the
+# header being searched for.
+# Example: X11/Xlib.h must be included before X11/Xregion.h so Xregion.h
+# can be compiled successfully.
+
+# If CMAKE_REQUIRED_QUIET is 1 (default) the search is mostly quiet, if
+# it is 0 (or not defined) check_include_files() is more verbose and
+# the result of the search is logged with fl_debug_var().
+# This is useful for debugging.
+
+set (CMAKE_REQUIRED_QUIET 1)
+
+include(CheckIncludeFiles)
+
+# The following macro is used to switch between old and new behavior.
+# Once this is stable (USE_FIND_FILE = 0) the unused part may be removed.
+
+macro (fl_find_header VAR HEADER)
+  if (USE_FIND_FILE)
+    find_file (${VAR} "${HEADER}")
+  else (USE_FIND_FILE)
+    check_include_files("${HEADER}" ${VAR})
+  endif (USE_FIND_FILE)
+  if (NOT CMAKE_REQUIRED_QUIET)
+    fl_debug_var (${VAR})
+  endif (NOT CMAKE_REQUIRED_QUIET)
+endmacro (fl_find_header)
+
+# Find header files...
+
+fl_find_header (HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
+fl_find_header (HAVE_DLFCN_H dlfcn.h)
+fl_find_header (HAVE_GL_GLU_H GL/glu.h)
+fl_find_header (HAVE_LIBPNG_PNG_H libpng/png.h)
+fl_find_header (HAVE_LOCALE_H locale.h)
+fl_find_header (HAVE_OPENGL_GLU_H OpenGL/glu.h)
+fl_find_header (HAVE_PNG_H png.h)
+fl_find_header (HAVE_STDIO_H stdio.h)
+fl_find_header (HAVE_STRINGS_H strings.h)
+fl_find_header (HAVE_SYS_SELECT_H sys/select.h)
+fl_find_header (HAVE_SYS_STDTYPES_H sys/stdtypes.h)
+
+if (USE_FIND_FILE)
+  fl_find_header (HAVE_X11_XREGION_H "X11/Xregion.h")
+  fl_find_header (HAVE_XDBE_H "X11/extensions/Xdbe.h")
+else ()
+  fl_find_header (HAVE_X11_XREGION_H "X11/Xlib.h;X11/Xregion.h")
+  fl_find_header (HAVE_XDBE_H "X11/Xlib.h;X11/extensions/Xdbe.h")
+endif()
 
 if (WIN32 AND NOT CYGWIN)
   # we don't use pthreads on Windows (except for Cygwin, see options.cmake)
   set(HAVE_PTHREAD_H 0)
 else ()
-  find_file(HAVE_PTHREAD_H pthread.h)
+  fl_find_header (HAVE_PTHREAD_H pthread.h)
 endif (WIN32 AND NOT CYGWIN)
 
 # Special case for Microsoft Visual Studio generator (MSVC):
@@ -91,24 +135,24 @@ endif (MSVC)
 # Simulate the behavior of autoconf macro AC_HEADER_DIRENT, see:
 # https://www.gnu.org/software/autoconf/manual/autoconf-2.69/html_node/Particular-Headers.html
 # "Check for the following header files. For the first one that is found
-#  and defines ‘DIR’, define the listed C preprocessor macro ..."
+#  and defines 'DIR', define the listed C preprocessor macro ..."
 #
 # Note: we don't check if it really defines 'DIR', but we stop processing
 # once we found the first suitable header file.
 
-find_file(HAVE_DIRENT_H dirent.h)
+fl_find_header (HAVE_DIRENT_H dirent.h)
 if(NOT HAVE_DIRENT_H)
-  find_file(HAVE_SYS_NDIR_H sys/ndir.h)
+  fl_find_header (HAVE_SYS_NDIR_H sys/ndir.h)
   if(NOT HAVE_SYS_NDIR_H)
-    find_file(HAVE_SYS_DIR_H sys/dir.h)
+    fl_find_header (HAVE_SYS_DIR_H sys/dir.h)
     if(NOT HAVE_SYS_DIR_H)
-      find_file(HAVE_NDIR_H ndir.h)
+      fl_find_header (HAVE_NDIR_H ndir.h)
     endif(NOT HAVE_SYS_DIR_H)
   endif(NOT HAVE_SYS_NDIR_H)
 endif(NOT HAVE_DIRENT_H)
 
 mark_as_advanced(HAVE_ALSA_ASOUNDLIB_H HAVE_DIRENT_H HAVE_DLFCN_H)
-mark_as_advanced(HAVE_FREETYPE_H HAVE_GL_GLU_H)
+mark_as_advanced(HAVE_GL_GLU_H)
 mark_as_advanced(HAVE_LIBPNG_PNG_H HAVE_LOCALE_H HAVE_NDIR_H)
 mark_as_advanced(HAVE_OPENGL_GLU_H HAVE_PNG_H HAVE_PTHREAD_H)
 mark_as_advanced(HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
@@ -116,12 +160,19 @@ mark_as_advanced(HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
 mark_as_advanced(HAVE_SYS_STDTYPES_H HAVE_XDBE_H)
 mark_as_advanced(HAVE_X11_XREGION_H)
 
+#----------------------------------------------------------------------
+# The following code is used to find the include path for freetype
+# headers to be able to #include <ft2build.h> in Xft.h.
+
 # where to find freetype headers
+
 find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
 find_path(FREETYPE_PATH freetype/freetype.h PATH_SUFFIXES freetype2)
-if(FREETYPE_PATH)
-   include_directories(${FREETYPE_PATH})
-endif(FREETYPE_PATH)
+
+if (FREETYPE_PATH)
+  include_directories(${FREETYPE_PATH})
+endif (FREETYPE_PATH)
+
 mark_as_advanced(FREETYPE_PATH)
 
 #######################################################################
@@ -153,7 +204,7 @@ endif(DEFINED CMAKE_REQUIRED_LIBRARIES)
 set(CMAKE_REQUIRED_LIBRARIES)
 
 if(HAVE_DLFCN_H)
-   set(HAVE_DLFCN_H 1)
+  set(HAVE_DLFCN_H 1)
 endif(HAVE_DLFCN_H)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_DL_LIBS})
@@ -169,19 +220,19 @@ if(LIB_png)
   set(CMAKE_REQUIRED_LIBRARIES)
 endif(LIB_png)
 
-CHECK_FUNCTION_EXISTS(scandir                HAVE_SCANDIR)
-CHECK_FUNCTION_EXISTS(snprintf               HAVE_SNPRINTF)
+CHECK_FUNCTION_EXISTS(scandir			HAVE_SCANDIR)
+CHECK_FUNCTION_EXISTS(snprintf			HAVE_SNPRINTF)
 
 # not really true but we convert strcasecmp calls to _stricmp calls in flstring.h
 if(MSVC)
    set(HAVE_STRCASECMP 1)
 endif(MSVC)
 
-CHECK_FUNCTION_EXISTS(strcasecmp             HAVE_STRCASECMP)
+CHECK_FUNCTION_EXISTS(strcasecmp		HAVE_STRCASECMP)
 
-CHECK_FUNCTION_EXISTS(strlcat                HAVE_STRLCAT)
-CHECK_FUNCTION_EXISTS(strlcpy                HAVE_STRLCPY)
-CHECK_FUNCTION_EXISTS(vsnprintf              HAVE_VSNPRINTF)
+CHECK_FUNCTION_EXISTS(strlcat			HAVE_STRLCAT)
+CHECK_FUNCTION_EXISTS(strlcpy			HAVE_STRLCPY)
+CHECK_FUNCTION_EXISTS(vsnprintf			HAVE_VSNPRINTF)
 
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
@@ -230,6 +281,10 @@ endif (DOXYGEN_FOUND)
 # message("Doxygen  found : ${DOXYGEN_FOUND}")
 # message("LaTex    found : ${LATEX_FOUND}")
 # message("LaTex Compiler : ${LATEX_COMPILER}")
+
+# Cleanup: unset local variables
+
+unset (CMAKE_REQUIRED_QUIET)
 
 #
 # End of "$Id$".

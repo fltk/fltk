@@ -877,10 +877,10 @@ case $host_os_gui in
 	if test x$enable_gl != xno; then
 	    AC_CHECK_HEADER(GL/gl.h,
 		AC_DEFINE(HAVE_GL)
-		GLLIB="-lopengl32")
+		GLLIBS="-lopengl32")
 	    AC_CHECK_HEADER(GL/glu.h,
 		AC_DEFINE(HAVE_GL_GLU_H)
-		GLLIB="-lglu32 $GLLIB")
+		GLLIBS="-lglu32 $GLLIBS")
 	else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
@@ -918,7 +918,7 @@ case $host_os_gui in
 	if test x$enable_gl != xno; then
 	    AC_DEFINE(HAVE_GL)
 	    AC_DEFINE(HAVE_GL_GLU_H)
-	    GLLIB="-framework OpenGL"
+	    GLLIBS="-framework OpenGL"
 	else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
@@ -970,17 +970,17 @@ case $host_os_gui in
 	fi
 
 	dnl Check for OpenGL unless disabled...
-	GLLIB=
+	GLLIBS=
 
 	if test x$enable_gl != xno; then
 	    AC_SEARCH_LIBS(dlopen, dl)
 	    AC_CHECK_HEADER(GL/gl.h,
 		AC_CHECK_LIB(GL, glXMakeCurrent,
 		    [AC_DEFINE(HAVE_GL)
-		     GLLIB="-lGL"],
+		     GLLIBS="-lGL"],
 		    AC_CHECK_LIB(MesaGL, glXMakeCurrent,
 			[AC_DEFINE(HAVE_GL)
-			 GLLIB="-lMesaGL"],,
+			 GLLIBS="-lMesaGL"],,
 			[-lm]),
 		    [-lm])
 		AC_CHECK_LIB(GL, glXGetProcAddressARB,
@@ -989,10 +989,10 @@ case $host_os_gui in
 	    AC_CHECK_HEADER(GL/glu.h,
 		AC_DEFINE(HAVE_GL_GLU_H)
 		if test x$ac_cv_lib_GL_glXMakeCurrent = xyes; then
-		    GLLIB="-lGLU $GLLIB"
+		    GLLIBS="-lGLU $GLLIBS"
 		fi
 		if test x$ac_cv_lib_MesaGL_glXMakeCurrent = xyes; then
-		    GLLIB="-lMesaGLU $GLLIB"
+		    GLLIBS="-lMesaGLU $GLLIBS"
 		fi
 	    )
 
@@ -1202,7 +1202,7 @@ case $host_os_gui in
 esac
 
 AC_SUBST(GLDEMOS)
-AC_SUBST(GLLIB)
+AC_SUBST(GLLIBS)
 AC_SUBST(HLINKS)
 AC_SUBST(OSX_ONLY)
 AC_SUBST(THREADS)
