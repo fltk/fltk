@@ -25,10 +25,18 @@ if (DEBUG_OPTIONS_CMAKE)
 endif (DEBUG_OPTIONS_CMAKE)
 
 #######################################################################
-# *temporary* option to modify header searches
+# *Temporary* option to modify header file searches
+#######################################################################
+# Note: The old, deprecated behavior (ON) was to use find_file() for
+# header searches, the new behavior (ON) is to use check_include_files()
+# which seems to be more reliable but more difficult to set up and
+# slower because it uses a compilation test. Default is "new" (OFF).
+# This option should be removed as soon as the new search strategy
+# is considered stable.
+# Currently used only in resources.cmake.
 #######################################################################
 option(USE_FIND_FILE
-  "Deprecated: use find_file() for header searches"
+  "Deprecated: use find_file() for header searches. Should be OFF."
   OFF
 )
 mark_as_advanced(USE_FIND_FILE)
@@ -59,13 +67,8 @@ set(FL_ABI_VERSION ${OPTION_ABI_VERSION})
 #######################################################################
 #######################################################################
 if (UNIX)
-   option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
-   list(APPEND FLTK_LDLIBS -lm)
+  option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
 endif (UNIX)
-
-if (WIN32)
-   list(APPEND FLTK_LDLIBS -lole32 -luuid -lcomctl32)
-endif (WIN32)
 
 #######################################################################
 ##  Add a TEMPORARY OPTION to enable high-DPI support under Windows.
@@ -195,21 +198,26 @@ if(OPTION_USE_GL)
          set(HAVE_GL_GLU_H ${HAVE_OPENGL_GLU_H})
       endif(APPLE)
    endif(OPTION_APPLE_X11)
+else ()
+  set(OPENGL_FOUND FALSE)
 endif(OPTION_USE_GL)
-
-if (DEBUG_OPTIONS_CMAKE)
-  fl_debug_var(OPENGL_FOUND)
-  fl_debug_var(OPENGL_INCLUDE_DIR)
-  fl_debug_var(OPENGL_LIBRARIES)
-endif (DEBUG_OPTIONS_CMAKE)
 
 if (OPENGL_FOUND)
   set (CMAKE_REQUIRED_INCLUDES ${OPENGL_INCLUDE_DIR}/GL)
+
+  # Set GLLIBS (used in fltk-config).
+  # We should probably deduct this from OPENGL_LIBRARIES but it turned
+  # out to be difficult since FindOpenGL seems to return different
+  # syntax depending on the platform (and maybe also CMake version).
+  # Hence we use the following code...
+
   if (WIN32)
     set (GLLIBS "-lglu32 -lopengl32")
+  elseif (APPLE AND NOT OPTION_APPLE_X11)
+    set (GLLIBS "-framework OpenGL")
   else ()
     set (GLLIBS "-lGLU -lGL")
-  endif ()
+  endif (WIN32)
 
   # check if function glXGetProcAddressARB exists
   set (TEMP_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
@@ -221,6 +229,7 @@ if (OPENGL_FOUND)
   set (FLTK_GL_FOUND TRUE)
 else ()
   set (FLTK_GL_FOUND FALSE)
+  set (GLLIBS)
 endif (OPENGL_FOUND)
 
 #######################################################################
@@ -541,11 +550,15 @@ endif(NOT CMAKE_VERSION VERSION_LESS 3.0.0)
 # Debugging ...
 
 if (DEBUG_OPTIONS_CMAKE)
+  message (STATUS "") # empty line
   fl_debug_var (WIN32)
   fl_debug_var (LIBS)
   fl_debug_var (GLLIBS)
   fl_debug_var (FLTK_LDLIBS)
   fl_debug_var (USE_FIND_FILE)
+  fl_debug_var (OPENGL_FOUND)
+  fl_debug_var (OPENGL_INCLUDE_DIR)
+  fl_debug_var (OPENGL_LIBRARIES)
   message (STATUS "[** end of options.cmake **]")
 endif (DEBUG_OPTIONS_CMAKE)
 unset (DEBUG_OPTIONS_CMAKE)

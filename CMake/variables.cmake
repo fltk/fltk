@@ -25,6 +25,8 @@ set (FL_PATCH_VERSION ${FLTK_VERSION_PATCH})
 set (DEBUG_VARIABLES_CMAKE 0)
 if (DEBUG_VARIABLES_CMAKE)
   message (STATUS "[** variables.cmake **]")
+  fl_debug_var (HAVE_DLSYM)
+  fl_debug_var (CMAKE_DL_LIBS)
   fl_debug_var (CMAKE_EXE_LINKER_FLAGS)
   fl_debug_var (LDFLAGS)
   fl_debug_var (LIBS)
@@ -40,14 +42,28 @@ endif (DEBUG_VARIABLES_CMAKE)
 #######################################################################
 # add several libraries
 # FIXME: libraries may need reordering.
+# FIXME: check fontconfig conditions (only if Xft is used or ...)
+
+if (WIN32)
+  list (APPEND FLTK_LDLIBS -lole32 -luuid -lcomctl32)
+elseif (APPLE AND OPTION_APPLE_SDL)
+  # FIXME: do nothing?
+elseif (APPLE AND NOT OPTION_APPLE_X11)
+  list (APPEND FLTK_LDLIBS "-framework Cocoa")
+else ()
+  list (APPEND FLTK_LDLIBS -lm)
+endif (WIN32)
 
 if (LIB_fontconfig)
   list(APPEND FLTK_LDLIBS -lfontconfig)
 endif (LIB_fontconfig)
 
-if (HAVE_DLSYM AND NOT WIN32)
-  list(APPEND FLTK_LDLIBS -ldl)
-endif (HAVE_DLSYM AND NOT WIN32)
+# add "-ldl" or whatever is necessary according to CMake (CMAKE_DL_LIBS)
+if (HAVE_DLSYM)
+  foreach (LIB ${CMAKE_DL_LIBS})
+    list (APPEND FLTK_LDLIBS "-l${LIB}")
+  endforeach ()
+endif (HAVE_DLSYM)
 
 #######################################################################
 # Set variables for fltk-config (generated from fltk-config.in)
@@ -123,7 +139,7 @@ foreach(arg ${FLTK_LDLIBS})
   set(LINK_LIBS "${LINK_LIBS} ${arg}")
 endforeach(arg ${FLTK_LDLIBS})
 
-set(LIBS ${LINK_LIBS})
+set(LIBS "${LINK_LIBS}")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "AIX")
     set(SHAREDSUFFIX "_s")
@@ -132,6 +148,9 @@ else ()
 endif (${CMAKE_SYSTEM_NAME} STREQUAL "AIX")
 
 if (DEBUG_VARIABLES_CMAKE)
+  message (STATUS "") # empty line
+  fl_debug_var (HAVE_DLSYM)
+  fl_debug_var (CMAKE_DL_LIBS)
   fl_debug_var (CMAKE_EXE_LINKER_FLAGS)
   fl_debug_var (LDFLAGS)
   fl_debug_var (LIBS)
