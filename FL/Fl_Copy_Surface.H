@@ -23,7 +23,7 @@
 
 /** Supports copying of graphical data to the clipboard.
  
- <br> After creation of an Fl_Copy_Surface object, call set_current() on it, and all subsequent graphics requests
+ <br> After creation of an Fl_Copy_Surface object, make it the current drawing surface calling Fl_Surface_Device::push_current(), and all subsequent graphics requests
  will be recorded in the clipboard. It's possible to draw widgets (using Fl_Copy_Surface::draw()
  ) or to use any of the \ref fl_drawings or the \ref fl_attributes.
  Finally, delete the Fl_Copy_Surface object to load the clipboard with the graphical data.
@@ -32,11 +32,11 @@
  \code
  Fl_Widget *g = ...; // a widget you want to copy to the clipboard
  Fl_Copy_Surface *copy_surf = new Fl_Copy_Surface(g->w(), g->h()); // create an Fl_Copy_Surface object
- copy_surf->set_current(); // direct graphics requests to the clipboard
+ Fl_Surface_Device::push_current(copy_surf); // direct graphics requests to the clipboard
  fl_color(FL_WHITE); fl_rectf(0, 0, g->w(), g->h()); // draw a white background
  copy_surf->draw(g); // draw the g widget in the clipboard
+ Fl_Surface_Device::pop_current();  // direct graphics requests back to their previous destination
  delete copy_surf; // after this, the clipboard is loaded
- Fl_Display_Device::display_device()->set_current();  // direct graphics requests back to the display
  \endcode
  Platform details:
  \li Windows: Transparent RGB images copy without transparency.

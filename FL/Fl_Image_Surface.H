@@ -28,7 +28,8 @@
 /** 
  \brief Directs all graphics requests to an Fl_Image.
  
- After creation of an Fl_Image_Surface object, call set_current() on it, and all
+ After creation of an Fl_Image_Surface object, make it the current drawing
+ surface calling Fl_Surface_Device::push_current(), and all
  subsequent graphics requests will be recorded in the image. It's possible to 
  draw widgets (using Fl_Image_Surface::draw()) or to use any of the 
  \ref fl_drawings or the \ref fl_attributes. Finally, call image() on the object
@@ -44,7 +45,7 @@
  Fl_Image_Surface *image_surface = new Fl_Image_Surface(g->w(), g->h());
  
  // direct all further graphics requests to the image
- image_surface->set_current();
+ Fl_Surface_Device::push_current(image_surface);
 
  // draw a white background
  fl_color(FL_WHITE); 
@@ -55,12 +56,12 @@
 
  // get the resulting image
  Fl_RGB_Image* image = image_surface->image();
+
+ // direct graphics requests back to their previous destination
+ Fl_Surface_Device::pop_current();
  
  // delete the image_surface object, but not the image itself
  delete image_surface;
-
- // direct graphics requests back to the screen
- Fl_Display_Device::display_device()->set_current();
  \endcode
 */
 class FL_EXPORT Fl_Image_Surface : public Fl_Widget_Surface {
