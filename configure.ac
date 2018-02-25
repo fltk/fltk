@@ -861,10 +861,12 @@ case $host_os_gui in
 	# \n.  Here we just force U32 to be defined to "unsigned"...
 	AC_DEFINE(U32,unsigned)
 	# We do no longer define WIN32 or _WIN32 (since FLTK 1.4.0)
+	# and we don't need to define USE_OPENGL32 (added in svn r6657
+	# but never used, see STR #2147)
 	# CFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CFLAGS"
 	# CXXFLAGS="-mwindows -D_WIN32 -DUSE_OPENGL32 $CXXFLAGS"
-	CFLAGS="-mwindows -DUSE_OPENGL32 $CFLAGS"
-	CXXFLAGS="-mwindows -DUSE_OPENGL32 $CXXFLAGS"
+	CFLAGS="-mwindows $CFLAGS"
+	CXXFLAGS="-mwindows $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32"
