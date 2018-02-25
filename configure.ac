@@ -649,41 +649,6 @@ STATICIMAGELIBS=""
 AC_SUBST(IMAGELIBS)
 AC_SUBST(STATICIMAGELIBS)
 
-# Handle the JPEG lib linking mode (use fltk local or system lib)
-# If --enable-(resp. --disable-)localjpeg parameter is not set by user
-# Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
-AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library [[default=auto]]])
-# Check for System lib use if automatic mode or --disable-localjpeg is requested
-sysjpeglib_ok=no
-sysjpeginc_ok=no
-if test x$enable_localjpeg != xyes; then
-    AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
-	[AC_CHECK_HEADER(jpeglib.h,
-	    sysjpeginc_ok=yes)
-	    if test x$sysjpeginc_ok = xyes; then
-		sysjpeglib_ok=yes
-	    fi])
-fi
-# Now set the jpeg lib and include flags according to the requested mode and availability
-if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
-    JPEGINC="-I../jpeg"
-    JPEG="jpeg"
-    IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
-    STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBJPEG)
-    #ac_cv_lib_jpeg_jpeg_CreateCompress=no # from ima: should not be necessary
-    # Finally, warn user if system lib was requested but not found
-    if test x$enable_localjpeg = xno; then
-	AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
-    fi
-else
-    JPEGINC=""
-    JPEG=""
-    IMAGELIBS="-ljpeg $IMAGELIBS"
-    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
-    AC_DEFINE(HAVE_LIBJPEG)
-fi
-
 # Handle the ZLIB lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localzlib parameter is not set by user
 # Then we check the ZLIB lib usability, with result in syszlib_ok variable
@@ -765,6 +730,40 @@ else
     AC_DEFINE(HAVE_LIBPNG)
     AC_CHECK_LIB(png,png_get_valid, AC_DEFINE(HAVE_PNG_GET_VALID))
     AC_CHECK_LIB(png,png_set_tRNS_to_alpha, AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA))
+fi
+
+# Handle the JPEG lib linking mode (use fltk local or system lib)
+# If --enable-(resp. --disable-)localjpeg parameter is not set by user
+# Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
+AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library [[default=auto]]])
+# Check for System lib use if automatic mode or --disable-localjpeg is requested
+sysjpeglib_ok=no
+sysjpeginc_ok=no
+if test x$enable_localjpeg != xyes; then
+    AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
+	[AC_CHECK_HEADER(jpeglib.h,
+	    sysjpeginc_ok=yes)
+	    if test x$sysjpeginc_ok = xyes; then
+		sysjpeglib_ok=yes
+	    fi])
+fi
+# Now set the jpeg lib and include flags according to the requested mode and availability
+if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
+    JPEGINC="-I../jpeg"
+    JPEG="jpeg"
+    IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
+    AC_DEFINE(HAVE_LIBJPEG)
+    # Finally, warn user if system lib was requested but not found
+    if test x$enable_localjpeg = xno; then
+	AC_MSG_WARN([Cannot find system jpeg lib or header: choosing the local lib mode.])
+    fi
+else
+    JPEGINC=""
+    JPEG=""
+    IMAGELIBS="-ljpeg $IMAGELIBS"
+    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
+    AC_DEFINE(HAVE_LIBJPEG)
 fi
 
 AC_SUBST(JPEG)
