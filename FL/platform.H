@@ -45,6 +45,8 @@ class Fl_Window;
 #  elif defined(FL_PORTING)
 #    pragma message "FL_PORTING: write a header file based on this file, win32.H, or mac.H to define the FLTK core internals"
 #    include "porting.H"
+#  elif defined(__ANDROID__)
+#    include "android.H"
 #  else // X11
 #   include <FL/fl_types.h>
 #   include <FL/Enumerations.H>
