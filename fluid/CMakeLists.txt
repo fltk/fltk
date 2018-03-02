@@ -16,6 +16,9 @@
 #     http://www.fltk.org/str.php
 #
 
+
+if(NOT ANDROID)
+
 set(CPPFILES
     CodeEditor.cxx
     Fl_Function_Type.cxx
@@ -46,7 +49,6 @@ else ()
     list(APPEND CPPFILES ExternalCodeEditor_UNIX.cxx)
 endif (WIN32)
 
-if(NOT ANDROID)
 if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set( ICON_NAME fluid.icns )
   set( ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/Fluid.app/Contents/Resources/${ICON_NAME}" )
@@ -54,7 +56,6 @@ if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 else()
   add_executable(fluid WIN32 ${CPPFILES})
 endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
-endif(NOT ANDROID)
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
@@ -94,3 +95,6 @@ if(UNIX)
         )
     endforeach()
 endif(UNIX)
+
+endif(NOT ANDROID)
+
