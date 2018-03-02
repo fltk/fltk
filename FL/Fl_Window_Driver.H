@@ -116,8 +116,8 @@ public:
   void resize_after_scale_change(int ns, float old_f, float new_f);
 
   // --- window data
-  virtual int decorated_w() = 0;
-  virtual int decorated_h() = 0;
+  virtual int decorated_w() { return w(); } // default, should be overidden by driver
+  virtual int decorated_h() { return h(); }
 
   // --- window management
   virtual void take_focus();

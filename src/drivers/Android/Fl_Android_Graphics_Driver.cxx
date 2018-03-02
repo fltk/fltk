@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include "Fl_Android_Graphics_Driver.h"
+#include "Fl_Android_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <errno.h>

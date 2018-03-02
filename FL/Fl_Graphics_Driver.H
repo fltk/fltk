@@ -452,81 +452,81 @@ public:
 protected:
   int line_width_;
   void cache_size(Fl_Image *img, int &width, int &height);
-  virtual Fl_Region scale_clip(float f)=0;
+  virtual Fl_Region scale_clip(float f) { return 0; }
   void unscale_clip(Fl_Region r);
   virtual void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy)=0;
+  virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy)=0;
+  virtual void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy)=0;
+  virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw(Fl_Shared_Image *shared, int X, int Y);
   virtual void point(int x, int y);
-  virtual void point_unscaled(float x, float y) = 0;
+  virtual void point_unscaled(float x, float y) {}
   virtual void rect(int x, int y, int w, int h);
-  virtual void rect_unscaled(float x, float y, float w, float h) = 0;
+  virtual void rect_unscaled(float x, float y, float w, float h) {}
   virtual void rectf(int x, int y, int w, int h);
-  virtual void rectf_unscaled(float x, float y, float w, float h) = 0;
+  virtual void rectf_unscaled(float x, float y, float w, float h) {}
   virtual void line(int x, int y, int x1, int y1);
-  virtual void line_unscaled(float x, float y, float x1, float y1) = 0;
+  virtual void line_unscaled(float x, float y, float x1, float y1) {}
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2) = 0;
+  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2) {}
   virtual void xyline(int x, int y, int x1);
   virtual void xyline(int x, int y, int x1, int y2);
   virtual void xyline(int x, int y, int x1, int y2, int x3);
-  virtual void xyline_unscaled(float x, float y, float x1)=0;
+  virtual void xyline_unscaled(float x, float y, float x1) {}
   virtual void yxline(int x, int y, int y1);
   virtual void yxline(int x, int y, int y1, int x2);
   virtual void yxline(int x, int y, int y1, int x2, int y3);
-  virtual void yxline_unscaled(float x, float y, float y1)=0;
+  virtual void yxline_unscaled(float x, float y, float y1) {}
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)=0;
+  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2) {}
   virtual void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)=0;
+  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {}
   virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)=0;
+  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2) {}
   virtual void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)=0;
+  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {}
   virtual void circle(double x, double y, double r);
-  virtual void ellipse_unscaled(double xt, double yt, double rx, double ry)=0;
+  virtual void ellipse_unscaled(double xt, double yt, double rx, double ry) {}
   virtual void font(Fl_Font face, Fl_Fontsize size);
-  virtual void font_unscaled(Fl_Font face, Fl_Fontsize size)=0;
+  virtual void font_unscaled(Fl_Font face, Fl_Fontsize size) {}
   virtual double width(const char *str, int n);
   virtual double width(unsigned int c);
-  virtual double width_unscaled(const char *str, int n)=0;
-  virtual double width_unscaled(unsigned int c)=0;
+  virtual double width_unscaled(const char *str, int n) { return 0.0; }
+  virtual double width_unscaled(unsigned int c) { return 0.0; }
   virtual Fl_Fontsize size();
-  virtual Fl_Fontsize size_unscaled()=0;
+  virtual Fl_Fontsize size_unscaled() { return 0; }
   virtual void text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h);
-  virtual void text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h)=0;
+  virtual void text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h) {}
   virtual int height();
   virtual int descent();
-  virtual int height_unscaled()=0;
-  virtual int descent_unscaled()=0;
+  virtual int height_unscaled() { return 0; }
+  virtual int descent_unscaled() { return 0; }
   virtual void draw(const char *str, int n, int x, int y);
-  virtual void draw_unscaled(const char *str, int n, int x, int y)=0;
+  virtual void draw_unscaled(const char *str, int n, int x, int y) {}
   virtual void draw(int angle, const char *str, int n, int x, int y);
-  virtual void draw_unscaled(int angle, const char *str, int n, int x, int y)=0;
+  virtual void draw_unscaled(int angle, const char *str, int n, int x, int y) {}
   virtual void rtl_draw(const char* str, int n, int x, int y);
-  virtual void rtl_draw_unscaled(const char* str, int n, int x, int y)=0;
+  virtual void rtl_draw_unscaled(const char* str, int n, int x, int y) {}
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2)=0;
+  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2) {}
   virtual void pie(int x, int y, int w, int h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2)=0;
+  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2) {}
   virtual void line_style(int style, int width=0, char* dashes=0);
-  virtual void line_style_unscaled(int style, float width, char* dashes)=0;
+  virtual void line_style_unscaled(int style, float width, char* dashes) {}
   void draw_image_rescale(void *buf, Fl_Draw_Image_Cb cb, int X, int Y, int W, int H, int D, int L, bool mono, float s);
-  virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0)=0;
-  virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3)=0;
+  virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
+  virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
-  virtual void draw_image_mono_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l)=0;
+  virtual void draw_image_mono_unscaled(const uchar* buf, int x, int y, int w, int h, int d, int l) {}
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
-  virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1)=0;
+  virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 
   void transformed_vertex(double xf, double yf);
-  virtual void transformed_vertex0(float x, float y)=0;
+  virtual void transformed_vertex0(float x, float y) {}
   void vertex(double x, double y);
 };
 #endif // FL_DOXYGEN

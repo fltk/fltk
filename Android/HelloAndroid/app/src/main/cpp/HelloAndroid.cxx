@@ -35,7 +35,7 @@ Fl_Button *btn;
 #include <string.h>
 #include <math.h>
 
-#define  LOG_TAG    "libplasma"
+#define  LOG_TAG    "HelloFLTK"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -521,8 +521,7 @@ void android_main(struct android_app* state) {
     stats_init(&engine.stats);
 
     win = new Fl_Window(10, 10, 600, 400, "Hallo");
-    btn = new Fl_Button(190, 200, 220, 35, "Hello, world!");
-    btn = new Fl_Button(190, 240, 220, 35, "O/\\!*()|");
+    btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
     win->show();
 
 

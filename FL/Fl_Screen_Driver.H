@@ -70,37 +70,37 @@ public:
   virtual void display(const char *disp);
   virtual int visual(int flags);
   // --- screen configuration
-  virtual void init() = 0;
-  virtual int x() = 0;
-  virtual int y() = 0;
-  virtual int w() = 0;
-  virtual int h() = 0;
+  virtual void init() {}
+  virtual int x() { return 0; }
+  virtual int y() { return 0; }
+  virtual int w() { return 800; } // default, override in driver!
+  virtual int h() { return 600; } // default, override in driver!
   virtual int screen_count();
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) = 0;
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) { X=0; Y=0; W=800; H=600; }
   void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
   virtual int screen_num(int x, int y);
   virtual int screen_num(int x, int y, int w, int h);
-  virtual void screen_dpi(float &h, float &v, int n=0) = 0;
+  virtual void screen_dpi(float &h, float &v, int n=0) { h=72; v=72; } // override in driver!
   void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) = 0;
+  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) { screen_xywh(X, Y, W, H, n); }
   // --- audible output
-  virtual void beep(int type) = 0;
+  virtual void beep(int type) { }
   // --- global events
-  virtual void flush() = 0;
-  virtual double wait(double time_to_wait) = 0;
-  virtual int ready() = 0;
-  virtual void grab(Fl_Window* win) = 0;
+  virtual void flush() { } // must override
+  virtual double wait(double time_to_wait) { return 0.0; } // must override
+  virtual int ready() { return 0; } // must override
+  virtual void grab(Fl_Window* win) { }
   // --- global colors
   /* the default implementation of parse_color() may be enough */
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
-  virtual void get_system_colors() = 0;
+  virtual void get_system_colors() { }
   virtual const char *get_system_scheme();
   // --- global timers
-  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) = 0;
-  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) = 0;
-  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
-  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) = 0;
+  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) { }
+  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) { }
+  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) { return 0; }
+  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) { }
 
   static int secret_input_character;
   /* Implement to indicate whether complex text input may involve marked text.
