@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
      compileSdkVersion 25
 
      defaultConfig {
-         applicationId 'com.example.native_plasma'
+         applicationId 'org.fltk.android_hello'
          minSdkVersion 14
          targetSdkVersion 25
      }
