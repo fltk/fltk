@@ -198,90 +198,6 @@ static void init_tables(void)
     init_angles();
 }
 
-static void fill_plasma(ANativeWindow_Buffer* buffer, double  t)
-{
-    Fixed yt1 = FIXED_FROM_FLOAT(t/1230.);
-    Fixed yt2 = yt1;
-    Fixed xt10 = FIXED_FROM_FLOAT(t/3000.);
-    Fixed xt20 = xt10;
-
-#define  YT1_INCR   FIXED_FROM_FLOAT(1/100.)
-#define  YT2_INCR   FIXED_FROM_FLOAT(1/163.)
-
-    void* pixels = buffer->bits;
-    //LOGI("width=%d height=%d stride=%d format=%d", buffer->width, buffer->height,
-    //        buffer->stride, buffer->format);
-
-    int  yy;
-    for (yy = 0; yy < buffer->height; yy++) {
-        uint16_t*  line = (uint16_t*)pixels;
-        Fixed      base = fixed_sin(yt1) + fixed_sin(yt2);
-        Fixed      xt1 = xt10;
-        Fixed      xt2 = xt20;
-
-        yt1 += YT1_INCR;
-        yt2 += YT2_INCR;
-
-#define  XT1_INCR  FIXED_FROM_FLOAT(1/173.)
-#define  XT2_INCR  FIXED_FROM_FLOAT(1/242.)
-
-#if OPTIMIZE_WRITES
-        /* optimize memory writes by generating one aligned 32-bit store
-         * for every pair of pixels.
-         */
-        uint16_t*  line_end = line + buffer->width;
-
-        if (line < line_end) {
-            if (((uint32_t)(uintptr_t)line & 3) != 0) {
-                Fixed ii = base + fixed_sin(xt1) + fixed_sin(xt2);
-
-                xt1 += XT1_INCR;
-                xt2 += XT2_INCR;
-
-                line[0] = palette_from_fixed(ii >> 2);
-                line++;
-            }
-
-            while (line + 2 <= line_end) {
-                Fixed i1 = base + fixed_sin(xt1) + fixed_sin(xt2);
-                xt1 += XT1_INCR;
-                xt2 += XT2_INCR;
-
-                Fixed i2 = base + fixed_sin(xt1) + fixed_sin(xt2);
-                xt1 += XT1_INCR;
-                xt2 += XT2_INCR;
-
-                uint32_t  pixel = ((uint32_t)palette_from_fixed(i1 >> 2) << 16) |
-                                   (uint32_t)palette_from_fixed(i2 >> 2);
-
-                ((uint32_t*)line)[0] = pixel;
-                line += 2;
-            }
-
-            if (line < line_end) {
-                Fixed ii = base + fixed_sin(xt1) + fixed_sin(xt2);
-                line[0] = palette_from_fixed(ii >> 2);
-                line++;
-            }
-        }
-#else /* !OPTIMIZE_WRITES */
-        int xx;
-        for (xx = 0; xx < buffer->width; xx++) {
-
-            Fixed ii = base + fixed_sin(xt1) + fixed_sin(xt2);
-
-            xt1 += XT1_INCR;
-            xt2 += XT2_INCR;
-
-            line[xx] = palette_from_fixed(ii / 4);
-        }
-#endif /* !OPTIMIZE_WRITES */
-
-        // go to next line
-        pixels = (uint16_t*)pixels + buffer->stride;
-    }
-}
-
 /* simple stats management */
 typedef struct {
     double  renderTime;
@@ -410,15 +326,10 @@ static void engine_draw_frame(struct engine* engine) {
     time_ms -= start_ms;
 
     /* Now fill the values with a nice little plasma */
-#if 0
-    fill_plasma(&buffer, time_ms);
-#else
-//    LOGE("Fl::flush()");
     gAGraphicsBuffer = &buffer;
     Fl::damage(FL_DAMAGE_ALL);
     win->redraw();
     Fl::flush();
-#endif
 
     ANativeWindow_unlockAndPost(engine->app->window);
 

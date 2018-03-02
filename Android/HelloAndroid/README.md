@@ -12,7 +12,7 @@ Getting Started
 1. [Download Android Studio](http://developer.android.com/sdk/index.html)
 1. Launch Android Studio.
 1. Open the Android directory inside the FLTK directory.
-1. Load the Android Studio project in the HelloAndroid directory.
+1. Open the AndroidStudio project by loading the HelloAndroid directory.
 1. Click *Run/Run 'app'*.
 
 Support
