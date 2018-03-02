@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Font.H 12650 2018-02-07 15:34:44Z manolo $"
+// "$Id$"
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
@@ -48,5 +48,5 @@ extern FL_EXPORT Fl_Fontdesc *fl_fonts; // the table
 #endif
 
 //
-// End of "$Id: Fl_Font.H 12650 2018-02-07 15:34:44Z manolo $".
+// End of "$Id$".
 //

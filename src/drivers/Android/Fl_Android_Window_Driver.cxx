@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Window_Driver.cxx 12641 2018-01-31 21:17:17Z AlbrechtS $"
+// "$Id$"
 //
 // Definition of Apple Cocoa window driver.
 //
@@ -728,5 +728,5 @@ void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
 #endif
 
 //
-// End of "$Id: Fl_Android_Window_Driver.cxx 12641 2018-01-31 21:17:17Z AlbrechtS $".
+// End of "$Id$".
 //

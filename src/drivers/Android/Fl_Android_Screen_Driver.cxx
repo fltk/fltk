@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Screen_Driver.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $"
+// "$Id$"
 //
 // Windows screen interface for the Fast Light Tool Kit (FLTK).
 //
@@ -1102,5 +1102,5 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState,
 
 
 //
-// End of "$Id: Fl_Android_Screen_Driver.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $".
+// End of "$Id$".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Image_Surface_Driver.cxx 12653 2018-02-09 13:48:22Z manolo $"
+// "$Id$"
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
@@ -117,5 +117,5 @@ void Fl_GDI_Image_Surface_Driver::end_current_(Fl_Surface_Device*)
 #endif
 
 //
-// End of "$Id: Fl_Android_Image_Surface_Driver.cxx 12653 2018-02-09 13:48:22Z manolo $".
+// End of "$Id$".
 //

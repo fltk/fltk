@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Screen_Driver.H 12655 2018-02-09 14:39:42Z AlbrechtS $"
+// "$Id$"
 //
 // Definition of Windows screen interface
 // for the Fast Light Tool Kit (FLTK).
@@ -473,5 +473,5 @@ extern void android_main(struct android_app* app);
 #endif // FL_WINAPI_SCREEN_DRIVER_H
 
 //
-// End of "$Id: Fl_Android_Screen_Driver.H 12655 2018-02-09 14:39:42Z AlbrechtS $".
+// End of "$Id$".
 //

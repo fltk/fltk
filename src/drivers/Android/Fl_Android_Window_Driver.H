@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Window_Driver.H 12668 2018-02-16 16:24:32Z manolo $"
+// "$Id$"
 //
 // Definition of Apple Cocoa window driver
 // for the Fast Light Tool Kit (FLTK).
@@ -140,5 +140,5 @@ public:
 #endif // FL_WINAPI_WINDOW_DRIVER_H
 
 //
-// End of "$Id: Fl_Android_Window_Driver.H 12668 2018-02-16 16:24:32Z manolo $".
+// End of "$Id$".
 //

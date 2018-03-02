@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Graphics_Driver.H 12656 2018-02-09 16:59:34Z manolo $"
+// "$Id$"
 //
 // Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
@@ -248,5 +248,5 @@ public:
 #endif // FL_GDI_GRAPHICS_DRIVER_H
 
 //
-// End of "$Id: Fl_Android_Graphics_Driver.H 12656 2018-02-09 16:59:34Z manolo $".
+// End of "$Id$".
 //

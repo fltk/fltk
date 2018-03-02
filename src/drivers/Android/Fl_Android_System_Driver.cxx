@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_System_Driver.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $"
+// "$Id$"
 //
 // Definition of Apple Darwin system driver.
 //
@@ -943,5 +943,5 @@ void Fl_WinAPI_System_Driver::gettime(time_t *sec, int *usec) {
 #endif
 
 //
-// End of "$Id: Fl_Android_System_Driver.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $".
+// End of "$Id$".
 //

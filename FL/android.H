@@ -1,5 +1,5 @@
 //
-// "$Id: android.H 12643 2018-01-31 22:49:52Z AlbrechtS $"
+// "$Id$"
 //
 // Template header file for the Fast Light Tool Kit (FLTK).
 //
@@ -34,5 +34,5 @@ typedef void *Window; // used by fl_find(), fl_xid() and class Fl_X
 extern void *fl_gc;
 
 //
-// End of "$Id: android.H 12643 2018-01-31 22:49:52Z AlbrechtS $".
+// End of "$Id$".
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_Graphics_Driver.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $"
+// "$Id$"
 //
 // Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
 //
@@ -488,5 +488,5 @@ void Fl_GDI_Graphics_Driver::set_current_() {
 #endif
 
 //
-// End of "$Id: Fl_Android_Graphics_Driver.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $".
+// End of "$Id$".
 //

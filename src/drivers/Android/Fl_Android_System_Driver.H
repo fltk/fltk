@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Android_System_Driver.H 12655 2018-02-09 14:39:42Z AlbrechtS $"
+// "$Id$"
 //
 // Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
@@ -125,5 +125,5 @@ public:
 #endif // FL_WINAPI_SYSTEM_DRIVER_H
 
 //
-// End of "$Id: Fl_Android_System_Driver.H 12655 2018-02-09 14:39:42Z AlbrechtS $".
+// End of "$Id$".
 //
