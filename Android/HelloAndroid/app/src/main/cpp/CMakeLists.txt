@@ -16,18 +16,20 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+set(FLTK_DIR ../../../../../..)
+
 # FIXME: add as a second argument the binary build dir
 # so that the first argument can link directly to FLTK
 # instead of the fltk symlink, which is bad for SVN
-add_subdirectory(../../../../../../ "${CMAKE_CURRENT_BINARY_DIR}/fltk" EXCLUDE_FROM_ALL)
+add_subdirectory(${FLTK_DIR}/ "${CMAKE_CURRENT_BINARY_DIR}/fltk" EXCLUDE_FROM_ALL)
 
 # now build app's shared lib
 add_library(android-hello SHARED
     HelloAndroid.cxx)
 
 target_include_directories(android-hello PRIVATE 
-    /Users/matt/dev/fltk-1.4.svn
-    /Users/matt/dev/fltk-1.4.svn/Android)
+    ${FLTK_DIR}/
+    ${FLTK_DIR}/Android/)
 
 # Export ANativeActivity_onCreate(), 
 # Refer to: https://github.com/android-ndk/ndk/issues/381.
