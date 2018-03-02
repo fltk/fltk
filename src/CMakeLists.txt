@@ -292,6 +292,26 @@ elseif (APPLE)
     drivers/Quartz/Fl_Font.H
   )
 
+elseif (ANDROID)
+
+  # Android
+
+  set (DRIVER_FILES
+    drivers/Android/Fl_Android_Graphics_Driver.cxx
+    drivers/Android/Fl_Android_Window_Driver.cxx
+    drivers/Android/Fl_Android_Screen_Driver.cxx
+    drivers/Android/Fl_Android_System_Driver.cxx
+    drivers/Android/Fl_Android_Image_Surface_Driver.cxx
+  )
+  set (DRIVER_HEADER_FILES
+    drivers/Android/Fl_Android_System_Driver.H
+    drivers/Android/Fl_Android_Screen_Driver.H
+    drivers/Android/Fl_Android_Window_Driver.H
+    drivers/Android/Fl_Android_Graphics_Driver.H
+    drivers/Android/Fl_Font.H
+  )
+
+
 else ()
 
   # Windows (GDI)
