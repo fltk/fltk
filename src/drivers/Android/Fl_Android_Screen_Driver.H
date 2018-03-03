@@ -28,11 +28,17 @@
 #include <FL/Fl_Screen_Driver.H>
 //#include <windows.h>
 
+extern void (*fl_unlock_function)();
+extern void (*fl_lock_function)();
+
+
 class Fl_Window;
 
 
 class FL_EXPORT Fl_Android_Screen_Driver : public Fl_Screen_Driver 
 {
+private:
+  int handle_queued_events(double time_to_wait);
 
 #if 0
 
@@ -74,7 +80,9 @@ public:
   virtual void beep(int type);
   // --- global events
   virtual void flush();
+#endif
   virtual double wait(double time_to_wait);
+#if 0
   virtual int ready();
   virtual void grab(Fl_Window* win);
   // --- global colors

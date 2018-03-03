@@ -27,6 +27,20 @@
 #include <FL/fl_ask.H>
 #include <stdio.h>
 
+#include <android/log.h>
+
+#define  LOG_TAG    "FLTK"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define  LOGV(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
+static struct android_app* gAndroidApp = 0L;
+
+static void nothing() {}
+void (*fl_unlock_function)() = nothing;
+void (*fl_lock_function)() = nothing;
+
 #if 0
 
 // these are set by Fl::args() and override any system colors: from Fl_get_system_colors.cxx
@@ -52,6 +66,102 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
   return new Fl_Android_Screen_Driver();
 }
+
+int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
+{
+/*
+  int ALooper_pollAll	(	int 	timeoutMillis,
+                          int * 	outFd,
+                          int * 	outEvents,
+                          void ** 	outData
+  )
+
+  struct engine engine;
+
+  memset(&engine, 0, sizeof(engine));
+  state->userData = &engine;
+  state->onAppCmd = engine_handle_cmd;
+  state->onInputEvent = engine_handle_input;
+  engine.app = state;
+
+  struct timespec now;
+  clock_gettime(CLOCK_MONOTONIC, &now);
+  start_ms = (((int64_t)now.tv_sec)*1000000000LL + now.tv_nsec)/1000000;
+
+  win = new Fl_Window(10, 10, 600, 400, "Hallo");
+  btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
+  win->show();
+
+
+  // loop waiting for stuff to do.
+
+  while (1) {
+    // Read all pending events.
+    int ident;
+    int events;
+    struct android_poll_source* source;
+
+    // If not animating, we will block forever waiting for events.
+    // If animating, we loop until all events are read, then continue
+    // to draw the next frame of animation.
+    while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+                                  (void**)&source)) >= 0) {
+
+      // Process this event.
+      if (source != NULL) {
+        source->process(state, source);
+      }
+
+      // Check if we are exiting.
+      if (state->destroyRequested != 0) {
+        LOGI("Engine thread destroy requested!");
+        engine_term_display(&engine);
+        return;
+      }
+    }
+
+    if (engine.animating) {
+      engine_draw_frame(&engine);
+    }
+  }
+  */
+  return -1;
+}
+
+
+double Fl_Android_Screen_Driver::wait(double time_to_wait)
+{
+  Fl::run_checks();
+  static int in_idle = 0;
+  if (Fl::idle) {
+    if (!in_idle) {
+      in_idle = 1;
+      Fl::idle();
+      in_idle = 0;
+    }
+    // the idle function may turn off idle, we can then wait:
+    if (Fl::idle) time_to_wait = 0.0;
+  }
+
+  if (time_to_wait==0.0) {
+    // if there is no wait time, handle the event and show the results right away
+    fl_unlock_function();
+    handle_queued_events(time_to_wait);
+    fl_lock_function();
+    Fl::flush();
+  } else {
+    // if there is wait time, show the pending changes and then handle the events
+    Fl::flush();
+    if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
+      time_to_wait = 0.0;
+    fl_unlock_function();
+    handle_queued_events(time_to_wait);
+    fl_lock_function();
+  }
+
+  return 0.0; // FIXME: return the remaining time to reach 'time_to_wait'
+}
+
 
 #if 0
 
@@ -682,19 +792,6 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
 #include <unistd.h>
 #include <sys/resource.h>
 
-//#include "android_native_app_glue.h"
-#include <android/log.h>
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "threaded_app", __VA_ARGS__))
-#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "threaded_app", __VA_ARGS__))
-
-/* For debug builds, always enable the debug traces in this library */
-#ifndef NDEBUG
-#  define LOGV(...)  ((void)__android_log_print(ANDROID_LOG_VERBOSE, "threaded_app", __VA_ARGS__))
-#else
-#  define LOGV(...)  ((void)0)
-#endif
-
 static void free_saved_state(struct android_app* android_app) {
     pthread_mutex_lock(&android_app->mutex);
     if (android_app->savedState != NULL) {
@@ -902,6 +999,7 @@ static void* android_app_entry(void* param) {
 static struct android_app* android_app_create(ANativeActivity* activity,
         void* savedState, size_t savedStateSize) {
     struct android_app* android_app = (struct android_app*)malloc(sizeof(struct android_app));
+    gAndroidApp = android_app;
     memset(android_app, 0, sizeof(struct android_app));
     android_app->activity = activity;
 

@@ -72,6 +72,7 @@ static void engine_draw_frame(struct engine* engine)
     Fl::flush();
 
     ANativeWindow_unlockAndPost(engine->app->window);
+    gAGraphicsBuffer = 0L;
 }
 
 static void engine_term_display(struct engine* engine) {
