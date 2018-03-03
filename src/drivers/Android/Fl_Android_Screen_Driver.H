@@ -22,8 +22,8 @@
  \brief Definition of Windows screen interface.
  */
 
-#ifndef FL_WINAPI_SCREEN_DRIVER_H
-#define FL_WINAPI_SCREEN_DRIVER_H
+#ifndef FL_ANDROID_SCREEN_DRIVER_H
+#define FL_ANDROID_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
 //#include <windows.h>
@@ -478,7 +478,7 @@ extern void android_main(struct android_app* app);
 #endif /* _ANDROID_NATIVE_APP_GLUE_H */
 
 
-#endif // FL_WINAPI_SCREEN_DRIVER_H
+#endif // FL_ANDROID_SCREEN_DRIVER_H
 
 //
 // End of "$Id$".
