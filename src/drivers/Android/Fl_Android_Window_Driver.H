@@ -1,10 +1,10 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa window driver
+// Definition of Android window driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,12 +18,12 @@
 //
 
 /**
- \file Fl_WinAPI_Window_Driver.H
- \brief Definition of Windows window driver.
+ \file Fl_Android_Window_Driver.H
+ \brief Definition of Android window driver.
  */
 
-#ifndef FL_WINAPI_WINDOW_DRIVER_H
-#define FL_WINAPI_WINDOW_DRIVER_H
+#ifndef FL_ANDROID_WINDOW_DRIVER_H
+#define FL_ANDROID_WINDOW_DRIVER_H
 
 #include <FL/Fl_Window_Driver.H>
 //#include <windows.h>
@@ -137,7 +137,7 @@ public:
 };
 
 
-#endif // FL_WINAPI_WINDOW_DRIVER_H
+#endif // FL_ANDROID_WINDOW_DRIVER_H
 
 //
 // End of "$Id$".

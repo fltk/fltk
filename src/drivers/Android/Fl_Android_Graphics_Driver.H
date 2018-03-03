@@ -1,10 +1,10 @@
 //
 // "$Id$"
 //
-// Definition of classes  Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// Definition of classes Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,15 +18,14 @@
 //
 
 /**
- \file Fl_GDI_Graphics_Driver.H
- \brief Definition of Windows GDI graphics driver.
+ \file Fl_Android_Graphics_Driver.H
+ \brief Definition of Android graphics driver.
  */
 
-#ifndef FL_GDI_GRAPHICS_DRIVER_H
-#define FL_GDI_GRAPHICS_DRIVER_H
+#ifndef FL_ANDROID_GRAPHICS_DRIVER_H
+#define FL_ANDROID_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
-//#include <windows.h>
 #include <limits.h>
 
 #if 0
@@ -222,10 +221,7 @@ protected:
 
 
 /**
-  The graphics driver used when printing on Windows.
-
-  This class is implemented only on the Windows platform.
-  It is extremely similar to Fl_GDI_Graphics_Driver.
+  The graphics driver used when printing on Android.
 */
 class FL_EXPORT Fl_Android_Printer_Graphics_Driver : public Fl_Android_Graphics_Driver {
 
@@ -245,7 +241,7 @@ public:
 };
 
 
-#endif // FL_GDI_GRAPHICS_DRIVER_H
+#endif // FL_ANDROID_GRAPHICS_DRIVER_H
 
 //
 // End of "$Id$".

@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
+// Definition of Android system driver for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2018 by Bill Spitzak and others.
 //
@@ -17,12 +17,12 @@
 //
 
 /**
- \file Fl_WinAPI_System_Driver.H
- \brief Definition of Windows system driver.
+ \file Fl_Android_System_Driver.H
+ \brief Definition of Android system driver.
  */
 
-#ifndef FL_WINAPI_SYSTEM_DRIVER_H
-#define FL_WINAPI_SYSTEM_DRIVER_H
+#ifndef FL_ANDROID_SYSTEM_DRIVER_H
+#define FL_ANDROID_SYSTEM_DRIVER_H
 
 #include <FL/Fl_System_Driver.H>
 #include <stdarg.h>
@@ -122,7 +122,7 @@ public:
 #endif
 };
 
-#endif // FL_WINAPI_SYSTEM_DRIVER_H
+#endif // FL_ANDROID_SYSTEM_DRIVER_H
 
 //
 // End of "$Id$".

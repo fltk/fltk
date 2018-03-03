@@ -16,6 +16,7 @@
  */
 
 //#include <android_native_app_glue.h>
+#include <src/drivers/Android/Fl_Android_Application.H>
 #include <src/drivers/Android/Fl_Android_Screen_Driver.H>
 
 #include <FL/Fl_Window.H>

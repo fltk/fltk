@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// Definition of Apple Cocoa window driver.
+// Definition of Android window driver.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
