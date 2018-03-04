@@ -35,8 +35,6 @@
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define  LOGV(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 
-static struct android_app* gAndroidApp = 0L;
-
 static void nothing() {}
 void (*fl_unlock_function)() = nothing;
 void (*fl_lock_function)() = nothing;

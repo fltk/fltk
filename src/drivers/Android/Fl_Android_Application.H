@@ -44,19 +44,33 @@ extern "C" {
 #endif
 
 /**
- * The native activity interface provided by <android/native_activity.h>
- * is based on a set of application-provided callbacks that will be called
+ * Static class that keeps often used data for global access.
+ *
+ * This class holds global variables that are needed by the Android
+ * drivers.
+ *
+ * It also contains the interface to the Android Native Activity.
+ * On launch, it creates a main thread and communication pipe to
+ * the Activity. All FLTK code will run in that thread. Activity
+ * events can be polled from the Screen driver using the provided
+ * Android Looper, but must also be forwarded to this class.
+ *
+ * All other events are handled in Fl_Android_Screen_Driver
+ *
+ * This code is based on the native activity interface
+ * provided by <android/native_activity.h>. It is based on a set
+ * of application-provided callbacks that will be called
  * by the Activity's main thread when certain events occur.
  *
  * This means that each one of this callbacks _should_ _not_ block, or they
  * risk having the system force-close the application. This programming
  * model is direct, lightweight, but constraining.
  *
- * The 'android_native_app_glue' static library is used to provide a different
+ * The 'Fl_Android_Application' interface is used to provide a different
  * execution model where the application can implement its own main event
  * loop in a different thread instead. Here's how it works:
  *
- * 1/ The application must provide a function named "android_main()" that
+ * 1/ The application must provide a function named "int main(argc, argv)" that
  *    will be called when the activity is created, in a new thread that is
  *    distinct from the activity's main thread.
  *
@@ -92,9 +106,98 @@ extern "C" {
  *
  * See the sample named "native-activity" that comes with the NDK with a
  * full usage example.  Also look at the JavaDoc of NativeActivity.
- */
 
-struct android_app;
+ */
+class Fl_Android_Application
+{
+public:
+  static void log_e(const char *text, ...);
+  static void log_w(const char *text, ...);
+  static void log_i(const char *text, ...);
+  static void log_v(const char *text, ...);
+
+  static int8_t read_cmd();
+  static void pre_exec_cmd(int8_t cmd);
+  static void post_exec_cmd(int8_t cmd);
+
+  static ANativeWindow *get_native_window() { return pNativeWindow; }
+  static int destroy_requested() { return pDestroyRequested; }
+  static void set_on_app_cmd(void (*cmd)(int32_t cmd)) { pOnAppCmd = cmd; }
+  static void set_on_input_event(int32_t (*cmd)(AInputEvent* event)) { pOnInputEvent = cmd; }
+
+protected:
+  static void free_saved_state();
+  static void print_cur_config();
+  static void destroy();
+  static void process_input(struct android_poll_source* source);
+  static void process_cmd(struct android_poll_source* source);
+  static void* thread_entry(void* param);
+
+  static ANativeActivity *pActivity;
+  static AConfiguration* pConfig;
+  static void* pSavedState;
+  static size_t pSavedStateSize;
+  static ALooper* pLooper;
+  static AInputQueue* pInputQueue;
+  static ANativeWindow* pNativeWindow;
+  static int pActivityState;
+  static int pDestroyRequested;
+  static void (*pOnAppCmd)(int32_t cmd);
+  static int32_t (*pOnInputEvent)(AInputEvent* event);
+
+
+  // ---- no need to make these visible to the outside ----
+  static pthread_mutex_t pMutex;
+  static pthread_cond_t pCond;
+  static int pMsgRead;
+  static int pMsgWrite;
+  static pthread_t pThread;
+  static struct android_poll_source pCmdPollSource;
+  static struct android_poll_source pInputPollSource;
+  static int pRunning;
+  static int pStateSaved;
+  static int pDestroyed;
+  static int pRedrawNeeded;
+  static AInputQueue* pPendingInputQueue;
+  static ANativeWindow* pPendingWindow;
+  static ARect pPendingContentRect;
+};
+
+
+class Fl_Android_Activity : public Fl_Android_Application
+{
+public:
+  static void create(ANativeActivity* activity, void* savedState, size_t savedStateSize);
+
+private:
+  static void set_activity(ANativeActivity *a) { pActivity = a; }
+  static void set_callbacks();
+
+  // ---- Android Native Activity interface
+  static void write_cmd(int8_t cmd);
+  static void set_input(AInputQueue* inputQueue);
+  static void set_window(ANativeWindow* window);
+  static void set_activity_state(int8_t cmd);
+  static void free();
+
+  // ---- Android Native Activity callbacks ----
+  static void onContentRectChanged(ANativeActivity *activity, const ARect *rect);
+  static void onNativeWindowRedrawNeeded(ANativeActivity *activity, ANativeWindow *window);
+  static void onNativeWindowResized(ANativeActivity *activity, ANativeWindow *window);
+  static void onDestroy(ANativeActivity* activity);
+  static void onStart(ANativeActivity* activity);
+  static void onResume(ANativeActivity* activity);
+  static void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen);
+  static void onPause(ANativeActivity* activity);
+  static void onStop(ANativeActivity* activity);
+  static void onConfigurationChanged(ANativeActivity* activity);
+  static void onLowMemory(ANativeActivity* activity);
+  static void onWindowFocusChanged(ANativeActivity* activity, int focused);
+  static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window);
+  static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window);
+  static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue);
+  static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue);
+};
 
 /**
  * Data associated with an ALooper fd that will be returned as the "outData"
@@ -105,96 +208,9 @@ struct android_poll_source {
   // LOOPER_ID_INPUT.
   int32_t id;
 
-  // The android_app this ident is associated with.
-  struct android_app* app;
-
   // Function to call to perform the standard processing of data from
   // this source.
-  void (*process)(struct android_app* app, struct android_poll_source* source);
-};
-
-/**
- * This is the interface for the standard glue code of a threaded
- * application.  In this model, the application's code is running
- * in its own thread separate from the main thread of the process.
- * It is not required that this thread be associated with the Java
- * VM, although it will need to be in order to make JNI calls any
- * Java objects.
- */
-struct android_app {
-  // The application can place a pointer to its own state object
-  // here if it likes.
-  void* userData;
-
-  // Fill this in with the function to process main app commands (APP_CMD_*)
-  void (*onAppCmd)(struct android_app* app, int32_t cmd);
-
-  // Fill this in with the function to process input events.  At this point
-  // the event has already been pre-dispatched, and it will be finished upon
-  // return.  Return 1 if you have handled the event, 0 for any default
-  // dispatching.
-  int32_t (*onInputEvent)(struct android_app* app, AInputEvent* event);
-
-  // The ANativeActivity object instance that this app is running in.
-  ANativeActivity* activity;
-
-  // The current configuration the app is running in.
-  AConfiguration* config;
-
-  // This is the last instance's saved state, as provided at creation time.
-  // It is NULL if there was no state.  You can use this as you need; the
-  // memory will remain around until you call android_app_exec_cmd() for
-  // APP_CMD_RESUME, at which point it will be freed and savedState set to NULL.
-  // These variables should only be changed when processing a APP_CMD_SAVE_STATE,
-  // at which point they will be initialized to NULL and you can malloc your
-  // state and place the information here.  In that case the memory will be
-  // freed for you later.
-  void* savedState;
-  size_t savedStateSize;
-
-  // The ALooper associated with the app's thread.
-  ALooper* looper;
-
-  // When non-NULL, this is the input queue from which the app will
-  // receive user input events.
-  AInputQueue* inputQueue;
-
-  // When non-NULL, this is the window surface that the app can draw in.
-  ANativeWindow* window;
-
-  // Current content rectangle of the window; this is the area where the
-  // window's content should be placed to be seen by the user.
-  ARect contentRect;
-
-  // Current state of the app's activity.  May be either APP_CMD_START,
-  // APP_CMD_RESUME, APP_CMD_PAUSE, or APP_CMD_STOP; see below.
-  int activityState;
-
-  // This is non-zero when the application's NativeActivity is being
-  // destroyed and waiting for the app thread to complete.
-  int destroyRequested;
-
-  // -------------------------------------------------
-  // Below are "private" implementation of the glue code.
-
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
-
-  int msgread;
-  int msgwrite;
-
-  pthread_t thread;
-
-  struct android_poll_source cmdPollSource;
-  struct android_poll_source inputPollSource;
-
-  int running;
-  int stateSaved;
-  int destroyed;
-  int redrawNeeded;
-  AInputQueue* pendingInputQueue;
-  ANativeWindow* pendingWindow;
-  ARect pendingContentRect;
+  void (*process)(struct android_poll_source* source);
 };
 
 enum {
@@ -325,40 +341,10 @@ enum {
 };
 
 /**
- * Call when ALooper_pollAll() returns LOOPER_ID_MAIN, reading the next
- * app command message.
- */
-int8_t android_app_read_cmd(struct android_app* android_app);
-
-/**
- * Call with the command returned by android_app_read_cmd() to do the
- * initial pre-processing of the given command.  You can perform your own
- * actions for the command after calling this function.
- */
-void android_app_pre_exec_cmd(struct android_app* android_app, int8_t cmd);
-
-/**
- * Call with the command returned by android_app_read_cmd() to do the
- * final post-processing of the given command.  You must have done your own
- * actions for the command before calling this function.
- */
-void android_app_post_exec_cmd(struct android_app* android_app, int8_t cmd);
-
-/**
- * Dummy function that used to be used to prevent the linker from stripping app
- * glue code. No longer necessary, since __attribute__((visibility("default")))
- * does this for us.
- */
-__attribute__((
-deprecated("Calls to app_dummy are no longer necessary. See "
-"https://github.com/android-ndk/ndk/issues/381."))) void
-app_dummy();
-
-/**
  * This is the function that application code must implement, representing
  * the main entry to the app.
  */
-extern void android_main(struct android_app* app);
+extern int main(int argc, char **argv);
 
 #ifdef __cplusplus
 }

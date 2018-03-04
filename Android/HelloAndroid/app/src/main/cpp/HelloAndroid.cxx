@@ -47,22 +47,23 @@ Fl_Button *btn;
 // ----------------------------------------------------------------------
 
 struct engine {
-    struct android_app* app;
     int animating;
 };
+
+struct engine engine = { 0 };
 
 ANativeWindow_Buffer* gAGraphicsBuffer = 0;
 
 static int64_t start_ms;
-static void engine_draw_frame(struct engine* engine)
+static void engine_draw_frame()
 {
-    if (engine->app->window == NULL) {
+    if (Fl_Android_Application::get_native_window() == NULL) {
         // No window.
         return;
     }
 
     ANativeWindow_Buffer buffer;
-    if (ANativeWindow_lock(engine->app->window, &buffer, NULL) < 0) {
+    if (ANativeWindow_lock(Fl_Android_Application::get_native_window(), &buffer, NULL) < 0) {
         LOGW("Unable to lock window buffer");
         return;
     }
@@ -72,20 +73,19 @@ static void engine_draw_frame(struct engine* engine)
     win->redraw();
     Fl::flush();
 
-    ANativeWindow_unlockAndPost(engine->app->window);
+    ANativeWindow_unlockAndPost(Fl_Android_Application::get_native_window());
     gAGraphicsBuffer = 0L;
 }
 
-static void engine_term_display(struct engine* engine) {
-    engine->animating = 0;
+static void engine_term_display() {
+    engine.animating = 0;
 }
 
-static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
-    struct engine* engine = (struct engine*)app->userData;
+static int32_t engine_handle_input(AInputEvent* event) {
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-        engine->animating = 1;
-        Fl::e_x = Fl::e_x_root = AMotionEvent_getX(event, 0) * 600 / ANativeWindow_getWidth(app->window);
-        Fl::e_y = Fl::e_y_root = AMotionEvent_getY(event, 0) * 800 / ANativeWindow_getHeight(app->window);
+        engine.animating = 1;
+        Fl::e_x = Fl::e_x_root = AMotionEvent_getX(event, 0) * 600 / ANativeWindow_getWidth(Fl_Android_Application::get_native_window());
+        Fl::e_y = Fl::e_y_root = AMotionEvent_getY(event, 0) * 800 / ANativeWindow_getHeight(Fl_Android_Application::get_native_window());
         Fl::e_state = FL_BUTTON1;
         Fl::e_keysym = FL_Button+1;
         if (AMotionEvent_getAction(event)==AMOTION_EVENT_ACTION_DOWN) {
@@ -109,15 +109,14 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     return 0;
 }
 
-static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
+static void engine_handle_cmd(int32_t cmd) {
     static int32_t format = WINDOW_FORMAT_RGB_565;
-    struct engine* engine = (struct engine*)app->userData;
     switch (cmd) {
         case APP_CMD_INIT_WINDOW:
-            if (engine->app->window != NULL) {
+            if (Fl_Android_Application::get_native_window() != NULL) {
                 // fill_plasma() assumes 565 format, get it here
-                format = ANativeWindow_getFormat(app->window);
-                ANativeWindow_setBuffersGeometry(app->window,
+                format = ANativeWindow_getFormat(Fl_Android_Application::get_native_window());
+                ANativeWindow_setBuffersGeometry(Fl_Android_Application::get_native_window(),
 #if 1
                               600, //ANativeWindow_getWidth(app->window),
                               800, //ANativeWindow_getHeight(app->window),
@@ -126,12 +125,12 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
                               ANativeWindow_getHeight(app->window),
 #endif
                               WINDOW_FORMAT_RGB_565);
-                engine_draw_frame(engine);
+                engine_draw_frame();
             }
             break;
         case APP_CMD_TERM_WINDOW:
-            engine_term_display(engine);
-            ANativeWindow_setBuffersGeometry(app->window,
+            engine_term_display();
+            ANativeWindow_setBuffersGeometry(Fl_Android_Application::get_native_window(),
 #if 1
                           600, //ANativeWindow_getWidth(app->window),
                           800, //ANativeWindow_getHeight(app->window),
@@ -142,23 +141,21 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
                           format);
             break;
         case APP_CMD_LOST_FOCUS:
-            engine->animating = 0;
-            engine_draw_frame(engine);
+            engine.animating = 0;
+            engine_draw_frame();
             break;
         default: break;
     }
 }
 
 
-void android_main(struct android_app* state)
+int main(int argc, char **argv)
 {
-    struct engine engine;
+  Fl_Android_Application::log_e("App path is %s", argv[0]);
 
     memset(&engine, 0, sizeof(engine));
-    state->userData = &engine;
-    state->onAppCmd = engine_handle_cmd;
-    state->onInputEvent = engine_handle_input;
-    engine.app = state;
+  Fl_Android_Application::set_on_app_cmd(engine_handle_cmd);
+  Fl_Android_Application::set_on_input_event(engine_handle_input);
 
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC, &now);
@@ -185,19 +182,20 @@ void android_main(struct android_app* state)
 
             // Process this event.
             if (source != NULL) {
-                source->process(state, source);
+                source->process(source);
             }
 
             // Check if we are exiting.
-            if (state->destroyRequested != 0) {
+            if (Fl_Android_Application::destroy_requested() != 0) {
                 LOGI("Engine thread destroy requested!");
-                engine_term_display(&engine);
-                return;
+                engine_term_display();
+                return 0;
             }
         }
 
         if (engine.animating) {
-            engine_draw_frame(&engine);
+            engine_draw_frame();
         }
     }
+  return 0;
 }
