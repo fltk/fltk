@@ -23,11 +23,17 @@ AndroidStudio for the first time, use the IDE to download and build the
 FLTK will be installed. Once Native Plasm runs on your emulator or physical
 device, you are ready to install FLTK.
 
-Open the Android/HelloAndroid directory in AndroidStudio. The project should compile and run out of the box.
+- if your host machine runs MSWindows, unzip the file
+  "ide/AndroidStudio3/gradlew.zip" first
+
+- open the "ide/AndroidStudio3/" directory as a project in AndroidStudio
+
+- click "run"; the project should compile and run out of the box
 
 
  DOCUMENT HISTORY
 ==================
 
+Mar 6 2018 - matt: moved project to ide/AndroidStudio3/
 Mar 2 2018 - matt: rewriting Android port and documentation from scratch
 Feb 9 2016 - matt: recreated document with more warnings and active support

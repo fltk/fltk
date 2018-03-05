@@ -29,7 +29,7 @@ add_library(android-hello SHARED
 
 target_include_directories(android-hello PRIVATE 
     ${FLTK_DIR}/
-    ${FLTK_DIR}/Android/)
+    ${FLTK_DIR}/ide/AndroidStudio3/)
 
 # Export ANativeActivity_onCreate(), 
 # Refer to: https://github.com/android-ndk/ndk/issues/381.
