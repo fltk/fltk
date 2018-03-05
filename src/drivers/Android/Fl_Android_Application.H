@@ -121,14 +121,12 @@ public:
   static void post_exec_cmd(int8_t cmd);
 
   static inline ANativeWindow *native_window() { return pNativeWindow; }
-  static inline ANativeWindow_Buffer &graphics_buffer() { return pNativeWindowBuffer; }
+  static inline ANativeWindow_Buffer &graphics_buffer() { return pApplicationWindowBuffer; }
   static int destroy_requested() { return pDestroyRequested; }
   static void set_on_app_cmd(void (*cmd)(int32_t cmd)) { pOnAppCmd = cmd; }
   static void set_on_input_event(int32_t (*cmd)(AInputEvent* event)) { pOnInputEvent = cmd; }
 
-  static bool lock_screen();
-  static void unlock_and_post_screen();
-  static bool screen_is_locked();
+  static void copy_screen();
 
 protected:
   static void free_saved_state();
@@ -138,6 +136,11 @@ protected:
   static void process_cmd(struct android_poll_source* source);
   static void* thread_entry(void* param);
 
+  static void allocate_screen();
+  static bool lock_screen();
+  static void unlock_and_post_screen();
+  static bool screen_is_locked();
+
   static ANativeActivity *pActivity;
   static AConfiguration *pConfig;
   static void *pSavedState;
@@ -146,6 +149,7 @@ protected:
   static AInputQueue *pInputQueue;
   static ANativeWindow *pNativeWindow;
   static ANativeWindow_Buffer pNativeWindowBuffer;
+  static ANativeWindow_Buffer pApplicationWindowBuffer;
   static int pActivityState;
   static int pDestroyRequested;
   static void (*pOnAppCmd)(int32_t cmd);

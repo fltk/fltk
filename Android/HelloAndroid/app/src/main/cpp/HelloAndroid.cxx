@@ -146,6 +146,8 @@ int main(int argc, char **argv)
     btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
     btn->color(FL_LIGHT2);
     win->show();
+  Fl::damage(FL_DAMAGE_ALL);
+  win->redraw();
 
 
     // loop waiting for stuff to do.
@@ -174,11 +176,7 @@ int main(int argc, char **argv)
                 return 0;
             }
         }
-      //Fl::flush();
-
-        if (engine.animating) {
-            engine_draw_frame();
-        }
+        Fl::flush();
     }
   return 0;
 }

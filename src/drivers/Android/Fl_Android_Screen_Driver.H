@@ -58,7 +58,7 @@ protected:
 #endif
 
 public:
-  Fl_Android_Screen_Driver() : Fl_Screen_Driver() { }
+  Fl_Android_Screen_Driver() : Fl_Screen_Driver(), pScreenContentChanged(false) { }
 
 #if 0
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
@@ -118,6 +118,7 @@ public:
   virtual float desktop_scale_factor();
 
 #endif
+  bool pScreenContentChanged;
 
 };
 

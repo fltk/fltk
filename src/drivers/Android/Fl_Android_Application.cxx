@@ -70,6 +70,7 @@ ANativeWindow* Fl_Android_Application::pNativeWindow = 0;
 
 // Use this buffer for direct drawing access
 ANativeWindow_Buffer Fl_Android_Application::pNativeWindowBuffer = { 0 };
+ANativeWindow_Buffer Fl_Android_Application::pApplicationWindowBuffer = { 0 };
 
 // Current state of the app's activity.  May be either APP_CMD_START,
 // APP_CMD_RESUME, APP_CMD_PAUSE, or APP_CMD_STOP; see below.
@@ -367,6 +368,43 @@ void *Fl_Android_Application::thread_entry(void* param)
 }
 
 /**
+ * Allocate memory for our internal screen buffer.
+ *
+ * FIXME: everything is currently hardcoded to an 600x800 resolution
+ * TODO: react to screen changes
+ */
+void Fl_Android_Application::allocate_screen() {
+  pApplicationWindowBuffer.bits = calloc(600*800, 2); // one uint16_t per pixel
+  pApplicationWindowBuffer.width = 600;
+  pApplicationWindowBuffer.height = 800;
+  pApplicationWindowBuffer.stride = 600;
+  pApplicationWindowBuffer.format = WINDOW_FORMAT_RGB_565;
+}
+
+
+#include <FL/fl_draw.H>
+
+void Fl_Android_Application::copy_screen()
+{
+  if (lock_screen()) {
+
+    static int i = 0;
+    fl_color( (i&1) ? FL_RED : FL_GREEN);
+    fl_rectf(i*10, 600+i*10, 50, 50);
+    i++;
+    if (i>10) i = 0;
+
+    // TODO: there are endless possibilities to optimize the following code
+    // We can identify previously written buffers and copy only those pixels
+    // that actually changed.
+    memcpy(pNativeWindowBuffer.bits,
+           pApplicationWindowBuffer.bits,
+           600*800*2);
+    unlock_and_post_screen();
+  }
+}
+
+/**
  * Take ownership of screen memory for gaining write access.
  *
  * If the screen is already locked, it will not be locked again
@@ -386,24 +424,12 @@ bool Fl_Android_Application::lock_screen()
     return false;
   }
 
-  // 190, 200, 280, 35
-  ARect dirty = { .left=190, .top = 200, .right = 290, .bottom = 235 };
-  if (ANativeWindow_lock(pNativeWindow, &pNativeWindowBuffer, &dirty) < 0) {
+  if (ANativeWindow_lock(pNativeWindow, &pNativeWindowBuffer, 0L) < 0) {
     log_w("Unable to lock window buffer: Android won't lock.");
     return false;
   }
-  log_w("Dirty rect is %d %d %d %d", dirty.left, dirty.top, dirty.right, dirty.bottom);
-
-  ANativeWindow_Buffer buf;
-  if (ANativeWindow_lock(pNativeWindow, &buf, &dirty) < 0) {
-    log_w("Unable to lock 2nd window buffer: Android won't lock.");
-    return false;
-  }
-
   return true;
 }
-
-#include <FL/fl_draw.H>
 
 /**
  * Release screen memory ownership and give it back to the system.
@@ -415,12 +441,6 @@ void Fl_Android_Application::unlock_and_post_screen()
 {
   if (!screen_is_locked())
     return;
-
-  static int i = 0;
-  fl_color( (i&1) ? FL_RED : FL_GREEN);
-  fl_rectf(i*10, 700, 50, 50);
-  i++;
-  if (i>10) i = 0;
 
   ANativeWindow_unlockAndPost(pNativeWindow);
   pNativeWindowBuffer.bits = 0L; // avoid any misunderstandings...
@@ -679,11 +699,13 @@ void Fl_Android_Activity::onInputQueueDestroyed(ANativeActivity* activity, AInpu
 void Fl_Android_Activity::create(ANativeActivity* activity, void* savedState,
                                  size_t savedStateSize)
 {
-  static char *FLTK = "FLTK";
+  static const char *FLTK = "FLTK";
   activity->instance = (void*)FLTK;
 
   set_activity(activity);
   set_callbacks();
+
+  allocate_screen(); // TODO: we may need to change this to when the actual screen is allocated
 
   pthread_mutex_init(&pMutex, NULL);
   pthread_cond_init(&pCond, NULL);

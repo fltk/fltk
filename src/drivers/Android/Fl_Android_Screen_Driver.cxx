@@ -372,17 +372,16 @@ void Fl_WinAPI_Screen_Driver::beep(int type)
 #endif
 
 /**
- * On Android, get access to screen memory, then flush(), then
- * release screen memory and post it to the physicla screen.
- *
- * Don't do anything if the screen wasn't previously locked by
- * any Fl_Window_Driver. We would just needlessly repost the same screen.
+ * On Android, we currently write into a memory buffer and copy
+ * the content to the screen.
  */
 void Fl_Android_Screen_Driver::flush()
 {
-  if (Fl_Android_Application::screen_is_locked()) {
-    Fl_Screen_Driver::flush();
-    Fl_Android_Application::unlock_and_post_screen();
+  Fl_Screen_Driver::flush();
+  // FIXME: do this only if anything actually changed on screen!
+  if (pScreenContentChanged) {
+    Fl_Android_Application::copy_screen();
+    pScreenContentChanged = false;
   }
 }
 

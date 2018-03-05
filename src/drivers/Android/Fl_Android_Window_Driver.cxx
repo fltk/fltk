@@ -77,7 +77,7 @@ void Fl_Android_Window_Driver::show()
 
 void Fl_Android_Window_Driver::make_current()
 {
-  Fl_Android_Application::lock_screen();
+  ((Fl_Android_Screen_Driver*)Fl::screen_driver())->pScreenContentChanged = true;
 }
 
 
