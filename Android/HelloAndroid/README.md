@@ -15,6 +15,10 @@ Getting Started
 1. Open the AndroidStudio project by loading the HelloAndroid directory.
 1. Click *Run/Run 'app'*.
 
+Micrososft Windows Users
+------------------------
+The file 'gradlew.zip' must be unzipped before you can use AndroidStudio. It contains the required file 'gradlew.bat'. This was neccessary because some svn setups block anything that looks like an executable file, including files that end in .bat .
+
 Support
 -------
 If you've found an error in these samples, please [file an issue](http://www.fltk.org/str.php). Patches are encouraged, and may be submitted via the same FLTK Bug & Feature system.

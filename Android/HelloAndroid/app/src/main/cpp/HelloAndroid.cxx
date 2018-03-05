@@ -21,7 +21,7 @@
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
-
+#include <FL/Enumerations.H>
 Fl_Window *win;
 Fl_Button *btn;
 
@@ -52,29 +52,14 @@ struct engine {
 
 struct engine engine = { 0 };
 
-ANativeWindow_Buffer* gAGraphicsBuffer = 0;
-
-static int64_t start_ms;
 static void engine_draw_frame()
 {
-    if (Fl_Android_Application::get_native_window() == NULL) {
-        // No window.
-        return;
-    }
-
-    ANativeWindow_Buffer buffer;
-    if (ANativeWindow_lock(Fl_Android_Application::get_native_window(), &buffer, NULL) < 0) {
-        LOGW("Unable to lock window buffer");
-        return;
-    }
-
-    gAGraphicsBuffer = &buffer;
+  //if (Fl_Android_Application::lock_screen()) {
     Fl::damage(FL_DAMAGE_ALL);
     win->redraw();
     Fl::flush();
-
-    ANativeWindow_unlockAndPost(Fl_Android_Application::get_native_window());
-    gAGraphicsBuffer = 0L;
+  // Fl_Android_Application::unlock_and_post_screen();
+  //}
 }
 
 static void engine_term_display() {
@@ -84,8 +69,8 @@ static void engine_term_display() {
 static int32_t engine_handle_input(AInputEvent* event) {
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
         engine.animating = 1;
-        Fl::e_x = Fl::e_x_root = AMotionEvent_getX(event, 0) * 600 / ANativeWindow_getWidth(Fl_Android_Application::get_native_window());
-        Fl::e_y = Fl::e_y_root = AMotionEvent_getY(event, 0) * 800 / ANativeWindow_getHeight(Fl_Android_Application::get_native_window());
+        Fl::e_x = Fl::e_x_root = AMotionEvent_getX(event, 0) * 600 / ANativeWindow_getWidth(Fl_Android_Application::native_window());
+        Fl::e_y = Fl::e_y_root = AMotionEvent_getY(event, 0) * 800 / ANativeWindow_getHeight(Fl_Android_Application::native_window());
         Fl::e_state = FL_BUTTON1;
         Fl::e_keysym = FL_Button+1;
         if (AMotionEvent_getAction(event)==AMOTION_EVENT_ACTION_DOWN) {
@@ -113,10 +98,10 @@ static void engine_handle_cmd(int32_t cmd) {
     static int32_t format = WINDOW_FORMAT_RGB_565;
     switch (cmd) {
         case APP_CMD_INIT_WINDOW:
-            if (Fl_Android_Application::get_native_window() != NULL) {
+            if (Fl_Android_Application::native_window() != NULL) {
                 // fill_plasma() assumes 565 format, get it here
-                format = ANativeWindow_getFormat(Fl_Android_Application::get_native_window());
-                ANativeWindow_setBuffersGeometry(Fl_Android_Application::get_native_window(),
+                format = ANativeWindow_getFormat(Fl_Android_Application::native_window());
+                ANativeWindow_setBuffersGeometry(Fl_Android_Application::native_window(),
 #if 1
                               600, //ANativeWindow_getWidth(app->window),
                               800, //ANativeWindow_getHeight(app->window),
@@ -130,7 +115,7 @@ static void engine_handle_cmd(int32_t cmd) {
             break;
         case APP_CMD_TERM_WINDOW:
             engine_term_display();
-            ANativeWindow_setBuffersGeometry(Fl_Android_Application::get_native_window(),
+            ANativeWindow_setBuffersGeometry(Fl_Android_Application::native_window(),
 #if 1
                           600, //ANativeWindow_getWidth(app->window),
                           800, //ANativeWindow_getHeight(app->window),
@@ -157,12 +142,9 @@ int main(int argc, char **argv)
   Fl_Android_Application::set_on_app_cmd(engine_handle_cmd);
   Fl_Android_Application::set_on_input_event(engine_handle_input);
 
-    struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC, &now);
-    start_ms = (((int64_t)now.tv_sec)*1000000000LL + now.tv_nsec)/1000000;
-
     win = new Fl_Window(10, 10, 600, 400, "Hallo");
     btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
+    btn->color(FL_LIGHT2);
     win->show();
 
 
@@ -192,6 +174,7 @@ int main(int argc, char **argv)
                 return 0;
             }
         }
+      //Fl::flush();
 
         if (engine.animating) {
             engine_draw_frame();

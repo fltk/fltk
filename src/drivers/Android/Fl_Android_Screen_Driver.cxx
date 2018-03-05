@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Android_Screen_Driver.H"
+#include "Fl_Android_Application.H"
 #include "./Fl_Font.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -27,13 +28,6 @@
 #include <FL/fl_ask.H>
 #include <stdio.h>
 
-#include <android/log.h>
-
-#define  LOG_TAG    "FLTK"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  LOGV(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 
 static void nothing() {}
 void (*fl_unlock_function)() = nothing;
@@ -375,14 +369,24 @@ void Fl_WinAPI_Screen_Driver::beep(int type)
       break;
   }
 }
+#endif
 
-
-void Fl_WinAPI_Screen_Driver::flush()
+/**
+ * On Android, get access to screen memory, then flush(), then
+ * release screen memory and post it to the physicla screen.
+ *
+ * Don't do anything if the screen wasn't previously locked by
+ * any Fl_Window_Driver. We would just needlessly repost the same screen.
+ */
+void Fl_Android_Screen_Driver::flush()
 {
-  GdiFlush();
+  if (Fl_Android_Application::screen_is_locked()) {
+    Fl_Screen_Driver::flush();
+    Fl_Android_Application::unlock_and_post_screen();
+  }
 }
 
-
+#if 0
 extern void fl_fix_focus(); // in Fl.cxx
 
 // We have to keep track of whether we have captured the mouse, since

@@ -29,6 +29,7 @@
 #include "Fl_Android_Window_Driver.H"
 #include "Fl_Android_Screen_Driver.H"
 #include "Fl_Android_Graphics_Driver.H"
+#include "Fl_Android_Application.H"
 
 
 #if 0
@@ -72,6 +73,13 @@ void Fl_Android_Window_Driver::show()
     // bring window to front
   }
 }
+
+
+void Fl_Android_Window_Driver::make_current()
+{
+  Fl_Android_Application::lock_screen();
+}
+
 
 #if 0
 

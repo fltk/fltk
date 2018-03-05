@@ -68,6 +68,9 @@ AInputQueue* Fl_Android_Application::pInputQueue = 0;
 // When non-NULL, this is the window surface that the app can draw in.
 ANativeWindow* Fl_Android_Application::pNativeWindow = 0;
 
+// Use this buffer for direct drawing access
+ANativeWindow_Buffer Fl_Android_Application::pNativeWindowBuffer = { 0 };
+
 // Current state of the app's activity.  May be either APP_CMD_START,
 // APP_CMD_RESUME, APP_CMD_PAUSE, or APP_CMD_STOP; see below.
 int Fl_Android_Application::pActivityState = 0;
@@ -314,7 +317,7 @@ void Fl_Android_Application::process_input(struct android_poll_source* source)
 {
   AInputEvent* event = NULL;
   while (AInputQueue_getEvent(pInputQueue, &event) >= 0) {
-    LOGV("New input event: type=%d\n", AInputEvent_getType(event));
+    //LOGV("New input event: type=%d\n", AInputEvent_getType(event));
     if (AInputQueue_preDispatchEvent(pInputQueue, event)) {
       continue;
     }
@@ -362,6 +365,76 @@ void *Fl_Android_Application::thread_entry(void* param)
   destroy();
   return NULL;
 }
+
+/**
+ * Take ownership of screen memory for gaining write access.
+ *
+ * If the screen is already locked, it will not be locked again
+ * and a value of true will be returned.
+ *
+ * @return true if we gaines access, false if no access was granted and screen memory must not be writte to
+ */
+bool Fl_Android_Application::lock_screen()
+{
+  if (screen_is_locked())
+    return true;
+
+  // TODO: or should we wait until the window is mapped?
+  // TODO: see also Fl_Window_Driver::wait_for_expose_value
+  if (!pNativeWindow) {
+    log_w("Unable to lock window buffer: no native window found.");
+    return false;
+  }
+
+  // 190, 200, 280, 35
+  ARect dirty = { .left=190, .top = 200, .right = 290, .bottom = 235 };
+  if (ANativeWindow_lock(pNativeWindow, &pNativeWindowBuffer, &dirty) < 0) {
+    log_w("Unable to lock window buffer: Android won't lock.");
+    return false;
+  }
+  log_w("Dirty rect is %d %d %d %d", dirty.left, dirty.top, dirty.right, dirty.bottom);
+
+  ANativeWindow_Buffer buf;
+  if (ANativeWindow_lock(pNativeWindow, &buf, &dirty) < 0) {
+    log_w("Unable to lock 2nd window buffer: Android won't lock.");
+    return false;
+  }
+
+  return true;
+}
+
+#include <FL/fl_draw.H>
+
+/**
+ * Release screen memory ownership and give it back to the system.
+ *
+ * The memory content will be copied to the physical screen next.
+ * If the screen is not locked, this call will have no effect.
+ */
+void Fl_Android_Application::unlock_and_post_screen()
+{
+  if (!screen_is_locked())
+    return;
+
+  static int i = 0;
+  fl_color( (i&1) ? FL_RED : FL_GREEN);
+  fl_rectf(i*10, 700, 50, 50);
+  i++;
+  if (i>10) i = 0;
+
+  ANativeWindow_unlockAndPost(pNativeWindow);
+  pNativeWindowBuffer.bits = 0L; // avoid any misunderstandings...
+}
+
+/**
+ * Is the screen currently locked?
+ * @return true if it is locked and the app has write access.
+ */
+bool Fl_Android_Application::screen_is_locked()
+{
+  return (pNativeWindowBuffer.bits!=0L);
+}
+
 
 // --------------------------------------------------------------------
 // Native activity interaction (called from main thread)

@@ -27,8 +27,6 @@
 #include "Fl_Android_Screen_Driver.H"
 #include <android/log.h>
 
-extern ANativeWindow_Buffer* gAGraphicsBuffer;
-
 #define  LOG_TAG    "FLTK"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
@@ -71,14 +69,14 @@ void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float
 // TODo: clip the rectangle to all parts of the current clipping region
 
   uint16_t cc = make565(color());
-  uint32_t ss = gAGraphicsBuffer->stride;
-  uint16_t *bits = (uint16_t*)gAGraphicsBuffer->bits;
+  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
+  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t ww = (uint32_t)w;
   uint32_t hh = (uint32_t)h;
-  for (uint32_t iy = yy; iy<hh; ++iy) {
-    uint16_t *d = bits + iy*ss + xx;
+  for (uint32_t iy = 0; iy<hh; ++iy) {
+    uint16_t *d = bits + (iy+yy)*ss + xx;
     for (uint32_t ix = ww; ix>0; --ix) {
       *d++ = cc;
     }
@@ -95,8 +93,8 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
     w = x-x1;
     x = x1;
   }
-  uint32_t ss = gAGraphicsBuffer->stride;
-  uint16_t *bits = (uint16_t*)gAGraphicsBuffer->bits;
+  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
+  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t ww = (uint32_t)w;
@@ -116,8 +114,8 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
     h = y-y1;
     y = y1;
   }
-  uint32_t ss = gAGraphicsBuffer->stride;
-  uint16_t *bits = (uint16_t*)gAGraphicsBuffer->bits;
+  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
+  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t hh = (uint32_t)h;
@@ -144,7 +142,7 @@ static int render_letter(int xx, int yy, uint32_t c)
    int w,h,i,j, size = 30;
    int dx, dy;
 
-LOGE("Render letter %c", c);
+//LOGE("Render letter %c", c);
 if (once==0) {
    once = 1;
    FILE *f = fopen("/system/fonts/DroidSans.ttf", "rb");
@@ -186,8 +184,8 @@ if (once==0) {
   // rrrr.rggg.gggb.bbbb
   xx += dx; yy += dy;
   uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
-  uint32_t ss = gAGraphicsBuffer->stride;
-  uint16_t *bits = (uint16_t*)gAGraphicsBuffer->bits;
+  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
+  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
   uint32_t ww = w;
   uint32_t hh = h;
   unsigned char *s = bitmap;

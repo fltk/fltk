@@ -103,8 +103,8 @@ public:
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();
-  virtual void make_current() { sCurrent = this; }
 #endif
+  virtual void make_current();
   virtual void show();
 #if 0
   virtual void label(const char *name,const char *iname);
@@ -133,6 +133,8 @@ public:
   static void resize_after_screen_change(void *data);
 
 #endif
+
+// Leuwer: 0171 473 1850
 
 };
 
