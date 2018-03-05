@@ -397,9 +397,21 @@ void Fl_Android_Application::copy_screen()
     // TODO: there are endless possibilities to optimize the following code
     // We can identify previously written buffers and copy only those pixels
     // that actually changed.
-    memcpy(pNativeWindowBuffer.bits,
-           pApplicationWindowBuffer.bits,
-           600*800*2);
+    const uint16_t *src = (uint16_t*)pApplicationWindowBuffer.bits;
+    int srcStride = pApplicationWindowBuffer.stride;
+    int ww = pApplicationWindowBuffer.width;
+    int hh = pApplicationWindowBuffer.height;
+
+    uint16_t *dst = (uint16_t*)pNativeWindowBuffer.bits;
+    int dstStride = pNativeWindowBuffer.stride;
+    if (pNativeWindowBuffer.width<ww) ww = pNativeWindowBuffer.width;
+    if (pNativeWindowBuffer.height<ww) ww = pNativeWindowBuffer.height;
+
+    for (int row=hh; row>0; --row) {
+      memcpy(dst, src, size_t(ww * 2));
+      src += srcStride;
+      dst += dstStride;
+    }
     unlock_and_post_screen();
   }
 }
