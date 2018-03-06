@@ -21,6 +21,7 @@
 #include "Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include <FL/fl_draw.H>
 
 
 /*
@@ -232,7 +233,7 @@ void Fl_GDI_Graphics_Driver::scale(float f) {
   if (f != scale_) {
     size_ = 0;
     scale_ = f;
-//fprintf(LOG,"set scale to %f\n",f);fflush(LOG);
+    line_style(FL_SOLID); // scale also default line width
   }
 }
 

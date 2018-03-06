@@ -51,7 +51,7 @@ void Fl_GDI_Graphics_Driver::overlay_rect(int x, int y, int w , int h) {
 
 void Fl_GDI_Graphics_Driver::rect_unscaled(float x, float y, float w, float h) {
   if (w<=0 || h<=0) return;
-  int line_delta_ =  (scale_ > 1.75 ? 1 : 0);//TMP
+  int line_delta_ =  (scale_ > 1.9 ? 1 : 0);
   x += line_delta_; y += line_delta_;
   int tw = line_width_ ? line_width_ : 1; // true line width
   MoveToEx(gc_, x, y, 0L);
@@ -93,13 +93,13 @@ void Fl_GDI_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1,
   SetPixel(gc_, x2, y2, fl_RGB());
 }
 
-//extern FILE*LOG;
 void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
   int line_delta_ =  (scale_ > 1.75 ? 1 : 0);
   int tw = line_width_ ? line_width_ : 1; // true line width
   if (x > x1) { float exch = x; x = x1; x1 = exch; }
   int ix = x+line_delta_; if (scale_ >= 2) ix -= int(scale_/2);
   int iy = y+line_delta_;
+  if (scale_ > 1.9 && line_width_/scale_ >= 2) iy--;
   int ix1 = int(x1/scale_+1.5)*scale_-1; // extend line to pixel before line beginning at x1/scale_ + 1
   ix1 += line_delta_; if (scale_ >= 2) ix1 -= 1;; if (scale_ >= 4) ix1 -= 1;
   MoveToEx(gc_, ix, iy, 0L); LineTo(gc_, ix1+1, iy);
@@ -107,7 +107,6 @@ void Fl_GDI_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
   if (int(scale_) != scale_ && y+line_delta_ + scale_ >= iy + tw+1 - 0.001 ) {
     MoveToEx(gc_, ix, iy+1, 0L); LineTo(gc_, ix1+1, iy+1);
   }
-//fprintf(LOG,"xyline_unscaled tw=%d s=%f gc_=%p\n",tw,scale_,gc_);fflush(LOG);
 }
 
 void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
@@ -116,6 +115,7 @@ void Fl_GDI_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
   int tw = line_width_ ? line_width_ : 1; // true line width
 
   int ix = x+line_delta_;
+  if (scale_ > 1.9 && line_width_/scale_ >= 2) ix--;
   int iy = y+line_delta_; if (scale_ >= 2) iy -= int(scale_/2);
   int iy1 = int(y1/scale_+1.5)*scale_-1;
   iy1 += line_delta_; if (scale_ >= 2) iy1 -= 1;; if (scale_ >= 4) iy1 -= 1; // extend line to pixel before line beginning at y1/scale_ + 1
@@ -135,6 +135,9 @@ void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1,
 }
 
 void Fl_GDI_Graphics_Driver::loop_unscaled(float x, float y, float x1, float y1, float x2, float y2, float x3, float y3) {
+  if (x==x3 && x1==x2 && y==y1 && y3==y2) { // rectangular loop
+    if (scale_ > 1.9) { x += 1; y += 1; x1 += 1; y1 += 1; x2 += 1; y2 += 1;  x3 += 1; y3 += 1;}
+  }
   MoveToEx(gc_, x, y, 0L);
   LineTo(gc_, x1, y1);
   LineTo(gc_, x2, y2);
