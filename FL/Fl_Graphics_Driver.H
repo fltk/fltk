@@ -443,8 +443,8 @@ struct Fl_Fontdesc {
  scaled coordinates. The member functions are named with the _unscaled suffix.
  - scale and unscale the clipping region.
  
- This class is presently used on the X11 platform to support HiDPI displays.
- In the future, it may also be used on the Windows platform.
+ This class is presently used by the X11 and Windows platforms to support HiDPI displays.
+ In the future, it may also be used by other platforms.
  */
 class FL_EXPORT Fl_Scalable_Graphics_Driver : public Fl_Graphics_Driver {
 public:
