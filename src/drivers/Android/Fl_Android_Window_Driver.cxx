@@ -69,9 +69,24 @@ void Fl_Android_Window_Driver::show()
     i(x);
     x->next = Fl_X::first;
     Fl_X::first = x;
-    pWindow->redraw();
+    if (Fl_Android_Application::native_window()) {
+      pWindow->redraw();
+    } else {
+      pWindow->wait_for_expose();
+    }
   } else {
     // bring window to front
+  }
+}
+
+
+void Fl_Android_Window_Driver::expose_all()
+{
+  for (Fl_X *x = Fl_X::first; x; x = x->next) {
+    Fl_Window *win = x->w;
+    win->driver()->wait_for_expose_value = 0;
+    win->damage(FL_DAMAGE_EXPOSE);
+    win->redraw();
   }
 }
 

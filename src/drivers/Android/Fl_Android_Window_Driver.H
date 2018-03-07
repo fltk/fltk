@@ -134,6 +134,8 @@ public:
 
 #endif
 
+  void wait_for_expose() { wait_for_expose_value = 1; }
+  static void expose_all();
 // Leuwer: 0171 473 1850
 
 };

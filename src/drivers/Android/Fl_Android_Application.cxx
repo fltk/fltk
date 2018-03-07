@@ -23,6 +23,7 @@
  */
 
 #include "Fl_Android_Application.H"
+#include "Fl_Android_Window_Driver.H"
 
 #include <jni.h>
 
@@ -238,6 +239,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
       pNativeWindow = pPendingWindow;
       pthread_cond_broadcast(&pCond);
       pthread_mutex_unlock(&pMutex);
+      Fl_Android_Window_Driver::expose_all();
       break;
 
     case APP_CMD_TERM_WINDOW:
@@ -416,10 +418,11 @@ bool Fl_Android_Application::copy_screen()
       src += srcStride;
       dst += dstStride;
     }
+
     unlock_and_post_screen();
     ret = true;
   } else {
-    Fl::damage(FL_DAMAGE_EXPOSE);
+    // wait for screen buffer to be created
   }
   return ret;
 }
