@@ -59,11 +59,22 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
   return new Fl_Android_Screen_Driver();
 }
 
+
+extern int fl_send_system_handlers(void *e);
+
 int Fl_Android_Screen_Driver::handle_app_command()
 {
+  // get the command
   int8_t cmd = Fl_Android_Application::read_cmd();
+
+  // setup the Android glue and prepare all settings for calling into FLTK
   Fl_Android_Application::pre_exec_cmd(cmd);
-  // TODO: call Fl::handle() with event parametrs set
+
+  // call all registered FLTK system handlers
+  Fl::e_number = ((uint32_t)cmd-APP_CMD_INPUT_CHANGED) + FL_ANDROID_EVENT_INPUT_CHANGED;
+  fl_send_system_handlers(0L);
+
+  // fixup and finalize application wide command handling
   Fl_Android_Application::post_exec_cmd(cmd);
   return 1;
 }

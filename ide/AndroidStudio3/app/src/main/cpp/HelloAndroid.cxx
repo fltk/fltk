@@ -15,6 +15,7 @@
  *
  */
 
+#include <src/drivers/Android/Fl_Android_Application.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Enumerations.H>
@@ -22,8 +23,15 @@
 Fl_Window *win;
 Fl_Button *btn;
 
+int h(void*, void*)
+{
+  Fl_Android_Application::log_w("App global even %p", Fl::event());
+  return 0;
+}
+
 int main(int argc, char **argv)
 {
+  Fl::add_system_handler(h, 0);
   win = new Fl_Window(10, 10, 600, 400, "Hallo");
   btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
   btn->color(FL_LIGHT2);
