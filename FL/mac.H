@@ -121,7 +121,10 @@ extern CGContextRef fl_gc;
 void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut = 0);
 
 
-/** \brief The version number of the running Mac OS X (e.g., 100604 for 10.6.4)
+/** The version number of the running Mac OS X (e.g., 100604 for 10.6.4, 101300 for 10.13).
+ FLTK initializes this global variable before main() begins running. If
+ the value is needed in a static initializer, a previous call to Fl::system_driver()
+ makes sure \ref fl_mac_os_version has been initialized.
  */
 extern int fl_mac_os_version;
 
