@@ -71,7 +71,7 @@ int Fl_Android_Screen_Driver::handle_app_command()
   Fl_Android_Application::pre_exec_cmd(cmd);
 
   // call all registered FLTK system handlers
-  Fl::e_number = ((uint32_t)cmd-APP_CMD_INPUT_CHANGED) + FL_ANDROID_EVENT_INPUT_CHANGED;
+  Fl::e_number = ((uint32_t)(cmd-Fl_Android_Application::APP_CMD_INPUT_CHANGED)) + FL_ANDROID_EVENT_INPUT_CHANGED;
   fl_send_system_handlers(0L);
 
   // fixup and finalize application wide command handling
@@ -156,10 +156,10 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
     ident = ALooper_pollAll(Fl::damage() ? 0 : -1, NULL, &events, (void **) &source);
     switch (ident) {
       // FIXME:  ALOOPER_POLL_WAKE = -1, ALOOPER_POLL_CALLBACK = -2, ALOOPER_POLL_TIMEOUT = -3, ALOOPER_POLL_ERROR = -4
-      case LOOPER_ID_MAIN:
+      case Fl_Android_Application::LOOPER_ID_MAIN:
         ret = handle_app_command();
         break;
-      case LOOPER_ID_INPUT:
+      case Fl_Android_Application::LOOPER_ID_INPUT:
         ret = handle_input_event();
         break;
       case -3: return ret;
