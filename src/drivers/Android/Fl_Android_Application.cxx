@@ -235,10 +235,18 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
 
     case APP_CMD_INIT_WINDOW:
       LOGV("APP_CMD_INIT_WINDOW\n");
+      // tell the main thread that we received the window handle
       pthread_mutex_lock(&pMutex);
       pNativeWindow = pPendingWindow;
       pthread_cond_broadcast(&pCond);
       pthread_mutex_unlock(&pMutex);
+      // change the format of the buffers to match our needs
+      // FIXME: current default screen size and format is 600x800xRGB565
+      ANativeWindow_setBuffersGeometry(pNativeWindow,
+                                       600,
+                                       800,
+                                       WINDOW_FORMAT_RGB_565);
+      // tell FLTK that the buffer is available now
       Fl_Android_Window_Driver::expose_all();
       break;
 
@@ -394,13 +402,17 @@ bool Fl_Android_Application::copy_screen()
   bool ret = false;
   if (lock_screen()) {
 
+#if 0
+    // screen activity viewer
     static int i = 0;
     fl_color( (i&1) ? FL_RED : FL_GREEN);
     fl_rectf(i*10, 600+i*10, 50, 50);
     i++;
     if (i>10) i = 0;
+#endif
 
     // TODO: there are endless possibilities to optimize the following code
+    // We are wasting time by copying the entire screen contents at every dirty frame
     // We can identify previously written buffers and copy only those pixels
     // that actually changed.
     const uint16_t *src = (uint16_t*)pApplicationWindowBuffer.bits;

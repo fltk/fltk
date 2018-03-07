@@ -119,6 +119,7 @@ public:
   static int8_t read_cmd();
   static void pre_exec_cmd(int8_t cmd);
   static void post_exec_cmd(int8_t cmd);
+  static AInputQueue *input_event_queue() { return pInputQueue; }
 
   static inline ANativeWindow *native_window() { return pNativeWindow; }
   static inline ANativeWindow_Buffer &graphics_buffer() { return pApplicationWindowBuffer; }

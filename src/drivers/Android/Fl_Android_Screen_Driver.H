@@ -26,6 +26,7 @@
 #define FL_ANDROID_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
+#include <android/input.h>
 //#include <windows.h>
 
 extern void (*fl_unlock_function)();
@@ -39,6 +40,10 @@ class FL_EXPORT Fl_Android_Screen_Driver : public Fl_Screen_Driver
 {
 private:
   int handle_queued_events(double time_to_wait);
+  int handle_app_command();
+  int handle_input_event();
+  int handle_keyboard_event(AInputEvent*);
+  int handle_mouse_event(AInputEvent*);
 
 #if 0
 

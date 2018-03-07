@@ -59,65 +59,103 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
   return new Fl_Android_Screen_Driver();
 }
 
-int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
+int Fl_Android_Screen_Driver::handle_app_command()
 {
-/*
-  int ALooper_pollAll	(	int 	timeoutMillis,
-                          int * 	outFd,
-                          int * 	outEvents,
-                          void ** 	outData
-  )
+  int8_t cmd = Fl_Android_Application::read_cmd();
+  Fl_Android_Application::pre_exec_cmd(cmd);
+  // TODO: call Fl::handle() with event parametrs set
+  Fl_Android_Application::post_exec_cmd(cmd);
+  return 1;
+}
 
-  struct engine engine;
+int Fl_Android_Screen_Driver::handle_input_event()
+{
+  AInputQueue *queue = Fl_Android_Application::input_event_queue();
+  AInputEvent *event = NULL;
 
-  memset(&engine, 0, sizeof(engine));
-  state->userData = &engine;
-  state->onAppCmd = engine_handle_cmd;
-  state->onInputEvent = engine_handle_input;
-  engine.app = state;
-
-  struct timespec now;
-  clock_gettime(CLOCK_MONOTONIC, &now);
-  start_ms = (((int64_t)now.tv_sec)*1000000000LL + now.tv_nsec)/1000000;
-
-  win = new Fl_Window(10, 10, 600, 400, "Hallo");
-  btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
-  win->show();
-
-
-  // loop waiting for stuff to do.
-
-  while (1) {
-    // Read all pending events.
-    int ident;
-    int events;
-    struct android_poll_source* source;
-
-    // If not animating, we will block forever waiting for events.
-    // If animating, we loop until all events are read, then continue
-    // to draw the next frame of animation.
-    while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
-                                  (void**)&source)) >= 0) {
-
-      // Process this event.
-      if (source != NULL) {
-        source->process(state, source);
+  if (AInputQueue_getEvent(queue, &event) >= 0) {
+    if (AInputQueue_preDispatchEvent(queue, event)==0) {
+      int consumed = 0;
+      switch (AInputEvent_getType(event)) {
+        case  AINPUT_EVENT_TYPE_KEY:
+          consumed = handle_keyboard_event(event);
+          break;
+        case AINPUT_EVENT_TYPE_MOTION:
+          consumed = handle_mouse_event(event);
+          break;
+        default:
+          // don;t do anything. There may be additional event types in the future
+          break;
       }
-
-      // Check if we are exiting.
-      if (state->destroyRequested != 0) {
-        LOGI("Engine thread destroy requested!");
-        engine_term_display(&engine);
-        return;
-      }
-    }
-
-    if (engine.animating) {
-      engine_draw_frame(&engine);
+      // TODO: handle all events here
+      AInputQueue_finishEvent(queue, event, consumed);
     }
   }
-  */
-  return -1;
+  return 0;
+}
+
+int Fl_Android_Screen_Driver::handle_keyboard_event(AInputEvent *event)
+{
+  Fl_Android_Application::log_i("Key event: action=%d keyCode=%d metaState=0x%x",
+                                AKeyEvent_getAction(event),
+                                AKeyEvent_getKeyCode(event),
+                                AKeyEvent_getMetaState(event));
+  return 0;
+}
+
+int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
+{
+  Fl::e_x = Fl::e_x_root = AMotionEvent_getX(event, 0) * 600 /
+                           ANativeWindow_getWidth(Fl_Android_Application::native_window());
+  Fl::e_y = Fl::e_y_root = AMotionEvent_getY(event, 0) * 800 /
+                           ANativeWindow_getHeight(Fl_Android_Application::native_window());
+  Fl::e_state = FL_BUTTON1;
+  Fl::e_keysym = FL_Button + 1;
+  if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
+    Fl::e_is_click = 1;
+    Fl::handle(FL_PUSH, Fl::first_window());
+    Fl_Android_Application::log_i("Mouse push %d at %d, %d", Fl::event_button(), Fl::event_x(),
+                                  Fl::event_y());
+  } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE) {
+    Fl::handle(FL_DRAG, Fl::first_window());
+  } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) {
+    Fl::e_state = 0;
+    Fl::handle(FL_RELEASE, Fl::first_window());
+  }
+  return 1;
+}
+
+/**
+ * Handle all events in the even queue.
+ *
+ * FIXME: what should this function return?
+ *
+ * @param time_to_wait
+ * @return we do not know
+ */
+int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
+{
+  int ret = 0;
+  // Read all pending events.
+  int ident;
+  int events;
+  struct android_poll_source *source;
+
+  for (;;) {
+    ident = ALooper_pollAll(Fl::damage() ? 0 : -1, NULL, &events, (void **) &source);
+    switch (ident) {
+      // FIXME:  ALOOPER_POLL_WAKE = -1, ALOOPER_POLL_CALLBACK = -2, ALOOPER_POLL_TIMEOUT = -3, ALOOPER_POLL_ERROR = -4
+      case LOOPER_ID_MAIN:
+        ret = handle_app_command();
+        break;
+      case LOOPER_ID_INPUT:
+        ret = handle_input_event();
+        break;
+      case -3: return ret;
+      default: return ret;
+    }
+  }
+  return ret;
 }
 
 
