@@ -59,7 +59,10 @@ void* Fl_Android_Application::pSavedState = 0;
 size_t Fl_Android_Application::pSavedStateSize = 0;
 
 // The ALooper associated with the app's thread.
-ALooper* Fl_Android_Application::pLooper = 0;
+ALooper* Fl_Android_Application::pMsgPipeLooper = 0;
+
+// The ALooper tht interrupts the main loop when FLTK requests a redraw.
+ALooper* Fl_Android_Application::pRedrawLooper = 0;
 
 // When non-NULL, this is the input queue from which the app will
 // receive user input events.
@@ -91,8 +94,8 @@ int32_t (*Fl_Android_Application::pOnInputEvent)(AInputEvent* event) = 0;
 
 pthread_mutex_t Fl_Android_Application::pMutex = { 0 };
 pthread_cond_t Fl_Android_Application::pCond = { 0 };
-int Fl_Android_Application::pMsgRead = 0;
-int Fl_Android_Application::pMsgWrite = 0;
+int Fl_Android_Application::pMsgReadPipe = 0;
+int Fl_Android_Application::pMsgWritePipe = 0;
 pthread_t Fl_Android_Application::pThread = 0;
 struct android_poll_source Fl_Android_Application::pCmdPollSource = { 0 };
 struct android_poll_source Fl_Android_Application::pInputPollSource = { 0 };
@@ -164,7 +167,7 @@ void Fl_Android_Application::free_saved_state()
 int8_t Fl_Android_Application::read_cmd()
 {
   int8_t cmd;
-  if (read(pMsgRead, &cmd, sizeof(cmd)) == sizeof(cmd)) {
+  if (read(pMsgReadPipe, &cmd, sizeof(cmd)) == sizeof(cmd)) {
     switch (cmd) {
       case APP_CMD_SAVE_STATE:
         free_saved_state();
@@ -222,7 +225,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
       if (pInputQueue != NULL) {
         LOGV("Attaching input queue to looper");
         AInputQueue_attachLooper(pInputQueue,
-                                 pLooper, LOOPER_ID_INPUT, NULL,
+                                 pMsgPipeLooper, LOOPER_ID_INPUT, NULL,
                                  &pInputPollSource);
       }
       pthread_cond_broadcast(&pCond);
@@ -350,10 +353,10 @@ void *Fl_Android_Application::thread_entry(void* param)
   pInputPollSource.id = LOOPER_ID_INPUT;
   pInputPollSource.process = process_input;
 
-  ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
-  ALooper_addFd(looper, pMsgRead, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL,
+  ALooper *looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+  ALooper_addFd(looper, pMsgReadPipe, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL,
                 &pCmdPollSource);
-  pLooper = looper;
+  pMsgPipeLooper = looper;
 
   pthread_mutex_lock(&pMutex);
   pRunning = 1;
@@ -384,8 +387,9 @@ void Fl_Android_Application::allocate_screen() {
 
 #include <FL/fl_draw.H>
 
-void Fl_Android_Application::copy_screen()
+bool Fl_Android_Application::copy_screen()
 {
+  bool ret = false;
   if (lock_screen()) {
 
     static int i = 0;
@@ -413,7 +417,11 @@ void Fl_Android_Application::copy_screen()
       dst += dstStride;
     }
     unlock_and_post_screen();
+    ret = true;
+  } else {
+    Fl::damage(FL_DAMAGE_EXPOSE);
   }
+  return ret;
 }
 
 /**
@@ -475,7 +483,7 @@ bool Fl_Android_Application::screen_is_locked()
 
 void Fl_Android_Activity::write_cmd(int8_t cmd)
 {
-  if (write(pMsgWrite, &cmd, sizeof(cmd)) != sizeof(cmd)) {
+  if (write(pMsgWritePipe, &cmd, sizeof(cmd)) != sizeof(cmd)) {
     LOGE("Failure writing android_app cmd: %s\n", strerror(errno));
   }
 }
@@ -530,8 +538,8 @@ void Fl_Android_Activity::free()
   }
   pthread_mutex_unlock(&pMutex);
 
-  close(pMsgRead);
-  close(pMsgWrite);
+  close(pMsgReadPipe);
+  close(pMsgWritePipe);
   pthread_cond_destroy(&pCond);
   pthread_mutex_destroy(&pMutex);
 }
@@ -733,8 +741,8 @@ void Fl_Android_Activity::create(ANativeActivity* activity, void* savedState,
     LOGE("could not create pipe: %s", strerror(errno));
     return;
   }
-  pMsgRead = msgpipe[0];
-  pMsgWrite = msgpipe[1];
+  pMsgReadPipe = msgpipe[0];
+  pMsgWritePipe = msgpipe[1];
 
   pthread_attr_t attr;
   pthread_attr_init(&attr);

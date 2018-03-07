@@ -378,10 +378,10 @@ void Fl_WinAPI_Screen_Driver::beep(int type)
 void Fl_Android_Screen_Driver::flush()
 {
   Fl_Screen_Driver::flush();
-  // FIXME: do this only if anything actually changed on screen!
+  // FIXME: do this only if anything actually changed on screen (need to optimize)!
   if (pScreenContentChanged) {
-    Fl_Android_Application::copy_screen();
-    pScreenContentChanged = false;
+    if (Fl_Android_Application::copy_screen())
+      pScreenContentChanged = false;
   }
 }
 

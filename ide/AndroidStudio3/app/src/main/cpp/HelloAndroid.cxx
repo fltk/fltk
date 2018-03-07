@@ -52,15 +52,17 @@ struct engine {
 
 struct engine engine = { 0 };
 
+#if 0
 static void engine_draw_frame()
 {
   //if (Fl_Android_Application::lock_screen()) {
-    Fl::damage(FL_DAMAGE_ALL);
-    win->redraw();
+    //Fl::damage(FL_DAMAGE_ALL);
+    //win->redraw();
     Fl::flush();
   // Fl_Android_Application::unlock_and_post_screen();
   //}
 }
+  #endif
 
 static void engine_term_display() {
     engine.animating = 0;
@@ -110,7 +112,7 @@ static void engine_handle_cmd(int32_t cmd) {
                               ANativeWindow_getHeight(app->window),
 #endif
                               WINDOW_FORMAT_RGB_565);
-                engine_draw_frame();
+                Fl::damage(FL_DAMAGE_EXPOSE);
             }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -127,7 +129,7 @@ static void engine_handle_cmd(int32_t cmd) {
             break;
         case APP_CMD_LOST_FOCUS:
             engine.animating = 0;
-            engine_draw_frame();
+            //engine_draw_frame();
             break;
         default: break;
     }
@@ -145,9 +147,14 @@ int main(int argc, char **argv)
     win = new Fl_Window(10, 10, 600, 400, "Hallo");
     btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
     btn->color(FL_LIGHT2);
-    win->show();
-  Fl::damage(FL_DAMAGE_ALL);
-  win->redraw();
+    win->show(argc, argv);
+  int x;
+  if (Fl::damage())
+    x = 0;
+  if (win->damage())
+    x = 2;
+  //Fl::damage(FL_DAMAGE_ALL);
+  //win->redraw();
 
 
     // loop waiting for stuff to do.
@@ -161,7 +168,7 @@ int main(int argc, char **argv)
         // If not animating, we will block forever waiting for events.
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+        while ((ident=ALooper_pollAll(Fl::damage() ? 0 : -1, NULL, &events,
                 (void**)&source)) >= 0) {
 
             // Process this event.

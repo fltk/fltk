@@ -126,7 +126,7 @@ public:
   static void set_on_app_cmd(void (*cmd)(int32_t cmd)) { pOnAppCmd = cmd; }
   static void set_on_input_event(int32_t (*cmd)(AInputEvent* event)) { pOnInputEvent = cmd; }
 
-  static void copy_screen();
+  static bool copy_screen();
 
 protected:
   static void free_saved_state();
@@ -145,7 +145,8 @@ protected:
   static AConfiguration *pConfig;
   static void *pSavedState;
   static size_t pSavedStateSize;
-  static ALooper *pLooper;
+  static ALooper *pMsgPipeLooper;
+  static ALooper *pRedrawLooper;
   static AInputQueue *pInputQueue;
   static ANativeWindow *pNativeWindow;
   static ANativeWindow_Buffer pNativeWindowBuffer;
@@ -155,12 +156,11 @@ protected:
   static void (*pOnAppCmd)(int32_t cmd);
   static int32_t (*pOnInputEvent)(AInputEvent* event);
 
-
   // ---- no need to make these visible to the outside ----
   static pthread_mutex_t pMutex;
   static pthread_cond_t pCond;
-  static int pMsgRead;
-  static int pMsgWrite;
+  static int pMsgReadPipe;
+  static int pMsgWritePipe;
   static pthread_t pThread;
   static struct android_poll_source pCmdPollSource;
   static struct android_poll_source pInputPollSource;

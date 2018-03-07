@@ -69,6 +69,7 @@ void Fl_Android_Window_Driver::show()
     i(x);
     x->next = Fl_X::first;
     Fl_X::first = x;
+    pWindow->redraw();
   } else {
     // bring window to front
   }
