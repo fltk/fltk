@@ -143,11 +143,16 @@ int Fl_Xlib_Graphics_Driver::clip_x (int x) {
 
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
 // Windows equivalent exists, implemented inline in win32.H
+
+// Note: if the entire region is outside the 16-bit X coordinate space an empty
+// clipping region is returned which means that *nothing* will be visible.
+
 Fl_Region Fl_Xlib_Graphics_Driver::XRectangleRegion(int x, int y, int w, int h) {
   XRectangle R;
-  clip_to_short(x, y, w, h, line_width_);
+  Fl_Region r = XCreateRegion(); // create an empty region
+  if (clip_to_short(x, y, w, h, line_width_)) // outside X coordinate space
+    return r;
   R.x = x; R.y = y; R.width = w; R.height = h;
-  Fl_Region r = XCreateRegion();
   XUnionRectWithRegion(&R, r, r);
   return r;
 }
