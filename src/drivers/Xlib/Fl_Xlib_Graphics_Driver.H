@@ -60,6 +60,8 @@ private:
   int line_delta_;
   virtual void set_current_();
 protected:
+  int xmin, ymin, xmax, ymax; // ranges of valid x/y coordinates, see set_clip_range()
+protected:
   virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -94,7 +96,6 @@ protected:
   int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
-  int clip_x(int x);
 #if USE_XFT
   static Window draw_window;
   static struct _XftDraw* draw_;
@@ -112,7 +113,7 @@ public:
 #if USE_XFT
   static void destroy_xft_draw(Window id);
 #endif
-  
+
   // --- bitmap stuff
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
   void delete_bitmask(Fl_Bitmask bm);
@@ -150,6 +151,26 @@ protected:
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+
+  // --- clipped drawing (after scaling, with real screen coordinates)
+  // --- currently specific to Fl_Xlib_Graphics_Driver (16-bit coordinate clipping)
+
+  // clip one coordinate (x or y) --- correct axis (x/y) is important !
+  virtual int clip_x(int x);
+  virtual int clip_y(int y);
+
+  // clip one line
+  virtual int clip_line(int &x1, int &y1, int &x2, int &y2);
+
+  // clip one rectangle
+  virtual int clip_rect(int &x, int &y, int &w, int &h);
+
+  // draw a line after clipping (if visible)
+  virtual void draw_clipped_line(int x1, int y1, int x2, int y2);
+
+  // set_clip_range() - set valid coordinate range (16-bit or current window)
+  virtual void set_clip_range();
+
   // --- clipping
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
