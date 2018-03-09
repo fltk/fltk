@@ -86,9 +86,7 @@ static void set_xmap(Fl_XMap& xmap, COLORREF c, int lw) {
 //  xmap.pen = CreatePen(PS_SOLID, 1, xmap.rgb);                        // get a pen into xmap.pen
   LOGBRUSH penbrush = {BS_SOLID, xmap.rgb, 0};
   xmap.pen = ExtCreatePen(PS_GEOMETRIC | PS_ENDCAP_FLAT | PS_JOIN_ROUND, lw, &penbrush, 0, 0);
-#ifdef FLTK_HIDPI_SUPPORT
   xmap.pwidth = lw;
-#endif
   xmap.brush = -1;
 }
 
@@ -100,11 +98,7 @@ void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
     Fl_Graphics_Driver::color(i);
     Fl_XMap &xmap = fl_xmap[i];
     int tw = line_width_ ? line_width_ : int(scale_); if (!tw) tw = 1;
-    if (!xmap.pen
-#ifdef FLTK_HIDPI_SUPPORT
-        || xmap.pwidth != tw
-#endif
-        ) {
+    if (!xmap.pen || xmap.pwidth != tw) {
 #if USE_COLORMAP
       if (fl_palette) {
 	set_xmap(xmap, PALETTEINDEX(i), tw);
@@ -126,11 +120,7 @@ void Fl_GDI_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   COLORREF c = RGB(r,g,b);
   Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
   int tw = line_width_ ? line_width_ : int(scale_); if (!tw) tw = 1;
-  if (!xmap.pen || c != xmap.rgb
-#ifdef FLTK_HIDPI_SUPPORT
-      || tw != xmap.pwidth
-#endif
-      ) {
+  if (!xmap.pen || c != xmap.rgb || tw != xmap.pwidth) {
     clear_xmap(xmap);
     set_xmap(xmap, c, tw);
   }

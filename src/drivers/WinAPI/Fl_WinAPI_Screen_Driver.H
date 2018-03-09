@@ -42,9 +42,7 @@ protected:
   static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
   int get_mouse_unscaled(int &mx, int &my);
-#ifdef FLTK_HIDPI_SUPPORT
   void init_screen_scale_factors();
-#endif
 
 public:
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
@@ -86,7 +84,6 @@ public:
   virtual void disable_im();
   virtual void open_display_platform();
   virtual void offscreen_size(Fl_Offscreen off, int &width, int &height);
-#if defined(FLTK_HIDPI_SUPPORT)  
   virtual APP_SCALING_CAPABILITY rescalable() {
     return PER_SCREEN_APP_SCALING;
   }
@@ -96,9 +93,6 @@ public:
   virtual void scale(int n, float f) {
     scale_of_screen[n] = f;
   }
-#else
-  float DWM_scaling_factor();
-#endif
   virtual float desktop_scale_factor();
 };
 

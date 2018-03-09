@@ -60,12 +60,8 @@ Fl_GDI_Copy_Surface_Driver::Fl_GDI_Copy_Surface_Driver(int w, int h) : Fl_Copy_S
   float factorw = (100.f * hmm) / hdots;
   float factorh = (100.f * vmm) / vdots;
   // Global display scaling factor: 1, 1.25, 1.5, 1.75, etc...
-#ifdef FLTK_HIDPI_SUPPORT
   float scaling = Fl_Graphics_Driver::default_driver().scale();
   ((Fl_GDI_Graphics_Driver*)driver())->scale(scaling);
-#else
-  float scaling = 1/((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
-#endif
   RECT rect; rect.left = 0; rect.top = 0; rect.right = (LONG)((w*scaling) * factorw); rect.bottom = (LONG)((h*scaling) * factorh);
   gc = CreateEnhMetaFile (NULL, NULL, &rect, NULL);
   if (gc != NULL) {

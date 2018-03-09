@@ -87,10 +87,8 @@ void fl_cleanup_dc_list(void);
 # include <wchar.h>
 #endif
 
-#ifdef FLTK_HIDPI_SUPPORT
-  typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
-  static SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = NULL;
-#endif
+typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
+static SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = NULL;
 
 extern bool fl_clipboard_notify_empty(void);
 extern void fl_trigger_clipboard_notify(int source);
@@ -522,7 +520,6 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
     return;
 
   beenHereDoneThat = 1;
-#ifdef FLTK_HIDPI_SUPPORT
   HMODULE hMod = LoadLibrary("Shcore.DLL");
   if (hMod) {
     fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
@@ -533,14 +530,12 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
       else fl_SetProcessDpiAwareness = NULL;
     }
   }
-#endif // FLTK_HIDPI_SUPPORT
   OleInitialize(0L);
 
   get_imm_module();
 }
 
 
-#ifdef FLTK_HIDPI_SUPPORT
 void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
   typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
   HMODULE hMod = LoadLibrary("Shcore.DLL");
@@ -558,7 +553,6 @@ void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
     }
   }
 }
-#endif // FLTK_HIDPI_SUPPORT
 
 
 class Fl_Win32_At_Exit {
@@ -852,16 +846,9 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	int hdots = GetDeviceCaps(hdc, HORZRES);
 	ReleaseDC(NULL, hdc);
 	float factor = (100.f * hmm) / hdots;
-#ifdef FLTK_HIDPI_SUPPORT
 	float scaling = Fl::screen_driver()->scale(receiver.top_window()->driver()->screen_num());
 	width = int(width / (scaling * factor)); // convert to screen pixel unit
 	height = int(height / (scaling * factor));
-#else
-	float scaling = ((Fl_WinAPI_Screen_Driver *)Fl::screen_driver())->DWM_scaling_factor();
-	width = int(width * scaling / factor); // convert to screen pixel unit
-	height = int(height * scaling / factor);
-	scaling = 1;
-#endif
 	RECT rect = {0, 0, width, height};
 	Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
 	Fl_Surface_Device::push_current(surf);
@@ -1180,7 +1167,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (window) {
     switch (uMsg) {
 
-#ifdef FLTK_HIDPI_SUPPORT
       case WM_DPICHANGED: { // 0x02E0
 	if (fl_SetProcessDpiAwareness && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
 	  RECT r;
@@ -1193,7 +1179,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	return 0;
       }
-#endif // FLTK_HIDPI_SUPPORT
 
       case WM_QUIT: // this should not happen?
 	Fl::fatal("WM_QUIT message");
@@ -2703,18 +2688,13 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top
   ww /= scaling;
   if (wsides <= 1)
     ww = w() + 2 * wsides;
-#ifdef FLTK_HIDPI_SUPPORT
-  float DWMscaling = scaling;
-#else
-  float DWMscaling = ((Fl_WinAPI_Screen_Driver *)Fl::screen_driver())->DWM_scaling_factor();
-#endif
   // capture the 4 window sides from screen
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
   if (htop) {
     r_top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop);
     top = Fl_Shared_Image::get(r_top);
-    if (DWMscaling != 1)
-      top->scale(ww, htop / DWMscaling, 0, 1);
+    if (scaling != 1)
+      top->scale(ww, htop / scaling, 0, 1);
   }
   if (wsides) {
     r_left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling);

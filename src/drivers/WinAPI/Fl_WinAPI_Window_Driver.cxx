@@ -103,16 +103,10 @@ RECT // frame of the decorated window in screen coordinates
       GetWindowRect(fl_xid(win), &r);
     }
     int width, height;
-#ifdef FLTK_HIDPI_SUPPORT
     RECT  rc;
     GetClientRect(fl_xid(win), &rc);
     width = rc.right;
     height = rc.bottom;
-#else
-    float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
-    width = int(win->w() * scaling);
-    height = int(win->h() * scaling);
-#endif
     bx = (r.right - r.left - width)/2;
     if (bx < 1) bx = 1;
     by = bx;
@@ -137,14 +131,9 @@ int Fl_WinAPI_Window_Driver::decorated_h()
 {
   int bt, bx, by;
   border_width_title_bar_height(bx, by, bt);
-#ifdef FLTK_HIDPI_SUPPORT
   float s = Fl::screen_driver()->scale(screen_num());
   int mini_by = by/s; if (mini_by < 1) mini_by = 1;
   return h() + (bt + by)/s + mini_by;
-#else
-  float scaling = ((Fl_WinAPI_Screen_Driver*)Fl::screen_driver())->DWM_scaling_factor();
-  return h() + bt/scaling + 2 * by +1;
-#endif
 }
 
 

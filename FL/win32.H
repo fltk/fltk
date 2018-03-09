@@ -55,9 +55,7 @@ extern FL_EXPORT struct Fl_XMap {
   COLORREF rgb;	// this should be the type the RGB() macro returns
   HPEN pen;	// pen, 0 if none created yet
   int brush;	// ref to solid brush, 0 if none created yet
-#ifdef FLTK_HIDPI_SUPPORT
   int pwidth;   // the width of the pen, if present
-#endif
 } *fl_current_xmap;
 inline COLORREF fl_RGB() {return fl_current_xmap->rgb;}
 inline HPEN fl_pen() {return fl_current_xmap->pen;}

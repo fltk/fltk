@@ -84,19 +84,6 @@ public:
     if( !pDataObj ) return E_INVALIDARG;
     // set e_modifiers here from grfKeyState, set e_x and e_root_x
     // check if FLTK handles this drag and return if it can't (i.e. BMP drag without filename)
-/* Tricky point here: Not DPI–aware applications use different units for the 'POINTL pt' argument
-of the DragEnter, DragOver, and Drop member functions.
-DragEnter receives the mouse coordinates in unscaled screen units,
-whereas DragOver and Drop receive the mouse coordinates in scaled units.
- 
-DPI–aware applications transmit unscaled screen units to all 3 member functions.
-These coordinates should be divided by the window's scale to get FLTK units.
-*/
-#ifndef FLTK_HIDPI_SUPPORT
-    POINT mp;
-    GetCursorPos(&mp); // bypass Windows bug that gives mouse coordinates in unscaled screen units
-    pt.x = mp.x; pt.y = mp.y;
-#endif
     POINT ppt;
     Fl::e_x_root = ppt.x = pt.x;
     Fl::e_y_root = ppt.y = pt.y;
