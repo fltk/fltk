@@ -62,9 +62,6 @@ size_t Fl_Android_Application::pSavedStateSize = 0;
 // The ALooper associated with the app's thread.
 ALooper* Fl_Android_Application::pMsgPipeLooper = 0;
 
-// The ALooper tht interrupts the main loop when FLTK requests a redraw.
-ALooper* Fl_Android_Application::pRedrawLooper = 0;
-
 // When non-NULL, this is the input queue from which the app will
 // receive user input events.
 AInputQueue* Fl_Android_Application::pInputQueue = 0;
@@ -103,10 +100,10 @@ struct Fl_Android_Application::android_poll_source Fl_Android_Application::pInpu
 int Fl_Android_Application::pRunning = 0;
 int Fl_Android_Application::pStateSaved = 0;
 int Fl_Android_Application::pDestroyed = 0;
-int Fl_Android_Application::pRedrawNeeded = 0;
+//int Fl_Android_Application::pRedrawNeeded = 0;
 AInputQueue *Fl_Android_Application::pPendingInputQueue = 0;
 ANativeWindow *Fl_Android_Application::pPendingWindow = 0;
-ARect Fl_Android_Application::pPendingContentRect = { 0 };
+//ARect Fl_Android_Application::pPendingContentRect = { 0 };
 
 
 
@@ -172,6 +169,8 @@ int8_t Fl_Android_Application::read_cmd()
     switch (cmd) {
       case APP_CMD_SAVE_STATE:
         free_saved_state();
+        break;
+      default:
         break;
     }
     return cmd;
@@ -276,6 +275,10 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
     case APP_CMD_DESTROY:
       LOGV("APP_CMD_DESTROY\n");
       pDestroyRequested = 1;
+      // FIXME: see Fl::program_should_quit()
+      break;
+
+    default:
       break;
   }
 }

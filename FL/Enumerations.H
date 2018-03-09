@@ -406,30 +406,6 @@ enum Fl_Event {	// events
   FL_ZOOM_GESTURE	= 26
 
 // DEV NOTE: Keep this list in sync with FL/names.h
-
-#ifdef __ANDROID__
-  // These events are specific to the Android OS driver system. They can
-  // be read by adding a callback via Fl::add_system_handler() and reading Fl::event()
-  // Dont's change the order of these enums! See Fl_Android_Application.H .
-  , FL_ANDROID_EVENTS = 0x00010000,
-  FL_ANDROID_EVENT_INPUT_CHANGED,
-  FL_ANDROID_EVENT_INIT_WINDOW,
-  FL_ANDROID_EVENT_TERM_WINDOW,
-  FL_ANDROID_EVENT_WINDOW_RESIZED,
-  FL_ANDROID_EVENT_WINDOW_REDRAW_NEEDED,
-  FL_ANDROID_EVENT_CONTENT_RECT_CHANGED,
-  FL_ANDROID_EVENT_GAINED_FOCUS,
-  FL_ANDROID_EVENT_LOST_FOCUS,
-  FL_ANDROID_EVENT_CONFIG_CHANGED,
-  FL_ANDROID_EVENT_LOW_MEMORY,
-  FL_ANDROID_EVENT_START,
-  FL_ANDROID_EVENT_RESUME,
-  FL_ANDROID_EVENT_SAVE_STATE,
-  FL_ANDROID_EVENT_PAUSE,
-  FL_ANDROID_EVENT_STOP,
-  FL_ANDROID_EVENT_DESTROY
-#endif
-
 };
 
 /** \name When Conditions */

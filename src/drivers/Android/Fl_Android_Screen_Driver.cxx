@@ -116,10 +116,10 @@ int Fl_Android_Screen_Driver::handle_keyboard_event(AInputEvent *event)
 
 int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
 {
-  Fl::e_x = Fl::e_x_root = AMotionEvent_getX(event, 0) * 600 /
-                           ANativeWindow_getWidth(Fl_Android_Application::native_window());
-  Fl::e_y = Fl::e_y_root = AMotionEvent_getY(event, 0) * 800 /
-                           ANativeWindow_getHeight(Fl_Android_Application::native_window());
+  Fl::e_x = Fl::e_x_root = (int)(AMotionEvent_getX(event, 0) * 600 /
+                           ANativeWindow_getWidth(Fl_Android_Application::native_window()));
+  Fl::e_y = Fl::e_y_root = (int)(AMotionEvent_getY(event, 0) * 800 /
+                           ANativeWindow_getHeight(Fl_Android_Application::native_window()));
   Fl::e_state = FL_BUTTON1;
   Fl::e_keysym = FL_Button + 1;
   if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
