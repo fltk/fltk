@@ -25,10 +25,6 @@
 
 #include <string.h>
 
-#if HAVE_XRENDER
-#include <X11/extensions/Xrender.h>
-#endif
-
 extern XIC fl_xim_ic;
 extern char fl_is_over_the_spot;
 #if !USE_XFT
