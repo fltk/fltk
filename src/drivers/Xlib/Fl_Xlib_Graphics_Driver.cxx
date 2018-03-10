@@ -249,15 +249,16 @@ Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
   if (r == 0 || (f == 1 && offset_x_ == 0 && offset_y_ == 0) ) return 0;
   int deltaf = f/2;
   Region r2 = XCreateRegion();
-  XRectangle R;
   for (int i = 0; i < r->numRects; i++) {
     int x = (r->rects[i].x1 + offset_x_)*f;
     int y = (r->rects[i].y1 + offset_y_)*f;
-    R.x = x - deltaf + line_delta_;
-    R.y = y - deltaf + line_delta_;
-    R.width = int((r->rects[i].x2 + offset_x_) * f) - x;
-    R.height = int((r->rects[i].y2 + offset_y_) * f) - y;
-    XUnionRectWithRegion(&R, r2, r2);
+    int w = int((r->rects[i].x2 + offset_x_) * f) - x;
+    int h = int((r->rects[i].y2 + offset_y_) * f) - y;
+    x += line_delta_ - deltaf;
+    y += line_delta_ - deltaf;
+    Region R = XRectangleRegion(x, y, w, h);
+    XUnionRegion(R, r2, r2);
+    ::XDestroyRegion(R);
   }
   rstack[rstackptr] = r2;
   return r;
