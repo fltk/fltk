@@ -60,6 +60,18 @@ public:
   Fl_Rect (const Fl_Widget* const widget)
   : x_(widget->x()), y_(widget->y()), w_(widget->w()), h_(widget->h()) {}
 
+ /** Return 1 if the rectangle is empty, width or height are 0 */
+  int is_empty() { return (w_==0)||(h_==0); }
+
+ /** Set the position and size */
+  void set(int x, int y, int w, int h) { x_=x; y_=y; w_=w; h_=h; }
+
+ /** return 0 if the rectangles are different, or 1 if they are the same */
+  int equals(int x, int y, int w, int h) { return ( (x_==x) &&  (y_==y) && (w_==w) && (h_==h) ); }
+
+  /** Set the position and size to zero, making this rect empty */
+  void clear() { x_ = y_ = w_ = h_ = 0; }
+
   int x() const { return x_; }		///< gets the x coordinate (left edge)
   int y() const { return y_; }		///< gets the y coordinate (top edge)
   int w() const { return w_; }		///< gets the width

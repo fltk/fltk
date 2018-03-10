@@ -26,66 +26,24 @@
 #define FL_ANDROID_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
+#include <FL/Fl_Rect.H>
 #include <limits.h>
 
-#if 0
-// clipping
-// 1: rect
-//    Draw only the part of any element that fits inside the rect
-// 2: region
-//    A rect that contains the entire region
-//    A sorted list of rows that contains fitting parts of the region
-//    A sorted list of rects for each row
 
-class AFl_Rect 
+struct Fl_Clip_Rect
 {
-  int pX1, pY1, pX2, pY2;
-public:
-  const int int_max = INT_MAX;
-  const int int_min = INT_MIN;
-  AFl_Rect(int x1, y1, x2, y2) : pX1(x1), pY1(y1), pX2(x2), pY2(y2) { }
-  AFl_Rect() : pX1(int_min), pY1(int_min), pX2(int_max), pY2(int_max) { }
-  void x1(int x) { pX1 = x; }
-  void y1(int y) { pY1 = y; }
-  void x2(int x) { pX2 = x; }
-  void y2(int y) { pY2 = y; }
-  void w(int w) { pX2 = x1+w; }
-  void h(int h) { pY2 = y1+w; }
-  int x1() { return pX1; }
-  int y1() { return pY1; }
-  int x2() { return pX2; }
-  int y2() { return pY2; }
-  int w() { return pX2-pX1; }
-  int h() { return pY2-pY1; }
+  Fl_Clip_Rect() : pRect() {}
+  Fl_Clip_Rect(int x, int y, int w, int h) : pRect(x, y, w, h) {}
+  int x() { return pRect.x(); }
+  int y() { return pRect.y(); }
+  int w() { return pRect.w(); }
+  int h() { return pRect.h(); }
+  int intersect_with(Fl_Clip_Rect *r);
+  static int min(int a, int b) { return (a<b) ? a : b; }
+  static int max(int a, int b) { return (a>b) ? a : b; }
+  Fl_Rect pRect;
 };
 
-class AFl_Row
-{
-  int nRect, NRect;
-  AFl_Rect *pRect;
-  AFl_rect pBounds;
-public:
-  AFl_Row(int y1, int y2) : nRect(0), NRect(0), pRect(0), pY1(y1), pY2(y2) { }
-  ~AFl_Row() { /* TODO: delete all rects */ }
-  void y1(int y) { pY1 = y; }
-  void y2(int y) { pY2 = y; }
-  AFl_Rect *first(int &i) { i=0; return (pRect && nRect>i) ? nRect[i] : 0L; }
-  AFl_Rect *next(int &i) { i++; return (pRect && nRect>i) ? nRect[i] : 0L; }
-  void add(AFl_Rect *r) { /* TODO: implement! */ }
-  void subtract(AFl_Rect *r) { /* TODO: implement! */ }
-  void clear() { /* TODO: implement! */ }
-};
-
-class AFl_Region
-{
-  int nRow, NRow;
-  AFl_Row *pRow;
-  AFl_rect pBounds;
-public:
-  AFl_Region() : nRow(0), NRow(0), pRow(0) { }
-  ~AFl_Region() { /* TODO: delete all rows */ }
-}
-#endif
 
 /**
   \brief The Windows-specific graphics driver class.
@@ -164,6 +122,7 @@ protected:
   void focus_rect(int x, int y, int w, int h);
 #endif
   void rectf_unscaled(float x, float y, float w, float h);
+  void rectf_unclipped(float x, float y, float w, float h);
 #if 0
   virtual void line_unscaled(float x, float y, float x1, float y1);
   virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
@@ -175,6 +134,7 @@ protected:
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+#endif
   // --- clipping
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
@@ -182,6 +142,10 @@ protected:
   void push_no_clip();
   void pop_clip();
   void restore_clip();
+  void clip_region(Fl_Region r);
+  Fl_Region clip_region();
+  static Fl_Clip_Rect pClipRect;
+#if 0
   virtual Fl_Region scale_clip(float f);
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   void begin_complex_polygon();

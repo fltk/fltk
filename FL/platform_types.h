@@ -112,6 +112,20 @@ typedef struct HGLRC__ *GLContext;
 #include <sys/stat.h>
 struct dirent {char d_name[1];};
 
+#elif defined(__ANDROID__)
+
+// see: src/driver/Android/Fl_Android_Graphics_Driver_region.cxx
+typedef struct Fl_Clip_Rect *Fl_Region;
+
+// TODO: the types below have not yet been ported
+typedef unsigned long Fl_Offscreen;
+typedef unsigned long Fl_Bitmask;
+typedef int FL_SOCKET;
+typedef struct __GLXcontextRec *GLContext;
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define OS-dependent types"
 typedef void* Fl_Offscreen;

@@ -19,13 +19,25 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Enumerations.H>
+#include <FL/fl_draw.H>
 
 Fl_Window *win;
 Fl_Button *btn;
 
+class MyButton : public Fl_Button
+{
+public:
+  MyButton(int x, int y, int w, int h, const char *l) : Fl_Button(x, y, w, h, l) { }
+  void draw() {
+    fl_push_clip(x(), y(), w()/2, h()/2);
+    Fl_Button::draw();
+    fl_pop_clip();
+  }
+};
+
 int h(void*, void*)
 {
-  Fl_Android_Application::log_w("App global even %p", Fl::event());
+  Fl_Android_Application::log_w("App global event %p", Fl::event());
   return 0;
 }
 
@@ -33,7 +45,7 @@ int main(int argc, char **argv)
 {
   Fl::add_system_handler(h, 0);
   win = new Fl_Window(10, 10, 600, 400, "Hallo");
-  btn = new Fl_Button(190, 200, 280, 35, "Hello, Android!");
+  btn = new MyButton(190, 200, 280, 35, "Hello, Android!");
   btn->color(FL_LIGHT2);
   win->show(argc, argv);
 

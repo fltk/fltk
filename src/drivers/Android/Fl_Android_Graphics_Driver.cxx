@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
+// Graphics routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
 //
@@ -20,17 +20,10 @@
 #include "../../config_lib.h"
 #include "Fl_Android_Application.H"
 #include "Fl_Android_Graphics_Driver.H"
+#include "Fl_Android_Screen_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <errno.h>
-
-#include "Fl_Android_Screen_Driver.H"
-#include <android/log.h>
-
-#define  LOG_TAG    "FLTK"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 
 /*
@@ -60,8 +53,16 @@ static uint16_t make565(Fl_Color crgba)
                        ((crgba >>11) & 0x001f) );
 }
 
-
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {
+  Fl_Android_Application::log_w("rectf %g %g %g %g", x, y, w, h);
+  Fl_Clip_Rect r(x, y, w, h);
+  if (r.intersect_with(&pClipRect)) {
+    rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+  }
+}
+
+void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h) {
+  Fl_Android_Application::log_w("rectf unclipped %g %g %g %g", x, y, w, h);
   if (w<=0 || h<=0) return;
 
 // TODO: clip the rectangle to the window outline
@@ -147,7 +148,7 @@ if (once==0) {
    once = 1;
    FILE *f = fopen("/system/fonts/DroidSans.ttf", "rb");
    if (f==NULL) {
-     LOGE("ERROR reading font %d!", errno);
+     Fl_Android_Application::log_e("ERROR reading font %d!", errno);
      return 0;
    }
    fread(ttf_buffer, 1, 1<<25, f);

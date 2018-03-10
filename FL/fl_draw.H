@@ -122,7 +122,7 @@ inline int fl_not_clipped(int x, int y, int w, int h) {return fl_graphics_driver
  \param[out] X,Y,W,H position and size of resulting bounding box.
  \returns Non-zero if the resulting rectangle is different to the original.
  */
-inline int fl_clip_box(int x , int y, int w, int h, int& X, int& Y, int& W, int& H) 
+inline int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H)
   {return fl_graphics_driver->clip_box(x,y,w,h,X,Y,W,H); }
 /** Undoes any clobbering of clip done by your program */
 inline void fl_restore_clip() { fl_graphics_driver->restore_clip(); }

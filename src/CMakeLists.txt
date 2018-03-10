@@ -303,6 +303,7 @@ elseif (ANDROID)
     drivers/Android/Fl_Android_Window_Driver.cxx
     drivers/Android/Fl_Android_Image_Surface_Driver.cxx
     drivers/Android/Fl_Android_Graphics_Driver.cxx
+    drivers/Android/Fl_Android_Graphics_Driver_region.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/Android/Fl_Android_Application.H
