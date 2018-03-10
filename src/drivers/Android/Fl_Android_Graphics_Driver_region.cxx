@@ -23,10 +23,6 @@
 #include <FL/platform.H>
 
 
-Fl_Complex_Region Fl_Android_Graphics_Driver::pWindowRegion;
-
-
-
 // return 0 for empty, 1 for same, 2 if intersecting
 int Fl_Rect_Region::intersect_with(Fl_Rect_Region *a)
 {
@@ -98,7 +94,7 @@ void Fl_Android_Graphics_Driver::restore_clip()
     // FIXME: scaling!
     a.intersect_with(b);
   }
-  pWindowRegion.set(b);
+  pWindowRegion = b;
   // FIXME: intersect with complex window region
 }
 

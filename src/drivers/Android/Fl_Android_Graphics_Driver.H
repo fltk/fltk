@@ -110,7 +110,10 @@ protected:
   void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
   int p_size;
   POINT *p;
+#endif
 public:
+  Fl_Android_Graphics_Driver() : pWindowRegion(0L) {}
+#if 0
   Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
@@ -187,7 +190,7 @@ protected:
   void restore_clip();
   void clip_region(Fl_Region r);
   Fl_Region clip_region();
-  static Fl_Complex_Region pWindowRegion;
+  Fl_Rect_Region *pWindowRegion;
 #if 0
   virtual Fl_Region scale_clip(float f);
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
