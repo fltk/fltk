@@ -55,10 +55,32 @@ static uint16_t make565(Fl_Color crgba)
 
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {
   Fl_Android_Application::log_w("rectf %g %g %g %g", x, y, w, h);
-  Fl_Clip_Rect r(x, y, w, h);
-  if (r.intersect_with(&pClipRect)) {
+  Fl_Rect_Region r(x, y, w, h);
+  if (r.intersect_with(&pWindowRegion)) {
     rectf_unclipped(r.x(), r.y(), r.w(), r.h());
   }
+
+  /*
+   * rectf(x, y, w, h) {
+   *   rectf(complex_window_region, drawing_rect(x, y, w, h))
+   * }
+   *
+   * rectf( complexRgn, drawRgn) {
+   *   // B: start of iterator
+   *     if (intersect(rect_of_complexRgn, drawRgn) {
+   *       if (complexRgn->is_complex() {
+   *         rectf(complexRgn->subregion, drawRect);
+   *       } else {
+   *         rawRect = intersection(rect_of_complexRgn, drawRgn);
+   *         rawDrawRect(rawRect);
+   *       }
+   *     }
+   *     // A: recursion
+   *     if (complexRgn->next)
+   *       rectf(complexRgn->next, drawRgn);
+   *   // B: end of iterator
+   * }
+   */
 }
 
 void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h) {

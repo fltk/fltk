@@ -23,36 +23,54 @@
 #include <FL/platform.H>
 
 
-Fl_Clip_Rect Fl_Android_Graphics_Driver::pClipRect;
+Fl_Complex_Region Fl_Android_Graphics_Driver::pWindowRegion;
+
 
 
 // return 0 for empty, 1 for same, 2 if intersecting
-int Fl_Clip_Rect::intersect_with(Fl_Clip_Rect *a)
+int Fl_Rect_Region::intersect_with(Fl_Rect_Region *a)
 {
-  if (pRect.is_empty()) {
-    return 0;
+  if (is_empty()) {
+    return EMPTY;
   }
-  if (a->pRect.is_empty()) {
-    pRect.clear();
-    return 0;
+  if (a->is_empty()) {
+    clear();
+    return EMPTY;
   }
-  int x = max(pRect.x(), a->pRect.x());
-  int y = max(pRect.y(), a->pRect.y());
-  int r = min(pRect.r(), a->pRect.r());
-  int b = min(pRect.b(), a->pRect.b());
-  int w = r-x;
-  int h = b-y;
-  if (pRect.equals(x, y, w, h)) {
-    return 1;
+  int lx = max(x(), a->x());
+  int ly = max(y(), a->y());
+  int lr = min(r(), a->r());
+  int lb = min(b(), a->b());
+  int lw = lr-lx;
+  int lh = lb-ly;
+  if (equals(lx, ly, lw, lh)) {
+    return SAME;
   }
-  pRect.set(x, y, w, h);
-  if ( (pRect.w()<=0) || (pRect.h()<=0) ) {
-    pRect.clear();
-    return 0;
+  set(lx, ly, lw, lh);
+  if ( (w()<=0) || (h()<=0) ) {
+    clear();
+    return EMPTY;
   }
-  return 2;
+  return LESS;
 }
 
+
+
+Fl_Complex_Region::~Fl_Complex_Region()
+{
+  delete pSubregion; // recursively delete all subregions
+  delete pNext; // recursively delete all following regions
+}
+
+
+void Fl_Complex_Region::set(Fl_Rect *rect)
+{
+  delete pSubregion;
+  pSubregion = 0L;
+  delete pNext;
+  pNext = 0L;
+  Fl_Rect_Region::set(rect);
+}
 
 
 void Fl_Android_Graphics_Driver::clip_region(Fl_Region r)
@@ -73,27 +91,28 @@ void Fl_Android_Graphics_Driver::restore_clip()
 {
   fl_clip_state_number++;
   Fl_Window *win = Fl_Window::current();
-  Fl_Clip_Rect a(0, 0, win->w(), win->h());
+  Fl_Rect_Region a(0, 0, win->w(), win->h());
 
   Fl_Region b = rstack[rstackptr];
   if (b) {
     // FIXME: scaling!
     a.intersect_with(b);
   }
-  pClipRect = a;
+  pWindowRegion.set(b);
+  // FIXME: intersect with complex window region
 }
 
 void Fl_Android_Graphics_Driver::push_clip(int x, int y, int w, int h)
 {
   Fl_Region r;
   if (w > 0 && h > 0) {
-    r = new Fl_Clip_Rect(x,y,w,h);
+    r = new Fl_Rect_Region(x,y,w,h);
     Fl_Region current = rstack[rstackptr];
     if (current) {
       r->intersect_with(current);
     }
   } else { // make empty clip region:
-    r = new Fl_Clip_Rect();
+    r = new Fl_Rect_Region();
   }
   if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
   else Fl::warning("Fl_Android_Graphics_Driver::push_clip: clip stack overflow!\n");
@@ -136,7 +155,7 @@ int Fl_Android_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int
     return 0;
   }
 
-  Fl_Clip_Rect a(x, y, w, h);
+  Fl_Rect_Region a(x, y, w, h);
   int ret = a.intersect_with(r); // return 0 for empty, 1 for same, 2 if intersecting
   X = a.x();
   Y = a.y();
@@ -161,7 +180,7 @@ int Fl_Android_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   Fl_Region r = rstack[rstackptr];
   if (!r) return 1;
 
-  Fl_Clip_Rect a(x, y, w, h); // return 0 for empty, 1 for same, 2 if intersecting
+  Fl_Rect_Region a(x, y, w, h); // return 0 for empty, 1 for same, 2 if intersecting
   return a.intersect_with(r);
 }
 

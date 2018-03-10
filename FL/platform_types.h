@@ -114,8 +114,11 @@ struct dirent {char d_name[1];};
 
 #elif defined(__ANDROID__)
 
-// see: src/driver/Android/Fl_Android_Graphics_Driver_region.cxx
-typedef struct Fl_Clip_Rect *Fl_Region;
+#ifdef __cplusplus
+typedef class Fl_Rect_Region *Fl_Region;
+#else
+typedef struct Fl_Rect_Region *Fl_Region;
+#endif
 
 // TODO: the types below have not yet been ported
 typedef unsigned long Fl_Offscreen;

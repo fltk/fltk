@@ -30,18 +30,61 @@
 #include <limits.h>
 
 
-struct Fl_Clip_Rect
+/**
+ * The Fl_Rect_Region is based on Fl_Rect with additional functionality for clipping.
+ */
+class Fl_Rect_Region : public Fl_Rect
 {
-  Fl_Clip_Rect() : pRect() {}
-  Fl_Clip_Rect(int x, int y, int w, int h) : pRect(x, y, w, h) {}
-  int x() { return pRect.x(); }
-  int y() { return pRect.y(); }
-  int w() { return pRect.w(); }
-  int h() { return pRect.h(); }
-  int intersect_with(Fl_Clip_Rect *r);
+public:
+  enum {
+    EMPTY = 0, SAME, LESS, MORE
+  };
+
+  /**
+   * Create an empty clipping region.
+   */
+  Fl_Rect_Region() {}
+
+  /**
+   * Create a clipping region based on position and size.
+   * @param x, y position
+   * @param w, h size
+   */
+  Fl_Rect_Region(int x, int y, int w, int h) : Fl_Rect(x, y, w, h) {}
+  int intersect_with(Fl_Rect_Region *r);
   static int min(int a, int b) { return (a<b) ? a : b; }
   static int max(int a, int b) { return (a>b) ? a : b; }
-  Fl_Rect pRect;
+};
+
+
+/**
+ * The Fl_Complex_Region represents a clipping region of any shape.
+ *
+ * This class is organized in a tree-like structure. If the region is
+ * rectangular, is_simple() returns 1 and the rectangle can be used just
+ * as in Fl_Rect_Region.
+ *
+ * If a more complex representation is needed, the first list of
+ * subregions is organizen in horizontal strips. The root region rect
+ * will contain the outline of all subregions, and the subregions
+ * will either be simple rectangles, or they will contain a second
+ * level of subregions, subdividing the horizontal region into vertical
+ * columns.
+ *
+ * When reading, the tree can be easily walked using recursion.
+ */
+class Fl_Complex_Region : public Fl_Rect_Region
+{
+public:
+  Fl_Complex_Region() : Fl_Rect_Region(), pSubregion(0L), pNext(0L) { }
+  Fl_Complex_Region(int x, int y, int w, int h) : Fl_Rect_Region(x, y, w, h), pSubregion(0L), pNext(0L)  { }
+  ~Fl_Complex_Region();
+  void set(Fl_Rect *rect);
+  char is_simple() { return pSubregion==0; }
+  char is_complex() { return pSubregion!=0; }
+protected:
+  Fl_Complex_Region *pSubregion;
+  Fl_Complex_Region *pNext;
 };
 
 
@@ -144,7 +187,7 @@ protected:
   void restore_clip();
   void clip_region(Fl_Region r);
   Fl_Region clip_region();
-  static Fl_Clip_Rect pClipRect;
+  static Fl_Complex_Region pWindowRegion;
 #if 0
   virtual Fl_Region scale_clip(float f);
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
