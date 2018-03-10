@@ -31,10 +31,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
     With FLTK 1.4, Fl::run() returns so the app follows its normal termination path.
   - MacOS platform: Added support for rescaling the GUI of any app at run-time
     using the command/+/-/0/ keystrokes.
-  - MSWindows platform: Added optional support for rescaling the GUI of any app
-    at run-time using the ctrl/+/-/0/ keystrokes. This requires to build the
-    FLTK library with -DFLTK_HIDPI_SUPPORT (for now). This option also makes
-    app detect the desktop scaling factor and automatically scale their GUI
+  - MSWindows platform: Added support for rescaling the GUI of any app
+    at run-time using the ctrl/+/-/0/ keystrokes. All applications
+    detect the desktop scaling factor and automatically scale their GUI
     accordingly. This effectively renders WIN32 FLTK apps "per-monitor DPI-aware"
     whereas they were "DPI-unaware" with FLTK 1.3.4.
   - FLTK apps on the MacOS platform contain automatically a Window menu, which,
@@ -63,7 +62,6 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
     by typing ctrl-'+' (enlarge), ctrl-'-' (shrink) or ctrl-'0' (back to starting
     factor value). Windows moved between screens adjust to the scaling factor of
     their screen. This supports desktops mixing screens with distinct resolutions.
-    [HiDPI displays have been supported since FLTK 1.3.3 for the WIN32 and MacOS platforms].
   - New method shadow(int) allows to disable the shadows of the hands
     of Fl_Clock, Fl_Clock_Output, and derived widgets.
   - New method Fl_Tabs::tab_align() allows to set alignment of tab labels,
