@@ -55,7 +55,6 @@ static uint16_t make565(Fl_Color crgba)
 
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {
   if (pWindowRegion) {
-    Fl_Android_Application::log_w("rectf %g %g %g %g", x, y, w, h);
     Fl_Rect_Region r(x, y, w, h);
     if (r.intersect_with(pWindowRegion)) {
       rectf_unclipped(r.x(), r.y(), r.w(), r.h());
