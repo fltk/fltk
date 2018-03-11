@@ -1154,6 +1154,10 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, 
 Copy a rectangular area of the size \p w*h from \p srcx,srcy
 in the offscreen buffer into the current drawing surface at \p x,y.
 
+void fl_scale_offscreen(Fl_Offscreen &osrc)
+\par
+Adapts the offscreen's size in pixels to a changed value of the scale factor
+while keeping the offscreen's graphical content.
 
 \htmlonly
 <hr>

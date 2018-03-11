@@ -225,7 +225,7 @@ public:
   Fl_Graphics_Driver();
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
   static Fl_Graphics_Driver &default_driver();
-  /** Current scale factor between FLTK and graphical coordinates: graphical = FLTK * scale() */
+  /** Current scale factor between FLTK and drawing units: drawing = FLTK * scale() */
   float scale() { return scale_; }
   /** Return whether the graphics driver can do alpha blending */
   virtual char can_do_alpha_blending() { return 0; }

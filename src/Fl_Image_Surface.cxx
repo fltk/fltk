@@ -186,9 +186,12 @@ void fl_end_offscreen() {
   Fl_Surface_Device::pop_current();
 }
 
-/** Adapts an offscreen buffer to a changed value of the graphical scaling factor.
+/** Adapts an offscreen buffer to a changed value of the scale factor.
  The \p ctx argument must have been created by fl_create_offscreen()
  and the calling context must not be between fl_begin_offscreen() and fl_end_offscreen().
+ The graphical content of the offscreen is preserved. The current scale factor
+ value is given by <tt>Fl_Graphics_Driver::default_driver().scale()</tt>.
+ \version 1.4
  */
 void fl_scale_offscreen(Fl_Offscreen &ctx) {
   int i, w, h;
