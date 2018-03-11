@@ -41,60 +41,61 @@ Before version 1.4, all graphical quantities used by FLTK are in pixel units:
 a window of width 500 units is 500-pixel wide, a line of length 10 units is
 10-pixel long, lines of text written using a 14-point font are 14 pixels below
 each other. This organization is not sufficient to support GUI apps that can be drawn on
-displays of varying pixel density, especially on High-DPI displays, because
+screens of varying pixel density, especially on High-DPI screens, because
 widgets become very small and text becomes unreadable.
 
-FLTK version 1.4 introduces a new feature, a display-specific <b>scale factor</b> which is
+FLTK version 1.4 introduces a new feature, a screen-specific <b>scale factor</b> which is
 a float number with a typical value in the 1-2.5 range and is used as follows: any graphical
-element with an FLTK value of \e v units is drawn on the display with \e v * \e scale units.
+element with an FLTK value of \e v units is drawn on the screen with \e v * \e scale units.
 Thus, a window with width 500 units is 500*scale-pixel wide, a line of length 10 units is
 10*scale-pixel long, lines of text written using a 14-point font are 14*scale pixels below
-each other. Consider a system with two displays, one with regular DPI and one with
-a twice higher DPI. If the first display's scale factor is set to 1 and that of the
-second display to 2, the GUI of any FLTK app appears equally sized on the two displays.
+each other. Consider a system with two screens, one with regular DPI and one with
+a twice higher DPI. If the first screen's scale factor is set to 1 and that of the
+second screen to 2, the GUI of any FLTK app appears equally sized on the two screens.
 
 FLTK uses several units to measure graphical elements:
 <ul><li>All data visible by the public API (e.g., window widths, line lengths, font sizes,
 clipping regions) are in <b>FLTK units</b> which are both system- and DPI-independent.
-<li>Just before drawing to a display, the library internally multiplies all quantities
+<li>Just before drawing to a screen, the library internally multiplies all quantities
 expressed in FLTK units by the current value of the scale factor
-for the display in use and obtains quantities in <b>drawing units</b>.
+for the screen in use and obtains quantities in <b>drawing units</b>.
 The current scale factor value, for an Fl_Window named \e window, is given by
 \code
 int nscreen = window->driver()->screen_num(); // the screen where window is mapped
 float s = Fl::screen_driver()->scale(nscreen); // this screen's scale factor
 \endcode
-One drawing unit generally corresponds to one display pixel...
-<li>...but not on Mac OS X and for retina displays, where drawing units correspond
+One drawing unit generally corresponds to one screen pixel...
+<li>...but not on Mac OS X and for retina displays, where one drawing unit corresponds
 to two pixels.
 </ul>
 
 At application start time, FLTK attempts to detect the adequate scale factor value for
-each display of the system. If this attempt fails, it's possible to set the
+each screen of the system. If this attempt fails, it's possible to set the
 <tt>FLTK_SCALING_FACTOR</tt> environmental variable to the desired numerical value
 (e.g., 1.75) and any FLTK app will start scaled with that value. Furthermore,
-it's possible to change the scale factor value of any display at run time
+it's possible to change the scale factor value of any screen at run time
 with ctrl/+/-/0/ keystrokes which enlarge, shrink, and reset, respectively,
-the GUI of all FLTK windows on a display.
+all FLTK windows on a screen and their content.
 Under Mac OS X, the corresponding GUI scaling shortcuts are cmd/+/-/0/.
 
-When drawing images to a display whose scale value is > 1, the image pixel data
+When drawing images to a screen whose scale factor value is > 1, the image pixels
 are mapped to the larger number of pixels present in
-a display area sized (in FLTK units) as the image. This operation is done internally
+a screen area sized (in FLTK units) as the image. This operation is done internally
 by the library using diverse scaling methods that vary with the image type
 (Fl_Pixmap, Fl_Bitmap or Fl_RGB_Image) and the platform.
 A situation of special interest arises when drawing Fl_Shared_Image's. The
 Fl_Shared_Image::scale() member function allows to set the image drawing size
 (in FLTK units) independently of its pixel size. Image pixels are mapped to the
-pixels of the image drawing area on the display which is determined by the scale
-factor value. Therefore, the image data can fill the drawing area of the display at
-full physical resolution even for high scale values if the original image is large enough.
+pixels of the image drawing area on the screen which is determined by the scale
+factor value. Therefore, the image data can fill the drawing area of the screen at
+full physical resolution even for high values of the scale factor if the original
+image is large enough.
 
 The Fl_Image_Surface class is intended to create an Fl_RGB_Image from a series
 of FLTK drawing operations. The Fl_Image_Surface constructor allows to control
 whether the size in pixels of the resulting image matches the FLTK units used when
 performing drawing operations, or matches the number of pixels corresponding to
-these FLTK units given the current scale factor value. The first result is obtained
+these FLTK units given the current value of the scale factor. The first result is obtained
 with <tt>new Fl_Image_Surface(w, h)</tt>, the second with
 <tt>new Fl_Image_Surface(w, h, 1)</tt>.
 
@@ -1072,7 +1073,7 @@ Each of these image classes loads a named file of the
 corresponding format. The Fl_Shared_Image class
 can be used to load any type of image file - the class examines
 the file and constructs an image of the appropriate type. It can also be used
-to scale an image to a certain size in drawing units, independently from its size 
+to scale an image to a certain size in FLTK units, independently from its size
 in pixels (see Fl_Shared_Image::scale()).
 
 Finally, FLTK provides a special image class called Fl_Tiled_Image to
@@ -1119,7 +1120,7 @@ where img is a pointer to any Fl_Image type.
 Sometimes it can be very useful to generate a complex drawing
 in memory first and copy it to the screen at a later point in 
 time. This technique can significantly reduce the amount of repeated
-drawing. Offscreen drawing functions are declared in <FL/platform.H>.
+drawing. Offscreen drawing functions are declared in <FL/fl_draw.H>.
 
 Fl_Double_Window uses offscreen rendering to avoid flickering on
 systems that don't support double-buffering natively.
@@ -1127,7 +1128,8 @@ systems that don't support double-buffering natively.
 Fl_Offscreen fl_create_offscreen(int w, int h)
 
 \par
-Create an RGB offscreen buffer with \p w*h pixels.
+Create an RGB offscreen buffer containing as many pixels as in a screen area
+of size \p w,h FLTK units.
 
 void fl_delete_offscreen(Fl_Offscreen)
 
@@ -1150,7 +1152,7 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, 
 
 \par
 Copy a rectangular area of the size \p w*h from \p srcx,srcy
-in the offscreen buffer into the current buffer at \p x,y.
+in the offscreen buffer into the current drawing surface at \p x,y.
 
 
 \htmlonly
