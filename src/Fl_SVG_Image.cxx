@@ -240,11 +240,11 @@ void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     f = Fl::screen_driver()->retina_factor() * fl_graphics_driver->scale();
   }
   int w1 = w(), h1 = h();
-  /* When f > 1, there may be several pixels per drawing unit in an area
+  /* When f > 1, there may be several pixels per FLTK unit in an area
    of size w() x h() of the display. This occurs, e.g., with Apple retina displays
    and when the display is rescaled.
    The SVG is rasterized to the area dimension in pixels. The image is then drawn
-   scaled to its size expressed in drawing units. With this procedure,
+   scaled to its size expressed in FLTK units. With this procedure,
    the SVG image is drawn using the full resolution of the display.
    */
   resize(f*w(), f*h());

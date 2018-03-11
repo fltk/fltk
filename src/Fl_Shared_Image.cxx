@@ -376,12 +376,12 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
 /** Sets the drawing size of the shared image.
  This function gives the shared image its own size, independently from the size of the original image
  that is typically larger.
- This can be useful to draw a shared image on a drawing surface whose resolution is higher
- than the drawing unit for this surface: all pixels of the original image become available to fill
- an area of the drawing surface sized at <tt>width,height</tt>.
- Examples of such drawing surfaces: laser printers, PostScript files, PDF printers, HiDPI displays.
+ This can be useful to draw a shared image on a drawing surface with more than 1 pixel per
+ FLTK unit: all pixels of the original image become available to fill an area of the drawing surface
+ sized at <tt>width,height</tt> FLTK units.
+ Examples of such drawing surfaces: HiDPI displays, laser printers, PostScript files, PDF printers.
 
- \param width,height   maximum width and height (in drawing units) to use when drawing the shared image
+ \param width,height   maximum width and height (in FLTK units) to use when drawing the shared image
  \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
  \param can_expand  if null, the width and height of the shared image will not exceed those of the original image
 

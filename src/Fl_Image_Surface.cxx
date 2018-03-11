@@ -30,14 +30,13 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
 
 /** Constructor with optional high resolution.
  \param w and \param h set the size of the resulting image. The value of the \p high_res
- parameter controls whether \p w and \p h are interpreted as pixel or drawing units.
+ parameter controls whether \p w and \p h are interpreted as pixel or FLTK units.
  
  \param high_res If zero, the created image surface is sized at \p w x \p h pixels.
- If non-zero, the pixel size of the created image surface follows
- the value of the display scaling factor (see Fl_Graphics_Driver::scale()). This gives
- the created image surface the same number of pixels as an area of the display of size 
- \p w x \p h expressed in drawing units. On the Mac OS platform, the image surface pixel 
- size is always twice as high and wide as \p w and \p h.
+ If non-zero, the pixel size of the created image surface depends on
+ the value of the display scale factor (see Fl_Graphics_Driver::scale()):
+ the resulting image has the same number of pixels as an area of the display of size
+ \p w x \p h expressed in FLTK units.
  If \p highres is non-zero, always use Fl_Image_Surface::highres_image() to get the image data.
 
  \param pixmap Is used internally by FLTK; applications just use its default value.
@@ -94,7 +93,7 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
 
 /** Returns a possibly high resolution image made of all drawings sent to the Fl_Image_Surface object.
  The Fl_Image_Surface object should have been constructed with Fl_Image_Surface(W, H, 1).
- The returned Fl_Shared_Image object is scaled to a size of WxH drawing units and may have a 
+ The returned Fl_Shared_Image object is scaled to a size of WxH FLTK units and may have a 
  pixel size larger than these values.
  The returned object should be deallocated with Fl_Shared_Image::release() after use.
  \version 1.3.4
