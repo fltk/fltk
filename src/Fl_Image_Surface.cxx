@@ -140,8 +140,12 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
 
 /**
    Creation of an offscreen graphics buffer.
-   \param w,h     width and height in pixels of the buffer.
+   \param w,h     width and height in FLTK units of the buffer.
    \return    the created graphics buffer.
+ 
+ The pixel size of the created graphics buffer is equal to the number of pixels
+ in an area of the screen containing the current window sized at \p w,h FLTK units.
+ This pixel size varies with the value of the scale factor of this screen.
    */
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   int rank = find_slot();
