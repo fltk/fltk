@@ -36,11 +36,9 @@
 
 #include <android/log.h>
 
-#define  LOG_TAG    "FLTK"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
-#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  LOGV(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
+static const char *LOG_TAG = "FLTK";
+
 
 // The ANativeActivity object instance that this app is running in.
 ANativeActivity *Fl_Android_Application::pActivity = 0L;
@@ -175,7 +173,7 @@ int8_t Fl_Android_Application::read_cmd()
     }
     return cmd;
   } else {
-    LOGE("No data on command pipe!");
+    log_e("No data on command pipe!");
   }
   return -1;
 }
@@ -187,7 +185,7 @@ void Fl_Android_Application::print_cur_config()
   AConfiguration_getLanguage(pConfig, lang);
   AConfiguration_getCountry(pConfig, country);
 
-  LOGV("Config: mcc=%d mnc=%d lang=%c%c cnt=%c%c orien=%d touch=%d dens=%d "
+  log_v("Config: mcc=%d mnc=%d lang=%c%c cnt=%c%c orien=%d touch=%d dens=%d "
                "keys=%d nav=%d keysHid=%d navHid=%d sdk=%d size=%d long=%d "
                "modetype=%d modenight=%d",
        AConfiguration_getMcc(pConfig),
@@ -216,14 +214,14 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
 {
   switch (cmd) {
     case APP_CMD_INPUT_CHANGED:
-      LOGV("APP_CMD_INPUT_CHANGED\n");
+      log_v("APP_CMD_INPUT_CHANGED\n");
       pthread_mutex_lock(&pMutex);
       if (pInputQueue != NULL) {
         AInputQueue_detachLooper(pInputQueue);
       }
       pInputQueue = pPendingInputQueue;
       if (pInputQueue != NULL) {
-        LOGV("Attaching input queue to looper");
+        log_v("Attaching input queue to looper");
         AInputQueue_attachLooper(pInputQueue,
                                  pMsgPipeLooper, LOOPER_ID_INPUT, NULL,
                                  &pInputPollSource);
@@ -233,7 +231,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
       break;
 
     case APP_CMD_INIT_WINDOW:
-      LOGV("APP_CMD_INIT_WINDOW\n");
+      log_v("APP_CMD_INIT_WINDOW\n");
       // tell the main thread that we received the window handle
       pthread_mutex_lock(&pMutex);
       pNativeWindow = pPendingWindow;
@@ -250,7 +248,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
       break;
 
     case APP_CMD_TERM_WINDOW:
-      LOGV("APP_CMD_TERM_WINDOW\n");
+      log_v("APP_CMD_TERM_WINDOW\n");
       pthread_cond_broadcast(&pCond);
       break;
 
@@ -258,7 +256,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
     case APP_CMD_START:
     case APP_CMD_PAUSE:
     case APP_CMD_STOP:
-      LOGV("activityState=%d\n", cmd);
+      log_v("activityState=%d\n", cmd);
       pthread_mutex_lock(&pMutex);
       pActivityState = cmd;
       pthread_cond_broadcast(&pCond);
@@ -266,14 +264,14 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
       break;
 
     case APP_CMD_CONFIG_CHANGED:
-      LOGV("APP_CMD_CONFIG_CHANGED\n");
+      log_v("APP_CMD_CONFIG_CHANGED\n");
       AConfiguration_fromAssetManager(pConfig,
                                       pActivity->assetManager);
       print_cur_config();
       break;
 
     case APP_CMD_DESTROY:
-      LOGV("APP_CMD_DESTROY\n");
+      log_v("APP_CMD_DESTROY\n");
       pDestroyRequested = 1;
       // FIXME: see Fl::program_should_quit()
       break;
@@ -292,7 +290,7 @@ void Fl_Android_Application::post_exec_cmd(int8_t cmd)
 {
   switch (cmd) {
     case APP_CMD_TERM_WINDOW:
-      LOGV("APP_CMD_TERM_WINDOW\n");
+      log_v("APP_CMD_TERM_WINDOW\n");
       pthread_mutex_lock(&pMutex);
       pNativeWindow = NULL;
       pthread_cond_broadcast(&pCond);
@@ -300,7 +298,7 @@ void Fl_Android_Application::post_exec_cmd(int8_t cmd)
       break;
 
     case APP_CMD_SAVE_STATE:
-      LOGV("APP_CMD_SAVE_STATE\n");
+      log_v("APP_CMD_SAVE_STATE\n");
       pthread_mutex_lock(&pMutex);
       pStateSaved = 1;
       pthread_cond_broadcast(&pCond);
@@ -334,7 +332,6 @@ void Fl_Android_Application::process_input(struct android_poll_source* source)
 {
   AInputEvent* event = NULL;
   while (AInputQueue_getEvent(pInputQueue, &event) >= 0) {
-    //LOGV("New input event: type=%d\n", AInputEvent_getType(event));
     if (AInputQueue_preDispatchEvent(pInputQueue, event)) {
       continue;
     }
@@ -502,7 +499,7 @@ bool Fl_Android_Application::screen_is_locked()
 void Fl_Android_Activity::write_cmd(int8_t cmd)
 {
   if (write(pMsgWritePipe, &cmd, sizeof(cmd)) != sizeof(cmd)) {
-    LOGE("Failure writing android_app cmd: %s\n", strerror(errno));
+    log_e("Failure writing android_app cmd: %s\n", strerror(errno));
   }
 }
 
@@ -756,7 +753,7 @@ void Fl_Android_Activity::create(ANativeActivity* activity, void* savedState,
 
   int msgpipe[2];
   if (pipe(msgpipe)) {
-    LOGE("could not create pipe: %s", strerror(errno));
+    log_e("could not create pipe: %s", strerror(errno));
     return;
   }
   pMsgReadPipe = msgpipe[0];

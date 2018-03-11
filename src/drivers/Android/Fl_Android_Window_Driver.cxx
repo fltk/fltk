@@ -93,7 +93,14 @@ void Fl_Android_Window_Driver::expose_all()
 
 void Fl_Android_Window_Driver::make_current()
 {
+  // FXIME: that is quite a cludge:
   ((Fl_Android_Screen_Driver*)Fl::screen_driver())->pScreenContentChanged = true;
+
+  Fl_Android_Graphics_Driver *gd = dynamic_cast<Fl_Android_Graphics_Driver*>(fl_graphics_driver);
+  if (gd) {
+    gd->make_current(pWindow);
+  }
+
 }
 
 

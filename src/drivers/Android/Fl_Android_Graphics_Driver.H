@@ -30,6 +30,9 @@
 #include <limits.h>
 
 
+class Fl_Android_Window_Driver;
+
+
 /**
  * The Fl_Rect_Region is based on Fl_Rect with additional functionality for clipping.
  */
@@ -52,6 +55,8 @@ public:
    */
   Fl_Rect_Region(int x, int y, int w, int h) : Fl_Rect(x, y, w, h) {}
   int intersect_with(Fl_Rect_Region *r);
+  virtual void print();
+
   static int min(int a, int b) { return (a<b) ? a : b; }
   static int max(int a, int b) { return (a>b) ? a : b; }
 };
@@ -79,10 +84,16 @@ public:
   Fl_Complex_Region() : Fl_Rect_Region(), pSubregion(0L), pNext(0L) { }
   Fl_Complex_Region(int x, int y, int w, int h) : Fl_Rect_Region(x, y, w, h), pSubregion(0L), pNext(0L)  { }
   ~Fl_Complex_Region();
-  void set(Fl_Rect *rect);
+  virtual void set(int x, int y, int w, int h);
+  virtual void set(Fl_Rect *rect);
+  void subtract(Fl_Rect*);
+  void intersect(Fl_Rect*);
+  void clone(Fl_Complex_Region*);
   char is_simple() { return pSubregion==0; }
   char is_complex() { return pSubregion!=0; }
+  void print();
 protected:
+  void print_data(int indent);
   Fl_Complex_Region *pSubregion;
   Fl_Complex_Region *pNext;
 };
@@ -112,7 +123,8 @@ protected:
   POINT *p;
 #endif
 public:
-  Fl_Android_Graphics_Driver() : pWindowRegion(0L) {}
+  Fl_Android_Graphics_Driver();
+  ~Fl_Android_Graphics_Driver();
 #if 0
   Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
@@ -190,7 +202,6 @@ protected:
   void restore_clip();
   void clip_region(Fl_Region r);
   Fl_Region clip_region();
-  Fl_Rect_Region *pWindowRegion;
 #if 0
   virtual Fl_Region scale_clip(float f);
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
@@ -227,6 +238,16 @@ protected:
 
 #endif
 
+  int render_letter(int xx, int yy, uint32_t c);
+  void make_current(Fl_Window*);
+
+  int32_t pStride;
+  uint16_t *pBits;
+
+  // Fl_Rect_Region pScreenRegion;
+  Fl_Rect_Region *pWindowRegion;
+  Fl_Complex_Region *pDesktopRegion;
+  Fl_Complex_Region *pClippingRegion;
 };
 
 

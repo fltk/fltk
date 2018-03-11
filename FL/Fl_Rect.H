@@ -60,14 +60,16 @@ public:
   Fl_Rect (const Fl_Widget* const widget)
   : x_(widget->x()), y_(widget->y()), w_(widget->w()), h_(widget->h()) {}
 
+  virtual ~Fl_Rect() { }
+
   /** Return 1 if the rectangle is empty, width or height are 0 */
   int is_empty() { return (w_<=0)||(h_<=0); }
 
    /** Set the position and size */
-  void set(int x, int y, int w, int h) { x_=x; y_=y; w_=w; h_=h; }
+  virtual void set(int x, int y, int w, int h) { x_=x; y_=y; w_=w; h_=h; }
 
   /** Clone another rectangle */
-  void set(Fl_Rect *r) { x_=r->x_; y_=r->y_; w_=r->w_; h_=r->h_; }
+  virtual void set(Fl_Rect *r) { x_=r->x_; y_=r->y_; w_=r->w_; h_=r->h_; }
 
   /** return 0 if the rectangles are different, or 1 if they are the same */
   int equals(int x, int y, int w, int h) { return ( (x_==x) &&  (y_==y) && (w_==w) && (h_==h) ); }

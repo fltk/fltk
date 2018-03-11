@@ -116,22 +116,38 @@ int Fl_Android_Screen_Driver::handle_keyboard_event(AInputEvent *event)
 
 int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
 {
-  Fl::e_x = Fl::e_x_root = (int)(AMotionEvent_getX(event, 0) * 600 /
-                           ANativeWindow_getWidth(Fl_Android_Application::native_window()));
-  Fl::e_y = Fl::e_y_root = (int)(AMotionEvent_getY(event, 0) * 800 /
-                           ANativeWindow_getHeight(Fl_Android_Application::native_window()));
+  int ex = Fl::e_x_root = (int)(AMotionEvent_getX(event, 0) * 600 /
+                                 ANativeWindow_getWidth(Fl_Android_Application::native_window()));
+  int ey = Fl::e_y_root = (int)(AMotionEvent_getY(event, 0) * 800 /
+                                 ANativeWindow_getHeight(Fl_Android_Application::native_window()));
+
+  // FIXME: find the window in which the event happened
+  Fl_Window *win = Fl::first_window();
+  while (win) {
+    if (ex>=win->x() && ex<win->x()+win->w() && ey>=win->y() && ey<win->y()+win->h())
+      break;
+    win = Fl::next_window(win);
+  }
+
+  if (win) {
+    Fl::e_x = ex-win->x();
+    Fl::e_y = ey-win->y();
+  } else {
+    Fl::e_x = ex;
+    Fl::e_y = ey;
+  }
+
   Fl::e_state = FL_BUTTON1;
   Fl::e_keysym = FL_Button + 1;
   if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
     Fl::e_is_click = 1;
-    Fl::handle(FL_PUSH, Fl::first_window());
-    Fl_Android_Application::log_i("Mouse push %d at %d, %d", Fl::event_button(), Fl::event_x(),
-                                  Fl::event_y());
+    Fl::handle(FL_PUSH, win);
+    Fl_Android_Application::log_i("Mouse push %d at %d, %d", Fl::event_button(), Fl::event_x(), Fl::event_y());
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE) {
-    Fl::handle(FL_DRAG, Fl::first_window());
+    Fl::handle(FL_DRAG, win);
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) {
     Fl::e_state = 0;
-    Fl::handle(FL_RELEASE, Fl::first_window());
+    Fl::handle(FL_RELEASE, win);
   }
   return 1;
 }

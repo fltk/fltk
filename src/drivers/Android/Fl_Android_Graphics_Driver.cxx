@@ -36,6 +36,56 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 }
 
 
+Fl_Android_Graphics_Driver::Fl_Android_Graphics_Driver() :
+        pStride(0), pBits(0),
+        pWindowRegion(new Fl_Rect_Region()),
+        pDesktopRegion(new Fl_Complex_Region()),
+        pClippingRegion(new Fl_Complex_Region())
+{
+}
+
+
+Fl_Android_Graphics_Driver::~Fl_Android_Graphics_Driver()
+{
+}
+
+
+void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
+{
+  Fl_Android_Application::log_i("------------ make current \"%s\"", win->label());
+
+  // The Stride is the offset between lines in the graphics buffer
+  pStride = Fl_Android_Application::graphics_buffer().stride;
+  // Bits is the memory address of the top left corner of the window
+  pBits = ((uint16_t*)(Fl_Android_Application::graphics_buffer().bits))
+          + win->x_root() + pStride * win->y_root();
+
+  // TODO: set the clipping area
+  // set the clipping area to the physical screen size in window coordinates
+  pWindowRegion->set(-win->x(), -win->y(), 600, 800);
+  Fl_Rect_Region wr(0, 0, win->w(), win->h());
+  pWindowRegion->intersect_with(&wr);
+  pWindowRegion->print();
+
+  pDesktopRegion->set(pWindowRegion);
+
+  // remove all window rectangles that are positioned on top of this window
+  // TODO: this region is expensive to calculate. Cache it for each window and recalculate when windows move, show, hide, or change order
+  Fl_Window *wTop = Fl::first_window();
+  while (wTop) {
+    if (wTop==win) break;
+    Fl_Rect r(wTop->x(), wTop->y(), wTop->w(), wTop->h());
+    pDesktopRegion->subtract(&r);
+    wTop = Fl::next_window(wTop);
+  }
+
+  // TODO: we can optimize this by using some "copy on write" system
+  pClippingRegion->clone(pDesktopRegion);
+  pClippingRegion->print();
+  Fl_Android_Application::log_i("------------ make current done");
+}
+
+
 static uint16_t  make565(int red, int green, int blue)
 {
     return (uint16_t)( ((red   << 8) & 0xf800) |
@@ -53,15 +103,14 @@ static uint16_t make565(Fl_Color crgba)
                        ((crgba >>11) & 0x001f) );
 }
 
-void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h) {
-  if (pWindowRegion) {
-    Fl_Rect_Region r(x, y, w, h);
-    if (r.intersect_with(pWindowRegion)) {
-      rectf_unclipped(r.x(), r.y(), r.w(), r.h());
-    }
-  } else {
-    rectf_unclipped(x, y, w, h);
+void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
+{
+  Fl_Rect_Region r(x, y, w, h);
+  if (r.intersect_with((Fl_Rect_Region*)pClippingRegion)) {
+    rectf_unclipped(r.x(), r.y(), r.w(), r.h());
   }
+  // TODO: create a complex region by intersecting r with the pClippingRegion
+  // TODO: walk the region and draw all rectangles
 
   /*
    * rectf(x, y, w, h) {
@@ -95,8 +144,8 @@ void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, floa
 // TODo: clip the rectangle to all parts of the current clipping region
 
   uint16_t cc = make565(color());
-  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
-  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
+  int32_t ss = pStride;
+  uint16_t *bits = pBits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t ww = (uint32_t)w;
@@ -119,8 +168,8 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
     w = x-x1;
     x = x1;
   }
-  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
-  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
+  int32_t ss = pStride;
+  uint16_t *bits = pBits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t ww = (uint32_t)w;
@@ -140,8 +189,8 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
     h = y-y1;
     y = y1;
   }
-  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
-  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
+  int32_t ss = pStride;
+  uint16_t *bits = pBits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t hh = (uint32_t)h;
@@ -160,7 +209,7 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
 
 unsigned char ttf_buffer[1<<25];
 
-static int render_letter(int xx, int yy, uint32_t c)
+int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
 {
    static bool once = 0;
    static stbtt_fontinfo font;
@@ -210,8 +259,8 @@ if (once==0) {
   // rrrr.rggg.gggb.bbbb
   xx += dx; yy += dy;
   uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
-  uint32_t ss = Fl_Android_Application::graphics_buffer().stride;
-  uint16_t *bits = (uint16_t*)Fl_Android_Application::graphics_buffer().bits;
+  int32_t ss = pStride;
+  uint16_t *bits = pBits;
   uint32_t ww = w;
   uint32_t hh = h;
   unsigned char *s = bitmap;
@@ -511,6 +560,7 @@ void Fl_GDI_Graphics_Driver::set_current_() {
 }
 
 #endif
+
 
 //
 // End of "$Id$".

@@ -51,11 +51,29 @@ int Fl_Rect_Region::intersect_with(Fl_Rect_Region *a)
 }
 
 
+void Fl_Rect_Region::print()
+{
+  Fl_Android_Application::log_i("-------- begin rect");
+  Fl_Android_Application::log_i("Rect %d %d %d %d", x(), y(), w(), h());
+}
+
+
 
 Fl_Complex_Region::~Fl_Complex_Region()
 {
   delete pSubregion; // recursively delete all subregions
   delete pNext; // recursively delete all following regions
+}
+
+
+void Fl_Complex_Region::set(int x, int y, int w, int h)
+{
+  // TODO: refactor the next four lines out, repeating
+  delete pSubregion;
+  pSubregion = 0L;
+  delete pNext;
+  pNext = 0L;
+  Fl_Rect_Region::set(x, y, w, h);
 }
 
 
@@ -68,6 +86,92 @@ void Fl_Complex_Region::set(Fl_Rect *rect)
   Fl_Rect_Region::set(rect);
 }
 
+/**
+ * Subtract a rectangle from this region.
+ *
+ * This operation may create multiple new subregions, but possibly also remove
+ * subregions.
+ *
+ * @param x, y, w, h rectangular region that will be subtracted
+ */
+void Fl_Complex_Region::subtract(Fl_Rect *r)
+{
+  Fl_Android_Application::log_i("------------ subtract");
+  this->print();
+  Fl_Android_Application::log_i("--------");
+  Fl_Android_Application::log_i("Rect %d %d %d %d", r->x(), r->y(), r->w(), r->h());
+  // ----
+  this->print();
+  Fl_Android_Application::log_i("------------ subtract done");
+  // FIXME: implement
+  int x = 3;
+}
+
+
+void Fl_Complex_Region::intersect(Fl_Rect*)
+{
+  // FIXME: implement
+}
+
+
+void Fl_Complex_Region::clone(Fl_Complex_Region *r)
+{
+  // FIXME: implement
+  // make this region simple and copy the bounding box
+  set(r);
+  if (r->pSubregion) {
+    pSubregion = new Fl_Complex_Region();
+    pSubregion->clone(r->pSubregion);
+  }
+  if (r->pNext) {
+    pNext = new Fl_Complex_Region();
+    pNext->clone(r->pNext);
+  }
+}
+
+
+void Fl_Complex_Region::print_data(int indent)
+{
+  static const char *space = "                ";
+  if (pSubregion) {
+    Fl_Android_Application::log_i("%sBBox %d %d %d %d", space+16-indent, x(), y(), w(), h());
+    pSubregion->print_data(indent+1);
+  } else {
+    Fl_Android_Application::log_i("%sRect %d %d %d %d", space+16-indent, x(), y(), w(), h());
+  }
+  if (pNext) {
+    pNext->print_data(indent+1);
+  }
+}
+
+
+void Fl_Complex_Region::print()
+{
+  Fl_Android_Application::log_i("-------- begin region");
+  print_data(0);
+}
+
+
+
+
+void Fl_Android_Graphics_Driver::restore_clip()
+{
+  fl_clip_state_number++;
+
+  // TODO: we can optimize this by using some "copy on write" system
+  Fl_Android_Application::log_i("------------ restore_clip");
+  pDesktopRegion->print();
+  //pClippingRegion->set(pWindowRegion);
+  pClippingRegion->clone(pDesktopRegion);
+
+  Fl_Region b = rstack[rstackptr];
+  if (b) {
+    pClippingRegion->intersect_with(b);
+    pClippingRegion->print();
+  }
+  Fl_Android_Application::log_i("------------ restore_clip done");
+}
+
 
 void Fl_Android_Graphics_Driver::clip_region(Fl_Region r)
 {
@@ -78,25 +182,12 @@ void Fl_Android_Graphics_Driver::clip_region(Fl_Region r)
   restore_clip();
 }
 
+
 Fl_Region Fl_Android_Graphics_Driver::clip_region()
 {
   return rstack[rstackptr];
 }
 
-void Fl_Android_Graphics_Driver::restore_clip()
-{
-  fl_clip_state_number++;
-  Fl_Window *win = Fl_Window::current();
-  Fl_Rect_Region a(0, 0, win->w(), win->h());
-
-  Fl_Region b = rstack[rstackptr];
-  if (b) {
-    // FIXME: scaling!
-    a.intersect_with(b);
-  }
-  pWindowRegion = b;
-  // FIXME: intersect with complex window region
-}
 
 void Fl_Android_Graphics_Driver::push_clip(int x, int y, int w, int h)
 {
@@ -115,12 +206,14 @@ void Fl_Android_Graphics_Driver::push_clip(int x, int y, int w, int h)
   restore_clip();
 }
 
+
 void Fl_Android_Graphics_Driver::push_no_clip()
 {
   if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
   else Fl::warning("Fl_Android_Graphics_Driver::push_no_clip: clip stack overflow!\n");
   restore_clip();
 }
+
 
 void Fl_Android_Graphics_Driver::pop_clip()
 {
@@ -235,42 +328,6 @@ int Fl_GDI_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 
 
 #endif
-
-
-/*
-  - Pushes an empty clip region onto the stack so nothing will be clipped.
-virtual void push_no_clip() {}
-  - Intersects the current clip region with a rectangle and pushes this new region onto the stack.
-virtual void push_clip(int x, int y, int w, int h) {}
-  - Restores the previous clip region.
-virtual void pop_clip() {}
-  - Does the rectangle intersect the current clip region? 0=no, 1=all, 2=partially
-virtual int not_clipped(int x, int y, int w, int h) {return 1;}
-  - Intersects the rectangle with the current clip region and returns the bounding box of the result.
-  Returns 1 if rect changed, W and H are 0 if there is no rect
-virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {return 0;}
-  - Undoes any clobbering of clip done by your program
-virtual void restore_clip();
-
-virtual Fl_Region clip_region();              // has default implementation
-virtual void clip_region(Fl_Region r);        // has default implementation
-
-  fl_push_clip(x,y,w,h) -> driver
-  fl_pop_clip() -> driver
-  fl_push_no_clip() -> driver
-  fl_not_clipped(int x, int y, int w, int h) -> driver
-  fl_clip_box(int x , int y, int w, int h, int& X, int& Y, int& W, int& H) -> driver
-  fl_restore_clip() -> driver
-
-  fl_clip_region(Fl_Region r) -> driver
-  fl_clip_region() -> driver
-
-virtual Fl_Region scale_clip(float f) { return 0; }
-void unscale_clip(Fl_Region r);
-
-
- */
-
 
 
 //
