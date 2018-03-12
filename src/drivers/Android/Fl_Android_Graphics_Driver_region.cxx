@@ -23,41 +23,132 @@
 #include <FL/platform.H>
 
 
-// return 0 for empty, 1 for same, 2 if intersecting
-int Fl_Rect_Region::intersect_with(Fl_Rect_Region *a)
+/**
+ * Create an empty clipping region.
+ */
+Fl_Rect_Region::Fl_Rect_Region() :
+        pLeft(0), pTop(0), pRight(0), pBottom(0)
+{
+}
+
+/**
+ * Create a clipping region based on position and size.
+ * @param x, y position
+ * @param w, h size
+ */
+Fl_Rect_Region::Fl_Rect_Region(int x, int y, int w, int h) :
+        pLeft(x), pTop(y), pRight(x+w), pBottom(y+h)
+{
+}
+
+/**
+ * Clone a clipping rectangle.
+ */
+Fl_Rect_Region::Fl_Rect_Region(const Fl_Rect_Region &r) :
+        pLeft(r.pLeft), pTop(r.pTop),
+        pRight(r.pRight), pBottom(r.pBottom)
+{
+}
+
+/**
+ * Clone a clipping rectangle.
+ * The pointer can be NULL if an empty rectangle is needed.
+ */
+Fl_Rect_Region::Fl_Rect_Region(enum Type what)
+{
+  if (what==INFINITE) {
+    pLeft = pTop = INT_MIN;
+    pRight = pBottom = INT_MAX;
+  } else {
+    pLeft = pTop = pRight = pBottom = 0;
+  }
+}
+
+/**
+ * If the rectangle has no width or height, it's considered empty.
+ * @return true, if everything will be clipped and there is nothing to draw
+ */
+bool Fl_Rect_Region::is_empty() const
+{
+  return (pRight<=pLeft || pBottom<=pTop);
+}
+
+/**
+ * Return true, if the rectangle is of unlimited size and nothing should be clipped.
+ * @return treu, if there is no clipping
+ */
+bool Fl_Rect_Region::is_infinite() const
+{
+  return (pLeft==INT_MIN);
+}
+
+
+void Fl_Rect_Region::set_empty()
+{
+  pLeft = pTop = pRight = pBottom = 0;
+}
+
+
+void Fl_Rect_Region::set(int x, int y, int w, int h)
+{
+  pLeft = x;
+  pTop = y;
+  pRight = x+w;
+  pBottom = y+h;
+}
+
+
+void Fl_Rect_Region::set(const Fl_Rect_Region &r)
+{
+  pLeft = r.pLeft;
+  pTop = r.pTop;
+  pRight = r.pRight;
+  pBottom = r.pBottom;
+}
+
+
+int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
 {
   if (is_empty()) {
     return EMPTY;
   }
-  if (a->is_empty()) {
-    clear();
+  if (r.is_empty()) {
+    set_empty();
     return EMPTY;
   }
-  int lx = max(x(), a->x());
-  int ly = max(y(), a->y());
-  int lr = min(r(), a->r());
-  int lb = min(b(), a->b());
-  int lw = lr-lx;
-  int lh = lb-ly;
-  if (equals(lx, ly, lw, lh)) {
+  bool same = true;
+  if ( pLeft != r.pLeft ) {
+    same = false;
+    if ( r.pLeft > pLeft ) pLeft = r.pLeft;
+  }
+  if ( pTop != r.pTop ) {
+    same = false;
+    if ( r.pTop > pTop ) pTop = r.pTop;
+  }
+  if ( pRight != r.pRight ) {
+    same = false;
+    if ( r.pRight < pRight ) pRight = r.pRight;
+  }
+  if ( pBottom != r.pBottom ) {
+    same = false;
+    if ( r.pBottom < pBottom ) pBottom = r.pBottom;
+  }
+  if (same)
     return SAME;
-  }
-  set(lx, ly, lw, lh);
-  if ( (w()<=0) || (h()<=0) ) {
-    clear();
+  if (is_empty())
     return EMPTY;
-  }
   return LESS;
 }
 
 
-void Fl_Rect_Region::print()
+void Fl_Rect_Region::print(const char *label) const
 {
-  Fl_Android_Application::log_i("-------- begin rect");
+  Fl_Android_Application::log_i("---> Fl_Rect_Region: %s", label);
   Fl_Android_Application::log_i("Rect %d %d %d %d", x(), y(), w(), h());
 }
 
 
+#if 0
 
 Fl_Complex_Region::~Fl_Complex_Region()
 {
@@ -151,6 +242,7 @@ void Fl_Complex_Region::print()
   print_data(0);
 }
 
+#endif
 
 
 
@@ -158,18 +250,12 @@ void Fl_Android_Graphics_Driver::restore_clip()
 {
   fl_clip_state_number++;
 
-  // TODO: we can optimize this by using some "copy on write" system
-  Fl_Android_Application::log_i("------------ restore_clip");
-  pDesktopRegion->print();
-  //pClippingRegion->set(pWindowRegion);
-  pClippingRegion->clone(pDesktopRegion);
+  pClippingRegion.set(pWindowRegion);
 
   Fl_Region b = rstack[rstackptr];
   if (b) {
-    pClippingRegion->intersect_with(b);
-    pClippingRegion->print();
+    pClippingRegion.intersect_with(*b);
   }
-  Fl_Android_Application::log_i("------------ restore_clip done");
 }
 
 
@@ -193,10 +279,10 @@ void Fl_Android_Graphics_Driver::push_clip(int x, int y, int w, int h)
 {
   Fl_Region r;
   if (w > 0 && h > 0) {
-    r = new Fl_Rect_Region(x,y,w,h);
+    r = new Fl_Rect_Region(x, y, w, h);
     Fl_Region current = rstack[rstackptr];
     if (current) {
-      r->intersect_with(current);
+      r->intersect_with(*current);
     }
   } else { // make empty clip region:
     r = new Fl_Rect_Region();
@@ -239,19 +325,18 @@ void Fl_Android_Graphics_Driver::pop_clip()
 int Fl_Android_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H)
 {
   Fl_Region r = rstack[rstackptr];
-  if (!r) {
+  if (r) {
+    Fl_Rect_Region a(x, y, w, h);
+    int ret = a.intersect_with(*r);
+    X = a.x();
+    Y = a.y();
+    W = a.w();
+    H = a.h();
+    return (ret!=Fl_Rect_Region::SAME);
+  } else {
     X = x; Y = y; W = w; H = h;
     return 0;
   }
-
-  Fl_Rect_Region a(x, y, w, h);
-  int ret = a.intersect_with(r); // return 0 for empty, 1 for same, 2 if intersecting
-  X = a.x();
-  Y = a.y();
-  W = a.w();
-  H = a.h();
-
-  return (ret!=1);
 }
 
 /*
@@ -264,70 +349,17 @@ int Fl_Android_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int
  Under X this returns 2 if the rectangle is partially clipped,
  and 1 if it is entirely inside the clip region.
  */
-int Fl_Android_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
-  if (x+w <= 0 || y+h <= 0) return 0;
+int Fl_Android_Graphics_Driver::not_clipped(int x, int y, int w, int h)
+{
+  if (w <= 0 || h <= 0) return 0;
   Fl_Region r = rstack[rstackptr];
-  if (!r) return 1;
-
-  Fl_Rect_Region a(x, y, w, h); // return 0 for empty, 1 for same, 2 if intersecting
-  return a.intersect_with(r);
-}
-
-#if 0
-
-// --- clipping
-
-int Fl_GDI_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
-  X = x; Y = y; W = w; H = h;
-  Fl_Region r = rstack[rstackptr];
-  if (!r) return 0;
-  // The win32 API makes no distinction between partial and complete
-  // intersection, so we have to check for partial intersection ourselves.
-  // However, given that the regions may be composite, we have to do
-  // some voodoo stuff...
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
-  Fl_Region temp = CreateRectRgn(0,0,0,0);
-  int ret;
-  if (CombineRgn(temp, rr, r, RGN_AND) == NULLREGION) { // disjoint
-    W = H = 0;
-    ret = 2;
-  } else if (EqualRgn(temp, rr)) { // complete
-    ret = 0;
-  } else {	// partial intersection
-    RECT rect;
-    GetRgnBox(temp, &rect);
-    if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // if print context, convert coords from device to logical
-      POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
-      DPtoLP(gc_, pt, 2);
-      X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;
-    }
-    else {
-      X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
-    }
-    ret = 1;
-  }
-  DeleteObject(temp);
-  DeleteObject(rr);
-  return ret;
-}
-
-int Fl_GDI_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
-  if (x+w <= 0 || y+h <= 0) return 0;
-  Fl_Region r = rstack[rstackptr];
-  if (!r) return 1;
-  RECT rect;
-  if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { // in case of print context, convert coords from logical to device
-    POINT pt[2] = { {x, y}, {x + w, y + h} };
-    LPtoDP(gc_, pt, 2);
-    rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
+  if (r) {
+    Fl_Rect_Region a(x, y, w, h); // return 0 for empty, 1 for same, 2 if intersecting
+    return a.intersect_with(*r);
   } else {
-    rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+    return 1;
   }
-  return RectInRegion(r,&rect);
 }
-
-
-#endif
 
 
 //

@@ -17,6 +17,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 set(FLTK_DIR ../../../../../..)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 
 # FIXME: add as a second argument the binary build dir
 # so that the first argument can link directly to FLTK

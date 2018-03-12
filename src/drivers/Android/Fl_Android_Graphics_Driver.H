@@ -26,7 +26,6 @@
 #define FL_ANDROID_GRAPHICS_DRIVER_H
 
 #include <FL/Fl_Graphics_Driver.H>
-#include <FL/Fl_Rect.H>
 #include <limits.h>
 
 
@@ -34,34 +33,53 @@ class Fl_Android_Window_Driver;
 
 
 /**
- * The Fl_Rect_Region is based on Fl_Rect with additional functionality for clipping.
+ * The Fl_Rect_Region describes a rectangular clipping region.
+ *
+ * Contrary to common FLTK convention, rectangles are stored with coordinates
+ * instead of their width and height to accelerate calculations. The discreet
+ * constructor however uses the old convention for convenience.
  */
-class Fl_Rect_Region : public Fl_Rect
+class Fl_Rect_Region
 {
 public:
-  enum {
-    EMPTY = 0, SAME, LESS, MORE
+  enum Type {
+    EMPTY = 0, SAME, LESS, MORE, INFINITE
   };
 
-  /**
-   * Create an empty clipping region.
-   */
-  Fl_Rect_Region() {}
+  Fl_Rect_Region();
+  Fl_Rect_Region(int x, int y, int w, int h);
+  Fl_Rect_Region(const Fl_Rect_Region&);
+  Fl_Rect_Region(enum Type what);
+  virtual ~Fl_Rect_Region() { }
 
-  /**
-   * Create a clipping region based on position and size.
-   * @param x, y position
-   * @param w, h size
-   */
-  Fl_Rect_Region(int x, int y, int w, int h) : Fl_Rect(x, y, w, h) {}
-  int intersect_with(Fl_Rect_Region *r);
-  virtual void print();
+  int x() const { return pLeft; }
+  int y() const { return pTop; }
+  int w() const { return pRight - pLeft; }
+  int h() const { return pBottom - pTop; }
 
-  static int min(int a, int b) { return (a<b) ? a : b; }
-  static int max(int a, int b) { return (a>b) ? a : b; }
+  int left() const { return pLeft; }
+  int top() const { return pTop; }
+  int right() const { return pRight; }
+  int bottom() const { return pBottom; }
+
+  bool is_empty() const;
+  bool is_infinite() const;
+
+  void set_empty();
+  void set(int x, int y, int w, int h);
+  void set(const Fl_Rect_Region &r);
+  int intersect_with(const Fl_Rect_Region &r);
+
+  virtual void print(const char*) const;
+
+protected:
+  int pLeft, pTop, pRight, pBottom;
+
+private:
+  Fl_Rect_Region&  operator = (const Fl_Rect_Region& other);
 };
 
-
+#if 0
 /**
  * The Fl_Complex_Region represents a clipping region of any shape.
  *
@@ -85,9 +103,9 @@ public:
   Fl_Complex_Region(int x, int y, int w, int h) : Fl_Rect_Region(x, y, w, h), pSubregion(0L), pNext(0L)  { }
   ~Fl_Complex_Region();
   virtual void set(int x, int y, int w, int h);
-  virtual void set(Fl_Rect *rect);
-  void subtract(Fl_Rect*);
-  void intersect(Fl_Rect*);
+  virtual void set(Fl_Rect_Region*);
+  void subtract(Fl_Rect_Region*);
+  void intersect(Fl_Rect_Region*);
   void clone(Fl_Complex_Region*);
   char is_simple() { return pSubregion==0; }
   char is_complex() { return pSubregion!=0; }
@@ -97,6 +115,7 @@ protected:
   Fl_Complex_Region *pSubregion;
   Fl_Complex_Region *pNext;
 };
+#endif
 
 
 /**
@@ -244,10 +263,8 @@ protected:
   int32_t pStride;
   uint16_t *pBits;
 
-  // Fl_Rect_Region pScreenRegion;
-  Fl_Rect_Region *pWindowRegion;
-  Fl_Complex_Region *pDesktopRegion;
-  Fl_Complex_Region *pClippingRegion;
+  Fl_Rect_Region pWindowRegion;
+  Fl_Rect_Region pClippingRegion;
 };
 
 

@@ -40,42 +40,29 @@ public:
 
   /** The default constructor creates an empty rectangle (x = y = w = h = 0). */
   Fl_Rect()
-  : x_(0), y_(0), w_(0), h_(0) {}
+          : x_(0), y_(0), w_(0), h_(0) {}
 
   /** This constructor creates a rectangle with x = y = 0 and
     the given width and height. */
   Fl_Rect(int W, int H)
-  : x_(0), y_(0), w_(W), h_(H) {}
+          : x_(0), y_(0), w_(W), h_(H) {}
 
   /** This constructor creates a rectangle with the given x,y coordinates
     and the given width and height. */
   Fl_Rect(int X, int Y, int W, int H)
-  : x_(X), y_(Y), w_(W), h_(H) {}
+          : x_(X), y_(Y), w_(W), h_(H) {}
 
-   /** This constructor creates a rectangle based on a widget's position and size. */
+  /** Copy constructor. */
+  Fl_Rect (const Fl_Rect& r)
+          : x_(r.x()), y_(r.y()), w_(r.w()), h_(r.h()) {}
+
+  /** This constructor creates a rectangle based a widget's position and size. */
   Fl_Rect (const Fl_Widget& widget)
-  : x_(widget.x()), y_(widget.y()), w_(widget.w()), h_(widget.h()) {}
+          : x_(widget.x()), y_(widget.y()), w_(widget.w()), h_(widget.h()) {}
 
-  /** This constructor creates a rectangle based on a widget's position and size. */
+  /** This constructor creates a rectangle based a widget's position and size. */
   Fl_Rect (const Fl_Widget* const widget)
-  : x_(widget->x()), y_(widget->y()), w_(widget->w()), h_(widget->h()) {}
-
-  virtual ~Fl_Rect() { }
-
-  /** Return 1 if the rectangle is empty, width or height are 0 */
-  int is_empty() { return (w_<=0)||(h_<=0); }
-
-   /** Set the position and size */
-  virtual void set(int x, int y, int w, int h) { x_=x; y_=y; w_=w; h_=h; }
-
-  /** Clone another rectangle */
-  virtual void set(Fl_Rect *r) { x_=r->x_; y_=r->y_; w_=r->w_; h_=r->h_; }
-
-  /** return 0 if the rectangles are different, or 1 if they are the same */
-  int equals(int x, int y, int w, int h) { return ( (x_==x) &&  (y_==y) && (w_==w) && (h_==h) ); }
-
-  /** Set the position and size to zero, making this rect empty */
-  void clear() { x_ = y_ = w_ = h_ = 0; }
+          : x_(widget->x()), y_(widget->y()), w_(widget->w()), h_(widget->h()) {}
 
   int x() const { return x_; }		///< gets the x coordinate (left edge)
   int y() const { return y_; }		///< gets the y coordinate (top edge)

@@ -37,10 +37,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 
 
 Fl_Android_Graphics_Driver::Fl_Android_Graphics_Driver() :
-        pStride(0), pBits(0),
-        pWindowRegion(new Fl_Rect_Region()),
-        pDesktopRegion(new Fl_Complex_Region()),
-        pClippingRegion(new Fl_Complex_Region())
+        pStride(0), pBits(0)
 {
 }
 
@@ -52,8 +49,6 @@ Fl_Android_Graphics_Driver::~Fl_Android_Graphics_Driver()
 
 void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
 {
-  Fl_Android_Application::log_i("------------ make current \"%s\"", win->label());
-
   // The Stride is the offset between lines in the graphics buffer
   pStride = Fl_Android_Application::graphics_buffer().stride;
   // Bits is the memory address of the top left corner of the window
@@ -62,13 +57,10 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
 
   // TODO: set the clipping area
   // set the clipping area to the physical screen size in window coordinates
-  pWindowRegion->set(-win->x(), -win->y(), 600, 800);
-  Fl_Rect_Region wr(0, 0, win->w(), win->h());
-  pWindowRegion->intersect_with(&wr);
-  pWindowRegion->print();
+  pWindowRegion.set(-win->x(), -win->y(), 600, 800);
+  pWindowRegion.intersect_with(Fl_Rect_Region(0, 0, win->w(), win->h()));
 
-  pDesktopRegion->set(pWindowRegion);
-
+#if 0
   // remove all window rectangles that are positioned on top of this window
   // TODO: this region is expensive to calculate. Cache it for each window and recalculate when windows move, show, hide, or change order
   Fl_Window *wTop = Fl::first_window();
@@ -78,11 +70,9 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
     pDesktopRegion->subtract(&r);
     wTop = Fl::next_window(wTop);
   }
+#endif
 
-  // TODO: we can optimize this by using some "copy on write" system
-  pClippingRegion->clone(pDesktopRegion);
-  pClippingRegion->print();
-  Fl_Android_Application::log_i("------------ make current done");
+  pClippingRegion.set(pWindowRegion);
 }
 
 
@@ -106,7 +96,7 @@ static uint16_t make565(Fl_Color crgba)
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
 {
   Fl_Rect_Region r(x, y, w, h);
-  if (r.intersect_with((Fl_Rect_Region*)pClippingRegion)) {
+  if (r.intersect_with(pClippingRegion)) {
     rectf_unclipped(r.x(), r.y(), r.w(), r.h());
   }
   // TODO: create a complex region by intersecting r with the pClippingRegion
@@ -135,8 +125,8 @@ void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float
    */
 }
 
-void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h) {
-  Fl_Android_Application::log_w("rectf unclipped %g %g %g %g", x, y, w, h);
+void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h)
+{
   if (w<=0 || h<=0) return;
 
 // TODO: clip the rectangle to the window outline
