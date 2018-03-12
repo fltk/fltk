@@ -23,7 +23,7 @@
 
 
 Fl_Window *win;
-Fl_Button *btn;
+Fl_Button *btn, *btn2;
 
 
 class MyButton : public Fl_Button
@@ -37,12 +37,34 @@ public:
   }
 };
 
+void bye_cb(void*)
+{
+  btn2->color(FL_BLUE);
+  btn2->redraw();
+  Fl::remove_timeout(bye_cb, NULL);
+}
+
+void hello_cb(void*)
+{
+  btn2->color(FL_GREEN);
+  btn2->redraw();
+  Fl::add_timeout(1.0, bye_cb, NULL);
+  Fl::remove_timeout(hello_cb, NULL);
+}
+
+void start_timer(Fl_Widget*, void*)
+{
+  Fl::add_timeout(1.0, hello_cb, NULL);
+}
 
 int main(int argc, char **argv)
 {
   win = new Fl_Window(50, 150, 500, 400, "Hallo");
+  btn2 = new Fl_Button(10, 10, 50, 50, "-@circle;-");
+  btn2->color(FL_BLUE);
   btn = new MyButton((win->w()-280)/2, 200, 280, 35, "Hello, Android!");
   btn->color(FL_LIGHT2);
+  btn->callback(start_timer);
   win->show(argc, argv);
 
   Fl::run();

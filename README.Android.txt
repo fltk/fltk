@@ -9,7 +9,8 @@ WARNING: FLTK FOR ANDROID IS WORK IN PROGRESS IN A PRETTY EARLY STAGE.
 ==========
 
   1	Building FLTK with Android Studio 3
-  2	DOCUMENT HISTORY
+  2 Limitation of FLTK on Android
+  3	DOCUMENT HISTORY
 
 
  BUILDING FLTK SAMPLE WITH ANDROID STUDIO 3
@@ -31,9 +32,21 @@ device, you are ready to install FLTK.
 - click "run"; the project should compile and run out of the box
 
 
+ Limitation of FLTK on Android
+===============================
+
+Android support for FLTK is in a very early stage. As of March 2018, very basic
+rendering work and mouse clicks are detected.
+
+- the screen size is currently always 600x800 and is scaled up
+- there is no support for multiple windows (yet)
+
+
  DOCUMENT HISTORY
 ==================
 
-Mar 6 2018 - matt: moved project to ide/AndroidStudio3/
-Mar 2 2018 - matt: rewriting Android port and documentation from scratch
-Feb 9 2016 - matt: recreated document with more warnings and active support
+Mar 12 2018 - matt: started list of limitation that serevs as information to the
+                    user as much as a todo list for core developers
+Mar  6 2018 - matt: moved project to ide/AndroidStudio3/
+Mar  2 2018 - matt: rewriting Android port and documentation from scratch
+Feb  9 2016 - matt: recreated document with more warnings and active support

@@ -27,11 +27,16 @@
 #include <FL/Fl_RGB_Image.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
+#include <errno.h>
+#include <math.h>
 
 
 static void nothing() {}
 void (*fl_unlock_function)() = nothing;
 void (*fl_lock_function)() = nothing;
+
+static void timer_do_callback(int timerIndex);
+
 
 #if 0
 
@@ -95,7 +100,7 @@ int Fl_Android_Screen_Driver::handle_input_event()
           consumed = handle_mouse_event(event);
           break;
         default:
-          // don;t do anything. There may be additional event types in the future
+          // don't do anything. There may be additional event types in the future
           break;
       }
       // TODO: handle all events here
@@ -178,6 +183,9 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
       case Fl_Android_Application::LOOPER_ID_INPUT:
         ret = handle_input_event();
         break;
+      case Fl_Android_Application::LOOPER_ID_TIMER:
+        timer_do_callback(Fl_Android_Application::receive_timer_index());
+        break;
       case -3: return ret;
       default: return ret;
     }
@@ -185,6 +193,14 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   return ret;
 }
 
+
+// TODO: we need a timout: nsecs_t systemTime(int clock = SYSTEM_TIME_MONOTONIC);
+// static inline nsecs_t seconds_to_nanoseconds(nsecs_t secs) return secs*1000000000;
+// int timer_create(clockid_t __clock, struct sigevent* __event, timer_t* __timer_ptr);
+// int timer_delete(timer_t __timer);
+// int timer_settime(timer_t __timer, int __flags, const struct itimerspec* __new_value, struct itimerspec* __old_value);
+// int timer_gettime(timer_t __timer, struct itimerspec* __ts);
+// int timer_getoverrun(timer_t __timer);
 
 double Fl_Android_Screen_Driver::wait(double time_to_wait)
 {
@@ -514,148 +530,8 @@ const char *Fl_WinAPI_Screen_Driver::get_system_scheme()
 }
 
 
-// ---- timers
 
 
-struct Win32Timer
-{
-  UINT_PTR handle;
-  Fl_Timeout_Handler callback;
-  void *data;
-};
-static Win32Timer* win32_timers;
-static int win32_timer_alloc;
-static int win32_timer_used;
-static HWND s_TimerWnd;
-
-
-static void realloc_timers()
-{
-  if (win32_timer_alloc == 0) {
-    win32_timer_alloc = 8;
-  }
-  win32_timer_alloc *= 2;
-  Win32Timer* new_timers = new Win32Timer[win32_timer_alloc];
-  memset(new_timers, 0, sizeof(Win32Timer) * win32_timer_used);
-  memcpy(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
-  Win32Timer* delete_me = win32_timers;
-  win32_timers = new_timers;
-  delete [] delete_me;
-}
-
-
-static void delete_timer(Win32Timer& t)
-{
-  KillTimer(s_TimerWnd, t.handle);
-  memset(&t, 0, sizeof(Win32Timer));
-}
-
-
-static LRESULT CALLBACK s_TimerProc(HWND hwnd, UINT msg,
-                                    WPARAM wParam, LPARAM lParam)
-{
-  switch (msg) {
-    case WM_TIMER:
-    {
-      unsigned int id = (unsigned) (wParam - 1);
-      if (id < (unsigned int)win32_timer_used && win32_timers[id].handle) {
-        Fl_Timeout_Handler cb   = win32_timers[id].callback;
-        void*              data = win32_timers[id].data;
-        delete_timer(win32_timers[id]);
-        if (cb) {
-          (*cb)(data);
-        }
-      }
-    }
-      return 0;
-
-    default:
-      break;
-  }
-  return DefWindowProc(hwnd, msg, wParam, lParam);
-}
-
-
-void Fl_WinAPI_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  repeat_timeout(time, cb, data);
-}
-
-
-void Fl_WinAPI_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  int timer_id = -1;
-  for (int i = 0;  i < win32_timer_used;  ++i) {
-    if ( !win32_timers[i].handle ) {
-      timer_id = i;
-      break;
-    }
-  }
-  if (timer_id == -1) {
-    if (win32_timer_used == win32_timer_alloc) {
-      realloc_timers();
-    }
-    timer_id = win32_timer_used++;
-  }
-  unsigned int elapsed = (unsigned int)(time * 1000);
-
-  if ( !s_TimerWnd ) {
-    const char* timer_class = "FLTimer";
-    WNDCLASSEX wc;
-    memset(&wc, 0, sizeof(wc));
-    wc.cbSize = sizeof (wc);
-    wc.style = CS_CLASSDC;
-    wc.lpfnWndProc = (WNDPROC)s_TimerProc;
-    wc.hInstance = fl_display;
-    wc.lpszClassName = timer_class;
-    /*ATOM atom =*/ RegisterClassEx(&wc);
-    // create a zero size window to handle timer events
-    s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
-                                timer_class, "",
-                                WS_POPUP,
-                                0, 0, 0, 0,
-                                NULL, NULL, fl_display, NULL);
-    // just in case this OS won't let us create a 0x0 size window:
-    if (!s_TimerWnd)
-      s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
-                                  timer_class, "",
-                                  WS_POPUP,
-                                  0, 0, 1, 1,
-                                  NULL, NULL, fl_display, NULL);
-    ShowWindow(s_TimerWnd, SW_SHOWNOACTIVATE);
-  }
-
-  win32_timers[timer_id].callback = cb;
-  win32_timers[timer_id].data     = data;
-
-  win32_timers[timer_id].handle =
-  SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
-}
-
-
-int Fl_WinAPI_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0;  i < win32_timer_used;  ++i) {
-    Win32Timer& t = win32_timers[i];
-    if (t.handle  &&  t.callback == cb  &&  t.data == data) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-
-void Fl_WinAPI_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  int i;
-  for (i = 0;  i < win32_timer_used;  ++i) {
-    Win32Timer& t = win32_timers[i];
-    if (t.handle  &&  t.callback == cb  &&
-        (t.data == data  ||  data == NULL)) {
-      delete_timer(t);
-    }
-  }
-}
 
 int Fl_WinAPI_Screen_Driver::compose(int &del) {
   unsigned char ascii = (unsigned char)Fl::e_text[0];
@@ -831,6 +707,152 @@ int Fl_WinAPI_Screen_Driver::screen_num_unscaled(int x, int y)
 }
 
 #endif
+
+
+// ---- timers
+
+struct TimerData
+{
+  timer_t handle;
+  struct sigevent sigevent;
+  Fl_Timeout_Handler callback;
+  void *data;
+  bool used;
+  bool triggered;
+};
+static TimerData* timerData = 0L;
+static int NTimerData = 0;
+static int nTimerData = 0;
+
+
+static int allocate_more_timers()
+{
+  if (NTimerData == 0) {
+    NTimerData = 8;
+  }
+  if (NTimerData>256) { // out of timers
+    return -1;
+  }
+  NTimerData *= 2;
+  timerData = (TimerData*)realloc(timerData, sizeof(TimerData) * NTimerData);
+  return nTimerData;
+}
+
+
+static void timer_signal_handler(union sigval data)
+{
+  int timerIndex = data.sival_int;
+  Fl_Android_Application::send_timer_index(timerIndex);
+}
+
+
+static void timer_do_callback(int timerIndex)
+{
+  TimerData& t = timerData[timerIndex];
+  t.triggered = false;
+  if (t.callback) {
+    t.callback(t.data);
+    // TODO: should we release the timer at this point?
+  }
+}
+
+
+void Fl_Android_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void *data)
+{
+  repeat_timeout(time, cb, data);
+}
+
+
+void Fl_Android_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void *data)
+{
+  int ret = -1;
+  int timerIndex = -1;
+
+  // first, find the timer associated with this handler
+  for (int i = 0; i < nTimerData; ++i) {
+    TimerData& t = timerData[i];
+    if ( (t.used) && (t.callback==cb) && (t.data==data) ) {
+      timerIndex = i;
+      break;
+    }
+  }
+
+  // if we did not have a timer yet, find a free slot
+  if (timerIndex==-1) {
+    for (int i = 0; i < nTimerData; ++i) {
+      if (!timerData[i].used)
+        timerIndex = i;
+      break;
+    }
+  }
+
+  // if that didn't work, allocate more timers
+  if (timerIndex==-1) {
+    if (nTimerData==NTimerData)
+      allocate_more_timers();
+    timerIndex = nTimerData++;
+  }
+
+  // if that didn;t work either, we ran out of timers
+  if (timerIndex==-1) {
+    Fl::error("FLTK ran out of timer slots.");
+    return;
+  }
+
+  TimerData& t = timerData[timerIndex];
+  if (!t.used) {
+    t.data = data;
+    t.callback = cb;
+    memset(&t.sigevent, 0, sizeof(struct sigevent));
+    t.sigevent.sigev_notify = SIGEV_THREAD;
+    t.sigevent.sigev_notify_function = timer_signal_handler;
+    t.sigevent.sigev_value.sival_int = timerIndex;
+    ret = timer_create(CLOCK_MONOTONIC, &t.sigevent, &t.handle);
+    if (ret==-1) {
+      Fl_Android_Application::log_e("Can't create timer: %s", strerror(errno));
+      return;
+    }
+    t.used = true;
+  }
+
+  double ff;
+  struct itimerspec timeout = {
+          { 0, 0 },
+          { (time_t)floor(time), (long)(modf(time, &ff)*1000000000) }
+  };
+  ret = timer_settime(t.handle, 0, &timeout, 0L);
+  if (ret==-1) {
+    Fl_Android_Application::log_e("Can't launch timer: %s", strerror(errno));
+    return;
+  }
+  t.triggered = true;
+}
+
+
+int Fl_Android_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void *data)
+{
+  for (int i = 0; i < nTimerData; ++i) {
+    TimerData& t = timerData[i];
+    if ( (t.used) && (t.callback==cb) && (t.data==data) ) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+void Fl_Android_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *data)
+{
+  for (int i = 0; i < nTimerData; ++i) {
+    TimerData& t = timerData[i];
+    if ( t.used && (t.callback==cb) && ( (t.data==data) || (data==NULL) ) ) {
+      if (t.used)
+        timer_delete(t.handle);
+      t.triggered = t.used = false;
+    }
+  }
+}
+
 
 //
 // End of "$Id$".

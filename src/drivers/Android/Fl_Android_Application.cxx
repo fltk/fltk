@@ -25,6 +25,8 @@
 #include "Fl_Android_Application.H"
 #include "Fl_Android_Window_Driver.H"
 
+#include <FL/fl_draw.H>
+
 #include <jni.h>
 
 #include <errno.h>
@@ -58,7 +60,7 @@ void* Fl_Android_Application::pSavedState = 0;
 size_t Fl_Android_Application::pSavedStateSize = 0;
 
 // The ALooper associated with the app's thread.
-ALooper* Fl_Android_Application::pMsgPipeLooper = 0;
+ALooper* Fl_Android_Application::pAppLooper = 0;
 
 // When non-NULL, this is the input queue from which the app will
 // receive user input events.
@@ -79,22 +81,11 @@ int Fl_Android_Application::pActivityState = 0;
 // destroyed and waiting for the app thread to complete.
 int Fl_Android_Application::pDestroyRequested = 0;
 
-// Fill this in with the function to process main app commands (APP_CMD_*)
-void (*Fl_Android_Application::pOnAppCmd)(int32_t cmd) = 0;
-
-// Fill this in with the function to process input events.  At this point
-// the event has already been pre-dispatched, and it will be finished upon
-// return.  Return 1 if you have handled the event, 0 for any default
-// dispatching.
-int32_t (*Fl_Android_Application::pOnInputEvent)(AInputEvent* event) = 0;
-
 pthread_mutex_t Fl_Android_Application::pMutex = { 0 };
 pthread_cond_t Fl_Android_Application::pCond = { 0 };
 int Fl_Android_Application::pMsgReadPipe = 0;
 int Fl_Android_Application::pMsgWritePipe = 0;
 pthread_t Fl_Android_Application::pThread = 0;
-struct Fl_Android_Application::android_poll_source Fl_Android_Application::pCmdPollSource = { 0 };
-struct Fl_Android_Application::android_poll_source Fl_Android_Application::pInputPollSource = { 0 };
 int Fl_Android_Application::pRunning = 0;
 int Fl_Android_Application::pStateSaved = 0;
 int Fl_Android_Application::pDestroyed = 0;
@@ -102,6 +93,9 @@ int Fl_Android_Application::pDestroyed = 0;
 AInputQueue *Fl_Android_Application::pPendingInputQueue = 0;
 ANativeWindow *Fl_Android_Application::pPendingWindow = 0;
 //ARect Fl_Android_Application::pPendingContentRect = { 0 };
+
+int Fl_Android_Application::pTimerReadPipe = -1;
+int Fl_Android_Application::pTimerWritePipe = -1;
 
 
 
@@ -222,9 +216,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
       pInputQueue = pPendingInputQueue;
       if (pInputQueue != NULL) {
         log_v("Attaching input queue to looper");
-        AInputQueue_attachLooper(pInputQueue,
-                                 pMsgPipeLooper, LOOPER_ID_INPUT, NULL,
-                                 &pInputPollSource);
+        AInputQueue_attachLooper(pInputQueue, pAppLooper, LOOPER_ID_INPUT, NULL, NULL);
       }
       pthread_cond_broadcast(&pCond);
       pthread_mutex_unlock(&pMutex);
@@ -312,6 +304,43 @@ void Fl_Android_Application::post_exec_cmd(int8_t cmd)
 }
 
 
+void Fl_Android_Application::create_timer_handler()
+{
+  int msgpipe[2];
+  if (::pipe(msgpipe)) {
+    log_e("could not create timer pipe: %s", strerror(errno));
+    return;
+  }
+  pTimerReadPipe = msgpipe[0];
+  pTimerWritePipe = msgpipe[1];
+  ALooper_addFd(pAppLooper, pTimerReadPipe, LOOPER_ID_TIMER, ALOOPER_EVENT_INPUT, NULL, NULL);
+}
+
+
+void Fl_Android_Application::destroy_timer_handler()
+{
+  ALooper_removeFd(pAppLooper, pTimerReadPipe);
+  ::close(pTimerWritePipe);
+  ::close(pTimerReadPipe);
+}
+
+
+void Fl_Android_Application::send_timer_index(uint8_t ix)
+{
+  if (pTimerWritePipe!=-1)
+    ::write(pTimerWritePipe, &ix, 1);
+}
+
+
+uint8_t Fl_Android_Application::receive_timer_index()
+{
+  uint8_t ix = 0;
+  if (pTimerReadPipe!=-1)
+    ::read(pTimerReadPipe, &ix, 1);
+  return ix;
+}
+
+
 void Fl_Android_Application::destroy()
 {
   log_v("android_app_destroy!");
@@ -320,34 +349,12 @@ void Fl_Android_Application::destroy()
   if (pInputQueue != NULL) {
     AInputQueue_detachLooper(pInputQueue);
   }
+  destroy_timer_handler();
   AConfiguration_delete(pConfig);
   pDestroyed = 1;
   pthread_cond_broadcast(&pCond);
   pthread_mutex_unlock(&pMutex);
   // Can't touch android_app object after this.
-}
-
-
-void Fl_Android_Application::process_input(struct android_poll_source* source)
-{
-  AInputEvent* event = NULL;
-  while (AInputQueue_getEvent(pInputQueue, &event) >= 0) {
-    if (AInputQueue_preDispatchEvent(pInputQueue, event)) {
-      continue;
-    }
-    int32_t handled = 0;
-    if (pOnInputEvent != NULL) handled = pOnInputEvent(event);
-    AInputQueue_finishEvent(pInputQueue, event, handled);
-  }
-}
-
-
-void Fl_Android_Application::process_cmd(struct android_poll_source* source)
-{
-  int8_t cmd = read_cmd();
-  pre_exec_cmd(cmd);
-  if (pOnAppCmd != NULL) pOnAppCmd(cmd);
-  post_exec_cmd(cmd);
 }
 
 
@@ -358,15 +365,10 @@ void *Fl_Android_Application::thread_entry(void* param)
 
   print_cur_config();
 
-  pCmdPollSource.id = LOOPER_ID_MAIN;
-  pCmdPollSource.process = process_cmd;
-  pInputPollSource.id = LOOPER_ID_INPUT;
-  pInputPollSource.process = process_input;
+  pAppLooper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+  ALooper_addFd(pAppLooper, pMsgReadPipe, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL, NULL);
 
-  ALooper *looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
-  ALooper_addFd(looper, pMsgReadPipe, LOOPER_ID_MAIN, ALOOPER_EVENT_INPUT, NULL,
-                &pCmdPollSource);
-  pMsgPipeLooper = looper;
+  create_timer_handler();
 
   pthread_mutex_lock(&pMutex);
   pRunning = 1;
@@ -394,8 +396,6 @@ void Fl_Android_Application::allocate_screen() {
   pApplicationWindowBuffer.format = WINDOW_FORMAT_RGB_565;
 }
 
-
-#include <FL/fl_draw.H>
 
 bool Fl_Android_Application::copy_screen()
 {

@@ -45,25 +45,13 @@ private:
   int handle_keyboard_event(AInputEvent*);
   int handle_mouse_event(AInputEvent*);
 
-#if 0
-
-protected:
-  RECT screens[MAX_SCREENS];
-  RECT work_area[MAX_SCREENS];
-  float dpi[MAX_SCREENS][2];
-  float scale_of_screen[MAX_SCREENS];
-
-  static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
-  BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
-  int get_mouse_unscaled(int &mx, int &my);
-#ifdef FLTK_HIDPI_SUPPORT
-  void init_screen_scale_factors();
-#endif
-
-#endif
-
 public:
   Fl_Android_Screen_Driver() : Fl_Screen_Driver(), pScreenContentChanged(false) { }
+
+  void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);
+  void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
+  int has_timeout(Fl_Timeout_Handler cb, void *argp);
+  void remove_timeout(Fl_Timeout_Handler cb, void *argp);
 
 #if 0
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
@@ -94,10 +82,6 @@ public:
   virtual void get_system_colors();
   virtual const char *get_system_scheme();
   // --- global timers
-  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp);
-  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual int dnd(int unused);
   virtual int compose(int &del);
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
@@ -121,6 +105,22 @@ public:
   float DWM_scaling_factor();
 #endif
   virtual float desktop_scale_factor();
+
+#endif
+#if 0
+
+  protected:
+  RECT screens[MAX_SCREENS];
+  RECT work_area[MAX_SCREENS];
+  float dpi[MAX_SCREENS][2];
+  float scale_of_screen[MAX_SCREENS];
+
+  static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
+  BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
+  int get_mouse_unscaled(int &mx, int &my);
+#ifdef FLTK_HIDPI_SUPPORT
+  void init_screen_scale_factors();
+#endif
 
 #endif
   bool pScreenContentChanged;

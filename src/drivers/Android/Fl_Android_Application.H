@@ -40,41 +40,28 @@ extern void (*fl_lock_function)();
 #include <android/native_activity.h>
 
 /**
- * Static class that keeps often used data for global access.
+ * Static class that manages all interaction between the Android Native Activity
+ * and the FLTK library. It also keeps often used data for global access.
  *
- * This class holds global variables that are needed by the Android
- * drivers.
- *
- * It also contains the interface to the Android Native Activity.
  * On launch, it creates a main thread and communication pipe to
  * the Activity. All FLTK code will run in that thread. Activity
- * events can be polled from the Screen driver using the provided
- * Android Looper, but must also be forwarded to this class.
- *
- * All other events are handled in Fl_Android_Screen_Driver
+ * events will be polled by the Screen driver using the provided
+ * Android Looper, and will also be routed back to this class as needed.
  *
  * This code is based on the native activity interface
  * provided by <android/native_activity.h>. It is based on a set
  * of application-provided callbacks that will be called
  * by the Activity's main thread when certain events occur.
  *
- * This means that each one of this callbacks _should_ _not_ block, or they
- * risk having the system force-close the application. This programming
- * model is direct, lightweight, but constraining.
- *
- * The 'Fl_Android_Application' interface is used to provide a different
- * execution model where the application can implement its own main event
- * loop in a different thread instead. Here's how it works:
- *
  * 1/ The application must provide a function named "int main(argc, argv)" that
  *    will be called when the activity is created, in a new thread that is
  *    distinct from the activity's main thread.
  *
- * 2/ android_main() receives a pointer to a valid "android_app" structure
+ * 2/ The application has access to a static "Fl_Android_Application" class
  *    that contains references to other important objects, e.g. the
- *    ANativeActivity obejct instance the application is running in.
+ *    ANativeActivity object instance the application is running in.
  *
- * 3/ the "android_app" object holds an ALooper instance that already
+ * 3/ the "Fl_Android_Application" class holds an ALooper instance that already
  *    listens to two important things:
  *
  *      - activity lifecycle events (e.g. "pause", "resume"). See APP_CMD_XXX
@@ -86,23 +73,8 @@ extern void (*fl_lock_function)();
  *    ALooper_pollOnce with values of LOOPER_ID_MAIN and LOOPER_ID_INPUT,
  *    respectively.
  *
- *    Your application can use the same ALooper to listen to additional
- *    file-descriptors.  They can either be callback based, or with return
- *    identifiers starting with LOOPER_ID_USER.
- *
- * 4/ Whenever you receive a LOOPER_ID_MAIN or LOOPER_ID_INPUT event,
- *    the returned data will point to an android_poll_source structure.  You
- *    can call the process() function on it, and fill in android_app->onAppCmd
- *    and android_app->onInputEvent to be called for your own processing
- *    of the event.
- *
- *    Alternatively, you can call the low-level functions to read and process
- *    the data directly...  look at the process_cmd() and process_input()
- *    implementations in the glue to see how to do this.
- *
- * See the sample named "native-activity" that comes with the NDK with a
- * full usage example.  Also look at the JavaDoc of NativeActivity.
-
+ *    FLTK will add more items to the looper for timers and file and socket
+ *    communication. (fl_add_timeout, Fl::add_fd(), ...
  */
 class Fl_Android_Application
 {
@@ -125,12 +97,18 @@ public:
      * android_poll_source structure.  These can be read via the inputQueue
      * object of android_app.
      */
-            LOOPER_ID_INPUT = 2,
+            LOOPER_ID_INPUT,
+
+    /**
+     * Timer data ID of all timer events coming from the Unix timer_create()
+     * and friends, used in fl_add_timeout() and colleagues.
+     */
+            LOOPER_ID_TIMER,
 
     /**
      * Start of user-defined ALooper identifiers.
      */
-            LOOPER_ID_USER = 3,
+            LOOPER_ID_USER,
   };
 
   /**
@@ -155,67 +133,59 @@ public:
             APP_CMD_DESTROY,
   };
 
-  /**
-   * Data associated with an ALooper fd that will be returned as the "outData"
-   * when that source has data ready.
-   */
-  struct android_poll_source {
-    // The identifier of this source.  May be LOOPER_ID_MAIN or
-    // LOOPER_ID_INPUT.
-    int32_t id;
-
-    // Function to call to perform the standard processing of data from
-    // this source.
-    void (*process)(struct android_poll_source* source);
-  };
-
-
 public:
+  // --- logging
   static void log_e(const char *text, ...);
   static void log_w(const char *text, ...);
   static void log_i(const char *text, ...);
   static void log_v(const char *text, ...);
 
+  // --- application state stuff
   static int8_t read_cmd();
   static void pre_exec_cmd(int8_t cmd);
   static void post_exec_cmd(int8_t cmd);
+  static int destroy_requested() { return pDestroyRequested; }
+
+  // --- event handling
   static AInputQueue *input_event_queue() { return pInputQueue; }
 
+  // --- screen stuff
+  static bool copy_screen();
   static inline ANativeWindow *native_window() { return pNativeWindow; }
   static inline ANativeWindow_Buffer &graphics_buffer() { return pApplicationWindowBuffer; }
-  static int destroy_requested() { return pDestroyRequested; }
-  //static void set_on_app_cmd(void (*cmd)(int32_t cmd)) { pOnAppCmd = cmd; }
-  //static void set_on_input_event(int32_t (*cmd)(AInputEvent* event)) { pOnInputEvent = cmd; }
 
-  static bool copy_screen();
+  // --- timer stuff
+  static void send_timer_index(uint8_t ix);
+  static uint8_t receive_timer_index();
+
 
 protected:
   static void free_saved_state();
   static void print_cur_config();
   static void destroy();
-  static void process_input(struct android_poll_source* source);
-  static void process_cmd(struct android_poll_source* source);
   static void* thread_entry(void* param);
 
+  // --- screen handling stuff
   static void allocate_screen();
   static bool lock_screen();
   static void unlock_and_post_screen();
   static bool screen_is_locked();
 
+  // --- timer stuff
+  static void create_timer_handler();
+  static void destroy_timer_handler();
+
   static ANativeActivity *pActivity;
   static AConfiguration *pConfig;
   static void *pSavedState;
   static size_t pSavedStateSize;
-  static ALooper *pMsgPipeLooper;
-  //static ALooper *pRedrawLooper;
+  static ALooper *pAppLooper;
   static AInputQueue *pInputQueue;
   static ANativeWindow *pNativeWindow;
   static ANativeWindow_Buffer pNativeWindowBuffer;
   static ANativeWindow_Buffer pApplicationWindowBuffer;
   static int pActivityState;
   static int pDestroyRequested;
-  static void (*pOnAppCmd)(int32_t cmd);
-  static int32_t (*pOnInputEvent)(AInputEvent* event);
 
   // ---- no need to make these visible to the outside ----
   static pthread_mutex_t pMutex;
@@ -223,15 +193,16 @@ protected:
   static int pMsgReadPipe;
   static int pMsgWritePipe;
   static pthread_t pThread;
-  static struct android_poll_source pCmdPollSource;
-  static struct android_poll_source pInputPollSource;
   static int pRunning;
   static int pStateSaved;
   static int pDestroyed;
-  //static int pRedrawNeeded;
   static AInputQueue* pPendingInputQueue;
   static ANativeWindow* pPendingWindow;
-  //static ARect pPendingContentRect;
+
+  // --- timer variables
+  static int pTimerReadPipe;
+  static int pTimerWritePipe;
+
 };
 
 

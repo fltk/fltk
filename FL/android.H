@@ -36,7 +36,7 @@ extern void *fl_gc;
 /**
  * These events are specific to the Android OS driver system. They can
  * be read by adding a callback via Fl::add_system_handler() and reading Fl::event()
- * Dont's change the order of these enums! See Fl_Android_Application.H .
+ * Don't change the order of these enums! See Fl_Android_Application.H .
  */
 enum Fl_Android_Platform_Event
 {
