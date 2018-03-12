@@ -220,7 +220,7 @@ private:
   static void set_input(AInputQueue* inputQueue);
   static void set_window(ANativeWindow* window);
   static void set_activity_state(int8_t cmd);
-  static void free();
+  static void close_activity();
 
   // ---- Android Native Activity callbacks ----
   static void onContentRectChanged(ANativeActivity *activity, const ARect *rect);

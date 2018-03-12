@@ -265,7 +265,7 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
     case APP_CMD_DESTROY:
       log_v("APP_CMD_DESTROY\n");
       pDestroyRequested = 1;
-      // FIXME: see Fl::program_should_quit()
+      Fl::program_should_quit(1);
       break;
 
     default:
@@ -452,8 +452,6 @@ bool Fl_Android_Application::lock_screen()
   if (screen_is_locked())
     return true;
 
-  // TODO: or should we wait until the window is mapped?
-  // TODO: see also Fl_Window_Driver::wait_for_expose_value
   if (!pNativeWindow) {
     log_w("Unable to lock window buffer: no native window found.");
     return false;
@@ -544,7 +542,7 @@ void Fl_Android_Activity::set_activity_state(int8_t cmd)
 }
 
 
-void Fl_Android_Activity::free()
+void Fl_Android_Activity::close_activity()
 {
   pthread_mutex_lock(&pMutex);
   write_cmd(APP_CMD_DESTROY);
@@ -593,7 +591,7 @@ void Fl_Android_Activity::onDestroy(ANativeActivity* activity)
 {
   log_v("Destroy: %p\n", activity);
   // FIXME: use the correct free()
-  free();
+  close_activity();
 }
 
 /**
