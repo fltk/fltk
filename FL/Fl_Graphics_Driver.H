@@ -221,8 +221,8 @@ protected:
     return pm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
   }
 
-public:
   Fl_Graphics_Driver();
+public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
   static Fl_Graphics_Driver &default_driver();
   /** Current scale factor between FLTK and drawing units: drawing = FLTK * scale() */
