@@ -59,6 +59,7 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
 #endif
   offset_x_ = 0; offset_y_ = 0;
   depth_ = 0;
+  clip_max_ = 32760; // clipping limit (2**15 - 8)
 }
 
 Fl_Xlib_Graphics_Driver::~Fl_Xlib_Graphics_Driver() {

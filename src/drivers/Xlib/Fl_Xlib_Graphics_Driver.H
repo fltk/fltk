@@ -59,8 +59,7 @@ private:
   int stack_x_[20], stack_y_[20]; // translation stack allowing cumulative translations
   int line_delta_;
   virtual void set_current_();
-protected:
-  int xmin, ymin, xmax, ymax; // ranges of valid x/y coordinates, see set_clip_range()
+  int clip_max_; // +/- x/y coordinate limit (16-bit coordinate space)
 protected:
   virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -155,9 +154,12 @@ protected:
   // --- clipped drawing (after scaling, with real screen coordinates)
   // --- currently specific to Fl_Xlib_Graphics_Driver (16-bit coordinate clipping)
 
-  // clip one coordinate (x or y) --- correct axis (x/y) is important !
-  virtual int clip_x(int x);
-  virtual int clip_y(int y);
+  // clipping limits
+  virtual int clip_max() { return clip_max_; }
+  virtual int clip_min() { return -clip_max_; }
+
+  // clip one coordinate (x or y)
+  virtual int clip_xy(int x);
 
   // clip one line
   virtual int clip_line(int &x1, int &y1, int &x2, int &y2);
@@ -167,9 +169,6 @@ protected:
 
   // draw a line after clipping (if visible)
   virtual void draw_clipped_line(int x1, int y1, int x2, int y2);
-
-  // set_clip_range() - set valid coordinate range (16-bit or current window)
-  virtual void set_clip_range();
 
   // --- clipping
   void push_clip(int x, int y, int w, int h);

@@ -41,58 +41,6 @@
 // Note: the current (default) approach is to clip to the current window
 // boundaries instead. This can avoid drawing unecessary (invisible) objects.
 
-#define MAXK (32760) // 2 ** 15 - K (8)
-
-#define CLIP_TO_WINDOW (0) // Default: 1 (clip to window), see below
-
-/*
-  Sets the coordinate space limits for clipping.
-
-  We have two choices:
-
-    - the entire 16-bit coordinate space (CLIP_TO_WINDOW = 0)
-    - the current window (Default: CLIP_TO_WINDOW != 0)
-
-  The current approach is to use window coordinates. The macro CLIP_TO_WINDOW
-  (above) can be set to 0 to clip to the entire 16-bit coordinate space
-  instead. This can be done for testing purposes or if it turns out that
-  window clipping doesn't work as expected.
-  AlbrechtS, 09 Mar 2018
-
-  Implementation note: to optimize setting the clip area this could be done
-  when drawing starts, maybe in make_current() or something like that.
-  This is left for a later step.
-*/
-void Fl_Xlib_Graphics_Driver::set_clip_range() {
-
-#if (CLIP_TO_WINDOW) // should be true (the default)
-
-  Fl_Window *win = Fl_Window::current(); // get current window
-
-  xmax = win->w() * scale_ + line_width_ + 1;
-  ymax = win->h() * scale_ + line_width_ + 1;
-  xmin = 0 - line_width_ - 1;
-  ymin = 0 - line_width_ - 1;
-
-  // the following checks are likely unnecessary, but with large scaling
-  // factors ... (a little paranoid)
-
-  if (xmax > MAXK) xmax = MAXK;
-  if (ymax > MAXK) ymax = MAXK;
-  if (xmin < -MAXK) xmin = -MAXK;
-  if (ymin < -MAXK) ymin = -MAXK;
-
-#else // use full X (16-bit) coordinate space
-
-  xmax = MAXK;
-  ymax = xmax;
-  xmin = -xmax;
-  ymin = -xmax;
-
-#endif // CLIP_TO_WINDOW
-
-} // set_clip_range()
-
 /*
   Liang-Barsky line clipping algorithm. For documentation see:
     https://en.wikipedia.org/wiki/Liang-Barsky_algorithm .
@@ -114,18 +62,16 @@ void Fl_Xlib_Graphics_Driver::set_clip_range() {
 
 int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 
-  set_clip_range();
-
   // define variables
   float p1 = float(-(x2 - x1));
   float p2 = float(-p1);
   float p3 = float(-(y2 - y1));
   float p4 = float(-p3);
 
-  float q1 = float(x1 - xmin);
-  float q2 = float(xmax - x1);
-  float q3 = float(y1 - ymin);
-  float q4 = float(ymax - y1);
+  float q1 = float(x1 - clip_min());
+  float q2 = float(clip_max() - x1);
+  float q3 = float(y1 - clip_min());
+  float q4 = float(clip_max() - y1);
 
   float posmin = 1; // positive minimum
   float negmax = 0; // negative maximum
@@ -155,6 +101,9 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
       if (r3 < posmin) posmin = r3;
     }
   }
+
+  if (negmax > posmin) // line outside clipping window
+    return 1; // clipped
 
   // compute new points (note: order is important!)
 
@@ -208,12 +157,12 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 /*
   clip_rect() returns 1 if the area is invisible (clipped) because ...
 
-  (a) w <= 0 or h <= 0		i.e. nothing is visible
-  (b) x+w < xmin or y+h < ymin	i.e. left of or above visible area
-  (c) x > xmax or y > ymax	i.e. right of or below visible area
+  (a) w <= 0 or h <= 0				i.e. nothing is visible
+  (b) x+w < clip_min() or y+h < clip_min()	i.e. left of or above visible area
+  (c) x > clip_max() or y > clip_max()		i.e. right of or below visible area
 
-  xmin, ymin, xmax, and ymax are the minimal and maximal X coordinate
-  values or the window bounds as defined above.
+  clip_min() and clip_max() are the minimal and maximal x/y coordinate values
+  used for clipping.
   In the above cases x, y, w, and h are not changed and the return
   value is 1 (clipped).
 
@@ -223,67 +172,41 @@ int Fl_Xlib_Graphics_Driver::clip_line(int &x1, int &y1, int &x2, int &y2) {
 
   Use this for clipping rectangles as in fl_rect() and fl_rectf().
   It is fast and convenient.
-
-  Todo: Test for exact (filled) rectangle and border limits. If coordinates
-  are modified (clipped) borders should not be visible if they would be
-  outside the window, for instance:
-
-    fl_line_style(FL_SOLID, 5); // line width = 5
-    fl_rect(-6, 0, 100, 100);	// left border should not be visible
-    fl_rect(-1, 0, 100, 100);	// left border should be partially visible
-
-  This is no problem with 16-bit clipping but might be relevant with
-  window clipping. The same applies to the bottom and right borders, resp..
 */
 
 int Fl_Xlib_Graphics_Driver::clip_rect(int &x, int &y, int &w, int &h) {
 
-  set_clip_range();
+  if (w <= 0 || h <= 0) return 1;			// (a)
+  if (x+w < clip_min() || y+h < clip_min()) return 1;	// (b)
+  if (x > clip_max() || y > clip_max()) return 1;	// (c)
 
-  if (w <= 0 || h <= 0) return 1;		// (a)
-  if (x+w < xmin || y+h < ymin) return 1;	// (b)
-  if (x > xmax || y > ymax) return 1;		// (c)
-
-  if (x < xmin) { w -= (xmin-x); x = xmin; }
-  if (y < ymin) { h -= (ymin-y); y = ymin; }
-  if (x+w > xmax) w = xmax - x;
-  if (y+h > ymax) h = ymax - y;
+  if (x < clip_min()) { w -= (clip_min()-x); x = clip_min(); }
+  if (y < clip_min()) { h -= (clip_min()-y); y = clip_min(); }
+  if (x+w > clip_max()) w = clip_max() - x;
+  if (y+h > clip_max()) h = clip_max() - y;
 
   return 0;
 }
 
 /*
-  clip_x() and clip_y() return a coordinate value clipped to the 16-bit
-  coordinate space or the current window (see above).
+  clip_xy() returns a single coordinate value clipped to the 16-bit
+  coordinate space.
 
   This can be used to draw horizontal and vertical lines that can be
-  handled by X11. Each single coordinate value can be clipped individually
+  handled by X. Each single coordinate value can be clipped individually
   and the result can be used directly, e.g. in fl_xyline() and fl_yxline().
 
   Note 1: this can't be used for arbitrary lines (neither horizontal nor vertical).
   Note 2: may be changed since Fl_Xlib_Graphics_Driver::clip_line() exists.
 */
 
-int Fl_Xlib_Graphics_Driver::clip_x(int x) {
+int Fl_Xlib_Graphics_Driver::clip_xy(int x) {
 
-  set_clip_range();
-
-  if (x < xmin)
-    x = xmin;
-  else if (x > xmax)
-    x = xmax;
+  if (x < clip_min())
+    x = clip_min();
+  else if (x > clip_max())
+    x = clip_max();
   return x;
-}
-
-int Fl_Xlib_Graphics_Driver::clip_y(int y) {
-
-  set_clip_range();
-
-  if (y < ymin)
-    y = ymin;
-  else if (y > ymax)
-    y = ymax;
-  return y;
 }
 
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
@@ -360,8 +283,8 @@ void Fl_Xlib_Graphics_Driver::xyline_unscaled(float x, float y, float x1) {
   x+=offset_x_*scale_; y+=offset_y_*scale_; x1 += offset_x_*scale_;
   int tw = line_width_ ? line_width_ : 1; // true line width
   if (x > x1) { float exch = x; x = x1; x1 = exch; }
-  int ix = clip_x(x+line_delta_); if (scale_ >= 2) ix -= int(scale_/2);
-  int iy = clip_y(y+line_delta_);
+  int ix = clip_xy(x+line_delta_); if (scale_ >= 2) ix -= int(scale_/2);
+  int iy = clip_xy(y+line_delta_);
   // make sure that line output by xyline(a,b,c) extends to pixel just at left of where xyline(c+1,b,d) begins
   int ix1 = int(x1/scale_+1.5)*scale_-1;
   ix1 += line_delta_; if (scale_ >= 4) ix1 -= 1;
@@ -375,8 +298,8 @@ void Fl_Xlib_Graphics_Driver::yxline_unscaled(float x, float y, float y1) {
   x+=offset_x_*scale_; y+=offset_y_*scale_; y1 += offset_y_*scale_;
   int tw = line_width_ ? line_width_ : 1; // true line width
   if (y > y1) { float exch = y; y = y1; y1 = exch; }
-  int ix = clip_x(x+line_delta_);
-  int iy = clip_y(y+line_delta_); if (scale_ >= 2) iy -= int(scale_/2);
+  int ix = clip_xy(x+line_delta_);
+  int iy = clip_xy(y+line_delta_); if (scale_ >= 2) iy -= int(scale_/2);
   int iy1 = int(y1/scale_+1.5)*scale_-1;
   // make sure that line output by yxline(a,b,c) extends to pixel just above where yxline(a,c+1,d) begins
   iy1 += line_delta_; if (scale_ >= 4) iy1 -= 1;
