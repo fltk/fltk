@@ -22,7 +22,7 @@
 #include <FL/fl_draw.H>
 
 
-Fl_Window *win;
+Fl_Window *win, *win1, *win2;
 Fl_Button *btn, *btn2;
 
 
@@ -52,20 +52,38 @@ void hello_cb(void*)
   Fl::remove_timeout(hello_cb, NULL);
 }
 
-void start_timer(Fl_Widget*, void*)
-{
-  Fl::add_timeout(1.0, hello_cb, NULL);
-}
 
 int main(int argc, char **argv)
 {
+  win1 = new Fl_Window(10, 10, 200, 200, "back");
+  win1->color(FL_RED);
+  win1->box(FL_DOWN_BOX);
+  Fl_Button *b1 = new Fl_Button(10, 10, 180, 180, "back");
+  win1->end();
+  win1->show();
+
   win = new Fl_Window(50, 150, 500, 400, "Hallo");
-  btn2 = new Fl_Button(10, 10, 50, 50, "-@circle;-");
+
+  btn2 = new Fl_Button(10, 10, 480, 100, "-@circle;-");
   btn2->color(FL_BLUE);
+
   btn = new MyButton((win->w()-280)/2, 200, 280, 35, "Hello, Android!");
   btn->color(FL_LIGHT2);
-  btn->callback(start_timer);
+  btn->callback(
+          [](Fl_Widget*, void*) {
+            Fl::add_timeout(1.0, hello_cb, NULL);
+          }
+  );
+
+  win->end();
   win->show(argc, argv);
+
+  win2 = new Fl_Window(390, 10, 200, 200, "front");
+  win2->color(FL_BLUE);
+  win2->box(FL_UP_BOX);
+  Fl_Button *b2 = new Fl_Button(10, 10, 180, 180, "front");
+  win2->end();
+  win2->show();
 
   Fl::run();
 

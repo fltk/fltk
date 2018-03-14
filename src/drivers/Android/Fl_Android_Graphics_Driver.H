@@ -79,7 +79,6 @@ private:
   Fl_Rect_Region&  operator = (const Fl_Rect_Region& other);
 };
 
-#if 0
 /**
  * The Fl_Complex_Region represents a clipping region of any shape.
  *
@@ -99,23 +98,23 @@ private:
 class Fl_Complex_Region : public Fl_Rect_Region
 {
 public:
-  Fl_Complex_Region() : Fl_Rect_Region(), pSubregion(0L), pNext(0L) { }
-  Fl_Complex_Region(int x, int y, int w, int h) : Fl_Rect_Region(x, y, w, h), pSubregion(0L), pNext(0L)  { }
-  ~Fl_Complex_Region();
-  virtual void set(int x, int y, int w, int h);
-  virtual void set(Fl_Rect_Region*);
-  void subtract(Fl_Rect_Region*);
-  void intersect(Fl_Rect_Region*);
-  void clone(Fl_Complex_Region*);
-  char is_simple() { return pSubregion==0; }
-  char is_complex() { return pSubregion!=0; }
-  void print();
+  Fl_Complex_Region();
+  Fl_Complex_Region(const Fl_Rect_Region&);
+  virtual ~Fl_Complex_Region() override;
+//  virtual void set(int x, int y, int w, int h);
+//  virtual void set(Fl_Rect_Region*);
+//  void subtract(Fl_Rect_Region*);
+//  void intersect(Fl_Rect_Region*);
+//  void clone(Fl_Complex_Region*);
+  char is_simple() const { return pSubregion==0; }
+  char is_complex() const { return pSubregion!=0; }
+  virtual void print(const char*) const override;
 protected:
-  void print_data(int indent);
-  Fl_Complex_Region *pSubregion;
-  Fl_Complex_Region *pNext;
+  void print_data(int indent) const;
+  Fl_Complex_Region *pSubregion = 0L;
+  Fl_Complex_Region *pParent = 0L;
+  Fl_Complex_Region *pNext = 0L;
 };
-#endif
 
 
 /**

@@ -147,15 +147,62 @@ void Fl_Rect_Region::print(const char *label) const
   Fl_Android_Application::log_i("Rect %d %d %d %d", x(), y(), w(), h());
 }
 
+// -----------------------------------------------------------------------------
 
-#if 0
+/**
+ * Create an empty complex region.
+ */
+Fl_Complex_Region::Fl_Complex_Region() :
+        Fl_Rect_Region()
+{
+}
 
+/**
+ * Create a complex region with the same bounds as the give rect.
+ * @param r region size
+ */
+Fl_Complex_Region::Fl_Complex_Region(const Fl_Rect_Region &r) :
+        Fl_Rect_Region(r)
+{
+}
+
+/**
+ * Delete this region, all subregions recursively, and all following regions.
+ */
 Fl_Complex_Region::~Fl_Complex_Region()
 {
   delete pSubregion; // recursively delete all subregions
   delete pNext; // recursively delete all following regions
 }
 
+/**
+ * Print the entire content of this region recursively.
+ */
+void Fl_Complex_Region::print(const char *label) const
+{
+  Fl_Android_Application::log_i("---> Fl_Complex_Region: %s", label);
+  print_data(0);
+}
+
+/*
+ * Print the rectangular data only.
+ */
+void Fl_Complex_Region::print_data(int indent) const
+{
+  static const char *space = "                ";
+  if (pSubregion) {
+    Fl_Android_Application::log_i("%sBBox %d %d %d %d", space+16-indent, x(), y(), w(), h());
+    pSubregion->print_data(indent+1);
+  } else {
+    Fl_Android_Application::log_i("%sRect %d %d %d %d", space+16-indent, x(), y(), w(), h());
+  }
+  if (pNext) {
+    pNext->print_data(indent+1);
+  }
+}
+
+
+#if 0
 
 void Fl_Complex_Region::set(int x, int y, int w, int h)
 {
@@ -166,7 +213,6 @@ void Fl_Complex_Region::set(int x, int y, int w, int h)
   pNext = 0L;
   Fl_Rect_Region::set(x, y, w, h);
 }
-
 
 void Fl_Complex_Region::set(Fl_Rect *rect)
 {
@@ -198,12 +244,10 @@ void Fl_Complex_Region::subtract(Fl_Rect *r)
   int x = 3;
 }
 
-
 void Fl_Complex_Region::intersect(Fl_Rect*)
 {
   // FIXME: implement
 }
-
 
 void Fl_Complex_Region::clone(Fl_Complex_Region *r)
 {
@@ -219,22 +263,6 @@ void Fl_Complex_Region::clone(Fl_Complex_Region *r)
     pNext->clone(r->pNext);
   }
 }
-
-
-void Fl_Complex_Region::print_data(int indent)
-{
-  static const char *space = "                ";
-  if (pSubregion) {
-    Fl_Android_Application::log_i("%sBBox %d %d %d %d", space+16-indent, x(), y(), w(), h());
-    pSubregion->print_data(indent+1);
-  } else {
-    Fl_Android_Application::log_i("%sRect %d %d %d %d", space+16-indent, x(), y(), w(), h());
-  }
-  if (pNext) {
-    pNext->print_data(indent+1);
-  }
-}
-
 
 void Fl_Complex_Region::print()
 {
