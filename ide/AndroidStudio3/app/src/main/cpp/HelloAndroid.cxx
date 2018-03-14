@@ -55,7 +55,7 @@ void hello_cb(void*)
 
 int main(int argc, char **argv)
 {
-  win1 = new Fl_Window(10, 10, 200, 200, "back");
+  win1 = new Fl_Window(10+50, 10, 200, 200, "back");
   win1->color(FL_RED);
   win1->box(FL_DOWN_BOX);
   Fl_Button *b1 = new Fl_Button(10, 10, 180, 180, "back");
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
   win->end();
   win->show(argc, argv);
 
-  win2 = new Fl_Window(390, 10, 200, 200, "front");
+  win2 = new Fl_Window(390-50, 10, 200, 200, "front");
   win2->color(FL_BLUE);
   win2->box(FL_UP_BOX);
   Fl_Button *b2 = new Fl_Button(10, 10, 180, 180, "front");

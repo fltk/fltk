@@ -67,8 +67,8 @@ public:
 
   void set_empty();
   void set(int x, int y, int w, int h);
-  void set(const Fl_Rect_Region &r);
-  int intersect_with(const Fl_Rect_Region &r);
+  virtual void set(const Fl_Rect_Region &r);
+  virtual int intersect_with(const Fl_Rect_Region &r);
 
   virtual void print(const char*) const;
 
@@ -101,16 +101,25 @@ public:
   Fl_Complex_Region();
   Fl_Complex_Region(const Fl_Rect_Region&);
   virtual ~Fl_Complex_Region() override;
-//  virtual void set(int x, int y, int w, int h);
+  virtual void set(const Fl_Rect_Region &r) override;
+  virtual int intersect_with(const Fl_Rect_Region &r) override;
+  int subtract(const Fl_Rect_Region &r);
+
+  //  virtual void set(int x, int y, int w, int h);
 //  virtual void set(Fl_Rect_Region*);
 //  void subtract(Fl_Rect_Region*);
 //  void intersect(Fl_Rect_Region*);
 //  void clone(Fl_Complex_Region*);
   char is_simple() const { return pSubregion==0; }
   char is_complex() const { return pSubregion!=0; }
+
+  Fl_Complex_Region *subregion() const { return pSubregion; }
+  Fl_Complex_Region *next() const { return pNext; }
+
   virtual void print(const char*) const override;
 protected:
   void print_data(int indent) const;
+  int subtract_smaller_region(const Fl_Rect_Region &r);
   Fl_Complex_Region *pSubregion = 0L;
   Fl_Complex_Region *pParent = 0L;
   Fl_Complex_Region *pNext = 0L;
@@ -262,8 +271,13 @@ protected:
   int32_t pStride;
   uint16_t *pBits;
 
+  // Clipping region of the current window in window coordinates (see: pStride and pBits)
   Fl_Rect_Region pWindowRegion;
-  Fl_Rect_Region pClippingRegion;
+
+  Fl_Complex_Region pDesktopWindowRegion;
+
+  // Final clipping region for all graphics calls to this class.
+  Fl_Complex_Region pClippingRegion;
 };
 
 

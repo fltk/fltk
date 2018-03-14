@@ -60,19 +60,19 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
   pWindowRegion.set(-win->x(), -win->y(), 600, 800);
   pWindowRegion.intersect_with(Fl_Rect_Region(0, 0, win->w(), win->h()));
 
-#if 0
+  pDesktopWindowRegion.set(pWindowRegion);
+  pDesktopWindowRegion.print(win->label());
+
   // remove all window rectangles that are positioned on top of this window
   // TODO: this region is expensive to calculate. Cache it for each window and recalculate when windows move, show, hide, or change order
   Fl_Window *wTop = Fl::first_window();
   while (wTop) {
     if (wTop==win) break;
-    Fl_Rect r(wTop->x(), wTop->y(), wTop->w(), wTop->h());
-    pDesktopRegion->subtract(&r);
+    Fl_Rect_Region r(wTop->x()-win->x(), wTop->y()-win->y(), wTop->w(), wTop->h());
+    pDesktopWindowRegion.subtract(r);
     wTop = Fl::next_window(wTop);
   }
-#endif
-
-  pClippingRegion.set(pWindowRegion);
+  pClippingRegion.set(pDesktopWindowRegion);
 }
 
 
@@ -95,10 +95,47 @@ static uint16_t make565(Fl_Color crgba)
 
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
 {
+  // FIXME: r must be a complex region, like pClippingRegion.
+
+#if 0
   Fl_Rect_Region r(x, y, w, h);
   if (r.intersect_with(pClippingRegion)) {
     rectf_unclipped(r.x(), r.y(), r.w(), r.h());
   }
+#else // proof of concept
+  // FIXME: write iterator over tree
+  for (Fl_Complex_Region *cr = &pClippingRegion; cr; cr=cr->next()) {
+    if (cr->subregion()) {
+      for (Fl_Complex_Region *cr1 = cr->subregion(); cr1; cr1=cr1->next()) {
+        if (cr1->subregion()) {
+          for (Fl_Complex_Region *cr2 = cr1->subregion(); cr2; cr2 = cr2->next()) {
+            Fl_Rect_Region r(x, y, w, h);
+            if (r.intersect_with(*cr2)) {
+              rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+            }
+          }
+        } else {
+          Fl_Rect_Region r(x, y, w, h);
+          if (r.intersect_with(*cr1)) {
+            rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+          }
+        }
+      }
+    } else {
+      Fl_Rect_Region r(x, y, w, h);
+      if (r.intersect_with(*cr)) {
+        r.print("---- fl_rectf");
+        pClippingRegion.print("clip to");
+        rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+      }
+    }
+  }
+#endif
+
+
+
+
+
   // TODO: create a complex region by intersecting r with the pClippingRegion
   // TODO: walk the region and draw all rectangles
 

@@ -202,6 +202,83 @@ void Fl_Complex_Region::print_data(int indent) const
 }
 
 
+void Fl_Complex_Region::set(const Fl_Rect_Region &r)
+{
+  delete pSubregion; pSubregion = 0;
+  Fl_Rect_Region::set(r);
+}
+
+
+int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
+{
+  delete pSubregion; pSubregion = 0;
+  // FIXME: handle complex regions!
+  int ret = Fl_Rect_Region::intersect_with(r);
+  return ret;
+}
+
+
+int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
+{
+  // FIXME: write me.
+  if (pSubregion) {
+    pSubregion->subtract(r);
+  } else {
+    // Check if we overlap at all
+    Fl_Rect_Region s(r);
+    this->print("---- subtract");
+    s.print("");
+    int intersects = s.intersect_with(*this);
+    switch (intersects) {
+      case EMPTY:
+        // nothing to do
+        break;
+      case SAME:
+        set_empty(); // FIXME: delete this Rect!
+        break;
+      case LESS:
+        // split this rect into 1, 2, 3, or 4 new ones
+        subtract_smaller_region(s);
+        break;
+      default:
+        Fl_Android_Application::log_e("Invalid case in %s:%d", __FUNCTION__, __LINE__);
+        break;
+    }
+    if (pNext) {
+      pNext->subtract(r);
+    }
+  }
+  return 0;
+}
+
+
+int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
+{
+  // subtract a smaller rect from a larger rect and create subrects as needed
+
+  print("subtract_smaller_region");
+  r.print("");
+  // if there is only one single coordinte different, we can reuse this container
+  if (left()==r.left() && top()==r.top() && right()==r.right() && bottom()==r.bottom()) {
+    // this should not happen
+    set_empty();
+  } else if (left()!=r.left() && top()==r.top() && right()==r.right() && bottom()==r.bottom()) {
+    pRight = r.left();
+  } else if (left()==r.left() && top()!=r.top() && right()==r.right() && bottom()==r.bottom()) {
+    pBottom = r.top();
+  } else if (left()==r.left() && top()==r.top() && right()!=r.right() && bottom()==r.bottom()) {
+    pLeft = r.right();
+  } else if (left()==r.left() && top()==r.top() && right()==r.right() && bottom()!=r.bottom()) {
+    pTop = r.bottom();
+  } else {
+    Fl_Android_Application::log_w("Regions too complex. Not yet implemented");
+  }
+  print("subtract_smaller_region");
+  r.print("");
+  return 0;
+}
+
+
 #if 0
 
 void Fl_Complex_Region::set(int x, int y, int w, int h)
@@ -278,7 +355,8 @@ void Fl_Android_Graphics_Driver::restore_clip()
 {
   fl_clip_state_number++;
 
-  pClippingRegion.set(pWindowRegion);
+  pClippingRegion.set(pDesktopWindowRegion);
+
 
   Fl_Region b = rstack[rstackptr];
   if (b) {
