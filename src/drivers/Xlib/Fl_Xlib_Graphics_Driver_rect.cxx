@@ -188,26 +188,6 @@ int Fl_Xlib_Graphics_Driver::clip_rect(int &x, int &y, int &w, int &h) {
   return 0;
 }
 
-/*
-  clip_xy() returns a single coordinate value clipped to the 16-bit
-  coordinate space.
-
-  This can be used to draw horizontal and vertical lines that can be
-  handled by X. Each single coordinate value can be clipped individually
-  and the result can be used directly, e.g. in fl_xyline() and fl_yxline().
-
-  Note 1: this can't be used for arbitrary lines (neither horizontal nor vertical).
-  Note 2: may be changed since Fl_Xlib_Graphics_Driver::clip_line() exists.
-*/
-
-int Fl_Xlib_Graphics_Driver::clip_xy(int x) {
-
-  if (x < clip_min())
-    x = clip_min();
-  else if (x > clip_max())
-    x = clip_max();
-  return x;
-}
 
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
 // Windows equivalent exists, implemented inline in win32.H

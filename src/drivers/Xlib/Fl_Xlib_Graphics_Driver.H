@@ -153,24 +153,35 @@ protected:
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
-  // --- clipped drawing (after scaling, with real screen coordinates)
-  // --- currently specific to Fl_Xlib_Graphics_Driver (16-bit coordinate clipping)
+  // Scaling and clipping stuff for internal usage.
+  // Currently specific to Fl_Xlib_Graphics_Driver (16-bit coordinate clipping)
+  // These methods must not be virtual so they can be inlined.
+  // All these methods work with "real" drawing coordinates (after scaling).
 
-  // clipping limits
-  virtual int clip_max() { return clip_max_; }
-  virtual int clip_min() { return -clip_max_; }
+  // Clipping limits
+  int clip_max() { return clip_max_; }
+  int clip_min() { return -clip_max_; }
 
-  // clip one coordinate (x or y)
-  virtual int clip_xy(int x);
+  /*
+    clip_xy() returns a single coordinate value clipped to the 16-bit
+    coordinate space.
 
-  // clip one line
-  virtual int clip_line(int &x1, int &y1, int &x2, int &y2);
+    This can be used to draw horizontal and vertical lines that can be
+    handled by X. Each single coordinate value can be clipped individually
+    and the result can be used directly, e.g. in fl_xyline() and fl_yxline().
+  */
+  int clip_xy(int x) {
+    return (x < clip_min() ? clip_min() : (x > clip_max() ? clip_max() : x ));
+  }
 
-  // clip one rectangle
-  virtual int clip_rect(int &x, int &y, int &w, int &h);
+  // clip an arbitrary line
+  int clip_line(int &x1, int &y1, int &x2, int &y2);
+
+  // clip a rectangle
+  int clip_rect(int &x, int &y, int &w, int &h);
 
   // draw a line after clipping (if visible)
-  virtual void draw_clipped_line(int x1, int y1, int x2, int y2);
+  void draw_clipped_line(int x1, int y1, int x2, int y2);
 
   // --- clipping
   void push_clip(int x, int y, int w, int h);
