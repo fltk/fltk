@@ -17,13 +17,9 @@
 //
 
 
-#include "../../config_lib.h"
-
-#ifdef FL_CFG_GFX_GDI
 #include "Fl_GDI_Graphics_Driver.H"
 #include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include <FL/Fl_Image_Surface.H>
-#include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include <windows.h>
 
@@ -106,7 +102,6 @@ void Fl_GDI_Image_Surface_Driver::end_current_(Fl_Surface_Device*)
   fl_window = pre_window;
 }
 
-#endif // FL_CFG_GFX_GDI
 
 //
 // End of "$Id$".
