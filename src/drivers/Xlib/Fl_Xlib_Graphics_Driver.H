@@ -46,6 +46,7 @@ struct _XRegion {
 #include <pango/pango.h>
 #endif
 
+#define FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE (20)
 
 /**
  \brief The Xlib-specific graphics class.
@@ -56,7 +57,8 @@ class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Scalable_Graphics_Driver {
 private:
   int offset_x_, offset_y_; // translation between user and graphical coordinates: graphical = user + offset
   unsigned depth_; // depth of translation stack
-  int stack_x_[20], stack_y_[20]; // translation stack allowing cumulative translations
+  int stack_x_[FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE]; // translation stack allowing cumulative translations
+  int stack_y_[FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE];
   int line_delta_;
   virtual void set_current_();
   int clip_max_; // +/- x/y coordinate limit (16-bit coordinate space)

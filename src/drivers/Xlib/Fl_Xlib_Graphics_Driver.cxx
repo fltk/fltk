@@ -263,14 +263,17 @@ Region Fl_Xlib_Graphics_Driver::scale_clip(float f) {
 
 
 void Fl_Xlib_Graphics_Driver::translate_all(int dx, int dy) { // reversibly adds dx,dy to the offset between user and graphical coordinates
-  stack_x_[depth_] = offset_x_;
-  stack_y_[depth_] = offset_y_;
-  offset_x_ = stack_x_[depth_] + dx;
-  offset_y_ = stack_y_[depth_] + dy;
+  if (depth_ < FL_XLIB_GRAPHICS_TRANSLATION_STACK_SIZE) {
+    stack_x_[depth_] = offset_x_;
+    stack_y_[depth_] = offset_y_;
+    depth_++;
+  } else {
+    Fl::warning("%s: translate stack overflow!", "Fl_Xlib_Graphics_Driver");
+  }
+  offset_x_ += dx;
+  offset_y_ += dy;
   push_matrix();
   translate(dx, dy);
-  if (depth_ < sizeof(stack_x_)/sizeof(int)) depth_++;
-  else Fl::warning("%s: translate stack overflow!", "Fl_Xlib_Graphics_Driver");
 }
 
 void Fl_Xlib_Graphics_Driver::untranslate_all() { // undoes previous translate_all()
