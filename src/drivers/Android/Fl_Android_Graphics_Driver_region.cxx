@@ -98,6 +98,15 @@ void Fl_Rect_Region::set(int x, int y, int w, int h)
 }
 
 
+void Fl_Rect_Region::set_ltrb(int l, int t, int r, int b)
+{
+  pLeft = l;
+  pTop = t;
+  pRight = r;
+  pBottom = b;
+}
+
+
 void Fl_Rect_Region::set(const Fl_Rect_Region &r)
 {
   pLeft = r.pLeft;
@@ -144,7 +153,7 @@ int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
 void Fl_Rect_Region::print(const char *label) const
 {
   Fl_Android_Application::log_i("---> Fl_Rect_Region: %s", label);
-  Fl_Android_Application::log_i("Rect %d %d %d %d", x(), y(), w(), h());
+  Fl_Android_Application::log_i("Rect l:%d t:%d r:%d b:%d", left(), top(), right(), bottom());
 }
 
 // -----------------------------------------------------------------------------
@@ -191,13 +200,13 @@ void Fl_Complex_Region::print_data(int indent) const
 {
   static const char *space = "                ";
   if (pSubregion) {
-    Fl_Android_Application::log_i("%sBBox %d %d %d %d", space+16-indent, x(), y(), w(), h());
+    Fl_Android_Application::log_i("%sBBox l:%d t:%d r:%d b:%d", space+16-indent, left(), top(), right(), bottom());
     pSubregion->print_data(indent+1);
   } else {
-    Fl_Android_Application::log_i("%sRect %d %d %d %d", space+16-indent, x(), y(), w(), h());
+    Fl_Android_Application::log_i("%sRect l:%d t:%d r:%d b:%d", space+16-indent, left(), top(), right(), bottom());
   }
   if (pNext) {
-    pNext->print_data(indent+1);
+    pNext->print_data(indent);
   }
 }
 
@@ -206,6 +215,29 @@ void Fl_Complex_Region::set(const Fl_Rect_Region &r)
 {
   delete pSubregion; pSubregion = 0;
   Fl_Rect_Region::set(r);
+}
+
+
+void Fl_Complex_Region::set(const Fl_Complex_Region &r)
+{
+#if 0
+  Fl_Android_Application::log_e("Not yet implemented!");
+  delete pSubregion; pSubregion = 0;
+  Fl_Rect_Region::set(r);
+#else
+  // outline:
+  // clear this region and copy the coordinates from r
+  delete pSubregion; pSubregion = 0;
+  Fl_Rect_Region::set((const Fl_Rect_Region&)r);
+  if (r.pSubregion) {
+    pSubregion = new Fl_Complex_Region();
+    pSubregion->set(*r.subregion());
+  }
+  if (r.pNext) {
+    pNext = new Fl_Complex_Region();
+    pNext->set(*r.next());
+  }
+#endif
 }
 
 
@@ -271,11 +303,36 @@ int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
   } else if (left()==r.left() && top()==r.top() && right()==r.right() && bottom()!=r.bottom()) {
     pTop = r.bottom();
   } else {
-    Fl_Android_Application::log_w("Regions too complex. Not yet implemented");
+    // create multiple regions
+    if (pTop!=r.top()) {
+      Fl_Complex_Region *s = add_subregion();
+      s->set_ltrb(pLeft, pTop, pRight, r.top());
+    }
+    if (pBottom!=r.bottom()) {
+      Fl_Complex_Region *s = add_subregion();
+      s->set_ltrb(pLeft, r.bottom(), pRight, pBottom);
+    }
+    if (pLeft!=r.left()) {
+      Fl_Complex_Region *s = add_subregion();
+      s->set_ltrb(pLeft, r.top(), r.left(), r.bottom());
+    }
+    if (pRight!=r.right()) {
+      Fl_Complex_Region *s = add_subregion();
+      s->set_ltrb(r.right(), r.top(), pRight, r.bottom());
+    }
+    //Fl_Android_Application::log_w("Regions too complex. Not yet implemented");
+    print("-- added subregions");
   }
-  print("subtract_smaller_region");
-  r.print("");
   return 0;
+}
+
+
+Fl_Complex_Region *Fl_Complex_Region::add_subregion()
+{
+  Fl_Complex_Region *r = new Fl_Complex_Region();
+  r->pNext = pSubregion;
+  pSubregion = r;
+  return r;
 }
 
 
@@ -360,7 +417,7 @@ void Fl_Android_Graphics_Driver::restore_clip()
 
   Fl_Region b = rstack[rstackptr];
   if (b) {
-    pClippingRegion.intersect_with(*b);
+    // FIXME: pClippingRegion.intersect_with(*b);
   }
 }
 

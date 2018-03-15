@@ -72,7 +72,9 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
     pDesktopWindowRegion.subtract(r);
     wTop = Fl::next_window(wTop);
   }
+  pDesktopWindowRegion.print(" #### DESKTOP");
   pClippingRegion.set(pDesktopWindowRegion);
+  pClippingRegion.print("#### CLIPPING");
 }
 
 
@@ -97,13 +99,17 @@ void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float
 {
   // FIXME: r must be a complex region, like pClippingRegion.
 
-#if 0
   Fl_Rect_Region r(x, y, w, h);
+#if 0
   if (r.intersect_with(pClippingRegion)) {
     rectf_unclipped(r.x(), r.y(), r.w(), r.h());
   }
 #else // proof of concept
   // FIXME: write iterator over tree
+
+  r.print("---- fl_rectf");
+  pClippingRegion.print("clip to");
+
   for (Fl_Complex_Region *cr = &pClippingRegion; cr; cr=cr->next()) {
     if (cr->subregion()) {
       for (Fl_Complex_Region *cr1 = cr->subregion(); cr1; cr1=cr1->next()) {
@@ -124,8 +130,6 @@ void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float
     } else {
       Fl_Rect_Region r(x, y, w, h);
       if (r.intersect_with(*cr)) {
-        r.print("---- fl_rectf");
-        pClippingRegion.print("clip to");
         rectf_unclipped(r.x(), r.y(), r.w(), r.h());
       }
     }

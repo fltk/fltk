@@ -59,6 +59,7 @@ int main(int argc, char **argv)
   win1->color(FL_RED);
   win1->box(FL_DOWN_BOX);
   Fl_Button *b1 = new Fl_Button(10, 10, 180, 180, "back");
+  b1->color(FL_DARK_RED);
   win1->end();
   win1->show();
 
@@ -82,6 +83,7 @@ int main(int argc, char **argv)
   win2->color(FL_BLUE);
   win2->box(FL_UP_BOX);
   Fl_Button *b2 = new Fl_Button(10, 10, 180, 180, "front");
+  b2->color(FL_DARK_BLUE);
   win2->end();
   win2->show();
 

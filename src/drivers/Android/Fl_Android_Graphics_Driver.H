@@ -67,6 +67,7 @@ public:
 
   void set_empty();
   void set(int x, int y, int w, int h);
+  void set_ltrb(int l, int t, int r, int b);
   virtual void set(const Fl_Rect_Region &r);
   virtual int intersect_with(const Fl_Rect_Region &r);
 
@@ -102,6 +103,7 @@ public:
   Fl_Complex_Region(const Fl_Rect_Region&);
   virtual ~Fl_Complex_Region() override;
   virtual void set(const Fl_Rect_Region &r) override;
+  void set(const Fl_Complex_Region &r);
   virtual int intersect_with(const Fl_Rect_Region &r) override;
   int subtract(const Fl_Rect_Region &r);
 
@@ -115,6 +117,8 @@ public:
 
   Fl_Complex_Region *subregion() const { return pSubregion; }
   Fl_Complex_Region *next() const { return pNext; }
+
+  Fl_Complex_Region *add_subregion();
 
   virtual void print(const char*) const override;
 protected:
