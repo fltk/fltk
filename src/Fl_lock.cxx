@@ -417,6 +417,33 @@ void unlock_ring() {}
 #endif // FL_CFG_SYS_POSIX
 
 
+// TODO: can these functions be moved to the system drivers?
+#ifdef __ANDROID__
+
+static void unlock_ring()
+{
+  // TODO: implement me
+}
+
+static void lock_ring()
+{
+  // TODO: implement me
+}
+
+static void unlock_function()
+{
+  // TODO: implement me
+}
+
+static void lock_function()
+{
+  // TODO: implement me
+}
+
+#endif // __ANDROID__
+
+
+
 void Fl::awake(void *v) {
   Fl::system_driver()->awake(v);
 }

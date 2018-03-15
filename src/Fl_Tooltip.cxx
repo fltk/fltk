@@ -23,24 +23,22 @@
 #include <FL/Fl_System_Driver.H>
 
 #include <stdio.h>
-#include <string.h>	// strdup()
+#include <string.h>   // strdup()
 
-float		Fl_Tooltip::delay_ = 1.0f;
-float		Fl_Tooltip::hoverdelay_ = 0.2f;
-Fl_Color	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
-		                                   FL_NUM_GREEN - 1,
-						   FL_NUM_BLUE - 2);
-Fl_Color	Fl_Tooltip::textcolor_ = FL_BLACK;
-Fl_Font         Fl_Tooltip::font_ = FL_HELVETICA;
-Fl_Fontsize     Fl_Tooltip::size_ = -1;
-int		Fl_Tooltip::margin_width_  = 3;
-int		Fl_Tooltip::margin_height_ = 3;
-int		Fl_Tooltip::wrap_width_    = 400;
+float     Fl_Tooltip::delay_ = 1.0f;
+float     Fl_Tooltip::hoverdelay_ = 0.2f;
+Fl_Color  Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
+                                             FL_NUM_GREEN - 1,
+                                             FL_NUM_BLUE - 2);
+Fl_Color  Fl_Tooltip::textcolor_ = FL_BLACK;
+Fl_Font   Fl_Tooltip::font_ = FL_HELVETICA;
+Fl_Fontsize Fl_Tooltip::size_ = -1;
+int       Fl_Tooltip::margin_width_ = 3;
+int       Fl_Tooltip::margin_height_ = 3;
+int       Fl_Tooltip::wrap_width_ = 400;
+const int Fl_Tooltip::draw_symbols_ = 1;
 
 static const char* tip;
-
-// FIXME: this should be a static class variable: Fl_Tooltip::draw_symbols_
-static const int draw_symbols_ = 1; // 1 = draw @-symbols in tooltips, 0 = no
 
 /**
     This widget creates a tooltip box window, with no caption.
@@ -84,7 +82,7 @@ void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
   int ww = Fl_Tooltip::wrap_width();
   int hh = 0;
-  fl_measure(tip, ww, hh, draw_symbols_);
+  fl_measure(tip, ww, hh, Fl_Tooltip::draw_symbols_);
   ww += (Fl_Tooltip::margin_width() * 2);
   hh += (Fl_Tooltip::margin_height() * 2);
 
@@ -117,7 +115,7 @@ void Fl_TooltipBox::draw() {
   int Y = Fl_Tooltip::margin_height();
   int W = w() - (Fl_Tooltip::margin_width()*2);
   int H = h() - (Fl_Tooltip::margin_height()*2);
-  fl_draw(tip, X, Y, W, H, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP), 0, draw_symbols_);
+  fl_draw(tip, X, Y, W, H, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP), 0, Fl_Tooltip::draw_symbols_);
 }
 
 static char recent_tooltip;
@@ -156,14 +154,14 @@ static void tooltip_timeout(void*) {
 // bugfix: no need to refactor
       if (Fl::system_driver()->use_tooltip_timeout_condition()) condition = (Fl::grab() == NULL);
       if ( condition ) {
-	if (!window) window = new Fl_TooltipBox;
-	// this cast bypasses the normal Fl_Window label() code:
-	((Fl_Widget*)window)->label(tip);
-	window->layout();
-	window->redraw();
-	// printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
-	//        window, tip ? tip : "(null)");
-	window->show();
+        if (!window) window = new Fl_TooltipBox;
+        // this cast bypasses the normal Fl_Window label() code:
+        ((Fl_Widget *) window)->label(tip);
+        window->layout();
+        window->redraw();
+        // printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+        //        window, tip ? tip : "(null)");
+        window->show();
       }
     }
   }
