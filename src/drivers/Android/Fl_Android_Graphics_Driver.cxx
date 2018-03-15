@@ -61,7 +61,6 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
   pWindowRegion.intersect_with(Fl_Rect_Region(0, 0, win->w(), win->h()));
 
   pDesktopWindowRegion.set(pWindowRegion);
-  pDesktopWindowRegion.print(win->label());
 
   // remove all window rectangles that are positioned on top of this window
   // TODO: this region is expensive to calculate. Cache it for each window and recalculate when windows move, show, hide, or change order
@@ -72,9 +71,7 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
     pDesktopWindowRegion.subtract(r);
     wTop = Fl::next_window(wTop);
   }
-  pDesktopWindowRegion.print(" #### DESKTOP");
   pClippingRegion.set(pDesktopWindowRegion);
-  pClippingRegion.print("#### CLIPPING");
 }
 
 
@@ -95,87 +92,19 @@ static uint16_t make565(Fl_Color crgba)
                        ((crgba >>11) & 0x001f) );
 }
 
+
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
 {
-#if 1
-
-  Fl_Rect_Region r(x, y, w, h);
-  for (const auto &it: pClippingRegion.overlapping(r)) {
-#if 1
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, w, h))) {
     Fl_Rect_Region s(it->clipped_rect());
     rectf_unclipped(s.x(), s.y(), s.w(), s.h());
-#else
-    if (it->is_simple()) {
-      Fl_Rect_Region r(x, y, w, h);
-      if (r.intersect_with(*it)) {
-        rectf_unclipped(r.x(), r.y(), r.w(), r.h());
-      }
-    }
-#endif
   }
-
-#elif 0
-
-  // This is elegant code, but it is not efficient. It walks the entire tree
-  // and checks for intersetion, even if the parent region indicated that there
-  // is no intersection.
-  //
-  // Maybe we can add a parameter somewhere so that the iterator runs the tree
-  // based on a give rectangle.
-
-  for (const auto &it: pClippingRegion) {
-    // TODO: if region is complex, but doesn't intersect, can we somehow manipulate the iterator?
-    if (it->is_simple()) {
-      Fl_Rect_Region r(x, y, w, h);
-      if (r.intersect_with(*it)) {
-        rectf_unclipped(r.x(), r.y(), r.w(), r.h());
-      }
-    }
-  }
-
-#else
-
-  // This code is massiv and ugly and has the same problem in that it does not
-  // optimize the number of tests for intersections.
-
-  r.print("---- fl_rectf");
-  pClippingRegion.print("clip to");
-
-  for (Fl_Complex_Region *cr = &pClippingRegion; cr; cr=cr->next()) {
-    if (cr->subregion()) {
-      for (Fl_Complex_Region *cr1 = cr->subregion(); cr1; cr1=cr1->next()) {
-        if (cr1->subregion()) {
-          for (Fl_Complex_Region *cr2 = cr1->subregion(); cr2; cr2 = cr2->next()) {
-            Fl_Rect_Region r(x, y, w, h);
-            if (r.intersect_with(*cr2)) {
-              rectf_unclipped(r.x(), r.y(), r.w(), r.h());
-            }
-          }
-        } else {
-          Fl_Rect_Region r(x, y, w, h);
-          if (r.intersect_with(*cr1)) {
-            rectf_unclipped(r.x(), r.y(), r.w(), r.h());
-          }
-        }
-      }
-    } else {
-      Fl_Rect_Region r(x, y, w, h);
-      if (r.intersect_with(*cr)) {
-        rectf_unclipped(r.x(), r.y(), r.w(), r.h());
-      }
-    }
-  }
-
-#endif
 }
+
 
 void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h)
 {
   if (w<=0 || h<=0) return;
-
-// TODO: clip the rectangle to the window outline
-// TODO: clip the rectangle to all parts of the window region
-// TODo: clip the rectangle to all parts of the current clipping region
 
   uint16_t cc = make565(color());
   int32_t ss = pStride;
@@ -192,9 +121,9 @@ void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, floa
   }
 }
 
+
 void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
 {
-  uint16_t cc = make565(color());
   float w;
   if (x1>x) {
     w = x1-x;
@@ -202,6 +131,17 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
     w = x-x1;
     x = x1;
   }
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, w, 1))) {
+    Fl_Rect_Region s(it->clipped_rect());
+    xyline_unclipped(s.x(), s.y(), s.right());
+  }
+}
+
+
+void Fl_Android_Graphics_Driver::xyline_unclipped(float x, float y, float x1)
+{
+  uint16_t cc = make565(color());
+  float w = x1-x;
   int32_t ss = pStride;
   uint16_t *bits = pBits;
   uint32_t xx = (uint32_t)x;
@@ -215,7 +155,6 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
 
 void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
 {
-  uint16_t cc = make565(color());
   float h;
   if (y1>y) {
     h = y1-y;
@@ -223,6 +162,16 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
     h = y-y1;
     y = y1;
   }
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, 1, h))) {
+    Fl_Rect_Region s(it->clipped_rect());
+    yxline_unclipped(s.x(), s.y(), s.bottom());
+  }
+}
+
+void Fl_Android_Graphics_Driver::yxline_unclipped(float x, float y, float y1)
+{
+  uint16_t cc = make565(color());
+  float h = y1-y;
   int32_t ss = pStride;
   uint16_t *bits = pBits;
   uint32_t xx = (uint32_t)x;

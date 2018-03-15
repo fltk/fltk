@@ -118,7 +118,7 @@ class Fl_Complex_Region : public Fl_Rect_Region
       Overlapping *pOv;
     };
   public:
-    Overlapping(Fl_Complex_Region *rgn, Fl_Rect_Region &rect);
+    Overlapping(Fl_Complex_Region *rgn, const Fl_Rect_Region &rect);
     OverlappingIterator begin();
     OverlappingIterator end();
     Fl_Rect_Region &clipped_rect();
@@ -151,7 +151,7 @@ public:
   Iterator begin();
   Iterator end();
 
-  Overlapping overlapping(Fl_Rect_Region &r);
+  Overlapping overlapping(const Fl_Rect_Region &r);
 
 protected:
   void print_data(int indent) const;
@@ -189,7 +189,7 @@ protected:
 #endif
 public:
   Fl_Android_Graphics_Driver();
-  ~Fl_Android_Graphics_Driver();
+  virtual ~Fl_Android_Graphics_Driver() override;
 #if 0
   Fl_GDI_Graphics_Driver() {mask_bitmap_ = NULL; gc_ = NULL; p_size = 0; p = NULL; depth = -1; origins = NULL;}
   virtual ~Fl_GDI_Graphics_Driver() { if (p) free(p); delete[] origins;}
@@ -202,7 +202,7 @@ public:
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array);
   void delete_bitmask(Fl_Bitmask bm);
 #endif
-  virtual void draw_unscaled(const char* str, int n, int x, int y);
+  virtual void draw_unscaled(const char* str, int n, int x, int y) override;
 #if 0
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
@@ -244,14 +244,16 @@ protected:
   void rect_unscaled(float x, float y, float w, float h);
   void focus_rect(int x, int y, int w, int h);
 #endif
-  void rectf_unscaled(float x, float y, float w, float h);
+  virtual void rectf_unscaled(float x, float y, float w, float h) override;
   void rectf_unclipped(float x, float y, float w, float h);
 #if 0
   virtual void line_unscaled(float x, float y, float x1, float y1);
   virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
 #endif
-  virtual void xyline_unscaled(float x, float y, float x1);
-  virtual void yxline_unscaled(float x, float y, float y1);
+  virtual void xyline_unscaled(float x, float y, float x1) override;
+  void xyline_unclipped(float x, float y, float x1);
+  virtual void yxline_unscaled(float x, float y, float y1) override;
+  void yxline_unclipped(float x, float y, float y1);
 #if 0
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
@@ -259,14 +261,14 @@ protected:
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 #endif
   // --- clipping
-  void push_clip(int x, int y, int w, int h);
-  int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
-  int not_clipped(int x, int y, int w, int h);
-  void push_no_clip();
-  void pop_clip();
-  void restore_clip();
-  void clip_region(Fl_Region r);
-  Fl_Region clip_region();
+  virtual void push_clip(int x, int y, int w, int h) override;
+  virtual int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) override;
+  virtual int not_clipped(int x, int y, int w, int h) override;
+  virtual void push_no_clip() override;
+  virtual void pop_clip() override;
+  virtual void restore_clip() override;
+  virtual void clip_region(Fl_Region r) override;
+  virtual Fl_Region clip_region() override;
 #if 0
   virtual Fl_Region scale_clip(float f);
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx

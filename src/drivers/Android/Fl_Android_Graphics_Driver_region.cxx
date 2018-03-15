@@ -220,11 +220,6 @@ void Fl_Complex_Region::set(const Fl_Rect_Region &r)
 
 void Fl_Complex_Region::set(const Fl_Complex_Region &r)
 {
-#if 0
-  Fl_Android_Application::log_e("Not yet implemented!");
-  delete pSubregion; pSubregion = 0;
-  Fl_Rect_Region::set(r);
-#else
   // outline:
   // clear this region and copy the coordinates from r
   delete pSubregion; pSubregion = 0;
@@ -237,7 +232,6 @@ void Fl_Complex_Region::set(const Fl_Complex_Region &r)
     pNext = new Fl_Complex_Region();
     pNext->set(*r.next());
   }
-#endif
 }
 
 
@@ -252,14 +246,11 @@ int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 
 int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
 {
-  // FIXME: write me.
   if (pSubregion) {
     pSubregion->subtract(r);
   } else {
     // Check if we overlap at all
     Fl_Rect_Region s(r);
-    this->print("---- subtract");
-    s.print("");
     int intersects = s.intersect_with(*this);
     switch (intersects) {
       case EMPTY:
@@ -287,9 +278,7 @@ int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
 int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
 {
   // subtract a smaller rect from a larger rect and create subrects as needed
-
-  print("subtract_smaller_region");
-  r.print("");
+  // FIXME: make sure that the bbox of the parent region is shrunk to the size of all children
   // if there is only one single coordinte different, we can reuse this container
   if (left()==r.left() && top()==r.top() && right()==r.right() && bottom()==r.bottom()) {
     // this should not happen
@@ -320,8 +309,6 @@ int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
       Fl_Complex_Region *s = add_subregion();
       s->set_ltrb(r.right(), r.top(), pRight, r.bottom());
     }
-    //Fl_Android_Application::log_w("Regions too complex. Not yet implemented");
-    print("-- added subregions");
   }
   return 0;
 }
@@ -383,14 +370,14 @@ Fl_Complex_Region *Fl_Complex_Region::Iterator::operator*() const
 
 // -----------------------------------------------------------------------------
 
-Fl_Complex_Region::Overlapping Fl_Complex_Region::overlapping(Fl_Rect_Region &r)
+Fl_Complex_Region::Overlapping Fl_Complex_Region::overlapping(const Fl_Rect_Region &r)
 {
   return Overlapping(this, r);
 }
 
 
 Fl_Complex_Region::Overlapping::Overlapping(Fl_Complex_Region *rgn,
-                                            Fl_Rect_Region &rect) :
+                                            const Fl_Rect_Region &rect) :
         pRegion(rgn),
         pOriginalRect(rect),
         pClippedRect(rect)
@@ -428,9 +415,6 @@ bool Fl_Complex_Region::Overlapping::find_intersecting()
   for (;;) {
     if (!pRegion) return false;
     pClippedRect.set(pOriginalRect);
-    pRegion->print("find intersetion");
-    pClippedRect.print("with");
-    pOriginalRect.print("with");
     if (intersects()) {
       if (!pRegion->subregion()) {
         return true;
@@ -492,77 +476,6 @@ Fl_Complex_Region::Overlapping::OverlappingIterator::operator*() const
 }
 
 // =============================================================================
-
-#if 0
-
-void Fl_Complex_Region::set(int x, int y, int w, int h)
-{
-  // TODO: refactor the next four lines out, repeating
-  delete pSubregion;
-  pSubregion = 0L;
-  delete pNext;
-  pNext = 0L;
-  Fl_Rect_Region::set(x, y, w, h);
-}
-
-void Fl_Complex_Region::set(Fl_Rect *rect)
-{
-  delete pSubregion;
-  pSubregion = 0L;
-  delete pNext;
-  pNext = 0L;
-  Fl_Rect_Region::set(rect);
-}
-
-/**
- * Subtract a rectangle from this region.
- *
- * This operation may create multiple new subregions, but possibly also remove
- * subregions.
- *
- * @param x, y, w, h rectangular region that will be subtracted
- */
-void Fl_Complex_Region::subtract(Fl_Rect *r)
-{
-  Fl_Android_Application::log_i("------------ subtract");
-  this->print();
-  Fl_Android_Application::log_i("--------");
-  Fl_Android_Application::log_i("Rect %d %d %d %d", r->x(), r->y(), r->w(), r->h());
-  // ----
-  this->print();
-  Fl_Android_Application::log_i("------------ subtract done");
-  // FIXME: implement
-  int x = 3;
-}
-
-void Fl_Complex_Region::intersect(Fl_Rect*)
-{
-  // FIXME: implement
-}
-
-void Fl_Complex_Region::clone(Fl_Complex_Region *r)
-{
-  // FIXME: implement
-  // make this region simple and copy the bounding box
-  set(r);
-  if (r->pSubregion) {
-    pSubregion = new Fl_Complex_Region();
-    pSubregion->clone(r->pSubregion);
-  }
-  if (r->pNext) {
-    pNext = new Fl_Complex_Region();
-    pNext->clone(r->pNext);
-  }
-}
-
-void Fl_Complex_Region::print()
-{
-  Fl_Android_Application::log_i("-------- begin region");
-  print_data(0);
-}
-
-#endif
-
 
 
 void Fl_Android_Graphics_Driver::restore_clip()
