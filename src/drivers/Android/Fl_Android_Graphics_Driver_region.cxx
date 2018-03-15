@@ -156,7 +156,7 @@ void Fl_Rect_Region::print(const char *label) const
   Fl_Android_Application::log_i("Rect l:%d t:%d r:%d b:%d", left(), top(), right(), bottom());
 }
 
-// -----------------------------------------------------------------------------
+// =============================================================================
 
 /**
  * Create an empty complex region.
@@ -330,11 +330,168 @@ int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
 Fl_Complex_Region *Fl_Complex_Region::add_subregion()
 {
   Fl_Complex_Region *r = new Fl_Complex_Region();
+  r->pParent = this;
   r->pNext = pSubregion;
   pSubregion = r;
   return r;
 }
 
+
+// -----------------------------------------------------------------------------
+
+Fl_Complex_Region::Iterator Fl_Complex_Region::begin()
+{
+  return Iterator(this);
+}
+
+
+Fl_Complex_Region::Iterator Fl_Complex_Region::end()
+{
+  return Iterator(0L);
+}
+
+
+Fl_Complex_Region::Iterator::Iterator(Fl_Complex_Region *r) :
+        pRegion(r)
+{
+}
+
+
+bool Fl_Complex_Region::Iterator::operator!=(const Iterator &other) const
+{
+  return pRegion != other.pRegion;
+}
+
+
+const Fl_Complex_Region::Iterator &Fl_Complex_Region::Iterator::operator++()
+{
+  if (pRegion->subregion()) {
+    pRegion = pRegion->subregion();
+  } else if (pRegion->next()) {
+    pRegion = pRegion->next();
+  } else {
+    pRegion = pRegion->parent();
+  }
+  return *this;
+}
+
+
+Fl_Complex_Region *Fl_Complex_Region::Iterator::operator*() const
+{
+  return pRegion;
+}
+
+// -----------------------------------------------------------------------------
+
+Fl_Complex_Region::Overlapping Fl_Complex_Region::overlapping(Fl_Rect_Region &r)
+{
+  return Overlapping(this, r);
+}
+
+
+Fl_Complex_Region::Overlapping::Overlapping(Fl_Complex_Region *rgn,
+                                            Fl_Rect_Region &rect) :
+        pRegion(rgn),
+        pOriginalRect(rect),
+        pClippedRect(rect)
+{
+}
+
+
+Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlapping::begin()
+{
+  find_intersecting();
+  return OverlappingIterator(this);
+}
+
+
+Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlapping::end()
+{
+  return OverlappingIterator(0L);
+}
+
+
+Fl_Rect_Region &Fl_Complex_Region::Overlapping::clipped_rect()
+{
+  return pClippedRect;
+}
+
+
+bool Fl_Complex_Region::Overlapping::intersects()
+{
+  return (pClippedRect.intersect_with(*pRegion) != EMPTY);
+}
+
+
+bool Fl_Complex_Region::Overlapping::find_intersecting()
+{
+  for (;;) {
+    if (!pRegion) return false;
+    pClippedRect.set(pOriginalRect);
+    pRegion->print("find intersetion");
+    pClippedRect.print("with");
+    pOriginalRect.print("with");
+    if (intersects()) {
+      if (!pRegion->subregion()) {
+        return true;
+      } else {
+        pRegion = pRegion->subregion();
+      }
+    } else {
+      find_next();
+    }
+  }
+}
+
+
+bool Fl_Complex_Region::Overlapping::find_next()
+{
+  if (pRegion->subregion()) {
+    pRegion = pRegion->subregion();
+  } else if (pRegion->next()) {
+    pRegion = pRegion->next();
+  } else {
+    pRegion = pRegion->parent(); // can be NULL
+  }
+  return (pRegion != 0L);
+}
+
+// -----------------------------------------------------------------------------
+
+
+Fl_Complex_Region::Overlapping::OverlappingIterator::OverlappingIterator(
+        Overlapping *ov) :
+        pOv(ov)
+{
+}
+
+
+bool Fl_Complex_Region::Overlapping::OverlappingIterator::operator!=(
+        const OverlappingIterator &other) const
+{
+  auto thisRegion = pOv ? pOv->pRegion : nullptr;
+  auto otherRegion = other.pOv ? other.pOv->pRegion : nullptr;
+  return thisRegion != otherRegion;
+}
+
+
+const Fl_Complex_Region::Overlapping::OverlappingIterator &
+Fl_Complex_Region::Overlapping::OverlappingIterator::operator++()
+{
+  pOv->find_next();
+  if (pOv->pRegion)
+    pOv->find_intersecting();
+  return *this;
+}
+
+
+Fl_Complex_Region::Overlapping *
+Fl_Complex_Region::Overlapping::OverlappingIterator::operator*() const
+{
+  return pOv;
+}
+
+// =============================================================================
 
 #if 0
 

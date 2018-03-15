@@ -97,15 +97,46 @@ static uint16_t make565(Fl_Color crgba)
 
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
 {
-  // FIXME: r must be a complex region, like pClippingRegion.
+#if 1
 
   Fl_Rect_Region r(x, y, w, h);
-#if 0
-  if (r.intersect_with(pClippingRegion)) {
-    rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+  for (const auto &it: pClippingRegion.overlapping(r)) {
+#if 1
+    Fl_Rect_Region s(it->clipped_rect());
+    rectf_unclipped(s.x(), s.y(), s.w(), s.h());
+#else
+    if (it->is_simple()) {
+      Fl_Rect_Region r(x, y, w, h);
+      if (r.intersect_with(*it)) {
+        rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+      }
+    }
+#endif
   }
-#else // proof of concept
-  // FIXME: write iterator over tree
+
+#elif 0
+
+  // This is elegant code, but it is not efficient. It walks the entire tree
+  // and checks for intersetion, even if the parent region indicated that there
+  // is no intersection.
+  //
+  // Maybe we can add a parameter somewhere so that the iterator runs the tree
+  // based on a give rectangle.
+
+  for (const auto &it: pClippingRegion) {
+    // TODO: if region is complex, but doesn't intersect, can we somehow manipulate the iterator?
+    if (it->is_simple()) {
+      Fl_Rect_Region r(x, y, w, h);
+      if (r.intersect_with(*it)) {
+        rectf_unclipped(r.x(), r.y(), r.w(), r.h());
+      }
+    }
+  }
+
+#else
+
+  // This code is massiv and ugly and has the same problem in that it does not
+  // optimize the number of tests for intersections.
 
   r.print("---- fl_rectf");
   pClippingRegion.print("clip to");
@@ -134,36 +165,8 @@ void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float
       }
     }
   }
+
 #endif
-
-
-
-
-
-  // TODO: create a complex region by intersecting r with the pClippingRegion
-  // TODO: walk the region and draw all rectangles
-
-  /*
-   * rectf(x, y, w, h) {
-   *   rectf(complex_window_region, drawing_rect(x, y, w, h))
-   * }
-   *
-   * rectf( complexRgn, drawRgn) {
-   *   // B: start of iterator
-   *     if (intersect(rect_of_complexRgn, drawRgn) {
-   *       if (complexRgn->is_complex() {
-   *         rectf(complexRgn->subregion, drawRect);
-   *       } else {
-   *         rawRect = intersection(rect_of_complexRgn, drawRgn);
-   *         rawDrawRect(rawRect);
-   *       }
-   *     }
-   *     // A: recursion
-   *     if (complexRgn->next)
-   *       rectf(complexRgn->next, drawRgn);
-   *   // B: end of iterator
-   * }
-   */
 }
 
 void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h)

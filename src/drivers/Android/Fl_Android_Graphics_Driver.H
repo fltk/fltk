@@ -80,6 +80,7 @@ private:
   Fl_Rect_Region&  operator = (const Fl_Rect_Region& other);
 };
 
+
 /**
  * The Fl_Complex_Region represents a clipping region of any shape.
  *
@@ -98,32 +99,65 @@ private:
  */
 class Fl_Complex_Region : public Fl_Rect_Region
 {
+  class Iterator {
+  public:
+    Iterator(Fl_Complex_Region *r);
+    bool operator!= (const Iterator& other) const;
+    const Iterator& operator++ ();
+    Fl_Complex_Region *operator* () const;
+    Fl_Complex_Region *pRegion;
+  };
+
+  class Overlapping {
+    class OverlappingIterator {
+    public:
+      OverlappingIterator(Overlapping *ov);
+      bool operator!= (const OverlappingIterator& other) const;
+      const OverlappingIterator& operator++ ();
+      Overlapping *operator* () const;
+      Overlapping *pOv;
+    };
+  public:
+    Overlapping(Fl_Complex_Region *rgn, Fl_Rect_Region &rect);
+    OverlappingIterator begin();
+    OverlappingIterator end();
+    Fl_Rect_Region &clipped_rect();
+    bool intersects();
+    bool find_intersecting();
+    bool find_next();
+    Fl_Complex_Region *pRegion;
+    Fl_Rect_Region pOriginalRect;
+    Fl_Rect_Region pClippedRect;
+  };
+
 public:
   Fl_Complex_Region();
   Fl_Complex_Region(const Fl_Rect_Region&);
   virtual ~Fl_Complex_Region() override;
+
   virtual void set(const Fl_Rect_Region &r) override;
   void set(const Fl_Complex_Region &r);
-  virtual int intersect_with(const Fl_Rect_Region &r) override;
-  int subtract(const Fl_Rect_Region &r);
-
-  //  virtual void set(int x, int y, int w, int h);
-//  virtual void set(Fl_Rect_Region*);
-//  void subtract(Fl_Rect_Region*);
-//  void intersect(Fl_Rect_Region*);
-//  void clone(Fl_Complex_Region*);
+  Fl_Complex_Region *subregion() const { return pSubregion; }
+  Fl_Complex_Region *next() const { return pNext; }
+  Fl_Complex_Region *parent() const { return pParent; }
   char is_simple() const { return pSubregion==0; }
   char is_complex() const { return pSubregion!=0; }
 
-  Fl_Complex_Region *subregion() const { return pSubregion; }
-  Fl_Complex_Region *next() const { return pNext; }
-
-  Fl_Complex_Region *add_subregion();
+  virtual int intersect_with(const Fl_Rect_Region &r) override;
+  int subtract(const Fl_Rect_Region &r);
 
   virtual void print(const char*) const override;
+
+  Iterator begin();
+  Iterator end();
+
+  Overlapping overlapping(Fl_Rect_Region &r);
+
 protected:
   void print_data(int indent) const;
   int subtract_smaller_region(const Fl_Rect_Region &r);
+  Fl_Complex_Region *add_subregion();
+
   Fl_Complex_Region *pSubregion = 0L;
   Fl_Complex_Region *pParent = 0L;
   Fl_Complex_Region *pNext = 0L;
