@@ -70,11 +70,24 @@ int main(int argc, char **argv)
 
   btn = new MyButton((win->w()-280)/2, 200, 280, 35, "Hello, Android!");
   btn->color(FL_LIGHT2);
+  btn->labelsize(30);
   btn->callback(
           [](Fl_Widget*, void*) {
             Fl::add_timeout(1.0, hello_cb, NULL);
           }
   );
+
+  btn = new MyButton((win->w()-280)/2, 200+40, 280, 35, "Hello, Android!");
+  btn->labelfont(FL_TIMES_BOLD_ITALIC);
+  btn->labelsize(30);
+
+  btn = new MyButton((win->w()-280)/2, 200+2*40, 280, 35, "Hello, Android!");
+  btn->labelfont(FL_COURIER_BOLD_ITALIC);
+  btn->labelsize(30);
+
+  btn = new MyButton((win->w()-280)/2, 200+3*40, 280, 35, "Hello, Android!");
+  btn->labelfont(FL_SCREEN);
+  btn->labelsize(30);
 
   win->end();
   win->show(argc, argv);

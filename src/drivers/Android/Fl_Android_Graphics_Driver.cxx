@@ -84,7 +84,8 @@ static uint16_t  make565(int red, int green, int blue)
 
 extern unsigned fl_cmap[256];
 
-static uint16_t make565(Fl_Color crgba)
+
+uint16_t Fl_Android_Graphics_Driver::make565(Fl_Color crgba)
 {
   if (crgba<0x00000100) crgba = fl_cmap[crgba];
     return (uint16_t)( ((crgba >>16) & 0xf800) |
@@ -185,110 +186,6 @@ void Fl_Android_Graphics_Driver::yxline_unclipped(float x, float y, float y1)
 }
 
 
-// -- fun with text rendering
-
-#define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate implementation
-#include "stb_truetype.h"
-
-unsigned char ttf_buffer[1<<25];
-
-int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
-{
-   static bool once = 0;
-   static stbtt_fontinfo font;
-   unsigned char *bitmap;
-   int w,h,i,j, size = 30;
-   int dx, dy;
-
-//LOGE("Render letter %c", c);
-if (once==0) {
-   once = 1;
-   FILE *f = fopen("/system/fonts/DroidSans.ttf", "rb");
-   if (f==NULL) {
-     Fl_Android_Application::log_e("ERROR reading font %d!", errno);
-     return 0;
-   }
-   fread(ttf_buffer, 1, 1<<25, f);
-
-   stbtt_InitFont(&font, ttf_buffer, stbtt_GetFontOffsetForIndex(ttf_buffer,0));
-}
-
-#if 0
-   scale = stbtt_ScaleForPixelHeight(&font, 15);
-   stbtt_GetFontVMetrics(&font, &ascent,0,0);
-   baseline = (int) (ascent*scale);
-
-   while (text[ch]) {
-      int advance,lsb,x0,y0,x1,y1;
-      float x_shift = xpos - (float) floor(xpos);
-      stbtt_GetCodepointHMetrics(&font, text[ch], &advance, &lsb);
-      stbtt_GetCodepointBitmapBoxSubpixel(&font, text[ch], scale,scale,x_shift,0, &x0,&y0,&x1,&y1);
-      stbtt_MakeCodepointBitmapSubpixel(&font, &screen[baseline + y0][(int) xpos + x0], x1-x0,y1-y0, 79, scale,scale,x_shift,0, text[ch]);
-      // note that this stomps the old data, so where character boxes overlap (e.g. 'lj') it's wrong
-      // because this API is really for baking character bitmaps into textures. if you want to render
-      // a sequence of characters, you really need to render each bitmap to a temp buffer, then
-      // "alpha blend" that into the working buffer
-      xpos += (advance * scale);
-      if (text[ch+1])
-         xpos += scale*stbtt_GetCodepointKernAdvance(&font, text[ch],text[ch+1]);
-      ++ch;
-   }
-
-#endif
-
-
-   bitmap = stbtt_GetCodepointBitmap(&font, 0,stbtt_ScaleForPixelHeight(&font, size), c, &w, &h, &dx, &dy);
-
-  // rrrr.rggg.gggb.bbbb
-  xx += dx; yy += dy;
-  uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
-  int32_t ss = pStride;
-  uint16_t *bits = pBits;
-  uint32_t ww = w;
-  uint32_t hh = h;
-  unsigned char *s = bitmap;
-  for (uint32_t iy = 0; iy<hh; ++iy) {
-    uint16_t *d = bits + (yy+iy)*ss + xx;
-    for (uint32_t ix = 0; ix<ww; ++ix) {
-#if 1
-      // 5 step antialiasing
-      unsigned char v = *s++;
-      if (v>200) { // 100% black
-        *d = cc;
-      } else if (v<50) { // 0%
-      } else if (v>150) { // 75%
-        uint16_t nn = *d, nn14 = (nn&0xe79c)>>2;
-        *d = nn14 + cc34;
-      } else if (v<100) { // 25%
-        uint16_t nn = *d, nn12 = (nn&0xf7de)>>1, nn14 = (nn12&0xf7de)>>1, nn34 = nn12+nn14;
-        *d = nn34 + cc14;
-      } else { // 50%
-        uint16_t nn = *d, nn12 = (nn&0xf7de)>>1;
-        *d = nn12 + cc12;
-      }
-#else
-      // pure black and white
-      if (*s++ > 128)
-        *d = cc;
-#endif
-      d++;
-    }
-  }
-   stbtt_FreeBitmap(bitmap, 0L);
-      int advance,lsb;
-      stbtt_GetCodepointHMetrics(&font, c, &advance, &lsb);
-   float scale = stbtt_ScaleForPixelHeight(&font, size);
-   return xx+advance*scale;
-}
-
-void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, int y)
-{
-  if (str) {
-    x = x+16*(-n/2);
-    for (int i=0; i<n; i++)
-      x = render_letter(x, y+5, str[i]);
-  }
-}
 
 #if 0
 

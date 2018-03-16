@@ -21,12 +21,21 @@
 
 
 #include "Fl_Android_Graphics_Driver.H"
+#include "stb_truetype.h"
 
 
 class Fl_Android_Font_Descriptor : public Fl_Font_Descriptor
 {
+private:
+  stbtt_fontinfo pFont;
+  Fl_Font pFontIndex;
+  uint8_t *pFileBuffer;
+
 public:
-  Fl_Android_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  Fl_Android_Font_Descriptor(const char* fontname, Fl_Font fnum, Fl_Fontsize size);
+  uint8_t *get_bitmap(uint32_t c, int *w, int *h, int *dx, int *dy);
+  void free_bitmap(uint8_t *bitmap);
+  float get_advance(uint32_t c);
 };
 
 

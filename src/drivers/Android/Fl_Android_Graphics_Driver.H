@@ -176,6 +176,8 @@ protected:
 
 #endif
 
+  static uint16_t make565(Fl_Color crgba);
+
   int render_letter(int xx, int yy, uint32_t c);
   void make_current(Fl_Window*);
 
