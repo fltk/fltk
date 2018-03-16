@@ -304,7 +304,7 @@ int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
         // nothing to do
         break;
       case SAME:
-        set_empty(); // FIXME: delete this Rect!
+        set_empty(); // Will be deleted by compress()
         break;
       case LESS:
         // split this rect into 1, 2, 3, or 4 new ones
@@ -361,16 +361,15 @@ void Fl_Complex_Region::compress()
 }
 
 /**
- * Subtract a rect from another rect, potentially creating four new rectangles.
+ * Subtract a smaller rect from a larger rect, potentially creating four new rectangles.
  * This assumes that the calling region is NOT complex.
- * @param r subtract the area of this rectangle.
+ * @param r subtract the area of this rectangle; r must fit within ``this``.
  * @return currently 0, but this may change
  */
 int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
 {
   // subtract a smaller rect from a larger rect and create subrects as needed
-  // FIXME: make sure that the bbox of the parent region is shrunk to the size of all children
-  // if there is only one single coordinte different, we can reuse this container
+  // if there is only one single coordinate different, we can reuse this container
   if (left()==r.left() && top()==r.top() && right()==r.right() && bottom()==r.bottom()) {
     // this should not happen
     set_empty();
@@ -647,12 +646,23 @@ void Fl_Android_Graphics_Driver::restore_clip()
 {
   fl_clip_state_number++;
 
-  pClippingRegion.set(pDesktopWindowRegion);
-
-
-  Fl_Region b = rstack[rstackptr];
+  // find the current user clipping rectangle
+  Fl_Region b = rstack[rstackptr]; // Fl_Region is a pointer to Fl_Rect_Region
   if (b) {
-    // FIXME: pClippingRegion.intersect_with(*b);
+    if (b->is_empty()) {
+      // if this is an empty region, the intersection is always empty as well
+      pClippingRegion.set_empty();
+    } else {
+      // if there is a region, copy the full window region
+      pClippingRegion.set(pDesktopWindowRegion);
+      if (!b->is_infinite()) {
+        // if the rect has dimensions, calculate the intersection
+        pClippingRegion.intersect_with(*b);
+      }
+    }
+  } else {
+    // no rect? Just copy the window region
+    pClippingRegion.set(pDesktopWindowRegion);
   }
 }
 

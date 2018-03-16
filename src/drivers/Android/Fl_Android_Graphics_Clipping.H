@@ -64,7 +64,7 @@ public:
   bool is_empty() const;
   bool is_infinite() const;
 
-  void set_empty();
+  virtual void set_empty();
   void set(int x, int y, int w, int h);
   void set_ltrb(int l, int t, int r, int b);
   virtual void set(const Fl_Rect_Region &r);
@@ -152,6 +152,7 @@ public:
 
   virtual void set(const Fl_Rect_Region &r) override;
   void set(const Fl_Complex_Region &r);
+  virtual void set_empty() override { delete pSubregion; pSubregion=0L; Fl_Rect_Region::set_empty(); }
   Fl_Complex_Region *subregion() const { return pSubregion; }
   Fl_Complex_Region *next() const { return pNext; }
   Fl_Complex_Region *parent() const { return pParent; }
