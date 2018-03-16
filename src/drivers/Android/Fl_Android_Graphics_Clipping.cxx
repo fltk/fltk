@@ -168,6 +168,17 @@ int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
 }
 
 /**
+ * Use rectangle as a bounding box and add the outline of another rect.
+ */
+void Fl_Rect_Region::add_to_bbox(const Fl_Rect_Region &r)
+{
+  if (r.pLeft<pLeft) pLeft = r.pLeft;
+  if (r.pTop<pTop) pTop = r.pTop;
+  if (r.pRight>pRight) pRight = r.pRight;
+  if (r.pBottom>pBottom) pBottom = r.pBottom;
+}
+
+/**
  * Print the coordinates of the rect to the log.
  * @param label some text that is logged with this message.
  */
@@ -237,8 +248,8 @@ void Fl_Complex_Region::print_data(int indent) const
  */
 void Fl_Complex_Region::set(const Fl_Rect_Region &r)
 {
-  delete pSubregion; pSubregion = 0;
   Fl_Rect_Region::set(r);
+  delete pSubregion; pSubregion = 0;
 }
 
 /**
@@ -307,7 +318,46 @@ int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
       pNext->subtract(r);
     }
   }
+  compress();
   return 0;
+}
+
+/**
+ * Compress the subregion of this region if possible and update the bounding
+ * box of this region.
+ *
+ * Does not recurse down the tree!
+ */
+void Fl_Complex_Region::compress()
+{
+  // Can't compress anything that does not have a subregion
+  if (!pSubregion) return;
+
+  // remove all empty regions, because the really don't add anything (literally)
+  Fl_Complex_Region *rgn = pSubregion, **rgnPtr = &pSubregion;
+  while (rgn) {
+    if (rgn->is_empty()) {
+      *rgnPtr = rgn->pNext;
+      delete rgn;
+    }
+    rgnPtr = &rgn->pNext;
+    rgn = *rgnPtr;
+  }
+  if (!pSubregion) return;
+
+  // find rectangles that can be merged into a single new rectangle
+
+  // if there is only a single subregion left, merge it into this region
+  if (pSubregion->pNext==nullptr) {
+    set((Fl_Rect_Region&)*pSubregion); // deletes subregion for us
+  }
+  if (!pSubregion) return;
+
+  // finally, update the boudning box
+  Fl_Rect_Region::set((Fl_Rect_Region&)*pSubregion);
+  for (rgn=pSubregion->pNext; rgn; rgn=rgn->pNext) {
+    add_to_bbox(*rgn);
+  }
 }
 
 /**

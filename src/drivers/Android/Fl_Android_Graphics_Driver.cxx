@@ -544,6 +544,9 @@ void Fl_GDI_Graphics_Driver::set_current_() {
 
 #endif
 
+/*
+
+ */
 
 //
 // End of "$Id$".
