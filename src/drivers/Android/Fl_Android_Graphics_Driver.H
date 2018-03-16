@@ -75,7 +75,9 @@ public:
 #if 0
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
-  virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
+#endif
+  virtual void font_unscaled(Fl_Font face, Fl_Fontsize size) override;
+#if 0
   void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy);

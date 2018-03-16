@@ -20,7 +20,7 @@
 #include "../../config_lib.h"
 #include "Fl_Android_Screen_Driver.H"
 #include "Fl_Android_Application.H"
-#include "./Fl_Font.H"
+#include "Fl_Android_Graphics_Font.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/Fl_Graphics_Driver.H>
