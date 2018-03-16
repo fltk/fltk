@@ -3,7 +3,7 @@
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -160,7 +160,7 @@ static char *add_modifier_key(char *p, const char *end, const char *name) {
   }
   if (p[-1] == '\\')		// remove (last) '\' character
     p--;
-  else if (p[-1] == '+')  // don't add another '+' character
+  else if (p[-1] == '+')	// don't add another '+' character
     {/*empty*/}
   else				// not a '\' or '+'
     *p++ = '+';			// add a '+' character
@@ -329,7 +329,7 @@ unsigned int Fl_Widget::label_shortcut(const char *t) {
   \param require_alt if true: match only if Alt key is pressed.
 
   \return true, if the entered text matches the '&x' shortcut in \p t
-      false (0) otherwise.
+	  false (0) otherwise.
 
   \note Internal use only.
 */
@@ -363,7 +363,7 @@ int Fl_Widget::test_shortcut(const char *t, const bool require_alt) {
   Fl::event_text() is used to get the entered key value.
 
   \return true, if the entered text matches the widget's'&x' shortcut,
-      false (0) otherwise.
+	  false (0) otherwise.
 
   \note Internal use only.
 */

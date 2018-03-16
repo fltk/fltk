@@ -119,40 +119,40 @@ bool Fl::cfg_sys_win32 = 0;
 Fl_Widget *fl_selection_requestor;
 
 #ifndef FL_DOXYGEN
-Fl_Widget *Fl::belowmouse_,
-        *Fl::pushed_,
-        *Fl::focus_,
-        *Fl::selection_owner_;
-int     Fl::damage_,
-        Fl::e_number,
-        Fl::e_x,
-        Fl::e_y,
-        Fl::e_x_root,
-        Fl::e_y_root,
-        Fl::e_dx,
-        Fl::e_dy,
-        Fl::e_state,
-        Fl::e_clicks,
-        Fl::e_is_click,
-        Fl::e_keysym,
-        Fl::e_original_keysym,
-        Fl::scrollbar_size_ = 16;
+Fl_Widget	*Fl::belowmouse_,
+		*Fl::pushed_,
+		*Fl::focus_,
+		*Fl::selection_owner_;
+int		Fl::damage_,
+		Fl::e_number,
+		Fl::e_x,
+		Fl::e_y,
+		Fl::e_x_root,
+		Fl::e_y_root,
+		Fl::e_dx,
+		Fl::e_dy,
+		Fl::e_state,
+		Fl::e_clicks,
+		Fl::e_is_click,
+		Fl::e_keysym,
+		Fl::e_original_keysym,
+		Fl::scrollbar_size_ = 16;
 
-char    *Fl::e_text = (char *) "";
-int     Fl::e_length;
-const char *Fl::e_clipboard_type = "";
-void    *Fl::e_clipboard_data = NULL;
+char		*Fl::e_text = (char *)"";
+int		Fl::e_length;
+const char	*Fl::e_clipboard_type = "";
+void		*Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
 
-unsigned char   Fl::options_[] = { 0, 0 };
-unsigned char   Fl::options_read_ = 0;
+unsigned char	Fl::options_[] = { 0, 0 };
+unsigned char	Fl::options_read_ = 0;
 
 
-Fl_Window *fl_xfocus = NULL;  // which window X thinks has focus
-Fl_Window *fl_xmousewin;  // which window X thinks has FL_ENTER
-Fl_Window *Fl::grab_; // most recent Fl::grab()
-Fl_Window *Fl::modal_;  // topmost modal() window
+Fl_Window	*fl_xfocus = NULL; // which window X thinks has focus
+Fl_Window	*fl_xmousewin;     // which window X thinks has FL_ENTER
+Fl_Window	*Fl::grab_;        // most recent Fl::grab()
+Fl_Window	*Fl::modal_;       // topmost modal() window
 
 #endif // FL_DOXYGEN
 
@@ -186,7 +186,7 @@ Fl_System_Driver *Fl::system_driver()
   Returns the compiled-in value of the FL_VERSION constant. This
   is useful for checking the version of a shared library.
 
-  \deprecated Use int Fl::api_version() instead.
+  \deprecated	Use int Fl::api_version() instead.
 */
 double Fl::version() {
   return FL_VERSION;
@@ -244,8 +244,8 @@ void Fl::scrollbar_size(int W) {
     To find out, whether the event is inside a child widget of the
     current window, you can use Fl::event_inside(const Fl_Widget *).
 
-    \param[in] xx,yy,ww,hh bounding box
-    \return non-zero, if mouse event is inside
+    \param[in] xx,yy,ww,hh	bounding box
+    \return			non-zero, if mouse event is inside
 */
 int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
   int mx = e_x - xx;
@@ -277,8 +277,8 @@ int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
 
     \see Fl::event_inside(int, int, int, int)
 
-    \param[in] o child widget to be tested
-    \return non-zero, if mouse event is inside the widget
+    \param[in] o	child widget to be tested
+    \return		non-zero, if mouse event is inside the widget
 */
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   int mx = e_x - o->x();
@@ -311,8 +311,8 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
  Removes a timeout callback. It is harmless to remove a timeout
  callback that no longer exists.
 
- \note This version removes all matching timeouts, not just the first one.
-      This may change in the future.
+ \note	This version removes all matching timeouts, not just the first one.
+	This may change in the future.
  */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
   Fl::screen_driver()->remove_timeout(cb, argp);
@@ -494,7 +494,7 @@ void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
 
 /**
  Waits a maximum of \p time_to_wait seconds or until "something happens".
- 
+
  See Fl::wait() for the description of operations performed when
  "something happens".
  \return Always 1 on Windows. Otherwise, it is positive
@@ -516,7 +516,7 @@ double Fl::wait(double time_to_wait) {
   (supposedly it would return non-zero on any errors, but FLTK calls
   exit directly for these).  A normal program will end main()
   with return Fl::run();.
- 
+
   \note Fl::run() and Fl::wait() (but not Fl::wait(double)) both
   return when all FLTK windows are closed. Therefore, a MacOS FLTK
   application possessing Fl_Sys_Menu_Bar items able to create new windows
@@ -1666,16 +1666,16 @@ static int max_widget_watch = 0;
 
   Example for a button that is clicked (from its handle() method):
   \code
-    Fl_Widget *wp = this;         // save 'this' in a pointer variable
-    Fl::watch_widget_pointer(wp); // add the pointer to the watch list
-    set_changed();                // set the changed flag
-    do_callback();                // call the callback
-    if (!wp) {                    // the widget has been deleted
+    Fl_Widget *wp = this;           // save 'this' in a pointer variable
+    Fl::watch_widget_pointer(wp);   // add the pointer to the watch list
+    set_changed();                  // set the changed flag
+    do_callback();                  // call the callback
+    if (!wp) {                      // the widget has been deleted
 
       // DO NOT ACCESS THE DELETED WIDGET !
 
-    } else {                      // the widget still exists
-      clear_changed();            // reset the changed flag
+    } else {                        // the widget still exists
+      clear_changed();              // reset the changed flag
     }
 
     Fl::release_widget_pointer(wp); // remove the pointer from the watch list
@@ -1734,8 +1734,8 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
     }
 #ifdef DEBUG_WATCH
     else { // found widget pointer
-      printf ("release_widget_pointer: (%d/%d) %8p => %8p\n",
-      i+1,num_widget_watch,wp,*wp);
+      printf("release_widget_pointer: (%d/%d) %8p => %8p\n",
+	     i+1, num_widget_watch, wp, *wp);
     }
 #endif //DEBUG_WATCH
   }
@@ -1925,7 +1925,7 @@ int Fl::dnd()
  * another character, the position of the " is marked on screen with a yellow
  * background color.
  *
- * Call this function if character composition needs to be aborted fro some
+ * Call this function if character composition needs to be aborted for some
  * reason. One such example would be the text input widget losing focus.
  */
 void Fl::reset_marked_text() {
@@ -1971,19 +1971,19 @@ int Fl::clipboard_contains(const char *type)
 
 /**
  Adds file descriptor fd to listen to.
- 
+
  When the fd becomes ready for reading Fl::wait() will call the
  callback and then return. The callback is passed the fd and the
  arbitrary void* argument.
- 
+
  This version takes a when bitfield, with the bits
  FL_READ, FL_WRITE, and FL_EXCEPT defined,
  to indicate when the callback should be done.
- 
+
  There can only be one callback of each type for a file descriptor.
  Fl::remove_fd() gets rid of <I>all</I> the callbacks for a given
  file descriptor.
- 
+
  Under UNIX/Linux/MacOS <I>any</I> file descriptor can be monitored (files,
  devices, pipes, sockets, etc.). Due to limitations in Microsoft Windows,
  Windows applications can only monitor sockets.
@@ -2047,11 +2047,11 @@ FL_EXPORT Window fl_xid_(const Fl_Window *w) {
  @{ */
 
 /** Register a function called for each file dropped onto an application icon.
- 
+
  This function is effective only on the Mac OS X platform.
  \c cb will be called with a single Unix-style file name and path.
  If multiple files were dropped, \c cb will be called multiple times.
- 
+
  This function should be called before \c fl_open_display() is called,
  either directly or indirectly (this happens at the first \c show() of a window),
  to be effective for files dropped on the application icon at launch time.
