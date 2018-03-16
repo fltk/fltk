@@ -305,7 +305,7 @@ elseif (ANDROID)
     drivers/Android/Fl_Android_Window_Driver.cxx
     drivers/Android/Fl_Android_Image_Surface_Driver.cxx
     drivers/Android/Fl_Android_Graphics_Driver.cxx
-    drivers/Android/Fl_Android_Graphics_Driver_region.cxx
+    drivers/Android/Fl_Android_Graphics_Clipping.cxx
   )
   set (DRIVER_HEADER_FILES
     drivers/Android/Fl_Android_Application.H
@@ -313,6 +313,7 @@ elseif (ANDROID)
     drivers/Android/Fl_Android_Screen_Driver.H
     drivers/Android/Fl_Android_Window_Driver.H
     drivers/Android/Fl_Android_Graphics_Driver.H
+    drivers/Android/Fl_Android_Graphics_Clipping.H
     drivers/Android/Fl_Font.H
   )
 
