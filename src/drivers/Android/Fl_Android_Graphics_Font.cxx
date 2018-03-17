@@ -416,33 +416,35 @@ void Fl_Android_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   font_ = fnum;
 }
 
-/**
- * Copy a single letter to the screen.
- * @param xx, yy position of character on screen
- * @param c unicode character
- * @return x position of next character on screen
- */
-int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
+
+void Fl_Android_Graphics_Driver::render_bytemap(int xx, int yy, Fl_Android_Bytemap *bm, Fl_Rect_Region &r)
 {
-  int oxx = xx;
-
-  // find the font descriptor
-  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
-  if (!fd) return xx; // this should not happen
-
-  Fl_Android_Bytemap *bm = fd->get_bytemap(c);
-  if (!bm) return oxx;
-
-  // rrrr.rggg.gggb.bbbb
   xx += bm->pXOffset; yy += bm->pYOffset;
+
+  if (xx>r.right()) return;
+  if (yy>r.bottom()) return;
+  if (xx+bm->pWidth < r.left()) return;
+  if (yy+bm->pHeight < r.top()) return;
+
   uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
   int32_t ss = pStride;
   uint16_t *bits = pBits;
   uint32_t ww = bm->pWidth;
   uint32_t hh = bm->pHeight;
+  unsigned char *srcBytes = bm->pBytes;
+
+  int dx = r.left()-xx;
+  int dy = r.top()-yy;
+  int dr = (xx+ww)-r.right();
+  int db = (yy+hh)-r.bottom();
+  if (dx>0) { xx+=dx; ww-=dx; srcBytes+=dx; }
+  if (dy>0) { yy+=dy; hh-=dy; srcBytes+=dy*bm->pStride; }
+  if (dr>0) { ww-=dr; }
+  if (db>0) { hh-=db; }
+
   for (uint32_t iy = 0; iy<hh; ++iy) {
     uint16_t *d = bits + (yy+iy)*ss + xx;
-    unsigned char *s = bm->pBytes + iy*bm->pStride;
+    unsigned char *s = srcBytes + iy*bm->pStride;
     for (uint32_t ix = 0; ix<ww; ++ix) {
 #if 1
       // 5 step antialiasing
@@ -468,6 +470,29 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
       d++;
     }
   }
+
+}
+
+
+/**
+ * Copy a single letter to the screen.
+ * @param xx, yy position of character on screen
+ * @param c unicode character
+ * @return x position of next character on screen
+ */
+int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c, Fl_Rect_Region &r)
+{
+  int oxx = xx;
+
+  // find the font descriptor
+  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
+  if (!fd) return xx; // this should not happen
+
+  Fl_Android_Bytemap *bm = fd->get_bytemap(c);
+  if (!bm) return oxx;
+
+  render_bytemap(xx, yy, bm, r);
+
   return oxx + bm->pAdvance;
 }
 
@@ -480,21 +505,29 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
 void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, int y)
 {
   if (str) {
-    const char *e = str+n;
-    for (int i=0; i<n; ) {
-      int incr = 1;
-      unsigned uniChar = fl_utf8decode(str + i, e, &incr);
-      int x1 = x;
-      x = render_letter(x, y, uniChar);
+    int dx, dy, w, h;
+    text_extents_unscaled(str, n, dx, dy, w, h);
+    pClippingRegion.print("<---- clip text to this");
+    Fl_Rect_Region(x+dx, y+dy, w, h).print(str);
+    for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x+dx, y+dy, w, h))) {
+      Fl_Rect_Region &r = it->clipped_rect();
+      r.print("Clip");
+      const char *e = str + n;
+      for (int i = 0; i < n;) {
+        int incr = 1;
+        unsigned uniChar = fl_utf8decode(str + i, e, &incr);
+        int x1 = x;
+        x = render_letter(x, y, uniChar, r);
 #if 0
-      // use this to make the character baseline visible
-      Fl_Color old = fl_color();
-      fl_color(FL_RED);
-      fl_xyline(x1, y, x);
-      fl_yxline(x1, y-5, y+5);
-      fl_color(old);
+        // use this to make the character baseline visible
+        Fl_Color old = fl_color();
+        fl_color(FL_RED);
+        fl_xyline(x1, y, x);
+        fl_yxline(x1, y-5, y+5);
+        fl_color(old);
 #endif
-      i += incr;
+        i += incr;
+      }
     }
   }
 }
@@ -535,10 +568,10 @@ Fl_Fontsize Fl_Android_Graphics_Driver::size_unscaled()
 
 void Fl_Android_Graphics_Driver::text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h)
 {
-  dx = 0;
-  dy = descent_unscaled();
   w = width_unscaled(str, n);
   h = height_unscaled();
+  dx = 0;
+  dy = descent_unscaled() - h;
 }
 
 

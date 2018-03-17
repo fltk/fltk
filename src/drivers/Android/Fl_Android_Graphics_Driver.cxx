@@ -97,7 +97,7 @@ uint16_t Fl_Android_Graphics_Driver::make565(Fl_Color crgba)
 void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
 {
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, w, h))) {
-    Fl_Rect_Region s(it->clipped_rect());
+    Fl_Rect_Region &s = it->clipped_rect();
     rectf_unclipped(s.x(), s.y(), s.w(), s.h());
   }
 }
@@ -133,7 +133,7 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
     x = x1;
   }
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, w, 1))) {
-    Fl_Rect_Region s(it->clipped_rect());
+    Fl_Rect_Region &s = it->clipped_rect();
     xyline_unclipped(s.x(), s.y(), s.right());
   }
 }
@@ -164,7 +164,7 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
     y = y1;
   }
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, 1, h))) {
-    Fl_Rect_Region s(it->clipped_rect());
+    Fl_Rect_Region &s = it->clipped_rect();
     yxline_unclipped(s.x(), s.y(), s.bottom());
   }
 }

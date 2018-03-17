@@ -27,11 +27,12 @@
 
 #include <FL/Fl_Graphics_Driver.H>
 #include "Fl_Android_Graphics_Clipping.H"
+#include "Fl_Android_Graphics_Font.H"
 #include <limits.h>
 
 
 class Fl_Android_Window_Driver;
-
+class Fl_Android_Bytemap;
 
 /**
   \brief The Windows-specific graphics driver class.
@@ -184,7 +185,8 @@ protected:
 
   static uint16_t make565(Fl_Color crgba);
 
-  int render_letter(int xx, int yy, uint32_t c);
+  void render_bytemap(int x, int y, Fl_Android_Bytemap *bm, Fl_Rect_Region &r);
+  int render_letter(int xx, int yy, uint32_t c, Fl_Rect_Region &r);
   void make_current(Fl_Window*);
 
   int32_t pStride;

@@ -280,6 +280,8 @@ void Fl_Complex_Region::set(const Fl_Complex_Region &r)
  */
 int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 {
+  set(r);
+  return LESS;
   delete pSubregion; pSubregion = 0;
   // FIXME: handle complex regions!
   int ret = Fl_Rect_Region::intersect_with(r);

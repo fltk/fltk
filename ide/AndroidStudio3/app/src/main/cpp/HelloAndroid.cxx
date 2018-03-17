@@ -68,9 +68,10 @@ int main(int argc, char **argv)
   btn2 = new Fl_Button(10, 10, 480, 100, "-@circle;-");
   btn2->color(FL_BLUE);
 
-  btn = new MyButton((win->w()-280)/2, 200-45, 280, 80, "Hello, Android!\nWhere were you?");
+  btn = new MyButton((win->w()-280)/2, 200-45, 280, 80, "Hello, Android!\nWhere have you been so long?");
   btn->color(FL_LIGHT2);
   btn->labelsize(30);
+  btn->align(FL_ALIGN_CLIP);
   btn->callback(
           [](Fl_Widget*, void*) {
             Fl::add_timeout(1.0, hello_cb, NULL);
