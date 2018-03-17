@@ -280,12 +280,30 @@ void Fl_Complex_Region::set(const Fl_Complex_Region &r)
  */
 int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 {
-  set(r);
-  return LESS;
-  delete pSubregion; pSubregion = 0;
-  // FIXME: handle complex regions!
-  int ret = Fl_Rect_Region::intersect_with(r);
-  return ret;
+  if (pSubregion) {
+    pSubregion->intersect_with(r);
+  } else {
+    int intersects = Fl_Rect_Region::intersect_with(r);
+    switch (intersects) {
+      case EMPTY:
+        // Will be deleted by compress()
+        break;
+      case SAME:
+        // nothing to do
+        break;
+      case LESS:
+        // nothing to do
+        break;
+      default:
+        Fl_Android_Application::log_e("Invalid case in %s:%d", __FUNCTION__, __LINE__);
+        break;
+    }
+    if (pNext) {
+      pNext->intersect_with(r);
+    }
+  }
+  compress();
+  return 0;
 }
 
 /**
@@ -336,14 +354,26 @@ void Fl_Complex_Region::compress()
   if (!pSubregion) return;
 
   // remove all empty regions, because the really don't add anything (literally)
-  Fl_Complex_Region *rgn = pSubregion, **rgnPtr = &pSubregion;
+  Fl_Complex_Region *rgn = pSubregion;
+#if 0
+  // FIXME: remove emty rectangles and lift single rectangles
+  // TODO: merging rectangles may take much too much time with little benefit
+  print("compress");
+  while (rgn && rgn->is_empty()) {
+    pSubregion = rgn->next();
+    delete rgn;
+    rgn = pSubregion;
+  }
+  if (!pSubregion) return;
+  rgn = pSubregion;
   while (rgn) {
-    if (rgn->is_empty()) {
-      *rgnPtr = rgn->pNext;
-      delete rgn;
+    Fl_Complex_Region *nextRgn = rgn->next();
+    if (nextRgn && nextRgn->is_empty()) {
+      rgn->pNext = nextRgn->next();
+      delete nextRgn;
+      nextRgn = rgn->pNext;
     }
-    rgnPtr = &rgn->pNext;
-    rgn = *rgnPtr;
+    rgn = rgn->next();
   }
   if (!pSubregion) return;
 
@@ -354,6 +384,7 @@ void Fl_Complex_Region::compress()
     set((Fl_Rect_Region&)*pSubregion); // deletes subregion for us
   }
   if (!pSubregion) return;
+#endif
 
   // finally, update the boudning box
   Fl_Rect_Region::set((Fl_Rect_Region&)*pSubregion);
