@@ -68,7 +68,7 @@ int main(int argc, char **argv)
   btn2 = new Fl_Button(10, 10, 480, 100, "-@circle;-");
   btn2->color(FL_BLUE);
 
-  btn = new MyButton((win->w()-280)/2, 200, 280, 35, "Hello, Android!");
+  btn = new MyButton((win->w()-280)/2, 200-45, 280, 80, "Hello, Android!\nWhere were you?");
   btn->color(FL_LIGHT2);
   btn->labelsize(30);
   btn->callback(

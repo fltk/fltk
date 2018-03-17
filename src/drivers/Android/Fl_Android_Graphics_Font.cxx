@@ -60,7 +60,7 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-static char *old_font_names[] = {
+static const char *old_font_names[] = {
         "$DroidSans.ttf", "$DroidSerif-Regular.ttf",
         "$DroidSansMono.ttf", "$DroidSansMono.ttf"
 };
@@ -282,6 +282,19 @@ float Fl_Android_Font_Source::get_advance(uint32_t c, Fl_Fontsize size)
 }
 
 
+int Fl_Android_Font_Source::get_descent(Fl_Fontsize size)
+{
+  if (pFileBuffer==0) load_font();
+  if (pError) return 0.0f;
+
+  int ascent, descent, lineGap;
+  stbtt_GetFontVMetrics(&pFont, &ascent, &descent, &lineGap);
+  float scale = stbtt_ScaleForPixelHeight(&pFont, size);
+
+  return -(descent*scale-0.5f);
+}
+
+
 // -----------------------------------------------------------------------------
 
 /**
@@ -297,6 +310,7 @@ Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_And
         pFontSource(fsrc),
         pFontIndex(fnum)
 {
+  descent = -1;
   if (!pFontSource) {
     pFontSource = new Fl_Android_Font_Source(fname, fnum);
   }
@@ -344,15 +358,25 @@ float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
 {
   Fl_Android_Bytemap *bm = 0;
-  try {
-    bm = pBytemapTable.at(c);
-  } catch(...) {
+  auto it = pBytemapTable.find(c);
+  if (it==pBytemapTable.end()) {
     bm = pFontSource->get_bytemap(c, size);
     if (bm)
       pBytemapTable[c] = bm;
+  } else {
+    bm = it->second;
   }
   return bm;
 }
+
+
+int Fl_Android_Font_Descriptor::get_descent()
+{
+  if (descent==-1)
+    descent = (short)pFontSource->get_descent(size);
+  return descent;
+}
+
 
 /**
  * Find or create a font descriptor for a given font and height.
@@ -474,6 +498,68 @@ void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, in
     }
   }
 }
+
+
+double Fl_Android_Graphics_Driver::width_unscaled(const char *str, int n)
+{
+  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
+  if (!fd) return 0;
+
+  int width = 0;
+  const char *e = str+n;
+  for (int i=0; i<n; ) {
+    int incr = 1;
+    unsigned uniChar = fl_utf8decode(str + i, e, &incr);
+    width += ((int)(fd->get_advance(uniChar)+0.5f));
+    i += incr;
+  }
+  return width;
+}
+
+
+double Fl_Android_Graphics_Driver::width_unscaled(unsigned int uniChar)
+{
+  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
+  if (!fd) return 0;
+  return ((int)(fd->get_advance(uniChar)+0.5f));
+}
+
+
+Fl_Fontsize Fl_Android_Graphics_Driver::size_unscaled()
+{
+  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
+  if (!fd) return 0;
+  return fd->size;
+}
+
+
+void Fl_Android_Graphics_Driver::text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h)
+{
+  dx = 0;
+  dy = descent_unscaled();
+  w = width_unscaled(str, n);
+  h = height_unscaled();
+}
+
+
+int Fl_Android_Graphics_Driver::height_unscaled()
+{
+  // This should really be "ascent - descent + lineGap"
+  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
+  if (!fd) return 0;
+  return fd->size;
+}
+
+
+int Fl_Android_Graphics_Driver::descent_unscaled()
+{
+  Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
+  if (!fd) return 0;
+  if (fd->descent==-1) fd->get_descent();
+  return fd->descent;
+}
+
+
 
 #if 0
 
