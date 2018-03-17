@@ -77,7 +77,7 @@ int main(int argc, char **argv)
           }
   );
 
-  btn = new MyButton((win->w()-280)/2, 200+40, 280, 35, "Hello, Android!");
+  btn = new MyButton((win->w()-280)/2, 200+40, 280, 35, "Hello, \u00c4\u00e4\u00d6\u00f6\u00dc\u00fc\u00df \u2639 \u263a");
   btn->labelfont(FL_TIMES_BOLD_ITALIC);
   btn->labelsize(30);
 

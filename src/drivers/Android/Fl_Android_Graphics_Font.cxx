@@ -58,12 +58,17 @@ static Fl_Fontdesc built_in_table[] = {
 Fl_Fontdesc* fl_fonts = built_in_table;
 
 
+/**
+ * Create an empty Bytemap.
+ */
 Fl_Android_Bytemap::Fl_Android_Bytemap() :
         pBytes(0L)
 {
 }
 
-
+/**
+ * Destroy the Bytemap and its allocated resources.
+ */
 Fl_Android_Bytemap::~Fl_Android_Bytemap()
 {
   if (pBytes) ::free(pBytes);
@@ -72,7 +77,11 @@ Fl_Android_Bytemap::~Fl_Android_Bytemap()
 
 // -----------------------------------------------------------------------------
 
-
+/**
+ * Create a True Type font manager.
+ * @param fname the name of the font as it appears in the fl_fonts table.
+ * @param fnum the index into the fl_fonts table
+ */
 Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) :
         pFileBuffer(0L),
         pName(fname),
@@ -80,7 +89,19 @@ Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) 
 {
 }
 
+/**
+ * Release all resources.
+ */
+Fl_Android_Font_Source::~Fl_Android_Font_Source()
+{
+  if (pFileBuffer) ::free(pFileBuffer);
+  // pFont does not allocate any buffers and needs no destructor
+}
 
+/**
+ * Load a True Type font file and initialize the TTF interpreter.
+ * A copy of the font file must remain in memory for the interpreter to work.
+ */
 void Fl_Android_Font_Source::load_font()
 {
   if (pFileBuffer==0) {
@@ -101,7 +122,12 @@ void Fl_Android_Font_Source::load_font()
   }
 }
 
-
+/**
+ * Return a bytemap for the give unicode character.
+ * @param c unicode character
+ * @param size height in pixels
+ * @return a bytemap
+ */
 Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
 {
   if (pFileBuffer==0) load_font();
@@ -140,7 +166,15 @@ Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
   return byteMap;
 }
 
-
+/**
+ * Get the width of the character in pixels.
+ * This is not a good function because character advance also depends on kerning
+ * which takes the next character in a text line into account. Also, FLTK is
+ * limited to interger character positions, and so is the Android driver.
+ * @param c unicode character
+ * @param size height in pixels
+ * @return width in pixels to the start of the next character
+ */
 float Fl_Android_Font_Source::get_advance(uint32_t c, Fl_Fontsize size)
 {
   int advance, lsb;
@@ -154,7 +188,14 @@ float Fl_Android_Font_Source::get_advance(uint32_t c, Fl_Fontsize size)
 
 // -----------------------------------------------------------------------------
 
-
+/**
+ * Create a new font descriptor.
+ * @param fname name of this font as in fl_fonts
+ * @param fsrc the font source for this font; there is one single font source
+ *        for all hights of a single font
+ * @param fnum index into the fl_fonts array
+ * @param fsize height of font in pixels
+ */
 Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_Android_Font_Source *fsrc, Fl_Font fnum, Fl_Fontsize fsize) :
         Fl_Font_Descriptor(fname, fsize),
         pFontSource(fsrc),
@@ -172,13 +213,21 @@ Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_And
   //  unsigned int listbase; // base of display list, 0 = none
 }
 
-
+/*
+ * Get the width of the character in pixels.
+ * @param c unicode character
+ * @return width in pixels to the start of the next character
+ */
 float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 {
   return pFontSource->get_advance(c, size);
 }
 
-
+/**
+ * Get the pixels for a given Unicode character.
+ * @param c unicode character
+ * @return a bytemap
+ */
 Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
 {
   // TODO: cache bytemaps here for fast access
@@ -186,7 +235,13 @@ Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
 }
 
 
-static Fl_Android_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size)
+/**
+ * Find or create a font descriptor for a given font and height.
+ * @param fnum index into fl_fonts
+ * @param size height in pixels
+ * @return an existing oder newly created descriptor
+ */
+Fl_Android_Font_Descriptor* Fl_Android_Font_Descriptor::find(Fl_Font fnum, Fl_Fontsize size)
 {
   Fl_Fontdesc &s = fl_fonts[fnum];
   if (!s.name) s = fl_fonts[0]; // use 0 if fnum undefined
@@ -208,21 +263,26 @@ static Fl_Android_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size)
 
 // =============================================================================
 
-
+/**
+ * Set a font for future use in text rendering calls.
+ * @param fnum index into fl_fonts
+ * @param size height in pixels
+ */
 void Fl_Android_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
-  Fl_Android_Application::log_e("FLTK is requesting font %d at %d pixels (%08x)", fnum, size, fl_fonts);
-  font_descriptor( find(fnum, size) );
+  font_descriptor( Fl_Android_Font_Descriptor::find(fnum, size) );
   size_ = size;
   font_ = fnum;
 }
 
-
+/**
+ * Copy a single letter to the screen.
+ * @param xx, yy position of character on screen
+ * @param c unicode character
+ * @return x position of next character on screen
+ */
 int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
 {
-//  unsigned char *bitmap;
   int oxx = xx;
-//  int w, h, size = 30;
-//  int dx, dy;
 
   // find the font descriptor
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
@@ -248,13 +308,13 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
         *d = cc;
       } else if (v<50) { // 0%
       } else if (v>150) { // 75%
-        uint16_t nn = *d, nn14 = (nn&0xe79c)>>2;
+        uint16_t nn = *d, nn14 = (nn&(uint16_t(0xe79c)))>>2;
         *d = nn14 + cc34;
       } else if (v<100) { // 25%
-        uint16_t nn = *d, nn12 = (nn&0xf7de)>>1, nn14 = (nn12&0xf7de)>>1, nn34 = nn12+nn14;
+        uint16_t nn = *d, nn12 = (nn&(uint16_t(0xf7de)))>>1, nn14 = (nn12&(uint16_t(0xf7de)))>>1, nn34 = nn12+nn14;
         *d = nn34 + cc14;
       } else { // 50%
-        uint16_t nn = *d, nn12 = (nn&0xf7de)>>1;
+        uint16_t nn = *d, nn12 = (nn&(uint16_t(0xf7de)))>>1;
         *d = nn12 + cc12;
       }
 #else
@@ -266,19 +326,146 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
     }
   }
   delete bm;
-  return oxx + fd->get_advance(c);
+  return oxx + (int)(fd->get_advance(c)+0.5f);
 }
 
-
+/**
+ * Render a string to screen.
+ * @param str text in utf-8 encoding
+ * @param n number of bytes to render
+ * @param x, y position on screen
+ */
 void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, int y)
 {
   if (str) {
-    x = x+16*(-n/2);
-    for (int i=0; i<n; i++)
-      x = render_letter(x, y+5, str[i]);
+    const char *e = str+n;
+    for (int i=0; i<n; ) {
+      int incr = 1;
+      unsigned uniChar = fl_utf8decode(str + i, e, &incr);
+      int x1 = x;
+      x = render_letter(x, y, uniChar);
+      Fl_Color old = fl_color();
+      fl_color(FL_RED);
+      fl_xyline(x1, y, x);
+      fl_color(old);
+      i += incr;
+    }
   }
 }
 
+#if 0
+
+// TODO: do we need that?
+const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
+  Fl_Xlib_Fontdesc *f = ((Fl_Xlib_Fontdesc*)fl_fonts) + fnum;
+  if (!f->fontname[0]) {
+    int type = 0;
+    const char* p = f->name;
+    if (!p) {
+      if (ap) *ap = 0;
+      return "";
+    }
+    char *o = f->fontname;
+
+    if (*p != '-') { // non-standard font, just replace * with spaces:
+      if (strstr(p,"bold")) type = FL_BOLD;
+      if (strstr(p,"ital")) type |= FL_ITALIC;
+      for (;*p; p++) {
+	if (*p == '*' || *p == ' ' || *p == '-') {
+	  do p++; while (*p == '*' || *p == ' ' || *p == '-');
+	  if (!*p) break;
+	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
+	}
+	if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = *p;
+      }
+      *o = 0;
+
+    } else { // standard dash-separated font:
+
+      // get the family:
+      const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;
+      if (!*x) {
+	if (ap) *ap = 0;
+	return p;
+      }
+      const char *e = fl_font_word(x,1);
+      if ((e - x) < (int)(ENDOFBUFFER - 1)) {
+	// MRS: we want strncpy here, not strlcpy...
+	strncpy(o,x,e-x);
+	o += e-x;
+      } else {
+	strlcpy(f->fontname, x, ENDOFBUFFER);
+	o = f->fontname+ENDOFBUFFER-1;
+      }
+
+      // collect all the attribute words:
+      for (int n = 3; n <= 6; n++) {
+	// get the next word:
+	if (*e) e++; x = e; e = fl_font_word(x,1);
+	int t = attribute(n,x);
+	if (t < 0) {
+	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
+	  if ((e - x) < (int)(ENDOFBUFFER - (o - f->fontname) - 1)) {
+	    // MRS: we want strncpy here, not strlcpy...
+	    strncpy(o,x,e-x);
+	    o += e-x;
+	  } else {
+	    strlcpy(o,x, ENDOFBUFFER - (o - f->fontname) - 1);
+	    o = f->fontname+ENDOFBUFFER-1;
+	  }
+	} else type |= t;
+      }
+
+      // skip over the '*' for the size and get the registry-encoding:
+      x = fl_font_word(e,2);
+      if (*x) {x++; *o++ = '('; while (*x) *o++ = *x++; *o++ = ')';}
+
+      *o = 0;
+      if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
+      if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
+    }
+    f->fontname[ENDOFBUFFER] = (char)type;
+  }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
+  return f->fontname;
+}
+
+#define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
+
+// turn a stored font name into a pretty name:
+const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
+  if (!fl_fonts) fl_fonts = calc_fl_fonts();
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  if (!f->fontname[0]) {
+    this->set_fontname_in_fontdesc(f);
+    const char* p = f->name;
+    if (!p || !*p) {if (ap) *ap = 0; return "";}
+    int type = 0;
+    if (strstr(f->name, "Bold")) type |= FL_BOLD;
+    if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;
+    f->fontname[ENDOFBUFFER] = (char)type;
+  }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
+  return f->fontname;
+}
+
+
+int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
+  static int array[128];
+  if (!fl_fonts) fl_fonts = calc_fl_fonts();
+  Fl_Fontdesc *s = fl_fonts+fnum;
+  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
+  int cnt = 0;
+
+  // ATS supports all font size
+  array[0] = 0;
+  sizep = array;
+  cnt = 1;
+
+  return cnt;
+}
+
+#endif
 
 //
 // End of "$Id$".
