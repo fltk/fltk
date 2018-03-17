@@ -21,6 +21,10 @@
 
 
 #include "Fl_Android_Graphics_Driver.H"
+
+// We violate FLTKs avoidance of STL because we live in a defined driver space
+#include <map>
+
 #include "stb_truetype.h"
 
 
@@ -35,7 +39,7 @@ public:
   ~Fl_Android_Bytemap();
 
 public:
-  int pWidth, pHeight, pStride, pXOffset, pYOffset;
+  int pWidth, pHeight, pStride, pXOffset, pYOffset, pAdvance;
   unsigned char *pBytes;
 };
 
@@ -69,9 +73,11 @@ class Fl_Android_Font_Descriptor : public Fl_Font_Descriptor
 private:
   Fl_Android_Font_Source *pFontSource;
   Fl_Font pFontIndex;
+  std::map<uint32_t, Fl_Android_Bytemap*> pBytemapTable;
 
 public:
   Fl_Android_Font_Descriptor(const char *fname, Fl_Android_Font_Source *fsrc, Fl_Font fnum, Fl_Fontsize size);
+  ~Fl_Android_Font_Descriptor();
   float get_advance(uint32_t c);
   Fl_Android_Bytemap *get_bytemap(uint32_t c);
   Fl_Android_Font_Source *get_font_source() { return pFontSource; }

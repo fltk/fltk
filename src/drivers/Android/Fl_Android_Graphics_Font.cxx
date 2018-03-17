@@ -163,6 +163,11 @@ Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
                                              &byteMap->pXOffset, &byteMap->pYOffset);
   byteMap->pStride = byteMap->pWidth;
 
+  int advance, lsb;
+  stbtt_GetCodepointHMetrics(&pFont, c, &advance, &lsb);
+  float scale = stbtt_ScaleForPixelHeight(&pFont, size);
+  byteMap->pAdvance = (int)((scale * advance)+0.5f);
+
   return byteMap;
 }
 
@@ -213,6 +218,17 @@ Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_And
   //  unsigned int listbase; // base of display list, 0 = none
 }
 
+/**
+ * Release resources, including all cached unicode character shapes.
+ */
+Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
+{
+  // Life is easy in C++11.
+  for (auto &i: pBytemapTable) {
+    delete i.second;
+  }
+}
+
 /*
  * Get the width of the character in pixels.
  * @param c unicode character
@@ -220,18 +236,30 @@ Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_And
  */
 float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 {
+  // TODO: should we cache the advance value inside the bytemap?
   return pFontSource->get_advance(c, size);
 }
 
 /**
  * Get the pixels for a given Unicode character.
+ *
+ * Calculating a bitmap is relatively expensive. This class will cache every
+ * bitmap ever generated. Currently, this is pretty much brute force because
+ * none of the bitmaps are ever released.
+ *
  * @param c unicode character
  * @return a bytemap
  */
 Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
 {
-  // TODO: cache bytemaps here for fast access
-  return pFontSource->get_bytemap(c, size);
+  Fl_Android_Bytemap *bm = 0;
+  try {
+    bm = pBytemapTable.at(c);
+  } catch(...) {
+    bm = pFontSource->get_bytemap(c, size);
+    pBytemapTable[c] = bm;
+  }
+  return bm;
 }
 
 
@@ -325,8 +353,7 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
       d++;
     }
   }
-  delete bm;
-  return oxx + (int)(fd->get_advance(c)+0.5f);
+  return oxx + bm->pAdvance;
 }
 
 /**
