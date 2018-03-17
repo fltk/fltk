@@ -33,6 +33,9 @@
 //};
 
 
+// TODO: font names starting with a $ will have the system font path inserted
+// TODO: font names starting with a . or / have a known path and will not change
+// TODO: font names starting with a ~ will have the package resource path for fonts added
 static Fl_Fontdesc built_in_table[] = {
         {"Roboto-Regular"},
         {"Roboto-Bold"},
@@ -55,35 +58,38 @@ static Fl_Fontdesc built_in_table[] = {
 Fl_Fontdesc* fl_fonts = built_in_table;
 
 
-Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char* fontname, Fl_Font fnum, Fl_Fontsize size) :
-        Fl_Font_Descriptor(fontname, size),
-        pFontIndex(fnum),
-        pFileBuffer(0)
+Fl_Android_Bytemap::Fl_Android_Bytemap() :
+        pBytes(0L)
 {
-  // --- This is what we have to live with:
-  //  Fl_Font_Descriptor *next;
-  //  Fl_Fontsize size; /**< font size */
-  //  Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
-  //          FL_EXPORT ~Fl_Font_Descriptor() {}
-  //  short ascent, descent, q_width;
-  //  unsigned int listbase; // base of display list, 0 = none
-
-
 }
 
 
-unsigned char *Fl_Android_Font_Descriptor::get_bitmap(uint32_t c, int *w, int *h, int *dx, int *dy)
+Fl_Android_Bytemap::~Fl_Android_Bytemap()
 {
-  unsigned char *bitmap;
+  if (pBytes) ::free(pBytes);
+}
 
+
+// -----------------------------------------------------------------------------
+
+
+Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) :
+        pFileBuffer(0L),
+        pName(fname),
+        pFontIndex(fnum)
+{
+}
+
+
+void Fl_Android_Font_Source::load_font()
+{
   if (pFileBuffer==0) {
     char buf[1024];
     sprintf(buf, "/system/fonts/%s.ttf", fl_fonts[pFontIndex].name);
-//    FILE *f = fopen("/system/fonts/DroidSans.ttf", "rb");
     FILE *f = fopen(buf, "rb");
     if (f==NULL) {
-      Fl_Android_Application::log_e("ERROR reading font %d!", errno);
-      return 0;
+      Fl_Android_Application::log_e("ERROR reading font %d from '%s'!", errno, buf);
+      return;
     }
     fseek(f, 0, SEEK_END);
     size_t fsize = (size_t)ftell(f);
@@ -91,9 +97,16 @@ unsigned char *Fl_Android_Font_Descriptor::get_bitmap(uint32_t c, int *w, int *h
     pFileBuffer = (uint8_t*)malloc(fsize);
     fread(pFileBuffer, 1, fsize, f);
     fclose(f);
-
     stbtt_InitFont(&pFont, pFileBuffer, stbtt_GetFontOffsetForIndex(pFileBuffer,0));
   }
+}
+
+
+Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
+{
+  if (pFileBuffer==0) load_font();
+
+  Fl_Android_Bytemap *byteMap = new Fl_Android_Bytemap();
 
 #if 0
   scale = stbtt_ScaleForPixelHeight(&font, 15);
@@ -117,44 +130,79 @@ unsigned char *Fl_Android_Font_Descriptor::get_bitmap(uint32_t c, int *w, int *h
    }
 
 #endif
-  int ww, hh, ddx, ddy;
-  float hgt = stbtt_ScaleForPixelHeight(&pFont, size);
-  bitmap = stbtt_GetCodepointBitmap(&pFont, 0, hgt, c, w, h, dx, dy);
-  return bitmap;
 
+  float hgt = stbtt_ScaleForPixelHeight(&pFont, size);
+  byteMap->pBytes = stbtt_GetCodepointBitmap(&pFont, 0, hgt, c,
+                                             &byteMap->pWidth, &byteMap->pHeight,
+                                             &byteMap->pXOffset, &byteMap->pYOffset);
+  byteMap->pStride = byteMap->pWidth;
+
+  return byteMap;
 }
 
 
-void Fl_Android_Font_Descriptor::free_bitmap(uint8_t *bitmap)
+float Fl_Android_Font_Source::get_advance(uint32_t c, Fl_Fontsize size)
 {
-  stbtt_FreeBitmap(bitmap, 0L);
+  int advance, lsb;
+
+  if (pFileBuffer==0) load_font();
+  stbtt_GetCodepointHMetrics(&pFont, c, &advance, &lsb);
+  float scale = stbtt_ScaleForPixelHeight(&pFont, size);
+  return scale * advance;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_Android_Font_Source *fsrc, Fl_Font fnum, Fl_Fontsize fsize) :
+        Fl_Font_Descriptor(fname, fsize),
+        pFontSource(fsrc),
+        pFontIndex(fnum)
+{
+  if (!pFontSource) {
+    pFontSource = new Fl_Android_Font_Source(fname, fnum);
+  }
+  // --- We probably must fill these values in:
+  //  Fl_Font_Descriptor *next;
+  //  Fl_Fontsize size; /**< font size */
+  //  Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  //          FL_EXPORT ~Fl_Font_Descriptor() {}
+  //  short ascent, descent, q_width;
+  //  unsigned int listbase; // base of display list, 0 = none
 }
 
 
 float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 {
-  int advance, lsb;
-  stbtt_GetCodepointHMetrics(&pFont, c, &advance, &lsb);
-  float scale = stbtt_ScaleForPixelHeight(&pFont, size);
+  return pFontSource->get_advance(c, size);
+}
 
-  return scale * advance;
+
+Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
+{
+  // TODO: cache bytemaps here for fast access
+  return pFontSource->get_bytemap(c, size);
 }
 
 
 static Fl_Android_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size)
 {
-  Fl_Fontdesc *s = fl_fonts + fnum;
-  if (!s->name) s = fl_fonts; // use 0 if fnum undefined
+  Fl_Fontdesc &s = fl_fonts[fnum];
+  if (!s.name) s = fl_fonts[0]; // use 0 if fnum undefined
 
-  Fl_Android_Font_Descriptor *f;
-  for (f = (Fl_Android_Font_Descriptor *) s->first; f; f = (Fl_Android_Font_Descriptor *) f->next) {
-    if (f->size == size) return f;
+  Fl_Font_Descriptor *f;
+  for (f = s.first; f; f = f->next) {
+    if (f->size==size) return (Fl_Android_Font_Descriptor*)f;
   }
 
-  f = new Fl_Android_Font_Descriptor(s->name, fnum, size);
-  f->next = s->first;
-  s->first = f;
-  return f;
+  Fl_Android_Font_Source *fsrc = nullptr;
+  if (s.first) fsrc = ((Fl_Android_Font_Descriptor*)s.first)->get_font_source();
+
+  Fl_Android_Font_Descriptor *af = new Fl_Android_Font_Descriptor(s.name, fsrc, fnum, size);
+  af->next = s.first;
+  s.first = af;
+  return af;
 }
 
 
@@ -169,30 +217,29 @@ void Fl_Android_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 
-// -- fun with text rendering
-
 int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
 {
-  unsigned char *bitmap;
-  int w, h, size = 30;
-  int dx, dy;
+//  unsigned char *bitmap;
+  int oxx = xx;
+//  int w, h, size = 30;
+//  int dx, dy;
 
   // find the font descriptor
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
   if (!fd) return xx; // this should not happen
 
-  bitmap = fd->get_bitmap(c, &w, &h, &dx, &dy);
+  Fl_Android_Bytemap *bm = fd->get_bytemap(c);
 
   // rrrr.rggg.gggb.bbbb
-  xx += dx; yy += dy;
+  xx += bm->pXOffset; yy += bm->pYOffset;
   uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
   int32_t ss = pStride;
   uint16_t *bits = pBits;
-  uint32_t ww = w;
-  uint32_t hh = h;
-  unsigned char *s = bitmap;
+  uint32_t ww = bm->pWidth;
+  uint32_t hh = bm->pHeight;
   for (uint32_t iy = 0; iy<hh; ++iy) {
     uint16_t *d = bits + (yy+iy)*ss + xx;
+    unsigned char *s = bm->pBytes + iy*bm->pStride;
     for (uint32_t ix = 0; ix<ww; ++ix) {
 #if 1
       // 5 step antialiasing
@@ -218,14 +265,13 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
       d++;
     }
   }
-  fd->free_bitmap(bitmap);
-  return xx+fd->get_advance(c);
+  delete bm;
+  return oxx + fd->get_advance(c);
 }
+
 
 void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, int y)
 {
-  if (!str) return;
-
   if (str) {
     x = x+16*(-n/2);
     for (int i=0; i<n; i++)
@@ -233,33 +279,6 @@ void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, in
   }
 }
 
-
-#if 0
-
-//"DroidSans.ttf", "DroidSans-Bold.ttf" -> links to "Roboto-Regular.ttf""
-//
-//"CutiveMono.ttf"
-//"DroidSansMono.ttf"
-//
-//"Roboto-*.ttf", Regular Bold Italic BoldItalic
-//
-//"NotoSerif-*.ttf", Regular Bold Italic BoldItalic
-//
-//"NotoSansSymbols-Regular-Subsetted.ttf"
-//"NotoSansSymbols-Regular-Subsetted2.ttf"
-//
-//"NotoColorEmoji.ttf"
-
-#include "../../config_lib.h"
-#include "Fl_Android_Application.H"
-#include "Fl_Android_Graphics_Driver.H"
-#include "Fl_Android_Screen_Driver.H"
-#include <FL/Fl.H>
-#include <FL/platform.H>
-#include <errno.h>
-
-
-#endif
 
 //
 // End of "$Id$".
