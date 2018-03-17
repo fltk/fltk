@@ -21,6 +21,7 @@
 #include "Fl_Android_Application.H"
 #include <FL/fl_draw.H>
 #include <errno.h>
+#include <FL/filename.H>
 
 #define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate implementation
 #include "stb_truetype.h"
@@ -33,30 +34,36 @@
 //};
 
 
-// TODO: font names starting with a $ will have the system font path inserted
-// TODO: font names starting with a . or / have a known path and will not change
-// TODO: font names starting with a ~ will have the package resource path for fonts added
+/**
+ * - font names starting with a $ will have the system font path inserted
+ * - font names starting with an @ will be loaded via the Asset Manager
+ * - all other names will be used verbatim
+ */
 static Fl_Fontdesc built_in_table[] = {
-        {"Roboto-Regular"},
-        {"Roboto-Bold"},
-        {"Roboto-Italic"},
-        {"Roboto-BoldItalic"},
-        {"CutiveMono"},
-        {"CutiveMono"}, // sorry no bold
-        {"CutiveMono"}, // sorry no italic
-        {"CutiveMono"}, // sorry no bold-italic
-        {"NotoSerif-Regular"},
-        {"NotoSerif-Bold"},
-        {"NotoSerif-Italic"},
-        {"NotoSerif-BoldItalic"},
-        {"Roboto-Regular"},
-        {"DroidSansMono"},
-        {"DroidSansMono"}, // sorry no bold
-        {"Roboto-Regular"},
+        {"$Roboto-Regular.ttf"},
+        {"$Roboto-Bold.ttf"},
+        {"$Roboto-Italic.ttf"},
+        {"$Roboto-BoldItalic.ttf"},
+        {"$CutiveMono.ttf"},
+        {"$CutiveMono.ttf"}, // sorry no bold
+        {"$CutiveMono.ttf"}, // sorry no italic
+        {"$CutiveMono.ttf"}, // sorry no bold-italic
+        {"$NotoSerif-Regular.ttf"},
+        {"$NotoSerif-Bold.ttf"},
+        {"$NotoSerif-Italic.ttf"},
+        {"$NotoSerif-BoldItalic.ttf"},
+        {"$Roboto-Regular.ttf"},
+        {"$DroidSansMono.ttf"},
+        {"$DroidSansMono.ttf"}, // sorry no bold
+        {"$Roboto-Regular.ttf"},
 };
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
+static char *old_font_names[] = {
+        "$DroidSans.ttf", "$DroidSerif-Regular.ttf",
+        "$DroidSansMono.ttf", "$DroidSansMono.ttf"
+};
 
 /**
  * Create an empty Bytemap.
@@ -85,7 +92,8 @@ Fl_Android_Bytemap::~Fl_Android_Bytemap()
 Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) :
         pFileBuffer(0L),
         pName(fname),
-        pFontIndex(fnum)
+        pFontIndex(fnum),
+        pError(false)
 {
 }
 
@@ -99,25 +107,128 @@ Fl_Android_Font_Source::~Fl_Android_Font_Source()
 }
 
 /**
+ * Attempt to find an load a font file.
+ * @param name file or asset name
+ * @return
+ */
+bool Fl_Android_Font_Source::load_font(const char *name)
+{
+  if (pFileBuffer) return true;
+  if (!name) return false;
+  bool ret = false;
+  if (name[0]=='@')
+    ret = load_font_asset(name+1);
+  else
+    ret = load_font_file(name);
+  return ret;
+}
+
+/**
+ * Attempt to load a font through the asset manager.
+ * @param name file or asset name
+ * @return
+ */
+bool Fl_Android_Font_Source::load_font_asset(const char *name)
+{
+  errno = 0;
+  AAssetManager *aMgr = Fl_Android_Application::get_asset_manager();
+  AAsset *aFile = AAssetManager_open(aMgr, name, AASSET_MODE_STREAMING);
+  if (aFile == NULL) {
+    Fl_Android_Application::log_w("Can't open font asset at '%s': ",
+                                  name, strerror(errno));
+    return false;
+  }
+  size_t fsize = (size_t)AAsset_getLength(aFile);
+  if (fsize == 0) {
+    Fl_Android_Application::log_w("Can't read font asset at '%s': file is empty",
+                                  name);
+    AAsset_close(aFile);
+    return false;
+  }
+  pFileBuffer = (uint8_t *)malloc(fsize);
+  if (AAsset_read(aFile, pFileBuffer, fsize)<=0) {
+    Fl_Android_Application::log_w("Can't read font asset at '%s': ",
+                                  name, strerror(errno));
+    free(pFileBuffer);
+    pFileBuffer = 0;
+    AAsset_close(aFile);
+    return false;
+  }
+  AAsset_close(aFile);
+  return true;
+}
+
+/**
+ * Attempt to load a font through the asset manager.
+ * @param name file or asset name
+ * @return
+ */
+bool Fl_Android_Font_Source::load_font_file(const char *name)
+{
+  char buf[2048];
+  if (name[0] == '$') {
+    // use the system path for fonts
+    snprintf(buf, 2048, "/system/fonts/%s", name + 1);
+  } else {
+    strcpy(buf, name);
+  }
+  FILE *f = fopen(buf, "rb");
+  if (f == NULL) {
+    Fl_Android_Application::log_w("Can't open font file at '%s': ",
+                                  name, strerror(errno));
+    return false;
+  }
+  fseek(f, 0, SEEK_END);
+  size_t fsize = (size_t)ftell(f);
+  fseek(f, 0, SEEK_SET);
+  if (fsize == 0) {
+    Fl_Android_Application::log_w(
+            "Can't read font file at '%s': file is empty",
+            name);
+    fclose(f);
+    return false;
+  }
+  pFileBuffer = (uint8_t *)malloc(fsize);
+  if (fread(pFileBuffer, 1, fsize, f)<=0) {
+    Fl_Android_Application::log_w("Can't read font file at '%s': ",
+                                  name, strerror(errno));
+    free(pFileBuffer);
+    pFileBuffer = 0;
+    fclose(f);
+    return false;
+  }
+  fclose(f);
+  return true;
+}
+
+
+/**
  * Load a True Type font file and initialize the TTF interpreter.
  * A copy of the font file must remain in memory for the interpreter to work.
  */
 void Fl_Android_Font_Source::load_font()
 {
+  if (pError) return;
   if (pFileBuffer==0) {
-    char buf[1024];
-    sprintf(buf, "/system/fonts/%s.ttf", fl_fonts[pFontIndex].name);
-    FILE *f = fopen(buf, "rb");
-    if (f==NULL) {
-      Fl_Android_Application::log_e("ERROR reading font %d from '%s'!", errno, buf);
+    const char *name = fl_fonts[pFontIndex].name;
+
+    // first attempt, try to read a font from wherever the user wishes
+    bool ret = load_font(name);
+
+    // if that did not work, read the old style Android fonts
+    if (!ret && pFontIndex<16)
+      ret = load_font(old_font_names[pFontIndex/4]);
+
+    // if that still didn't work, see if we have the default font asset
+    if (!ret)
+      ret = load_font("@fonts/Roboto-Regular.ttf");
+
+    // still no luck? Well, I guess we can't render anything in this font.
+    if (!ret) {
+      Fl_Android_Application::log_e("Giving up. Can't load font '%s'", name);
+      pError = true;
       return;
     }
-    fseek(f, 0, SEEK_END);
-    size_t fsize = (size_t)ftell(f);
-    fseek(f, 0, SEEK_SET);
-    pFileBuffer = (uint8_t*)malloc(fsize);
-    fread(pFileBuffer, 1, fsize, f);
-    fclose(f);
     stbtt_InitFont(&pFont, pFileBuffer, stbtt_GetFontOffsetForIndex(pFileBuffer,0));
   }
 }
@@ -131,51 +242,29 @@ void Fl_Android_Font_Source::load_font()
 Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
 {
   if (pFileBuffer==0) load_font();
+  if (pError) return 0L;
 
-  Fl_Android_Bytemap *byteMap = new Fl_Android_Bytemap();
-
-#if 0
-  scale = stbtt_ScaleForPixelHeight(&font, 15);
-   stbtt_GetFontVMetrics(&font, &ascent,0,0);
-   baseline = (int) (ascent*scale);
-
-   while (text[ch]) {
-      int advance,lsb,x0,y0,x1,y1;
-      float x_shift = xpos - (float) floor(xpos);
-      stbtt_GetCodepointHMetrics(&font, text[ch], &advance, &lsb);
-      stbtt_GetCodepointBitmapBoxSubpixel(&font, text[ch], scale,scale,x_shift,0, &x0,&y0,&x1,&y1);
-      stbtt_MakeCodepointBitmapSubpixel(&font, &screen[baseline + y0][(int) xpos + x0], x1-x0,y1-y0, 79, scale,scale,x_shift,0, text[ch]);
-      // note that this stomps the old data, so where character boxes overlap (e.g. 'lj') it's wrong
-      // because this API is really for baking character bitmaps into textures. if you want to render
-      // a sequence of characters, you really need to render each bitmap to a temp buffer, then
-      // "alpha blend" that into the working buffer
-      xpos += (advance * scale);
-      if (text[ch+1])
-         xpos += scale*stbtt_GetCodepointKernAdvance(&font, text[ch],text[ch+1]);
-      ++ch;
-   }
-
-#endif
+  Fl_Android_Bytemap *bm = new Fl_Android_Bytemap();
 
   float hgt = stbtt_ScaleForPixelHeight(&pFont, size);
-  byteMap->pBytes = stbtt_GetCodepointBitmap(&pFont, 0, hgt, c,
-                                             &byteMap->pWidth, &byteMap->pHeight,
-                                             &byteMap->pXOffset, &byteMap->pYOffset);
-  byteMap->pStride = byteMap->pWidth;
+  bm->pBytes = stbtt_GetCodepointBitmap(&pFont, 0, hgt, c,
+                                             &bm->pWidth, &bm->pHeight,
+                                             &bm->pXOffset, &bm->pYOffset);
+  bm->pStride = bm->pWidth;
 
   int advance, lsb;
   stbtt_GetCodepointHMetrics(&pFont, c, &advance, &lsb);
   float scale = stbtt_ScaleForPixelHeight(&pFont, size);
-  byteMap->pAdvance = (int)((scale * advance)+0.5f);
+  bm->pAdvance = (int)((scale * advance)+0.5f);
 
-  return byteMap;
+  return bm;
 }
 
 /**
  * Get the width of the character in pixels.
  * This is not a good function because character advance also depends on kerning
  * which takes the next character in a text line into account. Also, FLTK is
- * limited to interger character positions, and so is the Android driver.
+ * limited to integer character positions, and so is the Android driver.
  * @param c unicode character
  * @param size height in pixels
  * @return width in pixels to the start of the next character
@@ -185,6 +274,8 @@ float Fl_Android_Font_Source::get_advance(uint32_t c, Fl_Fontsize size)
   int advance, lsb;
 
   if (pFileBuffer==0) load_font();
+  if (pError) return 0.0f;
+
   stbtt_GetCodepointHMetrics(&pFont, c, &advance, &lsb);
   float scale = stbtt_ScaleForPixelHeight(&pFont, size);
   return scale * advance;
@@ -236,7 +327,7 @@ Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
  */
 float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 {
-  // TODO: should we cache the advance value inside the bytemap?
+  // TODO: should we use the cahced value in the Bytemap?
   return pFontSource->get_advance(c, size);
 }
 
@@ -257,11 +348,11 @@ Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
     bm = pBytemapTable.at(c);
   } catch(...) {
     bm = pFontSource->get_bytemap(c, size);
-    pBytemapTable[c] = bm;
+    if (bm)
+      pBytemapTable[c] = bm;
   }
   return bm;
 }
-
 
 /**
  * Find or create a font descriptor for a given font and height.
@@ -287,7 +378,6 @@ Fl_Android_Font_Descriptor* Fl_Android_Font_Descriptor::find(Fl_Font fnum, Fl_Fo
   s.first = af;
   return af;
 }
-
 
 // =============================================================================
 
@@ -317,6 +407,7 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c)
   if (!fd) return xx; // this should not happen
 
   Fl_Android_Bytemap *bm = fd->get_bytemap(c);
+  if (!bm) return oxx;
 
   // rrrr.rggg.gggb.bbbb
   xx += bm->pXOffset; yy += bm->pYOffset;
@@ -371,10 +462,14 @@ void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, in
       unsigned uniChar = fl_utf8decode(str + i, e, &incr);
       int x1 = x;
       x = render_letter(x, y, uniChar);
+#if 0
+      // use this to make the character baseline visible
       Fl_Color old = fl_color();
       fl_color(FL_RED);
       fl_xyline(x1, y, x);
+      fl_yxline(x1, y-5, y+5);
       fl_color(old);
+#endif
       i += incr;
     }
   }

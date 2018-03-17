@@ -145,6 +145,9 @@ public:
   static void pre_exec_cmd(int8_t cmd);
   static void post_exec_cmd(int8_t cmd);
   static int destroy_requested() { return pDestroyRequested; }
+  static const char *get_internal_data_path() { return pActivity->internalDataPath; }
+  static const char *get_external_data_path() { return pActivity->externalDataPath; }
+  static AAssetManager *get_asset_manager() { return pActivity->assetManager; }
 
   // --- event handling
   static AInputQueue *input_event_queue() { return pInputQueue; }

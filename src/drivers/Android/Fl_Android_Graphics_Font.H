@@ -55,6 +55,11 @@ private:
   uint8_t *pFileBuffer;
   const char *pName;
   Fl_Font pFontIndex;
+  bool pError;
+
+  bool load_font(const char *name);
+  bool load_font_file(const char *name);
+  bool load_font_asset(const char *name);
 
 public:
   Fl_Android_Font_Source(const char *fname, Fl_Font fnum);
