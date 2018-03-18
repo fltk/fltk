@@ -341,7 +341,9 @@ Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
  */
 float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 {
-  // TODO: should we use the cahced value in the Bytemap?
+  // TODO: should we use the cached value in the Bytemap?
+  // Yes, we should, because if FLTK requests the width of a character, it is
+  // more than likely to render that character soon after.
   return pFontSource->get_advance(c, size);
 }
 

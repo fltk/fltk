@@ -76,10 +76,11 @@ public:
  */
 class Fl_Android_Font_Descriptor : public Fl_Font_Descriptor
 {
+  typedef std::map<uint32_t, Fl_Android_Bytemap*> BytemapTable;
 private:
   Fl_Android_Font_Source *pFontSource;
   Fl_Font pFontIndex;
-  std::map<uint32_t, Fl_Android_Bytemap*> pBytemapTable;
+  BytemapTable pBytemapTable;
 
 public:
   Fl_Android_Font_Descriptor(const char *fname, Fl_Android_Font_Source *fsrc, Fl_Font fnum, Fl_Fontsize size);

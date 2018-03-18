@@ -55,6 +55,7 @@ void hello_cb(void*)
 
 int main(int argc, char **argv)
 {
+  Fl::scheme("gleam");
   win1 = new Fl_Window(20+50, 10, 200, 200, "back");
   win1->color(FL_RED);
   win1->box(FL_DOWN_BOX);

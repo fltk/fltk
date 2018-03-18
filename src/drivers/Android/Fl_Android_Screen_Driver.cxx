@@ -127,12 +127,17 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
                                  ANativeWindow_getHeight(Fl_Android_Application::native_window()));
 
   // FIXME: find the window in which the event happened
-  Fl_Window *win = Fl::first_window();
-  while (win) {
-    if (ex>=win->x() && ex<win->x()+win->w() && ey>=win->y() && ey<win->y()+win->h())
-      break;
-    win = Fl::next_window(win);
+  Fl_Window *win = Fl::grab();
+  if (!win) {
+    win = Fl::first_window();
+    while (win) {
+      if (ex >= win->x() && ex < win->x() + win->w() && ey >= win->y() &&
+          ey < win->y() + win->h())
+        break;
+      win = Fl::next_window(win);
+    }
   }
+  if (!win) return 0;
 
   if (win) {
     Fl::e_x = ex-win->x();
@@ -146,7 +151,7 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
   Fl::e_keysym = FL_Button + 1;
   if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
     Fl::e_is_click = 1;
-    Fl::handle(FL_PUSH, win);
+    if (win) Fl::handle(FL_PUSH, win); // do NOT send a push event into the "Desktop"
     Fl_Android_Application::log_i("Mouse push %d at %d, %d", Fl::event_button(), Fl::event_x(), Fl::event_y());
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE) {
     Fl::handle(FL_DRAG, win);
@@ -193,14 +198,6 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   return ret;
 }
 
-
-// TODO: we need a timout: nsecs_t systemTime(int clock = SYSTEM_TIME_MONOTONIC);
-// static inline nsecs_t seconds_to_nanoseconds(nsecs_t secs) return secs*1000000000;
-// int timer_create(clockid_t __clock, struct sigevent* __event, timer_t* __timer_ptr);
-// int timer_delete(timer_t __timer);
-// int timer_settime(timer_t __timer, int __flags, const struct itimerspec* __new_value, struct itimerspec* __old_value);
-// int timer_gettime(timer_t __timer, struct itimerspec* __ts);
-// int timer_getoverrun(timer_t __timer);
 
 double Fl_Android_Screen_Driver::wait(double time_to_wait)
 {
@@ -719,6 +716,7 @@ struct TimerData
   void *data;
   bool used;
   bool triggered;
+  struct itimerspec timeout;
 };
 static TimerData* timerData = 0L;
 static int NTimerData = 0;
@@ -816,11 +814,11 @@ void Fl_Android_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb
   }
 
   double ff;
-  struct itimerspec timeout = {
+  t.timeout = {
           { 0, 0 },
           { (time_t)floor(time), (long)(modf(time, &ff)*1000000000) }
   };
-  ret = timer_settime(t.handle, 0, &timeout, 0L);
+  ret = timer_settime(t.handle, 0, &t.timeout, 0L);
   if (ret==-1) {
     Fl_Android_Application::log_e("Can't launch timer: %s", strerror(errno));
     return;

@@ -172,6 +172,7 @@ int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
  */
 void Fl_Rect_Region::add_to_bbox(const Fl_Rect_Region &r)
 {
+  if (is_empty()) return;
   if (r.pLeft<pLeft) pLeft = r.pLeft;
   if (r.pTop<pTop) pTop = r.pTop;
   if (r.pRight>pRight) pRight = r.pRight;
@@ -212,8 +213,14 @@ Fl_Complex_Region::Fl_Complex_Region(const Fl_Rect_Region &r) :
  */
 Fl_Complex_Region::~Fl_Complex_Region()
 {
-  delete pSubregion; // recursively delete all subregions
-  delete pNext; // recursively delete all following regions
+  // Do NOT delete the chain in pNext! The caller has to that job.
+  // A top-level coplex region has pNext always set to NULL, and it does
+  // delete all subregions chained via the subregion pNext.
+  while (pSubregion) {
+    Fl_Complex_Region *rgn = pSubregion;
+    pSubregion = rgn->pNext;
+    delete rgn;
+  }
 }
 
 /**
@@ -354,7 +361,15 @@ void Fl_Complex_Region::compress()
   if (!pSubregion) return;
 
   // remove all empty regions, because the really don't add anything (literally)
+  print("Compress");
   Fl_Complex_Region *rgn = pSubregion;
+  while (rgn && rgn->is_empty()) {
+    pSubregion = rgn->next();
+    delete rgn;
+    rgn = pSubregion;
+  }
+
+
 #if 0
   // FIXME: remove emty rectangles and lift single rectangles
   // TODO: merging rectangles may take much too much time with little benefit
