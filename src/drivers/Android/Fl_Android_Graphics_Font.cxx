@@ -418,7 +418,16 @@ void Fl_Android_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   font_ = fnum;
 }
 
-
+/**
+ * Render a bytemap to the screen using the current fl_color.
+ *
+ * Bytes are seen as alpha values for the RGB color set by fl_color. For better
+ * performance, alpha is only rendered in 5 steps. All rendering is offset as
+ * described in the bytemap, and clipped to the clipping region.
+ * @param xx, yy bottom left position of the bytemap (baseline for text)
+ * @param bm bytemap including offsets and size
+ * @param r clipping rectangle
+ */
 void Fl_Android_Graphics_Driver::render_bytemap(int xx, int yy, Fl_Android_Bytemap *bm, Fl_Rect_Region &r)
 {
   xx += bm->pXOffset; yy += bm->pYOffset;
@@ -474,7 +483,6 @@ void Fl_Android_Graphics_Driver::render_bytemap(int xx, int yy, Fl_Android_Bytem
   }
 
 }
-
 
 /**
  * Copy a single letter to the screen.
@@ -594,7 +602,99 @@ int Fl_Android_Graphics_Driver::descent_unscaled()
   return fd->descent;
 }
 
+/**
+ * Get a human-readable string describing the family of this face.
+ * @param fnum index into font table
+ * @param ap[out] returns if the face is bold or italic or both.
+ * @return pointer to a string; don't free, don't write
+ */
+const char *Fl_Android_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap)
+{
+  const char *name = fl_fonts[fnum].name;
+  if (ap) {
+    *ap = 0;
+    if (strstr(name, "BoldItalic")) *ap = FL_BOLD_ITALIC;
+    else if (strstr(name, "Bold")) *ap = FL_BOLD;
+    else if (strstr(name, "Italic")) *ap = FL_ITALIC;
+  }
+  return name;
+}
 
+/**
+ * Gets the string for this face.
+ * @param num index into font table
+ * @return pointer to a string; don't free, don't write
+ */
+const char *Fl_Android_Graphics_Driver::font_name(int num)
+{
+  // TODO: we should probably beatify the font name, remove file path and
+  // extension, and save the result in fl_fonts[num].fontname ...
+  return fl_fonts[num].name;
+}
+
+/**
+ * Return an array of sizes in sizep.
+ * @param fnum index into font table
+ * @param sizep[out] a static array that contains the single value 0, indicating
+ *        that all fonts are arbitrarily resizable.
+ * @return 1, because our array has a size of 1
+ */
+int Fl_Android_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep)
+{
+  static int sSizes[] = { 0 };
+  sizep = sSizes;
+  return 1;
+}
+
+/**
+ * FLTK will open the display, and add every fonts on the server to the face table.
+ * TODO: This is not supported under Android.
+ * @param name basically a wildcard for finding fonts
+ * @return number of fonts found
+ */
+Fl_Font Fl_Android_Graphics_Driver::set_fonts(const char *name)
+{
+  return 16;
+}
+
+/**
+ * Changes a face.
+ * @param num index of the font
+ * @param name Path to font file, prepend $ for system fonts, @ for font assets.
+ *        The string pointer is simply stored, the string is not copied, so the
+ *        string must be in static memory.
+ */
+void Fl_Android_Graphics_Driver::font_name(int num, const char *name)
+{
+  Fl_Fontdesc *s = fl_fonts + num;
+
+  // if the same font is requested, do nothing
+  if (s && s->name && name && strcmp(s->name, name)==0) {
+    s->name = name;
+    return;
+  }
+
+  // if a font is loaded, delete the all descriptors, caches, and the source
+  Fl_Android_Font_Descriptor *desc = (Fl_Android_Font_Descriptor*)s->first;
+  if (desc) {
+    Fl_Android_Font_Source *src = desc->get_font_source();
+    while (desc) {
+      auto nDesc = (Fl_Android_Font_Descriptor*)desc->next;
+      delete desc; desc = nDesc;
+    }
+    delete src; src = nullptr;
+  }
+  s->name = nullptr;
+  s->fontname[0] = 0;
+  s->first = nullptr;
+
+  // set the new font name
+  if (name) {
+    // the next time the font is used, it will be loaded and initialized
+    s->name = name;
+    s->fontname[0] = 0;
+  }
+}
 
 #if 0
 
@@ -707,6 +807,7 @@ int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
   return cnt;
 }
+
 
 #endif
 

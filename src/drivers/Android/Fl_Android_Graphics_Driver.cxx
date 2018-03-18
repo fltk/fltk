@@ -142,15 +142,24 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
 void Fl_Android_Graphics_Driver::xyline_unclipped(float x, float y, float x1)
 {
   uint16_t cc = make565(color());
-  float w = x1-x;
+  float w;
+  if (x1>x) {
+    w = x1-x+1;
+  } else {
+    w = x-x1+1;
+    x = x1;
+  }
+  int32_t sx = 1;
   int32_t ss = pStride;
   uint16_t *bits = pBits;
   uint32_t xx = (uint32_t)x;
   uint32_t yy = (uint32_t)y;
   uint32_t ww = (uint32_t)w;
   uint16_t *d = bits + yy*ss + xx;
+  if ((pLineStyle&0xff)==FL_DOT) { ww = ww/2; sx = sx*2; }
   for (uint32_t ix = ww; ix>0; --ix) {
-    *d++ = cc;
+    *d = cc;
+    d+=sx;
   }
 }
 
@@ -158,9 +167,9 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
 {
   float h;
   if (y1>y) {
-    h = y1-y;
+    h = y1-y+1;
   } else {
-    h = y-y1;
+    h = y-y1+1;
     y = y1;
   }
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, 1, h))) {
@@ -179,12 +188,46 @@ void Fl_Android_Graphics_Driver::yxline_unclipped(float x, float y, float y1)
   uint32_t yy = (uint32_t)y;
   uint32_t hh = (uint32_t)h;
   uint16_t *d = bits + yy*ss + xx;
+  if ((pLineStyle&0xff)==FL_DOT) { hh = hh/2; ss = ss*2; }
   for (uint32_t iy = hh; iy>0; --iy) {
     *d = cc;
     d += ss;
   }
 }
 
+
+void Fl_Android_Graphics_Driver::rect_unscaled(float x, float y, float w, float h)
+{
+  xyline(x, y, x+w-1);
+  yxline(x, y, y+h-1);
+  yxline(x+w-1, y, y+h-1);
+  xyline(x, y+h-1, x+w-1);
+}
+
+
+void Fl_Android_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes)
+{
+  pLineStyle = style;
+  // TODO: finish this!
+}
+
+
+void Fl_Android_Graphics_Driver::point_unscaled(float x, float y)
+{
+  // drawing a single point is insanely inefficient because we need to walk the
+  // entire clipping region every time to see if the point needs to be drawn.
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, 1, 1))) {
+    Fl_Rect_Region &s = it->clipped_rect();
+    uint16_t cc = make565(color());
+    int32_t ss = pStride;
+    uint16_t *bits = pBits;
+    uint32_t xx = (uint32_t)x;
+    uint32_t yy = (uint32_t)y;
+    uint16_t *d = bits + yy*ss + xx;
+    *d = cc;
+  }
+
+}
 
 
 #if 0

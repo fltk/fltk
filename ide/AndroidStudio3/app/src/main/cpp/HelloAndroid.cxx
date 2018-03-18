@@ -55,7 +55,7 @@ void hello_cb(void*)
 
 int main(int argc, char **argv)
 {
-  Fl::scheme("gleam");
+//  Fl::scheme("gleam");
   win1 = new Fl_Window(20+50, 10, 200, 200, "back");
   win1->color(FL_RED);
   win1->box(FL_DOWN_BOX);
@@ -83,11 +83,18 @@ int main(int argc, char **argv)
   btn->labelfont(FL_TIMES_BOLD_ITALIC);
   btn->labelsize(30);
 
-  btn = new MyButton((win->w()-280)/2, 200+2*40, 280, 35, "Hello, Android!");
+  btn = new MyButton((win->w()-280)/2, 200+2*40, 280, 35, "Hello, Font!");
   btn->labelfont(FL_COURIER_BOLD_ITALIC);
   btn->labelsize(30);
+  btn->callback(
+          [](Fl_Widget *w, void*) {
+            Fl::set_font(FL_COURIER_BOLD_ITALIC, "$DancingScript-Regular.ttf");
+            w->redraw();
+          }
+  );
 
   btn = new MyButton((win->w()-280)/2, 200+3*40, 280, 35, "Hello, Android!");
+  btn->box(FL_BORDER_BOX);
   btn->labelfont(FL_SCREEN);
   btn->labelsize(30);
 
