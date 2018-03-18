@@ -697,7 +697,9 @@ int main() {
     Gets which particular mouse button caused the current event.
 
     This returns garbage if the most recent event was not a FL_PUSH or FL_RELEASE event.
-    \retval FL_LEFT_MOUSE \retval FL_MIDDLE_MOUSE \retval FL_RIGHT_MOUSE.
+    \retval FL_LEFT_MOUSE
+    \retval FL_MIDDLE_MOUSE
+    \retval FL_RIGHT_MOUSE.
     \see Fl::event_buttons()
   */
   static int event_button()	{return e_keysym-FL_Button;}

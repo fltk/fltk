@@ -76,7 +76,7 @@ was dropped after FLTK 1.0.10. FLTK uses the preprocessor definition
 
 \section preface_copyrights Copyrights and Trademarks
 
-FLTK is Copyright 1998-2016 by Bill Spitzak and others.  Use and
+FLTK is Copyright 1998-2018 by Bill Spitzak and others.  Use and
 distribution of FLTK is governed by the GNU Library General Public
 License with 4 exceptions, located in \ref license.
 
