@@ -69,7 +69,7 @@ static const char *old_font_names[] = {
  * Create an empty Bytemap.
  */
 Fl_Android_Bytemap::Fl_Android_Bytemap() :
-        pBytes(0L)
+        pBytes(nullptr)
 {
 }
 
@@ -90,7 +90,7 @@ Fl_Android_Bytemap::~Fl_Android_Bytemap()
  * @param fnum the index into the fl_fonts table
  */
 Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) :
-        pFileBuffer(0L),
+        pFileBuffer(nullptr),
         pName(fname),
         pFontIndex(fnum),
         pError(false)
@@ -133,7 +133,7 @@ bool Fl_Android_Font_Source::load_font_asset(const char *name)
   errno = 0;
   AAssetManager *aMgr = Fl_Android_Application::get_asset_manager();
   AAsset *aFile = AAssetManager_open(aMgr, name, AASSET_MODE_STREAMING);
-  if (aFile == NULL) {
+  if (aFile == nullptr) {
     Fl_Android_Application::log_w("Can't open font asset at '%s': ",
                                   name, strerror(errno));
     return false;
@@ -173,7 +173,7 @@ bool Fl_Android_Font_Source::load_font_file(const char *name)
     strcpy(buf, name);
   }
   FILE *f = fopen(buf, "rb");
-  if (f == NULL) {
+  if (f == nullptr) {
     Fl_Android_Application::log_w("Can't open font file at '%s': ",
                                   name, strerror(errno));
     return false;
@@ -242,7 +242,7 @@ void Fl_Android_Font_Source::load_font()
 Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
 {
   if (pFileBuffer==0) load_font();
-  if (pError) return 0L;
+  if (pError) return nullptr;
 
   Fl_Android_Bytemap *bm = new Fl_Android_Bytemap();
 
@@ -330,7 +330,7 @@ Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
 {
   // Life is easy in C++11.
   for (auto &i: pBytemapTable) {
-    delete i.second;
+    delete i.second; i.second = nullptr;
   }
 }
 

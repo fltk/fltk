@@ -149,6 +149,7 @@ public:
   Fl_Complex_Region();
   Fl_Complex_Region(const Fl_Rect_Region&);
   virtual ~Fl_Complex_Region() override;
+  void delete_all_subregions();
 
   virtual void set(const Fl_Rect_Region &r) override;
   void set(const Fl_Complex_Region &r);

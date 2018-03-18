@@ -77,7 +77,7 @@ int Fl_Android_Screen_Driver::handle_app_command()
 
   // call all registered FLTK system handlers
   Fl::e_number = ((uint32_t)(cmd-Fl_Android_Application::APP_CMD_INPUT_CHANGED)) + FL_ANDROID_EVENT_INPUT_CHANGED;
-  fl_send_system_handlers(0L);
+  fl_send_system_handlers(nullptr);
 
   // fixup and finalize application wide command handling
   Fl_Android_Application::post_exec_cmd(cmd);
@@ -87,7 +87,7 @@ int Fl_Android_Screen_Driver::handle_app_command()
 int Fl_Android_Screen_Driver::handle_input_event()
 {
   AInputQueue *queue = Fl_Android_Application::input_event_queue();
-  AInputEvent *event = NULL;
+  AInputEvent *event = nullptr;
 
   if (AInputQueue_getEvent(queue, &event) >= 0) {
     if (AInputQueue_preDispatchEvent(queue, event)==0) {
@@ -179,7 +179,7 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   struct android_poll_source *source;
 
   for (;;) {
-    ident = ALooper_pollAll(Fl::damage() ? 0 : -1, NULL, &events, (void **) &source);
+    ident = ALooper_pollAll(Fl::damage() ? 0 : -1, nullptr, &events, (void **) &source);
     switch (ident) {
       // FIXME:  ALOOPER_POLL_WAKE = -1, ALOOPER_POLL_CALLBACK = -2, ALOOPER_POLL_TIMEOUT = -3, ALOOPER_POLL_ERROR = -4
       case Fl_Android_Application::LOOPER_ID_MAIN:
@@ -718,7 +718,7 @@ struct TimerData
   bool triggered;
   struct itimerspec timeout;
 };
-static TimerData* timerData = 0L;
+static TimerData* timerData = nullptr;
 static int NTimerData = 0;
 static int nTimerData = 0;
 
@@ -818,7 +818,7 @@ void Fl_Android_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb
           { 0, 0 },
           { (time_t)floor(time), (long)(modf(time, &ff)*1000000000) }
   };
-  ret = timer_settime(t.handle, 0, &t.timeout, 0L);
+  ret = timer_settime(t.handle, 0, &t.timeout, nullptr);
   if (ret==-1) {
     Fl_Android_Application::log_e("Can't launch timer: %s", strerror(errno));
     return;
@@ -843,7 +843,7 @@ void Fl_Android_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *data)
 {
   for (int i = 0; i < nTimerData; ++i) {
     TimerData& t = timerData[i];
-    if ( t.used && (t.callback==cb) && ( (t.data==data) || (data==NULL) ) ) {
+    if ( t.used && (t.callback==cb) && ( (t.data==data) || (data==nullptr) ) ) {
       if (t.used)
         timer_delete(t.handle);
       t.triggered = t.used = false;

@@ -213,13 +213,26 @@ Fl_Complex_Region::Fl_Complex_Region(const Fl_Rect_Region &r) :
  */
 Fl_Complex_Region::~Fl_Complex_Region()
 {
+  delete_all_subregions();
+}
+
+/**
+ * Delete all subregions of this region.
+ * The pSubregion pointer should always be seen as a list of subregions, rather
+ * than a single region and some pNext pointer. So everything we do, we should
+ * probably do for every object in that list.
+ *
+ * Also note, that the top level region never has pNext pointing to anything.
+ */
+void Fl_Complex_Region::delete_all_subregions()
+{
   // Do NOT delete the chain in pNext! The caller has to that job.
   // A top-level coplex region has pNext always set to NULL, and it does
   // delete all subregions chained via the subregion pNext.
   while (pSubregion) {
     Fl_Complex_Region *rgn = pSubregion;
     pSubregion = rgn->pNext;
-    delete rgn;
+    delete rgn; rgn = 0;
   }
 }
 
@@ -256,7 +269,7 @@ void Fl_Complex_Region::print_data(int indent) const
 void Fl_Complex_Region::set(const Fl_Rect_Region &r)
 {
   Fl_Rect_Region::set(r);
-  delete pSubregion; pSubregion = 0;
+  delete_all_subregions();
 }
 
 /**
@@ -266,17 +279,21 @@ void Fl_Complex_Region::set(const Fl_Rect_Region &r)
  */
 void Fl_Complex_Region::set(const Fl_Complex_Region &r)
 {
-  // outline:
-  // clear this region and copy the coordinates from r
-  delete pSubregion; pSubregion = 0;
   Fl_Rect_Region::set((const Fl_Rect_Region&)r);
-  if (r.pSubregion) {
-    pSubregion = new Fl_Complex_Region();
-    pSubregion->set(*r.subregion());
-  }
-  if (r.pNext) {
-    pNext = new Fl_Complex_Region();
-    pNext->set(*r.next());
+  delete_all_subregions();
+
+  Fl_Complex_Region *srcRgn = r.pSubregion;
+  if (srcRgn) {
+    // copy first subregion
+    Fl_Complex_Region *dstRgn = pSubregion = new Fl_Complex_Region();
+    pSubregion->set(*srcRgn);
+    // copy rest of list
+    while (srcRgn) {
+      dstRgn->pNext = new Fl_Complex_Region();
+      dstRgn = dstRgn->next();
+      dstRgn->set(*srcRgn);
+      srcRgn = srcRgn->next();
+    }
   }
 }
 
@@ -288,28 +305,15 @@ void Fl_Complex_Region::set(const Fl_Complex_Region &r)
 int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 {
   if (pSubregion) {
-    pSubregion->intersect_with(r);
+    Fl_Complex_Region *rgn = pSubregion;
+    while (rgn) {
+      rgn->intersect_with(r);
+      rgn = rgn->next();
+    }
+    compress();
   } else {
-    int intersects = Fl_Rect_Region::intersect_with(r);
-    switch (intersects) {
-      case EMPTY:
-        // Will be deleted by compress()
-        break;
-      case SAME:
-        // nothing to do
-        break;
-      case LESS:
-        // nothing to do
-        break;
-      default:
-        Fl_Android_Application::log_e("Invalid case in %s:%d", __FUNCTION__, __LINE__);
-        break;
-    }
-    if (pNext) {
-      pNext->intersect_with(r);
-    }
+    Fl_Rect_Region::intersect_with(r);
   }
-  compress();
   return 0;
 }
 
@@ -321,7 +325,12 @@ int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
 {
   if (pSubregion) {
-    pSubregion->subtract(r);
+    Fl_Complex_Region *rgn = pSubregion;
+    while (rgn) {
+      rgn->subtract(r);
+      rgn = rgn->next();
+    }
+    compress();
   } else {
     // Check if we overlap at all
     Fl_Rect_Region s(r);
@@ -341,11 +350,8 @@ int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
         Fl_Android_Application::log_e("Invalid case in %s:%d", __FUNCTION__, __LINE__);
         break;
     }
-    if (pNext) {
-      pNext->subtract(r);
-    }
+    if (pSubregion) compress(); // because intersecting this may have created subregions
   }
-  compress();
   return 0;
 }
 
@@ -365,41 +371,27 @@ void Fl_Complex_Region::compress()
   Fl_Complex_Region *rgn = pSubregion;
   while (rgn && rgn->is_empty()) {
     pSubregion = rgn->next();
-    delete rgn;
-    rgn = pSubregion;
-  }
-
-
-#if 0
-  // FIXME: remove emty rectangles and lift single rectangles
-  // TODO: merging rectangles may take much too much time with little benefit
-  print("compress");
-  while (rgn && rgn->is_empty()) {
-    pSubregion = rgn->next();
-    delete rgn;
-    rgn = pSubregion;
+    delete rgn; rgn = pSubregion;
   }
   if (!pSubregion) return;
+
   rgn = pSubregion;
   while (rgn) {
-    Fl_Complex_Region *nextRgn = rgn->next();
-    if (nextRgn && nextRgn->is_empty()) {
-      rgn->pNext = nextRgn->next();
-      delete nextRgn;
-      nextRgn = rgn->pNext;
+    while (rgn->pNext && rgn->pNext->is_empty()) {
+      Fl_Complex_Region *nextNext = rgn->pNext->pNext;
+      delete rgn->pNext; rgn->pNext = nextNext;
     }
     rgn = rgn->next();
   }
-  if (!pSubregion) return;
 
   // find rectangles that can be merged into a single new rectangle
+  // (Too much work for much too little benefit)
 
   // if there is only a single subregion left, merge it into this region
   if (pSubregion->pNext==nullptr) {
     set((Fl_Rect_Region&)*pSubregion); // deletes subregion for us
   }
   if (!pSubregion) return;
-#endif
 
   // finally, update the boudning box
   Fl_Rect_Region::set((Fl_Rect_Region&)*pSubregion);
@@ -484,7 +476,7 @@ Fl_Complex_Region::Iterator Fl_Complex_Region::begin()
  */
 Fl_Complex_Region::Iterator Fl_Complex_Region::end()
 {
-  return Iterator(0L);
+  return Iterator(nullptr);
 }
 
 /**
@@ -574,7 +566,7 @@ Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlappi
  */
 Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlapping::end()
 {
-  return OverlappingIterator(0L);
+  return OverlappingIterator(nullptr);
 }
 
 /**
@@ -630,7 +622,7 @@ bool Fl_Complex_Region::Overlapping::find_next()
   } else {
     pRegion = pRegion->parent(); // can be NULL
   }
-  return (pRegion != 0L);
+  return (pRegion != nullptr);
 }
 
 // -----------------------------------------------------------------------------
