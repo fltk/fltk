@@ -125,7 +125,7 @@ int Fl_Bitmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
   }
   if (fl_graphics_driver->start_image(this, XP,YP,WP,HP,cx,cy,X,Y,W,H)) return 1;
   if (!id_)
-    id_ = fl_graphics_driver->cache(this, w(), h(), array);
+    id_ = fl_graphics_driver->cache(this);
   return 0;
 }
 
@@ -158,7 +158,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
   uchar		*new_array;	// New array for image data
 
   // Optimize the simple copy where the width and height are the same...
-  if (W == w() && H == h()) {
+  if (W == pixel_w() && H == pixel_h()) {
     new_array = new uchar [H * ((W + 7) / 8)];
     memcpy(new_array, array, H * ((W + 7) / 8));
 
@@ -182,10 +182,10 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
   // Figure out Bresenham step/modulus values...
-  xmod   = w() % W;
-  xstep  = w() / W;
-  ymod   = h() % H;
-  ystep  = h() / H;
+  xmod   = pixel_w() % W;
+  xstep  = pixel_w() / W;
+  ymod   = pixel_h() % H;
+  ystep  = pixel_h() / H;
 
   // Allocate memory for the new image...
   new_array = new uchar [H * ((W + 7) / 8)];
@@ -196,7 +196,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W, old_ptr = array + sy * ((w() + 7) / 8), sx = 0, new_bit = 1;
+    for (dx = W, xerr = W, old_ptr = array + sy * ((pixel_w() + 7) / 8), sx = 0, new_bit = 1;
 	 dx > 0;
 	 dx --) {
       old_bit = (uchar)(1 << (sx & 7));
@@ -229,12 +229,6 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
   return new_image;
 }
-
-
-int Fl_Bitmap::draw_scaled(int X, int Y, int W, int H) {
-  return (W <= w() && H <= h()) ?  fl_graphics_driver->draw_scaled(this, X, Y, W, H) : 0;
-}
-
 
 //
 // End of "$Id$".

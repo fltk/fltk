@@ -193,7 +193,6 @@ void Fl_SVG_Image::rasterize_(int W, int H) {
   rasterized_ = true;
   raster_w_ = W;
   raster_h_ = H;
-//printf("rasterize to %dx%d\n",W, H);
 }
 
 
@@ -235,10 +234,7 @@ void Fl_SVG_Image::resize(int width, int height) {
 
 
 void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
-  float f = 1;
-  if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
-    f = Fl::screen_driver()->retina_factor() * fl_graphics_driver->scale();
-  }
+  float f = Fl::screen_driver()->retina_factor() * fl_graphics_driver->scale();
   int w1 = w(), h1 = h();
   /* When f > 1, there may be several pixels per FLTK unit in an area
    of size w() x h() of the display. This occurs, e.g., with Apple retina displays
@@ -248,15 +244,8 @@ void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
    the SVG image is drawn using the full resolution of the display.
    */
   resize(f*w(), f*h());
-  if (f == 1) {
-    Fl_RGB_Image::draw(X, Y, W, H, cx, cy);
-  } else {
-    bool need_clip = (cx || cy || W != w1 || H != h1);
-    if (need_clip) fl_push_clip(X, Y, W, H);
-    fl_graphics_driver->draw_scaled(this, X-cx, Y-cy, w1, h1);
-    if (need_clip) fl_pop_clip();
-    w(w1); h(h1); // restore the previous image size
-  }
+  scale(w1, h1, 0, 1);
+  Fl_RGB_Image::draw(X, Y, W, H, cx, cy);
 }
 
 
@@ -270,14 +259,6 @@ void Fl_SVG_Image::color_average(Fl_Color c, float i) {
   average_color_ = c;
   average_weight_ = i;
   Fl_RGB_Image::color_average(c, i);
-}
-
-
-int Fl_SVG_Image::draw_scaled(int X, int Y, int W, int H) {
-  w(W);
-  h(H);
-  draw(X, Y, W, H, 0, 0);
-  return 1;
 }
 
 #endif // FLTK_USE_NANOSVG

@@ -43,9 +43,9 @@ enum Fl_RGB_Scaling {
 
 
 /**
- \brief Base class for image caching and drawing.
+ \brief Base class for image caching, scaling and drawing.
  
- Fl_Image is the base class used for caching and drawing all kinds of images 
+ Fl_Image is the base class used for caching, scaling and drawing all kinds of images
  in FLTK. This class keeps track of common image data such as the pixels, 
  colormap, width, height, and depth. Virtual methods are used to provide 
  type-specific image handling.
@@ -63,9 +63,10 @@ public:
     
 private:
   int w_, h_, d_, ld_, count_;
+  int pixel_w_, pixel_h_;
   const char * const *data_;
-  static Fl_RGB_Scaling RGB_scaling_;
-
+  static Fl_RGB_Scaling RGB_scaling_; // method used when copying RGB images
+  static Fl_RGB_Scaling scaling_algorithm_; // method used to rescale RGB source images before drawing
   // Forbid use of copy constructor and assign operator
   Fl_Image & operator=(const Fl_Image &);
   Fl_Image(const Fl_Image &);
@@ -75,11 +76,11 @@ protected:
   /**
    Sets the current image width in pixels.
    */
-  void w(int W) {w_ = W;}
+  void w(int W) {w_ = W; pixel_w_ = W;}
   /**
    Sets the current image height in pixels.
    */
-  void h(int H) {h_ = H;}
+  void h(int H) {h_ = H; pixel_h_ = H;}
   /**
    Sets the current image depth.
    */
@@ -104,18 +105,30 @@ protected:
 
   static void labeltype(const Fl_Label *lo, int lx, int ly, int lw, int lh, Fl_Align la);
   static void measure(const Fl_Label *lo, int &lw, int &lh);
-  virtual int draw_scaled(int X, int Y, int W, int H);
+  int draw_scaled(int X, int Y, int W, int H);
 
 public:
 
   /** 
-   Returns the current image width in pixels.
+   Returns the current image width in FLTK units.
+   The values of w() and pixel_w() are identical unless scale() has been called
+   after which they may differ.
    */
   int w() const {return w_;}
   /**
-   Returns the current image height in pixels.
+   Returns the current image height in FLTK units.
+   The values of h() and pixel_h() are identical unless scale() has been called
+   after which they may differ.
    */
   int h() const {return h_;}
+  /**
+   Returns the image width in pixels.
+   */
+  int pixel_w() {return pixel_w_;}
+  /**
+   Returns the image height in pixels.
+   */
+  int pixel_h() {return pixel_h_;}
   /**
    Returns the current image depth.
    The return value will be 0 for bitmaps, 1 for
@@ -188,15 +201,28 @@ public:
 
   // set RGB image scaling method
   static void RGB_scaling(Fl_RGB_Scaling);
-
   // get RGB image scaling method
   static Fl_RGB_Scaling RGB_scaling();
+  
   /** Use this method if you have an Fl_Image object and want to know whether it is derived 
    from class Fl_RGB_Image. 
    If the method returns non-NULL, then the image in question is
    derived from Fl_RGB_Image, and the returned value is a pointer to this image.
    */
   virtual Fl_RGB_Image *as_rgb_image() {return NULL;}
+  // set the image drawing size
+  virtual void scale(int width, int height, int proportional = 1, int can_expand = 0);
+  /** Sets what algorithm is used when resizing a source image to draw it.
+   The default algorithm is FL_RGB_SCALING_BILINEAR.
+   Drawing an Fl_Image is sometimes performed by first resizing the source image
+   and then drawing the resized copy. This occurs, e.g., when drawing to screen under X11
+   without Xrender support after having called scale().
+   This function controls what method is used when the image to be resized is an Fl_RGB_Image.
+   \version 1.4
+   */
+  static void scaling_algorithm(Fl_RGB_Scaling algorithm) {scaling_algorithm_ = algorithm; }
+  /** Gets what algorithm is used when resizing a source image to draw it. */
+  static Fl_RGB_Scaling scaling_algorithm() {return scaling_algorithm_;}
 };
 
 
@@ -229,9 +255,6 @@ private:
   fl_uintptr_t mask_;
   float cache_scale_; // graphics scaling value when id_ was computed
   
-protected:
-  virtual int draw_scaled(int X, int Y, int W, int H);
-
 public:
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);

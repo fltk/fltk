@@ -162,7 +162,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   if (!cgimg) {
     CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     int ld = img->ld();
-    if (!ld) ld = img->w() * img->d();
+    if (!ld) ld = img->pixel_w() * img->d();
     CGDataProviderRef src;
     if ( has_feature(PRINTER) ) {
       // When printing, the data at img->array are used when the printed page is completed,
@@ -172,16 +172,16 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       // is used to avoid repeating the copy operation if img is printed again.
       // The CGImage data provider deletes the copy at the latest of these two events:
       // deletion of img, and completion of the page where img was printed.
-      size_t total = ld * img->h();
+      size_t total = ld * img->pixel_h();
       uchar *copy = new uchar[total];
       memcpy(copy, img->array, total);
       src = CGDataProviderCreateWithData(NULL, copy, total, dataReleaseCB);
       *Fl_Graphics_Driver::mask(img) = 1;
     } else {
     // the CGImage data provider must not release the image data.
-      src = CGDataProviderCreateWithData(NULL, img->array, ld * img->h(), NULL);
+      src = CGDataProviderCreateWithData(NULL, img->array, ld * img->pixel_h(), NULL);
     }
-    cgimg = CGImageCreate(img->w(), img->h(), 8, img->d()*8, ld,
+    cgimg = CGImageCreate(img->pixel_w(), img->pixel_h(), 8, img->d()*8, ld,
                                            lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                                            src, 0L, false, kCGRenderingIntentDefault);
     *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
@@ -191,22 +191,6 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   if (cgimg && gc_) {
     draw_CGImage(cgimg, X,Y,W,H, cx,cy, img->w(), img->h());
   }
-}
-
-int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
-  int X, Y, W, H;
-  fl_clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
-  if (W == 0 || H == 0) return 1;
-  fl_push_no_clip(); // remove the FLTK clip that can't be rescaled
-  CGContextSaveGState(gc_);
-  CGContextClipToRect(gc_, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
-  CGContextTranslateCTM(gc_, XP, YP);
-  CGContextScaleCTM(gc_, float(WP)/img->w(), float(HP)/img->h());
-  if (img->as_rgb_image()) draw(img->as_rgb_image(), 0, 0, img->w(), img->h(), 0, 0);
-  else img->draw(0, 0, img->w(), img->h(), 0, 0);
-  CGContextRestoreGState(gc_);
-  fl_pop_clip(); // restore FLTK's clip
-  return 1;
 }
 
 void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -245,8 +229,8 @@ void Fl_Quartz_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uin
   }
 }
 
-fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap*, int w, int h, const uchar *array) {
-  return (fl_uintptr_t)create_bitmask(w, h, array);
+fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap *bm) {
+  return (fl_uintptr_t)create_bitmask(bm->pixel_w(), bm->pixel_h(), bm->array);
 }
 
 
@@ -254,10 +238,10 @@ static void pmProviderRelease (void *ctxt, const void *data, size_t size) {
   CFRelease(ctxt);
 }
 
-fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img, int w, int h, const char *const*data) {
-  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
+  Fl_Image_Surface *surf = new Fl_Image_Surface(img->pixel_w(), img->pixel_h());
   Fl_Surface_Device::push_current(surf);
-  fl_draw_pixmap(data, 0, 0, FL_BLACK);
+  fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
   CGContextRef src = surf->get_offscreen_before_delete();
   Fl_Surface_Device::pop_current();
   delete surf;

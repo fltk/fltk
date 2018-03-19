@@ -72,9 +72,9 @@ public:
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   virtual void draw_image_mono_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
-  fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array);
+  fl_uintptr_t cache(Fl_Pixmap *img);
   virtual void uncache_pixmap(fl_uintptr_t p);
-  fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array);
+  fl_uintptr_t cache(Fl_Bitmap *img);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   virtual double width_unscaled(const char *str, int n);
   virtual double width_unscaled(unsigned int c);

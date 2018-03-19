@@ -572,33 +572,44 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void 
 
 
 void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy){
-  const char * const * di =pxm->data();
-  int w,h;
-  if (!fl_measure_pixmap(di, w, h)) return;
-  mask=0;
-  mask_bitmap(&mask);
-  mx = WP;
-  my = HP;
-  push_clip(XP, YP, WP, HP);
-  fl_draw_pixmap(di,XP -cx, YP -cy, FL_BLACK );
-  pop_clip();
-  delete[] mask;
-  mask=0;
-  mask_bitmap(0);
+  int need_clip = cx || cy || WP != pxm->w() || HP != pxm->h();
+  if (need_clip) push_clip(XP, YP, WP, HP);
+  if (pxm->w() != pxm->pixel_w() || pxm->h() != pxm->pixel_h()) {
+    draw_scaled(pxm, XP-cx, YP-cy, pxm->w(), pxm->h());
+  } else {
+    const char * const * di =pxm->data();
+    int w,h;
+    if (!fl_measure_pixmap(di, w, h)) return;
+    mask=0;
+    mask_bitmap(&mask);
+    mx = WP;
+    my = HP;
+    fl_draw_pixmap(di, XP -cx, YP -cy, FL_BLACK);
+    delete[] mask;
+    mask=0;
+    mask_bitmap(0);
+  }
+  if (need_clip) pop_clip();
 }
 
-void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy){
-  const uchar  * di = rgb->array;
-  int w = rgb->w();
-  int h = rgb->h();
-  mask=0;
-  if (lang_level_>2) //when not true, not making alphamask, mixing colors instead...
-  if (alpha_mask(di, w, h, rgb->d(),rgb->ld())) return; //everthing masked, no need for painting!
-  push_clip(XP, YP, WP, HP);
-  draw_image(di, XP + cx, YP + cy, w, h, rgb->d(), rgb->ld());
-  pop_clip();
-  delete[]mask;
-  mask=0;
+void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy)
+{
+  int need_clip = cx || cy || WP != rgb->w() || HP != rgb->h();
+  if (need_clip) push_clip(XP, YP, WP, HP);
+  if (rgb->w() != rgb->pixel_w() || rgb->h() != rgb->pixel_h()) {
+    draw_scaled(rgb, XP-cx, YP-cy, rgb->w(), rgb->h());
+  } else {
+    const uchar  * di = rgb->array;
+    int w = rgb->w();
+    int h = rgb->h();
+    mask=0;
+    if (lang_level_>2) //when not true, not making alphamask, mixing colors instead...
+      if (alpha_mask(di, w, h, rgb->d(),rgb->ld())) return; //everthing masked, no need for painting!
+    draw_image(di, XP + cx, YP + cy, w, h, rgb->d(), rgb->ld());
+    delete[]mask;
+    mask=0;
+  }
+  if (need_clip) pop_clip();
 }
 
 int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP){
@@ -607,48 +618,55 @@ int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, in
   if (W == 0 || H == 0) return 1;
   push_no_clip(); // remove the FLTK clip that can't be rescaled
   clocale_printf("%d %d %i %i CL\n", X, Y, W, H);
-  clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->w(), float(HP)/img->h());
-  if (img->as_rgb_image()) draw(img->as_rgb_image(), 0, 0, img->w(), img->h(), 0, 0);
-  else img->draw(0, 0, img->w(), img->h(), 0, 0);
+  clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->pixel_w(), float(HP)/img->pixel_h());
+  int keep_w = img->w(), keep_h = img->h();
+  img->scale(img->pixel_w(), img->pixel_h(), 0, 1);
+  img->draw(0, 0, img->pixel_w(), img->pixel_h(), 0, 0);
   clocale_printf("GR GR\n");
+  img->scale(keep_w, keep_h, 0, 1);
   pop_clip(); // restore FLTK's clip
   return 1;
 }
 
-void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy){
-  const uchar  * di = bitmap->array;
-  int w,h;
-  int LD=(bitmap->w()+7)/8;
-  int xx;
-
-  if (WP> bitmap->w() - cx){// to assure that it does not go out of bounds;
-     w = bitmap->w() - cx;
-     xx = (bitmap->w()+7)/8 - cx/8; //length of mask in bytes
-  }else{
-    w =WP;
-    xx = (w+7)/8 - cx/8;
-  }
-  if ( HP > bitmap->h()-cy)
-    h = bitmap->h() - cy;
-  else
-    h = HP;
-
-  di += cy*LD + cx/8;
-  int si = cx % 8; // small shift to be clipped, it is simpler than shifting whole mask
-
-  int i,j;
-  push_clip(XP, YP, WP, HP);
-  fprintf(output , "%i %i %i %i %i %i MI\n", XP - si, YP + HP , WP , -HP , w , h);
-
-  void *rle85 = prepare_rle85();
-  for (j=0; j<HP; j++){
-    for (i=0; i<xx; i++){
-      write_rle85(swap_byte(*di), rle85);
-      di++;
+void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) {
+  int need_clip = cx || cy || WP != bitmap->w() || HP != bitmap->h();
+  if (need_clip) push_clip(XP, YP, WP, HP);
+  if (bitmap->w() != bitmap->pixel_w() || bitmap->h() != bitmap->pixel_h()) {
+    draw_scaled(bitmap, XP-cx, YP-cy, bitmap->w(), bitmap->h());
+  } else {
+    const uchar  * di = bitmap->array;
+    int w,h;
+    int LD=(bitmap->w()+7)/8;
+    int xx;
+    
+    if (WP> bitmap->w() - cx){// to assure that it does not go out of bounds;
+      w = bitmap->w() - cx;
+      xx = (bitmap->w()+7)/8 - cx/8; //length of mask in bytes
+    }else{
+      w =WP;
+      xx = (w+7)/8 - cx/8;
     }
+    if ( HP > bitmap->h()-cy)
+      h = bitmap->h() - cy;
+    else
+      h = HP;
+    
+    di += cy*LD + cx/8;
+    int si = cx % 8; // small shift to be clipped, it is simpler than shifting whole mask
+    
+    int i,j;
+    fprintf(output , "%i %i %i %i %i %i MI\n", XP - si, YP + HP , WP , -HP , w , h);
+    
+    void *rle85 = prepare_rle85();
+    for (j=0; j<HP; j++){
+      for (i=0; i<xx; i++){
+        write_rle85(swap_byte(*di), rle85);
+        di++;
+      }
+    }
+    close_rle85(rle85); fputc('\n', output);
   }
-  close_rle85(rle85); fputc('\n', output);
-  pop_clip();
+  if (need_clip) pop_clip();
 }
 
 #endif // !defined(FL_DOXYGEN) && !defined(FL_NO_PRINT_SUPPORT)

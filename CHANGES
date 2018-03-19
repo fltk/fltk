@@ -18,6 +18,11 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - New member function Fl_Image::scale(int width, int height) to set
+    the drawing size of an image independently from its pixel size. The
+    same function was previously available only for class Fl_Shared_Image
+    and with FL_ABI_VERSION >= 10304. New member functions Fl_Image::pixel_w()
+    and Fl_Image::pixel_h() give the size in pixels of an image.
   - OpenGL draws text using textures on all platforms, when the necessary
     hardware support is present (a backup mechanism is available in absence
     of this support). Thus, all text drawable in Fl_Window's can be drawn

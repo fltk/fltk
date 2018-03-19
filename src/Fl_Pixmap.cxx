@@ -64,7 +64,7 @@ int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
   }
   if ( fl_graphics_driver->start_image(this, XP,YP,WP,HP,cx,cy,X,Y,W,H) ) return 1;
   if (!id_) {
-    id_ = fl_graphics_driver->cache(this, w(), h(), data());
+    id_ = fl_graphics_driver->cache(this);
   }
   return 0;
 }
@@ -153,7 +153,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
     return new Fl_Pixmap((char *const*)0);
   }
   // Optimize the simple copy where the width and height are the same...
-  if (W == w() && H == h()) {
+  if (W == pixel_w() && H == pixel_h()) {
     // Make an exact copy of the image and return it...
     new_image = new Fl_Pixmap(data());
     new_image->copy_data();
@@ -185,10 +185,10 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
   sprintf(new_info, "%d %d %d %d", W, H, ncolors, chars_per_pixel);
 
   // Figure out Bresenham step/modulus values...
-  xmod   = w() % W;
-  xstep  = (w() / W) * chars_per_pixel;
-  ymod   = h() % H;
-  ystep  = h() / H;
+  xmod   = pixel_w() % W;
+  xstep  = (pixel_w() / W) * chars_per_pixel;
+  ymod   = pixel_h() % H;
+  ystep  = pixel_h() / H;
 
   // Allocate memory for the new array...
   if (ncolors < 0) new_data = new char *[H + 2];
@@ -393,10 +393,6 @@ void Fl_Pixmap::desaturate() {
       }
     }
   }
-}
-
-int Fl_Pixmap::draw_scaled(int X, int Y, int W, int H) {
-  return (W <= w() && H <= h()) ?  fl_graphics_driver->draw_scaled(this, X, Y, W, H) : 0;
 }
 
 //

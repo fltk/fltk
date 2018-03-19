@@ -123,7 +123,6 @@ Fl_Shared_Image::Fl_Shared_Image() : Fl_Image(0,0,0) {
   original_    = 0;
   image_       = 0;
   alloc_image_ = 0;
-  scaled_image_= 0;
 }
 
 
@@ -144,7 +143,6 @@ Fl_Shared_Image::Fl_Shared_Image(const char *n,		// I - Filename
   image_       = img;
   alloc_image_ = !img;
   original_    = 1;
-  scaled_image_= 0;
 
   if (!img) reload();
   else update();
@@ -211,7 +209,6 @@ Fl_Shared_Image::update() {
 Fl_Shared_Image::~Fl_Shared_Image() {
   if (name_) delete[] (char *)name_;
   if (alloc_image_) delete image_;
-  delete scaled_image_;
 }
 
 
@@ -357,7 +354,6 @@ Fl_Shared_Image::desaturate() {
   update();
 }
 
-
 //
 // 'Fl_Shared_Image::draw()' - Draw a shared image...
 //
@@ -366,59 +362,14 @@ void Fl_Shared_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
     Fl_Image::draw(X, Y, W, H, cx, cy);
     return;
   }
-  bool need_clip = (W != w() || H != h() || cx || cy);
-  if (need_clip) fl_push_clip(X, Y, W, H);
-  fl_graphics_driver->draw(this, X-cx, Y-cy);
-  if (need_clip) fl_pop_clip();
+  // transiently set the drawing size of image_ to that of the shared image
+  int width = image_->w(), height = image_->h();
+  image_->scale(w(), h(), 0, 1);
+  image_->draw(X, Y, W, H, cx, cy);
+  image_->scale(width, height, 0, 1);
 }
 
 
-/** Sets the drawing size of the shared image.
- This function gives the shared image its own size, independently from the size of the original image
- that is typically larger.
- This can be useful to draw a shared image on a drawing surface with more than 1 pixel per
- FLTK unit: all pixels of the original image become available to fill an area of the drawing surface
- sized at <tt>width,height</tt> FLTK units.
- Examples of such drawing surfaces: HiDPI displays, laser printers, PostScript files, PDF printers.
-
- \param width,height   maximum width and height (in FLTK units) to use when drawing the shared image
- \param proportional   if not null, keep the width and height of the shared image proportional to those of its original image
- \param can_expand  if null, the width and height of the shared image will not exceed those of the original image
-
- \version 1.3.4
-
- Example code: scale an image to fit in a box
- \code
- Fl_Box *b = ...  // a box
- Fl_Shared_Image *shared = Fl_Shared_Image::get("/path/to/picture.jpeg"); // read a picture file
- shared->scale(b->w(), b->h()); // set the drawing size of the shared image to the size of the box
- b->image(shared); // use the shared image as the box image
- b->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_CLIP); // the image is to be drawn centered in the box
- \endcode
- */
-void Fl_Shared_Image::scale(int width, int height, int proportional, int can_expand)
-{
-  w(width);
-  h(height);
-  if (!image_ || image_->fail()) return;
-  if (!proportional && can_expand) return;
-  if (!proportional && width <= image_->w() && height <= image_->h()) return;
-  float fw = image_->w() / float(width);
-  float fh = image_->h() / float(height);
-  if (proportional) {
-    if (fh > fw) fw = fh;
-    else fh = fw;
-  }
-  if (!can_expand) {
-    if (fw < 1) fw = 1;
-    if (fh < 1) fh = 1;
-  }
-  w(int(image_->w() / fw));
-  h(int(image_->h() / fh));
-}
-
-
-Fl_RGB_Scaling Fl_Shared_Image::scaling_algorithm_ = FL_RGB_SCALING_BILINEAR;
 
 
 //

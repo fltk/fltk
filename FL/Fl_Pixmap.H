@@ -45,7 +45,6 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
 
 protected:
   void measure();
-  virtual int draw_scaled(int X, int Y, int W, int H);
 
 public:
 

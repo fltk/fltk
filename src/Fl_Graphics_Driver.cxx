@@ -70,7 +70,8 @@ void Fl_Graphics_Driver::focus_rect(int x, int y, int w, int h)
 }
 
 /** Draws an Fl_Image scaled to width \p W & height \p H with top-left corner at \em X,Y
- \return zero when the graphics driver doesn't implement scaled drawing, non-zero if it does implement it.
+ \return zero when the graphics driver doesn't implement scaled drawing for the received image,
+ non-zero if it does implement it.
  */
 int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
   return 0;
@@ -192,29 +193,6 @@ void Fl_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
 
 
 void Fl_Graphics_Driver::set_current_() {
-}
-
-
-/** Draws an Fl_Shared_Image object using this graphics driver.
- \param shared shared image to be drawn
- \param X,Y top-left position of the drawn image */
-void Fl_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
-  if ( shared->w() == shared->image_->w() && shared->h() == shared->image_->h()) {
-    shared->image_->draw(X, Y, shared->w(), shared->h(), 0, 0);
-    return;
-  }
-  if ( shared->image_->draw_scaled(X, Y, shared->w(), shared->h()) ) return;
-  if (shared->scaled_image_ && (shared->scaled_image_->w() != shared->w() || shared->scaled_image_->h() != shared->h())) {
-    delete shared->scaled_image_;
-    shared->scaled_image_ = NULL;
-  }
-  if (!shared->scaled_image_) {
-    Fl_RGB_Scaling previous = Fl_Shared_Image::RGB_scaling();
-    Fl_Shared_Image::RGB_scaling(shared->scaling_algorithm_); // useless but no harm if image_ is not an Fl_RGB_Image
-    shared->scaled_image_ = shared->image_->copy(shared->w(), shared->h());
-    Fl_Shared_Image::RGB_scaling(previous);
-  }
-  shared->scaled_image_->draw(X, Y, shared->scaled_image_->w(), shared->scaled_image_->h(), 0, 0);
 }
 
 unsigned Fl_Graphics_Driver::font_desc_size() {
@@ -348,22 +326,20 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, i
     return;
   }
   // to allow rescale at runtime
-  if (*id(pxm)) {
-    if (*cache_scale(pxm) != scale_) {
-      pxm->uncache();
-    }
+  if (*id(pxm) && *cache_scale(pxm) != scale_) {
+    pxm->uncache();
   }
   if (!*id(pxm)) {
-    if (scale_ != 1) { // build a scaled id_ & pixmap_ for pxm
-      int w2=pxm->w(), h2=pxm->h();
-      cache_size(pxm, w2, h2);
+    int w2=pxm->w(), h2=pxm->h();
+    cache_size(pxm, w2, h2); // after this, w2 x h2 is size of desired cached image
+    if (pxm->pixel_w() != w2 || pxm->pixel_h() != h2) { // build a scaled id_ & pixmap_ for pxm
       Fl_Pixmap *pxm2 = (Fl_Pixmap*)pxm->copy(w2, h2);
-      *id(pxm) = cache(pxm2, pxm2->w(), pxm2->h(), pxm2->data());
+      *id(pxm) = cache(pxm2);
       *cache_scale(pxm) = scale_;
       *mask(pxm) = *mask(pxm2);
       *mask(pxm2) = 0;
       delete pxm2;
-    } else *id(pxm) = cache(pxm, pxm->w(), pxm->h(), pxm->data());
+    } else *id(pxm) = cache(pxm);
   }
   // draw pxm using its scaled id_ & pixmap_
   draw_unscaled(pxm, scale_, X, Y, W, H, cx, cy);
@@ -375,20 +351,18 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, in
   if (Fl_Graphics_Driver::start_image(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (*id(bm)) {
-    if (*cache_scale(bm) != scale_) {
-      bm->uncache();
-    }
+  if (*id(bm) && *cache_scale(bm) != scale_) {
+    bm->uncache();
   }
   if (!*id(bm)) {
-    if (scale_ != 1) { // build a scaled id_ for bm
-      int w2 = bm->w(), h2 = bm->h();
-      cache_size(bm, w2, h2);
+    int w2 = bm->w(), h2 = bm->h();
+    cache_size(bm, w2, h2); // after this, w2 x h2 is size of desired cached image
+    if (bm->pixel_w() != w2 || bm->pixel_h() != h2) { // build a scaled id_ for bm
       Fl_Bitmap *bm2 = (Fl_Bitmap*)bm->copy(w2, h2);
-      *id(bm) = cache(bm2, bm2->w(), bm2->h(), bm2->array);
+      *id(bm) = cache(bm2);
       *cache_scale(bm) =  scale_;
       delete bm2;
-    } else *id(bm) = cache(bm, bm->w(), bm->h(), bm->array);
+    } else *id(bm) = cache(bm);
   }
   // draw bm using its scaled id_
   draw_unscaled(bm, scale_, X, Y, W, H, cx, cy);
@@ -404,7 +378,9 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
   if (start_image(img, XP, YP, WP, HP, cx, cy, XP, YP, WP, HP)) {
     return;
   }
-  if (scale() != 1 && can_do_alpha_blending()) { // try and use the system's scaled image drawing
+  int need_scaled_drawing = fabs(img->w() - img->pixel_w()/scale_)/img->w() > 0.05 ||
+  fabs(img->h() - img->pixel_h()/scale_)/img->h() > 0.05;
+  if (need_scaled_drawing && can_do_alpha_blending()) { // try and use the system's scaled image drawing
     push_clip(XP, YP, WP, HP);
     int done = draw_scaled(img, XP-cx, YP-cy, img->w(), img->h());
     pop_clip();
@@ -412,12 +388,15 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
   }
   // to allow rescale at runtime
   if (*id(img) && *cache_scale(img) != scale_) {
-      img->uncache();
+    img->uncache();
   }
-  if (!*id(img) && scale_ != 1) { // build and draw a scaled id_ for img
+  if (!*id(img) && need_scaled_drawing ) { // build and draw a scaled id_ for img
     int w2=img->w(), h2=img->h();
     cache_size(img, w2, h2);
+    Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
+    Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
     Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w2, h2);
+    Fl_Image::RGB_scaling(keep);
     draw_unscaled(img2, scale_, XP, YP, WP, HP, cx, cy);
     *id(img) = *id(img2);
     *id(img2) = 0;
@@ -427,23 +406,6 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
   else { // draw img using its scaled id_
     draw_unscaled(img, scale_, XP, YP, WP, HP, cx, cy);
   }
-}
-
-
-void Fl_Scalable_Graphics_Driver::draw(Fl_Shared_Image *shared, int X, int Y) {
-  if (scale_ == 1) {
-    Fl_Graphics_Driver::draw(shared, X, Y);
-    return;
-  }
-  float s = scale_; scale_ = 1;
-  Fl_Region r2 = scale_clip(s);
-  int oldw=shared->w();
-  int oldh=shared->h();
-  change_image_size(shared, (oldw*s < 1 ? 1: int(oldw*s)), (oldh*s < 1 ? 1: int(oldh*s)));
-  Fl_Graphics_Driver::draw(shared, X*s, Y*s);
-  change_image_size(shared, oldw, oldh);
-  unscale_clip(r2);
-  scale_ = s;
 }
 
 
@@ -536,7 +498,10 @@ void Fl_Scalable_Graphics_Driver::draw_image_rescale(void *buf, Fl_Draw_Image_Cb
   }
   Fl_RGB_Image *rgb = new Fl_RGB_Image(tmp_buf, W, H, depth);
   rgb->alloc_array = 1;
+  Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
+  Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
   Fl_RGB_Image *scaled_rgb = (Fl_RGB_Image*)rgb->copy(ceil(W * s), ceil(H * s));
+  Fl_Image::RGB_scaling(keep);
   delete rgb;
   if (scaled_rgb) {
     Fl_Region r2 = scale_clip(s);

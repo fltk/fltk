@@ -58,6 +58,8 @@
 #  include "../../flstring.h"
 #if HAVE_XRENDER
 #include <X11/extensions/Xrender.h>
+// set this to 1 to activate experimental way to cache RGB images with Xrender Picture instead of X11 Pixmap
+#define USE_XRENDER_PICTURE 0
 #endif
 
 static XImage xi;	// template used to pass info to X
@@ -643,7 +645,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int X, int Y
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
   int ld = img->ld();
-  if (ld == 0) ld = img->w() * img->d();
+  if (ld == 0) ld = img->pixel_w() * img->d();
   uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
   int srcskip = ld - img->d() * W;
 
@@ -700,19 +702,30 @@ static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
   Fl_Image_Surface *surface;
   int depth = img->d();
   if (depth == 1 || depth == 3) {
-    surface = new Fl_Image_Surface(img->w(), img->h());
+    surface = new Fl_Image_Surface(img->pixel_w(), img->pixel_h());
   } else if (fl_can_do_alpha_blending()) {
-    Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->w(), img->h(), 32);
-    surface = new Fl_Image_Surface(img->w(), img->h(), 0, pixmap);
+    Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->pixel_w(), img->pixel_h(), 32);
+    surface = new Fl_Image_Surface(img->pixel_w(), img->pixel_h(), 0, pixmap);
     depth |= FL_IMAGE_WITH_ALPHA;
   } else {
     return 0;
   }
   Fl_Surface_Device::push_current(surface);
-  fl_draw_image(img->array, 0, 0, img->w(), img->h(), depth, img->ld());
+  fl_draw_image(img->array, 0, 0, img->pixel_w(), img->pixel_h(), depth, img->ld());
   Fl_Surface_Device::pop_current();
   Fl_Offscreen off = surface->get_offscreen_before_delete();
   delete surface;
+#if HAVE_XRENDER && USE_XRENDER_PICTURE
+  if (fl_can_do_alpha_blending()) {
+    XRenderPictureAttributes srcattr;
+    memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
+    static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+    static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
+    Picture pict = XRenderCreatePicture(fl_display, off, (depth%2==0 ? fmt32:fmt24), 0, &srcattr);
+    XFreePixmap(fl_display, off);
+    off = pict;
+  }
+#endif
   return off;
 }
 
@@ -724,15 +737,24 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, i
   Y = (Y+offset_y_)*s;
   cache_size(img, W, H);
   cx *= s; cy *= s;
+  if (W + cx > img->pixel_w()) W = img->pixel_w() - cx;
+  if (H + cy > img->pixel_h()) H = img->pixel_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
     *Fl_Graphics_Driver::id(img) = cache_rgb(img);
     *cache_scale(img) = 1;
   }
   Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::id(img)) {
-    if (img->d() == 4 || img->d() == 2) {
+#if HAVE_XRENDER && USE_XRENDER_PICTURE
+    int condition = can_do_alpha_blending();
+#else
+    int condition = 0;
+#endif
+    if (img->d() == 4 || img->d() == 2 || condition) {
 #if HAVE_XRENDER
+      scale_ = 1;
       scale_and_render_pixmap(*Fl_Graphics_Driver::id(img), img->d(), 1, 1, cx, cy, X, Y, W, H);
+      scale_ = s;
 #endif
     } else {
       XCopyArea(fl_display, *Fl_Graphics_Driver::id(img), fl_window, gc_, cx, cy, W, H, X, Y);
@@ -757,14 +779,18 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, i
 void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
   if (id_) {
-    XFreePixmap(fl_display, (Fl_Offscreen)id_);
+#if HAVE_XRENDER && USE_XRENDER_PICTURE
+    if (can_do_alpha_blending()) XRenderFreePicture(fl_display, id_);
+    else
+#endif
+      XFreePixmap(fl_display, (Fl_Offscreen)id_);
     id_ = 0;
   }
 }
 
-fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm, int w, int h, const uchar *array) {
+fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm) {
   *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
-  return (fl_uintptr_t)create_bitmask(w, h, array);
+  return (fl_uintptr_t)create_bitmask(bm->pixel_w(), bm->pixel_h(), bm->array);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int Y, int W, int H, int cx, int cy) {
@@ -812,15 +838,15 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int 
 }
 
 
-fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm, int w, int h, const char *const*data) {
-  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
+  Fl_Image_Surface *surf = new Fl_Image_Surface(pxm->pixel_w(), pxm->pixel_h());
   Fl_Surface_Device::push_current(surf);
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
-  fl_draw_pixmap(data, 0, 0, FL_BLACK);
+  fl_draw_pixmap(pxm->data(), 0, 0, FL_BLACK);
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(w, h, bitmap);
+    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(pxm->pixel_w(), pxm->pixel_h(), bitmap);
     delete[] bitmap;
   }
   Fl_Surface_Device::pop_current();
@@ -843,9 +869,13 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   bool has_alpha = (depth == 2 || depth == 4);
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
-  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
+#if USE_XRENDER_PICTURE
+  Picture src = pixmap;
+#else
+  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
   Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
+#endif
   Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
@@ -856,17 +886,23 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   if (clipr)
     XRenderSetPictureClipRegion(fl_display, dst, clipr);
   unscale_clip(r);
+#if !USE_XRENDER_PICTURE
   if (scale_x != 1 || scale_y != 1) {
+#endif
     XTransform mat = {{
       { XDoubleToFixed( scale_x ), XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ) },
       { XDoubleToFixed( 0 ),       XDoubleToFixed( scale_y ), XDoubleToFixed( 0 ) },
       { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
+#if !USE_XRENDER_PICTURE
   }
+#endif
   XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
                    XP, YP, WP, HP);
+#if !USE_XRENDER_PICTURE
   XRenderFreePicture(fl_display, src);
+#endif
   XRenderFreePicture(fl_display, dst);
   return 1;
 }
@@ -881,7 +917,7 @@ int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, 
   }
   cache_size(img, WP, HP);
   return scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
-                                 rgb->w() / double(WP), rgb->h() / double(HP), 0, 0, (XP + offset_x_)*scale_, (YP + offset_y_)*scale_, WP, HP);
+                                 rgb->pixel_w() / double(WP), rgb->pixel_h() / double(HP), 0, 0, (XP + offset_x_)*scale_, (YP + offset_y_)*scale_, WP, HP);
 }
 #endif // HAVE_XRENDER
 

@@ -141,9 +141,9 @@ protected:
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
   virtual void global_gc();
   /** Support function for Fl_Pixmap drawing */
-  virtual fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array) { return 0; }
+  virtual fl_uintptr_t cache(Fl_Pixmap *img) { return 0; }
   /** Support function for Fl_Bitmap drawing */
-  virtual fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array) { return 0; }
+  virtual fl_uintptr_t cache(Fl_Bitmap *img) { return 0; }
   /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
@@ -173,7 +173,6 @@ protected:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual void draw(Fl_Shared_Image *shared, int X, int Y);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
   /** Support function for image drawing */
@@ -393,7 +392,7 @@ public:
   virtual const char *font_name(int num) {return NULL;}
   /** Support for Fl::set_font() */
   virtual void font_name(int num, const char *name) {}
-  /** Support function for Fl_Shared_Image drawing */
+  // Draws an Fl_Image scaled to width W & height H
   virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
@@ -460,7 +459,6 @@ protected:
   virtual void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual void draw(Fl_Shared_Image *shared, int X, int Y);
   virtual void point(int x, int y);
   virtual void point_unscaled(float x, float y) {}
   virtual void rect(int x, int y, int w, int h);

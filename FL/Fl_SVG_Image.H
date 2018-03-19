@@ -34,9 +34,8 @@ struct NSVGimage;
  If the image has loaded correctly, w(), h(), and d() should return values greater than zero.
  
  Rasterization is not done until the image is first drawn or resize() is called. Therefore, 
- \ref array is NULL until then. The delayed rasterization ensures an Fl_Shared_Image based on
- an SVG image and scaled to its display size by Fl_Shared_Image::scale() will be 
- always rasterized to the exact screen resolution.
+ \ref array is NULL until then. The delayed rasterization ensures an Fl_SVG_Image is always rasterized
+ to the exact screen resolution at which it is drawn.
  
  The Fl_SVG_Image class draws images computed by \c nanosvg: one known limitation is that text
  within \c <text\></text\> blocks is not rendered.
@@ -118,8 +117,6 @@ private:
   void rasterize_(int W, int H);
   void init_(const char *filename, const char *filedata, Fl_SVG_Image *copy_source);
   Fl_SVG_Image(Fl_SVG_Image *source);
-protected:
-  virtual int draw_scaled(int X, int Y, int W, int H);
 public:
   /** Set this to \c false to allow image re-scaling that alters the image aspect ratio.
    Upon object creation, proportional is set to \c true, and the aspect ratio is kept constant.*/
