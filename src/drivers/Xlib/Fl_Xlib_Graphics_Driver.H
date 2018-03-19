@@ -131,9 +131,6 @@ public:
   virtual void text_extents_unscaled(const char*, int n, int& dx, int& dy, int& w, int& h);
   virtual Fl_Fontsize size_unscaled();
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-#if ! defined(FL_DOXYGEN)
-  void copy_offscreen_with_alpha(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-#endif
   void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
   Fl_Region XRectangleRegion(int x, int y, int w, int h);
   void XDestroyRegion(Fl_Region r);
