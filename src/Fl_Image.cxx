@@ -243,6 +243,8 @@ Fl_RGB_Scaling Fl_Image::RGB_scaling() {
  \param width,height   maximum width and height (in FLTK units) to use when drawing the image
  \param proportional   if not null, keep the width and height of the image proportional to those of the original size
  \param can_expand  if null, the width and height of the image will not exceed those of the original size
+ \note This function may change the values returned by the w() and h() member functions. In contrast,
+ the values returned by pixel_w() and pixel_h() remain unchanged after scale() was called.
  \version 1.4 (1.3.4 and FL_ABI_VERSION for Fl_Shared_Image only)
  
  Example code: scale an image to fit in a box
