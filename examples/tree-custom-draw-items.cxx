@@ -119,7 +119,7 @@ void Timer_CB(void *data) {
 
 int main(int argc, char *argv[]) {
   Fl::scheme("gtk+");
-  Fl_Double_Window *win = new Fl_Double_Window(350, 400, "Simple Tree");
+  Fl_Double_Window *win = new Fl_Double_Window(350, 400, "Tree Custom Draw Items");
   win->begin();
   {
     // Create the tree
