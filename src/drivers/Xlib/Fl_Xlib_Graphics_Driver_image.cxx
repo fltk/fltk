@@ -58,8 +58,6 @@
 #  include "../../flstring.h"
 #if HAVE_XRENDER
 #include <X11/extensions/Xrender.h>
-// set this to 1 to activate experimental way to cache RGB images with Xrender Picture instead of X11 Pixmap
-#define USE_XRENDER_PICTURE 0
 #endif
 
 static XImage xi;	// template used to pass info to X
@@ -715,17 +713,6 @@ static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
   Fl_Surface_Device::pop_current();
   Fl_Offscreen off = surface->get_offscreen_before_delete();
   delete surface;
-#if HAVE_XRENDER && USE_XRENDER_PICTURE
-  if (fl_can_do_alpha_blending()) {
-    XRenderPictureAttributes srcattr;
-    memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
-    static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
-    static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
-    Picture pict = XRenderCreatePicture(fl_display, off, (depth%2==0 ? fmt32:fmt24), 0, &srcattr);
-    XFreePixmap(fl_display, off);
-    off = pict;
-  }
-#endif
   return off;
 }
 
@@ -745,12 +732,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, i
   }
   Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::id(img)) {
-#if HAVE_XRENDER && USE_XRENDER_PICTURE
-    int condition = can_do_alpha_blending();
-#else
-    int condition = 0;
-#endif
-    if (img->d() == 4 || img->d() == 2 || condition) {
+    if (img->d() == 4 || img->d() == 2) {
 #if HAVE_XRENDER
       scale_ = 1;
       scale_and_render_pixmap(*Fl_Graphics_Driver::id(img), img->d(), 1, 1, cx, cy, X, Y, W, H);
@@ -779,11 +761,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, i
 void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
   if (id_) {
-#if HAVE_XRENDER && USE_XRENDER_PICTURE
-    if (can_do_alpha_blending()) XRenderFreePicture(fl_display, id_);
-    else
-#endif
-      XFreePixmap(fl_display, (Fl_Offscreen)id_);
+    XFreePixmap(fl_display, (Fl_Offscreen)id_);
     id_ = 0;
   }
 }
@@ -870,12 +848,8 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
-#if USE_XRENDER_PICTURE
-  Picture src = pixmap;
-#else
   static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
   Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
-#endif
   Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
@@ -886,23 +860,17 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   if (clipr)
     XRenderSetPictureClipRegion(fl_display, dst, clipr);
   unscale_clip(r);
-#if !USE_XRENDER_PICTURE
   if (scale_x != 1 || scale_y != 1) {
-#endif
     XTransform mat = {{
       { XDoubleToFixed( scale_x ), XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ) },
       { XDoubleToFixed( 0 ),       XDoubleToFixed( scale_y ), XDoubleToFixed( 0 ) },
       { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
     }};
     XRenderSetPictureTransform(fl_display, src, &mat);
-#if !USE_XRENDER_PICTURE
   }
-#endif
   XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
                    XP, YP, WP, HP);
-#if !USE_XRENDER_PICTURE
   XRenderFreePicture(fl_display, src);
-#endif
   XRenderFreePicture(fl_display, dst);
   return 1;
 }
