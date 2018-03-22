@@ -574,7 +574,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void 
 void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy){
   int need_clip = cx || cy || WP != pxm->w() || HP != pxm->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
-  if (pxm->w() != pxm->pixel_w() || pxm->h() != pxm->pixel_h()) {
+  if (pxm->w() != pxm->data_w() || pxm->h() != pxm->data_h()) {
     draw_scaled(pxm, XP-cx, YP-cy, pxm->w(), pxm->h());
   } else {
     const char * const * di =pxm->data();
@@ -596,7 +596,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int 
 {
   int need_clip = cx || cy || WP != rgb->w() || HP != rgb->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
-  if (rgb->w() != rgb->pixel_w() || rgb->h() != rgb->pixel_h()) {
+  if (rgb->w() != rgb->data_w() || rgb->h() != rgb->data_h()) {
     draw_scaled(rgb, XP-cx, YP-cy, rgb->w(), rgb->h());
   } else {
     const uchar  * di = rgb->array;
@@ -618,10 +618,10 @@ int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, in
   if (W == 0 || H == 0) return 1;
   push_no_clip(); // remove the FLTK clip that can't be rescaled
   clocale_printf("%d %d %i %i CL\n", X, Y, W, H);
-  clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->pixel_w(), float(HP)/img->pixel_h());
+  clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->data_w(), float(HP)/img->data_h());
   int keep_w = img->w(), keep_h = img->h();
-  img->scale(img->pixel_w(), img->pixel_h(), 0, 1);
-  img->draw(0, 0, img->pixel_w(), img->pixel_h(), 0, 0);
+  img->scale(img->data_w(), img->data_h(), 0, 1);
+  img->draw(0, 0, img->data_w(), img->data_h(), 0, 0);
   clocale_printf("GR GR\n");
   img->scale(keep_w, keep_h, 0, 1);
   pop_clip(); // restore FLTK's clip
@@ -631,7 +631,7 @@ int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, in
 void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) {
   int need_clip = cx || cy || WP != bitmap->w() || HP != bitmap->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
-  if (bitmap->w() != bitmap->pixel_w() || bitmap->h() != bitmap->pixel_h()) {
+  if (bitmap->w() != bitmap->data_w() || bitmap->h() != bitmap->data_h()) {
     draw_scaled(bitmap, XP-cx, YP-cy, bitmap->w(), bitmap->h());
   } else {
     const uchar  * di = bitmap->array;

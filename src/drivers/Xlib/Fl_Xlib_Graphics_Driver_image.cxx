@@ -643,7 +643,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int X, int Y
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
   int ld = img->ld();
-  if (ld == 0) ld = img->pixel_w() * img->d();
+  if (ld == 0) ld = img->data_w() * img->d();
   uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
   int srcskip = ld - img->d() * W;
 
@@ -700,16 +700,16 @@ static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
   Fl_Image_Surface *surface;
   int depth = img->d();
   if (depth == 1 || depth == 3) {
-    surface = new Fl_Image_Surface(img->pixel_w(), img->pixel_h());
+    surface = new Fl_Image_Surface(img->data_w(), img->data_h());
   } else if (fl_can_do_alpha_blending()) {
-    Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->pixel_w(), img->pixel_h(), 32);
-    surface = new Fl_Image_Surface(img->pixel_w(), img->pixel_h(), 0, pixmap);
+    Fl_Offscreen pixmap = XCreatePixmap(fl_display, RootWindow(fl_display, fl_screen), img->data_w(), img->data_h(), 32);
+    surface = new Fl_Image_Surface(img->data_w(), img->data_h(), 0, pixmap);
     depth |= FL_IMAGE_WITH_ALPHA;
   } else {
     return 0;
   }
   Fl_Surface_Device::push_current(surface);
-  fl_draw_image(img->array, 0, 0, img->pixel_w(), img->pixel_h(), depth, img->ld());
+  fl_draw_image(img->array, 0, 0, img->data_w(), img->data_h(), depth, img->ld());
   Fl_Surface_Device::pop_current();
   Fl_Offscreen off = surface->get_offscreen_before_delete();
   delete surface;
@@ -724,8 +724,8 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, i
   Y = (Y+offset_y_)*s;
   cache_size(img, W, H);
   cx *= s; cy *= s;
-  if (W + cx > img->pixel_w()) W = img->pixel_w() - cx;
-  if (H + cy > img->pixel_h()) H = img->pixel_h() - cy;
+  if (W + cx > img->data_w()) W = img->data_w() - cx;
+  if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
     *Fl_Graphics_Driver::id(img) = cache_rgb(img);
     *cache_scale(img) = 1;
@@ -768,7 +768,7 @@ void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintp
 
 fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm) {
   *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
-  return (fl_uintptr_t)create_bitmask(bm->pixel_w(), bm->pixel_h(), bm->array);
+  return (fl_uintptr_t)create_bitmask(bm->data_w(), bm->data_h(), bm->array);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int Y, int W, int H, int cx, int cy) {
@@ -817,14 +817,14 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int 
 
 
 fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
-  Fl_Image_Surface *surf = new Fl_Image_Surface(pxm->pixel_w(), pxm->pixel_h());
+  Fl_Image_Surface *surf = new Fl_Image_Surface(pxm->data_w(), pxm->data_h());
   Fl_Surface_Device::push_current(surf);
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
   fl_draw_pixmap(pxm->data(), 0, 0, FL_BLACK);
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(pxm->pixel_w(), pxm->pixel_h(), bitmap);
+    *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(pxm->data_w(), pxm->data_h(), bitmap);
     delete[] bitmap;
   }
   Fl_Surface_Device::pop_current();
@@ -885,7 +885,7 @@ int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, 
   }
   cache_size(img, WP, HP);
   return scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
-                                 rgb->pixel_w() / double(WP), rgb->pixel_h() / double(HP), 0, 0, (XP + offset_x_)*scale_, (YP + offset_y_)*scale_, WP, HP);
+                                 rgb->data_w() / double(WP), rgb->data_h() / double(HP), 0, 0, (XP + offset_x_)*scale_, (YP + offset_y_)*scale_, WP, HP);
 }
 #endif // HAVE_XRENDER
 

@@ -162,7 +162,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   if (!cgimg) {
     CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
     int ld = img->ld();
-    if (!ld) ld = img->pixel_w() * img->d();
+    if (!ld) ld = img->data_w() * img->d();
     CGDataProviderRef src;
     if ( has_feature(PRINTER) ) {
       // When printing, the data at img->array are used when the printed page is completed,
@@ -172,16 +172,16 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
       // is used to avoid repeating the copy operation if img is printed again.
       // The CGImage data provider deletes the copy at the latest of these two events:
       // deletion of img, and completion of the page where img was printed.
-      size_t total = ld * img->pixel_h();
+      size_t total = ld * img->data_h();
       uchar *copy = new uchar[total];
       memcpy(copy, img->array, total);
       src = CGDataProviderCreateWithData(NULL, copy, total, dataReleaseCB);
       *Fl_Graphics_Driver::mask(img) = 1;
     } else {
     // the CGImage data provider must not release the image data.
-      src = CGDataProviderCreateWithData(NULL, img->array, ld * img->pixel_h(), NULL);
+      src = CGDataProviderCreateWithData(NULL, img->array, ld * img->data_h(), NULL);
     }
-    cgimg = CGImageCreate(img->pixel_w(), img->pixel_h(), 8, img->d()*8, ld,
+    cgimg = CGImageCreate(img->data_w(), img->data_h(), 8, img->d()*8, ld,
                                            lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
                                            src, 0L, false, kCGRenderingIntentDefault);
     *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
@@ -230,7 +230,7 @@ void Fl_Quartz_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uin
 }
 
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap *bm) {
-  return (fl_uintptr_t)create_bitmask(bm->pixel_w(), bm->pixel_h(), bm->array);
+  return (fl_uintptr_t)create_bitmask(bm->data_w(), bm->data_h(), bm->array);
 }
 
 
@@ -239,7 +239,7 @@ static void pmProviderRelease (void *ctxt, const void *data, size_t size) {
 }
 
 fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
-  Fl_Image_Surface *surf = new Fl_Image_Surface(img->pixel_w(), img->pixel_h());
+  Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surf);
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
   CGContextRef src = surf->get_offscreen_before_delete();

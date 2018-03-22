@@ -153,7 +153,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
     return new Fl_Pixmap((char *const*)0);
   }
   // Optimize the simple copy where the width and height are the same...
-  if (W == pixel_w() && H == pixel_h()) {
+  if (W == data_w() && H == data_h()) {
     // Make an exact copy of the image and return it...
     new_image = new Fl_Pixmap(data());
     new_image->copy_data();
@@ -185,10 +185,10 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
   sprintf(new_info, "%d %d %d %d", W, H, ncolors, chars_per_pixel);
 
   // Figure out Bresenham step/modulus values...
-  xmod   = pixel_w() % W;
-  xstep  = (pixel_w() / W) * chars_per_pixel;
-  ymod   = pixel_h() % H;
-  ystep  = pixel_h() / H;
+  xmod   = data_w() % W;
+  xstep  = (data_w() / W) * chars_per_pixel;
+  ymod   = data_h() % H;
+  ystep  = data_h() / H;
 
   // Allocate memory for the new array...
   if (ncolors < 0) new_data = new char *[H + 2];

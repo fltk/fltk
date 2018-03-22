@@ -332,7 +332,7 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, i
   if (!*id(pxm)) {
     int w2=pxm->w(), h2=pxm->h();
     cache_size(pxm, w2, h2); // after this, w2 x h2 is size of desired cached image
-    if (pxm->pixel_w() != w2 || pxm->pixel_h() != h2) { // build a scaled id_ & pixmap_ for pxm
+    if (pxm->data_w() != w2 || pxm->data_h() != h2) { // build a scaled id_ & pixmap_ for pxm
       Fl_Pixmap *pxm2 = (Fl_Pixmap*)pxm->copy(w2, h2);
       *id(pxm) = cache(pxm2);
       *cache_scale(pxm) = scale_;
@@ -357,7 +357,7 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, in
   if (!*id(bm)) {
     int w2 = bm->w(), h2 = bm->h();
     cache_size(bm, w2, h2); // after this, w2 x h2 is size of desired cached image
-    if (bm->pixel_w() != w2 || bm->pixel_h() != h2) { // build a scaled id_ for bm
+    if (bm->data_w() != w2 || bm->data_h() != h2) { // build a scaled id_ for bm
       Fl_Bitmap *bm2 = (Fl_Bitmap*)bm->copy(w2, h2);
       *id(bm) = cache(bm2);
       *cache_scale(bm) =  scale_;
@@ -378,8 +378,8 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
   if (start_image(img, XP, YP, WP, HP, cx, cy, XP, YP, WP, HP)) {
     return;
   }
-  int need_scaled_drawing = fabs(img->w() - img->pixel_w()/scale_)/img->w() > 0.05 ||
-  fabs(img->h() - img->pixel_h()/scale_)/img->h() > 0.05;
+  int need_scaled_drawing = fabs(img->w() - img->data_w()/scale_)/img->w() > 0.05 ||
+  fabs(img->h() - img->data_h()/scale_)/img->h() > 0.05;
   if (need_scaled_drawing && can_do_alpha_blending()) { // try and use the system's scaled image drawing
     push_clip(XP, YP, WP, HP);
     int done = draw_scaled(img, XP-cx, YP-cy, img->w(), img->h());

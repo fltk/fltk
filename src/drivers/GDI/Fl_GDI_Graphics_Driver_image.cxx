@@ -463,7 +463,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int X
   fl_end_offscreen(); // offscreen data is in tmp_id
   SelectObject(tempdc, (HGDIOBJ)tmp_id); // use offscreen data
                                          // draw it to printer context with background color as transparent
-  fl_TransparentBlt(gc_, X,Y,W,H, tempdc, cx, cy, bm->pixel_w(), bm->pixel_h(), RGB(r, g, b) );
+  fl_TransparentBlt(gc_, X,Y,W,H, tempdc, cx, cy, bm->data_w(), bm->data_h(), RGB(r, g, b) );
   fl_delete_offscreen(tmp_id);
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
@@ -472,14 +472,14 @@ void Fl_GDI_Printer_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int X
 
 static Fl_Offscreen build_id(Fl_RGB_Image *img, void **pmask)
 {
-  Fl_Image_Surface *surface = new Fl_Image_Surface(img->pixel_w(), img->pixel_h());
+  Fl_Image_Surface *surface = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surface);
   if ((img->d() == 2 || img->d() == 4) && fl_can_do_alpha_blending()) {
-    fl_draw_image(img->array, 0, 0, img->pixel_w(), img->pixel_h(), img->d()|FL_IMAGE_WITH_ALPHA, img->ld());
+    fl_draw_image(img->array, 0, 0, img->data_w(), img->data_h(), img->d()|FL_IMAGE_WITH_ALPHA, img->ld());
   } else {
-    fl_draw_image(img->array, 0, 0, img->pixel_w(), img->pixel_h(), img->d(), img->ld());
+    fl_draw_image(img->array, 0, 0, img->data_w(), img->data_h(), img->d(), img->ld());
     if (img->d() == 2 || img->d() == 4) {
-      *pmask = fl_create_alphamask(img->pixel_w(), img->pixel_h(), img->d(), img->ld(), img->array);
+      *pmask = fl_create_alphamask(img->data_w(), img->data_h(), img->d(), img->ld(), img->array);
     }
   }
   Fl_Surface_Device::pop_current();
@@ -494,8 +494,8 @@ void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, in
   Y = Y*s;
   cache_size(img, W, H);
   cx *= s; cy *= s;
-  if (W + cx > img->pixel_w()) W = img->pixel_w() - cx;
-  if (H + cy > img->pixel_h()) H = img->pixel_h() - cy;
+  if (W + cx > img->data_w()) W = img->data_w() - cx;
+  if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
     *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));
     *cache_scale(img) = 1;
@@ -521,13 +521,13 @@ void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, in
 int Fl_GDI_Printer_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
   XFORM old_tr, tr;
   GetWorldTransform(gc_, &old_tr); // storing old transform
-  tr.eM11 = float(WP)/float(img->pixel_w());
-  tr.eM22 = float(HP)/float(img->pixel_h());
+  tr.eM11 = float(WP)/float(img->data_w());
+  tr.eM22 = float(HP)/float(img->data_h());
   tr.eM12 = tr.eM21 = 0;
   tr.eDx =  float(XP);
   tr.eDy =  float(YP);
   ModifyWorldTransform(gc_, &tr, MWT_LEFTMULTIPLY);
-  img->draw(0, 0, img->pixel_w(), img->pixel_h(), 0, 0);
+  img->draw(0, 0, img->data_w(), img->data_h(), 0, 0);
   SetWorldTransform(gc_, &old_tr);
   return 1;
 }
@@ -548,10 +548,10 @@ int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, i
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(XP*scale_, YP*scale_, WP, HP, new_gc, 0, 0, rgb->pixel_w(), rgb->pixel_h());
+    alpha_blend_(XP*scale_, YP*scale_, WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h());
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, XP*scale_, YP*scale_, WP, HP, new_gc, 0, 0, rgb->pixel_w(), rgb->pixel_h(), SRCCOPY);
+    StretchBlt(gc_, XP*scale_, YP*scale_, WP, HP, new_gc, 0, 0, rgb->data_w(), rgb->data_h(), SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
@@ -601,7 +601,7 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
 
 fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
   *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
-  return (fl_uintptr_t)fl_create_bitmap(bm->pixel_w(), bm->pixel_h(), bm->array);
+  return (fl_uintptr_t)fl_create_bitmap(bm->data_w(), bm->data_h(), bm->array);
 }
 
 void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int X, int Y, int W, int H, int cx, int cy) {
@@ -646,7 +646,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_unscaled(Fl_Pixmap *pxm, float s, int 
 
 
 fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
-  Fl_Image_Surface *surf = new Fl_Image_Surface(img->pixel_w(), img->pixel_h());
+  Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surf);
   uchar *bitmap = 0;
   Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
@@ -654,7 +654,7 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   *Fl_Graphics_Driver::pixmap_bg_color(img) = Fl_WinAPI_System_Driver::win_pixmap_bg_color;  // computed by fl_draw_pixmap()
   Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)fl_create_bitmask(img->pixel_w(), img->pixel_h(), bitmap);
+    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)fl_create_bitmask(img->data_w(), img->data_h(), bitmap);
     delete[] bitmap;
   }
   Fl_Surface_Device::pop_current();

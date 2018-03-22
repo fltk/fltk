@@ -158,7 +158,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
   uchar		*new_array;	// New array for image data
 
   // Optimize the simple copy where the width and height are the same...
-  if (W == pixel_w() && H == pixel_h()) {
+  if (W == data_w() && H == data_h()) {
     new_array = new uchar [H * ((W + 7) / 8)];
     memcpy(new_array, array, H * ((W + 7) / 8));
 
@@ -182,10 +182,10 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
 
   // Figure out Bresenham step/modulus values...
-  xmod   = pixel_w() % W;
-  xstep  = pixel_w() / W;
-  ymod   = pixel_h() % H;
-  ystep  = pixel_h() / H;
+  xmod   = data_w() % W;
+  xstep  = data_w() / W;
+  ymod   = data_h() % H;
+  ystep  = data_h() / H;
 
   // Allocate memory for the new image...
   new_array = new uchar [H * ((W + 7) / 8)];
@@ -196,7 +196,7 @@ Fl_Image *Fl_Bitmap::copy(int W, int H) {
 
   // Scale the image using a nearest-neighbor algorithm...
   for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W, old_ptr = array + sy * ((pixel_w() + 7) / 8), sx = 0, new_bit = 1;
+    for (dx = W, xerr = W, old_ptr = array + sy * ((data_w() + 7) / 8), sx = 0, new_bit = 1;
 	 dx > 0;
 	 dx --) {
       old_bit = (uchar)(1 << (sx & 7));
