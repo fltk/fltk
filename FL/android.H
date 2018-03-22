@@ -25,6 +25,23 @@
 #  error "Never use <FL/android.H> directly; include <FL/platform.H> instead."
 #endif // !FL_PLATFORM_H
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*
+ * This is the function that application code must implement, representing
+ * the main entry to the app.
+ */
+extern int main(int argc, char **argv);
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
 typedef void *Window; // used by fl_find(), fl_xid() and class Fl_X
 
 /* Reference to the current device context

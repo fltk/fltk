@@ -41,6 +41,13 @@ class Fl_Android_Bytemap;
 */
 class FL_EXPORT Fl_Android_Graphics_Driver : public Fl_Scalable_Graphics_Driver
 {
+  class Vertex {
+  public:
+    void set(float x, float y, bool gap = false) { pX = x; pY = y; pIsGap = gap; }
+    float pX, pY;
+    bool pIsGap;
+  };
+
 public:
   Fl_Android_Graphics_Driver();
   virtual ~Fl_Android_Graphics_Driver() override;
@@ -62,15 +69,34 @@ public:
   virtual Fl_Font set_fonts(const char *name) override;
   virtual void font_name(int num, const char *name) override;
 
-  // --- line drawinf stuff
+  // --- line drawing stuff
   virtual void rectf_unscaled(float x, float y, float w, float h) override;
   void rectf_unclipped(float x, float y, float w, float h);
   virtual void point_unscaled(float x, float y) override;
-  void rect_unscaled(float x, float y, float w, float h);
+  virtual void rect_unscaled(float x, float y, float w, float h) override;
   virtual void xyline_unscaled(float x, float y, float x1) override;
   void xyline_unclipped(float x, float y, float x1);
   virtual void yxline_unscaled(float x, float y, float y1) override;
   void yxline_unclipped(float x, float y, float y1);
+  virtual void line_unscaled(float  x, float y, float x1, float y1) override;
+
+  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
+  virtual void begin_points() override;
+  virtual void begin_line() override;
+  virtual void begin_loop() override;
+  virtual void begin_polygon() override;
+  virtual void begin_complex_polygon() override;
+  virtual void end_points() override;
+  virtual void end_line() override;
+  virtual void end_loop() override;
+  virtual void end_polygon() override;
+  void end_polygon(int begin, int end);
+  virtual void end_complex_polygon() override;
+  virtual void gap() override;
+  virtual void transformed_vertex0(float x, float y) override;
+
+  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
 
   // --- clipping
   virtual void push_clip(int x, int y, int w, int h) override;
@@ -118,30 +144,18 @@ public:
   static HRGN scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr);
   virtual void scale(float f);
 protected:
-  void transformed_vertex0(float x, float y);
   void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
-  virtual void line_unscaled(float x, float y, float x1, float y1);
   virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual Fl_Region scale_clip(float f);
-  // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
-  void begin_complex_polygon();
-  void end_points();
-  void end_line();
-  void end_loop();
-  void end_polygon();
-  void end_complex_polygon();
-  void gap();
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
   // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
   // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   virtual void line_style_unscaled(int style, float width, char* dashes);
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
@@ -176,6 +190,11 @@ protected:
 
   // Final clipping region for all graphics calls to this class.
   Fl_Complex_Region pClippingRegion;
+
+  void begin_vertices();
+  void add_vertex(float x, float y, bool gap=false);
+  int pnVertex = 0, pNVertex = 0, pVertexGapStart = 0;
+  Vertex *pVertex = nullptr;
 };
 
 

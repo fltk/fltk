@@ -517,11 +517,11 @@ void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, in
   if (str) {
     int dx, dy, w, h;
     text_extents_unscaled(str, n, dx, dy, w, h);
-    pClippingRegion.print("<---- clip text to this");
-    Fl_Rect_Region(x+dx, y+dy, w, h).print(str);
+    //pClippingRegion.print("<---- clip text to this");
+    //Fl_Rect_Region(x+dx, y+dy, w, h).print(str);
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x+dx, y+dy, w, h))) {
       Fl_Rect_Region &r = it->clipped_rect();
-      r.print("Clip");
+      //r.print("Clip");
       const char *e = str + n;
       for (int i = 0; i < n;) {
         int incr = 1;

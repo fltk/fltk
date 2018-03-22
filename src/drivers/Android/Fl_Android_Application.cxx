@@ -25,6 +25,7 @@
 #include "Fl_Android_Application.H"
 #include "Fl_Android_Window_Driver.H"
 
+#include <FL/platform.H>
 #include <FL/fl_draw.H>
 
 #include <jni.h>

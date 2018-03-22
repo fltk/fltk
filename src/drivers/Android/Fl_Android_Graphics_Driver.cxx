@@ -24,7 +24,9 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <errno.h>
+#include <math.h>
 
+static int sign(int v) { return (v<0) ? -1 : 1; }
 
 /*
  * By linking this module, the following static method will instantiate the
@@ -228,6 +230,451 @@ void Fl_Android_Graphics_Driver::point_unscaled(float x, float y)
   }
 
 }
+
+/**
+ * Draw a line.
+ * FIXME: it is incredibly inefficient to call 'point', especially for long lines
+ * FIXME: clipping maust be moved into this call and drawing to the screen should happen right here
+ * FIXME: line width is not considered
+ */
+void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1)
+{
+  if (x==x1) {
+    return yxline(x, y, y1);
+  }
+  if (y==y1) {
+    return xyline(x, y, x1);
+  }
+  // Bresenham
+  int w = x1 - x, dx = abs(w);
+  int h = y1 - y, dy = abs(h);
+  int dx1 = sign(w), dy1 = sign(h), dx2, dy2;
+  int min, max;
+  if (dx < dy) {
+    min = dx; max = dy;
+    dx2 = 0;
+    dy2 = dy1;
+  } else {
+    min = dy; max = dx;
+    dx2 = dx1;
+    dy2 = 0;
+  }
+  int num = max/2;
+  for (int i=max+1; i>0; i--) {
+    point_unscaled(x, y);
+    num += min;
+    if (num>=max) {
+      num -= max;
+      x += dx1;
+      y += dy1;
+    } else {
+      x += dx2;
+      y += dy2;
+    }
+  }
+}
+
+/**
+ * Reset the vertex counter to zero.
+ */
+void Fl_Android_Graphics_Driver::begin_vertices()
+{
+  pnVertex = 0;
+  pVertexGapStart = 0;
+}
+
+/**
+ * Add a vertex to the vertex list. Dynamically allocates memory.
+ * @param x, y position of the vertex after matrix transformation
+ * @param gap line and loop call offer to leave a gap in the drawing
+ */
+void Fl_Android_Graphics_Driver::add_vertex(float x, float y, bool gap)
+{
+  if (pnVertex == pNVertex) {
+    pNVertex += 16;
+    pVertex = (Vertex*)::realloc(pVertex, pNVertex*sizeof(Vertex));
+  }
+  pVertex[pnVertex].set(x, y);
+  pVertex[pnVertex].pIsGap = gap;
+  pnVertex++;
+}
+
+/**
+ * Start a list of vertices to draw multiple points.
+ */
+void Fl_Android_Graphics_Driver::begin_points()
+{
+  begin_vertices();
+  Fl_Scalable_Graphics_Driver::begin_points();
+}
+
+/**
+ * Start a list of vertices to draw a polyline.
+ */
+void Fl_Android_Graphics_Driver::begin_line()
+{
+  begin_vertices();
+  Fl_Scalable_Graphics_Driver::begin_line();
+}
+
+/**
+ * Start a list of vertices to draw a line loop.
+ */
+void Fl_Android_Graphics_Driver::begin_loop()
+{
+  begin_vertices();
+  Fl_Scalable_Graphics_Driver::begin_loop();
+}
+
+/**
+ * Start a list of vertices to draw a polygon.
+ */
+void Fl_Android_Graphics_Driver::begin_polygon()
+{
+  begin_vertices();
+  Fl_Scalable_Graphics_Driver::begin_polygon();
+}
+
+/**
+ * Start a list of vertices to draw a complex polygon.
+ */
+void Fl_Android_Graphics_Driver::begin_complex_polygon()
+{
+  begin_vertices();
+  Fl_Scalable_Graphics_Driver::begin_complex_polygon();
+}
+
+/**
+ * Draw all stored vertices as points.
+ */
+void Fl_Android_Graphics_Driver::end_points()
+{
+  for (int i=0; i<pnVertex; ++i) {
+    Vertex &v = pVertex[i];
+    if (!v.pIsGap)
+      point_unscaled(v.pX, v.pY);
+  }
+}
+
+/**
+ * Draw all stored vertices as a polyline.
+ */
+void Fl_Android_Graphics_Driver::end_line()
+{
+  Vertex &v1 = pVertex[0];
+  for (int i=1; i<pnVertex; ++i) {
+    Vertex &v2 = pVertex[i];
+    if (!v1.pIsGap && !v2.pIsGap)
+      line_unscaled(v1.pX, v1.pY, v2.pX, v2.pY);
+    v1 = v2;
+  }
+}
+
+/**
+ * Draw all stored vertices as a polyline loop.
+ */
+void Fl_Android_Graphics_Driver::end_loop()
+{
+  gap();
+  Vertex &v1 = pVertex[0];
+  for (int i=1; i<pnVertex; ++i) {
+    Vertex &v2 = pVertex[i];
+    if (!v1.pIsGap)
+      line_unscaled(v1.pX, v1.pY, v2.pX, v2.pY);
+    v1 = v2;
+  }
+}
+
+/**
+ * Draw all stored vertices as a polygon.
+ * FIXME: these calls are very ineffiecient. Avoid pointer lookup.
+ * FIXME: use the current clipping rect to accelerate rendering
+ * FIXME: unmix float and int
+ */
+void Fl_Android_Graphics_Driver::end_polygon(int begin, int end)
+{
+  if (end - begin < 2) return;
+
+  Vertex *v = pVertex+0;
+  int xMin = v->pX, xMax = xMin, yMin = v->pY, yMax = yMin;
+  for (int i = begin+1; i < end; i++) {
+    v = pVertex+i;
+    if (v->pX < xMin) xMin = v->pX;
+    if (v->pX > xMax) xMax = v->pX;
+    if (v->pY < yMin) yMin = v->pY;
+    if (v->pY > yMax) yMax = v->pY;
+  }
+  xMax++; yMax++;
+
+  int nodes, nodeX[end - begin], pixelX, pixelY, i, j, swap;
+
+  //  Loop through the rows of the image.
+  for (pixelY = yMin; pixelY < yMax; pixelY++) {
+    //  Build a list of nodes.
+    nodes = 0;
+    j = begin;
+    for (i = begin+1; i < end; i++) {
+      if (   pVertex[i].pY < pixelY && pVertex[j].pY >= pixelY
+          || pVertex[j].pY < pixelY && pVertex[i].pY >= pixelY)
+      {
+        float dy = pVertex[j].pY - pVertex[i].pY;
+        if (fabsf(dy)>.0001) {
+          nodeX[nodes++] = (int)(pVertex[i].pX +
+                                 (pixelY - pVertex[i].pY) / dy
+                                 * (pVertex[j].pX - pVertex[i].pX));
+        } else {
+          nodeX[nodes++] = pVertex[i].pX;
+        }
+      }
+      j = i;
+    }
+
+    //  Sort the nodes, via a simple “Bubble” sort.
+    i = 0;
+    while (i < nodes - 1) {
+      if (nodeX[i] > nodeX[i + 1]) {
+        swap = nodeX[i];
+        nodeX[i] = nodeX[i + 1];
+        nodeX[i + 1] = swap;
+        if (i) i--;
+      } else {
+        i++;
+      }
+    }
+
+    //  Fill the pixels between node pairs.
+    for (i = 0; i < nodes; i += 2) {
+      if (nodeX[i] >= xMax) break;
+      if (nodeX[i + 1] > xMin) {
+        if (nodeX[i] < xMin) nodeX[i] = xMin;
+        if (nodeX[i + 1] > xMax) nodeX[i + 1] = xMax;
+        xyline_unscaled(nodeX[i], pixelY, nodeX[i + 1]);
+      }
+    }
+  }
+
+}
+
+/**
+ * Draw all stored vertices as a polygon.
+ * Mind the gap!
+ */
+void Fl_Android_Graphics_Driver::end_polygon()
+{
+  if (pnVertex==0) return;
+  gap();
+  int start = 0, end = 0;
+  for (int i=0; i<pnVertex; i++) {
+    if (pVertex[i].pIsGap) {
+      end = i+1;
+      end_polygon(start, end);
+      start = end;
+      i++;
+    }
+  }
+}
+
+/**
+ * Draw all stored vertices as a possibly self-intersecting polygon.
+ * FIXME: these calls are very ineffiecient. Avoid pointer lookup.
+ * FIXME: use the current clipping rect to accelerate rendering
+ * FIXME: unmix float and int
+ */
+void Fl_Android_Graphics_Driver::end_complex_polygon()
+{
+  if (pnVertex < 2) return;
+
+  gap(); // adds the first coordinate of this loop and marks it as a gap
+  int begin = 0, end = pnVertex;
+
+  Vertex *v = pVertex+0;
+  int xMin = v->pX, xMax = xMin, yMin = v->pY, yMax = yMin;
+  for (int i = begin+1; i < end; i++) {
+    v = pVertex+i;
+    if (v->pX < xMin) xMin = v->pX;
+    if (v->pX > xMax) xMax = v->pX;
+    if (v->pY < yMin) yMin = v->pY;
+    if (v->pY > yMax) yMax = v->pY;
+  }
+  xMax++; yMax++;
+
+  int nodes, nodeX[end - begin], pixelX, pixelY, i, j, swap;
+
+  //  Loop through the rows of the image.
+  for (pixelY = yMin; pixelY < yMax; pixelY++) {
+    //  Build a list of nodes.
+    nodes = 0;
+    for (i = begin+1; i < end; i++) {
+      j = i-1;
+      if (pVertex[j].pIsGap)
+        continue;
+      if (   pVertex[i].pY < pixelY && pVertex[j].pY >= pixelY
+          || pVertex[j].pY < pixelY && pVertex[i].pY >= pixelY)
+      {
+        float dy = pVertex[j].pY - pVertex[i].pY;
+        if (fabsf(dy)>.0001) {
+          nodeX[nodes++] = (int)(pVertex[i].pX +
+                                 (pixelY - pVertex[i].pY) / dy
+                                 * (pVertex[j].pX - pVertex[i].pX));
+        } else {
+          nodeX[nodes++] = pVertex[i].pX;
+        }
+      }
+    }
+    //Fl_Android_Application::log_e("%d nodes (must be even!)", nodes);
+
+    //  Sort the nodes, via a simple “Bubble” sort.
+    i = 0;
+    while (i < nodes - 1) {
+      if (nodeX[i] > nodeX[i + 1]) {
+        swap = nodeX[i];
+        nodeX[i] = nodeX[i + 1];
+        nodeX[i + 1] = swap;
+        if (i) i--;
+      } else {
+        i++;
+      }
+    }
+
+    //  Fill the pixels between node pairs.
+    for (i = 0; i < nodes; i += 2) {
+      if (nodeX[i] >= xMax) break;
+      if (nodeX[i + 1] > xMin) {
+        if (nodeX[i] < xMin) nodeX[i] = xMin;
+        if (nodeX[i + 1] > xMax) nodeX[i + 1] = xMax;
+        xyline_unscaled(nodeX[i], pixelY, nodeX[i + 1]);
+      }
+    }
+  }
+}
+
+/**
+ * Add a gap to a polyline drawing
+ */
+void Fl_Android_Graphics_Driver::gap()
+{
+  // drop gaps at the start or gap after gap
+  if (pnVertex==0 || pnVertex==pVertexGapStart)
+    return;
+
+  // create a loop
+  Vertex &v = pVertex[pVertexGapStart];
+  add_vertex(v.pX, v.pY, true);
+  pVertexGapStart = pnVertex;
+}
+
+/**
+ * Add a vertex to the list.
+ * TODO: we should maintain a bounding box for faster clipping.
+ */
+void Fl_Android_Graphics_Driver::transformed_vertex0(float x, float y)
+{
+  add_vertex(x, y);
+}
+
+
+//void Fl_Pico_Graphics_Driver::circle(double x, double y, double r)
+//{
+//  begin_loop();
+//  double X = r;
+//  double Y = 0;
+//  fl_vertex(x+X,y+Y);
+//
+//  double rx = fabs(transform_dx(r, r));
+//  double ry = fabs(transform_dy(r, r));
+//
+//  double circ = M_PI*0.5*(rx+ry);
+//  int segs = circ * 360 / 1000;  // every line is about three pixels long
+//  if (segs<16) segs = 16;
+//
+//  double A = 2*M_PI;
+//  int i = segs;
+//
+//  if (i) {
+//    double epsilon = A/i;                       // Arc length for equal-size steps
+//    double cos_e = cos(epsilon);        // Rotation coefficients
+//    double sin_e = sin(epsilon);
+//    do {
+//      double Xnew =  cos_e*X + sin_e*Y;
+//      Y = -sin_e*X + cos_e*Y;
+//      fl_vertex(x + (X=Xnew), y + Y);
+//    } while (--i);
+//  }
+//  end_loop();
+//}
+
+/**
+ * Draw an arc.
+ * @param xi
+ * @param yi
+ * @param w
+ * @param h
+ * @param a1
+ * @param a2
+ * FIXME: float-to-int interpolation is horrible!
+ */
+void Fl_Android_Graphics_Driver::arc_unscaled(float xi, float yi, float w, float h, double a1, double a2)
+{
+  if (a2<=a1) return;
+
+  double rx = w/2.0;
+  double ry = h/2.0;
+  double x = xi + rx;
+  double y = yi + ry;
+  double circ = M_PI*0.5*(rx+ry);
+  int i, segs = circ * (a2-a1) / 1000;  // every line is about three pixels long
+  if (segs<3) segs = 3;
+
+  int px, py;
+  a1 = a1/180*M_PI;
+  a2 = a2/180*M_PI;
+  double step = (a2-a1)/segs;
+
+  int nx = x + cos(a1)*rx;
+  int ny = y - sin(a1)*ry;
+  for (i=segs; i>0; i--) {
+    a1+=step;
+    px = nx; py = ny;
+    nx = x + cos(a1)*rx;
+    ny = y - sin(a1)*ry;
+    line_unscaled(px, py, nx, ny);
+  }
+}
+
+void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float h, double b1, double b2)
+{
+  Fl_Color c = fl_color();
+  fl_color(FL_RED);
+  double a1 = b1/180*M_PI;
+  double a2 = b2/180*M_PI;
+  double rx = w/2.0;
+  double ry = h/2.0;
+  double x = xi + rx;
+  double y = yi + ry;
+  double yMin = y - sin(a1), yMax = y - sin(a2);
+  if (yMin>yMax) { double s = yMin; yMin = yMax; yMax = s; }
+  Fl_Android_Application::log_e("------ PI");
+  for (double i=y-ry; i<=y+ry; i++) {
+    double a = asin((i-y)/ry);
+    double aR = a; if (aR<0.0) aR+=2*M_PI;
+    double aL = M_PI-a;
+    Fl_Android_Application::log_e("%g %g", aL, aR);
+#if 0
+    if (aL>=a1 && aL<=a2)
+      xyline_unscaled(x-cos(a)*rx, i, x);
+
+    if (aR>=a1 && aR<=a2)
+      xyline_unscaled(x, i, x+cos(a)*rx);
+#else
+    xyline_unscaled(x-cos(a)*rx, i, x+cos(a)*rx);
+#endif
+    //xyline_unscaled(sin(a)*rx, i, y);
+  }
+  fl_color(FL_GREEN);
+  line_unscaled(x, y, x+cos(0.5*M_PI)*rx, y+sin(0.5*M_PI)*ry);
+  fl_color(c);
+}
+
 
 
 #if 0

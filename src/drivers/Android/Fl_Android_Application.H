@@ -245,22 +245,6 @@ private:
 };
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- * This is the function that application code must implement, representing
- * the main entry to the app.
- */
-extern int main(int argc, char **argv);
-
-#ifdef __cplusplus
-}
-#endif
-
-
-
 #endif // FL_ANDROID_APPLICATION_H
 
 //
