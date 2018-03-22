@@ -414,8 +414,8 @@ void Fl_Android_Graphics_Driver::end_polygon(int begin, int end)
     nodes = 0;
     j = begin;
     for (i = begin+1; i < end; i++) {
-      if (   pVertex[i].pY < pixelY && pVertex[j].pY >= pixelY
-          || pVertex[j].pY < pixelY && pVertex[i].pY >= pixelY)
+      if (   (pVertex[i].pY < pixelY && pVertex[j].pY >= pixelY)
+          || (pVertex[j].pY < pixelY && pVertex[i].pY >= pixelY))
       {
         float dy = pVertex[j].pY - pVertex[i].pY;
         if (fabsf(dy)>.0001) {
@@ -508,8 +508,8 @@ void Fl_Android_Graphics_Driver::end_complex_polygon()
       j = i-1;
       if (pVertex[j].pIsGap)
         continue;
-      if (   pVertex[i].pY < pixelY && pVertex[j].pY >= pixelY
-          || pVertex[j].pY < pixelY && pVertex[i].pY >= pixelY)
+      if (   (pVertex[i].pY < pixelY && pVertex[j].pY >= pixelY)
+          || (pVertex[j].pY < pixelY && pVertex[i].pY >= pixelY) )
       {
         float dy = pVertex[j].pY - pVertex[i].pY;
         if (fabsf(dy)>.0001) {
@@ -573,36 +573,6 @@ void Fl_Android_Graphics_Driver::transformed_vertex0(float x, float y)
 }
 
 
-//void Fl_Pico_Graphics_Driver::circle(double x, double y, double r)
-//{
-//  begin_loop();
-//  double X = r;
-//  double Y = 0;
-//  fl_vertex(x+X,y+Y);
-//
-//  double rx = fabs(transform_dx(r, r));
-//  double ry = fabs(transform_dy(r, r));
-//
-//  double circ = M_PI*0.5*(rx+ry);
-//  int segs = circ * 360 / 1000;  // every line is about three pixels long
-//  if (segs<16) segs = 16;
-//
-//  double A = 2*M_PI;
-//  int i = segs;
-//
-//  if (i) {
-//    double epsilon = A/i;                       // Arc length for equal-size steps
-//    double cos_e = cos(epsilon);        // Rotation coefficients
-//    double sin_e = sin(epsilon);
-//    do {
-//      double Xnew =  cos_e*X + sin_e*Y;
-//      Y = -sin_e*X + cos_e*Y;
-//      fl_vertex(x + (X=Xnew), y + Y);
-//    } while (--i);
-//  }
-//  end_loop();
-//}
-
 /**
  * Draw an arc.
  * @param xi
@@ -641,38 +611,62 @@ void Fl_Android_Graphics_Driver::arc_unscaled(float xi, float yi, float w, float
   }
 }
 
+/**
+ * Draw a piece of a pie.
+ * FIXME: this is not working very well at all.
+ * @param xi
+ * @param yi
+ * @param w
+ * @param h
+ * @param b1
+ * @param b2
+ */
 void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float h, double b1, double b2)
 {
-  Fl_Color c = fl_color();
-  fl_color(FL_RED);
-  double a1 = b1/180*M_PI;
-  double a2 = b2/180*M_PI;
+//  Fl_Android_Application::log_e("------ PIE: %g %g (%g, %g)", b1, b2, b1-90, b2-90);
+//  Fl_Color c = fl_color();
+//  fl_color(FL_YELLOW);
+
+  if (b1>=b2) return;
+
   double rx = w/2.0;
   double ry = h/2.0;
   double x = xi + rx;
   double y = yi + ry;
-  double yMin = y - sin(a1), yMax = y - sin(a2);
-  if (yMin>yMax) { double s = yMin; yMin = yMax; yMax = s; }
-  Fl_Android_Application::log_e("------ PI");
-  for (double i=y-ry; i<=y+ry; i++) {
-    double a = asin((i-y)/ry);
-    double aR = a; if (aR<0.0) aR+=2*M_PI;
-    double aL = M_PI-a;
-    Fl_Android_Application::log_e("%g %g", aL, aR);
-#if 0
-    if (aL>=a1 && aL<=a2)
-      xyline_unscaled(x-cos(a)*rx, i, x);
 
-    if (aR>=a1 && aR<=a2)
-      xyline_unscaled(x, i, x+cos(a)*rx);
-#else
-    xyline_unscaled(x-cos(a)*rx, i, x+cos(a)*rx);
-#endif
-    //xyline_unscaled(sin(a)*rx, i, y);
+//  double a1 = b1/180*M_PI;
+//  double a2 = b2/180*M_PI;
+//  double incr = (a2-a1)/20;
+//  for (int i=0; i<20; i++) {
+//    double dx = cos(a1), dy = -sin(a1);
+//    line_unscaled(x+rx*dx, y+ry*dy, x+2*rx*dx, y+2*ry*dy);
+//    a1 += incr;
+//  }
+//
+//  fl_color(FL_RED);
+
+  double at1 = (b1-90)/180*M_PI;  // radians, 0 is top, CCW
+  double at2 = (b2-90)/180*M_PI;  // radians, 0 is top, CCW
+  if (at2<0) { at1+=2*M_PI; at2+=2*M_PI; }
+  if (at2>2*M_PI) { at1-=2*M_PI; at2-=2*M_PI; }
+
+  for (double iy=y-ry; iy<=y+ry; iy++) {
+    double a = acos((iy-y)/ry);
+    double aL = M_PI-a; // 0..PI
+    double aR = a+M_PI; // 2PI..PI
+//    Fl_Android_Application::log_e("%g %g (%g)  - %g %g", aL, aR, aR-2*M_PI, at1, at2);
+
+    if ( ((at1<0) && ((at1<=aL-2*M_PI) && (at2>aL-2*M_PI) || (at1<=aL) && (at2>aL)))
+         || ((at1>=0) && (at1<=aL) && (at2>aL)))
+      xyline_unscaled(x-sin(aL)*rx, iy, x);
+
+    if ( ((at1<0) && ((at1<=aR-2*M_PI) && (at2>aR-2*M_PI) || (at1<=aR) && (at2>aR)))
+      || ((at1>=0) && (at1<=aR) && (at2>aR)))
+      xyline_unscaled(x, iy, x-sin(aR)*rx);
   }
-  fl_color(FL_GREEN);
-  line_unscaled(x, y, x+cos(0.5*M_PI)*rx, y+sin(0.5*M_PI)*ry);
-  fl_color(c);
+
+
+//    fl_color(c);
 }
 
 

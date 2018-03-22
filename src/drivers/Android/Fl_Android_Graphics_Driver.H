@@ -95,8 +95,8 @@ public:
   virtual void gap() override;
   virtual void transformed_vertex0(float x, float y) override;
 
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2);
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2);
+  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2) override;
+  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2) override;
 
   // --- clipping
   virtual void push_clip(int x, int y, int w, int h) override;
