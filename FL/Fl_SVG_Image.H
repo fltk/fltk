@@ -124,7 +124,7 @@ public:
   Fl_SVG_Image(const char *filename, const char *svg_data = NULL);
   virtual ~Fl_SVG_Image();
   virtual Fl_Image *copy(int W, int H);
-  Fl_Image *copy() { return copy(w(), h()); }
+  Fl_Image *copy() { return Fl_Image::copy(); }
   void resize(int width, int height);
   virtual void desaturate();
   virtual void color_average(Fl_Color c, float i);

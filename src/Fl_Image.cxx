@@ -79,11 +79,10 @@ void Fl_Image::draw_empty(int X, int Y) {
 }
 
 /**
-  The copy() method creates a copy of the specified
-  image. If the width and height are provided, the image is
-  resized to the specified size. The image should be deleted (or in
-  the case of Fl_Shared_Image, released) when you are done
-  with it.
+Creates a resized copy of the specified image.
+The image should be deleted (or in the case of Fl_Shared_Image, released)
+when you are done with it.
+ \param W,H  width and height of the returned copied image
 */
 Fl_Image *Fl_Image::copy(int W, int H) {
   return new Fl_Image(W, H, d());

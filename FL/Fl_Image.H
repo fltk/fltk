@@ -164,13 +164,11 @@ public:
   virtual ~Fl_Image();
   virtual Fl_Image *copy(int W, int H);
   /**
-   The copy() method creates a copy of the specified
-   image. If the width and height are provided, the image is
-   resized to the specified size. The image should be deleted (or in
-   the case of Fl_Shared_Image, released) when you are done
-   with it.
+   Creates a copy of the specified image.
+   The image should be deleted (or in the case of Fl_Shared_Image, released)
+   when you are done with it.
    */
-  Fl_Image *copy() { return copy(w(), h()); }
+  Fl_Image *copy() { Fl_Image *img = copy(data_w(), data_h()); img->scale(w(), h(), 0, 1); return img;}
   virtual void color_average(Fl_Color c, float i);
   /**
    The inactive() method calls
@@ -268,7 +266,7 @@ public:
   Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg=FL_GRAY);
   virtual ~Fl_RGB_Image();
   virtual Fl_Image *copy(int W, int H);
-  Fl_Image *copy() { return copy(w(), h()); }
+  Fl_Image *copy() { return Fl_Image::copy(); }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx=0, int cy=0);
