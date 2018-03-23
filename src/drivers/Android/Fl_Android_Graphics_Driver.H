@@ -86,6 +86,7 @@ public:
   virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) override;
   virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2) override;
   virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2) override;
+  virtual void ellipse_unscaled(double xt, double yt, double rx, double ry) override;
 
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void begin_points() override;
@@ -151,7 +152,6 @@ protected:
   void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
   virtual Fl_Region scale_clip(float f);
-  virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
   // using void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end);
   // --- implementation is in src/fl_arci.cxx which includes src/cfg_gfx/xxx_arci.cxx
