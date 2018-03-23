@@ -165,7 +165,7 @@ void bt(const char *name, Fl_Boxtype type, int square=0) {
 }
 
 int main(int argc, char ** argv) {
-  window = new Fl_Double_Window(4*W,ROWS*H);
+  window = new Fl_Double_Window(-W, 0, 4*W,ROWS*H);
   window->box(FL_FLAT_BOX);
 #if 0 // this code uses the command line arguments to set arbitrary color schemes
   Fl::args(argc, argv);

@@ -274,6 +274,59 @@ void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float
   }
 }
 
+
+void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1, float x2, float y2)
+{
+  begin_line();
+  transformed_vertex0(x, y);
+  transformed_vertex0(x1, y1);
+  transformed_vertex0(x2, y2);
+  end_line();
+}
+
+
+void Fl_Android_Graphics_Driver::loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)
+{
+  begin_loop();
+  transformed_vertex0(x0, y0);
+  transformed_vertex0(x1, y1);
+  transformed_vertex0(x2, y2);
+  end_loop();
+}
+
+
+void Fl_Android_Graphics_Driver::loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
+{
+  begin_loop();
+  transformed_vertex0(x0, y0);
+  transformed_vertex0(x1, y1);
+  transformed_vertex0(x2, y2);
+  transformed_vertex0(x3, y3);
+  end_loop();
+}
+
+
+void Fl_Android_Graphics_Driver::polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)
+{
+  begin_polygon();
+  transformed_vertex0(x0, y0);
+  transformed_vertex0(x1, y1);
+  transformed_vertex0(x2, y2);
+  end_polygon();
+}
+
+
+void Fl_Android_Graphics_Driver::polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
+{
+  begin_polygon();
+  transformed_vertex0(x0, y0);
+  transformed_vertex0(x1, y1);
+  transformed_vertex0(x2, y2);
+  transformed_vertex0(x3, y3);
+  end_polygon();
+}
+
+
 /**
  * Reset the vertex counter to zero.
  */

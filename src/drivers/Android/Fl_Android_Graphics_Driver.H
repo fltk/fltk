@@ -79,6 +79,13 @@ public:
   virtual void yxline_unscaled(float x, float y, float y1) override;
   void yxline_unclipped(float x, float y, float y1);
   virtual void line_unscaled(float  x, float y, float x1, float y1) override;
+  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2) override;
+  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2) override;
+  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) override;
+  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2) override;
+  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) override;
+  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2) override;
+  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2) override;
 
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   virtual void begin_points() override;
@@ -94,9 +101,6 @@ public:
   virtual void end_complex_polygon() override;
   virtual void gap() override;
   virtual void transformed_vertex0(float x, float y) override;
-
-  virtual void arc_unscaled(float x, float y, float w, float h, double a1, double a2) override;
-  virtual void pie_unscaled(float x, float y, float w, float h, double a1, double a2) override;
 
   // --- clipping
   virtual void push_clip(int x, int y, int w, int h) override;
@@ -146,11 +150,6 @@ public:
 protected:
   void fixloop();
   // --- implementation is in src/fl_rect.cxx which includes src/cfg_gfx/gdi_rect.cxx
-  virtual void line_unscaled(float x, float y, float x1, float y1, float x2, float y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2);
-  virtual void polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
   virtual Fl_Region scale_clip(float f);
   virtual void ellipse_unscaled(double xt, double yt, double rx, double ry);
   // --- implementation is in src/fl_arc.cxx which includes src/cfg_gfx/xxx_arc.cxx if needed
