@@ -623,53 +623,216 @@ void Fl_Android_Graphics_Driver::arc_unscaled(float xi, float yi, float w, float
  */
 void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float h, double b1, double b2)
 {
-//  Fl_Android_Application::log_e("------ PIE: %g %g (%g, %g)", b1, b2, b1-90, b2-90);
-//  Fl_Color c = fl_color();
-//  fl_color(FL_YELLOW);
-
-  if (b1>=b2) return;
-
-  double rx = w/2.0;
-  double ry = h/2.0;
+  // quick access to bounding box size
+  double rx = w / 2.0;
+  double ry = h / 2.0;
   double x = xi + rx;
   double y = yi + ry;
 
-//  double a1 = b1/180*M_PI;
-//  double a2 = b2/180*M_PI;
-//  double incr = (a2-a1)/20;
-//  for (int i=0; i<20; i++) {
-//    double dx = cos(a1), dy = -sin(a1);
-//    line_unscaled(x+rx*dx, y+ry*dy, x+2*rx*dx, y+2*ry*dy);
-//    a1 += incr;
-//  }
-//
-//  fl_color(FL_RED);
 
-  double at1 = (b1-90)/180*M_PI;  // radians, 0 is top, CCW
-  double at2 = (b2-90)/180*M_PI;  // radians, 0 is top, CCW
-  if (at2<0) { at1+=2*M_PI; at2+=2*M_PI; }
-  if (at2>2*M_PI) { at1-=2*M_PI; at2-=2*M_PI; }
+  double a1 = b1 / 180 * M_PI;
+  double a2 = b2 / 180 * M_PI;
 
-  for (double iy=y-ry; iy<=y+ry; iy++) {
-    double a = acos((iy-y)/ry);
-    double aL = M_PI-a; // 0..PI
-    double aR = a+M_PI; // 2PI..PI
-//    Fl_Android_Application::log_e("%g %g (%g)  - %g %g", aL, aR, aR-2*M_PI, at1, at2);
+  // invert to make b1 always the smaller value
+  if (b1 > b2) {
+    b1 -= 360.0;
+  }
+  if (b1 == b2) return;
 
-    if ( ((at1<0) && ((at1<=aL-2*M_PI) && (at2>aL-2*M_PI) || (at1<=aL) && (at2>aL)))
-         || ((at1>=0) && (at1<=aL) && (at2>aL)))
-      xyline_unscaled(x-sin(aL)*rx, iy, x);
+  // make the top the zero degree origin, turning CCW
+  b1 -= 90.0;
+  b2 -= 90.0;
 
-    if ( ((at1<0) && ((at1<=aR-2*M_PI) && (at2>aR-2*M_PI) || (at1<=aR) && (at2>aR)))
-      || ((at1>=0) && (at1<=aR) && (at2>aR)))
-      xyline_unscaled(x, iy, x-sin(aR)*rx);
+  // find the delta between angles
+  double delta = b2 - b1;
+  if (delta >= 360.0) {
+    b1 = 0.0;
+    b2 = 360.0;
+    delta = 360.0;
   }
 
+  // make sure that b2 is always in the range [0.0..360.0]
+  if (b2 > 360.0) b2 -= 360.0; // FIXME: fmod(...)
+  if (b2 < 0.0) b2 += 360.0;
+  b1 = b2 - delta;
+  // now b1 is [-360...360] and b2 is [0..360] and b1<b2;
 
-//    fl_color(c);
+  a1 = b1 / 180 * M_PI;
+  a2 = b2 / 180 * M_PI;
+  double b1o = b1;
+  bool flipped = false;
+  if (a1<0.0) { a1 += 2*M_PI; b1 += 360.0; flipped = true; }
+
+//  Fl_Android_Application::log_e(" %g %g %d", b1, b2, flipped);
+
+  double a1Slope = tan(a1);
+  double a2Slope = tan(a2);
+
+  // draw the pie line by line
+  for (double iy = y - ry; iy <= y + ry; iy++) {
+    double a = acos((iy - y) / ry);
+    double aL = M_PI - a; // 0..PI
+    double aR = a + M_PI; // 2PI..PI
+    double sinALrx = sin(aL)*rx;
+
+//    fl_color(FL_RED);
+
+    if (aL<0.5*M_PI) {
+      // rasterize top left quadrant
+      bool loInside = false, hiInside = false;
+      double loLeft = 0.0, loRight = 0.0;
+      double hiLeft = 0.0, hiRight = 0.0;
+      if (b1 >= 0 && b1 < 90) {
+        loInside = true;
+        loLeft = -sinALrx;
+        loRight = a1Slope * (iy - y);
+      }
+      if (b2 >= 0 && b2 < 90) {
+        hiInside = true;
+        if (aL < a2)
+          hiLeft = -sinALrx;
+        else
+          hiLeft = a2Slope * (iy - y);
+      }
+      if (loInside && hiInside && !flipped) {
+//        fl_color(FL_GREEN);
+        if (a1 < aL)
+          xyline_unscaled(x + hiLeft, iy, x + loRight);
+      } else {
+        if ((!loInside) && (!hiInside)) {
+//          fl_color(FL_MAGENTA);
+          if ( (b1o<=0.0 && b2>=90.0) || (b1o<=(0.0-360.0) && b2>=(90.0-360.0)) )
+            xyline_unscaled(x - sinALrx, iy, x);
+        } else {
+          if (loInside) {
+//            fl_color(FL_BLUE);
+            if (a1 < aL)
+              xyline_unscaled(x + loLeft, iy, x + loRight);
+          }
+          if (hiInside) {
+//            fl_color(FL_YELLOW);
+            xyline_unscaled(x + hiLeft, iy, x);
+          }
+        }
+      }
+    } else {
+      // rasterize bottom left quadrant
+      bool loInside = false, hiInside = false;
+      double loLeft = 0.0, loRight = 0.0;
+      double hiLeft = 0.0, hiRight = 0.0;
+      if (b1 >= 90 && b1 < 180) {
+        loInside = true;
+        if (aL>=a1)
+          loLeft = -sinALrx;
+        else
+          loLeft = a1Slope * (iy - y);
+      }
+      if (b2 >= 90 && b2 < 180) {
+        hiInside = true;
+        hiLeft = -sinALrx;
+        hiRight = a2Slope * (iy - y);
+      }
+      if (loInside && hiInside && !flipped) {
+//        fl_color(FL_GREEN);
+        if (a2 > aL)
+          xyline_unscaled(x + loLeft, iy, x + hiRight);
+      } else {
+        if ((!loInside) && (!hiInside)) {
+//          fl_color(FL_MAGENTA);
+          if ( (b1o<=90.0 && b2>=180.0) || (b1o<=(90.0-360.0) && b2>=(180.0-360.0)) )
+            xyline_unscaled(x - sinALrx, iy, x);
+        } else {
+          if (loInside) {
+//            fl_color(FL_BLUE);
+            xyline_unscaled(x + loLeft, iy, x);
+          }
+          if (hiInside) {
+//            fl_color(FL_YELLOW);
+            if (a2 > aL)
+              xyline_unscaled(x + hiLeft, iy, x + hiRight);
+          }
+        }
+      }
+    }
+    if (aR<1.5*M_PI) {
+      // rasterize bottom right quadrant
+      bool loInside = false, hiInside = false;
+      double loLeft = 0.0, loRight = 0.0;
+      double hiLeft = 0.0, hiRight = 0.0;
+      if (b1 >= 180 && b1 < 270) {
+        loInside = true;
+        loLeft = sinALrx;
+        loRight = a1Slope * (iy - y);
+      }
+      if (b2 >= 180 && b2 < 270) {
+        hiInside = true;
+        if (aR < a2)
+          hiLeft = sinALrx;
+        else
+          hiLeft = a2Slope * (iy - y);
+      }
+      if (loInside && hiInside && !flipped) {
+//        fl_color(FL_GREEN);
+        if (a1 < aR)
+          xyline_unscaled(x + hiLeft, iy, x + loRight);
+      } else {
+        if ((!loInside) && (!hiInside)) {
+//          fl_color(FL_MAGENTA);
+          if ( (b1o<=180.0 && b2>=270.0) || (b1o<=(180.0-360.0) && b2>=(270.0-360.0)) )
+            xyline_unscaled(x + sinALrx, iy, x);
+        } else {
+          if (loInside) {
+//            fl_color(FL_BLUE);
+            if (a1 < aR)
+              xyline_unscaled(x + loLeft, iy, x + loRight);
+          }
+          if (hiInside) {
+//            fl_color(FL_YELLOW);
+            xyline_unscaled(x + hiLeft, iy, x);
+          }
+        }
+      }
+    } else {
+      // rasterize top right quadrant
+      bool loInside = false, hiInside = false;
+      double loLeft = 0.0, loRight = 0.0;
+      double hiLeft = 0.0, hiRight = 0.0;
+      if (b1 >= 270 && b1 < 360) {
+        loInside = true;
+        if (aR>=a1)
+          loLeft = sinALrx;
+        else
+          loLeft = a1Slope * (iy - y);
+      }
+      if (b2 >= 270 && b2 < 360) {
+        hiInside = true;
+        hiLeft = sinALrx;
+        hiRight = a2Slope * (iy - y);
+      }
+      if (loInside && hiInside && !flipped) {
+//        fl_color(FL_GREEN);
+        if (a2 > aR)
+          xyline_unscaled(x + loLeft, iy, x + hiRight);
+      } else {
+        if ((!loInside) && (!hiInside)) {
+//          fl_color(FL_MAGENTA);
+          if ( (b1o<=270.0 && b2>=360.0) || (b1o<=(270.0-360.0) && b2>=(360.0-360.0)) )
+            xyline_unscaled(x + sinALrx, iy, x);
+        } else {
+          if (loInside) {
+//            fl_color(FL_BLUE);
+            xyline_unscaled(x + loLeft, iy, x);
+          }
+          if (hiInside) {
+//            fl_color(FL_YELLOW);
+            if (a2 > aR)
+              xyline_unscaled(x + hiLeft, iy, x + hiRight);
+          }
+        }
+      }
+    }
+  }
 }
-
-
 
 #if 0
 

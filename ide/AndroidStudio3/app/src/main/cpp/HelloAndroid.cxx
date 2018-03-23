@@ -15,6 +15,79 @@
  *
  */
 
+#if 0
+
+
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Hor_Slider.H>
+#include <FL/fl_draw.H>
+
+class MyBox : public Fl_Box
+{
+public:
+  MyBox(int x, int y, int w, int h) :
+    Fl_Box(x, y, w, h)
+  {
+    box(FL_DOWN_BOX);
+  }
+  void draw()
+  {
+    Fl_Box::draw();
+    fl_color(FL_BLUE);
+    fl_pie(x()+20, y()+20, w()-40, h()-40, a1, a2);
+  }
+  double a1 = 0.0;
+  double a2 = 240.0;
+};
+
+Fl_Window *win;
+MyBox *box = 0L;
+char s1Label[80] = { 0 };
+char s2Label[80] = { 0 };
+
+int main(int argc, char **argv)
+{
+  win = new Fl_Window(0, 0, 600, 800);
+
+  box = new MyBox(10, 10, 580, 580);
+
+  auto s1 = new Fl_Hor_Slider(210, 600, 380, 45, s1Label);
+  s1->range(-360, 360);
+  s1->value(0.0);
+  s1->labelsize(35);
+  s1->align(FL_ALIGN_LEFT);
+  s1->increment(1, 0);
+  s1->callback(
+    [](Fl_Widget *w, void*) {
+      auto s = (Fl_Slider*)w;
+      box->a1 = s->value();
+      sprintf(s1Label, "%g", s->value());
+      win->redraw();
+    }
+  );
+
+  auto s2 = new Fl_Hor_Slider(210, 660, 380, 45, s2Label);
+  s2->range(-360, 360);
+  s2->value(240.0);
+  s2->labelsize(35);
+  s2->align(FL_ALIGN_LEFT);
+  s2->callback(
+          [](Fl_Widget *w, void*) {
+            auto s = (Fl_Slider*)w;
+            box->a2 = s->value();
+            sprintf(s2Label, "%g", s->value());
+            win->redraw();
+          }
+  );
+
+  win->show(argc, argv);
+  Fl::run();
+  return 0;
+}
+
+#elif 1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -182,8 +255,7 @@ int main(int argc, char ** argv) {
 
 
 
-
-#if 0
+#else
 
 #include <src/drivers/Android/Fl_Android_Application.H>
 #include <FL/Fl_Window.H>
@@ -310,6 +382,8 @@ int xmain(int argc, char **argv)
       * drawing call must scale at some point (line width!)
       * rotating the screen must call the app handler and(?) window resize
       * proportions: pixels should be square
+ Need Work:
+  - Fl_Android_Graphics_Driver::pie(int) needs refactoring
 
 test/CubeMain.cxx			test/line_style.cxx
 test/CubeView.cxx			test/list_visuals.cxx
@@ -320,7 +394,7 @@ test/animated.cxx			test/menubar.cxx
 test/ask.cxx				test/minimum.cxx
 test/bitmap.cxx				test/native-filechooser.cxx
 test/blocks.cxx				test/navigation.cxx
-  * test/boxtype.cxx      : !! testing
+  * test/boxtype.cxx      : !! 'boxtype': must fix diamond box, plastic up frame, see fourth column
                                         test/offscreen.cxx
 test/browser.cxx			test/output.cxx
 test/button.cxx				test/overlay.cxx
