@@ -94,8 +94,7 @@ int Fl_Android_Screen_Driver::handle_input_event()
       int consumed = 0;
       switch (AInputEvent_getType(event)) {
         case  AINPUT_EVENT_TYPE_KEY:
-          consumed = handle_keyboard_event(event);
-          AInputQueue_finishEvent(queue, event, consumed);
+          consumed = handle_keyboard_event(queue, event);
           break;
         case AINPUT_EVENT_TYPE_MOTION:
           consumed = handle_mouse_event(queue, event);
@@ -112,12 +111,250 @@ int Fl_Android_Screen_Driver::handle_input_event()
   return 0;
 }
 
-int Fl_Android_Screen_Driver::handle_keyboard_event(AInputEvent *event)
+
+int Fl_Android_Screen_Driver::compose(int &del)
 {
-  Fl_Android_Application::log_i("Key event: action=%d keyCode=%d metaState=0x%x",
+  del = 0;
+  return 1;
+}
+
+
+int Fl_Android_Screen_Driver::handle_keyboard_event(AInputQueue *queue, AInputEvent *event)
+{
+/*
+int32_t 	AKeyEvent_getAction (const AInputEvent *key_event)
+ { AKEY_EVENT_ACTION_DOWN = 0, AKEY_EVENT_ACTION_UP = 1, AKEY_EVENT_ACTION_MULTIPLE = 2 }
+> Reading up on ACTION_MULTIPLE also explains how to deal with
+> special or sequences of characters:
+> "If the key code is not KEYCODE_UNKNOWN then the getRepeatCount()
+> method returns the number of times the given key code should be
+> executed. Otherwise, if the key code is KEYCODE_UNKNOWN, then this
+> is a sequence of characters as returned by getCharacters()."
+
+int32_t 	AKeyEvent_getFlags (const AInputEvent *key_event)
+ {
+  AKEY_EVENT_FLAG_WOKE_HERE = 0x1, AKEY_EVENT_FLAG_SOFT_KEYBOARD = 0x2, AKEY_EVENT_FLAG_KEEP_TOUCH_MODE = 0x4, AKEY_EVENT_FLAG_FROM_SYSTEM = 0x8,
+  AKEY_EVENT_FLAG_EDITOR_ACTION = 0x10, AKEY_EVENT_FLAG_CANCELED = 0x20, AKEY_EVENT_FLAG_VIRTUAL_HARD_KEY = 0x40, AKEY_EVENT_FLAG_LONG_PRESS = 0x80,
+  AKEY_EVENT_FLAG_CANCELED_LONG_PRESS = 0x100, AKEY_EVENT_FLAG_TRACKING = 0x200, AKEY_EVENT_FLAG_FALLBACK = 0x400
+}
+
+int32_t 	AKeyEvent_getKeyCode (const AInputEvent *key_event)
+ {
+  AKEYCODE_UNKNOWN = 0, AKEYCODE_SOFT_LEFT = 1, AKEYCODE_SOFT_RIGHT = 2, AKEYCODE_HOME = 3,
+  AKEYCODE_BACK = 4, AKEYCODE_CALL = 5, AKEYCODE_ENDCALL = 6, AKEYCODE_0 = 7,
+  AKEYCODE_1 = 8, AKEYCODE_2 = 9, AKEYCODE_3 = 10, AKEYCODE_4 = 11,
+  AKEYCODE_5 = 12, AKEYCODE_6 = 13, AKEYCODE_7 = 14, AKEYCODE_8 = 15,
+  AKEYCODE_9 = 16, AKEYCODE_STAR = 17, AKEYCODE_POUND = 18, AKEYCODE_DPAD_UP = 19,
+  AKEYCODE_DPAD_DOWN = 20, AKEYCODE_DPAD_LEFT = 21, AKEYCODE_DPAD_RIGHT = 22, AKEYCODE_DPAD_CENTER = 23,
+  AKEYCODE_VOLUME_UP = 24, AKEYCODE_VOLUME_DOWN = 25, AKEYCODE_POWER = 26, AKEYCODE_CAMERA = 27,
+  AKEYCODE_CLEAR = 28, AKEYCODE_A = 29, AKEYCODE_B = 30, AKEYCODE_C = 31,
+  AKEYCODE_D = 32, AKEYCODE_E = 33, AKEYCODE_F = 34, AKEYCODE_G = 35, ...
+
+int32_t 	AKeyEvent_getScanCode (const AInputEvent *key_event)
+  { AKEY_STATE_UNKNOWN = -1, AKEY_STATE_UP = 0, AKEY_STATE_DOWN = 1, AKEY_STATE_VIRTUAL = 2 }
+
+int32_t 	AKeyEvent_getMetaState (const AInputEvent *key_event)
+ {
+  AMETA_NONE = 0, AMETA_ALT_ON = 0x02, AMETA_ALT_LEFT_ON = 0x10, AMETA_ALT_RIGHT_ON = 0x20,
+  AMETA_SHIFT_ON = 0x01, AMETA_SHIFT_LEFT_ON = 0x40, AMETA_SHIFT_RIGHT_ON = 0x80, AMETA_SYM_ON = 0x04,
+  AMETA_FUNCTION_ON = 0x08, AMETA_CTRL_ON = 0x1000, AMETA_CTRL_LEFT_ON = 0x2000, AMETA_CTRL_RIGHT_ON = 0x4000,
+  AMETA_META_ON = 0x10000, AMETA_META_LEFT_ON = 0x20000, AMETA_META_RIGHT_ON = 0x40000, AMETA_CAPS_LOCK_ON = 0x100000,
+  AMETA_NUM_LOCK_ON = 0x200000, AMETA_SCROLL_LOCK_ON = 0x400000
+}
+
+int32_t 	AKeyEvent_getRepeatCount (const AInputEvent *key_event)
+int64_t 	AKeyEvent_getDownTime (const AInputEvent *key_event)
+int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
+*/
+  Fl_Android_Application::log_i("Key event: action=%d keyCode=%d metaState=0x%x scanCode=%d",
                                 AKeyEvent_getAction(event),
                                 AKeyEvent_getKeyCode(event),
-                                AKeyEvent_getMetaState(event));
+                                AKeyEvent_getMetaState(event),
+                                AKeyEvent_getScanCode(event));
+
+  auto keyAction = AKeyEvent_getAction(event);
+
+  JavaVM *javaVM = Fl_Android_Application::get_activity()->vm;
+  JNIEnv *jniEnv = Fl_Android_Application::get_activity()->env;
+
+  JavaVMAttachArgs Args = { JNI_VERSION_1_6, "NativeThread", NULL };
+  jint result = javaVM->AttachCurrentThread(&jniEnv, &Args);
+  if (result == JNI_ERR) return 0;
+
+  jclass class_key_event = jniEnv->FindClass("android/view/KeyEvent");
+
+  jmethodID method_get_unicode_char = jniEnv->GetMethodID(class_key_event,
+                                                          "getUnicodeChar",
+                                                          "(I)I");
+  jmethodID eventConstructor = jniEnv->GetMethodID(class_key_event, "<init>",
+                                                   "(JJIIIIIIII)V");
+  jobject eventObj = jniEnv->NewObject(class_key_event, eventConstructor,
+                                       AKeyEvent_getDownTime(event),
+                                       AKeyEvent_getEventTime(event),
+                                       AKeyEvent_getAction(event),
+                                       AKeyEvent_getKeyCode(event),
+                                       AKeyEvent_getRepeatCount(event),
+                                       AKeyEvent_getMetaState(event),
+                                       AInputEvent_getDeviceId(event),
+                                       AKeyEvent_getScanCode(event),
+                                       AKeyEvent_getFlags(event),
+                                       AInputEvent_getSource(event));
+  int unicodeKey = jniEnv->CallIntMethod(eventObj, method_get_unicode_char,
+                                         AKeyEvent_getMetaState(event));
+
+  javaVM->DetachCurrentThread();
+
+  static char buf[8];
+  int len = fl_utf8encode(unicodeKey, buf);
+  if (len >= 0 && len < 8)
+    buf[len] = 0;
+  else
+    buf[0] = 0;
+  Fl_Android_Application::log_i("Unicode: %d Text: %s", unicodeKey, buf);
+
+  AInputQueue_finishEvent(queue, event, 0);
+
+  Fl_Widget *w = Fl::focus();
+  if (w) {
+    Fl_Window *win = w->window();
+    if (keyAction==AKEY_EVENT_ACTION_DOWN && unicodeKey>0) {
+      Fl::e_text = buf;
+      Fl::e_length = len;
+      Fl::handle(FL_KEYBOARD, win);
+    }
+  }
+
+/*
+       case WM_KEYDOWN:
+      case WM_SYSKEYDOWN:
+      case WM_KEYUP:
+      case WM_SYSKEYUP:
+	// save the keysym until we figure out the characters:
+	Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam, lParam & (1 << 24));
+	// See if TranslateMessage turned it into a WM_*CHAR message:
+	if (PeekMessageW(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE)) {
+	  uMsg = fl_msg.message;
+	  wParam = fl_msg.wParam;
+	  lParam = fl_msg.lParam;
+	}
+	// FALLTHROUGH ...
+
+      case WM_DEADCHAR:
+      case WM_SYSDEADCHAR:
+      case WM_CHAR:
+      case WM_SYSCHAR: {
+	ulong state = Fl::e_state & 0xff000000; // keep the mouse button state
+	// if GetKeyState is expensive we might want to comment some of these out:
+	if (GetKeyState(VK_SHIFT) & ~1)
+	  state |= FL_SHIFT;
+	if (GetKeyState(VK_CAPITAL))
+	  state |= FL_CAPS_LOCK;
+	if (GetKeyState(VK_CONTROL) & ~1)
+	  state |= FL_CTRL;
+	// Alt gets reported for the Alt-GR switch on non-English keyboards.
+	// so we need to check the event as well to get it right:
+	if ((lParam & (1 << 29)) // same as GetKeyState(VK_MENU)
+	    && uMsg != WM_CHAR)
+	  state |= FL_ALT;
+	if (GetKeyState(VK_NUMLOCK))
+	  state |= FL_NUM_LOCK;
+	if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & ~1) {
+	  // Windows bug?  GetKeyState returns garbage if the user hit the
+	  // meta key to pop up start menu.  Sigh.
+	  if ((GetAsyncKeyState(VK_LWIN) | GetAsyncKeyState(VK_RWIN)) & ~1)
+	    state |= FL_META;
+	}
+	if (GetKeyState(VK_SCROLL))
+	  state |= FL_SCROLL_LOCK;
+	Fl::e_state = state;
+	static char buffer[1024];
+	if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
+	  wchar_t u = (wchar_t)wParam;
+	  Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+	  buffer[Fl::e_length] = 0;
+	} else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
+	  if (state & FL_NUM_LOCK) {
+	    // Convert to regular keypress...
+	    buffer[0] = Fl::e_keysym - FL_KP;
+	    Fl::e_length = 1;
+	  } else {
+	    // Convert to special keypress...
+	    buffer[0] = 0;
+	    Fl::e_length = 0;
+	    switch (Fl::e_keysym) {
+	      case FL_KP + '0':
+		Fl::e_keysym = FL_Insert;
+		break;
+	      case FL_KP + '1':
+		Fl::e_keysym = FL_End;
+		break;
+	      case FL_KP + '2':
+		Fl::e_keysym = FL_Down;
+		break;
+	      case FL_KP + '3':
+		Fl::e_keysym = FL_Page_Down;
+		break;
+	      case FL_KP + '4':
+		Fl::e_keysym = FL_Left;
+		break;
+	      case FL_KP + '6':
+		Fl::e_keysym = FL_Right;
+		break;
+	      case FL_KP + '7':
+		Fl::e_keysym = FL_Home;
+		break;
+	      case FL_KP + '8':
+		Fl::e_keysym = FL_Up;
+		break;
+	      case FL_KP + '9':
+		Fl::e_keysym = FL_Page_Up;
+		break;
+	      case FL_KP + '.':
+		Fl::e_keysym = FL_Delete;
+		break;
+	      case FL_KP + '/':
+	      case FL_KP + '*':
+	      case FL_KP + '-':
+	      case FL_KP + '+':
+		buffer[0] = Fl::e_keysym - FL_KP;
+		Fl::e_length = 1;
+		break;
+	    }
+	  }
+	} else if ((lParam & (1 << 31)) == 0) {
+#ifdef FLTK_PREVIEW_DEAD_KEYS
+	  if ((lParam & (1 << 24)) == 0) { // clear if dead key (always?)
+	    wchar_t u = (wchar_t)wParam;
+	    Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+	    buffer[Fl::e_length] = 0;
+	  } else { // set if "extended key" (never printable?)
+	    buffer[0] = 0;
+	    Fl::e_length = 0;
+	  }
+#else
+	  buffer[0] = 0;
+	  Fl::e_length = 0;
+#endif
+	}
+	Fl::e_text = buffer;
+	if (lParam & (1 << 31)) { // key up events.
+	  if (Fl::handle(FL_KEYUP, window))
+	    return 0;
+	  break;
+	}
+	while (window->parent())
+	  window = window->window();
+	if (Fl::handle(FL_KEYBOARD, window)) {
+	  if (uMsg == WM_DEADCHAR || uMsg == WM_SYSDEADCHAR)
+	    Fl::compose_state = 1;
+	  return 0;
+	}
+	break; // WM_KEYDOWN ... WM_SYSKEYUP, WM_DEADCHAR ... WM_SYSCHAR
+      } // case WM_DEADCHAR ... WM_SYSCHAR
+
+ */
+
+
   return 0;
 }
 
@@ -189,37 +426,47 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   // Read all pending events.
   int ident;
   int events;
+  int delay_millis = time_to_wait*1000;
+  bool done = false;
 
-  ident = ALooper_pollAll(Fl::damage() ? 0 : -1, nullptr, &events, nullptr);
-  switch (ident) {
-    case Fl_Android_Application::LOOPER_ID_MAIN:
-      ret = handle_app_command();
-      break;
-    case Fl_Android_Application::LOOPER_ID_INPUT:
-      ret = handle_input_event();
-      break;
-    case Fl_Android_Application::LOOPER_ID_TIMER:
-      timer_do_callback(Fl_Android_Application::receive_timer_index());
-      break;
-    case ALOOPER_POLL_WAKE:
-      Fl_Android_Application::log_e("Someone woke up ALooper_pollAll.");
-      break;
-    case ALOOPER_POLL_CALLBACK:
-      Fl_Android_Application::log_e(
-              "Someone added a callback to ALooper_pollAll.");
-      break;
-    case ALOOPER_POLL_TIMEOUT:
-      // timer expired
-      break;
-    case ALOOPER_POLL_ERROR:
-      Fl_Android_Application::log_e(
-              "Something caused an ERROR in ALooper_pollAll.");
-      break;
-    default:
-      Fl_Android_Application::log_e(
-              "Unknown return value from ALooper_pollAll.");
-      break;
-  }
+//  while (!done) {
+    int delay = Fl::damage() ? 0 : delay_millis;
+    ident = ALooper_pollOnce(delay, nullptr, &events, nullptr);
+    switch (ident) {
+      case Fl_Android_Application::LOOPER_ID_MAIN:
+        ret = handle_app_command();
+        break;
+      case Fl_Android_Application::LOOPER_ID_INPUT:
+        ret = handle_input_event();
+        break;
+      case Fl_Android_Application::LOOPER_ID_TIMER:
+        timer_do_callback(Fl_Android_Application::receive_timer_index());
+        break;
+      case ALOOPER_POLL_WAKE:
+        Fl_Android_Application::log_e("Someone woke up ALooper_pollAll.");
+        done = true;
+        break;
+      case ALOOPER_POLL_CALLBACK:
+        Fl_Android_Application::log_e(
+                "Someone added a callback to ALooper_pollAll.");
+        done = true;
+        break;
+      case ALOOPER_POLL_TIMEOUT:
+        // timer expired
+        done = true;
+        break;
+      case ALOOPER_POLL_ERROR:
+        Fl_Android_Application::log_e(
+                "Something caused an ERROR in ALooper_pollAll.");
+        done = true;
+        break;
+      default:
+        Fl_Android_Application::log_e(
+                "Unknown return value from ALooper_pollAll.");
+        done = true;
+        break;
+    }
+//  }
   return ret;
 }
 
@@ -881,6 +1128,27 @@ void Fl_Android_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *data)
     }
   }
 }
+
+
+void Fl_Android_Screen_Driver::request_keyboard()
+{
+  if (pKeyboardCount==0) {
+    ANativeActivity_showSoftInput(Fl_Android_Application::get_activity(),
+                                  ANATIVEACTIVITY_SHOW_SOFT_INPUT_IMPLICIT);
+  }
+  pKeyboardCount++;
+}
+
+
+void Fl_Android_Screen_Driver::release_keyboard()
+{
+  pKeyboardCount--;
+  if (pKeyboardCount==0) {
+    ANativeActivity_hideSoftInput(Fl_Android_Application::get_activity(),
+                                  ANATIVEACTIVITY_HIDE_SOFT_INPUT_NOT_ALWAYS);
+  }
+}
+
 
 
 //

@@ -148,6 +148,7 @@ public:
   static const char *get_internal_data_path() { return pActivity->internalDataPath; }
   static const char *get_external_data_path() { return pActivity->externalDataPath; }
   static AAssetManager *get_asset_manager() { return pActivity->assetManager; }
+  static ANativeActivity *get_activity() { return pActivity; }
 
   // --- event handling
   static AInputQueue *input_event_queue() { return pInputQueue; }

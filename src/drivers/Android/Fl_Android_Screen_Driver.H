@@ -42,7 +42,7 @@ private:
   int handle_queued_events(double time_to_wait);
   int handle_app_command();
   int handle_input_event();
-  int handle_keyboard_event(AInputEvent*);
+  int handle_keyboard_event(AInputQueue*, AInputEvent*);
   int handle_mouse_event(AInputQueue*, AInputEvent*);
 
 public:
@@ -52,6 +52,12 @@ public:
   void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
   int has_timeout(Fl_Timeout_Handler cb, void *argp);
   void remove_timeout(Fl_Timeout_Handler cb, void *argp);
+
+  virtual int compose(int &del) override;
+
+  virtual void request_keyboard() override;
+  virtual void release_keyboard() override;
+  int pKeyboardCount = 0;
 
 #if 0
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {

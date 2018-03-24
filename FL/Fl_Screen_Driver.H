@@ -122,6 +122,11 @@ public:
   // default implementation may be enough
   virtual int text_display_can_leak() { return 0; }
 
+  // if no keyboard is connected on a touch or pen device, the system on-screen keyboard is requested
+  virtual void request_keyboard() { }
+  // we no longer need the on-screen keyboard; it's up to the system to hide it
+  virtual void release_keyboard() { }
+
   // read raw image from a window or an offscreen buffer
 #if defined(FL_PORTING)
 #  pragma message "FL_PORTING: implement code to read RGB data from screen"

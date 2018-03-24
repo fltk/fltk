@@ -456,6 +456,6 @@ test/image.cxx				test/unittest_viewport.cxx
 test/input.cxx				test/unittests.cxx
 test/input_choice.cxx			test/utf8.cxx
 test/keyboard.cxx			test/windowfocus.cxx
-  * test/label.cxx        : - pop menu locks, pixmap, keyboard events
+  * test/label.cxx        : - pixmap, keyboard events
 
  */
