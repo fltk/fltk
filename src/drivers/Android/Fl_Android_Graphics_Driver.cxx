@@ -892,10 +892,10 @@ void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float
  * FIXME: these do not draw rotated ellipses correctly!
  * */
 void Fl_Android_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, double ry) {
-  double llx = xt-rx;
-  double w = xt+rx-llx;
-  double lly = yt-ry;
-  double h = yt+ry-lly;
+  float llx = xt-rx;
+  float w = xt+rx-llx;
+  float lly = yt-ry;
+  float h = yt+ry-lly;
 
   if (what==POLYGON)
     pie_unscaled(llx, lly, w, h, 0.0, 360.0);

@@ -71,11 +71,16 @@ private:
 #endif
 
 public:
-  Fl_Android_Window_Driver(Fl_Window *w) : Fl_Window_Driver(w) {}
-  ~Fl_Android_Window_Driver() {}
   static inline Fl_Android_Window_Driver* driver(Fl_Window *w) {
     return (Fl_Android_Window_Driver*)w->driver();
   }
+
+  Fl_Android_Window_Driver(Fl_Window *w) : Fl_Window_Driver(w) {}
+  virtual ~Fl_Android_Window_Driver() override {}
+
+  virtual void make_current() override;
+  virtual void show() override;
+  virtual void hide() override;
 
 #if 0
   HDC private_dc; // used for OpenGL
@@ -103,13 +108,8 @@ public:
   virtual void flush_double();
   virtual void flush_overlay();
   virtual void draw_begin();
-#endif
-  virtual void make_current();
-  virtual void show();
-#if 0
   virtual void label(const char *name,const char *iname);
   virtual void resize(int X,int Y,int W,int H);
-  virtual void hide();
   virtual void map();
   virtual void unmap();
   virtual void fullscreen_on();
@@ -136,8 +136,6 @@ public:
 
   void wait_for_expose() { wait_for_expose_value = 1; }
   static void expose_all();
-// Leuwer: 0171 473 1850
-
 };
 
 

@@ -76,7 +76,22 @@ void Fl_Android_Window_Driver::show()
     }
   } else {
     // bring window to front
+    Fl::first_window(pWindow); // TODO: does this really work?
+    expose_all();
   }
+}
+
+
+void Fl_Android_Window_Driver::hide()
+{
+  Fl_X* ip = Fl_X::i(pWindow);
+  if (hide_common()) return;
+  if (ip->region) {
+    delete ip->region;
+    ip->region = nullptr;
+  }
+  delete ip;
+  expose_all();
 }
 
 

@@ -95,16 +95,18 @@ int Fl_Android_Screen_Driver::handle_input_event()
       switch (AInputEvent_getType(event)) {
         case  AINPUT_EVENT_TYPE_KEY:
           consumed = handle_keyboard_event(event);
+          AInputQueue_finishEvent(queue, event, consumed);
           break;
         case AINPUT_EVENT_TYPE_MOTION:
-          consumed = handle_mouse_event(event);
+          consumed = handle_mouse_event(queue, event);
           break;
         default:
           // don't do anything. There may be additional event types in the future
+          AInputQueue_finishEvent(queue, event, consumed);
           break;
       }
       // TODO: handle all events here
-      AInputQueue_finishEvent(queue, event, consumed);
+//      AInputQueue_finishEvent(queue, event, consumed);
     }
   }
   return 0;
@@ -119,7 +121,8 @@ int Fl_Android_Screen_Driver::handle_keyboard_event(AInputEvent *event)
   return 0;
 }
 
-int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
+
+int Fl_Android_Screen_Driver::handle_mouse_event(AInputQueue *queue, AInputEvent *event)
 {
   int ex = Fl::e_x_root = (int)(AMotionEvent_getX(event, 0) * 600 /
                                  ANativeWindow_getWidth(Fl_Android_Application::native_window()));
@@ -130,14 +133,19 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
   Fl_Window *win = Fl::grab();
   if (!win) {
     win = Fl::first_window();
-    while (win) {
-      if (ex >= win->x() && ex < win->x() + win->w() && ey >= win->y() &&
-          ey < win->y() + win->h())
-        break;
-      win = Fl::next_window(win);
+    if (win && !win->modal()) {
+      while (win) {
+        if (ex >= win->x() && ex < win->x() + win->w() && ey >= win->y() &&
+            ey < win->y() + win->h())
+          break;
+        win = Fl::next_window(win);
+      }
     }
   }
-  if (!win) return 0;
+  if (!win) {
+    AInputQueue_finishEvent(queue, event, 0);
+    return 0;
+  }
 
   if (win) {
     Fl::e_x = ex-win->x();
@@ -150,14 +158,19 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputEvent *event)
   Fl::e_state = FL_BUTTON1;
   Fl::e_keysym = FL_Button + 1;
   if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
+    AInputQueue_finishEvent(queue, event, 1);
     Fl::e_is_click = 1;
     if (win) Fl::handle(FL_PUSH, win); // do NOT send a push event into the "Desktop"
     Fl_Android_Application::log_i("Mouse push %d at %d, %d", Fl::event_button(), Fl::event_x(), Fl::event_y());
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE) {
+    AInputQueue_finishEvent(queue, event, 1);
     Fl::handle(FL_DRAG, win);
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) {
+    AInputQueue_finishEvent(queue, event, 1);
     Fl::e_state = 0;
     Fl::handle(FL_RELEASE, win);
+  } else {
+    AInputQueue_finishEvent(queue, event, 0);
   }
   return 1;
 }
@@ -176,29 +189,47 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   // Read all pending events.
   int ident;
   int events;
-  struct android_poll_source *source;
 
-  for (;;) {
-    ident = ALooper_pollAll(Fl::damage() ? 0 : -1, nullptr, &events, (void **) &source);
-    switch (ident) {
-      // FIXME:  ALOOPER_POLL_WAKE = -1, ALOOPER_POLL_CALLBACK = -2, ALOOPER_POLL_TIMEOUT = -3, ALOOPER_POLL_ERROR = -4
-      case Fl_Android_Application::LOOPER_ID_MAIN:
-        ret = handle_app_command();
-        break;
-      case Fl_Android_Application::LOOPER_ID_INPUT:
-        ret = handle_input_event();
-        break;
-      case Fl_Android_Application::LOOPER_ID_TIMER:
-        timer_do_callback(Fl_Android_Application::receive_timer_index());
-        break;
-      case -3: return ret;
-      default: return ret;
-    }
+  ident = ALooper_pollAll(Fl::damage() ? 0 : -1, nullptr, &events, nullptr);
+  switch (ident) {
+    case Fl_Android_Application::LOOPER_ID_MAIN:
+      ret = handle_app_command();
+      break;
+    case Fl_Android_Application::LOOPER_ID_INPUT:
+      ret = handle_input_event();
+      break;
+    case Fl_Android_Application::LOOPER_ID_TIMER:
+      timer_do_callback(Fl_Android_Application::receive_timer_index());
+      break;
+    case ALOOPER_POLL_WAKE:
+      Fl_Android_Application::log_e("Someone woke up ALooper_pollAll.");
+      break;
+    case ALOOPER_POLL_CALLBACK:
+      Fl_Android_Application::log_e(
+              "Someone added a callback to ALooper_pollAll.");
+      break;
+    case ALOOPER_POLL_TIMEOUT:
+      // timer expired
+      break;
+    case ALOOPER_POLL_ERROR:
+      Fl_Android_Application::log_e(
+              "Something caused an ERROR in ALooper_pollAll.");
+      break;
+    default:
+      Fl_Android_Application::log_e(
+              "Unknown return value from ALooper_pollAll.");
+      break;
   }
   return ret;
 }
 
-
+/**
+ * Wait for a maximum of `time_to_wait` until something happens.
+ * @param time_to_wait in seconds
+ * @return We really do not know; check other platforms to see what is
+ *        consistent here.
+ * FIXME: return the remaining time to reach 'time_to_wait'
+ */
 double Fl_Android_Screen_Driver::wait(double time_to_wait)
 {
   Fl::run_checks();
@@ -229,7 +260,7 @@ double Fl_Android_Screen_Driver::wait(double time_to_wait)
     fl_lock_function();
   }
 
-  return 0.0; // FIXME: return the remaining time to reach 'time_to_wait'
+  return 0.0;
 }
 
 

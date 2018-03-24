@@ -43,7 +43,7 @@ private:
   int handle_app_command();
   int handle_input_event();
   int handle_keyboard_event(AInputEvent*);
-  int handle_mouse_event(AInputEvent*);
+  int handle_mouse_event(AInputQueue*, AInputEvent*);
 
 public:
   Fl_Android_Screen_Driver() : Fl_Screen_Driver(), pScreenContentChanged(false) { }
