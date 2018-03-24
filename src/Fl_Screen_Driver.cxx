@@ -395,8 +395,7 @@ int Fl_Screen_Driver::scale_handler(int event)
     int screen = wid->top_window()->driver()->screen_num();
     Fl_Screen_Driver *screen_dr = Fl::screen_driver();
     static float initial_scale = screen_dr->scale(screen);
-    static float scaling_values[] = {0.5, 2.f/3, 0.8, 0.9, 1, 1.1, 1.2, 4.f/3, 1.5, 1.7, 2, 2.4, 3,
-      4, 5.5, 6.5, 7.5, 9.75 };
+    static float scaling_values[] = {0.5, 2.f/3, 0.8, 0.9, 1, 1.1, 1.2, 4.f/3, 1.5, 1.7, 2, 2.4, 3};
     float f, old_f = screen_dr->scale(screen)/initial_scale;
     if (key == '0' || key == 0xE0) f = 1;
     else {
