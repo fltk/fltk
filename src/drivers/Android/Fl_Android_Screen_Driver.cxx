@@ -304,6 +304,7 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputQueue *queue, AInputEvent
  */
 int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
 {
+  AInputQueue *queue = Fl_Android_Application::input_event_queue();
   int ret = 0;
   // Read all pending events.
   int ident;
@@ -311,8 +312,8 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   int delay_millis = time_to_wait*1000;
   bool done = false;
 
-//  while (!done) {
-    int delay = Fl::damage() ? 0 : delay_millis;
+  int delay = Fl::damage() ? 0 : delay_millis;
+  while (!done) {
     ident = ALooper_pollOnce(delay, nullptr, &events, nullptr);
     switch (ident) {
       case Fl_Android_Application::LOOPER_ID_MAIN:
@@ -325,30 +326,37 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
         timer_do_callback(Fl_Android_Application::receive_timer_index());
         break;
       case ALOOPER_POLL_WAKE:
-        Fl_Android_Application::log_e("Someone woke up ALooper_pollAll.");
+        Fl_Android_Application::log_e("Someone woke up ALooper_pollOnce.");
         done = true;
         break;
       case ALOOPER_POLL_CALLBACK:
         Fl_Android_Application::log_e(
-                "Someone added a callback to ALooper_pollAll.");
+                "Someone added a callback to ALooper_pollOnce.");
         done = true;
         break;
       case ALOOPER_POLL_TIMEOUT:
-        // timer expired
-        done = true;
+        done = true; // timer expired, return to FLTK
         break;
       case ALOOPER_POLL_ERROR:
         Fl_Android_Application::log_e(
-                "Something caused an ERROR in ALooper_pollAll.");
-        done = true;
+                "Something caused an ERROR in ALooper_pollOnce.");
+        done = true; // return to the app to find the error
         break;
       default:
         Fl_Android_Application::log_e(
-                "Unknown return value from ALooper_pollAll.");
-        done = true;
+                "Unknown return value from ALooper_pollOnce.");
+        done = true; // return to the app, just in case
         break;
     }
-//  }
+    // we need to repeat this as long as there are messages in the queue, or any
+    // change in the graphical interface will trigger a redraw immediately. To
+    // save time and energy, we want to collect graphics changes and execute
+    // them as soon as no more events are pending.
+    // Setting delay to zero on the second round makes sure that all events
+    // are handled first, and the call returns only when no more
+    // events are pending.
+    delay = 0;
+  }
   return ret;
 }
 
