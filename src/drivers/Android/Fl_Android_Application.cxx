@@ -804,6 +804,43 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
   Fl_Android_Activity::create(activity, savedState, savedStateSize);
 }
 
+
+// ---- Java Stuff -------------------------------------------------------------
+
+
+Fl_Android_Java::Fl_Android_Java()
+{
+  jint lResult;
+  jint lFlags = 0;
+
+  pJavaVM = Fl_Android_Application::get_activity()->vm;
+  pJNIEnv = Fl_Android_Application::get_activity()->env;
+
+  JavaVMAttachArgs lJavaVMAttachArgs = {
+          .version = JNI_VERSION_1_6,
+          .name = "NativeThread",
+          .group = nullptr
+  };
+
+  lResult = pJavaVM->AttachCurrentThread(&pJNIEnv, &lJavaVMAttachArgs);
+  if (lResult == JNI_ERR) return;
+
+  pNativeActivity = Fl_Android_Application::get_activity()->clazz;
+
+  pNativeActivityClass = env()->GetObjectClass(pNativeActivity);
+
+  pAttached = true;
+}
+
+
+Fl_Android_Java::~Fl_Android_Java()
+{
+  if (is_attached()) {
+    pJavaVM->DetachCurrentThread();
+  }
+}
+
+
 //
 // End of "$Id$".
 //

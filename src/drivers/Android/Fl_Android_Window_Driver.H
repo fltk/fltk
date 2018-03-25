@@ -134,7 +134,7 @@ public:
 
 #endif
 
-  void wait_for_expose() { wait_for_expose_value = 1; }
+  virtual void wait_for_expose() override { wait_for_expose_value = 1; }
   static void expose_all();
 };
 

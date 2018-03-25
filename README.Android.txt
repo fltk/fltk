@@ -9,9 +9,9 @@ WARNING: FLTK FOR ANDROID IS WORK IN PROGRESS IN A PRETTY EARLY STAGE.
 CONTENTS
 --------
 
-  1	Building FLTK with Android Studio 3
+  1 Building FLTK with Android Studio 3
   2 Extensions and limitation of FLTK on Android
-  3	DOCUMENT HISTORY
+  3 DOCUMENT HISTORY
 
 
 BUILDING FLTK SAMPLE WITH ANDROID STUDIO 3

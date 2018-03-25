@@ -39,6 +39,29 @@ extern void (*fl_lock_function)();
 #include <android/looper.h>
 #include <android/native_activity.h>
 
+
+/**
+ * A class to make Java calls from C++ easier.
+ */
+class Fl_Android_Java
+{
+  JavaVM *pJavaVM = nullptr;
+  JNIEnv *pJNIEnv = nullptr;
+  jobject pNativeActivity;
+  jclass pNativeActivityClass;
+  bool pAttached = false;
+
+public:
+  Fl_Android_Java();
+  ~Fl_Android_Java();
+  bool is_attached() { return pAttached; }
+  JavaVM *VM() { return pJavaVM; }
+  JNIEnv *env() { return pJNIEnv; }
+  jobject native_ativity() { return pNativeActivity; }
+  jclass native_activity_class() { return pNativeActivityClass; }
+};
+
+
 /**
  * Static class that manages all interaction between the Android Native Activity
  * and the FLTK library. It also keeps often used data for global access.
