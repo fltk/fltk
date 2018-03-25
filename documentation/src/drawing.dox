@@ -78,18 +78,19 @@ with ctrl/+/-/0/ keystrokes which enlarge, shrink, and reset, respectively,
 all FLTK windows on a screen and their content.
 Under Mac OS X, the corresponding GUI scaling shortcuts are cmd/+/-/0/.
 
-When drawing images to a screen whose scale factor value is > 1, the image pixels
-are mapped to the larger number of pixels present in
-a screen area sized (in FLTK units) as the image. This operation is done internally
-by the library using diverse scaling methods that vary with the image type
-(Fl_Pixmap, Fl_Bitmap or Fl_RGB_Image) and the platform.
-A situation of special interest arises when drawing Fl_Shared_Image's. The
-Fl_Shared_Image::scale() member function allows to set the image drawing size
-(in FLTK units) independently of its pixel size. Image pixels are mapped to the
-pixels of the image drawing area on the screen which is determined by the scale
-factor value. Therefore, the image data can fill the drawing area of the screen at
-full physical resolution even for high values of the scale factor if the original
-image is large enough.
+GUI rescaling involves also image drawing: the screen area covered by the drawn image
+contains a number of pixels that grows with the scale factor. When FLTK draws images,
+it maps the image data (the size of these data is given by Fl_Image::data_w() and
+Fl_Image::data_h())) to the screen area whose size (in FLTK units) is given by
+Fl_Image::w() and Fl_Image::h(). How exactly such mapping is performed depends on the
+image type, the platform and some hardware features. The most common
+case for Fl_RGB_Image's is that FLTK uses a scaled drawing system feature that directly
+maps image data to screen pixels. An important feature of FLTK for image drawing
+is the Fl_Image::scale() member function, new in FLTK version 1.4. This function
+controls the image drawing size (in FLTK units) independantly from the size
+of the image data. An image with large enough data size can thus be drawn at the
+full resolution of the screen even when the screen area covered by the image grows
+following the GUI scale factor.
 
 The Fl_Image_Surface class is intended to create an Fl_RGB_Image from a series
 of FLTK drawing operations. The Fl_Image_Surface constructor allows to control
