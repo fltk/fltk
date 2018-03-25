@@ -48,10 +48,10 @@ private:
 public:
   Fl_Android_Screen_Driver() : Fl_Screen_Driver(), pScreenContentChanged(false) { }
 
-  void add_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp);
-  int has_timeout(Fl_Timeout_Handler cb, void *argp);
-  void remove_timeout(Fl_Timeout_Handler cb, void *argp);
+  virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) override;
+  virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) override;
+  virtual int has_timeout(Fl_Timeout_Handler cb, void *argp) override;
+  virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp) override;
 
   virtual int compose(int &del) override;
 
@@ -79,8 +79,8 @@ public:
   virtual void beep(int type);
   // --- global events
 #endif
-  virtual void flush();
-  virtual double wait(double time_to_wait);
+  virtual void flush() override;
+  virtual double wait(double time_to_wait) override;
 #if 0
   virtual int ready();
   virtual void grab(Fl_Window* win);

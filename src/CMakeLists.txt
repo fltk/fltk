@@ -302,6 +302,7 @@ elseif (ANDROID)
     drivers/Android/Fl_Android_Application.cxx
     drivers/Android/Fl_Android_System_Driver.cxx
     drivers/Android/Fl_Android_Screen_Driver.cxx
+    drivers/Android/Fl_Android_Screen_Keyboard.cxx
     drivers/Android/Fl_Android_Window_Driver.cxx
     drivers/Android/Fl_Android_Image_Surface_Driver.cxx
     drivers/Android/Fl_Android_Graphics_Driver.cxx
