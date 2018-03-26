@@ -187,6 +187,28 @@ static unsigned short *compute_key_lookup()
 }
 
 
+static int android_to_fltk_modifiers(int a)
+{
+  int fl_mod = 0;
+  if (a == AMETA_NONE) return 0;
+  if (a & AMETA_ALT_ON) fl_mod |= FL_ALT;
+  if (a & AMETA_SHIFT_ON) fl_mod |= FL_SHIFT;
+  if (a & AMETA_CTRL_ON) fl_mod |= FL_CTRL;
+  if (a & AMETA_META_ON) fl_mod |= FL_META;
+  if (a & AMETA_NUM_LOCK_ON) fl_mod |= FL_NUM_LOCK;
+  if (a & AMETA_CAPS_LOCK_ON) fl_mod |= FL_CAPS_LOCK;
+  if (a & AMETA_SCROLL_LOCK_ON) fl_mod |= FL_SCROLL_LOCK;
+  // AMETA_SYM_ON
+  // AMETA_FUNCTION_ON
+  // FIXME: we need to add the status of the mouse button(s)
+  // FL_BUTTON1
+  // FL_BUTTON2
+  // FL_BUTTON3
+  return fl_mod;
+}
+
+
+
 int Fl_Android_Screen_Driver::handle_keyboard_event(AInputQueue *queue, AInputEvent *event)
 {
 /*
@@ -271,6 +293,7 @@ int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
 
   int unicodeKey = 0;
   auto aKeyCode = AKeyEvent_getKeyCode(event);
+  auto aMetaState = AKeyEvent_getMetaState(event);
 
   Fl_Android_Java java;
   if (java.is_attached()) {
@@ -288,9 +311,9 @@ int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
             AKeyEvent_getAction(event),
             aKeyCode,
             AKeyEvent_getRepeatCount(event),
-            AKeyEvent_getMetaState(event),
+            aMetaState,
             AInputEvent_getDeviceId(event),
-            AKeyEvent_getScanCode(event),
+            AKeyEvent_getScanCode(event), // hardware keyboard only
             AKeyEvent_getFlags(event),
             AInputEvent_getSource(event));
 
@@ -307,6 +330,7 @@ int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
     java.env()->DeleteLocalRef(eventObj);
   }
 
+  // FIXME: do the following thing only on key-down or key-repeat
   static char buf[8];
   int len = fl_utf8encode(unicodeKey, buf);
   if (len >= 0 && len < 8)
@@ -317,6 +341,7 @@ int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
 
   if (!key_lookup) key_lookup = compute_key_lookup();
   Fl::e_keysym = (aKeyCode>AKEYCODE_ALL_APPS) ? 0 : key_lookup[aKeyCode];
+  Fl::e_state = android_to_fltk_modifiers(aMetaState);
 
   AInputQueue_finishEvent(queue, event, 0);
 
