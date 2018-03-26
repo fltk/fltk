@@ -213,7 +213,7 @@ Fl_Image *Fl_SVG_Image::copy(int W, int H) {
  If \ref proportional was set to \c false, the image is rasterized to the given \c width
  and \c height values.*/
 void Fl_SVG_Image::resize(int width, int height) {
-  if (ld() < 0) {
+  if (ld() < 0 || width <= 0 || height <= 0) {
     return;
   }
   int w1 = width, h1 = height;
