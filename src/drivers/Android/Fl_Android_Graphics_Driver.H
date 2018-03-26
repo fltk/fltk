@@ -118,6 +118,10 @@ public:
   // --- matrix based drawing
 //  virtual void line_unscaled(float x, float y, float x1, float y1) override;
 
+  // --- image drawing
+
+  virtual void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy) override;
+  virtual fl_uintptr_t cache(Fl_Bitmap *img) override;
 
 #if 0
   virtual int has_feature(driver_feature mask) { return mask & NATIVE; }
@@ -128,7 +132,6 @@ public:
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
   void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
   virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);

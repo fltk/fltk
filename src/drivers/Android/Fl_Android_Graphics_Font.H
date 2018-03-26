@@ -36,11 +36,13 @@ class Fl_Android_Bytemap
 {
 public:
   Fl_Android_Bytemap();
+  Fl_Android_Bytemap(int w, int h);
   ~Fl_Android_Bytemap();
 
 public:
-  int pWidth, pHeight, pStride, pXOffset, pYOffset, pAdvance;
-  unsigned char *pBytes;
+  int pWidth = 0, pHeight = 0, pStride = 0;
+  int pXOffset = 0, pYOffset = 0, pAdvance = 0;
+  unsigned char *pBytes = nullptr;
 };
 
 

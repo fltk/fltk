@@ -68,9 +68,17 @@ static const char *old_font_names[] = {
 /**
  * Create an empty Bytemap.
  */
-Fl_Android_Bytemap::Fl_Android_Bytemap() :
-        pBytes(nullptr)
+Fl_Android_Bytemap::Fl_Android_Bytemap()
 {
+}
+
+/**
+ * Create an empty Bytemap.
+ */
+Fl_Android_Bytemap::Fl_Android_Bytemap(int w, int h)
+{
+  pWidth = w; pStride = w; pHeight = h;
+  pBytes = (unsigned char *)malloc(w*h);
 }
 
 /**

@@ -72,6 +72,12 @@ typedef opaque GLContext; /**< an OpenGL graphics context, into which all OpenGL
 typedef intptr_t fl_intptr_t;
 typedef uintptr_t fl_uintptr_t;
 
+#elif defined(__ANDROID__)
+
+#include <sys/stat.h>
+typedef intptr_t fl_intptr_t;
+typedef uintptr_t fl_uintptr_t;
+
 #else /* ! _WIN64 */
 
 typedef long fl_intptr_t;
@@ -125,9 +131,9 @@ typedef unsigned long Fl_Offscreen;
 typedef unsigned long Fl_Bitmask;
 typedef int FL_SOCKET;
 typedef struct __GLXcontextRec *GLContext;
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+
 
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define OS-dependent types"
