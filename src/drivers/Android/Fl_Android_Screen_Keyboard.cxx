@@ -363,8 +363,10 @@ int64_t 	AKeyEvent_getEventTime (const AInputEvent *key_event)
   return 0;
 }
 
-
-void Fl_Android_Screen_Driver::request_keyboard()
+// TODO: different inputs may be able to request different keyboards
+// TODO: knowing the position of the widget, we may be able to avoid
+// obstructing it with the on-screen keyboard
+void Fl_Android_Screen_Driver::request_keyboard( /*o->rect(), o->type()*/ )
 {
   if (pKeyboardCount==0) {
     /*

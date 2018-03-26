@@ -861,6 +861,11 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
     \e test if the widget wants the focus (by it returning non-zero from
     handle()).
 
+    Widgets can set the NEEDS_KEYBOARD flag to indicate that a keyboard is
+    essential for the widget to function. Touchscreen devices will be sent a
+    request to show and on-screen keyboard if no hardware keyboard is
+    connected.
+
     \see Fl_Widget::take_focus()
 */
 void Fl::focus(Fl_Widget *o)
@@ -869,10 +874,12 @@ void Fl::focus(Fl_Widget *o)
 
   // request an on-screen keyboard on touch screen devices if needed
   Fl_Widget *prevFocus = Fl::focus();
-  if ( prevFocus && (prevFocus->flags()&Fl_Widget::NEEDS_KEYBOARD) )
+  char hideKeyboard = ( prevFocus && (prevFocus->flags()&Fl_Widget::NEEDS_KEYBOARD) );
+  char showKeyboard = (o && (o->flags()&Fl_Widget::NEEDS_KEYBOARD));
+  if (hideKeyboard && !showKeyboard)
     Fl::screen_driver()->release_keyboard();
-  if (o && (o->flags()&Fl_Widget::NEEDS_KEYBOARD))
-    Fl::screen_driver()->request_keyboard( /*o->type()*/ );
+  if (showKeyboard && !hideKeyboard)
+    Fl::screen_driver()->request_keyboard();
 
   if (o && !o->visible_focus()) return;
   Fl_Widget *p = focus_;
