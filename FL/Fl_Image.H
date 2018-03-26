@@ -82,10 +82,14 @@ protected:
 
   /**
    Sets the width of the image data.
+   This protected function sets both image widths: the width of the image data returned by data_w() and
+   the image drawing width in FLTK units returned by w().
    */
   void w(int W) {w_ = W; data_w_ = W;}
   /**
    Sets the height of the image data.
+   This protected function sets both image heights: the height of the image data returned by data_h() and
+   the image drawing height in FLTK units returned by h().
    */
   void h(int H) {h_ = H; data_h_ = H;}
   /**
