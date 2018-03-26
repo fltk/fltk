@@ -444,6 +444,7 @@ int xmain(int argc, char **argv)
  Need Work:
   - Fl_Android_Graphics_Driver::pie(int) needs refactoring
   - ...::line(...) has round ing issues (see rounded box type)
+  - grab() not working when leaving window (adjuster...)
 
 
 test/CubeMain.cxx			test/line_style.cxx
