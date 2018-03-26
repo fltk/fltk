@@ -75,6 +75,7 @@ Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
   insert_mode_ = 1;
   key_bindings = 0;
   set_flag(MAC_USE_ACCENTS_MENU);
+  set_flag(NEEDS_KEYBOARD);
 
   // handle the default key bindings
   add_default_key_bindings(&key_bindings);

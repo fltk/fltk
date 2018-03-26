@@ -23,6 +23,7 @@
 #define Fl_Widget_H
 
 #include "Enumerations.H"
+#include "Fl.H"
 
 class Fl_Widget;
 class Fl_Window;
@@ -70,6 +71,7 @@ struct FL_EXPORT Fl_Label {
 };
 
 
+
 /** Fl_Widget is the base class for all widgets in FLTK.  
   
     You can't create one of these because the constructor is not public.
@@ -84,6 +86,7 @@ struct FL_EXPORT Fl_Label {
  */
 class FL_EXPORT Fl_Widget {
   friend class Fl_Group;
+  friend void Fl::focus(Fl_Widget*);
 
   Fl_Group* parent_;
   Fl_Callback* callback_;
@@ -158,6 +161,8 @@ protected:
         FULLSCREEN      = 1<<18,  ///< a fullscreen window (Fl_Window)
         MAC_USE_ACCENTS_MENU = 1<<19, ///< On the Mac OS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
         // (space for more flags)
+        NEEDS_KEYBOARD  = 1<<20,  ///< set this on touch screen devices if a widget needs a keyboard when it gets Focus. @see Fl_Screen_Driver::request_keyboard()
+        // a tiny bit more space for new flags...
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
         USERFLAG1       = 1<<31   ///< reserved for 3rd party extensions

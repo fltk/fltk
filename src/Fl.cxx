@@ -863,9 +863,18 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
 
     \see Fl_Widget::take_focus()
 */
-void Fl::focus(Fl_Widget *o) {
-  if (o && !o->visible_focus()) return;
+void Fl::focus(Fl_Widget *o)
+{
   if (grab()) return; // don't do anything while grab is on
+
+  // request an on-screen keyboard on touch screen devices if needed
+  Fl_Widget *prevFocus = Fl::focus();
+  if ( prevFocus && (prevFocus->flags()&Fl_Widget::NEEDS_KEYBOARD) )
+    Fl::screen_driver()->release_keyboard();
+  if (o && (o->flags()&Fl_Widget::NEEDS_KEYBOARD))
+    Fl::screen_driver()->request_keyboard( /*o->type()*/ );
+
+  if (o && !o->visible_focus()) return;
   Fl_Widget *p = focus_;
   if (o != p) {
     Fl::compose_reset();

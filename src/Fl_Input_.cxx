@@ -1128,6 +1128,7 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
   set_flag(MAC_USE_ACCENTS_MENU);
+  set_flag(NEEDS_KEYBOARD);
   tab_nav(1);
 }
 
