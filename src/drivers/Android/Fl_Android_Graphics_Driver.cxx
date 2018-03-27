@@ -38,8 +38,11 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 }
 
 
+/**
+ * Private default constructor.
+ */
 Fl_Android_Graphics_Driver::Fl_Android_Graphics_Driver() :
-        pStride(0), pBits(0)
+        super()
 {
 }
 
@@ -96,7 +99,7 @@ uint16_t Fl_Android_Graphics_Driver::make565(Fl_Color crgba)
 }
 
 
-void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float h)
+void Fl_Android_Graphics_Driver::rectf(int x, int y, int w, int h)
 {
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x, y, w, h))) {
     Fl_Rect_Region &s = it->clipped_rect();
@@ -105,7 +108,7 @@ void Fl_Android_Graphics_Driver::rectf_unscaled(float x, float y, float w, float
 }
 
 
-void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, float h)
+void Fl_Android_Graphics_Driver::rectf_unclipped(int x, int y, int w, int h)
 {
   if (w<=0 || h<=0) return;
 
@@ -125,7 +128,7 @@ void Fl_Android_Graphics_Driver::rectf_unclipped(float x, float y, float w, floa
 }
 
 
-void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
+void Fl_Android_Graphics_Driver::xyline(int x, int y, int x1)
 {
   float w;
   if (x1>x) {
@@ -141,7 +144,22 @@ void Fl_Android_Graphics_Driver::xyline_unscaled(float x, float y, float x1)
 }
 
 
-void Fl_Android_Graphics_Driver::xyline_unclipped(float x, float y, float x1)
+void Fl_Android_Graphics_Driver::xyline(int x, int y, int x1, int y2)
+{
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
+}
+
+
+void Fl_Android_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3)
+{
+  xyline(x, y, x1);
+  yxline(x1, y, y2);
+  xyline(x1, y2, x3);
+}
+
+
+void Fl_Android_Graphics_Driver::xyline_unclipped(int x, int y, int x1)
 {
   uint16_t cc = make565(color());
   float w;
@@ -165,7 +183,8 @@ void Fl_Android_Graphics_Driver::xyline_unclipped(float x, float y, float x1)
   }
 }
 
-void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
+
+void Fl_Android_Graphics_Driver::yxline(int x, int y, int y1)
 {
   float h;
   if (y1>y) {
@@ -180,7 +199,23 @@ void Fl_Android_Graphics_Driver::yxline_unscaled(float x, float y, float y1)
   }
 }
 
-void Fl_Android_Graphics_Driver::yxline_unclipped(float x, float y, float y1)
+
+void Fl_Android_Graphics_Driver::yxline(int x, int y, int y1, int x2)
+{
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
+}
+
+
+void Fl_Android_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3)
+{
+  yxline(x, y, y1);
+  xyline(x, y1, x2);
+  yxline(x2, y1, y3);
+}
+
+
+void Fl_Android_Graphics_Driver::yxline_unclipped(int x, int y, int y1)
 {
   uint16_t cc = make565(color());
   float h = y1-y;
@@ -198,7 +233,7 @@ void Fl_Android_Graphics_Driver::yxline_unclipped(float x, float y, float y1)
 }
 
 
-void Fl_Android_Graphics_Driver::rect_unscaled(float x, float y, float w, float h)
+void Fl_Android_Graphics_Driver::rect(int x, int y, int w, int h)
 {
   xyline(x, y, x+w-1);
   yxline(x, y, y+h-1);
@@ -207,14 +242,17 @@ void Fl_Android_Graphics_Driver::rect_unscaled(float x, float y, float w, float 
 }
 
 
-void Fl_Android_Graphics_Driver::line_style_unscaled(int style, float width, char* dashes)
+void Fl_Android_Graphics_Driver::line_style(int style, int width, char* dashes)
 {
   pLineStyle = style;
   // TODO: finish this!
 }
 
-
-void Fl_Android_Graphics_Driver::point_unscaled(float x, float y)
+/**
+ * Draw a single dot in the current color.
+ * @param x, y position relative to window.
+ */
+void Fl_Android_Graphics_Driver::point(int x, int y)
 {
   // drawing a single point is insanely inefficient because we need to walk the
   // entire clipping region every time to see if the point needs to be drawn.
@@ -237,7 +275,7 @@ void Fl_Android_Graphics_Driver::point_unscaled(float x, float y)
  * FIXME: clipping maust be moved into this call and drawing to the screen should happen right here
  * FIXME: line width is not considered
  */
-void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1)
+void Fl_Android_Graphics_Driver::line(int x, int y, int x1, int y1)
 {
   if (x==x1) {
     return yxline(x, y, y1);
@@ -261,7 +299,7 @@ void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float
   }
   int num = max/2;
   for (int i=max+1; i>0; i--) {
-    point_unscaled(x, y);
+    point(x, y);
     num += min;
     if (num>=max) {
       num -= max;
@@ -275,54 +313,54 @@ void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float
 }
 
 
-void Fl_Android_Graphics_Driver::line_unscaled(float x, float y, float x1, float y1, float x2, float y2)
+void Fl_Android_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2)
 {
   begin_line();
-  transformed_vertex0(x, y);
-  transformed_vertex0(x1, y1);
-  transformed_vertex0(x2, y2);
+  transformed_vertex(x, y);
+  transformed_vertex(x1, y1);
+  transformed_vertex(x2, y2);
   end_line();
 }
 
 
-void Fl_Android_Graphics_Driver::loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)
+void Fl_Android_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2)
 {
   begin_loop();
-  transformed_vertex0(x0, y0);
-  transformed_vertex0(x1, y1);
-  transformed_vertex0(x2, y2);
+  transformed_vertex(x0, y0);
+  transformed_vertex(x1, y1);
+  transformed_vertex(x2, y2);
   end_loop();
 }
 
 
-void Fl_Android_Graphics_Driver::loop_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
+void Fl_Android_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
 {
   begin_loop();
-  transformed_vertex0(x0, y0);
-  transformed_vertex0(x1, y1);
-  transformed_vertex0(x2, y2);
-  transformed_vertex0(x3, y3);
+  transformed_vertex(x0, y0);
+  transformed_vertex(x1, y1);
+  transformed_vertex(x2, y2);
+  transformed_vertex(x3, y3);
   end_loop();
 }
 
 
-void Fl_Android_Graphics_Driver::polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2)
+void Fl_Android_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2)
 {
   begin_polygon();
-  transformed_vertex0(x0, y0);
-  transformed_vertex0(x1, y1);
-  transformed_vertex0(x2, y2);
+  transformed_vertex(x0, y0);
+  transformed_vertex(x1, y1);
+  transformed_vertex(x2, y2);
   end_polygon();
 }
 
 
-void Fl_Android_Graphics_Driver::polygon_unscaled(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
+void Fl_Android_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
 {
   begin_polygon();
-  transformed_vertex0(x0, y0);
-  transformed_vertex0(x1, y1);
-  transformed_vertex0(x2, y2);
-  transformed_vertex0(x3, y3);
+  transformed_vertex(x0, y0);
+  transformed_vertex(x1, y1);
+  transformed_vertex(x2, y2);
+  transformed_vertex(x3, y3);
   end_polygon();
 }
 
@@ -358,7 +396,7 @@ void Fl_Android_Graphics_Driver::add_vertex(float x, float y, bool gap)
 void Fl_Android_Graphics_Driver::begin_points()
 {
   begin_vertices();
-  Fl_Scalable_Graphics_Driver::begin_points();
+  super::begin_points();
 }
 
 /**
@@ -367,7 +405,7 @@ void Fl_Android_Graphics_Driver::begin_points()
 void Fl_Android_Graphics_Driver::begin_line()
 {
   begin_vertices();
-  Fl_Scalable_Graphics_Driver::begin_line();
+  super::begin_line();
 }
 
 /**
@@ -376,7 +414,7 @@ void Fl_Android_Graphics_Driver::begin_line()
 void Fl_Android_Graphics_Driver::begin_loop()
 {
   begin_vertices();
-  Fl_Scalable_Graphics_Driver::begin_loop();
+  super::begin_loop();
 }
 
 /**
@@ -385,7 +423,7 @@ void Fl_Android_Graphics_Driver::begin_loop()
 void Fl_Android_Graphics_Driver::begin_polygon()
 {
   begin_vertices();
-  Fl_Scalable_Graphics_Driver::begin_polygon();
+  super::begin_polygon();
 }
 
 /**
@@ -394,7 +432,7 @@ void Fl_Android_Graphics_Driver::begin_polygon()
 void Fl_Android_Graphics_Driver::begin_complex_polygon()
 {
   begin_vertices();
-  Fl_Scalable_Graphics_Driver::begin_complex_polygon();
+  super::begin_complex_polygon();
 }
 
 /**
@@ -405,7 +443,7 @@ void Fl_Android_Graphics_Driver::end_points()
   for (int i=0; i<pnVertex; ++i) {
     Vertex &v = pVertex[i];
     if (!v.pIsGap)
-      point_unscaled(v.pX, v.pY);
+      point(v.pX, v.pY);
   }
 }
 
@@ -418,7 +456,7 @@ void Fl_Android_Graphics_Driver::end_line()
   for (int i=1; i<pnVertex; ++i) {
     Vertex &v2 = pVertex[i];
     if (!v1.pIsGap && !v2.pIsGap)
-      line_unscaled(v1.pX, v1.pY, v2.pX, v2.pY);
+      line(v1.pX, v1.pY, v2.pX, v2.pY);
     v1 = v2;
   }
 }
@@ -433,7 +471,7 @@ void Fl_Android_Graphics_Driver::end_loop()
   for (int i=1; i<pnVertex; ++i) {
     Vertex &v2 = pVertex[i];
     if (!v1.pIsGap)
-      line_unscaled(v1.pX, v1.pY, v2.pX, v2.pY);
+      line(v1.pX, v1.pY, v2.pX, v2.pY);
     v1 = v2;
   }
 }
@@ -501,7 +539,7 @@ void Fl_Android_Graphics_Driver::end_polygon(int begin, int end)
       if (nodeX[i + 1] > xMin) {
         if (nodeX[i] < xMin) nodeX[i] = xMin;
         if (nodeX[i + 1] > xMax) nodeX[i + 1] = xMax;
-        xyline_unscaled(nodeX[i], pixelY, nodeX[i + 1]);
+        xyline(nodeX[i], pixelY, nodeX[i + 1]);
       }
     }
   }
@@ -595,7 +633,7 @@ void Fl_Android_Graphics_Driver::end_complex_polygon()
       if (nodeX[i + 1] > xMin) {
         if (nodeX[i] < xMin) nodeX[i] = xMin;
         if (nodeX[i + 1] > xMax) nodeX[i + 1] = xMax;
-        xyline_unscaled(nodeX[i], pixelY, nodeX[i + 1]);
+        xyline(nodeX[i], pixelY, nodeX[i + 1]);
       }
     }
   }
@@ -620,9 +658,15 @@ void Fl_Android_Graphics_Driver::gap()
  * Add a vertex to the list.
  * TODO: we should maintain a bounding box for faster clipping.
  */
-void Fl_Android_Graphics_Driver::transformed_vertex0(float x, float y)
+void Fl_Android_Graphics_Driver::transformed_vertex(double x, double y)
 {
   add_vertex(x, y);
+}
+
+
+void Fl_Android_Graphics_Driver::vertex(double x,double y)
+{
+  transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
 }
 
 
@@ -636,7 +680,7 @@ void Fl_Android_Graphics_Driver::transformed_vertex0(float x, float y)
  * @param a2
  * FIXME: float-to-int interpolation is horrible!
  */
-void Fl_Android_Graphics_Driver::arc_unscaled(float xi, float yi, float w, float h, double a1, double a2)
+void Fl_Android_Graphics_Driver::arc(int xi, int yi, int w, int h, double a1, double a2)
 {
   if (a2<=a1) return;
 
@@ -660,7 +704,7 @@ void Fl_Android_Graphics_Driver::arc_unscaled(float xi, float yi, float w, float
     px = nx; py = ny;
     nx = x + cos(a1)*rx;
     ny = y - sin(a1)*ry;
-    line_unscaled(px, py, nx, ny);
+    line(px, py, nx, ny);
   }
 }
 
@@ -674,7 +718,7 @@ void Fl_Android_Graphics_Driver::arc_unscaled(float xi, float yi, float w, float
  * @param b1
  * @param b2
  */
-void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float h, double b1, double b2)
+void Fl_Android_Graphics_Driver::pie(int xi, int yi, int w, int h, double b1, double b2)
 {
   // quick access to bounding box size
   double rx = w / 2.0;
@@ -750,21 +794,21 @@ void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float
       if (loInside && hiInside && !flipped) {
 //        fl_color(FL_GREEN);
         if (a1 < aL)
-          xyline_unscaled(x + hiLeft, iy, x + loRight);
+          xyline(x + hiLeft, iy, x + loRight);
       } else {
         if ((!loInside) && (!hiInside)) {
 //          fl_color(FL_MAGENTA);
           if ( (b1o<=0.0 && b2>=90.0) || (b1o<=(0.0-360.0) && b2>=(90.0-360.0)) )
-            xyline_unscaled(x - sinALrx, iy, x);
+            xyline(x - sinALrx, iy, x);
         } else {
           if (loInside) {
 //            fl_color(FL_BLUE);
             if (a1 < aL)
-              xyline_unscaled(x + loLeft, iy, x + loRight);
+              xyline(x + loLeft, iy, x + loRight);
           }
           if (hiInside) {
 //            fl_color(FL_YELLOW);
-            xyline_unscaled(x + hiLeft, iy, x);
+            xyline(x + hiLeft, iy, x);
           }
         }
       }
@@ -788,21 +832,21 @@ void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float
       if (loInside && hiInside && !flipped) {
 //        fl_color(FL_GREEN);
         if (a2 > aL)
-          xyline_unscaled(x + loLeft, iy, x + hiRight);
+          xyline(x + loLeft, iy, x + hiRight);
       } else {
         if ((!loInside) && (!hiInside)) {
 //          fl_color(FL_MAGENTA);
           if ( (b1o<=90.0 && b2>=180.0) || (b1o<=(90.0-360.0) && b2>=(180.0-360.0)) )
-            xyline_unscaled(x - sinALrx, iy, x);
+            xyline(x - sinALrx, iy, x);
         } else {
           if (loInside) {
 //            fl_color(FL_BLUE);
-            xyline_unscaled(x + loLeft, iy, x);
+            xyline(x + loLeft, iy, x);
           }
           if (hiInside) {
 //            fl_color(FL_YELLOW);
             if (a2 > aL)
-              xyline_unscaled(x + hiLeft, iy, x + hiRight);
+              xyline(x + hiLeft, iy, x + hiRight);
           }
         }
       }
@@ -827,21 +871,21 @@ void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float
       if (loInside && hiInside && !flipped) {
 //        fl_color(FL_GREEN);
         if (a1 < aR)
-          xyline_unscaled(x + hiLeft, iy, x + loRight);
+          xyline(x + hiLeft, iy, x + loRight);
       } else {
         if ((!loInside) && (!hiInside)) {
 //          fl_color(FL_MAGENTA);
           if ( (b1o<=180.0 && b2>=270.0) || (b1o<=(180.0-360.0) && b2>=(270.0-360.0)) )
-            xyline_unscaled(x + sinALrx, iy, x);
+            xyline(x + sinALrx, iy, x);
         } else {
           if (loInside) {
 //            fl_color(FL_BLUE);
             if (a1 < aR)
-              xyline_unscaled(x + loLeft, iy, x + loRight);
+              xyline(x + loLeft, iy, x + loRight);
           }
           if (hiInside) {
 //            fl_color(FL_YELLOW);
-            xyline_unscaled(x + hiLeft, iy, x);
+            xyline(x + hiLeft, iy, x);
           }
         }
       }
@@ -865,21 +909,21 @@ void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float
       if (loInside && hiInside && !flipped) {
 //        fl_color(FL_GREEN);
         if (a2 > aR)
-          xyline_unscaled(x + loLeft, iy, x + hiRight);
+          xyline(x + loLeft, iy, x + hiRight);
       } else {
         if ((!loInside) && (!hiInside)) {
 //          fl_color(FL_MAGENTA);
           if ( (b1o<=270.0 && b2>=360.0) || (b1o<=(270.0-360.0) && b2>=(360.0-360.0)) )
-            xyline_unscaled(x + sinALrx, iy, x);
+            xyline(x + sinALrx, iy, x);
         } else {
           if (loInside) {
 //            fl_color(FL_BLUE);
-            xyline_unscaled(x + loLeft, iy, x);
+            xyline(x + loLeft, iy, x);
           }
           if (hiInside) {
 //            fl_color(FL_YELLOW);
             if (a2 > aR)
-              xyline_unscaled(x + hiLeft, iy, x + hiRight);
+              xyline(x + hiLeft, iy, x + hiRight);
           }
         }
       }
@@ -888,23 +932,34 @@ void Fl_Android_Graphics_Driver::pie_unscaled(float xi, float yi, float w, float
 }
 
 /**
- * shortcut the closed circles so they use XDrawArc:
  * FIXME: these do not draw rotated ellipses correctly!
+ * FIXME: use floating point version of arc and pie?!
  * */
-void Fl_Android_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, double ry) {
-  float llx = xt-rx;
-  float w = xt+rx-llx;
-  float lly = yt-ry;
-  float h = yt+ry-lly;
+void Fl_Android_Graphics_Driver::ellipse(double xt, double yt, double rx, double ry)
+{
+  int llx = xt-rx;
+  int w = xt+rx-llx;
+  int lly = yt-ry;
+  int h = yt+ry-lly;
 
   if (what==POLYGON)
-    pie_unscaled(llx, lly, w, h, 0.0, 360.0);
+    pie(llx, lly, w, h, 0.0, 360.0);
   else
-    arc_unscaled(llx, lly, w, h, 0.0, 360.0);
+    arc(llx, lly, w, h, 0.0, 360.0);
 }
 
 
-void Fl_Android_Graphics_Driver::draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy)
+void Fl_Android_Graphics_Driver::circle(double x, double y, double r)
+{
+  double xt = transform_x(x,y);
+  double yt = transform_y(x,y);
+  double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
+  double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
+  ellipse(xt, yt, rx, ry);
+}
+
+
+void Fl_Android_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy)
 {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
@@ -928,7 +983,7 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
   for (int yy=0; yy<w; yy++) {
     const uchar *src = bm->array + yy*rowBytes;
     uchar *dst = cache->pBytes + yy*cache->pStride;
-    uchar d;
+    uchar d = 0;
     for (int xx=0; xx<w; xx++) {
       if ((xx&7)==0) d = *src++;
       if (d&1) *dst = 0xff; else *dst = 0;

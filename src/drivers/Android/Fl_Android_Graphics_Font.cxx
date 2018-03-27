@@ -420,7 +420,7 @@ Fl_Android_Font_Descriptor* Fl_Android_Font_Descriptor::find(Fl_Font fnum, Fl_Fo
  * @param fnum index into fl_fonts
  * @param size height in pixels
  */
-void Fl_Android_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Android_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   font_descriptor( Fl_Android_Font_Descriptor::find(fnum, size) );
   size_ = size;
   font_ = fnum;
@@ -520,11 +520,11 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c, Fl_Rec
  * @param n number of bytes to render
  * @param x, y position on screen
  */
-void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, int y)
+void Fl_Android_Graphics_Driver::draw(const char* str, int n, int x, int y)
 {
   if (str) {
     int dx, dy, w, h;
-    text_extents_unscaled(str, n, dx, dy, w, h);
+    text_extents(str, n, dx, dy, w, h);
     //pClippingRegion.print("<---- clip text to this");
     //Fl_Rect_Region(x+dx, y+dy, w, h).print(str);
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(x+dx, y+dy, w, h))) {
@@ -551,7 +551,7 @@ void Fl_Android_Graphics_Driver::draw_unscaled(const char* str, int n, int x, in
 }
 
 
-double Fl_Android_Graphics_Driver::width_unscaled(const char *str, int n)
+double Fl_Android_Graphics_Driver::width(const char *str, int n)
 {
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
   if (!fd) return 0;
@@ -568,7 +568,7 @@ double Fl_Android_Graphics_Driver::width_unscaled(const char *str, int n)
 }
 
 
-double Fl_Android_Graphics_Driver::width_unscaled(unsigned int uniChar)
+double Fl_Android_Graphics_Driver::width(unsigned int uniChar)
 {
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
   if (!fd) return 0;
@@ -576,24 +576,26 @@ double Fl_Android_Graphics_Driver::width_unscaled(unsigned int uniChar)
 }
 
 
-Fl_Fontsize Fl_Android_Graphics_Driver::size_unscaled()
+Fl_Fontsize Fl_Android_Graphics_Driver::size()
 {
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
   if (!fd) return 0;
   return fd->size;
 }
 
-
-void Fl_Android_Graphics_Driver::text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h)
+/**
+ * FIXME: use the actual size of all glyphs, which is easily found in the Bytemap!
+ */
+void Fl_Android_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h)
 {
-  w = width_unscaled(str, n);
-  h = height_unscaled();
+  w = width(str, n);
+  h = height();
   dx = 0;
-  dy = descent_unscaled() - h;
+  dy = descent() - h;
 }
 
 
-int Fl_Android_Graphics_Driver::height_unscaled()
+int Fl_Android_Graphics_Driver::height()
 {
   // This should really be "ascent - descent + lineGap"
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
@@ -602,7 +604,7 @@ int Fl_Android_Graphics_Driver::height_unscaled()
 }
 
 
-int Fl_Android_Graphics_Driver::descent_unscaled()
+int Fl_Android_Graphics_Driver::descent()
 {
   Fl_Android_Font_Descriptor *fd = (Fl_Android_Font_Descriptor*)font_descriptor();
   if (!fd) return 0;
