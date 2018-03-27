@@ -47,6 +47,26 @@ public:
 
 
 /**
+ * A 565a map is an array of words for interleaved RGB and Alpha data.
+ * 565 is the number of bit per component, compatible with our screen memory
+ * scheme. The second word is actually a byt containing the alpha value for
+ * the previous pixel: rrrrrggg.gggbbbbb.aaaaaaaa.00000000
+ */
+class Fl_Android_565A_Map
+{
+public:
+  Fl_Android_565A_Map();
+  Fl_Android_565A_Map(int w, int h);
+  ~Fl_Android_565A_Map();
+
+public:
+  int pWidth = 0, pHeight = 0, pStride = 0;
+  int pXOffset = 0, pYOffset = 0;
+  uint32_t *pWords = nullptr;
+};
+
+
+/**
  * This class reads True Type Font files and creates Bytemaps for glyphs at the
  * requested height.
  */

@@ -38,6 +38,37 @@ class Fl_Window;
 
 class FL_EXPORT Fl_Android_Screen_Driver : public Fl_Screen_Driver 
 {
+
+#if 0
+  // No, this is not how we will implement this.
+  enum {
+    /// request attribute for a specific screen; default to screen 0
+    INDEX = 0x0001,     // add an integer in the vararg list
+    /// allow or lock screen rotation
+    ROTATION_MASK = 0x0006, ROTATION_KEEP = 0x0000,
+    MAY_ROTATE = 0x0006, LOCK_TO_PORTRAIT = 0x0002, LOCK_TO_LANDSCAPE = 0x0004,
+    /// screen size
+    SIZE_MASK = 0x0038, SIZE_KEEP = 0x0000,
+    NATIVE_SIZE = 0x0008, // keep the full native screen size
+    FIRST_WINDOW = 0x0010, // adapt the screen to the size of the first window
+    ALL_WINDOWS = 0x0018, // adapt the screen to show all windows
+    FIXED_DIAGONAL = 0x0020, // keep aspect ration at 1:1, add an int for the length of the diagonal
+    // fixed size override the previous flags for portrait and/or landscape
+    FIXED_PORTRAIT_SIZE = 0x0040, // add two int width and height
+    NO_FIXED_PORTRAIT_SIZE = 0x80000040, // release fixed portrait size
+    FIXED_LANDSCAPE_SIZE = 0x0080, // add two int width and height
+    NO_FIXED_LANDSCAPE_SIZE = 0x80000080, // release fixed landscape size
+    // show or hide mobile device screen items
+    SHOW_STATUS_BAR = 0x0080, // top of the screen
+    HIDE_STATUS_BAR = 0x80000080, // top of the screen
+    SHOW_NAVIGATION_BAR = 0x0100, // bottom of the screen
+    HIDE_NAVIGATION_BAR = 0x0100, // bottom of the screen
+  };
+  /// request some attributes from a screen that may or may not be met
+  virtual hint(unsigned int flags, ...);
+#endif
+
+
 private:
   int handle_queued_events(double time_to_wait);
   int handle_app_command();

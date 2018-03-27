@@ -65,6 +65,8 @@ static const char *old_font_names[] = {
         "$DroidSansMono.ttf", "$DroidSansMono.ttf"
 };
 
+// -----------------------------------------------------------------------------
+
 /**
  * Create an empty Bytemap.
  */
@@ -78,7 +80,7 @@ Fl_Android_Bytemap::Fl_Android_Bytemap()
 Fl_Android_Bytemap::Fl_Android_Bytemap(int w, int h)
 {
   pWidth = w; pStride = w; pHeight = h;
-  pBytes = (unsigned char *)malloc(w*h);
+  pBytes = (unsigned char *)calloc(w, h);
 }
 
 /**
@@ -89,6 +91,144 @@ Fl_Android_Bytemap::~Fl_Android_Bytemap()
   if (pBytes) ::free(pBytes);
 }
 
+/**
+ * Render a bytemap to the screen using the current fl_color.
+ *
+ * Bytes are seen as alpha values for the RGB color set by fl_color. For better
+ * performance, alpha is only rendered in 5 steps. All rendering is offset as
+ * described in the bytemap, and clipped to the clipping region.
+ * @param xx, yy bottom left position of the bytemap (baseline for text)
+ * @param bm bytemap including offsets and size
+ * @param r clipping rectangle
+ */
+void Fl_Android_Graphics_Driver::draw(int xx, int yy, Fl_Android_Bytemap *bm,
+                                      Fl_Rect_Region &r)
+{
+  xx += bm->pXOffset; yy += bm->pYOffset;
+
+  if (xx>r.right()) return;
+  if (yy>r.bottom()) return;
+  if (xx+bm->pWidth < r.left()) return;
+  if (yy+bm->pHeight < r.top()) return;
+
+  uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
+  int32_t ss = pStride;
+  uint16_t *bits = pBits;
+  uint32_t ww = bm->pWidth;
+  uint32_t hh = bm->pHeight;
+  unsigned char *srcBytes = bm->pBytes;
+
+  int dx = r.left()-xx;
+  int dy = r.top()-yy;
+  int dr = (xx+ww)-r.right();
+  int db = (yy+hh)-r.bottom();
+  if (dx>0) { xx+=dx; ww-=dx; srcBytes+=dx; }
+  if (dy>0) { yy+=dy; hh-=dy; srcBytes+=dy*bm->pStride; }
+  if (dr>0) { ww-=dr; }
+  if (db>0) { hh-=db; }
+
+  for (uint32_t iy = 0; iy<hh; ++iy) {
+    uint16_t *d = bits + (yy+iy)*ss + xx;
+    unsigned char *s = srcBytes + iy*bm->pStride;
+    for (uint32_t ix = 0; ix<ww; ++ix) {
+#if 1
+      // 5 step antialiasing
+      unsigned char v = *s++;
+      if (v>200) { // 100% black
+        *d = cc;
+      } else if (v<50) { // 0%
+      } else if (v>150) { // 75%
+        uint16_t nn = *d, nn14 = (nn&(uint16_t(0xe79c)))>>2;
+        *d = nn14 + cc34;
+      } else if (v<100) { // 25%
+        uint16_t nn = *d, nn12 = (nn&(uint16_t(0xf7de)))>>1, nn14 = (nn12&(uint16_t(0xf7de)))>>1, nn34 = nn12+nn14;
+        *d = nn34 + cc14;
+      } else { // 50%
+        uint16_t nn = *d, nn12 = (nn&(uint16_t(0xf7de)))>>1;
+        *d = nn12 + cc12;
+      }
+#else
+      // pure black and white
+      if (*s++ > 128)
+        *d = cc;
+#endif
+      d++;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Create an empty image.
+ * All initialisation of members is done in-lin (C++11)
+ */
+Fl_Android_565A_Map::Fl_Android_565A_Map()
+{
+}
+
+Fl_Android_565A_Map::Fl_Android_565A_Map(int w, int h)
+{
+  pWidth = w; pStride = w; pHeight = h;
+  pWords = (uint32_t*)calloc(4, w*h);
+}
+
+Fl_Android_565A_Map::~Fl_Android_565A_Map()
+{
+  if (pWords) ::free(pWords);
+}
+
+/**
+ * Render a bytemap to the screen using the current fl_color.
+ *
+ * Bytes are seen as alpha values for the RGB color set by fl_color. For better
+ * performance, alpha is only rendered in 5 steps. All rendering is offset as
+ * described in the bytemap, and clipped to the clipping region.
+ * @param xx, yy bottom left position of the bytemap (baseline for text)
+ * @param bm bytemap including offsets and size
+ * @param r clipping rectangle
+ */
+void Fl_Android_Graphics_Driver::draw(int xx, int yy, Fl_Android_565A_Map *bm,
+                                      Fl_Rect_Region &r)
+{
+  xx += bm->pXOffset; yy += bm->pYOffset;
+
+  if (xx>r.right()) return;
+  if (yy>r.bottom()) return;
+  if (xx+bm->pWidth < r.left()) return;
+  if (yy+bm->pHeight < r.top()) return;
+
+  uint16_t cc = make565(fl_color()); // TODO: alpha: , cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
+  int32_t ss = pStride;
+  uint16_t *bits = pBits;
+  uint32_t ww = bm->pWidth;
+  uint32_t hh = bm->pHeight;
+  uint32_t *srcWords = bm->pWords;
+
+  int dx = r.left()-xx;
+  int dy = r.top()-yy;
+  int dr = (xx+ww)-r.right();
+  int db = (yy+hh)-r.bottom();
+  if (dx>0) { xx+=dx; ww-=dx; srcWords+=dx; }
+  if (dy>0) { yy+=dy; hh-=dy; srcWords+=dy*bm->pStride; }
+  if (dr>0) { ww-=dr; }
+  if (db>0) { hh-=db; }
+
+  for (uint32_t iy = 0; iy<hh; ++iy) {
+    uint16_t *d = bits + (yy+iy)*ss + xx;
+    uint32_t *s = srcWords + iy*bm->pStride;
+    for (uint32_t ix = 0; ix<ww; ++ix) {
+      uint32_t c = *s++;
+      uint8_t alpha = c;
+      if (alpha>0) {
+        uint16_t rgb = c >> 16;
+        // TODO: alpha blending: *d = rgb*a + (*d)*(1-a);
+        *d = rgb;
+      }
+      d++;
+    }
+  }
+}
 
 // -----------------------------------------------------------------------------
 
@@ -427,72 +567,6 @@ void Fl_Android_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 /**
- * Render a bytemap to the screen using the current fl_color.
- *
- * Bytes are seen as alpha values for the RGB color set by fl_color. For better
- * performance, alpha is only rendered in 5 steps. All rendering is offset as
- * described in the bytemap, and clipped to the clipping region.
- * @param xx, yy bottom left position of the bytemap (baseline for text)
- * @param bm bytemap including offsets and size
- * @param r clipping rectangle
- */
-void Fl_Android_Graphics_Driver::render_bytemap(int xx, int yy, Fl_Android_Bytemap *bm, Fl_Rect_Region &r)
-{
-  xx += bm->pXOffset; yy += bm->pYOffset;
-
-  if (xx>r.right()) return;
-  if (yy>r.bottom()) return;
-  if (xx+bm->pWidth < r.left()) return;
-  if (yy+bm->pHeight < r.top()) return;
-
-  uint16_t cc = make565(fl_color()), cc12 = (cc&0xf7de)>>1, cc14 = (cc12&0xf7de)>>1, cc34 = cc12+cc14;
-  int32_t ss = pStride;
-  uint16_t *bits = pBits;
-  uint32_t ww = bm->pWidth;
-  uint32_t hh = bm->pHeight;
-  unsigned char *srcBytes = bm->pBytes;
-
-  int dx = r.left()-xx;
-  int dy = r.top()-yy;
-  int dr = (xx+ww)-r.right();
-  int db = (yy+hh)-r.bottom();
-  if (dx>0) { xx+=dx; ww-=dx; srcBytes+=dx; }
-  if (dy>0) { yy+=dy; hh-=dy; srcBytes+=dy*bm->pStride; }
-  if (dr>0) { ww-=dr; }
-  if (db>0) { hh-=db; }
-
-  for (uint32_t iy = 0; iy<hh; ++iy) {
-    uint16_t *d = bits + (yy+iy)*ss + xx;
-    unsigned char *s = srcBytes + iy*bm->pStride;
-    for (uint32_t ix = 0; ix<ww; ++ix) {
-#if 1
-      // 5 step antialiasing
-      unsigned char v = *s++;
-      if (v>200) { // 100% black
-        *d = cc;
-      } else if (v<50) { // 0%
-      } else if (v>150) { // 75%
-        uint16_t nn = *d, nn14 = (nn&(uint16_t(0xe79c)))>>2;
-        *d = nn14 + cc34;
-      } else if (v<100) { // 25%
-        uint16_t nn = *d, nn12 = (nn&(uint16_t(0xf7de)))>>1, nn14 = (nn12&(uint16_t(0xf7de)))>>1, nn34 = nn12+nn14;
-        *d = nn34 + cc14;
-      } else { // 50%
-        uint16_t nn = *d, nn12 = (nn&(uint16_t(0xf7de)))>>1;
-        *d = nn12 + cc12;
-      }
-#else
-      // pure black and white
-      if (*s++ > 128)
-        *d = cc;
-#endif
-      d++;
-    }
-  }
-
-}
-
-/**
  * Copy a single letter to the screen.
  * @param xx, yy position of character on screen
  * @param c unicode character
@@ -509,7 +583,7 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c, Fl_Rec
   Fl_Android_Bytemap *bm = fd->get_bytemap(c);
   if (!bm) return oxx;
 
-  render_bytemap(xx, yy, bm, r);
+  draw(xx, yy, bm, r);
 
   return oxx + bm->pAdvance;
 }
@@ -706,120 +780,6 @@ void Fl_Android_Graphics_Driver::font_name(int num, const char *name)
   }
 }
 
-#if 0
-
-// TODO: do we need that?
-const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
-  Fl_Xlib_Fontdesc *f = ((Fl_Xlib_Fontdesc*)fl_fonts) + fnum;
-  if (!f->fontname[0]) {
-    int type = 0;
-    const char* p = f->name;
-    if (!p) {
-      if (ap) *ap = 0;
-      return "";
-    }
-    char *o = f->fontname;
-
-    if (*p != '-') { // non-standard font, just replace * with spaces:
-      if (strstr(p,"bold")) type = FL_BOLD;
-      if (strstr(p,"ital")) type |= FL_ITALIC;
-      for (;*p; p++) {
-	if (*p == '*' || *p == ' ' || *p == '-') {
-	  do p++; while (*p == '*' || *p == ' ' || *p == '-');
-	  if (!*p) break;
-	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
-	}
-	if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = *p;
-      }
-      *o = 0;
-
-    } else { // standard dash-separated font:
-
-      // get the family:
-      const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;
-      if (!*x) {
-	if (ap) *ap = 0;
-	return p;
-      }
-      const char *e = fl_font_word(x,1);
-      if ((e - x) < (int)(ENDOFBUFFER - 1)) {
-	// MRS: we want strncpy here, not strlcpy...
-	strncpy(o,x,e-x);
-	o += e-x;
-      } else {
-	strlcpy(f->fontname, x, ENDOFBUFFER);
-	o = f->fontname+ENDOFBUFFER-1;
-      }
-
-      // collect all the attribute words:
-      for (int n = 3; n <= 6; n++) {
-	// get the next word:
-	if (*e) e++; x = e; e = fl_font_word(x,1);
-	int t = attribute(n,x);
-	if (t < 0) {
-	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
-	  if ((e - x) < (int)(ENDOFBUFFER - (o - f->fontname) - 1)) {
-	    // MRS: we want strncpy here, not strlcpy...
-	    strncpy(o,x,e-x);
-	    o += e-x;
-	  } else {
-	    strlcpy(o,x, ENDOFBUFFER - (o - f->fontname) - 1);
-	    o = f->fontname+ENDOFBUFFER-1;
-	  }
-	} else type |= t;
-      }
-
-      // skip over the '*' for the size and get the registry-encoding:
-      x = fl_font_word(e,2);
-      if (*x) {x++; *o++ = '('; while (*x) *o++ = *x++; *o++ = ')';}
-
-      *o = 0;
-      if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
-      if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
-    }
-    f->fontname[ENDOFBUFFER] = (char)type;
-  }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
-  return f->fontname;
-}
-
-#define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
-
-// turn a stored font name into a pretty name:
-const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
-  if (!fl_fonts) fl_fonts = calc_fl_fonts();
-  Fl_Fontdesc *f = fl_fonts + fnum;
-  if (!f->fontname[0]) {
-    this->set_fontname_in_fontdesc(f);
-    const char* p = f->name;
-    if (!p || !*p) {if (ap) *ap = 0; return "";}
-    int type = 0;
-    if (strstr(f->name, "Bold")) type |= FL_BOLD;
-    if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;
-    f->fontname[ENDOFBUFFER] = (char)type;
-  }
-  if (ap) *ap = f->fontname[ENDOFBUFFER];
-  return f->fontname;
-}
-
-
-int Fl_Quartz_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
-  static int array[128];
-  if (!fl_fonts) fl_fonts = calc_fl_fonts();
-  Fl_Fontdesc *s = fl_fonts+fnum;
-  if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
-  int cnt = 0;
-
-  // ATS supports all font size
-  array[0] = 0;
-  sizep = array;
-  cnt = 1;
-
-  return cnt;
-}
-
-
-#endif
 
 //
 // End of "$Id$".

@@ -33,6 +33,7 @@
 
 class Fl_Android_Window_Driver;
 class Fl_Android_Bytemap;
+class Fl_Android_565A_Map;
 
 /**
   \brief The Windows-specific graphics driver class.
@@ -60,49 +61,11 @@ protected:
   float scale_; // scale between user and graphical coordinates: graphical = user * scale_
   /** Sets the current value of the scaling factor */
   virtual void scale(float f) { scale_ = f; }
-public:
-  // The following functions create the various graphics drivers that are required
-  // for core operations. They must be implemented as members of Fl_Graphics_Driver,
-  // but located in the device driver module that is linked to the core library
-  /** Instantiate the graphics driver adequate to draw to the platform's display driver.
-   Each platform implements this method its own way.
-   */
-  static Fl_Graphics_Driver *newMainGraphicsDriver();
-  /** A 2D coordinate transformation matrix */
-  struct matrix {double a, b, c, d, x, y;};
-  /** Features that a derived class may possess.  */
-  typedef enum {
-    NATIVE = 1, /**< native graphics driver for the platform */
-    PRINTER = 2 /**< graphics driver for a printer drawing surface */
-  } driver_feature;
-
 protected:
-  int fl_clip_state_number; ///< For internal use by FLTK
-  static const matrix m0; ///< For internal use by FLTK
-  Fl_Font font_; ///< current font
-  Fl_Fontsize size_; ///< current font size
-  Fl_Color color_; ///< current color
-  int sptr;///< For internal use by FLTK
-  static const int matrix_stack_size = FL_MATRIX_STACK_SIZE; ///< For internal use by FLTK
-  matrix stack[FL_MATRIX_STACK_SIZE]; ///< For internal use by FLTK
-  matrix m; ///< current transformation matrix
-  int n; ///< For internal use by FLTK
-  int gap_; ///< For internal use by FLTK
-  int what; ///< For internal use by FLTK
-  int rstackptr; ///< For internal use by FLTK
-  static const int region_stack_max = FL_REGION_STACK_SIZE - 1; ///< For internal use by FLTK
-  Fl_Region rstack[FL_REGION_STACK_SIZE]; ///< For internal use by FLTK
-  Fl_Font_Descriptor *font_descriptor_; ///< For internal use by FLTK
-#ifndef FL_DOXYGEN
-  enum {LINE, LOOP, POLYGON, POINT_};
-  inline int vertex_no() { return n; }
-  inline int vertex_kind() {return what;}
-#endif
-  matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
   virtual void global_gc();
-  /** Support function for Fl_Pixmap drawing */
-  virtual fl_uintptr_t cache(Fl_Pixmap *img) { return 0; }
 #endif
+  /** Support function for Fl_Pixmap drawing */
+  virtual fl_uintptr_t cache(Fl_Pixmap *img) override;
   /** Support function for Fl_Bitmap drawing */
   virtual fl_uintptr_t cache(Fl_Bitmap *img) override;
 #if 0
@@ -123,13 +86,13 @@ protected:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
+#endif
   /** \brief Draws an Fl_Pixmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
-  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
-#endif
+  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) override;
   /** \brief Draws an Fl_Bitmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
@@ -150,39 +113,6 @@ protected:
   }
   // Support function for image drawing
   virtual void uncache_pixmap(fl_uintptr_t p);
-  // accessor functions to protected image members
-  int start_image(Fl_Image *img, int XP, int YP, int WP, int HP, int &cx, int &cy,
-                  int &X, int &Y, int &W, int &H);
-  /** Accessor to a private member variable of Fl_RGB_Image */
-  static fl_uintptr_t* id(Fl_RGB_Image *rgb) {return &(rgb->id_);}
-  /** Accessor to a private member variable of Fl_Pixmap */
-  static fl_uintptr_t* id(Fl_Pixmap *pm) {return &(pm->id_);}
-  /** Accessor to a private member variable of Fl_Bitmap */
-  static fl_uintptr_t* id(Fl_Bitmap *bm) {return &(bm->id_);}
-  /** Accessor to a private member variable of Fl_RGB_Image */
-  static fl_uintptr_t* mask(Fl_RGB_Image *rgb) {return &(rgb->mask_);}
-  /** Accessor to a private member variable of Fl_Pixmap */
-  static fl_uintptr_t* mask(Fl_Pixmap *pm) {return &(pm->mask_);}
-  /** Accessor to a private member variable of Fl_Pixmap */
-  static float* cache_scale(Fl_Pixmap *pm) {return &(pm->cache_scale_);}
-  /** Accessor to a private member variable of Fl_Bitmap */
-  static float* cache_scale(Fl_Bitmap *bm) {return &(bm->cache_scale_);}
-  /** Accessor to a private member variable of Fl_RGB_Image */
-  static float* cache_scale(Fl_RGB_Image *rgb) {return &(rgb->cache_scale_);}
-  /** Accessor to a private member variable of Fl_Pixmap */
-  static Fl_Color* pixmap_bg_color(Fl_Pixmap *pm) {return &(pm->pixmap_bg_color);}
-  /** For internal library use only */
-  static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
-  /** Accessor to a private member function of Fl_Bitmap */
-  static int prepare(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int &cx, int &cy,
-                     int &X, int &Y, int &W, int &H) {
-    return bm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
-  }
-  /** Accessor to a private member function of Fl_Pixmap */
-  static int prepare(Fl_Pixmap *pm, int XP, int YP, int WP, int HP, int &cx, int &cy,
-                     int &X, int &Y, int &W, int &H) {
-    return pm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
-  }
 #endif
 public:
   /** Constructor, C++11 initialises member variables in-line */
@@ -270,52 +200,44 @@ public:
   virtual void gap() override;
   /** see fl_circle() */
   virtual void circle(double x, double y, double r) override;
-#if 0
-  // TODO: arc()
   // --- implementation is in src/fl_arc.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arc.cxx if needed
-  virtual void arc(double x, double y, double r, double start, double end);
-#endif
+  virtual void arc(double x, double y, double r, double start, double end) override { super::arc(x, y, r, start, end); }
   // --- implementation is in src/fl_arci.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_arci.cxx
   /** see fl_arc(int x, int y, int w, int h, double a1, double a2) */
   virtual void arc(int x, int y, int w, int h, double a1, double a2) override;
   /** see fl_pie() */
   virtual void pie(int x, int y, int w, int h, double a1, double a2) override;
-#if 0
-  // TODO: curve()
   // --- implementation is in src/fl_curve.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_curve.cxx if needed
-  virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-#endif
+  // super: virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   // --- implementation is in src/fl_line_style.cxx which includes src/cfg_gfx/xxx_line_style.cxx
   // TODO: line_style()
   /** see fl_line_style() */
   virtual void line_style(int style, int width=0, char* dashes=0) override;
   // --- implementation is in src/fl_color.cxx which includes src/cfg_gfx/xxx_color.cxx
   /** see fl_color(Fl_Color) */
-  // super: virtual void color(Fl_Color c);
-#if 0
-  virtual void set_color(Fl_Color i, unsigned int c);
-  virtual void free_color(Fl_Color i, int overlay);
+  virtual void color(Fl_Color c) override { super::color(c); }
+  virtual void set_color(Fl_Color i, unsigned int c) override;
+  // super: virtual void free_color(Fl_Color i, int overlay);
   /** see fl_color(void) */
-  virtual Fl_Color color() { return color_; }
+  virtual Fl_Color color() override { return super::color(); }
   /** see fl_color(uchar, uchar, uchar) */
-  virtual void color(uchar r, uchar g, uchar b) {}
-#endif
+  virtual void color(uchar r, uchar g, uchar b) override;
   /** see fl_draw(const char *str, int n, int x, int y) */
   virtual void draw(const char *str, int n, int x, int y) override;
-#if 0
   /** Draw the first \p n bytes of the string \p str starting at position \p x , \p y */
-  virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
+  // super: virtual void draw(const char *str, int n, float x, float y);
   /** see fl_draw(int angle, const char *str, int n, int x, int y) */
-  virtual void draw(int angle, const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  // TODO: drawing text at an angle is not supported
+  virtual void draw(int angle, const char *str, int n, int x, int y) override { draw(str, n, x, y); }
   /** see fl_rtl_draw(const char *str, int n, int x, int y) */
-  virtual void rtl_draw(const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  // TODO: drawing text right-to-left is not supported
+  virtual void rtl_draw(const char *str, int n, int x, int y) override { draw(str, n, x, y); }
   /** Returns non-zero if the graphics driver possesses the \p feature */
-  virtual int has_feature(driver_feature feature) { return 0; }
-#endif
+  // super: virtual int has_feature(driver_feature feature)
   /** see fl_font(Fl_Font, Fl_Fontsize) */
   virtual void font(Fl_Font face, Fl_Fontsize fsize) override;
   /** see fl_font(void) */
-  // super: virtual Fl_Font font() {return font_; }
+  virtual Fl_Font font() override { return super::font(); }
   /** Return the current font size */
   virtual Fl_Fontsize size() override;
   /** Compute the width of the first \p n bytes of the string \p str if drawn with current font */
@@ -340,10 +262,12 @@ public:
   virtual uchar **mask_bitmap() { return 0; }
   /** Support for pixmap drawing */
   virtual void mask_bitmap(uchar **) {}
+#endif
   // default implementation may be enough
   /** Support for PostScript drawing */
-  virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) { return float(s); }
+  virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) override { return float(s); }
   // default implementation may be enough
+#if 0
   /** Support for PostScript drawing */
   virtual float scale_bitmap_for_PostScript() { return 2; }
   virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
@@ -359,12 +283,10 @@ public:
   virtual int get_font_sizes(Fl_Font fnum, int*& sizep) override;
   /** Support for Fl::set_fonts() */
   virtual Fl_Font set_fonts(const char *name) override;
-#if 0
   /** Some platforms may need to implement this to support fonts */
-  virtual Fl_Fontdesc* calc_fl_fonts(void) {return NULL;}
+  // super: virtual Fl_Fontdesc* calc_fl_fonts(void) {return NULL;}
   /** Support for Fl::set_font() */
-  virtual unsigned font_desc_size();
-#endif
+  // super: virtual unsigned font_desc_size();
   /** Support for Fl::get_font() */
   virtual const char *font_name(int num) override;
   /** Support for Fl::set_font() */
@@ -375,10 +297,10 @@ public:
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
   virtual bool overlay_rect_unscaled();
+#endif
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
-  virtual void overlay_rect(int x, int y, int w , int h) { loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1); }
-#endif
+  // super: virtual void overlay_rect(int x, int y, int w , int h) { loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1); }
   // --- end of original Fl_Graphics_Driver header -----------------------------
 
   // --- start of Android additions --------------------------------------------
@@ -393,7 +315,8 @@ protected:
   void yxline_unclipped(int x, int y, int y1);
   void end_polygon(int begin, int end);
   void ellipse(double xt, double yt, double rx, double ry);
-  void render_bytemap(int x, int y, Fl_Android_Bytemap *bm, Fl_Rect_Region &r);
+  void draw(int xx, int yy, Fl_Android_565A_Map *bm, Fl_Rect_Region &r);
+  void draw(int x, int y, Fl_Android_Bytemap *bm, Fl_Rect_Region &r);
   int render_letter(int xx, int yy, uint32_t c, Fl_Rect_Region &r);
 
   // pointer into the screen buffer at the top left corner of the current window

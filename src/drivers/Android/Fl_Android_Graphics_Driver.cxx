@@ -26,6 +26,9 @@
 #include <errno.h>
 #include <math.h>
 
+
+extern int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
+
 static int sign(int v) { return (v<0) ? -1 : 1; }
 
 /*
@@ -370,7 +373,7 @@ void Fl_Android_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2,
  */
 void Fl_Android_Graphics_Driver::begin_vertices()
 {
-  pnVertex = 0;
+  pnVertex = n = 0;
   pVertexGapStart = 0;
 }
 
@@ -387,7 +390,7 @@ void Fl_Android_Graphics_Driver::add_vertex(float x, float y, bool gap)
   }
   pVertex[pnVertex].set(x, y);
   pVertex[pnVertex].pIsGap = gap;
-  pnVertex++;
+  pnVertex++; n = pnVertex;
 }
 
 /**
@@ -959,6 +962,21 @@ void Fl_Android_Graphics_Driver::circle(double x, double y, double r)
 }
 
 
+void Fl_Android_Graphics_Driver::draw(Fl_Pixmap * pxm, int XP, int YP, int WP, int HP, int cx, int cy)
+{
+  int X, Y, W, H;
+  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (*Fl_Graphics_Driver::id(pxm)) {
+    Fl_Android_565A_Map *cache = (Fl_Android_565A_Map*)*Fl_Graphics_Driver::id(pxm);
+    for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
+      draw(XP, YP, cache, it->clipped_rect());
+    }
+  }
+}
+
+
 void Fl_Android_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy)
 {
   int X, Y, W, H;
@@ -968,7 +986,7 @@ void Fl_Android_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int
   if (*Fl_Graphics_Driver::id(bm)) {
     Fl_Android_Bytemap *cache = (Fl_Android_Bytemap*)*Fl_Graphics_Driver::id(bm);
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
-      render_bytemap(XP, YP, cache, it->clipped_rect());
+      draw(XP, YP, cache, it->clipped_rect());
     }
   }
 }
@@ -994,6 +1012,50 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
 
   return (fl_uintptr_t)cache;
 }
+
+
+
+fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
+{
+  int w = img->w(), h = img->h();
+  int rowBytes = 4*w;
+  uchar *rgba = (uchar*)calloc(w*h, 4);
+  int ret = fl_convert_pixmap(img->data(), rgba, 0);
+  if (ret==0) {
+    ::free(rgba);
+    return 0;
+  }
+
+  Fl_Android_565A_Map *cache = new Fl_Android_565A_Map(w, h);
+  for (int yy=0; yy<w; yy++) {
+    const uchar *src = rgba + yy*rowBytes;
+    uint32_t *dst = cache->pWords + yy*cache->pStride;
+    for (int xx=0; xx<w; xx++) {
+      uint32_t c = ((((src[0] << 8) & 0xf800) |
+                     ((src[1] << 3) & 0x07e0) |
+                     ((src[2] >> 3) & 0x001f) ) << 16) | src[3]; // FIXME: alpha
+      *dst++ = c;
+      src+=4;
+    }
+  }
+
+  ::free(rgba);
+  return (fl_uintptr_t)cache;
+}
+
+
+void Fl_Android_Graphics_Driver::set_color(Fl_Color i, unsigned int c)
+{
+  if (i>255) return;
+  fl_cmap[i] = c;
+}
+
+
+void Fl_Android_Graphics_Driver::color(uchar r, uchar g, uchar b)
+{
+  color( (((Fl_Color)r)<<24)|(((Fl_Color)g)<<16)|(((Fl_Color)b)<<8) );
+}
+
 
 //
 // End of "$Id$".
