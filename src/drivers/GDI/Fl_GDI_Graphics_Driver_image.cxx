@@ -498,7 +498,10 @@ void Fl_GDI_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, in
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
     *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)build_id(img, (void**)(Fl_Graphics_Driver::mask(img)));
-    *cache_scale(img) = 1;
+    int *pw, *ph;
+    cache_w_h(img, pw, ph);
+    *pw = img->data_w();
+    *ph = img->data_h();
   }
   Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::mask(img)) {
@@ -541,7 +544,10 @@ int Fl_GDI_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, i
   if (!*Fl_Graphics_Driver::id(rgb)) {
     *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)build_id(rgb,
                                                     (void**)(Fl_Graphics_Driver::mask(rgb)));
-    *cache_scale(rgb) = 1;
+    int *pw, *ph;
+    cache_w_h(rgb, pw, ph);
+    *pw = rgb->data_w();
+    *ph = rgb->data_h();
   }
   cache_size(img, WP, HP);
   HDC new_gc = CreateCompatibleDC(gc_);
@@ -600,7 +606,10 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
 }
 
 fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
-  *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
+  int *pw, *ph;
+  cache_w_h(bm, pw, ph);
+  *pw = bm->data_w();
+  *ph = bm->data_h();
   return (fl_uintptr_t)fl_create_bitmap(bm->data_w(), bm->data_h(), bm->array);
 }
 
@@ -660,7 +669,10 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Surface_Device::pop_current();
   Fl_Offscreen id = surf->get_offscreen_before_delete();
   delete surf;
-  *cache_scale(img) =  1;
+  int *pw, *ph;
+  cache_w_h(img, pw, ph);
+  *pw = img->data_w();
+  *ph = img->data_h();
   return (fl_uintptr_t)id;
 }
 

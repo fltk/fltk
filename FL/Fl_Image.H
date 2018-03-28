@@ -262,8 +262,8 @@ private:
   // These two variables are used to cache the image and mask for the main display graphics driver
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
-  float cache_scale_; // graphics scaling value when id_ was computed
-  
+  int cache_w_, cache_h_; // size of image when cached
+
 public:
 
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0);

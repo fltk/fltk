@@ -696,7 +696,7 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
   delete[] dst;
 }
 
-static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
+Fl_Offscreen Fl_Xlib_Graphics_Driver::cache_rgb(Fl_RGB_Image *img) {
   Fl_Image_Surface *surface;
   int depth = img->d();
   if (depth == 1 || depth == 3) {
@@ -713,6 +713,10 @@ static Fl_Offscreen cache_rgb(Fl_RGB_Image *img) {
   Fl_Surface_Device::pop_current();
   Fl_Offscreen off = surface->get_offscreen_before_delete();
   delete surface;
+  int *pw, *ph;
+  cache_w_h(img, pw, ph);
+  *pw = img->data_w();
+  *ph = img->data_h();
   return off;
 }
 
@@ -728,7 +732,6 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(Fl_RGB_Image *img, float s, int X, i
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
     *Fl_Graphics_Driver::id(img) = cache_rgb(img);
-    *cache_scale(img) = 1;
   }
   Fl_Region r2 = scale_clip(s);
   if (*Fl_Graphics_Driver::id(img)) {
@@ -767,7 +770,10 @@ void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintp
 }
 
 fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Bitmap *bm) {
-  *cache_scale(bm) =  Fl_Scalable_Graphics_Driver::scale();
+  int *pw, *ph;
+  cache_w_h(bm, pw, ph);
+  *pw = bm->data_w();
+  *ph = bm->data_h();
   return (fl_uintptr_t)create_bitmask(bm->data_w(), bm->data_h(), bm->array);
 }
 
@@ -830,7 +836,10 @@ fl_uintptr_t Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
   Fl_Surface_Device::pop_current();
   Fl_Offscreen id = surf->get_offscreen_before_delete();
   delete surf;
-  *cache_scale(pxm) =  1;
+  int *pw, *ph;
+  cache_w_h(pxm, pw, ph);
+  *pw = pxm->data_w();
+  *ph = pxm->data_h();
   return (fl_uintptr_t)id;
 }
 
@@ -881,7 +890,6 @@ int Fl_Xlib_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, 
   if (!rgb || !can_do_alpha_blending()) return 0;
   if (!*Fl_Graphics_Driver::id(rgb)) {
     *Fl_Graphics_Driver::id(rgb) = cache_rgb(rgb);
-    *cache_scale(rgb) = 1;
   }
   cache_size(img, WP, HP);
   return scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),

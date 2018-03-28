@@ -199,12 +199,21 @@ protected:
   static fl_uintptr_t* mask(Fl_RGB_Image *rgb) {return &(rgb->mask_);}
   /** Accessor to a private member variable of Fl_Pixmap */
   static fl_uintptr_t* mask(Fl_Pixmap *pm) {return &(pm->mask_);}
-  /** Accessor to a private member variable of Fl_Pixmap */
-  static float* cache_scale(Fl_Pixmap *pm) {return &(pm->cache_scale_);}
-  /** Accessor to a private member variable of Fl_Bitmap */
-  static float* cache_scale(Fl_Bitmap *bm) {return &(bm->cache_scale_);}
-  /** Accessor to a private member variable of Fl_RGB_Image */
-  static float* cache_scale(Fl_RGB_Image *rgb) {return &(rgb->cache_scale_);}
+  /** Accessor to private member variables of Fl_Pixmap */
+  static void cache_w_h(Fl_Pixmap *pm, int*& pwidth, int*& pheight) {
+    pwidth = &(pm->cache_w_);
+    pheight = &(pm->cache_h_);
+  }
+  /** Accessor to private member variables of Fl_Bitmap */
+  static void cache_w_h(Fl_Bitmap *bm, int*& pwidth, int*& pheight) {
+    pwidth = &(bm->cache_w_);
+    pheight = &(bm->cache_h_);
+  }
+  /** Accessor to private member variables of Fl_RGB_Image */
+  static void cache_w_h(Fl_RGB_Image *rgb, int*& pwidth, int*& pheight) {
+    pwidth = &(rgb->cache_w_);
+    pheight = &(rgb->cache_h_);
+  }
   /** Accessor to a private member variable of Fl_Pixmap */
   static Fl_Color* pixmap_bg_color(Fl_Pixmap *pm) {return &(pm->pixmap_bg_color);}
   /** For internal library use only */

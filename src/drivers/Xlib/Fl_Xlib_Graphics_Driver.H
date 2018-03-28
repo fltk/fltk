@@ -101,6 +101,7 @@ protected:
   static Window draw_window;
   static struct _XftDraw* draw_;
 #endif
+  Fl_Offscreen cache_rgb(Fl_RGB_Image *img);
 public:
   Fl_Xlib_Graphics_Driver(void);
   virtual ~Fl_Xlib_Graphics_Driver();

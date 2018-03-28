@@ -55,7 +55,7 @@ private:
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
   Fl_Color pixmap_bg_color;
-  float cache_scale_; // graphics scaling value when id_ was computed
+  int cache_w_, cache_h_; // size of pixmap when cached
 
 public:
 

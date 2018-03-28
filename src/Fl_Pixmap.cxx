@@ -42,7 +42,7 @@ void Fl_Pixmap::measure() {
   if (w()<0 && data()) {
     fl_measure_pixmap(data(), W, H);
     w(W); h(H);
-    cache_scale_ = 1;
+    cache_w_ = cache_h_ = 0;
   }
 }
 

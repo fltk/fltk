@@ -349,7 +349,7 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
   alloc_array(0),
   id_(0),
   mask_(0),
-  cache_scale_(1)
+  cache_w_(0), cache_h_(0)
 {
     data((const char **)&array, 1);
     ld(LD);
@@ -372,7 +372,7 @@ Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
   alloc_array(0),
   id_(0),
   mask_(0),
-  cache_scale_(1)
+  cache_w_(0), cache_h_(0)
 {
   if (pxm && pxm->w() > 0 && pxm->h() > 0) {
     array = new uchar[w() * h() * d()];
