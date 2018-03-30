@@ -3,7 +3,7 @@
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -763,11 +763,11 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
       if (L >= RR) L += dw;
       else if (L > RL) L += dw * (L-RL) / (RR-RL);
       if (R >= RR) R += dw;
-      else if (R > RL) R = R + dw * (R-RL) / (RR-RL);
+      else if (R > RL) R += dw * (R-RL) / (RR-RL);
       if (T >= RB) T += dh;
-      else if (T > RT) T = T + dh * (T-RT) / (RB-RT);
+      else if (T > RT) T += dh * (T-RT) / (RB-RT);
       if (B >= RB) B += dh;
-      else if (B > RT) B = B + dh * (B-RT) / (RB-RT);
+      else if (B > RT) B += dh * (B-RT) / (RB-RT);
 
 #endif // old / new (1.4.0++) widget resizing code
 
