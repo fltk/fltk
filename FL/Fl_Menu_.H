@@ -47,6 +47,10 @@
       the Fl_Menu_ widget's callback is invoked with any userdata
       configured for it. The callback can determine which item
       was picked using value(), mvalue(), item_pathname(), etc.
+
+  The line spacing between menu items can be controlled with the global setting
+  Fl::menu_linespacing().
+
 */
 class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 
