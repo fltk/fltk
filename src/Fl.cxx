@@ -136,7 +136,8 @@ int		Fl::damage_,
 		Fl::e_is_click,
 		Fl::e_keysym,
 		Fl::e_original_keysym,
-		Fl::scrollbar_size_ = 16;
+		Fl::scrollbar_size_ = 16,
+		Fl::menu_linespacing_ = 4;	// 4: was a local macro in Fl_Menu.cxx called "LEADING"
 
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
@@ -230,6 +231,23 @@ int Fl::scrollbar_size() {
 */
 void Fl::scrollbar_size(int W) {
   scrollbar_size_ = W;
+}
+
+/**
+  Gets the default line spacing used by menus.
+  \returns The default line spacing, in pixels.
+*/
+int Fl::menu_linespacing() {
+  return menu_linespacing_;
+}
+
+/**
+  Sets the default line spacing used by menus.
+  Default is 4.
+  \param[in] H The new default line spacing between menu items, in pixels.
+*/
+void Fl::menu_linespacing(int H) {
+  menu_linespacing_ = H;
 }
 
 

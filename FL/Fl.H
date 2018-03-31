@@ -294,6 +294,7 @@ public:
 
   static int e_original_keysym; // late addition
   static int scrollbar_size_;
+  static int menu_linespacing_;	// STR #2927
 #endif
 
 
@@ -407,6 +408,8 @@ public:
   static int reload_scheme(); // platform dependent
   static int scrollbar_size();
   static void scrollbar_size(int W);
+  static int menu_linespacing();
+  static void menu_linespacing(int H);
 
   // execution:
   static int wait();
