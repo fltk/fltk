@@ -15,195 +15,159 @@
  *
  */
 
-#if 0
+#if 1
 
-
-#elif 1
-
+//
+// "$Id: color_chooser.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $"
+//
+// Color chooser test program for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2018 by Bill Spitzak and others.
+//
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
+//
+//     http://www.fltk.org/COPYING.php
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
 
 #include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Hor_Value_Slider.H>
-#include <FL/Fl_Toggle_Button.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Choice.H>
-#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Button.H>
+#include <FL/fl_show_colormap.H>
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Image.H>
+#include <FL/platform.H>
 #include <FL/fl_draw.H>
 
-#include "/Users/matt/dev/fltk-1.4.svn/test/pixmaps/blast.xpm"
+#include <stdlib.h>
+#include <stdio.h>
+#if !defined(_WIN32) && !defined(__APPLE__) && !defined(FL_PORTING) && !defined(__ANDROID__)
+#include "list_visuals.cxx"
+#endif
 
-Fl_Toggle_Button *imageb, *imageovertextb, *imagenexttotextb, *imagebackdropb;
-Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*clipb,*wrapb;
-Fl_Box *text;
-Fl_Input *input;
-Fl_Hor_Value_Slider *fonts;
-Fl_Hor_Value_Slider *sizes;
-Fl_Double_Window *window;
-Fl_Pixmap *img;
+int width = 100;
+int height = 100;
+uchar *image;
+Fl_Box *hint;
 
-void button_cb(Fl_Widget *,void *) {
-  int i = 0;
-  if (leftb->value()) i |= FL_ALIGN_LEFT;
-  if (rightb->value()) i |= FL_ALIGN_RIGHT;
-  if (topb->value()) i |= FL_ALIGN_TOP;
-  if (bottomb->value()) i |= FL_ALIGN_BOTTOM;
-  if (insideb->value()) i |= FL_ALIGN_INSIDE;
-  if (clipb->value()) i |= FL_ALIGN_CLIP;
-  if (wrapb->value()) i |= FL_ALIGN_WRAP;
-  if (imageovertextb->value()) i |= FL_ALIGN_TEXT_OVER_IMAGE;
-  if (imagenexttotextb->value()) i |= FL_ALIGN_IMAGE_NEXT_TO_TEXT;
-  if (imagebackdropb->value()) i |= FL_ALIGN_IMAGE_BACKDROP;
-  text->align(i);
-  window->redraw();
-}
-
-void image_cb(Fl_Widget *,void *) {
-  if (imageb->value())
-    text->image(img);
-  else
-    text->image(0);
-  window->redraw();
-}
-
-void font_cb(Fl_Widget *,void *) {
-  text->labelfont(int(fonts->value()));
-  window->redraw();
-}
-
-void size_cb(Fl_Widget *,void *) {
-  text->labelsize(int(sizes->value()));
-  window->redraw();
-}
-
-void input_cb(Fl_Widget *,void *) {
-  text->label(input->value());
-  window->redraw();
-}
-
-void normal_cb(Fl_Widget *,void *) {
-  text->labeltype(FL_NORMAL_LABEL);
-  window->redraw();
-}
-
-void symbol_cb(Fl_Widget *,void *) {
-  text->labeltype(FL_SYMBOL_LABEL);
-  if (input->value()[0] != '@') {
-    input->static_value("@->");
-    text->label("@->");
+void make_image() {
+  image = new uchar[3*width*height];
+  uchar *p = image;
+  for (int y = 0; y < height; y++) {
+    double Y = double(y)/(height-1);
+    for (int x = 0; x < width; x++) {
+      double X = double(x)/(width-1);
+      *p++ = uchar(255*((1-X)*(1-Y))); // red in upper-left
+      *p++ = uchar(255*((1-X)*Y));	// green in lower-left
+      *p++ = uchar(255*(X*Y));	// blue in lower-right
+    }
   }
-  window->redraw();
 }
 
-void shadow_cb(Fl_Widget *,void *) {
-  text->labeltype(FL_SHADOW_LABEL);
-  window->redraw();
+class Pens : public Fl_Box {
+  void draw();
+public:
+  Pens(int X, int Y, int W, int H, const char* L)
+  : Fl_Box(X,Y,W,H,L) {}
+};
+void Pens::draw() {
+  // use every color in the gray ramp:
+  for (int i = 0; i < 3*8; i++) {
+    fl_color((Fl_Color)(FL_GRAY_RAMP+i));
+    fl_line(x()+i, y(), x()+i, y()+h());
+  }
 }
 
-void embossed_cb(Fl_Widget *,void *) {
-  text->labeltype(FL_EMBOSSED_LABEL);
-  window->redraw();
+Fl_Color c = FL_GRAY;
+#define fullcolor_cell (FL_FREE_COLOR)
+
+void cb1(Fl_Widget *, void *v) {
+  c = fl_show_colormap(c);
+  Fl_Box* b = (Fl_Box*)v;
+  b->color(c);
+  hint->labelcolor(fl_contrast(FL_BLACK,c));
+  b->parent()->redraw();
 }
 
-void engraved_cb(Fl_Widget *,void *) {
-  text->labeltype(FL_ENGRAVED_LABEL);
-  window->redraw();
+void cb2(Fl_Widget *, void *v) {
+  uchar r,g,b;
+  Fl::get_color(c,r,g,b);
+  if (!fl_color_chooser("New color:",r,g,b,3)) return;
+  c = fullcolor_cell;
+  Fl::set_color(fullcolor_cell,r,g,b);
+  Fl_Box* bx = (Fl_Box*)v;
+  bx->color(fullcolor_cell);
+  hint->labelcolor(fl_contrast(FL_BLACK,fullcolor_cell));
+  bx->parent()->redraw();
 }
 
-Fl_Menu_Item choices[] = {
-        {"FL_NORMAL_LABEL",0,normal_cb},
-        {"FL_SYMBOL_LABEL",0,symbol_cb},
-        {"FL_SHADOW_LABEL",0,shadow_cb},
-        {"FL_ENGRAVED_LABEL",0,engraved_cb},
-        {"FL_EMBOSSED_LABEL",0,embossed_cb},
-        {0}};
-
-int main(int argc, char **argv) {
-  img = new Fl_Pixmap(blast_xpm);
-
-  window = new Fl_Double_Window(440,420);
-
-  input = new Fl_Input(70,375,350,25,"Label:");
-  input->static_value("The quick brown fox jumped over the lazy dog.");
-  input->when(FL_WHEN_CHANGED);
-  input->callback(input_cb);
-  input->tooltip("label text");
-
-  sizes= new Fl_Hor_Value_Slider(70,350,350,25,"Size:");
-  sizes->align(FL_ALIGN_LEFT);
-  sizes->bounds(1,64);
-  sizes->step(1);
-  sizes->value(14);
-  sizes->callback(size_cb);
-
-  fonts=new Fl_Hor_Value_Slider(70,325,350,25,"Font:");
-  fonts->align(FL_ALIGN_LEFT);
-  fonts->bounds(0,15);
-  fonts->step(1);
-  fonts->value(0);
-  fonts->callback(font_cb);
-
-  Fl_Group *g = new Fl_Group(70,275,350,50);
-  imageb = new Fl_Toggle_Button(70,275,50,25,"image");
-  imageb->callback(image_cb);
-  imageb->tooltip("show image");
-
-  imageovertextb = new Fl_Toggle_Button(120,275,50,25,"T o I");
-  imageovertextb->callback(button_cb);
-  imageovertextb->tooltip("FL_ALIGN_TEXT_OVER_IMAGE");
-
-  imagenexttotextb = new Fl_Toggle_Button(170,275,50,25,"I | T");
-  imagenexttotextb->callback(button_cb);
-  imagenexttotextb->tooltip("FL_ALIGN_IMAGE_NEXT_TO_TEXT");
-
-  imagebackdropb = new Fl_Toggle_Button(220,275,50,25,"back");
-  imagebackdropb->callback(button_cb);
-  imagebackdropb->tooltip("FL_ALIGN_IMAGE_BACKDROP");
-
-  leftb = new Fl_Toggle_Button(70,300,50,25,"left");
-  leftb->callback(button_cb);
-  leftb->tooltip("FL_ALIGN_LEFT");
-
-  rightb = new Fl_Toggle_Button(120,300,50,25,"right");
-  rightb->callback(button_cb);
-  rightb->tooltip("FL_ALIGN_RIGHT");
-
-  topb = new Fl_Toggle_Button(170,300,50,25,"top");
-  topb->callback(button_cb);
-  topb->tooltip("FL_ALIGN_TOP");
-
-  bottomb = new Fl_Toggle_Button(220,300,50,25,"bottom");
-  bottomb->callback(button_cb);
-  bottomb->tooltip("FL_ALIGN_BOTTOM");
-
-  insideb = new Fl_Toggle_Button(270,300,50,25,"inside");
-  insideb->callback(button_cb);
-  insideb->tooltip("FL_ALIGN_INSIDE");
-
-  wrapb = new Fl_Toggle_Button(320,300,50,25,"wrap");
-  wrapb->callback(button_cb);
-  wrapb->tooltip("FL_ALIGN_WRAP");
-
-  clipb = new Fl_Toggle_Button(370,300,50,25,"clip");
-  clipb->callback(button_cb);
-  clipb->tooltip("FL_ALIGN_CLIP");
-
-  g->resizable(insideb);
-  g->end();
-
-  Fl_Choice *c = new Fl_Choice(70,250,200,25);
-  c->menu(choices);
-
-  text = new Fl_Box(FL_FRAME_BOX,120,75,200,100,input->value());
-  text->align(FL_ALIGN_CENTER);
-
-  window->resizable(text);
-  window->end();
-  window->show(argc,argv);
+int main(int argc, char ** argv) {
+  Fl::set_color(fullcolor_cell,145,159,170);
+  Fl_Window window(400,400);
+  Fl_Box box(30,30,340,340);
+  box.box(FL_THIN_DOWN_BOX);
+  c = fullcolor_cell;
+  box.color(c);
+  Fl_Box hintbox(40,40,320,30,"Pick background color with buttons:");
+  hintbox.align(FL_ALIGN_INSIDE);
+  hint = &hintbox;
+  Fl_Button b1(120,80,180,30,"fl_show_colormap()");
+  b1.callback(cb1,&box);
+  Fl_Button b2(120,120,180,30,"fl_color_chooser()");
+  b2.callback(cb2,&box);
+  Fl_Box image_box(160,190,width,height,0);
+  make_image();
+  (new Fl_RGB_Image(image, width, height))->label(&image_box);
+  Fl_Box b(160,310,120,30,"Example of fl_draw_image()");
+  Pens p(60,180,3*8,120,"lines");
+  p.align(FL_ALIGN_TOP);
+  int i = 1;
+  if (!Fl::args(argc,argv,i) || i < argc-1) {
+    printf("usage: %s <switches> visual-number\n"
+           " - : default visual\n"
+           " r : call Fl::visual(FL_RGB)\n"
+           " c : call Fl::own_colormap()\n",argv[0]);
+#if !defined(_WIN32) && !defined(__APPLE__) && !defined(FL_PORTING) && !defined(__ANDROID__)
+    printf(" # : use this visual with an empty colormap:\n");
+    list_visuals();
+#endif
+    puts(Fl::help);
+    exit(1);
+  }
+  if (i!=argc) {
+    if (argv[i][0] == 'r') {
+      if (!Fl::visual(FL_RGB)) printf("Fl::visual(FL_RGB) returned false.\n");
+    } else if (argv[i][0] == 'c') {
+      Fl::own_colormap();
+    } else if (argv[i][0] != '-') {
+#if !defined(_WIN32) && !defined(__APPLE__) && !defined(FL_PORTING) && !defined(__ANDROID__)
+      int visid = atoi(argv[i]);
+      fl_open_display();
+      XVisualInfo templt; int num;
+      templt.visualid = visid;
+      fl_visual = XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
+      if (!fl_visual) Fl::fatal("No visual with id %d",visid);
+      fl_colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
+                                    fl_visual->visual, AllocNone);
+      fl_xpixel(FL_BLACK); // make sure black is allocated
+#else
+      Fl::fatal("Visual id's not supported on Windows or MacOS.");
+#endif
+    }
+  }
+  window.show(argc,argv);
   return Fl::run();
 }
 
-
+//
+// End of "$Id: color_chooser.cxx 12655 2018-02-09 14:39:42Z AlbrechtS $".
+//
 
 
 #else
@@ -359,7 +323,8 @@ test/cairo_test.cxx			test/pixmap.cxx
 test/checkers.cxx			test/pixmap_browser.cxx
 test/clock.cxx				test/resizebox.cxx
 test/colbrowser.cxx			test/rotated_text.cxx
-test/color_chooser.cxx			test/scroll.cxx
+  * test/color_chooser.cxx: - can't draw 'on the fly' yet
+test/scroll.cxx
 test/connect.cxx			test/shape.cxx
 test/cube.cxx				test/subwindow.cxx
 test/cursor.cxx				test/sudoku.cxx
@@ -386,6 +351,6 @@ test/image.cxx				test/unittest_viewport.cxx
 test/input.cxx				test/unittests.cxx
 test/input_choice.cxx			test/utf8.cxx
 test/keyboard.cxx			test/windowfocus.cxx
-  * test/label.cxx        : - pixmap
+  * test/label.cxx        : + 'label' works
 
  */

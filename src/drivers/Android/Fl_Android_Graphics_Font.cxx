@@ -476,10 +476,16 @@ Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_And
  */
 Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
 {
+#ifdef FL_ALLOW_STL
   // Life is easy in C++11.
   for (auto &i: pBytemapTable) {
     delete i.second; i.second = nullptr;
   }
+#else
+  for (int i=0; i<256; i++) {
+    if (pBytemapTable[i]) delete pBytemapTable[i];
+  }
+#endif
 }
 
 /*
@@ -508,6 +514,7 @@ float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
 {
   Fl_Android_Bytemap *bm = 0;
+#ifdef FL_ALLOW_STL
   auto it = pBytemapTable.find(c);
   if (it==pBytemapTable.end()) {
     bm = pFontSource->get_bytemap(c, size);
@@ -516,6 +523,17 @@ Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
   } else {
     bm = it->second;
   }
+#else
+  if (c<256) {
+    if (pBytemapTable[c]) {
+      bm = pBytemapTable[c];
+    } else {
+      bm = pFontSource->get_bytemap(c, size);
+      if (bm)
+        pBytemapTable[c] = bm;
+    }
+  }
+#endif
   return bm;
 }
 

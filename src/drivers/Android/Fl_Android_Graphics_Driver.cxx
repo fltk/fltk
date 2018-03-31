@@ -1031,16 +1031,96 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
     const uchar *src = rgba + yy*rowBytes;
     uint32_t *dst = cache->pWords + yy*cache->pStride;
     for (int xx=0; xx<w; xx++) {
-      uint32_t c = ((((src[0] << 8) & 0xf800) |
-                     ((src[1] << 3) & 0x07e0) |
-                     ((src[2] >> 3) & 0x001f) ) << 16) | src[3]; // FIXME: alpha
-      *dst++ = c;
+//      uint32_t c = ((((src[0] << 8) & 0xf800) |
+//                     ((src[1] << 3) & 0x07e0) |
+//                     ((src[2] >> 3) & 0x001f) ) << 16) | src[3]; // FIXME: alpha
+      *dst++ = Fl_Android_565A_Map::toRGBA(src[0],src[1], src[2], src[3]);
       src+=4;
     }
   }
 
   ::free(rgba);
   return (fl_uintptr_t)cache;
+}
+
+
+void Fl_Android_Graphics_Driver::uncache_pixmap(fl_uintptr_t p)
+{
+  Fl_Android_565A_Map *img = (Fl_Android_565A_Map*)p;
+  delete img;
+}
+
+
+void Fl_Android_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy)
+{
+  int X, Y, W, H;
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+    Fl_Graphics_Driver::draw_empty(img, XP, YP);
+    return;
+  }
+  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  Fl_Android_565A_Map *cgimg = (Fl_Android_565A_Map*)*Fl_Graphics_Driver::id(img);
+  if (!cgimg) {
+    int w = img->w(), h = img->h(), d = img->d(), stride = w*d + img->ld();
+    cgimg = new Fl_Android_565A_Map(w, h);
+    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
+    if (d==1) { // grayscale
+      for (int iy=0; iy<h; iy++) {
+        const uchar *src = img->array + iy*stride;
+        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+        for (int ix=0; ix<w; ix++) {
+          uchar l = *src++;
+          uint32_t rgba = Fl_Android_565A_Map::toRGBA(l, l, l, 255);
+          *dst++ = rgba;
+        }
+      }
+    } else if (d==2) { // gray + alpha
+      for (int iy=0; iy<h; iy++) {
+        const uchar *src = img->array + iy*stride;
+        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+        for (int ix=0; ix<w; ix++) {
+          uchar l = *src++, a = *src++;
+          uint32_t rgba = Fl_Android_565A_Map::toRGBA(l, l, l, a);
+          *dst++ = rgba;
+        }
+      }
+    } else if (d==3) { // rgb
+      for (int iy=0; iy<h; iy++) {
+        const uchar *src = img->array + iy*stride;
+        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+        for (int ix=0; ix<w; ix++) {
+          uchar r = *src++, g = *src++, b = *src++;
+          uint32_t rgba = Fl_Android_565A_Map::toRGBA(r, g, b, 255);
+          *dst++ = rgba;
+        }
+      }
+    } else if (d==4) { // rgb + alpha
+      for (int iy=0; iy<h; iy++) {
+        const uchar *src = img->array + iy*stride;
+        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+        for (int ix=0; ix<w; ix++) {
+          uchar r = *src++, g = *src++, b = *src++, a = *src++;
+          uint32_t rgba = Fl_Android_565A_Map::toRGBA(r, g, b, a);
+          *dst++ = rgba;
+        }
+      }
+    }
+  }
+  if (cgimg) {
+    for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
+      draw(XP, YP, cgimg, it->clipped_rect());
+    }
+  }
+}
+
+
+void Fl_Android_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t&)
+{
+  Fl_Android_565A_Map *cgimg = (Fl_Android_565A_Map*)id_;
+  delete cgimg;
 }
 
 
@@ -1054,6 +1134,19 @@ void Fl_Android_Graphics_Driver::set_color(Fl_Color i, unsigned int c)
 void Fl_Android_Graphics_Driver::color(uchar r, uchar g, uchar b)
 {
   color( (((Fl_Color)r)<<24)|(((Fl_Color)g)<<16)|(((Fl_Color)b)<<8) );
+}
+
+/**
+ * Draw a rectangle that may be dithered if we are in colormap mode (which in
+ * the year 2018 is as likely has a user with a berstein colored tube TV).
+ * FIXME: This function should be virtual as well, or should not exist at all.
+ */
+void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
+#if USE_COLORMAP
+  // ...
+#endif
+  fl_color(r,g,b);
+  fl_rectf(x,y,w,h);
 }
 
 

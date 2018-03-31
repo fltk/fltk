@@ -53,24 +53,23 @@ protected:
   // - excluded by #if/#endif means that we have not implemneted this yet
   // - methods marked with // super: use the implemnetation of the super class
   // - virtual ... override functions are implemented for Android
-#if 0
 private:
   // some platforms may need to reimplement this
-  virtual void set_current_();
+  // This is called from the surface device, see: end_current_()
+  // super: virtual void set_current_();
 protected:
-  float scale_; // scale between user and graphical coordinates: graphical = user * scale_
   /** Sets the current value of the scaling factor */
-  virtual void scale(float f) { scale_ = f; }
+  // super: virtual void scale(float f) { scale_ = f; } // we do not support any scaling at this point
 protected:
-  virtual void global_gc();
-#endif
+  // set fl_gc, which we do not use in the Android port at this point
+  // super: virtual void global_gc();
   /** Support function for Fl_Pixmap drawing */
   virtual fl_uintptr_t cache(Fl_Pixmap *img) override;
   /** Support function for Fl_Bitmap drawing */
   virtual fl_uintptr_t cache(Fl_Bitmap *img) override;
-#if 0
   /** Support function for Fl_RGB_Image drawing */
-  virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
+  virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) override;
+#if 0
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
   /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
   virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
@@ -80,13 +79,9 @@ protected:
   virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
   /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
-  /** \brief Draws an Fl_RGB_Image object using this graphics driver.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
 #endif
+  /** \brief Draws an Fl_RGB_Image object using this graphics driver. */
+  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) override;
   /** \brief Draws an Fl_Pixmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
@@ -106,14 +101,9 @@ protected:
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
   /** Support function for image drawing */
   virtual void delete_bitmask(Fl_Bitmask bm) {}
-  /** For internal library use only */
-  static void change_image_size(Fl_Image *img, int W, int H) {
-    img->w(W);
-    img->h(H);
-  }
-  // Support function for image drawing
-  virtual void uncache_pixmap(fl_uintptr_t p);
 #endif
+  // Support function for image drawing
+  virtual void uncache_pixmap(fl_uintptr_t p) override;
 public:
   /** Constructor, C++11 initialises member variables in-line */
   Fl_Android_Graphics_Driver();
@@ -267,16 +257,19 @@ public:
   /** Support for PostScript drawing */
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) override { return float(s); }
   // default implementation may be enough
-#if 0
-  /** Support for PostScript drawing */
-  virtual float scale_bitmap_for_PostScript() { return 2; }
-  virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
-  virtual void reset_spot();
+  /** Support for PostScript drawing - no documentation found on this call*/
+  // super: virtual float scale_bitmap_for_PostScript() { return 2; }
+  // super: virtual void set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win);
+  // super: virtual void reset_spot();
   // each platform implements these 3 functions its own way
-  virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
-  virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
-  virtual void XDestroyRegion(Fl_Region r);
-#endif
+  /* TODO: Android: we can implement this to have a redraw region based on Fl::damage
+   * calls. Currently, we do not implement damage regions, but we can probably
+   * implement this using our clipping regions. This may become neccesary when
+   * we allow desktop-style window movement.
+   */
+  // super: virtual void add_rectangle_to_region(Fl_Region r, int x, int y, int w, int h);
+  // super: virtual Fl_Region XRectangleRegion(int x, int y, int w, int h);
+  // super: virtual void XDestroyRegion(Fl_Region r);
   /** Support for Fl::get_font_name() */
   virtual const char* get_font_name(Fl_Font fnum, int* ap) override;
   /** Support for Fl::get_font_sizes() */
@@ -291,13 +284,12 @@ public:
   virtual const char *font_name(int num) override;
   /** Support for Fl::set_font() */
   virtual void font_name(int num, const char *name) override;
-#if 0
   // Draws an Fl_Image scaled to width W & height H
-  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
+  // TODO: we don't seem to need this until we introduce a scaling graphis driver
+  // super: virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
-  virtual bool overlay_rect_unscaled();
-#endif
+  // super: virtual bool overlay_rect_unscaled();
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
   // super: virtual void overlay_rect(int x, int y, int w , int h) { loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1); }
@@ -305,7 +297,7 @@ public:
 
   // --- start of Android additions --------------------------------------------
   // start drawing with this driver into the given window
-  // TODO: how is this different to Fl_Graphics_Driver::set_current_() above
+  // The virtual call `set_current_()` changes surface, not windows
   void make_current(Fl_Window*);
 
 protected:

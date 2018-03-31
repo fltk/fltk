@@ -23,7 +23,10 @@
 #include "Fl_Android_Graphics_Driver.H"
 
 // We violate FLTKs avoidance of STL because we live in a defined driver space
+#define FL_ALLOW_STL 1
+#ifdef FL_ALLOW_STL
 #include <map>
+#endif
 
 #include "stb_truetype.h"
 
@@ -31,6 +34,8 @@
 /**
  * A bytemap is an array of bytes, used as an alpha channel when redering glyphs
  * in a given color.
+ * TODO: reate a class for RGB only and for grayscale and grayscale with alpha
+ * TODO: derive all this from a baseclass, so we can create the correct class for the required image
  */
 class Fl_Android_Bytemap
 {
@@ -58,6 +63,12 @@ public:
   Fl_Android_565A_Map();
   Fl_Android_565A_Map(int w, int h);
   ~Fl_Android_565A_Map();
+  static inline uint32_t toRGBA(uchar r, uchar g, uchar b, uchar a)
+  {
+    return ((((r << 8) & 0xf800) |
+             ((g << 3) & 0x07e0) |
+             ((b >> 3) & 0x001f)) << 16) | a;
+  }
 
 public:
   int pWidth = 0, pHeight = 0, pStride = 0;
@@ -98,7 +109,11 @@ public:
  */
 class Fl_Android_Font_Descriptor : public Fl_Font_Descriptor
 {
+#ifdef FL_ALLOW_STL
   typedef std::map<uint32_t, Fl_Android_Bytemap*> BytemapTable;
+#else
+  typedef Fl_Android_Bytemap* BytemapTable[256];
+#endif
 private:
   Fl_Android_Font_Source *pFontSource;
   Fl_Font pFontIndex;
