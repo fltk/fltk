@@ -69,13 +69,11 @@ protected:
   virtual fl_uintptr_t cache(Fl_Bitmap *img) override;
   /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) override;
-#if 0
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
   /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
-  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
+  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) override;
   /** see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
-  virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
-#endif
+  virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) override;
   /** see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) override;
   /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */

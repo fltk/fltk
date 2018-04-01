@@ -1116,6 +1116,60 @@ void Fl_Android_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP,
   }
 }
 
+
+/**
+ * Copy RGB (or RGBA?) image data directly onto the surface.
+ * TODO: I did not find documentation on the possible values of D. If D is four, does that
+ * mean that the fourth value must be an alpha value, and should that be applied here?
+ * What does a negative D indicate?
+ */
+void Fl_Android_Graphics_Driver::draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
+{
+  int srcDelta = abs(D);
+  int srcStride = W*srcDelta+L;
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
+    Fl_Rect_Region *r = &it->clipped_rect();
+    int rBottom = r->bottom();
+    int rRight = r->right();
+    for (int iy=r->top(); iy<rBottom;iy++) {
+      const uchar *src = buf + iy*srcStride;
+      uint16_t *dst = pBits + iy*pStride + r->left();
+      for (int ix=r->left();ix<rRight;ix++) {
+        uint16_t c = make565(src[0], src[1], src[2]);
+        src += srcDelta;
+        *dst++ = c;
+      }
+    }
+  }
+}
+
+/**
+ * Copy RGB (or RGBA?) image data directly onto the surface.
+ * TODO: I did not find documentation on the possible values of D. If D is four, does that
+ * mean that the fourth value must be an alpha value, and should that be applied here?
+ * What does a negative D indicate?
+ */
+void Fl_Android_Graphics_Driver::draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L)
+{
+  int srcDelta = abs(D);
+  int srcStride = W*srcDelta+L;
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
+    Fl_Rect_Region *r = &it->clipped_rect();
+    int rBottom = r->bottom();
+    int rRight = r->right();
+    for (int iy=r->top(); iy<rBottom;iy++) {
+      const uchar *src = buf + iy*srcStride;
+      uint16_t *dst = pBits + iy*pStride + r->left();
+      for (int ix=r->left();ix<rRight;ix++) {
+        uchar l = src[0];
+        uint16_t c = make565(l, l, l);
+        src += srcDelta;
+        *dst++ = c;
+      }
+    }
+  }
+}
+
 /*
  * Draw some graphics line-by-line directly onto this surface
  * TODO: I did not find documentation on the possible values of D. If D is four, does that
@@ -1126,7 +1180,7 @@ void Fl_Android_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data, int
   int srcDelta = abs(D);
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
     Fl_Rect_Region *r = &it->clipped_rect();
-    uchar *buf = (uchar*)malloc(srcDelta*r->w());
+    uchar *buf = (uchar*)malloc(size_t(srcDelta*r->w()));
     int rBottom = r->bottom();
     int rRight = r->right();
     for (int iy=r->top(); iy<rBottom;iy++) {
@@ -1155,7 +1209,7 @@ void Fl_Android_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data
   int srcDelta = abs(D);
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
     Fl_Rect_Region *r = &it->clipped_rect();
-    uchar *buf = (uchar*)malloc(srcDelta*r->w());
+    uchar *buf = (uchar*)malloc(size_t(srcDelta*r->w()));
     int rBottom = r->bottom();
     int rRight = r->right();
     for (int iy=r->top(); iy<rBottom;iy++) {
