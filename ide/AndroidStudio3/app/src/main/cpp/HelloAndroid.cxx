@@ -323,7 +323,7 @@ test/cairo_test.cxx			test/pixmap.cxx
 test/checkers.cxx			test/pixmap_browser.cxx
 test/clock.cxx				test/resizebox.cxx
 test/colbrowser.cxx			test/rotated_text.cxx
-  * test/color_chooser.cxx: - can't draw 'on the fly' yet
+  * test/color_chooser.cxx:+ 'color_chooser' works
 test/scroll.cxx
 test/connect.cxx			test/shape.cxx
 test/cube.cxx				test/subwindow.cxx

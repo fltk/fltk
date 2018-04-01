@@ -83,11 +83,11 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
 }
 
 
-static uint16_t  make565(int red, int green, int blue)
+uint16_t Fl_Android_Graphics_Driver::make565(uchar red,  uchar green, uchar blue)
 {
-    return (uint16_t)( ((red   << 8) & 0xf800) |
-                       ((green << 3) & 0x07e0) |
-                       ((blue  >> 3) & 0x001f) );
+    return (uint16_t)( ((((uint16_t)(red))   << 8) & 0xf800) |
+                       ((((uint16_t)(green)) << 3) & 0x07e0) |
+                       ((((uint16_t)(blue))  >> 3) & 0x001f) );
 }
 
 extern unsigned fl_cmap[256];
@@ -96,9 +96,9 @@ extern unsigned fl_cmap[256];
 uint16_t Fl_Android_Graphics_Driver::make565(Fl_Color crgba)
 {
   if (crgba<0x00000100) crgba = fl_cmap[crgba];
-    return (uint16_t)( ((crgba >>16) & 0xf800) |
-                       ((crgba >>13) & 0x07e0) |
-                       ((crgba >>11) & 0x001f) );
+    return (uint16_t)( ((crgba >> 16) & 0xf800) |
+                       ((crgba >> 13) & 0x07e0) |
+                       ((crgba >> 11) & 0x001f) );
 }
 
 
@@ -1113,6 +1113,63 @@ void Fl_Android_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP,
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
       draw(XP, YP, cgimg, it->clipped_rect());
     }
+  }
+}
+
+/*
+ * Draw some graphics line-by-line directly onto this surface
+ * TODO: I did not find documentation on the possible values of D. If D is four, does that
+ * mean that the fourth value must be an alpha value, and should that be applied here?
+ */
+void Fl_Android_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
+{
+  int srcDelta = abs(D);
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
+    Fl_Rect_Region *r = &it->clipped_rect();
+    uchar *buf = (uchar*)malloc(srcDelta*r->w());
+    int rBottom = r->bottom();
+    int rRight = r->right();
+    for (int iy=r->top(); iy<rBottom;iy++) {
+      cb(data, r->left()-X, iy-Y, r->w(), buf);
+      uchar *src = buf;
+      uint16_t *dst = pBits + iy*pStride + r->left();
+      for (int ix=r->left();ix<rRight;ix++) {
+        uint16_t c = make565(src[0], src[1], src[2]);
+        src += srcDelta;
+        *dst++ = c;
+      }
+    }
+    free(buf);
+  }
+}
+
+/*
+ * Draw some graphics line-by-line directly onto this surface
+ * TODO: I did not find documentation on the possible values of D. If D is two, does that
+ * mean that the fourth value must be an alpha value, and should that be applied here?
+ * If it is three, doe we need to convert RGB to grayscale?
+ * What exactly does a negative value mean? Where is this all documented? Sigh.
+ */
+void Fl_Android_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
+{
+  int srcDelta = abs(D);
+  for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
+    Fl_Rect_Region *r = &it->clipped_rect();
+    uchar *buf = (uchar*)malloc(srcDelta*r->w());
+    int rBottom = r->bottom();
+    int rRight = r->right();
+    for (int iy=r->top(); iy<rBottom;iy++) {
+      cb(data, r->left()-X, iy-Y, r->w(), buf);
+      uchar *src = buf;
+      uint16_t *dst = pBits + iy*pStride + r->left();
+      for (int ix=r->left();ix<rRight;ix++) {
+        uchar l = src[0];
+        uint16_t c = make565(l, l, l);
+        src += srcDelta;
+        *dst++ = c;
+      }
+    }
+    free(buf);
   }
 }
 

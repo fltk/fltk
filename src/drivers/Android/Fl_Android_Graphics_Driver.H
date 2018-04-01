@@ -75,11 +75,11 @@ protected:
   virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
   /** see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
   virtual void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
-  /** see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
-  virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
-  /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
-  virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
 #endif
+  /** see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
+  virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) override;
+  /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
+  virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) override;
   /** \brief Draws an Fl_RGB_Image object using this graphics driver. */
   virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) override;
   /** \brief Draws an Fl_Pixmap object using this graphics driver.
@@ -301,6 +301,7 @@ public:
   void make_current(Fl_Window*);
 
 protected:
+  static uint16_t make565(uchar r, uchar g, uchar b);
   static uint16_t make565(Fl_Color crgba);
   void rectf_unclipped(int x, int y, int w, int h);
   void xyline_unclipped(int x, int y, int x1);
