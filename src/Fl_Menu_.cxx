@@ -462,10 +462,10 @@ void Fl_Menu_::clear() {
       fl_menu_array_owner = 0;
     else
       delete[] menu_;
-    menu_ = 0;
-    value_ = 0;
     alloc = 0;
   }
+  menu_ = 0;
+  value_ = 0;
 }
 
 /**
