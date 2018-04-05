@@ -45,7 +45,7 @@ void Fl_Xlib_Graphics_Driver::end_line() {
 void Fl_Xlib_Graphics_Driver::end_loop() {
   fixloop();
   if (n>2) {
-    transformed_vertex0(p[0].x, p[0].y);
+    transformed_vertex0(p[0].x - line_delta_, p[0].y - line_delta_);
   }
   end_line();
 }
@@ -67,7 +67,7 @@ void Fl_Xlib_Graphics_Driver::begin_complex_polygon() {
 void Fl_Xlib_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
-    transformed_vertex0(p[gap_].x, p[gap_].y);
+    transformed_vertex0(p[gap_].x - line_delta_, p[gap_].y - line_delta_);
     gap_ = n;
   } else {
     n = gap_;
