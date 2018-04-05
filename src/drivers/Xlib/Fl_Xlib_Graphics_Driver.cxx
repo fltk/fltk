@@ -115,8 +115,8 @@ void Fl_Xlib_Graphics_Driver::transformed_vertex0(float fx, float fy) {
       p_size = p ? 2*p_size : 16;
       p = (XPOINT*)realloc((void*)p, p_size*sizeof(*p));
     }
-    p[n].x = x;
-    p[n].y = y;
+    p[n].x = x + line_delta_;
+    p[n].y = y + line_delta_;
     n++;
   }
 }
