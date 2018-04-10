@@ -458,7 +458,6 @@ int Fl_Input::handle_key() {
 int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
   static Fl_Widget *dnd_save_focus = NULL;
-  static int has_keyboard = 0;
   switch (event) {
     case FL_UNFOCUS:
       if (Fl::screen_driver()->has_marked_text() && Fl::compose_state) {
