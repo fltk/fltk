@@ -89,6 +89,12 @@
 ///     positioned on the screen with show_item_top(), show_item_middle() and
 ///     show_item_bottom(),<BR>
 ///     item children can be swapped around with Fl_Tree_Item::swap_children(),<BR>
+///     items can be moved around with Fl_Tree_Item::move(),<BR>
+///     an item's children can be walked with Fl_Tree_Item::first() and Fl_Tree_Item::next(),
+///     an item's children can be indexed directly with Fl_Tree_Item::child()
+///     and Fl_Tree_Item::children(),<BR>
+///     items can be moved from one subtree to another with Fl_Tree_Item::deparent()
+///     and Fl_Tree_Item::reparent(),<BR>
 ///     sorting can be controlled when items are add()ed via sortorder().<BR>
 ///     You can walk the entire tree with first() and next().<BR>
 ///     You can walk visible items with first_visible_item()

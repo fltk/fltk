@@ -454,6 +454,7 @@ int Fl_Tree_Item::reparent(Fl_Tree_Item *newchild, int pos) {
 ///    -  0: Success
 ///    - -1: range error (e.g. if \p 'to' or \p 'from' out of range).
 ///    - (Other return values reserved for future use)
+/// \see move_above(), move_below(), move_into(), move(Fl_Tree_Item*,int,int)
 ///
 int Fl_Tree_Item::move(int to, int from) {
   return _children.move(to, from);
@@ -474,6 +475,8 @@ int Fl_Tree_Item::move(int to, int from) {
 ///     - -5: could not deparent
 ///     - -6: could not reparent at \p 'pos'
 ///     - (Other return values reserved for future use.)
+///
+/// \see move_above(), move_below(), move_into(), move(int,int)
 ///
 int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
   Fl_Tree_Item *from_parent, *to_parent;
@@ -529,6 +532,8 @@ int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
 ///          On error returns a negative value;
 ///          see move(Fl_Tree_Item*,int,int) for possible error codes.
 ///
+/// \see move_below(), move_into(), move(int,int), move(Fl_Tree_Item*,int,int)
+///
 int Fl_Tree_Item::move_above(Fl_Tree_Item *item) {
   return move(item, 0, 0);
 }
@@ -540,6 +545,8 @@ int Fl_Tree_Item::move_above(Fl_Tree_Item *item) {
 ///          On error returns a negative value;
 ///          see move(Fl_Tree_Item*,int,int) for possible error codes.
 ///
+/// \see move_above(), move_into(), move(int,int), move(Fl_Tree_Item*,int,int)
+///
 int Fl_Tree_Item::move_below(Fl_Tree_Item *item) {
   return move(item, 1, 0);
 }
@@ -550,6 +557,8 @@ int Fl_Tree_Item::move_below(Fl_Tree_Item *item) {
 /// \returns 0 on success.<br>
 ///          On error returns a negative value;
 ///          see move(Fl_Tree_Item*,int,int) for possible error codes.
+///
+/// \see move_above(), move_below(), move(int,int), move(Fl_Tree_Item*,int,int)
 ///
 int Fl_Tree_Item::move_into(Fl_Tree_Item *item, int pos) {
   return move(item, 2, pos);
