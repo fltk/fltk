@@ -3,7 +3,7 @@
 //
 // Fl_Rect header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,8 +65,14 @@ public:
   int w() const { return w_; }		///< gets the width
   int h() const { return h_; }		///< gets the height
 
-  int r() const { return x_ + w_; }	///< gets the right edge (x + w)
-  int b() const { return y_ + h_; }	///< gets the bottom edge (y + h)
+  /** gets the right edge (x + w).
+    \note r() and b() are coordinates \b outside the area of the rectangle.
+  */
+  int r() const { return x_ + w_; }
+  /** gets the bottom edge (y + h).
+    \note r() and b() are coordinates \b outside the area of the rectangle.
+  */
+  int b() const { return y_ + h_; }
 
   void x(int X) { x_ = X; }		///< sets the x coordinate (left edge)
   void y(int Y) { y_ = Y; }		///< sets the y coordinate (top edge)
