@@ -84,9 +84,9 @@
   See also the complete example program in test/tile.cxx.
 */
 
-#include <FL/Fl.H>
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Rect.H>
 
 /**
   Drags the intersection at (\p oldx,\p oldy) to (\p newx,\p newy).

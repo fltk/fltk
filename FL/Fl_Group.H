@@ -23,7 +23,11 @@
 #define Fl_Group_H
 
 #include "Fl_Widget.H"
-#include "Fl_Rect.H"
+
+// Don't #include Fl_Rect.H because this would introduce lots
+// of unnecessary dependencies on Fl_Rect.H
+class Fl_Rect;
+
 
 /**
   The Fl_Group class is the FLTK container widget. It maintains

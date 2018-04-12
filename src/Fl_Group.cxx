@@ -21,13 +21,12 @@
 // Fl_Window itself is a subclass of this, and most of the event
 // handling is designed so windows themselves work correctly.
 
-#include <stdio.h>
-#include <FL/Fl.H>
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Window.H>
 #include <FL/Fl_Window_Driver.H>
+#include <FL/Fl_Rect.H>
 #include <FL/fl_draw.H>
-#include <stdlib.h>
+
+#include <stdlib.h> // malloc etc.
 
 Fl_Group* Fl_Group::current_;
 
@@ -35,16 +34,19 @@ Fl_Group* Fl_Group::current_;
 // multiple children are stored in an allocated array:
 
 /**
-  Returns a pointer to the array of children. <I>This pointer is only
-  valid until the next time a child is added or removed.</I>
+  Returns a pointer to the array of children.
+
+  \note	This pointer is only valid until the next time a child
+	is added or removed.
 */
 Fl_Widget*const* Fl_Group::array() const {
   return children_ <= 1 ? (Fl_Widget**)(&array_) : array_;
 }
 
 /**
-  Searches the child array for the widget and returns the index. Returns children()
-  if the widget is NULL or not found.
+  Searches the child array for the widget and returns the index.
+
+  Returns children() if the widget is NULL or not found.
 */
 int Fl_Group::find(const Fl_Widget* o) const {
   Fl_Widget*const* a = array();
@@ -92,7 +94,7 @@ extern Fl_Widget* fl_oldfocus; // set by Fl::focus
 // windows so they are relative to that window.
 
 static int send(Fl_Widget* o, int event) {
-  if (o->type() < FL_WINDOW) return o->handle(event);
+  if (!o->as_window()) return o->handle(event);
   switch ( event )
   {
   case FL_DND_ENTER: /* FALLTHROUGH */
@@ -590,20 +592,26 @@ void Fl_Group::init_sizes() {
   \note You should never need to use this \e protected method directly,
 	unless you have special needs to rearrange the children of a
 	Fl_Group. Fl_Tile uses this to rearrange its widget positions.
-
-  \returns	Array of Fl_Rect's with widget positions and sizes. The
-		returned array is only valid until init_sizes() is called
-		or widgets are added to or removed from the group.
-
-  \note	The returned array should be considered read-only. Do not change
+	The returned array should be considered read-only. Do not change
 	its contents. If you need to rearrange children in a group, do
 	so by resizing the children and call init_sizes().
+
+  \#include \<FL/Fl_Rect.H\> if you want to access the bounds() array in
+  your derived class. Fl_Rect.H is intentionally not included by
+  Fl_Group.H to avoid unnecessary dependencies.
+
+  \returns Array of Fl_Rect's with widget positions and sizes. The
+	returned array is only valid until init_sizes() is called
+	or widgets are added to or removed from the group.
 
   \see init_sizes()
 
   \since FLTK 1.4.0
 
-  \internal If you change this be sure to fix Fl_Tile which also uses this array!
+  \internal Notes to developers:
+    - If you change this be sure to fix Fl_Tile which also uses this array!
+    - Do not #include Fl_Rect.H in Fl_Group.H because this would introduce
+      lots of unnecessary dependencies on Fl_Rect.H.
 */
 Fl_Rect* Fl_Group::bounds() {
   if (!bounds_) {
