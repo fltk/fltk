@@ -62,16 +62,16 @@ private:
   int line_delta_;
   virtual void set_current_();
   int clip_max_; // +/- x/y coordinate limit (16-bit coordinate space)
+  virtual void draw_fixed(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  virtual void draw_fixed(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  virtual void draw_fixed(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
 protected:
-  virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_Bitmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy);
+  virtual void draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void draw_image_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   virtual void draw_image_mono_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 #if HAVE_XRENDER
-  virtual int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
   int scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP);
 #endif
   virtual int height_unscaled();
@@ -101,7 +101,7 @@ protected:
   static Window draw_window;
   static struct _XftDraw* draw_;
 #endif
-  Fl_Offscreen cache_rgb(Fl_RGB_Image *img);
+  fl_uintptr_t cache(Fl_RGB_Image *img);
 public:
   Fl_Xlib_Graphics_Driver(void);
   virtual ~Fl_Xlib_Graphics_Driver();

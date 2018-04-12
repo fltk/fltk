@@ -125,7 +125,7 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   SelectObject(new_gc, bitmap);
   BOOL alpha_ok = 0;
   // first try to alpha blend
-  if ( can_do_alpha_blending() ) {
+  if ( fl_can_do_alpha_blending() ) {
     alpha_ok = alpha_blend_(x, y, w, h, new_gc, srcx, srcy, w, h);
   }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1

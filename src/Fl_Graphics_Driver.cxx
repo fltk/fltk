@@ -69,14 +69,6 @@ void Fl_Graphics_Driver::focus_rect(int x, int y, int w, int h)
   line_style(FL_SOLID);
 }
 
-/** Draws an Fl_Image scaled to width \p W & height \p H with top-left corner at \em X,Y
- \return zero when the graphics driver doesn't implement scaled drawing for the received image,
- non-zero if it does implement it.
- */
-int Fl_Graphics_Driver::draw_scaled(Fl_Image *img, int X, int Y, int W, int H) {
-  return 0;
-}
-
 /** see fl_copy_offscreen() */
 void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
 {
@@ -308,7 +300,7 @@ void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
 }
 
 // compute width & height of cached image so it can be tiled without undrawn gaps when scaling output
-void Fl_Scalable_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
+void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
 {
   if ( int(scale_) == scale_ ) {
     width  = width * scale_;
@@ -320,7 +312,7 @@ void Fl_Scalable_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &hei
 }
 
 
-void Fl_Scalable_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
@@ -344,11 +336,11 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, i
     } else *id(pxm) = cache(pxm);
   }
   // draw pxm using its scaled id_ & pixmap_
-  draw_unscaled(pxm, scale_, X, Y, W, H, cx, cy);
+  draw_fixed(pxm, X, Y, W, H, cx, cy);
 }
 
 
-void Fl_Scalable_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::start_image(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
@@ -369,11 +361,11 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, in
     } else *id(bm) = cache(bm);
   }
   // draw bm using its scaled id_
-  draw_unscaled(bm, scale_, X, Y, W, H, cx, cy);
+  draw_fixed(bm, X, Y, W, H, cx, cy);
 }
 
 
-void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   // Don't draw an empty image...
   if (!img->d() || !img->array) {
     Fl_Graphics_Driver::draw_empty(img, XP, YP);
@@ -382,14 +374,8 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
   if (start_image(img, XP, YP, WP, HP, cx, cy, XP, YP, WP, HP)) {
     return;
   }
-  int need_scaled_drawing = fabs(img->w() - img->data_w()/scale_)/img->w() > 0.05 ||
-  fabs(img->h() - img->data_h()/scale_)/img->h() > 0.05;
-  if (need_scaled_drawing && can_do_alpha_blending()) { // try and use the system's scaled image drawing
-    push_clip(XP, YP, WP, HP);
-    int done = draw_scaled(img, XP-cx, YP-cy, img->w(), img->h());
-    pop_clip();
-    if (done) return;
-  }
+  int need_scaled_drawing = ( fabs(img->w() - img->data_w()/scale_)/img->w() > 0.05 ||
+                            fabs(img->h() - img->data_h()/scale_)/img->h() > 0.05 );
   // to allow rescale at runtime
   int w2, h2, *pw, *ph;
   if (need_scaled_drawing) {
@@ -407,15 +393,19 @@ void Fl_Scalable_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP
     Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
     Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w2, h2);
     Fl_Image::RGB_scaling(keep);
-    draw_unscaled(img2, scale_, XP, YP, WP, HP, cx, cy);
+    cache(img2);
+    draw_fixed(img2, XP, YP, WP, HP, cx, cy);
     *id(img) = *id(img2);
+    *mask(img) = *mask(img2);
     *id(img2) = 0;
+    *mask(img2) = 0;
     *pw = w2;
     *ph = h2;
     delete img2;
   }
   else { // draw img using its scaled id_
-    draw_unscaled(img, scale_, XP, YP, WP, HP, cx, cy);
+    if (!*id(img)) cache(img);
+    draw_fixed(img, XP, YP, WP, HP, cx, cy);
   }
 }
 

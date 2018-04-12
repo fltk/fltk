@@ -962,31 +962,23 @@ void Fl_Android_Graphics_Driver::circle(double x, double y, double r)
 }
 
 
-void Fl_Android_Graphics_Driver::draw(Fl_Pixmap * pxm, int XP, int YP, int WP, int HP, int cx, int cy)
+void Fl_Android_Graphics_Driver::draw_fixed(Fl_Pixmap * pxm, int X, int Y, int W, int H, int cx, int cy)
 {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
   if (*Fl_Graphics_Driver::id(pxm)) {
     Fl_Android_565A_Map *cache = (Fl_Android_565A_Map*)*Fl_Graphics_Driver::id(pxm);
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
-      draw(XP, YP, cache, it->clipped_rect());
+      draw(X-cx, Y-cy, cache, it->clipped_rect());
     }
   }
 }
 
 
-void Fl_Android_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy)
+void Fl_Android_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy)
 {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
   if (*Fl_Graphics_Driver::id(bm)) {
     Fl_Android_Bytemap *cache = (Fl_Android_Bytemap*)*Fl_Graphics_Driver::id(bm);
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
-      draw(XP, YP, cache, it->clipped_rect());
+      draw(X-cx, Y-cy, cache, it->clipped_rect());
     }
   }
 }
@@ -1050,68 +1042,65 @@ void Fl_Android_Graphics_Driver::uncache_pixmap(fl_uintptr_t p)
   delete img;
 }
 
-
-void Fl_Android_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy)
+fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_RGB_Image *img)
 {
-  int X, Y, W, H;
-  // Don't draw an empty image...
-  if (!img->d() || !img->array) {
-    Fl_Graphics_Driver::draw_empty(img, XP, YP);
-    return;
-  }
-  if (start_image(img, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  Fl_Android_565A_Map *cgimg = (Fl_Android_565A_Map*)*Fl_Graphics_Driver::id(img);
-  if (!cgimg) {
-    int w = img->w(), h = img->h(), d = img->d(), stride = w*d + img->ld();
-    cgimg = new Fl_Android_565A_Map(w, h);
-    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
-    if (d==1) { // grayscale
-      for (int iy=0; iy<h; iy++) {
-        const uchar *src = img->array + iy*stride;
-        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
-        for (int ix=0; ix<w; ix++) {
-          uchar l = *src++;
-          uint32_t rgba = Fl_Android_565A_Map::toRGBA(l, l, l, 255);
-          *dst++ = rgba;
-        }
+  int w = img->data_w(), h = img->data_h(), d = img->d(), stride = w*d + img->ld();
+  Fl_Android_565A_Map *cgimg = new Fl_Android_565A_Map(w, h);
+  *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
+  int *pw, *ph;
+  cache_w_h(img, pw, ph);
+  *pw = img->data_w();
+  *ph = img->data_h();
+  if (d==1) { // grayscale
+    for (int iy=0; iy<h; iy++) {
+      const uchar *src = img->array + iy*stride;
+      uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+      for (int ix=0; ix<w; ix++) {
+        uchar l = *src++;
+        uint32_t rgba = Fl_Android_565A_Map::toRGBA(l, l, l, 255);
+        *dst++ = rgba;
       }
-    } else if (d==2) { // gray + alpha
-      for (int iy=0; iy<h; iy++) {
-        const uchar *src = img->array + iy*stride;
-        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
-        for (int ix=0; ix<w; ix++) {
-          uchar l = *src++, a = *src++;
-          uint32_t rgba = Fl_Android_565A_Map::toRGBA(l, l, l, a);
-          *dst++ = rgba;
-        }
+    }
+  } else if (d==2) { // gray + alpha
+    for (int iy=0; iy<h; iy++) {
+      const uchar *src = img->array + iy*stride;
+      uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+      for (int ix=0; ix<w; ix++) {
+        uchar l = *src++, a = *src++;
+        uint32_t rgba = Fl_Android_565A_Map::toRGBA(l, l, l, a);
+        *dst++ = rgba;
       }
-    } else if (d==3) { // rgb
-      for (int iy=0; iy<h; iy++) {
-        const uchar *src = img->array + iy*stride;
-        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
-        for (int ix=0; ix<w; ix++) {
-          uchar r = *src++, g = *src++, b = *src++;
-          uint32_t rgba = Fl_Android_565A_Map::toRGBA(r, g, b, 255);
-          *dst++ = rgba;
-        }
+    }
+  } else if (d==3) { // rgb
+    for (int iy=0; iy<h; iy++) {
+      const uchar *src = img->array + iy*stride;
+      uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+      for (int ix=0; ix<w; ix++) {
+        uchar r = *src++, g = *src++, b = *src++;
+        uint32_t rgba = Fl_Android_565A_Map::toRGBA(r, g, b, 255);
+        *dst++ = rgba;
       }
-    } else if (d==4) { // rgb + alpha
-      for (int iy=0; iy<h; iy++) {
-        const uchar *src = img->array + iy*stride;
-        uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
-        for (int ix=0; ix<w; ix++) {
-          uchar r = *src++, g = *src++, b = *src++, a = *src++;
-          uint32_t rgba = Fl_Android_565A_Map::toRGBA(r, g, b, a);
-          *dst++ = rgba;
-        }
+    }
+  } else if (d==4) { // rgb + alpha
+    for (int iy=0; iy<h; iy++) {
+      const uchar *src = img->array + iy*stride;
+      uint32_t *dst = cgimg->pWords + iy*cgimg->pStride;
+      for (int ix=0; ix<w; ix++) {
+        uchar r = *src++, g = *src++, b = *src++, a = *src++;
+        uint32_t rgba = Fl_Android_565A_Map::toRGBA(r, g, b, a);
+        *dst++ = rgba;
       }
     }
   }
+  return (fl_uintptr_t)cgimg;
+}
+
+void Fl_Android_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy)
+{
+  Fl_Android_565A_Map *cgimg = (Fl_Android_565A_Map*)*Fl_Graphics_Driver::id(img);
   if (cgimg) {
     for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
-      draw(XP, YP, cgimg, it->clipped_rect());
+      draw(X-cx, Y-cy, cgimg, it->clipped_rect());
     }
   }
 }
@@ -1232,6 +1221,7 @@ void Fl_Android_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_ui
 {
   Fl_Android_565A_Map *cgimg = (Fl_Android_565A_Map*)id_;
   delete cgimg;
+  id_ = 0;
 }
 
 

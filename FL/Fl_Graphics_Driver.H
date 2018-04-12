@@ -94,6 +94,34 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
   friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
 private:
+  /* ============== Implementation note about image drawing =========================
+   A graphics driver uses either its implementation of the draw_rgb(Fl_RGB_Image *,....)
+   or that of the draw_fixed(Fl_RGB_Image *,....) member functions to draw an RGB image.
+   Same thing with draw_bitmap(Fl_Bitmap *,....) or draw_fixed(Fl_Bitmap *,....).
+   Same thing with draw_pixmap(Fl_Pixmap *,....) or draw_fixed(Fl_Pixmap *,....).
+   - The driver uses draw_???() if it can directly map the image data,
+   sized at data_w() x data_h(), to the image drawing area, sized at w()*scale x h()*scale
+   where scale is the current GUI scale factor.
+   - If the driver does not support such scale-and-draw operation, it should use draw_fixed()
+   which is called by the library after the image has been internally resized to the adequate
+   drawing size and cached.
+   - The platform-independent Fl_Graphics_Driver class implements draw_???(image-class *,....)
+   that scales the image and calls the platform-specific implementation of
+   draw_fixed(image-class *,....) with the scaled, cached image.
+   - Some graphics drivers implement only draw_???() or draw_fixed() as in these examples:
+   - Fl_Quartz_Graphics_Driver implements only draw_rgb(Fl_RGB_Image *,....) because it
+   can perform the scale-and-draw operation whatever the RGB image and the required scaling.
+   - Fl_GDI_Graphics_Driver implements only draw_fixed(Fl_Pixmap *,....). The library
+   takes care of scaling and caching the Pixmap to the adequate drawing size.
+   - Some drivers implement both draw_???() and draw_fixed() :
+   - Fl_Xlib_Graphics_Driver implements both draw_rgb(Fl_RGB_Image *,....) and
+   draw_fixed(Fl_RGB_Image *,....) because scale-and-draw is possible only in the
+   presence of Xrender. In the absence of Xrender, the draw_rgb() implementation calls
+   Fl_Graphics_Driver::draw_rgb() which runs Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
+   */
+  virtual void draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
   // some platforms may need to reimplement this
   virtual void set_current_();
 protected:
@@ -145,6 +173,8 @@ protected:
   /** Support function for Fl_Bitmap drawing */
   virtual fl_uintptr_t cache(Fl_Bitmap *img) { return 0; }
   /** Support function for Fl_RGB_Image drawing */
+  virtual fl_uintptr_t cache(Fl_RGB_Image *img) { return 0; }
+  /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
   /** see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L) */
@@ -160,19 +190,19 @@ protected:
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
-  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   /** \brief Draws an Fl_Pixmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
-  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
   /** \brief Draws an Fl_Bitmap object using this graphics driver.
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of
    the image offset by the cx and cy arguments.
    */
-  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
+  virtual void draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
   /** Support function for image drawing */
@@ -230,6 +260,7 @@ protected:
   }
 
   Fl_Graphics_Driver();
+  void cache_size(Fl_Image *img, int &width, int &height);
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
   static Fl_Graphics_Driver &default_driver();
@@ -401,8 +432,6 @@ public:
   virtual const char *font_name(int num) {return NULL;}
   /** Support for Fl::set_font() */
   virtual void font_name(int num, const char *name) {}
-  // Draws an Fl_Image scaled to width W & height H
-  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
   virtual bool overlay_rect_unscaled();
@@ -459,15 +488,8 @@ public:
   Fl_Scalable_Graphics_Driver();
 protected:
   int line_width_;
-  void cache_size(Fl_Image *img, int &width, int &height);
   virtual Fl_Region scale_clip(float f) { return 0; }
   void unscale_clip(Fl_Region r);
-  virtual void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
-  virtual void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual void draw_unscaled(Fl_RGB_Image *img, float s, int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void point(int x, int y);
   virtual void point_unscaled(float x, float y) {}
   virtual void rect(int x, int y, int w, int h);

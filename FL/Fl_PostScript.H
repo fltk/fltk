@@ -67,6 +67,7 @@ private:
   void *prepare85();
   void write85(void *data, const uchar *p, int len);
   void close85(void *data);
+  int scale_and_draw(Fl_Image *img, int XP, int YP, int WP, int HP);
 protected:
   uchar **mask_bitmap() {return &mask;}
   void mask_bitmap(uchar **value) { }
@@ -212,7 +213,6 @@ class Clip {
   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
   /** Shields output PostScript data from modifications of the current locale.
    It typically avoids PostScript errors caused if the current locale uses comma instead of dot
    as "decimal point".

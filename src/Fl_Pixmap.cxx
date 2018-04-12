@@ -47,7 +47,7 @@ void Fl_Pixmap::measure() {
 }
 
 void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
-  fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
+  fl_graphics_driver->draw_pixmap(this, XP, YP, WP, HP, cx, cy);
 }
 
 

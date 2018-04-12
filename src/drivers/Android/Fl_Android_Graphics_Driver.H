@@ -54,6 +54,9 @@ protected:
   // - methods marked with // super: use the implemnetation of the super class
   // - virtual ... override functions are implemented for Android
 private:
+  virtual void draw_fixed(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) override;
+  virtual void draw_fixed(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) override;
+  virtual void draw_fixed(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) override;
   // some platforms may need to reimplement this
   // This is called from the surface device, see: end_current_()
   // super: virtual void set_current_();
@@ -67,6 +70,7 @@ protected:
   virtual fl_uintptr_t cache(Fl_Pixmap *img) override;
   /** Support function for Fl_Bitmap drawing */
   virtual fl_uintptr_t cache(Fl_Bitmap *img) override;
+  virtual fl_uintptr_t cache(Fl_RGB_Image *img) override;
   /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) override;
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
@@ -78,20 +82,6 @@ protected:
   virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) override;
   /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) override;
-  /** \brief Draws an Fl_RGB_Image object using this graphics driver. */
-  virtual void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) override;
-  /** \brief Draws an Fl_Pixmap object using this graphics driver.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) override;
-  /** \brief Draws an Fl_Bitmap object using this graphics driver.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
-  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) override;
 #if 0
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
@@ -282,9 +272,6 @@ public:
   virtual const char *font_name(int num) override;
   /** Support for Fl::set_font() */
   virtual void font_name(int num, const char *name) override;
-  // Draws an Fl_Image scaled to width W & height H
-  // TODO: we don't seem to need this until we introduce a scaling graphis driver
-  // super: virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
   // super: virtual bool overlay_rect_unscaled();
@@ -358,7 +345,6 @@ public:
   virtual int has_feature(driver_feature mask) { return mask & (NATIVE | PRINTER); }
   void draw_unscaled(Fl_Pixmap *pxm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_unscaled(Fl_Bitmap *bm, float s, int XP, int YP, int WP, int HP, int cx, int cy);
-  int draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP);
 
 #endif
 

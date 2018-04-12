@@ -195,7 +195,6 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 //   the image offset by the cx and cy arguments.
 //   */
 //  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-//  virtual int draw_scaled(Fl_Image *img, int X, int Y, int W, int H);
 //  virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 //
 //  /** Sets the value of the driver-specific graphics context. */

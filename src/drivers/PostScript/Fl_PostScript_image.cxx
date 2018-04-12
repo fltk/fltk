@@ -575,7 +575,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP,
   int need_clip = cx || cy || WP != pxm->w() || HP != pxm->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
   if (pxm->w() != pxm->data_w() || pxm->h() != pxm->data_h()) {
-    draw_scaled(pxm, XP-cx, YP-cy, pxm->w(), pxm->h());
+    scale_and_draw(pxm, XP-cx, YP-cy, pxm->w(), pxm->h());
   } else {
     const char * const * di =pxm->data();
     int w,h;
@@ -597,7 +597,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int 
   int need_clip = cx || cy || WP != rgb->w() || HP != rgb->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
   if (rgb->w() != rgb->data_w() || rgb->h() != rgb->data_h()) {
-    draw_scaled(rgb, XP-cx, YP-cy, rgb->w(), rgb->h());
+    scale_and_draw(rgb, XP-cx, YP-cy, rgb->w(), rgb->h());
   } else {
     const uchar  * di = rgb->array;
     int w = rgb->w();
@@ -612,7 +612,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int 
   if (need_clip) pop_clip();
 }
 
-int Fl_PostScript_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP){
+int Fl_PostScript_Graphics_Driver::scale_and_draw(Fl_Image *img, int XP, int YP, int WP, int HP){
   int X, Y, W, H;
   clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
   if (W == 0 || H == 0) return 1;
@@ -632,7 +632,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
   int need_clip = cx || cy || WP != bitmap->w() || HP != bitmap->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
   if (bitmap->w() != bitmap->data_w() || bitmap->h() != bitmap->data_h()) {
-    draw_scaled(bitmap, XP-cx, YP-cy, bitmap->w(), bitmap->h());
+    scale_and_draw(bitmap, XP-cx, YP-cy, bitmap->w(), bitmap->h());
   } else {
     const uchar  * di = bitmap->array;
     int w,h;

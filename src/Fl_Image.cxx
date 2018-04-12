@@ -643,7 +643,7 @@ void Fl_RGB_Image::desaturate() {
 }
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
-  fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
+  fl_graphics_driver->draw_rgb(this, XP, YP, WP, HP, cx, cy);
 }
 
 void Fl_RGB_Image::label(Fl_Widget* widget) {

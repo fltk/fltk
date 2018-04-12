@@ -132,7 +132,7 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
   fl_rectf(x,y,w,h);
 }
 
-void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_Quartz_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
@@ -142,8 +142,38 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
   }
 }
 
+fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
+  CGColorSpaceRef lut = rgb->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+  int ld = rgb->ld();
+  if (!ld) ld = rgb->data_w() * rgb->d();
+  CGDataProviderRef src;
+  if ( has_feature(PRINTER) ) {
+    // When printing, the data at rgb->array are used when the printed page is completed,
+    // that is, after return from this function.
+    // At that stage, the rgb object has possibly been deleted. It is therefore necessary
+    // to use a copy of rgb->array for printing. The mask_ member of rgb
+    // is used to avoid repeating the copy operation if rgb is printed again.
+    // The CGImage data provider deletes the copy at the latest of these two events:
+    // deletion of rgb, and completion of the page where rgb was printed.
+    size_t total = ld * rgb->data_h();
+    uchar *copy = new uchar[total];
+    memcpy(copy, rgb->array, total);
+    src = CGDataProviderCreateWithData(NULL, copy, total, dataReleaseCB);
+    *Fl_Graphics_Driver::mask(rgb) = 1;
+  } else {
+    // the CGImage data provider must not release the image data.
+    src = CGDataProviderCreateWithData(NULL, rgb->array, ld * rgb->data_h(), NULL);
+  }
+  CGImageRef cgimg = CGImageCreate(rgb->data_w(), rgb->data_h(), 8, rgb->d()*8, ld,
+                        lut, (rgb->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
+                        src, 0L, false, kCGRenderingIntentDefault);
+  *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)cgimg;
+  CGColorSpaceRelease(lut);
+  CGDataProviderRelease(src);
+  return (fl_uintptr_t)cgimg;
+}
 
-void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_Quartz_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   // Don't draw an empty image...
   if (!img->d() || !img->array) {
@@ -160,40 +190,14 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
     cgimg = NULL;
   }
   if (!cgimg) {
-    CGColorSpaceRef lut = img->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-    int ld = img->ld();
-    if (!ld) ld = img->data_w() * img->d();
-    CGDataProviderRef src;
-    if ( has_feature(PRINTER) ) {
-      // When printing, the data at img->array are used when the printed page is completed,
-      // that is, after return from this function.
-      // At that stage, the img object has possibly been deleted. It is therefore necessary
-      // to use a copy of img->array for printing. The mask_ member of img
-      // is used to avoid repeating the copy operation if img is printed again.
-      // The CGImage data provider deletes the copy at the latest of these two events:
-      // deletion of img, and completion of the page where img was printed.
-      size_t total = ld * img->data_h();
-      uchar *copy = new uchar[total];
-      memcpy(copy, img->array, total);
-      src = CGDataProviderCreateWithData(NULL, copy, total, dataReleaseCB);
-      *Fl_Graphics_Driver::mask(img) = 1;
-    } else {
-    // the CGImage data provider must not release the image data.
-      src = CGDataProviderCreateWithData(NULL, img->array, ld * img->data_h(), NULL);
-    }
-    cgimg = CGImageCreate(img->data_w(), img->data_h(), 8, img->d()*8, ld,
-                                           lut, (img->d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
-                                           src, 0L, false, kCGRenderingIntentDefault);
-    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
-    CGColorSpaceRelease(lut);
-    CGDataProviderRelease(src);
+    cgimg = (CGImageRef)cache(img);
   }
   if (cgimg && gc_) {
     draw_CGImage(cgimg, X,Y,W,H, cx,cy, img->w(), img->h());
   }
 }
 
-void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_Quartz_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(pxm);
