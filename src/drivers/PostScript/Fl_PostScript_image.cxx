@@ -604,7 +604,7 @@ void Fl_PostScript_Graphics_Driver::draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, 
     int h = rgb->h();
     mask=0;
     if (lang_level_>2) //when not true, not making alphamask, mixing colors instead...
-      if (alpha_mask(di, w, h, rgb->d(),rgb->ld())) return; //everthing masked, no need for painting!
+      if (alpha_mask(di, w, h, rgb->d(),rgb->ld())) return; //everything masked, no need for painting!
     draw_image(di, XP + cx, YP + cy, w, h, rgb->d(), rgb->ld());
     delete[]mask;
     mask=0;
@@ -621,7 +621,8 @@ int Fl_PostScript_Graphics_Driver::scale_and_draw(Fl_Image *img, int XP, int YP,
   clocale_printf("GS %d %d TR  %f %f SC GS\n", XP, YP, float(WP)/img->data_w(), float(HP)/img->data_h());
   int keep_w = img->w(), keep_h = img->h();
   img->scale(img->data_w(), img->data_h(), 0, 1);
-  img->draw(0, 0, img->data_w(), img->data_h(), 0, 0);
+  if (img->as_rgb_image()) draw_rgb(img->as_rgb_image(), 0, 0, img->data_w(), img->data_h(), 0, 0);
+  else img->draw(0, 0, img->data_w(), img->data_h(), 0, 0);
   clocale_printf("GR GR\n");
   img->scale(keep_w, keep_h, 0, 1);
   pop_clip(); // restore FLTK's clip

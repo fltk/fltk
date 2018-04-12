@@ -234,7 +234,9 @@ void Fl_SVG_Image::resize(int width, int height) {
 
 
 void Fl_SVG_Image::draw(int X, int Y, int W, int H, int cx, int cy) {
-  float f = Fl::screen_driver()->retina_factor() * fl_graphics_driver->scale();
+  float f = fl_graphics_driver->scale();
+  if (fl_graphics_driver->has_feature(Fl_Graphics_Driver::PRINTER)) f *= 2;
+  else f *= Fl::screen_driver()->retina_factor();
   int w1 = w(), h1 = h();
   /* When f > 1, there may be several pixels per FLTK unit in an area
    of size w() x h() of the display. This occurs, e.g., with Apple retina displays
