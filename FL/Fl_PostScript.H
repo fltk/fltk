@@ -210,9 +210,9 @@ class Clip {
   void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
   int height();
   int descent();
-  void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   /** Shields output PostScript data from modifications of the current locale.
    It typically avoids PostScript errors caused if the current locale uses comma instead of dot
    as "decimal point".

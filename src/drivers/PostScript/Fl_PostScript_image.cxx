@@ -571,7 +571,7 @@ void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void 
 ////////////////////////////// Image classes //////////////////////
 
 
-void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy){
+void Fl_PostScript_Graphics_Driver::draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy){
   int need_clip = cx || cy || WP != pxm->w() || HP != pxm->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
   if (pxm->w() != pxm->data_w() || pxm->h() != pxm->data_h()) {
@@ -592,7 +592,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP,
   if (need_clip) pop_clip();
 }
 
-void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy)
+void Fl_PostScript_Graphics_Driver::draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy)
 {
   int need_clip = cx || cy || WP != rgb->w() || HP != rgb->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
@@ -628,7 +628,7 @@ int Fl_PostScript_Graphics_Driver::scale_and_draw(Fl_Image *img, int XP, int YP,
   return 1;
 }
 
-void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) {
+void Fl_PostScript_Graphics_Driver::draw_bitmap(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy) {
   int need_clip = cx || cy || WP != bitmap->w() || HP != bitmap->h();
   if (need_clip) push_clip(XP, YP, WP, HP);
   if (bitmap->w() != bitmap->data_w() || bitmap->h() != bitmap->data_h()) {
