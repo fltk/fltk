@@ -67,7 +67,7 @@ private:
   void *prepare85();
   void write85(void *data, const uchar *p, int len);
   void close85(void *data);
-  int scale_and_draw(Fl_Image *img, int XP, int YP, int WP, int HP);
+  int scale_for_image_(Fl_Image *img, int XP, int YP, int WP, int HP,int cx, int cy);
 protected:
   uchar **mask_bitmap() {return &mask;}
   void mask_bitmap(uchar **value) { }
