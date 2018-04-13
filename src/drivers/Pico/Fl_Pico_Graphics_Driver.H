@@ -169,8 +169,8 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 //  virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
 //  // --- implementation is in src/fl_image.cxx which includes src/drivers/xxx/Fl_xxx_Graphics_Driver_font.cxx
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) ;
-//  virtual fl_uintptr_t cache(Fl_Pixmap *img, int w, int h, const char *const*array) { return 0; }
-//  virtual fl_uintptr_t cache(Fl_Bitmap *img, int w, int h, const uchar *array) { return 0; }
+//  virtual void cache(Fl_Pixmap *img) { return 0; }
+//  virtual void cache(Fl_Bitmap *img) { return 0; }
 //  virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) { }
   virtual void delete_bitmask(Fl_Bitmask bm) ;
 //  virtual void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}

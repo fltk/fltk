@@ -101,7 +101,7 @@ protected:
   static Window draw_window;
   static struct _XftDraw* draw_;
 #endif
-  fl_uintptr_t cache(Fl_RGB_Image *img);
+  void cache(Fl_RGB_Image *img);
 public:
   Fl_Xlib_Graphics_Driver(void);
   virtual ~Fl_Xlib_Graphics_Driver();
@@ -123,9 +123,9 @@ public:
   virtual void draw_unscaled(int angle, const char *str, int n, int x, int y);
   virtual void rtl_draw_unscaled(const char* str, int n, int x, int y);
   virtual void font_unscaled(Fl_Font face, Fl_Fontsize size);
-  fl_uintptr_t cache(Fl_Pixmap *img);
+  void cache(Fl_Pixmap *img);
   virtual void uncache_pixmap(fl_uintptr_t p);
-  fl_uintptr_t cache(Fl_Bitmap *img);
+  void cache(Fl_Bitmap *img);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   virtual double width_unscaled(const char *str, int n);
   virtual double width_unscaled(unsigned int c);

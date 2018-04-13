@@ -328,12 +328,14 @@ void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int
   if (!*id(pxm)) {
     if (pxm->data_w() != w2 || pxm->data_h() != h2) { // build a scaled id_ & mask_ for pxm
       Fl_Pixmap *pxm2 = (Fl_Pixmap*)pxm->copy(w2, h2);
-      *id(pxm) = cache(pxm2);
+      cache(pxm2);
+      *id(pxm) = *id(pxm2);
+      *id(pxm2) = 0;
       *pw = w2; *ph = h2; // memorize size of cached form of pixmap
       *mask(pxm) = *mask(pxm2);
       *mask(pxm2) = 0;
       delete pxm2;
-    } else *id(pxm) = cache(pxm);
+    } else cache(pxm);
   }
   // draw pxm using its scaled id_ & pixmap_
   draw_fixed(pxm, X, Y, W, H, cx, cy);
@@ -355,10 +357,12 @@ void Fl_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int 
   if (!*id(bm)) {
     if (bm->data_w() != w2 || bm->data_h() != h2) { // build a scaled id_ for bm
       Fl_Bitmap *bm2 = (Fl_Bitmap*)bm->copy(w2, h2);
-      *id(bm) = cache(bm2);
+      cache(bm2);
+      *id(bm) = *id(bm2);
+      *id(bm2) = 0;
       *pw = w2; *ph = h2; // memorize size of cached form of bitmap
       delete bm2;
-    } else *id(bm) = cache(bm);
+    } else cache(bm);
   }
   // draw bm using its scaled id_
   draw_fixed(bm, X, Y, W, H, cx, cy);

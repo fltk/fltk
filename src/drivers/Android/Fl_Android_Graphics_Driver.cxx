@@ -984,7 +984,7 @@ void Fl_Android_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, 
 }
 
 
-fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
+void Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
 {
   int w = bm->w(), h = bm->h();
   int rowBytes = (w+7)>>3;
@@ -1002,12 +1002,12 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
     }
   }
 
-  return (fl_uintptr_t)cache;
+  *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)cache;
 }
 
 
 
-fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
+void Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
 {
   int w = img->w(), h = img->h();
   int rowBytes = 4*w;
@@ -1015,7 +1015,8 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
   int ret = fl_convert_pixmap(img->data(), rgba, 0);
   if (ret==0) {
     ::free(rgba);
-    return 0;
+    *Fl_Graphics_Driver::id(img) = 0;
+    return;
   }
 
   Fl_Android_565A_Map *cache = new Fl_Android_565A_Map(w, h);
@@ -1032,7 +1033,7 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
   }
 
   ::free(rgba);
-  return (fl_uintptr_t)cache;
+  *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cache;
 }
 
 
@@ -1042,7 +1043,7 @@ void Fl_Android_Graphics_Driver::uncache_pixmap(fl_uintptr_t p)
   delete img;
 }
 
-fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_RGB_Image *img)
+void Fl_Android_Graphics_Driver::cache(Fl_RGB_Image *img)
 {
   int w = img->data_w(), h = img->data_h(), d = img->d(), stride = w*d + img->ld();
   Fl_Android_565A_Map *cgimg = new Fl_Android_565A_Map(w, h);
@@ -1092,7 +1093,6 @@ fl_uintptr_t Fl_Android_Graphics_Driver::cache(Fl_RGB_Image *img)
       }
     }
   }
-  return (fl_uintptr_t)cgimg;
 }
 
 void Fl_Android_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy)

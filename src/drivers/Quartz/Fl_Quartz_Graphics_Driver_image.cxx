@@ -142,7 +142,7 @@ void Fl_Quartz_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int W
   }
 }
 
-fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
+void Fl_Quartz_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
   CGColorSpaceRef lut = rgb->d()<=2 ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
   int ld = rgb->ld();
   if (!ld) ld = rgb->data_w() * rgb->d();
@@ -170,7 +170,6 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
   *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)cgimg;
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src);
-  return (fl_uintptr_t)cgimg;
 }
 
 void Fl_Quartz_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -190,7 +189,8 @@ void Fl_Quartz_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int 
     cgimg = NULL;
   }
   if (!cgimg) {
-    cgimg = (CGImageRef)cache(img);
+    cache(img);
+    cgimg = (CGImageRef)*Fl_Graphics_Driver::id(img);
   }
   if (cgimg && gc_) {
     draw_CGImage(cgimg, X,Y,W,H, cx,cy, img->w(), img->h());
@@ -233,8 +233,8 @@ void Fl_Quartz_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uin
   }
 }
 
-fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap *bm) {
-  return (fl_uintptr_t)create_bitmask(bm->data_w(), bm->data_h(), bm->array);
+void Fl_Quartz_Graphics_Driver::cache(Fl_Bitmap *bm) {
+  *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)create_bitmask(bm->data_w(), bm->data_h(), bm->array);
 }
 
 
@@ -242,7 +242,7 @@ static void pmProviderRelease (void *ctxt, const void *data, size_t size) {
   CFRelease(ctxt);
 }
 
-fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
+void Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surf);
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
@@ -259,7 +259,7 @@ fl_uintptr_t Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
                                  src_bytes, 0L, false, kCGRenderingIntentDefault);
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src_bytes);
-  return (fl_uintptr_t)cgimg;
+  *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cgimg;
 }
 
 void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int w, int h, int srcx, int srcy, int sw, int sh)

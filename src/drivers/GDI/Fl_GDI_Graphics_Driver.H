@@ -44,7 +44,7 @@ private:
   void draw_fixed(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
 protected:
   void draw_fixed(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
-  fl_uintptr_t cache(Fl_RGB_Image *rgb);
+  void cache(Fl_RGB_Image *rgb);
   HDC gc_;
   int numcount;
   int counts[20];
@@ -73,9 +73,9 @@ public:
   virtual void draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   virtual void draw_image_mono_unscaled(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   virtual void draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
-  fl_uintptr_t cache(Fl_Pixmap *img);
+  void cache(Fl_Pixmap *img);
   virtual void uncache_pixmap(fl_uintptr_t p);
-  fl_uintptr_t cache(Fl_Bitmap *img);
+  void cache(Fl_Bitmap *img);
   void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_);
   virtual double width_unscaled(const char *str, int n);
   virtual double width_unscaled(unsigned int c);

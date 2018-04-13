@@ -442,7 +442,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, 
   }
   if (recache || !*id(bm)) {
     bm->uncache();
-    *Fl_Graphics_Driver::id(bm) = cache(bm);
+    cache(bm);
   }
   HDC tempdc;
   int save;
@@ -478,7 +478,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, 
 }
 
 
-fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
+void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 {
   Fl_Image_Surface *surface = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surface);
@@ -498,7 +498,6 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
   *pw = img->data_w();
   *ph = img->data_h();
   *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)offs;
-  return (fl_uintptr_t)offs;
 }
 
 
@@ -510,11 +509,7 @@ void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, 
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
-    *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cache(img);
-    int *pw, *ph;
-    cache_w_h(img, pw, ph);
-    *pw = img->data_w();
-    *ph = img->data_h();
+    cache(img);
   }
   if (*Fl_Graphics_Driver::mask(img)) {
     HDC new_gc = CreateCompatibleDC(gc_);
@@ -542,11 +537,7 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
     return;
   }
   if (!*Fl_Graphics_Driver::id(rgb)) {
-    *Fl_Graphics_Driver::id(rgb) = (fl_uintptr_t)cache(rgb);
-    int *pw, *ph;
-    cache_w_h(rgb, pw, ph);
-    *pw = rgb->data_w();
-    *ph = rgb->data_h();
+    cache(rgb);
   }
   float scaleW = float(rgb->data_w())/rgb->w();
   float scaleH = float(rgb->data_h())/rgb->h();
@@ -630,12 +621,12 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   return bm;
 }
 
-fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
+void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
   int *pw, *ph;
   cache_w_h(bm, pw, ph);
   *pw = bm->data_w();
   *ph = bm->data_h();
-  return (fl_uintptr_t)fl_create_bitmap(bm->data_w(), bm->data_h(), bm->array);
+  *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)fl_create_bitmap(bm->data_w(), bm->data_h(), bm->array);
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
@@ -673,7 +664,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
     }
     if (recache || !*id(pxm)) {
       pxm->uncache();
-      *Fl_Graphics_Driver::id(pxm) = cache(pxm);
+      cache(pxm);
     }
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
@@ -693,7 +684,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
 }
 
 
-fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
+void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surf);
   uchar *bitmap = 0;
@@ -712,7 +703,7 @@ fl_uintptr_t Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   cache_w_h(img, pw, ph);
   *pw = img->data_w();
   *ph = img->data_h();
-  return (fl_uintptr_t)id;
+  *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)id;
 }
 
 void Fl_GDI_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {

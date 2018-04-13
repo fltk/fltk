@@ -67,10 +67,10 @@ protected:
   // set fl_gc, which we do not use in the Android port at this point
   // super: virtual void global_gc();
   /** Support function for Fl_Pixmap drawing */
-  virtual fl_uintptr_t cache(Fl_Pixmap *img) override;
+  virtual void cache(Fl_Pixmap *img) override;
   /** Support function for Fl_Bitmap drawing */
-  virtual fl_uintptr_t cache(Fl_Bitmap *img) override;
-  virtual fl_uintptr_t cache(Fl_RGB_Image *img) override;
+  virtual void cache(Fl_Bitmap *img) override;
+  virtual void cache(Fl_RGB_Image *img) override;
   /** Support function for Fl_RGB_Image drawing */
   virtual void uncache(Fl_RGB_Image *img, fl_uintptr_t &id_, fl_uintptr_t &mask_) override;
   // --- implementation is in src/drivers/xxx/Fl_xxx_Graphics_Driver_image.cxx
