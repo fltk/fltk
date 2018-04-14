@@ -116,19 +116,6 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw_bitmap(this, XP, YP, WP, HP, cx, cy);
 }
 
-int Fl_Bitmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
-		 int &X, int &Y, int &W, int &H)
-{
-  if (!array) {
-    draw_empty(XP, YP);
-    return 1;
-  }
-  if (fl_graphics_driver->start_image(this, XP,YP,WP,HP,cx,cy,X,Y,W,H)) return 1;
-  if (!id_)
-    fl_graphics_driver->cache(this);
-  return 0;
-}
-
 /**
   The destructor frees all memory and server resources that are used by
   the bitmap.

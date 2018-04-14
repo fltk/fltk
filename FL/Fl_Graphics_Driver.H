@@ -248,17 +248,7 @@ protected:
   static Fl_Color* pixmap_bg_color(Fl_Pixmap *pm) {return &(pm->pixmap_bg_color);}
   /** For internal library use only */
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
-  /** Accessor to a private member function of Fl_Bitmap */
-  static int prepare(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int &cx, int &cy,
-                   int &X, int &Y, int &W, int &H) {
-    return bm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
-  }
-  /** Accessor to a private member function of Fl_Pixmap */
-  static int prepare(Fl_Pixmap *pm, int XP, int YP, int WP, int HP, int &cx, int &cy,
-                     int &X, int &Y, int &W, int &H) {
-    return pm->prepare(XP,YP,WP,HP,cx,cy,X,Y,W,H);
-  }
-
+  
   Fl_Graphics_Driver();
   void cache_size(Fl_Image *img, int &width, int &height);
 public:

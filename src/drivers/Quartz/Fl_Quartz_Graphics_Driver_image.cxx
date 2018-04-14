@@ -134,9 +134,14 @@ void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 
 void Fl_Quartz_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+  if (!bm->array) {
+    draw_empty(bm, XP, YP);
     return;
   }
+  if (start_image(bm, XP,YP,WP,HP,cx,cy,X,Y,W,H)) return;
+  if (!*id(bm))
+    cache(bm);
+
   if (*Fl_Graphics_Driver::id(bm) && gc_) {
     draw_CGImage((CGImageRef)*Fl_Graphics_Driver::id(bm), X,Y,W,H, cx, cy, bm->w(), bm->h());
   }
@@ -199,7 +204,15 @@ void Fl_Quartz_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int 
 
 void Fl_Quartz_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (Fl_Graphics_Driver::prepare(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (!pxm->data() || !pxm->w()) {
+    draw_empty(pxm, XP, YP);
+    return;
+  }
+  if ( start_image(pxm, XP,YP,WP,HP,cx,cy,X,Y,W,H) ) return;
+  if (!*id(pxm)) {
+    cache(pxm);
+  }
+  
   CGImageRef cgimg = (CGImageRef)*Fl_Graphics_Driver::id(pxm);
   draw_CGImage(cgimg, X,Y,W,H, cx,cy, pxm->w(), pxm->h());
 }

@@ -40,8 +40,6 @@ public:
   int alloc_array;
   
 private:
-  int prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
-	    int &X, int &Y, int &W, int &H);
   /** for internal use */
   fl_uintptr_t id_;
   int cache_w_, cache_h_; // size of bitmap when cached
