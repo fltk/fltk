@@ -95,25 +95,37 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
 private:
   /* ============== Implementation note about image drawing =========================
-   A graphics driver uses either its implementation of the draw_rgb(Fl_RGB_Image *,....)
-   or that of the draw_fixed(Fl_RGB_Image *,....) member functions to draw an RGB image.
-   Same thing with draw_bitmap(Fl_Bitmap *,....) or draw_fixed(Fl_Bitmap *,....).
-   Same thing with draw_pixmap(Fl_Pixmap *,....) or draw_fixed(Fl_Pixmap *,....).
-   - The driver uses draw_???() if it can directly map the image data,
+   A graphics driver can implement up to 6 virtual member functions to draw images:
+   virtual void draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy)
+   virtual void draw_bitmap(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy)
+   virtual void draw_rgb(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy)
+and
+   virtual void draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy)
+   virtual void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy)
+   virtual void draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy)
+   - The 1st group of functions is used when the driver can directly map the image data,
    sized at data_w() x data_h(), to the image drawing area, sized at w()*scale x h()*scale
    where scale is the current GUI scale factor.
-   - If the driver does not support such scale-and-draw operation, it should use draw_fixed()
-   which is called by the library after the image has been internally resized to the adequate
-   drawing size and cached.
-   - The platform-independent Fl_Graphics_Driver class implements draw_???(image-class *,....)
-   that scales the image and calls the platform-specific implementation of
-   draw_fixed(image-class *,....) with the scaled, cached image.
-   - Some graphics drivers implement only draw_???() or draw_fixed() as in these examples:
+   - If the driver does not support such scale-and-draw operation, it should implement the
+   draw_fixed() function which is called by the library after the image has been internally
+   resized to the drawing size and cached.
+   - The platform-independent Fl_Graphics_Driver class implements the 1st group of functions.
+   Each resizes the image, caches it, and calls the platform-specific implementation of
+   draw_fixed(image-class *,....) with the cached image.
+   - Consider an image object, say from class Fl_RGB_Image. Fl_RGB_Image::draw()
+   calls the virtual member function draw_rgb(Fl_RGB_Image *,....). If Fl_XXX_Graphics_Driver
+   re-implements this function, this code runs and is expected to draw the image
+   adequately scaled to its drawing size. If Fl_XXX_Graphics_Driver does not re-implement
+   this function, Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *,....) runs. It internally
+   resizes the image, caches it, and calls Fl_XXX_Graphics_Driver::draw_fixed(Fl_RGB_Image *,....)
+   that draws the image from its cached form which already has the adequate size.
+   - Some drivers implement, for a given image class, only the function of the 1st group or
+   only draw_fixed() as in these examples:
    - Fl_Quartz_Graphics_Driver implements only draw_rgb(Fl_RGB_Image *,....) because it
    can perform the scale-and-draw operation whatever the RGB image and the required scaling.
    - Fl_GDI_Graphics_Driver implements only draw_fixed(Fl_Pixmap *,....). The library
-   takes care of scaling and caching the Pixmap to the adequate drawing size.
-   - Some drivers implement both draw_???() and draw_fixed() :
+   takes care of resizing and caching the Pixmap to the adequate drawing size.
+   - Some drivers implement one function from both groups for a given image class :
    - Fl_Xlib_Graphics_Driver implements both draw_rgb(Fl_RGB_Image *,....) and
    draw_fixed(Fl_RGB_Image *,....) because scale-and-draw is possible only in the
    presence of Xrender. In the absence of Xrender, the draw_rgb() implementation calls
