@@ -76,24 +76,20 @@ struct Fl_Fontdesc;
  */
 class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Surface_Device;
-  friend class Fl_Display_Device;
   friend class Fl_Screen_Driver;
   friend class Fl_Window_Driver;
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
-  friend class Fl_Shared_Image;
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-  friend FL_EXPORT int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg);
   friend FL_EXPORT void gl_start();
   friend FL_EXPORT void gl_finish();
   friend FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array);
   friend FL_EXPORT void fl_delete_bitmask(Fl_Bitmask);
-private:
   /* ============== Implementation note about image drawing =========================
    A graphics driver can implement up to 6 virtual member functions to draw images:
    virtual void draw_pixmap(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy)
@@ -131,6 +127,7 @@ and
    presence of Xrender. In the absence of Xrender, the draw_rgb() implementation calls
    Fl_Graphics_Driver::draw_rgb() which runs Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
    */
+private:
   virtual void draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw_fixed(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy) {}
   virtual void draw_fixed(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
