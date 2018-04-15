@@ -748,6 +748,8 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W,
   offset_x_ = ox; offset_y_ = oy;
 }
 
+#if HAVE_XRENDER
+
 void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy) {
   if (!fl_can_do_alpha_blending()) {
     Fl_Graphics_Driver::draw_rgb(rgb, XP, YP, WP, HP, cx, cy);
@@ -765,6 +767,43 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
                                  rgb->data_w() / double(rgb->w()*scale_), rgb->data_h() / double(rgb->h()*scale_),
                           cx*scale_, cy*scale_, (X + offset_x_)*scale_, (Y + offset_y_)*scale_, W, H);
 }
+
+/* Draws with Xrender an Fl_Offscreen with optional scaling and accounting for transparency if necessary.
+ XP,YP,WP,HP are in drawing units
+ */
+int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP) {
+  bool has_alpha = (depth == 2 || depth == 4);
+  XRenderPictureAttributes srcattr;
+  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
+  static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
+  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+  Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
+  if (!src || !dst) {
+    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
+    return 0;
+  }
+  Fl_Region r = scale_clip(scale_);
+  const Fl_Region clipr = clip_region();
+  if (clipr)
+    XRenderSetPictureClipRegion(fl_display, dst, clipr);
+  unscale_clip(r);
+  if (scale_x != 1 || scale_y != 1) {
+    XTransform mat = {{
+      { XDoubleToFixed( scale_x ), XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ) },
+      { XDoubleToFixed( 0 ),       XDoubleToFixed( scale_y ), XDoubleToFixed( 0 ) },
+      { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
+    }};
+    XRenderSetPictureTransform(fl_display, src, &mat);
+  }
+  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
+                   XP, YP, WP, HP);
+  XRenderFreePicture(fl_display, src);
+  XRenderFreePicture(fl_display, dst);
+  return 1;
+}
+
+#endif // HAVE_XRENDER
 
 void Fl_Xlib_Graphics_Driver::uncache(Fl_RGB_Image*, fl_uintptr_t &id_, fl_uintptr_t &mask_)
 {
@@ -851,46 +890,6 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
 void Fl_Xlib_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {
   XFreePixmap(fl_display, (Fl_Offscreen)offscreen);
 }
-
-
-#if HAVE_XRENDER
-/* Draws with Xrender an Fl_Offscreen with optional scaling and accounting for transparency if necessary.
- XP,YP,WP,HP are in drawing units
- */
-int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int depth, double scale_x, double scale_y, int srcx, int srcy, int XP, int YP, int WP, int HP) {
-  bool has_alpha = (depth == 2 || depth == 4);
-  XRenderPictureAttributes srcattr;
-  memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
-  static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
-  static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
-  Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
-  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
-  if (!src || !dst) {
-    fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
-    return 0;
-  }
-  Fl_Region r = scale_clip(scale_);
-  const Fl_Region clipr = clip_region();
-  if (clipr)
-    XRenderSetPictureClipRegion(fl_display, dst, clipr);
-  unscale_clip(r);
-  if (scale_x != 1 || scale_y != 1) {
-    XTransform mat = {{
-      { XDoubleToFixed( scale_x ), XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ) },
-      { XDoubleToFixed( 0 ),       XDoubleToFixed( scale_y ), XDoubleToFixed( 0 ) },
-      { XDoubleToFixed( 0 ),       XDoubleToFixed( 0 ),       XDoubleToFixed( 1 ) }
-    }};
-    XRenderSetPictureTransform(fl_display, src, &mat);
-  }
-  XRenderComposite(fl_display, (has_alpha ? PictOpOver : PictOpSrc), src, None, dst, srcx, srcy, 0, 0,
-                   XP, YP, WP, HP);
-  XRenderFreePicture(fl_display, src);
-  XRenderFreePicture(fl_display, dst);
-  return 1;
-}
-
-#endif // HAVE_XRENDER
-
 
 //
 // End of "$Id$".
