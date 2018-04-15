@@ -102,9 +102,9 @@ and
    - The 1st group of functions is used when the driver can directly map the image data,
    sized at data_w() x data_h(), to the image drawing area, sized at w()*scale x h()*scale
    where scale is the current GUI scale factor.
-   - If the driver does not support such scale-and-draw operation, it should implement the
-   draw_fixed() function which is called by the library after the image has been internally
-   resized to the drawing size and cached.
+   - If the driver does not support such scale-and-draw operation for a given image type,
+   it should implement the draw_fixed() function which is called by the library after the
+   image has been internally resized to the drawing size and cached.
    - The platform-independent Fl_Graphics_Driver class implements the 1st group of functions.
    Each resizes the image, caches it, and calls the platform-specific implementation of
    draw_fixed(image-class *,....) with the cached image.
@@ -119,13 +119,17 @@ and
    only draw_fixed() as in these examples:
    - Fl_Quartz_Graphics_Driver implements only draw_rgb(Fl_RGB_Image *,....) because it
    can perform the scale-and-draw operation whatever the RGB image and the required scaling.
-   - Fl_GDI_Graphics_Driver implements only draw_fixed(Fl_Pixmap *,....). The library
+   - Fl_Xlib_Graphics_Driver implements only draw_fixed(Fl_Pixmap *,....). The library
    takes care of resizing and caching the Pixmap to the adequate drawing size.
-   - Some drivers implement one function from both groups for a given image class :
-   - Fl_Xlib_Graphics_Driver implements both draw_rgb(Fl_RGB_Image *,....) and
-   draw_fixed(Fl_RGB_Image *,....) because scale-and-draw is possible only in the
-   presence of Xrender. In the absence of Xrender, the draw_rgb() implementation calls
-   Fl_Graphics_Driver::draw_rgb() which runs Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
+   - Some drivers implement, for a given image class, the function of both groups, e.g. :
+   Fl_GDI_Graphics_Driver implements both draw_rgb(Fl_RGB_Image *,....) and
+   draw_fixed(Fl_RGB_Image *,....) because scale-and-draw may require function Alphablend()
+   from MSIMG32.DLL. In the absence of that, the draw_rgb() implementation calls
+   Fl_Graphics_Driver::draw_rgb() which runs Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
+   
+   Graphics drivers also implement cache(Fl_Pixmap*), cache(Fl_Bitmap*) and cache(Fl_RGB_Image*)
+   to compute the cached form of all image types, and uncache(Fl_RGB_Image *img,...) and
+   uncache_pixmap(fl_uintptr_t p) to destroy cached image forms.
    */
 private:
   virtual void draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
