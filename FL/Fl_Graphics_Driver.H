@@ -130,6 +130,8 @@ and
    Graphics drivers also implement cache(Fl_Pixmap*), cache(Fl_Bitmap*) and cache(Fl_RGB_Image*)
    to compute the cached form of all image types, and uncache(Fl_RGB_Image *,...),
    uncache_pixmap(fl_uintptr_t) and delete_bitmask(Fl_Bitmask) to destroy cached image forms.
+   Graphics drivers that use the mask_ variable of class Fl_Pixmap to cache an Fl_Pixmap
+   object also reimplement the uchar **Fl_Graphics_Driver::mask_bitmap() member function.
    */
 private:
   virtual void draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
