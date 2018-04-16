@@ -687,15 +687,16 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
 void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surf);
-  uchar *bitmap = 0;
-  Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
+  uchar **pbitmap = surf->driver()->mask_bitmap();
+  *pbitmap = 0;
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
   *Fl_Graphics_Driver::pixmap_bg_color(img) = Fl_WinAPI_System_Driver::win_pixmap_bg_color;  // computed by fl_draw_pixmap()
-  Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
+  uchar *bitmap = *pbitmap;
   if (bitmap) {
-    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)fl_create_bitmask(img->data_w(), img->data_h(), bitmap);
+    *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)create_bitmask(img->data_w(), img->data_h(), bitmap);
     delete[] bitmap;
   }
+  *pbitmap = 0;
   Fl_Surface_Device::pop_current();
   Fl_Offscreen id = surf->get_offscreen_before_delete();
   delete surf;

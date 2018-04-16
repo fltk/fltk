@@ -869,14 +869,15 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, in
 void Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(pxm->data_w(), pxm->data_h());
   Fl_Surface_Device::push_current(surf);
-  uchar *bitmap = 0;
-  Fl_Surface_Device::surface()->driver()->mask_bitmap(&bitmap);
+  uchar **pbitmap = surf->driver()->mask_bitmap();
+  *pbitmap = 0;
   fl_draw_pixmap(pxm->data(), 0, 0, FL_BLACK);
-  Fl_Surface_Device::surface()->driver()->mask_bitmap(0);
+  uchar *bitmap = *pbitmap;
   if (bitmap) {
     *Fl_Graphics_Driver::mask(pxm) = (fl_uintptr_t)create_bitmask(pxm->data_w(), pxm->data_h(), bitmap);
     delete[] bitmap;
   }
+  *pbitmap = 0;
   Fl_Surface_Device::pop_current();
   Fl_Offscreen id = surf->get_offscreen_before_delete();
   delete surf;

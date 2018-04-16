@@ -407,8 +407,6 @@ public:
   virtual void *gc(void) {return NULL;}
   /** Support for pixmap drawing */
   virtual uchar **mask_bitmap() { return 0; }
-  /** Support for pixmap drawing */
-  virtual void mask_bitmap(uchar **) {}
   // default implementation may be enough
   /** Support for PostScript drawing */
   virtual float scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) { return float(s); }

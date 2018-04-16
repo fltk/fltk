@@ -48,9 +48,8 @@ protected:
   HDC gc_;
   int numcount;
   int counts[20];
-  uchar **mask_bitmap_;
-  uchar **mask_bitmap() {return mask_bitmap_;}
-  void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
+  uchar *mask_bitmap_;
+  uchar **mask_bitmap() {return &mask_bitmap_;}
   int p_size;
   POINT *p;
 public:

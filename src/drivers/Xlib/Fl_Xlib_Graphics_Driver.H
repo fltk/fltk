@@ -91,9 +91,8 @@ protected:
   static void init_built_in_fonts();
 #endif
   static GC gc_;
-  uchar **mask_bitmap_;
-  uchar **mask_bitmap() {return mask_bitmap_;}
-  void mask_bitmap(uchar **value) { mask_bitmap_ = value; }
+  uchar *mask_bitmap_;
+  uchar **mask_bitmap() {return &mask_bitmap_;}
   int p_size;
   typedef struct {short x, y;} XPOINT;
   XPOINT *p;
