@@ -30,8 +30,14 @@
 #include <ApplicationServices/ApplicationServices.h>
 
 // condition for the ATSU API to be available at compile time
-#define HAS_ATSU ((!defined(__LP64__) || !__LP64__) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11 && \
-    MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5)
+#if (    (!defined(__LP64__) || !__LP64__) \
+      && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_11 \
+      && MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5 \
+    )
+#define HAS_ATSU 1
+#else
+#define HAS_ATSU 0
+#endif
 
 struct Fl_Fontdesc;
 class Fl_Quartz_Font_Descriptor;
