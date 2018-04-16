@@ -87,11 +87,11 @@ protected:
 
   /** Support function for image drawing */
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
-  /** Support function for image drawing */
-  virtual void delete_bitmask(Fl_Bitmask bm) {}
 #endif
   // Support function for image drawing
   virtual void uncache_pixmap(fl_uintptr_t p) override;
+  // Support function for image drawing
+  virtual void delete_bitmask(Fl_Bitmask bm) override;
 public:
   /** Constructor, C++11 initialises member variables in-line */
   Fl_Android_Graphics_Driver();

@@ -1005,7 +1005,10 @@ void Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
   *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)cache;
 }
 
-
+void Fl_Android_Graphics_Driver::delete_bitmask(Fl_Bitmask bm)
+{
+  delete (Fl_Android_Bytemap*)bm;
+}
 
 void Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
 {
