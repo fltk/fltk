@@ -223,7 +223,6 @@ class Clip {
   ~Fl_PostScript_Graphics_Driver();
   // ---
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
-  void delete_bitmask(Fl_Bitmask bm) { };
   virtual int has_feature(driver_feature mask) { return mask & PRINTER; }
 };
 
