@@ -576,13 +576,11 @@ void Fl_PostScript_Graphics_Driver::draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, 
   int w,h;
   if (!fl_measure_pixmap(di, w, h)) return;
   mask=0;
-  mask_bitmap(&mask);
   mx = w;
   my = h;
-  fl_draw_pixmap(di, 0, 0, FL_BLACK);
+  fl_draw_pixmap(di, 0, 0, FL_BLACK); // assigns mask to an array
   delete[] mask;
   mask=0;
-  mask_bitmap(0);
   clocale_printf("GR GR\n");
   pop_clip(); // matches push_no_clip in scale_for_image_
 }

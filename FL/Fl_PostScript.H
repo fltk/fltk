@@ -70,7 +70,6 @@ private:
   int scale_for_image_(Fl_Image *img, int XP, int YP, int WP, int HP,int cx, int cy);
 protected:
   uchar **mask_bitmap() {return &mask;}
-  void mask_bitmap(uchar **value) { }
 public:
   Fl_PostScript_Graphics_Driver();
 #ifndef FL_DOXYGEN
