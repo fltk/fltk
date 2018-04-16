@@ -128,8 +128,8 @@ and
    Fl_Graphics_Driver::draw_rgb() which runs Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image*,...).
    
    Graphics drivers also implement cache(Fl_Pixmap*), cache(Fl_Bitmap*) and cache(Fl_RGB_Image*)
-   to compute the cached form of all image types, and uncache(Fl_RGB_Image *img,...) and
-   uncache_pixmap(fl_uintptr_t p) to destroy cached image forms.
+   to compute the cached form of all image types, and uncache(Fl_RGB_Image *,...),
+   uncache_pixmap(fl_uintptr_t) and delete_bitmask(Fl_Bitmask) to destroy cached image forms.
    */
 private:
   virtual void draw_fixed(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
