@@ -130,21 +130,21 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   const uchar*const* data = (const uchar*const*)(cdata+1);
   static int use_extra_transparent_processing = Fl::system_driver()->pixmap_extra_transparent_processing();
   uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
-
+  
   if (!fl_measure_pixmap(cdata, w, h))
     return 0;
-
+  
   if ((chars_per_pixel < 1) || (chars_per_pixel > 2))
     return 0;
-
+  
   typedef uchar uchar4[4];
   uchar4 *colors = new uchar4[1<<(chars_per_pixel*8)];
-
+  
   if (use_extra_transparent_processing) {
     color_count = 0;
     used_colors = (UsedColor*)malloc(abs(ncolors) * sizeof(UsedColor));
   }
-
+  
   if (ncolors < 0) {	// FLTK (non standard) compressed colormap
     ncolors = -ncolors;
     const uchar *p = *data++;
@@ -178,19 +178,19 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
       int ind = *p++;
       uchar* c;
       if (chars_per_pixel>1)
-	ind = (ind<<8)|*p++;
+        ind = (ind<<8)|*p++;
       c = colors[ind];
       // look for "c word", or last word if none:
       const uchar *previous_word = p;
       for (;;) {
-	while (*p && isspace(*p)) p++;
-	uchar what = *p++;
-	while (*p && !isspace(*p)) p++;
-	while (*p && isspace(*p)) p++;
-	if (!*p) {p = previous_word; break;}
-	if (what == 'c') break;
-	previous_word = p;
-	while (*p && !isspace(*p)) p++;
+        while (*p && isspace(*p)) p++;
+        uchar what = *p++;
+        while (*p && !isspace(*p)) p++;
+        while (*p && isspace(*p)) p++;
+        if (!*p) {p = previous_word; break;}
+        if (what == 'c') break;
+        previous_word = p;
+        while (*p && !isspace(*p)) p++;
       }
       int parse = fl_parse_color((const char*)p, c[0], c[1], c[2]);
       c[3] = 255;
@@ -203,10 +203,10 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
         }
       } else {
         // assume "None" or "#transparent" for any errors
-	// "bg" should be transparent...
-	Fl::get_color(bg, c[0], c[1], c[2]);
+        // "bg" should be transparent...
+        Fl::get_color(bg, c[0], c[1], c[2]);
         c[3] = 0;
-	if (use_extra_transparent_processing) transparent_c = c;
+        if (use_extra_transparent_processing) transparent_c = c;
       } // if parse
     } // for ncolors
   } // if ncolors
@@ -218,21 +218,21 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
       Fl::system_driver()->make_unused_color(r, g, b);
     }
   }
-
+  
   U32 *q = (U32*)out;
   for (int Y = 0; Y < h; Y++) {
-      const uchar* p = data[Y];
-      if (chars_per_pixel <= 1) {
+    const uchar* p = data[Y];
+    if (chars_per_pixel <= 1) {
       for (int X = 0; X < w; X++)
         memcpy(q++, colors[*p++], 4);
-      } else {
+    } else {
       for (int X = 0; X < w; X++) {
         int ind = (*p++)<<8;
         ind |= *p++;
         memcpy(q++, colors[ind], 4);
-	}
       }
     }
+  }
   delete[] colors;
   return 1;
 }
