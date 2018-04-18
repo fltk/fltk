@@ -647,7 +647,9 @@ void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
+    float s = scale_; scale_ = 1;
     copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
+    scale_ = s;
   }
   unscale_clip(r2);
 }
@@ -658,16 +660,9 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
   if (start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   transparent_f_type fl_TransparentBlt = TransparentBlt();
   if (fl_TransparentBlt) {
-    bool recache = false;
-    if (*id(pxm)) {
-      int *pw, *ph;
-      cache_w_h(pxm, pw, ph);
-      recache = (*pw != pxm->data_w() || *ph != pxm->data_h());
-    }
-    if (recache || !*id(pxm)) {
-      pxm->uncache();
-      cache(pxm);
-    }
+    need_pixmap_bg_color = 1;
+    pxm->uncache();
+    cache(pxm);
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)*Fl_Graphics_Driver::id(pxm));
@@ -675,10 +670,11 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
     float scaleW = pxm->data_w()/float(pxm->w());
     float scaleH = pxm->data_h()/float(pxm->h());
     fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx * scaleW, cy * scaleH, W * scaleW, H * scaleH,
-                      *Fl_Graphics_Driver::pixmap_bg_color(pxm) );
+                      need_pixmap_bg_color );
+    need_pixmap_bg_color = 0;
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
-    if (recache) pxm->uncache();
+    need_pixmap_bg_color = 0;
   }
   else {
     copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
@@ -692,7 +688,6 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   uchar **pbitmap = surf->driver()->mask_bitmap();
   *pbitmap = 0;
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
-  *Fl_Graphics_Driver::pixmap_bg_color(img) = Fl_WinAPI_System_Driver::win_pixmap_bg_color;  // computed by fl_draw_pixmap()
   uchar *bitmap = *pbitmap;
   if (bitmap) {
     *Fl_Graphics_Driver::mask(img) = (fl_uintptr_t)create_bitmask(img->data_w(), img->data_h(), bitmap);

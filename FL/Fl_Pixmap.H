@@ -52,7 +52,6 @@ private:
   // for internal use
   fl_uintptr_t id_;
   fl_uintptr_t mask_;
-  Fl_Color pixmap_bg_color;
   int cache_w_, cache_h_; // size of pixmap when cached
 
 public:

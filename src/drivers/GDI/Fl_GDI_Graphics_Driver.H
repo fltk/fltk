@@ -42,6 +42,7 @@ private:
   void set_current_();
   void draw_fixed(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_fixed(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b);
 protected:
   void draw_fixed(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
   void cache(Fl_RGB_Image *rgb);
