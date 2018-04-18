@@ -1010,7 +1010,7 @@ void Fl_Text_Display::overstrike(const char* text) {
   /* find which characters to remove, and if necessary generate additional
    padding to make up for removed control characters at the end */
   indent = startIndent;
-  for ( p = startPos; ; p=buffer()->next_char(p) ) {
+  for ( p = startPos; ; p = buf->next_char(p) ) {
     if ( p == buf->length() )
       break;
     ch = buf->char_at( p );
@@ -1018,11 +1018,11 @@ void Fl_Text_Display::overstrike(const char* text) {
       break;
     indent++;
     if ( indent == endIndent ) {
-      p++;
+      p = buf->next_char(p);
       break;
     } else if ( indent > endIndent ) {
       if ( ch != '\t' ) {
-        p++;
+        p = buf->next_char(p);
         paddedText = new char [ textLen + FL_TEXT_MAX_EXP_CHAR_LEN + 1 ];
         strcpy( paddedText, text );
         for ( i = 0; i < indent - endIndent; i++ )
