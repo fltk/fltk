@@ -363,19 +363,9 @@ int fl_ask(const char *fmt, ...) {
 
 /** Shows a dialog displaying the printf style \p fmt message,
     this dialog features up to 3 customizable choice buttons
-    which are specified in *right-to-left* order, e.g.
-    \code
-    //
-    //  ______________________________________________
-    // |  ___                                         |           
-    // | | ? |   Message text..                       |           
-    // | |___|                                        |           
-    // |                    [Left]  [Middle] [Right]  |
-    // |______________________________________________|
-    //
-    //
-    fl_choice("Message text..", "Right", "Middle", "Left");
-    \endcode
+    which are specified in order of *right-to-left* in the dialog, e.g.
+    \image html  fl_choice_left_middle_right.png
+    \image latex fl_choice_left_middle_right.png  "fl_choice() button ordering" width=4cm
 
    \note Common dialog boxes are application modal. No more than one common dialog box
     can be open at any time. Requests for additional dialog boxes are ignored.
@@ -398,11 +388,11 @@ int fl_ask(const char *fmt, ...) {
    \image html  fl_choice_three.png
    \image latex fl_choice_three.png  "fl_choice() three choices" width=4cm
    \code
-       switch ( fl_choice("How many musketeers?", "One", "Two", "Three") ) {
-         case 0: .. // One
-         case 1: .. // Two (default)
-         case 2: .. // Three
-       }
+   switch ( fl_choice("How many bedrooms?", "Zero", "One", "Two") ) {
+     case 0: .. // "Zero"
+     case 1: .. // "One" (default)
+     case 2: .. // "Two"
+   }
    \endcode
 
    Two choice example:
