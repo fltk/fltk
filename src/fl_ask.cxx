@@ -363,12 +363,27 @@ int fl_ask(const char *fmt, ...) {
 
 /** Shows a dialog displaying the printf style \p fmt message,
     this dialog features up to 3 customizable choice buttons
+    which are specified in *right-to-left* order, e.g.
+    \code
+    //
+    //  ______________________________________________
+    // |  ___                                         |           
+    // | | ? |   Message text..                       |           
+    // | |___|                                        |           
+    // |                    [Left]  [Middle] [Right]  |
+    // |______________________________________________|
+    //
+    //
+    fl_choice("Message text..", "Right", "Middle", "Left");
+    \endcode
 
    \note Common dialog boxes are application modal. No more than one common dialog box
     can be open at any time. Requests for additional dialog boxes are ignored.
    \note \#include <FL/fl_ask.H>
 
    Three choices with printf() style formatting:
+   \image html  fl_choice_three_fmt.png
+   \image latex fl_choice_three_fmt.png  "fl_choice() three choices with printf formatting" width=4cm
    \code
        int num_msgs = GetNumberOfMessages();
        switch ( fl_choice("What to do with %d messages?", "Send", "Save", "Delete", num_msgs) ) {
@@ -408,12 +423,12 @@ int fl_ask(const char *fmt, ...) {
    \endcode
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
-   \param[in] b0 text label of button 0
-   \param[in] b1 text label of button 1 (can be 0)
-   \param[in] b2 text label of button 2 (can be 0)
-   \retval 0 if the first button with \p b0 text is pushed or another dialog box is still open
-   \retval 1 if the second button with \p b1 text is pushed
-   \retval 2 if the third button with \p b2 text is pushed
+   \param[in] b0 text label for right button 0
+   \param[in] b1 text label for middle button 1 (can be 0)
+   \param[in] b2 text label for left button 2 (can be 0)
+   \retval 0 if the button with \p b0 text is pushed or another dialog box is still open
+   \retval 1 if the button with \p b1 text is pushed
+   \retval 2 if the button with \p b2 text is pushed
  */
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
 
