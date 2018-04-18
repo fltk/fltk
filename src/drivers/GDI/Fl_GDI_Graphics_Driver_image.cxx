@@ -348,8 +348,10 @@ Fl_Bitmask Fl_GDI_Graphics_Driver::create_bitmask(int w, int h, const uchar *dat
   static uchar loNibble[16] =
   { 0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
     0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-  int np  = GetDeviceCaps(gc_, PLANES);	//: was always one on sample machines
-  int bpp = GetDeviceCaps(gc_, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
+  HDC hdc = GetDC(NULL);
+  int np  = GetDeviceCaps(hdc, PLANES);	//: was always one on sample machines
+  int bpp = GetDeviceCaps(hdc, BITSPIXEL);//: 1,4,8,16,24,32 and more odd stuff?
+  ReleaseDC(NULL, hdc);
   int Bpr = (bpp*w+7)/8;			//: bytes per row
   int pad = Bpr&1, w1 = (w+7)/8, shr = ((w-1)&7)+1;
   if (bpp==4) shr = (shr+1)/2;
