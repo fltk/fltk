@@ -654,7 +654,21 @@ void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int
   unscale_clip(r2);
 }
 
-
+/*  ===== Implementation note about how Fl_Pixmap objects get printed under Windows =====
+ Fl_Pixmap objects are printed with the print-specific Fl_GDI_Printer_Graphics_Driver
+ which uses the TransparentBlt() system function that can scale the image and treat one
+ of its colors as transparent.
+ Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *,...) sets need_pixmap_bg_color,
+ a static class variable, to 1 and recaches the image. This calls fl_convert_pixmap()
+ that checks the value of need_pixmap_bg_color. When this value is not 0, fl_convert_pixmap
+ runs in a way that memorizes the list of all colors in the pixmap, computes
+ a color absent from this list, uses it for the transparent pixels of the pixmap and puts
+ this color value in need_pixmap_bg_color. As a result, the transparent areas of the image
+ are correcty handled by the printing operation. Variable need_pixmap_bg_color is ultimately
+ reset to 0.
+ Fl_GDI_Graphics_Driver::make_unused_color_() which does the color computation mentionned
+ above is implemented in file src/fl_draw_pixmap.cxx
+ */
 void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
@@ -671,7 +685,6 @@ void Fl_GDI_Printer_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP,
     float scaleH = pxm->data_h()/float(pxm->h());
     fl_TransparentBlt(gc_, X, Y, W, H, new_gc, cx * scaleW, cy * scaleH, W * scaleW, H * scaleH,
                       need_pixmap_bg_color );
-    need_pixmap_bg_color = 0;
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
     need_pixmap_bg_color = 0;
