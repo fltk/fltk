@@ -30,6 +30,8 @@ FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current driver of graph
 
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
+unsigned Fl_Graphics_Driver::need_pixmap_bg_color = 0;
+
 /** Constructor */
 Fl_Graphics_Driver::Fl_Graphics_Driver()
 {
@@ -210,6 +212,120 @@ void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
   }
 }
 
+/** Draws an Fl_Pixmap object using this graphics driver.
+ Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+ the image offset by the cx and cy arguments.
+ */
+void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (Fl_Graphics_Driver::start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  // to allow rescale at runtime
+  int w2=pxm->w(), h2=pxm->h();
+  cache_size(pxm, w2, h2); // after this, w2 x h2 is size of desired cached image
+  int *pw, *ph;
+  cache_w_h(pxm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
+  if (*id(pxm) && (*pw != w2 || *ph != h2)) {
+    pxm->uncache();
+  }
+  if (!*id(pxm)) {
+    if (pxm->data_w() != w2 || pxm->data_h() != h2) { // build a scaled id_ & mask_ for pxm
+      Fl_Pixmap *pxm2 = (Fl_Pixmap*)pxm->copy(w2, h2);
+      cache(pxm2);
+      *id(pxm) = *id(pxm2);
+      *id(pxm2) = 0;
+      *pw = w2; *ph = h2; // memorize size of cached form of pixmap
+      *mask(pxm) = *mask(pxm2);
+      *mask(pxm2) = 0;
+      delete pxm2;
+    } else cache(pxm);
+  }
+  // draw pxm using its scaled id_ & pixmap_
+  draw_fixed(pxm, X, Y, W, H, cx, cy);
+}
+
+
+/** Draws an Fl_Bitmap object using this graphics driver.
+ Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+ the image offset by the cx and cy arguments.
+ */
+void Fl_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (Fl_Graphics_Driver::start_image(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  int w2 = bm->w(), h2 = bm->h();
+  cache_size(bm, w2, h2); // after this, w2 x h2 is size of desired cached image
+  int *pw, *ph;
+  cache_w_h(bm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
+  if (*id(bm) && (*pw != w2 || *ph != h2)) {
+    bm->uncache();
+  }
+  if (!*id(bm)) {
+    if (bm->data_w() != w2 || bm->data_h() != h2) { // build a scaled id_ for bm
+      Fl_Bitmap *bm2 = (Fl_Bitmap*)bm->copy(w2, h2);
+      cache(bm2);
+      *id(bm) = *id(bm2);
+      *id(bm2) = 0;
+      *pw = w2; *ph = h2; // memorize size of cached form of bitmap
+      delete bm2;
+    } else cache(bm);
+  }
+  // draw bm using its scaled id_
+  draw_fixed(bm, X, Y, W, H, cx, cy);
+}
+
+
+/** Draws an Fl_RGB_Image object using this graphics driver.
+ Specifies a bounding box for the image, with the origin (upper left-hand corner) of
+ the image offset by the cx and cy arguments.
+ */
+void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+    Fl_Graphics_Driver::draw_empty(img, XP, YP);
+    return;
+  }
+  if (start_image(img, XP, YP, WP, HP, cx, cy, XP, YP, WP, HP)) {
+    return;
+  }
+  int need_scaled_drawing = ( fabs(img->w() - img->data_w()/scale_)/img->w() > 0.05 ||
+                            fabs(img->h() - img->data_h()/scale_)/img->h() > 0.05 );
+  // to allow rescale at runtime
+  int w2, h2, *pw, *ph;
+  if (need_scaled_drawing) {
+    w2 = img->w(); h2 = img->h();
+    cache_size(img, w2, h2);
+  } else {
+    w2 = img->data_w(); h2 = img->data_h();
+  } // after this, w2 x h2 is desired cached image size
+  cache_w_h(img, pw, ph); // after this, *pw x *ph is current size of cached image
+  if (*id(img) && (w2 != *pw || h2 != *ph )) {
+    img->uncache();
+  }
+  if (!*id(img) && need_scaled_drawing) { // build and draw a scaled id_ for img
+    Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
+    Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
+    Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w2, h2);
+    Fl_Image::RGB_scaling(keep);
+    cache(img2);
+    draw_fixed(img2, XP, YP, WP, HP, cx, cy);
+    *id(img) = *id(img2);
+    *mask(img) = *mask(img2);
+    *id(img2) = 0;
+    *mask(img2) = 0;
+    *pw = w2;
+    *ph = h2;
+    delete img2;
+  }
+  else { // draw img using its scaled id_
+    if (!*id(img)) cache(img);
+    draw_fixed(img, XP, YP, WP, HP, cx, cy);
+  }
+}
+
+
 #ifndef FL_DOXYGEN
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
@@ -312,111 +428,6 @@ void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
   double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
   ellipse_unscaled(xt*scale_, yt*scale_, rx*scale_, ry*scale_);
 }
-
-
-
-void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::start_image(pxm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  // to allow rescale at runtime
-  int w2=pxm->w(), h2=pxm->h();
-  cache_size(pxm, w2, h2); // after this, w2 x h2 is size of desired cached image
-  int *pw, *ph;
-  cache_w_h(pxm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
-  if (*id(pxm) && (*pw != w2 || *ph != h2)) {
-    pxm->uncache();
-  }
-  if (!*id(pxm)) {
-    if (pxm->data_w() != w2 || pxm->data_h() != h2) { // build a scaled id_ & mask_ for pxm
-      Fl_Pixmap *pxm2 = (Fl_Pixmap*)pxm->copy(w2, h2);
-      cache(pxm2);
-      *id(pxm) = *id(pxm2);
-      *id(pxm2) = 0;
-      *pw = w2; *ph = h2; // memorize size of cached form of pixmap
-      *mask(pxm) = *mask(pxm2);
-      *mask(pxm2) = 0;
-      delete pxm2;
-    } else cache(pxm);
-  }
-  // draw pxm using its scaled id_ & pixmap_
-  draw_fixed(pxm, X, Y, W, H, cx, cy);
-}
-
-
-void Fl_Graphics_Driver::draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  int X, Y, W, H;
-  if (Fl_Graphics_Driver::start_image(bm, XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
-    return;
-  }
-  int w2 = bm->w(), h2 = bm->h();
-  cache_size(bm, w2, h2); // after this, w2 x h2 is size of desired cached image
-  int *pw, *ph;
-  cache_w_h(bm, pw, ph); // after this, *pw x *ph is current size of cached form of bitmap
-  if (*id(bm) && (*pw != w2 || *ph != h2)) {
-    bm->uncache();
-  }
-  if (!*id(bm)) {
-    if (bm->data_w() != w2 || bm->data_h() != h2) { // build a scaled id_ for bm
-      Fl_Bitmap *bm2 = (Fl_Bitmap*)bm->copy(w2, h2);
-      cache(bm2);
-      *id(bm) = *id(bm2);
-      *id(bm2) = 0;
-      *pw = w2; *ph = h2; // memorize size of cached form of bitmap
-      delete bm2;
-    } else cache(bm);
-  }
-  // draw bm using its scaled id_
-  draw_fixed(bm, X, Y, W, H, cx, cy);
-}
-
-
-void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
-  // Don't draw an empty image...
-  if (!img->d() || !img->array) {
-    Fl_Graphics_Driver::draw_empty(img, XP, YP);
-    return;
-  }
-  if (start_image(img, XP, YP, WP, HP, cx, cy, XP, YP, WP, HP)) {
-    return;
-  }
-  int need_scaled_drawing = ( fabs(img->w() - img->data_w()/scale_)/img->w() > 0.05 ||
-                            fabs(img->h() - img->data_h()/scale_)/img->h() > 0.05 );
-  // to allow rescale at runtime
-  int w2, h2, *pw, *ph;
-  if (need_scaled_drawing) {
-    w2 = img->w(); h2 = img->h();
-    cache_size(img, w2, h2);
-  } else {
-    w2 = img->data_w(); h2 = img->data_h();
-  } // after this, w2 x h2 is desired cached image size
-  cache_w_h(img, pw, ph); // after this, *pw x *ph is current size of cached image
-  if (*id(img) && (w2 != *pw || h2 != *ph )) {
-    img->uncache();
-  }
-  if (!*id(img) && need_scaled_drawing) { // build and draw a scaled id_ for img
-    Fl_RGB_Scaling keep = Fl_Image::RGB_scaling();
-    Fl_Image::RGB_scaling(Fl_Image::scaling_algorithm());
-    Fl_RGB_Image *img2 = (Fl_RGB_Image*)img->copy(w2, h2);
-    Fl_Image::RGB_scaling(keep);
-    cache(img2);
-    draw_fixed(img2, XP, YP, WP, HP, cx, cy);
-    *id(img) = *id(img2);
-    *mask(img) = *mask(img2);
-    *id(img2) = 0;
-    *mask(img2) = 0;
-    *pw = w2;
-    *ph = h2;
-    delete img2;
-  }
-  else { // draw img using its scaled id_
-    if (!*id(img)) cache(img);
-    draw_fixed(img, XP, YP, WP, HP, cx, cy);
-  }
-}
-
-unsigned Fl_Graphics_Driver::need_pixmap_bg_color = 0;
 
 void Fl_Scalable_Graphics_Driver::font(Fl_Font face, Fl_Fontsize size) {
   if (!font_descriptor()) fl_open_display(); // to catch the correct initial value of scale_

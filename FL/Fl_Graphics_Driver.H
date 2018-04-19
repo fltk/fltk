@@ -203,23 +203,8 @@ protected:
   virtual void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
   /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
-  /** \brief Draws an Fl_RGB_Image object using this graphics driver.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
   virtual void draw_rgb(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-  /** \brief Draws an Fl_Pixmap object using this graphics driver.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
   virtual void draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  /** \brief Draws an Fl_Bitmap object using this graphics driver.
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of
-   the image offset by the cx and cy arguments.
-   */
   virtual void draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
