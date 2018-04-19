@@ -203,7 +203,8 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
         // assume "None" or "#transparent" for any errors
         // "bg" should be transparent...
         Fl::get_color(bg, c[0], c[1], c[2]);
-        c[3] = 255;
+        uchar **m = fl_graphics_driver->mask_bitmap();
+        c[3] = (m && !*m) ? 255 : 0;
         if (Fl_Graphics_Driver::need_pixmap_bg_color) transparent_c = c;
       } // if parse
     } // for ncolors
