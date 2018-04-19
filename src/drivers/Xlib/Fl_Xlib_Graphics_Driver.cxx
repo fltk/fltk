@@ -77,9 +77,9 @@ void Fl_Xlib_Graphics_Driver::gc(void *value) {
 
 void Fl_Xlib_Graphics_Driver::scale(float f) {
 #if USE_XFT
-  if (f != scale_) {
+  if (f != scale()) {
     size_ = 0;
-    scale_ = f;
+    Fl_Graphics_Driver::scale(f);
     //fprintf(stderr, "scale=%.2f\n", scale_);
     line_style(FL_SOLID); // scale also default line width
     /* Scaling >= 2 transforms 1-pixel wide lines into wider lines.
@@ -92,13 +92,13 @@ void Fl_Xlib_Graphics_Driver::scale(float f) {
      Setting line_delta_ to 1 and offsetting all line, rectangle, text and clip
      coordinates by line_delta_ achieves what is wanted until scale_ <= 3.5.
      */
-    line_delta_ =  (scale_ > 1.75 ? 1 : 0);
+    line_delta_ =  (scale() > 1.75 ? 1 : 0);
   }
 #endif
 }
 
 void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx*scale_, srcy*scale_, w*scale_, h*scale_, (x+offset_x_)*scale_, (y+offset_y_)*scale_);
+  XCopyArea(fl_display, pixmap, fl_window, gc_, srcx*scale(), srcy*scale(), w*scale(), h*scale(), (x+offset_x_)*scale(), (y+offset_y_)*scale());
 
 }
 

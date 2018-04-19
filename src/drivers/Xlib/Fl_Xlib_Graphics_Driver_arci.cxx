@@ -28,13 +28,13 @@
 
 void Fl_Xlib_Graphics_Driver::arc_unscaled(float x,float y,float w,float h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
-  XDrawArc(fl_display, fl_window, gc_, int(x+offset_x_*scale_), int(y+offset_y_*scale_), int(w-1), int(h-1), int(a1*64),int((a2-a1)*64));
+  XDrawArc(fl_display, fl_window, gc_, int(x+offset_x_*scale()), int(y+offset_y_*scale()), int(w-1), int(h-1), int(a1*64),int((a2-a1)*64));
 }
 
 void Fl_Xlib_Graphics_Driver::pie_unscaled(float x,float y,float w,float h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
-  x += offset_x_*scale_;
-  y += offset_y_*scale_;
+  x += offset_x_*scale();
+  y += offset_y_*scale();
   XDrawArc(fl_display, fl_window, gc_, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
   XFillArc(fl_display, fl_window, gc_, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 }

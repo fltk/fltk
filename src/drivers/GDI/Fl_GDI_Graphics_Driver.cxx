@@ -109,7 +109,7 @@ void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offsc
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
-  BitBlt(gc_, x*scale_, y*scale_, w*scale_, h*scale_, new_gc, srcx*scale_, srcy*scale_, SRCCOPY);
+  BitBlt(gc_, x*scale(), y*scale(), w*scale(), h*scale(), new_gc, srcx*scale(), srcy*scale(), SRCCOPY);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
@@ -147,7 +147,7 @@ void Fl_GDI_Graphics_Driver::translate_all(int x, int y) {
     depth = stack_height - 1;
   }
   GetWindowOrgEx((HDC)gc(), origins+depth);
-  SetWindowOrgEx((HDC)gc(), origins[depth].x - x*scale_, origins[depth].y - y*scale_, NULL);
+  SetWindowOrgEx((HDC)gc(), origins[depth].x - x*scale(), origins[depth].y - y*scale(), NULL);
   depth++;
 }
 
@@ -230,9 +230,9 @@ void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, i
 
 
 void Fl_GDI_Graphics_Driver::scale(float f) {
-  if (f != scale_) {
+  if (f != scale()) {
     size_ = 0;
-    scale_ = f;
+    Fl_Graphics_Driver::scale(f);
     line_style(FL_SOLID); // scale also default line width
   }
 }

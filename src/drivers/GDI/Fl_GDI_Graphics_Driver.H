@@ -94,6 +94,7 @@ public:
   void untranslate_all(void);
   static HRGN scale_region(HRGN r, float f, Fl_GDI_Graphics_Driver *dr);
   virtual void scale(float f);
+  float scale() {return Fl_Graphics_Driver::scale();}
 protected:
   void transformed_vertex0(float x, float y);
   void fixloop();

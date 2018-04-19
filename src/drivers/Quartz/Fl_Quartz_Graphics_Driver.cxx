@@ -102,7 +102,7 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Of
                                  src_bytes, 0L, false, kCGRenderingIntentDefault);
   CGDataProviderRelease(src_bytes);
   CGColorSpaceRelease(lut);
-  float s = scale_;
+  float s = scale();
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   // test whether osrc was created by fl_create_offscreen()
   fl_begin_offscreen(osrc); // does nothing if osrc was not created by fl_create_offscreen()

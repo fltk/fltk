@@ -142,8 +142,8 @@ private:
   virtual void make_unused_color_(unsigned char &r, unsigned char &g, unsigned char &b) {}
   // some platforms may need to reimplement this
   virtual void set_current_();
+  float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
 protected:
-  float scale_; // scale between user and graphical coordinates: graphical = user * scale_
   /** Sets the current value of the scaling factor */
   virtual void scale(float f) { scale_ = f; }
 public:

@@ -97,7 +97,7 @@ void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
   } else {
     Fl_Graphics_Driver::color(i);
     Fl_XMap &xmap = fl_xmap[i];
-    int tw = line_width_ ? line_width_ : int(scale_); if (!tw) tw = 1;
+    int tw = line_width_ ? line_width_ : int(scale()); if (!tw) tw = 1;
     if (!xmap.pen || xmap.pwidth != tw) {
 #if USE_COLORMAP
       if (fl_palette) {
@@ -119,7 +119,7 @@ void Fl_GDI_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   static Fl_XMap xmap;
   COLORREF c = RGB(r,g,b);
   Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
-  int tw = line_width_ ? line_width_ : int(scale_); if (!tw) tw = 1;
+  int tw = line_width_ ? line_width_ : int(scale()); if (!tw) tw = 1;
   if (!xmap.pen || c != xmap.rgb || tw != xmap.pwidth) {
     clear_xmap(xmap);
     set_xmap(xmap, c, tw);

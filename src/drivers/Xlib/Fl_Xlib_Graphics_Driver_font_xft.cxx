@@ -129,21 +129,21 @@ Fl_Fontsize Fl_Xlib_Graphics_Driver::size_unscaled() {
   return (Fl_Fontsize)(size_);
 }
 
-static void correct_extents (float scale_, int &dx, int &dy, int &w, int &h) {
-  if (int(scale_) == scale_) { // correct for extents non divisible by integral scale_
-    int delta = dx - int(dx/scale_)*scale_;
+static void correct_extents (float s, int &dx, int &dy, int &w, int &h) {
+  if (int(s) == s) { // correct for extents non divisible by integral s
+    int delta = dx - int(dx/s)*s;
     if (delta) {
       dx -= delta; w += delta;
     }
-    delta = -dy - int((-dy)/scale_)*scale_;
+    delta = -dy - int((-dy)/s)*s;
     if (delta) {
       dy -= delta; h += delta;
     }
-    delta = h - int(h/scale_)*scale_;
+    delta = h - int(h/s)*s;
     if (delta) {
       h += delta;
     }
-    delta = w - int(w/scale_)*scale_;
+    delta = w - int(w/s)*s;
     if (delta) {
       w += delta;
     }
@@ -778,7 +778,7 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
   h = gi.height;
   dx = -gi.x + line_delta_;
   dy = -gi.y + line_delta_;
-  correct_extents(scale_, dx, dy, w, h);
+  correct_extents(scale(), dx, dy, w, h);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
@@ -814,9 +814,9 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
     
     const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar16 *)buffer, n);
+    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (XftChar16 *)buffer, n);
 #else
-    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (XftChar32 *)buffer, n);
+    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (XftChar32 *)buffer, n);
 #endif
   }
 }
@@ -858,7 +858,7 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale_+line_delta_, y+offset_y_*scale_+line_delta_, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (FcChar32 *)str, n);
 }
 
 
@@ -1223,12 +1223,12 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
-  do_draw(0, str, n, x+offset_x_*scale_, y+offset_y_*scale_);
+  do_draw(0, str, n, x+offset_x_*scale(), y+offset_y_*scale());
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
   PangoMatrix mat = PANGO_MATRIX_INIT; // 1.6
-  pango_matrix_translate(&mat, x+offset_x_*scale_, y+offset_y_*scale_); // 1.6
+  pango_matrix_translate(&mat, x+offset_x_*scale(), y+offset_y_*scale()); // 1.6
   double l = width_unscaled(str, n);
   pango_matrix_rotate(&mat, angle); // 1.6
   pango_context_set_matrix(pctxt_, &mat); // 1.6
@@ -1242,7 +1242,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* str, int n, int x, int y) {
-  do_draw(1, str, n, x+offset_x_*scale_, y+offset_y_*scale_);
+  do_draw(1, str, n, x+offset_x_*scale(), y+offset_y_*scale());
 }
 
 /* Compute dx, dy, w, h so that fl_rect(x+dx, y+dy, w, h) is the bounding box
@@ -1332,7 +1332,7 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int 
   int y_correction;
   fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, descent_unscaled(), height_unscaled(), y_correction);
   dy -= y_correction;
-  correct_extents(scale_, dx, dy, w, h);
+  correct_extents(scale(), dx, dy, w, h);
 }
 
 int Fl_Xlib_Graphics_Driver::height_unscaled() {

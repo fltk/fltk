@@ -403,10 +403,10 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale_;
-  Y = Y*scale_;
+  X = X*scale();
+  Y = Y*scale();
   cache_size(bm, W, H);
-  cx *= scale_; cy *= scale_;
+  cx *= scale(); cy *= scale();
 
   HDC tempdc = CreateCompatibleDC(gc_);
   int save = SaveDC(tempdc);
@@ -504,10 +504,10 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale_;
-  Y = Y*scale_;
+  X = X*scale();
+  Y = Y*scale();
   cache_size(img, W, H);
-  cx *= scale_; cy *= scale_;
+  cx *= scale(); cy *= scale();
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
   if (!*Fl_Graphics_Driver::id(img)) {
@@ -549,10 +549,10 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
   if ( (rgb->d() % 2) == 0 ) {
-    alpha_blend_(XP*scale_, YP*scale_, W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH);
+    alpha_blend_(XP*scale(), YP*scale(), W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH);
   } else {
     SetStretchBltMode(gc_, HALFTONE);
-    StretchBlt(gc_, XP*scale_, YP*scale_, W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH, SRCCOPY);
+    StretchBlt(gc_, XP*scale(), YP*scale(), W, H, new_gc, cx*scaleW, cy*scaleH, WP*scaleW, HP*scaleH, SRCCOPY);
   }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
@@ -632,11 +632,11 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
 }
 
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
-  X = X*scale_;
-  Y = Y*scale_;
+  X = X*scale();
+  Y = Y*scale();
   cache_size(pxm, W, H);
-  cx *= scale_; cy *= scale_;
-  Fl_Region r2 = scale_clip(scale_);
+  cx *= scale(); cy *= scale();
+  Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {
     HDC new_gc = CreateCompatibleDC(gc_);
     int save = SaveDC(new_gc);
@@ -647,9 +647,9 @@ void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
-    float s = scale_; scale_ = 1;
+    float s = scale(); Fl_Graphics_Driver::scale(1);
     copy_offscreen(X, Y, W, H, (Fl_Offscreen)*Fl_Graphics_Driver::id(pxm), cx, cy);
-    scale_ = s;
+    Fl_Graphics_Driver::scale(s);
   }
   unscale_clip(r2);
 }
