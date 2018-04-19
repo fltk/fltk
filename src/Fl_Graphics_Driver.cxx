@@ -196,6 +196,20 @@ bool Fl_Graphics_Driver::overlay_rect_unscaled()
   return (scale() == int(scale()));
 }
 
+/** Converts \p width and \p height from FLTK units to drawing units.
+ The conversion performed consists in multiplying \p width and \p height by
+ scale() and in slightly modifying that to help support tiled images. */
+void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
+{
+  if ( int(scale_) == scale_ ) {
+    width  = width * scale_;
+    height = height * scale_;
+  } else {
+    width  = (width+1) * scale_;
+    height = (height+1) * scale_;
+  }
+}
+
 #ifndef FL_DOXYGEN
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
@@ -299,17 +313,6 @@ void Fl_Scalable_Graphics_Driver::circle(double x, double y, double r) {
   ellipse_unscaled(xt*scale_, yt*scale_, rx*scale_, ry*scale_);
 }
 
-// compute width & height of cached image so it can be tiled without undrawn gaps when scaling output
-void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
-{
-  if ( int(scale_) == scale_ ) {
-    width  = width * scale_;
-    height = height * scale_;
-  } else {
-    width  = (width+1) * scale_;
-    height = (height+1) * scale_;
-  }
-}
 
 
 void Fl_Graphics_Driver::draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
