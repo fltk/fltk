@@ -575,7 +575,7 @@ void Fl_PostScript_Graphics_Driver::draw_pixmap(Fl_Pixmap * pxm,int XP, int YP, 
   const char * const * di =pxm->data();
   int w,h;
   if (!fl_measure_pixmap(di, w, h)) return;
-  mask=0;
+  mask=(uchar*)1;// will instruct fl_draw_pixmap() to compute the image's mask
   mx = w;
   my = h;
   fl_draw_pixmap(di, 0, 0, FL_BLACK); // assigns mask to an array

@@ -870,7 +870,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(pxm->data_w(), pxm->data_h());
   Fl_Surface_Device::push_current(surf);
   uchar **pbitmap = surf->driver()->mask_bitmap();
-  *pbitmap = 0;
+  *pbitmap = (uchar*)1;// will instruct fl_draw_pixmap() to compute the image's mask
   fl_draw_pixmap(pxm->data(), 0, 0, FL_BLACK);
   uchar *bitmap = *pbitmap;
   if (bitmap) {
