@@ -257,8 +257,6 @@ Fl_RGB_Scaling Fl_Image::RGB_scaling() {
  // set the drawing size of the image to the size of the box keeping its aspect ratio
  img->scale(b->w(), b->h());
  b->image(img); // use the image as the box image
- // the image is to be drawn centered in the box
- b->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_CLIP);
  \endcode
  */
 void Fl_Image::scale(int width, int height, int proportional, int can_expand)
