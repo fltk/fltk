@@ -1119,7 +1119,6 @@ void Fl_Android_Graphics_Driver::draw_image(const uchar* buf, int X,int Y,int W,
 {
   int srcDelta = abs(D);
   int srcStride = L ? L : W*srcDelta;
-  void *see = pBits;
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
     Fl_Rect_Region *r = &it->clipped_rect();
     int rBottom = r->bottom();
