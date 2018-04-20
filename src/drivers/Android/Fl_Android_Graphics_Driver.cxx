@@ -1118,13 +1118,14 @@ void Fl_Android_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int
 void Fl_Android_Graphics_Driver::draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 {
   int srcDelta = abs(D);
-  int srcStride = W*srcDelta+L;
+  int srcStride = L ? L : W*srcDelta;
+  void *see = pBits;
   for (const auto &it: pClippingRegion.overlapping(Fl_Rect_Region(X, Y, W, H))) {
     Fl_Rect_Region *r = &it->clipped_rect();
     int rBottom = r->bottom();
     int rRight = r->right();
     for (int iy=r->top(); iy<rBottom;iy++) {
-      const uchar *src = buf + iy*srcStride;
+      const uchar *src = buf + (iy-Y)*srcStride + (r->left()-X)*srcDelta;
       uint16_t *dst = pBits + iy*pStride + r->left();
       for (int ix=r->left();ix<rRight;ix++) {
         uint16_t c = make565(src[0], src[1], src[2]);
