@@ -17,9 +17,17 @@ specific interfaces must include the following header file:
 #include <FL/x.H>
 \endcode
 
-Despite the name, this header file will define the
-appropriate interface for your environment. The pages that
-follow describe the functionality that is provided for each
+Despite the name, this header file will define the appropriate interface
+for your environment.
+
+\note This header file name "x.H" is changed in FLTK 1.4.0 to the better
+  name "platform.H". FLTK 1.3.5 now has a compatibility header file
+  FL/platform.H that includes FL/x.H to help you move to FLTK 1.4.0.
+  If your code is targeted at FLTK 1.3.5 or higher you can safely
+  change it to include FL/platform.H instead. FLTK 1.4.x will keep the
+  file "x.H" for a few releases for backwards compatibility.
+
+The pages that follow describe the functionality that is provided for each
 operating system.
 
 <CENTER>
