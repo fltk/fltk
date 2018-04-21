@@ -1003,6 +1003,10 @@ void Fl_Android_Graphics_Driver::cache(Fl_Bitmap *bm)
   }
 
   *Fl_Graphics_Driver::id(bm) = (fl_uintptr_t)cache;
+  int *pw, *ph;
+  cache_w_h(bm, pw, ph);
+  *pw = bm->data_w();
+  *ph = bm->data_h();
 }
 
 void Fl_Android_Graphics_Driver::delete_bitmask(Fl_Bitmask bm)
@@ -1037,6 +1041,10 @@ void Fl_Android_Graphics_Driver::cache(Fl_Pixmap *img)
 
   ::free(rgba);
   *Fl_Graphics_Driver::id(img) = (fl_uintptr_t)cache;
+  int *pw, *ph;
+  cache_w_h(img, pw, ph);
+  *pw = img->data_w();
+  *ph = img->data_h();
 }
 
 
