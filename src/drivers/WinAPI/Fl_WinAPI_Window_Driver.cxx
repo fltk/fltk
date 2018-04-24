@@ -307,7 +307,7 @@ void Fl_WinAPI_Window_Driver::flush_double()
   }
   if (pWindow->damage() & ~FL_DAMAGE_EXPOSE) {
     fl_clip_region(i->region); i->region = 0;
-#if 1 /* Short form that transiently changes the current Fl_Surface_Device */
+#if 0 /* Short form that transiently changes the current Fl_Surface_Device */
     fl_begin_offscreen(other_xid);
     fl_graphics_driver->clip_region( 0 );
     draw();
@@ -317,10 +317,8 @@ void Fl_WinAPI_Window_Driver::flush_double()
      The code run in the window draw() method can call Fl_Surface_Device::surface()
      and conclude that it's drawing to the display, which is ultimately true
      for an Fl_Double_Window.
-     With this form, test/offscreen does not work  ==> needs investigation.
      */
     HDC sgc = fl_gc;
-    Window save_w = fl_window; fl_window = (Window)other_xid;
     fl_gc = fl_makeDC(other_xid);
     int savedc = SaveDC(fl_gc);
     fl_graphics_driver->gc(fl_gc);
@@ -328,7 +326,6 @@ void Fl_WinAPI_Window_Driver::flush_double()
     draw();
     RestoreDC(fl_gc, savedc);
     DeleteDC(fl_gc);
-    fl_window = save_w;
     fl_graphics_driver->gc(sgc);
 #endif
   }
