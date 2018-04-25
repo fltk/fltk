@@ -2680,6 +2680,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top
   pWindow->show();
   while (Fl::ready())
     Fl::check();
+  HDC save_gc = (HDC)fl_graphics_driver->gc();
   fl_graphics_driver->gc(GetDC(NULL));
   int ww = w() * scaling + 2 * wsides;
   wsides /= scaling;
@@ -2710,6 +2711,7 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top
     }
   }
   ReleaseDC(NULL, (HDC)fl_graphics_driver->gc());
+  fl_graphics_driver->gc(save_gc);
   Fl_Surface_Device::pop_current();
 }
 
