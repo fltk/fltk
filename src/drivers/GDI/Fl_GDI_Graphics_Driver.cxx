@@ -114,6 +114,10 @@ void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offsc
   DeleteDC(new_gc);
 }
 
+void Fl_GDI_Printer_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy) {
+  Fl_Graphics_Driver::copy_offscreen(x, y, w, h, bitmap, srcx, srcy);
+}
+
 BOOL Fl_GDI_Graphics_Driver::alpha_blend_(int x, int y, int w, int h, HDC src_gc, int srcx, int srcy, int srcw, int srch) {
   return fl_alpha_blend(gc_, x, y, w, h, src_gc, srcx, srcy, srcw, srch, blendfunc);
 }

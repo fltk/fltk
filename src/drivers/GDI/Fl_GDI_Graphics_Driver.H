@@ -168,6 +168,7 @@ public:
   void draw_pixmap(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_bitmap(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy);
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy);
 };
 
 
