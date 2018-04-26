@@ -847,6 +847,10 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	ReleaseDC(NULL, hdc);
 	float factor = (100.f * hmm) / hdots;
 	float scaling = Fl::screen_driver()->scale(receiver.top_window()->driver()->screen_num());
+  if (!Fl_Window::current()) {
+    Fl_GDI_Graphics_Driver *d = (Fl_GDI_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
+    d->scale(scaling);// may run early at app startup before Fl_Window::make_current() scales d
+  }
 	width = int(width / (scaling * factor)); // convert to screen pixel unit
 	height = int(height / (scaling * factor));
 	RECT rect = {0, 0, width, height};
