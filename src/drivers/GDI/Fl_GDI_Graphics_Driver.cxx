@@ -22,7 +22,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
-
+#include <FL/Fl_Screen_Driver.H>
 
 /*
  * By linking this module, the following static method will instantiate the
@@ -106,10 +106,18 @@ HDC fl_makeDC(HBITMAP bitmap) {
 }
 
 void Fl_GDI_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen bitmap, int srcx, int srcy) {
+  x *= scale(); y *= scale(); w *= scale(); h *= scale(); srcx *= scale(); srcy *= scale();
+  if (srcx < 0) {w += srcx; x -= srcx; srcx = 0;}
+  if (srcy < 0) {h += srcy; y -= srcy; srcy = 0;}
+  int off_width, off_height;
+  Fl::screen_driver()->offscreen_size(bitmap, off_width, off_height);
+  if (srcx + w >= off_width) {w = off_width - srcx;}
+  if (srcy + h >= off_height) {h = off_height - srcy;}
+  if (w <= 0 || h <= 0) return;
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
-  BitBlt(gc_, x*scale(), y*scale(), w*scale(), h*scale(), new_gc, srcx*scale(), srcy*scale(), SRCCOPY);
+  BitBlt(gc_, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
