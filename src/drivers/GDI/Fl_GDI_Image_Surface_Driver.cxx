@@ -60,7 +60,7 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
 
 
 Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
-  if (offscreen) DeleteObject(offscreen);
+  if (offscreen && !external_offscreen) DeleteObject(offscreen);
   delete driver();
 }
 

@@ -39,11 +39,13 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
  \p w x \p h expressed in FLTK units.
  If \p highres is non-zero, always use Fl_Image_Surface::highres_image() to get the image data.
 
- \param pixmap Is used internally by FLTK; applications just use its default value.
+ \param off If not null, the image surface is constructed around a pre-existing
+ Fl_Offscreen. The caller is responsible for both construction and destruction of this Fl_Offscreen object.
+ Is mostly intended for internal use by FLTK.
  \version 1.3.4 (1.3.3 without the \p highres parameter)
  */
-Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen pixmap) : Fl_Widget_Surface(NULL) {
-  platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, high_res, pixmap);
+Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL) {
+  platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, high_res, off);
   if (platform_surface) driver(platform_surface->driver());
 }
 

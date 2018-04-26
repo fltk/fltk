@@ -72,7 +72,7 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
 }
 
 Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
-  if (offscreen) {
+  if (offscreen && !external_offscreen) {
     void *data = CGBitmapContextGetData(offscreen);
     free(data);
     CGContextRelease((CGContextRef)offscreen);

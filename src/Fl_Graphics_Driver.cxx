@@ -102,7 +102,6 @@ void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen
   uchar *img = fl_read_image(NULL, px, py, pw, ph, 0);
   if (surface) {
     Fl_Surface_Device::pop_current();
-    surface->get_offscreen_before_delete(); // so deleting surface does not touch pixmap
     delete surface;
   } else fl_end_offscreen();
   if (img) {

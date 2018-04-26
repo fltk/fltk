@@ -99,7 +99,8 @@ protected:
   int width;
   int height;
   Fl_Offscreen offscreen;
-  Fl_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {}
+  int external_offscreen;
+  Fl_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Widget_Surface(NULL), width(w), height(h), offscreen(off) {external_offscreen = (off != 0);}
   virtual ~Fl_Image_Surface_Driver() {}
   virtual void set_current() {}
   virtual void translate(int x, int y) {}
