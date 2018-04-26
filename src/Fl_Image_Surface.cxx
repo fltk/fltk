@@ -72,7 +72,8 @@ void Fl_Image_Surface::untranslate() {
 }
 
 /** Returns the Fl_Offscreen object associated to the image surface.
- The returned Fl_Offscreen object is deleted when the Fl_Image_Surface object is deleted.
+ The returned Fl_Offscreen object is deleted when the Fl_Image_Surface object is deleted,
+ unless the Fl_Image_Surface was constructed with non-null Fl_Offscreen argument.
  */
 Fl_Offscreen Fl_Image_Surface::offscreen() { 
   return platform_surface ? platform_surface->offscreen : (Fl_Offscreen)0;
