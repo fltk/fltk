@@ -796,7 +796,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       if ((h = GetClipboardData(CF_DIB))) { // if there's a DIB in clipboard
 	LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
 	width = lpBI->bmiHeader.biWidth; // bitmap width & height
-	height = lpBI->bmiHeader.biHeight;
+	height = abs(lpBI->bmiHeader.biHeight);
 	if ((lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) &&
 	    lpBI->bmiHeader.biCompression == BI_RGB &&
 	    lpBI->bmiHeader.biClrUsed == 0) {      // direct use of the DIB data if it's RGB or RGBA
