@@ -822,14 +822,12 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	    }
 	  }
 	} else { // the system will decode a complex DIB
-	  void *pDIBBits = (void *)(lpBI->bmiColors);
+    void *pDIBBits = (void *)(lpBI->bmiColors + 256);
 	  if (lpBI->bmiHeader.biCompression == BI_BITFIELDS)
 	    pDIBBits = (void *)(lpBI->bmiColors + 3);
 	  else if (lpBI->bmiHeader.biClrUsed > 0)
 	    pDIBBits = (void *)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
     Fl_Image_Surface *surf = new Fl_Image_Surface(width, height);
-//fprintf(LOG,"complex DIB surf=%p biCompression=%d BI_BITFIELDS=%d biClrUsed=%d\n",
-//        surf,lpBI->bmiHeader.biCompression,BI_BITFIELDS,lpBI->bmiHeader.biClrUsed);fflush(LOG);
     Fl_Surface_Device::push_current(surf);
 	  SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
 	  rgb = fl_read_image(NULL, 0, 0, width, height);
