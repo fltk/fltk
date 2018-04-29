@@ -85,25 +85,21 @@ public:
       int format = EnumClipboardFormats(0);
       if (format && format < CF_MAX) { sprintf(p, " %d",format); p += strlen(p); }
       while (format) {
-	format = EnumClipboardFormats(format);
-	if (format && format < CF_MAX) { sprintf(p, " %d",format); p += strlen(p); }
+        format = EnumClipboardFormats(format);
+        if (format && format < CF_MAX) { sprintf(p, " %d",format); p += strlen(p); }
       }
       HANDLE h;
       if ((h = GetClipboardData(CF_DIB))) {
-	LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
-	sprintf(p, " biBitCount=%d biCompression=%d biClrUsed=%d",
-		lpBI->bmiHeader.biBitCount, (int)lpBI->bmiHeader.biCompression, (int)lpBI->bmiHeader.biClrUsed);
+        LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
+        sprintf(p, " biBitCount=%d biCompression=%d biClrUsed=%d",
+                lpBI->bmiHeader.biBitCount, (int)lpBI->bmiHeader.biCompression, (int)lpBI->bmiHeader.biClrUsed);
       }
       CloseClipboard();
 #endif
-      Fl_Shared_Image *oldim = (Fl_Shared_Image*)image_box->image();
-      if (oldim) oldim->release();
-      float scale = fl_graphics_driver->scale();
-      Fl_Shared_Image *shared = Fl_Shared_Image::get(im);
-      int width = fl_min(image_box->w(), im->w()/scale);
-      int height = fl_min(image_box->h(), im->h()/scale);
-      shared->scale(width, height);
-      image_box->image(shared); // show the scaled image
+      Fl_Image *oldimg = image_box->image();
+      delete oldimg;
+      im->scale(image_box->w(), image_box->h());
+      image_box->image(im); // show the scaled image
       image_size->copy_label(title);
       value(image_box->parent());
       window()->redraw();
