@@ -780,7 +780,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 	    }
 	  }
 	  else { // the system will decode a complex DIB
-	    void *pDIBBits = (void*)(lpBI->bmiColors); 
+	    void *pDIBBits = (void*)(lpBI->bmiColors + 256); 
 	    if (lpBI->bmiHeader.biCompression == BI_BITFIELDS) pDIBBits = (void*)(lpBI->bmiColors + 3);
 	    else if (lpBI->bmiHeader.biClrUsed > 0) pDIBBits = (void*)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
 	    Fl_Offscreen off = fl_create_offscreen(width, height);
