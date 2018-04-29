@@ -511,7 +511,7 @@ int Fl_WinAPI_Screen_Driver::ready() {
   return get_wsock_mod() ? s_wsock_select(0, &fdt[0], &fdt[1], &fdt[2], &t) : 0;
 }
 
-// extern FILE *LOG;
+//FILE *LOG=fopen("log.log","w");
 
 void Fl_WinAPI_Screen_Driver::open_display_platform() {
   static char beenHereDoneThat = 0;
@@ -827,13 +827,15 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
 	    pDIBBits = (void *)(lpBI->bmiColors + 3);
 	  else if (lpBI->bmiHeader.biClrUsed > 0)
 	    pDIBBits = (void *)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
-	  Fl_Offscreen off = fl_create_offscreen(width, height);
-	  fl_begin_offscreen(off);
+    Fl_Image_Surface *surf = new Fl_Image_Surface(width, height);
+//fprintf(LOG,"complex DIB surf=%p biCompression=%d BI_BITFIELDS=%d biClrUsed=%d\n",
+//        surf,lpBI->bmiHeader.biCompression,BI_BITFIELDS,lpBI->bmiHeader.biClrUsed);fflush(LOG);
+    Fl_Surface_Device::push_current(surf);
 	  SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
 	  rgb = fl_read_image(NULL, 0, 0, width, height);
 	  depth = 3;
-	  fl_end_offscreen();
-	  fl_delete_offscreen(off);
+    Fl_Surface_Device::pop_current();
+    delete surf;
 	}
 	GlobalUnlock(h);
       } else if ((h = GetClipboardData(CF_ENHMETAFILE))) { // if there's an enhanced metafile in clipboard
@@ -867,7 +869,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       }
       if (rgb || image) {
 	if (!image) {
-	  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
+	  image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
 	  image->alloc_array = 1;
 	}
 	Fl::e_clipboard_data = image;
