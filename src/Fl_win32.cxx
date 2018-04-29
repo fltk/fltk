@@ -796,7 +796,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       if ((h = GetClipboardData(CF_DIB))) { // if there's a DIB in clipboard
         LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h);
         width = lpBI->bmiHeader.biWidth; // bitmap width & height
-        height = abs(lpBI->bmiHeader.biHeight);
+        height = lpBI->bmiHeader.biHeight; // is < 0 for top-down DIB
         if ((lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) &&
             lpBI->bmiHeader.biCompression == BI_RGB &&
             lpBI->bmiHeader.biClrUsed == 0) {      // direct use of the DIB data if it's RGB or RGBA
@@ -806,9 +806,12 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
             linewidth = 4 * ((3 * width + 3) / 4); // row length: series of groups of 3 bytes, rounded to multiple of 4 bytes
           else
             linewidth = 4 * width;
-          rgb = new uchar[width * height * depth]; // will hold the image data
+          rgb = new uchar[width * abs(height) * depth]; // will hold the image data
           uchar *p = rgb, *r, rr, gg, bb;
-          for (int i = height - 1; i >= 0; i--) {           // for each row, from last to first
+          int step = (height > 0 ? -1 : +1);
+          int from = (height > 0 ? height-1 : 0);
+          int to = (height > 0 ? 0 : -height-1);
+          for (int i = from; (height > 0 ? i>=to : i <=to); i += step) {// for each row, from last to first
             r = (uchar *)(lpBI->bmiColors) + i * linewidth; // beginning of pixel data for the ith row
             for (int j = 0; j < width; j++) {               // for each pixel in a row
               bb = *r++;                                    // BGR is in DIB
@@ -827,10 +830,10 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
             pDIBBits = (void *)(lpBI->bmiColors + 3);
           else if (lpBI->bmiHeader.biClrUsed > 0)
             pDIBBits = (void *)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
-          Fl_Image_Surface *surf = new Fl_Image_Surface(width, height);
+          Fl_Image_Surface *surf = new Fl_Image_Surface(width, abs(height));
           Fl_Surface_Device::push_current(surf);
-          SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
-          rgb = fl_read_image(NULL, 0, 0, width, height);
+          SetDIBitsToDevice((HDC)fl_graphics_driver->gc(), 0, 0, width, abs(height), 0, 0, 0, abs(height), pDIBBits, lpBI, DIB_RGB_COLORS);
+          rgb = fl_read_image(NULL, 0, 0, width, abs(height));
           depth = 3;
           Fl_Surface_Device::pop_current();
           delete surf;
@@ -867,7 +870,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
       }
       if (rgb || image) {
         if (!image) {
-          image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
+          image = new Fl_RGB_Image(rgb, width, abs(height), depth); // create new image from pixel data
           image->alloc_array = 1;
         }
         Fl::e_clipboard_data = image;
