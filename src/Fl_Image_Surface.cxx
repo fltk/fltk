@@ -173,6 +173,7 @@ void fl_delete_offscreen(Fl_Offscreen ctx) {
 
 /**  Send all subsequent drawing commands to this offscreen buffer.
    \param ctx     the offscreen buffer.
+   \note The \p ctx argument must have been created by fl_create_offscreen().
    */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
   for (int i = 0; i < count_offscreens; i++) {
