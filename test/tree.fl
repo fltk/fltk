@@ -362,7 +362,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {539 25 1045 730} type Double visible
+    xywh {539 25 1045 730} type Double hide
   } {
     Fl_Group tree {
       label Tree

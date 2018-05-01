@@ -1,16 +1,16 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304 
-header_name {.h} 
+version 1.0400
+header_name {.h}
 code_name {.cxx}
 decl {\#include <FL/Fl_Simple_Terminal.H>} {public global
-} 
+}
 
 Function {} {open
 } {
   Fl_Window {} {
     label {Valuator classes, showing values for type()} open
-    xywh {400 199 580 640} type Double color 43 selection_color 43
-    code0 {\#include <stdio.h>} visible
+    xywh {400 199 580 640} type Double color 43 selection_color 43 hide
+    code0 {\#include <stdio.h>}
   } {
     Fl_Box {} {
       label Fl_Slider
@@ -227,14 +227,14 @@ Function {} {open
       class Fl_Simple_Terminal
     }
   }
-} 
+}
 
 Function {callback(Fl_Widget* o, void*)} {open return_type void
 } {
   code {const char *name = (const char*)(o->user_data() ? o->user_data() : "???");
 tty->printf("callback(): %s value() = \\033[2m%g\\033[0m\\n",
             name, ((Fl_Valuator*)o)->value());} {}
-} 
+}
 
 Function {callback_spinner(Fl_Widget* o, void*)} {
   comment {Spinner doesn't derive from Fl_Valuator..} open return_type void
@@ -242,4 +242,4 @@ Function {callback_spinner(Fl_Widget* o, void*)} {
   code {const char *name = (const char*)(o->user_data() ? o->user_data() : "???");
 tty->printf("callback(): %s value() = \\033[2m%g\\033[0m\\n",
             name, ((Fl_Spinner*)o)->value());} {}
-} 
+}

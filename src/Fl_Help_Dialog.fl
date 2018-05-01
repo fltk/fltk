@@ -29,6 +29,9 @@ comment {//
 } {in_source in_header
 }
 
+decl {\#include <FL/Fl_Shared_Image.H>} {selected private local
+}
+
 decl {\#include "flstring.h"} {private local
 }
 
@@ -53,7 +56,7 @@ class FL_EXPORT Fl_Help_Dialog {open
       label {Help Dialog} open
       private xywh {398 64 530 385} type Double hide resizable size_range {260 150 0 0}
     } {
-      Fl_Group {} {open selected
+      Fl_Group {} {open
         xywh {10 10 511 25}
       } {
         Fl_Button back_ {

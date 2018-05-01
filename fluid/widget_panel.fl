@@ -30,8 +30,8 @@ Function {make_widget_panel()} {
 } {
   Fl_Window {} {
     comment {Use a Double Window to avoid flickering.} open
-    xywh {560 60 420 400} type Double labelsize 11 align 80 resizable hotspot
-    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0} visible
+    xywh {560 60 420 400} type Double labelsize 11 align 80 hide resizable hotspot
+    code0 {o->size_range(o->w(), o->h());} size_range {420 400 0 0}
   } {
     Fl_Tabs {} {
       callback {propagate_load((Fl_Group *)o,v);} open
