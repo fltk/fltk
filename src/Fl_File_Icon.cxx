@@ -50,6 +50,13 @@
 Fl_File_Icon	*Fl_File_Icon::first_ = (Fl_File_Icon *)0;
 
 
+// Registers the FL_ICON_LABEL drawing function
+Fl_Labeltype fl_define_FL_ICON_LABEL() {
+  Fl::set_labeltype(_FL_ICON_LABEL, Fl_File_Icon::labeltype, 0);
+  return _FL_ICON_LABEL;
+}
+
+
 /**
   Creates a new Fl_File_Icon with the specified information.
   \param[in] p filename pattern
@@ -394,8 +401,7 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 */
 void Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
 {
-  Fl::set_labeltype(_FL_ICON_LABEL, labeltype, 0);
-  w->label(_FL_ICON_LABEL, (const char*)this);
+  w->label(FL_ICON_LABEL, (const char*)this);
 }
 
 
