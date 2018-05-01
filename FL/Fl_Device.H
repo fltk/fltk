@@ -58,9 +58,8 @@ class FL_EXPORT Fl_Surface_Device {
   static Fl_Surface_Device *surface_; // the surface that currently receives graphics requests
   static Fl_Surface_Device *default_surface(); // create surface if none exists yet
   /* Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) re-implement this.
-   Gets called each time a surface ceases to be the current drawing surface.
-   The next_current argument gives the drawing surface that will become current next */
-  virtual void end_current_(Fl_Surface_Device *next_current) {}
+   Gets called each time a surface ceases to be the current drawing surface. */
+  virtual void end_current_() {}
 protected:
   /** Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }

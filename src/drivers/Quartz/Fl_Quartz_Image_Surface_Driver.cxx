@@ -28,7 +28,7 @@
 
 class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   friend class Fl_Image_Surface;
-  virtual void end_current_(Fl_Surface_Device*);
+  virtual void end_current_();
 public:
   Window pre_window;
   Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
@@ -113,7 +113,7 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
   return image;
 }
 
-void Fl_Quartz_Image_Surface_Driver::end_current_(Fl_Surface_Device*)
+void Fl_Quartz_Image_Surface_Driver::end_current_()
 {
   fl_window = pre_window;
 }

@@ -24,7 +24,7 @@
 #include <windows.h>
 
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current_(Fl_Surface_Device*);
+  virtual void end_current_();
 public:
   Window pre_window;
   int _savedc;
@@ -93,7 +93,7 @@ Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 }
 
 
-void Fl_GDI_Image_Surface_Driver::end_current_(Fl_Surface_Device*)
+void Fl_GDI_Image_Surface_Driver::end_current_()
 {
   HDC gc = (HDC)driver()->gc();
   GetWindowOrgEx(gc, &origin);

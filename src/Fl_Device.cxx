@@ -50,7 +50,7 @@
  is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().*/
 void Fl_Surface_Device::set_current(void)
 {
-  if (surface_) surface_->end_current_(this);
+  if (surface_) surface_->end_current_();
   fl_graphics_driver = pGraphicsDriver;
   surface_ = this;
   pGraphicsDriver->global_gc();
