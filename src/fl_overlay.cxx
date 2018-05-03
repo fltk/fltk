@@ -39,8 +39,7 @@ static uchar *bgN = 0L, *bgS = 0L, *bgE = 0L, *bgW = 0L;
 
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_RGB_Image.H>
-#include <FL/Fl_Shared_Image.H>
-static Fl_Shared_Image *s_bgN = 0, *s_bgS = 0, *s_bgE = 0, *s_bgW = 0;
+static Fl_RGB_Image *s_bgN = 0, *s_bgS = 0, *s_bgE = 0, *s_bgW = 0;
 
 static int bgx, bgy, bgw, bgh;
 #endif
@@ -73,10 +72,10 @@ static void draw_current_rect() {
     if (bgE) { free(bgE); bgE = 0L; }
     if (bgW) { free(bgW); bgW = 0L; }
   } else {
-    if (s_bgN) { s_bgN->release(); s_bgN = 0; }
-    if (s_bgS) { s_bgS->release(); s_bgS = 0; }
-    if (s_bgE) { s_bgE->release(); s_bgE = 0; }
-    if (s_bgW) { s_bgW->release(); s_bgW = 0; }
+    if (s_bgN) { delete s_bgN; s_bgN = 0; }
+    if (s_bgS) { delete s_bgS; s_bgS = 0; }
+    if (s_bgE) { delete s_bgE; s_bgE = 0; }
+    if (s_bgW) { delete s_bgW; s_bgW = 0; }
   }
   if (pw>0 && ph>0) {
     if (unscaled) {
@@ -85,25 +84,20 @@ static void draw_current_rect() {
       bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
       bgN = fl_read_image(0L, px, py, pw, 1);
     } else {
-      Fl_RGB_Image *tmp;
-      tmp = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph);
-      if(tmp && tmp->w() && tmp->h()) {
-        s_bgE = Fl_Shared_Image::get(tmp);
+      s_bgE = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph);
+      if(s_bgE && s_bgE->w() && s_bgE->h()) {
         s_bgE->scale(1, ph,0,1);
       }
-      tmp = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph);
-      if(tmp && tmp->w() && tmp->h()) {
-        s_bgW = Fl_Shared_Image::get(tmp);
+      s_bgW = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph);
+      if(s_bgW && s_bgW->w() && s_bgW->h()) {
         s_bgW->scale(1, ph,0,1);
       }
-      tmp = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1);
-      if(tmp && tmp->w() && tmp->h()) {
-        s_bgS = Fl_Shared_Image::get(tmp);
+      s_bgS = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1);
+      if(s_bgS && s_bgS->w() && s_bgS->h()) {
         s_bgS->scale(pw, 1,0,1);
       }
-      tmp = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1);
-      if(tmp && tmp->w() && tmp->h()) {
-        s_bgN = Fl_Shared_Image::get(tmp);
+      s_bgN = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1);
+      if(s_bgN && s_bgN->w() && s_bgN->h()) {
         s_bgN->scale(pw, 1,0,1);
       }
     }
