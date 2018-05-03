@@ -206,8 +206,8 @@ void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
     width  = width * scale();
     height = height * scale();
   } else {
-    width  = (width+1) * scale();
-    height = (height+1) * scale();
+    width  = (width+1) * scale() - 1;
+    height = (height+1) * scale() - 1;
   }
 }
 

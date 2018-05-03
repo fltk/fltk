@@ -786,10 +786,18 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
 #  endif // __sgi
   
   float s = Fl_Surface_Device::surface()->driver()->scale();
-
+  int ws, hs;
+  if (int(s) == s) { ws = w * s; hs = h * s;}
+  else {
+    ws = (w+1)*s-1;
+    hs = (h+1)*s-1;
+    if (ws < 1) ws = 1;
+    if (hs < 1) hs = 1;
+  }
+  
   if (!image) {
     // fetch absolute coordinates
-    int dx, dy, sx, sy, sw, sh;
+    int dx, dy, dxs, dys, sx, sy, sw, sh;
     Window child_win;
     
     Fl_Window *win;
@@ -797,17 +805,17 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
     else win = fl_find(fl_window);
     if (win) {
       XTranslateCoordinates(fl_display, fl_window,
-                            RootWindow(fl_display, fl_screen), X*s, Y*s, &dx, &dy, &child_win);
-      dx /= s; dy /= s;
+                            RootWindow(fl_display, fl_screen), X*s, Y*s, &dxs, &dys, &child_win);
+      dx = dxs/s; dy = dys/s;
       // screen dimensions
       Fl::screen_xywh(sx, sy, sw, sh, win->driver()->screen_num());
     }
-    if (!win || (dx >= sx && dy >= sy && dx + w <= sx+sw && dy + h <= sy+sh)) {
+    if (!win || (dx >= sx && dy >= sy && dxs + ws <= (sx+sw)*s && dys + hs <= (sy+sh)*s) ) {
       // the image is fully contained, we can use the traditional method
       // however, if the window is obscured etc. the function will still fail. Make sure we
       // catch the error and continue, otherwise an exception will be thrown.
       XErrorHandler old_handler = XSetErrorHandler(xgetimageerrhandler);
-      image = XGetImage(fl_display, fl_window, int(X*s), int(Y*s), w*s < 1 ? 1 : int(w*s), h*s < 1 ? 1 : int(h*s), AllPlanes, ZPixmap);
+      image = XGetImage(fl_display, fl_window, int(X*s), int(Y*s), ws, hs, AllPlanes, ZPixmap);
       XSetErrorHandler(old_handler);
     } else {
       // image is crossing borders, determine visible region
@@ -818,9 +826,9 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       
       // allocate the image
       int bpp = fl_visual->depth + ((fl_visual->depth / 8) % 2) * 8;
-      char* buf = (char*)malloc(bpp / 8 * int(w*s) * int(h*s));
+      char* buf = (char*)malloc((bpp / 8) * ws * hs);
       image = XCreateImage(fl_display, fl_visual->visual,
-                           fl_visual->depth, ZPixmap, 0, buf, w*s, h*s, bpp, 0);
+                           fl_visual->depth, ZPixmap, 0, buf, ws, hs, bpp, 0);
       if (!image) {
         if (buf) free(buf);
         return 0;
@@ -839,8 +847,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   
   if (!image) return 0;
   if (s != 1) {
-    w = w*s < 1 ? 1 : int(w*s);
-    h = h*s < 1 ? 1 : int(h*s);
+    w = ws;
+    h = hs;
   }
   
 #ifdef DEBUG

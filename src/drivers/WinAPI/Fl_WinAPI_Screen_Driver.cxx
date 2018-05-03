@@ -503,7 +503,15 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
                                             int   h)		// I - Height of area to read
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
-  return read_win_rectangle_unscaled(X*s, Y*s, w*s, h*s);
+  int ws, hs;
+  if (int(s) == s) { ws = w * s; hs = h * s;}
+  else {
+    ws = (w+1)*s-1;
+    hs = (h+1)*s-1;
+    if (ws < 1) ws = 1;
+    if (hs < 1) hs = 1;
+  }
+  return read_win_rectangle_unscaled(X*s, Y*s, ws, hs);
 }
 
 Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h)
