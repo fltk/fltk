@@ -140,9 +140,9 @@ void Fl_Widget_Surface::origin(int x, int y) {
 }
 
 /**
- @brief Prints a rectangular part of an on-screen window.
+ Draws a rectangular part of an on-screen window.
  
- @param win The window from where to capture.
+ @param win The window from where to capture. Can be an Fl_Gl_Window. Sub-windows that intersect the rectangle are also captured.
  @param x The rectangle left
  @param y The rectangle top
  @param w The rectangle width
@@ -166,11 +166,11 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
 }
 
 /**
- @brief Computes the width and height of the printable area of the page.
+ Computes the width and height of the drawable area of the drawing surface.
  
- Values are in the same unit as that used by FLTK drawing functions,
- are unchanged by calls to origin(), but are changed by scale() calls.
- Values account for the user-selected paper type and print orientation.
+ Values are in the same unit as that used by FLTK drawing functions and are unchanged by calls to origin().
+ If the object is derived from class Fl_Paged_Device, values account for the user-selected paper type and print orientation
+ and are changed by scale() calls.
  @return 0 if OK, non-zero if any error
  */
 int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
