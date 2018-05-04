@@ -4198,9 +4198,10 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
       rect = NSMakeRect(s*x - 0.5, s*y - 0.5, s*w, s*h);
     }
     else {
-      rect = NSMakeRect(x*s, int(win->h()*s)-(y+h)*s, w*s, h*s);
-      // lock focus to win's view
       winview = [fl_xid(win) contentView];
+      int view_h = [winview frame].size.height;
+      rect = NSMakeRect(int(x*s), int(view_h-y*s-int(h*s)), int(w*s), int(h*s));
+      // lock focus to win's view
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
       if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] saveGraphicsState]; // necessary under 10.11
 #endif
