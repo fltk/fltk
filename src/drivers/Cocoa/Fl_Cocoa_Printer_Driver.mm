@@ -70,7 +70,6 @@ private:
   int end_page (void);
   void end_job (void);
   void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
-  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y);
   ~Fl_Cocoa_Printer_Driver(void);
 };
 
@@ -360,20 +359,6 @@ void Fl_Cocoa_Printer_Driver::end_job (void)
 #endif
   Fl_Window *w = Fl::first_window();
   if (w) w->show();
-}
-
-// version that prints at high res if using a retina display
-void Fl_Cocoa_Printer_Driver::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
-{
- Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
-  Fl_Window *save_front = Fl::first_window();
-  win->show();
-  Fl::check();
-  CGImageRef img = Fl_Cocoa_Window_Driver::driver(win)->CGImage_from_window_rect(x, y, w, h);
-  if (save_front != win) save_front->show();
-  Fl_Surface_Device::pop_current();
-  ((Fl_Quartz_Graphics_Driver*)driver())->draw_CGImage(img,delta_x, delta_y, w, h, 0,0,w,h);
-  CFRelease(img);
 }
 
 void Fl_Cocoa_Printer_Driver::origin(int *x, int *y)

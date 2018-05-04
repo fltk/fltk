@@ -102,8 +102,6 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
-  void print_widget(Fl_Widget* widget, int delta_x=0, int delta_y=0);
-  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x=0, int delta_y=0);
   void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   void set_current(void);
  

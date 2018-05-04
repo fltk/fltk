@@ -87,7 +87,7 @@ static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
-static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
+static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins = true);
 static void drain_dropped_files_list(void);
 
 int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
@@ -4181,7 +4181,7 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
   return bitmap;
 }
 
-static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h)
+static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins)
 /* Captures a rectangle from a mapped window.
  On retina displays, the resulting bitmap has 2 pixels per screen unit.
  The returned value is to be released after use
@@ -4222,7 +4222,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   NSArray *children = [fl_xid(win) childWindows]; // 10.2
   NSEnumerator *enumerator = [children objectEnumerator];
   id child;
-  while ((child = [enumerator nextObject]) != nil) {
+  while (capture_subwins && ((child = [enumerator nextObject]) != nil)) {
     if (![child isKindOfClass:[FLWindow class]]) continue;
     Fl_Window *sub = [(FLWindow*)child getFl_Window];
     CGRect rsub = CGRectMake(sub->x(), win->h() -(sub->y()+sub->h()), sub->w(), sub->h());
@@ -4247,7 +4247,7 @@ static void nsbitmapProviderReleaseData (void *info, const void *data, size_t si
   [(NSBitmapImageRep*)info release];
 }
 
-CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w, int h)
+CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w, int h, bool capture_subwins)
 /* Returns a capture of a rectangle of a mapped window as a CGImage.
  With retina displays, the returned image has twice the width and height.
  CFRelease the returned CGImageRef after use
@@ -4255,7 +4255,7 @@ CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w,
 {
   Fl_Window *win = pWindow;
   CGImageRef img;
-  NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
+  NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h, capture_subwins);
   if (fl_mac_os_version >= 100500) {
     img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
     CGImageRetain(img);
@@ -4363,7 +4363,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
       }
     }
   } else {
-    CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop);
+    CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop, false);
     CGContextSaveGState(auxgc);
     clip_to_rounded_corners(auxgc, scaled_w, htop);
     CGContextDrawImage(auxgc, CGRectMake(0, 0, scaled_w, htop), img);

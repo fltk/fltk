@@ -43,8 +43,6 @@ void Fl_Printer::translate(int x, int y) {}
 void Fl_Printer::untranslate(void) {}
 int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
-void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) {}
-void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y) {}
 void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
 Fl_Printer::~Fl_Printer(void) {}
@@ -208,25 +206,9 @@ void Fl_Printer::end_job (void)
   printer->end_job();
 }
 
-/** Prints the widget on the drawing surface. 
- \param[in] widget Any FLTK widget (e.g., standard, custom, window, GL window).
- \param[in] delta_x,delta_y Optional offsets for positioning the widget's
- top-left corner relatively to the current origin of graphics functions.
- */
-void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
-{
-  printer->draw(widget, delta_x, delta_y);
-}
-
 void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y)
 {
   printer->draw_decorated_window(win, delta_x, delta_y);
-}
-
-
-void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
-{
-  printer->print_window_part(win, x, y, w, h, delta_x, delta_y);
 }
 
 void Fl_Printer::set_current(void)

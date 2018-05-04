@@ -196,6 +196,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
     if (full_img) g->as_window()->make_current();
     full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h);
   }
+  float full_img_scale =  (full_img && w > 0 ? float(full_img->data_w())/w : 1);
   int n = g->children();
   for (int i = 0; i < n; i++) {
     Fl_Widget *c = g->child(i);
@@ -221,9 +222,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
         } else {
           top = full_img->h() - (origin_y - y + img->h());
         }
-        int nscreen = c->as_window()->driver()->screen_num();
-        float s = Fl::screen_driver()->scale(nscreen);
-        write_image_inside(full_img, img, (origin_x - x) * s, top * s);
+       write_image_inside(full_img, img, (origin_x - x) * full_img_scale, top * full_img_scale);
         delete img;
       }
     }

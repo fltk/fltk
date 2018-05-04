@@ -88,7 +88,7 @@ public:
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   static void destroy(FLWindow*);
-  CGImageRef CGImage_from_window_rect(int x, int y, int w, int h);
+  CGImageRef CGImage_from_window_rect(int x, int y, int w, int h, bool capture_subwins = true);
 
   // --- window data
   virtual int decorated_w();

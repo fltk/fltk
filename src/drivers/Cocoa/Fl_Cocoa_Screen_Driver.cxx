@@ -372,7 +372,7 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     bpr = 0;
   } else { // read from window
     Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(Fl_Window::current());
-    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h);
+    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h, false);
     if (!cgimg) {
       return NULL;
     }
