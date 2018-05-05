@@ -158,11 +158,13 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   Fl::check();
   win->driver()->flush(); // makes the window current
   Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, x, y, w, h, NULL);
-  img->scale(w, h, 1, 1);
+  if (img) img->scale(w, h, 1, 1);
   if (save_front != win) save_front->show();
   Fl_Surface_Device::pop_current();
-  img->draw(delta_x, delta_y);
-  delete img;
+  if (img) {
+    img->draw(delta_x, delta_y);
+    delete img;
+  }
 }
 
 /**
