@@ -786,14 +786,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
 #  endif // __sgi
   
   float s = Fl_Surface_Device::surface()->driver()->scale();
-  int ws, hs;
-  if (int(s) == s) { ws = w * s; hs = h * s;}
-  else {
-    ws = (w+1)*s-1;
-    hs = (h+1)*s-1;
-    if (ws < 1) ws = 1;
-    if (hs < 1) hs = 1;
-  }
+  int ws = w * s, hs = h * s;
   
   if (!image) {
     // fetch absolute coordinates
@@ -810,6 +803,14 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       // screen dimensions
       Fl::screen_xywh(sx, sy, sw, sh, win->driver()->screen_num());
     }
+    if (win && !allow_outside && int(s) != s) {
+      ws = (w+1)*s-1;
+      hs = (h+1)*s-1;
+      if (int(X*s) + ws >= win->w()*s) ws = win->w()*s - int(X*s) -1;
+      if (int(Y*s) + hs >= win->h()*s) hs = win->h()*s - int(Y*s) -1;
+     }
+    if (ws < 1) ws = 1;
+    if (hs < 1) hs = 1;
     if (!win || (dx >= sx && dy >= sy && dxs + ws <= (sx+sw)*s && dys + hs <= (sy+sh)*s) ) {
       // the image is fully contained, we can use the traditional method
       // however, if the window is obscured etc. the function will still fail. Make sure we
