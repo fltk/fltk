@@ -191,8 +191,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
     if (!pi) return full_img;
     full_img = pi->rectangle_capture(g, x, y, w, h);
   }
-  else if ( g->as_window() && (!full_img || (g->window() && g->window()->as_gl_window())) ) {
-    // the starting window or one inside a GL window
+  else if ( g->as_window()/* && (!full_img || (g->window() && g->window()->as_gl_window()))*/ ) {
     if (full_img) g->as_window()->make_current();
     full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h);
   }
@@ -217,11 +216,11 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
                                                       origin_y - c->y(), width, height, full_img);
         if (img == full_img) continue;
         int top;
-        if (c->as_gl_window()) {
+        //if (c->as_gl_window()) {
           top = origin_y - y;
-        } else {
+        /*} else {
           top = full_img->h() - (origin_y - y + img->h());
-        }
+        }*/
        write_image_inside(full_img, img, (origin_x - x) * full_img_scale, top * full_img_scale);
         delete img;
       }
