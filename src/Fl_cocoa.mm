@@ -42,7 +42,6 @@ extern "C" {
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
-#include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Gl_Window_Driver.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"

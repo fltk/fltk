@@ -65,7 +65,6 @@ void fl_cleanup_dc_list(void);
 #include <FL/Enumerations.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Paged_Device.H>
-#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Image_Surface.H>
 #include "flstring.h"
 #include "drivers/GDI/Fl_Font.H"

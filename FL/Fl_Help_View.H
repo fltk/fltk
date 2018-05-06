@@ -33,6 +33,7 @@
 #include "fl_draw.H"
 #include "filename.H"
 
+class Fl_Shared_Image;
 //
 // Fl_Help_Func type - link callback function for files...
 //

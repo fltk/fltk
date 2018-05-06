@@ -20,7 +20,6 @@
  */
 
 #include <FL/Fl_Paged_Device.H>
-#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 

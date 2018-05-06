@@ -32,7 +32,6 @@
 #include <stdlib.h>
 
 class Fl_Graphics_Driver;
-class Fl_Shared_Image;
 class Fl_Font_Descriptor;
 /** \brief Points to the driver that currently receives all graphics requests */
 FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;

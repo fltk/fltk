@@ -17,7 +17,6 @@
 //
 
 #include <FL/Fl_Printer.H>
-#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Screen_Driver.H>
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"

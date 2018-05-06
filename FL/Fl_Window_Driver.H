@@ -32,7 +32,6 @@
 
 class Fl_X;
 class Fl_Image;
-class Fl_Shared_Image;
 class Fl_RGB_Image;
 
 /**

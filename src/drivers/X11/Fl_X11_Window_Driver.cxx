@@ -22,7 +22,6 @@
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 
-#include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Menu_Window.H>
