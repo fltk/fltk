@@ -319,6 +319,13 @@ void Fl_Graphics_Driver::draw_rgb(Fl_RGB_Image *img, int XP, int YP, int WP, int
   }
 }
 
+/** Accessor to private member function of Fl_Image_Surface */
+Fl_Offscreen Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(Fl_Image_Surface* surface) {
+  Fl_Offscreen off = surface->get_offscreen_before_delete_();
+  delete surface;
+  return off;
+}
+
 
 #ifndef FL_DOXYGEN
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {

@@ -111,10 +111,8 @@ Fl_Shared_Image* Fl_Image_Surface::highres_image()
   return s_img;
 }
 
-/** Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen.
- This member function is intended for internal use by the FLTK library.
- */
-Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete() {
+// Allows to delete the Fl_Image_Surface object while keeping its underlying Fl_Offscreen
+Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete_() {
   Fl_Offscreen keep = platform_surface->offscreen;
   platform_surface->offscreen = 0;
   return keep;

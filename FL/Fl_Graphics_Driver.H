@@ -33,6 +33,7 @@
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
+class Fl_Image_Surface;
 /** \brief Points to the driver that currently receives all graphics requests */
 FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
 
@@ -249,6 +250,7 @@ protected:
     pwidth = &(rgb->cache_w_);
     pheight = &(rgb->cache_h_);
   }
+  static Fl_Offscreen get_offscreen_and_delete_image_surface(Fl_Image_Surface*);
   /** For internal library use only */
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
   

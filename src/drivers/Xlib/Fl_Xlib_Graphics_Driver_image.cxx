@@ -712,8 +712,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_RGB_Image *img) {
   Fl_Surface_Device::push_current(surface);
   fl_draw_image(img->array, 0, 0, img->data_w(), img->data_h(), depth, img->ld());
   Fl_Surface_Device::pop_current();
-  Fl_Offscreen off = surface->get_offscreen_before_delete();
-  delete surface;
+  Fl_Offscreen off = Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surface);
   int *pw, *ph;
   cache_w_h(img, pw, ph);
   *pw = img->data_w();
@@ -879,8 +878,7 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
   }
   *pbitmap = 0;
   Fl_Surface_Device::pop_current();
-  Fl_Offscreen id = surf->get_offscreen_before_delete();
-  delete surf;
+  Fl_Offscreen id = Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surf);
   int *pw, *ph;
   cache_w_h(pxm, pw, ph);
   *pw = pxm->data_w();

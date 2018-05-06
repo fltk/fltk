@@ -259,9 +259,8 @@ void Fl_Quartz_Graphics_Driver::cache(Fl_Pixmap *img) {
   Fl_Image_Surface *surf = new Fl_Image_Surface(img->data_w(), img->data_h());
   Fl_Surface_Device::push_current(surf);
   fl_draw_pixmap(img->data(), 0, 0, FL_BLACK);
-  CGContextRef src = surf->get_offscreen_before_delete();
   Fl_Surface_Device::pop_current();
-  delete surf;
+  CGContextRef src = Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surf);
   void *cgdata = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);
   int sh = CGBitmapContextGetHeight(src);

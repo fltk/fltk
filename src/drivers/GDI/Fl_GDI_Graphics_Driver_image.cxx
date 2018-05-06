@@ -491,8 +491,7 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
     }
   }
   Fl_Surface_Device::pop_current();
-  Fl_Offscreen offs = surface->get_offscreen_before_delete();
-  delete surface;
+  Fl_Offscreen offs = Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surface);
   int *pw, *ph;
   cache_w_h(img, pw, ph);
   *pw = img->data_w();
@@ -707,8 +706,7 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Pixmap *img) {
   }
   *pbitmap = 0;
   Fl_Surface_Device::pop_current();
-  Fl_Offscreen id = surf->get_offscreen_before_delete();
-  delete surf;
+  Fl_Offscreen id = Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(surf);
   int *pw, *ph;
   cache_w_h(img, pw, ph);
   *pw = img->data_w();
