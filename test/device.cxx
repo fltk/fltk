@@ -576,7 +576,7 @@ void copy(Fl_Widget *, void *data) {
       rgb_surf->draw_decorated_window(target->as_window());
     else
       rgb_surf->draw(target);
-    Fl_Image *img = rgb_surf->highres_image();
+    Fl_Image *img = rgb_surf->image();
     delete rgb_surf;
     Fl_Surface_Device::pop_current();
     if (img) {

@@ -37,7 +37,6 @@ Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, i
  the value of the display scale factor (see Fl_Graphics_Driver::scale()):
  the resulting image has the same number of pixels as an area of the display of size
  \p w x \p h expressed in FLTK units.
- If \p highres is non-zero, always use Fl_Image_Surface::highres_image() to get the image data.
 
  \param off If not null, the image surface is constructed around a pre-existing
  Fl_Offscreen. The caller is responsible for both construction and destruction of this Fl_Offscreen object.
@@ -91,6 +90,7 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
   if (need_push) Fl_Surface_Device::push_current(platform_surface);
   Fl_RGB_Image *img = platform_surface->image();
   if (need_push) Fl_Surface_Device::pop_current();
+  img->scale(platform_surface->width, platform_surface->height, 1, 1);
   return img;
 }
 
@@ -99,7 +99,8 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
  The returned Fl_Shared_Image object is scaled to a size of WxH FLTK units and may have a 
  pixel size larger than these values.
  The returned object should be deallocated with Fl_Shared_Image::release() after use.
- \version 1.3.4
+ Deprecated: use image() instead.
+ \version 1.4 (1.3.4 for MacOS platform only)
  */
 Fl_Shared_Image* Fl_Image_Surface::highres_image()
 {
@@ -203,14 +204,14 @@ void fl_scale_offscreen(Fl_Offscreen &ctx) {
     }
   }
   if (i >= count_offscreens) return;
-  Fl_Shared_Image *shared = offscreen_api_surface[i]->highres_image();
+  Fl_RGB_Image *rgb = offscreen_api_surface[i]->image();
   offscreen_api_surface[i]->printable_rect(&w, &h);
   fl_delete_offscreen(ctx);
   ctx = fl_create_offscreen(w, h);
   fl_begin_offscreen(ctx);
-  shared->draw(0, 0);
+  rgb->draw(0, 0);
   fl_end_offscreen();
-  shared->release();
+  delete rgb;
 }
 
 /** @} */
