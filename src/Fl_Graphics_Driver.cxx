@@ -192,11 +192,6 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
   return (unsigned)sizeof(Fl_Fontdesc);
 }
 
-bool Fl_Graphics_Driver::overlay_rect_unscaled()
-{
-  return (scale() == int(scale()));
-}
-
 /** Converts \p width and \p height from FLTK units to drawing units.
  The conversion performed consists in multiplying \p width and \p height by
  scale() and in slightly modifying that to help support tiled images. */

@@ -35,8 +35,6 @@ static int px,py,pw,ph;
 
 #ifndef USE_XOR
 #include <stdlib.h>
-static uchar *bgN = 0L, *bgS = 0L, *bgE = 0L, *bgW = 0L;
-
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_RGB_Image.H>
 static Fl_RGB_Image *s_bgN = 0, *s_bgS = 0, *s_bgE = 0, *s_bgW = 0;
@@ -65,54 +63,37 @@ static void draw_current_rect() {
 #  error unsupported platform
 # endif
 #else
-  bool unscaled = fl_graphics_driver->overlay_rect_unscaled();
-  if (unscaled) {
-    if (bgN) { free(bgN); bgN = 0L; }
-    if (bgS) { free(bgS); bgS = 0L; }
-    if (bgE) { free(bgE); bgE = 0L; }
-    if (bgW) { free(bgW); bgW = 0L; }
-  } else {
-    if (s_bgN) { delete s_bgN; s_bgN = 0; }
-    if (s_bgS) { delete s_bgS; s_bgS = 0; }
-    if (s_bgE) { delete s_bgE; s_bgE = 0; }
-    if (s_bgW) { delete s_bgW; s_bgW = 0; }
-  }
+  if (s_bgN) { delete s_bgN; s_bgN = 0; }
+  if (s_bgS) { delete s_bgS; s_bgS = 0; }
+  if (s_bgE) { delete s_bgE; s_bgE = 0; }
+  if (s_bgW) { delete s_bgW; s_bgW = 0; }
   if (pw>0 && ph>0) {
-    if (unscaled) {
-      bgE = fl_read_image(0L, px+pw-1, py, 1, ph);
-      bgW = fl_read_image(0L, px, py, 1, ph);
-      bgS = fl_read_image(0L, px, py+ph-1, pw, 1);
-      bgN = fl_read_image(0L, px, py, pw, 1);
-    } else {
-      s_bgE = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph);
-      if(s_bgE && s_bgE->w() && s_bgE->h()) {
-        s_bgE->scale(1, ph,0,1);
-      }
-      s_bgW = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph);
-      if(s_bgW && s_bgW->w() && s_bgW->h()) {
-        s_bgW->scale(1, ph,0,1);
-      }
-      s_bgS = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1);
-      if(s_bgS && s_bgS->w() && s_bgS->h()) {
-        s_bgS->scale(pw, 1,0,1);
-      }
-      s_bgN = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1);
-      if(s_bgN && s_bgN->w() && s_bgN->h()) {
-        s_bgN->scale(pw, 1,0,1);
-      }
+    s_bgE = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph);
+    if(s_bgE && s_bgE->w() && s_bgE->h()) {
+      s_bgE->scale(1, ph,0,1);
+    }
+    s_bgW = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph);
+    if(s_bgW && s_bgW->w() && s_bgW->h()) {
+      s_bgW->scale(1, ph,0,1);
+    }
+    s_bgS = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1);
+    if(s_bgS && s_bgS->w() && s_bgS->h()) {
+      s_bgS->scale(pw, 1,0,1);
+    }
+    s_bgN = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1);
+    if(s_bgN && s_bgN->w() && s_bgN->h()) {
+      s_bgN->scale(pw, 1,0,1);
     }
     bgx = px; bgy = py;
     bgw = pw; bgh = ph;
   }
   fl_color(FL_WHITE);
   fl_line_style(FL_SOLID);
-  if (unscaled) fl_rect(px, py, pw, ph);
-  else fl_graphics_driver->overlay_rect(px, py, pw, ph);
+  fl_graphics_driver->overlay_rect(px, py, pw, ph);
 
   fl_color(FL_BLACK);
   fl_line_style(FL_DOT);
-  if (unscaled) fl_rect(px, py, pw, ph);
-  else fl_graphics_driver->overlay_rect(px, py, pw, ph);
+  fl_graphics_driver->overlay_rect(px, py, pw, ph);
   fl_line_style(FL_SOLID);
 #endif // USE_XOR
 }
@@ -125,18 +106,10 @@ static void erase_current_rect() {
   draw_current_rect();
 # endif
 #else
-  bool unscaled = fl_graphics_driver->overlay_rect_unscaled();
-  if (unscaled) {
-    if (bgN) fl_draw_image(bgN, bgx, bgy, bgw, 1);
-    if (bgS) fl_draw_image(bgS, bgx, bgy+bgh-1, bgw, 1);
-    if (bgW) fl_draw_image(bgW, bgx, bgy, 1, bgh);
-    if (bgE) fl_draw_image(bgE, bgx+bgw-1, bgy, 1, bgh);
-  } else {
-    if (s_bgN) s_bgN->draw(bgx, bgy);
-    if (s_bgS) s_bgS->draw(bgx, (bgy+bgh-1));
-    if (s_bgW) s_bgW->draw(bgx, bgy);
-    if (s_bgE) s_bgE->draw((bgx+bgw-1), bgy);
-  }
+  if (s_bgN) s_bgN->draw(bgx, bgy);
+  if (s_bgS) s_bgS->draw(bgx, (bgy+bgh-1));
+  if (s_bgW) s_bgW->draw(bgx, bgy);
+  if (s_bgE) s_bgE->draw((bgx+bgw-1), bgy);
 #endif
 }
 

@@ -427,9 +427,6 @@ public:
   virtual void font_name(int num, const char *name) {}
   /** Support function for fl_overlay_rect() and scaled GUI.
    Defaut implementation may be enough */
-  virtual bool overlay_rect_unscaled();
-  /** Support function for fl_overlay_rect() and scaled GUI.
-   Defaut implementation may be enough */
   virtual void overlay_rect(int x, int y, int w , int h) { loop(x, y, x+w-1, y, x+w-1, y+h-1, x, y+h-1); }
 };
 

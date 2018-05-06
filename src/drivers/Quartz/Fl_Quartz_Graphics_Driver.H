@@ -190,7 +190,6 @@ protected:
 #else
   void descriptor_init(const char* name, Fl_Fontsize Size, Fl_Quartz_Font_Descriptor *d);
 #endif
-  virtual bool overlay_rect_unscaled() {return false; }
   virtual void overlay_rect(int x, int y, int w , int h);
 };
 
