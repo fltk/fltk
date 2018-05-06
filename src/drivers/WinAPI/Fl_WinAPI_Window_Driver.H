@@ -116,7 +116,7 @@ public:
   virtual void free_icons();
   void set_icons(); // driver-internal support function
   // this one is implemented in Fl_win32.cxx
-  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
+  virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                      void (*draw_area)(void*, int,int,int,int), void* data);
   static void resize_after_screen_change(void *data);

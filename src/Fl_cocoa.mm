@@ -4332,7 +4332,7 @@ void Fl_Cocoa_Window_Driver::draw_layer_to_context(CALayer *layer, CGContextRef 
 /* Returns images of the capture of the window title-bar.
  On the Mac OS platform, left, bottom and right are returned NULL; top is returned with depth 4.
  */
-void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
+void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
   left = bottom = right = NULL;
   int htop = pWindow->decorated_h() - h();
@@ -4370,9 +4370,8 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top,
     CGContextRestoreGState(auxgc);
     CFRelease(img);
   }
-  Fl_RGB_Image *top_rgb = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
-  top_rgb->alloc_array = 1;
-  top = Fl_Shared_Image::get(top_rgb);
+  top = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
+  top->alloc_array = 1;
   top->scale(w(),htop, s <1 ? 0 : 1, 1);
   CGContextRelease(auxgc);
 }

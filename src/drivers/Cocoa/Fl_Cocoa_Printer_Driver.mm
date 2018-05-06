@@ -428,12 +428,12 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   win->show();
   Fl::check();
   // capture the window title bar with no title
-  Fl_Shared_Image *top, *left, *bottom, *right;
+  Fl_RGB_Image *top, *left, *bottom, *right;
   win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
   [(NSWindow*)fl_xid(win) setTitle:title]; // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar
-  top->release();
+  delete top;
   if (win->label()) { // print the window title
     const int skip = 65; // approx width of the zone of the 3 window control buttons
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4

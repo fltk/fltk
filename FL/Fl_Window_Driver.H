@@ -175,8 +175,8 @@ public:
   static void default_icons(const Fl_RGB_Image *icons[], int count);
 
   // --- window printing/drawing helper
-  virtual void capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left,
-                                            Fl_Shared_Image*& bottom, Fl_Shared_Image*& right);
+  virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,
+                                            Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
 #if defined(FL_PORTING)
 # pragma message "FL_PORTING: implement scrolling of the screen contents"
 #endif

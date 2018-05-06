@@ -185,7 +185,7 @@ int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
  */
 void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  Fl_Shared_Image *top=0, *left=0, *bottom=0, *right=0;
+  Fl_RGB_Image *top=0, *left=0, *bottom=0, *right=0;
   if (win->border() && !win->parent()) {
     win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
   }
@@ -193,19 +193,19 @@ void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int 
   int toph = top ? top->h() : 0;
   if (top) {
     top->draw(x_offset, y_offset);
-    top->release();
+    delete top;
   }
   if (left) {
     left->draw(x_offset, y_offset + toph);
-    left->release();
+    delete left;
   }
   if (right) {
     right->draw(x_offset + wsides + win->w(), y_offset + toph);
-    right->release();
+    delete right;
   }
   if (bottom) {
     bottom->draw(x_offset, y_offset + toph + win->h());
-    bottom->release();
+    delete bottom;
   }
   this->draw(win, x_offset + wsides, y_offset + toph);
 }

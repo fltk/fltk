@@ -390,9 +390,8 @@ void Fl_X11_Window_Driver::free_icons() {
  This function exploits a feature of Fl_X11_Screen_Driver::read_win_rectangle() which,
  when called with negative 4th argument, captures the window decoration.
  */
-void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, Fl_Shared_Image*& left, Fl_Shared_Image*& bottom, Fl_Shared_Image*& right)
+void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
-  Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
   top = left = bottom = right = NULL;
   if (pWindow->decorated_h() == h()) return;
   Window from = fl_window;
@@ -413,24 +412,20 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image*& top, F
   htop /= s; wsides /= s;
   fl_window = parent;
   if (htop) {
-    r_top = Fl::screen_driver()->read_win_rectangle(0, 0, - (w() + 2 * wsides), htop);
-    top = Fl_Shared_Image::get(r_top);
+    top = Fl::screen_driver()->read_win_rectangle(0, 0, - (w() + 2 * wsides), htop);
     top->scale(w() + 2 * wsides, htop, 0, 1);
   }
   if (wsides) {
-    r_left = Fl::screen_driver()->read_win_rectangle(0, htop, -wsides, h());
-    if (r_left) {
-      left =  Fl_Shared_Image::get(r_left);
+    left = Fl::screen_driver()->read_win_rectangle(0, htop, -wsides, h());
+    if (left) {
       left->scale(wsides, h(), 0, 1);
     }
-    r_right = Fl::screen_driver()->read_win_rectangle(w() + wsides, htop, -wsides, h());
-    if (r_right) {
-      right = Fl_Shared_Image::get(r_right);
+    right = Fl::screen_driver()->read_win_rectangle(w() + wsides, htop, -wsides, h());
+    if (right) {
       right->scale(wsides, h(), 0, 1);
     }
-    r_bottom = Fl::screen_driver()->read_win_rectangle(0, htop + h(), -(w() + 2*wsides), hbottom);
-    if (r_bottom) {
-      bottom = Fl_Shared_Image::get(r_bottom);
+    bottom = Fl::screen_driver()->read_win_rectangle(0, htop + h(), -(w() + 2*wsides), hbottom);
+    if (bottom) {
       bottom->scale(w() + 2*wsides, wsides, 0, 1);
     }  }
   fl_window = from;

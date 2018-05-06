@@ -2673,9 +2673,8 @@ void fl_cleanup_dc_list(void) { // clean up the list
  This function exploits a feature of Fl_WinAPI_Screen_Driver::read_win_rectangle() which,
  when fl_gc is set to the screen device context, captures the window decoration.
  */
-void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top, Fl_Shared_Image *&left,
-                                                           Fl_Shared_Image *&bottom, Fl_Shared_Image *&right) {
-  Fl_RGB_Image *r_top, *r_left, *r_bottom, *r_right;
+void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, Fl_RGB_Image *&left,
+                                                           Fl_RGB_Image *&bottom, Fl_RGB_Image *&right) {
   top = left = bottom = right = NULL;
   if (!shown() || parent() || !border() || !visible())
     return;
@@ -2699,18 +2698,14 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_Shared_Image *&top
   // capture the 4 window sides from screen
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
   if (htop) {
-    r_top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop);
-    top = Fl_Shared_Image::get(r_top);
+    top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop);
     if (scaling != 1)
       top->scale(ww, htop / scaling, 0, 1);
   }
   if (wsides) {
-    r_left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling);
-    left = Fl_Shared_Image::get(r_left);
-    r_right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling);
-    right = Fl_Shared_Image::get(r_right);
-    r_bottom = dr->read_win_rectangle_unscaled(r.left, r.bottom - hbottom, ww, hbottom);
-    bottom = Fl_Shared_Image::get(r_bottom);
+    left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling);
+    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling);
+    bottom = dr->read_win_rectangle_unscaled(r.left, r.bottom - hbottom, ww, hbottom);
     if (scaling != 1) {
       left->scale(wsides, h(), 0, 1);
       right->scale(wsides, h(), 0, 1);
