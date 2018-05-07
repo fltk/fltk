@@ -63,10 +63,14 @@
   #include <FL/Fl_Double_Window.H>
   #include <FL/Fl_Input_Choice.H>
   void choice_cb(Fl_Widget *w, void *userdata) {
+
     // Show info about the picked item
     Fl_Input_Choice *choice = (Fl_Input_Choice*)w;
-    const Fl_Menu_Item *item = choice->menubutton()->mvalue();
     printf("*** Choice Callback:\n");
+    printf("    widget's text value='%s'\n", choice->value());   // normally all you need
+
+    // Access the menu via menubutton()..
+    const Fl_Menu_Item *item = choice->menubutton()->mvalue();
     printf("    item label()='%s'\n", item ? item->label() : "(No item)");
     printf("    item value()=%d\n", choice->menubutton()->value());
     printf("    input value()='%s'\n", choice->input()->value());
@@ -214,6 +218,48 @@ void Fl_Input_Choice::clear_changed() {
   Fl_Widget::clear_changed();
 }
 
+/** Updates the menubutton with the string value in Fl_Input.
+
+    If the string value currently in Fl_Input matches one of the
+    menu items in menubutton(), that menu item will become the
+    current item selected.
+
+    Call this method after setting value(const char*) if you need
+    the menubutton() to be synchronized with the Fl_Input field.
+
+    \code
+    // Add items
+    choice->add(".25");
+    choice->add(".50");
+    choice->add("1.0");
+    choice->add("2.0");
+    choice->add("4.0");
+
+    choice->value("1.0");            // sets Fl_Input to "1.0"
+    choice->update_menubutton();     // cause menubutton to reflect this value too
+                                     // (returns 1 if match was found, 0 if not)
+    // Verify menubutton()'s value.
+    printf("menu button choice index=%d, value=%s\n", 
+                                choice->menubutton()->value(),    // would be -1 if update not done
+                                choice->menubutton()->text());    // would be NULL if update not done
+    \endcode
+
+    \returns 1 if a matching menuitem was found and value set, 0 if not.
+    \version 1.4.0
+*/
+int Fl_Input_Choice::update_menubutton() {
+  // Find item in menu
+  for ( int i=0; i<menu_->size(); i++ ) {
+    const Fl_Menu_Item &item = menu_->menu()[i];
+    if (item.flags & (FL_SUBMENU|FL_SUBMENU_POINTER)) continue;   // ignore submenus
+    const char *name = menu_->text(i);
+    if ( name && strcmp(name, inp_->value()) == 0) {
+      menu_->value(i);
+      return 1;
+    }
+  }
+  return 0;		// not found
+}
 
 //
 // End of "$Id$".

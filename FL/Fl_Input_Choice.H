@@ -85,8 +85,11 @@ public:
   void resize(int X, int Y, int W, int H);
 
   /** Adds an item to the menu.
+    When any item is selected, the Fl_Input_Choice callback() is invoked,
+    which can do something with the selected item.
+
     You can access the more complex Fl_Menu_Button::add() methods
-    (setting callbacks, userdata, etc), via menubutton(). Example:
+    (setting item-specific callbacks, userdata, etc), via menubutton(). Example:
     \code
     Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Fonts");
     Fl_Menu_Button *mb = choice->menubutton();             // use Fl_Input_Choice's Fl_Menu_Button
@@ -143,14 +146,22 @@ public:
   const char* value() const { return (inp_->value()); }
 
   /** Sets the Fl_Input text field's contents to \p val.
-    Does not affect the menu selection.
-    \see void value(int val)
+
+    Note it is possible to set the value() to one that is not
+    in the menubutton's list of choices.
+
+    Setting the value() does NOT affect the menubutton's selection.
+    If that's needed, call update_menubutton() after setting value().
+
+    \see void value(int val), update_menubutton()
   */
   void value(const char *val) { inp_->value(val); }
 
   /* Chooses item# \p val in the menu, and sets the Fl_Input text field
     to that value. Any previous text is cleared. */
   void value(int val);
+
+  int update_menubutton();
 
   /** Returns a pointer to the internal Fl_Menu_Button widget.
     This can be used to access any of the methods of the menu button, e.g.
