@@ -86,6 +86,7 @@ public:
   void origin(int x, int y);
   int printable_rect(int *w, int *h);
   Fl_Offscreen offscreen();
+  static void rescale(Fl_Image_Surface*& surf);
 };
 
 

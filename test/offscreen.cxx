@@ -99,7 +99,7 @@ void oscr_box::draw()
   {
     if (scale != Fl_Graphics_Driver::default_driver().scale()) {
       // the screen scaling factor has changed
-      fl_scale_offscreen(oscr);
+      fl_rescale_offscreen(oscr);
       scale = Fl_Graphics_Driver::default_driver().scale();
     }
     fl_copy_offscreen(xo, yo, wd, ht, oscr, page_x, page_y);

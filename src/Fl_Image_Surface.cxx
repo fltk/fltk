@@ -119,6 +119,21 @@ Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete_() {
   return keep;
 }
 
+/** Adapts an Fl_Image_Surface object to the new value of the GUI scale factor.
+ \version 1.4
+ */
+void Fl_Image_Surface::rescale(Fl_Image_Surface*& surface) {
+  Fl_RGB_Image *rgb = surface->image();
+  int w, h;
+  surface->printable_rect(&w, &h);
+  delete surface;
+  surface = new Fl_Image_Surface(w, h, 1);
+  Fl_Surface_Device::push_current(surface);
+  rgb->draw(0,0);
+  Fl_Surface_Device::pop_current();
+  delete rgb;
+}
+
 // implementation of the fl_XXX_offscreen() functions
 
 static Fl_Image_Surface **offscreen_api_surface = NULL;
@@ -148,6 +163,17 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
  The pixel size of the created graphics buffer is equal to the number of pixels
  in an area of the screen containing the current window sized at \p w,h FLTK units.
  This pixel size varies with the value of the scale factor of this screen.
+ \note Work with the fl_XXX_offscreen() functions is equivalent to work with
+ an Fl_Image_Surface object, as follows :
+ <table>
+ <tr> <th>Fl_Offscreen-based approach</th><th>Fl_Image_Surface-based approach</th> </tr>
+ <tr> <td>Fl_Offscreen off = fl_create_offscreen(w, h)</td><td>Fl_Image_Surface *surface = new Fl_Image_Surface(w, h, 1)</td> </tr>
+ <tr> <td>fl_begin_offscreen(off)</td><td>Fl_Surface_Device::push_current(surface)</td> </tr>
+ <tr> <td>fl_end_offscreen()</td><td>Fl_Surface_Device::pop_current()</td> </tr>
+ <tr> <td>fl_copy_offscreen(x,y,w,h, off, sx,sy)</td><td>fl_copy_offscreen(x,y,w,h, surface->offscreen(), sx,sy)</td> </tr>
+ <tr> <td>fl_rescale_offscreen(off)</td><td>Fl_Image_Surface::rescale(surface)</td> </tr>
+ <tr> <td>fl_delete_offscreen(off)</td><td>delete surface</td> </tr>
+ </table>
    */
 Fl_Offscreen fl_create_offscreen(int w, int h) {
   int rank = find_slot();
@@ -196,22 +222,16 @@ void fl_end_offscreen() {
  value is given by <tt>Fl_Graphics_Driver::default_driver().scale()</tt>.
  \version 1.4
  */
-void fl_scale_offscreen(Fl_Offscreen &ctx) {
-  int i, w, h;
+void fl_rescale_offscreen(Fl_Offscreen &ctx) {
+  int i;
   for (i = 0; i < count_offscreens; i++) {
     if (offscreen_api_surface[i] && offscreen_api_surface[i]->offscreen() == ctx) {
       break;
     }
   }
   if (i >= count_offscreens) return;
-  Fl_RGB_Image *rgb = offscreen_api_surface[i]->image();
-  offscreen_api_surface[i]->printable_rect(&w, &h);
-  fl_delete_offscreen(ctx);
-  ctx = fl_create_offscreen(w, h);
-  fl_begin_offscreen(ctx);
-  rgb->draw(0, 0);
-  fl_end_offscreen();
-  delete rgb;
+  Fl_Image_Surface::rescale(offscreen_api_surface[i]);
+  ctx = offscreen_api_surface[i]->offscreen();
 }
 
 /** @} */

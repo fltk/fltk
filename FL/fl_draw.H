@@ -512,7 +512,7 @@ FL_EXPORT Fl_Offscreen fl_create_offscreen(int w, int h);
 FL_EXPORT void fl_begin_offscreen(Fl_Offscreen b);
 FL_EXPORT void fl_end_offscreen(void);
 FL_EXPORT void fl_delete_offscreen(Fl_Offscreen bitmap);
-FL_EXPORT void fl_scale_offscreen(Fl_Offscreen &ctx);
+FL_EXPORT void fl_rescale_offscreen(Fl_Offscreen &ctx);
 
 /** @} */
 
