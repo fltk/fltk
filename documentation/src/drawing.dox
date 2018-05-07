@@ -1029,6 +1029,8 @@ FLTK provides a base image class called Fl_Image which supports
 creating, copying, and drawing images of various kinds, along
 with some basic color operations. Images can be used as labels
 for widgets using the \p image() and \p deimage() methods or drawn directly.
+Images can be drawn scaled to any size, independently from
+the size of the image's data (see Fl_Image::scale()).
 
 The Fl_Image class does almost nothing by itself, but is instead 
 supported by three basic image types:
@@ -1069,13 +1071,12 @@ standard image types for common file formats:
 \li Fl_PNM_Image 
 \li Fl_XBM_Image 
 \li Fl_XPM_Image
+\li Fl_SVG_Image
 
 Each of these image classes loads a named file of the
 corresponding format. The Fl_Shared_Image class
 can be used to load any type of image file - the class examines
-the file and constructs an image of the appropriate type. It can also be used
-to scale an image to a certain size in FLTK units, independently from its size
-in pixels (see Fl_Shared_Image::scale()).
+the file and constructs an image of the appropriate type.
 
 Finally, FLTK provides a special image class called Fl_Tiled_Image to
 tile another image object in the specified area. This class can be
