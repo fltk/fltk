@@ -28,7 +28,7 @@
 
 /** Support for printing on the Unix/Linux platform */
 class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
-  virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  virtual int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
 };
 
 Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
@@ -36,8 +36,8 @@ Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
   return new Fl_Posix_Printer_Driver();
 }
 
-/** Starts a print job. */
-int Fl_Posix_Printer_Driver::start_job(int pages, int *firstpage, int *lastpage) {
+/*    Begins a print job. */
+int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
   
@@ -112,7 +112,7 @@ int Fl_Posix_Printer_Driver::start_job(int pages, int *firstpage, int *lastpage)
   if (!print_pipe) printer = "<File>";
   
   if (!print_pipe) // fall back to file printing
-    return Fl_PostScript_File_Device::start_job (pages, format, layout);
+    return Fl_PostScript_File_Device::begin_job (pages, format, layout);
   
   // Print: pipe the output into the lp command...
   

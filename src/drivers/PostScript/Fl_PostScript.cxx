@@ -59,7 +59,7 @@ Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
 }
 
 
-int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::Page_Format format, 
+int Fl_PostScript_File_Device::begin_job (int pagecount, enum Fl_Paged_Device::Page_Format format,
 					  enum Fl_Paged_Device::Page_Layout layout)
 {
   Fl_Native_File_Chooser fnfc;
@@ -85,7 +85,7 @@ extern "C" {
   }
 }
 
-int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount,
+int Fl_PostScript_File_Device::begin_job (FILE *ps_output, int pagecount,
     enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
@@ -97,7 +97,7 @@ int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount,
   return 0;
 }
 
-int Fl_PostScript_File_Device::start_job(int pagecount, int* from, int* to)
+int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to)
 {
   return 1;
 }
@@ -1429,7 +1429,7 @@ void Fl_PostScript_File_Device::untranslate(void)
   fprintf(driver()->output, "GR GR\n");
 }
 
-int Fl_PostScript_File_Device::start_page (void)
+int Fl_PostScript_File_Device::begin_page (void)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->page(ps->page_format_);

@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/Fl_Printer.H>
+#include <FL/Fl_Paged_Device.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Screen_Driver.H>
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
@@ -56,8 +56,8 @@ private:
   PMPageFormat    pageFormat;
   PMPrintSettings printSettings;
   Fl_Cocoa_Printer_Driver(void);
-  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
-  int start_page (void);
+  int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
   void origin(int *x, int *y);
@@ -91,7 +91,7 @@ Fl_Cocoa_Printer_Driver::~Fl_Cocoa_Printer_Driver(void) {
 }
 
 
-int Fl_Cocoa_Printer_Driver::start_job (int pagecount, int *frompage, int *topage)
+int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
 //returns 0 iff OK
 {
@@ -277,7 +277,7 @@ void Fl_Cocoa_Printer_Driver::untranslate(void)
   CGContextRestoreGState(gc);
 }
 
-int Fl_Cocoa_Printer_Driver::start_page (void)
+int Fl_Cocoa_Printer_Driver::begin_page (void)
 {	
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
   CGContextRef gc;

@@ -36,7 +36,7 @@
  <li>Use a series of FLTK graphics commands (e.g., font, text, lines, colors, clip, image) to
  compose a page appropriately shaped for printing. 
  </ul>
- In both cases, begin by start_job(), start_page(), printable_rect() and origin() calls
+ In both cases, begin by begin_job(), begin_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
  <p>Example of use: print a widget centered in a page
  \code
@@ -45,8 +45,8 @@
  int width, height;
  Fl_Widget *widget = ...  // a widget we want printed
  Fl_Printer *printer = new Fl_Printer();
- if (printer->start_job(1) == 0) {
-  printer->start_page();
+ if (printer->begin_job(1) == 0) {
+  printer->begin_page();
   printer->printable_rect(&width, &height);
   fl_color(FL_BLACK);
   fl_line_style(FL_SOLID, 2);
@@ -65,7 +65,7 @@
  <li>Unix/Linux platforms:
  Unless it has been previously changed, the default paper size is A4.
  To change that, press the "Properties" button of the "Print" dialog window
- opened by an Fl_Printer::start_job() call. This opens a "Printer Properties" window where it's
+ opened by an Fl_Printer::begin_job() call. This opens a "Printer Properties" window where it's
  possible to select the adequate paper size. Finally press the "Save" button therein to assign
  the chosen paper size to the chosen printer for this and all further print operations.
  <br>Class Fl_RGB_Image prints but loses its transparency if it has one.
@@ -90,8 +90,8 @@ private:
 public:
   /** The constructor */
   Fl_Printer(void);
-  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
-  int start_page(void);
+  int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int begin_page(void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
   void origin(int *x, int *y);

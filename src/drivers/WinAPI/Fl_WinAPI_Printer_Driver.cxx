@@ -37,8 +37,8 @@ private:
   int top_margin;
   void absolute_printable_rect(int *x, int *y, int *w, int *h);
   Fl_WinAPI_Printer_Driver(void);
-  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
-  int start_page (void);
+  int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
   void origin(int *x, int *y);
@@ -84,7 +84,7 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 }
 
 
-int Fl_WinAPI_Printer_Driver::start_job (int pagecount, int *frompage, int *topage)
+int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage)
 // returns 0 iff OK
 {
   if (pagecount == 0) pagecount = 10000;
@@ -214,7 +214,7 @@ int Fl_WinAPI_Printer_Driver::printable_rect(int *w, int *h)
   return 0;
 }
 
-int Fl_WinAPI_Printer_Driver::start_page (void)
+int Fl_WinAPI_Printer_Driver::begin_page (void)
 {
   int  rsult, w, h;
   

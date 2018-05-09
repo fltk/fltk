@@ -31,8 +31,8 @@
 Fl_Printer::Fl_Printer(void) {
   printer = NULL;
 }
-int Fl_Printer::start_job(int pagecount, int *frompage, int *topage) {return 1;}
-int Fl_Printer::start_page(void) {return 1;}
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Printer::begin_page(void) {return 1;}
 int Fl_Printer::printable_rect(int *w, int *h) {return 1;}
 void Fl_Printer::margins(int *left, int *top, int *right, int *bottom) {}
 void Fl_Printer::origin(int *x, int *y) {}
@@ -68,12 +68,12 @@ const char *Fl_Printer::property_save = NULL;
 const char *Fl_Printer::property_cancel = NULL;
 
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void) {}
-int Fl_PostScript_File_Device::start_job(int pagecount, int* from, int* to) {return 1;}
-int Fl_PostScript_File_Device::start_job(int pagecount, enum Fl_Paged_Device::Page_Format format,
+int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to) {return 1;}
+int Fl_PostScript_File_Device::begin_job(int pagecount, enum Fl_Paged_Device::Page_Format format,
                                           enum Fl_Paged_Device::Page_Layout layout) {return 1;}
-int Fl_PostScript_File_Device::start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format,
+int Fl_PostScript_File_Device::begin_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format,
               enum Fl_Paged_Device::Page_Layout layout) {return 1;}
-int Fl_PostScript_File_Device::start_page (void) {return 1;}
+int Fl_PostScript_File_Device::begin_page (void) {return 1;}
 int Fl_PostScript_File_Device::printable_rect(int *w, int *h) {return 1;}
 void Fl_PostScript_File_Device::margins(int *left, int *top, int *right, int *bottom) {}
 void Fl_PostScript_File_Device::origin(int *x, int *y) {}
@@ -135,7 +135,7 @@ Fl_Printer::Fl_Printer(void) {
 }
 
 /**
- Starts a print job.
+ Begins a print job.
  Opens a platform-specific dialog window allowing the user to set several options including
  the desired printer and the page orientation. Optionally, the user can also select a range of pages to  be
  printed. This range is returned to the caller that is in charge of sending only these pages 
@@ -146,14 +146,14 @@ Fl_Printer::Fl_Printer(void) {
  @param[out] topage if non-null, *topage is set to the last page the user wants printed
  @return 0 if OK, non-zero if any error occurred or if the user cancelled the print request.
  */
-int Fl_Printer::start_job(int pagecount, int *frompage, int *topage)
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage)
 {
-  return printer->start_job(pagecount, frompage, topage);
+  return printer->begin_job(pagecount, frompage, topage);
 }
 
-int Fl_Printer::start_page(void)
+int Fl_Printer::begin_page(void)
 {
-  return printer->start_page();
+  return printer->begin_page();
 }
 
 int Fl_Printer::printable_rect(int *w, int *h)

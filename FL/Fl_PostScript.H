@@ -227,7 +227,7 @@ class Clip {
 
 /**
  To send graphical output to a PostScript file.
- This class is used exactly as the Fl_Printer class except for the start_job() call,
+ This class is used exactly as the Fl_Printer class except for the begin_job() call,
  two variants of which are usable and allow to specify what page format and layout are desired.
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
@@ -246,7 +246,7 @@ public:
    */
   ~Fl_PostScript_File_Device();
   /** Don't use with this class. */
-  int start_job(int pagecount, int* from, int* to);
+  int begin_job(int pagecount, int* from, int* to);
   /**
    @brief Begins the session where all graphics requests will go to a local PostScript file.
    *
@@ -256,8 +256,14 @@ public:
    @param layout Desired page layout.
    @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
    */
-  int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
+  int begin_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
 		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
+  /** Synonym of begin_job().
+   For API compatibility with FLTK 1.3.x */
+  int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
+                enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT) {
+    return begin_job(pagecount, format, layout);
+  }
   /**
    @brief Begins the session where all graphics requests will go to FILE pointer.
    *
@@ -268,9 +274,16 @@ public:
    @param layout Desired page layout.
    @return always 0.
    */
-  int start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
+  int begin_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
 		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
-  int start_page (void);
+  /** Synonym of begin_job().
+   For API compatibility with FLTK 1.3.x */
+  int start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
+                enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT) {
+    return begin_job(ps_output, pagecount, format, layout);
+  }
+
+  int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
   void origin(int *x, int *y);

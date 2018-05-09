@@ -2960,8 +2960,8 @@ void printFront(Fl_Widget *o, void *data)
   Fl_Window *win = Fl::first_window();
   if(!win) return;
   int w, h;
-  if( printer.start_job(1) ) { o->window()->show(); return; }
-  if( printer.start_page() ) { o->window()->show(); return; }
+  if( printer.begin_job(1) ) { o->window()->show(); return; }
+  if( printer.begin_page() ) { o->window()->show(); return; }
   printer.printable_rect(&w,&h);
   // scale the printer device so that the window fits on the page
   float scale = 1;

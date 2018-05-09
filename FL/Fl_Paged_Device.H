@@ -105,8 +105,14 @@ public:
   static const page_format page_formats[NO_PAGE_FORMATS];  
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
-  virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
-  virtual int start_page(void);
+  virtual int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  /** Synonym of begin_job(int pagecount, int *frompage, int *topage).
+   For API compatibility with FLTK 1.3.x */
+  int start_job(int pagecount, int *frompage = NULL, int *topage = NULL) {return begin_job(pagecount, frompage, topage);}
+  virtual int begin_page(void);
+  /** Synonym of begin_page().
+   For API compatibility with FLTK 1.3.x */
+  int start_page() {return begin_page();}
   virtual void margins(int *left, int *top, int *right, int *bottom);
   virtual void scale(float scale_x, float scale_y = 0.);
   virtual void rotate(float angle);

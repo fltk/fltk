@@ -3809,8 +3809,8 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
   Fl_Window *win = Fl::first_window();
   if(!win) return;
   if (win->parent()) win = win->top_window();
-  if( printer.start_job(1) ) return;
-  if( printer.start_page() ) return;
+  if( printer.begin_job(1) ) return;
+  if( printer.begin_page() ) return;
   fl_lock_function();
   // scale the printer device so that the window fits on the page
   float scale = 1;

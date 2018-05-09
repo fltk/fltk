@@ -92,7 +92,7 @@ int Fl_Darwin_System_Driver::clocale_printf(FILE *output, const char *format, va
 /* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
  Supports old Mac OS X versions that may use a couple of Carbon calls:
  GetKeys used by OS X 10.3 or before (in Fl::get_key())
- PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
+ PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::begin_job())
  */
 void *Fl_Darwin_System_Driver::get_carbon_function(const char *function_name) {
   static void *carbon = ::dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);

@@ -2729,11 +2729,11 @@ void printFront(Fl_Widget *o, void *data) {
   if (!win)
     return;
   int w, h;
-  if (printer.start_job(1)) {
+  if (printer.begin_job(1)) {
     o->window()->show();
     return;
   }
-  if (printer.start_page()) {
+  if (printer.begin_page()) {
     o->window()->show();
     return;
   }

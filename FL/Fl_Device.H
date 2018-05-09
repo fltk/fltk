@@ -41,7 +41,7 @@ class Fl_Widget;
  A drawing surface other than the computer's display, is typically used as follows:
  <ol><li> Create \c surface, an object from a particular Fl_Surface_Device derived class (e.g., Fl_Copy_Surface, Fl_Printer).
  <li> Call \c Fl_Surface_Device::push_current(surface); to redirect all graphics requests to \c surface which becomes the new
- current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::start_job()).
+ current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::begin_job()).
  <li> At this point all of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
  (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface.
  Certain drawing surfaces allow additional ways to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).

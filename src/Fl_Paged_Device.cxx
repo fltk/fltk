@@ -26,23 +26,23 @@
 
 
 /**
- @brief Starts a print job.
+ @brief Begins a print job.
 
  @param[in] pagecount the total number of pages of the job (or 0 if you don't know the number of pages)
  @param[out] frompage if non-null, *frompage is set to the first page the user wants printed
  @param[out] topage if non-null, *topage is set to the last page the user wants printed
  @return 0 if OK, non-zero if any error
  */
-int Fl_Paged_Device::start_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Paged_Device::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
 
 /**
- @brief Starts a new printed page
+ @brief Begins a new printed page
 
  The page coordinates are initially in points, i.e., 1/72 inch, 
  and with origin at the top left of the printable page area.
  @return 0 if OK, non-zero if any error
  */
-int Fl_Paged_Device::start_page (void) {return 1;}
+int Fl_Paged_Device::begin_page (void) {return 1;}
 
 /**
  @brief Computes the dimensions of margins that lie between the printable page area and
