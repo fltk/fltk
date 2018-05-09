@@ -22,7 +22,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
-#include <FL/Fl_Printer.H>
 #include "flstring.h"
 
 void fl_restore_clip(); // from fl_rect.cxx

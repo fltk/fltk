@@ -39,7 +39,6 @@
 #include "Fl_GDI_Graphics_Driver.H"
 #include "../WinAPI/Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
-#include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include <FL/Fl_Image_Surface.H>

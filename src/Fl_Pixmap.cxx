@@ -29,7 +29,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Printer.H>
 
 #include <stdio.h>
 #include "flstring.h"

@@ -24,7 +24,6 @@
 #include "../../config_lib.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
-#include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 

@@ -25,7 +25,6 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Printer.H>
 
 #include "Fl_GDI_Graphics_Driver.H"
 

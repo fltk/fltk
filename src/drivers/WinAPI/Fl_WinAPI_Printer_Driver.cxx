@@ -17,7 +17,7 @@
 //
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
-#include <FL/Fl_Printer.H>
+#include <FL/Fl_Paged_Device.H>
 #include <FL/fl_ask.H>
 #include <FL/math.h>
 #include <FL/fl_draw.H>

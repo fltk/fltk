@@ -23,7 +23,6 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Printer.H>
 #include <FL/platform.H>
 #include <FL/Fl_Image_Surface.H>
 

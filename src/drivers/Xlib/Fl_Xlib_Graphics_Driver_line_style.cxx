@@ -24,7 +24,6 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
-#include <FL/Fl_Printer.H>
 #include "../../flstring.h"
 
 #include "Fl_Xlib_Graphics_Driver.H"

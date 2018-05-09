@@ -27,7 +27,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
-#include <FL/Fl_Printer.H>
 
 /** Create a bit mask */
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
