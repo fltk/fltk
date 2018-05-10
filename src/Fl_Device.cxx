@@ -21,26 +21,39 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Graphics_Driver.H>
 
-/* Attempt at an inheritance diagram.
- 
+/* Inheritance diagram.
  
   +- Fl_Surface_Device: any kind of surface that we can draw onto -> uses an Fl_Graphics_Driver
       |
-      +- Fl_Display_Device: some kind of video device
-      +- Fl_Copy_Surface: create an image for dnd or copy/paste
-      +- Fl_Image_Surface: create an RGB Image
-      +- Fl_Paged_Device: output to a printer or similar
+      +- Fl_Display_Device: some kind of video device (one object per app)
+      +- Fl_Widget_Surface: any FLTK widget can be drawn to it
           |
-          +- Fl_..._Surface_: platform specific driver
-          +- Fl_Printer: user can instantiate this to gain access to a printer
-          +- Fl_System_Printer:
-          +- Fl_PostScript_File_Device
+          +- Fl_Copy_Surface: draw into the clipboard (in vectorial form if the platform supports it)
+          +- Fl_Copy_Surface_Driver: helper class interfacing FLTK with draw-to-clipboard operations
               |
-              +- Fl_PostScript_Printer
+              +- Fl_..._Copy_Surface_Driver: platform-specific implementation of Fl_Copy_Surface_Driver
+          +- Fl_Image_Surface: draw into an RGB Image
+          +- Fl_Image_Surface_Driver: helper class interfacing FLTK with draw-to-image operations
+              |
+              +- Fl_..._Image_Surface_Driver: platform-specific implementation of Fl_Image_Surface_Driver
+         +- Fl_Paged_Device: output to a page-structured surface
+              |
+              +- Fl_Printer: user can instantiate this to gain access to a printer
+              +- Fl_..._Printer_Driver: platform-specific helper class interfacing FLTK with print operations
+              +- Fl_PostScript_File_Device: draw into a PostScript file
+                  |
+                  +- Fl_Posix_Printer_Driver: Fl_Printer uses that under Posix platforms
  
-  +- Fl_Graphics_Driver
+  +- Fl_Graphics_Driver -> directed to an Fl_Surface_Device object
       |
-      +- Fl_..._Graphics_Driver: platform specific graphics driver
+      +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript drawing
+      +- Fl_..._Graphics_Driver: platform-specific graphics driver (MacOS, Android, Pico)
+          +- Fl_Quartz_Printer_Graphics_Driver: MacOS-specific, for drawing to printers
+      +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
+          +- Fl_Xlib_Graphics_Driver: X11-specific graphics driver
+          +- Fl_GDI_Graphics_Driver: Windows-specific graphics driver
+              +- Fl_GDI_Printer_Graphics_Driver: re-implements a few member functions especially for output to printer
+      +- Fl_OpenGL_Graphics_Driver: draw to an Fl_Gl_Window (only very partial implementation)
 
 */
 
