@@ -87,7 +87,7 @@ image type, the platform and some hardware features. The most common
 case for Fl_RGB_Image's is that FLTK uses a scaled drawing system feature that directly
 maps image data to screen pixels. An important feature of FLTK for image drawing
 is the Fl_Image::scale() member function, new in FLTK version 1.4. This function
-controls the image drawing size (in FLTK units) independantly from the size
+controls the image drawing size (in FLTK units) independently from the size
 of the image data. An image with large enough data size can thus be drawn at the
 full resolution of the screen even when the screen area covered by the image grows
 following the GUI scale factor.
