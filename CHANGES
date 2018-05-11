@@ -18,6 +18,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   New Features and Extensions
 
   - (add new items here)
+  - New member functions Fl_Paged_Device::begin_job() and begin_page()
+    replace start_job() and start_page(). The start_... names are maintained
+    for API compatibility.
   - New member function Fl_Image::scale(int width, int height) to set
     the drawing size of an image independently from its data size. The
     same function was previously available only for class Fl_Shared_Image
