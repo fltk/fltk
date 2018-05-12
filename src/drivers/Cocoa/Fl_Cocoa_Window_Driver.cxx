@@ -276,6 +276,50 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
   return 0;
 }
 
+static const unsigned windowDidResize_mask = 1;
+
+bool Fl_Cocoa_Window_Driver::in_windowDidResize() {
+  return window_flags_ & windowDidResize_mask;
+}
+
+void Fl_Cocoa_Window_Driver::in_windowDidResize(bool b) {
+  if (b) window_flags_ |= windowDidResize_mask;
+  else window_flags_ &= ~windowDidResize_mask;
+}
+
+static const unsigned mapped_mask = 2;
+static const unsigned changed_mask = 4;
+
+bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
+  return window_flags_ & mapped_mask;
+}
+
+void Fl_Cocoa_Window_Driver::mapped_to_retina(bool b) {
+  if (b) window_flags_ |= mapped_mask;
+  else window_flags_ &= ~mapped_mask;
+}
+
+bool Fl_Cocoa_Window_Driver::changed_resolution() {
+  return window_flags_ & changed_mask;
+}
+
+void Fl_Cocoa_Window_Driver::changed_resolution(bool b) {
+  if (b) window_flags_ |= changed_mask;
+  else window_flags_ &= ~changed_mask;
+}
+
+// clip the graphics context to rounded corners
+void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int h) {
+  const CGFloat radius = 7.5;
+  CGContextMoveToPoint(gc, 0, 0);
+  CGContextAddLineToPoint(gc, 0, h - radius);
+  CGContextAddArcToPoint(gc, 0, h,  radius, h, radius);
+  CGContextAddLineToPoint(gc, w - radius, h);
+  CGContextAddArcToPoint(gc, w, h, w, h - radius, radius);
+  CGContextAddLineToPoint(gc, w, 0);
+  CGContextClip(gc);
+}
+
 //
 // End of "$Id$".
 //
