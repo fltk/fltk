@@ -3020,27 +3020,6 @@ void Fl_Cocoa_Window_Driver::wait_for_expose()
 }
 
 /*
- * returns pointer to the filename, or null if name ends with ':'
- */
-/*const char *Fl_Darwin_System_Driver::filename_name( const char *name )
-{
-  const char *p, *q;
-  if (!name) return (0);
-  for ( p = q = name ; *p ; ) {
-    if ( ( p[0] == ':' ) && ( p[1] == ':' ) ) {
-      q = p+2;
-      p++;
-    }
-    else if (p[0] == '/') {
-      q = p + 1;
-    }
-    p++;
-  }
-  return q;
-}*/
-
-
-/*
  * set the window title bar name
  */
 void Fl_Cocoa_Window_Driver::label(const char *name, const char *mininame) {
