@@ -486,7 +486,7 @@ static void processFLTKEvent(void) {
 /*
  * break the current event loop
  */
-static void breakMacEventLoop()
+void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 {  
   NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSMakePoint(0,0)
                                  modifierFlags:0 timestamp:0
@@ -494,152 +494,6 @@ static void breakMacEventLoop()
   [NSApp postEvent:event atStart:NO];
 }
 
-//
-// MacOS X timers
-//
-
-struct MacTimeout {
-  Fl_Timeout_Handler callback;
-  void* data;
-  CFRunLoopTimerRef timer;
-  char pending; 
-  CFAbsoluteTime next_timeout; // scheduled time for this timer
-};
-static MacTimeout* mac_timers;
-static int mac_timer_alloc;
-static int mac_timer_used;
-static MacTimeout* current_timer;  // the timer that triggered its callback function
-
-static void realloc_timers()
-{
-  if (mac_timer_alloc == 0) {
-    mac_timer_alloc = 8;
-    fl_open_display(); // needed because the timer creates an event
-  }
-  mac_timer_alloc *= 2;
-  MacTimeout* new_timers = new MacTimeout[mac_timer_alloc];
-  memset(new_timers, 0, sizeof(MacTimeout)*mac_timer_alloc);
-  memcpy(new_timers, mac_timers, sizeof(MacTimeout) * mac_timer_used);
-  if (current_timer) {
-    MacTimeout* newCurrent = new_timers + (current_timer - mac_timers);
-    current_timer = newCurrent;
-  }
-  MacTimeout* delete_me = mac_timers;
-  mac_timers = new_timers;
-  delete [] delete_me;
-}
-
-static void delete_timer(MacTimeout& t)
-{
-  if (t.timer) {
-    CFRunLoopRemoveTimer(CFRunLoopGetCurrent(),
-		      t.timer,
-		      kCFRunLoopDefaultMode);
-    CFRelease(t.timer);
-    memset(&t, 0, sizeof(MacTimeout));
-  }
-}
-
-static void do_timer(CFRunLoopTimerRef timer, void* data)
-{
-  fl_lock_function();
-  fl_intptr_t timerId = (fl_intptr_t)data;
-  current_timer = &mac_timers[timerId];
-  current_timer->pending = 0;
-  (current_timer->callback)(current_timer->data);
-  if (current_timer && current_timer->pending == 0)
-    delete_timer(*current_timer);
-  current_timer = NULL;
-
-  breakMacEventLoop();
-  fl_unlock_function();
-}
-
-void Fl_Cocoa_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  // check, if this timer slot exists already
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    // if so, simply change the fire interval
-    if (t.callback == cb  &&  t.data == data) {
-      t.next_timeout = CFAbsoluteTimeGetCurrent() + time;
-      CFRunLoopTimerSetNextFireDate(t.timer, t.next_timeout );
-      t.pending = 1;
-      return;
-    }
-  }
-  // no existing timer to use. Create a new one:
-  fl_intptr_t timer_id = -1;
-  // find an empty slot in the timer array
-  for (int i = 0; i < mac_timer_used; ++i) {
-    if ( !mac_timers[i].timer ) {
-      timer_id = i;
-      break;
-    }
-  }
-  // if there was no empty slot, append a new timer
-  if (timer_id == -1) {
-    // make space if needed
-    if (mac_timer_used == mac_timer_alloc) {
-      realloc_timers();
-    }
-    timer_id = mac_timer_used++;
-  }
-  // now install a brand new timer
-  MacTimeout& t = mac_timers[timer_id];
-  CFRunLoopTimerContext context = {0, (void*)timer_id, NULL,NULL,NULL};
-  CFRunLoopTimerRef timerRef = CFRunLoopTimerCreate(kCFAllocatorDefault, 
-						    CFAbsoluteTimeGetCurrent() + time,
-						    1E30,  
-						    0,
-						    0,
-						    do_timer,
-						    &context
-						    );
-  if (timerRef) {
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(),
-		      timerRef,
-		      kCFRunLoopDefaultMode);
-    t.callback = cb;
-    t.data     = data;
-    t.timer    = timerRef;
-    t.pending  = 1;
-    t.next_timeout = CFRunLoopTimerGetNextFireDate(timerRef);
-  }
-}
-
-void Fl_Cocoa_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  // k = how many times 'time' seconds after the last scheduled timeout until the future
-  double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
-  if (k < 1) k = 1;
-  current_timer->next_timeout += k * time;
-  CFRunLoopTimerSetNextFireDate(current_timer->timer, current_timer->next_timeout );
-  current_timer->callback = cb;
-  current_timer->data = data;
-  current_timer->pending = 1;
-}
-
-int Fl_Cocoa_Screen_Driver::has_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  &&  t.data == data && t.pending) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void Fl_Cocoa_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  && ( t.data == data || data == NULL)) {
-      delete_timer(t);
-    }
-  }
-}
 
 @interface FLWindow : NSWindow {
   Fl_Window *w;
@@ -1527,7 +1381,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   fl_unlock_function();
   if ( ! Fl::first_window() ) {
     Fl::program_should_quit(1);
-    breakMacEventLoop(); // necessary when called through menu and in Fl::wait()
+    Fl_Cocoa_Screen_Driver::breakMacEventLoop(); // necessary when called through menu and in Fl::wait()
   }
   return NSTerminateCancel;
 }
@@ -2482,7 +2336,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
   int ret = Fl::handle( FL_DND_ENTER, target );
-  breakMacEventLoop();
+  Fl_Cocoa_Screen_Driver::breakMacEventLoop();
   fl_unlock_function();
   Fl::flush();
   return ret ? NSDragOperationCopy : NSDragOperationNone;
@@ -2494,7 +2348,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
   int ret = Fl::handle( FL_DND_DRAG, target );
-  breakMacEventLoop();
+  Fl_Cocoa_Screen_Driver::breakMacEventLoop();
   fl_unlock_function();
   // if the DND started in the same application, Fl::dnd() will not return until 
   // the DND operation is finished. The call below causes the drop indicator
@@ -2508,7 +2362,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   if ( !Fl::handle( FL_DND_RELEASE, target ) ) { 
-    breakMacEventLoop();
+    Fl_Cocoa_Screen_Driver::breakMacEventLoop();
     fl_unlock_function();
     return NO;
   }
@@ -2534,7 +2388,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     convert_crlf(DragData, strlen(DragData));
   }
   else {
-    breakMacEventLoop();
+    Fl_Cocoa_Screen_Driver::breakMacEventLoop();
     fl_unlock_function();
     return NO;
   }
@@ -2547,7 +2401,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl::e_text = NULL;
   Fl::e_length = 0;
   fl_dnd_target_window = NULL;
-  breakMacEventLoop();
+  Fl_Cocoa_Screen_Driver::breakMacEventLoop();
   fl_unlock_function();
   return YES;
 }
