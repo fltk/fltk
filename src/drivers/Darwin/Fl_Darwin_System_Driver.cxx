@@ -220,6 +220,26 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   return filename;
 }
 
+/*
+ * returns pointer to the filename, or null if name ends with ':'
+ */
+const char *Fl_Darwin_System_Driver::filename_name( const char *name )
+{
+  const char *p, *q;
+  if (!name) return (0);
+  for ( p = q = name ; *p ; ) {
+    if ( ( p[0] == ':' ) && ( p[1] == ':' ) ) {
+      q = p+2;
+      p++;
+    }
+    else if (p[0] == '/') {
+      q = p + 1;
+    }
+    p++;
+  }
+  return q;
+}
+
 //
 // End of "$Id$".
 //

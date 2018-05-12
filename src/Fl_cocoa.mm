@@ -3022,7 +3022,7 @@ void Fl_Cocoa_Window_Driver::wait_for_expose()
 /*
  * returns pointer to the filename, or null if name ends with ':'
  */
-const char *Fl_Darwin_System_Driver::filename_name( const char *name )
+/*const char *Fl_Darwin_System_Driver::filename_name( const char *name )
 {
   const char *p, *q;
   if (!name) return (0);
@@ -3037,7 +3037,7 @@ const char *Fl_Darwin_System_Driver::filename_name( const char *name )
     p++;
   }
   return q;
-}
+}*/
 
 
 /*
