@@ -27,17 +27,17 @@
 #include <FL/Fl_Window_Driver.H>
 
 void Fl_Menu_Window::show() {
-  driver()->show_menu();
+  Fl_Window_Driver::driver(this)->show_menu();
 }
 
 void Fl_Menu_Window::flush() {
   if (!shown()) return;
-  driver()->flush_menu();
+  Fl_Window_Driver::driver(this)->flush_menu();
 }
 
 /** Erases the window, does nothing if HAVE_OVERLAY is not defined in config.h */
 void Fl_Menu_Window::erase() {
-  driver()->erase_menu();
+  Fl_Window_Driver::driver(this)->erase_menu();
 }
 
 // Fix the colormap flashing on Maximum Impact Graphics by erasing the

@@ -1353,7 +1353,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   r = [[nsw contentView] frame];
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, r.size.height)];
   pt2.y = main_screen_height - pt2.y;
-  float s = Fl::screen_driver()->scale(window->driver()->screen_num());
+  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num());
   pt2.x = int(pt2.x/s + 0.5); pt2.y = int(pt2.y/s + 0.5);
   Fl_Window *parent = window->window();
   while (parent) {
@@ -1976,7 +1976,7 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   int W, H, xoff, yoff, dx, dy;
   int ret = bx = by = bt = 0;
   if (w->border() && !w->parent()) {
-    if (w->driver()->maxw() != w->driver()->minw() || w->driver()->maxh() != w->driver()->minh()) {
+    if (Fl_Window_Driver::driver(w)->maxw() != Fl_Window_Driver::driver(w)->minw() || Fl_Window_Driver::driver(w)->maxh() != Fl_Window_Driver::driver(w)->minh()) {
       ret = 2;
     } else {
       ret = 1;
@@ -3088,7 +3088,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   x->xid = cw;
   x->w = w;
   i(x);
-  w->driver()->wait_for_expose_value = 1;
+  Fl_Window_Driver::driver(w)->wait_for_expose_value = 1;
   if (!w->parent()) {
     x->next = Fl_X::first;
     Fl_X::first = x;

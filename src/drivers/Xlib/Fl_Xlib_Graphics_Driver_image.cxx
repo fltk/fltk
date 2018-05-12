@@ -736,7 +736,7 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W,
   int ox = offset_x_, oy = offset_y_;
   offset_x_ = offset_y_ = 0;
   Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
-  int nscreen = Fl_Window::current()->driver()->screen_num();
+  int nscreen = Fl_Window_Driver::driver(Fl_Window::current())->screen_num();
   float keep = d->scale(nscreen);
   d->scale(nscreen, 1);
   push_no_clip();

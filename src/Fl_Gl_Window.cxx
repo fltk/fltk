@@ -617,7 +617,7 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 
 float Fl_WinAPI_Gl_Window_Driver::pixels_per_unit()
 {
-  int ns = pWindow->driver()->screen_num();
+  int ns = Fl_Window_Driver::driver(pWindow)->screen_num();
   return Fl::screen_driver()->scale(ns);
 }
 
@@ -715,7 +715,7 @@ void Fl_X11_Gl_Window_Driver::before_show(int& need_redraw) {
 
 float Fl_X11_Gl_Window_Driver::pixels_per_unit()
 {
-  int ns = pWindow->driver()->screen_num();
+  int ns = Fl_Window_Driver::driver(pWindow)->screen_num();
   return Fl::screen_driver()->scale(ns);
 }
 

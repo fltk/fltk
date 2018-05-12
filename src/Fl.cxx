@@ -695,10 +695,10 @@ void Fl::flush() {
     damage_ = 0;
     for (Fl_X* i = Fl_X::first; i; i = i->next) {
       Fl_Window* wi = i->w;
-      if (wi->driver()->wait_for_expose_value) {damage_ = 1; continue;}
+      if (Fl_Window_Driver::driver(wi)->wait_for_expose_value) {damage_ = 1; continue;}
       if (!wi->visible_r()) continue;
       if (wi->damage()) {
-        wi->driver()->flush();
+        Fl_Window_Driver::driver(wi)->flush();
         wi->clear_damage();
       }
       // destroy damage regions for windows that don't use them:
@@ -912,7 +912,7 @@ void Fl::focus(Fl_Widget *o)
       while (w1) { win=w1; w1=win->window(); }
       if (win) {
         if (fl_xfocus != win) {
-          win->driver()->take_focus();
+          Fl_Window_Driver::driver(win)->take_focus();
           fl_xfocus = win;
         }
       }

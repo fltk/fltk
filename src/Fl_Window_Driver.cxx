@@ -250,7 +250,7 @@ void Fl_Window_Driver::wait_for_expose() {
 }
 
 int Fl_Window_Driver::screen_num() {
-  if (pWindow->parent()) return pWindow->top_window()->driver()->screen_num();
+  if (pWindow->parent()) return Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
   return Fl::screen_num(x(), y(), w(), h());
 }
 

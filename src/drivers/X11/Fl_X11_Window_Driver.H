@@ -92,7 +92,7 @@ private:
 public:
   Fl_X11_Window_Driver(Fl_Window*);
   virtual ~Fl_X11_Window_Driver();
-  static inline Fl_X11_Window_Driver* driver(Fl_Window *w) {return (Fl_X11_Window_Driver*)w->driver();}
+  static inline Fl_X11_Window_Driver* driver(const Fl_Window *w) {return (Fl_X11_Window_Driver*)Fl_Window_Driver::driver(w);}
 #if  USE_XFT
   virtual int screen_num();
   static void resize_after_screen_change(void *data);

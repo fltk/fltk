@@ -631,6 +631,11 @@ void Fl_Window::size_range(int minw, int minh, int maxw, int maxh, int dw, int d
   pWindowDriver->size_range();
 }
 
+/** The number of the screen containing the mapped window */
+inline int Fl_Window::screen_num() {
+  return pWindowDriver->screen_num();
+}
+
 //
 // End of "$Id$".
 //

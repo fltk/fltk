@@ -383,7 +383,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       CGContextRef gc = (CGContextRef)driver()->gc();
       CGContextSaveGState(gc);
       CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-      float s = Fl::screen_driver()->scale(win->driver()->screen_num());
+      float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
       CGContextScaleCTM(gc, 1/s, -1/s);
       Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt);
       CGContextRestoreGState(gc);
@@ -428,7 +428,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   Fl::check();
   // capture the window title bar with no title
   Fl_RGB_Image *top, *left, *bottom, *right;
-  win->driver()->capture_titlebar_and_borders(top, left, bottom, right);
+  Fl_Window_Driver::driver(win)->capture_titlebar_and_borders(top, left, bottom, right);
   [(NSWindow*)fl_xid(win) setTitle:title]; // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
   top->draw(x_offset, y_offset); // print the title bar

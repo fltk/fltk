@@ -848,7 +848,7 @@ void Fl_WinAPI_System_Driver::paste(Fl_Widget &receiver, int clipboard, const ch
         int hdots = GetDeviceCaps(hdc, HORZRES);
         ReleaseDC(NULL, hdc);
         float factor = (100.f * hmm) / hdots;
-        float scaling = Fl::screen_driver()->scale(receiver.top_window()->driver()->screen_num());
+        float scaling = Fl::screen_driver()->scale(Fl_Window_Driver::driver(receiver.top_window())->screen_num());
         if (!Fl_Window::current()) {
           Fl_GDI_Graphics_Driver *d = (Fl_GDI_Graphics_Driver*)&Fl_Graphics_Driver::default_driver();
           d->scale(scaling);// may run early at app startup before Fl_Window::make_current() scales d
@@ -1168,7 +1168,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   // fl_msg.lPrivate = ???
 
   Fl_Window *window = fl_find(hWnd);
-  float scale = (window ? Fl::screen_driver()->scale(window->driver()->screen_num()) : 1);
+  float scale = (window ? Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num()) : 1);
 
   if (window) {
     switch (uMsg) {
@@ -1179,9 +1179,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	  float f = HIWORD(wParam) / 96.;
 	  GetClientRect(hWnd, &r);
 	  float old_f = float(r.right) / window->w();
-	  int ns = window->driver()->screen_num();
+	  int ns = Fl_Window_Driver::driver(window)->screen_num();
 	  Fl::screen_driver()->scale(ns, f);
-	  window->driver()->resize_after_scale_change(ns, old_f, f);
+	  Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
 	}
 	return 0;
       }
@@ -1204,7 +1204,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
       case WM_PAINT: {
 	Fl_Region R, R2;
 	Fl_X *i = Fl_X::i(window);
-	window->driver()->wait_for_expose_value = 0;
+	Fl_Window_Driver::driver(window)->wait_for_expose_value = 0;
 	char redraw_whole_window = false;
 	if (!i->region && window->damage()) {
 	  // Redraw the whole window...
@@ -1246,7 +1246,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	// Very annoying!
 	fl_GetDC(hWnd); // Make sure we have a DC for this window...
 	fl_save_pen();
-	window->driver()->flush();
+	Fl_Window_Driver::driver(window)->flush();
 	fl_restore_pen();
 	window->clear_damage();
 	return 0;
@@ -1652,10 +1652,10 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
   int ret = bx = by = bt = 0;
 
   int fallback = 1;
-  float s = Fl::screen_driver()->scale(w->driver()->screen_num());
+  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(w)->screen_num());
   if (!w->parent()) {
     if (fl_xid(w)) {
-      Fl_WinAPI_Window_Driver *dr = (Fl_WinAPI_Window_Driver *)w->driver();
+      Fl_WinAPI_Window_Driver *dr = Fl_WinAPI_Window_Driver::driver(w);
       dr->border_width_title_bar_height(bx, by, bt);
       xoff = bx;
       yoff = by + bt;
@@ -1952,19 +1952,19 @@ Fl_X *Fl_WinAPI_Window_Driver::makeWindow() {
   // compute adequate screen where to put the window
   int nscreen = 0;
   if (w->parent()) {
-    nscreen = w->top_window()->driver()->screen_num();
-  } else if (w->driver()->force_position() && Fl_WinAPI_Window_Driver::driver(w)->screen_num_ >= 0) {
-    nscreen = w->driver()->screen_num();
+    nscreen = Fl_Window_Driver::driver(w->top_window())->screen_num();
+  } else if (Fl_Window_Driver::driver(w)->force_position() && Fl_WinAPI_Window_Driver::driver(w)->screen_num_ >= 0) {
+    nscreen = Fl_Window_Driver::driver(w)->screen_num();
   } else {
     Fl_Window *hint = Fl::first_window();
     if (hint) {
-      nscreen = hint->top_window()->driver()->screen_num();
+      nscreen = Fl_Window_Driver::driver(hint->top_window())->screen_num();
     } else {
       int mx, my;
       nscreen = Fl::screen_driver()->get_mouse(mx, my);
     }
   }
-  w->driver()->screen_num(nscreen);
+  Fl_Window_Driver::driver(w)->screen_num(nscreen);
   float s = Fl::screen_driver()->scale(nscreen);
   int xp = w->x() * s; // these are in graphical units
   int yp = w->y() * s;

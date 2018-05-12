@@ -64,7 +64,7 @@ Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 
 int Fl_WinAPI_Window_Driver::screen_num() {
   if (pWindow->parent()) {
-    screen_num_ = pWindow->top_window()->driver()->screen_num();
+    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
   }
   return screen_num_ >= 0 ? screen_num_ : 0;
 }
@@ -694,7 +694,7 @@ void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
   GetClientRect(fl_xid(win), &r);
   float old_f = float(r.right)/win->w();
   int ns = data_for_resize_window_between_screens_.screen;
-  win->driver()->resize_after_scale_change(ns, old_f, Fl::screen_driver()->scale(ns));
+  Fl_Window_Driver::driver(win)->resize_after_scale_change(ns, old_f, Fl::screen_driver()->scale(ns));
   data_for_resize_window_between_screens_.busy = false;
 }
 

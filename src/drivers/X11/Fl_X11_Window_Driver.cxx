@@ -691,14 +691,14 @@ Fl_X11_Window_Driver::type_for_resize_window_between_screens Fl_X11_Window_Drive
 void Fl_X11_Window_Driver::resize_after_screen_change(void *data) {
   Fl_Window *win = (Fl_Window*)data;
   float f = Fl::screen_driver()->scale(data_for_resize_window_between_screens_.screen);
-  win->driver()->resize_after_scale_change(data_for_resize_window_between_screens_.screen, f, f);
+  Fl_Window_Driver::driver(win)->resize_after_scale_change(data_for_resize_window_between_screens_.screen, f, f);
   data_for_resize_window_between_screens_.busy = false;
 }
 
 
 int Fl_X11_Window_Driver::screen_num() {
   if (pWindow->parent()) {
-    screen_num_ = pWindow->top_window()->driver()->screen_num();
+    screen_num_ = Fl_Window_Driver::driver(pWindow->top_window())->screen_num();
   }
   return screen_num_ >= 0 ? screen_num_ : 0;
 }

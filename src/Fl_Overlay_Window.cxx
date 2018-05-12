@@ -51,7 +51,7 @@ void Fl_Overlay_Window::hide() {
 
 void Fl_Overlay_Window::flush()
 {
-  driver()->flush_overlay();
+  Fl_Window_Driver::driver(this)->flush_overlay();
 }
 
 void Fl_Overlay_Window::resize(int X, int Y, int W, int H) {
@@ -68,7 +68,7 @@ Fl_Overlay_Window::~Fl_Overlay_Window() {
 }
 
 int Fl_Overlay_Window::can_do_overlay() {
-  return driver()->can_do_overlay();
+  return Fl_Window_Driver::driver(this)->can_do_overlay();
 }
 
 /**
@@ -78,7 +78,7 @@ int Fl_Overlay_Window::can_do_overlay() {
  calling show().
  */
 void Fl_Overlay_Window::redraw_overlay() {
-  driver()->redraw_overlay();
+  Fl_Window_Driver::driver(this)->redraw_overlay();
 }
 
 //

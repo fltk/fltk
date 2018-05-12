@@ -801,7 +801,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
                             RootWindow(fl_display, fl_screen), X*s, Y*s, &dxs, &dys, &child_win);
       dx = dxs/s; dy = dys/s;
       // screen dimensions
-      Fl::screen_xywh(sx, sy, sw, sh, win->driver()->screen_num());
+      Fl::screen_xywh(sx, sy, sw, sh, Fl_Window_Driver::driver(win)->screen_num());
     }
     if (win && !allow_outside && int(s) != s) {
       ws = (w+1)*s-1;

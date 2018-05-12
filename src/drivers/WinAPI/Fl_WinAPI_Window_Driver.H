@@ -68,7 +68,7 @@ private:
 public:
   Fl_WinAPI_Window_Driver(Fl_Window*);
   ~Fl_WinAPI_Window_Driver();
-  static inline Fl_WinAPI_Window_Driver* driver(Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)w->driver();}
+  static inline Fl_WinAPI_Window_Driver* driver(const Fl_Window *w) {return (Fl_WinAPI_Window_Driver*)Fl_Window_Driver::driver(w);}
   HDC private_dc; // used for OpenGL
   RECT border_width_title_bar_height(int &bx, int &by, int &bt);
   virtual void screen_num(int n);

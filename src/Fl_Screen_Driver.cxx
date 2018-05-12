@@ -302,7 +302,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   int i = 0, count = 0; // count top-level windows, except transient scale-displaying window
   Fl_Window *win = Fl::first_window();
   while (win) {
-    if (!win->parent() && (win->driver()->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
         win->user_data() != &Fl_Screen_Driver::transient_scale_display) count++;
     win = Fl::next_window(win);
   }
@@ -310,14 +310,14 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
     if (!win->parent() && win->user_data() != &Fl_Screen_Driver::transient_scale_display &&
-        (win->driver()->screen_num() == screen  || rescalable() == SYSTEMWIDE_APP_SCALING) ) {
+        (Fl_Window_Driver::driver(win)->screen_num() == screen  || rescalable() == SYSTEMWIDE_APP_SCALING) ) {
       win_array[i++] = win;
     }
     win = Fl::next_window(win);
   }
   for (i = count - 1; i >= 0; i--) { // rescale all top-level windows, finishing with front one
     win = win_array[i];
-    win->driver()->resize_after_scale_change(screen, old_f, f);
+    Fl_Window_Driver::driver(win)->resize_after_scale_change(screen, old_f, f);
     win->wait_for_expose();
   }
   delete[] win_array;
@@ -366,8 +366,8 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->user_data((void*)&transient_scale_display); // prevent this window from being rescaled later
   win->set_output();
   win->set_non_modal();
-  win->driver()->screen_num(nscreen);
-  win->driver()->force_position(1);
+  Fl_Window_Driver::driver(win)->screen_num(nscreen);
+  Fl_Window_Driver::driver(win)->force_position(1);
   win->show();
   Fl::add_timeout(1, del_transient_window, win); // delete after 1 sec
 }
@@ -382,7 +382,7 @@ int Fl_Screen_Driver::scale_handler(int event)
     if (Fl::grab()) return 0; // don't rescale when menu windows are on
     Fl_Widget *wid = Fl::focus();
     if (!wid) return 0;
-    int screen = wid->top_window()->driver()->screen_num();
+    int screen = Fl_Window_Driver::driver(wid->top_window())->screen_num();
     Fl_Screen_Driver *screen_dr = Fl::screen_driver();
     static float initial_scale = screen_dr->scale(screen);
 #if defined(TEST_SCALING)

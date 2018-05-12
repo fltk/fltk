@@ -1098,7 +1098,7 @@ static void set_event_xy(Fl_Window *win) {
 #  endif
   float s = 1;
 #if USE_XFT
-  s = Fl::screen_driver()->scale(win->driver()->screen_num());
+  s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
 #endif
   Fl::e_x_root  = fl_xevent->xbutton.x_root/s;
   Fl::e_x       = fl_xevent->xbutton.x/s;
@@ -1654,7 +1654,7 @@ int fl_handle(const XEvent& thisevent)
     break;
 
   case Expose:
-    window->driver()->wait_for_expose_value = 0;
+    Fl_Window_Driver::driver(window)->wait_for_expose_value = 0;
 #  if 0
     // try to keep windows on top even if WM_TRANSIENT_FOR does not work:
     // opaque move/resize window managers do not like this, so I disabled it.
@@ -1665,7 +1665,7 @@ int fl_handle(const XEvent& thisevent)
   case GraphicsExpose:
     {
 #if USE_XFT
-      int ns = window->driver()->screen_num();
+      int ns = Fl_Window_Driver::driver(window)->screen_num();
       float s = Fl::screen_driver()->scale(ns);
       window->damage(FL_DAMAGE_EXPOSE, xevent.xexpose.x/s, xevent.xexpose.y/s,
                      xevent.xexpose.width/s + 2, xevent.xexpose.height/s + 2);
@@ -2072,7 +2072,7 @@ int fl_handle(const XEvent& thisevent)
     if ( !wasXExceptionRaised() ) {
       resize_bug_fix = window;
 #if USE_XFT
-      int ns = window->driver()->screen_num();
+      int ns = Fl_Window_Driver::driver(window)->screen_num();
       float s = Fl::screen_driver()->scale(ns);
 #else
       float s = 1;
@@ -2282,11 +2282,11 @@ void fl_fix_focus(); // in Fl.cxx
 Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X *xp = new Fl_X;
   xp->xid = winxid;
-  win->driver()->other_xid = 0;
+  Fl_Window_Driver::driver(win)->other_xid = 0;
   xp->w = win; win->i = xp;
   xp->next = Fl_X::first;
   xp->region = 0;
-  win->driver()->wait_for_expose_value = 1;
+  Fl_Window_Driver::driver(win)->wait_for_expose_value = 1;
 #ifdef USE_XDBE
   Fl_X11_Window_Driver::driver(win)->backbuffer_bad = 1;
 #endif
@@ -2427,13 +2427,13 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   //compute adequate screen where to put the window
   int nscreen = 0;
   if (win->parent()) {
-    nscreen = win->top_window()->driver()->screen_num();
+    nscreen = Fl_Window_Driver::driver(win->top_window())->screen_num();
   } else if (win->force_position() && Fl_X11_Window_Driver::driver(win)->screen_num_ >= 0) {
-    nscreen = win->driver()->screen_num();
+    nscreen = Fl_Window_Driver::driver(win)->screen_num();
   } else {
     Fl_Window *hint = Fl::first_window();
     if (hint) {
-      nscreen = hint->top_window()->driver()->screen_num();
+      nscreen = Fl_Window_Driver::driver(hint->top_window())->screen_num();
     }
   }
   Fl_X11_Window_Driver::driver(win)->screen_num(nscreen);

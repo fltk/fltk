@@ -71,8 +71,8 @@ private:
 #endif
 
 public:
-  static inline Fl_Android_Window_Driver* driver(Fl_Window *w) {
-    return (Fl_Android_Window_Driver*)w->driver();
+  static inline Fl_Android_Window_Driver* driver(const Fl_Window *w) {
+    return (Fl_Android_Window_Driver*)Fl_Window_Driver::driver(w);
   }
 
   Fl_Android_Window_Driver(Fl_Window *w) : Fl_Window_Driver(w) {}

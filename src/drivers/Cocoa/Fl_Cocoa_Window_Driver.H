@@ -73,7 +73,7 @@ private:
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
   ~Fl_Cocoa_Window_Driver();
-  static inline Fl_Cocoa_Window_Driver* driver(Fl_Window *w) {return (Fl_Cocoa_Window_Driver*)w->driver();}
+  static inline Fl_Cocoa_Window_Driver* driver(const Fl_Window *w) {return (Fl_Cocoa_Window_Driver*)Fl_Window_Driver::driver(w);}
   CGContextRef gc;                 // graphics context
   NSCursor *cursor;
   static void q_release_context(Fl_Cocoa_Window_Driver *x = 0); // free all resources associated with gc

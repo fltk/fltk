@@ -90,7 +90,7 @@ public:
     HWND hWnd = WindowFromPoint( ppt );
     Fl_Window *target = fl_find( hWnd );
     if (target) {
-      float s = Fl::screen_driver()->scale(target->driver()->screen_num());
+      float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
       Fl::e_x_root /= s;
       Fl::e_y_root /= s;
       Fl::e_x = Fl::e_x_root-target->x();
@@ -125,7 +125,7 @@ public:
     Fl::e_x_root = pt.x;
     Fl::e_y_root = pt.y;
     if (fl_dnd_target_window) {
-      float s = Fl::screen_driver()->scale(fl_dnd_target_window->driver()->screen_num());
+      float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(fl_dnd_target_window)->screen_num());
       Fl::e_x_root /= s;
       Fl::e_y_root /= s;
       Fl::e_x = Fl::e_x_root-fl_dnd_target_window->x();
@@ -162,7 +162,7 @@ public:
     fl_dnd_target_window = 0;
     Fl::e_x_root = pt.x;
     Fl::e_y_root = pt.y;
-    float s = Fl::screen_driver()->scale(target->driver()->screen_num());
+    float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
     Fl::e_x_root /= s;
     Fl::e_y_root /= s;
     if (target) {

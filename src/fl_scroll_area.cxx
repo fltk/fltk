@@ -72,7 +72,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
     clip_h = H-src_h;
   }
 
-  int retval = Fl_Window::current()->driver()->scroll(src_x, src_y, src_w, src_h,
+  int retval = Fl_Window_Driver::driver(Fl_Window::current())->scroll(src_x, src_y, src_w, src_h,
                                                       dest_x, dest_y, draw_area, data);
   if (retval) {
     draw_area(data,X,Y,W,H);

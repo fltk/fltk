@@ -54,15 +54,15 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int oh = h();
   Fl_Window::resize(X,Y,W,H);
   Fl_X *myi = Fl_X::i(this);
-  if (myi && driver()->other_xid && (ow < w() || oh < h() || Fl_Window_Driver::is_a_rescale()))
-    driver()->destroy_double_buffer();
+  if (myi && Fl_Window_Driver::driver(this)->other_xid && (ow < w() || oh < h() || Fl_Window_Driver::is_a_rescale()))
+    Fl_Window_Driver::driver(this)->destroy_double_buffer();
 }
 
 
 void Fl_Double_Window::hide() {
   Fl_X *myi = Fl_X::i(this);
-  if (myi && driver()->other_xid) {
-    driver()->destroy_double_buffer();
+  if (myi && Fl_Window_Driver::driver(this)->other_xid) {
+    Fl_Window_Driver::driver(this)->destroy_double_buffer();
   }
   Fl_Window::hide();
 }
@@ -70,7 +70,7 @@ void Fl_Double_Window::hide() {
 
 void Fl_Double_Window::flush()
 {
-  driver()->flush_double();
+  Fl_Window_Driver::driver(this)->flush_double();
 }
 
 

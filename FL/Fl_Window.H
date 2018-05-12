@@ -527,8 +527,6 @@ public:
    */
   int decorated_h() const;
 
-  Fl_Window_Driver *driver() const { return pWindowDriver; }
-
   // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Window* as_window() { return this; }
 
@@ -545,7 +543,7 @@ public:
   void shape(const Fl_Image* img);
   void shape(const Fl_Image& b) ;
   int is_shaped();
-
+  inline int screen_num();
 };
 
 #endif
