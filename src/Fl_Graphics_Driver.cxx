@@ -346,10 +346,12 @@ void Fl_Scalable_Graphics_Driver::rect(int x, int y, int w, int h)
   if (int(scale()) == scale()) {
     rect_unscaled(x * scale(), y * scale(), w * scale(), h * scale());
   } else {
-    xyline(x, y, x+w-1);
-    yxline(x, y, y+h-1);
-    yxline(x+w-1, y, y+h-1);
-    xyline(x, y+h-1, x+w-1);
+    if (w > 0 && h > 0) {
+      xyline(x, y, x+w-1);
+      yxline(x, y, y+h-1);
+      yxline(x+w-1, y, y+h-1);
+      xyline(x, y+h-1, x+w-1);
+    }
   }
 }
 
