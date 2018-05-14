@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// implementation of Fl_Device class for the Fast Light Tool Kit (FLTK).
+// implementation of classes Fl_Surface_Device and Fl_Display_Device for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2017 by Bill Spitzak and others.
 //
