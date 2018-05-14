@@ -17,7 +17,6 @@
 //
 
 #include <FL/Fl_Image_Surface.H>
-#include <FL/Fl_Device.H>
 
 #if defined(FL_PORTING)
 # pragma message "FL_PORTING: optionally implement class Fl_XXX_Image_Surface_Driver for your platform"

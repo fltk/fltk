@@ -19,7 +19,6 @@
 #ifndef FL_SCREEN_DRIVER_H
 #define FL_SCREEN_DRIVER_H
 
-#include <FL/Fl_Device.H>
 #include <FL/fl_types.h>
 #include <FL/Fl.H> // for Fl_Timeout_Handler
 #include <FL/Fl_Text_Editor.H>
