@@ -192,7 +192,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
     full_img = pi->rectangle_capture(g, x, y, w, h);
   }
   else if ( g->as_window() ) {
-    if (full_img) g->as_window()->make_current();
+    if (Fl_Window::current() != g) g->as_window()->make_current();
     full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h);
   }
   float full_img_scale =  (full_img && w > 0 ? float(full_img->data_w())/w : 1);
