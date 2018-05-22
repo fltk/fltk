@@ -3,7 +3,7 @@
 //
 // Tab widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,7 +46,7 @@ int Fl_Tabs::tab_positions() {
     clear_tab_positions();
     if (nc) {
       tab_pos   = (int*)malloc((nc+1)*sizeof(int));
-      tab_width = (int*)malloc((nc+1)*sizeof(int));
+      tab_width = (int*)malloc((nc)*sizeof(int));
     }
     tab_count = nc;
   }
