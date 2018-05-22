@@ -62,7 +62,7 @@ for the screen in use and obtains quantities in <b>drawing units</b>.
 The current scale factor value, for an Fl_Window named \e window, is given by
 \code
 int nscreen = window->screen_num(); // the screen where window is mapped
-float s = Fl::screen_driver()->scale(nscreen); // this screen's scale factor
+float s = Fl::screen_scale(nscreen); // this screen's scale factor
 \endcode
 One drawing unit generally corresponds to one screen pixel...
 <li>...but not on Mac OS X and for retina displays, where one drawing unit corresponds

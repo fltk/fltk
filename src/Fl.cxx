@@ -2110,6 +2110,12 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   return Fl_Graphics_Driver::default_driver().get_font_sizes(fnum, sizep);
 }
 
+/** Current value of the GUI scaling factor for screen number \p n */
+float Fl::screen_scale(int n) {
+  return Fl::screen_driver()->scale(n);
+}
+
+
 // Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
 FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();

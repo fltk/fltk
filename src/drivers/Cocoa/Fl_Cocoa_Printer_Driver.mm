@@ -383,7 +383,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
       CGContextRef gc = (CGContextRef)driver()->gc();
       CGContextSaveGState(gc);
       CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-      float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
+      float s = Fl::screen_scale(win->screen_num());
       CGContextScaleCTM(gc, 1/s, -1/s);
       Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt);
       CGContextRestoreGState(gc);

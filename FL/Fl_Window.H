@@ -543,7 +543,7 @@ public:
   void shape(const Fl_Image* img);
   void shape(const Fl_Image& b) ;
   int is_shaped();
-  inline int screen_num();
+  int screen_num();
 };
 
 #endif

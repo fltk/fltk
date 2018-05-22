@@ -1008,6 +1008,7 @@ int main() {
   static void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my); // via screen driver
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // via screen driver
   static void screen_work_area(int &X, int &Y, int &W, int &H); // via screen driver
+  static float screen_scale(int n); // via screen driver
 /**   @} */
 
 
