@@ -759,6 +759,7 @@ int main(int argc, char ** argv) {
   Fl::run();
   delete pixmap;
   delete b_bitmap.image();
+  delete rgb;
   
   return 0;
 }
