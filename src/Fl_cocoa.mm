@@ -2914,7 +2914,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   x->xid = cw;
   x->w = w;
   i(x);
-  Fl_Window_Driver::driver(w)->wait_for_expose_value = 1;
+  wait_for_expose_value = 1;
   if (!w->parent()) {
     x->next = Fl_X::first;
     Fl_X::first = x;
