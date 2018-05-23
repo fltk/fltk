@@ -2581,8 +2581,12 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     win = win->window();
   }
   // Convert the rect to screen coordinates
-  glyphRect.origin.y = wfocus->h() - glyphRect.origin.y;
+  float s = Fl_Graphics_Driver::default_driver().scale();
+  glyphRect.origin.x *= s;
+  glyphRect.origin.y *= s;
+  glyphRect.origin.y = wfocus->h()*s - glyphRect.origin.y;
   glyphRect.origin = [(FLWindow*)[self window] convertBaseToScreen:glyphRect.origin];
+  glyphRect.size.height *= s;
   if (actualRange) *actualRange = aRange;
   fl_unlock_function();
   return glyphRect;
