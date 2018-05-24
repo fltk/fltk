@@ -654,10 +654,14 @@ in degrees counter-clockwise from 3 o'clock.
 If \p end is less than \p start then it draws the arc in a clockwise
 direction.
 
+\par
+\image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
+\image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
+
 void fl_circle(double x, double y, double r)
 
 \par
-\p fl_circle(...) is equivalent to \p fl_arc(...,0,360) but may
+\p fl_circle(x,y,r) is equivalent to \p fl_arc(x,y,r,0,360) but may
 be faster. It must be the \e only thing in the path: if you want
 a circle as part of a complex polygon you must use \p %fl_arc().
 

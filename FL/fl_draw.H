@@ -408,6 +408,9 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
  counter-clockwise from 3 o'clock. If \p end is less than \p start
  then it draws the arc in a clockwise direction.
 
+ \image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
+ \image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
+
  Examples:
  \code
     // Draw an arc of points
@@ -428,7 +431,7 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
  */
 inline void fl_arc(double x, double y, double r, double start, double end) {fl_graphics_driver->arc(x,y,r,start,end); }
 /**
- fl_circle() is equivalent to fl_arc(x,y,r,0,360), but may be faster.
+ fl_circle(x,y,r) is equivalent to fl_arc(x,y,r,0,360), but may be faster.
  
  It must be the \e only thing in the path: if you want a circle as part of
  a complex polygon you must use fl_arc()
