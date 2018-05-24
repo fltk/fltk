@@ -28,12 +28,14 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
 
 #endif
 
-/** the constructor */
+/** the constructor
+\param w, h Width and height of the drawing surface in FLTK units */
 Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) : Fl_Widget_Surface(NULL) {
   platform_surface = Fl_Copy_Surface_Driver::newCopySurfaceDriver(w, h);
   if (platform_surface) driver(platform_surface->driver());
 }
 
+/** the destructor */
 Fl_Copy_Surface::~Fl_Copy_Surface() { delete platform_surface; }
 
 void Fl_Copy_Surface::origin(int x, int y) {platform_surface->origin(x, y);}
