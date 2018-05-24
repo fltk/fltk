@@ -303,6 +303,9 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_graphics_driver-
  \param[in] a1,a2 start and end angles of arc measured in degrees
  counter-clockwise from 3 o'clock. \p a2 must be greater
  than or equal to \p a1.
+
+ \image html  fl_pie_arc_diagram.png "fl_pie() and fl_arc()"
+ \image latex fl_pie_arc_diagram.png "fl_pie() and fl_arc()" width=4cm
  */
 inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_graphics_driver->arc(x,y,w,h,a1,a2); }
 /**
@@ -316,6 +319,9 @@ inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_graphic
  \param[in] a1,a2 start and end angles of arc measured in degrees
  counter-clockwise from 3 o'clock. \p a2 must be greater
  than or equal to \p a1.
+
+ \image html  fl_pie_arc_diagram.png "fl_pie() and fl_arc()"
+ \image latex fl_pie_arc_diagram.png "fl_pie() and fl_arc()" width=4cm
  */
 inline void fl_pie(int x, int y, int w, int h, double a1, double a2) {fl_graphics_driver->pie(x,y,w,h,a1,a2); }
 /** fl_chord declaration is a place holder - the function does not yet exist */
