@@ -1947,8 +1947,6 @@ int Fl::dnd()
   return Fl::screen_driver()->dnd();
 }
 
-#if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warnings
-
 /**
  * Resets marked text.
  *
@@ -1969,13 +1967,11 @@ void Fl::reset_marked_text() {
 /**
   Sets window coordinates and height of insertion point.
 
-  \todo Please explain what exactly this does and how to use it.
+ \see Fl::compose(int& del) for a detailed description.
 */
 void Fl::insertion_point_location(int x, int y, int height) {
   Fl::screen_driver()->insertion_point_location(x, y, height);
 }
-
-#endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warnings
 
 int Fl::event_key(int k) {
   return system_driver()->event_key(k);

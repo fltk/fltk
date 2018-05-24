@@ -140,6 +140,8 @@ public:
 
   static Fl_Screen_Driver *screen_driver();
   static Fl_System_Driver *system_driver();
+  static void reset_marked_text(); // resets marked text
+  static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 
 public: // run time information about compile time configuration
   /** \defgroup cfg_gfx runtime graphics driver configuration */
@@ -197,8 +199,6 @@ public: // should be private!
   static Fl_Window* grab_;
   static int compose_state; // used for dead keys (Windows) or marked text (MacOS)
   static void call_screen_init(); // recompute screen number and dimensions
-  static void reset_marked_text(); // resets marked text
-  static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #endif // FL_DOXYGEN
 
 

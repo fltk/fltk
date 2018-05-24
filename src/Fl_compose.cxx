@@ -50,8 +50,8 @@ int Fl::compose_state = 0;
  marked text, usually underlining it. Widgets can use
  <tt>int Fl::compose_state</tt> <i>after</i> having called Fl::compose(int&)
  to obtain the length in bytes of marked text that always finishes at the
- current insertion point. It's the widget's task to underline marked text.
- Widgets should also call <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS
+ current insertion point. Widgets should also call
+ <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS
  events. Optionally, widgets can also call
  <tt>void Fl::insertion_point_location(int x, int y, int height)</tt> to indicate the window 
  coordinates of the bottom of the current insertion point and the line height. 
@@ -63,7 +63,7 @@ int Fl::compose_state = 0;
  text input will work, but will not signal to the user what text is marked.
  Finally, text editing widgets should call <tt>set_flag(MAC_USE_ACCENTS_MENU);</tt>
  in their constructor if they want to use the feature introduced with Mac OS 10.7 "Lion"
- where pressing and holding a key on the keyboard opens an accented-character menu window.
+ where pressing and holding certain keys on the keyboard opens an accented-character menu window.
  
  <p>Though the current implementation returns immediately, future
  versions may take quite awhile, as they may pop up a window or do
