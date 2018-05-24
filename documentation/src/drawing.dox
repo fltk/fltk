@@ -508,6 +508,10 @@ box. The two angles are measured in degrees counter-clockwise from
 must be greater or equal to \p a1.
 
 \par
+\image html  fl_pie_arc_diagram.png "fl_pie() and fl_arc()"
+\image latex fl_pie_arc_diagram.png "fl_pie() and fl_arc()" width=6cm
+
+\par
 \p %fl_arc() draws a series of lines to approximate the arc.
 Notice that the integer version of \p %fl_arc() has a different
 number of arguments to the other
