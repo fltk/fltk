@@ -118,16 +118,18 @@ Fl_Offscreen Fl_Image_Surface::get_offscreen_before_delete_() {
   return keep;
 }
 
-/** Adapts an Fl_Image_Surface object to the new value of the GUI scale factor.
+/** Adapts the Fl_Image_Surface object to the new value of the GUI scale factor.
+ The Fl_Image_Surface object must not be the current drawing surface.
+ This function is useful only for an object constructed with non-zero \p high_res parameter.
  \version 1.4
  */
-void Fl_Image_Surface::rescale(Fl_Image_Surface*& surface) {
-  Fl_RGB_Image *rgb = surface->image();
+void Fl_Image_Surface::rescale() {
+  Fl_RGB_Image *rgb = image();
   int w, h;
-  surface->printable_rect(&w, &h);
-  delete surface;
-  surface = new Fl_Image_Surface(w, h, 1);
-  Fl_Surface_Device::push_current(surface);
+  printable_rect(&w, &h);
+  delete platform_surface;
+  platform_surface = Fl_Image_Surface_Driver::newImageSurfaceDriver(w, h, 1, 0);
+  Fl_Surface_Device::push_current(this);
   rgb->draw(0,0);
   Fl_Surface_Device::pop_current();
   delete rgb;
@@ -170,7 +172,7 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
  <tr> <td>fl_begin_offscreen(off)</td><td>Fl_Surface_Device::push_current(surface)</td> </tr>
  <tr> <td>fl_end_offscreen()</td><td>Fl_Surface_Device::pop_current()</td> </tr>
  <tr> <td>fl_copy_offscreen(x,y,w,h, off, sx,sy)</td><td>fl_copy_offscreen(x,y,w,h, surface->offscreen(), sx,sy)</td> </tr>
- <tr> <td>fl_rescale_offscreen(off)</td><td>Fl_Image_Surface::rescale(surface)</td> </tr>
+ <tr> <td>fl_rescale_offscreen(off)</td><td>surface->rescale()</td> </tr>
  <tr> <td>fl_delete_offscreen(off)</td><td>delete surface</td> </tr>
  </table>
    */
@@ -229,7 +231,7 @@ void fl_rescale_offscreen(Fl_Offscreen &ctx) {
     }
   }
   if (i >= count_offscreens) return;
-  Fl_Image_Surface::rescale(offscreen_api_surface[i]);
+  offscreen_api_surface[i]->rescale();
   ctx = offscreen_api_surface[i]->offscreen();
 }
 
