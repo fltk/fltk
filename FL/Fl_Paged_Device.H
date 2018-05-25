@@ -39,8 +39,6 @@ class FL_EXPORT Fl_Paged_Device : public Fl_Widget_Surface {
 protected:
   /** \brief The constructor */
   Fl_Paged_Device() : Fl_Widget_Surface(NULL) {};
-  /** A platform should implement this function to support printing via the Fl_Printer class. */
-  static Fl_Paged_Device* newPrinterDriver(void);
 public:
   /**
    \brief Possible page formats.

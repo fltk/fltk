@@ -31,6 +31,9 @@
 Fl_Printer::Fl_Printer(void) {
   printer = NULL;
 }
+Fl_Paged_Device* Fl_Printer::newPrinterDriver(void) {
+  return NULL;
+}
 int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
 int Fl_Printer::begin_page(void) {return 1;}
 int Fl_Printer::printable_rect(int *w, int *h) {return 1;}
@@ -130,7 +133,7 @@ const char *Fl_Printer::property_cancel = "Cancel";
 
 
 Fl_Printer::Fl_Printer(void) {
-  printer = Fl_Paged_Device::newPrinterDriver();
+  printer = Fl_Printer::newPrinterDriver();
   driver(printer->driver());
 }
 

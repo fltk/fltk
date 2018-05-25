@@ -87,6 +87,8 @@
 class FL_EXPORT Fl_Printer : public Fl_Paged_Device {
 private:
   Fl_Paged_Device *printer;
+  /** Each platform implements this function its own way */
+  static Fl_Paged_Device* newPrinterDriver(void);
 public:
   /** The constructor */
   Fl_Printer(void);
@@ -104,7 +106,7 @@ public:
   void end_job (void);
   void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   void set_current(void);
- 
+
   /** \name These attributes are useful for the Linux/Unix platform only.
    \{
    */  

@@ -31,7 +31,7 @@ class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
   virtual int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
 };
 
-Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
+Fl_Paged_Device* Fl_Printer::newPrinterDriver(void)
 {
   return new Fl_Posix_Printer_Driver();
 }

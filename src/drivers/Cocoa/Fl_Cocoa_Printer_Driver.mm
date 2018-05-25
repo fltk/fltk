@@ -17,6 +17,7 @@
 //
 
 #include <FL/Fl_Paged_Device.H>
+#include <FL/Fl_Printer.H>
 #include <FL/Fl_Window_Driver.H>
 #include <FL/Fl_Screen_Driver.H>
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
@@ -47,7 +48,7 @@ typedef OSStatus
 
 /** Support for printing on the Apple OS X platform */
 class Fl_Cocoa_Printer_Driver : public Fl_Paged_Device {
-  friend class Fl_Paged_Device;
+  friend class Fl_Printer;
 private:
   float scale_x;
   float scale_y;
@@ -81,7 +82,7 @@ Fl_Cocoa_Printer_Driver::Fl_Cocoa_Printer_Driver(void)
   driver(new Fl_Quartz_Printer_Graphics_Driver);
 }
 
-Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
+Fl_Paged_Device* Fl_Printer::newPrinterDriver(void)
 {
   return new Fl_Cocoa_Printer_Driver();
 }

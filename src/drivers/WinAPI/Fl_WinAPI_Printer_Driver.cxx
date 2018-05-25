@@ -18,6 +18,7 @@
 
 #include "../GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/Fl_Paged_Device.H>
+#include <FL/Fl_Printer.H>
 #include <FL/fl_ask.H>
 #include <FL/math.h>
 #include <FL/fl_draw.H>
@@ -27,7 +28,7 @@ extern HWND fl_window;
 
 /** Support for printing on the Windows platform */
 class Fl_WinAPI_Printer_Driver : public Fl_Paged_Device {
-  friend class Fl_Paged_Device;
+  friend class Fl_Printer;
 private:
   int   abortPrint;
   PRINTDLG      pd;
@@ -57,7 +58,7 @@ Fl_WinAPI_Printer_Driver::Fl_WinAPI_Printer_Driver(void) : Fl_Paged_Device() {
   driver(new Fl_GDI_Printer_Graphics_Driver);
 }
 
-Fl_Paged_Device* Fl_Paged_Device::newPrinterDriver(void)
+Fl_Paged_Device* Fl_Printer::newPrinterDriver(void)
 {
   return new Fl_WinAPI_Printer_Driver();
 }
