@@ -38,6 +38,7 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 }
 
 #ifdef FL_CFG_GFX_QUARTZ
+#include <FL/Fl_Gl_Window_Driver.H>
 
 // convert BGRA to RGB and also exchange top and bottom
 static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)
@@ -67,7 +68,8 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
   if (factor != 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
-  glw->flush(); // forces a GL redraw, necessary for the glpuzzle demo
+  Fl_Cocoa_Gl_Window_Driver *driver = (Fl_Cocoa_Gl_Window_Driver*)glw->gl_driver();
+  driver->flush_context(); // to capture also the overlay and for directGL demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -85,6 +87,7 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
   baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
   Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, 3 * w);
   img->alloc_array = 1;
+  driver->flush_context();
   return img;
 }
 

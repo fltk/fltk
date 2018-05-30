@@ -59,7 +59,6 @@ public:
   virtual void swap_buffers() {}
   virtual void resize(int is_a_resize, int w, int h) {}
   virtual char swap_type();
-  virtual void flush_context() {}
   virtual int flush_begin(char& valid_f) {return 0;}
   virtual void hide_overlay(void *& overlay) {}
   static Fl_Gl_Choice *find_begin(int m, const int *alistp);
@@ -101,6 +100,7 @@ class NSOpenGLPixelFormat;
 
 class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
+  friend class Fl_OpenGL_Display_Device;
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
   virtual float pixels_per_unit();
   virtual void before_show(int& need_redraw);
@@ -110,7 +110,7 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void swap_buffers();
   virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();
-  virtual void flush_context();
+  void flush_context();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
   virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
   virtual void set_gl_context(Fl_Window* w, GLContext context);

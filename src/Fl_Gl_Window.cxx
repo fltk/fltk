@@ -238,7 +238,6 @@ void Fl_Gl_Window::flush() {
       }
 
     }
-    pGlWindowDriver->flush_context();
     if (overlay==this && SWAP_TYPE != SWAP) { // fake overlay in front buffer
       glDrawBuffer(GL_FRONT);
       draw_overlay();
@@ -588,10 +587,8 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
     glMatrixMode(matrixmode);
     glRasterPos3f(pos[0], pos[1], pos[2]);              // restore original glRasterPos
   }
-  /* // nothing to do here under Cocoa because [NSOpenGLContext -flushBuffer] done later replaces it
    else
-   aglSwapBuffers((AGLContext)context_);
-   */
+     flush_context();//aglSwapBuffers((AGLContext)context_);
 }
 
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int unused, int also) {
