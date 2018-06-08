@@ -295,7 +295,7 @@ int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned s
 void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
 {
   float old_f = this->scale(screen);
-  if (f == old_f) return;
+  //if (f == old_f) return;
   this->scale(screen, f);
   Fl_Graphics_Driver *d = Fl_Display_Device::display_device()->driver();
   d->scale(f);
@@ -428,7 +428,7 @@ int Fl_Screen_Driver::scale_handler(int event)
 
 
 // use the startup time scaling value
-void Fl_Screen_Driver::use_startup_scale_factor()
+float Fl_Screen_Driver::use_startup_scale_factor()
 {
   float factor;
   char *p = 0;
@@ -441,9 +441,7 @@ void Fl_Screen_Driver::use_startup_scale_factor()
   else {
     factor = desktop_scale_factor();
   }
-  if (factor) {
-    for (int i = 0; i < screen_count(); i++)  scale(i, factor);
-  }
+  return factor;
 }
 
 
@@ -455,7 +453,8 @@ void Fl_Screen_Driver::open_display()
     been_here = true;
     screen_count(); // initialize, but ignore return value
     if (rescalable()) {
-      use_startup_scale_factor();
+      float factor = use_startup_scale_factor();
+      for (int i = 0; i < screen_count(); i++)  scale(i, factor);
       Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
