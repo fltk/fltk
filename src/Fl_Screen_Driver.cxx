@@ -451,10 +451,10 @@ void Fl_Screen_Driver::open_display()
   static bool been_here = false;
   if (!been_here) {
     been_here = true;
-    screen_count(); // initialize, but ignore return value
+    int scount = screen_count(); // keep here
     if (rescalable()) {
       float factor = use_startup_scale_factor();
-      if (factor) for (int i = 0; i < screen_count(); i++)  scale(i, factor);
+      if (factor) for (int i = 0; i < scount; i++)  scale(i, factor);
       Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
