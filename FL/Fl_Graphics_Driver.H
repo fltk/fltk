@@ -79,6 +79,7 @@ struct Fl_Fontdesc;
  */
 class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Surface_Device;
+  friend class Fl_Display_Device;
   friend class Fl_Screen_Driver;
   friend class Fl_Window_Driver;
   friend class Fl_Pixmap;
@@ -146,17 +147,11 @@ private:
   // some platforms may need to reimplement this
   virtual void set_current_();
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
-protected:
-  /** Sets the current value of the scaling factor */
-  virtual void scale(float f) { scale_ = f; }
-public:
-  // The following functions create the various graphics drivers that are required
-  // for core operations. They must be implemented as members of Fl_Graphics_Driver,
-  // but located in the device driver module that is linked to the core library
-  /** Instantiate the graphics driver adequate to draw to the platform's display driver.
-   Each platform implements this method its own way.
-   */
+  // The following function creates the graphics driver that is required
+  // for core operations. It must be implemented as a member of Fl_Graphics_Driver,
+  // but located in the device driver module that is linked to the core library.
   static Fl_Graphics_Driver *newMainGraphicsDriver();
+public:
   /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
   /** Features that a derived class may possess.  */
@@ -166,6 +161,8 @@ public:
   } driver_feature;
 
 protected:
+  /** Sets the current value of the scaling factor */
+  virtual void scale(float f) { scale_ = f; }
   int fl_clip_state_number; ///< For internal use by FLTK
   static const matrix m0; ///< For internal use by FLTK
   Fl_Font font_; ///< current font
