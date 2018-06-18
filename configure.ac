@@ -868,7 +868,7 @@ case $host_os_gui in
 	CXXFLAGS="-mwindows $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
-	LIBS="$LIBS -lole32 -luuid -lcomctl32"
+	LIBS="$LIBS -lole32 -luuid -lcomctl32 -lws2_32"
 	BUILD="WIN"
 	if test "x$with_optim" = x; then
 	    dnl Avoid -Os optimization on Cygwin/MinGW

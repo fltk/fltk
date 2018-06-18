@@ -43,6 +43,8 @@
 #include <windows.h>
 #include <ole2.h>
 #include <shellapi.h>
+// Some versions of MinGW now require us to explicitly include winerror to get S_OK defined
+#include <winerror.h>
 #include <math.h> // for ceil()
 
 void fl_free_fonts(void);
