@@ -82,8 +82,9 @@ static char *svg_inflate(const char *fname) {
   FILE *in = fl_fopen(fname, "r");
   if (!in) return NULL;
   unsigned char header[2];
-  if (fread(header, 2, 1, in) < 1) {	// FIXME: can't read file header
-    header[0] = header[1] = 0;		// FIXME: continuing anyway ?
+  if (fread(header, 2, 1, in) < 1) {
+    fclose(in);
+    return NULL;
   }
   int direct = (header[0] != 0x1f || header[1] != 0x8b);
   fseek(in, 0, SEEK_END);
