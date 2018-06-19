@@ -504,7 +504,7 @@ if (USE_SDL)
 endif(USE_SDL)
 
 if (WIN32)
-    list (APPEND OPTIONAL_LIBS comctl32)
+    list (APPEND OPTIONAL_LIBS comctl32 ws2_32)
 endif (WIN32)
 
 if (FLTK_HAVE_CAIRO)

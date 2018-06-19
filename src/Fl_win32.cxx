@@ -134,6 +134,12 @@ static bool initial_clipboard = true;
 # define SOCKET int
 #endif
 
+// Disable dynamic linking/loading of Winsock DLL (STR #3454)
+// *FIXME* The old code should be entirely removed when the issue
+// is finally resolved.
+
+#if (0) // *FIXME* dynamic loading of Winsock DLL (ws2_32.dll)
+
 // note: winsock2.h has been #include'd in Fl.cxx
 #define WSCK_DLL_NAME "WS2_32.DLL"
 
@@ -154,6 +160,21 @@ static HMODULE get_wsock_mod() {
   }
   return s_wsock_mod;
 }
+
+#else // static linking of ws2_32.dll
+
+// *FIXME* These defines and the dummy function get_wsock_mod() must be
+// *removed* when the issue (STR #3454) is finally resolved. The code that
+// uses these defines and get_wsock_mod() must be modified to use the
+// official socket interface (select() and FL_ISSET).
+
+#define fl_wsk_fd_is_set FD_ISSET
+#define s_wsock_select select
+static int get_wsock_mod() {
+  return 1;
+}
+
+#endif // dynamic/static linking of ws2_32.dll (see above and STR #3454)
 
 /*
  * Dynamic linking of imm32.dll
