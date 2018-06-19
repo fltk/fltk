@@ -52,6 +52,17 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 extern int fl_send_system_handlers(void *e);
 
 
+/**
+ * Create the screen driver.
+ */
+Fl_Android_Screen_Driver::Fl_Android_Screen_Driver() :
+  super(),
+  pContentChanged(false),
+  pClearDesktop(false)
+{
+}
+
+
 int Fl_Android_Screen_Driver::handle_app_command()
 {
   // get the command
@@ -242,9 +253,23 @@ double Fl_Android_Screen_Driver::wait(double time_to_wait)
     fl_unlock_function();
     handle_queued_events(time_to_wait);
     fl_lock_function();
+    // FIXME: kludge to erase a window after it was hidden
+    if (pClearDesktop && fl_graphics_driver) {
+      ((Fl_Android_Graphics_Driver*)fl_graphics_driver)->make_current(nullptr);
+      fl_rectf(0, 0, 600, 800, FL_BLACK);
+      pClearDesktop = false;
+      pContentChanged = true;
+    }
     Fl::flush();
   } else {
     // if there is wait time, show the pending changes and then handle the events
+    // FIXME: kludge to erase a window after it was hidden
+    if (pClearDesktop && fl_graphics_driver) {
+      ((Fl_Android_Graphics_Driver*)fl_graphics_driver)->make_current(nullptr);
+      fl_rectf(0, 0, 600, 800, FL_BLACK);
+      pClearDesktop = false;
+      pContentChanged = true;
+    }
     Fl::flush();
     if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
       time_to_wait = 0.0;
@@ -264,9 +289,9 @@ void Fl_Android_Screen_Driver::flush()
 {
   Fl_Screen_Driver::flush();
   // FIXME: do this only if anything actually changed on screen (need to optimize)!
-  if (pScreenContentChanged) {
+  if (pContentChanged) {
     if (Fl_Android_Application::copy_screen())
-      pScreenContentChanged = false;
+      pContentChanged = false;
   }
 }
 

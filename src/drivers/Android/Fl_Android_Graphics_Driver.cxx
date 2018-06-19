@@ -57,25 +57,35 @@ Fl_Android_Graphics_Driver::~Fl_Android_Graphics_Driver()
 
 void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
 {
+  // In the special case of win==0, we activate the desktop (the screen
+  // background) for drawing and clip out all visible windows
+
   // The Stride is the offset between lines in the graphics buffer
   pStride = Fl_Android_Application::graphics_buffer().stride;
   // Bits is the memory address of the top left corner of the window
-  pBits = ((uint16_t*)(Fl_Android_Application::graphics_buffer().bits))
-          + win->x_root() + pStride * win->y_root();
+  pBits = ((uint16_t*)(Fl_Android_Application::graphics_buffer().bits));
+  if (win) pBits += win->x_root() + pStride * win->y_root();
 
   // TODO: set the clipping area
   // set the clipping area to the physical screen size in window coordinates
-  pWindowRegion.set(-win->x(), -win->y(), 600, 800);
-  pWindowRegion.intersect_with(Fl_Rect_Region(0, 0, win->w(), win->h()));
+  if (win) {
+    pWindowRegion.set(-win->x(), -win->y(), 600, 800);
+    pWindowRegion.intersect_with(Fl_Rect_Region(0, 0, win->w(), win->h()));
+  } else {
+    pWindowRegion.set(0, 0, 600, 800);
+  }
 
   pDesktopWindowRegion.set(pWindowRegion);
 
   // remove all window rectangles that are positioned on top of this window
   // TODO: this region is expensive to calculate. Cache it for each window and recalculate when windows move, show, hide, or change order
+  // TODO: this is where we also need to subtract any possible window decoration, like the window title and drag bar, resizing edges, etc.
   Fl_Window *wTop = Fl::first_window();
+  int wx = win ? win->x() : 0;
+  int wy = win ? win->y() : 0;
   while (wTop) {
     if (wTop==win) break;
-    Fl_Rect_Region r(wTop->x()-win->x(), wTop->y()-win->y(), wTop->w(), wTop->h());
+    Fl_Rect_Region r(wTop->x()-wx, wTop->y()-wy, wTop->w(), wTop->h());
     pDesktopWindowRegion.subtract(r);
     wTop = Fl::next_window(wTop);
   }

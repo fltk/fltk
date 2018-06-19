@@ -367,7 +367,7 @@ void Fl_Complex_Region::compress()
   if (!pSubregion) return;
 
   // remove all empty regions, because the really don't add anything (literally)
-  print("Compress");
+  //  print("Compress");
   Fl_Complex_Region *rgn = pSubregion;
   while (rgn && rgn->is_empty()) {
     pSubregion = rgn->next();
@@ -460,7 +460,7 @@ Fl_Complex_Region *Fl_Complex_Region::add_subregion()
 // -----------------------------------------------------------------------------
 
 /**
- * Returns an interator object for loops that traverse the entire region tree.
+ * Returns an iterator object for loops that traverse the entire region tree.
  * C++11 interface to range-based loops.
  * @return Iterator pointing to the first element.
  */
@@ -640,7 +640,7 @@ Fl_Complex_Region::Overlapping::OverlappingIterator::OverlappingIterator(
 
 /**
  * Compare two iterator.
- * This is used by C++11 range0based for loops to find the end of the range.
+ * This is used by C++11 range-based for loops to find the end of the range.
  * @param other
  * @return
  */

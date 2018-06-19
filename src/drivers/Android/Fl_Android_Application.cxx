@@ -389,7 +389,8 @@ void *Fl_Android_Application::thread_entry(void* param)
  * FIXME: everything is currently hardcoded to an 600x800 resolution
  * TODO: react to screen changes
  */
-void Fl_Android_Application::allocate_screen() {
+void Fl_Android_Application::allocate_screen()
+{
   pApplicationWindowBuffer.bits = calloc(600*800, 2); // one uint16_t per pixel
   pApplicationWindowBuffer.width = 600;
   pApplicationWindowBuffer.height = 800;

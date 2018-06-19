@@ -26,6 +26,7 @@
 #define FL_ANDROID_SCREEN_DRIVER_H
 
 #include <FL/Fl_Screen_Driver.H>
+#include <FL/Fl_Rect.H>
 #include <android/input.h>
 //#include <windows.h>
 
@@ -38,6 +39,8 @@ class Fl_Window;
 
 class FL_EXPORT Fl_Android_Screen_Driver : public Fl_Screen_Driver 
 {
+  // easy access to the super class
+  typedef Fl_Screen_Driver super;
 
 #if 0
   // No, this is not how we will implement this.
@@ -77,7 +80,7 @@ private:
   int handle_mouse_event(AInputQueue*, AInputEvent*);
 
 public:
-  Fl_Android_Screen_Driver() : Fl_Screen_Driver(), pScreenContentChanged(false) { }
+  Fl_Android_Screen_Driver();
 
   virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) override;
   virtual void repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) override;
@@ -160,8 +163,8 @@ public:
 #endif
 
 #endif
-  bool pScreenContentChanged;
-
+  bool pContentChanged;
+  bool pClearDesktop;
 };
 
 #endif // FL_ANDROID_SCREEN_DRIVER_H

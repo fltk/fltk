@@ -28,6 +28,7 @@ CubeView::CubeView(int x,int y,int w,int h,const char *l)
             : Fl_Box(x,y,w,h,l)
 #endif /* HAVE_GL */
 {
+    Fl::use_high_res_GL(1);
     vAng = 0.0;
     hAng=0.0;
     size=10.0;

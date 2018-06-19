@@ -103,13 +103,14 @@ void Fl_Android_Window_Driver::expose_all()
     win->damage(FL_DAMAGE_EXPOSE);
     win->redraw();
   }
+  ((Fl_Android_Screen_Driver*)Fl::screen_driver())->pClearDesktop = true;
 }
 
 
 void Fl_Android_Window_Driver::make_current()
 {
   // FXIME: that is quite a cludge:
-  ((Fl_Android_Screen_Driver*)Fl::screen_driver())->pScreenContentChanged = true;
+  ((Fl_Android_Screen_Driver*)Fl::screen_driver())->pContentChanged = true;
 
   Fl_Android_Graphics_Driver *gd = dynamic_cast<Fl_Android_Graphics_Driver*>(fl_graphics_driver);
   if (gd) {

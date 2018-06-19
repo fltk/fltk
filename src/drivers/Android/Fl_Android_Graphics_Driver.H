@@ -83,9 +83,10 @@ protected:
   /** see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D) */
   virtual void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) override;
 #if 0
+  // TODO: where are begine_, end_, create_, and delete_offscreen? Answer: Fl_Image_Surface - you know what to do!
   virtual void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
-
   /** Support function for image drawing */
+  // TODO: these seem to be only needed if FL_Image and Fl_Pixmap store alpha values seperatley.
   virtual Fl_Bitmask create_bitmask(int w, int h, const uchar *array) {return 0; }
 #endif
   // Support function for image drawing
@@ -232,6 +233,7 @@ public:
   /** Set the current Fl_Font_Descriptor */
   // super: virtual void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
 #if 0
+  // FIXME: do we need to implement any of the functions below?
   /** Sets the value of the driver-specific graphics context. */
   virtual void gc(void*) {}
   /** Returns the driver-specific graphics context, of NULL if there's none. */
