@@ -16,10 +16,6 @@
 //     http://www.fltk.org/str.php
 //
 
-// *FIXME* Do we really need config_lib.h ? We should NOT!
-// *FIXME* We should not even need config.h in this file. AlbrechtS.
-// #include "../../config_lib.h"
-
 #include "Fl_Darwin_System_Driver.H"
 #include <FL/platform.H>
 #include <FL/Fl.H>
