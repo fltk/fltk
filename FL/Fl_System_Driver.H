@@ -46,12 +46,18 @@ class Fl_Widget;
   */
 class FL_EXPORT Fl_System_Driver {
   friend class Fl;
+public:
+  struct Keyname {
+    unsigned int key;
+    const char* name;
+  };
 protected:
   // implement once for each platform
   static Fl_System_Driver *newSystemDriver();
   Fl_System_Driver();
-  struct Keyname {unsigned int key; const char* name;};
-  static Keyname table[];
+  // key_table and key_table_size are used in fl_shortcut to translate key names
+  Keyname *key_table;
+  int key_table_size;
 public:
   virtual ~Fl_System_Driver();
   // These flags are useful after calling XParseGeometry(). They indicate which of its arguments

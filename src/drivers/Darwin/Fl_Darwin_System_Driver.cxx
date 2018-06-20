@@ -16,8 +16,10 @@
 //     http://www.fltk.org/str.php
 //
 
+// *FIXME* Do we really need config_lib.h ? We should NOT!
+// *FIXME* We should not even need config.h in this file. AlbrechtS.
+// #include "../../config_lib.h"
 
-#include "../../config_lib.h"
 #include "Fl_Darwin_System_Driver.H"
 #include <FL/platform.H>
 #include <FL/Fl.H>
@@ -37,6 +39,47 @@
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
+
+// This key table is used for the Darwin system driver. It is defined here
+// "static" and assigned in the constructor to avoid static initialization
+// race conditions. It is used in fl_shortcut.cxx.
+//
+// This table must be in numeric order by fltk (X) keysym number:
+
+Fl_System_Driver::Keyname darwin_key_table[] = {
+  //              v - this column may contain UTF-8 characters
+  {' ',           "Space"},
+  {FL_BackSpace,  "\xe2\x8c\xab"}, // erase to the left
+  {FL_Tab,        "\xe2\x87\xa5"}, // rightwards arrow to bar
+  {0xff0b,        "\xe2\x8c\xa6"}, // erase to the right
+  {FL_Enter,      "\xe2\x86\xa9"}, // leftwards arrow with hook
+  {FL_Pause,      "Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,     "\xe2\x90\x9b"},
+  {FL_Home,       "\xe2\x86\x96"}, // north west arrow
+  {FL_Left,       "\xe2\x86\x90"}, // leftwards arrow
+  {FL_Up,         "\xe2\x86\x91"}, // upwards arrow
+  {FL_Right,      "\xe2\x86\x92"}, // rightwards arrow
+  {FL_Down,       "\xe2\x86\x93"}, // downwards arrow
+  {FL_Page_Up,    "\xe2\x87\x9e"}, // upwards arrow with double stroke
+  {FL_Page_Down,  "\xe2\x87\x9f"}, // downwards arrow with double stroke
+  {FL_End,        "\xe2\x86\x98"}, // south east arrow
+  {FL_Print,      "Print"},
+  {FL_Insert,     "Insert"},
+  {FL_Menu,       "Menu"},
+  {FL_Num_Lock,   "Num_Lock"},
+  {FL_KP_Enter,   "\xe2\x8c\xa4"}, // up arrow head between two horizontal bars
+  {FL_Shift_L,    "Shift_L"},
+  {FL_Shift_R,    "Shift_R"},
+  {FL_Control_L,  "Control_L"},
+  {FL_Control_R,  "Control_R"},
+  {FL_Caps_Lock,  "\xe2\x87\xaa"}, // upwards white arrow from bar
+  {FL_Meta_L,     "Meta_L"},
+  {FL_Meta_R,     "Meta_R"},
+  {FL_Alt_L,      "Alt_L"},
+  {FL_Alt_R,      "Alt_R"},
+  {FL_Delete,     "\xe2\x8c\xa7"}  // x in a rectangle box
+};
 
 const char *Fl_Darwin_System_Driver::shift_name() {
   return "⇧\\"; // "\xe2\x87\xa7\\"; // U+21E7 (upwards white arrow)
@@ -63,6 +106,9 @@ Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 
 Fl_Darwin_System_Driver::Fl_Darwin_System_Driver() : Fl_Posix_System_Driver() {
   if (fl_mac_os_version == 0) fl_mac_os_version = calc_mac_os_version();
+  // initialize key table
+  key_table = darwin_key_table;
+  key_table_size = sizeof(darwin_key_table)/sizeof(*darwin_key_table);
 }
 
 int Fl_Darwin_System_Driver::single_arg(const char *arg) {

@@ -517,6 +517,30 @@ int Fl_X11_System_Driver::utf8locale() {
   return ret;
 }
 
+#if !defined(FL_DOXYGEN)
+
+const char *Fl_X11_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
+{
+  const char* q;
+  if (key == FL_Enter || key == '\r') q = "Enter";  // don't use Xlib's "Return":
+  else if (key > 32 && key < 0x100) q = 0;
+  else q = XKeysymToString(key);
+  if (!q) {
+    p += fl_utf8encode(fl_toupper(key), p);
+    *p = 0;
+    return buf;
+  }
+  if (p > buf) {
+    strcpy(p,q);
+    return buf;
+  } else {
+    if (eom) *eom = q;
+    return q;
+  }
+}
+
+#endif // !defined(FL_DOXYGEN)
+
 //
 // End of "$Id$".
 //

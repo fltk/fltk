@@ -4,7 +4,7 @@
 // Definition of Posix system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -24,7 +24,11 @@
 
 class Fl_X11_System_Driver : public Fl_Posix_System_Driver {
 public:
-  Fl_X11_System_Driver() : Fl_Posix_System_Driver() {}
+  Fl_X11_System_Driver() : Fl_Posix_System_Driver() {
+    // X11 system driver does not use a key table
+    key_table = NULL;
+    key_table_size = 0;
+  }
   virtual void display_arg(const char *arg);
   virtual int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
   virtual int clocale_printf(FILE *output, const char *format, va_list args);
