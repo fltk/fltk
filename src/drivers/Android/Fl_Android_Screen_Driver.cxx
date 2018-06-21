@@ -483,6 +483,27 @@ void Fl_Android_Screen_Driver::beep(int type)
 
 }
 
+/**
+ * Get the current mouse coordinates.
+ *
+ * This is used, among other things, to position the FLTK standard dialogs in
+ * a way that makes it easy to click the most common button. For an Android
+ * touch screen, this makes no sense at all, which is why we return the center
+ * of the screen for now.
+ *
+ * TODO: rethink the dialog positioning scheme for touch devices.
+ *
+ * @param [out] x
+ * @param [out] y
+ * @return
+ */
+int Fl_Android_Screen_Driver::get_mouse(int &x, int &y)
+{
+  x = 600/2;
+  y = 800/2;
+  return 1;
+}
+
 //
 // End of "$Id$".
 //

@@ -126,7 +126,9 @@ public:
   virtual int compose(int &del);
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
   Fl_RGB_Image *read_win_rectangle_unscaled(int X, int Y, int w, int h);
-  virtual int get_mouse(int &x, int &y);
+#endif
+  virtual int get_mouse(int &x, int &y) override;
+#if 0
   virtual void enable_im();
   virtual void disable_im();
   virtual void open_display_platform();

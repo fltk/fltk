@@ -49,12 +49,29 @@ void Fl_Android_Window_Driver::show()
   if (!shown()) {
     // make window
     fl_open_display();
+    if (pWindow->parent() && !Fl_X::i(pWindow->window())) {
+      pWindow->set_visible();
+      return;
+    }
     pWindow->set_visible();
     Fl_X *x = new Fl_X;
     x->w = pWindow;
     i(x);
     x->next = Fl_X::first;
     Fl_X::first = x;
+    // position window
+    // TODO: we want to scale the screen to hold all windows
+    // TODO: we want to allow for screen size hints to make apps look perfect, even if the screen is rotated
+    if (force_position()) {
+      // TODO: make sure that we are on a screen if this is just a regular window
+    } else {
+      // Center any new window on screen
+      pWindow->position(
+              (600-pWindow->w())/2,
+              (800-pWindow->h())/2
+      );
+    }
+    // show window or defer showing window
     if (Fl_Android_Application::native_window()) {
       pWindow->redraw();
     } else {
@@ -62,7 +79,8 @@ void Fl_Android_Window_Driver::show()
     }
   } else {
     // bring window to front
-    Fl::first_window(pWindow); // TODO: does this really work?
+    if (!pWindow->parent())
+      Fl::first_window(pWindow); // TODO: does this really work?
     expose_all();
   }
 }

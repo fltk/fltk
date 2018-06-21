@@ -261,6 +261,8 @@ int xmain(int argc, char **argv)
   - ...::line(...) has round ing issues (see rounded box type)
   - grab() not working when leaving window (adjuster...)
   - scrolling if implemented as a complete redraw. Must implement real scrolling
+  - the 'hotspot' idea to position dialogs under the mouse cursor makes little sense on touch screen devices
+  - fix screen when keyboard pops up in front of the text cursor or input field (temporarily shift up?)
 
 
 test/CubeMain.cxx
@@ -335,18 +337,15 @@ test/utf8.cxx
 test/keyboard.cxx
 test/windowfocus.cxx
 
-  * test/ask.cxx          :
-    * fix popup position for dialogs
-    * fix screen when keyboard pops up in fron of the text cursor or input field
-
+  * test/ask.cxx          : + 'ask' works
+  * test/button.cxx       : + 'button' works, including beep
   * test/pack.cxx         : + 'pack' works
   * test/adjuster.cxx     : + 'adjuster' works
   * test/arc.cxx          : + 'arc' works as expected
   * test/minimum.cxx      : + 'minimum' works
   * test/boxtype.cxx      : + 'boxtype' works
-  * test/button.cxx       : + 'button' works, including beep
   * test/buttons.cxx      : + 'buttons' works
-  * test/color_chooser.cxx:+ 'color_chooser' works
+  * test/color_chooser.cxx: + 'color_chooser' works
   * test/symbols.cxx      : + 'symbols' working as expected
   * test/hello.cxx        : + 'hello' works fine, italics, shadow, etc.
   * test/label.cxx        : + 'label' works
