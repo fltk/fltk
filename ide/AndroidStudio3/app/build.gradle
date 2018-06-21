@@ -7,6 +7,11 @@ apply plugin: 'com.android.application'
          applicationId 'org.fltk.android_hello'
          minSdkVersion 14
          targetSdkVersion 25
+         externalNativeBuild {
+             cmake {
+                 arguments '-DANDROID_STL=c++_shared'
+             }
+         }
      }
      buildTypes {
          release {
