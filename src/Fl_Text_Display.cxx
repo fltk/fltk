@@ -179,6 +179,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   box(FL_DOWN_FRAME);
   set_flag(SHORTCUT_LABEL);
+  clear_flag(NEEDS_KEYBOARD);
 
   end();
 }

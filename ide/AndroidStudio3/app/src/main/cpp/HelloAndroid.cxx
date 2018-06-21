@@ -17,115 +17,78 @@
 
 #if 1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <FL/Fl.H>
+#include <FL/Fl_Value_Input.H> // necessary for bug in mingw32?
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Hor_Value_Slider.H>
+#include <FL/Fl_Toggle_Button.H>
+#include <FL/Fl_Input.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Output.H>
+#include <FL/Fl_Multiline_Output.H>
 
-#include <FL/fl_ask.H>
+Fl_Output *text;
+Fl_Multiline_Output *text2;
+Fl_Input *input;
+Fl_Value_Slider *fonts;
+Fl_Value_Slider *sizes;
+Fl_Double_Window *window;
 
-void update_input_text(Fl_Widget* o, const char *input) {
-  if (input) {
-    o->copy_label(input);
-    o->redraw();
-  }
+void font_cb(Fl_Widget *,void *) {
+  text->textfont(int(fonts->value()));
+  text->redraw();
+  text2->textfont(int(fonts->value()));
+  text2->redraw();
 }
 
-void rename_me(Fl_Widget*o) {
-  const char *input = fl_input("Input:", o->label());
-  update_input_text(o, input);
+void size_cb(Fl_Widget *,void *) {
+  text->textsize(int(sizes->value()));
+  text->redraw();
+  text2->textsize(int(sizes->value()));
+  text2->redraw();
 }
 
-void rename_me_pwd(Fl_Widget*o) {
-  const char *input = fl_password("Input PWD:", o->label());
-  update_input_text(o, input);
+void input_cb(Fl_Widget *,void *) {
+  text->value(input->value());
+  text2->value(input->value());
 }
 
-void window_callback(Fl_Widget*, void*) {
-  int hotspot = fl_message_hotspot();
-  fl_message_hotspot(0);
-  fl_message_title("note: no hotspot set for this dialog");
-  int rep = fl_choice("Are you sure you want to quit?",
-                      "Cancel", "Quit", "Dunno");
-  fl_message_hotspot(hotspot);
-  if (rep==1)
-    exit(0);
-  else if (rep==2)
-    fl_message("Well, maybe you should know before we quit.");
-}
-/*
-  This timer callback shows a message dialog (fl_choice) window
-  every 5 seconds to test "recursive" common dialogs.
-
-  The timer can be stopped by clicking the button "Stop these funny popups"
-  or pressing the Enter key. As it is currently implemented, clicking the
-  "Close" button will reactivate the popups (only possible if "recursive"
-  dialogs are enabled, see below).
-
-  Note 1: This dialog box is blocked in FLTK 1.3.x if another common dialog
-  is already open because the window used is a static (i.e. permanently
-  allocated) Fl_Window instance. This should be fixed in FLTK 1.4.0.
-  See STR #334 (sic !) and also STR #2751 ("Limit input field characters").
-*/
-void timer_cb(void *) {
-
-  static int stop = 0;
-  static const double delta = 5.0;
-
-  Fl_Box *message_icon = (Fl_Box *)fl_message_icon();
-
-  Fl::repeat_timeout(delta, timer_cb);
-
-  if (stop == 1) {
-    message_icon->color(FL_WHITE);
-    return;
-  }
-
-  // Change the icon box color:
-  Fl_Color c = message_icon->color();
-  c = (c+1) % 32;
-  if (c == message_icon->labelcolor()) c++;
-  message_icon->color((Fl_Color)c);
-
-  // pop up a message:
-  stop = fl_choice("Timeout. Click the 'Close' button.\n"
-                           "Note: this message was blocked in FLTK 1.3\n"
-                           "if another message window is open.\n"
-                           "This *should* be fixed in FLTK 1.4.0!\n"
-                           "This message should pop up every 5 seconds.",
-                   "Close", "Stop these funny popups", NULL);
-}
 int main(int argc, char **argv) {
-  char buffer[128] = "Test text";
-  char buffer2[128] = "MyPassword";
+  window = new Fl_Double_Window(400,400);
 
-  // This is a test to make sure automatic destructors work. Pop up
-  // the question dialog several times and make sure it doesn't crash.
+  input = new Fl_Input(50,375,350,25);
+  input->static_value("The quick brown fox\njumped over\nthe lazy dog.");
+  input->when(FL_WHEN_CHANGED);
+  input->callback(input_cb);
 
-  Fl_Double_Window window(200, 105);
-  Fl_Return_Button b(20, 10, 160, 35, buffer);
-  b.callback(rename_me);
-  Fl_Button b2(20, 50, 160, 35, buffer2);
-  b2.callback(rename_me_pwd);
-  window.end();
-  window.resizable(&b);
-  window.show(argc, argv);
+  sizes = new Fl_Hor_Value_Slider(50,350,350,25,"Size");
+  sizes->align(FL_ALIGN_LEFT);
+  sizes->bounds(1,64);
+  sizes->step(1);
+  sizes->value(14);
+  sizes->callback(size_cb);
 
-  // Also we test to see if the exit callback works:
-  window.callback(window_callback);
+  fonts = new Fl_Hor_Value_Slider(50,325,350,25,"Font");
+  fonts->align(FL_ALIGN_LEFT);
+  fonts->bounds(0,15);
+  fonts->step(1);
+  fonts->value(0);
+  fonts->callback(font_cb);
 
-  // Test: set default message window title:
-  // fl_message_title_default("Default Window Title");
+  text2 = new Fl_Multiline_Output(100,150,200,100,"Fl_Multiline_Output");
+  text2->value(input->value());
+  text2->align(FL_ALIGN_BOTTOM);
+  text2->tooltip("This is an Fl_Multiline_Output widget.");
+  window->resizable(text2);
 
-  // Test: multiple (nested, aka "recursive") popups
-  Fl::add_timeout(5.0, timer_cb);
+  text = new Fl_Output(100,90,200,30,"Fl_Output");
+  text->value(input->value());
+  text->align(FL_ALIGN_BOTTOM);
+  text->tooltip("This is an Fl_Output widget.");
 
+  window->end();
+  window->show(argc,argv);
   return Fl::run();
 }
 
@@ -279,7 +242,6 @@ test/blocks.cxx
 test/navigation.cxx
 test/offscreen.cxx
 test/browser.cxx
-test/output.cxx
 test/overlay.cxx
 test/cairo_test.cxx
 test/pixmap.cxx
@@ -337,6 +299,7 @@ test/utf8.cxx
 test/keyboard.cxx
 test/windowfocus.cxx
 
+  * test/output.cxx       : + 'output' works
   * test/ask.cxx          : + 'ask' works
   * test/button.cxx       : + 'button' works, including beep
   * test/pack.cxx         : + 'pack' works

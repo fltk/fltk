@@ -464,10 +464,8 @@ int Fl_Input::handle(int event) {
 	this->mark( this->position() );
 	Fl::reset_marked_text();
       }
-      Fl::screen_driver()->release_keyboard();
       break;
     case FL_FOCUS:
-      Fl::screen_driver()->request_keyboard();
       switch (Fl::event_key()) {
         case FL_Right:
           position(0);
@@ -686,12 +684,14 @@ Fl_Multiline_Input::Fl_Multiline_Input(int X,int Y,int W,int H,const char *l)
 Fl_Output::Fl_Output(int X,int Y,int W,int H, const char *l)
 : Fl_Input(X, Y, W, H, l) {
   type(FL_NORMAL_OUTPUT);
+  clear_flag(NEEDS_KEYBOARD);
 }
 
 
 Fl_Multiline_Output::Fl_Multiline_Output(int X,int Y,int W,int H,const char *l)
 : Fl_Output(X,Y,W,H,l) {
   type(FL_MULTILINE_OUTPUT);
+  clear_flag(NEEDS_KEYBOARD);
 }
 
 
