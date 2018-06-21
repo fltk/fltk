@@ -147,15 +147,17 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputQueue *queue, AInputEvent
   if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
     AInputQueue_finishEvent(queue, event, 1);
     Fl::e_is_click = 1;
+    Fl_Android_Application::log_i("Mouse push %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
     if (win) Fl::handle(FL_PUSH, win); // do NOT send a push event into the "Desktop"
-    Fl_Android_Application::log_i("Mouse push %d at %d, %d", Fl::event_button(), Fl::event_x(), Fl::event_y());
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE) {
     AInputQueue_finishEvent(queue, event, 1);
-    Fl::handle(FL_DRAG, win);
+    Fl_Android_Application::log_i("Mouse drag %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
+    if (win) Fl::handle(FL_DRAG, win);
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) {
     AInputQueue_finishEvent(queue, event, 1);
     Fl::e_state = 0;
-    Fl::handle(FL_RELEASE, win);
+    Fl_Android_Application::log_i("Mouse release %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
+    if (win) Fl::handle(FL_RELEASE, win);
   } else {
     AInputQueue_finishEvent(queue, event, 0);
   }
@@ -503,6 +505,22 @@ int Fl_Android_Screen_Driver::get_mouse(int &x, int &y)
   y = 800/2;
   return 1;
 }
+
+
+void Fl_Android_Screen_Driver::grab(Fl_Window* win)
+{
+  if (win) {
+    if (!Fl::grab_) {
+      // TODO: will we need to fix any focus and/or direct the input stream to a window
+    }
+    Fl::grab_ = win;
+  } else {
+    if (Fl::grab_) {
+      Fl::grab_ = 0;
+    }
+  }
+}
+
 
 //
 // End of "$Id$".

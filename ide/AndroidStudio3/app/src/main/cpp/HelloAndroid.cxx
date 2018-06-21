@@ -17,80 +17,120 @@
 
 #if 1
 
+
 #include <FL/Fl.H>
-#include <FL/Fl_Value_Input.H> // necessary for bug in mingw32?
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Scroll.H>
+#include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Choice.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Hor_Value_Slider.H>
-#include <FL/Fl_Toggle_Button.H>
-#include <FL/Fl_Input.H>
+#include <string.h>
+#include <stdio.h>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Output.H>
-#include <FL/Fl_Multiline_Output.H>
+#include <FL/math.h>
 
-Fl_Output *text;
-Fl_Multiline_Output *text2;
-Fl_Input *input;
-Fl_Value_Slider *fonts;
-Fl_Value_Slider *sizes;
-Fl_Double_Window *window;
+class Drawing : public Fl_Widget {
+  void draw();
+public:
+  Drawing(int X,int Y,int W,int H,const char* L) : Fl_Widget(X,Y,W,H,L) {
+    align(FL_ALIGN_TOP);
+    box(FL_FLAT_BOX);
+    color(FL_WHITE);
+  }
+};
 
-void font_cb(Fl_Widget *,void *) {
-  text->textfont(int(fonts->value()));
-  text->redraw();
-  text2->textfont(int(fonts->value()));
-  text2->redraw();
+void Drawing::draw() {
+  draw_box();
+  fl_push_matrix();
+  fl_translate(x()+w()/2, y()+h()/2);
+  fl_scale(w()/2, h()/2);
+  fl_color(FL_BLACK);
+  for (int i = 0; i < 20; i++) {
+    for (int j = i+1; j < 20; j++) {
+      fl_begin_line();
+      fl_vertex(cos(M_PI*i/10+.1), sin(M_PI*i/10+.1));
+      fl_vertex(cos(M_PI*j/10+.1), sin(M_PI*j/10+.1));
+      fl_end_line();
+    }
+  }
+  fl_pop_matrix();
 }
 
-void size_cb(Fl_Widget *,void *) {
-  text->textsize(int(sizes->value()));
-  text->redraw();
-  text2->textsize(int(sizes->value()));
-  text2->redraw();
+Fl_Scroll* thescroll;
+
+void box_cb(Fl_Widget* o, void*) {
+  thescroll->box(((Fl_Button*)o)->value() ? FL_DOWN_FRAME : FL_NO_BOX);
+  thescroll->redraw();
 }
 
-void input_cb(Fl_Widget *,void *) {
-  text->value(input->value());
-  text2->value(input->value());
+void type_cb(Fl_Widget*, void* v) {
+  thescroll->type((uchar)((fl_intptr_t)v));
+  thescroll->redraw();
+}
+Fl_Menu_Item choices[] = {
+        {"0", 0, type_cb, (void*)0},
+        {"HORIZONTAL", 0, type_cb, (void*)Fl_Scroll::HORIZONTAL},
+        {"VERTICAL", 0, type_cb, (void*)Fl_Scroll::VERTICAL},
+        {"BOTH", 0, type_cb, (void*)Fl_Scroll::BOTH},
+        {"HORIZONTAL_ALWAYS", 0, type_cb, (void*)Fl_Scroll::HORIZONTAL_ALWAYS},
+        {"VERTICAL_ALWAYS", 0, type_cb, (void*)Fl_Scroll::VERTICAL_ALWAYS},
+        {"BOTH_ALWAYS", 0, type_cb, (void*)Fl_Scroll::BOTH_ALWAYS},
+        {0}
+};
+
+void align_cb(Fl_Widget*, void* v) {
+  thescroll->scrollbar.align((uchar)((fl_intptr_t)v));
+  thescroll->redraw();
 }
 
-int main(int argc, char **argv) {
-  window = new Fl_Double_Window(400,400);
+Fl_Menu_Item align_choices[] = {
+        {"left+top", 0, align_cb, (void*)(FL_ALIGN_LEFT+FL_ALIGN_TOP)},
+        {"left+bottom", 0, align_cb, (void*)(FL_ALIGN_LEFT+FL_ALIGN_BOTTOM)},
+        {"right+top", 0, align_cb, (void*)(FL_ALIGN_RIGHT+FL_ALIGN_TOP)},
+        {"right+bottom", 0, align_cb, (void*)(FL_ALIGN_RIGHT+FL_ALIGN_BOTTOM)},
+        {0}
+};
 
-  input = new Fl_Input(50,375,350,25);
-  input->static_value("The quick brown fox\njumped over\nthe lazy dog.");
-  input->when(FL_WHEN_CHANGED);
-  input->callback(input_cb);
+int main(int argc, char** argv) {
+  Fl_Window window(5*75,400);
+  window.box(FL_NO_BOX);
+  Fl_Scroll scroll(0,0,5*75,300);
 
-  sizes = new Fl_Hor_Value_Slider(50,350,350,25,"Size");
-  sizes->align(FL_ALIGN_LEFT);
-  sizes->bounds(1,64);
-  sizes->step(1);
-  sizes->value(14);
-  sizes->callback(size_cb);
+  int n = 0;
+  for (int y=0; y<16; y++) for (int x=0; x<5; x++) {
+      char buf[20]; sprintf(buf,"%d",n++);
+      Fl_Button* b = new Fl_Button(x*75,y*25+(y>=8?5*75:0),75,25);
+      b->copy_label(buf);
+      b->color(n);
+      b->labelcolor(FL_WHITE);
+    }
+  Drawing drawing(0,8*25,5*75,5*75,0);
+  scroll.end();
+  window.resizable(scroll);
 
-  fonts = new Fl_Hor_Value_Slider(50,325,350,25,"Font");
-  fonts->align(FL_ALIGN_LEFT);
-  fonts->bounds(0,15);
-  fonts->step(1);
-  fonts->value(0);
-  fonts->callback(font_cb);
+  Fl_Box box(0,300,5*75,window.h()-300); // gray area below the scroll
+  box.box(FL_FLAT_BOX);
 
-  text2 = new Fl_Multiline_Output(100,150,200,100,"Fl_Multiline_Output");
-  text2->value(input->value());
-  text2->align(FL_ALIGN_BOTTOM);
-  text2->tooltip("This is an Fl_Multiline_Output widget.");
-  window->resizable(text2);
+  Fl_Light_Button but1(150, 310, 200, 25, "box");
+  but1.callback(box_cb);
 
-  text = new Fl_Output(100,90,200,30,"Fl_Output");
-  text->value(input->value());
-  text->align(FL_ALIGN_BOTTOM);
-  text->tooltip("This is an Fl_Output widget.");
+  Fl_Choice choice(150, 335, 200, 25, "type():");
+  choice.menu(choices);
+  choice.value(3);
 
-  window->end();
-  window->show(argc,argv);
+  Fl_Choice achoice(150, 360, 200, 25, "scrollbar.align():");
+  achoice.menu(align_choices);
+  achoice.value(3);
+
+  thescroll = &scroll;
+
+  //scroll.box(FL_DOWN_BOX);
+  //scroll.type(Fl_Scroll::VERTICAL);
+  window.end();
+  window.show(argc,argv);
   return Fl::run();
 }
+
 
 #else
 
@@ -226,6 +266,7 @@ int xmain(int argc, char **argv)
   - scrolling if implemented as a complete redraw. Must implement real scrolling
   - the 'hotspot' idea to position dialogs under the mouse cursor makes little sense on touch screen devices
   - fix screen when keyboard pops up in front of the text cursor or input field (temporarily shift up?)
+  - ending 'message' will not quit the app right away, but wait for some timeout
 
 
 test/CubeMain.cxx
@@ -234,14 +275,10 @@ test/CubeView.cxx
 test/list_visuals.cxx
 test/mandelbrot.cxx
 test/animated.cxx
-test/menubar.cxx
-test/message.cxx
-test/bitmap.cxx
 test/native-filechooser.cxx
 test/blocks.cxx
 test/navigation.cxx
 test/offscreen.cxx
-test/browser.cxx
 test/overlay.cxx
 test/cairo_test.cxx
 test/pixmap.cxx
@@ -298,7 +335,19 @@ test/input_choice.cxx
 test/utf8.cxx
 test/keyboard.cxx
 test/windowfocus.cxx
+test/browser.cxx
 
+  * test/scroll.cxx       : - works ok
+                            - some dirt when a popup draws over another menu button!?
+                            - on touch-screens, menuitem should be selected when released
+                            - on touch-screens, scroll groups should scroll on multitouch, or when not causing any other action
+  * test/bitmap.cxx       : + 'bitmap' works
+  * test/message.cxx      : - 'message' mostly works
+                            - when ending the app, it will not close right away but instead hang around for a few seconds
+  * test/menubar.cxx      : - 'menubar' mostly works including unicode
+                            ! pressing 'button' will hang the app
+                            - shortcut modifiers don't work
+                            - right-click does not work (should this be emulated via click-and-hold?)
   * test/output.cxx       : + 'output' works
   * test/ask.cxx          : + 'ask' works
   * test/button.cxx       : + 'button' works, including beep

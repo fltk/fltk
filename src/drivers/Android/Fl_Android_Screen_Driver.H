@@ -101,15 +101,19 @@ public:
   virtual int visual(int flags);
   // --- screen configuration
   virtual void init();
-  virtual int x();
-  virtual int y();
-  virtual int w();
-  virtual int h();
-  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n);
+#endif
+  virtual int x() override { return 0; } // FIXME:
+  virtual int y() override { return 0; } // FIXME:
+  virtual int w() override { return 600; } // FIXME:
+  virtual int h() override { return 800; } // FIXME:
+  virtual void screen_xywh(int &X, int &Y, int &W, int &H, int n) override
+  { X = 0; Y = 0; W = 600; H = 800; }  // FIXME:
+#if 0
   virtual void screen_dpi(float &h, float &v, int n=0);
   int screen_num_unscaled(int x, int y);
-  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
 #endif
+  virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n) override
+  { X = 0; Y = 0; W = 600; H = 800; }  // FIXME:
   // --- audible output
   virtual void beep(int type) override;
   // --- global events
@@ -117,7 +121,9 @@ public:
   virtual double wait(double time_to_wait) override;
 #if 0
   virtual int ready();
-  virtual void grab(Fl_Window* win);
+#endif
+  virtual void grab(Fl_Window* win) override;
+#if 0
   // --- global colors
   virtual void get_system_colors();
   virtual const char *get_system_scheme();
