@@ -109,10 +109,10 @@ public:
   virtual void screen_dpi(float &h, float &v, int n=0);
   int screen_num_unscaled(int x, int y);
   virtual void screen_work_area(int &X, int &Y, int &W, int &H, int n);
-  // --- audible output
-  virtual void beep(int type);
-  // --- global events
 #endif
+  // --- audible output
+  virtual void beep(int type) override;
+  // --- global events
   virtual void flush() override;
   virtual double wait(double time_to_wait) override;
 #if 0

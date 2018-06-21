@@ -442,6 +442,47 @@ void Fl_Android_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *data)
 }
 
 
+void Fl_Android_Screen_Driver::beep(int type)
+{
+  // TODO: map FLTK sounds to Android sounds at https://developer.android.com/reference/android/media/ToneGenerator
+  int androidSoundID = 93;  // TONE_CDMA_ALERT_CALL_GUARD
+  switch (type) {
+    case FL_BEEP_DEFAULT:
+    case FL_BEEP_MESSAGE:
+    case FL_BEEP_ERROR:
+    case FL_BEEP_QUESTION:
+    case FL_BEEP_PASSWORD:
+    case FL_BEEP_NOTIFICATION: androidSoundID = 93; break;
+  }
+  Fl_Android_Java java;
+  if (java.is_attached()) {
+
+    jclass class_tone_generator = java.env()->FindClass("android/media/ToneGenerator");
+
+    jmethodID toneGeneratorConstructor = java.env()->GetMethodID(
+            class_tone_generator, "<init>",
+            "(II)V");
+
+    jobject toneGeneratorObj = java.env()->NewObject(
+            class_tone_generator, toneGeneratorConstructor,
+            4,  // STREAM_ALARM
+            100); // volume
+
+    jmethodID method_start_tone = java.env()->GetMethodID(
+            class_tone_generator,
+            "startTone",
+            "(I)Z");
+
+    java.env()->CallBooleanMethod(
+            toneGeneratorObj, method_start_tone,
+            androidSoundID);
+
+    java.env()->DeleteLocalRef(class_tone_generator);
+    java.env()->DeleteLocalRef(toneGeneratorObj);
+  }
+
+}
+
 //
 // End of "$Id$".
 //
