@@ -17,89 +17,115 @@
 
 #if 1
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include <FL/Fl.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Scroll.H>
-#include <FL/Fl_Value_Slider.H>
-#include <FL/Fl_Pack.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Box.H>
 
-Fl_Pack *pack;
-Fl_Scroll *scroll;
+#include <FL/fl_ask.H>
 
-void type_cb(Fl_Light_Button*, long v) {
-  for (int i = 0; i < pack->children(); i++) {
-    Fl_Widget* o = pack->child(i);
-    o->resize(0,0,25,25);
+void update_input_text(Fl_Widget* o, const char *input) {
+  if (input) {
+    o->copy_label(input);
+    o->redraw();
   }
-  pack->resize(scroll->x(),scroll->y(),scroll->w(),scroll->h());
-  pack->parent()->redraw();
-  pack->type(uchar(v));
-  pack->redraw();
 }
 
-void spacing_cb(Fl_Value_Slider*o, long) {
-  pack->spacing(int(o->value()));
-  scroll->redraw();
+void rename_me(Fl_Widget*o) {
+  const char *input = fl_input("Input:", o->label());
+  update_input_text(o, input);
 }
 
+void rename_me_pwd(Fl_Widget*o) {
+  const char *input = fl_password("Input PWD:", o->label());
+  update_input_text(o, input);
+}
+
+void window_callback(Fl_Widget*, void*) {
+  int hotspot = fl_message_hotspot();
+  fl_message_hotspot(0);
+  fl_message_title("note: no hotspot set for this dialog");
+  int rep = fl_choice("Are you sure you want to quit?",
+                      "Cancel", "Quit", "Dunno");
+  fl_message_hotspot(hotspot);
+  if (rep==1)
+    exit(0);
+  else if (rep==2)
+    fl_message("Well, maybe you should know before we quit.");
+}
+/*
+  This timer callback shows a message dialog (fl_choice) window
+  every 5 seconds to test "recursive" common dialogs.
+
+  The timer can be stopped by clicking the button "Stop these funny popups"
+  or pressing the Enter key. As it is currently implemented, clicking the
+  "Close" button will reactivate the popups (only possible if "recursive"
+  dialogs are enabled, see below).
+
+  Note 1: This dialog box is blocked in FLTK 1.3.x if another common dialog
+  is already open because the window used is a static (i.e. permanently
+  allocated) Fl_Window instance. This should be fixed in FLTK 1.4.0.
+  See STR #334 (sic !) and also STR #2751 ("Limit input field characters").
+*/
+void timer_cb(void *) {
+
+  static int stop = 0;
+  static const double delta = 5.0;
+
+  Fl_Box *message_icon = (Fl_Box *)fl_message_icon();
+
+  Fl::repeat_timeout(delta, timer_cb);
+
+  if (stop == 1) {
+    message_icon->color(FL_WHITE);
+    return;
+  }
+
+  // Change the icon box color:
+  Fl_Color c = message_icon->color();
+  c = (c+1) % 32;
+  if (c == message_icon->labelcolor()) c++;
+  message_icon->color((Fl_Color)c);
+
+  // pop up a message:
+  stop = fl_choice("Timeout. Click the 'Close' button.\n"
+                           "Note: this message was blocked in FLTK 1.3\n"
+                           "if another message window is open.\n"
+                           "This *should* be fixed in FLTK 1.4.0!\n"
+                           "This message should pop up every 5 seconds.",
+                   "Close", "Stop these funny popups", NULL);
+}
 int main(int argc, char **argv) {
-  Fl_Double_Window *w;
-  {Fl_Double_Window* o = new Fl_Double_Window(360, 370);
-    w = o;
-    scroll = new Fl_Scroll(10,10,340,285);
-    {Fl_Pack* o = new Fl_Pack(10, 10, 340, 285);
-      pack = o;
-      o->box(FL_DOWN_FRAME);
-      //o->box(FL_ENGRAVED_FRAME);
-      new Fl_Button(35, 35, 25, 25, "b1");
-      new Fl_Button(45, 45, 25, 25, "b2");
-      new Fl_Button(55, 55, 25, 25, "b3");
-      new Fl_Button(65, 65, 25, 25, "b4");
-      new Fl_Button(75, 75, 25, 25, "b5");
-      new Fl_Button(85, 85, 25, 25, "b6");
-      new Fl_Button(95, 95, 25, 25, "b7");
-      new Fl_Button(105, 105, 25, 25, "b8");
-      new Fl_Button(115, 115, 25, 25, "b9");
-      new Fl_Button(125, 125, 25, 25, "b10");
-      new Fl_Button(135, 135, 25, 25, "b11");
-      new Fl_Button(145, 145, 25, 25, "b12");
-      new Fl_Button(155, 155, 25, 25, "b13");
-      new Fl_Button(165, 165, 25, 25, "b14");
-      new Fl_Button(175, 175, 25, 25, "b15");
-      new Fl_Button(185, 185, 25, 25, "b16");
-      new Fl_Button(195, 195, 25, 25, "b17");
-      new Fl_Button(205, 205, 25, 25, "b18");
-      new Fl_Button(215, 215, 25, 25, "b19");
-      new Fl_Button(225, 225, 25, 25, "b20");
-      new Fl_Button(235, 235, 25, 25, "b21");
-      new Fl_Button(245, 245, 25, 25, "b22");
-      new Fl_Button(255, 255, 25, 25, "b23");
-      new Fl_Button(265, 265, 25, 25, "b24");
-      o->end();
-      w->resizable(o);
-    }
-    scroll->end();
-    {Fl_Light_Button* o = new Fl_Light_Button(10, 305, 165, 25, "HORIZONTAL");
-      o->type(FL_RADIO_BUTTON);
-      o->callback((Fl_Callback*)type_cb, (void*)(Fl_Pack::HORIZONTAL));
-    }
-    {Fl_Light_Button* o = new Fl_Light_Button(185, 305, 165, 25, "VERTICAL");
-      o->type(FL_RADIO_BUTTON);
-      o->value(1);
-      o->callback((Fl_Callback*)type_cb, (void*)(Fl_Pack::VERTICAL));
-    }
-    {Fl_Value_Slider* o = new Fl_Value_Slider(100, 335, 250, 25, "Spacing: ");
-      o->align(FL_ALIGN_LEFT);
-      o->type(FL_HORIZONTAL);
-      o->range(0,30);
-      o->step(1);
-      o->callback((Fl_Callback*)spacing_cb);
-    }
-    w->end();
-  }
-  w->show(argc, argv);
+  char buffer[128] = "Test text";
+  char buffer2[128] = "MyPassword";
+
+  // This is a test to make sure automatic destructors work. Pop up
+  // the question dialog several times and make sure it doesn't crash.
+
+  Fl_Double_Window window(200, 105);
+  Fl_Return_Button b(20, 10, 160, 35, buffer);
+  b.callback(rename_me);
+  Fl_Button b2(20, 50, 160, 35, buffer2);
+  b2.callback(rename_me_pwd);
+  window.end();
+  window.resizable(&b);
+  window.show(argc, argv);
+
+  // Also we test to see if the exit callback works:
+  window.callback(window_callback);
+
+  // Test: set default message window title:
+  // fl_message_title_default("Default Window Title");
+
+  // Test: multiple (nested, aka "recursive") popups
+  Fl::add_timeout(5.0, timer_cb);
+
   return Fl::run();
 }
 
@@ -234,6 +260,7 @@ int xmain(int argc, char **argv)
   - Fl_Android_Graphics_Driver::pie(int) needs refactoring
   - ...::line(...) has round ing issues (see rounded box type)
   - grab() not working when leaving window (adjuster...)
+  - scrolling if implemented as a complete redraw. Must implement real scrolling
 
 
 test/CubeMain.cxx
@@ -244,7 +271,6 @@ test/mandelbrot.cxx
 test/animated.cxx
 test/menubar.cxx
 test/message.cxx
-test/ask.cxx
 test/bitmap.cxx
 test/native-filechooser.cxx
 test/blocks.cxx
@@ -309,8 +335,11 @@ test/utf8.cxx
 test/keyboard.cxx
 test/windowfocus.cxx
 
-  * test/pack.cxx         : ! must implement scroll function in graphics driver
+  * test/ask.cxx          :
+    * fix popup position for dialogs
+    * fix screen when keyboard pops up in fron of the text cursor or input field
 
+  * test/pack.cxx         : + 'pack' works
   * test/adjuster.cxx     : + 'adjuster' works
   * test/arc.cxx          : + 'arc' works as expected
   * test/minimum.cxx      : + 'minimum' works

@@ -144,6 +144,73 @@ void Fl_Android_Window_Driver::resize(int X,int Y,int W,int H)
   }
 }
 
+/**
+ * Scroll a portion of the window.
+ * FIXME: We are currently taking the easy way out, basically telling the caller that we don;t know how to scroll
+ * and asking FLTK to draw the new area from scratch. It would be nice if clipping provides all calls
+ * that we need to implement a more efficient scrolling code.
+ */
+int Fl_Android_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
+                                    void (*draw_area)(void*, int,int,int,int), void* data)
+{
+#if 0
+  typedef int (WINAPI* fl_GetRandomRgn_func)(HDC, HRGN, INT);
+  static fl_GetRandomRgn_func fl_GetRandomRgn = 0L;
+  static char first_time = 1;
+  // We will have to do some Region magic now, so let's see if the
+  // required function is available (and it should be starting w/Win95)
+  if (first_time) {
+    HMODULE hMod = GetModuleHandle("GDI32.DLL");
+    if (hMod) {
+      fl_GetRandomRgn = (fl_GetRandomRgn_func)GetProcAddress(hMod, "GetRandomRgn");
+    }
+    first_time = 0;
+  }
+  float s = Fl::screen_driver()->scale(screen_num());
+  src_x *= s; src_y *= s; src_w *= s; src_h *= s; dest_x *= s; dest_y *= s;
+  // Now check if the source scrolling area is fully visible.
+  // If it is, we will do a quick scroll and just update the
+  // newly exposed area. If it is not, we go the safe route and
+  // re-render the full area instead.
+  // Note 1: we could go and find the areas that are actually
+  // obscured and recursively call fl_scroll for the newly found
+  // rectangles. However, this practice would rely on the
+  // elements of the undocumented Rgn structure.
+  // Note 2: although this method should take care of most
+  // multi-screen solutions, it will not solve issues scrolling
+  // from a different resolution screen onto another.
+  // Note 3: this has been tested with image maps, too.
+  HDC gc = (HDC)fl_graphics_driver->gc();
+  if (fl_GetRandomRgn) {
+    // get the DC region minus all overlapping windows
+    HRGN sys_rgn = CreateRectRgn(0, 0, 0, 0);
+    fl_GetRandomRgn(gc, sys_rgn, 4);
+    // now get the source scrolling rectangle
+    HRGN src_rgn = CreateRectRgn(src_x, src_y, src_x+src_w, src_y+src_h);
+    POINT offset = { 0, 0 };
+    if (GetDCOrgEx(gc, &offset)) {
+      OffsetRgn(src_rgn, offset.x, offset.y);
+    }
+    // see if all source pixels are available in the system region
+    // Note: we could be a bit more merciful and subtract the
+    // scroll destination region as well.
+    HRGN dst_rgn = CreateRectRgn(0, 0, 0, 0);
+    int r = CombineRgn(dst_rgn, src_rgn, sys_rgn, RGN_DIFF);
+    DeleteObject(dst_rgn);
+    DeleteObject(src_rgn);
+    DeleteObject(sys_rgn);
+    if (r != NULLREGION) {
+      return 1;
+    }
+  }
+  // Great, we can do an accelerated scroll instead of re-rendering
+  BitBlt(gc, dest_x, dest_y, src_w, src_h, gc, src_x, src_y,SRCCOPY);
+  return 0;
+#endif
+  return 1;
+}
+
+
 #if 0
 
 Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
@@ -727,62 +794,6 @@ void Fl_WinAPI_Window_Driver::decoration_sizes(int *top, int *left,  int *right,
   *top += GetSystemMetrics(SM_CYCAPTION);
 }
 
-int Fl_WinAPI_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
-                   void (*draw_area)(void*, int,int,int,int), void* data)
-{
-  typedef int (WINAPI* fl_GetRandomRgn_func)(HDC, HRGN, INT);
-  static fl_GetRandomRgn_func fl_GetRandomRgn = 0L;
-  static char first_time = 1;
-  // We will have to do some Region magic now, so let's see if the
-  // required function is available (and it should be starting w/Win95)
-  if (first_time) {
-    HMODULE hMod = GetModuleHandle("GDI32.DLL");
-    if (hMod) {
-      fl_GetRandomRgn = (fl_GetRandomRgn_func)GetProcAddress(hMod, "GetRandomRgn");
-    }
-    first_time = 0;
-  }
-  float s = Fl::screen_driver()->scale(screen_num());
-  src_x *= s; src_y *= s; src_w *= s; src_h *= s; dest_x *= s; dest_y *= s;
-  // Now check if the source scrolling area is fully visible.
-  // If it is, we will do a quick scroll and just update the
-  // newly exposed area. If it is not, we go the safe route and
-  // re-render the full area instead.
-  // Note 1: we could go and find the areas that are actually
-  // obscured and recursively call fl_scroll for the newly found
-  // rectangles. However, this practice would rely on the
-  // elements of the undocumented Rgn structure.
-  // Note 2: although this method should take care of most
-  // multi-screen solutions, it will not solve issues scrolling
-  // from a different resolution screen onto another.
-  // Note 3: this has been tested with image maps, too.
-  HDC gc = (HDC)fl_graphics_driver->gc();
-  if (fl_GetRandomRgn) {
-    // get the DC region minus all overlapping windows
-    HRGN sys_rgn = CreateRectRgn(0, 0, 0, 0);
-    fl_GetRandomRgn(gc, sys_rgn, 4);
-    // now get the source scrolling rectangle
-    HRGN src_rgn = CreateRectRgn(src_x, src_y, src_x+src_w, src_y+src_h);
-    POINT offset = { 0, 0 };
-    if (GetDCOrgEx(gc, &offset)) {
-      OffsetRgn(src_rgn, offset.x, offset.y);
-    }
-    // see if all source pixels are available in the system region
-    // Note: we could be a bit more merciful and subtract the
-    // scroll destination region as well.
-    HRGN dst_rgn = CreateRectRgn(0, 0, 0, 0);
-    int r = CombineRgn(dst_rgn, src_rgn, sys_rgn, RGN_DIFF);
-    DeleteObject(dst_rgn);
-    DeleteObject(src_rgn);
-    DeleteObject(sys_rgn);
-    if (r != NULLREGION) {
-      return 1;
-    }
-  }
-  // Great, we can do an accelerated scroll instead of re-rendering
-  BitBlt(gc, dest_x, dest_y, src_w, src_h, gc, src_x, src_y,SRCCOPY);
-  return 0;
-}
 
 Fl_WinAPI_Window_Driver::type_for_resize_window_between_screens Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_ = {0, false};
 
