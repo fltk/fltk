@@ -53,7 +53,6 @@ struct Fl_Window_Driver::shape_data_type {
 
 class FL_EXPORT Fl_Android_Window_Driver : public Fl_Window_Driver
 {
-  static Fl_Window *sCurrent;
 #if 0
 
   friend class Fl_Window;
@@ -109,7 +108,9 @@ public:
   virtual void flush_overlay();
   virtual void draw_begin();
   virtual void label(const char *name,const char *iname);
-  virtual void resize(int X,int Y,int W,int H);
+#endif
+  virtual void resize(int X,int Y,int W,int H) override;
+#if 0
   virtual void map();
   virtual void unmap();
   virtual void fullscreen_on();

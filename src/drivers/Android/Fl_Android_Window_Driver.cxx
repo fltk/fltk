@@ -26,25 +26,11 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/platform.H>
+#include <math.h>
 #include "Fl_Android_Window_Driver.H"
 #include "Fl_Android_Screen_Driver.H"
 #include "Fl_Android_Graphics_Driver.H"
 #include "Fl_Android_Application.H"
-
-
-#if 0
-
-#include <windows.h>
-#include <math.h>  // for ceil()
-
-#if USE_COLORMAP
-extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
-#endif
-
-#endif
-
-
-Fl_Window *Fl_Android_Window_Driver::sCurrent = 0L;
 
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
@@ -119,6 +105,44 @@ void Fl_Android_Window_Driver::make_current()
 
 }
 
+
+void Fl_Android_Window_Driver::resize(int X,int Y,int W,int H)
+{
+  int is_a_resize = (W != w() || H != h() || is_a_rescale());
+  if (X != x() || Y != y() || is_a_rescale()) {
+    force_position(1);
+  } else {
+    if (!is_a_resize)
+      return;
+  }
+  if (is_a_resize) {
+    pWindow->Fl_Group::resize(X, Y, W, H);
+    if (visible_r()) {
+      pWindow->redraw();
+      // only wait for exposure if this window has a size - a window
+      // with no width or height will never get an exposure event
+      Fl_X *i = Fl_X::i(pWindow);
+      if (i && W > 0 && H > 0)
+        wait_for_expose_value = 1;
+    }
+  } else {
+    x(X);
+    y(Y);
+  }
+  if (shown()) {
+    if (!pWindow->resizable())
+      pWindow->size_range(w(), h(), w(), h());
+    // compute window position and size in scaled units
+//    float s = Fl::screen_driver()->scale(screen_num());
+//    int scaledX = ceil(X * s), scaledY = ceil(Y * s), scaledW = ceil(W * s), scaledH = ceil(H * s);
+//    if (scaledW <= 0)
+//      scaledW = 1;
+//    if (scaledH <= 0)
+//      scaledH = 1;
+//    //SetWindowPos(fl_xid(pWindow), 0, scaledX, scaledY, scaledW, scaledH, flags);
+    expose_all();
+  }
+}
 
 #if 0
 
@@ -601,7 +625,7 @@ void Fl_WinAPI_Window_Driver::unmap() {
   ShowWindow(fl_xid(pWindow), SW_HIDE);
 }
 
-#if !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
+#if !defined(FL_DOXYGEN)
 
 void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   Fl_Window *w = pWindow;
@@ -638,7 +662,7 @@ void Fl_WinAPI_Window_Driver::make_fullscreen(int X, int Y, int W, int H) {
   SetWindowPos(fl_xid(w), HWND_TOP, X*s, Y*s, W*s, H*s, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
 
-#endif // !defined(FL_DOXYGEN) // FIXME - silence Doxygen warning
+#endif // !defined(FL_DOXYGEN)
 
 
 void Fl_WinAPI_Window_Driver::fullscreen_on() {
