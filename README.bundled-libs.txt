@@ -82,8 +82,8 @@ Merging source files:
   should be added in FLTK as well if they are necessary to build the
   library. A simple "trial and error" should be sufficient to find files
   that need to be added. Added files must be added to FLTK's build files
-  as well, usually to both the Makefile and the CMakeLists.txt to be
-  used in configure/make and in CMake based builds.
+  as well, usually to both `Makefile' and `CMakeLists.txt' to be used in
+  configure/make and in CMake based builds, respectively.
 
 
 Upgrade order:
@@ -97,15 +97,15 @@ Tests after merge:
 
   Tests should be done on as many platforms as possible, both with
   autotools (configure/make) and CMake. Windows (Visual Studio) and
-  macOS (Xcode) build need CMake to generate the IDE files.
+  macOS (Xcode) builds need CMake to generate the IDE files.
 
 
 Upgrade notes for specific libraries:
 
   The following chapters contain information of specific files and how
   they are upgraded. Since the changes in all bundled libraries can't
-  be known in advance this information can change in the future. Please
-  very that no other changes are necessary.
+  be known in advance this information may change in the future. Please
+  verify that no other changes are necessary.
 
 
 zlib:
@@ -126,8 +126,10 @@ zlib:
       As of zlib 1.2.11: two small sections marked with "FLTK" comments
       that need to be kept.
 
-    makedepend: Keep this file. Run `make depend' in the zlib folder
-      on a Linux system after the upgrade to update this file.
+    makedepend: Keep this file.
+
+      Run `make depend' in the zlib folder on a Linux system after
+      the upgrade to update this file.
 
 
 png:
@@ -146,8 +148,10 @@ png:
 
     Note: more to come...
 
-    makedepend: Keep this file. Run `make depend' in the zlib folder
-      on a Linux system after the upgrade to update this file.
+    makedepend: Keep this file.
+
+      Run `make depend' in the png folder on a Linux system after
+      the upgrade to update this file.
 
 
 jpeg:
@@ -164,8 +168,10 @@ jpeg:
 
     Note: more to come...
 
-    makedepend: Keep this file. Run `make depend' in the zlib folder
-      on a Linux system after the upgrade to update this file.
+    makedepend: Keep this file.
+
+      Run `make depend' in the jpeg folder on a Linux system after
+      the upgrade to update this file.
 
 
 nanosvg:
@@ -192,8 +198,8 @@ nanosvg:
     $ cd src
     $ cp nanosvg.h nanosvgrast.h /path/to/fltk-1.4/nanosvg/
 
-  This library does not have its own build files since it is a
-  header-only library. The build is included in FLTK where necessary.
+  This library does not have its own build files since it is a header-only
+  library. The headers are included in FLTK where necessary.
 
   The following files need special handling:
 
