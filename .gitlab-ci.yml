@@ -1,0 +1,112 @@
+# This file controls GitLab CI (Continuous Integration) for FLTK.
+#
+# It serves two purposes:
+#
+# (1) Continuously building FLTK with several build systems.
+# (2) Generating current HTML documentation and putting it online.
+#
+# The documentation will be at:
+#
+# https://fltk.gitlab.io/fltk/
+#
+# Details of this script:
+#
+# use the official gcc image, based on debian
+# can use versions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+
+image: gcc
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Build with autoconf/make (including Pango and Cairo)
+
+build-autotools:
+  stage: build
+  # install the necessary build tools
+  before_script: 
+    - apt update && apt -y install make autoconf man
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev
+    - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
+    - apt -y install libpango1.0-dev libcairo2-dev
+  script: 
+    - make clean
+    - ./configure --enable-pango --enable-cairo
+    - time make -j3
+    - cd examples && time make
+  artifacts:
+    paths:
+      - lib/
+      - test/cairo_test
+      - test/glpuzzle
+      - test/unittests
+      - examples/fltk-versions
+
+# Build with CMake and Ninja (Default configuration)
+
+build-cmake:
+  stage: build
+  # install the necessary build tools
+  before_script:
+    - apt update && apt -y install cmake ninja-build
+    - apt -y install freeglut3-dev libfontconfig-dev libxft-dev
+    - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
+  script:
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
+    - time ninja
+  artifacts:
+    paths:
+      - build/lib/
+      - build/bin/
+
+# Build HTML documentation
+
+documentation:
+  stage: build
+  only:
+    - schedules
+  # install the necessary build tools
+  before_script:
+    - apt update && apt -y install make autoconf man doxygen
+  script:
+    - make clean
+    - cd documentation && make && make html
+  artifacts:
+    paths:
+      - documentation/src/*.[1-6]
+      - documentation/html
+
+  # depending on your build setup it's most likely a good idea to
+  #   cache outputs to reduce the build time
+  # cache:
+  #   paths:
+  #     - "*.o"
+
+# run tests using the binary built before
+#test:
+#  stage: test
+#  script:
+#    - ./runmytests.sh
+
+
+# Generate and install HTML documentation
+
+pages:
+  stage: deploy
+  # install the necessary build tools
+  before_script:
+    - apt update && apt -y install make autoconf man doxygen
+  script:
+    - make clean
+    - cd documentation
+    - make && make html
+    - cd ..
+    - mkdir -p public/
+    - mv documentation/html/* public/
+  artifacts:
+    paths:
+      - public
