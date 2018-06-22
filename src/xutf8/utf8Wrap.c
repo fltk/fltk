@@ -14,12 +14,11 @@
  *     http://www.fltk.org/str.php
  */
 
-#include "../config_lib.h"
-
 /*
  * X11 UTF-8 text drawing functions.
+ *
+ * This file is compiled and linked only for X11 w/o Xft.
  */
-#if defined(FL_CFG_WIN_X11)
 
 #include "../Xutf8.h"
 #include <X11/Xlib.h>
@@ -1023,8 +1022,6 @@ XFreeUtf8FontStruct(Display 	    *dpy,
   free(font_set->encodings);
   free(font_set);
 }
-
-#endif /* FL_CFG_WIN_X11 */
 
 /*
  *  End of "$Id$".
