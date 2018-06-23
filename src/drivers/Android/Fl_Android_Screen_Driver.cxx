@@ -17,6 +17,13 @@
 //
 
 
+/**
+ * @if AndroidDev
+ * @defgroup AndroidDeveloper Android Developer Documentation
+ * @{
+ */
+
+
 #include "../../config_lib.h"
 #include "Fl_Android_Screen_Driver.H"
 #include "Fl_Android_Application.H"
@@ -29,13 +36,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <math.h>
-
-
-/**
- * @cond AndroidDev
- * @defgroup AndroidDeveloper Android Develoer Documentation
- * @{
- */
 
 
 /**
@@ -566,7 +566,7 @@ void Fl_Android_Screen_Driver::grab(Fl_Window* win)
 
 /**
  * @}
- * @endcond AndroidDev
+ * @endif
  */
 
 
