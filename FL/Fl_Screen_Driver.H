@@ -136,9 +136,6 @@ public:
   virtual void release_keyboard() { }
 
   // read raw image from a window or an offscreen buffer
-#if defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement code to read RGB data from screen"
-#endif
   /* Member function read_win_rectangle() supports the public function
    fl_read_image() which captures pixel data either from
    the current window or from an offscreen buffer.

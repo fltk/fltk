@@ -93,10 +93,6 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
 
 #else
 
-#if defined(FL_PORTING)
-#  pragma message "FL_PORTING: check whether the default Fl_OpenGL_Display_Device::capture_gl_rectangle() works for your platform"
-#endif
-
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Window_Driver.H>
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)

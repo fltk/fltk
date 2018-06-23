@@ -20,10 +20,6 @@
 
   /* not needed */
 
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: include the character encoding file below if needed"
-
 #else
 
 #ifndef CP936

@@ -37,12 +37,6 @@
  * Microsoft(r) Windows(r) that allows for it.
  */
 
-#if defined(_WIN32) || defined(__APPLE__) /* PORTME: Fl_System_Driver - platform main() */
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement 'main()' here if your platform provides another app entry point"
-#else
-#endif
-
 #if defined(_WIN32) && !defined(FL_DLL) && !defined (__GNUC__)
 
 #  include <windows.h>

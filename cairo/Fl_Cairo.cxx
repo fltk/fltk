@@ -32,8 +32,6 @@
 #  include <cairo-win32.h>
 #elif defined(__APPLE_QUARTZ__) // PORTME: Cairo Support
 #  include <cairo-quartz.h>
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: is the Cairo library available on this platform?"
 #else
 #  error Cairo is not supported on this platform.
 #endif

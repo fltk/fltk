@@ -177,16 +177,6 @@
 #undef USE_SDL
 
 /*
- * FL_PORTING
- *
- * A little helper that points to locations in the core that still need
- * to be ported to the core driver setup.
- * *FIXME* Not yet implemented in configure !
- */
-
-#undef FL_PORTING
-
-/*
  * HAVE_OVERLAY:
  *
  * Use the X overlay extension?  FLTK will try to use an overlay

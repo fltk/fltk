@@ -134,24 +134,6 @@ typedef struct __GLXcontextRec *GLContext;
 #include <sys/types.h>
 #include <dirent.h>
 
-
-#elif defined(FL_PORTING)
-# pragma message "FL_PORTING: define OS-dependent types"
-typedef void* Fl_Offscreen;
-typedef void* Fl_Bitmask;
-typedef void *Fl_Region;
-typedef int FL_SOCKET;
-typedef void *GLContext;
-# pragma message "FL_PORTING: define struct dirent and implement scandir() for the platform"
-struct dirent {char d_name[1];};
-# pragma message "FL_PORTING: define struct stat and implement Fl_XXX_System_Driver::stat() for the platform"
-struct stat { /* the FLTK source code uses part of the stat() API */
-  unsigned st_mode;
-  unsigned st_size;
-};
-#define        S_IFDIR  0040000  /* directory */
-#define        S_IFREG  0100000  /* regular */
-
 #else /* X11 */
 
 typedef unsigned long Fl_Offscreen;

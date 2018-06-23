@@ -33,10 +33,6 @@ int main(int, char**) {
   return 1;
 }
 
-#elif defined(FL_PORTING)
-
-#  pragma message "FL_PORTING: list_visuals"
-
 #else
 
 #include <config.h>

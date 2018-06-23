@@ -26,10 +26,6 @@
 #ifndef Fl_Gl_Window_Driver_H
 #define Fl_Gl_Window_Driver_H
 
-#if defined(FL_PORTING)
-# pragma message "FL_PORTING: please, derive and implement the Fl_Gl_Window_Driver class for your platform"
-#endif
-
 #include <FL/Fl_Gl_Window.H>
 
 class Fl_Gl_Choice;

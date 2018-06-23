@@ -64,11 +64,6 @@
 #endif // FL_CFG_GFX_GDI
 
 
-#if defined(FL_PORTING) && !defined(FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS)
-#  pragma message "Define platform-specific members of the Fl_Gl_Choice class"
-#  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
-#endif
-
 // Describes crap needed to create a GLContext.
 class Fl_Gl_Choice {
   friend class Fl_Gl_Window_Driver;

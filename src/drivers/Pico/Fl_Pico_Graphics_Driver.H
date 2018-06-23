@@ -81,7 +81,6 @@ class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {
 //#endif
 //  matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 //
-//  // === all code below in this class has been to the reorganisation FL_PORTING process
 //public:
 //  Fl_Graphics_Driver();
 //  virtual ~Fl_Graphics_Driver() { if (p) free(p); }

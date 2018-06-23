@@ -32,9 +32,6 @@
  */
 
 #include "config_lib.h"
-#if defined(FL_PORTING)
-#  pragma message "FL_PORTING: implement OpenGL text rendering here"
-#endif // defined(FL_PORTING)
 
 #if HAVE_GL || defined(FL_DOXYGEN)
 

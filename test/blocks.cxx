@@ -34,12 +34,6 @@
 // Audio headers...
 #include <config.h>
 
-#if defined(_WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: FLTK does not provide cross platform sound support"
-#else
-#endif
-
 #ifndef _WIN32
 #  include <unistd.h>
 #  include <sys/time.h> // gettimeofday()

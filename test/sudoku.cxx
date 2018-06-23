@@ -46,12 +46,6 @@
 #  include <unistd.h>
 #endif // !_WIN32
 
-#if defined(_WIN32) || defined(__APPLE__)
-#elif defined(FL_PORTING)
-#  pragma message "FL_PORTING: FLTK does not provide cross platform sound support"
-#else
-#endif
-
 #ifdef HAVE_ALSA_ASOUNDLIB_H
 #  define ALSA_PCM_NEW_HW_PARAMS_API
 #  include <alsa/asoundlib.h>

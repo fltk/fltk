@@ -20,11 +20,6 @@
 #include <FL/Fl_Printer.H>
 #include <config.h>
 
-#ifdef FL_PORTING
-#  pragma message "FL_PORTING: implement print support for your platform, or define FL_NO_PRINT_SUPPORT"
-#define FL_NO_PRINT_SUPPORT 1
-#endif
-
 #if defined(FL_NO_PRINT_SUPPORT)
 #include <FL/Fl_PostScript.H>
 
