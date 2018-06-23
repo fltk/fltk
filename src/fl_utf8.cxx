@@ -615,7 +615,7 @@ void fl_make_path_for_file( const char *path ) {
 
 #if ERRORS_TO_CP1252
 /* Codes 0x80..0x9f from the Microsoft CP1252 character set, translated
- * to Unicode:
+ to Unicode:
  */
 static unsigned short cp1252[32] = {
   0x20ac, 0x0081, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020, 0x2021,

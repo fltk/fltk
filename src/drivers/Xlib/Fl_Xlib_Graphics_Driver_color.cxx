@@ -343,7 +343,7 @@ void Fl_Xlib_Graphics_Driver::set_color(Fl_Color i, unsigned c) {
 }
 
 /**
- @}
+ \}
  */
 
 //

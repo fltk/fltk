@@ -91,9 +91,9 @@ public:
 
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** A base class describing the interface between FLTK and draw-to-image operations.
@@ -123,8 +123,8 @@ protected:
 };
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 #endif // Fl_Image_Surface_H

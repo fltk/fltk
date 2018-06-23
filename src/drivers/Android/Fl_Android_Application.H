@@ -41,7 +41,7 @@ extern void (*fl_lock_function)();
 
 
 /**
- * A class to make Java calls from C++ easier.
+ A class to make Java calls from C++ easier.
  */
 class Fl_Android_Java
 {
@@ -63,41 +63,41 @@ public:
 
 
 /**
- * Static class that manages all interaction between the Android Native Activity
- * and the FLTK library. It also keeps often used data for global access.
- *
- * On launch, it creates a main thread and communication pipe to
- * the Activity. All FLTK code will run in that thread. Activity
- * events will be polled by the Screen driver using the provided
- * Android Looper, and will also be routed back to this class as needed.
- *
- * This code is based on the native activity interface
- * provided by <android/native_activity.h>. It is based on a set
- * of application-provided callbacks that will be called
- * by the Activity's main thread when certain events occur.
- *
- * 1/ The application must provide a function named "int main(argc, argv)" that
- *    will be called when the activity is created, in a new thread that is
- *    distinct from the activity's main thread.
- *
- * 2/ The application has access to a static "Fl_Android_Application" class
- *    that contains references to other important objects, e.g. the
- *    ANativeActivity object instance the application is running in.
- *
- * 3/ the "Fl_Android_Application" class holds an ALooper instance that already
- *    listens to two important things:
- *
- *      - activity lifecycle events (e.g. "pause", "resume"). See APP_CMD_XXX
- *        declarations below.
- *
- *      - input events coming from the AInputQueue attached to the activity.
- *
- *    Each of these correspond to an ALooper identifier returned by
- *    ALooper_pollOnce with values of LOOPER_ID_MAIN and LOOPER_ID_INPUT,
- *    respectively.
- *
- *    FLTK will add more items to the looper for timers and file and socket
- *    communication. (fl_add_timeout, Fl::add_fd(), ...
+ Static class that manages all interaction between the Android Native Activity
+ and the FLTK library. It also keeps often used data for global access.
+
+ On launch, it creates a main thread and communication pipe to
+ the Activity. All FLTK code will run in that thread. Activity
+ events will be polled by the Screen driver using the provided
+ Android Looper, and will also be routed back to this class as needed.
+
+ This code is based on the native activity interface
+ provided by <android/native_activity.h>. It is based on a set
+ of application-provided callbacks that will be called
+ by the Activity's main thread when certain events occur.
+
+ 1/ The application must provide a function named "int main(argc, argv)" that
+    will be called when the activity is created, in a new thread that is
+    distinct from the activity's main thread.
+
+ 2/ The application has access to a static "Fl_Android_Application" class
+    that contains references to other important objects, e.g. the
+    ANativeActivity object instance the application is running in.
+
+ 3/ the "Fl_Android_Application" class holds an ALooper instance that already
+    listens to two important things:
+
+      - activity lifecycle events (e.g. "pause", "resume"). See APP_CMD_XXX
+        declarations below.
+
+      - input events coming from the AInputQueue attached to the activity.
+
+    Each of these correspond to an ALooper identifier returned by
+    ALooper_pollOnce with values of LOOPER_ID_MAIN and LOOPER_ID_INPUT,
+    respectively.
+
+    FLTK will add more items to the looper for timers and file and socket
+    communication. (fl_add_timeout, Fl::add_fd(), ...
  */
 class Fl_Android_Application
 {

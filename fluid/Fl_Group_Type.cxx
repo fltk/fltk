@@ -379,7 +379,7 @@ void Fl_Group_Type::leave_live_mode() {
 }
 
 /**
- * copy all properties from the edit widget to the live widget
+ copy all properties from the edit widget to the live widget
  */
 void Fl_Group_Type::copy_properties() {
   Fl_Widget_Type::copy_properties();

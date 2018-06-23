@@ -177,10 +177,10 @@ static int get_wsock_mod() {
 #endif // dynamic/static linking of ws2_32.dll (see above and STR #3454)
 
 /*
- * Dynamic linking of imm32.dll
- * This library is only needed for a hand full (four ATM) functions relating to
- * international text rendering and locales. Dynamically loading reduces initial
- * size and link dependencies.
+ Dynamic linking of imm32.dll
+ This library is only needed for a hand full (four ATM) functions relating to
+ international text rendering and locales. Dynamically loading reduces initial
+ size and link dependencies.
  */
 static HMODULE s_imm_module = 0;
 typedef BOOL(WINAPI *flTypeImmAssociateContextEx)(HWND, HIMC, DWORD);
@@ -1862,9 +1862,9 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
 ////////////////////////////////////////////////////////////////
 
 /*
- * This silly little class remembers the name of all window classes
- * we register to avoid double registration. It has the added bonus
- * of freeing everything on application close as well.
+ This silly little class remembers the name of all window classes
+ we register to avoid double registration. It has the added bonus
+ of freeing everything on application close as well.
  */
 class NameList {
 public:

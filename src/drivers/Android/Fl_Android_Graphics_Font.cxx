@@ -35,9 +35,9 @@
 
 
 /**
- * - font names starting with a $ will have the system font path inserted
- * - font names starting with an @ will be loaded via the Asset Manager
- * - all other names will be used verbatim
+ - font names starting with a $ will have the system font path inserted
+ - font names starting with an @ will be loaded via the Asset Manager
+ - all other names will be used verbatim
  */
 static Fl_Fontdesc built_in_table[] = {
         {"$Roboto-Regular.ttf"},
@@ -68,14 +68,14 @@ static const char *old_font_names[] = {
 // -----------------------------------------------------------------------------
 
 /**
- * Create an empty Bytemap.
+ Create an empty Bytemap.
  */
 Fl_Android_Bytemap::Fl_Android_Bytemap()
 {
 }
 
 /**
- * Create an empty Bytemap.
+ Create an empty Bytemap.
  */
 Fl_Android_Bytemap::Fl_Android_Bytemap(int w, int h)
 {
@@ -84,7 +84,7 @@ Fl_Android_Bytemap::Fl_Android_Bytemap(int w, int h)
 }
 
 /**
- * Destroy the Bytemap and its allocated resources.
+ Destroy the Bytemap and its allocated resources.
  */
 Fl_Android_Bytemap::~Fl_Android_Bytemap()
 {
@@ -92,14 +92,14 @@ Fl_Android_Bytemap::~Fl_Android_Bytemap()
 }
 
 /**
- * Render a bytemap to the screen using the current fl_color.
- *
- * Bytes are seen as alpha values for the RGB color set by fl_color. For better
- * performance, alpha is only rendered in 5 steps. All rendering is offset as
- * described in the bytemap, and clipped to the clipping region.
- * @param xx, yy bottom left position of the bytemap (baseline for text)
- * @param bm bytemap including offsets and size
- * @param r clipping rectangle
+ Render a bytemap to the screen using the current fl_color.
+
+ Bytes are seen as alpha values for the RGB color set by fl_color. For better
+ performance, alpha is only rendered in 5 steps. All rendering is offset as
+ described in the bytemap, and clipped to the clipping region.
+ \param xx, yy bottom left position of the bytemap (baseline for text)
+ \param bm bytemap including offsets and size
+ \param r clipping rectangle
  */
 void Fl_Android_Graphics_Driver::draw(int xx, int yy, Fl_Android_Bytemap *bm,
                                       Fl_Rect_Region &r)
@@ -160,8 +160,8 @@ void Fl_Android_Graphics_Driver::draw(int xx, int yy, Fl_Android_Bytemap *bm,
 // -----------------------------------------------------------------------------
 
 /**
- * Create an empty image.
- * All initialisation of members is done in-lin (C++11)
+ Create an empty image.
+ All initialisation of members is done in-lin (C++11)
  */
 Fl_Android_565A_Map::Fl_Android_565A_Map()
 {
@@ -179,14 +179,14 @@ Fl_Android_565A_Map::~Fl_Android_565A_Map()
 }
 
 /**
- * Render a bytemap to the screen using the current fl_color.
- *
- * Bytes are seen as alpha values for the RGB color set by fl_color. For better
- * performance, alpha is only rendered in 5 steps. All rendering is offset as
- * described in the bytemap, and clipped to the clipping region.
- * @param xx, yy bottom left position of the bytemap (baseline for text)
- * @param bm bytemap including offsets and size
- * @param r clipping rectangle
+ Render a bytemap to the screen using the current fl_color.
+
+ Bytes are seen as alpha values for the RGB color set by fl_color. For better
+ performance, alpha is only rendered in 5 steps. All rendering is offset as
+ described in the bytemap, and clipped to the clipping region.
+ \param xx, yy bottom left position of the bytemap (baseline for text)
+ \param bm bytemap including offsets and size
+ \param r clipping rectangle
  */
 void Fl_Android_Graphics_Driver::draw(int xx, int yy, Fl_Android_565A_Map *bm,
                                       Fl_Rect_Region &r)
@@ -233,9 +233,9 @@ void Fl_Android_Graphics_Driver::draw(int xx, int yy, Fl_Android_565A_Map *bm,
 // -----------------------------------------------------------------------------
 
 /**
- * Create a True Type font manager.
- * @param fname the name of the font as it appears in the fl_fonts table.
- * @param fnum the index into the fl_fonts table
+ Create a True Type font manager.
+ \param fname the name of the font as it appears in the fl_fonts table.
+ \param fnum the index into the fl_fonts table
  */
 Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) :
         pFileBuffer(nullptr),
@@ -246,7 +246,7 @@ Fl_Android_Font_Source::Fl_Android_Font_Source(const char *fname, Fl_Font fnum) 
 }
 
 /**
- * Release all resources.
+ Release all resources.
  */
 Fl_Android_Font_Source::~Fl_Android_Font_Source()
 {
@@ -255,9 +255,9 @@ Fl_Android_Font_Source::~Fl_Android_Font_Source()
 }
 
 /**
- * Attempt to find an load a font file.
- * @param name file or asset name
- * @return
+ Attempt to find an load a font file.
+ \param name file or asset name
+ \return
  */
 bool Fl_Android_Font_Source::load_font(const char *name)
 {
@@ -272,9 +272,9 @@ bool Fl_Android_Font_Source::load_font(const char *name)
 }
 
 /**
- * Attempt to load a font through the asset manager.
- * @param name file or asset name
- * @return
+ Attempt to load a font through the asset manager.
+ \param name file or asset name
+ \return
  */
 bool Fl_Android_Font_Source::load_font_asset(const char *name)
 {
@@ -307,9 +307,9 @@ bool Fl_Android_Font_Source::load_font_asset(const char *name)
 }
 
 /**
- * Attempt to load a font through the asset manager.
- * @param name file or asset name
- * @return
+ Attempt to load a font through the asset manager.
+ \param name file or asset name
+ \return
  */
 bool Fl_Android_Font_Source::load_font_file(const char *name)
 {
@@ -351,8 +351,8 @@ bool Fl_Android_Font_Source::load_font_file(const char *name)
 
 
 /**
- * Load a True Type font file and initialize the TTF interpreter.
- * A copy of the font file must remain in memory for the interpreter to work.
+ Load a True Type font file and initialize the TTF interpreter.
+ A copy of the font file must remain in memory for the interpreter to work.
  */
 void Fl_Android_Font_Source::load_font()
 {
@@ -382,10 +382,10 @@ void Fl_Android_Font_Source::load_font()
 }
 
 /**
- * Return a bytemap for the give unicode character.
- * @param c unicode character
- * @param size height in pixels
- * @return a bytemap
+ Return a bytemap for the give unicode character.
+ \param c unicode character
+ \param size height in pixels
+ \return a bytemap
  */
 Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
 {
@@ -409,13 +409,13 @@ Fl_Android_Bytemap *Fl_Android_Font_Source::get_bytemap(uint32_t c, int size)
 }
 
 /**
- * Get the width of the character in pixels.
- * This is not a good function because character advance also depends on kerning
- * which takes the next character in a text line into account. Also, FLTK is
- * limited to integer character positions, and so is the Android driver.
- * @param c unicode character
- * @param size height in pixels
- * @return width in pixels to the start of the next character
+ Get the width of the character in pixels.
+ This is not a good function because character advance also depends on kerning
+ which takes the next character in a text line into account. Also, FLTK is
+ limited to integer character positions, and so is the Android driver.
+ \param c unicode character
+ \param size height in pixels
+ \return width in pixels to the start of the next character
  */
 float Fl_Android_Font_Source::get_advance(uint32_t c, Fl_Fontsize size)
 {
@@ -446,12 +446,12 @@ int Fl_Android_Font_Source::get_descent(Fl_Fontsize size)
 // -----------------------------------------------------------------------------
 
 /**
- * Create a new font descriptor.
- * @param fname name of this font as in fl_fonts
- * @param fsrc the font source for this font; there is one single font source
- *        for all hights of a single font
- * @param fnum index into the fl_fonts array
- * @param fsize height of font in pixels
+ Create a new font descriptor.
+ \param fname name of this font as in fl_fonts
+ \param fsrc the font source for this font; there is one single font source
+        for all hights of a single font
+ \param fnum index into the fl_fonts array
+ \param fsize height of font in pixels
  */
 Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_Android_Font_Source *fsrc, Fl_Font fnum, Fl_Fontsize fsize) :
         Fl_Font_Descriptor(fname, fsize),
@@ -472,7 +472,7 @@ Fl_Android_Font_Descriptor::Fl_Android_Font_Descriptor(const char *fname, Fl_And
 }
 
 /**
- * Release resources, including all cached unicode character shapes.
+ Release resources, including all cached unicode character shapes.
  */
 Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
 {
@@ -489,9 +489,9 @@ Fl_Android_Font_Descriptor::~Fl_Android_Font_Descriptor()
 }
 
 /*
- * Get the width of the character in pixels.
- * @param c unicode character
- * @return width in pixels to the start of the next character
+ Get the width of the character in pixels.
+ \param c unicode character
+ \return width in pixels to the start of the next character
  */
 float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 {
@@ -502,14 +502,14 @@ float Fl_Android_Font_Descriptor::get_advance(uint32_t c)
 }
 
 /**
- * Get the pixels for a given Unicode character.
- *
- * Calculating a bitmap is relatively expensive. This class will cache every
- * bitmap ever generated. Currently, this is pretty much brute force because
- * none of the bitmaps are ever released.
- *
- * @param c unicode character
- * @return a bytemap
+ Get the pixels for a given Unicode character.
+
+ Calculating a bitmap is relatively expensive. This class will cache every
+ bitmap ever generated. Currently, this is pretty much brute force because
+ none of the bitmaps are ever released.
+
+ \param c unicode character
+ \return a bytemap
  */
 Fl_Android_Bytemap *Fl_Android_Font_Descriptor::get_bytemap(uint32_t c)
 {
@@ -547,10 +547,10 @@ int Fl_Android_Font_Descriptor::get_descent()
 
 
 /**
- * Find or create a font descriptor for a given font and height.
- * @param fnum index into fl_fonts
- * @param size height in pixels
- * @return an existing oder newly created descriptor
+ Find or create a font descriptor for a given font and height.
+ \param fnum index into fl_fonts
+ \param size height in pixels
+ \return an existing oder newly created descriptor
  */
 Fl_Android_Font_Descriptor* Fl_Android_Font_Descriptor::find(Fl_Font fnum, Fl_Fontsize size)
 {
@@ -574,9 +574,9 @@ Fl_Android_Font_Descriptor* Fl_Android_Font_Descriptor::find(Fl_Font fnum, Fl_Fo
 // =============================================================================
 
 /**
- * Set a font for future use in text rendering calls.
- * @param fnum index into fl_fonts
- * @param size height in pixels
+ Set a font for future use in text rendering calls.
+ \param fnum index into fl_fonts
+ \param size height in pixels
  */
 void Fl_Android_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   font_descriptor( Fl_Android_Font_Descriptor::find(fnum, size) );
@@ -585,10 +585,10 @@ void Fl_Android_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 /**
- * Copy a single letter to the screen.
- * @param xx, yy position of character on screen
- * @param c unicode character
- * @return x position of next character on screen
+ Copy a single letter to the screen.
+ \param xx, yy position of character on screen
+ \param c unicode character
+ \return x position of next character on screen
  */
 int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c, Fl_Rect_Region &r)
 {
@@ -607,10 +607,10 @@ int Fl_Android_Graphics_Driver::render_letter(int xx, int yy, uint32_t c, Fl_Rec
 }
 
 /**
- * Render a string to screen.
- * @param str text in utf-8 encoding
- * @param n number of bytes to render
- * @param x, y position on screen
+ Render a string to screen.
+ \param str text in utf-8 encoding
+ \param n number of bytes to render
+ \param x, y position on screen
  */
 void Fl_Android_Graphics_Driver::draw(const char* str, int n, int x, int y)
 {
@@ -676,7 +676,7 @@ Fl_Fontsize Fl_Android_Graphics_Driver::size()
 }
 
 /**
- * FIXME: use the actual size of all glyphs, which is easily found in the Bytemap!
+ FIXME: use the actual size of all glyphs, which is easily found in the Bytemap!
  */
 void Fl_Android_Graphics_Driver::text_extents(const char *str, int n, int &dx, int &dy, int &w, int &h)
 {
@@ -705,10 +705,10 @@ int Fl_Android_Graphics_Driver::descent()
 }
 
 /**
- * Get a human-readable string describing the family of this face.
- * @param fnum index into font table
- * @param ap[out] returns if the face is bold or italic or both.
- * @return pointer to a string; don't free, don't write
+ Get a human-readable string describing the family of this face.
+ \param fnum index into font table
+ \param ap[out] returns if the face is bold or italic or both.
+ \return pointer to a string; don't free, don't write
  */
 const char *Fl_Android_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap)
 {
@@ -723,9 +723,9 @@ const char *Fl_Android_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap)
 }
 
 /**
- * Gets the string for this face.
- * @param num index into font table
- * @return pointer to a string; don't free, don't write
+ Gets the string for this face.
+ \param num index into font table
+ \return pointer to a string; don't free, don't write
  */
 const char *Fl_Android_Graphics_Driver::font_name(int num)
 {
@@ -735,11 +735,11 @@ const char *Fl_Android_Graphics_Driver::font_name(int num)
 }
 
 /**
- * Return an array of sizes in sizep.
- * @param fnum index into font table
- * @param sizep[out] a static array that contains the single value 0, indicating
- *        that all fonts are arbitrarily resizable.
- * @return 1, because our array has a size of 1
+ Return an array of sizes in sizep.
+ \param fnum index into font table
+ \param sizep[out] a static array that contains the single value 0, indicating
+        that all fonts are arbitrarily resizable.
+ \return 1, because our array has a size of 1
  */
 int Fl_Android_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep)
 {
@@ -749,10 +749,10 @@ int Fl_Android_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep)
 }
 
 /**
- * FLTK will open the display, and add every fonts on the server to the face table.
- * TODO: This is not supported under Android.
- * @param name basically a wildcard for finding fonts
- * @return number of fonts found
+ FLTK will open the display, and add every fonts on the server to the face table.
+ TODO: This is not supported under Android.
+ \param name basically a wildcard for finding fonts
+ \return number of fonts found
  */
 Fl_Font Fl_Android_Graphics_Driver::set_fonts(const char *name)
 {
@@ -760,11 +760,11 @@ Fl_Font Fl_Android_Graphics_Driver::set_fonts(const char *name)
 }
 
 /**
- * Changes a face.
- * @param num index of the font
- * @param name Path to font file, prepend $ for system fonts, @ for font assets.
- *        The string pointer is simply stored, the string is not copied, so the
- *        string must be in static memory.
+ Changes a face.
+ \param num index of the font
+ \param name Path to font file, prepend $ for system fonts, @ for font assets.
+        The string pointer is simply stored, the string is not copied, so the
+        string must be in static memory.
  */
 void Fl_Android_Graphics_Driver::font_name(int num, const char *name)
 {

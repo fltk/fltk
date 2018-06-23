@@ -32,10 +32,10 @@
 
 
 /**
- * A bytemap is an array of bytes, used as an alpha channel when redering glyphs
- * in a given color.
- * TODO: reate a class for RGB only and for grayscale and grayscale with alpha
- * TODO: derive all this from a baseclass, so we can create the correct class for the required image
+ A bytemap is an array of bytes, used as an alpha channel when redering glyphs
+ in a given color.
+ TODO: reate a class for RGB only and for grayscale and grayscale with alpha
+ TODO: derive all this from a baseclass, so we can create the correct class for the required image
  */
 class Fl_Android_Bytemap
 {
@@ -52,10 +52,10 @@ public:
 
 
 /**
- * A 565a map is an array of words for interleaved RGB and Alpha data.
- * 565 is the number of bit per component, compatible with our screen memory
- * scheme. The second word is actually a byt containing the alpha value for
- * the previous pixel: rrrrrggg.gggbbbbb.aaaaaaaa.00000000
+ A 565a map is an array of words for interleaved RGB and Alpha data.
+ 565 is the number of bit per component, compatible with our screen memory
+ scheme. The second word is actually a byt containing the alpha value for
+ the previous pixel: rrrrrggg.gggbbbbb.aaaaaaaa.00000000
  */
 class Fl_Android_565A_Map
 {
@@ -78,8 +78,8 @@ public:
 
 
 /**
- * This class reads True Type Font files and creates Bytemaps for glyphs at the
- * requested height.
+ This class reads True Type Font files and creates Bytemaps for glyphs at the
+ requested height.
  */
 class Fl_Android_Font_Source
 {
@@ -105,7 +105,7 @@ public:
 
 
 /**
- * This class caches glyphs of a font for a specified height.
+ This class caches glyphs of a font for a specified height.
  */
 class Fl_Android_Font_Descriptor : public Fl_Font_Descriptor
 {

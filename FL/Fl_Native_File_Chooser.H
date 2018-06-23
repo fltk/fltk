@@ -168,9 +168,9 @@ public:
   };
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** Represents the interface between FLTK and a native file chooser.
@@ -265,8 +265,8 @@ public:
 };
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 

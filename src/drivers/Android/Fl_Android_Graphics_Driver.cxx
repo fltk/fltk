@@ -32,8 +32,8 @@ extern int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
 static int sign(int v) { return (v<0) ? -1 : 1; }
 
 /*
- * By linking this module, the following static method will instantiate the
- * Windows GDI Graphics driver as the main display driver.
+ By linking this module, the following static method will instantiate the
+ Windows GDI Graphics driver as the main display driver.
  */
 Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 {
@@ -42,7 +42,7 @@ Fl_Graphics_Driver *Fl_Graphics_Driver::newMainGraphicsDriver()
 
 
 /**
- * Private default constructor.
+ Private default constructor.
  */
 Fl_Android_Graphics_Driver::Fl_Android_Graphics_Driver() :
         super()
@@ -262,8 +262,8 @@ void Fl_Android_Graphics_Driver::line_style(int style, int width, char* dashes)
 }
 
 /**
- * Draw a single dot in the current color.
- * @param x, y position relative to window.
+ Draw a single dot in the current color.
+ \param x, y position relative to window.
  */
 void Fl_Android_Graphics_Driver::point(int x, int y)
 {
@@ -283,10 +283,10 @@ void Fl_Android_Graphics_Driver::point(int x, int y)
 }
 
 /**
- * Draw a line.
- * FIXME: it is incredibly inefficient to call 'point', especially for long lines
- * FIXME: clipping maust be moved into this call and drawing to the screen should happen right here
- * FIXME: line width is not considered
+ Draw a line.
+ FIXME: it is incredibly inefficient to call 'point', especially for long lines
+ FIXME: clipping maust be moved into this call and drawing to the screen should happen right here
+ FIXME: line width is not considered
  */
 void Fl_Android_Graphics_Driver::line(int x, int y, int x1, int y1)
 {
@@ -379,7 +379,7 @@ void Fl_Android_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2,
 
 
 /**
- * Reset the vertex counter to zero.
+ Reset the vertex counter to zero.
  */
 void Fl_Android_Graphics_Driver::begin_vertices()
 {
@@ -388,9 +388,9 @@ void Fl_Android_Graphics_Driver::begin_vertices()
 }
 
 /**
- * Add a vertex to the vertex list. Dynamically allocates memory.
- * @param x, y position of the vertex after matrix transformation
- * @param gap line and loop call offer to leave a gap in the drawing
+ Add a vertex to the vertex list. Dynamically allocates memory.
+ \param x, y position of the vertex after matrix transformation
+ \param gap line and loop call offer to leave a gap in the drawing
  */
 void Fl_Android_Graphics_Driver::add_vertex(float x, float y, bool gap)
 {
@@ -404,7 +404,7 @@ void Fl_Android_Graphics_Driver::add_vertex(float x, float y, bool gap)
 }
 
 /**
- * Start a list of vertices to draw multiple points.
+ Start a list of vertices to draw multiple points.
  */
 void Fl_Android_Graphics_Driver::begin_points()
 {
@@ -413,7 +413,7 @@ void Fl_Android_Graphics_Driver::begin_points()
 }
 
 /**
- * Start a list of vertices to draw a polyline.
+ Start a list of vertices to draw a polyline.
  */
 void Fl_Android_Graphics_Driver::begin_line()
 {
@@ -422,7 +422,7 @@ void Fl_Android_Graphics_Driver::begin_line()
 }
 
 /**
- * Start a list of vertices to draw a line loop.
+ Start a list of vertices to draw a line loop.
  */
 void Fl_Android_Graphics_Driver::begin_loop()
 {
@@ -431,7 +431,7 @@ void Fl_Android_Graphics_Driver::begin_loop()
 }
 
 /**
- * Start a list of vertices to draw a polygon.
+ Start a list of vertices to draw a polygon.
  */
 void Fl_Android_Graphics_Driver::begin_polygon()
 {
@@ -440,7 +440,7 @@ void Fl_Android_Graphics_Driver::begin_polygon()
 }
 
 /**
- * Start a list of vertices to draw a complex polygon.
+ Start a list of vertices to draw a complex polygon.
  */
 void Fl_Android_Graphics_Driver::begin_complex_polygon()
 {
@@ -449,7 +449,7 @@ void Fl_Android_Graphics_Driver::begin_complex_polygon()
 }
 
 /**
- * Draw all stored vertices as points.
+ Draw all stored vertices as points.
  */
 void Fl_Android_Graphics_Driver::end_points()
 {
@@ -461,7 +461,7 @@ void Fl_Android_Graphics_Driver::end_points()
 }
 
 /**
- * Draw all stored vertices as a polyline.
+ Draw all stored vertices as a polyline.
  */
 void Fl_Android_Graphics_Driver::end_line()
 {
@@ -475,7 +475,7 @@ void Fl_Android_Graphics_Driver::end_line()
 }
 
 /**
- * Draw all stored vertices as a polyline loop.
+ Draw all stored vertices as a polyline loop.
  */
 void Fl_Android_Graphics_Driver::end_loop()
 {
@@ -490,10 +490,10 @@ void Fl_Android_Graphics_Driver::end_loop()
 }
 
 /**
- * Draw all stored vertices as a polygon.
- * FIXME: these calls are very ineffiecient. Avoid pointer lookup.
- * FIXME: use the current clipping rect to accelerate rendering
- * FIXME: unmix float and int
+ Draw all stored vertices as a polygon.
+ FIXME: these calls are very ineffiecient. Avoid pointer lookup.
+ FIXME: use the current clipping rect to accelerate rendering
+ FIXME: unmix float and int
  */
 void Fl_Android_Graphics_Driver::end_polygon(int begin, int end)
 {
@@ -560,8 +560,8 @@ void Fl_Android_Graphics_Driver::end_polygon(int begin, int end)
 }
 
 /**
- * Draw all stored vertices as a polygon.
- * Mind the gap!
+ Draw all stored vertices as a polygon.
+ Mind the gap!
  */
 void Fl_Android_Graphics_Driver::end_polygon()
 {
@@ -579,10 +579,10 @@ void Fl_Android_Graphics_Driver::end_polygon()
 }
 
 /**
- * Draw all stored vertices as a possibly self-intersecting polygon.
- * FIXME: these calls are very ineffiecient. Avoid pointer lookup.
- * FIXME: use the current clipping rect to accelerate rendering
- * FIXME: unmix float and int
+ Draw all stored vertices as a possibly self-intersecting polygon.
+ FIXME: these calls are very ineffiecient. Avoid pointer lookup.
+ FIXME: use the current clipping rect to accelerate rendering
+ FIXME: unmix float and int
  */
 void Fl_Android_Graphics_Driver::end_complex_polygon()
 {
@@ -653,7 +653,7 @@ void Fl_Android_Graphics_Driver::end_complex_polygon()
 }
 
 /**
- * Add a gap to a polyline drawing
+ Add a gap to a polyline drawing
  */
 void Fl_Android_Graphics_Driver::gap()
 {
@@ -668,8 +668,8 @@ void Fl_Android_Graphics_Driver::gap()
 }
 
 /**
- * Add a vertex to the list.
- * TODO: we should maintain a bounding box for faster clipping.
+ Add a vertex to the list.
+ TODO: we should maintain a bounding box for faster clipping.
  */
 void Fl_Android_Graphics_Driver::transformed_vertex(double x, double y)
 {
@@ -684,14 +684,14 @@ void Fl_Android_Graphics_Driver::vertex(double x,double y)
 
 
 /**
- * Draw an arc.
- * @param xi
- * @param yi
- * @param w
- * @param h
- * @param a1
- * @param a2
- * FIXME: float-to-int interpolation is horrible!
+ Draw an arc.
+ \param xi
+ \param yi
+ \param w
+ \param h
+ \param a1
+ \param a2
+ FIXME: float-to-int interpolation is horrible!
  */
 void Fl_Android_Graphics_Driver::arc(int xi, int yi, int w, int h, double a1, double a2)
 {
@@ -722,14 +722,14 @@ void Fl_Android_Graphics_Driver::arc(int xi, int yi, int w, int h, double a1, do
 }
 
 /**
- * Draw a piece of a pie.
- * FIXME: this is not working very well at all.
- * @param xi
- * @param yi
- * @param w
- * @param h
- * @param b1
- * @param b2
+ Draw a piece of a pie.
+ FIXME: this is not working very well at all.
+ \param xi
+ \param yi
+ \param w
+ \param h
+ \param b1
+ \param b2
  */
 void Fl_Android_Graphics_Driver::pie(int xi, int yi, int w, int h, double b1, double b2)
 {
@@ -945,9 +945,9 @@ void Fl_Android_Graphics_Driver::pie(int xi, int yi, int w, int h, double b1, do
 }
 
 /**
- * FIXME: these do not draw rotated ellipses correctly!
- * FIXME: use floating point version of arc and pie?!
- * */
+ FIXME: these do not draw rotated ellipses correctly!
+ FIXME: use floating point version of arc and pie?!
+ */
 void Fl_Android_Graphics_Driver::ellipse(double xt, double yt, double rx, double ry)
 {
   int llx = xt-rx;
@@ -1128,10 +1128,10 @@ void Fl_Android_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int
 
 
 /**
- * Copy RGB (or RGBA?) image data directly onto the surface.
- * TODO: I did not find documentation on the possible values of D. If D is four, does that
- * mean that the fourth value must be an alpha value, and should that be applied here?
- * What does a negative D indicate?
+ Copy RGB (or RGBA?) image data directly onto the surface.
+ TODO: I did not find documentation on the possible values of D. If D is four, does that
+ mean that the fourth value must be an alpha value, and should that be applied here?
+ What does a negative D indicate?
  */
 void Fl_Android_Graphics_Driver::draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 {
@@ -1154,10 +1154,10 @@ void Fl_Android_Graphics_Driver::draw_image(const uchar* buf, int X,int Y,int W,
 }
 
 /**
- * Copy RGB (or RGBA?) image data directly onto the surface.
- * TODO: I did not find documentation on the possible values of D. If D is four, does that
- * mean that the fourth value must be an alpha value, and should that be applied here?
- * What does a negative D indicate?
+ Copy RGB (or RGBA?) image data directly onto the surface.
+ TODO: I did not find documentation on the possible values of D. If D is four, does that
+ mean that the fourth value must be an alpha value, and should that be applied here?
+ What does a negative D indicate?
  */
 void Fl_Android_Graphics_Driver::draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 {
@@ -1181,9 +1181,9 @@ void Fl_Android_Graphics_Driver::draw_image_mono(const uchar* buf, int X,int Y,i
 }
 
 /*
- * Draw some graphics line-by-line directly onto this surface
- * TODO: I did not find documentation on the possible values of D. If D is four, does that
- * mean that the fourth value must be an alpha value, and should that be applied here?
+ Draw some graphics line-by-line directly onto this surface
+ TODO: I did not find documentation on the possible values of D. If D is four, does that
+ mean that the fourth value must be an alpha value, and should that be applied here?
  */
 void Fl_Android_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
 {
@@ -1208,11 +1208,11 @@ void Fl_Android_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data, int
 }
 
 /*
- * Draw some graphics line-by-line directly onto this surface
- * TODO: I did not find documentation on the possible values of D. If D is two, does that
- * mean that the fourth value must be an alpha value, and should that be applied here?
- * If it is three, doe we need to convert RGB to grayscale?
- * What exactly does a negative value mean? Where is this all documented? Sigh.
+ Draw some graphics line-by-line directly onto this surface
+ TODO: I did not find documentation on the possible values of D. If D is two, does that
+ mean that the fourth value must be an alpha value, and should that be applied here?
+ If it is three, doe we need to convert RGB to grayscale?
+ What exactly does a negative value mean? Where is this all documented? Sigh.
  */
 void Fl_Android_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
 {
@@ -1259,9 +1259,9 @@ void Fl_Android_Graphics_Driver::color(uchar r, uchar g, uchar b)
 }
 
 /**
- * Draw a rectangle that may be dithered if we are in colormap mode (which in
- * the year 2018 is as likely has a user with a berstein colored tube TV).
- * FIXME: This function should be virtual as well, or should not exist at all.
+ Draw a rectangle that may be dithered if we are in colormap mode (which in
+ the year 2018 is as likely has a user with a berstein colored tube TV).
+ FIXME: This function should be virtual as well, or should not exist at all.
  */
 void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b) {
 #if USE_COLORMAP

@@ -38,9 +38,9 @@
 #include <stdlib.h>
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** see fl_push_matrix() */
@@ -134,8 +134,8 @@ double Fl_Graphics_Driver::transform_dy(double x, double y) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

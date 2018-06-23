@@ -2570,10 +2570,10 @@ Fl_Tree_Reason Fl_Tree::callback_reason() const {
 }
 
 /**
- * Read a preferences database into the tree widget.
- * A preferences database is a hierarchical collection of data which can be
- * directly loaded into the tree view for inspection.
- * \param[in] prefs the Fl_Preferences database
+ Read a preferences database into the tree widget.
+ A preferences database is a hierarchical collection of data which can be
+ directly loaded into the tree view for inspection.
+ \param[in] prefs the Fl_Preferences database
  */
 void Fl_Tree::load(Fl_Preferences &prefs) {
   int i, j, n, pn = (int) strlen(prefs.path());

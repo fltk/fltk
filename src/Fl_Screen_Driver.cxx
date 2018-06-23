@@ -17,9 +17,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 #include <FL/Fl_Screen_Driver.H>
@@ -495,8 +495,8 @@ int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

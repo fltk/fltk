@@ -17,9 +17,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 #include <FL/Fl_Native_File_Chooser.H>
@@ -312,8 +312,8 @@ int Fl_Native_File_Chooser_FLTK_Driver::exist_dialog() {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

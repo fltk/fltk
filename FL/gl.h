@@ -23,21 +23,22 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file gl.h
- *  This file defines wrapper functions for OpenGL in FLTK
- *
- *  To use OpenGL from within an FLTK application you MUST use gl_visual()
- *  to select the default visual before doing show() on any windows. Mesa
- *  will crash if you try to use a visual not returned by glxChooseVisual.
- *
- *  Historically, this did not always work well with Fl_Double_Window's!
- *  It can try to draw into the front buffer.
- *  Depending on the system this might either
- *  crash or do nothing (when pixmaps are being used as back buffer
- *  and GL is being done by hardware), work correctly (when GL is done
- *  with software, such as Mesa), or draw into the front buffer and
- *  be erased when the buffers are swapped (when double buffer hardware
- *  is being used)
+/**
+ \file gl.h
+ This file defines wrapper functions for OpenGL in FLTK
+
+ To use OpenGL from within an FLTK application you MUST use gl_visual()
+ to select the default visual before doing show() on any windows. Mesa
+ will crash if you try to use a visual not returned by glxChooseVisual.
+
+ Historically, this did not always work well with Fl_Double_Window's!
+ It can try to draw into the front buffer.
+ Depending on the system this might either
+ crash or do nothing (when pixmaps are being used as back buffer
+ and GL is being done by hardware), work correctly (when GL is done
+ with software, such as Mesa), or draw into the front buffer and
+ be erased when the buffers are swapped (when double buffer hardware
+ is being used)
  */
 
 #ifndef FL_gl_H

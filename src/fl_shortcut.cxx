@@ -373,9 +373,9 @@ int Fl_Widget::test_shortcut() {
 }
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 const char *Fl_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
@@ -417,8 +417,8 @@ const char *Fl_System_Driver::shortcut_add_key_name(unsigned key, char *p, char 
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

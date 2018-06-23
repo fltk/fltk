@@ -111,10 +111,10 @@ extern CGContextRef fl_gc;
 /** \defgroup group_macosx Mac OS X-specific symbols
  Mac OS X-specific symbols declared in <FL/platform.H>
  \sa \ref osissues_macos
- @{ */
+ \{ */
 
 /**
- *  Attaches a callback to the "About myprog" item of the system application menu.
+ Attaches a callback to the "About myprog" item of the system application menu.
  For back-compatibility.
  Equivalent to Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *user_data).
  */

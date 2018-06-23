@@ -40,7 +40,7 @@ unsigned fl_cmap[256] = {
 // -----------------------------------------------------------------------------
 
 /** \addtogroup  fl_attributes
- @{ */
+ \{ */
 
 /**
  Returns the RGB value(s) for the given FLTK color index.
@@ -166,7 +166,7 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   else return FL_WHITE;
 }
 /**
- @}
+ \}
  */
 
 //

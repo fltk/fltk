@@ -44,7 +44,7 @@ class Fl_Quartz_Font_Descriptor;
 
 /**
  \brief The Mac OS X-specific graphics class.
- *
+
  This class is implemented only on the Mac OS X platform.
  */
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {

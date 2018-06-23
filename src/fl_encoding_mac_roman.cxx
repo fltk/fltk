@@ -77,9 +77,9 @@ static char *buf = 0;
 static int n_buf = 0;
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 const char *Fl_System_Driver::local_to_mac_roman(const char *t, int n)
@@ -125,8 +125,8 @@ const char *Fl_System_Driver::mac_roman_to_local(const char *t, int n)
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 const char *fl_local_to_mac_roman(const char *t, int n) {

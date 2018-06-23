@@ -2809,7 +2809,7 @@ void Fl_Widget_Type::leave_live_mode() {
 }
 
 /**
- * copy all properties from the edit widget to the live widget
+ copy all properties from the edit widget to the live widget
  */
 void Fl_Widget_Type::copy_properties() {
   if (!live_widget) 

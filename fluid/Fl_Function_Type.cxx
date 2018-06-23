@@ -1315,7 +1315,7 @@ const char* Fl_Type::class_name(const int need_nest) const {
 }
 
 /**
- * If this Type resides inside a class, this function returns the class type, or null.
+ If this Type resides inside a class, this function returns the class type, or null.
  */
 const Fl_Class_Type *Fl_Type::is_in_class() const {
   Fl_Type* p = parent;
@@ -1479,7 +1479,7 @@ void Fl_Class_Type::write_code2() {
 }
 
 /**
- * Return 1 if this class contains a function with the given signature.
+ Return 1 if this class contains a function with the given signature.
  */
 int Fl_Class_Type::has_function(const char *rtype, const char *sig) const {
   Fl_Type *child;

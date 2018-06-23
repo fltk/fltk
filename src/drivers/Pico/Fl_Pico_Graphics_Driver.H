@@ -30,7 +30,7 @@
 
 /**
  \brief The Pico minimal graphics class.
- *
+
  This class is implemented as a base class for minimal core drivers.
  */
 class Fl_Pico_Graphics_Driver : public Fl_Graphics_Driver {

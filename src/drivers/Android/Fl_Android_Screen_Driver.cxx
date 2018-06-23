@@ -18,9 +18,9 @@
 
 
 /**
- * @if AndroidDev
- * @defgroup AndroidDeveloper Android Developer Documentation
- * @{
+ @cond AndroidDev
+ \defgroup AndroidDeveloper Android Developer Documentation
+ \{
  */
 
 
@@ -39,11 +39,11 @@
 
 
 /**
- * @class Fl_Android_Screen_Driver
- *
- * Handle Android screen devices.
- *
- * @todo This class is in an early development stage
+ \class Fl_Android_Screen_Driver
+
+ Handle Android screen devices.
+
+ \todo This class is in an early development stage
  */
 
 
@@ -55,7 +55,7 @@ static void timer_do_callback(int timerIndex);
 
 
 /**
- * Creates a driver that manages all Android screen and display related calls.
+ Creates a driver that manages all Android screen and display related calls.
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
@@ -67,7 +67,7 @@ extern int fl_send_system_handlers(void *e);
 
 
 /**
- * Create the screen driver.
+ Create the screen driver.
  */
 Fl_Android_Screen_Driver::Fl_Android_Screen_Driver() :
   super(),
@@ -78,11 +78,11 @@ Fl_Android_Screen_Driver::Fl_Android_Screen_Driver() :
 
 
 /**
- * Call the FLTK System handler with Android specific events.
- *
- * @return always 1, assuming the event was handled
- *
- * @see Fl_Android_Platform_Event
+ Call the FLTK System handler with Android specific events.
+
+ \return always 1, assuming the event was handled
+
+ \see Fl_Android_Platform_Event
  */
 int Fl_Android_Screen_Driver::handle_app_command()
 {
@@ -187,12 +187,12 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputQueue *queue, AInputEvent
 
 
 /**
- * Handle all events in the even queue.
- *
- * @todo what should this function return?
- *
- * @param time_to_wait
- * @return we do not know
+ Handle all events in the even queue.
+
+ \todo what should this function return?
+
+ \param time_to_wait
+ \return we do not know
  */
 int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
 {
@@ -253,13 +253,13 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
 
 
 /**
- * Wait for a maximum of `time_to_wait` until something happens.
- *
- * @param time_to_wait in seconds
- * @return We really do not know; check other platforms to see what is
- *        consistent here.
- *
- * @todo return the remaining time to reach 'time_to_wait'
+ Wait for a maximum of `time_to_wait` until something happens.
+
+ \param time_to_wait in seconds
+ \return We really do not know; check other platforms to see what is
+        consistent here.
+
+ \todo return the remaining time to reach 'time_to_wait'
  */
 double Fl_Android_Screen_Driver::wait(double time_to_wait)
 {
@@ -310,10 +310,10 @@ double Fl_Android_Screen_Driver::wait(double time_to_wait)
 
 
 /**
- * On Android, we currently write into a memory buffer and copy
- * the content to the screen.
- *
- * @see fl_flush()
+ On Android, we currently write into a memory buffer and copy
+ the content to the screen.
+
+ \see fl_flush()
  */
 void Fl_Android_Screen_Driver::flush()
 {
@@ -474,14 +474,14 @@ void Fl_Android_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *data)
 
 
 /**
- * Play some system sound.
- *
- * This function plays some rather arbitrary system sounds.
- *
- * @param type
- *
- * @see Fl_Screen_Driver::beep(int)
- * @see fl_beep(int)
+ Play some system sound.
+
+ This function plays some rather arbitrary system sounds.
+
+ \param type
+
+ \see Fl_Screen_Driver::beep(int)
+ \see fl_beep(int)
  */
 void Fl_Android_Screen_Driver::beep(int type)
 {
@@ -526,20 +526,20 @@ void Fl_Android_Screen_Driver::beep(int type)
 
 
 /**
- * Get the current mouse coordinates.
- *
- * This is used, among other things, to position the FLTK standard dialogs in
- * a way that makes it easy to click the most common button. For an Android
- * touch screen, this makes no sense at all, which is why we return the center
- * of the screen for now.
- *
- * @todo rethink the dialog positioning scheme for touch devices.
- *
- * @todo this method assumes a fixed screen resolution
- *
- * @param [out] x
- * @param [out] y
- * @return
+ Get the current mouse coordinates.
+
+ This is used, among other things, to position the FLTK standard dialogs in
+ a way that makes it easy to click the most common button. For an Android
+ touch screen, this makes no sense at all, which is why we return the center
+ of the screen for now.
+
+ \todo rethink the dialog positioning scheme for touch devices.
+
+ \todo this method assumes a fixed screen resolution
+
+ \param [out] x
+ \param [out] y
+ \return
  */
 int Fl_Android_Screen_Driver::get_mouse(int &x, int &y)
 {
@@ -565,8 +565,8 @@ void Fl_Android_Screen_Driver::grab(Fl_Window* win)
 
 
 /**
- * @}
- * @endif
+ \}
+ \endcond
  */
 
 

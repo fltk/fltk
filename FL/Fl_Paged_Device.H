@@ -31,7 +31,7 @@
 
 /**
  \brief Represents page-structured drawing surfaces.
- *
+
  This class has no public constructor: don't instantiate it; use Fl_Printer 
  or Fl_PostScript_File_Device instead.
  */

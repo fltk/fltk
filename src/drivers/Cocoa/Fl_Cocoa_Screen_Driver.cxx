@@ -37,9 +37,9 @@ extern void (*fl_unlock_function)();
 int Fl_Cocoa_Screen_Driver::next_marked_length = 0;
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /**
@@ -53,8 +53,8 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {

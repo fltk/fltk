@@ -32,11 +32,11 @@ class Fl_Android_Window_Driver;
 
 
 /**
- * The Fl_Rect_Region describes a rectangular clipping region.
- *
- * Contrary to common FLTK convention, rectangles are stored with coordinates
- * instead of their width and height to accelerate calculations. The discreet
- * constructor however uses the old convention for convenience.
+ The Fl_Rect_Region describes a rectangular clipping region.
+
+ Contrary to common FLTK convention, rectangles are stored with coordinates
+ instead of their width and height to accelerate calculations. The discreet
+ constructor however uses the old convention for convenience.
  */
 class Fl_Rect_Region
 {
@@ -82,35 +82,35 @@ private:
 
 
 /**
- * The Fl_Complex_Region represents a clipping region of any shape.
- *
- * This class is organized in a tree-like structure. If the region is
- * rectangular, is_simple() returns 1 and the rectangle can be used just
- * as in Fl_Rect_Region.
- *
- * If a more complex representation is needed, subregions are created which are
- * guaranteed to lie within the bounding box of the current region. Subregions
- * themselves can again contain sub-subregions to describe the entire clipping
- * region, effectively creating a tree where the leafs contain the rectangles
- * that together describe the clipping area.
- *
- * To make life easier, Fl_Complex_Region provides two types of iterator to
- * travers the entire tree.
- *
- * 1. Fl_Complex_Region itself is compatible to C++11 range-based loops and
- *    can bewalked simply by writing ``for (auto &&it: rgn) { ... }``.
- *
- * 2. Fl_Complex_Region provides an alternative iterator that loop only through
- *    leafs that intersects with a given rectangle. The returned object
- *    provides access to the readily clipped rectangle.
- *
- * @code
- * Fl_Complex_Region rgn(something);
- * for (auto &&it: rgn.iterate(Fl_Rect_Region(0, 0, 100, 100)) {
- *    draw_something(it->rect());
- * }
- * @endcode
- *
+ The Fl_Complex_Region represents a clipping region of any shape.
+
+ This class is organized in a tree-like structure. If the region is
+ rectangular, is_simple() returns 1 and the rectangle can be used just
+ as in Fl_Rect_Region.
+
+ If a more complex representation is needed, subregions are created which are
+ guaranteed to lie within the bounding box of the current region. Subregions
+ themselves can again contain sub-subregions to describe the entire clipping
+ region, effectively creating a tree where the leafs contain the rectangles
+ that together describe the clipping area.
+
+ To make life easier, Fl_Complex_Region provides two types of iterator to
+ travers the entire tree.
+
+ 1. Fl_Complex_Region itself is compatible to C++11 range-based loops and
+    can bewalked simply by writing ``for (auto &&it: rgn) { ... }``.
+
+ 2. Fl_Complex_Region provides an alternative iterator that loop only through
+    leafs that intersects with a given rectangle. The returned object
+    provides access to the readily clipped rectangle.
+
+ \code
+ Fl_Complex_Region rgn(something);
+ for (auto &&it: rgn.iterate(Fl_Rect_Region(0, 0, 100, 100)) {
+    draw_something(it->rect());
+ }
+ \endcode
+
  */
 class Fl_Complex_Region : public Fl_Rect_Region
 {

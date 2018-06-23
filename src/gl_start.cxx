@@ -87,9 +87,9 @@ void gl_finish() {
 }
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
@@ -129,8 +129,8 @@ int Fl::gl_visual(int mode, int *alist) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 #endif // HAVE_GL

@@ -59,9 +59,9 @@ static void del_context(GLContext ctx) {
 static Fl_Gl_Choice *first;
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 // this assumes one of the two arguments is zero:
@@ -76,8 +76,8 @@ Fl_Gl_Choice *Fl_Gl_Window_Driver::find_begin(int m, const int *alistp) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 static GLContext cached_context;

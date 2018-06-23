@@ -152,8 +152,8 @@ void Fl_Android_Application::free_saved_state()
 }
 
 /**
- * Call when ALooper_pollAll() returns LOOPER_ID_MAIN, reading the next
- * app command message.
+ Call when ALooper_pollAll() returns LOOPER_ID_MAIN, reading the next
+ app command message.
  */
 int8_t Fl_Android_Application::read_cmd()
 {
@@ -201,9 +201,9 @@ void Fl_Android_Application::print_cur_config()
 }
 
 /**
- * Call with the command returned by android_app_read_cmd() to do the
- * initial pre-processing of the given command.  You can perform your own
- * actions for the command after calling this function.
+ Call with the command returned by android_app_read_cmd() to do the
+ initial pre-processing of the given command.  You can perform your own
+ actions for the command after calling this function.
  */
 void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
 {
@@ -275,9 +275,9 @@ void Fl_Android_Application::pre_exec_cmd(int8_t cmd)
 }
 
 /**
- * Call with the command returned by read_cmd() to do the
- * final post-processing of the given command.  You must have done your own
- * actions for the command before calling this function.
+ Call with the command returned by read_cmd() to do the
+ final post-processing of the given command.  You must have done your own
+ actions for the command before calling this function.
  */
 void Fl_Android_Application::post_exec_cmd(int8_t cmd)
 {
@@ -384,10 +384,10 @@ void *Fl_Android_Application::thread_entry(void* param)
 }
 
 /**
- * Allocate memory for our internal screen buffer.
- *
- * FIXME: everything is currently hardcoded to an 600x800 resolution
- * TODO: react to screen changes
+ Allocate memory for our internal screen buffer.
+
+ FIXME: everything is currently hardcoded to an 600x800 resolution
+ TODO: react to screen changes
  */
 void Fl_Android_Application::allocate_screen()
 {
@@ -442,12 +442,12 @@ bool Fl_Android_Application::copy_screen()
 }
 
 /**
- * Take ownership of screen memory for gaining write access.
- *
- * If the screen is already locked, it will not be locked again
- * and a value of true will be returned.
- *
- * @return true if we gaines access, false if no access was granted and screen memory must not be writte to
+ Take ownership of screen memory for gaining write access.
+
+ If the screen is already locked, it will not be locked again
+ and a value of true will be returned.
+
+ \return true if we gaines access, false if no access was granted and screen memory must not be writte to
  */
 bool Fl_Android_Application::lock_screen()
 {
@@ -467,10 +467,10 @@ bool Fl_Android_Application::lock_screen()
 }
 
 /**
- * Release screen memory ownership and give it back to the system.
- *
- * The memory content will be copied to the physical screen next.
- * If the screen is not locked, this call will have no effect.
+ Release screen memory ownership and give it back to the system.
+
+ The memory content will be copied to the physical screen next.
+ If the screen is not locked, this call will have no effect.
  */
 void Fl_Android_Application::unlock_and_post_screen()
 {
@@ -482,8 +482,8 @@ void Fl_Android_Application::unlock_and_post_screen()
 }
 
 /**
- * Is the screen currently locked?
- * @return true if it is locked and the app has write access.
+ Is the screen currently locked?
+ \return true if it is locked and the app has write access.
  */
 bool Fl_Android_Application::screen_is_locked()
 {
@@ -563,7 +563,7 @@ void Fl_Android_Activity::close_activity()
 // ---- Android Native Activity callbacks ----
 
 /**
- * The rectangle in the window in which content should be placed has changed.
+ The rectangle in the window in which content should be placed has changed.
  */
 void Fl_Android_Activity::onContentRectChanged(ANativeActivity *activity, const ARect *rect)
 {
@@ -571,7 +571,7 @@ void Fl_Android_Activity::onContentRectChanged(ANativeActivity *activity, const 
 }
 
 /**
- * The drawing window for this native activity needs to be redrawn. To avoid transient artifacts during screen changes (such resizing after rotation), applications should not return from this function until they have finished drawing their window in its current state.
+ The drawing window for this native activity needs to be redrawn. To avoid transient artifacts during screen changes (such resizing after rotation), applications should not return from this function until they have finished drawing their window in its current state.
  */
 void Fl_Android_Activity::onNativeWindowRedrawNeeded(ANativeActivity *activity, ANativeWindow *window)
 {
@@ -579,7 +579,7 @@ void Fl_Android_Activity::onNativeWindowRedrawNeeded(ANativeActivity *activity, 
 }
 
 /**
- * The drawing window for this native activity has been resized. You should retrieve the new size from the window and ensure that your rendering in it now matches.
+ The drawing window for this native activity has been resized. You should retrieve the new size from the window and ensure that your rendering in it now matches.
  */
 void Fl_Android_Activity::onNativeWindowResized(ANativeActivity *activity, ANativeWindow *window)
 {
@@ -587,7 +587,7 @@ void Fl_Android_Activity::onNativeWindowResized(ANativeActivity *activity, ANati
 }
 
 /**
- * NativeActivity is being destroyed. See Java documentation for Activity.onDestroy() for more information.
+ NativeActivity is being destroyed. See Java documentation for Activity.onDestroy() for more information.
  */
 void Fl_Android_Activity::onDestroy(ANativeActivity* activity)
 {
@@ -597,7 +597,7 @@ void Fl_Android_Activity::onDestroy(ANativeActivity* activity)
 }
 
 /**
- * NativeActivity has started. See Java documentation for Activity.onStart() for more information.
+ NativeActivity has started. See Java documentation for Activity.onStart() for more information.
  */
 void Fl_Android_Activity::onStart(ANativeActivity* activity)
 {
@@ -606,7 +606,7 @@ void Fl_Android_Activity::onStart(ANativeActivity* activity)
 }
 
 /**
- * NativeActivity has resumed. See Java documentation for Activity.onResume() for more information.
+ NativeActivity has resumed. See Java documentation for Activity.onResume() for more information.
  */
 void Fl_Android_Activity::onResume(ANativeActivity* activity)
 {
@@ -615,7 +615,7 @@ void Fl_Android_Activity::onResume(ANativeActivity* activity)
 }
 
 /**
- * Framework is asking NativeActivity to save its current instance state. See Java documentation for Activity.onSaveInstanceState() for more information. The returned pointer needs to be created with malloc(); the framework will call free() on it for you. You also must fill in outSize with the number of bytes in the allocation. Note that the saved state will be persisted, so it can not contain any active entities (pointers to memory, file descriptors, etc).
+ Framework is asking NativeActivity to save its current instance state. See Java documentation for Activity.onSaveInstanceState() for more information. The returned pointer needs to be created with malloc(); the framework will call free() on it for you. You also must fill in outSize with the number of bytes in the allocation. Note that the saved state will be persisted, so it can not contain any active entities (pointers to memory, file descriptors, etc).
  */
 void *Fl_Android_Activity::onSaveInstanceState(ANativeActivity* activity, size_t* outLen)
 {
@@ -643,7 +643,7 @@ void *Fl_Android_Activity::onSaveInstanceState(ANativeActivity* activity, size_t
 }
 
 /**
- * NativeActivity has paused. See Java documentation for Activity.onPause() for more information.
+ NativeActivity has paused. See Java documentation for Activity.onPause() for more information.
  */
 void Fl_Android_Activity::onPause(ANativeActivity* activity)
 {
@@ -652,7 +652,7 @@ void Fl_Android_Activity::onPause(ANativeActivity* activity)
 }
 
 /**
- * NativeActivity has stopped. See Java documentation for Activity.onStop() for more information.
+ NativeActivity has stopped. See Java documentation for Activity.onStop() for more information.
  */
 void Fl_Android_Activity::onStop(ANativeActivity* activity)
 {
@@ -661,7 +661,7 @@ void Fl_Android_Activity::onStop(ANativeActivity* activity)
 }
 
 /**
- * The current device AConfiguration has changed. The new configuration can be retrieved from assetManager.
+ The current device AConfiguration has changed. The new configuration can be retrieved from assetManager.
  */
 void Fl_Android_Activity::onConfigurationChanged(ANativeActivity* activity)
 {
@@ -671,7 +671,7 @@ void Fl_Android_Activity::onConfigurationChanged(ANativeActivity* activity)
 }
 
 /**
- * The system is running low on memory. Use this callback to release resources you do not need, to help the system avoid killing more important processes.
+ The system is running low on memory. Use this callback to release resources you do not need, to help the system avoid killing more important processes.
  */
 void Fl_Android_Activity::onLowMemory(ANativeActivity* activity)
 {
@@ -681,7 +681,7 @@ void Fl_Android_Activity::onLowMemory(ANativeActivity* activity)
 }
 
 /**
- * Focus has changed in this NativeActivity's window. This is often used, for example, to pause a game when it loses input focus.
+ Focus has changed in this NativeActivity's window. This is often used, for example, to pause a game when it loses input focus.
  */
 void Fl_Android_Activity::onWindowFocusChanged(ANativeActivity* activity, int focused)
 {
@@ -690,7 +690,7 @@ void Fl_Android_Activity::onWindowFocusChanged(ANativeActivity* activity, int fo
 }
 
 /**
- * The drawing window for this native activity has been created. You can use the given native window object to start drawing.
+ The drawing window for this native activity has been created. You can use the given native window object to start drawing.
  */
 void Fl_Android_Activity::onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
 {
@@ -699,7 +699,7 @@ void Fl_Android_Activity::onNativeWindowCreated(ANativeActivity* activity, ANati
 }
 
 /**
- * The drawing window for this native activity is going to be destroyed. You MUST ensure that you do not touch the window object after returning from this function: in the common case of drawing to the window from another thread, that means the implementation of this callback must properly synchronize with the other thread to stop its drawing before returning from here.
+ The drawing window for this native activity is going to be destroyed. You MUST ensure that you do not touch the window object after returning from this function: in the common case of drawing to the window from another thread, that means the implementation of this callback must properly synchronize with the other thread to stop its drawing before returning from here.
  */
 void Fl_Android_Activity::onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window)
 {
@@ -708,7 +708,7 @@ void Fl_Android_Activity::onNativeWindowDestroyed(ANativeActivity* activity, ANa
 }
 
 /**
- * The input queue for this native activity's window has been created. You can use the given input queue to start retrieving input events.
+ The input queue for this native activity's window has been created. You can use the given input queue to start retrieving input events.
  */
 void Fl_Android_Activity::onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
 {
@@ -717,7 +717,7 @@ void Fl_Android_Activity::onInputQueueCreated(ANativeActivity* activity, AInputQ
 }
 
 /**
- * The input queue for this native activity's window is being destroyed. You should no longer try to reference this object upon returning from this function.
+ The input queue for this native activity's window is being destroyed. You should no longer try to reference this object upon returning from this function.
  */
 void Fl_Android_Activity::onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
 {
@@ -726,10 +726,10 @@ void Fl_Android_Activity::onInputQueueDestroyed(ANativeActivity* activity, AInpu
 }
 
 /**
- * Create a thread that will run our FLTK code and the required communications and locks.
- * @param activity the interface to the Java end of Android
- * @param savedState if this app is relaunched, this is a memory block with the state of the app when it was interrupted
- * @param savedStateSize size of that block
+ Create a thread that will run our FLTK code and the required communications and locks.
+ \param activity the interface to the Java end of Android
+ \param savedState if this app is relaunched, this is a memory block with the state of the app when it was interrupted
+ \param savedStateSize size of that block
  */
 void Fl_Android_Activity::create(ANativeActivity* activity, void* savedState,
                                  size_t savedStateSize)
@@ -773,7 +773,7 @@ void Fl_Android_Activity::create(ANativeActivity* activity, void* savedState,
 }
 
 /**
- * Set all callbacks from the Native Activity.
+ Set all callbacks from the Native Activity.
  */
 void Fl_Android_Activity::set_callbacks()
 {
@@ -797,7 +797,7 @@ void Fl_Android_Activity::set_callbacks()
 }
 
 /**
- * This is the main entry point from the Android JavaVM into the native world.
+ This is the main entry point from the Android JavaVM into the native world.
  */
 JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {

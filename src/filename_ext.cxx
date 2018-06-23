@@ -36,18 +36,18 @@ const char *fl_filename_ext(const char *buf) {
 
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /**
- * Default implementation to find a filename extension.
- *
- * The default implementation assumes that the last `.` character separates
- * the extension form the basename of a file.
- *
- * @see fl_filename_ext(const char*)
+ Default implementation to find a filename extension.
+
+ The default implementation assumes that the last `.` character separates
+ the extension form the basename of a file.
+
+ \see fl_filename_ext(const char*)
  */
 const char *Fl_System_Driver::filename_ext(const char *buf) {
   const char *q = 0;
@@ -60,8 +60,8 @@ const char *Fl_System_Driver::filename_ext(const char *buf) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

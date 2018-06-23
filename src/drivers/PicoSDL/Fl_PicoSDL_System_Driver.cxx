@@ -23,8 +23,8 @@
 
 
 /*
- * By linking this module, the following static method will instantiate the
- * PicoSDL Graphics driver as the main display driver.
+ By linking this module, the following static method will instantiate the
+ PicoSDL Graphics driver as the main display driver.
  */
 Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 {

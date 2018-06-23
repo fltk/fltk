@@ -34,9 +34,9 @@
 // -----------------------------------------------------------------------------
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** see fl_restore_clip() */
@@ -59,8 +59,8 @@ Fl_Region Fl_Graphics_Driver::clip_region() {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 

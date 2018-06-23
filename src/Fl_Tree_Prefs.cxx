@@ -89,9 +89,9 @@ int Fl_Darwin_System_Driver::tree_connector_style() {
 
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 const char * const Fl_System_Driver::tree_open_xpm[] = {
@@ -132,14 +132,14 @@ const char * const Fl_System_Driver::tree_close_xpm[] = {
 
 
 /**
- * Return the address of a pixmap that show a plus in a box.
- *
- * This pixmap is used to indicate a brach of a tree that is closed and
- * can be opened by clicking it.
- *
- * Other platforms may use other symbols which can be reimplemented in the
- * driver. Notably, Apple Mac systems mark a closed branch with a triangle
- * pointing to the right, and an open branch with a triangle pointing down.
+ Return the address of a pixmap that show a plus in a box.
+
+ This pixmap is used to indicate a brach of a tree that is closed and
+ can be opened by clicking it.
+
+ Other platforms may use other symbols which can be reimplemented in the
+ driver. Notably, Apple Mac systems mark a closed branch with a triangle
+ pointing to the right, and an open branch with a triangle pointing down.
  */
 Fl_Pixmap *Fl_System_Driver::tree_openpixmap() {
   static Fl_Pixmap *pixmap = new Fl_Pixmap(tree_open_xpm);
@@ -156,8 +156,8 @@ int Fl_System_Driver::tree_connector_style() {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 

@@ -890,7 +890,7 @@ extern int include_H_from_C;
 extern int use_FL_COMMAND;
 
 /*
- * This class is needed for additional command line plugins.
+ This class is needed for additional command line plugins.
  */
 class Fl_Commandline_Plugin : public Fl_Plugin {
 public:

@@ -17,9 +17,9 @@
 //
 
 /**
- * @cond DriverDev
- * @defgroup DriverDeveloper Driver Developer Documentation
- * @{
+ \cond DriverDev
+ \defgroup DriverDeveloper Driver Developer Documentation
+ \{
  */
 
 #include <FL/Fl_System_Driver.H>
@@ -153,15 +153,15 @@ void Fl_System_Driver::fatal(const char *format, va_list args) {
  */
 
 /*
- *    XParseGeometry parses strings of the form
- *   "=<width>x<height>{+-}<xoffset>{+-}<yoffset>", where
- *   width, height, xoffset, and yoffset are unsigned integers.
- *   Example:  "=80x24+300-49"
- *   The equal sign is optional.
- *   It returns a bitmask that indicates which of the four values
- *   were actually found in the string.  For each value found,
- *   the corresponding argument is updated;  for each value
- *   not found, the corresponding argument is left unchanged.
+    XParseGeometry parses strings of the form
+   "=<width>x<height>{+-}<xoffset>{+-}<yoffset>", where
+   width, height, xoffset, and yoffset are unsigned integers.
+   Example:  "=80x24+300-49"
+   The equal sign is optional.
+   It returns a bitmask that indicates which of the four values
+   were actually found in the string.  For each value found,
+   the corresponding argument is updated;  for each value
+   not found, the corresponding argument is left unchanged.
  */
 
 static int ReadInteger(char* string, char** NextString)
@@ -495,8 +495,8 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

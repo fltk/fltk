@@ -17,9 +17,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 #include <FL/Fl.H>
@@ -333,8 +333,8 @@ Fl_Offscreen Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(Fl_Image
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 #ifndef FL_DOXYGEN

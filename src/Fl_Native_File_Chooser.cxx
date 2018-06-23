@@ -241,9 +241,9 @@ int Fl_Native_File_Chooser::show() {
 }
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 // COPY A STRING WITH 'new'
@@ -297,8 +297,8 @@ void Fl_Native_File_Chooser_Driver::chrcat(char *s, char c) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

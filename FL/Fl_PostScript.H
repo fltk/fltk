@@ -33,14 +33,14 @@ extern "C" {
 }
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /**
  \brief PostScript graphical backend.
- *
+
  PostScript text uses vectorial fonts when using the FLTK standard fonts  
  and the latin alphabet or a few other characters listed in the following table.
  The latin alphabet means all unicode characters between U+0020 and U+017F, or, in other words, 
@@ -232,8 +232,8 @@ public:
 };
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 /**

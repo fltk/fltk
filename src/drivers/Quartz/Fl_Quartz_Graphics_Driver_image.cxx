@@ -34,20 +34,20 @@ static void dataReleaseCB(void *info, const void *data, size_t size)
 }
 
 /*
- * draw an image based on the input parameters
- *
- * buf:       image source data
- * X, Y:      position (in buffer?!)
- * W, H:      size of picture (in pixel?)
- * delta:     distance from pixel to pixel in buf in bytes
- * linedelta: distance from line to line in buf in bytes
- * mono:      if set, pixel is one byte - if zero, pixel is 3 byte
- * cb:        callback to copy image data into (RGB?) buffer
- *   buf:       pointer to first byte in image source
- *   x, y:      position in buffer
- *   w:         width (in bytes?)
- *   dst:       destination buffer
- * userdata:  ?
+ draw an image based on the input parameters
+
+ buf:       image source data
+ X, Y:      position (in buffer?!)
+ W, H:      size of picture (in pixel?)
+ delta:     distance from pixel to pixel in buf in bytes
+ linedelta: distance from line to line in buf in bytes
+ mono:      if set, pixel is one byte - if zero, pixel is 3 byte
+ cb:        callback to copy image data into (RGB?) buffer
+   buf:       pointer to first byte in image source
+   x, y:      position in buffer
+   w:         width (in bytes?)
+   dst:       destination buffer
+ userdata:  ?
  */
 static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int mono,

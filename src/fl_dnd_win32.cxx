@@ -52,7 +52,7 @@ Fl_Window *fl_dnd_target_window = 0;
 
 
 /**
- * subclass the IDropTarget to receive data from DnD operations
+ subclass the IDropTarget to receive data from DnD operations
  */
 class FLDropTarget : public IDropTarget
 {
@@ -321,7 +321,7 @@ int FLDropTarget::currDragSize = 0;
 char FLDropTarget::currDragResult = 0;
 
 /**
- * this class is needed to allow FLTK apps to be a DnD source
+ this class is needed to allow FLTK apps to be a DnD source
  */
 class FLDropSource : public IDropSource
 {

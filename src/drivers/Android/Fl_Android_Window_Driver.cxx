@@ -163,10 +163,10 @@ void Fl_Android_Window_Driver::resize(int X,int Y,int W,int H)
 }
 
 /**
- * Scroll a portion of the window.
- * FIXME: We are currently taking the easy way out, basically telling the caller that we don;t know how to scroll
- * and asking FLTK to draw the new area from scratch. It would be nice if clipping provides all calls
- * that we need to implement a more efficient scrolling code.
+ Scroll a portion of the window.
+ FIXME: We are currently taking the easy way out, basically telling the caller that we don;t know how to scroll
+ and asking FLTK to draw the new area from scratch. It would be nice if clipping provides all calls
+ that we need to implement a more efficient scrolling code.
  */
 int Fl_Android_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                                     void (*draw_area)(void*, int,int,int,int), void* data)

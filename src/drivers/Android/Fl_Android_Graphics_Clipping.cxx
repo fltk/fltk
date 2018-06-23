@@ -24,7 +24,7 @@
 
 
 /**
- * Create an empty clipping region.
+ Create an empty clipping region.
  */
 Fl_Rect_Region::Fl_Rect_Region() :
         pLeft(0), pTop(0), pRight(0), pBottom(0)
@@ -32,9 +32,9 @@ Fl_Rect_Region::Fl_Rect_Region() :
 }
 
 /**
- * Create a clipping region based on position and size.
- * @param x, y position
- * @param w, h size
+ Create a clipping region based on position and size.
+ \param x, y position
+ \param w, h size
  */
 Fl_Rect_Region::Fl_Rect_Region(int x, int y, int w, int h) :
         pLeft(x), pTop(y), pRight(x+w), pBottom(y+h)
@@ -42,7 +42,7 @@ Fl_Rect_Region::Fl_Rect_Region(int x, int y, int w, int h) :
 }
 
 /**
- * Clone a clipping rectangle.
+ Clone a clipping rectangle.
  */
 Fl_Rect_Region::Fl_Rect_Region(const Fl_Rect_Region &r) :
         pLeft(r.pLeft), pTop(r.pTop),
@@ -51,8 +51,8 @@ Fl_Rect_Region::Fl_Rect_Region(const Fl_Rect_Region &r) :
 }
 
 /**
- * Clone a clipping rectangle.
- * The pointer can be NULL if an empty rectangle is needed.
+ Clone a clipping rectangle.
+ The pointer can be NULL if an empty rectangle is needed.
  */
 Fl_Rect_Region::Fl_Rect_Region(enum Type what)
 {
@@ -65,8 +65,8 @@ Fl_Rect_Region::Fl_Rect_Region(enum Type what)
 }
 
 /**
- * If the rectangle has no width or height, it's considered empty.
- * @return true, if everything will be clipped and there is nothing to draw
+ If the rectangle has no width or height, it's considered empty.
+ \return true, if everything will be clipped and there is nothing to draw
  */
 bool Fl_Rect_Region::is_empty() const
 {
@@ -74,8 +74,8 @@ bool Fl_Rect_Region::is_empty() const
 }
 
 /**
- * Return true, if the rectangle is of unlimited size and nothing should be clipped.
- * @return treu, if there is no clipping
+ Return true, if the rectangle is of unlimited size and nothing should be clipped.
+ \return treu, if there is no clipping
  */
 bool Fl_Rect_Region::is_infinite() const
 {
@@ -83,7 +83,7 @@ bool Fl_Rect_Region::is_infinite() const
 }
 
 /**
- * Set an empty clipping rect.
+ Set an empty clipping rect.
  */
 void Fl_Rect_Region::set_empty()
 {
@@ -91,9 +91,9 @@ void Fl_Rect_Region::set_empty()
 }
 
 /**
- * Set a clipping rect using position and size
- * @param x, y position
- * @param w, h size
+ Set a clipping rect using position and size
+ \param x, y position
+ \param w, h size
  */
 void Fl_Rect_Region::set(int x, int y, int w, int h)
 {
@@ -104,9 +104,9 @@ void Fl_Rect_Region::set(int x, int y, int w, int h)
 }
 
 /**
- * Set a rectangle using the coordinates of two points, top left and bottom right.
- * @param l, t left and top coordinate
- * @param r, b right and bottom coordinate
+ Set a rectangle using the coordinates of two points, top left and bottom right.
+ \param l, t left and top coordinate
+ \param r, b right and bottom coordinate
  */
 void Fl_Rect_Region::set_ltrb(int l, int t, int r, int b)
 {
@@ -117,8 +117,8 @@ void Fl_Rect_Region::set_ltrb(int l, int t, int r, int b)
 }
 
 /**
- * Copy the corrdinates from another rect.
- * @param r source rectangle
+ Copy the corrdinates from another rect.
+ \param r source rectangle
  */
 void Fl_Rect_Region::set(const Fl_Rect_Region &r)
 {
@@ -129,10 +129,10 @@ void Fl_Rect_Region::set(const Fl_Rect_Region &r)
 }
 
 /**
- * Set this rect to be the intersecting area between the original rect and another rect.
- * @param r another rectangular region
- * @return EMPTY, if rectangles are not intersecting, SAME if this and rect are
- *      equal, LESS if the new rect is smaller than the original rect
+ Set this rect to be the intersecting area between the original rect and another rect.
+ \param r another rectangular region
+ \return EMPTY, if rectangles are not intersecting, SAME if this and rect are
+      equal, LESS if the new rect is smaller than the original rect
  */
 int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
 {
@@ -168,7 +168,7 @@ int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
 }
 
 /**
- * Use rectangle as a bounding box and add the outline of another rect.
+ Use rectangle as a bounding box and add the outline of another rect.
  */
 void Fl_Rect_Region::add_to_bbox(const Fl_Rect_Region &r)
 {
@@ -180,8 +180,8 @@ void Fl_Rect_Region::add_to_bbox(const Fl_Rect_Region &r)
 }
 
 /**
- * Print the coordinates of the rect to the log.
- * @param label some text that is logged with this message.
+ Print the coordinates of the rect to the log.
+ \param label some text that is logged with this message.
  */
 void Fl_Rect_Region::print(const char *label) const
 {
@@ -192,7 +192,7 @@ void Fl_Rect_Region::print(const char *label) const
 // =============================================================================
 
 /**
- * Create an empty complex region.
+ Create an empty complex region.
  */
 Fl_Complex_Region::Fl_Complex_Region() :
         Fl_Rect_Region()
@@ -200,8 +200,8 @@ Fl_Complex_Region::Fl_Complex_Region() :
 }
 
 /**
- * Create a complex region with the same bounds as the give rect.
- * @param r region size
+ Create a complex region with the same bounds as the give rect.
+ \param r region size
  */
 Fl_Complex_Region::Fl_Complex_Region(const Fl_Rect_Region &r) :
         Fl_Rect_Region(r)
@@ -209,7 +209,7 @@ Fl_Complex_Region::Fl_Complex_Region(const Fl_Rect_Region &r) :
 }
 
 /**
- * Delete this region, all subregions recursively, and all following regions.
+ Delete this region, all subregions recursively, and all following regions.
  */
 Fl_Complex_Region::~Fl_Complex_Region()
 {
@@ -217,12 +217,12 @@ Fl_Complex_Region::~Fl_Complex_Region()
 }
 
 /**
- * Delete all subregions of this region.
- * The pSubregion pointer should always be seen as a list of subregions, rather
- * than a single region and some pNext pointer. So everything we do, we should
- * probably do for every object in that list.
- *
- * Also note, that the top level region never has pNext pointing to anything.
+ Delete all subregions of this region.
+ The pSubregion pointer should always be seen as a list of subregions, rather
+ than a single region and some pNext pointer. So everything we do, we should
+ probably do for every object in that list.
+
+ Also note, that the top level region never has pNext pointing to anything.
  */
 void Fl_Complex_Region::delete_all_subregions()
 {
@@ -237,7 +237,7 @@ void Fl_Complex_Region::delete_all_subregions()
 }
 
 /**
- * Print the entire content of this region recursively.
+ Print the entire content of this region recursively.
  */
 void Fl_Complex_Region::print(const char *label) const
 {
@@ -246,7 +246,7 @@ void Fl_Complex_Region::print(const char *label) const
 }
 
 /*
- * Print the rectangular data only.
+ Print the rectangular data only.
  */
 void Fl_Complex_Region::print_data(int indent) const
 {
@@ -263,8 +263,8 @@ void Fl_Complex_Region::print_data(int indent) const
 }
 
 /**
- * Replace this region with a rectangle.
- * @param r the source rectangle
+ Replace this region with a rectangle.
+ \param r the source rectangle
  */
 void Fl_Complex_Region::set(const Fl_Rect_Region &r)
 {
@@ -273,9 +273,9 @@ void Fl_Complex_Region::set(const Fl_Rect_Region &r)
 }
 
 /**
- * Replace this region with a copy of another region.
- * This operation can be expensive for very complex regions.
- * @param r the source region
+ Replace this region with a copy of another region.
+ This operation can be expensive for very complex regions.
+ \param r the source region
  */
 void Fl_Complex_Region::set(const Fl_Complex_Region &r)
 {
@@ -298,9 +298,9 @@ void Fl_Complex_Region::set(const Fl_Complex_Region &r)
 }
 
 /**
- * Set this region to the intersection of the original region and some rect.
- * @param r intersect with this rectangle
- * @return EMPTY, SAME, LESS
+ Set this region to the intersection of the original region and some rect.
+ \param r intersect with this rectangle
+ \return EMPTY, SAME, LESS
  */
 int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 {
@@ -318,9 +318,9 @@ int Fl_Complex_Region::intersect_with(const Fl_Rect_Region &r)
 }
 
 /**
- * Subtract a rectangular region from this region.
- * @param r the rect that we want removed
- * @return currently 0, but could return something meaningful
+ Subtract a rectangular region from this region.
+ \param r the rect that we want removed
+ \return currently 0, but could return something meaningful
  */
 int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
 {
@@ -356,10 +356,10 @@ int Fl_Complex_Region::subtract(const Fl_Rect_Region &r)
 }
 
 /**
- * Compress the subregion of this region if possible and update the bounding
- * box of this region.
- *
- * Does not recurse down the tree!
+ Compress the subregion of this region if possible and update the bounding
+ box of this region.
+
+ Does not recurse down the tree!
  */
 void Fl_Complex_Region::compress()
 {
@@ -401,10 +401,10 @@ void Fl_Complex_Region::compress()
 }
 
 /**
- * Subtract a smaller rect from a larger rect, potentially creating four new rectangles.
- * This assumes that the calling region is NOT complex.
- * @param r subtract the area of this rectangle; r must fit within ``this``.
- * @return currently 0, but this may change
+ Subtract a smaller rect from a larger rect, potentially creating four new rectangles.
+ This assumes that the calling region is NOT complex.
+ \param r subtract the area of this rectangle; r must fit within ``this``.
+ \return currently 0, but this may change
  */
 int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
 {
@@ -444,8 +444,8 @@ int Fl_Complex_Region::subtract_smaller_region(const Fl_Rect_Region &r)
 }
 
 /**
- * Add an empty subregion to the current region.
- * @return a pointer to the newly created region.
+ Add an empty subregion to the current region.
+ \return a pointer to the newly created region.
  */
 Fl_Complex_Region *Fl_Complex_Region::add_subregion()
 {
@@ -460,9 +460,9 @@ Fl_Complex_Region *Fl_Complex_Region::add_subregion()
 // -----------------------------------------------------------------------------
 
 /**
- * Returns an iterator object for loops that traverse the entire region tree.
- * C++11 interface to range-based loops.
- * @return Iterator pointing to the first element.
+ Returns an iterator object for loops that traverse the entire region tree.
+ C++11 interface to range-based loops.
+ \return Iterator pointing to the first element.
  */
 Fl_Complex_Region::Iterator Fl_Complex_Region::begin()
 {
@@ -470,9 +470,9 @@ Fl_Complex_Region::Iterator Fl_Complex_Region::begin()
 }
 
 /**
- * Returns an interator object to mark the end of travesing the tree.
- * C++11 interface to range-based loops.
- * @return
+ Returns an interator object to mark the end of travesing the tree.
+ C++11 interface to range-based loops.
+ \return
  */
 Fl_Complex_Region::Iterator Fl_Complex_Region::end()
 {
@@ -480,8 +480,8 @@ Fl_Complex_Region::Iterator Fl_Complex_Region::end()
 }
 
 /**
- * Create an iterator to walk the entire tree.
- * @param r Iterate through this region, r must not have a parent().
+ Create an iterator to walk the entire tree.
+ \param r Iterate through this region, r must not have a parent().
  */
 Fl_Complex_Region::Iterator::Iterator(Fl_Complex_Region *r) :
         pRegion(r)
@@ -489,10 +489,10 @@ Fl_Complex_Region::Iterator::Iterator(Fl_Complex_Region *r) :
 }
 
 /**
- * Compare two iterators.
- * C++11 needs this to find the end of a for loop.
- * @param other
- * @return
+ Compare two iterators.
+ C++11 needs this to find the end of a for loop.
+ \param other
+ \return
  */
 bool Fl_Complex_Region::Iterator::operator!=(const Iterator &other) const
 {
@@ -500,9 +500,9 @@ bool Fl_Complex_Region::Iterator::operator!=(const Iterator &other) const
 }
 
 /**
- * Set the iterator to the next object in the tree, down first.
- * C++11 needs this to iterate in a for loop.
- * @return
+ Set the iterator to the next object in the tree, down first.
+ C++11 needs this to iterate in a for loop.
+ \return
  */
 const Fl_Complex_Region::Iterator &Fl_Complex_Region::Iterator::operator++()
 {
@@ -517,8 +517,8 @@ const Fl_Complex_Region::Iterator &Fl_Complex_Region::Iterator::operator++()
 }
 
 /**
- * Return the current object while iterating through the tree.
- * @return
+ Return the current object while iterating through the tree.
+ \return
  */
 Fl_Complex_Region *Fl_Complex_Region::Iterator::operator*() const
 {
@@ -528,9 +528,9 @@ Fl_Complex_Region *Fl_Complex_Region::Iterator::operator*() const
 // -----------------------------------------------------------------------------
 
 /**
- * Use this to iterate through a region, hitting only nodes that intersect with this rect.
- * @param r find all parts of the region that intersect with this rect.
- * @return an object that can be used in range-based for loops in C++11.
+ Use this to iterate through a region, hitting only nodes that intersect with this rect.
+ \param r find all parts of the region that intersect with this rect.
+ \return an object that can be used in range-based for loops in C++11.
  */
 Fl_Complex_Region::Overlapping Fl_Complex_Region::overlapping(const Fl_Rect_Region &r)
 {
@@ -538,9 +538,9 @@ Fl_Complex_Region::Overlapping Fl_Complex_Region::overlapping(const Fl_Rect_Regi
 }
 
 /**
- * A helper object for iterating through a region, finding only overlapping rects.
- * @param rgn
- * @param rect
+ A helper object for iterating through a region, finding only overlapping rects.
+ \param rgn
+ \param rect
  */
 Fl_Complex_Region::Overlapping::Overlapping(Fl_Complex_Region *rgn,
                                             const Fl_Rect_Region &rect) :
@@ -551,8 +551,8 @@ Fl_Complex_Region::Overlapping::Overlapping(Fl_Complex_Region *rgn,
 }
 
 /**
- * Return an itertor for the first clipping rectangle inside the region.
- * @return
+ Return an itertor for the first clipping rectangle inside the region.
+ \return
  */
 Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlapping::begin()
 {
@@ -561,8 +561,8 @@ Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlappi
 }
 
 /**
- * Return an iterator for the end of forward iteration.
- * @return
+ Return an iterator for the end of forward iteration.
+ \return
  */
 Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlapping::end()
 {
@@ -570,8 +570,8 @@ Fl_Complex_Region::Overlapping::OverlappingIterator Fl_Complex_Region::Overlappi
 }
 
 /**
- * Return the result of intersecting the original rect with this iterator.
- * @return
+ Return the result of intersecting the original rect with this iterator.
+ \return
  */
 Fl_Rect_Region &Fl_Complex_Region::Overlapping::clipped_rect()
 {
@@ -579,8 +579,8 @@ Fl_Rect_Region &Fl_Complex_Region::Overlapping::clipped_rect()
 }
 
 /**
- * Store the intersection in pClippedRect and return true if there was an intersection.
- * @return
+ Store the intersection in pClippedRect and return true if there was an intersection.
+ \return
  */
 bool Fl_Complex_Region::Overlapping::intersects()
 {
@@ -588,9 +588,9 @@ bool Fl_Complex_Region::Overlapping::intersects()
 }
 
 /**
- * Find the next element in the tree that actually intersects with the initial rect.
- * Starting the search at the current object, NOT the next object.
- * @return
+ Find the next element in the tree that actually intersects with the initial rect.
+ Starting the search at the current object, NOT the next object.
+ \return
  */
 bool Fl_Complex_Region::Overlapping::find_intersecting()
 {
@@ -610,8 +610,8 @@ bool Fl_Complex_Region::Overlapping::find_intersecting()
 }
 
 /**
- * Find the next object in the tree, complex, simple, intersecting or not.
- * @return
+ Find the next object in the tree, complex, simple, intersecting or not.
+ \return
  */
 bool Fl_Complex_Region::Overlapping::find_next()
 {
@@ -628,9 +628,9 @@ bool Fl_Complex_Region::Overlapping::find_next()
 // -----------------------------------------------------------------------------
 
 /**
- * Create the actual iterator for finding true clipping rects.
- * @see Fl_Complex_Region::Overlapping
- * @param ov
+ Create the actual iterator for finding true clipping rects.
+ \see Fl_Complex_Region::Overlapping
+ \param ov
  */
 Fl_Complex_Region::Overlapping::OverlappingIterator::OverlappingIterator(
         Overlapping *ov) :
@@ -639,10 +639,10 @@ Fl_Complex_Region::Overlapping::OverlappingIterator::OverlappingIterator(
 }
 
 /**
- * Compare two iterator.
- * This is used by C++11 range-based for loops to find the end of the range.
- * @param other
- * @return
+ Compare two iterator.
+ This is used by C++11 range-based for loops to find the end of the range.
+ \param other
+ \return
  */
 bool Fl_Complex_Region::Overlapping::OverlappingIterator::operator!=(
         const OverlappingIterator &other) const
@@ -653,10 +653,10 @@ bool Fl_Complex_Region::Overlapping::OverlappingIterator::operator!=(
 }
 
 /**
- * Wrapper to find and set the next intersecting rectangle.
- * @see Fl_Complex_Region::Overlapping::find_intersecting
- * @see Fl_Complex_Region::Overlapping::find_next
- * @return
+ Wrapper to find and set the next intersecting rectangle.
+ \see Fl_Complex_Region::Overlapping::find_intersecting
+ \see Fl_Complex_Region::Overlapping::find_next
+ \return
  */
 const Fl_Complex_Region::Overlapping::OverlappingIterator &
 Fl_Complex_Region::Overlapping::OverlappingIterator::operator++()
@@ -668,10 +668,10 @@ Fl_Complex_Region::Overlapping::OverlappingIterator::operator++()
 }
 
 /**
- * Return the Fl_Complex_Region::Overlapping state for this iterator.
- * This gives the user access to the current rectangular fragment of
- * the clipping region.
- * @return
+ Return the Fl_Complex_Region::Overlapping state for this iterator.
+ This gives the user access to the current rectangular fragment of
+ the clipping region.
+ \return
  */
 Fl_Complex_Region::Overlapping *
 Fl_Complex_Region::Overlapping::OverlappingIterator::operator*() const

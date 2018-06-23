@@ -30,9 +30,9 @@
 #include <math.h>
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** see fl_curve() */
@@ -104,8 +104,8 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

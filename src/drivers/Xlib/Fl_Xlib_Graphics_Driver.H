@@ -50,7 +50,7 @@ struct _XRegion {
 
 /**
  \brief The Xlib-specific graphics class.
- *
+
  This class is implemented only on the Xlib platform.
  */
 class FL_EXPORT Fl_Xlib_Graphics_Driver : public Fl_Scalable_Graphics_Driver {

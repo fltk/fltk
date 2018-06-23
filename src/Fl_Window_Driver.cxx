@@ -18,9 +18,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 #include <FL/Fl_Window_Driver.H>
@@ -33,10 +33,10 @@ extern void fl_throw_focus(Fl_Widget *o);
 
 
 /**
- * Create a new Window Driver.
- *
- * This calls should be derived into a new class that manages desktop windows
- * on the target platform.
+ Create a new Window Driver.
+
+ This calls should be derived into a new class that manages desktop windows
+ on the target platform.
  */
 Fl_Window_Driver::Fl_Window_Driver(Fl_Window *win) :
 pWindow(win)
@@ -77,29 +77,29 @@ void Fl_Window_Driver::flush_Fl_Window() { pWindow->Fl_Window::flush(); }
 void Fl_Window_Driver::flush_menu() { pWindow->Fl_Window::flush(); }
 
 /**
- * Draw the window content.
- * A new driver can add code before or after drawing an individua window.
+ Draw the window content.
+ A new driver can add code before or after drawing an individua window.
  */
 void Fl_Window_Driver::draw() { pWindow->draw(); }
 
 /**
- * Prepare this window for rendering.
- * A new driver may prepare bitmaps and clipping areas for calls to the
- * Graphics driver.
+ Prepare this window for rendering.
+ A new driver may prepare bitmaps and clipping areas for calls to the
+ Graphics driver.
  */
 void Fl_Window_Driver::make_current() { }
 
 /**
- * Make the window visble and raise it to the top.
+ Make the window visble and raise it to the top.
  */
 void Fl_Window_Driver::show() { }
 
 void Fl_Window_Driver::show_menu() { pWindow->Fl_Window::show(); }
 
 /**
- * Change the window title.
- * A new drive should provide an interface to change the title of the window
- * in the title bar.
+ Change the window title.
+ A new drive should provide an interface to change the title of the window
+ in the title bar.
  */
 void Fl_Window_Driver::label(const char *name, const char *mininame) {}
 
@@ -309,8 +309,8 @@ void Fl_Window_Driver::resize_after_scale_change(int ns, float old_f, float new_
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

@@ -18,9 +18,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** \file Fl_Graphics_Driver.H
@@ -558,8 +558,8 @@ protected:
 #endif // FL_GRAPHICS_DRIVER_H
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

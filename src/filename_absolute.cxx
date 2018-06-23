@@ -50,9 +50,9 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
 
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
@@ -95,8 +95,8 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 
@@ -150,9 +150,9 @@ fl_filename_relative(char       *to,	// O - Relative filename
 
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 int                                             // O - 0 if no change, 1 if changed
@@ -227,8 +227,8 @@ Fl_System_Driver::filename_relative(char *to,	// O - Relative filename
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

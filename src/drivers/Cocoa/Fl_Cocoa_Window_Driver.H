@@ -41,9 +41,9 @@ class FLWindow;
 #endif // __OBJC__
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /*
@@ -67,8 +67,8 @@ struct Fl_Window_Driver::shape_data_type {
 };
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 

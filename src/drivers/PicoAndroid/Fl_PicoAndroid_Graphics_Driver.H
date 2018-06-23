@@ -31,7 +31,7 @@
 
 /**
  \brief The Pico minimal SDL graphics class.
- *
+
  This class is implemented as a base class for minimal core SDL drivers.
  */
 class Fl_PicoAndroid_Graphics_Driver : public Fl_Pico_Graphics_Driver {

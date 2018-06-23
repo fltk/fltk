@@ -22,9 +22,9 @@
 #include "undo.h"
 
 /**
- * the first behaviour always uses the first selected widget as a reference
- * the second behaviour uses the largest widget (most extreme positions) as
- * a reference.
+ the first behaviour always uses the first selected widget as a reference
+ the second behaviour uses the largest widget (most extreme positions) as
+ a reference.
  */
 #define BREAK_ON_FIRST break
 //#define BREAK_ON_FIRST

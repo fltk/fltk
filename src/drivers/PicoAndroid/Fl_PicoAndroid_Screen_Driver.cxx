@@ -274,9 +274,9 @@ void android_main(struct android_app* state)
 }
 
 /**
- * This is the main entry point of a native application that is using
- * android_native_app_glue.  It runs in its own thread, with its own
- * event loop for receiving input events and doing other things.
+ This is the main entry point of a native application that is using
+ android_native_app_glue.  It runs in its own thread, with its own
+ event loop for receiving input events and doing other things.
  */
 void Fl_PicoAndroid_Screen_Driver::android_main(struct android_app* state)
 {
@@ -443,8 +443,8 @@ double Fl_PicoAndroid_Screen_Driver::wait(double time_to_wait)
 
 
 /*
- * The following code should not be here! 
- * All this must be refactored into the driver system!
+ The following code should not be here! 
+ All this must be refactored into the driver system!
  */
 
 Fl_Fontdesc* fl_fonts = NULL;

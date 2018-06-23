@@ -67,18 +67,18 @@ public:
 
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /**
- * A base class describing the interface between FLTK and draw-to-clipboard operations.
- *
- * This class is only for internal use by the FLTK library.
- *
- * A supported platform should implement the virtual methods of this class
- * in order to support drawing to the clipboard through class Fl_Copy_Surface.
+ A base class describing the interface between FLTK and draw-to-clipboard operations.
+ 
+ This class is only for internal use by the FLTK library.
+
+ A supported platform should implement the virtual methods of this class
+ in order to support drawing to the clipboard through class Fl_Copy_Surface.
  */
 class Fl_Copy_Surface_Driver : public Fl_Widget_Surface {
   friend class Fl_Copy_Surface;
@@ -100,8 +100,8 @@ protected:
 };
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 #endif // Fl_Copy_Surface_H

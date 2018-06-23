@@ -28,9 +28,9 @@
 #include <FL/platform.H>
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
@@ -39,8 +39,8 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 

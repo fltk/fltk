@@ -47,11 +47,11 @@ void Fl_Sys_Menu_Bar::update() {
 }
 
 /**
- * @brief create a system menu bar using the given list of menu structs
- *
- * \author Matthias Melcher
- *
- * @param m Zero-ending list of Fl_Menu_Item's
+ \brief create a system menu bar using the given list of menu structs
+
+ \author Matthias Melcher
+
+ \param m Zero-ending list of Fl_Menu_Item's
  */
 void Fl_Sys_Menu_Bar::menu(const Fl_Menu_Item *m)
 {
@@ -76,20 +76,20 @@ void   Fl_Sys_Menu_Bar::mode (int i, int fl) {
 }
 
 /**
- * @brief Add a new menu item to the system menu bar.
- *
- * Add to the system menu bar a new menu item, with a title string, shortcut int,
- * callback, argument to the callback, and flags.
- *
- * @param label     - new menu item's label
- * @param shortcut  - new menu item's integer shortcut (can be 0 for none, or e.g. FL_ALT+'x')
- * @param cb        - callback to be invoked when item selected (can be 0 for none, in which case the menubar's callback() can be used instead)
- * @param user_data - argument to the callback
- * @param flags     - item's flags, e.g. ::FL_MENU_TOGGLE, etc.
- *
- * \returns the index into the menu() array, where the entry was added
- *
- * @see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
+ \brief Add a new menu item to the system menu bar.
+
+ Add to the system menu bar a new menu item, with a title string, shortcut int,
+ callback, argument to the callback, and flags.
+
+ \param label     - new menu item's label
+ \param shortcut  - new menu item's integer shortcut (can be 0 for none, or e.g. FL_ALT+'x')
+ \param cb        - callback to be invoked when item selected (can be 0 for none, in which case the menubar's callback() can be used instead)
+ \param user_data - argument to the callback
+ \param flags     - item's flags, e.g. ::FL_MENU_TOGGLE, etc.
+
+ \returns the index into the menu() array, where the entry was added
+
+ \see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
  */
 int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
 {
@@ -97,10 +97,10 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 }
 
 /**
- * Forms-compatible procedure to add items to the system menu bar
- *
- * \returns the index into the menu() array, where the entry was added
- * @see Fl_Menu_::add(const char* str)
+ Forms-compatible procedure to add items to the system menu bar
+
+ \returns the index into the menu() array, where the entry was added
+ \see Fl_Menu_::add(const char* str)
  */
 int Fl_Sys_Menu_Bar::add(const char* str)
 {
@@ -108,13 +108,13 @@ int Fl_Sys_Menu_Bar::add(const char* str)
 }
 
 /**
- * @brief insert in the system menu bar a new menu item
- *
- * Insert in the system menu bar a new menu item, with a title string, shortcut int,
- * callback, argument to the callback, and flags.
- *
- * \returns the index into the menu() array, where the entry was inserted
- * @see Fl_Menu_::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
+ \brief insert in the system menu bar a new menu item
+
+ Insert in the system menu bar a new menu item, with a title string, shortcut int,
+ callback, argument to the callback, and flags.
+
+ \returns the index into the menu() array, where the entry was inserted
+ \see Fl_Menu_::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
  */
 int Fl_Sys_Menu_Bar::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
 {
@@ -138,9 +138,9 @@ int Fl_Sys_Menu_Bar::clear_submenu(int index)
 }
 
 /**
- * @brief remove an item from the system menu bar
- *
- * @param index    the index of the item to remove
+ \brief remove an item from the system menu bar
+
+ \param index    the index of the item to remove
  */
 void Fl_Sys_Menu_Bar::remove(int index)
 {
@@ -148,10 +148,10 @@ void Fl_Sys_Menu_Bar::remove(int index)
 }
 
 /**
- * @brief rename an item from the system menu bar
- *
- * @param index    the index of the item to rename
- * @param name    the new item name as a UTF8 string
+ \brief rename an item from the system menu bar
+ 
+ \param index    the index of the item to rename
+ \param name    the new item name as a UTF8 string
  */
 void Fl_Sys_Menu_Bar::replace(int index, const char *name)
 {
@@ -159,11 +159,11 @@ void Fl_Sys_Menu_Bar::replace(int index, const char *name)
 }
 
 /**
- *  Attaches a callback to the "About myprog" item of the system application menu.
- * This cross-platform function is effective only under the MacOS platform.
- * \param cb   a callback that will be called by "About myprog" menu item
- *       with NULL 1st argument.
- * \param data   a pointer transmitted as 2nd argument to the callback.
+  Attaches a callback to the "About myprog" item of the system application menu.
+ This cross-platform function is effective only under the MacOS platform.
+ \param cb   a callback that will be called by "About myprog" menu item
+       with NULL 1st argument.
+ \param data   a pointer transmitted as 2nd argument to the callback.
  */
 void Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *data) {
   driver()->about(cb, data);

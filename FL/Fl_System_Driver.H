@@ -18,9 +18,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /** \file Fl_System_Driver.H
@@ -239,8 +239,8 @@ public:
 #endif // FL_SYSTEM_DRIVER_H
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

@@ -26,8 +26,7 @@
 #include <FL/Fl_Paged_Device.H>
 
 /**
- * \brief OS-independent print support.
- *
+ \brief OS-independent print support.
  Fl_Printer allows to use all drawing, color, text, image, and clip FLTK functions, and to have them operate
  on printed page(s). There are two main, non exclusive, ways to use it.
  <ul><li>Print any widget (standard, custom, Fl_Window, Fl_Gl_Window) as it appears 

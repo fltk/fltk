@@ -18,9 +18,9 @@
 //
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 #ifndef Fl_Gl_Window_Driver_H
@@ -205,8 +205,8 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 #endif /* Fl_Gl_Window_Driver_H */
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 //

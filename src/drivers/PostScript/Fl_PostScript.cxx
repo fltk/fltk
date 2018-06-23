@@ -30,13 +30,13 @@
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 /**
- @brief The constructor.
+ \brief The constructor.
  */
 Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
 {
@@ -55,8 +55,8 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 
@@ -120,9 +120,9 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
 }
 
 /**
- * @cond DriverDev
- * @addtogroup DriverDeveloper
- * @{
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
  */
 
 int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
@@ -1494,8 +1494,8 @@ void Fl_PostScript_File_Device::end_job (void)
 }
 
 /**
- * @}
- * @endcond
+ \}
+ \endcond
  */
 
 #endif // !defined(FL_NO_PRINT_SUPPORT)
