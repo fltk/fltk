@@ -32,18 +32,18 @@
 
 
 /**
- * \cond AndroidDev
- * \defgroup AndroidDeveloper Android Develoer Documentation
+ * @cond AndroidDev
+ * @defgroup AndroidDeveloper Android Develoer Documentation
  * @{
  */
 
 
 /**
- * \class Fl_Android_Screen_Driver
+ * @class Fl_Android_Screen_Driver
  *
  * Handle Android screen devices.
  *
- * \todo This calss is in an early development stage
+ * @todo This class is in an early development stage
  */
 
 
@@ -54,10 +54,8 @@ void (*fl_lock_function)() = nothing;
 static void timer_do_callback(int timerIndex);
 
 
-/*
- Creates a driver that manages all screen and display related calls.
-
- This function must be implemented once for every platform.
+/**
+ * Creates a driver that manages all Android screen and display related calls.
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
@@ -79,6 +77,13 @@ Fl_Android_Screen_Driver::Fl_Android_Screen_Driver() :
 }
 
 
+/**
+ * Call the FLTK System handler with Android specific events.
+ *
+ * @return always 1, assuming the event was handled
+ *
+ * @see Fl_Android_Platform_Event
+ */
 int Fl_Android_Screen_Driver::handle_app_command()
 {
   // get the command
@@ -180,10 +185,11 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputQueue *queue, AInputEvent
   return 1;
 }
 
+
 /**
  * Handle all events in the even queue.
  *
- * FIXME: what should this function return?
+ * @todo what should this function return?
  *
  * @param time_to_wait
  * @return we do not know
@@ -245,12 +251,15 @@ int Fl_Android_Screen_Driver::handle_queued_events(double time_to_wait)
   return ret;
 }
 
+
 /**
  * Wait for a maximum of `time_to_wait` until something happens.
+ *
  * @param time_to_wait in seconds
  * @return We really do not know; check other platforms to see what is
  *        consistent here.
- * FIXME: return the remaining time to reach 'time_to_wait'
+ *
+ * @todo return the remaining time to reach 'time_to_wait'
  */
 double Fl_Android_Screen_Driver::wait(double time_to_wait)
 {
@@ -304,7 +313,7 @@ double Fl_Android_Screen_Driver::wait(double time_to_wait)
  * On Android, we currently write into a memory buffer and copy
  * the content to the screen.
  *
- * @see Fl_Screen_Driver::flush()
+ * @see fl_flush()
  */
 void Fl_Android_Screen_Driver::flush()
 {
@@ -524,8 +533,9 @@ void Fl_Android_Screen_Driver::beep(int type)
  * touch screen, this makes no sense at all, which is why we return the center
  * of the screen for now.
  *
- * \todo rethink the dialog positioning scheme for touch devices.
- * \fixme this method assumes a fixed screen resolution
+ * @todo rethink the dialog positioning scheme for touch devices.
+ *
+ * @todo this method assumes a fixed screen resolution
  *
  * @param [out] x
  * @param [out] y
@@ -555,8 +565,8 @@ void Fl_Android_Screen_Driver::grab(Fl_Window* win)
 
 
 /**
- * \}
- * \endcond AndroidDev
+ * @}
+ * @endcond AndroidDev
  */
 
 
