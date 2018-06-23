@@ -49,6 +49,12 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
 }
 
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
   if (isdirsep(*from) || *from == '|') {
     strlcpy(to, from, tolen);
@@ -87,6 +93,12 @@ int Fl_System_Driver::filename_absolute(char *to, int tolen, const char *from) {
   delete[] temp;
   return 1;
 }
+
+/**
+ * @}
+ * @endcond
+ */
+
 
 /** Makes a filename relative to the current working directory.
     \code
@@ -135,6 +147,13 @@ fl_filename_relative(char       *to,	// O - Relative filename
                      const char *base) { // I - Find path relative to this path
   return Fl::system_driver()->filename_relative(to, tolen, from, base);
 }
+
+
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
 
 int                                             // O - 0 if no change, 1 if changed
 Fl_System_Driver::filename_relative(char *to,	// O - Relative filename
@@ -206,6 +225,11 @@ Fl_System_Driver::filename_relative(char *to,	// O - Relative filename
   free(cwd_buf);
   return 1;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

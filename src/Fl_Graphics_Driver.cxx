@@ -16,6 +16,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 #include <FL/Fl.H>
 #include "config_lib.h"
 #include <FL/Fl_Graphics_Driver.H>
@@ -326,8 +332,13 @@ Fl_Offscreen Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(Fl_Image
   return off;
 }
 
+/**
+ * @}
+ * @endcond
+ */
 
 #ifndef FL_DOXYGEN
+
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
 #  if HAVE_GL
@@ -580,7 +591,7 @@ void Fl_Scalable_Graphics_Driver::unscale_clip(Fl_Region r) {
   }
 }
 
-#endif // !FL_DOXYGEN
+#endif
 
 //
 // End of "$Id$".

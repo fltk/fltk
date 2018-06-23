@@ -30,6 +30,12 @@
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 
 /**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
  @brief The constructor.
  */
 Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
@@ -47,6 +53,12 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
 Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
   if(ps_filename_) free(ps_filename_);
 }
+
+/**
+ * @}
+ * @endcond
+ */
+
 
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
@@ -107,6 +119,12 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
   if (ps) delete ps;
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 {
   va_list args;
@@ -115,8 +133,6 @@ int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
   va_end(args);
   return retval;
 }
-
-#ifndef FL_DOXYGEN
 
 //  Prolog string 
 
@@ -1477,7 +1493,10 @@ void Fl_PostScript_File_Device::end_job (void)
   Fl_Display_Device::display_device()->set_current();
 }
 
-#endif // FL_DOXYGEN
+/**
+ * @}
+ * @endcond
+ */
 
 #endif // !defined(FL_NO_PRINT_SUPPORT)
 

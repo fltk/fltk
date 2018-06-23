@@ -58,6 +58,12 @@ static void del_context(GLContext ctx) {
 
 static Fl_Gl_Choice *first;
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 // this assumes one of the two arguments is zero:
 // We keep the list system in Win32 to stay compatible and interpret
 // the list later...
@@ -69,6 +75,10 @@ Fl_Gl_Choice *Fl_Gl_Window_Driver::find_begin(int m, const int *alistp) {
   return NULL;
 }
 
+/**
+ * @}
+ * @endcond
+ */
 
 static GLContext cached_context;
 static Fl_Window* cached_window;

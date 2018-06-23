@@ -86,6 +86,12 @@ void gl_finish() {
   gl_start_scale = 1;
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
   gl_choice = c;
 }
@@ -121,6 +127,11 @@ int Fl::gl_visual(int mode, int *alist) {
   Fl_Gl_Window_Driver::global()->gl_visual(c);
   return 1;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 #endif // HAVE_GL
 

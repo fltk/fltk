@@ -34,7 +34,21 @@ static double _fl_hypot(double x, double y) {
   return sqrt(x*x + y*y);
 }
 
-/** see fl_arc(double x, double y, double r, double start, double end) */
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
+ * Draw an arc.
+ *
+ * The default implementation draws an arc using other calls into the graphics
+ * driver. There is no need to override the method unless the target platform
+ * supports drawing arcs directly.
+ *
+ * @see fl_arc(double x, double y, double r, double start, double end)
+ */
 void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double end) {
 
   // draw start point accurately:
@@ -71,6 +85,11 @@ void Fl_Graphics_Driver::arc(double x, double y, double r, double start, double 
     } while (--i);
   }
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

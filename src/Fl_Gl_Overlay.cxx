@@ -34,9 +34,20 @@ int Fl_Gl_Window::can_do_overlay() {
   return pGlWindowDriver->can_do_overlay();
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 void Fl_Gl_Window_Driver::make_overlay(void *&o) {
   o = pWindow;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 /**
  Causes draw_overlay() to be called at a later time.

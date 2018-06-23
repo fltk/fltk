@@ -19,14 +19,6 @@
 
 #include <FL/Fl_Native_File_Chooser.H>
 
-#ifdef FL_PORTING
-#  pragma message "Implement a native file chooser (see Fl_Native_File_Chooser_Driver), or use FLTK's chooser, or don't use any chooser"
-Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-  //platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val); // do this to use FLTK's default file chooser
-  platform_fnfc = 0; // do this so class Fl_Native_File_Chooser does nothing
-}
-#endif
-
 /** Localizable message */
 const char *Fl_Native_File_Chooser::file_exists_message = "File exists. Are you sure you want to overwrite?";
 
@@ -248,6 +240,12 @@ int Fl_Native_File_Chooser::show() {
   return platform_fnfc ? platform_fnfc->show() : 1;
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 // COPY A STRING WITH 'new'
 //    Value can be NULL
 //
@@ -297,6 +295,11 @@ void Fl_Native_File_Chooser_Driver::chrcat(char *s, char c) {
   char tmp[2] = { c, '\0' };
   strcat(s, tmp);
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

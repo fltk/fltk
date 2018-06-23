@@ -115,15 +115,44 @@ const char *Fl_Darwin_System_Driver::local_to_latin1(const char *t, int n)
 
 #endif
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
+ * Default implementation of latin-to-local text conversion.
+ *
+ * The default implementation returns the original text. This method should
+ * be reimplemented by drivers for platforms that commonly use latin
+ * text encoding.
+ *
+ * @see fl_latin1_to_local(const char *, int)
+ */
 const char *Fl_System_Driver::latin1_to_local(const char *t, int)
 {
   return t;
 }
 
+/**
+ * Default implementation of local-to-latin text conversion.
+ *
+ * The default implementation returns the original text. This method should
+ * be reimplemented by drivers for platforms that commonly use latin
+ * text encoding.
+ *
+ * @see fl_local_to_latin1(const char *, int)
+ */
 const char *Fl_System_Driver::local_to_latin1(const char *t, int)
 {
   return t;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 const char *fl_latin1_to_local(const char *t, int n)
 {
@@ -134,7 +163,6 @@ const char *fl_local_to_latin1(const char *t, int n)
 {
   return Fl::system_driver()->local_to_latin1(t, n);
 }
-
 
 //
 // End of "$Id$".

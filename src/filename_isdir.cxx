@@ -23,19 +23,6 @@
 #include <FL/filename.H>
 #include <FL/Fl.H>
 
-/*
- * filename_isdir_quick() is a private function that checks for a
- * trailing slash and assumes that the passed name is a directory if
- * it finds one.  This function is used by Fl_File_Browser and
- * Fl_File_Chooser to avoid extra stat() calls, but is not supported
- * outside of FLTK...
- */
-int Fl_System_Driver::filename_isdir_quick(const char* n) {
-  // Do a quick optimization for filenames with a trailing slash...
-  if (*n && n[strlen(n) - 1] == '/') return 1;
-  return filename_isdir(n);
-}
-
 /**
    Determines if a file exists and is a directory from its filename.
    \code
@@ -50,6 +37,27 @@ int Fl_System_Driver::filename_isdir_quick(const char* n) {
 int fl_filename_isdir(const char* n) {
   return Fl::system_driver()->filename_isdir(n);
 }
+
+
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
+ * filename_isdir_quick() is a private function that checks for a
+ * trailing slash and assumes that the passed name is a directory if
+ * it finds one.  This function is used by Fl_File_Browser and
+ * Fl_File_Chooser to avoid extra stat() calls, but is not supported
+ * outside of FLTK...
+ */
+int Fl_System_Driver::filename_isdir_quick(const char* n) {
+    // Do a quick optimization for filenames with a trailing slash...
+    if (*n && n[strlen(n) - 1] == '/') return 1;
+    return filename_isdir(n);
+}
+
 
 int Fl_System_Driver::filename_isdir(const char* n) {
   struct stat	s;
@@ -67,6 +75,11 @@ int Fl_System_Driver::filename_isdir(const char* n) {
   }
   return !stat(n, &s) && (s.st_mode & S_IFDIR);
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

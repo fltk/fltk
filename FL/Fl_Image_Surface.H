@@ -90,6 +90,12 @@ public:
 };
 
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** A base class describing the interface between FLTK and draw-to-image operations.
  This class is only for internal use by the FLTK library.
  A supported platform should implement the virtual methods of this class
@@ -115,6 +121,11 @@ protected:
    */
   static Fl_Image_Surface_Driver *newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off);
 };
+
+/**
+ * @}
+ * @endcond
+ */
 
 #endif // Fl_Image_Surface_H
 

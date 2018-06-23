@@ -17,6 +17,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 #ifndef Fl_Gl_Window_Driver_H
 #define Fl_Gl_Window_Driver_H
 
@@ -201,6 +207,11 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 #endif // FL_CFG_GFX_XLIB
 
 #endif /* Fl_Gl_Window_Driver_H */
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

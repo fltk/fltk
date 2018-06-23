@@ -40,10 +40,22 @@ public:
 };
 
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
 {
   return new Fl_Quartz_Image_Surface_Driver(w, h, high_res, off);
 }
+
+/**
+ * @}
+ * @endcond
+ */
+
 
 
 Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off) : Fl_Image_Surface_Driver(w, h, high_res, off) {

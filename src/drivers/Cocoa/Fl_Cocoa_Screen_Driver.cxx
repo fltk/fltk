@@ -36,7 +36,13 @@ extern void (*fl_unlock_function)();
 
 int Fl_Cocoa_Screen_Driver::next_marked_length = 0;
 
-/*
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
  Creates a driver that manages all screen and display related calls.
  
  This function must be implemented once for every platform.
@@ -45,6 +51,11 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
   return new Fl_Cocoa_Screen_Driver();
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
   // Define CMD+key accelerators...

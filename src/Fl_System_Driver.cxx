@@ -16,6 +16,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @defgroup DriverDeveloper Driver Developer Documentation
+ * @{
+ */
 
 #include <FL/Fl_System_Driver.H>
 #include <FL/Fl.H>
@@ -488,6 +493,11 @@ void Fl_System_Driver::gettime(time_t *sec, int *usec) {
   *sec =  time(NULL);
   *usec = 0;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

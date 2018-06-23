@@ -29,6 +29,12 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** see fl_curve() */
 void Fl_Graphics_Driver::curve(double X0, double Y0,
 	      double X1, double Y1,
@@ -96,6 +102,11 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
   // draw point n:
   fl_transformed_vertex(x3,y3);
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

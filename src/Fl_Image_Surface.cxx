@@ -18,15 +18,6 @@
 
 #include <FL/Fl_Image_Surface.H>
 
-#if defined(FL_PORTING)
-# pragma message "FL_PORTING: optionally implement class Fl_XXX_Image_Surface_Driver for your platform"
-Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen)
-{
-  return NULL;
-}
-#endif
-
-
 /** Constructor with optional high resolution.
  \param w and \param h set the size of the resulting image. The value of the \p high_res
  parameter controls whether \p w and \p h are interpreted as pixel or FLTK units.

@@ -372,6 +372,12 @@ int Fl_Widget::test_shortcut() {
   return test_shortcut(label());
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 const char *Fl_System_Driver::shortcut_add_key_name(unsigned key, char *p, char *buf, const char **eom)
 {
   if (key >= FL_F && key <= FL_F_Last) {
@@ -409,6 +415,11 @@ const char *Fl_System_Driver::shortcut_add_key_name(unsigned key, char *p, char 
   *p = 0;
   return buf;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

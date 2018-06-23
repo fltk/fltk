@@ -33,6 +33,12 @@ extern "C" {
 }
 
 /**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
  \brief PostScript graphical backend.
  *
  PostScript text uses vectorial fonts when using the FLTK standard fonts  
@@ -75,7 +81,7 @@ public:
 #ifndef FL_DOXYGEN
   enum SHAPE{NONE=0, LINE, LOOP, POLYGON, POINTS};
   
-class Clip {
+  class Clip {
   public:
     int x, y, w, h;
     Clip *prev;
@@ -224,6 +230,11 @@ class Clip {
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
   virtual int has_feature(driver_feature mask) { return mask & PRINTER; }
 };
+
+/**
+ * @}
+ * @endcond
+ */
 
 /**
  To send graphical output to a PostScript file.

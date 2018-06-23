@@ -17,6 +17,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** \file Fl_Graphics_Driver.H
  \brief declaration of class Fl_Graphics_Driver.
 */
@@ -51,6 +57,7 @@ struct Fl_Fontdesc;
 
 #define FL_REGION_STACK_SIZE 10
 #define FL_MATRIX_STACK_SIZE 32
+
 /**
  An abstract class subclassed for each graphics driver FLTK uses.
  Typically, FLTK applications do not use directly objects from this class. Rather, they perform
@@ -58,14 +65,14 @@ struct Fl_Fontdesc;
  Drawing operations are functionally presented in \ref drawing and as function lists
  in the \ref fl_drawings and \ref fl_attributes modules.
  
- \p <tt>Fl_Surface_Device::surface()->driver()</tt>
+ <tt>Fl_Surface_Device::surface()->driver()</tt>
  gives at any time the graphics driver used by all drawing operations. 
  For compatibility with older FLTK versions, the \ref fl_graphics_driver global variable gives the same result.
  Its value changes when
  drawing operations are directed to another drawing surface by Fl_Surface_Device::push_current() /
  Fl_Surface_Device::pop_current() / Fl_Surface_Device::set_current().
 
- \p The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
+ The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
  An example would be to draw to an SVG file. This would require to create a new class,
  say SVG_Graphics_Driver, derived from class Fl_Graphics_Driver, and another new class,
  say SVG_Surface, derived from class Fl_Surface_Device. The new SVG_Graphics_Driver class should
@@ -73,7 +80,7 @@ struct Fl_Fontdesc;
  and have them draw into SVG files. Alternatively, class SVG_Graphics_Driver could implement only some
  virtual methods, and only part of FLTK drawing functions would be usable when drawing to SVG files.
  
- \p The Fl_Graphics_Driver class is essential for developers of the FLTK library.
+ The Fl_Graphics_Driver class is essential for developers of the FLTK library.
  Each platform supported by FLTK requires to create a derived class of Fl_Graphics_Driver that
  implements all its virtual member functions according to the platform.
  */
@@ -549,6 +556,11 @@ protected:
 #endif // FL_DOXYGEN
 
 #endif // FL_GRAPHICS_DRIVER_H
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

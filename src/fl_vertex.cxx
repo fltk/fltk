@@ -37,6 +37,12 @@
 #include <FL/math.h>
 #include <stdlib.h>
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** see fl_push_matrix() */
 void Fl_Graphics_Driver::push_matrix() {
   if (sptr==matrix_stack_size)
@@ -126,6 +132,11 @@ double Fl_Graphics_Driver::transform_dx(double x, double y) {
 double Fl_Graphics_Driver::transform_dy(double x, double y) {
   return x*m.b + y*m.d;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

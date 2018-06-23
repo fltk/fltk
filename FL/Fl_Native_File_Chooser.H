@@ -167,6 +167,12 @@ public:
   int show() ;
   };
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** Represents the interface between FLTK and a native file chooser.
  This class is only for internal use by the FLTK library.
  A platform that wants to provide a native file chooser implements all virtual methods
@@ -257,6 +263,11 @@ public:
   virtual const char *errmsg() const ;
   virtual int show() ;
 };
+
+/**
+ * @}
+ * @endcond
+ */
 
 
 #endif /*FL_NATIVE_FILE_CHOOSER_H*/

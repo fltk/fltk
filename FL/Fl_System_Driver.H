@@ -17,6 +17,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** \file Fl_System_Driver.H
  \brief declaration of class Fl_System_Driver.
 */
@@ -231,6 +237,11 @@ public:
 };
 
 #endif // FL_SYSTEM_DRIVER_H
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

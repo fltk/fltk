@@ -16,6 +16,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl.H>
@@ -487,6 +493,11 @@ int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
   r = (uchar)R; g = (uchar)G; b = (uchar)B;
   return 1;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

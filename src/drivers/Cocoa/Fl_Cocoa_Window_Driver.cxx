@@ -27,10 +27,22 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 {
   return new Fl_Cocoa_Window_Driver(w);
 }
+
+/**
+ * @}
+ * @endcond
+ */
+
 
 
 Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)

@@ -76,6 +76,12 @@ static uchar roman2latin[128] = {
 static char *buf = 0;
 static int n_buf = 0;
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 const char *Fl_System_Driver::local_to_mac_roman(const char *t, int n)
 {
   if (n==-1) n = (int) strlen(t);
@@ -117,6 +123,11 @@ const char *Fl_System_Driver::mac_roman_to_local(const char *t, int n)
   //*dst = 0; // this would be wrong
   return buf;
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 const char *fl_local_to_mac_roman(const char *t, int n) {
   return Fl::system_driver()->local_to_mac_roman(t, n);

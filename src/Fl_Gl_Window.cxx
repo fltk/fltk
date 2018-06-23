@@ -451,6 +451,12 @@ float Fl_Gl_Window::pixels_per_unit() {
   return pGlWindowDriver->pixels_per_unit();
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 // creates a unique, dummy Fl_Gl_Window_Driver object used when no Fl_Gl_Window is around
 // necessary to support gl_start()/gl_finish()
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::global() {
@@ -760,6 +766,11 @@ void Fl_X11_Gl_Window_Driver::waitGL() {
 }
 
 #endif // FL_CFG_GFX_XLIB
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

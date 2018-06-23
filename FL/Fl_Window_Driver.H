@@ -17,6 +17,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /** \file Fl_Window_Driver.H
  \brief declaration of class Fl_Window_Driver.
 */
@@ -35,9 +41,14 @@ class Fl_Image;
 class Fl_RGB_Image;
 
 /**
- \brief A base class for platform specific window handling code.
- This class is only for internal use by the FLTK library.
- Each supported platform implements several of the virtual methods of this class.
+ * \brief A base class for platform specific window handling code.
+ *
+ * This class is only for internal use by the FLTK library.
+ *
+ * When porting FLTK to a new platform, many mothods in this class provide
+ * a minimal default implementation. Some methods must be overridden to make
+ * sure that the Graphics Driver will draw into the bitmap associated with
+ * this window.
 */
 class FL_EXPORT Fl_Window_Driver
 {
@@ -185,6 +196,11 @@ public:
 };
 
 #endif // FL_WINDOW_DRIVER_H
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

@@ -458,6 +458,12 @@ void gl_texture_pile_height(int max)
 }
 
 
+/**
+  * @cond DriverDev
+  * @addtogroup DriverDeveloper
+  * @{
+  */
+
 void Fl_Gl_Window_Driver::draw_string_legacy(const char* str, int n)
 {
   draw_string_legacy_glut(str,  n);
@@ -788,6 +794,11 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
 }
 
 #endif // FL_CFG_GFX_QUARTZ
+
+/**
+ * @}
+ * @endcond
+ */
 
 #endif // HAVE_GL || defined(FL_DOXYGEN)
 

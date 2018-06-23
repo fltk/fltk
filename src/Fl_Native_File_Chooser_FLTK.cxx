@@ -16,6 +16,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_File_Icon.H>
@@ -304,6 +310,11 @@ const char* Fl_Native_File_Chooser_FLTK_Driver::preset_file() const {
 int Fl_Native_File_Chooser_FLTK_Driver::exist_dialog() {
   return fl_choice("%s", fl_cancel, fl_ok, NULL, Fl_Native_File_Chooser::file_exists_message);
 }
+
+/**
+ * @}
+ * @endcond
+ */
 
 //
 // End of "$Id$".

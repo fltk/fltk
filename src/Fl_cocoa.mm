@@ -154,7 +154,25 @@ void fl_set_status(int x, int y, int w, int h)
 {
 }
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
+/**
+ * Set the default icon for the window decoration.
+ *
+ * @todo This method should probably be virtual and should be overriden for
+ *      a give targte platform. This implementation however lives in Fl_Cocoa.m
+ *      which is a Mac specific file.
+ */
 void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {}
+
+/**
+ * @}
+ * @endcond
+ */
 
 /*
  * Mac keyboard lookup table

@@ -40,6 +40,12 @@ class NSCursor;
 class FLWindow;
 #endif // __OBJC__
 
+/**
+ * @cond DriverDev
+ * @addtogroup DriverDeveloper
+ * @{
+ */
+
 /*
  Move everything here that manages the native window interface.
 
@@ -59,6 +65,11 @@ struct Fl_Window_Driver::shape_data_type {
   typedef struct CGImage* CGImageRef;
   CGImageRef mask;
 };
+
+/**
+ * @}
+ * @endcond
+ */
 
 
 class FL_EXPORT Fl_Cocoa_Window_Driver : public Fl_Window_Driver
