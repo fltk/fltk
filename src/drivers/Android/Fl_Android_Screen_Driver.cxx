@@ -31,6 +31,22 @@
 #include <math.h>
 
 
+/**
+ * \cond AndroidDev
+ * \defgroup AndroidDeveloper Android Develoer Documentation
+ * @{
+ */
+
+
+/**
+ * \class Fl_Android_Screen_Driver
+ *
+ * Handle Android screen devices.
+ *
+ * \todo This calss is in an early development stage
+ */
+
+
 static void nothing() {}
 void (*fl_unlock_function)() = nothing;
 void (*fl_lock_function)() = nothing;
@@ -147,16 +163,16 @@ int Fl_Android_Screen_Driver::handle_mouse_event(AInputQueue *queue, AInputEvent
   if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN) {
     AInputQueue_finishEvent(queue, event, 1);
     Fl::e_is_click = 1;
-    Fl_Android_Application::log_i("Mouse push %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
+//    Fl_Android_Application::log_i("Mouse push %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
     if (win) Fl::handle(FL_PUSH, win); // do NOT send a push event into the "Desktop"
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE) {
     AInputQueue_finishEvent(queue, event, 1);
-    Fl_Android_Application::log_i("Mouse drag %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
+//    Fl_Android_Application::log_i("Mouse drag %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
     if (win) Fl::handle(FL_DRAG, win);
   } else if (AMotionEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) {
     AInputQueue_finishEvent(queue, event, 1);
     Fl::e_state = 0;
-    Fl_Android_Application::log_i("Mouse release %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
+//    Fl_Android_Application::log_i("Mouse release %x %d at %d, %d", win, Fl::event_button(), Fl::event_x(), Fl::event_y());
     if (win) Fl::handle(FL_RELEASE, win);
   } else {
     AInputQueue_finishEvent(queue, event, 0);
@@ -283,9 +299,12 @@ double Fl_Android_Screen_Driver::wait(double time_to_wait)
   return 0.0;
 }
 
+
 /**
  * On Android, we currently write into a memory buffer and copy
  * the content to the screen.
+ *
+ * @see Fl_Screen_Driver::flush()
  */
 void Fl_Android_Screen_Driver::flush()
 {
@@ -296,6 +315,7 @@ void Fl_Android_Screen_Driver::flush()
       pContentChanged = false;
   }
 }
+
 
 // ---- timers -----------------------------------------------------------------
 
@@ -383,7 +403,7 @@ void Fl_Android_Screen_Driver::repeat_timeout(double time, Fl_Timeout_Handler cb
     timerIndex = nTimerData++;
   }
 
-  // if that didn;t work either, we ran out of timers
+  // if that didn't work either, we ran out of timers
   if (timerIndex==-1) {
     Fl::error("FLTK ran out of timer slots.");
     return;
@@ -444,17 +464,26 @@ void Fl_Android_Screen_Driver::remove_timeout(Fl_Timeout_Handler cb, void *data)
 }
 
 
+/**
+ * Play some system sound.
+ *
+ * This function plays some rather arbitrary system sounds.
+ *
+ * @param type
+ *
+ * @see Fl_Screen_Driver::beep(int)
+ * @see fl_beep(int)
+ */
 void Fl_Android_Screen_Driver::beep(int type)
 {
-  // TODO: map FLTK sounds to Android sounds at https://developer.android.com/reference/android/media/ToneGenerator
-  int androidSoundID = 93;  // TONE_CDMA_ALERT_CALL_GUARD
+  int androidSoundID = 93;  // default to TONE_CDMA_ALERT_CALL_GUARD
   switch (type) {
-    case FL_BEEP_DEFAULT:
-    case FL_BEEP_MESSAGE:
-    case FL_BEEP_ERROR:
-    case FL_BEEP_QUESTION:
-    case FL_BEEP_PASSWORD:
-    case FL_BEEP_NOTIFICATION: androidSoundID = 93; break;
+    case FL_BEEP_DEFAULT:       androidSoundID = 92; break;
+    case FL_BEEP_MESSAGE:       androidSoundID = 86; break;
+    case FL_BEEP_ERROR:         androidSoundID = 87; break;
+    case FL_BEEP_QUESTION:      androidSoundID = 91; break;
+    case FL_BEEP_PASSWORD:      androidSoundID = 95; break;
+    case FL_BEEP_NOTIFICATION:  androidSoundID = 93; break;
   }
   Fl_Android_Java java;
   if (java.is_attached()) {
@@ -473,17 +502,19 @@ void Fl_Android_Screen_Driver::beep(int type)
     jmethodID method_start_tone = java.env()->GetMethodID(
             class_tone_generator,
             "startTone",
-            "(I)Z");
+            "(II)Z");
 
     java.env()->CallBooleanMethod(
             toneGeneratorObj, method_start_tone,
-            androidSoundID);
+            androidSoundID,
+            1000);
 
     java.env()->DeleteLocalRef(class_tone_generator);
     java.env()->DeleteLocalRef(toneGeneratorObj);
   }
 
 }
+
 
 /**
  * Get the current mouse coordinates.
@@ -493,7 +524,8 @@ void Fl_Android_Screen_Driver::beep(int type)
  * touch screen, this makes no sense at all, which is why we return the center
  * of the screen for now.
  *
- * TODO: rethink the dialog positioning scheme for touch devices.
+ * \todo rethink the dialog positioning scheme for touch devices.
+ * \fixme this method assumes a fixed screen resolution
  *
  * @param [out] x
  * @param [out] y
@@ -520,6 +552,12 @@ void Fl_Android_Screen_Driver::grab(Fl_Window* win)
     }
   }
 }
+
+
+/**
+ * \}
+ * \endcond AndroidDev
+ */
 
 
 //

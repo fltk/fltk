@@ -16,7 +16,7 @@
  */
 
 
-#include "../../test/unittests.cxx"
+#include "../../test/button.cxx"
 
 
 /*
@@ -43,20 +43,6 @@
   - no support for dead-key entry
   - no Shift-Tab
 
-test/unittest_simple_terminal.cxx
-test/unittest_points.cxx
-test/unittest_schemes.cxx
-test/unittest_scrollbarsize.cxx
-test/unittest_rects.cxx
-test/unittest_lines.cxx
-test/unittest_about.cxx
-test/unittest_images.cxx
-test/unittest_circles.cxx
-test/unittest_symbol.cxx
-test/unittest_text.cxx
-test/unittest_viewport.cxx
-test/unittests.cxx
-
   * test/CubeMain.cxx     : UNSUPPROTED - needs OpenGL
   * test/CubeView.cxx     : UNSUPPROTED - needs OpenGL
   * test/shape.cxx        : UNSUPPROTED - needs OpenGL
@@ -68,6 +54,17 @@ test/unittests.cxx
   * test/glpuzzle.cxx     : UNSUPPROTED - needs OpenGL
   * test/mandelbrot.cxx   : UNSUPPORTED - needs Fluid
   * test/keyboard.cxx     : UNSUPPORTED - needs Fluid
+  * test/CubeViewUI.fl
+  * test/keyboard_ui.fl
+  * test/radio.fl
+  * test/tree.fl
+  * test/fast_slow.fl
+  * test/mandelbrot_ui.fl
+  * test/resize.fl
+  * test/valuators.fl
+  * test/inactive.fl
+  * test/preferences.fl
+  * test/tabs.fl
   * test/cairo_test.cxx   : UNSUPPORTED - needs Cairo
   * test/connect.cxx      : UNSUPPORTED - Android is not Linux
   * test/tiled_image.cxx  : UNSUPPORTED - X11 only
