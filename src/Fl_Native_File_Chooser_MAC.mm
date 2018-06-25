@@ -29,12 +29,13 @@
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
 #define MAXFILTERS	80
+#import <Cocoa/Cocoa.h>
 
 class Fl_Quartz_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
 private:
   int             _btype;		// kind-of browser to show()
   int             _options;		// general options
-  void 	         *_panel;
+  NSSavePanel 	*_panel;
   char          **_pathnames;		// array of pathnames
   int             _tpathnames;	        // total pathnames
   char           *_directory;		// default pathname to use
@@ -399,13 +400,12 @@ int Fl_Quartz_Native_File_Chooser_Driver::filters() const {
   return(_filt_total);
 }
 
-#import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 
 int Fl_Quartz_Native_File_Chooser_Driver::get_saveas_basename(void) {
-  char *q = strdup( [[[(NSSavePanel*)_panel URL] path] UTF8String] );
+  char *q = strdup( [[[_panel URL] path] UTF8String] );
   if ( !(_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM) ) {
-    const char *d = [[[[(NSSavePanel*)_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
+    const char *d = [[[[_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
     int l = (int)strlen(d) + 1;
     if (strcmp(d, "/") == 0) l = 1;
     int lu = strlen(UNLIKELYPREFIX);
@@ -604,7 +604,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
   if (fl_mac_os_version >= 100600) {
     bool usepath = false;
     NSString *path = nil;
-    if (dir && fname && [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]]) {
+    if (dir && fname && [_panel isKindOfClass:[NSOpenPanel class]]) {
       // STR #3406: If both dir + fname specified, combine and pass to setDirectoryURL
       path = [[NSString alloc] initWithFormat:@"%@/%@", dir, fname];  // dir+fname -> path
       // See if full path to file exists
@@ -613,15 +613,15 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
       //
       if ( [[NSFileManager defaultManager] fileExistsAtPath:path] ) usepath = true;
     }
-      if (usepath) {
-        // Set only if full path exists
-        [(NSSavePanel*)_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:path]];
-      } else { // didn't setDirectoryURL to full path? Set dir + fname separately..
-        if (dir) [(NSSavePanel*)_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:dir]];
-        if (fname) [(NSSavePanel*)_panel performSelector:@selector(setNameFieldStringValue:) withObject:fname];
-      }
-      [path release];
-    retval = [(NSSavePanel*)_panel runModal];
+    if (usepath) {
+      // Set only if full path exists
+      [_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:path]];
+    } else { // didn't setDirectoryURL to full path? Set dir + fname separately..
+      if (dir) [_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:dir]];
+      if (fname) [_panel performSelector:@selector(setNameFieldStringValue:) withObject:fname];
+    }
+    [path release];
+    retval = [_panel runModal];
   }
   else {
     retval = [(id)_panel runModalForDirectory:dir file:fname];
@@ -660,11 +660,11 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       _panel =  [NSSavePanel savePanel];
       break;
   }
-  BOOL is_open_panel = [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]];
+  BOOL is_open_panel = [_panel isKindOfClass:[NSOpenPanel class]];
   if (_title) {
     SEL title_or_message = (is_open_panel && fl_mac_os_version >= 101200) ?
           @selector(setMessage:) : @selector(setTitle:);
-    [(NSSavePanel*)_panel performSelector:title_or_message withObject:[NSString stringWithUTF8String:_title]];
+    [_panel performSelector:title_or_message withObject:[NSString stringWithUTF8String:_title]];
   }
   switch (_btype) {
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE:
@@ -677,7 +677,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       [(NSOpenPanel*)_panel setCanChooseDirectories:YES];
       break;
     case Fl_Native_File_Chooser::BROWSE_SAVE_DIRECTORY:
-      [(NSSavePanel*)_panel setCanCreateDirectories:YES];
+      [_panel setCanCreateDirectories:YES];
       break;
   }
   
@@ -687,7 +687,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
   if ( is_open_panel ) {
     if (_filt_total) {
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
-      popup = createPopupAccessory((NSSavePanel*)_panel, t, Fl_File_Chooser::show_label, 0);
+      popup = createPopupAccessory(_panel, t, Fl_File_Chooser::show_label, 0);
       delete[] t;
       [[popup menu] addItem:[NSMenuItem separatorItem]];
       [popup addItemWithTitle:[NSString stringWithUTF8String:Fl_File_Chooser::all_files_label]];
@@ -695,25 +695,25 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       [popup setTarget:(NSObject*)_panel];
       FLopenDelegate *openDelegate = [[[FLopenDelegate alloc] init] autorelease];
       [openDelegate setPopup:popup filter_pattern:_filt_patt];
-      [(NSOpenPanel*)_panel setDelegate:openDelegate];
+      [_panel setDelegate:openDelegate];
     }
   }
   else {
     FLsaveDelegate *saveDelegate = [[[FLsaveDelegate alloc] init] autorelease]; 
-    [(NSSavePanel*)_panel setAllowsOtherFileTypes:YES];
-    [(NSSavePanel*)_panel setDelegate:saveDelegate];
+    [_panel setAllowsOtherFileTypes:YES];
+    [_panel setDelegate:saveDelegate];
     [saveDelegate option:(_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM)];
     if (_filt_total) {
       if (_filt_value >= _filt_total) _filt_value = _filt_total - 1;
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
-      popup = createPopupAccessory((NSSavePanel*)_panel, t, [[(NSSavePanel*)_panel nameFieldLabel] UTF8String], _filt_value);
+      popup = createPopupAccessory(_panel, t, [[_panel nameFieldLabel] UTF8String], _filt_value);
       delete[] t;
       if (_options & Fl_Native_File_Chooser::USE_FILTER_EXT) {
 	[popup setAction:@selector(changedPopup:)];
 	[popup setTarget:saveDelegate];
 	[saveDelegate panel:(NSSavePanel*)_panel];
       }
-      [(NSSavePanel*)_panel setCanSelectHiddenExtension:YES];
+      [_panel setCanSelectHiddenExtension:YES];
     }
   }
   int retval = runmodal();
