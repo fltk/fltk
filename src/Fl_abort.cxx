@@ -19,7 +19,7 @@
 // You can also override this by redefining all of these.
 
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <stdarg.h>
 
 void (*Fl::warning)(const char* format, ...) = Fl_System_Driver::warning;

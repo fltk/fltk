@@ -12,7 +12,7 @@ Fl.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
 Fl.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl.o: ../FL/Fl_Text_Buffer.H Fl_Window_Driver.H ../FL/Fl_Window.H
 Fl.o: ../FL/Fl_Group.H ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
-Fl.o: ../FL/Fl_Window.H ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl.o: ../FL/Fl_Window.H Fl_System_Driver.H ../FL/filename.H
 Fl.o: ../FL/Fl_Preferences.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
 Fl.o: ../FL/fl_draw.H flstring.h
 Fl_Adjuster.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -83,7 +83,7 @@ Fl_Clock.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Clock.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Clock.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Clock.H
 Fl_Clock.o: ../FL/Fl_Widget.H ../FL/Fl.H ../FL/Fl_Round_Clock.H
-Fl_Clock.o: ../FL/Fl_Clock.H ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_Clock.o: ../FL/Fl_Clock.H Fl_System_Driver.H ../FL/filename.H
 Fl_Clock.o: ../FL/Fl_Preferences.H ../FL/fl_draw.H
 Fl_Color_Chooser.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Color_Chooser.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -133,7 +133,7 @@ Fl_File_Browser.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
 Fl_File_Browser.o: ../FL/Fl_Export.H ../FL/platform_types.h ../FL/Fl.H
 Fl_File_Browser.o: ../FL/Fl_Export.H ../FL/fl_utf8.h ../FL/fl_types.h
 Fl_File_Browser.o: ../FL/Enumerations.H ../FL/abi-version.h
-Fl_File_Browser.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_File_Browser.o: Fl_System_Driver.H ../FL/filename.H
 Fl_File_Browser.o: ../FL/Fl_Preferences.H ../FL/fl_draw.H ../FL/Fl_Image.H
 Fl_File_Browser.o: ../FL/Fl_Widget.H flstring.h ../config.h
 Fl_File_Chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/Fl_Export.H
@@ -163,20 +163,20 @@ Fl_File_Chooser2.o: ../FL/Fl_File_Icon.H ../FL/filename.H ../FL/Fl_Box.H
 Fl_File_Chooser2.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 Fl_File_Chooser2.o: ../FL/Fl_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 Fl_File_Chooser2.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H ../FL/fl_ask.H
-Fl_File_Chooser2.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_File_Chooser2.o: Fl_System_Driver.H ../FL/filename.H
 Fl_File_Chooser2.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl_File_Chooser2.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H flstring.h
 Fl_File_Chooser2.o: ../config.h
 Fl_File_Icon.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_File_Icon.o: ../FL/Fl.H ../FL/platform_types.h ../FL/fl_utf8.h
 Fl_File_Icon.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_File_Icon.o: ../FL/abi-version.h ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_File_Icon.o: ../FL/abi-version.h Fl_System_Driver.H ../FL/filename.H
 Fl_File_Icon.o: ../FL/Fl_Preferences.H ../FL/Fl_File_Icon.H ../FL/Fl.H
 Fl_File_Icon.o: ../FL/Fl_Widget.H ../FL/fl_draw.H
 Fl_File_Input.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_File_Input.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_File_Input.o: ../FL/Enumerations.H ../FL/abi-version.h
-Fl_File_Input.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_File_Input.o: Fl_System_Driver.H ../FL/filename.H
 Fl_File_Input.o: ../FL/Fl_Preferences.H ../FL/Fl_File_Input.H
 Fl_File_Input.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Window.H
 Fl_File_Input.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
@@ -240,7 +240,7 @@ Fl_Input.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Input.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H
 Fl_Input.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/Fl_Window.H
 Fl_Input.o: ../FL/Fl_Group.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-Fl_Input.o: ../FL/Fl_Widget.H ../FL/Fl.H ../FL/Fl_System_Driver.H
+Fl_Input.o: ../FL/Fl_Widget.H ../FL/Fl.H Fl_System_Driver.H
 Fl_Input.o: ../FL/filename.H ../FL/Fl_Preferences.H Fl_Screen_Driver.H
 Fl_Input.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H ../FL/fl_draw.H
 Fl_Input.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
@@ -279,7 +279,7 @@ Fl_Light_Button.o: ../FL/Fl_Radio_Light_Button.H ../FL/Fl_Light_Button.H
 Fl_Light_Button.o: ../FL/fl_draw.H flstring.h ../config.h
 Fl_Menu.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Menu.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_Menu.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_System_Driver.H
+Fl_Menu.o: ../FL/Enumerations.H ../FL/abi-version.h Fl_System_Driver.H
 Fl_Menu.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/Fl_Menu_Window.H
 Fl_Menu.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H ../FL/Fl_Menu_.H
 Fl_Menu.o: ../FL/Fl_Widget.H ../FL/Fl.H ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H
@@ -373,7 +373,7 @@ Fl_Positioner.o: ../FL/fl_draw.H
 Fl_Preferences.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Preferences.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Preferences.o: ../FL/Enumerations.H ../FL/abi-version.h
-Fl_Preferences.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_Preferences.o: Fl_System_Driver.H ../FL/filename.H
 Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/Fl_Plugin.H
 Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/fl_utf8.h flstring.h
 Fl_Preferences.o: ../config.h
@@ -474,7 +474,7 @@ Fl_Sys_Menu_Bar.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Export.H
 Fl_Sys_Menu_Bar.o: ../FL/fl_types.h ../FL/platform_types.h ../FL/Fl.H
 Fl_Sys_Menu_Bar.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/platform.H
 Fl_Sys_Menu_Bar.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_System_Driver.o: ../FL/Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
+Fl_System_Driver.o: Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
 Fl_System_Driver.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_System_Driver.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_System_Driver.o: ../FL/filename.H ../FL/Fl_Preferences.H
@@ -562,7 +562,7 @@ Fl_Tree_Item_Array.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Tree_Item_Array.o: ../FL/abi-version.h ../FL/Fl_Tree_Item.H
 Fl_Tree_Item_Array.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 Fl_Tree_Item_Array.o: ../FL/Fl.H ../FL/fl_draw.H ../FL/Fl_Tree_Prefs.H
-Fl_Tree_Prefs.o: config_lib.h ../config.h ../FL/Fl_System_Driver.H ../FL/Fl.H
+Fl_Tree_Prefs.o: config_lib.h ../config.h Fl_System_Driver.H ../FL/Fl.H
 Fl_Tree_Prefs.o: ../FL/Fl_Export.H ../FL/platform_types.h ../FL/fl_utf8.h
 Fl_Tree_Prefs.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl_Tree_Prefs.o: ../FL/abi-version.h ../FL/filename.H ../FL/Fl_Preferences.H
@@ -572,7 +572,7 @@ Fl_Tooltip.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Tooltip.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_Tooltip.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Menu_Window.H
 Fl_Tooltip.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H
-Fl_Tooltip.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_Tooltip.o: Fl_System_Driver.H ../FL/filename.H
 Fl_Tooltip.o: ../FL/Fl_Preferences.H
 Fl_Valuator.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Valuator.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -673,7 +673,7 @@ Fl_XPM_Image.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h
 Fl_XPM_Image.o: ../config.h
 Fl_abort.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_abort.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-Fl_abort.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_System_Driver.H
+Fl_abort.o: ../FL/Enumerations.H ../FL/abi-version.h Fl_System_Driver.H
 Fl_abort.o: ../FL/filename.H ../FL/Fl_Preferences.H
 Fl_add_idle.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_add_idle.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -683,7 +683,7 @@ Fl_arg.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Enumerations.H
 Fl_arg.o: ../FL/abi-version.h ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_arg.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/Fl.H
 Fl_arg.o: Fl_Window_Driver.H ../FL/Fl_Overlay_Window.H
-Fl_arg.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_System_Driver.H
+Fl_arg.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H Fl_System_Driver.H
 Fl_arg.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/Fl_Tooltip.H
 Fl_arg.o: ../FL/Fl_Widget.H ../FL/fl_draw.H flstring.h ../config.h
 Fl_compose.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -721,7 +721,7 @@ Fl_get_system_colors.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 Fl_get_system_colors.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H
 Fl_get_system_colors.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 Fl_get_system_colors.o: ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
-Fl_get_system_colors.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_get_system_colors.o: Fl_System_Driver.H ../FL/filename.H
 Fl_get_system_colors.o: ../FL/Fl_Preferences.H ../FL/fl_draw.H
 Fl_get_system_colors.o: ../FL/platform.H ../FL/math.h ../FL/fl_utf8.h
 Fl_get_system_colors.o: flstring.h ../config.h ../FL/Fl_Tiled_Image.H
@@ -739,13 +739,13 @@ Fl_grab.o: ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
 Fl_lock.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_lock.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_lock.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
-Fl_lock.o: ../FL/Fl_System_Driver.H ../FL/filename.H ../FL/Fl_Preferences.H
+Fl_lock.o: Fl_System_Driver.H ../FL/filename.H ../FL/Fl_Preferences.H
 Fl_lock.o: drivers/Posix/Fl_Posix_System_Driver.H
 Fl_own_colormap.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_own_colormap.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_own_colormap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_own_colormap.o: ../FL/platform.H ../FL/fl_types.h ../FL/Enumerations.H
-Fl_own_colormap.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_own_colormap.o: Fl_System_Driver.H ../FL/filename.H
 Fl_own_colormap.o: ../FL/Fl_Preferences.H drivers/X11/Fl_X11_System_Driver.H
 Fl_own_colormap.o: drivers/Posix/Fl_Posix_System_Driver.H
 Fl_visual.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -761,25 +761,25 @@ Fl_visual.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
 filename_absolute.o: ../FL/filename.H ../FL/Fl_Export.H
 filename_absolute.o: ../FL/platform_types.h ../FL/Fl.H ../FL/Fl_Export.H
 filename_absolute.o: ../FL/fl_utf8.h ../FL/fl_types.h ../FL/Enumerations.H
-filename_absolute.o: ../FL/abi-version.h ../FL/Fl_System_Driver.H
+filename_absolute.o: ../FL/abi-version.h Fl_System_Driver.H
 filename_absolute.o: ../FL/Fl_Preferences.H flstring.h ../config.h
-filename_expand.o: ../FL/Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
+filename_expand.o: Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
 filename_expand.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 filename_expand.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 filename_expand.o: ../FL/filename.H ../FL/Fl_Preferences.H
-filename_ext.o: ../FL/Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
+filename_ext.o: Fl_System_Driver.H ../FL/Fl.H ../FL/Fl_Export.H
 filename_ext.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 filename_ext.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 filename_ext.o: ../FL/filename.H ../FL/Fl_Preferences.H
 filename_isdir.o: flstring.h ../FL/Fl_Export.H ../config.h
-filename_isdir.o: ../FL/Fl_System_Driver.H ../FL/Fl.H ../FL/platform_types.h
+filename_isdir.o: Fl_System_Driver.H ../FL/Fl.H ../FL/platform_types.h
 filename_isdir.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 filename_isdir.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/filename.H
 filename_isdir.o: ../FL/Fl_Preferences.H
 filename_list.o: ../FL/filename.H ../FL/Fl_Export.H ../FL/platform_types.h
 filename_list.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/fl_utf8.h
 filename_list.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
-filename_list.o: ../FL/Fl_System_Driver.H ../FL/Fl_Preferences.H
+filename_list.o: Fl_System_Driver.H ../FL/Fl_Preferences.H
 filename_list.o: ../FL/fl_utf8.h flstring.h ../config.h
 filename_match.o: ../FL/filename.H ../FL/Fl_Export.H ../FL/platform_types.h
 filename_setext.o: ../FL/filename.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -834,17 +834,17 @@ fl_draw.o: flstring.h ../config.h
 fl_draw_pixmap.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 fl_draw_pixmap.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 fl_draw_pixmap.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
-fl_draw_pixmap.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+fl_draw_pixmap.o: Fl_System_Driver.H ../FL/filename.H
 fl_draw_pixmap.o: ../FL/Fl_Preferences.H ../FL/platform.H ../FL/fl_types.h
 fl_draw_pixmap.o: ../FL/Enumerations.H ../FL/fl_draw.H flstring.h
 fl_encoding_latin1.o: config_lib.h ../config.h ../FL/fl_draw.H ../FL/Fl.H
 fl_encoding_latin1.o: ../FL/Fl_Export.H ../FL/platform_types.h
 fl_encoding_latin1.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_encoding_latin1.o: ../FL/Enumerations.H ../FL/abi-version.h
-fl_encoding_latin1.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+fl_encoding_latin1.o: Fl_System_Driver.H ../FL/filename.H
 fl_encoding_latin1.o: ../FL/Fl_Preferences.H ../FL/Enumerations.H flstring.h
 fl_encoding_mac_roman.o: config_lib.h ../config.h ../FL/fl_draw.H
-fl_encoding_mac_roman.o: ../FL/Fl_System_Driver.H ../FL/Fl.H
+fl_encoding_mac_roman.o: Fl_System_Driver.H ../FL/Fl.H
 fl_encoding_mac_roman.o: ../FL/Fl_Export.H ../FL/platform_types.h
 fl_encoding_mac_roman.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_encoding_mac_roman.o: ../FL/Enumerations.H ../FL/abi-version.h
@@ -883,7 +883,7 @@ fl_labeltype.o: ../FL/Fl_Widget.H ../FL/Fl.H ../FL/Fl_Input_.H
 fl_open_uri.o: config_lib.h ../config.h ../FL/filename.H ../FL/Fl_Export.H
 fl_open_uri.o: ../FL/platform_types.h ../FL/Fl.H ../FL/Fl_Export.H
 fl_open_uri.o: ../FL/fl_utf8.h ../FL/fl_types.h ../FL/Enumerations.H
-fl_open_uri.o: ../FL/abi-version.h ../FL/Fl_System_Driver.H
+fl_open_uri.o: ../FL/abi-version.h Fl_System_Driver.H
 fl_open_uri.o: ../FL/Fl_Preferences.H flstring.h
 fl_open_uri.o: drivers/Posix/Fl_Posix_System_Driver.H
 fl_oval_box.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
@@ -956,7 +956,7 @@ fl_shortcut.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_shortcut.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_shortcut.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Widget.H
 fl_shortcut.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H ../FL/Fl.H
-fl_shortcut.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+fl_shortcut.o: Fl_System_Driver.H ../FL/filename.H
 fl_shortcut.o: ../FL/Fl_Preferences.H ../FL/fl_draw.H flstring.h ../config.h
 fl_show_colormap.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_show_colormap.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -987,7 +987,7 @@ screen_xywh.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 screen_xywh.o: ../FL/Fl_Text_Buffer.H ../config.h
 fl_utf8.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_utf8.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
-fl_utf8.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_System_Driver.H
+fl_utf8.o: ../FL/Enumerations.H ../FL/abi-version.h Fl_System_Driver.H
 fl_utf8.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/fl_utf8.h
 fl_utf8.o: utf8_internal.h xutf8/mk_wcwidth.c
 drivers/PostScript/Fl_PostScript.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H
@@ -1017,7 +1017,7 @@ drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Input_.H
 drivers/PostScript/Fl_PostScript.o: ../FL/Fl_Return_Button.H
-drivers/PostScript/Fl_PostScript.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+drivers/PostScript/Fl_PostScript.o: Fl_System_Driver.H ../FL/filename.H
 drivers/PostScript/Fl_PostScript_image.o: ../config.h ../FL/Fl_PostScript.H
 drivers/PostScript/Fl_PostScript_image.o: ../FL/Fl_Paged_Device.H
 drivers/PostScript/Fl_PostScript_image.o: ../FL/Fl_Widget_Surface.H
@@ -1341,7 +1341,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Shared_Image.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../config.h
 drivers/Posix/Fl_Posix_System_Driver.o: drivers/Posix/Fl_Posix_System_Driver.H
-drivers/Posix/Fl_Posix_System_Driver.o: ../FL/Fl_System_Driver.H ../FL/Fl.H
+drivers/Posix/Fl_Posix_System_Driver.o: Fl_System_Driver.H ../FL/Fl.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/Fl_Export.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/platform_types.h
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/fl_utf8.h ../FL/Fl_Export.H
@@ -1354,7 +1354,7 @@ drivers/Posix/Fl_Posix_System_Driver.o: ../FL/Fl_File_Icon.H ../FL/Fl.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../FL/filename.H ../FL/Fl_File_Icon.H
 drivers/X11/Fl_X11_System_Driver.o: drivers/X11/Fl_X11_System_Driver.H
 drivers/X11/Fl_X11_System_Driver.o: drivers/Posix/Fl_Posix_System_Driver.H
-drivers/X11/Fl_X11_System_Driver.o: ../FL/Fl_System_Driver.H ../FL/Fl.H
+drivers/X11/Fl_X11_System_Driver.o: Fl_System_Driver.H ../FL/Fl.H
 drivers/X11/Fl_X11_System_Driver.o: ../FL/Fl_Export.H ../FL/platform_types.h
 drivers/X11/Fl_X11_System_Driver.o: ../FL/fl_utf8.h ../FL/Fl_Export.H
 drivers/X11/Fl_X11_System_Driver.o: ../FL/fl_types.h ../FL/Enumerations.H
@@ -1416,7 +1416,7 @@ Fl_x.o: ../FL/Fl_Graphics_Driver.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 Fl_x.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H
 Fl_x.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H
 Fl_x.o: drivers/X11/Fl_X11_Window_Driver.H drivers/X11/Fl_X11_System_Driver.H
-Fl_x.o: drivers/Posix/Fl_Posix_System_Driver.H ../FL/Fl_System_Driver.H
+Fl_x.o: drivers/Posix/Fl_Posix_System_Driver.H Fl_System_Driver.H
 Fl_x.o: ../FL/Fl_Preferences.H drivers/Xlib/Fl_Xlib_Graphics_Driver.H Xutf8.h
 fl_dnd_x.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fl_dnd_x.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -1450,7 +1450,7 @@ Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
 Fl_Native_File_Chooser_FLTK.o: ../FL/fl_ask.H ../FL/Fl_File_Icon.H
-Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_Native_File_Chooser_FLTK.o: Fl_System_Driver.H ../FL/filename.H
 Fl_Native_File_Chooser_GTK.o: config_lib.h ../config.h ../FL/platform.H
 Fl_Native_File_Chooser_GTK.o: ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Native_File_Chooser_GTK.o: ../FL/fl_types.h ../FL/Enumerations.H
@@ -1476,7 +1476,7 @@ Fl_get_key.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_get_key.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_get_key.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
 Fl_get_key.o: drivers/X11/Fl_X11_System_Driver.H
-Fl_get_key.o: drivers/Posix/Fl_Posix_System_Driver.H ../FL/Fl_System_Driver.H
+Fl_get_key.o: drivers/Posix/Fl_Posix_System_Driver.H Fl_System_Driver.H
 Fl_get_key.o: ../FL/filename.H ../FL/Fl_Preferences.H ../FL/platform.H
 Fl_get_key.o: ../FL/fl_types.h ../FL/Enumerations.H
 drivers/Xlib/Fl_Xlib_Graphics_Driver_font_xft.o: flstring.h ../FL/Fl_Export.H
@@ -1639,7 +1639,7 @@ forms_timer.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
 forms_timer.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H ../FL/fl_ask.H
 forms_timer.o: ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H ../FL/Fl_Positioner.H
 forms_timer.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Value_Slider.H
-forms_timer.o: ../FL/Fl_Timer.H ../FL/Fl_System_Driver.H ../FL/filename.H
+forms_timer.o: ../FL/Fl_Timer.H Fl_System_Driver.H ../FL/filename.H
 Fl_Gl_Choice.o: config_lib.h ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_Gl_Choice.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Gl_Choice.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
@@ -1950,7 +1950,7 @@ Fl_JPEG_Image.o: ../FL/abi-version.h ../config.h
 Fl_PNG_Image.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H
 Fl_PNG_Image.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_PNG_Image.o: ../FL/fl_types.h ../FL/Enumerations.H ../FL/abi-version.h
-Fl_PNG_Image.o: ../FL/Fl_System_Driver.H ../FL/filename.H
+Fl_PNG_Image.o: Fl_System_Driver.H ../FL/filename.H
 Fl_PNG_Image.o: ../FL/Fl_Preferences.H ../FL/Fl_PNG_Image.H ../FL/Fl_Image.H
 Fl_PNG_Image.o: ../FL/Fl_Shared_Image.H ../FL/fl_utf8.h
 Fl_PNM_Image.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h

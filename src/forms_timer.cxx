@@ -24,7 +24,7 @@
 #include <FL/Fl_Timer.H>
 #include <FL/fl_draw.H>
 #include <FL/forms.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <stdio.h>
 
 #define FL_TIMER_BLINKRATE	0.2

@@ -22,7 +22,7 @@
 
 #include "config_lib.h"
 
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree_Prefs.H>

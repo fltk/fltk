@@ -20,7 +20,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 
 #include <stdio.h>
 #include <string.h>   // strdup()

@@ -18,7 +18,7 @@
 
 
 #include "../../config_lib.h"
-#include <FL/Fl_System_Driver.H>
+#include "../../Fl_System_Driver.H"
 //#include "Fl_PicoSDL_System_Driver.h"
 
 

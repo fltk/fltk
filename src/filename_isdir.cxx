@@ -19,7 +19,7 @@
 // Used by fl_file_chooser
 
 #include "flstring.h"
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/filename.H>
 #include <FL/Fl.H>
 

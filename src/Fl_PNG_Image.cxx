@@ -30,7 +30,7 @@
 
 #include <config.h>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_utf8.h>

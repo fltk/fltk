@@ -20,7 +20,7 @@
 #ifndef FL_PICO_SYSTEM_DRIVER_H
 #define FL_PICO_SYSTEM_DRIVER_H
 
-#include <FL/Fl_System_Driver.H>
+#include "../../Fl_System_Driver.H"
 
 class Fl_Pico_System_Driver : public Fl_System_Driver {
 public:

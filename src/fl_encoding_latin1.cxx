@@ -19,7 +19,7 @@
 #include "config_lib.h"
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/Enumerations.H>
 #include <stdlib.h>
 #include "flstring.h"

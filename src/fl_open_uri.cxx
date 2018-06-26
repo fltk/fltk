@@ -27,7 +27,7 @@
 #include "config_lib.h"
 #include <FL/filename.H>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"

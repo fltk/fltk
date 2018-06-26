@@ -18,7 +18,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/Fl_File_Input.H>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>

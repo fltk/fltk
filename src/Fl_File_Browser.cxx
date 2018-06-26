@@ -33,7 +33,7 @@
 
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
 #include <FL/Fl_Image.H>	// icon

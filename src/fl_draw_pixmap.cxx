@@ -34,7 +34,7 @@
 
 #include "config_lib.h"
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #if defined(FL_CFG_SYS_WIN32)
 #include "drivers/GDI/Fl_GDI_Graphics_Driver.H"
 #endif

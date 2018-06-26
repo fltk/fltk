@@ -27,7 +27,7 @@
 #include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 
 
 #if defined(FL_CFG_WIN_X11) && !defined(FL_DOXYGEN)

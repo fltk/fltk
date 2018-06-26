@@ -36,7 +36,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/fl_draw.H>
 #include <stdlib.h>
 #include <ctype.h>

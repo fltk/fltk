@@ -19,7 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Clock.H>
 #include <FL/Fl_Round_Clock.H>
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/fl_draw.H>
 #include <math.h>
 #include <time.h>

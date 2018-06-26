@@ -16,7 +16,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/Fl.H>
 
 /** Gets the extension of a filename.

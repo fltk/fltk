@@ -18,7 +18,7 @@
 
 #include <FL/Fl.H>
 #include "Fl_Screen_Driver.H"
-#include <FL/Fl_System_Driver.H>
+#include "Fl_System_Driver.H"
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
 #include <FL/math.h>

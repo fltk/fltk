@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
-#include <FL/Fl_System_Driver.H>
+#include "../../Fl_System_Driver.H"
 #include <stdarg.h>
 
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
