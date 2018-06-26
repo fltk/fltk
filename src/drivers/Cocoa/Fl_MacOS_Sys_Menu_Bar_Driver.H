@@ -19,7 +19,7 @@
 #ifndef Fl_MacOS_Sys_Menu_Bar_Driver_H
 #define Fl_MacOS_Sys_Menu_Bar_Driver_H
 
-#include <FL/Fl_Sys_Menu_Bar_Driver.H>
+#include "../../Fl_Sys_Menu_Bar_Driver.H"
 
 class Fl_MacOS_Sys_Menu_Bar_Driver : public Fl_Sys_Menu_Bar_Driver {
 public:

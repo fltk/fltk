@@ -18,7 +18,6 @@
 
 #if defined(__APPLE__)
 
-#include <FL/Fl_Sys_Menu_Bar_Driver.H>
 #include <FL/platform.H>
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include "flstring.h"
@@ -26,7 +25,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#import <Cocoa/Cocoa.h> // keep this after include of Fl_Sys_Menu_Bar_Driver.H because of check() conflict
+#import <Cocoa/Cocoa.h> // keep this after include of Fl_MacOS_Sys_Menu_Bar_Driver.H because of check() conflict
 
 typedef const Fl_Menu_Item *pFl_Menu_Item;
 
