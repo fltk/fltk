@@ -25,7 +25,7 @@
 #ifndef FL_ANDROID_SCREEN_DRIVER_H
 #define FL_ANDROID_SCREEN_DRIVER_H
 
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 #include <FL/Fl_Rect.H>
 #include <android/input.h>
 //#include <windows.h>

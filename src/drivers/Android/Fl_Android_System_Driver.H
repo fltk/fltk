@@ -24,7 +24,7 @@
 #ifndef FL_ANDROID_SYSTEM_DRIVER_H
 #define FL_ANDROID_SYSTEM_DRIVER_H
 
-#include <FL/Fl_System_Driver.H>
+#include "../../Fl_System_Driver.H"
 #include <stdarg.h>
 
 /*
