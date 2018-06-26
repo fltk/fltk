@@ -22,7 +22,7 @@
 #include <FL/Fl.H>
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
-#include <FL/Fl_Gl_Window_Driver.H>
+#include "Fl_Gl_Window_Driver.H"
 #include <stdlib.h>
 
 /**

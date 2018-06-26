@@ -23,7 +23,7 @@
 #  include <stdlib.h>
 #  include "Fl_Gl_Choice.H"
 #  include <FL/Fl_Gl_Window.H>
-#  include <FL/Fl_Gl_Window_Driver.H>
+#  include "Fl_Gl_Window_Driver.H"
 #  include <FL/gl_draw.H>
 #  include "flstring.h"
 #  include <FL/fl_utf8.h>

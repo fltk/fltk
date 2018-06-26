@@ -38,7 +38,7 @@ Fl_OpenGL_Display_Device::Fl_OpenGL_Display_Device(Fl_OpenGL_Graphics_Driver *gr
 }
 
 #ifdef FL_CFG_GFX_QUARTZ
-#include <FL/Fl_Gl_Window_Driver.H>
+#include "../../Fl_Gl_Window_Driver.H"
 
 // convert BGRA to RGB and also exchange top and bottom
 static uchar *convert_BGRA_to_RGB(uchar *baseAddress, int w, int h, int mByteWidth)

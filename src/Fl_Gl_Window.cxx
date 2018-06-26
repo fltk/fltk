@@ -23,7 +23,7 @@ extern int fl_gl_load_plugin;
 
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
-#include <FL/Fl_Gl_Window_Driver.H>
+#include "Fl_Gl_Window_Driver.H"
 #include "Fl_Window_Driver.H"
 #include <FL/Fl_Graphics_Driver.H>
 #include <stdlib.h>

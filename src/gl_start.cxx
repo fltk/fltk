@@ -37,7 +37,7 @@
 #include <FL/gl.h>
 class Fl_Gl_Choice;
 #include <FL/Fl_Gl_Window.H>
-#include <FL/Fl_Gl_Window_Driver.H>
+#include "Fl_Gl_Window_Driver.H"
 
 static GLContext context;
 static int clip_state_number=-1;

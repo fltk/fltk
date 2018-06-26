@@ -39,7 +39,7 @@
 #include <FL/gl.h>
 #include <FL/gl_draw.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Gl_Window_Driver.H>
+#include "Fl_Gl_Window_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <FL/glu.h>  // for gluUnProject()
 #include <FL/glut.H> // for glutStrokeString() and glutStrokeLength()
