@@ -24,7 +24,7 @@
 // can be used to dismiss the menus.
 
 #include <FL/Fl_Menu_Window.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 
 void Fl_Menu_Window::show() {
   Fl_Window_Driver::driver(this)->show_menu();

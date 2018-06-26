@@ -25,7 +25,7 @@
 #ifndef FL_X11_WINDOW_DRIVER_H
 #define FL_X11_WINDOW_DRIVER_H
 
-#include <FL/Fl_Window_Driver.H>
+#include "../../Fl_Window_Driver.H"
 #include <config.h> // for USE_XDBE
 #include <FL/platform.H> // for Cursor
 class Fl_Bitmap;

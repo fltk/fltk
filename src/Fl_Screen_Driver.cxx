@@ -30,7 +30,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Tooltip.H>

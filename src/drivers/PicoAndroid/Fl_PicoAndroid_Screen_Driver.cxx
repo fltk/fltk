@@ -28,7 +28,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Window_Driver.H>
+#include "../../Fl_Window_Driver.H"
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Graphics_Driver.H>
 #include <FL/fl_draw.H>

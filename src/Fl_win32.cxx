@@ -54,7 +54,7 @@ void fl_cleanup_dc_list(void);
 #include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Graphics_Driver.H> // for fl_graphics_driver
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"

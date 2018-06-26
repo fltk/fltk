@@ -25,7 +25,7 @@
 #ifndef FL_PICO_WINDOW_DRIVER_H
 #define FL_PICO_WINDOW_DRIVER_H
 
-#include <FL/Fl_Window_Driver.H>
+#include "../../Fl_Window_Driver.H"
 
 
 class FL_EXPORT Fl_Pico_Window_Driver : public Fl_Window_Driver

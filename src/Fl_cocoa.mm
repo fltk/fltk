@@ -37,7 +37,7 @@ extern "C" {
 #include "config_lib.h"
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/Fl_Screen_Driver.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>

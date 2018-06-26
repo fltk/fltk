@@ -23,7 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/fl_utf8.h>
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "flstring.h"

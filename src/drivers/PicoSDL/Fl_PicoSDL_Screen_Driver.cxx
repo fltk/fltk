@@ -21,7 +21,7 @@
 #include "Fl_PicoSDL_Screen_Driver.H"
 
 #include <FL/platform.H>
-#include <FL/Fl_Window_Driver.H>
+#include "../../Fl_Window_Driver.H"
 
 #define __APPLE__
 #include <SDL2/SDL.h>

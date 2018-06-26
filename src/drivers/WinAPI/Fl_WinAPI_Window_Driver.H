@@ -25,7 +25,7 @@
 #ifndef FL_WINAPI_WINDOW_DRIVER_H
 #define FL_WINAPI_WINDOW_DRIVER_H
 
-#include <FL/Fl_Window_Driver.H>
+#include "../../Fl_Window_Driver.H"
 #include <windows.h>
 
 /*

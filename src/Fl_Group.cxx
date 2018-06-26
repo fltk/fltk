@@ -22,7 +22,7 @@
 // handling is designed so windows themselves work correctly.
 
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/Fl_Rect.H>
 #include <FL/fl_draw.H>
 

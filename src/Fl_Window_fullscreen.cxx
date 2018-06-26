@@ -17,7 +17,7 @@
 //
 
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 
 void Fl_Window::border(int b) {
   if (b) {

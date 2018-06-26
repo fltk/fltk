@@ -24,7 +24,7 @@ extern int fl_gl_load_plugin;
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Gl_Window_Driver.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/Fl_Graphics_Driver.H>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
@@ -704,7 +704,7 @@ void* Fl_WinAPI_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #include <FL/platform.H>
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Screen_Driver.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {

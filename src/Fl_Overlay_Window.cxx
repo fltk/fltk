@@ -23,7 +23,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 
 
 Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l)

@@ -27,7 +27,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 #include <FL/fl_draw.H>
 
 #include "fl_cursor_wait.xpm"

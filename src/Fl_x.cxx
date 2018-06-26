@@ -25,7 +25,7 @@
 #  include <config.h>
 #  include <FL/Fl.H>
 #  include <FL/platform.H>
-#  include <FL/Fl_Window_Driver.H>
+#  include "Fl_Window_Driver.H"
 #  include <FL/Fl_Window.H>
 #  include <FL/fl_utf8.h>
 #  include <FL/Fl_Tooltip.H>

@@ -25,7 +25,7 @@
 #ifndef FL_COCOA_WINDOW_DRIVER_H
 #define FL_COCOA_WINDOW_DRIVER_H
 
-#include <FL/Fl_Window_Driver.H>
+#include "../../Fl_Window_Driver.H"
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Image;

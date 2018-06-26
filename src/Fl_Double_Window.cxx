@@ -23,7 +23,7 @@
 #include <FL/platform.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Window_Driver.H>
+#include "Fl_Window_Driver.H"
 
 // On systems that support double buffering "naturally" the base
 // Fl_Window class will probably do double-buffer and this subclass
