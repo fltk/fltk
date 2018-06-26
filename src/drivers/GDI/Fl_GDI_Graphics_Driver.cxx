@@ -22,7 +22,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 
 /*
  * By linking this module, the following static method will instantiate the

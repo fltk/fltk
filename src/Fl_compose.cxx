@@ -22,7 +22,7 @@ Utility functions to support text input.
 */
 
 #include <FL/Fl.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 
 #ifndef FL_DOXYGEN
 int Fl::compose_state = 0;

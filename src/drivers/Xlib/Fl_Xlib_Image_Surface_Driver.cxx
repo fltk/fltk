@@ -18,7 +18,7 @@
 
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl_Image_Surface.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
   virtual void end_current_();

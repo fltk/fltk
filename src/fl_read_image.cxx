@@ -18,7 +18,7 @@
 
 #include <FL/Fl.H>
 #include <FL/platform.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 
 /**
  Reads an RGB(A) image from the current window or off-screen buffer.

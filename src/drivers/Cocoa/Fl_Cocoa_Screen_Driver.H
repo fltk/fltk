@@ -25,7 +25,7 @@
 #ifndef FL_COCOA_SCREEN_DRIVER_H
 #define FL_COCOA_SCREEN_DRIVER_H
 
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 
 /*
  Move everything here that manages the native screen interface.

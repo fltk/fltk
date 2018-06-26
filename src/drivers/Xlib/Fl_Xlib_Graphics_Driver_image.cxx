@@ -53,7 +53,7 @@
 #  include <FL/fl_draw.H>
 #  include <FL/platform.H>
 #  include <FL/Fl_Image_Surface.H>
-#  include <FL/Fl_Screen_Driver.H>
+#  include "../../Fl_Screen_Driver.H"
 #  include "../../Fl_XColor.H"
 #  include "../../flstring.h"
 #if HAVE_XRENDER

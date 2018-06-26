@@ -17,7 +17,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 
 ////////////////////////////////////////////////////////////////
 // "Grab" is done while menu systems are up.  This has several effects:

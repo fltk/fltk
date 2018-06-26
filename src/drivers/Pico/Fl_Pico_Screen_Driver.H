@@ -25,7 +25,7 @@
 #ifndef FL_PICO_SCREEN_DRIVER_H
 #define FL_PICO_SCREEN_DRIVER_H
 
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 
 
 class FL_EXPORT Fl_Pico_Screen_Driver : public Fl_Screen_Driver

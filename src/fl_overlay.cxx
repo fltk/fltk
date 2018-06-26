@@ -35,7 +35,7 @@ static int px,py,pw,ph;
 
 #ifndef USE_XOR
 #include <stdlib.h>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 #include <FL/Fl_RGB_Image.H>
 static Fl_RGB_Image *s_bgN = 0, *s_bgS = 0, *s_bgE = 0, *s_bgW = 0;
 

@@ -93,7 +93,7 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
 
 #else
 
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 #include "../../Fl_Window_Driver.H"
 Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window *glw, int x, int y, int w, int h)
 /* captures a rectangle of a Fl_Gl_Window window, and returns it as a RGB image

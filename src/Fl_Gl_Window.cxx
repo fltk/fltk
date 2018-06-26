@@ -611,7 +611,7 @@ char Fl_Cocoa_Gl_Window_Driver::swap_type() {return COPY;}
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 #include <FL/platform.H>
 #include <FL/Fl_Graphics_Driver.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
 {
@@ -703,7 +703,7 @@ void* Fl_WinAPI_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #if defined(FL_CFG_GFX_XLIB)
 #include <FL/platform.H>
 #include "Fl_Gl_Choice.H"
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 #include "Fl_Window_Driver.H"
 
 Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)

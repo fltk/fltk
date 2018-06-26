@@ -19,7 +19,7 @@
 #include <FL/Fl_Paged_Device.H>
 #include <FL/Fl_Printer.H>
 #include "../../Fl_Window_Driver.H"
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "../Darwin/Fl_Darwin_System_Driver.H"
 #include "Fl_Cocoa_Window_Driver.H"

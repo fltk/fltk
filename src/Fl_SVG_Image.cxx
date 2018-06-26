@@ -23,7 +23,7 @@
 #include <FL/Fl_SVG_Image.H>
 #include <FL/fl_utf8.h>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
 #if defined(HAVE_LIBZ)

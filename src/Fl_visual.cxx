@@ -19,7 +19,7 @@
 // Set the default visual according to passed switches:
 
 #include <FL/Fl.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 
 /** \fn  Fl::visual(int flags)
     Selects a visual so that your graphics are drawn correctly.  This is

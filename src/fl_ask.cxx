@@ -41,7 +41,7 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Secret_Input.H>
 #include <FL/platform.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 #include <FL/fl_draw.H>
 
 static Fl_Window *message_form;

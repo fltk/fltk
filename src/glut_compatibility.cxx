@@ -29,7 +29,7 @@
 #include "flstring.h"
 #if HAVE_GL
 #  include <FL/Fl_Gl_Window_Driver.H>
-#  include <FL/Fl_Screen_Driver.H>
+#  include "Fl_Screen_Driver.H"
 #  include <FL/glut.H>
 #  define MAXWINDOWS 32
 

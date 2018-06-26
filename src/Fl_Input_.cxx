@@ -19,7 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Input_.H>
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Screen_Driver.H>
+#include "Fl_Screen_Driver.H"
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <math.h>

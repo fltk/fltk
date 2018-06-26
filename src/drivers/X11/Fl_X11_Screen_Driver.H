@@ -25,7 +25,7 @@
 #ifndef FL_X11_SCREEN_DRIVER_H
 #define FL_X11_SCREEN_DRIVER_H
 
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 
 
 class Fl_Window;

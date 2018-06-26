@@ -25,7 +25,7 @@
 #ifndef FL_WINAPI_SCREEN_DRIVER_H
 #define FL_WINAPI_SCREEN_DRIVER_H
 
-#include <FL/Fl_Screen_Driver.H>
+#include "../../Fl_Screen_Driver.H"
 #include <windows.h>
 
 class Fl_Window;
