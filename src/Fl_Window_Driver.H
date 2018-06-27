@@ -53,7 +53,6 @@ class Fl_RGB_Image;
 class FL_EXPORT Fl_Window_Driver
 {
   friend class Fl_Window;
-  friend class Fl_X;
 private:
   static bool is_a_rescale_; // true when a top-level window is being rescaled
 

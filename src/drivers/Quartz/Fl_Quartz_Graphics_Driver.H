@@ -48,7 +48,6 @@ class Fl_Quartz_Font_Descriptor;
  This class is implemented only on the Mac OS X platform.
  */
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
-  friend class Fl_Font_Descriptor;
   friend class Fl_Cocoa_Printer_Driver;
   friend class Fl_Quartz_Font_Descriptor;
 protected:

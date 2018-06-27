@@ -53,7 +53,6 @@ struct Fl_Window_Driver::shape_data_type {
 
 class FL_EXPORT Fl_WinAPI_Window_Driver : public Fl_Window_Driver
 {
-  friend class Fl_Window;
   struct icon_data {
     const void *legacy_icon;
     Fl_RGB_Image **icons;

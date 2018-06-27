@@ -27,7 +27,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  friend class Fl_Image_Surface;
   virtual void end_current_();
 public:
   Window pre_window;

@@ -81,7 +81,6 @@ protected:
   void drawUCS4(const void *str, int n, int x, int y);
 #endif
 #if USE_PANGO
-  friend class Fl_X11_Screen_Driver;
   static PangoContext *pctxt_;
   static PangoFontMap *pfmap_;
   static PangoLayout *playout_;
