@@ -72,14 +72,6 @@ struct Fl_Fontdesc;
  drawing operations are directed to another drawing surface by Fl_Surface_Device::push_current() /
  Fl_Surface_Device::pop_current() / Fl_Surface_Device::set_current().
 
- The Fl_Graphics_Driver class is of interest if one wants to perform new kinds of drawing operations.
- An example would be to draw to an SVG file. This would require to create a new class,
- say SVG_Graphics_Driver, derived from class Fl_Graphics_Driver, and another new class,
- say SVG_Surface, derived from class Fl_Surface_Device. The new SVG_Graphics_Driver class should
- implement all virtual methods of the Fl_Graphics_Driver class to support all FLTK drawing functions
- and have them draw into SVG files. Alternatively, class SVG_Graphics_Driver could implement only some
- virtual methods, and only part of FLTK drawing functions would be usable when drawing to SVG files.
- 
  The Fl_Graphics_Driver class is essential for developers of the FLTK library.
  Each platform supported by FLTK requires to create a derived class of Fl_Graphics_Driver that
  implements all its virtual member functions according to the platform.

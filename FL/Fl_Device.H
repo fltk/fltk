@@ -51,6 +51,17 @@ class Fl_Widget;
  </ol>
  For back-compatibility, it is also possible to use the Fl_Surface_Device::set_current() member function
  to change the current drawing surface, once to the new surface, once to the previous one.
+ 
+ Class Fl_Surface_Device can also be derived to define new kinds of graphical output
+ usable with FLTK drawing functions.
+ An example would be to draw to an SVG file. This would require to create a new class,
+ say SVG_Surface, derived from class Fl_Surface_Device, and another new class,
+ say SVG_Graphics_Driver, derived from class Fl_Graphics_Driver.
+ Class SVG_Graphics_Driver should implement all virtual methods of the Fl_Graphics_Driver class
+ to support all FLTK drawing functions and have them draw into SVG files. Alternatively,
+ class SVG_Graphics_Driver could implement only some virtual methods, and only part of
+ the FLTK drawing API would be usable when drawing to SVG files
+ (see examples/SVG_File_Surface.cxx for a small, working implementation of this procedure).
  */
 class FL_EXPORT Fl_Surface_Device {
   /** The graphics driver in use by this surface. */
