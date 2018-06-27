@@ -75,6 +75,7 @@
 /examples/howto-drag-and-drop
 /examples/howto-menu-with-images
 /examples/howto-parse-args
+/examples/howto-simple-svg
 /examples/howto-text-over-image-button
 /examples/menubar-add
 /examples/nativefilechooser-simple-app
@@ -83,6 +84,8 @@
 /examples/OpenGL3test
 /examples/progress-simple
 /examples/shapedwindow
+/examples/simple-terminal
+/examples/SVG_File_Surface
 /examples/table-as-container
 /examples/table-simple
 /examples/table-sort
