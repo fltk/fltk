@@ -2147,11 +2147,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
-  float s = fl_graphics_driver->scale();
-  if ( !window->parent() && window->border() && fabs(rect.size.height - window->h() * s) > 5. ) { // this happens with tabbed windows
-        window->resize([cw frame].origin.x/s,
-                       (main_screen_height - ([cw frame].origin.y + rect.size.height))/s,
-                       rect.size.width/s, rect.size.height/s);
+  float scale = fl_graphics_driver->scale();
+  if ( !window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) { // this happens with tabbed windows
+        window->resize([cw frame].origin.x/scale,
+                       (main_screen_height - ([cw frame].origin.y + rect.size.height))/scale,
+                       rect.size.width/scale, rect.size.height/scale);
   }
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
