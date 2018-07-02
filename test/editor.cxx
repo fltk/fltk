@@ -966,6 +966,7 @@ int main(int argc, char **argv) {
   Fl_Window* window = new_view();
 
   window->show(1, argv);
+  //window->wait_for_expose();
 #ifndef __APPLE__
   if (argc > 1) load_file(argv[1], -1);
 #endif
