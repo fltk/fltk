@@ -146,11 +146,9 @@ private:
   // some platforms may need to reimplement this
   virtual void set_current_();
   float scale_; // scale between FLTK and drawing coordinates: drawing = FLTK * scale_
-  // The following function creates the graphics driver that is required
-  // for core operations. It must be implemented as a member of Fl_Graphics_Driver,
-  // but located in the device driver module that is linked to the core library.
-  static Fl_Graphics_Driver *newMainGraphicsDriver();
 public:
+  /** Creates the graphics driver that is used for core operations. */
+  static Fl_Graphics_Driver *newMainGraphicsDriver();
   /** A 2D coordinate transformation matrix */
   struct matrix {double a, b, c, d, x, y;};
   /** Features that a derived class may possess.  */
