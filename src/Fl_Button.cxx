@@ -164,6 +164,7 @@ int Fl_Button::handle(int event) {
       if (when() & FL_WHEN_RELEASE) do_callback();
       return 1;
     }
+    /* FALLTHROUGH */
   default:
     return 0;
   }
