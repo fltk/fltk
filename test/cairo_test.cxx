@@ -138,14 +138,14 @@ int main(int argc, char** argv) {
 #ifdef AUTOLINK
   Fl::cairo_autolink_context(true);
 #endif
-    Fl_Cairo_Window window(300,300);
-    
-    window.resizable(&window);
-    window.color(FL_WHITE);
-    window.set_draw_cb(my_cairo_draw_cb);
-    window.show(argc,argv);
+  Fl_Cairo_Window window(300, 300, "FLTK loves Cairo");
 
-    return Fl::run();
+  window.resizable(&window);
+  window.color(FL_WHITE);
+  window.set_draw_cb(my_cairo_draw_cb);
+  window.show(argc,argv);
+
+  return Fl::run();
 }
 #else
 #include <FL/fl_ask.H>

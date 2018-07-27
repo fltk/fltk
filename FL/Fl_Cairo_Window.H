@@ -3,7 +3,7 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,7 +17,7 @@
 //
 
 /* \file
-    Fl_Cairo_Window Handling transparently a fltk window incorporte a cairo draw callback.
+    Fl_Cairo_Window Handling transparently a FLTK window incorporating a cairo draw callback.
 */
 
 #ifndef FL_CAIRO_WINDOW_H
@@ -35,11 +35,13 @@
 */
 
 /**
-   This defines a pre-configured cairo fltk window.
+   This defines a FLTK window with cairo support.
+
    This class overloads the virtual draw() method for you,
    so that the only thing you have to do is to provide your cairo code.
    All cairo context handling is achieved transparently.
-   \note You can alternatively define your custom cairo fltk window,
+
+   \note You can alternatively define your custom cairo FLTK window,
    and thus at least override the draw() method to provide custom cairo
    support. In this case you will probably use Fl::cairo_make_current(Fl_Window*)
    to attach a context to your window. You should do it only when your window is 
@@ -48,7 +50,10 @@
 class FL_EXPORT Fl_Cairo_Window : public Fl_Double_Window {
 
 public:
-  Fl_Cairo_Window(int w, int h) : Fl_Double_Window(w,h),draw_cb_(0) {}
+  Fl_Cairo_Window(int W, int H, const char *L = 0)
+    : Fl_Double_Window(W, H, L), draw_cb_(0) {}
+  Fl_Cairo_Window(int X, int Y, int W, int H, const char *L = 0)
+    : Fl_Double_Window(X, Y, W, H, L), draw_cb_(0) {}
 
 protected:
   /** Overloaded to provide cairo callback support */
@@ -67,7 +72,7 @@ public:
     You must provide a draw callback which will implement your cairo rendering.
     This method will permit you to set your cairo callback to \p cb.
   */
-  void set_draw_cb(cairo_draw_cb  cb){draw_cb_=cb;}
+  void set_draw_cb(cairo_draw_cb cb) { draw_cb_ = cb; }
 private:
     cairo_draw_cb draw_cb_;
 };

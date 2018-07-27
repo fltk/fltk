@@ -102,6 +102,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2017
   Other Improvements
 
   - (add new items here)
+  - Fl_Cairo_Window constructors are now compatible with Fl_Double_Window
+    constructors - fixed missing constructors (STR #3160).
   - The include file for platform specific functions and definitions
     (FL/x.H) has been replaced with FL/platform.H. FL/x.H is deprecated
     but still available for backwards compatibility (STR #3435).
