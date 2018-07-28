@@ -107,7 +107,6 @@
 /fluid/fluid-shared
 /fluid/*.bck
 /fluid/*.exe
-/fluid/*.ilk
 /fluid/TAGS
 
 # /fluid/fluid.app/Contents/MacOS/
