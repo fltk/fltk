@@ -6,6 +6,7 @@
 
 # /
 /autom4te*.cache
+/build
 /clang
 /config.cache
 /config.guess
@@ -75,6 +76,8 @@
 /examples/howto-text-over-image-button
 /examples/menubar-add
 /examples/nativefilechooser-simple-app
+/examples/OpenGL3-glut-test
+/examples/OpenGL3test
 /examples/progress-simple
 /examples/shapedwindow
 /examples/table-as-container
