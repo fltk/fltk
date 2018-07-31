@@ -5,9 +5,13 @@
 # (1) Continuously building FLTK with several build systems.
 # (2) Generating current HTML documentation and putting it online.
 #
-# The documentation will be at:
+# The documentation will be viewable at:
 #
-# https://fltk.gitlab.io/fltk/
+# https://fltk.gitlab.io/<repository>/
+#
+# <repository> can be one of:
+#  - fltk
+#  - fltk-test
 #
 # Details of this script:
 #
@@ -74,6 +78,7 @@ documentation:
     - apt update && apt -y install make autoconf man doxygen
   script:
     - make clean
+    - doxygen --version
     - cd documentation && make && make html
   artifacts:
     paths:
