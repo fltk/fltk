@@ -45,7 +45,7 @@ build-autotools:
       - test/unittests
       - examples/fltk-versions
 
-# Build with CMake and Ninja (Default configuration)
+# Build with CMake and Ninja (default configuration)
 
 build-cmake:
   stage: build
