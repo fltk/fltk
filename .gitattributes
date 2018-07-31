@@ -1,0 +1,56 @@
+#
+# Git attributes for special files
+#
+# files not mentioned here are either text files
+# or their types are "guessed" properly by Git
+#
+# todo (migration from svn to git):
+#
+# - do we need to define Git attributes for source and text files?
+# - if yes, how to migrate "svn:eol-style native" to Git?
+# - which attributes do we need for fluid (.fl) files?
+# - what about "svn:keywords id" (+ author date revision)?
+#
+
+# files that will not be exported in source tarballs
+
+makesrcdist	export-ignore	eol=lf
+.gitattributes	export-ignore
+.gitignore	export-ignore
+
+# fluid files (eol=lf or text?)
+
+#*FIXME* *.fl		eol=lf
+
+# shell scripts etc. with Unix line endings (lf)
+
+*.ac		eol=lf
+*.desktop	eol=lf
+*.sh		eol=lf
+
+documentation/make_pdf		eol=lf
+misc/config.guess		eol=lf
+misc/config.sub			eol=lf
+misc/update_config_scripts	eol=lf
+
+# files with Windows line endings (crlf)
+
+*.rc		eol=crlf
+
+ide/AndroidStudio3/gradlew.rename_to_bat eol=crlf
+
+# binary files
+
+*.ico		binary
+*.icns		binary
+*.jar		binary
+*.png		binary
+*.jpg		binary
+*.ttf		binary
+*.xcf		binary
+*.xcf_gz	binary
+
+# image files that consist of ASCII text
+
+# *.xbm		text
+# *.xpm		text

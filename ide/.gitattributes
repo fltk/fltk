@@ -1,0 +1,12 @@
+#
+# Git attributes for IDE files
+#
+
+# MS VC files with Windows line endings (crlf)
+
+*.dsp		eol=crlf
+*.dsw		eol=crlf
+*.filters	eol=crlf
+*.sln		eol=crlf
+*.vcproj	eol=crlf
+*.vcxproj	eol=crlf
