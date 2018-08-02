@@ -636,6 +636,52 @@ int Fl_Window::screen_num() {
   return pWindowDriver->screen_num();
 }
 
+/** Assigns a non-rectangular shape to the window.
+ This function gives an arbitrary shape (not just a rectangular region) to an Fl_Window.
+ An Fl_Image of any dimension can be used as mask; it is rescaled to the window's dimension as needed.
+ 
+ The layout and widgets inside are unaware of the mask shape, and most will act as though the window's
+ rectangular bounding box is available
+ to them. It is up to you to make sure they adhere to the bounds of their masking shape.
+ 
+ The \p img argument can be an Fl_Bitmap, Fl_Pixmap, Fl_RGB_Image or Fl_Shared_Image:
+ \li With Fl_Bitmap or Fl_Pixmap, the shaped window covers the image part where bitmap bits equal one,
+ or where the pixmap is not fully transparent.
+ \li With an Fl_RGB_Image with an alpha channel (depths 2 or 4), the shaped window covers the image part
+ that is not fully transparent.
+ \li With an Fl_RGB_Image of depth 1 (gray-scale) or 3 (RGB), the shaped window covers the non-black image part.
+ \li With an Fl_Shared_Image, the shape is determined by rules above applied to the underlying image.
+ The shared image should not have been scaled through Fl_Image::scale().
+ 
+ Platform details:
+ \li On the unix/linux platform, the SHAPE extension of the X server is required.
+ This function does control the shape of Fl_Gl_Window instances.
+ \li On the Windows platform, this function does nothing with class Fl_Gl_Window.
+ \li On the Mac platform, OS version 10.4 or above is required.
+ An 8-bit shape-mask is used when \p img is an Fl_RGB_Image:
+ with depths 2 or 4, the image alpha channel becomes the shape mask such that areas with alpha = 0
+ are out of the shaped window;
+ with depths 1 or 3, white and black are in and out of the
+ shaped window, respectively, and other colors give intermediate masking scores.
+ This function does nothing with class Fl_Gl_Window.
+ 
+ The window borders and caption created by the window system are turned off by default. They
+ can be re-enabled by calling Fl_Window::border(1).
+ 
+ A usage example is found at example/shapedwindow.cxx.
+ 
+ \version 1.3.3
+ */
+void Fl_Window::shape(const Fl_Image* img) {pWindowDriver->shape(img);}
+
+/** Set the window's shape with an Fl_Image.
+ \see void shape(const Fl_Image* img)
+ */
+void Fl_Window::shape(const Fl_Image& img) {pWindowDriver->shape(&img);}
+
+/** Returns non NULL when the window has been assigned a non-rectangular shape */
+int Fl_Window::is_shaped() {return pWindowDriver->shape_data_ != NULL;}
+
 //
 // End of "$Id$".
 //
