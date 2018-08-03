@@ -2856,7 +2856,6 @@ int Fl_X11_Window_Driver::set_cursor(Fl_Cursor c) {
 #undef cache_cursor
 
   XDefineCursor(fl_display, fl_xid(pWindow), xc);
-  current_cursor_ = xc;
 
   return 1;
 }
@@ -2924,7 +2923,6 @@ int Fl_X11_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int ho
 
   xc = XcursorImageLoadCursor(fl_display, cursor);
   XDefineCursor(fl_display, fl_xid(pWindow), xc);
-  current_cursor_ = xc;
   XFreeCursor(fl_display, xc);
 
   XcursorImageDestroy(cursor);

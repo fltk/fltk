@@ -129,7 +129,6 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 {
   icon_ = new icon_data;
   memset(icon_, 0, sizeof(icon_data));
-  current_cursor_ = None;
 #if USE_XFT
   screen_num_ = -1;
 #endif
