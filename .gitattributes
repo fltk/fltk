@@ -27,6 +27,7 @@ makesrcdist	export-ignore	eol=lf
 *.ac		eol=lf
 *.desktop	eol=lf
 *.sh		eol=lf
+fltk-config.in	eol=lf
 
 documentation/make_pdf		eol=lf
 misc/config.guess		eol=lf
