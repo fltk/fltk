@@ -74,21 +74,6 @@ int fl_measure_pixmap(const char * const *cdata, int &w, int &h) {
   return 1;
 }
 
-
-/**
-  Draw XPM image data, with the top-left corner at the given position.
-  The image is dithered on 8-bit displays so you won't lose color
-  space for programs displaying both images and pixmaps.
-  \param[in] data pointer to XPM image data
-  \param[in] x,y  position of top-left corner
-  \param[in] bg   background color
-  \returns 0 if there was any error decoding the XPM data.
-  */
-int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
-  return fl_draw_pixmap((const char*const*)data,x,y,bg);
-}
-
-
 #if defined(FL_CFG_SYS_WIN32)
 
 
@@ -236,10 +221,6 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   return 1;
 }
 
-/**
-  Draw XPM image data, with the top-left corner at the given position.
-  \see fl_draw_pixmap(char* const* data, int x, int y, Fl_Color bg)
-  */
 int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   int w, h;
 

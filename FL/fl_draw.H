@@ -796,8 +796,24 @@ inline char fl_can_do_alpha_blending() {return Fl_Graphics_Driver::default_drive
 FL_EXPORT uchar *fl_read_image(uchar *p,int X,int Y,int W,int H,int alpha=0);
 
 // pixmaps:
-FL_EXPORT int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color=FL_GRAY);
-FL_EXPORT int fl_draw_pixmap(const char* const* cdata, int x,int y,Fl_Color=FL_GRAY);
+/**
+ Draw XPM image data, with the top-left corner at the given position.
+ The image is dithered on 8-bit displays so you won't lose color
+ space for programs displaying both images and pixmaps.
+ \param[in] data pointer to XPM image data
+ \param[in] x,y  position of top-left corner
+ \param[in] bg   background color
+ \returns 0 if there was any error decoding the XPM data.
+ */
+FL_EXPORT int fl_draw_pixmap(const char* const* data, int x,int y,Fl_Color bg=FL_GRAY);
+/**
+ Draw XPM image data, with the top-left corner at the given position.
+ \see fl_draw_pixmap(const char* const* data, int x, int y, Fl_Color bg)
+ */
+inline int fl_draw_pixmap(/*const*/ char* const* data, int x, int y, Fl_Color bg=FL_GRAY)
+{
+  return fl_draw_pixmap((const char*const*)data,x,y,bg);
+}
 FL_EXPORT int fl_measure_pixmap(/*const*/ char* const* data, int &w, int &h);
 FL_EXPORT int fl_measure_pixmap(const char* const* cdata, int &w, int &h);
 
