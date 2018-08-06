@@ -18,6 +18,8 @@
 
 #include <FL/Fl_Image_Surface.H>
 
+#include <FL/fl_draw.H> // necessary for FL_EXPORT fl_*_offscreen()
+
 /** Constructor with optional high resolution.
  \param w and \param h set the size of the resulting image. The value of the \p high_res
  parameter controls whether \p w and \p h are interpreted as pixel or FLTK units.
