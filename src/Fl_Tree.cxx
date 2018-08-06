@@ -630,11 +630,10 @@ void Fl_Tree::calc_dimensions() {
 /// normally managed automatically.
 ///
 /// On return:
-///
-///	- _tree_w will be the overall pixel width of the entire viewable tree
-///	- _tree_h will be the overall pixel height ""
-///     - scrollbar visibility and pan sizes are updated
-///     - internal _tix/_tiy/_tiw/_tih dimensions are updated
+/// - _tree_w will be the overall pixel width of the entire viewable tree
+/// - _tree_h will be the overall pixel height ""
+/// - scrollbar visibility and pan sizes are updated
+/// - internal _tix/_tiy/_tiw/_tih dimensions are updated
 ///
 /// _tree_w/_tree_h include the tree's margins (e.g. marginleft()),
 /// whether items are open or closed, label contents and font sizes, etc.
@@ -800,24 +799,27 @@ void Fl_Tree::root(Fl_Tree_Item *newitem) {
   _root = newitem;
 }
 
-/// Adds a new item, given a menu style \p 'path'.
-/// Any parent nodes that don't already exist are created automatically.
-/// Adds the item based on the value of sortorder().
-/// If \p 'item' is NULL, a new item is created.
-///
-/// To specify items or submenus that contain slashes ('/' or '\')
-/// use an escape character to protect them, e.g.
-/// \code
-///     tree->add("/Holidays/Photos/12\\/25\\/2010");         // Adds item "12/25/2010"
-///     tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
-/// \endcode
-/// \param[in] path The path to the item, e.g. "Flintstone/Fred".
-/// \param[in] item The new item to be added.
-///                 If NULL, a new item is created with
-///                 a name that is the last element in \p 'path'.
-/// \returns The new item added, or 0 on error.
-/// \version 1.3.3
-///
+/** Adds a new item, given a menu style \p 'path'.
+ Any parent nodes that don't already exist are created automatically.
+ Adds the item based on the value of sortorder().
+ If \p 'item' is NULL, a new item is created.
+
+ To specify items or submenus that contain slashes ('/' or '\')
+ use an escape character to protect them, e.g.
+ \par
+ \code
+ :
+ tree->add("/Holidays/Photos/12\\/25\\/2010");         // Adds item "12/25/2010"
+ tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
+ :
+ \endcode
+ \param[in] path The path to the item, e.g. "Flintstone/Fred".
+ \param[in] item The new item to be added.
+                 If NULL, a new item is created with
+                 a name that is the last element in \p 'path'.
+ \returns The new item added, or 0 on error.
+ \version 1.3.3
+*/
 Fl_Tree_Item* Fl_Tree::add(const char *path, Fl_Tree_Item *item) {
   // Tree has no root? make one
   if ( ! _root ) {
@@ -845,46 +847,52 @@ Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
   return(parent_item->add(_prefs, name));
 }
 
-/// Inserts a new item \p 'name' above the specified Fl_Tree_Item \p 'above'.
-/// Example:
-/// \code
-/// tree->add("Aaa/000");       // "000" is index 0 in Aaa's children
-/// tree->add("Aaa/111");       // "111" is index 1 in Aaa's children
-/// tree->add("Aaa/222");       // "222" is index 2 in Aaa's children
-/// ..
-/// // How to use insert_above() to insert a new item above Aaa/222
-/// Fl_Tree_Item *item = tree->find_item("Aaa/222");  // get item Aaa/222
-/// if (item) tree->insert_above(item, "New item");   // insert new item above it
-/// \endcode
-///
-/// \param[in] above -- the item above which to insert the new item. Must not be NULL.
-/// \param[in] name -- the name of the new item
-/// \returns The new item added, or 0 if 'above' could not be found.
-/// \see insert()
-/// 
+/**
+ Inserts a new item \p 'name' above the specified Fl_Tree_Item \p 'above'.
+ Example:
+ \par
+ \code
+ :
+ tree->add("Aaa/000");       // "000" is index 0 in Aaa's children
+ tree->add("Aaa/111");       // "111" is index 1 in Aaa's children
+ tree->add("Aaa/222");       // "222" is index 2 in Aaa's children
+ ..
+ // How to use insert_above() to insert a new item above Aaa/222
+ Fl_Tree_Item *item = tree->find_item("Aaa/222");  // get item Aaa/222
+ if (item) tree->insert_above(item, "New item");   // insert new item above it
+ :
+ \endcode
+ 
+ \param[in] above -- the item above which to insert the new item. Must not be NULL.
+ \param[in] name -- the name of the new item
+ \returns The new item added, or 0 if 'above' could not be found.
+ \see insert()
+*/
 Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
   return(above->insert_above(_prefs, name));
 }
 
-/// Insert a new item \p 'name' into \p 'item's children at position \p 'pos'.
-///
-/// Example:
-/// \code
-/// tree->add("Aaa/000");       // "000" is index 0 in Aaa's children
-/// tree->add("Aaa/111");       // "111" is index 1 in Aaa's children
-/// tree->add("Aaa/222");       // "222" is index 2 in Aaa's children
-/// ..
-/// // How to use insert() to insert a new item between Aaa/111 + Aaa/222
-/// Fl_Tree_Item *item = tree->find_item("Aaa");  // get parent item Aaa
-/// if (item) tree->insert(item, "New item", 2);  // insert as a child of Aaa at index #2
-/// \endcode
-///
-/// \param[in] item The existing item to insert new child into. Must not be NULL.
-/// \param[in] name The label for the new item
-/// \param[in] pos The position of the new item in the child list
-/// \returns The new item added.
-/// \see insert_above()
-///
+/**
+ Insert a new item \p 'name' into \p 'item's children at position \p 'pos'.
+ Example:
+ \par
+ \code
+ :
+ tree->add("Aaa/000");       // "000" is index 0 in Aaa's children
+ tree->add("Aaa/111");       // "111" is index 1 in Aaa's children
+ tree->add("Aaa/222");       // "222" is index 2 in Aaa's children
+ :
+ // How to use insert() to insert a new item between Aaa/111 + Aaa/222
+ Fl_Tree_Item *item = tree->find_item("Aaa");  // get parent item Aaa
+ if (item) tree->insert(item, "New item", 2);  // insert as a child of Aaa at index #2
+ :
+ \endcode
+ \param[in] item The existing item to insert new child into. Must not be NULL.
+ \param[in] name The label for the new item
+ \param[in] pos The position of the new item in the child list
+ \returns The new item added.
+ \see insert_above()
+*/
 Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
   return(item->insert(_prefs, name, pos));
 }
@@ -930,23 +938,26 @@ void Fl_Tree::clear_children(Fl_Tree_Item *item) {
   }
 } 
 
-/// Find the item, given a menu style path, e.g. "/Parent/Child/item".
-/// There is both a const and non-const version of this method.
-/// Const version allows pure const methods to use this method 
-/// to do lookups without causing compiler errors.
-///
-/// To specify items or submenus that contain slashes ('/' or '\')
-/// use an escape character to protect them, e.g.
-///
-/// \code
-///     tree->add("/Holidays/Photos/12\\/25\\/2010");         // Adds item "12/25/2010"
-///     tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
-/// \endcode
-///
-/// \param[in] path -- the tree item's pathname to be found (e.g. "Flintstones/Fred")
-/// \returns The item, or NULL if not found.
-/// \see item_pathname()
-///
+/**
+ Find the item, given a menu style path, e.g. "/Parent/Child/item".
+ There is both a const and non-const version of this method.
+ Const version allows pure const methods to use this method 
+ to do lookups without causing compiler errors.
+
+ To specify items or submenus that contain slashes ('/' or '\')
+ use an escape character to protect them, e.g.
+ \par
+ \code
+ :
+ tree->add("/Holidays/Photos/12\\/25\\/2010");         // Adds item "12/25/2010"
+ tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
+ :
+ \endcode
+
+ \param[in] path -- the tree item's pathname to be found (e.g. "Flintstones/Fred")
+ \returns The item, or NULL if not found.
+ \see item_pathname()
+*/
 const Fl_Tree_Item *Fl_Tree::find_item(const char *path) const {
   if ( ! _root ) return(NULL);
   char **arr = parse_path(path);
@@ -1067,41 +1078,47 @@ Fl_Tree_Item* Fl_Tree::item_clicked() {
   return(_callback_item);
 }
 
-/// Returns next open(), visible item above (\p dir==FL_Up)
-/// or below (\p dir==FL_Down) the specified \p 'item', or 0 if no more items.
-///
-/// If \p 'item' is 0, returns last() if \p 'dir' is FL_Up,
-/// or first() if \p dir is FL_Down.
-///
-/// \code
-/// // Walk down the tree (forwards)
-/// for ( Fl_Tree_Item *i=tree->first_visible_item(); i; i=tree->next_visible_item(i, FL_Down) )
-///     printf("Item: %s\n", i->label());
-///
-/// // Walk up the tree (backwards)
-/// for ( Fl_Tree_Item *i=tree->last_visible_item(); i; i=tree->next_visible_item(i, FL_Up) )
-///     printf("Item: %s\n", i->label());
-/// \endcode
-/// \param[in] item The item above/below which we'll find the next visible item
-/// \param[in] dir  The direction to search. Can be FL_Up or FL_Down.
-/// \returns The item found, or 0 if there's no visible items above/below the specified \p item.
-/// \version 1.3.3
-///
+/**
+ Returns next open(), visible item above (\p dir==FL_Up)
+ or below (\p dir==FL_Down) the specified \p 'item', or 0 if no more items.
+
+ If \p 'item' is 0, returns last() if \p 'dir' is FL_Up,
+ or first() if \p dir is FL_Down.
+ \par
+ \code
+ :
+ // Walk down the tree (forwards)
+ for ( Fl_Tree_Item *i=tree->first_visible_item(); i; i=tree->next_visible_item(i, FL_Down) )
+     printf("Item: %s\n", i->label());
+
+ // Walk up the tree (backwards)
+ for ( Fl_Tree_Item *i=tree->last_visible_item(); i; i=tree->next_visible_item(i, FL_Up) )
+     printf("Item: %s\n", i->label());
+ :
+ \endcode
+ \param[in] item The item above/below which we'll find the next visible item
+ \param[in] dir  The direction to search. Can be FL_Up or FL_Down.
+ \returns The item found, or 0 if there's no visible items above/below the specified \p item.
+ \version 1.3.3
+*/
 Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
   return next_item(item, dir, true);
 }
 
-/// Returns the first item in the tree, or 0 if none.
-///
-/// Use this to walk the tree in the forward direction, e.g.
-/// \code
-/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) )
-///     printf("Item: %s\n", item->label());
-/// \endcode
-///
-/// \returns First item in tree, or 0 if none (tree empty).
-/// \see first(), next(), last(), prev()
-///
+/**
+ Returns the first item in the tree, or 0 if none.
+
+ Use this to walk the tree in the forward direction, e.g.
+ \par
+ \code
+ :
+ for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) )
+     printf("Item: %s\n", item->label());
+ :
+ \endcode
+ \returns First item in tree, or 0 if none (tree empty).
+ \see first(), next(), last(), prev()
+*/
 Fl_Tree_Item* Fl_Tree::first() {
   return(_root);				// first item always root
 }
@@ -1127,54 +1144,55 @@ Fl_Tree_Item* Fl_Tree::first_visible_item() {
   return(0);
 }
 
-/// Return the next item after \p 'item', or 0 if no more items.
-///
-/// Use this code to walk the entire tree:
-/// \code
-/// for ( Fl_Tree_Item *i = tree->first(); i; i = tree->next(i) )
-///     printf("Item: %s\n", i->label());
-/// \endcode
-///
-/// \param[in] item The item to use to find the next item. If NULL, returns 0.
-/// \returns Next item in tree, or 0 if at last item.
-///
-/// \see first(), next(), last(), prev()
-///
+/**
+ Return the next item after \p 'item', or 0 if no more items.
+ Use this code to walk the entire tree:
+ \par
+ \code
+ :
+ for ( Fl_Tree_Item *i = tree->first(); i; i = tree->next(i) )
+     printf("Item: %s\n", i->label());
+ :
+ \endcode
+ \param[in] item The item to use to find the next item. If NULL, returns 0.
+ \returns Next item in tree, or 0 if at last item.
+ \see first(), next(), last(), prev()
+*/
 Fl_Tree_Item *Fl_Tree::next(Fl_Tree_Item *item) {
   if ( ! item ) return(0);
   return(item->next());
 }
 
-/// Return the previous item before \p 'item', or 0 if no more items.
-///
-/// This can be used to walk the tree in reverse, e.g.
-/// \code
-/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->prev(item) )
-///     printf("Item: %s\n", item->label());
-/// \endcode
-///
-/// \param[in] item The item to use to find the previous item. If NULL, returns 0.
-/// \returns Previous item in tree, or 0 if at first item.
-///
-/// \see first(), next(), last(), prev()
-///
+/**
+ Return the previous item before \p 'item', or 0 if no more items.
+ This can be used to walk the tree in reverse, e.g.
+ \par
+ \code
+ :
+ for ( Fl_Tree_Item *item = tree->first(); item; item = tree->prev(item) )
+     printf("Item: %s\n", item->label());
+ :
+ \endcode
+ \param[in] item The item to use to find the previous item. If NULL, returns 0.
+ \returns Previous item in tree, or 0 if at first item.
+ \see first(), next(), last(), prev()
+*/
 Fl_Tree_Item *Fl_Tree::prev(Fl_Tree_Item *item) {
   if ( ! item ) return(0);
   return(item->prev());
 }
 
-/// Returns the last item in the tree.
-///
-/// This can be used to walk the tree in reverse, e.g.
-///
-/// \code
-/// for ( Fl_Tree_Item *item = tree->last(); item; item = tree->prev() )
-///     printf("Item: %s\n", item->label());
-/// \endcode
-///
-/// \returns Last item in the tree, or 0 if none (tree empty).
-/// \see first(), next(), last(), prev()
-///
+/**
+ Returns the last item in the tree.
+ This can be used to walk the tree in reverse, e.g.
+ \par
+ \code
+ for ( Fl_Tree_Item *item = tree->last(); item; item = tree->prev() )
+     printf("Item: %s\n", item->label());
+ \endcode
+ \returns Last item in the tree, or 0 if none (tree empty).
+ \see first(), next(), last(), prev()
+*/
 Fl_Tree_Item* Fl_Tree::last() {
   if ( ! _root ) return(0);
   Fl_Tree_Item *item = _root;
@@ -1211,89 +1229,98 @@ Fl_Tree_Item* Fl_Tree::last_visible_item() {
   return(item);
 }
 
-/// Returns the first selected item in the tree.
-///
-/// Use this to walk the tree from top to bottom
-/// looking for all the selected items, e.g.
-///
-/// \code
-/// // Walk tree forward, from top to bottom
-/// for ( Fl_Tree_Item *i=tree->first_selected_item(); i; i=tree->next_selected_item(i) )
-///     printf("Selected item: %s\n", i->label());
-/// \endcode
-///
-/// \returns The first selected item, or 0 if none.
-/// \see first_selected_item(), last_selected_item(), next_selected_item()
-///     
+/**
+ Returns the first selected item in the tree.
+
+ Use this to walk the tree from top to bottom
+ looking for all the selected items, e.g.
+ \par
+ \code
+ :
+ // Walk tree forward, from top to bottom
+ for ( Fl_Tree_Item *i=tree->first_selected_item(); i; i=tree->next_selected_item(i) )
+     printf("Selected item: %s\n", i->label());
+ :
+ \endcode
+ \returns The first selected item, or 0 if none.
+ \see first_selected_item(), last_selected_item(), next_selected_item()
+*/
 Fl_Tree_Item *Fl_Tree::first_selected_item() {
   return(next_selected_item(0));
 }
 
 
-/// Returns the last selected item in the tree.
-///
-/// Use this to walk the tree in reverse from bottom to top
-/// looking for all the selected items, e.g.
-///
-/// \code
-/// // Walk tree in reverse, from bottom to top
-/// for ( Fl_Tree_Item *i=tree->last_selected_item(); i; i=tree->next_selected_item(i, FL_Up) )
-///     printf("Selected item: %s\n", i->label());
-/// \endcode
-///
-/// \returns The last selected item, or 0 if none.
-/// \see first_selected_item(), last_selected_item(), next_selected_item()
-/// \version 1.3.3
-///     
+/**
+ Returns the last selected item in the tree.
+
+ Use this to walk the tree in reverse from bottom to top
+ looking for all the selected items, e.g.
+ \par
+ \code
+ :
+ // Walk tree in reverse, from bottom to top
+ for ( Fl_Tree_Item *i=tree->last_selected_item(); i; i=tree->next_selected_item(i, FL_Up) )
+     printf("Selected item: %s\n", i->label());
+ :
+ \endcode
+ \returns The last selected item, or 0 if none.
+ \see first_selected_item(), last_selected_item(), next_selected_item()
+ \version 1.3.3
+*/
 Fl_Tree_Item *Fl_Tree::last_selected_item() {
   return(next_selected_item(0, FL_Up));
 }
 
-/// Returns next item after \p 'item' in direction \p 'dir'
-/// depending on \p 'visible'.
-///
-/// Next item will be above (if dir==FL_Up) or below (if dir==FL_Down).
-/// If \p 'visible' is true, only items whose parents are open() will be returned.
-/// If \p 'visible' is false, even items whose parents are close()ed will be returned.
-///
-/// If \p item is 0, the return value will be the result of this truth table:
-/// <PRE>
-///                        visible=true           visible=false
-///                        -------------------    -------------
-///          dir=FL_Up:    last_visible_item()    last()
-///        dir=FL_Down:    first_visible_item()   first()
-/// </PRE>
-///
-/// \par Example use:
-/// \code
-/// // Walk down the tree showing open(), visible items
-/// for ( Fl_Tree_Item *i=tree->first_visible_item(); i; i=tree->next_item(i, FL_Down, true) )
-///     printf("Item: %s\n", i->label());
-///
-/// // Walk up the tree showing open(), visible items
-/// for ( Fl_Tree_Item *i=tree->last_visible_item(); i; i=tree->next_item(i, FL_Up, true) )
-///     printf("Item: %s\n", i->label());
-///
-/// // Walk down the tree showing all items (open or closed)
-/// for ( Fl_Tree_Item *i=tree->first(); i; i=tree->next_item(i, FL_Down, false) )
-///     printf("Item: %s\n", i->label());
-///
-/// // Walk up the tree showing all items (open or closed)
-/// for ( Fl_Tree_Item *i=tree->last(); i; i=tree->next_item(i, FL_Up, false) )
-///     printf("Item: %s\n", i->label());
-/// \endcode
-///
-/// \param[in] item    The item to use to find the next item. If NULL, returns 0.
-/// \param[in] dir     Can be FL_Up or FL_Down (default=FL_Down or 'next')
-/// \param[in] visible true=return only open(), visible items,<br>
-///                    false=return open or closed items (default)
-/// \returns Next item in tree in the direction and visibility specified,
-///          or 0 if no more items of specified visibility in that direction.
-/// \see first(), last(), next(),<BR>
-///      first_visible_item(), last_visible_item(), next_visible_item(),<BR>
-///      first_selected_item(), last_selected_item(), next_selected_item()
-/// \version 1.3.3
-///  
+/**
+ Returns next item after \p 'item' in direction \p 'dir'
+ depending on \p 'visible'.
+
+ Next item will be above (if dir==FL_Up) or below (if dir==FL_Down).
+ If \p 'visible' is true, only items whose parents are open() will be returned.
+ If \p 'visible' is false, even items whose parents are close()ed will be returned.
+
+ If \p item is 0, the return value will be the result of this truth table:
+ <PRE>
+                        visible=true           visible=false
+                        -------------------    -------------
+          dir=FL_Up:    last_visible_item()    last()
+        dir=FL_Down:    first_visible_item()   first()
+ </PRE>
+
+ Example use:
+ \par
+ \code
+ :
+ // Walk down the tree showing open(), visible items
+ for ( Fl_Tree_Item *i=tree->first_visible_item(); i; i=tree->next_item(i, FL_Down, true) )
+     printf("Item: %s\n", i->label());
+
+ // Walk up the tree showing open(), visible items
+ for ( Fl_Tree_Item *i=tree->last_visible_item(); i; i=tree->next_item(i, FL_Up, true) )
+     printf("Item: %s\n", i->label());
+
+ // Walk down the tree showing all items (open or closed)
+ for ( Fl_Tree_Item *i=tree->first(); i; i=tree->next_item(i, FL_Down, false) )
+     printf("Item: %s\n", i->label());
+
+ // Walk up the tree showing all items (open or closed)
+ for ( Fl_Tree_Item *i=tree->last(); i; i=tree->next_item(i, FL_Up, false) )
+     printf("Item: %s\n", i->label());
+ :
+ \endcode
+
+ \param[in] item    The item to use to find the next item. If NULL, returns 0.
+ \param[in] dir     Can be FL_Up or FL_Down (default=FL_Down or 'next')
+ \param[in] visible true=return only open(), visible items,<br>
+                    false=return open or closed items (default)
+
+ \returns Next item in tree in the direction and visibility specified,
+          or 0 if no more items of specified visibility in that direction.
+ \see first(), last(), next(),<BR>
+      first_visible_item(), last_visible_item(), next_visible_item(),<BR>
+      first_selected_item(), last_selected_item(), next_selected_item()
+ \version 1.3.3
+*/
 Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
   if ( ! item ) {					// no start item?
     if ( visible ) {
@@ -1317,31 +1344,35 @@ Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
   return(0);		// unknown dir
 }
 
-/// Returns the next selected item above or below \p 'item', depending on \p 'dir'.
-/// If \p 'item' is 0, search starts at either first() or last(), depending on \p 'dir':
-/// first() if \p 'dir' is FL_Down (default), last() if \p 'dir' is FL_Up.
-///
-/// Use this to walk the tree looking for all the selected items, e.g.
-/// \code
-/// // Walk down the tree (forwards)
-/// for ( Fl_Tree_Item *i=tree->first_selected_item(); i; i=tree->next_selected_item(i, FL_Down) )
-///     printf("Item: %s\n", i->label());
-///
-/// // Walk up the tree (backwards)
-/// for ( Fl_Tree_Item *i=tree->last_selected_item(); i; i=tree->next_selected_item(i, FL_Up) )
-///     printf("Item: %s\n", i->label());
-/// \endcode
-///
-/// \param[in] item The item above or below which we'll find the next selected item.
-///                 If NULL, first() is used if FL_Down, last() if FL_Up.
-///                 (default=NULL)
-/// \param[in] dir  The direction to go.
-///                 FL_Up for moving up the tree,
-///                 FL_Down for down the tree (default)
-/// \returns The next selected item, or 0 if there are no more selected items.
-/// \see first_selected_item(), last_selected_item(), next_selected_item()
-/// \version 1.3.3
-///
+/**
+ Returns the next selected item above or below \p 'item', depending on \p 'dir'.
+ If \p 'item' is 0, search starts at either first() or last(), depending on \p 'dir':
+ first() if \p 'dir' is FL_Down (default), last() if \p 'dir' is FL_Up.
+
+ Use this to walk the tree looking for all the selected items, e.g.
+ \par
+ \code
+ :
+ // Walk down the tree (forwards)
+ for ( Fl_Tree_Item *i=tree->first_selected_item(); i; i=tree->next_selected_item(i, FL_Down) )
+     printf("Item: %s\n", i->label());
+
+ // Walk up the tree (backwards)
+ for ( Fl_Tree_Item *i=tree->last_selected_item(); i; i=tree->next_selected_item(i, FL_Up) )
+     printf("Item: %s\n", i->label());
+ :
+ \endcode
+
+ \param[in] item The item above or below which we'll find the next selected item.
+                 If NULL, first() is used if FL_Down, last() if FL_Up.
+                 (default=NULL)
+ \param[in] dir  The direction to go.
+                 FL_Up for moving up the tree,
+                 FL_Down for down the tree (default)
+ \returns The next selected item, or 0 if there are no more selected items.
+ \see first_selected_item(), last_selected_item(), next_selected_item()
+ \version 1.3.3
+*/
 Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
   switch (dir) {
     case FL_Down:
@@ -1366,25 +1397,28 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
   return(0);
 }
 
-/// Returns the currently selected items as an array of \p 'ret_items'.
-///
-/// Example:
-/// \code
-///   // Get selected items as an array
-///   Fl_Tree_Item_Array items;
-///   tree->get_selected_items(items);
-///   // Manipulate the returned array
-///   for ( int t=0; t<items.total(); t++ ) {
-///       Fl_Tree_Item &item = items[t];
-///       ..do stuff with each selected item..
-///   }
-/// \endcode
-///
-/// \param[out] ret_items The returned array of selected items.
-/// \returns The number of items in the returned array.
-/// \see first_selected_item(), next_selected_item()
-/// \version 1.3.3 ABI feature
-///
+/**
+ Returns the currently selected items as an array of \p 'ret_items'.
+
+ Example:
+ \par
+ \code
+   :
+   // Get selected items as an array
+   Fl_Tree_Item_Array items;
+   tree->get_selected_items(items);
+   // Manipulate the returned array
+   for ( int t=0; t<items.total(); t++ ) {
+       Fl_Tree_Item &item = items[t];
+       ..do stuff with each selected item..
+   }
+   :
+ \endcode
+ \param[out] ret_items The returned array of selected items.
+ \returns The number of items in the returned array.
+ \see first_selected_item(), next_selected_item()
+ \version 1.3.3 ABI feature
+*/
 int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
   ret_items.clear();
   for ( Fl_Tree_Item *i=first_selected_item(); i; i=next_selected_item(i) ) {
@@ -2439,19 +2473,23 @@ void Fl_Tree::hposition(int pos) {
   redraw();
 }
 
-/// See if widget \p 'w' is one of the Fl_Tree widget's scrollbars.
-/// Use this to skip over the scrollbars when walking the child() array. Example:
-/// \code
-/// for ( int i=0; i<tree->children(); i++ ) {    // walk children
-///     Fl_Widget *w = tree->child(i);
-///     if ( tree->is_scrollbar(w) ) continue;    // skip scrollbars
-///     ..do work here..
-/// }
-/// \endcode
-/// \param[in] w Widget to test
-/// \returns 1 if \p w is a scrollbar, 0 if not.
-/// \todo should be const
-///
+/**
+ See if widget \p 'w' is one of the Fl_Tree widget's scrollbars.
+ Use this to skip over the scrollbars when walking the child() array. Example:
+ \par
+ \code
+ :
+ for ( int i=0; i<tree->children(); i++ ) {    // walk children
+     Fl_Widget *w = tree->child(i);
+     if ( tree->is_scrollbar(w) ) continue;    // skip scrollbars
+     ..do work here..
+ }
+ :
+ \endcode
+ \param[in] w Widget to test
+ \returns 1 if \p w is a scrollbar, 0 if not.
+ \todo should be const
+*/
 int Fl_Tree::is_scrollbar(Fl_Widget *w) {
   return( (w==_vscroll || w==_hscroll) ? 1 : 0 );
 }
@@ -2546,25 +2584,28 @@ void Fl_Tree::callback_reason(Fl_Tree_Reason reason) {
   _callback_reason = reason;
 }
 
-/// Gets the reason for this callback.
-///
-/// The callback() can use this value to see why it was called. Example:
-/// \code
-///     void MyTreeCallback(Fl_Widget *w, void *userdata) {
-///         Fl_Tree *tree = (Fl_Tree*)w;
-///         Fl_Tree_Item *item = tree->callback_item();    // the item changed (can be NULL if more than one item was changed!)
-///         switch ( tree->callback_reason() ) {           // reason callback was invoked
-///             case     FL_TREE_REASON_OPENED: ..item was opened..
-///             case     FL_TREE_REASON_CLOSED: ..item was closed..
-///             case   FL_TREE_REASON_SELECTED: ..item was selected..
-///             case FL_TREE_REASON_RESELECTED: ..item was reselected (double-clicked, etc)..
-///             case FL_TREE_REASON_DESELECTED: ..item was deselected..
-///         }
-///     }
-/// \endcode
-///
-/// \see item_reselect_mode() -- enables FL_TREE_REASON_RESELECTED events
-///
+/**
+ Gets the reason for this callback.
+
+ The callback() can use this value to see why it was called. Example:
+ \par
+ \code
+ :
+ void MyTreeCallback(Fl_Widget *w, void *userdata) {
+     Fl_Tree *tree = (Fl_Tree*)w;
+     Fl_Tree_Item *item = tree->callback_item();    // the item changed (can be NULL if more than one item was changed!)
+     switch ( tree->callback_reason() ) {           // reason callback was invoked
+         case     FL_TREE_REASON_OPENED: ..item was opened..
+         case     FL_TREE_REASON_CLOSED: ..item was closed..
+         case   FL_TREE_REASON_SELECTED: ..item was selected..
+         case FL_TREE_REASON_RESELECTED: ..item was reselected (double-clicked, etc)..
+         case FL_TREE_REASON_DESELECTED: ..item was deselected..
+     }
+ }
+ :
+ \endcode
+ \see item_reselect_mode() -- enables FL_TREE_REASON_RESELECTED events
+*/
 Fl_Tree_Reason Fl_Tree::callback_reason() const {
   return(_callback_reason);
 }
