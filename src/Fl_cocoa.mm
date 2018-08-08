@@ -2146,7 +2146,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
-  float scale = fl_graphics_driver->scale();
+  float scale = Fl::screen_driver()->scale(0);
   if ( !window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) { // this happens with tabbed windows
         window->resize([cw frame].origin.x/scale,
                        (main_screen_height - ([cw frame].origin.y + rect.size.height))/scale,

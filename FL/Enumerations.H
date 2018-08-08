@@ -403,8 +403,9 @@ enum Fl_Event {	// events
       The Fl::event_dy() method can be used to find magnification amount,
       Fl::event_x() and Fl::event_y() are set as well.
      */
-  FL_ZOOM_GESTURE	= 26
-
+  FL_ZOOM_GESTURE	= 26,
+  /** A zoom event (crtl-/+/-/0/) was processed */
+  FL_ZOOM_EVENT = 27
 // DEV NOTE: Keep this list in sync with FL/names.h
 };
 

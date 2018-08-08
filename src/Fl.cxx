@@ -16,6 +16,10 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+ Implementation of the member functions of class Fl.
+ */
+
 #include "config_lib.h"
 
 #include <FL/Fl.H>
@@ -1860,8 +1864,11 @@ bool Fl::option(Fl_Option opt)
       options_[OPTION_DND_TEXT] = tmp;
       opt_prefs.get("ShowTooltips", tmp, 1);                    // default: on
       options_[OPTION_SHOW_TOOLTIPS] = tmp;
-      opt_prefs.get("FNFCUsesGTK", tmp, 1);                    // default: on
+      opt_prefs.get("FNFCUsesGTK", tmp, 1);                     // default: on
       options_[OPTION_FNFC_USES_GTK] = tmp;
+      
+      opt_prefs.get("ShowZoomFactor", tmp, 1);                  // default: on
+      options_[OPTION_SHOW_SCALING] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
@@ -1881,6 +1888,9 @@ bool Fl::option(Fl_Option opt)
       if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, -1);
       if (tmp >= 0) options_[OPTION_FNFC_USES_GTK] = tmp;
+      
+      opt_prefs.get("ShowZoomFactor", tmp, -1);
+      if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
     }
     { // now, if the developer has registered this app, we could as for per-application preferences
     }
@@ -2058,6 +2068,11 @@ void Fl::disable_im()
   Fl::screen_driver()->disable_im();
 }
 
+/**
+ Opens the display.
+ Automatically called by the library when the first window is show()'n.
+ Does nothing if the display is already open.
+ */
 void fl_open_display()
 {
   Fl::screen_driver()->open_display();
@@ -2110,6 +2125,24 @@ float Fl::screen_scale(int n) {
   return Fl::screen_driver()->scale(n);
 }
 
+/** Set the value of the GUI scaling factor for screen number \p n.
+Call this function before the fist window is show()'n and after
+a call to fl_open_display() to set the application's initial scaling factor value. */
+void Fl::screen_scale(int n, float factor) {
+  Fl::screen_driver()->scale(n, factor);
+  Fl_Graphics_Driver::default_driver().scale(factor);
+}
+
+/**
+  See if scaling factors are supported by this platform.
+ \return 0 if scaling factors are not supported by this platform,
+ 1 if a single scaling factor value is shared by all screens, 2 if each screen
+ can have its own scaling factor value.
+  \see Fl::screen_scale(int)
+ */
+int Fl::screen_scaling_supported() {
+  return Fl::screen_driver()->rescalable();
+}
 
 // Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx

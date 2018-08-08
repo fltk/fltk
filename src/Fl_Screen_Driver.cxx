@@ -336,7 +336,9 @@ static void del_transient_window(void *data) {
 }
 
 void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
-{ // transiently show the new scaling value using a shaped window
+{
+  if (!Fl::option(Fl::OPTION_SHOW_SCALING)) return;
+  // transiently show the new scaling value using a shaped window
   int w = 150;
   // draw a white rounded box on black background
   Fl_Screen_Driver *d = Fl::screen_driver();
@@ -427,6 +429,7 @@ int Fl_Screen_Driver::scale_handler(int event)
     screen_dr->rescale_all_windows_from_screen(screen, f*initial_scale);
     Fl_Screen_Driver::transient_scale_display(f, screen);
     screen_dr->init_workarea();
+    Fl::handle(FL_ZOOM_EVENT, NULL);
     return 1;
   }
   return 0;
