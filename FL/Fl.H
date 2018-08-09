@@ -993,13 +993,18 @@ int main() {
 
 
 /** \defgroup  fl_screen  Screen functions
-	fl global screen functions declared in <FL/Fl.H>.
+ Fl global screen functions declared in <FL/Fl.H>.
  FLTK supports high-DPI screens using a screen scaling factor.
- The scaling factor value can be changed by typing ctrl-/+/-/0/
- (cmd-/+/-/0/ under MacOS). FLTK sends the FL_ZOOM_EVENT when the
- factor value is changed, to which a callback can be associated with Fl::add_handler().
+ The scaling factor is initialized by the library to a value
+ based on information obtained from the OS. If this initial value
+ is not satisfactory, the FLTK_SCALING_FACTOR environment variable
+ can be set to a value FLTK will use as initial scaling factor.
+ The scaling factor value can be further changed at runtime
+ by typing ctrl-/+/-/0/ (cmd-/+/-/0/ under MacOS). FLTK sends the
+ \ref FL_ZOOM_EVENT when the factor value is changed, to which a
+ callback can be associated with Fl::add_handler().
  By default, FLTK also displays the new scaling factor value in a yellow, transient window.
- This can be changed with Fl::option(OPTION_SHOW_SCALING, 0).
+ This can be changed with option Fl::OPTION_SHOW_SCALING.
  The scaling factor value is programmatically get and set with the Fl::screen_scale() functions.
  
      @{ */
