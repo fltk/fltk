@@ -80,7 +80,7 @@ extern int fl_send_system_handlers(void *e);
 
 // forward definition of functions in this file
 // converting cr lf converter function
-static void convert_crlf(char * string, size_t len);
+static size_t convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
@@ -3253,10 +3253,20 @@ Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
 // Copy & Paste fltk implementation.
 ////////////////////////////////////////////////////////////////
 
-static void convert_crlf(char * s, size_t len)
+static size_t convert_crlf(char * s, size_t len)
 {
-  // turn all \r characters into \n:
-  for (size_t x = 0; x < len; x++) if (s[x] == '\r') s[x] = '\n';
+  // turn \r characters into \n and "\r\n" sequences into \n:
+  char *p;
+  size_t l = len;
+  while ((p = strchr(s, '\r'))) {
+    if (*(p+1) == '\n') {
+      memmove(p, p+1, l-(p-s));
+      len--; l--;
+    } else *p = '\n';
+    l -= p-s;
+    s = p + 1;
+  }
+  return len;
 }
 
 // clipboard variables definitions :
@@ -3339,8 +3349,7 @@ static int get_plain_text_from_clipboard(int clipboard)
         [data getBytes:fl_selection_buffer[clipboard]];
       }
       fl_selection_buffer[clipboard][len - 1] = 0;
-      length = len - 1;
-      convert_crlf(fl_selection_buffer[clipboard], len - 1); // turn all \r characters into \n:
+      length = convert_crlf(fl_selection_buffer[clipboard], len - 1); // turn all \r characters into \n:
       Fl::e_clipboard_type = Fl::clipboard_plain_text;
     }
   }    
