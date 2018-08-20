@@ -3,7 +3,7 @@
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,9 +50,13 @@
 
 #ifdef FL_CFG_GFX_XLIB
 #  include <GL/glx.h>
+#  if ! defined(GLX_VERSION_1_3)
+#    typedef void *GLXFBConfig;
+#  endif
 #  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
       XVisualInfo *vis; /* the visual to use */ \
-      Colormap colormap; // a colormap for that visual
+      Colormap colormap; /* a colormap for that visual */ \
+      GLXFBConfig best_fb;
 #endif // FL_CFG_GFX_XLIB*/
 
 
