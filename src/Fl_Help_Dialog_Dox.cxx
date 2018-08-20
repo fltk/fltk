@@ -21,6 +21,9 @@
 /** \class Fl_Help_Dialog
   The Fl_Help_Dialog widget displays a standard help dialog window
   using the Fl_Help_View widget.
+
+  The Fl_Help_Dialog class is not part of the FLTK core library, but instead
+  of \em fltk_images. Use \c --use-images when compiling with \c fltk-config .
   
   <P ALIGN=CENTER> \image html Fl_Help_Dialog.png </P> 
   \image latex  Fl_Help_Dialog.png "Fl_Help_Dialog" width=8cm
