@@ -151,7 +151,7 @@ public:
    - \c FL_DEPTH - depth buffer
    - \c FL_STENCIL - stencil buffer
    - \c FL_MULTISAMPLE - multisample antialiasing
-   - \c FL_OPENGL3 - use OpenGL version 3.0 or more when running Mac OS.
+   - \c FL_OPENGL3 - use OpenGL version 3.0 or more.
    
    FL_RGB and FL_SINGLE have a value of zero, so they
    are "on" unless you give FL_INDEX or FL_DOUBLE.
@@ -171,6 +171,9 @@ public:
    mode() must not be called within draw() since it
    changes the current context.
    
+   The FL_OPENGL3 flag is required to access OpenGL version 3 or more
+   under the X11 and MacOS platforms; it's optional under Windows.
+   
    \note On the <b>Windows and Unix/Linux platforms</b>, FLTK produces
    contexts for the highest OpenGL version supported by the hardware. Such contexts
    are also compatible with lower OpenGL versions. On the <b>Apple OS X
@@ -179,8 +182,7 @@ public:
    creates contexts adequate for OpenGL versions 1 and 2. To get contexts
    for OpenGL 3.0 or higher, the <tt>FL_OPENGL3</tt> flag and Mac OS
    version 10.7 or higher are required (in that case the context is NOT 
-   compatible with OpenGL versions 1 or 2). The <tt>FL_OPENGL3</tt> flag has no
-   effect on non-Apple platforms.
+   compatible with OpenGL versions 1 or 2).
    
    \version the <tt>FL_OPENGL3</tt> flag appeared in version 1.3.4
    */
