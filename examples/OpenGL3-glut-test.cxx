@@ -189,14 +189,21 @@ void display(void)
   glDrawArrays(GL_TRIANGLES, 0, 3);	// draw second object
  }
 
+int fullscreen = 0;
 
 int main (int argc, char* argv[])
 {
   Fl::use_high_res_GL(true);
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | FL_OPENGL3);
-  glutInitWindowSize(400,400);
+  int W = 400, H = 400;
+  if (fullscreen) {
+    int X,Y;
+    Fl::screen_xywh(X,Y,W,H,0);
+  }
+  glutInitWindowSize(W, H);
   glutCreateWindow("Triangle Test");
+  if (fullscreen) Fl::first_window()->fullscreen();
 #ifndef __APPLE__
   GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
   if (err) Fl::error("glewInit() failed returning %u", err);
