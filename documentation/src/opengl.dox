@@ -460,13 +460,17 @@ To access OpenGL 3.0 (or higher versions), use the <tt>FL_OPENGL3</tt> flag
 when calling Fl_Gl_Window::mode(int a) or glutInitDisplayMode().
 
 <b>On the Windows and Unix/Linux platforms</b>, FLTK creates contexts
-implementing the highest OpenGL version supported by the hardware,
-which are also compatible with lower OpenGL versions. Thus, FLTK allows
-source code targeting any version of OpenGL. Access to functions from OpenGL
+implementing the highest OpenGL version supported by the hardware.
+Such contexts may also be compatible with lower OpenGL versions.
+Access to functions from OpenGL
 versions above 1.1 requires to load function pointers at runtime on these platforms.
 FLTK recommends to use the GLEW library to perform this. It is therefore
-necessary to install the GLEW library (see below).  <b>On the macOS platform</b>,
-MacOS 10.7 or above is required; GLEW is possible but not necessary.
+necessary to install the GLEW library (see below).
+
+<b>On the macOS platform</b>, MacOS 10.7 or above is required;
+GLEW is possible but not necessary. FLTK creates contexts for OpenGL
+versions 1 and 2 without the FL_OPENGL3
+flag and for OpenGL versions 3.2 and above with it.
 
 \par GLEW installation (Unix/Linux and Windows platforms)
 GLEW is available as a package for most Linux distributions and in source
