@@ -2126,9 +2126,10 @@ float Fl::screen_scale(int n) {
 }
 
 /** Set the value of the GUI scaling factor for screen number \p n.
-Call this function before the first window is show()'n and after
-a call to fl_open_display() to set the application's initial scaling factor value. */
+Call this function before the first window is show()'n to set the
+ application's initial scaling factor value. */
 void Fl::screen_scale(int n, float factor) {
+  fl_open_display();
   Fl::screen_driver()->scale(n, factor);
   Fl_Graphics_Driver::default_driver().scale(factor);
 }
