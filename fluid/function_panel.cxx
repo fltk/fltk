@@ -449,6 +449,8 @@ Fl_Menu_Item menu_data_class_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+Fl_Check_Button *data_mode=(Fl_Check_Button *)0;
+
 Fl_Input *data_input=(Fl_Input *)0;
 
 Fl_Input *data_filename=(Fl_Input *)0;
@@ -462,10 +464,10 @@ Fl_Return_Button *data_panel_ok=(Fl_Return_Button *)0;
 Fl_Button *data_panel_cancel=(Fl_Button *)0;
 
 Fl_Double_Window* make_data_panel() {
-  { data_panel = new Fl_Double_Window(343, 237, "Binary Data Properties");
+  { data_panel = new Fl_Double_Window(343, 237, "Inline Data Properties");
     data_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
-    { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
-      { Fl_Box* o = new Fl_Box(200, 10, 80, 20);
+    { Fl_Group* o = new Fl_Group(10, 10, 320, 20);
+      { Fl_Box* o = new Fl_Box(288, 10, 42, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       { data_choice = new Fl_Choice(10, 10, 185, 20);
@@ -480,10 +482,17 @@ Fl_Double_Window* make_data_panel() {
         data_class_choice->textsize(11);
         data_class_choice->menu(menu_data_class_choice);
       } // Fl_Choice* data_class_choice
+      { data_mode = new Fl_Check_Button(200, 10, 78, 20, "text mode");
+        data_mode->tooltip("When text mode is seleted, the returned type is \"const char[]\" and a traili\
+ng NUL will be appended to the data.");
+        data_mode->down_box(FL_DOWN_BOX);
+        data_mode->labelsize(11);
+      } // Fl_Check_Button* data_mode
       o->end();
     } // Fl_Group* o
     { data_input = new Fl_Input(10, 52, 320, 20, "Variable Name:");
-      data_input->tooltip("Binary Data variables are declared \"const unsigned char []\".");
+      data_input->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode \
+and \"const char[]\" in text mode.");
       data_input->labelfont(1);
       data_input->labelsize(11);
       data_input->textfont(4);
@@ -492,7 +501,7 @@ Fl_Double_Window* make_data_panel() {
       data_input->when(FL_WHEN_NEVER);
     } // Fl_Input* data_input
     { data_filename = new Fl_Input(10, 90, 280, 20, "Filename:");
-      data_filename->tooltip("Name and path of binary file that will be included.");
+      data_filename->tooltip("Name and path of file that will be inlined.");
       data_filename->labelfont(1);
       data_filename->labelsize(11);
       data_filename->textfont(4);
@@ -774,7 +783,7 @@ Fl_Window* make_widgetbin() {
         o->image(pixmap[11]);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(55, 55, 24, 24);
-        o->tooltip("Binary Data");
+        o->tooltip("Inline Data");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("data"));
         o->image(pixmap[49]);

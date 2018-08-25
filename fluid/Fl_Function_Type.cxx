@@ -770,7 +770,8 @@ Fl_Type *Fl_Data_Type::make() {
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = 0;
-  o->name("myBinaryData");
+  o->text_mode_ = 0;
+  o->name("myInlineData");
   o->add(p);
   o->factory = this;
   return o;
@@ -782,11 +783,16 @@ void Fl_Data_Type::write_properties() {
     write_string("filename");
     write_word(filename_);
   }
+  if (text_mode_) {
+    write_string("textmode");
+  }
 }
 
 void Fl_Data_Type::read_property(const char *c) {
   if (!strcmp(c,"filename")) {
     storestring(read_word(), filename_, 1);
+  } else if (!strcmp(c,"textmode")) {
+    text_mode_ = 1;
   } else {
     Fl_Decl_Type::read_property(c);
   }
@@ -804,6 +810,7 @@ void Fl_Data_Type::open() {
     data_choice->show();
     data_class_choice->hide();
   }
+  data_mode->value(text_mode_);
   data_filename->value(filename_?filename_:"");
   const char *c = comment();
   data_comment_input->buffer()->text(c?c:"");
@@ -817,7 +824,7 @@ void Fl_Data_Type::open() {
       else if (w == data_panel_ok) break;
       else if (w == data_filebrowser) {
         goto_source_dir();
-        const char *fn = fl_file_chooser("Load Binary Data", 0L, data_filename->value(), 1);
+        const char *fn = fl_file_chooser("Load Data Verbose", 0L, data_filename->value(), 1);
         leave_source_dir();
         if (fn) {
           if (strcmp(fn, data_filename->value()))
@@ -868,6 +875,7 @@ void Fl_Data_Type::open() {
         static_ = ((data_choice->value()>>1)&1);
       }
     }
+    text_mode_ = data_mode->value();
     // store the filename
     c = data_filename->value();
     if (filename_ && strcmp(filename_, data_filename->value()))
@@ -905,7 +913,7 @@ void Fl_Data_Type::write_code1() {
   if (filename_ && !write_sourceview) {
     FILE *f = fl_fopen(filename_, "rb");
     if (!f) {
-      message = "Can't include binary file. Can't open";
+      message = "Can't include data from file. Can't open";
     } else {
       fseek(f, 0, SEEK_END);
       nData = ftell(f);
@@ -917,38 +925,48 @@ void Fl_Data_Type::write_code1() {
       fclose(f);
     }
   } else {
-    fn = "<no filename>";
+      fn = fn ? filename_ : "<no filename>";
   }
-  if (is_in_class()) {
+ const char *variableType = text_mode_ ? "char" : "unsigned char";
+ if (is_in_class()) {
     write_public(public_);
     write_comment_h("  ");
-    write_h("  static unsigned char %s[%d];\n", c, nData);
-    write_c("unsigned char %s::%s[%d] = /* binary data included from %s */\n", class_name(1), c, nData, fn);
+    write_h("  static %s %s[%d];\n", variableType, c, nData);
+    write_c("%s %s::%s[%d] = /* data inlined from %s */\n", variableType, class_name(1), c, nData, fn);
     if (message) write_c("#error %s %s\n", message, fn);
-    write_cdata(data, nData);
+     if (text_mode_)
+         write_cstring(data, nData);
+     else
+         write_cdata(data, nData);
     write_c(";\n");
   } else {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        write_h("extern unsigned char %s[%d];\n", c, nData);
+        write_h("extern %s %s[%d];\n", variableType, c, nData);
         write_comment_c();
-        write_c("unsigned char %s[%d] = /* binary data included from %s */\n", c, nData, fn);
+        write_c("%s %s[%d] = /* data inlined from %s */\n", variableType, c, nData, fn);
         if (message) write_c("#error %s %s\n", message, fn);
-        write_cdata(data, nData);
+          if (text_mode_)
+              write_cstring(data, nData);
+          else
+              write_cdata(data, nData);
         write_c(";\n");
       } else {
         write_comment_h();
-        write_h("#error Unsupported declaration loading binary data %s\n", fn);
-        write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
+        write_h("#error Unsupported declaration loading inline data %s\n", fn);
+        write_h("%s %s[3] = { 1, 2, 3 };\n", variableType, c);
       }
     } else {
       write_comment_c();
       if (static_) 
         write_c("static ");
-      write_c("unsigned char %s[%d] = /* binary data included from %s */\n", c, nData, fn);
+      write_c("%s %s[%d] = /* data inlined from %s */\n", variableType, c, nData, fn);
       if (message) write_c("#error %s %s\n", message, fn);
-      write_cdata(data, nData);
+      if (text_mode_)
+        write_cstring(data, nData);
+      else
+        write_cdata(data, nData);
       write_c(";\n");
     }
   }

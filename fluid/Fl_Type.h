@@ -282,8 +282,9 @@ public:
 
 class Fl_Data_Type : public Fl_Decl_Type {
   const char *filename_;
+  int text_mode_;
 public:
-  Fl_Data_Type() : Fl_Decl_Type(), filename_(0L) { }
+  Fl_Data_Type() : Fl_Decl_Type(), filename_(0L), text_mode_(0) { }
   ~Fl_Data_Type() {
     if (filename_) free((void*)filename_);
   }

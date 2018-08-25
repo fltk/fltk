@@ -983,7 +983,7 @@ Fl_Menu_Item New_Menu[] = {
   {"Class",0,cb,(void*)&Fl_Class_type},
   {"Widget Class",0,cb,(void*)&Fl_Widget_Class_type},
   {"Comment",0,cb,(void*)&Fl_Comment_type},
-  {"Binary Data",0,cb,(void*)&Fl_Data_type},
+  {"Inlined Data",0,cb,(void*)&Fl_Data_type},
 {0},
 {"Group",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Window_type},

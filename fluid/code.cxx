@@ -156,6 +156,18 @@ void write_cstring(const char *s, int length) {
     varused = 1;
     return;
   }
+    if (write_sourceview && ((s==NULL) || (length>1024))) {
+        if (length>=0)
+            fprintf(code_file, "\" ... %d bytes of text... \"", length);
+        else
+            fprintf(code_file, "\" ... text... \"");
+        return;
+    }
+    if (length==-1) {
+        fprintf(code_file, "\" ... undefined size text... \"");
+        return;
+    }
+
   const char *p = s;
   const char *e = s+length;
   int linelength = 1;

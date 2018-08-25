@@ -99,7 +99,7 @@ void Fluid_Image::write_static() {
 
     FILE *f = fl_fopen(name(), "rb");
     if (!f) {
-      // message = "Can't include binary file. Can't open";
+      // message = "Can't inline file into source code. Can't open";
     } else {
       fseek(f, 0, SEEK_END);
       size_t nData = ftell(f);
