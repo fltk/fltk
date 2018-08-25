@@ -483,8 +483,8 @@ Fl_Double_Window* make_data_panel() {
         data_class_choice->menu(menu_data_class_choice);
       } // Fl_Choice* data_class_choice
       { data_mode = new Fl_Check_Button(200, 10, 78, 20, "text mode");
-        data_mode->tooltip("When text mode is seleted, the returned type is \"const char[]\" and a traili\
-ng NUL will be appended to the data.");
+        data_mode->tooltip("When text mode is seleted, the returned type is \"const char*\" and a trailin\
+g NUL will be appended to the data.");
         data_mode->down_box(FL_DOWN_BOX);
         data_mode->labelsize(11);
       } // Fl_Check_Button* data_mode
@@ -492,7 +492,7 @@ ng NUL will be appended to the data.");
     } // Fl_Group* o
     { data_input = new Fl_Input(10, 52, 320, 20, "Variable Name:");
       data_input->tooltip("Inline Data variables are declared \"const unsigned char []\" in binary mode \
-and \"const char[]\" in text mode.");
+and \"const char*\" in text mode.");
       data_input->labelfont(1);
       data_input->labelsize(11);
       data_input->textfont(4);

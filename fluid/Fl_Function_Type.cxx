@@ -927,46 +927,60 @@ void Fl_Data_Type::write_code1() {
   } else {
       fn = fn ? filename_ : "<no filename>";
   }
- const char *variableType = text_mode_ ? "char" : "unsigned char";
- if (is_in_class()) {
+  if (is_in_class()) {
     write_public(public_);
     write_comment_h("  ");
-    write_h("  static %s %s[%d];\n", variableType, c, nData);
-    write_c("%s %s::%s[%d] = /* data inlined from %s */\n", variableType, class_name(1), c, nData, fn);
-    if (message) write_c("#error %s %s\n", message, fn);
-     if (text_mode_)
-         write_cstring(data, nData);
-     else
-         write_cdata(data, nData);
+    if (text_mode_) {
+      write_h("  static char *%s;\n", c);
+      write_c("char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      if (message) write_c("#error %s %s\n", message, fn);
+      write_cstring(data, nData);
+    } else {
+      write_h("  static unsigned char %s[%d];\n", c, nData);
+      write_c("unsigned char %s::%s[%d] = /* data inlined from %s */\n", class_name(1), c, nData, fn);
+      if (message) write_c("#error %s %s\n", message, fn);
+      write_cdata(data, nData);
+    }
     write_c(";\n");
   } else {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        write_h("extern %s %s[%d];\n", variableType, c, nData);
-        write_comment_c();
-        write_c("%s %s[%d] = /* data inlined from %s */\n", variableType, c, nData, fn);
-        if (message) write_c("#error %s %s\n", message, fn);
-          if (text_mode_)
-              write_cstring(data, nData);
-          else
-              write_cdata(data, nData);
+        if (text_mode_) {
+          write_h("extern char *%s;\n", c);
+          write_comment_c();
+          write_c("char *%s = /* text inlined from %s */\n", c, fn);
+          if (message) write_c("#error %s %s\n", message, fn);
+          write_cstring(data, nData);
+        } else {
+          write_h("extern unsigned char %s[%d];\n", c, nData);
+          write_comment_c();
+          write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+          if (message) write_c("#error %s %s\n", message, fn);
+          write_cdata(data, nData);
+        }
         write_c(";\n");
       } else {
         write_comment_h();
         write_h("#error Unsupported declaration loading inline data %s\n", fn);
-        write_h("%s %s[3] = { 1, 2, 3 };\n", variableType, c);
+        if (text_mode_)
+          write_h("char *%s = \"abc...\";\n", c);
+        else
+          write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
     } else {
       write_comment_c();
       if (static_) 
         write_c("static ");
-      write_c("%s %s[%d] = /* data inlined from %s */\n", variableType, c, nData, fn);
-      if (message) write_c("#error %s %s\n", message, fn);
-      if (text_mode_)
+      if (text_mode_) {
+        write_c("char *%s = /* text inlined from %s */\n", c, fn);
+        if (message) write_c("#error %s %s\n", message, fn);
         write_cstring(data, nData);
-      else
+      } else {
+        write_c("unsigned char %s[%d] = /* data inlined from %s */\n", c, nData, fn);
+        if (message) write_c("#error %s %s\n", message, fn);
         write_cdata(data, nData);
+      }
       write_c(";\n");
     }
   }
