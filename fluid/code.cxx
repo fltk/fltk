@@ -156,17 +156,20 @@ void write_cstring(const char *s, int length) {
     varused = 1;
     return;
   }
-    if (write_sourceview && ((s==NULL) || (length>1024))) {
-        if (length>=0)
-            fprintf(code_file, "\" ... %d bytes of text... \"", length);
-        else
-            fprintf(code_file, "\" ... text... \"");
-        return;
-    }
-    if (length==-1) {
-        fprintf(code_file, "\" ... undefined size text... \"");
-        return;
-    }
+  // if we are rendering to the source code preview window, and the text is
+  // longer that four lines, we only render a placeholder.
+  if (write_sourceview && ((s==NULL) || (length>300))) {
+    if (length>=0)
+      fprintf(code_file, "\" ... %d bytes of text... \"", length);
+    else
+      fprintf(code_file, "\" ... text... \"");
+    return;
+  }
+  if (length==-1 || s==0L) {
+    fprintf(code_file, "\n#error  string not found\n");
+    fprintf(code_file, "\" ... undefined size text... \"");
+    return;
+  }
 
   const char *p = s;
   const char *e = s+length;
@@ -247,6 +250,7 @@ void write_cdata(const char *s, int length) {
     return;
   }
   if (length==-1) {
+    fprintf(code_file, "\n#error  data not found\n");
     fprintf(code_file, "{ /* ... undefined size binary data... */ }");
     return;
   }

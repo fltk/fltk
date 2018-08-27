@@ -824,7 +824,7 @@ void Fl_Data_Type::open() {
       else if (w == data_panel_ok) break;
       else if (w == data_filebrowser) {
         goto_source_dir();
-        const char *fn = fl_file_chooser("Load Data Verbose", 0L, data_filename->value(), 1);
+        const char *fn = fl_file_chooser("Load Inline Data", 0L, data_filename->value(), 1);
         leave_source_dir();
         if (fn) {
           if (strcmp(fn, data_filename->value()))
@@ -925,7 +925,7 @@ void Fl_Data_Type::write_code1() {
       fclose(f);
     }
   } else {
-      fn = fn ? filename_ : "<no filename>";
+    fn = filename_ ? filename_ : "<no filename>";
   }
   if (is_in_class()) {
     write_public(public_);
