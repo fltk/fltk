@@ -63,6 +63,7 @@ target_link_libraries(fluid fltk fltk_images fltk_forms)
 
 if(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   # create bundle
+  set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/fluid/Fluid.app/Contents/Info.plist" )
   set_target_properties(fluid PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
   set_target_properties(fluid PROPERTIES RESOURCE ${ICON_PATH})
   # install
