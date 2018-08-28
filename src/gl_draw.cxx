@@ -750,43 +750,32 @@ int Fl_WinAPI_Gl_Window_Driver::overlay_color(Fl_Color i) {
 
 
 #if defined(FL_CFG_GFX_QUARTZ)
-#  include "drivers/Quartz/Fl_Font.H"
-
-#  if !defined(kCGBitmapByteOrder32Host) // doc says available 10.4 but some 10.4 don't have it
-#   define kCGBitmapByteOrder32Host 0
-#  endif // !defined(kCGBitmapByteOrder32Host)
+#include <FL/platform.H>
+#include <FL/Fl_Image_Surface.H>
 
 /* Some old Apple hardware doesn't implement the GL_EXT_texture_rectangle extension.
- For it, draw_string_legacy_glut() is used to draw text.
- */
+ For it, draw_string_legacy_glut() is used to draw text. */
 
 char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, int h)
 {
   // write str to a bitmap just big enough
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  void *base = NULL;
-  if (fl_mac_os_version < 100600) base = calloc(4*w, h);
-  void* save_gc = fl_graphics_driver->gc();
-  CGContextRef gc = CGBitmapContextCreate(base, w, h, 8, w*4, lut,
-                                          (CGBitmapInfo)(kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-  CGColorSpaceRelease(lut);
-  fl_graphics_driver->gc(gc);
+  Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+  Fl_Surface_Device::push_current(surf);
   fl_color(FL_WHITE);
-  CGContextScaleCTM(gc, gl_scale, -gl_scale);
-  CGContextTranslateCTM(gc, 0,  -fl_descent());
+  CGContextScaleCTM(surf->offscreen(), gl_scale, gl_scale);
+  CGContextTranslateCTM(surf->offscreen(), 0,  fl_height() - fl_descent());
   fl_draw(str, n, 0, 0);
   // get the alpha channel only of the bitmap
   char *txt_buf = new char[w*h], *r = txt_buf, *q;
-  q = (char*)CGBitmapContextGetData(gc);
+  q = (char*)CGBitmapContextGetData(surf->offscreen());
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
       *r++ = *(q+3);
       q += 4;
     }
   }
-  CGContextRelease(gc);
-  fl_graphics_driver->gc(save_gc);
-  if (base) free(base);
+  Fl_Surface_Device::pop_current();
+  delete surf;
   return txt_buf;
 }
 
