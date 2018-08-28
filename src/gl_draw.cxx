@@ -760,11 +760,11 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
 {
   // write str to a bitmap just big enough
   Fl_Image_Surface *surf = new Fl_Image_Surface(w, h);
+  Fl_Font f=fl_font(); Fl_Fontsize s=fl_size();
   Fl_Surface_Device::push_current(surf);
   fl_color(FL_WHITE);
-  CGContextScaleCTM(surf->offscreen(), gl_scale, gl_scale);
-  CGContextTranslateCTM(surf->offscreen(), 0,  fl_height() - fl_descent());
-  fl_draw(str, n, 0, 0);
+  fl_font(f, s * gl_scale);
+  fl_draw(str, n, 0, fl_height() - fl_descent());
   // get the alpha channel only of the bitmap
   char *txt_buf = new char[w*h], *r = txt_buf, *q;
   q = (char*)CGBitmapContextGetData(surf->offscreen());
