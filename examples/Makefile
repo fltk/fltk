@@ -31,6 +31,7 @@ ALL = clipboard$(EXEEXT) \
       SVG_File_Surface$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
+      texteditor-with-dynamic-colors$(EXEEXT) \
       tree-simple$(EXEEXT) \
       tree-as-container$(EXEEXT) \
       tree-custom-draw-items$(EXEEXT) \
