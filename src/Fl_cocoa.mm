@@ -1159,7 +1159,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   NSPoint pt2;
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
   update_e_xy_and_e_xy_root(nsw);
-  pt2.y = main_screen_height - pt2.y;
+  // we don't use 'main_screen_height' here because it's wrong just after screen config changes
+  pt2.y = CGDisplayBounds(CGMainDisplayID()).size.height - pt2.y;
   float s = Fl::screen_driver()->scale(0);
   pt2.x = int(pt2.x / s + 0.5);
   pt2.y = int(pt2.y / s + 0.5);
@@ -1389,18 +1390,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 - (void)applicationDidChangeScreenParameters:(NSNotification *)unused
 { // react to changes in screen numbers and positions
   fl_lock_function();
-  main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+  main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
   Fl::call_screen_init();
-  // FLTK windows have already been notified they were moved,
-  // but they had the old main_screen_height, so they must be notified again.
-  NSArray *windows = [NSApp windows];
-  int count = [windows count];
-  for (int i = 0; i < count; i++) {
-    NSWindow *win = [windows objectAtIndex:i];
-    if ([win isKindOfClass:[FLWindow class]] && ![win parentWindow] && [win isVisible]) {
-      [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidMoveNotification object:win];
-      }
-    }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
   fl_unlock_function();
 }
@@ -1660,7 +1651,7 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
     
     foreground_and_activate_if_needed();
     if (![NSApp servicesMenu]) createAppleMenu();
-    main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+    main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
     [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate singleInstance]
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
