@@ -232,6 +232,7 @@ Fl_Image_Surface.o: ../FL/platform_types.h ../FL/fl_utf8.h ../FL/fl_types.h
 Fl_Image_Surface.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/Fl_Group.H
 Fl_Image_Surface.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Widget.H
 Fl_Image_Surface.o: ../FL/Fl.H ../FL/Fl_Image.H ../FL/Fl_Shared_Image.H
+Fl_Image_Surface.o: ../FL/fl_draw.H
 Fl_Input.o: ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 Fl_Input.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Input.o: ../FL/Enumerations.H ../FL/abi-version.h ../FL/platform.H

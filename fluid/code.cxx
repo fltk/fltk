@@ -157,7 +157,7 @@ void write_cstring(const char *s, int length) {
     return;
   }
   // if we are rendering to the source code preview window, and the text is
-  // longer that four lines, we only render a placeholder.
+  // longer than four lines, we only render a placeholder.
   if (write_sourceview && ((s==NULL) || (length>300))) {
     if (length>=0)
       fprintf(code_file, "\" ... %d bytes of text... \"", length);

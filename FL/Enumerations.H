@@ -406,7 +406,7 @@ enum Fl_Event {	// events
       This event is sent to the window's handle method.
      */
   FL_ZOOM_GESTURE	= 26,
-  /** A zoom event (crtl/+/-/0/ or cmd/+/-/0/) was processed.
+  /** A zoom event (ctrl/+/-/0/ or cmd/+/-/0/) was processed.
    Use Fl::add_handler() to be notified of this event.
    */
   FL_ZOOM_EVENT = 27

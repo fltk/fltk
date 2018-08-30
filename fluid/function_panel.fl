@@ -337,7 +337,7 @@ Function {make_data_panel()} {open
 } {
   Fl_Window data_panel {
     label {Inline Data Properties} open
-    xywh {472 191 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+    xywh {472 191 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
   } {
     Fl_Group {} {open
       xywh {10 10 320 20}
@@ -383,7 +383,7 @@ Function {make_data_panel()} {open
       }
       Fl_Check_Button data_mode {
         label {text mode}
-        tooltip {When text mode is seleted, the returned type is "const char*" and a trailing NUL will be appended to the data.} xywh {200 10 78 20} down_box DOWN_BOX labelsize 11
+        tooltip {When text mode is selected, the returned type is "const char*" and a trailing NUL will be appended to the data.} xywh {200 10 78 20} down_box DOWN_BOX labelsize 11
       }
     }
     Fl_Input data_input {

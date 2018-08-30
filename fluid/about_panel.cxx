@@ -300,7 +300,7 @@ Fl_Double_Window* make_about_panel() {
 /**
  Embedded image for internal fluid.html web page.
 */
-unsigned char fluid_org_png[27580] = /* binary data included from ../documentation/src/fluid-org.png */
+unsigned char fluid_org_png[27580] = /* data inlined from ../documentation/src/fluid-org.png */
 {137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,2,161,0,0,1,25,8,6,0,0,0,
 167,211,252,219,0,0,0,1,115,82,71,66,0,174,206,28,233,0,0,0,6,98,75,71,68,0,255,
 0,255,0,255,160,189,167,147,0,0,0,9,112,72,89,115,0,0,11,19,0,0,11,19,1,0,154,
