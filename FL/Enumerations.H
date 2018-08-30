@@ -396,15 +396,19 @@ enum Fl_Event {	// events
    Use Fl::add_handler() to be notified of this event.
    */
   FL_SCREEN_CONFIGURATION_CHANGED = 24,
-  /** The fullscreen state of the window has changed
+  /** The fullscreen state of the window has changed.
+   This event is sent to the window's handle method.
    */
   FL_FULLSCREEN         = 25,
-  /** The user has made a zoom/pinch/magnification gesture. 
+  /** The user has made a zoom/pinch/magnification gesture (Mac OS platform only).
       The Fl::event_dy() method can be used to find magnification amount,
       Fl::event_x() and Fl::event_y() are set as well.
+      This event is sent to the window's handle method.
      */
   FL_ZOOM_GESTURE	= 26,
-  /** A zoom event (crtl-/+/-/0/) was processed */
+  /** A zoom event (crtl/+/-/0/ or cmd/+/-/0/) was processed.
+   Use Fl::add_handler() to be notified of this event.
+   */
   FL_ZOOM_EVENT = 27
 // DEV NOTE: Keep this list in sync with FL/names.h
 };
