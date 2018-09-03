@@ -256,8 +256,8 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
   /* On OS X < 10.6, it is necessary to recreate the window. This is done
    with hide+show. */
-  hide();
-  show();
+  pWindow->hide();
+  pWindow->show();
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
