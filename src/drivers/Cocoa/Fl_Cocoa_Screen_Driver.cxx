@@ -83,6 +83,7 @@ Fl_Cocoa_Screen_Driver::Fl_Cocoa_Screen_Driver() {
 
 void Fl_Cocoa_Screen_Driver::init()
 {
+  open_display();
   CGDirectDisplayID displays[MAX_SCREENS];
   CGDisplayCount count, i;
   CGRect r;
