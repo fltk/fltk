@@ -196,12 +196,7 @@ int main (int argc, char* argv[])
   Fl::use_high_res_GL(true);
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | FL_OPENGL3);
-  int W = 400, H = 400;
-  if (fullscreen) {
-    int X,Y;
-    Fl::screen_xywh(X,Y,W,H,0);
-  }
-  glutInitWindowSize(W, H);
+  glutInitWindowSize(400, 400);
   glutCreateWindow("Triangle Test");
   if (fullscreen) Fl::first_window()->fullscreen();
 #ifndef __APPLE__
