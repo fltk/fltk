@@ -113,10 +113,13 @@ static double missed_timeout_by;
  */
 Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 {
-#if !USE_XFT
+  Fl_X11_Screen_Driver *d = new Fl_X11_Screen_Driver();
+#if USE_XFT
+  for (int i = 0;  i < MAX_SCREENS; i++) d->screens[i].scale = 1;
+#else
   secret_input_character = '*';
 #endif
-  return new Fl_X11_Screen_Driver();
+  return d;
 }
 
 
@@ -209,7 +212,7 @@ static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
 
 void Fl_X11_Screen_Driver::init_workarea() 
 {
-  open_display();
+  if (!fl_display) open_display();
 
   Atom actual;
   unsigned long count, remaining;
@@ -227,22 +230,17 @@ void Fl_X11_Screen_Driver::init_workarea()
                          (unsigned char **)&xywh) || !xywh || !xywh[2] ||
                          !xywh[3])
   {
-    Fl::screen_xywh(fl_workarea_xywh[0],
-                    fl_workarea_xywh[1],
-                    fl_workarea_xywh[2],
-                    fl_workarea_xywh[3], 0);
+    fl_workarea_xywh[0] = screens[0].x_org;
+    fl_workarea_xywh[1] = screens[0].y_org;
+    fl_workarea_xywh[2] = screens[0].width;
+    fl_workarea_xywh[3] = screens[0].height;
   }
   else
   {
-#if USE_XFT
-    float s = screens[0].scale;
-#else
-    float s = 1;
-#endif
-    fl_workarea_xywh[0] = xywh[0] / s;
-    fl_workarea_xywh[1] = xywh[1] / s;
-    fl_workarea_xywh[2] = xywh[2] / s;
-    fl_workarea_xywh[3] = xywh[3] / s;
+    fl_workarea_xywh[0] = xywh[0];
+    fl_workarea_xywh[1] = xywh[1];
+    fl_workarea_xywh[2] = xywh[2];
+    fl_workarea_xywh[3] = xywh[3];
   }
   if ( xywh ) { XFree(xywh); xywh = 0; }
 }
@@ -250,22 +248,38 @@ void Fl_X11_Screen_Driver::init_workarea()
 
 int Fl_X11_Screen_Driver::x() {
   if (fl_workarea_xywh[0] < 0) init_workarea();
-  return fl_workarea_xywh[0];
+  return fl_workarea_xywh[0]
+#if USE_XFT
+  / screens[0].scale
+#endif
+  ;
 }
 
 int Fl_X11_Screen_Driver::y() {
   if (fl_workarea_xywh[0] < 0) init_workarea();
-  return fl_workarea_xywh[1];
+  return fl_workarea_xywh[1]
+#if USE_XFT
+  / screens[0].scale
+#endif
+  ;
 }
 
 int Fl_X11_Screen_Driver::w() {
   if (fl_workarea_xywh[0] < 0) init_workarea();
-  return fl_workarea_xywh[2];
+  return fl_workarea_xywh[2]
+#if USE_XFT
+      / screens[0].scale
+#endif
+  ;
 }
 
 int Fl_X11_Screen_Driver::h() {
   if (fl_workarea_xywh[0] < 0) init_workarea();
-  return fl_workarea_xywh[3];
+  return fl_workarea_xywh[3]
+#if USE_XFT
+  / screens[0].scale
+#endif
+  ;
 }
 
 #define USE_XRANDR (HAVE_DLSYM && HAVE_DLFCN_H) // means attempt to dynamically load libXrandr.so
@@ -326,9 +340,6 @@ void Fl_X11_Screen_Driver::init() {
       screens[i].y_org = xsi[i].y_org;
       screens[i].width = xsi[i].width;
       screens[i].height = xsi[i].height;
-#if USE_XFT
-      screens[i].scale = 1;
-#endif
       if (dpi_by_randr) {
 	dpi[i][0] = dpih;
 	dpi[i][1] = dpiv;
