@@ -264,9 +264,9 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
 
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
-  hide();
-  resize(X, Y, W, H);
-  show();
+  pWindow->hide();
+  pWindow->resize(X, Y, W, H);
+  pWindow->show();
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
