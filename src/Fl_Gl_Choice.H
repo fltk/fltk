@@ -3,7 +3,7 @@
 //
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -64,6 +64,9 @@ typedef NSOpenGLContext* FLOpenGLContextPtr;
 #else
 #  include <GL/glx.h>
 #  define GLContext GLXContext
+#  if ! defined(GLX_VERSION_1_3)
+#    typedef void *GLXFBConfig;
+#  endif
 #endif
 
 // Describes crap needed to create a GLContext.
@@ -80,6 +83,7 @@ public:
 #else
   XVisualInfo *vis;	// the visual to use
   Colormap colormap;	// a colormap for that visual
+  GLXFBConfig best_fb;
 #endif
   // Return one of these structures for a given gl mode.
   // The second argument is a glX attribute list, and is used if mode is
@@ -101,10 +105,10 @@ GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice*, int layer=0);
 
 GLContext fl_create_gl_context(XVisualInfo* vis);
 
-static inline
-GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice* g) {
+//static inline
+ GLContext fl_create_gl_context(Fl_Window*, const Fl_Gl_Choice* g);/* {
   return fl_create_gl_context(g->vis);
-}
+}*/
 
 #endif
 

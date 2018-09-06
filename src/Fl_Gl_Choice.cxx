@@ -3,7 +3,7 @@
 //
 // OpenGL visual selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,6 +31,63 @@
 void fl_save_dc(HWND, HDC);
 #elif defined(__APPLE__)
 extern void gl_texture_reset();
+#endif
+
+#if defined(USE_X11)
+static XVisualInfo *gl3_getvisual(const int *blist, GLXFBConfig *pbestFB)
+{
+  int glx_major, glx_minor;
+  
+  // FBConfigs were added in GLX version 1.3.
+  if ( !glXQueryVersion( fl_display, &glx_major, &glx_minor ) ||
+      ( ( glx_major == 1 ) && ( glx_minor < 3 ) ) || ( glx_major < 1 ) )
+  {
+    //printf("Invalid GLX version");
+    return NULL;
+  }
+  
+  //printf( "Getting matching framebuffer configs\n" );
+  int fbcount;
+  GLXFBConfig* fbc = glXChooseFBConfig(fl_display, DefaultScreen(fl_display), blist, &fbcount);
+  if (!fbc)
+  {
+    //printf( "Failed to retrieve a framebuffer config\n" );
+    return NULL;
+  }
+  //printf( "Found %d matching FB configs.\n", fbcount );
+  
+  // Pick the FB config/visual with the most samples per pixel
+  int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+  
+  int i;
+  for (i=0; i<fbcount; ++i)
+  {
+    XVisualInfo *vi = glXGetVisualFromFBConfig( fl_display, fbc[i] );
+    if ( vi )
+    {
+      int samp_buf, samples;
+      glXGetFBConfigAttrib( fl_display, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf );
+      glXGetFBConfigAttrib( fl_display, fbc[i], GLX_SAMPLES       , &samples  );
+      /*printf( "  Matching fbconfig %d, visual ID 0x%2lx: SAMPLE_BUFFERS = %d, SAMPLES = %d\n",
+       i, vi -> visualid, samp_buf, samples );*/
+      if ( best_fbc < 0 || (samp_buf && samples > best_num_samp) )
+        best_fbc = i, best_num_samp = samples;
+      if ( worst_fbc < 0 || !samp_buf || samples < worst_num_samp )
+        worst_fbc = i, worst_num_samp = samples;
+    }
+    XFree( vi );
+  }
+  
+  GLXFBConfig bestFbc = fbc[ best_fbc ];
+  
+  // Be sure to free the FBConfig list allocated by glXChooseFBConfig()
+  XFree( fbc );
+  
+  // Get a visual
+  XVisualInfo *vi = glXGetVisualFromFBConfig( fl_display, bestFbc );
+  *pbestFB = bestFbc;
+  return vi;
+}
 #endif
 
 static Fl_Gl_Choice *first;
@@ -96,12 +153,19 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   }
     
   fl_open_display();
-  XVisualInfo *visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
+  XVisualInfo *visp = NULL;
+  GLXFBConfig best_fb = NULL;
+  if (m & FL_OPENGL3) {
+    visp = gl3_getvisual((const int *)blist, &best_fb);
+  }
   if (!visp) {
+    visp = glXChooseVisual(fl_display, fl_screen, (int *)blist);
+    if (!visp) {
 #    if defined(GLX_VERSION_1_1) && defined(GLX_SGIS_multisample)
-    if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE,0);
+      if (m&FL_MULTISAMPLE) return find(m&~FL_MULTISAMPLE,0);
 #    endif
-    return 0;
+      return 0;
+    }
   }
 
 #elif defined(__APPLE_QUARTZ__)
@@ -155,6 +219,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
 
 #if defined(USE_X11)
   g->vis = visp;
+  g->best_fb = best_fb;
 
   if (/*MaxCmapsOfScreen(ScreenOfDisplay(fl_display,fl_screen))==1 && */
       visp->visualid == fl_visual->visualid &&
@@ -203,6 +268,56 @@ static void del_context(GLContext ctx) {
 }
 
 #if defined(USE_X11)
+
+static bool ctxErrorOccurred = false;
+static int ctxErrorHandler( Display *dpy, XErrorEvent *ev )
+{
+  ctxErrorOccurred = true;
+  return 0;
+}
+
+
+GLContext fl_create_gl_context(Fl_Window *window, const Fl_Gl_Choice* g) {
+  GLContext shared_ctx = 0;
+  if (context_list && nContext) shared_ctx = context_list[0];
+  
+  typedef GLContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLContext, Bool, const int*);
+  
+  // It is not necessary to create or make current to a context before calling glXGetProcAddressARB
+  static glXCreateContextAttribsARBProc glXCreateContextAttribsARB =
+  (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
+  
+  GLContext ctx = 0;
+  
+  // Check for the GLX_ARB_create_context extension string and the function.
+  // If either is not present, use GLX 1.3 context creation method.
+  const char *glxExts = glXQueryExtensionsString(fl_display, fl_screen);
+  if (g->best_fb && strstr(glxExts, "GLX_ARB_create_context") && glXCreateContextAttribsARB ) {
+    int context_attribs[] =
+    {
+      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+      GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+      //GLX_CONTEXT_FLAGS_ARB        , GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+      //GLX_CONTEXT_PROFILE_MASK_ARB ,   GLX_CONTEXT_CORE_PROFILE_BIT_ARB ,
+      None
+    };
+    ctxErrorOccurred = false;
+    XErrorHandler oldHandler = XSetErrorHandler(&ctxErrorHandler);
+    ctx = glXCreateContextAttribsARB( fl_display, g->best_fb, shared_ctx, True, context_attribs );
+    // Sync to ensure any errors generated are processed.
+    XSync( fl_display, False );
+    if (ctxErrorOccurred) ctx = 0;
+    XSetErrorHandler(oldHandler);
+  }
+  if (!ctx) { // use OpenGL 1-style context creation
+    ctx = glXCreateContext(fl_display, g->vis, shared_ctx, true);
+  }
+  if (ctx)
+    add_context(ctx);
+//glXMakeCurrent(fl_display, fl_xid(window), ctx);printf("%s\n", glGetString(GL_VERSION));
+  return ctx;
+}
+
 
 GLContext fl_create_gl_context(XVisualInfo* vis) {
   GLContext shared_ctx = 0;
