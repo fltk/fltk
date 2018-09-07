@@ -428,7 +428,6 @@ int Fl_Screen_Driver::scale_handler(int event)
     if (f == old_f) return 1;
     screen_dr->rescale_all_windows_from_screen(screen, f*initial_scale);
     Fl_Screen_Driver::transient_scale_display(f, screen);
-    screen_dr->init_workarea();
     Fl::handle(FL_ZOOM_EVENT, NULL);
     return 1;
   }

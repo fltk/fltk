@@ -174,7 +174,6 @@ public:
   void rescale_all_windows_from_screen(int screen, float f);
   static void transient_scale_display(float f, int nscreen);
   static int scale_handler(int event);
-  virtual void init_workarea() {}
   virtual float desktop_scale_factor() {return 1;}
   float use_startup_scale_factor();
   enum APP_SCALING_CAPABILITY {

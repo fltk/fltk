@@ -212,8 +212,6 @@ static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
 
 void Fl_X11_Screen_Driver::init_workarea() 
 {
-  if (!fl_display) open_display();
-
   Atom actual;
   unsigned long count, remaining;
   int format;
@@ -247,7 +245,7 @@ void Fl_X11_Screen_Driver::init_workarea()
 
 
 int Fl_X11_Screen_Driver::x() {
-  if (fl_workarea_xywh[0] < 0) init_workarea();
+  if (!fl_display) open_display();
   return fl_workarea_xywh[0]
 #if USE_XFT
   / screens[0].scale
@@ -256,7 +254,7 @@ int Fl_X11_Screen_Driver::x() {
 }
 
 int Fl_X11_Screen_Driver::y() {
-  if (fl_workarea_xywh[0] < 0) init_workarea();
+  if (!fl_display) open_display();
   return fl_workarea_xywh[1]
 #if USE_XFT
   / screens[0].scale
@@ -265,7 +263,7 @@ int Fl_X11_Screen_Driver::y() {
 }
 
 int Fl_X11_Screen_Driver::w() {
-  if (fl_workarea_xywh[0] < 0) init_workarea();
+  if (!fl_display) open_display();
   return fl_workarea_xywh[2]
 #if USE_XFT
       / screens[0].scale
@@ -274,7 +272,7 @@ int Fl_X11_Screen_Driver::w() {
 }
 
 int Fl_X11_Screen_Driver::h() {
-  if (fl_workarea_xywh[0] < 0) init_workarea();
+  if (!fl_display) open_display();
   return fl_workarea_xywh[3]
 #if USE_XFT
   / screens[0].scale

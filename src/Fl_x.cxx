@@ -1302,7 +1302,7 @@ int fl_handle(const XEvent& thisevent)
 #endif // USE_XRANDR
 
   if (xevent.type == PropertyNotify && xevent.xproperty.atom == fl_NET_WORKAREA) {
-    Fl::screen_driver()->init_workarea();
+    ((Fl_X11_Screen_Driver*)Fl::screen_driver())->init_workarea();
   }
   
   switch (xevent.type) {
