@@ -613,8 +613,8 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
     parent = parent->window();
   }
   float s = Fl::screen_driver()->scale(0);
-  NSRect rp = NSMakeRect(int(s * bx + 0.5), main_screen_height - int(s * (by + w->h()) + 0.5),
-                         int(s * w->w() + 0.5), int(s * w->h() + 0.5));
+  NSRect rp = NSMakeRect(round(s * bx), main_screen_height - round(s * (by + w->h())),
+                         round(s * w->w()), round(s * w->h()));
 
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
@@ -1162,8 +1162,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   // we don't use 'main_screen_height' here because it's wrong just after screen config changes
   pt2.y = CGDisplayBounds(CGMainDisplayID()).size.height - pt2.y;
   float s = Fl::screen_driver()->scale(0);
-  pt2.x = int(pt2.x / s + 0.5);
-  pt2.y = int(pt2.y / s + 0.5);
+  pt2.x = round(pt2.x / s);
+  pt2.y = round(pt2.y / s);
   Fl_Window *parent = window->window();
   while (parent) {
     pt2.x -= parent->x();
@@ -1194,7 +1194,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, r.size.height)];
   pt2.y = main_screen_height - pt2.y;
   float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num());
-  pt2.x = int(pt2.x/s + 0.5); pt2.y = int(pt2.y/s + 0.5);
+  pt2.x = round(pt2.x/s); pt2.y = round(pt2.y/s);
   Fl_Window *parent = window->window();
   while (parent) {
     pt2.x -= parent->x();
@@ -1205,7 +1205,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(true);
   update_e_xy_and_e_xy_root(nsw);
-  window->resize((int)(pt2.x), (int)(pt2.y), (int)(r.size.width/s +0.5), (int)(r.size.height/s +0.5));
+  window->resize((int)(pt2.x), (int)(pt2.y), (int)lround(r.size.width/s), (int)lround(r.size.height/s));
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
@@ -3148,7 +3148,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      NSRect r = NSMakeRect(int(bx*s+0.5), main_screen_height - int((by + H)*s +0.5), int(W*s+0.5), int(H*s+0.5) + (border()?bt:0));
+      NSRect r = NSMakeRect(round(bx*s), main_screen_height - round((by + H)*s), round(W*s), round(H*s) + (border()?bt:0));
       if (visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
     } else {
       bx = X; by = Y;
@@ -3158,7 +3158,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      NSPoint pt = NSMakePoint(int(bx*s+0.5), main_screen_height - int((by + H)*s +0.5));
+      NSPoint pt = NSMakePoint(round(bx*s), main_screen_height - round((by + H)*s));
       if (visible_r()) [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
     }
   }
@@ -3938,8 +3938,8 @@ static NSBitmapImageRep *scale_nsbitmapimagerep(NSBitmapImageRep *img, float sca
 {
   int w = [img pixelsWide];
   int h = [img pixelsHigh];
-  int scaled_w = int(scale * w + 0.5);
-  int scaled_h = int(scale * h + 0.5);
+  long int scaled_w = lround(scale * w);
+  long int scaled_h = lround(scale * h);
   NSBitmapImageRep *scaled = [[NSBitmapImageRep alloc]  initWithBitmapDataPlanes:NULL
                                                                       pixelsWide:scaled_w
                                                                       pixelsHigh:scaled_h
