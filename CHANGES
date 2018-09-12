@@ -102,6 +102,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2018
   Other Improvements
 
   - (add new items here)
+  - MacOS ≥ 10.10: Fl_Window::fullscreen() and fullscreen_off() no longer
+    proceed by Fl_Window::hide() + Fl_Window::show() but essentially
+    resize the window, as done on the X11+EWMH and Windows platforms.
   - Fl_Cairo_Window constructors are now compatible with Fl_Double_Window
     constructors - fixed missing constructors (STR #3160).
   - The include file for platform specific functions and definitions

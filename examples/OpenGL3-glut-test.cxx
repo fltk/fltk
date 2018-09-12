@@ -198,7 +198,6 @@ int main (int argc, char* argv[])
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | FL_OPENGL3);
   glutInitWindowSize(400, 400);
   glutCreateWindow("Triangle Test");
-  if (fullscreen) Fl::first_window()->fullscreen();
 #ifndef __APPLE__
   GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
   if (err) Fl::error("glewInit() failed returning %u", err);
@@ -215,6 +214,7 @@ int main (int argc, char* argv[])
   initShaders();
   init();
   glutDisplayFunc(display);
+  if (fullscreen) Fl::first_window()->fullscreen();
   glutMainLoop();
   return 0;
 }

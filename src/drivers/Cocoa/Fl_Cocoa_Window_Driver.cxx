@@ -252,25 +252,6 @@ void Fl_Cocoa_Window_Driver::hide() {
 }
 
 
-void Fl_Cocoa_Window_Driver::fullscreen_on() {
-  pWindow->_set_fullscreen();
-  /* On OS X < 10.6, it is necessary to recreate the window. This is done
-   with hide+show. */
-  pWindow->hide();
-  pWindow->show();
-  Fl::handle(FL_FULLSCREEN, pWindow);
-}
-
-
-void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
-  pWindow->_clear_fullscreen();
-  pWindow->hide();
-  pWindow->resize(X, Y, W, H);
-  pWindow->show();
-  Fl::handle(FL_FULLSCREEN, pWindow);
-}
-
-
 void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
   *top = 24;
   *left = 2;
