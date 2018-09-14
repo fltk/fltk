@@ -1244,7 +1244,7 @@ static bool use_monitors_xml(float &factor) {
       if( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
         p += 7;
         sscanf(p, "%f", &factor);
-        found = true;
+        if (factor == 2) { found = true; break; }
       }
     }
   }
