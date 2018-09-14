@@ -28,7 +28,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/Fl_Tooltip.H>
-
+#include <FL/filename.H>
 #include <sys/time.h>
 
 #if HAVE_XINERAMA
@@ -1228,6 +1228,30 @@ static bool is_name_in_list(const char *name, const char **list) {
 }
 
 
+static bool use_monitors_xml(float &factor) {
+  // read file $HOME/.config/monitors.xml, search <scale>#</scale> data therein, and use it
+  char path[FL_PATH_MAX], line[100], *p;
+  bool found = false;
+  p = getenv("HOME");
+  if (!p) return false;
+  strcpy(path, p);
+  strcat(path, "/.config/monitors.xml");
+  FILE *in = fopen(path, "r");
+  if (!in) return false;
+  p = fgets(line, sizeof(line), in);
+  if (strstr(line, "<monitors version=\"2\">")) {
+    while (fgets(line, sizeof(line), in)) {
+      if( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
+        p += 7;
+        sscanf(p, "%f", &factor);
+        found = true;
+      }
+    }
+  }
+  fclose(in);
+  return found;
+}
+
 // define types needed for dynamic lib functions
 typedef const char** (*g_settings_list_schemas_ftype)(void);
 typedef void (*g_variant_get_ftype)(void *value, const char *format_string, ...);
@@ -1266,6 +1290,9 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
  gsettings get com.ubuntu.user-interface scale-factor
  Example value: {'VGA-0': 10}
  Its type is "a{si}". This value should be divided by 8 to get the correct scaling factor.
+ 
+ In Ubuntu 18, file $HOME/.config/monitors.xml contains the gnome scaling factor value,
+ and FLTK reads that.
  
  Debian or FreeBSD :
  Change the gnome scaling factor with:
@@ -1351,6 +1378,7 @@ static bool gnome_scale_factor(float& factor) {
   }
   
   if (ubuntu) {
+    if (use_monitors_xml(factor)) return true;
     gvar = value_of_key_in_schema(known, "com.ubuntu.user-interface", "scale-factor");
     if (gvar) {
       found = true;
