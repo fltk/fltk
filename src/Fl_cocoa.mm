@@ -2926,18 +2926,42 @@ void Fl_X::GLcontext_makecurrent(NSOpenGLContext* ctxt)
 
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
-  /* On OS X < 10.6, it is necessary to recreate the window. This is done
-     with hide+show. */
-  hide();
-  show();
+  if (fl_mac_os_version < 101000) {
+    // On OS X < 10.6, it is necessary to recreate the window. This is done with hide+show.
+    // The alternative procedure isn't stable until MacOS 10.10
+    hide();
+    show();
+  } else {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+    [i->xid setStyleMask:NSBorderlessWindowMask]; //10.6
+#endif
+    [i->xid setLevel:NSStatusWindowLevel];
+    int X,Y,W,H;
+    Fl::screen_xywh(X, Y, W, H, x(), y(), w(), h());
+    resize(X, Y, W, H);
+  }
   Fl::handle(FL_FULLSCREEN, this);
 }
 
 void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
   _clear_fullscreen();
-  hide();
-  resize(X, Y, W, H);
-  show();
+  if (fl_mac_os_version < 101000) {
+    hide();
+    resize(X, Y, W, H);
+    show();
+  } else {
+    NSUInteger winstyle = (border() ?
+                           (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) : NSBorderlessWindowMask);
+    if (!modal()) winstyle |= NSMiniaturizableWindowMask;
+    NSInteger level = NSNormalWindowLevel;
+    if (modal()) level = modal_window_level();
+    else if (non_modal()) level = non_modal_window_level();
+    [i->xid setLevel:level];
+    resize(X, Y, W, H);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+    [i->xid setStyleMask:winstyle]; //10.6
+#endif
+  }
   Fl::handle(FL_FULLSCREEN, this);
 }
 
@@ -3293,7 +3317,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
         by += parent->y();
         parent = parent->window();
       }
-      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + (border()?bt:0));
+      NSRect r = NSMakeRect(bx, main_screen_height - (by + H), W, H + ( (border()&&!fullscreen_active())?bt:0 ));
       if (visible_r()) [fl_xid(this) setFrame:r display:YES];
     } else {
       bx = X; by = Y;
