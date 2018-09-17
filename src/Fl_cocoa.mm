@@ -1765,11 +1765,36 @@ void fl_open_callback(void (*cb)(const char *)) {
 }
 @end
 
+static BOOL is_bundled() {
+  static int value = 2;
+  if (value == 2) {
+    value = 1;
+    NSBundle *bundle = [NSBundle mainBundle];
+    if (bundle) {
+      NSString *exe = [[bundle executablePath] stringByStandardizingPath];
+      NSString *bpath = [bundle bundlePath];
+      NSString *exe_dir = [exe stringByDeletingLastPathComponent];
+      if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) value = 0;
+    }
+  }
+  return value == 1;
+}
+
 /* Prototype of undocumented function needed to support Mac OS 10.2 or earlier
  extern "C" {
-  OSErr CPSEnableForegroundOperation(ProcessSerialNumber*, UInt32, UInt32, UInt32, UInt32);
+ OSErr CPSEnableForegroundOperation(ProcessSerialNumber*, UInt32, UInt32, UInt32, UInt32);
+ }
+ */
+static void foreground_and_activate() {
+  if ( !is_bundled() ) { // only transform the application type for unbundled apps
+    ProcessSerialNumber cur_psn = { 0, kCurrentProcess };
+    TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication); // needs Mac OS 10.3
+    /* support of Mac OS 10.2 or earlier used this undocumented call instead
+     err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+     */
+  }
+  [NSApp activateIgnoringOtherApps:YES];
 }
-*/
 
 void fl_open_display() {
   static char beenHereDoneThat = 0;
@@ -1783,8 +1808,8 @@ void fl_open_display() {
     FLAppDelegate *delegate = (fl_mac_os_version < 100500 ? [FLAppDelegateBefore10_5 alloc] : [FLAppDelegate alloc]);
     [(NSApplication*)NSApp setDelegate:[delegate init]];
     if (need_new_nsapp) {
-      if (fl_mac_os_version >= 101300 ) {
-        [NSApp activateIgnoringOtherApps:YES]; // necessary to run app from command line
+      if (fl_mac_os_version >= 101300 && is_bundled()) {
+        [NSApp activateIgnoringOtherApps:YES];
         in_nsapp_run = true;
         [NSApp run];
         in_nsapp_run = false;
@@ -1799,45 +1824,7 @@ void fl_open_display() {
 					  dequeue:YES];
     while (ign_event);
     
-    // bring the application into foreground without a 'CARB' resource
-    bool i_am_in_front;
-    ProcessSerialNumber cur_psn = { 0, kCurrentProcess };
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-    if (fl_mac_os_version >= 100600) {
-      i_am_in_front = [[NSRunningApplication currentApplication] isActive];
-    }
-    else
-#endif
-    {
-      Boolean same_psn;
-      ProcessSerialNumber front_psn;
-      //avoid compilation warnings triggered by GetFrontProcess() and SameProcess()
-      void* h = dlopen(NULL, RTLD_LAZY);
-      typedef OSErr (*GetFrontProcess_type)(ProcessSerialNumber*);
-      GetFrontProcess_type  GetFrontProcess_ = (GetFrontProcess_type)dlsym(h, "GetFrontProcess");
-      typedef OSErr (*SameProcess_type)(ProcessSerialNumber*, ProcessSerialNumber*, Boolean*);
-      SameProcess_type  SameProcess_ = (SameProcess_type)dlsym(h, "SameProcess");
-      i_am_in_front = (!GetFrontProcess_( &front_psn ) &&
-                       !SameProcess_( &front_psn, &cur_psn, &same_psn ) && same_psn );
-    }
-    if (!i_am_in_front) {
-      // only transform the application type for unbundled apps
-      NSBundle *bundle = [NSBundle mainBundle];
-      if (bundle) {
-        NSString *exe = [[bundle executablePath] stringByStandardizingPath];
-        NSString *bpath = [bundle bundlePath];
-        NSString *exe_dir = [exe stringByDeletingLastPathComponent];
-        if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) bundle = nil;
-      }
-      
-      if ( !bundle ) {
-        TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication); // needs Mac OS 10.3
-        /* support of Mac OS 10.2 or earlier used this undocumented call instead
-         err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
-         */
-      }
-      [NSApp activateIgnoringOtherApps:YES];
-    }
+    if (![NSApp isActive]) foreground_and_activate();
     if (![NSApp servicesMenu]) createAppleMenu();
     main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
     [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate singleInstance]
