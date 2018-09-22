@@ -1609,7 +1609,7 @@ static BOOL is_bundled() {
       NSString *bpath = [bundle bundlePath];
       NSString *exe_dir = [exe stringByDeletingLastPathComponent];
       if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) value = 0;
-    }
+    } else value = 0;
   }
   return value == 1;
 }
