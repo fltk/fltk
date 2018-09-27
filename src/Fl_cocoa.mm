@@ -3223,13 +3223,17 @@ void Fl_Cocoa_Window_Driver::make_current()
     destroy_double_buffer();
     changed_resolution(false);
   }
-  NSGraphicsContext *nsgc;
+  /*NSGraphicsContext *nsgc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   if (fl_mac_os_version >= 100400)
     nsgc = [fl_window graphicsContext]; // 10.4
   else
-#endif
-    nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
+#endif*/
+    NSGraphicsContext *nsgc = through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
+    if (!nsgc) { // this occurs on 10.14 when through_Fl_X_flush==0
+        [[fl_window contentView] lockFocus];
+        nsgc = [NSGraphicsContext currentContext];
+    }
   gc = (CGContextRef)[nsgc graphicsPort];
   Fl_Graphics_Driver::default_driver().gc(gc);
   CGContextSaveGState(gc); // native context
