@@ -1281,10 +1281,12 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     // capture the window and its subwindows and use as miniature window image
     Fl_Window *window = [nsw getFl_Window];
     NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(window, 0, 0, window->w(), window->h());
-    NSImage *img = [[[NSImage alloc] initWithSize:NSMakeSize([bitmap pixelsWide], [bitmap pixelsHigh])] autorelease];
-    [img addRepresentation:bitmap];
-    [bitmap release];
-    [nsw setMiniwindowImage:img];
+    if (bitmap) {
+      NSImage *img = [[[NSImage alloc] initWithSize:NSMakeSize([bitmap pixelsWide], [bitmap pixelsHigh])] autorelease];
+      [img addRepresentation:bitmap];
+      [bitmap release];
+      [nsw setMiniwindowImage:img];
+    }
   }
   fl_unlock_function();
 }
