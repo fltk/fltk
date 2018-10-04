@@ -4058,6 +4058,28 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
   return bitmap;
 }
 
+static NSBitmapImageRep* rect_to_NSBitmapImageRep_noredraw(Fl_Window *win, int x, int y, int w, int h)
+{
+// under macOS 10.14 and when linked with 10.14 SDK, initWithFocusedViewRect: does not work
+// this other procedure does capture screen data, but does not capture window parts outside the screen
+  NSBitmapImageRep *bitmap = nil;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  NSRect wrect = [fl_xid(win) frame]; // window on screen from bottom
+  int bx, by, bt;
+  get_window_frame_sizes(bx, by, bt, win);
+  wrect.size.height -= bt; // exclude titlebar
+  wrect.origin.y = main_screen_height - (wrect.origin.y + wrect.size.height); // window on screen from top
+  CGRect cgbounds = NSRectToCGRect(wrect);//10.5
+  float s = Fl_Graphics_Driver::default_driver().scale();
+  cgbounds.origin.x += x*s +0.5; cgbounds.origin.y += y*s +0.5;
+  cgbounds.size.width = w*s; cgbounds.size.height = h*s;
+  CGImageRef cgimg = CGWindowListCreateImage(cgbounds, kCGWindowListOptionIncludingWindow, [fl_xid(win) windowNumber], kCGWindowImageBoundsIgnoreFraming); //10.5
+  bitmap = [[NSBitmapImageRep alloc] initWithCGImage:cgimg];//10.5
+  CGImageRelease(cgimg);
+#endif
+  return bitmap;
+}
+
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins)
 /* Captures a rectangle from a mapped window.
  On retina displays, the resulting bitmap has 2 pixels per screen unit.
@@ -4069,6 +4091,8 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   float s = Fl_Graphics_Driver::default_driver().scale();
   if (win->as_gl_window() && y >= 0) {
     bitmap = GL_rect_to_nsbitmap(win, x, y, w, h);
+  } else if (fl_mac_os_version >= 101400) {
+    bitmap = rect_to_NSBitmapImageRep_noredraw(win, x, y, w, h);
   } else {
     NSView *winview = nil;
     if ( through_Fl_X_flush  && Fl_Window::current() == win ) {
