@@ -1325,6 +1325,7 @@ drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Image_Surface.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Widget_Surface.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Shared_Image.H
 drivers/X11/Fl_X11_Screen_Driver.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
+drivers/X11/Fl_X11_Screen_Driver.o: ../FL/filename.H
 drivers/Posix/Fl_Posix_System_Driver.o: ../config.h
 drivers/Posix/Fl_Posix_System_Driver.o: drivers/Posix/Fl_Posix_System_Driver.H
 drivers/Posix/Fl_Posix_System_Driver.o: Fl_System_Driver.H flstring.h
