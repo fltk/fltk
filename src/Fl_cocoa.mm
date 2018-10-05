@@ -4091,8 +4091,10 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   float s = Fl_Graphics_Driver::default_driver().scale();
   if (win->as_gl_window() && y >= 0) {
     bitmap = GL_rect_to_nsbitmap(win, x, y, w, h);
-  } else if (fl_mac_os_version >= 101400) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  } else if (fl_mac_os_version >= 101400 && [[fl_xid(win) contentView] layer /*10.5*/]) {
     bitmap = rect_to_NSBitmapImageRep_noredraw(win, x, y, w, h);
+#endif
   } else {
     NSView *winview = nil;
     if ( through_Fl_X_flush  && Fl_Window::current() == win ) {
