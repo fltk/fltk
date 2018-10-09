@@ -464,7 +464,7 @@ void Fl_Menu_::replace(int i, const char *str) {
   if (!alloc) copy(menu_);
   if (alloc > 1) {
     free((void *)menu_[i].text);
-    str = strdup(str);
+      str = strdup(str?str:"");
   }
   menu_[i].text = str;
 }

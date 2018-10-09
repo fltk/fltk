@@ -566,7 +566,10 @@ void open_history_cb(Fl_Widget *, void *v) {
   set_modflag(0);
   undo_resume();
   undo_clear();
-  if (oldfilename) free((void *)oldfilename);
+  if (oldfilename) {
+    free((void *)oldfilename);
+    oldfilename = 0L;
+  }
 }
 
 void new_cb(Fl_Widget *, void *v) {
@@ -1760,7 +1763,7 @@ int main(int argc,char **argv) {
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
       " -h <name> : .h output filename, or extension if <name> starts with '.'\n";
-    int len = (int)(strlen(msg) + strlen(argv[0]) + strlen(Fl::help));
+      int len = (int)(strlen(msg) + strlen(argv[0]?argv[0]:"fluid") + strlen(Fl::help));
     Fl_Plugin_Manager pm("commandline");
     int i, n = pm.plugins();
     for (i=0; i<n; i++) {
