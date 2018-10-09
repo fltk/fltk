@@ -931,8 +931,8 @@ void Fl_Data_Type::write_code1() {
     write_public(public_);
     write_comment_h("  ");
     if (text_mode_) {
-      write_h("  static char *%s;\n", c);
-      write_c("char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
+      write_h("  static const char *%s;\n", c);
+      write_c("const char *%s::%s = /* text inlined from %s */\n", class_name(1), c, fn);
       if (message) write_c("#error %s %s\n", message, fn);
       write_cstring(data, nData);
     } else {
@@ -947,9 +947,9 @@ void Fl_Data_Type::write_code1() {
     if (public_) {
       if (static_) {
         if (text_mode_) {
-          write_h("extern char *%s;\n", c);
+          write_h("extern const char *%s;\n", c);
           write_comment_c();
-          write_c("char *%s = /* text inlined from %s */\n", c, fn);
+          write_c("const char *%s = /* text inlined from %s */\n", c, fn);
           if (message) write_c("#error %s %s\n", message, fn);
           write_cstring(data, nData);
         } else {
@@ -964,7 +964,7 @@ void Fl_Data_Type::write_code1() {
         write_comment_h();
         write_h("#error Unsupported declaration loading inline data %s\n", fn);
         if (text_mode_)
-          write_h("char *%s = \"abc...\";\n", c);
+          write_h("const char *%s = \"abc...\";\n", c);
         else
           write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
@@ -973,7 +973,7 @@ void Fl_Data_Type::write_code1() {
       if (static_) 
         write_c("static ");
       if (text_mode_) {
-        write_c("char *%s = /* text inlined from %s */\n", c, fn);
+        write_c("const char *%s = /* text inlined from %s */\n", c, fn);
         if (message) write_c("#error %s %s\n", message, fn);
         write_cstring(data, nData);
       } else {
