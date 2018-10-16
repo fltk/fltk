@@ -77,6 +77,12 @@ typedef CGContextRef Fl_Offscreen;
 #ifndef MAC_OS_X_VERSION_10_12
 #define MAC_OS_X_VERSION_10_12 101200
 #endif
+#ifndef MAC_OS_X_VERSION_10_13
+#define MAC_OS_X_VERSION_10_13 101300
+#endif
+#ifndef MAC_OS_X_VERSION_10_14
+#define MAC_OS_X_VERSION_10_14 101400
+#endif
 
 #ifndef NSINTEGER_DEFINED // appears with 10.5 in NSObjCRuntime.h
 #if defined(__LP64__) && __LP64__
