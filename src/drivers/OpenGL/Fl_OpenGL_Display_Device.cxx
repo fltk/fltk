@@ -69,6 +69,7 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
   Fl_Cocoa_Gl_Window_Driver *driver = (Fl_Cocoa_Gl_Window_Driver*)glw->gl_driver();
+  driver->GLcontext_makecurrent(glw->context());
   driver->flush_context(); // to capture also the overlay and for directGL demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
