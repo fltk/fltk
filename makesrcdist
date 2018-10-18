@@ -17,15 +17,23 @@
 #	Use a version number as argument, e.g. "1.3.3" or "1.3.4rc2".
 #	This can be used for local testing.
 #
+#	Note: the release tarballs will be created from the current
+#	'HEAD' revision of your local Git repository.
+#
 #  (3)	Create distribution tarballs (final):
 #
 #	makesrcdist <version> tag
 #
-#	Same as (2), but create subversion tag with version number.
+#	Same as (2), but create Git tag with version number.
 #	Enter "tag" (verbatim) as 2nd argument.
-#	This will create the subversion tag "release-<version>" for the
-#	current revision in the FLTK subversion repository and export the
+#	This will create the Git tag "release-<version>" for the
+#	current revision in the (local) FLTK Git repository and export the
 #	FLTK sources from this tag for creation of distribution files.
+#
+#	Note: You need to 'git push' the Git tag manually when you
+#	are satisfied with the result. You may use:
+#	  $ git push origin release-<version>
+#	where '<version>' is the version number (argument #1)
 #
 # Note: define FLTK_TAR if you want to use a different compatible tar
 #	command than "tar", e.g. to use "gtar" (bash syntax):
@@ -37,21 +45,25 @@ if test "x$FLTK_TAR" != "x"; then
   TAR="$FLTK_TAR"
 fi
 
-# these are the subversion and snapshot/download URL's currently in use:
+# These are the release and snapshot download URL's currently in use:
 
-SVN='http://seriss.com/public/fltk/fltk'
 DOWNLOAD='http://fltk.org/pub/fltk'
 SNAPSHOT='http://fltk.org/pub/fltk/snapshots'
-VS=`cat VERSION | sed -e's/\([0-9]*\.[0-9]*\).*/\1/'`
+
+DATE="`date +'%Y%m%d'`"
+
+# VS = short version number ('major.minor'), for instance '1.4'.
+# Note: VS is used only for snapshot generation
+
+VS="`cat VERSION | sed -e's/\([0-9]*\.[0-9]*\).*/\1/'`"
 
 echo "Getting distribution..."
 
 if test $# = 0 -o "x$1" = "xsnapshot"; then
-	echo Updating for snapshot...
-	svn up
-	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
-	version="${VS}svn"
-	fileversion="${VS}.x-r$rev"
+	echo Getting snapshot revision...
+	rev="`git rev-parse --short=8 HEAD`"
+	version="${VS}-git"
+	fileversion="${VS}.x-${DATE}-$rev"
 	fileurl="$SNAPSHOT/fltk-$fileversion.tar.gz"
 	echo "fileversion = $fileversion"
 	echo "fileurl     = $fileurl"
@@ -79,16 +91,15 @@ else
 	if test "x$2" != "xtag"; then
 		url="."
 	else
-		echo "Creating subversion tag 'release-$version' ..."
-		url="$SVN/tags/release-$version"
-		svn copy $SVN/branches/branch-${VS} "$url" \
-		-m "Tag $version" || exit 1
+		echo "Creating Git tag 'release-$version' ..."
+		git tag -a -m "Tag $version" release-$version || exit 1
 	fi
 fi
 
-echo Exporting $version...
+echo Exporting $version to /tmp/fltk-$version/...
 rm -rf /tmp/fltk-$version
-svn export $url /tmp/fltk-$version
+mkdir /tmp/fltk-$version
+git archive --format=tar HEAD | $TAR -C /tmp/fltk-$version -x --
 
 if test $# != 0 -a "x$1" != "xsnapshot"; then
 	echo "Copying HTML and PDF documentation..."
@@ -113,7 +124,6 @@ automake --add-missing --copy
 
 echo Cleaning developer files...
 rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
-rm -f makesrcdist
 
 cd ..
 
@@ -142,5 +152,14 @@ $TAR czf fltk-$fileversion-source.tar.gz fltk-$version
 echo "Removing distribution directory..."
 
 rm -rf fltk-$version
+
+if test "x$2" = "xtag"; then
+	echo ""
+	echo "Don't forget to push the Git tag"
+	echo "(assuming 'origin' as your remote Git repository):"
+	echo ""
+	echo "\$ git push origin release-$version"
+	echo ""
+fi
 
 echo "Done!"
