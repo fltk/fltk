@@ -3922,7 +3922,7 @@ int Fl_Cocoa_Screen_Driver::dnd(int use_selection)
     NSPasteboardItem *pbItem = [[[NSPasteboardItem alloc] init] autorelease];
     [pbItem setData:(NSData*)text forType:UTF8_pasteboard_type];
     NSDraggingItem *dragItem = [[[NSDraggingItem alloc] initWithPasteboardWriter:pbItem] autorelease];
-    NSRect r = {pt, {width, height}};
+    NSRect r = {pt, {CGFloat(width), CGFloat(height)}};
     [dragItem setDraggingFrame:r contents:image];
     [myview beginDraggingSessionWithItems:[NSArray arrayWithObject:dragItem] event:theEvent source:myview];
   } else
