@@ -169,7 +169,7 @@ protected:
         TOOLTIP_WINDOW  = 1<<13,  ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
         MODAL           = 1<<14,  ///< a window blocking input to all other winows (Fl_Window)
         NO_OVERLAY      = 1<<15,  ///< window not using a hardware overlay plane (Fl_Menu_Window)
-        GROUP_RELATIVE  = 1<<16,  ///< position this widget relative to the parent group, not to the window
+        GROUP_RELATIVE  = 1<<16,  ///< Reserved, not implemented. DO NOT USE.
         COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
         FULLSCREEN      = 1<<18,  ///< a fullscreen window (Fl_Window)
         MAC_USE_ACCENTS_MENU = 1<<19, ///< On the Mac OS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
