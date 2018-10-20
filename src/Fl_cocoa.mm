@@ -592,8 +592,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (BOOL)did_view_resolution_change;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
 - (BOOL)wantsLayer;
-- (BOOL)wantsUpdateLayer;
-- (void)updateLayer;
+- (void)displayLayer:(CALayer *)layer;
 - (void)viewFrameDidChange;
 #endif
 @end
@@ -2180,8 +2179,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  When views_use_CA is NO, views are not supposed to be layer-backed.
  
  Each layer-backed non-OpenGL window has a single FLView object which itself has an associated CALayer.
- FLView sets wantsUpdateLayer to YES. Consequently, FLView objects are drawn
- by the updateLayer message. An FLView has also a member variable
+ FLView implements displayLayer:. Consequently, FLView objects are drawn
+ by the displayLayer: method. An FLView manages also a member variable
  CGContextRef layer_gc, a bitmap context the size of the view (double on Retina).
  All Quartz drawings go to this bitmap. updateLayer finishes by using an image copy
  of the bitmap as the layer's contents. That step fills the window.
@@ -2190,8 +2189,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  viewFrameDidChange is also called when the window flips between low/high resolution displays.
  
  Each layer-backed OpenGL window has an associated FLViewGL object, derived from FLView.
- FLViewGL sets wantsUpdateLayer to NO. Consequently, FLViewGL objects are drawn
- by the drawLayer:inContext: message which calls drawRect: which draws the GL scene.
+ FLViewGL objects are drawn by the displayLayer: method which calls drawRect:
+ which draws the GL scene.
  */
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
@@ -2204,17 +2203,12 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 }
 
 @interface FLViewGL : FLView // only for layered GL windows
-- (BOOL)wantsUpdateLayer;
-- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx;
-- (void)viewFrameDidChange;
+- (void)displayLayer:(CALayer *)layer;
 @end
 
 @implementation FLViewGL
-- (BOOL)wantsUpdateLayer {
-  return NO;
-}
-- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx {
-  [self drawRect:[self frame]];//essai
+- (void)displayLayer:(CALayer *)layer {
+  [self drawRect:[self frame]];
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   if (window->parent()) window->redraw(); // useful during resize of GL subwindow
   if (Fl_Cocoa_Window_Driver::driver(window)->wait_for_expose_value) {
@@ -2223,13 +2217,9 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     r.size.width -= 1;
     [[self window] setFrame:r display:NO]; // very dirty but works. Should find something better.
     r.size.width += 1;
-    [[self window] setFrame:r display:YES];    
+    [[self window] setFrame:r display:YES];
      }
   Fl_Cocoa_Window_Driver::driver(window)->wait_for_expose_value = 0;
-}
-- (void)viewFrameDidChange
-{
-    [[self layer] display]; // for layered GL windows
 }
 @end
 #endif //>= MAC_OS_X_VERSION_10_8
@@ -2239,29 +2229,27 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 - (BOOL)wantsLayer {
   return views_use_CA;
 }
-- (BOOL)wantsUpdateLayer {
-  return views_use_CA;
-}
-- (void)updateLayer {
+- (void)displayLayer:(CALayer *)layer {
   // called if views are layered (but not for GL) : all drawing to window goes through this
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-  float scale = Fl::screen_driver()->scale(0);
-  NSRect rect = [self frame];
-  if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) { // this happens with tabbed windows
-    window->resize([[self window] frame].origin.x/scale,
-                   (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
-                   rect.size.width/scale, rect.size.height/scale);
-  }
   if (!layer_gc) { // runs when window is created, resized, changed screen resolution
+    float scale = Fl::screen_driver()->scale(0);
+    NSRect rect = [self frame];
+    if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) {
+      // this happens with tabbed windows
+      window->resize([[self window] frame].origin.x/scale,
+                     (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
+                     rect.size.width/scale, rect.size.height/scale);
+    }
     NSRect r = [self frame];
-    [self layer].bounds = NSRectToCGRect(r);
+    layer.bounds = NSRectToCGRect(r);
     d->wait_for_expose_value = 0;
     [self did_view_resolution_change];
     if (d->mapped_to_retina()) {
       r.size.width *= 2; r.size.height *= 2;
-      [self layer].contentsScale = 2.;
-    } else [self layer].contentsScale = 1.;
+      layer.contentsScale = 2.;
+    } else layer.contentsScale = 1.;
     layer_gc = prepare_bitmap_for_layer(r.size.width, r.size.height);
     Fl_X *i = Fl_X::i(window);
     if ( i->region ) {
@@ -2277,7 +2265,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     through_drawRect = NO;
     window->clear_damage();
     CGImageRef cgimg = CGBitmapContextCreateImage(layer_gc);  // requires 10.4
-    [self layer].contents = (id)cgimg;
+    layer.contents = (id)cgimg;
     CGImageRelease(cgimg);
   }
 }
@@ -2953,8 +2941,11 @@ void Fl_Cocoa_Window_Driver::flush()
 {
   if (pWindow->as_gl_window()) {
     Fl_Window_Driver::flush();
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   } else if (views_use_CA) {
-    [[fl_xid(pWindow) contentView] updateLayer];
+    FLView *view = (FLView*)[fl_xid(pWindow) contentView];
+    [view displayLayer:[view layer]];
+#endif
   } else {
     make_current_counts = 1;
     NSView *view = (through_drawRect ? nil : [fl_xid(pWindow) contentView]);
@@ -3401,8 +3392,8 @@ void Fl_Cocoa_Window_Driver::make_current()
 {
   if (make_current_counts > 1 && !views_use_CA) return;
   if (make_current_counts) make_current_counts++;
-  if (views_use_CA && !through_drawRect) {
-    pWindow->damage(FL_DAMAGE_CHILD); // force display of previous draws to this window
+  if (views_use_CA && !through_drawRect) { // detect direct calls from the app
+    pWindow->damage(FL_DAMAGE_CHILD); // make next draws to this window displayed at next event loop
   }
   q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
@@ -4475,7 +4466,7 @@ int Fl_Darwin_System_Driver::calc_mac_os_version() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (fl_mac_os_version >= 101400) views_use_CA = YES;
 #endif
-  //if (fl_mac_os_version >= 101300) views_use_CA = YES;  // to get as with mojave
+  //if (fl_mac_os_version >= 101300) views_use_CA = YES; // to get as with mojave
   return fl_mac_os_version;
 }
 
