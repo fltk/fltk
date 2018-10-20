@@ -1293,12 +1293,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  if (views_use_CA && window->as_gl_window() && !window->parent()) { // resize toplevel layered GL window
-    id pre = [[[nsw contentView] layer] presentationLayer];
-    if (pre) [[nsw contentView] layer].contents = pre;
-   }
-#endif
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
