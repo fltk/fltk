@@ -2202,6 +2202,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 
 @implementation FLViewGL
 - (void)displayLayer:(CALayer *)layer {
+  if (!Fl::use_high_res_GL()) layer.contentsScale = 1.;
   [self drawRect:[self frame]];
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   if (window->parent()) window->redraw(); // useful during resize of GL subwindow
