@@ -102,6 +102,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Added support for MacOS 10.14 "Mojave": all drawing to windows is done
+    through "layer-backed views" when the app is linked to SDK 10.14.
   - MacOS ≥ 10.10: Fl_Window::fullscreen() and fullscreen_off() no longer
     proceed by Fl_Window::hide() + Fl_Window::show() but essentially
     resize the window, as done on the X11+EWMH and Windows platforms.
