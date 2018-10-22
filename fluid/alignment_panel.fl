@@ -37,6 +37,9 @@ decl {\#include <FL/Fl_Preferences.H>} {private global
 decl {\#include <FL/fl_ask.H>} {private global
 }
 
+decl {\#include <string.h>} {selected private global
+}
+
 decl {extern void load_history();} {public local
 }
 

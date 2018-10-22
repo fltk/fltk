@@ -21,6 +21,7 @@
 #include "alignment_panel.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/fl_ask.H>
+#include <string.h>
 Fl_Text_Buffer *shell_run_buffer; 
 
 Fl_Double_Window *project_window=(Fl_Double_Window *)0;
