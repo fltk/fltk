@@ -1276,9 +1276,6 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-- (void)viewFrameDidChangeNotification:(NSNotification *)notif;
-#endif
 - (void)doNothing:(id)unused;
 @end
 
@@ -1478,6 +1475,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) Fl_X::i(window)->in_windowDidResize(false);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+  if (views_use_CA && !window->as_gl_window()) [(FLView*)[nsw contentView] viewFrameDidChange];
+#endif
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
@@ -1576,13 +1576,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   fl_unlock_function();
 }
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
--(void)viewFrameDidChangeNotification:(NSNotification *)notif
-{
-  NSView *view = (NSView*)[notif object];
-  if ([view layer] && [view isMemberOfClass:[FLView class]]) [(FLView*)view viewFrameDidChange];
-}
-#endif
 - (void)doNothing:(id)unused
 {
   return;
@@ -1913,12 +1906,6 @@ void fl_open_display() {
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-    [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate singleInstance]
-                                             selector:@selector(viewFrameDidChangeNotification:)
-                                                 name:NSViewFrameDidChangeNotification
-                                               object:nil];
-#endif
     if (![NSThread isMultiThreaded]) {
       // With old OS X versions, it is necessary to create one thread for secondary pthreads to be
       // allowed to use cocoa, especially to create an NSAutoreleasePool.
