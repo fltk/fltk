@@ -1147,9 +1147,6 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-- (void)viewFrameDidChangeNotification:(NSNotification *)notif;
-#endif
 - (void)doNothing:(id)unused;
 @end
 
@@ -1293,6 +1290,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
+  if ([[nsw contentView] layer]) [(FLView*)[nsw contentView] viewFrameDidChange];
   fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
@@ -1407,13 +1405,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   fl_unlock_function();
 }
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
--(void)viewFrameDidChangeNotification:(NSNotification *)notif
-{
-  NSView *view = (NSView*)[notif object];
-  if ([view layer] && [view isMemberOfClass:[FLView class]]) [(FLView*)view viewFrameDidChange];
-}
-#endif
 - (void)doNothing:(id)unused
 {
   return;
@@ -1757,12 +1748,6 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-    [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate singleInstance]
-                                             selector:@selector(viewFrameDidChangeNotification:)
-                                                 name:NSViewFrameDidChangeNotification
-                                               object:nil];
-#endif
     if (![NSThread isMultiThreaded]) {
       // With old OS X versions, it is necessary to create one thread for secondary pthreads to be
       // allowed to use cocoa, especially to create an NSAutoreleasePool.
@@ -2178,9 +2163,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  CGContextRef layer_gc, a bitmap context the size of the view (double on Retina).
  All Quartz drawings go to this bitmap. updateLayer finishes by using an image copy
  of the bitmap as the layer's contents. That step fills the window.
- FLView implements viewFrameDidChange which deletes the bitmap and zeros layer_gc.
- This ensures the bitmap is recreated when the window is resized.
- viewFrameDidChange is also called when the window flips between low/high resolution displays.
+ When resized or when the window flips between low/high resolution displays,
+ FLView receives the viewFrameDidChange message which deletes the bitmap and zeros layer_gc.
+ This ensures the bitmap is recreated after the window was resized.
  
  Each layer-backed OpenGL window has an associated FLViewGL object, derived from FLView.
  FLViewGL objects are drawn by the displayLayer: method which calls drawRect:
@@ -2198,24 +2183,39 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 
 @interface FLViewGL : FLView // only for layered GL windows
 - (void)displayLayer:(CALayer *)layer;
+- (void)drawRect:(NSRect)rect;
+- (void)viewFrameDidChange;
 @end
 
 @implementation FLViewGL
 - (void)displayLayer:(CALayer *)layer {
-  if (!Fl::use_high_res_GL()) layer.contentsScale = 1.;
   [self drawRect:[self frame]];
+ }
+- (void)drawRect:(NSRect)rect {//TO CHECK change of resolution
+  fl_lock_function();
+  if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-  if (window->parent()) window->redraw(); // useful during resize of GL subwindow
-  if (Fl_Cocoa_Window_Driver::driver(window)->wait_for_expose_value) {
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  through_drawRect = YES;
+  window->clear_damage(FL_DAMAGE_ALL);
+  window->as_gl_window()->flush();
+  window->clear_damage();
+  through_drawRect = NO;
+  if (fl_mac_os_version < 101401) {
+    if (window->parent()) window->redraw(); // useful during resize of GL subwindow
+  }
+  if (d->wait_for_expose_value) {
     // 1st drawing of GL window
     NSRect r = [[self window] frame];
     r.size.width -= 1;
     [[self window] setFrame:r display:NO]; // very dirty but works. Should find something better.
     r.size.width += 1;
     [[self window] setFrame:r display:YES];
-     }
-  Fl_Cocoa_Window_Driver::driver(window)->wait_for_expose_value = 0;
+    d->wait_for_expose_value = 0;
+  }
+  fl_unlock_function();
 }
+-(void)viewFrameDidChange { ; }
 @end
 #endif //>= MAC_OS_X_VERSION_10_8
 
@@ -2326,7 +2326,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
-  if (!views_use_CA) d->wait_for_expose_value = 0;
+  d->wait_for_expose_value = 0;
   Fl_X *i = Fl_X::i(window);
   if ( i->region ) {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
