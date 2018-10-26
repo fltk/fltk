@@ -2057,7 +2057,7 @@ static void handleUpdateEvent( Fl_Window *window )
   if ( !window ) return;
   Fl_X *i = Fl_X::i( window );
   [(FLView*)[fl_xid(window) contentView] did_view_resolution_change];
-  if (!views_use_CA) i->wait_for_expose = 0;
+  i->wait_for_expose = 0;
   if ( i->region ) {
     XDestroyRegion(i->region);
     i->region = 0;
@@ -2357,24 +2357,35 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 
 @interface FLViewGL : FLView // only for layered GL windows
 - (void)displayLayer:(CALayer *)layer;
+- (void)drawRect:(NSRect)rect;
 @end
 
 @implementation FLViewGL
 - (void)displayLayer:(CALayer *)layer {
-  if (!Fl::use_high_res_GL()) layer.contentsScale = 1.;
   [self drawRect:[self frame]];
+}
+- (void)drawRect:(NSRect)rect {
+  fl_lock_function();
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-  if (window->parent()) window->redraw(); // useful during resize of GL subwindow
   Fl_X *i = Fl_X::i( window );
+  if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
+  through_drawRect = YES;
+  [self did_view_resolution_change];
+  window->clear_damage(FL_DAMAGE_ALL);
+  i->flush();
+  window->clear_damage();
+  through_drawRect = NO;
+  if (window->parent() && fl_mac_os_version < 101401) window->redraw(); // useful during resize of GL subwindow
   if (i->wait_for_expose) {
     // 1st drawing of GL window
     NSRect r = [[self window] frame];
     r.size.width -= 1;
-    [[self window] setFrame:r display:NO]; // very dirty but works. Should find something better.
+    [[self window] setFrame:r display:NO]; // very dirty but works.
     r.size.width += 1;
     [[self window] setFrame:r display:YES];
     i->wait_for_expose = 0;
   }
+  fl_unlock_function();
 }
 @end
 #endif //>= MAC_OS_X_VERSION_10_8
