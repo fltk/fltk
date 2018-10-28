@@ -2196,6 +2196,16 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  if (d->wait_for_expose_value) {
+    // 1st drawing of GL window
+    [self did_view_resolution_change];
+    NSRect r = [[self window] frame];
+    r.size.width -= 1;
+    [[self window] setFrame:r display:NO]; // very dirty but works. Should find something better.
+    r.size.width += 1;
+    [[self window] setFrame:r display:YES];
+    d->wait_for_expose_value = 0;
+  }
   through_drawRect = YES;
   window->clear_damage(FL_DAMAGE_ALL);
   window->as_gl_window()->flush();
@@ -2203,15 +2213,6 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   through_drawRect = NO;
   if (fl_mac_os_version < 101401) {
     if (window->parent()) window->redraw(); // useful during resize of GL subwindow
-  }
-  if (d->wait_for_expose_value) {
-    // 1st drawing of GL window
-    NSRect r = [[self window] frame];
-    r.size.width -= 1;
-    [[self window] setFrame:r display:NO]; // very dirty but works. Should find something better.
-    r.size.width += 1;
-    [[self window] setFrame:r display:YES];
-    d->wait_for_expose_value = 0;
   }
   fl_unlock_function();
 }
