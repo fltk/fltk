@@ -2161,7 +2161,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  FLView implements displayLayer:. Consequently, FLView objects are drawn
  by the displayLayer: method. An FLView manages also a member variable
  CGContextRef layer_gc, a bitmap context the size of the view (double on Retina).
- All Quartz drawings go to this bitmap. updateLayer finishes by using an image copy
+ All Quartz drawings go to this bitmap. displayLayer: finishes by using an image copy
  of the bitmap as the layer's contents. That step fills the window.
  When resized or when the window flips between low/high resolution displays,
  FLView receives the viewFrameDidChange message which deletes the bitmap and zeros layer_gc.
@@ -2199,11 +2199,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   if (d->wait_for_expose_value) {
     // 1st drawing of GL window
     [self did_view_resolution_change];
-    NSRect r = [[self window] frame];
-    r.size.width -= 1;
-    [[self window] setFrame:r display:NO]; // very dirty but works. Should find something better.
-    r.size.width += 1;
-    [[self window] setFrame:r display:YES];
+    [window->as_gl_window()->context() update]; // GL window is empty without this
     d->wait_for_expose_value = 0;
   }
   through_drawRect = YES;
