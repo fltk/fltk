@@ -2228,24 +2228,24 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   // called if views are layered (but not for GL) : all drawing to window goes through this
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  float scale = Fl::screen_driver()->scale(0);
+  NSRect rect = [self frame];
+  if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) {
+    // this happens with tabbed windows
+    window->resize([[self window] frame].origin.x/scale,
+                   (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
+                   rect.size.width/scale, rect.size.height/scale);
+    [self viewFrameDidChange];
+  }
   if (!layer_gc) { // runs when window is created, resized, changed screen resolution
-    float scale = Fl::screen_driver()->scale(0);
-    NSRect rect = [self frame];
-    if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) {
-      // this happens with tabbed windows
-      window->resize([[self window] frame].origin.x/scale,
-                     (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
-                     rect.size.width/scale, rect.size.height/scale);
-    }
-    NSRect r = [self frame];
-    layer.bounds = NSRectToCGRect(r);
+    layer.bounds = NSRectToCGRect(rect);
     d->wait_for_expose_value = 0;
     [self did_view_resolution_change];
     if (d->mapped_to_retina()) {
-      r.size.width *= 2; r.size.height *= 2;
+      rect.size.width *= 2; rect.size.height *= 2;
       layer.contentsScale = 2.;
     } else layer.contentsScale = 1.;
-    layer_gc = prepare_bitmap_for_layer(r.size.width, r.size.height);
+    layer_gc = prepare_bitmap_for_layer(rect.size.width, rect.size.height);
     Fl_X *i = Fl_X::i(window);
     if ( i->region ) {
       Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
