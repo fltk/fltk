@@ -883,8 +883,8 @@ Fl_File_Chooser::fileNameCB()
 	  strlcpy(matchname, file, sizeof(matchname));
 	  max_match = (int) strlen(matchname);
 
-          // Strip trailing /, if any...
-	  if (matchname[max_match - 1] == '/') {
+	  if (matchname[max_match - 1] == '/' &&	// Strip trailing /, if any...
+	      matchname[1] != 0 ) {			// unless entire path is root ("/") -- STR #3500
 	    max_match --;
 	    matchname[max_match] = '\0';
 	  }
