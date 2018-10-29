@@ -2190,7 +2190,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 - (void)displayLayer:(CALayer *)layer {
   [self drawRect:[self frame]];
  }
-- (void)drawRect:(NSRect)rect {//TO CHECK change of resolution
+- (void)drawRect:(NSRect)rect {
   fl_lock_function();
   if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
