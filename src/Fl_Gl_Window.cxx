@@ -557,8 +557,7 @@ void Fl_Cocoa_Gl_Window_Driver::make_current_before() {
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(pWindow);
   if (d->changed_resolution()){
     d->changed_resolution(false);
-    invalidate();
-    pWindow->valid(0);
+    pWindow->invalidate();
     GLcontext_update(pWindow->context());
   }
 }
