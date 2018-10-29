@@ -1255,9 +1255,9 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (!window->as_gl_window()) { // move layered non-GL window to different resolution
      [(FLView*)[nsw contentView] viewFrameDidChange];
     }
-    if (window->parent()) {
-      [nsw setSubwindowFrame];
-      [[nsw contentView] display];
+    if (fl_mac_os_version < 101401 && window->parent() && window->as_gl_window() && Fl::use_high_res_GL()) {
+      Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+      [[nsw contentView] layer].contentsScale = d->mapped_to_retina() ? 2. : 1.;
     }
   }
 #endif
