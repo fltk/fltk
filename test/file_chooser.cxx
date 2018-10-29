@@ -124,11 +124,16 @@ main(int  argc,		// I - Number of command-line arguments
 		  "C/C++ Source Files (*.{c,C,cc,cpp,cxx})");
 
   button = new Fl_Button(365, 10, 25, 25);
-  button->labelcolor(FL_YELLOW);
+  button->tooltip("Click to open file browser..");
   button->callback((Fl_Callback *)show_callback);
-
-  icon   = Fl_File_Icon::find(".", Fl_File_Icon::DIRECTORY);
-  icon->label(button);
+  if ( (icon = Fl_File_Icon::find(".", Fl_File_Icon::DIRECTORY)) ) {
+    // Icon found; assign it..
+    button->labelcolor(FL_YELLOW);
+    icon->label(button);
+  } else {
+    // Fallback if no icon found
+    button->label("..");
+  }
 
   button = new Fl_Light_Button(50, 45, 80, 25, "MULTI");
   button->callback((Fl_Callback *)multi_callback);
