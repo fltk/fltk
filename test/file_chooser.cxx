@@ -368,15 +368,11 @@ show_callback(void)
 
     for (i = 1; i <= count; i ++)
     {
-      if (!fc->value(i))
-        break;
-
-      tty->printf("%d/%d) %sPicked: '%s'%s\n", i, count, TERMINAL_GREEN, fc->value(i), TERMINAL_NORMAL);
-
+      if (!fc->value(i)) break;
       fl_filename_relative(relative, sizeof(relative), fc->value(i));
-
-      files->add(relative,
-                 Fl_File_Icon::find(fc->value(i), Fl_File_Icon::PLAIN));
+      tty->printf("%d/%d) %sPicked: '%s'\n     Relative: '%s'%s\n", i, count, 
+                  TERMINAL_GREEN, fc->value(i), relative, TERMINAL_NORMAL);
+      files->add(relative, Fl_File_Icon::find(fc->value(i), Fl_File_Icon::PLAIN));
     }
 
     files->redraw();
