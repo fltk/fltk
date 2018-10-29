@@ -1253,8 +1253,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA && [(FLView*)[nsw contentView] did_view_resolution_change]) {
     if (window->as_gl_window()) { // move layered GL window to different resolution
-      NSView *view = [nsw contentView];
-      [view display]; [view display]; // 2 necessary for toplevel GL windows
+      window->as_gl_window()->valid(0);
     } else [(FLView*)[nsw contentView] viewFrameDidChange];
     if (window->parent()) {
       [nsw setSubwindowFrame];
