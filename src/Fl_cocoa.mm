@@ -1440,12 +1440,15 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (fl_mac_os_version < 101000) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw checkSubwindowFrame];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  if (views_use_CA && [(FLView*)[nsw contentView] did_view_resolution_change]) {
+  FLView *view = (FLView*)[nsw contentView];
+  if (views_use_CA && [view did_view_resolution_change]) {
     if (!window->as_gl_window()) { // move layered non-GL window to different resolution
-      [(FLView*)[nsw contentView] viewFrameDidChange];
+      [view viewFrameDidChange];
+      // useful for Mandelbrot to recreate the layer's bitmap
+      [view displayLayer:[view layer]];
     }
     if (fl_mac_os_version < 101401 && window->parent() && window->as_gl_window() && Fl::use_high_res_GL()) {
-      [[nsw contentView] layer].contentsScale = Fl_X::i(window)->mapped_to_retina() ? 2. : 1.;
+      [view layer].contentsScale = Fl_X::i(window)->mapped_to_retina() ? 2. : 1.;
     }
   }
 #endif
