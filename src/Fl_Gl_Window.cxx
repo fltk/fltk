@@ -550,6 +550,15 @@ int Fl_Gl_Window::gl_plugin_linkage() {
   return fl_gl_load_plugin;
 }
 
+#ifdef __APPLE__
+extern "C" {
+  void *fl_mac_gl_window_context(Fl_Gl_Window *);
+}
+void *fl_mac_gl_window_context(Fl_Gl_Window *glwin) {
+  return glwin->context();
+}
+#endif
+
 //
 // End of "$Id$".
 //
