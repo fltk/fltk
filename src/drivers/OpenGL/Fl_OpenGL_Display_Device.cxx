@@ -68,9 +68,8 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
   if (factor != 1) {
     w *= factor; h *= factor; x *= factor; y *= factor;
   }
-  Fl_Cocoa_Gl_Window_Driver *driver = (Fl_Cocoa_Gl_Window_Driver*)glw->gl_driver();
-  driver->GLcontext_makecurrent(glw->context());
-  driver->flush_context(); // to capture also the overlay and for directGL demo
+  Fl_Cocoa_Gl_Window_Driver::GLcontext_makecurrent(glw->context());
+  Fl_Cocoa_Gl_Window_Driver::flush_context(glw->context()); // to capture also the overlay and for directGL demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
@@ -88,7 +87,7 @@ Fl_RGB_Image* Fl_OpenGL_Display_Device::capture_gl_rectangle(Fl_Gl_Window* glw, 
   baseAddress = convert_BGRA_to_RGB(baseAddress, w, h, mByteWidth);
   Fl_RGB_Image *img = new Fl_RGB_Image(baseAddress, w, h, 3, 3 * w);
   img->alloc_array = 1;
-  driver->flush_context();
+  Fl_Cocoa_Gl_Window_Driver::flush_context(glw->context());
   return img;
 }
 

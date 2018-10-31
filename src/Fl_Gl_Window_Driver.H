@@ -112,7 +112,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void swap_buffers();
   virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();
-  void flush_context();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
   virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
   virtual void set_gl_context(Fl_Window* w, GLContext context);
@@ -124,6 +123,7 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // uses Objective-c
   static void GLcontext_update(NSOpenGLContext*); // uses Objective-c
   static void GLcontext_release(NSOpenGLContext*); // uses Objective-c
+  static void flush_context(NSOpenGLContext*); // uses Objective-c
   static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
   static void GL_cleardrawable(void); // uses Objective-c
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h);

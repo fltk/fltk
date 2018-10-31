@@ -594,7 +594,7 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
     glRasterPos3f(pos[0], pos[1], pos[2]);              // restore original glRasterPos
   }
    else
-     flush_context();//aglSwapBuffers((AGLContext)context_);
+     flush_context(pWindow->context());//aglSwapBuffers((AGLContext)context_);
 }
 
 void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int unused, int also) {
