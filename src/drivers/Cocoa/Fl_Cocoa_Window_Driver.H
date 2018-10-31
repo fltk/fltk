@@ -34,10 +34,14 @@ class Fl_Window;
 @class CALayer;
 @class NSCursor;
 @class FLWindow;
+@class NSOpenGLContext;
+@class NSOpenGLPixelFormat;
 #else
 class CALayer;
 class NSCursor;
 class FLWindow;
+class NSOpenGLContext;
+class NSOpenGLPixelFormat;
 #endif // __OBJC__
 
 /**
@@ -136,9 +140,17 @@ public:
   virtual void wait_for_expose();
   static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
+  
+  // these functions are OpenGL-related and use objective-c
+  // they are put here to avoid libfltk_gl dependency in Fl_cocoa.mm
+  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
+  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // uses Objective-c
+  static void GLcontext_update(NSOpenGLContext*); // uses Objective-c
+  static void GLcontext_release(NSOpenGLContext*); // uses Objective-c
+  static void flush_context(NSOpenGLContext*); // uses Objective-c
+  static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
+  static void GL_cleardrawable(void); // uses Objective-c
 };
-
-
 
 #endif // FL_COCOA_WINDOW_DRIVER_H
 

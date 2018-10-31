@@ -85,13 +85,15 @@ static Fl_Window* cached_window;
 
 
 #ifdef FL_CFG_GFX_QUARTZ
+#  include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
+
 extern void gl_texture_reset();
 
 Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 {
   Fl_Gl_Choice *g = Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
-  NSOpenGLPixelFormat* fmt = mode_to_NSOpenGLPixelFormat(m, alistp);
+  NSOpenGLPixelFormat* fmt = Fl_Cocoa_Window_Driver::mode_to_NSOpenGLPixelFormat(m, alistp);
   if (!fmt) return 0;
   g = new Fl_Gl_Choice(m, alistp, first);
   first = g;
@@ -105,7 +107,7 @@ GLContext Fl_Cocoa_Gl_Window_Driver::create_gl_context(Fl_Window* window, const 
   // resets the pile of string textures used to draw strings
   // necessary before the first context is created
   if (!shared_ctx) gl_texture_reset();
-  context = create_GLcontext_for_window((NSOpenGLPixelFormat*)g->pixelformat, shared_ctx, window);
+  context = Fl_Cocoa_Window_Driver::create_GLcontext_for_window((NSOpenGLPixelFormat*)g->pixelformat, shared_ctx, window);
   if (!context) return 0;
   add_context(context);
   return (context);
@@ -115,7 +117,7 @@ void Fl_Cocoa_Gl_Window_Driver::set_gl_context(Fl_Window* w, GLContext context) 
   if (context != cached_context || w != cached_window) {
     cached_context = context;
     cached_window = w;
-    GLcontext_makecurrent(context);
+    Fl_Cocoa_Window_Driver::GLcontext_makecurrent(context);
   }
 }
 
@@ -123,9 +125,9 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
   if (cached_context == context) {
     cached_context = 0;
     cached_window = 0;
-    GL_cleardrawable();
+    Fl_Cocoa_Window_Driver::GL_cleardrawable();
   }
-  GLcontext_release(context);
+  Fl_Cocoa_Window_Driver::GLcontext_release(context);
   del_context(context);
 }
 

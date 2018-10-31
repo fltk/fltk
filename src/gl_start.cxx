@@ -97,9 +97,10 @@ void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
 }
 
 #ifdef FL_CFG_GFX_QUARTZ
+#include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 
 void Fl_Cocoa_Gl_Window_Driver::gl_start() {
-  GLcontext_update(context); // supports window resizing
+  Fl_Cocoa_Window_Driver::GLcontext_update(context); // supports window resizing
 }
 
 #endif

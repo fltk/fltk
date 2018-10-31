@@ -43,7 +43,6 @@ extern "C" {
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
-#include "Fl_Gl_Window_Driver.H"
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
@@ -2811,7 +2810,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 @end
 
 
-NSOpenGLPixelFormat* Fl_Cocoa_Gl_Window_Driver::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
+NSOpenGLPixelFormat* Fl_Cocoa_Window_Driver::mode_to_NSOpenGLPixelFormat(int m, const int *alistp)
 {
   NSOpenGLPixelFormatAttribute attribs[32];
   int n = 0;
@@ -2899,7 +2898,7 @@ NSOpenGLPixelFormat* Fl_Cocoa_Gl_Window_Driver::mode_to_NSOpenGLPixelFormat(int 
   return pixform;
 }
 
-NSOpenGLContext* Fl_Cocoa_Gl_Window_Driver::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat,
+NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat,
                                               NSOpenGLContext *shared_ctx, Fl_Window *window)
 {
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
@@ -2919,27 +2918,27 @@ NSOpenGLContext* Fl_Cocoa_Gl_Window_Driver::create_GLcontext_for_window(NSOpenGL
   return context;
 }
 
-void Fl_Cocoa_Gl_Window_Driver::GLcontext_update(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Window_Driver::GLcontext_update(NSOpenGLContext* ctxt)
 {
   [ctxt update];
 }
 
-void Fl_Cocoa_Gl_Window_Driver::flush_context(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Window_Driver::flush_context(NSOpenGLContext* ctxt)
 {
   [ctxt flushBuffer];
 }
 
-void Fl_Cocoa_Gl_Window_Driver::GLcontext_release(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Window_Driver::GLcontext_release(NSOpenGLContext* ctxt)
 {
   [ctxt release];
 }
 
-void Fl_Cocoa_Gl_Window_Driver::GL_cleardrawable(void)
+void Fl_Cocoa_Window_Driver::GL_cleardrawable(void)
 {
   [[NSOpenGLContext currentContext] clearDrawable];
 }
 
-void Fl_Cocoa_Gl_Window_Driver::GLcontext_makecurrent(NSOpenGLContext* ctxt)
+void Fl_Cocoa_Window_Driver::GLcontext_makecurrent(NSOpenGLContext* ctxt)
 {
   [ctxt makeCurrentContext];
 }

@@ -119,13 +119,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void make_overlay_current();
   virtual void redraw_overlay();
   virtual void gl_start();
-  static NSOpenGLContext* create_GLcontext_for_window(NSOpenGLPixelFormat *pixelformat, NSOpenGLContext *shared_ctx, Fl_Window *window);
-  static NSOpenGLPixelFormat *mode_to_NSOpenGLPixelFormat(int mode, const int*); // uses Objective-c
-  static void GLcontext_update(NSOpenGLContext*); // uses Objective-c
-  static void GLcontext_release(NSOpenGLContext*); // uses Objective-c
-  static void flush_context(NSOpenGLContext*); // uses Objective-c
-  static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
-  static void GL_cleardrawable(void); // uses Objective-c
   virtual char *alpha_mask_for_string(const char *str, int n, int w, int h);
 };
 #endif // FL_CFG_GFX_QUARTZ
