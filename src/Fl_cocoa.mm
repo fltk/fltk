@@ -4458,7 +4458,7 @@ void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA) {
     Fl_Cocoa_Window_Driver::q_release_context();
-    [[fl_window contentView] viewFrameDidChange];
+    [(FLView*)[fl_window contentView] viewFrameDidChange];
   }
 #endif
   [ctxt update]; // supports window resizing
