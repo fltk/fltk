@@ -100,7 +100,7 @@ void Fl_Gl_Window_Driver::gl_visual(Fl_Gl_Choice *c) {
 #include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
 
 void Fl_Cocoa_Gl_Window_Driver::gl_start() {
-  Fl_Cocoa_Window_Driver::GLcontext_update(context); // supports window resizing
+  Fl_Cocoa_Window_Driver::gl_start(context);
 }
 
 #endif

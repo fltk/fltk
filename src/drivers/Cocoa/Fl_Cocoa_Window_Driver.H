@@ -150,6 +150,7 @@ public:
   static void flush_context(NSOpenGLContext*); // uses Objective-c
   static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
   static void GL_cleardrawable(void); // uses Objective-c
+  static void gl_start(NSOpenGLContext*); // uses Objective-c
 };
 
 #endif // FL_COCOA_WINDOW_DRIVER_H

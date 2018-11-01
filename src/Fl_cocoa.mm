@@ -2270,9 +2270,11 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     Fl_Cocoa_Window_Driver::q_release_context();
     through_drawRect = NO;
     window->clear_damage();
-    CGImageRef cgimg = CGBitmapContextCreateImage(layer_data.gc);  // requires 10.4
-    layer.contents = (id)cgimg;
-    CGImageRelease(cgimg);
+    if (layer_data.gc) {
+      CGImageRef cgimg = CGBitmapContextCreateImage(layer_data.gc);  // requires 10.4
+      layer.contents = (id)cgimg;
+      CGImageRelease(cgimg);
+    }
   }
 }
 
@@ -2903,7 +2905,7 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
 {
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
   if (context) {
-    NSView *view = [fl_xid(window) contentView];
+    FLView *view = (FLView*)[fl_xid(window) contentView];
     if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
       //replaces  [view setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
       typedef void (*bestResolutionIMP)(id, SEL, BOOL);
@@ -2912,7 +2914,9 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
     }
     [context setView:view];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-    if (views_use_CA) ((FLViewGL*)view)->layer_data.context = context;
+    if (views_use_CA
+        && !view->layer_data.gc // avoid use of gl_start()/gl_finish()
+        ) view->layer_data.context = context;
 #endif
   }
   return context;
@@ -4448,6 +4452,16 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
   top->alloc_array = 1;
   top->scale(w(),htop, s <1 ? 0 : 1, 1);
   CGContextRelease(auxgc);
+}
+
+void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+  if (views_use_CA) {
+    Fl_Cocoa_Window_Driver::q_release_context();
+    [[fl_window contentView] viewFrameDidChange];
+  }
+#endif
+  [ctxt update]; // supports window resizing
 }
 
 /* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
