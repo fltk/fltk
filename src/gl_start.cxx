@@ -68,7 +68,7 @@ void gl_start() {
   }
   fl_set_gl_context(Fl_Window::current(), context);
 #ifdef __APPLE__
-  Fl_X::GLcontext_update(context); // supports window resizing
+  Fl_X::gl_start(context);
 #elif !defined(WIN32)
   glXWaitX();
 #endif

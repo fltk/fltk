@@ -197,6 +197,7 @@ public:
   static void GLcontext_release(NSOpenGLContext*);
   static void GLcontext_makecurrent(NSOpenGLContext*);
   static void GL_cleardrawable(void);
+  static void gl_start(NSOpenGLContext*);
   void destroy(void);
   void map(void);
   void unmap(void);

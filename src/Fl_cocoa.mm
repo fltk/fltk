@@ -2425,9 +2425,11 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     Fl_X::q_release_context();
     through_drawRect = NO;
     window->clear_damage();
-    CGImageRef cgimg = CGBitmapContextCreateImage(layer_gc);  // requires 10.4
-    layer.contents = (id)cgimg;
-    CGImageRelease(cgimg);
+    if (layer_gc) {
+      CGImageRef cgimg = CGBitmapContextCreateImage(layer_gc);  // requires 10.4
+      layer.contents = (id)cgimg;
+      CGImageRelease(cgimg);
+    }
   }
 }
 -(void)viewFrameDidChange
@@ -4806,6 +4808,17 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   }
   [title release];
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
+}
+
+void Fl_X::gl_start(NSOpenGLContext *ctxt) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+  if (views_use_CA) {
+    Fl_X::q_release_context();
+    [(FLView*)[fl_window contentView] viewFrameDidChange];
+    [(FLView*)[fl_window contentView] layer].contentsScale = 1.;
+  }
+#endif
+  [ctxt update]; // supports window resizing
 }
 
 
