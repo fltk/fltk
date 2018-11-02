@@ -169,6 +169,7 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   }
 
 #elif defined(__APPLE_QUARTZ__)
+  fl_open_display();
   NSOpenGLPixelFormat* fmt = Fl_X::mode_to_NSOpenGLPixelFormat(m, alistp);
   if (!fmt) return 0;
   
