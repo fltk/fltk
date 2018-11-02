@@ -86,11 +86,13 @@ static Fl_Window* cached_window;
 
 #ifdef FL_CFG_GFX_QUARTZ
 #  include "drivers/Cocoa/Fl_Cocoa_Window_Driver.H"
+#  include "Fl_Screen_Driver.H"
 
 extern void gl_texture_reset();
 
 Fl_Gl_Choice *Fl_Cocoa_Gl_Window_Driver::find(int m, const int *alistp)
 {
+  Fl::screen_driver()->open_display(); // useful when called through gl_start()
   Fl_Gl_Choice *g = Fl_Gl_Window_Driver::find_begin(m, alistp);
   if (g) return g;
   NSOpenGLPixelFormat* fmt = Fl_Cocoa_Window_Driver::mode_to_NSOpenGLPixelFormat(m, alistp);
