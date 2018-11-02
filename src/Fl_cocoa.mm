@@ -4459,6 +4459,7 @@ void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {
   if (views_use_CA) {
     Fl_Cocoa_Window_Driver::q_release_context();
     [(FLView*)[fl_window contentView] viewFrameDidChange];
+    [(FLView*)[fl_window contentView] layer].contentsScale = 1.;
   }
 #endif
   [ctxt update]; // supports window resizing
