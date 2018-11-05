@@ -175,6 +175,16 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
   
 #elif defined(WIN32)
 
+// STR #3119: select pixel format with composition support
+// ... and no more than 32 color bits (8 bits/color)
+// Ref: PixelFormatDescriptor Object
+// https://msdn.microsoft.com/en-us/library/cc231189.aspx
+#if !defined(PFD_SUPPORT_COMPOSITION)
+# define PFD_SUPPORT_COMPOSITION (0x8000)
+#endif
+
+#define DEBUG_PFD (0) // 1 = PFD selection debug output, 0 = no debug output
+
   // Replacement for ChoosePixelFormat() that finds one with an overlay
   // if possible:
   if (!fl_gc) fl_GetDC(0);
@@ -192,21 +202,47 @@ Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {
     if ((!(m & FL_STEREO)) != (!(pfd.dwFlags & PFD_STEREO))) continue;
     if ((m & FL_DEPTH) && !pfd.cDepthBits) continue;
     if ((m & FL_STENCIL) && !pfd.cStencilBits) continue;
+
+#if DEBUG_PFD
+    printf("pfd #%d supports composition: %s\n", i, (pfd.dwFlags & PFD_SUPPORT_COMPOSITION) ? "yes" : "no");
+    printf("    ... & PFD_GENERIC_FORMAT: %s\n", (pfd.dwFlags & PFD_GENERIC_FORMAT) ? "generic" : "accelerated");
+    printf("    ... Overlay Planes      : %d\n", pfd.bReserved & 15);
+    printf("    ... Color & Depth       : %d, %d\n", pfd.cColorBits, pfd.cDepthBits);
+    if (pixelformat)
+      printf("        current pixelformat : %d\n", pixelformat);
+    fflush(stdout);
+#endif // DEBUG_PFD
+
     // see if better than the one we have already:
     if (pixelformat) {
-      // offering non-generic rendering is better (read: hardware accelleration)
+      // offering non-generic rendering is better (read: hardware acceleration)
       if (!(chosen_pfd.dwFlags & PFD_GENERIC_FORMAT) &&
           (pfd.dwFlags & PFD_GENERIC_FORMAT)) continue;
       // offering overlay is better:
       else if (!(chosen_pfd.bReserved & 15) && (pfd.bReserved & 15)) {}
-      // otherwise more bit planes is better:
-      else if (chosen_pfd.cColorBits > pfd.cColorBits) continue;
+      // otherwise prefer a format that supports composition (STR #3119)
+      else if ((chosen_pfd.dwFlags & PFD_SUPPORT_COMPOSITION) &&
+	       !(pfd.dwFlags & PFD_SUPPORT_COMPOSITION)) continue;
+      // otherwise more bit planes is better, but no more than 32 (8 bits per channel):
+      else if (pfd.cColorBits > 32 || chosen_pfd.cColorBits > pfd.cColorBits) continue;
       else if (chosen_pfd.cDepthBits > pfd.cDepthBits) continue;
     }
     pixelformat = i;
     chosen_pfd = pfd;
   }
-  //printf("Chosen pixel format is %d\n", pixelformat);
+
+#if DEBUG_PFD
+  static int bb = 0;
+  if (!bb) {
+    bb = 1;
+    printf("PFD_SUPPORT_COMPOSITION = 0x%x\n", PFD_SUPPORT_COMPOSITION);
+  }
+  printf("Chosen pixel format is %d\n", pixelformat);
+  printf("Color bits = %d, Depth bits = %d\n", chosen_pfd.cColorBits, chosen_pfd.cDepthBits);
+  printf("Pixel format supports composition: %s\n", (chosen_pfd.dwFlags & PFD_SUPPORT_COMPOSITION) ? "yes" : "no");
+  fflush(stdout);
+#endif // DEBUG_PFD
+
   if (!pixelformat) return 0;
 #else
 # error platform unsupported
