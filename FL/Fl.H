@@ -166,6 +166,9 @@ public: // should be private!
   static int compose_state; // used for dead keys (WIN32) or marked text (MacOS)
   static void call_screen_init(); // recompute screen number and dimensions
 #ifdef __APPLE__
+#  ifdef FLTK_HAVE_CAIRO
+      static bool using_cairo_context;
+#  endif
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #endif

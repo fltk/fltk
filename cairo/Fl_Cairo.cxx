@@ -34,6 +34,7 @@
 # elif defined(WIN32)
 #  include <cairo-win32.h>
 # elif defined(__APPLE_QUARTZ__)
+bool Fl::using_cairo_context = false;
 #  include <cairo-quartz.h>
 # else
 #  error Cairo is not supported on this platform.
@@ -78,9 +79,15 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
     if (fl_gc==0) { // means remove current cc
 	Fl::cairo_cc(0); // destroy any previous cc
 	cairo_state_.window(0);
+#if defined(__APPLE_QUARTZ__)
+      Fl::using_cairo_context = false;
+#endif
 	return 0;
     }
 
+#if defined(__APPLE_QUARTZ__)
+  Fl::using_cairo_context = true;
+#endif
     // don't re-create a context if it's the same gc/window couple
     if (fl_gc==Fl::cairo_state_.gc() && fl_xid(wi) == (Window) Fl::cairo_state_.window())
 	return Fl::cairo_cc();

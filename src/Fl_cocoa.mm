@@ -36,9 +36,8 @@ extern "C" {
 #include <pthread.h>
 }
 
-
-#include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
@@ -2421,8 +2420,20 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   }
   if (window->damage()) {
     through_drawRect = YES;
+#ifdef FLTK_HAVE_CAIRO
+    CGFloat before_flush = CGContextGetCTM(layer_gc).d;
+    Fl::using_cairo_context = false;
+#endif
     i->flush();
     Fl_X::q_release_context();
+#ifdef FLTK_HAVE_CAIRO
+    if (Fl::using_cairo_context && CGContextGetCTM(layer_gc).d != before_flush ) {
+      // necessary for Cairo and layer-backed views
+      CGContextRestoreGState(layer_gc);
+      CGContextSaveGState(layer_gc);
+    }
+    Fl::using_cairo_context = false;
+#endif
     through_drawRect = NO;
     window->clear_damage();
     if (layer_gc) {
