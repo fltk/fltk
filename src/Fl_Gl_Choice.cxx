@@ -141,7 +141,7 @@ void Fl_Cocoa_Gl_Window_Driver::delete_gl_context(GLContext context) {
 #include "drivers/WinAPI/Fl_WinAPI_Window_Driver.H"
 extern void fl_save_dc(HWND, HDC);
 
-// STR #3191: select pixel format with composition support
+// STR #3119: select pixel format with composition support
 // ... and no more than 32 color bits (8 bits/color)
 // Ref: PixelFormatDescriptor Object
 // https://msdn.microsoft.com/en-us/library/cc231189.aspx
