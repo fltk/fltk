@@ -128,8 +128,10 @@ void gl_remove_displaylist_fonts()
  \see  gl_texture_pile_height(int)
   */
 void gl_draw(const char* str, int n) {
-  if (has_texture_rectangle)  Fl_Gl_Window_Driver::draw_string_with_texture(str, n);
-  else Fl_Gl_Window_Driver::global()->draw_string_legacy(str, n);
+  if (n > 0) {
+    if (has_texture_rectangle)  Fl_Gl_Window_Driver::draw_string_with_texture(str, n);
+    else Fl_Gl_Window_Driver::global()->draw_string_legacy(str, n);
+  }
 }
 
 
