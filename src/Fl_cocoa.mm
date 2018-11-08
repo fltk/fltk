@@ -2420,20 +2420,8 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   }
   if (window->damage()) {
     through_drawRect = YES;
-#ifdef FLTK_HAVE_CAIRO
-    CGFloat before_flush = CGContextGetCTM(layer_gc).d;
-    Fl::using_cairo_context = false;
-#endif
     i->flush();
     Fl_X::q_release_context();
-#ifdef FLTK_HAVE_CAIRO
-    if (Fl::using_cairo_context && CGContextGetCTM(layer_gc).d != before_flush ) {
-      // necessary for Cairo and layer-backed views
-      CGContextRestoreGState(layer_gc);
-      CGContextSaveGState(layer_gc);
-    }
-    Fl::using_cairo_context = false;
-#endif
     through_drawRect = NO;
     window->clear_damage();
     if (layer_gc) {
@@ -3549,6 +3537,13 @@ void Fl_Window::make_current()
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA) {
     i->gc = ((FLView*)[fl_window contentView])->layer_gc;
+#  ifdef FLTK_HAVE_CAIRO
+    // make sure the GC starts with an identity transformation matrix as do native Cocoa GC's
+    CGAffineTransform mat = CGContextGetCTM(i->gc);
+    if (!CGAffineTransformIsIdentity(mat)) { // 10.4
+      CGContextConcatCTM(i->gc, CGAffineTransformInvert(mat));
+    }
+#  endif
   } else
 #endif
   {
@@ -4480,7 +4475,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, i
   int resolution = i->mapped_to_retina() ? 2 : 1;
   if (x || y || w != win->w() || h != win->h()) {
     CGRect rect = CGRectMake(x * resolution, y * resolution, w * resolution, h * resolution);
-    CGImageRef cgimg2 = CGImageCreateWithImageInRect(cgimg, rect);
+    CGImageRef cgimg2 = CGImageCreateWithImageInRect(cgimg, rect); //10.4
     CGImageRelease(cgimg);
     cgimg = cgimg2;
   }
