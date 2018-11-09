@@ -103,13 +103,6 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 # elif   defined(_WIN32)
     return cairo_win32_surface_create((HDC) gc);
 # elif defined(__APPLE_QUARTZ__)
-  CGAffineTransform mat = CGContextGetCTM((CGContextRef)gc);
-  if (mat.d > 0) { // necessary for layer-backed Cairo windows
-    CGContextRestoreGState((CGContextRef)gc);
-    CGContextRestoreGState((CGContextRef)gc);
-    CGContextSaveGState((CGContextRef)gc);
-    CGContextSaveGState((CGContextRef)gc);
-  }
   return cairo_quartz_surface_create_for_cg_context((CGContextRef) gc, W, H);
 # else
 #  error Cairo is not supported under this platform.

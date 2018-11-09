@@ -3421,6 +3421,14 @@ void Fl_Cocoa_Window_Driver::make_current()
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA) {
     gc = ((FLView*)[fl_window contentView])->layer_data.gc;
+#  ifdef FLTK_HAVE_CAIRO
+    // make sure the GC starts with an identity transformation matrix as do native Cocoa GC's
+    // because cairo may have changed it 
+    CGAffineTransform mat = CGContextGetCTM(gc);
+    if (!CGAffineTransformIsIdentity(mat)) { // 10.4
+      CGContextConcatCTM(gc, CGAffineTransformInvert(mat));
+    }
+#  endif
   } else
 #endif
   {
