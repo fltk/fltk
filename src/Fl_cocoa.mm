@@ -3433,7 +3433,8 @@ void Fl_Cocoa_Window_Driver::make_current()
 #endif
   {
     NSGraphicsContext *nsgc =   through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
-    gc = (CGContextRef)[nsgc graphicsPort];
+    static SEL gc_sel = fl_mac_os_version >= 101000 ? @selector(CGContext) : @selector(graphicsPort);
+    gc = (CGContextRef)[nsgc performSelector:gc_sel];
   }
   Fl_Graphics_Driver::default_driver().gc(gc);
   CGContextSaveGState(gc); // native context
