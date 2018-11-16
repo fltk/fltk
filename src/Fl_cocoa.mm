@@ -2372,13 +2372,6 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   if (i->wait_for_expose) {
     // 1st drawing of GL window
     [self did_view_resolution_change];
-    typedef NSOpenGLContext* (*ftype)(Fl_Gl_Window*);
-    static ftype f =  (ftype)dlsym(RTLD_SELF, "fl_mac_gl_window_context");
-    if (f) { // that function is implemented in Fl_Gl_Window.cxx from libftk_gl
-      NSOpenGLContext *ctxt = f(window->as_gl_window());
-      [ctxt update]; // GL window may be empty without this
-    }
-    i->wait_for_expose = 0;
   }
   through_drawRect = YES;
   window->clear_damage(FL_DAMAGE_ALL);

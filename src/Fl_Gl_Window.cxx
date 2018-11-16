@@ -297,6 +297,14 @@ void Fl_Gl_Window::flush() {
 #if HAVE_GL_OVERLAY && defined(WIN32)
   uchar save_valid_f = valid_f_;
 #endif
+  
+#ifdef __APPLE__
+  Fl_X *i = Fl_X::i(this);
+  if (i->wait_for_expose) {
+    Fl_X::GLcontext_update((GLContext)context());
+    i->wait_for_expose = 0;
+  }
+#endif
 
 #if HAVE_GL_OVERLAY && defined(WIN32)
 
@@ -549,15 +557,6 @@ int Fl_Gl_Window::handle(int event)
 int Fl_Gl_Window::gl_plugin_linkage() {
   return fl_gl_load_plugin;
 }
-
-#ifdef __APPLE__
-extern "C" {
-  void *fl_mac_gl_window_context(Fl_Gl_Window *);
-}
-void *fl_mac_gl_window_context(Fl_Gl_Window *glwin) {
-  return glwin->context();
-}
-#endif
 
 //
 // End of "$Id$".
