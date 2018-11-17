@@ -1445,9 +1445,11 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       // useful for Mandelbrot to recreate the layer's bitmap
       [view displayLayer:[view layer]];
     }
-    if (fl_mac_os_version < 101401 && window->parent() && window->as_gl_window() && Fl::use_high_res_GL()) {
+    if (fl_mac_os_version < 101401 && window->as_gl_window() && Fl::use_high_res_GL()) {
       [view layer].contentsScale = Fl_X::i(window)->mapped_to_retina() ? 2. : 1.;
     }
+    if (window->as_gl_window() && Fl::use_high_res_GL())
+      window->redraw(); // necessary with 10.14.2 public beta 3
   }
 #endif
   fl_unlock_function();
