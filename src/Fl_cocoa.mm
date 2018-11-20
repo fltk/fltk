@@ -2248,8 +2248,8 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   }
   if (!layer_data) { // runs when window is created, resized, changed screen resolution
     layer.bounds = NSRectToCGRect(rect);
-    d->wait_for_expose_value = 0;
     [self did_view_resolution_change];
+    d->wait_for_expose_value = 0;
     if (d->mapped_to_retina()) {
       rect.size.width *= 2; rect.size.height *= 2;
       layer.contentsScale = 2.;
