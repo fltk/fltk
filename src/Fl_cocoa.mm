@@ -598,6 +598,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)viewFrameDidChange;
 - (BOOL)wantsLayer;
 - (void)dealloc;
+- (BOOL)did_view_resolution_change;
 @end
 #endif //10_8
 
@@ -1255,16 +1256,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw checkSubwindowFrame];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   FLView *view = (FLView*)[nsw contentView];
-  if (views_use_CA && [view did_view_resolution_change]) {
-    if (!window->as_gl_window()) { // move layered non-GL window to different resolution
-      [(FLViewLayer*)view viewFrameDidChange];
-      [(FLViewLayer*)view displayLayer:[view layer]]; // useful for Mandelbrot to recreate the layer's bitmap
-    }
-    if (fl_mac_os_version < 101401 && window->parent() && window->as_gl_window() && Fl::use_high_res_GL()) {
-      Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-      [view layer].contentsScale = d->mapped_to_retina() ? 2. : 1.;
-    }
-  }
+  if ([view layer]) [view did_view_resolution_change];
 #endif
   fl_unlock_function();
 }
@@ -2181,9 +2173,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
 static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
-  CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+  static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   CGContextRef gc = CGBitmapContextCreate(NULL,  w,  h, 8, 4 * w, cspace, kCGImageAlphaPremultipliedFirst);
-  CGColorSpaceRelease(cspace);
   CGContextClearRect(gc, CGRectMake(0,0,w,h));
   return gc;
 }
@@ -2195,13 +2186,14 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 - (void)displayLayer:(CALayer *)layer;
 - (void)drawRect:(NSRect)rect;
 - (BOOL)wantsLayer;
+- (BOOL)did_view_resolution_change;
 @end
 
 @implementation FLGLViewLayer
 - (void)displayLayer:(CALayer *)layer {
   [self drawRect:[self frame]];
  }
-- (void)drawRect:(NSRect)rect {
+- (void)drawRect:(NSRect)rect { //runs when layer-backed GL window is created or resized
   fl_lock_function();
   if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
@@ -2222,6 +2214,16 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 }
 -(BOOL)wantsLayer {
   return YES;
+}
+- (BOOL)did_view_resolution_change {
+  BOOL retval = [super did_view_resolution_change];
+  if (retval && Fl::use_high_res_GL()) {
+    Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+    [self layer].contentsScale = d->mapped_to_retina() ? 2. : 1.;
+    window->redraw(); // necessary with 10.14.2 public beta 3
+  }
+  return retval;
 }
 @end
 
@@ -2273,7 +2275,14 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     }
   }
 }
-
+- (BOOL)did_view_resolution_change {
+  BOOL retval = [super did_view_resolution_change];
+  if (retval) {
+    [self viewFrameDidChange];
+    [self displayLayer:[self layer]]; // useful for Mandelbrot to recreate the layer's bitmap
+  }
+  return retval;
+}
 -(void)viewFrameDidChange
 {
   CGContextRelease(layer_data);
