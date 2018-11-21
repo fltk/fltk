@@ -2202,11 +2202,9 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     // 1st drawing of GL window
     [self did_view_resolution_change];
   }
-  through_drawRect = YES;
   window->clear_damage(FL_DAMAGE_ALL);
   d->Fl_Window_Driver::flush();
   window->clear_damage();
-  through_drawRect = NO;
   if (fl_mac_os_version < 101401) {
     if (window->parent()) window->redraw(); // useful during resize of GL subwindow
   }
