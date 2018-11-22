@@ -1347,6 +1347,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   if ([nsw miniwindowImage]) { [nsw setMiniwindowImage:nil]; }
   Fl_Window *window = [nsw getFl_Window];
+  // necessary when resolutions before miniaturization and after deminiaturization differ
+  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
   Fl::flush(); // Process redraws set by FL_SHOW.
@@ -2198,10 +2200,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-  if (d->wait_for_expose_value) {
-    // 1st drawing of GL window
-    [self did_view_resolution_change];
-  }
+  [self did_view_resolution_change];
   window->clear_damage(FL_DAMAGE_ALL);
   d->Fl_Window_Driver::flush();
   window->clear_damage();
