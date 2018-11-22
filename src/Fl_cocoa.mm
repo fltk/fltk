@@ -670,10 +670,6 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
   NSInteger identifier;
   NSRange selectedRange;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-@public
-  CGContextRef layer_gc;
-#endif
 }
 + (void)prepareEtext:(NSString*)aString;
 + (void)concatEtext:(NSString*)aString;
@@ -712,12 +708,25 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 - (NSInteger)windowLevel;
 #endif
 - (BOOL)did_view_resolution_change;
+@end
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-- (BOOL)wantsLayer;
+@interface FLViewLayer : FLView // for layer-backed non-GL windows
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+< CALayerDelegate >
+#endif
+{
+@public
+  CGContextRef layer_data;
+}
 - (void)displayLayer:(CALayer *)layer;
 - (void)viewFrameDidChange;
-#endif
+- (BOOL)wantsLayer;
+- (void)dealloc;
+- (BOOL)did_view_resolution_change;
 @end
+#endif //10_8
+
 
 @implementation FLWindow
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
@@ -1439,18 +1448,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw checkSubwindowFrame];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   FLView *view = (FLView*)[nsw contentView];
-  if (views_use_CA && [view did_view_resolution_change]) {
-    if (!window->as_gl_window()) { // move layered non-GL window to different resolution
-      [view viewFrameDidChange];
-      // useful for Mandelbrot to recreate the layer's bitmap
-      [view displayLayer:[view layer]];
-    }
-    if (fl_mac_os_version < 101401 && window->as_gl_window() && Fl::use_high_res_GL()) {
-      [view layer].contentsScale = Fl_X::i(window)->mapped_to_retina() ? 2. : 1.;
-    }
-    if (window->as_gl_window() && Fl::use_high_res_GL())
-      window->redraw(); // necessary with 10.14.2 public beta 3
-  }
+  if ([view layer]) [view did_view_resolution_change];
 #endif
   fl_unlock_function();
 }
@@ -1478,7 +1476,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) Fl_X::i(window)->in_windowDidResize(false);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  if (views_use_CA && !window->as_gl_window()) [(FLView*)[nsw contentView] viewFrameDidChange];
+  if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)[nsw contentView] viewFrameDidChange];
 #endif
   fl_unlock_function();
 }
@@ -1525,6 +1523,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   if ([nsw miniwindowImage]) { [nsw setMiniwindowImage:nil]; }
   Fl_Window *window = [nsw getFl_Window];
+  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
   Fl::flush(); // Process redraws set by FL_SHOW.
@@ -2333,18 +2332,18 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  that is, for apps running under 10.14 and linked to SDK 10.14.
  When views_use_CA is NO, views are not supposed to be layer-backed.
  
- Each layer-backed non-OpenGL window has a single FLView object which itself has an associated CALayer.
- FLView implements displayLayer:. Consequently, FLView objects are drawn
- by the displayLayer: method. An FLView manages also a member variable
- CGContextRef layer_gc, a bitmap context the size of the view (double on Retina).
+ Each layer-backed non-OpenGL window has a single FLViewLayer object which itself has an associated CALayer.
+ FLViewLayer implements displayLayer:. Consequently, FLViewLayer objects are drawn
+ by the displayLayer: method. An FLViewLayer manages also a member variable
+ CGContextRef layer_data, a bitmap context the size of the view (double on Retina).
  All Quartz drawings go to this bitmap. updateLayer finishes by using an image copy
  of the bitmap as the layer's contents. That step fills the window.
- FLView implements viewFrameDidChange which deletes the bitmap and zeros layer_gc.
+ FLViewLayer implements viewFrameDidChange which deletes the bitmap and zeros layer_data.
  This ensures the bitmap is recreated when the window is resized.
  viewFrameDidChange is also called when the window flips between low/high resolution displays.
  
- Each layer-backed OpenGL window has an associated FLViewGL object, derived from FLView.
- FLViewGL objects are drawn by the displayLayer: method which calls drawRect:
+ Each layer-backed OpenGL window has an associated FLGLViewLayer object, derived from FLView.
+ FLGLViewLayer objects are drawn by the displayLayer: method which calls drawRect:
  which draws the GL scene.
  */
 
@@ -2357,12 +2356,17 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   return gc;
 }
 
-@interface FLViewGL : FLView // only for layered GL windows
+@interface FLGLViewLayer : FLView // for layer-backed GL windows
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+< CALayerDelegate >
+#endif
 - (void)displayLayer:(CALayer *)layer;
 - (void)drawRect:(NSRect)rect;
+- (BOOL)wantsLayer;
+- (BOOL)did_view_resolution_change;
 @end
 
-@implementation FLViewGL
+@implementation FLGLViewLayer
 - (void)displayLayer:(CALayer *)layer {
   [self drawRect:[self frame]];
 }
@@ -2371,41 +2375,47 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_X *i = Fl_X::i( window );
   if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
-  if (i->wait_for_expose) {
-    // 1st drawing of GL window
-    [self did_view_resolution_change];
-  }
-  through_drawRect = YES;
+  [self did_view_resolution_change];
   window->clear_damage(FL_DAMAGE_ALL);
   i->flush();
   window->clear_damage();
-  through_drawRect = NO;
   if (window->parent() && fl_mac_os_version < 101401) window->redraw(); // useful during resize of GL subwindow
   fl_unlock_function();
 }
+-(BOOL)wantsLayer {
+  return YES;
+}
+- (BOOL)did_view_resolution_change {
+  BOOL retval = [super did_view_resolution_change];
+  if (retval && Fl::use_high_res_GL()) {
+    Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
+    Fl_X *i = Fl_X::i( window );
+    [self layer].contentsScale = i->mapped_to_retina() ? 2. : 1.;
+    window->redraw(); // necessary with 10.14.2 public beta 3
+  }
+  return retval;
+}
 @end
-#endif //>= MAC_OS_X_VERSION_10_8
 
 
-@implementation FLView
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+@implementation FLViewLayer
 - (BOOL)wantsLayer {
-  return views_use_CA;
+  return YES;
 }
 - (void)displayLayer:(CALayer *)layer {
   // called if views are layered (but not for GL) : all drawing to window goes through this
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_X *i = Fl_X::i( window );
-  if (!layer_gc) { // runs when window is created, resized, changed screen resolution
+  if (!layer_data) { // runs when window is created, resized, changed screen resolution
     NSRect r = [self frame];
     layer.bounds = NSRectToCGRect(r);
-    i->wait_for_expose = 0;
     [self did_view_resolution_change];
+    i->wait_for_expose = 0;
     if (i->mapped_to_retina()) {
       r.size.width *= 2; r.size.height *= 2;
       layer.contentsScale = 2.;
     } else layer.contentsScale = 1.;
-    layer_gc = prepare_bitmap_for_layer(r.size.width, r.size.height);
+    layer_data = prepare_bitmap_for_layer(r.size.width, r.size.height);
     Fl_X *i = Fl_X::i(window);
     if ( i->region ) {
       XDestroyRegion(i->region);
@@ -2419,24 +2429,34 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     Fl_X::q_release_context();
     through_drawRect = NO;
     window->clear_damage();
-    if (layer_gc) {
-      CGImageRef cgimg = CGBitmapContextCreateImage(layer_gc);  // requires 10.4
+    if (layer_data) {
+      CGImageRef cgimg = CGBitmapContextCreateImage(layer_data);  // requires 10.4
       layer.contents = (id)cgimg;
       CGImageRelease(cgimg);
     }
   }
 }
+- (BOOL)did_view_resolution_change {
+  BOOL retval = [super did_view_resolution_change];
+  if (retval) {
+    [self viewFrameDidChange];
+    [self displayLayer:[self layer]]; // useful for Mandelbrot to recreate the layer's bitmap
+  }
+  return retval;
+}
 -(void)viewFrameDidChange
 {
-  CGContextRelease(layer_gc);
-  layer_gc = NULL;
+  CGContextRelease(layer_data);
+  layer_data = NULL;
 }
 -(void)dealloc {
-  CGContextRelease(layer_gc);
+  CGContextRelease(layer_data);
   [super dealloc];
 }
+@end
 #endif //>= MAC_OS_X_VERSION_10_8
 
+@implementation FLView
 - (BOOL)did_view_resolution_change {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   if (fl_mac_os_version >= 100700) { // determine whether window is mapped to a retina display
@@ -3108,7 +3128,7 @@ void Fl_X::flush()
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   } else if (views_use_CA) {
     if (!through_drawRect) {
-      FLView *view = (FLView*)[fl_xid(w) contentView];
+      FLViewLayer *view = (FLViewLayer*)[fl_xid(w) contentView];
       [view displayLayer:[view layer]];
     } else
       w->flush();
@@ -3266,11 +3286,13 @@ void Fl_X::make(Fl_Window* w)
       x->next = NULL;
       Fl_X::first = x;
     }
-  FLView *myview =
+  FLView *myview;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  views_use_CA && w->as_gl_window() ? [FLViewGL alloc] :
+  if (views_use_CA) {
+    myview = w->as_gl_window() ? [FLGLViewLayer alloc] : [FLViewLayer alloc];
+  } else
 #endif
-  [FLView alloc];
+    myview = [FLView alloc];
   myview = [myview initWithFrame:crect];
     [cw setContentView:myview];
     [myview release];
@@ -3531,7 +3553,7 @@ void Fl_Window::make_current()
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA) {
-    i->gc = ((FLView*)[fl_window contentView])->layer_gc;
+    i->gc = ((FLViewLayer*)[fl_window contentView])->layer_data;
 #  ifdef FLTK_HAVE_CAIRO
     // make sure the GC starts with an identity transformation matrix as do native Cocoa GC's
     // because cairo may have changed it
@@ -4465,7 +4487,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, i
 { // capture window data for layer-based views because initWithFocusedViewRect: does not work for them
   NSBitmapImageRep *bitmap = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  CGContextRef gc = ((FLView*)[fl_xid(win) contentView])->layer_gc;
+  CGContextRef gc = ((FLViewLayer*)[fl_xid(win) contentView])->layer_data;
   CGImageRef cgimg = CGBitmapContextCreateImage(gc);  // requires 10.4
   Fl_X *i = Fl_X::i( win );
   int resolution = i->mapped_to_retina() ? 2 : 1;
@@ -4816,8 +4838,8 @@ void Fl_X::gl_start(NSOpenGLContext *ctxt) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA) {
     Fl_X::q_release_context();
-    [(FLView*)[fl_window contentView] viewFrameDidChange];
-    [(FLView*)[fl_window contentView] layer].contentsScale = 1.;
+    [(FLViewLayer*)[fl_window contentView] viewFrameDidChange];
+    [[fl_window contentView] layer].contentsScale = 1.;
   }
 #endif
   [ctxt update]; // supports window resizing
