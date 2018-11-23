@@ -1421,9 +1421,11 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)windowDidMove:(NSNotification *)notif
 {
-  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
+  // don't process move for a subwindow of a miniaturized top window
+  if (window->parent() && [fl_xid(window->top_window()) isMiniaturized]) return;
+  fl_lock_function();
   resize_from_system = window;
   NSPoint pt2;
   pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
