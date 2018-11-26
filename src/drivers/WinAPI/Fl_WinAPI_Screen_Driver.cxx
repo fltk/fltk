@@ -209,37 +209,49 @@ void Fl_WinAPI_Screen_Driver::screen_dpi(float &h, float &v, int n)
 
 int Fl_WinAPI_Screen_Driver::x()
 {
-  RECT r;
+  /*RECT r;
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.left;
+  return r.left;*/
+  int X, Y, W, H;
+  screen_work_area(X, Y, W, H, 0);
+  return X;
 }
 
 
 int Fl_WinAPI_Screen_Driver::y()
 {
-  RECT r;
+  /*RECT r;
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.top;
+  return r.top;*/
+  int X, Y, W, H;
+  screen_work_area(X, Y, W, H, 0);
+  return Y;
 }
 
 
 int Fl_WinAPI_Screen_Driver::h()
 {
-  RECT r;
+  /*RECT r;
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.bottom - r.top;
+  return r.bottom - r.top;*/
+  int X, Y, W, H;
+  screen_work_area(X, Y, W, H, 0);
+  return H;
 }
 
 
 int Fl_WinAPI_Screen_Driver::w()
 {
-  RECT r;
+  /*RECT r;
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &r, 0);
-  return r.right - r.left;
+  return r.right - r.left;*/
+  int X, Y, W, H;
+  screen_work_area(X, Y, W, H, 0);
+  return W;
 }
 
 
