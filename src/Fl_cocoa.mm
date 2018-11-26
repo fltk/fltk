@@ -3267,11 +3267,7 @@ void Fl_Cocoa_Window_Driver::wait_for_expose()
     if (fl_mac_os_version < 101300) {
         [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose)];
     } else {
-      while (dropped_files_list) {
-        drain_dropped_files_list();
-      }
-       [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:nil
-                             inMode:NSDefaultRunLoopMode dequeue:NO];
+      Fl_Window_Driver::wait_for_expose();
     }
 }
 
