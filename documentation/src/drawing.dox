@@ -168,7 +168,7 @@ is described in the \ref common_boxtypes section.
 You can limit all your drawing to a rectangular region by calling
 \p %fl_push_clip(), and put the drawings back by using
 \p %fl_pop_clip().
-This rectangle is measured in pixels and is unaffected by the current
+This rectangle is measured in \ref ssect_DrawingUnit "FLTK units" and is unaffected by the current
 transformation matrix.
 
 In addition, the system may provide clipping when updating windows
@@ -400,13 +400,13 @@ system-defined default of whatever value is fastest.
 \li <tt>FL_JOIN_BEVEL</tt> (flat)
 
 \par
-\p width is the number of pixels thick to draw the lines.
+\p width is the number of \ref ssect_DrawingUnit "FLTK units" thick to draw the lines.
 Zero results in the system-defined default, which on both X and
 Windows is somewhat different and nicer than 1.
 
 \par
 \p dashes is a pointer to an array of dash lengths, measured in
-pixels.  The first location is how long to draw a solid portion, the
+\ref ssect_DrawingUnit "FLTK units".  The first location is how long to draw a solid portion, the
 next is how long to draw the gap, then the solid, etc.  It is
 terminated with a zero-length entry. A \p NULL pointer or a zero-length
 array results in a solid line. Odd array sizes are not supported and
@@ -523,15 +523,11 @@ function described later in this chapter.
 extend outside the line drawn by \p %fl_arc(); to avoid this
 use \p w-1 and \p h-1.
 
-\todo
-add an Fl_Draw_Area_Cb typedef to allow fl_scroll(...) to be doxygenated?
-
-void fl_scroll(int X, int Y, int W, int H, int dx, int dy, void (*draw_area)(void*, int,int,int,int), void* data)
-
+void \ref fl_scroll(int X, int Y, int W, int H, int dx, int dy, void (*draw_area)(void*, int,int,int,int), void* data)
 \par
 Scroll a rectangle and draw the newly exposed portions. The contents
 of the rectangular area is first shifted by \p dx and 
-\p dy pixels. The callback is then called for every newly 
+\p dy \ref ssect_DrawingUnit "FLTK units". The callback is then called for every newly 
 exposed rectangular area,
 
 
@@ -732,8 +728,8 @@ Refer to the full documentation for fl_measure() for details
 on usage and how to avoid common pitfalls.
 
 \see fl_text_extents() -- measure the 'inked' area of a string
-\see fl_width() -- measure the pixel width of a string or single character
-\see fl_height() -- measure the pixel height of the \ref drawing_fl_font "current font"
+\see fl_width() -- measure the width of a string or single character
+\see fl_height() -- measure the height of the \ref drawing_fl_font "current font"
 \see fl_descent() -- the height of the descender for the \ref drawing_fl_font "current font"
 
 int fl_height()
@@ -756,7 +752,7 @@ double fl_width(const char* txt, int n) <br>
 double fl_width(unsigned int unicode_char)
 
 \par
-Return the pixel width of a nul-terminated string, a sequence of \p n
+Return the width of a nul-terminated string, a sequence of \p n
 characters, or a single character in the \ref drawing_fl_font "current font".
 
 \see fl_measure(), fl_text_extents(), fl_height(), fl_descent()
@@ -764,11 +760,11 @@ characters, or a single character in the \ref drawing_fl_font "current font".
 void fl_text_extents(const char* txt, int& dx, int& dy, int& w, int& h)
 
 \par
-Determines the minimum pixel dimensions of a nul-terminated string,
+Determines the minimum dimensions of a nul-terminated string,
 ie. the 'inked area'.
 \par
 Given a string "txt" drawn using fl_draw(txt, x, y) you would determine
-its pixel extents on the display using fl_text_extents(txt, dx, dy, wo, ho)
+its extents in \ref ssect_DrawingUnit "FLTK units" on the display using fl_text_extents(txt, dx, dy, wo, ho)
 such that a bounding box that exactly fits around the inked area of the text
 could be drawn with fl_rect(x+dx, y+dy, wo, ho). 
 \par
@@ -822,8 +818,8 @@ the display.
 
 \par
 The font is identified by a \p face and a \p size.
-The size of the font is measured in \p pixels and not "points".
-Lines should be spaced \p size pixels apart or more.
+The size of the font is measured in \ref ssect_DrawingUnit "FLTK units" and not "points".
+Lines should be spaced \p size FLTK units apart or more.
 
 int fl_font() <br>
 int fl_size()
@@ -1139,7 +1135,7 @@ Fl_Offscreen fl_create_offscreen(int w, int h)
 
 \par
 Create an RGB offscreen buffer containing as many pixels as in a screen area
-of size \p w,h FLTK units.
+of size \p w,h \ref ssect_DrawingUnit "FLTK units".
 
 void fl_delete_offscreen(Fl_Offscreen)
 
