@@ -103,6 +103,7 @@ public:
   /* the default implementation of parse_color() may be enough */
   virtual int parse_color(const char* p, uchar& r, uchar& g, uchar& b);
   virtual void get_system_colors() { }
+  /* the default implementation of get_system_scheme() may be enough */
   virtual const char *get_system_scheme();
   // --- global timers
   virtual void add_timeout(double time, Fl_Timeout_Handler cb, void *argp) { }

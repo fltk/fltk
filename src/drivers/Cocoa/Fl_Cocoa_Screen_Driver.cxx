@@ -217,12 +217,6 @@ void Fl_Cocoa_Screen_Driver::get_system_colors()
 }
 
 
-const char *Fl_Cocoa_Screen_Driver::get_system_scheme()
-{
-  return fl_getenv("FLTK_SCHEME");
-}
-
-
 int Fl_Cocoa_Screen_Driver::has_marked_text() {
   return true;
 }

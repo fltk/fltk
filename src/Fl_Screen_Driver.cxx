@@ -137,7 +137,7 @@ int Fl_Screen_Driver::screen_num(int x, int y, int w, int h)
 
 const char *Fl_Screen_Driver::get_system_scheme()
 {
-  return 0L;
+  return fl_getenv("FLTK_SCHEME");
 }
 
 /** The bullet character used by default by Fl_Secret_Input */

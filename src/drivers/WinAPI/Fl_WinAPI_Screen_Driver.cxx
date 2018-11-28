@@ -341,12 +341,6 @@ void Fl_WinAPI_Screen_Driver::get_system_colors()
 }
 
 
-const char *Fl_WinAPI_Screen_Driver::get_system_scheme()
-{
-  return fl_getenv("FLTK_SCHEME");
-}
-
-
 // ---- timers
 
 
