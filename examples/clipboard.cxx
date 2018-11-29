@@ -129,9 +129,7 @@ void clip_callback(int source, void *data) { // called after clipboard was chang
 
 int main(int argc, char **argv)
 {
-#if !(defined(__APPLE__) || defined(_WIN32))
-  fl_register_images(); // required to allow pasting of images
-#endif
+  fl_register_images(); // required for the X11 platform to allow pasting of images
   Fl_Window* win = new Fl_Window(500, 550, "clipboard viewer");
   tabs = new clipboard_viewer(0, 0, 500, 500);
   Fl_Group *g = new Fl_Group( 5, 30, 490, 460, Fl::clipboard_image); // g will display the image form
