@@ -25,6 +25,7 @@
 #define Fl_Device_H
 
 #include <FL/Fl_Plugin.H>
+#include <FL/platform_types.h>
 #include <stdlib.h>
 
 class Fl_Graphics_Driver;
@@ -127,6 +128,8 @@ public:
    \return The captured pixels as an RGB image
    */
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) = 0;
+  /** Returns the window's GL context */
+  virtual GLContext context(class Fl_Window *glw) = 0;
 };
 
 #endif // Fl_Device_H

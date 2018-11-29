@@ -109,7 +109,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void after_show(int need_redraw);
   virtual int mode_(int m, const int *a);
   virtual void make_current_before();
-  virtual int flush_begin(char& valid_f);
   virtual void swap_buffers();
   virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();

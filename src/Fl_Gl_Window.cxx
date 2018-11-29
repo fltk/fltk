@@ -524,15 +524,6 @@ void Fl_Cocoa_Gl_Window_Driver::after_show(int need_redraw) {
   if(need_redraw) pWindow->redraw();//necessary only after creation of a top-level GL window
 }
 
-int Fl_Cocoa_Gl_Window_Driver::flush_begin(char& valid_f_) {
-  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(pWindow);
-  if (d->wait_for_expose_value) { // 1st drawing of layer-backed GL window
-    Fl_Cocoa_Window_Driver::GLcontext_update(pWindow->context());  // layer-backed GL windows may be empty without this
-    d->wait_for_expose_value = 0;
-  }
-  return 0;
-}
-
 float Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
 {
   int retina = (fl_mac_os_version >= 100700 && Fl::use_high_res_GL() && Fl_X::i(pWindow) &&
