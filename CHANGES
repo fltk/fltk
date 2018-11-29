@@ -142,6 +142,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Bug Fixes
 
   - (add new items here)
+  - Fix FL_PUSH event handling of Fl_Check_Browser (STR #3004).
   - Fix a potential crash when a program exits before it opens a window
     (Windows only, STR #3484).
   - Fix Fl_PNG_Image error handling. An error was potentially caused

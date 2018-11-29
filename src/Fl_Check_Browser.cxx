@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
+// Fl_Check_Browser implementation for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2018 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -310,8 +310,12 @@ void Fl_Check_Browser::check_none() {
 }
 
 int Fl_Check_Browser::handle(int event) {
-  if (event==FL_PUSH)
-    deselect();
+  if (event == FL_PUSH) {
+    int X, Y, W, H;
+    bbox(X, Y, W, H);
+    if (Fl::event_inside(X, Y, W, H))
+      deselect();
+  }
   return Fl_Browser_::handle(event);
 }
 
