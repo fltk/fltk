@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// implementation of class Fl_Gl_Device_Plugin for the Fast Light Tool Kit (FLTK).
+// Definition of class Fl_OpenGL_Display_Device for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
 //
