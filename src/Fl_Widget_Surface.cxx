@@ -71,7 +71,7 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
     Fl_Plugin_Manager pm("fltk:device");
     Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
     if (pi) {
-      drawn_by_plugin = pi->print(widget, 0, 0, 0);
+      drawn_by_plugin = pi->print(widget);
     }
   }
   if (!drawn_by_plugin) {

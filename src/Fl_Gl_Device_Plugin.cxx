@@ -30,12 +30,12 @@ class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
 public:
   Fl_Gl_Device_Plugin() : Fl_Device_Plugin(name()) { }
   virtual const char *name() { return "opengl.device.fltk.org"; }
-  virtual int print(Fl_Widget *w, int x, int y, int height /*useless*/) {
+  virtual int print(Fl_Widget *w) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
     Fl_RGB_Image *img = Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, 0, 0, glw->w(), glw->h());
     img->scale(glw->w(), glw->h());
-    img->draw(x, y);
+    img->draw(0, 0);
     delete img;
     return 1;
   }
@@ -44,9 +44,9 @@ public:
     if (!glw) return NULL;
     return Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, x, y, w, h);
   }
-  virtual GLContext context(Fl_Window *window) {
-    Fl_Gl_Window *glw = window->as_gl_window();
-    return glw ? glw->context() : 0;
+  virtual GLContext context(Fl_Widget *widget) {
+    Fl_Gl_Window *glw = widget->as_gl_window();
+    return glw ? glw->context() : (GLContext)0;
   }
 };
 

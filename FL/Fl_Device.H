@@ -118,18 +118,14 @@ public:
   virtual const char *klass() { return "fltk:device"; }
   /** \brief Returns the plugin name */
   virtual const char *name() = 0;
-  /** \brief Prints a widget 
-   \param w the widget
-   \param x,y offsets where to print relatively to coordinates origin
-   \param height height of the current drawing area
-   */
-  virtual int print(Fl_Widget* w, int x, int y, int height) = 0;
-  /** captures a rectangle of a widget as an image
+  /** \brief Prints a widget */
+  virtual int print(Fl_Widget* w) = 0;
+  /** Captures a rectangle of a widget as an image
    \return The captured pixels as an RGB image
    */
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) = 0;
   /** Returns the window's GL context */
-  virtual GLContext context(class Fl_Window *glw) = 0;
+  virtual GLContext context(Fl_Widget *widget) = 0;
 };
 
 #endif // Fl_Device_H
