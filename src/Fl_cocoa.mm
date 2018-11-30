@@ -148,8 +148,11 @@ typedef void (*KeyScript_type)(short);
 static KeyScript_type KeyScript;
 
 static Fl_Device_Plugin *opengl_plugin_device() {
-  static Fl_Plugin_Manager pm("fltk:device");
-  static Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+  static Fl_Device_Plugin *pi = NULL;
+  if (!pi) {
+    Fl_Plugin_Manager pm("fltk:device");
+    pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+  }
   return pi;
 }
 
