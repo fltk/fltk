@@ -4512,7 +4512,7 @@ int Fl_Darwin_System_Driver::calc_mac_os_version() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (fl_mac_os_version >= 101400) views_use_CA = YES;
 #endif
-  //if (fl_mac_os_version >= 101300) views_use_CA = YES; // to get as with mojave
+  //if (fl_mac_os_version >= 101300) views_use_CA = YES; // TEMP to get as with mojave
   return fl_mac_os_version;
 }
 
