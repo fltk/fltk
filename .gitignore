@@ -255,6 +255,7 @@
 
 fluid/*.app/Contents/MacOS
 test/*.app/Contents/MacOS
+**/.DS_Store
 
 test/adjuster.app
 test/iconize.app
