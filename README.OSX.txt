@@ -1,5 +1,5 @@
-README.OSX.txt - 2016-04-01 - Building FLTK under Apple OS X
-------------------------------------------------------------
+README.OSX.txt - Building FLTK under Apple macOS
+-------------------------------------------------
 
 
 
@@ -33,17 +33,17 @@ README.OSX.txt - 2016-04-01 - Building FLTK under Apple OS X
     4.5   Testing FLTK
     4.6   Uninstalling previous versions of FLTK
     4.7   Installing FLTK
-  5  MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
+  5   MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
   6   DOCUMENT HISTORY
 
 
  1  INTRODUCTION
 =================
 
-FLTK supports all Mac OS X versions above 10.3 (Panther). See below for how to
-build FLTK applications that can run on all (old or recent) Mac OS X versions.
+FLTK supports all macOS versions above 10.3 (Panther). See below for how to
+build FLTK applications that can run on all (old or recent) macOS versions.
 
-FLTK currently supports the following development environments on the Apple OS X
+FLTK currently supports the following development environments on the macOS
 platform:
 
     - gcc command line tools
@@ -73,11 +73,11 @@ to keep the Terminal in the Dock.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
-page. Unpack FLTK into a convenient location. I like to have everything in my
+If you are familiar with Git and like to stay current with your version,
+you will find the Git access parameters at the bottom of that page.
+Unpack FLTK into a convenient location. I like to have everything in my
 dev directory:
 
   cd
@@ -87,14 +87,14 @@ dev directory:
   tar xvfz fltk-1.3.xxxx.tar.gz
   cd fltk-1.3.xxxx
 
-If you got FLTK via subversion then you need one extra step: build the
+If you got FLTK via Git then you need one extra step: build the
 configure script. Otherwise skip the following part marked ADVANCED:
 
-ADVANCED: (only if you got FLTK via subversion)
+ADVANCED: (only if you got FLTK via Git)
 - The preferred procedure is to build the configure script using tools
   called autoconf and automake. If these tools are not both available
   on your system, this post
-     http://www.fltk.org/newsgroups.php?s15486+gfltk.coredev+v15499
+     https://www.fltk.org/newsgroups.php?gfltk.coredev+v:15499
   details how to get them.
 
   Then, stay in your FLTK source-code directory and type the following:
@@ -102,7 +102,7 @@ ADVANCED: (only if you got FLTK via subversion)
   NOCONFIGURE=1 ./autogen.sh
 
 - Alternatively, copy the configure script from the last FLTK weekly snapshot
-  to your svn source-code directory.
+  to your Git source-code directory.
 
 :END_ADVANCED
 
@@ -123,7 +123,7 @@ more details can be found in README.
 To create multi-architecture binaries, start "configure" with these flags:
   ./configure  --with-archflags="-arch i386 -arch x86_64"
 
-To create applications that can run under Mac OS X 10.4 and above, use these flags:
+To create applications that can run under macOS 10.4 and above, use these flags:
   ./configure CXXFLAGS="-mmacosx-version-min=10.4" LDFLAGS="-mmacosx-version-min=10.4"
 
 :END_ADVANCED
@@ -202,10 +202,10 @@ FLTK USING XCODE4'
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
+If you are familiar with "Git" and like to stay current with your
+version, you will find the Git access parameters at the bottom of that
 page. You can use the SCM system that is built into Xcode.
 
 Unpack FLTK by double-clicking it and copy the new folder into a convenient
@@ -229,10 +229,10 @@ Use the "Project" pulldown menu to change "Active Build Configuration" to
 Use the "Project" pulldown menu to set the "Active Target" to "Demo". Select
 "Build" from the "Build" menu to create all libraries and test applications.
 
-By default, the Xcode4 project builds applications that run under Mac OS X 10.5
+By default, the Xcode4 project builds applications that run under macOS 10.5
 and above. To build applications that also run under older Mac OS versions,
 select "Edit Project Settings" of the Project menu, then select the Build panel,
-and modify the "Mac OS X Deployment Target" item.
+and modify the "macOS Deployment Target" item.
 
 All frameworks and apps will be located in "./ide/Xcode4/build/Release/".
 
@@ -276,8 +276,8 @@ generate C++ source code from .fl resource files. Add Fluid to the developer
 tools:
 
   sudo mkdir /Developer/Applications/Utilities/FLTK/
-  sudo rm -f -r /Developer/Applications/Utilities/FLTK/Fluid.app
-  sudo cp -R ide/Xcode4/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
+  sudo rm -f -r /Developer/Applications/Utilities/FLTK/fluid.app
+  sudo cp -R ide/Xcode4/build/Release/fluid.app /Developer/Applications/Utilities/FLTK/
 
 
  3.8  Installing Little Helpers
@@ -359,10 +359,10 @@ the Download section in the Preferences dialog.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
+If you are familiar with "Git" and like to stay current with your
+version, you will find the Git access parameters at the bottom of that
 page. You can use the SCM system that is built into Xcode.
 
 Unpack FLTK by double-clicking it and copy the new folder into a convenient
@@ -386,9 +386,9 @@ Use the "Scheme" pulldown menu to change the active target to "Demo" and
 "My Mac 32-bit" or "My Mac 64-bit". Select "Build for" -> "Running"Run" from
 the "Product" menu to create all libraries and test applications.
 
-By default, the Xcode4 project builds applications that run under Mac OS X 10.5
+By default, the Xcode4 project builds applications that run under macOS 10.5
 and above. To build applications that also run under older Mac OS versions,
-modify the "OS X Deployment Target" item of the FLTK project build settings.
+modify the "macOS Deployment Target" item of the FLTK project build settings.
 
 All frameworks and apps will be located in a private directory. Use
 "Window"->"Organizer" to find the full path.
@@ -435,8 +435,8 @@ generate C++ source code from .fl resource files. Add Fluid to the developer
 tools:
 
   sudo mkdir /Applications/FLTK/
-  sudo rm -f -r /Applications/FLTK/Fluid.app
-  sudo cp -R (Organizer->Derived Data Path)/Release/Fluid.app /Applications/FLTK/
+  sudo rm -f -r /Applications/FLTK/fluid.app
+  sudo cp -R (Organizer->Derived Data Path)/Release/fluid.app /Applications/FLTK/
 
     (TODO: 4.8   Installing Little Helpers)
     (TODO: 4.9   Creating new Projects)
@@ -475,3 +475,4 @@ Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON
 Apr 28 2014 - Manolo: how to build programs that run on various Mac OS X versions
 Mar 18 2015 - Manolo: removed uses of the Xcode3 project
 Apr 01 2016 - AlbrechtS: corrected typo, formatted most line breaks < 80 columns
+Dec 04 2018 - AlbrechtS: fix typo (lowercase fluid.app) for case sensitive macOS
