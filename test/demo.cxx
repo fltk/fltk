@@ -322,7 +322,7 @@ void dobut(Fl_Widget *, long arg)
       *arg = 0;
 #if defined USING_XCODE
       fl_filename_absolute(path, 2048, "../../../../test/");
-      fluidpath = "Fluid.app";
+      fluidpath = "fluid.app";
 #else
       strcpy(path, app_path); strcat(path, "/");
       fluidpath = "../fluid/fluid.app";

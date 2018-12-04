@@ -283,8 +283,8 @@ generate C++ source code from .fl resource files. Add Fluid to the developer
 tools:
 
   sudo mkdir /Developer/Applications/Utilities/FLTK/
-  sudo rm -f -r /Developer/Applications/Utilities/FLTK/Fluid.app
-  sudo cp -R ide/Xcode4/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
+  sudo rm -f -r /Developer/Applications/Utilities/FLTK/fluid.app
+  sudo cp -R ide/Xcode4/build/Release/fluid.app /Developer/Applications/Utilities/FLTK/
 
 
  3.8  Installing Little Helpers
@@ -442,8 +442,8 @@ generate C++ source code from .fl resource files. Add Fluid to the developer
 tools:
 
   sudo mkdir /Applications/FLTK/
-  sudo rm -f -r /Applications/FLTK/Fluid.app
-  sudo cp -R (Organizer->Derived Data Path)/Release/Fluid.app /Applications/FLTK/
+  sudo rm -f -r /Applications/FLTK/fluid.app
+  sudo cp -R (Organizer->Derived Data Path)/Release/fluid.app /Applications/FLTK/
 
     (TODO: 4.8   Installing Little Helpers)
     (TODO: 4.9   Creating new Projects)
