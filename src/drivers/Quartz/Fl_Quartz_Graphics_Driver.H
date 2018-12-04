@@ -113,8 +113,6 @@ protected:
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
-  void push_no_clip();
-  void pop_clip();
   void restore_clip();
   // --- implementation is in src/fl_vertex.cxx which includes src/cfg_gfx/xxx_rect.cxx
   void begin_complex_polygon();

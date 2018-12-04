@@ -385,6 +385,20 @@ void Fl_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2,
   polygon(x1, y1, x2, y2, x3, y3);
 }
 
+void Fl_Graphics_Driver::push_no_clip() {
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
+  else Fl::warning("Fl_Graphics_Driver::push_no_clip: clip stack overflow!\n");
+  restore_clip();
+}
+
+void Fl_Graphics_Driver::pop_clip() {
+  if (rstackptr > 0) {
+    Fl_Region oldr = rstack[rstackptr--];
+    if (oldr) XDestroyRegion(oldr);
+  } else Fl::warning("Fl_Graphics_Driver::pop_clip: clip stack underflow!\n");
+  restore_clip();
+}
+
 /**
  \}
  \endcond

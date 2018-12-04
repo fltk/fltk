@@ -181,21 +181,6 @@ int Fl_OpenGL_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   return 1;
 }
 
-void Fl_OpenGL_Graphics_Driver::push_no_clip() {
-  // TODO: implement OpenGL clipping
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
-  else Fl::warning("Fl_OpenGL_Graphics_Driver::push_no_clip: clip stack overflow!\n");
-  restore_clip();
-}
-
-void Fl_OpenGL_Graphics_Driver::pop_clip() {
-  // TODO: implement OpenGL clipping
-  if (rstackptr > 0) {
-    rstackptr--;
-  } else Fl::warning("Fl_OpenGL_Graphics_Driver::pop_clip: clip stack underflow!\n");
-  restore_clip();
-}
-
 void Fl_OpenGL_Graphics_Driver::restore_clip() {
   // TODO: implement OpenGL clipping
   fl_clip_state_number++;

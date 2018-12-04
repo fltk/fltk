@@ -298,9 +298,9 @@ public:
   /** see fl_not_clipped() */
   virtual int not_clipped(int x, int y, int w, int h) {return 1;}
   /** see fl_push_no_clip() */
-  virtual void push_no_clip() {}
+  virtual void push_no_clip();                  // has default implementation
   /** see fl_pop_clip() */
-  virtual void pop_clip() {}
+  virtual void pop_clip();                      // has default implementation
   virtual Fl_Region clip_region();              // has default implementation
   virtual void clip_region(Fl_Region r);        // has default implementation
   virtual void restore_clip();

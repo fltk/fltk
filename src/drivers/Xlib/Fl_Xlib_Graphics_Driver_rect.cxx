@@ -396,22 +396,6 @@ int Fl_Xlib_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   return XRectInRegion(r, x, y, w, h);
 }
 
-// make there be no clip (used by fl_begin_offscreen() only!)
-void Fl_Xlib_Graphics_Driver::push_no_clip() {
-  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
-  else Fl::warning("Fl_Xlib_Graphics_Driver::push_no_clip: clip stack overflow!\n");
-  restore_clip();
-}
-
-// pop back to previous clip:
-void Fl_Xlib_Graphics_Driver::pop_clip() {
-  if (rstackptr > 0) {
-    Fl_Region oldr = rstack[rstackptr--];
-    if (oldr) XDestroyRegion(oldr);
-  } else Fl::warning("Fl_Xlib_Graphics_Driver::pop_clip: clip stack underflow!\n");
-  restore_clip();
-}
-
 void Fl_Xlib_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   if (gc_) {
