@@ -332,6 +332,59 @@ Fl_Offscreen Fl_Graphics_Driver::get_offscreen_and_delete_image_surface(Fl_Image
   return off;
 }
 
+void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
+  line(x, y, x1, y);
+}
+
+void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2) {
+  line(x, y, x1, y);
+  line(x1, y, x1, y2);
+}
+
+void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
+  line(x, y, x1, y);
+  line(x1, y, x1, y2);
+  line(x1, y2, x3, y2);
+}
+
+void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
+  line(x, y, x, y1);
+}
+
+void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2) {
+  line(x, y, x, y1);
+  line(x, y1, x2, y1);
+}
+
+void Fl_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3) {
+  line(x, y, x, y1);
+  line(x, y1, x2, y1);
+  line(x2, y1, x2, y3);
+}
+
+void Fl_Graphics_Driver::line(int x, int y, int x1, int y1, int x2, int y2) {
+  line(x, y, x1, y1);
+  line(x1, y1, x2, y2);
+}
+
+void Fl_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
+  line(x0, y0, x1, y1);
+  line(x1, y1, x2, y2);
+  line(x2, y2, x0, y0);
+}
+
+void Fl_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+  line(x0, y0, x1, y1);
+  line(x1, y1, x2, y2);
+  line(x2, y2, x3, y3);
+  line(x3, y3, x0, y0);
+}
+
+void Fl_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+  polygon(x0, y0, x1, y1, x3, y3);
+  polygon(x1, y1, x2, y2, x3, y3);
+}
+
 /**
  \}
  \endcond
