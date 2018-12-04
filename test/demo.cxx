@@ -9,11 +9,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include <stdio.h>
@@ -326,7 +326,7 @@ void dobut(Fl_Widget *, long arg) {
       *arg = 0;
 #if defined USING_XCODE
       fl_filename_absolute(path, 2048, "../../../../test/");
-      fluidpath = "Fluid.app";
+      fluidpath = "fluid.app";
 #else
       strcpy(path, app_path); strcat(path, "/");
       fluidpath = "../fluid/fluid.app";
