@@ -907,13 +907,18 @@ int main() {
    Fl::clipboard_image (requesting image data) are possible.
    Set things up so the handle function of the \p receiver widget will be called with an FL_PASTE event some
    time in the future if the clipboard does contain data of the requested type.
-   While processing the FL_PASTE event:
-   \li if \p type is Fl::clipboard_plain_text, the text string from the specified \p source is in Fl::event_text()
-   with UTF-8 encoding, and the number of bytes in Fl::event_length().
-   If Fl::paste() gets called during the drop step of a files-drag-and-drop operation,
+   
+   The handle function of \p receiver can process the FL_PASTE event as follows:
+   \li If the \p receiver widget is known to only receive text data, the text string
+   from the specified \p source is in Fl::event_text() with UTF-8 encoding, and the
+   number of bytes is in Fl::event_length(). If Fl::paste() gets called during the
+   drop step of a files-drag-and-drop operation,
    Fl::event_text() contains a list of filenames (see \ref events_dnd).
-   \li if \p type is Fl::clipboard_image, the pointer returned by Fl::event_clipboard() can be safely cast to
-   type Fl_RGB_Image * to obtain a pointer to the pasted image.
+   \li If the \p receiver widget can potentially receive non-text data, use
+   Fl::event_clipboard_type() to determine what sort of data is being sent.
+   If Fl::event_clipboard_type() returns Fl::clipboard_plain_text, proceed as above.
+   It it returns Fl::clipboard_image, the pointer returned by Fl::event_clipboard()
+   can be safely cast to type Fl_RGB_Image * to obtain a pointer to the pasted image.
    If \p receiver accepts the clipboard image, receiver.handle() should return 1 and the
    application should take ownership of this image (that is, delete it after use).
    Conversely, if receiver.handle() returns 0, the application must not use the image.
