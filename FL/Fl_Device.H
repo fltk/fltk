@@ -126,6 +126,8 @@ public:
   virtual Fl_RGB_Image* rectangle_capture(Fl_Widget *widget, int x, int y, int w, int h) = 0;
   /** Returns the window's GL context */
   virtual GLContext context(Fl_Widget *widget) = 0;
+  /** Returns the OpenGL plugin */
+  static Fl_Device_Plugin *opengl_plugin();
 };
 
 #endif // Fl_Device_H

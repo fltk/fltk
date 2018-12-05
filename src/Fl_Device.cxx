@@ -122,6 +122,15 @@ Fl_Surface_Device *Fl_Surface_Device::pop_current()
   return surface_;
 }
 
+Fl_Device_Plugin *Fl_Device_Plugin::opengl_plugin() {
+  static Fl_Device_Plugin *pi = NULL;
+  if (!pi) {
+    Fl_Plugin_Manager pm("fltk:device");
+    pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+  }
+  return pi;
+}
+
 //
 // End of "$Id$".
 //

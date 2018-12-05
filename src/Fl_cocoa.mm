@@ -147,15 +147,6 @@ static TISCreateASCIICapableInputSourceList_type TISCreateASCIICapableInputSourc
 typedef void (*KeyScript_type)(short);
 static KeyScript_type KeyScript;
 
-static Fl_Device_Plugin *opengl_plugin_device() {
-  static Fl_Device_Plugin *pi = NULL;
-  if (!pi) {
-    Fl_Plugin_Manager pm("fltk:device");
-    pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
-  }
-  return pi;
-}
-
 /* fltk-utf8 placekeepers */
 void fl_set_status(int x, int y, int w, int h)
 {
@@ -2212,7 +2203,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
   if (d->wait_for_expose_value) { // 1st drawing of layer-backed GL window
-    Fl_Device_Plugin *pi = opengl_plugin_device();
+    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
     if (pi) {
       [pi->context(window) update]; // layer-backed GL windows may be empty without this
     }
@@ -4253,7 +4244,7 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
 // captures a rectangle from a GL window and returns it as an allocated NSBitmapImageRep
 // the capture has high res on retina
 {
-  Fl_Device_Plugin *pi = opengl_plugin_device();
+  Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
   if (!pi) return nil;
   Fl_RGB_Image *img = pi->rectangle_capture(win, x, y, w, h);
   NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:img->w() pixelsHigh:img->h() bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*img->w() bitsPerPixel:32];

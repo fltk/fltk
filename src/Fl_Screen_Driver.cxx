@@ -192,8 +192,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
                                                           Fl_RGB_Image *full_img)
 {
   if ( g->as_gl_window() ) {
-    Fl_Plugin_Manager pm("fltk:device");
-    Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
     if (!pi) return full_img;
     full_img = pi->rectangle_capture(g, x, y, w, h);
   }

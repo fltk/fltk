@@ -68,8 +68,7 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
   // we do some trickery to recognize OpenGL windows and draw them via a plugin
   int drawn_by_plugin = 0;
   if (widget->as_gl_window()) {
-    Fl_Plugin_Manager pm("fltk:device");
-    Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
     if (pi) {
       drawn_by_plugin = pi->print(widget);
     }
