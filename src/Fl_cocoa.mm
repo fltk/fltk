@@ -2226,7 +2226,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
     Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
     [self layer].contentsScale = d->mapped_to_retina() ? 2. : 1.;
-    window->redraw(); // necessary with 10.14.2 public beta 3
+    window->redraw(); // necessary with 10.14.2; harmless before
   }
   return retval;
 }
