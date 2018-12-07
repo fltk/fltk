@@ -173,6 +173,7 @@ int Fl_Choice::value(int v) {
 int Fl_Choice::handle(int e) {
   if (!menu() || !menu()->text) return 0;
   const Fl_Menu_Item* v;
+  Fl_Widget_Tracker wp(this);
   switch (e) {
   case FL_ENTER:
   case FL_LEAVE:
@@ -187,12 +188,14 @@ int Fl_Choice::handle(int e) {
     if (Fl::scheme()
 	|| fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) != textcolor()) {
       v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+      if (wp.deleted()) return 1;
     } else {
       // In order to preserve the old look-n-feel of "white" menus,
       // temporarily override the color() of this widget...
       Fl_Color c = color();
       color(FL_BACKGROUND2_COLOR);
       v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
+      if (wp.deleted()) return 1;
       color(c);
     }
     if (!v || v->submenu()) return 1;
