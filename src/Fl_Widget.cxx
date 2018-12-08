@@ -170,6 +170,8 @@ Fl_Widget::~Fl_Widget() {
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
+  if (flags() & COPIED_IMAGE && label_.image) delete label_.image;
+  if (flags() & COPIED_DEIMAGE && label_.deimage) delete label_.deimage;
   // remove from parent group
   if (parent_) parent_->remove(this);
 #ifdef DEBUG_DELETE
@@ -330,6 +332,45 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg) {
   if (wp.deleted()) return;
   if (callback_ != default_callback)
     clear_changed();
+}
+
+
+void Fl_Widget::image(Fl_Image* img) {
+  if (label_.image == img) return;
+  if (flags() & COPIED_IMAGE) {
+    if (img) {
+      label_.image = img->copy(img->w(),img->h());
+    }
+    else {
+      delete label_.image;
+    }
+  }
+  else {
+    label_.image = img;
+  }
+}
+
+void Fl_Widget::image(Fl_Image& img) {
+  image(&img);
+}
+
+void Fl_Widget::deimage(Fl_Image* img) {
+  if (label_.deimage == img) return;
+  if (flags() & COPIED_DEIMAGE) {
+    if (img) {
+      label_.deimage = img->copy(img->w(),img->h());
+    }
+    else {
+      delete label_.deimage;
+    }
+  }
+  else {
+    label_.deimage = img;
+  }
+}
+
+void Fl_Widget::deimage(Fl_Image& img) {
+  deimage(&img);
 }
 
 //

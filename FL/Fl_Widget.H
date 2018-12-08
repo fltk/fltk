@@ -162,6 +162,8 @@ protected:
         MAC_USE_ACCENTS_MENU = 1<<19, ///< On the Mac OS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
         // (space for more flags)
         NEEDS_KEYBOARD  = 1<<20,  ///< set this on touch screen devices if a widget needs a keyboard when it gets Focus. @see Fl_Screen_Driver::request_keyboard()
+        COPIED_IMAGE    = 1<<21,  ///< the image associated with the widget's label is internally copied and its destruction is handled by the widget
+        COPIED_DEIMAGE  = 1<<22,  // < the deimage associated with the widget's label is internally copied and its destruction is handled by the widget
         // a tiny bit more space for new flags...
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
@@ -235,7 +237,7 @@ public:
   */
   int is_label_copied() const {return ((flags_ & COPIED_LABEL) ? 1 : 0);}
 
-  /** Returns a pointer to the parent widget.  
+  /** Returns a pointer to the parent widget.
       Usually this is a Fl_Group or Fl_Window. 
       \retval NULL if the widget has no parent
       \see Fl_Group::add(Fl_Widget*)
@@ -505,15 +507,21 @@ public:
 
   /** Sets the image to use as part of the widget label.
       This image is used when drawing the widget in the active state.
+
+      If the COPIED_IMAGE user flag is set this method allocates
+      a copy of 'img'.
       \param[in] img the new image for the label 
    */
-  void image(Fl_Image* img) {label_.image=img;}
+  void image(Fl_Image* img);
 
   /** Sets the image to use as part of the widget label.
       This image is used when drawing the widget in the active state.
-      \param[in] img the new image for the label 
+
+      If the COPIED_IMAGE user flag is set this method allocates
+      a copy of 'img'.
+      \param[in] img the new image for the label
    */
-  void image(Fl_Image& img) {label_.image=&img;}
+  void image(Fl_Image& img);
 
   /** Gets the image that is used as part of the widget label.  
       This image is used when drawing the widget in the inactive state.
@@ -524,15 +532,23 @@ public:
 
   /** Sets the image to use as part of the widget label.  
       This image is used when drawing the widget in the inactive state.
-      \param[in] img the new image for the deactivated widget
-   */
-  void deimage(Fl_Image* img) {label_.deimage=img;}
 
-  /** Sets the image to use as part of the widget label.  
-      This image is used when drawing the widget in the inactive state.
+      If the COPIED_DEIMAGE user flag is set this method allocates
+      a copy of 'img'.
+
       \param[in] img the new image for the deactivated widget
    */
-  void deimage(Fl_Image& img) {label_.deimage=&img;}
+  void deimage(Fl_Image* img);
+
+  /** Sets the image to use as part of the widget label.
+      This image is used when drawing the widget in the inactive state.
+
+      If the COPIED_DEIMAGE user flag is set this method allocates
+      a copy of 'img'.
+
+      \param[in] img the new image for the deactivated widget
+   */
+  void deimage(Fl_Image& img);
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL
