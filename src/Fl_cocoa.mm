@@ -1146,6 +1146,7 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidBecomeKey:(NSNotification *)notif;
 - (void)windowDidBecomeMain:(NSNotification *)notif;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
+- (void)fl_windowMiniaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
@@ -1194,7 +1195,7 @@ static void orderfront_subwindows(FLWindow *xid)
 }
 -(void)windowWillMiniaturize:(NSNotification *)notif
 {
-  [super windowWillMiniaturize:notif];
+  [super fl_windowMiniaturize:notif];
   NSArray *children = [(NSWindow*)[notif object] childWindows]; // 10.2
   NSEnumerator *enumerator = [children objectEnumerator];
   id child;
@@ -1354,13 +1355,13 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl::flush(); // Process redraws set by FL_SHOW.
   fl_unlock_function();
 }
-- (void)windowDidMiniaturize:(NSNotification *)notif
+- (void)fl_windowMiniaturize:(NSNotification *)notif
 {
   // subwindows are not captured in system-built miniature window image
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
-  Fl_Window *window = [nsw getFl_Window];
   if ([[nsw childWindows] count]) {
+    Fl_Window *window = [nsw getFl_Window];
     // capture the window and its subwindows and use as miniature window image
     NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(window, 0, 0, window->w(), window->h());
     if (bitmap) {
@@ -1370,6 +1371,14 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       [nsw setMiniwindowImage:img];
     }
   }
+  fl_unlock_function();
+}
+- (void)windowDidMiniaturize:(NSNotification *)notif
+{
+  if (fl_mac_os_version >= 100500) [self fl_windowMiniaturize:notif];
+  fl_lock_function();
+  FLWindow *nsw = (FLWindow*)[notif object];
+  Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_HIDE, window);
   fl_unlock_function();
 }
