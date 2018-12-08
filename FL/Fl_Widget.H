@@ -507,21 +507,38 @@ public:
 
   /** Sets the image to use as part of the widget label.
       This image is used when drawing the widget in the active state.
-
-      If the COPIED_IMAGE user flag is set this method allocates
-      a copy of 'img'.
-      \param[in] img the new image for the label 
+      \param[in] img the new image for the label
    */
   void image(Fl_Image* img);
 
   /** Sets the image to use as part of the widget label.
       This image is used when drawing the widget in the active state.
-
-      If the COPIED_IMAGE user flag is set this method allocates
-      a copy of 'img'.
       \param[in] img the new image for the label
    */
   void image(Fl_Image& img);
+
+  /** Sets the current image.
+      Unlike image(), this method makes a copy of the image
+      instead of using the original pointer.
+
+      The internal copy will automatically be freed whenever you assign
+      a new image or when the widget is destroyed.
+
+      \param[in] new_img the new image
+      \see image()
+   */
+
+  void copy_image(Fl_Image* new_img);
+
+  /** Returns whether the current image was assigned with copy_image().
+
+      This can be useful for temporarily overwriting the widget's image
+      and restoring it later.
+
+      \retval 0 current image was assigned with image().
+      \retval 1 current image was assigned with copy_image().
+  */
+  int is_image_copied() const {return ((flags_ & COPIED_IMAGE) ? 1 : 0);}
 
   /** Gets the image that is used as part of the widget label.  
       This image is used when drawing the widget in the inactive state.
@@ -549,6 +566,30 @@ public:
       \param[in] img the new image for the deactivated widget
    */
   void deimage(Fl_Image& img);
+
+  /** Sets the current deimage.
+      Unlike deimage(), this method makes a copy of the deimage
+      instead of using the original pointer.
+
+      The internal copy will automatically be freed whenever you assign
+      a new deimage or when the widget is destroyed.
+
+      \param[in] new_img the new deimage
+      \see deimage()
+   */
+
+  void copy_deimage(Fl_Image* new_img);
+
+
+  /** Returns whether the current image was assigned with copy_deimage().
+
+      This can be useful for temporarily overwriting the widget's deimage
+      and restoring it later.
+
+      \retval 0 current deimage was assigned with deimage().
+      \retval 1 current deimage  was assigned with copy_deimage().
+  */
+  int is_deimage_copied() const {return ((flags_ & COPIED_DEIMAGE) ? 1 : 0);}
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL
