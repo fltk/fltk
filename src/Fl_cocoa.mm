@@ -1279,8 +1279,8 @@ static FLTextView *fltextview_instance = nil;
 - (void)windowDidResignKey:(NSNotification *)notif;
 - (void)windowDidBecomeKey:(NSNotification *)notif;
 - (void)windowDidBecomeMain:(NSNotification *)notif;
-- (void)windowWillMiniaturize:(NSNotification *)notif;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
+- (void)fl_windowMiniaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
@@ -1397,7 +1397,7 @@ void Fl_X::changed_resolution(bool b) {
 }
 -(void)windowWillMiniaturize:(NSNotification *)notif
 {
-  [super windowWillMiniaturize:notif];
+  [super fl_windowMiniaturize:notif];
   NSArray *children = [(NSWindow*)[notif object] childWindows]; // 10.2
   NSEnumerator *enumerator = [children objectEnumerator];
   id child;
@@ -1531,9 +1531,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl::flush(); // Process redraws set by FL_SHOW.
   fl_unlock_function();
 }
-- (void)windowWillMiniaturize:(NSNotification *)notif
-{
-  // subwindows are not captured in system-built miniature window image
+- (void)fl_windowMiniaturize:(NSNotification *)notif
+{ // Same as windowWillMiniaturize before 10.5,
+  // and called by windowDidMiniaturize after 10.5.
+  // Subwindows are not captured in system-built miniature window image
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   if ([[nsw childWindows] count]) {
@@ -1549,6 +1550,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)windowDidMiniaturize:(NSNotification *)notif
 {
+  if (fl_mac_os_version >= 100500) [self fl_windowMiniaturize:notif];
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
@@ -4490,6 +4492,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, i
   NSBitmapImageRep *bitmap = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   CGContextRef gc = ((FLViewLayer*)[fl_xid(win) contentView])->layer_data;
+  if (!gc) return nil;
   CGImageRef cgimg = CGBitmapContextCreateImage(gc);  // requires 10.4
   Fl_X *i = Fl_X::i( win );
   int resolution = i->mapped_to_retina() ? 2 : 1;
@@ -4539,9 +4542,9 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
       if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] restoreGraphicsState];
 #endif
     }
-    if (!bitmap) return nil;
   }
-  
+  if (!bitmap) return nil;
+
   // capture also subwindows
   NSArray *children = [fl_xid(win) childWindows]; // 10.2
   NSEnumerator *enumerator = [children objectEnumerator];
