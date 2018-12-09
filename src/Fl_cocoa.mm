@@ -3182,7 +3182,10 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   if (show_iconic()) {
     show_iconic(0);
     w->handle(FL_SHOW); // create subwindows if any
-    [cw recursivelySendToSubwindows:@selector(display)];  // draw the window and its subwindows before its icon is computed
+    if (fl_mac_os_version < 101300) { // TODO: threshold may be smaller
+      // draw the window and its subwindows before its icon is computed
+      [cw recursivelySendToSubwindows:@selector(display)];
+    }
     [cw miniaturize:nil];
   } else if (w->parent()) { // a subwindow
     [cw setIgnoresMouseEvents:YES]; // needs OS X 10.2
