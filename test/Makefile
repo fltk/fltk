@@ -309,11 +309,15 @@ buttons$(EXEEXT): buttons.o
 blocks$(EXEEXT): blocks.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) $(RM) -r -f blocks.app/Contents/MacOS
+	$(OSX_ONLY) mkdir blocks.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
 
 checkers$(EXEEXT): checkers.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) $(RM) -r -f checkers.app/Contents/MacOS
+	$(OSX_ONLY) mkdir checkers.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
 
 clock$(EXEEXT): clock.o
@@ -464,6 +468,8 @@ subwindow$(EXEEXT): subwindow.o
 sudoku: sudoku.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
+	$(OSX_ONLY) $(RM) -r -f sudoku.app/Contents/MacOS
+	$(OSX_ONLY) mkdir sudoku.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
 
 sudoku.exe: sudoku.o sudoku.rc
