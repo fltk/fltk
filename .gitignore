@@ -78,8 +78,8 @@
 /examples/howto-simple-svg
 /examples/howto-text-over-image-button
 /examples/menubar-add
-/examples/nativefilechooser-simple-app
 /examples/nativefilechooser-simple
+/examples/nativefilechooser-simple-app
 /examples/OpenGL3-glut-test
 /examples/OpenGL3test
 /examples/progress-simple
@@ -95,6 +95,7 @@
 /examples/tabs-simple
 /examples/textdisplay-with-colors
 /examples/texteditor-simple
+/examples/texteditor-with-dynamic-colors
 /examples/tree-as-container
 /examples/tree-custom-draw-items
 /examples/tree-custom-sort

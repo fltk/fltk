@@ -6,7 +6,7 @@ FLTK EXAMPLE PROGRAMS
     programmers. The "*-simple.cxx" files are a good starting point for
     those new to FLTK.
 
-    The programs in this directory are NOT built automatically 
+    The programs in this directory are NOT built automatically
     when you build FLTK; you have to manually build them.
 
     The goals of these example programs:
@@ -15,7 +15,7 @@ FLTK EXAMPLE PROGRAMS
 
       o Show simple examples of how to use widgets to new users of FLTK.
 
-      o Show intermediate or advanced examples of techniques often 
+      o Show intermediate or advanced examples of techniques often
         misused or hard to document
 
       o Demonstrate code that are FAQs on the newsgroup forum.
@@ -40,12 +40,12 @@ NEW SUBMISSIONS: RECOMMENDED PRACTICES
     just a .cxx/.h file pair should have their own subdirectory.
 
     Data files common to several examples should be located in the
-    examples/data directory. 
-    
-    Ancillary data files should be as small as possible, to keep the 
+    examples/data directory.
+
+    Ancillary data files should be as small as possible, to keep the
     distribution tar files small. Avoid high resolution images or
-    uncompressed images when possible. 
-    
+    uncompressed images when possible.
+
     Examples that need large data sets (HD images, etc) should not
     be part of the FLTK distribution; they can be provided as separate
     packages (eg. as articles or external links).
@@ -72,16 +72,17 @@ NAMING CONVENTIONS
     with that widget's name in lowercase, eg. "table.cxx" for Fl_Table.
 
     Demonstrations of a particular technique should start with
-    "howto-xxx.cxx" to avoid naming conflicts with future widgets 
+    "howto-xxx.cxx" to avoid naming conflicts with future widgets
     of the same name.
 
       xxx-simple.cxx          -- Simplest possible example of widget xxx
-                                 eg. table-simple.cxx
+                                 eg. "table-simple.cxx"
 
       xxx-<technique>.cxx     -- A particular "technique" using widget xxx
                                  eg. "table-spreadsheet.cxx"
 
-      howto-<technique>.cxx   -- Demonstrate a particular technique, eg. "howto-threading.cxx"
+      howto-<technique>.cxx   -- Demonstrate a particular technique,
+                                 eg. "howto-threading.cxx"
 
     Some example programs may depend on multiple files. To avoid
     cluttering up the top level examples directory, such examples will
@@ -106,7 +107,7 @@ HISTORY
     applications programmers.
 
     The fltk/examples directory was created in FLTK 1.3.0 to separate
-    'good programming examples' from the test suite code. 
+    'good programming examples' from the test suite code.
 
 
 DISCLAIMER
@@ -114,9 +115,9 @@ DISCLAIMER
     The examples in this directory are provided 'as-is', without any express
     or implied warranty.  In no event will the authors be held liable for
     any damages arising from the use of this software.
-  
+
 
 BUGS
 
     If you find a bug, please report it through the fltk STR form at
-    http://fltk.org/str.php
+    https://www.fltk.org/str.php

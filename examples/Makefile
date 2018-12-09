@@ -16,10 +16,12 @@ ALL = clipboard$(EXEEXT) \
       howto-simple-svg$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
-      nativefilechooser-simple$(EXEEXT) \
       nativefilechooser-simple-app$(EXEEXT) \
+      nativefilechooser-simple$(EXEEXT) \
       progress-simple$(EXEEXT) \
       shapedwindow$(EXEEXT) \
+      simple-terminal$(EXEEXT) \
+      SVG_File_Surface$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \
@@ -27,16 +29,14 @@ ALL = clipboard$(EXEEXT) \
       table-spreadsheet-with-keyboard-nav$(EXEEXT) \
       table-with-keynav$(EXEEXT) \
       tabs-simple$(EXEEXT) \
-      simple-terminal$(EXEEXT) \
-      SVG_File_Surface$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
       texteditor-with-dynamic-colors$(EXEEXT) \
-      tree-simple$(EXEEXT) \
       tree-as-container$(EXEEXT) \
       tree-custom-draw-items$(EXEEXT) \
       tree-custom-sort$(EXEEXT) \
       tree-of-tables$(EXEEXT) \
+      tree-simple$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
