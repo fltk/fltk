@@ -1,12 +1,11 @@
-README (documentation)
-----------------------
+README.txt (documentation)
+---------------------------
 FLTK 1.3 (and higher) documentation is available in HTML and PDF format.
 The documentation must be generated in a separate step or downloaded
 from FLTK's software download pages. The documentation can also
 be accessed online.
 
-To read the docs after downloading or generating them, open the
-files:
+To read the docs after downloading or generating them, open the files:
 
     documentation/html/index.html
     documentation/fltk.pdf
@@ -21,14 +20,14 @@ along with the PDF version of the manual. The docs on the web site
 are usually somewhat older (latest release). Use this URL to find
 the current online documentation:
 
-    http://www.fltk.org/documentation.php
+    https://www.fltk.org/documentation.php
 
 
 Documentation Download:
 -----------------------
 To download pre-generated docs, go to
 
-    http://www.fltk.org/software.php
+    https://www.fltk.org/software.php
 
 and look for the files
 
@@ -42,12 +41,17 @@ did with the source tarball.
 Generation of Documentation (common part):
 ------------------------------------------
 To generate the documentation yourself, you should have Doxygen
-version 1.5.7 or later (recommended version is 1.7.3 or later).
+version 1.8 or later (recommended version is 1.8.13 or later).
+Older Doxygen versions than 1.8 may or may not work.
 
 To generate the PDF version you also need a current version of LaTeX.
 You can use the packages tetex (older) or texlive (current) if your
 distribution provides them. You may need to install additional fonts
 and other sub-packages for the PDF version to be generated correctly.
+
+Note: packages known to work under Ubuntu 18.04:
+
+  texlive texlive-extra-utils texlive-latex-extra texlive-font-utils
 
 
 Generation of Documentation with autoconf (configure) + make:
@@ -91,10 +95,10 @@ manually, because the generation is not included in the standard ('all')
 target. This may be changed in the future.
 
 
-FLTK Developer Snapshots or Subversion Usage:
----------------------------------------------
+FLTK Developer Snapshots or Git Usage:
+--------------------------------------
 There is no pre-generated documentation available if you use a current
-developer snapshot or subversion. You must generate the documentation
+developer snapshot or git. You must generate the documentation
 yourself or access the online documentation.
 
 
@@ -105,4 +109,4 @@ contribute an example, section, or chapter to the FLTK manual, please
 post a question in the fltk newsgroup fltk.general or post a bug
 report or feature request at:
 
-    http://www.fltk.org/str.php
+    https://www.fltk.org/str.php

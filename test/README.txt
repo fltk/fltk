@@ -1,5 +1,5 @@
-test/README - 20 Oct 1998
--------------------------
+test/README.txt - 20 Oct 1998
+-----------------------------
 
 This directory contains tests and demos of FL.  In most cases you can
 learn a lot about how to program FL by looking at the source code.
@@ -28,3 +28,8 @@ shiny:		Demo of drawing FL's controls using OpenGL
 forms:		An XForms program to demonstrate emulation
 
 colbrowser:	Another XForms program that is actually useful
+
+
+-----------------------------------------------------
+Note: this file is outdated and incomplete. (*FIXME*)
+-----------------------------------------------------

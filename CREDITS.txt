@@ -1,12 +1,12 @@
-CREDITS - Fast Light Tool Kit (FLTK) Version 1.4.0
---------------------------------------------------
+CREDITS.txt - Fast Light Tool Kit (FLTK) Version 1.4.0
+------------------------------------------------------
 
     This file lists the people responsible for the toolkit you are
     now using.  If you've been looking for your name in lights
     but we've forgotten you here, please use the report on the
     following page, and we'll update this file accordingly:
 
-        http://www.fltk.org/str.php
+        https://www.fltk.org/str.php
 
 
 CORE DEVELOPERS
