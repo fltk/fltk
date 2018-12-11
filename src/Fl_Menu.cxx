@@ -899,7 +899,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     {
       const Fl_Menu_Item* oldi = pp.current_item;
       Fl::wait();
-      if (wp.deleted()) // menu widget has been deleted (STR #3503)
+      if (pbutton && wp.deleted()) // menu widget has been deleted (STR #3503)
 	break;
       if (pp.state == DONE_STATE) break; // done.
       if (pp.current_item == oldi) continue;
