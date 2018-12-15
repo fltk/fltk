@@ -1239,9 +1239,9 @@ static bool use_monitors_xml(float &factor) {
   FILE *in = fopen(path, "r");
   if (!in) return false;
   p = fgets(line, sizeof(line), in);
-  if (strstr(line, "<monitors version=\"2\">")) {
+  if (p && strstr(line, "<monitors version=\"2\">")) {
     while (fgets(line, sizeof(line), in)) {
-      if( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
+      if ( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
         p += 7;
         sscanf(p, "%f", &factor);
         if (factor == 2) { found = true; break; }
