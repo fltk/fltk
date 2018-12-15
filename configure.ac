@@ -89,7 +89,7 @@ case $host_os in
     darwin*)
 	if test x$enable_x11 = xyes; then
 		host_os_gui="X11"
-		OPTIM="-U__APPLE__ $OPTIM"
+		OPTIM="-U__APPLE__ -mmacosx-version-min=10.3 $OPTIM"
 	fi
 	;;
    *)
