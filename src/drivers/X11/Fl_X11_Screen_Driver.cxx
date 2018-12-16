@@ -968,10 +968,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             line_ptr[2] = cvals[i][2];
             
             if (index_shift > 0) {
-              index_mask >>= 2;
               index_shift -= 2;
             } else {
-              index_mask  = 192;
               index_shift = 6;
               pixel ++;
             }
@@ -1239,9 +1237,9 @@ static bool use_monitors_xml(float &factor) {
   FILE *in = fopen(path, "r");
   if (!in) return false;
   p = fgets(line, sizeof(line), in);
-  if (strstr(line, "<monitors version=\"2\">")) {
+  if (p && strstr(line, "<monitors version=\"2\">")) {
     while (fgets(line, sizeof(line), in)) {
-      if( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
+      if ( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
         p += 7;
         sscanf(p, "%f", &factor);
         if (factor == 2) { found = true; break; }
