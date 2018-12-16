@@ -968,10 +968,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
             line_ptr[2] = cvals[i][2];
             
             if (index_shift > 0) {
-              index_mask >>= 2;
               index_shift -= 2;
             } else {
-              index_mask  = 192;
               index_shift = 6;
               pixel ++;
             }
