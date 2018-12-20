@@ -157,27 +157,33 @@ include(FindPkgConfig)
 
 option(OPTION_CAIRO "use lib Cairo" OFF)
 option(OPTION_CAIROEXT
-   "use FLTK code instrumentation for cairo extended use" OFF
+   "use FLTK code instrumentation for Cairo extended use" OFF
    )
 
-if(OPTION_CAIRO OR OPTION_CAIROEXT AND LIB_CAIRO)
+if ((OPTION_CAIRO OR OPTION_CAIROEXT) AND LIB_CAIRO)
    pkg_search_module(PKG_CAIRO cairo)
-endif(OPTION_CAIRO OR OPTION_CAIROEXT AND LIB_CAIRO)
+endif ((OPTION_CAIRO OR OPTION_CAIROEXT) AND LIB_CAIRO)
 
-if(PKG_CAIRO_FOUND)
-   set(FLTK_HAVE_CAIRO 1)
+if (PKG_CAIRO_FOUND)
+   set (FLTK_HAVE_CAIRO 1)
    add_subdirectory(cairo)
    list(APPEND FLTK_LDLIBS -lcairo -lpixman-1)
    include_directories(${PKG_CAIRO_INCLUDE_DIRS})
    string(REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")
-endif(PKG_CAIRO_FOUND)
+endif (PKG_CAIRO_FOUND)
 
-if(LIB_CAIRO AND OPTION_CAIROEXT AND PKG_CAIRO_FOUND)
+if (LIB_CAIRO AND OPTION_CAIROEXT AND PKG_CAIRO_FOUND)
    set(FLTK_USE_CAIRO 1)
    set(FLTK_CAIRO_FOUND TRUE)
 else()
    set(FLTK_CAIRO_FOUND FALSE)
-endif(LIB_CAIRO AND OPTION_CAIROEXT AND PKG_CAIRO_FOUND)
+endif (LIB_CAIRO AND OPTION_CAIROEXT AND PKG_CAIRO_FOUND)
+
+if ((OPTION_CAIRO OR OPTION_CAIROEXT) AND NOT PKG_CAIRO_FOUND)
+   message(STATUS "*** Cairo was requested but not found - please install Cairo ...")
+   message(STATUS "*** or disable options OPTION_CAIRO and OPTION_CAIRO_EXT")
+   message(FATAL_ERROR "*** Terminating: missing Cairo libs or headers")
+endif ((OPTION_CAIRO OR OPTION_CAIROEXT) AND NOT PKG_CAIRO_FOUND)
 
 #######################################################################
 option(OPTION_USE_NANOSVG "support SVG images" ON)
