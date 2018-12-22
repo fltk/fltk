@@ -4,6 +4,7 @@
 
 # MS VC files with Windows line endings (crlf)
 
+*.cmd		eol=crlf
 *.dsp		eol=crlf
 *.dsw		eol=crlf
 *.filters	eol=crlf
