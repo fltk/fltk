@@ -178,11 +178,11 @@ if (PKG_CAIRO_FOUND)
       set(FLTK_CAIRO_FOUND FALSE)
    endif (LIB_CAIRO AND OPTION_CAIROEXT)
 else ()
-   if ((OPTION_CAIRO OR OPTION_CAIROEXT))
+   if (OPTION_CAIRO OR OPTION_CAIROEXT)
 	  message(STATUS "*** Cairo was requested but not found - please check your cairo installation")
 	  message(STATUS "***   or disable options OPTION_CAIRO and OPTION_CAIRO_EXT.")
 	  message(FATAL_ERROR "*** Terminating: missing Cairo libs or headers.")
-   endif ((OPTION_CAIRO OR OPTION_CAIROEXT))
+   endif (OPTION_CAIRO OR OPTION_CAIROEXT)
 endif (PKG_CAIRO_FOUND)
 
 #######################################################################
