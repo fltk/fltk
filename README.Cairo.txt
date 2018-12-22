@@ -50,7 +50,7 @@ variable OPTION_CAIRO:BOOL=ON is set.
 ------------------------------
 
 (1) Adding a new Fl_Cairo_Window class permitting transparent and easy
-    integration of a Cairo draw callback without the need subclass Fl_Window.
+    integration of a Cairo draw callback without the need to subclass Fl_Window.
 
 (2) Adding a Fl::cairo_make_current(Fl_Window*) function only providing
     transparently a cairo context to your custom Fl_Window derived class.
