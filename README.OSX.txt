@@ -90,22 +90,6 @@ dev directory:
 If you got FLTK via Git then you need one extra step: build the
 configure script. Otherwise skip the following part marked ADVANCED:
 
-ADVANCED: (only if you got FLTK via Git)
-- The preferred procedure is to build the configure script using tools
-  called autoconf and automake. If these tools are not both available
-  on your system, this post
-     https://www.fltk.org/newsgroups.php?gfltk.coredev+v:15499
-  details how to get them.
-
-  Then, stay in your FLTK source-code directory and type the following:
-
-  NOCONFIGURE=1 ./autogen.sh
-
-- Alternatively, copy the configure script from the last FLTK weekly snapshot
-  to your Git source-code directory.
-
-:END_ADVANCED
-
 
  2.3  Configuring FLTK
 -----------------------
