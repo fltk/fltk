@@ -117,7 +117,20 @@ on the various supported operating systems.
     3.1 Linux
     ---------
 
-    From Greg (erco@seriss.com):
+    3.1.1 Debian and derivatives (like Ubuntu)
+    -----------------------------------------------------
+
+      Run from a terminal command line:
+        sudo apt install libcairo2-dev
+
+    Then build fltk using the cairo additional option using:
+      cmake -G"Unix Makefiles" -DOPTION_CAIRO:BOOL=ON -S <fltk_dir> -B <your_build_dir>
+      cd <your_build_dir>
+      make
+
+    3.1.2 CentOS from Greg (erco@seriss.com)
+    ---------------------------------------------------
+
     To get FLTK 1.3.x (r9204) to build on Centos 5.5, I found that
     I only needed to install the "cairo-devel" package, ie:
 
