@@ -1,0 +1,53 @@
+sudo: required
+dist: trusty
+cache: ccache
+
+language:
+  - c++
+# - objective-c
+
+os:
+  - linux
+  - osx
+  
+compiler:
+  - gcc
+  - clang
+
+branches:
+  only:
+  - master
+  - /^feature.*$/
+
+before_script:
+  - |
+    if [ $TRAVIS_OS_NAME == linux ]; then
+       sudo apt-get update -q
+       sudo apt-get install -y libxinerama-dev libxcursor-dev libasound2-dev
+       sudo apt-get install -y doxygen 
+    elif [ $TRAVIS_OS_NAME == osx ]; then
+      brew install ccache # need to install on OSX
+      export PATH="/usr/local/opt/ccache/libexec:$PATH"
+      brew install doxygen
+    fi
+
+script:
+  - |
+    autoconf
+    ./configure
+    make
+
+after_success:
+  - |
+    if [ $TRAVIS_OS_NAME == linux ]; then
+      doxygen --version
+      cd documentation
+      make html
+      cd -
+    fi
+
+notifications:
+  email:
+    recipients:
+      - fabien@onepost.net
+
