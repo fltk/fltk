@@ -4,13 +4,13 @@ CONTENTS
 ========
 1. INTRODUCTION
 2. HOW TO BUILD FLTK USING _autoconf_ AND _make_ 
-  1. Prerequisites
-  2. Downloading and Unpacking
-  3. Configuring FLTK
-  4. Building FLTK
-  5. Testing FLTK
-  6. Installing FLTK
-  7. Creating new Projects
+  2.1. Prerequisites
+  2.2. Downloading and Unpacking
+  2.3. Configuring FLTK
+  2.4. Building FLTK
+  2.5. Testing FLTK
+  2.6. Installing FLTK
+  2.7. Creating new Projects
 3. HOW TO BUILD FLTK USING _CMake_ AND _Xcode_
   1. Prerequisites
   2. Downloading and Unpacking
