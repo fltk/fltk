@@ -337,30 +337,26 @@ void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
 Fl_Widget *Fl_Group_Type::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Group(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
-  if (live_widget) {
-    copy_properties();
-    Fl_Type *n;
-    for (n = next; n && n->level > level; n = n->next) {
-      if (n->level == level+1)
-        n->enter_live_mode();
-    }
-    grp->end();
+  copy_properties();
+  Fl_Type *n;
+  for (n = next; n && n->level > level; n = n->next) {
+    if (n->level == level+1)
+      n->enter_live_mode();
   }
+  grp->end();
   return live_widget;
 }
 
 Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
   Fl_Tabs *grp = new Fl_Tabs(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
-  if (live_widget) {
-    copy_properties();
-    Fl_Type *n;
-    for (n = next; n && n->level > level; n = n->next) {
-      if (n->level == level+1)
-        n->enter_live_mode();
-    }
-    grp->end();
+  copy_properties();
+  Fl_Type *n;
+  for (n = next; n && n->level > level; n = n->next) {
+    if (n->level == level+1)
+      n->enter_live_mode();
   }
+  grp->end();
   grp->value(((Fl_Tabs*)o)->value());
   return live_widget;
 }
@@ -368,10 +364,8 @@ Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
 Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
   Fl_Group *grp = new Fluid_Table(o->x(), o->y(), o->w(), o->h());
   live_widget = grp;
-  if (live_widget) {
-    copy_properties();
-    grp->end();
-  }
+  copy_properties();
+  grp->end();
   return live_widget;
 }
 
@@ -396,15 +390,13 @@ Fl_Widget *Fl_Scroll_Type::enter_live_mode(int) {
   Fl_Group *grp = new Fl_Scroll(o->x(), o->y(), o->w(), o->h());
   grp->show();
   live_widget = grp;
-  if (live_widget) {
-    copy_properties();
-    Fl_Type *n;
-    for (n = next; n && n->level > level; n = n->next) {
-      if (n->level == level+1)
-        n->enter_live_mode();
-    }
-    grp->end();
+  copy_properties();
+  Fl_Type *n;
+  for (n = next; n && n->level > level; n = n->next) {
+    if (n->level == level+1)
+      n->enter_live_mode();
   }
+  grp->end();
   return live_widget;
 }
 

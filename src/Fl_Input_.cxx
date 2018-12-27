@@ -1010,6 +1010,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       if (!(damage()&FL_DAMAGE_EXPOSE)) {minimal_update(position_); erase_cursor_only = 1;}
     } else //if (Fl::selection_owner() != this)
       minimal_update(mark_, position_);
+      // FALLTHROUGH
   case FL_HIDE:
     fl_reset_spot();
     if (!readonly() && (when() & FL_WHEN_RELEASE))

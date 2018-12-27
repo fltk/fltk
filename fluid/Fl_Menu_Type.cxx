@@ -360,27 +360,27 @@ void Fl_Menu_Item_Type::write_code1() {
     }
   }
 
-  int init = 0;
+  int menuItemInitialized = 0;
   // if the name is an array variable, assign the value here
   if (name() && strchr(name(), '[')) {
     write_c("%s%s = &%s[%d];\n", indent(), name(), mname, i);
   }
   if (image) {
-    if (!init) {
-      init = 1;
-      write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
-    }
+    menuItemInitialized = 1;
+    write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
     image->write_code("o");
   }
-  for (int n=0; n < NUM_EXTRA_CODE; n++)
+  for (int n=0; n < NUM_EXTRA_CODE; n++) {
     if (extra_code(n) && !isdeclare(extra_code(n))) {
-      if (!init) {
-	init = 1;
-	write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
+      if (!menuItemInitialized) {
+        menuItemInitialized = 1;
+        write_c("%s{ Fl_Menu_Item* o = &%s[%d];\n", indent(), mname, i);
       }
       write_c("%s  %s\n", indent(), extra_code(n));
     }
-  if (init) write_c("%s}\n",indent());
+  }
+  if (menuItemInitialized)
+    write_c("%s}\n",indent());
 }
 
 void Fl_Menu_Item_Type::write_code2() {}

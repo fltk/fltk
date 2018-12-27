@@ -511,7 +511,7 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
   char* str = l->txt;
   const int* i = column_widths();
 
-  bool first = true;	// for icon
+  bool firstLoop = true;	// for icon
   while (W > 6) {	// do each tab-separated field
     int w1 = W;	// width for this field
     char* e = 0; // pointer to end of field or null if none
@@ -520,8 +520,8 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
       if (e) {*e = 0; w1 = *i++;}
     }
     // Icon drawing code
-    if (first) {
-      first = false;
+    if (firstLoop) {
+      firstLoop = false;
       if (l->icon) {
 	l->icon->draw(X+2,Y+1);	// leave 2px left, 1px above
 	int iconw = l->icon->w()+2;
