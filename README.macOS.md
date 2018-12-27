@@ -1,10 +1,12 @@
 _README.macOS.md - Building FLTK under Apple macOS_
 
-CONTENTS
-========
-1. INTRODUCTION
-2. HOW TO BUILD FLTK USING _autoconf_ AND _make_ 
-  2.1. Prerequisites
+<a name="contents"></a>
+## Contents
+
+* [Contents](#contents)
+* [Introduction](#introduction)
+* [How to Build FLTK Using _autoconf_ And _make_](#build_autoconf_make)
+    * [Prerequisites](#bam_prerequisites)
   2.2. Downloading and Unpacking
   2.3. Configuring FLTK
   2.4. Building FLTK
@@ -25,29 +27,26 @@ CONTENTS
 5. MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
 6. DOCUMENT HISTORY
 
-
- 1  INTRODUCTION
-=================
+<a name="introduction"></a>
+## INTRODUCTION
 
 FLTK supports all macOS versions above 10.3 (Panther). See below for how to
 build FLTK applications that can run on all (old or recent) macOS versions.
 
-FLTK currently supports the following development environments on the macOS
+FLTK 1.4 supports the following build environments on the macOS
 platform:
 
-    - gcc command line tools
-    - Xcode 3.x and higher
+- _autoconf_ and _make_ from the command line
+- _cmake_ and _make_ from the command line
+- _cmake_ and _Xcode_ 
 
-CAUTION: gcc command line built libraries and Xcode created Frameworks should
-not be mixed!
+All environments will generate Unix style static libraries and macOS style app bundles.
 
+<a name="build_autoconf_make"></a>
+## How to Build FLTK Using _autoconf_ And _make_
 
- 2  HOW TO BUILD FLTK USING GCC
-================================
-
-
- 2.1  Prerequisites
---------------------
+<a name="bam_prerequisites"></a>
+###  Prerequisites
 
 In order to build FLTK from the command line, you need to install the Xcode
 developer environment. It can be downloaded from the Apple Store for free.
@@ -69,12 +68,14 @@ you will find the Git access parameters at the bottom of that page.
 Unpack FLTK into a convenient location. I like to have everything in my
 dev directory:
 
-  cd
-  mkdir dev
-  cd dev
-  mv ~/Downloads/fltk-1.3.xxxx.tar.gz .
-  tar xvfz fltk-1.3.xxxx.tar.gz
-  cd fltk-1.3.xxxx
+```bash
+cd
+mkdir dev
+cd dev
+mv ~/Downloads/fltk-1.3.xxxx.tar.gz .
+tar xvfz fltk-1.3.xxxx.tar.gz
+cd fltk-1.3.xxxx
+``` 
 
 If you got FLTK via Git then you need one extra step: build the
 configure script. Otherwise skip the following part marked ADVANCED:
