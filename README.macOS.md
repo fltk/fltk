@@ -1,40 +1,29 @@
-README.OSX.txt - Building FLTK under Apple macOS
--------------------------------------------------
+_README.macOS.md - Building FLTK under Apple macOS_
 
-
-
- CONTENTS
-==========
-
-  1   INTRODUCTION
-  2   HOW TO BUILD FLTK USING GCC
-    2.1   Prerequisites
-    2.2   Downloading and Unpacking
-    2.3   Configuring FLTK
-    2.4   Building FLTK
-    2.5   Testing FLTK
-    2.6   Installing FLTK
-    2.7   Creating new Projects
-  3   HOW TO BUILD FLTK USING XCODE3
-    3.1   Prerequisites
-    3.2   Downloading and Unpacking
-    3.3   Configuring FLTK
-    3.4   Building FLTK
-    3.5   Testing FLTK
-    3.6   Uninstalling previous versions of FLTK
-    3.7   Installing FLTK
-    3.8   Installing Little Helpers
-    3.9   Creating new Projects
-  4   HOW TO BUILD FLTK USING XCODE4
-    4.1   Prerequisites
-    4.2   Downloading and Unpacking
-    4.3   Configuring FLTK
-    4.4   Building FLTK
-    4.5   Testing FLTK
-    4.6   Uninstalling previous versions of FLTK
-    4.7   Installing FLTK
-  5   MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
-  6   DOCUMENT HISTORY
+CONTENTS
+========
+1. INTRODUCTION
+2. HOW TO BUILD FLTK USING _autoconf_ AND _make_ 
+  1. Prerequisites
+  2. Downloading and Unpacking
+  3. Configuring FLTK
+  4. Building FLTK
+  5. Testing FLTK
+  6. Installing FLTK
+  7. Creating new Projects
+3. HOW TO BUILD FLTK USING _CMake_ AND _Xcode_
+  1. Prerequisites
+  2. Downloading and Unpacking
+  3. Configuring FLTK
+  4. Building FLTK
+  5. Testing FLTK
+  6. Uninstalling previous versions of FLTK
+  7. Installing FLTK
+  8. Installing Little Helpers
+  9. Creating new Projects
+4. HOW TO BUILD FLTK USING _CMake_ AND _make_
+5. MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
+6. DOCUMENT HISTORY
 
 
  1  INTRODUCTION
