@@ -60,7 +60,7 @@ All environments will generate Unix style static libraries and macOS style app b
 This option is best for users who like to develop their apps using Apple's Xcode IDE. There
 is no need to ever use a command line shell in this configuration.
 
-This option requires an Apple ID, but no administrator rights.
+This option requires an Apple ID and administrator rights.
 
 <a name="bcx_prerequisites"></a>
 ###  Prerequisites (CMake, Xcode)
@@ -77,7 +77,7 @@ the Finder window opens, drag the _CMake_ icon into the Applications folder.
 
 _Xcode_ can be downloaded via the 
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12). You will
-need an Apple ID for this. Installing _Xcode_ may take well over an hour.
+need an Apple ID and administrator right for this. Installing _Xcode_ will take well over an hour.
 
 <a name="bcx_download"></a>
 ### Downloading and Unpacking (CMake, Xcode)
@@ -86,6 +86,12 @@ FLTK 1.4 is currently (as of Jan. 2019) only available as a source code reposito
 You will need to clone the repository to check out the source code onto your machine. This
 has the great benefit that the source code can be updated later simply by telling _git_ to
 _pull_ the newest release.
+
+If you want to use _Xcode_ to clone the FLTK GitHub repository, you will have to set up a 
+GitHub Account in the _Xcode_ preferences. If you don't have a GitHub account, or don't
+want to create one for _Xcode_, you can use still the command line 
+`git clone https://github.com/fltk/fltk.git fltk-1.4.git` to ceck out the repo.
+
 
 Start _Xcode_. Select `Source Control >> Clone...` in the main menu. 
 
