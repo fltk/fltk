@@ -60,6 +60,8 @@ All environments will generate Unix style static libraries and macOS style app b
 This option is best for users who like to develop their apps using Apple's Xcode IDE. There
 is no need to ever use a command line shell in this configuration.
 
+This option requires an Apple ID, but no administrator rights.
+
 <a name="bcx_prerequisites"></a>
 ###  Prerequisites (CMake, Xcode)
 
@@ -176,6 +178,8 @@ TODO: we still need to write a simple CMake file for creating a minimal cross pl
 This option is best for users who like to develop their apps without using Apple's Xcode IDE,
 but like the advantages of _CMake_ over _autoconf_. Users should be comfortable with 
 using `bash` or `tcsh` in a terminal window. 
+
+This option requires neither administrator rights, nor an Apple ID.
 
 <a name="bcm_prerequisites"></a>
 ###  Prerequisites (CMake, make)
@@ -304,6 +308,8 @@ fltk-config --compile myProgram.cxx
 This option is best for users who like to develop their apps without using Apple's Xcode IDE
 and prefer minimal dependencies of a _Makefile_ over _CMake_. Users should be comfortable 
 with using `bash` or `tcsh` in a terminal window. 
+
+This option requires administrator rights, but no Apple ID.
 
 <a name="bam_prerequisites"></a>
 ###  Prerequisites (autoconf, make)
