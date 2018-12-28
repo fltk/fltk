@@ -9,7 +9,7 @@ language:
 os:
   - linux
   - osx
-  
+
 compiler:
   - gcc
   - clang
@@ -35,7 +35,7 @@ before_script:
     if [ $TRAVIS_OS_NAME == linux ]; then
        sudo apt-get update -q
        sudo apt-get install -y libxinerama-dev libxcursor-dev libasound2-dev
-       sudo apt-get install -y doxygen 
+       sudo apt-get install -y doxygen
     elif [ $TRAVIS_OS_NAME == osx ]; then
       brew install ccache # need to install on OSX
       export PATH="/usr/local/opt/ccache/libexec:$PATH"
@@ -71,4 +71,4 @@ notifications:
   email:
     recipients:
       - fabien@onepost.net
-      
+      - albrechts.fltk@online.de
