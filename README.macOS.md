@@ -338,18 +338,19 @@ clang
 ```
 
 If the command line tools are already available, the response will be
-`clang: error: no input files`, and you are done. Continue with downloading FLTK.
+`clang: error: no input files`, and you are done. Continue with installing _autoconf_.
 
 If the command line tools were not installed yet, a dialog box will pop up, claiimig "_The 
 clang command requires the command line developer tools. Would you like to install 
-the tools now?_". Simply click on _Install_ and wait for the tools to be installed.
+the tools now?_". Simply click on _Install_, _Agree_, and wait for the tools to be installed.
 
 On older versions of macOS, you will have to install _Xcode_ from the 
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
 and then install the command line tools from within _Xcode_.
 
-Apple no longer includes _autoconf_. To installe _autoconf_, we first need to installe _brew_ 
-by typing this rather cryptic command in the shell:
+Apple no longer includes _autoconf_ in the _Xcode_ command line tools. To install 
+_autoconf_, we first need to installe _brew_ by typing this rather cryptic command in the shell
+you will need the root password):
 
 ```bash
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -442,7 +443,7 @@ test/demo
 ### Installing FLTK (autoconf, make)
 
 If you did not change any of the configuration settings, FLTK will be installed
-in `/usr/local/include`, `/usr/local/lib`, and `/usr/local/bin` by typing
+in `/usr/local/include`, `/usr/local/lib`, and `/usr/local/bin` by typing:
 
 ```bash
 sudo make install
