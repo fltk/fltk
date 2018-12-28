@@ -196,7 +196,11 @@ the Finder window opens, drag the _CMake_ icon into the Applications folder.
 
 We will be using _CMake_ from the command line. Please launch _CMake_ and choose 
 `Tools > How to Install for Command Line Use` and follow the instructions
-in the dialog box. 
+in the dialog box. If you have admin right, you can also use
+
+```bash
+sudo ln -s /Applications/CMake.app/Contents/bin/cmake /usr/local/bin/cmake
+```
 
 Installing the _Xcode_ command line tools is pretty straight forward. Just enter this 
 in your shell and follow the dialogs:
