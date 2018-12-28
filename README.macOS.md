@@ -321,13 +321,13 @@ This option is best for users who like to develop their apps without using Apple
 Users should be comfortable with using `bash` or `tcsh` in a terminal window. 
 
 <a name="bam_prerequisites"></a>
-###  Prerequisites (autoconf. make)
+###  Prerequisites (autoconf, make)
 
 In order to build FLTK from the command line, you need to install a C++ compiler 
 environment, `make` and `autoconf`. Installing the _Xcode_ command line tools is the easiest
 way to get all prerequisites in one simple step.
 
-Launch _Terminal.app_. It is located in the _Utilities_ folder inside the _Applications_ folder. 
+Launch _Terminal.app_ by pressing Command+Spacebar and typing `Terminal` and pressing _return_. 
 I like to keep the Terminal in the Dock for future use (launch Terminal, right-click or control-click
 on the Terminal icon that is now in the docking bar, and choose _Options_->_Keep in Dock_).
 
@@ -348,8 +348,21 @@ On older versions of macOS, you will have to install _Xcode_ from the
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
 and then install the command line tools from within _Xcode_.
 
+Apple no longer includes _autoconf_. To installe _autoconf_, we first need to installe _brew_ 
+by typing this rather cryptic command in the shell:
+
+```bash
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+After a few minutes, we can now build and install all other tools from one simple command:
+
+```bash
+brew install autoconf automake
+```
+
 <a name="bam_download"></a>
-### Downloading and Unpacking
+### Downloading and Unpacking (autoconf, make)
 
 FLTK 1.4 is currently (as of Jan. 2019) only available as a source code repository via GitHub.
 You will need to clone the repository to check out the source code onto your machine. This
@@ -374,7 +387,7 @@ cd fltk-1.4.git
 ```
 
 <a name="bam_config"></a>
-### Configuring FLTK (autoconf. make)
+### Configuring FLTK (autoconf, make)
 
 Using you shell in the terminal, make sure that you are in the root directory of your
 FLTK source code tree.
@@ -403,7 +416,7 @@ self-explanatory. Some more details can be found in
 [online documentation](https://www.fltk.org/doc-1.4/intro.html#intro_unix).
 
 <a name="bam_build"></a>
-### Building FLTK (autoconf. make)
+### Building FLTK (autoconf, make)
 
 Now this is easy if all the previous steps were successful. Stay in your FLTK source-code 
 directory and type:
@@ -417,7 +430,7 @@ warnings should appear, but "ranlib" may complain about a few modules having no
 symbols. This is normal and can safely be ignored.
 
 <a name="bam_test"></a>
-### Testing FLTK (autoconf. make)
+### Testing FLTK (autoconf, make)
 
 After a successful build, you can test FLTK's capabilities by running
 
@@ -426,7 +439,7 @@ test/demo
 ```
 
 <a name="bam_install"></a>
-### Installing FLTK (autoconf. make)
+### Installing FLTK (autoconf, make)
 
 If you did not change any of the configuration settings, FLTK will be installed
 in `/usr/local/include`, `/usr/local/lib`, and `/usr/local/bin` by typing
@@ -440,7 +453,7 @@ installation path to a location within the user account by adding the
 `--prefix=PREFIX` parameter to the `./configure` command.
 
 <a name="bam_new_projects"></a>
-### Creating new Projects (autoconf. make)
+### Creating new Projects (autoconf, make)
 
 FLTK provides a neat script named `fltk-config` that can provide all the flags
 needed to build FLTK applications using the same flags that were used to build
@@ -449,7 +462,16 @@ of options. The easiest call to compile an FLTK application from a single source
 file is:
 
 ```bash
-fltk-config --compile myProgram.cxx
+cat << EOF > main.cxx
+  #include <FL/Fl_Window.H>
+  int main(int argc, char **argv) {
+    Fl_Window *win = new Fl_Window(600, 400, "Hello, world!");
+    win->show(argc, argv);
+    return Fl::run();
+  }
+EOF
+fltk-config --compile main.cxx
+./main
 ```
 
 `fltk-config` and our user interface designer `fluid` will be installed in 
@@ -740,16 +762,16 @@ to the Info.plist file you have prepared.
 <a name="doc_history"></a>
 ## DOCUMENT HISTORY
 
-Oct 29 2010 - matt: removed warnings
-Oct 24 2010 - matt: restructured entire document and verified instructions
-Dec 19 2010 - Manolo: corrected typos
-Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no longer needed
-Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
-Apr 17 2012 - matt: added Xcode4 documentation
-Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
-Apr 28 2014 - Manolo: how to build programs that run on various Mac OS X versions
-Mar 18 2015 - Manolo: removed uses of the Xcode3 project
-Apr 01 2016 - AlbrechtS: corrected typo, formatted most line breaks < 80 columns
-Dec 04 2018 - AlbrechtS: fix typo (lowercase fluid.app) for case sensitive macOS
-Dec 28 2018 - Matt: complete rework for FLTK 1.4
+- Oct 29 2010 - matt: removed warnings
+- Oct 24 2010 - matt: restructured entire document and verified instructions
+- Dec 19 2010 - Manolo: corrected typos
+- Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no longer needed
+- Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
+- Apr 17 2012 - matt: added Xcode4 documentation
+- Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
+- Apr 28 2014 - Manolo: how to build programs that run on various Mac OS X versions
+- Mar 18 2015 - Manolo: removed uses of the Xcode3 project
+- Apr 01 2016 - AlbrechtS: corrected typo, formatted most line breaks < 80 columns
+- Dec 04 2018 - AlbrechtS: fix typo (lowercase fluid.app) for case sensitive macOS
+- Dec 28 2018 - Matt: complete rework for FLTK 1.4
 
