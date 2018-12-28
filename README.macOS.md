@@ -16,7 +16,7 @@ _README.macOS.md - Building FLTK under Apple macOS_
     * [Installing FLTK](#bcx_install)
     * [Creating new Projects](#bcx_new_projects)
 
-* [How to Build FLTK using _CMake_ AND _make_](#build_cmake_make)
+* [How to Build FLTK using _CMake_ and _make_](#build_cmake_make)
     * [Prerequisites](#bcm_prerequisites)
     * [Downloading FLTK and Unpacking](#bcm_download)
     * [Configuring FLTK](#bcm_config)
@@ -39,17 +39,17 @@ _README.macOS.md - Building FLTK under Apple macOS_
 
 
 <a name="introduction"></a>
-## INTRODUCTION
+## Introduction
 
-FLTK supports all macOS versions above 10.3 (Panther). See below for how to
-build FLTK applications that can run on all (old or recent) macOS versions.
+FLTK supports macOS version 10.3 Panther and above. At the time of writing (Jan. 2019),
+FLTK compiles and runs fine on the most recent macOS 10.14 Mojave.
 
 FLTK 1.4 supports the following build environments on the macOS
 platform:
 
-- _autoconf_ and _make_ from the command line
-- _cmake_ and _make_ from the command line
-- _cmake_ and _Xcode_ 
+* [_cmake_ and _Xcode_](#build_cmake_xcode), no shell needed
+* [_cmake_ and _make_](#build_cmake_make) from the command line
+* [_autoconf_ and _make_](#build_autoconf_make) from the command line
 
 All environments will generate Unix style static libraries and macOS style app bundles.
 
@@ -57,23 +57,23 @@ All environments will generate Unix style static libraries and macOS style app b
 <a name="build_cmake_xcode"></a>
 ## How to Build FLTK Using _CMake_ and _Xcode_
 
-TODO: This option is best for users who like to develop their apps without using Apple's Xcode IDE.
-Users should be comfortable with using `bash` or `tcsh` in a terminal window. 
+This option is best for users who like to develop their apps using Apple's Xcode IDE. There
+is no need to ever use a command line shell in this configuration.
 
 <a name="bcx_prerequisites"></a>
 ###  Prerequisites (CMake, Xcode)
 
-In order to build FLTK from the command line, you need to install a C++ compiler 
-environment, `make` and `autoconf`. _Xcode_ is the easiest way to install all prerequisites,
-even if you don't plan to use it as your iDE.
+In order to build FLTK, you need to install _CMake_ and _Xcode_.
+
+"CMake is used to control the software compilation process using simple platform and 
+compiler independent configuration files, and generate native makefiles and workspaces
+that can be used in the compiler environment of your choice."
+
+Please download and install the Mac OS X version of _CMake_ from 
+[www.cmake.org](https://cmake.org/download/).
 
 _Xcode_ can be downloaded via the 
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12).
-
-After downloading and installing, you need to launch the Terminal. _Terminal.app_
-is located in the _Utilities_ folder inside the _Applications_ folder. I like
-to keep the Terminal in the Dock for future use (launch Terminal, right-click or control-click
-on the Terminal icon that is now in the docking bar, and choose _Options_->_Keep in Dock_).
 
 <a name="bcx_download"></a>
 ### Downloading and Unpacking (CMake, Xcode)
@@ -324,16 +324,29 @@ Users should be comfortable with using `bash` or `tcsh` in a terminal window.
 ###  Prerequisites (autoconf. make)
 
 In order to build FLTK from the command line, you need to install a C++ compiler 
-environment, `make` and `autoconf`. _Xcode_ is the easiest way to install all prerequisites,
-even if you don't plan to use it as your iDE.
+environment, `make` and `autoconf`. Installing the _Xcode_ command line tools is the easiest
+way to get all prerequisites in one simple step.
 
-_Xcode_ can be downloaded via the 
-[App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12).
-
-After downloading and installing, you need to launch the Terminal. _Terminal.app_
-is located in the _Utilities_ folder inside the _Applications_ folder. I like
-to keep the Terminal in the Dock for future use (launch Terminal, right-click or control-click
+Launch _Terminal.app_. It is located in the _Utilities_ folder inside the _Applications_ folder. 
+I like to keep the Terminal in the Dock for future use (launch Terminal, right-click or control-click
 on the Terminal icon that is now in the docking bar, and choose _Options_->_Keep in Dock_).
+
+See if we already have a current C++ compiler installed. Type
+
+```bash
+clang
+```
+
+If the command line tools are already available, the response will be
+`clang: error: no input files`, and you are done. Continue with downloading FLTK.
+
+If the command line tools were not installed yet, a dialog box will pop up, claiimig "_The 
+clang command requires the command line developer tools. Would you like to install 
+the tools now?_". Simply click on _Install_ and wait for the tools to be installed.
+
+On older versions of macOS, you will have to install _Xcode_ from the 
+[App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
+and then install the command line tools from within _Xcode_.
 
 <a name="bam_download"></a>
 ### Downloading and Unpacking
