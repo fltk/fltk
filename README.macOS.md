@@ -194,7 +194,17 @@ We will be using _CMake_ from the command line. Please launch _CMake_ and choose
 `Tools > How to Install for Command Line Use` and follow the instructions
 in the dialog box. 
 
-Installing the _Xcode_ command line tools is explained [here](#xcode_command_line_tools).
+Installing the _Xcode_ command line tools is pretty straight forward. Just enter this 
+in your shell and follow the dialogs:
+
+```bash
+xcode-select --install
+```
+
+On older versions of macOS, you will have to install _Xcode_ from the 
+[App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
+and then install the command line tools from within _Xcode_.
+
 
 <a name="bcm_download"></a>
 ### Downloading and Unpacking (CMake, make)
@@ -307,19 +317,12 @@ Launch _Terminal.app_ by pressing Command+Spacebar and typing `Terminal` and pre
 I like to keep the Terminal in the Dock for future use (launch Terminal, right-click or control-click
 on the Terminal icon that is now in the docking bar, and choose _Options_->_Keep in Dock_).
 
-TODO: xcode-select --install
-See if we already have a current C++ compiler installed. Type
+Installing the _Xcode_ command line tools is pretty straight forward. Just enter this 
+and follow the dialogs:
 
 ```bash
-clang
+xcode-select --install
 ```
-
-If the command line tools are already available, the response will be
-`clang: error: no input files`, and you are done. Continue with installing _autoconf_.
-
-If the command line tools were not installed yet, a dialog box will pop up, claiimig "_The 
-clang command requires the command line developer tools. Would you like to install 
-the tools now?_". Simply click on _Install_, _Agree_, and wait for the tools to be installed.
 
 On older versions of macOS, you will have to install _Xcode_ from the 
 [App Store](https://itunes.apple.com/de/app/xcode/id497799835?l=en&mt=12)
@@ -455,264 +458,6 @@ fltk-config --compile main.cxx
 `fltk-config` and our user interface designer `fluid` will be installed in 
 `/usr/local/bin/` by default. I recommend that you add this directory to the shell
 `PATH` variable.
-
-
-
- 3  HOW TO BUILD FLTK USING XCODE3
-===================================
-
-
- 3.1  Prerequisites
---------------------
-
-In order to build FLTK from within Xcode 3, you need to have the Xcode 3
-developer environment on your computer. If you don't, go to: 'HOW TO BUILD
-FLTK USING XCODE4'
-
-
- 3.2  Downloading and Unpacking
---------------------------------
-
-Download FLTK from here:
-
-  https://www.fltk.org/software.php
-
-If you are familiar with "Git" and like to stay current with your
-version, you will find the Git access parameters at the bottom of that
-page. You can use the SCM system that is built into Xcode.
-
-Unpack FLTK by double-clicking it and copy the new folder into a convenient
-location. I have set up a "dev" folder in my home folder for all my projects.
-
-
- 3.3  Configuring FLTK
------------------------
-
-Launch Xcode. Open the project file in
-
-  .../fltk-1.3.xxxx/ide/Xcode4/FLTK.xcodeproj
-
-Use the "Project" pulldown menu to change "Active Build Configuration" to
-"Release". Change the "Active Architecture"  as desired.
-
-
- 3.4  Building FLTK
---------------------
-
-Use the "Project" pulldown menu to set the "Active Target" to "Demo". Select
-"Build" from the "Build" menu to create all libraries and test applications.
-
-By default, the Xcode4 project builds applications that run under macOS 10.5
-and above. To build applications that also run under older Mac OS versions,
-select "Edit Project Settings" of the Project menu, then select the Build panel,
-and modify the "macOS Deployment Target" item.
-
-All frameworks and apps will be located in "./ide/Xcode4/build/Release/".
-
-
- 3.5  Testing FLTK
--------------------
-
-Select "Build and Run" from the "Build" menu to run the Demo program. Use "Demo"
-to explore all test programs.
-
-
- 3.6  Uninstalling previous versions of FLTK
----------------------------------------------
-
-Remove FLTK frameworks:
-
-  sudo rm -r /Library/Frameworks/fltk*.framework
-
-Remove Fluid and possibly other utilities:
-
-  sudo rm -r /Developer/Applications/Utilities/FLTK/
-
-
- 3.7  Installing FLTK
-----------------------
-
-When distributing FLTK applications, the FLTK frameworks should be made part of
-the application package. For development however, it is very convenient to have
-the Release-mode Frameworks in a standard location.
-
-For Xcode project template use, all FLTK frameworks should be copied from
-"./ide/Xcode4/build/Release/" to "/Library/Frameworks/". The FLTK header files
-for all FLTK frameworks will then be at "/Library/Frameworks/fltk.framework/
-Headers/". Add this path to the header search path of your projects.
-
-  sudo rm -f -r /Library/Frameworks/fltk*
-  sudo cp -R ide/Xcode4/build/Release/fltk*.framework /Library/Frameworks/
-
-Many FLTK applications will use Fluid, the FLTK User Interface builder, to
-generate C++ source code from .fl resource files. Add Fluid to the developer
-tools:
-
-  sudo mkdir /Developer/Applications/Utilities/FLTK/
-  sudo rm -f -r /Developer/Applications/Utilities/FLTK/fluid.app
-  sudo cp -R ide/Xcode4/build/Release/fluid.app /Developer/Applications/Utilities/FLTK/
-
-
- 3.8  Installing Little Helpers
---------------------------------
-
-
-- Project Templates:
-
-Project Templates are the quickest way to create a new FLTK application from
-within Xcode. The included project builds an FLTK based Cocoa application
-written in C++ with support for the Fluid UI designer, image reading, and
-OpenGL. Unused FLTK sub-Frameworks can simply be removed from the project.
-The template assumes that Release versions of the FLTK frameworks are installed
-in /Library/Frameworks as described above.
-
-First, we need to create the Template folder:
-
-  sudo mkdir -p /Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/
-
-Next, we copy the project template over:
-
-  sudo cp -r ide/Xcode4/Project\ Templates/* /Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/
-
-After restarting Xcode, the dialog for "File > New Project..." will offer an
-FLTK 1.3 user template which is ready to compile.
-
-
-- Fluid file handling
-
-This section assumes that a Release version of Fluid is installed in
-"/Developer/Applications/Utilities/FLTK/" as described above. It will install
-a new file type which opens Fluid as an editor for files ending in ".fl".
-
-First, we need to create the spec folder:
-
-  sudo mkdir -p /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
-
-Next, we copy the Fluid specification over:
-
-  sudo cp ide/Xcode4/fluid.pbfilespec /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
-
-Open Xcode preferences and select the File Types tab. Find the
-"sourcecode.fluid" entry in "file > text > sourcecode" and set the external
-editor to Fluid. When adding ".fl" files, set the File Type in the Info dialog
-to "sourcecode.fluid" and Xcode will edit your file in Fluid when
-double-clicking.
-
-
-- More
-
-TODO: Language Definition
-TODO: Build Rules
-
-
- 3.9  Creating new Projects
-----------------------------
-
-If the little helpers above were installed, the menu "File > New Project..."
-will pop up a dialog that offers a User Template named Fluid. Select it and
-follow the instructions.
-
-
-
- 4  HOW TO BUILD FLTK USING XCODE4
-===================================
-
-
- 4.1  Prerequisites
---------------------
-
-In order to build FLTK from within Xcode 4, 5, 6, 7, or 8 you need to install
-the Xcode developer environment via the Apple App Store that comes with
-Lion and up. If you also want the command line version of gcc, you can use
-the Download section in the Preferences dialog.
-
-
- 4.2  Downloading and Unpacking
---------------------------------
-
-Download FLTK from here:
-
-  https://www.fltk.org/software.php
-
-If you are familiar with "Git" and like to stay current with your
-version, you will find the Git access parameters at the bottom of that
-page. You can use the SCM system that is built into Xcode.
-
-Unpack FLTK by double-clicking it and copy the new folder into a convenient
-location. I have set up a "dev" folder in my home folder for all my projects.
-
-
- 4.3  Configuring FLTK
------------------------
-
-Launch Xcode. Open the project file in
-
-  .../fltk-1.3.xxxx/ide/Xcode4/FLTK.xcodeproj
-
-There is nothing else to configure.
-
-
- 4.4  Building FLTK
---------------------
-
-Use the "Scheme" pulldown menu to change the active target to "Demo" and
-"My Mac 32-bit" or "My Mac 64-bit". Select "Build for" -> "Running"Run" from
-the "Product" menu to create all libraries and test applications.
-
-By default, the Xcode4 project builds applications that run under macOS 10.5
-and above. To build applications that also run under older Mac OS versions,
-modify the "macOS Deployment Target" item of the FLTK project build settings.
-
-All frameworks and apps will be located in a private directory. Use
-"Window"->"Organizer" to find the full path.
-
-
- 4.5  Testing FLTK
--------------------
-
-Select "Run" from the "Product" menu to run the Demo program. Use "Demo"
-to explore all test programs.
-
-
- 4.6  Uninstalling previous versions of FLTK
----------------------------------------------
-
-Remove FLTK frameworks:
-
-  sudo rm -r /Library/Frameworks/fltk*.framework
-
-Remove Fluid and possibly other utilities:
-
-  sudo rm -r /Applications/FLTK/
-
-
- 4.7  Installing FLTK
-----------------------
-
-When distributing FLTK applications, the FLTK frameworks should be made part of
-the application package. For development however, it is very convenient to have
-the Release-mode Frameworks in a standard location.
-
-For Xcode project template use, all FLTK frameworks should be built using
-"Build for Archiving" and then copied from
-"./(Organizer->Derived Data Path)/Release/" to "/Library/Frameworks/".
-The FLTK header files for all FLTK frameworks will then be at
-"/Library/Frameworks/fltk.framework/Headers/". Add this path to the header
-search path of your projects.
-
-  sudo rm -f -r /Library/Frameworks/fltk*
-  sudo cp -R (Organizer->Derived Data Path)/Release/fltk*.framework /Library/Frameworks/
-
-Many FLTK applications will use Fluid, the FLTK User Interface builder, to
-generate C++ source code from .fl resource files. Add Fluid to the developer
-tools:
-
-  sudo mkdir /Applications/FLTK/
-  sudo rm -f -r /Applications/FLTK/fluid.app
-  sudo cp -R (Organizer->Derived Data Path)/Release/fluid.app /Applications/FLTK/
-
-    (TODO: 4.8   Installing Little Helpers)
-    (TODO: 4.9   Creating new Projects)
 
 
 <a name="dropstart"></a>
