@@ -44,6 +44,14 @@ That was a blank line above this.
 @C1RED
 @C2Green
 @C4Blue
+@N@.Inactive
+
+@@ start line with '@'
+@.@ alternative start line with '@'
+@l@@ start tall line with '@'
+@s@@ start small line with '@'
+#s## start line with '#'
+#s#.# alternative start line with '#'
 
 	You should try different browser types:
 	Fl_Browser
@@ -164,6 +172,7 @@ int main(int argc, char **argv) {
   browser->callback(b_cb);
   // browser->scrollbar_right();
   //browser->has_scrollbar(Fl_Browser::BOTH_ALWAYS);
+  //browser->format_char('#');
   if (!browser->load(fname)) {
     int done = 0;
 #ifdef _MSC_VER
