@@ -44,6 +44,7 @@ That was a blank line above this.
 @C1RED
 @C2Green
 @C4Blue
+@N@.Inactive
 
 @@ start line with '@'
 @.@ alternative start line with '@'
