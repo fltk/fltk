@@ -47,6 +47,10 @@ That was a blank line above this.
 
 @@ start line with '@'
 @.@ alternative start line with '@'
+@l@@ start tall line with '@'
+@s@@ start small line with '@'
+#s## start line with '#'
+#s#.# alternative start line with '#'
 
 	You should try different browser types:
 	Fl_Browser
