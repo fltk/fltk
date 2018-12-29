@@ -212,7 +212,7 @@ public:
     and used to modify how the rest of the line is printed:
     
     \li <tt>'\@.'</tt> Print rest of line, don't look for more '\@' signs
-    \li <tt>'\@\@'</tt> Print rest of line starting with '\@'
+    \li <tt>'\@\@'</tt> Doubling the format character prints the format character once, followed by the rest of line
     \li <tt>'\@l'</tt> Use a LARGE (24 point) font
     \li <tt>'\@m'</tt> Use a medium large (18 point) font
     \li <tt>'\@s'</tt> Use a <SMALL>small</SMALL> (11 point) font
