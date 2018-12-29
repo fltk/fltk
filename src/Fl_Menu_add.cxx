@@ -176,7 +176,7 @@ int Fl_Menu_Item::insert(
       if (m->flags&FL_SUBMENU && !compare(item, m->text)) break;
 
     if (!m->text) { /* create a new menu */
-      int n = (index==-1) ? (int) (m-array) : index;
+      int n = (int)(m-array); /* index is not used if label contains a path */
       array = array_insert(array, msize, n, item, FL_SUBMENU|flags1);
       msize++;
       array = array_insert(array, msize, n+1, 0, 0);

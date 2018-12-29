@@ -771,7 +771,7 @@ int BlockWindow::handle(int event) {
       b     = 0;
 
       for (j = 0, c = columns_; !count && j < num_columns_; j ++, c ++)
-	for (k = 0, b = c->blocks; !count && k < c->num_blocks; k ++, b ++)
+	for (k = 0, b = c->blocks; k < c->num_blocks; k ++, b ++)
 	  if (mx >= c->x && mx < (c->x + BLOCK_SIZE) &&
 	      my >= b->y && my < (b->y + BLOCK_SIZE)) {
 	    if (b->bomb) count = bomb(b->color);
