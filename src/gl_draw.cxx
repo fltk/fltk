@@ -97,26 +97,24 @@ void gl_remove_displaylist_fonts()
 
   for (int j = 0 ; j < FL_FREE_FONT ; ++j)
   {
-    Fl_Font_Descriptor* past = 0;
-    Fl_Font_Descriptor** s_first = Fl_Gl_Window_Driver::global()->fontnum_to_fontdescriptor(j);
-    Fl_Font_Descriptor* f = *s_first;
-    while (f != 0) {
-      if(f->listbase) {
-        if(f == *s_first) {
-          *s_first = f->next;
-        }
-        else {
-          past->next = f->next;
+    Fl_Font_Descriptor *prevDesc = 0L, *nextDesc = 0L;
+    Fl_Font_Descriptor *&firstDesc = *Fl_Gl_Window_Driver::global()->fontnum_to_fontdescriptor(j);
+    for (Fl_Font_Descriptor *desc = firstDesc; desc; desc = nextDesc)
+    {
+      nextDesc = desc->next;
+      if(desc->listbase) {
+        // remove descriptor from a single-linked list
+        if(desc == firstDesc) {
+          firstDesc = desc->next;
+        } else if (prevDesc) {
+          // prevDesc should not be NULL, but this test will make static analysis shut up
+          prevDesc->next = desc->next;
         }
         // It would be nice if this next line was in a destructor somewhere
-        glDeleteLists(f->listbase, Fl_Gl_Window_Driver::global()->genlistsize());
-        Fl_Font_Descriptor* tmp = f;
-        f = f->next;
-        delete tmp;
-      }
-      else {
-        past = f;
-        f = f->next;
+        glDeleteLists(desc->listbase, Fl_Gl_Window_Driver::global()->genlistsize());
+        delete desc;
+      } else {
+        prevDesc = desc;
       }
     }
   }

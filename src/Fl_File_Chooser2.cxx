@@ -432,7 +432,8 @@ Fl_File_Chooser::count() {
 void
 Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 {
-  char	*dirptr;			// Pointer into directory
+  char	*dirptr;			    // Pointer into directory
+  char  fixpath[FL_PATH_MAX];   // Path with slashes converted
 
 
 //  printf("Fl_File_Chooser::directory(\"%s\")\n", d == NULL ? "(null)" : d);
@@ -444,7 +445,6 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
   if (Fl::system_driver()->backslash_as_slash()) {
     // See if the filename contains backslashes...
     char	*slash;				// Pointer to slashes
-    char	fixpath[FL_PATH_MAX];			// Path with slashes converted
     if (strchr(d, '\\')) {
       // Convert backslashes to slashes...
       strlcpy(fixpath, d, sizeof(fixpath));

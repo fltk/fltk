@@ -378,8 +378,7 @@ int Fl_Browser::item_height(void *item) const {
       Fl_Font font = textfont(); // default font
       int tsize = textsize();    // default size
       if ( format_char() ) {     // can be NULL
-	while (*str==format_char()) {
-	  str++;
+	while (*str==format_char() && *str++ && *str!=format_char()) {
 	  switch (*str++) {
 	  case 'l': case 'L': tsize = 24; break;
 	  case 'm': case 'M': tsize = 18; break;
@@ -391,7 +390,6 @@ int Fl_Browser::item_height(void *item) const {
 	  case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
 	  case 'F': font = (Fl_Font)strtol(str,&str,10); break;
 	  case 'S': tsize = strtol(str,&str,10); break;
-	  case 0: case '@': str--;
 	  case '.': goto END_FORMAT;
 	  }
 	}
@@ -458,9 +456,6 @@ int Fl_Browser::item_width(void *item) const {
       case '.':
 	done = 1;
 	break;
-      case '@':
-	str--;
-	done = 1;
       }
 
     if (done)
@@ -511,7 +506,7 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
   char* str = l->txt;
   const int* i = column_widths();
 
-  bool first = true;	// for icon
+  bool firstLoop = true;	// for icon
   while (W > 6) {	// do each tab-separated field
     int w1 = W;	// width for this field
     char* e = 0; // pointer to end of field or null if none
@@ -520,8 +515,8 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
       if (e) {*e = 0; w1 = *i++;}
     }
     // Icon drawing code
-    if (first) {
-      first = false;
+    if (firstLoop) {
+      firstLoop = false;
       if (l->icon) {
 	l->icon->draw(X+2,Y+1);	// leave 2px left, 1px above
 	int iconw = l->icon->w()+2;
@@ -578,8 +573,6 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
 	  break;
 	case '.':
 	  goto BREAK;
-	case '@':
-	  str--; goto BREAK;
 	}
       }
     }

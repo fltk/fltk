@@ -103,11 +103,11 @@ OPTION_ARCHFLAGS - default EMPTY
    Extra architecture flags.
 
 OPTION_APPLE_X11 - default OFF
-   In case you want to use X11 on OSX.
+   In case you want to use X11 on macOS.
    Use this only if you know what you do, and if you have installed X11.
 
 OPTION_USE_POLL - default OFF
-   Don't use this one either.
+   Don't use this one either, it is deprecated.
 
 OPTION_BUILD_SHARED_LIBS - default OFF
    Normally FLTK is built as static libraries which makes more portable
@@ -117,10 +117,10 @@ OPTION_BUILD_EXAMPLES - default ON
    Builds the many fine example programs.
 
 OPTION_CAIRO - default OFF
-   Enables libcairo support - see README.CMake.txt.
+   Enables libcairo support - see README.Cairo.txt.
 
 OPTION_CAIROEXT - default OFF
-   Enables extended libcairo support - see README.CMake.txt.
+   Enables extended libcairo support - see README.Cairo.txt.
 
 OPTION_USE_GL - default ON
    Enables OpenGL support.
@@ -168,6 +168,28 @@ OPTION_PRINT_SUPPORT - default ON
    Fl_PostScript_File_Device class cannot be used, but the FLTK library
    is somewhat smaller. This option makes sense only on the Unix/Linux
    platform or when OPTION_APPLE_X11 is ON.
+
+
+Documentation options: these options are only available if `doxygen' is
+   installed and found by CMake. PDF related options require also `latex'.
+
+OPTION_BUILD_HTML_DOCUMENTATION - default OFF
+OPTION_BUILD_PDF_DOCUMENTATION - default OFF
+   These options can be used to switch HTML documentation generation with
+   doxygen on. The build targets ('html', 'pdf', or 'docs') need still to
+   be executed explicitly.
+
+OPTION_INCLUDE_DRIVER_DOCUMENTATION - default OFF
+   This option adds driver documentation to HTML and PDF docs (if ON). This
+   option is marked as "advanced" since it is only useful for FLTK developers
+   or advanced users.
+
+OPTION_INSTALL_HTML_DOCUMENTATION - default OFF
+OPTION_INSTALL_PDF_DOCUMENTATION - default OFF
+   If these options are ON then the HTML and/or PDF docs get installed
+   when the 'install' target is executed, e.g. with `make install'. You
+   need to select above options OPTION_BUILD_*_DOCUMENTATION as well.
+
 
  2.3  Building under Linux with Unix Makefiles
 -----------------------------------------------
@@ -543,3 +565,4 @@ Apr 07 2015 - AlbrechtS: update use example and more docs
 Jan 31 2016 - msurette: custom command instead of fltk_wrap_ui
 Nov 01 2016 - AlbrechtS: remove deprecated FLTK_USE_FILE, add MinGW build
 Jul 05 2017 - matt: added instructions for MacOS and Xcode
+Dec 29 2018 - AlbrechtS: add documentation option descriptions

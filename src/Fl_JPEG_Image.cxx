@@ -255,9 +255,8 @@ extern "C" {
 
 static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 {
-  my_src_ptr src;
-  cinfo->src = (struct jpeg_source_mgr *)malloc(sizeof(my_source_mgr));
-  src = (my_src_ptr)cinfo->src;
+  my_src_ptr src = (my_source_mgr*)malloc(sizeof(my_source_mgr));
+  cinfo->src = &(src->pub);
   src->pub.init_source = init_source;
   src->pub.fill_input_buffer = fill_input_buffer;
   src->pub.skip_input_data = skip_input_data;

@@ -1306,6 +1306,7 @@ int Fl::handle_(int e, Fl_Window* window)
 
   case FL_UNFOCUS:
     window = 0;
+      // FALLTHROUGH
   case FL_FOCUS:
     fl_xfocus = window;
     fl_fix_focus();
