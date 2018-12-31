@@ -16,6 +16,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+ Definition of class Fl_Sys_Menu_Bar.
+ */
+
+
 #ifndef Fl_Sys_Menu_Bar_H
 #define Fl_Sys_Menu_Bar_H
 
@@ -102,7 +107,8 @@ public:
   static void create_window_menu();
 };
 
-/** The system menu bar. */
+/** The system menu bar.
+ */
 extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 #endif // Fl_Sys_Menu_Bar_H
