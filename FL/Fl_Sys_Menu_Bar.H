@@ -102,6 +102,7 @@ public:
   static void create_window_menu();
 };
 
+/** The system menu bar. */
 extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 #endif // Fl_Sys_Menu_Bar_H
