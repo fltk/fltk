@@ -235,7 +235,7 @@
 ///     The following table lists keyboard bindings for navigating the tree:
 ///
 ///  <TABLE BORDER="1" SUMMARY="Fl_Tree keyboard bindings.">
-///    <CAPTION ALIGN=TOP>Fl_Tree keyboard bindings.</CAPTION>
+///    <CAPTION ALIGN=TOP>Keyboard bindings.</CAPTION>
 ///  <TR>
 ///    <TD WIDTH=25% ALIGN=CENTER><B>Keyboard</B></TD>
 ///    <TD WIDTH=25% ALIGN=CENTER><B>FL_TREE_SELECT_MULTI</B></TD>
