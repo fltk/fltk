@@ -3,7 +3,7 @@
 //
 // Fl_GIF_Image routines.
 //
-// Copyright 1997-2015 by Bill Spitzak and others.
+// Copyright 1997-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -17,6 +17,16 @@
 //
 // Contents:
 //
+//
+
+//
+// Reference: GIF89a Specification (links valid as of Jan 05, 2019):
+//
+// "GRAPHICS INTERCHANGE FORMAT(sm), Version 89a" (authoritative):
+// https://www.w3.org/Graphics/GIF/spec-gif89a.txt
+//
+// HTML version (non-authoritative):
+// https://web.archive.org/web/20160304075538/http://qalle.net/gif89a.php
 //
 
 //
@@ -113,7 +123,12 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   uchar ch = NEXTBYTE;
   char HasColormap = ((ch & 0x80) != 0);
   int BitsPerPixel = (ch & 7) + 1;
-  int ColorMapSize = 1 << BitsPerPixel;
+  int ColorMapSize;
+  if (HasColormap) {
+    ColorMapSize = 2 << (ch & 7);
+  } else {
+    ColorMapSize = 0;
+  }
   // int OriginalResolution = ((ch>>4)&7)+1;
   // int SortedTable = (ch&8)!=0;
   ch = NEXTBYTE; // Background Color index
@@ -129,10 +144,6 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
       Green[i] = NEXTBYTE;
       Blue[i] = NEXTBYTE;
     }
-  } else {
-    Fl::warning("%s does not have a colormap.", infname);
-    for (int i = 0; i < ColorMapSize; i++)
-      Red[i] = Green[i] = Blue[i] = (uchar)(255 * i / (ColorMapSize-1));
   }
 
   int CodeSize;		/* Code size, init from GIF header, increases... */
@@ -179,10 +190,10 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
       GETSHORT(Height);
       ch = NEXTBYTE;
       Interlace = ((ch & 0x40) != 0);
-      if (ch&0x80) { 
-	// read local color map
-	int n = 2<<(ch&7);
-	for (i=0; i < n; i++) {	
+      if (ch & 0x80) { // image has local color table
+	BitsPerPixel = (ch & 7) + 1;
+	ColorMapSize = 2 << (ch & 7);
+	for (i=0; i < ColorMapSize; i++) {
 	  Red[i] = NEXTBYTE;
 	  Green[i] = NEXTBYTE;
 	  Blue[i] = NEXTBYTE;
@@ -204,6 +215,27 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     // Workaround for broken GIF files...
     BitsPerPixel = CodeSize - 1;
     ColorMapSize = 1 << BitsPerPixel;
+  }
+
+  // Fix images w/o color table. The standard allows this and lets the
+  // decoder choose a default color table. The standard recommends the
+  // first two color table entries should be black and white.
+
+  if (ColorMapSize == 0) { // no global and no local color table
+    Fl::warning("%s does not have a color table, using default.\n", infname);
+    BitsPerPixel = CodeSize - 1;
+    ColorMapSize = 1 << BitsPerPixel;
+    Red[0] = Green[0] = Blue[0] = 0;	// black
+    Red[1] = Green[1] = Blue[1] = 255;	// white
+    for (int i = 2; i < ColorMapSize; i++) {
+      Red[i] = Green[i] = Blue[i] = (uchar)(255 * i / (ColorMapSize - 1));
+    }
+#if (0)
+    // fill color table to maximum size
+    for (int i = ColorMapSize; i < 256; i++) {
+      Red[i] = Green[i] = Blue[i] = 0; // black
+    }
+#endif
   }
 
   uchar *Image = new uchar[Width*Height];
