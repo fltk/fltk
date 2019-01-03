@@ -39,6 +39,7 @@ misc/update_config_scripts	eol=lf
 # files with Windows line endings (crlf)
 
 *.rc		eol=crlf
+*.bat		eol=crlf
 
 # Android Studio special support file (Windows .bat file)
 ide/AndroidStudio3/gradlew.rename_to_bat eol=crlf
