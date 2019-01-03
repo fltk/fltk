@@ -594,10 +594,12 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   CGContextRef layer_data;
 }
 - (void)displayLayer:(CALayer *)layer;
+- (void)prepare_bitmap_for_layer;
 - (void)viewFrameDidChange;
 - (BOOL)wantsLayer;
 - (void)dealloc;
 - (BOOL)did_view_resolution_change;
+- (void)drawRect:(NSRect)rect;
 @end
 #endif //10_8
 
@@ -2176,12 +2178,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  */
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
-  static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  CGContextRef gc = CGBitmapContextCreate(NULL,  w,  h, 8, 4 * w, cspace, kCGImageAlphaPremultipliedFirst);
-  CGContextClearRect(gc, CGRectMake(0,0,w,h));
-  return gc;
-}
 
 @interface FLGLViewLayer : FLView // for layer-backed GL windows
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
@@ -2238,11 +2234,10 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 - (BOOL)wantsLayer {
   return YES;
 }
-
 - (void)displayLayer:(CALayer *)layer {
-  // called if views are layered (but not for GL) : all drawing to window goes through this
+  // used by non-GL layer-backed views
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  if (!window) return; // needed e.g. when closing a tab in a window
   float scale = Fl::screen_driver()->scale(0);
   NSRect rect = [self frame];
   if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) {
@@ -2253,44 +2248,57 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
     [self viewFrameDidChange];
   }
   if (!layer_data) { // runs when window is created, resized, changed screen resolution
-    layer.bounds = NSRectToCGRect(rect);
-    [self did_view_resolution_change];
-    d->wait_for_expose_value = 0;
-    if (d->mapped_to_retina()) {
-      rect.size.width *= 2; rect.size.height *= 2;
-      layer.contentsScale = 2.;
-    } else layer.contentsScale = 1.;
-    layer_data = prepare_bitmap_for_layer(rect.size.width, rect.size.height);
+    [self prepare_bitmap_for_layer];
     Fl_X *i = Fl_X::i(window);
     if ( i->region ) {
       Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
       i->region = 0;
     }
     window->clear_damage(FL_DAMAGE_ALL);
-  }
-  if (window->damage()) {
-    through_drawRect = YES;
-    d->Fl_Window_Driver::flush();
+    through_Fl_X_flush = YES;
+    Fl_Cocoa_Window_Driver::driver(window)->Fl_Window_Driver::flush();
     Fl_Cocoa_Window_Driver::q_release_context();
-    through_drawRect = NO;
+    through_Fl_X_flush = NO;
     window->clear_damage();
-    if (layer_data) {
-      CGImageRef cgimg = CGBitmapContextCreateImage(layer_data);  // requires 10.4
-      layer.contents = (id)cgimg;
-      CGImageRelease(cgimg);
-    }
   }
+  if (layer_data) {
+    CGImageRef cgimg = CGBitmapContextCreateImage(layer_data);  // requires 10.4
+    layer.contents = (id)cgimg;
+    CGImageRelease(cgimg);
+  }
+}
+- (void)prepare_bitmap_for_layer {
+  Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  CALayer *layer = [self layer];
+  NSRect rect = [self frame];
+  layer.bounds = NSRectToCGRect(rect);
+  [self did_view_resolution_change];
+  d->wait_for_expose_value = 0;
+  if (d->mapped_to_retina()) {
+    rect.size.width *= 2; rect.size.height *= 2;
+    layer.contentsScale = 2.;
+  } else layer.contentsScale = 1.;
+  static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+  layer_data = CGBitmapContextCreate(NULL,  rect.size.width,  rect.size.height, 8, 4 * rect.size.width, cspace, kCGImageAlphaPremultipliedFirst);
+  CGContextClearRect(layer_data, CGRectMake(0,0,rect.size.width,rect.size.height));
 }
 - (BOOL)did_view_resolution_change {
   BOOL retval = [super did_view_resolution_change];
   if (retval) {
     [self viewFrameDidChange];
-    [self displayLayer:[self layer]]; // useful for Mandelbrot to recreate the layer's bitmap
+    [(FLWindow*)[self window] getFl_Window]->redraw();
+    [self setNeedsDisplay:YES];
   }
   return retval;
 }
 -(void)viewFrameDidChange
 {
+  Fl_Window *win = [(FLWindow*)[self window] getFl_Window];
+  if (win) { // can be null when window is set fullscreen
+    Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver::driver(win));
+    win->redraw();
+  }
   CGContextRelease(layer_data);
   layer_data = NULL;
 }
@@ -2298,6 +2306,7 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
   CGContextRelease(layer_data);
   [super dealloc];
 }
+- (void)drawRect:(NSRect)rect {} // necessary under 10.14.2 to support gl_start()
 @end
 #endif //>= MAC_OS_X_VERSION_10_8
 
@@ -2965,7 +2974,12 @@ void Fl_Cocoa_Window_Driver::flush()
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   } else if (views_use_CA) {
     FLViewLayer *view = (FLViewLayer*)[fl_xid(pWindow) contentView];
-    [view displayLayer:[view layer]];
+    if (!view->layer_data) [view prepare_bitmap_for_layer];
+    through_Fl_X_flush = YES;
+    Fl_Window_Driver::flush();
+    through_Fl_X_flush = NO;
+    q_release_context();
+    [view setNeedsDisplay:YES];
 #endif
   } else {
     make_current_counts = 1;
@@ -3414,8 +3428,10 @@ void Fl_Cocoa_Window_Driver::make_current()
 {
   if (make_current_counts > 1 && !views_use_CA) return;
   if (make_current_counts) make_current_counts++;
-  if (views_use_CA && !through_drawRect) { // detect direct calls from the app
-    pWindow->damage(FL_DAMAGE_CHILD); // make next draws to this window displayed at next event loop
+  if (views_use_CA && !through_Fl_X_flush) { // detect direct calls from the app
+    FLViewLayer *view = (FLViewLayer*)[fl_window contentView];
+    if (!view->layer_data) [view prepare_bitmap_for_layer]; // necessary for progressive drawing
+    [view setNeedsDisplay:YES];
   }
   q_release_context();
   Fl_X *i = Fl_X::i(pWindow);
@@ -3431,12 +3447,8 @@ void Fl_Cocoa_Window_Driver::make_current()
   if (views_use_CA) {
     gc = ((FLViewLayer*)[fl_window contentView])->layer_data;
 #  ifdef FLTK_HAVE_CAIRO
-    // make sure the GC starts with an identity transformation matrix as do native Cocoa GC's
-    // because cairo may have changed it 
-    CGAffineTransform mat = CGContextGetCTM(gc);
-    if (!CGAffineTransformIsIdentity(mat)) { // 10.4
-      CGContextConcatCTM(gc, CGAffineTransformInvert(mat));
-    }
+    // necessary because cairo may have changed the Quartz context
+    CGContextSaveGState(gc);
 #  endif
   } else
 #endif
@@ -3482,6 +3494,9 @@ void Fl_Cocoa_Window_Driver::q_release_context(Fl_Cocoa_Window_Driver *x) {
   if (!gc) return;
   CGContextRestoreGState(gc); // match the CGContextSaveGState's of make_current
   CGContextRestoreGState(gc);
+#if defined(FLTK_HAVE_CAIRO)
+  if (views_use_CA) CGContextRestoreGState(gc);
+#endif
   CGContextFlush(gc);
   Fl_Graphics_Driver::default_driver().gc(0);
 #if defined(FLTK_USE_CAIRO)

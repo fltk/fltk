@@ -16,6 +16,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+ Definition of class Fl_Sys_Menu_Bar.
+ */
+
+
 #ifndef Fl_Sys_Menu_Bar_H
 #define Fl_Sys_Menu_Bar_H
 
@@ -44,7 +49,8 @@ class Fl_Sys_Menu_Bar_Driver;
  Changes to the menu state are immediately visible in the menubar when they are made
  using member functions of the Fl_Sys_Menu_Bar class. Other changes (e.g., by a call to
  Fl_Menu_Item::set()) should be followed by a call to update() to be
- visible in the menubar across all platforms.
+ visible in the menubar across all platforms. Global variable \ref fl_sys_menu_bar points to
+ the unique, current system menu bar.
  
  A few FLTK menu features are not supported by the Mac System menu:
   \li no symbolic labels
@@ -102,6 +108,8 @@ public:
   static void create_window_menu();
 };
 
+/** The system menu bar.
+ */
 extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 #endif // Fl_Sys_Menu_Bar_H

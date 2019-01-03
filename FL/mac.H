@@ -135,10 +135,6 @@ void fl_mac_set_about(Fl_Callback *cb, void *user_data, int shortcut = 0);
  */
 extern int fl_mac_os_version;
 
-/** The system menu bar.
- */
-//extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
-
 struct Fl_Menu_Item;
 
 class Fl_Mac_App_Menu {
