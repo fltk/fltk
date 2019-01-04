@@ -605,10 +605,6 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 @implementation FLWindow
 - (void)close
 {
-  [super close];
-  // when a fullscreen window is closed, windowDidResize may be sent after the close message was sent
-  // and before the FLWindow receives the final dealloc message
-  w = NULL;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if ([[self contentView] isMemberOfClass:[FLViewLayer class]]) {
     FLViewLayer *view = (FLViewLayer*)[self contentView];
@@ -616,6 +612,10 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
     view->layer_data = NULL;
   }
 #endif
+  [super close];
+  // when a fullscreen window is closed, windowDidResize may be sent after the close message was sent
+  // and before the FLWindow receives the final dealloc message
+  w = NULL;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
