@@ -597,7 +597,6 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)prepare_bitmap_for_layer;
 - (void)viewFrameDidChange;
 - (BOOL)wantsLayer;
-- (void)dealloc;
 - (BOOL)did_view_resolution_change;
 - (void)drawRect:(NSRect)rect;
 @end
@@ -610,6 +609,13 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   // when a fullscreen window is closed, windowDidResize may be sent after the close message was sent
   // and before the FLWindow receives the final dealloc message
   w = NULL;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+  if ([[self contentView] isMemberOfClass:[FLViewLayer class]]) {
+    FLViewLayer *view = (FLViewLayer*)[self contentView];
+    CGContextRelease(view->layer_data);
+    view->layer_data = NULL;
+  }
+#endif
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint
@@ -2301,10 +2307,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
   CGContextRelease(layer_data);
   layer_data = NULL;
-}
--(void)dealloc {
-  CGContextRelease(layer_data);
-  [super dealloc];
 }
 - (void)drawRect:(NSRect)rect {} // necessary under 10.14.2 to support gl_start()
 @end
