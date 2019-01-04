@@ -477,7 +477,7 @@ fltk-config --compile main.cxx
 
 
 <a name="dropstart"></a>
-### Make an Application Launchable by Dropping Files on its Icon
+## Make an Application Launchable by Dropping Files on its Icon
 
 TODO: update for FLTK 1.4
 
@@ -497,6 +497,9 @@ to the Info.plist file you have prepared.
 
 - Rebuild your application.
 
+## Links
+
+[GitHub, git, forking, fetching. and pull requests](https://gist.github.com/Chaser324/ce0505fbed06b947d962)
 
 <a name="doc_history"></a>
 ## DOCUMENT HISTORY
