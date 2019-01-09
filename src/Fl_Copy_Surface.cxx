@@ -244,7 +244,7 @@ void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int del
     } else {
       CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
       CGContextDrawImage(gc, CGRectMake(0, 0, win->w(), bt), img);
-      CFRelease(img);
+      CGImageRelease(img);
     }
     CGContextRestoreGState(gc);
   }

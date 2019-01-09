@@ -4492,7 +4492,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, i
   NSBitmapImageRep *bitmap = nil;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   CGContextRef gc = ((FLViewLayer*)[fl_xid(win) contentView])->layer_data;
-  if (!gc) return nil;
+  if (!gc || y < 0) return nil;
   CGImageRef cgimg = CGBitmapContextCreateImage(gc);  // requires 10.4
   Fl_X *i = Fl_X::i( win );
   int resolution = i->mapped_to_retina() ? 2 : 1;

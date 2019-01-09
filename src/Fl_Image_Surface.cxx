@@ -215,7 +215,7 @@ void Fl_Image_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int de
     } else {
       CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
       CGContextDrawImage(fl_gc, CGRectMake(0, 0, win->w(), bt), img);
-      CFRelease(img);
+      CGImageRelease(img);
     }
     helper->untranslate();
     CGContextTranslateCTM(fl_gc, delta_x, height+delta_y);
