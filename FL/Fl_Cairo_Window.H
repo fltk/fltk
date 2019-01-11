@@ -59,10 +59,15 @@ protected:
   /** Overloaded to provide cairo callback support */
   void draw() {
     Fl_Double_Window::draw();
-    // manual method ? if yes explicitly get a cairo_context here
-    if (!Fl::cairo_autolink_context()) 
-      Fl::cairo_make_current(this); 
-    if (draw_cb_) draw_cb_(this, Fl::cairo_cc());
+    if (draw_cb_) { // call the Cairo draw callback
+      // manual method ? if yes explicitly get a cairo_context here
+      if (!Fl::cairo_autolink_context())
+	Fl::cairo_make_current(this);
+      draw_cb_(this, Fl::cairo_cc());
+      // flush cairo drawings: necessary at least for Windows
+      cairo_surface_t *s = cairo_get_target(Fl::cairo_cc());
+      cairo_surface_flush(s);
+    }
   }
 
 public:
