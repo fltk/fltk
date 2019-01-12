@@ -1,0 +1,64 @@
+sudo: required
+dist: trusty
+cache: ccache
+
+language:
+  - c++
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  - |
+    DOC=false
+
+matrix:
+  include:
+    os: linux
+    compiler: clang
+    env: DOC=true
+
+branches:
+  only:
+  - branch-1.3
+
+before_script:
+  - |
+    if [ $TRAVIS_OS_NAME == linux ]; then
+       sudo apt-get update -q
+       sudo apt-get install -y libxinerama-dev libxcursor-dev libasound2-dev
+       sudo apt-get install -y doxygen
+    elif [ $TRAVIS_OS_NAME == osx ]; then
+      brew install ccache # need to install on OSX
+      export PATH="/usr/local/opt/ccache/libexec:$PATH"
+      brew install doxygen
+    fi
+
+script:
+  - |
+   if [ $ANALYZE = "false" ]; then
+     autoconf
+     ./configure
+     make
+     mkdir cmake-build
+     cd cmake-build
+     cmake -G "Unix Makefiles" ..
+     make
+   fi
+
+after_success:
+  - |
+    if [ $DOC = "true" ]; then
+      doxygen --version
+      make html
+    fi
+
+notifications:
+  email:
+    recipients:
+      - albrechts.fltk@online.de
