@@ -41,21 +41,23 @@ before_script:
 
 script:
   - |
-   if [ $ANALYZE = "false" ]; then
-     autoconf
-     ./configure
-     make
-     mkdir cmake-build
-     cd cmake-build
-     cmake -G "Unix Makefiles" ..
-     make
-   fi
+    date
+    make
+    date
+    mkdir cmake-build
+    cd cmake-build
+    cmake -G "Unix Makefiles" ..
+    date
+    make
+    date
 
 after_success:
   - |
     if [ $DOC = "true" ]; then
       doxygen --version
+      date
       make html
+      date
     fi
 
 notifications:
