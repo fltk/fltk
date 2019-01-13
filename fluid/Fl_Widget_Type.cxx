@@ -1280,12 +1280,6 @@ void comment_cb(Fl_Text_Editor* i, void *v) {
   } else {
     int mod = 0;
     char *c = i->buffer()->text();
-    const char *d = c_check(c);
-    if (d) {
-      fl_message("Error in comment: %s",d);
-      if (i->window()) i->window()->make_current();
-      haderror = 1;
-    }
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected) {
         o->comment(c);
