@@ -456,6 +456,7 @@ void Fl_Code_Type::open() {
   if (!code_panel) make_code_panel();
   const char *text = name();
   code_input->buffer()->text( text ? text : "" );
+  code_input->insert_position(cursor_position_);
   code_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -472,6 +473,7 @@ void Fl_Code_Type::open() {
     free(c);
     break;
   }
+  cursor_position_ = code_input->insert_position();
 BREAK2:
   code_panel->hide();
 }

@@ -193,7 +193,9 @@ public:
 
 class Fl_Code_Type : public Fl_Type {
   ExternalCodeEditor editor_;
+  int cursor_position_;
 public:
+  Fl_Code_Type() { cursor_position_ = 0; }
   Fl_Type *make();
   void write();
   void write_code1();
