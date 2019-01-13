@@ -23,6 +23,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Simple_Terminal.H>
 #include <FL/filename.H>
 extern void load_history();
 extern void redraw_browser();
@@ -32,7 +33,6 @@ extern char G_external_editor_command[512];
 extern int show_coredevmenus;
 extern struct Fl_Menu_Item *dbmanager_item;
 extern Fl_Preferences fluid_prefs;
-extern Fl_Text_Buffer *shell_run_buffer; 
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
@@ -87,8 +87,7 @@ extern Fl_Check_Button *shell_savefl_button;
 #include <FL/Fl_Return_Button.H>
 extern void do_shell_command(Fl_Return_Button*, void*);
 extern Fl_Double_Window *shell_run_window;
-#include <FL/Fl_Text_Display.H>
-extern Fl_Text_Display *shell_run_display;
+extern Fl_Simple_Terminal *shell_run_terminal;
 extern Fl_Return_Button *shell_run_button;
 Fl_Double_Window* make_shell_window();
 extern Fl_Double_Window *grid_window;

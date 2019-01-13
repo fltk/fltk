@@ -28,6 +28,9 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 }
 
+decl {\#include <FL/Fl_Simple_Terminal.H>} {public local
+}
+
 decl {\#include <FL/filename.H>} {public local
 }
 
@@ -37,7 +40,7 @@ decl {\#include <FL/Fl_Preferences.H>} {private global
 decl {\#include <FL/fl_ask.H>} {private global
 }
 
-decl {\#include <string.h>} {selected private global
+decl {\#include <string.h>} {private global
 }
 
 decl {extern void load_history();} {public local
@@ -62,9 +65,6 @@ decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
 }
 
 decl {extern Fl_Preferences fluid_prefs;} {public local
-}
-
-decl {Fl_Text_Buffer *shell_run_buffer;} {public local
 }
 
 Function {make_project_window()} {open
@@ -138,7 +138,7 @@ Function {make_project_window()} {open
         }
         Fl_Input i18n_include_input {
           label {\#include:}
-          callback i18n_text_cb selected
+          callback i18n_text_cb
           tooltip {The include file for internationalization.} xywh {100 78 272 20} box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_file_input {
@@ -281,7 +281,7 @@ redraw_browser();}
         callback {strncpy(G_external_editor_command, editor_command_input->value(), sizeof(G_external_editor_command)-1);
 G_external_editor_command[sizeof(G_external_editor_command)-1] = 0;
 fluid_prefs.set("external_editor_command", G_external_editor_command);
-redraw_browser();} selected
+redraw_browser();}
         tooltip {The editor command to open your external text editor.
 Include any necessary flags to ensure your editor does not background itself.
 Examples:
@@ -300,7 +300,8 @@ Examples:
   }
 }
 
-Function {make_shell_window()} {} {
+Function {make_shell_window()} {open
+} {
   Fl_Window shell_window {
     label {Shell Command} open
     xywh {761 190 365 125} type Double hide
@@ -349,17 +350,21 @@ Function {make_shell_window()} {} {
     }
   }
   Fl_Window shell_run_window {
-    label {Shell Command Output}
-    xywh {592 332 555 430} type Double hide resizable
+    label {Shell Command Output} open selected
+    xywh {454 363 555 430} type Double resizable visible
   } {
-    Fl_Text_Display shell_run_display {
-      xywh {10 10 535 375} box DOWN_BOX textfont 4 resizable
-      code0 {shell_run_buffer = new Fl_Text_Buffer();}
-      code1 {shell_run_display->buffer(shell_run_buffer);}
+    Fl_Box shell_run_terminal {
+      xywh {10 10 535 375} box DOWN_BOX color 0 resizable
+      class Fl_Simple_Terminal
     }
     Fl_Return_Button shell_run_button {
       label Close
-      callback {shell_run_window->hide();}
+      callback {Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+pos.set("x", shell_run_window->x());
+pos.set("y", shell_run_window->y());
+pos.set("w", shell_run_window->w());
+pos.set("h", shell_run_window->h());
+shell_run_window->hide();}
       xywh {468 395 77 25}
     }
   }

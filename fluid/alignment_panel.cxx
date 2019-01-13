@@ -22,7 +22,6 @@
 #include <FL/Fl_Preferences.H>
 #include <FL/fl_ask.H>
 #include <string.h>
-Fl_Text_Buffer *shell_run_buffer; 
 
 Fl_Double_Window *project_window=(Fl_Double_Window *)0;
 
@@ -357,12 +356,17 @@ static void cb_Cancel(Fl_Button*, void*) {
 
 Fl_Double_Window *shell_run_window=(Fl_Double_Window *)0;
 
-Fl_Text_Display *shell_run_display=(Fl_Text_Display *)0;
+Fl_Simple_Terminal *shell_run_terminal=(Fl_Simple_Terminal *)0;
 
 Fl_Return_Button *shell_run_button=(Fl_Return_Button *)0;
 
 static void cb_shell_run_button(Fl_Return_Button*, void*) {
-  shell_run_window->hide();
+  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+pos.set("x", shell_run_window->x());
+pos.set("y", shell_run_window->y());
+pos.set("w", shell_run_window->w());
+pos.set("h", shell_run_window->h());
+shell_run_window->hide();
 }
 
 Fl_Double_Window* make_shell_window() {
@@ -405,13 +409,18 @@ Fl_Double_Window* make_shell_window() {
     shell_window->end();
   } // Fl_Double_Window* shell_window
   { shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
-    { shell_run_display = new Fl_Text_Display(10, 10, 535, 375);
-      shell_run_display->box(FL_DOWN_BOX);
-      shell_run_display->textfont(4);
-      Fl_Group::current()->resizable(shell_run_display);
-      shell_run_buffer = new Fl_Text_Buffer();
-      shell_run_display->buffer(shell_run_buffer);
-    } // Fl_Text_Display* shell_run_display
+    { shell_run_terminal = new Fl_Simple_Terminal(10, 10, 535, 375);
+      shell_run_terminal->box(FL_DOWN_BOX);
+      shell_run_terminal->color(FL_FOREGROUND_COLOR);
+      shell_run_terminal->selection_color(FL_BACKGROUND_COLOR);
+      shell_run_terminal->labeltype(FL_NORMAL_LABEL);
+      shell_run_terminal->labelfont(0);
+      shell_run_terminal->labelsize(14);
+      shell_run_terminal->labelcolor(FL_FOREGROUND_COLOR);
+      shell_run_terminal->align(Fl_Align(FL_ALIGN_CENTER));
+      shell_run_terminal->when(FL_WHEN_RELEASE);
+      Fl_Group::current()->resizable(shell_run_terminal);
+    } // Fl_Simple_Terminal* shell_run_terminal
     { shell_run_button = new Fl_Return_Button(468, 395, 77, 25, "Close");
       shell_run_button->callback((Fl_Callback*)cb_shell_run_button);
     } // Fl_Return_Button* shell_run_button

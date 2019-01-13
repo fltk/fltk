@@ -1483,16 +1483,13 @@ shell_pipe_cb(FL_SOCKET, void*) {
 
   if (s_proc.get_line(line, sizeof(line)) != NULL) {
     // Add the line to the output list...
-    shell_run_buffer->append(line);
+    shell_run_terminal->append(line);
   } else {
     // End of file; tell the parent...
     Fl::remove_fd(fileno(s_proc.desc()));
     s_proc.close();
-    shell_run_buffer->append("... END SHELL COMMAND ...\n");
+    shell_run_terminal->append("... END SHELL COMMAND ...\n");
   }
-
-  shell_run_display->scroll(shell_run_display->count_lines(0,
-                            shell_run_buffer->length(), 1), 0);
 }
 
 void
@@ -1502,9 +1499,9 @@ do_shell_command(Fl_Return_Button*, void*) {
   if (!prepare_shell_command(command)) return;
 
   // Show the output window and clear things...
-  shell_run_buffer->text("");
-  shell_run_buffer->append(command);
-  shell_run_buffer->append("\n");
+  shell_run_terminal->text("");
+  shell_run_terminal->append(command);
+  shell_run_terminal->append("\n");
   shell_run_window->label("Shell Command Running...");
 
   if (s_proc.popen((char *)command) == NULL) {
@@ -1513,7 +1510,16 @@ do_shell_command(Fl_Return_Button*, void*) {
   }
 
   shell_run_button->deactivate();
-  shell_run_window->hotspot(shell_run_display);
+
+  Fl_Preferences pos(fluid_prefs, "shell_run_Window_pos");
+  int x, y, w, h;
+  pos.get("x", x, -1);
+  pos.get("y", y, 0);
+  pos.get("w", w, 640);
+  pos.get("h", h, 480);
+  if (x!=-1) {
+    shell_run_window->resize(x, y, w, h);
+  }
   shell_run_window->show();
 
   Fl::add_fd(fileno(s_proc.desc()), shell_pipe_cb);
