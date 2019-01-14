@@ -72,6 +72,20 @@ Limitations:
  - many many big and little functions are not yet implemented
 
 
+Scratch Pad
+-----------
+
+2019 approach: 
+```bash
+cmake -G "Unix Makefiles" \
+      -D OPTION_USE_SYSTEM_LIBJPEG=Off \
+      -D OPTION_USE_SYSTEM_ZLIB=Off \
+      -D OPTION_USE_SYSTEM_LIBPNG=Off \
+      -D OPTION_CREATE_ANDROID_STUDIO_IDE=On \
+      ../..
+```
+
+
 DOCUMENT HISTORY
 ----------------
 
