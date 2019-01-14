@@ -49,6 +49,7 @@ extern const char* i18n_file;
 extern const char* i18n_set;
 
 static char submenuflag;
+static uchar menuitemtype = 0;
 
 void Fl_Input_Choice_Type::build_menu() {
   Fl_Input_Choice* w = (Fl_Input_Choice*)o;
@@ -117,10 +118,25 @@ Fl_Type *Fl_Menu_Item_Type::make() {
 
   Fl_Menu_Item_Type* t = submenuflag ? new Fl_Submenu_Type() : new Fl_Menu_Item_Type();
   t->o = new Fl_Button(0,0,100,20);
+  t->o->type(menuitemtype);
   t->factory = this;
   t->add(p);
   if (!reading_file) t->label(submenuflag ? "submenu" : "item");
   return t;
+}
+
+Fl_Type *Fl_Checkbox_Menu_Item_Type::make() {
+    menuitemtype = FL_MENU_TOGGLE;
+    Fl_Type* t = Fl_Menu_Item_Type::make();
+    menuitemtype = 0;
+    return t;
+}
+
+Fl_Type *Fl_Radio_Menu_Item_Type::make() {
+    menuitemtype = FL_MENU_RADIO;
+    Fl_Type* t = Fl_Menu_Item_Type::make();
+    menuitemtype = 0;
+    return t;
 }
 
 Fl_Type *Fl_Submenu_Type::make() {
@@ -131,6 +147,8 @@ Fl_Type *Fl_Submenu_Type::make() {
 }
 
 Fl_Menu_Item_Type Fl_Menu_Item_type;
+Fl_Checkbox_Menu_Item_Type Fl_Checkbox_Menu_Item_type;
+Fl_Radio_Menu_Item_Type Fl_Radio_Menu_Item_type;
 Fl_Submenu_Type Fl_Submenu_type;
 
 ////////////////////////////////////////////////////////////////
@@ -424,7 +442,7 @@ void Fl_Menu_Type::build_menu() {
       }
       m->shortcut(((Fl_Button*)(i->o))->shortcut());
       m->callback(0,(void*)i);
-      m->flags = i->flags();
+      m->flags = i->flags() | i->o->type();
       m->labelfont(i->o->labelfont());
       m->labelsize(i->o->labelsize());
       m->labelcolor(i->o->labelcolor());

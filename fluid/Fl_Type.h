@@ -690,6 +690,16 @@ public:
   int pixmapID() { return 16; }
 };
 
+class Fl_Radio_Menu_Item_Type : public Fl_Menu_Item_Type {
+public:
+    Fl_Type* make();
+};
+
+class Fl_Checkbox_Menu_Item_Type : public Fl_Menu_Item_Type {
+public:
+    Fl_Type* make();
+};
+
 class Fl_Submenu_Type : public Fl_Menu_Item_Type {
 public:
   Fl_Menu_Item* subtypes() {return 0;}
@@ -705,6 +715,7 @@ public:
   void remove_child(Fl_Type*a) {parent->remove_child(a);}
   int pixmapID() { return 18; }
 };
+
 
 
 #include <FL/Fl_Menu_.H>

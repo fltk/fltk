@@ -926,6 +926,8 @@ extern class Fl_Choice_Type Fl_Choice_type;
 extern class Fl_Menu_Bar_Type Fl_Menu_Bar_type;
 extern class Fl_Menu_Button_Type Fl_Menu_Button_type;
 extern class Fl_Menu_Item_Type Fl_Menu_Item_type;
+extern class Fl_Checkbox_Menu_Item_Type Fl_Checkbox_Menu_Item_type;
+extern class Fl_Radio_Menu_Item_Type Fl_Radio_Menu_Item_type;
 extern class Fl_Submenu_Type Fl_Submenu_type;
 extern class Fl_Wizard_Type Fl_Wizard_type;
 
@@ -1029,6 +1031,8 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Input_Choice_type},
   {0,0,cb, (void*)&Fl_Submenu_type},
   {0,0,cb, (void*)&Fl_Menu_Item_type},
+  {"Checkbox Menu Item",0,cb, (void*)&Fl_Checkbox_Menu_Item_type},
+  {"Radio Menu Item",0,cb, (void*)&Fl_Radio_Menu_Item_type},
 {0},
 {"Browsers",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Browser_type},
