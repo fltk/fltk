@@ -974,6 +974,12 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_File_Input"));
         o->image(pixmap[30]);
       } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(366, 55, 24, 24);
+        o->tooltip("File Input");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Simple_Terminal"));
+        o->image(pixmap[52]);
+      } // Fl_Button* o
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(398, 3, 54, 79);

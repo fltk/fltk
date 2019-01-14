@@ -577,7 +577,7 @@ public:
     int ww = (int)fl_width('m');
     w = ((w + ww - 1) / ww) * ww + Fl::box_dw(o->box());
     h = ((h + fl_height() - 1) / fl_height()) * fl_height() +
-        Fl::box_dh(o->box());
+    Fl::box_dh(o->box());
     if (h < 30) h = 30;
     if (w < 50) w = 50;
   }
@@ -604,6 +604,23 @@ int Fl_Text_Editor_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   }
   return 1;
 }
+
+////////////////////////////////////////////////////////////////
+
+#include <FL/Fl_Simple_Terminal.H>
+class Fl_Simple_Terminal_Type : public Fl_Text_Editor_Type {
+public:
+  virtual const char *type_name() {return "Fl_Simple_Terminal";}
+  virtual const char *alt_type_name() {return "fltk::SimpleTerminal";}
+  int is_text_display() const {return 1;}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Simple_Terminal *myo = new Fl_Simple_Terminal(x,y,w,h);
+    return myo;
+  }
+  Fl_Widget_Type *_make() {return new Fl_Simple_Terminal_Type();}
+  int pixmapID() { return 52; }
+};
+static Fl_Simple_Terminal_Type Fl_Simple_Terminal_type;
 
 ////////////////////////////////////////////////////////////////
 
@@ -1023,6 +1040,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Output_type},
   {0,0,cb,(void*)&Fl_Text_Display_type},
   {0,0,cb,(void*)&Fl_Text_Editor_type},
+  {0,0,cb,(void*)&Fl_Simple_Terminal_type},
 {0},
 {"Menus",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Menu_Bar_type},

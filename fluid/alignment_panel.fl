@@ -28,9 +28,6 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 }
 
-decl {\#include <FL/Fl_Simple_Terminal.H>} {public local
-}
-
 decl {\#include <FL/filename.H>} {public local
 }
 
@@ -350,12 +347,11 @@ Function {make_shell_window()} {open
     }
   }
   Fl_Window shell_run_window {
-    label {Shell Command Output} open selected
+    label {Shell Command Output} open
     xywh {454 363 555 430} type Double resizable visible
   } {
-    Fl_Box shell_run_terminal {
-      xywh {10 10 535 375} box DOWN_BOX color 0 resizable
-      class Fl_Simple_Terminal
+    Fl_Simple_Terminal shell_run_terminal {
+      xywh {10 10 535 375} resizable
     }
     Fl_Return_Button shell_run_button {
       label Close

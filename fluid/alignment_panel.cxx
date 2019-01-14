@@ -410,15 +410,6 @@ Fl_Double_Window* make_shell_window() {
   } // Fl_Double_Window* shell_window
   { shell_run_window = new Fl_Double_Window(555, 430, "Shell Command Output");
     { shell_run_terminal = new Fl_Simple_Terminal(10, 10, 535, 375);
-      shell_run_terminal->box(FL_DOWN_BOX);
-      shell_run_terminal->color(FL_FOREGROUND_COLOR);
-      shell_run_terminal->selection_color(FL_BACKGROUND_COLOR);
-      shell_run_terminal->labeltype(FL_NORMAL_LABEL);
-      shell_run_terminal->labelfont(0);
-      shell_run_terminal->labelsize(14);
-      shell_run_terminal->labelcolor(FL_FOREGROUND_COLOR);
-      shell_run_terminal->align(Fl_Align(FL_ALIGN_CENTER));
-      shell_run_terminal->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(shell_run_terminal);
     } // Fl_Simple_Terminal* shell_run_terminal
     { shell_run_button = new Fl_Return_Button(468, 395, 77, 25, "Close");

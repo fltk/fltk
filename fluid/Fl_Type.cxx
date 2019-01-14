@@ -98,6 +98,7 @@ static Fl_Pixmap	protected_pixmap(protected_xpm);
 #include "pixmaps/flWidgetClass.xpm"
 #include "pixmaps/flTree.xpm"
 #include "pixmaps/flTable.xpm"
+#include "pixmaps/flSimpleTerminal.xpm"
 
 static Fl_Pixmap	window_pixmap(flWindow_xpm);
 static Fl_Pixmap	button_pixmap(flButton_xpm);
@@ -149,7 +150,8 @@ static Fl_Pixmap	spinner_pixmap(flSpinner_xpm);
 static Fl_Pixmap	widgetclass_pixmap(flWidgetClass_xpm);
 static Fl_Pixmap	data_pixmap(flData_xpm);
 static Fl_Pixmap	tree_pixmap(flTree_xpm);
-static Fl_Pixmap	table_pixmap(flTable_xpm);
+static Fl_Pixmap    table_pixmap(flTable_xpm);
+static Fl_Pixmap    simple_terminal_pixmap(flSimpleTerminal_xpm);
 
 Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, &roundbutton_pixmap, /* 0..4 */
  &box_pixmap, &group_pixmap, &function_pixmap, &code_pixmap, &codeblock_pixmap, &declaration_pixmap, /* 5..10 */ 
@@ -157,10 +159,11 @@ Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, 
  &menuitem_pixmap, &menubar_pixmap, &submenu_pixmap, &scroll_pixmap, &tile_pixmap, &wizard_pixmap,   /* 16..21 */
  &pack_pixmap, &returnbutton_pixmap, &lightbutton_pixmap, &repeatbutton_pixmap, &menubutton_pixmap,  /* 22..26 */
  &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
- &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	     /* 33..36 */
+ &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	         /* 33..36 */
  &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
  &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap,             /* 42..46 */
- &spinner_pixmap, &widgetclass_pixmap, &data_pixmap, &tree_pixmap, &table_pixmap };                  /* 47..51 */
+ &spinner_pixmap, &widgetclass_pixmap, &data_pixmap, &tree_pixmap, &table_pixmap,                    /* 47..51 */
+ &simple_terminal_pixmap };                                                                          /* 52 */
 
 extern int show_comments;
 

@@ -257,8 +257,7 @@ Function {make_declblock_panel()} {} {
   }
 }
 
-Function {make_decl_panel()} {selected
-} {
+Function {make_decl_panel()} {} {
   Fl_Window decl_panel {
     label {Declaration Properties} open
     xywh {480 333 343 237} type Double align 80 hide resizable size_range {343 237 0 0}
@@ -536,16 +535,17 @@ Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
   }} {}
 }
 
-Function {make_widgetbin()} {} {
+Function {make_widgetbin()} {open
+} {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
 else  
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
-    xywh {410 171 574 85} type Single align 80 hide non_modal
+    xywh {410 171 574 85} type Single align 80 non_modal visible
   } {
-    Fl_Group {} {open
+    Fl_Group {} {
       xywh {3 3 79 79}
     } {
       Fl_Button {} {
@@ -759,7 +759,7 @@ else
         code0 {o->image(pixmap[44]);}
       }
     }
-    Fl_Group {} {
+    Fl_Group {} {open
       xywh {339 3 54 79}
     } {
       Fl_Button {} {
@@ -791,6 +791,12 @@ else
         callback type_make_cb
         tooltip {File Input} xywh {341 55 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[30]);}
+      }
+      Fl_Button {} {
+        user_data {"Fl_Simple_Terminal"}
+        callback type_make_cb selected
+        tooltip {File Input} xywh {366 55 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[52]);}
       }
     }
     Fl_Group {} {
