@@ -39,7 +39,7 @@ include_directories(
   )
 
 #######################################################################
-if(!ANDROID)
+if(NOT ANDROID)
 CREATE_EXAMPLE(adjuster adjuster.cxx fltk)
 CREATE_EXAMPLE(arc arc.cxx fltk)
 CREATE_EXAMPLE(animated animated.cxx fltk)
@@ -127,7 +127,7 @@ if(FLTK_HAVE_CAIRO)
    CREATE_EXAMPLE(cairo_test cairo_test.cxx "fltk;fltk_cairo")
 endif(FLTK_HAVE_CAIRO)
 
-endif(!ANDROID)
+endif(NOT ANDROID)
 
 # We need some support files for the demo programs:
 
