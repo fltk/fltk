@@ -1,4 +1,0 @@
-include ':app'
-
-include ':FLTK'
-project(':FLTK').projectDir = new File('../../')

@@ -17,3 +17,82 @@
 #     http://www.fltk.org/str.php
 #
 
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/settings.gradle.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/settings.gradle"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/build.gradle.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/build.gradle"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/abi-version.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/FL/abi-version.h"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/app.build.gradle.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/build.gradle"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/AndroidManifest.xml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/AndroidManifest.xml"
+  @ONLY
+)
+
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/Roboto-Regular.ttf"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/assets/fonts/Roboto-Regular.ttf"
+  COPYONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/mdpi.ic_launcher.png"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/res/mipmap-mdpi/ic_launcher.png"
+  COPYONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/hdpi.ic_launcher.png"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+  COPYONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/xhdpi.ic_launcher.png"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+  COPYONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/xxhdpi.ic_launcher.png"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+  COPYONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/strings.xml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/res/values/strings.xml"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/CMakeList.txt.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/cpp/CMakeLists.txt"
+  @ONLY
+)
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Android/HelloAndroid.cxx.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/app/src/main/cpp/HelloAndroid.cxx"
+  @ONLY
+)
+

@@ -96,14 +96,6 @@ configure_file(
  @ONLY
  )
 
-if (OPTION_CREATE_ANDROID_STUDIO_IDE)
-  configure_file(
-   ${CMAKE_CURRENT_SOURCE_DIR}/abi-version.cmake.in
-   ${CMAKE_CURRENT_BINARY_DIR}/AndroidStudio/FL/abi-version.h
-   @ONLY
-   )
-endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
-
 #######################################################################
 # build examples - these have to be built after fluid is built/imported
 #######################################################################
