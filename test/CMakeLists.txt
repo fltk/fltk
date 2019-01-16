@@ -39,11 +39,17 @@ include_directories(
   )
 
 #######################################################################
+## testing creation of Android Studio IDE files
+if (OPTION_CREATE_ANDROID_STUDIO_IDE)
+CREATE_ANDROID_IDE_FOR_TEST(arc arc.cxx fltk)
+CREATE_ANDROID_IDE_FOR_TEST(hello hello.cxx fltk)
+CREATE_ANDROID_IDE_FOR_TEST(input input.cxx fltk)
+endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
+
+#######################################################################
 if(NOT ANDROID)
 CREATE_EXAMPLE(adjuster adjuster.cxx fltk)
 CREATE_EXAMPLE(arc arc.cxx fltk)
-CREATE_ANDROID_IDE_FOR_TEST(arc arc.cxx fltk)
-CREATE_ANDROID_IDE_FOR_TEST(hello hello.cxx fltk)
 CREATE_EXAMPLE(animated animated.cxx fltk)
 CREATE_EXAMPLE(ask ask.cxx fltk)
 CREATE_EXAMPLE(bitmap bitmap.cxx fltk)

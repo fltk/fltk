@@ -163,6 +163,15 @@ macro(CREATE_ANDROID_IDE_FOR_TEST NAME SOURCES LIBRARIES)
     @ONLY
   )
 
+  file(APPEND "${CMAKE_BINARY_DIR}/AndroidStudio/settings.gradle" "include ':${ANDROID_APP_NAME}'\n")
+
 endmacro(CREATE_ANDROID_IDE_FOR_TEST NAME SOURCES LIBRARIES)
+
+
+macro(CREATE_ANDROID_IDE_WRAPUP)
+
+  message(STATUS "Wrapping up Android IDE creation")
+
+endmacro(CREATE_ANDROID_IDE_WRAPUP)
 
 
