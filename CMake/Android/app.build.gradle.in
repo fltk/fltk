@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
      compileSdkVersion 25
 
      defaultConfig {
-         applicationId 'org.fltk.android_hello'
+         applicationId 'org.fltk.@ANDROID_APP_NAME@'
          minSdkVersion 14
          targetSdkVersion 25
          externalNativeBuild {
