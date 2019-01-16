@@ -26,17 +26,23 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # instead of the fltk symlink, which is bad for SVN
 add_subdirectory(${FLTK_DIR}/ "${CMAKE_CURRENT_BINARY_DIR}/lib" EXCLUDE_FROM_ALL)
 
+# run FLuid commands if any
+@ANDROID_FLUID_COMMANDS@
+
+# copy source files
+@ANDROID_APP_COPY_SOURCES@
+
 # now build app's shared lib
 add_library(
     test_@ANDROID_APP_NAME@ SHARED
-    HelloAndroid.cxx)
+@ANDROID_APP_SOURCES@)
 
 target_include_directories(
     test_@ANDROID_APP_NAME@ PRIVATE
     ${FLTK_DIR}/
     ${FLTK_IDE_DIR}/ )
 
-# Export ANativeActivity_onCreate(), 
+# Export ANativeActivity_onCreate()
 # Refer to: https://github.com/android-ndk/ndk/issues/381.
 set(CMAKE_SHARED_LINKER_FLAGS
     "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")

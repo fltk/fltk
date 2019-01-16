@@ -44,6 +44,9 @@ if (OPTION_CREATE_ANDROID_STUDIO_IDE)
 CREATE_ANDROID_IDE_FOR_TEST(arc arc.cxx fltk)
 CREATE_ANDROID_IDE_FOR_TEST(hello hello.cxx fltk)
 CREATE_ANDROID_IDE_FOR_TEST(input input.cxx fltk)
+CREATE_ANDROID_IDE_FOR_TEST(inactive inactive.fl fltk)
+# FIXME: fails because in the current schmeme, we can't find the .h files 
+#CREATE_ANDROID_IDE_FOR_TEST(keyboard "keyboard.cxx;keyboard_ui.fl" fltk)
 endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
 
 #######################################################################

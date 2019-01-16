@@ -100,7 +100,38 @@ configure_file(
 macro(CREATE_ANDROID_IDE_FOR_TEST NAME SOURCES LIBRARIES)
 
   message(STATUS "Creating Android IDE for ${NAME}")
+
   set (ANDROID_APP_NAME ${NAME})
+
+  set (srcs)
+  set (ANDROID_APP_SOURCES)
+  set (ANDROID_APP_COPY_SOURCES)
+  set (ANDROID_FLUID_COMMANDS)
+  set (flsrcs)        # fluid source files
+  foreach(src ${SOURCES})
+    if ("${src}" MATCHES "\\.fl$")
+      list(APPEND flsrcs ${src})
+      string(REGEX REPLACE "(.*).fl" \\1 basename ${src})
+      string(APPEND ANDROID_FLUID_COMMANDS
+        "add_custom_command( OUTPUT \"${basename}.cxx\" \"${basename}.h\"\n"
+        "  OUTPUT \"${basename}.cxx\" \"${basename}.h\"\n"
+        "  COMMAND fluid -c \"\${CMAKE_CURRENT_SOURCE_DIR}/${src}\"\n"
+        "  DEPENDS ${src}\n"
+        "  MAIN_DEPENDENCY ${src}\n"
+        ")\n\n"
+      )
+      set(src_cxx ${basename}.cxx)
+    else ()
+      list(APPEND srcs ${src})
+      set(src_cxx ${src})
+    endif ("${src}" MATCHES "\\.fl$")
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/cpp/")
+    # FIXME: Unix only for older version of CMake
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+      "${CMAKE_CURRENT_SOURCE_DIR}/${src}"
+      "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/cpp/${src}")
+    string(APPEND ANDROID_APP_SOURCES "    ${src_cxx}\n")
+  endforeach(src)
 
   configure_file(
     "${CMAKE_SOURCE_DIR}/CMake/Android/app.build.gradle.in"
@@ -113,7 +144,6 @@ macro(CREATE_ANDROID_IDE_FOR_TEST NAME SOURCES LIBRARIES)
     "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/AndroidManifest.xml"
     @ONLY
   )
-
 
   configure_file(
     "${CMAKE_SOURCE_DIR}/CMake/Android/Roboto-Regular.ttf"
