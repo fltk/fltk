@@ -104,6 +104,13 @@ if(OPTION_BUILD_EXAMPLES)
 endif(OPTION_BUILD_EXAMPLES)
 
 #######################################################################
+# Android Studio wrapup
+#######################################################################
+if (OPTION_CREATE_ANDROID_STUDIO_IDE)
+  CREATE_ANDROID_IDE_WRAPUP()
+endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
+
+#######################################################################
 # installation
 #######################################################################
 include(CMake/install.cmake)

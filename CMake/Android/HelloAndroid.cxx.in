@@ -16,7 +16,7 @@
  */
 
 
-#include "../../../test/button.cxx"
+#include "../../../test/@ANDROID_APP_NAME@.cxx"
 
 
 /*

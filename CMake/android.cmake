@@ -96,3 +96,82 @@ configure_file(
   @ONLY
 )
 
+
+macro(CREATE_ANDROID_IDE_FOR_TEST NAME SOURCES LIBRARIES)
+
+  message(STATUS "Creating Android IDE for ${NAME}")
+  set (ANDROID_APP_NAME ${NAME})
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/app.build.gradle.in"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/build.gradle"
+    @ONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/AndroidManifest.xml.in"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/AndroidManifest.xml"
+    @ONLY
+  )
+
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/Roboto-Regular.ttf"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/assets/fonts/Roboto-Regular.ttf"
+    COPYONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/mdpi.ic_launcher.png"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/res/mipmap-mdpi/ic_launcher.png"
+    COPYONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/hdpi.ic_launcher.png"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/res/mipmap-hdpi/ic_launcher.png"
+    COPYONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/xhdpi.ic_launcher.png"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/res/mipmap-xhdpi/ic_launcher.png"
+    COPYONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/xxhdpi.ic_launcher.png"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    COPYONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/strings.xml.in"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/res/values/strings.xml"
+    @ONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/CMakeList.txt.in"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/cpp/CMakeLists.txt"
+    @ONLY
+  )
+
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/CMake/Android/HelloAndroid.cxx.in"
+    "${CMAKE_BINARY_DIR}/AndroidStudio/${ANDROID_APP_NAME}/src/main/cpp/HelloAndroid.cxx"
+    @ONLY
+  )
+
+  file(APPEND "${CMAKE_BINARY_DIR}/AndroidStudio/settings.gradle" "include ':${ANDROID_APP_NAME}'\n")
+
+endmacro(CREATE_ANDROID_IDE_FOR_TEST NAME SOURCES LIBRARIES)
+
+
+macro(CREATE_ANDROID_IDE_WRAPUP)
+
+  message(STATUS "Wrapping up Android IDE creation")
+
+endmacro(CREATE_ANDROID_IDE_WRAPUP)
+
+
