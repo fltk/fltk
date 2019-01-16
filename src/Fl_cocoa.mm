@@ -2175,7 +2175,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  All Quartz drawings go to this bitmap. displayLayer: finishes by using an image copy
  of the bitmap as the layer's contents. That step fills the window.
  When resized or when the window flips between low/high resolution displays,
- FLViewLayer receives the viewFrameDidChange message which deletes the bitmap and zeros layer_data.
+ FLViewLayer receives the viewFrameDidChange message which deletes the bitmap and zeroes layer_data.
  This ensures the bitmap is recreated after the window was resized or changed resolution.
  
  Each layer-backed OpenGL window has an associated FLGLViewLayer object, derived from FLView.
