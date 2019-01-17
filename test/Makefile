@@ -3,7 +3,7 @@
 #
 # Test/example program makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2017 by Bill Spitzak and others.
+# Copyright 1998-2019 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -49,6 +49,7 @@ CPPFILES =\
 	fonts.cxx \
 	forms.cxx \
 	fractals.cxx \
+	fracviewer.cxx \
 	fullscreen.cxx \
 	gl_overlay.cxx \
 	glpuzzle.cxx \
@@ -286,7 +287,7 @@ unittests$(EXEEXT): unittests.o
 
 unittests.o: unittests.cxx unittest_about.cxx unittest_points.cxx unittest_lines.cxx unittest_circles.cxx \
 	unittest_rects.cxx unittest_text.cxx unittest_symbol.cxx unittest_viewport.cxx unittest_images.cxx \
-	unittest_schemes.cxx unittest_simple_terminal.cxx
+	unittest_schemes.cxx unittest_scrollbarsize.cxx unittest_simple_terminal.cxx
 
 adjuster$(EXEEXT): adjuster.o
 
