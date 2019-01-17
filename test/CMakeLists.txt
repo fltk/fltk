@@ -3,7 +3,7 @@
 #
 # CMakeLists.txt used to build test and demo apps by the CMake build system
 #
-# Copyright 2004-2018 by Bill Spitzak and others.
+# Copyright 2004-2019 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -39,39 +39,30 @@ include_directories(
   )
 
 #######################################################################
-## testing creation of Android Studio IDE files
-if (OPTION_CREATE_ANDROID_STUDIO_IDE)
-CREATE_ANDROID_IDE_FOR_TEST(arc arc.cxx fltk)
-CREATE_ANDROID_IDE_FOR_TEST(hello hello.cxx fltk)
-CREATE_ANDROID_IDE_FOR_TEST(input input.cxx fltk)
-CREATE_ANDROID_IDE_FOR_TEST(inactive inactive.fl fltk)
-# FIXME: fails because in the current schmeme, we can't find the .h files 
-#CREATE_ANDROID_IDE_FOR_TEST(keyboard "keyboard.cxx;keyboard_ui.fl" fltk)
-endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
-
-#######################################################################
+# Add the ANDROID_OK option if the example can be compiled for Android
+# as well as for other platforms.
 if(NOT ANDROID)
-CREATE_EXAMPLE(adjuster adjuster.cxx fltk)
-CREATE_EXAMPLE(arc arc.cxx fltk)
-CREATE_EXAMPLE(animated animated.cxx fltk)
-CREATE_EXAMPLE(ask ask.cxx fltk)
-CREATE_EXAMPLE(bitmap bitmap.cxx fltk)
+CREATE_EXAMPLE(adjuster adjuster.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(arc arc.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(animated animated.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(ask ask.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(bitmap bitmap.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE(blocks blocks.cxx "fltk;${AUDIOLIBS}")
-CREATE_EXAMPLE(boxtype boxtype.cxx fltk)
-CREATE_EXAMPLE(browser browser.cxx fltk)
-CREATE_EXAMPLE(button button.cxx fltk)
-CREATE_EXAMPLE(buttons buttons.cxx fltk)
-CREATE_EXAMPLE(checkers checkers.cxx fltk)
-CREATE_EXAMPLE(clock clock.cxx fltk)
+CREATE_EXAMPLE(boxtype boxtype.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(browser browser.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(button button.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(buttons buttons.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(checkers checkers.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(clock clock.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE(colbrowser colbrowser.cxx "fltk;fltk_forms")
-CREATE_EXAMPLE(color_chooser color_chooser.cxx fltk)
-CREATE_EXAMPLE(cursor cursor.cxx fltk)
-CREATE_EXAMPLE(curve curve.cxx fltk)
+CREATE_EXAMPLE(color_chooser color_chooser.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(cursor cursor.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(curve curve.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE(demo demo.cxx fltk)
 CREATE_EXAMPLE(device device.cxx fltk)
-CREATE_EXAMPLE(doublebuffer doublebuffer.cxx fltk)
-CREATE_EXAMPLE(editor editor.cxx fltk)
-CREATE_EXAMPLE(fast_slow fast_slow.fl fltk)
+CREATE_EXAMPLE(doublebuffer doublebuffer.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(editor editor.cxx fltk ANDROID_OK)
+CREATE_EXAMPLE(fast_slow fast_slow.fl fltk ANDROID_OK)
 CREATE_EXAMPLE(file_chooser file_chooser.cxx "fltk;fltk_images")
 CREATE_EXAMPLE(fonts fonts.cxx fltk)
 CREATE_EXAMPLE(forms forms.cxx "fltk;fltk_forms")

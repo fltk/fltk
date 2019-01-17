@@ -13,25 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# Modified to be a template for Android builds in FLTK
+# Copyright 2019  Matthias Melcher and others
+#
 
 cmake_minimum_required(VERSION 3.4.1)
 
-set(FLTK_DIR ../../../../../../..)
-set(FLTK_IDE_DIR ../../../..)
+set(FLTK_DIR "@ANDROID_FLTK_DIR@")
+set(FLTK_IDE_DIR "../../../..")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 
-# FIXME: add as a second argument the binary build dir
-# so that the first argument can link directly to FLTK
-# instead of the fltk symlink, which is bad for SVN
-add_subdirectory(${FLTK_DIR}/ "${CMAKE_CURRENT_BINARY_DIR}/lib" EXCLUDE_FROM_ALL)
+# FIXME: this includes the entire CMakeLists again, creating an entire library
+#        build in every target
+# TODO:  create separate targets for all fltk libraries that can be easily
+#        linked by all app targets
+add_subdirectory("${FLTK_DIR}/" "${CMAKE_CURRENT_BINARY_DIR}/lib" EXCLUDE_FROM_ALL)
 
-# run FLuid commands if any
+# run Fluid build steps for every .fl file, if any
 @ANDROID_FLUID_COMMANDS@
-
-# copy source files
-@ANDROID_APP_COPY_SOURCES@
-
 # now build app's shared lib
 add_library(
     test_@ANDROID_APP_NAME@ SHARED
@@ -48,6 +48,8 @@ set(CMAKE_SHARED_LINKER_FLAGS
     "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 
 # add lib dependencies
+# FIXME: apps may depend on additional fltk libraries; thise dependencies
+#        must be created in the CREATE_ANDROID_IDE_FOR_TEST macro
 target_link_libraries(
     test_@ANDROID_APP_NAME@
     fltk

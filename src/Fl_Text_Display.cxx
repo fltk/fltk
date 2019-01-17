@@ -396,7 +396,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  Styles are ranged from 65 ('A') to 126.
 
  \param styleBuffer this buffer works in parallel to the text buffer. For every
-   character in the text buffer, the stye buffer has a byte at the same offset
+   character in the text buffer, the style buffer has a byte at the same offset
    that contains an index into an array of possible styles.
  \param styleTable a list of styles indexed by the style buffer
  \param nStyles number of styles in the style table
