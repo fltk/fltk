@@ -165,7 +165,11 @@ uninstall:
 $(CAIROOBJECTS):	../makeinclude
 
 depend: $(CAIROCPPFILES)
-	makedepend -Y -I.. -f makedepend $(CAIROCPPFILES)
+	makedepend -Y -I.. -f makedepend -w 20 $(CAIROCPPFILES)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | sort -u >> makedepend.tmp
+	mv makedepend.tmp makedepend
 
 include makedepend
 
