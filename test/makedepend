@@ -318,6 +318,12 @@ fractals.o: ../FL/Fl_Window.H ../FL/Fl.H ../FL/Fl_Export.H ../FL/fl_utf8.h
 fractals.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
 fractals.o: ../FL/Fl_Image.H ../FL/glu.h fracviewer.h ../FL/Fl_Button.H
 fractals.o: ../FL/Fl_Window.H
+fracviewer.o: ../config.h ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+fracviewer.o: ../FL/abi-version.h ../FL/Fl_Export.H ../FL/fl_types.h
+fracviewer.o: ../FL/platform_types.h ../FL/Fl.H ../FL/Fl_Gl_Window.H
+fracviewer.o: ../FL/Fl_Window.H ../FL/Fl.H ../FL/Fl_Export.H ../FL/fl_utf8.h
+fracviewer.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
+fracviewer.o: ../FL/Fl_Image.H ../FL/glu.h fracviewer.h
 fullscreen.o: ../config.h ../FL/Fl.H ../FL/Fl_Export.H ../FL/platform_types.h
 fullscreen.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fullscreen.o: ../FL/Enumerations.H ../FL/abi-version.h
