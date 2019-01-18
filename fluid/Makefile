@@ -71,7 +71,11 @@ clean:
 	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
 
 depend:	$(CPPFILES)
-	makedepend -Y -I.. -f makedepend $(CPPFILES)
+	makedepend -Y -I.. -f makedepend -w 20 $(CPPFILES)
+	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
+	echo "" >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | sort -u >> makedepend.tmp
+	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies...
 include makedepend
