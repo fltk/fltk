@@ -58,13 +58,16 @@ the version number.
 (1) Traditional configure + make (Unix, Linux, MinGW etc.)
 ----------------------------------------------------------
 
-	Run
+    Run
+	make clean
+	./configure --with-abiversion=10304
+	make
 
-		./configure --with-abiversion=10304
-		make
+    This will generate FL/abi-version.h and build FLTK as usual.
 
-	This will generate FL/abi-version.h and build FLTK as usual.
-
+    Note: you should always make sure that you compile everything from
+    scratch if you change the ABI version or any other configuration
+    options, e.g. with `make clean'.
 
 (2) CMake + make
 ----------------
@@ -104,6 +107,9 @@ the version number.
 	will copy the file abi-version.ide to FL/abi-version.h and run the
 	build with the defined ABI version.
 
+	Note: you should always make sure that you compile everything from
+	scratch if you change the ABI version or any other configuration
+	options, e.g. with "Clean all" or "Rebuild all" menu functions.
 
 Note on CMake:
 
