@@ -53,12 +53,15 @@ the version number.
 ----------------------------------------------------------
 
     Run
-
+	make clean
 	./configure --with-abiversion=10401
 	make
 
     This will generate FL/abi-version.h and build FLTK as usual.
 
+    Note: you should always make sure that you compile everything from
+    scratch if you change the ABI version or any other configuration
+    options, e.g. with `make clean'.
 
 (2) CMake + make
 ----------------
