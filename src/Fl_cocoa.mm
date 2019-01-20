@@ -596,7 +596,6 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)displayLayer:(CALayer *)layer;
 - (void)prepare_bitmap_for_layer;
 - (void)viewFrameDidChange;
-- (BOOL)wantsLayer;
 - (BOOL)did_view_resolution_change;
 - (void)drawRect:(NSRect)rect;
 @end
@@ -2191,7 +2190,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 #endif
 - (void)displayLayer:(CALayer *)layer;
 - (void)drawRect:(NSRect)rect;
-- (BOOL)wantsLayer;
 - (BOOL)did_view_resolution_change;
 @end
 
@@ -2220,9 +2218,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
   fl_unlock_function();
 }
--(BOOL)wantsLayer {
-  return YES;
-}
 - (BOOL)did_view_resolution_change {
   BOOL retval = [super did_view_resolution_change];
   if (retval && Fl::use_high_res_GL()) {
@@ -2237,9 +2232,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 
 
 @implementation FLViewLayer
-- (BOOL)wantsLayer {
-  return YES;
-}
 - (void)displayLayer:(CALayer *)layer {
   // used by non-GL layer-backed views
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
@@ -4527,7 +4519,6 @@ int Fl_Darwin_System_Driver::calc_mac_os_version() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (fl_mac_os_version >= 101400) views_use_CA = YES;
 #endif
-  //if (fl_mac_os_version >= 101300) views_use_CA = YES; // TEMP to get as with mojave
   return fl_mac_os_version;
 }
 
