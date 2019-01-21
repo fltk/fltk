@@ -31,9 +31,9 @@ test: all
 	(cd test; $(MAKE) $(MFLAGS)) || exit 1
 
 install: makeinclude
-	-mkdir -p $(DESTDIR)$(bindir)
-	$(RM) $(DESTDIR)$(bindir)/fltk-config
-	$(INSTALL_SCRIPT) fltk-config $(DESTDIR)$(bindir)
+	-mkdir -p "$(DESTDIR)$(bindir)"
+	$(RM) "$(DESTDIR)$(bindir)/fltk-config"
+	$(INSTALL_SCRIPT) fltk-config "$(DESTDIR)$(bindir)"
 	for dir in FL $(DIRS); do\
 		echo "=== installing $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) install) || exit 1;\
@@ -46,7 +46,7 @@ install-desktop: makeinclude
 	cd test; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)
 
 uninstall: makeinclude
-	$(RM) $(DESTDIR)$(bindir)/fltk-config
+	$(RM) "$(DESTDIR)$(bindir)/fltk-config"
 	for dir in FL $(DIRS); do\
 		echo "=== uninstalling $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || exit 1;\
