@@ -125,22 +125,7 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
 
 void Fl_X11_Screen_Driver::display(const char *d)
 {
-  if (!d) return;
-  
-  static const char *cmd = "DISPLAY=";
-  static const char *ext = ":0.0";
-  int nc = strlen(cmd);
-  int ne = strlen(ext);
-  int nd = strlen(d);
-
-  char *buf = (char *)malloc(nc+ne+nd+1);
-  strcpy(buf, cmd);
-  strcat(buf, d);
-  if (!strchr(d, ':')) {
-    strcat(buf, ext);
-  }
-  putenv(buf);
-  free(buf);
+  if (d) setenv("DISPLAY", d, 1);
 }
 
 
