@@ -2781,6 +2781,13 @@ static CGContextRef prepare_bitmap_for_layer(int w, int h ) {
 	received,strlen([received UTF8String]),Fl::compose_state,replacementRange.location,replacementRange.length);*/
   fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 101400 && replacementRange.length > 0) {
+    // occurs after a key was pressed and maintained and an auxiliary window appeared
+    // prevents marking dead key from deactivation
+    [[self inputContext] discardMarkedText];
+  }
+#endif
   while (replacementRange.length--) { // delete replacementRange.length characters before insertion point
     int saved_keysym = Fl::e_keysym;
     Fl::e_keysym = FL_BackSpace;
