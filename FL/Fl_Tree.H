@@ -109,6 +109,7 @@
  (inherited from Fl_Widget).<BR>
  A hook is provided to allow you to redefine how item's labels are drawn
  via Fl_Tree::item_draw_callback().<BR>
+ Items can be interactively dragged using FL_TREE_SELECT_SINGLE_DRAGGABLE.
 
  \par SELECTION OF ITEMS
  The tree can have different selection behaviors controlled by selectmode().
