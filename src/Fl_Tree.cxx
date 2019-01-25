@@ -874,6 +874,14 @@ Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
 
 /**
  Insert a new item \p 'name' into \p 'item's children at position \p 'pos'.
+
+ If \p pos is out of range the new item is
+  - prepended if \p pos \< 0 or
+  - appended  if \p pos \> item->children().
+
+ Note: \p pos == children() is not considered out of range: the item is
+ appended to the child list.
+
  Example:
  \par
  \code

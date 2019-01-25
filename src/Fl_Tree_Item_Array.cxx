@@ -109,9 +109,14 @@ void Fl_Tree_Item_Array::enlarge(int count) {
 /// Insert an item at index position \p pos.
 ///
 ///     Handles enlarging array if needed, total increased by 1.
-///     If \p pos == total(), an empty item is appended to the array.
+///     If \p pos \>= total(), the item is appended to the array.
+///     If \p pos \< 0, the item is prepended (works like pos == 0).
 ///
 void Fl_Tree_Item_Array::insert(int pos, Fl_Tree_Item *new_item) {
+  if (pos < 0)
+    pos = 0;
+  else if (pos > _total)
+    pos = _total;
   enlarge(1);
   // printf("*** POS=%d TOTAL-1=%d NITEMS=%d\n", pos, _total-1, (_total-pos));
   if ( pos <= (_total - 1) ) {	// need to move memory around?

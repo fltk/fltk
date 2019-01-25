@@ -387,10 +387,17 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs,
 	 : 0;				      // failed? error
 }
 
-/// Insert a new item named \p 'new_label' into current item's
-/// children at a specified position \p 'pos'.
-/// \returns the new item inserted.
-///
+/**
+  Insert a new item named \p 'new_label' into current item's
+  children at a specified position \p 'pos'.
+
+  If \p pos is out of range the new item is
+   - prepended if \p pos \< 0 or
+   - appended  if \p pos \> item->children().
+
+  \returns the new item inserted
+  \see Fl_Tree::insert()
+*/
 Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos) {
   Fl_Tree_Item *item = new Fl_Tree_Item(_tree);
   item->label(new_label);
