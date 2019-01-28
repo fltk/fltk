@@ -2285,7 +2285,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   BOOL retval = [super did_view_resolution_change];
   if (retval) {
     [self viewFrameDidChange];
-    [(FLWindow*)[self window] getFl_Window]->redraw();
     [self setNeedsDisplay:YES];
   }
   return retval;
