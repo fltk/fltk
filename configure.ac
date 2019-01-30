@@ -1006,20 +1006,36 @@ case $host_os_gui in
 
 	xft_found=no
 	if test x$enable_xft != xno; then
-	    AC_PATH_PROG(FTCONFIG, freetype-config)
+            # Try pkg-config first (freetype2 deprecated freetype-config from some version on)
+            AC_PATH_PROG(PKGCONFIG, pkg-config)
+            FT_FLAGS=""
+            if test "x$PKGCONFIG" != x; then
+                FT_FLAGS="`$PKGCONFIG --cflags xft`"
+                if test "x$FT_FLAGS" = x; then
+                    FT_FLAGS="`$PKGCONFIG --cflags freetype2`"
+                fi
+            fi
+            # if that failed, try freetype-config
+            if test "x$FT_FLAGS" = x; then
+                AC_PATH_PROG(FTCONFIG, freetype-config)
+                if test "x$FTCONFIG" != x; then
+                    FT_FLAGS="`$FTCONFIG --cflags`"
+                else
+                    # abort if both methods failed
+                    AC_MSG_NOTICE([please install pkg-config or use 'configure --disable-xft'.])
+                    AC_MSG_ERROR([Aborting.])
+                fi
+            fi
+            CPPFLAGS="$FT_FLAGS $CPPFLAGS"
+            CXXFLAGS="$FT_FLAGS $CXXFLAGS"
+            CFLAGS="$FT_FLAGS $CFLAGS"
 
-	    if test "x$FTCONFIG" != x; then
-		CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
-		CFLAGS="`$FTCONFIG --cflags` $CFLAGS"
-		CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
-
-		AC_CHECK_LIB(fontconfig, FcPatternCreate)
-		AC_CHECK_HEADER(X11/Xft/Xft.h,
+            AC_CHECK_LIB(fontconfig, FcPatternCreate)
+            AC_CHECK_HEADER(X11/Xft/Xft.h,
 		    AC_CHECK_LIB(Xft, XftDrawCreate,
 			[AC_DEFINE(USE_XFT)
 			 LIBS="-lXft $LIBS"
 			 xft_found=yes] ))
-	    fi
 	fi
 
 	dnl Issue a warning message if Xft was not found, abort configure
