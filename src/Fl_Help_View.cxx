@@ -3281,10 +3281,24 @@ Fl_Help_View::~Fl_Help_View()
 
 /** Loads the specified file.
 
-  This method loads the specified file or URL.
+ This method loads the specified file or URL. The filename may end in a
+ '#name' style target.
+
+ If the URL starts with \a ftp, \a http, \a https, \a ipp, \a mailto, or
+ \a news, followed by a colon, FLTK will use fl_open_uri() to show the
+ requested page in an external browser.
+
+ In all other cases, the URL is interpreted as a filename. The file is read and
+ displayed in this borwser. Note that MSWindows style backslashes are not
+ supported in the file name.
+
+ \param[in] f filename or URL
+
+ \return 0 on success, -1 on error
+
+ \see fl_open_uri()
 */
-int				// O - 0 on success, -1 on error
-Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
+int Fl_Help_View::load(const char *f)
 {
   FILE		*fp;		// File to read from
   long		len;		// Length of file
@@ -3301,7 +3315,8 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
       strncmp(f, "https:", 6) == 0 ||
       strncmp(f, "ipp:", 4) == 0 ||
       strncmp(f, "mailto:", 7) == 0 ||
-      strncmp(f, "news:", 5) == 0) {
+      strncmp(f, "news:", 5) == 0)
+  {
     char urimsg[FL_PATH_MAX];
     if ( fl_open_uri(f, urimsg, sizeof(urimsg)) == 0 ) {
       clear_selection();
@@ -3337,9 +3352,10 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 	       "%s.</P></BODY>",
 	       f, urimsg);
       value(error);
-      //return(-1);
+      return -1;
+    } else {
+      return 0;
     }
-    return(0);
   }
 
   clear_selection();
@@ -3354,7 +3370,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     localname = filename_;
 
   if (!localname)
-    return (0);
+    return -1;
 
   free_data();
 
@@ -3371,6 +3387,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   if (strncmp(localname, "file:", 5) == 0)
     localname += 5;	// Adjust for local filename...
 
+  int ret = 0;
   if ((fp = fl_fopen(localname, "rb")) != NULL)
   {
     fseek(fp, 0, SEEK_END);
@@ -3390,6 +3407,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 	     "%s.</P></BODY>",
 	     localname, strerror(errno));
     value_ = strdup(error);
+    ret = -1;
   }
 
   initial_load = 1;
@@ -3401,7 +3419,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   else
     topline(0);
 
-  return (0);
+  return ret;
 }
 
 
