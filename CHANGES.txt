@@ -102,6 +102,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Fix for STR#3473 (and its duplicate STR#3507) to restore configure-based
+    builds on recent Linux/Unix distributions where the freetype-config
+    command has been replaced by pkg-config.
   - Added support for MacOS 10.14 "Mojave": all drawing to windows is done
     through "layer-backed views" when the app is linked to SDK 10.14.
   - MacOS ≥ 10.10: Fl_Window::fullscreen() and fullscreen_off() no longer
