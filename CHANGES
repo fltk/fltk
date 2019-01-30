@@ -13,6 +13,9 @@ New features and enhancements (highlights)
 
 Bug fixes and other improvements
 
+        - Fix for STR 3473 (and its duplicate STR 3507) to restore configure-based
+          builds on recent Linux/Unix distributions where the freetype-config
+          command has been replaced by pkg-config.
 	- Fix Fl_Tree::insert() with pos out ouf range (issue #18).
 	- Fix Fl_GIF_Image Color Table handling (STR 3491).
 	- Make sure not to access Fl_Menu_ widgets if the widget gets
