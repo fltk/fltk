@@ -628,12 +628,15 @@ void Fl_Text_Display::recalc_display() {
     if (scrollbar_align() & FL_ALIGN_LEFT) {
 #ifdef LINENUM_LEFT_OF_VSCROLL
       mVScrollBar->resize(text_area.x - LEFT_MARGIN - scrollsize,
+                          text_area.y - TOP_MARGIN,
+                          scrollsize,
+                          text_area.h + TOP_MARGIN + BOTTOM_MARGIN);
 #else
       mVScrollBar->resize(X,
+                          text_area.y - TOP_MARGIN,
+                          scrollsize,
+                          text_area.h + TOP_MARGIN + BOTTOM_MARGIN);
 #endif
-			  text_area.y - TOP_MARGIN,
-			  scrollsize,
-			  text_area.h + TOP_MARGIN + BOTTOM_MARGIN);
     } else {
       mVScrollBar->resize(X+W-scrollsize,
 			  text_area.y - TOP_MARGIN,
@@ -1965,6 +1968,7 @@ int Fl_Text_Display::handle_vline(
   // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the
   // FIXME: character for selection, and one on the character center for cursors.
   int i, X, startIndex, style, charStyle;
+  int startStyle, styleX;
   char *lineStr;
   double startX;
 
@@ -1990,8 +1994,8 @@ int Fl_Text_Display::handle_vline(
     X = text_area.x - mHorizOffset;
   }
 
-  startX = X;
-  startIndex = 0;
+  startX = styleX = X;
+  startIndex = startStyle = 0;
   if (!lineStr) {
     // just clear the background
     if (mode==DRAW_LINE) {
@@ -2018,6 +2022,7 @@ int Fl_Text_Display::handle_vline(
       double w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
+        styleX = startX; startStyle = startIndex;
         double tab = col_to_x(mBuffer->tab_distance());
         double xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
         w = ((int(xAbs/tab)+1)*tab) - xAbs;
@@ -2032,9 +2037,24 @@ int Fl_Text_Display::handle_vline(
         }
       } else {
         // draw a text segment
-        w = string_width( lineStr+startIndex, i-startIndex, style );
-        if (mode==DRAW_LINE)
-          draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+        if ( (style&0xff)==(charStyle&0xff)) {
+          w = string_width( lineStr+startStyle, i-startStyle, style ) + styleX - startX;
+        } else {
+          styleX = startX; startStyle = startIndex;
+          w = string_width( lineStr+startIndex, i-startIndex, style );
+        }
+        if (mode==DRAW_LINE) {
+          // STR 2531: if only the highlighting changes, but the style is the same,
+          // we must use some tricky clipping, or kerning between characters will
+          // make the text wiggle while the user is expanding a selection.
+          if ( (style&0xff)==(charStyle&0xff)) {
+            fl_push_clip(startX, Y, w, mMaxsize);
+            draw_string( style, styleX, Y, startX+w, lineStr+startStyle, i-startStyle );
+            fl_pop_clip();
+          } else {
+            draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+          }
+        }
         if (mode==FIND_INDEX && startX+w>rightClip) {
           // find x pos inside block
 	  int di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
@@ -2050,7 +2070,7 @@ int Fl_Text_Display::handle_vline(
     i += len;
     prevChar = currChar;
   }
-  int w = 0;
+  double w = 0;
   if (currChar=='\t') {
     // draw a single Tab space
     double tab = col_to_x(mBuffer->tab_distance());
@@ -2067,8 +2087,16 @@ int Fl_Text_Display::handle_vline(
     }
   } else {
     w = string_width( lineStr+startIndex, i-startIndex, style );
-    if (mode==DRAW_LINE)
-      draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+    if (mode==DRAW_LINE) {
+      // STR 2531
+      if ( (style&0xff)==(charStyle&0xff)) {
+        fl_push_clip(startX, Y, w, mMaxsize);
+        draw_string( style, styleX, Y, startX+w, lineStr+startStyle, i-startStyle );
+        fl_pop_clip();
+      } else {
+        draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+      }
+    }
     if (mode==FIND_INDEX) {
       // find x pos inside block
       int di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
