@@ -31,15 +31,18 @@
 #ifndef NANOSVGRAST_H
 #define NANOSVGRAST_H
 
+#ifndef NANOSVGRAST_CPLUSPLUS
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 typedef struct NSVGrasterizer NSVGrasterizer;
 
 /* Example Usage:
 	// Load SVG
-	struct SNVGImage* image = nsvgParseFromFile("test.svg.");
+	NSVGimage* image;
+	image = nsvgParseFromFile("test.svg", "px", 96);
 
 	// Create rasterizer (can be used to render multiple images).
 	struct NSVGrasterizer* rast = nsvgCreateRasterizer();
@@ -78,8 +81,10 @@ void nsvgRasterizeXY(NSVGrasterizer* r,
 void nsvgDeleteRasterizer(NSVGrasterizer*);
 
 
+#ifndef NANOSVGRAST_CPLUSPLUS
 #ifdef __cplusplus
 }
+#endif
 #endif
 
 #endif // NANOSVGRAST_H
