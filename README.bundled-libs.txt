@@ -17,21 +17,21 @@ Current versions of bundled libraries:
   Library       Version            Release date		FLTK Version
   ------------------------------------------------------------------
   jpeg          jpeg-9c            2018-01-14           1.4.0
-  nanosvg [1]   06c1f0f            2018-07-01           1.4.0
+  nanosvg       e62285a43b [1]     2019-01-31           1.4.0
   png           libpng-1.6.34      2017-09-29           1.4.0
   zlib          zlib-1.2.11        2017-01-15           1.4.0
-
-[1] Git commit: https://github.com/memononen/nanosvg
-
 
 Previous versions of bundled libraries:
 
   Library       Version            Release date		FLTK Version
   ------------------------------------------------------------------
+  nanosvg       ce81a6577c [1]     2018-07-01           1.4.0
   jpeg          jpeg-9a            2014-01-19           1.3.4
   png           libpng-1.6.16      2014-12-22           1.3.4
   zlib          zlib-1.2.8         2013-04-28           1.3.4
 
+[1] Git commit in: https://github.com/fltk/nanosvg
+    See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date".
 
 General information:
 
@@ -49,7 +49,7 @@ General information:
   later is aware of changes in the source code for FLTK. Additional comments
   should be added to show the rationale, i.e. why a particular change was
   necessary. If applicable, add a reference to a Software Trouble Report
-  like "STR #3456".
+  like "STR 3456", "Issue #123", or "PR #234".
 
 
 How to update the bundled libraries:
