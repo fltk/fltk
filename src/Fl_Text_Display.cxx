@@ -1967,10 +1967,23 @@ int Fl_Text_Display::handle_vline(
 
   // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the
   // FIXME: character for selection, and one on the character center for cursors.
-  int i, X, startIndex, style, charStyle;
-  int startStyle, styleX;
+
+  /* STR #2531
+
+   The variables startStyle and styleX seem to introduce some additional
+   complexity. They were required to fix STR #2531 in which a horizontal
+   character wiggle could be observed when drag-selecting text. This was caused
+   by native drawing an measuring routines that support kerning (inter-character
+   spacing, the width of 'T' plus the width of 'e' is greater than the width of
+   'Te', because advanced typesetting moves the 'e' slightly to the left below
+   the 'T').
+
+   To acommodate this, FLTK uses slightly different routines for a true style
+   change vs. a change in highlighting only.
+   */
+  int i, X, startIndex, startStyle, style, charStyle;
   char *lineStr;
-  double startX;
+  double startX, styleX;
 
   if ( lineStartPos == -1 ) {
     lineStr = NULL;
@@ -1994,8 +2007,8 @@ int Fl_Text_Display::handle_vline(
     X = text_area.x - mHorizOffset;
   }
 
-  startX = styleX = X;
-  startIndex = startStyle = 0;
+  startX = X;
+  startIndex = 0;
   if (!lineStr) {
     // just clear the background
     if (mode==DRAW_LINE) {
@@ -2008,8 +2021,8 @@ int Fl_Text_Display::handle_vline(
     }
     return 0;
   }
-
   char currChar = 0, prevChar = 0;
+  styleX = startX; startStyle = startIndex;
   // draw the line
   style = position_style(lineStartPos, lineLen, 0);
   for (i=0; i<lineLen; ) {
@@ -2022,10 +2035,10 @@ int Fl_Text_Display::handle_vline(
       double w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
-        styleX = startX; startStyle = startIndex;
         double tab = col_to_x(mBuffer->tab_distance());
         double xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
         w = ((int(xAbs/tab)+1)*tab) - xAbs;
+        styleX = startX+w; startStyle = i;
         if (mode==DRAW_LINE)
           draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
         if (mode==FIND_INDEX && startX+w>rightClip) {
@@ -2036,19 +2049,15 @@ int Fl_Text_Display::handle_vline(
           return lineStartPos + startIndex;
         }
       } else {
-        // draw a text segment
+        // draw the text segment from the previous style change up to this point
         if ( (style&0xff)==(charStyle&0xff)) {
-          w = string_width( lineStr+startStyle, i-startStyle, style ) + styleX - startX;
+          w = string_width( lineStr+startStyle, i-startStyle, style ) - startX + styleX;
         } else {
-          styleX = startX; startStyle = startIndex;
           w = string_width( lineStr+startIndex, i-startIndex, style );
         }
         if (mode==DRAW_LINE) {
-          // STR 2531: if only the highlighting changes, but the style is the same,
-          // we must use some tricky clipping, or kerning between characters will
-          // make the text wiggle while the user is expanding a selection.
-          if ( (style&0xff)==(charStyle&0xff)) {
-            fl_push_clip(startX, Y, w, mMaxsize);
+          if (startIndex!=startStyle) {
+            fl_push_clip(startX, Y, w+1, mMaxsize);
             draw_string( style, styleX, Y, startX+w, lineStr+startStyle, i-startStyle );
             fl_pop_clip();
           } else {
@@ -2057,10 +2066,21 @@ int Fl_Text_Display::handle_vline(
         }
         if (mode==FIND_INDEX && startX+w>rightClip) {
           // find x pos inside block
-	  int di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
+          int di;
+          if (startIndex!=startStyle) {
+            di = find_x(lineStr+startStyle, i-startStyle, style, -(rightClip-styleX)); // STR #2788
+            di = lineStartPos + startStyle + di;
+          } else {
+            di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
+            di = lineStartPos + startIndex + di;
+          }
           free(lineStr);
           IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
-          return lineStartPos + startIndex + di;
+          return di;
+        }
+        if ( (style&0xff)!=(charStyle&0xff)) {
+          startStyle = i;
+          styleX = startX+w;
         }
       }
       style = charStyle;
@@ -2089,8 +2109,8 @@ int Fl_Text_Display::handle_vline(
     w = string_width( lineStr+startIndex, i-startIndex, style );
     if (mode==DRAW_LINE) {
       // STR 2531
-      if ( (style&0xff)==(charStyle&0xff)) {
-        fl_push_clip(startX, Y, w, mMaxsize);
+      if (startIndex!=startStyle) {
+        fl_push_clip(startX, Y, w+1, mMaxsize);
         draw_string( style, styleX, Y, startX+w, lineStr+startStyle, i-startStyle );
         fl_pop_clip();
       } else {
@@ -2099,10 +2119,17 @@ int Fl_Text_Display::handle_vline(
     }
     if (mode==FIND_INDEX) {
       // find x pos inside block
-      int di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
+      int di;
+      if (startIndex!=startStyle) {
+        di = find_x(lineStr+startStyle, i-startStyle, style, -(rightClip-styleX)); // STR #2788
+        di = lineStartPos + startStyle + di;
+      } else {
+        di = find_x(lineStr+startIndex, i-startIndex, style, -(rightClip-startX)); // STR #2788
+        di = lineStartPos + startIndex + di;
+      }
       free(lineStr);
       IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
-      return lineStartPos + startIndex + di;
+      return di;
     }
   }
   if (mode==GET_WIDTH) {
