@@ -177,8 +177,9 @@ int Fl_Input::kf_delete_eol() {
 
 int Fl_Input::kf_delete_char_right() {
   if (readonly()) { fl_beep(); return 1; }
-  if (mark() != position()) return cut();
-  else return cut(1);
+  if (mark() != position()) cut();
+  else cut(1);
+  return 1;
 }
 
 int Fl_Input::kf_delete_char_left() {
