@@ -194,6 +194,16 @@ public:
     Returns the selection color of the spinner widget's input field.
   */
   Fl_Color selection_color() const { return input_.selection_color(); }
+
+  /**
+   Sets the maximum width of the input field.
+   */
+  void maximum_size(int m) { if (m > 0) input_.maximum_size(m); }
+
+  /**
+   Returns the maximum width of the input field.
+   */
+  int maximum_size() const { return input_.maximum_size(); }
 };
 
 #endif // !Fl_Spinner_H
