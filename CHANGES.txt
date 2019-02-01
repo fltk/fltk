@@ -145,6 +145,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Bug Fixes
 
   - (add new items here)
+  - Updated Fluid documentation and image (STR #3328).
   - Duplicating Widget Class in Fluid no longer crashes (STR #3445).
   - Fl_Check_Browser::add(item) now accepts NULL (STR #3498).
   - Interface to set maximum width of spinner text field (STR #3386).

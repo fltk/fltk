@@ -944,6 +944,9 @@ undone, however.
 
 \section fluid_widget_attributes GUI Attributes
 
+\par Not all fields in the Widget attributes dialog will be visible
+for all types of widgets.
+
 \par Label (text field)
 
 \par
