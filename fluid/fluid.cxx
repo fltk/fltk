@@ -581,12 +581,20 @@ void new_cb(Fl_Widget *, void *v) {
                       "Save", "Don't Save"))
     {
       case 0 : /* Cancel */
-          return;
+        return;
       case 1 : /* Save */
-          save_cb(NULL, NULL);
-	  if (modflag) return;	// Didn't save!
+        save_cb(NULL, NULL);
+        if (modflag) return;  // Didn't save!
     }
   }
+
+  // Clear the current data...
+  delete_all();
+  set_filename(NULL);
+}
+
+void new_from_template_cb(Fl_Widget *w, void *v) {
+  new_cb(w, v);
 
   // Setup the template panel...
   if (!template_panel) make_template_panel();
@@ -602,17 +610,17 @@ void new_cb(Fl_Widget *, void *v) {
   template_instance->deactivate();
   template_instance->value("");
 
-  template_delete->hide();
+  template_delete->show();
 
   template_submit->label("New");
   template_submit->deactivate();
 
   template_panel->label("New");
 
-  if ( template_browser->size() == 1 ) { // only one item?
+  //if ( template_browser->size() == 1 ) { // only one item?
     template_browser->value(1);          // select it
     template_browser->do_callback();
-  }
+  //}
 
   // Show the panel and wait for the user to do something...
   template_panel->show();
@@ -621,10 +629,6 @@ void new_cb(Fl_Widget *, void *v) {
   // See if the user chose anything...
   int item = template_browser->value();
   if (item < 1) return;
-
-  // Clear the current data...
-  delete_all();
-  set_filename(NULL);
 
   // Load the template, if any...
   const char *tname = (const char *)template_browser->data(item);
@@ -1041,14 +1045,15 @@ void toggle_sourceview_cb(Fl_Double_Window *, void *);
 
 Fl_Menu_Item Main_Menu[] = {
 {"&File",0,0,0,FL_SUBMENU},
-  {"&New...", FL_COMMAND+'n', new_cb, 0},
+  {"&New", FL_COMMAND+'n', new_cb, 0},
   {"&Open...", FL_COMMAND+'o', open_cb, 0},
   {"&Insert...", FL_COMMAND+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
   {"&Save", FL_COMMAND+'s', save_cb, 0},
   {"Save &As...", FL_COMMAND+FL_SHIFT+'s', save_cb, (void*)1},
   {"Sa&ve A Copy...", 0, save_cb, (void*)2},
-  {"Save &Template...", 0, save_template_cb},
   {"&Revert...", 0, revert_cb, 0, FL_MENU_DIVIDER},
+  {"New &From Template...", FL_COMMAND+'N', new_from_template_cb, 0},
+  {"Save As &Template...", 0, save_template_cb, 0, FL_MENU_DIVIDER},
   {"&Print...", FL_COMMAND+'p', print_menu_cb},
   {"Write &Code...", FL_COMMAND+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},

@@ -16,6 +16,7 @@ Subchapters:
 \li \ref fluid_compiling_fl_files
 \li \ref fluid_tutorial
 \li \ref fluid_references
+\li \ref fluid_templates
 \li \ref fluid_i18n
 \li \ref fluid_limitations
 
@@ -1444,6 +1445,33 @@ Fl_PNG_Image image to label the widget, and writes uncompressed
 RGB or grayscale data to the source file. PNG images can provide
 a full alpha channel for partial transparency, and FLTK supports
 this as best as possible on each platform.
+
+\section fluid_templates FLUID Templates
+
+\par
+Fluid can store a number of project templates. Project templates
+are great for storing often used boilerplate code for fast access.
+A common use would be projects with readily prepared copyright 
+messages.
+
+\par
+A sample template for FLTK projects is included with Fluid.
+
+\par
+Choose "File > New From Template..." to create a new project
+based on a template file. In the template dialog, select one of
+the existing templates.  All occurrences of the word 
+"@INSTANCE@" in the template are replaced with the text in 
+the "Instance" field. To create the new project click "New".
+
+\par
+To add your current project as a new template, choose 
+"File > Save As Template...", fill in a name, and click "Save".
+
+\par
+To delete a template, open the template dialog using 
+"New from Template" or "Save As Template", the select any 
+existing template, and click "Delete Template".
 
 \section fluid_i18n Internationalization with FLUID
 

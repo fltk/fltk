@@ -220,6 +220,30 @@ void template_load() {
   fluid_prefs.getUserdataPath(path, sizeof(path));
   strlcat(path, "templates", sizeof(path));
   
+  int sample_templates_generated = 0;
+  fluid_prefs.get("sample_templates_generated", sample_templates_generated, 0);
+  
+  if (!sample_templates_generated) {
+    strcpy(filename, path);
+    strcat(filename, "/FLTK_License.fl");
+    FILE *f = fopen(filename, "wb");
+    if (f) {
+      fputs(
+  "# data file for the Fltk User Interface Designer (fluid)\nversion 1.0400\nheader_name {.h}\n"
+  "code_name {.cxx}\ncomment {//\n// \"$Id$\"\n//\n// @INSTANCE@ for the Fast Light Tool Kit (FLT"
+  "K).\n//\n// Copyright 1998-2019 by Bill Spitzak and others.\n//\n// This library is free sof"
+  "tware. Distribution and use rights are outlined in\n// the file \"COPYING\" which should have "
+  "been included with this file.  If this\n// file is missing or damaged, see the license at:\n"
+  "//\n//     http://www.fltk.org/COPYING.php\n//\n// Please report all bugs and problems on th"
+  "e following page:\n//\n//     http://www.fltk.org/str.php\n//\n} {selected in_source in_head"
+  "er\n}\n\ncomment {\n//\n// End of \"$Id$\".\n//} {in_source in_header\n}\n", f);
+      fclose(f);
+    }
+    sample_templates_generated = 1;
+    fluid_prefs.set("sample_templates_generated", sample_templates_generated);
+    fluid_prefs.flush();
+  }
+  
   num_files = fl_filename_list(path, &files);
   
   for (i = 0; i < num_files; i ++) {
