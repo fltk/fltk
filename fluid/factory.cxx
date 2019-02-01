@@ -1116,8 +1116,14 @@ Fl_Type *Fl_Type_make(const char *tn) {
     Fl_Menu_Item *m = New_Menu+i;
     if (!m->user_data()) continue;
     Fl_Type *t = (Fl_Type*)(m->user_data());
-    if (!fl_ascii_strcasecmp(tn,t->type_name())) {r = t->make(); break;}
-    if (!fl_ascii_strcasecmp(tn,t->alt_type_name())) {r = t->make(); break;}
+    if (!fl_ascii_strcasecmp(tn,t->type_name())) {
+        r = t->make();
+        break;
+    }
+    if (!fl_ascii_strcasecmp(tn,t->alt_type_name())) {
+        r = t->make();
+        break;
+    }
   }
   reading_file = 0;
   return r;

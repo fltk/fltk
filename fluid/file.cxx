@@ -450,40 +450,44 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
 
-    {Fl_Type *t = Fl_Type_make(c);
-    if (!t) {
-      read_error("Unknown word \"%s\"", c);
-      continue;
-    }
-    t->name(read_word());
+    {
+      Fl_Type *t = Fl_Type_make(c);
+      if (!t) {
+        read_error("Unknown word \"%s\"", c);
+        continue;
+      }
+      t->name(read_word());
 
-    c = read_word(1);
-    if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
-      ((Fl_Class_Type*)t)->prefix(t->name());
-      t->name(c);
       c = read_word(1);
+      if (strcmp(c,"{") && t->is_class()) {   // <prefix> <name>
+        ((Fl_Class_Type*)t)->prefix(t->name());
+        t->name(c);
+        c = read_word(1);
+      }
+
+      if (strcmp(c,"{")) {
+        read_error("Missing property list for %s\n",t->title());
+        goto REUSE_C;
+      }
+
+      t->open_ = 0;
+      for (;;) {
+        const char *cc = read_word();
+        if (!cc || !strcmp(cc,"}")) break;
+        t->read_property(cc);
+      }
+
+      if (!t->is_parent()) continue;
+      c = read_word(1);
+      if (strcmp(c,"{")) {
+        read_error("Missing child list for %s\n",t->title());
+        goto REUSE_C;
+      }
+      read_children(t, 0);
     }
 
-    if (strcmp(c,"{")) {
-      read_error("Missing property list for %s\n",t->title());
-      goto REUSE_C;
-    }
-
-    t->open_ = 0;
-    for (;;) {
-      const char *cc = read_word();
-      if (!cc || !strcmp(cc,"}")) break;
-      t->read_property(cc);
-    }
-
-    if (!t->is_parent()) continue;
-    c = read_word(1);
-    if (strcmp(c,"{")) {
-      read_error("Missing child list for %s\n",t->title());
-      goto REUSE_C;
-    }
-    read_children(t, 0);}
     Fl_Type::current = p;
+    
   CONTINUE:;
   }
 }

@@ -102,7 +102,7 @@ Fl_Type *Fl_Widget_Type::make() {
   Fl_Widget_Type* q = (Fl_Widget_Type*)qq;
   // find the parent widget:
   Fl_Widget_Type* p = q;
-  if ((force_parent || !p->is_group()) && p->parent->is_widget())
+  if ((force_parent || !p->is_group()) && p->parent && p->parent->is_widget())
     p = (Fl_Widget_Type*)(p->parent);
   force_parent = 0;
 
