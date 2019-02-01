@@ -145,6 +145,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Bug Fixes
 
   - (add new items here)
+  - Fl_Check_Browser::add(item) now accepts NULL (STR #3498).
+  - Interface to set maximum width of spinner text field (STR #3386).
+  - Fl_Text_Display no longer wiggles (STR #2531).
+  - Fixed Help_View return value (STR #3430).
   - Fix 'fluid.app' on case sensitive macOS (was: Fluid.app).
   - Fix FL_PUSH event handling of Fl_Check_Browser (STR #3004).
   - Fix a potential crash when a program exits before it opens a window
