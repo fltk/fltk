@@ -175,7 +175,7 @@ int Fl_Check_Browser::add(char *s, int b) {
 	p->prev = 0;
 	p->checked = b;
 	p->selected = 0;
-	p->text = strdup(s);
+    p->text = strdup(s?s:"");
 
 	if (b) {
 		nchecked_++;
