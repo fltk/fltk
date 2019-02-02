@@ -42,6 +42,8 @@ protected:
   void item_select(void *, int);
   int item_selected(void *) const;
   const char *item_text(void *item) const /* override */;
+
+public:
   void *item_at(int index) const /* override */;
   void item_swap(int ia, int ib) /* override */;
   void item_swap(void *a, void *b) /* override */;
