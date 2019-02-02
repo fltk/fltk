@@ -400,6 +400,13 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
         // draw the menu to the right
         Y = Y-h()+itemheight+Fl::box_dy(box());
       }
+      if (t) {
+        if (menubar_title) {
+          Y = Y + Fl::menu_linespacing() - Fl::box_dw(button->box());
+        } else {
+          Y += 2*Htitle+2*BW+3;
+        }
+      }
     }
   }
   if (m) y(Y); else {y(Y-2); w(1); h(1);}
