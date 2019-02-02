@@ -189,7 +189,7 @@ inline int glutGetMenu() {return glut_menu;}
 
 inline void glutSetMenu(int m) {glut_menu = m;}
 
-FL_EXPORT void glutAddMenuEntry(char *label, int value);
+FL_EXPORT void glutAddMenuEntry(const char *label, int value);
 
 FL_EXPORT void glutAddSubMenu(char *label, int submenu);
 

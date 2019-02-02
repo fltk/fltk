@@ -329,7 +329,7 @@ static Fl_Menu_Item* additem(menu *m) {
   return i;
 }
 
-void glutAddMenuEntry(char *label, int value) {
+void glutAddMenuEntry(const char *label, int value) {
   menu *m = &menus[glut_menu];
   Fl_Menu_Item* i = additem(m);
   i->text = label;
