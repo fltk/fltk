@@ -940,7 +940,10 @@ void visible_cb(Fl_Light_Button* i, void* v) {
 	}
       }
     }
-    if (mod) set_modflag(1);
+    if (mod) {
+      set_modflag(1);
+      redraw_browser();
+    }
   }
 }
 

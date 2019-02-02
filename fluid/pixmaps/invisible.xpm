@@ -1,0 +1,29 @@
+/* XPM */
+static const char *invisible_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"` c #000000",
+"a c #80c080",
+"b c #c0ffc0",
+"c c none",
+"M c #e0e0e0",
+"e c #408040",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ccMMMccccccccccc",
+"ccM`Mccccccccccc",
+"MMMMMccccccccccc",
+"M```Mccccccccccc",
+"MMM`Mccccccccccc",
+"ccM`Mccccccccccc",
+"MMM`MMMccccccccc",
+"M`````Mccccccccc",
+"MMMMMMMccccccccc",
+"cccccccccccccccc"
+};

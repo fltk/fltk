@@ -41,10 +41,12 @@
 #include <FL/Fl_Pixmap.H>
 #include "pixmaps/lock.xpm"
 #include "pixmaps/protected.xpm"
+#include "pixmaps/invisible.xpm"
 //#include "pixmaps/unlock.xpm"
 
 static Fl_Pixmap	lock_pixmap(lock_xpm);
-static Fl_Pixmap	protected_pixmap(protected_xpm);
+static Fl_Pixmap    protected_pixmap(protected_xpm);
+static Fl_Pixmap    invisible_pixmap(invisible_xpm);
 //static Fl_Pixmap	unlock_pixmap(unlock_xpm);
 
 #include "pixmaps/flWindow.xpm"
@@ -388,6 +390,10 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   switch (l->is_public()) {
     case 0: lock_pixmap.draw(X - 17, Y); break;
     case 2: protected_pixmap.draw(X - 17, Y); break;
+  }
+
+  if (l->is_widget() && ((Fl_Widget_Type*)l)->o && !((Fl_Widget_Type*)l)->o->visible()) {
+    invisible_pixmap.draw(X - 17, Y);
   }
   
   // Indent=12 per level: Now write the text that comes after the graphics representation
