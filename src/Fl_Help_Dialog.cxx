@@ -221,10 +221,11 @@ void Fl_Help_Dialog::hide() {
   window_->hide();
 }
 
-void Fl_Help_Dialog::load(const char *f) {
+int Fl_Help_Dialog::load(const char *f) {
   view_->set_changed();
-  view_->load(f);
+  int ret = view_->load(f);
   window_->label(view_->title());
+  return ret;
 }
 
 void Fl_Help_Dialog::position(int xx, int yy) {

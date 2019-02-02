@@ -29,7 +29,7 @@ comment {//
 } {in_source in_header
 }
 
-decl {\#include <FL/Fl_Shared_Image.H>} {selected private local
+decl {\#include <FL/Fl_Shared_Image.H>} {private local
 }
 
 decl {\#include "flstring.h"} {private local
@@ -50,8 +50,7 @@ class FL_EXPORT Fl_Help_Dialog {open
   }
   decl {int find_pos_;} {private local
   }
-  Function {Fl_Help_Dialog()} {open
-  } {
+  Function {Fl_Help_Dialog()} {} {
     Fl_Window window_ {
       label {Help Dialog} open
       private xywh {398 64 530 385} type Double hide resizable size_range {260 150 0 0}
@@ -190,11 +189,13 @@ fl_register_images();} {}
   } {
     code {window_->hide();} {}
   }
-  Function {load(const char *f)} {return_type void
+  Function {load(const char *f)} {open return_type int
   } {
     code {view_->set_changed();
-view_->load(f);
-window_->label(view_->title());} {}
+int ret = view_->load(f);
+window_->label(view_->title());
+return ret;} {selected
+    }
   }
   Function {position(int xx, int yy)} {return_type void
   } {

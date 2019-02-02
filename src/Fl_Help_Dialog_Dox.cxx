@@ -40,9 +40,14 @@
 /** \fn void Fl_Help_Dialog::hide()
   Hides the Fl_Help_Dialog window.*/
 
-/** \fn void Fl_Help_Dialog::load(const char *f)
-  Loads the specified HTML file into the Fl_Help_View widget.
-  The filename can also contain a target name ("filename.html#target").
+/** \fn int Fl_Help_Dialog::load(const char *f)
+ \brief Loads the specified HTML file into the Fl_Help_View widget.
+ The filename can also contain a target name ("filename.html#target"). Always
+ use forward slashes as path deliminators, MSWindows-style backslashes are not
+ supported here
+ \param[in] f the name and path of an HTML file
+ \return 0 on success, -1 on error
+ \see Fl_Help_View::load(), fl_load_uri()
 */
 
 /** \fn void Fl_Help_Dialog::position(int x, int y)

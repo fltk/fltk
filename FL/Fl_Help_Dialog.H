@@ -67,7 +67,7 @@ public:
   ~Fl_Help_Dialog();
   int h();
   void hide();
-  void load(const char *f);
+  int load(const char *f);
   void position(int xx, int yy);
   void resize(int xx, int yy, int ww, int hh);
   void show();
