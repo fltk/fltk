@@ -18,6 +18,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - Tooltips hide by themselves after 12 seconds (STR #2584).
   - New member functions Fl_Paged_Device::begin_job() and begin_page()
     replace start_job() and start_page(). The start_... names are maintained
     for API compatibility.
