@@ -101,8 +101,8 @@ int main(int argc, char** argv) {
     const char *str;
     
     // update all the buttons with the current key and shift state:
-    for (int i = 0; i < window->children(); i++) {
-      Fl_Widget* b = window->child(i);
+    for (int c = 0; c < window->children(); c++) {
+      Fl_Widget* b = window->child(c);
       if (b->callback() == (Fl_Callback*)key_cb) {
 	int i = b->argument();
 	if (!i) i = b->label()[0];

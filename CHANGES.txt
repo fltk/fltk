@@ -146,6 +146,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Bug Fixes
 
   - (add new items here)
+  - Removed all shadow lint in header files (STR #2714).
   - Fixed pulldown menu position when at the bottom of the screen (STR #2880).
   - Fixed missing item handling in Fl_Chekc_Browser (STR #3480).
   - Fixed Delete key in Fl_Input deleting entire widgets in Fluid (STR #2841).
