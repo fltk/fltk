@@ -40,9 +40,9 @@ public:
   static float delay() { return delay_; }
   /**    Sets the tooltip delay. The default delay is 1.0 seconds.  */
   static void delay(float f) { delay_ = f; }
-  /**    Gets the time unitl an open tooltip hides again. The default delay is 12.0 seconds.  */
+  /**    Gets the time until an open tooltip hides again. The default delay is 12.0 seconds.  */
   static float hidedelay() { return hidedelay_; }
-  /**    Sets the time unitl an open tooltip hides again. The default delay is 12.0 seconds.  */
+  /**    Sets the time until an open tooltip hides again. The default delay is 12.0 seconds.  */
   static void hidedelay(float f) { hidedelay_ = f; }
   /**
     Gets the tooltip hover delay, the delay between tooltips.
