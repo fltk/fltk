@@ -587,23 +587,7 @@ int Fl_Window::handle(int ev)
 /**
  Sets the allowable range the user can resize this window to.
  This only works for top-level windows.
- <UL>
- <LI>\p minw and \p minh are the smallest the window can be.
-	Either value must be greater than 0.</LI>
- <LI>\p maxw and \p maxh are the largest the window can be. If either is
-	<I>equal</I> to the minimum then you cannot resize in that direction.
-	If either is zero  then FLTK picks a maximum size in that direction
-	such that the window will fill the screen.</LI>
- <LI>\p dw and \p dh are size increments.  The  window will be constrained
-	to widths of minw + N * dw,  where N is any non-negative integer.
-	If these are less or equal to 1 they are ignored (this is ignored
-	on Windows).</LI>
- <LI>\p aspect is a flag that indicates that the window should preserve its
-	aspect ratio.  This only works if both the maximum and minimum have
-	the same aspect ratio (ignored on Windows and by many X window managers).
-	</LI>
- </UL>
- 
+
  If this function is not called, FLTK tries to figure out the range
  from the setting of resizable():
  <UL>
@@ -619,15 +603,31 @@ int Fl_Window::handle(int ev)
  
  It is undefined what happens if the current size does not fit in the
  constraints passed to size_range().
+
+ \param[in] minWidth, minHeight The smallest the window can be.
+    Either value must be greater than 0.
+ \param[in] maxWidth, maxHeight The largest the window can be. If either is
+    equal to the minimum then you cannot resize in that direction.
+    If either is zero then FLTK picks a maximum size in that direction
+    such that the window will fill the screen.
+ \param[in] deltaX, deltaY These are size increments. The window will be
+    constrained to widths of <tt>minWidth + N * deltaX</tt>, where N is any
+    non-negative integer. If these are less or equal to 1 they are ignored.
+    (this is ignored on Windows)
+ \param[in] aspectRatio A flag that indicates that the window should preserve
+    its aspect ratio. This only works if both the maximum and minimum have
+    the same aspect ratio (ignored on Windows and by many X window managers).
  */
-void Fl_Window::size_range(int minw, int minh, int maxw, int maxh, int dw, int dh, int aspect) {
-  this->minw   = minw;
-  this->minh   = minh;
-  this->maxw   = maxw;
-  this->maxh   = maxh;
-  this->dw     = dw;
-  this->dh     = dh;
-  this->aspect = aspect;
+void Fl_Window::size_range(int minWidth, int minHeight,
+                           int maxWidth, int maxHeight,
+                           int deltaX, int deltaY, int aspectRatio) {
+  minw   = minWidth;
+  minh   = minHeight;
+  maxw   = maxWidth;
+  maxh   = maxHeight;
+  dw     = deltaX;
+  dh     = deltaY;
+  aspect = aspectRatio;
   pWindowDriver->size_range();
 }
 

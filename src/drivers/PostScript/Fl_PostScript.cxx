@@ -974,9 +974,9 @@ void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsi
   }
 }
 
-void Fl_PostScript_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y)
+void Fl_PostScript_Graphics_Driver::draw(int rotation, const char *str, int n, int x, int y)
 {
-  fprintf(output, "GS %d %d translate %d rotate\n", x, y, - angle);
+  fprintf(output, "GS %d %d translate %d rotate\n", x, y, -rotation);
   this->transformed_draw(str, n, 0, 0);
   fprintf(output, "GR\n");
 }
@@ -1046,7 +1046,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   font(fontnum, old_size);
   fl_delete_offscreen(off);
   // compute the mask of what is not the background
-  uchar *mask = calc_mask(img, w2, h, bg_color);
+  uchar *img_mask = calc_mask(img, w2, h, bg_color);
   delete[] img;
   // write the string image to PostScript as a scaled bitmask
   scale = w2 / float(w);
@@ -1055,14 +1055,14 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   int wmask = (w2+7)/8;
   void *rle85 = prepare_rle85();
   for (int j = h - 1; j >= 0; j--){
-    di = mask + j * wmask;
+    di = img_mask + j * wmask;
     for (int i = 0; i < wmask; i++){
       write_rle85(*di, rle85);
       di++;
     }
   }
   close_rle85(rle85); fputc('\n', output);
-  delete[] mask;
+  delete[] img_mask;
 }
 
 static int is_in_table(unsigned utf) {

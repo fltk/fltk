@@ -310,8 +310,8 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
   CGContextRestoreGState(gc_);
 }
 
-void Fl_Quartz_Graphics_Driver::uncache_pixmap(fl_uintptr_t p) {
-  CGImageRelease((CGImageRef)p);
+void Fl_Quartz_Graphics_Driver::uncache_pixmap(fl_uintptr_t pixmap_ref) {
+  CGImageRelease((CGImageRef)pixmap_ref);
 }
 
 //

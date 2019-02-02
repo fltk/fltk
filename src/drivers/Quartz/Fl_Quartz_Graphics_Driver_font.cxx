@@ -152,8 +152,8 @@ const char* Fl_Quartz_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
     this->set_fontname_in_fontdesc(f);
-    const char* p = f->name;
-    if (!p || !*p) {if (ap) *ap = 0; return "";}
+    const char* thisFont = f->name;
+    if (!thisFont || !*thisFont) {if (ap) *ap = 0; return "";}
     int type = 0;
     if (strstr(f->name, "Bold")) type |= FL_BOLD;
     if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;

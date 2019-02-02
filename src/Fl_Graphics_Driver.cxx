@@ -61,9 +61,9 @@ Fl_Graphics_Driver &Fl_Graphics_Driver::default_driver()
 
 
 /** see fl_text_extents() */
-void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int& w, int& h)
+void Fl_Graphics_Driver::text_extents(const char*t, int nChars, int& dx, int& dy, int& w, int& h)
 {
-  w = (int)width(t, n);
+  w = (int)width(t, nChars);
   h = - height();
   dx = 0;
   dy = descent();

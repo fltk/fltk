@@ -1163,17 +1163,17 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
     int child_w = W - (child_x-X);
     int child_y_start = Y;
     for ( int t=0; t<children(); t++ ) {
-      int lastchild = ((t+1)==children()) ? 1 : 0;
-      _children[t]->draw(child_x, Y, child_w, itemfocus, tree_item_xmax, lastchild, render);
+      int is_lastchild = ((t+1)==children()) ? 1 : 0;
+      _children[t]->draw(child_x, Y, child_w, itemfocus, tree_item_xmax, is_lastchild, render);
     }
     if ( has_children() && is_open() ) {
       Y += prefs.openchild_marginbottom();		// offset below open child tree
     }
     if ( ! lastchild ) {
       // Special 'clipped' calculation. (intentional variable shadowing)
-      int clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
-                    ((child_y_start > tree_bot) && (Y > tree_bot));
-      if (render && !clipped )
+      int is_clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
+                       ((child_y_start > tree_bot) && (Y > tree_bot));
+      if (render && !is_clipped )
         draw_vertical_connector(hconn_x, child_y_start, Y, prefs);
     }
   }

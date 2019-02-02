@@ -798,9 +798,9 @@ Fl_File_Chooser::fileNameCB()
   }
 
   // Make sure we have an absolute path...
-  int condition = directory_[0] != '\0' && filename[0] != '/';
-  if (condition && Fl::system_driver()->colon_is_drive()) condition = !(isalpha(filename[0] & 255) && (!filename[1] || filename[1] == ':'));
-  if (condition) {
+  int dirIsRelative = directory_[0] != '\0' && filename[0] != '/';
+  if (dirIsRelative && Fl::system_driver()->colon_is_drive()) dirIsRelative = !(isalpha(filename[0] & 255) && (!filename[1] || filename[1] == ':'));
+  if (dirIsRelative) {
     fl_filename_absolute(pathname, sizeof(pathname), filename);
     value(pathname);
     fileName->mark(fileName->position()); // no selection after expansion

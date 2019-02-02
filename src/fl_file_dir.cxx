@@ -34,14 +34,14 @@ static void callback(Fl_File_Chooser *, void*) {
 }
 
 // Pop up a file chooser dialog window and wait until it is closed...
-static void popup(Fl_File_Chooser *fc) {
-  fc->show();
+static void popup(Fl_File_Chooser *filechooser) {
+  filechooser->show();
 
   // deactivate Fl::grab(), because it is incompatible with modal windows
   Fl_Window* g = Fl::grab();
   if (g) Fl::grab(0);
 
-  while (fc->shown())
+  while (filechooser->shown())
     Fl::wait();
 
   if (g) // regrab the previous popup menu, if there was one

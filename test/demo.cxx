@@ -295,7 +295,7 @@ void dobut(Fl_Widget *, long arg) {
 #elif defined __APPLE__
 
     char *cmd = strdup(menus[men].icommand[bn]);
-    char *arg = strchr(cmd, ' ');
+    char *macosArg = strchr(cmd, ' ');
     
     char command[2048], path[2048], app_path[2048];
     
@@ -309,21 +309,21 @@ void dobut(Fl_Widget *, long arg) {
     CFRelease(cc_app_path);
     if (*app_path) {
       if (memcmp(app_path + strlen(app_path) - 4, ".app", 4) == 0) {
-        char *n = strrchr(app_path, '/');
-        if (n) *n = 0;
+        char *lastSlash = strrchr(app_path, '/');
+        if (lastSlash) *lastSlash = 0;
       }
       fl_chdir(app_path);
     }
     
     char *name = new char[strlen(cmd) + 5];
     strcpy(name, cmd);
-    if (arg) name[arg-cmd] = 0;
+    if (macosArg) name[macosArg-cmd] = 0;
     strcat(name, ".app");
     // check whether app bundle exists
     if ( ! fl_filename_isdir(name) ) strcpy(name, cmd);
-    if (arg) {
+    if (macosArg) {
       const char *fluidpath;
-      *arg = 0;
+      *macosArg = 0;
 #if defined USING_XCODE
       fl_filename_absolute(path, 2048, "../../../../test/");
       fluidpath = "fluid.app";
@@ -334,9 +334,9 @@ void dobut(Fl_Widget *, long arg) {
       if ( ! fl_filename_isdir(fluidpath) ) fluidpath = "../fluid";
 #endif
       if (strcmp(cmd, "../fluid/fluid")==0) {
-	sprintf(command, "open %s --args %s%s", fluidpath, path, arg+1);
+	sprintf(command, "open %s --args %s%s", fluidpath, path, macosArg+1);
       } else {
-	sprintf(command, "open %s --args %s%s", name, path, arg+1);
+	sprintf(command, "open %s --args %s%s", name, path, macosArg+1);
       }
     } else {
       sprintf(command, "open %s", name);

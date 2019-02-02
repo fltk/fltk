@@ -240,19 +240,19 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     int W = (w+7)/8;
     uchar* bitmap = new uchar[W * h];
     *p = bitmap;
-    const uchar *p = &buffer[3];
+    const uchar *alphaPtr = &buffer[3];
     uchar b = 0;
     for (int Y = 0; Y < h; Y++) {
       b = 0;
-      for (int X = 0, bit = 1; X < w; X++, p += 4) {
-        if (*p > 127)
+      for (int X = 0, bit = 1; X < w; X++, alphaPtr += 4) {
+        if (*alphaPtr > 127)
           b |= bit;
-	    bit <<= 1;
+        bit <<= 1;
         if (bit > 0x80 || X == w-1) {
-	    *bitmap++ = b;
+          *bitmap++ = b;
           bit = 1;
-	    b = 0;
-	  }
+          b = 0;
+        }
       } // if chars_per_pixel
     } // for Y
   }

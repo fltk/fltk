@@ -123,25 +123,25 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
     [self setState:(item->value() ? NSOnState : NSOffState)];
   }
   else if ( item->flags & FL_MENU_RADIO ) {	// update the menu radio symbols
-    NSMenu* menu = [self menu];
-    NSInteger flRank = [menu indexOfItem:self];
-    NSInteger last = [menu numberOfItems] - 1;
+    NSMenu* this_menu = [self menu];
+    NSInteger flRank = [this_menu indexOfItem:self];
+    NSInteger last = [this_menu numberOfItems] - 1;
     int from = flRank;
     while(from > 0) {
-      if ([[menu itemAtIndex:from-1] isSeparatorItem]) break;
-      item = [(FLMenuItem*)[menu itemAtIndex:from-1] getFlItem];
+      if ([[this_menu itemAtIndex:from-1] isSeparatorItem]) break;
+      item = [(FLMenuItem*)[this_menu itemAtIndex:from-1] getFlItem];
       if ( !(item->flags & FL_MENU_RADIO) ) break;
       from--;
     }
     int to = flRank;
     while (to < last) {
-      if ([[menu itemAtIndex:to+1] isSeparatorItem]) break;
-      item = [(FLMenuItem*)[menu itemAtIndex:to+1] getFlItem];
+      if ([[this_menu itemAtIndex:to+1] isSeparatorItem]) break;
+      item = [(FLMenuItem*)[this_menu itemAtIndex:to+1] getFlItem];
       if (!(item->flags & FL_MENU_RADIO)) break;
       to++;
     }
     for(int i =  from; i <= to; i++) {
-      NSMenuItem *nsitem = [menu itemAtIndex:i];
+      NSMenuItem *nsitem = [this_menu itemAtIndex:i];
       [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
     }
   }

@@ -228,7 +228,7 @@ public:
   ~Fl_PostScript_Graphics_Driver();
   // ---
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
-  virtual int has_feature(driver_feature mask) { return mask & PRINTER; }
+  virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
 };
 
 /**

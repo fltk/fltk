@@ -1028,30 +1028,32 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   The selected item (or NULL if none) is returned. <I>This does not
   do the callbacks or change the state of check or radio items.</I>
 
-  X,Y is the position of the mouse cursor, relative to the
-  window that got the most recent event (usually you can pass 
-  Fl::event_x() and Fl::event_y() unchanged here).
-
-  \p title is a character string title for the menu.  If
-  non-zero a small box appears above the menu with the title in it.
-
-  The menu is positioned so the cursor is centered over the item 
+  The menu is positioned so the cursor is centered over the item
   picked.  This will work even if \p picked is in a submenu.
   If \p picked is zero or not in the menu item table the menu is
   positioned with the cursor in the top-left corner.
 
-  \p button is a pointer to an Fl_Menu_ from which the color and
+  \param[in] X,Y the position of the mouse cursor, relative to the
+  window that got the most recent event (usually you can pass 
+  Fl::event_x() and Fl::event_y() unchanged here).
+
+  \param[in] title a character string title for the menu.  If
+  non-zero a small box appears above the menu with the title in it.
+
+  \param[in] menu_button is a pointer to an Fl_Menu_ from which the color and
   boxtypes for the menu are pulled.  If NULL then defaults are used.
+
+  \return a pointer to the menu item selected by the user, or NULL
 */
 const Fl_Menu_Item* Fl_Menu_Item::popup(
   int X, int Y,
   const char* title,
   const Fl_Menu_Item* picked,
-  const Fl_Menu_* button
-  ) const {
+  const Fl_Menu_* menu_button
+) const {
   static Fl_Menu_Item dummy; // static so it is all zeros
   dummy.text = title;
-  return pulldown(X, Y, 0, 0, picked, button, title ? &dummy : 0);
+  return pulldown(X, Y, 0, 0, picked, menu_button, title ? &dummy : 0);
 }
 
 /**

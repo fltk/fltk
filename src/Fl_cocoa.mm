@@ -2204,9 +2204,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
   if (d->wait_for_expose_value) { // 1st drawing of layer-backed GL window
-    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
-    if (pi) {
-      [pi->context(window) update]; // layer-backed GL windows may be empty without this
+    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+    if (plugin) {
+      [plugin->context(window) update]; // layer-backed GL windows may be empty without this
     }
     d->wait_for_expose_value = 0;
   }
@@ -4265,9 +4265,9 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
 // captures a rectangle from a GL window and returns it as an allocated NSBitmapImageRep
 // the capture has high res on retina
 {
-  Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
-  if (!pi) return nil;
-  Fl_RGB_Image *img = pi->rectangle_capture(win, x, y, w, h);
+  Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+  if (!plugin) return nil;
+  Fl_RGB_Image *img = plugin->rectangle_capture(win, x, y, w, h);
   NSBitmapImageRep* bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL pixelsWide:img->w() pixelsHigh:img->h() bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4*img->w() bitsPerPixel:32];
   memset([bitmap bitmapData], 0xFF, [bitmap bytesPerPlane]);
   const uchar *from = img->array;

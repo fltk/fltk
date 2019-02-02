@@ -60,11 +60,11 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
   if (b > a) a = b;
 
   // use that to guess at the number of segments:
-  int n = int(sqrt(a)/4);
-  if (n > 1) {
-    if (n > 100) n = 100; // make huge curves not hang forever
+  int nSeg = int(sqrt(a)/4);
+  if (nSeg > 1) {
+    if (nSeg > 100) nSeg = 100; // make huge curves not hang forever
 
-    double e = 1.0/n;
+    double e = 1.0/nSeg;
 
     // calculate the coefficients of 3rd order equation:
     double xa = (x3-3*x2+3*x1-x);
@@ -85,7 +85,7 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
     double dy2 = dy3 + 2*yb*e*e;
 
     // draw points 1 .. n-2:
-    for (int m=2; m<n; m++) {
+    for (int i=2; i<n; i++) {
       x += dx1;
       dx1 += dx2;
       dx2 += dx3;

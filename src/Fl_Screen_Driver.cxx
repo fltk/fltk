@@ -192,9 +192,9 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
                                                           Fl_RGB_Image *full_img)
 {
   if ( g->as_gl_window() ) {
-    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
-    if (!pi) return full_img;
-    full_img = pi->rectangle_capture(g, x, y, w, h);
+    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+    if (!plugin) return full_img;
+    full_img = plugin->rectangle_capture(g, x, y, w, h);
   }
   else if ( g->as_window() ) {
     if (Fl_Window::current() != g) g->as_window()->make_current();

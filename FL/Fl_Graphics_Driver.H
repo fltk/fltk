@@ -360,13 +360,13 @@ public:
   /** see fl_color(uchar, uchar, uchar) */
   virtual void color(uchar r, uchar g, uchar b) {}
   /** see fl_draw(const char *str, int n, int x, int y) */
-  virtual void draw(const char *str, int n, int x, int y) {}
+  virtual void draw(const char *str, int nChars, int x, int y) {}
   /** Draw the first \p n bytes of the string \p str starting at position \p x , \p y */
-  virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
+  virtual void draw(const char *str, int nChars, float x, float y) { draw(str, nChars, (int)(x+0.5), (int)(y+0.5));}
   /** see fl_draw(int angle, const char *str, int n, int x, int y) */
-  virtual void draw(int angle, const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  virtual void draw(int angle, const char *str, int nChars, int x, int y) { draw(str, nChars, x, y); }
   /** see fl_rtl_draw(const char *str, int n, int x, int y) */
-  virtual void rtl_draw(const char *str, int n, int x, int y) { draw(str, n, x, y); }
+  virtual void rtl_draw(const char *str, int nChars, int x, int y) { draw(str, nChars, x, y); }
   /** Returns non-zero if the graphics driver possesses the \p feature */
   virtual int has_feature(driver_feature feature) { return 0; }
   /** see fl_font(Fl_Font, Fl_Fontsize) */
@@ -376,7 +376,7 @@ public:
   /** Return the current font size */
   virtual Fl_Fontsize size() {return size_; }
   /** Compute the width of the first \p n bytes of the string \p str if drawn with current font */
-  virtual double width(const char *str, int n) { return 0; }
+  virtual double width(const char *str, int nChars) { return 0; }
   /** Compute the width of Unicode character \p c if drawn with current font */
   virtual double width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
   virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);

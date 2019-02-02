@@ -71,7 +71,7 @@ public:
 
 Fl_Widget* Fl_Tooltip::widget_ = 0;
 static Fl_TooltipBox *window = 0;
-static int Y,H;
+static int currentTooltipY, currentTooltipH;
 
 Fl_Window *Fl_Tooltip::current_window(void)
 {
@@ -88,7 +88,7 @@ void Fl_TooltipBox::layout() {
 
   // find position on the screen of the widget:
   int ox = Fl::event_x_root();
-  int oy = Y + H+2;
+  int oy = currentTooltipY + currentTooltipH+2;
   for (Fl_Widget* p = Fl_Tooltip::current(); p; p = p->window()) {
     oy += p->y();
   }
@@ -96,11 +96,11 @@ void Fl_TooltipBox::layout() {
   Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
   if (ox+ww > scr_x+scr_w) ox = scr_x+scr_w - ww;
   if (ox < scr_x) ox = scr_x;
-  if (H > 30) {
+  if (currentTooltipH > 30) {
     oy = Fl::event_y_root()+13;
     if (oy+hh > scr_y+scr_h) oy -= 23+hh;
   } else {
-    if (oy+hh > scr_y+scr_h) oy -= (4+hh+H);
+    if (oy+hh > scr_y+scr_h) oy -= (4+hh+currentTooltipH);
   }
   if (oy < scr_y) oy = scr_y;
 
@@ -277,11 +277,11 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
     return;
   }
   // do nothing if it is the same:
-  if (wid==widget_ /*&& x==X && y==Y && w==W && h==H*/ && t==tip) return;
+  if (wid==widget_ /*&& x==X && y==currentTooltipY && w==W && h==currentTooltipH*/ && t==tip) return;
   Fl::remove_timeout(tooltip_timeout);
   Fl::remove_timeout(recent_timeout);
   // remember it:
-  widget_ = wid; Y = y; H = h; tip = t;
+  widget_ = wid; currentTooltipY = y; currentTooltipH = h; tip = t;
   // popup the tooltip immediately if it was recently up:
   if (recent_tooltip) {
     if (window) window->hide();

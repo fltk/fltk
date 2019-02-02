@@ -68,9 +68,9 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
   // we do some trickery to recognize OpenGL windows and draw them via a plugin
   int drawn_by_plugin = 0;
   if (widget->as_gl_window()) {
-    Fl_Device_Plugin *pi = Fl_Device_Plugin::opengl_plugin();
-    if (pi) {
-      drawn_by_plugin = pi->print(widget);
+    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+    if (plugin) {
+      drawn_by_plugin = plugin->print(widget);
     }
   }
   if (!drawn_by_plugin) {
@@ -177,11 +177,11 @@ int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
 
 /** Draws a window with its title bar and frame if any.
  
- \p x_offset and \p y_offset are optional coordinates of where to position the window top left.
+ \p win_offset_x and \p win_offset_y are optional coordinates of where to position the window top left.
  Equivalent to draw() if \p win is a subwindow or has no border.
  Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the window.
  */
-void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset)
+void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int win_offset_x, int win_offset_y)
 {
   Fl_RGB_Image *top=0, *left=0, *bottom=0, *right=0;
   if (win->border() && !win->parent()) {
@@ -190,22 +190,22 @@ void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int 
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {
-    top->draw(x_offset, y_offset);
+    top->draw(win_offset_x, win_offset_y);
     delete top;
   }
   if (left) {
-    left->draw(x_offset, y_offset + toph);
+    left->draw(win_offset_x, win_offset_y + toph);
     delete left;
   }
   if (right) {
-    right->draw(x_offset + wsides + win->w(), y_offset + toph);
+    right->draw(win_offset_x + wsides + win->w(), win_offset_y + toph);
     delete right;
   }
   if (bottom) {
-    bottom->draw(x_offset, y_offset + toph + win->h());
+    bottom->draw(win_offset_x, win_offset_y + toph + win->h());
     delete bottom;
   }
-  this->draw(win, x_offset + wsides, y_offset + toph);
+  this->draw(win, win_offset_x + wsides, win_offset_y + toph);
 }
 
 //
