@@ -30,8 +30,9 @@
   lines that may be selected and/or checked by the user.
 */
 class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
-  /* required routines for Fl_Browser_ subclass: */
 
+protected:
+  /* required routines for Fl_Browser_ subclass: */
   void *item_first() const;
   void *item_next(void *) const;
   void *item_prev(void *) const;
@@ -40,6 +41,10 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   void item_draw(void *, int, int, int, int) const;
   void item_select(void *, int);
   int item_selected(void *) const;
+  const char *item_text(void *item) const /* override */;
+  void *item_at(int index) const /* override */;
+  void item_swap(int ia, int ib) /* override */;
+  void item_swap(void *a, void *b) /* override */;
 
   /* private data */
 

@@ -145,6 +145,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Bug Fixes
 
   - (add new items here)
+  - Fixed missing item handling in Fl_Chekc_Browser (STR #3480).
   - Fixed Delete key in Fl_Input deleting entire widgets in Fluid (STR #2841).
   - Reorganized Fluid Template feature (STR #3336).
   - Updated Fluid documentation and image (STR #3328).

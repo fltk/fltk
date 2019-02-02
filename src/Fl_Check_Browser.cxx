@@ -101,6 +101,76 @@ int Fl_Check_Browser::item_height(void *) const {
 	return textsize() + 2;
 }
 
+const char *Fl_Check_Browser::item_text(void *item) const {
+  cb_item *i = (cb_item *)item;
+  return i->text;
+}
+
+void *Fl_Check_Browser::item_at(int index) const { // note: index is 1-based
+  if (index < 1 || index > nitems())
+    return 0L;
+  cb_item *item = (cb_item *)item_first();
+  for (int i = 1; i < index; i++)
+    item = (cb_item *)(item_next(item));
+  return (void *)item;
+}
+
+void Fl_Check_Browser::item_swap(int ia, int ib) {
+  item_swap(item_at(ia), item_at(ib));
+}
+
+void Fl_Check_Browser::item_swap(void *a, void *b) {
+  cb_item *ia = (cb_item *)a;
+  cb_item *ib = (cb_item *)b;
+
+  cb_item *a_next = ia->next;
+  cb_item *a_prev = ia->prev;
+
+  cb_item *b_next = ib->next;
+  cb_item *b_prev = ib->prev;
+
+  if (a_next == ib) {        // p - a - b - n  => p - b - a - n
+    if (a_prev)
+      a_prev->next = ib;
+    if (b_next)
+      b_next->prev = ia;
+    ib->prev = a_prev;
+    ib->next = ia;
+    ia->prev = ib;
+    ia->next = b_next;
+  } else if (a_prev == ib) {    // p - b - a - n  => p - a - b - n
+    if (b_prev)
+      b_prev->next = ia;
+    if (a_next)
+      a_next->prev = ib;
+    ia->prev = b_prev;
+    ia->next = ib;
+    ib->prev = ia;
+    ib->next = a_next;
+  } else {            // x - a - y - b - z => x - b - y - a - z
+    if (a_prev)
+      a_prev->next = ib;
+    if (a_next)
+      a_next->prev = ib;
+    ia->next = b_next;
+    ia->prev = b_prev;
+
+    if (b_prev)
+      b_prev->next = ia;
+    if (b_next)
+      b_next->prev = ia;
+    ib->next = a_next;
+    ib->prev = a_prev;
+  }
+  if (first == ia)
+    first = ib;
+  if (last == ia)
+    last = ib;
+  // invalidate item cache
+  cached_item = -1;
+  cache = 0L;
+}
+
 #define CHECK_SIZE (textsize()-2)
 
 int Fl_Check_Browser::item_width(void *v) const {
