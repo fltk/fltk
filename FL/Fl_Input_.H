@@ -359,6 +359,9 @@ public:
   */
   int insert(const char* t, int l=0){return replace(position_, mark_, t, l);}
 
+  /* Append text at the end. */
+  int append(const char* t, int l=0, char keep_selection=0);
+
   /* Put the current selection into the clipboard. */
   int copy(int clipboard);
 

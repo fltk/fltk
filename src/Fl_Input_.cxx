@@ -744,6 +744,30 @@ static void undobuffersize(int n) {
 }
 
 /**
+ Append text at the end.
+
+ This function appends the string in \p t to the end of the text.
+ It does not moves the new position or mark.
+
+ \param [in] t text that will be appended
+ \param [in] l length of text, or 0 if the string is terminated by \c nul.
+ \param [in] keep_selection if this is 1, the current text selection will
+    remain, if 0, the cursor will move to the end of the inserted text.
+ \return 0 if no text was appended
+ */
+int Fl_Input_::append(const char* t, int l, char keep_selection)
+{
+  int end = size();
+  int om = mark_, op = position_;
+  int ret = replace(end, end, t, l);
+  if (keep_selection) {
+    position(op, om);
+  }
+  return ret;
+}
+
+
+/**
   Deletes text from \p b to \p e and inserts the new string \p text.
 
   All changes to the text buffer go through this function.
