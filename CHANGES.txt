@@ -102,7 +102,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
-  - Added widget visibilit indicator to Fluid (STR #2669).
+  - Added widget visibility indicator to Fluid (STR #2669).
   - Added Fl_Input_::append() method (STR #2953).
   - Fix for STR#3473 (and its duplicate STR#3507) to restore configure-based
     builds on recent Linux/Unix distributions where the freetype-config
