@@ -84,7 +84,7 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
     double dy3 = 6*ya*e*e*e;
     double dy2 = dy3 + 2*yb*e*e;
 
-    // draw points 1 .. n-2:
+    // draw points 1 .. nSeg-2:
     for (int i=2; i<nSeg; i++) {
       x += dx1;
       dx1 += dx2;
@@ -99,7 +99,7 @@ void Fl_Graphics_Driver::curve(double X0, double Y0,
     fl_transformed_vertex(x+dx1, y+dy1);
   }
 
-  // draw point n:
+  // draw point nSeg:
   fl_transformed_vertex(x3,y3);
 }
 
