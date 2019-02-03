@@ -307,9 +307,11 @@ void Flcc_HueBox::draw() {
   int yy1 = y()+Fl::box_dy(box());
   int w1 = w()-Fl::box_dw(box());
   int h1 = h()-Fl::box_dh(box());
-  if (damage() == FL_DAMAGE_EXPOSE) fl_push_clip(x1+px,yy1+py,6,6);
-  fl_draw_image(generate_image, this, x1, yy1, w1, h1);
-  if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
+  if (w1>0 && h1>0) {
+    if (damage() == FL_DAMAGE_EXPOSE) fl_push_clip(x1+px,yy1+py,6,6);
+    fl_draw_image(generate_image, this, x1, yy1, w1, h1);
+    if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
+  }
   Fl_Color_Chooser* c = (Fl_Color_Chooser*)parent();
 #ifdef CIRCLE
   int X = int(.5*(cos(c->hue()*(M_PI/3.0))*c->saturation()+1) * (w1-6));
@@ -321,7 +323,11 @@ void Flcc_HueBox::draw() {
   if (X < 0) X = 0; else if (X > w1-6) X = w1-6;
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
   //  fl_color(c->value()>.75 ? FL_BLACK : FL_WHITE);
-  draw_box(FL_UP_BOX,x1+X,yy1+Y,6,6,Fl::focus() == this ? FL_FOREGROUND_COLOR : FL_GRAY);
+  if (w1>0 && h1>0) {
+    fl_push_clip(x1,yy1,w1,h1);
+    draw_box(FL_UP_BOX,x1+X,yy1+Y,6,6,Fl::focus() == this ? FL_FOREGROUND_COLOR : FL_GRAY);
+    fl_pop_clip();
+  }
   px = X; py = Y;
 }
 #endif // !FL_DOXYGEN
@@ -381,9 +387,11 @@ void Flcc_ValueBox::draw() {
   int yy1 = y()+Fl::box_dy(box());
   int w1 = w()-Fl::box_dw(box());
   int h1 = h()-Fl::box_dh(box());
-  if (damage() == FL_DAMAGE_EXPOSE) fl_push_clip(x1,yy1+py,w1,6);
-  fl_draw_image(generate_vimage, this, x1, yy1, w1, h1);
-  if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
+  if (w1>0 && h1>0) {
+    if (damage() == FL_DAMAGE_EXPOSE) fl_push_clip(x1,yy1+py,w1,6);
+    fl_draw_image(generate_vimage, this, x1, yy1, w1, h1);
+    if (damage() == FL_DAMAGE_EXPOSE) fl_pop_clip();
+  }
   int Y = int((1-c->value()) * (h1-6));
   if (Y < 0) Y = 0; else if (Y > h1-6) Y = h1-6;
   draw_box(FL_UP_BOX,x1,yy1+Y,w1,6,Fl::focus() == this ? FL_FOREGROUND_COLOR : FL_GRAY);
