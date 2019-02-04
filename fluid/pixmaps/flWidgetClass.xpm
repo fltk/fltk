@@ -1,5 +1,5 @@
 /* XPM */
-static const char *flWidgetClass_xpm[] = {
+static const char * const flWidgetClass_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "16 16 8 1",
 /* colors */

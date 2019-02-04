@@ -1,5 +1,5 @@
 /* XPM */
-static const char * porsche[] = {
+static const char * const porsche[] = {
 /* width height ncolors chars_per_pixel */
 "64 64 4 1",
 /* colormap */

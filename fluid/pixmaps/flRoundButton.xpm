@@ -1,5 +1,5 @@
 /* XPM */
-static const char *flRoundButton_xpm[] = {
+static const char * const flRoundButton_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "16 16 7 1",
 /* colors */

@@ -1,5 +1,5 @@
 /* XPM */
-static const char *invisible_xpm[] = {
+static const char * const invisible_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "16 16 6 1",
 /* colors */

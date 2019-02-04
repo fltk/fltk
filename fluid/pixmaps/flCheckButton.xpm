@@ -1,5 +1,5 @@
 /* XPM */
-static const char *flCheckButton_xpm[] = {
+static const char * const flCheckButton_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "16 16 7 1",
 /* colors */

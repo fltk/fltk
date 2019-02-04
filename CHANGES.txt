@@ -150,6 +150,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Bug Fixes
 
   - (add new items here)
+  - Fixed all Pixmaps to be '*const' (STR #3108).
   - Fixed Fl_Text_Editor selection range after paste (STR #3248).
   - Fixed crash for very small Fl_Color_Chooser (STR #3490).
   - Removed all shadow lint in header files (STR #2714).
