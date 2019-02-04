@@ -3971,7 +3971,11 @@ int Fl_Text_Display::handle(int event) {
         handle(FL_FOCUS);
       }
       if (Fl_Group::handle(event)) return 1;
-      if (Fl::event_state()&FL_SHIFT) return handle(FL_DRAG);
+      if (Fl::event_state()&FL_SHIFT) {
+        if (!buffer()->primary_selection()->selected())
+            dragPos = insert_position();
+        return handle(FL_DRAG);
+      }
       dragging = 1;
       int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
       dragPos = pos;
