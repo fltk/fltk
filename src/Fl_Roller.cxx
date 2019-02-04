@@ -27,53 +27,68 @@ int Fl_Roller::handle(int event) {
   static int ipos;
   int newpos = horizontal() ? Fl::event_x() : Fl::event_y();
   switch (event) {
-  case FL_PUSH:
-    if (Fl::visible_focus()) {
-      Fl::focus(this);
-      redraw();
-    }
-    handle_push();
-    ipos = newpos;
-    return 1;
-  case FL_DRAG:
-    handle_drag(clamp(round(increment(previous_value(),newpos-ipos))));
-    return 1;
-  case FL_RELEASE:
-    handle_release();
-    return 1;
-  case FL_KEYBOARD :
-    switch (Fl::event_key()) {
-      case FL_Up:
-        if (horizontal()) return 0;
-	handle_drag(clamp(increment(value(),-1)));
-	return 1;
-      case FL_Down:
-        if (horizontal()) return 0;
-	handle_drag(clamp(increment(value(),1)));
-	return 1;
-      case FL_Left:
-        if (!horizontal()) return 0;
-	handle_drag(clamp(increment(value(),-1)));
-	return 1;
-      case FL_Right:
-        if (!horizontal()) return 0;
-	handle_drag(clamp(increment(value(),1)));
-	return 1;
-      default:
-        return 0;
-    }
-    // break not required because of switch...
-  case FL_FOCUS :
-  case FL_UNFOCUS :
-    if (Fl::visible_focus()) {
-      redraw();
+    case FL_PUSH:
+      if (Fl::visible_focus()) {
+        Fl::focus(this);
+        redraw();
+      }
+      handle_push();
+      ipos = newpos;
       return 1;
-    } else return 0;
-  case FL_ENTER :
-  case FL_LEAVE :
-    return 1;
-  default:
-    return 0;
+    case FL_DRAG:
+      handle_drag(clamp(round(increment(previous_value(),newpos-ipos))));
+      return 1;
+    case FL_RELEASE:
+      handle_release();
+      return 1;
+    case FL_MOUSEWHEEL :
+      if (Fl::belowmouse()==this) {
+        if (horizontal()) {
+          if (Fl::e_dx!=0) {
+            handle_drag(clamp(round(increment(value(),-Fl::e_dx))));
+          }
+        } else {
+          if (Fl::e_dy!=0) {
+            handle_drag(clamp(round(increment(value(),-Fl::e_dy))));
+          }
+        }
+        return 1;
+      } else {
+        return 0;
+      }
+    case FL_KEYBOARD :
+      switch (Fl::event_key()) {
+        case FL_Up:
+          if (horizontal()) return 0;
+          handle_drag(clamp(increment(value(),-1)));
+          return 1;
+        case FL_Down:
+          if (horizontal()) return 0;
+          handle_drag(clamp(increment(value(),1)));
+          return 1;
+        case FL_Left:
+          if (!horizontal()) return 0;
+          handle_drag(clamp(increment(value(),-1)));
+          return 1;
+        case FL_Right:
+          if (!horizontal()) return 0;
+          handle_drag(clamp(increment(value(),1)));
+          return 1;
+        default:
+          return 0;
+      }
+      // break not required because of switch...
+    case FL_FOCUS :
+    case FL_UNFOCUS :
+      if (Fl::visible_focus()) {
+        redraw();
+        return 1;
+      } else return 0;
+    case FL_ENTER :
+    case FL_LEAVE :
+      return 1;
+    default:
+      return 0;
   }
 }
 
