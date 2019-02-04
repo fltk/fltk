@@ -375,6 +375,15 @@ The @ sign may also be followed by the following optional
 Thus, to show a very large arrow pointing downward you would use the
 label string "@+92->".
 
+Symbols and text can can be combined in a label, however the symbol must be at
+the beginning and/or at the end of the text. If the text spans multiple lines,
+the symbol or symbols will scale up to match the height of all the lines.
+
+\image html symbol-examples.png "Figure 3-5: FLTK symbols and text"
+\image latex symbol-examples.png "FLTK symbols and text" width=10cm
+
+<!-- NEED 2in -->
+
 \par align()
 
 The \p align() method positions the label. The following
