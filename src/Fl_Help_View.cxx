@@ -3282,7 +3282,7 @@ Fl_Help_View::~Fl_Help_View()
 /** Loads the specified file.
 
  This method loads the specified file or URL. The filename may end in a
- '#name' style target.
+ \c \#name style target.
 
  If the URL starts with \a ftp, \a http, \a https, \a ipp, \a mailto, or
  \a news, followed by a colon, FLTK will use fl_open_uri() to show the

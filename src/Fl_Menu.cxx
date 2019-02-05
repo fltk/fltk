@@ -1047,6 +1047,9 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   \param[in] title a character string title for the menu.  If
   non-zero a small box appears above the menu with the title in it.
 
+  \param[in] picked if this pointer is not NULL, the popup menu will appear
+  so that the picked menu is under the mouse pointer.
+
   \param[in] menu_button is a pointer to an Fl_Menu_ from which the color and
   boxtypes for the menu are pulled.  If NULL then defaults are used.
 
