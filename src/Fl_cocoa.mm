@@ -595,7 +595,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 }
 - (void)displayLayer:(CALayer *)layer;
 - (void)prepare_bitmap_for_layer;
-- (void)viewFrameDidChange;
+- (void)reset_layer_data;
 - (BOOL)did_view_resolution_change;
 - (void)drawRect:(NSRect)rect;
 @end
@@ -1295,7 +1295,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
   if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)[nsw contentView] viewFrameDidChange];
+  if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)[nsw contentView] reset_layer_data];
 #endif
   fl_unlock_function();
 }
@@ -2174,7 +2174,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  All Quartz drawings go to this bitmap. displayLayer: finishes by using an image copy
  of the bitmap as the layer's contents. That step fills the window.
  When resized or when the window flips between low/high resolution displays,
- FLViewLayer receives the viewFrameDidChange message which deletes the bitmap and zeroes layer_data.
+ FLViewLayer receives the reset_layer_data message which deletes the bitmap and zeroes layer_data.
  This ensures the bitmap is recreated after the window was resized or changed resolution.
  
  Each layer-backed OpenGL window has an associated FLGLViewLayer object, derived from FLView.
@@ -2243,7 +2243,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     window->resize([[self window] frame].origin.x/scale,
                    (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
                    rect.size.width/scale, rect.size.height/scale);
-    [self viewFrameDidChange];
+    [self reset_layer_data];
   }
   if (!layer_data) { // runs when window is created, resized, changed screen resolution
     [self prepare_bitmap_for_layer];
@@ -2284,12 +2284,12 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 - (BOOL)did_view_resolution_change {
   BOOL retval = [super did_view_resolution_change];
   if (retval) {
-    [self viewFrameDidChange];
+    [self reset_layer_data];
     [self setNeedsDisplay:YES];
   }
   return retval;
 }
--(void)viewFrameDidChange
+-(void)reset_layer_data
 {
   Fl_Window *win = [(FLWindow*)[self window] getFl_Window];
   if (win) { // can be null when window is set fullscreen
@@ -4493,7 +4493,7 @@ void Fl_Cocoa_Window_Driver::gl_start(NSOpenGLContext *ctxt) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA) {
     Fl_Cocoa_Window_Driver::q_release_context();
-    [(FLViewLayer*)[fl_window contentView] viewFrameDidChange];
+    [(FLViewLayer*)[fl_window contentView] reset_layer_data];
     [[fl_window contentView] layer].contentsScale = 1.;
   }
 #endif
