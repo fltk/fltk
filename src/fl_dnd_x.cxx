@@ -21,6 +21,7 @@
 #include <FL/platform.H>
 #include "flstring.h"
 #include "drivers/X11/Fl_X11_Screen_Driver.H"
+#include "Fl_Window_Driver.H"
 
 
 extern Atom fl_XdndAware;
@@ -107,6 +108,13 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
       if ((new_local_window = fl_find(child))) break;
       if ((new_version = dnd_aware(new_window))) break;
     }
+#if USE_XFT
+    if (new_local_window) {
+      float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(new_local_window)->screen_num());
+      Fl::e_x_root /= s;
+      Fl::e_y_root /= s;
+    }
+#endif
 
     if (new_window != target_window) {
       if (local_window) {
@@ -151,8 +159,16 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
     if (local_window) {
       local_handle(FL_DND_DRAG, local_window);
     } else if (dndversion) {
+      int exroot = Fl::e_x_root, eyroot = Fl::e_y_root;
+#if USE_XFT
+      Fl_Window *target = fl_find(target_window);
+      if (target) {
+        float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
+        exroot *= s; eyroot *= s;
+      }
+#endif
       fl_sendClientMessage(target_window, fl_XdndPosition, source_window,
-                           0, (Fl::e_x_root<<16)|Fl::e_y_root, fl_event_time,
+                           0, (exroot<<16)|eyroot, fl_event_time,
 			   fl_XdndActionCopy);
     }
     Fl::wait();
@@ -174,8 +190,13 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
     msg.time = fl_event_time+1;
     msg.x = dest_x;
     msg.y = dest_y;
-    msg.x_root = Fl::e_x_root;
-    msg.y_root = Fl::e_y_root;
+    float s = 1;
+#if USE_XFT
+    Fl_Window *target = fl_find(target_window);
+    if (target) s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(target)->screen_num());
+#endif
+    msg.x_root = Fl::e_x_root * s;
+    msg.y_root = Fl::e_y_root * s;
     msg.state = 0x0;
     msg.button = Button2;
     XSendEvent(fl_display, target_window, False, 0L, (XEvent*)&msg);

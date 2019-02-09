@@ -1635,8 +1635,12 @@ int fl_handle(const XEvent& thisevent)
       fl_xmousewin = window;
       in_a_window = true;
       fl_dnd_source_window = data[0];
-      Fl::e_x_root = data[2]>>16;
-      Fl::e_y_root = data[2]&0xFFFF;
+      float s = 1;
+#if USE_XFT
+      if (window) s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num());
+#endif
+      Fl::e_x_root = (data[2]>>16)/s;
+      Fl::e_y_root = (data[2]&0xFFFF)/s;
       if (window) {
         Fl::e_x = Fl::e_x_root-window->x();
         Fl::e_y = Fl::e_y_root-window->y();
