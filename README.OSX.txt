@@ -1,5 +1,5 @@
-README.OSX.txt - 2016-04-01 - Building FLTK under Apple OS X
-------------------------------------------------------------
+README.OSX.txt - 2019-01-06 - Building FLTK under macOS
+-------------------------------------------------------
 
 
 
@@ -73,10 +73,10 @@ to keep the Terminal in the Dock.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of that
 page. Unpack FLTK into a convenient location. I like to have everything in my
 dev directory:
 
@@ -87,14 +87,14 @@ dev directory:
   tar xvfz fltk-1.3.xxxx.tar.gz
   cd fltk-1.3.xxxx
 
-If you got FLTK via subversion then you need one extra step: build the
+If you got FLTK via git then you need one extra step: build the
 configure script. Otherwise skip the following part marked ADVANCED:
 
-ADVANCED: (only if you got FLTK via subversion)
+ADVANCED: (only if you got FLTK via git)
 - The preferred procedure is to build the configure script using tools
   called autoconf and automake. If these tools are not both available
   on your system, this post
-     http://www.fltk.org/newsgroups.php?s15486+gfltk.coredev+v15499
+     https://www.fltk.org/newsgroups.php?s15486+gfltk.coredev+v15499
   details how to get them.
 
   Then, stay in your FLTK source-code directory and type the following:
@@ -102,7 +102,7 @@ ADVANCED: (only if you got FLTK via subversion)
   NOCONFIGURE=1 ./autogen.sh
 
 - Alternatively, copy the configure script from the last FLTK weekly snapshot
-  to your svn source-code directory.
+  to your git source-code directory.
 
 :END_ADVANCED
 
@@ -209,10 +209,10 @@ FLTK USING XCODE4'
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of that
 page. You can use the SCM system that is built into Xcode.
 
 Unpack FLTK by double-clicking it and copy the new folder into a convenient
@@ -366,10 +366,10 @@ the Download section in the Preferences dialog.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of that
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of that
 page. You can use the SCM system that is built into Xcode.
 
 Unpack FLTK by double-clicking it and copy the new folder into a convenient

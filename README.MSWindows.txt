@@ -72,8 +72,8 @@ This chapter of this document gives a brief overview of
 compiling and using FLTK with the Cygwin and MinGW compiler
 toolkits.  Both toolkits provide a build environment based
 around the GNU C/C++ compiler. Further information is
-available from the FLTK website at http://www.fltk.org, such
-as this Howto note: http://www.fltk.org/articles.php?L598
+available from the FLTK website at https://www.fltk.org, such
+as this Howto note: https://www.fltk.org/articles.php?L598
 
 The Cygwin build environment supplies a library (the Cygwin
 DLL) that is primarily intended to provide a number of
@@ -193,15 +193,15 @@ the Start menu.
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
 into your home folder. The default location as seen from MSWindows is similar
 to
 
   C:\MinGW\msys\1.0\home\matt\
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of
 that page. Unpack FLTK into a convenient location. I like to have everything
 in my dev directory:
 
@@ -215,7 +215,7 @@ in my dev directory:
  Configuring FLTK
 ------------------
 
-If you got FLTK via subversion then you need one extra step. Otherwise skip
+If you got FLTK via git then you need one extra step. Otherwise skip
 over this part. Stay in your FLTK source-code directory and type the
 following:
 
@@ -244,7 +244,7 @@ linking:
 
 Known Problems:
 
-  There is a known incompatibility with some Windows subversion tools that
+  There is a known incompatibility with some Windows git tools that
   may not set the correct line endings for autoconf. If you get strange
   error messages when running ./configure or make, you may need to convert
   configh.in to "Unix line endings" (LF-only). These error messages are
@@ -257,7 +257,7 @@ Known Problems:
   or with your favorite editor, if it allows to change the line endings,
   then run autoconf and ./configure again.
   For further information see this bug report:
-     http://www.fltk.org/newsgroups.php?gfltk.bugs+v:10197
+     https://www.fltk.org/newsgroups.php?gfltk.bugs+v:10197
 
 
  Building FLTK
@@ -330,10 +330,10 @@ or building FLTK on a multicore CPU will be very painful!
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of
 that page.
 
 Unpack FLTK by using an appropriate unpacker and copy the new folder into a
@@ -451,10 +451,10 @@ Express edition is free of charge and sufficient to develop FLTK applications:
 
 Download FLTK from here:
 
-  http://www.fltk.org/software.php
+  https://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with your
-version, you will find the subversion access parameters at the bottom of
+If you are familiar with "git" and like to stay current with your
+version, you will find the git access parameters at the bottom of
 that page.
 
 Unpack FLTK by using an appropriate unpacker and copy the new folder into a
@@ -618,7 +618,7 @@ The following links may be of use:
 
 3. Check out the FLTK newsgroups at the FLTK homepage:
 
-       http://www.fltk.org/
+       https://www.fltk.org/
 
    Its archival search facilities are EXTREMELY useful
    to check back through previous problems with this
