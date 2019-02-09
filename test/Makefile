@@ -19,9 +19,8 @@
 include ../makeinclude
 
 CPPFILES =\
-	unittests.cxx \
-	animated.cxx \
 	adjuster.cxx \
+	animated.cxx \
 	arc.cxx \
 	ask.cxx \
 	bitmap.cxx \
@@ -78,7 +77,6 @@ CPPFILES =\
 	pixmap_browser.cxx \
 	pixmap.cxx \
 	preferences.cxx \
-	device.cxx \
 	radio.cxx \
 	resizebox.cxx \
 	resize.cxx \
@@ -95,8 +93,9 @@ CPPFILES =\
 	tiled_image.cxx \
 	tree.cxx \
 	twowin.cxx \
-	valuators.cxx \
+	unittests.cxx \
 	utf8.cxx \
+	valuators.cxx \
 	windowfocus.cxx
 
 ALL =	\
