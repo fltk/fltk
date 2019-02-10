@@ -6,7 +6,7 @@ crc32.o: zutil.h zlib.h zconf.h crc32.h
 uncompr.o: zlib.h zconf.h
 deflate.o: deflate.h zutil.h zlib.h zconf.h
 trees.o: deflate.h zutil.h zlib.h zconf.h trees.h
-zutil.o: zutil.h zlib.h zconf.h
+zutil.o: zutil.h zlib.h zconf.h gzguts.h
 inflate.o: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h inffixed.h
 inftrees.o: zutil.h zlib.h zconf.h inftrees.h
 inffast.o: zutil.h zlib.h zconf.h inftrees.h inflate.h inffast.h
