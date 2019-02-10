@@ -51,6 +51,8 @@ fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 			$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
+	$(OSX_ONLY) $(RM) -r -f fluid.app/Contents/MacOS
+	$(OSX_ONLY) mkdir fluid.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
