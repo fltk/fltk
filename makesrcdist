@@ -47,8 +47,8 @@ fi
 
 # These are the release and snapshot download URL's currently in use:
 
-DOWNLOAD='http://fltk.org/pub/fltk'
-SNAPSHOT='http://fltk.org/pub/fltk/snapshots'
+DOWNLOAD='https://www.fltk.org/pub/fltk'
+SNAPSHOT='https://www.fltk.org/pub/fltk/snapshots'
 
 DATE="`date +'%Y%m%d'`"
 
@@ -62,11 +62,9 @@ echo "Getting distribution..."
 if test $# = 0 -o "x$1" = "xsnapshot"; then
 	echo Getting snapshot revision...
 	rev="`git rev-parse --short=8 HEAD`"
-	version="${VS}-git"
+	version="${VS}-${rev}"
 	fileversion="${VS}.x-${DATE}-$rev"
 	fileurl="$SNAPSHOT/fltk-$fileversion.tar.gz"
-	echo "fileversion = $fileversion"
-	echo "fileurl     = $fileurl"
 else
 	if test ! -e "documentation/html/"; then
 		echo "ERROR: Please generate the HTML documentation before distributing:"
@@ -89,9 +87,14 @@ else
 
 	if test "x$2" = "xtag"; then
 		echo "Creating Git tag 'release-$version' ..."
-		git tag -a -m "Tag $version" release-$version || exit 1
+		git tag -a -m "Release $version" release-$version || exit 1
 	fi
 fi
+
+# Debug:
+# echo "version     = $version"
+# echo "fileversion = $fileversion"
+# echo "fileurl     = $fileurl"
 
 echo Exporting $version to /tmp/fltk-$version/...
 rm -rf /tmp/fltk-$version
@@ -107,17 +110,16 @@ fi
 echo Applying version number...
 cd /tmp/fltk-$version
 
-fileurl=`echo $fileurl | sed -e '1,$s/\\//\\\\\\//g'`
 sed -e '1,$s/@VERSION@/'$version'/' \
 	-e '1,$s/@RELEASE@/'$rev'/' \
-	-e '1,$s/^Source:.*/Source: '$fileurl'/' \
+	-e '1,$s#^Source:.*#Source: '$fileurl'#' \
 	<fltk.spec.in >fltk.spec
 
 echo Creating configure script...
 autoconf -f
 
 echo Creating config.guess and config.sub \(ignore any other errors\)...
-automake --add-missing --copy
+automake --add-missing --copy 2>/dev/null
 
 echo Cleaning developer files...
 rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
