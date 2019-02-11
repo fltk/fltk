@@ -54,7 +54,9 @@ DATE="`date +'%Y%m%d'`"
 
 # VS = short version number ('major.minor'), for instance '1.4'.
 # Note: VS is used only for snapshot generation
+# fltk_version = full version number w/o 'rcN' (from file VERSION)
 
+fltk_version="`cat VERSION`"
 VS="`cat VERSION | sed -e's/\([0-9]*\.[0-9]*\).*/\1/'`"
 
 echo "Getting distribution..."
@@ -92,11 +94,12 @@ else
 fi
 
 # Debug:
-# echo "version     = $version"
-# echo "fileversion = $fileversion"
-# echo "fileurl     = $fileurl"
+# echo "fltk_version = $fltk_version"
+# echo "version      = $version"
+# echo "fileversion  = $fileversion"
+# echo "fileurl      = $fileurl"
 
-echo Exporting $version to /tmp/fltk-$version/...
+echo Exporting $fltk_version to /tmp/fltk-$version/...
 rm -rf /tmp/fltk-$version
 mkdir /tmp/fltk-$version
 git archive --format=tar HEAD | $TAR -C /tmp/fltk-$version -x --
@@ -138,26 +141,46 @@ echo "Removing documentation..."
 rm -rf fltk-$version/documentation/html/
 rm -f fltk-$version/documentation/fltk.pdf
 
-echo "Making UNIX distribution..."
+echo "Making UNIX (.tar.gz) distribution..."
 $TAR czf fltk-$fileversion-source.tar.gz fltk-$version
 
-#echo "Making BZ2 distribution..."
-#$TAR cjf fltk-$fileversion-source.tar.bz2 fltk-$version
+echo "Making UNIX (.tar.bz2) distribution..."
+$TAR cjf fltk-$fileversion-source.tar.bz2 fltk-$version
 
-#echo "Making Windows distribution..."
-#rm -f fltk-$fileversion-source.zip
-#zip -r9 fltk-$fileversion-source.zip fltk-$version
+# echo "Making Windows (.zip) distribution..."
+# rm -f fltk-$fileversion-source.zip
+# zip -r9 fltk-$fileversion-source.zip fltk-$version
 
 echo "Removing distribution directory..."
 
 rm -rf fltk-$version
 
+# Create MD5 sums
+
+out="`pwd`/fltk-$fileversion-md5sums.txt"
+echo "Creating MD5 sums in $out"
+rm -f $out
+touch $out
+
+# make sure the order is source - html - pdf
+
+for f in source docs-html docs-pdf; do
+  if [ -f fltk-$fileversion-$f.tar.bz2 ] ; then
+    md5sum fltk-$fileversion-$f.tar.bz2 >> $out
+  fi
+  if [ -f fltk-$fileversion-$f.tar.gz ] ; then
+    md5sum fltk-$fileversion-$f.tar.gz >> $out
+  fi
+done
+
+sed -e"s#  # $fltk_version fltk/$fltk_version/#" -i $out
+
 if test "x$2" = "xtag"; then
 	echo ""
 	echo "Don't forget to push the Git tag"
-	echo "(assuming 'origin' as your remote Git repository):"
+	echo "(assuming your remote Git repository is 'origin'):"
 	echo ""
-	echo "\$ git push origin release-$version"
+	echo "Use: \$ git push origin release-$version"
 	echo ""
 fi
 
