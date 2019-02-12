@@ -124,10 +124,12 @@ CREATE_EXAMPLE(gl_overlay gl_overlay.cxx "fltk;fltk_gl;${OPENGL_LIBRARIES}")
 CREATE_EXAMPLE(shape shape.cxx "fltk;fltk_gl;${OPENGL_LIBRARIES}")
 endif(OPENGL_FOUND)
 
-# Cairo demo
-if(FLTK_HAVE_CAIRO)
-   CREATE_EXAMPLE(cairo_test cairo_test.cxx "fltk;fltk_cairo")
-endif(FLTK_HAVE_CAIRO)
+# Cairo demo - must also be built w/o Cairo (displays a message box)
+if (FLTK_HAVE_CAIRO)
+  CREATE_EXAMPLE(cairo_test cairo_test.cxx "fltk;fltk_cairo")
+else ()
+  CREATE_EXAMPLE(cairo_test cairo_test.cxx fltk)
+endif (FLTK_HAVE_CAIRO)
 
 endif(NOT ANDROID)
 

@@ -1,19 +1,19 @@
 //
 // "$Id$"
 //
-// Arc drawing test program for the Fast Light Tool Kit (FLTK).
+// Cairo drawing test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include <config.h>
@@ -27,7 +27,7 @@
 #include <FL/math.h>
 #define DEF_WIDTH 0.03
 
-// uncomment the following line to enable cairo context autolink feature:
+// uncomment the following line to enable Cairo context autolink feature:
 // #define AUTOLINK
 
 // put your drawing stuff here
@@ -116,7 +116,7 @@ static void round_button(cairo_t *cr, double x0, double y0,
   centered_text(cr, x0, y0, rect_width, rect_height, "FLTK loves Cairo!");
 }
 
-// The cairo rendering cb called during Fl_Cairo_Window::draw() :
+// The Cairo rendering cb called during Fl_Cairo_Window::draw() :
 static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
 
   int w = window->w(), h = window->h();
@@ -147,7 +147,10 @@ int main(int argc, char **argv) {
 #include <FL/fl_ask.H>
 
 int main(int argc, char **argv) {
-  fl_message("please configure fltk with CAIRO enabled (--enable-cairo or --enable-cairoext)"); 
+  fl_message_title("This program needs a Cairo enabled FLTK library");
+  fl_message(
+    "Please configure FLTK with Cairo enabled (--enable-cairo or --enable-cairoext)\n"
+    "or one of the CMake options OPTION_CAIRO or OPTION_CAIROEXT, respectively.");
   return 0;
 }
 #endif
