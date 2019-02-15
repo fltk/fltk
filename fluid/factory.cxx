@@ -614,7 +614,15 @@ public:
   virtual const char *alt_type_name() {return "fltk::SimpleTerminal";}
   int is_text_display() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
-    Fl_Simple_Terminal *myo = new Fl_Simple_Terminal(x,y,w,h);
+    Fl_Widget *myo = 0L;
+    if (batch_mode) {
+      // The Fl_Simple_Terminal constructor attaches a buffer which in turn
+      // opens a connection to the display. In batch mode, we create the
+      // superclass Fl_Text_Display to avoid that.
+      myo = new Fl_Text_Display(x,y,w,h);
+    } else {
+      myo = new Fl_Simple_Terminal(x,y,w,h);
+    }
     return myo;
   }
   Fl_Widget_Type *_make() {return new Fl_Simple_Terminal_Type();}
