@@ -28,7 +28,11 @@ matrix:
 branches:
   only:
   - master
-  - /^feature.*$/
+  - branch-1.3
+  - /^feature-.*/
+  - /^fix-.*/
+  - /^issue-.*/
+  - /^str-.*/
 
 before_script:
   - |
