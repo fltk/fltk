@@ -67,8 +67,12 @@ after_success:
       cd -
     fi
 
-notifications:
-  email:
-    recipients:
-      - fabien@onepost.net
-      - albrechts.fltk@online.de
+# explicit email notifications don't play well with forks: don't use them
+# default: committer and author get notifications
+# we're now using defaults for everything, hence settings are commented
+# out, left only for documentation purposes...
+
+#notifications:
+#  email:
+#    on_success: change # default: change, may be: never
+#    on_failure: always # default: always
