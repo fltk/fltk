@@ -62,8 +62,3 @@ after_success:
       cd -
       date
     fi
-
-notifications:
-  email:
-    recipients:
-      - albrechts.fltk@online.de
