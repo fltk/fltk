@@ -14,8 +14,6 @@ New features and enhancements (highlights)
 	- Add FL/platform.H for compatibility with FLTK 1.4 and higher.
 	- Improve OpenGL(3+) support.
 	- Improve Cairo support and (CMake) Cairo detection.
-	- Improve desktop scaling support for HiDPI screens.
-	  Note: FLTK application scaling is available in FLTK 1.4.0.
 
 Bug fixes and other improvements
 
