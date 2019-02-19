@@ -1211,10 +1211,14 @@ static bool is_name_in_list(const char *name, const char **list) {
 }
 
 
-static bool use_monitors_xml(float &factor) {
-  // read file $HOME/.config/monitors.xml, search <scale>#</scale> data therein, and use it
+static bool use_monitors_xml(float &factor, int width, int height) {
+  // read file $HOME/.config/monitors.xml, search configuration with given width & height,
+  // read <scale>#</scale> data therein, and use it for factor
+  // return false if not found
   char path[FL_PATH_MAX], line[100], *p;
-  bool found = false;
+  bool found = false, in_config = false;
+  int w, h;
+  float f = 1;
   p = getenv("HOME");
   if (!p) return false;
   strcpy(path, p);
@@ -1223,11 +1227,22 @@ static bool use_monitors_xml(float &factor) {
   if (!in) return false;
   p = fgets(line, sizeof(line), in);
   if (p && strstr(line, "<monitors version=\"2\">")) {
-    while (fgets(line, sizeof(line), in)) {
-      if ( (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
-        p += 7;
-        sscanf(p, "%f", &factor);
-        if (factor == 2) { found = true; break; }
+    while ( (!found) && fgets(line, sizeof(line), in)) {
+      if (strstr(line, "<configuration>")) in_config = true;
+      if (strstr(line, "</configuration>")) {in_config = false; f = 1;}
+      if (in_config && (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
+        sscanf(p + 7, "%f", &f);
+      }
+      if ( in_config && (p = strstr(line, "<width>")) && strstr(p, "</width>") ) {
+        sscanf(p + 7, "%d", &w);
+        fgets(line, sizeof(line), in);
+        p = strstr(line, "<height>");
+        if (p) sscanf(p+8, "%d", &h);
+        if (p && w == width && h == height) {
+          found = true;
+          factor = f;
+          //fprintf(stderr, "%dx%d f=%.1f found=%d\n", w, h, f, found);
+        }
       }
     }
   }
@@ -1361,7 +1376,6 @@ static bool gnome_scale_factor(float& factor) {
   }
   
   if (ubuntu) {
-    if (use_monitors_xml(factor)) return true;
     gvar = value_of_key_in_schema(known, "com.ubuntu.user-interface", "scale-factor");
     if (gvar) {
       found = true;
@@ -1427,7 +1441,9 @@ float Fl_X11_Screen_Driver::desktop_scale_factor()
 {
   float factor = 1;
 #if HAVE_DLSYM && HAVE_DLFCN_H
-  gnome_scale_factor(factor);
+  if (!use_monitors_xml(factor, screens[0].width, screens[0].height)) {
+    gnome_scale_factor(factor);
+  }
 #endif
   return factor;
 }
