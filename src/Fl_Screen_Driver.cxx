@@ -441,13 +441,13 @@ float Fl_Screen_Driver::use_startup_scale_factor()
   char *p = 0;
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
     sscanf(p, "%f", &factor);
-    // checks to prevent potential crash (factor <= 0) or very large factors
-    if (factor < 0.25) factor = 0.25;
-    else if (factor > 10.0) factor = 10.0;
   }
   else {
     factor = desktop_scale_factor();
   }
+  // checks to prevent potential crash (factor <= 0) or very large factors
+  if (factor < 0.25) factor = 0.25;
+  else if (factor > 10.0) factor = 10.0;
   return factor;
 }
 
