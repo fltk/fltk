@@ -1211,23 +1211,38 @@ static bool is_name_in_list(const char *name, const char **list) {
 }
 
 
-static bool use_monitors_xml(float &factor, int width, int height) {
-  // read file $HOME/.config/monitors.xml, search configuration with given width & height,
+static bool use_xrdb_or_monitors_xml(float &factor, int width, int height) {
+  // First, try reading the Xft.dpi resource from command xrdb
+  bool found = false, in_config = false;
+  FILE *in = popen("xrdb -query", "r");
+  char path[FL_PATH_MAX], line[100], *p;
+  if (in) {
+    while (fgets(line, sizeof(line), in)) {
+      if ((p = strstr(line, "Xft.dpi:"))) {
+        int dpi = 96;
+        sscanf(p+8, "%d", &dpi);
+        factor = dpi / 96.;
+        found = true;
+        break;
+      }
+    }
+    pclose(in);
+    if (found) return true;
+  }
+  // Next, read file $HOME/.config/monitors.xml, search configuration with given width & height,
   // read <scale>#</scale> data therein, and use it for factor
   // return false if not found
-  char path[FL_PATH_MAX], line[100], *p;
-  bool found = false, in_config = false;
   int w, h;
   float f = 1;
   p = getenv("HOME");
   if (!p) return false;
   strcpy(path, p);
   strcat(path, "/.config/monitors.xml");
-  FILE *in = fopen(path, "r");
+  in = fopen(path, "r");
   if (!in) return false;
   p = fgets(line, sizeof(line), in);
   if (p && strstr(line, "<monitors version=\"2\">")) {
-    while ( (!found) && fgets(line, sizeof(line), in)) {
+    while (fgets(line, sizeof(line), in)) {
       if (strstr(line, "<configuration>")) in_config = true;
       if (strstr(line, "</configuration>")) {in_config = false; f = 1;}
       if (in_config && (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
@@ -1241,7 +1256,7 @@ static bool use_monitors_xml(float &factor, int width, int height) {
         if (p && w == width && h == height) {
           found = true;
           factor = f;
-          //fprintf(stderr, "%dx%d f=%.1f found=%d\n", w, h, f, found);
+          break;
         }
       }
     }
@@ -1441,7 +1456,7 @@ float Fl_X11_Screen_Driver::desktop_scale_factor()
 {
   float factor = 1;
 #if HAVE_DLSYM && HAVE_DLFCN_H
-  if (!use_monitors_xml(factor, screens[0].width, screens[0].height)) {
+  if (!use_xrdb_or_monitors_xml(factor, screens[0].width, screens[0].height)) {
     gnome_scale_factor(factor);
   }
 #endif
