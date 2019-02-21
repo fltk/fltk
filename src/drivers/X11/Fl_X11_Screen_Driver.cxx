@@ -1199,46 +1199,19 @@ int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
   return screen;
 }
 
-#if HAVE_DLSYM && HAVE_DLFCN_H
-
-// returns true when name is among the list of known names
-static bool is_name_in_list(const char *name, const char **list) {
-  int i = 0;
-  while (list[i]) {
-    if (strcmp(list[i++], name) == 0) return true;
-  }
-  return false;
-}
-
-
-static bool use_xrdb_or_monitors_xml(float &factor, int width, int height) {
-  // First, try reading the Xft.dpi resource from command xrdb
-  bool found = false, in_config = false;
-  FILE *in = popen("xrdb -query", "r");
-  char path[FL_PATH_MAX], line[100], *p;
-  if (in) {
-    while (fgets(line, sizeof(line), in)) {
-      if ((p = strstr(line, "Xft.dpi:"))) {
-        int dpi = 96;
-        sscanf(p+8, "%d", &dpi);
-        factor = dpi / 96.;
-        found = true;
-        break;
-      }
-    }
-    pclose(in);
-    if (found) return true;
-  }
-  // Next, read file $HOME/.config/monitors.xml, search configuration with given width & height,
+static bool usemonitors_xml(float &factor, int width, int height) {
+  // Read file $HOME/.config/monitors.xml, search configuration with given width & height,
   // read <scale>#</scale> data therein, and use it for factor
   // return false if not found
+  bool found = false, in_config = false;
+  char path[FL_PATH_MAX], line[100], *p;
   int w, h;
   float f = 1;
   p = getenv("HOME");
   if (!p) return false;
   strcpy(path, p);
   strcat(path, "/.config/monitors.xml");
-  in = fopen(path, "r");
+  FILE *in = fopen(path, "r");
   if (!in) return false;
   p = fgets(line, sizeof(line), in);
   if (p && strstr(line, "<monitors version=\"2\">")) {
@@ -1263,6 +1236,17 @@ static bool use_xrdb_or_monitors_xml(float &factor, int width, int height) {
   }
   fclose(in);
   return found;
+}
+
+#if HAVE_DLSYM && HAVE_DLFCN_H
+
+// returns true when name is among the list of known names
+static bool is_name_in_list(const char *name, const char **list) {
+  int i = 0;
+  while (list[i]) {
+    if (strcmp(list[i++], name) == 0) return true;
+  }
+  return false;
 }
 
 // define types needed for dynamic lib functions
@@ -1454,15 +1438,21 @@ static bool gnome_scale_factor(float& factor) {
 // return the desktop's default scaling value
 float Fl_X11_Screen_Driver::desktop_scale_factor()
 {
-  float factor = 1;
-#if HAVE_DLSYM && HAVE_DLFCN_H
-  if (!use_xrdb_or_monitors_xml(factor, screens[0].width, screens[0].height)) {
-    gnome_scale_factor(factor);
+  // First, try getting the Xft.dpi resource value
+  char *s = XGetDefault(fl_display, "Xft", "dpi");
+  if (s) {
+    int dpi = 96;
+    sscanf(s, "%d", &dpi);
+    return dpi / 96.;
   }
+  float factor = 1;
+  if (!usemonitors_xml(factor, screens[0].width, screens[0].height)) {
+#if HAVE_DLSYM && HAVE_DLFCN_H
+    gnome_scale_factor(factor);
 #endif
+  }
   return factor;
 }
-
 
 #endif // USE_XFT
 
