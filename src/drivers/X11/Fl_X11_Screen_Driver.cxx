@@ -1223,8 +1223,8 @@ static bool usemonitors_xml(float &factor, int width, int height) {
       }
       if ( in_config && (p = strstr(line, "<width>")) && strstr(p, "</width>") ) {
         sscanf(p + 7, "%d", &w);
-        fgets(line, sizeof(line), in);
-        p = strstr(line, "<height>");
+        p = fgets(line, sizeof(line), in);
+        if (p) p = strstr(line, "<height>");
         if (p) sscanf(p+8, "%d", &h);
         if (p && w == width && h == height) {
           found = true;
