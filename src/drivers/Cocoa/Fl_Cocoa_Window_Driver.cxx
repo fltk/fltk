@@ -227,7 +227,10 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
   memset(shape_data_, 0, sizeof(shape_data_type));
   pWindow->border(false);
   int d = img->d();
-  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  if (d && img->count() >= 2) {
+    shape_pixmap_((Fl_Image*)img);
+    shape_data_->shape_ = (Fl_Image*)img;
+  }
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
@@ -311,6 +314,10 @@ void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int
   CGContextAddArcToPoint(gc, w, h, w, h - radius, radius);
   CGContextAddLineToPoint(gc, w, 0);
   CGContextClip(gc);
+}
+
+const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
+  return shape_data_ ? shape_data_->shape_ : NULL;
 }
 
 //

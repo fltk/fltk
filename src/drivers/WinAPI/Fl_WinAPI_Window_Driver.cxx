@@ -179,6 +179,7 @@ void Fl_WinAPI_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   bitmap->alloc_array = 1;
   shape_bitmap_(bitmap);
   shape_data_->todelete_ = bitmap;
+  shape_data_->shape_ = img;
 }
 
 void Fl_WinAPI_Window_Driver::shape(const Fl_Image* img) {
@@ -191,7 +192,10 @@ void Fl_WinAPI_Window_Driver::shape(const Fl_Image* img) {
   memset(shape_data_, 0, sizeof(shape_data_type));
   pWindow->border(false);
   int d = img->d();
-  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  if (d && img->count() >= 2) {
+    shape_pixmap_((Fl_Image*)img);
+    shape_data_->shape_ = (Fl_Image*)img;
+  }
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
@@ -285,7 +289,8 @@ void Fl_WinAPI_Window_Driver::draw_begin()
       // size of window has changed since last time
       shape_data_->lw_ = s*w();
       shape_data_->lh_ = s*h();
-      Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
+      Fl_Image* temp = shape_data_->todelete_ ? shape_data_->todelete_ : shape_data_->shape_;
+      temp = temp->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
       SetWindowRgn(fl_xid(pWindow), region, TRUE); // the system deletes the region when it's no longer needed
       delete temp;
@@ -696,6 +701,10 @@ void Fl_WinAPI_Window_Driver::resize_after_screen_change(void *data) {
   int ns = data_for_resize_window_between_screens_.screen;
   Fl_Window_Driver::driver(win)->resize_after_scale_change(ns, old_f, Fl::screen_driver()->scale(ns));
   data_for_resize_window_between_screens_.busy = false;
+}
+
+const Fl_Image* Fl_WinAPI_Window_Driver::shape() {
+  return shape_data_ ? shape_data_->shape_ : NULL;
 }
 
 //

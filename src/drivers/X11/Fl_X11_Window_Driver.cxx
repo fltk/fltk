@@ -291,6 +291,7 @@ void Fl_X11_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   bitmap->alloc_array = 1;
   shape_bitmap_(bitmap);
   shape_data_->todelete_ = bitmap;
+  shape_data_->shape_ = img;
 }
 
 void Fl_X11_Window_Driver::shape(const Fl_Image* img) {
@@ -303,7 +304,10 @@ void Fl_X11_Window_Driver::shape(const Fl_Image* img) {
   memset(shape_data_, 0, sizeof(shape_data_type));
   pWindow->border(false);
   int d = img->d();
-  if (d && img->count() >= 2) shape_pixmap_((Fl_Image*)img);
+  if (d && img->count() >= 2) {
+    shape_pixmap_((Fl_Image*)img);
+    shape_data_->shape_ = (Fl_Image*)img;
+  }
   else if (d == 0) shape_bitmap_((Fl_Image*)img);
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
@@ -333,7 +337,8 @@ void Fl_X11_Window_Driver::combine_mask()
   float s = Fl::screen_driver()->scale(screen_num());
   shape_data_->lw_ = w()*s;
   shape_data_->lh_ = h()*s;
-  Fl_Image* temp = shape_data_->shape_->copy(shape_data_->lw_, shape_data_->lh_);
+  Fl_Image* temp = shape_data_->todelete_ ? shape_data_->todelete_ : shape_data_->shape_;
+  temp = temp->copy(shape_data_->lw_, shape_data_->lh_);
   Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(pWindow),
                                          (const char*)*temp->data(),
                                          temp->w(), temp->h());
@@ -682,6 +687,9 @@ Fl_X *Fl_X11_Window_Driver::makeWindow()
   return Fl_X::i(pWindow);
 }
 
+const Fl_Image* Fl_X11_Window_Driver::shape() {
+  return shape_data_ ? shape_data_->shape_ : NULL;
+}
 
 #if USE_XFT
 

@@ -330,7 +330,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
 
 static void del_transient_window(void *data) {
   Fl_Window *win = (Fl_Window*)data;
-  delete (Fl_RGB_Image*)win->child(0)->user_data();
+  delete (Fl_Image*)win->shape();
   Fl::delete_widget(win);
 }
 
@@ -369,7 +369,6 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   b->color(Fl_Tooltip::color());
   win->end();
   win->shape(img);
-  b->user_data(img);
   win->user_data((void*)&transient_scale_display); // prevent this window from being rescaled later
   win->set_output();
   win->set_non_modal();

@@ -679,8 +679,8 @@ void Fl_Window::shape(const Fl_Image* img) {pWindowDriver->shape(img);}
  */
 void Fl_Window::shape(const Fl_Image& img) {pWindowDriver->shape(&img);}
 
-/** Returns non NULL when the window has been assigned a non-rectangular shape */
-int Fl_Window::is_shaped() {return pWindowDriver->shape_data_ != NULL;}
+/** Returns the image controlling the window shape or NULL */
+const Fl_Image* Fl_Window::shape() {return pWindowDriver->shape();}
 
 //
 // End of "$Id$".

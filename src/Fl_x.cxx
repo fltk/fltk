@@ -2607,7 +2607,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   }
 #endif
 
-  if (win->is_shaped()) {
+  if (win->shape()) {
     Fl_X11_Window_Driver::driver(win)->combine_mask();
     }
   XMapWindow(fl_display, xp->xid);

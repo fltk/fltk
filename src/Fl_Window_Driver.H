@@ -127,6 +127,7 @@ public:
   // --- window data
   virtual int decorated_w() { return w(); } // default, should be overidden by driver
   virtual int decorated_h() { return h(); }
+  virtual const Fl_Image* shape() { return NULL; }
 
   // --- window management
   virtual void take_focus();

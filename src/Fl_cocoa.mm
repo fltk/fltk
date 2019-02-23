@@ -3131,7 +3131,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
   }
-  if (w->is_shaped()) {
+  if (w->shape()) {
     [cw setOpaque:NO]; // shaped windows must be non opaque
     [cw setBackgroundColor:[NSColor clearColor]]; // and with transparent background color
   }

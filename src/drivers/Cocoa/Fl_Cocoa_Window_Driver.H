@@ -108,6 +108,7 @@ public:
   // --- window data
   virtual int decorated_w();
   virtual int decorated_h();
+  virtual const Fl_Image* shape();
 
   // --- window management
   virtual Fl_X *makeWindow();
