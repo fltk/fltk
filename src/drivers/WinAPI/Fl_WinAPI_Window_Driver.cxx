@@ -56,7 +56,7 @@ Fl_WinAPI_Window_Driver::Fl_WinAPI_Window_Driver(Fl_Window *win)
 Fl_WinAPI_Window_Driver::~Fl_WinAPI_Window_Driver()
 {
   if (shape_data_) {
-    delete shape_data_->todelete_;
+    delete shape_data_->effective_bitmap_;
     delete shape_data_;
   }
   delete icon_;
@@ -178,13 +178,13 @@ void Fl_WinAPI_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   Fl_Bitmap* bitmap = new Fl_Bitmap(bits, w, h);
   bitmap->alloc_array = 1;
   shape_bitmap_(bitmap);
-  shape_data_->todelete_ = bitmap;
+  shape_data_->effective_bitmap_ = bitmap;
   shape_data_->shape_ = img;
 }
 
 void Fl_WinAPI_Window_Driver::shape(const Fl_Image* img) {
   if (shape_data_) {
-    if (shape_data_->todelete_) { delete shape_data_->todelete_; }
+    if (shape_data_->effective_bitmap_) { delete shape_data_->effective_bitmap_; }
   }
   else {
     shape_data_ = new shape_data_type;
@@ -289,7 +289,7 @@ void Fl_WinAPI_Window_Driver::draw_begin()
       // size of window has changed since last time
       shape_data_->lw_ = s*w();
       shape_data_->lh_ = s*h();
-      Fl_Image* temp = shape_data_->todelete_ ? shape_data_->todelete_ : shape_data_->shape_;
+      Fl_Image* temp = shape_data_->effective_bitmap_ ? shape_data_->effective_bitmap_ : shape_data_->shape_;
       temp = temp->copy(shape_data_->lw_, shape_data_->lh_);
       HRGN region = bitmap2region(temp);
       SetWindowRgn(fl_xid(pWindow), region, TRUE); // the system deletes the region when it's no longer needed

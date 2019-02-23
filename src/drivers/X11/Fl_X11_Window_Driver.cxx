@@ -138,7 +138,7 @@ Fl_X11_Window_Driver::Fl_X11_Window_Driver(Fl_Window *win)
 Fl_X11_Window_Driver::~Fl_X11_Window_Driver()
 {
   if (shape_data_) {
-    delete shape_data_->todelete_;
+    delete shape_data_->effective_bitmap_;
     delete shape_data_;
   }
   delete icon_;
@@ -290,13 +290,13 @@ void Fl_X11_Window_Driver::shape_alpha_(Fl_Image* img, int offset) {
   Fl_Bitmap* bitmap = new Fl_Bitmap(bits, w, h);
   bitmap->alloc_array = 1;
   shape_bitmap_(bitmap);
-  shape_data_->todelete_ = bitmap;
+  shape_data_->effective_bitmap_ = bitmap;
   shape_data_->shape_ = img;
 }
 
 void Fl_X11_Window_Driver::shape(const Fl_Image* img) {
   if (shape_data_) {
-    if (shape_data_->todelete_) { delete shape_data_->todelete_; }
+    if (shape_data_->effective_bitmap_) { delete shape_data_->effective_bitmap_; }
   }
   else {
     shape_data_ = new shape_data_type;
@@ -337,7 +337,7 @@ void Fl_X11_Window_Driver::combine_mask()
   float s = Fl::screen_driver()->scale(screen_num());
   shape_data_->lw_ = w()*s;
   shape_data_->lh_ = h()*s;
-  Fl_Image* temp = shape_data_->todelete_ ? shape_data_->todelete_ : shape_data_->shape_;
+  Fl_Image* temp = shape_data_->effective_bitmap_ ? shape_data_->effective_bitmap_ : shape_data_->shape_;
   temp = temp->copy(shape_data_->lw_, shape_data_->lh_);
   Pixmap pbitmap = XCreateBitmapFromData(fl_display, fl_xid(pWindow),
                                          (const char*)*temp->data(),
