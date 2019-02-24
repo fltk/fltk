@@ -166,6 +166,7 @@ void Fl_Sys_Menu_Bar::replace(int index, const char *name)
  \param data   a pointer transmitted as 2nd argument to the callback.
  */
 void Fl_Sys_Menu_Bar::about(Fl_Callback *cb, void *data) {
+  fl_open_display(); // create the system menu, if needed
   driver()->about(cb, data);
 }
 
