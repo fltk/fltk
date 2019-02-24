@@ -32,6 +32,7 @@
 #include "../src/flstring.h"
 #include <FL/fl_draw.H>
 #include <FL/Fl_Simple_Terminal.H>
+#include <FL/fl_ask.H>
 
 #define TERMINAL_HEIGHT 120
 
@@ -218,6 +219,10 @@ void menu_linespacing_cb(Fl_Widget* w, void*) {
 
 Fl_Menu_* menus[4];
 
+void about_cb(Fl_Widget*, void*) {
+  fl_message("The menubar test app.");
+}
+
 int main(int argc, char **argv) {
   //Fl::set_color(Fl_Color(15),0,0,128);
   for (int i=0; i<99; i++) {
@@ -273,6 +278,7 @@ int main(int argc, char **argv) {
 
   window.end();
   
+  Fl_Sys_Menu_Bar::about(about_cb, NULL);
 #ifdef __APPLE__
   Fl_Menu_Item custom[] = {
     {"Preferences…",	0,	test_cb, NULL, FL_MENU_DIVIDER},
