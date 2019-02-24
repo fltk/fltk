@@ -61,25 +61,17 @@ Fl_MacOS_Sys_Menu_Bar_Driver* Fl_MacOS_Sys_Menu_Bar_Driver::driver() {
   return once;
 }
 
-/*  Each MacOS system menu item contains a pointer to a record of type sys_menu_item defined below.
-    The purpose of these records is to associate each MacOS system menu item with a relevant Fl_Menu_Item.
-
-    If use_index is YES, the "index" field is used, and fl_sys_menu_bar->menu() + index is the address
+/*  Class FLMenuItem, derived from NSMenuItem, associates any item of the macOS system menu
+    with a corresponding Fl_Menu_Item as follows:
+    - if the system item's tag is >= 0, fl_sys_menu_bar->menu() + tag is the address
     of the relevant Fl_Menu_Item;
-    Otherwise, the "item" field points to the relevant Fl_Menu_Item.
-    This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus, 
+    - otherwise, the system item's representedObject is the Fl_Menu_Item's address.
+    This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus,
     the address of which can be relocated by the FLTK menu logic.
-    The "item" field is used for non-relocatable Fl_Menu_Item's associated to FL_SUBMENU_POINTER.
-    Sending the getFlItem message to a MacOS system menu item (of class FLMenuItem) returns the address
+    The "representedObject" is used for non-relocatable Fl_Menu_Item's associated to FL_SUBMENU_POINTER.
+    Sending the getFlItem message to a macOS system menu item (of class FLMenuItem) returns the address
     of the relevant Fl_Menu_Item.
 */
-typedef struct {
-  union {
-    int index;
-    const Fl_Menu_Item *item;
-  };
-  BOOL use_index;
-} sys_menu_item;
 
 // Apple App Menu
 const char *Fl_Mac_App_Menu::about = "About %@";
@@ -110,9 +102,9 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
 - (const Fl_Menu_Item*) getFlItem
 // returns the Fl_Menu_Item corresponding to this system menu item
 {
-  sys_menu_item *smi = (sys_menu_item*)[(NSData*)[self representedObject] bytes];
-  if (smi->use_index) return fl_sys_menu_bar->menu() + smi->index;
-  return smi->item;
+  NSInteger tag = [self tag];
+  if (tag >= 0) return fl_sys_menu_bar->menu() + tag;
+  return *(const Fl_Menu_Item**)[(NSData*)[self representedObject] bytes];
 }
 - (void) itemCallback:(Fl_Menu_*)menu
 {
@@ -196,13 +188,13 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:title
 						action:selector
 					 keyEquivalent:@""];
-  sys_menu_item smi;
   // >= 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
-  smi.index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
-  smi.use_index = (smi.index >= 0);
-  if (!smi.use_index) smi.item = mitem;
-  NSData *pointer = [NSData dataWithBytes:&smi length:sizeof(smi)];
-  [item setRepresentedObject:pointer];
+  NSInteger index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
+  [item setTag:index];
+  if (index < 0) {
+    NSData *pointer = [NSData dataWithBytes:&mitem length:sizeof(Fl_Menu_Item*)];
+    [item setRepresentedObject:pointer];
+  }
   [menu addItem:item];
   [item setTarget:item];
   int retval = [menu indexOfItem:item];
