@@ -237,7 +237,6 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
  
 void Fl_MacOS_Sys_Menu_Bar_Driver::about( Fl_Callback *cb, void *user_data)
 {
-  fl_open_display();
   Fl_Menu_Item aboutItem;
   memset(&aboutItem, 0, sizeof(Fl_Menu_Item));
   aboutItem.callback(cb);
