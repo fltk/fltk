@@ -192,8 +192,9 @@ const char *Fl_Mac_App_Menu::quit = "Quit %@";
   NSInteger index = (fl_sys_menu_bar ? fl_sys_menu_bar->find_index(mitem) : -1);
   [item setTag:index];
   if (index < 0) {
-    NSData *pointer = [NSData dataWithBytes:&mitem length:sizeof(Fl_Menu_Item*)];
+    NSData *pointer = [[NSData alloc] initWithBytes:&mitem length:sizeof(Fl_Menu_Item*)];
     [item setRepresentedObject:pointer];
+    [pointer release];//pointer will dealloc each time item dealloc's
   }
   [menu addItem:item];
   [item setTarget:item];
