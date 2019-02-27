@@ -1341,7 +1341,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
       Fl_Menu_Item *item = (Fl_Menu_Item*)fl_sys_menu_bar->menu() + index;
       if (!item->label()) break;
       if (item->user_data() == window) {
-        fl_sys_menu_bar->setonly(item);
+        if (!item->value()) fl_sys_menu_bar->setonly(item);
         break;
       }
       index++;
