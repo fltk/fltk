@@ -169,8 +169,8 @@ void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, i
   if (n < 0 || n >= num_screens) n = 0;
   X = work_area[n].left/scale_of_screen[n];
   Y = work_area[n].top/scale_of_screen[n];
-  W = (work_area[n].right - X)/scale_of_screen[n];
-  H = (work_area[n].bottom - Y)/scale_of_screen[n];
+  W = (work_area[n].right - work_area[n].left)/scale_of_screen[n];
+  H = (work_area[n].bottom - work_area[n].top)/scale_of_screen[n];
 }
 
 
