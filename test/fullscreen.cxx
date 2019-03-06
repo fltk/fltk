@@ -238,7 +238,7 @@ void update_screeninfo(Fl_Widget *b, void *p) {
         float dpih, dpiv;
 	Fl::screen_xywh(x, y, w, h, n);
         Fl::screen_dpi(dpih, dpiv, n);
-	sprintf(line, "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f", n, w, h, x, y, dpih, dpiv);
+        sprintf(line, "Screen %d: %dx%d@%d,%d DPI:%.1fx%.1f scale:%.2f", n, w, h, x, y, dpih, dpiv, Fl::screen_scale(n));
 	browser->add(line);
 	Fl::screen_work_area(x, y, w, h, n);
 	sprintf(line, "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
@@ -269,7 +269,7 @@ int main(int argc, char **argv) {
   if (Fl::args(argc,argv,i,arg) < argc)
     Fl::fatal("Options are:\n -2 = 2 windows\n -f = startup fullscreen\n%s",Fl::help);
 
-  fullscreen_window window(400,400+30*NUMB); window.end();
+  fullscreen_window window(460,400+30*NUMB); window.end();
 
   shape_window sw(10,10,window.w()-20,window.h()-30*NUMB-120);
 
