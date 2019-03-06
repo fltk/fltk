@@ -42,7 +42,6 @@ protected:
   static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
   BOOL screen_cb(HMONITOR mon, HDC, LPRECT r);
   int get_mouse_unscaled(int &mx, int &my);
-  void init_screen_scale_factors();
 
 public:
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
@@ -92,7 +91,7 @@ public:
   virtual void scale(int n, float f) {
     scale_of_screen[n] = f;
   }
-  virtual float desktop_scale_factor();
+  virtual void desktop_scale_factor();
 };
 
 

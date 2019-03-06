@@ -175,8 +175,8 @@ public:
   void rescale_all_windows_from_screen(int screen, float f);
   static void transient_scale_display(float f, int nscreen);
   static int scale_handler(int event);
-  virtual float desktop_scale_factor() {return 1;}
-  float use_startup_scale_factor();
+  virtual void desktop_scale_factor() {}
+  void use_startup_scale_factor();
   enum APP_SCALING_CAPABILITY {
     NO_APP_SCALING = 0, ///< The platform does not support rescaling.
     SYSTEMWIDE_APP_SCALING, ///< The platform supports rescaling with the same factor for all screens.

@@ -55,7 +55,7 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return PER_SCREEN_APP_SCALING; }
   virtual float scale(int n) {return screens[n].scale;}
   virtual void scale(int n, float f) { screens[n].scale = f;}
-  virtual float desktop_scale_factor();
+  virtual void desktop_scale_factor();
   int screen_num_unscaled(int x, int y);
 #endif
   

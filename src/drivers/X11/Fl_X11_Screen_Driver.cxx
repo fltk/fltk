@@ -1435,23 +1435,33 @@ static bool gnome_scale_factor(float& factor) {
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
 
 
-// return the desktop's default scaling value
-float Fl_X11_Screen_Driver::desktop_scale_factor()
+// set the desktop's default scaling value
+void Fl_X11_Screen_Driver::desktop_scale_factor()
 {
+  float factor = 1;
+  bool doit = false;
   // First, try getting the Xft.dpi resource value
   char *s = XGetDefault(fl_display, "Xft", "dpi");
   if (s) {
     int dpi = 96;
     sscanf(s, "%d", &dpi);
-    return dpi / 96.;
-  }
-  float factor = 1;
-  if (!usemonitors_xml(factor, screens[0].width, screens[0].height)) {
+    factor = dpi / 96.;
+    doit = true;
+  } else {
+    screen_count(); // keep here
+    doit = usemonitors_xml(factor, screens[0].width, screens[0].height);
 #if HAVE_DLSYM && HAVE_DLFCN_H
-    gnome_scale_factor(factor);
+    if (!doit) {
+      doit = gnome_scale_factor(factor);
+    }
 #endif
   }
-  return factor;
+  if (doit) {
+    // checks to prevent potential crash (factor <= 0) or very large factors
+    if (factor < 0.25) factor = 0.25;
+    else if (factor > 10.0) factor = 10.0;
+    for (int i = 0; i < screen_count(); i++)  scale(i, factor);
+  }
 }
 
 #endif // USE_XFT

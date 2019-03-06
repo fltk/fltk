@@ -1255,9 +1255,9 @@ static void react_to_screen_reconfiguration() {
     for (int screen = 0; screen < old_count; screen++)
       Fl::screen_driver()->scale(screen, scales[screen]);
   } else {
-    float factor = Fl::screen_driver()->use_startup_scale_factor();
+    Fl::screen_driver()->use_startup_scale_factor();
     for (int screen = 0; screen < Fl::screen_count(); screen++)
-      Fl::screen_driver()->rescale_all_windows_from_screen(screen, factor);
+      Fl::screen_driver()->rescale_all_windows_from_screen(screen, Fl::screen_driver()->scale(screen));
   }
   delete[] scales;
 #endif // USE_XFT

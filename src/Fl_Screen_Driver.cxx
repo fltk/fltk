@@ -434,20 +434,15 @@ int Fl_Screen_Driver::scale_handler(int event)
 
 
 // use the startup time scaling value
-float Fl_Screen_Driver::use_startup_scale_factor()
+void Fl_Screen_Driver::use_startup_scale_factor()
 {
-  float factor;
-  char *p = 0;
+  char *p;
+  desktop_scale_factor();
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
+    float factor = 1;
     sscanf(p, "%f", &factor);
+    for (int i = 0; i < screen_count(); i++)  scale(i, factor * scale(i));
   }
-  else {
-    factor = desktop_scale_factor();
-  }
-  // checks to prevent potential crash (factor <= 0) or very large factors
-  if (factor < 0.25) factor = 0.25;
-  else if (factor > 10.0) factor = 10.0;
-  return factor;
 }
 
 
@@ -457,10 +452,8 @@ void Fl_Screen_Driver::open_display()
   static bool been_here = false;
   if (!been_here) {
     been_here = true;
-    int scount = screen_count(); // keep here
     if (rescalable()) {
-      float factor = use_startup_scale_factor();
-      if (factor) for (int i = 0; i < scount; i++)  scale(i, factor);
+      use_startup_scale_factor();
       Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);

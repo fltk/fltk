@@ -548,8 +548,7 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
     const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
     if (fl_SetProcessDpiAwareness) {
       HRESULT hr = fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-      if (hr == S_OK) init_screen_scale_factors();
-      else fl_SetProcessDpiAwareness = NULL;
+      if (hr != S_OK) fl_SetProcessDpiAwareness = NULL;
     }
   }
   OleInitialize(0L);
@@ -558,11 +557,11 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 }
 
 
-void Fl_WinAPI_Screen_Driver::init_screen_scale_factors() {
+void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
   typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
   HMODULE hMod = LoadLibrary("Shcore.DLL");
   GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
-  if (hMod)
+  if (hMod && fl_SetProcessDpiAwareness)
     fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
   if (fl_GetDpiForMonitor) {
     for (int ns = 0; ns < screen_count(); ns++) {

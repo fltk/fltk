@@ -158,11 +158,6 @@ void Fl_WinAPI_Screen_Driver::init()
 }
 
 
-float Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
-  return 0; //indicates each screen has already been assigned its scale factor value
-}
-
-
 void Fl_WinAPI_Screen_Driver::screen_work_area(int &X, int &Y, int &W, int &H, int n)
 {
   if (num_screens < 0) init();
