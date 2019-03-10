@@ -1199,45 +1199,8 @@ int Fl_X11_Screen_Driver::screen_num_unscaled(int x, int y)
   return screen;
 }
 
-static bool usemonitors_xml(float &factor, int width, int height) {
-  // Read file $HOME/.config/monitors.xml, search configuration with given width & height,
-  // read <scale>#</scale> data therein, and use it for factor
-  // return false if not found
-  bool found = false, in_config = false;
-  char path[FL_PATH_MAX], line[100], *p;
-  int w, h;
-  float f = 1;
-  p = getenv("HOME");
-  if (!p) return false;
-  strcpy(path, p);
-  strcat(path, "/.config/monitors.xml");
-  FILE *in = fopen(path, "r");
-  if (!in) return false;
-  p = fgets(line, sizeof(line), in);
-  if (p && strstr(line, "<monitors version=\"2\">")) {
-    while (fgets(line, sizeof(line), in)) {
-      if (strstr(line, "<configuration>")) in_config = true;
-      if (strstr(line, "</configuration>")) {in_config = false; f = 1;}
-      if (in_config && (p = strstr(line, "<scale>")) && strstr(p, "</scale>") ) {
-        sscanf(p + 7, "%f", &f);
-      }
-      if ( in_config && (p = strstr(line, "<width>")) && strstr(p, "</width>") ) {
-        sscanf(p + 7, "%d", &w);
-        p = fgets(line, sizeof(line), in);
-        if (p) p = strstr(line, "<height>");
-        if (p) sscanf(p+8, "%d", &h);
-        if (p && w == width && h == height) {
-          found = true;
-          factor = f;
-          break;
-        }
-      }
-    }
-  }
-  fclose(in);
-  return found;
-}
 
+/*
 #if HAVE_DLSYM && HAVE_DLFCN_H
 
 // returns true when name is among the list of known names
@@ -1275,8 +1238,10 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
     g_object_unref_f(gset);
   }
   return retval;
-}
+}*/
 
+// DEPRECATED: gnome apparently no longer stores the display scale factor value
+// in the gsettings database.
 /*
  returns true under Ubuntu or Debian or FreeBSD and when the gnome scaling value has been found
  
@@ -1328,7 +1293,7 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
                                             org.gnome.settings-daemon.plugins.xsettings overrides
  =================================================================================================
  */
-static bool gnome_scale_factor(float& factor) {
+/*static bool gnome_scale_factor(float& factor) {
   // open dynamic libs
   void *glib = dlopen("libglib-2.0.so", RTLD_LAZY);
   void *gio = dlopen("libgio-2.0.so", RTLD_LAZY);
@@ -1433,30 +1398,17 @@ static bool gnome_scale_factor(float& factor) {
   return true;
 }
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
-
+*/
 
 // set the desktop's default scaling value
 void Fl_X11_Screen_Driver::desktop_scale_factor()
 {
   float factor = 1;
-  bool doit = false;
-  // First, try getting the Xft.dpi resource value
+  int dpi;
+  // Try getting the Xft.dpi resource value
   char *s = XGetDefault(fl_display, "Xft", "dpi");
-  if (s) {
-    int dpi = 96;
-    sscanf(s, "%d", &dpi);
+  if (s && sscanf(s, "%d", &dpi) == 1) {
     factor = dpi / 96.;
-    doit = true;
-  } else {
-    screen_count(); // keep here
-    doit = usemonitors_xml(factor, screens[0].width, screens[0].height);
-#if HAVE_DLSYM && HAVE_DLFCN_H
-    if (!doit) {
-      doit = gnome_scale_factor(factor);
-    }
-#endif
-  }
-  if (doit) {
     // checks to prevent potential crash (factor <= 0) or very large factors
     if (factor < 0.25) factor = 0.25;
     else if (factor > 10.0) factor = 10.0;
