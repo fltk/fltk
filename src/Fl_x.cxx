@@ -1251,7 +1251,8 @@ static void react_to_screen_reconfiguration() {
     }
   }
   delete[] sizes;
-  if (nochange) { // screen sizes did not change: re-use previous screen scale values
+  if (nochange || (old_count == 1 && Fl::screen_count() == 1)) {
+    // screen sizes did not change or single screen: re-use previous screen scale values
     for (int screen = 0; screen < old_count; screen++)
       Fl::screen_driver()->scale(screen, scales[screen]);
   } else {
