@@ -116,6 +116,7 @@ Fl_Screen_Driver *Fl_Screen_Driver::newScreenDriver()
   Fl_X11_Screen_Driver *d = new Fl_X11_Screen_Driver();
 #if USE_XFT
   for (int i = 0;  i < MAX_SCREENS; i++) d->screens[i].scale = 1;
+  d->current_xft_dpi = 0.; // means the value of the Xft.dpi resource is still unknown
 #else
   secret_input_character = '*';
 #endif
@@ -1403,16 +1404,15 @@ static void* value_of_key_in_schema(const char **known, const char *schema, cons
 // set the desktop's default scaling value
 void Fl_X11_Screen_Driver::desktop_scale_factor()
 {
-  float factor = 1;
-  int dpi;
-  // Try getting the Xft.dpi resource value
-  char *s = XGetDefault(fl_display, "Xft", "dpi");
-  if (s && sscanf(s, "%d", &dpi) == 1) {
-    factor = dpi / 96.;
-    // checks to prevent potential crash (factor <= 0) or very large factors
-    if (factor < 0.25) factor = 0.25;
-    else if (factor > 10.0) factor = 10.0;
-    for (int i = 0; i < screen_count(); i++)  scale(i, factor);
+  if (this->current_xft_dpi == 0.) { // Try getting the Xft.dpi resource value
+    char *s = XGetDefault(fl_display, "Xft", "dpi");
+    if (s && sscanf(s, "%f", &(this->current_xft_dpi)) == 1) {
+      float factor = this->current_xft_dpi / 96.;
+      // checks to prevent potential crash (factor <= 0) or very large factors
+      if (factor < 0.25) factor = 0.25;
+      else if (factor > 10.0) factor = 10.0;
+      for (int i = 0; i < screen_count(); i++)  scale(i, factor);
+    }
   }
 }
 

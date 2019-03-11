@@ -1267,6 +1267,28 @@ static void react_to_screen_reconfiguration() {
 }
 #endif // USE_XRANDR
 
+#if USE_XFT
+static void after_display_rescale(float *p_current_xft_dpi) {
+  FILE *pipe = popen("xrdb -query", "r");
+  if (!pipe) return;
+  char line[100];
+  while (fgets(line, sizeof(line), pipe) != NULL) {
+    if (memcmp(line, "Xft.dpi:", 8)) continue;
+    float dpi;
+    if (sscanf(line+8, "%f", &dpi) == 1) {
+      //fprintf(stderr," previous=%g dpi=%g \n", *p_current_xft_dpi, dpi);
+      if (fabs(dpi - *p_current_xft_dpi) > 0.01) {
+        *p_current_xft_dpi = dpi;
+        float f = dpi/96.;
+        for (int i = 0; i < Fl::screen_count(); i++)
+          Fl::screen_driver()->rescale_all_windows_from_screen(i, f);
+      }
+    }
+    break;
+  }
+  pclose(pipe);
+}
+#endif // USE_XFT
 
 int fl_handle(const XEvent& thisevent)
 {
@@ -1305,7 +1327,11 @@ int fl_handle(const XEvent& thisevent)
 #endif // USE_XRANDR
 
   if (xevent.type == PropertyNotify && xevent.xproperty.atom == fl_NET_WORKAREA) {
-    ((Fl_X11_Screen_Driver*)Fl::screen_driver())->init_workarea();
+    Fl_X11_Screen_Driver *d = (Fl_X11_Screen_Driver*)Fl::screen_driver();
+    d->init_workarea();
+#if USE_XFT
+    after_display_rescale(&(d->current_xft_dpi));
+#endif // USE_XFT
   }
   
   switch (xevent.type) {

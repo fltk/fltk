@@ -52,6 +52,7 @@ protected:
 
 public:
 #if USE_XFT // scaling does not work without Xft
+  float current_xft_dpi; // current value of the Xft.dpi X resource
   virtual APP_SCALING_CAPABILITY rescalable() { return PER_SCREEN_APP_SCALING; }
   virtual float scale(int n) {return screens[n].scale;}
   virtual void scale(int n, float f) { screens[n].scale = f;}
