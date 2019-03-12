@@ -52,11 +52,7 @@ endmacro (fl_debug_var)
 #######################################################################
 macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
-    if (${LIBTYPE} STREQUAL "SHARED")
-        set (LIBRARY_NAME ${LIBNAME}_SHARED)
-    else ()
-        set (LIBRARY_NAME ${LIBNAME})
-    endif (${LIBTYPE} STREQUAL "SHARED")
+    set (LIBRARY_NAME ${LIBNAME}_${LIBTYPE})
 
     if (MSVC)
 	set (LIBRARY_NAME_DEBUG "${LIBRARY_NAME}d")
@@ -68,7 +64,7 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
     set_target_properties(${LIBRARY_NAME}
         PROPERTIES
-        OUTPUT_NAME ${LIBRARY_NAME}
+        OUTPUT_NAME ${LIBNAME}
         DEBUG_OUTPUT_NAME ${LIBRARY_NAME_DEBUG}
         CLEAN_DIRECT_OUTPUT TRUE
         COMPILE_DEFINITIONS "FL_LIBRARY"
@@ -77,6 +73,7 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
     if (${LIBTYPE} STREQUAL "SHARED")
 	set_target_properties(${LIBRARY_NAME}
 	    PROPERTIES
+      OUTPUT_NAME ${LIBNAME}
 	    VERSION ${FLTK_VERSION_FULL}
 	    SOVERSION ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
 	    PREFIX "lib"    # for MSVC static/shared coexistence

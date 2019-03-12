@@ -41,9 +41,9 @@ install(FILES png.h;pngconf.h;pnglibconf.h
 )
 
 if(OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries(fltk_png ${FLTK_ZLIB_LIBRARIES})
+    target_link_libraries(fltk_png_STATIC ${FLTK_ZLIB_LIBRARIES})
 else()
-    target_link_libraries(fltk_png fltk_z)
+    target_link_libraries(fltk_png_STATIC fltk_z)
 endif(OPTION_USE_SYSTEM_ZLIB)
 
 #######################################################################

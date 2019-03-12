@@ -544,41 +544,41 @@ endif (USE_XFT)
 #######################################################################
 
 FL_ADD_LIBRARY(fltk STATIC "${STATIC_FILES}")
-target_link_libraries(fltk ${OPTIONAL_LIBS})
+target_link_libraries(fltk_STATIC ${OPTIONAL_LIBS})
 
 #######################################################################
 
 FL_ADD_LIBRARY(fltk_forms STATIC "${FLCPPFILES}")
-target_link_libraries(fltk_forms fltk)
+target_link_libraries(fltk_forms_STATIC fltk_STATIC)
 
 #######################################################################
 
 FL_ADD_LIBRARY(fltk_images STATIC "${IMGCPPFILES}")
-target_link_libraries(fltk_images fltk)
+target_link_libraries(fltk_images_STATIC fltk_STATIC)
 
 if (OPTION_USE_SYSTEM_LIBJPEG)
-    target_link_libraries(fltk_images ${FLTK_JPEG_LIBRARIES})
+    target_link_libraries(fltk_images_STATIC ${FLTK_JPEG_LIBRARIES})
 else()
-    target_link_libraries(fltk_images fltk_jpeg)
+    target_link_libraries(fltk_images_STATIC fltk_jpeg_STATIC)
 endif (OPTION_USE_SYSTEM_LIBJPEG)
 
 if (OPTION_USE_SYSTEM_ZLIB)
-    target_link_libraries(fltk_images ${FLTK_ZLIB_LIBRARIES})
+    target_link_libraries(fltk_images_STATIC ${FLTK_ZLIB_LIBRARIES})
 else()
-    target_link_libraries(fltk_images fltk_z)
+    target_link_libraries(fltk_images_STATIC fltk_z_STATIC)
 endif (OPTION_USE_SYSTEM_ZLIB)
 
 if (OPTION_USE_SYSTEM_LIBPNG)
-    target_link_libraries(fltk_images ${FLTK_PNG_LIBRARIES})
+    target_link_libraries(fltk_images_STATIC ${FLTK_PNG_LIBRARIES})
 else()
-    target_link_libraries(fltk_images fltk_png)
+    target_link_libraries(fltk_images_STATIC fltk_png_STATIC)
 endif (OPTION_USE_SYSTEM_LIBPNG)
 
 #######################################################################
 
 if (OPENGL_FOUND)
     FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
-   target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
+    target_link_libraries(fltk_gl_STATIC fltk_STATIC ${OPENGL_LIBRARIES})
 endif (OPENGL_FOUND)
 
 #######################################################################
@@ -601,7 +601,7 @@ if (OPTION_BUILD_SHARED_LIBS)
 
     FL_ADD_LIBRARY(fltk_forms SHARED "${FLCPPFILES}")
     if (MSVC)
-      target_link_libraries(fltk_forms_SHARED fltk)
+      target_link_libraries(fltk_forms_SHARED fltk_SHARED)
     else ()
       target_link_libraries(fltk_forms_SHARED fltk_SHARED)
     endif (MSVC)
@@ -610,27 +610,27 @@ if (OPTION_BUILD_SHARED_LIBS)
 
     FL_ADD_LIBRARY(fltk_images SHARED "${IMGCPPFILES}")
     if (MSVC)
-      target_link_libraries(fltk_images_SHARED fltk)
+      target_link_libraries(fltk_images_SHARED fltk_SHARED)
     else ()
       target_link_libraries(fltk_images_SHARED fltk_SHARED)
     endif (MSVC)
 
     if (OPTION_USE_SYSTEM_LIBJPEG)
-	target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
+      target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
     else()
-	target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
+      target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
     endif (OPTION_USE_SYSTEM_LIBJPEG)
 
     if (OPTION_USE_SYSTEM_LIBPNG)
-	target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
+      target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
     else()
-	target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
+      target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
     endif (OPTION_USE_SYSTEM_LIBPNG)
 
     if (OPTION_USE_SYSTEM_ZLIB)
-	target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
+      target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
     else()
-	target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
+      target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
     endif (OPTION_USE_SYSTEM_ZLIB)
 
     ###################################################################
@@ -638,9 +638,9 @@ if (OPTION_BUILD_SHARED_LIBS)
     if (OPENGL_FOUND)
       FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
       if (MSVC)
-	target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
+        target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
       else ()
-	target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+        target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
       endif (MSVC)
     endif (OPENGL_FOUND)
 

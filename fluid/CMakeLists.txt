@@ -57,7 +57,7 @@ else()
   add_executable(fluid WIN32 ${CPPFILES})
 endif(APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
-target_link_libraries(fluid fltk fltk_images fltk_forms)
+target_link_libraries(fluid fltk_STATIC fltk_images_STATIC fltk_forms_STATIC)
 
 # install fluid
 
