@@ -76,7 +76,6 @@
 #ifdef FL_CFG_GFX_QUARTZ
 
 #include "Fl_Quartz_Graphics_Driver.H"
-#include "../Cocoa/Fl_Cocoa_Screen_Driver.H"
 #include "Fl_Font.H"
 #include <math.h>
 #include <FL/Fl.H>
