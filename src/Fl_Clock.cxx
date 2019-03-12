@@ -213,7 +213,10 @@ static void tick(void *v) {
   int usec;
   Fl::system_driver()->gettime(&sec, &usec);
   ((Fl_Clock*)v)->value((ulong)sec);
-  Fl::add_timeout((1000000 - usec)/1000000., tick, v); // time till next second
+
+  // schedule timer event slightly later than the next second (+25 ms)
+  // to prevent multiple timer events if triggered too early (STR 3516)
+  Fl::add_timeout((1025000 - usec)/1000000., tick, v);
 }
 
 int Fl_Clock::handle(int event) {
