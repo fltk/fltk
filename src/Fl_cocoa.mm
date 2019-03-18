@@ -658,7 +658,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   if (Fl::modal_ && (Fl::modal_ != w))
     return NO;	// prevent the caption to be redrawn as active on click
 		//  when another modal window is currently the key win
-  return !(w->tooltip_window() || w->menu_window() || w->parent());
+  return !(!w || w->tooltip_window() || w->menu_window() || w->parent());
 }
 
 - (BOOL)canBecomeMainWindow
@@ -667,7 +667,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
     return NO;	// prevent the caption to be redrawn as active on click
 		//  when another modal window is currently the key win
 
-  return !(w->tooltip_window() || w->menu_window() || w->parent());
+  return !(!w || w->tooltip_window() || w->menu_window() || w->parent());
 }
 
 - (void)recursivelySendToSubwindows:(SEL)sel
