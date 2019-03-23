@@ -3890,7 +3890,8 @@ int Fl_Cocoa_Window_Driver::set_cursor(const Fl_RGB_Image *image, int hotx, int 
 @end
 @implementation FLaboutItemTarget
 - (BOOL)validateMenuItem:(NSMenuItem *)item
-{ // invalidate the Quit item of the application menu when running modal
+{ // invalidate the Quit item of the application menu when running modal or when in native file chooser
+  if ([[NSApp keyWindow] isKindOfClass:[NSSavePanel class]]) return NO;
   if (!Fl::modal() || [item action] != @selector(terminate:)) return YES;
   return NO;
 }
