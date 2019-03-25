@@ -103,6 +103,7 @@ public:
   virtual void close_display();
   // --- compute dimensions of an Fl_Offscreen
   virtual void offscreen_size(Fl_Offscreen o, int &width, int &height);
+  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 };
 
 

@@ -181,8 +181,6 @@ public:
   virtual const void *icon() const {return NULL;}
   virtual void icon(const void * ic) {}
   virtual void free_icons() {}
-  // each platform implements this its own way
-  static void default_icons(const Fl_RGB_Image *icons[], int count);
 
   // --- window printing/drawing helper
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left,

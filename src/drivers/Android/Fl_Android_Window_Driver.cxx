@@ -38,8 +38,6 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
   return new Fl_Android_Window_Driver(w);
 }
 
-void Fl_Window_Driver::default_icons(Fl_RGB_Image const**, int) {
-}
 
 Window fl_window = 0;
 

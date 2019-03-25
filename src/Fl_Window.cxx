@@ -25,6 +25,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include "Fl_Window_Driver.H"
+#include "Fl_Screen_Driver.H"
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
@@ -317,7 +318,8 @@ void Fl_Window::default_icon(const Fl_RGB_Image *icon) {
   \see Fl_Window::icons(const Fl_RGB_Image *[], int)
  */
 void Fl_Window::default_icons(const Fl_RGB_Image *icons[], int count) {
-  Fl_Window_Driver::default_icons(icons, count);
+  Fl::screen_driver()->open_display();
+  Fl::screen_driver()->default_icons(icons, count);
 }
 
 /** Sets or resets a single window icon.

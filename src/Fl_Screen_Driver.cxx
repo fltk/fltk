@@ -487,6 +487,8 @@ int Fl_Screen_Driver::parse_color(const char* p, uchar& r, uchar& g, uchar& b)
   return 1;
 }
 
+void Fl_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {}
+
 /**
  \}
  \endcond

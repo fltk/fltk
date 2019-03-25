@@ -31,10 +31,6 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *win)
 }
 
 
-void Fl_Window_Driver::default_icons(Fl_RGB_Image const**, int) {
-}
-
-
 Fl_PicoSDL_Window_Driver::Fl_PicoSDL_Window_Driver(Fl_Window *win)
 : Fl_Pico_Window_Driver(win)
 {

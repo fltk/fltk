@@ -2321,7 +2321,7 @@ static const Fl_RGB_Image *find_best_icon(int ideal_width, const Fl_RGB_Image *i
   return best;
 }
 
-void Fl_Window_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {
+void Fl_WinAPI_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {
   const Fl_RGB_Image *best_big, *best_small;
 
   if (default_big_icon != NULL)

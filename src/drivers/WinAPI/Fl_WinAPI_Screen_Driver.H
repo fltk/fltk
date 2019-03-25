@@ -92,6 +92,7 @@ public:
     scale_of_screen[n] = f;
   }
   virtual void desktop_scale_factor();
+  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 };
 
 

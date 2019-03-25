@@ -188,6 +188,8 @@ public:
   /* Number of pixels per drawing unit for the display.
      The default implementation may be enough. */
   virtual float retina_factor() { return 1; }
+  // supports Fl_Window::default_icons()
+  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 };
 
 
