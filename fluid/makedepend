@@ -593,6 +593,7 @@ Fl_Type.o: pixmaps/flValueSlider.xpm
 Fl_Type.o: pixmaps/flWidgetClass.xpm
 Fl_Type.o: pixmaps/flWindow.xpm
 Fl_Type.o: pixmaps/flWizard.xpm
+Fl_Type.o: pixmaps/invisible.xpm
 Fl_Type.o: pixmaps/lock.xpm
 Fl_Type.o: pixmaps/protected.xpm
 Fl_Type.o: ../src/flstring.h
