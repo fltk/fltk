@@ -1152,12 +1152,14 @@ fl_dnd_x.o: ../FL/abi-version.h
 fl_dnd_x.o: ../FL/Enumerations.H
 fl_dnd_x.o: ../FL/Fl_Bitmap.H
 fl_dnd_x.o: ../FL/Fl_Device.H
+fl_dnd_x.o: ../FL/Fl_Double_Window.H
 fl_dnd_x.o: ../FL/fl_draw.H
 fl_dnd_x.o: ../FL/Fl_Export.H
 fl_dnd_x.o: ../FL/Fl_Graphics_Driver.H
 fl_dnd_x.o: ../FL/Fl_Group.H
 fl_dnd_x.o: ../FL/Fl.H
 fl_dnd_x.o: ../FL/Fl_Image.H
+fl_dnd_x.o: ../FL/Fl_Overlay_Window.H
 fl_dnd_x.o: ../FL/Fl_Pixmap.H
 fl_dnd_x.o: ../FL/Fl_Plugin.H
 fl_dnd_x.o: ../FL/Fl_Preferences.H
@@ -1176,6 +1178,7 @@ fl_dnd_x.o: ../FL/platform.H
 fl_dnd_x.o: ../FL/platform_types.h
 fl_dnd_x.o: Fl_Screen_Driver.H
 fl_dnd_x.o: flstring.h
+fl_dnd_x.o: Fl_Window_Driver.H
 Fl_Double_Window.o: ../FL/abi-version.h
 Fl_Double_Window.o: ../FL/Enumerations.H
 Fl_Double_Window.o: ../FL/Fl_Bitmap.H
