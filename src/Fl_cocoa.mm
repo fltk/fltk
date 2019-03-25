@@ -74,7 +74,6 @@ extern "C" {
 
 // external functions
 extern void fl_fix_focus();
-extern unsigned short *fl_compute_macKeyLookUp();
 extern int fl_send_system_handlers(void *e);
 
 // forward definition of functions in this file
@@ -2117,7 +2116,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   // printf("%08x %08x %08x\n", keyCode, mods, key);
   maskedKeyCode = keyCode & 0x7f;
   mods_to_e_state( mods ); // process modifier keys
-  if (!macKeyLookUp) macKeyLookUp = fl_compute_macKeyLookUp();
+  if (!macKeyLookUp) macKeyLookUp = Fl_Darwin_System_Driver::compute_macKeyLookUp();
   sym = macKeyLookUp[maskedKeyCode];
   if (sym < 0xff00) { // a "simple" key
     // find the result of this key without modifier
@@ -2492,7 +2491,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if ( tMods )
   {
     unsigned short keycode = [theEvent keyCode];
-    if (!macKeyLookUp) macKeyLookUp = fl_compute_macKeyLookUp();
+    if (!macKeyLookUp) macKeyLookUp = Fl_Darwin_System_Driver::compute_macKeyLookUp();
     Fl::e_keysym = Fl::e_original_keysym = macKeyLookUp[keycode & 0x7f];
     if ( Fl::e_keysym ) 
       sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;

@@ -215,7 +215,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
 };
 
 // Computes the macKeyLookUp table that transforms a Mac OS virtual keycode into an FLTK keysym
-unsigned short *fl_compute_macKeyLookUp()
+unsigned short *Fl_Darwin_System_Driver::compute_macKeyLookUp()
 {
   static unsigned short macKeyLookUp[128];
   memset(macKeyLookUp, 0, sizeof(macKeyLookUp));
