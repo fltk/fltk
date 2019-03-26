@@ -45,7 +45,7 @@ static double strtoll(const char *str, char **endptr, int base) {
 
 
 /** The constructor loads the SVG image from the given .svg/.svgz filename or in-memory data.
- \param filename The full path and name of a .svg or .svgz file, or NULL.
+ \param filename Name of a .svg or .svgz file, or NULL.
  \param svg_data A pointer to the memory location of the SVG image data.
  This parameter allows to load an SVG image from in-memory data, and is used when \p filename is NULL.
  \note In-memory SVG data is parsed by the object constructor and is not used after construction.
