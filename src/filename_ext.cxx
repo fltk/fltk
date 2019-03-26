@@ -42,10 +42,10 @@ const char *fl_filename_ext(const char *buf) {
  */
 
 /**
- Default implementation to find a filename extension.
+ Finds a filename extension.
 
  The default implementation assumes that the last `.` character separates
- the extension form the basename of a file.
+ the extension from the basename of a file.
 
  \see fl_filename_ext(const char*)
  */
