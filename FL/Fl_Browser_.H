@@ -349,20 +349,16 @@ public:
       scrollbar_size_ = newSize;
   }   
   /**
-    This method has been deprecated, existing for backwards compatibility only.
-    Use scrollbar_size() instead.
-    This method always returns the global value Fl::scrollbar_size().
-    \returns Always returns the global value Fl::scrollbar_size().
+    Returns the global value Fl::scrollbar_size().
+   \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed in 1.4+
   */
   int scrollbar_width() const {
       return(Fl::scrollbar_size());
   }
   /**
-    This method has been deprecated, existing for backwards compatibility only.
-    Use scrollbar_size(int) instead.
-    This method sets the global Fl::scrollbar_size(), and forces this
-    instance of the widget to use it.
+    Sets the global Fl::scrollbar_size(), and forces this instance of the widget to use it.
+   \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed in 1.4+
   */
   void scrollbar_width(int width) {

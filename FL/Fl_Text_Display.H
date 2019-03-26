@@ -224,10 +224,8 @@ public:
   void cursor_color(Fl_Color n) {mCursor_color = n;}
   
   /**
-    This method has been deprecated, existing for backwards compatibility only.
-    Use scrollbar_size() instead.
-    This method returns the global value Fl::scrollbar_size() unless
-    a specific scrollbar_width_ has been set.
+    Returns the global value Fl::scrollbar_size() unless a specific scrollbar_width_ has been set.
+   \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed.
   */
   int scrollbar_width() const {
@@ -235,10 +233,8 @@ public:
   }
 
   /**
-    This method has been deprecated, existing for backwards compatibility only.
-    Use scrollbar_size(int) instead.
-    This method sets the global Fl::scrollbar_size(), and forces this
-    instance of the widget to use it.
+    Sets the global Fl::scrollbar_size(), and forces this instance of the widget to use it.
+   \deprecated Use scrollbar_size() instead.
     \todo This method should eventually be removed
   */
   void scrollbar_width(int width) {

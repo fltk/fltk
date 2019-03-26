@@ -91,7 +91,7 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
  The returned Fl_Shared_Image object is scaled to a size of WxH FLTK units and may have a 
  pixel size larger than these values.
  The returned object should be deallocated with Fl_Shared_Image::release() after use.
- Deprecated: use image() instead.
+ \deprecated Use image() instead.
  \version 1.4 (1.3.4 for MacOS platform only)
  */
 Fl_Shared_Image* Fl_Image_Surface::highres_image()

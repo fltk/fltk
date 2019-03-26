@@ -282,11 +282,11 @@ void Fl_Image::scale(int width, int height, int proportional, int can_expand)
 }
 
 /** Draw the image to the current drawing surface rescaled to a given width and height.
- Deprecated. Only for API compatibility with FLTK 1.3.4.
  Intended for internal use by the FLTK library.
  \param X,Y position of the image's top-left
  \param W,H width and height for the drawn image
  \return 1
+ \deprecated Only for API compatibility with FLTK 1.3.4.
  */
 int Fl_Image::draw_scaled(int X, int Y, int W, int H) {
   // transiently set image drawing size to WxH
