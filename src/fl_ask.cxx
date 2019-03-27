@@ -196,6 +196,7 @@ static void resizeform() {
 //             button[i]->w(), button[i]->h(),
 //	     button[i]->x(), button[i]->y());
     }
+  message_form->init_sizes();
 }
 
 static int innards(const char* fmt, va_list ap,
