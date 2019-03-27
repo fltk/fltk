@@ -884,7 +884,7 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
 
     Widgets can set the NEEDS_KEYBOARD flag to indicate that a keyboard is
     essential for the widget to function. Touchscreen devices will be sent a
-    request to show and on-screen keyboard if no hardware keyboard is
+    request to show an on-screen keyboard if no hardware keyboard is
     connected.
 
     \see Fl_Widget::take_focus()
