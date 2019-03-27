@@ -335,7 +335,10 @@ static void del_transient_window(WinAndTracker *data) {
   delete (Fl_Image*)data->win->shape();
   Fl::delete_widget(data->win);
   if (data->tracker) {
-    if (data->tracker->exists()) Fl::focus(data->tracker->widget());
+    if (data->tracker->exists()) {
+      Fl::focus(data->tracker->widget());
+      data->tracker->widget()->handle(FL_FOCUS);
+    }
     delete data->tracker;
   }
   delete data;
