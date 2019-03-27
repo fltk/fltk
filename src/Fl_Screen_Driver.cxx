@@ -326,15 +326,18 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   delete[] win_array;
 }
 
-typedef struct {
+struct WinAndTracker {
   Fl_Window *win;
-  Fl_Widget *widget;
-} WinAndWidget;
+  Fl_Widget_Tracker *tracker;
+};
 
-static void del_transient_window(WinAndWidget *data) {
+static void del_transient_window(WinAndTracker *data) {
   delete (Fl_Image*)data->win->shape();
   Fl::delete_widget(data->win);
-  if (data->widget) Fl::focus(data->widget);
+  if (data->tracker) {
+    if (data->tracker->exists()) Fl::focus(data->tracker->widget());
+    delete data->tracker;
+  }
   delete data;
 }
 
@@ -378,15 +381,10 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->set_non_modal();
   Fl_Window_Driver::driver(win)->screen_num(nscreen);
   Fl_Window_Driver::driver(win)->force_position(1);
-  WinAndWidget *data = new WinAndWidget;
+  WinAndTracker *data = new WinAndTracker;
   data->win = win;
-  data->widget = Fl::focus();
-  if (data->widget) {
-    Fl_Window *top = data->widget->top_window();
-    if (!top || top->user_data() == &transient_scale_display) {
-      data->widget = 0;
-    }
-  }
+  Fl_Widget *widget = Fl::focus();
+  data->tracker = (widget ? new Fl_Widget_Tracker(widget) : NULL);
   win->show();
   Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, data); // delete after 1 sec
 }
