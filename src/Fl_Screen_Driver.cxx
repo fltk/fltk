@@ -329,9 +329,9 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
 typedef struct {
   Fl_Window *win;
   Fl_Widget *widget;
-} win_and_widget;
+} WinAndWidget;
 
-static void del_transient_window(win_and_widget *data) {
+static void del_transient_window(WinAndWidget *data) {
   delete (Fl_Image*)data->win->shape();
   Fl::delete_widget(data->win);
   if (data->widget) Fl::focus(data->widget);
@@ -378,7 +378,7 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->set_non_modal();
   Fl_Window_Driver::driver(win)->screen_num(nscreen);
   Fl_Window_Driver::driver(win)->force_position(1);
-  win_and_widget *data = new win_and_widget;
+  WinAndWidget *data = new WinAndWidget;
   data->win = win;
   data->widget = Fl::focus();
   if (data->widget) {
