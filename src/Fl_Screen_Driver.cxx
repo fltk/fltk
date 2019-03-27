@@ -383,7 +383,7 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win_and_widget *data = new win_and_widget;
   data->win = win;
   data->widget = Fl::focus();
-  if (data->widget->top_window()->user_data() == &transient_scale_display) {
+  if (data->widget && data->widget->top_window()->user_data() == &transient_scale_display) {
     data->widget = 0;
   }
   win->show();
