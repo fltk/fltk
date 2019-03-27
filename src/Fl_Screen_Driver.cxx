@@ -328,10 +328,16 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   delete[] win_array;
 }
 
-static void del_transient_window(void *data) {
-  Fl_Window *win = (Fl_Window*)data;
-  delete (Fl_Image*)win->shape();
-  Fl::delete_widget(win);
+typedef struct {
+  Fl_Window *win;
+  Fl_Widget *widget;
+} win_and_widget;
+
+static void del_transient_window(win_and_widget *data) {
+  delete (Fl_Image*)data->win->shape();
+  Fl::delete_widget(data->win);
+  if (data->widget) Fl::focus(data->widget);
+  delete data;
 }
 
 void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
@@ -374,8 +380,14 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
   win->set_non_modal();
   Fl_Window_Driver::driver(win)->screen_num(nscreen);
   Fl_Window_Driver::driver(win)->force_position(1);
+  win_and_widget *data = new win_and_widget;
+  data->win = win;
+  data->widget = Fl::focus();
+  if (data->widget->top_window()->user_data() == &transient_scale_display) {
+    data->widget = 0;
+  }
   win->show();
-  Fl::add_timeout(1, del_transient_window, win); // delete after 1 sec
+  Fl::add_timeout(1, (Fl_Timeout_Handler)del_transient_window, data); // delete after 1 sec
 }
 
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
