@@ -195,6 +195,27 @@ depend:	$(CPPFILES)
 # Automatically generated dependencies...
 include makedepend
 
+# Additional dependencies...
+cairo_test.o: ../FL/Fl_Bitmap.H
+cairo_test.o: ../FL/Fl_Box.H
+cairo_test.o: ../FL/Fl_Cairo_Window.H
+cairo_test.o: ../FL/Fl_Device.H
+cairo_test.o: ../FL/Fl_Double_Window.H
+cairo_test.o: ../FL/fl_draw.H
+cairo_test.o: ../FL/Fl_Graphics_Driver.H
+cairo_test.o: ../FL/Fl_Group.H
+cairo_test.o: ../FL/Fl.H
+cairo_test.o: ../FL/Fl_Image.H
+cairo_test.o: ../FL/Fl_Pixmap.H
+cairo_test.o: ../FL/Fl_Plugin.H
+cairo_test.o: ../FL/Fl_Preferences.H
+cairo_test.o: ../FL/Fl_RGB_Image.H
+cairo_test.o: ../FL/fl_utf8.h
+cairo_test.o: ../FL/Fl_Widget.H
+cairo_test.o: ../FL/Fl_Window.H
+cairo_test.o: ../FL/math.h
+cairo_test.o: ../FL/platform.H
+
 clean:
 	$(RM) $(ALL) $(GLALL) core
 	for file in $(ALL) $(GLALL); do \

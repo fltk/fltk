@@ -1,3 +1,17 @@
-# DO NOT DELETE
+# DO NOT DELETE THIS LINE -- make depend depends on it.
 
-Fl_Cairo.o: ../config.h ../FL/Fl_Export.H
+Fl_Cairo.o: ../config.h
+Fl_Cairo.o: ../FL/abi-version.h
+Fl_Cairo.o: ../FL/Enumerations.H
+Fl_Cairo.o: ../FL/Fl_Bitmap.H
+Fl_Cairo.o: ../FL/Fl_Cairo.H
+Fl_Cairo.o: ../FL/Fl_Export.H
+Fl_Cairo.o: ../FL/Fl_Group.H
+Fl_Cairo.o: ../FL/Fl.H
+Fl_Cairo.o: ../FL/Fl_Image.H
+Fl_Cairo.o: ../FL/fl_types.h
+Fl_Cairo.o: ../FL/fl_utf8.h
+Fl_Cairo.o: ../FL/Fl_Widget.H
+Fl_Cairo.o: ../FL/Fl_Window.H
+Fl_Cairo.o: ../FL/platform.H
+Fl_Cairo.o: ../FL/platform_types.h
