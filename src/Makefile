@@ -618,11 +618,11 @@ include makedepend
 # These dependencies aren't part of the makedepend file since
 # they are part of the Windows and MacOS code base...
 # Please add only non-Linux/Unix files or such that are optional
-# (like "*xft*") here:
+# (like "*non-Xft*") here:
 Fl_get_key_mac.o:	Fl_get_key_mac.cxx
 Fl_get_key_win32.o:	Fl_get_key_win32.cxx
 scandir_win32.o:   scandir_win32.c
-Fl_Native_File_Chooser_WIN32.o : Fl_Native_File_Chooser_WIN32.cxx
+Fl_Native_File_Chooser_WIN32.o: Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl_Native_File_Chooser_FLTK.o:	Fl_Native_File_Chooser_FLTK.cxx
 Fl_Native_File_Chooser_GTK.o:	Fl_Native_File_Chooser_GTK.cxx
@@ -671,6 +671,64 @@ Fl_Window_fullscreen.o:	../FL/mac.H ../FL/win32.H
 Fl_Window_iconize.o:	../FL/mac.H ../FL/win32.H
 gl_draw.o:	../FL/mac.H ../FL/win32.H
 gl_start.o:	../FL/mac.H ../FL/win32.H
+# these additional dependencies are for non-Xft builds on Linux/Unix
+drivers/X11/Fl_X11_Screen_Driver.o: Xutf8.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../config.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Font.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: drivers/Xlib/Fl_Xlib_Graphics_Driver.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/abi-version.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Enumerations.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Bitmap.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Device.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_draw.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Export.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Graphics_Driver.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Image.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Pixmap.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Plugin.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Preferences.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_RGB_Image.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_types.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/fl_utf8.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/Fl_Widget.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/platform.H
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: ../FL/platform_types.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: flstring.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.o: Xutf8.h
+drivers/Xlib/Fl_Xlib_Graphics_Driver.o: Xutf8.h
+gl_draw.o: Xutf8.h
+xutf8/utf8Utils.o: ../FL/Fl_Export.H
+xutf8/utf8Utils.o: Xutf8.h
+xutf8/utf8Wrap.o: ../FL/Fl_Export.H
+xutf8/utf8Wrap.o: utf8_internal.h
+xutf8/utf8Wrap.o: Xutf8.h
+xutf8/utf8Wrap.o: xutf8/headers/dingbats_.h
+xutf8/utf8Wrap.o: xutf8/headers/symbol_.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/big5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp1251.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp936ext.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/gb2312.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_10.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_11.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_13.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_14.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_15.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_2.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_3.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_4.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_6.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_7.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_8.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_9.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0201.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0208.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0212.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_r.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_u.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Wrap.o: xutf8/ucs2fontmap.c
 
 ################################################################
 
