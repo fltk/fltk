@@ -3310,11 +3310,21 @@ void Fl_Cocoa_Window_Driver::show() {
   }
 }
 
+static void rescale_top_window(Fl_Window *win, int X, int Y, int W, int H) {
+  int bx, by, bt = 0;
+  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
+  if (win->border()) get_window_frame_sizes(bx, by, bt, win);
+  NSRect r = NSMakeRect(round(X*s), main_screen_height - round((Y + H)*s), round(W*s), round(H*s) + bt);
+  [fl_xid(win) setFrame:r display:YES];
+}
 
 /*
  * resize a window
  */
-void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
+void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
+  if (is_a_rescale() && !pWindow->parent() && !resize_from_system ) {
+    return rescale_top_window(pWindow, X, Y, W, H);
+  }
   int bx, by, bt;
   Fl_Window *parent;
   if (W<=0) W = 1; // OS X does not like zero width windows
@@ -3366,7 +3376,7 @@ void Fl_Cocoa_Window_Driver::resize(int X,int Y,int W,int H) {
   }
   else {
     resize_from_system = 0;
-    if (is_a_resize) {
+    if (is_a_resize && !is_a_rescale()) {
       pWindow->Fl_Group::resize(X,Y,W,H);
       if (shown()) {
         pWindow->redraw();
