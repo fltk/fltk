@@ -49,6 +49,7 @@ public:
   SimpleGL3Window(int x, int y, int w, int h) :  Fl_Gl_Window(x, y, w, h) {
     mode(FL_RGB8 | FL_DOUBLE | FL_OPENGL3);
     shaderProgram = 0;
+    gl_version_major = 0;
   }
   void draw(void) {
     if (gl_version_major < 3) return;
@@ -154,6 +155,7 @@ public:
       add_output("GL_VERSION=%s\n", glv);
       sscanf((const char *)glv, "%d", &gl_version_major);
       if (gl_version_major < 3) add_output("\nThis platform does not support OpenGL V3\n\n");
+      redraw();
     }
     
     if (event == FL_PUSH && gl_version_major >= 3) {
