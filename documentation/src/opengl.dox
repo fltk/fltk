@@ -503,7 +503,6 @@ to be created among your Fl_Gl_Window-derived classes:
       first = 0;
       make_current();
       glewInit(); // defines pters to functions of OpenGL V 1.2 and above
-      redraw();
     }
 #endif
 \endcode
