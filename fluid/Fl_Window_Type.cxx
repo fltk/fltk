@@ -1479,6 +1479,8 @@ void Fl_Widget_Class_Type::read_property(const char *c) {
 // Convert A::B::C::D to D (i.e. keep only innermost name)
 // This is useful for classes that contain a namespace component
 static const char *trimclassname(const char *n) {
+  if (!n)
+    return NULL;
   const char *nn;
   while((nn = strstr(n, "::"))) {
     n = nn + 2;
