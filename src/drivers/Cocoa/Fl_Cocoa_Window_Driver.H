@@ -82,8 +82,7 @@ private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
-  // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
-  // whether window is OpenGL and is currently being resized.
+  // stores 2 binary flags: whether window is mapped to retina display; whether resolution just changed
   unsigned window_flags_;
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);

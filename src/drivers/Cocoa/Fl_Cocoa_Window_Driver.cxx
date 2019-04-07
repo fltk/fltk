@@ -272,8 +272,8 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
   return 0;
 }
 
-static const unsigned mapped_mask = 2;
-static const unsigned changed_mask = 4;
+static const unsigned mapped_mask = 1;
+static const unsigned changed_mask = 2;
 
 bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
   return window_flags_ & mapped_mask;
