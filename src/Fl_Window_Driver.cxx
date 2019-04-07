@@ -191,6 +191,7 @@ int Fl_Window_Driver::hide_common() {
 void Fl_Window_Driver::use_border() {
   if (shown()) {
     pWindow->hide(); // hide and then show to reflect the new state of the window border
+    pWindow->force_position(1);
     pWindow->show();
   }
 }
