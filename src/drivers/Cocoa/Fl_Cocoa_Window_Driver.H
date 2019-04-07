@@ -98,8 +98,6 @@ public:
   void mapped_to_retina(bool);  // sets whether window is mapped to retina display
   bool changed_resolution();      // did window just moved to display with another resolution?
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
-  bool in_windowDidResize();      // is window performing windowDidResize?
-  void in_windowDidResize(bool);  // sets whether window is performing windowDidResize
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   static void destroy(FLWindow*);

@@ -110,7 +110,6 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual int mode_(int m, const int *a);
   virtual void make_current_before();
   virtual void swap_buffers();
-  virtual void resize(int is_a_resize, int w, int h);
   virtual char swap_type();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
   virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);

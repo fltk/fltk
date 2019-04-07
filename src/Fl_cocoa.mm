@@ -85,6 +85,7 @@ static void clipboard_check(void);
 static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins = true);
 static void drain_dropped_files_list(void);
+static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H);
 
 int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -93,7 +94,6 @@ void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(
 Window fl_window;
 
 // forward declarations of variables in this file
-static Fl_Window* resize_from_system;
 static int main_screen_height; // height of menubar-containing screen used to convert between Cocoa and FLTK global screen coordinates
 // through_drawRect = YES means the drawRect: message was sent to the view, 
 // thus the graphics context was prepared by the system
@@ -498,7 +498,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle;
 - (Fl_Window *)getFl_Window;
-- (void)recursivelySendToSubwindows:(SEL)sel;
+- (void)recursivelySendToSubwindows:(SEL)sel applyToSelf:(BOOL)b;
 - (void)setSubwindowFrame;
 - (void)checkSubwindowFrame;
 - (void)waitForExpose;
@@ -650,35 +650,27 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   return !(!w || w->tooltip_window() || w->menu_window() || w->parent());
 }
 
-- (void)recursivelySendToSubwindows:(SEL)sel
+- (void)recursivelySendToSubwindows:(SEL)sel applyToSelf:(BOOL)b
 {
-  [self performSelector:sel];
+  if (b) [self performSelector:sel];
   NSEnumerator *enumerator = [[self childWindows] objectEnumerator];
   id child;
   while ((child = [enumerator nextObject]) != nil) {
-    if ([child isKindOfClass:[FLWindow class]]) [child recursivelySendToSubwindows:sel];
+    if ([child isKindOfClass:[FLWindow class]]) [child recursivelySendToSubwindows:sel applyToSelf:YES];
   }
 }
 
-- (void)setSubwindowFrame { // maps a subwindow at its correct position/size
+- (void)setSubwindowFrame { // have the cocoa position and size of a subwindow follow its FLTK data
   Fl_Window *parent = w->window();
-  if (!parent) return;
-  FLWindow *pxid = fl_xid(parent);
-  if (!pxid) return;
-  int bx = w->x(); int by = w->y();
-  while (parent) {
-    bx += parent->x();
-    by += parent->y();
-    parent = parent->window();
-  }
+  if (!parent || !parent->shown()) return;
+  NSPoint pt = FLTKtoCocoa(w, w->x(), w->y(), w->h());
   float s = Fl::screen_driver()->scale(0);
-  NSRect rp = NSMakeRect(round(s * bx), main_screen_height - round(s * (by + w->h())),
-                         round(s * w->w()), round(s * w->h()));
-
+  NSRect rp = NSMakeRect(round(pt.x), round(pt.y), round(s * w->w()), round(s * w->h()));
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
   }
   if (![self parentWindow]) {
+    FLWindow *pxid = fl_xid(parent);
     [pxid addChildWindow:self ordered:NSWindowAbove]; // needs OS X 10.2
     [self orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
   }
@@ -1190,6 +1182,24 @@ static void orderfront_subwindows(FLWindow *xid)
 }
 @end
 
+// compute coordinates of the win top left in FLTK units
+static void CocoatoFLTK(Fl_Window *win, int &x, int &y) {
+  NSPoint ori;
+  FLWindow *nsw = fl_xid(win);
+  ori = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
+  float s = Fl::screen_driver()->scale(0);
+  x = lround(ori.x / s);
+  y = lround((main_screen_height - ori.y) / s);
+  while (win->parent()) {win = win->window(); x -= win->x(); y -= win->y();}
+}
+
+// return Cocoa coordinates of the point in window win at (x,y) FLTK units
+static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H) {
+  float s = Fl::screen_driver()->scale(0);
+  while (win->parent()) {win = win->window(); x += win->x(); y += win->y();}
+  return NSMakePoint(x * s, main_screen_height - (y + H)*s);
+}
+
 static FLWindowDelegate *flwindowdelegate_instance = nil;
 @implementation FLWindowDelegate
 + (void)initialize
@@ -1216,31 +1226,22 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     return;
   }
   fl_lock_function();
-  resize_from_system = window;
-  NSPoint pt2;
-  pt2 = [nsw convertBaseToScreen:NSMakePoint(0, [[nsw contentView] frame].size.height)];
   update_e_xy_and_e_xy_root(nsw);
-  // we don't use 'main_screen_height' here because it's wrong just after screen config changes
-  pt2.y = CGDisplayBounds(CGMainDisplayID()).size.height - pt2.y;
-  float s = Fl::screen_driver()->scale(0);
-  pt2.x = round(pt2.x / s);
-  pt2.y = round(pt2.y / s);
-  Fl_Window *parent = window->window();
-  while (parent) {
-    pt2.x -= parent->x();
-    pt2.y -= parent->y();
-    parent = parent->window();
-  }
-  window->position((int)pt2.x, (int)pt2.y);
+  // we update 'main_screen_height' here because it's wrong just after screen config changes
+  main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
+  int X, Y;
+  CocoatoFLTK(window, X, Y);
+  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+  d->x(X);
+  d->y(Y);
   if (fl_mac_os_version < 100700) { // after move, redraw parent and children of GL windows
-    parent = window->window();
+    Fl_Window *parent = window->window();
     if (parent && parent->as_gl_window()) window->redraw();
     if (parent && window->as_gl_window()) parent->redraw();
   }
-  resize_from_system = NULL;
-  // at least since MacOS 10.10: OS sends windowDidMove to parent window and then to children
+  // at least since MacOS 10.9: OS sends windowDidMove to parent window and then to children
   // FLTK sets position of parent and children. setSubwindowFrame is no longer necessary.
-  if (fl_mac_os_version < 101000) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+    if (fl_mac_os_version < 100900) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
   [nsw checkSubwindowFrame];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   FLView *view = (FLView*)[nsw contentView];
@@ -1254,26 +1255,25 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   if (!window) return;
   fl_lock_function();
-  NSRect r; NSPoint pt2;
-  r = [[nsw contentView] frame];
-  pt2 = [nsw convertBaseToScreen:NSMakePoint(0, r.size.height)];
-  pt2.y = main_screen_height - pt2.y;
+  NSRect r = [[nsw contentView] frame];
   float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num());
-  pt2.x = round(pt2.x/s); pt2.y = round(pt2.y/s);
-  Fl_Window *parent = window->window();
-  while (parent) {
-    pt2.x -= parent->x();
-    pt2.y -= parent->y();
-    parent = parent->window();
-  }
-  resize_from_system = window;
+  int X, Y;
+  CocoatoFLTK(window, X, Y);
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-  if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(true);
+  if (window->as_gl_window() && window->shown()) {
+    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+    if (plugin) {
+      plugin->valid(window, 0);
+      [plugin->context(window) update];
+    }
+  }
   update_e_xy_and_e_xy_root(nsw);
-  window->resize((int)(pt2.x), (int)(pt2.y), (int)lround(r.size.width/s), (int)lround(r.size.height/s));
-  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
-  [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame)];
-  if (window->as_gl_window() && Fl_X::i(window)) d->in_windowDidResize(false);
+  if (d->is_a_rescale()) {
+    d->x(X); d->y(Y);
+    [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
+  }
+  else  window->Fl_Group::resize(X, Y,lround(r.size.width/s), lround(r.size.height/s));
+  [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:NO];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)[nsw contentView] reset_layer_data];
 #endif
@@ -1336,7 +1336,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if ([nsw miniwindowImage]) { [nsw setMiniwindowImage:nil]; }
   Fl_Window *window = [nsw getFl_Window];
   // necessary when resolutions before miniaturization and after deminiaturization differ
-  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
   Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
   Fl::flush(); // Process redraws set by FL_SHOW.
@@ -2334,6 +2334,13 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
+  if (window->as_gl_window() && d->wait_for_expose_value) { // 1st drawing of GL window
+    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
+    if (plugin) {
+      [plugin->context(window) update]; // GL windows may be empty without this
+    }
+  }
+
   d->wait_for_expose_value = 0;
   Fl_X *i = Fl_X::i(window);
   if ( i->region ) {
@@ -3053,7 +3060,6 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   gc = 0;
   mapped_to_retina(false);
   changed_resolution(false);
-  in_windowDidResize(false);
   
   NSRect crect;
   if (w->fullscreen_active()) {
@@ -3178,7 +3184,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     w->handle(FL_SHOW); // create subwindows if any
     if (fl_mac_os_version < 101300) { // TODO: threshold may be smaller
       // draw the window and its subwindows before its icon is computed
-      [cw recursivelySendToSubwindows:@selector(display)];
+      [cw recursivelySendToSubwindows:@selector(display) applyToSelf:YES];
     }
     [cw miniaturize:nil];
   } else if (w->parent()) { // a subwindow
@@ -3269,7 +3275,7 @@ void Fl_Cocoa_Window_Driver::size_range() {
 void Fl_Cocoa_Window_Driver::wait_for_expose()
 {
     if (fl_mac_os_version < 101300) {
-        [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose)];
+      [fl_xid(pWindow) recursivelySendToSubwindows:@selector(waitForExpose) applyToSelf:YES];
     } else {
       Fl_Window_Driver::wait_for_expose();
     }
@@ -3310,81 +3316,27 @@ void Fl_Cocoa_Window_Driver::show() {
   }
 }
 
-static void rescale_top_window(Fl_Window *win, int X, int Y, int W, int H) {
-  int bx, by, bt = 0;
-  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(win)->screen_num());
-  if (win->border()) get_window_frame_sizes(bx, by, bt, win);
-  NSRect r = NSMakeRect(round(X*s), main_screen_height - round((Y + H)*s), round(W*s), round(H*s) + bt);
-  [fl_xid(win) setFrame:r display:YES];
-}
-
 /*
  * resize a window
  */
 void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
-  if (is_a_rescale() && !pWindow->parent() && !resize_from_system ) {
-    return rescale_top_window(pWindow, X, Y, W, H);
-  }
-  int bx, by, bt;
-  Fl_Window *parent;
-  if (W<=0) W = 1; // OS X does not like zero width windows
-  if (H<=0) H = 1;
-  int is_a_resize = (W != w() || H != h() || is_a_rescale());
-  //  printf("Fl_Window::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
-  //         X, Y, W, H, is_a_resize, resize_from_system, this);
-  if (X != x() || Y != y()) force_position(1);
-  else if (!is_a_resize) {
-    resize_from_system = 0;
-    return;
+  if (visible_r()) {
+    NSPoint pt = FLTKtoCocoa(pWindow, X, Y, H);
+    if (W != w() || H != h() || is_a_rescale()) {
+      NSRect r;
+      float s = Fl::screen_driver()->scale(screen_num());
+      int bx, by, bt = 0;
+      if (border()) get_window_frame_sizes(bx, by, bt, pWindow);
+      r.origin = pt;
+      r.size.width = round(W*s);
+      r.size.height = round(H*s) + bt;
+      [fl_xid(pWindow) setFrame:r display:YES];
     }
-  if ( (resize_from_system != pWindow) && shown()) {
-    float s = Fl::screen_driver()->scale(screen_num());
-    if (is_a_resize) {
-      if (pWindow->resizable()) {
-        int min_w = minw(), max_w = maxw(), min_h = minh(), max_h = maxh();
-        if (W<min_w) min_w = W; // user request for resize takes priority
-        if (max_w && W>max_w) max_w = W; // over a previously set size_range
-        if (H<min_h) min_h = H;
-        if (max_h && H>max_h) max_h = H;
-        pWindow->size_range(min_w, min_h, max_w, max_h);
-      } else {
-        pWindow->size_range(W, H, W, H);
-      }
-      pWindow->Fl_Group::resize(X,Y,W,H);
-      // transmit changes in FLTK coords to cocoa
-      get_window_frame_sizes(bx, by, bt, pWindow);
-      bx = X; by = Y;
-      parent = pWindow->window();
-      while (parent) {
-        bx += parent->x();
-        by += parent->y();
-        parent = parent->window();
-      }
-      NSRect r = NSMakeRect(round(bx*s), main_screen_height - round((by + H)*s), round(W*s), round(H*s) + (border()?bt:0));
-      if (visible_r()) [fl_xid(pWindow) setFrame:r display:YES];
-    } else {
-      bx = X; by = Y;
-      parent = pWindow->window();
-      while (parent) {
-        bx += parent->x();
-        by += parent->y();
-        parent = parent->window();
-      }
-      NSPoint pt = NSMakePoint(round(bx*s), main_screen_height - round((by + H)*s));
-      if (visible_r()) [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
+    else {
+      [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
+      x(X); y(Y); // useful when frame did not move
     }
-  }
-  else {
-    resize_from_system = 0;
-    if (is_a_resize && !is_a_rescale()) {
-      pWindow->Fl_Group::resize(X,Y,W,H);
-      if (shown()) {
-        pWindow->redraw();
-      }
-    } else {
-      x(X); y(Y);
-    }
-  }
+  } else pWindow->Fl_Group::resize(X, Y, W, H);
 }
 
 

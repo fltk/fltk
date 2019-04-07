@@ -272,17 +272,6 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
   return 0;
 }
 
-static const unsigned windowDidResize_mask = 1;
-
-bool Fl_Cocoa_Window_Driver::in_windowDidResize() {
-  return window_flags_ & windowDidResize_mask;
-}
-
-void Fl_Cocoa_Window_Driver::in_windowDidResize(bool b) {
-  if (b) window_flags_ |= windowDidResize_mask;
-  else window_flags_ &= ~windowDidResize_mask;
-}
-
 static const unsigned mapped_mask = 2;
 static const unsigned changed_mask = 4;
 
