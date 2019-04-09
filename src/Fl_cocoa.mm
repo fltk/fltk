@@ -3372,7 +3372,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   if (make_current_counts) make_current_counts++;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA && !through_Fl_X_flush) { // detect direct calls from the app
-    FLViewLayer *view = (FLViewLayer*)[fl_window contentView];
+    FLViewLayer *view = (FLViewLayer*)[fl_xid(pWindow) contentView];
     if (!view->layer_data) [view prepare_bitmap_for_layer]; // necessary for progressive drawing
     [view setNeedsDisplay:YES];
   }
