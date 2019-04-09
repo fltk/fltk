@@ -36,6 +36,8 @@
  The \p alpha parameter controls whether an alpha channel is created
  and the value that is placed in the alpha channel. If 0, no alpha
  channel is generated.
+ 
+ \see fl_capture_window_part()
  */
 uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
@@ -88,6 +90,23 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   return image_data;
 }
 
+/** Captures the content of a rectangular zone of a mapped window.
+ \param win a mapped Fl_Window (derived types including Fl_Gl_Window are also possible)
+ \param x,y,w,h window area to be captured. Intersecting sub-windows are captured too.
+ \return The captured pixels as an Fl_RGB_Image. The raw and
+ drawing sizes of the image can differ. Returns NULL when capture was not successful.
+ The image depth may differ between platforms.
+ \version 1.4
+*/
+Fl_RGB_Image *fl_capture_window_part(Fl_Window *win, int x, int y, int w, int h)
+{
+  Fl_RGB_Image *rgb = NULL;
+  if (win->shown()) {
+    rgb = Fl_Screen_Driver::traverse_to_gl_subwindows(win, x, y, w, h, NULL);
+    if (rgb) rgb->scale(w, h, 0, 1);
+  }
+  return rgb;
+}
 //
 // End of "$Id$".
 //

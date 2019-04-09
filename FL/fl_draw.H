@@ -794,6 +794,7 @@ inline void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int 
 inline char fl_can_do_alpha_blending() {return Fl_Graphics_Driver::default_driver().can_do_alpha_blending();}
 
 FL_EXPORT uchar *fl_read_image(uchar *p,int X,int Y,int W,int H,int alpha=0);
+FL_EXPORT Fl_RGB_Image *fl_capture_window_part(Fl_Window *win, int x, int y, int w, int h);
 
 // pixmaps:
 /**
