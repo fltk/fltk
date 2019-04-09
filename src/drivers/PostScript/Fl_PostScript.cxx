@@ -1019,7 +1019,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   float scale = Fl_Graphics_Driver::default_driver().scale_bitmap_for_PostScript();
   Fl_Fontsize old_size = size();
   Fl_Font fontnum = Fl_Graphics_Driver::font();
-  int w_scaled =  (int)(w * (scale + 0.5));
+  int w_scaled =  (int)(w * (scale + 0.5) + 1);
   int h = (int)(height() * scale);
   // create an offscreen image of the string
   Fl_Color text_color = Fl_Graphics_Driver::color();
@@ -1037,11 +1037,12 @@ void Fl_PostScript_Graphics_Driver::transformed_draw_extra(const char* str, int 
   }
   fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
   int w2 = (int)fl_width(str, n);
+  if (w2 > w_scaled) w2 = w_scaled;
   // draw string in offscreen
   if (rtl) fl_rtl_draw(str, n, w2, (int)(h * 0.8) );
-  else fl_draw(str, n, 1, (int)(h * 0.8) );
+  else fl_draw(str, n, 0, (int)(h * 0.8) );
   // read (most of) the offscreen image
-  uchar *img = fl_read_image(NULL, 1, 1, w2, h, 0);
+  uchar *img = fl_read_image(NULL, 0, 1, w2, h, 0);
   fl_end_offscreen();
   font(fontnum, old_size);
   fl_delete_offscreen(off);
