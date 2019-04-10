@@ -35,8 +35,6 @@ protected:
   void set_current();
   void translate(int x, int y);
   void untranslate();
-  int w() {return width;}
-  int h() {return height;}
 };
 
 

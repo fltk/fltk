@@ -37,8 +37,6 @@ protected:
   void set_current();
   void translate(int x, int y);
   void untranslate();
-  int w() {return width;}
-  int h() {return height;}
 };
 
 #endif /* Fl_Quartz_Copy_Surface_Driver_H */
