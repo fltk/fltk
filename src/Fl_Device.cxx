@@ -72,6 +72,10 @@ void Fl_Surface_Device::set_current(void)
 
 Fl_Surface_Device* Fl_Surface_Device::surface_; // the current target surface of graphics operations
 
+/** Is this surface the current drawing surface? */
+bool Fl_Surface_Device::is_current() {
+  return surface_ == this;
+}
 
 Fl_Surface_Device::~Fl_Surface_Device()
 {

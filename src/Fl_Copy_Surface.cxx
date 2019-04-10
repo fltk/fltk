@@ -38,6 +38,10 @@ void Fl_Copy_Surface::set_current() {
   if (platform_surface) platform_surface->set_current();
 }
 
+bool Fl_Copy_Surface::is_current() {
+  return surface() == platform_surface;
+}
+
 void Fl_Copy_Surface::translate(int x, int y) {
   if (platform_surface) platform_surface->translate(x, y);
 }
@@ -57,6 +61,11 @@ int Fl_Copy_Surface::printable_rect(int *w, int *h)  {
     *w  = *h = 0;
   }
   return 1;
+}
+
+int Fl_Copy_Surface_Driver::printable_rect(int *w, int *h) {
+  *w = width; *h = height;
+  return 0;
 }
 
 //

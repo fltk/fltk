@@ -47,6 +47,8 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
 {
   int old_x, old_y, new_x, new_y, is_window;
   if ( ! widget->visible() ) return;
+  bool need_push = !is_current();
+  if (need_push) Fl_Surface_Device::push_current(this);
   is_window = (widget->as_window() != NULL);
   uchar old_damage = widget->damage();
   widget->damage(FL_DAMAGE_ALL);
@@ -87,6 +89,7 @@ void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
   }
   if ((old_damage & FL_DAMAGE_CHILD) == 0) widget->clear_damage(old_damage);
   else widget->damage(FL_DAMAGE_ALL);
+  if (need_push) Fl_Surface_Device::pop_current();
 }
 
 
@@ -150,7 +153,8 @@ void Fl_Widget_Surface::origin(int x, int y) {
  */
 void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
-  Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
+  bool need_push = !Fl_Display_Device::display_device()->is_current();
+  if (need_push) Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
   Fl_Window *save_front = Fl::first_window();
   win->show();
   Fl::check();
@@ -158,9 +162,12 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
   Fl_RGB_Image *img = Fl_Screen_Driver::traverse_to_gl_subwindows(win, x, y, w, h, NULL);
   if (img) img->scale(w, h, 1, 1);
   if (save_front != win) save_front->show();
-  Fl_Surface_Device::pop_current();
+  if (need_push) Fl_Surface_Device::pop_current();
   if (img) {
+    need_push = !is_current();
+    if (need_push) Fl_Surface_Device::push_current(this);
     img->draw(delta_x, delta_y);
+    if (need_push) Fl_Surface_Device::pop_current();
     delete img;
   }
 }
@@ -187,6 +194,8 @@ void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int win_offset_x, 
   if (win->border() && !win->parent()) {
     Fl_Window_Driver::driver(win)->capture_titlebar_and_borders(top, left, bottom, right);
   }
+  bool need_push = !is_current();
+  if (need_push) Fl_Surface_Device::push_current(this);
   int wsides = left ? left->w() : 0;
   int toph = top ? top->h() : 0;
   if (top) {
@@ -206,6 +215,7 @@ void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int win_offset_x, 
     delete bottom;
   }
   this->draw(win, win_offset_x + wsides, win_offset_y + toph);
+  if (need_push) Fl_Surface_Device::pop_current();
 }
 
 //

@@ -105,6 +105,7 @@ public:
   void end_job (void);
   void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   void set_current(void);
+  virtual bool is_current();
 
   /** \name These attributes are useful for the Linux/Unix platform only.
    \{

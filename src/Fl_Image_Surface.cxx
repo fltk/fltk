@@ -54,6 +54,10 @@ void Fl_Image_Surface::set_current() {
   if (platform_surface) platform_surface->set_current();
 }
 
+bool Fl_Image_Surface::is_current() {
+  return surface() == platform_surface;
+}
+
 void Fl_Image_Surface::translate(int x, int y) {
   if (platform_surface) platform_surface->translate(x, y);
 }
@@ -72,6 +76,10 @@ Fl_Offscreen Fl_Image_Surface::offscreen() {
 
 int Fl_Image_Surface::printable_rect(int *w, int *h)  {return platform_surface->printable_rect(w, h);}
 
+int Fl_Image_Surface_Driver::printable_rect(int *w, int *h) {
+  *w = width; *h = height;
+  return 0;
+}
 
 /** Returns an image made of all drawings sent to the Fl_Image_Surface object.
  The returned object contains its own copy of the RGB data.

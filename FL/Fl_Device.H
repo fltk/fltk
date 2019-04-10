@@ -77,6 +77,7 @@ protected:
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }
 public:
   virtual void set_current(void);
+  virtual bool is_current();
   /** \brief Sets the graphics driver of this drawing surface. */
   inline void driver(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver;};
   /** \brief Returns the graphics driver of this drawing surface. */

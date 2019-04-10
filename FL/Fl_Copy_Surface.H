@@ -56,6 +56,7 @@ public:
   Fl_Copy_Surface(int w, int h);
   ~Fl_Copy_Surface();
   void set_current();
+  virtual bool is_current();
   /** Returns the pixel width of the copy surface */
   int w();
   /** Returns the pixel height of the copy surface */
@@ -87,11 +88,10 @@ protected:
   int height;
   Fl_Copy_Surface_Driver(int w, int h) : Fl_Widget_Surface(NULL), width(w), height(h) {}
   virtual ~Fl_Copy_Surface_Driver() {}
-  virtual void set_current() {}
-  virtual void translate(int x, int y) {}
-  virtual void untranslate() {}
-  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
-  virtual Fl_RGB_Image *image() {return NULL;}
+  virtual void set_current() = 0;
+  virtual void translate(int x, int y) = 0;
+  virtual void untranslate() = 0;
+  int printable_rect(int *w, int *h);
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
    of class Fl_Copy_Surface_Driver for the plaform.

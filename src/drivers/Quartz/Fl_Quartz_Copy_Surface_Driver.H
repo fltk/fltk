@@ -39,7 +39,6 @@ protected:
   void untranslate();
   int w() {return width;}
   int h() {return height;}
-  int printable_rect(int *w, int *h) {*w = width; *h = height; return 0;}
 };
 
 #endif /* Fl_Quartz_Copy_Surface_Driver_H */

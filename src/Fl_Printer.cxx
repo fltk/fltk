@@ -214,6 +214,10 @@ void Fl_Printer::set_current(void)
   printer->set_current();
 }
 
+bool Fl_Printer::is_current() {
+  return surface() == printer;
+}
+
 Fl_Printer::~Fl_Printer(void)
 {
   delete printer;
