@@ -49,7 +49,7 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
     }
     img->alloc_array = 1;
   } else {
-    img = Fl::screen_driver()->traverse_to_gl_subwindows(Fl_Window::current(), X, Y, w, h, NULL);
+    img = Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Window::current(), X, Y, w, h, NULL);
   }
   int depth = alpha ? 4 : 3;
   if (img->d() != depth) {
