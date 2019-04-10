@@ -217,9 +217,12 @@ void gl_rect(int x, int y, int w, int h) {
 
 void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   if (!ld) ld = w*d;
+  GLint row_length;
+  glGetIntegerv(GL_UNPACK_ROW_LENGTH, &row_length); // get current row length
   glPixelStorei(GL_UNPACK_ROW_LENGTH, ld/d);
   glRasterPos2i(x,y);
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length); // restore row length
 }
 
 
@@ -404,18 +407,24 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   int w, h;
   w = fl_width(fifo[current].utf8, n) * gl_scale;
   // Hack - make w be aligned
-  w = (w + 3) & 0xFFFFFFC;
+  w = (w + 3) & (~3);
   h = fl_height() * gl_scale;
-  
+
   fifo[current].scale = gl_scale;
   fifo[current].fdesc = gl_fontsize;
   char *txt_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h);
-  
+
+  // save GL parameters GL_UNPACK_ROW_LENGTH and GL_UNPACK_ALIGNMENT
+  GLint row_length, alignment;
+  glGetIntegerv(GL_UNPACK_ROW_LENGTH, &row_length);
+  glGetIntegerv(GL_UNPACK_ALIGNMENT, &alignment);
+
   // put the bitmap in an alpha-component-only texture
   glPushAttrib(GL_TEXTURE_BIT);
   glBindTexture (GL_TEXTURE_RECTANGLE_ARB, fifo[current].texName);
   glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  //glPixelStorei(GL_UNPACK_ROW_LENGTH, w);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, w);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   // GL_ALPHA8 is defined in GL/gl.h of X11 and of MinGW32 and of MinGW64 and of OpenGL.framework for MacOS
   glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_ALPHA8, w, h, 0, GL_ALPHA, GL_UNSIGNED_BYTE, txt_buf);
   /* For the record: texture construction if an alpha-only-texture is not possible
@@ -424,6 +433,9 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
    */
   delete[] txt_buf; // free the buffer now we have copied it into the Gl texture
   glPopAttrib();
+  // restore saved GL parameters
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
   return current;
 }
 
