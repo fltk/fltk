@@ -3346,18 +3346,21 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
  This can be called in 3 different instances:
  
  1) When a window is created or resized.
- The system sends the drawRect: message to the window's view after having prepared the current 
- graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect 
- to YES and calls Fl_Cocoa_Window_Driver::flush().
- Fl_Cocoa_Window_Driver::flush() sets through_Fl_X_flush
- to YES and calls Fl_Window::flush() that calls Fl_Window::make_current() that
+ Before 10.14: The system sends the drawRect: message to the window's view after having prepared the current
+    graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect
+    to YES and calls Fl_Cocoa_Window_Driver::flush() that sets through_Fl_X_flush
+    to YES and calls Fl_Window::flush().
+ After 10.14: The system sends the displayLayer: message to the window's view.
+    Variable through_Fl_X_flush is set to YES and Fl_Window_Driver::flush() is called
+    which calls Fl_Window::flush().
+ Fl_Window::flush() calls Fl_Window::make_current() that
  uses the window's graphics context. The window's draw() function is then executed.
  
  2) At each round of the FLTK event loop.
  Fl::flush() is called, that calls Fl_Cocoa_Window_Driver::flush() on each window that needs drawing.
- Variable through_Fl_X_flush is set to YES. Fl_Cocoa_Window_Driver::flush() locks the focus to the 
- view and calls Fl_Window::flush() that calls Fl_Window::make_current() which uses the window's 
- graphics context. Fl_Window::flush() then runs the window's draw() function.
+ Fl_Cocoa_Window_Driver::flush() [Before 10.14: locks the focus to the
+ view and] calls Fl_Window_Driver::flush() that calls Fl_Window::make_current()
+ and proceeds as in 1).
  
  3) An FLTK application can call Fl_Window::make_current() at any time before it draws to a window.
  This occurs for instance in the idle callback function of the mandelbrot test program. Variable 
