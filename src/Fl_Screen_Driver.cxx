@@ -184,7 +184,8 @@ Image depths can differ between "to" and "from".
  will be partially overwritten with the new capture
  
  Return value:
- An Fl_RGB_Image*, the depth of which is platform-dependent, containing the captured pixels.
+ An Fl_RGB_Image*, the depth of which is platform-dependent, containing the captured pixels,
+ or NULL if capture failed.
  */
 Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                           Fl_RGB_Image *full_img)
@@ -198,6 +199,7 @@ Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, in
     if (Fl_Window::current() != g) g->as_window()->make_current();
     full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h);
   }
+  if (!full_img) return NULL;
   float full_img_scale =  (full_img && w > 0 ? float(full_img->data_w())/w : 1);
   int n = g->children();
   for (int i = 0; i < n; i++) {

@@ -153,6 +153,7 @@ void Fl_Widget_Surface::origin(int x, int y) {
  */
 void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
+  if (!win->shown()) return;
   bool need_push = !Fl_Display_Device::display_device()->is_current();
   if (need_push) Fl_Surface_Device::push_current(Fl_Display_Device::display_device());
   Fl_Window *save_front = Fl::first_window();
