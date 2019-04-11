@@ -76,10 +76,19 @@ Fl_Offscreen Fl_Image_Surface::offscreen() {
 
 int Fl_Image_Surface::printable_rect(int *w, int *h)  {return platform_surface->printable_rect(w, h);}
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
 int Fl_Image_Surface_Driver::printable_rect(int *w, int *h) {
   *w = width; *h = height;
   return 0;
 }
+/**
+ \}
+ \endcond
+ */
 
 /** Returns an image made of all drawings sent to the Fl_Image_Surface object.
  The returned object contains its own copy of the RGB data.

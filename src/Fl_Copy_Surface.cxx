@@ -63,10 +63,19 @@ int Fl_Copy_Surface::printable_rect(int *w, int *h)  {
   return 1;
 }
 
+/**
+ \cond DriverDev
+ \addtogroup DriverDeveloper
+ \{
+ */
 int Fl_Copy_Surface_Driver::printable_rect(int *w, int *h) {
   *w = width; *h = height;
   return 0;
 }
+/**
+ \}
+ \endcond
+ */
 
 //
 // End of "$Id$".
