@@ -62,21 +62,23 @@
  <b>Platform specifics</b>
  <ul>
  <li>Unix/Linux platforms:
- Unless it has been previously changed, the default paper size is A4.
+ <ul><li>FLTK expresses all graphics data using (Level 2) PostScript and sends that to the selected printer.
+ See class Fl_PostScript_File_Device for a description of how text appears in print.
+ <li>Unless it has been previously changed, the default paper size is A4.
  To change that, press the "Properties" button of the "Print" dialog window
  opened by an Fl_Printer::begin_job() call. This opens a "Printer Properties" window where it's
  possible to select the adequate paper size. Finally press the "Save" button therein to assign
  the chosen paper size to the chosen printer for this and all further print operations.
- <br>Class Fl_RGB_Image prints but loses its transparency if it has one.
- See class Fl_PostScript_Graphics_Driver for a description of how UTF-8 strings appear in print.
- Use the static public attributes of this class to set the print dialog to other languages 
+ <li>Class Fl_RGB_Image prints but loses its transparency if it has one.
+ <li>Use the static public attributes of this class to set the print dialog to other languages
  than English. For example, the "Printer:" dialog item Fl_Printer::dialog_printer can be set to French with:
  \code
  Fl_Printer::dialog_printer = "Imprimante:";
  \endcode
  before creation of the Fl_Printer object.
- Use Fl_PostScript_File_Device::file_chooser_title to customize the title of the file chooser dialog that opens
- when using the "Print To File" option of the print dialog. 
+ <li>Use Fl_PostScript_File_Device::file_chooser_title to customize the title of the file chooser dialog that opens
+ when using the "Print To File" option of the print dialog.
+ </ul>
  <li>Windows platform: Transparent Fl_RGB_Image 's don't print with exact transparency on most printers
  (a workaround is to use print_window_part() ).
  Fl_RGB_Image 's don't rotate() well.
