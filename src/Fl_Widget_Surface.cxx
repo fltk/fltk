@@ -112,6 +112,10 @@ void Fl_Widget_Surface::translate(int x, int y)
 {
 }
 
+void Fl_Widget_Surface::untranslate()
+{
+}
+
 /**
  \brief Computes the page coordinates of the current origin of graphics functions.
 

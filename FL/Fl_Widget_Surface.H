@@ -44,7 +44,7 @@ public:
   /**
    Undoes the effect of a previous translate() call.
    */
-  virtual void untranslate(void) {}
+  virtual void untranslate();
   void draw(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
   virtual void draw_decorated_window(Fl_Window *win, int x_offset = 0, int y_offset = 0);
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
