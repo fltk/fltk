@@ -857,7 +857,8 @@ the GL scene in pixels: if the Fl_Gl_Window is mapped on a retina display, these
 reported by Fl_Widget::w() and Fl_Widget::h(); if it's mapped on a regular display, they return the same values
 as w() and h(). These methods dynamically change their values if the window is moved into/out from a retina
 display. If Fl::use_high_res_GL(1) is not called, all Fl_Gl_Window 's are drawn at low resolution.
-These methods are synonyms of w() and h() on non-Mac OS X platforms, so the source code remains cross-platform.
+These methods are useful on all platforms because Fl_Gl_Window::w() and Fl_Gl_Window::h() don't return,
+on HighDPI displays, the quantitites in pixels necessary to OpenGL functions .
 
 The Fl_Gl_Window::pixels_per_unit() method is useful when the OpenGL code depends on the pixel dimension
 of the GL scene. This occurs, e.g., if a window's handle() method uses Fl::event_x() and Fl::event_y()

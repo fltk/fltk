@@ -439,10 +439,8 @@ int Fl_Gl_Window::gl_plugin_linkage() {
 }
 
 /** The number of pixels per FLTK unit of length for the window.
- Returns 1, except for a window mapped to
- an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
- when it returns 2. This method dynamically adjusts its value when the window
- is moved to/from a retina display. This method is useful, e.g., to convert,
+ This method dynamically adjusts its value when the GUI is rescaled or when the window
+ is moved to/from displays of distinct resolutions. This method is useful, e.g., to convert,
  in a window's handle() method, the FLTK units returned by Fl::event_x() and
  Fl::event_y() to the pixel units used by the OpenGL source code.
  \version 1.3.4

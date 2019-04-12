@@ -208,17 +208,21 @@ public:
   
   float pixels_per_unit();
   /** Gives the window width in OpenGL pixels.
-   Generally identical with the result of the w() function, but for a window mapped to
-   an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
-   pixel_w() returns 2 * w(). This method detects when the window has been moved
+   When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::w()
+   which is expressed in FLTK units, may differ from the window width in pixels.
+   Calls to OpenGL functions expecting pixel values (e.g., glViewport) must therefore
+   use this method rather than method w().
+   This method detects when the GUI is rescaled or when the window has been moved
    between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
   int pixel_w() { return int(pixels_per_unit() * w() + 0.5f); }
   /** Gives the window height in OpenGL pixels.
-   Generally identical with the result of the h() function, but for a window mapped to
-   an Apple 'retina' display, and if Fl::use_high_res_GL(bool) is set to true,
-   pixel_h() returns 2 * h(). This method detects when the window has been moved
+   When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::h()
+   which is expressed in FLTK units, may differ from the window height in pixels.
+   Calls to OpenGL functions expecting pixel values (e.g., glViewport) must therefore
+   use this method rather than method h().
+   This method detects when the GUI is rescaled or when the window has been moved
    between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
