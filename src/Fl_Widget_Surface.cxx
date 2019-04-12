@@ -108,10 +108,19 @@ void Fl_Widget_Surface::traverse(Fl_Widget *widget)
   }
 }
 
+/**
+ Translates the current graphics origin accounting for the current rotation.
+ 
+ Each translate() call must be matched by an untranslate() call.
+ Successive translate() calls add up their effects.
+ */
 void Fl_Widget_Surface::translate(int x, int y)
 {
 }
 
+/**
+ Undoes the effect of a previous translate() call.
+ */
 void Fl_Widget_Surface::untranslate()
 {
 }
