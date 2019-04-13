@@ -42,14 +42,13 @@ class Fl_Gl_Window_Driver;
   Please note that the FLTK drawing and clipping functions
   will not work inside an Fl_Gl_Window. All drawing
   should be done using OpenGL calls exclusively.
-  Even though Fl_Gl_Window is derived from Fl_Group, 
-  it is not useful to add other FLTK Widgets as children,
-  unless those widgets are modified to draw using OpenGL calls.
+ 
+  \see \ref opengl_highdpi
 
-  Note: FLTK 1.4 introduces a Driver system for graphic calls. It is now possible
+  \note FLTK 1.4 introduces a driver system for graphic calls. It is now possible
   to add a selection of widgets to an OpenGL window. The widgets will draw on top
   of any OpenGL rendering. The number of supported widgets will increase as the
-  driver development improves.
+  driver development improves. Program test/cube.cxx illustrates how to do that.
 */
 class FL_EXPORT Fl_Gl_Window : public Fl_Window {
   friend class Fl_Gl_Window_Driver;
