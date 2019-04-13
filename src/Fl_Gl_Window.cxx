@@ -383,7 +383,7 @@ void Fl_Gl_Window::draw_overlay() {}
     void mywindow::draw() {
         if (!valid()) {
             glLoadIdentity();
-            glViewport(0,0,w(),h());
+            glViewport(0,0,pixel_w(),pixel_h());
             glOrtho(-w(),w(),-h(),h(),-1,1);
         }
         // Clear screen
