@@ -45,7 +45,8 @@ class Fl_Widget;
  current drawing surface (not necessary with class Fl_Printer because it is done by Fl_Printer::begin_job()).
  <li> At this point all of the \ref fl_drawings (e.g., fl_rect()) or the \ref fl_attributes or \ref drawing_images functions
  (e.g., fl_draw_image(), Fl_Image::draw()) operate on the new current drawing surface.
- Certain drawing surfaces allow additional ways to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
+ Drawing surfaces from Fl_Widget_Surface derived classes allow additional ways
+ to draw to them (e.g., Fl_Printer::print_widget(), Fl_Image_Surface::draw()).
  <li> After all drawing requests have been performed, redirect graphics requests back to their previous destination
  with \c Fl_Surface_Device::pop_current();.
  <li> Delete \c surface.

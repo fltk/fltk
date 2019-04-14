@@ -27,7 +27,7 @@
  will be recorded in the clipboard. It's possible to draw widgets (using Fl_Copy_Surface::draw()
  ) or to use any of the \ref fl_drawings or the \ref fl_attributes.
  Finally, delete the Fl_Copy_Surface object to load the clipboard with the graphical data.
- <br> Fl_GL_Window 's can be copied to the clipboard as well. 
+ <br> Fl_Gl_Window 's can be copied to the clipboard as well. 
  <br> Usage example:
  \code
  Fl_Widget *g = ...; // a widget you want to copy to the clipboard
