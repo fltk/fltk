@@ -121,13 +121,13 @@ protected:
 public:
 
   /** 
-   Returns the current image width in FLTK units.
+   Returns the current image drawing width in FLTK units.
    The values of w() and data_w() are identical unless scale() has been called
    after which they may differ.
    */
   int w() const {return w_;}
   /**
-   Returns the current image height in FLTK units.
+   Returns the current image drawing height in FLTK units.
    The values of h() and data_h() are identical unless scale() has been called
    after which they may differ.
    */
@@ -141,7 +141,7 @@ public:
    */
   int data_h() const {return data_h_;}
   /**
-   Returns the current image depth.
+   Returns the image depth.
    The return value will be 0 for bitmaps, 1 for
    pixmaps, and 1 to 4 for color images.</P>
    */
