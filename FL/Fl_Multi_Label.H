@@ -22,10 +22,7 @@
 class Fl_Widget;
 struct Fl_Menu_Item;
 
-/** This struct allows multiple labels to be added to objects that might normally have only one label.
-
-    This struct allows a mixed text and/or graphics label to be applied to an object that
-    would normally only have a single (usually text only) label.
+/** Allows a mixed text and/or graphics label to be applied to an Fl_Menu_Item or Fl_Widget.
 
     Most regular FLTK widgets now support the ability to associate both images and text
     with a label but some special cases, notably the non-widget Fl_Menu_Item objects, do not.
