@@ -209,9 +209,9 @@ public:
   /** Gives the window width in OpenGL pixels.
    When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::w()
    which is expressed in FLTK units, may differ from the window width in pixels.
-   Calls to OpenGL functions expecting pixel values (e.g., glViewport) must therefore
-   use this method rather than method w().
-   This method detects when the GUI is rescaled or when the window has been moved
+   Calls to OpenGL functions expecting pixel values (\em e.g., \c glViewport) should therefore
+   use pixel_w() rather than w().
+   Method pixel_w() detects when the GUI is rescaled or when the window has been moved
    between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */
@@ -219,9 +219,9 @@ public:
   /** Gives the window height in OpenGL pixels.
    When an Fl_Gl_Window is mapped to a HighDPI display, the value given by Fl_Gl_Window::h()
    which is expressed in FLTK units, may differ from the window height in pixels.
-   Calls to OpenGL functions expecting pixel values (e.g., glViewport) must therefore
-   use this method rather than method h().
-   This method detects when the GUI is rescaled or when the window has been moved
+   Calls to OpenGL functions expecting pixel values (\em e.g., \c glViewport) should therefore
+   use pixel_h() rather than h().
+   Method pixel_h() detects when the GUI is rescaled or when the window has been moved
    between low and high resolution displays and automatically adjusts the returned value.
    \version 1.3.4
    */

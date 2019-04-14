@@ -185,13 +185,13 @@ HighDPI displays (including the so-called 'retina' displays of Apple
 hardware) are supported by FLTK in such a way that 1 unit of an FLTK
 quantity (say, the value given by Fl_Gl_Window::w()) corresponds to more
 than 1 pixel on the display. Conversely, when a program specifies the width and height of the
-OpenGL viewport, it is necessary to use an API that returns quantities expressed in pixels
-as follows:
+OpenGL viewport, it is necessary to use an API that returns quantities expressed in pixels.
+That can be done as follows:
 \code
   Fl_Gl_Window *glw = ...;
   glViewport(0, 0, glw->pixel_w(), glw->pixel_h());
 \endcode
-which makes use of the Fl_Gl_Window::pixel_w() and Fl_Gl_Window::pixel_h() functions giving
+which makes use of the Fl_Gl_Window::pixel_w() and Fl_Gl_Window::pixel_h() methods giving
 the size in pixels of an Fl_Gl_Window that is potentially mapped to a HighDPI display.
 Method Fl_Gl_Window::pixels_per_unit() can also be useful in this context.
 \note A further coding rule is necessary to properly support retina displays
