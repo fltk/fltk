@@ -34,7 +34,7 @@
  draw widgets (using Fl_Image_Surface::draw()) or to use any of the 
  \ref fl_drawings or the \ref fl_attributes. Finally, call image() on the object
  to obtain a newly allocated Fl_RGB_Image object.
- Fl_GL_Window objects can be drawn in the image as well.
+ Fl_Gl_Window objects can be drawn in the image as well.
  
  Usage example:
  \code
