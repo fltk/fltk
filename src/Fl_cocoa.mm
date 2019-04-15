@@ -1256,7 +1256,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (!window) return;
   fl_lock_function();
   NSRect r = [[nsw contentView] frame];
-  float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(window)->screen_num());
   int X, Y;
   CocoatoFLTK(window, X, Y);
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
@@ -1272,7 +1271,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     d->x(X); d->y(Y);
     [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
   }
-  else  window->Fl_Group::resize(X, Y,lround(r.size.width/s), lround(r.size.height/s));
+  else {
+    float s = Fl::screen_driver()->scale(d->screen_num());
+    window->Fl_Group::resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
+  }
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:NO];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)[nsw contentView] reset_layer_data];
