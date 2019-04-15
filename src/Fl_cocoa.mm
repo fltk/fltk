@@ -1255,7 +1255,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   if (!window) return;
   fl_lock_function();
-  NSRect r = [[nsw contentView] frame];
   int X, Y;
   CocoatoFLTK(window, X, Y);
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
@@ -1273,6 +1272,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   else {
     float s = Fl::screen_driver()->scale(d->screen_num());
+    NSRect r = [[nsw contentView] frame];
     window->Fl_Group::resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
   }
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:NO];
