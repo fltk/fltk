@@ -97,6 +97,7 @@ public:
     X += 35;
     // Render the date and time, one over the other
     fl_font(labelfont(), 8);			// small font
+    fl_color(fg);
     const struct tm *tm = GetTimeStruct();
     char s[80];
     sprintf(s, "Date: %02d/%02d/%02d", tm->tm_mon+1, tm->tm_mday, tm->tm_year % 100);
