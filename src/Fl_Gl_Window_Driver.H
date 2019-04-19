@@ -52,8 +52,8 @@ public:
   static Fl_Gl_Window_Driver *newGlWindowDriver(Fl_Gl_Window *w);
   static Fl_Gl_Window_Driver *global();
   virtual float pixels_per_unit() {return 1;}
-  virtual void before_show(int& need_redraw) {}
-  virtual void after_show(int need_redraw) {}
+  virtual void before_show(int& need_after) {}
+  virtual void after_show() {}
   virtual void invalidate();
   virtual int mode_(int m, const int *a) {return 0;}
   virtual void make_current_before() {}
@@ -105,8 +105,8 @@ class Fl_Cocoa_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_OpenGL_Display_Device;
   Fl_Cocoa_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
   virtual float pixels_per_unit();
-  virtual void before_show(int& need_redraw);
-  virtual void after_show(int need_redraw);
+  virtual void before_show(int& need_after);
+  virtual void after_show();
   virtual int mode_(int m, const int *a);
   virtual void make_current_before();
   virtual void swap_buffers();
@@ -161,7 +161,7 @@ class Fl_X11_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   friend class Fl_Gl_Window_Driver;
   Fl_X11_Gl_Window_Driver(Fl_Gl_Window *win) : Fl_Gl_Window_Driver(win) {}
   virtual float pixels_per_unit();
-  virtual void before_show(int& need_redraw);
+  virtual void before_show(int& need_after);
   virtual int mode_(int m, const int *a);
   virtual void swap_buffers();
   virtual void resize(int is_a_resize, int w, int h);

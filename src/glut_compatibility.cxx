@@ -243,14 +243,20 @@ int glutCreateWindow(const char *title) {
   W->valid(0);
   W->context_valid(0);
   W->make_current();
+  // some platforms (e.g., macOS 10.9) draw the window while show() runs
+  // but the window's draw function is not yet set when this function runs
+  W->redraw();
   return W->number;
 }
 
 int glutCreateSubWindow(int win, int x, int y, int w, int h) {
   Fl_Glut_Window *W = new Fl_Glut_Window(x,y,w,h,0);
   windows[win]->add(W);
-  if (windows[win]->shown()) W->show();
-  W->make_current();
+  if (windows[win]->shown()) {
+    W->show();
+    W->make_current();
+    W->redraw();
+  }
   return W->number;
 }
 /** Destroys the glut window, first unregister it from the glut windows list */

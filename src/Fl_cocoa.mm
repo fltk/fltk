@@ -2186,10 +2186,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
   if (d->wait_for_expose_value) { // 1st drawing of layer-backed GL window
-    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
-    if (plugin) {
-      [plugin->context(window) update]; // layer-backed GL windows may be empty without this
-    }
     d->wait_for_expose_value = 0;
   }
   window->clear_damage(FL_DAMAGE_ALL);
@@ -2336,13 +2332,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
-  if (window->as_gl_window() && d->wait_for_expose_value) { // 1st drawing of GL window
-    Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
-    if (plugin) {
-      [plugin->context(window) update]; // GL windows may be empty without this
-    }
-  }
-
   d->wait_for_expose_value = 0;
   Fl_X *i = Fl_X::i(window);
   if ( i->region ) {
@@ -3661,6 +3650,7 @@ int Fl_Darwin_System_Driver::clipboard_contains(const char *type) {
 }
 
 void Fl_Cocoa_Window_Driver::destroy(FLWindow *xid) {
+  [[xid parentWindow] removeChildWindow:xid]; // necessary until 10.6 at least
   if (fl_sys_menu_bar && Fl_Sys_Menu_Bar_Driver::window_menu_style())
     Fl_MacOS_Sys_Menu_Bar_Driver::driver()->remove_window([xid getFl_Window]);
   [xid close];

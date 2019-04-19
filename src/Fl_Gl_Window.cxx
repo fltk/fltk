@@ -72,7 +72,7 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 }
 
 void Fl_Gl_Window::show() {
-  int need_redraw = 0;
+  int need_after = 0;
   if (!shown()) {
     if (!g) {
       g = pGlWindowDriver->find(mode_,alist);
@@ -86,10 +86,10 @@ void Fl_Gl_Window::show() {
 	return;
       }
     }
-    pGlWindowDriver->before_show(need_redraw);
+    pGlWindowDriver->before_show(need_after);
   }
   Fl_Window::show();
-  pGlWindowDriver->after_show(need_redraw);
+  if (need_after) pGlWindowDriver->after_show();
 }
 
 
@@ -513,13 +513,13 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
   return new Fl_Cocoa_Gl_Window_Driver(w);
 }
 
-void Fl_Cocoa_Gl_Window_Driver::before_show(int& need_redraw) {
-  if( ! pWindow->parent() ) need_redraw=1;
+void Fl_Cocoa_Gl_Window_Driver::before_show(int& need_after) {
+  need_after = 1;
 }
 
-void Fl_Cocoa_Gl_Window_Driver::after_show(int need_redraw) {
-  pWindow->set_visible();
-  if(need_redraw) pWindow->redraw();//necessary only after creation of a top-level GL window
+void Fl_Cocoa_Gl_Window_Driver::after_show() {
+  // Makes sure the GL context is created to avoid drawing twice the window when first shown
+  pWindow->make_current();
 }
 
 float Fl_Cocoa_Gl_Window_Driver::pixels_per_unit()
@@ -703,7 +703,7 @@ Fl_Gl_Window_Driver *Fl_Gl_Window_Driver::newGlWindowDriver(Fl_Gl_Window *w)
   return new Fl_X11_Gl_Window_Driver(w);
 }
 
-void Fl_X11_Gl_Window_Driver::before_show(int& need_redraw) {
+void Fl_X11_Gl_Window_Driver::before_show(int&) {
   Fl_X::make_xid(pWindow, g()->vis, g()->colormap);
   if (overlay() && overlay() != pWindow) ((Fl_Gl_Window*)overlay())->show();
 }
