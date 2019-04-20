@@ -124,6 +124,7 @@ public:
   virtual void unmap();
   virtual void fullscreen_on();
   virtual void fullscreen_off(int X, int Y, int W, int H);
+  virtual void use_border();
   virtual void size_range();
   virtual void iconize();
   virtual void decoration_sizes(int *top, int *left,  int *right, int *bottom);

@@ -3205,15 +3205,14 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
 
 void Fl_Cocoa_Window_Driver::fullscreen_on() {
   pWindow->_set_fullscreen();
-  if (fl_mac_os_version < 101000) {
+  if (fl_mac_os_version < 100600) {
     // On OS X < 10.6, it is necessary to recreate the window. This is done with hide+show.
-    // The alternative procedure isn't stable until MacOS 10.10
     pWindow->hide();
     pWindow->show();
   } else {
     FLWindow *nswin = fl_xid(pWindow);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-    [nswin setStyleMask:NSBorderlessWindowMask]; //10.6
+    [nswin setStyleMask:NSBorderlessWindowMask]; // 10.6
 #endif
     [nswin setLevel:NSStatusWindowLevel];
     int X,Y,W,H;
@@ -3223,27 +3222,45 @@ void Fl_Cocoa_Window_Driver::fullscreen_on() {
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+static NSUInteger calc_win_style(Fl_Window *win) {
+  NSUInteger winstyle;
+  if (win->border() && !win->fullscreen_active()) {
+    winstyle = NSTitledWindowMask | NSClosableWindowMask;
+    if (win->resizable()) winstyle |= NSResizableWindowMask;
+    if (!win->modal()) winstyle |= NSMiniaturizableWindowMask;
+  } else winstyle = NSBorderlessWindowMask;
+  return winstyle;
+}
+#endif
+
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
   pWindow->_clear_fullscreen();
-  if (fl_mac_os_version < 101000) {
+  if (fl_mac_os_version < 100600) {
     pWindow->hide();
     pWindow->resize(X, Y, W, H);
     pWindow->show();
   } else {
     FLWindow *nswin = fl_xid(pWindow);
-    NSUInteger winstyle = (pWindow->border() ?
-      (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) : NSBorderlessWindowMask);
-    if (!pWindow->modal()) winstyle |= NSMiniaturizableWindowMask;
     NSInteger level = NSNormalWindowLevel;
     if (pWindow->modal()) level = modal_window_level();
     else if (pWindow->non_modal()) level = non_modal_window_level();
     [nswin setLevel:level];
     pWindow->resize(X, Y, W, H);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-    [nswin setStyleMask:winstyle]; //10.6
+    [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
 #endif
   }
   Fl::handle(FL_FULLSCREEN, pWindow);
+}
+
+void Fl_Cocoa_Window_Driver::use_border() {
+  if (!shown() || pWindow->parent()) return;
+  if (fl_mac_os_version < 100600) return Fl_Window_Driver::use_border();
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  [fl_xid(pWindow) setStyleMask:calc_win_style(pWindow)]; // 10.6
+  pWindow->redraw();
+#endif
 }
 
 /*
