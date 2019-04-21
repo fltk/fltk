@@ -3246,10 +3246,10 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     if (pWindow->modal()) level = modal_window_level();
     else if (pWindow->non_modal()) level = non_modal_window_level();
     [nswin setLevel:level];
-    pWindow->resize(X, Y, W, H);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
     [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
 #endif
+    pWindow->resize(X, Y, W, H);
   }
   Fl::handle(FL_FULLSCREEN, pWindow);
 }
