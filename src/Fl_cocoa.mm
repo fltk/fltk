@@ -1220,7 +1220,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   // don't process move for a subwindow of a miniaturized top window
   if (window->parent() && [fl_xid(window->top_window()) isMiniaturized]) return;
-  if (fabs([[nsw contentView] frame].size.height - window->h() * fl_graphics_driver->scale()) > 5.) {
+  if (fabs([[nsw contentView] frame].size.height - window->h() * Fl::screen_driver()->scale(0)) > 5.) {
     // the contentView, but not the window frame, is resized. This happens with tabbed windows.
     [self windowDidResize:notif];
     return;
