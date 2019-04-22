@@ -3334,6 +3334,7 @@ void Fl_Cocoa_Window_Driver::show() {
 void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
   if (visible_r()) {
     NSPoint pt = FLTKtoCocoa(pWindow, X, Y, H);
+    FLWindow *xid = fl_xid(pWindow);
     if (W != w() || H != h() || is_a_rescale()) {
       NSRect r;
       float s = Fl::screen_driver()->scale(screen_num());
@@ -3342,10 +3343,12 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
       r.origin = pt;
       r.size.width = round(W*s);
       r.size.height = round(H*s) + bt;
-      [fl_xid(pWindow) setFrame:r display:YES];
+      if (NSEqualRects(r, [xid frame])) // occurs with tabbed windows
+        pWindow->Fl_Group::resize(X, Y, W, H);
+      else [xid setFrame:r display:YES];
     }
     else {
-      [fl_xid(pWindow) setFrameOrigin:pt]; // set cocoa coords to FLTK position
+      [xid setFrameOrigin:pt]; // set cocoa coords to FLTK position
       x(X); y(Y); // useful when frame did not move
     }
   } else pWindow->Fl_Group::resize(X, Y, W, H);
