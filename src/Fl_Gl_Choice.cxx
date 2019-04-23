@@ -418,7 +418,11 @@ GLContext Fl_X11_Gl_Window_Driver::create_gl_context(Fl_Window* window, const Fl
   typedef GLContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLContext, Bool, const int*);
   // It is not necessary to create or make current to a context before calling glXGetProcAddressARB
   static glXCreateContextAttribsARBProc glXCreateContextAttribsARB =
+#if defined(HAVE_GLXGETPROCADDRESSARB)
     (glXCreateContextAttribsARBProc)glXGetProcAddressARB((const GLubyte *)"glXCreateContextAttribsARB");
+#else
+  NULL;
+#endif
   
   GLContext ctx = 0;
   // Check for the GLX_ARB_create_context extension string and the function.
