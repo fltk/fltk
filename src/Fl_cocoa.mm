@@ -2218,7 +2218,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   NSRect rect = [self frame];
   if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) {
     // this happens with tabbed windows
-    window->resize([[self window] frame].origin.x/scale,
+    window->Fl_Group::resize([[self window] frame].origin.x/scale,
                    (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
                    rect.size.width/scale, rect.size.height/scale);
     [self reset_layer_data];
@@ -2325,7 +2325,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl_Window *window = [cw getFl_Window];
   float scale = Fl::screen_driver()->scale(0);
   if ( !window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) { // this happens with tabbed windows
-        window->resize([cw frame].origin.x/scale,
+    window->Fl_Group::resize([cw frame].origin.x/scale,
                        (main_screen_height - ([cw frame].origin.y + rect.size.height))/scale,
                        rect.size.width/scale, rect.size.height/scale);
   }
@@ -3343,9 +3343,7 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
       r.origin = pt;
       r.size.width = round(W*s);
       r.size.height = round(H*s) + bt;
-      if (NSEqualRects(r, [xid frame])) // occurs with tabbed windows
-        pWindow->Fl_Group::resize(X, Y, W, H);
-      else [xid setFrame:r display:YES];
+      [xid setFrame:r display:YES];
     }
     else {
       [xid setFrameOrigin:pt]; // set cocoa coords to FLTK position
