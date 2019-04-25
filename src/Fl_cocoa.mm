@@ -1120,7 +1120,7 @@ static FLTextView *fltextview_instance = nil;
 + (void)initialize;
 + (FLWindowDelegate*)singleInstance;
 - (void)windowDidMove:(NSNotification *)notif;
-- (void)windowDidResize:(NSNotification *)notif;
+- (void)view_did_resize:(NSNotification *)notif;
 - (void)windowDidResignKey:(NSNotification *)notif;
 - (void)windowDidBecomeKey:(NSNotification *)notif;
 - (void)windowDidBecomeMain:(NSNotification *)notif;
@@ -1220,11 +1220,6 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   Fl_Window *window = [nsw getFl_Window];
   // don't process move for a subwindow of a miniaturized top window
   if (window->parent() && [fl_xid(window->top_window()) isMiniaturized]) return;
-  if (fabs([[nsw contentView] frame].size.height - window->h() * Fl::screen_driver()->scale(0)) > 5.) {
-    // the contentView, but not the window frame, is resized. This happens with tabbed windows.
-    [self windowDidResize:notif];
-    return;
-  }
   fl_lock_function();
   update_e_xy_and_e_xy_root(nsw);
   // we update 'main_screen_height' here because it's wrong just after screen config changes
@@ -1249,12 +1244,14 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 #endif
   fl_unlock_function();
 }
-- (void)windowDidResize:(NSNotification *)notif
+- (void)view_did_resize:(NSNotification *)notif
 {
-  FLWindow *nsw = (FLWindow*)[notif object];
-  Fl_Window *window = [nsw getFl_Window];
-  if (!window) return;
+  if (![[notif object] isKindOfClass:[FLView class]]) return;
+  FLView *view = (FLView*)[notif object];
+  FLWindow *nsw = (FLWindow*)[view window];
+  if (!nsw) return;
   fl_lock_function();
+  Fl_Window *window = [nsw getFl_Window];
   int X, Y;
   CocoatoFLTK(window, X, Y);
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
@@ -1272,12 +1269,15 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   }
   else {
     float s = Fl::screen_driver()->scale(d->screen_num());
-    NSRect r = [[nsw contentView] frame];
+    NSRect r = [view frame];
+    if (d->other_xid && ( window->w() < lround(r.size.width/s) || window->h() < lround(r.size.height/s) )) {
+        d->destroy_double_buffer(); // for Fl_Overlay_Window
+    }
     window->Fl_Group::resize(X, Y, lround(r.size.width/s), lround(r.size.height/s));
   }
   [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:NO];
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)[nsw contentView] reset_layer_data];
+  if (views_use_CA && !window->as_gl_window()) [(FLViewLayer*)view reset_layer_data];
 #endif
   fl_unlock_function();
 }
@@ -1739,6 +1739,10 @@ void Fl_Cocoa_Screen_Driver::open_display_platform() {
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate singleInstance]
+                                             selector:@selector(view_did_resize:)
+                                                 name:NSViewFrameDidChangeNotification
+                                               object:nil];
     if (![NSThread isMultiThreaded]) {
       // With old OS X versions, it is necessary to create one thread for secondary pthreads to be
       // allowed to use cocoa, especially to create an NSAutoreleasePool.
@@ -2214,15 +2218,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   // used by non-GL layer-backed views
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   if (!window) return; // needed e.g. when closing a tab in a window
-  float scale = Fl::screen_driver()->scale(0);
-  NSRect rect = [self frame];
-  if (!window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) {
-    // this happens with tabbed windows
-    window->Fl_Group::resize([[self window] frame].origin.x/scale,
-                   (main_screen_height - ([[self window] frame].origin.y + rect.size.height))/scale,
-                   rect.size.width/scale, rect.size.height/scale);
-    [self reset_layer_data];
-  }
   if (!layer_data) { // runs when window is created, resized, changed screen resolution
     [self prepare_bitmap_for_layer];
     Fl_X *i = Fl_X::i(window);
@@ -2323,12 +2318,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
-  float scale = Fl::screen_driver()->scale(0);
-  if ( !window->parent() && window->border() && fabs(rect.size.height - window->h() * scale) > 5. ) { // this happens with tabbed windows
-    window->Fl_Group::resize([cw frame].origin.x/scale,
-                       (main_screen_height - ([cw frame].origin.y + rect.size.height))/scale,
-                       rect.size.width/scale, rect.size.height/scale);
-  }
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
