@@ -669,7 +669,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
   }
-  if (![self parentWindow]) {
+  if (![self parentWindow]) { // useful when subwin is first shown, not when moved
     FLWindow *pxid = fl_xid(parent);
     [pxid addChildWindow:self ordered:NSWindowAbove]; // needs OS X 10.2
     [self orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
@@ -1218,8 +1218,8 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  // don't process move for a subwindow of a miniaturized top window
-  if (window->parent() && [fl_xid(window->top_window()) isMiniaturized]) return;
+  // don't process move for a subwindow
+  if (window->parent() /*&& [fl_xid(window->top_window()) isMiniaturized]*/) return;
   fl_lock_function();
   update_e_xy_and_e_xy_root(nsw);
   // we update 'main_screen_height' here because it's wrong just after screen config changes
