@@ -49,6 +49,7 @@ Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 : Fl_Window_Driver(win)
 {
   cursor = nil;
+  window_flags_ = 0;
 }
 
 
@@ -274,6 +275,7 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
 
 static const unsigned mapped_mask = 1;
 static const unsigned changed_mask = 2;
+static const unsigned view_resized_mask = 4;
 
 bool Fl_Cocoa_Window_Driver::mapped_to_retina() {
   return window_flags_ & mapped_mask;
@@ -292,6 +294,16 @@ void Fl_Cocoa_Window_Driver::changed_resolution(bool b) {
   if (b) window_flags_ |= changed_mask;
   else window_flags_ &= ~changed_mask;
 }
+
+bool Fl_Cocoa_Window_Driver::view_resized() {
+  return window_flags_ & view_resized_mask;
+}
+
+void Fl_Cocoa_Window_Driver::view_resized(bool b) {
+  if (b) window_flags_ |= view_resized_mask;
+  else window_flags_ &= ~view_resized_mask;
+}
+
 
 // clip the graphics context to rounded corners
 void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int h) {

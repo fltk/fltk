@@ -44,14 +44,6 @@ public:
     if (!glw) return NULL;
     return Fl_OpenGL_Display_Device::capture_gl_rectangle(glw, x, y, w, h);
   }
-  virtual GLContext context(Fl_Widget *widget) {
-    Fl_Gl_Window *glw = widget->as_gl_window();
-    return glw ? glw->context() : (GLContext)0;
-  }  
-  virtual void valid(Fl_Widget *widget, char v) {
-    Fl_Gl_Window *glw = widget->as_gl_window();
-    if (glw) glw->valid(v);
-  }
 };
 
 static Fl_Gl_Device_Plugin Gl_Device_Plugin;

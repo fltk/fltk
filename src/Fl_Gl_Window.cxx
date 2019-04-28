@@ -597,6 +597,10 @@ void Fl_Cocoa_Gl_Window_Driver::swap_buffers() {
 
 char Fl_Cocoa_Gl_Window_Driver::swap_type() {return COPY;}
 
+void Fl_Cocoa_Gl_Window_Driver::resize(int is_a_resize, int w, int h) {
+  Fl_Cocoa_Window_Driver::GLcontext_update(pWindow->context());
+}
+
 #endif // FL_CFG_GFX_QUARTZ
 
 #if defined(FL_CFG_GFX_GDI)

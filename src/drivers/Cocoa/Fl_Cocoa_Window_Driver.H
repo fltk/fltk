@@ -82,7 +82,8 @@ private:
   void shape_bitmap_(Fl_Image* b);
   void shape_alpha_(Fl_Image* img, int offset);
   CGRect* subRect_;           // makes sure subwindow remains inside its parent window
-  // stores 2 binary flags: whether window is mapped to retina display; whether resolution just changed
+  // stores 3 binary flags: whether window is mapped to retina display; whether resolution just changed;
+  // whether window's view received the [FLView view_did_resize] message
   unsigned window_flags_;
 public:
   Fl_Cocoa_Window_Driver(Fl_Window*);
@@ -97,6 +98,8 @@ public:
   void mapped_to_retina(bool);  // sets whether window is mapped to retina display
   bool changed_resolution();      // did window just moved to display with another resolution?
   void changed_resolution(bool);// sets whether window just moved to display with another resolution
+  bool view_resized();   // did window's view receive [FLView view_did_resize] message?
+  void view_resized(bool b); // sets whether window's view received [FLView view_did_resize] message
   CGRect* subRect() { return subRect_; } // getter
   void subRect(CGRect *r) { subRect_ = r; } // setter
   static void destroy(FLWindow*);
