@@ -226,7 +226,6 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
     shape_data_ = new shape_data_type;
   }
   memset(shape_data_, 0, sizeof(shape_data_type));
-  pWindow->border(false);
   int d = img->d();
   if (d && img->count() >= 2) {
     shape_pixmap_((Fl_Image*)img);
@@ -236,6 +235,7 @@ void Fl_Cocoa_Window_Driver::shape(const Fl_Image* img) {
   else if (d == 2 || d == 4) shape_alpha_((Fl_Image*)img, d - 1);
   else if ((d == 1 || d == 3) && img->count() == 1) shape_alpha_((Fl_Image*)img, 0);
 #endif
+  pWindow->border(false);
 }
 
 
