@@ -115,6 +115,7 @@ static NSString *UTF8_pasteboard_type = (fl_mac_os_version >= 100600 ? NSPastebo
 static bool in_nsapp_run = false; // true during execution of [NSApp run]
 static NSMutableArray *dropped_files_list = nil; // list of files dropped at app launch
 typedef void (*open_cb_f_type)(const char *);
+static Fl_Window *starting_moved_window = NULL; // the moved window which brings its subwins with it
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -501,6 +502,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 - (void)recursivelySendToSubwindows:(SEL)sel applyToSelf:(BOOL)b;
 - (void)setSubwindowFrame;
 - (void)checkSubwindowFrame;
+- (void)did_window_change_resolution;
 - (void)waitForExpose;
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
@@ -677,7 +679,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 }
 
 - (void)checkSubwindowFrame {
-  if (![self parentWindow]) return;
+  if (!w->parent()) return;
   // make sure this subwindow doesn't leak out of its parent window
   Fl_Window *from = w, *parent;
   CGRect full = CGRectMake(0, 0, w->w(), w->h()); // full subwindow area
@@ -702,7 +704,16 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
       if (r->size.width == 0 && r->size.height == 0) r->origin.x = r->origin.y = 0;
     }
     d->subRect(r);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
+    NSView *view = [fl_xid(w) contentView];
+    if ([view isMemberOfClass:[FLViewLayer class]]) [(FLViewLayer*)view reset_layer_data];
+#endif
+    w->redraw();
   }
+}
+
+- (void)did_window_change_resolution {
+  [(FLView*)[self contentView] did_view_resolution_change];
 }
 
 -(void)waitForExpose
@@ -1216,32 +1227,33 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
 }
 - (void)windowDidMove:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  // don't process move for a subwindow
-  if (window->parent() /*&& [fl_xid(window->top_window()) isMiniaturized]*/) return;
-  fl_lock_function();
-  update_e_xy_and_e_xy_root(nsw);
-  // we update 'main_screen_height' here because it's wrong just after screen config changes
-  main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
-  int X, Y;
-  CocoatoFLTK(window, X, Y);
-  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-  d->x(X);
-  d->y(Y);
-  if (fl_mac_os_version < 100700) { // after move, redraw parent and children of GL windows
-    Fl_Window *parent = window->window();
-    if (parent && parent->as_gl_window()) window->redraw();
-    if (parent && window->as_gl_window()) parent->redraw();
-  }
-  // at least since MacOS 10.9: OS sends windowDidMove to parent window and then to children
-  // FLTK sets position of parent and children. setSubwindowFrame is no longer necessary.
-  if (fl_mac_os_version < 100900) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
-  [nsw checkSubwindowFrame];
+  if (!window->parent()) {
+    starting_moved_window = window;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  FLView *view = (FLView*)[nsw contentView];
-  if ([view layer]) [view did_view_resolution_change];
+    FLView *view = (FLView*)[nsw contentView];
+    if ([view layer] && [view did_view_resolution_change]) {
+      [nsw recursivelySendToSubwindows:@selector(did_window_change_resolution) applyToSelf:NO];
+    }
 #endif
+  }
+  if (window == starting_moved_window) {
+    // we update 'main_screen_height' here because it's wrong just after screen config changes
+    main_screen_height = CGDisplayBounds(CGMainDisplayID()).size.height;
+    int X, Y;
+    CocoatoFLTK(window, X, Y);
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+    d->x(X);
+    d->y(Y);
+    update_e_xy_and_e_xy_root(nsw);
+    // at least since MacOS 10.9: OS moves subwindows contained in a moved window
+    // setSubwindowFrame is no longer necessary.
+    if (fl_mac_os_version < 100900) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
+    if (window->parent()) [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:YES];
+    starting_moved_window = NULL;
+  }
   fl_unlock_function();
 }
 - (void)view_did_resize:(NSNotification *)notif
@@ -2267,8 +2279,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
     Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
     bool previous = d->mapped_to_retina();
-    NSSize s = [self convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
-    d->mapped_to_retina( int(s.width + 0.5) > 10 );
+    NSView *view = window->parent() ? [fl_xid(window->top_window()) contentView] : self;
+    if (view) {
+      NSSize s = [view convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
+      d->mapped_to_retina( int(s.width + 0.5) > 10 );
+    }
     BOOL retval = (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina());
     if (retval) d->changed_resolution(true);
     return retval;
@@ -3156,7 +3171,9 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
     // next 2 statements so a subwindow doesn't leak out of its parent window
     [cw setOpaque:NO];
     [cw setBackgroundColor:[NSColor clearColor]]; // transparent background color
+    starting_moved_window = w;
     [cw setSubwindowFrame];
+    starting_moved_window = NULL;
     // needed if top window was first displayed miniaturized
     FLWindow *pxid = fl_xid(w->top_window());
     [pxid makeFirstResponder:[pxid contentView]];
@@ -3323,8 +3340,10 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
       pWindow->redraw();
     }
     else {
+      if (pWindow->parent()) starting_moved_window = pWindow;
       [xid setFrameOrigin:pt]; // set cocoa coords to FLTK position
       x(X); y(Y); // useful when frame did not move but X or Y changed
+      if (pWindow->parent()) starting_moved_window = NULL;
     }
   }
 }
