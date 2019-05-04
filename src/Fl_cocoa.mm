@@ -1251,7 +1251,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     // at least since MacOS 10.9: OS moves subwindows contained in a moved window
     // setSubwindowFrame is no longer necessary.
     if (fl_mac_os_version < 100900) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
-    if (window->parent()) [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:YES];
+    if (window->parent()) {
+      [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:YES];
+      window->parent()->init_sizes();
+    }
     starting_moved_window = NULL;
   }
   fl_unlock_function();
@@ -1660,7 +1663,7 @@ void Fl_Darwin_System_Driver::open_callback(void (*cb)(const char *)) {
     [[NSApp keyWindow] sendEvent:theEvent];
     return;
     }
-  [NSApp sendEvent:theEvent]; 
+  [NSApp sendEvent:theEvent];
 }
 @end
 
@@ -3423,13 +3426,13 @@ void Fl_Cocoa_Window_Driver::make_current()
   CGFloat hgt = [[fl_window contentView] frame].size.height;
   CGContextTranslateCTM(gc, 0.5, hgt-0.5f);
   CGContextScaleCTM(gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
-  // for subwindows, limit drawing to inside of parent window
-  // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
-  if (subRect()) CGContextClipToRect(gc, CGRectOffset(*(subRect()), -0.5, -0.5));
-  
   float s = Fl::screen_driver()->scale(0);
   CGContextScaleCTM(gc, s, s); // apply current scaling factor
-  
+  // for subwindows, limit drawing to inside of parent window
+  // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()
+  if (subRect()) {
+    CGContextClipToRect(gc, CGRectOffset(*(subRect()), -0.5, -0.5));
+  }
 // this is the context with origin at top left of (sub)window
   CGContextSaveGState(gc);
 #if defined(FLTK_USE_CAIRO)
