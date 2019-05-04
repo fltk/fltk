@@ -1251,10 +1251,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     // at least since MacOS 10.9: OS moves subwindows contained in a moved window
     // setSubwindowFrame is no longer necessary.
     if (fl_mac_os_version < 100900) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
-    if (window->parent()) {
-      [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:YES];
-      window->parent()->init_sizes();
-    }
+    if (window->parent()) [nsw recursivelySendToSubwindows:@selector(checkSubwindowFrame) applyToSelf:YES];
     starting_moved_window = NULL;
   }
   fl_unlock_function();
