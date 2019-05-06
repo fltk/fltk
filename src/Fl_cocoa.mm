@@ -2181,19 +2181,16 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  }
 - (void)drawRect:(NSRect)rect { //runs when layer-backed GL window is created or resized
   fl_lock_function();
-  if (!Fl::use_high_res_GL() && fl_mac_os_version < 101401) [self layer].contentsScale = 1.;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
   if (d->wait_for_expose_value) { // 1st drawing of layer-backed GL window
     d->wait_for_expose_value = 0;
+    if (fl_mac_os_version < 101401) window->size(window->w(), window->h()); // sends message [GLcontext update]
   }
   window->clear_damage(FL_DAMAGE_ALL);
   d->Fl_Window_Driver::flush();
   window->clear_damage();
-  if (fl_mac_os_version < 101401) {
-    if (window->parent()) window->redraw(); // useful during resize of GL subwindow
-  }
   fl_unlock_function();
 }
 - (BOOL)did_view_resolution_change {
