@@ -1208,7 +1208,7 @@ static void CocoatoFLTK(Fl_Window *win, int &x, int &y) {
 static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H) {
   float s = Fl::screen_driver()->scale(0);
   while (win->parent()) {win = win->window(); x += win->x(); y += win->y();}
-  return NSMakePoint(x * s, main_screen_height - (y + H)*s);
+  return NSMakePoint(round(x * s), main_screen_height - round((y + H)*s));
 }
 
 static FLWindowDelegate *flwindowdelegate_instance = nil;
@@ -2197,8 +2197,6 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   BOOL retval = [super did_view_resolution_change];
   if (retval && Fl::use_high_res_GL()) {
     Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-    [self layer].contentsScale = d->mapped_to_retina() ? 2. : 1.;
     window->redraw(); // necessary with 10.14.2; harmless before
   }
   return retval;
