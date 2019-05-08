@@ -4432,7 +4432,9 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
       }
     }
   } else {
+    Fl_Graphics_Driver::default_driver().scale(1);
     CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop, false);
+    Fl_Graphics_Driver::default_driver().scale(s);
     CGContextSaveGState(auxgc);
     clip_to_rounded_corners(auxgc, scaled_w, htop);
     CGContextDrawImage(auxgc, CGRectMake(0, 0, scaled_w, htop), img);
