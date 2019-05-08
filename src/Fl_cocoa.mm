@@ -3331,9 +3331,10 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
       r.origin = pt;
       r.size.width = round(W*s);
       r.size.height = round(H*s) + bt;
-      if (NSEqualRects(r, [xid frame])) pWindow->Fl_Group::resize(X, Y, W, H);
-      else [xid setFrame:r display:YES];
-      pWindow->redraw();
+      if (NSEqualRects(r, [xid frame])) {
+        pWindow->Fl_Group::resize(X, Y, W, H); // runs rarely, e.g. with scaled down test/tabs
+        pWindow->redraw();
+      } else [xid setFrame:r display:YES];
     }
     else {
       if (pWindow->parent()) starting_moved_window = pWindow;
