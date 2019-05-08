@@ -1901,10 +1901,11 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   yoff = by + bt;
   dx = 2*bx;
   dy = 2*by + bt;
-  X = w->x()-xoff;
-  Y = w->y()-yoff;
-  W = w->w()+dx;
-  H = w->h()+dy;
+  float s = Fl::screen_driver()->scale(0);
+  X = w->x()*s-xoff;
+  Y = w->y()*s-yoff;
+  W = w->w()*s+dx;
+  H = w->h()*s+dy;
   
   if (w->parent()) return 0;
   
@@ -1989,6 +1990,8 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   // Return the client area's top left corner in (X,Y)
   X+=xoff;
   Y+=yoff;
+  X /= s;
+  Y /= s;
   
   return ret;
 }
