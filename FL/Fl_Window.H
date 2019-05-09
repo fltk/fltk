@@ -187,12 +187,9 @@ public:
     parameters after the resize request.
   */
   virtual void resize(int X,int Y,int W,int H);
-  /**
-    Sets whether or not the window manager border is around the
-    window.  The default value is true. void border(int) can be
-    used to turn the border on and off. <I>Under most X window
-    managers this does not work after show() has been called,
-    although SGI's 4DWM does work.</I>
+  /** Sets whether or not the window manager border is around the window.
+  The default value is true. <I>With some X window
+  managers, this does not work after show() has been called.</I>
   */
   void border(int b);
   /**
@@ -200,7 +197,7 @@ public:
     off. It only works before show() is called.
   */
   void clear_border()	{set_flag(NOBORDER);}
-  /** See void Fl_Window::border(int) */
+  /** Returns whether the window possesses a border */
   unsigned int border() const	{return !(flags() & NOBORDER);}
   /** Activates the flags NOBORDER|FL_OVERRIDE */
   void set_override()	{set_flag(NOBORDER|OVERRIDE);}
