@@ -1800,13 +1800,13 @@ void Fl_Cocoa_Screen_Driver::disable_im() {
 }
 
 
-// Gets the border sizes and the titlebar size
-static void get_window_frame_sizes(int &bx, int &by, int &bt, Fl_Window *win) {
+// Gets the border sizes and the titlebar height
+static int get_window_frame_sizes(Fl_Window *win, int *pbx = NULL, int *pby = NULL) {
+  if (pbx) *pbx = 0; if (pby) *pby = 0;
+  if (win && !win->border()) return 0;
   FLWindow *flw = fl_xid(win);
   if (flw) {
-    bt = [flw frame].size.height - [[flw contentView] frame].size.height;
-    bx = by = 0;
-    return;
+    return [flw frame].size.height - [[flw contentView] frame].size.height;
   }
   static int top = 0, left, bottom;
   if (!top) {
@@ -1818,9 +1818,9 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt, Fl_Window *win) {
     top = int(outside.size.height - inside.size.height) - bottom;
     [pool release];
     }
-  bx = left;
-  by = bottom;
-  bt = top;
+  if (pbx) *pbx = left;
+  if (pby) *pby = bottom;
+  return top;
 }
 
 /*
@@ -1894,7 +1894,7 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
     } else {
       ret = 1;
     }
-    get_window_frame_sizes(bx, by, bt, w);
+    bt = get_window_frame_sizes(w, &bx, &by);
   }
   // The coordinates of the whole window, including non-client area
   xoff = bx;
@@ -3263,8 +3263,7 @@ void Fl_Cocoa_Window_Driver::size_range() {
   Fl_X *i = Fl_X::i(pWindow);
   if (i && i->xid) {
     float s = Fl::screen_driver()->scale(0);
-    int bx, by, bt;
-    get_window_frame_sizes(bx, by, bt, pWindow);
+    int bt = get_window_frame_sizes(pWindow);
     NSSize minSize = NSMakeSize(int(minw() * s +.5) , int(minh() * s +.5) + bt);
     NSSize maxSize = NSMakeSize(maxw() ? int(maxw() * s + .5):32000, maxh() ? int(maxh() * s +.5) + bt:32000);
     [i->xid setMinSize:minSize];
@@ -3329,8 +3328,7 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
     if (W != w() || H != h() || is_a_rescale()) {
       NSRect r;
       float s = Fl::screen_driver()->scale(screen_num());
-      int bx, by, bt = 0;
-      if (border()) get_window_frame_sizes(bx, by, bt, pWindow);
+      int bt = get_window_frame_sizes(pWindow);
       r.origin = pt;
       r.size.width = round(W*s);
       r.size.height = round(H*s) + bt;
@@ -4360,8 +4358,8 @@ int Fl_Cocoa_Window_Driver::decorated_w()
 {
   if (!shown() || parent() || !border() || !visible())
     return w();
-  int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt, pWindow);
+  int bx=0;
+  get_window_frame_sizes(pWindow, &bx);
   return w() + 2 * bx;
 }
 
@@ -4369,8 +4367,8 @@ int Fl_Cocoa_Window_Driver::decorated_h()
 {
   if (!shown() || parent() || !border() || !visible())
     return h();
-  int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt, pWindow);
+  int bx = 0, by = 0;
+  int bt = get_window_frame_sizes(pWindow, &bx, &by);
   return h() + bt + by;
 }
 
