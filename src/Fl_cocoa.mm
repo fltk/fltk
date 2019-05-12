@@ -1896,6 +1896,7 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
     }
     bt = get_window_frame_sizes(w, &bx, &by);
   }
+  if (w->parent()) return 0;
   // The coordinates of the whole window, including non-client area
   xoff = bx;
   yoff = by + bt;
@@ -1906,8 +1907,6 @@ static int fake_X_wm(Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   Y = w->y()*s-yoff;
   W = w->w()*s+dx;
   H = w->h()*s+dy;
-  
-  if (w->parent()) return 0;
   
   // Proceed to positioning the window fully inside the screen, if possible
   
