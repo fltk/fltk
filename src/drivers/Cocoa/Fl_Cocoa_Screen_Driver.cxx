@@ -152,13 +152,6 @@ void Fl_Cocoa_Screen_Driver::beep(int type) {
 }
 
 
-void Fl_Cocoa_Screen_Driver::flush() {
-  CGContextRef gc = (CGContextRef)Fl_Graphics_Driver::default_driver().gc();
-  if (gc)
-    CGContextFlush(gc);
-}
-
-
 extern void fl_fix_focus(); // in Fl.cxx
 
 extern void *fl_capture;

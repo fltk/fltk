@@ -71,7 +71,6 @@ public:
   // --- audible output
   virtual void beep(int type);
   // --- global events
-  virtual void flush();
   virtual double wait(double time_to_wait);
   virtual int ready();
   virtual void grab(Fl_Window* win);
