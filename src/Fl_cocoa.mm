@@ -86,6 +86,7 @@ static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins = true);
 static void drain_dropped_files_list(void);
 static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H);
+static int get_window_frame_sizes(Fl_Window *win, int *pbx = NULL, int *pby = NULL);
 
 int fl_mac_os_version = Fl_Darwin_System_Driver::calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
@@ -662,16 +663,17 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   }
 }
 
-- (void)setSubwindowFrame { // have the cocoa position and size of a subwindow follow its FLTK data
+- (void)setSubwindowFrame { // have the cocoa position and size of a (sub)window follow its FLTK data
   Fl_Window *parent = w->window();
-  if (!parent || !parent->shown()) return;
+  if (!w->visible_r()) return;
   NSPoint pt = FLTKtoCocoa(w, w->x(), w->y(), w->h());
   float s = Fl::screen_driver()->scale(0);
-  NSRect rp = NSMakeRect(round(pt.x), round(pt.y), round(s * w->w()), round(s * w->h()));
+  int bt = parent ? 0 : get_window_frame_sizes(w);
+  NSRect rp = NSMakeRect(round(pt.x), round(pt.y), round(s * w->w()), round(s * w->h()) + bt);
   if (!NSEqualRects(rp, [self frame])) {
     [self setFrame:rp display:YES];
   }
-  if (![self parentWindow]) { // useful when subwin is first shown, not when moved
+  if (parent && ![self parentWindow]) { // useful when subwin is first shown, not when moved
     FLWindow *pxid = fl_xid(parent);
     [pxid addChildWindow:self ordered:NSWindowAbove]; // needs OS X 10.2
     [self orderWindow:NSWindowAbove relativeTo:[pxid windowNumber]]; // necessary under 10.3
@@ -1333,9 +1335,10 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   if ([nsw miniwindowImage]) { [nsw setMiniwindowImage:nil]; }
   Fl_Window *window = [nsw getFl_Window];
-  // necessary when resolutions before miniaturization and after deminiaturization differ
-  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:NO];
   Fl::handle(FL_SHOW, window);
+  // necessary when resolutions before miniaturization and after deminiaturization differ
+  // or if GUI was resized while window was minimized
+  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame) applyToSelf:YES];
   update_e_xy_and_e_xy_root(nsw);
   Fl::flush(); // Process redraws set by FL_SHOW.
   fl_unlock_function();
@@ -1801,7 +1804,7 @@ void Fl_Cocoa_Screen_Driver::disable_im() {
 
 
 // Gets the border sizes and the titlebar height
-static int get_window_frame_sizes(Fl_Window *win, int *pbx = NULL, int *pby = NULL) {
+static int get_window_frame_sizes(Fl_Window *win, int *pbx, int *pby) {
   if (pbx) *pbx = 0; if (pby) *pby = 0;
   if (win && !win->border()) return 0;
   FLWindow *flw = fl_xid(win);
