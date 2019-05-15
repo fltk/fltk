@@ -125,7 +125,7 @@ because Escape will still close pop-up windows:
 
 \code
 void my_callback(Fl_Widget*, void*) {
-  if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
+  if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
     return; // ignore Escape
   exit(0);
 }
@@ -136,7 +136,8 @@ done with:
 
 \code
 void my_callback(Fl_Widget*, void*) {
-  if (fl_ask("Are you sure you want to quit?"))
+  if (fl_choice("Are you sure you want to quit?",
+                "continue", "quit", NULL))
     exit(0);
 }
 \endcode
