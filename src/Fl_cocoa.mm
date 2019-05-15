@@ -2164,50 +2164,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  FLViewLayer receives the reset_layer_data message which deletes the bitmap and zeroes layer_data.
  This ensures the bitmap is recreated after the window was resized or changed resolution.
  
- Each layer-backed OpenGL window has an associated FLGLViewLayer object, derived from FLView.
- FLGLViewLayer objects are drawn by the displayLayer: method which calls drawRect:
- which draws the GL scene.
+ Layer-backed OpenGL windows remain processed as before.
  */
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-
-@interface FLGLViewLayer : FLView // for layer-backed GL windows
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
-< CALayerDelegate >
-#endif
-- (void)displayLayer:(CALayer *)layer;
-- (void)drawRect:(NSRect)rect;
-- (BOOL)did_view_resolution_change;
-@end
-
-@implementation FLGLViewLayer
-- (void)displayLayer:(CALayer *)layer {
-  [self drawRect:[self frame]];
- }
-- (void)drawRect:(NSRect)rect { //runs when layer-backed GL window is created or resized
-  fl_lock_function();
-  Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-  [self did_view_resolution_change];
-  if (d->wait_for_expose_value) { // 1st drawing of layer-backed GL window
-    d->wait_for_expose_value = 0;
-    if (fl_mac_os_version < 101401) window->size(window->w(), window->h()); // sends message [GLcontext update]
-  }
-  window->clear_damage(FL_DAMAGE_ALL);
-  d->Fl_Window_Driver::flush();
-  window->clear_damage();
-  fl_unlock_function();
-}
-- (BOOL)did_view_resolution_change {
-  BOOL retval = [super did_view_resolution_change];
-  if (retval && Fl::use_high_res_GL()) {
-    Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-    window->redraw(); // necessary with 10.14.2; harmless before
-  }
-  return retval;
-}
-@end
-
 
 @implementation FLViewLayer
 - (void)displayLayer:(CALayer *)layer {
@@ -2285,7 +2245,12 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
       d->mapped_to_retina( int(s.width + 0.5) > 10 );
     }
     BOOL retval = (d->wait_for_expose_value == 0 && previous != d->mapped_to_retina());
-    if (retval) d->changed_resolution(true);
+    if (retval) {
+      d->changed_resolution(true);
+      if (window->as_gl_window() && views_use_CA && Fl::use_high_res_GL()) {
+        [self setNeedsDisplay:YES]; // necessary with  macOS ≥ 10.14.2; harmless before
+      }
+    }
     return retval;
   }
 #endif
@@ -2308,8 +2273,8 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   return self;
 }
 
-/*
- * Gets called when a non-layered window is created or resized, or moved between retina and non-retina displays
+/* Used by non-layered windows and by all GL windows.
+ * Gets called when a window is created or resized, or moved between retina and non-retina displays
  * (with Mac OS ≥ 10.11 also when deminiaturized)
  */
 - (void)drawRect:(NSRect)rect
@@ -2320,7 +2285,12 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   through_drawRect = YES;
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   [self did_view_resolution_change];
-  d->wait_for_expose_value = 0;
+  if (d->wait_for_expose_value) {
+    d->wait_for_expose_value = 0;
+    if (window->as_gl_window() && views_use_CA && fl_mac_os_version < 101401) { // 1st drawing of layer-backed GL window
+      window->size(window->w(), window->h()); // sends message [GLcontext update]
+    }
+  }
   Fl_X *i = Fl_X::i(window);
   if ( i->region ) {
     Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
@@ -3117,8 +3087,8 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   }
   FLView *myview;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-  if (views_use_CA) {
-    myview = w->as_gl_window() ? [FLGLViewLayer alloc] : [FLViewLayer alloc];
+  if (views_use_CA && !w->as_gl_window()) {
+    myview = [FLViewLayer alloc];
   } else
 #endif
     myview = [FLView alloc];
