@@ -2272,6 +2272,9 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     }
   return self;
 }
+- (void)displayLayer:(CALayer *)layer { // necessary with 10.14, does not run with ≥ 10.14.2
+  [self drawRect:[self frame]];
+}
 
 /* Used by non-layered windows and by all GL windows.
  * Gets called when a window is created or resized, or moved between retina and non-retina displays
