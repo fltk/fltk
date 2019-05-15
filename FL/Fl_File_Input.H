@@ -46,7 +46,6 @@
 */
 class FL_EXPORT Fl_File_Input : public Fl_Input {
   
-  Fl_Color	errorcolor_;
   char		ok_entry_;
   uchar		down_box_;
   short		buttons_[200];
@@ -73,11 +72,24 @@ public:
 
   /**
     Gets the current error color.
-    \todo Better docs for Fl_File_Input::errorcolor() - is it even used?
+
+    Returns \p FL_RED since FLTK 1.4.0 (default in 1.3.x).
+    Retained for backwards compatibility.
+
+    \deprecated Will be removed in FLTK 1.4.2 or higher.
+    \todo Remove Fl_File_Input::errorcolor() in FLTK 1.4.2 or higher.
   */
-  Fl_Color	errorcolor() const { return errorcolor_; }
-  /** Sets the current error color to \p c */
-  void		errorcolor(Fl_Color c) { errorcolor_ = c; }
+  Fl_Color	errorcolor() const { return FL_RED; }
+
+  /**
+    Sets the current error color to \p c.
+
+    Does nothing since FLTK 1.4.0. Retained for backwards compatibility.
+
+    \deprecated Will be removed in FLTK 1.4.2 or higher.
+    \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.4.2 or higher.
+    */
+  void		errorcolor(Fl_Color c) {}
 
   int	value(const char *str);
   int	value(const char *str, int len);

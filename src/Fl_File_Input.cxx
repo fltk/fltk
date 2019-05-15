@@ -50,7 +50,6 @@
 Fl_File_Input::Fl_File_Input(int X, int Y, int W, int H, const char *L)
   : Fl_Input(X, Y, W, H, L) {
   buttons_[0] = 0;
-  errorcolor_ = FL_RED;
   ok_entry_   = 1;
   pressed_    = -1;
 
