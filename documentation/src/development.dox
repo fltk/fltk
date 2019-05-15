@@ -156,7 +156,7 @@ This will appear in the document:
     &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
 
 For further informations about HTML quoting characters see
-    <br> \b http://www.doxygen.org/htmlcmds.html
+    <br> \b http://www.doxygen.org/manual/htmlcmds.html
 
 Alternatively you can use \b UTF-8 encoding within Doxygen comments.
 
@@ -221,9 +221,9 @@ Links to other documents and external links can be embedded with
     unicode that has been created with a \\page statement.
 
 -   For further informations about quoting see
-    http://www.doxygen.org/htmlcmds.html
+    http://www.doxygen.org/manual/htmlcmds.html
 
--   see <a href="http://www.nedit.org/">Nedit</a> creates
+-   see <a href="https://www.fltk.org/">FLTK Library</a> creates
     a standard HTML link
 
 \endcode
@@ -234,9 +234,9 @@ appears as:
     unicode that has been created with a \\page statement.
 
 -   For further informations about quoting see
-    http://www.doxygen.org/htmlcmds.html
+    http://www.doxygen.org/manual/htmlcmds.html
 
--   see <a href="http://www.nedit.org/">Nedit</a> creates
+-   see <a href="https://www.fltk.org/">FLTK Library</a> creates
     a standard HTML link
 
 

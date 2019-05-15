@@ -620,8 +620,8 @@ Fl_Text_Editor widget.
 The Fl_Text_Editor widget supports highlighting
 of text with different fonts, colors, and sizes. The
 implementation is based on the excellent
-<A HREF="http://www.nedit.org/">NEdit</A>
-text editor core, from http://www.nedit.org/, which
+<A HREF="https://sourceforge.net/projects/nedit/">NEdit</A>
+text editor core, from https://sourceforge.net/projects/nedit/, which
 uses a parallel "style" buffer which tracks the font, color, and
 size of the text that is drawn.
 
