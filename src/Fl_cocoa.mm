@@ -82,7 +82,6 @@ static size_t convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
-static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins = true);
 static void drain_dropped_files_list(void);
 static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H);
@@ -699,7 +698,8 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
   CGRect current_clip = (r ? *r : full); // current subwindow clip
   if (!CGRectEqualToRect(srect, current_clip)) { // if new clip differs from current clip
     delete r;
-    [[Fl_X::i(w)->xid contentView] setNeedsDisplay:YES]; // subwindow needs redrawn
+    FLWindow *xid = fl_xid(w);
+    NSView *view = [xid contentView];
     if (CGRectEqualToRect(srect, full)) r = NULL;
     else {
       r = new CGRect(srect);
@@ -707,10 +707,15 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
     }
     d->subRect(r);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-    NSView *view = [fl_xid(w) contentView];
     if ([view isMemberOfClass:[FLViewLayer class]]) [(FLViewLayer*)view reset_layer_data];
 #endif
     w->redraw();
+    if (fl_mac_os_version < 100900) {
+      NSInteger parent_num = [fl_xid(w->window()) windowNumber];
+      [xid orderWindow:NSWindowBelow relativeTo:parent_num];
+      [xid orderWindow:NSWindowAbove relativeTo:parent_num];
+    }
+    [view display]; // subwindow needs redrawn
   }
 }
 
@@ -2294,14 +2299,16 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
       window->size(window->w(), window->h()); // sends message [GLcontext update]
     }
   }
-  Fl_X *i = Fl_X::i(window);
-  if ( i->region ) {
-    Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
-    i->region = 0;
+  if (!through_Fl_X_flush) {
+    Fl_X *i = Fl_X::i(window);
+    if ( i->region ) {
+      Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region);
+      i->region = 0;
+    }
+    window->clear_damage(FL_DAMAGE_ALL);
   }
-  window->clear_damage(FL_DAMAGE_ALL);
-  d->flush();
-  window->clear_damage();
+  d->Fl_Window_Driver::flush();
+  if (!through_Fl_X_flush) window->clear_damage();
   through_drawRect = NO;
   fl_unlock_function();
 }
@@ -2921,15 +2928,11 @@ void Fl_Cocoa_Window_Driver::flush()
     [view setNeedsDisplay:YES];
 #endif
   } else {
-    make_current_counts = 1;
-    NSView *view = (through_drawRect ? nil : [fl_xid(pWindow) contentView]);
-    [view lockFocus];
     through_Fl_X_flush = YES;
-    Fl_Window_Driver::flush();
+    NSView *view = [fl_xid(pWindow) contentView];
+    [view setNeedsDisplay:YES];
+    [view displayIfNeededIgnoringOpacity];
     through_Fl_X_flush = NO;
-    [view unlockFocus];
-    make_current_counts = 0;
-    Fl_Cocoa_Window_Driver::q_release_context();
   }
 }
 
@@ -3310,7 +3313,10 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
       if (NSEqualRects(r, [xid frame])) {
         pWindow->Fl_Group::resize(X, Y, W, H); // runs rarely, e.g. with scaled down test/tabs
         pWindow->redraw();
-      } else [xid setFrame:r display:YES];
+      } else {
+        [xid setFrame:r display:YES];
+        [[xid contentView] displayIfNeededIgnoringOpacity];
+      }
     }
     else {
       if (pWindow->parent()) starting_moved_window = pWindow;
@@ -3328,33 +3334,36 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
  This can be called in 3 different instances:
  
  1) When a window is created or resized.
- Before 10.14: The system sends the drawRect: message to the window's view after having prepared the current
-    graphics context to draw to this view. Processing of drawRect: sets variable through_drawRect
-    to YES and calls Fl_Cocoa_Window_Driver::flush() that sets through_Fl_X_flush
-    to YES and calls Fl_Window::flush().
- After 10.14: The system sends the displayLayer: message to the window's view.
-    Variable through_Fl_X_flush is set to YES and Fl_Window_Driver::flush() is called
-    which calls Fl_Window::flush().
- Fl_Window::flush() calls Fl_Window::make_current() that
- uses the window's graphics context. The window's draw() function is then executed.
+ Before 10.14: macOS sends the drawRect: message to the window view after having prepared the
+    current graphics context to draw to this view. Variable through_drawRect is set
+    to YES and calls Fl_Window_Driver::flush().
+ After 10.14: macOS sends the displayLayer: message to the window view. If the layer bitmap
+    does not exist, variable through_Fl_X_flush is set to YES and Fl_Window_Driver::flush() is called.
+ Fl_Window_Driver::flush() calls Fl_Window::flush() that calls Fl_Window::make_current() that
+ uses the graphics context of the window or the layer. The window's draw() function is then executed.
+ After 10.14: the displayLayer method sets the layer's contents to the layer's bitmap.
  
  2) At each round of the FLTK event loop.
  Fl::flush() is called, that calls Fl_Cocoa_Window_Driver::flush() on each window that needs drawing.
- Fl_Cocoa_Window_Driver::flush() [Before 10.14: locks the focus to the
- view and] calls Fl_Window_Driver::flush() that calls Fl_Window::make_current()
- and proceeds as in 1).
+ Fl_Cocoa_Window_Driver::flush() sets through_Fl_X_Flush to YES and marks the view as
+ needing display.
+ Before 10.14: the view is sent the displayIfNeededIgnoringOpacity message which makes
+   the OS send the view the drawRect: message. The program proceeds next as in 1) above.
+ After 10.14: Fl_Window_Driver::flush() is called which draws to the layer bitmap, and
+ the layered view is sent the displayLayer: message at the next event loop.
  
  3) An FLTK application can call Fl_Window::make_current() at any time before it draws to a window.
- This occurs for instance in the idle callback function of the mandelbrot test program. Variable 
- through_Fl_X_flush is NO. Under Mac OS 10.4 and higher, the window's graphics context is obtained.
- Under Mac OS 10.3 a new graphics context adequate for the window is created. 
- Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(),
- Fl::check() nor Fl::ready() while in the draw() function of a widget. Use an idle callback instead.
+ This occurs for instance in the idle callback function of the mandelbrot test program. Variables
+ through_Fl_X_flush and through_drawRect equal NO. The graphics context of the window
+ or the layer is obtained.
+ Before 10.14: Subsequent drawing requests go to the window.
+ After 10.14: The layered view is marked as needing display. It's sent the display message
+ at the next event loop.
+ CAUTION: it's not possible to call Fl::wait(), Fl::check() nor Fl::ready() while in the draw()
+ function of a widget. Use an idle callback instead.
  */
 void Fl_Cocoa_Window_Driver::make_current()
 {
-  if (make_current_counts > 1 && !views_use_CA) return;
-  if (make_current_counts) make_current_counts++;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   if (views_use_CA && !through_Fl_X_flush) { // detect direct calls from the app
     FLViewLayer *view = (FLViewLayer*)[fl_xid(pWindow) contentView];
@@ -3382,7 +3391,7 @@ void Fl_Cocoa_Window_Driver::make_current()
   } else
 #endif
   {
-    NSGraphicsContext *nsgc =   through_Fl_X_flush ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
+    NSGraphicsContext *nsgc =   through_drawRect ? [NSGraphicsContext currentContext] : [NSGraphicsContext graphicsContextWithWindow:fl_window];
     static SEL gc_sel = fl_mac_os_version >= 101000 ? @selector(CGContext) : @selector(graphicsPort);
     gc = (CGContextRef)[nsgc performSelector:gc_sel];
   }
