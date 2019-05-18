@@ -2213,7 +2213,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   } else layer.contentsScale = 1.;
   static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   layer_data = CGBitmapContextCreate(NULL,  rect.size.width,  rect.size.height, 8, 4 * rect.size.width, cspace, kCGImageAlphaPremultipliedFirst);
-  CGContextClearRect(layer_data, CGRectMake(0,0,rect.size.width,rect.size.height));
+  CGContextClearRect(layer_data, NSRectToCGRect(rect));
 }
 - (BOOL)did_view_resolution_change {
   BOOL retval = [super did_view_resolution_change];
