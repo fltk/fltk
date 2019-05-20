@@ -4228,9 +4228,9 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, i
   CGContextRef gc = ((FLViewLayer*)[fl_xid(win) contentView])->layer_data;
   if (!gc) return nil;
   CGImageRef cgimg = CGBitmapContextCreateImage(gc);  // requires 10.4
-  float s = Fl::screen_driver()->scale(0);
   int resolution = Fl_Cocoa_Window_Driver::driver(win->top_window())->mapped_to_retina() ? 2 : 1;
   if (x || y || w != win->w() || h != win->h()) {
+    float s = Fl::screen_driver()->scale(0);
     CGRect rect = CGRectMake(x * s * resolution, y * s * resolution, w * s * resolution, h * s * resolution);
     CGImageRef cgimg2 = CGImageCreateWithImageInRect(cgimg, rect);
     CGImageRelease(cgimg);
@@ -4356,11 +4356,11 @@ int Fl_Cocoa_Window_Driver::decorated_h()
   return h() + bt + by;
 }
 
-static CALayer *get_titlebar_layer(Fl_Window *win)
+CALayer *Fl_Cocoa_Window_Driver::get_titlebar_layer()
 {
   // a compilation warning appears with SDK 10.5, so we require SDK 10.6 instead
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  return fl_mac_os_version >= 101000 ? [[[fl_xid(win) standardWindowButton:NSWindowCloseButton] superview] layer] : nil; // 10.5
+  return fl_mac_os_version >= 101000 ? [[[fl_xid(pWindow) standardWindowButton:NSWindowCloseButton] superview] layer] : nil; // 10.5
 #else
   return nil;
 #endif
@@ -4387,7 +4387,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
 {
   left = bottom = right = NULL;
   int htop = pWindow->decorated_h() - h();
-  CALayer *layer = get_titlebar_layer(pWindow);
+  CALayer *layer = get_titlebar_layer();
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
   int scaled_w = int(w() * s);

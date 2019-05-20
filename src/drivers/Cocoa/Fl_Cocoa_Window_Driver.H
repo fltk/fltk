@@ -136,10 +136,10 @@ public:
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
 
   virtual void shape(const Fl_Image* img);
-  // that one is implemented in Fl_Cocoa.mm because it uses Objective-c
+  // next 4 are in Fl_cocoa.mm because they use Objective-c
   virtual void capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right);
-  //this one is in Fl_cocoa.mm because it uses Objective-c
   virtual void wait_for_expose();
+  CALayer *get_titlebar_layer();
   static void draw_layer_to_context(CALayer *layer, CGContextRef gc, int w, int h);
   virtual int scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data);
   

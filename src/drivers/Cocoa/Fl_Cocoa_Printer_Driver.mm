@@ -374,11 +374,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   }
   int bt = win->decorated_h() - win->h();
   BOOL to_quartz =  (this->driver()->has_feature(Fl_Graphics_Driver::NATIVE));
-  CALayer *layer = nil;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-  if (fl_mac_os_version >= 101000) layer = [[[fl_xid(win) standardWindowButton:NSWindowCloseButton] superview] layer];
-#endif
-  
+  CALayer *layer = Fl_Cocoa_Window_Driver::driver(win)->get_titlebar_layer();
   if (layer) { // if title bar uses a layer
     if (to_quartz) { // to Quartz printer
       CGContextRef gc = (CGContextRef)driver()->gc();
