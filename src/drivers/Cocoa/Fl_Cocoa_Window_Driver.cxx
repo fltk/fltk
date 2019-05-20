@@ -256,13 +256,6 @@ void Fl_Cocoa_Window_Driver::hide() {
 }
 
 
-void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
-  *top = 24;
-  *left = 2;
-  *right = 2;
-  *bottom = 2;
-}
-
 int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y, void (*draw_area)(void*, int,int,int,int), void* data)
 {
   CGImageRef img = CGImage_from_window_rect(src_x, src_y, src_w, src_h);

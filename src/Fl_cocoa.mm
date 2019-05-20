@@ -1831,6 +1831,11 @@ static int get_window_frame_sizes(Fl_Window *win, int *pbx, int *pby) {
   return top;
 }
 
+void Fl_Cocoa_Window_Driver::decoration_sizes(int *top, int *left,  int *right, int *bottom) {
+  *top = get_window_frame_sizes(pWindow, left, bottom);
+  *right = *left;
+}
+
 /*
  * smallest x coordinate in screen space of work area of menubar-containing display
  */
