@@ -3408,9 +3408,9 @@ void Fl_Cocoa_Window_Driver::make_current()
   // it gets activated when needed (e.g., draw text)
   CGContextSetShouldAntialias(gc, false);
   CGFloat hgt = [[fl_window contentView] frame].size.height;
-  CGContextTranslateCTM(gc, 0.5, hgt-0.5f);
-  CGContextScaleCTM(gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   float s = Fl::screen_driver()->scale(0);
+  CGContextTranslateCTM(gc, 0.5f*s, hgt-0.5f*s);
+  CGContextScaleCTM(gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
   CGContextScaleCTM(gc, s, s); // apply current scaling factor
   // for subwindows, limit drawing to inside of parent window
   // half pixel offset is necessary for clipping as done by fl_cgrectmake_cocoa()

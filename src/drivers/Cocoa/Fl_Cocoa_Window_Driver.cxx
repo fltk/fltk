@@ -26,6 +26,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
 #include <FL/platform.H>
+#include <math.h>
 
 /**
  \cond DriverDev
@@ -260,7 +261,9 @@ int Fl_Cocoa_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, i
 {
   CGImageRef img = CGImage_from_window_rect(src_x, src_y, src_w, src_h);
   if (img) {
-    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,dest_x,dest_y,src_w,src_h,0,0,src_w,src_h);
+    float s = Fl_Graphics_Driver::default_driver().scale();
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->draw_CGImage(img,
+                                      dest_x, dest_y, lround(s*src_w), lround(s*src_h), 0, 0, src_w, src_h);
     CFRelease(img);
   }
   return 0;

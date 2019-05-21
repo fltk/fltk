@@ -280,32 +280,9 @@ void Fl_Quartz_Graphics_Driver::draw_CGImage(CGImageRef cgimg, int x, int y, int
   CGContextClipToRect(gc_, CGRectOffset(rect, -0.5, -0.5 ));
   // move graphics context to origin of vertically reversed image
   // The 0.5 here cancels the 0.5 offset present in Quartz graphics contexts.
-  // Thus, image and surface pixels are in phase if there's no scaling.
+  // Thus, image and surface pixels are in phase.
   CGContextTranslateCTM(gc_, rect.origin.x - srcx - 0.5, rect.origin.y - srcy + sh - 0.5);
   CGContextScaleCTM(gc_, 1, -1);
-  CGAffineTransform at = CGContextGetCTM(gc_);
-  if (at.a == at.d && at.b == 0 && at.c == 0) { // proportional scaling, no rotation
-    // We handle x2 and /2 scalings that occur when drawing to
-    // a double-resolution bitmap, and when drawing a double-resolution bitmap to display.
-    bool doit = false;
-    // phase image with display pixels
-    CGFloat deltax = 0, deltay = 0;
-    if (at.a == 2) { // make .tx and .ty have even values
-      deltax = (at.tx/2 - round(at.tx/2));
-      deltay = (at.ty/2 - round(at.ty/2));
-      doit = true;
-    } else if (at.a == 0.5) {
-      doit = true;
-      if (high_resolution()) { // make .tx and .ty have int or half-int values
-        deltax = -(at.tx*2 - round(at.tx*2));
-        deltay = (at.ty*2 - round(at.ty*2));
-      } else { // make .tx and .ty have integral values
-        deltax = (at.tx - round(at.tx))*2;
-        deltay = (at.ty - round(at.ty))*2;
-      }
-    }
-    if (doit) CGContextTranslateCTM(gc_, -deltax, -deltay);
-  }
   CGContextDrawImage(gc_, CGRectMake(0, 0, sw, sh), cgimg);
   CGContextRestoreGState(gc_);
 }
