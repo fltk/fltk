@@ -63,6 +63,10 @@ int Fl_Copy_Surface::printable_rect(int *w, int *h)  {
   return 1;
 }
 
+void Fl_Copy_Surface::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset) {
+  if (platform_surface) platform_surface->draw_decorated_window(win, x_offset, y_offset);
+}
+
 /**
  \cond DriverDev
  \addtogroup DriverDeveloper
@@ -72,6 +76,11 @@ int Fl_Copy_Surface_Driver::printable_rect(int *w, int *h) {
   *w = width; *h = height;
   return 0;
 }
+
+void Fl_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset) {
+  Fl_Widget_Surface::draw_decorated_window(win, x_offset, y_offset);
+}
+
 /**
  \}
  \endcond
