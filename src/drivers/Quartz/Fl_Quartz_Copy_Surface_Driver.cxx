@@ -41,7 +41,7 @@ Fl_Copy_Surface_Driver *Fl_Copy_Surface_Driver::newCopySurfaceDriver(int w, int 
  */
 
 Fl_Quartz_Copy_Surface_Driver::Fl_Quartz_Copy_Surface_Driver(int w, int h) : Fl_Copy_Surface_Driver(w, h) {
-  driver(new Fl_Quartz_Graphics_Driver);
+  driver(new Fl_Quartz_Printer_Graphics_Driver);
   prepare_copy_pdf_and_tiff(w, h);
 }
 

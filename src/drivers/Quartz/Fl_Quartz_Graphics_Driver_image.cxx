@@ -152,13 +152,13 @@ void Fl_Quartz_Graphics_Driver::cache(Fl_RGB_Image *rgb) {
   if (!ld) ld = rgb->data_w() * rgb->d();
   CGDataProviderRef src;
   if ( has_feature(PRINTER) ) {
-    // When printing, the data at rgb->array are used when the printed page is completed,
-    // that is, after return from this function.
+    // When printing or copying to clipboard, the data at rgb->array are used when
+    // the PDF page is completed, that is, after return from this function.
     // At that stage, the rgb object has possibly been deleted. It is therefore necessary
-    // to use a copy of rgb->array for printing. The mask_ member of rgb
-    // is used to avoid repeating the copy operation if rgb is printed again.
+    // to use a copy of rgb->array. The mask_ member of rgb
+    // is used to avoid repeating the copy operation if rgb is drawn again.
     // The CGImage data provider deletes the copy at the latest of these two events:
-    // deletion of rgb, and completion of the page where rgb was printed.
+    // deletion of rgb, and completion of the PDF page where rgb was drawn.
     size_t total = ld * rgb->data_h();
     uchar *copy = new uchar[total];
     memcpy(copy, rgb->array, total);
