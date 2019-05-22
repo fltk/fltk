@@ -178,29 +178,14 @@
 /** \fn Fl_Color Fl_File_Chooser::color()
   Gets the background color of the Fl_File_Browser list.*/
 
-/** \fn int Fl_File_Chooser::count()
-  Returns the number of selected files.*/
-
 /** \fn void Fl_File_Chooser::directory(const char *pathname)
   Sets the current directory.*/
 
 /** \fn const char *Fl_File_Chooser::directory()
-  Gets the current directory.*/
-
-/** \fn void Fl_File_Chooser::filter(const char *pattern)
-  Sets or gets the current filename filter patterns. The filter
-  patterns use fl_filename_match().
-  Multiple patterns can be used by separating them with tabs, like
-  <tt>"*.jpg\t*.png\t*.gif\t*"</tt>. In addition, you can provide
-  human-readable labels with the patterns inside parenthesis, like
-  <tt>"JPEG Files (*.jpg)\tPNG Files (*.png)\tGIF Files (*.gif)\tAll Files (*)"
-  </tt>.
-
-  Use filter(NULL) to show all files.
-*/
+ Gets the current directory.*/
 
 /** \fn const char *Fl_File_Chooser::filter()
-  See void filter(const char *pattern)*/
+ Gets the current filename filter patterns.*/
 
 /** \fn void Fl_File_Chooser::filter_value(int f)
   Sets the current filename filter selection.*/
@@ -238,12 +223,6 @@
 /** \fn int Fl_File_Chooser::preview() const
    Returns the current state of the preview box. */
 
-/** \fn void Fl_File_Chooser::rescan()
-  Reloads the current directory in the Fl_File_Browser.*/
-
-/** \fn void Fl_File_Chooser::show()
-  Shows the Fl_File_Chooser window.*/
-
 /** \fn void Fl_File_Chooser::textcolor(Fl_Color c)
   Sets the current Fl_File_Browser text color.*/
 
@@ -267,26 +246,6 @@
 
 /** \fn int Fl_File_Chooser::type()
   Gets the current type of Fl_File_Chooser.*/
-
-/** \fn void Fl_File_Chooser::value(const char *pathname)
-  Sets the current value of the selected file.
-*/
-
-/** \fn const char *Fl_File_Chooser::value(int f)
- Gets the current value of the selected file(s).
- \p f is a \c 1-based index into a list of
- file names. The number of selected files is returned by
- Fl_File_Chooser::count().
- 
- This sample code loops through all selected files:
- \code
- // Get list of filenames user selected from a MULTI chooser
- for ( int t=1; t<=chooser->count(); t++ ) {
- const char *filename = chooser->value(t);
- ...
- }
- \endcode
- */
 
 /** \fn int Fl_File_Chooser::visible()
   Returns 1 if the Fl_File_Chooser window is visible.*/
@@ -388,10 +347,7 @@ static int	compare_dirnames(const char *a, const char *b);
 static void	quote_pathname(char *, const char *, int);
 static void	unquote_pathname(char *, const char *, int);
 
-//
-// 'Fl_File_Chooser::count()' - Return the number of selected files.
-//
-
+/**  Returns the number of selected files.*/
 int				// O - Number of selected files
 Fl_File_Chooser::count() {
   int		i;		// Looping var
@@ -425,10 +381,7 @@ Fl_File_Chooser::count() {
 }
 
 
-//
-// 'Fl_File_Chooser::directory()' - Set the directory in the file chooser.
-//
-
+/** Sets the current directory.*/
 void
 Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 {
@@ -953,10 +906,16 @@ Fl_File_Chooser::fileNameCB()
 }
 
 
-//
-// 'Fl_File_Chooser::filter()' - Set the filter(s) for the chooser.
-//
-
+/** Sets the current filename filter patterns. The filter
+ patterns use fl_filename_match().
+ Multiple patterns can be used by separating them with tabs, like
+ <tt>"*.jpg\t*.png\t*.gif\t*"</tt>. In addition, you can provide
+ human-readable labels with the patterns inside parenthesis, like
+ <tt>"JPEG Files (*.jpg)\tPNG Files (*.png)\tGIF Files (*.gif)\tAll Files (*)"
+ </tt>.
+ 
+ Use filter(NULL) to show all files.
+ */
 void
 Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 {
@@ -1075,10 +1034,7 @@ Fl_File_Chooser::previewCB(Fl_File_Chooser *fc) {	// I - File chooser
 }
 
 
-//
-// 'Fl_File_Chooser::rescan()' - Rescan the current directory.
-//
-
+/** Reloads the current directory in the Fl_File_Browser.*/
 void
 Fl_File_Chooser::rescan()
 {
@@ -1105,8 +1061,7 @@ Fl_File_Chooser::rescan()
   update_preview();
 }
 
-//
-/**  
+/**
   Rescan the current directory  without clearing the filename, 
   then select the file if it is in the list
 */
@@ -1405,10 +1360,20 @@ Fl_File_Chooser::update_preview()
 }
 
 
-//
-// 'Fl_File_Chooser::value()' - Return a selected filename.
-//
-
+/** Gets the current value of the selected file(s).
+ \p f is a \c 1-based index into a list of
+ file names. The number of selected files is returned by
+ Fl_File_Chooser::count().
+ 
+ This sample code loops through all selected files:
+ \code
+ // Get list of filenames user selected from a MULTI chooser
+ for ( int t=1; t<=chooser->count(); t++ ) {
+ const char *filename = chooser->value(t);
+ ...
+ }
+ \endcode
+ */
 const char *			// O - Filename or NULL
 Fl_File_Chooser::value(int f)	// I - File number
 {
@@ -1451,10 +1416,8 @@ Fl_File_Chooser::value(int f)	// I - File number
 }
 
 
-//
-// 'Fl_File_Chooser::value()' - Set the current filename.
-//
-
+/** Sets the current value of the selected file.
+ */
 void
 Fl_File_Chooser::value(const char *filename)
 					// I - Filename + directory
@@ -1526,6 +1489,7 @@ Fl_File_Chooser::value(const char *filename)
     }
 }
   
+/** Shows the Fl_File_Chooser window.*/
 void Fl_File_Chooser::show()
 {
   window->hotspot(fileList);
