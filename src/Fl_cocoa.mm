@@ -4263,7 +4263,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   } else {
     NSView *winview = nil;
     if ( through_Fl_X_flush  && Fl_Window::current() == win ) {
-      rect = NSMakeRect(s*x - 0.5, s*y - 0.5, s*w, s*h);
+      rect = NSMakeRect(x - 0.5, y - 0.5, w, h);
     }
     else {
       winview = [fl_xid(win) contentView];
