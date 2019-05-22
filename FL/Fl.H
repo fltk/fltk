@@ -1011,7 +1011,6 @@ int main() {
  By default, FLTK also displays the new scaling factor value in a yellow, transient window.
  This can be changed with option Fl::OPTION_SHOW_SCALING.
  The scaling factor value is programmatically get and set with the Fl::screen_scale() functions.
- 
      @{ */
   static int x(); // via screen driver
   static int y(); // via screen driver
