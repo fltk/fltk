@@ -408,7 +408,7 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   Fl_Window_Driver::driver(win)->capture_titlebar_and_borders(top, left, bottom, right);
   [(NSWindow*)fl_xid(win) setTitle:title]; // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
-  top->scale(win->w(), bt/s);
+  top->scale(win->w(), bt/s, 0, 1);
   top->draw(x_offset, y_offset + bt - bt/s); // print the title bar
   delete top;
   if (win->label()) { // print the window title
