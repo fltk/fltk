@@ -373,37 +373,17 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     return;
   }
   int bt = win->decorated_h() - win->h();
-  BOOL to_quartz =  (this->driver()->has_feature(Fl_Graphics_Driver::NATIVE));
+  float s = Fl::screen_scale(win->screen_num());
+  if (s < 1) y_offset += bt*(1/s-1);
   CALayer *layer = Fl_Cocoa_Window_Driver::driver(win)->get_titlebar_layer();
   if (layer) { // if title bar uses a layer
-    if (to_quartz) { // to Quartz printer
-      CGContextRef gc = (CGContextRef)driver()->gc();
-      CGContextSaveGState(gc);
-      CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
-      float s = Fl::screen_scale(win->screen_num());
-      CGContextScaleCTM(gc, 1/s, -1/s);
-      Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt);
-      CGContextRestoreGState(gc);
-    }
-    else {
-      CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB ();
-      CGContextRef gc = CGBitmapContextCreate(NULL, 2*win->w(), 2*bt, 8, 0, cspace, kCGImageAlphaPremultipliedLast);
-      CGColorSpaceRelease(cspace);
-      CGContextScaleCTM(gc, 2, 2);
-      Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w(), bt);
-      Fl_RGB_Image *image = new Fl_RGB_Image((const uchar*)CGBitmapContextGetData(gc), 2*win->w(), 2*bt, 4,
-                                             CGBitmapContextGetBytesPerRow(gc)); // 10.2
-      int ori_x, ori_y;
-      origin(&ori_x, &ori_y);
-      scale(0.5);
-      origin(2*ori_x, 2*ori_y);
-      image->draw(2*x_offset, 2*y_offset); // draw title bar as double resolution image
-      scale(1);
-      origin(ori_x, ori_y);
-      delete image;
-      CGContextRelease(gc);
-    }
-    bool clip_corners = fl_mac_os_version >= 100600 && to_quartz && !win->parent();
+    CGContextRef gc = (CGContextRef)driver()->gc();
+    CGContextSaveGState(gc);
+    CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
+    CGContextScaleCTM(gc, 1/s, -1/s);
+    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, gc, win->w() * s, bt);
+    CGContextRestoreGState(gc);
+    bool clip_corners = fl_mac_os_version >= 100600 && !win->parent();
     if (clip_corners) {
       CGContextRef gc = (CGContextRef)driver()->gc();
       CGContextSaveGState(gc);
@@ -428,21 +408,24 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   Fl_Window_Driver::driver(win)->capture_titlebar_and_borders(top, left, bottom, right);
   [(NSWindow*)fl_xid(win) setTitle:title]; // put back the window title
   this->set_current(); // back to the Fl_Paged_Device
-  top->draw(x_offset, y_offset); // print the title bar
+  top->scale(win->w(), bt/s);
+  top->draw(x_offset, y_offset + bt - bt/s); // print the title bar
   delete top;
   if (win->label()) { // print the window title
     const int skip = 65; // approx width of the zone of the 3 window control buttons
+    float fs = [NSFont systemFontSize]/s;
+    int text_y = y_offset+bt*(1-1/(2*s))+fs/3;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-    if (fl_mac_os_version >= 100400 && to_quartz) { // use Cocoa string drawing with exact title bar font
+    if ( fl_mac_os_version >= 100400 ) { // use Cocoa string drawing with exact title bar font
       // the exact font is LucidaGrande 13 pts (and HelveticaNeueDeskInterface-Regular with 10.10)
       NSGraphicsContext *current = [NSGraphicsContext currentContext];
       [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:driver()->gc() flipped:YES]];//10.4
-      NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0]
+      NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:fs]
                                                        forKey:NSFontAttributeName];
       NSSize size = [title sizeWithAttributes:attr];
       int x = x_offset + win->w()/2 - size.width/2;
       if (x < x_offset+skip) x = x_offset+skip;
-      NSRect r = NSMakeRect(x, y_offset+bt/2+4, win->w() - skip, bt);
+      NSRect r = NSMakeRect(x, text_y , win->w() - skip, bt);
       [[NSGraphicsContext currentContext] setShouldAntialias:YES];
       [title drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];
@@ -451,12 +434,12 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     else
 #endif
     {
-      fl_font(FL_HELVETICA, 14);
+      fl_font(FL_HELVETICA, fs);
       fl_color(FL_BLACK);
       int x = x_offset + win->w()/2 - fl_width(win->label())/2;
       if (x < x_offset+skip) x = x_offset+skip;
-      fl_push_clip(x_offset, y_offset, win->w(), bt);
-      fl_draw(win->label(), x, y_offset+bt/2+4);
+      fl_push_clip(x_offset, y_offset + bt - bt/s, win->w(), bt/s);
+      fl_draw(win->label(), x, text_y);
       fl_pop_clip();
     }
   }
