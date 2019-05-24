@@ -77,10 +77,6 @@ int Fl_Copy_Surface_Driver::printable_rect(int *w, int *h) {
   return 0;
 }
 
-void Fl_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset) {
-  Fl_Widget_Surface::draw_decorated_window(win, x_offset, y_offset);
-}
-
 /**
  \}
  \endcond

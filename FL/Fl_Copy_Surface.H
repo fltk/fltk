@@ -92,7 +92,6 @@ protected:
   virtual void set_current() = 0;
   virtual void translate(int x, int y) = 0;
   virtual void untranslate() = 0;
-  virtual void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
   int printable_rect(int *w, int *h);
   /** Each platform implements this function its own way.
    It returns an object implementing all virtual functions
