@@ -27,7 +27,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 
 class Fl_Quartz_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current_();
+  virtual void end_current();
 public:
   Window pre_window;
   Fl_Quartz_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
@@ -89,6 +89,7 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
     CGContextRelease((CGContextRef)offscreen);
   }
   delete driver();
+  if (is_current()) end_current();
 }
 
 void Fl_Quartz_Image_Surface_Driver::set_current() {
@@ -124,7 +125,7 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
   return image;
 }
 
-void Fl_Quartz_Image_Surface_Driver::end_current_()
+void Fl_Quartz_Image_Surface_Driver::end_current()
 {
   fl_window = pre_window;
 }

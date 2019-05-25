@@ -24,7 +24,7 @@
 #include <windows.h>
 
 class Fl_GDI_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current_();
+  virtual void end_current();
 public:
   Window pre_window;
   int _savedc;
@@ -61,6 +61,7 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
 
 Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) DeleteObject(offscreen);
+  if (is_current()) end_current();
   delete driver();
 }
 
@@ -93,7 +94,7 @@ Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 }
 
 
-void Fl_GDI_Image_Surface_Driver::end_current_()
+void Fl_GDI_Image_Surface_Driver::end_current()
 {
   HDC gc = (HDC)driver()->gc();
   GetWindowOrgEx(gc, &origin);

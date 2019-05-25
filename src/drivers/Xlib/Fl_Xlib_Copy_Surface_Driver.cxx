@@ -28,7 +28,7 @@
 
 class Fl_Xlib_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
   friend class Fl_Copy_Surface_Driver;
-  virtual void end_current_();
+  virtual void end_current();
 protected:
   Fl_Offscreen xid;
   Window oldwindow;
@@ -70,6 +70,7 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   delete rgb;
   fl_delete_offscreen(xid);
   delete driver();
+  if (!need_push) end_current();
 }
 
 
@@ -79,7 +80,7 @@ void Fl_Xlib_Copy_Surface_Driver::set_current() {
   fl_window = xid;
 }
 
-void Fl_Xlib_Copy_Surface_Driver::end_current_() {
+void Fl_Xlib_Copy_Surface_Driver::end_current() {
   fl_window = oldwindow;
 }
 

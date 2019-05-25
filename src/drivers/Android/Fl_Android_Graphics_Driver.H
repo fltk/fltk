@@ -58,7 +58,7 @@ private:
   virtual void draw_fixed(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) override;
   virtual void draw_fixed(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) override;
   // some platforms may need to reimplement this
-  // This is called from the surface device, see: end_current_()
+  // This is called from the surface device, see: end_current()
   // super: virtual void set_current_();
 protected:
   /** Sets the current value of the scaling factor */

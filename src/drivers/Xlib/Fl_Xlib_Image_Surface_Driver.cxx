@@ -21,7 +21,7 @@
 #include "../../Fl_Screen_Driver.H"
 
 class Fl_Xlib_Image_Surface_Driver : public Fl_Image_Surface_Driver {
-  virtual void end_current_();
+  virtual void end_current();
 public:
   Window pre_window;
   Fl_Xlib_Image_Surface_Driver(int w, int h, int high_res, Fl_Offscreen off);
@@ -55,6 +55,7 @@ Fl_Xlib_Image_Surface_Driver::Fl_Xlib_Image_Surface_Driver(int w, int h, int hig
 Fl_Xlib_Image_Surface_Driver::~Fl_Xlib_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) XFreePixmap(fl_display, offscreen);
   delete driver();
+  if (is_current()) end_current();
 }
 
 void Fl_Xlib_Image_Surface_Driver::set_current() {
@@ -77,7 +78,7 @@ Fl_RGB_Image* Fl_Xlib_Image_Surface_Driver::image()
   return image;
 }
 
-void Fl_Xlib_Image_Surface_Driver::end_current_()
+void Fl_Xlib_Image_Surface_Driver::end_current()
 {
   fl_window = pre_window;
 }
