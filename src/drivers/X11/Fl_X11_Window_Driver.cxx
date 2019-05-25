@@ -399,15 +399,12 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
   if (pWindow->decorated_h() == h()) return;
   Window from = fl_window;
   Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
-  pWindow->show();
-  Fl::check();
-  pWindow->make_current();
-  Window root, parent, *children, child_win;
+  Window root, parent, *children, child_win, xid = fl_xid(pWindow);
   unsigned n = 0;
   int do_it;
   int wsides, htop;
-  do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 &&
-           XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &wsides, &htop, &child_win) == True);
+  do_it = (XQueryTree(fl_display, xid, &root, &parent, &children, &n) != 0 &&
+           XTranslateCoordinates(fl_display, xid, parent, 0, 0, &wsides, &htop, &child_win) == True);
   if (n) XFree(children);
   if (!do_it) wsides = htop = 0;
   int hbottom = wsides;
