@@ -76,8 +76,8 @@ public:
     Returns \p FL_RED since FLTK 1.4.0 (default in 1.3.x).
     Retained for backwards compatibility.
 
-    \deprecated Will be removed in FLTK 1.4.2 or higher.
-    \todo Remove Fl_File_Input::errorcolor() in FLTK 1.4.2 or higher.
+    \deprecated Will be removed in FLTK 1.5.0 or higher.
+    \todo Remove Fl_File_Input::errorcolor() in FLTK 1.5.0 or higher.
   */
   Fl_Color	errorcolor() const { return FL_RED; }
 
@@ -86,8 +86,8 @@ public:
 
     Does nothing since FLTK 1.4.0. Retained for backwards compatibility.
 
-    \deprecated Will be removed in FLTK 1.4.2 or higher.
-    \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.4.2 or higher.
+    \deprecated Will be removed in FLTK 1.5.0 or higher.
+    \todo Remove Fl_File_Input::errorcolor(Fl_Color) in FLTK 1.5.0 or higher.
     */
   void		errorcolor(Fl_Color c) {}
 
