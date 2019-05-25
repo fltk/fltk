@@ -431,8 +431,8 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
     if (bottom) {
       bottom->scale(w() + 2*wsides, wsides, 0, 1);
     }  }
-  fl_window = from;
   Fl_Surface_Device::pop_current();
+  fl_window = from;
 }
 
 
