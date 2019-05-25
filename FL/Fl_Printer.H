@@ -105,7 +105,7 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
-  void draw_decorated_window(Fl_Window *win, int x_offset, int y_offset);
+  void draw_decorated_window(Fl_Window *win, int x_offset = 0, int y_offset = 0);
   void set_current(void);
   virtual bool is_current();
 
