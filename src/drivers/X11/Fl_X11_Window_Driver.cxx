@@ -391,14 +391,17 @@ void Fl_X11_Window_Driver::free_icons() {
  The top and bottom images extend from left of the left border to right of the right border.
  
  This function exploits a feature of Fl_X11_Screen_Driver::read_win_rectangle() which,
- when called with negative 4th argument, captures the window decoration.
+ when called with negative 3rd argument, captures the window decoration.
+ Other requirements to capture the window decoration:
+ - fl_window is the parent window of the top window
+ - Fl_Window::current() is the top window
  */
 void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
   top = left = bottom = right = NULL;
   if (pWindow->decorated_h() == h()) return;
   Window from = fl_window;
-  Fl_Surface_Device::push_current( Fl_Display_Device::display_device() );
+  Fl_Window *oldcurrent = Fl_Window::current();
   Window root, parent, *children, child_win, xid = fl_xid(pWindow);
   unsigned n = 0;
   int do_it;
@@ -411,9 +414,10 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
   float s = Fl::screen_driver()->scale(screen_num());
   htop /= s; wsides /= s;
   fl_window = parent;
+  current(pWindow);
   if (htop) {
     top = Fl::screen_driver()->read_win_rectangle(0, 0, - (w() + 2 * wsides), htop);
-    top->scale(w() + 2 * wsides, htop, 0, 1);
+    if (top) top->scale(w() + 2 * wsides, htop, 0, 1);
   }
   if (wsides) {
     left = Fl::screen_driver()->read_win_rectangle(0, htop, -wsides, h());
@@ -428,7 +432,7 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
     if (bottom) {
       bottom->scale(w() + 2*wsides, wsides, 0, 1);
     }  }
-  Fl_Surface_Device::pop_current();
+  current(oldcurrent);
   fl_window = from;
 }
 
