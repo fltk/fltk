@@ -84,7 +84,8 @@ protected:
   static PangoContext *pctxt_;
   static PangoFontMap *pfmap_;
   static PangoLayout *playout_;
-  PangoFontDescription *pfd_;
+  static PangoFontDescription **pfd_array; // one array element for each Fl_Font
+  static int pfd_array_length;
   void do_draw(int from_right, const char *str, int n, int x, int y);
   static PangoContext *context();
   static void init_built_in_fonts();

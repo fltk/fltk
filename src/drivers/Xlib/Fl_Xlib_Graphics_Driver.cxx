@@ -54,7 +54,6 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
   p = NULL;
   line_delta_ = 0;
 #if USE_PANGO
-  pfd_ = pango_font_description_new();
   Fl_Graphics_Driver::font(0, 0);
 #endif
   offset_x_ = 0; offset_y_ = 0;
@@ -64,9 +63,6 @@ Fl_Xlib_Graphics_Driver::Fl_Xlib_Graphics_Driver(void) {
 
 Fl_Xlib_Graphics_Driver::~Fl_Xlib_Graphics_Driver() {
   if (p) free(p);
-#if USE_PANGO
-  pango_font_description_free(pfd_);
-#endif
 }
 
 
@@ -216,7 +212,11 @@ const char *Fl_Xlib_Graphics_Driver::font_name(int num) {
 void Fl_Xlib_Graphics_Driver::font_name(int num, const char *name) {
 #if USE_XFT
 #  if USE_PANGO
-    init_built_in_fonts();
+  init_built_in_fonts();
+  if (pfd_array_length > num && pfd_array[num]) {
+    pango_font_description_free(pfd_array[num]);
+    pfd_array[num] = NULL;
+  }
 #  endif
   Fl_Fontdesc *s = fl_fonts + num;
 #else
@@ -286,6 +286,12 @@ void Fl_Xlib_Graphics_Driver::untranslate_all() { // undoes previous translate_a
 void Fl_Xlib_Graphics_Driver::set_current_() {
   restore_clip();
 }
+
+#if USE_PANGO
+int Fl_Xlib_Graphics_Driver::pfd_array_length = FL_FREE_FONT;
+
+PangoFontDescription **Fl_Xlib_Graphics_Driver::pfd_array = (PangoFontDescription**)calloc(pfd_array_length, sizeof(PangoFontDescription*));
+#endif
 
 //
 // End of "$Id$".

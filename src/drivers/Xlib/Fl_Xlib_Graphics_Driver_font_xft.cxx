@@ -1208,13 +1208,22 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
   if (this->Fl_Graphics_Driver::font() == fnum && this->size_unscaled() == size && this->font_descriptor()) return;
   fl_xft_font(this, fnum, size, 0);
   init_built_in_fonts();
-  if (pfd_) pango_font_description_free(pfd_);
-  pfd_ = pango_font_description_from_string(Fl::get_font_name(fnum));
-  pango_font_description_set_absolute_size(pfd_, size*PANGO_SCALE); // 1.8
+  if (fnum >= pfd_array_length) {
+    int new_length = fnum + 10;
+    PangoFontDescription **data = (PangoFontDescription**)calloc(new_length, sizeof(PangoFontDescription*));
+    memcpy(data, pfd_array, pfd_array_length*sizeof(PangoFontDescription*));
+    free(pfd_array);
+    pfd_array = data;
+    pfd_array_length = new_length;
+  }
+  if (!pfd_array[fnum]) {
+    pfd_array[fnum] = pango_font_description_from_string(Fl::get_font_name(fnum));
+  }
+  pango_font_description_set_absolute_size(pfd_array[fnum], size*PANGO_SCALE); // 1.8
   if (!pctxt_) context();
   Fl_Xlib_Font_Descriptor *fd = (Fl_Xlib_Font_Descriptor*)font_descriptor();
   if (!fd->height_) {
-    PangoFont *pfont = pango_font_map_load_font(pfmap_, pctxt_, pfd_);
+    PangoFont *pfont = pango_font_map_load_font(pfmap_, pctxt_, pfd_array[fnum]);
     PangoRectangle logical_rect;
     pango_font_get_glyph_extents(pfont, /*PangoGlyph glyph*/'p', NULL, &logical_rect);
     fd->descent_ = PANGO_DESCENT(logical_rect)/PANGO_SCALE;
@@ -1273,7 +1282,7 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
     if (--n == 0) return;
     tmpv = NULL;
   }
-  pango_layout_set_font_description(playout_, pfd_);
+  pango_layout_set_font_description(playout_, pfd_array[font_]);
   if (tmpv) { // replace newlines by spaces in a copy of str
     str2 = (char*)malloc(n);
     memcpy(str2, str, n);
@@ -1319,7 +1328,7 @@ double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
   if (!fl_display || size_ == 0) return -1;
   if (!playout_) context();
   int width, height;
-  pango_layout_set_font_description(playout_, pfd_);
+  pango_layout_set_font_description(playout_, pfd_array[font_]);
   pango_layout_set_text(playout_, str, n);
   pango_layout_get_pixel_size(playout_, &width, &height);
   return (double)width;
@@ -1327,7 +1336,7 @@ double Fl_Xlib_Graphics_Driver::width_unscaled(const char* str, int n) {
 
 void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *str, int n, int &dx, int &dy, int &w, int &h) {
   if (!playout_) context();
-  pango_layout_set_font_description(playout_, pfd_);
+  pango_layout_set_font_description(playout_, pfd_array[font_]);
   pango_layout_set_text(playout_, str, n);
   int y_correction;
   fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, descent_unscaled(), height_unscaled(), y_correction);
@@ -1395,7 +1404,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
         *(p+lp-4) = 0; prefix = 'B';
       }
       char *q = p + strlen(p) - 1;
-      while (*q == ' ' && q > p) q--;
+      while (q > p && *q == ' ') {*q = 0; q--;}
       int lq = l+2;
       if (*p) lq += strlen(p) + 1;
       q = new char[lq];
