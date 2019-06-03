@@ -1222,6 +1222,12 @@ void Fl_Xlib_Graphics_Driver::font_unscaled(Fl_Font fnum, Fl_Fontsize size) {
     pango_font_get_glyph_extents(pfont, /*PangoGlyph glyph*/'p', NULL, &logical_rect);
     fd->descent_ = PANGO_DESCENT(logical_rect)/PANGO_SCALE;
     fd->height_ = logical_rect.height/PANGO_SCALE;
+    if (fd->height_ == 0) { // this occurs with some fonts
+      PangoFontMetrics *pfmt = pango_font_get_metrics(pfont, pango_script_get_sample_language(PANGO_SCRIPT_LATIN) /* 1.4 */);
+      fd->descent_ = pango_font_metrics_get_descent(pfmt)/PANGO_SCALE;
+      fd->height_ = (pango_font_metrics_get_ascent(pfmt) + pango_font_metrics_get_descent(pfmt))/PANGO_SCALE ;
+      pango_font_metrics_unref(pfmt);
+    }
   }
 }
 
