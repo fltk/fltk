@@ -2185,6 +2185,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
   if (!window) return; // needed e.g. when closing a tab in a window
   if (!layer_data) { // runs when window is created, resized, changed screen resolution
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
+    if (d->wait_for_expose_value) {
+      [super did_view_resolution_change];
+      d->wait_for_expose_value = 0;
+    }
     [self prepare_bitmap_for_layer];
     Fl_X *i = Fl_X::i(window);
     if ( i->region ) {
@@ -2193,7 +2198,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     }
     window->clear_damage(FL_DAMAGE_ALL);
     through_Fl_X_flush = YES;
-    Fl_Cocoa_Window_Driver::driver(window)->Fl_Window_Driver::flush();
+    d->Fl_Window_Driver::flush();
     Fl_Cocoa_Window_Driver::q_release_context();
     through_Fl_X_flush = NO;
     window->clear_damage();
@@ -2206,13 +2211,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 - (void)prepare_bitmap_for_layer {
   Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
-  Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   CALayer *layer = [self layer];
   NSRect rect = [self frame];
   layer.bounds = NSRectToCGRect(rect);
-  [self did_view_resolution_change];
-  d->wait_for_expose_value = 0;
-  if (d->mapped_to_retina()) {
+  if (Fl_Cocoa_Window_Driver::driver(window)->mapped_to_retina()) {
     rect.size.width *= 2; rect.size.height *= 2;
     layer.contentsScale = 2.;
   } else layer.contentsScale = 1.;
