@@ -85,7 +85,7 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
     if (MSVC)
 	if (OPTION_LARGE_FILE)
-	    set_target_properties(${LIBRARYNAME}
+	    set_target_properties(${LIBRARY_NAME}
 		PROPERTIES
 		LINK_FLAGS /LARGEADDRESSAWARE
 		)
