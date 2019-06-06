@@ -85,8 +85,8 @@ class Fl_Sys_Menu_Bar_Driver;
 
  ..the result being:
 
- \image html mac-app-menu-preferences.png "Mac Application submenu"
- \image latex tree-simple.png "Mac Application submenu" width=4cm
+ \image html mac-app-menu-preferences.png  "Mac Application submenu"
+ \image latex mac-app-menu-preferences.png "Mac Application submenu" width=4cm
 
   */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
