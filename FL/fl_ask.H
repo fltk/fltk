@@ -38,6 +38,15 @@ enum Fl_Beep {
   FL_BEEP_NOTIFICATION  ///< Notification beep.
 };
 
+/** Different positioning modes available.
+ \sa fl_message_position(int,int,int) */
+enum Fl_Position_Mode
+{
+  FL_POSMODE_WM, ///< Positioning determined by Window Manager.
+  FL_POSMODE_HOTSPOT, ///< Position under mouse cursor.
+  FL_POSMODE_XY ///< Position at specified X,Y point.
+};
+
 #  ifdef __GNUC__
 /* the GNUC-specific attribute appearing below in prototypes with a variable list of arguments
  helps detection of mismatches between format string and argument list at compilation time */
@@ -65,6 +74,9 @@ inline void fl_message_font(Fl_Font f, Fl_Fontsize s) {
 
 FL_EXPORT void fl_message_hotspot(int enable);
 FL_EXPORT int fl_message_hotspot(void);
+
+FL_EXPORT void fl_message_position(const int mode, const int x = 0, const int y = 0);
+FL_EXPORT int fl_message_position(int* x = NULL, int* y = NULL);
 
 FL_EXPORT void fl_message_title(const char *title);
 FL_EXPORT void fl_message_title_default(const char *title);
