@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <limits.h>
 #include "flstring.h"
 
 #include <FL/Fl.H>
@@ -55,6 +56,8 @@ static const char *message_title_default;
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = -1;
 static int enableHotspot = 1;
+static int form_x = INT_MIN;
+static int form_y = INT_MIN;
 
 static char avoidRecursion = 0;
 
@@ -236,8 +239,18 @@ static int innards(const char* fmt, va_list ap,
 
   if (button[1]->visible() && !input->visible())
     button[1]->take_focus();
-  if (enableHotspot)
+
+  if (form_x != INT_MIN && form_y != INT_MIN)
+  {
+    message_form->position(form_x, form_y);
+    form_x = INT_MIN;
+    form_y = INT_MIN;
+  }
+  else if (enableHotspot)
     message_form->hotspot(button[0]);
+  else
+    message_form->free_position();
+
   if (b0 && Fl_Widget::label_shortcut(b0))
     button[0]->shortcut(0);
   else
@@ -504,6 +517,37 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   const char* r = input_innards(fmt, ap, defstr, FL_SECRET_INPUT);
   va_end(ap);
   return r;
+}
+
+/** Sets the preferred position for common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password(). Resets after
+    every call to any of the common dialogs.
+
+    \note \#include <FL/fl_ask.H>
+    param[in] x   Preferred X position
+    param[in] y   Preferred Y position
+*/
+void fl_message_position(const int x, const int y) {
+  form_x = x;
+  form_y = y;
+}
+
+/** Gets the preferred position for common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password().
+
+    \note \#include <FL/fl_ask.H>
+    param[out] x   Preferred X position, returns INT_MIN if not set
+    param[out] y   Preferred Y position, returns INT_MIN if not set
+\see fl_message_position(int,int)
+*/
+void fl_message_position(int* x, int* y) {
+  if (x)
+    *x = form_x;
+
+  if (y)
+    *y = form_y;
 }
 
 /** Sets whether or not to move the common message box used in

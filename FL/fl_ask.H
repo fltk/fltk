@@ -24,7 +24,6 @@
 #  define fl_ask_H
 
 #  include "Enumerations.H"
-
 class Fl_Widget;
 
 /** Different system beeps available. 
@@ -65,6 +64,9 @@ inline void fl_message_font(Fl_Font f, Fl_Fontsize s) {
 
 FL_EXPORT void fl_message_hotspot(int enable);
 FL_EXPORT int fl_message_hotspot(void);
+
+FL_EXPORT void fl_message_position(const int x = 0, const int y = 0);
+FL_EXPORT void fl_message_position(int* x = 0, int* y = 0);
 
 FL_EXPORT void fl_message_title(const char *title);
 FL_EXPORT void fl_message_title_default(const char *title);
