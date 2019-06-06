@@ -30,9 +30,10 @@ class Fl_Sys_Menu_Bar_Driver;
 
 /**
  A class to create and modify menus that appear on Mac OS X in the menu bar at the top of the screen.
- To use this class, just replace Fl_Menu_Bar by Fl_Sys_Menu_Bar, and, on the Mac platform,
+ To use this class, just replace Fl_Menu_Bar with Fl_Sys_Menu_Bar, and on the Mac platform
  a system menu at the top of the screen will be available. This menu will match an array
- of Fl_Menu_Item's exactly as in all other FLTK menus.
+ of Fl_Menu_Item's exactly as in all other FLTK menus (except for the submenu with the
+ application's own name; see below).
  
   On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
  
@@ -56,6 +57,37 @@ class Fl_Sys_Menu_Bar_Driver;
   \li no symbolic labels
   \li no embossed labels
   \li no font sizes
+
+ As described above, the submenu with the application's own name (usually
+ the second submenu from the left, immediately following the "Apple" submenu)
+ is a special case, and can be managed with
+ Fl_Mac_App_Menu::custom_application_menu_items(). 
+ For example, to make your own "Appname -> Preferences" dialog, you might use:
+
+ \code
+ #include <FL/platform.H> 	 // for Fl_Mac_App_Menu class
+ #include <FL/Fl_Sys_Menu_Bar.H> // for Fl_Menu_Item
+ :
+ void prefs_cb(Fl_Widget *w, void *data) {
+   // ..Open your preferences dialog here..
+ }
+ :
+ int main(..) {
+    :
+    // Items to add to the application menu
+    static Fl_Menu_Item appitems[] = {
+       { "Preferences", 0, prefs_cb, 0, 0 },
+       { 0 }, { 0 }
+     };
+     Fl_Mac_App_Menu::custom_application_menu_items(appitems);	// adds it
+  }
+ \endcode
+
+ ..the result being:
+
+ \image html mac-app-menu-preferences.png "Mac Application submenu"
+ \image latex tree-simple.png "Mac Application submenu" width=4cm
+
   */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
