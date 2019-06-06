@@ -339,11 +339,11 @@ void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &h
   height = CGBitmapContextGetHeight(off);
 }
 
-Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h)
+Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *window)
 {
   int bpp, bpr, depth = 4;
   uchar *base, *p;
-  if (!fl_window) { // read from offscreen buffer
+  if (!window) { // read from offscreen buffer
     float s = 1;
     CGContextRef src = (CGContextRef)Fl_Surface_Device::surface()->driver()->gc();  // get bitmap context
     base = (uchar *)CGBitmapContextGetData(src);  // get data
@@ -373,7 +373,7 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     }
     bpr = 0;
   } else { // read from window
-    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(Fl_Window::current());
+    Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
     CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h, false);
     if (!cgimg) {
       return NULL;

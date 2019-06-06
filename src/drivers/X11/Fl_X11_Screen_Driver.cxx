@@ -745,7 +745,7 @@ extern "C" {
   }
 }
 
-Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h)
+Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win)
 {
   XImage	*image;		// Captured image
   int		i, maxindex;	// Looping vars
@@ -772,12 +772,14 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
   int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window frame
   if (w < 0) w = - w;
   
-  float s = allow_outside ? Fl::screen_driver()->scale(Fl_Window::current()->screen_num()) : Fl_Surface_Device::surface()->driver()->scale();
+  Window xid = (win && !allow_outside ? fl_xid(win) : fl_window);
+
+  float s = allow_outside ? Fl::screen_driver()->scale(win->screen_num()) : Fl_Surface_Device::surface()->driver()->scale();
   int ws = w * s, hs = h * s, Xs = X*s, Ys = Y*s;
   
 #  ifdef __sgi
   if (XReadDisplayQueryExtension(fl_display, &i, &i)) {
-    image = XReadDisplay(fl_display, fl_window, Xs, Ys, ws, hs, 0, NULL);
+    image = XReadDisplay(fl_display, xid, Xs, Ys, ws, hs, 0, NULL);
   } else
 #  else
     image = 0;
@@ -788,11 +790,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
     int dx, dy, sx, sy, sw, sh;
     Window child_win;
     
-    Fl_Window *win;
-    if (allow_outside) win = Fl_Window::current();
-    else win = fl_find(fl_window);
     if (win) {
-      XTranslateCoordinates(fl_display, fl_window,
+      XTranslateCoordinates(fl_display, xid,
                             RootWindow(fl_display, fl_screen), Xs, Ys, &dx, &dy, &child_win);
       // screen dimensions
       Fl::screen_xywh(sx, sy, sw, sh, Fl_Window_Driver::driver(win)->screen_num());
@@ -811,7 +810,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       // however, if the window is obscured etc. the function will still fail. Make sure we
       // catch the error and continue, otherwise an exception will be thrown.
       XErrorHandler old_handler = XSetErrorHandler(xgetimageerrhandler);
-      image = XGetImage(fl_display, fl_window, Xs, Ys, ws, hs, AllPlanes, ZPixmap);
+      image = XGetImage(fl_display, xid, Xs, Ys, ws, hs, AllPlanes, ZPixmap);
       XSetErrorHandler(old_handler);
     } else {
       // image is crossing borders, determine visible region
@@ -831,7 +830,7 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       }
       
       XErrorHandler old_handler = XSetErrorHandler(xgetimageerrhandler);
-      XImage *subimg = XGetSubImage(fl_display, fl_window, Xs + noffx, Ys + noffy,
+      XImage *subimg = XGetSubImage(fl_display, xid, Xs + noffx, Ys + noffy,
                                     nw, nh, AllPlanes, ZPixmap, image, noffx, noffy);
       XSetErrorHandler(old_handler);
       if (!subimg) {

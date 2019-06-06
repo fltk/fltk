@@ -64,7 +64,7 @@ Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   driver()->pop_clip();
   bool need_push = !is_current();
   if (need_push) Fl_Surface_Device::push_current(this);
-  Fl_RGB_Image *rgb = Fl::screen_driver()->read_win_rectangle(0, 0, width, height);
+  Fl_RGB_Image *rgb = Fl::screen_driver()->read_win_rectangle(0, 0, width, height, 0);
   if (need_push) Fl_Surface_Device::pop_current();
   Fl_X11_Screen_Driver::copy_image(rgb->array, rgb->w(), rgb->h(), 1);
   delete rgb;

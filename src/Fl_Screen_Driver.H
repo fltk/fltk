@@ -150,8 +150,10 @@ public:
    A platform may also use its read_win_rectangle() implementation to capture
    window decorations (e.g., title bar). In that case, it is called by
    Fl_XXX_Window_Driver::capture_titlebar_and_borders().
+   
+   win is the window to capture from, or NULL to capture from the current offscreen
    */
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h) {return NULL;}
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win) {return NULL;}
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
   static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                  Fl_RGB_Image *full_img);

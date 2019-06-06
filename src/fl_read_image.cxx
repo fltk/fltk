@@ -43,7 +43,7 @@ uchar *fl_read_image(uchar *p, int X, int Y, int w, int h, int alpha) {
   uchar *image_data = NULL;
   Fl_RGB_Image *img;
   if (fl_find(fl_window) == 0) { // read from off_screen buffer
-    img = Fl::screen_driver()->read_win_rectangle(X, Y, w, h);
+    img = Fl::screen_driver()->read_win_rectangle(X, Y, w, h, 0);
     if (!img) {
       return NULL;
     }

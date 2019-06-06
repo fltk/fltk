@@ -501,7 +501,8 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
                                             int   X,		// I - Left position
                                             int   Y,		// I - Top position
                                             int   w,		// I - Width of area to read
-                                            int   h)		// I - Height of area to read
+                                            int   h,		// I - Height of area to read
+                                            Fl_Window *win)     // I - window to capture from or NULL to capture from current offscreen
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
   int ws, hs;
@@ -512,10 +513,10 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
     if (ws < 1) ws = 1;
     if (hs < 1) hs = 1;
   }
-  return read_win_rectangle_unscaled(X*s, Y*s, ws, hs);
+  return read_win_rectangle_unscaled(X*s, Y*s, ws, hs, win);
 }
 
-Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h)
+Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win)
 {
   int	d = 3;			// Depth of image
   int alpha = 0; uchar *p = NULL;
@@ -569,6 +570,7 @@ Fl_RGB_Image *Fl_WinAPI_Screen_Driver::read_win_rectangle_unscaled(int X, int Y,
   bi.bmiHeader.biClrImportant = 0;
   
   // copy bitmap from original DC (Window, Fl_Offscreen, ...)
+  if (win && Fl_Window::current() != win) win->make_current();
   HDC gc = (HDC)fl_graphics_driver->gc();
   HDC hdc = CreateCompatibleDC(gc);
   HBITMAP hbm = CreateCompatibleBitmap(gc,w,h);

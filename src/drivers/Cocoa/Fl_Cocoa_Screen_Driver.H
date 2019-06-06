@@ -99,7 +99,7 @@ public:
   virtual APP_SCALING_CAPABILITY rescalable() { return SYSTEMWIDE_APP_SCALING; }
   virtual float scale(int n) {return scale_;}
   virtual void scale(int n, float f) { scale_ = f;}
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h);
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win);
 private:
   float scale_;
 };

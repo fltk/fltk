@@ -68,19 +68,19 @@ static void draw_current_rect() {
   if (s_bgE) { delete s_bgE; s_bgE = 0; }
   if (s_bgW) { delete s_bgW; s_bgW = 0; }
   if (pw>0 && ph>0) {
-    s_bgE = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph);
+    s_bgE = Fl::screen_driver()->read_win_rectangle( px+pw-1, py, 1, ph, Fl_Window::current());
     if(s_bgE && s_bgE->w() && s_bgE->h()) {
       s_bgE->scale(1, ph,0,1);
     }
-    s_bgW = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph);
+    s_bgW = Fl::screen_driver()->read_win_rectangle( px, py, 1, ph, Fl_Window::current());
     if(s_bgW && s_bgW->w() && s_bgW->h()) {
       s_bgW->scale(1, ph,0,1);
     }
-    s_bgS = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1);
+    s_bgS = Fl::screen_driver()->read_win_rectangle( px, py+ph-1, pw, 1, Fl_Window::current());
     if(s_bgS && s_bgS->w() && s_bgS->h()) {
       s_bgS->scale(pw, 1,0,1);
     }
-    s_bgN = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1);
+    s_bgN = Fl::screen_driver()->read_win_rectangle( px, py, pw, 1, Fl_Window::current());
     if(s_bgN && s_bgN->w() && s_bgN->h()) {
       s_bgN->scale(pw, 1,0,1);
     }

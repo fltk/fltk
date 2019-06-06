@@ -2719,14 +2719,14 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
   // capture the 4 window sides from screen
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
   if (htop) {
-    top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop);
+    top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop, 0);
     if (scaling != 1)
       top->scale(ww, htop / scaling, 0, 1);
   }
   if (wsides) {
-    left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling);
-    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling);
-    bottom = dr->read_win_rectangle_unscaled(r.left, r.bottom - hbottom, ww, hbottom);
+    left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling, 0);
+    right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling, 0);
+    bottom = dr->read_win_rectangle_unscaled(r.left, r.bottom - hbottom, ww, hbottom, 0);
     if (scaling != 1) {
       left->scale(wsides, h(), 0, 1);
       right->scale(wsides, h(), 0, 1);

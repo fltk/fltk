@@ -89,7 +89,7 @@ void Fl_GDI_Image_Surface_Driver::untranslate() {
 
 Fl_RGB_Image* Fl_GDI_Image_Surface_Driver::image()
 {
-  Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle( 0, 0, width, height);
+  Fl_RGB_Image *image = Fl::screen_driver()->read_win_rectangle( 0, 0, width, height, 0);
   return image;
 }
 
