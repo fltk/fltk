@@ -267,6 +267,8 @@ static int innards(const char* fmt, va_list ap,
   icon->label(prev_icon_label);
   message_form->label(0); // reset window title
 
+  positionMode = FL_POSMODE_HOTSPOT;// reset position mode
+
   avoidRecursion = 0;
   return ret_val;
 }
