@@ -19,6 +19,7 @@
 
 #include "../../config_lib.h"
 #include "Fl_Cocoa_Window_Driver.H"
+#include "../../Fl_Screen_Driver.H"
 #include "../Quartz/Fl_Quartz_Graphics_Driver.H"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Overlay_Window.H>
@@ -315,6 +316,55 @@ void Fl_Cocoa_Window_Driver::clip_to_rounded_corners(CGContextRef gc, int w, int
 
 const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
   return shape_data_ ? shape_data_->shape_ : NULL;
+}
+
+/* Returns images of the capture of the window title-bar.
+ On the Mac OS platform, left, bottom and right are returned NULL; top is returned with depth 4.
+ */
+void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
+{
+  left = bottom = right = NULL;
+  int htop = pWindow->decorated_h() - h();
+  CALayer *layer = get_titlebar_layer();
+  CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+  float s = Fl::screen_driver()->scale(screen_num());
+  int scaled_w = int(w() * s);
+  uchar *rgba = new uchar[4 * scaled_w * htop * 4];
+  CGContextRef auxgc = CGBitmapContextCreate(rgba, 2 * scaled_w, 2 * htop, 8, 8 * scaled_w, cspace, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(cspace);
+  CGContextClearRect(auxgc, CGRectMake(0,0,2*scaled_w,2*htop));
+  CGContextScaleCTM(auxgc, 2, 2);
+  if (layer) {
+    Fl_Cocoa_Window_Driver::draw_layer_to_context(layer, auxgc, scaled_w, htop);
+    if (fl_mac_os_version >= 101300) {
+      // drawn layer is left transparent and alpha-premultiplied: demultiply it and set it opaque.
+      uchar *p = rgba;
+      uchar *last = rgba + 4 * scaled_w * htop * 4;
+      while (p < last) {
+        uchar q = *(p+3);
+        if (q) {
+          float m = 255./q;
+          *p++ *= m;
+          *p++ *= m;
+          *p++ *= m;
+          *p++ = 0xff;
+        } else p += 4;
+      }
+    }
+  } else {
+    Fl_Graphics_Driver::default_driver().scale(1);
+    CGImageRef img = CGImage_from_window_rect(0, -htop, scaled_w, htop, false);
+    Fl_Graphics_Driver::default_driver().scale(s);
+    CGContextSaveGState(auxgc);
+    clip_to_rounded_corners(auxgc, scaled_w, htop);
+    CGContextDrawImage(auxgc, CGRectMake(0, 0, scaled_w, htop), img);
+    CGContextRestoreGState(auxgc);
+    CFRelease(img);
+  }
+  top = new Fl_RGB_Image(rgba, 2 * scaled_w, 2 * htop, 4);
+  top->alloc_array = 1;
+  top->scale(w(),htop, s <1 ? 0 : 1, 1);
+  CGContextRelease(auxgc);
 }
 
 //
