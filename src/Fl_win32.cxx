@@ -1631,11 +1631,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	fl_i_own_selection[1] = 0;
 	return 1;
 
-      case WM_DISPLAYCHANGE: // occurs when screen configuration (number, position) changes
-	Fl::call_screen_init();
-	Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
-	return 0;
-
+      case WM_DISPLAYCHANGE: {// occurs when screen configuration (number, size, position) changes
+        Fl::call_screen_init();
+        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+        for (int ns = 0; ns < sd->screen_count(); ns++) {
+          sd->rescale_all_windows_from_screen(ns, sd->dpi[ns][0]/96);
+        }
+        Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+        return 0;
+      }
       case WM_CHANGECBCHAIN:
 	if ((hWnd == clipboard_wnd) && (next_clipboard_wnd == (HWND)wParam))
 	  next_clipboard_wnd = (HWND)lParam;
