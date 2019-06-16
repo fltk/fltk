@@ -36,7 +36,6 @@ class FL_EXPORT Fl_WinAPI_Screen_Driver : public Fl_Screen_Driver
 protected:
   RECT screens[MAX_SCREENS];
   RECT work_area[MAX_SCREENS];
-  float dpi[MAX_SCREENS][2];
   float scale_of_screen[MAX_SCREENS];
 
   static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM);
@@ -44,6 +43,7 @@ protected:
   int get_mouse_unscaled(int &mx, int &my);
 
 public:
+  float dpi[MAX_SCREENS][2];
   Fl_WinAPI_Screen_Driver() : Fl_Screen_Driver() {
     for (int i = 0; i < MAX_SCREENS; i++) scale_of_screen[i] = 1;
   }

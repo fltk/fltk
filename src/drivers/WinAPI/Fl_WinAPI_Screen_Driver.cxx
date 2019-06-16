@@ -100,21 +100,6 @@ BOOL Fl_WinAPI_Screen_Driver::screen_cb(HMONITOR mon, HDC, LPRECT r)
     screens[num_screens] = mi.rcMonitor;
     // If we also want to record the work area, we would also store mi.rcWork at this point
     work_area[num_screens] = mi.rcWork;
-//extern FILE*LOG;fprintf(LOG,"screen_cb ns=%d\n",num_screens);fflush(LOG);
-    /*fl_alert("screen %d %d,%d,%d,%d work %d,%d,%d,%d",num_screens,
-    screens[num_screens].left,screens[num_screens].right,screens[num_screens].top,screens[num_screens].bottom,
-    work_area[num_screens].left,work_area[num_screens].right,work_area[num_screens].top,work_area[num_screens].bottom);
-    */
-    // find the pixel size
-    if (mi.cbSize == sizeof(mi)) {
-      HDC screen = CreateDC(mi.szDevice, NULL, NULL, NULL);
-      if (screen) {
-        dpi[num_screens][0] = (float)GetDeviceCaps(screen, LOGPIXELSX);
-        dpi[num_screens][1] = (float)GetDeviceCaps(screen, LOGPIXELSY);
-      }
-      DeleteDC(screen);
-    }
-
     num_screens++;
   }
   return TRUE;
@@ -128,6 +113,7 @@ void Fl_WinAPI_Screen_Driver::init()
   // we do a run-time check for the required functions...
   HMODULE hMod = GetModuleHandle("USER32.DLL");
 
+  int old_num_screens = num_screens;
   if (hMod) {
     // check that EnumDisplayMonitors is available
     fl_edm_func fl_edm = (fl_edm_func)GetProcAddress(hMod, "EnumDisplayMonitors");
@@ -142,7 +128,7 @@ void Fl_WinAPI_Screen_Driver::init()
         //      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
         num_screens = 0;
         fl_edm(0, 0, screen_cb, (LPARAM)this);
-        return;
+        goto way_out;
       }
     }
   }
@@ -155,6 +141,9 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
   scale_of_screen[0] = 1;
+way_out:
+  // prevent desktop_scale_factor() from being called twice at app startup
+  if (old_num_screens >= 0) desktop_scale_factor();
 }
 
 
