@@ -113,7 +113,6 @@ void Fl_WinAPI_Screen_Driver::init()
   // we do a run-time check for the required functions...
   HMODULE hMod = GetModuleHandle("USER32.DLL");
 
-  int old_num_screens = num_screens;
   if (hMod) {
     // check that EnumDisplayMonitors is available
     fl_edm_func fl_edm = (fl_edm_func)GetProcAddress(hMod, "EnumDisplayMonitors");
@@ -140,10 +139,8 @@ void Fl_WinAPI_Screen_Driver::init()
   screens[0].right = GetSystemMetrics(SM_CXSCREEN);
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
   work_area[0] = screens[0];
-  scale_of_screen[0] = 1;
 way_out:
-  // prevent desktop_scale_factor() from being called twice at app startup
-  if (old_num_screens >= 0) desktop_scale_factor();
+  desktop_scale_factor();
 }
 
 
