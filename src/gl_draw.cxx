@@ -263,6 +263,7 @@ private:
     char *utf8; //its text
     Fl_Font_Descriptor *fdesc; // its font
     float scale; // scaling factor of the GUI
+    int str_len; // the length of the utf8 text
   } data;
   data *fifo; // array of pile elements
   int size_; // pile height
@@ -300,9 +301,11 @@ int gl_texture_fifo::already_known(const char *str, int n)
 {
   int rank;
   for ( rank = 0; rank <= last; rank++) {
-    if ( (memcmp(str, fifo[rank].utf8, n) == 0) && (fifo[rank].utf8[n] == 0) &&
-      (fifo[rank].fdesc == gl_fontsize) && (fifo[rank].scale == gl_scale) ) {
-        return rank;
+    if ((fifo[rank].str_len == n) &&
+	(fifo[rank].fdesc == gl_fontsize) &&
+	(fifo[rank].scale == gl_scale) &&
+	(memcmp(str, fifo[rank].utf8, n) == 0)) {
+      return rank;
     }
   }
   return -1; // means no texture exists yet for that string
@@ -403,6 +406,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fifo[current].utf8 = (char *)malloc(n + 1);
   memcpy(fifo[current].utf8, str, n);
   fifo[current].utf8[n] = 0;
+  fifo[current].str_len = n; // record length of text in utf8
   fl_graphics_driver->font_descriptor(gl_fontsize);
   int w, h;
   w = fl_width(fifo[current].utf8, n) * gl_scale;
