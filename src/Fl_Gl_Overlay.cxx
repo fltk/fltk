@@ -233,10 +233,14 @@ void Fl_WinAPI_Gl_Window_Driver::hide_overlay(void *& overlay) {
 #endif
 }
 
+void Fl_WinAPI_Gl_Window_Driver::hide_overlay() {
+  Fl_Gl_Window_Driver::hide_overlay();
+}
+
 void Fl_WinAPI_Gl_Window_Driver::make_overlay_current() {
 #if HAVE_GL_OVERLAY
-  if (overlay != this) {
-    pGlWindowDriver->set_gl_context(this, (GLContext)overlay);
+  if (overlay() != this) {
+    set_gl_context(pWindow, (GLContext)overlay());
     //  if (fl_overlay_depth)
     //    wglRealizeLayerPalette(Fl_X::i(this)->private_dc, 1, TRUE);
   } else
@@ -249,6 +253,7 @@ void Fl_WinAPI_Gl_Window_Driver::redraw_overlay() {
 }
 
 #if HAVE_GL_OVERLAY
+#  include "Fl_Gl_Choice.H"
 
 //static COLORREF *palette;
 extern int fl_overlay_depth;
@@ -256,13 +261,13 @@ extern int fl_overlay_depth;
 void Fl_WinAPI_Gl_Window_Driver::make_overlay(void*&overlay) {
   if (overlay) return;
 
-  GLContext context = create_gl_context(pWindow, g, 1);
+  GLContext context = create_gl_context(pWindow, g(), 1);
   if (!context) {overlay = pWindow; return;} // fake the overlay
 
   HDC hdc = Fl_WinAPI_Window_Driver::driver(pWindow)->private_dc;
   overlay = context;
   LAYERPLANEDESCRIPTOR pfd;
-  wglDescribeLayerPlane(hdc, g->pixelformat, 1, sizeof(pfd), &pfd);
+  wglDescribeLayerPlane(hdc, g()->pixelformat, 1, sizeof(pfd), &pfd);
   if (!pfd.iPixelType) {
     ; // full-color overlay
   } else {
@@ -284,7 +289,7 @@ void Fl_WinAPI_Gl_Window_Driver::make_overlay(void*&overlay) {
     wglSetLayerPaletteEntries(hdc, 1, 1, n, palette+1);
     wglRealizeLayerPalette(hdc, 1, TRUE);
   }
-  valid(0);
+  pWindow->valid(0);
   return;
 }
 

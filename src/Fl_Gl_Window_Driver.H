@@ -136,6 +136,7 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void invalidate() {}
   virtual int flush_begin(char& valid_f);
   virtual void hide_overlay(void *& overlay);
+  virtual void hide_overlay();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
   virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
   virtual void set_gl_context(Fl_Window* w, GLContext context);
@@ -150,6 +151,7 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
 #if HAVE_GL_OVERLAY
   virtual int can_do_overlay();
   virtual int overlay_color(Fl_Color i);
+  void make_overlay(void*&overlay);
 #endif
 };
 
