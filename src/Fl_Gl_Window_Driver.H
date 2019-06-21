@@ -62,7 +62,7 @@ public:
   virtual void resize(int is_a_resize, int w, int h) {}
   virtual char swap_type();
   virtual int flush_begin(char& valid_f) {return 0;}
-  virtual void hide_overlay(void *& overlay) {}
+  virtual void gl_hide_before(void *& overlay) {} // the default implementation may be enough
   static Fl_Gl_Choice *find_begin(int m, const int *alistp);
   // Return one of these structures for a given gl mode.
   // The second argument is a glX attribute list, and is used if mode is zero.
@@ -72,7 +72,7 @@ public:
   virtual void set_gl_context(Fl_Window* w, GLContext context) {}
   virtual void delete_gl_context(GLContext) {}
   virtual void make_overlay(void* &o);
-  virtual void hide_overlay() {}
+  virtual void hide_overlay() {} // the default implementation may be enough
   virtual void make_overlay_current() {}
   virtual void redraw_overlay() {}
   virtual int can_do_overlay() {return 0;}
@@ -135,8 +135,6 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void swap_buffers();
   virtual void invalidate() {}
   virtual int flush_begin(char& valid_f);
-  virtual void hide_overlay(void *& overlay);
-  virtual void hide_overlay();
   virtual Fl_Gl_Choice *find(int m, const int *alistp);
   virtual GLContext create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer = 0);
   virtual void set_gl_context(Fl_Window* w, GLContext context);
@@ -149,6 +147,7 @@ class Fl_WinAPI_Gl_Window_Driver : public Fl_Gl_Window_Driver {
   virtual void get_list(Fl_Font_Descriptor *fd, int r);
   virtual int genlistsize();
 #if HAVE_GL_OVERLAY
+  virtual void gl_hide_before(void *& overlay);
   virtual int can_do_overlay();
   virtual int overlay_color(Fl_Color i);
   void make_overlay(void*&overlay);

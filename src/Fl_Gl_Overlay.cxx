@@ -224,18 +224,15 @@ void Fl_X11_Gl_Window_Driver::make_overlay(void *&current) {
 ////////////////////////////////////////////////////////////////
 // Windows version:
 
-void Fl_WinAPI_Gl_Window_Driver::hide_overlay(void *& overlay) {
 #if HAVE_GL_OVERLAY
+void Fl_WinAPI_Gl_Window_Driver::gl_hide_before(void *& overlay) {
   if (overlay && overlay != pWindow) {
     delete_gl_context((GLContext)overlay);
     overlay = 0;
   }
+}
 #endif
-}
 
-void Fl_WinAPI_Gl_Window_Driver::hide_overlay() {
-  Fl_Gl_Window_Driver::hide_overlay();
-}
 
 void Fl_WinAPI_Gl_Window_Driver::make_overlay_current() {
 #if HAVE_GL_OVERLAY
