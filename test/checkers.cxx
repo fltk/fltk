@@ -857,71 +857,41 @@ int VT100main() {
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Bitmap.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/fl_ask.H>
 
 //----------------------------------------------------------------
-// old 4-level NeXT images have been seperated into bitmaps so they
-// can be drawn with arbitrary colors and real transparency.  This is
-// rather tedious and perhaps fltk should provide a direct support
-// to do this:
+// Checkers pieces with built in transparency/drop shadows
+#include "pixmaps/black_checker_png.h"
+#include "pixmaps/white_checker_png.h"
+#include "pixmaps/black_checker_king_png.h"
+#include "pixmaps/white_checker_king_png.h"
 
-#include "pixmaps/black_1.xbm"
-#include "pixmaps/black_2.xbm"
-#include "pixmaps/black_3.xbm"
-#include "pixmaps/black_4.xbm"
-#include "pixmaps/white_1.xbm"
-#include "pixmaps/white_2.xbm"
-#include "pixmaps/white_3.xbm"
-#include "pixmaps/white_4.xbm"
-#include "pixmaps/blackking_1.xbm"
-#include "pixmaps/blackking_2.xbm"
-#include "pixmaps/blackking_3.xbm"
-#include "pixmaps/blackking_4.xbm"
-#include "pixmaps/whiteking_1.xbm"
-#include "pixmaps/whiteking_2.xbm"
-#include "pixmaps/whiteking_3.xbm"
-#include "pixmaps/whiteking_4.xbm"
+Fl_PNG_Image *png[4];
 
-Fl_Bitmap *bm[4][4];
-
-void make_bitmaps() {
-  if (bm[0][0]) return;
-  bm[0][0] = new Fl_Bitmap(black_1_bits, black_1_width, black_1_height);
-  bm[0][1] = new Fl_Bitmap(black_2_bits, black_1_width, black_1_height);
-  bm[0][2] = new Fl_Bitmap(black_3_bits, black_1_width, black_1_height);
-  bm[0][3] = new Fl_Bitmap(black_4_bits, black_1_width, black_1_height);
-  bm[1][0] = new Fl_Bitmap(white_1_bits, black_1_width, black_1_height);
-  bm[1][1] = new Fl_Bitmap(white_2_bits, black_1_width, black_1_height);
-  bm[1][2] = new Fl_Bitmap(white_3_bits, black_1_width, black_1_height);
-  bm[1][3] = new Fl_Bitmap(white_4_bits, black_1_width, black_1_height);
-  bm[2][0] = new Fl_Bitmap(blackking_1_bits, black_1_width, black_1_height);
-  bm[2][1] = new Fl_Bitmap(blackking_2_bits, black_1_width, black_1_height);
-  bm[2][2] = new Fl_Bitmap(blackking_3_bits, black_1_width, black_1_height);
-  bm[2][3] = new Fl_Bitmap(blackking_4_bits, black_1_width, black_1_height);
-  bm[3][0] = new Fl_Bitmap(whiteking_1_bits, black_1_width, black_1_height);
-  bm[3][1] = new Fl_Bitmap(whiteking_2_bits, black_1_width, black_1_height);
-  bm[3][2] = new Fl_Bitmap(whiteking_3_bits, black_1_width, black_1_height);
-  bm[3][3] = new Fl_Bitmap(whiteking_4_bits, black_1_width, black_1_height);
+void make_pieces() {
+  if (png[0]) return;
+  int which = 0;
+  png[which++] = new Fl_PNG_Image(NULL, pixmaps_black_checker_png,      sizeof(pixmaps_black_checker_png));
+  png[which++] = new Fl_PNG_Image(NULL, pixmaps_white_checker_png,      sizeof(pixmaps_white_checker_png));
+  png[which++] = new Fl_PNG_Image(NULL, pixmaps_black_checker_king_png, sizeof(pixmaps_black_checker_king_png));
+  png[which++] = new Fl_PNG_Image(NULL, pixmaps_white_checker_king_png, sizeof(pixmaps_white_checker_king_png));
 }
 
-#define ISIZE black_1_width
+#define ISIZE 62	// old: 56
 
 void draw_piece(int which, int x, int y) {
   if (!fl_not_clipped(x,y,ISIZE,ISIZE)) return;
   switch (which) {
-  case BLACK: which = 0; break;
-  case WHITE: which = 1; break;
-  case BLACKKING: which = 2; break;
-  case WHITEKING: which = 3; break;
-  default: return;
+    case BLACK: which = 0; break;
+    case WHITE: which = 1; break;
+    case BLACKKING: which = 2; break;
+    case WHITEKING: which = 3; break;
+    default: return;
   }
-  fl_color(FL_BLACK); bm[which][0]->draw(x, y);
-  fl_color(FL_INACTIVE_COLOR); bm[which][1]->draw(x, y);
-  fl_color(FL_SELECTION_COLOR); bm[which][2]->draw(x, y);
-  fl_color(FL_WHITE); bm[which][3]->draw(x, y);
+  png[which]->draw(x,y);
 }
 
 //----------------------------------------------------------------
@@ -934,7 +904,7 @@ public:
   void drop_piece(int);
   void animate(node* move, int backwards);
   void computer_move(int);
-  Board(int w, int h) : Fl_Double_Window(w,h) {color(15);}
+  Board(int w, int h) : Fl_Double_Window(w,h,"FLTK Checkers") {color(15);}
 };
 
 #define BOXSIZE 52
@@ -952,7 +922,7 @@ int squarex(int i) {return (usermoves(i,1)-'A')*BOXSIZE+BMOFFSET;}
 int squarey(int i) {return (usermoves(i,2)-'1')*BOXSIZE+BMOFFSET;}
 
 void Board::draw() {
-  make_bitmaps();
+  make_pieces();
   // -- draw the board itself
   fl_draw_box(box(),0,0,w(),h(),color());
   // -- draw all dark tiles
@@ -1341,6 +1311,7 @@ int main(int argc, char **argv) {
   seed = time(0);
   newgame();
 #ifdef BOTH
+  fl_register_images();
   int i = 1;
   if (Fl::args(argc, argv, i, arg) < argc) {
     fprintf(stderr," -t : use VT100 display\n", Fl::help);

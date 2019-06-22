@@ -338,9 +338,13 @@ blocks$(EXEEXT): blocks.o
 	$(OSX_ONLY) mkdir blocks.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
 
-checkers$(EXEEXT): checkers.o
+checkers$(EXEEXT): pixmaps/black_checker_png.h \
+		   pixmaps/white_checker_png.h \
+		   pixmaps/black_checker_king_png.h \
+		   pixmaps/white_checker_king_png.h \
+		   checkers.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -f -r checkers.app/Contents/MacOS
 	$(OSX_ONLY) mkdir checkers.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
