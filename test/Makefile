@@ -580,6 +580,16 @@ cairo_test$(EXEEXT): cairo_test.o
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
+# Checkers .png -> .h conversion
+pixmaps/black_checker_king_png.h: pixmaps/black_checker_king.png
+	xxd -i $< > $@
+pixmaps/white_checker_king_png.h: pixmaps/white_checker_king.png
+	xxd -i $< > $@
+pixmaps/black_checker_png.h: pixmaps/black_checker.png
+	xxd -i $< > $@
+pixmaps/white_checker_png.h: pixmaps/white_checker.png
+	xxd -i $< > $@
+
 #
 # End of "$Id$".
 #
