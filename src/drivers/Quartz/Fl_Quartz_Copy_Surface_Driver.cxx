@@ -101,10 +101,9 @@ void Fl_Quartz_Copy_Surface_Driver::untranslate() {
 
 void Fl_Quartz_Copy_Surface_Driver::draw_decorated_window(Fl_Window *win, int x_offset, int y_offset) {
   CALayer *layer = Fl_Cocoa_Window_Driver::driver(win)->get_titlebar_layer();
-  if (!layer) {
+  if (!layer || fl_mac_os_version >= 101500) {
     return Fl_Widget_Surface::draw_decorated_window(win, x_offset, y_offset);
   }
-  CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextSaveGState(gc);
   int bt = win->decorated_h() - win->h();
   CGContextTranslateCTM(gc, x_offset - 0.5, y_offset + bt - 0.5);
