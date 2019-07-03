@@ -522,8 +522,8 @@ const Fl_Menu_Item *Fl_Menu_::menu_end() {
     memcpy(newMenu, local_array, n * sizeof(Fl_Menu_Item));
     if (value_)
       value_ = newMenu + value_offset;
+    fl_menu_array_owner = 0;
   }
-  fl_menu_array_owner = 0;
   return menu_;
 }
 
