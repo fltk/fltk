@@ -380,6 +380,8 @@ build tools are.  The CMake website is a good source of information on
 this file.  Here's one for MinGW under Linux.
 
 ----
+# CMake Toolchain File for MinGW Cross Compilation
+
 # the name of the target operating system
 set(CMAKE_SYSTEM_NAME Windows)
 
@@ -399,6 +401,11 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_FIND_ROOT_PATH}/usr CACHE FILEPATH
    "install path prefix")
+
+# initialize required linker flags
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-static-libgcc -static-libstdc++")
+
+# end of toolchain file
 ----
 
 Not too tough.  The other thing you need is a native installation of FLTK
