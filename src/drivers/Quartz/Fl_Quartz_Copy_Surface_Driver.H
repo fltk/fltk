@@ -28,8 +28,6 @@ class Fl_Quartz_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
 protected:
   CFMutableDataRef pdfdata;
   CGContextRef gc;
-  void prepare_copy_pdf_and_tiff(int w, int h);
-  void init_PDF_context(int w, int h);
   static size_t MyPutBytes(void* info, const void* buffer, size_t count);
   Fl_Quartz_Copy_Surface_Driver(int w, int h);
   // implemented in Fl_cocoa.mm because uses Objective-c
