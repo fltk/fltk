@@ -3,7 +3,7 @@
 //
 // Printing support for Windows for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -274,6 +274,9 @@ int Fl_WinAPI_Printer_Driver::end_page (void)
       abortPrint = TRUE;
       fl_alert ("EndPage error %d", prerr);
       rsult = 1;
+    }
+    else { // make sure rotation is not transferred to next page
+      ModifyWorldTransform(hPr, NULL, MWT_IDENTITY);
     }
   }
   return rsult;
