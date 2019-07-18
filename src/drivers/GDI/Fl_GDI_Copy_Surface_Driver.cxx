@@ -23,6 +23,7 @@
 #include <FL/platform.H>
 #include "Fl_GDI_Graphics_Driver.H"
 #include "../WinAPI/Fl_WinAPI_Screen_Driver.H"
+#include <FL/Fl_Image_Surface.H>
 #include <windows.h>
 
 class Fl_GDI_Copy_Surface_Driver : public Fl_Copy_Surface_Driver {
@@ -74,7 +75,21 @@ Fl_GDI_Copy_Surface_Driver::~Fl_GDI_Copy_Surface_Driver() {
   if ( hmf != NULL ) {
     if ( OpenClipboard (NULL) ){
       EmptyClipboard ();
+      // put first the vectorial form of the graphics in the clipboard
       SetClipboardData (CF_ENHMETAFILE, hmf);
+      // then put a BITMAP version of the graphics in the clipboard
+      float scaling = driver()->scale();
+      int W = width * scaling, H = height * scaling;
+      RECT rect = {0, 0, W, H};
+      Fl_Image_Surface *surf = new Fl_Image_Surface(W, H);
+      Fl_Surface_Device::push_current(surf);
+      fl_color(FL_WHITE);    // draw white background
+      fl_rectf(0, 0, W, H);
+      PlayEnhMetaFile((HDC)surf->driver()->gc(), hmf, &rect); // draw metafile to offscreen buffer
+      SetClipboardData(CF_BITMAP, surf->offscreen());
+      Fl_Surface_Device::pop_current();
+      delete surf;
+      
       CloseClipboard ();
     }
     DeleteEnhMetaFile(hmf);
