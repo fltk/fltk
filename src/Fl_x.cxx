@@ -857,18 +857,56 @@ const char * fl_selection_type[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2] = {0,0};
 
+static void read_int(uchar *c, int& i) {
+  i = *c;
+  i |= (*(++c))<<8;
+  i |= (*(++c))<<16;
+  i |= (*(++c))<<24;
+}
+
+// turn BMP image FLTK produced by create_bmp() back to Fl_RGB_Image
+static Fl_RGB_Image *own_bmp_to_RGB(char *bmp) {
+  int w, h;
+  read_int((uchar*)bmp + 18, w);
+  read_int((uchar*)bmp + 22, h);
+  int R=(3*w+3)/4 * 4; // the number of bytes per row, rounded up to multiple of 4
+  bmp +=  54;
+  uchar *data = new uchar[w*h*3];
+  uchar *p = data;
+  for (int i = h-1; i >= 0; i--) {
+    char *s = bmp + i * R;
+    for (int j = 0; j < w; j++) {
+      *p++=s[2];
+      *p++=s[1];
+      *p++=s[0];
+      s+=3;
+    }
+  }
+  Fl_RGB_Image *img = new Fl_RGB_Image(data, w, h, 3);
+  img->alloc_array = 1;
+  return img;
+}
+
 // Call this when a "paste" operation happens:
 void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (fl_i_own_selection[clipboard]) {
     // We already have it, do it quickly without window server.
+    if (type == Fl::clipboard_plain_text && fl_selection_type[clipboard] == type) {
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
     // However, for now, we only paste text in this function
-    if (fl_selection_type[clipboard] != Fl::clipboard_plain_text) return; //TODO: allow copy/paste of image within same app
     Fl::e_text = fl_selection_buffer[clipboard];
     Fl::e_length = fl_selection_length[clipboard];
     if (!Fl::e_text) Fl::e_text = (char *)"";
-    receiver.handle(FL_PASTE);
+    } else if (clipboard == 1 && type == Fl::clipboard_image && fl_selection_type[1] == type) {
+      Fl::e_clipboard_data = own_bmp_to_RGB(fl_selection_buffer[1]);
+      Fl::e_clipboard_type = Fl::clipboard_image;
+    } else return;
+    int retval = receiver.handle(FL_PASTE);
+    if (retval == 0 && type == Fl::clipboard_image) {
+      delete (Fl_RGB_Image*)Fl::e_clipboard_data;
+      Fl::e_clipboard_data = NULL;
+    }
     return;
   }
   // otherwise get the window server to return it:
@@ -881,6 +919,9 @@ void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
 
 int Fl::clipboard_contains(const char *type)
 {
+  if (fl_i_own_selection[1]) {
+    return fl_selection_type[1] == type;
+  }
   XEvent event;
   Atom actual; int format; unsigned long count, remaining, i = 0;
   unsigned char* portion = NULL;
@@ -888,8 +929,8 @@ int Fl::clipboard_contains(const char *type)
   if (!win || !fl_xid(win)) return 0;
   XConvertSelection(fl_display, CLIPBOARD, TARGETS, CLIPBOARD, fl_xid(win), CurrentTime);
   XFlush(fl_display);
-  do  { 
-    XNextEvent(fl_display, &event); 
+  do  {
+    XNextEvent(fl_display, &event);
     if (event.type == SelectionNotify && event.xselection.property == None) return 0;
     i++; 
   }
