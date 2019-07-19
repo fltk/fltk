@@ -128,7 +128,18 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   if ( hmf != NULL ) {
     if ( OpenClipboard (NULL) ){
       EmptyClipboard ();
+      // first, put vectorial version of graphics in the clipboard
       SetClipboardData (CF_ENHMETAFILE, hmf);
+      // next, put BITMAP version of the graphics in the clipboard
+      RECT rect = {0, 0, width, height};
+      Fl_Offscreen of = CreateCompatibleBitmap(fl_GetDC(0), width, height);
+      fl_begin_offscreen(of);
+      fl_color(FL_WHITE);    // draw white background
+      fl_rectf(0, 0, width, height);
+      PlayEnhMetaFile((HDC)fl_gc, hmf, &rect); // draw metafile to offscreen buffer
+      fl_end_offscreen();
+      SetClipboardData(CF_BITMAP, (HBITMAP)of);
+      fl_delete_offscreen(of);
       CloseClipboard ();
     }
     DeleteEnhMetaFile(hmf);
