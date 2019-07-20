@@ -40,7 +40,9 @@
  \endcode
  Platform details:
  \li Windows: Transparent RGB images copy without transparency.
- The graphical data are copied to the clipboard as an 'enhanced metafile'.
+ The graphical data are copied to the clipboard in two formats: 1) as an 'enhanced metafile';
+ 2) as a color bitmap. Applications to which the clipboard content is pasted can use the format
+ that suits them best.
  \li Mac OS: The graphical data are copied to the clipboard (a.k.a. pasteboard) in two 'flavors':
  1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image. 
  Applications to which the clipboard content is pasted can use the flavor that suits them best.
