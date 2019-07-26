@@ -37,6 +37,14 @@ struct FL_BLINE;
   editor or spreadsheet!  But it is useful for showing a vertical list of
   named objects to the user.
   
+  \image html  fl_hold_browser.png "Fl_Hold_Browser"
+  \image latex fl_hold_browser.png "Fl_Hold_Browser" width=4cm
+
+  \par
+
+  \image html  fl_multi_browser.png "Fl_Multi_Browser"
+  \image latex fl_multi_browser.png "Fl_Multi_Browser" width=4cm
+
   Each line in the browser is identified by number. <I>The numbers
   start at one</I> (this is so that zero can be reserved for "no line" in
   the selective browsers). <I>Unless otherwise noted, the methods do not
