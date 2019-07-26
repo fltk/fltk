@@ -28,6 +28,9 @@
   \class Fl_Choice
   \brief A button that is used to pop up a menu.
 
+  \image html choice.png
+  \image latex choice.png  "Fl_Choice" width=4cm
+
   This is a button that, when pushed, pops up a menu (or hierarchy of menus)
   defined by an array of Fl_Menu_Item objects.
   Motif calls this an OptionButton.
@@ -62,8 +65,6 @@
   you pick the item with the mouse.  The '\&' character in item names are
   only looked at when the menu is popped up, however.
 
-  \image html choice.png
-  \image latex choice.png  "Fl_Choice" width=4cm
   \todo Refactor the doxygen comments for Fl_Choice changed() documentation.
 
   \li <tt>int Fl_Widget::changed() const</tt>
@@ -79,6 +80,27 @@
       The default down box type is \c FL_DOWN_BOX.
   \li <tt>void Fl_Choice::down_box(Fl_Boxtype b)</tt>
       Sets the current down box type to \p b.
+
+ Simple example:
+ \par
+ \code
+   #include <FL/Fl.H>
+   #include <FL/Fl_Window.H>
+   #include <FL/Fl_Choice.H>
+   int main() {
+     Fl_Window *win = new Fl_Window(300,200);
+     Fl_Choice *choice = new Fl_Choice(100,10,100,25,"Choice:");
+     choice->add("Zero");
+     choice->add("One");
+     choice->add("Two");
+     choice->add("Three");
+     choice->value(2);    // make "Two" selected by default (zero based!)
+     win->end();
+     win->show();
+     return Fl::run();
+   }
+ \endcode
+     
  */
 class FL_EXPORT Fl_Choice : public Fl_Menu_ {
 protected:
