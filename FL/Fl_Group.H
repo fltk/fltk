@@ -205,19 +205,20 @@ public:
   This is a dummy class that allows you to end a Fl_Group in a constructor list of a
   class:
   \code 
-   class MyClass {
-   Fl_Group group;
-   Fl_Button button_in_group;
-   Fl_End end;
-   Fl_Button button_outside_group;
-   MyClass();
+  class MyClass {
+    Fl_Group group;
+    Fl_Button button_in_group;
+    Fl_End end;
+    Fl_Button button_outside_group;
+    MyClass();
   };
   MyClass::MyClass() :
-   group(10,10,100,100),
-   button_in_group(20,20,60,30),
-   end(),
-   button_outside_group(10,120,60,30)
-  {} 
+    group(10,10,100,100),
+    button_in_group(20,20,60,30),
+    end(),
+    button_outside_group(10,120,60,30) {
+    [..ctor code..]
+  } 
   \endcode
 */
 class FL_EXPORT Fl_End {
