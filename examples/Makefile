@@ -2,10 +2,11 @@ include Makefile.FLTK
 
 RM    = rm -f
 SHELL = /bin/sh
-.SILENT:
+#.SILENT:
 
 # Executables
-ALL = clipboard$(EXEEXT) \
+ALL = browser-simple$(EXEEXT) \
+      clipboard$(EXEEXT) \
       draggable-group$(EXEEXT) \
       fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
