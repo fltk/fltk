@@ -2,7 +2,7 @@ include Makefile.FLTK
 
 RM    = rm -f
 SHELL = /bin/sh
-#.SILENT:
+.SILENT:
 
 # Executables
 ALL = browser-simple$(EXEEXT) \
