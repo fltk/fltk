@@ -3,7 +3,7 @@
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -460,6 +460,81 @@ void Fl_Color_Chooser::mode(int newMode)
   choice.do_callback();
 }
 
+// Small local helper function:
+// Copy hex color value ('RRGGBB') of Fl_Color_Chooser to clipboard.
+// Always returns 1 (event was used).
+
+static int copy_rgb(double r, double g, double b) {
+  char buf[8];
+  int len;
+  len = sprintf(buf, "%02X%02X%02X", int(r * 255 + .5), int(g * 255 + .5), int(b * 255 + .5));
+  Fl::copy(buf, len, 1);
+  // printf("copied '%s' to clipboard\n", buf); // Debug
+  return 1;
+}
+
+/**
+  Handles all events received by this widget.
+
+  This specific handle() method processes the standard 'copy' function
+  as seen in other input widgets. It copies the current color value to
+  the clipboard as a string in RGB format ('RRGGBB').
+
+  This format is independent of the Fl_Color_Chooser display format
+  setting. No other formats are supplied.
+
+  The keyboard events handled are:
+    - ctrl-c
+    - ctrl-x
+    - ctrl-Insert
+
+  All other events are processed by the parent class \c Fl_Group.
+
+  This enables the \b user to choose a color value, press 
+  \p ctrl-c to copy the value to the clipboard and paste it into
+  a color selection widget in another application window or any
+  other text input (e.g. a preferences dialog or an editor).
+
+  \note Keyboard event handling by the current focus widget has
+    priority, hence moving the focus to one of the buttons or
+    selecting text in one of the input widgets effectively
+    disables this special method.
+
+  \param[in]	e  current event
+  \returns	1  if event has been handled, 0 otherwise
+
+  \see Fl_Group::handle(int)
+*/
+
+int Fl_Color_Chooser::handle(int e) {
+
+  unsigned int mods = Fl::event_state() & (FL_META | FL_CTRL | FL_ALT);
+  unsigned int shift = Fl::event_state() & FL_SHIFT;
+
+  switch (e) {
+    case FL_KEYBOARD:
+    case FL_SHORTCUT:
+      // ignore CTRL-SHIFT-C, CTRL-SHIFT-X and CTRL-SHIFT-Insert
+      if (shift)
+	return Fl_Group::handle(e);
+      switch (Fl::event_key()) {
+	case FL_Insert:
+	  if (mods == FL_CTRL)
+	    return copy_rgb(r_, g_, b_);
+	  break;
+	case 'c':
+	case 'x':
+	  if (mods == FL_COMMAND)
+	    return copy_rgb(r_, g_, b_);
+	  break;
+	default:
+	  break;
+      }
+    default:
+      break;
+  }
+  return Fl_Group::handle(e);
+}
 
 ////////////////////////////////////////////////////////////////
 
