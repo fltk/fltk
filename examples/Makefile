@@ -14,6 +14,7 @@ ALL = browser-simple$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
       howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
+      howto-remap-numpad-keyboard-keys$(EXEEXT) \
       howto-simple-svg$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
