@@ -4208,8 +4208,8 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, i
   BOOL need_subimage = x || y || w != win->w() || h != win->h();
   if (need_subimage) {
     float s = Fl::screen_driver()->scale(0);
-    int resolution = Fl_Cocoa_Window_Driver::driver(win->top_window())->mapped_to_retina() ? 2 : 1;
-    CGRect rect = CGRectMake(x * s * resolution, y * s * resolution, w * s * resolution, h * s * resolution);
+    if (Fl_Cocoa_Window_Driver::driver(win)->mapped_to_retina()) s *= 2;
+    CGRect rect = CGRectMake(x * s, y * s, w * s, h * s);
     cgimg = CGImageCreateWithImageInRect(cgimg, rect);
   }
   bitmap = [[NSBitmapImageRep alloc] initWithCGImage:cgimg];//10.5
