@@ -339,7 +339,8 @@ void Fl_Cocoa_Screen_Driver::offscreen_size(Fl_Offscreen off, int &width, int &h
   height = CGBitmapContextGetHeight(off);
 }
 
-Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *window)
+Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *window,
+                                                         bool may_capture_subwins, bool *did_capture_subwins)
 {
   int bpp, bpr, depth = 4;
   uchar *base, *p;
@@ -374,7 +375,8 @@ Fl_RGB_Image *Fl_Cocoa_Screen_Driver::read_win_rectangle(int X, int Y, int w, in
     bpr = 0;
   } else { // read from window
     Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
-    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h, false);
+    CGImageRef cgimg = d->CGImage_from_window_rect(X, Y, w, h, may_capture_subwins);
+    if (did_capture_subwins) *did_capture_subwins = may_capture_subwins;
     if (!cgimg) {
       return NULL;
     }

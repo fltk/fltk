@@ -4255,13 +4255,13 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
 #endif
     }
   }
-  if (!bitmap) return nil;
+  if (!capture_subwins || !bitmap) return bitmap;
 
   // capture also subwindows
   NSArray *children = [fl_xid(win) childWindows]; // 10.2
   NSEnumerator *enumerator = [children objectEnumerator];
   id child;
-  while (capture_subwins && ((child = [enumerator nextObject]) != nil)) {
+  while ((child = [enumerator nextObject]) != nil) {
     if (![child isKindOfClass:[FLWindow class]]) continue;
     Fl_Window *sub = [(FLWindow*)child getFl_Window];
     CGRect rsub = CGRectMake(sub->x(), win->h() -(sub->y()+sub->h()), sub->w(), sub->h());
@@ -4272,7 +4272,9 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
                                                              win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height);
     if (childbitmap) {
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
-      if ([bitmap pixelsWide] > w && [childbitmap pixelsWide] == clip.size.width) childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
+      if (!win->as_gl_window() && Fl_Cocoa_Window_Driver::driver(win)->mapped_to_retina() && sub->as_gl_window() && !Fl::use_high_res_GL()) {
+        childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
+      }
       write_bitmap_inside(bitmap, w*s, childbitmap,
                           (clip.origin.x - x)*s, (win->h() - clip.origin.y - clip.size.height - y)*s );
     }

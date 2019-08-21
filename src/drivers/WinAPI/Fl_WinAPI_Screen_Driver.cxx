@@ -488,7 +488,8 @@ Fl_WinAPI_Screen_Driver::read_win_rectangle(
                                             int   Y,		// I - Top position
                                             int   w,		// I - Width of area to read
                                             int   h,		// I - Height of area to read
-                                            Fl_Window *win)     // I - window to capture from or NULL to capture from current offscreen
+                                            Fl_Window *win,     // I - window to capture from or NULL to capture from current offscreen
+                                            bool may_capture_subwins, bool *did_capture_subwins)
 {
   float s = Fl_Surface_Device::surface()->driver()->scale();
   int ws, hs;

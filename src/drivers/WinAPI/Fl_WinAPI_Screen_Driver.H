@@ -75,7 +75,7 @@ public:
   virtual void remove_timeout(Fl_Timeout_Handler cb, void *argp);
   virtual int dnd(int unused);
   virtual int compose(int &del);
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win);
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
   Fl_RGB_Image *read_win_rectangle_unscaled(int X, int Y, int w, int h, Fl_Window *win);
   virtual int get_mouse(int &x, int &y);
   virtual void enable_im();

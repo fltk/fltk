@@ -190,17 +190,18 @@ Image depths can differ between "to" and "from".
 Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                           Fl_RGB_Image *full_img)
 {
+  bool captured_subwin = false;
   if ( g->as_gl_window() ) {
     Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
     if (!plugin) return full_img;
     full_img = plugin->rectangle_capture(g, x, y, w, h);
   }
   else if ( g->as_window() ) {
-    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h, g->as_window());
+    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h, g->as_window(), true, &captured_subwin);
   }
   if (!full_img) return NULL;
   float full_img_scale =  (full_img && w > 0 ? float(full_img->data_w())/w : 1);
-  int n = g->children();
+  int n = (captured_subwin ? 0 : g->children());
   for (int i = 0; i < n; i++) {
     Fl_Widget *c = g->child(i);
     if ( !c->visible() || !c->as_group()) continue;

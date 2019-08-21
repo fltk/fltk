@@ -745,7 +745,7 @@ extern "C" {
   }
 }
 
-Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win)
+Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins)
 {
   XImage	*image;		// Captured image
   int		i, maxindex;	// Looping vars
