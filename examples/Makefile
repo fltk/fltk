@@ -12,6 +12,7 @@ ALL = browser-simple$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
+      howto-draw-an-x$(EXEEXT) \
       howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-remap-numpad-keyboard-keys$(EXEEXT) \
