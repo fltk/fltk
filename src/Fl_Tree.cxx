@@ -219,7 +219,7 @@ int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
   return(changed);
 }
 
-enum { PushedNothing=0, PushedOpenClose, PushedItem };
+enum { PUSHED_NONE=0, PUSHED_OPEN_CLOSE, PUSHED_USER_ICON, PUSHED_LABEL };
 /// Standard FLTK event handler for this widget.
 /// \todo add Fl_Widget_Tracker (see Fl_Browser_.cxx::handle())
 int Fl_Tree::handle(int e) {
@@ -386,9 +386,10 @@ int Fl_Tree::handle(int e) {
       if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
       Fl_Tree_Item *item = _root->find_clicked(_prefs, 0);
       // Tell FL_DRAG what was pushed
-      _lastpushed = item ? (item->event_on_collapse_icon(_prefs) ? PushedOpenClose  // open/close icon clicked
-                                                                 : PushedItem)      // item clicked
-                                                                 : PushedNothing;   // none of the above
+      _lastpushed = item ? item->event_on_collapse_icon(_prefs) ? PUSHED_OPEN_CLOSE  // open/close icon clicked
+                         : item->event_on_user_icon(_prefs)     ? PUSHED_USER_ICON   // usericon clicked
+                                                                : PUSHED_LABEL       // label clicked
+                                                                : PUSHED_NONE;       // none of the above
       if ( !item ) {		// clicked, but not on an item?
         _lastselect = 0;
 	switch ( _prefs.selectmode() ) {
@@ -407,8 +408,7 @@ int Fl_Tree::handle(int e) {
       if ( Fl::event_button() == FL_LEFT_MOUSE ) {
 	if ( item->event_on_collapse_icon(_prefs) ) {	// collapse icon clicked?
 	  open_toggle(item);				// toggle open (handles redraw)
-	} else if ( item->event_on_label(_prefs) && 	// label clicked?
-		  (!item->widget() || !Fl::event_inside(item->widget())) ) {	// not inside widget
+	} else if ( !item->widget() || !Fl::event_inside(item->widget()) ) {  // not inside widget()
 	  switch ( _prefs.selectmode() ) {
 	    case FL_TREE_SELECT_NONE:
 	      break;
@@ -440,8 +440,11 @@ int Fl_Tree::handle(int e) {
       break;
     }
     case FL_DRAG: {
-      // FL_PUSH not on item? Ignore drag to prevent unexpected selections (STR #3527)
-      if ( _lastpushed != PushedItem ) return 0;
+      // FL_PUSH outside item or on open/close?
+      //     Ignore drag to prevent unexpected selections (STR #3527)
+      //
+      if ( _lastpushed == PUSHED_NONE ||
+           _lastpushed == PUSHED_OPEN_CLOSE ) return 0;
 
       // Do scrolling first
 
