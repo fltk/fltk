@@ -292,7 +292,8 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Reason _callback_reason;		// reason for the callback
   Fl_Tree_Prefs  _prefs;			// all the tree's settings
   int            _scrollbar_size;		// size of scrollbar trough
-  Fl_Tree_Item *_lastselect;
+  Fl_Tree_Item  *_lastselect;                   // last selected item
+  char           _lastpushed;                   // entity FL_PUSH occurred on: 0=nothing, 1=open/close, 2=item
   void fix_scrollbar_order();
 
 protected:
