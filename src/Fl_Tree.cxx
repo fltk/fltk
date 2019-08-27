@@ -506,47 +506,42 @@ int Fl_Tree::handle(int e) {
     case FL_RELEASE:
       if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
           Fl::event_button() == FL_LEFT_MOUSE) {
-        Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
-
-        if (item && _lastselect && item != _lastselect &&
-            Fl::event_x() >= item->label_x()) {
-          //printf("Would drag '%s' to '%s'\n", _lastselect->label(), item->label());
+        Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item mouse is over (vertically)
+        if (item && 					     // mouse over valid item?
+	    _lastselect && 				     // item being dragged is valid?
+	    item != _lastselect) {			     // item we're over not same as drag item?
           // Are we dropping above or below the target item?
-          const int h = Fl::event_y() - item->y();
-          const int mid = item->h() / 2;
-          const bool before = h < mid;
-          //printf("Dropping %s it\n", before ? "before" : "after");
+          const int h = Fl::event_y() - item->y();	     // mouse relative to item's top/left
+          const int mid = item->h() / 2;		     // middle of item relative to item's top/left
+          const bool is_above = h < mid;		     // is mouse above middle of item?
+          //printf("Dropping %s target item\n", is_above ? "above" : "below");
 
-          // Do nothing if it would be a no-op
-          if ((before && prev(item) != _lastselect) ||
-              (!before && next(item) != _lastselect)) {
-            Fl_Tree_Item *parent = item->parent();
-
-            if (parent) {
-              int pos = parent->find_child(item);
-              if (!before)
-                pos++;
-
-              // Special case: trying to drop right before a folder
-              if (item->children() && item->is_open() && !before) {
-                parent = item;
-                pos = 0;
-              }
-
-              // If we're moving inside the same parent, use the below/above methods
-              if (_lastselect->parent() == parent) {
-                if (before) {
-                  _lastselect->move_above(item);
-                } else {
-                  _lastselect->move_below(item);
-                }
-              } else {
-                _lastselect->move_into(parent, pos);
-              }
-
-              redraw();
-              do_callback_for_item(_lastselect, FL_TREE_REASON_DRAGGED);
-            }
+	  Fl_Tree_Item *target = is_above ? prev(item) : next(item); // target item
+          if ( target != _lastselect ) {                     // Don't drop on self
+            Fl_Tree_Item *parent = item->parent();	     // find parent for item mouse is over
+	    if ( !parent ) {				     // no parent (root)?
+	      // Special case for root; Drop as first child
+	      _lastselect->move_into(root(), 0);
+	    } else {
+	      // Not root..
+	      if (item->children() && item->is_open() && !is_above) {
+	        // Special case: Drop onto open folder below midline?
+		//    Drop as first child (pos=0)
+		//
+		_lastselect->move_into(item, 0);	     // STR #3432
+	      } else if (_lastselect->parent() == parent) {
+		// If we're moving inside same parent, use the below/above methods
+		if (is_above) _lastselect->move_above(item);
+		else          _lastselect->move_below(item);
+	      } else {
+		// Moving to different parent..
+		int pos = parent->find_child(item);	// find position of item in parent
+		if (!is_above) pos++;			// below? next position down
+		_lastselect->move_into(parent, pos);	// move item into parent at position
+	      }
+	    }
+	    redraw();
+	    do_callback_for_item(_lastselect, FL_TREE_REASON_DRAGGED);
           }
         }
         redraw();
@@ -751,19 +746,18 @@ void Fl_Tree::draw() {
   }
 
   // Draw dragging line
-  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&
-      Fl::pushed() == this) {
+  if (_prefs.selectmode() == FL_TREE_SELECT_SINGLE_DRAGGABLE &&		// drag mode?
+      Fl::pushed() == this) {						// item clicked is the one we're drawing?
 
     Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
-    if (item && item != _item_focus) {
-      // Are we dropping above or before the target item?
-      const int h = Fl::event_y() - item->y();
-      const int mid = item->h() / 2;
-      const bool before = h < mid;
-
+    if (item && 					 // we're over a valid item?
+        item != _item_focus) {				 // item doesn't have keyboard focus?
+      // Are we dropping above or below the target item?
+      const int h = Fl::event_y() - item->y();	         // mouse relative to item's top/left
+      const int mid = item->h() / 2;		         // middle of item relative to item's top/left
+      const bool is_above = h < mid;		         // is mouse above middle of item?
       fl_color(FL_BLACK);
-
-      int tgt = item->y() + (before ? 0 : item->h());
+      int tgt = item->y() + (is_above ? 0 : item->h());
       fl_line(item->x(), tgt, item->x() + item->w(), tgt);
     }
   }
