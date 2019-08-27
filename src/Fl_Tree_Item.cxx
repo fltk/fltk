@@ -1218,8 +1218,12 @@ int Fl_Tree_Item::event_on_user_icon(const Fl_Tree_Prefs &prefs) const {
   return 1;                                             // must be inside usericon by elimination
 }
 
+/// Was event anywhere on the item?
+int Fl_Tree_Item::event_on_item(const Fl_Tree_Prefs &prefs) const {
+    return(event_inside(_xywh) ? 1 : 0);
+}
+
 /// Was event on the label() of this item?
-///
 int Fl_Tree_Item::event_on_label(const Fl_Tree_Prefs &prefs) const {
   if ( is_visible() && is_active() ) {
     return(event_inside(_label_xywh) ? 1 : 0);
