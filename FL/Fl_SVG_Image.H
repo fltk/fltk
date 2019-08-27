@@ -100,6 +100,34 @@ struct NSVGimage;
  }
  \endcode
 
+ Example of fitting an svg image to a resizable Fl_Box:
+ \code
+ #include <FL/Fl_Window.H>
+ #include <FL/Fl_SVG_Image.H>
+ #include <FL/Fl_Box.H>
+ 
+ class resizable_box : public Fl_Box {
+ public:
+    resizable_box(int w, int h) : Fl_Box(0, 0, w, h, NULL) {}
+    virtual void resize(int x, int y, int w, int h) {
+     image()->scale(w, h);
+     Fl_Box::resize(x, y, w, h);
+    }
+ };
+ 
+ int main(int argc, char **argv) {
+   Fl_Window *win = new Fl_Window(130, 130);
+   resizable_box *box = new resizable_box(win->w(), win->h());
+   Fl_SVG_Image *svg = new Fl_SVG_Image("/path/to/image.svg");
+   box->image(svg);
+   svg->scale(box->w(), box->h());
+   win->end();
+   win->resizable(win);
+   win->show(argc, argv);
+   return Fl::run();
+ }
+ \endcode
+
  */
 class FL_EXPORT Fl_SVG_Image : public Fl_RGB_Image {
 private:
