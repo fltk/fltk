@@ -492,17 +492,20 @@ int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
     case 0:	// "above"
       from_parent = this->parent();
       to_parent   = item->parent();
+      if ( !from_parent || !to_parent ) return -1;
       from        = from_parent->find_child(this);
       to          = to_parent->find_child(item);
       break;
     case 1:	// "below"
       from_parent = this->parent();
       to_parent   = item->parent();
+      if ( !from_parent || !to_parent ) return -1;
       from        = from_parent->find_child(this);
       to          = to_parent->find_child(item);
       break;
     case 2:	// "into"
       from_parent = this->parent();
+      if ( !from_parent ) return -1;
       to_parent   = item;
       from        = from_parent->find_child(this);
       to          = pos;
