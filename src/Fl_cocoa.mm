@@ -2178,7 +2178,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     Fl_Window *window = [(FLWindow*)[self window] getFl_Window];
     Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
     bool previous = d->mapped_to_retina();
-    NSView *view = window->parent() ? [fl_xid(window->top_window()) contentView] : self;
+    NSView *view = (window->parent() && !window->as_gl_window()) ? [fl_xid(window->top_window()) contentView] : self;
     if (view) {
       NSSize s = [view convertSizeToBacking:NSMakeSize(10, 10)]; // 10.7
       d->mapped_to_retina( int(s.width + 0.5) > 10 );
