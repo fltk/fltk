@@ -213,7 +213,7 @@ void template_delete_cb(Fl_Button *, void *) {
 
 void template_load() {
   int i;
-  char name[1024], filename[1024], path[1024], *ptr;
+  char name[1024], filename[1400], path[1024], *ptr;
   struct dirent **files;
   int num_files;
   
