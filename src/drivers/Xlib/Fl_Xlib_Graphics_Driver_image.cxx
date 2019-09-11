@@ -776,8 +776,9 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
   static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+  static XRenderPictFormat *dstfmt = XRenderFindVisualFormat(fl_display, fl_visual->visual);
   Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
-  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
     return 0;
