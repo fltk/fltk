@@ -143,7 +143,7 @@ void Fl_Xlib_Graphics_Driver::copy_offscreen_with_alpha(int x, int y, int w, int
   XRenderPictureAttributes srcattr;
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   static XRenderPictFormat *srcfmt = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
-  static XRenderPictFormat *dstfmt = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
+  static XRenderPictFormat *dstfmt = XRenderFindVisualFormat(fl_display, fl_visual->visual);
 
   Picture src = XRenderCreatePicture(fl_display, pixmap, srcfmt, 0, &srcattr);
   Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
