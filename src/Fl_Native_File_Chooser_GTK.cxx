@@ -24,6 +24,7 @@
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <dlfcn.h>   // for dlopen et al
+#include "drivers/X11/Fl_X11_System_Driver.H"
 #endif
 #include <locale.h>  // for setlocale
 
@@ -159,10 +160,6 @@ static XX_g_slist_length fl_g_slist_length = NULL;
 typedef void (*XX_g_slist_free) (GSList *);
 static XX_g_slist_free fl_g_slist_free = NULL;
 
-// gboolean gtk_init_check (int *argc, char ***argv);
-typedef gboolean (*XX_gtk_init_check)(int *, char ***);
-static XX_gtk_init_check fl_gtk_init_check = NULL;
-
 // void gtk_widget_destroy (GtkWidget *widget);
 typedef void (*XX_gtk_widget_destroy) (GtkWidget *);
 static XX_gtk_widget_destroy fl_gtk_widget_destroy = NULL;
@@ -262,9 +259,9 @@ static XX_gtk_widget_show_now fl_gtk_widget_show_now = NULL;
 typedef GdkWindow* (*XX_gtk_widget_get_window)(GtkWidget *);
 static XX_gtk_widget_get_window fl_gtk_widget_get_window = NULL;
 
-// Window gdk_x11_drawable_get_xid(GdkWindow *);
-typedef Window (*XX_gdk_x11_drawable_get_xid)(GdkWindow *);
-static XX_gdk_x11_drawable_get_xid fl_gdk_x11_drawable_get_xid = NULL;
+// Window gdk_x11_drawable_get_xid(GdkWindow *); or gdk_x11_window_get_xid
+typedef Window (*gdk_to_X11_t)(GdkWindow*);
+static gdk_to_X11_t fl_gdk_to_X11 = NULL;
 
 // GtkWidget *gtk_check_button_new_with_label(const gchar *);
 typedef GtkWidget* (*XX_gtk_check_button_new_with_label)(const gchar *);
@@ -492,15 +489,8 @@ static void run_response_handler(GtkDialog *dialog, gint response_id, gpointer d
 int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
 {
   int result = 1;
-  static int have_gtk_init = 0;
   char *p;
-  
-  if(!have_gtk_init) {
-    have_gtk_init = -1;
-    int ac = 0;
-    fl_gtk_init_check(&ac, NULL);
-  }
-  
+
   if(gtkw_ptr) { // discard the previous dialog widget
     fl_gtk_widget_destroy (gtkw_ptr);
     gtkw_ptr = NULL;
@@ -611,7 +601,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
   if (firstw) {
     GdkWindow* gdkw = fl_gtk_widget_get_window(gtkw_ptr);
-    Window xw = fl_gdk_x11_drawable_get_xid(gdkw); // get the X11 ref of the GTK window
+    Window xw = fl_gdk_to_X11(gdkw); // get the X11 ref of the GTK window
     XSetTransientForHint(fl_display, xw, fl_xid(firstw)); // set the GTK window transient for the last FLTK win
     }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
@@ -701,57 +691,22 @@ fprintf(stderr, "%s\n", pc_dl_error);       \
 did_find_GTK_libs = 0;                      \
 return; }
 
-static void* fl_dlopen(const char *filename1, const char *filename2)
-{
-  void *ptr = dlopen(filename1, RTLD_LAZY | RTLD_GLOBAL);
-  if (!ptr) ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-  return ptr;
-}
+
 #endif // HAVE_DLSYM && HAVE_DLFCN_H
 
-/* 
+/*
  * Use dlopen to see if we can load the gtk dynamic libraries that
  * will allow us to create a GtkFileChooserDialog() on the fly,
  * without linking to the GTK libs at compile time.
  */
 void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
 #if HAVE_DLSYM && HAVE_DLFCN_H
-  void *ptr_glib    = NULL;
-  void *ptr_gtk     = NULL;
-  
-#   ifdef __APPLE_CC__ // allows testing on Darwin + X11
-  ptr_glib    = dlopen("/sw/lib/libglib-2.0.dylib", RTLD_LAZY | RTLD_GLOBAL);
-#   else
-  ptr_glib    = fl_dlopen("libglib-2.0.so", "libglib-2.0.so.0");
-#   endif
-  // Try first with GTK2
-#   ifdef __APPLE_CC__ // allows testing on Darwin + X11
-  ptr_gtk     = dlopen("/sw/lib/libgtk-x11-2.0.dylib", RTLD_LAZY | RTLD_GLOBAL);
-#else
-  ptr_gtk     = fl_dlopen("libgtk-x11-2.0.so", "libgtk-x11-2.0.so.0");
-#endif
-  if (ptr_gtk && ptr_glib) {
-#ifdef DEBUG
-    puts("selected GTK-2\n");
-#endif
-  }
-  else {// Try then with GTK3
-    ptr_gtk     = fl_dlopen("libgtk-3.so", "libgtk-3.so.0");
-#ifdef DEBUG
-    if (ptr_gtk && ptr_glib) {
-      puts("selected GTK-3\n");
-    }
-#endif
-  }
-  
-  if((!ptr_glib) || (!ptr_gtk)) {
-#ifdef DEBUG
-    puts("Failure to load libglib or libgtk");
-#endif
+  void  *ptr_gtk;
+  if ( !Fl_X11_System_Driver::probe_for_GTK(2, 4, &ptr_gtk)) {
     did_find_GTK_libs = 0;
     return;
   }
-  
+  void *ptr_glib = ptr_gtk;
   char *pc_dl_error; // used to report errors by the GET_SYM macro...
   // items we need from GLib
   GET_SYM(g_free, ptr_glib);
@@ -759,7 +714,6 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(g_slist_length, ptr_glib);
   GET_SYM(g_slist_free, ptr_glib);
   // items we need from GTK
-  GET_SYM(gtk_init_check, ptr_gtk);
   GET_SYM(gtk_widget_destroy, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_select_multiple, ptr_gtk);
   GET_SYM(gtk_file_chooser_set_do_overwrite_confirmation, ptr_gtk);
@@ -784,7 +738,9 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(gtk_file_chooser_set_extra_widget, ptr_gtk);
   GET_SYM(gtk_widget_show_now, ptr_gtk);
   GET_SYM(gtk_widget_get_window, ptr_gtk);
-  GET_SYM(gdk_x11_drawable_get_xid, ptr_gtk);
+  fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
+  if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
+  if (!fl_gdk_to_X11) { did_find_GTK_libs = 0; return; }
   GET_SYM(gtk_check_button_new_with_label, ptr_gtk);
   GET_SYM(g_signal_connect_data, ptr_gtk);
   GET_SYM(gtk_toggle_button_get_active, ptr_gtk);

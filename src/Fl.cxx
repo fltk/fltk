@@ -1866,7 +1866,9 @@ bool Fl::option(Fl_Option opt)
       options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, 1);                     // default: on
       options_[OPTION_FNFC_USES_GTK] = tmp;
-      
+      opt_prefs.get("PrintUsesGTK", tmp, 1);                     // default: on
+      options_[OPTION_PRINTER_USES_GTK] = tmp;
+
       opt_prefs.get("ShowZoomFactor", tmp, 1);                  // default: on
       options_[OPTION_SHOW_SCALING] = tmp;
     }
@@ -1888,7 +1890,9 @@ bool Fl::option(Fl_Option opt)
       if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, -1);
       if (tmp >= 0) options_[OPTION_FNFC_USES_GTK] = tmp;
-      
+      opt_prefs.get("PrintUsesGTK", tmp, -1);
+      if (tmp >= 0) options_[OPTION_PRINTER_USES_GTK] = tmp;
+
       opt_prefs.get("ShowZoomFactor", tmp, -1);
       if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
     }

@@ -252,6 +252,10 @@ public:
      /// if the GTK library is available on the platform (linux/unix only).
      /// When switched off, GTK file dialogs aren't used even if the GTK library is available.
     OPTION_FNFC_USES_GTK,
+    /// When switched on (default), Fl_Printer runs the GTK printer dialog
+    /// if the GTK library is available on the platform (linux/unix only).
+    /// When switched off, the GTK printer dialog isn't used even if the GTK library is available.
+    OPTION_PRINTER_USES_GTK,
     /// When switched on (default), the library shows in a transient yellow window the zoom factor
     /// value.
     /// When switched off, no such window gets displayed.

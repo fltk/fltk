@@ -20,6 +20,7 @@
 #ifndef FL_X11_SYSTEM_DRIVER_H
 #define FL_X11_SYSTEM_DRIVER_H
 
+#include "../../config_lib.h"
 #include "../Posix/Fl_Posix_System_Driver.H"
 
 class Fl_X11_System_Driver : public Fl_Posix_System_Driver {
@@ -63,6 +64,9 @@ public:
   virtual void add_fd(int fd, Fl_FD_Handler cb, void* = 0);
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  static bool probe_for_GTK(int major, int minor, void **ptr_gtk);
+#endif
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */
