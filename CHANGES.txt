@@ -18,6 +18,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - Fl_Printer::begin_job() uses by default the Gnome print dialog on the X11
+    platform when the GTK library is available at run-time. That can be turned off
+    with Fl::option(OPTION_PRINTER_USES_GTK, false).
   - New member functions Fl_Paged_Device::begin_job() and begin_page()
     replace start_job() and start_page(). The start_... names are maintained
     for API compatibility.
@@ -102,6 +105,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Class Fl_Native_File_Chooser uses in priority the file chooser dialog
+    of GTK version 3 when available on the running X11 platform, and falls back
+    to version 2 when V3 is not available. In contrast, GTK version 2 was used
+    in priority by FLTK 1.3.x
   - Added support for macOS 10.15 "Catalina"
   - Improved documentation for '@' symbols in labels (STR #2940).
   - Fl_Roller can now be controlled via the mouse wheel (STR #3120).
