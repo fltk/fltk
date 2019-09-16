@@ -46,6 +46,12 @@ if(OPTION_BUILD_HTML_DOCUMENTATION)
 	@ONLY
     )
 
+    configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/src/tiny.png
+	${CMAKE_CURRENT_BINARY_DIR}/html/tiny.png
+	COPYONLY
+    )
+
     # generate html docs
 
     add_custom_target(html
