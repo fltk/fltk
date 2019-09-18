@@ -706,7 +706,7 @@ Sudoku::Sudoku()
 
   // Set icon for window (MacOS uses app bundle for icon...)
 #ifdef _WIN32
-  icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
+  icon((char *)(HICON)LoadImage(fl_display, "IDI_ICON", IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR));
 #elif !defined(__APPLE__)
   fl_open_display();
   icon((char *)XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),

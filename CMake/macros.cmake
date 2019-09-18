@@ -170,7 +170,11 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
         add_executable(${tname} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES})
       endif (DEFINED RESOURCE_PATH)
     else ()
-      add_executable(${tname} WIN32 ${srcs} ${FLUID_SOURCES})
+      if (${tname} STREQUAL "sudoku")
+        add_executable(${tname} WIN32 ${srcs} sudoku2.rc ${FLUID_SOURCES})
+      else ()
+        add_executable(${tname} WIN32 ${srcs} ${FLUID_SOURCES})
+      endif ()
     endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
     set_target_properties(${tname}
