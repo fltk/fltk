@@ -75,6 +75,9 @@ endif (UNIX)
 ##  May be removed once high-DPI support under Windows is complete.
 #######################################################################
 if (WIN32)
+  if(CMAKE_COMPILER_IS_MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
+  endif ()
   option(OPTION_HIDPI "build with experimental high-DPI support" OFF)
   if (OPTION_HIDPI)
     add_definitions("-DFLTK_HIDPI_SUPPORT")
