@@ -2256,7 +2256,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     window->clear_damage(FL_DAMAGE_ALL);
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  else if (cgimg && gc) {
+  else if (cgimg && gc && ( Fl_X::i(window)->region || !(window->damage()&FL_DAMAGE_ALL)) ) {
     CGContextDrawImage(gc, NSRectToCGRect([self frame]), cgimg);
   }
   CGImageRelease(cgimg);
