@@ -2262,7 +2262,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   else if (gc && aux_bitmap && ( Fl_X::i(window)->region || !(window->damage()&FL_DAMAGE_ALL)) ) {
-    memcpy(CGBitmapContextGetData(gc), CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
+    if (CGBitmapContextGetBytesPerRow(gc) != CGBitmapContextGetBytesPerRow(aux_bitmap)) {
+      // this condition (unchanged W and H but changed BytesPerRow) occurs with 10.15
+      CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
+      CGContextDrawImage(gc, [self frame], img);
+      CGImageRelease(img);
+    } else {
+      memcpy(CGBitmapContextGetData(gc), CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
+    }
   }
 #endif
   through_drawRect = YES;
@@ -2270,6 +2277,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if (!through_Fl_X_flush) window->clear_damage();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (gc) {
+    if (aux_bitmap && CGBitmapContextGetBytesPerRow(gc) != CGBitmapContextGetBytesPerRow(aux_bitmap)) [self reset_aux_bitmap];
     if (!aux_bitmap) [self create_aux_bitmap:gc retina:d->mapped_to_retina()];
     memcpy(CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetData(gc), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
     Fl_Cocoa_Window_Driver::q_release_context();
