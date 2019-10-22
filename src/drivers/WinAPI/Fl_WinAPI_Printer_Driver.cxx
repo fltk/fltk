@@ -38,7 +38,7 @@ private:
   int top_margin;
   void absolute_printable_rect(int *x, int *y, int *w, int *h);
   Fl_WinAPI_Printer_Driver(void);
-  int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
   int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);

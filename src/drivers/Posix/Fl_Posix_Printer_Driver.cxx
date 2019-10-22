@@ -28,7 +28,7 @@
 
 /** Support for printing on the Unix/Linux platform */
 class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
-  virtual int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
 };
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
@@ -57,7 +57,7 @@ public:
   
   GtkPrintJob *pjob; // data shared between begin_job() and end_job()
   char tmpfilename[50]; // name of temporary PostScript file containing to-be-printed data
-  virtual int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
   virtual void end_job();
   static bool probe_for_GTK();
   static void *ptr_gtk; // points to the GTK dynamic lib or NULL
