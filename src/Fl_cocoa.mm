@@ -2857,11 +2857,11 @@ NSOpenGLContext* Fl_Cocoa_Window_Driver::create_GLcontext_for_window(NSOpenGLPix
   NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelformat shareContext:shared_ctx];
   if (context) {
     FLView *view = (FLView*)[fl_xid(window) contentView];
-    if (fl_mac_os_version >= 100700 && Fl::use_high_res_GL()) {
+    if (fl_mac_os_version >= 100700) {
       //replaces  [view setWantsBestResolutionOpenGLSurface:YES]  without compiler warning
       typedef void (*bestResolutionIMP)(id, SEL, BOOL);
       static bestResolutionIMP addr = (bestResolutionIMP)[NSView instanceMethodForSelector:@selector(setWantsBestResolutionOpenGLSurface:)];
-      addr(view, @selector(setWantsBestResolutionOpenGLSurface:), YES);
+      addr(view, @selector(setWantsBestResolutionOpenGLSurface:), Fl::use_high_res_GL() != 0);
     }
     [context setView:view];
   }
