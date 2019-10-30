@@ -47,14 +47,43 @@
 #endif /* !S_ISDIR */
 
 
+static void* double_dlopen(const char *filename1)
+{
+  void *ptr = ::dlopen(filename1, RTLD_LAZY | RTLD_GLOBAL);
+  if (!ptr) {
+    char filename2[FL_PATH_MAX];
+    sprintf(filename2, "%s.0", filename1);
+    ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
+  }
+  return ptr;
+}
 
 
 void *Fl_Posix_System_Driver::dlopen(const char *filename)
 {
+  void *ptr = NULL;
 #if HAVE_DLSYM
-  return ::dlopen(filename, RTLD_LAZY);
-#endif
-  return NULL;
+  ptr = double_dlopen(filename);
+#  ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
+  if (!ptr) {
+    char *f_dylib = strdup(filename);
+    strcpy(strrchr(f_dylib, '.'), ".dylib");
+    char path[FL_PATH_MAX];
+    sprintf(path, "/sw/lib/%s", f_dylib);
+    ptr = ::dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+    if (!ptr) {
+      sprintf(path, "/opt/sw/lib/%s", f_dylib);
+      ptr = ::dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+    }
+    if (!ptr) {
+      sprintf(path, "/opt/X11/lib/%s", f_dylib);
+      ptr = ::dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+    }
+    free(f_dylib);
+  }
+#  endif // __APPLE_CC__
+#endif // HAVE_DLSYM
+  return ptr;
 }
 
 int Fl_Posix_System_Driver::file_type(const char *filename)

@@ -697,7 +697,7 @@ void fl_open_display(Display* d) {
 
 #if USE_XRANDR
   void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
-  if (!libxrandr_addr)  libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
+  if (!libxrandr_addr)  libxrandr_addr = Fl::system_driver()->dlopen("libXrandr.so");
   if (libxrandr_addr) {
     int error_base;
     typedef Bool (*XRRQueryExtension_type)(Display*, int*, int*);

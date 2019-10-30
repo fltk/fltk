@@ -21,6 +21,7 @@
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Font.H"
 #include "Fl_X11_Window_Driver.H"
+#include "../../src/Fl_System_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -287,10 +288,7 @@ void Fl_X11_Screen_Driver::init() {
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
     void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
-    if (!libxrandr_addr) libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
-#   ifdef __APPLE_CC__ // allows testing on Darwin + X11
-    if (!libxrandr_addr) libxrandr_addr = dlopen("/opt/X11/lib/libXrandr.dylib", RTLD_LAZY);
-#   endif
+    if (!libxrandr_addr) libxrandr_addr = Fl::system_driver()->dlopen("libXrandr.so");
     if (libxrandr_addr) XRRSizes_f = (XRRSizes_type)dlsym(libxrandr_addr, "XRRSizes");
   }
   if (XRRSizes_f) {

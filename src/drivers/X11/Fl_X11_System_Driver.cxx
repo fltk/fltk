@@ -520,13 +520,6 @@ int Fl_X11_System_Driver::utf8locale() {
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <dlfcn.h>   // for dlopen et al
 
-static void* fl_dlopen(const char *filename1, const char *filename2)
-{
-  void *ptr = dlopen(filename1, RTLD_LAZY | RTLD_GLOBAL);
-  if (!ptr) ptr = dlopen(filename2, RTLD_LAZY | RTLD_GLOBAL);
-  return ptr;
-}
-
 bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
   typedef void (*init_t)(int*, void*);
   *ptr_gtk = NULL;
@@ -536,18 +529,14 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
     *ptr_gtk = RTLD_DEFAULT; // Caution: NULL under linux, not-NULL under Darwin
   } else {
     // Try first with GTK3
-    *ptr_gtk     = fl_dlopen("libgtk-3.so", "libgtk-3.so.0");
+    *ptr_gtk = Fl::system_driver()->dlopen("libgtk3.0.so");
     if (*ptr_gtk) {
 #ifdef DEBUG
       puts("selected GTK-3\n");
 #endif
     } else {
       // Try then with GTK2
-#   ifdef __APPLE_CC__ // allows testing on Darwin + X11
-      *ptr_gtk     = ::dlopen("/sw/lib/libgtk-x11-2.0.dylib", RTLD_LAZY | RTLD_GLOBAL);
-#else
-      *ptr_gtk     = fl_dlopen("libgtk-x11-2.0.so", "libgtk-x11-2.0.so.0");
-#endif
+      *ptr_gtk = Fl::system_driver()->dlopen("libgtk-x11-2.0.so");
     }
     if (*ptr_gtk) {
 #ifdef DEBUG
