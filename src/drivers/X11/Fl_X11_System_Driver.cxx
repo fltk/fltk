@@ -529,7 +529,7 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
     *ptr_gtk = RTLD_DEFAULT; // Caution: NULL under linux, not-NULL under Darwin
   } else {
     // Try first with GTK3
-    *ptr_gtk = Fl::system_driver()->dlopen("libgtk3.0.so");
+    *ptr_gtk = Fl::system_driver()->dlopen("libgtk-3.so");
     if (*ptr_gtk) {
 #ifdef DEBUG
       puts("selected GTK-3\n");
@@ -537,12 +537,13 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
     } else {
       // Try then with GTK2
       *ptr_gtk = Fl::system_driver()->dlopen("libgtk-x11-2.0.so");
-    }
-    if (*ptr_gtk) {
 #ifdef DEBUG
-      puts("selected GTK-2\n");
+      if (*ptr_gtk) {
+        puts("selected GTK-2\n");
+      }
 #endif
-    } else {
+    }
+    if (!(*ptr_gtk)) {
 #ifdef DEBUG
       puts("Failure to load libgtk");
 #endif
