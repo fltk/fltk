@@ -92,7 +92,7 @@ case $host_os in
 		OPTIM="-U__APPLE__ $OPTIM"
     		macosversion=`sw_vers -productVersion | cut -d. -f2`
 		if  test $macosversion -ge "13" ; then
-	    		CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.8"
+	    		CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.9 -D_LIBCPP_HAS_THREAD_API_PTHREAD"
 		fi
 	fi
 	;;
