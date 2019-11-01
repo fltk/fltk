@@ -762,8 +762,10 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
     cache(rgb);
   }
   cache_size(rgb, W, H);
+  int Wfull = rgb->w(), Hfull = rgb->h();
+  cache_size(rgb, Wfull, Hfull);
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
-                                 rgb->data_w() / double(rgb->w()*scale()), rgb->data_h() / double(rgb->h()*scale()),
+                                 rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
                           cx*scale(), cy*scale(), (X + offset_x_)*scale(), (Y + offset_y_)*scale(), W, H);
 }
 
