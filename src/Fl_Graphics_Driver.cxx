@@ -204,7 +204,9 @@ unsigned Fl_Graphics_Driver::font_desc_size() {
  scale() and in slightly modifying that to help support tiled images. */
 void Fl_Graphics_Driver::cache_size(Fl_Image *img, int &width, int &height)
 {
-  if ( int(scale()) == scale() ) {
+  if ( int(scale()) == scale()
+      || width==1 || height==1 // to cover fl_overlay_clear
+      ) {
     width  = width * scale();
     height = height * scale();
   } else {
