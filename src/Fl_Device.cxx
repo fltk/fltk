@@ -36,13 +36,15 @@
           +- Fl_Image_Surface_Driver: helper class interfacing FLTK with draw-to-image operations
               |
               +- Fl_..._Image_Surface_Driver: platform-specific implementation of Fl_Image_Surface_Driver
-         +- Fl_Paged_Device: output to a page-structured surface
+          +- Fl_Paged_Device: output to a page-structured surface
               |
               +- Fl_Printer: user can instantiate this to gain access to a printer
-              +- Fl_..._Printer_Driver: platform-specific helper class interfacing FLTK with print operations
+              +- Fl_WinAPI_Printer_Driver: Windows-specific helper class interfacing FLTK with print operations
+              +- Fl_Cocoa_Printer_Driver: macOS-specific helper class interfacing FLTK with print operations
               +- Fl_PostScript_File_Device: draw into a PostScript file
                   |
                   +- Fl_Posix_Printer_Driver: Fl_Printer uses that under Posix platforms
+                  +- Fl_GTK_Printer_Driver: Fl_Printer uses that under Posix+GTK platforms
  
   +- Fl_Graphics_Driver -> directed to an Fl_Surface_Device object
       |
