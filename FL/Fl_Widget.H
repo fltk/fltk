@@ -411,8 +411,9 @@ public:
 
   /** Sets the current label pointer.
 
-      The label is shown somewhere on or next to the widget. The passed pointer 
-      is stored unchanged in the widget (the string is \em not copied), so if 
+      The label is shown somewhere on or next to the widget.
+      See \ref common_labels for details about what can be put in a label.
+      The passed pointer is stored unchanged in the widget (the string is \em not copied), so if 
       you need to set the label to a formatted value, make sure the buffer is 
       static, global, or allocated. The copy_label() method can be used 
       to make a copy of the label string automatically.
