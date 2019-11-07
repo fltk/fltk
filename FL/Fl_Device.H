@@ -73,7 +73,7 @@ class FL_EXPORT Fl_Surface_Device {
 protected:
   /* Some drawing surfaces (e.g., Fl_XXX_Image_Surface_Driver) re-implement this.
    Gets called each time a surface ceases to be the current drawing surface. */
-  virtual void end_current() {}
+  virtual void end_current() { surface_ = 0;}
   /** Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {pGraphicsDriver = graphics_driver; }
   /** Sets the graphics driver of this drawing surface. */

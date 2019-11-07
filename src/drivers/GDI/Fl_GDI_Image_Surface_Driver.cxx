@@ -61,7 +61,6 @@ Fl_GDI_Image_Surface_Driver::Fl_GDI_Image_Surface_Driver(int w, int h, int high_
 
 Fl_GDI_Image_Surface_Driver::~Fl_GDI_Image_Surface_Driver() {
   if (offscreen && !external_offscreen) DeleteObject(offscreen);
-  if (is_current()) end_current();
   delete driver();
 }
 
@@ -101,6 +100,7 @@ void Fl_GDI_Image_Surface_Driver::end_current()
   RestoreDC(gc, _savedc);
   DeleteDC(gc);
   fl_window = pre_window;
+  Fl_Surface_Device::end_current();
 }
 
 

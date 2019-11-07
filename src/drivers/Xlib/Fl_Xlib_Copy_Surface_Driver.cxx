@@ -62,15 +62,15 @@ Fl_Xlib_Copy_Surface_Driver::Fl_Xlib_Copy_Surface_Driver(int w, int h) : Fl_Copy
 
 Fl_Xlib_Copy_Surface_Driver::~Fl_Xlib_Copy_Surface_Driver() {
   driver()->pop_clip();
-  bool need_push = !is_current();
-  if (need_push) Fl_Surface_Device::push_current(this);
+  Window old_win = fl_window;
+  fl_window = xid;
   Fl_RGB_Image *rgb = Fl::screen_driver()->read_win_rectangle(0, 0, width, height, 0);
-  if (need_push) Fl_Surface_Device::pop_current();
+  fl_window = old_win;
+  if (is_current()) end_current();
   Fl_X11_Screen_Driver::copy_image(rgb->array, rgb->w(), rgb->h(), 1);
   delete rgb;
   fl_delete_offscreen(xid);
   delete driver();
-  if (!need_push) end_current();
 }
 
 
@@ -82,6 +82,7 @@ void Fl_Xlib_Copy_Surface_Driver::set_current() {
 
 void Fl_Xlib_Copy_Surface_Driver::end_current() {
   fl_window = oldwindow;
+  Fl_Surface_Device::end_current();
 }
 
 void Fl_Xlib_Copy_Surface_Driver::translate(int x, int y) {
