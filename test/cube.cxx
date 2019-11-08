@@ -1,11 +1,11 @@
 //
 // "$Id$"
 //
-// Another forms test program for the Fast Light Tool Kit (FLTK).
+// OpenGL test program for the Fast Light Tool Kit (FLTK).
 //
 // Modified to have 2 cubes to test multiple OpenGL contexts
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -145,12 +145,16 @@ void makeform(const char *name) {
   flat = new Fl_Radio_Light_Button(390,50,100,30,"Flat");
   button = new Fl_Button(390,340,100,30,"Exit");
   cube = new cube_box(23,23,344,344, 0);
+
+#if HAVE_GL
   if (Fl::cfg_gfx_opengl) { // try to overlay a button onto an OpenGL window
     cube->begin();
     Fl_Button *test = new Fl_Button(35, 105, 100, 30, "Test");
     test->box(FL_ROUND_UP_BOX);
     cube->end();
   }
+#endif // HAVE_GL
+
   cube2 = new cube_box(513,23,344,344, 0);
   Fl_Box *b = new Fl_Box(FL_NO_BOX,cube->x(),size->y(),
 			 cube->w(),size->h(),0);
@@ -195,7 +199,11 @@ int main(int argc, char **argv) {
   form->end();
   // end of printing demo
   speed->bounds(4,0);
+#if HAVE_GL
   speed->value(cube->speed = cube2->speed = 1.0);
+#else
+  speed->value(cube->speed = cube2->speed = 0.0);
+#endif
   size->bounds(4,0.01);
   size->value(cube->size = cube2->size = 1.0);
   flat->value(1); cube->wire = 0; cube2->wire = 1;
