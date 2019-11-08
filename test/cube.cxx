@@ -132,8 +132,15 @@ int cube_box::handle(int e) {
 
 Fl_Window *form;
 Fl_Slider *speed, *size;
-Fl_Button *button, *wire, *flat;
+Fl_Button *exit_button, *wire, *flat;
 cube_box *cube, *cube2;
+
+int done = 0; // set to 1 in exit button callback
+
+// exit button callback
+void exit_cb(Fl_Widget *, void *) {
+  done = 1;
+}
 
 void makeform(const char *name) {
   form = new Fl_Window(510+390,390,name);
@@ -143,7 +150,8 @@ void makeform(const char *name) {
   size = new Fl_Slider(FL_VERT_SLIDER,450,90,40,220,"Size");
   wire = new Fl_Radio_Light_Button(390,20,100,30,"Wire");
   flat = new Fl_Radio_Light_Button(390,50,100,30,"Flat");
-  button = new Fl_Button(390,340,100,30,"Exit");
+  exit_button = new Fl_Button(390,340,100,30,"Exit");
+  exit_button->callback(exit_cb);
   cube = new cube_box(23,23,344,344, 0);
 
 #if HAVE_GL
@@ -232,7 +240,7 @@ int main(int argc, char **argv) {
     cube->speed = cube2->speed = speed->value();
     cube->redraw();
     cube2->redraw();
-    if (Fl::readqueue() == button) break;
+    if (done) break; // exit button was clicked
   }
   return 0;
 }
