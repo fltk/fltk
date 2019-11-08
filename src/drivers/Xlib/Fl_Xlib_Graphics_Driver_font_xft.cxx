@@ -1380,7 +1380,7 @@ static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
   char face_a, face_b;
   int la = font_name_process(fa->name, face_a);
   int lb = font_name_process(fb->name, face_b);
-  int c = memcmp(fa->name, fb->name, la >= lb ? lb : la);
+  int c = strncasecmp(fa->name, fb->name, la >= lb ? lb : la);
   return (c == 0 ? face_a - face_b : c);
 }
 
