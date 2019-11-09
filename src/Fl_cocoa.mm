@@ -2202,19 +2202,14 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
-  CGColorSpaceRef cspace = CGBitmapContextGetColorSpace(gc);
-  CFRetain(cspace);
   aux_bitmap = CGBitmapContextCreate(NULL, CGBitmapContextGetWidth(gc), CGBitmapContextGetHeight(gc),
                                      CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
-                                     cspace, CGBitmapContextGetBitmapInfo(gc));
+                                     CGBitmapContextGetColorSpace(gc), CGBitmapContextGetBitmapInfo(gc));
   if (r) CGContextScaleCTM(aux_bitmap, 2, 2);
 }
 - (void)reset_aux_bitmap {
-  if (aux_bitmap) {
-    CFRelease(CGBitmapContextGetColorSpace(aux_bitmap));
-    CFRelease(aux_bitmap);
-    aux_bitmap = NULL;
-  }
+  CGContextRelease(aux_bitmap);
+  aux_bitmap = NULL;
 }
 #endif
 - (BOOL)process_keydown:(NSEvent*)theEvent
