@@ -350,7 +350,7 @@ int Fl_Native_File_Chooser::get_saveas_basename(void) {
     if (strcmp(d, "/") == 0) l = 1;
     int lu = strlen(UNLIKELYPREFIX);
     // Remove UNLIKELYPREFIX between directory and filename parts
-    memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
+    if (memcmp(q+l, UNLIKELYPREFIX, lu) == 0) memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
   }
   set_single_pathname( q );
   free(q);
