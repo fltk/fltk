@@ -105,6 +105,7 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Fix Fl::add_timeout() in draw() under Linux (STR 3188)
   - Class Fl_Native_File_Chooser uses in priority the file chooser dialog
     of GTK version 3 when available on the running X11 platform, and falls back
     to version 2 when V3 is not available. In contrast, GTK version 2 was used
