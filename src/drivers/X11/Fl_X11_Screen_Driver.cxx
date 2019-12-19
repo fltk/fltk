@@ -480,6 +480,10 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
     Fl::flush();
     if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
       time_to_wait = 0.0;
+    else if (first_timeout && first_timeout->time < time_to_wait) {
+      // another timeout may have been queued within flush(), see STR #3188
+      time_to_wait = first_timeout->time >= 0.0 ? first_timeout->time : 0.0;
+    }
     return this->poll_or_select_with_delay(time_to_wait);
   }
 }
