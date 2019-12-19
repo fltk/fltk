@@ -1879,7 +1879,7 @@ int Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y)
   NSPoint pt = [NSEvent mouseLocation];
   x = int(pt.x);
   y = int(main_screen_height - pt.y);
-  return screen_num(x, y);
+  return screen_num(x/scale(0), y/scale(0));
 }
 
 
