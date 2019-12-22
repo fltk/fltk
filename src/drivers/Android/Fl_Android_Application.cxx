@@ -40,6 +40,8 @@
 #include <android/log.h>
 
 
+void fl_set_status(int x, int y, int w, int h) {}
+
 static const char *LOG_TAG = "FLTK";
 
 

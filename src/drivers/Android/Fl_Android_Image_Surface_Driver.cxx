@@ -39,12 +39,12 @@ public:
   : Fl_Image_Surface_Driver(w, h, high_res, off) {}
 #if 0
   ~Fl_GDI_Image_Surface_Driver();
-  void set_current();
-  void translate(int x, int y);
-  void untranslate();
-  Fl_RGB_Image *image();
   POINT origin;
 #endif
+  void set_current() override { } // TODO: write me
+  void translate(int x, int y) override { } // TODO: write me
+  void untranslate() override { } // TODO: write me
+  Fl_RGB_Image *image() override { return nullptr; } // TODO: write me
 };
 
 Fl_Image_Surface_Driver *Fl_Image_Surface_Driver::newImageSurfaceDriver(int w, int h, int high_res, Fl_Offscreen off)
