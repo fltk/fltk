@@ -1348,7 +1348,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
     if (parent && window->as_gl_window()) parent->redraw();
   }
   resize_from_system = NULL;
-  [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
+  if (fl_mac_os_version < 101000) [nsw recursivelySendToSubwindows:@selector(setSubwindowFrame)];
   [nsw checkSubwindowFrame];
   fl_unlock_function();
 }
