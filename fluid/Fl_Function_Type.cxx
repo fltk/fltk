@@ -913,7 +913,9 @@ void Fl_Data_Type::write_code1() {
   int nData = -1;
   // path should be set correctly already
   if (filename_ && !write_sourceview) {
+    goto_source_dir();
     FILE *f = fl_fopen(filename_, "rb");
+    leave_source_dir();
     if (!f) {
       message = "Can't include data from file. Can't open";
     } else {
