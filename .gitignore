@@ -179,6 +179,8 @@ etc/FLTKConfig.cmake
 /test/fast_slow.cxx
 /test/fast_slow.h
 /test/file_chooser
+/test/flink_ui.cxx
+/test/flink_ui.h
 /test/fonts
 /test/forms
 /test/fractals

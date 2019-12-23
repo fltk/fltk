@@ -1,0 +1,15 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+data mdpi_ic_launcher {public local filename {desktop/flink_mdpi_ic_launcher.png}
+}
+
+data hdpi_ic_launcher {public local filename {desktop/flink_hdpi_ic_launcher.png}
+}
+
+data xhdpi_ic_launcher {public local filename {desktop/flink_xhdpi_ic_launcher.png}
+}
+
+data xxhdpi_ic_launcher {selected public local filename {desktop/flink_xxhdpi_ic_launcher.png}
+}
