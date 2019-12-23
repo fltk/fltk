@@ -156,9 +156,21 @@ configure_file(rgb.txt ${TESTFILE_PATH} COPYONLY)
 configure_file(help_dialog.html ${TESTFILE_PATH} COPYONLY)
 configure_file(browser.cxx ${TESTFILE_PATH} COPYONLY)
 configure_file(editor.cxx ${TESTFILE_PATH} COPYONLY)
+
+# Apple macOS creates bundles instead of executables and needs a little bit
+# more help for demos to run correctly
 if(APPLE AND NOT OPTION_APPLE_X11)
-    configure_file(demo.menu "${TESTFILE_PATH}/demo.app/Contents/Resources/demo.menu" COPYONLY)
-    configure_file(browser.cxx "${TESTFILE_PATH}/browser.app/Contents/Resources/browser.cxx" COPYONLY)
-    configure_file(rgb.txt ${TESTFILE_PATH}/colbrowser.app/Contents/Resources/rgb.txt COPYONLY)
-    configure_file(help_dialog.html ${TESTFILE_PATH}/help_dialog.app/Contents/Resources/help_dialog.html COPYONLY)
+
+    # make the menu structure part of the app
+    target_sources(demo PRIVATE demo.menu)
+    set_target_properties(demo PROPERTIES MACOSX_BUNDLE TRUE RESOURCE demo.menu )
+
+    # add a sample RGB file that otherwise only exists under X11
+    target_sources(colbrowser PRIVATE rgb.txt)
+    set_target_properties(colbrowser PROPERTIES MACOSX_BUNDLE TRUE RESOURCE rgb.txt )
+
+    # help_dialog displays an html file as an example
+    target_sources(help_dialog PRIVATE help_dialog.html)
+    set_target_properties(help_dialog PROPERTIES MACOSX_BUNDLE TRUE RESOURCE help_dialog.html )
+
 endif(APPLE AND NOT OPTION_APPLE_X11)

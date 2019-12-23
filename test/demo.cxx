@@ -3,7 +3,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -39,7 +39,6 @@
 
 #if defined __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
-#include <unistd.h> // no longer necessary with fl_chdir() ?
 #endif
 
 #include <FL/Fl.H>
@@ -293,58 +292,94 @@ void dobut(Fl_Widget *, long arg) {
     delete[] copy_of_icommand;
     
 #elif defined __APPLE__
+    /*
+     Starting with version 1.4.0, FLTK uses CMake as the only supported build
+     system. On macOS, the app developer is expected to run CMake in a
+     directory named './build/Xcode' or './build/Makefiles' to generate the
+     build environment.
 
-    char *cmd = strdup(menus[men].icommand[bn]);
-    char *macosArg = strchr(cmd, ' ');
-    
-    char command[2048], path[2048], app_path[2048];
-    
-    // this neat little block of code ensures that the current directory
-    // is set to the location of the Demo application.
-    CFBundleRef app = CFBundleGetMainBundle();
-    CFURLRef url = CFBundleCopyBundleURL(app);    
-    CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-    CFRelease(url);
-    CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
-    CFRelease(cc_app_path);
-    if (*app_path) {
-      if (memcmp(app_path + strlen(app_path) - 4, ".app", 4) == 0) {
-        char *lastSlash = strrchr(app_path, '/');
-        if (lastSlash) *lastSlash = 0;
+     When building FLTK in the next step, teh macOS app bundles are then
+     stored in either:
+     './build/Xcode/bin/examples/hello.app/' for Makefiles
+     './build/Xcode/bin/examples/Debug/hello.app/' for XCode Debug
+     or
+     './build/Xcode/bin/examples/Release/hello.app/' as a symbolic
+     into the Archive system of macOS
+
+     'Demo' needs to find and run all of these app bundles, some requiring
+     an additional file name and path for resource files.
+
+     This is my attempt to find the bundles and resources so that Demo.app
+     and all its dependencies will run without any further configuration.
+     They will stop running however if any of the bundles or rresources
+     are moved.
+     */
+    {
+      char src_path[PATH_MAX];
+      char app_path[PATH_MAX];
+      char app_name[PATH_MAX];
+      char command[2*PATH_MAX+2];
+      char *cmd = strdup(menus[men].icommand[bn]);
+      char *args = strchr(cmd, ' ');
+
+      /*
+       Get the path to the source code at compile time. This is where the other
+       resources are located.
+       */
+      strcpy(src_path, __FILE__);
+      char *src_path_end = (char*)fl_filename_name(src_path);
+      if (src_path_end) *src_path_end = 0;
+
+      /*
+       All example app bundles are in the same directory as 'Demo', so set the
+       current dir to the location of Demo.app .
+
+       Starting with macOS 10.12, the actual location of the app has a randomized
+       path to fix a vulnerability. This still works in Debug mode which is
+       */
+      {
+        app_path[0] = 0;
+        CFBundleRef app = CFBundleGetMainBundle();
+        CFURLRef url = CFBundleCopyBundleURL(app);
+        CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+        CFRelease(url);
+        CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
+        CFRelease(cc_app_path);
+        if (app_path[0]) {
+          char *app_path_end = (char*)fl_filename_name(app_path);
+          if (app_path_end) *app_path_end = 0;
+          fl_chdir(app_path);
+        }
       }
-      fl_chdir(app_path);
-    }
-    
-    char *name = new char[strlen(cmd) + 5];
-    strcpy(name, cmd);
-    if (macosArg) name[macosArg-cmd] = 0;
-    strcat(name, ".app");
-    // check whether app bundle exists
-    if ( ! fl_filename_isdir(name) ) strcpy(name, cmd);
-    if (macosArg) {
-      const char *fluidpath;
-      *macosArg = 0;
-#if defined USING_XCODE
-      fl_filename_absolute(path, 2048, "../../../../test/");
-      fluidpath = "fluid.app";
-#else
-      strcpy(path, app_path); strcat(path, "/");
-      fluidpath = "../fluid/fluid.app";
-      // check whether fluid bundle exists
-      if ( ! fl_filename_isdir(fluidpath) ) fluidpath = "../fluid";
-#endif
-      if (strcmp(cmd, "../fluid/fluid")==0) {
-	sprintf(command, "open %s --args %s%s", fluidpath, path, macosArg+1);
+
+      // extract the executable name from the command in the menu file
+      strcpy(app_name, cmd);
+      // remove any additioanl command line arguments
+      if (args) app_name[args-cmd] = 0;
+      // make the file name into a bundle name
+      strcat(app_name, ".app");
+
+      if (args) {
+        if (strcmp(app_name, "../fluid/fluid.app")==0) {
+          // CMake -G 'Unix Makefiles' ... : ./bin/fluid.app
+          // CMake -G 'Xcode' ... : ./bin/Debug/fluid.app or ./bin/Release/fluid.app
+          // so removing the '/example' path segment from the app_path should
+          // always work.
+          char *examples = strstr(app_path, "/examples");
+          if (examples) {
+            memmove(examples, examples+9, strlen(examples+9)+1);
+          }
+          sprintf(command, "open '%sfluid.app' --args '%s%s'", app_path, src_path, args+1);
+        } else {
+          // we assume that we have only one argument which is a filename, so we add a path
+          sprintf(command, "open '%s%s' --args '%s%s'", app_path, app_name, src_path, args+1);
+        }
       } else {
-	sprintf(command, "open %s --args %s%s", name, path, macosArg+1);
+        sprintf(command, "open '%s%s'", app_path, app_name);
       }
-    } else {
-      sprintf(command, "open %s", name);
+      system(command);
+      free(cmd);
     }
-    delete[] name;
-    // puts(command);
-    system(command);
-    free(cmd);
 
 #else // Non Windows systems.
 
