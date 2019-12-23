@@ -1250,7 +1250,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if (![[notif object] isKindOfClass:[FLView class]]) return;
   FLView *view = (FLView*)[notif object];
   FLWindow *nsw = (FLWindow*)[view window];
-  if (!nsw) return;
+  if (!nsw || ![nsw getFl_Window]) return;
   fl_lock_function();
   Fl_Window *window = [nsw getFl_Window];
   int X, Y;
@@ -1879,7 +1879,7 @@ int Fl_Cocoa_Screen_Driver::get_mouse(int &x, int &y)
   NSPoint pt = [NSEvent mouseLocation];
   x = int(pt.x);
   y = int(main_screen_height - pt.y);
-  return screen_num(x, y);
+  return screen_num(x/scale(0), y/scale(0));
 }
 
 
@@ -2234,9 +2234,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
  */
 - (void)drawRect:(NSRect)rect
 {
-  fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *window = [cw getFl_Window];
+  if (!window) return; // may happen after closing full-screen window
+  fl_lock_function();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   CGContextRef gc = views_use_CA ? [[NSGraphicsContext currentContext] CGContext] : NULL;
 #endif
