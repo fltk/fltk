@@ -2,6 +2,45 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// Flink for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 2019 by Matthias Melcher and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems to "fltk-bugs@fltk.org".
+//
+} {in_source in_header
+}
+
+decl {extern void showAboutWindow();} {private global
+}
+
+decl {extern void selectSourceFolder();} {private global
+}
+
+decl {extern void selectProjectFolder();} {private global
+}
+
+decl {extern void createProjectFolder();} {private global
+}
+
 data mdpi_ic_launcher {public local filename {desktop/flink_mdpi_ic_launcher.png}
 }
 
@@ -11,5 +50,52 @@ data hdpi_ic_launcher {public local filename {desktop/flink_hdpi_ic_launcher.png
 data xhdpi_ic_launcher {public local filename {desktop/flink_xhdpi_ic_launcher.png}
 }
 
-data xxhdpi_ic_launcher {selected public local filename {desktop/flink_xxhdpi_ic_launcher.png}
+data xxhdpi_ic_launcher {public local filename {desktop/flink_xxhdpi_ic_launcher.png}
+}
+
+Function {createMainWindow()} {open
+} {
+  Fl_Window {} {
+    label Flink open
+    xywh {466 222 539 247} type Double visible
+  } {
+    Fl_File_Input wSourceFolder {
+      label {FLTK Source Code Folder}
+      xywh {24 26 460 34} align 1
+    }
+    Fl_Button wSourceFolderSelect {
+      label {@fileopen}
+      callback {selectSourceFolder();}
+      xywh {484 36 35 24} labelcolor 215
+    }
+    Fl_File_Input wProjectFolder {
+      label {AndroidStudio Project Subfolder}
+      xywh {24 86 460 34} align 1
+    }
+    Fl_Button wProjectFolderSelect {
+      label {@fileopen}
+      callback {selectProjectFolder();}
+      xywh {484 96 35 24} labelcolor 215
+    }
+    Fl_Check_Button wDeleteExistingProject {
+      label {delete existing AndroidStudio folder}
+      xywh {176 130 252 28} down_box DOWN_BOX value 1
+    }
+    Fl_Button {} {
+      label {Create AndroidStudio Project}
+      callback {createProjectFolder();}
+      xywh {214 176 259 36}
+    }
+    Fl_Button {} {
+      label {?}
+      callback {showAboutWindow();}
+      xywh {483 180 24 24} box ROUND_UP_BOX color 215 labelsize 16
+    }
+  }
+}
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
 }
