@@ -17,12 +17,14 @@
 //
 
 /*
- "Flink" creates an AndroidStudio project tree that allows to compile many FLTK
- "test" programes to run on Android without writing a single line of Java.
+ "Flink" creates an AndroidStudio project tree that compiles many FLTK test
+ programes to run on Android.
 
  CMake does support the C++ (native) part of Android out of the box. Flink works
  on a higher layer and creates all the files needed make Android application
  packeages, including the required additional CMake files.
+
+  Using the native fltk libraries there is no need to write any Java code.
  */
 
 // TODO: make sure that there are no formatting characters in any of the path names (%s,...)
@@ -34,6 +36,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <unistd.h>
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -42,11 +45,18 @@
 
 #include "flink_ui.h"
 
+/*
+ Manage a lsit of strings.
 
+ FLTK does use templates or the C++ std library within its core or tests
+ for historic reasons. So here is a crude implementation of vector<string>.
+ */
 class StringList
 {
 public:
+  // Create an ampty list of strings.
   StringList(): pN(0), pCapacity(0), pArray(0L) { }
+  // Create a prefilled list of strings. Last entry must be NULL.
   StringList(const char *firstEntry, ...): pN(0), pCapacity(0), pArray(0L) {
     add(firstEntry);
     va_list ap;
@@ -58,17 +68,22 @@ public:
     }
     va_end(ap);
   }
+  // Destroy the list and release all resources.
   ~StringList() {
     for (int i=0; i<pN; ++i) free(pArray[i]);
     if (pArray) ::free(pArray);
   }
+  // Append a string to the list, string is duplicated.
   void add(const char *string) {
     pMakeRoom();
     pArray[pN++] = ::strdup(string);
   }
+  // Retunr the number of entries in the list.
   int n() const { return pN; }
+  // Return the entry at the given index.
   const char *operator[](int index) const { return pArray[index]; }
 private:
+  // make room for one more entry.
   void pMakeRoom() {
     if (pN==pCapacity) {
       pCapacity += 32;
@@ -80,12 +95,26 @@ private:
 };
 
 
-Fl_Window *gMainindow;
-char gProjectDir[FL_PATH_MAX];
+// Pointer to the application window.
+Fl_Window *gMainindow = NULL;
+
+// Copy of the directory that contains the FLTK project tree.
+char gFLTKRootDir[FL_PATH_MAX] = "";
+
+// Copy of the subdirectory that contains the Android project tree.
+char gProjectDir[FL_PATH_MAX] = "";
+
+// List of all libraries created, will be filled in the process.
 StringList gLibraryList;
+
+// List of all applications created, will be filled in the process.
 StringList gApplicationList;
 
 
+/*
+ Output a formatted string into a file. This is made to have the same footprint
+ as fputs() to make formatting easy and the source code more readable.
+ */
 int fputf(const char *fmt, FILE *f, ...)
 {
   va_list ap;
@@ -95,39 +124,10 @@ int fputf(const char *fmt, FILE *f, ...)
   return ret;
 }
 
-
-void showAboutWindow()
-{
-  fl_message("%s",
-             "Flink creates all files needed to compile FLTK for Android.\n\n"
-             "Flink was written for FLTK 1.4 and tested with\n"
-             "AndroidStudio 3.5 ."
-             );
-}
-
-
-void selectSourceFolder()
-{
-  const char *dir = fl_dir_chooser("Select the FLTK root folder", wSourceFolder->value(), 0);
-  if (dir) {
-    wSourceFolder->value(dir);
-  }
-}
-
-
-void selectProjectFolder()
-{
-  char oldDir[FL_PATH_MAX];
-  fl_getcwd(oldDir, FL_PATH_MAX);
-  fl_chdir(wSourceFolder->value());
-  const char *dir = fl_dir_chooser("Select the AndroidStudio subfolder", wProjectFolder->value(), 1);
-  fl_chdir(oldDir);
-  if (dir) {
-    wProjectFolder->value(dir);
-  }
-}
-
-
+/*
+ Convinience function to easily create a file at the given
+ directory and filename.
+ */
 FILE *createFile(const char *dir, const char *name)
 {
   char filename[FL_PATH_MAX];
@@ -137,7 +137,10 @@ FILE *createFile(const char *dir, const char *name)
   return fl_fopen(filename, "wb");
 }
 
-
+/*
+ Convinience function to easily create a file at the given
+ directory, filename pattern, and additional parameters.
+ */
 FILE *createFileFormatted(const char *dir, const char *fmt, ...)
 {
   char name[FL_PATH_MAX];
@@ -148,7 +151,10 @@ FILE *createFileFormatted(const char *dir, const char *fmt, ...)
   return createFile(dir, name);
 }
 
-
+/*
+ Convinience function to easily create and write a text file at the given
+ directory and filename.
+ */
 void createFile(const char *dir, const char *name, const char *text)
 {
   char filename[FL_PATH_MAX];
@@ -160,7 +166,10 @@ void createFile(const char *dir, const char *name, const char *text)
   fclose(f);
 }
 
-
+/*
+ Convinience function to easily create and write a binary file at the given
+ directory and filename.
+ */
 void createFile(const char *dir, const char *name, const unsigned char *data, size_t size)
 {
   char filename[FL_PATH_MAX];
@@ -172,7 +181,9 @@ void createFile(const char *dir, const char *name, const unsigned char *data, si
   fclose(f);
 }
 
-
+/*
+ Fills a list with entries to CMake variable by reading a CMakeLists.txt file.
+ */
 void getEntriesFromCMakeFile(StringList &list, const char *path, const char *name, const char *key)
 {
   char clone = 0;
@@ -209,8 +220,11 @@ void getEntriesFromCMakeFile(StringList &list, const char *path, const char *nam
   fclose(f);
 }
 
-
-void createLibBuidGradle(const char *libName)
+/*
+ Create the file <Android>/<lib>/build.gradle.
+ This file describes the steps required to build a library under Gradle.
+ */
+void createLibBuildGradle(const char *libName)
 {
   FILE *f = createFileFormatted(gProjectDir, "%s/build.gradle", libName);
   fputs("apply plugin: 'com.android.library'\n\n"
@@ -240,6 +254,10 @@ void createLibBuidGradle(const char *libName)
   fclose(f);
 }
 
+/*
+ Create the file <Android>/<lib>/src/main/AndroidManifest.xml.
+ This file describes the library to Android.
+ */
 void createLibSrcMainAndroidManifestXml(const char *libName)
 {
   FILE *f;
@@ -251,6 +269,11 @@ void createLibSrcMainAndroidManifestXml(const char *libName)
   fclose(f);
 }
 
+/*
+ Create the file <Android>/<lib>/src/main/cpp/CMakeLists.txt.
+ This file is used by the crosscopiler implementation of CMake to generate the
+ native build environment for C and C++ source code.
+ */
 void createLibSrcMainCppCMakeListsTxt(const char *libName, const StringList &srcList)
 {
   FILE *f = createFileFormatted(gProjectDir, "%s/src/main/cpp/CMakeLists.txt", libName);
@@ -258,7 +281,7 @@ void createLibSrcMainCppCMakeListsTxt(const char *libName, const StringList &src
         "\n"
         "set(CMAKE_VERBOSE_MAKEFILE on)\n"
         "\n", f);
-  fputf("set(FLTK_DIR \"%s\")\n", f, wSourceFolder->value());
+  fputf("set(FLTK_DIR \"%s\")\n", f, gFLTKRootDir);
   fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
   fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n"
         "\n"
@@ -308,15 +331,22 @@ void createLibSrcMainCppCMakeListsTxt(const char *libName, const StringList &src
   fclose(f);
 }
 
+/*
+ Create all directories and files needed to compile a native library form
+ C and C++ source code.
+ */
 void createLibraryFolder(const char *libName, const StringList &srcList)
 {
   gLibraryList.add(libName);
-  createLibBuidGradle(libName);
+  createLibBuildGradle(libName);
   createLibSrcMainAndroidManifestXml(libName);
   createLibSrcMainCppCMakeListsTxt(libName, srcList);
 }
 
-
+/*
+ Create the file <Android>/<app>/build.gradle.
+ This file describes the steps required to build an application under Gradle.
+ */
 void createAppBuildGradle(const char *appName, const StringList &libList)
 {
   int i;
@@ -352,6 +382,14 @@ void createAppBuildGradle(const char *appName, const StringList &libList)
   fclose(f);
 }
 
+/*
+ Create the file <Android>/<app>/src/main/AndroidManifest.xml.
+
+ "Every application must have an AndroidManifest.xml file (with precisely that
+ name) in its root directory. The manifest presents essential information about
+ the application to the Android system, information the system must have before
+ it can run any of the application's code." - Android Documentation
+ */
 void createAppSrcMainAndroidManifestXml(const char *appName)
 {
   FILE *f = createFileFormatted(gProjectDir, "%s/src/main/AndroidManifest.xml", appName);
@@ -380,12 +418,17 @@ void createAppSrcMainAndroidManifestXml(const char *appName)
   fclose(f);
 }
 
+/*
+ Create the file <Android>/<app>/src/main/cpp/CMakeLists.txt.
+ This file is used by the crosscopiler implementation of CMake to generate the
+ native build environment for C and C++ source code.
+ */
 void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &srcList, const StringList &libList)
 {
   int i;
   FILE *f = createFileFormatted(gProjectDir, "%s/src/main/cpp/CMakeLists.txt", appName);
   fputs("cmake_minimum_required(VERSION 3.4.1)\n", f);
-  fputf("set(FLTK_DIR \"%s\")\n", f, wSourceFolder->value());
+  fputf("set(FLTK_DIR \"%s\")\n", f, gFLTKRootDir);
   fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
   fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n"
         "add_library(\n", f);
@@ -410,18 +453,28 @@ void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &src
   fclose(f);
 }
 
+/*
+ Create the file <Android>/<app>/src/main/res/values/strings.xml.
+ This file provdes a number of texts and strings available to the Android
+ environment and the application istself. Currently it only contains the
+ name of the app and FLTK statistics
+ */
 void createAppSrcMainResValuesStringsXml(const char *appName)
 {
   FILE *f = createFileFormatted(gProjectDir, "%s/src/main/res/values/strings.xml", appName);
   fputs("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
         "<resources>\n", f);
   fputf("    <string name=\"app_name\">%s</string>\n", f, appName);
+  fputf("    <string name=\"fltk_version\">%d.%d.%d</string>\n", f,
+        FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
   fputs("</resources>\n", f);
   fclose(f);
 }
 
 /*
- * We may add fonts here: <appName>/src/main/assets/fonts/Roboto-Regular.ttf
+ Create files in <Android>/<app>/src/main/res/.
+ Copy a number of default app icons for various screen resolutions.
+ We may add fonts here: <appName>/src/main/assets/fonts/Roboto-Regular.ttf
  */
 void createAppSrcMainResBinaries(const char *appName)
 {
@@ -444,6 +497,10 @@ void createAppSrcMainResBinaries(const char *appName)
   fclose(f);
 }
 
+/*
+ Create all directories and files needed to compile a native application form
+ C and C++ source code.
+ */
 void createApplicationFolder(const char *appName, const StringList &srcList, const StringList &libList)
 {
   gApplicationList.add(appName);
@@ -454,20 +511,242 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
   createAppSrcMainResBinaries(appName);
 }
 
-
-void setProjectFolder()
+/*
+ Create the file <Android>/FL/abi-version.h
+ This file is included from within FLTK and possibly from apps. The actual
+ definition of this macro is in FL/Enumerations.H though.
+ */
+void createProjectFlAbiVersion()
 {
-  fl_chdir(wSourceFolder->value());
+  createFile(gProjectDir, "FL/abi-version.h",
+             "/* #undef FL_ABI_VERSION */\n");
+}
+
+/*
+ Create the file <Android>/build.gradle
+ This file is needed for the basic setup of the Android buildtool "Gradle".
+ */
+void createProjectBuildGradle()
+{
+  createFile(gProjectDir, "build.gradle",
+             "buildscript {\n"
+             "    repositories {\n"
+             "        jcenter()\n"
+             "        google()\n"
+             "    }\n"
+             "    dependencies {\n"
+             "        classpath 'com.android.tools.build:gradle:3.5.3'\n"
+             "    }\n"
+             "}\n\n"
+             "allprojects {\n"
+             "    repositories {\n"
+             "        jcenter()\n"
+             "        google()\n"
+             "    }\n"
+             "}\n");
+}
+
+/*
+ Create the file <Android>/settings.gradle
+ This file contains a list of subdirectories, one for each app, and one for
+ each library, that need to be included into this project.
+ */
+void createProjectSettingsGradle()
+{
+  int i;
+  FILE *f = createFile(gProjectDir, "settings.gradle");
+  for (i=0; i<gLibraryList.n(); ++i)
+    fputf("include ':%s'\n", f, gLibraryList[i]);
+  for (i=0; i<gApplicationList.n(); ++i)
+    fputf("include ':%s'\n", f, gApplicationList[i]);
+  fclose(f);
+}
+
+/*
+ Create the file <Android>/config.h
+ This file is included by the FLTK core library to help the preprocessor when
+ including files and calling functions depending on the OS and build
+ environment. This file is usually created by CMake at configuration time.
+ For Android, this is predefined here.
+ */
+void createProjectConfigH()
+{
+  createFile(gProjectDir, "config.h",
+             "#define FLTK_DATADIR \"/usr/local/share/fltk\"\n"
+             "#define FLTK_DOCDIR \"/usr/local/share/doc/fltk\"\n"
+             "#define BORDER_WIDTH 2\n"
+             "#define HAVE_GL 0\n"
+             "#define HAVE_GL_GLU_H 0\n"
+             "/* #undef HAVE_GLXGETPROCADDRESSARB */\n"
+             "#define USE_COLORMAP 1\n"
+             "#define HAVE_XINERAMA 0\n"
+             "#define USE_XFT 0\n"
+             "#define USE_PANGO 0\n"
+             "#define HAVE_XDBE 0\n"
+             "#define USE_XDBE HAVE_XDBE\n"
+             "#define HAVE_XFIXES 0\n"
+             "#define HAVE_XCURSOR 0\n"
+             "#define HAVE_XRENDER 0\n"
+             "#define HAVE_X11_XREGION_H 0\n"
+             "/* #undef __APPLE_QUARTZ__ */\n"
+             "/* #undef USE_X11 */\n"
+             "/* #undef USE_SDL */\n"
+             "#define HAVE_OVERLAY 0\n"
+             "#define HAVE_GL_OVERLAY HAVE_OVERLAY\n"
+             "#define WORDS_BIGENDIAN 0\n"
+             "#define U16 unsigned short\n"
+             "#define U32 unsigned\n"
+             "#define U64 unsigned long\n"
+             "#define HAVE_DIRENT_H 1\n"
+             "#define HAVE_SCANDIR 1\n"
+             "#define HAVE_SCANDIR_POSIX 1\n"
+             "#define HAVE_VSNPRINTF 1\n"
+             "#define HAVE_SNPRINTF 1\n"
+             "#define HAVE_STRINGS_H 1\n"
+             "#define HAVE_STRCASECMP 1\n"
+             "#define HAVE_STRLCAT 1\n"
+             "#define HAVE_STRLCPY 1\n"
+             "#define HAVE_LOCALE_H 1\n"
+             "#define HAVE_LOCALECONV 1\n"
+             "#define HAVE_SYS_SELECT_H 1\n"
+             "/* #undef HAVE_SYS_STDTYPES_H */\n"
+             "#define USE_POLL 0\n"
+             "#define HAVE_LIBPNG 1\n"
+             "#define HAVE_LIBZ 1\n"
+             "#define HAVE_LIBJPEG 1\n"
+             "/* #undef FLTK_USE_CAIRO */\n"
+             "/* #undef FLTK_HAVE_CAIRO */\n"
+             "#define HAVE_PNG_H 1\n"
+             "/* #undef HAVE_LIBPNG_PNG_H */\n"
+             "#define HAVE_PNG_GET_VALID 1\n"
+             "#define HAVE_PNG_SET_TRNS_TO_ALPHA 1\n"
+             "#define FLTK_USE_NANOSVG 1\n"
+             "#define HAVE_PTHREAD 1\n"
+             "#define HAVE_PTHREAD_H 1\n"
+             "/* #undef HAVE_ALSA_ASOUNDLIB_H */\n"
+             "#define HAVE_LONG_LONG 1\n"
+             "#define FLTK_LLFMT \"%lld\"\n"
+             "#define FLTK_LLCAST (long long)\n"
+             "#define HAVE_DLFCN_H 1\n"
+             "#define HAVE_DLSYM 1\n"
+             "#define FL_NO_PRINT_SUPPORT 1\n"
+             "/* #undef FL_CFG_NO_FILESYSTEM_SUPPORT */\n");
+}
+
+/*
+ Create all files that are needed by AndroidStudio and Gradle, independently
+ of the apps and libs created.
+ */
+void createProjectFiles()
+{
+  createProjectFlAbiVersion();
+  createProjectBuildGradle();
+  createProjectSettingsGradle();
+  createProjectConfigH();
+}
+
+/*
+ Read all the user definable parameters from the user interface and
+ store them in a convinient location.
+
+ TODO: verify the parameters, warn the user, and return 0, so we can abort the mission.
+ */
+int updateProjectParametrsFromUI()
+{
+  char cwd[FL_PATH_MAX];
+  fl_getcwd(cwd, FL_PATH_MAX);
+  strcpy(gFLTKRootDir, wSourceFolder->value());
+  fl_chdir(gFLTKRootDir);
   fl_filename_absolute(gProjectDir, FL_PATH_MAX, wProjectFolder->value());
   int n = strlen(gProjectDir);
   if (gProjectDir[n]!='/') strcat(gProjectDir, "/");
-  fl_make_path(gProjectDir);
+  fl_chdir(cwd);
+
+  char idFile[FL_PATH_MAX];
+  snprintf(idFile, FL_PATH_MAX, "%s/%s", gProjectDir, "FLTK4Android.txt");
+  if (fl_access(idFile, W_OK)==0) {
+    wDeleteProject->activate();
+  } else {
+    wDeleteProject->deactivate();
+  }
+
+  return 1;
 }
 
-
-void createProjectFolder()
+int flink_rmdir(const char *fullpath)
 {
-  setProjectFolder();
+  int i, ret = 0;
+  struct dirent **entry;
+  int n = fl_filename_list(fullpath, &entry);
+  if (n==-1)
+    return -1;
+  if (n>2) { // more than "." and ".."
+    for (i=0; i<n; i++) {
+      const char *fn = entry[i]->d_name;
+      if (strcmp(fn, "./")==0) continue;
+      if (strcmp(fn, "../")==0) continue;
+      char newPath[FL_PATH_MAX];
+      snprintf(newPath, sizeof(newPath), "%s%s", fullpath, fn);
+      if (fl_filename_isdir(newPath)) {
+        ret = flink_rmdir(newPath); // recursion
+      } else {
+        ret = fl_unlink(newPath);
+      }
+      if (ret==-1)
+        break;
+    }
+  }
+  for (i=0; i<n; ++i)
+    free(entry[i]);
+  free(entry);
+  if (ret==0)
+    fl_rmdir(fullpath);
+  return ret;
+}
+
+/*
+ FLTK callback:
+ Delete the entire AndroidStudio project tree.
+ */
+void deleteProject()
+{
+  if (updateProjectParametrsFromUI()==0)
+    return;
+  char idFile[FL_PATH_MAX];
+  snprintf(idFile, FL_PATH_MAX, "%s/%s", gProjectDir, "FLTK4Android.txt");
+  if (fl_access(idFile, W_OK)!=0) {
+    int ret = fl_choice("This directory was not created by Flink.\n"
+                        "Do you want to delete the directory anyway?\n\n%s\n",
+                        "Cancel", "Delete Directory", 0L,
+                        gProjectDir);
+    if (ret==0) return; // Cancel
+  } else {
+    int ret = fl_choice("Do you want to delete this directory?\n\n%s\n",
+                        "Cancel", "Delete Directory", 0L,
+                        gProjectDir);
+    if (ret==0) return; // Cancel
+  }
+  if (flink_rmdir(gProjectDir)==-1) {
+    fl_alert("Error deleting directory:\n\n%s", gProjectDir);
+  }
+  updateProjectParametrsFromUI();
+}
+
+/*
+ FLTK callback:
+ Create the entire AndroidStudio project tree for all applications
+ and libraries.
+ */
+void createProject()
+{
+  if (updateProjectParametrsFromUI()==0)
+    return;
+
+  // This file identifies an AndroidStudio project directory that was created
+  // by Flink. The file should probably contain some more details on how and
+  // when it was created.
+  createFile(gProjectDir, "FLTK4Android.txt",
+             "Created by Flink\n");
 
   StringList fltkSrcs("drivers/Android/Fl_Android_Application.cxx",
                       "drivers/Android/Fl_Android_System_Driver.cxx",
@@ -479,12 +758,12 @@ void createProjectFolder()
                       "drivers/Android/Fl_Android_Graphics_Clipping.cxx",
                       "drivers/Android/Fl_Android_Graphics_Font.cxx",
                       0L);
-  getEntriesFromCMakeFile(fltkSrcs, wSourceFolder->value(), "src/CMakeLists.txt", "CPPFILES");
-  getEntriesFromCMakeFile(fltkSrcs, wSourceFolder->value(), "src/CMakeLists.txt", "CFILES");
+  getEntriesFromCMakeFile(fltkSrcs, gFLTKRootDir, "src/CMakeLists.txt", "CPPFILES");
+  getEntriesFromCMakeFile(fltkSrcs, gFLTKRootDir, "src/CMakeLists.txt", "CFILES");
   createLibraryFolder("fltk", fltkSrcs);
 
   StringList fltkFormsSrcs;
-  getEntriesFromCMakeFile(fltkFormsSrcs, wSourceFolder->value(), "src/CMakeLists.txt", "FLCPPFILES");
+  getEntriesFromCMakeFile(fltkFormsSrcs, gFLTKRootDir, "src/CMakeLists.txt", "FLCPPFILES");
   createLibraryFolder("fltk_forms", fltkFormsSrcs);
 
 
@@ -574,106 +853,78 @@ void createProjectFolder()
   //CREATE_EXAMPLE(unittests unittests.cxx fltk)
   //CREATE_EXAMPLE(windowfocus windowfocus.cxx fltk)
 
-
-  FILE *f;
-  int i;
-
-  // create this for the entire project
-  createFile(gProjectDir, "FL/abi-version.h", "/* #undef FL_ABI_VERSION */\n");
-  createFile(gProjectDir, "build.gradle",
-             "buildscript {\n"
-             "    repositories {\n"
-             "        jcenter()\n"
-             "        google()\n"
-             "    }\n"
-             "    dependencies {\n"
-             "        classpath 'com.android.tools.build:gradle:3.5.3'\n"
-             "    }\n"
-             "}\n\n"
-             "allprojects {\n"
-             "    repositories {\n"
-             "        jcenter()\n"
-             "        google()\n"
-             "    }\n"
-             "}\n");
-
-  f = createFile(gProjectDir, "settings.gradle");
-  for (i=0; i<gLibraryList.n(); ++i)
-    fputf("include ':%s'\n", f, gLibraryList[i]);
-  for (i=0; i<gApplicationList.n(); ++i)
-    fputf("include ':%s'\n", f, gApplicationList[i]);
-  fclose(f);
-
-  createFile(gProjectDir, "config.h",
-             "#define FLTK_DATADIR \"/usr/local/share/fltk\"\n"
-             "#define FLTK_DOCDIR \"/usr/local/share/doc/fltk\"\n"
-             "#define BORDER_WIDTH 2\n"
-             "#define HAVE_GL 0\n"
-             "#define HAVE_GL_GLU_H 0\n"
-             "/* #undef HAVE_GLXGETPROCADDRESSARB */\n"
-             "#define USE_COLORMAP 1\n"
-             "#define HAVE_XINERAMA 0\n"
-             "#define USE_XFT 0\n"
-             "#define USE_PANGO 0\n"
-             "#define HAVE_XDBE 0\n"
-             "#define USE_XDBE HAVE_XDBE\n"
-             "#define HAVE_XFIXES 0\n"
-             "#define HAVE_XCURSOR 0\n"
-             "#define HAVE_XRENDER 0\n"
-             "#define HAVE_X11_XREGION_H 0\n"
-             "/* #undef __APPLE_QUARTZ__ */\n"
-             "/* #undef USE_X11 */\n"
-             "/* #undef USE_SDL */\n"
-             "#define HAVE_OVERLAY 0\n"
-             "#define HAVE_GL_OVERLAY HAVE_OVERLAY\n"
-             "#define WORDS_BIGENDIAN 0\n"
-             "#define U16 unsigned short\n"
-             "#define U32 unsigned\n"
-             "#define U64 unsigned long\n"
-             "#define HAVE_DIRENT_H 1\n"
-             "#define HAVE_SCANDIR 1\n"
-             "#define HAVE_SCANDIR_POSIX 1\n"
-             "#define HAVE_VSNPRINTF 1\n"
-             "#define HAVE_SNPRINTF 1\n"
-             "#define HAVE_STRINGS_H 1\n"
-             "#define HAVE_STRCASECMP 1\n"
-             "#define HAVE_STRLCAT 1\n"
-             "#define HAVE_STRLCPY 1\n"
-             "#define HAVE_LOCALE_H 1\n"
-             "#define HAVE_LOCALECONV 1\n"
-             "#define HAVE_SYS_SELECT_H 1\n"
-             "/* #undef HAVE_SYS_STDTYPES_H */\n"
-             "#define USE_POLL 0\n"
-             "#define HAVE_LIBPNG 1\n"
-             "#define HAVE_LIBZ 1\n"
-             "#define HAVE_LIBJPEG 1\n"
-             "/* #undef FLTK_USE_CAIRO */\n"
-             "/* #undef FLTK_HAVE_CAIRO */\n"
-             "#define HAVE_PNG_H 1\n"
-             "/* #undef HAVE_LIBPNG_PNG_H */\n"
-             "#define HAVE_PNG_GET_VALID 1\n"
-             "#define HAVE_PNG_SET_TRNS_TO_ALPHA 1\n"
-             "#define FLTK_USE_NANOSVG 1\n"
-             "#define HAVE_PTHREAD 1\n"
-             "#define HAVE_PTHREAD_H 1\n"
-             "/* #undef HAVE_ALSA_ASOUNDLIB_H */\n"
-             "#define HAVE_LONG_LONG 1\n"
-             "#define FLTK_LLFMT \"%lld\"\n"
-             "#define FLTK_LLCAST (long long)\n"
-             "#define HAVE_DLFCN_H 1\n"
-             "#define HAVE_DLSYM 1\n"
-             "#define FL_NO_PRINT_SUPPORT 1\n"
-             "/* #undef FL_CFG_NO_FILESYSTEM_SUPPORT */\n");
+  createProjectFiles();
 
   fl_message("Project created at\n%s", gProjectDir);
   gMainindow->hide();
 }
 
+/*
+ FLTK callback:
+ Show the "About" window.
+ */
+void showAboutWindow()
+{
+  fl_message("%s",
+             "Flink creates all files needed to compile FLTK for Android.\n\n"
+             "Flink was written for FLTK 1.4 and tested with\n"
+             "AndroidStudio 3.5 ."
+             );
+}
 
-int main(int argc, char **argv) {
-  fl_message_title_default("Flink");
-  gMainindow = createMainWindow();
+/*
+ FLTK callback:
+ User changed the source folder.
+ */
+void sourceFolderChanged()
+{
+  updateProjectParametrsFromUI();
+}
 
+/*
+ FLTK callback:
+ Pop up a filechooser to select the FLTK root folder.
+ */
+void selectSourceFolder()
+{
+  const char *dir = fl_dir_chooser("Select the FLTK root folder", wSourceFolder->value(), 0);
+  if (dir) {
+    wSourceFolder->value(dir);
+    updateProjectParametrsFromUI();
+  }
+}
+
+/*
+ FLTK callback:
+ User changed the project folder.
+ */
+void projectFolderChanged()
+{
+  updateProjectParametrsFromUI();
+}
+
+/*
+ FLTK callback:
+ Pop up a filechooser to select the AndroidStudio project folder.
+ */
+void selectProjectFolder()
+{
+  char oldDir[FL_PATH_MAX];
+  fl_getcwd(oldDir, FL_PATH_MAX);
+  fl_chdir(wSourceFolder->value());
+  const char *dir = fl_dir_chooser("Select the AndroidStudio subfolder", wProjectFolder->value(), 1);
+  fl_chdir(oldDir);
+  if (dir) {
+    wProjectFolder->value(dir);
+    updateProjectParametrsFromUI();
+  }
+}
+
+/*
+ Write default values into the UI.
+ */
+void presetUI()
+{
   char pathToFLTK[FL_PATH_MAX];
   strcpy(pathToFLTK, __FILE__);
   char *name = (char*)fl_filename_name(pathToFLTK);
@@ -681,10 +932,20 @@ int main(int argc, char **argv) {
   name = (char*)fl_filename_name(pathToFLTK);
   if (name && name>pathToFLTK) name[-1] = 0;
   wSourceFolder->value(pathToFLTK);
-
   wProjectFolder->value("build/AndroidStudio");
+  wDeleteProject->deactivate();
+}
 
-  wDeleteExistingProject->value(1);
+/*
+ The main app entry point.
+ TODO: we may want to add command line parameters at some point.
+ */
+int main(int argc, char **argv) {
+  fl_message_title_default("Flink");
+  gMainindow = createMainWindow();
+
+  presetUI();
+  updateProjectParametrsFromUI();
 
   gMainindow->show(argc, argv);
   return Fl::run();

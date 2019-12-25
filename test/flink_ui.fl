@@ -32,13 +32,22 @@ comment {//
 decl {extern void showAboutWindow();} {private global
 }
 
+decl {extern void sourceFolderChanged();} {private global
+}
+
 decl {extern void selectSourceFolder();} {private global
+}
+
+decl {extern void projectFolderChanged();} {private global
 }
 
 decl {extern void selectProjectFolder();} {private global
 }
 
-decl {extern void createProjectFolder();} {private global
+decl {extern void deleteProject();} {private global
+}
+
+decl {extern void createProject();} {private global
 }
 
 data mdpi_ic_launcher {public local filename {desktop/flink_mdpi_ic_launcher.png}
@@ -57,10 +66,11 @@ Function {createMainWindow()} {open
 } {
   Fl_Window {} {
     label Flink open
-    xywh {466 222 539 247} type Double visible
+    xywh {466 222 539 193} type Double visible
   } {
     Fl_File_Input wSourceFolder {
-      label {FLTK Source Code Folder}
+      label {FLTK Root Folder}
+      callback {sourceFolderChanged();}
       xywh {24 26 460 34} align 1
     }
     Fl_Button wSourceFolderSelect {
@@ -70,6 +80,7 @@ Function {createMainWindow()} {open
     }
     Fl_File_Input wProjectFolder {
       label {AndroidStudio Project Subfolder}
+      callback {projectFolderChanged();} selected
       xywh {24 86 460 34} align 1
     }
     Fl_Button wProjectFolderSelect {
@@ -77,19 +88,20 @@ Function {createMainWindow()} {open
       callback {selectProjectFolder();}
       xywh {484 96 35 24} labelcolor 215
     }
-    Fl_Check_Button wDeleteExistingProject {
-      label {delete existing AndroidStudio folder}
-      xywh {176 130 252 28} down_box DOWN_BOX value 1
+    Fl_Button wDeleteProject {
+      label {Delete Project}
+      callback {deleteProject();}
+      xywh {92 144 141 30}
     }
     Fl_Button {} {
       label {Create AndroidStudio Project}
-      callback {createProjectFolder();}
-      xywh {214 176 259 36}
+      callback {createProject();}
+      xywh {256 144 217 30}
     }
     Fl_Button {} {
       label {?}
       callback {showAboutWindow();}
-      xywh {483 180 24 24} box ROUND_UP_BOX color 215 labelsize 16
+      xywh {483 147 24 24} box ROUND_UP_BOX color 215 labelsize 16
     }
   }
 }
