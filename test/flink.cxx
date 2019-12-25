@@ -26,9 +26,10 @@
  */
 
 // TODO: make sure that there are no formatting characters in any of the path names (%s,...)
-// TODO: make sure that the FLTK path exists, maybe even check for known files
+// TODO: make sure that the FLTK path exists, maybe even check for known files (src/CMakeLists.txt)
 // TODO: handle all possible errors when writing files (if ( && && && ) else ...)
-// TODO: we can read a lot of information from the CMake files in the FLTK tree!
+// TODO: document that source code, find better function and variable names
+// TODO: improve the UI
 
 #include <string.h>
 #include <stdio.h>
@@ -79,6 +80,7 @@ private:
 };
 
 
+Fl_Window *gMainindow;
 char gProjectDir[FL_PATH_MAX];
 StringList gLibraryList;
 StringList gApplicationList;
@@ -171,21 +173,161 @@ void createFile(const char *dir, const char *name, const unsigned char *data, si
 }
 
 
-void createApplicationFolder(const char *appName, const StringList &srcList, const StringList &libList)
+void getEntriesFromCMakeFile(StringList &list, const char *path, const char *name, const char *key)
+{
+  char clone = 0;
+  char line[1024];
+  char startKey[1024];
+  snprintf(startKey, sizeof(startKey), "set (%s", key);
+  int startKeyN = strlen(startKey);
+  char filename[FL_PATH_MAX];
+  snprintf(filename, FL_PATH_MAX, "%s/%s", path, name);
+  FILE *f = fopen(filename, "rb");
+  for (;;) {
+    if (feof(f) || clone==2) break;
+    fgets(line, sizeof(line), f);
+    char *s = line;
+    for (;;++s) {
+      if (*s>' ') break;
+    }
+    memmove(line, s, strlen(s)+1);
+    if (clone) {
+      if (*s==')') {
+        clone = 2;
+      } else {
+        s = line + strlen(line) - 1;
+        for (;s>line;--s) {
+          if (*s>' ') { s[1] = 0; break; }
+        }
+        list.add(line);
+      }
+    } else {
+      if (strncmp(line, startKey, startKeyN)==0)
+        clone = 1;
+    }
+  }
+  fclose(f);
+}
+
+
+void createLibBuidGradle(const char *libName)
+{
+  FILE *f = createFileFormatted(gProjectDir, "%s/build.gradle", libName);
+  fputs("apply plugin: 'com.android.library'\n\n"
+        "android {\n"
+        "  compileSdkVersion 26\n"
+        "  defaultConfig {\n"
+        "    minSdkVersion 14\n"
+        "    targetSdkVersion 26\n"
+        "    externalNativeBuild {\n"
+        "      cmake {\n"
+        "        arguments '-DANDROID_STL=c++_shared'\n", f);
+  fputf("        targets '%s'\n", f, libName);
+  fputs("      }\n"
+        "    }\n"
+        "  }\n"
+        "  buildTypes {\n"
+        "    release {\n"
+        "      minifyEnabled false\n"
+        "    }\n"
+        "  }\n"
+        "  externalNativeBuild {\n"
+        "    cmake {\n"
+        "      path 'src/main/cpp/CMakeLists.txt'\n"
+        "    }\n"
+        "  }\n"
+        "}\n", f);
+  fclose(f);
+}
+
+void createLibSrcMainAndroidManifestXml(const char *libName)
 {
   FILE *f;
+  f = createFileFormatted(gProjectDir, "%s/src/main/AndroidManifest.xml", libName);
+  fputs("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+        "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n", f);
+  fputf("          package=\"org.fltk.%s\">\n", f, libName);
+  fputs("</manifest>\n", f);
+  fclose(f);
+}
+
+void createLibSrcMainCppCMakeListsTxt(const char *libName, const StringList &srcList)
+{
+  FILE *f = createFileFormatted(gProjectDir, "%s/src/main/cpp/CMakeLists.txt", libName);
+  fputs("cmake_minimum_required(VERSION 3.6)\n"
+        "\n"
+        "set(CMAKE_VERBOSE_MAKEFILE on)\n"
+        "\n", f);
+  fputf("set(FLTK_DIR \"%s\")\n", f, wSourceFolder->value());
+  fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
+  fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n"
+        "\n"
+        "function(list_transform_prepend var prefix)\n"
+        "    set(temp \"\")\n"
+        "    foreach(f ${${var}})\n"
+        "        list(APPEND temp \"${prefix}${f}\")\n"
+        "    endforeach()\n"
+        "    set(${var} \"${temp}\" PARENT_SCOPE)\n"
+        "endfunction()\n"
+        "\n"
+        "set (CPPFILES\n", f);
+  for (int i=0; i<srcList.n(); i++)
+    fputf("  %s\n", f, srcList[i]);
+  fputs(")\n"
+        "\n"
+        "add_definitions(-DFL_LIBRARY)\n"
+        "\n"
+        "list_transform_prepend(CPPFILES \"${FLTK_DIR}/src/\")\n"
+        "\n"
+        "# now build app's shared lib\n", f);
+  fputf("add_library( %s STATIC\n", f, libName);
+  fputs("  ${CPPFILES}\n"
+        ")\n"
+        "\n", f);
+  fputf("set_target_properties( %s\n", f, libName);
+  fputs("    PROPERTIES\n"
+        "    CLEAN_DIRECT_OUTPUT TRUE\n"
+        "    COMPILE_DEFINITIONS \"FL_LIBRARY\"\n"
+        ")\n"
+        "\n"
+        "target_include_directories(\n", f);
+  fputf("    %s SYSTEM PRIVATE\n", f, libName);
+        // The path below is a terrible hack. The Android NDK include a file
+        // name <version> somewhere, but instead of using the clang file,
+        // if finds the FLTK "VERSION" file first. This path links directly to <version>
+        // Alternative (cl/usr/include/cang only): -iwithsysroot /usr/include/c++/v1/
+  fputs("    ${CMAKE_SYSROOT}/usr/include/c++/v1/\n"
+        "    ${FLTK_DIR}/\n"
+        "    ${FLTK_DIR}/src/\n"
+        "    ${FLTK_IDE_DIR}/\n"
+        ")\n"
+        "\n"
+        "target_include_directories(\n", f);
+  fputf("    %s PRIVATE\n", f, libName);
+  fputs("    ${FLTK_DIR}/src/ )\n", f);
+  fclose(f);
+}
+
+void createLibraryFolder(const char *libName, const StringList &srcList)
+{
+  gLibraryList.add(libName);
+  createLibBuidGradle(libName);
+  createLibSrcMainAndroidManifestXml(libName);
+  createLibSrcMainCppCMakeListsTxt(libName, srcList);
+}
+
+
+void createAppBuildGradle(const char *appName, const StringList &libList)
+{
   int i;
-
-  gApplicationList.add(appName);
-
-  // create the build.gradle file
-  f = createFileFormatted(gProjectDir, "%s/build.gradle", appName);
+  FILE *f = createFileFormatted(gProjectDir, "%s/build.gradle", appName);
   fputs("apply plugin: 'com.android.application'\n"
         "android {\n"
         "    compileSdkVersion 26\n"
-        "    dependencies {\n"
-        "        implementation project(':fltk')\n"
-        "    }\n"
+        "    dependencies {\n", f);
+  for (i=0; i<libList.n(); ++i)
+    fputf("        implementation project(':%s')\n", f, libList[i]);
+  fputs("    }\n"
         "    defaultConfig {\n", f);
   fputf("        applicationId 'org.fltk.%s'\n", f, appName);
   fputs("        minSdkVersion 14\n"
@@ -208,9 +350,11 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
         "    }\n"
         "}\n", f);
   fclose(f);
+}
 
-  // create the AndroidManifest.xml file
-  f = createFileFormatted(gProjectDir, "%s/src/main/AndroidManifest.xml", appName);
+void createAppSrcMainAndroidManifestXml(const char *appName)
+{
+  FILE *f = createFileFormatted(gProjectDir, "%s/src/main/AndroidManifest.xml", appName);
   fputs("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
         "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n", f);
   fputf("          package=\"org.fltk.%s\"\n", f, appName);
@@ -225,7 +369,7 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
         "    <activity android:name=\"android.app.NativeActivity\"\n"
         "              android:label=\"@string/app_name\">\n"
         "      <meta-data android:name=\"android.app.lib_name\"\n", f);
-  fputf("                 android:value=\"%s\" />\n", f, appName);
+  fputf("                android:value=\"%s\" />\n", f, appName);
   fputs("      <intent-filter>\n"
         "        <action android:name=\"android.intent.action.MAIN\" />\n"
         "        <category android:name=\"android.intent.category.LAUNCHER\" />\n"
@@ -234,9 +378,12 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
         "  </application>\n"
         "</manifest>\n", f);
   fclose(f);
+}
 
-  // create the CMakeLists.txt file
-  f = createFileFormatted(gProjectDir, "%s/src/main/cpp/CMakeLists.txt", appName);
+void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &srcList, const StringList &libList)
+{
+  int i;
+  FILE *f = createFileFormatted(gProjectDir, "%s/src/main/cpp/CMakeLists.txt", appName);
   fputs("cmake_minimum_required(VERSION 3.4.1)\n", f);
   fputf("set(FLTK_DIR \"%s\")\n", f, wSourceFolder->value());
   fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
@@ -248,7 +395,8 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
   fputs(")\n"
         "target_include_directories(\n", f);
   fputf("    %s SYSTEM PRIVATE\n", f, appName);
-  fputs("    ${FLTK_DIR}/\n"
+  fputs("    ${CMAKE_SYSROOT}/usr/include/c++/v1/\n"
+        "    ${FLTK_DIR}/\n"
         "    ${FLTK_IDE_DIR}/\n"
         ")\n"
         "target_link_libraries(\n", f);
@@ -260,14 +408,24 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
         "    m\n"
         ")\n", f);
   fclose(f);
+}
 
-  // create the strings.xml resource
-  f = createFileFormatted(gProjectDir, "%s/src/main/res/values/strings.xml", appName);
+void createAppSrcMainResValuesStringsXml(const char *appName)
+{
+  FILE *f = createFileFormatted(gProjectDir, "%s/src/main/res/values/strings.xml", appName);
   fputs("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
         "<resources>\n", f);
   fputf("    <string name=\"app_name\">%s</string>\n", f, appName);
   fputs("</resources>\n", f);
   fclose(f);
+}
+
+/*
+ * We may add fonts here: <appName>/src/main/assets/fonts/Roboto-Regular.ttf
+ */
+void createAppSrcMainResBinaries(const char *appName)
+{
+  FILE *f;
 
   f = createFileFormatted(gProjectDir, "%s/src/main/res/mipmap-mdpi/ic_launcher.png", appName);
   fwrite(mdpi_ic_launcher, sizeof(mdpi_ic_launcher), 1, f);
@@ -284,8 +442,16 @@ void createApplicationFolder(const char *appName, const StringList &srcList, con
   f = createFileFormatted(gProjectDir, "%s/src/main/res/mipmap-xxhdpi/ic_launcher.png", appName);
   fwrite(xxhdpi_ic_launcher, sizeof(xxhdpi_ic_launcher), 1, f);
   fclose(f);
+}
 
-  // we may add fonts here: <appName>/src/main/assets/fonts/Roboto-Regular.ttf
+void createApplicationFolder(const char *appName, const StringList &srcList, const StringList &libList)
+{
+  gApplicationList.add(appName);
+  createAppBuildGradle(appName, libList);
+  createAppSrcMainAndroidManifestXml(appName);
+  createAppSrcMainCppCMakeListsTxt(appName, srcList, libList);
+  createAppSrcMainResValuesStringsXml(appName);
+  createAppSrcMainResBinaries(appName);
 }
 
 
@@ -303,275 +469,114 @@ void createProjectFolder()
 {
   setProjectFolder();
 
-  //fl_message("Can't create project. Not yet implemented.");
+  StringList fltkSrcs("drivers/Android/Fl_Android_Application.cxx",
+                      "drivers/Android/Fl_Android_System_Driver.cxx",
+                      "drivers/Android/Fl_Android_Screen_Driver.cxx",
+                      "drivers/Android/Fl_Android_Screen_Keyboard.cxx",
+                      "drivers/Android/Fl_Android_Window_Driver.cxx",
+                      "drivers/Android/Fl_Android_Image_Surface_Driver.cxx",
+                      "drivers/Android/Fl_Android_Graphics_Driver.cxx",
+                      "drivers/Android/Fl_Android_Graphics_Clipping.cxx",
+                      "drivers/Android/Fl_Android_Graphics_Font.cxx",
+                      0L);
+  getEntriesFromCMakeFile(fltkSrcs, wSourceFolder->value(), "src/CMakeLists.txt", "CPPFILES");
+  getEntriesFromCMakeFile(fltkSrcs, wSourceFolder->value(), "src/CMakeLists.txt", "CFILES");
+  createLibraryFolder("fltk", fltkSrcs);
 
-  // create this for every library
-  gLibraryList.add("fltk");
-  createFile(gProjectDir, "fltk/build.gradle",
-             "apply plugin: 'com.android.library'\n\n"
-             "android {\n"
-             "  compileSdkVersion 26\n"
-             "  defaultConfig {\n"
-             "    minSdkVersion 14\n"
-             "    targetSdkVersion 26\n"
-             "    externalNativeBuild {\n"
-             "      cmake {\n"
-             "        arguments '-DANDROID_STL=c++_shared'\n"
-             "        targets 'fltk'\n"
-             "      }\n"
-             "    }\n"
-             "  }\n"
-             "  buildTypes {\n"
-             "    release {\n"
-             "      minifyEnabled false\n"
-             "    }\n"
-             "  }\n"
-             "  externalNativeBuild {\n"
-             "    cmake {\n"
-             "      path 'src/main/cpp/CMakeLists.txt'\n"
-             "    }\n"
-             "  }\n"
-             "}\n");
-  createFile(gProjectDir, "fltk/src/main/AndroidManifest.xml",
-             "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-             "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n"
-             "          package=\"org.fltk.fltk\">\n"
-             "</manifest>\n");
+  StringList fltkFormsSrcs;
+  getEntriesFromCMakeFile(fltkFormsSrcs, wSourceFolder->value(), "src/CMakeLists.txt", "FLCPPFILES");
+  createLibraryFolder("fltk_forms", fltkFormsSrcs);
 
-  FILE *f;
-  f = createFileFormatted(gProjectDir, "%s/src/main/cpp/CMakeLists.txt", "fltk");
-  fputs("cmake_minimum_required(VERSION 3.6)\n"
-             "\n"
-             "set(CMAKE_VERBOSE_MAKEFILE on)\n"
-        "\n", f);
-  fputf("set(FLTK_DIR \"%s\")\n", f, wSourceFolder->value());
-  fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
-  fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n"
-             "\n"
-             "function(list_transform_prepend var prefix)\n"
-             "    set(temp \"\")\n"
-             "    foreach(f ${${var}})\n"
-             "        list(APPEND temp \"${prefix}${f}\")\n"
-             "    endforeach()\n"
-             "    set(${var} \"${temp}\" PARENT_SCOPE)\n"
-             "endfunction()\n"
-             "\n"
-             "set (CPPFILES\n"
-             "  Fl.cxx\n"
-             "  Fl_Adjuster.cxx\n"
-             "  Fl_Bitmap.cxx\n"
-             "  Fl_Browser.cxx\n"
-             "  Fl_Browser_.cxx\n"
-             "  Fl_Browser_load.cxx\n"
-             "  Fl_Box.cxx\n"
-             "  Fl_Button.cxx\n"
-             "  Fl_Chart.cxx\n"
-             "  Fl_Check_Browser.cxx\n"
-             "  Fl_Check_Button.cxx\n"
-             "  Fl_Choice.cxx\n"
-             "  Fl_Clock.cxx\n"
-             "  Fl_Color_Chooser.cxx\n"
-             "  Fl_Copy_Surface.cxx\n"
-             "  Fl_Counter.cxx\n"
-             "  Fl_Device.cxx\n"
-             "  Fl_Dial.cxx\n"
-             "  Fl_Help_Dialog_Dox.cxx\n"
-             "  Fl_Double_Window.cxx\n"
-             "  Fl_File_Browser.cxx\n"
-             "  Fl_File_Chooser.cxx\n"
-             "  Fl_File_Chooser2.cxx\n"
-             "  Fl_File_Icon.cxx\n"
-             "  Fl_File_Input.cxx\n"
-             "  Fl_Graphics_Driver.cxx\n"
-             "  Fl_Group.cxx\n"
-             "  Fl_Help_View.cxx\n"
-             "  Fl_Image.cxx\n"
-             "  Fl_Image_Surface.cxx\n"
-             "  Fl_Input.cxx\n"
-             "  Fl_Input_.cxx\n"
-             "  Fl_Input_Choice.cxx\n"
-             "  Fl_Light_Button.cxx\n"
-             "  Fl_Menu.cxx\n"
-             "  Fl_Menu_.cxx\n"
-             "  Fl_Menu_Bar.cxx\n"
-             "  Fl_Menu_Button.cxx\n"
-             "  Fl_Menu_Window.cxx\n"
-             "  Fl_Menu_add.cxx\n"
-             "  Fl_Menu_global.cxx\n"
-             "  Fl_Multi_Label.cxx\n"
-             "  Fl_Native_File_Chooser.cxx\n"
-             "  Fl_Overlay_Window.cxx\n"
-             "  Fl_Pack.cxx\n"
-             "  Fl_Paged_Device.cxx\n"
-             "  Fl_Pixmap.cxx\n"
-             "  Fl_Positioner.cxx\n"
-             "  Fl_Preferences.cxx\n"
-             "  Fl_Printer.cxx\n"
-             "  Fl_Progress.cxx\n"
-             "  Fl_Repeat_Button.cxx\n"
-             "  Fl_Return_Button.cxx\n"
-             "  Fl_Roller.cxx\n"
-             "  Fl_Round_Button.cxx\n"
-             "  Fl_Screen_Driver.cxx\n"
-             "  Fl_Scroll.cxx\n"
-             "  Fl_Scrollbar.cxx\n"
-             "  Fl_Shared_Image.cxx\n"
-             "  Fl_Simple_Terminal.cxx\n"
-             "  Fl_Single_Window.cxx\n"
-             "  Fl_Slider.cxx\n"
-             "  Fl_Spinner.cxx\n"
-             "  Fl_Sys_Menu_Bar.cxx\n"
-             "  Fl_System_Driver.cxx\n"
-             "  Fl_Table.cxx\n"
-             "  Fl_Table_Row.cxx\n"
-             "  Fl_Tabs.cxx\n"
-             "  Fl_Text_Buffer.cxx\n"
-             "  Fl_Text_Display.cxx\n"
-             "  Fl_Text_Editor.cxx\n"
-             "  Fl_Tile.cxx\n"
-             "  Fl_Tiled_Image.cxx\n"
-             "  Fl_Tooltip.cxx\n"
-             "  Fl_Tree.cxx\n"
-             "  Fl_Tree_Item_Array.cxx\n"
-             "  Fl_Tree_Item.cxx\n"
-             "  Fl_Tree_Prefs.cxx\n"
-             "  Fl_Valuator.cxx\n"
-             "  Fl_Value_Input.cxx\n"
-             "  Fl_Value_Output.cxx\n"
-             "  Fl_Value_Slider.cxx\n"
-             "  Fl_Widget.cxx\n"
-             "  Fl_Widget_Surface.cxx\n"
-             "  Fl_Window.cxx\n"
-             "  Fl_Window_Driver.cxx\n"
-             "  Fl_Window_fullscreen.cxx\n"
-             "  Fl_Window_hotspot.cxx\n"
-             "  Fl_Window_iconize.cxx\n"
-             "  Fl_Wizard.cxx\n"
-             "  Fl_XBM_Image.cxx\n"
-             "  Fl_XPM_Image.cxx\n"
-             "  Fl_abort.cxx\n"
-             "  Fl_add_idle.cxx\n"
-             "  Fl_arg.cxx\n"
-             "  Fl_compose.cxx\n"
-             "  Fl_display.cxx\n"
-             "  Fl_get_system_colors.cxx\n"
-             "  Fl_grab.cxx\n"
-             "  Fl_lock.cxx\n"
-             "  Fl_own_colormap.cxx\n"
-             "  Fl_visual.cxx\n"
-             "  filename_absolute.cxx\n"
-             "  filename_expand.cxx\n"
-             "  filename_ext.cxx\n"
-             "  filename_isdir.cxx\n"
-             "  filename_list.cxx\n"
-             "  filename_match.cxx\n"
-             "  filename_setext.cxx\n"
-             "  fl_arc.cxx\n"
-             "  fl_ask.cxx\n"
-             "  fl_boxtype.cxx\n"
-             "  fl_color.cxx\n"
-             "  fl_cursor.cxx\n"
-             "  fl_curve.cxx\n"
-             "  fl_diamond_box.cxx\n"
-             "  fl_draw.cxx\n"
-             "  fl_draw_pixmap.cxx\n"
-             "  fl_engraved_label.cxx\n"
-             "  fl_file_dir.cxx\n"
-             "  fl_font.cxx\n"
-             "  fl_gleam.cxx\n"
-             "  fl_gtk.cxx\n"
-             "  fl_labeltype.cxx\n"
-             "  fl_open_uri.cxx\n"
-             "  fl_oval_box.cxx\n"
-             "  fl_overlay.cxx\n"
-             "  fl_overlay_visual.cxx\n"
-             "  fl_plastic.cxx\n"
-             "  fl_read_image.cxx\n"
-             "  fl_rect.cxx\n"
-             "  fl_round_box.cxx\n"
-             "  fl_rounded_box.cxx\n"
-             "  fl_set_font.cxx\n"
-             "  fl_scroll_area.cxx\n"
-             "  fl_shadow_box.cxx\n"
-             "  fl_shortcut.cxx\n"
-             "  fl_show_colormap.cxx\n"
-             "  fl_symbols.cxx\n"
-             "  fl_vertex.cxx\n"
-             "  screen_xywh.cxx\n"
-             "  fl_utf8.cxx\n"
-             "  fl_encoding_latin1.cxx\n"
-             "  fl_encoding_mac_roman.cxx\n"
-             ")\n"
-             "\n"
-             "set (DRIVER_FILES\n"
-             "  drivers/Android/Fl_Android_Application.cxx\n"
-             "  drivers/Android/Fl_Android_System_Driver.cxx\n"
-             "  drivers/Android/Fl_Android_Screen_Driver.cxx\n"
-             "  drivers/Android/Fl_Android_Screen_Keyboard.cxx\n"
-             "  drivers/Android/Fl_Android_Window_Driver.cxx\n"
-             "  drivers/Android/Fl_Android_Image_Surface_Driver.cxx\n"
-             "  drivers/Android/Fl_Android_Graphics_Driver.cxx\n"
-             "  drivers/Android/Fl_Android_Graphics_Clipping.cxx\n"
-             "  drivers/Android/Fl_Android_Graphics_Font.cxx\n"
-             ")\n"
-             "\n"
-             "#source_group(\"Header Files\" FILES ${HEADER_FILES})\n"
-             "source_group(\"Driver Source Files\" FILES ${DRIVER_FILES})\n"
-             "#source_group(\"Driver Header Files\" FILES ${DRIVER_HEADER_FILES})\n"
-             "\n"
-             "set (CFILES\n"
-             "  flstring.c\n"
-             "  numericsort.c\n"
-             "  vsnprintf.c\n"
-             "  xutf8/is_right2left.c\n"
-             "  xutf8/is_spacing.c\n"
-             "  xutf8/case.c\n"
-             ")\n"
-             "\n"
-             "set (CPPFILES\n"
-             "  ${CPPFILES}\n"
-             "  ${DRIVER_FILES}\n"
-             ")\n"
-             "\n"
-             "set (SHARED_FILES ${CPPFILES} ${CFILES})\n"
-             "set (STATIC_FILES ${SHARED_FILES})\n"
-             "\n"
-             "add_definitions(-DFL_LIBRARY)\n"
-             "\n"
-             "list_transform_prepend(STATIC_FILES \"${FLTK_DIR}/src/\")\n"
-             "\n"
-             "# now build app's shared lib\n"
-             "add_library( fltk STATIC\n"
-             "  ${STATIC_FILES}\n"
-             ")\n"
-             "\n"
-             "set_target_properties( fltk\n"
-             "    PROPERTIES\n"
-             "    CLEAN_DIRECT_OUTPUT TRUE\n"
-             "    COMPILE_DEFINITIONS \"FL_LIBRARY\"\n"
-             ")\n"
-             "\n"
-             "target_include_directories(\n"
-             "    fltk SYSTEM PRIVATE\n"
-             // The path below is a terrible hack. The Android NDK include a file
-             // name <version> somewhere, but instead of using the clang file,
-             // if finds the FLTK "VERSION" file first. This path links directly to <version>
-             // Alternative (cl/usr/include/cang only): -iwithsysroot /usr/include/c++/v1/
-             "    ${CMAKE_SYSROOT}/usr/include/c++/v1/\n"
-             "    ${FLTK_DIR}/\n"
-             "    ${FLTK_DIR}/src/\n"
-             "    ${FLTK_IDE_DIR}/\n"
-             ")\n"
-             "\n"
-             "target_include_directories(\n"
-             "    fltk PRIVATE\n"
-             "    ${FLTK_DIR}/src/ )\n", f);
-  fclose(f);
 
+  // test applications that can run on Android
+  // - entries marked TODO basically work, but need to be adapted to the mobile platform
+  // - entries marked with FIXME require additional work on FLTK
+  // - unmarked entries work well, no more work is required
 
   createApplicationFolder("adjuster", StringList("adjuster.cxx", 0L), StringList("fltk", 0L));
   createApplicationFolder("arc", StringList("arc.cxx", 0L), StringList("fltk", 0L));
+  // FIXME: alpha drawing not implemented
+  createApplicationFolder("animated", StringList("animated.cxx", 0L), StringList("fltk", 0L));
+  // TODO: timeout dialog seems to not work?
+  createApplicationFolder("ask", StringList("ask.cxx", 0L), StringList("fltk", 0L));
+  createApplicationFolder("bitmap", StringList("bitmap.cxx", 0L), StringList("fltk", 0L));
+  // FIXME: no audio library, screen size
+  //createApplicationFolder("blocks", StringList("blocks.cxx", 0L), StringList("fltk", "fltk_audio", 0L));
+  // TODO: window does not fit the default screen size
   createApplicationFolder("boxtype", StringList("boxtype.cxx", 0L), StringList("fltk", 0L));
+  // FIXME: we need to be able to add the referenced resource file
+  createApplicationFolder("browser", StringList("browser.cxx", 0L), StringList("fltk", 0L));
+  createApplicationFolder("button", StringList("button.cxx", 0L), StringList("fltk", 0L));
+  createApplicationFolder("buttons", StringList("buttons.cxx", 0L), StringList("fltk", 0L));
+  // FIXME: must implement fltk_images
+  // createApplicationFolder("checkers", StringList("checkers.cxx", 0L), StringList("fltk", "fltk_images", 0L));
+  // FIXME: no interface to get actual time, both windows overlapping
+  createApplicationFolder("clock", StringList("clock.cxx", 0L), StringList("fltk", 0L));
+  // FIXME: implement forms library, we need to be able to add the referenced resource file
+  createApplicationFolder("colbrowser", StringList("colbrowser.cxx", 0L), StringList("fltk", 0L));
+  createApplicationFolder("color_chooser", StringList("color_chooser.cxx", 0L), StringList("fltk", 0L));
+  //CREATE_EXAMPLE(cursor cursor.cxx fltk ANDROID_OK)
+  createApplicationFolder("curve", StringList("curve.cxx", 0L), StringList("fltk", 0L));
+  //CREATE_EXAMPLE(demo demo.cxx fltk)
+  //CREATE_EXAMPLE(device device.cxx fltk)
+  //CREATE_EXAMPLE(doublebuffer doublebuffer.cxx fltk ANDROID_OK)
+  //CREATE_EXAMPLE(editor editor.cxx fltk ANDROID_OK)
+  //CREATE_EXAMPLE(fast_slow fast_slow.fl fltk ANDROID_OK)
+  //CREATE_EXAMPLE(file_chooser file_chooser.cxx "fltk;fltk_images")
+  //CREATE_EXAMPLE(flink "flink.cxx;flink_ui.fl" "fltk;fltk_images")
+  createApplicationFolder("fonts", StringList("fonts.cxx", 0L), StringList("fltk", 0L));
+  //CREATE_EXAMPLE(forms forms.cxx "fltk;fltk_forms")
+  createApplicationFolder("hello", StringList("hello.cxx", 0L), StringList("fltk", 0L));
+  //CREATE_EXAMPLE(help_dialog help_dialog.cxx "fltk;fltk_images")
+  //CREATE_EXAMPLE(icon icon.cxx fltk)
+  //CREATE_EXAMPLE(iconize iconize.cxx fltk)
+  //CREATE_EXAMPLE(image image.cxx fltk)
+  //createApplicationFolder("inactive", StringList("inactive.cxx", 0L), StringList("fltk", 0L));
+  // TODO: Android keyboard may cover text field
+  createApplicationFolder("input", StringList("input.cxx", 0L), StringList("fltk", 0L));
+  //CREATE_EXAMPLE(input_choice input_choice.cxx fltk)
+  //CREATE_EXAMPLE(keyboard "keyboard.cxx;keyboard_ui.fl" fltk)
+  //CREATE_EXAMPLE(label label.cxx "fltk;fltk_forms")
+  //CREATE_EXAMPLE(line_style line_style.cxx fltk)
+  //CREATE_EXAMPLE(list_visuals list_visuals.cxx fltk)
+  //CREATE_EXAMPLE(mandelbrot "mandelbrot_ui.fl;mandelbrot.cxx" fltk)
+  //CREATE_EXAMPLE(menubar menubar.cxx fltk)
+  //CREATE_EXAMPLE(message message.cxx fltk)
+  //CREATE_EXAMPLE(minimum minimum.cxx fltk)
+  //CREATE_EXAMPLE(native-filechooser native-filechooser.cxx "fltk;fltk_images")
+  //CREATE_EXAMPLE(navigation navigation.cxx fltk)
+  createApplicationFolder("output", StringList("output.cxx", 0L), StringList("fltk", "fltk_forms", 0L));
+  //CREATE_EXAMPLE(output output.cxx "fltk;fltk_forms")
+  //CREATE_EXAMPLE(overlay overlay.cxx fltk)
+  //CREATE_EXAMPLE(pack pack.cxx fltk)
+  //CREATE_EXAMPLE(pixmap pixmap.cxx fltk)
+  //CREATE_EXAMPLE(pixmap_browser pixmap_browser.cxx "fltk;fltk_images")
+  //CREATE_EXAMPLE(preferences preferences.fl fltk)
+  //CREATE_EXAMPLE(offscreen offscreen.cxx fltk)
+  //CREATE_EXAMPLE(radio radio.fl fltk)
+  //CREATE_EXAMPLE(resize resize.fl fltk)
+  //CREATE_EXAMPLE(resizebox resizebox.cxx fltk)
+  //CREATE_EXAMPLE(rotated_text rotated_text.cxx fltk)
+  // FIXME: popup window clipping is not ok
+  createApplicationFolder("scroll", StringList("scroll.cxx", 0L), StringList("fltk", 0L));
+  //CREATE_EXAMPLE(subwindow subwindow.cxx fltk)
+  //CREATE_EXAMPLE(sudoku sudoku.cxx "fltk;fltk_images;${AUDIOLIBS}")
+  //CREATE_EXAMPLE(symbols symbols.cxx fltk)
+  //CREATE_EXAMPLE(tabs tabs.fl fltk)
+  //CREATE_EXAMPLE(table table.cxx fltk)
+  //CREATE_EXAMPLE(threads threads.cxx fltk)
+  //CREATE_EXAMPLE(tile tile.cxx fltk)
+  //CREATE_EXAMPLE(tiled_image tiled_image.cxx fltk)
+  //CREATE_EXAMPLE(tree tree.fl fltk)
+  //CREATE_EXAMPLE(twowin twowin.cxx fltk)
+  //CREATE_EXAMPLE(utf8 utf8.cxx fltk)
+  //CREATE_EXAMPLE(valuators valuators.fl fltk)
+  //CREATE_EXAMPLE(unittests unittests.cxx fltk)
+  //CREATE_EXAMPLE(windowfocus windowfocus.cxx fltk)
+
+
+  FILE *f;
+  int i;
 
   // create this for the entire project
   createFile(gProjectDir, "FL/abi-version.h", "/* #undef FL_ABI_VERSION */\n");
@@ -591,7 +596,7 @@ void createProjectFolder()
              "        google()\n"
              "    }\n"
              "}\n");
-  int i;
+
   f = createFile(gProjectDir, "settings.gradle");
   for (i=0; i<gLibraryList.n(); ++i)
     fputf("include ':%s'\n", f, gLibraryList[i]);
@@ -659,12 +664,15 @@ void createProjectFolder()
              "#define HAVE_DLSYM 1\n"
              "#define FL_NO_PRINT_SUPPORT 1\n"
              "/* #undef FL_CFG_NO_FILESYSTEM_SUPPORT */\n");
+
+  fl_message("Project created at\n%s", gProjectDir);
+  gMainindow->hide();
 }
 
 
 int main(int argc, char **argv) {
   fl_message_title_default("Flink");
-  Fl_Window *window = createMainWindow();
+  gMainindow = createMainWindow();
 
   char pathToFLTK[FL_PATH_MAX];
   strcpy(pathToFLTK, __FILE__);
@@ -678,7 +686,7 @@ int main(int argc, char **argv) {
 
   wDeleteExistingProject->value(1);
 
-  window->show(argc, argv);
+  gMainindow->show(argc, argv);
   return Fl::run();
 }
 
