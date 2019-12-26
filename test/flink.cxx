@@ -739,11 +739,12 @@ void deleteProject()
 int verifyFLTKRootDir()
 {
   char fullName[FL_PATH_MAX];
-  snprintf(fullName, sizeof(fullName), "%s/src/CMakeListst.txt", gFLTKRootDir);
-  if (fl_access(fullName, R_OK)==-1) {
+  snprintf(fullName, sizeof(fullName), "%s/src/CMakeLists.txt", gFLTKRootDir);
+  int ret;
+  if ((ret = fl_access(fullName, R_OK))==-1) {
     fl_alert("This seleted FLTK root directory does not seem to be\n"
              "the base of an FLTK project.\n\n"
-             "%s:\n\"%s/src/CMakeListst.txt\"",
+             "%s:\n\"%s/src/CMakeLists.txt\"",
              strerror(errno), gFLTKRootDir);
     return 0;
   }
@@ -811,26 +812,28 @@ void createProject()
   // createApplicationFolder("checkers", StringList("checkers.cxx", 0L), StringList("fltk", "fltk_images", 0L));
   // FIXME: no interface to get actual time, both windows overlapping
   createApplicationFolder("clock", StringList("clock.cxx", 0L), StringList("fltk", 0L));
-  // FIXME: implement forms library, we need to be able to add the referenced resource file
-  createApplicationFolder("colbrowser", StringList("colbrowser.cxx", 0L), StringList("fltk", 0L));
+  // FIXME: we need to be able to add the referenced resource file
+  createApplicationFolder("colbrowser", StringList("colbrowser.cxx", 0L), StringList("fltk_forms", "fltk", 0L));
   createApplicationFolder("color_chooser", StringList("color_chooser.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(cursor cursor.cxx fltk ANDROID_OK)
   createApplicationFolder("curve", StringList("curve.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(demo demo.cxx fltk)
   //CREATE_EXAMPLE(device device.cxx fltk)
   //CREATE_EXAMPLE(doublebuffer doublebuffer.cxx fltk ANDROID_OK)
-  //CREATE_EXAMPLE(editor editor.cxx fltk ANDROID_OK)
+  // FIXME: missing Fl_Native_Filechooser
+  //createApplicationFolder("editor", StringList("editor.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(fast_slow fast_slow.fl fltk ANDROID_OK)
   //CREATE_EXAMPLE(file_chooser file_chooser.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(flink "flink.cxx;flink_ui.fl" "fltk;fltk_images")
   createApplicationFolder("fonts", StringList("fonts.cxx", 0L), StringList("fltk", 0L));
-  //CREATE_EXAMPLE(forms forms.cxx "fltk;fltk_forms")
+  createApplicationFolder("forms", StringList("forms.cxx", 0L), StringList("fltk_forms", "fltk", 0L));
   createApplicationFolder("hello", StringList("hello.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(help_dialog help_dialog.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(icon icon.cxx fltk)
   //CREATE_EXAMPLE(iconize iconize.cxx fltk)
-  //CREATE_EXAMPLE(image image.cxx fltk)
-  //createApplicationFolder("inactive", StringList("inactive.cxx", 0L), StringList("fltk", 0L));
+  // TODO: transparency
+  createApplicationFolder("image", StringList("image.cxx", 0L), StringList("fltk", 0L));
+  //createApplicationFolder("inactive", StringList("inactive.fl", 0L), StringList("fltk", 0L));
   // TODO: Android keyboard may cover text field
   createApplicationFolder("input", StringList("input.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(input_choice input_choice.cxx fltk)
@@ -844,8 +847,7 @@ void createProject()
   //CREATE_EXAMPLE(minimum minimum.cxx fltk)
   //CREATE_EXAMPLE(native-filechooser native-filechooser.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(navigation navigation.cxx fltk)
-  createApplicationFolder("output", StringList("output.cxx", 0L), StringList("fltk", "fltk_forms", 0L));
-  //CREATE_EXAMPLE(output output.cxx "fltk;fltk_forms")
+  createApplicationFolder("output", StringList("output.cxx", 0L), StringList("fltk_forms", "fltk", 0L));
   //CREATE_EXAMPLE(overlay overlay.cxx fltk)
   //CREATE_EXAMPLE(pack pack.cxx fltk)
   //CREATE_EXAMPLE(pixmap pixmap.cxx fltk)
