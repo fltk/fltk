@@ -21,6 +21,7 @@
 #include "Fl_Android_Application.H"
 #include "Fl_Android_Graphics_Driver.H"
 #include "Fl_Android_Screen_Driver.H"
+#include "Fl_Android_Window_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <errno.h>
@@ -80,14 +81,17 @@ void Fl_Android_Graphics_Driver::make_current(Fl_Window *win)
   // remove all window rectangles that are positioned on top of this window
   // TODO: this region is expensive to calculate. Cache it for each window and recalculate when windows move, show, hide, or change order
   // TODO: this is where we also need to subtract any possible window decoration, like the window title and drag bar, resizing edges, etc.
-  Fl_Window *wTop = Fl::first_window();
   int wx = win ? win->x() : 0;
   int wy = win ? win->y() : 0;
-  while (wTop) {
+  Fl_Android_Window_Driver *wDriver = Fl_Android_Window_Driver::stackTopWindow();
+  while (wDriver) {
+    Fl_Window *wTop = wDriver->window();
     if (wTop==win) break;
-    Fl_Rect_Region r(wTop->x()-wx, wTop->y()-wy, wTop->w(), wTop->h());
-    pDesktopWindowRegion.subtract(r);
-    wTop = Fl::next_window(wTop);
+    if (wTop->shown()) {
+      Fl_Rect_Region r(wTop->x() - wx, wTop->y() - wy, wTop->w(), wTop->h());
+      pDesktopWindowRegion.subtract(r);
+    }
+    wDriver = wDriver->stackNextWindow();
   }
   pClippingRegion.set(pDesktopWindowRegion);
 }

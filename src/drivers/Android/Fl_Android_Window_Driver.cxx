@@ -40,6 +40,15 @@ Fl_Window_Driver *Fl_Window_Driver::newWindowDriver(Fl_Window *w)
 
 
 Window fl_window = 0;
+Fl_Android_Window_Driver *Fl_Android_Window_Driver::pStackTopWindow = nullptr;
+
+
+
+Fl_Android_Window_Driver::~Fl_Android_Window_Driver()
+{
+  // remove window if it wasn't removed by 'unmap' yet
+  stackRemoveWindow();
+}
 
 
 void Fl_Android_Window_Driver::show()
@@ -69,6 +78,8 @@ void Fl_Android_Window_Driver::show()
               (800-pWindow->h())/2
       );
     }
+    // add the window to the stack according to its modal flags
+    stackAddWindow();
     // show window or defer showing window
     if (Fl_Android_Application::native_window()) {
       pWindow->redraw();
@@ -77,8 +88,12 @@ void Fl_Android_Window_Driver::show()
     }
   } else {
     // bring window to front
-    if (!pWindow->parent())
-      Fl::first_window(pWindow); // TODO: does this really work?
+    if (!pWindow->parent()) {
+      // this call makes the window the first window in the FLTK list
+      Fl::first_window(pWindow);
+      // this call makes the window the top window in the Android screen stacking order
+      stackRaiseWindow();
+    }
     expose_all();
   }
 }
@@ -118,7 +133,6 @@ void Fl_Android_Window_Driver::make_current()
   if (gd) {
     gd->make_current(pWindow);
   }
-
 }
 
 
@@ -162,9 +176,9 @@ void Fl_Android_Window_Driver::resize(int X,int Y,int W,int H)
 
 /**
  Scroll a portion of the window.
- FIXME: We are currently taking the easy way out, basically telling the caller that we don;t know how to scroll
- and asking FLTK to draw the new area from scratch. It would be nice if clipping provides all calls
- that we need to implement a more efficient scrolling code.
+ FIXME: We are currently taking the easy way out, basically telling the caller that we don;t know
+ how to scroll and asking FLTK to draw the new area from scratch. It would be nice if clipping
+ provides all calls that we need to implement a more efficient scrolling code.
  */
 int Fl_Android_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h, int dest_x, int dest_y,
                                     void (*draw_area)(void*, int,int,int,int), void* data)
@@ -226,6 +240,79 @@ int Fl_Android_Window_Driver::scroll(int src_x, int src_y, int src_w, int src_h,
   return 1;
 }
 
+void Fl_Android_Window_Driver::map()
+{
+  Fl_Window_Driver::map();
+  // not sure yet, if calling this does anything to the window stack
+}
+
+void Fl_Android_Window_Driver::unmap()
+{
+  Fl_Window_Driver::unmap();
+  // not sure yet, if calling this does anything to the window stack
+}
+
+/**
+ * Add this window to the window stack.
+ *
+ * The stack is a list of all windows in the order in which they appear on screen from the topmost
+ * window to the bottom.
+ *
+ * Hidden windows remain inside the stack (?)
+ * Unmapped windows are removed from the stack (?)
+ *
+ * Windows are always arranged from 'modal', then 'non_modal' down to normal windows.
+ */
+void Fl_Android_Window_Driver::stackAddWindow()
+{
+  Fl_Android_Window_Driver *insertAfter = nullptr;
+
+  if (pWindow->modal()) {
+    // if the window is modal, put it at the top of the stack before all other windows
+    insertAfter = nullptr;
+  } else if (pWindow->non_modal()) {
+    // if the window is non-modal, insert it right below the first modal window
+    for (auto w = pStackTopWindow; w; w = w->pStackNextWindow) {
+      if (!w->pWindow->modal())
+        break;
+      insertAfter = w;
+    }
+  } else {
+    // if this is a normal window, insert it after the first non-modal window
+    for (auto w = pStackTopWindow; w; w = w->pStackNextWindow) {
+      if (!w->pWindow->non_modal()) // tests for modal and non-modal
+        break;
+      insertAfter = w;
+    }
+  }
+  if (insertAfter) {
+    pStackNextWindow = insertAfter->pStackNextWindow;
+    insertAfter->pStackNextWindow = this;
+  } else {
+    pStackNextWindow = pStackTopWindow;
+    pStackTopWindow = this;
+  }
+}
+
+void Fl_Android_Window_Driver::stackRaiseWindow()
+{
+  stackRemoveWindow();
+  stackAddWindow();
+}
+
+void Fl_Android_Window_Driver::stackRemoveWindow()
+{
+  auto w = pStackTopWindow;
+  if (w==this) {
+    pStackTopWindow = this->pStackNextWindow;
+  }
+  for ( ; w; w = w->pStackNextWindow) {
+    if (w->pStackNextWindow==this) {
+      w->pStackNextWindow = pStackNextWindow;
+      break;
+    }
+  }
+}
 
 #if 0
 

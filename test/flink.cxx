@@ -30,6 +30,7 @@
 // TODO: make sure that there are no formatting characters in any of the path names (%s,...)
 // TODO: handle all possible errors when writing files (if ( && && && ) else ...)
 // TODO: document that source code, find better function and variable names
+// TODO: test and fix on Linux and MSWindows
 
 #include <string.h>
 #include <stdio.h>
@@ -297,7 +298,7 @@ void createLibSrcMainCppCMakeListsTxt(const char *libName, const StringList &src
     fputf("  %s\n", f, srcList[i]);
   fputs(")\n"
         "\n"
-        "add_definitions(-DFL_LIBRARY)\n"
+        "add_definitions(-DFL_LIBRARY -D__ANDROID__)\n"
         "\n"
         "list_transform_prepend(CPPFILES \"${FLTK_DIR}/src/\")\n"
         "\n"
@@ -430,6 +431,7 @@ void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &src
   fputf("set(FLTK_DIR \"%s\")\n", f, gFLTKRootDir);
   fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
   fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n"
+        "add_definitions(-DFL_LIBRARY -D__ANDROID__)\n"
         "add_library(\n", f);
   fputf("    %s SHARED\n", f, appName);
   for (i=0; i<srcList.n(); ++i)
@@ -800,8 +802,8 @@ void createProject()
   // TODO: timeout dialog seems to not work?
   createApplicationFolder("ask", StringList("ask.cxx", 0L), StringList("fltk", 0L));
   createApplicationFolder("bitmap", StringList("bitmap.cxx", 0L), StringList("fltk", 0L));
-  // FIXME: no audio library, screen size
-  //createApplicationFolder("blocks", StringList("blocks.cxx", 0L), StringList("fltk", "fltk_audio", 0L));
+  // FIXME: no audio library, screen size, runs too slow
+  createApplicationFolder("blocks", StringList("blocks.cxx", 0L), StringList("fltk", 0L));
   // TODO: window does not fit the default screen size
   createApplicationFolder("boxtype", StringList("boxtype.cxx", 0L), StringList("fltk", 0L));
   // FIXME: we need to be able to add the referenced resource file
@@ -844,33 +846,37 @@ void createProject()
   //CREATE_EXAMPLE(mandelbrot "mandelbrot_ui.fl;mandelbrot.cxx" fltk)
   //CREATE_EXAMPLE(menubar menubar.cxx fltk)
   //CREATE_EXAMPLE(message message.cxx fltk)
-  //CREATE_EXAMPLE(minimum minimum.cxx fltk)
+  // TODO: left-over dirt is different than in desktop version. Clipping?
+  createApplicationFolder("minimum", StringList("minimum.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(native-filechooser native-filechooser.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(navigation navigation.cxx fltk)
   createApplicationFolder("output", StringList("output.cxx", 0L), StringList("fltk_forms", "fltk", 0L));
   //CREATE_EXAMPLE(overlay overlay.cxx fltk)
-  //CREATE_EXAMPLE(pack pack.cxx fltk)
-  //CREATE_EXAMPLE(pixmap pixmap.cxx fltk)
+  createApplicationFolder("pack", StringList("pack.cxx", 0L), StringList("fltk", 0L));
+  createApplicationFolder("pixmap", StringList("pixmap.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(pixmap_browser pixmap_browser.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(preferences preferences.fl fltk)
   //CREATE_EXAMPLE(offscreen offscreen.cxx fltk)
   //CREATE_EXAMPLE(radio radio.fl fltk)
   //CREATE_EXAMPLE(resize resize.fl fltk)
-  //CREATE_EXAMPLE(resizebox resizebox.cxx fltk)
+  // TODO: no window manager yet to resize the test app window
+  createApplicationFolder("resizebox", StringList("resizebox.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(rotated_text rotated_text.cxx fltk)
-  // FIXME: popup window clipping is not ok
   createApplicationFolder("scroll", StringList("scroll.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(subwindow subwindow.cxx fltk)
   //CREATE_EXAMPLE(sudoku sudoku.cxx "fltk;fltk_images;${AUDIOLIBS}")
-  //CREATE_EXAMPLE(symbols symbols.cxx fltk)
+  createApplicationFolder("symbols", StringList("symbols.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(tabs tabs.fl fltk)
   //CREATE_EXAMPLE(table table.cxx fltk)
   //CREATE_EXAMPLE(threads threads.cxx fltk)
-  //CREATE_EXAMPLE(tile tile.cxx fltk)
-  //CREATE_EXAMPLE(tiled_image tiled_image.cxx fltk)
+  // TODO: subwindow does not render (clipping, maybe more)
+  createApplicationFolder("tile", StringList("tile.cxx", 0L), StringList("fltk", 0L));
+  // TODO: app does not quit when pressing button
+  createApplicationFolder("tiled_image", StringList("tiled_image.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(tree tree.fl fltk)
   //CREATE_EXAMPLE(twowin twowin.cxx fltk)
-  //CREATE_EXAMPLE(utf8 utf8.cxx fltk)
+  // FIXME: individual windows show, but both windows together cause the app to lock
+  createApplicationFolder("utf8", StringList("utf8.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(valuators valuators.fl fltk)
   //CREATE_EXAMPLE(unittests unittests.cxx fltk)
   //CREATE_EXAMPLE(windowfocus windowfocus.cxx fltk)

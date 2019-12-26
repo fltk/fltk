@@ -162,8 +162,10 @@ int Fl_Rect_Region::intersect_with(const Fl_Rect_Region &r)
   }
   if (same)
     return SAME;
-  if (is_empty())
+  if (is_empty()) {
+    set_empty();
     return EMPTY;
+  }
   return LESS;
 }
 
@@ -366,26 +368,44 @@ void Fl_Complex_Region::compress()
   // Can't compress anything that does not have a subregion
   if (!pSubregion) return;
 
-  // remove all empty regions, because the really don't add anything (literally)
-  //  print("Compress");
-  Fl_Complex_Region *rgn = pSubregion;
-  while (rgn && rgn->is_empty()) {
-    pSubregion = rgn->next();
-    delete rgn; rgn = pSubregion;
-  }
-  if (!pSubregion) return;
-
-  rgn = pSubregion;
-  while (rgn) {
-    while (rgn->pNext && rgn->pNext->is_empty()) {
-      Fl_Complex_Region *nextNext = rgn->pNext->pNext;
-      delete rgn->pNext; rgn->pNext = nextNext;
+  // remove all empty regions, because they really don't add anything (literally)
+  Fl_Complex_Region **rgnp = &pSubregion;
+  while (*rgnp) {
+    Fl_Complex_Region *rgn = *rgnp;
+    if (rgn->is_empty()) {
+      *rgnp = rgn->next();
+      delete rgn;
+    } else {
+      Fl_Complex_Region *nextRgn = rgn->next();
+      if (!nextRgn) break;
+      rgnp = &nextRgn;
     }
-    rgn = rgn->next();
   }
+  if (!pSubregion) {
+    set_empty();
+    return;
+  }
+
+
+//  Fl_Complex_Region *rgn = pSubregion;
+//  while (rgn && rgn->is_empty()) {
+//    pSubregion = rgn->next();
+//    delete rgn; rgn = pSubregion;
+//  }
+//  if (!pSubregion) return;
+//
+//  rgn = pSubregion;
+//  while (rgn) {
+//    while (rgn->pNext && rgn->pNext->is_empty()) {
+//      Fl_Complex_Region *nextNext = rgn->pNext->pNext;
+//      delete rgn->pNext; rgn->pNext = nextNext;
+//    }
+//    rgn = rgn->next();
+//  }
 
   // find rectangles that can be merged into a single new rectangle
   // (Too much work for much too little benefit)
+
 
   // if there is only a single subregion left, merge it into this region
   if (pSubregion->pNext==nullptr) {
@@ -395,7 +415,7 @@ void Fl_Complex_Region::compress()
 
   // finally, update the boudning box
   Fl_Rect_Region::set((Fl_Rect_Region&)*pSubregion);
-  for (rgn=pSubregion->pNext; rgn; rgn=rgn->pNext) {
+  for (Fl_Complex_Region *rgn=pSubregion->pNext; rgn; rgn=rgn->pNext) {
     add_to_bbox(*rgn);
   }
 }

@@ -583,7 +583,9 @@ int main(int argc, char** argv)
 #ifdef _WIN32
                " Arial Unicode MS"
 #elif defined(__APPLE__)
-               "Monaco"
+          "Monaco"
+#elif defined(__ANDROID__)
+          "$Roboto-Regular.ttf"
 #else
                "-*-*-*-*-*-*-*-*-*-*-*-*-iso10646-1"
 #endif
