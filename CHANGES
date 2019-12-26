@@ -52,10 +52,10 @@ Bug fixes and other improvements
 	  through "layer-backed views" when the app is linked to SDK 10.14.
 	- MacOS platform: fix regression in macOS 10.13 where an unbundled app
 	  had its system menu bar unresponsive.
-	- MacOS 10.10 platform: Fl_Window::fullscreen() and fullscreen_off() 
+	- MacOS 10.10 platform: Fl_Window::fullscreen() and fullscreen_off()
 	  no longer call Fl_Window::hide() + Fl_Window::show().
-	  The new procedure essentially resizes the window, as done on 
-	  the X11+EWMH and Windows platforms. This improves in particular 
+	  The new procedure essentially resizes the window, as done on
+	  the X11+EWMH and Windows platforms. This improves in particular
 	  the possibility to turn an Fl_Gl_Window fullscreen on and off.
 	- MacOS platform: Support \r\n as end of line used by recent
 	  MS Office apps in clipboard.
@@ -92,7 +92,7 @@ Bug fixes and other improvements
 	- Fix Windows IDE solutions VisualC2008 and VisualC2010 to
 	  build properly if the FLTK source directory is located
 	  in a path that contains spaces.
-	
+
 	Note: this is a source tar file update that is only necessary
 	if you build one of the above mentioned Visual Studio IDE
 	solutions in a path with spaces. Nothing else changed, no
@@ -106,7 +106,7 @@ Bug fixes and other improvements
 	- Fix test/native-filechooser help display artifact (STR #3349).
 	- MacOS: fix a crash when closing a fullscreen window.
 	- Accept empty Fl_Pixmap in Fl_RGB_Image c'tor (STR #3348).
-	- MacOS: fix drawing error when a window containing a hidden subwindow 
+	- MacOS: fix drawing error when a window containing a hidden subwindow
 	  is changed to fullscreen (error visible with the tabs test program).
 	- MacOS: fix possible crash when enabling fullscreen in test/scroll.
 	- Add a snapshot of known STR's and RFE's (KNOWN_BUGS.html).
