@@ -28,15 +28,14 @@
  */
 
 // TODO: make sure that there are no formatting characters in any of the path names (%s,...)
-// TODO: make sure that the FLTK path exists, maybe even check for known files (src/CMakeLists.txt)
 // TODO: handle all possible errors when writing files (if ( && && && ) else ...)
 // TODO: document that source code, find better function and variable names
-// TODO: improve the UI
 
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -733,6 +732,25 @@ void deleteProject()
 }
 
 /*
+ Verify that the given source directory is actually an FLTK project root
+ directory by searching for <fltk>/src/CMakeListst.txt which we will need
+ in the process of creating the project.
+ */
+int verifyFLTKRootDir()
+{
+  char fullName[FL_PATH_MAX];
+  snprintf(fullName, sizeof(fullName), "%s/src/CMakeListst.txt", gFLTKRootDir);
+  if (fl_access(fullName, R_OK)==-1) {
+    fl_alert("This seleted FLTK root directory does not seem to be\n"
+             "the base of an FLTK project.\n\n"
+             "%s:\n\"%s/src/CMakeListst.txt\"",
+             strerror(errno), gFLTKRootDir);
+    return 0;
+  }
+  return 1;
+}
+
+/*
  FLTK callback:
  Create the entire AndroidStudio project tree for all applications
  and libraries.
@@ -740,6 +758,8 @@ void deleteProject()
 void createProject()
 {
   if (updateProjectParametrsFromUI()==0)
+    return;
+  if (verifyFLTKRootDir()==0)
     return;
 
   // This file identifies an AndroidStudio project directory that was created
@@ -940,7 +960,8 @@ void presetUI()
  The main app entry point.
  TODO: we may want to add command line parameters at some point.
  */
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   fl_message_title_default("Flink");
   gMainindow = createMainWindow();
 
