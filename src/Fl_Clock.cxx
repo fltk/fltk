@@ -212,11 +212,16 @@ static void tick(void *v) {
   time_t sec;
   int usec;
   Fl::system_driver()->gettime(&sec, &usec);
+  double delta = (1000000 - usec)/1000000.; // time till next second
+  // if current time is just before full second, show that full second
+  // and wait one more second (STR 3516)
+  if (delta < 0.1) {
+    delta += 1.0;
+    sec++;
+  }
   ((Fl_Clock*)v)->value((ulong)sec);
 
-  // schedule timer event slightly later than the next second (+25 ms)
-  // to prevent multiple timer events if triggered too early (STR 3516)
-  Fl::add_timeout((1025000 - usec)/1000000., tick, v);
+  Fl::add_timeout(delta, tick, v);
 }
 
 int Fl_Clock::handle(int event) {
