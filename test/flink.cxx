@@ -31,6 +31,7 @@
 // TODO: handle all possible errors when writing files (if ( && && && ) else ...)
 // TODO: document that source code, find better function and variable names
 // TODO: test and fix on Linux and MSWindows
+// FIXME: find the path to Fluid
 
 #include <string.h>
 #include <stdio.h>
@@ -430,12 +431,34 @@ void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &src
   fputs("cmake_minimum_required(VERSION 3.4.1)\n", f);
   fputf("set(FLTK_DIR \"%s\")\n", f, gFLTKRootDir);
   fputf("set(FLTK_IDE_DIR \"%s\")\n", f, gProjectDir);
-  fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n"
-        "add_definitions(-DFL_LIBRARY -D__ANDROID__)\n"
+  fputs("set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -std=c++11\")\n", f);
+  for (i=0; i<srcList.n(); ++i) {
+    const char *ext = fl_filename_ext(srcList[i]);
+    if (strcmp(ext, ".fl")==0) {
+      char cxxFile[FL_PATH_MAX];
+      strcpy(cxxFile, srcList[i]);
+      fl_filename_setext(cxxFile, sizeof(cxxFile), ".cxx");
+      char hFile[FL_PATH_MAX];
+      strcpy(hFile, srcList[i]);
+      fl_filename_setext(hFile, sizeof(hFile), ".h");
+      fputs("add_custom_command(\n", f);
+      fputf("    OUTPUT ${FLTK_DIR}/test/%s ${FLTK_DIR}/test/%s\n", f, cxxFile, hFile);
+      fputf("    COMMAND fluid -c ${FLTK_DIR}/test/%s\n", f, srcList[i]);
+      fputs("    WORKING_DIRECTORY ${FLTK_DIR}/test/\n"
+            ")\n", f);
+    }
+  }
+  fputs("add_definitions(-DFL_LIBRARY -D__ANDROID__)\n"
         "add_library(\n", f);
   fputf("    %s SHARED\n", f, appName);
-  for (i=0; i<srcList.n(); ++i)
-    fputf("    \"${FLTK_DIR}/test/%s\"\n", f, srcList[i]);
+  for (i=0; i<srcList.n(); ++i) {
+    char srcFile[FL_PATH_MAX];
+    strcpy(srcFile, srcList[i]);
+    const char *ext = fl_filename_ext(srcList[i]);
+    if (strcmp(ext, ".fl")==0)
+      fl_filename_setext(srcFile, sizeof(srcFile), ".cxx");
+    fputf("    \"${FLTK_DIR}/test/%s\"\n", f, srcFile);
+  }
   fputs(")\n"
         "target_include_directories(\n", f);
   fputf("    %s SYSTEM PRIVATE\n", f, appName);
@@ -789,7 +812,6 @@ void createProject()
   getEntriesFromCMakeFile(fltkFormsSrcs, gFLTKRootDir, "src/CMakeLists.txt", "FLCPPFILES");
   createLibraryFolder("fltk_forms", fltkFormsSrcs);
 
-
   // test applications that can run on Android
   // - entries marked TODO basically work, but need to be adapted to the mobile platform
   // - entries marked with FIXME require additional work on FLTK
@@ -824,7 +846,7 @@ void createProject()
   //CREATE_EXAMPLE(doublebuffer doublebuffer.cxx fltk ANDROID_OK)
   // FIXME: missing Fl_Native_Filechooser
   //createApplicationFolder("editor", StringList("editor.cxx", 0L), StringList("fltk", 0L));
-  //CREATE_EXAMPLE(fast_slow fast_slow.fl fltk ANDROID_OK)
+  createApplicationFolder("fast_slow", StringList("fast_slow.fl", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(file_chooser file_chooser.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(flink "flink.cxx;flink_ui.fl" "fltk;fltk_images")
   createApplicationFolder("fonts", StringList("fonts.cxx", 0L), StringList("fltk", 0L));
@@ -835,15 +857,16 @@ void createProject()
   //CREATE_EXAMPLE(iconize iconize.cxx fltk)
   // TODO: transparency
   createApplicationFolder("image", StringList("image.cxx", 0L), StringList("fltk", 0L));
-  //createApplicationFolder("inactive", StringList("inactive.fl", 0L), StringList("fltk", 0L));
+  createApplicationFolder("inactive", StringList("inactive.fl", 0L), StringList("fltk", 0L));
   // TODO: Android keyboard may cover text field
   createApplicationFolder("input", StringList("input.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(input_choice input_choice.cxx fltk)
-  //CREATE_EXAMPLE(keyboard "keyboard.cxx;keyboard_ui.fl" fltk)
-  //CREATE_EXAMPLE(label label.cxx "fltk;fltk_forms")
+  createApplicationFolder("keyboard", StringList("keyboard.cxx", "keyboard_ui.fl", 0L), StringList("fltk", 0L));
+  createApplicationFolder("label", StringList("label.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(line_style line_style.cxx fltk)
   //CREATE_EXAMPLE(list_visuals list_visuals.cxx fltk)
-  //CREATE_EXAMPLE(mandelbrot "mandelbrot_ui.fl;mandelbrot.cxx" fltk)
+  // FIXME: no printer support on Android
+  //createApplicationFolder("mandelbrot", StringList("mandelbrot.cxx", "mandelbrot_ui.fl", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(menubar menubar.cxx fltk)
   //CREATE_EXAMPLE(message message.cxx fltk)
   // TODO: left-over dirt is different than in desktop version. Clipping?
@@ -864,7 +887,8 @@ void createProject()
   //CREATE_EXAMPLE(rotated_text rotated_text.cxx fltk)
   createApplicationFolder("scroll", StringList("scroll.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(subwindow subwindow.cxx fltk)
-  //CREATE_EXAMPLE(sudoku sudoku.cxx "fltk;fltk_images;${AUDIOLIBS}")
+  // FIXME: sound, fltk_images, Help Dialog not yet implemented
+  //createApplicationFolder("sudoku", StringList("sudoku.cxx", 0L), StringList("fltk", 0L));
   createApplicationFolder("symbols", StringList("symbols.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(tabs tabs.fl fltk)
   //CREATE_EXAMPLE(table table.cxx fltk)
@@ -877,7 +901,7 @@ void createProject()
   //CREATE_EXAMPLE(twowin twowin.cxx fltk)
   // FIXME: individual windows show, but both windows together cause the app to lock
   createApplicationFolder("utf8", StringList("utf8.cxx", 0L), StringList("fltk", 0L));
-  //CREATE_EXAMPLE(valuators valuators.fl fltk)
+  createApplicationFolder("valuators", StringList("valuators.fl", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(unittests unittests.cxx fltk)
   //CREATE_EXAMPLE(windowfocus windowfocus.cxx fltk)
 

@@ -441,6 +441,9 @@ void SudokuSound::play(char note) {
     Sleep(NOTE_DURATION);
   } else Beep(frequencies[note - 'A'], NOTE_DURATION);
 
+#elif defined(__ANDROID__)
+  // empty for now
+
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
@@ -707,6 +710,8 @@ Sudoku::Sudoku()
   // Set icon for window (MacOS uses app bundle for icon...)
 #ifdef _WIN32
   icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
+#elif defined(__ANDROID__)
+    //
 #elif !defined(__APPLE__)
   fl_open_display();
   icon((char *)XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
