@@ -249,7 +249,7 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   // TODO: verify that this is the Apple sanctioned way of finding these folders
   // (On Windows, this frequently leads to issues with internationalized systems)
   // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
-  switch (root) {
+  switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::SYSTEM:
       strcpy(filename, "/Library/Preferences");
       break;

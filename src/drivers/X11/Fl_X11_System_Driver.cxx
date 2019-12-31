@@ -399,7 +399,7 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Prefer
 {
   static char filename[ FL_PATH_MAX ]; filename[0] = 0;
   const char *e;
-  switch (root) {
+  switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::USER:
       if ((e = getenv("HOME")) != NULL) {
         strlcpy(filename, e, sizeof(filename));

@@ -168,7 +168,7 @@ void Fl_File_Chooser::cb_favOkButton(Fl_Return_Button* o, void* v) {
 
 Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char *title) {
   if (!prefs_) {
-    prefs_ = new Fl_Preferences(Fl_Preferences::USER, "fltk.org", "filechooser");
+    prefs_ = new Fl_Preferences(Fl_Preferences::CORE_USER, "fltk.org", "filechooser");
   }
   Fl_Group *prev_current = Fl_Group::current();
   { window = new Fl_Double_Window(490, 380, "Choose File");
