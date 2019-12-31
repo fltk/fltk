@@ -73,8 +73,12 @@ public:
      Define the scope of the preferences.
    */
   enum Root { 
-    SYSTEM=0,   ///< Preferences are used system-wide
-    USER        ///< Preferences apply only to the current user
+    SYSTEM = 0,       ///< Preferences are used system-wide
+    USER,             ///< Preferences apply only to the current user
+    ROOT_MASK = 0xFF, //< maks for the values above
+    CORE = 0x100,      ///< OR'd by FLTK to read and write core library preferences and options
+    CORE_SYSTEM = CORE|SYSTEM,
+    CORE_USER = CORE|USER
   };
   
   /**
@@ -87,6 +91,41 @@ public:
   typedef void *ID;
   
   static const char *newUUID();
+
+  /** Set this, if no call to Fl_Preferences shall access the file sytem
+   @see Fl_Preferences::file_access(unsigned int)
+   @see Fl_Preferences::file_access()
+   */
+  static const unsigned int NONE = 0x0000;
+  /** set this if it is ok for applications to read user preference files */
+  static const unsigned int USER_READ_OK = 0x0001;
+  /** set this if it is ok for applications to create and write user preference files */
+  static const unsigned int USER_WRITE_OK = 0x0002;
+  /** set this if it is ok for applications to read, create, and write user preference files */
+  static const unsigned int USER_OK = USER_READ_OK | USER_WRITE_OK;
+  /** set this if it is ok for applications to read system wide preference files */
+  static const unsigned int SYSTEM_READ_OK = 0x0004;
+  /** set this if it is ok for applications to create and write system wide preference files */
+  static const unsigned int SYSTEM_WRITE_OK = 0x0008;
+  /** set this if it is ok for applications to read, create, and write system wide preference files */
+  static const unsigned int SYSTEM_OK = SYSTEM_READ_OK | SYSTEM_WRITE_OK;
+  /** set this if it is ok for applications to read, create, and write any kind of preference files */
+  static const unsigned int APP_OK = SYSTEM_OK | USER_OK;
+  /** Set this if it is ok for FLTK to read preference files. USER_READ_OK and/or SYSTEM_READ_OK must also be set. */
+  static const unsigned int CORE_READ_OK = 0x0010;
+  /** Set this if it is ok for FLTK to create or write preference files. USER_WRITE_OK and/or SYSTEM_WRITE_OK must also be set. */
+  static const unsigned int CORE_WRITE_OK = 0x0020;
+  /** set this if it is ok for FLTK to read, create, or write preference files */
+  static const unsigned int CORE_OK = CORE_READ_OK | CORE_WRITE_OK;
+  /** set this to allow FLTK and applications to read preference files */
+  static const unsigned int ALL_READ_OK = USER_READ_OK | SYSTEM_READ_OK | CORE_READ_OK;
+  /** set this to allow FLTK and applications to create and write preference files */
+  static const unsigned int ALL_WRITE_OK = USER_WRITE_OK | SYSTEM_WRITE_OK | CORE_WRITE_OK;
+  /** set this to give FLTK and applications permission to read, write, and create preference files */
+  static const unsigned int ALL = ALL_READ_OK | ALL_WRITE_OK;
+
+  static void file_access(unsigned int flags);
+  static unsigned int file_access();
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
   Fl_Preferences( const char *path, const char *vendor, const char *application );
@@ -193,6 +232,7 @@ private:
   static char nameBuffer[128];
   static char uuidBuffer[40];
   static Fl_Preferences *runtimePrefs;
+  static unsigned int fileAccess_;
 
 public:  // older Sun compilers need this (public definition of the following classes)
   class RootNode;
@@ -256,6 +296,7 @@ public:  // older Sun compilers need this (public definition of the following cl
     Fl_Preferences *prefs_;
     char *filename_;
     char *vendor_, *application_;
+    Root root_;
   public:
     RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
     RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application );

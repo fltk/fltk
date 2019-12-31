@@ -834,7 +834,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   LONG err;
   HKEY key;
   
-  switch (root) {
+  switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::SYSTEM:
       err = RegOpenKeyW( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCEW, &key );
       if (err == ERROR_SUCCESS) {
