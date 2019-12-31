@@ -135,6 +135,8 @@ void Fl_Pack::draw() {
   th += Fl::box_dh(box()); if (th <= 0) th = 1;
   if (tw != w() || th != h()) {
     Fl_Widget::resize(x(),y(),tw,th);
+    Fl_Group *parent = this->parent();
+    if (parent) parent->init_sizes();
     d = FL_DAMAGE_ALL;
   }
   if (d&FL_DAMAGE_ALL) {
