@@ -635,6 +635,7 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
 
 void Fl_X11_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   elapse_timeouts();
+  missed_timeout_by = 0;
   repeat_timeout(time, cb, argp);
 }
 

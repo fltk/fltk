@@ -18,6 +18,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - Fix Fl::add_timeout() under Linux (STR 3516).
+  - Fix early timeouts in Fl_Clock seen in some environments (STR 3516).
   - Fl_Printer::begin_job() uses by default the Gnome print dialog on the X11
     platform when the GTK library is available at run-time. That can be turned off
     with Fl::option(OPTION_PRINTER_USES_GTK, false).
