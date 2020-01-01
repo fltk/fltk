@@ -7,7 +7,7 @@ comment {//
 //
 // Flink for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2019 by Matthias Melcher and others.
+// Copyright 2019-2020 by Matthias Melcher and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -38,6 +38,12 @@ decl {extern void sourceFolderChanged();} {private global
 decl {extern void selectSourceFolder();} {private global
 }
 
+decl {extern void fluidPathChanged();} {private global
+}
+
+decl {extern void selectFluidPath();} {selected private global
+}
+
 decl {extern void projectFolderChanged();} {private global
 }
 
@@ -66,42 +72,52 @@ Function {createMainWindow()} {open
 } {
   Fl_Window {} {
     label Flink open
-    xywh {466 222 539 193} type Double visible
+    xywh {466 222 539 253} type Double visible
   } {
     Fl_File_Input wSourceFolder {
       label {FLTK Root Folder}
       callback {sourceFolderChanged();}
-      xywh {24 26 460 34} align 1
+      xywh {24 26 460 34} align 129
     }
     Fl_Button wSourceFolderSelect {
       label {@fileopen}
       callback {selectSourceFolder();}
       xywh {484 36 35 24} labelcolor 215
     }
-    Fl_File_Input wProjectFolder {
-      label {AndroidStudio Project Subfolder}
-      callback {projectFolderChanged();} selected
+    Fl_File_Input wFluidPath {
+      label {Fluid Exectuable Path}
+      callback {fluidPathChanged();}
       xywh {24 86 460 34} align 1
     }
-    Fl_Button wProjectFolderSelect {
+    Fl_Button wFluidPathSelect {
       label {@fileopen}
-      callback {selectProjectFolder();}
+      callback {selectFluidPath();}
       xywh {484 96 35 24} labelcolor 215
     }
     Fl_Button wDeleteProject {
       label {Delete Project}
       callback {deleteProject();}
-      xywh {92 144 141 30}
+      xywh {92 204 141 30}
     }
     Fl_Button {} {
       label {Create AndroidStudio Project}
       callback {createProject();}
-      xywh {256 144 217 30}
+      xywh {256 204 217 30}
     }
     Fl_Button {} {
       label {?}
       callback {showAboutWindow();}
-      xywh {483 147 24 24} box ROUND_UP_BOX color 215 labelsize 16
+      xywh {483 207 24 24} box ROUND_UP_BOX color 215 labelsize 16
+    }
+    Fl_File_Input wProjectFolder {
+      label {AndroidStudio Project Subfolder}
+      callback {projectFolderChanged();}
+      xywh {24 146 460 34} align 1
+    }
+    Fl_Button wProjectFolderSelect {
+      label {@fileopen}
+      callback {selectProjectFolder();}
+      xywh {484 156 35 24} labelcolor 215
     }
   }
 }

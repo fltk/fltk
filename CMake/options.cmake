@@ -561,10 +561,6 @@ endif(OPTION_FILESYSTEM_SUPPORT)
 #######################################################################
 
 #######################################################################
-option (OPTION_CREATE_ANDROID_STUDIO_IDE "create files needed to compile FLtk for Android" OFF)
-#######################################################################
-
-#######################################################################
 # prior to CMake 3.0 this feature was buggy
 if(NOT CMAKE_VERSION VERSION_LESS 3.0.0)
     option(CMAKE_SUPPRESS_REGENERATION

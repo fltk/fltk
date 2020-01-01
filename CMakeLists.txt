@@ -44,13 +44,6 @@ include(CMake/resources.cmake)
 #######################################################################
 include(CMake/options.cmake)
 
-#######################################################################
-# Android Studio setup
-#######################################################################
-if (OPTION_CREATE_ANDROID_STUDIO_IDE)
-  include(CMake/android.cmake)
-endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
-
 
 #######################################################################
 # print (debug) several build variables and options
@@ -66,7 +59,6 @@ if (debug_build)
   fl_debug_var(MSVC)
   fl_debug_var(UNIX)
   fl_debug_var(APPLE)
-  fl_debug_var(ANDROID)
   fl_debug_var(CMAKE_BUILD_TYPE)
   fl_debug_var(CMAKE_SIZEOF_VOID_P)
   fl_debug_var(OPTION_OPTIM)
@@ -102,13 +94,6 @@ configure_file(
 if(OPTION_BUILD_EXAMPLES)
    add_subdirectory(test)
 endif(OPTION_BUILD_EXAMPLES)
-
-#######################################################################
-# Android Studio wrapup
-#######################################################################
-if (OPTION_CREATE_ANDROID_STUDIO_IDE)
-  CREATE_ANDROID_IDE_WRAPUP()
-endif (OPTION_CREATE_ANDROID_STUDIO_IDE)
 
 #######################################################################
 # installation

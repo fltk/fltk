@@ -3,7 +3,7 @@
 //
 // Flink program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2019 by Matthias Melcher and others.
+// Copyright 2019-2020 by Matthias Melcher and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -31,7 +31,8 @@
 // TODO: handle all possible errors when writing files (if ( && && && ) else ...)
 // TODO: document that source code, find better function and variable names
 // TODO: test and fix on Linux and MSWindows
-// FIXME: find the path to Fluid
+// FIXME: find the path to Fluid, create an input line in the GUI
+// TODO: when chamginmg the FLTK base directory, does that change the Android dir as well?
 
 #include <string.h>
 #include <stdio.h>
@@ -101,6 +102,9 @@ Fl_Window *gMainindow = NULL;
 
 // Copy of the directory that contains the FLTK project tree.
 char gFLTKRootDir[FL_PATH_MAX] = "";
+
+// Copy of the subpath that poinmts to the Fluid execuatble
+char gFluidPath[FL_PATH_MAX] = "";
 
 // Copy of the subdirectory that contains the Android project tree.
 char gProjectDir[FL_PATH_MAX] = "";
@@ -204,7 +208,7 @@ void getEntriesFromCMakeFile(StringList &list, const char *path, const char *nam
     }
     memmove(line, s, strlen(s)+1);
     if (clone) {
-      if (*s==')') {
+      if (line[0]==')') {
         clone = 2;
       } else {
         s = line + strlen(line) - 1;
@@ -443,7 +447,7 @@ void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &src
       fl_filename_setext(hFile, sizeof(hFile), ".h");
       fputs("add_custom_command(\n", f);
       fputf("    OUTPUT ${FLTK_DIR}/test/%s ${FLTK_DIR}/test/%s\n", f, cxxFile, hFile);
-      fputf("    COMMAND fluid -c ${FLTK_DIR}/test/%s\n", f, srcList[i]);
+      fputf("    COMMAND %s -c ${FLTK_DIR}/test/%s\n", f, gFluidPath, srcList[i]);
       fputs("    WORKING_DIRECTORY ${FLTK_DIR}/test/\n"
             ")\n", f);
     }
@@ -681,9 +685,15 @@ int updateProjectParametrsFromUI()
   fl_getcwd(cwd, FL_PATH_MAX);
   strcpy(gFLTKRootDir, wSourceFolder->value());
   fl_chdir(gFLTKRootDir);
+
+  // set the path to the Fluid executable
+  fl_filename_absolute(gFluidPath, FL_PATH_MAX, wFluidPath->value());
+
+  // set the path to the Android project dir
   fl_filename_absolute(gProjectDir, FL_PATH_MAX, wProjectFolder->value());
   int n = strlen(gProjectDir);
   if (gProjectDir[n]!='/') strcat(gProjectDir, "/");
+
   fl_chdir(cwd);
 
   char idFile[FL_PATH_MAX];
@@ -769,8 +779,25 @@ int verifyFLTKRootDir()
   if ((ret = fl_access(fullName, R_OK))==-1) {
     fl_alert("This seleted FLTK root directory does not seem to be\n"
              "the base of an FLTK project.\n\n"
-             "%s:\n\"%s/src/CMakeLists.txt\"",
-             strerror(errno), gFLTKRootDir);
+             "%s:\n\"%s\"",
+             strerror(errno), fullName);
+    return 0;
+  }
+  return 1;
+}
+
+/*
+ Verify that the given Fluid path is actually pointing to an executable.
+ We are not checking that this is actually a compatible version of Fluid.
+ */
+int verifyFluidPath()
+{
+  int ret;
+  if ((ret = fl_access(gFluidPath, X_OK))==-1) {
+    fl_alert("This seleted Fluid path does not seem to be\n"
+             "pointing to an application.\n\n"
+             "%s:\n\"%s\"",
+             strerror(errno), gFluidPath);
     return 0;
   }
   return 1;
@@ -787,6 +814,8 @@ void createProject()
     return;
   if (verifyFLTKRootDir()==0)
     return;
+  if (verifyFluidPath()==0)
+    return;
 
   // This file identifies an AndroidStudio project directory that was created
   // by Flink. The file should probably contain some more details on how and
@@ -794,16 +823,8 @@ void createProject()
   createFile(gProjectDir, "FLTK4Android.txt",
              "Created by Flink\n");
 
-  StringList fltkSrcs("drivers/Android/Fl_Android_Application.cxx",
-                      "drivers/Android/Fl_Android_System_Driver.cxx",
-                      "drivers/Android/Fl_Android_Screen_Driver.cxx",
-                      "drivers/Android/Fl_Android_Screen_Keyboard.cxx",
-                      "drivers/Android/Fl_Android_Window_Driver.cxx",
-                      "drivers/Android/Fl_Android_Image_Surface_Driver.cxx",
-                      "drivers/Android/Fl_Android_Graphics_Driver.cxx",
-                      "drivers/Android/Fl_Android_Graphics_Clipping.cxx",
-                      "drivers/Android/Fl_Android_Graphics_Font.cxx",
-                      0L);
+  StringList fltkSrcs;
+  getEntriesFromCMakeFile(fltkSrcs, gFLTKRootDir, "src/CMakeLists.txt", "ANDROID_DRIVER_FILES");
   getEntriesFromCMakeFile(fltkSrcs, gFLTKRootDir, "src/CMakeLists.txt", "CPPFILES");
   getEntriesFromCMakeFile(fltkSrcs, gFLTKRootDir, "src/CMakeLists.txt", "CFILES");
   createLibraryFolder("fltk", fltkSrcs);
@@ -948,6 +969,32 @@ void selectSourceFolder()
 
 /*
  FLTK callback:
+ User changed the path to the Fluid executable.
+ */
+void fluidPathChanged()
+{
+    updateProjectParametrsFromUI();
+}
+
+/*
+ FLTK callback:
+ Pop up a filechooser to select the path to Fluid.
+ */
+void selectFluidPath()
+{
+  char oldDir[FL_PATH_MAX];
+  fl_getcwd(oldDir, FL_PATH_MAX);
+  fl_chdir(wSourceFolder->value());
+  const char *file = fl_file_chooser("Select the Fluid executable path", "", wFluidPath->value(), 1);
+  fl_chdir(oldDir);
+  if (file) {
+    wFluidPath->value(file);
+    updateProjectParametrsFromUI();
+  }
+}
+
+/*
+ FLTK callback:
  User changed the project folder.
  */
 void projectFolderChanged()
@@ -984,6 +1031,10 @@ void presetUI()
   name = (char*)fl_filename_name(pathToFLTK);
   if (name && name>pathToFLTK) name[-1] = 0;
   wSourceFolder->value(pathToFLTK);
+  // FIXME: we have to do this on a per-OS/per build system basis
+  // FIXME: maybe we shoudl support selectin "fluid.app" as well
+  //                             .../examples/Debug/flink.app/...
+  wFluidPath->value("build/Xcode/bin/Debug/fluid.app/Contents/MacOS/fluid");
   wProjectFolder->value("build/AndroidStudio");
   wDeleteProject->deactivate();
 }

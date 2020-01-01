@@ -3,7 +3,7 @@
 #
 # CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -295,10 +295,14 @@ elseif (APPLE)
 elseif (ANDROID)
 
   # Android
+  #
+  # Android build files are created using the Flink tool inside the test
+  # directory. The followind variables are never set by CMake, but read by
+  # Flink instead.
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-  set (DRIVER_FILES
+  set (ANDROID_DRIVER_FILES
     drivers/Android/Fl_Android_Application.cxx
     drivers/Android/Fl_Android_System_Driver.cxx
     drivers/Android/Fl_Android_Screen_Driver.cxx
@@ -309,7 +313,7 @@ elseif (ANDROID)
     drivers/Android/Fl_Android_Graphics_Clipping.cxx
     drivers/Android/Fl_Android_Graphics_Font.cxx
   )
-  set (DRIVER_HEADER_FILES
+  set (ANDROID_DRIVER_HEADER_FILES
     drivers/Android/Fl_Android_Application.H
     drivers/Android/Fl_Android_System_Driver.H
     drivers/Android/Fl_Android_Screen_Driver.H

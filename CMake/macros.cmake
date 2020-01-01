@@ -188,17 +188,6 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
     target_link_libraries(${tname} ${LIBRARIES})
 
-    # CREATE_EXAMPLE can have an optional fourth argument with a list of options
-    # - the option ANDROID_OK is set if CREATE_EXAMPLE creates code for Androids
-    #   builds in addition to the native build
-    if (${ARGC} GREATER 3)
-      foreach(OPTION ${ARGV3})
-        if (${OPTION} STREQUAL ANDROID_OK AND OPTION_CREATE_ANDROID_STUDIO_IDE)
-          CREATE_ANDROID_IDE_FOR_TEST(${NAME} ${SOURCES} ${LIBRARIES})
-        endif()
-      endforeach()
-    endif()
-
 endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
 #######################################################################
