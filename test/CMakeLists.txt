@@ -153,6 +153,9 @@ configure_file(help_dialog.html ${TESTFILE_PATH} COPYONLY)
 configure_file(browser.cxx ${TESTFILE_PATH} COPYONLY)
 configure_file(editor.cxx ${TESTFILE_PATH} COPYONLY)
 
+# Flink needs to know where CMake will put the Fluid executable
+set_target_properties(flink PROPERTIES COMPILE_DEFINITIONS FL_CMAKE_FLUID_PATH="$<TARGET_FILE:fluid>")
+
 # Apple macOS creates bundles instead of executables and needs a little bit
 # more help for demos to run correctly
 if(APPLE AND NOT OPTION_APPLE_X11)
