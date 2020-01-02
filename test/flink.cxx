@@ -33,6 +33,7 @@
 // TODO: test and fix on Linux and MSWindows
 // FIXME: find the path to Fluid, create an input line in the GUI
 // TODO: when chamginmg the FLTK base directory, does that change the Android dir as well?
+// FIXME: on Linux, the path to libfltk.so is wrong (/Debug instead of /debug)
 
 #include <string.h>
 #include <stdio.h>
