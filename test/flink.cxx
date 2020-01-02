@@ -37,7 +37,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#ifdef _WIN32
+#define X_OK 0
+#define W_OK 2
+#define R_OK 4
+#else
 #include <unistd.h>
+#endif
 #include <errno.h>
 
 #include <FL/Fl.H>
