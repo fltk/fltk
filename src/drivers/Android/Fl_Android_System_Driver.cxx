@@ -25,6 +25,9 @@
 #include <FL/Fl_File_Icon.H>
 #include "../../flstring.h"
 
+#include <sys/time.h>
+
+
 #if 0
 
 #include <stdio.h>
@@ -158,6 +161,14 @@ static char *wchar_to_utf8(const wchar_t *wstr, char *&utf8) {
 Fl_System_Driver *Fl_System_Driver::newSystemDriver()
 {
   return new Fl_Android_System_Driver();
+}
+
+
+void Fl_Android_System_Driver::gettime(time_t *sec, int *usec) {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  *sec = tv.tv_sec;
+  *usec = tv.tv_usec;
 }
 
 

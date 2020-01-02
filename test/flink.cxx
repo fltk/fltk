@@ -858,7 +858,7 @@ void createProject()
   createApplicationFolder("buttons", StringList("buttons.cxx", 0L), StringList("fltk", 0L));
   // FIXME: must implement fltk_images
   // createApplicationFolder("checkers", StringList("checkers.cxx", 0L), StringList("fltk", "fltk_images", 0L));
-  // FIXME: no interface to get actual time, both windows overlapping
+  // FIXME: Fl_Clock never receives FL_SHOW event, both windows overlapping
   createApplicationFolder("clock", StringList("clock.cxx", 0L), StringList("fltk", 0L));
   // FIXME: we need to be able to add the referenced resource file
   createApplicationFolder("colbrowser", StringList("colbrowser.cxx", 0L), StringList("fltk_forms", "fltk", 0L));
@@ -889,7 +889,7 @@ void createProject()
   createApplicationFolder("label", StringList("label.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(line_style line_style.cxx fltk)
   //CREATE_EXAMPLE(list_visuals list_visuals.cxx fltk)
-  // FIXME: no printer support on Android
+  // FIXME: can't compile: no printer support on Android
   //createApplicationFolder("mandelbrot", StringList("mandelbrot.cxx", "mandelbrot_ui.fl", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(menubar menubar.cxx fltk)
   //CREATE_EXAMPLE(message message.cxx fltk)
@@ -898,7 +898,8 @@ void createProject()
   //CREATE_EXAMPLE(native-filechooser native-filechooser.cxx "fltk;fltk_images")
   //CREATE_EXAMPLE(navigation navigation.cxx fltk)
   createApplicationFolder("output", StringList("output.cxx", 0L), StringList("fltk_forms", "fltk", 0L));
-  //CREATE_EXAMPLE(overlay overlay.cxx fltk)
+  // FIXME: not implemented
+  createApplicationFolder("overlay", StringList("overlay.cxx", 0L), StringList("fltk", 0L));
   createApplicationFolder("pack", StringList("pack.cxx", 0L), StringList("fltk", 0L));
   createApplicationFolder("pixmap", StringList("pixmap.cxx", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(pixmap_browser pixmap_browser.cxx "fltk;fltk_images")
@@ -916,7 +917,8 @@ void createProject()
   // FIXME: sound, fltk_images, Help Dialog not yet implemented
   //createApplicationFolder("sudoku", StringList("sudoku.cxx", 0L), StringList("fltk", 0L));
   createApplicationFolder("symbols", StringList("symbols.cxx", 0L), StringList("fltk", 0L));
-  //CREATE_EXAMPLE(tabs tabs.fl fltk)
+  // FIXME: hangs on "print" tab
+  createApplicationFolder("tabs", StringList("tabs.fl", 0L), StringList("fltk", 0L));
   //CREATE_EXAMPLE(table table.cxx fltk)
   //CREATE_EXAMPLE(threads threads.cxx fltk)
   // TODO: subwindow does not render (clipping, maybe more)
