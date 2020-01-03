@@ -14,12 +14,12 @@ Current versions of bundled libraries:
 
   ** work in progress -- not yet completely upgraded **
 
-  Library       Version            Release date		FLTK Version
-  ------------------------------------------------------------------
+  Library       Version            Release date		FLTK Version  Status
+  --------------------------------------------------------------------------
   jpeg          jpeg-9c            2018-01-14           1.4.0
   nanosvg       f31098fa85 [1]     2019-05-23           1.4.0
   png           libpng-1.6.34      2017-09-29           1.4.0
-  zlib          zlib-1.2.11        2017-01-15           1.4.0
+  zlib          zlib-1.2.11        2017-01-15           1.4.0         DONE
 
 Previous versions of bundled libraries:
 

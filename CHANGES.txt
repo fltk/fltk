@@ -98,6 +98,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   - FLTK's ABI version can be configured with 'configure' and CMake.
     See documentation in README.abi-version.txt.
 
+  Bundled libraries
+
+  - Bundled image libraries have been upgraded to newer versions.
+    For details see README.bundled-libs.txt.
 
   1.4.0 ABI FEATURES
 
