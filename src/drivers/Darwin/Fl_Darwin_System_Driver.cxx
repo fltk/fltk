@@ -242,26 +242,6 @@ void Fl_Darwin_System_Driver::newUUID(char *uuidBuffer)
   CFRelease(theUUID);
 }
 
-char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root,
-                                                  const char *vendor, const char *application)
-{
-  static char filename[ FL_PATH_MAX ];
-  // TODO: verify that this is the Apple sanctioned way of finding these folders
-  // (On Windows, this frequently leads to issues with internationalized systems)
-  // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
-  switch (root&Fl_Preferences::ROOT_MASK) {
-    case Fl_Preferences::SYSTEM:
-      strcpy(filename, "/Library/Preferences");
-      break;
-    case Fl_Preferences::USER:
-      sprintf(filename, "%s/Library/Preferences", getenv("HOME"));
-      break;
-  }
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
-           "/%s/%s.prefs", vendor, application);
-  return filename;
-}
-
 /*
  * returns pointer to the filename, or null if name ends with ':'
  */

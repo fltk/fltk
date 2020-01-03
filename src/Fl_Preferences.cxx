@@ -923,7 +923,7 @@ Fl_Preferences::RootNode::~RootNode() {
 
 // read a preferences file and construct the group tree and with all entry leafs
 int Fl_Preferences::RootNode::read() {
-  if (!filename_)   // RUNTIME preferences
+  if (!filename_)   // RUNTIME preferences, or filename could not be created
     return -1;
   if ( (root_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_READ_OK) ) {
     prefs_->node->clearDirtyFlags();
@@ -972,7 +972,7 @@ int Fl_Preferences::RootNode::read() {
 
 // write the group tree and all entry leafs
 int Fl_Preferences::RootNode::write() {
-  if (!filename_)   // RUNTIME preferences
+  if (!filename_)   // RUNTIME preferences, or filename could not be created
     return -1;
   if ( (root_ & Fl_Preferences::CORE) && !(fileAccess_ & Fl_Preferences::CORE_WRITE_OK) )
     return -1;
@@ -1010,7 +1010,7 @@ int Fl_Preferences::RootNode::write() {
 // - copy the path into the buffer at "path"
 // - if the resulting path is longer than "pathlen", it will be cropped
 char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
-  if (!filename_)   // RUNTIME preferences
+  if (!filename_)   // RUNTIME preferences. or filename could not be created
     return 1; // return 1 (not -1) to be consistent with fl_make_path()
 
   if (pathlen<=0)
