@@ -24,6 +24,10 @@
 #include <X11/Xlib.h>
 #include <locale.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 
 #if defined(_AIX)
 extern "C" {
@@ -397,24 +401,37 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
 char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                                 const char *application)
 {
-  static char filename[ FL_PATH_MAX ]; filename[0] = 0;
+  static char *filename = 0L;
+  if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
   const char *e;
   switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::USER:
-      if ((e = getenv("HOME")) != NULL) {
-        strlcpy(filename, e, sizeof(filename));
-        
-        if (filename[strlen(filename)-1] != '/') {
-          strlcat(filename, "/.fltk/", sizeof(filename));
-        } else {
-          strlcat(filename, ".fltk/", sizeof(filename));
-        }
-        break;
+      e = getenv("HOME");
+      // make sure that $HOME is set to an existing directory
+      if ( (e==0L) || (e[0]=0) || (::access(e, F_OK)==-1) ) ) {
+        struct passwd *pw = getpwuid(getuid());
+        e = pw->pw_dir;
       }
+      if ( (e==0L) || (e[0]=0) || (::access(e, F_OK)==-1) ) ) {
+        return 0L;
+      } else {
+        strlcpy(filename, e, sizeof(filename));
+        if (filename[strlen(filename)-1] != '/')
+          strlcat(filename, "/", sizeof(filename));
+        strlcat(filename, ".fltk/", sizeof(filename));
+      }
+      break;
     case Fl_Preferences::SYSTEM:
       strcpy(filename, "/etc/fltk/");
       break;
   }
+    
+  // Make sure that the parameters are not NULL
+  if ( (vendor==0L) || (vendor[0]==0) )
+    vendor = "unknown";
+  if ( (application==0L) || (application[0]==0) )
+    application = "unknown";
+
   snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
            "%s/%s.prefs", vendor, application);
   return filename;
