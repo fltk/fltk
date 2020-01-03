@@ -4387,6 +4387,46 @@ int Fl_Darwin_System_Driver::calc_mac_os_version() {
   return fl_mac_os_version;
 }
 
+char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root,
+                                                   const char *vendor, const char *application)
+{
+  static char *filename = 0L;
+
+  // Allocate this only when we need it, but then keep it allocated.
+  if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
+
+  switch (root&Fl_Preferences::ROOT_MASK) {
+    case Fl_Preferences::SYSTEM:
+      // This is safe, even on machines that use different languages
+      strcpy(filename, "/Library/Preferences");
+      break;
+    case Fl_Preferences::USER:
+    { // Find the home directory, but return NULL if components were not found.
+      // If we ever port this to iOS: this returns tha location of the app!
+      NSString *nsHome = NSHomeDirectory();
+      if (!nsHome) return 0L;
+      const char *cHome = [nsHome UTF8String];
+      if (!cHome) return 0L;
+      snprintf(filename, FL_PATH_MAX, "%s/Library/Preferences", cHome);
+      break; }
+  }
+
+  // Make sure that the parameters are not NULL
+  if ( (vendor==0L) || (vendor[0]==0) )
+    vendor = "unknown";
+  if ( (application==0L) || (application[0]==0) )
+    application = "unknown";
+
+  // Our C path names for preferences will be:
+  // SYSTEM: "/Library/Preferences/$vendor/$application.prefs"
+  // SYSTEM: "/Users/$user/Preferences/$vendor/$application.prefs"
+  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
+           "/%s/%s.prefs", vendor, application);
+
+  return filename;
+}
+
+
 //
 // End of "$Id$".
 //
