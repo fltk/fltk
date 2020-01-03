@@ -30,9 +30,15 @@
  */
 class FL_EXPORT Fl_GIF_Image : public Fl_Pixmap {
 
-  public:
+public:
 
   Fl_GIF_Image(const char* filename);
+  Fl_GIF_Image(const char* filename, const unsigned char *data);
+
+protected:
+
+  void read(class GIFReader &rdr);
+
 };
 
 #endif

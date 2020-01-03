@@ -77,8 +77,80 @@
 
 typedef unsigned char uchar;
 
-#define NEXTBYTE (uchar)getc(GifFile)
-#define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
+//
+// Local reader class...
+//
+
+class GIFReader
+{
+public:
+  GIFReader() :
+  pIsFile(0), pIsData(0),
+  pFile(0L), pData(0L), pStart(0L),
+  pName(0L)
+  { }
+  int open(const char *filename) {
+    if (filename)
+      pName = strdup(filename);
+    if ((pFile = fl_fopen(filename, "rb")) == NULL) {
+      return -1;
+    } else {
+      pIsFile = 1;
+      return 0;
+    }
+  }
+  int open(const char *imagename, const unsigned char *data) {
+    if (imagename)
+      pName = strdup(imagename);
+    if (data) {
+      pStart = pData = data;
+      pIsData = 1;
+      return 0;
+    } else {
+      return -1;
+    }
+  }
+  ~GIFReader() {
+    if (pIsFile && pFile) {
+      fclose(pFile);
+    }
+    if (pName)
+      ::free(pName);
+  }
+  uchar read_byte() {
+    if (pIsFile) {
+      return getc(pFile);
+    } else if (pIsData) {
+      return *pData++;
+    } else {
+      return 0;
+    }
+  }
+  // 'read_word()' - Read a 16-bit unsigned integer.
+  unsigned short read_word() {
+    unsigned char b0, b1;  // Bytes from file
+    if (pIsFile) {
+      b0 = (uchar)getc(pFile);
+      b1 = (uchar)getc(pFile);
+      return ((b1 << 8) | b0);
+    } else if (pIsData) {
+      b0 = *pData++;
+      b1 = *pData++;
+      return ((b1 << 8) | b0);
+    } else {
+      return 0;
+    }
+  }
+  const char *name() { return pName; }
+private:
+  char pIsFile;
+  char pIsData;
+  FILE *pFile;
+  const unsigned char *pData;
+  const unsigned char *pStart;
+  char *pName;
+};
+
 
 /**
  The constructor loads the named GIF image.
@@ -91,36 +163,58 @@ typedef unsigned char uchar;
  GIF format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
  */
-Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
-  FILE *GifFile;	// File to read
-  char **new_data;	// Data array
-
-  if ((GifFile = fl_fopen(infname, "rb")) == NULL) {
+Fl_GIF_Image::Fl_GIF_Image(const char *infname) :
+  Fl_Pixmap((char *const*)0)
+{
+  GIFReader f;
+  if (f.open(infname)==-1) {
     Fl::error("Fl_GIF_Image: Unable to open %s!", infname);
     ld(ERR_FILE_ACCESS);
-    return;
+  } else {
+    read(f);
   }
+}
 
-  {char b[6];
-  if (fread(b,1,6,GifFile)<6) {
-    fclose(GifFile);
-    ld(ERR_FILE_ACCESS);
-    return; /* quit on eof */
-  }
-  if (b[0]!='G' || b[1]!='I' || b[2] != 'F') {
-    fclose(GifFile);
-    Fl::error("Fl_GIF_Image: %s is not a GIF file.\n", infname);
+
+/**
+ The constructor loads the named GIF image.
+
+ \param[in] bmp the name of the bitmap
+ \param[in] data a pointer to the BMP data in memory. There is no checking for buffer overruns
+
+ \see Fl_BMP_Image::Fl_BMP_Image(const char *bmp)
+ */
+Fl_GIF_Image::Fl_GIF_Image(const char *gif, const unsigned char *data) :
+  Fl_Pixmap((char *const*)0)
+{
+  GIFReader d;
+  if (d.open(gif, data)==-1) {
     ld(ERR_FORMAT);
-    return;
+  } else {
+    read(d);
   }
-  if (b[3]!='8' || b[4]>'9' || b[5]!= 'a')
-    Fl::warning("%s is version %c%c%c.",infname,b[3],b[4],b[5]);
+}
+
+
+void Fl_GIF_Image::read(GIFReader &rdr)
+{
+  char **new_data;	// Data array
+
+  {char b[6] = { 0 };
+    for (int i=0; i<6; ++i) b[i] = rdr.read_byte();
+    if (b[0]!='G' || b[1]!='I' || b[2] != 'F') {
+      Fl::error("Fl_GIF_Image: %s is not a GIF file.\n", rdr.name());
+      ld(ERR_FORMAT);
+      return;
+    }
+    if (b[3]!='8' || b[4]>'9' || b[5]!= 'a')
+      Fl::warning("%s is version %c%c%c.",rdr.name(),b[3],b[4],b[5]);
   }
 
-  int Width; GETSHORT(Width);
-  int Height; GETSHORT(Height);
+  int Width = rdr.read_word();
+  int Height = rdr.read_word();
 
-  uchar ch = NEXTBYTE;
+  uchar ch = rdr.read_byte();
   char HasColormap = ((ch & 0x80) != 0);
   int BitsPerPixel = (ch & 7) + 1;
   int ColorMapSize;
@@ -131,18 +225,18 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   }
   // int OriginalResolution = ((ch>>4)&7)+1;
   // int SortedTable = (ch&8)!=0;
-  ch = NEXTBYTE; // Background Color index
-  ch = NEXTBYTE; // Aspect ratio is N/64
+  ch = rdr.read_byte(); // Background Color index
+  ch = rdr.read_byte(); // Aspect ratio is N/64
 
   // Read in global colormap:
   uchar transparent_pixel = 0;
   char has_transparent = 0;
   uchar Red[256], Green[256], Blue[256]; /* color map */
   if (HasColormap) {
-    for (int i=0; i < ColorMapSize; i++) {	
-      Red[i] = NEXTBYTE;
-      Green[i] = NEXTBYTE;
-      Blue[i] = NEXTBYTE;
+    for (int i=0; i < ColorMapSize; i++) {
+      Red[i] = rdr.read_byte();
+      Green[i] = rdr.read_byte();
+      Blue[i] = rdr.read_byte();
     }
   }
 
@@ -151,10 +245,9 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
   for (;;) {
 
-    int i = NEXTBYTE;
+    int i = rdr.read_byte();
     if (i<0) {
-      fclose(GifFile);
-      Fl::error("Fl_GIF_Image: %s - unexpected EOF",infname); 
+      Fl::error("Fl_GIF_Image: %s - unexpected EOF", rdr.name());
       w(0); h(0); d(0); ld(ERR_FORMAT);
       return;
     }
@@ -164,50 +257,50 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
     if (i == 0x21) {		// a "gif extension"
 
-      ch = NEXTBYTE;
-      blocklen = NEXTBYTE;
+      ch = rdr.read_byte();
+      blocklen = rdr.read_byte();
 
       if (ch==0xF9 && blocklen==4) { // Netscape animation extension
 
-	char bits;
-	bits = NEXTBYTE;
-	getc(GifFile); getc(GifFile); // GETSHORT(delay);
-	transparent_pixel = NEXTBYTE;
-	if (bits & 1) has_transparent = 1;
-	blocklen = NEXTBYTE;
+        char bits;
+        bits = rdr.read_byte();
+        rdr.read_word(); // GETSHORT(delay);
+        transparent_pixel = rdr.read_byte();
+        if (bits & 1) has_transparent = 1;
+        blocklen = rdr.read_byte();
 
       } else if (ch == 0xFF) { // Netscape repeat count
-	;
+        ;
 
       } else if (ch != 0xFE) { //Gif Comment
-	Fl::warning("%s: unknown gif extension 0x%02x.", infname, ch);
+        Fl::warning("%s: unknown gif extension 0x%02x.", rdr.name(), ch);
       }
     } else if (i == 0x2c) {	// an image
 
-      ch = NEXTBYTE; ch = NEXTBYTE; // GETSHORT(x_position);
-      ch = NEXTBYTE; ch = NEXTBYTE; // GETSHORT(y_position);
-      GETSHORT(Width);
-      GETSHORT(Height);
-      ch = NEXTBYTE;
+      ch = rdr.read_byte(); ch = rdr.read_byte(); // GETSHORT(x_position);
+      ch = rdr.read_byte(); ch = rdr.read_byte(); // GETSHORT(y_position);
+      Width = rdr.read_word();
+      Height = rdr.read_word();
+      ch = rdr.read_byte();
       Interlace = ((ch & 0x40) != 0);
       if (ch & 0x80) { // image has local color table
-	BitsPerPixel = (ch & 7) + 1;
-	ColorMapSize = 2 << (ch & 7);
-	for (i=0; i < ColorMapSize; i++) {
-	  Red[i] = NEXTBYTE;
-	  Green[i] = NEXTBYTE;
-	  Blue[i] = NEXTBYTE;
-	}
+        BitsPerPixel = (ch & 7) + 1;
+        ColorMapSize = 2 << (ch & 7);
+        for (i=0; i < ColorMapSize; i++) {
+          Red[i] = rdr.read_byte();
+          Green[i] = rdr.read_byte();
+          Blue[i] = rdr.read_byte();
+        }
       }
-      CodeSize = NEXTBYTE+1;
+      CodeSize = rdr.read_byte()+1;
       break; // okay, this is the image we want
     } else {
-      Fl::warning("%s: unknown gif code 0x%02x", infname, i);
+      Fl::warning("%s: unknown gif code 0x%02x", rdr.name(), i);
       blocklen = 0;
     }
 
     // skip the data:
-    while (blocklen>0) {while (blocklen--) {ch = NEXTBYTE;} blocklen=NEXTBYTE;}
+    while (blocklen>0) {while (blocklen--) {ch = rdr.read_byte();} blocklen=rdr.read_byte();}
   }
 
   if (BitsPerPixel >= CodeSize)
@@ -222,7 +315,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   // first two color table entries should be black and white.
 
   if (ColorMapSize == 0) { // no global and no local color table
-    Fl::warning("%s does not have a color table, using default.\n", infname);
+    Fl::warning("%s does not have a color table, using default.\n", rdr.name());
     BitsPerPixel = CodeSize - 1;
     ColorMapSize = 1 << BitsPerPixel;
     Red[0] = Green[0] = Blue[0] = 0;	// black
@@ -257,32 +350,32 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   short int Prefix[4096];
   uchar Suffix[4096];
 
-  int blocklen = NEXTBYTE;
-  uchar thisbyte = NEXTBYTE; blocklen--;
+  int blocklen = rdr.read_byte();
+  uchar thisbyte = rdr.read_byte(); blocklen--;
   int frombit = 0;
 
   for (;;) {
 
-/* Fetch the next code from the raster data stream.  The codes can be
- * any length from 3 to 12 bits, packed into 8-bit bytes, so we have to
- * maintain our location as a pointer and a bit offset.
- * In addition, gif adds totally useless and annoying block counts
- * that must be correctly skipped over. */
+    /* Fetch the next code from the raster data stream.  The codes can be
+     * any length from 3 to 12 bits, packed into 8-bit bytes, so we have to
+     * maintain our location as a pointer and a bit offset.
+     * In addition, gif adds totally useless and annoying block counts
+     * that must be correctly skipped over. */
     int CurCode = thisbyte;
     if (frombit+CodeSize > 7) {
       if (blocklen <= 0) {
-	blocklen = NEXTBYTE;
-	if (blocklen <= 0) break;
+        blocklen = rdr.read_byte();
+        if (blocklen <= 0) break;
       }
-      thisbyte = NEXTBYTE; blocklen--;
+      thisbyte = rdr.read_byte(); blocklen--;
       CurCode |= thisbyte<<8;
     }
     if (frombit+CodeSize > 15) {
       if (blocklen <= 0) {
-	blocklen = NEXTBYTE;
-	if (blocklen <= 0) break;
+        blocklen = rdr.read_byte();
+        if (blocklen <= 0) break;
       }
-      thisbyte = NEXTBYTE; blocklen--;
+      thisbyte = rdr.read_byte(); blocklen--;
       CurCode |= thisbyte<<16;
     }
     CurCode = (CurCode>>frombit)&ReadMask;
@@ -303,23 +396,23 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
     int i;
     if (CurCode < FreeCode) i = CurCode;
     else if (CurCode == FreeCode) {*tp++ = (uchar)FinChar; i = OldCode;}
-    else {Fl::error("Fl_GIF_Image: %s - LZW Barf!", infname); break;}
+    else {Fl::error("Fl_GIF_Image: %s - LZW Barf!", rdr.name()); break;}
 
     while (i >= ColorMapSize) {*tp++ = Suffix[i]; i = Prefix[i];}
     *tp++ = FinChar = i;
     do {
       *p++ = *--tp;
       if (p >= eol) {
-	if (!Interlace) YC++;
-	else switch (Pass) {
-	case 0: YC += 8; if (YC >= Height) {Pass++; YC = 4;} break;
-	case 1: YC += 8; if (YC >= Height) {Pass++; YC = 2;} break;
-	case 2: YC += 4; if (YC >= Height) {Pass++; YC = 1;} break;
-	case 3: YC += 2; break;
-	}
-	if (YC>=Height) YC=0; /* cheap bug fix when excess data */
-	p = Image + YC*Width;
-	eol = p+Width;
+        if (!Interlace) YC++;
+        else switch (Pass) {
+          case 0: YC += 8; if (YC >= Height) {Pass++; YC = 4;} break;
+          case 1: YC += 8; if (YC >= Height) {Pass++; YC = 2;} break;
+          case 2: YC += 4; if (YC >= Height) {Pass++; YC = 1;} break;
+          case 3: YC += 2; break;
+        }
+        if (YC>=Height) YC=0; /* cheap bug fix when excess data */
+        p = Image + YC*Width;
+        eol = p+Width;
       }
     } while (tp > OutCode);
 
@@ -328,11 +421,11 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
       Suffix[FreeCode] = FinChar;
       FreeCode++;
       if (FreeCode > ReadMask) {
-	if (CodeSize < 12) {
-	  CodeSize++;
-	  ReadMask = (1 << CodeSize) - 1;
-	}
-	else FreeCode--;
+        if (CodeSize < 12) {
+          CodeSize++;
+          ReadMask = (1 << CodeSize) - 1;
+        }
+        else FreeCode--;
       }
     }
     OldCode = CurCode;
@@ -385,7 +478,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
 
   // write the first line of xpm data (use suffix as temp array):
   int length = sprintf((char*)(Suffix),
-		       "%d %d %d %d",Width,Height,-numcolors,1);
+                       "%d %d %d %d",Width,Height,-numcolors,1);
   new_data[0] = new char[length+1];
   strcpy(new_data[0], (char*)Suffix);
 
@@ -413,8 +506,6 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   alloc_data = 1;
 
   delete[] Image;
-
-  fclose(GifFile);
 }
 
 
