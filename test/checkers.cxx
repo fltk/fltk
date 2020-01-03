@@ -864,10 +864,7 @@ int VT100main() {
 
 //----------------------------------------------------------------
 // Checkers pieces with built in transparency/drop shadows
-#include "pixmaps/black_checker_png.h"
-#include "pixmaps/white_checker_png.h"
-#include "pixmaps/black_checker_king_png.h"
-#include "pixmaps/white_checker_king_png.h"
+#include "checkers_pieces.h"
 
 Fl_PNG_Image *png[4];
 
