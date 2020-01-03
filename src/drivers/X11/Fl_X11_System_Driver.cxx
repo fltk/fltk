@@ -408,17 +408,17 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Prefer
     case Fl_Preferences::USER:
       e = getenv("HOME");
       // make sure that $HOME is set to an existing directory
-      if ( (e==0L) || (e[0]=0) || (::access(e, F_OK)==-1) ) ) {
+      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
         struct passwd *pw = getpwuid(getuid());
         e = pw->pw_dir;
       }
-      if ( (e==0L) || (e[0]=0) || (::access(e, F_OK)==-1) ) ) {
+      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
         return 0L;
       } else {
-        strlcpy(filename, e, sizeof(filename));
+        strlcpy(filename, e, FL_PATH_MAX);
         if (filename[strlen(filename)-1] != '/')
-          strlcat(filename, "/", sizeof(filename));
-        strlcat(filename, ".fltk/", sizeof(filename));
+          strlcat(filename, "/", FL_PATH_MAX);
+        strlcat(filename, ".fltk/", FL_PATH_MAX);
       }
       break;
     case Fl_Preferences::SYSTEM:
@@ -432,7 +432,7 @@ char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Prefer
   if ( (application==0L) || (application[0]==0) )
     application = "unknown";
 
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "%s/%s.prefs", vendor, application);
   return filename;
 }

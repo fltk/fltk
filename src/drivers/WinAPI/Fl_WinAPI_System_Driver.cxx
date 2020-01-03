@@ -891,7 +891,7 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
   if ( (application==0L) || (application[0]==0) )
     application = "unknown";
 
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
   return filename;
