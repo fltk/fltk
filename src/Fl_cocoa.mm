@@ -57,6 +57,7 @@ extern "C" {
 #include <limits.h>
 #include <dlfcn.h>
 #include <string.h>
+#include <pwd.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -4402,12 +4403,20 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
       break;
     case Fl_Preferences::USER:
     { // Find the home directory, but return NULL if components were not found.
-      // If we ever port this to iOS: this returns tha location of the app!
-      NSString *nsHome = NSHomeDirectory();
-      if (!nsHome) return 0L;
-      const char *cHome = [nsHome UTF8String];
-      if (!cHome) return 0L;
-      snprintf(filename, FL_PATH_MAX, "%s/Library/Preferences", cHome);
+      // If we ever port this to iOS: NSHomeDirectory returns tha location of the app!
+      const char *e = getenv("HOME");
+      // if $HOME does not exist, try NSHomeDirectory, the Mac way.
+      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
+        NSString *nsHome = NSHomeDirectory();
+        if (nsHome)
+          e = [nsHome UTF8String];
+      }
+      // if NSHomeDirectory does not work, try getpwuid(), the Unix way.
+      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
+        struct passwd *pw = getpwuid(getuid());
+        e = pw->pw_dir;
+      }
+      snprintf(filename, FL_PATH_MAX, "%s/Library/Preferences", e);
       break; }
   }
 
