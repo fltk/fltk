@@ -875,6 +875,8 @@ void make_pieces() {
   png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_white_checker_png,      sizeof(pixmaps_white_checker_png));
   png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_black_checker_king_png, sizeof(pixmaps_black_checker_king_png));
   png[which++] = new Fl_PNG_Image(NULL, (const unsigned char *)pixmaps_white_checker_king_png, sizeof(pixmaps_white_checker_king_png));
+  for (int i = 0; i < which; i++)
+    png[i]->scale(png[i]->data_w()/2, png[i]->data_h()/2);
 }
 
 #define ISIZE 62	// old: 56
