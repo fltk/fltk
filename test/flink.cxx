@@ -483,6 +483,10 @@ void createAppSrcMainCppCMakeListsTxt(const char *appName, const StringList &src
         ")\n"
         "target_link_libraries(\n", f);
   fputf("    %s\n", f, appName);
+  // FIXME: ${CMAKE_BUILD_TYPE} is "Debug", but the path segment is "debug".
+  // This fails in case sensitive file systems (Linux...).
+  //  would this work? fputf("    \"${FLTK_IDE_DIR}/%s/.cxx/cmake/$<LOWER_CASE:${CMAKE_BUILD_TYPE}>/${ANDROID_ABI}/lib%s.a\"\n", f, libList[i], libList[i]);
+  //  $<TARGET_FILE:tgt>
   for (i=0; i<libList.n(); ++i)
     fputf("    \"${FLTK_IDE_DIR}/%s/.cxx/cmake/${CMAKE_BUILD_TYPE}/${ANDROID_ABI}/lib%s.a\"\n", f, libList[i], libList[i]);
   fputs("    android\n"
