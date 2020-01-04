@@ -226,6 +226,7 @@ clean:
 	done
 	$(RM) *.o core.* *~ *.bck *.bak
 	$(RM) CubeViewUI.cxx CubeViewUI.h
+	$(RM) checkers_pieces.cxx checkers_pieces.h
 	$(RM) fast_slow.cxx fast_slow.h
 	$(RM) inactive.cxx inactive.h
 	$(RM) keyboard_ui.cxx keyboard_ui.h
@@ -338,16 +339,16 @@ blocks$(EXEEXT): blocks.o
 	$(OSX_ONLY) mkdir blocks.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
 
-checkers$(EXEEXT): pixmaps/black_checker_png.h \
-		   pixmaps/white_checker_png.h \
-		   pixmaps/black_checker_king_png.h \
-		   pixmaps/white_checker_king_png.h \
-		   checkers.o
+checkers$(EXEEXT): checkers.o checkers_pieces.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o checkers_pieces.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -f -r checkers.app/Contents/MacOS
 	$(OSX_ONLY) mkdir checkers.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
+checkers.cxx:		checkers_pieces.h
+checkers_pieces.o:	checkers_pieces.h
+checkers_pieces.h:	checkers_pieces.fl
+checkers_pieces.cxx:	checkers_pieces.fl ../fluid/fluid$(EXEEXT)
 
 clock$(EXEEXT): clock.o
 
@@ -579,16 +580,6 @@ cairo_test$(EXEEXT): cairo_test.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
-
-# Checkers .png -> .h conversion
-pixmaps/black_checker_king_png.h: pixmaps/black_checker_king.png
-	xxd -i $< > $@
-pixmaps/white_checker_king_png.h: pixmaps/white_checker_king.png
-	xxd -i $< > $@
-pixmaps/black_checker_png.h: pixmaps/black_checker.png
-	xxd -i $< > $@
-pixmaps/white_checker_png.h: pixmaps/white_checker.png
-	xxd -i $< > $@
 
 #
 # End of "$Id$".
