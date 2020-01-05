@@ -163,12 +163,12 @@ private:
  GIF format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
  */
-Fl_GIF_Image::Fl_GIF_Image(const char *infname) :
+Fl_GIF_Image::Fl_GIF_Image(const char *filename) :
   Fl_Pixmap((char *const*)0)
 {
   GIFReader f;
-  if (f.open(infname)==-1) {
-    Fl::error("Fl_GIF_Image: Unable to open %s!", infname);
+  if (f.open(filename)==-1) {
+    Fl::error("Fl_GIF_Image: Unable to open %s!", filename);
     ld(ERR_FILE_ACCESS);
   } else {
     read(f);
@@ -179,16 +179,16 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) :
 /**
  The constructor loads the named GIF image.
 
- \param[in] bmp the name of the bitmap
- \param[in] data a pointer to the BMP data in memory. There is no checking for buffer overruns
+ \param[in] imagename the name of the GIF image
+ \param[in] data a pointer to the GIF data in memory. There is no checking for buffer overruns
 
- \see Fl_BMP_Image::Fl_BMP_Image(const char *bmp)
+ \see Fl_GIF_Image::Fl_GIF_Image(const char *filename)
  */
-Fl_GIF_Image::Fl_GIF_Image(const char *gif, const unsigned char *data) :
+Fl_GIF_Image::Fl_GIF_Image(const char *imagename, const unsigned char *data) :
   Fl_Pixmap((char *const*)0)
 {
   GIFReader d;
-  if (d.open(gif, data)==-1) {
+  if (d.open(imagename, data)==-1) {
     ld(ERR_FORMAT);
   } else {
     read(d);

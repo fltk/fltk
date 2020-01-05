@@ -32,7 +32,7 @@ class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
   public:
 
     Fl_BMP_Image(const char* filename);
-    Fl_BMP_Image(const char* filename, const unsigned char *data);
+    Fl_BMP_Image(const char* imagename, const unsigned char *data);
 
   protected:
 

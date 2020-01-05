@@ -160,11 +160,11 @@ private:
  BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
  */
-Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
+Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
 : Fl_RGB_Image(0,0,0)
 {
   BMPReader f;
-  if (f.open(bmp)==-1) {
+  if (f.open(filename)==-1) {
     ld(ERR_FORMAT);
   } else {
     read(f);
@@ -174,16 +174,16 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 /**
  The constructor loads the named BMP image from the given memory address.
 
- \param[in] bmp the name of the bitmap
+ \param[in] imagename the name of the bitmap
  \param[in] data a pointer to the BMP data in memory. There is no checking for buffer overruns
 
- \see Fl_BMP_Image::Fl_BMP_Image(const char *bmp)
+ \see Fl_BMP_Image::Fl_BMP_Image(const char *filename)
 */
-Fl_BMP_Image::Fl_BMP_Image(const char *bmp, const unsigned char *data)
+Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
 : Fl_RGB_Image(0,0,0)
 {
   BMPReader d;
-  if (d.open(bmp, data)==-1) {
+  if (d.open(imagename, data)==-1) {
     ld(ERR_FORMAT);
   } else {
     read(d);
