@@ -201,6 +201,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   - Bundled IDE project files (Xcode and Visual Studio) have been
     removed. Please use CMake to generate your IDE project files.
     See README.CMake.txt for more information.
+  - Dropped FLTK 1.0 compatibility (macro FLTK_1_0_COMPAT). This "feature"
+    was no longer usable since FLTK 1.3, hence it can be dropped safely.
 
 
 Changes in FLTK 1.3

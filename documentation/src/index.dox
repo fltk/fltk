@@ -13,7 +13,7 @@
     Revision 11 by F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
     A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
 
-    Copyright 1998-2018 by Bill Spitzak and others.
+    Copyright 1998-2020 by Bill Spitzak and others.
   </CENTER></TD>
 </TR>
 </TABLE>
@@ -80,9 +80,7 @@
 
 	- \subpage osissues
 
-	- \subpage migration_1_1
-
-	- \subpage migration_1_3
+	- \subpage migration_1_4
 
 	- \subpage development
 

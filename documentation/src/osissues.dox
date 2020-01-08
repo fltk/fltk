@@ -918,8 +918,8 @@ FLTK uses UTF-8-encoded UNIX-style filenames and paths.
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="migration_1_1.html">
-    Migrating Code from FLTK 1.0 to 1.1
+    <a class="el" href="migration_1_4.html">
+    Migrating Code from FLTK 1.3 to 1.4
     [Next]
     </a>
   </td>

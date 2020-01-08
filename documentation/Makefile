@@ -3,7 +3,7 @@
 #
 # Makefile for the Fast Light Tool Kit (FLTK) documentation.
 #
-# Copyright 1998-2015 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -43,8 +43,7 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/glut.dox \
                          $(SRC_DOCDIR)/forms.dox \
                          $(SRC_DOCDIR)/osissues.dox \
-                         $(SRC_DOCDIR)/migration_1_1.dox \
-                         $(SRC_DOCDIR)/migration_1_3.dox \
+                         $(SRC_DOCDIR)/migration_1_4.dox \
                          $(SRC_DOCDIR)/development.dox \
                          $(SRC_DOCDIR)/license.dox \
                          $(SRC_DOCDIR)/examples.dox \
