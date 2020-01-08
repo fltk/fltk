@@ -782,6 +782,15 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
+
+  // transform coordinates and clip if outside 16-bit space (STR 2798)
+
+  int x1 = x + offset_x_ * scale() + line_delta_;
+  if (x1 < clip_min() || x1 > clip_max()) return;
+
+  int y1 = y + offset_y_ * scale() + line_delta_;
+  if (y1 < clip_min() || y1 > clip_max()) return;
+
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
@@ -814,9 +823,9 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
     
     const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (XftChar16 *)buffer, n);
+    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x1, y1, (XftChar16 *)buffer, n);
 #else
-    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (XftChar32 *)buffer, n);
+    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x1, y1, (XftChar32 *)buffer, n);
 #endif
   }
 }

@@ -111,6 +111,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Improve X11 16-bit coordinate clipping for text (STR 2798). This
+    assumes that text is "small" WRT 16-bit coordinate space and clips
+    text if at least one of the x/y coordinates is out of bounds.
   - Fix Fl::add_timeout() in draw() under Linux (STR 3188)
   - Class Fl_Native_File_Chooser uses in priority the file chooser dialog
     of GTK version 3 when available on the running X11 platform, and falls back
