@@ -873,6 +873,11 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int y) {
 
+  // clip if outside 16-bit space (STR 2798)
+
+  if (x < clip_min() || x > clip_max()) return;
+  if (y < clip_min() || y > clip_max()) return;
+
 #if defined(__GNUC__)
 // FIXME: warning Need to improve this XFT right to left draw function
 #endif /*__GNUC__*/
