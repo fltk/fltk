@@ -148,7 +148,7 @@ png:
 
     Makefile: Same as CMakeLists.txt.
 
-    Note: more to come...
+    pnglibconf.h: Generate on a Linux system and merge.
 
     makedepend: Keep this file.
 
