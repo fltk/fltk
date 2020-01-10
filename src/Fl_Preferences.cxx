@@ -98,31 +98,69 @@ unsigned int Fl_Preferences::file_access()
 }
 
 /**
-   The constructor creates a group that manages name/value pairs and
-   child groups. Groups are ready for reading and writing at any time.
-   The root argument is either Fl_Preferences::USER
-   or Fl_Preferences::SYSTEM.
+ The constructor creates a group that manages name/value pairs and
+ child groups. Groups are ready for reading and writing at any time.
+ The root argument is either Fl_Preferences::USER
+ or Fl_Preferences::SYSTEM.
 
-   This constructor creates the <i>base</i> instance for all
-   following entries and reads existing databases into memory. The
-   vendor argument is a unique text string identifying the
-   development team or vendor of an application.  A domain name or
-   an EMail address are great unique names, e.g.
-   "researchATmatthiasm.com" or "fltk.org". The
-   application argument can be the working title or final
-   name of your application. Both vendor and
-   application must be valid relative UNIX pathnames and
-   may contain '/'s to create deeper file structures.
+ This constructor creates the <i>base</i> instance for all
+ following entries and reads existing databases into memory. The
+ vendor argument is a unique text string identifying the
+ development team or vendor of an application.  A domain name or
+ an EMail address are great unique names, e.g.
+ "research.matthiasm.com" or "fluid.fltk.org". The
+ application argument can be the working title or final
+ name of your application. Both vendor and
+ application must be valid UNIX path segments and
+ may contain forward slashes to create deeper file structures.
 
-   A set of Preferences marked "run-time" exists exactly one per application and
-   only as long as the application runs. It can be used as a database for
-   volatile information. FLTK uses it to register plugins at run-time.
+ A set of Preferences marked "run-time" exists exactly once per application and
+ only as long as the application runs. It can be used as a database for
+ volatile information. FLTK uses it to register plugins at run-time.
 
-   \param[in] root can be \c USER or \c SYSTEM for user specific or system wide
-              preferences
-   \param[in] vendor unique text describing the company or author of this file
-   \param[in] application unique text describing the application
-*/
+ \note On \b MSWindows, the directory is constructed by querying the <i>Common AppData</i>
+ or <i>AppData</i> key of the <tt>Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders</tt>
+ registry entry. The filename and path is then constructed as <tt>$(query)/$(vendor)/$(application).prefs</tt> .
+ If the query call fails, data will be stored in RAM only and be lost when the app exits.
+
+ \par In FLTK versions before 1.4.0, if querying the registry failed, preferences would be written to
+ <tt>C:\FLTK\$(vendor)\$(application).prefs</tt> .
+
+ \note On \b Linux, the \c USER directory is constructed by reading \c $HOME . If \c $HOME is not set
+ or not pointing to an existing directory, we are checking the path member of the passwd struct returned by
+ \c getpwuid(getuid()) .  If all attempts fail, data will be stored in RAM only and be lost when the app exits.
+ The filename and path is then constructed as <tt>$(directory)/.fltk/$(vendor)/$(application).prefs</tt> .
+ The \c SYSTEM directory is hardcoded as <tt>/etc/fltk/$(vendor)/$(application).prefs</tt> .
+
+ \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path would be empty,
+ generating <tt>$(vendor)/$(application).prefs</tt>, which was used relative the the current working directory.
+
+ \note On \b MacOS, the \c USER directory is constructed by reading \c $HOME . If \c $HOME is not set
+ or not pointing to an existing directory, we check the path returned by \c NSHomeDirectory() , and
+ finally checking the path member of the passwd struct returned by \c getpwuid(getuid()) .
+ If all attempts fail, data will be stored in RAM only and be lost when the app exits.
+ The filename and path is then constructed as <tt>$(directory)/Library/Preferences/$(vendor)/$(application).prefs</tt> .
+ The \c SYSTEM directory is hardcoded as <tt>/Library/Preferences/$(vendor)/$(application).prefs</tt> .
+
+ \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path would be \c NULL ,
+ generating <tt>\<null\>/Library/Preferences/$(vendor)/$(application).prefs</tt>, which would silently fail to
+ create a prefrences file.
+
+ \param[in] root can be \c USER or \c SYSTEM for user specific or system wide preferences
+ \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
+ \param[in] application unique text describing the application, must be a valid filepath segment
+
+ \todo Before the release of 1.4.0, I want to make a failed attempt to write a preferences file smarter. I
+ plan to use a subgroup of the "runtime" preferences to store data and stay accessable until the application
+ exits. Data would be stored under <tt>./$(vendor)/$(application).prefs</tt> in RAM, but not on disk.
+
+ \todo I want a way to access the type of the root preferences (SYSTEM, USER, MEMORY), and the state of
+ the file access (OK, FILE_SYSTEM_FAIL, PERMISSION_FAIL, etc.), and probably the dirty() flag as well.
+
+ \todo Also, I need to explain runtime preferences.
+
+ \todo Lastly, I think I have to put short sample code in the Doxygen docs. The test app ist just not enough.
+ */
 Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application ) {
   node = new Node( "." );
   rootNode = new RootNode( this, root, vendor, application );
@@ -133,13 +171,12 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
    \brief Use this constructor to create or read a preferences file at an
    arbitrary position in the file system.
 
-   The file name is generated in the form
-   <tt><i>path</i>/<i>application</i>.prefs</tt>. If \p application
-   is \c NULL, \p path must contain the full file name.
+   The file name is generated in the form <tt>$(path)/$(application).prefs</tt>.
+   If \p application is \c NULL, \p path is taken literally as the file path and name.
 
    \param[in] path path to the directory that contains the preferences file
-   \param[in] vendor unique text describing the company or author of this file
-   \param[in] application unique text describing the application
+   \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
+   \param[in] application unique text describing the application, must be a valid filepath segment
  */
 Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char *application ) {
   node = new Node( "." );
