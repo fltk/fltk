@@ -48,24 +48,35 @@
 // Local reader class...
 //
 
+/*
+ This class reads data chunks from a file or from memory in LSB-first
+ byte order.
+ 
+ TODO: GIFReader and BMPReader are very similar and should be combined to avoid
+ code duplication.
+ */
 class BMPReader
 {
 public:
+  // Create the reader.
   BMPReader() :
   pIsFile(0), pIsData(0),
   pFile(0L), pData(0L), pStart(0L),
   pName(0L)
   { }
+  // Initialize the reader to access the file system, filename is copied
+  // and stored.
   int open(const char *filename) {
-    if (filename)
-      pName = strdup(filename);
-    if ((pFile = fl_fopen(filename, "rb")) == NULL) {
+    if (!filename)
       return -1;
-    } else {
-      pIsFile = 1;
-      return 0;
+    pName = strdup(filename);
+    if ( (pFile = fl_fopen(filename, "rb")) == NULL ) {
+      return -1;
     }
+    pIsFile = 1;
+    return 0;
   }
+  // Initialize the reader for memory access, name is copied and stored
   int open(const char *imagename, const unsigned char *data) {
     if (imagename)
       pName = strdup(imagename);
@@ -77,6 +88,7 @@ public:
       return -1;
     }
   }
+  // Close and destroy the reader
   ~BMPReader() {
     if (pIsFile && pFile) {
       fclose(pFile);
@@ -84,6 +96,7 @@ public:
     if (pName)
       ::free(pName);
   }
+  // Read a single byte form memory or a file
   uchar read_byte() {
     if (pIsFile) {
       return getc(pFile);
@@ -93,7 +106,7 @@ public:
       return 0;
     }
   }
-  // 'read_word()' - Read a 16-bit unsigned integer.
+  // Read a 16-bit unsigned integer, LSB-first
   unsigned short read_word() {
     unsigned char b0, b1;  // Bytes from file
     if (pIsFile) {
@@ -108,7 +121,7 @@ public:
       return 0;
     }
   }
-  // 'read_dword()' - Read a 32-bit unsigned integer.
+  // Read a 32-bit unsigned integer, LSB-first
   unsigned int read_dword() {
     unsigned char b0, b1, b2, b3;  // Bytes from file
     if (pIsFile) {
@@ -127,10 +140,12 @@ public:
       return 0;
     }
   }
-  // 'read_long()' - Read a 32-bit signed integer.
+  // Read a 32-bit signed integer, LSB-first
   int read_long() {
     return (int)read_dword();
   };
+  // Move the current read position to a byte offset fro the beginning of the
+  // file or the original start address in memory
   void seek(unsigned int n) {
     if (pIsFile) {
       fseek(pFile, n , SEEK_SET);
@@ -138,19 +153,26 @@ public:
       pData = pStart + n;
     }
   }
+  // return the name or filename for this reader
   const char *name() { return pName; }
 private:
+  // open() sets this if we read form a file
   char pIsFile;
+  // open() sets this if we read form memory
   char pIsData;
+  // a pointer to the opened file
   FILE *pFile;
+  // a pointer to the current byte in memory
   const unsigned char *pData;
+  // a pointer to the start of the image data
   const unsigned char *pStart;
+  // a copy of the name associated with this reader
   char *pName;
 };
 
 
 /**
- The constructor loads the named BMP image from the given bmp filename.
+ \brief The constructor loads the named BMP image from the given bmp filename.
 
  The destructor frees all memory and server resources that are used by
  the image.
@@ -159,39 +181,58 @@ private:
  ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
+
+ \param[in] filename a full path and name pointing to a valid BMP file.
+
+ \see Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
  */
 Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
 : Fl_RGB_Image(0,0,0)
 {
   BMPReader f;
   if (f.open(filename)==-1) {
-    ld(ERR_FORMAT);
+    ld(ERR_FILE_ACCESS);
   } else {
-    read(f);
+    load_bmp_(f);
   }
 }
 
 /**
- The constructor loads the named BMP image from the given memory address.
+ \brief Read a BMP image from memory.
 
- \param[in] imagename the name of the bitmap
- \param[in] data a pointer to the BMP data in memory. There is no checking for buffer overruns
+ Construct an image from a block of memory inside the application. Fluid offers
+ "binary Data" chunks as a great way to add image data into the C++ source code.
+ imagename can be NULL. If a name is given, the image is added to the list of
+ shared images and will be available by that name.
+
+ Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
+ BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
+ be loaded for another reason.
+
+ \param[in] imagename  A name given to this image or NULL
+ \param[in] data       Pointer to the start of the BMP image in memory. This code will not check for buffer overruns.
 
  \see Fl_BMP_Image::Fl_BMP_Image(const char *filename)
+ \see Fl_Shared_Image
 */
 Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
 : Fl_RGB_Image(0,0,0)
 {
   BMPReader d;
   if (d.open(imagename, data)==-1) {
-    ld(ERR_FORMAT);
+    ld(ERR_FILE_ACCESS);
   } else {
-    read(d);
+    load_bmp_(d);
   }
 }
 
-
-void Fl_BMP_Image::read(class BMPReader &rdr)
+/*
+ This method reads BMP image data and creates an RGB or RGBA image. The BMP
+ format supports only 1 bit for alpha. To avoid code duplication, we use
+ a BMPReader that reads data from either a file or from memory.
+ */
+void Fl_BMP_Image::load_bmp_(class BMPReader &rdr)
 {
   int     info_size,    // Size of info header
           depth,        // Depth of image (bits)

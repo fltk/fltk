@@ -95,107 +95,42 @@ extern "C" {
  w(), h(), and d() should return values greater than zero.
  
  \param[in] filename a full path and name pointing to a valid jpeg file.
+
+ \see Fl_JPEG_Image::Fl_JPEG_Image(const char *imagename, const unsigned char *data)
  */
-Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
-: Fl_RGB_Image(0,0,0) {
-#ifdef HAVE_LIBJPEG
-  FILE				*fp;	// File pointer
-  jpeg_decompress_struct	dinfo;	// Decompressor info
-  fl_jpeg_error_mgr		jerr;	// Error handler info
-  JSAMPROW			row;	// Sample row pointer
-  
-  // the following variables are pointers allocating some private space that
-  // is not reset by 'setjmp()'
-  char* max_finish_decompress_err;      // count errors and give up afer a while
-  char* max_destroy_decompress_err;     // to avoid recusion and deadlock
-  
-  // Clear data...
-  alloc_array = 0;
-  array = (uchar *)0;
-  
-  // Open the image file...
-  if ((fp = fl_fopen(filename, "rb")) == NULL) {
-    ld(ERR_FILE_ACCESS);
-    return;
-  }
-  
-  // Setup the decompressor info and read the header...
-  dinfo.err                = jpeg_std_error((jpeg_error_mgr *)&jerr);
-  jerr.pub_.error_exit     = fl_jpeg_error_handler;
-  jerr.pub_.output_message = fl_jpeg_output_handler;
-  
-  // Setup error loop variables
-  max_finish_decompress_err = (char*)malloc(1);   // allocate space on the frame for error counters
-  max_destroy_decompress_err = (char*)malloc(1);  // otherwise, the variables are reset on the longjmp
-  *max_finish_decompress_err=10;
-  *max_destroy_decompress_err=10;
-  
-  if (setjmp(jerr.errhand_))
-  {
-    // JPEG error handling...
-    Fl::warning("JPEG file \"%s\" is too large or contains errors!\n", filename);
-    // if any of the cleanup routines hits another error, we would end up 
-    // in a loop. So instead, we decrement max_err for some upper cleanup limit.
-    if ( ((*max_finish_decompress_err)-- > 0) && array)
-      jpeg_finish_decompress(&dinfo);
-    if ( (*max_destroy_decompress_err)-- > 0)
-      jpeg_destroy_decompress(&dinfo);
-    
-    fclose(fp);
-    
-    w(0);
-    h(0);
-    d(0);
-    
-    if (array) {
-      delete[] (uchar *)array;
-      array = 0;
-      alloc_array = 0;
-    }
-    
-    free(max_destroy_decompress_err);
-    free(max_finish_decompress_err);
-    
-    ld(ERR_FORMAT);
-    return;
-  }
-  
-  jpeg_create_decompress(&dinfo);
-  jpeg_stdio_src(&dinfo, fp);
-  jpeg_read_header(&dinfo, TRUE);
-  
-  dinfo.quantize_colors      = (boolean)FALSE;
-  dinfo.out_color_space      = JCS_RGB;
-  dinfo.out_color_components = 3;
-  dinfo.output_components    = 3;
-  
-  jpeg_calc_output_dimensions(&dinfo);
-  
-  w(dinfo.output_width); 
-  h(dinfo.output_height);
-  d(dinfo.output_components);
-  
-  if (((size_t)w()) * h() * d() > max_size() ) longjmp(jerr.errhand_, 1);
-  array = new uchar[w() * h() * d()];
-  alloc_array = 1;
-  
-  jpeg_start_decompress(&dinfo);
-  
-  while (dinfo.output_scanline < dinfo.output_height) {
-    row = (JSAMPROW)(array +
-                     dinfo.output_scanline * dinfo.output_width *
-                     dinfo.output_components);
-    jpeg_read_scanlines(&dinfo, &row, (JDIMENSION)1);
-  }
-  
-  jpeg_finish_decompress(&dinfo);
-  jpeg_destroy_decompress(&dinfo);
-  
-  free(max_destroy_decompress_err);
-  free(max_finish_decompress_err);
-  
-  fclose(fp);
-#endif // HAVE_LIBJPEG
+Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)
+: Fl_RGB_Image(0,0,0)
+{
+  load_jpg_(filename, 0L, 0L);
+}
+
+/**
+ \brief The constructor loads the JPEG image from memory.
+
+ Construct an image from a block of memory inside the application. Fluid offers
+ "binary Data" chunks as a great way to add image data into the C++ source code.
+ name_png can be NULL. If a name is given, the image is added to the list of
+ shared images (see: Fl_Shared_Image) and will be available by that name.
+
+ The inherited destructor frees all memory and server resources that are used
+ by the image.
+
+ Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
+ ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
+ JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
+ be loaded for another reason. If the image has loaded correctly,
+ w(), h(), and d() should return values greater than zero.
+
+ \param name A unique name or NULL
+ \param data A pointer to the memory location of the JPEG image
+
+ \see Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)
+ \see Fl_Shared_Image
+ */
+Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
+: Fl_RGB_Image(0,0,0)
+{
+  load_jpg_(0L, name, data);
 }
 
 
@@ -270,120 +205,135 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 #endif // HAVE_LIBJPEG
 
 
-/**
- \brief The constructor loads the JPEG image from memory.
-
- Construct an image from a block of memory inside the application. Fluid offers
- "binary Data" chunks as a great way to add image data into the C++ source code.
- name_png can be NULL. If a name is given, the image is added to the list of 
- shared images (see: Fl_Shared_Image) and will be available by that name.
-
- The inherited destructor frees all memory and server resources that are used 
- by the image.
-
- Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
- JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
- be loaded for another reason. If the image has loaded correctly,
- w(), h(), and d() should return values greater than zero.
-
- \param name A unique name or NULL
- \param data A pointer to the memory location of the JPEG image
+/*
+ This method reads JPEG image data and creates an RGB or grayscale image.
+ To avoid code duplication, we set filename if we want to read form a file or
+ data to read from memory instead. Sharename can be set if the image is
+ supposed to be added to teh Fl_Shared_Image list.
  */
-Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
-: Fl_RGB_Image(0,0,0) {
+void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const unsigned char *data)
+{
 #ifdef HAVE_LIBJPEG
-  jpeg_decompress_struct	dinfo;	// Decompressor info
-  fl_jpeg_error_mgr		jerr;	// Error handler info
-  JSAMPROW			row;	// Sample row pointer
-  
+  FILE                   *fp = 0L;  // File pointer
+  jpeg_decompress_struct  dinfo;    // Decompressor info
+  fl_jpeg_error_mgr       jerr;     // Error handler info
+  JSAMPROW                row;      // Sample row pointer
+
   // the following variables are pointers allocating some private space that
   // is not reset by 'setjmp()'
   char* max_finish_decompress_err;      // count errors and give up afer a while
   char* max_destroy_decompress_err;     // to avoid recusion and deadlock
-  
+
   // Clear data...
   alloc_array = 0;
   array = (uchar *)0;
-  
+
+  // Open the image file if we read from the file system
+  if (filename) {
+    if ((fp = fl_fopen(filename, "rb")) == NULL) {
+      ld(ERR_FILE_ACCESS);
+      return;
+    }
+  } else {
+    if (data==0L) {
+      ld(ERR_FILE_ACCESS);
+      return;
+    }
+  }
+
   // Setup the decompressor info and read the header...
   dinfo.err                = jpeg_std_error((jpeg_error_mgr *)&jerr);
   jerr.pub_.error_exit     = fl_jpeg_error_handler;
   jerr.pub_.output_message = fl_jpeg_output_handler;
-  
+
   // Setup error loop variables
   max_finish_decompress_err = (char*)malloc(1);   // allocate space on the frame for error counters
   max_destroy_decompress_err = (char*)malloc(1);  // otherwise, the variables are reset on the longjmp
   *max_finish_decompress_err=10;
   *max_destroy_decompress_err=10;
-  
+
   if (setjmp(jerr.errhand_))
   {
     // JPEG error handling...
-    Fl::warning("JPEG data is too large or contains errors!\n");
-    // if any of the cleanup routines hits another error, we would end up 
+    const char *name = "<unnamed>";
+    if (filename) name = filename;
+    else if (sharename) name = sharename;
+    Fl::warning("JPEG file \"%s\" is too large or contains errors!\n", name);
+    // if any of the cleanup routines hits another error, we would end up
     // in a loop. So instead, we decrement max_err for some upper cleanup limit.
     if ( ((*max_finish_decompress_err)-- > 0) && array)
       jpeg_finish_decompress(&dinfo);
     if ( (*max_destroy_decompress_err)-- > 0)
       jpeg_destroy_decompress(&dinfo);
-    
+
+    if (fp)
+      fclose(fp);
+
     w(0);
     h(0);
     d(0);
-    
+
     if (array) {
       delete[] (uchar *)array;
       array = 0;
       alloc_array = 0;
     }
-    
+
     free(max_destroy_decompress_err);
     free(max_finish_decompress_err);
-    
+
+    ld(ERR_FORMAT);
     return;
   }
-  
+
   jpeg_create_decompress(&dinfo);
-  jpeg_mem_src(&dinfo, data);
+  if (fp) {
+    jpeg_stdio_src(&dinfo, fp);
+  } else {
+    jpeg_mem_src(&dinfo, data);
+  }
   jpeg_read_header(&dinfo, TRUE);
-  
+
   dinfo.quantize_colors      = (boolean)FALSE;
   dinfo.out_color_space      = JCS_RGB;
   dinfo.out_color_components = 3;
   dinfo.output_components    = 3;
-  
+
   jpeg_calc_output_dimensions(&dinfo);
-  
-  w(dinfo.output_width); 
+
+  w(dinfo.output_width);
   h(dinfo.output_height);
   d(dinfo.output_components);
-  
+
   if (((size_t)w()) * h() * d() > max_size() ) longjmp(jerr.errhand_, 1);
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
-  
+
   jpeg_start_decompress(&dinfo);
-  
+
   while (dinfo.output_scanline < dinfo.output_height) {
     row = (JSAMPROW)(array +
                      dinfo.output_scanline * dinfo.output_width *
                      dinfo.output_components);
     jpeg_read_scanlines(&dinfo, &row, (JDIMENSION)1);
   }
-  
+
   jpeg_finish_decompress(&dinfo);
   jpeg_destroy_decompress(&dinfo);
-  
+
   free(max_destroy_decompress_err);
   free(max_finish_decompress_err);
 
-  if (w() && h() && name) {
-    Fl_Shared_Image *si = new Fl_Shared_Image(name, this);
+  if (fp)
+    fclose(fp);
+
+  if (sharename && w() && h()) {
+    Fl_Shared_Image *si = new Fl_Shared_Image(sharename, this);
     si->add();
   }
 #endif // HAVE_LIBJPEG
 }
+
 
 //
 // End of "$Id$".

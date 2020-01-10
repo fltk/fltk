@@ -37,7 +37,7 @@ public:
 
 protected:
 
-  void read(class GIFReader &rdr);
+  void load_gif_(class GIFReader &rdr);
 
 };
 

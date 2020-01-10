@@ -36,7 +36,7 @@ class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
   protected:
 
-    void read(class BMPReader &rdr);
+    void load_bmp_(class BMPReader &rdr);
 
 };
 
