@@ -79,6 +79,7 @@ static Fl_Text_Editor::Key_Binding extra_bindings[] =  {
 Fl_Cocoa_Screen_Driver::Fl_Cocoa_Screen_Driver() {
   text_editor_extra_key_bindings =  extra_bindings;
   scale_ = 1.;
+  default_icon = nil;
 }
 
 

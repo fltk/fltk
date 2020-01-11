@@ -754,6 +754,10 @@ int main(int argc, char ** argv) {
   w3->end();
   
   w2->end();
+  Fl_RGB_Image *rgba_icon = new Fl_RGB_Image(pixmap);
+  Fl_Window::default_icon(rgba_icon);
+  //w2->icon(rgba_icon);
+  delete rgba_icon;
   w2->show(argc, argv);
   
   Fl::run();
