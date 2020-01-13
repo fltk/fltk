@@ -1306,6 +1306,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   Fl::first_window(window);
+  if (!window->parent()) [nsw orderFront:nil];
   update_e_xy_and_e_xy_root(nsw);
   if (fl_sys_menu_bar && Fl_MacOS_Sys_Menu_Bar_Driver::window_menu_style()) {
     // select the corresponding Window menu item
