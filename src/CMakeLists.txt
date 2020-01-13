@@ -46,6 +46,7 @@ set (CPPFILES
   Fl_Group.cxx
   Fl_Help_View.cxx
   Fl_Image.cxx
+  Fl_Image_Reader.cxx
   Fl_Image_Surface.cxx
   Fl_Input.cxx
   Fl_Input_.cxx

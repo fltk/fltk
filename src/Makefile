@@ -3,7 +3,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -48,6 +48,7 @@ CPPFILES = \
 	Fl_Group.cxx \
 	Fl_Help_View.cxx \
 	Fl_Image.cxx \
+	Fl_Image_Reader.cxx \
 	Fl_Image_Surface.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \

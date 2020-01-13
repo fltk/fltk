@@ -3,7 +3,7 @@
 //
 // Fl_GIF_Image routines.
 //
-// Copyright 1997-2019 by Bill Spitzak and others.
+// Copyright 1997-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -14,9 +14,6 @@
 // Please report all bugs and problems on the following page:
 //
 //     http://www.fltk.org/str.php
-//
-// Contents:
-//
 //
 
 //
@@ -35,10 +32,12 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_GIF_Image.H>
-#include <stdio.h>
-#include <stdlib.h>
+#include "Fl_Image_Reader.h"
 #include <FL/fl_utf8.h>
 #include "flstring.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 // Read a .gif file and convert it to a "xpm" format (actually my
 // modified one with compressed colormaps).
@@ -75,100 +74,6 @@
  *                     (415) 336-1080
  */
 
-typedef unsigned char uchar;
-
-//
-// Local reader class...
-//
-
-/*
- This class reads data chunks from a file or from memory in LSB-first
- byte order.
-
- TODO: GIFReader and BMPReader are very similar and should be combined to avoid
-       code duplication.
- */
-class GIFReader
-{
-public:
-  // Create the reader.
-  GIFReader() :
-  pIsFile(0), pIsData(0),
-  pFile(0L), pData(0L),
-  pName(0L)
-  { }
-  // Initialize the reader to access the file system, filename is copied
-  // and stored.
-  int open(const char *filename) {
-    if (!filename)
-      return -1;
-    pName = strdup(filename);
-    if ( (pFile = fl_fopen(filename, "rb")) == NULL ) {
-      return -1;
-    }
-    pIsFile = 1;
-    return 0;
-  }
-  // Initialize the reader for memory access, name is copied and stored
-  int open(const char *imagename, const unsigned char *data) {
-    if (imagename)
-      pName = strdup(imagename);
-    if (data) {
-      pData = data;
-      pIsData = 1;
-      return 0;
-    } else {
-      return -1;
-    }
-  }
-  // Close and destroy the reader
-  ~GIFReader() {
-    if (pIsFile && pFile) {
-      fclose(pFile);
-    }
-    if (pName)
-      ::free(pName);
-  }
-  // Read a single byte form memory or a file
-  uchar read_byte() {
-    if (pIsFile) {
-      return getc(pFile);
-    } else if (pIsData) {
-      return *pData++;
-    } else {
-      return 0;
-    }
-  }
-  // Read a 16-bit unsigned integer, LSB-first
-  unsigned short read_word() {
-    unsigned char b0, b1;  // Bytes from file
-    if (pIsFile) {
-      b0 = (uchar)getc(pFile);
-      b1 = (uchar)getc(pFile);
-      return ((b1 << 8) | b0);
-    } else if (pIsData) {
-      b0 = *pData++;
-      b1 = *pData++;
-      return ((b1 << 8) | b0);
-    } else {
-      return 0;
-    }
-  }
-  // return the name or filename for this reader
-  const char *name() { return pName; }
-private:
-  // open() sets this if we read form a file
-  char pIsFile;
-  // open() sets this if we read form memory
-  char pIsData;
-  // a pointer to the opened file
-  FILE *pFile;
-  // a pointer to the current byte in memory
-  const unsigned char *pData;
-  // a copy of the name associated with this reader
-  char *pName;
-};
-
 
 /**
  \brief The constructor loads the named GIF image.
@@ -191,12 +96,12 @@ private:
 Fl_GIF_Image::Fl_GIF_Image(const char *filename) :
   Fl_Pixmap((char *const*)0)
 {
-  GIFReader f;
-  if (f.open(filename)==-1) {
+  Fl_Image_Reader rdr;
+  if (rdr.open(filename) == -1) {
     Fl::error("Fl_GIF_Image: Unable to open %s!", filename);
     ld(ERR_FILE_ACCESS);
   } else {
-    load_gif_(f);
+    load_gif_(rdr);
   }
 }
 
@@ -222,24 +127,24 @@ Fl_GIF_Image::Fl_GIF_Image(const char *filename) :
 
  \see Fl_GIF_Image::Fl_GIF_Image(const char *filename)
  \see Fl_Shared_Image
- */
+*/
 Fl_GIF_Image::Fl_GIF_Image(const char *imagename, const unsigned char *data) :
   Fl_Pixmap((char *const*)0)
 {
-  GIFReader d;
-  if (d.open(imagename, data)==-1) {
+  Fl_Image_Reader rdr;
+  if (rdr.open(imagename, data)==-1) {
     ld(ERR_FILE_ACCESS);
   } else {
-    load_gif_(d);
+    load_gif_(rdr);
   }
 }
 
 /*
  This method reads GIF image data and creates an RGB or RGBA image. The GIF
  format supports only 1 bit for alpha. To avoid code duplication, we use
- a GIFReader that reads data from either a file or from memory.
- */
-void Fl_GIF_Image::load_gif_(GIFReader &rdr)
+ an Fl_Image_Reader that reads data from either a file or from memory.
+*/
+void Fl_GIF_Image::load_gif_(Fl_Image_Reader &rdr)
 {
   char **new_data;	// Data array
 
@@ -343,7 +248,7 @@ void Fl_GIF_Image::load_gif_(GIFReader &rdr)
     }
 
     // skip the data:
-    while (blocklen>0) {while (blocklen--) {ch = rdr.read_byte();} blocklen=rdr.read_byte();}
+    while (blocklen>0) {while (blocklen--) {ch = rdr.read_byte();} blocklen = rdr.read_byte();}
   }
 
   if (BitsPerPixel >= CodeSize)
@@ -402,7 +307,7 @@ void Fl_GIF_Image::load_gif_(GIFReader &rdr)
     /* Fetch the next code from the raster data stream.  The codes can be
      * any length from 3 to 12 bits, packed into 8-bit bytes, so we have to
      * maintain our location as a pointer and a bit offset.
-     * In addition, gif adds totally useless and annoying block counts
+     * In addition, GIF adds totally useless and annoying block counts
      * that must be correctly skipped over. */
     int CurCode = thisbyte;
     if (frombit+CodeSize > 7) {

@@ -1,8 +1,9 @@
 //
 // "$Id$"
 //
-// Fl_BMP_Image routines.
+// Fl_BMP_Image class for the Fast Light Tool Kit (FLTK).
 //
+// Copyright 2011-2020 by Bill Spitzak and others.
 // Copyright 1997-2010 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
@@ -10,15 +11,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
-//
-// Contents:
-//
-//   Fl_BMP_Image::Fl_BMP_Image() - Load a BMP image file.
+//     https://www.fltk.org/str.php
 //
 
 //
@@ -26,11 +23,11 @@
 //
 
 #include <FL/Fl_BMP_Image.H>
+#include "Fl_Image_Reader.h"
 #include <FL/fl_utf8.h>
 #include <FL/Fl.H>
 #include <stdio.h>
 #include <stdlib.h>
-
 
 //
 // BMP definitions...
@@ -44,135 +41,8 @@
 #endif // !BI_RGB
 
 
-//
-// Local reader class...
-//
-
-/*
- This class reads data chunks from a file or from memory in LSB-first
- byte order.
- 
- TODO: GIFReader and BMPReader are very similar and should be combined to avoid
- code duplication.
- */
-class BMPReader
-{
-public:
-  // Create the reader.
-  BMPReader() :
-  pIsFile(0), pIsData(0),
-  pFile(0L), pData(0L), pStart(0L),
-  pName(0L)
-  { }
-  // Initialize the reader to access the file system, filename is copied
-  // and stored.
-  int open(const char *filename) {
-    if (!filename)
-      return -1;
-    pName = strdup(filename);
-    if ( (pFile = fl_fopen(filename, "rb")) == NULL ) {
-      return -1;
-    }
-    pIsFile = 1;
-    return 0;
-  }
-  // Initialize the reader for memory access, name is copied and stored
-  int open(const char *imagename, const unsigned char *data) {
-    if (imagename)
-      pName = strdup(imagename);
-    if (data) {
-      pStart = pData = data;
-      pIsData = 1;
-      return 0;
-    } else {
-      return -1;
-    }
-  }
-  // Close and destroy the reader
-  ~BMPReader() {
-    if (pIsFile && pFile) {
-      fclose(pFile);
-    }
-    if (pName)
-      ::free(pName);
-  }
-  // Read a single byte form memory or a file
-  uchar read_byte() {
-    if (pIsFile) {
-      return getc(pFile);
-    } else if (pIsData) {
-      return *pData++;
-    } else {
-      return 0;
-    }
-  }
-  // Read a 16-bit unsigned integer, LSB-first
-  unsigned short read_word() {
-    unsigned char b0, b1;  // Bytes from file
-    if (pIsFile) {
-      b0 = (uchar)getc(pFile);
-      b1 = (uchar)getc(pFile);
-      return ((b1 << 8) | b0);
-    } else if (pIsData) {
-      b0 = *pData++;
-      b1 = *pData++;
-      return ((b1 << 8) | b0);
-    } else {
-      return 0;
-    }
-  }
-  // Read a 32-bit unsigned integer, LSB-first
-  unsigned int read_dword() {
-    unsigned char b0, b1, b2, b3;  // Bytes from file
-    if (pIsFile) {
-      b0 = (uchar)getc(pFile);
-      b1 = (uchar)getc(pFile);
-      b2 = (uchar)getc(pFile);
-      b3 = (uchar)getc(pFile);
-      return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
-    } else if (pIsData) {
-      b0 = *pData++;
-      b1 = *pData++;
-      b2 = *pData++;
-      b3 = *pData++;
-      return ((((((b3 << 8) | b2) << 8) | b1) << 8) | b0);
-    } else {
-      return 0;
-    }
-  }
-  // Read a 32-bit signed integer, LSB-first
-  int read_long() {
-    return (int)read_dword();
-  };
-  // Move the current read position to a byte offset fro the beginning of the
-  // file or the original start address in memory
-  void seek(unsigned int n) {
-    if (pIsFile) {
-      fseek(pFile, n , SEEK_SET);
-    } else if (pIsData) {
-      pData = pStart + n;
-    }
-  }
-  // return the name or filename for this reader
-  const char *name() { return pName; }
-private:
-  // open() sets this if we read form a file
-  char pIsFile;
-  // open() sets this if we read form memory
-  char pIsData;
-  // a pointer to the opened file
-  FILE *pFile;
-  // a pointer to the current byte in memory
-  const unsigned char *pData;
-  // a pointer to the start of the image data
-  const unsigned char *pStart;
-  // a copy of the name associated with this reader
-  char *pName;
-};
-
-
 /**
- \brief The constructor loads the named BMP image from the given bmp filename.
+ \brief This constructor loads the named BMP image from the given BMP filename.
 
  The destructor frees all memory and server resources that are used by
  the image.
@@ -189,11 +59,11 @@ private:
 Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
 : Fl_RGB_Image(0,0,0)
 {
-  BMPReader f;
-  if (f.open(filename)==-1) {
+  Fl_Image_Reader rdr;
+  if (rdr.open(filename) == -1) {
     ld(ERR_FILE_ACCESS);
   } else {
-    load_bmp_(f);
+    load_bmp_(rdr);
   }
 }
 
@@ -201,12 +71,12 @@ Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
  \brief Read a BMP image from memory.
 
  Construct an image from a block of memory inside the application. Fluid offers
- "binary Data" chunks as a great way to add image data into the C++ source code.
+ "binary data" chunks as a great way to add image data into the C++ source code.
  imagename can be NULL. If a name is given, the image is added to the list of
  shared images and will be available by that name.
 
  Use Fl_Image::fail() to check if Fl_BMP_Image failed to load. fail() returns
- ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
+ ERR_FILE_ACCESS if the image could not be read from memory, ERR_FORMAT if the
  BMP format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
 
@@ -219,20 +89,20 @@ Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
 Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
 : Fl_RGB_Image(0,0,0)
 {
-  BMPReader d;
-  if (d.open(imagename, data)==-1) {
+  Fl_Image_Reader rdr;
+  if (rdr.open(imagename, data) == -1) {
     ld(ERR_FILE_ACCESS);
   } else {
-    load_bmp_(d);
+    load_bmp_(rdr);
   }
 }
 
 /*
  This method reads BMP image data and creates an RGB or RGBA image. The BMP
  format supports only 1 bit for alpha. To avoid code duplication, we use
- a BMPReader that reads data from either a file or from memory.
+ an Fl_Image_Reader that reads data from either a file or from memory.
  */
-void Fl_BMP_Image::load_bmp_(class BMPReader &rdr)
+void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
 {
   int     info_size,    // Size of info header
           depth,        // Depth of image (bits)
@@ -584,7 +454,7 @@ void Fl_BMP_Image::load_bmp_(class BMPReader &rdr)
         break;
     }
   }
-  
+
   if (havemask) {
     for (y = h() - 1; y >= 0; y --) {
       ptr = (uchar *)array + y * w() * d() + 3;

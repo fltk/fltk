@@ -61,6 +61,7 @@ Fl_BMP_Image.o: ../FL/abi-version.h
 Fl_BMP_Image.o: ../FL/fl_types.h
 Fl_BMP_Image.o: ../FL/fl_utf8.h
 Fl_BMP_Image.o: ../FL/platform_types.h
+Fl_BMP_Image.o: Fl_Image_Reader.h
 Fl_Bitmap.o: ../FL/Enumerations.H
 Fl_Bitmap.o: ../FL/Fl.H
 Fl_Bitmap.o: ../FL/Fl_Bitmap.H
@@ -466,6 +467,7 @@ Fl_GIF_Image.o: ../FL/fl_types.h
 Fl_GIF_Image.o: ../FL/fl_utf8.h
 Fl_GIF_Image.o: ../FL/platform_types.h
 Fl_GIF_Image.o: ../config.h
+Fl_GIF_Image.o: Fl_Image_Reader.h
 Fl_GIF_Image.o: flstring.h
 Fl_Gl_Choice.o: ../FL/Enumerations.H
 Fl_Gl_Choice.o: ../FL/Fl.H
@@ -672,6 +674,8 @@ Fl_Image.o: ../FL/platform_types.h
 Fl_Image.o: ../config.h
 Fl_Image.o: config_lib.h
 Fl_Image.o: flstring.h
+Fl_Image_Reader.o: ../FL/fl_utf8.h
+Fl_Image_Reader.o: Fl_Image_Reader.h
 Fl_Image_Surface.o: ../FL/Enumerations.H
 Fl_Image_Surface.o: ../FL/Fl.H
 Fl_Image_Surface.o: ../FL/Fl_Bitmap.H
