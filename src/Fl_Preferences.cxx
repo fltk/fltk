@@ -3,17 +3,18 @@
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
+// Copyright 2011-2020 by Bill Spitzak and others.
 // Copyright 2002-2010 by Matthias Melcher.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include <FL/Fl.H>
@@ -118,48 +119,48 @@ unsigned int Fl_Preferences::file_access()
  only as long as the application runs. It can be used as a database for
  volatile information. FLTK uses it to register plugins at run-time.
 
- \note On \b MSWindows, the directory is constructed by querying the <i>Common AppData</i>
- or <i>AppData</i> key of the <tt>Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders</tt>
- registry entry. The filename and path is then constructed as <tt>$(query)/$(vendor)/$(application).prefs</tt> .
+ \note On \b Windows, the directory is constructed by querying the <i>Common AppData</i>
+ or <i>AppData</i> key of the <tt>Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders</tt>
+ registry entry. The filename and path is then constructed as <tt>\$(query)/\$(vendor)/\$(application).prefs</tt> .
  If the query call fails, data will be stored in RAM only and be lost when the app exits.
 
  \par In FLTK versions before 1.4.0, if querying the registry failed, preferences would be written to
- <tt>C:\FLTK\$(vendor)\$(application).prefs</tt> .
+ <tt>C:\\FLTK\\\$(vendor)\\\$(application).prefs</tt> .
 
  \note On \b Linux, the \c USER directory is constructed by reading \c $HOME . If \c $HOME is not set
  or not pointing to an existing directory, we are checking the path member of the passwd struct returned by
  \c getpwuid(getuid()) .  If all attempts fail, data will be stored in RAM only and be lost when the app exits.
- The filename and path is then constructed as <tt>$(directory)/.fltk/$(vendor)/$(application).prefs</tt> .
- The \c SYSTEM directory is hardcoded as <tt>/etc/fltk/$(vendor)/$(application).prefs</tt> .
+ The filename and path is then constructed as <tt>\$(directory)/.fltk/\$(vendor)/\$(application).prefs</tt> .
+ The \c SYSTEM directory is hardcoded as <tt>/etc/fltk/\$(vendor)/\$(application).prefs</tt> .
 
  \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path would be empty,
- generating <tt>$(vendor)/$(application).prefs</tt>, which was used relative the the current working directory.
+ generating <tt>\$(vendor)/\$(application).prefs</tt>, which was used relative to the current working directory.
 
- \note On \b MacOS, the \c USER directory is constructed by reading \c $HOME . If \c $HOME is not set
+ \note On \b macOS, the \c USER directory is constructed by reading \c $HOME . If \c $HOME is not set
  or not pointing to an existing directory, we check the path returned by \c NSHomeDirectory() , and
  finally checking the path member of the passwd struct returned by \c getpwuid(getuid()) .
  If all attempts fail, data will be stored in RAM only and be lost when the app exits.
- The filename and path is then constructed as <tt>$(directory)/Library/Preferences/$(vendor)/$(application).prefs</tt> .
- The \c SYSTEM directory is hardcoded as <tt>/Library/Preferences/$(vendor)/$(application).prefs</tt> .
+ The filename and path is then constructed as <tt>\$(directory)/Library/Preferences/\$(vendor)/\$(application).prefs</tt> .
+ The \c SYSTEM directory is hardcoded as <tt>/Library/Preferences/\$(vendor)/\$(application).prefs</tt> .
 
  \par In FLTK versions before 1.4.0, if \c $HOME was not set, the \c USER path would be \c NULL ,
- generating <tt>\<null\>/Library/Preferences/$(vendor)/$(application).prefs</tt>, which would silently fail to
- create a prefrences file.
+ generating <tt>\<null\>/Library/Preferences/\$(vendor)/\$(application).prefs</tt>, which would silently fail to
+ create a preferences file.
 
  \param[in] root can be \c USER or \c SYSTEM for user specific or system wide preferences
  \param[in] vendor unique text describing the company or author of this file, must be a valid filepath segment
  \param[in] application unique text describing the application, must be a valid filepath segment
 
- \todo Before the release of 1.4.0, I want to make a failed attempt to write a preferences file smarter. I
- plan to use a subgroup of the "runtime" preferences to store data and stay accessable until the application
- exits. Data would be stored under <tt>./$(vendor)/$(application).prefs</tt> in RAM, but not on disk.
+ \todo (Matt) Before the release of 1.4.0, I want to make a further attempt to write a preferences file smarter. I
+ plan to use a subgroup of the "runtime" preferences to store data and stay accessible until the application
+ exits. Data would be stored under <tt>./\$(vendor)/\$(application).prefs</tt> in RAM, but not on disk.
 
- \todo I want a way to access the type of the root preferences (SYSTEM, USER, MEMORY), and the state of
+ \todo (Matt) I want a way to access the type of the root preferences (SYSTEM, USER, MEMORY), and the state of
  the file access (OK, FILE_SYSTEM_FAIL, PERMISSION_FAIL, etc.), and probably the dirty() flag as well.
 
- \todo Also, I need to explain runtime preferences.
+ \todo (Matt) Also, I need to explain runtime preferences.
 
- \todo Lastly, I think I have to put short sample code in the Doxygen docs. The test app ist just not enough.
+ \todo (Matt) Lastly, I think I have to put short sample code in the Doxygen docs. The test app ist just not enough.
  */
 Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application ) {
   node = new Node( "." );
@@ -564,8 +565,8 @@ static char *decodeText( const char *src ) {
   for ( ; *s; s++, len++ ) {
     if ( *s == '\\' ) {
       if ( isdigit( s[1] ) ) {
-        s+=3; 
-      } else { 
+        s+=3;
+      } else {
         s+=1;
       }
     }
@@ -898,7 +899,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   char *filename = Fl::system_driver()->preference_rootnode(prefs, root, vendor, application);
     filename_    = filename ? strdup(filename) : 0L;
   vendor_      = strdup(vendor);
-  application_ = strdup(application); 
+  application_ = strdup(application);
   read();
 }
 
@@ -923,7 +924,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, const char *path, con
     filename_  = strdup(filename);
   }
   vendor_      = strdup(vendor);
-  application_ = strdup(application); 
+  application_ = strdup(application);
   read();
 }
 
@@ -977,7 +978,7 @@ int Fl_Preferences::RootNode::read() {
   char buf[1024];
   FILE *f = fl_fopen( filename_, "rb" );
   if ( !f )
-    return -1; 
+    return -1;
   if (fgets( buf, 1024, f )==0) { /* ignore */ }
   if (fgets( buf, 1024, f )==0) { /* ignore */ }
   if (fgets( buf, 1024, f )==0) { /* ignore */ }
@@ -1054,7 +1055,7 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
     return 1;
 
   // copy the root filepath into the provided buffer
-  strlcpy( path, filename_, pathlen); 
+  strlcpy( path, filename_, pathlen);
 
   char *name = 0L, *ext = 0L;
 
@@ -1353,7 +1354,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::find( const char *path ) {
 // - if the pathname is "." (current node) return this node
 // - if the pathname is "./" (root node) return the topmost node
 // - if the pathname starts with "./", start the search at the root node instead
-Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset ) { 
+Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset ) {
   if ( offset == 0 ) {
     if ( path[0] == '.' ) {
       if ( path[1] == 0 ) {
