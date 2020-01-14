@@ -4444,7 +4444,7 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
 
   // Our C path names for preferences will be:
   // SYSTEM: "/Library/Preferences/$vendor/$application.prefs"
-  // SYSTEM: "/Users/$user/Preferences/$vendor/$application.prefs"
+  // USER: "/Users/$user/Library/Preferences/$vendor/$application.prefs"
   snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "/%s/%s.prefs", vendor, application);
 
