@@ -544,6 +544,9 @@ int fl_rename(const char* f, const char *n) {
 
   This function creates a \p path in the file system by recursively creating
   all directories.
+
+  \param[in] path a Unix style ('/' forward slashes) absolute or relative pathname
+  \return 1 if the path was created, 0 if creating the path failed at some point
 */
 char fl_make_path( const char *path ) {
   if (fl_access(path, 0)) {

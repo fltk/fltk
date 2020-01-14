@@ -794,24 +794,37 @@ int Fl_Preferences::size( const char *key ) {
  database without the \c .prefs extension and located in the same directory.
  It then fills the given buffer with the complete path name.
 
+ There is no way to verify that the path name fit into the buffer.
+ If the name is too long, it will be clipped.
+
+ This function can be used with direct paths that don't end in \c .prefs .
+ \a getUserDataPath() will remove any extension and end the path with a \c / . If
+ the file name has no extension, \a getUserDataPath() will append \c .data/
+ to the path name.
+
  Example:
  \code
  Fl_Preferences prefs( USER, "matthiasm.com", "test" );
  char path[FL_PATH_MAX];
- prefs.getUserdataPath( path );
+ prefs.getUserdataPath( path, FL_PATH_MAX );
  \endcode
- ..creates the preferences database in (MS Windows):
+ creates the preferences database in the directory (User 'matt' on Linux):
  \code
- c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
+ /Users/matt/.fltk/matthiasm.com/test.prefs
  \endcode
  ..and returns the userdata path:
  \code
- c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
+ /Users/matt/.fltk/matthiasm.com/test/
  \endcode
 
  \param[out] path buffer for user data path
- \param[in] pathlen size of path buffer (should be at least \c FL_PATH_MAX)
- \return 0 if path was not created or pathname can't fit into buffer
+ \param[in] pathlen size of path buffer (should be at least \c FL_PATH_MAX )
+ \return 1 if there is no filename (\a path will be unmodified)
+ \return 1 if \a pathlen is 0 (\a path will be unmodified)
+ \return 1 if a path was created successfully, \a path will contain the path name ending in a '/'
+ \return 0 if path was not created for some reason;  \a path will contain the pathname that could not be created
+
+ \see Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
  */
 char Fl_Preferences::getUserdataPath( char *path, int pathlen ) {
   if ( rootNode )
