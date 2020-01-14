@@ -52,17 +52,7 @@ Fl_Cocoa_Window_Driver::Fl_Cocoa_Window_Driver(Fl_Window *win)
 {
   cursor = nil;
   window_flags_ = 0;
-}
-
-
-Fl_Cocoa_Window_Driver::~Fl_Cocoa_Window_Driver()
-{
-  if (shape_data_) {
-    if (shape_data_->mask) {
-      CGImageRelease(shape_data_->mask);
-    }
-    delete shape_data_;
-  }
+  icon_image = NULL;
 }
 
 

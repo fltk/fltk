@@ -33,12 +33,14 @@ class Fl_Window;
 #ifdef __OBJC__
 @class CALayer;
 @class NSCursor;
+@class NSImage;
 @class FLWindow;
 @class NSOpenGLContext;
 @class NSOpenGLPixelFormat;
 #else
 class CALayer;
 class NSCursor;
+class NSImage;
 class FLWindow;
 class NSOpenGLContext;
 class NSOpenGLPixelFormat;
@@ -153,6 +155,10 @@ public:
   static void GLcontext_makecurrent(NSOpenGLContext*); // uses Objective-c
   static void GL_cleardrawable(void); // uses Objective-c
   static void gl_start(NSOpenGLContext*); // uses Objective-c
+  
+  //icons
+  virtual void icons(const Fl_RGB_Image *icons[], int count);
+  NSImage *icon_image;
 };
 
 #endif // FL_COCOA_WINDOW_DRIVER_H

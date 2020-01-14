@@ -41,6 +41,11 @@
 class Fl_Window;
 class Fl_Input;
 class Fl_RGB_Image;
+#ifdef __OBJC__
+@class NSImage;
+#else
+class NSImage;
+#endif
 
 class FL_EXPORT Fl_Cocoa_Screen_Driver : public Fl_Screen_Driver 
 {
@@ -54,6 +59,7 @@ protected:
   static int insertion_point_height;
   static bool insertion_point_location_is_valid;
 public:
+  NSImage *default_icon;
   Fl_Cocoa_Screen_Driver();
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
   static void breakMacEventLoop();
@@ -100,6 +106,7 @@ public:
   virtual float scale(int n) {return scale_;}
   virtual void scale(int n, float f) { scale_ = f;}
   virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins);
+  virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 private:
   float scale_;
 };
