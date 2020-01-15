@@ -92,16 +92,23 @@ void Fl_Quartz_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Of
   void *data = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);
   int sh = CGBitmapContextGetHeight(src);
-  CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  // when output goes to a Quartz printercontext, release of the bitmap must be
-  // delayed after the end of the printed page
-  CFRetain(src);
-  CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
-  CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
-                                 src_bytes, 0L, false, kCGRenderingIntentDefault);
-  CGDataProviderRelease(src_bytes);
-  CGColorSpaceRelease(lut);
+  CGImageRef img;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (fl_mac_os_version >= 100400) img = CGBitmapContextCreateImage(src);  // requires 10.4
+  else
+#endif
+  {
+    CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
+    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+    // when output goes to a Quartz printercontext, release of the bitmap must be
+    // delayed after the end of the printed page
+    CFRetain(src);
+    CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
+    img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
+                        src_bytes, 0L, false, kCGRenderingIntentDefault);
+    CGDataProviderRelease(src_bytes);
+    CGColorSpaceRelease(lut);
+  }
   float s = scale();
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   // test whether osrc was created by fl_create_offscreen()
