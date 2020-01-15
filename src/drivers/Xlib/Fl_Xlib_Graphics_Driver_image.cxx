@@ -3,7 +3,7 @@
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -474,8 +474,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 {
   if (!linedelta) linedelta = W*abs(delta);
 
-  int dx, dy, w, h;
-  fl_clip_box(X,Y,W,H,dx,dy,w,h);
+  int dx = 0, dy = 0, w = 0, h = 0;
+  fl_clip_box(X, Y, W, H, dx, dy, w, h);
   if (w<=0 || h<=0) return;
   dx -= X;
   dy -= Y;

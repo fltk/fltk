@@ -3,7 +3,7 @@
 //
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -463,7 +463,13 @@ void Fl_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2)
 void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {}
 
 /** see fl_clip_box() */
-int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {return 0;}
+int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
+  X = x;
+  Y = y;
+  W = w;
+  H = h;
+  return 0; // completely inside
+}
 /** see fl_not_clipped() */
 
 int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {return 1;}

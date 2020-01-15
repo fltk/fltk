@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2018 by Bill Spitzak and others.
+// Copyright 2001-2020 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -3798,7 +3798,7 @@ void Fl_Text_Display::draw(void) {
   // draw all of the text
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_EXPOSE)) {
     //printf("drawing all text\n");
-    int X, Y, W, H;
+    int X = 0, Y = 0, W = 0, H = 0;
     if (fl_clip_box(text_area.x, text_area.y, text_area.w, text_area.h,
                     X, Y, W, H)) {
       // Draw text using the intersected clipping box...
