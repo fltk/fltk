@@ -2,8 +2,9 @@
  * "$Id$"
  *
  * Common string header file for the Fast Light Tool Kit (FLTK).
+ * Internal use only (see "important note" below).
  *
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2020 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -14,6 +15,14 @@
  * Please report all bugs and problems on the following page:
  *
  *     http://www.fltk.org/str.php
+ */
+
+ /*
+ * Important note: this header file includes '<config.h>' !
+ *
+ * This header MUST NOT be included in public headers (i.e. in 'FL/') and
+ * SHOULD NOT be included in test and demo programs (i.e. in 'test/' or
+ * 'examples/') because it includes '<config.h>'.
  */
 
 #ifndef flstring_h
