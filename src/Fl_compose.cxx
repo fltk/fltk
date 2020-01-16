@@ -80,6 +80,7 @@ int Fl::compose(int& del) {
   int condition;
 #if defined(__APPLE__)
   int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
+  Fl::e_keysym == FL_JIS_Underscore || Fl::e_keysym == FL_Yen ||
   (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
   condition = Fl::e_state&(FL_META | FL_CTRL) || 
       (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
