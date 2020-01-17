@@ -2126,16 +2126,21 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 /** Current value of the GUI scaling factor for screen number \p n */
 float Fl::screen_scale(int n) {
+  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return 1.;
   return Fl::screen_driver()->scale(n);
 }
 
 /** Set the value of the GUI scaling factor for screen number \p n.
-Call this function before the first window is show()'n to set the
- application's initial scaling factor value. */
+When this function is called before the first window is show()'n it sets the
+ application's initial scaling factor value. Otherwise, it sets the scale factor value of all windows mapped to screen number \p n */
 void Fl::screen_scale(int n, float factor) {
-  fl_open_display();
-  Fl::screen_driver()->scale(n, factor);
-  Fl_Graphics_Driver::default_driver().scale(factor);
+  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return;
+  if (Fl::first_window()) {
+    Fl::screen_driver()->rescale_all_windows_from_screen(n, factor);
+  } else {
+    Fl::screen_driver()->scale(n, factor);
+    Fl_Graphics_Driver::default_driver().scale(factor);
+  }
 }
 
 /**
