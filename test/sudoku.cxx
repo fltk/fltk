@@ -27,17 +27,15 @@
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/platform.H>
+#include <FL/Fl_Image_Surface.H>
+#include <FL/Fl_Bitmap.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <FL/math.h>
 
-#ifdef _WIN32
-#  include "sudokurc.h"
-#elif !defined(__APPLE__)
-#  include "pixmaps/sudoku.xbm"
-#endif // _WIN32
+#include "pixmaps/sudoku.xbm"
 
 // Audio headers...
 #include <config.h>
@@ -704,16 +702,17 @@ Sudoku::Sudoku()
       grid_cells_[j][k] = cell;
     }
 
-  // Set icon for window (MacOS uses app bundle for icon...)
-#ifdef _WIN32
-  icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
-#elif !defined(__APPLE__)
-  fl_open_display();
-  icon((char *)XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
-                                     (char *)sudoku_bits, sudoku_width,
-				     sudoku_height));
-#endif // _WIN32
-
+  // Set icon for window
+  Fl_Bitmap bm(sudoku_bits, sudoku_width, sudoku_height);
+  Fl_Image_Surface surf(sudoku_width, sudoku_height, 1);
+  Fl_Surface_Device::push_current(&surf);
+  fl_color(FL_WHITE);
+  fl_rectf(0, 0, sudoku_width, sudoku_height);
+  fl_color(FL_BLACK);
+  bm.draw(0, 0);
+  Fl_Surface_Device::pop_current();
+  icon(surf.image());
+  
   // Catch window close events...
   callback(close_cb);
 
