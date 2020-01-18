@@ -3576,12 +3576,12 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
   if (!bitmap) return NULL;
   int bytesPerPixel([bitmap bitsPerPixel]/8);
   int bpr([bitmap bytesPerRow]);
-  int bpp([bitmap bytesPerPlane]);
-  int hh(bpp/bpr);
-  int ww(bpr/bytesPerPixel);
+  int hh([bitmap pixelsHigh]);
+  int ww([bitmap pixelsWide]);
   uchar *imagedata = new uchar[bpr * hh];
   memcpy(imagedata, [bitmap bitmapData], bpr * hh);
-  Fl_RGB_Image *image = new Fl_RGB_Image(imagedata, ww, hh, bytesPerPixel);
+  Fl_RGB_Image *image = new Fl_RGB_Image(imagedata, ww, hh, bytesPerPixel, (bpr == ww * bytesPerPixel ? 0 : bpr) );
+  image->scale([bitmap size].width, [bitmap size].height);
   image->alloc_array = 1;
   [bitmap release];
   Fl::e_clipboard_type = Fl::clipboard_image;

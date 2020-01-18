@@ -98,7 +98,7 @@ public:
 #endif
       Fl_Image *oldimg = image_box->image();
       delete oldimg;
-      im->scale(image_box->w(), image_box->h());
+      if (im->w() > image_box->w() || im->h() > image_box->h()) im->scale(image_box->w(), image_box->h());
       image_box->image(im); // show the scaled image
       image_size->copy_label(title);
       value(image_box->parent());
