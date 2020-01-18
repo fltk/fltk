@@ -338,7 +338,11 @@ endif (ZLIB_FOUND)
 set (HAVE_LIBZ 1)
 
 #######################################################################
-option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+endif (APPLE)
 
 if (OPTION_USE_SYSTEM_LIBJPEG)
   include (FindJPEG)
@@ -362,7 +366,11 @@ endif (JPEG_FOUND)
 set (HAVE_LIBJPEG 1)
 
 #######################################################################
-option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
+endif (APPLE)
 
 if (OPTION_USE_SYSTEM_LIBPNG)
   include (FindPNG)
