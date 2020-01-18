@@ -204,7 +204,7 @@ the following.
     sudo make install (optional)
 
 IMPORTANT: The trailing ".." on the cmake command must be specified
-(it is NOT an elipsis).                           ^^^^^^^^^^^^^^^^^
+(it is NOT an ellipsis).                          ^^^^^^^^^^^^^^^^^
 
 This will build and install a default configuration FLTK.
 
@@ -252,7 +252,7 @@ in the GUI (cmake-gui).
            cmake -G "Visual Studio 7" -D CMAKE_BUILD_TYPE=Release ..
 
        IMPORTANT: The trailing ".." on the cmake command must be specified
-       (it is NOT an elipsis).                           ^^^^^^^^^^^^^^^^^
+       (it is NOT an ellipsis).                          ^^^^^^^^^^^^^^^^^
 
 	This will create the file FLTK.sln in the current 'build' directory.
 
@@ -377,25 +377,28 @@ of the cmake related files are updated, Xcode will rerun cmake for you.
 Once you have a crosscompiler going, to use CMake to build FLTK you need
 two more things.  You need a toolchain file which tells CMake where your
 build tools are.  The CMake website is a good source of information on
-this file.  Here's one for MinGW under Linux.
+this file.  Here's one for MinGW (64-bit) under Linux.
 
 ----
-# CMake Toolchain File for MinGW Cross Compilation
+# CMake Toolchain File for MinGW-w64 (64-bit) Cross Compilation
 
 # the name of the target operating system
 set(CMAKE_SYSTEM_NAME Windows)
 
 # which tools to use
-set(CMAKE_C_COMPILER   /usr/bin/i486-mingw32-gcc)
-set(CMAKE_CXX_COMPILER /usr/bin/i486-mingw32-g++)
+set(CMAKE_C_COMPILER   /usr/bin/x86_64-w64-mingw32-gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-g++)
+set(CMAKE_RC_COMPILER  /usr/bin/x86_64-w64-mingw32-windres)
 
 # here is where the target environment located
-set(CMAKE_FIND_ROOT_PATH  /usr/i486-mingw32)
+set(CMAKE_FIND_ROOT_PATH  /usr/x86_64-w64-mingw32)
 
-# adjust the default behaviour of the FIND_XXX() commands:
+# adjust the default behavior of the FIND_XXX() commands:
+
 # search programs in the host environment
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-# search headers and libraries in the target environment,
+
+# search headers and libraries in the target environment
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
@@ -421,11 +424,13 @@ So, again from the FLTK tree root.
     sudo make install
 
 IMPORTANT: The trailing ".." on the cmake command must be specified
-(it is NOT an elipsis).                           ^^^^^^^^^^^^^^^^^
+(it is NOT an ellipsis).                          ^^^^^^^^^^^^^^^^^
 
 This will create a default configuration FLTK suitable for mingw/msys and
-install it in the /usr/i486-mingw32/usr tree.
+install it in the /usr/x86_64-w64-mingw32/usr tree.
 
+Note: replace 'x86_64-w64-mingw32' with your cross toolchain location as
+required.
 
 
  3.  Using CMake with FLTK
