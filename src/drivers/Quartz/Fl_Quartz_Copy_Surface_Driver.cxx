@@ -60,7 +60,7 @@ Fl_Quartz_Copy_Surface_Driver::Fl_Quartz_Copy_Surface_Driver(int w, int h) : Fl_
   CGDataConsumerRelease(myconsumer);
   if (gc) {
     CGContextBeginPage(gc, &bounds);
-    CGContextTranslateCTM(gc, 0, h);
+    CGContextTranslateCTM(gc, 0.5, h-0.5);
     CGContextScaleCTM(gc, 1.0f, -1.0f);
     CGContextSaveGState(gc);
   }

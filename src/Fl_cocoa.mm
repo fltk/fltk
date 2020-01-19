@@ -3429,10 +3429,15 @@ Fl_Quartz_Copy_Surface_Driver::~Fl_Quartz_Copy_Surface_Driver()
   NSPasteboard *clip = [NSPasteboard generalPasteboard];
   [clip declareTypes:[NSArray arrayWithObjects:PDF_pasteboard_type, TIFF_pasteboard_type, nil] owner:nil];
   [clip setData:(NSData*)pdfdata forType:PDF_pasteboard_type];
-  //second, transform this PDF to a bitmap image and put it as tiff in clipboard
+  //second, transform this PDF to a bitmap image and put it as tiff in clipboard with retina resolution
   NSImage *image = [[NSImage alloc] initWithData:(NSData*)pdfdata];
   CFRelease(pdfdata);
-  [clip setData:[image TIFFRepresentation] forType:TIFF_pasteboard_type];
+  [image lockFocus];
+  NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, [image size].width*2, [image size].height*2)];
+  [image unlockFocus];
+  [bitmap setSize:[image size]];
+  [clip setData:[bitmap TIFFRepresentation] forType:TIFF_pasteboard_type];
+  [bitmap release];
   [image release];
   delete driver();
 }
@@ -3569,7 +3574,8 @@ static Fl_RGB_Image* get_image_from_clipboard(Fl_Widget *receiver)
   else if ([found isEqualToString:PDF_pasteboard_type] || [found isEqualToString:PICT_pasteboard_type]) {
     NSImage *nsimg = [[NSImage alloc] initWithData:data];
     [nsimg lockFocus];
-    bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, [nsimg size].width, [nsimg size].height)];
+    bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, [nsimg size].width*2, [nsimg size].height*2)];
+    [bitmap setSize:[nsimg size]];
     [nsimg unlockFocus];
     [nsimg release];
   }
