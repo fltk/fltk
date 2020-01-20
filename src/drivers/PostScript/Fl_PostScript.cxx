@@ -1344,7 +1344,7 @@ void Fl_PostScript_Graphics_Driver::pop_clip() {
 int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
   if (!clip_) {
     X = x; Y = y; W = w; H = h;
-    return 1;
+    return 0;
   }
   if (clip_->w < 0) {
     X = x; Y = y; W = w; H = h;
