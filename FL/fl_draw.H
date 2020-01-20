@@ -3,17 +3,17 @@
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /**
@@ -100,32 +100,75 @@ inline void fl_push_no_clip() {fl_graphics_driver->push_no_clip(); }
  you return to FLTK.
  */
 inline void fl_pop_clip() {fl_graphics_driver->pop_clip(); }
+
 /**
- Does the rectangle intersect the current clip region?
- \param[in] x,y,w,h position and size of rectangle
- \returns non-zero if any of the rectangle intersects the current clip
- region. If this returns 0 you don't have to draw the object.
- 
- \note
- Under X this returns 2 if the rectangle is partially clipped, 
- and 1 if it is entirely inside the clip region.
- */
-inline int fl_not_clipped(int x, int y, int w, int h) {return fl_graphics_driver->not_clipped(x,y,w,h); }
+  Does the rectangle intersect the current clip region?
+
+  \param[in] x,y,w,h position and size of rectangle
+
+  \returns non-zero if any of the rectangle intersects the current clip
+    region. If this returns 0 you don't have to draw the object.
+
+  \note Under X this returns 2 if the rectangle is partially clipped
+    and 1 if it is entirely inside the clip region.
+
+  \see fl_clip_box()
+*/
+inline int fl_not_clipped(int x, int y, int w, int h) {
+  return fl_graphics_driver->not_clipped(x, y, w, h);
+}
+
 /**
- Intersects the rectangle with the current clip region and returns the
- bounding box of the result.
- 
- Returns non-zero if the resulting rectangle is different to the original.
- This can be used to limit the necessary drawing to a rectangle.
- \p W and \p H are set to zero if the rectangle is completely outside the region.
- \param[in] x,y,w,h position and size of rectangle
- \param[out] X,Y,W,H position and size of resulting bounding box.
- \returns Non-zero if the resulting rectangle is different to the original.
- */
-inline int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H)
-  {return fl_graphics_driver->clip_box(x,y,w,h,X,Y,W,H); }
+  Intersects a rectangle with the current clip region and returns the
+  bounding box of the result.
+
+  Returns non-zero if the resulting rectangle is different to the original.
+  The given rectangle <tt>(x, y, w, h)</tt> \e should be entirely inside its
+  window, otherwise the result may be unexpected, i.e. this function \e may
+  not clip the rectangle to the window coordinates and size. In particular
+  \p x and \p y \e should not be negative.
+
+  The resulting bounding box can be used to limit the necessary drawing to
+  this rectangle.
+
+  Example:
+  \code
+    void MyGroup::draw() {
+      int X = 0, Y = 0, W = 0, H = 0;
+      int ret = fl_clip_box(x(), y(), w(), h(), X, Y, W, H);
+      if (ret == 0) { // entire group is visible (not clipped)
+	// full drawing code here
+      } else { // parts of this group are clipped
+	// partial drawing code here (uses X, Y, W, and H to test)
+      }
+    }
+  \endcode
+
+  \p W and \p H are set to zero if the rectangle is completely outside the
+    clipping region. In this case \p X and \p Y are undefined and should
+    not be used. Possible values are <tt>(0, 0)</tt>, <tt>(x, y)</tt>,
+    or anything else (platform dependent).
+
+  \note This function is platform-dependent. If the given rectangle is not
+    entirely inside the window, the results are not guaranteed to be the
+    same on all platforms.
+
+  \param[in]  x,y,w,h position and size of rectangle
+  \param[out] X,Y,W,H position and size of resulting bounding box.
+
+  \returns Non-zero if the resulting rectangle is different to the original.
+
+  \see fl_not_clipped()
+*/
+inline int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H) {
+  return fl_graphics_driver->clip_box(x, y, w, h, X, Y, W, H);
+}
+
 /** Undoes any clobbering of clip done by your program */
-inline void fl_restore_clip() { fl_graphics_driver->restore_clip(); }
+inline void fl_restore_clip() {
+  fl_graphics_driver->restore_clip();
+}
+
 /**
  Replaces the top of the clipping stack with a clipping region of any shape.
  
@@ -133,6 +176,7 @@ inline void fl_restore_clip() { fl_graphics_driver->restore_clip(); }
  \param[in] r clipping region
  */
 inline void fl_clip_region(Fl_Region r) { fl_graphics_driver->clip_region(r); }
+
 /**
  Returns the current clipping region.
  */
