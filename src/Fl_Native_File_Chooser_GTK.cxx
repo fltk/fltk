@@ -432,33 +432,7 @@ static void hidden_files_cb(GtkToggleButton *togglebutton, gpointer user_data)
 
 int Fl_GTK_Native_File_Chooser_Driver::show()
 {
-  // The point here is that after running a GTK dialog, the calling program's current locale is modified.
-  // To avoid that, we memorize the calling program's current locale, and the locale as modified
-  // by GTK after the first dialog use. We restore the calling program's current locale 
-  // before returning, and we set the locale as modified by GTK before subsequent GTK dialog uses.
-  static bool first = true;
-  char *p;
-  char *before = NULL;
-  static char *gtk_wants = NULL;
-  fl_open_display();
-  // record in before the calling program's current locale
-  p = setlocale(LC_ALL, NULL);
-  if (p) before = strdup(p);
-  if (gtk_wants) { // set the locale as GTK 'wants it'
-    setlocale(LC_ALL, gtk_wants);
-  }
-  int retval = fl_gtk_chooser_wrapper(); // may change the locale
-  if (first) {
-    first = false;
-    // record in gtk_wants the locale as modified by the GTK dialog
-    p = setlocale(LC_ALL, NULL);
-    if (p) gtk_wants = strdup(p);
-  }
-  if (before) {
-    setlocale(LC_ALL, before); // restore calling program's current locale
-    free(before);
-    }
-  return retval;
+  return fl_gtk_chooser_wrapper();
 }
 
 static char *extract_dir_from_path(const char *path)

@@ -569,8 +569,21 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
     init_f = (init_t)dlsym(*ptr_gtk, "gtk_init_check");
     if (!init_f) return false;
   }
+
+  // The point here is that after running gtk_init_check, the calling program's current locale can be modified.
+  // To avoid that, we memorize the calling program's current locale and restore the locale
+  // before returning.
+  char *before = NULL;
+  // record in "before" the calling program's current locale
+  char *p = setlocale(LC_ALL, NULL);
+  if (p) before = strdup(p);
   int ac = 0;
-  init_f(&ac, NULL);
+  init_f(&ac, NULL); // may change the locale
+  if (before) {
+    setlocale(LC_ALL, before); // restore calling program's current locale
+    free(before);
+  }
+
   // now check if running version is high enough
   if (dlsym(*ptr_gtk, "gtk_get_major_version") == NULL) { // YES indicates V 3
     typedef const char* (*check_t)(int, int, int);
