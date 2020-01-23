@@ -853,8 +853,6 @@ void Fl_Group::draw_child(Fl_Widget& widget) const {
   }
 }
 
-extern char fl_draw_shortcut;
-
 /** Parents normally call this to draw outside labels of child widgets. */
 void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   if (!widget.visible()) return;
