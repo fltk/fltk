@@ -86,6 +86,8 @@ public:
   struct GtkPageRange { int start, end; };
   typedef GtkPageRange* (*gtk_print_settings_get_page_ranges_t)(GtkPrintSettings*, int*);
   typedef void (*g_object_unref_t)(void* object);
+  typedef void (*gtk_print_unix_dialog_set_embed_page_setup_t)(GtkPrintUnixDialog *dialog, gboolean embed);
+  typedef const char * (*gtk_check_version_t)(unsigned, unsigned, unsigned);
 };
 
 // the CALL_GTK macro produces the source code to call a GTK function given its name
@@ -106,6 +108,8 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
   enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT ;
   
   GtkPrintUnixDialog *pdialog = CALL_GTK(gtk_print_unix_dialog_new)(Fl_Printer::dialog_title, NULL); //2.10
+  if (dlsym(ptr_gtk, "gtk_get_major_version") || !CALL_GTK(gtk_check_version)(2, 18, 0))
+    CALL_GTK(gtk_print_unix_dialog_set_embed_page_setup)(pdialog, true); //2.18
   GtkPrintSettings *psettings = CALL_GTK(gtk_print_unix_dialog_get_settings)(pdialog); //2.10
   CALL_GTK(gtk_print_settings_set)(psettings, "output-file-format", "ps"); //2.10
   char line[FL_PATH_MAX + 20], cwd[FL_PATH_MAX];
