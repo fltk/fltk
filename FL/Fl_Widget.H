@@ -1043,7 +1043,7 @@ public:
   */
   void color2(unsigned a) {color2_ = a;}
 
-  /** Sets whether the widget's label use '&' to indicate shortcuts.
+  /** Sets whether the widget's label uses '&' to indicate shortcuts.
    By default, all objects of classes Fl_Menu_ (and derivatives), Fl_Button (and derivatives),
    Fl_Text_Display, Fl_Value_Input, and Fl_Input_ (and derivatives)
    use character '&' in their label, unless '&' is repeated,
@@ -1061,7 +1061,7 @@ public:
       clear_flag(SHORTCUT_LABEL);
   }
 
-  /** Returns whether the widget's label use '&' to indicate shortcuts.
+  /** Returns whether the widget's label uses '&' to indicate shortcuts.
    \see void shortcut_label(int value) */
   int shortcut_label() const { return flags_ & SHORTCUT_LABEL; }
 };
