@@ -2,12 +2,12 @@
 
  \page unicode Unicode and UTF-8 Support
 
-This chapter explains how FLTK handles international 
+This chapter explains how FLTK handles international
 text via Unicode and UTF-8.
 
-Unicode support was only recently added to FLTK and is
-still incomplete. This chapter is Work in Progress, reflecting
-the current state of Unicode support.
+Unicode support was added to FLTK starting with version 1.3.0 and is
+still incomplete but mostly functional. This chapter is Work in Progress,
+reflecting the current state of Unicode support.
 
 \section unicode_about About Unicode, ISO 10646 and UTF-8
 
@@ -16,11 +16,11 @@ deliberately brief and provides just enough information for
 the rest of this chapter.
 
 For further information, please see:
-- http://www.unicode.org
-- http://www.iso.org
-- http://en.wikipedia.org/wiki/Unicode
-- http://www.cl.cam.ac.uk/~mgk25/unicode.html
-- http://www.apps.ietf.org/rfc/rfc3629.html
+- https://unicode.org
+- https://iso.org
+- https://en.wikipedia.org/wiki/Unicode
+- https://www.cl.cam.ac.uk/~mgk25/unicode.html
+- https://tools.ietf.org/html/rfc3629
 
 
 \par The Unicode Standard
@@ -33,7 +33,7 @@ and is supported by most of the major computing companies in the world.
 Before Unicode, many different systems, on different platforms,
 had been developed for encoding characters for different languages,
 but no single encoding could satisfy all languages.
-Unicode provides access to over 100,000 characters 
+Unicode provides access to over 130,000 characters
 used in all the major languages written today,
 and is independent of platform and language.
 
@@ -78,7 +78,10 @@ U+10FFFF.  The complete character set is sub-divided into \e planes.
 used characters from previous encoding standards. Other planes
 contain characters for specialist applications.
 
-\todo Do we need this info about planes?
+\todo FLTK 1.3 and later supports the full Unicode range (21 bits), but
+  there are a few exceptions, for instance binary shortcut values in menus
+  (\ref Fl_Shortcut) can only be used with characters from the BMP (16 bits).
+  This may be extended in a future FLTK version.
 
 The UCS also defines various methods of encoding characters as
 a sequence of bytes.
@@ -95,8 +98,8 @@ UTF-16 and UTF-32 are based on units of two and four bytes.
 UCS characters requiring more than 16 bits are encoded using
 "surrogate pairs" in UTF-16.
 
-UTF-8 encodes all Unicode characters into variable length 
-sequences of bytes. Unicode characters in the 7-bit ASCII 
+UTF-8 encodes all Unicode characters into variable length
+sequences of bytes. Unicode characters in the 7-bit ASCII
 range map to the same value and are represented as a single byte,
 making the transformation to Unicode quick and easy.
 
@@ -139,6 +142,11 @@ some level of synchronisation and error detection.
 </tr>
 </table>
 
+\note This table contains theoretical values outside the valid Unicode
+  range (<tt>U+000000 - U+10FFFF</tt>). Such values can only be returned by
+  conversion functions for illegal input values (see \ref unicode_illegals).
+
+
 \par
 
 Moving from ASCII encoding to Unicode will allow all new FLTK
@@ -175,7 +183,7 @@ the following limitations:
   are LIMITED to 24 bit Unicode values, but also says that only 16 bits
   are really used under linux and win32.
   <b>[Can we verify this?]</b>
-  
+
 - The [<b>fltk2</b>] %fl_utf8encode() and %fl_utf8decode() functions are
   designed to handle Unicode characters in the range U+000000 to U+10FFFF
   inclusive, which covers all UTF-16 characters, as specified in RFC 3629.
@@ -189,7 +197,7 @@ the following limitations:
   and not on a general Unicode character basis.
 
 - FLTK will not handle right-to-left or bi-directional text.
-  
+
   \todo
   Verify 16/24 bit Unicode limit for different character sets?
   OksiD's code appears limited to 16-bit whereas the FLTK2 code
@@ -249,7 +257,7 @@ about error handling and return values.
 
 \section unicode_fltk_calls FLTK Unicode and UTF-8 Functions
 
-This section currently provides a brief overview of the functions.
+This section provides a brief overview of the functions.
 For more details, consult the main text for each function via its link.
 
 int fl_utf8locale()
