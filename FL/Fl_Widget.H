@@ -1042,6 +1042,28 @@ public:
       \deprecated Use selection_color(unsigned) instead.
   */
   void color2(unsigned a) {color2_ = a;}
+
+  /** Sets whether the widget's label use '&' to indicate shortcuts.
+   By default, all objects of classes Fl_Menu_ (and derivatives), Fl_Button (and derivatives),
+   Fl_Text_Display, Fl_Value_Input, and Fl_Input_ (and derivatives)
+   use character '&' in their label, unless '&' is repeated,
+   to indicate shortcuts: '&' does not appear in the drawn label,
+   the next character after '&' in the label is drawn underlined, and typing this character
+   triggers the corresponding menu window, button, or other widget. If the label contains 2 consecutive '&',
+   only one is drawn and the next character is not underlined and not used as a shortcut.
+   If \p value is set to 0, all these labels don't process character '&' as indicating a shortcut:
+   '&' is drawn in the label, the next character is not underlined and does not define a shortcut.
+   */
+  void shortcut_label(int value) {
+    if (value)
+      set_flag(SHORTCUT_LABEL);
+    else
+      clear_flag(SHORTCUT_LABEL);
+  }
+
+  /** Returns whether the widget's label use '&' to indicate shortcuts.
+   \see void shortcut_label(int value) */
+  int shortcut_label() const { return flags_ & SHORTCUT_LABEL; }
 };
 
 /**

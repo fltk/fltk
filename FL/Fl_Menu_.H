@@ -50,7 +50,7 @@
 
   The line spacing between menu items can be controlled with the global setting
   Fl::menu_linespacing().
-
+ \see Fl_Widget::shortcut_label(int)
 */
 class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 

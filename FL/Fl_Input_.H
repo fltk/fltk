@@ -79,6 +79,7 @@
   UTF-8 sequences and pointers into the middle of a sequence are undefined.
 
   \see Fl_Text_Display, Fl_Text_Editor for more powerful text handling widgets
+  \see Fl_Widget::shortcut_label(int)
 
   \internal
   When porting this widget from ASCII to UTF-8, previously legal pointers into

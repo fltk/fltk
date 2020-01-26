@@ -41,6 +41,8 @@
   on the card tab, including the label font and style.  The
   selection color of that child is used to color the tab, while
   the color of the child determines the background color of the pane.
+  '&' in labels are used to prefix a shortcut that is drawn underlined and
+  that activates the corresponding tab; repeated '&&' avoids that.
   
   The size of the tabs is controlled by the bounding box of the
   children (there should be some space between the children and
