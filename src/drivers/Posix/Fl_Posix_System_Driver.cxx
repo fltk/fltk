@@ -47,6 +47,7 @@
 #endif /* !S_ISDIR */
 
 
+#if HAVE_DLFCN_H
 static void* double_dlopen(const char *filename1)
 {
   void *ptr = ::dlopen(filename1, RTLD_LAZY | RTLD_GLOBAL);
@@ -57,12 +58,12 @@ static void* double_dlopen(const char *filename1)
   }
   return ptr;
 }
-
+#endif
 
 void *Fl_Posix_System_Driver::dlopen(const char *filename)
 {
   void *ptr = NULL;
-#if HAVE_DLSYM
+#if HAVE_DLFCN_H
   ptr = double_dlopen(filename);
 #  ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
   if (!ptr) {
@@ -82,7 +83,7 @@ void *Fl_Posix_System_Driver::dlopen(const char *filename)
     free(f_dylib);
   }
 #  endif // __APPLE_CC__
-#endif // HAVE_DLSYM
+#endif // HAVE_DLFCN_H
   return ptr;
 }
 
