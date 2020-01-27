@@ -491,7 +491,7 @@ void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #    endif // RTLD_DEFAULT
   
 #elif defined(HAVE_GLXGETPROCADDRESSARB)
-  return glXGetProcAddressARB((const GLubyte *)procName);
+  return (void*)glXGetProcAddressARB((const GLubyte *)procName);
   
 #else
   return 0;
