@@ -1003,6 +1003,7 @@ int main() {
 
 /** \defgroup  fl_screen  Screen functions
  Fl global screen functions declared in <FL/Fl.H>.
+ 
  FLTK supports high-DPI screens using a screen scaling factor.
  The scaling factor is initialized by the library to a value
  based on information obtained from the OS. If this initial value
