@@ -536,6 +536,8 @@ int Fl_X11_System_Driver::utf8locale() {
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
 #include <dlfcn.h>   // for dlopen et al
+#endif
+#if HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
   typedef void (*init_t)(int*, void*);
@@ -592,7 +594,7 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
   }
   return true;
 }
-#endif // HAVE_DLSYM && HAVE_DLFCN_H
+#endif // HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 #if !defined(FL_DOXYGEN)
 
