@@ -297,6 +297,8 @@ int Fl_Image::draw_scaled(int X, int Y, int W, int H) {
   return 1;
 }
 
+/** True after fl_register_images() was called, false before */
+bool Fl_Image::register_images_done = false;
 
 //
 // RGB image class...
