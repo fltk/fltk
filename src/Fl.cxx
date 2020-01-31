@@ -3,17 +3,17 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /** \file
@@ -2155,11 +2155,20 @@ int Fl::screen_scaling_supported() {
 }
 
 /** Controls the possibility to scale all windows by ctrl/+/-/0/ or cmd/+/-/0/.
- This function must be called before fl_open_display() runs to be effective.
- \param value 0 to stop recognition of ctrl/+/-/0/ (or cmd/+/-/0/ under macOS) keys as window scaling.
- */
+
+  This function \b should be called before fl_open_display() runs.
+  If it is not called, the default is to handle these keys for
+  window scaling.
+
+  \note This function can currently only be used to switch the internal
+    handler \b off, i.e. \p value must be 0 (zero) - all other values
+    result in undefined behavior and are reserved for future extension.
+
+  \param value 0 to stop recognition of ctrl/+/-/0/ (or cmd/+/-/0/ under macOS)
+    keys as window scaling.
+*/
 void Fl::keyboard_screen_scaling(int value) {
-  Fl::screen_driver()->keyboard_screen_scaling = value;
+  Fl_Screen_Driver::keyboard_screen_scaling = value;
 }
 
 // Pointers you can use to change FLTK to another language.

@@ -3,17 +3,17 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /**
@@ -63,10 +63,10 @@ protected:
 
   int num_screens;
   static  float fl_intersection(int x1, int y1, int w1, int h1,
-                                      int x2, int y2, int w2, int h2);
+				int x2, int y2, int w2, int h2);
 
 public:
-  bool keyboard_screen_scaling; // true means ctrl/+/-/0/ resize windows
+  static int keyboard_screen_scaling; // true means ctrl/+/-/0/ resize windows
   static char bg_set;
   static char bg2_set;
   static char fg_set;

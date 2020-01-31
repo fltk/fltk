@@ -37,9 +37,10 @@ char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
 char Fl_Screen_Driver::fg_set = 0;
 
+int Fl_Screen_Driver::keyboard_screen_scaling = 1;
 
 Fl_Screen_Driver::Fl_Screen_Driver() :
-num_screens(-1), text_editor_extra_key_bindings(NULL), keyboard_screen_scaling(true)
+num_screens(-1), text_editor_extra_key_bindings(NULL)
 {
 }
 
@@ -397,6 +398,7 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
 int Fl_Screen_Driver::scale_handler(int event)
 {
+  if (!keyboard_screen_scaling) return 0;
   if ( event != FL_SHORTCUT || (!Fl::event_command()) ) return 0;
   int key = Fl::event_key() & ~(FL_SHIFT+FL_COMMAND);
   if (key == '=' || key == '-' || key == '+' || key == '0' || key == 0xE0/* for '0' on Fr keyboard */) {
@@ -471,7 +473,8 @@ void Fl_Screen_Driver::open_display()
     been_here = true;
     if (rescalable()) {
       use_startup_scale_factor();
-      if (keyboard_screen_scaling) Fl::add_handler(Fl_Screen_Driver::scale_handler);
+      if (keyboard_screen_scaling)
+	Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));
