@@ -18,6 +18,9 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - New "Preview" switch added to the GTK native file chooser dialog
+    available on the X11 platform. This requires function fl_register_images()
+    to have been called.
   - New public variable Fl_Image::register_images_done allows an app. to detect
     whether function fl_register_images() has been called.
   - Fix Fl::add_timeout() under Linux (STR 3516).
