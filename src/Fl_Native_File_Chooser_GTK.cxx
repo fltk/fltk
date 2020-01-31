@@ -19,14 +19,15 @@
 #include "config_lib.h"
 
 #ifdef FL_CFG_WIN_X11
-#include <FL/platform.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
+#include <FL/platform.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Image_Surface.H>
+#include <FL/fl_draw.H>
 #include <dlfcn.h>   // for dlopen et al
 #include "drivers/X11/Fl_X11_System_Driver.H"
-#endif
-#include <locale.h>  // for setlocale
 
 /* --------------------- Type definitions from GLIB and GTK --------------------- */
 /* all of this is from the public gnome API, so unlikely to change */
@@ -56,6 +57,9 @@ typedef struct _GtkWindow          GtkWindow;
 typedef struct _GdkDrawable           GdkWindow;
 typedef struct _GtkFileFilter     GtkFileFilter;
 typedef struct _GtkToggleButton       GtkToggleButton;
+typedef struct _GdkPixbuf GdkPixbuf;
+typedef struct _GtkImage GtkImage;
+typedef struct _GtkTable GtkTable;
 typedef enum {
   GTK_FILE_FILTER_FILENAME     = 1 << 0,
   GTK_FILE_FILTER_URI          = 1 << 1,
@@ -101,7 +105,6 @@ class FL_EXPORT Fl_GTK_Native_File_Chooser_Driver : public Fl_Native_File_Choose
   friend class Fl_Native_File_Chooser;
 private:
   static int have_looked_for_GTK_libs;
-  typedef struct _GtkWidget GtkWidget;
   typedef struct _GtkFileFilterInfo GtkFileFilterInfo;
   struct pair {
     Fl_GTK_Native_File_Chooser_Driver* running; // the running Fl_GTK_File_Chooser
@@ -137,8 +140,12 @@ private:
   
   static int custom_gtk_filter_function(const GtkFileFilterInfo*, Fl_GTK_Native_File_Chooser_Driver::pair*);
   static void free_pair(pair *p);
+  Fl_Preferences gtk_chooser_prefs;
+public:
+  static gboolean want_preview; // state of "Preview" button
 };
 
+gboolean Fl_GTK_Native_File_Chooser_Driver::want_preview = false;
 
 int Fl_GTK_Native_File_Chooser_Driver::did_find_GTK_libs = 0;
 
@@ -287,27 +294,66 @@ static XX_gtk_file_chooser_get_show_hidden fl_gtk_file_chooser_get_show_hidden =
 typedef void (*XX_gtk_toggle_button_set_active)(GtkToggleButton *, gboolean);
 static XX_gtk_toggle_button_set_active fl_gtk_toggle_button_set_active = NULL;
 
+// GtkWidget *gtk_check_button_new_with_label(const gchar *);
+typedef GtkWidget* (*XX_gtk_file_chooser_set_preview_widget_active)(GtkFileChooser*, gboolean);
+static XX_gtk_file_chooser_set_preview_widget_active fl_gtk_file_chooser_set_preview_widget_active = NULL;
+
+// GdkPixbuf* gtk_file_chooser_set_preview_widget(GtkFileChooser *, GtkWidget *);
+typedef GdkPixbuf* (*XX_gtk_file_chooser_set_preview_widget) (GtkFileChooser *gtkw_ptr, GtkWidget *preview);
+static XX_gtk_file_chooser_set_preview_widget fl_gtk_file_chooser_set_preview_widget = NULL;
+
+// char *gtk_file_chooser_get_preview_filename(GtkFileChooser*); // 2.4
+typedef char* (*XX_gtk_file_chooser_get_preview_filename) (GtkFileChooser*);
+static XX_gtk_file_chooser_get_preview_filename fl_gtk_file_chooser_get_preview_filename = NULL;
+
+// GdkPixbuf *gdk_pixbuf_new_from_data(const uchar *,GdkColorspace, gboolean, int, int, int, int, void*, void*);
+typedef GdkPixbuf* (*XX_gdk_pixbuf_new_from_data)(const uchar *, int/*GdkColorspace*/, gboolean, int, int, int, int, void*, void*);
+static XX_gdk_pixbuf_new_from_data fl_gdk_pixbuf_new_from_data = NULL;
+
+// void gtk_image_set_from_pixbuf(GtkImage*, GdkPixbuf*);
+typedef GdkPixbuf* (*XX_gtk_image_set_from_pixbuf) (GtkImage*, GdkPixbuf*);
+static XX_gtk_image_set_from_pixbuf fl_gtk_image_set_from_pixbuf = NULL;
+
+// GtkWidget *gtk_image_new();
+typedef GtkWidget* (*XX_gtk_image_new)(void);
+static XX_gtk_image_new fl_gtk_image_new = NULL;
+
+// GtkWidget *gtk_table_new();
+typedef GtkTable* (*XX_gtk_table_new)(int, int, gboolean);
+static XX_gtk_table_new fl_gtk_table_new = NULL;
+
+// GtkWidget *gtk_table_new();
+typedef void (*XX_gtk_widget_show_all)(GtkWidget*);
+static XX_gtk_widget_show_all fl_gtk_widget_show_all = NULL;
+
+// void gtk_table_attach_defaults()
+typedef void (*XX_gtk_table_attach_defaults)(GtkTable *, GtkWidget *, guint left_attach, guint right_attach,
+                           guint top_attach, guint bottom_attach);
+static XX_gtk_table_attach_defaults fl_gtk_table_attach_defaults = NULL;
+
+// GtkImage *gtk_file_chooser_get_preview_widget(GtkFileChooser*);
+typedef GtkImage*(*XX_gtk_file_chooser_get_preview_widget)(GtkFileChooser*);
+static XX_gtk_file_chooser_get_preview_widget fl_gtk_file_chooser_get_preview_widget = NULL;
+
+typedef void (*XX_gtk_widget_set_sensitive)(GtkWidget *, gboolean);
+static XX_gtk_widget_set_sensitive fl_gtk_widget_set_sensitive = NULL;
+
+typedef GtkWidget *(*XX_gtk_button_new_with_label)(const char*);
+XX_gtk_button_new_with_label fl_gtk_button_new_with_label = NULL;
+
+typedef GtkWidget *(*XX_gtk_widget_get_toplevel)(GtkWidget *);
+static XX_gtk_widget_get_toplevel fl_gtk_widget_get_toplevel = NULL;
+
+// void g_object_unref(gpointer);
+typedef void (*XX_g_object_unref)(void*);
+static XX_g_object_unref fl_g_object_unref = NULL;
+
 
 int Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs = 0;
 
 
-Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
-  if (Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs == 0) {
-    // First Time here, try to find the GTK libs if they are installed
-#if HAVE_DLSYM && HAVE_DLFCN_H
-    if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
-      Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs();
-    }
-#endif
-    Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs = -1;
-  }
-  // if we found all the GTK functions we need, we will use the GtkFileChooserDialog
-  if (Fl_GTK_Native_File_Chooser_Driver::did_find_GTK_libs) platform_fnfc = new Fl_GTK_Native_File_Chooser_Driver(val);
-  else platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
-}
-
-
-Fl_GTK_Native_File_Chooser_Driver::Fl_GTK_Native_File_Chooser_Driver(int val) : Fl_Native_File_Chooser_FLTK_Driver(-1)
+Fl_GTK_Native_File_Chooser_Driver::Fl_GTK_Native_File_Chooser_Driver(int val) : Fl_Native_File_Chooser_FLTK_Driver(-1),
+gtk_chooser_prefs(Fl_Preferences::USER, "fltk.org", "fltk/GTK-file-chooser")
 {
   gtkw_ptr   = NULL;    // used to hold a GtkWidget* 
   gtkw_slist = NULL;    // will hold the returned file names in a multi-selection...
@@ -316,6 +362,7 @@ Fl_GTK_Native_File_Chooser_Driver::Fl_GTK_Native_File_Chooser_Driver(int val) : 
   gtkw_title = NULL;    // dialog title
   _btype = val;
   previous_filter = NULL;
+  gtk_chooser_prefs.get("Preview", want_preview, 0);
 }
 
 Fl_GTK_Native_File_Chooser_Driver::~Fl_GTK_Native_File_Chooser_Driver()
@@ -340,6 +387,7 @@ Fl_GTK_Native_File_Chooser_Driver::~Fl_GTK_Native_File_Chooser_Driver()
   }
   gtkw_count = 0; // assume we have no files selected now
   gtkw_title = strfree(gtkw_title);
+  gtk_chooser_prefs.set("Preview", want_preview);
 }
 
 void Fl_GTK_Native_File_Chooser_Driver::type(int val) {
@@ -459,6 +507,129 @@ static void run_response_handler(GtkDialog *dialog, gint response_id, gpointer d
   *ri = response_id;
 }
 
+// checks whether the file begins with up to 1000 UTF-8-encoded unicode characters
+// if yes, those characters are returned as a UTF-8 string (to be delete[]'d after use)
+// if no, NULL is returned
+static char *text_file_preview(const char *fname) {
+  if (!strcmp(fl_filename_ext(fname), ".svg")) return NULL;
+  if (!strcmp(fl_filename_ext(fname), ".xpm")) return NULL;
+  FILE *in = fl_fopen(fname, "r");
+  if (!in) return NULL;
+  char *text = new char[4011];
+  int len = fread(text, 1, 4010, in);
+  fclose(in);
+  text[len] = 0;
+  if (strlen(text) < len) text[0] = 0; // presence of null byte in file --> not text
+  char *p = text;
+  int count = 0;
+  const char *end = text + strlen(text);
+  while (p < end && count < 1000) {
+    if (*p & 0x80) { // what should be a multibyte encoding
+      fl_utf8decode(p, end, &len);
+      if (len < 2) { // That's not genuine UTF-8
+        delete[] text;
+        return NULL;
+      }
+    } else {
+      len = 1;
+    }
+    p += len;
+    count++;
+  }
+  *p = 0;
+  if (text[0]==0) {delete[] text; text = NULL;}
+  return text;
+}
+
+static void delete_rgb_image(uchar *pixels, Fl_RGB_Image *rgb) {
+  delete rgb;
+}
+
+// Draws to an Fl_RGB_Image a preview of text and image files,
+// and uses it to fill the "preview" part of the GTK file chooser
+//static int preview_width = 175;
+static float preview_zoom = 1.;
+static GtkWidget *plus_button, *minus_button;
+
+static void update_preview_cb(GtkFileChooser *file_chooser, GtkImage* gtkimg)
+{
+  gboolean have_preview = false;
+  Fl_Shared_Image *img = NULL;
+  char *preview_text = NULL;
+  char *filename = NULL;
+  
+  fl_gtk_widget_set_sensitive(plus_button, false);
+  fl_gtk_widget_set_sensitive(minus_button, false);
+  
+  if (Fl_GTK_Native_File_Chooser_Driver::want_preview) filename = fl_gtk_file_chooser_get_preview_filename(file_chooser); // 2.4
+  if (filename) {
+    if (!fl_filename_isdir(filename)) {
+      preview_text = text_file_preview(filename);
+      if (!preview_text) {
+        img = Fl_Shared_Image::get(filename);
+      }
+    }
+    free(filename);
+  }
+  if (preview_text || (img && !img->fail())) {
+    int width = preview_zoom * 175, height = preview_zoom * 225; // same size as Fl_File_Chooser's preview box
+    if (preview_text) height = 225;
+    if (img) {
+      img->scale(width, height);
+      width = img->w(), height = img->h();
+    }
+    Fl_Image_Surface *surf = new Fl_Image_Surface(width, height, 1);
+    Fl_Surface_Device::push_current(surf);
+    fl_color(FL_WHITE);
+    fl_rectf(0, 0, width, height);
+    if (img) img->draw(0, 0);
+    else {
+      fl_color(FL_BLACK);
+      fl_font(FL_COURIER, FL_NORMAL_SIZE - 1);
+      fl_draw(preview_text, 0, 0, width, height, FL_ALIGN_TOP|FL_ALIGN_LEFT, NULL, false);
+      delete[] preview_text;
+    }
+    Fl_RGB_Image *rgb = surf->image();
+    Fl_Surface_Device::pop_current();
+    delete surf;
+    GdkPixbuf *pixbuf = fl_gdk_pixbuf_new_from_data(rgb->array,  0/*GDK_COLORSPACE_RGB*/,  rgb->d() == 4,
+              8,  rgb->data_w(),  rgb->data_h(), rgb->ld() ? rgb->ld() : rgb->data_w() * rgb->d(),
+              (void*)&delete_rgb_image, rgb);
+    if (pixbuf) {
+      fl_gtk_image_set_from_pixbuf(gtkimg, pixbuf);
+      fl_g_object_unref(pixbuf);
+      if (preview_zoom < 4) fl_gtk_widget_set_sensitive(plus_button, true);
+      if (preview_zoom > 1) fl_gtk_widget_set_sensitive(minus_button, true);
+      have_preview = true;
+    }
+  }
+  if (img) img->release();
+  fl_gtk_file_chooser_set_preview_widget_active(file_chooser, have_preview); //2.4
+}
+
+static void preview_cb(GtkToggleButton *togglebutton, GtkFileChooser *chooser)
+{
+  Fl_GTK_Native_File_Chooser_Driver::want_preview = fl_gtk_toggle_button_get_active(togglebutton);
+  GtkImage *preview = fl_gtk_file_chooser_get_preview_widget(chooser);
+  update_preview_cb(chooser, preview);
+}
+
+static void plus_cb(GtkWidget *togglebutton, GtkImage *preview) {
+  preview_zoom *= 1.5;
+  if (preview_zoom > 4) {
+    preview_zoom = 4;
+  }
+  update_preview_cb((GtkFileChooser*)fl_gtk_widget_get_toplevel(togglebutton), preview);
+}
+
+static void minus_cb(GtkWidget *togglebutton, GtkImage *preview) {
+  preview_zoom /= 1.5;
+  if (preview_zoom < 1) {
+    preview_zoom = 1;
+  }
+  update_preview_cb((GtkFileChooser*)fl_gtk_widget_get_toplevel(togglebutton), preview);
+}
+
 
 int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
 {
@@ -568,9 +739,33 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
     }
   }
   
-  GtkWidget *toggle = fl_gtk_check_button_new_with_label(Fl_File_Chooser::hidden_label);
-  fl_gtk_file_chooser_set_extra_widget((GtkFileChooser *)gtkw_ptr, toggle);
-  fl_g_signal_connect_data(toggle, "toggled", G_CALLBACK(hidden_files_cb), gtkw_ptr, NULL, (GConnectFlags) 0);
+  // extra buttons "Show hidden" [+ "Preview" before it if fl_register_images() was called]
+  GtkWidget *show_hidden_button = fl_gtk_check_button_new_with_label(Fl_File_Chooser::hidden_label);
+  fl_g_signal_connect_data(show_hidden_button, "toggled", G_CALLBACK(hidden_files_cb), gtkw_ptr, NULL, (GConnectFlags) 0);
+  GtkWidget *extra = show_hidden_button;
+  if (Fl_Image::register_images_done) {
+    GtkTable *table = fl_gtk_table_new(1, 4, true);
+    GtkWidget *preview = fl_gtk_image_new();
+    fl_gtk_file_chooser_set_preview_widget((GtkFileChooser *)gtkw_ptr, preview); //2.4
+    fl_g_signal_connect_data((GtkFileChooser *)gtkw_ptr, "update-preview", G_CALLBACK(update_preview_cb), preview,
+                             NULL, (GConnectFlags)0);
+    GtkWidget *preview_button = fl_gtk_check_button_new_with_label(Fl_File_Chooser::preview_label);
+    fl_g_signal_connect_data(preview_button, "toggled", G_CALLBACK(preview_cb), gtkw_ptr, NULL, (GConnectFlags) 0);
+    fl_gtk_toggle_button_set_active((GtkToggleButton *)preview_button, want_preview);
+    fl_gtk_table_attach_defaults(table, preview_button, 0, 1, 0, 1);
+
+    plus_button = fl_gtk_button_new_with_label("<--->");
+    fl_g_signal_connect_data(plus_button, "clicked", G_CALLBACK(plus_cb), preview, NULL, (GConnectFlags) 0);
+    fl_gtk_table_attach_defaults(table, plus_button, 1,2, 0, 1);
+    minus_button = fl_gtk_button_new_with_label(">---<");
+    fl_g_signal_connect_data(minus_button, "clicked", G_CALLBACK(minus_cb), preview, NULL, (GConnectFlags) 0);
+    fl_gtk_table_attach_defaults(table, minus_button, 2,3, 0, 1);
+    
+    fl_gtk_table_attach_defaults(table, show_hidden_button, 3, 4, 0, 1);
+    extra = (GtkWidget*)table;
+  }
+  fl_gtk_file_chooser_set_extra_widget((GtkFileChooser *)gtkw_ptr, extra);
+  fl_gtk_widget_show_all(extra);
   Fl_Window* firstw = Fl::first_window();
   fl_gtk_widget_show_now(gtkw_ptr); // map the GTK window on screen
   if (firstw) {
@@ -579,7 +774,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
     XSetTransientForHint(fl_display, xw, fl_xid(firstw)); // set the GTK window transient for the last FLTK win
     }
   gboolean state = fl_gtk_file_chooser_get_show_hidden((GtkFileChooser *)gtkw_ptr);
-  fl_gtk_toggle_button_set_active((GtkToggleButton *)toggle, state);
+  fl_gtk_toggle_button_set_active((GtkToggleButton *)show_hidden_button, state);
   
   gint response_id = GTK_RESPONSE_NONE;
   fl_g_signal_connect_data(gtkw_ptr, "response", G_CALLBACK(run_response_handler), &response_id, NULL, (GConnectFlags) 0);
@@ -592,7 +787,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
       if (xevent.type == ConfigureNotify) xid = xevent.xmaprequest.window;
       if (!fl_find(xid)) continue; // skip events to non-FLTK windows
       // process Expose and ConfigureNotify events
-      if ( xevent.type == Expose || xevent.type == ConfigureNotify ) fl_handle(xevent); 
+      if ( xevent.type == Expose || xevent.type == ConfigureNotify ) fl_handle(xevent);
     }
     Fl::flush(); // do the drawings needed after Expose events
   } 
@@ -655,7 +850,6 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   return result;
 } // fl_gtk_chooser_wrapper
 
-#if HAVE_DLSYM && HAVE_DLFCN_H
 // macro to help with the symbol loading boilerplate...
 #  define GET_SYM(SSS, LLL) \
 dlerror();    /* Clear any existing error */  \
@@ -666,15 +860,12 @@ did_find_GTK_libs = 0;                      \
 return; }
 
 
-#endif // HAVE_DLSYM && HAVE_DLFCN_H
-
 /*
  * Use dlopen to see if we can load the gtk dynamic libraries that
  * will allow us to create a GtkFileChooserDialog() on the fly,
  * without linking to the GTK libs at compile time.
  */
 void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
-#if HAVE_DLSYM && HAVE_DLFCN_H
   void  *ptr_gtk;
   if ( !Fl_X11_System_Driver::probe_for_GTK(2, 4, &ptr_gtk)) {
     did_find_GTK_libs = 0;
@@ -712,6 +903,20 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(gtk_file_chooser_set_extra_widget, ptr_gtk);
   GET_SYM(gtk_widget_show_now, ptr_gtk);
   GET_SYM(gtk_widget_get_window, ptr_gtk);
+  GET_SYM(gtk_file_chooser_set_preview_widget_active, ptr_gtk);
+  GET_SYM(gtk_file_chooser_set_preview_widget, ptr_gtk);
+  GET_SYM(gtk_file_chooser_get_preview_widget, ptr_gtk);
+  GET_SYM(gtk_widget_set_sensitive, ptr_gtk);
+  GET_SYM(gtk_button_new_with_label, ptr_gtk);
+  GET_SYM(gtk_widget_get_toplevel, ptr_gtk);
+  GET_SYM(gtk_file_chooser_get_preview_filename, ptr_gtk);
+  GET_SYM(gdk_pixbuf_new_from_data, ptr_gtk);
+  GET_SYM(gtk_image_set_from_pixbuf, ptr_gtk);
+  GET_SYM(gtk_image_new, ptr_gtk);
+  GET_SYM(gtk_table_new, ptr_gtk);
+  GET_SYM(gtk_widget_show_all, ptr_gtk);
+  GET_SYM(gtk_table_attach_defaults, ptr_gtk);
+  GET_SYM(g_object_unref, ptr_gtk);
   fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_drawable_get_xid");
   if (!fl_gdk_to_X11) fl_gdk_to_X11 = (gdk_to_X11_t)dlsym(ptr_gtk, "gdk_x11_window_get_xid");
   if (!fl_gdk_to_X11) { did_find_GTK_libs = 0; return; }
@@ -723,8 +928,25 @@ void Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs(void) {
   GET_SYM(gtk_toggle_button_set_active, ptr_gtk);
   
   did_find_GTK_libs = 1;
-#endif // HAVE_DLSYM && HAVE_DLFCN_H
 } // probe_for_GTK_libs
+
+#endif // HAVE_DLSYM && HAVE_DLFCN_H
+
+Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
+#if HAVE_DLSYM && HAVE_DLFCN_H
+  if (Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs == 0) {
+    // First Time here, try to find the GTK libs if they are installed
+    if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
+      Fl_GTK_Native_File_Chooser_Driver::probe_for_GTK_libs();
+    }
+    Fl_GTK_Native_File_Chooser_Driver::have_looked_for_GTK_libs = -1;
+  }
+  // if we found all the GTK functions we need, we will use the GtkFileChooserDialog
+  if (Fl_GTK_Native_File_Chooser_Driver::did_find_GTK_libs) platform_fnfc = new Fl_GTK_Native_File_Chooser_Driver(val);
+  else
+#endif // HAVE_DLSYM && HAVE_DLFCN_H
+    platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
+}
 
 #endif // FL_CFG_WIN_X11
 
