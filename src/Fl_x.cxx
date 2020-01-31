@@ -1282,7 +1282,7 @@ static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
 #pragma GCC diagnostic pop
 #endif
 
-#pragma clang diagnostic push
+#pragma clang diagnostic pop
 
 #if USE_XRANDR
 static void react_to_screen_reconfiguration() {
