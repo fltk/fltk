@@ -39,7 +39,7 @@ char Fl_Screen_Driver::fg_set = 0;
 
 
 Fl_Screen_Driver::Fl_Screen_Driver() :
-num_screens(-1), text_editor_extra_key_bindings(NULL)
+num_screens(-1), text_editor_extra_key_bindings(NULL), keyboard_screen_scaling(true)
 {
 }
 
@@ -471,7 +471,7 @@ void Fl_Screen_Driver::open_display()
     been_here = true;
     if (rescalable()) {
       use_startup_scale_factor();
-      Fl::add_handler(Fl_Screen_Driver::scale_handler);
+      if (keyboard_screen_scaling) Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));

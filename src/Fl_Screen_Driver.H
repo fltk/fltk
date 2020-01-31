@@ -66,11 +66,11 @@ protected:
                                       int x2, int y2, int w2, int h2);
 
 public:
+  bool keyboard_screen_scaling; // true means ctrl/+/-/0/ resize windows
   static char bg_set;
   static char bg2_set;
   static char fg_set;
 
-public:
   virtual float scale(int n) {return 1;}
   virtual void scale(int n, float f) { }
   static Fl_Screen_Driver *newScreenDriver();

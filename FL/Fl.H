@@ -1037,6 +1037,7 @@ int main() {
   static float screen_scale(int n); // via screen driver
   static void screen_scale(int n, float factor); // via screen driver
   static int screen_scaling_supported();
+  static void keyboard_screen_scaling(int);
 
 /**   @} */
 

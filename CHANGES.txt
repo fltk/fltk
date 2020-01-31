@@ -18,6 +18,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - New Fl::keyboard_screen_scaling(0) call stops recognition of ctrl/+/-/0/
+    keystrokes as scaling all windows of a screen.
   - New "Preview" switch added to the GTK native file chooser dialog
     available on the X11 platform. This requires function fl_register_images()
     to have been called.

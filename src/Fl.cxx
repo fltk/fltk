@@ -2154,6 +2154,14 @@ int Fl::screen_scaling_supported() {
   return Fl::screen_driver()->rescalable();
 }
 
+/** Controls the possibilty to scale all windows by ctrl/+/-/0/ or cmd/+/-/0/.
+ This function must be called before fl_open_display() runs to be effective.
+ \param value 0 to stop recognition of ctrl/+/-/0/ (or cmd/+/-/0/ under macOS) keys as window scaling.
+ */
+void Fl::keyboard_screen_scaling(int value) {
+  Fl::screen_driver()->keyboard_screen_scaling = value;
+}
+
 // Pointers you can use to change FLTK to another language.
 // Note: Similar pointers are defined in FL/fl_ask.H and src/fl_ask.cxx
 FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();
