@@ -2154,7 +2154,7 @@ int Fl::screen_scaling_supported() {
   return Fl::screen_driver()->rescalable();
 }
 
-/** Controls the possibilty to scale all windows by ctrl/+/-/0/ or cmd/+/-/0/.
+/** Controls the possibility to scale all windows by ctrl/+/-/0/ or cmd/+/-/0/.
  This function must be called before fl_open_display() runs to be effective.
  \param value 0 to stop recognition of ctrl/+/-/0/ (or cmd/+/-/0/ under macOS) keys as window scaling.
  */
