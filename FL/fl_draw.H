@@ -574,16 +574,11 @@ FL_EXPORT void fl_rescale_offscreen(Fl_Offscreen &ctx);
 /* NOTE: doxygen comments here to avoid triplication in os-specific sources */
 
 // Fonts:
-/**
+/*
   Sets the current font, which is then used in various drawing routines.
-  You may call this outside a draw context if necessary to call fl_width(),
-  but on X this will open the display.
-
-  The font is identified by a \p face and a \p size.
-  The size of the font is measured in pixels and not "points".
-  Lines should be spaced \p size pixels apart or more.
+  Implemented and documented in src/Fl_Graphics_Driver.cxx
 */
-inline void fl_font(Fl_Font face, Fl_Fontsize fsize) { fl_graphics_driver->font(face,fsize); }
+void fl_font(Fl_Font face, Fl_Fontsize fsize);
 
 /**
   Returns the \p face set by the most recent call to fl_font().

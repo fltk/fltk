@@ -557,6 +557,22 @@ void Fl_Graphics_Driver::rtl_draw(const char *str, int nChars, int x, int y) {
 /** Returns non-zero if the graphics driver possesses the \p feature */
 int Fl_Graphics_Driver::has_feature(driver_feature feature) { return 0; }
 
+/**
+  Sets the current font, which is then used in various drawing routines.
+  You may call this outside a draw context if necessary to measure text,
+  for instance by calling fl_width(), fl_measure(), or fl_text_extents(),
+  but on X this will open the display.
+
+  The font is identified by a \p face and a \p size.
+  The size of the font is measured in pixels and not "points".
+  Lines should be spaced \p size pixels apart or more.
+*/
+void fl_font(Fl_Font face, Fl_Fontsize fsize) {
+  if (!fl_graphics_driver)
+    fl_open_display();
+  fl_graphics_driver->font(face, fsize);
+}
+
 /** see fl_font(Fl_Font, Fl_Fontsize) */
 void Fl_Graphics_Driver::font(Fl_Font face, Fl_Fontsize fsize) {font_ = face; size_ = fsize;}
 
