@@ -77,6 +77,8 @@ static bool have_xfixes = false;
 
 extern Fl_Widget *fl_selection_requestor;
 
+static void open_display_i(Display *d); // open display (internal)
+
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
@@ -614,14 +616,14 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   Display *d = XOpenDisplay(0);
   if (!d) Fl::fatal("Can't open display: %s",XDisplayName(0));
 
-  fl_open_display(d);
+  open_display_i(d);
   // the unique GC used by all X windows
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
 }
 
 
-void fl_open_display(Display* d) {
+void open_display_i(Display* d) {
   fl_display = d;
 
   WM_DELETE_WINDOW      = XInternAtom(d, "WM_DELETE_WINDOW",    0);
