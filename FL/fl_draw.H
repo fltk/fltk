@@ -576,9 +576,9 @@ FL_EXPORT void fl_rescale_offscreen(Fl_Offscreen &ctx);
 // Fonts:
 /*
   Sets the current font, which is then used in various drawing routines.
-  Implemented and documented in src/Fl_Graphics_Driver.cxx
+  Implemented and documented in src/fl_draw.cxx
 */
-void fl_font(Fl_Font face, Fl_Fontsize fsize);
+FL_EXPORT void fl_font(Fl_Font face, Fl_Fontsize fsize);
 
 /**
   Returns the \p face set by the most recent call to fl_font().
