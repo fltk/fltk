@@ -4352,7 +4352,8 @@ int Fl_Cocoa_Window_Driver::decorated_h()
     return h();
   int bx = 0, by = 0;
   int bt = get_window_frame_sizes(pWindow, &bx, &by);
-  return h() + bt + by;
+  float s = Fl::screen_driver()->scale(0);
+  return h() + bt/s;
 }
 
 CALayer *Fl_Cocoa_Window_Driver::get_titlebar_layer()

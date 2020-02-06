@@ -314,7 +314,8 @@ const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
 void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
   left = bottom = right = NULL;
-  int htop = pWindow->decorated_h() - h();
+  int htop, hleft, hright, hbottom;
+  Fl_Cocoa_Window_Driver::decoration_sizes(&htop, &hleft,  &hright, &hbottom);
   CALayer *layer = get_titlebar_layer();
   CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
   float s = Fl::screen_driver()->scale(screen_num());
