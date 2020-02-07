@@ -74,6 +74,7 @@ Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l) :
 {
   _Fl_Window();
   set_flag(FORCE_POSITION);
+  if (!parent()) clear_visible();
 }
 
 
