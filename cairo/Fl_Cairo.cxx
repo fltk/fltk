@@ -84,11 +84,20 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
 
     cairo_state_.window(wi);
 
-#if defined(USE_X11)
-    return Fl::cairo_make_current(0, wi->w(), wi->h());
-#else
-    return Fl::cairo_make_current(fl_gc, wi->w(), wi->h());
+  cairo_t * cairo_ctxt;
+#ifndef __APPLE__
+  float scale = Fl::screen_scale(wi->screen_num()); // get the screen scaling factor
 #endif
+#if defined(USE_X11)
+  cairo_ctxt = Fl::cairo_make_current(0, wi->w() * scale, wi->h() * scale);
+#else
+  // on macOS, scaling is done before by Fl_Window::make_current(), on Windows, the size is not used
+  cairo_ctxt = Fl::cairo_make_current(fl_gc, wi->w(), wi->h());
+#endif
+#ifndef __APPLE__
+  cairo_scale(cairo_ctxt, scale, scale);
+#endif
+  return cairo_ctxt;
 }
 
 /* 
