@@ -3,17 +3,17 @@
 #
 # CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
 # Please report all bugs and problems on the following page:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/str.php
 #
 
 set (CPPFILES
@@ -395,7 +395,6 @@ set (GL_DRIVER_FILES
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx
-  drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx
   drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx

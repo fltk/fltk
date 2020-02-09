@@ -196,7 +196,6 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx \
-	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
