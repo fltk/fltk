@@ -57,7 +57,7 @@
  \see Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
  */
 Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
-: Fl_RGB_Image(0,0,0)
+: Fl_RGB_Image(0,0,0), desired_h_(0)
 {
   Fl_Image_Reader rdr;
   if (rdr.open(filename) == -1) {
@@ -87,7 +87,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
  \see Fl_Shared_Image
 */
 Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
-: Fl_RGB_Image(0,0,0)
+: Fl_RGB_Image(0,0,0), desired_h_(0)
 {
   Fl_Image_Reader rdr;
   if (rdr.open(imagename, data) == -1) {
@@ -102,7 +102,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
  format supports only 1 bit for alpha. To avoid code duplication, we use
  an Fl_Image_Reader that reads data from either a file or from memory.
  */
-void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
+void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int skip_header)
 {
   int     info_size,    // Size of info header
           depth,        // Depth of image (bits)
@@ -118,7 +118,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
           row_order,    // 1 = normal;  -1 = flipped row order
           start_y,      // Beginning Y
           end_y;        // Ending Y
-  long    offbits;      // Offset to image data
+  long    offbits = 0;  // Offset to image data
   uchar   bit,          // Bit in image
           byte;         // Byte in image
   uchar   *ptr;         // Pointer into pixels
@@ -129,17 +129,19 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   // Reader is already open at this point.
 
   // Get the header...
-  byte = rdr.read_byte();	// Check "BM" sync chars
-  bit  = rdr.read_byte();
-  if (byte != 'B' || bit != 'M') {
-    ld(ERR_FORMAT);
-    return;
-  }
+  if (skip_header == 0) {
+    byte = rdr.read_byte();	// Check "BM" sync chars
+    bit  = rdr.read_byte();
+    if (byte != 'B' || bit != 'M') {
+      ld(ERR_FORMAT);
+      return;
+    }
 
-  rdr.read_dword();		// Skip size
-  rdr.read_word();		// Skip reserved stuff
-  rdr.read_word();
-  offbits = (long)rdr.read_dword();// Read offset to image data
+    rdr.read_dword();		// Skip size
+    rdr.read_word();		// Skip reserved stuff
+    rdr.read_word();
+    offbits = (long)rdr.read_dword();// Read offset to image data
+  }
 
   // Then the bitmap information...
   info_size = rdr.read_dword();
@@ -166,7 +168,9 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
     // If the height is negative, the row order is flipped
     temp = rdr.read_long();
     if (temp < 0) row_order = 1;
-    h(abs(temp));
+    // When reading from a .ICO file we must be able to force a specific height.
+    // I guess the mask is sometimes not correctly recognized. There must be a better way...
+    if (desired_h() == 0) h(abs(temp));
     rdr.read_word();
     depth = rdr.read_word();
     compression = rdr.read_dword();

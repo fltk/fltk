@@ -419,6 +419,7 @@ set (IMGCPPFILES
   Fl_File_Icon2.cxx
   Fl_GIF_Image.cxx
   Fl_Help_Dialog.cxx
+  Fl_ICO_Image.cxx
   Fl_JPEG_Image.cxx
   Fl_PNG_Image.cxx
   Fl_PNM_Image.cxx

@@ -33,10 +33,10 @@ class FL_EXPORT Fl_PNG_Image : public Fl_RGB_Image {
 
 public:
 
-  Fl_PNG_Image(const char* filename);
-  Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int datasize);
+  Fl_PNG_Image(const char *filename, int offset=0);
+  Fl_PNG_Image(const char *name_png, const unsigned char *buffer, int datasize);
 private:
-  void load_png_(const char *name_png, const unsigned char *buffer_png, int datasize);
+  void load_png_(const char *name_png, int offset, const unsigned char *buffer_png, int datasize);
 };
 
 #endif

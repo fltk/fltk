@@ -29,6 +29,9 @@
  */
 class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
+  private:
+    int desired_h_;
+
   public:
 
     Fl_BMP_Image(const char* filename);
@@ -36,7 +39,10 @@ class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
   protected:
 
-    void load_bmp_(class Fl_Image_Reader &rdr);
+    int desired_h() { return desired_h_; }
+    void desired_h(int n) { desired_h_ = n; }
+
+    void load_bmp_(class Fl_Image_Reader &rdr, int skip_header=0);
 
 };
 
