@@ -519,7 +519,7 @@ static char *text_file_preview(const char *fname) {
   int len = fread(text, 1, 4010, in);
   fclose(in);
   text[len] = 0;
-  if (strlen(text) < len) text[0] = 0; // presence of null byte in file --> not text
+  if ((int)strlen(text) < len) text[0] = 0; // presence of null byte in file --> not text
   char *p = text;
   int count = 0;
   const char *end = text + strlen(text);
