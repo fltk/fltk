@@ -272,7 +272,7 @@ int main(int argc, char **argv) {
   fullscreen_window window(460,400+30*NUMB); window.end();
 
   shape_window sw(10,10,window.w()-20,window.h()-30*NUMB-120);
-
+  sw.set_visible(); // necessary because sw is not a child of window
 #if HAVE_GL
   sw.mode(FL_RGB);
 #endif
