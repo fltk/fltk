@@ -1268,8 +1268,10 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lowe
   Note: '#pragma GCC diagnostic push' needs at least GCC 4.6.
 */
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 #if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 5))
 #pragma GCC diagnostic push
@@ -1284,7 +1286,9 @@ static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
 #pragma GCC diagnostic pop
 #endif
 
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
 #if USE_XRANDR
 static void react_to_screen_reconfiguration() {
