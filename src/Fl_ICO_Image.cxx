@@ -27,25 +27,28 @@
 #  include <FL/Fl_PNG_Image.H>
 #endif
 
-Fl_ICO_Image::Fl_ICO_Image(const char *filename)
-: Fl_BMP_Image(0)
+Fl_ICO_Image::Fl_ICO_Image(const char *filename, const unsigned char *data, int id)
+: Fl_BMP_Image(0,0),
+ idcount_(0),
+ icondirentry_(0)
 {
   Fl_Image_Reader rdr;
-  if (rdr.open(filename) == -1) {
-    ld(ERR_FILE_ACCESS);
-  } else {
-    load_ico_(rdr);
-  }
-}
+  int r;
 
-Fl_ICO_Image::Fl_ICO_Image(const char *imagename, const unsigned char *data)
-: Fl_BMP_Image(0,0)
-{
-  Fl_Image_Reader rdr;
-  if (rdr.open(imagename, data) == -1) {
+  w(0); h(0); d(0); ld(0);
+  alloc_array = 0;
+  array = 0;
+
+  if (data) {
+    r = rdr.open(filename, data);
+  } else {
+    r = rdr.open(filename);
+  }
+
+  if (r == -1) {
     ld(ERR_FILE_ACCESS);
   } else {
-    load_ico_(rdr);
+    load_ico_(rdr, id);
   }
 }
 
@@ -53,69 +56,79 @@ Fl_ICO_Image::Fl_ICO_Image(const char *imagename, const unsigned char *data)
  This method attempts to load the biggest image resource available
  inside a .ICO file (Windows Icon format).
  */
-void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr)
+void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr, int id)
 {
-  w(0); h(0); d(0); ld(0);
-  alloc_array = 0;
-  array = 0;
+  int pickedID = -1;
 
   // Check file header (ICONDIR, 6 bytes)
-  unsigned short idReserved = rdr.read_word();
-  unsigned short idType = rdr.read_word();
-  unsigned short idCount = rdr.read_word();
 
-  if (idReserved != 0 || idType != 1) {
+  if (rdr.read_word() != 0 || rdr.read_word() != 1) {
     Fl::error("Fl_ICO_Image: %s is not an ICO file.\n", rdr.name());
     ld(ERR_FORMAT);
     return;
   }
 
-  if (idCount == 0) {
+  idcount_ = rdr.read_word();
+
+  if (idcount() == 0) {
     Fl::error("Fl_ICO_Image: %s - no image resources found\n", rdr.name());
     ld(ERR_FORMAT);
     return;
   }
 
-  // Check directory entries
 
-  uint highestRes = 0;
-  uint offset = 0;
-  uint numBytes = 0;
-  uint bitcount = 0;
+  // read entries (ICONDIRENTRY, 16 bytes each)
 
-  for (uint i = 0; i < idCount; ++i) {
-    // ICONDIRENTRY, 16 bytes
-    uint bWidth = rdr.read_byte();
-    uint bHeight = rdr.read_byte();
-    rdr.read_byte();  // bColorCount
-    rdr.read_byte();  // bReserved
-    rdr.read_word();  // wPlanes
-    uint wBitCount = rdr.read_word();  // wBitCount
-    uint dwBytesInRes = rdr.read_dword();
-    uint dwImageOffset = rdr.read_dword();
+  icondirentry_ = new fl_ICONDIRENTRY[idcount()];
 
-    if (bWidth == 0) bWidth = 256;
-    if (bHeight == 0) bHeight = 256;
-    uint res = bWidth * bHeight;
+  for (int i = 0; i < idcount(); ++i) {
+    icondirentry_[i].bWidth = (int)rdr.read_byte();
+    icondirentry_[i].bHeight = (int)rdr.read_byte();
+    icondirentry_[i].bColorCount = (int)rdr.read_byte();
+    icondirentry_[i].bReserved = (int)rdr.read_byte();
+    icondirentry_[i].wPlanes = (int)rdr.read_word();
+    icondirentry_[i].wBitCount = (int)rdr.read_word();
+    icondirentry_[i].dwBytesInRes = (int)rdr.read_dword();
+    icondirentry_[i].dwImageOffset = (int)rdr.read_dword();
 
-    // pick icon with highest resolution + highest bitcount
-    if (res > highestRes || (res == highestRes && wBitCount > bitcount)) {
-      w(bWidth);
-      h(bHeight);
-      offset = dwImageOffset;
-      numBytes = dwBytesInRes;
-      highestRes = res;
-      bitcount = wBitCount;
-    }
+    if (icondirentry_[i].bWidth == 0) icondirentry_[i].bWidth = 256;
+    if (icondirentry_[i].bHeight == 0) icondirentry_[i].bHeight = 256;
   }
 
-  if (offset==0 || numBytes==0 || highestRes==0 || w()==0 || h()==0) {
-    w(0); h(0); d(0);
+  if (id <= -2) return;
+
+  if (!icondirentry_ || idcount() < 1 || id >= idcount()) {
     ld(ERR_FORMAT);
     return;
   }
 
-  rdr.seek(offset);
+  if (id == -1) {
+    // pick icon with highest resolution + highest bitcount
+    int highestRes = 0, bitcount = 0;
+    for (int i = 0; i < idcount(); ++i) {
+      int res = icondirentry_[i].bWidth * icondirentry_[i].bHeight;
+      if (res > highestRes || (res == highestRes && icondirentry_[i].wBitCount > bitcount)) {
+        highestRes = res;
+        bitcount = icondirentry_[i].wBitCount;
+        pickedID = i;
+      }
+    }
+  } else {
+    pickedID = id;
+  }
+
+  if (pickedID < 0 ||
+      icondirentry_[pickedID].bWidth <= 0 ||
+      icondirentry_[pickedID].bHeight <= 0 ||
+      icondirentry_[pickedID].dwImageOffset <= 0||
+      icondirentry_[pickedID].dwBytesInRes <= 0)
+  {
+    ld(ERR_FORMAT);
+    return;
+  }
+
+  rdr.seek(icondirentry_[pickedID].dwImageOffset);
+
 
   // Check for a PNG image resource
   uchar b[8];
@@ -125,7 +138,7 @@ void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr)
       b[4]=='\r' && b[5]=='\n' && b[6]==0x1A && b[7]=='\n')
   {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
-    Fl_PNG_Image *png = new Fl_PNG_Image(rdr.name(), offset);
+    Fl_PNG_Image *png = new Fl_PNG_Image(rdr.name(), icondirentry_[pickedID].dwImageOffset);
 
     int loaded = png ? png->fail() : ERR_FILE_ACCESS;
     if (loaded < 0) {
@@ -155,8 +168,11 @@ void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr)
 #endif
   }
 
+
   // Bitmap resource
 
+  w(icondirentry_[pickedID].bWidth);
+  h(icondirentry_[pickedID].bHeight);
   d(4);
 
   if (((size_t)w()) * h() * d() > max_size()) {
@@ -166,8 +182,7 @@ void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr)
     return;
   }
 
-  rdr.seek(offset);
-
+  rdr.seek(icondirentry_[pickedID].dwImageOffset);
   desired_h(h());
   load_bmp_(rdr, 1);
 }
