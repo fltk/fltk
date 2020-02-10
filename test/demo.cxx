@@ -3,7 +3,7 @@
 //
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -19,23 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-// *FIXME*
-// Implement fl_putenv(). Then remove the following comment
-// and the #define's of fl_putenv below
-
-// Visual C++ 2005 incorrectly displays a warning about the use of
-// POSIX APIs on Windows, which is supposed to be POSIX compliant...
-
-#if defined(_MSC_VER)
-#  define fl_putenv _putenv
-#else
-#  define fl_putenv putenv
-#endif // _MSC_VER
-
-// *FIXME* To do:
-// Check whether '#include <unistd.h>' can be removed since chdir()
-// has been replaced with fl_chdir() (AlbrechtS, Nov 12, 2017)
 
 #if defined __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -459,7 +442,7 @@ int load_the_menu(char* fname) {
 }
 
 int main(int argc, char **argv) {
-  fl_putenv((char *)"FLTK_DOCDIR=../documentation/html");
+  fl_putenv("FLTK_DOCDIR=../documentation/html");
   char buf[FL_PATH_MAX];
   strcpy(buf, argv[0]);
 #if DEBUG_EXE_WITH_D

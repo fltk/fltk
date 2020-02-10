@@ -1,19 +1,19 @@
 //
 // "$Id$"
 //
-// Definition of Apple Darwin system driver.
+// Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include "../../config_lib.h"
@@ -194,6 +194,17 @@ char *Fl_WinAPI_System_Driver::getenv(const char *var) {
   wchar_t *ret = _wgetenv(utf8_to_wchar(var, wbuf));
   if (!ret) return NULL;
   return wchar_to_utf8(ret, buf);
+}
+
+int Fl_WinAPI_System_Driver::putenv(const char *var) {
+  unsigned len = (unsigned)strlen(var);
+  unsigned wn = fl_utf8toUtf16(var, len, NULL, 0) + 1; // Query length
+  wchar_t *wbuf = (wchar_t *)malloc(sizeof(wchar_t) * wn);
+  wn = fl_utf8toUtf16(var, len, (unsigned short *)wbuf, wn);
+  wbuf[wn] = 0;
+  int ret = _wputenv(wbuf);
+  free(wbuf);
+  return ret;
 }
 
 int Fl_WinAPI_System_Driver::open(const char *fnam, int oflags, int pmode) {

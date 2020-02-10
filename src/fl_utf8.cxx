@@ -5,17 +5,17 @@
 //
 // Author: Jean-Marc Lienher ( http://oksid.ch )
 // Copyright 2000-2010 by O'ksi'D.
-// Copyright 2016-2017 by Bill Spitzak and others.
+// Copyright 2016-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include <FL/Fl.H>
@@ -314,6 +314,38 @@ char *fl_getenv(const char* v) {
 }
 
 
+/** Cross-platform function to write environment variables with a UTF-8
+  encoded name or value.
+
+  This function is especially useful on the Windows platform where
+  non-ASCII environment variables are encoded as wide characters.
+
+  The given argument \p var must be encoded in UTF-8 in the form "name=value".
+  The \p 'name' part must conform to platform dependent restrictions on
+  environment variable names.
+
+  The string given in \p var is copied and optionally converted to the
+  required encoding for the platform. On platforms other than Windows
+  this function calls putenv directly.
+
+  The return value is zero on success and non-zero in case of error.
+  The value in case of error is platform specific and returned as-is.
+
+  \note The copied string is allocated on the heap and "lost" on some platforms,
+    i.e. calling fl_putenv() to change environment variables frequently may cause
+    memory leaks. There may be an option to avoid this in a future implementation.
+
+  \note This function is not thread-safe.
+
+  \param[in] var the UTF-8 encoded environment variable \p 'name=value'
+  \return  0 on success, non-zero in case of error.
+*/
+
+int fl_putenv(const char* var) {
+  return Fl::system_driver()->putenv(var);
+}
+
+
 /** Cross-platform function to open files with a UTF-8 encoded name.
 
   This function is especially useful on the Windows platform where the
@@ -578,11 +610,6 @@ void fl_make_path_for_file( const char *path ) {
   fl_make_path( p );
   free( p );
 } // fl_make_path_for_file()
-
-
-//============================================================
-// this part comes from file src/fl_utf.c of FLTK 1.3
-//============================================================
 
 /** Set to 1 to turn bad UTF-8 bytes into ISO-8859-1. If this is zero
   they are instead turned into the Unicode REPLACEMENT CHARACTER, of
@@ -1330,10 +1357,6 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen, const char* src, unsigned sr
   }
   return Fl::system_driver()->utf8from_mb(dst, dstlen, src, srclen);
 }
-
-//============================================================
-// end of the part from file src/fl_utf.c of FLTK 1.3
-//============================================================
 
 /** @} */
 
