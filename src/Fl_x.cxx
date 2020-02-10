@@ -3,17 +3,17 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #ifdef WIN32
@@ -671,7 +671,7 @@ void fl_open_display() {
   if (fl_display) return;
 
   setlocale(LC_CTYPE, "");
-  XSetLocaleModifiers("@im=");
+  XSetLocaleModifiers("");
 
   XSetIOErrorHandler(io_error_handler);
   XSetErrorHandler(xerror_handler);
@@ -1376,7 +1376,7 @@ int fl_handle(const XEvent& thisevent)
     xim_im = XOpenIM(fl_display, NULL, NULL, NULL);
     if (!xim_im) {
       /*  XIM server has crashed */
-      XSetLocaleModifiers("@im=");
+      XSetLocaleModifiers("");
       fl_xim_im = NULL;
       fl_init_xim();
     } else {
