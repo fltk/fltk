@@ -353,6 +353,7 @@ public:
   // These 2 member functions break the driver model but are kept for back compatibility.
   // They are implemented in Fl_win32.cxx
   static void default_icons(HICON big_icon, HICON small_icon);
+  static void default_icons();
   void icons(HICON big_icon, HICON small_icon);
 #endif
 

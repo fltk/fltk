@@ -2424,6 +2424,22 @@ void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
     default_small_icon = CopyIcon(small_icon);
 }
 
+void Fl_Window::default_icons() {
+  HICON *big_icon, *small_icon, big_icon_array[1], small_icon_array[1];
+  char path[FL_PATH_MAX];
+
+  big_icon_array[0] = NULL;
+  small_icon_array[0] = NULL;
+  big_icon = big_icon_array;
+  small_icon = small_icon_array;
+
+  // use exe's/module's icon resource to set window default icons
+  GetModuleFileNameA(NULL, path, FL_PATH_MAX);
+  ExtractIconExA(path, 0, big_icon, small_icon, 1);
+
+  Fl_Window::default_icons(big_icon_array[0], small_icon_array[0]);
+}
+
 void Fl_WinAPI_Window_Driver::set_icons() {
   HICON big_icon, small_icon;
 
