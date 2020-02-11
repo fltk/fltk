@@ -1476,7 +1476,7 @@ void Fl_Preferences::Node::createIndex() {
   int n = nChildren();
   if (n>NIndex_) {
     NIndex_ = n + 16;
-    index_ = (Node**)realloc(index_, NIndex_*sizeof(Node**));
+    index_ = (Node**)realloc(index_, NIndex_*sizeof(Node*));
   }
   Node *nd;
   int i = 0;

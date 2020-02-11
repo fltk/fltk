@@ -308,15 +308,21 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   int i = 0, count = 0; // count top-level windows, except transient scale-displaying window
   Fl_Window *win = Fl::first_window();
   while (win) {
-    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
-        win->user_data() != &Fl_Screen_Driver::transient_scale_display) count++;
+    if (!win->parent() &&
+	(Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+      count++;
+    }
     win = Fl::next_window(win);
   }
+  if (count == 0)
+    return;
   Fl_Window **win_array = new Fl_Window*[count];
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
-    if (!win->parent() && win->user_data() != &Fl_Screen_Driver::transient_scale_display &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen  || rescalable() == SYSTEMWIDE_APP_SCALING) ) {
+    if (!win->parent() &&
+	(Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+	win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
     win = Fl::next_window(win);

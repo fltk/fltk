@@ -394,7 +394,7 @@ void Fl_Function_Type::write_code1() {
     }
   }
   
-  if (havewidgets && !child->name()) write_c("  %s* w;\n", subclassname(child));
+  if (havewidgets && child && !child->name()) write_c("  %s* w;\n", subclassname(child));
   indentation += 2;
 }
 
