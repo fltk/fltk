@@ -259,7 +259,8 @@ void Fl_Widget_Type::redraw() {
     // find the menu button that parents this menu:
     do t = t->parent; while (t && t->is_menu_item());
     // kludge to cause build_menu to be called again:
-    t->add_child(0,0);
+    if (t)
+      t->add_child(0, 0);
   } else {
     while (t->parent && t->parent->is_widget()) t = t->parent;
     ((Fl_Widget_Type*)t)->o->redraw();
@@ -638,6 +639,8 @@ const char *item_name(Fl_Menu_Item* m, int i) {
   return buffer;
 }
 int item_number(Fl_Menu_Item* m, const char* i) {
+  if (!i)
+    return 0;
   if (m && i) {
     if (i[0]=='F' && i[1]=='L' && i[2]=='_') i += 3;
     while (m->label()) {
