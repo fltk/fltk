@@ -54,9 +54,9 @@ static const char *iconlabel = "?";
 static const char *message_title_default;
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = -1;
-static int positionMode = FL_POSMODE_HOTSPOT;
-static int form_x = 10;
-static int form_y = 10;
+static int enableHotspot = 1;
+static int form_x = INT_MIN;
+static int form_y = INT_MIN;
 
 static char avoidRecursion = 0;
 
@@ -239,9 +239,13 @@ static int innards(const char* fmt, va_list ap,
   if (button[1]->visible() && !input->visible())
     button[1]->take_focus();
 
-  if (positionMode == FL_POSMODE_XY)
+  if (form_x != INT_MIN && form_y != INT_MIN)
+  {
     message_form->position(form_x, form_y);
-  else if (positionMode == FL_POSMODE_HOTSPOT)
+    form_x = INT_MIN;
+    form_y = INT_MIN;
+  }
+  else if (enableHotspot)
     message_form->hotspot(button[0]);
   else
     message_form->free_position();
@@ -266,8 +270,6 @@ static int innards(const char* fmt, va_list ap,
     Fl::grab(g);
   icon->label(prev_icon_label);
   message_form->label(0); // reset window title
-
-  positionMode = FL_POSMODE_HOTSPOT;// reset position mode
 
   avoidRecursion = 0;
   return ret_val;
@@ -516,47 +518,35 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   return r;
 }
 
-/** Sets whether or not to move the common message box used in
-many common dialogs like fl_message(), fl_alert(),
-fl_ask(), fl_choice(), fl_input(), fl_password().
+/** Sets the preferred position for common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password(). Resets after
+    every call to any of the common dialogs.
 
-The default mode is FL_POSMODE_HOTSPOT, so that the default button is the
-hotspot and appears at the mouse position.
-\note \#include <FL/fl_ask.H>
-param[in] mode   The position mode from the \ref Fl_Position_Mode enumeration.
-param[in] x   X position used when using FL_POSMODE_XY mode.
-param[in] y   Y position used when using FL_POSMODE_XY mode.
+    \note \#include <FL/fl_ask.H>
+    param[in] x   Preferred X position
+    param[in] y   Preferred Y position
 */
-void fl_message_position(const int mode, const int x, const int y) {
-  if (mode == FL_POSMODE_XY)
-  {
-    form_x = x;
-    form_y = y;
-  }
-
-  positionMode = mode;
+void fl_message_position(const int x, const int y) {
+  form_x = x;
+  form_y = y;
 }
 
-/** Gets whether or not to move the common message box used in
-many common dialogs like fl_message(), fl_alert(),
-fl_ask(), fl_choice(), fl_input(), fl_password().
+/** Gets the preferred position for common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password().
 
-The default mode is FL_POSMODE_HOTSPOT, so that the default button is the
-hotspot and appears at the mouse position.
-\note \#include <FL/fl_ask.H>
-\return mode   The position mode from the \ref Fl_Position_Mode enumeration.
-param[out] x   X position used when using FL_POSMODE_XY mode.
-param[out] y   Y position used when using FL_POSMODE_XY mode.
-\see fl_message_position(int,int,int)
+    \note \#include <FL/fl_ask.H>
+    param[out] x   Preferred X position, returns INT_MIN if not set
+    param[out] y   Preferred Y position, returns INT_MIN if not set
+\see fl_message_position(int,int)
 */
-int fl_message_position(int* x, int* y) {
-  if (x != NULL)
+void fl_message_position(int* x, int* y) {
+  if (x)
     *x = form_x;
 
-  if (y != NULL)
+  if (y)
     *y = form_y;
-
-  return positionMode;
 }
 
 /** Sets whether or not to move the common message box used in
@@ -569,10 +559,9 @@ int fl_message_position(int* x, int* y) {
     \note \#include <FL/fl_ask.H>
     \param[in]	enable	non-zero enables hotspot behavior,
 			0 disables hotspot
-    \deprecated Use fl_message_position(int,int,int)
  */
 void fl_message_hotspot(int enable) {
-  enable ? positionMode = FL_POSMODE_HOTSPOT : positionMode = FL_POSMODE_WM;
+  enableHotspot = enable ? 1 : 0;
 }
 
 /** Gets whether or not to move the common message box used in
@@ -582,10 +571,9 @@ void fl_message_hotspot(int enable) {
     \note \#include <FL/fl_ask.H>
     \return	0 if disable, non-zero otherwise
     \see fl_message_hotspot(int)
-    \deprecated Use fl_message_position(int*,int*)
  */
 int fl_message_hotspot(void) {
-  return positionMode == FL_POSMODE_HOTSPOT;
+  return enableHotspot;
 }
 
 /** Sets the title of the dialog window used in many common dialogs.
