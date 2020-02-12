@@ -51,7 +51,7 @@ class Fl_Widget_Tracker;
   down, but if you have an input field in the same window, the user will have
   to hold down the \e Alt key so that the input field does not eat the event
   first as an \c FL_KEYBOARD event.
-
+  \see Fl_Widget::shortcut_label(int)
   \todo Refactor the doxygen comments for Fl_Button type() documentation.
 
   For an Fl_Button object, the type() call returns one of:

@@ -75,6 +75,7 @@
  and Fl_Text_Buffer classes.
 
  \note Line numbers were added in FLTK 1.3.3.
+ \see Fl_Widget::shortcut_label(int)
  */
 class FL_EXPORT Fl_Text_Display: public Fl_Group {
 

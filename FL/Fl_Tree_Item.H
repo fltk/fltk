@@ -452,7 +452,9 @@ public:
   //////////////////
   const Fl_Tree_Item* find_clicked(const Fl_Tree_Prefs &prefs, int yonly=0) const;
   Fl_Tree_Item* find_clicked(const Fl_Tree_Prefs &prefs, int yonly=0);
+  int event_on_item(const Fl_Tree_Prefs &prefs) const;
   int event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const;
+  int event_on_user_icon(const Fl_Tree_Prefs &prefs) const;
   int event_on_label(const Fl_Tree_Prefs &prefs) const;
   /// Is this item the root of the tree?
   int is_root() const {

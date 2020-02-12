@@ -71,17 +71,6 @@ if (UNIX)
 endif (UNIX)
 
 #######################################################################
-##  Add a TEMPORARY OPTION to enable high-DPI support under Windows.
-##  May be removed once high-DPI support under Windows is complete.
-#######################################################################
-if (WIN32)
-  option(OPTION_HIDPI "build with experimental high-DPI support" OFF)
-  if (OPTION_HIDPI)
-    add_definitions("-DFLTK_HIDPI_SUPPORT")
-  endif (OPTION_HIDPI)
-endif (WIN32)
-
-#######################################################################
 if (APPLE)
   option (OPTION_APPLE_X11 "use X11" OFF)
   option (OPTION_APPLE_SDL "use SDL" OFF)
@@ -349,7 +338,11 @@ endif (ZLIB_FOUND)
 set (HAVE_LIBZ 1)
 
 #######################################################################
-option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBJPEG "use system libjpeg" ON)
+endif (APPLE)
 
 if (OPTION_USE_SYSTEM_LIBJPEG)
   include (FindJPEG)
@@ -373,7 +366,11 @@ endif (JPEG_FOUND)
 set (HAVE_LIBJPEG 1)
 
 #######################################################################
-option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
+if (APPLE)
+  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" OFF)
+else ()
+  option (OPTION_USE_SYSTEM_LIBPNG "use system libpng" ON)
+endif (APPLE)
 
 if (OPTION_USE_SYSTEM_LIBPNG)
   include (FindPNG)
@@ -467,8 +464,9 @@ endif (OPTION_USE_PANGO)
 if(X11_Xft_FOUND AND OPTION_USE_PANGO)
 #this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
   if(APPLE AND OPTION_APPLE_X11)
-     list(APPEND CMAKE_INCLUDE_PATH  /sw/include)
-     list(APPEND CMAKE_LIBRARY_PATH  /sw/lib)
+     find_file(FINK_PREFIX NAMES /opt/sw /sw)
+     list(APPEND CMAKE_INCLUDE_PATH  ${FINK_PREFIX}/include)
+     list(APPEND CMAKE_LIBRARY_PATH  ${FINK_PREFIX}/lib)
   endif(APPLE AND OPTION_APPLE_X11)
   find_file(HAVE_PANGO_H pango-1.0/pango/pango.h ${CMAKE_INCLUDE_PATH})
   find_file(HAVE_PANGOXFT_H pango-1.0/pango/pangoxft.h ${CMAKE_INCLUDE_PATH})
@@ -499,7 +497,7 @@ if(X11_Xft_FOUND AND OPTION_USE_PANGO)
     include_directories(${PANGO_H_PREFIX}/pango-1.0 ${GLIB_H_PATH} ${PANGOLIB_DIR}/glib-2.0/include)
     list(APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
     if (APPLE)
-      set (LDFLAGS "${LDFLAGS} -L/sw/lib")
+      set(LDFLAGS "${LDFLAGS} -L${FINK_PREFIX}/lib")
     endif (APPLE)
   endif(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
 endif(X11_Xft_FOUND AND OPTION_USE_PANGO)

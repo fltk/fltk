@@ -89,7 +89,6 @@ Fl_Quartz_Image_Surface_Driver::~Fl_Quartz_Image_Surface_Driver() {
     CGContextRelease((CGContextRef)offscreen);
   }
   delete driver();
-  if (is_current()) end_current();
 }
 
 void Fl_Quartz_Image_Surface_Driver::set_current() {
@@ -128,6 +127,7 @@ Fl_RGB_Image* Fl_Quartz_Image_Surface_Driver::image()
 void Fl_Quartz_Image_Surface_Driver::end_current()
 {
   fl_window = pre_window;
+  Fl_Surface_Device::end_current();
 }
 
 #endif // FL_CFG_GFX_QUARTZ

@@ -15,10 +15,10 @@ Current versions of bundled libraries:
   ** work in progress -- not yet completely upgraded **
 
   Library       Version            Release date		FLTK Version
-  ------------------------------------------------------------------
+  --------------------------------------------------------------------------
   jpeg          jpeg-9c            2018-01-14           1.4.0
   nanosvg       f31098fa85 [1]     2019-05-23           1.4.0
-  png           libpng-1.6.34      2017-09-29           1.4.0
+  png           libpng-1.6.37      2019-04-14           1.4.0
   zlib          zlib-1.2.11        2017-01-15           1.4.0
 
 Previous versions of bundled libraries:
@@ -26,9 +26,9 @@ Previous versions of bundled libraries:
   Library       Version            Release date		FLTK Version
   ------------------------------------------------------------------
   nanosvg       ce81a6577c [1]     2018-07-01           1.4.0
-  jpeg          jpeg-9a            2014-01-19           1.3.4
-  png           libpng-1.6.16      2014-12-22           1.3.4
-  zlib          zlib-1.2.8         2013-04-28           1.3.4
+  jpeg          jpeg-9a            2014-01-19           1.3.5
+  png           libpng-1.6.16      2014-12-22           1.3.5
+  zlib          zlib-1.2.8         2013-04-28           1.3.5
 
 [1] Git commit in: https://github.com/fltk/nanosvg
     See also git tag 'fltk_yyyy-mm-dd' where yyyy-mm-dd == "Release date".
@@ -148,7 +148,7 @@ png:
 
     Makefile: Same as CMakeLists.txt.
 
-    Note: more to come...
+    pnglibconf.h: Generate on a Linux system and merge.
 
     makedepend: Keep this file.
 

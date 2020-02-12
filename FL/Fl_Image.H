@@ -226,6 +226,7 @@ public:
   static void scaling_algorithm(Fl_RGB_Scaling algorithm) {scaling_algorithm_ = algorithm; }
   /** Gets what algorithm is used when resizing a source image to draw it. */
   static Fl_RGB_Scaling scaling_algorithm() {return scaling_algorithm_;}
+  static bool register_images_done;
 };
 
 

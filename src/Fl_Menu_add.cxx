@@ -3,7 +3,7 @@
 //
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -42,7 +42,6 @@ extern Fl_Menu_* fl_menu_array_owner; // in Fl_Menu_.cxx
 // depreciated and should not be used.  These old methods use the
 // above pointers to detect if the array belongs to an Fl_Menu_
 // widget, and if so it reallocates as necessary.
-
 
 
 // Insert a single Fl_Menu_Item into an array of size at offset n,
@@ -376,13 +375,7 @@ int Fl_Menu_::insert(
   // make this widget own the local array:
   if (this != fl_menu_array_owner) {
     if (fl_menu_array_owner) {
-      Fl_Menu_* o = fl_menu_array_owner;
-      // the previous owner gets its own correctly-sized array:
-      int value_offset = (int) (o->value_-local_array);
-      int n = local_array_size;
-      Fl_Menu_Item* newMenu = o->menu_ = new Fl_Menu_Item[n];
-      memcpy(newMenu, local_array, n*sizeof(Fl_Menu_Item));
-      if (o->value_) o->value_ = newMenu+value_offset;
+      fl_menu_array_owner->menu_end();
     }
     if (menu_) {
       // this already has a menu array, use it as the local one:
@@ -493,6 +486,45 @@ void Fl_Menu_::remove(int i) {
   }
   // MRS: "n" is the menu size(), which includes the trailing NULL entry...
   memmove(item, next_item, (menu_+n-next_item)*sizeof(Fl_Menu_Item));
+}
+
+/**
+  Finishes menu modifications and returns menu().
+
+  Call menu_end() after using add(), insert(), remove(), or any other
+  methods that may change the menu array if you want to access the
+  menu array anytime later with menu(). This should be called only
+  once after the \b last menu modification for performance reasons.
+
+  Does nothing if the menu array is already in a private location.
+
+  Some methods like Fl_Menu_Button::popup() call this method before
+  their menu is opened.
+
+  \note After menu changes like add(), insert(), etc. menu() would
+    return a pointer to a temporary internal menu array that may be
+    relocated at unexpected times. This is due to performance
+    considerations and may be changed w/o further notice.
+
+  \since 1.4.0
+
+  \returns New Fl_Menu_Item array pointer.
+
+  \see Fl_Menu_::menu()
+*/
+
+const Fl_Menu_Item *Fl_Menu_::menu_end() {
+  if (menu_ == local_array && fl_menu_array_owner == this) {
+    // copy the menu array to a private correctly-sized array:
+    int value_offset = (int)(value_ - local_array);
+    int n = local_array_size;
+    Fl_Menu_Item* newMenu = menu_ = new Fl_Menu_Item[n];
+    memcpy(newMenu, local_array, n * sizeof(Fl_Menu_Item));
+    if (value_)
+      value_ = newMenu + value_offset;
+    fl_menu_array_owner = 0;
+  }
+  return menu_;
 }
 
 //

@@ -3,7 +3,7 @@
 //
 // Menu button widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,8 +46,14 @@ void Fl_Menu_Button::draw() {
   and if they pick one it sets value() and does the callback or
   sets changed() as described above.  The menu item is returned
   or NULL if the user dismisses the menu.
+
+  \note Since FLTK 1.4.0 Fl_Menu_::menu_end() is called before the menu
+    pops up to make sure the menu array is located in private storage.
+
+  \see Fl_Menu_::menu_end()
 */
 const Fl_Menu_Item* Fl_Menu_Button::popup() {
+  menu_end();
   const Fl_Menu_Item* m;
   pressed_menu_button_ = this;
   redraw();

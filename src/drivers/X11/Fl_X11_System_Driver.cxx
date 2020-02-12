@@ -24,6 +24,10 @@
 #include <X11/Xlib.h>
 #include <locale.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 
 #if defined(_AIX)
 extern "C" {
@@ -397,25 +401,38 @@ void Fl_X11_System_Driver::newUUID(char *uuidBuffer)
 char *Fl_X11_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                                 const char *application)
 {
-  static char filename[ FL_PATH_MAX ]; filename[0] = 0;
+  static char *filename = 0L;
+  if (!filename) filename = (char*)::calloc(1, FL_PATH_MAX);
   const char *e;
-  switch (root) {
+  switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::USER:
-      if ((e = getenv("HOME")) != NULL) {
-        strlcpy(filename, e, sizeof(filename));
-        
-        if (filename[strlen(filename)-1] != '/') {
-          strlcat(filename, "/.fltk/", sizeof(filename));
-        } else {
-          strlcat(filename, ".fltk/", sizeof(filename));
-        }
-        break;
+      e = getenv("HOME");
+      // make sure that $HOME is set to an existing directory
+      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
+        struct passwd *pw = getpwuid(getuid());
+        e = pw->pw_dir;
       }
+      if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
+        return 0L;
+      } else {
+        strlcpy(filename, e, FL_PATH_MAX);
+        if (filename[strlen(filename)-1] != '/')
+          strlcat(filename, "/", FL_PATH_MAX);
+        strlcat(filename, ".fltk/", FL_PATH_MAX);
+      }
+      break;
     case Fl_Preferences::SYSTEM:
       strcpy(filename, "/etc/fltk/");
       break;
   }
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+    
+  // Make sure that the parameters are not NULL
+  if ( (vendor==0L) || (vendor[0]==0) )
+    vendor = "unknown";
+  if ( (application==0L) || (application[0]==0) )
+    application = "unknown";
+
+  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "%s/%s.prefs", vendor, application);
   return filename;
 }
@@ -516,6 +533,68 @@ int Fl_X11_System_Driver::utf8locale() {
   }
   return ret;
 }
+
+#if HAVE_DLSYM && HAVE_DLFCN_H
+#include <dlfcn.h>   // for dlopen et al
+#endif
+#if HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
+
+bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
+  typedef void (*init_t)(int*, void*);
+  *ptr_gtk = NULL;
+  // was GTK previously loaded?
+  init_t init_f = (init_t)dlsym(RTLD_DEFAULT, "gtk_init_check");
+  if (init_f) { // yes it was.
+    *ptr_gtk = RTLD_DEFAULT; // Caution: NULL under linux, not-NULL under Darwin
+  } else {
+    // Try first with GTK3
+    *ptr_gtk = Fl::system_driver()->dlopen("libgtk-3.so");
+    if (*ptr_gtk) {
+#ifdef DEBUG
+      puts("selected GTK-3\n");
+#endif
+    } else {
+      // Try then with GTK2
+      *ptr_gtk = Fl::system_driver()->dlopen("libgtk-x11-2.0.so");
+#ifdef DEBUG
+      if (*ptr_gtk) {
+        puts("selected GTK-2\n");
+      }
+#endif
+    }
+    if (!(*ptr_gtk)) {
+#ifdef DEBUG
+      puts("Failure to load libgtk");
+#endif
+      return false;
+    }
+    init_f = (init_t)dlsym(*ptr_gtk, "gtk_init_check");
+    if (!init_f) return false;
+  }
+
+  // The point here is that after running gtk_init_check, the calling program's current locale can be modified.
+  // To avoid that, we memorize the calling program's current locale and restore the locale
+  // before returning.
+  char *before = NULL;
+  // record in "before" the calling program's current locale
+  char *p = setlocale(LC_ALL, NULL);
+  if (p) before = strdup(p);
+  int ac = 0;
+  init_f(&ac, NULL); // may change the locale
+  if (before) {
+    setlocale(LC_ALL, before); // restore calling program's current locale
+    free(before);
+  }
+
+  // now check if running version is high enough
+  if (dlsym(*ptr_gtk, "gtk_get_major_version") == NULL) { // YES indicates V 3
+    typedef const char* (*check_t)(int, int, int);
+    check_t check_f = (check_t)dlsym(*ptr_gtk, "gtk_check_version");
+    if (!check_f || check_f(major, minor, 0) ) return false;
+  }
+  return true;
+}
+#endif // HAVE_DLSYM && HAVE_DLFCN_H && defined(RTLD_DEFAULT)
 
 #if !defined(FL_DOXYGEN)
 

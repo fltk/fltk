@@ -263,6 +263,7 @@ private:
     char *utf8; //its text
     Fl_Font_Descriptor *fdesc; // its font
     float scale; // scaling factor of the GUI
+    int str_len; // the length of the utf8 text
   } data;
   data *fifo; // array of pile elements
   int size_; // pile height
@@ -300,9 +301,11 @@ int gl_texture_fifo::already_known(const char *str, int n)
 {
   int rank;
   for ( rank = 0; rank <= last; rank++) {
-    if ( (memcmp(str, fifo[rank].utf8, n) == 0) && (fifo[rank].utf8[n] == 0) &&
-      (fifo[rank].fdesc == gl_fontsize) && (fifo[rank].scale == gl_scale) ) {
-        return rank;
+    if ((fifo[rank].str_len == n) &&
+	(fifo[rank].fdesc == gl_fontsize) &&
+	(fifo[rank].scale == gl_scale) &&
+	(memcmp(str, fifo[rank].utf8, n) == 0)) {
+      return rank;
     }
   }
   return -1; // means no texture exists yet for that string
@@ -403,6 +406,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fifo[current].utf8 = (char *)malloc(n + 1);
   memcpy(fifo[current].utf8, str, n);
   fifo[current].utf8[n] = 0;
+  fifo[current].str_len = n; // record length of text in utf8
   fl_graphics_driver->font_descriptor(gl_fontsize);
   int w, h;
   w = fl_width(fifo[current].utf8, n) * gl_scale;
@@ -412,7 +416,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
 
   fifo[current].scale = gl_scale;
   fifo[current].fdesc = gl_fontsize;
-  char *txt_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h);
+  char *alpha_buf = Fl_Gl_Window_Driver::global()->alpha_mask_for_string(str, n, w, h);
 
   // save GL parameters GL_UNPACK_ROW_LENGTH and GL_UNPACK_ALIGNMENT
   GLint row_length, alignment;
@@ -426,12 +430,12 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   glPixelStorei(GL_UNPACK_ROW_LENGTH, w);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   // GL_ALPHA8 is defined in GL/gl.h of X11 and of MinGW32 and of MinGW64 and of OpenGL.framework for MacOS
-  glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_ALPHA8, w, h, 0, GL_ALPHA, GL_UNSIGNED_BYTE, txt_buf);
+  glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_ALPHA8, w, h, 0, GL_ALPHA, GL_UNSIGNED_BYTE, alpha_buf);
   /* For the record: texture construction if an alpha-only-texture is not possible
    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8, w, h, 0, GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, rgba_buf);
    and also, replace GL_SRC_ALPHA by GL_ONE in glBlendFunc() call of display_texture()
    */
-  delete[] txt_buf; // free the buffer now we have copied it into the Gl texture
+  delete[] alpha_buf; // free the buffer now we have copied it into the GL texture
   glPopAttrib();
   // restore saved GL parameters
   glPixelStorei(GL_UNPACK_ROW_LENGTH, row_length);
@@ -521,13 +525,13 @@ char *Fl_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, int w, 
   Fl_Surface_Device::pop_current();
   delete image_surface;
   // This gives us an RGB rendering of the text. We build an alpha channel from that.
-  char *txt_buf = new char [w * h];
+  char *alpha_buf = new char [w * h];
   for (int idx = 0; idx < w * h; ++idx)
   { // Fake up the alpha component using the green component's value
-    txt_buf[idx] = image->array[idx * 3 + 1];
+    alpha_buf[idx] = image->array[idx * 3 + 1];
   }
   delete image;
-  return txt_buf;
+  return alpha_buf;
 }
 
 
@@ -778,7 +782,7 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
   fl_font(f, s * gl_scale);
   fl_draw(str, n, 0, fl_height() - fl_descent());
   // get the alpha channel only of the bitmap
-  char *txt_buf = new char[w*h], *r = txt_buf, *q;
+  char *alpha_buf = new char[w*h], *r = alpha_buf, *q;
   q = (char*)CGBitmapContextGetData(surf->offscreen());
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
@@ -788,7 +792,7 @@ char *Fl_Cocoa_Gl_Window_Driver::alpha_mask_for_string(const char *str, int n, i
   }
   Fl_Surface_Device::pop_current();
   delete surf;
-  return txt_buf;
+  return alpha_buf;
 }
 
 #endif // FL_CFG_GFX_QUARTZ

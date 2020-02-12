@@ -92,7 +92,7 @@ case $host_os in
 		OPTIM="-U__APPLE__ $OPTIM"
     		macosversion=`sw_vers -productVersion | cut -d. -f2`
 		if  test $macosversion -ge "13" ; then
-	    		CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.8"
+	    		CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.9 -D_LIBCPP_HAS_THREAD_API_PTHREAD"
 		fi
 	fi
 	;;
@@ -1089,8 +1089,8 @@ case $host_os_gui in
 	if test x$enable_pango = xyes; then
 	    case $host_os in
     		darwin*)
-	    	  CXXFLAGS="-I/sw/include/pango-1.0 -I/sw/include/glib-2.0 -I/sw/lib/glib-2.0/include $CXXFLAGS"
-	    	  PANGOLIBDIR="-L/sw/lib"
+	    	  CXXFLAGS="`pkg-config --cflags pango` $CXXFLAGS"
+	    	  PANGOLIBDIR="`pkg-config --libs-only-L pango`"
 	    	  ;;
     		linux*)
 	    	  CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"

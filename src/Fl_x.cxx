@@ -3,17 +3,17 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #if !defined(FL_DOXYGEN)
@@ -76,6 +76,8 @@ static bool have_xfixes = false;
 #  endif
 
 extern Fl_Widget *fl_selection_requestor;
+
+static void open_display_i(Display *d); // open display (internal)
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -606,7 +608,7 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   if (fl_display) return;
 
   setlocale(LC_CTYPE, "");
-  XSetLocaleModifiers("@im=");
+  XSetLocaleModifiers("");
 
   XSetIOErrorHandler(io_error_handler);
   XSetErrorHandler(xerror_handler);
@@ -614,14 +616,14 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   Display *d = XOpenDisplay(0);
   if (!d) Fl::fatal("Can't open display: %s",XDisplayName(0));
 
-  fl_open_display(d);
+  open_display_i(d);
   // the unique GC used by all X windows
   GC gc = XCreateGC(fl_display, RootWindow(fl_display, fl_screen), 0, 0);
   Fl_Graphics_Driver::default_driver().gc(gc);
 }
 
 
-void fl_open_display(Display* d) {
+void open_display_i(Display* d) {
   fl_display = d;
 
   WM_DELETE_WINDOW      = XInternAtom(d, "WM_DELETE_WINDOW",    0);
@@ -697,7 +699,7 @@ void fl_open_display(Display* d) {
 
 #if USE_XRANDR
   void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
-  if (!libxrandr_addr)  libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
+  if (!libxrandr_addr)  libxrandr_addr = Fl::system_driver()->dlopen("libXrandr.so");
   if (libxrandr_addr) {
     int error_base;
     typedef Bool (*XRRQueryExtension_type)(Display*, int*, int*);
@@ -751,18 +753,56 @@ const char * fl_selection_type[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2] = {0,0};
 
+static void read_int(uchar *c, int& i) {
+  i = *c;
+  i |= (*(++c))<<8;
+  i |= (*(++c))<<16;
+  i |= (*(++c))<<24;
+}
+
+// turn BMP image FLTK produced by create_bmp() back to Fl_RGB_Image
+static Fl_RGB_Image *own_bmp_to_RGB(char *bmp) {
+  int w, h;
+  read_int((uchar*)bmp + 18, w);
+  read_int((uchar*)bmp + 22, h);
+  int R=(3*w+3)/4 * 4; // the number of bytes per row, rounded up to multiple of 4
+  bmp +=  54;
+  uchar *data = new uchar[w*h*3];
+  uchar *p = data;
+  for (int i = h-1; i >= 0; i--) {
+    char *s = bmp + i * R;
+    for (int j = 0; j < w; j++) {
+      *p++=s[2];
+      *p++=s[1];
+      *p++=s[0];
+      s+=3;
+    }
+  }
+  Fl_RGB_Image *img = new Fl_RGB_Image(data, w, h, 3);
+  img->alloc_array = 1;
+  return img;
+}
+
 // Call this when a "paste" operation happens:
 void Fl_X11_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (fl_i_own_selection[clipboard]) {
     // We already have it, do it quickly without window server.
-    // Notice that the text is clobbered if set_selection is
-    // called in response to FL_PASTE!
-    // However, for now, we only paste text in this function
-    if (fl_selection_type[clipboard] != Fl::clipboard_plain_text) return; //TODO: allow copy/paste of image within same app
-    Fl::e_text = fl_selection_buffer[clipboard];
-    Fl::e_length = fl_selection_length[clipboard];
-    if (!Fl::e_text) Fl::e_text = (char *)"";
-    receiver.handle(FL_PASTE);
+    if (type == Fl::clipboard_plain_text && fl_selection_type[clipboard] == type) {
+      // Notice that the text is clobbered if set_selection is
+      // called in response to FL_PASTE!
+      // However, for now, we only paste text in this function
+      Fl::e_text = fl_selection_buffer[clipboard];
+      Fl::e_length = fl_selection_length[clipboard];
+      if (!Fl::e_text) Fl::e_text = (char *)"";
+    } else if (clipboard == 1 && type == Fl::clipboard_image && fl_selection_type[1] == type) {
+      Fl::e_clipboard_data = own_bmp_to_RGB(fl_selection_buffer[1]);
+      Fl::e_clipboard_type = Fl::clipboard_image;
+    } else return;
+    int retval = receiver.handle(FL_PASTE);
+    if (retval == 0 && type == Fl::clipboard_image) {
+      delete (Fl_RGB_Image*)Fl::e_clipboard_data;
+      Fl::e_clipboard_data = NULL;
+    }
     return;
   }
   // otherwise get the window server to return it:
@@ -775,11 +815,15 @@ void Fl_X11_System_Driver::paste(Fl_Widget &receiver, int clipboard, const char 
 
 int Fl_X11_System_Driver::clipboard_contains(const char *type)
 {
+  if (fl_i_own_selection[1]) {
+    return fl_selection_type[1] == type;
+  }
   XEvent event;
   Atom actual; int format; unsigned long count, remaining, i = 0;
   unsigned char* portion = NULL;
   Fl_Window *win = Fl::first_window();
   if (!win || !fl_xid(win)) return 0;
+  win->wait_for_expose();
   XConvertSelection(fl_display, CLIPBOARD, TARGETS, CLIPBOARD, fl_xid(win), CurrentTime);
   XFlush(fl_display);
   do  { 
@@ -1212,13 +1256,39 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lowe
   return (long)total;
 }
 
-/* Internal function to reduce "deprecated" warnings for XKeycodeToKeysym().
-   This way we get only one warning. The option to use XkbKeycodeToKeysym()
-   instead would not help much - see STR #2913 for more information.
+/*
+  Internal function to reduce "deprecated" warnings for XKeycodeToKeysym().
+  This way we get at most one warning. The option to use XkbKeycodeToKeysym()
+  instead would not help much - see STR #2913 for more information.
+
+  Update (Jan 31, 2020): disable "deprecated declaration" warnings in
+  this function for GCC >= 4.6 and clang (all versions) to get rid of
+  these warnings at least for current GCC and clang compilers.
+
+  Note: '#pragma GCC diagnostic push' needs at least GCC 4.6.
 */
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 5))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 static KeySym fl_KeycodeToKeysym(Display *d, KeyCode k, unsigned i) {
   return XKeycodeToKeysym(d, k, i);
 }
+
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 5))
+#pragma GCC diagnostic pop
+#endif
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #if USE_XRANDR
 static void react_to_screen_reconfiguration() {
@@ -1304,7 +1374,7 @@ int fl_handle(const XEvent& thisevent)
     xim_im = XOpenIM(fl_display, NULL, NULL, NULL);
     if (!xim_im) {
       /*  XIM server has crashed */
-      XSetLocaleModifiers("@im=");
+      XSetLocaleModifiers("");
       fl_xim_im = NULL;
       fl_init_xim();
     } else {

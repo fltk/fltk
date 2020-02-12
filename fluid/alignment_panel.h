@@ -108,6 +108,7 @@ extern Fl_Choice *wArrowFocus;
 extern Fl_Choice *wShowTooltips;
 extern Fl_Choice *wDNDText;
 extern Fl_Choice *wGTKText;
+extern Fl_Choice *wPrintGTKText;
 extern Fl_Choice *wUserOrSystem;
 Fl_Double_Window* make_global_settings_window();
 extern Fl_Menu_Item menu_wVisibleFocus[];
@@ -115,6 +116,7 @@ extern Fl_Menu_Item menu_wArrowFocus[];
 extern Fl_Menu_Item menu_wShowTooltips[];
 extern Fl_Menu_Item menu_wDNDText[];
 extern Fl_Menu_Item menu_wGTKText[];
+extern Fl_Menu_Item menu_wPrintGTKText[];
 extern Fl_Menu_Item menu_wUserOrSystem[];
 #endif
 

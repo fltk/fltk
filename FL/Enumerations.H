@@ -3,7 +3,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1222,13 +1222,7 @@ enum Fl_Damage {
   FL_DAMAGE_ALL      = 0x80  /**< Everything needs to be redrawn. */
 };
 
-// FLTK 1.0.x compatibility definitions...
-#  ifdef FLTK_1_0_COMPAT
-#    define contrast	fl_contrast
-#    define down	fl_down
-#    define frame	fl_frame
-#    define inactive	fl_inactive
-#  endif // FLTK_1_0_COMPAT
+// FLTK 1.0.x compatibility definitions (FLTK_1_0_COMPAT) dropped in 1.4.0
 
 #endif
 

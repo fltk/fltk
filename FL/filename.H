@@ -104,22 +104,8 @@ FL_EXPORT void fl_decode_uri(char *uri);
 #  endif /* __cplusplus */
 
 /*
- * FLTK 1.0.x compatibility definitions...
+ * FLTK 1.0.x compatibility definitions (FLTK_1_0_COMPAT) dropped in 1.4.0
  */
-
-#  ifdef FLTK_1_0_COMPAT
-#    define filename_absolute	fl_filename_absolute
-#    define filename_expand	fl_filename_expand
-#    define filename_ext	fl_filename_ext
-#    define filename_isdir	fl_filename_isdir
-#    define filename_list	fl_filename_list
-#    define filename_match	fl_filename_match
-#    define filename_name	fl_filename_name
-#    define filename_relative	fl_filename_relative
-#    define filename_setext	fl_filename_setext
-#    define numericsort		fl_numericsort
-#  endif /* FLTK_1_0_COMPAT */
-
 
 #endif /* FL_FILENAME_H */
 

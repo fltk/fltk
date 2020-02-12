@@ -3,7 +3,7 @@
 //
 // OpenGL context routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -65,7 +65,7 @@ void gl_start() {
   }
   if (clip_state_number != fl_graphics_driver->fl_clip_state_number) {
     clip_state_number = fl_graphics_driver->fl_clip_state_number;
-    int x, y, w, h;
+    int x = 0, y = 0, w = 0, h = 0;
     if (fl_clip_box(0, 0, Fl_Window::current()->w(), Fl_Window::current()->h(),
 		    x, y, w, h)) {
       fl_clip_region(Fl_Graphics_Driver::default_driver().XRectangleRegion(x,y,w,h));

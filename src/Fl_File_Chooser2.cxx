@@ -385,7 +385,7 @@ Fl_File_Chooser::count() {
 void
 Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 {
-  char	*dirptr;			    // Pointer into directory
+  char	*dirptr;		// Pointer into directory
   char  fixpath[FL_PATH_MAX];   // Path with slashes converted
 
 
@@ -457,8 +457,8 @@ void
 Fl_File_Chooser::favoritesButtonCB()
 {
   int		v;			// Current selection
-  char		pathname[FL_PATH_MAX],		// Pathname
-		menuname[FL_PATH_MAX];		// Menu name
+  char		pathname[FL_PATH_MAX],	// Pathname
+		menuname[FL_PATH_MAX];	// Menu name
 
 
   v = favoritesButton->value();
@@ -624,7 +624,7 @@ void
 Fl_File_Chooser::fileListCB()
 {
   char	*filename,			// New filename
-	pathname[FL_PATH_MAX];			// Full pathname to file
+	pathname[FL_PATH_MAX + 4];	// Full pathname to file
 
 
   filename = (char *)fileList->text(fileList->value());
@@ -809,7 +809,7 @@ Fl_File_Chooser::fileNameCB()
       directory(pathname);
 
       if (filename[0]) {
-	char tempname[FL_PATH_MAX];
+	char tempname[FL_PATH_MAX + 4];
 
 	snprintf(tempname, sizeof(tempname), "%s/%s", directory_, filename);
 	fileName->value(tempname);
@@ -923,7 +923,7 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 		*start,				// Start of pattern
 		*end;				// End of pattern
   int		allfiles;			// Do we have a "*" pattern?
-  char		temp[FL_PATH_MAX];			// Temporary pattern string
+  char		temp[FL_PATH_MAX];		// Temporary pattern string
 
 
   // Make sure we have a pattern...
@@ -967,8 +967,8 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 void
 Fl_File_Chooser::newdir()
 {
-  const char	*dir;		// New directory name
-  char		pathname[FL_PATH_MAX];	// Full path of directory
+  const char	*dir;				// New directory name
+  char		pathname[FL_PATH_MAX + 4];	// Full path of directory
 
 
   // Get a directory name from the user
@@ -1117,7 +1117,7 @@ Fl_File_Chooser::showChoiceCB()
   const char	*item,			// Selected item
 		*patstart;		// Start of pattern
   char		*patend;		// End of pattern
-  char		temp[FL_PATH_MAX];		// Temporary string for pattern
+  char		temp[FL_PATH_MAX];	// Temporary string for pattern
 
 
   item = showChoice->text(showChoice->value());
@@ -1154,7 +1154,7 @@ void
 Fl_File_Chooser::update_favorites()
 {
   int		i;			// Looping var
-  char		pathname[FL_PATH_MAX],		// Pathname
+  char		pathname[FL_PATH_MAX],	// Pathname
 		menuname[2048];		// Menu name
   const char	*home;			// Home directory
 
@@ -1380,7 +1380,7 @@ Fl_File_Chooser::value(int f)	// I - File number
   int		i;		// Looping var
   int		fcount;		// Number of selected files
   const char	*name;		// Current filename
-  static char	pathname[FL_PATH_MAX];	// Filename + directory
+  static char	pathname[FL_PATH_MAX + 4]; // Filename + directory
 
 
   name = fileName->value();

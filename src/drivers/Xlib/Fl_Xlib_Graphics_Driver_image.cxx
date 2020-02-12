@@ -3,7 +3,7 @@
 //
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -474,8 +474,8 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 {
   if (!linedelta) linedelta = W*abs(delta);
 
-  int dx, dy, w, h;
-  fl_clip_box(X,Y,W,H,dx,dy,w,h);
+  int dx = 0, dy = 0, w = 0, h = 0;
+  fl_clip_box(X, Y, W, H, dx, dy, w, h);
   if (w<=0 || h<=0) return;
   dx -= X;
   dy -= Y;
@@ -762,8 +762,10 @@ void Fl_Xlib_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP
     cache(rgb);
   }
   cache_size(rgb, W, H);
+  int Wfull = rgb->w(), Hfull = rgb->h();
+  cache_size(rgb, Wfull, Hfull);
   scale_and_render_pixmap( *Fl_Graphics_Driver::id(rgb), rgb->d(),
-                                 rgb->data_w() / double(rgb->w()*scale()), rgb->data_h() / double(rgb->h()*scale()),
+                                 rgb->data_w() / double(Wfull), rgb->data_h() / double(Hfull),
                           cx*scale(), cy*scale(), (X + offset_x_)*scale(), (Y + offset_y_)*scale(), W, H);
 }
 
@@ -776,8 +778,9 @@ int Fl_Xlib_Graphics_Driver::scale_and_render_pixmap(Fl_Offscreen pixmap, int de
   memset(&srcattr, 0, sizeof(XRenderPictureAttributes));
   static XRenderPictFormat *fmt24 = XRenderFindStandardFormat(fl_display, PictStandardRGB24);
   static XRenderPictFormat *fmt32 = XRenderFindStandardFormat(fl_display, PictStandardARGB32);
+  static XRenderPictFormat *dstfmt = XRenderFindVisualFormat(fl_display, fl_visual->visual);
   Picture src = XRenderCreatePicture(fl_display, pixmap, has_alpha ?fmt32:fmt24, 0, &srcattr);
-  Picture dst = XRenderCreatePicture(fl_display, fl_window, fmt24, 0, &srcattr);
+  Picture dst = XRenderCreatePicture(fl_display, fl_window, dstfmt, 0, &srcattr);
   if (!src || !dst) {
     fprintf(stderr, "Failed to create Render pictures (%lu %lu)\n", src, dst);
     return 0;

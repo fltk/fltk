@@ -3,7 +3,7 @@
 //
 // X Color Browser demo program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -146,7 +146,7 @@ static int load_browser(char *fname)
   FILE *fp;
   RGBdb *db = rgbdb, *dbs = db + MAX_RGB;
   int r, g, b,  lr  = -1 , lg = -1, lb = -1;
-  char name[256], buf[256];
+  char name[256], buf[300];
 
   if (!(fp = fl_fopen(fname, "r"))) {
     fl_alert("%s\n%s\n%s","Load", fname, "Can't open");

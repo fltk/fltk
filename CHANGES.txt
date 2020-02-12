@@ -1,4 +1,4 @@
-Changes in FLTK 1.4.0					Released: ??? ?? 2019
+Changes in FLTK 1.4.0					Released: ??? ?? 2020
 
   General Information about this Release
 
@@ -18,6 +18,19 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   New Features and Extensions
 
   - (add new items here)
+  - New fl_putenv() is a cross-platform putenv() wrapper (see docs).
+  - New Fl::keyboard_screen_scaling(0) call stops recognition of ctrl/+/-/0/
+    keystrokes as scaling all windows of a screen.
+  - New "Preview" switch added to the GTK native file chooser dialog
+    available on the X11 platform. This requires function fl_register_images()
+    to have been called.
+  - New public variable Fl_Image::register_images_done allows an app. to detect
+    whether function fl_register_images() has been called.
+  - Fix Fl::add_timeout() under Linux (STR 3516).
+  - Fix early timeouts in Fl_Clock seen in some environments (STR 3516).
+  - Fl_Printer::begin_job() uses by default the Gnome print dialog on the X11
+    platform when the GTK library is available at run-time. That can be turned off
+    with Fl::option(OPTION_PRINTER_USES_GTK, false).
   - New member functions Fl_Paged_Device::begin_job() and begin_page()
     replace start_job() and start_page(). The start_... names are maintained
     for API compatibility.
@@ -93,6 +106,10 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   - FLTK's ABI version can be configured with 'configure' and CMake.
     See documentation in README.abi-version.txt.
 
+  Bundled libraries
+
+  - Bundled image libraries have been upgraded to newer versions.
+    For details see README.bundled-libs.txt.
 
   1.4.0 ABI FEATURES
 
@@ -102,6 +119,15 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   Other Improvements
 
   - (add new items here)
+  - Improve X11 16-bit coordinate clipping for text (STR 2798). This
+    assumes that text is "small" WRT 16-bit coordinate space and clips
+    text if at least one of the x/y coordinates is out of bounds.
+  - Fix Fl::add_timeout() in draw() under Linux (STR 3188)
+  - Class Fl_Native_File_Chooser uses in priority the file chooser dialog
+    of GTK version 3 when available on the running X11 platform, and falls back
+    to version 2 when V3 is not available. In contrast, GTK version 2 was used
+    in priority by FLTK 1.3.x
+  - Added support for macOS 10.15 "Catalina"
   - Improved documentation for '@' symbols in labels (STR #2940).
   - Fl_Roller can now be controlled via the mouse wheel (STR #3120).
   - Tooltips hide by themselves after 12 seconds (STR #2584).
@@ -186,6 +212,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2019
   - Bundled IDE project files (Xcode and Visual Studio) have been
     removed. Please use CMake to generate your IDE project files.
     See README.CMake.txt for more information.
+  - Dropped FLTK 1.0 compatibility (macro FLTK_1_0_COMPAT). This "feature"
+    was no longer usable since FLTK 1.3, hence it can be dropped safely.
 
 
 Changes in FLTK 1.3

@@ -209,7 +209,7 @@ template_browser->do_callback();} {}
 Function {template_load()} {open return_type void
 } {
   code {int i;
-char name[1024], filename[1024], path[1024], *ptr;
+char name[1024], filename[1400], path[1024], *ptr;
 struct dirent **files;
 int num_files;
 

@@ -42,7 +42,10 @@ Fl_Image_Surface::Fl_Image_Surface(int w, int h, int high_res, Fl_Offscreen off)
 
 
 /** The destructor. */
-Fl_Image_Surface::~Fl_Image_Surface() { delete platform_surface; }
+Fl_Image_Surface::~Fl_Image_Surface() {
+  if (is_current()) platform_surface->end_current();
+  delete platform_surface;
+}
 
 void Fl_Image_Surface::origin(int x, int y) {platform_surface->origin(x, y);}
 

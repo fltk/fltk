@@ -116,7 +116,11 @@ typedef  int FL_SOCKET;
 # endif
 typedef struct HGLRC__ *GLContext;
 #include <sys/stat.h>
-struct dirent {char d_name[1];};
+#ifdef __MINGW32__
+#  include <dirent.h>
+#else
+   struct dirent {char d_name[1];};
+#endif
 
 #elif defined(__ANDROID__)
 

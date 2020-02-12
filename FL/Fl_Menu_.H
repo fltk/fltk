@@ -3,7 +3,7 @@
 //
 // Menu base class header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -50,7 +50,7 @@
 
   The line spacing between menu items can be controlled with the global setting
   Fl::menu_linespacing().
-
+ \see Fl_Widget::shortcut_label(int)
 */
 class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 
@@ -95,8 +95,25 @@ public:
 
   /**
     Returns a pointer to the array of Fl_Menu_Items.  This will either be
-    the value passed to menu(value) or the private copy.
-    \sa size() -- returns the size of the Fl_Menu_Item array.
+    the value passed to menu(value) or the private copy or an internal
+    (temporary) location (see note below).
+
+    \note <b>Implementation details - may be changed in the future.</b>
+      All modifications of the menu array are done by copying the entire
+      menu array to an internal storage for optimization of memory
+      allocations, for instance when using add() or insert(). While this
+      is done, menu() returns the pointer to this internal location. The
+      entire menu will be copied back to private storage when needed,
+      i.e. when \b another Fl_Menu_ is modified. You can force this
+      reallocation after you're done with all menu modifications by calling
+      Fl_Menu_::menu_end() to make sure menu() returns a permanent pointer
+      to private storage (until the menu is modified again).
+      Note also that some menu methods (e.g. Fl_Menu_Button::popup()) call
+      menu_end() internally to ensure a consistent menu array while the
+      menu is open.
+
+    \see size() -- returns the size of the Fl_Menu_Item array.
+    \see menu_end() -- finish %menu modifications (optional)
 
     \b Example: How to walk the array:
     \code
@@ -112,6 +129,7 @@ public:
 
   */
   const Fl_Menu_Item *menu() const {return menu_;}
+  const Fl_Menu_Item *menu_end(); // in src/Fl_Menu_add.cxx
   void menu(const Fl_Menu_Item *m);
   void copy(const Fl_Menu_Item *m, void* user_data = 0);
   int insert(int index, const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);

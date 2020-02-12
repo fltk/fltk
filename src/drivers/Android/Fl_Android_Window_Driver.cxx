@@ -3,7 +3,7 @@
 //
 // Definition of Android window driver.
 //
-// Copyright 2018 by Bill Spitzak and others.
+// Copyright 2018-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -510,7 +510,8 @@ void Fl_WinAPI_Window_Driver::flush_double()
     fl_end_offscreen();
   }
 
-  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+  int X = 0, Y = 0, W = 0, H = 0;
+  fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
 }
 
@@ -540,7 +541,8 @@ void Fl_WinAPI_Window_Driver::flush_overlay()
   }
 
   if (eraseoverlay) fl_clip_region(0);
-  int X, Y, W, H; fl_clip_box(0, 0, w(), h(), X, Y, W, H);
+  int X = 0, Y = 0, W = 0, H = 0;
+  fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
 
   if (overlay() == oWindow) oWindow->draw_overlay();

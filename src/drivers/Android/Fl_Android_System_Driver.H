@@ -3,17 +3,17 @@
 //
 // Definition of Android system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /**
@@ -48,7 +48,7 @@ public:
   virtual void fatal(const char *format, va_list args);
   virtual char *utf2mbcs(const char *s);
   virtual char *getenv(const char *var);
-  virtual int putenv(char *var) {return ::putenv(var);} // *FIXME* needs string conversion
+  virtual int putenv(const char *var) { return ::putenv(strdup(var)); }
   virtual int open(const char *fnam, int oflags, int pmode);
   virtual int open_ext(const char *fnam, int binary, int oflags, int pmode);
   virtual FILE *fopen(const char *fnam, const char *mode);

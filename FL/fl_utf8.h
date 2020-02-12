@@ -3,17 +3,17 @@
  *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
- * Copyright 2016-2018 by Bill Spitzak and others.
+ * Copyright 2016-2020 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
  * Please report all bugs and problems on the following page:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/str.php
  */
 
 /* Merged in some functionality from the fltk-2 version. IMM.
@@ -190,6 +190,9 @@ FL_EXPORT int fl_rmdir(const char *f);
 
 /* OD: Portable UTF-8 aware getenv wrapper */
 FL_EXPORT char* fl_getenv(const char *name);
+
+/* Portable UTF-8 aware putenv wrapper */
+FL_EXPORT int fl_putenv(const char *var);
 
 /* OD: Portable UTF-8 aware execvp wrapper */
 FL_EXPORT int fl_mkdir(const char* f, int mode);

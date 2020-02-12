@@ -3,17 +3,17 @@
 //
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2018 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems to:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /**
@@ -462,10 +462,30 @@ void Fl_Graphics_Driver::polygon(int x0, int y0, int x1, int y1, int x2, int y2)
 /** see fl_push_clip() */
 void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {}
 
-/** see fl_clip_box() */
-int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {return 0;}
-/** see fl_not_clipped() */
+/**
+  Default graphics driver implementation of fl_clip_box().
 
+  This default implementation is sufficient for a graphics driver that does not
+  support clipping. Drivers that support clipping must override this virtual method.
+
+  It returns
+  - in (X, Y, W, H) the same values as given in (x, y, w, h) respectively
+  - 0 (zero) as the function return value
+  which means that \b nothing was clipped.
+
+  \returns 0 (zero) - nothing was clipped
+
+  \see fl_clip_box()
+*/
+int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
+  X = x;
+  Y = y;
+  W = w;
+  H = h;
+  return 0;
+}
+
+/** see fl_not_clipped() */
 int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {return 1;}
 
 /** see fl_begin_complex_polygon() */

@@ -3,17 +3,17 @@
 //
 // Input widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 // This is the "user interface", it decodes user actions into what to
@@ -32,7 +32,7 @@
 #include <FL/Fl_Input.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
-#include "flstring.h"
+#include "flstring.h"		// this #includes "<config.h>" !
 
 #include <FL/Fl_Float_Input.H>
 #include <FL/Fl_Int_Input.H>
@@ -613,27 +613,31 @@ int Fl_Input::handle(int event) {
       Fl::first_window()->cursor(FL_CURSOR_MOVE);
       dnd_save_focus = NULL;
       return 1;
-      
+
     case FL_DND_RELEASE:
       if (dnd_save_focus == this) { // if the dragged text comes from the same widget
-	// remove the selected text
-	int old_position = position();
-	if (dnd_save_mark > dnd_save_position) {
-	  int tmp = dnd_save_mark;
-	  dnd_save_mark = dnd_save_position;
-	  dnd_save_position = tmp;
+	if (!readonly()) {
+	  // remove the selected text
+	  int old_position = position();
+	  if (dnd_save_mark > dnd_save_position) {
+	    int tmp = dnd_save_mark;
+	    dnd_save_mark = dnd_save_position;
+	    dnd_save_position = tmp;
 	  }
-	replace(dnd_save_mark, dnd_save_position, NULL, 0);
-	if (old_position > dnd_save_position) position(old_position - (dnd_save_position - dnd_save_mark));
-	else position(old_position);
-	}
-      else if(dnd_save_focus) {
+	  replace(dnd_save_mark, dnd_save_position, NULL, 0);
+	  if (old_position > dnd_save_position)
+	    position(old_position - (dnd_save_position - dnd_save_mark));
+	  else
+	    position(old_position);
+	} // !readonly()
+      } // from the same widget
+      else if (dnd_save_focus) {
 	dnd_save_focus->handle(FL_UNFOCUS);
-	}
+      }
       dnd_save_focus = NULL;
       take_focus();
       return 1;
-      
+
       /* TODO: this will scroll the area, but stop if the cursor would become invisible.
        That clipping happens in drawtext(). Do we change the clipping or should 
        we move the cursor (ouch)?

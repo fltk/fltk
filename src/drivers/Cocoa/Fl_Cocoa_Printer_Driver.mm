@@ -57,7 +57,7 @@ private:
   PMPageFormat    pageFormat;
   PMPrintSettings printSettings;
   Fl_Cocoa_Printer_Driver(void);
-  int begin_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
   int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
@@ -372,7 +372,8 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
     this->print_widget(win, x_offset, y_offset);
     return;
   }
-  int bt = win->decorated_h() - win->h();
+  int bt, hleft, hright, hbottom;
+  Fl_Cocoa_Window_Driver::driver(win)->decoration_sizes(&bt, &hleft,  &hright, &hbottom);
   float s = Fl::screen_scale(win->screen_num());
   if (s < 1) y_offset += bt*(1/s-1);
   CALayer *layer = Fl_Cocoa_Window_Driver::driver(win)->get_titlebar_layer();

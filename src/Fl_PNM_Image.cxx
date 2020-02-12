@@ -48,8 +48,10 @@
  ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  PNM format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason.
+
+ \param[in] filename a full path and name pointing to a valid jpeg file.
  */
-Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
+Fl_PNM_Image::Fl_PNM_Image(const char *filename)	// I - File to read
   : Fl_RGB_Image(0,0,0) {
   FILE		*fp;		// File pointer
   int		x, y;		// Looping vars
@@ -63,7 +65,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 		maxval;		// Maximum pixel value
 
 
-  if ((fp = fl_fopen(name, "rb")) == NULL) {
+  if ((fp = fl_fopen(filename, "rb")) == NULL) {
     ld(ERR_FILE_ACCESS);
     return;
   }
@@ -84,7 +86,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
   lineptr = fgets(line, sizeof(line), fp);
   if (!lineptr) {
     fclose(fp);
-    Fl::error("Early end-of-file in PNM file \"%s\"!", name);
+    Fl::error("Early end-of-file in PNM file \"%s\"!", filename);
     ld(ERR_FILE_ACCESS);
     return;
   }
@@ -128,10 +130,10 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
   if (format == 1 || format == 2 || format == 4 || format == 5) d(1);
   else d(3);
 
-//  printf("%s = %dx%dx%d\n", name, w(), h(), d());
+//  printf("%s = %dx%dx%d\n", filename, w(), h(), d());
 
   if (((size_t)w()) * h() * d() > max_size() ) {
-    Fl::warning("PNM file \"%s\" is too large!\n", name);
+    Fl::warning("PNM file \"%s\" is too large!\n", filename);
     fclose(fp);
     w(0); h(0); d(0); ld(ERR_FORMAT);
     return;

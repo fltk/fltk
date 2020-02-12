@@ -1,20 +1,20 @@
 //
 // "$Id$"
 //
-// Definition of Posix system driver
+// Definition of POSIX system driver
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2017 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /**
@@ -52,8 +52,8 @@ public:
   virtual int open(const char* f, int oflags, int pmode) {
     return pmode == -1 ?  ::open(f, oflags) : ::open(f, oflags, pmode);
   }
-  virtual char *getenv(const char *v) { return ::getenv(v); }  
-  virtual int putenv(char* v) {return ::putenv(v);}
+  virtual char *getenv(const char *v) { return ::getenv(v); }
+  virtual int putenv(const char *var) {return ::putenv(strdup(var));}
   virtual int system(const char* cmd) {return ::system(cmd);}
   virtual int execvp(const char *file, char *const *argv) {return ::execvp(file, argv);}
   virtual int chmod(const char* f, int mode) {return ::chmod(f, mode);}

@@ -3,7 +3,7 @@
 #
 # Library Makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
@@ -48,6 +48,7 @@ CPPFILES = \
 	Fl_Group.cxx \
 	Fl_Help_View.cxx \
 	Fl_Image.cxx \
+	Fl_Image_Reader.cxx \
 	Fl_Image_Surface.cxx \
 	Fl_Input.cxx \
 	Fl_Input_.cxx \
@@ -195,7 +196,6 @@ GLCPPFILES = \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_arci.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_color.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_font.cxx \
-	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_image.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_line_style.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_rect.cxx \
 	drivers/OpenGL/Fl_OpenGL_Graphics_Driver_vertex.cxx
@@ -609,7 +609,7 @@ depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFIL
 		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)  $(XLIBCFILES)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp
-	grep '^[a-zA-Z]' makedepend | sort -u >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u >> makedepend.tmp; )
 	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies... generated on a Linux/Unix host !

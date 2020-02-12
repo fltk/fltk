@@ -14,7 +14,7 @@ OpenGL calls to draw the display. Your main program should call
 (somewhat later) FLTK will call \p draw().
 
 With a bit of care you can also use OpenGL to draw into
-normal FLTK windows. This allows you to use Gouraud shading for
+normal FLTK windows (see \ref opengl_normal below). This allows you to use Gouraud shading for
 drawing your widgets.  To do this you use the
 \ref opengl_gl_start "gl_start()" and
 \ref opengl_gl_finish "gl_finish()"
@@ -198,6 +198,10 @@ Method Fl_Gl_Window::pixels_per_unit() can also be useful in this context.
 and OpenGL under macOS (see \ref osissues_retina)
 
 \section opengl_normal Using OpenGL in Normal FLTK Windows
+
+\note Drawing both with OpenGL and Quartz in a normal FLTK window is not possible
+with the macOS platform. This technique is therefore not useful under macOS because
+it permits nothing more than what is possible with class Fl_Gl_Window.
 
 You can put OpenGL code into the \p draw() method, as described in
 \ref subclassing_drawing

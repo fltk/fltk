@@ -1,9 +1,8 @@
 #
-# "$Id$"
-#
-# PNG library makefile for the Fast Light Toolkit (FLTK).
+# PNG library Makefile for the Fast Light Toolkit (FLTK).
 #
 # Copyright 1997-2011 by Easy Software Products.
+# Copyright 2012-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this

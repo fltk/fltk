@@ -7,7 +7,7 @@
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // Buffer management (HV_Edit_Buffer) and more by AlbrechtS and others.
-// Copyright 2011-2018 by Bill Spitzak and others.
+// Copyright 2011-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -2775,7 +2775,7 @@ Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char	*localname;		// Local filename
   char		dir[FL_PATH_MAX];	// Current directory
-  char		temp[FL_PATH_MAX],	// Temporary filename
+  char		temp[2 * FL_PATH_MAX],	// Temporary filename
 		*tempptr;		// Pointer into temporary name
   Fl_Shared_Image *ip;			// Image pointer...
 
@@ -2872,7 +2872,7 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
   {
     char	dir[FL_PATH_MAX];	// Current directory
-    char	temp[FL_PATH_MAX],	// Temporary filename
+    char	temp[2 * FL_PATH_MAX],	// Temporary filename
 	      *tempptr;	// Pointer into temporary filename
 
 
@@ -3305,7 +3305,7 @@ int Fl_Help_View::load(const char *f)
   char		*target;	// Target in file
   char		*slash;		// Directory separator
   const char	*localname;	// Local filename
-  char		error[1024];	// Error buffer
+  char		error[2 * FL_PATH_MAX];	// Error buffer
   char		newname[FL_PATH_MAX];	// New filename buffer
 
   // printf("load(%s)\n",f); fflush(stdout);

@@ -492,17 +492,20 @@ int Fl_Tree_Item::move(Fl_Tree_Item *item, int op, int pos) {
     case 0:	// "above"
       from_parent = this->parent();
       to_parent   = item->parent();
+      if ( !from_parent || !to_parent ) return -1;
       from        = from_parent->find_child(this);
       to          = to_parent->find_child(item);
       break;
     case 1:	// "below"
       from_parent = this->parent();
       to_parent   = item->parent();
+      if ( !from_parent || !to_parent ) return -1;
       from        = from_parent->find_child(this);
       to          = to_parent->find_child(item);
       break;
     case 2:	// "into"
       from_parent = this->parent();
+      if ( !from_parent ) return -1;
       to_parent   = item;
       from        = from_parent->find_child(this);
       to          = pos;
@@ -1190,8 +1193,37 @@ int Fl_Tree_Item::event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const {
   }
 }
 
-/// Was event on the label() of this item?
+/// Was the event on the 'user icon' of this item, if any?
 ///
+int Fl_Tree_Item::event_on_user_icon(const Fl_Tree_Prefs &prefs) const {
+  // NOTE: Fl_Tree_Item doesn't keep an _xywh[] for usericon, but we can derive it as
+  //       by elimitation of all other possibilities.
+  if ( !is_visible() )  return 0;                       // item not visible? not us
+  if ( !event_inside(_xywh) ) return 0;                 // not inside item? not us
+  if ( event_on_collapse_icon(prefs) ) return 0;        // inside collapse icon? not us
+  if ( Fl::event_x() >= _label_xywh[0] ) return 0;      // inside label or beyond (e.g. widget())? not us
+  // Is a user icon being shown?
+  // TBD: Determining usericon xywh and 'if displayed' should be class methods used here and by draw_*()
+  Fl_Image *ui = 0;
+  if ( is_active() ) {
+    if ( usericon() )              ui = usericon();         // user icon for item?
+    else if ( prefs.usericon() )   ui = prefs.usericon();   // user icon for tree?
+  } else {
+    if ( userdeicon() )            ui = userdeicon();       // user deicon for this item?
+    else if ( prefs.userdeicon() ) ui = prefs.userdeicon(); // user deicon for tree?
+  }
+  if ( !ui ) return 0;                                  // no user icon? not us
+  int uix = _label_xywh[0]-ui->w();                     // find x position of usericon
+  if ( Fl::event_x() < uix ) return 0;                  // event left of usericon? not us
+  return 1;                                             // must be inside usericon by elimination
+}
+
+/// Was event anywhere on the item?
+int Fl_Tree_Item::event_on_item(const Fl_Tree_Prefs &prefs) const {
+    return(event_inside(_xywh) ? 1 : 0);
+}
+
+/// Was event on the label() of this item?
 int Fl_Tree_Item::event_on_label(const Fl_Tree_Prefs &prefs) const {
   if ( is_visible() && is_active() ) {
     return(event_inside(_label_xywh) ? 1 : 0);

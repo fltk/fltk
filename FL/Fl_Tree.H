@@ -278,7 +278,8 @@ enum Fl_Tree_Reason {
   FL_TREE_REASON_NONE=0,	///< unknown reason
   FL_TREE_REASON_SELECTED,	///< an item was selected
   FL_TREE_REASON_DESELECTED,	///< an item was de-selected
-  FL_TREE_REASON_RESELECTED,	///< an item was re-selected (e.g. double-clicked)
+  FL_TREE_REASON_RESELECTED,	///< an item was re-selected (double-clicked).
+				///< See ::Fl_Tree_Item_Reselect_Mode to enable this.
   FL_TREE_REASON_OPENED,	///< an item was opened
   FL_TREE_REASON_CLOSED,	///< an item was closed
   FL_TREE_REASON_DRAGGED	///< an item was dragged into a new place
@@ -292,7 +293,8 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Reason _callback_reason;		// reason for the callback
   Fl_Tree_Prefs  _prefs;			// all the tree's settings
   int            _scrollbar_size;		// size of scrollbar trough
-  Fl_Tree_Item *_lastselect;
+  Fl_Tree_Item  *_lastselect;                   // last selected item
+  char           _lastpushed;                   // FL_PUSH occurred on: 0=nothing, 1=open/close, 2=usericon, 3=label
   void fix_scrollbar_order();
 
 protected:

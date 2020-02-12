@@ -5,14 +5,17 @@ SHELL = /bin/sh
 .SILENT:
 
 # Executables
-ALL = clipboard$(EXEEXT) \
+ALL = browser-simple$(EXEEXT) \
+      clipboard$(EXEEXT) \
       draggable-group$(EXEEXT) \
       fltk-versions$(EXEEXT) \
       howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
+      howto-draw-an-x$(EXEEXT) \
       howto-menu-with-images$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
+      howto-remap-numpad-keyboard-keys$(EXEEXT) \
       howto-simple-svg$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
@@ -28,6 +31,7 @@ ALL = clipboard$(EXEEXT) \
       table-spreadsheet$(EXEEXT) \
       table-spreadsheet-with-keyboard-nav$(EXEEXT) \
       table-with-keynav$(EXEEXT) \
+      table-with-right-column-stretch-fit$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \

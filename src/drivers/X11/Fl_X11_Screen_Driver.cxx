@@ -21,6 +21,7 @@
 #include "Fl_X11_Screen_Driver.H"
 #include "../Xlib/Fl_Font.H"
 #include "Fl_X11_Window_Driver.H"
+#include "../../Fl_System_Driver.H"
 #include "../Xlib/Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/platform.H>
@@ -287,10 +288,7 @@ void Fl_X11_Screen_Driver::init() {
   static XRRSizes_type XRRSizes_f = NULL;
   if (!XRRSizes_f) {
     void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
-    if (!libxrandr_addr) libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
-#   ifdef __APPLE_CC__ // allows testing on Darwin + X11
-    if (!libxrandr_addr) libxrandr_addr = dlopen("/opt/X11/lib/libXrandr.dylib", RTLD_LAZY);
-#   endif
+    if (!libxrandr_addr) libxrandr_addr = Fl::system_driver()->dlopen("libXrandr.so");
     if (libxrandr_addr) XRRSizes_f = (XRRSizes_type)dlsym(libxrandr_addr, "XRRSizes");
   }
   if (XRRSizes_f) {
@@ -482,6 +480,10 @@ double Fl_X11_Screen_Driver::wait(double time_to_wait)
     Fl::flush();
     if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
       time_to_wait = 0.0;
+    else if (first_timeout && first_timeout->time < time_to_wait) {
+      // another timeout may have been queued within flush(), see STR #3188
+      time_to_wait = first_timeout->time >= 0.0 ? first_timeout->time : 0.0;
+    }
     return this->poll_or_select_with_delay(time_to_wait);
   }
 }
@@ -633,6 +635,7 @@ const char *Fl_X11_Screen_Driver::get_system_scheme()
 
 void Fl_X11_Screen_Driver::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   elapse_timeouts();
+  missed_timeout_by = 0;
   repeat_timeout(time, cb, argp);
 }
 
@@ -745,7 +748,7 @@ extern "C" {
   }
 }
 
-Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win)
+Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win, bool may_capture_subwins, bool *did_capture_subwins)
 {
   XImage	*image;		// Captured image
   int		i, maxindex;	// Looping vars
@@ -798,8 +801,8 @@ Fl_RGB_Image *Fl_X11_Screen_Driver::read_win_rectangle(int X, int Y, int w, int 
       sx *= s; sy *= s; sw *= s; sh *= s;
     }
     if (win && !allow_outside && int(s) != s) {
-      ws = (w+1)*s-1;
-      hs = (h+1)*s-1;
+      ws = (w+1) * s; // matches what Fl_Graphics_Driver::cache_size() does
+      hs = (h+1) * s;
       if (Xs + ws >= int(win->w()*s)) ws = win->w()*s - Xs -1;
       if (Ys + hs >= int(win->h()*s)) hs = win->h()*s - Ys -1;
      }

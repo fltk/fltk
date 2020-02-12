@@ -26,9 +26,6 @@
 #include "Fl_Screen_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(HAVE_LIBZ)
-#include <zlib.h>
-#endif
 
 #if !defined(HAVE_LONG_LONG)
 static double strtoll(const char *str, char **endptr, int base) {
@@ -43,6 +40,9 @@ static double strtoll(const char *str, char **endptr, int base) {
 #define NANOSVGRAST_IMPLEMENTATION	// Expands implementation
 #include "../nanosvg/nanosvgrast.h"
 
+#if defined(HAVE_LIBZ)
+#include <zlib.h>
+#endif
 
 /** The constructor loads the SVG image from the given .svg/.svgz filename or in-memory data.
  \param filename Name of a .svg or .svgz file, or NULL.

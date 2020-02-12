@@ -6,20 +6,22 @@
 // This is a GLUT demo program to demonstrate fltk's GLUT emulation.
 // Search for "fltk" to find all the changes
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
-// this block added for fltk's distribtion so it will compile w/o OpenGL:
+// Convenience options 'n' and ' ' and command line switch '-n' added for FLTK
+
+// this block added for fltk's distribution so it will compile w/o OpenGL:
 #include <config.h>
 #if !HAVE_GL || !HAVE_GL_GLU_H
 #include <FL/Fl.H>
@@ -84,6 +86,7 @@ static unsigned char colors[PIECES + 1][3] =
 };
 
 void changeState(void);
+void animate(void);
 
 static struct puzzle *hashtable[HASHSIZE];
 static struct puzzle *startPuzzle;
@@ -1119,6 +1122,7 @@ static int left_mouse, middle_mouse;
 static int mousex, mousey;
 static int solving;
 static int spinning;
+static int enable_spinning = 1;
 static float lastquat[4];
 static int sel_piece;
 
@@ -1152,8 +1156,16 @@ toggleSolve(void)
     glutPostRedisplay();
 }
 
+void reset_position(void)
+{
+    spinning = 0;
+    trackball(curquat, 0.0, 0.0, 0.0, 0.0); // reset position
+    glutIdleFunc(animate);
+}
+
 void reset(void)
 {
+    reset_position();
     if (solving) {
       freeSolutions();
       solving = 0;
@@ -1174,6 +1186,11 @@ keyboard(unsigned char c, int x, int y)
   switch (c) {
   case 27:
     exit(0);
+    break;
+  case ' ':
+  case 'n':
+  case 'N':
+    reset_position();
     break;
   case 'D':
   case 'd':
@@ -1226,7 +1243,7 @@ motion(int x, int y)
         (H - 2.0*mousey) / H,
         (2.0*x - W) / W,
         (H - 2.0*y) / H);
-      spinning = 1;
+      spinning = enable_spinning; // 1 = yes, 0 = disabled (commandline -n)
     } else {
       spinning = 0;
     }
@@ -1400,12 +1417,15 @@ menu(int choice)
 {
    switch(choice) {
    case 1:
-      toggleSolve();
+      reset_position();
       break;
    case 2:
-      reset();
+      toggleSolve();
       break;
    case 3:
+      reset();
+      break;
+   case 4:
       exit(0);
       break;
    }
@@ -1421,6 +1441,9 @@ main(int argc, char **argv)
   for (i = 1; i < argc; i++) {
     if (argv[i][0] == '-') {
       switch (argv[i][1]) {
+      case 'n':
+        enable_spinning = 0; // disable (sometimes annoying) spinning behaviour
+        break;
       case 's':
         doubleBuffer = 0;
         break;
@@ -1447,6 +1470,7 @@ main(int argc, char **argv)
   glGetIntegerv(GL_VIEWPORT, viewport);
 
   puts("");
+  puts("n   Normal position - stop spinning");
   puts("r   Reset puzzle");
   puts("s   Solve puzzle (may take a few seconds to compute)");
   puts("d   Destroy a piece - makes the puzzle easier");
@@ -1463,9 +1487,10 @@ main(int argc, char **argv)
   glutMouseFunc(mouse);
   glutVisibilityFunc(visibility);
   glutCreateMenu(menu);
-  glutAddMenuEntry((char *)"Solve", 1);
-  glutAddMenuEntry((char *)"Reset", 2);
-  glutAddMenuEntry((char *)"Quit", 3);
+  glutAddMenuEntry((char *)"Normal pos", 1);
+  glutAddMenuEntry((char *)"Solve", 2);
+  glutAddMenuEntry((char *)"Reset", 3);
+  glutAddMenuEntry((char *)"Quit", 4);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
   glutMainLoop();
   return 0;             /* ANSI C requires main to return int. */

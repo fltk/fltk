@@ -30,9 +30,7 @@
 // uncomment the following line to enable Cairo context autolink feature:
 // #define AUTOLINK
 
-// put your drawing stuff here
-float drawargs[7] = {90, 90, 100, 100, 0, 360, 0};
-const char *name[7] = {"X", "Y", "W", "H", "start", "end", "rotate"};
+// draw centered text
 
 static void centered_text(cairo_t *cr, double x0, double y0, double w0, double h0, const char *my_text) {
   cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_OBLIQUE, CAIRO_FONT_WEIGHT_BOLD);
@@ -50,12 +48,12 @@ static void centered_text(cairo_t *cr, double x0, double y0, double w0, double h
   cairo_set_line_width(cr, DEF_WIDTH);
 }
 
+// draw a button object with rounded corners and a label
+
 static void round_button(cairo_t *cr, double x0, double y0,
 			 double rect_width, double rect_height, double radius,
 			 double r, double g, double b) {
-
   double x1, y1;
-
   x1 = x0 + rect_width;
   y1 = y0 + rect_height;
   if (!rect_width || !rect_height)
@@ -98,8 +96,8 @@ static void round_button(cairo_t *cr, double x0, double y0,
   cairo_close_path(cr);
 
   cairo_pattern_t *pat =
-      // cairo_pattern_create_linear (0.0, 0.0,  0.0, 1.0);
-      cairo_pattern_create_radial(0.25, 0.24, 0.11, 0.24, 0.14, 0.35);
+    // cairo_pattern_create_linear (0.0, 0.0,  0.0, 1.0);
+    cairo_pattern_create_radial(0.25, 0.24, 0.11, 0.24, 0.14, 0.35);
   cairo_pattern_set_extend(pat, CAIRO_EXTEND_REFLECT);
 
   cairo_pattern_add_color_stop_rgba(pat, 1.0, r, g, b, 1);
@@ -112,21 +110,27 @@ static void round_button(cairo_t *cr, double x0, double y0,
   cairo_set_source_rgba(cr, 0, 0, 0.5, 0.3);
   cairo_stroke(cr);
 
-  cairo_set_font_size(cr, 0.08);
+  cairo_set_font_size(cr, 0.075);
   centered_text(cr, x0, y0, rect_width, rect_height, "FLTK loves Cairo!");
 }
 
-// The Cairo rendering cb called during Fl_Cairo_Window::draw() :
-static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
+// draw the entire image (3 buttons), scaled to the given width and height
 
-  int w = window->w(), h = window->h();
+void draw_image(cairo_t *cr, int w, int h) {
 
   cairo_set_line_width(cr, DEF_WIDTH);
   cairo_scale(cr, w, h);
 
-  round_button(cr, 0.1, 0.05, 0.8, 0.2, 0.4, 0, 0, 1);
-  round_button(cr, 0.1, 0.35, 0.8, 0.2, 0.4, 1, 0, 0);
-  round_button(cr, 0.1, 0.65, 0.8, 0.2, 0.4, 0, 1, 0);
+  round_button(cr, 0.1, 0.1, 0.8, 0.2, 0.4, 1, 0, 0);
+  round_button(cr, 0.1, 0.4, 0.8, 0.2, 0.4, 0, 1, 0);
+  round_button(cr, 0.1, 0.7, 0.8, 0.2, 0.4, 0, 0, 1);
+
+} // draw_image()
+
+// Cairo rendering cb called during Fl_Cairo_Window::draw()
+
+static void my_cairo_draw_cb(Fl_Cairo_Window *window, cairo_t *cr) {
+  draw_image(cr, window->w(), window->h());
   return;
 }
 

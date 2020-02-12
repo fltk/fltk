@@ -290,7 +290,7 @@ void Fl_Gl_Window::context(GLContext v, int destroy_flag) {
 */
 void Fl_Gl_Window::hide() {
   context(0);
-  pGlWindowDriver->hide_overlay(overlay);
+  pGlWindowDriver->gl_hide_before(overlay);
   Fl_Window::hide();
 }
 
@@ -491,7 +491,7 @@ void* Fl_Gl_Window_Driver::GetProcAddress(const char *procName) {
 #    endif // RTLD_DEFAULT
   
 #elif defined(HAVE_GLXGETPROCADDRESSARB)
-  return glXGetProcAddressARB((const GLubyte *)procName);
+  return (void*)glXGetProcAddressARB((const GLubyte *)procName);
   
 #else
   return 0;

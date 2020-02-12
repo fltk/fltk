@@ -88,8 +88,7 @@ void fl_cleanup_dc_list(void);
 # include <wchar.h>
 #endif
 
-typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
-static SetProcessDpiAwareness_type fl_SetProcessDpiAwareness = NULL;
+static bool is_dpi_aware = false;
 
 extern bool fl_clipboard_notify_empty(void);
 extern void fl_trigger_clipboard_notify(int source);
@@ -542,13 +541,21 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
     return;
 
   beenHereDoneThat = 1;
-  HMODULE hMod = LoadLibrary("Shcore.DLL");
-  if (hMod) {
-    fl_SetProcessDpiAwareness = (SetProcessDpiAwareness_type)GetProcAddress(hMod, "SetProcessDpiAwareness");
-    const int PROCESS_PER_MONITOR_DPI_AWARE = 2;
+  typedef void *fl_DPI_AWARENESS_CONTEXT;
+  typedef BOOL(WINAPI * SetProcessDpiAwarenessContext_type)(fl_DPI_AWARENESS_CONTEXT);
+  SetProcessDpiAwarenessContext_type fl_SetProcessDpiAwarenessContext =
+      (SetProcessDpiAwarenessContext_type)GetProcAddress(LoadLibrary("User32.DLL"), "SetProcessDpiAwarenessContext");
+  if (fl_SetProcessDpiAwarenessContext) {
+    const fl_DPI_AWARENESS_CONTEXT fl_DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = (fl_DPI_AWARENESS_CONTEXT)(-4);
+    is_dpi_aware = fl_SetProcessDpiAwarenessContext(fl_DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+  }
+  if (!is_dpi_aware) {
+    typedef HRESULT(WINAPI * SetProcessDpiAwareness_type)(int);
+    SetProcessDpiAwareness_type fl_SetProcessDpiAwareness =
+        (SetProcessDpiAwareness_type)GetProcAddress(LoadLibrary("Shcore.DLL"), "SetProcessDpiAwareness");
     if (fl_SetProcessDpiAwareness) {
-      HRESULT hr = fl_SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-      if (hr != S_OK) fl_SetProcessDpiAwareness = NULL;
+      const int fl_PROCESS_PER_MONITOR_DPI_AWARE = 2;
+      if (fl_SetProcessDpiAwareness(fl_PROCESS_PER_MONITOR_DPI_AWARE) == S_OK) is_dpi_aware = true;
     }
   }
   OleInitialize(0L);
@@ -559,19 +566,18 @@ void Fl_WinAPI_Screen_Driver::open_display_platform() {
 
 void Fl_WinAPI_Screen_Driver::desktop_scale_factor() {
   typedef HRESULT(WINAPI * GetDpiForMonitor_type)(HMONITOR, int, UINT *, UINT *);
-  HMODULE hMod = LoadLibrary("Shcore.DLL");
   GetDpiForMonitor_type fl_GetDpiForMonitor = NULL;
-  if (hMod && fl_SetProcessDpiAwareness)
-    fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(hMod, "GetDpiForMonitor");
-  if (fl_GetDpiForMonitor) {
-    for (int ns = 0; ns < screen_count(); ns++) {
-      HMONITOR hm = MonitorFromRect(&screens[ns], MONITOR_DEFAULTTONEAREST);
-      UINT dpiX, dpiY;
-      HRESULT r = fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY);
-      float f = (r == S_OK ? dpiX / 96. : 1);
-      scale(ns, f);
-  //fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f\n", ns, scale(ns));fflush(LOG);
-    }
+  if (is_dpi_aware)
+    fl_GetDpiForMonitor = (GetDpiForMonitor_type)GetProcAddress(LoadLibrary("Shcore.DLL"), "GetDpiForMonitor");
+  for (int ns = 0; ns < screen_count(); ns++) {
+    HMONITOR hm = MonitorFromRect(&screens[ns], MONITOR_DEFAULTTONEAREST);
+    UINT dpiX, dpiY;
+    HRESULT r =  fl_GetDpiForMonitor ? fl_GetDpiForMonitor(hm, 0, &dpiX, &dpiY) : !S_OK;
+    if (r != S_OK) { dpiX = dpiY = 96; }
+    dpi[ns][0] = dpiX;
+    dpi[ns][1] = dpiY;
+    scale(ns, dpiX / 96.);
+  //fprintf(LOG, "desktop_scale_factor ns=%d factor=%.2f dpi=%.1f\n", ns, scale(ns), dpi[ns][0]);
   }
 }
 
@@ -1196,12 +1202,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     switch (uMsg) {
 
       case WM_DPICHANGED: { // 0x02E0
-	if (fl_SetProcessDpiAwareness && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
+	if (is_dpi_aware && !Fl_WinAPI_Window_Driver::data_for_resize_window_between_screens_.busy) {
 	  RECT r;
+          Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+          int ns = Fl_Window_Driver::driver(window)->screen_num();
+          sd->dpi[ns][0] = sd->dpi[ns][1] = HIWORD(wParam);
 	  float f = HIWORD(wParam) / 96.;
 	  GetClientRect(hWnd, &r);
 	  float old_f = float(r.right) / window->w();
-	  int ns = Fl_Window_Driver::driver(window)->screen_num();
 	  Fl::screen_driver()->scale(ns, f);
 	  Fl_Window_Driver::driver(window)->resize_after_scale_change(ns, old_f, f);
 	}
@@ -1623,11 +1631,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	fl_i_own_selection[1] = 0;
 	return 1;
 
-      case WM_DISPLAYCHANGE: // occurs when screen configuration (number, position) changes
-	Fl::call_screen_init();
-	Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
-	return 0;
-
+      case WM_DISPLAYCHANGE: {// occurs when screen configuration (number, size, position) changes
+        Fl::call_screen_init();
+        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+        for (int ns = 0; ns < sd->screen_count(); ns++) {
+          sd->rescale_all_windows_from_screen(ns, sd->dpi[ns][0]/96);
+        }
+        Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+        return 0;
+      }
       case WM_CHANGECBCHAIN:
 	if ((hWnd == clipboard_wnd) && (next_clipboard_wnd == (HWND)wParam))
 	  next_clipboard_wnd = (HWND)lParam;
@@ -1657,6 +1669,24 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
+/* Implementation note about the API to get the dimensions of the top/left borders and the title bar
+ 
+ Function fake_X_wm_style() below is used before calling CreateWindowExW() to create
+ a window and before calling SetWindowPos(). Both of these Windows functions need the window size
+ including borders and title bar. Function fake_X_wm_style() uses AdjustWindowRectExForDpi() or
+ AdjustWindowRectEx() to get the sizes of borders and title bar. The gotten values don't always match
+ what is seen on the display, but they are the **required** values so the subsequent calls to
+ CreateWindowExW() or SetWindowPos() correctly size the window.
+ The Windows doc of AdjustWindowRectExForDpi/AdjustWindowRectEx makes this very clear:
+    Calculates the required size of the window rectangle, based on the desired size of the client
+    rectangle [and the provided DPI]. This window rectangle can then be passed to the CreateWindowEx
+    function to create a window with a client area of the desired size.
+ 
+ Conversely, Fl_WinAPI_Window_Driver::border_width_title_bar_height() is used to get
+ the true sizes of borders and title bar of a mapped window. The correct API for that is
+ DwmGetWindowAttribute().
+ */
+
 ////////////////////////////////////////////////////////////////
 // This function gets the dimensions of the top/left borders and
 // the title bar, if there is one, based on the FL_BORDER, FL_MODAL
@@ -1676,18 +1706,7 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
   int fallback = 1;
   float s = Fl::screen_driver()->scale(Fl_Window_Driver::driver(w)->screen_num());
   if (!w->parent()) {
-    if (fl_xid(w)) {
-      Fl_WinAPI_Window_Driver *dr = Fl_WinAPI_Window_Driver::driver(w);
-      dr->border_width_title_bar_height(bx, by, bt);
-      xoff = bx;
-      yoff = by + bt;
-      dx = 2 * bx;
-      dy = 2 * by + bt;
-      X = w->x() * s - bx;
-      Y = w->y() * s - bt - by;
-      W = w->w() * s + dx;
-      H = w->h() * s + dy;
-    } else if (fl_xid(w) || style) {
+    if (fl_xid(w) || style) {
       // The block below calculates the window borders by requesting the
       // required decorated window rectangle for a desired client rectangle.
       // If any part of the function above fails, we will drop to a
@@ -1706,7 +1725,17 @@ static int fake_X_wm_style(const Fl_Window *w, int &X, int &Y, int &bt, int &bx,
       r.right = (w->x() + w->w()) * s;
       r.bottom = (w->y() + w->h()) * s;
       // get the decoration rectangle for the desired client rectangle
-      BOOL ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
+      
+      typedef BOOL(WINAPI* AdjustWindowRectExForDpi_type)(LPRECT, DWORD, BOOL, DWORD, UINT);
+      static AdjustWindowRectExForDpi_type fl_AdjustWindowRectExForDpi =
+        (AdjustWindowRectExForDpi_type)GetProcAddress(LoadLibrary("User32.DLL"), "AdjustWindowRectExForDpi");
+      BOOL ok;
+      if ( fl_AdjustWindowRectExForDpi) {
+        Fl_WinAPI_Screen_Driver *sd = (Fl_WinAPI_Screen_Driver*)Fl::screen_driver();
+        UINT dpi = sd->dpi[Fl_Window_Driver::driver(w)->screen_num()][0];
+        ok = fl_AdjustWindowRectExForDpi(&r, style, FALSE, styleEx, dpi);
+      } else
+        ok = AdjustWindowRectEx(&r, style, FALSE, styleEx);
       if (ok) {
 	X = r.left;
 	Y = r.top;
@@ -1803,6 +1832,7 @@ int Fl_WinAPI_Window_Driver::fake_X_wm(int &X, int &Y, int &bt, int &bx, int &by
 ////////////////////////////////////////////////////////////////
 
 void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
+//fprintf(stderr, "resize w()=%d W=%d h()=%d H=%d\n",pWindow->w(), W,pWindow->h(), H);
   UINT flags = SWP_NOSENDCHANGING | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER;
   int is_a_resize = (W != w() || H != h() || is_a_rescale());
   int resize_from_program = (pWindow != resize_bug_fix);
@@ -1838,7 +1868,7 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
     int dummy_x, dummy_y, bt, bx, by;
     // compute window position and size in scaled units
     float s = Fl::screen_driver()->scale(screen_num());
-    int scaledX = ceil(X * s), scaledY = ceil(Y * s), scaledW = ceil(W * s), scaledH = ceil(H * s);
+    int scaledX = int(X * s), scaledY = int(Y * s), scaledW = int(W * s), scaledH = int(H * s);
     // Ignore window managing when resizing, so that windows (and more
     // specifically menus) can be moved offscreen.
     if (fake_X_wm(dummy_x, dummy_y, bt, bx, by)) {
@@ -2717,20 +2747,21 @@ void Fl_WinAPI_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image *&top, F
   if (wsides <= 1)
     ww = w() + 2 * wsides;
   // capture the 4 window sides from screen
+  int offset = r.left < 0 ? -r.left : 0;
   Fl_WinAPI_Screen_Driver *dr = (Fl_WinAPI_Screen_Driver *)Fl::screen_driver();
-  if (htop) {
-    top = dr->read_win_rectangle_unscaled(r.left, r.top, r.right - r.left, htop, 0);
-    if (scaling != 1)
+  if (htop && r.right - r.left > offset) {
+    top = dr->read_win_rectangle_unscaled(r.left+offset, r.top, r.right - r.left-offset, htop, 0);
+    if (scaling != 1 && top)
       top->scale(ww, htop / scaling, 0, 1);
   }
   if (wsides) {
-    left = dr->read_win_rectangle_unscaled(r.left, r.top + htop, wsides, h() * scaling, 0);
+    left = dr->read_win_rectangle_unscaled(r.left + offset, r.top + htop, wsides, h() * scaling, 0);
     right = dr->read_win_rectangle_unscaled(r.right - wsides, r.top + htop, wsides, h() * scaling, 0);
-    bottom = dr->read_win_rectangle_unscaled(r.left, r.bottom - hbottom, ww, hbottom, 0);
+    bottom = dr->read_win_rectangle_unscaled(r.left+offset, r.bottom - hbottom, ww, hbottom, 0);
     if (scaling != 1) {
-      left->scale(wsides, h(), 0, 1);
-      right->scale(wsides, h(), 0, 1);
-      bottom->scale(ww, hbottom, 0, 1);
+      if (left) left->scale(wsides, h(), 0, 1);
+      if (right) right->scale(wsides, h(), 0, 1);
+      if (bottom) bottom->scale(ww, hbottom, 0, 1);
     }
   }
   ReleaseDC(NULL, (HDC)fl_graphics_driver->gc());

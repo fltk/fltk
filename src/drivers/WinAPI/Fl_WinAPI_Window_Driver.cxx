@@ -3,7 +3,7 @@
 //
 // Definition of Apple Cocoa window driver.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -334,7 +334,8 @@ void Fl_WinAPI_Window_Driver::flush_double()
     fl_graphics_driver->gc(sgc);
 #endif
   }
-  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+  int X = 0, Y = 0, W = 0, H = 0;
+  fl_clip_box(0, 0, w(), h(), X, Y, W, H);
   if (other_xid) fl_copy_offscreen(X, Y, W, H, other_xid, X, Y);
 }
 

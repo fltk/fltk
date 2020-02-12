@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Copyright 2001-2018 by Bill Spitzak and others.
+// Copyright 2001-2020 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -9,11 +9,11 @@
 // the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 // TODO: rendering of the "optional hyphen"
@@ -478,8 +478,6 @@ void Fl_Text_Display::recalc_display() {
   unsigned int vscrollbarvisible = mVScrollBar->visible();
   int scrollsize = scrollbar_width_ ? scrollbar_width_ : Fl::scrollbar_size();
 
-  int oldTAWidth = text_area.w;
-
   int X = x() + Fl::box_dx(box());
   int Y = y() + Fl::box_dy(box());
   int W = w() - Fl::box_dw(box());
@@ -499,16 +497,16 @@ void Fl_Text_Display::recalc_display() {
   mVScrollBar->clear_visible();
   mHScrollBar->clear_visible();
 
-#if (1) // optimization (experimental - seems to work well)
-
   // Optimization: if the number of lines in the buffer does not fit in
   // the display area, then we need a vertical scrollbar regardless of
   // word wrapping. If we switch it on here, this saves one line counting
   // run in wrap mode in the loop below ("... again ..."). This is important
   // for large buffers that suffer from slow calculations of character width
   // to determine line wrapping.
+  // Note: active since Oct 25, 2017: commit eb772d027d (svn r12526)
 
-  oldTAWidth = -1; // force _first_ calculation in loop (STR #3412)
+  // force _first_ calculation in loop (STR #3412)
+  int oldTAWidth = -1; // was: text_area.w (before STR #3412)
 
   if (mContinuousWrap && !mWrapMarginPix) {
 
@@ -520,8 +518,7 @@ void Fl_Text_Display::recalc_display() {
       text_area.w -= scrollsize;
     }
   }
-
-#endif // optimization
+  // End of optimization, see comment above.
 
   for (int again = 1; again;) {
     again = 0;
@@ -3728,9 +3725,6 @@ void Fl_Text_Display::draw(void) {
   // background color -- change if inactive
   Fl_Color bgcolor = active_r() ? color() : fl_inactive(color());
 
-  // scrollbar size
-  int scrollsize = scrollbar_width_ ? scrollbar_width_ : Fl::scrollbar_size();
-
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
     recalc_display();
@@ -3739,14 +3733,9 @@ void Fl_Text_Display::draw(void) {
       // if to printer, draw the background
       fl_rectf(text_area.x, text_area.y, text_area.w, text_area.h, bgcolor);
     }
-    // draw the box()
-    int W = w(), H = h();
-    draw_box(box(), x(), y(), W, H, bgcolor);
 
-    if (mHScrollBar->visible())
-      W -= scrollsize;
-    if (mVScrollBar->visible())
-      H -= scrollsize;
+    // draw the box()
+    draw_box(box(), x(), y(), w(), h(), bgcolor);
 
     // left margin
     fl_rectf(text_area.x-LEFT_MARGIN, text_area.y-TOP_MARGIN,
@@ -3771,7 +3760,6 @@ void Fl_Text_Display::draw(void) {
       fl_rectf(mVScrollBar->x(), mHScrollBar->y(),
                mVScrollBar->w(), mHScrollBar->h(),
                FL_GRAY);
-    //draw_line_numbers(true);		// commented out STR# 2621 / LZA
   }
   else if (damage() & (FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)) {
     //    printf("blanking previous cursor extrusions at Y: %d\n", mCursorOldY);
@@ -3798,7 +3786,7 @@ void Fl_Text_Display::draw(void) {
   // draw all of the text
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_EXPOSE)) {
     //printf("drawing all text\n");
-    int X, Y, W, H;
+    int X = 0, Y = 0, W = 0, H = 0;
     if (fl_clip_box(text_area.x, text_area.y, text_area.w, text_area.h,
                     X, Y, W, H)) {
       // Draw text using the intersected clipping box...

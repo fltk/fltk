@@ -3,7 +3,7 @@
 //
 // Classes Fl_PostScript_File_Device and Fl_PostScript_Graphics_Driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2016 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -1341,16 +1341,16 @@ void Fl_PostScript_Graphics_Driver::pop_clip() {
     recover();
 }
 
-int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H){
-  if(!clip_){
-    X=x;Y=y;W=w;H=h;
+int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H) {
+  if (!clip_) {
+    X = x; Y = y; W = w; H = h;
+    return 0;
+  }
+  if (clip_->w < 0) {
+    X = x; Y = y; W = w; H = h;
     return 1;
   }
-  if(clip_->w < 0){
-    X=x;Y=y;W=w;H=h;
-    return 1;
-  }
-  int ret=0;
+  int ret = 0;
   if (x > (X=clip_->x)) {X=x; ret=1;}
   if (y > (Y=clip_->y)) {Y=y; ret=1;}
   if ((x+w) < (clip_->x+clip_->w)) {
@@ -1377,12 +1377,12 @@ int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, 
   return ret;
 }
 
-int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h){
-  if(!clip_) return 1;
-  if(clip_->w < 0) return 1;
-  int X, Y, W, H;
+int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
+  if (!clip_) return 1;
+  if (clip_->w < 0) return 1;
+  int X = 0, Y = 0, W = 0, H = 0;
   clip_box(x, y, w, h, X, Y, W, H);
-  if(W) return 1;
+  if (W) return 1;
   return 0;
 }
 

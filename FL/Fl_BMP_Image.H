@@ -3,17 +3,17 @@
 //
 // BMP image header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /* \file
@@ -25,13 +25,19 @@
 
 /**
  The Fl_BMP_Image class supports loading, caching,
- and drawing of Windows Bitmap (BMP) image files. 
+ and drawing of Windows Bitmap (BMP) image files.
  */
 class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
   public:
 
-  Fl_BMP_Image(const char* filename);
+    Fl_BMP_Image(const char* filename);
+    Fl_BMP_Image(const char* imagename, const unsigned char *data);
+
+  protected:
+
+    void load_bmp_(class Fl_Image_Reader &rdr);
+
 };
 
 #endif

@@ -37,6 +37,7 @@ char Fl_Screen_Driver::bg_set = 0;
 char Fl_Screen_Driver::bg2_set = 0;
 char Fl_Screen_Driver::fg_set = 0;
 
+int Fl_Screen_Driver::keyboard_screen_scaling = 1;
 
 Fl_Screen_Driver::Fl_Screen_Driver() :
 num_screens(-1), text_editor_extra_key_bindings(NULL)
@@ -190,17 +191,18 @@ Image depths can differ between "to" and "from".
 Fl_RGB_Image *Fl_Screen_Driver::traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                           Fl_RGB_Image *full_img)
 {
+  bool captured_subwin = false;
   if ( g->as_gl_window() ) {
     Fl_Device_Plugin *plugin = Fl_Device_Plugin::opengl_plugin();
     if (!plugin) return full_img;
     full_img = plugin->rectangle_capture(g, x, y, w, h);
   }
   else if ( g->as_window() ) {
-    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h, g->as_window());
+    full_img = Fl::screen_driver()->read_win_rectangle(x, y, w, h, g->as_window(), true, &captured_subwin);
   }
   if (!full_img) return NULL;
   float full_img_scale =  (full_img && w > 0 ? float(full_img->data_w())/w : 1);
-  int n = g->children();
+  int n = (captured_subwin ? 0 : g->children());
   for (int i = 0; i < n; i++) {
     Fl_Widget *c = g->child(i);
     if ( !c->visible() || !c->as_group()) continue;
@@ -306,15 +308,21 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   int i = 0, count = 0; // count top-level windows, except transient scale-displaying window
   Fl_Window *win = Fl::first_window();
   while (win) {
-    if (!win->parent() && (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
-        win->user_data() != &Fl_Screen_Driver::transient_scale_display) count++;
+    if (!win->parent() &&
+	(Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+      count++;
+    }
     win = Fl::next_window(win);
   }
+  if (count == 0)
+    return;
   Fl_Window **win_array = new Fl_Window*[count];
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
-    if (!win->parent() && win->user_data() != &Fl_Screen_Driver::transient_scale_display &&
-        (Fl_Window_Driver::driver(win)->screen_num() == screen  || rescalable() == SYSTEMWIDE_APP_SCALING) ) {
+    if (!win->parent() &&
+	(Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+	win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
     win = Fl::next_window(win);
@@ -396,6 +404,7 @@ void Fl_Screen_Driver::transient_scale_display(float f, int nscreen)
 // respond to Ctrl-'+' and Ctrl-'-' and Ctrl-'0' (Ctrl-'=' is same as Ctrl-'+') by rescaling all windows
 int Fl_Screen_Driver::scale_handler(int event)
 {
+  if (!keyboard_screen_scaling) return 0;
   if ( event != FL_SHORTCUT || (!Fl::event_command()) ) return 0;
   int key = Fl::event_key() & ~(FL_SHIFT+FL_COMMAND);
   if (key == '=' || key == '-' || key == '+' || key == '0' || key == 0xE0/* for '0' on Fr keyboard */) {
@@ -452,11 +461,12 @@ int Fl_Screen_Driver::scale_handler(int event)
 void Fl_Screen_Driver::use_startup_scale_factor()
 {
   char *p;
+  int s_count = screen_count();
   desktop_scale_factor();
   if ((p = fl_getenv("FLTK_SCALING_FACTOR"))) {
     float factor = 1;
     sscanf(p, "%f", &factor);
-    for (int i = 0; i < screen_count(); i++)  scale(i, factor * scale(i));
+    for (int i = 0; i < s_count; i++)  scale(i, factor * scale(i));
   }
 }
 
@@ -469,7 +479,8 @@ void Fl_Screen_Driver::open_display()
     been_here = true;
     if (rescalable()) {
       use_startup_scale_factor();
-      Fl::add_handler(Fl_Screen_Driver::scale_handler);
+      if (keyboard_screen_scaling)
+	Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));

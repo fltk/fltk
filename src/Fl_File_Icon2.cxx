@@ -6,7 +6,7 @@
 // KDE icon code donated by Maarten De Boer.
 //
 // Copyright 1999-2010 by Michael Sweet.
-// Copyright 2011-2017 by Bill Spitzak and others.
+// Copyright 2011-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -572,10 +572,10 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 */
 void
 Fl_File_Icon::load_system_icons(void) {
-  int		i;		// Looping var
-  Fl_File_Icon	*icon;		// New icons
-  char		filename[FL_PATH_MAX];	// Filename
-  char		icondir[FL_PATH_MAX];	// Icon directory
+  int		i;				// Looping var
+  Fl_File_Icon	*icon;				// New icons
+  char		filename[FL_PATH_MAX + 60];	// Filename
+  char		icondir[FL_PATH_MAX];		// Icon directory
   static int	init = 0;	// Have the icons been initialized?
   const char * const icondirs[] = {
 		  "Bluecurve",	// Icon directories to look for, in order
@@ -819,7 +819,7 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
   char		pattern[1024];
   char		mimetype[1024];
   char		*val;
-  char		full_iconfilename[FL_PATH_MAX];
+  char		full_iconfilename[2 * FL_PATH_MAX];
   Fl_File_Icon	*icon;
 
 

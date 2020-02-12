@@ -3,17 +3,17 @@
 //
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /** \file
@@ -1850,7 +1850,7 @@ bool Fl::option(Fl_Option opt)
   if (!options_read_) {
     int tmp;
     { // first, read the system wide preferences
-      Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
+      Fl_Preferences prefs(Fl_Preferences::CORE_SYSTEM, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
       opt_prefs.get("ArrowFocus", tmp, 0);                      // default: off
       options_[OPTION_ARROW_FOCUS] = tmp;
@@ -1866,13 +1866,15 @@ bool Fl::option(Fl_Option opt)
       options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, 1);                     // default: on
       options_[OPTION_FNFC_USES_GTK] = tmp;
-      
+      opt_prefs.get("PrintUsesGTK", tmp, 1);                     // default: on
+      options_[OPTION_PRINTER_USES_GTK] = tmp;
+
       opt_prefs.get("ShowZoomFactor", tmp, 1);                  // default: on
       options_[OPTION_SHOW_SCALING] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
-      Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
+      Fl_Preferences prefs(Fl_Preferences::CORE_USER, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
       opt_prefs.get("ArrowFocus", tmp, -1);
       if (tmp >= 0) options_[OPTION_ARROW_FOCUS] = tmp;
@@ -1888,11 +1890,13 @@ bool Fl::option(Fl_Option opt)
       if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
       opt_prefs.get("FNFCUsesGTK", tmp, -1);
       if (tmp >= 0) options_[OPTION_FNFC_USES_GTK] = tmp;
-      
+      opt_prefs.get("PrintUsesGTK", tmp, -1);
+      if (tmp >= 0) options_[OPTION_PRINTER_USES_GTK] = tmp;
+
       opt_prefs.get("ShowZoomFactor", tmp, -1);
       if (tmp >= 0) options_[OPTION_SHOW_SCALING] = tmp;
     }
-    { // now, if the developer has registered this app, we could as for per-application preferences
+    { // now, if the developer has registered this app, we could ask for per-application preferences
     }
     options_read_ = 1;
   }
@@ -2122,16 +2126,21 @@ int Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 
 /** Current value of the GUI scaling factor for screen number \p n */
 float Fl::screen_scale(int n) {
+  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return 1.;
   return Fl::screen_driver()->scale(n);
 }
 
 /** Set the value of the GUI scaling factor for screen number \p n.
-Call this function before the first window is show()'n to set the
- application's initial scaling factor value. */
+When this function is called before the first window is show()'n it sets the
+ application's initial scaling factor value. Otherwise, it sets the scale factor value of all windows mapped to screen number \p n */
 void Fl::screen_scale(int n, float factor) {
-  fl_open_display();
-  Fl::screen_driver()->scale(n, factor);
-  Fl_Graphics_Driver::default_driver().scale(factor);
+  if (!Fl::screen_scaling_supported() || n < 0 || n >= Fl::screen_count()) return;
+  if (Fl::first_window()) {
+    Fl::screen_driver()->rescale_all_windows_from_screen(n, factor);
+  } else {
+    Fl::screen_driver()->scale(n, factor);
+    Fl_Graphics_Driver::default_driver().scale(factor);
+  }
 }
 
 /**
@@ -2143,6 +2152,23 @@ void Fl::screen_scale(int n, float factor) {
  */
 int Fl::screen_scaling_supported() {
   return Fl::screen_driver()->rescalable();
+}
+
+/** Controls the possibility to scale all windows by ctrl/+/-/0/ or cmd/+/-/0/.
+
+  This function \b should be called before fl_open_display() runs.
+  If it is not called, the default is to handle these keys for
+  window scaling.
+
+  \note This function can currently only be used to switch the internal
+    handler \b off, i.e. \p value must be 0 (zero) - all other values
+    result in undefined behavior and are reserved for future extension.
+
+  \param value 0 to stop recognition of ctrl/+/-/0/ (or cmd/+/-/0/ under macOS)
+    keys as window scaling.
+*/
+void Fl::keyboard_screen_scaling(int value) {
+  Fl_Screen_Driver::keyboard_screen_scaling = value;
 }
 
 // Pointers you can use to change FLTK to another language.

@@ -35,6 +35,11 @@ public:
 
   Fl_JPEG_Image(const char *filename);
   Fl_JPEG_Image(const char *name, const unsigned char *data);
+
+protected:
+
+  void load_jpg_(const char *filename, const char *sharename, const unsigned char *data);
+
 };
 
 #endif

@@ -782,6 +782,15 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y) {
+
+  // transform coordinates and clip if outside 16-bit space (STR 2798)
+
+  int x1 = x + offset_x_ * scale() + line_delta_;
+  if (x1 < clip_min() || x1 > clip_max()) return;
+
+  int y1 = y + offset_y_ * scale() + line_delta_;
+  if (y1 < clip_min() || y1 > clip_max()) return;
+
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
@@ -814,9 +823,9 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
     
     const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (XftChar16 *)buffer, n);
+    XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x1, y1, (XftChar16 *)buffer, n);
 #else
-    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x+offset_x_*scale()+line_delta_, y+offset_y_*scale()+line_delta_, (XftChar32 *)buffer, n);
+    XftDrawString32(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x1, y1, (XftChar32 *)buffer, n);
 #endif
   }
 }
@@ -863,6 +872,11 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
 
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int y) {
+
+  // clip if outside 16-bit space (STR 2798)
+
+  if (x < clip_min() || x > clip_max()) return;
+  if (y < clip_min() || y > clip_max()) return;
 
 #if defined(__GNUC__)
 // FIXME: warning Need to improve this XFT right to left draw function
@@ -1380,7 +1394,7 @@ static int font_sort(Fl_Fontdesc *fa, Fl_Fontdesc *fb) {
   char face_a, face_b;
   int la = font_name_process(fa->name, face_a);
   int lb = font_name_process(fb->name, face_b);
-  int c = memcmp(fa->name, fb->name, la >= lb ? lb : la);
+  int c = strncasecmp(fa->name, fb->name, la >= lb ? lb : la);
   return (c == 0 ? face_a - face_b : c);
 }
 

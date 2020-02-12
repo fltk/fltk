@@ -3,17 +3,17 @@
 //
 // Label drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 // Implementation of fl_draw(const char*,int,int,int,int,Fl_Align)
@@ -27,6 +27,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
+#include <FL/platform.H>	// fl_open_display()
 
 #include "flstring.h"
 #include <ctype.h>
@@ -417,6 +418,22 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 
   w = W + symtotal;
   h = lines*h;
+}
+
+/**
+  Sets the current font, which is then used in various drawing routines.
+  You may call this outside a draw context if necessary to measure text,
+  for instance by calling fl_width(), fl_measure(), or fl_text_extents(),
+  but on X this will open the display.
+
+  The font is identified by a \p face and a \p size.
+  The size of the font is measured in pixels and not "points".
+  Lines should be spaced \p size pixels apart or more.
+*/
+void fl_font(Fl_Font face, Fl_Fontsize fsize) {
+  if (!fl_graphics_driver)
+    fl_open_display();
+  fl_graphics_driver->font(face, fsize);
 }
 
 /**

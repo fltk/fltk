@@ -1,19 +1,19 @@
 //
 // "$Id$"
 //
-// Definition of Apple Darwin system driver.
+// Definition of Windows system driver for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include "../../config_lib.h"
@@ -194,6 +194,17 @@ char *Fl_WinAPI_System_Driver::getenv(const char *var) {
   wchar_t *ret = _wgetenv(utf8_to_wchar(var, wbuf));
   if (!ret) return NULL;
   return wchar_to_utf8(ret, buf);
+}
+
+int Fl_WinAPI_System_Driver::putenv(const char *var) {
+  unsigned len = (unsigned)strlen(var);
+  unsigned wn = fl_utf8toUtf16(var, len, NULL, 0) + 1; // Query length
+  wchar_t *wbuf = (wchar_t *)malloc(sizeof(wchar_t) * wn);
+  wn = fl_utf8toUtf16(var, len, (unsigned short *)wbuf, wn);
+  wbuf[wn] = 0;
+  int ret = _wputenv(wbuf);
+  free(wbuf);
+  return ret;
 }
 
 int Fl_WinAPI_System_Driver::open(const char *fnam, int oflags, int pmode) {
@@ -827,21 +838,24 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
 {
 #  define FLPREFS_RESOURCE	"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
 #  define FLPREFS_RESOURCEW	L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
-  static char filename[ FL_PATH_MAX ];
+  static char *filename = 0L;
+  // make enough room for a UTF16 pathname
+  if (!filename) filename = (char*)::malloc(2*FL_PATH_MAX);
   filename[0] = 0;
+  filename[1] = 0;
   size_t appDataLen = strlen(vendor) + strlen(application) + 8;
-  DWORD type, nn;
+  DWORD nn;
   LONG err;
   HKEY key;
   
-  switch (root) {
+  switch (root&Fl_Preferences::ROOT_MASK) {
     case Fl_Preferences::SYSTEM:
       err = RegOpenKeyW( HKEY_LOCAL_MACHINE, FLPREFS_RESOURCEW, &key );
       if (err == ERROR_SUCCESS) {
         nn = (DWORD) (FL_PATH_MAX - appDataLen);
-        err = RegQueryValueExW( key, L"Common AppData", 0L, &type,
+        err = RegQueryValueExW( key, L"Common AppData", 0L, 0L,
                                (BYTE*)filename, &nn );
-        if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) ) {
+        if ( err != ERROR_SUCCESS ) {
           filename[0] = 0;
           filename[1] = 0;
         }
@@ -852,9 +866,9 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
       err = RegOpenKeyW( HKEY_CURRENT_USER, FLPREFS_RESOURCEW, &key );
       if (err == ERROR_SUCCESS) {
         nn = (DWORD) (FL_PATH_MAX - appDataLen);
-        err = RegQueryValueExW( key, L"AppData", 0L, &type,
+        err = RegQueryValueExW( key, L"AppData", 0L,0L,
                                (BYTE*)filename, &nn );
-        if ( ( err != ERROR_SUCCESS ) && ( type == REG_SZ ) ) {
+        if ( err != ERROR_SUCCESS ) {
           filename[0] = 0;
           filename[1] = 0;
         }
@@ -863,7 +877,9 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
       break;
   }
   if (!filename[1] && !filename[0]) {
-    strcpy(filename, "C:\\FLTK");
+    // Don't write data into some arbitrary directory! Just return NULL.
+    //strcpy(filename, "C:\\FLTK");
+    return 0L;
   } else {
 #if 0
     wchar_t *b = (wchar_t*)_wcsdup((wchar_t *)filename);
@@ -879,7 +895,14 @@ char *Fl_WinAPI_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
     filename[len] = 0;
     free(b);
   }
-  snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
+
+  // Make sure that the parameters are not NULL
+  if ( (vendor==0L) || (vendor[0]==0) )
+    vendor = "unknown";
+  if ( (application==0L) || (application[0]==0) )
+    application = "unknown";
+
+  snprintf(filename + strlen(filename), FL_PATH_MAX - strlen(filename),
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
   return filename;

@@ -165,7 +165,9 @@ etc/FLTKConfig.cmake
 /test/buttons
 /test/cairo_test
 /test/checkers
-/test/clock
+test/checkers_pieces.cxx
+test/checkers_pieces.h
+test/clock
 /test/colbrowser
 /test/color_chooser
 /test/cube

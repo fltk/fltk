@@ -3,17 +3,17 @@
 //
 // All screen related calls in a driver style class.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /**
@@ -63,14 +63,14 @@ protected:
 
   int num_screens;
   static  float fl_intersection(int x1, int y1, int w1, int h1,
-                                      int x2, int y2, int w2, int h2);
+				int x2, int y2, int w2, int h2);
 
 public:
+  static int keyboard_screen_scaling; // true means ctrl/+/-/0/ resize windows
   static char bg_set;
   static char bg2_set;
   static char fg_set;
 
-public:
   virtual float scale(int n) {return 1;}
   virtual void scale(int n, float f) { }
   static Fl_Screen_Driver *newScreenDriver();
@@ -136,16 +136,17 @@ public:
   // we no longer need the on-screen keyboard; it's up to the system to hide it
   virtual void release_keyboard() { }
 
-  // read raw image from a window or an offscreen buffer
-  /* Member function read_win_rectangle() supports the public function
-   fl_read_image() which captures pixel data either from
-   the current window or from an offscreen buffer.
-
-   With fl_read_image() and for capture from a window, the returned pixel array
-   also contains data from any embedded sub-window.
+  /* Member function read_win_rectangle() supports public functions
+   fl_read_image() and fl_capture_window_part() which capture pixel data from
+   a window (or also from an offscreen buffer with fl_read_image).
    
-   In the case of read_win_rectangle() and for capture from a window, only data
-   from the current window is collected.
+   If 'may_capture_subwins' is true, an implementation may or may not capture
+   also the content of subwindows embedded in 'win'. If subwindows were captured,
+   *'did_capture_subwins' is returned set to true. If read_win_rectangle()
+   is called with 'may_capture_subwins' set to true, 'did_capture_subwins' should
+   be set before the call to the address of a boolean set to false.
+   The implementation of this virtual function for the macOS platform has the
+   capability of capturing subwindows when asked for.
    
    A platform may also use its read_win_rectangle() implementation to capture
    window decorations (e.g., title bar). In that case, it is called by
@@ -153,7 +154,8 @@ public:
    
    win is the window to capture from, or NULL to capture from the current offscreen
    */
-  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win) {return NULL;}
+  virtual Fl_RGB_Image *read_win_rectangle(int X, int Y, int w, int h, Fl_Window *win,
+                                           bool may_capture_subwins = false, bool *did_capture_subwins = NULL) {return NULL;}
   static void write_image_inside(Fl_RGB_Image *to, Fl_RGB_Image *from, int to_x, int to_y);
   static Fl_RGB_Image *traverse_to_gl_subwindows(Fl_Group *g, int x, int y, int w, int h,
                                                  Fl_RGB_Image *full_img);

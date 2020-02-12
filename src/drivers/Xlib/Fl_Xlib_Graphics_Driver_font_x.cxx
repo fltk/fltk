@@ -642,23 +642,33 @@ void Fl_Xlib_Graphics_Driver::text_extents_unscaled(const char *c, int n, int &d
   if (gc_) XUtf8_measure_extents(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, &xx, &yy, &ww, &hh, c, n);
 
   W = ww; H = hh; dx = xx; dy = yy;
-// This is the safe but mostly wrong thing we used to do...
-//  W = 0; H = 0;
-//  fl_measure(c, W, H, 0);
-//  dx = 0;
-//  dy = fl_descent() - H;
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(const char* c, int n, int x, int y) {
+
+  // transform coordinates and clip if outside 16-bit space (STR 2798)
+
+  int x1 = x + offset_x_;
+  if (x1 < clip_min() || x1 > clip_max()) return;
+
+  int y1 = y + offset_y_;
+  if (y1 < clip_min() || y1 > clip_max()) return;
+
   if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
     XSetFont(fl_display, gc_, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font->fid);
   }
-  if (gc_) XUtf8DrawString(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, x+offset_x_, y+offset_y_, c, n);
+  if (gc_) XUtf8DrawString(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, x1, y1, c, n);
 }
 
 void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, int x, int y) {
+
+  // clip if outside 16-bit space (STR 2798)
+
+  if (x < clip_min() || x > clip_max()) return;
+  if (y < clip_min() || y > clip_max()) return;
+
   static char warning = 0; // issue warning only once
   if (!warning && angle != 0) {
     warning = 1;
@@ -670,11 +680,20 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw_unscaled(const char* c, int n, int x, int y) {
+
+  // transform coordinates and clip if outside 16-bit space (STR 2798)
+
+  int x1 = x + offset_x_;
+  if (x1 < clip_min() || x1 > clip_max()) return;
+
+  int y1 = y + offset_y_;
+  if (y1 < clip_min() || y1 > clip_max()) return;
+
   if (font_gc != gc_) {
     if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = gc_;
   }
-  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, x+offset_x_, y+offset_y_, c, n);
+  if (gc_) XUtf8DrawRtlString(fl_display, fl_window, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, gc_, x1, y1, c, n);
 }
 
 float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *desc, int s) {

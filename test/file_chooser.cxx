@@ -4,7 +4,7 @@
 // File chooser test program.
 //
 // Copyright 1999-2010 by Michael Sweet.
-// Copyright 2011-2017 by Bill Spitzak and others.
+// Copyright 2011-2019 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -286,7 +286,7 @@ pdf_check(const char *name,	// I - Name of file
 {
   const char	*home;		// Home directory
   char		preview[FL_PATH_MAX],	// Preview filename
-		command[FL_PATH_MAX];	// Command
+		command[3 * FL_PATH_MAX]; // Command
 
 
   if (memcmp(header, "%PDF", 4) != 0)
@@ -318,7 +318,7 @@ ps_check(const char *name,	// I - Name of file
   const char	*home;		// Home directory
   char		preview[FL_PATH_MAX],	// Preview filename
 		outname[FL_PATH_MAX],	// Preview PS file
-		command[FL_PATH_MAX];	// Command
+		command[3 * FL_PATH_MAX]; // Command
   FILE		*in,		// Input file
 		*out;		// Output file
   int		page;		// Current page

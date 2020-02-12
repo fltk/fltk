@@ -1,0 +1,63 @@
+/**
+
+ \page	migration_1_4	Migrating Code from FLTK 1.3 to 1.4
+
+This appendix describes the differences between the FLTK
+1.3.x and FLTK 1.4.x functions and classes.
+
+\section migration_1_4_old_versions Migrating from FLTK 1.0 or 1.1 to 1.4
+
+If you want to migrate your code from FLTK 1.0 or 1.1 to FLTK 1.4,
+then you should first consult the relevant appendices in FLTK 1.3
+documentation online or by downloading the FLTK 1.3 documentation.
+See https://www.fltk.org/doc-1.3/index.html
+and/or https://www.fltk.org/software.php , respectively.
+
+
+\section migration_1_4_headers Minor Changes in Header Files
+
+(to be documented)
+
+
+
+\section migration_1_4_preferences Fl_Preferences
+
+Starting with FLTK 1.3, preference databases are expected to be in UTF-8
+encoding. Previous databases were stored in the current character set or
+code page which renders them incompatible for text entries using
+international characters.
+
+Starting with FLTK 1.4, searching a valid path to store the preferences
+files has changed slightly. Please see
+Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
+for details.
+
+If you want to retain user preferences you may want to move the preferences
+file from its old location to the new location as documented in
+Fl_Preferences::Fl_Preferences(Root, const char*, const char*) .
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="osissues.html">
+    [Prev]
+    Operating System Issues
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="development.html">
+    Developer Information
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

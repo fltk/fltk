@@ -204,17 +204,18 @@ int Fl_Tabs::handle(int event) {
     return 1;
   case FL_MOVE: {
     int ret = Fl_Group::handle(event);
-    Fl_Widget *tooltip_widget = Fl_Tooltip::current(), *n = tooltip_widget;
+    Fl_Widget *tooltip_widget = Fl_Tooltip::current();
+    Fl_Widget *n; // initialized later
     int H = tab_height();
-    if ( (H>=0) && (Fl::event_y()>y()+H) )
+    if ( (H >= 0) && (Fl::event_y() > y()+H) )
       return ret;
-    else if ( (H<0) && (Fl::event_y() < y()+h()+H) )
+    else if ( (H < 0) && (Fl::event_y() < y()+h()+H) )
       return ret;
     else {
       n = which(Fl::event_x(), Fl::event_y());
       if (!n) n = this;
     }
-    if (n!=tooltip_widget)
+    if (n != tooltip_widget)
       Fl_Tooltip::enter(n);
     return ret; }
   case FL_FOCUS:

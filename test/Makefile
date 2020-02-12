@@ -189,7 +189,7 @@ depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend -w 20 $(CPPFILES)
 	echo "# DO NOT DELETE THIS LINE -- make depend depends on it." > makedepend.tmp
 	echo "" >> makedepend.tmp
-	grep '^[a-zA-Z]' makedepend | sort -u >> makedepend.tmp
+	grep '^[a-zA-Z]' makedepend | ( LC_ALL=C sort -u >> makedepend.tmp; )
 	mv makedepend.tmp makedepend
 
 # Automatically generated dependencies...
@@ -226,6 +226,7 @@ clean:
 	done
 	$(RM) *.o core.* *~ *.bck *.bak
 	$(RM) CubeViewUI.cxx CubeViewUI.h
+	$(RM) checkers_pieces.cxx checkers_pieces.h
 	$(RM) fast_slow.cxx fast_slow.h
 	$(RM) inactive.cxx inactive.h
 	$(RM) keyboard_ui.cxx keyboard_ui.h
@@ -338,12 +339,16 @@ blocks$(EXEEXT): blocks.o
 	$(OSX_ONLY) mkdir blocks.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS
 
-checkers$(EXEEXT): checkers.o
+checkers$(EXEEXT): checkers.o checkers_pieces.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) checkers.o checkers_pieces.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(RM) -f -r checkers.app/Contents/MacOS
 	$(OSX_ONLY) mkdir checkers.app/Contents/MacOS
 	$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
+checkers.cxx:		checkers_pieces.h
+checkers_pieces.o:	checkers_pieces.h
+checkers_pieces.h:	checkers_pieces.fl
+checkers_pieces.cxx:	checkers_pieces.fl ../fluid/fluid$(EXEEXT)
 
 clock$(EXEEXT): clock.o
 

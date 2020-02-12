@@ -595,7 +595,7 @@ switch ( collapseicons_chooser->value() ) {
         tooltip {Tests Fl_Tree::openicon(), Fl_Tree::closeicon() and Fl_Tree::showcollapse().} xywh {520 225 140 21} down_box BORDER_BOX labelsize 12 textsize 11
       } {
         MenuItem {} {
-          label Normal
+          label Default
           xywh {10 10 36 21} labelsize 12
         }
         MenuItem {} {
@@ -645,7 +645,8 @@ switch ( selectmode_chooser->value() ) {
 Sets how Fl_Tree handles mouse selection of tree items.
     NONE	-- Not selectable by keyboard/mouse
     SINGLE	-- Only one item at a time selectable by keyboard/mouse
-    MULTI	-- Multiple items selectable} xywh {520 273 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+    MULTI	-- Multiple items selectable
+    SINGLE+DRAG	-- Lets user drag items to different position in tree} xywh {520 273 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {selectmode_chooser->value(2);}
         code1 {cb_selectmode_chooser(selectmode_chooser, (void*)0);}
       } {
@@ -765,7 +766,7 @@ tree->item_draw_mode(flags);
 tree->redraw();}
         tooltip {Tests Fl_Tree::item_draw_mode(FL_TREE_ITEM_HEIGHT_FROM_WIDGET)
 If enabled, item's height will track the widget()'s height.
-When enabled, click 'ccc' or 'D1/D2' buttons to test.} xywh {645 372 20 16} down_box DOWN_BOX labelsize 11 align 7
+When enabled, click 'ccc button' or 'D1/D2' buttons to test.} xywh {645 372 20 16} down_box DOWN_BOX labelsize 11 align 7
         code0 {itemheightfromwidget_radio->value(0);}
         code1 {itemheightfromwidget_radio->do_callback();}
       }

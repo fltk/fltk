@@ -57,6 +57,7 @@ static Fl_Image	*fl_check_images(const char *name, uchar *header, int headerlen)
 */
 void fl_register_images() {
   Fl_Shared_Image::add_handler(fl_check_images);
+  Fl_Image::register_images_done = true;
 }
 
 

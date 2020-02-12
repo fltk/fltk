@@ -3,17 +3,17 @@
 //
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /** \file
@@ -252,6 +252,10 @@ public:
      /// if the GTK library is available on the platform (linux/unix only).
      /// When switched off, GTK file dialogs aren't used even if the GTK library is available.
     OPTION_FNFC_USES_GTK,
+    /// When switched on (default), Fl_Printer runs the GTK printer dialog
+    /// if the GTK library is available on the platform (linux/unix only).
+    /// When switched off, the GTK printer dialog isn't used even if the GTK library is available.
+    OPTION_PRINTER_USES_GTK,
     /// When switched on (default), the library shows in a transient yellow window the zoom factor
     /// value.
     /// When switched off, no such window gets displayed.
@@ -999,6 +1003,7 @@ int main() {
 
 /** \defgroup  fl_screen  Screen functions
  Fl global screen functions declared in <FL/Fl.H>.
+ 
  FLTK supports high-DPI screens using a screen scaling factor.
  The scaling factor is initialized by the library to a value
  based on information obtained from the OS. If this initial value
@@ -1032,6 +1037,7 @@ int main() {
   static float screen_scale(int n); // via screen driver
   static void screen_scale(int n, float factor); // via screen driver
   static int screen_scaling_supported();
+  static void keyboard_screen_scaling(int value);
 
 /**   @} */
 

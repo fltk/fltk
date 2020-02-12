@@ -328,7 +328,7 @@ Function {writePrefs()} {open return_type void
     fl_message( "Assertion failed:\\nNot all group entries were found!" );
 
   /* sample code only: */
-  unsigned int hex = 0x2387efcd;
-  eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-  eat.set( "binFoo2", (void*)&bed, 256 );} {}
+  //unsigned int hex = 0x2387efcd;
+  //eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
+  //eat.set( "binFoo2", (void*)&bed, 256 );} {}
 }
