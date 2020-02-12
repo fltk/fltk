@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <limits.h>
 #include "flstring.h"
 
 #include <FL/Fl.H>
