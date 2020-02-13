@@ -53,13 +53,14 @@ script:
      ./configure
      make
      mkdir cmake-build
-     cmake -G "Unix Makefiles" -S .  -B"./cmake-build"
      cd cmake-build
+     cmake -G "Unix Makefiles" ..
      make
    else
-     scan-build cmake -G "Unix Makefiles"
-     scan-build --status-bugs -v
-     make
+     mkdir scan-build
+     cd scan-build
+     scan-build cmake -G "Unix Makefiles" ..
+     scan-build --status-bugs -v make
    fi
 
 after_success:
