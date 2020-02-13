@@ -60,7 +60,7 @@ script:
      mkdir scan-build
      cd scan-build
      scan-build cmake -G "Unix Makefiles" ..
-     scan-build --status-bugs -v make
+     scan-build -v make
    fi
 
 after_success:
