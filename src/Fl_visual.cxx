@@ -52,7 +52,7 @@
     </UL>
     
     <P>This returns true if the system has the capabilities by default or
-    FLTK suceeded in turing them on.  Your program will still work even if
+    FLTK succeeded in turning them on.  Your program will still work even if
     this returns false (it just won't look as good).
 */
 int Fl::visual(int flags)

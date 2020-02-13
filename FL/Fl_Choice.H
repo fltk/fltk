@@ -112,7 +112,7 @@ public:
 
   /**
     Gets the index of the last item chosen by the user.
-    The index is zero initially.
+    The index is -1 initially.
    */
   int value() const {return Fl_Menu_::value();}
 
