@@ -4,17 +4,17 @@
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
 # Please report all bugs and problems on the following page:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/str.php
 #
 
 set (DEBUG_OPTIONS_CMAKE 0)
@@ -128,18 +128,18 @@ option(OPTION_PRINT_SUPPORT "allow print support" ON)
 option(OPTION_FILESYSTEM_SUPPORT "allow file system support" ON)
 
 #######################################################################
-if(DOXYGEN_FOUND)
-    option(OPTION_BUILD_HTML_DOCUMENTATION "build html docs" OFF)
+if (DOXYGEN_FOUND)
+    option(OPTION_BUILD_HTML_DOCUMENTATION "build html docs" ON)
     option(OPTION_INSTALL_HTML_DOCUMENTATION "install html docs" OFF)
 
     option(OPTION_INCLUDE_DRIVER_DOCUMENTATION "include driver (developer) docs" OFF)
     mark_as_advanced(OPTION_INCLUDE_DRIVER_DOCUMENTATION)
 
-    if(LATEX_FOUND)
-      option(OPTION_BUILD_PDF_DOCUMENTATION "build pdf docs" OFF)
+    if (LATEX_FOUND)
+      option(OPTION_BUILD_PDF_DOCUMENTATION "build pdf docs" ON)
       option(OPTION_INSTALL_PDF_DOCUMENTATION "install pdf docs" OFF)
-    endif(LATEX_FOUND)
-endif(DOXYGEN_FOUND)
+    endif (LATEX_FOUND)
+endif (DOXYGEN_FOUND)
 
 if(OPTION_BUILD_HTML_DOCUMENTATION OR OPTION_BUILD_PDF_DOCUMENTATION)
     add_subdirectory(documentation)
