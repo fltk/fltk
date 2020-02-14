@@ -183,8 +183,7 @@ void Fl_ICO_Image::load_ico_(Fl_Image_Reader &rdr, int id)
   }
 
   rdr.seek(icondirentry_[pickedID].dwImageOffset);
-  desired_h(h());
-  load_bmp_(rdr, 1);
+  load_bmp_(rdr, h());
 }
 
 

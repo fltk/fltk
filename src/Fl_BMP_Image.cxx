@@ -57,7 +57,7 @@
  \see Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
  */
 Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
-: Fl_RGB_Image(0,0,0), desired_h_(0)
+: Fl_RGB_Image(0,0,0)
 {
   Fl_Image_Reader rdr;
   if (rdr.open(filename) == -1) {
@@ -87,7 +87,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *filename) // I - File to read
  \see Fl_Shared_Image
 */
 Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
-: Fl_RGB_Image(0,0,0), desired_h_(0)
+: Fl_RGB_Image(0,0,0)
 {
   Fl_Image_Reader rdr;
   if (rdr.open(imagename, data) == -1) {
@@ -102,7 +102,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *imagename, const unsigned char *data)
  format supports only 1 bit for alpha. To avoid code duplication, we use
  an Fl_Image_Reader that reads data from either a file or from memory.
  */
-void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int skip_header)
+void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int ico_height)
 {
   int     info_size,    // Size of info header
           depth,        // Depth of image (bits)
@@ -129,7 +129,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int skip_header)
   // Reader is already open at this point.
 
   // Get the header...
-  if (skip_header == 0) {
+  if (ico_height < 1) {
     byte = rdr.read_byte();	// Check "BM" sync chars
     bit  = rdr.read_byte();
     if (byte != 'B' || bit != 'M') {
@@ -168,9 +168,7 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr, int skip_header)
     // If the height is negative, the row order is flipped
     temp = rdr.read_long();
     if (temp < 0) row_order = 1;
-    // When reading from a .ICO file we must be able to force a specific height.
-    // I guess the mask is sometimes not correctly recognized. There must be a better way...
-    if (desired_h() == 0) h(abs(temp));
+    w(ico_height > 0 ? ico_height : abs(temp));
     rdr.read_word();
     depth = rdr.read_word();
     compression = rdr.read_dword();
