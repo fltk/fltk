@@ -366,19 +366,20 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
   image is destroyed.
 */
 Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
-  Fl_Image(pxm->w(), pxm->h(), 4),
+  Fl_Image(pxm->data_w(), pxm->data_h(), 4),
   array(0),
   alloc_array(0),
   id_(0),
   mask_(0),
   cache_w_(0), cache_h_(0)
 {
-  if (pxm && pxm->w() > 0 && pxm->h() > 0) {
-    array = new uchar[w() * h() * d()];
+  if (pxm && pxm->data_w() > 0 && pxm->data_h() > 0) {
+    array = new uchar[data_w() * data_h() * d()];
     alloc_array = 1;
     fl_convert_pixmap(pxm->data(), (uchar*)array, bg);
   }
   data((const char **)&array, 1);
+  scale(pxm->w(), pxm->h(), 0, 1);
 }
 
 
