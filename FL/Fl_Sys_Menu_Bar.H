@@ -29,15 +29,20 @@
 class Fl_Sys_Menu_Bar_Driver;
 
 /**
- A class to create and modify menus that appear on Mac OS X in the menu bar at the top of the screen.
- To use this class, just replace Fl_Menu_Bar with Fl_Sys_Menu_Bar, and on the Mac platform
+ A class to create and modify menus that appear on macOS in the menu bar at the top of the screen.
+ 
+ On other than macOS platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
+ 
+ On the macOS  platform, replace Fl_Menu_Bar with Fl_Sys_Menu_Bar, and
  a system menu at the top of the screen will be available. This menu will match an array
  of Fl_Menu_Item's exactly as in all other FLTK menus (except for the submenu with the
- application's own name; see below).
+ application's own name and the 'Window' menu; see below). There is, though, an important difference between
+ an Fl_Sys_Menu_Bar object under macOS and under other platforms: only a single object
+ from this class can be created, because macOS uses a single system menu bar. Therefore,
+ porting to macOS an app that creates, on other platforms,  several Fl_Menu_Bar objects, one for each of several windows,
+ is more complex that just replacing Fl_Menu_Bar by Fl_Sys_Menu_Bar.
  
-  On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
- 
-  On the MacOS platform, the system menu bar of any FLTK app begins with the Application
+  On the macOS platform, the system menu bar of any FLTK app begins with the Application
   menu which the FLTK library automatically constructs. Functions
   Fl_Mac_App_Menu::custom_application_menu_items() and Fl_Sys_Menu_Bar::about() can be used to further customize
   the Application menu. The FLTK library also automatically constructs and handles a Window menu which can be
@@ -50,7 +55,7 @@ class Fl_Sys_Menu_Bar_Driver;
  Changes to the menu state are immediately visible in the menubar when they are made
  using member functions of the Fl_Sys_Menu_Bar class. Other changes (e.g., by a call to
  Fl_Menu_Item::set()) should be followed by a call to update() to be
- visible in the menubar across all platforms. Global variable \ref fl_sys_menu_bar points to
+ visible in the menubar across all platforms. macOS global variable \ref fl_sys_menu_bar points to
  the unique, current system menu bar.
  
  A few FLTK menu features are not supported by the Mac System menu:
@@ -90,6 +95,7 @@ class Fl_Sys_Menu_Bar_Driver;
 
   */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
+  static Fl_Sys_Menu_Bar_Driver *driver();
 protected:
   virtual void draw();
 public:
@@ -102,7 +108,6 @@ public:
   } window_menu_style_enum;
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
   virtual ~Fl_Sys_Menu_Bar();
-  static Fl_Sys_Menu_Bar_Driver *driver();
   /** Return the system menu's array of Fl_Menu_Item's
    */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}

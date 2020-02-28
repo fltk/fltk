@@ -2930,7 +2930,7 @@ Fl_X* Fl_Cocoa_Window_Driver::makeWindow()
   fl_open_display();
   NSInteger winlevel = NSNormalWindowLevel;
   NSUInteger winstyle;
-  Fl_Sys_Menu_Bar::driver()->create_window_menu(); // effective once at most
+  Fl_Sys_Menu_Bar::create_window_menu(); // effective once at most
   Fl_Window* w = pWindow;
   if (w->parent()) {
     w->border(0);
