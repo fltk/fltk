@@ -482,6 +482,9 @@ void Fl_Window::flush()
 
 void Fl_Window::draw()
 {
+  Fl_Window *save_current = current_;
+  bool to_display = Fl_Display_Device::display_device()->is_current();
+  if (!to_display) current_ = this; // so drawing of background Fl_Tiled_Image is correct
   pWindowDriver->draw_begin();
 
   // The following is similar to Fl_Group::draw(), but ...
@@ -510,6 +513,7 @@ void Fl_Window::draw()
   draw_children();
 
   pWindowDriver->draw_end();
+  if (!to_display) current_ = save_current;
 # if defined(FLTK_USE_CAIRO)
   Fl::cairo_make_current(this); // checkout if an update is necessary
 # endif
