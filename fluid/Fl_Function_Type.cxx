@@ -1322,6 +1322,7 @@ void Fl_Comment_Type::write_code1() {
     *e++ = eol;
     b = e;
   }
+  free(txt);
 }
 
 void Fl_Comment_Type::write_code2() {}

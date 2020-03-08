@@ -856,7 +856,7 @@ void delete_all(int selected_only) {
   selection_changed(0);
 }
 
-// move f (and it's children) into list before g:
+// move f (and its children) into list before g:
 // returns pointer to whatever is after f & children
 void Fl_Type::move_before(Fl_Type* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",
@@ -917,7 +917,7 @@ void later_cb(Fl_Widget*,void*) {
 
 ////////////////////////////////////////////////////////////////
 
-// write a widget and all it's children:
+// write a widget and all its children:
 void Fl_Type::write() {
     write_indent(level);
     write_word(type_name());
