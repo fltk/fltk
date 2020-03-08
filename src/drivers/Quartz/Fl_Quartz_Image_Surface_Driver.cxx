@@ -70,7 +70,7 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
   offscreen = off ? off : CGBitmapContextCreate(calloc(W*H,4), W, H, 8, W*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
   driver(new Fl_Quartz_Graphics_Driver);
-  CGContextTranslateCTM(offscreen, 0.5, -0.5); // as when drawing to a window
+  CGContextTranslateCTM(offscreen, 0.5*s, -0.5*s); // as when drawing to a window
   if (high_res) {
     CGContextScaleCTM(offscreen, s, s);
   }
