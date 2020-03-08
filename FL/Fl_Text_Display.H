@@ -3,7 +3,7 @@
 //
 // Header file for Fl_Text_Display class.
 //
-// Copyright 2001-2017 by Bill Spitzak and others.
+// Copyright 2001-2020 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
@@ -11,11 +11,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 /* \file
@@ -179,11 +179,18 @@ public:
   void insert(const char* text);
   void overstrike(const char* text);
   void insert_position(int newPos);
-  
-  /** 
-   Gets the position of the text insertion cursor for text display.
-   \return insert position index into text buffer 
-   */
+
+  /**
+    Gets the position of the text insertion cursor for text display.
+
+    The insert position is the byte count (offset) from the beginning
+    of the text buffer (starting with 0). Returns 0 (zero) if no buffer
+    is associated to the text display. Returns buffer()->length() if the
+    insert position is at the end of the buffer.
+
+    \returns insert position index into text buffer
+    \see insert_position(int)
+  */
   int insert_position() const { return mCursorPos; }
   int position_to_xy(int pos, int* x, int* y) const;
 

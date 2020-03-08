@@ -230,7 +230,7 @@ void Fl_Text_Display::linenumber_width(int width) {
 int Fl_Text_Display::linenumber_width() const {
   return mLineNumWidth;
 }
- 
+
 /**
  Set the font used for line numbers (if enabled).
  \version 1.3.3
@@ -309,12 +309,12 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
 
 /**
  Sets the printf() style format string used for line numbers.
- Default is "%d" for normal unpadded decimal integers. 
+ Default is "%d" for normal unpadded decimal integers.
 
  An internal copy of \p val is allocated and managed;
  it is automatically freed whenever a new value is assigned,
  or when the widget is destroyed.
- 
+
  The value of \p val must \a not be NULL.
 
  Example values:
@@ -1063,7 +1063,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   int lineStartPos, fontHeight;
   int visLineNum;
   /* If position is not displayed, return false */
-  if ((pos < mFirstChar) || 
+  if ((pos < mFirstChar) ||
       (pos > mLastChar && !empty_vlines()) ||
       (pos > buffer()->length()) ) {		// STR #3231
     return (*X=*Y=0); // make sure X & Y are set when it is out of view
@@ -1622,11 +1622,11 @@ void Fl_Text_Display::previous_word() {
  \brief This is called before any characters are deleted.
 
  Callback attached to the text buffer to receive delete information before
- the modifications are actually made. 
+ the modifications are actually made.
 
- This callback can be used to adjust 
- the display or update other setting. It is not advisable to change any 
- buffers or text in this callback, or line counting may get out of sync.
+ This callback can be used to adjust the display or update other setting.
+ It is not advisable to change any buffers or text in this callback, or
+ line counting may get out of sync.
 
  \param pos starting index of deletion
  \param nDeleted number of bytes we will delete (must be UTF-8 aligned!)
@@ -1657,9 +1657,9 @@ void Fl_Text_Display::buffer_predelete_cb(int pos, int nDeleted, void *cbArg) {
 
  Callback attached to the text buffer to receive modification information.
 
- This callback can be used to adjust 
- the display or update other setting. It is not advisable to change any 
- buffers or text in this callback, or line counting may get out of sync.
+ This callback can be used to adjust the display or update other setting.
+ It is not advisable to change any buffers or text in this callback, or
+ line counting may get out of sync.
 
  \param pos starting index of modification
  \param nInserted number of bytes we inserted (must be UTF-8 aligned!)
@@ -1782,7 +1782,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
      have changed. If only one line is altered, line numbers cannot
      be affected (the insertion or removal of a line break always
      results in at least two lines being redrawn). */
-    
+
     // Call draw_line_numbers() here to ensure line# is drawn
     // when hitting enter for new line -- LZA / STR #2621
     //textD->draw_line_numbers(true);    // no, can't call this here, not in draw() context -- ERCO / STR#2621
@@ -1829,11 +1829,10 @@ void Fl_Text_Display::maintain_absolute_top_line_number(int state) {
 
 
 /**
- \brief Line numbering stuff, currently unused.
+  Returns the absolute (non-wrapped) line number of the first line displayed.
 
- Returns the absolute (non-wrapped) line number of the first line displayed.
- Returns 0 if the absolute top line number is not being maintained.
- */
+  Returns 0 if the absolute top line number is not being maintained.
+*/
 int Fl_Text_Display::get_absolute_top_line_number() const {
   if (!mContinuousWrap)
     return mTopLineNum;
@@ -1845,10 +1844,10 @@ int Fl_Text_Display::get_absolute_top_line_number() const {
 
 
 /**
- \brief Line numbering stuff, currently unused.
+  Re-calculate absolute top line number for a change in scroll position.
 
- Re-calculate absolute top line number for a change in scroll position.
- */
+  Does nothing if the absolute top line number is not being maintained.
+*/
 void Fl_Text_Display::absolute_top_line_number(int oldFirstChar) {
   if (maintaining_absolute_top_line_number()) {
     if (mFirstChar < oldFirstChar)
@@ -1861,11 +1860,12 @@ void Fl_Text_Display::absolute_top_line_number(int oldFirstChar) {
 
 
 /**
- \brief Line numbering stuff, currently unused.
+  Returns true if a separate absolute top line number is being maintained.
 
- Return true if a separate absolute top line number is being maintained
- (for displaying line numbers or showing in the statistics line).
- */
+  The absolute top line number is used for displaying line numbers in
+  continuous wrap mode or showing in the statistics line (the latter is
+  currently not available in FLTK).
+*/
 int Fl_Text_Display::maintaining_absolute_top_line_number() const {
   return mContinuousWrap &&
   (mLineNumWidth != 0 || mNeedAbsTopLineNum);
@@ -1874,11 +1874,11 @@ int Fl_Text_Display::maintaining_absolute_top_line_number() const {
 
 
 /**
- \brief Line numbering stuff, probably unused.
+ Reestablish the absolute (non-wrapped) top line number.
 
- Count lines from the beginning of the buffer to reestablish the
- absolute (non-wrapped) top line number.  If mode is not continuous wrap,
- or the number is not being maintained, does nothing.
+ Count lines from the beginning of the buffer to reestablish the absolute
+ (non-wrapped) top line number. If mode is not continuous wrap, or the
+ number is not being maintained, does nothing.
  */
 void Fl_Text_Display::reset_absolute_top_line_number() {
   mAbsTopLineNum = 1;
@@ -1888,16 +1888,24 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
 
 
 /**
- \brief Convert a position index into a line number offset.
+  Convert a position index into a line number offset.
 
- Find the line number of position \p pos relative to the first line of
- displayed text. Returns 0 if the line is not displayed.
+  Find the line number of position \p pos relative to the first line of
+  displayed text, counting from 0 to <i>visible lines - 1</i>.
+  The line number is returned in \p lineNum.
 
- \param pos ??
- \param[out] lineNum ??
- \return ??
- \todo What does this do?
- */
+  Returns 0 if the line is not displayed. In this case \p lineNum is 0 as well.
+
+  Returns 1 if the line is displayed. In this case \p lineNum is the relative
+  line number.
+
+  \param[in]  pos	byte position in buffer
+  \param[out] lineNum	relative line number of byte \p pos in buffer
+
+  \returns whether the character at byte position \p pos is currently displayed
+  \retval 0 \p pos is not displayed; \p lineNum is invalid (zero)
+  \retval 1 \p pos is displayed; \p lineNum is valid
+*/
 int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
   IS_UTF8_ALIGNED2(buffer(), pos)
 
@@ -2280,7 +2288,7 @@ void Fl_Text_Display::draw_string(int style,
       if (Fl::focus() == (Fl_Widget*)this) {
 	if (Fl::screen_driver()->has_marked_text() && Fl::compose_state)
           background = color();// Mac OS: underline marked text
-	else 
+	else
           background = selection_color();
 	}
       else background = fl_color_average(color(), selection_color(), 0.4f);
@@ -3051,7 +3059,7 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
       }
       Y += lineHeight;
     }
-  } 
+  }
   fl_pop_clip();
 }
 
@@ -3838,7 +3846,7 @@ void Fl_Text_Display::draw(void) {
   // Important to do this at end of this method, otherwise line numbers
   // will not scroll with the text edit area
   draw_line_numbers(true);
-    
+
   fl_pop_clip();
 }
 
