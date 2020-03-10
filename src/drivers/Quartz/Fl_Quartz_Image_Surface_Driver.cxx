@@ -73,6 +73,7 @@ Fl_Quartz_Image_Surface_Driver::Fl_Quartz_Image_Surface_Driver(int w, int h, int
   CGContextTranslateCTM(offscreen, 0.5*s, -0.5*s); // as when drawing to a window
   if (high_res) {
     CGContextScaleCTM(offscreen, s, s);
+    driver()->scale(s);
   }
   CGContextSetShouldAntialias(offscreen, false);
   CGContextTranslateCTM(offscreen, 0, height);  
