@@ -3,17 +3,17 @@
 //
 // Group widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 // The Fl_Group is the only defined container type in FLTK.
@@ -54,7 +54,7 @@ int Fl_Group::find(const Fl_Widget* o) const {
   return i;
 }
 
-// Metrowerks CodeWarrior and others can't export the static
+// Some (* which? *) compilers / toolchains can't export the static
 // class member: current_, so these methods can't be inlined...
 
 /**

@@ -3,31 +3,19 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2019 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
-//// From the inner edge of a MetroWerks CodeWarrior CD:
-// (without permission)
-//
-// "Three Compiles for 68Ks under the sky,
-// Seven Compiles for PPCs in their fragments of code,
-// Nine Compiles for Mortal Carbon doomed to die,
-// One Compile for Mach-O Cocoa on its Mach-O throne,
-// in the Land of MacOS X where the Drop-Shadows lie.
-// 
-// One Compile to link them all, One Compile to merge them,
-// One Compile to copy them all and in the bundle bind them,
-// in the Land of MacOS X where the Drop-Shadows lie."
 
 #define CONSOLIDATE_MOTION 0
 extern "C" {

@@ -3,17 +3,17 @@
 //
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #include <FL/Fl.H>
@@ -1480,7 +1480,6 @@ static bool prepare_shell_command(const char * &command)  { // common pre-shell 
   return true;
 }
 
-#if !defined(__MWERKS__)
 // Support the full piped shell command...
 void
 shell_pipe_cb(FL_SOCKET, void*) {
@@ -1537,22 +1536,6 @@ do_shell_command(Fl_Return_Button*, void*) {
 
   while (shell_run_window->shown()) Fl::wait();
 }
-#else
-// Just do basic shell command stuff, no status window...
-void
-do_shell_command(Fl_Return_Button*, void*) {
-  const char	*command;	// Command to run
-  int		status;		// Status from command...
-
-  if (!prepare_shell_command(command)) return;
-
-  if ((status = system(command)) != 0) {
-    fl_alert("Shell command returned status %d!", status);
-  } else if (completion_button->value()) {
-    fl_message("Shell command completed successfully!");
-  }
-}
-#endif // !__MWERKS__
 
 void
 show_shell_window() {

@@ -5,17 +5,17 @@
 //
 // This program is described in Chapter 4 of the FLTK Programmer's Guide.
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 //
@@ -27,10 +27,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-
-#ifdef __MWERKS__
-# define FL_DLL
-#endif
 
 #include <FL/Fl.H>
 #include <FL/platform.H> // for fl_open_callback
