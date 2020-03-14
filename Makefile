@@ -80,6 +80,10 @@ distclean: clean
 		$(RM) test/`basename $$file .fl`.cxx; \
 		$(RM) test/`basename $$file .fl`.h; \
 	done
+	$(RM) -rf autom4te.cache/
+	$(RM) config.guess
+	$(RM) config.sub
+	$(RM) configure
 
 fltk-config: configure configh.in fltk-config.in
 	if test -f config.status; then \
