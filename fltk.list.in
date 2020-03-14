@@ -124,7 +124,7 @@ f 0444 root sys /usr/share/icons/hicolor/32x32/apps/fluid.png fluid/icons/fluid-
 f 0444 root sys /usr/share/icons/hicolor/48x48/apps/fluid.png fluid/icons/fluid-48.png
 f 0444 root sys /usr/share/icons/hicolor/64x64/apps/fluid.png fluid/icons/fluid-64.png
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/fluid.png fluid/icons/fluid-128.png
-f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/x-fluid.desktop
+f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/fluid.desktop
 
 %system all
 
@@ -361,7 +361,7 @@ f 0444 root sys $docdir/ documentation/html/*.gif
 f 0444 root sys $docdir/ documentation/html/*.html
 f 0444 root sys $docdir/ documentation/html/*.jpg
 f 0444 root sys $docdir/COPYING COPYING
-f 0444 root sys $docdir/CHANGES CHANGES
+f 0444 root sys $docdir/CHANGES.txt CHANGES.txt
 
 # Examples
 d 0555 root sys $docdir/examples
