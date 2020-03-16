@@ -3,23 +3,23 @@
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
-# (EPM can be found at http://www.epmhome.org/)
+# (EPM can be found at https://www.msweet.org/epm/)
 #
-# Copyright 1998-2018 by Bill Spitzak and others.
+# Copyright 1998-2020 by Bill Spitzak and others.
 #
 # This library is free software. Distribution and use rights are outlined in
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#      http://www.fltk.org/COPYING.php
+#      https://www.fltk.org/COPYING.php
 #
 # Please report all bugs and problems on the following page:
 #
-#      http://www.fltk.org/str.php
+#      https://www.fltk.org/str.php
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2018 by Bill Spitzak and others.
+%copyright 1998-2020 by Bill Spitzak and others.
 %vendor FLTK Development Team
 %license COPYING
 %readme README.txt
