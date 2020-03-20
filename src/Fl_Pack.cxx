@@ -17,7 +17,7 @@
 //
 
 // Based on code by Curtis Edwards
-// Group that compresses all it's children together and resizes to surround
+// Group that compresses all its children together and resizes to surround
 // them on each redraw (only if box() is zero)
 // Bugs: ?
 
