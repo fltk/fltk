@@ -321,6 +321,11 @@ STYLE_DONE:
 
 static int fl_free_font = FL_FREE_FONT;
 
+// This function fills in the fltk font table with all the fonts that
+// are found on the X server.  It tries to place the fonts into families
+// and to sort them so the first 4 in a family are normal, bold, italic,
+// and bold italic.
+
 // Uses the fontconfig lib to construct a list of all installed fonts.
 // I tried using XftListFonts for this, but the API is tricky - and when
 // I looked at the XftList* code, it calls the Fc* functions anyway, so...
@@ -966,19 +971,13 @@ float Fl_Xlib_Graphics_Driver::scale_font_for_PostScript(Fl_Font_Descriptor *des
   return ps_size;
 }
 
-
-// This function fills in the fltk font table with all the fonts that
-// are found on the X server.  It tries to place the fonts into families
-// and to sort them so the first 4 in a family are normal, bold, italic,
-// and bold italic.
-
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change
 // the header files I decided to store this value in the last character
 // of the font name array.
 #define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
 
-
+#if USE_PANGO
 // turn a stored font name in "fltk format" into a pretty name:
 const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
@@ -988,15 +987,35 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
     type = 0;
     if (strstr(p, " Bold")) type = FL_BOLD;
     if (strstr(p, " Italic") || strstr(p, " Oblique")) type += FL_ITALIC;
-    // NOTE: This can cause duplications in fonts that already have Bold or Italic in
-    // their "name". Maybe we need to find a cleverer way?
     strlcpy(f->fontname, p, ENDOFBUFFER);
     f->fontname[ENDOFBUFFER] = (char)type;
   }
   if (ap) *ap = f->fontname[ENDOFBUFFER];
   return f->fontname;
 }
-
+#else
+const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
+  Fl_Fontdesc *f = fl_fonts + fnum;
+  if (!f->fontname[0]) {
+    const char* p = f->name;
+    int type;
+    switch (p[0]) {
+    case 'B': type = FL_BOLD; break;
+    case 'I': type = FL_ITALIC; break;
+    case 'P': type = FL_BOLD | FL_ITALIC; break;
+    default:  type = 0; break;
+    }
+  // NOTE: This can cause duplications in fonts that already have Bold or Italic in
+  // their "name". Maybe we need to find a cleverer way?
+    strlcpy(f->fontname, p+1, ENDOFBUFFER);
+    if (type & FL_BOLD) strlcat(f->fontname, " bold", ENDOFBUFFER);
+    if (type & FL_ITALIC) strlcat(f->fontname, " italic", ENDOFBUFFER);
+    f->fontname[ENDOFBUFFER] = (char)type;
+  }
+  if (ap) *ap = f->fontname[ENDOFBUFFER];
+  return f->fontname;
+}
+#endif // USE_PANGO
 
 float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
   return 2;
