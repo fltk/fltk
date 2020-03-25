@@ -1846,6 +1846,13 @@ void Fl_WinAPI_Window_Driver::resize(int X, int Y, int W, int H) {
     flags |= SWP_NOMOVE;
   }
   if (is_a_resize) {
+    if (resize_from_program && shown()) {
+      // don't obey "resize from program" when window is maximized
+      WINDOWPLACEMENT wplace;
+      wplace.length = sizeof(WINDOWPLACEMENT);
+      BOOL ok = GetWindowPlacement(fl_xid(pWindow), &wplace);
+      if (ok && wplace.showCmd == SW_SHOWMAXIMIZED) return;
+    }
     pWindow->Fl_Group::resize(X, Y, W, H);
     if (visible_r()) {
       pWindow->redraw();
