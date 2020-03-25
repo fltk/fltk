@@ -119,6 +119,8 @@ Changes in FLTK 1.4.0					Released: ??? ?? 2020
   Other Improvements
 
   - (add new items here)
+  - Fix Windows-specific bug when the program tries to enlarge a
+    maximized window, that would freeze the window (git issue #65).
   - Improve X11 16-bit coordinate clipping for text (STR 2798). This
     assumes that text is "small" WRT 16-bit coordinate space and clips
     text if at least one of the x/y coordinates is out of bounds.
