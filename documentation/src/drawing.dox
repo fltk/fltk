@@ -70,7 +70,10 @@ to two pixels.
 </ul>
 
 At application start time, FLTK attempts to detect the adequate scale factor value for
-each screen of the system. If this attempt fails, it's possible to set the
+each screen of the system. Here is how that's done under the \ref osissues_x_scaling "X11"
+and \ref osissues_windows_scaling "Windows" platforms.
+If the resulting scale factor is not satisfactory, and also under the macOS platform,
+it's possible to set the
 <tt>FLTK_SCALING_FACTOR</tt> environmental variable to the desired numerical value
 (e.g., 1.75) and any FLTK app will start scaled with that value. Furthermore,
 it's possible to change the scale factor value of any screen at run time
