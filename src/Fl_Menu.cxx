@@ -857,20 +857,23 @@ int menuwindow::handle_part1(int e) {
 }
 
 /**
-  Pulldown() is similar to popup(), but a rectangle is
-  provided to position the menu.  The menu is made at least W
-  wide, and the picked item is centered over the rectangle
-  (like Fl_Choice uses).  If picked is zero or not
-  found, the menu is aligned just below the rectangle (like a pulldown
-  menu).
-  <P>The title and menubar arguments are used
-  internally by the Fl_Menu_Bar widget.
+  Pulldown() is similar to popup(), but a rectangle is provided
+  to position the menu.
+
+  The menu is made at least \p W wide, and the picked item \p initial_item
+  is centered over the rectangle (like Fl_Choice uses).
+
+  If \p initial_item is \p NULL or not found, the menu is aligned just
+  below the rectangle (like a pulldown menu).
+
+  The \p title and \p menubar arguments are used internally by the
+  Fl_Menu_Bar widget.
 */
 const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     int X, int Y, int W, int H,
     const Fl_Menu_Item* initial_item,
     const Fl_Menu_* pbutton,
-    const Fl_Menu_Item* t,
+    const Fl_Menu_Item* title,
     int menubar) const {
   Fl_Group::current(0); // fix possible user error...
 
@@ -888,7 +891,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     X += Fl::event_x_root()-Fl::event_x();
     Y += Fl::event_y_root()-Fl::event_y();
   }
-  menuwindow mw(this, X, Y, W, H, initial_item, t, menubar);
+  menuwindow mw(this, X, Y, W, H, initial_item, title, menubar);
   Fl::grab(mw);
   menustate pp; p = &pp;
   pp.p[0] = &mw;

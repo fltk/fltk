@@ -474,7 +474,7 @@ the class "fltk" is used (e.g. <tt>fltk.background</tt>). If no
 match is found, a global search is done (e.g.
 <tt>*background</tt>).
 
-\subsection osissues_x_scaling Dislay Scaling Factor
+\subsection osissues_x_scaling Display Scaling Factor
 
 FLTK uses the value of the Xft.dpi resource divided by 96.
 to initialize the display scaling factor. That is also
@@ -583,7 +583,7 @@ DrawSomething(fl_gc, ..., fl_brush());
 It may also be useful to refer to Fl_Window::current()
 to get the window's size or position.
 
-\subsection osissues_windows_scaling Dislay Scaling Factor
+\subsection osissues_windows_scaling Display Scaling Factor
 
 FLTK uses the value given by function GetDpiForMonitor() divided by 96.
 to initialize the scaling factor of each display in the system.
