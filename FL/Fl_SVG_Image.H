@@ -37,8 +37,8 @@ struct NSVGimage;
  \ref array is NULL until then. The delayed rasterization ensures an Fl_SVG_Image is always rasterized
  to the exact screen resolution at which it is drawn.
  
- The Fl_SVG_Image class draws images computed by \c nanosvg: one known limitation is that text
- within \c <text\></text\> blocks is not rendered.
+ The Fl_SVG_Image class draws images computed by \c nanosvg: two known limitations are that text
+ between \c <text\> and </text\> marks, and \c image elements  are not rendered.
  
  The FLTK library can optionally be built without SVG support; in that case, 
  class Fl_SVG_Image is unavailable.
