@@ -409,15 +409,16 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
            XTranslateCoordinates(fl_display, xid, parent, 0, 0, &wsides, &htop, &child_win) == True);
   if (n) XFree(children);
   if (!do_it) wsides = htop = 0;
-  int hbottom = wsides;
+  //int hbottom = wsides;
   float s = Fl::screen_driver()->scale(screen_num());
+  htop -= wsides;
   htop /= s; wsides /= s;
   fl_window = parent;
   if (htop) {
-    top = Fl::screen_driver()->read_win_rectangle(0, 0, - (w() + 2 * wsides), htop, pWindow);
-    if (top) top->scale(w() + 2 * wsides, htop, 0, 1);
+    top = Fl::screen_driver()->read_win_rectangle(wsides, wsides, -w(), htop, pWindow);
+    if (top) top->scale(w(), htop, 0, 1);
   }
-  if (wsides) {
+  /*if (wsides) {
     left = Fl::screen_driver()->read_win_rectangle(0, htop, -wsides, h(), pWindow);
     if (left) {
       left->scale(wsides, h(), 0, 1);
@@ -429,7 +430,8 @@ void Fl_X11_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_R
     bottom = Fl::screen_driver()->read_win_rectangle(0, htop + h(), -(w() + 2*wsides), hbottom, pWindow);
     if (bottom) {
       bottom->scale(w() + 2*wsides, wsides, 0, 1);
-    }  }
+    }
+  }*/
   fl_window = from;
 }
 
