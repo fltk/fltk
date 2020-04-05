@@ -84,7 +84,7 @@ Under Mac OS X, the corresponding GUI scaling shortcuts are ⌘/+/-/0/.
 GUI rescaling involves also image drawing: the screen area covered by the drawn image
 contains a number of pixels that grows with the scale factor. When FLTK draws images,
 it maps the image data (the size of these data is given by Fl_Image::data_w() and
-Fl_Image::data_h())) to the screen area whose size (in FLTK units) is given by
+Fl_Image::data_h()) to the screen area whose size (in FLTK units) is given by
 Fl_Image::w() and Fl_Image::h(). How exactly such mapping is performed depends on the
 image type, the platform and some hardware features. The most common
 case for Fl_RGB_Image's is that FLTK uses a scaled drawing system feature that directly
