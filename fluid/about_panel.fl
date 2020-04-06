@@ -7,19 +7,22 @@ comment {//
 //
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 } {in_source in_header
+}
+
+decl {\#include <time.h>} {public global
 }
 
 decl {void show_help(const char *name);} {public local
@@ -27,9 +30,15 @@ decl {void show_help(const char *name);} {public local
 
 Function {make_about_panel()} {open
 } {
+  code {static char cbuf[200] = "";
+  if (!cbuf[0]) {
+    time_t t = time(0);
+    struct tm *lt = localtime(&t);
+    sprintf(cbuf, "Copyright © 1998 - %d\\nby Bill Spitzak and others", lt->tm_year+1900);
+  }} {}
   Fl_Window about_panel {
-    label {About FLUID} open selected
-    xywh {340 195 345 180} type Double color 50 selection_color 47 hide hotspot
+    label {About FLUID} open
+    xywh {340 190 345 180} type Double color 50 selection_color 47 hide hotspot
     code0 {\#include "../src/flstring.h"} non_modal
   } {
     Fl_Box {} {
@@ -45,9 +54,10 @@ Version x.x.x}
       code2 {o->copy_label(about);}
     }
     Fl_Box {} {
-      label {Copyright 1998-2018 by
-Bill Spitzak and others}
+      label {(Copyright)}
+      comment {Label edited dynamically:} selected
       xywh {135 90 200 45} align 148
+      code0 {o->label(cbuf);}
     }
     Fl_Button {} {
       label {View License...}
