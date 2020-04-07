@@ -942,17 +942,17 @@ void show_help(const char *name) {
        "the <code>.cxx</code> file so it still appears to be a single source file.<p>"
        "<img src=\"embedded:/fluid-org.png\"></p>"
        "<p>More information is available online at <a href="
-       "\"http://www.fltk.org/doc-1.3/fluid.html\">http://www.fltk.org/</a>"
+       "\"https://www.fltk.org/doc-1.4/fluid.html\">https://www.fltk.org/</a>"
        "</body></html>"
        );
     } else if (strcmp(name, "license.html")==0) {
-      fl_open_uri("http://www.fltk.org/doc-1.3/license.html");
+      fl_open_uri("https://www.fltk.org/doc-1.4/license.html");
       return;
     } else if (strcmp(name, "index.html")==0) {
-      fl_open_uri("http://www.fltk.org/doc-1.3/index.html");
+      fl_open_uri("https://www.fltk.org/doc-1.4/index.html");
       return;
     } else {
-      snprintf(helpname, sizeof(helpname), "http://www.fltk.org/%s", name);
+      snprintf(helpname, sizeof(helpname), "https://www.fltk.org/%s", name);
       fl_open_uri(helpname);
       return;
     }
