@@ -536,6 +536,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   NSString *ns = [NSString stringWithFormat:@"%@.%@", 
 		  [[dialog performSelector:@selector(nameFieldStringValue)] stringByDeletingPathExtension],
 		  [NSString stringWithUTF8String:p]];
+  if (fl_mac_os_version >= 100900) [dialog setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
   free(s);
   [dialog performSelector:@selector(setNameFieldStringValue:) withObject:ns];
 }
@@ -601,6 +602,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
     fname = [preset lastPathComponent];
   }
   if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   if (fl_mac_os_version >= 100600) {
     bool usepath = false;
     NSString *path = nil;
@@ -615,15 +617,22 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
     }
     if (usepath) {
       // Set only if full path exists
-      [_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:path]];
+      [_panel setDirectoryURL:[NSURL fileURLWithPath:path]];
     } else { // didn't setDirectoryURL to full path? Set dir + fname separately..
-      if (dir) [_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:dir]];
-      if (fname) [_panel performSelector:@selector(setNameFieldStringValue:) withObject:fname];
+      if (dir) [_panel setDirectoryURL:[NSURL fileURLWithPath:dir]];
+      if (fname) [_panel setNameFieldStringValue:fname];
     }
     [path release];
-    retval = [_panel runModal];
+    __block NSInteger complete = -1;
+    [_panel beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSInteger returnCode) {
+      complete = returnCode; // this block runs after OK or Cancel was triggered in file dialog
+    }]; // this message returns immediately and begins the file dialog as a sheet
+    while (complete < 0) Fl::wait(100); // loop until end of file dialog
+    retval = complete;
   }
-  else {
+  else
+#endif
+  {
     retval = [(id)_panel runModalForDirectory:dir file:fname];
   }
   [dir release];
@@ -712,6 +721,16 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
 	[popup setAction:@selector(changedPopup:)];
 	[popup setTarget:saveDelegate];
 	[saveDelegate panel:(NSSavePanel*)_panel];
+        if (fl_mac_os_version >= 100900) {
+          char *p = _filt_patt[_filt_value];
+          char *q = strchr(p, '.'); if(!q) q = p-1;
+          do q++; while (*q==' ' || *q=='{');
+          p = strdup(q);
+          q = strchr(p, ','); if (q) *q = 0;
+          [_panel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
+          free(p);
+          [_panel setExtensionHidden:NO];
+        }
       }
       [_panel setCanSelectHiddenExtension:YES];
     }
