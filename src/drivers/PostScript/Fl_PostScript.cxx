@@ -77,7 +77,7 @@ int Fl_PostScript_File_Device::begin_job (int pagecount, enum Fl_Paged_Device::P
   Fl_Native_File_Chooser fnfc;
   fnfc.title(Fl_PostScript_File_Device::file_chooser_title);
   fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM);
+  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
   fnfc.filter("PostScript\t*.ps\n");
   // Show native chooser
   if ( fnfc.show() ) return 1;
