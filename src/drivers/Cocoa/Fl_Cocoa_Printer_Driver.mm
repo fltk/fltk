@@ -91,6 +91,15 @@ Fl_Cocoa_Printer_Driver::~Fl_Cocoa_Printer_Driver(void) {
   delete driver();
 }
 
+@interface print_panel_delegate : NSObject
+- (void)printPanelDidEnd:(NSPrintPanel *)printPanel returnCode:(NSInteger)returnCode contextInfo:(NSInteger *)contextInfo;
+@end
+@implementation print_panel_delegate
+- (void)printPanelDidEnd:(NSPrintPanel *)printPanel returnCode:(NSInteger)returnCode contextInfo:(NSInteger *)contextInfo
+{
+  *contextInfo = returnCode;
+}
+@end
 
 int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
@@ -105,12 +114,20 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
     NSPrintPanel *panel = [NSPrintPanel printPanel];
     //from 10.5
     [panel setOptions:NSPrintPanelShowsCopies | NSPrintPanelShowsPageRange | NSPrintPanelShowsPageSetupAccessory];
-    NSInteger retval = [panel runModalWithPrintInfo:info];//from 10.5
-    if(retval != NSOKButton) {
-      Fl_Window *w = Fl::first_window();
-      if (w) w->show();
-      return 1;
-    }
+    NSInteger retval = -1;
+    Fl_Window *top = Fl::first_window();
+    NSWindow *main = (top ? (NSWindow*)fl_xid(top->top_window()) : nil);
+    if (main) {
+      [panel beginSheetWithPrintInfo:info
+                      modalForWindow:main
+                            delegate:[[[print_panel_delegate alloc] init] autorelease]
+                      didEndSelector:@selector(printPanelDidEnd:returnCode:contextInfo:)
+                         contextInfo:&retval];
+      while (retval < 0) Fl::wait(100);
+      [main makeKeyAndOrderFront:nil];
+    } else
+      retval = [panel runModalWithPrintInfo:info]; //from 10.5
+    if (retval != NSOKButton) return 1;
     printSession = (PMPrintSession)[info PMPrintSession];//from 10.5
     pageFormat = (PMPageFormat)[info PMPageFormat];//from 10.5
     printSettings = (PMPrintSettings)[info PMPrintSettings];//from 10.5
