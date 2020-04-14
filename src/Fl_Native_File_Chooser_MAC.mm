@@ -729,10 +729,10 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
           q = strchr(p, ','); if (q) *q = 0;
           [_panel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
           free(p);
-          [_panel setExtensionHidden:NO];
         }
       }
       [_panel setCanSelectHiddenExtension:YES];
+      [_panel setExtensionHidden:NO];
     }
   }
   int retval = runmodal();
