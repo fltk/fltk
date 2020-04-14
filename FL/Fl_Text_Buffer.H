@@ -478,9 +478,7 @@ public:
   void highlight(int start, int end);
 
   /**
-   Returns the highlighted text.
-
-   When you are done with the text, free it using the free() function.
+   Returns a non-zero value if text has been highlighted, 0 otherwise.
    */
   int highlight() { return mHighlight.selected(); }
 
