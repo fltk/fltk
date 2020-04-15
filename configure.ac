@@ -1093,8 +1093,12 @@ case $host_os_gui in
 	    	  PANGOLIBDIR="`pkg-config --libs-only-L pango`"
 	    	  ;;
     		linux*)
-	    	  CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
-	    	  CXXFLAGS="-I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include $CXXFLAGS"
+    		  if test "x$PKGCONFIG" != x; then
+                    CXXFLAGS="`$PKGCONFIG --cflags pangoxft` $CXXFLAGS"
+    		  else
+	    	    CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
+	    	    CXXFLAGS="-I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include $CXXFLAGS"
+	    	  fi
     	    	  ;;
     	    	freebsd*)
 	    	  CXXFLAGS="-I/usr/local/include/pango-1.0 -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include $CXXFLAGS"
