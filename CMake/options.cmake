@@ -462,6 +462,15 @@ endif (OPTION_USE_PANGO)
 
 #######################################################################
 if(X11_Xft_FOUND AND OPTION_USE_PANGO)
+  pkg_check_modules(PANGOXFT pangoxft)
+  # message(STATUS "PANGOXFT_FOUND=" ${PANGOXFT_FOUND})
+  if(PANGOXFT_FOUND)
+    include_directories(${PANGOXFT_INCLUDE_DIRS})
+    find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
+    find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
+    set(USE_PANGO TRUE)
+  else(PANGOXFT_FOUND)
+  
 #this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
   if(APPLE AND OPTION_APPLE_X11)
      find_file(FINK_PREFIX NAMES /opt/sw /sw)
@@ -500,6 +509,7 @@ if(X11_Xft_FOUND AND OPTION_USE_PANGO)
       set(LDFLAGS "${LDFLAGS} -L${FINK_PREFIX}/lib")
     endif (APPLE)
   endif(HAVE_LIB_PANGO AND HAVE_LIB_PANGOXFT AND HAVE_LIB_GOBJECT)
+endif(PANGOXFT_FOUND)
 endif(X11_Xft_FOUND AND OPTION_USE_PANGO)
 
 if(OPTION_USE_XFT)
