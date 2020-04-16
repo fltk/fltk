@@ -1087,18 +1087,14 @@ case $host_os_gui in
 
         pango_found=no
 	if test x$enable_pango = xyes; then
+          if test x$PKGCONFIG != x; then
+            CXXFLAGS="`$PKGCONFIG --cflags pangoxft` $CXXFLAGS"
+            LIBS="`$PKGCONFIG --libs pangoxft` $LIBS"
+          else
 	    case $host_os in
-    		darwin*)
-	    	  CXXFLAGS="`pkg-config --cflags pango` $CXXFLAGS"
-	    	  PANGOLIBDIR="`pkg-config --libs-only-L pango`"
-	    	  ;;
     		linux*)
-    		  if test "x$PKGCONFIG" != x; then
-                    CXXFLAGS="`$PKGCONFIG --cflags pangoxft` $CXXFLAGS"
-    		  else
 	    	    CXXFLAGS="-I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include $CXXFLAGS"
 	    	    CXXFLAGS="-I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/lib/x86_64-linux-gnu/glib-2.0/include $CXXFLAGS"
-	    	  fi
     	    	  ;;
     	    	freebsd*)
 	    	  CXXFLAGS="-I/usr/local/include/pango-1.0 -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include $CXXFLAGS"
@@ -1110,13 +1106,14 @@ case $host_os_gui in
 	    	  LDFLAGS="-Wl,-rpath,/usr/pkg/lib $LDFLAGS"
 	    	  ;;
    	    esac
-	        CPPFLAGS="$PANGOLIBDIR $CXXFLAGS"
+            LIBS="$PANGOLIBDIR -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0 $LIBS"
+          fi
+	        CPPFLAGS="$CXXFLAGS"
 	        AC_CHECK_HEADERS([pango/pango.h pango/pangoxft.h],
 		   AC_CHECK_LIB(pango-1.0, pango_layout_new,
 		    AC_CHECK_LIB(pangoxft-1.0, pango_xft_render_layout,
 			AC_DEFINE(USE_PANGO)
-                        pango_found=yes
-			LIBS="$PANGOLIBDIR -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0 $LIBS")))
+                        pango_found=yes)))
 		CPPFLAGS=$CXXFLAGS
 	fi
 
