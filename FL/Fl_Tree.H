@@ -24,11 +24,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 ///
@@ -309,14 +309,17 @@ protected:
   int _tree_h;
   void item_clicked(Fl_Tree_Item* val);
   void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason);
-// next_visible_item() and extend_selection() moved to 'public' in ABI 1.3.3
-// undocmented draw_tree() dropped -- draw() does all the work now
+
+  // next_visible_item() and extend_selection() moved to 'public' in ABI 1.3.3
+  // undocmented draw_tree() dropped -- draw() does all the work now
+
+  // draw() has to be protected per FLTK convention (was public in 1.3.x)
+  void draw();
 
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
   ~Fl_Tree();
   int handle(int e);
-  void draw();
   void show_self();
   void resize(int,int,int,int);
 

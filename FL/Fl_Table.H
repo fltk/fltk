@@ -10,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/str.php
 //
 
 #ifndef _FL_TABLE_H
@@ -423,7 +423,10 @@ protected:
     // Indicate partial redraw needed of some cells
     damage(FL_DAMAGE_CHILD);
   }
-  
+
+  // draw() has to be protected per FLTK convention (was public in 1.3.x)
+  void draw();
+
 public:
   Fl_Table(int X, int Y, int W, int H, const char *l=0);
   ~Fl_Table();
@@ -758,7 +761,6 @@ public:
   int move_cursor(int R, int C, int shiftselect);
   int move_cursor(int R, int C);
   void resize(int X, int Y, int W, int H);	// fltk resize() override
-  void draw(void);				// fltk draw() override
   
   // This crashes sortapp() during init.
   //  void box(Fl_Boxtype val) {
