@@ -334,7 +334,7 @@ void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl
       uchar *last = rgba + 4 * scaled_w * htop * 4;
       while (p < last) {
         uchar q = *(p+3);
-        if (q) {
+        if (q && q != 0xff) {
           float m = 255./q;
           *p++ *= m;
           *p++ *= m;
