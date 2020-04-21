@@ -4377,8 +4377,10 @@ void Fl_Cocoa_Window_Driver::draw_layer_to_context(CALayer *layer, CGContextRef 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   CGContextSaveGState(gc);
   clip_to_rounded_corners(gc, w, h);
-  CGContextSetRGBFillColor(gc, .79, .79, .79, 1.); // equiv. to FL_DARK1
-  CGContextFillRect(gc, CGRectMake(0, 0, w, h));
+  if (fl_mac_os_version < 101500) { // exact OS threshold might be lower
+    CGContextSetRGBFillColor(gc, .79, .79, .79, 1.); // equiv. to FL_DARK1
+    CGContextFillRect(gc, CGRectMake(0, 0, w, h));
+  }
   CGContextSetShouldAntialias(gc, true);
   [layer renderInContext:gc]; // 10.5
   CGContextRestoreGState(gc);
