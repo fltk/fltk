@@ -31,9 +31,11 @@
  \param[in] pagecount the total number of pages of the job (or 0 if you don't know the number of pages)
  \param[out] frompage if non-null, *frompage is set to the first page the user wants printed
  \param[out] topage if non-null, *topage is set to the last page the user wants printed
- \return 0 if OK, non-zero if any error
+ \param[out] perr_message if non-null and if the returned value is > 1, *perr_message is set to a string
+ describing the error. That string can be delete[]'d after use.
+ \return 0 if OK, 1 if user cancelled the job, > 1 if any error.
  */
-int Fl_Paged_Device::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Paged_Device::begin_job(int pagecount, int *frompage, int *topage, char **perr_message) {return 1;}
 
 /**
  \brief Begins a new printed page

@@ -258,7 +258,7 @@ public:
    */
   ~Fl_PostScript_File_Device();
   /** Don't use with this class. */
-  int begin_job(int pagecount, int* from, int* to);
+  int begin_job(int pagecount, int* from, int* to, char **perr_message);
   /**
    @brief Begins the session where all graphics requests will go to a local PostScript file.
    *

@@ -109,7 +109,7 @@ int Fl_PostScript_File_Device::begin_job (FILE *ps_output, int pagecount,
   return 0;
 }
 
-int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to)
+int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to, char **)
 {
   return 1;
 }

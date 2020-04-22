@@ -38,7 +38,7 @@ private:
   int top_margin;
   void absolute_printable_rect(int *x, int *y, int *w, int *h);
   Fl_WinAPI_Printer_Driver(void);
-  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
+  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
   int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
@@ -85,7 +85,7 @@ static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 }
 
 
-int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage)
+int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage, char **perr_message)
 // returns 0 iff OK
 {
   if (pagecount == 0) pagecount = 10000;
@@ -116,14 +116,26 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
       prerr = StartDoc (hPr, &di);
       if (prerr < 1) {
         abortPrint = TRUE;
-        //fl_alert ("StartDoc error %d", prerr);
-        err = 1;
+        DWORD dw = GetLastError();
+        err = (dw == ERROR_CANCELLED ? 1 : 2);
+        if (perr_message && err == 2) {
+          wchar_t *lpMsgBuf;
+          FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                        NULL,
+                        dw,
+                        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                        (LPWSTR) &lpMsgBuf,
+                        0, NULL);
+          unsigned srclen = lstrlenW(lpMsgBuf) - 2; // ignore terminal ^M
+          unsigned l = fl_utf8fromwc(NULL, 0, lpMsgBuf, srclen);
+          char *tmp = new char[l+1];
+          fl_utf8fromwc(tmp, l, lpMsgBuf, srclen);
+          LocalFree(lpMsgBuf);
+          *perr_message = new char[l + 50];
+          sprintf(*perr_message, "begin_job() failed with error %d: %s", dw, tmp);
+          delete[] tmp;
+        }
       }
-    } else {
-      commdlgerr = CommDlgExtendedError ();
-      fl_alert ("Unable to create print context, error %lu",
-                (unsigned long) commdlgerr);
-      err = 1;
     }
   } else {
     err = 1;

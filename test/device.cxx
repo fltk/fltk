@@ -612,21 +612,22 @@ void copy(Fl_Widget *, void *data) {
   if (strcmp(operation, "Fl_Printer") == 0 || strcmp(operation, "Fl_PostScript_File_Device") == 0) {
     Fl_Paged_Device *p;
     int err;
+    char *err_message = NULL;
     if (strcmp(operation, "Fl_Printer") == 0) {
       p = new Fl_Printer();
-      err = p->start_job(1);
+      err = p->begin_job(1, NULL, NULL, &err_message);
     }
     else {
       p = new Fl_PostScript_File_Device();
       err = ((Fl_PostScript_File_Device*)p)->start_job(1);
     }
     if (!err) {
-      p->start_page();
+      p->begin_page();
       if (target->as_window()) p->print_window(target->as_window());
       else p->print_widget(target);
       p->end_page();
       p->end_job();
-    }
+    } else if (err > 1 && err_message) {fl_alert("%s", err_message); delete[] err_message;}
     delete p;
   }
 }

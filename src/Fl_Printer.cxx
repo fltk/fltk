@@ -132,21 +132,9 @@ Fl_Printer::Fl_Printer(void) {
   driver(printer->driver());
 }
 
-/**
- Begins a print job.
- Opens a platform-specific dialog window allowing the user to set several options including
- the desired printer and the page orientation. Optionally, the user can also select a range of pages to  be
- printed. This range is returned to the caller that is in charge of sending only these pages 
- for printing.
- 
- \param[in] pagecount the total number of pages of the job (or 0 if you don't know the number of pages)
- \param[out] frompage if non-null, *frompage is set to the first page the user wants printed
- \param[out] topage if non-null, *topage is set to the last page the user wants printed
- \return 0 if OK, non-zero if any error occurred or if the user cancelled the print request.
- */
-int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage)
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage, char **perr_message)
 {
-  return printer->begin_job(pagecount, frompage, topage);
+  return printer->begin_job(pagecount, frompage, topage, perr_message);
 }
 
 int Fl_Printer::begin_page(void)

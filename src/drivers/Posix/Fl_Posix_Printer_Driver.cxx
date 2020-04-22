@@ -28,7 +28,7 @@
 
 /** Support for printing on the Unix/Linux platform */
 class Fl_Posix_Printer_Driver : public Fl_PostScript_File_Device {
-  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
+  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message=NULL);
 };
 
 #if HAVE_DLSYM && HAVE_DLFCN_H
@@ -57,7 +57,7 @@ public:
   
   GtkPrintJob *pjob; // data shared between begin_job() and end_job()
   char tmpfilename[50]; // name of temporary PostScript file containing to-be-printed data
-  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
+  virtual int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message=NULL);
   virtual void end_job();
   static bool probe_for_GTK();
   static void *ptr_gtk; // points to the GTK dynamic lib or NULL
@@ -103,7 +103,7 @@ bool Fl_GTK_Printer_Driver::probe_for_GTK() {
 }
 
 
-int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpage) {
+int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpage, char **perr_message) {
   enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4;
   enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT ;
   
@@ -157,6 +157,12 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
       if (output) {
         Fl_PostScript_File_Device::begin_job(output, 0, format, layout);
         response_id = GTK_RESPONSE_OK;
+      } else {
+        response_id = GTK_RESPONSE_NONE + GTK_RESPONSE_OK + 1;
+        if (perr_message) {
+          *perr_message = new char[strlen(line)+50];
+          sprintf(*perr_message, "Can't open output file %s", line);
+        }
       }
     } else if ( CALL_GTK(gtk_printer_accepts_ps)(gprinter) && //2.10
         CALL_GTK(gtk_printer_is_active)(gprinter) ) { // 2.10
@@ -167,6 +173,12 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
         Fl_PostScript_File_Device::begin_job(output, 0, format, layout);
         pjob = CALL_GTK(gtk_print_job_new)("FLTK print job", gprinter, psettings, psetup); //2.10
         response_id = GTK_RESPONSE_OK;
+      } else {
+        response_id = GTK_RESPONSE_NONE + GTK_RESPONSE_OK + 1;
+        if (perr_message) {
+          *perr_message = new char[strlen(tmpfilename)+50];
+          sprintf(*perr_message, "Can't create temporary file %s", tmpfilename);
+        }
       }
     }
     CALL_GTK(g_object_unref)(psettings);
@@ -183,7 +195,7 @@ int Fl_GTK_Printer_Driver::begin_job(int pagecount, int *firstpage, int *lastpag
     while (Fl::ready()) Fl::check();
     Fl_Surface_Device::pop_current();
   }
-  return (response_id == GTK_RESPONSE_OK ? 0 : 1);
+  return (response_id == GTK_RESPONSE_OK ? 0 : (response_id == GTK_RESPONSE_NONE ? 1 : 2));
 }
 
 static void pJobCompleteFunc(Fl_GTK_Printer_Driver::GtkPrintJob *print_job, Fl_GTK_Printer_Driver::gboolean *user_data, const Fl_GTK_Printer_Driver::GError *error) {
@@ -221,7 +233,7 @@ Fl_Paged_Device* Fl_Printer::newPrinterDriver(void)
 }
 
 /*    Begins a print job. */
-int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage) {
+int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage, char **perr_message) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
   
@@ -309,8 +321,11 @@ int Fl_Posix_Printer_Driver::begin_job(int pages, int *firstpage, int *lastpage)
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->output = popen(command, "w");
   if (!ps->output) {
-    fl_alert("could not run command: %s\n",command);
-    return 1;
+    if (perr_message) {
+      *perr_message = new char[strlen(command) + 50];
+      sprintf(*perr_message, "could not run command: %s", command);
+    }
+    return 2;
   }
   ps->close_command(pclose);
   this->set_current();

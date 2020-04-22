@@ -57,7 +57,7 @@ private:
   PMPageFormat    pageFormat;
   PMPrintSettings printSettings;
   Fl_Cocoa_Printer_Driver(void);
-  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL);
+  int begin_job(int pagecount = 0, int *frompage = NULL, int *topage = NULL, char **perr_message = NULL);
   int begin_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
@@ -101,7 +101,7 @@ Fl_Cocoa_Printer_Driver::~Fl_Cocoa_Printer_Driver(void) {
 }
 @end
 
-int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage)
+int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topage, char **perr_message)
 //printing using a Quartz graphics context
 //returns 0 iff OK
 {
@@ -194,7 +194,14 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
 #endif //__LP64__
   }
 
-  if (status != noErr) return 1;
+  if (status != noErr) {
+    if (perr_message) {
+      NSError *nserr = [NSError errorWithDomain:NSCocoaErrorDomain code:status userInfo:nil];
+      NSString *s = [nserr localizedDescription];
+      if (s) *perr_message = strdup([s UTF8String]);
+    }
+    return 2;
+  }
   y_offset = x_offset = 0;
   return 0;
 }
