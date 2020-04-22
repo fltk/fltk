@@ -89,7 +89,6 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
 // returns 0 iff OK
 {
   if (pagecount == 0) pagecount = 10000;
-  DWORD       commdlgerr;
   DOCINFO     di;
   char        docName [256];
   int err = 0;
@@ -132,7 +131,7 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
           fl_utf8fromwc(tmp, l, lpMsgBuf, srclen);
           LocalFree(lpMsgBuf);
           *perr_message = new char[l + 50];
-          sprintf(*perr_message, "begin_job() failed with error %d: %s", dw, tmp);
+          sprintf(*perr_message, "begin_job() failed with error %lu: %s", dw, tmp);
           delete[] tmp;
         }
       }
