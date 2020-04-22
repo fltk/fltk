@@ -1,19 +1,19 @@
 /*
- * "$Id: abi-version.h 12196 2017-03-13 23:31:38Z AlbrechtS $"
+ * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2015 by Bill Spitzak and others.
+ * Copyright 1998-2020 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
  * Please report all bugs and problems on the following page:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/str.php
  */
 
 /*
@@ -27,5 +27,5 @@
 /* #undef FL_ABI_VERSION */
 
 /*
- * End of "$Id: abi-version.h 12196 2017-03-13 23:31:38Z AlbrechtS $".
+ * End of "$Id$".
  */
