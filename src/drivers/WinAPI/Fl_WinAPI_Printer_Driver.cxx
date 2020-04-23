@@ -119,20 +119,22 @@ int Fl_WinAPI_Printer_Driver::begin_job (int pagecount, int *frompage, int *topa
         err = (dw == ERROR_CANCELLED ? 1 : 2);
         if (perr_message && err == 2) {
           wchar_t *lpMsgBuf;
-          FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                        NULL,
-                        dw,
-                        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                        (LPWSTR) &lpMsgBuf,
-                        0, NULL);
-          unsigned srclen = lstrlenW(lpMsgBuf) - 2; // ignore terminal ^M
-          unsigned l = fl_utf8fromwc(NULL, 0, lpMsgBuf, srclen);
-          char *tmp = new char[l+1];
-          fl_utf8fromwc(tmp, l, lpMsgBuf, srclen);
-          LocalFree(lpMsgBuf);
-          *perr_message = new char[l + 50];
-          sprintf(*perr_message, "begin_job() failed with error %lu: %s", dw, tmp);
-          delete[] tmp;
+          DWORD retval = FormatMessageW(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPWSTR) &lpMsgBuf,
+            0, NULL);
+          if (retval) {
+            unsigned srclen = lstrlenW(lpMsgBuf);
+            while (srclen > 0 && (lpMsgBuf[srclen-1] == '\n' || lpMsgBuf[srclen-1] == '\r')) srclen--;
+            unsigned l = fl_utf8fromwc(NULL, 0, lpMsgBuf, srclen);
+            *perr_message = new char[l+51];
+            sprintf(*perr_message, "begin_job() failed with error %lu: ", dw);
+            fl_utf8fromwc(*perr_message + strlen(*perr_message), l+1, lpMsgBuf, srclen);
+            LocalFree(lpMsgBuf);
+          }
         }
       }
     }
