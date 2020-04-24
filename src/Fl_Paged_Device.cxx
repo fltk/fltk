@@ -33,7 +33,7 @@
  \param[out] topage if non-null, *topage is set to the last page the user wants printed
  \param[out] perr_message if non-null and if the returned value is > 1, *perr_message is set to a string
  describing the error. That string can be delete[]'d after use.
- \return 0 if OK, 1 if user cancelled the job, > 1 if any error.
+ \return 0 if OK, 1 if user cancelled the job, ≥ 2 if any error.
  */
 int Fl_Paged_Device::begin_job(int pagecount, int *frompage, int *topage, char **perr_message) {return 1;}
 
