@@ -39,9 +39,8 @@ Fl_Widget_Surface::Fl_Widget_Surface(Fl_Graphics_Driver *d) : Fl_Surface_Device(
  and by the optional delta_x and delta_y arguments.
  Its dimensions are in points unless there was a previous call to scale().
  \param[in] widget Any FLTK widget (e.g., standard, custom, window).
- \param[in] delta_x Optional horizontal offset for positioning the widget relatively
- to the current origin of graphics functions.
- \param[in] delta_y Same as above, vertically.
+ \param[in] delta_x,delta_y Optional horizontal and vertical offsets for positioning the widget top left relatively
+ to the current origin of graphics.
  */
 void Fl_Widget_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
 {
@@ -126,10 +125,9 @@ void Fl_Widget_Surface::untranslate()
 }
 
 /**
- \brief Computes the page coordinates of the current origin of graphics functions.
+ \brief Computes the coordinates of the current origin of graphics functions.
 
- \param[out] x If non-null, *x is set to the horizontal page offset of graphics origin.
- \param[out] y Same as above, vertically.
+ \param[out] x,y If non-null, *x and *y are set to the horizontal and vertical coordinates of the graphics origin.
  */
 void Fl_Widget_Surface::origin(int *x, int *y)
 {
@@ -138,15 +136,13 @@ void Fl_Widget_Surface::origin(int *x, int *y)
 }
 
 /**
- \brief Sets the position in page coordinates of the origin of graphics functions.
+ \brief Sets the position of the origin of graphics in the drawable part of the drawing surface.
  
  Arguments should be expressed relatively to the result of a previous printable_rect() call.
  That is, <tt>printable_rect(&w, &h); origin(w/2, 0);</tt> sets the graphics origin at the
- top center of the page printable area.
- Origin() calls are not affected by rotate() calls.
- Successive origin() calls don't combine their effects.
- \param[in] x Horizontal position in page coordinates of the desired origin of graphics functions.
- \param[in] y Same as above, vertically.
+ top center of the drawable area. Successive origin() calls don't combine their effects.
+ Origin() calls are not affected by rotate() calls (for classes derived from Fl_Paged_Device).
+ \param[in] x,y Horizontal and vertical positions in the drawing surface of the desired origin of graphics.
  */
 void Fl_Widget_Surface::origin(int x, int y) {
   x_offset = x;
@@ -161,8 +157,7 @@ void Fl_Widget_Surface::origin(int x, int y) {
  \param y The rectangle top
  \param w The rectangle width
  \param h The rectangle height
- \param delta_x Optional horizontal offset from current graphics origin where to print the captured rectangle.
- \param delta_y As above, vertically.
+ \param delta_x,delta_y Optional horizontal and vertical offsets from current graphics origin where to draw the top left of the captured rectangle.
  */
 void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
@@ -200,7 +195,7 @@ int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
  
  \p win_offset_x and \p win_offset_y are optional coordinates of where to position the window top left.
  Equivalent to draw() if \p win is a subwindow or has no border.
- Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the window.
+ Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the framed window.
  */
 void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int win_offset_x, int win_offset_y)
 {
