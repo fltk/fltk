@@ -173,12 +173,18 @@ inline void fl_restore_clip() {
  Replaces the top of the clipping stack with a clipping region of any shape.
  
  Fl_Region is an operating system specific type.
+ \note This function is mostly intended for internal use by the FLTK library
+ when drawing to the display.
+ Its effect can be null if the current drawing surface is not the display.
  \param[in] r clipping region
  */
 inline void fl_clip_region(Fl_Region r) { fl_graphics_driver->clip_region(r); }
 
 /**
  Returns the current clipping region.
+ \note This function is mostly intended for internal use by the FLTK library
+ when drawing to the display.
+ Its return value can be always NULL if the current drawing surface is not the display.
  */
 inline Fl_Region fl_clip_region() { return fl_graphics_driver->clip_region(); }
 
