@@ -1235,8 +1235,6 @@ menubar.o: ../FL/fl_draw.H
 menubar.o: ../FL/fl_types.h
 menubar.o: ../FL/fl_utf8.h
 menubar.o: ../FL/platform_types.h
-menubar.o: ../config.h
-menubar.o: ../src/flstring.h
 message.o: ../FL/Enumerations.H
 message.o: ../FL/Fl.H
 message.o: ../FL/Fl_Bitmap.H
@@ -1700,6 +1698,7 @@ sudoku.o: ../FL/Fl_Group.H
 sudoku.o: ../FL/Fl_Help_Dialog.H
 sudoku.o: ../FL/Fl_Help_View.H
 sudoku.o: ../FL/Fl_Image.H
+sudoku.o: ../FL/Fl_Image_Surface.H
 sudoku.o: ../FL/Fl_Input.H
 sudoku.o: ../FL/Fl_Input_.H
 sudoku.o: ../FL/Fl_Menu_.H
@@ -1710,10 +1709,12 @@ sudoku.o: ../FL/Fl_Plugin.H
 sudoku.o: ../FL/Fl_Preferences.H
 sudoku.o: ../FL/Fl_RGB_Image.H
 sudoku.o: ../FL/Fl_Scrollbar.H
+sudoku.o: ../FL/Fl_Shared_Image.H
 sudoku.o: ../FL/Fl_Slider.H
 sudoku.o: ../FL/Fl_Sys_Menu_Bar.H
 sudoku.o: ../FL/Fl_Valuator.H
 sudoku.o: ../FL/Fl_Widget.H
+sudoku.o: ../FL/Fl_Widget_Surface.H
 sudoku.o: ../FL/Fl_Window.H
 sudoku.o: ../FL/abi-version.h
 sudoku.o: ../FL/filename.H

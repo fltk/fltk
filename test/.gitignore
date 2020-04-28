@@ -27,6 +27,9 @@ button
 buttons
 cairo_test
 checkers
+checkers_pieces.cxx
+checkers_pieces.h
+clock
 colbrowser
 color_chooser
 cube
