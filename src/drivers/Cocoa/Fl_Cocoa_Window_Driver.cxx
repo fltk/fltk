@@ -314,7 +314,7 @@ const Fl_Image* Fl_Cocoa_Window_Driver::shape() {
  */
 void Fl_Cocoa_Window_Driver::capture_titlebar_and_borders(Fl_RGB_Image*& top, Fl_RGB_Image*& left, Fl_RGB_Image*& bottom, Fl_RGB_Image*& right)
 {
-  left = bottom = right = NULL;
+  top = left = bottom = right = NULL;
   int htop, hleft, hright, hbottom;
   Fl_Cocoa_Window_Driver::decoration_sizes(&htop, &hleft,  &hright, &hbottom);
   if (htop == 0) return; // when window is fullscreen
