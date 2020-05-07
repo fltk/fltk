@@ -3,17 +3,17 @@
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2018 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//   https://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
-//     http://www.fltk.org/str.php
+//   https://www.fltk.org/str.php
 //
 
 /**
@@ -28,7 +28,6 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <limits.h>
 #include "flstring.h"
 
 #include <FL/Fl.H>
@@ -56,8 +55,9 @@ static const char *message_title_default;
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = -1;
 static int enableHotspot = 1;
-static int form_x = INT_MIN;
-static int form_y = INT_MIN;
+static int form_x = 0;
+static int form_y = 0;
+static int form_position = 0; // 0 = not set, 1 = absolute, 2 = centered
 
 static char avoidRecursion = 0;
 
@@ -240,13 +240,14 @@ static int innards(const char* fmt, va_list ap,
   if (button[1]->visible() && !input->visible())
     button[1]->take_focus();
 
-  if (form_x != INT_MIN && form_y != INT_MIN)
-  {
+  if (form_position) {
+    if (form_position == 2) { // centered
+      form_x -= message_form->w()/2;
+      form_y -= message_form->h()/2;
+    }
     message_form->position(form_x, form_y);
-    form_x = INT_MIN;
-    form_y = INT_MIN;
-  }
-  else if (enableHotspot)
+    form_x = form_y = form_position = 0;
+  } else if (enableHotspot)
     message_form->hotspot(button[0]);
   else
     message_form->free_position();
@@ -375,8 +376,9 @@ int fl_ask(const char *fmt, ...) {
   return r;
 }
 
-/** Shows a dialog displaying the printf style \p fmt message,
-    this dialog features up to 3 customizable choice buttons
+/** Shows a dialog displaying the printf style \p fmt message.
+
+    This dialog features up to 3 customizable choice buttons
     which are specified in order of *right-to-left* in the dialog, e.g.
     \image html  fl_choice_left_middle_right.png
     \image latex fl_choice_left_middle_right.png  "fl_choice() button ordering" width=4cm
@@ -519,35 +521,80 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   return r;
 }
 
-/** Sets the preferred position for common message box used in
+/** Sets the preferred position for the common message box used in
     many common dialogs like fl_message(), fl_alert(),
-    fl_ask(), fl_choice(), fl_input(), fl_password(). Resets after
-    every call to any of the common dialogs.
+    fl_ask(), fl_choice(), fl_input(), fl_password().
+
+    Resets after every call to any of the common dialogs.
+
+    The position set with this method overrides the hotspot setting,
+    i.e. setting a position has higher priority than the hotspot mode
+    set by fl_message_hotspot(int).
+
+    If the optional argument \p center is non-zero (true) the message box
+    will be centered at the given coordinates rather than using the X/Y
+    position as the window position (top left corner).
 
     \note \#include <FL/fl_ask.H>
-    param[in] x   Preferred X position
-    param[in] y   Preferred Y position
+
+    \param[in] x	Preferred X position
+    \param[in] y	Preferred Y position
+    \param[in] center   1 = centered, 0 = absolute
+
+    \see int fl_message_position(int *x, int *y)
 */
-void fl_message_position(const int x, const int y) {
+void fl_message_position(const int x, const int y, const int center) {
   form_x = x;
   form_y = y;
+  form_position = center ? 2 : 1;
 }
 
-/** Gets the preferred position for common message box used in
+/** Sets the preferred position for the common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password().
+
+    The common message box will be centered over the given widget
+    or window extensions.
+
+    Everything else is like fl_message_position(int, int, int) with
+    argument 'center' set to 1.
+
+    \note \#include <FL/fl_ask.H>
+
+    \param[in] w	Widget or window to position the message box over.
+
+    \see int fl_message_position(int x, int y, int center)
+*/
+void fl_message_position(Fl_Widget *widget) {
+  form_x = widget->x() + widget->w()/2;
+  form_y = widget->y() + widget->h()/2;
+  form_position = 2;
+}
+
+/** Gets the preferred position for the common message box used in
     many common dialogs like fl_message(), fl_alert(),
     fl_ask(), fl_choice(), fl_input(), fl_password().
 
     \note \#include <FL/fl_ask.H>
-    param[out] x   Preferred X position, returns INT_MIN if not set
-    param[out] y   Preferred Y position, returns INT_MIN if not set
-\see fl_message_position(int,int)
-*/
-void fl_message_position(int* x, int* y) {
-  if (x)
-    *x = form_x;
 
+    \param[out] x  Preferred X position, returns -1 if not set
+    \param[out] y  Preferred Y position, returns -1 if not set
+
+    \returns	whether position is currently set or not
+    \retval	0 position is not set (may be hotspot or not)
+    \retval	1 position is set (window position)
+    \retval	2 position is set (message box centered)
+
+    \see fl_message_position(int, int)
+    \see fl_message_hotspot(int)
+    \see int fl_message_hotspot()
+*/
+int fl_message_position(int *x, int *y) {
+  if (x)
+    *x = form_position ? form_x : -1;
   if (y)
-    *y = form_y;
+    *y = form_position ? form_y : -1;
+  return form_position;
 }
 
 /** Sets whether or not to move the common message box used in
@@ -603,7 +650,7 @@ void fl_message_title(const char *title) {
     common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
     fl_input(), fl_password(), unless a specific title has been set
     with fl_message_title(const char *title).
-    
+
     The default is no title. You can override the default title for a
     single dialog with fl_message_title(const char *title).
 
