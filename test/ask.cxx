@@ -49,7 +49,7 @@ void rename_me_pwd(Fl_Widget*o) {
   update_input_text(o, input);
 }
 
-void window_callback(Fl_Widget*, void*) {
+void window_callback(Fl_Widget *win, void*) {
   int hotspot = fl_message_hotspot();
   fl_message_hotspot(0);
   fl_message_title("note: no hotspot set for this dialog");
@@ -58,8 +58,11 @@ void window_callback(Fl_Widget*, void*) {
   fl_message_hotspot(hotspot);
   if (rep==1)
     exit(0);
-  else if (rep==2)
+  else if (rep==2) { // (Dunno)
+    fl_message_position(win);
+    fl_message_title("This dialog must be centered over the main window");
     fl_message("Well, maybe you should know before we quit.");
+  }
 }
 
 /*
