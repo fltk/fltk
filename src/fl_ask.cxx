@@ -561,7 +561,7 @@ void fl_message_position(const int x, const int y, const int center) {
 
     \note \#include <FL/fl_ask.H>
 
-    \param[in] w	Widget or window to position the message box over.
+    \param[in] widget	Widget or window to position the message box over.
 
     \see int fl_message_position(int x, int y, int center)
 */
