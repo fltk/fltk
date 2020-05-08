@@ -124,8 +124,8 @@ void Fl_Android_Window_Driver::make_current()
 
 void Fl_Android_Window_Driver::resize(int X,int Y,int W,int H)
 {
-  int is_a_resize = (W != w() || H != h() || is_a_rescale());
-  if (X != x() || Y != y() || is_a_rescale()) {
+  int is_a_resize = (W != w() || H != h() || Fl_Window::is_a_rescale());
+  if (X != x() || Y != y() || Fl_Window::is_a_rescale()) {
     force_position(1);
   } else {
     if (!is_a_resize)

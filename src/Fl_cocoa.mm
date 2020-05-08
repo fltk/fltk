@@ -3296,7 +3296,7 @@ void Fl_Cocoa_Window_Driver::resize(int X, int Y, int W, int H) {
   } else {
     NSPoint pt = FLTKtoCocoa(pWindow, X, Y, H);
     FLWindow *xid = fl_xid(pWindow);
-    if (W != w() || H != h() || is_a_rescale()) {
+    if (W != w() || H != h() || Fl_Window::is_a_rescale()) {
       NSRect r;
       float s = Fl::screen_driver()->scale(screen_num());
       int bt = get_window_frame_sizes(pWindow);

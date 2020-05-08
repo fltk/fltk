@@ -689,6 +689,9 @@ void Fl_Window::shape(const Fl_Image& img) {pWindowDriver->shape(&img);}
 /** Returns the image controlling the window shape or NULL */
 const Fl_Image* Fl_Window::shape() {return pWindowDriver->shape();}
 
+/** Returns true when a window is being rescaled */
+bool Fl_Window::is_a_rescale() {return Fl_Window_Driver::is_a_rescale_;}
+
 //
 // End of "$Id$".
 //

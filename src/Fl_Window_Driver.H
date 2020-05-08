@@ -69,7 +69,6 @@ public:
   Fl_Offscreen other_xid; // offscreen bitmap (overlay and double-buffered windows)
   virtual int screen_num();
   virtual void screen_num(int) {}
-  static bool is_a_rescale() {return is_a_rescale_;};
 
 
   // --- frequently used accessors to public window data
