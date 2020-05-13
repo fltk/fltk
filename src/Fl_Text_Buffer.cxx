@@ -1373,7 +1373,7 @@ void Fl_Text_Buffer::replace_selection_(Fl_Text_Selection * sel,
     return;
   
   /* Do the appropriate type of replace */
-    replace(start, end, text);
+  replace(start, end, text);
   
   /* Unselect (happens automatically in BufReplace, but BufReplaceRect
    can't detect when the contents of a selection goes away) */
