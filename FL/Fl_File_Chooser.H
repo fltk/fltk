@@ -168,6 +168,11 @@ public:
   const char *value(int f = 1); 
   void value(const char *filename); 
   int visible();
+  void position(int x, int y);
+  int x();
+  int y();
+  int w();
+  int h();
   /**
    [standard text may be customized at run-time]
   */

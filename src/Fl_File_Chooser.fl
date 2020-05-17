@@ -351,7 +351,7 @@ okButton->parent()->init_sizes();} {}
   } {
     code {fileList->textfont(f);} {}
   }
-  Function {textfont()} {selected return_type Fl_Font
+  Function {textfont()} {return_type Fl_Font
   } {
     code {return (fileList->textfont());} {}
   }
@@ -398,6 +398,26 @@ else
   Function {visible()} {return_type int
   } {
     code {return window->visible();} {}
+  }
+  Function {position(int x, int y)} {selected return_type void
+  } {
+    code {window->position(x, y);} {}
+  }
+  Function {x()} {return_type int
+  } {
+    code {return window->x();} {}
+  }
+  Function {y()} {return_type int
+  } {
+    code {return window->y();} {}
+  }
+  Function {w()} {return_type int
+  } {
+    code {return window->w();} {}
+  }
+  Function {h()} {return_type int
+  } {
+    code {return window->h();} {}
   }
   decl {static const char *add_favorites_label;} {
     comment {[standard text may be customized at run-time]} public local
