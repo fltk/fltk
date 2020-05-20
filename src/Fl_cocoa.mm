@@ -31,6 +31,7 @@ extern "C" {
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Rect.H>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
@@ -71,7 +72,8 @@ static size_t convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static void clipboard_check(void);
-static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins = true);
+static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h);
+static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins);
 static void drain_dropped_files_list(void);
 static NSPoint FLTKtoCocoa(Fl_Window *win, int x, int y, int H);
 static int get_window_frame_sizes(Fl_Window *win, int *pbx = NULL, int *pby = NULL);
@@ -496,6 +498,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 - (NSPoint)convertBaseToScreen:(NSPoint)aPoint;
 #endif
+- (NSBitmapImageRep*)rect_to_NSBitmapImageRep:(Fl_Rect*)r;
 @end
 
 
@@ -716,6 +719,9 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 {
   if ([self parentWindow]) return frameRect; // do not constrain subwindows
   return [super constrainFrameRect:frameRect toScreen:screen]; // will prevent a window from going above the menu bar
+}
+- (NSBitmapImageRep*)rect_to_NSBitmapImageRep:(Fl_Rect*)r {
+  return rect_to_NSBitmapImageRep(w, r->x(), r->y(), r->w(), r->h());
 }
 @end
 
@@ -1333,7 +1339,7 @@ static FLWindowDelegate *flwindowdelegate_instance = nil;
   if ([[nsw childWindows] count]) {
     Fl_Window *window = [nsw getFl_Window];
     // capture the window and its subwindows and use as miniature window image
-    NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(window, 0, 0, window->w(), window->h());
+    NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep_subwins(window, 0, 0, window->w(), window->h(), true);
     if (bitmap) {
       NSImage *img = [[[NSImage alloc] initWithSize:NSMakeSize([bitmap pixelsWide], [bitmap pixelsHigh])] autorelease];
       [img addRepresentation:bitmap];
@@ -4213,7 +4219,7 @@ static NSBitmapImageRep* GL_rect_to_nsbitmap(Fl_Window *win, int x, int y, int w
 }
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-static CGImageRef rect_to_CGImage_layer(Fl_Window *win, int x, int y, int w, int h)
+static NSBitmapImageRep* rect_to_NSBitmapImage_layer(Fl_Window *win, int x, int y, int w, int h)
 { // capture window data for layer-based views because initWithFocusedViewRect: does not work for them
   FLView *view = (FLView*)[fl_xid(win) contentView];
   // make sure to get the most recent content of the view
@@ -4229,57 +4235,59 @@ static CGImageRef rect_to_CGImage_layer(Fl_Window *win, int x, int y, int w, int
     CGImageRelease(cgimg);
     cgimg = cgimg2;
   }
-  return cgimg;
+  NSBitmapImageRep *bitmap = (cgimg ? [[NSBitmapImageRep alloc] initWithCGImage:cgimg/*10.5*/] : nil);
+  CGImageRelease(cgimg);
+  return bitmap;
 }
 #endif
 
-static NSBitmapImageRep* rect_to_NSBitmapImageRep_layer(Fl_Window *win, int x, int y, int w, int h) {
-  NSBitmapImageRep *bitmap = nil;
+static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h) {
+    NSBitmapImageRep *bitmap = nil;
+    NSRect rect;
+    float s = Fl_Graphics_Driver::default_driver().scale();
+    if (win->as_gl_window() && y >= 0) {
+      bitmap = GL_rect_to_nsbitmap(win, x, y, w, h);
+    }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  CGImageRef cgimg = rect_to_CGImage_layer(win, x, y, w, h);
-  if (cgimg) bitmap = [[NSBitmapImageRep alloc] initWithCGImage:cgimg];//10.5
-  CGImageRelease(cgimg);
+    else if (views_use_CA) {
+        bitmap = rect_to_NSBitmapImage_layer(win, x, y, w, h);
+    }
 #endif
+    else {
+      NSView *winview = nil;
+      if ( through_Fl_X_flush  && Fl_Window::current() == win ) {
+        rect = NSMakeRect(x - 0.5, y - 0.5, w, h);
+      }
+      else {
+        winview = [fl_xid(win) contentView];
+        int view_h = [winview frame].size.height;
+        rect = NSMakeRect(int(x*s), int(view_h-y*s-int(h*s)), int(w*s), int(h*s));
+        // lock focus to win's view
+  #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+        if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] saveGraphicsState]; // necessary under 10.11
+  #endif
+        [winview lockFocus];
+      }
+      // The image depth is 3 until 10.5 and 4 with 10.6 and above
+      bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
+      if ( !( through_Fl_X_flush && Fl_Window::current() == win) ) {
+        [winview unlockFocus];
+  #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+        if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] restoreGraphicsState];
+  #endif
+      }
+    }
   return bitmap;
 }
 
-static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins)
+static NSBitmapImageRep* rect_to_NSBitmapImageRep_subwins(Fl_Window *win, int x, int y, int w, int h, bool capture_subwins)
 /* Captures a rectangle from a mapped window.
  On retina displays, the resulting bitmap has 2 pixels per screen unit.
  The returned value is to be released after use
  */
 {
-  NSBitmapImageRep *bitmap = nil;
-  NSRect rect;
-  float s = Fl_Graphics_Driver::default_driver().scale();
-  if (win->as_gl_window() && y >= 0) {
-    bitmap = GL_rect_to_nsbitmap(win, x, y, w, h);
-  } else if (views_use_CA) {
-    bitmap = rect_to_NSBitmapImageRep_layer(win, x, y, w, h);
-  } else {
-    NSView *winview = nil;
-    if ( through_Fl_X_flush  && Fl_Window::current() == win ) {
-      rect = NSMakeRect(x - 0.5, y - 0.5, w, h);
-    }
-    else {
-      winview = [fl_xid(win) contentView];
-      int view_h = [winview frame].size.height;
-      rect = NSMakeRect(int(x*s), int(view_h-y*s-int(h*s)), int(w*s), int(h*s));
-      // lock focus to win's view
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-      if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] saveGraphicsState]; // necessary under 10.11
-#endif
-      [winview lockFocus];
-    }
-    // The image depth is 3 until 10.5 and 4 with 10.6 and above
-    bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
-    if ( !( through_Fl_X_flush && Fl_Window::current() == win) ) {
-      [winview unlockFocus];
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-      if (fl_mac_os_version >= 101100) [[fl_xid(win) graphicsContext] restoreGraphicsState];
-#endif
-    }
-  }
+  Fl_Rect r(x, y, w, h);
+  NSBitmapImageRep *bitmap = [fl_xid(win) rect_to_NSBitmapImageRep:&r];
   if (!capture_subwins || !bitmap) return bitmap;
 
   // capture also subwindows
@@ -4293,13 +4301,14 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     CGRect clip = CGRectMake(x, win->h()-(y+h), w, h);
     clip = CGRectIntersection(rsub, clip);
     if (CGRectIsNull(clip)) continue;
-    NSBitmapImageRep *childbitmap = rect_to_NSBitmapImageRep(sub, clip.origin.x - sub->x(),
-                                                             win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height);
+    NSBitmapImageRep *childbitmap = rect_to_NSBitmapImageRep_subwins(sub, clip.origin.x - sub->x(),
+                                                             win->h() - clip.origin.y - sub->y() - clip.size.height, clip.size.width, clip.size.height, true);
     if (childbitmap) {
       // if bitmap is high res and childbitmap is not, childbitmap must be rescaled
       if (!win->as_gl_window() && Fl_Cocoa_Window_Driver::driver(win)->mapped_to_retina() && sub->as_gl_window() && !Fl::use_high_res_GL()) {
         childbitmap = scale_nsbitmapimagerep(childbitmap, 2);
       }
+      float s = Fl_Graphics_Driver::default_driver().scale();
       write_bitmap_inside(bitmap, w*s, childbitmap,
                           (clip.origin.x - x)*s, (win->h() - clip.origin.y - clip.size.height - y)*s );
     }
@@ -4319,11 +4328,8 @@ CGImageRef Fl_Cocoa_Window_Driver::CGImage_from_window_rect(int x, int y, int w,
  CFRelease the returned CGImageRef after use
  */
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  if (views_use_CA && (!capture_subwins || [[fl_xid(pWindow) childWindows] count] == 0)) return rect_to_CGImage_layer(pWindow, x, y, w, h);
-#endif
   CGImageRef img;
-  NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(pWindow, x, y, w, h, capture_subwins);
+  NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep_subwins(pWindow, x, y, w, h, capture_subwins);
   if (fl_mac_os_version >= 100500) {
     img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
     CGImageRetain(img);
