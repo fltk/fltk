@@ -34,7 +34,7 @@
    simple configuration mechanism for UNIX.
 
    Fl_Preferences uses a hierarchy to store data. It
-   bundles similar data into groups and manages entries into those
+   bundles similar data into groups and manages entries in these
    groups as name/value pairs.
 
    Preferences are stored in text files that can be edited
@@ -53,13 +53,14 @@
    files: see \a Fl_Preferences::getUserdataPath() .
  
    \note Starting with FLTK 1.3, preference databases are expected to
-   be in UTF-8 encoding. Previous databases were stored in the
-   current character set or code page which renders them incompatible
-   for text entries using international characters.
+     be in UTF-8 encoding. Previous databases were stored in the
+     current character set or code page which renders them incompatible
+     for text entries using international characters.
 
-   \note Starting with FLTK 1.4, searching a valid path to store the preferences
-   files has changed slightly. Please see <i>Fl_Preferences::Fl_Preferences(Root, const char*, const char*)</i>
-   for details.
+   \note Starting with FLTK 1.4, searching a valid path to store
+     the preferences files has changed slightly. Please see
+     Fl_Preferences::Fl_Preferences(Root, const char*, const char*)
+     for details.
  */
 class FL_EXPORT Fl_Preferences {
 
@@ -68,9 +69,9 @@ public:
      Define the scope of the preferences.
    */
   enum Root { 
-    SYSTEM = 0,       ///< Preferences are used system-wide
-    USER,             ///< Preferences apply only to the current user
-    ROOT_MASK = 0xFF, //< maks for the values above
+    SYSTEM = 0,        ///< Preferences are used system-wide
+    USER,              ///< Preferences apply only to the current user
+    ROOT_MASK = 0xFF,  ///< masks for the values above
     CORE = 0x100,      ///< OR'd by FLTK to read and write core library preferences and options
     CORE_SYSTEM = CORE|SYSTEM,
     CORE_USER = CORE|USER
