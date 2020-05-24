@@ -77,6 +77,7 @@ static char *undo_filename(int level) {
 // Redo menu callback
 void redo_cb(Fl_Widget *, void *) {
   int undo_item = main_menubar->find_index(undo_cb);
+  int redo_item = main_menubar->find_index(redo_cb);
 
   if (undo_current >= undo_last) return;
 
@@ -93,7 +94,7 @@ void redo_cb(Fl_Widget *, void *) {
   set_modflag(undo_current != undo_save);
 
   // Update undo/redo menu items...
-  if (undo_current >= undo_last) Main_Menu[undo_item].deactivate();
+  if (undo_current >= undo_last) Main_Menu[redo_item].deactivate();
   Main_Menu[undo_item].activate();
 }
 
@@ -160,6 +161,8 @@ void undo_checkpoint() {
 
 // Clear undo buffer
 void undo_clear() {
+  int undo_item = main_menubar->find_index(undo_cb);
+  int redo_item = main_menubar->find_index(redo_cb);
   // Remove old checkpoint files...
   for (int i = 0; i <= undo_max; i ++) {
     fl_unlink(undo_filename(i));
@@ -169,6 +172,10 @@ void undo_clear() {
   undo_current = undo_last = undo_max = 0;
   if (modflag) undo_save = -1;
   else undo_save = 0;
+
+  // Disable the Undo and Redo menu items...
+  Main_Menu[undo_item].deactivate();
+  Main_Menu[redo_item].deactivate();
 }
 
 // Resume undo checkpoints
