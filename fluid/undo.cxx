@@ -34,9 +34,8 @@
 
 extern Fl_Preferences	fluid_prefs;	// FLUID preferences
 extern Fl_Menu_Item	Main_Menu[];	// Main menu
+extern Fl_Menu_Bar     *main_menubar;	// Main menubar
 
-#define UNDO_ITEM	25		// Undo menu item index
-#define REDO_ITEM	26		// Redo menu item index
 
 
 //
@@ -77,6 +76,7 @@ static char *undo_filename(int level) {
 
 // Redo menu callback
 void redo_cb(Fl_Widget *, void *) {
+  int undo_item = main_menubar->find_index(undo_cb);
 
   if (undo_current >= undo_last) return;
 
@@ -93,12 +93,14 @@ void redo_cb(Fl_Widget *, void *) {
   set_modflag(undo_current != undo_save);
 
   // Update undo/redo menu items...
-  if (undo_current >= undo_last) Main_Menu[REDO_ITEM].deactivate();
-  Main_Menu[UNDO_ITEM].activate();
+  if (undo_current >= undo_last) Main_Menu[undo_item].deactivate();
+  Main_Menu[undo_item].activate();
 }
 
 // Undo menu callback
 void undo_cb(Fl_Widget *, void *) {
+  int undo_item = main_menubar->find_index(undo_cb);
+  int redo_item = main_menubar->find_index(redo_cb);
 
   if (undo_current <= 0) return;
 
@@ -119,13 +121,15 @@ void undo_cb(Fl_Widget *, void *) {
   set_modflag(undo_current != undo_save);
 
   // Update undo/redo menu items...
-  if (undo_current <= 0) Main_Menu[UNDO_ITEM].deactivate();
-  Main_Menu[REDO_ITEM].activate();
+  if (undo_current <= 0) Main_Menu[undo_item].deactivate();
+  Main_Menu[redo_item].activate();
   undo_resume();
 }
 
 // Save current file to undo buffer
 void undo_checkpoint() {
+  int undo_item = main_menubar->find_index(undo_cb);
+  int redo_item = main_menubar->find_index(redo_cb);
   //  printf("undo_checkpoint(): undo_current=%d, undo_paused=%d, modflag=%d\n",
   //         undo_current, undo_paused, modflag);
 
@@ -150,13 +154,12 @@ void undo_checkpoint() {
   if (undo_current > undo_max) undo_max = undo_current;
 
   // Enable the Undo and disable the Redo menu items...
-  Main_Menu[UNDO_ITEM].activate();
-  Main_Menu[REDO_ITEM].deactivate();
+  Main_Menu[undo_item].activate();
+  Main_Menu[redo_item].deactivate();
 }
 
 // Clear undo buffer
 void undo_clear() {
-
   // Remove old checkpoint files...
   for (int i = 0; i <= undo_max; i ++) {
     fl_unlink(undo_filename(i));
