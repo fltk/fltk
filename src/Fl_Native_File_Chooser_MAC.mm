@@ -473,9 +473,10 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   char *q = p+1;
   while (*q != ' ' && *q != ')' && *q != 0) q++;
   *q = 0;
-  NSString *ns = [NSString stringWithFormat:@"%@.%@", 
-		  [[dialog performSelector:@selector(nameFieldStringValue)] stringByDeletingPathExtension],
-		  [NSString stringWithUTF8String:p]];
+  NSString *ns = [NSString stringWithFormat:@"%@.%@",
+                  [[dialog performSelector:@selector(nameFieldStringValue)] stringByDeletingPathExtension],
+                  [NSString stringWithUTF8String:p]];
+  if (fl_mac_os_version >= 100900) [dialog setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
   free(s);
   [dialog performSelector:@selector(setNameFieldStringValue:) withObject:ns];
 }
@@ -541,12 +542,37 @@ int Fl_Native_File_Chooser::runmodal()
     fname = [preset lastPathComponent];
   }
   if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   if (fl_mac_os_version >= 100600) {
-    if (dir) [(NSSavePanel*)_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:dir]];
-    if (fname) [(NSSavePanel*)_panel performSelector:@selector(setNameFieldStringValue:) withObject:fname];
-    retval = [(NSSavePanel*)_panel runModal];
+    bool usepath = false;
+    NSString *path = nil;
+    if (dir && fname && [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]]) {
+      // STR #3406: If both dir + fname specified, combine and pass to setDirectoryURL
+      path = [[NSString alloc] initWithFormat:@"%@/%@", dir, fname];  // dir+fname -> path
+      // See if full path to file exists
+      //    If dir exists but fname doesn't, avoid using setDirectoryURL,
+      //    otherwise NSSavePanel falls back to showing user's Documents dir.
+      //
+      if ( [[NSFileManager defaultManager] fileExistsAtPath:path] ) usepath = true;
+    }
+    if (usepath) {
+      // Set only if full path exists
+      [(NSSavePanel*)_panel setDirectoryURL:[NSURL fileURLWithPath:path]];
+    } else { // didn't setDirectoryURL to full path? Set dir + fname separately..
+      if (dir) [(NSSavePanel*)_panel setDirectoryURL:[NSURL fileURLWithPath:dir]];
+      if (fname) [(NSSavePanel*)_panel setNameFieldStringValue:fname];
+    }
+    [path release];
+    __block NSInteger complete = -1;
+    [(NSSavePanel*)_panel beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSInteger returnCode) {
+      complete = returnCode; // this block runs after OK or Cancel was triggered in file dialog
+    }]; // this message returns immediately and begins the file dialog as a sheet
+    while (complete < 0) Fl::wait(100); // loop until end of file dialog
+    retval = complete;
   }
-  else {
+  else
+#endif
+  {
     retval = [(id)_panel runModalForDirectory:dir file:fname];
   }
   [dir release];
@@ -635,8 +661,18 @@ int Fl_Native_File_Chooser::post() {
 	[popup setAction:@selector(changedPopup:)];
 	[popup setTarget:saveDelegate];
 	[saveDelegate panel:(NSSavePanel*)_panel];
+        if (fl_mac_os_version >= 100900) {
+          char *p = _filt_patt[_filt_value];
+          char *q = strchr(p, '.'); if(!q) q = p-1;
+          do q++; while (*q==' ' || *q=='{');
+          p = strdup(q);
+          q = strchr(p, ','); if (q) *q = 0;
+          [(NSSavePanel*)_panel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
+          free(p);
+        }
       }
       [(NSSavePanel*)_panel setCanSelectHiddenExtension:YES];
+      [(NSSavePanel*)_panel setExtensionHidden:NO];
     }
   }
   int retval = runmodal();

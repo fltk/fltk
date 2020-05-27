@@ -4735,12 +4735,12 @@ void Fl_X::draw_layer_to_context(void *layer, CGContextRef gc, int w, int h)
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
+  int bx, by, bt, bpp;
+  bt = get_window_frame_sizes(win, &bx, &by);
+  if (!win->shown() || win->parent() || !win->border() || !win->visible() || !bt) {
     this->print_widget(win, x_offset, y_offset);
     return;
   }
-  int bx, by, bt, bpp;
-  bt = get_window_frame_sizes(win, &bx, &by);
   BOOL to_quartz =  (this->driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id);
   void *layer = Fl_X::get_titlebar_layer(win);
   if (layer) { // if title bar uses a layer
