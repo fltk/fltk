@@ -4076,11 +4076,11 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
                 	     nil];
     [NSApp orderFrontStandardAboutPanelWithOptions:options];
 }
-#include <FL/Fl_PostScript.H>
+//#include <FL/Fl_PostScript.H>
 - (void)printPanel
 {  
-  //Fl_Printer printer;
-  Fl_PostScript_File_Device printer;
+  Fl_Printer printer;
+  //Fl_PostScript_File_Device printer;
   int w, h, ww, wh;
   Fl_Window *win = Fl::first_window();
   if(!win) return;
