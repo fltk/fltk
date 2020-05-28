@@ -3090,8 +3090,25 @@ void Fl_Window::fullscreen_x() {
     [i->xid setStyleMask:NSBorderlessWindowMask]; //10.6
 #endif
     [i->xid setLevel:NSStatusWindowLevel];
-    int X,Y,W,H;
-    Fl::screen_xywh(X, Y, W, H, x(), y(), w(), h());
+    int sx, sy, sw, sh, X, Y, W, H;
+    int top = fullscreen_screen_top;
+    int bottom = fullscreen_screen_bottom;
+    int left = fullscreen_screen_left;
+    int right = fullscreen_screen_right;
+    if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
+      top = Fl::screen_num(x(), y(), w(), h());
+      bottom = top;
+      left = top;
+      right = top;
+    }
+    Fl::screen_xywh(sx, sy, sw, sh, top);
+    Y = sy;
+    Fl::screen_xywh(sx, sy, sw, sh, bottom);
+    H = sy + sh - Y;
+    Fl::screen_xywh(sx, sy, sw, sh, left);
+    X = sx;
+    Fl::screen_xywh(sx, sy, sw, sh, right);
+    W = sx + sw - X;
     resize(X, Y, W, H);
   }
   Fl::handle(FL_FULLSCREEN, this);
