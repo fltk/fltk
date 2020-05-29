@@ -218,7 +218,7 @@ void Fl_Copy_Surface::prepare_copy_pdf_and_tiff(int w, int h)
   if (gc == NULL) return;
   CGRect bounds = CGRectMake(0, 0, w, h );	
   CGContextBeginPage (gc, &bounds);
-  CGContextTranslateCTM(gc, 0, h);
+  CGContextTranslateCTM(gc, 0.5, h-0.5);
   CGContextScaleCTM(gc, 1.0f, -1.0f);
   CGContextSaveGState(gc);
 }
