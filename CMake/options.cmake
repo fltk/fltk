@@ -63,6 +63,16 @@ if((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
    endif(X11_FOUND)
 endif((NOT APPLE OR OPTION_APPLE_X11) AND NOT WIN32)
 
+if (OPTION_APPLE_X11)
+  include_directories (AFTER SYSTEM /opt/X11/include/freetype2)
+  if (PATH_TO_XLIBS)
+    set (LDFLAGS "-L${PATH_TO_XLIBS} ${LDFLAGS}")
+  endif (PATH_TO_XLIBS)
+  if (X11_INCLUDE_DIR)
+    list (APPEND FLTK_CFLAGS "-I${X11_INCLUDE_DIR}")
+  endif (X11_INCLUDE_DIR)
+endif (OPTION_APPLE_X11)
+
 #######################################################################
 option(OPTION_USE_POLL "use poll if available" OFF)
 mark_as_advanced(OPTION_USE_POLL)
