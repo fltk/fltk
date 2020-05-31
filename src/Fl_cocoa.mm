@@ -929,28 +929,16 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
     return;
   }
   Fl::first_window(window);
-  
-  // Under OSX, single mousewheel increments are 0.1,
-  // so make sure they show up as at least 1..
-  //
-  float dx = [theEvent deltaX]; if ( fabs(dx) < 1.0 ) dx = (dx > 0) ? 1.0 : -1.0;
-  float dy = [theEvent deltaY]; if ( fabs(dy) < 1.0 ) dy = (dy > 0) ? 1.0 : -1.0;
-  if ([theEvent deltaX] != 0) {
-    Fl::e_dx = (int)-dx;
-    Fl::e_dy = 0;
-    if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
-  } else if ([theEvent deltaY] != 0) {
-    Fl::e_dx = 0;
-    Fl::e_dy = (int)-dy;
-    if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
-  } else {
-    fl_unlock_function();
-    return;
+
+  // Under OSX, mousewheel deltas are floats, but fltk only supports ints.
+  int dx = roundf([theEvent deltaX]);
+  int dy = roundf([theEvent deltaY]);
+  if (dx || dy) {
+    Fl::e_dx = -dx;
+    Fl::e_dy = -dy;
+    Fl::handle(FL_MOUSEWHEEL, window);
   }
-  
   fl_unlock_function();
-  
-  //  return noErr;
 }
 
 /*
