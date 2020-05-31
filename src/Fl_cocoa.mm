@@ -4441,12 +4441,14 @@ char *Fl_Darwin_System_Driver::preference_rootnode(Fl_Preferences *prefs, Fl_Pre
     case Fl_Preferences::USER:
     { // Find the home directory, but return NULL if components were not found.
       // If we ever port this to iOS: NSHomeDirectory returns tha location of the app!
-      const char *e = getenv("HOME");
+      const char *e = ::getenv("HOME");
       // if $HOME does not exist, try NSHomeDirectory, the Mac way.
       if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
+        NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
         NSString *nsHome = NSHomeDirectory();
         if (nsHome)
           e = [nsHome UTF8String];
+        [localPool release];
       }
       // if NSHomeDirectory does not work, try getpwuid(), the Unix way.
       if ( (e==0L) || (e[0]==0) || (::access(e, F_OK)==-1) ) {
