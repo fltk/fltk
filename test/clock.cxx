@@ -23,12 +23,25 @@
 
 const int dev_test = 0;  // 1 = enable non-standard colors and no-shadow tests
 
+// close all windows when the user closes one of the windows
+
+void close_cb(Fl_Widget *w, void *v) {
+  Fl_Window *win = Fl::first_window();
+  while (win) {
+    win->hide();
+    win = Fl::first_window();
+  }
+  return;
+}
+
 int main(int argc, char **argv) {
   Fl_Double_Window window(220,220,"Fl_Clock");
+  window.callback(close_cb);
   Fl_Clock c1(0,0,220,220); // c1.color(2,1);
   window.resizable(c1);
   window.end();
   Fl_Double_Window window2(220,220,"Fl_Round_Clock");
+  window2.callback(close_cb);
   Fl_Round_Clock c2(0,0,220,220);
   if (dev_test) {
     c2.color(FL_YELLOW,FL_RED); // set background and hands colors, resp.
