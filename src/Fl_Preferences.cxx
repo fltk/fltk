@@ -52,14 +52,15 @@ const char *Fl_Preferences::newUUID() {
 }
 
 /**
- Tell the FLTK Preferences system which files in the file system it may read, create, or write.
+ Tell the FLTK preferences system which files in the file system it may read, create, or write.
 
- The FLTK core library will try to read or even create or write preference files when calling Fl::option(),
- Fl_File_Chooser, the printing panel, and possibly some other internal function. If your applications wants
- to keep FLTK from touching the file system, call this function before making any other FLTK calls:
+ The FLTK core library will try to read or even create or write preference files
+ when calling Fl::option(), Fl_File_Chooser, the printing panel, and possibly
+ some other internal functions. If your application wants to keep FLTK from
+ touching the file system, call this function before making any other FLTK calls:
 
  \code
- // neiter FLTK nor the app may read, create, or write preference files
+ // neither FLTK nor the app may read, create, or write preference files
  Fl_Preferences::file_access( Fl_Preferences::NONE );
  \endcode
 
@@ -70,15 +71,17 @@ const char *Fl_Preferences::newUUID() {
  Fl_Preferences::file_access( Fl_Preferences::APP_OK );
  \endcode
 
- All flags can be combined using an OR operator. If flags are not set, that specifc access to the file system
- will not be allowed. By default, all access is granted. To clear one or more flags from the default setting, us:
+ All flags can be combined using an OR operator. If flags are not set, that
+ specific access to the file system will not be allowed. By default, all access
+ is granted. To clear one or more flags from the default setting, use:
  \code
  Fl_Preferences::file_access( Fl_Preferences::file_access()
                            &~ Fl_Preferences::SYSTEM_WRITE );
  \endcode
 
- If preferences are created using a filename (instead of Fl_Preferences::USER or Fl_Preferences::SYSTEM),
- file access is handled as if the Fl_Preferences::USER flag was set.
+ If preferences are created using a filename (instead of Fl_Preferences::USER or
+ Fl_Preferences::SYSTEM), file access is handled as if the Fl_Preferences::USER
+ flag was set.
 
  \see Fl_Preferences::NONE and others for a list of flags.
  \see Fl_Preferences::file_access()
@@ -89,7 +92,7 @@ void Fl_Preferences::file_access(unsigned int flags)
 }
 
 /**
- Return the current file access permissions for the FLTK Preferences system.
+ Return the current file access permissions for the FLTK preferences system.
 
  \see Fl_Preferences::file_access(unsigned int)
  */
@@ -910,7 +913,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   root_(root)
 {
   char *filename = Fl::system_driver()->preference_rootnode(prefs, root, vendor, application);
-    filename_    = filename ? strdup(filename) : 0L;
+  filename_    = filename ? strdup(filename) : 0L;
   vendor_      = strdup(vendor);
   application_ = strdup(application);
   read();
