@@ -2241,6 +2241,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   fl_lock_function();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   CGContextRef gc = views_use_CA ? [[NSGraphicsContext currentContext] CGContext] : NULL;
+  // this condition (unchanged W and H but changed BytesPerRow) occurs with 10.15
+  size_t to_copy = gc && (!aux_bitmap ||
+      (CGBitmapContextGetBytesPerRow(gc) == CGBitmapContextGetBytesPerRow(aux_bitmap))) ?
+  CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc) : 0;
 #endif
   Fl_Cocoa_Window_Driver *d = Fl_Cocoa_Window_Driver::driver(window);
   if (!through_Fl_X_flush
@@ -2264,13 +2268,12 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   else if (gc && aux_bitmap && ( Fl_X::i(window)->region || !(window->damage()&FL_DAMAGE_ALL)) ) {
-    if (CGBitmapContextGetBytesPerRow(gc) != CGBitmapContextGetBytesPerRow(aux_bitmap)) {
-      // this condition (unchanged W and H but changed BytesPerRow) occurs with 10.15
+    if (to_copy) {
+      memcpy(CGBitmapContextGetData(gc), CGBitmapContextGetData(aux_bitmap), to_copy);
+    } else {
       CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
       CGContextDrawImage(gc, [self frame], img);
       CGImageRelease(img);
-    } else {
-      memcpy(CGBitmapContextGetData(gc), CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
     }
   }
 #endif
@@ -2280,12 +2283,12 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     if (window->damage()) {
       d->Fl_Window_Driver::flush();
       if (!aux_bitmap) [self create_aux_bitmap:gc retina:d->mapped_to_retina()];
-      if (CGBitmapContextGetBytesPerRow(gc) != CGBitmapContextGetBytesPerRow(aux_bitmap)) {
+      if (to_copy) {
+        memcpy(CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetData(gc), to_copy);
+      } else {
         CGImageRef img = CGBitmapContextCreateImage(gc);
         CGContextDrawImage(aux_bitmap, [self frame], img);
         CGImageRelease(img);
-      } else {
-        memcpy(CGBitmapContextGetData(aux_bitmap), CGBitmapContextGetData(gc), CGBitmapContextGetHeight(gc) * CGBitmapContextGetBytesPerRow(gc));
       }
     }
     Fl_Cocoa_Window_Driver::q_release_context();
