@@ -22,6 +22,9 @@ etc/FLTKConfig.cmake
 *.tlog
 .vs/
 
+# VS Code (Visual Studio Code) Editor
+.vscode/
+
 # /
 /autom4te*.cache
 /build
