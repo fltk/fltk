@@ -659,7 +659,12 @@ Fl_Window* Fl::first_window() {
   \param[in] window must be shown and not NULL
 */
 Fl_Window* Fl::next_window(const Fl_Window* window) {
-  Fl_X* i = Fl_X::i(window)->next;
+  Fl_X* i = window ? Fl_X::i(window) : 0;
+  if (!i) {
+    Fl::error("Fl::next_window() failed: window (%p) not shown.", window);
+    return 0;
+  }
+  i = i->next;
   return i ? i->w : 0;
 }
 
