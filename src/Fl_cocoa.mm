@@ -922,35 +922,24 @@ static void cocoaMouseWheelHandler(NSEvent *theEvent)
   // to me why Apple changed the API on this even though the current API
   // supports two wheels just fine. Matthias,
   fl_lock_function();
-  
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
-  if ( !window->shown() ) {
-    fl_unlock_function();
-    return;
-  }
   Fl::first_window(window);
-  
-  // Under OSX, single mousewheel increments are 0.1,
-  // so make sure they show up as at least 1..
-  //
-  float dx = [theEvent deltaX]; if ( fabs(dx) < 1.0 ) dx = (dx > 0) ? 1.0 : -1.0;
-  float dy = [theEvent deltaY]; if ( fabs(dy) < 1.0 ) dy = (dy > 0) ? 1.0 : -1.0;
-  if ([theEvent deltaX] != 0) {
-    Fl::e_dx = (int)-dx;
+  // Under OSX, mousewheel deltas are floats, but fltk only supports ints.
+  float s = Fl::screen_driver()->scale(0);
+  int dx = roundf([theEvent deltaX] / s);
+  int dy = roundf([theEvent deltaY] / s);
+  // allow both horizontal and vertical movements to be processed by the widget
+  if (dx) {
+    Fl::e_dx = -dx;
     Fl::e_dy = 0;
-    if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
-  } else if ([theEvent deltaY] != 0) {
-    Fl::e_dx = 0;
-    Fl::e_dy = (int)-dy;
-    if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
-  } else {
-    fl_unlock_function();
-    return;
+    Fl::handle( FL_MOUSEWHEEL, window );
   }
-  
+  if (dy) {
+    Fl::e_dx = 0;
+    Fl::e_dy = -dy;
+    Fl::handle( FL_MOUSEWHEEL, window );
+  }
   fl_unlock_function();
-  
-  //  return noErr;
 }
 
 /*
