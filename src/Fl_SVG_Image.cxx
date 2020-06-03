@@ -208,11 +208,13 @@ Fl_Image *Fl_SVG_Image::copy(int W, int H) {
 }
 
 
-/** Have the svg data (re-)rasterized using the given width and height values.
- By default, the resulting image w() and h() will preserve the width/height ratio
- of the SVG data.
- If \ref proportional was set to \c false, the image is rasterized to the given \c width
- and \c height values.*/
+/** Have the svg data (re-)rasterized using the given \p width and \p height values.
+ By default, the resulting image w() and h() will be close to \p width and \p height
+ while preserving the width/height ratio of the SVG data.
+ If \ref proportional was set to \c false, the image is rasterized to the exact \c width
+ and \c height values. In both cases, data_w() and data_h() values are set to w() and h(),
+ respectively.
+ */
 void Fl_SVG_Image::resize(int width, int height) {
   if (ld() < 0 || width <= 0 || height <= 0) {
     return;
