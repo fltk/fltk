@@ -99,6 +99,10 @@ public:
   void		release();
   void		reload();
 
+  virtual Fl_Shared_Image *as_shared_image() {
+    return this;
+  }
+
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return Fl_Image::copy(); }
   virtual void color_average(Fl_Color c, float i);

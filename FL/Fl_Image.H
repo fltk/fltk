@@ -164,6 +164,50 @@ public:
    */
   const char * const *data() const {return data_;}
   int fail();
+  /**
+    Releases an Fl_Image - the same as '\p delete \p this'.
+
+    This virtual method is for almost all image classes the same as calling
+    \code
+      delete image;
+    \endcode
+    where image is an \p Fl_Image \p * pointer.
+
+    However, for subclass Fl_Shared_Image this virtual method is
+    reimplemented and maintains shared images.
+
+    This virtual method makes it possible to \p delete all image types in
+    the same way by calling
+    \code
+      image->release();
+    \endcode
+
+    Reasoning: If you have an 'Fl_Image *' pointer and don't know if the
+    object is one of the class Fl_Shared_Image or any other subclass of
+    Fl_Image (for instance Fl_RGB_Image) then you can't just use operator
+    delete since this is not appropriate for Fl_Shared_Image objects.
+
+    The virtual method release() handles this properly.
+
+    \since 1.4.0 in the base class Fl_Image and virtual in Fl_Shared_Image
+  */
+  virtual void release() {
+    delete this;
+  }
+
+  /** Returns whether an image is an Fl_Shared_Image or not.
+
+    This virtual method returns a pointer to an Fl_Shared_Image if this
+    object is an instance of Fl_Shared_Image or NULL if not. This can be
+    used to detect if a given Fl_Image object is a shared image, i.e.
+    derived from Fl_Shared_Image.
+
+    \since 1.4.0
+  */
+  virtual class Fl_Shared_Image *as_shared_image() {
+    return 0;
+  }
+
   Fl_Image(int W, int H, int D);
   virtual ~Fl_Image();
   virtual Fl_Image *copy(int W, int H);
