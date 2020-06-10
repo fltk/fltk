@@ -3188,6 +3188,19 @@ static NSUInteger calc_win_style(Fl_Window *win) {
   } else winstyle = NSBorderlessWindowMask;
   return winstyle;
 }
+
+static void restore_window_title_and_icon(Fl_Window *pWindow, NSImage *icon) {
+  FLWindow *nswin = fl_xid(pWindow);
+  q_set_window_title(nswin, pWindow->label(), pWindow->iconlabel());
+  if (!icon) icon = ((Fl_Cocoa_Screen_Driver*)Fl::screen_driver())->default_icon;
+  if (icon && ([nswin styleMask] & NSTitledWindowMask) && pWindow->label() && strlen(pWindow->label())>0) {
+    NSButton *icon_button = [nswin standardWindowButton:NSWindowDocumentIconButton];
+    if (icon_button) {
+      [icon setSize:[icon_button frame].size];
+      [icon_button setImage:icon];
+    }
+  }
+}
 #endif
 
 void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
@@ -3200,6 +3213,7 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     else if (pWindow->non_modal()) level = non_modal_window_level();
     [nswin setLevel:level];
     [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
+    restore_window_title_and_icon(pWindow, icon_image);
     pWindow->resize(X, Y, W, H);
   } else
 #endif
@@ -3216,6 +3230,7 @@ void Fl_Cocoa_Window_Driver::use_border() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
   if (fl_mac_os_version >= 100600) {
     [fl_xid(pWindow) setStyleMask:calc_win_style(pWindow)]; // 10.6
+    if (border()) restore_window_title_and_icon(pWindow, icon_image);
     pWindow->redraw();
   }
   else
