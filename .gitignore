@@ -115,6 +115,7 @@ etc/FLTKConfig.cmake
 /src/*.sl*
 /src/*.a
 /src/*.bck
+/src/*.dll
 /src/*.sav
 /src/*.dylib
 

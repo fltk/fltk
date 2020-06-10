@@ -1,21 +1,19 @@
 dnl -*- sh -*-
 dnl the "configure" script is made from this by running GNU "autoconf"
 dnl
-dnl "$Id$"
-dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2018 by Bill Spitzak and others.
+dnl Copyright 1998-2020 by Bill Spitzak and others.
 dnl
 dnl This library is free software. Distribution and use rights are outlined in
 dnl the file "COPYING" which should have been included with this file.  If this
 dnl file is missing or damaged, see the license at:
 dnl
-dnl     http://www.fltk.org/COPYING.php
+dnl     https://www.fltk.org/COPYING.php
 dnl
 dnl Please report all bugs and problems on the following page:
 dnl
-dnl      http://www.fltk.org/str.php
+dnl      https://www.fltk.org/str.php
 dnl
 
 dnl We need at least autoconf 2.50...
@@ -26,6 +24,13 @@ AC_INIT
 AC_CONFIG_SRCDIR([src/Fl.cxx])
 
 AC_CANONICAL_HOST
+
+dnl determine whether we're cross-compiling
+if test "$host" != "$build"; then
+  fltk_cross_compiling="yes"
+else
+  fltk_cross_compiling="no"
+fi
 
 dnl Do not automatically add "-g" to compiler options...
 dnl This must be _before_ "Find compiler commands..."
@@ -390,6 +395,16 @@ else
     LINKSHARED="$LINKFLTKCAIRO ../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
 fi
 
+dnl Define the fluid executable used when building the test programs.
+dnl In a native build we use the fluid executable created during the build,
+dnl in a cross-compilation we use `fluid' which must exist on the build system
+dnl and must be in the PATH, i.e. executable as 'fluid' (w/o $EXEEXT).
+if test "$fltk_cross_compiling" = "yes"; then
+  FLUID_BUILD="fluid"
+else
+  FLUID_BUILD="../fluid/fluid$EXEEXT"
+fi
+
 AC_SUBST(DSOCOMMAND)
 AC_SUBST(DSOFLAGS)
 AC_SUBST(DSOLINK)
@@ -401,6 +416,7 @@ AC_SUBST(CAIRODSONAME)
 AC_SUBST(SHAREDSUFFIX)
 AC_SUBST(LINKSHARED)
 AC_SUBST(FLUID)
+AC_SUBST(FLUID_BUILD)
 
 AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support [[default=yes]]])
 
@@ -1602,8 +1618,14 @@ case $host_os in
     echo "                 MSys docpath=$msyspath/local/share/doc/fltk"
   ;;
 esac
+dnl
+echo "Cross-compiling: $fltk_cross_compiling"
+if test "$fltk_cross_compiling" = "yes"; then
+  echo "          Build: $build -> Host: $host"
+fi
+dnl
 echo "       Graphics: $graphics"
-
+dnl
 if test x$JPEG = x; then
     echo "Image Libraries: JPEG=System"
 else
@@ -1658,5 +1680,5 @@ dnl Make sure the fltk-config script is executable...
 chmod +x fltk-config
 
 dnl
-dnl End of "$Id$".
+dnl End of file.
 dnl
