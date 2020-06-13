@@ -53,30 +53,32 @@ endmacro (fl_debug_var)
 macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
     if (${LIBTYPE} STREQUAL "SHARED")
-        set (LIBRARY_NAME ${LIBNAME}_SHARED)
+      set (TARGET_NAME ${LIBNAME}_SHARED)
     else ()
-        set (LIBRARY_NAME ${LIBNAME})
+      set (TARGET_NAME ${LIBNAME})
     endif (${LIBTYPE} STREQUAL "SHARED")
 
     if (MSVC)
-	set (LIBRARY_NAME_DEBUG "${LIBRARY_NAME}d")
+	set (DEBUG_OUTPUT_NAME "${LIBNAME}d")
     else ()
-	set (LIBRARY_NAME_DEBUG "${LIBRARY_NAME}")
+	set (DEBUG_OUTPUT_NAME "${LIBNAME}")
     endif (MSVC)
 
-    add_library(${LIBRARY_NAME} ${LIBTYPE} ${LIBFILES})
+    add_library(${TARGET_NAME} ${LIBTYPE} ${LIBFILES})
 
-    set_target_properties(${LIBRARY_NAME}
+    set_target_properties(${TARGET_NAME}
         PROPERTIES
-        OUTPUT_NAME ${LIBRARY_NAME}
-        DEBUG_OUTPUT_NAME ${LIBRARY_NAME_DEBUG}
+        OUTPUT_NAME ${LIBNAME}
+        DEBUG_OUTPUT_NAME ${DEBUG_OUTPUT_NAME}
         CLEAN_DIRECT_OUTPUT TRUE
         COMPILE_DEFINITIONS "FL_LIBRARY"
 	)
 
     if (${LIBTYPE} STREQUAL "SHARED")
-	set_target_properties(${LIBRARY_NAME}
+	set_target_properties(${TARGET_NAME}
 	    PROPERTIES
+	    OUTPUT_NAME ${LIBNAME}
+	    DEBUG_OUTPUT_NAME ${DEBUG_OUTPUT_NAME}
 	    VERSION ${FLTK_VERSION_FULL}
 	    SOVERSION ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
 	    PREFIX "lib"    # for MSVC static/shared coexistence
@@ -85,28 +87,28 @@ macro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)
 
     if (MSVC)
 	if (OPTION_LARGE_FILE)
-	    set_target_properties(${LIBRARY_NAME}
+	    set_target_properties(${TARGET_NAME}
 		PROPERTIES
 		LINK_FLAGS /LARGEADDRESSAWARE
 		)
 	endif (OPTION_LARGE_FILE)
 
 	if (${LIBTYPE} STREQUAL "SHARED")
-	    set_target_properties(${LIBRARY_NAME}
+	    set_target_properties(${TARGET_NAME}
 		PROPERTIES
 		COMPILE_DEFINITIONS "FL_DLL"
 		)
 	endif (${LIBTYPE} STREQUAL "SHARED")
     endif (MSVC)
 
-    install(TARGETS ${LIBRARY_NAME}
+    install(TARGETS ${TARGET_NAME}
         EXPORT FLTK-Targets
         RUNTIME DESTINATION ${FLTK_BINDIR}
         LIBRARY DESTINATION ${FLTK_LIBDIR}
         ARCHIVE DESTINATION ${FLTK_LIBDIR}
 	)
 
-    list(APPEND FLTK_LIBRARIES "${LIBRARY_NAME}")
+    list(APPEND FLTK_LIBRARIES "${TARGET_NAME}")
     set (FLTK_LIBRARIES ${FLTK_LIBRARIES} PARENT_SCOPE)
 
 endmacro(FL_ADD_LIBRARY LIBNAME LIBTYPE LIBFILES)

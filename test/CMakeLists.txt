@@ -110,7 +110,6 @@ CREATE_EXAMPLE(utf8 utf8.cxx fltk)
 CREATE_EXAMPLE(valuators valuators.fl fltk)
 CREATE_EXAMPLE(unittests unittests.cxx fltk)
 CREATE_EXAMPLE(windowfocus windowfocus.cxx fltk)
-
 CREATE_EXAMPLE(fltk-versions ../examples/fltk-versions.cxx fltk)
 
 # OpenGL demos...

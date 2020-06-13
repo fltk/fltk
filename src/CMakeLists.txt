@@ -578,7 +578,7 @@ endif (OPTION_USE_SYSTEM_LIBPNG)
 
 if (OPENGL_FOUND)
     FL_ADD_LIBRARY(fltk_gl STATIC "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
-   target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
+    target_link_libraries(fltk_gl fltk ${OPENGL_LIBRARIES})
 endif (OPENGL_FOUND)
 
 #######################################################################
@@ -616,21 +616,21 @@ if (OPTION_BUILD_SHARED_LIBS)
     endif (MSVC)
 
     if (OPTION_USE_SYSTEM_LIBJPEG)
-	target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
+      target_link_libraries(fltk_images_SHARED ${FLTK_JPEG_LIBRARIES})
     else()
-	target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
+      target_link_libraries(fltk_images_SHARED fltk_jpeg_SHARED)
     endif (OPTION_USE_SYSTEM_LIBJPEG)
 
     if (OPTION_USE_SYSTEM_LIBPNG)
-	target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
+      target_link_libraries(fltk_images_SHARED ${FLTK_PNG_LIBRARIES})
     else()
-	target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
+      target_link_libraries(fltk_images_SHARED fltk_png_SHARED)
     endif (OPTION_USE_SYSTEM_LIBPNG)
 
     if (OPTION_USE_SYSTEM_ZLIB)
-	target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
+      target_link_libraries(fltk_images_SHARED ${FLTK_ZLIB_LIBRARIES})
     else()
-	target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
+      target_link_libraries(fltk_images_SHARED fltk_z_SHARED)
     endif (OPTION_USE_SYSTEM_ZLIB)
 
     ###################################################################
@@ -638,9 +638,9 @@ if (OPTION_BUILD_SHARED_LIBS)
     if (OPENGL_FOUND)
       FL_ADD_LIBRARY(fltk_gl SHARED "${GLCPPFILES};${GL_HEADER_FILES};${GL_DRIVER_HEADER_FILES}")
       if (MSVC)
-	target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
+        target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
       else ()
-	target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
+        target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
       endif (MSVC)
     endif (OPENGL_FOUND)
 
