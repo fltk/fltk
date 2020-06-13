@@ -495,8 +495,8 @@ a Windows GUI app.  It is ignored on other platforms and should always be
 present with FLTK GUI programs for better portability.
 
 Note: the variable FLTK_USE_FILE used to include another file in
-previous FLTK versions was deprecated since FLTK 1.3.4 and was removed
-in FLTK 1.4.0.
+previous FLTK versions was deprecated since FLTK 1.3.4 and will be
+removed in FLTK 1.4.0 (this version) or later (maybe 1.4.1).
 
 
  3.1  Library Names
