@@ -48,6 +48,10 @@ etc/FLTKConfig.cmake
 /FL/Makefile
 /FL/*.bck
 
+# /cairo/
+/cairo/*.so*
+/cairo/*.dll
+
 # /documentation/
 /documentation/.xvpics
 /documentation/blocks.0
