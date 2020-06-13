@@ -14,7 +14,7 @@
 #      https://www.fltk.org/bugs.php
 #
 
-%define version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
+%define version @FLTK_VERSION_MAJOR@.@FLTK_VERSION_MINOR@.@FLTK_VERSION_PATCH@
 %define release 1
 %define prefix /usr
 

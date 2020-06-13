@@ -132,7 +132,7 @@ uninstall-linux uninstall-osx:
 
 Doxyfile: Doxyfile.in
 	echo "Generating Doxyfile ..."
-	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,YES,' \
 	    -e's,@GENERATE_LATEX@,NO,' \
 	    -e's, @LATEX_HEADER@,,' \
@@ -142,7 +142,7 @@ Doxyfile: Doxyfile.in
 
 Doxybook: Doxyfile.in
 	echo "Generating Doxybook ..."
-	sed -e's,@FL_VERSION@,$(FL_VERSION),' \
+	sed -e's,@FLTK_VERSION@,$(FLTK_VERSION),' \
 	    -e's,@GENERATE_HTML@,NO,' \
 	    -e's,@GENERATE_LATEX@,YES,' \
 	    -e's,@LATEX_HEADER@,src/fltk-book.tex,' \
@@ -183,6 +183,6 @@ src/fltk-book.tex: src/fltk-book.tex.in
 	DOXY_VERSION=`$(DOXYDOC) --version`; \
 	YEAR=`date +%Y`; \
 	sed -e"s/@YEAR@/$$YEAR/g" \
-	    -e"s/@FL_VERSION@/$(FL_VERSION)/g" \
+	    -e"s/@FLTK_VERSION@/$(FLTK_VERSION)/g" \
 	    -e"s/@DOXY_VERSION@/$$DOXY_VERSION/g" \
 	< $< > $@

@@ -14,7 +14,7 @@
 #      https://www.fltk.org/bugs.php
 #
 
-# Note:	see ../configure.in and/or ../makeinclude for definition of
+# Note:	see ../configure.ac and/or ../makeinclude for definition of
 #	FL_VERSION (x.y.z), FL_ABI_VERSION (x.y.0), and FL_DSO_VERSION (x.y)
 
 CPPFILES = \

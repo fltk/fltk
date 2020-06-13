@@ -552,9 +552,9 @@ add_executable(CubeView WIN32 CubeMain.cxx CubeView.cxx CubeViewUI.cxx)
 target_link_libraries(CubeView fltk fltk_gl)
 ---
 
-You can repeat the add_custom_command for each fluid file or if you have
-a large number of them see the CMake/macros.cmake function FLTK_RUN_FLUID
-for an example of how to run it in a loop.
+You can repeat the add_custom_command for each fluid file or if you
+have a large number of them see the CMake/FLTK-Functions.cmake function
+FLTK_RUN_FLUID for an example of how to run it in a loop.
 
 The two lines
 

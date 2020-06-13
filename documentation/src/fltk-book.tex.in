@@ -127,7 +127,7 @@
 \begin{titlepage}
 \vspace*{5cm}
 \begin{center}%
-{\Huge FLTK @FL_VERSION@ Programming Manual}\\
+{\Huge FLTK @FLTK_VERSION@ Programming Manual}\\
 \vspace*{2cm}
 \begin{DoxyImageNoCaption}
  \mbox{\includegraphics[width=6cm]{FL200.png}}
