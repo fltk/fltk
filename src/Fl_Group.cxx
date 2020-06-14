@@ -452,6 +452,8 @@ void Fl_Group::clear() {
   widgets' destructors would be called twice!
 */
 Fl_Group::~Fl_Group() {
+  if (current_ == this)
+    end();
   clear();
 }
 
