@@ -86,10 +86,8 @@ fl_check_images(const char *name,		// I - Filename
 #endif // HAVE_LIBPNG
 
 #ifdef HAVE_LIBJPEG
-  if (memcmp(header, "\377\330\377", 3) == 0 &&
-					// Start-of-Image
-      header[3] >= 0xc0 && header[3] <= 0xef)
-	   				// APPn for JPEG file
+  if (memcmp(header, "\377\330\377", 3) == 0 && // Start-of-Image
+      header[3] >= 0xc0 && header[3] <= 0xfe)   // APPn .. comment for JPEG file
     return new Fl_JPEG_Image(name);
 #endif // HAVE_LIBJPEG
 
