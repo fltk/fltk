@@ -4516,6 +4516,7 @@ void Fl_Cocoa_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   [icon_image release];
   icon_image = nil;
   if (count >= 1 && pWindow->border() && pWindow->label() && strlen(pWindow->label())) {
+    ((Fl_RGB_Image*)icons[0])->normalize();
     icon_image = rgb_to_nsimage(icons[0]);
   }
 }

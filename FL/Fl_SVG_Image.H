@@ -31,7 +31,7 @@ struct NSVGimage;
  if the file could not be opened or read, and ERR_FORMAT if the SVG format could not be decoded. 
  If the image has loaded correctly, w(), h(), and d() should return values greater than zero.
 
- Rasterization is not done until the image is first drawn or resize() is called. Therefore, 
+ Rasterization is not done until the image is first drawn or resize() or normalize() is called. Therefore, 
  \ref array is NULL until then. The delayed rasterization ensures an Fl_SVG_Image is always rasterized
  to the exact screen resolution at which it is drawn.
 
@@ -161,6 +161,8 @@ public:
   virtual void color_average(Fl_Color c, float i);
   virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
+  virtual Fl_SVG_Image *as_svg_image() { return this; };
+  virtual void normalize();
 };
 
 #endif // FL_SVG_IMAGE_H

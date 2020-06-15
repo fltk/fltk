@@ -356,8 +356,10 @@ void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
     icon_->icons = new Fl_RGB_Image*[count];
     icon_->count = count;
     // FIXME: Fl_RGB_Image lacks const modifiers on methods
-    for (int i = 0;i < count;i++)
+    for (int i = 0;i < count;i++) {
       icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
+      icon_->icons[i]->normalize();
+    }
   }
   
   if (Fl_X::i(pWindow))

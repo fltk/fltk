@@ -273,6 +273,7 @@ public:
   static bool register_images_done;
 };
 
+class Fl_SVG_Image;
 
 /**
   The Fl_RGB_Image class supports caching and drawing
@@ -291,6 +292,7 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
 public:
 
   /** Points to the start of the object's data array
+   \see class Fl_SVG_Image which delays initialization of this member variable.
    */
   const uchar *array;
   /** If non-zero, the object's data array is delete[]'d when deleting the object.
@@ -332,6 +334,12 @@ public:
    \sa  void Fl_RGB_Image::max_size(size_t)
    */
   static size_t max_size() {return max_size_;}
+  /** Returns whether an image is an Fl_SVG_Image or not.
+  This virtual method returns a pointer to the Fl_SVG_Image if this object is an instance of Fl_SVG_Image or NULL if not. */
+  virtual Fl_SVG_Image *as_svg_image() { return NULL; }
+  /** Makes sure the object is fully initialized.
+   In particular, makes sure member variable \ref array is non-null. */
+  virtual void normalize() {}
 };
 
 #endif // !Fl_Image_H

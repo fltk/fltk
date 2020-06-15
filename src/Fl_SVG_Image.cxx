@@ -266,6 +266,12 @@ void Fl_SVG_Image::color_average(Fl_Color c, float i) {
   Fl_RGB_Image::color_average(c, i);
 }
 
+/** Makes sure the object is fully initialized.
+ This function rasterizes the SVG image if that was not done before. */
+void Fl_SVG_Image::normalize() {
+  if (!array) resize(w(), h());
+}
+
 #endif // FLTK_USE_NANOSVG
 
 //
