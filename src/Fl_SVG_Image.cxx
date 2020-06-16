@@ -267,7 +267,7 @@ void Fl_SVG_Image::color_average(Fl_Color c, float i) {
 }
 
 /** Makes sure the object is fully initialized.
- This function rasterizes the SVG image if that was not done before. */
+ This function rasterizes the SVG image, and consequently initializes its \ref array member, if that was not done before. */
 void Fl_SVG_Image::normalize() {
   if (!array) resize(w(), h());
 }
