@@ -631,8 +631,9 @@ void Fl_MacOS_Sys_Menu_Bar_Driver::remove_window(Fl_Window *win)
     if (item->user_data() == win) {
       bool doit = item->value();
       remove(index);
-      if (doit) {
+      if (doit) { // select Fl::first_window() in Window menu
         item = (Fl_Menu_Item*)bar->menu() + find_first_window() + 1;
+        while (item->label() && item->user_data() != Fl::first_window()) item++;
         if (item->label()) {
           ((Fl_Window*)item->user_data())->show();
           setonly(item);
