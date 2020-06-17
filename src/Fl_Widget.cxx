@@ -170,6 +170,8 @@ Fl_Widget::~Fl_Widget() {
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
+  if (flags() & COPIED_IMAGE && label_.image) { delete label_.image; label_.image = 0; };
+  if (flags() & COPIED_DEIMAGE && label_.deimage) { delete label_.deimage; label_.deimage = 0; };
   // remove from parent group
   if (parent_) parent_->remove(this);
 #ifdef DEBUG_DELETE
@@ -331,6 +333,61 @@ void Fl_Widget::do_callback(Fl_Widget *widget, void *arg) {
   if (callback_ != default_callback)
     clear_changed();
 }
+
+void Fl_Widget::image(Fl_Image* img) {
+  if (flags() & COPIED_IMAGE) {
+    if (label_.image == img)
+      return;
+    delete label_.image;
+    label_.image = 0;
+    clear_flag(COPIED_IMAGE);
+  }
+  label_.image=img;
+  redraw_label();
+}
+
+void Fl_Widget::copy_image(Fl_Image* new_img) {
+  if ((flags() & COPIED_IMAGE) && (label_.image == new_img))
+    return;
+  if (new_img) {
+    image(new_img->copy(new_img->w(),new_img->h()));
+    set_flag(COPIED_IMAGE);
+  } else {
+    image(0);
+  }
+}
+
+void Fl_Widget::image(Fl_Image& img) {
+  image(&img);
+}
+
+void Fl_Widget::deimage(Fl_Image* img) {
+  if (flags() & COPIED_DEIMAGE) {
+    if (label_.deimage == img)
+      return;
+    delete label_.deimage;
+    label_.deimage = 0;
+    clear_flag(COPIED_DEIMAGE);
+  }
+  label_.deimage=img;
+  redraw_label();
+}
+
+void Fl_Widget::copy_deimage(Fl_Image* new_img) {
+  if ((flags() & COPIED_DEIMAGE) && (label_.deimage == new_img))
+    return;
+  if (new_img) {
+    deimage(new_img->copy(new_img->w(),new_img->h()));
+    set_flag(COPIED_DEIMAGE);
+  } else {
+    deimage(0);
+  }
+}
+
+void Fl_Widget::deimage(Fl_Image& img) {
+  deimage(&img);
+}
+
 
 //
 // End of "$Id$".
