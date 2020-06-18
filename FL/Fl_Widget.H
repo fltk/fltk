@@ -497,41 +497,47 @@ public:
    */
   void labelsize(Fl_Fontsize pix) {label_.size=pix;}
 
-  /** Gets the image that is used as part of the widget label.
-      This image is used when drawing the widget in the active state.
+  /** Gets the image that is used as part of the widget label when in the active state.
       \return the current image
    */
   Fl_Image* image() {return label_.image;}
+  /** Gets the image that is used as part of the widget label when in the active state.
+      \return the current image
+   */
   const Fl_Image* image() const {return label_.image;}
 
-  /** Sets the image to use as part of the widget label.
-      This image is used when drawing the widget in the active state.
-      \param[in] img the new image for the label 
+  /** Sets the image to use as part of the widget label when in the active state.
+      \param[in] img the new image for the label
+      \note The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
+   and, if appropriate, for deleting it after the widget's deletion.
    */
   void image(Fl_Image* img) {label_.image=img;}
 
-  /** Sets the image to use as part of the widget label.
-      This image is used when drawing the widget in the active state.
-      \param[in] img the new image for the label 
+  /** Sets the image to use as part of the widget label when in the active state.
+      \param[in] img the new image for the label
+   \see void image(Fl_Image* img)
    */
   void image(Fl_Image& img) {label_.image=&img;}
 
-  /** Gets the image that is used as part of the widget label.  
-      This image is used when drawing the widget in the inactive state.
+  /** Gets the image that is used as part of the widget label when in the inactive state.
       \return the current image for the deactivated widget
    */
   Fl_Image* deimage() {return label_.deimage;}
+  /** Gets the image that is used as part of the widget label when in the inactive state.
+      \return the current image for the deactivated widget
+   */
   const Fl_Image* deimage() const {return label_.deimage;}
 
-  /** Sets the image to use as part of the widget label.  
-      This image is used when drawing the widget in the inactive state.
+  /** Sets the image to use as part of the widget label when in the inactive state.
       \param[in] img the new image for the deactivated widget
+      \note The caller is responsible for making sure \p img is not deleted  while it's used by the widget,
+   and, if appropriate, for deleting it after the widget's deletion.
    */
   void deimage(Fl_Image* img) {label_.deimage=img;}
 
-  /** Sets the image to use as part of the widget label.  
-      This image is used when drawing the widget in the inactive state.
+  /** Sets the image to use as part of the widget label when in the inactive state.
       \param[in] img the new image for the deactivated widget
+   \see void deimage(Fl_Image* img)
    */
   void deimage(Fl_Image& img) {label_.deimage=&img;}
 
