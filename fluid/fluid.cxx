@@ -1721,6 +1721,7 @@ void set_modflag(int mf) {
 ////////////////////////////////////////////////////////////////
 
 static int arg(int argc, char** argv, int& i) {
+  if (argv[i][1] == 'd' && !argv[i][2]) {G_debug=1; i++; return 1;}
   if (argv[i][1] == 'u' && !argv[i][2]) {update_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && !argv[i][2]) {compile_file++; batch_mode++; i++; return 1;}
   if (argv[i][1] == 'c' && argv[i][2] == 's' && !argv[i][3]) {compile_file++; compile_strings++; batch_mode++; i++; return 1;}
@@ -1778,7 +1779,8 @@ int main(int argc,char **argv) {
       " -c : write .cxx and .h and exit\n"
       " -cs : write .cxx and .h and strings and exit\n"
       " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
-      " -h <name> : .h output filename, or extension if <name> starts with '.'\n";
+      " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
+      " -d : enable internal debugging\n";
     int len = (int)(strlen(msg) + strlen(argv[0]) + strlen(Fl::help));
     Fl_Plugin_Manager pm("commandline");
     int i, n = pm.plugins();

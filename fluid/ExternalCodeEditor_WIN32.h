@@ -43,7 +43,7 @@ public:
   ExternalCodeEditor();
   ~ExternalCodeEditor();
   int is_editing();
-  DWORD reap_editor();
+  int reap_editor(DWORD *pid_reaped=NULL);
   void close_editor();
   const char *filename() { return filename_; }
   int open_editor(const char *editor_cmd, const char *code);
