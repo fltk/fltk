@@ -77,6 +77,8 @@ void ExternalCodeEditor::close_editor() {
   // Wait until editor is closed + reaped
   while ( is_editing() ) {
     switch ( reap_editor() ) {
+      case -2:  // no editor running (unlikely to happen)
+        return;
       case -1:  // error
         fl_alert("Error reaping external editor\n"
                  "pid=%ld file=%s", long(pid_), filename());
@@ -94,7 +96,7 @@ void ExternalCodeEditor::close_editor() {
 	    continue;
 	}
         break;
-      default:  // process reaped
+      case 1:   // process reaped
         return;
     }
   }
@@ -109,9 +111,12 @@ void ExternalCodeEditor::kill_editor() {
   if ( !is_editing() ) return;  // editor not running? return..
   kill(pid_, SIGTERM);          // kill editor
   int wcount = 0;
-  while ( pid_ != -1 ) {        // and wait for it to finish..
+  while ( is_editing() ) {      // and wait for editor to finish..
     usleep(100000);             // 1/10th sec delay gives editor time to close itself
-    switch (reap_editor()) {
+    pid_t pid_reaped;
+    switch ( reap_editor(&pid_reaped) ) {
+      case -2:  // editor not running (unlikely to happen)
+        return;
       case -1:  // error
         fl_alert("Can't seem to close editor of file: %s\n"
                  "waitpid() returned: %s\n"
@@ -124,10 +129,9 @@ void ExternalCodeEditor::kill_editor() {
                    "Please close editor and hit OK", filename());
         }
         continue;
-      default:  // process reaped
+      case 1:  // process reaped (reap_editor() sets pid_ to -1)
         if ( G_debug )
-          printf("*** REAPED KILLED EXTERNAL EDITOR: PID %ld\n", (long)pid_);
-        pid_ = -1;
+          printf("*** REAPED KILLED EXTERNAL EDITOR: PID %ld\n", (long)pid_reaped);
         break;
     }
   }
@@ -346,14 +350,18 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
 }
 
 // [Public] Try to reap external editor process
+// If 'pid_reaped' not NULL, returns PID of reaped editor.
 // Returns:
 //   -2 -- editor not open
 //   -1 -- waitpid() failed (errno has reason)
 //    0 -- process still running
-//   >0 -- process finished + reaped (value is pid)
-//         Handles removing tmpfile/zeroing file_mtime/file_size
+//    1 -- process finished + reaped ('pid_reaped' has pid), pid_ set to -1.
+//         Handles removing tmpfile/zeroing file_mtime/file_size/filename
 //
-pid_t ExternalCodeEditor::reap_editor() {
+// If return value <=0, 'pid_reaped' is set to zero.
+//
+int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
+  if ( pid_reaped ) *pid_reaped = 0;
   if ( !is_editing() ) return -2;
   int status = 0;
   pid_t wpid;
@@ -363,6 +371,7 @@ pid_t ExternalCodeEditor::reap_editor() {
     case 0:     // process didn't reap, still running
       return 0;
     default:    // process reaped
+      if ( pid_reaped ) *pid_reaped = wpid;  // return pid to caller
       remove_tmpfile(); // also zeroes mtime/size
       pid_ = -1;
       if ( --L_editors_open <= 0 )
@@ -371,7 +380,7 @@ pid_t ExternalCodeEditor::reap_editor() {
   }
   if ( G_debug ) 
     printf("*** EDITOR REAPED: pid=%ld #open=%d\n", long(wpid), L_editors_open);
-  return wpid;
+  return 1;
 }
 
 // [Public] Open external editor using 'editor_cmd' to edit 'code'
@@ -393,8 +402,10 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
   if ( is_file(filename()) ) {
     if ( is_editing() ) {
       // See if editor recently closed but not reaped; try to reap
-      pid_t wpid = reap_editor();
-      switch (wpid) {
+      pid_t wpid;
+      switch ( reap_editor(&wpid) ) {
+        case -2:        // no editor running? (unlikely if is_editing() true)
+	  break;
         case -1:        // waitpid() failed
           fl_alert("ERROR: waitpid() failed: %s\nfile='%s', pid=%ld",
             strerror(errno), filename(), (long)pid_);
@@ -403,7 +414,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
           fl_alert("Editor Already Open\n  file='%s'\n  pid=%ld",
             filename(), (long)pid_);
           return 0;
-        default:        // process reaped, wpid is pid reaped
+        case 1:        // process reaped, wpid is pid reaped
           if ( G_debug )
             printf("*** REAPED EXTERNAL EDITOR: PID %ld\n", (long)wpid);
           break;        // fall thru to open new editor instance
