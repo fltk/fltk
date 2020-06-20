@@ -50,14 +50,14 @@ clean:
 
 install: $(LIBPNG)
 	echo "Installing libfltk_png$(LIBEXT) in $(libdir)..."
-	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(LIBPNG) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
+	-$(INSTALL_DIR) "$(DESTDIR)$(libdir)"
+	$(INSTALL_LIB) $(LIBPNG) "$(DESTDIR)$(libdir)"
+	$(RANLIB) "$(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)"
 	echo "Installing png headers in $(includedir)/FL/images..."
-	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) png.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) pngconf.h $(DESTDIR)$(includedir)/FL/images
-	$(INSTALL_DATA) pnglibconf.h $(DESTDIR)$(includedir)/FL/images
+	-$(INSTALL_DIR) "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) png.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) pngconf.h "$(DESTDIR)$(includedir)/FL/images"
+	$(INSTALL_DATA) pnglibconf.h "$(DESTDIR)$(includedir)/FL/images"
 
 
 #
@@ -66,11 +66,11 @@ install: $(LIBPNG)
 
 uninstall:
 	echo "Uninstalling libfltk_png$(LIBEXT) in $(libdir)..."
-	$(RM) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
+	$(RM) "$(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)"
 	echo "Uninstalling png headers in $(includedir)/FL/images..."
-	$(RM) $(DESTDIR)$(includedir)/FL/images/png.h
-	$(RM) $(DESTDIR)$(includedir)/FL/images/pngconf.h
-	$(RM) $(DESTDIR)$(includedir)/FL/images/pnglibconf.h
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/png.h"
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/pngconf.h"
+	$(RM) "$(DESTDIR)$(includedir)/FL/images/pnglibconf.h"
 
 
 #

@@ -28,15 +28,15 @@ APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 ### BEGIN fltk-config
 selfdir=`dirname "$0"`
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
 exec_prefix_set=no
-includedir=@includedir@
-libdir=@libdir@
-srcdir=@srcdir@
+includedir="@includedir@"
+libdir="@libdir@"
+srcdir="@srcdir@"
 
 # BINARY_DIR - used only for CMake builds in local (binary) directory
-BINARY_DIR=@BINARY_DIR@
+BINARY_DIR="@BINARY_DIR@"
 
 # compiler names
 CC="@CC@"
@@ -57,24 +57,24 @@ if test -f "$selfdir/FL/Fl_Window.H"; then
 	libdir="$selfdir/lib"
 
 	if test -f "$libdir/libfltk_jpeg.a"; then
-		CFLAGS="-I$includedir/jpeg $CFLAGS"
-		CXXFLAGS="-I$includedir/jpeg $CXXFLAGS"
+		CFLAGS="-I'$includedir/jpeg' $CFLAGS"
+		CXXFLAGS="-I'$includedir/jpeg' $CXXFLAGS"
 	fi
 
 	if test -f "$libdir/libfltk_z.a"; then
-		CFLAGS="-I$includedir/zlib $CFLAGS"
-		CXXFLAGS="-I$includedir/zlib $CXXFLAGS"
+		CFLAGS="-I'$includedir/zlib' $CFLAGS"
+		CXXFLAGS="-I'$includedir/zlib' $CXXFLAGS"
 	fi
 
 	if test -f "$libdir/libfltk_png.a"; then
-		CFLAGS="-I$includedir/png $CFLAGS"
-		CXXFLAGS="-I$includedir/png $CXXFLAGS"
+		CFLAGS="-I'$includedir/png' $CFLAGS"
+		CXXFLAGS="-I'$includedir/png' $CXXFLAGS"
 	fi
 fi
 
 if test -d $includedir/FL/images; then
-	CFLAGS="-I$includedir/FL/images $CFLAGS"
-	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
+	CFLAGS="-I'$includedir/FL/images' $CFLAGS"
+	CXXFLAGS="-I'$includedir/FL/images' $CXXFLAGS"
 fi
 
 if test -f "$libdir/libfltk_cairo.a"; then
@@ -219,41 +219,41 @@ do
 done
 
 if test "$includedir" != /usr/include; then
-    includes=-I$includedir
+    includes="-I'$includedir'"
 else
     includes=
 fi
 
 if test "$BINARY_DIR" != ""; then
-    includes="-I$BINARY_DIR $includes"
+    includes="-I'$BINARY_DIR' $includes"
 fi
 
 if test "$libdir" != /usr/lib -a "$libdir" != /usr/lib32; then
-    libs=-L$libdir
+    libs="-L'$libdir'"
 else
     libs=
 fi
 
 # Calculate needed libraries
-LDSTATIC="$libdir/libfltk.a $LDLIBS"
+LDSTATIC="'$libdir/libfltk.a' $LDLIBS"
 LDLIBS="-lfltk$SHAREDSUFFIX $LDLIBS"
 
 if test x$use_forms = xyes; then
     LDLIBS="-lfltk_forms$SHAREDSUFFIX $LDLIBS"
-    LDSTATIC="$libdir/libfltk_forms.a $LDSTATIC"
+    LDSTATIC="'$libdir/libfltk_forms.a' $LDSTATIC"
 fi
 if test x$use_gl = xyes; then
     LDLIBS="-lfltk_gl$SHAREDSUFFIX @GLLIBS@ $LDLIBS"
-    LDSTATIC="$libdir/libfltk_gl.a @GLLIBS@ $LDSTATIC"
+    LDSTATIC="'$libdir/libfltk_gl.a' @GLLIBS@ $LDSTATIC"
 fi
 if test x$use_images = xyes; then
     LDLIBS="-lfltk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"
-    LDSTATIC="$libdir/libfltk_images.a $STATICIMAGELIBS $LDSTATIC"
+    LDSTATIC="'$libdir/libfltk_images.a' $STATICIMAGELIBS $LDSTATIC"
 fi
 
 if test x$use_cairo = xyes; then
     LDLIBS="-lfltk_cairo$SHAREDSUFFIX $CAIROLIBS $LDLIBS"
-    LDSTATIC="$libdir/libfltk_cairo.a $CAIROLIBS $LDSTATIC"
+    LDSTATIC="'$libdir/libfltk_cairo.a' $CAIROLIBS $LDSTATIC"
 fi
 
 LDLIBS="$DSOLINK $LDFLAGS $libs $LDLIBS"
@@ -352,10 +352,10 @@ fi
 
 if test "$echo_ldflags" = "yes"; then
     my_libs=
-    libdirs=$libs
+    libdirs="$libs"
 
     for i in $LDLIBS ; do
-	if test $i != -L$libdir ; then
+	if test $i != "-L'$libdir'" ; then
 	    if test -z "$my_libs" ; then
 		my_libs="$i"
 	    else
@@ -371,26 +371,26 @@ if test "$echo_ldstaticflags" = "yes"; then
 fi
 
 if test "$echo_libs" = "yes"; then
-    USELIBS="$libdir/libfltk.a"
+    USELIBS="'$libdir/libfltk.a'"
 
     if test x$use_forms = xyes; then
-        USELIBS="$libdir/libfltk_forms.a $USELIBS"
+        USELIBS="'$libdir/libfltk_forms.a' $USELIBS"
     fi
 
     if test x$use_gl = xyes; then
-        USELIBS="$libdir/libfltk_gl.a $USELIBS"
+        USELIBS="'$libdir/libfltk_gl.a' $USELIBS"
     fi
 
     if test x$use_cairo = xyes; then
-        USELIBS="$libdir/libfltk_cairo.a $USELIBS"
+        USELIBS="'$libdir/libfltk_cairo.a' $USELIBS"
     fi
 
     if test x$use_images = xyes; then
-        USELIBS="$libdir/libfltk_images.a $USELIBS"
+        USELIBS="'$libdir/libfltk_images.a' $USELIBS"
 
         for lib in fltk_jpeg fltk_png fltk_z; do
-            if test -f $libdir/lib$lib.a; then
-                USELIBS="$libdir/lib$lib.a $USELIBS"
+            if test -f "$libdir/lib$lib.a"; then
+                USELIBS="'$libdir/lib$lib.a' $USELIBS"
             fi
 	done
     fi
