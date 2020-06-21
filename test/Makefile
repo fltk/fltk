@@ -352,7 +352,7 @@ clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ colbrowser.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ colbrowser.o $(LINKFLTK) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 	$(OSX_ONLY) mkdir -p colbrowser.app/Contents/Resources
 	$(OSX_ONLY) cp -f rgb.txt colbrowser.app/Contents/Resources/
@@ -365,7 +365,7 @@ curve$(EXEEXT): curve.o
 
 demo$(EXEEXT): demo.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTK) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 	$(OSX_ONLY) mkdir -p demo.app/Contents/Resources
 	$(OSX_ONLY) cp -f demo.menu demo.app/Contents/Resources/
@@ -429,7 +429,7 @@ keyboard_ui.cxx:	keyboard_ui.fl ../fluid/fluid$(EXEEXT)
 
 label$(EXEEXT): label.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ label.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ label.o $(LINKFLTK) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 line_style$(EXEEXT): line_style.o
@@ -460,7 +460,7 @@ offscreen$(EXEEXT): offscreen.o
 
 output$(EXEEXT): output.o $(FLLIBNAME)
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ output.o $(LINKFLTKFORMS) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ output.o $(LINKFLTK) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 overlay$(EXEEXT): overlay.o
