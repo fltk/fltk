@@ -469,6 +469,7 @@ if(X11_Xft_FOUND AND OPTION_USE_PANGO)
     find_library(HAVE_LIB_PANGO pango-1.0 ${CMAKE_LIBRARY_PATH})
     find_library(HAVE_LIB_PANGOXFT pangoxft-1.0 ${CMAKE_LIBRARY_PATH})
     set(USE_PANGO TRUE)
+    list(APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
   else(PANGOXFT_FOUND)
   
 #this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
