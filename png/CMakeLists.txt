@@ -31,6 +31,9 @@ set(PNG_SRCS
   pngwrite.c
   pngwtran.c
   pngwutil.c
+  arm/arm_init.c
+  arm/filter_neon_intrinsics.c
+  arm/palette_neon_intrinsics.c
 )
 
 #######################################################################
