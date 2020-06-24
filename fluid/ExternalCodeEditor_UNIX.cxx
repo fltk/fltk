@@ -296,6 +296,9 @@ static int save_file(const char *filename, const char *code) {
 //     o 's' will be modified (words will be NULL separated)
 //     o argv[] will end up pointing to the words of 's'
 //     o Caller must free argv with: free(argv);
+//   Returns:
+//     o -1 in case of memory allocation error
+//     o number of arguments in argv (same value as in argc)
 //
 static int make_args(char *s,         // string containing words (gets trashed!)
                      int *aargc,      // pointer to argc
@@ -334,10 +337,13 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
       // NOTE: OSX wants minimal code between fork/exec, see Apple TN2083
       int nargs;
       char **args = 0;
-      make_args(cmd, &nargs, &args);
-      execvp(args[0], args);  // run command - doesn't return if succeeds
-      fl_alert("couldn't exec() '%s': %s", cmd, strerror(errno));
+      if (make_args(cmd, &nargs, &args) > 0) {
+	execvp(args[0], args);  // run command - doesn't return if succeeds
+	fl_alert("couldn't exec() '%s': %s", cmd, strerror(errno));
+	exit(1);
+      }
       exit(1);
+      // break;
     }
     default:    // parent
       if ( L_editors_open++ == 0 )  // first editor? start timers

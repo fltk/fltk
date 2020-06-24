@@ -614,7 +614,10 @@ void Fl_X11_Screen_Driver::open_display_platform() {
   XSetErrorHandler(xerror_handler);
 
   Display *d = XOpenDisplay(0);
-  if (!d) Fl::fatal("Can't open display: %s",XDisplayName(0));
+  if (!d) {
+    Fl::fatal("Can't open display: %s", XDisplayName(0)); // does not return
+    return; // silence static code analyzer
+  }
 
   open_display_i(d);
   // the unique GC used by all X windows
@@ -953,20 +956,20 @@ void Fl_X11_System_Driver::copy(const char *stuff, int len, int clipboard, const
   XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
 }
 
-static void write_short(unsigned char **cp,short i){
-  unsigned char *c=*cp;
-  *c++=i&0xFF;i>>=8;
-  *c++=i&0xFF;i>>=8;
-  *cp=c;
+static void write_short(unsigned char **cp, short i) {
+  unsigned char *c = *cp;
+  *c++ = i & 0xFF; i >>= 8;
+  *c++ = i & 0xFF;
+  *cp = c;
 }
 
-static void write_int(unsigned char **cp,int i){
-  unsigned char *c=*cp;
-  *c++=i&0xFF;i>>=8;
-  *c++=i&0xFF;i>>=8;
-  *c++=i&0xFF;i>>=8;
-  *c++=i&0xFF;i>>=8;
-  *cp=c;
+static void write_int(unsigned char **cp, int i) {
+  unsigned char *c = *cp;
+  *c++ = i & 0xFF; i >>= 8;
+  *c++ = i & 0xFF; i >>= 8;
+  *c++ = i & 0xFF; i >>= 8;
+  *c++ = i & 0xFF;
+  *cp = c;
 }
 
 static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *return_size){
@@ -1840,7 +1843,6 @@ int fl_handle(const XEvent& thisevent)
     fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char *kp_buffer = NULL;
     static int kp_buffer_len = 0;
-    int len=0;
     KeySym keysym;
     if (kp_buffer_len == 0) {
       kp_buffer_len = 4096;
@@ -1848,8 +1850,8 @@ int fl_handle(const XEvent& thisevent)
     }
     if (xevent.type == KeyPress) {
       event = FL_KEYDOWN;
-      len = 0;
 
+      int len;
       if (fl_xim_ic) {
 	Status status;
 	len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
@@ -2017,7 +2019,7 @@ int fl_handle(const XEvent& thisevent)
         // Store ASCII numeric keypad value...
         keysym = keysym1 | FL_KP;
         kp_buffer[0] = char(keysym1) & 0x7F;
-        len = 1;
+        // len = 1;
       } else {
         // Map keypad to special key...
         static const unsigned short table[15] = {
