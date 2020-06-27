@@ -3,7 +3,7 @@
 //
 // Device test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2016 by Roman Kantor and others.
+// Copyright 1998-2020 by Roman Kantor and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -18,7 +18,6 @@
 
 #include <math.h>
 #include <FL/Fl.H>
-
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Radio_Round_Button.H>
@@ -28,15 +27,12 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Round_Button.H>
-
-
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Copy_Surface.H>
 #include <FL/Fl_Image_Surface.H>
-
-#include <FL/Fl_File_Chooser.H>
-#include <FL/fl_draw.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_SVG_File_Surface.H>
 
 
 #define sorceress_width 75
@@ -630,6 +626,59 @@ void copy(Fl_Widget *, void *data) {
     } else if (err > 1 && err_message) {fl_alert("%s", err_message); delete[] err_message;}
     delete p;
   }
+  
+  if (strcmp(operation, "Fl_EPS_File_Surface") == 0) {
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Save a .eps file");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.filter("EPS\t*.eps\n");
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    if (!fnfc.show() ) {
+      FILE *eps = fl_fopen(fnfc.filename(), "w");
+      if (eps) {
+        int ww, wh;
+        if (target->as_window())  {
+          ww = target->as_window()->decorated_w();
+          wh = target->as_window()->decorated_h();
+        } else {
+          ww = target->w();
+          wh = target->h();
+        }
+        Fl_EPS_File_Surface p(ww, wh, eps);
+        if (target->as_window()) p.draw_decorated_window(target->as_window());
+        else p.draw(target);
+        //p.close();
+      }
+      fclose(eps);
+    }
+  }
+
+  if (strcmp(operation, "Fl_SVG_File_Surface") == 0) {
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Save a .svg file");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fnfc.filter("SVG\t*.svg\n");
+    fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+    if (!fnfc.show() ) {
+      FILE *svg = fl_fopen(fnfc.filename(), "w");
+      if (svg) {
+        int ww, wh;
+        if (target->as_window())  {
+          ww = target->as_window()->decorated_w();
+          wh = target->as_window()->decorated_h();
+        } else {
+          ww = target->w();
+          wh = target->h();
+        }
+        Fl_SVG_File_Surface surface(ww, wh, svg);
+        if (surface.file()) {
+          if (target->as_window()) surface.draw_decorated_window(target->as_window());
+          else surface.draw(target);
+          surface.close();
+        }
+      }
+    }
+  }
 }
 
 
@@ -664,59 +713,59 @@ void operation_cb(Fl_Widget* wid, void *data)
 
 int main(int argc, char ** argv) {
   
-  //Fl::scheme("plastic");  
+  Fl::scheme("plastic");  
   
-  Fl_Window * w2 = new Fl_Window(500,560,"Graphics test");
+  Fl_Window * w2 = new Fl_Window(500,568,"Graphics test");
   
-  Fl_Group *c2 =new Fl_Group(3, 43, 494, 514 );
+  Fl_Group *c2 =new Fl_Group(3, 56, 494, 514 );
   
-  new MyWidget(10,140);
-  new MyWidget2(110,80);
-  new MyWidget3(220,140);
-  new MyWidget4(330,70);
-  new MyWidget5(140,270);
+  new MyWidget(10,140+16);
+  new MyWidget2(110,80+16);
+  new MyWidget3(220,140+16);
+  new MyWidget4(330,70+16);
+  new MyWidget5(140,270+16);
   
   make_image();
   Fl_RGB_Image *rgb = new Fl_RGB_Image(image, width, height, 4);
-  My_Button b_rgb(10,245,100,100,"RGB with alpha");
+  My_Button b_rgb(10,245+16,100,100,"RGB with alpha");
   b_rgb.image(rgb);
   
-  My_Button b_pixmap(10,345,100,100,"Pixmap");
+  My_Button b_pixmap(10,345+16,100,100,"Pixmap");
   Fl_Pixmap *pixmap = new Fl_Pixmap(porsche_xpm);
   b_pixmap.image(pixmap);
   
-  My_Button b_bitmap(10,445,100,100,"Bitmap");
+  My_Button b_bitmap(10,445+16,100,100,"Bitmap");
   b_bitmap.labelcolor(FL_GREEN);
   b_bitmap.image(new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height));
   
-  new Fl_Clock(360,230,120,120);
+  new Fl_Clock(360,230+16,120,120);
   Fl_Return_Button * ret = new Fl_Return_Button (360, 360, 120,30, "Return");
   ret->deactivate();
-  Fl_Button but1(360, 390, 30, 30, "@->|");
+  Fl_Button but1(360, 390+16, 30, 30, "@->|");
   but1.labelcolor(FL_DARK3);
-  Fl_Button but2(390, 390, 30, 30, "@UpArrow");
+  Fl_Button but2(390, 390+16, 30, 30, "@UpArrow");
   but2.labelcolor(FL_DARK3);
-  Fl_Button but3(420, 390, 30, 30, "@DnArrow");
+  Fl_Button but3(420, 390+16, 30, 30, "@DnArrow");
   but3.labelcolor(FL_DARK3);
-  Fl_Button but4(450, 390, 30, 30, "@+");
+  Fl_Button but4(450, 390+16, 30, 30, "@+");
   but4.labelcolor(FL_DARK3);
-  Fl_Button but5(360, 425, 120, 30, "Hello, World");
+  Fl_Button but5(360, 425+16, 120, 30, "Hello, World");
   but5.labelfont(FL_BOLD|FL_ITALIC);
   but5.labeltype(FL_SHADOW_LABEL);
   but5.box(FL_ROUND_UP_BOX);
   
-  Fl_Button but6(360, 460, 120, 30, "Plastic");
+  Fl_Button but6(360, 460+16, 120, 30, "Plastic");
   but6.box(FL_PLASTIC_UP_BOX);
   
   Fl_Group *group;
-  { Fl_Group* o = new Fl_Group(360, 495, 120, 40); group=o;
+  { Fl_Group* o = new Fl_Group(360, 495+16, 120, 40); group=o;
     o->box(FL_UP_BOX);
-    { Fl_Group* o = new Fl_Group(365, 500, 110, 30);
+    { Fl_Group* o = new Fl_Group(365, 500+16, 110, 30);
       o->box(FL_THIN_UP_FRAME);
-      { Fl_Round_Button* o = new Fl_Round_Button(365, 500, 40, 30, "rad");
+      { Fl_Round_Button* o = new Fl_Round_Button(365, 500+16, 40, 30, "rad");
         o->value(1);
       }
-      { Fl_Check_Button* o = new Fl_Check_Button(410, 500, 60, 30, "check");
+      { Fl_Check_Button* o = new Fl_Check_Button(410, 500+16, 60, 30, "check");
         o->value(1);
         
       }
@@ -725,7 +774,7 @@ int main(int argc, char ** argv) {
     o->end();
     o->deactivate();
   }
-  Fl_Box tx(120,492,230,50,"Background is not printed because\nencapsulating group, which we are\n printing, has not set the box type");
+  Fl_Box tx(120,492+16,230,50,"Background is not printed because\nencapsulating group, which we are\n printing, has not set the box type");
   tx.box(FL_SHADOW_BOX);
   tx.labelsize(12);
   
@@ -734,7 +783,7 @@ int main(int argc, char ** argv) {
   c2->end();
   
   Fl_Radio_Round_Button *rb;
-  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,60);
+  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,73);
   w3->box(FL_DOWN_BOX);
   Fl_Group *g1 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
   rb = new Fl_Radio_Round_Button(5,5,150,12, "Fl_Image_Surface"); 
@@ -742,6 +791,8 @@ int main(int argc, char ** argv) {
   rb = new Fl_Radio_Round_Button(5,18,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   rb = new Fl_Radio_Round_Button(5,31,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   rb = new Fl_Radio_Round_Button(5,44,150,12, "Fl_PostScript_File_Device"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(5,57,150,12, "Fl_EPS_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
+  rb = new Fl_Radio_Round_Button(170,57,150,12, "Fl_SVG_File_Surface"); rb->callback(operation_cb, NULL); rb->labelsize(12);
   g1->end();
   
   Fl_Group *g2 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());

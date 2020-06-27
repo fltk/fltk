@@ -3,7 +3,7 @@
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2019 by Bill Spitzak and others.
+// Copyright 2010-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -206,6 +206,11 @@ public:
   // ---
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
   virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
+  
+  int start_eps(int width, int height);
+  void ps_origin(int x, int y);
+  void ps_translate(int, int);
+  void ps_untranslate();
 };
 
 /**
@@ -308,6 +313,58 @@ public:
   void end_job(void);  
   /** \brief Label of the PostScript file chooser window */
   static const char *file_chooser_title;
+};
+
+/** Encapsulated PostScript drawing surface.
+ This drawing surface allows to store any FLTK graphics in vectorial form in an "Encapsulated PostScript" file.
+ \n Usage example:
+ \code
+   Fl_Window *win = ...// Window to draw to an .eps file
+   int ww = win->decorated_w();
+   int wh = win->decorated_h();
+   FILE *eps = fl_fopen("/path/to/mywindow.eps", "w");
+   if (eps) {
+     Fl_EPS_File_Surface *surface = new Fl_EPS_File_Surface(ww, wh, eps, win->color());
+     Fl_Surface_Device::push_current(surface);
+     surface->draw_decorated_window(win);
+     Fl_Surface_Device::pop_current();
+     delete surface; // the .eps file is not complete until the destructor was run
+     fclose(eps);
+   }
+ \endcode
+ */
+class FL_EXPORT Fl_EPS_File_Surface : public Fl_Widget_Surface {
+private:
+  void complete_();
+protected:
+  /** Returns the PostScript driver of this drawing surface. */
+  inline Fl_PostScript_Graphics_Driver *driver() { return (Fl_PostScript_Graphics_Driver*)Fl_Surface_Device::driver(); }
+public:
+  /**
+  Constructor.
+  \param width,height Width and height of the EPS drawing area
+  \param eps A writable FILE pointer where the Encapsulated PostScript data will be sent
+  \param background Color expected to cover the background of the EPS drawing area.
+  This parameter affects only the drawing of transparent Fl_RGB_Image objects:
+  transparent areas of RGB images are blended with the \p background color.
+  */
+  Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background = FL_WHITE);
+  /**
+   Destructor.
+   The underlying FILE pointer remains open after destruction of the Fl_EPS_File_Surface object
+   unless close() was called.
+   */
+  ~Fl_EPS_File_Surface();
+  virtual int printable_rect(int *w, int *h);
+  /** Returns the underlying FILE pointer */
+  FILE *file() { return driver()->output; }
+  virtual void origin(int x, int y);
+  virtual void origin(int *px, int *py);
+  virtual void translate(int x, int y);
+  virtual void untranslate();
+  /** Closes using fclose() the underlying FILE pointer.
+   The only operation possible with the Fl_EPS_File_Surface object after calling close() is its destruction. */
+  int close();
 };
 
 #endif // Fl_PostScript_H

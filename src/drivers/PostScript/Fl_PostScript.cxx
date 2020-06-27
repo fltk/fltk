@@ -26,6 +26,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include "../../Fl_System_Driver.H"
 #include <stdarg.h>
+#include <time.h>
 
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 
@@ -137,7 +138,6 @@ int Fl_PostScript_Graphics_Driver::clocale_printf(const char *format, ...)
 //  Prolog string 
 
 static const char * prolog =
-"%%BeginProlog\n"
 "/L { /y2 exch def\n"
 "/x2 exch def\n"
 "/y1 exch def\n"
@@ -554,7 +554,7 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount,
   if (lang_level_ == 3 && (layout & Fl_Paged_Device::LANDSCAPE) ) { x = w; w = h; h = x; }
   fprintf(output, "<</PageSize[%d %d]>>setpagedevice\n", w, h );
   fputs("%%EndFeature\n", output);
-  fputs("%%EndComments\n", output);
+  fputs("%%EndComments\n%%BeginProlog\n", output);
   fputs(prolog, output);
   if (lang_level_ > 1) {
     fputs(prolog_2, output);
@@ -580,6 +580,41 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount,
   
   reset();
   nPages=0;
+  return 0;
+}
+
+int Fl_PostScript_Graphics_Driver::start_eps (int width, int height) {
+  width_ = width;
+  height_ = height;
+  fputs("%!PS-Adobe-3.0 EPSF-3.0\n", output);
+  fputs("%%Creator: (FLTK)\n", output);
+  fprintf(output,"%%%%BoundingBox: 1 1 %d %d\n", width, height);
+  if (ps_filename_) fprintf(output,"%%%%Title: (%s)\n", fl_filename_name(ps_filename_));
+  time_t lt = time(NULL);
+  fprintf(output,"%%%%CreationDate: %s", ctime(&lt)+4);
+  lang_level_= 2;
+  fprintf(output, "%%%%LanguageLevel: 2\n");
+  fputs("%%Pages: 1\n%%EndComments\n", output);
+  fputs("%%BeginProlog\n", output);
+  fputs("%%EndProlog\n",output);
+  fprintf(output, "save\n");
+  fputs("/FLTK 20 dict def FLTK begin\n"
+  "/x1 0 def /x2 0 def /y1 0 def /y2 0 def /x 0 def /y 0 def /dx 0 def /dy 0 def\n"
+        "/px 0 def /py 0 def /sx 0 def /sy 0 def /inter 0 def\n"
+        "/pixmap_sx 0 def  /pixmap_sy 0 def /pixmap_w 0 def /pixmap_h 0 def\n", output);
+  fputs(prolog, output);
+  fputs(prolog_2, output);
+  fputs(prolog_2_pixmap, output);
+  fputs("/CS { GS } bind def\n", output);
+  fputs("/CR { GR } bind def\n", output);
+  page_policy_ = 1;
+  reset();
+  nPages=0;
+  fprintf(output, "GS\n");
+  clocale_printf( "%g %g TR\n", (double)0, height_);
+  fprintf(output, "1 -1 SC\n");
+  line_style(0);
+  fprintf(output, "GS GS\n");
   return 0;
 }
 
@@ -1386,6 +1421,22 @@ int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   return 0;
 }
 
+void Fl_PostScript_Graphics_Driver::ps_origin(int x, int y)
+{
+  clocale_printf("GR GR GS %d %d TR  %f %f SC %d %d TR %f rotate GS\n",
+    left_margin, top_margin, scale_x, scale_y, x, y, angle);
+}
+
+void Fl_PostScript_Graphics_Driver::ps_translate(int x, int y)
+{
+  fprintf(output, "GS %d %d translate GS\n", x, y);
+}
+
+void Fl_PostScript_Graphics_Driver::ps_untranslate(void)
+{
+  fprintf(output, "GR GR\n");
+}
+
 void Fl_PostScript_File_Device::margins(int *left, int *top, int *right, int *bottom) // to implement
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
@@ -1413,9 +1464,7 @@ void Fl_PostScript_File_Device::origin(int x, int y)
 {
   x_offset = x;
   y_offset = y;
-  Fl_PostScript_Graphics_Driver *ps = driver();
-  ps->clocale_printf("GR GR GS %d %d TR  %f %f SC %d %d TR %f rotate GS\n",
-	  ps->left_margin, ps->top_margin, ps->scale_x, ps->scale_y, x, y, ps->angle);
+  driver()->ps_origin(x, y);
 }
 
 void Fl_PostScript_File_Device::scale (float s_x, float s_y)
@@ -1438,12 +1487,12 @@ void Fl_PostScript_File_Device::rotate (float rot_angle)
 
 void Fl_PostScript_File_Device::translate(int x, int y)
 {
-  fprintf(driver()->output, "GS %d %d translate GS\n", x, y);
+  driver()->ps_translate(x, y);
 }
 
 void Fl_PostScript_File_Device::untranslate(void)
 {
-  fprintf(driver()->output, "GR GR\n");
+  driver()->ps_untranslate();
 }
 
 int Fl_PostScript_File_Device::begin_page (void)
@@ -1495,9 +1544,85 @@ void Fl_PostScript_File_Device::end_job (void)
 }
 
 /**
- \}
- \endcond
- */
+\}
+\endcond
+*/
+
+Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background) :
+        Fl_Widget_Surface(new Fl_PostScript_Graphics_Driver()) {
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  ps->output = eps;
+  if (ps->output) {
+    float s = Fl::screen_scale(0);
+    ps->start_eps(width*s, height*s);
+    if (s != 1) {
+      ps->clocale_printf("GR GR GS %f %f SC GS\n", s, s);
+      ps->scale_x = ps->scale_y = s;
+    }
+    Fl::get_color(background, ps->bg_r, ps->bg_g, ps->bg_b);
+  }
+}
+
+void Fl_EPS_File_Surface::complete_() {
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  if(ps->output) {
+    fputs("GR\nend %matches begin of FLTK dict\n", ps->output);
+    fputs("restore\n", ps->output);
+    fputs("%%EOF\n", ps->output);
+    ps->reset();
+    fflush(ps->output);
+    if(ferror(ps->output)) {
+      fl_alert ("Error during PostScript data output.");
+    }
+  }
+  while (ps->clip_){
+    Fl_PostScript_Graphics_Driver::Clip * c= ps->clip_;
+    ps->clip_= ps->clip_->prev;
+    delete c;
+  }
+}
+
+Fl_EPS_File_Surface::~Fl_EPS_File_Surface() {
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  if(ps->output) complete_();
+  delete ps;
+}
+
+int Fl_EPS_File_Surface::close() {
+  complete_();
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  int retval = fclose(ps->output);
+  ps->output = NULL;
+  return retval;
+}
+
+int Fl_EPS_File_Surface::printable_rect(int *w, int *h) {
+  Fl_PostScript_Graphics_Driver *ps = driver();
+  *w = ps->width_;
+  *h = ps->height_;
+  return 0;
+}
+
+void Fl_EPS_File_Surface::origin(int x, int y)
+{
+  x_offset = x;
+  y_offset = y;
+  driver()->ps_origin(x, y);
+}
+
+void Fl_EPS_File_Surface::origin(int *px, int *py) {
+  Fl_Widget_Surface::origin(px, py);
+}
+
+void Fl_EPS_File_Surface::translate(int x, int y)
+{
+  driver()->ps_translate(x, y);
+}
+
+void Fl_EPS_File_Surface::untranslate()
+{
+  driver()->ps_untranslate();
+}
 
 #endif // !defined(FL_NO_PRINT_SUPPORT)
 

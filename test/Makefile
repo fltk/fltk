@@ -370,9 +370,9 @@ demo$(EXEEXT): demo.o
 	$(OSX_ONLY) mkdir -p demo.app/Contents/Resources
 	$(OSX_ONLY) cp -f demo.menu demo.app/Contents/Resources/
 
-device$(EXEEXT): device.o $(IMGLIBNAME)
+device$(EXEEXT): device.o
 	echo Linking $@...
-	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) device.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) device.o -o $@ $(LINKFLTK) $(IMAGELIBS) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
 
 doublebuffer$(EXEEXT): doublebuffer.o

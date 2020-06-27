@@ -27,7 +27,8 @@
 #include <errno.h>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_message.H>
-
+#include <FL/Fl_SVG_File_Surface.H>
+#include <FL/Fl_Native_File_Chooser.H>
 Fl_Box *b;
 Fl_Double_Window *w;
 Fl_Shared_Image *img;
@@ -77,16 +78,17 @@ void file_cb(const char *n) {
 void button_cb(Fl_Widget *,void *) {
   fl_file_chooser_callback(file_cb);
   const char *fname = fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm"
-#ifdef FLTK_USE_NANOSVG
+#ifdef FLTK_USE_SVG
                                       ",svg"
 #ifdef HAVE_LIBZ
                                       ",svgz"
-#endif
-#endif
+#endif // HAVE_LIBZ
+#endif // FLTK_USE_SVG
                                       "}", name);
   puts(fname ? fname : "(null)"); fflush(stdout);
   fl_file_chooser_callback(0);
 }
+
 void print_cb(Fl_Widget *widget, void *) {
   Fl_Printer printer;
   int width, height;
@@ -100,6 +102,19 @@ void print_cb(Fl_Widget *widget, void *) {
   printer.print_window(widget->window());
   printer.end_page();
   printer.end_job();
+}
+   
+void svg_cb(Fl_Widget *widget, void *) {
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Pick a .svg file");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fnfc.filter("SVG\t*.svg\n");
+  fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+  if (fnfc.show() ) return;
+  FILE *svg = fl_fopen(fnfc.filename(), "w");
+  Fl_SVG_File_Surface surf(widget->window()->decorated_w(), widget->window()->decorated_h(), svg);
+  surf.draw_decorated_window(widget->window());
+  surf.close();
 }
 
 int dvisual = 0;
@@ -126,6 +141,8 @@ int main(int argc, char **argv) {
   window.resizable(b);
   Fl_Button print(300,425,50,25,"Print");
   print.callback(print_cb);
+  Fl_Button svg(190,425,100,25,"save as SVG");
+  svg.callback(svg_cb);
 
   window.show(argc,argv);
   return Fl::run();

@@ -18,7 +18,7 @@
 
 #include <config.h>
 
-#if defined(FLTK_USE_NANOSVG) || defined(FL_DOXYGEN)
+#if defined(FLTK_USE_SVG) || defined(FL_DOXYGEN)
 
 #include <FL/Fl_SVG_Image.H>
 #include <FL/fl_utf8.h>
@@ -272,7 +272,7 @@ void Fl_SVG_Image::normalize() {
   if (!array) resize(w(), h());
 }
 
-#endif // FLTK_USE_NANOSVG
+#endif // FLTK_USE_SVG
 
 //
 // End of "$Id$".

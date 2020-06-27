@@ -161,6 +161,7 @@ set (CPPFILES
   fl_utf8.cxx
   fl_encoding_latin1.cxx
   fl_encoding_mac_roman.cxx
+  drivers/SVG/Fl_SVG_File_Surface.cxx
 )
 
 # find all header files in source directory <FL/...>

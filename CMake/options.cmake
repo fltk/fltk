@@ -179,11 +179,11 @@ else ()
 endif (PKG_CAIRO_FOUND)
 
 #######################################################################
-option(OPTION_USE_NANOSVG "support SVG images" ON)
+option(OPTION_USE_SVG "read/write SVG files" ON)
 
-if(OPTION_USE_NANOSVG)
-  set(FLTK_USE_NANOSVG 1)
-endif(OPTION_USE_NANOSVG)
+if(OPTION_USE_SVG)
+  set(FLTK_USE_SVG 1)
+endif(OPTION_USE_SVG)
 
 #######################################################################
 set(HAVE_GL LIB_GL OR LIB_MesaGL)

@@ -91,7 +91,7 @@ fl_check_images(const char *name,		// I - Filename
     return new Fl_JPEG_Image(name);
 #endif // HAVE_LIBJPEG
 
-#ifdef FLTK_USE_NANOSVG
+#ifdef FLTK_USE_SVG
 #  if defined(HAVE_LIBZ)
   if (header[0] == 0x1f && header[1] == 0x8b) { // denotes gzip'ed data
     int fd = fl_open_ext(name, 1, 0);
@@ -106,7 +106,7 @@ fl_check_images(const char *name,		// I - Filename
   if ( (headerlen > 5 && memcmp(header, "<?xml", 5) == 0) ||
       memcmp(header, "<svg", 4) == 0)
     return new Fl_SVG_Image(name);
-#endif // FLTK_USE_NANOSVG
+#endif // FLTK_USE_SVG
 
   return 0;
 }

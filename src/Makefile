@@ -214,7 +214,6 @@ IMGCPPFILES = \
 	Fl_Image_Reader.cxx \
 	Fl_SVG_Image.cxx
 
-
 CFILES = fl_call_main.c flstring.c numericsort.c vsnprintf.c
 
 UTF8CFILES = \
@@ -306,7 +305,8 @@ GDICFILES = \
 
 PSCPPFILES = \
 	drivers/PostScript/Fl_PostScript.cxx \
-	drivers/PostScript/Fl_PostScript_image.cxx
+	drivers/PostScript/Fl_PostScript_image.cxx \
+	drivers/SVG/Fl_SVG_File_Surface.cxx
 
 ################################################################
 FLTKFLAGS = -DFL_LIBRARY

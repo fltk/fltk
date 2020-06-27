@@ -789,10 +789,10 @@ AC_SUBST(PNGINC)
 AC_SUBST(ZLIB)
 AC_SUBST(ZLIBINC)
 
-# Control the usage of the nanosvg lib
-AC_ARG_ENABLE(nanosvg, [  --enable-nanosvg        use nanosvg to support SVG images  [[default=yes]]])
-if test x$enable_nanosvg != xno; then
-    AC_DEFINE(FLTK_USE_NANOSVG)
+# Control the usage of the nanosvg lib and SVG output
+AC_ARG_ENABLE(svg, [  --enable-svg            read/write SVG files  [[default=yes]]])
+if test x$enable_svg != xno; then
+    AC_DEFINE(FLTK_USE_SVG)
 fi
 
 dnl Restore original LIBS settings...
