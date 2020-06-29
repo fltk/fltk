@@ -24,7 +24,6 @@ ALL = browser-simple$(EXEEXT) \
       progress-simple$(EXEEXT) \
       shapedwindow$(EXEEXT) \
       simple-terminal$(EXEEXT) \
-      SVG_File_Surface$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \

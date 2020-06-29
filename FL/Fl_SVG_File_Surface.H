@@ -39,8 +39,9 @@
      fclose(svg);
    }
  \endcode
- \note FLTK uses the PNG and JPEG libraries to encode images to the SVG format. If JPEG is
- not available at application build time, PNG is enough (but produces a quite larger output).
+ \note FLTK uses the PNG and JPEG libraries to encode images to the SVG format.
+ For this reason, class Fl_SVG_File_Surface is placed in the fltk_images library.
+ If JPEG is not available at application build time, PNG is enough (but produces a quite larger output).
  If PNG isn't available either, images don't appear in the SVG output.
 */
 class FL_EXPORT Fl_SVG_File_Surface : public Fl_Widget_Surface {

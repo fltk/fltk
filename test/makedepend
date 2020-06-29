@@ -530,6 +530,7 @@ device.o: ../FL/Fl_Light_Button.H
 device.o: ../FL/Fl_Menu_.H
 device.o: ../FL/Fl_Menu_Button.H
 device.o: ../FL/Fl_Menu_Item.H
+device.o: ../FL/Fl_Native_File_Chooser.H
 device.o: ../FL/Fl_Overlay_Window.H
 device.o: ../FL/Fl_Paged_Device.H
 device.o: ../FL/Fl_Pixmap.H
@@ -544,6 +545,7 @@ device.o: ../FL/Fl_Round_Button.H
 device.o: ../FL/Fl_Scrollbar.H
 device.o: ../FL/Fl_Shared_Image.H
 device.o: ../FL/Fl_Slider.H
+device.o: ../FL/Fl_SVG_File_Surface.H
 device.o: ../FL/Fl_Tile.H
 device.o: ../FL/fl_types.h
 device.o: ../FL/fl_utf8.h
@@ -1492,6 +1494,7 @@ pixmap_browser.o: ../FL/Fl_Menu_.H
 pixmap_browser.o: ../FL/Fl_Menu_Button.H
 pixmap_browser.o: ../FL/Fl_Menu_Item.H
 pixmap_browser.o: ../FL/fl_message.H
+pixmap_browser.o: ../FL/Fl_Native_File_Chooser.H
 pixmap_browser.o: ../FL/Fl_Paged_Device.H
 pixmap_browser.o: ../FL/Fl_Plugin.H
 pixmap_browser.o: ../FL/Fl_Preferences.H
@@ -1500,6 +1503,7 @@ pixmap_browser.o: ../FL/Fl_Return_Button.H
 pixmap_browser.o: ../FL/Fl_Scrollbar.H
 pixmap_browser.o: ../FL/Fl_Shared_Image.H
 pixmap_browser.o: ../FL/Fl_Slider.H
+pixmap_browser.o: ../FL/Fl_SVG_File_Surface.H
 pixmap_browser.o: ../FL/Fl_Tile.H
 pixmap_browser.o: ../FL/fl_types.h
 pixmap_browser.o: ../FL/fl_utf8.h

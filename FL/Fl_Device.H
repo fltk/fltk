@@ -56,14 +56,13 @@ class Fl_Widget;
  
  Class Fl_Surface_Device can also be derived to define new kinds of graphical output
  usable with FLTK drawing functions.
- An example would be to draw to an SVG file. This would require to create a new class,
- say SVG_Surface, derived from class Fl_Surface_Device, and another new class,
- say SVG_Graphics_Driver, derived from class Fl_Graphics_Driver.
- Class SVG_Graphics_Driver should implement all virtual methods of the Fl_Graphics_Driver class
- to support all FLTK drawing functions and have them draw into SVG files. Alternatively,
- class SVG_Graphics_Driver could implement only some virtual methods, and only part of
- the FLTK drawing API would be usable when drawing to SVG files
- (see examples/SVG_File_Surface.cxx for a small, working implementation of this procedure).
+ An example would be to draw to a PDF file. This would require to create a new class,
+ say PDF_File_Surface, derived from class Fl_Surface_Device, and another new class,
+ say PDF_Graphics_Driver, derived from class Fl_Graphics_Driver.
+ Class PDF_Graphics_Driver should implement all virtual methods of the Fl_Graphics_Driver class
+ to support all FLTK drawing functions and have them draw into PDF files. Alternatively,
+ class PDF_Graphics_Driver could implement only some virtual methods, and only part of
+ the FLTK drawing API would be usable when drawing to PDF files.
  */
 class FL_EXPORT Fl_Surface_Device {
   /** The graphics driver in use by this surface. */
