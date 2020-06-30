@@ -473,22 +473,25 @@ int main() {
   static void add_timeout(double t, Fl_Timeout_Handler,void* = 0); // platform dependent
   /**
   Repeats a timeout callback from the expiration of the
-  previous timeout, allowing for more accurate timing. You may only call
-  this method inside a timeout callback.
-  
+  previous timeout, allowing for more accurate timing.
+
+  You may only call this method inside a timeout callback of the same timer
+  or at least a closely related timer, otherwise the timing accuracy can't
+  be improved and the behavior is undefined.
+
   The following code will print "TICK" each second on
   stdout with a fair degree of accuracy:
-  
+
   \code
-     void callback(void*) {
-       puts("TICK");
-       Fl::repeat_timeout(1.0, callback);
-     }
-  
-     int main() {
-       Fl::add_timeout(1.0, callback);
-       return Fl::run();
-     }
+    void callback(void*) {
+      puts("TICK");
+      Fl::repeat_timeout(1.0, callback);
+    }
+
+    int main() {
+      Fl::add_timeout(1.0, callback);
+      return Fl::run();
+    }
   \endcode
   */
   static void repeat_timeout(double t, Fl_Timeout_Handler, void* = 0); // platform dependent
