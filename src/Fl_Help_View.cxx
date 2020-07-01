@@ -3613,6 +3613,7 @@ quote_char(const char *p) {	// I - Quoted string
     { "cent;",   5, 162 },
     { "copy;",   5, 169 },
     { "curren;", 7, 164 },
+    { "dagger;", 7, 0x2020 },
     { "deg;",    4, 176 },
     { "divide;", 7, 247 },
     { "Eacute;", 7, 201 },
@@ -3693,8 +3694,7 @@ quote_char(const char *p) {	// I - Quoted string
     { "yacute;", 7, 253 },
     { "yen;",    4, 165 },
     { "Yuml;",   5, 0x0178 },
-    { "yuml;",   5, 255 },
-    { "dagger;", 7, 0x2020 }
+    { "yuml;",   5, 255 }
   };
 
   if (!strchr(p, ';')) return -1;

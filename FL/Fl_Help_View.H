@@ -174,7 +174,7 @@ struct Fl_Help_Target {
      - Aacute aacute Acirc acirc acute AElig aelig Agrave agrave amp Aring aring Atilde atilde Auml auml
      - brvbar bull
      - Ccedil ccedil cedil cent copy curren
-     - deg divide
+     - dagger deg divide
      - Eacute eacute Ecirc ecirc Egrave egrave ETH eth Euml euml euro
      - frac12 frac14 frac34
      - gt
