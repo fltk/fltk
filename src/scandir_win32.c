@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Windows scandir function for the Fast Light Tool Kit (FLTK).
  *
  * Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #ifndef __CYGWIN__
@@ -25,8 +23,8 @@
 #include <stdlib.h>
 
 int fl_scandir(const char *dirname, struct dirent ***namelist,
-	       int (*select)(struct dirent *),
-	       int (*compar)(struct dirent **, struct dirent **)) {
+               int (*select)(struct dirent *),
+               int (*compar)(struct dirent **, struct dirent **)) {
   int len;
   char *findIn, *d, is_dir = 0;
   WIN32_FIND_DATAW findw;
@@ -57,14 +55,14 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   { /* Create a block to limit the scope while we find the initial "wide" filename */
      /* unsigned short * wbuf = (unsigned short*)malloc(sizeof(short) *(len + 10)); */
      /* wbuf[fl_utf2unicode(findIn, strlen(findIn), wbuf)] = 0; */
-	unsigned short *wbuf = NULL;
-	unsigned wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), NULL, 0); /* Pass NULL to query length */
-	wlen++; /* add a little extra for termination etc. */
-	wbuf = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
-	wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), wbuf, wlen); /* actually convert the filename */
-	wbuf[wlen] = 0; /* NULL terminate the resultant string */
-	h = FindFirstFileW(wbuf, &findw); /* get a handle to the first filename in the search */
-	free(wbuf); /* release the "wide" buffer before the pointer goes out of scope */
+        unsigned short *wbuf = NULL;
+        unsigned wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), NULL, 0); /* Pass NULL to query length */
+        wlen++; /* add a little extra for termination etc. */
+        wbuf = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
+        wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), wbuf, wlen); /* actually convert the filename */
+        wbuf[wlen] = 0; /* NULL terminate the resultant string */
+        h = FindFirstFileW(wbuf, &findw); /* get a handle to the first filename in the search */
+        free(wbuf); /* release the "wide" buffer before the pointer goes out of scope */
   }
   if (h==INVALID_HANDLE_VALUE) {
     free(findIn);
@@ -76,32 +74,32 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
     return nDir;
   }
   do {
-	int l = (int) wcslen(findw.cFileName);
-	int dstlen = l * 5 + 1;
-	selectDir=(struct dirent*)malloc(sizeof(struct dirent)+dstlen);
+        int l = (int) wcslen(findw.cFileName);
+        int dstlen = l * 5 + 1;
+        selectDir=(struct dirent*)malloc(sizeof(struct dirent)+dstlen);
 
      /* l = fl_unicode2utf(findw.cFileName, l, selectDir->d_name); */
-	l = fl_utf8fromwc(selectDir->d_name, dstlen, findw.cFileName, l);
+        l = fl_utf8fromwc(selectDir->d_name, dstlen, findw.cFileName, l);
 
-	selectDir->d_name[l] = 0;
-	if (findw.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-		/* Append a trailing slash to directory names... */
-		strcat(selectDir->d_name, "/");
-	}
-	if (!select || (*select)(selectDir)) {
-		if (nDir==NDir) {
-	struct dirent **tempDir = (struct dirent **)calloc(sizeof(struct dirent*), (size_t)(NDir+33));
-	if (NDir) memcpy(tempDir, dir, sizeof(struct dirent*)*NDir);
-	if (dir) free(dir);
-	dir = tempDir;
-	NDir += 32;
-		}
-		dir[nDir] = selectDir;
-		nDir++;
-		dir[nDir] = 0;
-	} else {
-		free(selectDir);
-	}
+        selectDir->d_name[l] = 0;
+        if (findw.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                /* Append a trailing slash to directory names... */
+                strcat(selectDir->d_name, "/");
+        }
+        if (!select || (*select)(selectDir)) {
+                if (nDir==NDir) {
+        struct dirent **tempDir = (struct dirent **)calloc(sizeof(struct dirent*), (size_t)(NDir+33));
+        if (NDir) memcpy(tempDir, dir, sizeof(struct dirent*)*NDir);
+        if (dir) free(dir);
+        dir = tempDir;
+        NDir += 32;
+                }
+                dir[nDir] = selectDir;
+                nDir++;
+                dir[nDir] = 0;
+        } else {
+                free(selectDir);
+        }
    } while (FindNextFileW(h, &findw));
   ret = GetLastError();
   if (ret != ERROR_NO_MORE_FILES) {
@@ -113,14 +111,10 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   free (findIn);
 
   if (compar) qsort(dir, (size_t)nDir, sizeof(*dir),
-		    (int(*)(const void*, const void*))compar);
+                    (int(*)(const void*, const void*))compar);
 
   *namelist = dir;
   return nDir;
 }
 
 #endif
-
-/*
- * End of "$Id$".
- */

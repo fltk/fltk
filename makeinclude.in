@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Make include file for the Fast Light Tool Kit (FLTK).
 #
 # Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 #
 #     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      https://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 # FLTK version numbers
@@ -140,7 +138,7 @@ CAT6EXT		= @CAT6EXT@
 
 INSTALL_BIN	= $(INSTALL) -m 755
 INSTALL_DATA	= $(INSTALL) -m 644
-INSTALL_DIR	= $(INSTALL) -d 
+INSTALL_DIR	= $(INSTALL) -d
 INSTALL_LIB	= $(INSTALL) -m 755
 INSTALL_MAN	= $(INSTALL) -m 644
 INSTALL_SCRIPT	= $(INSTALL) -m 755
@@ -167,7 +165,7 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 .cxx.o:
 	echo Compiling $<...
 	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@
-	
+
 .mm.o:
 	echo Compiling $<...
 	$(CXX) -I.. $(ARCHFLAGS) $(CXXFLAGS) -x objective-c++ -c $< -o $@
@@ -184,7 +182,3 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 	$(NROFF) -man $< >t
 	pack -f t
 	mv t.z $@
-
-#
-# End of "$Id$".
-#

@@ -1,6 +1,6 @@
 /**
 
- \page	editor Designing a Simple Text Editor
+ \page  editor Designing a Simple Text Editor
 
 This chapter takes you through the design of a simple
 FLTK-based text editor.

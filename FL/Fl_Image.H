@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Image header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
@@ -44,19 +42,19 @@ enum Fl_RGB_Scaling {
 
 /**
  \brief Base class for image caching, scaling and drawing.
- 
+
  Fl_Image is the base class used for caching, scaling and drawing all kinds of images
- in FLTK. This class keeps track of common image data such as the pixels, 
- colormap, width, height, and depth. Virtual methods are used to provide 
+ in FLTK. This class keeps track of common image data such as the pixels,
+ colormap, width, height, and depth. Virtual methods are used to provide
  type-specific image handling.
- 
+
  Each image possesses two (width, height) pairs. 1) The width and height of the
  image raw data are returned by data_w() and data_h(). These values are set
  when the image is created and remain unchanged. 2) The width and height
  of the area filled by the image when it gets drawn are returned by w() and h().
  The values are equal to data_w() and data_h() when the image is created,
  and can be changed by the scale() member function.
-  
+
  Since the Fl_Image class does not support image
  drawing by itself, calling the draw() method results in
  a box with an X in it being drawn instead.
@@ -67,7 +65,7 @@ public:
   static const int ERR_NO_IMAGE    = -1;
   static const int ERR_FILE_ACCESS = -2;
   static const int ERR_FORMAT      = -3;
-    
+
 private:
   int w_, h_, d_, ld_, count_;
   int data_w_, data_h_;
@@ -108,7 +106,7 @@ protected:
    to account for the extra data per line.
    */
   void ld(int LD) {ld_ = LD;}
-  /** 
+  /**
    Sets the current array pointer and count of pointers in the array.
    */
   void data(const char * const *p, int c) {data_ = p; count_ = c;}
@@ -120,7 +118,7 @@ protected:
 
 public:
 
-  /** 
+  /**
    Returns the current image drawing width in FLTK units.
    The values of w() and data_w() are identical unless scale() has been called
    after which they may differ.
@@ -233,10 +231,10 @@ public:
   /**
    Draws the image to the current drawing surface with a bounding box.
    Arguments <tt>X,Y,W,H</tt> specify
-   a bounding box for the image, with the origin        
+   a bounding box for the image, with the origin
    (upper-left corner) of the image offset by the \c cx
    and \c cy arguments.
-   
+
    In other words:  <tt>fl_push_clip(X,Y,W,H)</tt> is applied,
    the image is drawn with its upper-left corner at <tt>X-cx,Y-cy</tt> and its own width and height,
    <tt>fl_pop_clip</tt><tt>()</tt> is applied.
@@ -256,7 +254,7 @@ public:
   static void RGB_scaling(Fl_RGB_Scaling);
   // get RGB image scaling method
   static Fl_RGB_Scaling RGB_scaling();
-  
+
   // set the image drawing size
   virtual void scale(int width, int height, int proportional = 1, int can_expand = 0);
   /** Sets what algorithm is used when resizing a source image to draw it.
@@ -320,17 +318,17 @@ public:
   virtual void label(Fl_Menu_Item*m);
   virtual void uncache();
   /** Sets the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
-   
+
    The image size in bytes of an Fl_RGB_Image object is the value of the product w() * h() * d().
-   If this product exceeds size, the created object of a derived class of Fl_RGB_Image 
+   If this product exceeds size, the created object of a derived class of Fl_RGB_Image
    won't be loaded with the image data.
-   This does not apply to direct RGB image creation with 
+   This does not apply to direct RGB image creation with
    Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD).
-   The default max_size() value is essentially infinite. 
+   The default max_size() value is essentially infinite.
    */
   static void max_size(size_t size) { max_size_ = size;}
   /** Returns the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
-   
+
    \sa  void Fl_RGB_Image::max_size(size_t)
    */
   static size_t max_size() {return max_size_;}
@@ -343,7 +341,3 @@ public:
 };
 
 #endif // !Fl_Image_H
-
-//
-// End of "$Id$".
-//

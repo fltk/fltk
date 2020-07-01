@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2011-2020 by Bill Spitzak and others.
@@ -12,9 +10,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -666,7 +664,7 @@ char Fl_Preferences::set( const char *key, const char *text ) {
       else if ( c=='\n' ) { *d++ = '\\'; *d++ = 'n'; s++; }
       else if ( c=='\r' ) { *d++ = '\\'; *d++ = 'r'; s++; }
       else if ( c<32 || c==0x7f )
-	{ *d++ = '\\'; *d++ = '0'+((c>>6)&3); *d++ = '0'+((c>>3)&7); *d++ = '0'+(c&7);  s++; }
+        { *d++ = '\\'; *d++ = '0'+((c>>6)&3); *d++ = '0'+((c>>3)&7); *d++ = '0'+(c&7);  s++; }
       else *d++ = *s++;
     }
     *d = 0;
@@ -1000,20 +998,20 @@ int Fl_Preferences::RootNode::read() {
   if (fgets( buf, 1024, f )==0) { /* ignore */ }
   Node *nd = prefs_->node;
   for (;;) {
-    if ( !fgets( buf, 1024, f ) ) break;	// EOF or Error
-    if ( buf[0]=='[' ) {			// read a new group
+    if ( !fgets( buf, 1024, f ) ) break;        // EOF or Error
+    if ( buf[0]=='[' ) {                        // read a new group
       size_t end = strcspn( buf+1, "]\n\r" );
       buf[ end+1 ] = 0;
       nd = prefs_->node->find( buf+1 );
-    } else if ( buf[0]=='+' ) {			// value of previous name/value pair spans multiple lines
+    } else if ( buf[0]=='+' ) {                 // value of previous name/value pair spans multiple lines
       size_t end = strcspn( buf+1, "\n\r" );
-      if ( end != 0 ) {				// if entry is not empty
+      if ( end != 0 ) {                         // if entry is not empty
         buf[ end+1 ] = 0;
         nd->add( buf+1 );
       }
-    } else {					 // read a name/value pair
+    } else {                                     // read a name/value pair
       size_t end = strcspn( buf, "\n\r" );
-      if ( end != 0 ) {				// if entry is not empty
+      if ( end != 0 ) {                         // if entry is not empty
         buf[ end ] = 0;
         nd->set( buf );
       }
@@ -1048,7 +1046,7 @@ int Fl_Preferences::RootNode::write() {
     if (strncmp(filename_, "/etc/fltk/", 10) == 0) {
       char *p;
       p = filename_ + 9;
-      do {			 // for each directory to the pref file
+      do {                       // for each directory to the pref file
         *p = 0;
         fl_chmod(filename_, 0755); // rwxr-xr-x
         *p = '/';
@@ -1140,12 +1138,12 @@ void Fl_Preferences::Node::deleteAllEntries() {
   if ( entry_ ) {
     for ( int i = 0; i < nEntry_; i++ ) {
       if ( entry_[i].name ) {
-	free( entry_[i].name );
-	entry_[i].name = 0L;
+        free( entry_[i].name );
+        entry_[i].name = 0L;
       }
       if ( entry_[i].value ) {
-	free( entry_[i].value );
-	entry_[i].value = 0L;
+        free( entry_[i].value );
+        entry_[i].value = 0L;
       }
     }
     free( entry_ );
@@ -1195,21 +1193,21 @@ int Fl_Preferences::Node::write( FILE *f ) {
   fprintf( f, "\n[%s]\n\n", path_ );
   for ( int i = 0; i < nEntry_; i++ ) {
     char *src = entry_[i].value;
-    if ( src ) {		// hack it into smaller pieces if needed
+    if ( src ) {                // hack it into smaller pieces if needed
       fprintf( f, "%s:", entry_[i].name );
       size_t cnt, written = 0;
       for ( cnt = 0; cnt < 60; cnt++ )
-	if ( src[cnt]==0 ) break;
+        if ( src[cnt]==0 ) break;
       written += fwrite( src, cnt, 1, f );
       fprintf( f, "\n" );
       src += cnt;
       for (;*src;) {
-	for ( cnt = 0; cnt < 80; cnt++ )
-	  if ( src[cnt]==0 ) break;
+        for ( cnt = 0; cnt < 80; cnt++ )
+          if ( src[cnt]==0 ) break;
         fputc( '+', f );
-	written += fwrite( src, cnt, 1, f );
+        written += fwrite( src, cnt, 1, f );
         fputc( '\n', f );
-	src += cnt;
+        src += cnt;
       }
     }
     else
@@ -1258,10 +1256,10 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
     if ( strcmp( name, entry_[i].name ) == 0 ) {
       if ( !value ) return; // annotation
       if ( strcmp( value, entry_[i].value ) != 0 ) {
-	if ( entry_[i].value )
-	  free( entry_[i].value );
-	entry_[i].value = strdup( value );
-	dirty_ = 1;
+        if ( entry_[i].value )
+          free( entry_[i].value );
+        entry_[i].value = strdup( value );
+        dirty_ = 1;
       }
       lastEntrySet = i;
       return;
@@ -1374,14 +1372,14 @@ Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset
   if ( offset == 0 ) {
     if ( path[0] == '.' ) {
       if ( path[1] == 0 ) {
-	return this; // user was searching for current node
+        return this; // user was searching for current node
       } else if ( path[1] == '/' ) {
-	Node *nn = this;
-	while ( nn->parent() ) nn = nn->parent();
-	if ( path[2]==0 ) {		// user is searching for root ( "./" )
-	  return nn;
-	}
-	return nn->search( path+2, 2 ); // do a relative search on the root node
+        Node *nn = this;
+        while ( nn->parent() ) nn = nn->parent();
+        if ( path[2]==0 ) {             // user is searching for root ( "./" )
+          return nn;
+        }
+        return nn->search( path+2, 2 ); // do a relative search on the root node
       }
     }
     offset = (int) strlen( path_ ) + 1;
@@ -1394,8 +1392,8 @@ Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset
       return this;
     if ( len <= 0 || path[ len ] == '/' ) {
       for ( Node *nd = child_; nd; nd = nd->next_ ) {
-	Node *nn = nd->search( path, offset );
-	if ( nn ) return nn;
+        Node *nn = nd->search( path, offset );
+        if ( nn ) return nn;
       }
       return 0;
     }
@@ -1460,11 +1458,11 @@ char Fl_Preferences::Node::remove() {
     nd = parent()->child_; np = 0L;
     for ( ; nd; np = nd, nd = nd->next_ ) {
       if ( nd == this ) {
-	if ( np )
-	  np->next_ = nd->next_;
-	else
-	  parent()->child_ = nd->next_;
-	break;
+        if ( np )
+          np->next_ = nd->next_;
+        else
+          parent()->child_ = nd->next_;
+        break;
       }
     }
     parent()->dirty_ = 1;
@@ -1674,7 +1672,3 @@ int Fl_Plugin_Manager::loadAll(const char *filepath, const char *pattern) {
   free(dir);
   return 0;
 }
-
-//
-// End of "$Id$".
-//

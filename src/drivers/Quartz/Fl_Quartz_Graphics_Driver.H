@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Quartz graphics driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -162,7 +160,7 @@ protected:
   virtual Fl_Font set_fonts(const char* xstarname);
   void set_fontname_in_fontdesc(Fl_Fontdesc *f);
   virtual void uncache_pixmap(fl_uintptr_t p);
-  
+
 #if HAS_ATSU && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   enum {use_CoreText = 1, use_ATSU};
   static int CoreText_or_ATSU;
@@ -196,7 +194,3 @@ public:
 };
 
 #endif // FL_QUARTZ_GRAPHICS_DRIVER_H
-
-//
-// End of "$Id$".
-//

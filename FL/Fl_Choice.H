@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Choice header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -45,7 +43,7 @@
   and then:
 
       - The item's callback is done if one has been set; the
-        Fl_Choice is passed as the Fl_Widget* argument, 
+        Fl_Choice is passed as the Fl_Widget* argument,
         along with any userdata configured for the callback.
 
       - If the item does not have a callback, the Fl_Choice widget's
@@ -100,7 +98,7 @@
      return Fl::run();
    }
  \endcode
-     
+
  */
 class FL_EXPORT Fl_Choice : public Fl_Menu_ {
 protected:
@@ -122,7 +120,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

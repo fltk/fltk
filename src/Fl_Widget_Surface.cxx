@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Drivers code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Widget_Surface.H>
@@ -109,7 +107,7 @@ void Fl_Widget_Surface::traverse(Fl_Widget *widget)
 
 /**
  Translates the current graphics origin accounting for the current rotation.
- 
+
  Each translate() call must be matched by an untranslate() call.
  Successive translate() calls add up their effects.
  */
@@ -137,7 +135,7 @@ void Fl_Widget_Surface::origin(int *x, int *y)
 
 /**
  \brief Sets the position of the origin of graphics in the drawable part of the drawing surface.
- 
+
  Arguments should be expressed relatively to the result of a previous printable_rect() call.
  That is, <tt>printable_rect(&w, &h); origin(w/2, 0);</tt> sets the graphics origin at the
  top center of the drawable area. Successive origin() calls don't combine their effects.
@@ -151,7 +149,7 @@ void Fl_Widget_Surface::origin(int x, int y) {
 
 /**
  Draws a rectangular part of an on-screen window.
- 
+
  \param win The window from where to capture. Can be an Fl_Gl_Window. Sub-windows that intersect the rectangle are also captured.
  \param x The rectangle left
  \param y The rectangle top
@@ -183,7 +181,7 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
 
 /**
  Computes the width and height of the drawable area of the drawing surface.
- 
+
  Values are in the same unit as that used by FLTK drawing functions and are unchanged by calls to origin().
  If the object is derived from class Fl_Paged_Device, values account for the user-selected paper type and print orientation
  and are changed by scale() calls.
@@ -192,7 +190,7 @@ void Fl_Widget_Surface::print_window_part(Fl_Window *win, int x, int y, int w, i
 int Fl_Widget_Surface::printable_rect(int *w, int *h) {return 1;}
 
 /** Draws a window with its title bar and frame if any.
- 
+
  \p win_offset_x and \p win_offset_y are optional coordinates of where to position the window top left.
  Equivalent to draw() if \p win is a subwindow or has no border.
  Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the framed window.
@@ -226,7 +224,3 @@ void Fl_Widget_Surface::draw_decorated_window(Fl_Window *win, int win_offset_x, 
   this->draw(win, win_offset_x + wsides, win_offset_y + toph);
   if (need_push) Fl_Surface_Device::pop_current();
 }
-
-//
-// End of "$Id$".
-//

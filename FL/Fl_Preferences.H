@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Preferences implementation for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2002-2010 by Matthias Melcher.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -23,7 +21,7 @@
 #  define Fl_Preferences_H
 
 #  include <stdio.h>
-#  include "Fl_Export.H" 
+#  include "Fl_Export.H"
 
 /**
    \brief Fl_Preferences provides methods to store user
@@ -51,7 +49,7 @@
    reasons. One application can have multiple preferences files.
    Extensive binary data however should be stored in separate
    files: see \a Fl_Preferences::getUserdataPath() .
- 
+
    \note Starting with FLTK 1.3, preference databases are expected to
      be in UTF-8 encoding. Previous databases were stored in the
      current character set or code page which renders them incompatible
@@ -64,11 +62,11 @@
  */
 class FL_EXPORT Fl_Preferences {
 
-public: 
+public:
   /**
      Define the scope of the preferences.
    */
-  enum Root { 
+  enum Root {
     SYSTEM = 0,        ///< Preferences are used system-wide
     USER,              ///< Preferences apply only to the current user
     ROOT_MASK = 0xFF,  ///< masks for the values above
@@ -76,16 +74,16 @@ public:
     CORE_SYSTEM = CORE|SYSTEM,
     CORE_USER = CORE|USER
   };
-  
+
   /**
    Every Fl_Preferences-Group has a uniqe ID.
-   
+
    ID's can be retrieved from an Fl_Preferences-Group and can then be used
-   to create more Fl_Preference references to the same data set, as long as the 
+   to create more Fl_Preference references to the same data set, as long as the
    database remains open.
    */
   typedef void *ID;
-  
+
   static const char *newUUID();
 
   /** Set this, if no call to Fl_Preferences shall access the file sytem
@@ -132,11 +130,11 @@ public:
   Fl_Preferences(const Fl_Preferences&);
   Fl_Preferences( ID id );
   virtual ~Fl_Preferences();
-  
+
   /** Return an ID that can later be reused to open more references to this dataset.
    */
   ID id() { return (ID)node; }
-  
+
   /** Remove the group with this ID from a database.
    */
   static char remove(ID id_) { return ((Node*)id_)->remove(); }
@@ -144,11 +142,11 @@ public:
   /** Return the name of this entry.
    */
   const char *name() { return node->name(); }
-  
+
   /** Return the full path to this entry.
    */
   const char *path() { return node->path(); }
-  
+
   int groups();
   const char *group( int num_group );
   char groupExists( const char *key );
@@ -160,7 +158,7 @@ public:
   char entryExists( const char *key );
   char deleteEntry( const char *entry );
   char deleteAllEntries();
-  
+
   char clear();
 
   char set( const char *entry, int value );
@@ -169,8 +167,8 @@ public:
   char set( const char *entry, double value );
   char set( const char *entry, double value, int precision );
   char set( const char *entry, const char *value );
-  char set( const char *entry, const void *value, int size ); 
-  
+  char set( const char *entry, const void *value, int size );
+
   char get( const char *entry, int &value, int defaultValue );
   char get( const char *entry, float &value,  float defaultValue );
   char get( const char *entry, double &value, double defaultValue );
@@ -187,13 +185,13 @@ public:
 
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
-  
+
   /**
      'Name' provides a simple method to create numerical or more complex
      procedural names for entries and groups on the fly.
-     
+
      Example: prefs.set(Fl_Preferences::Name("File%d",i),file[i]);.
-    
+
      See test/preferences.cxx as a sample for writing arrays into preferences.
 
      'Name' is actually implemented as a class inside Fl_Preferences. It casts
@@ -204,7 +202,7 @@ public:
 
     char *data_;
 
-  public: 
+  public:
     Name( unsigned int n );
     Name( const char *format, ... );
 
@@ -221,7 +219,7 @@ public:
     char *name, *value;
   };
 
-private: 
+private:
   Fl_Preferences() : node(0), rootNode(0) { }
   Fl_Preferences &operator=(const Fl_Preferences&);
 
@@ -232,13 +230,13 @@ private:
 
 public:  // older Sun compilers need this (public definition of the following classes)
   class RootNode;
-  
-  class FL_EXPORT Node {	// a node contains a list to all its entries 
-            			// and all means to manage the tree structure
+
+  class FL_EXPORT Node {        // a node contains a list to all its entries
+                                // and all means to manage the tree structure
     Node *child_, *next_;
-    union { 			// these two are mutually exclusive
-      Node *parent_;   		// top_ bit clear
-      RootNode *root_; 		// top_ bit set
+    union {                     // these two are mutually exclusive
+      Node *parent_;            // top_ bit clear
+      RootNode *root_;          // top_ bit set
     };
     char *path_;
     Entry *entry_;
@@ -288,7 +286,7 @@ public:  // older Sun compilers need this (public definition of the following cl
   };
   friend class Node;
 
-  class FL_EXPORT RootNode {		// the root node manages file paths and basic reading and writing
+  class FL_EXPORT RootNode {            // the root node manages file paths and basic reading and writing
     Fl_Preferences *prefs_;
     char *filename_;
     char *vendor_, *application_;
@@ -310,7 +308,3 @@ protected:
 };
 
 #endif // !Fl_Preferences_H
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // implementation of classes Fl_Surface_Device and Fl_Display_Device for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -22,7 +20,7 @@
 #include <FL/Fl_Graphics_Driver.H>
 
 /* Inheritance diagram.
- 
+
   +- Fl_Surface_Device: any kind of surface that we can draw onto -> uses an Fl_Graphics_Driver
       |
       +- Fl_Display_Device: some kind of video device (one object per app)
@@ -45,7 +43,7 @@
                   |
                   +- Fl_Posix_Printer_Driver: Fl_Printer uses that under Posix platforms
                   +- Fl_GTK_Printer_Driver: Fl_Printer uses that under Posix+GTK platforms
- 
+
   +- Fl_Graphics_Driver -> directed to an Fl_Surface_Device object
       |
       +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript drawing
@@ -60,7 +58,7 @@
 */
 
 /** Make this surface the current drawing surface.
- This surface will receive all future graphics requests. 
+ This surface will receive all future graphics requests.
  \p Starting from FLTK 1.4.0, another convenient API to set/unset the current drawing surface
  is Fl_Surface_Device::push_current( ) / Fl_Surface_Device::pop_current().*/
 void Fl_Surface_Device::set_current(void)
@@ -120,7 +118,7 @@ void Fl_Surface_Device::push_current(Fl_Surface_Device *new_current)
 }
 
 /** Removes the top element from the current drawing surface stack, and makes the new top element current.
- \return A pointer to the new current drawing surface. 
+ \return A pointer to the new current drawing surface.
  \version 1.4.0 */
 Fl_Surface_Device *Fl_Surface_Device::pop_current()
 {
@@ -136,7 +134,3 @@ Fl_Device_Plugin *Fl_Device_Plugin::opengl_plugin() {
   }
   return pi;
 }
-
-//
-// End of "$Id$".
-//

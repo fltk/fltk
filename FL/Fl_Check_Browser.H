@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Check_Browser header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -55,11 +53,11 @@ public:
 #ifndef FL_DOXYGEN
   /** For internal use only. */
   struct cb_item {
-	  cb_item *next;	/**< For internal use only. */
-	  cb_item *prev;	/**< For internal use only. */
-	  char checked;		/**< For internal use only. */
-	  char selected;	/**< For internal use only. */
-	  char *text;		/**< For internal use only. */
+          cb_item *next;        /**< For internal use only. */
+          cb_item *prev;        /**< For internal use only. */
+          char checked;         /**< For internal use only. */
+          char selected;        /**< For internal use only. */
+          char *text;           /**< For internal use only. */
   };
 #endif // !FL_DOXYGEN
 
@@ -81,7 +79,7 @@ public:
   ~Fl_Check_Browser() { clear(); }
   int add(char *s);               // add an (unchecked) item
   int add(char *s, int b);        // add an item and set checked
-				  // both return the new nitems()
+                                  // both return the new nitems()
   int remove(int item);           // delete an item. Returns nitems()
 
   // inline const char * methods to avoid breaking binary compatibility...
@@ -113,8 +111,4 @@ public:
 };
 
 #endif // Fl_Check_Browser_H
-
-//
-// End of "$Id$".
-//
 

@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
@@ -12,9 +10,9 @@
 #
 #     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     https://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 set (DEBUG_OPTIONS_CMAKE 0)
@@ -471,7 +469,7 @@ if(X11_Xft_FOUND AND OPTION_USE_PANGO)
     set(USE_PANGO TRUE)
     list(APPEND FLTK_LDLIBS -lpango-1.0 -lpangoxft-1.0 -lgobject-2.0)
   else(PANGOXFT_FOUND)
-  
+
 #this covers Debian, Ubuntu, FreeBSD, NetBSD, Darwin
   if(APPLE AND OPTION_APPLE_X11)
      find_file(FINK_PREFIX NAMES /opt/sw /sw)

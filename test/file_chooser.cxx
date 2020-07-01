@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // File chooser test program.
 //
 // Copyright 1999-2010 by Michael Sweet.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -50,11 +48,11 @@
 // Globals...
 //
 
-Fl_Input		*filter;
-Fl_File_Browser		*files;
-Fl_File_Chooser		*fc;
-Fl_Shared_Image		*image = 0;
-Fl_Simple_Terminal	*tty = 0;
+Fl_Input                *filter;
+Fl_File_Browser         *files;
+Fl_File_Chooser         *fc;
+Fl_Shared_Image         *image = 0;
+Fl_Simple_Terminal      *tty = 0;
 
 // for choosing extra groups
 Fl_Choice *ch_extra;
@@ -68,29 +66,29 @@ Fl_Check_Button *version = (Fl_Check_Button*)0;
 // Functions...
 //
 
-void		close_callback(void);
-void		create_callback(void);
-void		dir_callback(void);
-void		fc_callback(Fl_File_Chooser *, void *);
-void		multi_callback(void);
-Fl_Image	*pdf_check(const char *, uchar *, int);
-Fl_Image	*ps_check(const char *, uchar *, int);
-void		show_callback(void);
+void            close_callback(void);
+void            create_callback(void);
+void            dir_callback(void);
+void            fc_callback(Fl_File_Chooser *, void *);
+void            multi_callback(void);
+Fl_Image        *pdf_check(const char *, uchar *, int);
+Fl_Image        *ps_check(const char *, uchar *, int);
+void            show_callback(void);
 
-void		extra_callback(Fl_Choice*,void*);
+void            extra_callback(Fl_Choice*,void*);
 
 //
 // 'main()' - Create a file chooser and wait for a selection to be made.
 //
 
-int			// O - Exit status
-main(int  argc,		// I - Number of command-line arguments
-     char *argv[])	// I - Command-line arguments
+int                     // O - Exit status
+main(int  argc,         // I - Number of command-line arguments
+     char *argv[])      // I - Command-line arguments
 {
-  Fl_Double_Window	*window;// Main window
-  Fl_Button		*button;// Buttons
+  Fl_Double_Window      *window;// Main window
+  Fl_Button             *button;// Buttons
   Fl_Group              *grp;   // Groups
-  Fl_File_Icon		*icon;	// New file icon
+  Fl_File_Icon          *icon;  // New file icon
 
 
   // Make the file chooser...
@@ -125,8 +123,8 @@ main(int  argc,		// I - Number of command-line arguments
     else
       filter->value("PDF Files (*.pdf)\t"
                     "PostScript Files (*.ps)\t"
-		    "Image Files (*.{bmp,gif,jpg,png})\t"
-		    "C/C++ Source Files (*.{c,C,cc,cpp,cxx})");
+                    "Image Files (*.{bmp,gif,jpg,png})\t"
+                    "C/C++ Source Files (*.{c,C,cc,cpp,cxx})");
 
     button = new Fl_Button(365, 10, 25, 25);
     button->tooltip("Click to open file browser..");
@@ -250,10 +248,10 @@ dir_callback(void)
 //
 
 void
-fc_callback(Fl_File_Chooser *fc,	// I - File chooser
-            void            *data)	// I - Data
+fc_callback(Fl_File_Chooser *fc,        // I - File chooser
+            void            *data)      // I - Data
 {
-  const char		*filename;	// Current filename
+  const char            *filename;      // Current filename
 
 
   tty->printf("fc_callback(fc = %p, data = %p)\n", fc, data);
@@ -279,14 +277,14 @@ multi_callback(void)
 // 'pdf_check()' - Check for and load the first page of a PDF file.
 //
 
-Fl_Image *			// O - Page image or NULL
-pdf_check(const char *name,	// I - Name of file
-          uchar      *header,	// I - Header data
-	  int)			// I - Length of header data (unused)
+Fl_Image *                      // O - Page image or NULL
+pdf_check(const char *name,     // I - Name of file
+          uchar      *header,   // I - Header data
+          int)                  // I - Length of header data (unused)
 {
-  const char	*home;		// Home directory
-  char		preview[FL_PATH_MAX],	// Preview filename
-		command[3 * FL_PATH_MAX]; // Command
+  const char    *home;          // Home directory
+  char          preview[FL_PATH_MAX],   // Preview filename
+                command[3 * FL_PATH_MAX]; // Command
 
 
   if (memcmp(header, "%PDF", 4) != 0)
@@ -297,8 +295,8 @@ pdf_check(const char *name,	// I - Name of file
 
   sprintf(command,
           "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
-	  "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' "
-	  "-dFirstPage=1 -dLastPage=1 \'%s\' 2>/dev/null", preview, name);
+          "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' "
+          "-dFirstPage=1 -dLastPage=1 \'%s\' 2>/dev/null", preview, name);
 
   if (system(command)) return 0;
 
@@ -310,19 +308,19 @@ pdf_check(const char *name,	// I - Name of file
 // 'ps_check()' - Check for and load the first page of a PostScript file.
 //
 
-Fl_Image *			// O - Page image or NULL
-ps_check(const char *name,	// I - Name of file
-         uchar      *header,	// I - Header data
-	 int)			// I - Length of header data (unused)
+Fl_Image *                      // O - Page image or NULL
+ps_check(const char *name,      // I - Name of file
+         uchar      *header,    // I - Header data
+         int)                   // I - Length of header data (unused)
 {
-  const char	*home;		// Home directory
-  char		preview[FL_PATH_MAX],	// Preview filename
-		outname[FL_PATH_MAX],	// Preview PS file
-		command[3 * FL_PATH_MAX]; // Command
-  FILE		*in,		// Input file
-		*out;		// Output file
-  int		page;		// Current page
-  char		line[256];	// Line from file
+  const char    *home;          // Home directory
+  char          preview[FL_PATH_MAX],   // Preview filename
+                outname[FL_PATH_MAX],   // Preview PS file
+                command[3 * FL_PATH_MAX]; // Command
+  FILE          *in,            // Input file
+                *out;           // Output file
+  int           page;           // Current page
+  char          line[256];      // Line from file
 
 
   if (memcmp(header, "%!", 2) != 0)
@@ -341,12 +339,12 @@ ps_check(const char *name,	// I - Name of file
       page = 0;
 
       while (fgets(line, sizeof(line), in) != NULL) {
-	if (strncmp(line, "%%Page:", 7) == 0) {
+        if (strncmp(line, "%%Page:", 7) == 0) {
           page ++;
-	  if (page > 1) break;
-	}
+          if (page > 1) break;
+        }
 
-	fputs(line, out);
+        fputs(line, out);
       }
 
       fclose(in);
@@ -360,8 +358,8 @@ ps_check(const char *name,	// I - Name of file
 
   sprintf(command,
           "gs -r100 -dFIXED -sDEVICE=ppmraw -dQUIET -dNOPAUSE -dBATCH "
-	  "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' \'%s\' 2>/dev/null",
-	  preview, outname);
+          "-sstdout=\"%%stderr\" -sOUTPUTFILE=\'%s\' \'%s\' 2>/dev/null",
+          preview, outname);
 
   if (system(command)) return 0;
 
@@ -376,9 +374,9 @@ ps_check(const char *name,	// I - Name of file
 void
 show_callback(void)
 {
-  int	i;			// Looping var
-  int	count;			// Number of files selected
-  char	relative[FL_PATH_MAX];	// Relative filename
+  int   i;                      // Looping var
+  int   count;                  // Number of files selected
+  char  relative[FL_PATH_MAX];  // Relative filename
 
 
   if (filter->value()[0])
@@ -399,7 +397,7 @@ show_callback(void)
     {
       if (!fc->value(i)) break;
       fl_filename_relative(relative, sizeof(relative), fc->value(i));
-      tty->printf("%d/%d) %sPicked: '%s'\n     Relative: '%s'%s\n", i, count, 
+      tty->printf("%d/%d) %sPicked: '%s'\n     Relative: '%s'%s\n", i, count,
                   TERMINAL_GREEN, fc->value(i), relative, TERMINAL_NORMAL);
       files->add(relative, Fl_File_Icon::find(fc->value(i), Fl_File_Icon::PLAIN));
     }
@@ -407,8 +405,3 @@ show_callback(void)
     files->redraw();
   }
 }
-
-
-//
-// End of "$Id$".
-//

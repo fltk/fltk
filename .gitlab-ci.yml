@@ -31,12 +31,12 @@ stages:
 build-autotools:
   stage: build
   # install the necessary build tools
-  before_script: 
+  before_script:
     - apt update && apt -y install make autoconf man
     - apt -y install freeglut3-dev libfontconfig-dev libxft-dev
     - apt -y install libxcursor-dev libxinerama-dev libasound2-dev
     - apt -y install libpango1.0-dev libcairo2-dev
-  script: 
+  script:
     - make clean
     - ./configure --enable-pango --enable-cairo
     - time make -j3

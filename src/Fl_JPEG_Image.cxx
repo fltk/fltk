@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_JPEG_Image routines.
 //
 // Copyright 1997-2011 by Easy Software Products.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -58,8 +56,8 @@ extern "C"
 
 #ifdef HAVE_LIBJPEG
 struct fl_jpeg_error_mgr {
-  jpeg_error_mgr	pub_;		// Destination manager...
-  jmp_buf		errhand_;	// Error handler
+  jpeg_error_mgr        pub_;           // Destination manager...
+  jmp_buf               errhand_;       // Error handler
 };
 #endif // HAVE_LIBJPEG
 
@@ -71,12 +69,12 @@ struct fl_jpeg_error_mgr {
 #ifdef HAVE_LIBJPEG
 extern "C" {
   static void
-  fl_jpeg_error_handler(j_common_ptr dinfo) {	// I - Decompressor info
+  fl_jpeg_error_handler(j_common_ptr dinfo) {   // I - Decompressor info
     longjmp(((fl_jpeg_error_mgr *)(dinfo->err))->errhand_, 1);
   }
 
   static void
-  fl_jpeg_output_handler(j_common_ptr) {	// I - Decompressor info (not used)
+  fl_jpeg_output_handler(j_common_ptr) {        // I - Decompressor info (not used)
   }
 }
 #endif // HAVE_LIBJPEG
@@ -84,16 +82,16 @@ extern "C" {
 
 /**
  \brief The constructor loads the JPEG image from the given jpeg filename.
- 
- The inherited destructor frees all memory and server resources that are used 
+
+ The inherited destructor frees all memory and server resources that are used
  by the image.
- 
+
  Use Fl_Image::fail() to check if Fl_JPEG_Image failed to load. fail() returns
  ERR_FILE_ACCESS if the file could not be opened or read, ERR_FORMAT if the
  JPEG format could not be decoded, and ERR_NO_IMAGE if the image could not
  be loaded for another reason. If the image has loaded correctly,
  w(), h(), and d() should return values greater than zero.
- 
+
  \param[in] filename a full path and name pointing to a valid jpeg file.
 
  \see Fl_JPEG_Image::Fl_JPEG_Image(const char *imagename, const unsigned char *data)
@@ -333,8 +331,3 @@ void Fl_JPEG_Image::load_jpg_(const char *filename, const char *sharename, const
   }
 #endif // HAVE_LIBJPEG
 }
-
-
-//
-// End of "$Id$".
-//

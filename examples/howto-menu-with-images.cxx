@@ -1,4 +1,4 @@
-// "$Id$"
+//
 // vim: autoindent tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=cpp
 //
 //     How to use Fl_Multi_Label to make menu items with images and labels.
@@ -10,11 +10,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -200,7 +200,3 @@ int main() {
   win->show();
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

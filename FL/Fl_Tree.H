@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 
 #ifndef FL_TREE_H
 #define FL_TREE_H
@@ -26,9 +24,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 ///
@@ -80,7 +78,7 @@
    tree.add("Simpsons/Lisa");
  tree.end();
  \endcode
-     
+
  \par FEATURES
  Items can be added with add(),<BR>
  removed with remove(),<BR>
@@ -124,7 +122,7 @@
  widget() to be shown in place of the item's label (if it has one).
  Only the widget()'s width will be used; the widget()'s x() and y() position
  will be managed by the tree, and the h() will track the item's height.
- This default behavior can be altered (ABI 1.3.1): 
+ This default behavior can be altered (ABI 1.3.1):
  Setting Fl_Tree::item_draw_mode()'s FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET flag
  causes the label + widget to be displayed together in that order, and
  adding the FL_TREE_ITEM_HEIGHT_FROM_WIDGET flag causes widget's height
@@ -136,8 +134,8 @@
  can either be changed globally with Fl_Tree::usericon(),
  or on a per-item basis with Fl_Tree_Item::usericon().
  \par
- Various default preferences can be globally manipulated via Fl_Tree_Prefs, 
- including colors, margins, icons, connection lines, etc. 
+ Various default preferences can be globally manipulated via Fl_Tree_Prefs,
+ including colors, margins, icons, connection lines, etc.
 
  \par FONTS AND COLORS
  When adding new items to the tree, the new items get the
@@ -165,7 +163,7 @@
  \code
  void MyTreeCallback(Fl_Widget *w, void *data) {
    Fl_Tree      *tree = (Fl_Tree*)w;
-   Fl_Tree_Item *item = (Fl_Tree_Item*)tree->callback_item();	// get selected item
+   Fl_Tree_Item *item = (Fl_Tree_Item*)tree->callback_item();   // get selected item
    switch ( tree->callback_reason() ) {
      case FL_TREE_REASON_SELECTED: [..]
      case FL_TREE_REASON_DESELECTED: [..]
@@ -190,7 +188,7 @@
  \code
  [..]
  char pathname[256] = "???";
- tree->item_pathname(pathname, sizeof(pathname), item);		// eg. "Parent/Child/Item"
+ tree->item_pathname(pathname, sizeof(pathname), item);         // eg. "Parent/Child/Item"
  [..]
  \endcode
  \par
@@ -203,7 +201,7 @@
  }
  \endcode
  \par
- To recursively walk all the children of a particular item, 
+ To recursively walk all the children of a particular item,
  define a function that uses recursion:
  \par
  \code
@@ -220,8 +218,8 @@
  \par
  \code
  tree = new Fl_Tree(..);
- tree->item_labelfont(FL_COURIER);	// Use Courier font for all new items
- tree->item_labelfgcolor(FL_RED);	// Use red color for labels of all new items
+ tree->item_labelfont(FL_COURIER);      // Use Courier font for all new items
+ tree->item_labelfgcolor(FL_RED);       // Use red color for labels of all new items
  [..]
  // Now create the items in the tree using the above defaults.
  tree->add("Aaa");
@@ -275,33 +273,33 @@
 /// The reason the callback was invoked.
 ///
 enum Fl_Tree_Reason {
-  FL_TREE_REASON_NONE=0,	///< unknown reason
-  FL_TREE_REASON_SELECTED,	///< an item was selected
-  FL_TREE_REASON_DESELECTED,	///< an item was de-selected
-  FL_TREE_REASON_RESELECTED,	///< an item was re-selected (double-clicked).
-				///< See ::Fl_Tree_Item_Reselect_Mode to enable this.
-  FL_TREE_REASON_OPENED,	///< an item was opened
-  FL_TREE_REASON_CLOSED,	///< an item was closed
-  FL_TREE_REASON_DRAGGED	///< an item was dragged into a new place
+  FL_TREE_REASON_NONE=0,        ///< unknown reason
+  FL_TREE_REASON_SELECTED,      ///< an item was selected
+  FL_TREE_REASON_DESELECTED,    ///< an item was de-selected
+  FL_TREE_REASON_RESELECTED,    ///< an item was re-selected (double-clicked).
+                                ///< See ::Fl_Tree_Item_Reselect_Mode to enable this.
+  FL_TREE_REASON_OPENED,        ///< an item was opened
+  FL_TREE_REASON_CLOSED,        ///< an item was closed
+  FL_TREE_REASON_DRAGGED        ///< an item was dragged into a new place
 };
 
 class FL_EXPORT Fl_Tree : public Fl_Group {
   friend class Fl_Tree_Item;
-  Fl_Tree_Item  *_root;				// can be null!
-  Fl_Tree_Item  *_item_focus;			// item that has focus box
-  Fl_Tree_Item  *_callback_item;		// item invoked during callback (can be NULL)
-  Fl_Tree_Reason _callback_reason;		// reason for the callback
-  Fl_Tree_Prefs  _prefs;			// all the tree's settings
-  int            _scrollbar_size;		// size of scrollbar trough
+  Fl_Tree_Item  *_root;                         // can be null!
+  Fl_Tree_Item  *_item_focus;                   // item that has focus box
+  Fl_Tree_Item  *_callback_item;                // item invoked during callback (can be NULL)
+  Fl_Tree_Reason _callback_reason;              // reason for the callback
+  Fl_Tree_Prefs  _prefs;                        // all the tree's settings
+  int            _scrollbar_size;               // size of scrollbar trough
   Fl_Tree_Item  *_lastselect;                   // last selected item
   char           _lastpushed;                   // FL_PUSH occurred on: 0=nothing, 1=open/close, 2=usericon, 3=label
   void fix_scrollbar_order();
 
 protected:
-  Fl_Scrollbar *_vscroll;	///< Vertical scrollbar
-  Fl_Scrollbar *_hscroll;	///< Horizontal scrollbar
-  int _tox,_toy,_tow,_toh;	///< Tree widget outer xywh dimension: outside scrollbars, inside widget border
-  int _tix,_tiy,_tiw,_tih;	///< Tree widget inner xywh dimension: inside borders + scrollbars
+  Fl_Scrollbar *_vscroll;       ///< Vertical scrollbar
+  Fl_Scrollbar *_hscroll;       ///< Horizontal scrollbar
+  int _tox,_toy,_tow,_toh;      ///< Tree widget outer xywh dimension: outside scrollbars, inside widget border
+  int _tix,_tiy,_tiw,_tih;      ///< Tree widget inner xywh dimension: inside borders + scrollbars
 
   /// the calculated width of the entire tree hierarchy. See calc_tree()
   int _tree_w;
@@ -352,14 +350,14 @@ public:
   Fl_Tree_Item* find_clicked(int yonly=0);
   Fl_Tree_Item *item_clicked();
   Fl_Tree_Item *first();
-  Fl_Tree_Item *first_visible();		// deprecated in ABI 10303
+  Fl_Tree_Item *first_visible();                // deprecated in ABI 10303
   Fl_Tree_Item *first_visible_item();
   Fl_Tree_Item *next(Fl_Tree_Item *item=0);
   Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
   Fl_Tree_Item *last();
-  Fl_Tree_Item *last_visible();			// deprecated in ABI 10303
+  Fl_Tree_Item *last_visible();                 // deprecated in ABI 10303
   Fl_Tree_Item *last_visible_item();
-  Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);	// made public in 1.3.3 ABI
+  Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);        // made public in 1.3.3 ABI
   Fl_Tree_Item *first_selected_item();
   Fl_Tree_Item *last_selected_item();
   Fl_Tree_Item *next_item(Fl_Tree_Item *item, int dir=FL_Down, bool visible=false);
@@ -392,13 +390,13 @@ public:
   int select_all(Fl_Tree_Item *item=0, int docallback=1);
   int extend_selection_dir(Fl_Tree_Item *from,
                            Fl_Tree_Item *to,
-			   int dir,
-			   int val,
-			   bool visible);
+                           int dir,
+                           int val,
+                           bool visible);
   int extend_selection(Fl_Tree_Item *from,
-  		       Fl_Tree_Item *to,
-		       int val=1,
-		       bool visible=false);
+                       Fl_Tree_Item *to,
+                       int val=1,
+                       bool visible=false);
   void set_item_focus(Fl_Tree_Item *item);
   Fl_Tree_Item *get_item_focus() const;
   int is_selected(Fl_Tree_Item *item) const;
@@ -492,7 +490,3 @@ public:
 };
 
 #endif /*FL_TREE_H*/
-
-//
-// End of "$Id$".
-//

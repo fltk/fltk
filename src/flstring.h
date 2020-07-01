@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Common string header file for the Fast Light Tool Kit (FLTK).
  * Internal use only (see "important note" below).
  *
@@ -10,11 +8,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
  /*
@@ -59,8 +57,8 @@
 #  endif /* _MSC_VER */
 
 #  if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
-#    define strcasecmp(s,t)	_stricmp((s), (t))
-#    define strncasecmp(s,t,n)	_strnicmp((s), (t), (n))
+#    define strcasecmp(s,t)     _stricmp((s), (t))
+#    define strncasecmp(s,t,n)  _strnicmp((s), (t), (n))
 #  endif /* _WIN32 && ... */
 
 #  ifdef __cplusplus
@@ -103,7 +101,3 @@ FL_EXPORT extern int fl_ascii_strcasecmp(const char *s, const char *t);
 #  endif /* __cplusplus */
 
 #endif /* !flstring_h */
-
-/*
- * End of "$Id$".
- */

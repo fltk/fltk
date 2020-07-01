@@ -9,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Complete implementation to draw into an SVG file using the standard FLTK drawing API.
@@ -157,13 +157,13 @@ Fl_SVG_Graphics_Driver::~Fl_SVG_Graphics_Driver()
 
 void Fl_SVG_Graphics_Driver::rect(int x, int y, int w, int h) {
   fprintf(out_, "<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" "
-	  "fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" stroke-dasharray=\"%s\""
+          "fill=\"none\" stroke=\"rgb(%u,%u,%u)\" stroke-width=\"%d\" stroke-dasharray=\"%s\""
           " stroke-linecap=\"%s\" stroke-linejoin=\"%s\"/>\n", x, y, w-1, h-1, red_, green_, blue_, width_, dasharray_, linecap_, linejoin_);
 }
 
 void Fl_SVG_Graphics_Driver::rectf(int x, int y, int w, int h) {
   fprintf(out_, "<rect x=\"%.3f\" y=\"%.3f\" width=\"%d\" height=\"%d\" "
-	  "fill=\"rgb(%u,%u,%u)\" />\n", x-.5, y-.5, w, h, red_, green_, blue_);
+          "fill=\"rgb(%u,%u,%u)\" />\n", x-.5, y-.5, w, h, red_, green_, blue_);
 }
 
 void Fl_SVG_Graphics_Driver::point(int x, int y) {
@@ -171,10 +171,10 @@ void Fl_SVG_Graphics_Driver::point(int x, int y) {
 }
 
 void Fl_SVG_Graphics_Driver::line(int x1, int y1, int x2, int y2) {
-  fprintf(out_, 
-	  "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" "
-	  "style=\"stroke:rgb(%u,%u,%u);stroke-width:%d;stroke-linecap:%s;stroke-linejoin:%s;stroke-dasharray:%s\" />\n",
-	  x1,y1,x2,y2, red_, green_, blue_, width_, linecap_, linejoin_, dasharray_);
+  fprintf(out_,
+          "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" "
+          "style=\"stroke:rgb(%u,%u,%u);stroke-width:%d;stroke-linecap:%s;stroke-linejoin:%s;stroke-dasharray:%s\" />\n",
+          x1,y1,x2,y2, red_, green_, blue_, width_, linecap_, linejoin_, dasharray_);
 }
 
 void Fl_SVG_Graphics_Driver::font_(int ft, int s) {
@@ -185,7 +185,7 @@ void Fl_SVG_Graphics_Driver::font_(int ft, int s) {
   else family_ = "Times";
   int modulo = ft % 4;
   int use_bold = modulo == 1 || modulo == 3;
-  int use_italic = modulo >= 2;  
+  int use_italic = modulo >= 2;
   bold_ =  ( use_bold ? " font-weight=\"bold\"" : "" );
   style_ =  ( use_italic ? " font-style=\"italic\"" : "" );
   if (use_italic && famnum != 2) style_ = " font-style=\"oblique\"";
@@ -306,11 +306,11 @@ Fl_SVG_File_Surface::Fl_SVG_File_Surface(int w, int h, FILE *f) : Fl_Widget_Surf
   float s = (win ? Fl::screen_scale(win->screen_num()) : 1);
   int sw = w * s, sh = h * s;
   fprintf(f,
-	  "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n"
-	  "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n"
-	  "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n"
-	  "<svg width=\"%dpx\" height=\"%dpx\" viewBox=\"0 0 %d %d\"\n"
-	  "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n", sw, sh, sw, sh);
+          "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n"
+          "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n"
+          "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n"
+          "<svg width=\"%dpx\" height=\"%dpx\" viewBox=\"0 0 %d %d\"\n"
+          "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n", sw, sh, sw, sh);
   width_ = w; height_ = h;
   fprintf(f, "<g transform=\"scale(%f)\">\n", s);
   fputs("<g transform=\"translate(0,0)\">\n", f);
@@ -1017,7 +1017,3 @@ void Fl_SVG_File_Surface::untranslate() {}
 int Fl_SVG_File_Surface::printable_rect(int *w, int *h) {return 0;}
 
 #endif // FLTK_USE_SVG
-
-//
-// End of "$Id$".
-//

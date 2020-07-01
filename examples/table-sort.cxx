@@ -1,12 +1,10 @@
 //
-// "$Id$"
+//      table-sort -- An example application using a sortable Fl_Table
 //
-//	table-sort -- An example application using a sortable Fl_Table
-//                
-//	Originally the 'sortapp.cxx' example program that came with 
-//	erco's Fl_Table widget. Added to FLTK in 2010.
+//      Originally the 'sortapp.cxx' example program that came with
+//      erco's Fl_Table widget. Added to FLTK in 2010.
 //
-//      Example of a non-trivial application that uses Fl_Table 
+//      Example of a non-trivial application that uses Fl_Table
 //      with sortable columns. This example is not trying to be simple,
 //      but to demonstrate the complexities of an actual app.
 //
@@ -17,12 +15,12 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
-// 
+//     https://www.fltk.org/bugs.php
+//
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -147,17 +145,17 @@ void MyTable::draw_sort_arrow(int X,int Y,int W,int H) {
 
 // Handle drawing all cells in table
 void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W, int H) {
-    const char *s = ""; 
+    const char *s = "";
     if ( R < (int)_rowdata.size() && C < (int)_rowdata[R].cols.size() )
-        s = _rowdata[R].cols[C]; 
+        s = _rowdata[R].cols[C];
     switch ( context ) {
         case CONTEXT_COL_HEADER:
             fl_push_clip(X,Y,W,H); {
                 fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_BACKGROUND_COLOR);
                 if ( C < 9 ) {
-		    fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
+                    fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
                     fl_color(FL_BLACK);
-                    fl_draw(G_header[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left 
+                    fl_draw(G_header[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left
                     // Draw sort arrow
                     if ( C == _sort_lastcol ) {
                         draw_sort_arrow(X,Y,W,H);
@@ -165,14 +163,14 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
                 }
             }
             fl_pop_clip();
-            return; 
+            return;
         case CONTEXT_CELL: {
             fl_push_clip(X,Y,W,H); {
                 // Bg color
                 Fl_Color bgcolor = row_selected(R) ? selection_color() : FL_WHITE;
-                fl_color(bgcolor); fl_rectf(X,Y,W,H); 
-		fl_font(ROW_FONTFACE, ROW_FONTSIZE);
-                fl_color(FL_BLACK); fl_draw(s, X+2,Y,W,H, FL_ALIGN_LEFT);     // +2=pad left 
+                fl_color(bgcolor); fl_rectf(X,Y,W,H);
+                fl_font(ROW_FONTFACE, ROW_FONTSIZE);
+                fl_color(FL_BLACK); fl_draw(s, X+2,Y,W,H, FL_ALIGN_LEFT);     // +2=pad left
                 // Border
                 fl_color(FL_LIGHT2); fl_rect(X,Y,W,H);
             }
@@ -190,7 +188,7 @@ void MyTable::autowidth(int pad) {
     // Initialize all column widths to header width
     fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
     for ( int c=0; G_header[c]; c++ ) {
-	w=0; fl_measure(G_header[c], w, h, 0);                   // pixel width of header text
+        w=0; fl_measure(G_header[c], w, h, 0);                   // pixel width of header text
         col_width(c, w+pad);
     }
     fl_font(ROW_FONTFACE, ROW_FONTSIZE);
@@ -233,9 +231,9 @@ void MyTable::load_command(const char *cmd) {
         if ( (int)rc.size() > cols() ) {
             cols((int)rc.size());
         }
-    } 
+    }
     // How many rows we loaded
-    rows((int)_rowdata.size()); 
+    rows((int)_rowdata.size());
     // Auto-calculate widths, with 20 pixel padding
     autowidth(20);
 }
@@ -255,7 +253,7 @@ void MyTable::event_callback2() {
             if ( Fl::event() == FL_RELEASE && Fl::event_button() == 1 ) {
                 if ( _sort_lastcol == COL ) {   // Click same column? Toggle sort
                     _sort_reverse ^= 1;
-                } else {                        // Click diff column? Up sort 
+                } else {                        // Click diff column? Up sort
                     _sort_reverse = 0;
                 }
                 sort_column(COL, _sort_reverse);
@@ -277,15 +275,11 @@ int main() {
         table.when(FL_WHEN_RELEASE);            // handle table events on release
         table.load_command(DIRCMD);             // load table with a directory listing
         table.row_height_all(18);               // height of all rows
-	table.tooltip("Click on column headings to toggle column sorting");
-	table.color(FL_WHITE);
+        table.tooltip("Click on column headings to toggle column sorting");
+        table.color(FL_WHITE);
     win.end();
     win.resizable(table);
     table.resize_window();
     win.show();
     return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A simple terminal widget for Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <ctype.h>      /* isdigit */
@@ -432,19 +430,19 @@ int Fl_Simple_Terminal::current_style_index() const {
 
  \param stable - the style table, an array of structs of the type
                  Fl_Text_Display::Style_Table_Entry. Can be NULL
-		 to use the default style table (see ansi(bool)).
+                 to use the default style table (see ansi(bool)).
  \param stable_size - the sizeof() the style table (in bytes).
                       Set this to 0 if 'stable' is NULL.
  \param normal_style_index - the style table index# used when the special
                              ANSI sequence "\033[0m" is encountered.
-			     Normally use 0 so that sequence selects the
-			     first item in the table. Only use different
-			     values if a different entry in the table
-			     should be the default. This value should
-			     not be larger than the number of items in
-			     the table, or it will be clamped with a
-			     modulus operation. This value is ignored
-			     if stable is NULL.
+                             Normally use 0 so that sequence selects the
+                             first item in the table. Only use different
+                             values if a different entry in the table
+                             should be the default. This value should
+                             not be larger than the number of items in
+                             the table, or it will be clamped with a
+                             modulus operation. This value is ignored
+                             if stable is NULL.
 */
 void Fl_Simple_Terminal::style_table(Fl_Text_Display::Style_Table_Entry *stable,
                                      int stable_size, int normal_style_index) {

@@ -1,6 +1,4 @@
 //
-// "$Id$".
-//
 //       External code editor management class for Unix
 //
 //       Handles starting and keeping track of an external text editor,
@@ -47,6 +45,3 @@ public:
 };
 
 #endif /*_EXTCODEEDITOR_H */
-//
-// End of "$Id$".
-//

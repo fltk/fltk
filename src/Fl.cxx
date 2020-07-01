@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Main event handling code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
@@ -123,41 +121,41 @@ bool Fl::cfg_sys_win32 = 0;
 Fl_Widget *fl_selection_requestor;
 
 #ifndef FL_DOXYGEN
-Fl_Widget	*Fl::belowmouse_,
-		*Fl::pushed_,
-		*Fl::focus_,
-		*Fl::selection_owner_;
-int		Fl::damage_,
-		Fl::e_number,
-		Fl::e_x,
-		Fl::e_y,
-		Fl::e_x_root,
-		Fl::e_y_root,
-		Fl::e_dx,
-		Fl::e_dy,
-		Fl::e_state,
-		Fl::e_clicks,
-		Fl::e_is_click,
-		Fl::e_keysym,
-		Fl::e_original_keysym,
-		Fl::scrollbar_size_ = 16,
-		Fl::menu_linespacing_ = 4;	// 4: was a local macro in Fl_Menu.cxx called "LEADING"
+Fl_Widget       *Fl::belowmouse_,
+                *Fl::pushed_,
+                *Fl::focus_,
+                *Fl::selection_owner_;
+int             Fl::damage_,
+                Fl::e_number,
+                Fl::e_x,
+                Fl::e_y,
+                Fl::e_x_root,
+                Fl::e_y_root,
+                Fl::e_dx,
+                Fl::e_dy,
+                Fl::e_state,
+                Fl::e_clicks,
+                Fl::e_is_click,
+                Fl::e_keysym,
+                Fl::e_original_keysym,
+                Fl::scrollbar_size_ = 16,
+                Fl::menu_linespacing_ = 4;      // 4: was a local macro in Fl_Menu.cxx called "LEADING"
 
-char		*Fl::e_text = (char *)"";
-int		Fl::e_length;
-const char	*Fl::e_clipboard_type = "";
-void		*Fl::e_clipboard_data = NULL;
+char            *Fl::e_text = (char *)"";
+int             Fl::e_length;
+const char      *Fl::e_clipboard_type = "";
+void            *Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
 
-unsigned char	Fl::options_[] = { 0, 0 };
-unsigned char	Fl::options_read_ = 0;
+unsigned char   Fl::options_[] = { 0, 0 };
+unsigned char   Fl::options_read_ = 0;
 
 
-Fl_Window	*fl_xfocus = NULL; // which window X thinks has focus
-Fl_Window	*fl_xmousewin;     // which window X thinks has FL_ENTER
-Fl_Window	*Fl::grab_;        // most recent Fl::grab()
-Fl_Window	*Fl::modal_;       // topmost modal() window
+Fl_Window       *fl_xfocus = NULL; // which window X thinks has focus
+Fl_Window       *fl_xmousewin;     // which window X thinks has FL_ENTER
+Fl_Window       *Fl::grab_;        // most recent Fl::grab()
+Fl_Window       *Fl::modal_;       // topmost modal() window
 
 #endif // FL_DOXYGEN
 
@@ -191,7 +189,7 @@ Fl_System_Driver *Fl::system_driver()
   Returns the compiled-in value of the FL_VERSION constant. This
   is useful for checking the version of a shared library.
 
-  \deprecated	Use int Fl::api_version() instead.
+  \deprecated   Use int Fl::api_version() instead.
 */
 double Fl::version() {
   return FL_VERSION;
@@ -266,8 +264,8 @@ void Fl::menu_linespacing(int H) {
     To find out, whether the event is inside a child widget of the
     current window, you can use Fl::event_inside(const Fl_Widget *).
 
-    \param[in] xx,yy,ww,hh	bounding box
-    \return			non-zero, if mouse event is inside
+    \param[in] xx,yy,ww,hh      bounding box
+    \return                     non-zero, if mouse event is inside
 */
 int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
   int mx = e_x - xx;
@@ -299,8 +297,8 @@ int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
 
     \see Fl::event_inside(int, int, int, int)
 
-    \param[in] o	child widget to be tested
-    \return		non-zero, if mouse event is inside the widget
+    \param[in] o        child widget to be tested
+    \return             non-zero, if mouse event is inside the widget
 */
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   int mx = e_x - o->x();
@@ -333,8 +331,8 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
  Removes a timeout callback. It is harmless to remove a timeout
  callback that no longer exists.
 
- \note	This version removes all matching timeouts, not just the first one.
-	This may change in the future.
+ \note  This version removes all matching timeouts, not just the first one.
+        This may change in the future.
  */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
   Fl::screen_driver()->remove_timeout(cb, argp);
@@ -1778,7 +1776,7 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
 #ifdef DEBUG_WATCH
     else { // found widget pointer
       printf("release_widget_pointer: (%d/%d) %8p => %8p\n",
-	     i+1, num_widget_watch, wp, *wp);
+             i+1, num_widget_watch, wp, *wp);
     }
 #endif //DEBUG_WATCH
   }
@@ -2182,7 +2180,3 @@ FL_EXPORT const char* fl_local_shift = Fl::system_driver()->shift_name();
 FL_EXPORT const char* fl_local_meta  = Fl::system_driver()->meta_name();
 FL_EXPORT const char* fl_local_alt   = Fl::system_driver()->alt_name();
 FL_EXPORT const char* fl_local_ctrl  = Fl::system_driver()->control_name();
-
-//
-// End of "$Id$".
-//

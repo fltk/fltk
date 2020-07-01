@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//   https://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//   https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file fl_ask.H
@@ -26,7 +24,7 @@
 #  include "Enumerations.H"
 class Fl_Widget;
 
-/** Different system beeps available. 
+/** Different system beeps available.
  \sa fl_beep(int) */
 enum Fl_Beep {
   FL_BEEP_DEFAULT = 0,  ///< Default beep.
@@ -84,7 +82,3 @@ extern FL_EXPORT const char* fl_ok;
 extern FL_EXPORT const char* fl_cancel;
 extern FL_EXPORT const char* fl_close;
 #endif // !fl_ask_H
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Apple Darwin system driver.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "Fl_Darwin_System_Driver.H"
@@ -92,7 +90,7 @@ const char *Fl_Darwin_System_Driver::control_name() {
 
 /*
  Creates a driver that manages all system related calls.
- 
+
  This function must be implemented once for every platform.
  */
 Fl_System_Driver *Fl_System_Driver::newSystemDriver()
@@ -159,7 +157,7 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*
   // Use memcpy for speed since we already know the length of the string...
   memcpy(fullname, d, dirlen+1);
   char *name = fullname + dirlen;
-  if (name!=fullname && name[-1]!='/') *name++ = '/';  
+  if (name!=fullname && name[-1]!='/') *name++ = '/';
   for (i=0; i<n; i++) {
     int newlen;
     dirent *de = (*list)[i];
@@ -190,7 +188,7 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*
 
 int Fl_Darwin_System_Driver::open_uri(const char *uri, char *msg, int msglen)
 {
-  char	*argv[3];			// Command-line arguments
+  char  *argv[3];                       // Command-line arguments
   argv[0] = (char*)"open";
   argv[1] = (char*)uri;
   argv[2] = (char*)0;
@@ -201,20 +199,20 @@ int Fl_Darwin_System_Driver::open_uri(const char *uri, char *msg, int msglen)
 int Fl_Darwin_System_Driver::file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon)
 {
   // MacOS X and Darwin use getfsstat() system call...
-  int			numfs;	// Number of file systems
-  struct statfs	*fs;	// Buffer for file system info
+  int                   numfs;  // Number of file systems
+  struct statfs *fs;    // Buffer for file system info
   int num_files = 0;
-  
+
   // We always have the root filesystem.
   browser->add("/", icon);
-  
+
   // Get the mounted filesystems...
   numfs = getfsstat(NULL, 0, MNT_NOWAIT);
   if (numfs > 0) {
     // We have file systems, get them...
     fs = new struct statfs[numfs];
     getfsstat(fs, sizeof(struct statfs) * numfs, MNT_NOWAIT);
-    
+
     // Add filesystems to the list...
     for (int i = 0; i < numfs; i ++) {
       // Ignore "/", "/dev", and "/.vol"...
@@ -225,7 +223,7 @@ int Fl_Darwin_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
       }
       num_files ++;
     }
-    
+
     // Free the memory used for the file system info array...
     delete[] fs;
   }
@@ -261,7 +259,3 @@ const char *Fl_Darwin_System_Driver::filename_name( const char *name )
   }
   return q;
 }
-
-//
-// End of "$Id$".
-//

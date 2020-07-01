@@ -9,9 +9,9 @@
 #
 #      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      https://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 include ../makeinclude
@@ -578,7 +578,3 @@ cairo_test$(EXEEXT): cairo_test.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
-
-#
-# End of "$Id$".
-#

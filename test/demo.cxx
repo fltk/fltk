@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Main demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -111,7 +109,7 @@ typedef struct {
   char icommand[9][64];
 } MENU;
 
-#define MAXMENU	32
+#define MAXMENU 32
 
 MENU menus[MAXMENU];
 int mennumb = 0;
@@ -144,27 +142,27 @@ void addto_menu(const char* men, const char* item, const char* comm) {
 
 /* Button to Item conversion and back. */
 
-int b2n[][9] = { 
-	{ -1, -1, -1, -1,  0, -1, -1, -1, -1},
-	{ -1, -1, -1,  0, -1,  1, -1, -1, -1},
-	{  0, -1, -1, -1,  1, -1, -1, -1,  2},
-	{  0, -1,  1, -1, -1, -1,  2, -1,  3},
-	{  0, -1,  1, -1,  2, -1,  3, -1,  4},
-	{  0, -1,  1,  2, -1,  3,  4, -1,  5},
-	{  0, -1,  1,  2,  3,  4,  5, -1,  6},
-	{  0,  1,  2,  3, -1,  4,  5,  6,  7},
-	{  0,  1,  2,  3,  4,  5,  6,  7,  8}
+int b2n[][9] = {
+        { -1, -1, -1, -1,  0, -1, -1, -1, -1},
+        { -1, -1, -1,  0, -1,  1, -1, -1, -1},
+        {  0, -1, -1, -1,  1, -1, -1, -1,  2},
+        {  0, -1,  1, -1, -1, -1,  2, -1,  3},
+        {  0, -1,  1, -1,  2, -1,  3, -1,  4},
+        {  0, -1,  1,  2, -1,  3,  4, -1,  5},
+        {  0, -1,  1,  2,  3,  4,  5, -1,  6},
+        {  0,  1,  2,  3, -1,  4,  5,  6,  7},
+        {  0,  1,  2,  3,  4,  5,  6,  7,  8}
 };
-int n2b[][9] = { 
-	{  4, -1, -1, -1, -1, -1, -1, -1, -1},
-	{  3,  5, -1, -1, -1, -1, -1, -1, -1},
-	{  0,  4,  8, -1, -1, -1, -1, -1, -1},
-	{  0,  2,  6,  8, -1, -1, -1, -1, -1},
-	{  0,  2,  4,  6,  8, -1, -1, -1, -1},
-	{  0,  2,  3,  5,  6,  8, -1, -1, -1},
-	{  0,  2,  3,  4,  5,  6,  8, -1, -1},
-	{  0,  1,  2,  3,  5,  6,  7,  8, -1},
-	{  0,  1,  2,  3,  4,  5,  6,  7,  8}
+int n2b[][9] = {
+        {  4, -1, -1, -1, -1, -1, -1, -1, -1},
+        {  3,  5, -1, -1, -1, -1, -1, -1, -1},
+        {  0,  4,  8, -1, -1, -1, -1, -1, -1},
+        {  0,  2,  6,  8, -1, -1, -1, -1, -1},
+        {  0,  2,  4,  6,  8, -1, -1, -1, -1},
+        {  0,  2,  3,  5,  6,  8, -1, -1, -1},
+        {  0,  2,  3,  4,  5,  6,  8, -1, -1},
+        {  0,  1,  2,  3,  5,  6,  7,  8, -1},
+        {  0,  1,  2,  3,  4,  5,  6,  7,  8}
 };
 
 /* Transform a button number to an item number when there are
@@ -222,26 +220,26 @@ void dobut(Fl_Widget *, long arg) {
 
 #ifdef _WIN32
 
-    STARTUPINFO		suInfo;		// Process startup information
-    PROCESS_INFORMATION	prInfo;		// Process information
+    STARTUPINFO         suInfo;         // Process startup information
+    PROCESS_INFORMATION prInfo;         // Process information
 
 # if DEBUG_EXE_WITH_D
-    const char *exe = "d.exe";		// exe name with trailing 'd'
+    const char *exe = "d.exe";          // exe name with trailing 'd'
 # else
-    const char *exe = ".exe";		// exe name w/o trailing 'd'
+    const char *exe = ".exe";           // exe name w/o trailing 'd'
 # endif
 
     memset(&suInfo, 0, sizeof(suInfo));
     suInfo.cb = sizeof(suInfo);
-    
+
     int icommand_length = strlen(menus[men].icommand[bn]);
-    
+
     char* copy_of_icommand = new char[icommand_length+1];
     strcpy(copy_of_icommand,menus[men].icommand[bn]);
-    
+
     // On Windows the .exe suffix needs to be appended to the command
     // whilst leaving any additional parameters unchanged - this
-    // is required to handle the correct conversion of cases such as : 
+    // is required to handle the correct conversion of cases such as :
     // `../fluid/fluid valuators.fl' to '../fluid/fluid.exe valuators.fl'.
 
     // skip leading spaces.
@@ -261,16 +259,16 @@ void dobut(Fl_Widget *, long arg) {
       *start_parameters = 0;
       // move start_paremeters to skip over the intermediate space.
       ++start_parameters;
-      
+
       sprintf(command, "%s%s %s", start_command, exe, start_parameters);
     }
-    
+
     CreateProcess(NULL, command, NULL, NULL, FALSE,
                   NORMAL_PRIORITY_CLASS, NULL, NULL, &suInfo, &prInfo);
-    
+
     delete[] command;
     delete[] copy_of_icommand;
-    
+
 #elif defined __APPLE__
     /*
      Starting with version 1.4.0, FLTK uses CMake as the only supported build
@@ -364,7 +362,7 @@ void dobut(Fl_Widget *, long arg) {
 #else // Non Windows systems.
 
     int icommand_length = strlen(menus[men].icommand[bn]);
-    char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0' 
+    char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0'
 
     sprintf(command, "./%s &", menus[men].icommand[bn]);
     if (system(command)==-1) { /* ignore */ }
@@ -417,7 +415,7 @@ int load_the_menu(char* fname) {
     while (line[i] != ':' && line[i] != '\n') mname[j++] = line[i++];
     mname[j] = '\0';
     if (line[i] == ':') i++;
-    j = 0; 
+    j = 0;
     while (line[i] != ':' && line[i] != '\n') {
       if (line[i] == '\\') {
         i++;
@@ -453,15 +451,15 @@ int main(int argc, char **argv) {
   if (!Fl::args(argc,argv,i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s",argv[0],Fl::help);
   if (i < argc) fname = argv[i];
-  
+
   create_the_forms();
-  
+
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
   if (buf != fname)
     strcpy(buf,fname);
   const char *c = fl_filename_name(buf);
   if (c > buf) {
-    buf[c-buf] = 0; 
+    buf[c-buf] = 0;
     if (fl_chdir(buf) == -1) { /* ignore */ }
   }
   push_menu("@main");
@@ -469,7 +467,3 @@ int main(int argc, char **argv) {
   Fl::run();
   return 0;
 }
-
-//
-// End of "$Id$".
-//

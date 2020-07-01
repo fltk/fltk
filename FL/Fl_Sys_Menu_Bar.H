@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // MacOS system menu bar header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
@@ -30,9 +28,9 @@ class Fl_Sys_Menu_Bar_Driver;
 
 /**
  A class to create and modify menus that appear on macOS in the menu bar at the top of the screen.
- 
+
  On other than macOS platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
- 
+
  On the macOS  platform, replace Fl_Menu_Bar with Fl_Sys_Menu_Bar, and
  a system menu at the top of the screen will be available. This menu will match an array
  of Fl_Menu_Item's exactly as in all other FLTK menus (except for the submenu with the
@@ -41,7 +39,7 @@ class Fl_Sys_Menu_Bar_Driver;
  from this class can be created, because macOS uses a single system menu bar. Therefore,
  porting to macOS an app that creates, on other platforms,  several Fl_Menu_Bar objects, one for each of several windows,
  is more complex that just replacing Fl_Menu_Bar by Fl_Sys_Menu_Bar.
- 
+
   On the macOS platform, the system menu bar of any FLTK app begins with the Application
   menu which the FLTK library automatically constructs. Functions
   Fl_Mac_App_Menu::custom_application_menu_items() and Fl_Sys_Menu_Bar::about() can be used to further customize
@@ -51,13 +49,13 @@ class Fl_Sys_Menu_Bar_Driver;
   Other member functions of this class allow the app to generate the rest of the system menu bar.
   It is recommended to localize the system menu bar using the standard Mac OS X localization procedure
   (see \ref osissues_localize).
- 
+
  Changes to the menu state are immediately visible in the menubar when they are made
  using member functions of the Fl_Sys_Menu_Bar class. Other changes (e.g., by a call to
  Fl_Menu_Item::set()) should be followed by a call to update() to be
  visible in the menubar across all platforms. macOS global variable \ref fl_sys_menu_bar points to
  the unique, current system menu bar.
- 
+
  A few FLTK menu features are not supported by the Mac System menu:
   \li no symbolic labels
   \li no embossed labels
@@ -66,11 +64,11 @@ class Fl_Sys_Menu_Bar_Driver;
  As described above, the submenu with the application's own name (usually
  the second submenu from the left, immediately following the "Apple" submenu)
  is a special case, and can be managed with
- Fl_Mac_App_Menu::custom_application_menu_items(). 
+ Fl_Mac_App_Menu::custom_application_menu_items().
  For example, to make your own "Appname -> Preferences" dialog, you might use:
 
  \code
- #include <FL/platform.H> 	 // for Fl_Mac_App_Menu class
+ #include <FL/platform.H>        // for Fl_Mac_App_Menu class
  #include <FL/Fl_Sys_Menu_Bar.H> // for Fl_Menu_Item
  :
  void prefs_cb(Fl_Widget *w, void *data) {
@@ -84,7 +82,7 @@ class Fl_Sys_Menu_Bar_Driver;
        { "Preferences", 0, prefs_cb, 0, 0 },
        { 0 }, { 0 }
      };
-     Fl_Mac_App_Menu::custom_application_menu_items(appitems);	// adds it
+     Fl_Mac_App_Menu::custom_application_menu_items(appitems);  // adds it
   }
  \endcode
 
@@ -114,7 +112,7 @@ public:
   void menu(const Fl_Menu_Item *m);
   virtual void update();
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
-  /** Adds a new menu item. 
+  /** Adds a new menu item.
    \see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0)
    */
   int add(const char* label, const char* shortcut, Fl_Callback* cb, void *user_data=0, int flags=0) {
@@ -122,7 +120,7 @@ public:
     }
   int add(const char* str);
   int insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data=0, int flags=0);
-  /** Insert a new menu item. 
+  /** Insert a new menu item.
    \see Fl_Menu_::insert(int index, const char* label, const char* shortcut, Fl_Callback *cb, void *user_data=0, int flags=0)
    */
   int insert(int index, const char* label, const char* shortcut, Fl_Callback *cb, void *user_data=0, int flags=0) {
@@ -132,14 +130,14 @@ public:
   void replace(int index, const char *name);
   void clear();
   int clear_submenu(int index);
-  void 	mode (int i, int fl);
+  void  mode (int i, int fl);
   /** Gets the flags of item i.
    */
   int mode(int i) const { return Fl_Menu_::mode(i); }
   void shortcut (int i, int s);
   void setonly (Fl_Menu_Item *item);
   static void about(Fl_Callback *cb, void *data);
-  
+
   static window_menu_style_enum window_menu_style();
   static void window_menu_style(window_menu_style_enum style);
   static void create_window_menu();
@@ -150,7 +148,3 @@ public:
 extern Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 #endif // Fl_Sys_Menu_Bar_H
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Group.H>
@@ -23,8 +21,8 @@
 #include <FL/fl_draw.H>
 
 // Note: currently (March 2010) fl_draw_image() supports transparency with
-//	 alpha channel only on Apple (Mac OS X), but Fl_RGB_Image->draw()
-//	 supports transparency on all platforms !
+//       alpha channel only on Apple (Mac OS X), but Fl_RGB_Image->draw()
+//       supports transparency on all platforms !
 
 //
 //------- test the image drawing capabilities of this implementation ----------
@@ -34,7 +32,7 @@
 // Default values: CB=1, DX=0, IMG=1, LX=0, FLIPH=0
 
 static int CB = 1;  // 1 to show the checker board background for alpha images,
-              		  // 0 otherwise
+                          // 0 otherwise
 static int DX = 0;  // additional (undefined (0)) pixels per line, must be >= 0
                     // ignored (irrelevant), if LX == 0 (see below)
 static int IMG = 1; // 1 to use Fl_RGB_Image for drawing images with transparency,
@@ -53,10 +51,10 @@ static int FLIPH = 0; // 1 = Flip image horizontally (only if IMG == 0)
 // ----------------------------------------------------------------------
 //  Test scenario for fl_draw_image() with pos. and neg. d and ld args:
 // ----------------------------------------------------------------------
-//  (1) set IMG   =  0:	normal, but w/o transparency: no checker board
-//  (2) set LX    = -1:	images flipped vertically
-//  (3) set FLIPH =  1:	images flipped vertically and horizontally
-//  (4) set LX    =  0:	images flipped horizontally
+//  (1) set IMG   =  0: normal, but w/o transparency: no checker board
+//  (2) set LX    = -1: images flipped vertically
+//  (3) set FLIPH =  1: images flipped vertically and horizontally
+//  (4) set LX    =  0: images flipped horizontally
 //  (5) set FLIPH =  0, IMG = 1: back to default (with transparency)
 // ----------------------------------------------------------------------
 
@@ -158,9 +156,9 @@ public:
 
   ImageTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
     label("Testing Image Drawing\n\n"
-	"This test renders four images, two of them with a checker board\n"
-	"visible through the graphics. Color and gray gradients should be\n"
-	"visible. This does not test any image formats such as JPEG.");
+        "This test renders four images, two of them with a checker board\n"
+        "visible through the graphics. Color and gray gradients should be\n"
+        "visible. This does not test any image formats such as JPEG.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
     int cw = 90;
@@ -220,8 +218,8 @@ public:
     // bottom left: RGBA
 
     xx = x()+10; yy = y()+10+134;
-    fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);	// black frame
-    fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 128, 128);	// white background
+    fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);      // black frame
+    fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 128, 128); // white background
     if (CB) { // checker board
       fl_color(FL_BLACK); fl_rectf(xx+65, yy+1, 64, 64);
       fl_color(FL_BLACK); fl_rectf(xx+1, yy+65, 64, 64);
@@ -259,8 +257,8 @@ public:
     // bottom right: Gray+Alpha
 
     xx = x()+10+200; yy = y()+10+134;
-    fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);	// black frame
-    fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 128, 128);	// white background
+    fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);      // black frame
+    fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 128, 128); // white background
     if (CB) { // checker board
       fl_color(FL_BLACK); fl_rectf(xx+65, yy+1, 64, 64);
       fl_color(FL_BLACK); fl_rectf(xx+1, yy+65, 64, 64);
@@ -294,7 +292,3 @@ Fl_RGB_Image *ImageTest::i_rgb = 0;
 Fl_RGB_Image *ImageTest::i_rgba = 0;
 
 UnitTest images("drawing images", ImageTest::create);
-
-//
-// End of "$Id$"
-//

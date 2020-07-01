@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//   https://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//   https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -127,12 +125,12 @@ static Fl_Window *makeform() {
  */
 
 static void resizeform() {
-  int	i;
-  int	message_w, message_h;
-  int	text_height;
-  int	button_w[3], button_h[3];
-  int	x, w, h, max_w, max_h;
-	const int icon_size = 50;
+  int   i;
+  int   message_w, message_h;
+  int   text_height;
+  int   button_w[3], button_h[3];
+  int   x, w, h, max_w, max_h;
+        const int icon_size = 50;
 
   message_form->size(410,103);
 
@@ -197,7 +195,7 @@ static void resizeform() {
 
 //      printf("button %d (%s) is %dx%d+%d,%d\n", i, button[i]->label(),
 //             button[i]->w(), button[i]->h(),
-//	     button[i]->x(), button[i]->y());
+//           button[i]->x(), button[i]->y());
     }
   message_form->init_sizes();
 }
@@ -457,7 +455,7 @@ int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
 Fl_Widget *fl_message_icon() {makeform(); return icon;}
 
 static const char* input_innards(const char* fmt, va_list ap,
-				 const char* defstr, uchar type) {
+                                 const char* defstr, uchar type) {
   makeform();
   message_form->size(410,103);
   message->position(60,10);
@@ -537,8 +535,8 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 
     \note \#include <FL/fl_ask.H>
 
-    \param[in] x	Preferred X position
-    \param[in] y	Preferred Y position
+    \param[in] x        Preferred X position
+    \param[in] y        Preferred Y position
     \param[in] center   1 = centered, 0 = absolute
 
     \see int fl_message_position(int *x, int *y)
@@ -561,7 +559,7 @@ void fl_message_position(const int x, const int y, const int center) {
 
     \note \#include <FL/fl_ask.H>
 
-    \param[in] widget	Widget or window to position the message box over.
+    \param[in] widget   Widget or window to position the message box over.
 
     \see int fl_message_position(int x, int y, int center)
 */
@@ -580,10 +578,10 @@ void fl_message_position(Fl_Widget *widget) {
     \param[out] x  Preferred X position, returns -1 if not set
     \param[out] y  Preferred Y position, returns -1 if not set
 
-    \returns	whether position is currently set or not
-    \retval	0 position is not set (may be hotspot or not)
-    \retval	1 position is set (window position)
-    \retval	2 position is set (message box centered)
+    \returns    whether position is currently set or not
+    \retval     0 position is not set (may be hotspot or not)
+    \retval     1 position is set (window position)
+    \retval     2 position is set (message box centered)
 
     \see fl_message_position(int, int)
     \see fl_message_hotspot(int)
@@ -605,8 +603,8 @@ int fl_message_position(int *x, int *y) {
     The default is \e enabled, so that the default button is the
     hotspot and appears at the mouse position.
     \note \#include <FL/fl_ask.H>
-    \param[in]	enable	non-zero enables hotspot behavior,
-			0 disables hotspot
+    \param[in]  enable  non-zero enables hotspot behavior,
+                        0 disables hotspot
  */
 void fl_message_hotspot(int enable) {
   enableHotspot = enable ? 1 : 0;
@@ -617,7 +615,7 @@ void fl_message_hotspot(int enable) {
     fl_ask(), fl_choice(), fl_input(), fl_password() to follow
     the mouse pointer.
     \note \#include <FL/fl_ask.H>
-    \return	0 if disable, non-zero otherwise
+    \return     0 if disable, non-zero otherwise
     \see fl_message_hotspot(int)
  */
 int fl_message_hotspot(void) {
@@ -637,7 +635,7 @@ int fl_message_hotspot(void) {
     that call.
 
     \note \#include <FL/fl_ask.H>
-    \param[in] title	window label, string copied internally
+    \param[in] title    window label, string copied internally
 */
 void fl_message_title(const char *title) {
   makeform();
@@ -658,7 +656,7 @@ void fl_message_title(const char *title) {
     local variable or free the string immediately after this call.
 
     \note \#include <FL/fl_ask.H>
-    \param[in] title	default window label, string copied internally
+    \param[in] title    default window label, string copied internally
 */
 void fl_message_title_default(const char *title) {
   if (message_title_default) {
@@ -670,7 +668,3 @@ void fl_message_title_default(const char *title) {
 }
 
 /** @} */
-
-//
-// End of "$Id$".
-//

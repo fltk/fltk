@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of X11 window driver.
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -34,8 +32,8 @@
 #if HAVE_DLFCN_H
 #include <dlfcn.h>
 #endif
-#define ShapeBounding			0
-#define ShapeSet			0
+#define ShapeBounding                   0
+#define ShapeSet                        0
 
 #if HAVE_OVERLAY
 extern XVisualInfo *fl_find_overlay_visual();
@@ -89,7 +87,7 @@ void Fl_X11_Window_Driver::flush_double_dbe(int erase_overlay)
     if (i->region) {Fl_Graphics_Driver::default_driver().XDestroyRegion(i->region); i->region = 0;}
     pWindow->clear_damage(FL_DAMAGE_ALL);
     backbuffer_bad = 0;
-  }  
+  }
   // Redraw as needed...
   if (pWindow->damage()) {
     fl_clip_region(i->region); i->region = 0;
@@ -181,7 +179,7 @@ int Fl_X11_Window_Driver::decorated_h()
 int Fl_X11_Window_Driver::decorated_w()
 {
   int w, h;
-  
+
   decorated_win_size(w, h);
   return w;
 }
@@ -191,8 +189,8 @@ void Fl_X11_Window_Driver::take_focus()
 {
   Fl_X *i = Fl_X::i(pWindow);
   if (!Fl_X11_Screen_Driver::ewmh_supported())
-    pWindow->show();		// Old WMs, XMapRaised
-  else if (i)			// New WMs use the NETWM attribute:
+    pWindow->show();            // Old WMs, XMapRaised
+  else if (i)                   // New WMs use the NETWM attribute:
     activate_window();
 }
 
@@ -351,7 +349,7 @@ void Fl_X11_Window_Driver::combine_mask()
 
 void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
   free_icons();
-  
+
   if (count > 0) {
     icon_->icons = new Fl_RGB_Image*[count];
     icon_->count = count;
@@ -361,7 +359,7 @@ void Fl_X11_Window_Driver::icons(const Fl_RGB_Image *icons[], int count) {
       icon_->icons[i]->normalize();
     }
   }
-  
+
   if (Fl_X::i(pWindow))
     set_icons();
 }
@@ -392,7 +390,7 @@ void Fl_X11_Window_Driver::free_icons() {
  (or NULL if a particular border is absent).
  Returned images can be deleted after use. Their depth and size may be platform-dependent.
  The top and bottom images extend from left of the left border to right of the right border.
- 
+
  This function exploits a feature of Fl_X11_Screen_Driver::read_win_rectangle() which,
  when called with negative 3rd argument, captures the window decoration.
  Other requirement to capture the window decoration:
@@ -449,7 +447,7 @@ void Fl_X11_Window_Driver::make_current() {
 #if USE_XFT
   ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->scale(Fl::screen_driver()->scale(screen_num()));
 #endif
-  
+
 #ifdef FLTK_USE_CAIRO
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(pWindow);
@@ -529,20 +527,20 @@ void Fl_X11_Window_Driver::decoration_sizes(int *top, int *left,  int *right, in
 void Fl_X11_Window_Driver::show_with_args_begin() {
   // Get defaults for drag-n-drop and focus...
   const char *key = 0, *val;
-  
+
   if (Fl::first_window()) key = Fl::first_window()->xclass();
   if (!key) key = "fltk";
-  
+
   val = XGetDefault(fl_display, key, "dndTextOps");
   if (val) Fl::dnd_text_ops(strcasecmp(val, "true") == 0 ||
                             strcasecmp(val, "on") == 0 ||
                             strcasecmp(val, "yes") == 0);
-  
+
   val = XGetDefault(fl_display, key, "tooltips");
   if (val) Fl_Tooltip::enable(strcasecmp(val, "true") == 0 ||
                               strcasecmp(val, "on") == 0 ||
                               strcasecmp(val, "yes") == 0);
-  
+
   val = XGetDefault(fl_display, key, "visibleFocus");
   if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
                              strcasecmp(val, "on") == 0 ||
@@ -624,7 +622,7 @@ void Fl_X11_Window_Driver::redraw_overlay() {
       overlay(new _Fl_Overlay(0,0,w(),h()));
       Fl_Group::current(0);
     } else {
-      overlay(pWindow);	// fake the overlay
+      overlay(pWindow); // fake the overlay
     }
   }
   if (shown()) {
@@ -712,8 +710,3 @@ int Fl_X11_Window_Driver::screen_num() {
   return screen_num_ >= 0 ? screen_num_ : 0;
 }
 #endif // USE_XFT
-
-
-//
-// End of "$Id$".
-//

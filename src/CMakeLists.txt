@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # CMakeLists.txt to build the FLTK library using CMake (www.cmake.org)
 #
 # Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 #
 #     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     https://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 set (CPPFILES
@@ -175,7 +173,7 @@ list (APPEND HEADER_FILES
   ${CMAKE_CURRENT_BINARY_DIR}/../config.h
 )
 
-set (GL_HEADER_FILES)		# FIXME: not (yet?) defined
+set (GL_HEADER_FILES)           # FIXME: not (yet?) defined
 
 if ((USE_X11 OR USE_SDL) AND NOT OPTION_PRINT_SUPPORT)
   set (PSFILES
@@ -221,7 +219,7 @@ if (USE_X11)
   else ()
     set (DRIVER_FILES ${DRIVER_FILES}
       drivers/Xlib/Fl_Xlib_Graphics_Driver_font_x.cxx
-    )  
+    )
   endif (USE_XFT)
   set (DRIVER_HEADER_FILES
     drivers/Posix/Fl_Posix_System_Driver.H
@@ -233,7 +231,7 @@ if (USE_X11)
 
 elseif (USE_SDL)
 
-  # SDL2 
+  # SDL2
 
   set (DRIVER_FILES
     drivers/Pico/Fl_Pico_System_Driver.cxx
@@ -531,14 +529,14 @@ endif (HAVE_XRENDER)
 if (USE_PANGO)
   list (APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO} ${HAVE_LIB_PANGOXFT})
   if(NOT APPLE)
-  	list (APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT} )
+        list (APPEND OPTIONAL_LIBS ${HAVE_LIB_GOBJECT} )
   endif(NOT APPLE)
 endif(USE_PANGO)
 
 if (USE_XFT)
     list (APPEND OPTIONAL_LIBS ${X11_Xft_LIB})
     if (LIB_fontconfig)
-	list (APPEND OPTIONAL_LIBS ${LIB_fontconfig})
+        list (APPEND OPTIONAL_LIBS ${LIB_fontconfig})
     endif (LIB_fontconfig)
 endif (USE_XFT)
 

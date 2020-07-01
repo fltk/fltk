@@ -3,8 +3,6 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -15,9 +13,9 @@ comment {//
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -136,7 +134,7 @@ Function {make_function_panel()} {} {
 Function {make_code_panel()} {} {
   Fl_Window code_panel {
     label {Code Properties}
-    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
+    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
     return; // ignore Escape
 code_panel->hide(); // otherwise hide..} open
     xywh {503 450 540 180} type Double labelsize 11 hide resizable
@@ -541,7 +539,7 @@ Function {make_widgetbin()} {open
     label {Widget Bin}
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
-else  
+else
   toggle_widgetbin_cb((Fl_Widget*)o, v);} open
     xywh {410 171 574 85} type Single align 80 hide non_modal
   } {
@@ -963,7 +961,5 @@ Function {make_sourceview()} {} {
 }
 
 comment {
-//
-// End of "$Id$".
 //} {in_source in_header
 }

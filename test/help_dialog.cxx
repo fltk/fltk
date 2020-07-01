@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Help_Dialog test program.
 //
 // Copyright 1999-2010 by Easy Software Products.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -26,16 +24,16 @@
 //
 
 #include <FL/Fl_Help_Dialog.H>
-#include <FL/filename.H>	/* FL_PATH_MAX */
-#include <string.h>		/* strcpy(), etc */
+#include <FL/filename.H>        /* FL_PATH_MAX */
+#include <string.h>             /* strcpy(), etc */
 
 //
 // 'main()' - Display the help GUI...
 //
 
-int				// O - Exit status
-main(int  argc,			// I - Number of command-line arguments
-     char *argv[])		// I - Command-line arguments
+int                             // O - Exit status
+main(int  argc,                 // I - Number of command-line arguments
+     char *argv[])              // I - Command-line arguments
 {
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
   char htmlname[FL_PATH_MAX];
@@ -58,7 +56,7 @@ main(int  argc,			// I - Number of command-line arguments
   }
 #endif
 
-  help->load(htmlname);	// TODO: add error check (when load() returns int instead of void)
+  help->load(htmlname); // TODO: add error check (when load() returns int instead of void)
 
   help->show(1, argv);
 
@@ -68,7 +66,3 @@ main(int  argc,			// I - Number of command-line arguments
 
   return 0;
 }
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef FL_DOXYGEN
@@ -276,7 +274,7 @@ static void make_raw_name(char *raw, char *pretty)
           mods |= BOLD;
         }
         goto NEXT_STYLE;
-          
+
         case 'L':
           if (strncasecmp(style, "Light", 5) == 0)
           {
@@ -564,13 +562,13 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
           nxt++; // first char of next name
         }
 
-	// Add the current name to the match pattern
-	XftPatternAddString(fnt_pat, XFT_FAMILY, curr);
+        // Add the current name to the match pattern
+        XftPatternAddString(fnt_pat, XFT_FAMILY, curr);
 
         if(nxt) curr = nxt; // move onto next name (if it exists)
-	// Now do a cut-down version of the FLTK name conversion.
-	// NOTE: we only use the slant and weight of the first name,
-	// subsequent names we ignore this for... But we still need to do the check.
+        // Now do a cut-down version of the FLTK name conversion.
+        // NOTE: we only use the slant and weight of the first name,
+        // subsequent names we ignore this for... But we still need to do the check.
         switch (*curr++) {
         case 'I': break; // italic
         case 'P':        // bold-italic (falls-through)
@@ -615,28 +613,28 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
 #if 0 // the XftResult never seems to get set to anything... abandon this code?
     switch(match_result) { // how good a match is this font for our request?
       case XftResultMatch:
-	puts("Object exists with the specified ID");
-	break;
+        puts("Object exists with the specified ID");
+        break;
 
       case XftResultTypeMismatch:
-	puts("Object exists, but the type does not match");
-	break;
+        puts("Object exists, but the type does not match");
+        break;
 
       case XftResultNoId:
-	puts("Object exists, but has fewer values than specified");
-	break;
+        puts("Object exists, but has fewer values than specified");
+        break;
 
       case FcResultOutOfMemory:
-	puts("FcResult: Malloc failed");
-	break;
+        puts("FcResult: Malloc failed");
+        break;
 
       case XftResultNoMatch:
-	puts("Object does not exist at all");
-	break;
+        puts("Object does not exist at all");
+        break;
 
       default:
-	printf("Invalid XftResult status %d \n", match_result);
-	break;
+        printf("Invalid XftResult status %d \n", match_result);
+        break;
     }
 #endif
 
@@ -801,21 +799,21 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
   if (fl_overlay) {
     if (!draw_)
       draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
-			   fl_overlay_visual->visual, fl_overlay_colormap);
+                           fl_overlay_visual->visual, fl_overlay_colormap);
     else //if (draw_overlay_window != fl_window)
       XftDrawChange(draw_, draw_overlay_window = fl_window);
   } else
 #endif
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
-			 fl_visual->visual, fl_colormap);
+                         fl_visual->visual, fl_colormap);
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
   Region region = fl_clip_region();
   if (!(region && XEmptyRegion(region))) {
     XftDrawSetClip(draw_, region);
-    
+
     // Use fltk's color allocator, copy the results to match what
     // XftCollorAllocValue returns:
     XftColor color;
@@ -825,7 +823,7 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(const char *str, int n, int x, int y
     color.color.green = ((int)g)*0x101;
     color.color.blue  = ((int)b)*0x101;
     color.color.alpha = 0xffff;
-    
+
     const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
     XftDrawString16(draw_, &color, ((Fl_Xlib_Font_Descriptor*)font_descriptor())->font, x1, y1, (XftChar16 *)buffer, n);
@@ -847,14 +845,14 @@ void Fl_Xlib_Graphics_Driver::drawUCS4(const void *str, int n, int x, int y) {
   if (fl_overlay) {
     if (!draw_)
       draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
-			   fl_overlay_visual->visual, fl_overlay_colormap);
+                           fl_overlay_visual->visual, fl_overlay_colormap);
     else //if (draw_overlay_window != fl_window)
       XftDrawChange(draw_, draw_overlay_window = fl_window);
   } else
 #endif
   if (!draw_)
     draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
-			 fl_visual->visual, fl_colormap);
+                         fl_visual->visual, fl_colormap);
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
@@ -934,7 +932,7 @@ extern "C" {
 int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
   Fl_Fontdesc *s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // empty slot in table, use entry 0
-  
+
   fl_open_display();
   XftFontSet* fs = XftListFonts(fl_display, fl_screen,
                                 XFT_FAMILY, XftTypeString, s->name+1,
@@ -1301,7 +1299,7 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   Region region = clip_region();
   if (region && XEmptyRegion(region)) return;
   if (!playout_) context();
-  
+
   char *str2 = NULL;
   const char *tmpv = (const char *)memchr(str, '\n', n);
   if (tmpv == str + n - 1) { // ignore final '\n'
@@ -1339,7 +1337,7 @@ void Fl_Xlib_Graphics_Driver::do_draw(int from_right, const char *str, int n, in
   else
     XftDrawChange(draw_, draw_window = fl_window);
   XftDrawSetClip(draw_, region);
-  
+
   int  dx, dy, w, h, y_correction, desc = descent_unscaled(), lheight = height_unscaled();
   fl_pango_layout_get_pixel_extents(playout_, dx, dy, w, h, desc, lheight, y_correction);
   if (from_right) {
@@ -1465,7 +1463,3 @@ Fl_Xlib_Font_Descriptor::Fl_Xlib_Font_Descriptor(const char* name, Fl_Fontsize f
 #endif // USE_PANGO
 
 #endif // FL_DOXYGEN
-
-//
-// End of "$Id$"
-//

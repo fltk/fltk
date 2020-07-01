@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2019 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
@@ -67,7 +65,7 @@ public:
 
 #endif // !FL_DOXYGEN
 
-/** \addtogroup group_comdlg 
+/** \addtogroup group_comdlg
     @{ */
 
 /**
@@ -122,21 +120,21 @@ class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   static void rgb_cb(Fl_Widget*, void*);
   static void mode_cb(Fl_Widget*, void*);
 public:
-  
+
   int handle(int e);
 
-  /** 
-   Returns which Fl_Color_Chooser variant is currently active 
-   \return color modes are rgb(0), byte(1), hex(2), or hsv(3)   
+  /**
+   Returns which Fl_Color_Chooser variant is currently active
+   \return color modes are rgb(0), byte(1), hex(2), or hsv(3)
    */
   int mode() {return choice.value();}
-  
-  /** 
-   Set which Fl_Color_Chooser variant is currently active 
-   \param[in] newMode color modes are rgb(0), byte(1), hex(2), or hsv(3)   
+
+  /**
+   Set which Fl_Color_Chooser variant is currently active
+   \param[in] newMode color modes are rgb(0), byte(1), hex(2), or hsv(3)
    */
   void mode(int newMode);
-  
+
   /**
     Returns the current hue.
     0 <= hue < 6. Zero is red, one is yellow, two is green, etc.
@@ -190,7 +188,3 @@ FL_EXPORT int fl_color_chooser(const char* name, double& r, double& g, double& b
 FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b, int m=-1);
 
 #endif
-
-//
-// End of "$Id$".
-//

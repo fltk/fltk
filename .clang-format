@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # clang-format control file for the FLTK project.
 #
 # Copyright 2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 #
 # Important notes:
@@ -46,11 +44,11 @@
 
 # FLTK settings (currently experimental).
 
-BasedOnStyle:					LLVM
+BasedOnStyle:                                   LLVM
 
 # The Language tag marks C++ options
 
-# Language:					Cpp
+# Language:                                     Cpp
 
 # The following options override the LLVM style definitions, if set.
 
@@ -65,61 +63,61 @@ BasedOnStyle:					LLVM
 # UseTab can be set to 'Never' (default) or 'ForIndentation' to avoid
 # this annoying bug of clang-format.
 #
-# UseTab:					Always
-UseTab:						ForIndentation
+# UseTab:                                       Always
+UseTab:                                         ForIndentation
 
 # Should we extend code lines beyond 80 columns ?
 # Default: 80
-ColumnLimit:					120
+ColumnLimit:                                    120
 
 # The FLTK CMP requires that case labels are indented (LLVM: false)
-IndentCaseLabels:				true
+IndentCaseLabels:                               true
 
 # There are sometimes more than 1 empty lines; should we keep 2 or more ?
 # LLVM default is 1.
 
-MaxEmptyLinesToKeep:				2
+MaxEmptyLinesToKeep:                            2
 
 # Present FLTK source code contains some short blocks and if statements
 # in one line, but we should better make it consistent and NOT use the
 # following "Allow..." statements (leave them commented out):
 #
 # LLVM default values:
-# AllowShortBlocksOnASingleLine:		false
-# AllowShortFunctionsOnASingleLine:		All
-# AllowShortIfStatementsOnASingleLine:		false
-# AllowShortLoopsOnASingleLine:			false
+# AllowShortBlocksOnASingleLine:                false
+# AllowShortFunctionsOnASingleLine:             All
+# AllowShortIfStatementsOnASingleLine:          false
+# AllowShortLoopsOnASingleLine:                 false
 #
 # FLTK values:
-# AllowShortBlocksOnASingleLine:		true
-# AllowShortIfStatementsOnASingleLine:		true
+# AllowShortBlocksOnASingleLine:                true
+# AllowShortIfStatementsOnASingleLine:          true
 
 # Short inline functions in header files are an exception to the above "rule":
 
-AllowShortFunctionsOnASingleLine:		Inline
+AllowShortFunctionsOnASingleLine:               Inline
 
 # The following is particularly useful for macros with continuation lines.
-# LLVM default:	AlignEscapedNewlinesLeft:	false
+# LLVM default: AlignEscapedNewlinesLeft:       false
 
-AlignEscapedNewlinesLeft:			true
+AlignEscapedNewlinesLeft:                       true
 
 # Include files should be left as-is until we know we can sort them
 # without any bad side effects (LLVM: true)
 
-SortIncludes:					false
+SortIncludes:                                   false
 
 # Multiple constructor initializers must be on consecutive lines:
 
-BreakConstructorInitializersBeforeComma:	true
+BreakConstructorInitializersBeforeComma:        true
 
 # Constructor initializers will be indented by 2 spaces (LLVM: 4):
 
-ConstructorInitializerIndentWidth:		2
+ConstructorInitializerIndentWidth:              2
 
 # Continuation lines (if automatically wrapped) may be indented differently.
 # This does not apply to function call arguments which are aligned to the
 # opening bracket. LLVM (default): 4
-# ContinuationIndentWidth:			2
+# ContinuationIndentWidth:                      2
 
 # Most of FLTK's code uses 'void *p' as opposed to 'void* p'.
 # This is particularly useful in combined declarations like:
@@ -131,9 +129,5 @@ ConstructorInitializerIndentWidth:		2
 # Note: this also applies to references like 'int &w, int &h', for instance
 # in function parameter lists.
 
-DerivePointerAlignment:				false
-PointerAlignment:				Right
-
-#
-# End of "$Id$".
-#
+DerivePointerAlignment:                         false
+PointerAlignment:                               Right

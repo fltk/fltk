@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Change the current cursor.
@@ -38,7 +36,7 @@
 
 /**
   Sets the cursor for the current window to the specified shape and colors.
-  The cursors are defined in the <FL/Enumerations.H> header file. 
+  The cursors are defined in the <FL/Enumerations.H> header file.
   */
 void fl_cursor(Fl_Cursor c) {
   if (Fl::first_window()) Fl::first_window()->cursor(c);
@@ -50,7 +48,7 @@ void fl_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
 }
 
 
-/** 
+/**
     Sets the default window cursor. This is the cursor that will be used
     after the mouse pointer leaves a widget with a custom cursor set.
 
@@ -177,21 +175,16 @@ void Fl_Window::cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
 
 /**
  For back compatibility only.
- Same as Fl_Window::cursor(Fl_Cursor) 
+ Same as Fl_Window::cursor(Fl_Cursor)
 */
 void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   cursor(c);
 };
 
-/** 
+/**
  For back compatibility only.
- same as Fl_Window::default_cursor(Fl_Cursor) 
+ same as Fl_Window::default_cursor(Fl_Cursor)
 */
 void Fl_Window::default_cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   default_cursor(c);
 };
-
-
-//
-// End of "$Id$".
-//

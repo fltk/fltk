@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Wizard widget definitions.
 //
 // Copyright 1999-2010 by Easy Software Products.
@@ -12,9 +10,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -58,7 +56,3 @@ public:
 };
 
 #endif // !_Fl_Wizard_H_
-
-//
-// End of "$Id$".
-//

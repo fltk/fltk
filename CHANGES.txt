@@ -1,4 +1,4 @@
-Changes in FLTK 1.4.0					Released: ??? ?? 2020
+Changes in FLTK 1.4.0                            Released: ??? ?? 2020
 
   General Information about this Release
 

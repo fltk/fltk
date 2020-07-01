@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // FLTK native OS file chooser widget
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /** \file
@@ -38,15 +36,15 @@
 
  Each platform must implement the constructor of the Fl_Native_File_Chooser class.
  This particular implementation:
- 
+
  Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   platform_fnfc = new Fl_Native_File_Chooser_FLTK_Driver(val);
  }
- 
- can be used by any platform. 
+
+ can be used by any platform.
  No more code is required. The cross-platform Fl_Native_File_Chooser_FLTK.cxx file must be compiled in libfltk,
  and the default FLTK file chooser will be used.
- 
+
  This other implementation:
  Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
    platform_fnfc = 0;
@@ -63,19 +61,19 @@
 class Fl_Native_File_Chooser_Driver;
 
 /**
- This class lets an FLTK application easily and consistently access 
- the operating system's native file chooser. Some operating systems 
- have very complex and specific file choosers that many users want 
- access to specifically, instead of FLTK's default file chooser(s). 
- 
+ This class lets an FLTK application easily and consistently access
+ the operating system's native file chooser. Some operating systems
+ have very complex and specific file choosers that many users want
+ access to specifically, instead of FLTK's default file chooser(s).
+
  In cases where there is no native file browser, FLTK's own file browser
  is used instead.
- 
+
  To use this widget, use the following include in your code:
  \code
  #include <FL/Fl_Native_File_Chooser.H>
  \endcode
- 
+
  The following example shows how to pick a single file:
  \code
  // Create and post the local native file chooser
@@ -94,15 +92,15 @@ class Fl_Native_File_Chooser_Driver;
    default: printf("PICKED: %s\n", fnfc.filename()); break;  // FILE CHOSEN
  }
  \endcode
- 
+
  The Fl_Native_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
  recommended to open files that may have non-ASCII names with the fl_fopen() or
  fl_open() utility functions that handle these names in a cross-platform way
  (whereas the standard fopen()/open() functions fail on the Windows platform
  to open files with a non-ASCII name).
- 
+
  <B>Platform Specific Caveats</B>
- 
+
  - Under X windows, and if Fl::OPTION_FNFC_USES_GTK has not been switched off,
  the widget attempts to use standard GTK file chooser dialogs if they are
  available at run-time on the platform, and falls back to use FLTK's Fl_File_Chooser if they are not.
@@ -111,34 +109,34 @@ class Fl_Native_File_Chooser_Driver;
  at the start of main(), to enable the nicer looking file browser widgets.
  Use the static public attributes of class Fl_File_Chooser to localize
  the browser.
- - Some operating systems support certain OS specific options; see 
+ - Some operating systems support certain OS specific options; see
  Fl_Native_File_Chooser::options() for a list.
- 
+
  \image html Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms."
  \image latex Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms" width=14cm
- 
+
  */
 class FL_EXPORT Fl_Native_File_Chooser {
 private:
   Fl_Native_File_Chooser_Driver *platform_fnfc;
 public:
   enum Type {
-    BROWSE_FILE = 0,			///< browse files (lets user choose one file)
-    BROWSE_DIRECTORY,			///< browse directories (lets user choose one directory)
-    BROWSE_MULTI_FILE,			///< browse files (lets user choose multiple files)
-    BROWSE_MULTI_DIRECTORY,		///< browse directories (lets user choose multiple directories)
-    BROWSE_SAVE_FILE,			///< browse to save a file
-    BROWSE_SAVE_DIRECTORY		///< browse to save a directory
+    BROWSE_FILE = 0,                    ///< browse files (lets user choose one file)
+    BROWSE_DIRECTORY,                   ///< browse directories (lets user choose one directory)
+    BROWSE_MULTI_FILE,                  ///< browse files (lets user choose multiple files)
+    BROWSE_MULTI_DIRECTORY,             ///< browse directories (lets user choose multiple directories)
+    BROWSE_SAVE_FILE,                   ///< browse to save a file
+    BROWSE_SAVE_DIRECTORY               ///< browse to save a directory
   };
   enum Option {
-    NO_OPTIONS     = 0x0000,		///< no options enabled
-    SAVEAS_CONFIRM = 0x0001,		///< Show native 'Save As' overwrite confirm dialog
-    NEW_FOLDER     = 0x0002,		///< Show 'New Folder' icon (if supported)
-    PREVIEW        = 0x0004,		///< enable preview mode (if supported)
-    USE_FILTER_EXT = 0x0008		///< Chooser filter pilots the output file extension (if supported)
+    NO_OPTIONS     = 0x0000,            ///< no options enabled
+    SAVEAS_CONFIRM = 0x0001,            ///< Show native 'Save As' overwrite confirm dialog
+    NEW_FOLDER     = 0x0002,            ///< Show 'New Folder' icon (if supported)
+    PREVIEW        = 0x0004,            ///< enable preview mode (if supported)
+    USE_FILTER_EXT = 0x0008             ///< Chooser filter pilots the output file extension (if supported)
   };
   static const char *file_exists_message;
-  
+
   /**
    The constructor. Internally allocates the native widgets.
    Optional \p val presets the type of browser this will be,
@@ -213,7 +211,7 @@ public:
 
 /** A cross-platform implementation of Fl_Native_File_Chooser_Driver.
  This implementation uses a Fl_File_Chooser object as file chooser.
- 
+
  Any platform can support the Fl_Native_File_Chooser class by implementing
  its constructor as follows:
  \code
@@ -229,16 +227,16 @@ private:
   int exist_dialog();
   void parse_filter();
 protected:
-  int   _btype;			// kind-of browser to show()
-  int   _options;		// general options
+  int   _btype;                 // kind-of browser to show()
+  int   _options;               // general options
   int   _nfilters;
-  char *_filter;		// user supplied filter
-  char *_parsedfilt;		// parsed filter
-  int   _filtvalue;		// selected filter
+  char *_filter;                // user supplied filter
+  char *_parsedfilt;            // parsed filter
+  int   _filtvalue;             // selected filter
   char *_preset_file;
-  char *_prevvalue;		// Returned filename
+  char *_prevvalue;             // Returned filename
   char *_directory;
-  char *_errmsg;		// error message
+  char *_errmsg;                // error message
   Fl_File_Chooser *_file_chooser;
 public:
   Fl_Native_File_Chooser_FLTK_Driver(int val);
@@ -272,7 +270,3 @@ public:
 
 
 #endif /*FL_NATIVE_FILE_CHOOSER_H*/
-
-//
-// End of "$Id$".
-//

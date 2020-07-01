@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Progress bar widget definitions.
 //
 // Copyright 2000-2010 by Michael Sweet.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -36,10 +34,10 @@
     Displays a progress bar for the user.
 */
 class FL_EXPORT Fl_Progress : public Fl_Widget {
-  
-  float	value_,
-	minimum_,
-	maximum_;
+
+  float value_,
+        minimum_,
+        maximum_;
 
   protected:
 
@@ -50,23 +48,19 @@ class FL_EXPORT Fl_Progress : public Fl_Widget {
   Fl_Progress(int x, int y, int w, int h, const char *l = 0);
 
   /** Sets the maximum value in the progress widget.  */
-  void	maximum(float v) { maximum_ = v; redraw(); }
+  void  maximum(float v) { maximum_ = v; redraw(); }
   /** Gets the maximum value in the progress widget.  */
-  float	maximum() const { return (maximum_); }
+  float maximum() const { return (maximum_); }
 
   /** Sets the minimum value in the progress widget.  */
-  void	minimum(float v) { minimum_ = v; redraw(); }
+  void  minimum(float v) { minimum_ = v; redraw(); }
   /** Gets the minimum value in the progress widget.  */
-  float	minimum() const { return (minimum_); }
+  float minimum() const { return (minimum_); }
 
   /** Sets the current value in the progress widget.  */
-  void	value(float v) { value_ = v; redraw(); }
+  void  value(float v) { value_ = v; redraw(); }
   /** Gets the current value in the progress widget.  */
-  float	value() const { return (value_); }
+  float value() const { return (value_); }
 };
 
 #endif // !_Fl_Progress_H_
-
-//
-// End of "$Id$".
-//

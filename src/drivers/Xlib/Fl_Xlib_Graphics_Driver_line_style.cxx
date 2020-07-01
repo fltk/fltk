@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Line style code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -47,9 +45,9 @@ void Fl_Xlib_Graphics_Driver::line_style_unscaled(int style, float width, char* 
     }
     char* p = dashes = buf;
     switch (style & 0xff) {
-    case FL_DASH:	*p++ = dash; *p++ = gap; break;
-    case FL_DOT:	*p++ = dot; *p++ = gap; break;
-    case FL_DASHDOT:	*p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; break;
+    case FL_DASH:       *p++ = dash; *p++ = gap; break;
+    case FL_DOT:        *p++ = dot; *p++ = gap; break;
+    case FL_DASHDOT:    *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; break;
     case FL_DASHDOTDOT: *p++ = dash; *p++ = gap; *p++ = dot; *p++ = gap; *p++ = dot; *p++ = gap; break;
     }
     ndashes = p-buf;
@@ -59,11 +57,7 @@ if (*dashes == 0) ndashes = 0;//against error with very small scaling
   static int Join[4] = {JoinMiter, JoinMiter, JoinRound, JoinBevel};
   XSetLineAttributes(fl_display, gc_,
                      line_width_,
-		     ndashes ? LineOnOffDash : LineSolid,
-		     Cap[(style>>8)&3], Join[(style>>12)&3]);
+                     ndashes ? LineOnOffDash : LineSolid,
+                     Cap[(style>>8)&3], Join[(style>>12)&3]);
   if (ndashes) XSetDashes(fl_display, gc_, 0, dashes, ndashes);
 }
-
-//
-// End of "$Id$".
-//

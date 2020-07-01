@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Printing support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -9,14 +7,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-/** \file Fl_Printer.H 
+/** \file Fl_Printer.H
  \brief declaration of class Fl_Printer.
  */
 
@@ -29,11 +27,11 @@
  \brief OS-independent print support.
  Fl_Printer allows to use all drawing, color, text, image, and clip FLTK functions, and to have them operate
  on printed page(s). There are two main, non exclusive, ways to use it.
- <ul><li>Print any widget (standard, custom, Fl_Window, Fl_Gl_Window) as it appears 
- on screen, with optional translation, scaling and rotation. This is done by calling print_widget(), 
+ <ul><li>Print any widget (standard, custom, Fl_Window, Fl_Gl_Window) as it appears
+ on screen, with optional translation, scaling and rotation. This is done by calling print_widget(),
  print_window() or print_window_part().
  <li>Use a series of FLTK graphics commands (e.g., font, text, lines, colors, clip, image) to
- compose a page appropriately shaped for printing. 
+ compose a page appropriately shaped for printing.
  </ul>
  In both cases, begin by begin_job(), begin_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
@@ -111,12 +109,12 @@ public:
 
   /** \name These attributes are useful for the Linux/Unix platform only.
    \{
-   */  
-  static const char *dialog_title; 
-  static const char *dialog_printer; 
-  static const char *dialog_range; 
-  static const char *dialog_copies; 
-  static const char *dialog_all; 
+   */
+  static const char *dialog_title;
+  static const char *dialog_printer;
+  static const char *dialog_range;
+  static const char *dialog_copies;
+  static const char *dialog_all;
   static const char *dialog_pages;
   static const char *dialog_from;
   static const char *dialog_to;
@@ -131,13 +129,9 @@ public:
   static const char *property_use;
   static const char *property_save;
   static const char *property_cancel;
-  /** \} */ 
+  /** \} */
   /** The destructor */
   ~Fl_Printer(void);
 };
 
 #endif // Fl_Printer_H
-
-//
-// End of "$Id$"
-//

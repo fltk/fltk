@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // FLUID undo support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -32,9 +30,9 @@
 #endif // _WIN32 && !__CYGWIN__
 
 
-extern Fl_Preferences	fluid_prefs;	// FLUID preferences
-extern Fl_Menu_Item	Main_Menu[];	// Main menu
-extern Fl_Menu_Bar     *main_menubar;	// Main menubar
+extern Fl_Preferences   fluid_prefs;    // FLUID preferences
+extern Fl_Menu_Item     Main_Menu[];    // Main menu
+extern Fl_Menu_Bar     *main_menubar;   // Main menubar
 
 
 
@@ -46,11 +44,11 @@ extern Fl_Menu_Bar     *main_menubar;	// Main menubar
 //
 
 
-int undo_current = 0;			// Current undo level in buffer
-int undo_last = 0;			// Last undo level in buffer
-int undo_max = 0;			// Maximum undo level used
-int undo_save = -1;			// Last undo level that was saved
-static int undo_paused = 0;		// Undo checkpointing paused?
+int undo_current = 0;                   // Current undo level in buffer
+int undo_last = 0;                      // Last undo level in buffer
+int undo_max = 0;                       // Maximum undo level used
+int undo_save = -1;                     // Last undo level that was saved
+static int undo_paused = 0;             // Undo checkpointing paused?
 
 
 // Return the undo filename.
@@ -68,8 +66,8 @@ static char *undo_filename(int level) {
 
   // append filename: "undo_PID_LEVEL.fl"
   snprintf(undo_path + undo_path_len,
-	   sizeof(undo_path) - undo_path_len - 1,
-	   "undo_%d_%d.fl", getpid(), level);
+           sizeof(undo_path) - undo_path_len - 1,
+           "undo_%d_%d.fl", getpid(), level);
   return undo_path;
 }
 
@@ -187,8 +185,3 @@ void undo_resume() {
 void undo_suspend() {
   undo_paused = 1;
 }
-
-
-//
-// End of "$Id$".
-//

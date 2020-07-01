@@ -21,7 +21,7 @@ The authors do request that such modifications be
 contributed to the FLTK project - send all contributions
 through the "Software Trouble Report" on the following page:
 .IP
-    http://www.fltk.org/str.php
+    https://www.fltk.org/bugs.php
 .IP
 2. Widgets that are subclassed from FLTK widgets do not
 constitute a derivative work.
@@ -46,12 +46,12 @@ following example statement can be included in user
 documentation to satisfy this requirement:
 .IP
 [program/widget] is based in part on the work of the FLTK
-project (http://www.fltk.org).
+project (https://www.fltk.org).
 .SH SEE ALSO
 fltk\-config(1), fluid(1)
 .br
 FLTK Programming Manual
 .br
-FLTK Web Site, http://www.fltk.org/
+FLTK Web Site, https://www.fltk.org/
 .SH AUTHORS
 Bill Spitzak and others.

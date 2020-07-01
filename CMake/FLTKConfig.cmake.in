@@ -36,7 +36,3 @@ if (CMAKE_CROSSCOMPILING)
 else ()
   set (FLTK_FLUID_EXECUTABLE fluid)
 endif (CMAKE_CROSSCOMPILING)
-
-#
-# End of file
-#

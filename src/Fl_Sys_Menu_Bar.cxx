@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // system menu bar widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -163,7 +161,7 @@ void Fl_Sys_Menu_Bar::remove(int index)
 
 /**
  \brief rename an item from the system menu bar
- 
+
  \param index    the index of the item to rename
  \param name    the new item name as a UTF8 string
  */
@@ -210,7 +208,7 @@ Fl_Sys_Menu_Bar::window_menu_style_enum Fl_Sys_Menu_Bar::window_menu_style() {
  all windows in a single tabbed display mode. This is the \b default Window menu style
  for FLTK apps.
  \li \c tabbing_mode_preferred : new windows are displayed in tabbed mode when first created
- 
+
  The Window menu, if present, is entirely created and controlled by the FLTK library.
  Mac OS version 10.12 or later must be running for windows to be displayed in tabbed form.
  Under non MacOS platforms, this function does nothing.
@@ -228,7 +226,7 @@ void Fl_Sys_Menu_Bar::window_menu_style(Fl_Sys_Menu_Bar::window_menu_style_enum 
  Fl_Sys_Menu_Bar::window_menu_style(window_menu_style_enum) before the first Fl_Window::show().
  Alternatively, an app can call create_window_menu() after having populated the system menu bar,
  for example with menu(const Fl_Menu_Item *), and before the first Fl_Window::show().
- 
+
  This function does nothing on non MacOS platforms.
  \version 1.4
  */
@@ -254,7 +252,3 @@ Fl_Sys_Menu_Bar_Driver::~Fl_Sys_Menu_Bar_Driver() {}
 
 Fl_Sys_Menu_Bar::window_menu_style_enum Fl_Sys_Menu_Bar_Driver::window_menu_style_ = Fl_Sys_Menu_Bar::tabbing_mode_automatic;
 #endif // !defined(FL_DOXYGEN)
-
-//
-// End of "$Id$".
-//

@@ -3,7 +3,7 @@
  <!-- Warning: \p .h   does not work but <tt>.h</tt>   does -->
  <!-- Warning: \p .cxx does not work but <tt>.cxx</tt> does -->
 
- \page	fluid	Programming with FLUID
+ \page  fluid   Programming with FLUID
 
 This chapter shows how to use the Fast Light User-Interface Designer
 ("FLUID") to create your GUIs.
@@ -135,7 +135,7 @@ files:
 
 \code
 my_panels.h my_panels.cxx: my_panels.fl
-	fluid -c my_panels.fl
+        fluid -c my_panels.fl
 \endcode
 
 Most versions of make support rules that cause <tt>.fl</tt>
@@ -144,7 +144,7 @@ files to be compiled:
 \code
 .SUFFIXES: .fl .cxx .h
 .fl.h .fl.cxx:
-	fluid -c $<
+        fluid -c $<
 \endcode
 
 If you use

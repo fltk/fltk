@@ -3,8 +3,6 @@ version 1.0400
 header_name {.h}
 code_name {.cxx}
 comment {//
-// "$Id$"
-//
 // FLUID print panel for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -15,9 +13,9 @@ comment {//
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 } {in_source in_header
 }
@@ -53,7 +51,7 @@ Function {make_print_panel()} {open
       } {}
       Fl_Button print_properties {
         label {Properties...}
-        callback {print_properties_panel->show();} selected
+        callback {print_properties_panel->show();}
         xywh {294 10 105 25}
       }
       Fl_Box print_status {
@@ -357,10 +355,4 @@ print_page_size->value(val);
 snprintf(name, sizeof(name), "%s/output_mode", printer);
 fluid_prefs.get(name, val, 0);
 print_output_mode[val]->setonly();} {}
-}
-
-comment {
-//
-// End of "$Id$".
-//} {in_source in_header
 }

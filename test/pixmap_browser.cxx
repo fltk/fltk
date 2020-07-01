@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A shared image test program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -50,7 +48,7 @@ void load_file(const char *n) {
     return;
   }
   Fl_Shared_Image *img2 = Fl_Shared_Image::get(n);
- 
+
   if (!img2) {
     b->label("@filenew"); // show an empty document
     b->labelsize(64);
@@ -103,7 +101,7 @@ void print_cb(Fl_Widget *widget, void *) {
   printer.end_page();
   printer.end_job();
 }
-   
+
 void svg_cb(Fl_Widget *widget, void *) {
   Fl_Native_File_Chooser fnfc;
   fnfc.title("Pick a .svg file");
@@ -147,7 +145,3 @@ int main(int argc, char **argv) {
   window.show(argc,argv);
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

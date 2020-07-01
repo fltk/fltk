@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Main CMakeLists.txt to build the FLTK project using CMake (www.cmake.org)
 # Written by Michael Surette
 #
@@ -10,11 +8,11 @@
 # the file "COPYING" which should have been included with this file.  If this
 # file is missing or damaged, see the license at:
 #
-#     http://www.fltk.org/COPYING.php
+#     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     http://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 #######################################################################
@@ -208,31 +206,31 @@ if(HAVE_DLFCN_H)
 endif(HAVE_DLFCN_H)
 
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_DL_LIBS})
-CHECK_FUNCTION_EXISTS(dlsym			HAVE_DLSYM)
+CHECK_FUNCTION_EXISTS(dlsym                     HAVE_DLSYM)
 set(CMAKE_REQUIRED_LIBRARIES)
 
-CHECK_FUNCTION_EXISTS(localeconv		HAVE_LOCALECONV)
+CHECK_FUNCTION_EXISTS(localeconv                HAVE_LOCALECONV)
 
 if(LIB_png)
   set(CMAKE_REQUIRED_LIBRARIES ${LIB_png})
-  CHECK_FUNCTION_EXISTS(png_get_valid		HAVE_PNG_GET_VALID)
-  CHECK_FUNCTION_EXISTS(png_set_tRNS_to_alpha	HAVE_PNG_SET_TRNS_TO_ALPHA)
+  CHECK_FUNCTION_EXISTS(png_get_valid           HAVE_PNG_GET_VALID)
+  CHECK_FUNCTION_EXISTS(png_set_tRNS_to_alpha   HAVE_PNG_SET_TRNS_TO_ALPHA)
   set(CMAKE_REQUIRED_LIBRARIES)
 endif(LIB_png)
 
-CHECK_FUNCTION_EXISTS(scandir			HAVE_SCANDIR)
-CHECK_FUNCTION_EXISTS(snprintf			HAVE_SNPRINTF)
+CHECK_FUNCTION_EXISTS(scandir                   HAVE_SCANDIR)
+CHECK_FUNCTION_EXISTS(snprintf                  HAVE_SNPRINTF)
 
 # not really true but we convert strcasecmp calls to _stricmp calls in flstring.h
 if(MSVC)
    set(HAVE_STRCASECMP 1)
 endif(MSVC)
 
-CHECK_FUNCTION_EXISTS(strcasecmp		HAVE_STRCASECMP)
+CHECK_FUNCTION_EXISTS(strcasecmp                HAVE_STRCASECMP)
 
-CHECK_FUNCTION_EXISTS(strlcat			HAVE_STRLCAT)
-CHECK_FUNCTION_EXISTS(strlcpy			HAVE_STRLCPY)
-CHECK_FUNCTION_EXISTS(vsnprintf			HAVE_VSNPRINTF)
+CHECK_FUNCTION_EXISTS(strlcat                   HAVE_STRLCAT)
+CHECK_FUNCTION_EXISTS(strlcpy                   HAVE_STRLCPY)
+CHECK_FUNCTION_EXISTS(vsnprintf                 HAVE_VSNPRINTF)
 
 if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
@@ -285,7 +283,3 @@ endif (DOXYGEN_FOUND)
 # Cleanup: unset local variables
 
 unset (CMAKE_REQUIRED_QUIET)
-
-#
-# End of "$Id$".
-#

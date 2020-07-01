@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu item code for the Fast Light Tool Kit (FLTK).
 //
 // Menu items are kludged by making a phony Fl_Box widget so the normal
@@ -15,11 +13,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -90,7 +88,7 @@ void Fl_Input_Choice_Type::build_menu() {
       if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-	(q->next && q->next->is_menu_item()) ? q->next->level : level;
+        (q->next && q->next->is_menu_item()) ? q->next->level : level;
       while (lvl > l1) {m->label(0); m++; lvl--;}
       lvl = l1;
     }
@@ -226,7 +224,7 @@ void Fl_Menu_Item_Type::write_static() {
       // Go up one more level for Fl_Input_Choice, as these are groups themselves
       if (t && !strcmp(t->type_name(), "Fl_Input_Choice"))
         write_c("->parent()");
-      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent) 
+      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent)
         write_c("->parent()");
       if (!q || strcmp(q->type_name(), "widget_class"))
         write_c("->user_data()");
@@ -244,11 +242,11 @@ void Fl_Menu_Item_Type::write_static() {
   // entire array out:
   const char* k = class_name(1);
   if (k) {
-    int i; 
+    int i;
     if (i18n_type) write_c("\nunsigned char %s::%s_i18n_done = 0;", k, menu_name(i));
     write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
   } else {
-    int i; 
+    int i;
     if (i18n_type) write_c("\nunsigned char %s_i18n_done = 0;", menu_name(i));
     write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
   }
@@ -271,11 +269,11 @@ void Fl_Menu_Item_Type::write_static() {
       if (c) {
         if (c==m->name()) {
           // assign a menu item address directly to a variable
-          int i; 
+          int i;
           const char* n = ((Fl_Menu_Item_Type *)q)->menu_name(i);
           write_c("Fl_Menu_Item* %s::%s = %s::%s + %d;\n", k, c, k, n, i);
         } else {
-          // if the name is an array, only define the array. 
+          // if the name is an array, only define the array.
           // The actual assignment is in write_code1()
           write_c("Fl_Menu_Item* %s::%s;\n", k, c);
         }
@@ -315,12 +313,12 @@ void Fl_Menu_Item_Type::write_item() {
   else if (label()) write_cstring(label()); // we will call i18n when the widget is instantiated for the first time
   else write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
-		int s = ((Fl_Button*)o)->shortcut();
-		if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-			write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
-		} else {
-			write_c(", 0x%x, ", s);
-		}
+                int s = ((Fl_Button*)o)->shortcut();
+                if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
+                        write_c(", FL_COMMAND|0x%x, ", s & ~(FL_CTRL|FL_META));
+                } else {
+                        write_c(", 0x%x, ", s);
+                }
   } else
     write_c(", 0, ");
   if (callback()) {
@@ -337,7 +335,7 @@ void Fl_Menu_Item_Type::write_item() {
   else
     write_c(" 0,");
   write_c(" %d, (uchar)%s, %d, %d, %d", flags(),
-	  labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
+          labeltypes[o->labeltype()], o->labelfont(), o->labelsize(), o->labelcolor());
   write_c("},\n");
 }
 
@@ -449,7 +447,7 @@ void Fl_Menu_Type::build_menu() {
       if (q->is_parent()) {lvl++; m->flags |= FL_SUBMENU;}
       m++;
       int l1 =
-	(q->next && q->next->is_menu_item()) ? q->next->level : level;
+        (q->next && q->next->is_menu_item()) ? q->next->level : level;
       while (lvl > l1) {m->label(0); m++; lvl--;}
       lvl = l1;
     }
@@ -484,10 +482,10 @@ void Fl_Menu_Type::write_code2() {
       const char *mName = mi->menu_name(i);
       for (Fl_Type* q = next; q && q->is_menu_item(); q = q->next) {
         if (((Fl_Menu_Item_Type*)q)->label()) nLabel++;
-	int thislevel = q->level; if (q->is_parent()) thislevel++;
-	int nextlevel =
-	    (q->next && q->next->is_menu_item()) ? q->next->level : next->level+1;
-	nItem += 1 + ((thislevel > nextlevel) ? (thislevel-nextlevel) : 0);
+        int thislevel = q->level; if (q->is_parent()) thislevel++;
+        int nextlevel =
+            (q->next && q->next->is_menu_item()) ? q->next->level : next->level+1;
+        nItem += 1 + ((thislevel > nextlevel) ? (thislevel-nextlevel) : 0);
       }
       if (nLabel) {
         write_c("%sif (!%s_i18n_done) {\n", indent(), mName);
@@ -501,7 +499,7 @@ void Fl_Menu_Type::write_code2() {
             break;
           case 2:
             write_c("%s      %s[i].label(catgets(%s,%s,i+%d,%s[i].label()));\n",
-                    indent(), mName, i18n_file[0] ? i18n_file : "_catalog", 
+                    indent(), mName, i18n_file[0] ? i18n_file : "_catalog",
                     i18n_set, mi->msgnum(), mName);
             break;
         }
@@ -510,7 +508,7 @@ void Fl_Menu_Type::write_code2() {
       }
     }
     write_c("%s%s->menu(%s);\n", indent(), name() ? name() : "o",
-	    unique_id(this, "menu", name(), label()));
+            unique_id(this, "menu", name(), label()));
   }
   Fl_Widget_Type::write_code2();
 }
@@ -592,13 +590,13 @@ void Shortcut_Button::draw() {
   if (value()) draw_box(FL_DOWN_BOX, (Fl_Color)9);
   else draw_box(FL_UP_BOX, FL_WHITE);
   fl_font(FL_HELVETICA,14); fl_color(FL_FOREGROUND_COLOR);
-	if (use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
-		char buf[1024];
-		fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
-		fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-	} else {
-		fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
-	}
+        if (use_FL_COMMAND && (svalue & (FL_CTRL|FL_META))) {
+                char buf[1024];
+                fl_snprintf(buf, 1023, "Command+%s", fl_shortcut_label(svalue&~(FL_CTRL|FL_META)));
+                fl_draw(buf,x()+6,y(),w(),h(),FL_ALIGN_LEFT);
+        } else {
+                fl_draw(fl_shortcut_label(svalue),x()+6,y(),w(),h(),FL_ALIGN_LEFT);
+        }
 }
 
 int Shortcut_Button::handle(int e) {
@@ -629,7 +627,7 @@ int Shortcut_Button::handle(int e) {
     return r;
   }
 }
-  
+
 void shortcut_in_cb(Shortcut_Button* i, void* v) {
   if (v == LOAD) {
     if (current_widget->is_button())
@@ -650,27 +648,23 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next)
       if (o->selected && o->is_button()) {
-	Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
+        Fl_Button* b = (Fl_Button*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
-	if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
+        b->shortcut(i->svalue);
+        if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
       } else if (o->selected && o->is_input()) {
-	Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
+        Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
+        b->shortcut(i->svalue);
       } else if (o->selected && o->is_value_input()) {
-	Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
+        Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
+        b->shortcut(i->svalue);
       } else if (o->selected && o->is_text_display()) {
-	Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
+        Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
-	b->shortcut(i->svalue);
+        b->shortcut(i->svalue);
       }
     if (mod) set_modflag(1);
   }
 }
-
-//
-// End of "$Id$".
-//

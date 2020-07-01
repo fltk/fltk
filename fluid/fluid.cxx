@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // FLUID main entry for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -81,7 +79,7 @@ extern "C"
 //
 static Fl_Help_Dialog *help_dialog = 0;
 
-Fl_Preferences	fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
+Fl_Preferences  fluid_prefs(Fl_Preferences::USER, "fltk.org", "fluid");
 int gridx = 5;
 int gridy = 5;
 int snap = 1;
@@ -93,14 +91,14 @@ char G_external_editor_command[512];
 int show_coredevmenus = 1;
 
 // File history info...
-char	absolute_history[10][FL_PATH_MAX];
-char	relative_history[10][FL_PATH_MAX];
+char    absolute_history[10][FL_PATH_MAX];
+char    relative_history[10][FL_PATH_MAX];
 
-void	load_history();
-void	update_history(const char *);
+void    load_history();
+void    update_history(const char *);
 
 // Shell command support...
-void	show_shell_window();
+void    show_shell_window();
 
 Fl_Menu_Item *save_item = 0L;
 Fl_Menu_Item *history_item = 0L;
@@ -201,7 +199,7 @@ static void external_editor_timer(void*) {
       if ( p->is_code() ) {
         Fl_Code_Type *code = (Fl_Code_Type*)p;
         // Code changed by external editor?
-        if ( code->handle_editor_changes() ) {	// updates ram, file size/mtime
+        if ( code->handle_editor_changes() ) {  // updates ram, file size/mtime
           modified++;
         }
         if ( code->is_editing() ) {             // editor open?
@@ -225,7 +223,7 @@ static void external_editor_timer(void*) {
 void save_cb(Fl_Widget *, void *v) {
   Fl_Native_File_Chooser fnfc;
   const char *c = filename;
-  if (v || !c || !*c) {    
+  if (v || !c || !*c) {
     fnfc.title("Save To:");
     fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
     fnfc.filter("FLUID Files\t*.f[ld]");
@@ -244,7 +242,7 @@ void save_cb(Fl_Widget *, void *v) {
 
       if (fl_choice("The file \"%s\" already exists.\n"
                     "Do you want to replace it?", "Cancel",
-		    "Replace", NULL, basename) == 0) return;
+                    "Replace", NULL, basename) == 0) return;
     }
 
     if (v != (void *)2) set_filename(c);
@@ -318,7 +316,7 @@ void save_template_cb(Fl_Widget *, void *) {
   if (!fl_access(filename, 0)) {
     if (fl_choice("The template \"%s\" already exists.\n"
                   "Do you want to replace it?", "Cancel",
-		  "Replace", NULL, c) == 0) return;
+                  "Replace", NULL, c) == 0) return;
   }
 
   if (!write_file(filename)) {
@@ -417,7 +415,7 @@ void exit_cb(Fl_Widget *,void *) {
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
-	  if (modflag) return;	// Didn't save!
+          if (modflag) return;  // Didn't save!
     }
 
   save_position(main_window,"main_window_pos");
@@ -464,7 +462,7 @@ apple_open_cb(const char *c) {
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
-	  if (modflag) return;	// Didn't save!
+          if (modflag) return;  // Didn't save!
     }
   }
   const char *oldfilename;
@@ -499,7 +497,7 @@ void open_cb(Fl_Widget *, void *v) {
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
-	  if (modflag) return;	// Didn't save!
+          if (modflag) return;  // Didn't save!
     }
   }
   const char *c;
@@ -547,7 +545,7 @@ void open_history_cb(Fl_Widget *, void *v) {
           return;
       case 1 : /* Save */
           save_cb(NULL, NULL);
-	  if (modflag) return;	// Didn't save!
+          if (modflag) return;  // Didn't save!
     }
   }
   const char *oldfilename = filename;
@@ -643,30 +641,30 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
       FILE *infile, *outfile;
 
       if ((infile = fl_fopen(tname, "r")) == NULL) {
-	fl_alert("Error reading template file \"%s\":\n%s", tname,
-        	 strerror(errno));
-	set_modflag(0);
-	undo_clear();
-	return;
+        fl_alert("Error reading template file \"%s\":\n%s", tname,
+                 strerror(errno));
+        set_modflag(0);
+        undo_clear();
+        return;
       }
 
       if ((outfile = fl_fopen(cutfname(1), "w")) == NULL) {
-	fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
-        	 strerror(errno));
-	fclose(infile);
-	set_modflag(0);
-	undo_clear();
-	return;
+        fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
+                 strerror(errno));
+        fclose(infile);
+        set_modflag(0);
+        undo_clear();
+        return;
       }
 
       while (fgets(line, sizeof(line), infile)) {
-	// Replace @INSTANCE@ with the instance name...
-	for (ptr = line; (next = strstr(ptr, "@INSTANCE@")) != NULL; ptr = next + 10) {
-	  fwrite(ptr, next - ptr, 1, outfile);
-	  fputs(iname, outfile);
-	}
+        // Replace @INSTANCE@ with the instance name...
+        for (ptr = line; (next = strstr(ptr, "@INSTANCE@")) != NULL; ptr = next + 10) {
+          fwrite(ptr, next - ptr, 1, outfile);
+          fputs(iname, outfile);
+        }
 
-	fputs(ptr, outfile);
+        fputs(ptr, outfile);
       }
 
       fclose(infile);
@@ -689,10 +687,10 @@ void new_from_template_cb(Fl_Widget *w, void *v) {
 }
 
 int exit_early = 0;
-int update_file = 0;		// fluid -u
-int compile_file = 0;		// fluid -c
-int compile_strings = 0;	// fluic -cs
-int batch_mode = 0;		// if set (-c, -u) don't open display
+int update_file = 0;            // fluid -u
+int compile_file = 0;           // fluid -c
+int compile_strings = 0;        // fluic -cs
+int batch_mode = 0;             // if set (-c, -u) don't open display
 int header_file_set = 0;
 int code_file_set = 0;
 const char* header_file_name = ".h";
@@ -897,8 +895,8 @@ void about_cb(Fl_Widget *, void *) {
 }
 
 void show_help(const char *name) {
-  const char	*docdir;
-  char		helpname[FL_PATH_MAX];
+  const char    *docdir;
+  char          helpname[FL_PATH_MAX];
 
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
@@ -973,12 +971,12 @@ void manual_cb(Fl_Widget *, void *) {
 void print_menu_cb(Fl_Widget *, void *) {
   int w, h, ww, hh;
   int frompage, topage;
-  Fl_Type	*t;			// Current widget
-  int		num_windows;		// Number of windows
-  Fl_Window_Type *windows[1000];	// Windows to print
-  int		winpage;		// Current window page
+  Fl_Type       *t;                     // Current widget
+  int           num_windows;            // Number of windows
+  Fl_Window_Type *windows[1000];        // Windows to print
+  int           winpage;                // Current window page
   Fl_Window *win;
-  
+
   for (t = Fl_Type::first, num_windows = 0; t; t = t->next) {
     if (t->is_window()) {
       windows[num_windows] = (Fl_Window_Type *)t;
@@ -986,7 +984,7 @@ void print_menu_cb(Fl_Widget *, void *) {
       num_windows ++;
     }
   }
-  
+
   Fl_Printer printjob;
   if ( printjob.start_job(num_windows, &frompage, &topage) ) return;
   int pagecount = 0;
@@ -1006,13 +1004,13 @@ void print_menu_cb(Fl_Widget *, void *) {
     sprintf(date, "%d/%d", ++pagecount, topage-frompage+1);
     fl_draw(date, w - (int)fl_width(date), fl_height());
     // Get the base filename...
-    const char *basename = strrchr(filename, 
+    const char *basename = strrchr(filename,
 #ifdef _WIN32
-				   '\\'
+                                   '\\'
 #else
-				   '/'
+                                   '/'
 #endif
-				   );
+                                   );
     if (basename) basename ++;
     else basename = filename;
     sprintf(date, "%s", basename);
@@ -1257,8 +1255,8 @@ void make_main_window() {
 
 // Load file history from preferences...
 void load_history() {
-  int	i;		// Looping var
-  int	max_files;
+  int   i;              // Looping var
+  int   max_files;
 
 
   fluid_prefs.get("recent_files", max_files, 5);
@@ -1284,9 +1282,9 @@ void load_history() {
 
 // Update file history from preferences...
 void update_history(const char *flname) {
-  int	i;		// Looping var
-  char	absolute[FL_PATH_MAX];
-  int	max_files;
+  int   i;              // Looping var
+  char  absolute[FL_PATH_MAX];
+  int   max_files;
 
 
   fluid_prefs.get("recent_files", max_files, 5);
@@ -1343,8 +1341,8 @@ public:
   ~Fl_Process() {if (_fpt) close();}
 
   // FIXME: popen needs the UTF-8 equivalent fl_popen
-  FILE * popen	(const char *cmd, const char *mode="r");
-  //not necessary here: FILE * fl_fopen	(const char *file, const char *mode="r");
+  FILE * popen  (const char *cmd, const char *mode="r");
+  //not necessary here: FILE * fl_fopen (const char *file, const char *mode="r");
   int  close();
 
   FILE * desc() const { return _fpt;} // non null if file is open
@@ -1396,7 +1394,7 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
 
   // Create windows pipes
   if (!createPipe(pin) || !createPipe(pout) || (!fusion && !createPipe(perr) ) )
-	return freeHandles(); // error
+        return freeHandles(); // error
 
   // Initialize Startup Info
   ZeroMemory(&si, sizeof(STARTUPINFO));
@@ -1407,7 +1405,7 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
   si.hStdError  = fusion ? pout[1] : perr [1];
 
   if ( CreateProcess(NULL, (LPTSTR) cmd,NULL,NULL,TRUE,
-		     DETACHED_PROCESS,NULL,NULL, &si, &pi)) {
+                     DETACHED_PROCESS,NULL,NULL, &si, &pi)) {
     // don't need theses handles inherited by child process:
     clean_close(pin[0]); clean_close(pout[1]); clean_close(perr[1]);
     HANDLE & h = *mode == 'r' ? pout[0] : pin[1];
@@ -1483,7 +1481,7 @@ static bool prepare_shell_command(const char * &command)  { // common pre-shell 
 // Support the full piped shell command...
 void
 shell_pipe_cb(FL_SOCKET, void*) {
-  char	line[1024]="";		// Line from command output...
+  char  line[1024]="";          // Line from command output...
 
   if (s_proc.get_line(line, sizeof(line)) != NULL) {
     // Add the line to the output list...
@@ -1498,7 +1496,7 @@ shell_pipe_cb(FL_SOCKET, void*) {
 
 void
 do_shell_command(Fl_Return_Button*, void*) {
-  const char	*command=NULL;	// Command to run
+  const char    *command=NULL;  // Command to run
 
   if (!prepare_shell_command(command)) return;
 
@@ -1663,8 +1661,8 @@ void update_sourceview_timer(void*)
 
 // Set the "modified" flag and update the title of the main window...
 void set_modflag(int mf) {
-  const char	*basename;
-  static char	title[FL_PATH_MAX];
+  const char    *basename;
+  static char   title[FL_PATH_MAX];
 
   modflag = mf;
 
@@ -1749,9 +1747,9 @@ static void sigint(SIGARG) {
 
 int main(int argc,char **argv) {
   int i = 1;
-  
+
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
-    static const char *msg = 
+    static const char *msg =
       "usage: %s <switches> name.fl\n"
       " -u : update .fl file and exit (may be combined with '-c' or '-cs')\n"
       " -c : write .cxx and .h and exit\n"
@@ -1783,7 +1781,7 @@ int main(int argc,char **argv) {
   }
   if (exit_early)
     exit(0);
-  
+
   const char *c = argv[i];
 
   fl_register_images();
@@ -1818,13 +1816,13 @@ int main(int argc,char **argv) {
   }
   undo_resume();
 
-  if (update_file) {		// fluid -u
+  if (update_file) {            // fluid -u
     write_file(c,0);
     if (!compile_file)
       exit(0);
   }
 
-  if (compile_file) {		// fluid -c[s]
+  if (compile_file) {           // fluid -c[s]
     if (compile_strings)
       write_strings_cb(0,0);
     write_cb(0,0);
@@ -1853,7 +1851,3 @@ int main(int argc,char **argv) {
 
   return (0);
 }
-
-//
-// End of "$Id$".
-//

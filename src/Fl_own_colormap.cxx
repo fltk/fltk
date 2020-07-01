@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Private colormap support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Using the default system colormap can be a bad idea on PseudoColor
@@ -52,8 +50,8 @@ void Fl_X11_System_Driver::own_colormap() {
   XQueryColors(fl_display, fl_colormap, colors, 16);
   // Create a new colormap...
   fl_colormap = XCreateColormap(fl_display,
-				RootWindow(fl_display,fl_screen),
-				fl_visual->visual, AllocNone);
+                                RootWindow(fl_display,fl_screen),
+                                fl_visual->visual, AllocNone);
   // Copy those first 16 colors to our own colormap:
   for (i = 0; i < 16; i ++)
     XAllocColor(fl_display, fl_colormap, colors + i);
@@ -66,13 +64,9 @@ void Fl_X11_System_Driver::own_colormap() {
  Makes FLTK use its <a href="fltk-colormap.png">own colormap</a>.  This may make FLTK display better
  and will reduce conflicts with other programs that want lots of colors.
  However the colors may flash as you move the cursor between windows.
- 
+
  <P>This does nothing if the current visual is not colormapped.
  */
 void Fl::own_colormap() {
   Fl::system_driver()->own_colormap();
 }
-
-//
-// End of "$Id$".
-//

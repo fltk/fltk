@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-//	Fl_Tree as a container of FLTK widgets. - erco 04/15/2012
+//      Fl_Tree as a container of FLTK widgets. - erco 04/15/2012
 //
 // Copyright 2010,2012 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 #include <stdio.h>
 #include <FL/Fl.H>
@@ -32,18 +30,18 @@ class MyData : public Fl_Group {
     Fl_Input *fields[MAX_FIELDS];
 public:
     MyData(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) {
-	static unsigned int colors[MAX_FIELDS] = {
-	    0xffffdd00, 0xffdddd00, 0xddffff00, 0xddffdd00, 0xddddff00
-	};
+        static unsigned int colors[MAX_FIELDS] = {
+            0xffffdd00, 0xffdddd00, 0xddffff00, 0xddffdd00, 0xddddff00
+        };
         for ( int t=0; t<MAX_FIELDS; t++ ) {
-	    fields[t] = new Fl_Input(X+t*FIELD_WIDTH,Y,FIELD_WIDTH,H);
-	    fields[t]->color(Fl_Color(colors[t]));
-	}
-	end();
+            fields[t] = new Fl_Input(X+t*FIELD_WIDTH,Y,FIELD_WIDTH,H);
+            fields[t]->color(Fl_Color(colors[t]));
+        }
+        end();
     }
     void SetData(int col, const char *val) {
         if ( col >= 0 && col < MAX_FIELDS )
-	    fields[col]->value(val);
+            fields[col]->value(val);
     }
 };
 
@@ -53,7 +51,7 @@ int main(int argc, char *argv[]) {
   {
     // Create the tree
     Fl_Tree *tree = new Fl_Tree(10, 10, win->w()-20, win->h()-20);
-    tree->showroot(0);				// don't show root of tree
+    tree->showroot(0);                          // don't show root of tree
     // Add some regular text nodes
     tree->add("Foo/Bar/001");
     tree->add("Foo/Bar/002");
@@ -63,20 +61,20 @@ int main(int argc, char *argv[]) {
     for ( int t=0; t<MAX_ROWS; t++ ) {
         // Add item to tree
         static char s[80];
-	sprintf(s, "FLTK Widgets/%d", t);
-	Fl_Tree_Item *item = tree->add(s);
-	// Reconfigure item to be an FLTK widget (MyData)
-	tree->begin();
-	{
-	    MyData *data = new MyData(0,0,FIELD_WIDTH*MAX_FIELDS, FIELD_HEIGHT);
-	    item->widget(data);
-	    // Initialize widget data
-	    for ( int c=0; c<MAX_FIELDS; c++ ) {
-		sprintf(s, "%d-%d", t,c);
-	        data->SetData(c,s);
-	    }
-	}
-	tree->end();
+        sprintf(s, "FLTK Widgets/%d", t);
+        Fl_Tree_Item *item = tree->add(s);
+        // Reconfigure item to be an FLTK widget (MyData)
+        tree->begin();
+        {
+            MyData *data = new MyData(0,0,FIELD_WIDTH*MAX_FIELDS, FIELD_HEIGHT);
+            item->widget(data);
+            // Initialize widget data
+            for ( int c=0; c<MAX_FIELDS; c++ ) {
+                sprintf(s, "%d-%d", t,c);
+                data->SetData(c,s);
+            }
+        }
+        tree->end();
     }
   }
   win->end();
@@ -84,7 +82,3 @@ int main(int argc, char *argv[]) {
   win->show(argc, argv);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

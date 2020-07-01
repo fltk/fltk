@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2019 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -44,11 +42,11 @@
   \param[out] R, G, B color components
  */
 void Fl_Color_Chooser::hsv2rgb(
-	double H, double S, double V, double& R, double& G, double& B) {
+        double H, double S, double V, double& R, double& G, double& B) {
   if (S < 5.0e-6) {
     R = G = B = V;
   } else {
-    int i = (int)H;  
+    int i = (int)H;
     double f = H - (float)i;
     double p1 = V*(1.0-S);
     double p2 = V*(1.0-S*f);
@@ -70,7 +68,7 @@ void Fl_Color_Chooser::hsv2rgb(
   \param[out] H, S, V color components
  */
 void Fl_Color_Chooser::rgb2hsv(
-	double R, double G, double B, double& H, double& S, double& V) {
+        double R, double G, double B, double& H, double& S, double& V) {
   double maxv = R > G ? R : G; if (B > maxv) maxv = B;
   V = maxv;
   if (maxv>0) {
@@ -86,10 +84,10 @@ void Fl_Color_Chooser::rgb2hsv(
 
 /** Fl_Color_Chooser modes */
 enum {
-  M_RGB,	/**< mode() of Fl_Color_Chooser showing RGB values */
-  M_BYTE,	/**< mode() of Fl_Color_Chooser showing byte values */
-  M_HEX,	/**< mode() of Fl_Color_Chooser showing hex values */
-  M_HSV		/**< mode() of Fl_Color_Chooser showing HSV values */
+  M_RGB,        /**< mode() of Fl_Color_Chooser showing RGB values */
+  M_BYTE,       /**< mode() of Fl_Color_Chooser showing byte values */
+  M_HEX,        /**< mode() of Fl_Color_Chooser showing hex values */
+  M_HSV         /**< mode() of Fl_Color_Chooser showing HSV values */
 };
 static const Fl_Menu_Item mode_menu[] = {
   {"rgb"},
@@ -150,7 +148,7 @@ int Fl_Color_Chooser::rgb(double R, double G, double B) {
 #endif
     valuebox.damage(FL_DAMAGE_EXPOSE);}
   if (hue_ != ph || saturation_ != ps) {
-    huebox.damage(FL_DAMAGE_EXPOSE); 
+    huebox.damage(FL_DAMAGE_EXPOSE);
     valuebox.damage(FL_DAMAGE_SCROLL);
   }
   return 1;
@@ -178,7 +176,7 @@ int Fl_Color_Chooser::hsv(double H, double S, double V) {
 #endif
     valuebox.damage(FL_DAMAGE_EXPOSE);}
   if (hue_ != ph || saturation_ != ps) {
-    huebox.damage(FL_DAMAGE_EXPOSE); 
+    huebox.damage(FL_DAMAGE_EXPOSE);
     valuebox.damage(FL_DAMAGE_SCROLL);
   }
   hsv2rgb(H,S,V,r_,g_,b_);
@@ -490,7 +488,7 @@ static int copy_rgb(double r, double g, double b) {
 
   All other events are processed by the parent class \c Fl_Group.
 
-  This enables the \b user to choose a color value, press 
+  This enables the \b user to choose a color value, press
   \p ctrl-c to copy the value to the clipboard and paste it into
   a color selection widget in another application window or any
   other text input (e.g. a preferences dialog or an editor).
@@ -500,8 +498,8 @@ static int copy_rgb(double r, double g, double b) {
     selecting text in one of the input widgets effectively
     disables this special method.
 
-  \param[in]	e  current event
-  \returns	1  if event has been handled, 0 otherwise
+  \param[in]    e  current event
+  \returns      1  if event has been handled, 0 otherwise
 
   \see Fl_Group::handle(int)
 */
@@ -516,19 +514,19 @@ int Fl_Color_Chooser::handle(int e) {
     case FL_SHORTCUT:
       // ignore CTRL-SHIFT-C, CTRL-SHIFT-X and CTRL-SHIFT-Insert
       if (shift)
-	return Fl_Group::handle(e);
+        return Fl_Group::handle(e);
       switch (Fl::event_key()) {
-	case FL_Insert:
-	  if (mods == FL_CTRL)
-	    return copy_rgb(r_, g_, b_);
-	  break;
-	case 'c':
-	case 'x':
-	  if (mods == FL_COMMAND)
-	    return copy_rgb(r_, g_, b_);
-	  break;
-	default:
-	  break;
+        case FL_Insert:
+          if (mods == FL_CTRL)
+            return copy_rgb(r_, g_, b_);
+          break;
+        case 'c':
+        case 'x':
+          if (mods == FL_COMMAND)
+            return copy_rgb(r_, g_, b_);
+          break;
+        default:
+          break;
       }
     default:
       break;
@@ -592,9 +590,9 @@ public:
 void ColorChip::draw() {
   if (damage()&FL_DAMAGE_ALL) draw_box();
   fl_rectf(x()+Fl::box_dx(box()),
-	   y()+Fl::box_dy(box()),
-	   w()-Fl::box_dw(box()),
-	   h()-Fl::box_dh(box()),r,g,b);
+           y()+Fl::box_dy(box()),
+           w()-Fl::box_dw(box()),
+           h()-Fl::box_dh(box()),r,g,b);
 }
 
 static void chooser_cb(Fl_Widget* o, void* vv) {
@@ -610,7 +608,7 @@ extern const char* fl_ok;
 extern const char* fl_cancel;
 
 // fl_color_chooser's callback for ok_button (below)
-//  [in] o is a pointer to okay_button (below) 
+//  [in] o is a pointer to okay_button (below)
 //  [in] p is a pointer to an int to receive the return value (1)
 // closes the fl_color_chooser window
 static void cc_ok_cb (Fl_Widget *o, void *p) {
@@ -630,17 +628,17 @@ static void cc_cancel_cb (Fl_Widget *o, void *p) {
     o->hide();
 }
 
-/** \addtogroup  group_comdlg 
+/** \addtogroup  group_comdlg
     @{ */
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
   \note \#include <FL/Fl_Color_Chooser.H>
-  \image html fl_color_chooser.jpg 
+  \image html fl_color_chooser.jpg
   \image latex  fl_color_chooser.jpg "fl_color_chooser" width=8cm
   \param[in] name Title label for the window
   \param[in,out] r, g, b Color components in the range 0.0 to 1.0.
   \param[in] cmode Optional mode for color chooser. See mode(int). Default -1 if none (rgb mode).
-  \retval 1 if user confirms the selection 
+  \retval 1 if user confirms the selection
   \retval 0 if user cancels the dialog
   \relates Fl_Color_Chooser
  */
@@ -678,12 +676,12 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b, int cmod
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
   \note \#include <FL/Fl_Color_Chooser.H>
-  \image html fl_color_chooser.jpg 
+  \image html fl_color_chooser.jpg
   \image latex  fl_color_chooser.jpg "fl_color_chooser" width=8cm
   \param[in] name Title label for the window
   \param[in,out] r, g, b Color components in the range 0 to 255.
   \param[in] cmode Optional mode for color chooser. See mode(int). Default -1 if none (rgb mode).
-  \retval 1 if user confirms the selection 
+  \retval 1 if user confirms the selection
   \retval 0 if user cancels the dialog
   \relates Fl_Color_Chooser
  */
@@ -701,6 +699,3 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b, int cmode) 
 }
 
 /** @} */
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_BMP_Image class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2011-2020 by Bill Spitzak and others.
@@ -13,9 +11,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -129,15 +127,15 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   // Reader is already open at this point.
 
   // Get the header...
-  byte = rdr.read_byte();	// Check "BM" sync chars
+  byte = rdr.read_byte();       // Check "BM" sync chars
   bit  = rdr.read_byte();
   if (byte != 'B' || bit != 'M') {
     ld(ERR_FORMAT);
     return;
   }
 
-  rdr.read_dword();		// Skip size
-  rdr.read_word();		// Skip reserved stuff
+  rdr.read_dword();             // Skip size
+  rdr.read_word();              // Skip reserved stuff
   rdr.read_word();
   offbits = (long)rdr.read_dword();// Read offset to image data
 
@@ -476,8 +474,3 @@ void Fl_BMP_Image::load_bmp_(Fl_Image_Reader &rdr)
   }
   // File is closed when returning...
 }
-
-
-//
-// End of "$Id$".
-//

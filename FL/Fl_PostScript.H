@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2020 by Bill Spitzak and others.
@@ -11,12 +9,12 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-/** \file Fl_PostScript.H 
+/** \file Fl_PostScript.H
  \brief declaration of classes Fl_PostScript_Graphics_Driver, Fl_PostScript_File_Device.
  */
 
@@ -57,21 +55,21 @@ public:
   Fl_PostScript_Graphics_Driver();
 #ifndef FL_DOXYGEN
   enum SHAPE{NONE=0, LINE, LOOP, POLYGON, POINTS};
-  
+
   class Clip {
   public:
     int x, y, w, h;
     Clip *prev;
   };
   Clip * clip_;
-  
+
   int lang_level_;
   int gap_;
   int pages_;
-  
+
   double width_;
   double height_;
-  
+
   int shape_;
   int linewidth_;// need for clipping, lang level 1-2
   int linestyle_;//
@@ -82,7 +80,7 @@ public:
   void reconcat(); //invert
   void recover(); //recovers the state after grestore (such as line styles...)
   void reset();
-  
+
   uchar * mask;
   int mx; // width of mask;
   int my; // mask lines
@@ -91,16 +89,16 @@ public:
   int page_policy_;
   int nPages;
   int orientation_;
-  
+
   float scale_x;
   float scale_y;
   float angle;
   int left_margin;
   int top_margin;
- 
+
   FILE *output;
   double pw_, ph_;
-  
+
   uchar bg_r, bg_g, bg_b;
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
   /*  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
@@ -108,10 +106,10 @@ public:
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
   void transformed_draw(const char* s, double x, double y);
   int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
-  
+
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
- 
+
   void page_policy(int p);
   int page_policy(){return page_policy_;};
   void close_command(Fl_PostScript_Close_Command* cmd){close_cmd_=cmd;};
@@ -121,43 +119,43 @@ public:
   //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int x, int y, int w, int h); //eps constructor
   void interpolate(int i){interpolate_=i;};
   int interpolate(){return interpolate_;}
-  
+
   void page(double pw, double ph, int media = 0);
   void page(int format);
 #endif // FL_DOXYGEN
-  
+
   // implementation of drawing methods
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
-  
+
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   int not_clipped(int x, int y, int w, int h);
   void push_no_clip();
   void pop_clip();
-  
+
   void line_style(int style, int width=0, char* dashes=0);
-  
+
   void rect(int x, int y, int w, int h);
   void rectf(int x, int y, int w, int h);
-  
+
   void xyline(int x, int y, int x1);
   void xyline(int x, int y, int x1, int y2);
   void xyline(int x, int y, int x1, int y2, int x3);
-  
+
   void yxline(int x, int y, int y1);
   void yxline(int x, int y, int y1, int x2);
   void yxline(int x, int y, int y1, int x2, int y3);
-  
+
   void line(int x1, int y1, int x2, int y2);
-  void line(int x1, int y1, int x2, int y2, int x3, int y3);  
-  
+  void line(int x1, int y1, int x2, int y2, int x3, int y3);
+
   void loop(int x0, int y0, int x1, int y1, int x2, int y2);
   void loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2);
   void polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3);
   void point(int x, int y);
-  
+
   void begin_points();
   void begin_line();
   void begin_loop();
@@ -176,12 +174,12 @@ public:
   void gap(){gap_=1;};
   void end_complex_polygon(){end_polygon();};
   void transformed_vertex(double x, double y);
-    
+
   void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0);
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0);
   void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
-      
+
   void draw(const char* s, int nBytes, int x, int y) {transformed_draw(s,nBytes,x,y); };
   void draw(const char* s, int nBytes, float x, float y) {transformed_draw(s,nBytes,x,y); };
   void draw(int angle, const char *str, int n, int x, int y);
@@ -206,7 +204,7 @@ public:
   // ---
   Fl_Bitmask create_bitmask(int w, int h, const uchar *array) { return 0L; }
   virtual int has_feature(driver_feature feature_mask) { return feature_mask & PRINTER; }
-  
+
   int start_eps(int width, int height);
   void ps_origin(int x, int y);
   void ps_translate(int, int);
@@ -222,7 +220,7 @@ public:
  To send graphical output to a PostScript file.
  This class is used exactly as the Fl_Printer class except for the begin_job() call,
  two variants of which are usable and allow to specify what page format and layout are desired.
- 
+
  PostScript text uses vectorial fonts when using the FLTK standard fonts
  and the latin alphabet or a few other characters listed in the following table.
  The latin alphabet means all unicode characters between U+0020 and U+017F, or, in other words,
@@ -274,7 +272,7 @@ public:
    @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
    */
   int begin_job(int pagecount = 0, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
-		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
+                enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
   /** Synonym of begin_job().
    For API compatibility with FLTK 1.3.x */
   int start_job(int pagecount = 0, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
@@ -292,7 +290,7 @@ public:
    @return always 0.
    */
   int begin_job(FILE *ps_output, int pagecount = 0, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
-		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
+                enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
   /** Synonym of begin_job().
    For API compatibility with FLTK 1.3.x */
   int start_job(FILE *ps_output, int pagecount = 0, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4,
@@ -309,8 +307,8 @@ public:
   void rotate(float angle);
   void translate(int x, int y);
   void untranslate(void);
-  int end_page (void);    
-  void end_job(void);  
+  int end_page (void);
+  void end_job(void);
   /** \brief Label of the PostScript file chooser window */
   static const char *file_chooser_title;
 };
@@ -368,7 +366,3 @@ public:
 };
 
 #endif // Fl_PostScript_H
-
-//
-// End of "$Id$"
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // =======================================================================
 //  DO NOT EDIT FL/Fl_File_Chooser.H and src/Fl_File_Chooser.cxx !!!
@@ -47,24 +45,24 @@
 
 class FL_EXPORT Fl_File_Chooser {
 public:
-  enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 }; 
+  enum { SINGLE = 0, MULTI = 1, CREATE = 2, DIRECTORY = 4 };
 private:
-  static Fl_Preferences *prefs_; 
-  void (*callback_)(Fl_File_Chooser*, void *); 
-  void *data_; 
-  char directory_[FL_PATH_MAX]; 
-  char pattern_[FL_PATH_MAX]; 
-  char preview_text_[2048]; 
-  int type_; 
-  void favoritesButtonCB(); 
-  void favoritesCB(Fl_Widget *w); 
-  void fileListCB(); 
-  void fileNameCB(); 
-  void newdir(); 
-  static void previewCB(Fl_File_Chooser *fc); 
-  void showChoiceCB(); 
-  void update_favorites(); 
-  void update_preview(); 
+  static Fl_Preferences *prefs_;
+  void (*callback_)(Fl_File_Chooser*, void *);
+  void *data_;
+  char directory_[FL_PATH_MAX];
+  char pattern_[FL_PATH_MAX];
+  char preview_text_[2048];
+  int type_;
+  void favoritesButtonCB();
+  void favoritesCB(Fl_Widget *w);
+  void fileListCB();
+  void fileNameCB();
+  void newdir();
+  static void previewCB(Fl_File_Chooser *fc);
+  void showChoiceCB();
+  void update_favorites();
+  void update_preview();
 public:
   Fl_File_Chooser(const char *d, const char *p, int t, const char *title);
 private:
@@ -131,10 +129,10 @@ public:
   void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
   void color(Fl_Color c);
   Fl_Color color();
-  int count(); 
-  void directory(const char *d); 
+  int count();
+  void directory(const char *d);
   char * directory();
-  void filter(const char *p); 
+  void filter(const char *p);
   const char * filter();
   int filter_value();
   void filter_value(int f);
@@ -145,15 +143,15 @@ public:
   const char * label();
   void ok_label(const char *l);
   const char * ok_label();
-  void preview(int e); 
-  int preview() const { return previewButton->value(); }; 
+  void preview(int e);
+  int preview() const { return previewButton->value(); };
 private:
-  void showHidden(int e); 
-  void remove_hidden_files(); 
+  void showHidden(int e);
+  void remove_hidden_files();
 public:
-  void rescan(); 
-  void rescan_keep_filename(); 
-  void show(); 
+  void rescan();
+  void rescan_keep_filename();
+  void show();
   int shown();
   void textcolor(Fl_Color c);
   Fl_Color textcolor();
@@ -165,72 +163,72 @@ public:
   int type();
   void * user_data() const;
   void user_data(void *d);
-  const char *value(int f = 1); 
-  void value(const char *filename); 
+  const char *value(int f = 1);
+  void value(const char *filename);
   int visible();
   /**
    [standard text may be customized at run-time]
   */
-  static const char *add_favorites_label; 
+  static const char *add_favorites_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *all_files_label; 
+  static const char *all_files_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *custom_filter_label; 
+  static const char *custom_filter_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *existing_file_label; 
+  static const char *existing_file_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *favorites_label; 
+  static const char *favorites_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *filename_label; 
+  static const char *filename_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *filesystems_label; 
+  static const char *filesystems_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *manage_favorites_label; 
+  static const char *manage_favorites_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *new_directory_label; 
+  static const char *new_directory_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *new_directory_tooltip; 
+  static const char *new_directory_tooltip;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *preview_label; 
+  static const char *preview_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *save_label; 
+  static const char *save_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *show_label; 
+  static const char *show_label;
   /**
    [standard text may be customized at run-time]
   */
-  static const char *hidden_label; 
+  static const char *hidden_label;
   /**
    the sort function that is used when loading
    the contents of a directory.
   */
-  static Fl_File_Sort_F *sort; 
+  static Fl_File_Sort_F *sort;
 private:
-  Fl_Widget* ext_group; 
+  Fl_Widget* ext_group;
 public:
   Fl_Widget* add_extra(Fl_Widget* gr);
 };
@@ -239,7 +237,3 @@ FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *
 FL_EXPORT void fl_file_chooser_callback(void (*cb)(const char*));
 FL_EXPORT void fl_file_chooser_ok_label(const char*l);
 #endif
-
-//
-// End of "$Id$".
-//

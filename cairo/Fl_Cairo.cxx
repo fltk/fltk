@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Main header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -37,7 +35,7 @@
 #endif
 
 // static Fl module initialization :
-Fl_Cairo_State Fl::cairo_state_;	///< contains all necessary info for current cairo context mapping
+Fl_Cairo_State Fl::cairo_state_;        ///< contains all necessary info for current cairo context mapping
 
 
 // Fl cairo features implementation
@@ -49,11 +47,11 @@ void  Fl_Cairo_State::autolink(bool b)  {
   autolink_ = b;
 #else
   Fl::fatal("In Fl::autolink(bool) : Cairo autolink() feature is only "
-	    "available with the enable-cairoext configure option, now quitting.");
+            "available with the enable-cairoext configure option, now quitting.");
 #endif
 }
 
-/** 
+/**
     Provides a corresponding cairo context for window \a wi.
     This is needed in a draw() override if Fl::cairo_autolink_context()
     returns false, which is the default.
@@ -71,16 +69,16 @@ void  Fl_Cairo_State::autolink(bool b)  {
 */
 cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
     if (!wi) return NULL; // Precondition
-    
+
     if (fl_gc==0) { // means remove current cc
-	Fl::cairo_cc(0); // destroy any previous cc
-	cairo_state_.window(0);
-	return 0;
+        Fl::cairo_cc(0); // destroy any previous cc
+        cairo_state_.window(0);
+        return 0;
     }
 
     // don't re-create a context if it's the same gc/window couple
     if (fl_gc==Fl::cairo_state_.gc() && fl_xid(wi) == (Window) Fl::cairo_state_.window())
-	return Fl::cairo_cc();
+        return Fl::cairo_cc();
 
     cairo_state_.window(wi);
 
@@ -100,7 +98,7 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
   return cairo_ctxt;
 }
 
-/* 
+/*
     Creates transparently a cairo_surface_t object.
     gc is an HDC context in Windows, a CGContext* in Quartz, and
     a display on X11 (not used on this platform)
@@ -118,7 +116,7 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 # endif
 }
 
-/** 
+/**
   Creates a cairo context from a \a gc only, gets its window size or
   offscreen size if fl_window is null.
   \note Only available when configure has the --enable-cairo option
@@ -129,7 +127,7 @@ cairo_t * Fl::cairo_make_current(void *gc) {
     //FIXME X11 get W,H
     // gc will be the window handle here
 # warning FIXME get W,H for cairo_make_current(void*)
-#elif defined(__APPLE_QUARTZ__) 
+#elif defined(__APPLE_QUARTZ__)
     if (fl_window) {
       W = Fl_Window::current()->w();
       H = Fl_Window::current()->h();
@@ -144,14 +142,14 @@ cairo_t * Fl::cairo_make_current(void *gc) {
 # error Cairo is not supported on this platform.
 #endif
     if (!gc) {
-	Fl::cairo_cc(0);
-	cairo_state_.gc(0); // keep track for next time
-	return 0;
+        Fl::cairo_cc(0);
+        cairo_state_.gc(0); // keep track for next time
+        return 0;
     }
-    if (gc==Fl::cairo_state_.gc() && 
-	fl_window== (Window) Fl::cairo_state_.window() && 
-	cairo_state_.cc()!=0)
-	return Fl::cairo_cc();
+    if (gc==Fl::cairo_state_.gc() &&
+        fl_window== (Window) Fl::cairo_state_.window() &&
+        cairo_state_.cc()!=0)
+        return Fl::cairo_cc();
     cairo_state_.gc(fl_gc); // keep track for next time
     cairo_surface_t * s = cairo_create_surface(gc, W, H);
     cairo_t * c = cairo_create(s);
@@ -160,15 +158,15 @@ cairo_t * Fl::cairo_make_current(void *gc) {
     return c;
 }
 
-/** 
-   Creates a cairo context from a \a gc and its size 
+/**
+   Creates a cairo context from a \a gc and its size
    \note Only available when configure has the --enable-cairo option
 */
 cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
-    if (gc==Fl::cairo_state_.gc() && 
-	fl_window== (Window) Fl::cairo_state_.window() &&
-	cairo_state_.cc()!=0) // no need to create a cc, just return that one
-	return cairo_state_.cc(); 
+    if (gc==Fl::cairo_state_.gc() &&
+        fl_window== (Window) Fl::cairo_state_.window() &&
+        cairo_state_.cc()!=0) // no need to create a cc, just return that one
+        return cairo_state_.cc();
 
     // we need to (re-)create a fresh cc ...
     cairo_state_.gc(gc); // keep track for next time
@@ -183,7 +181,3 @@ cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
 #include <FL/Fl_Export.H>
 FL_EXPORT int fltk_cairo_dummy() { return 1;}
 #endif // FLTK_HAVE_CAIRO
-
-//
-// End of "$Id$" .
-//

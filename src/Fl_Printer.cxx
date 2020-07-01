@@ -1,7 +1,5 @@
 //
-// "$Id$"
-//
-// Encompasses platform-specific printing-support code and 
+// Encompasses platform-specific printing-support code and
 // PostScript output code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2016 by Bill Spitzak and others.
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Printer.H>
@@ -212,7 +210,3 @@ Fl_Printer::~Fl_Printer(void)
 }
 
 #endif // defined(FL_NO_PRINT_SUPPORT)
-
-//
-// End of "$Id$".
-//

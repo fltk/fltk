@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
 # (EPM can be found at https://www.msweet.org/epm/)
@@ -13,9 +11,9 @@
 #
 #      https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#      https://www.fltk.org/str.php
+#      https://www.fltk.org/bugs.php
 #
 
 %product Fast Light Tool Kit (FLTK)
@@ -101,7 +99,7 @@ f 0555 root sys $libdir/libfltk_gl.so.@FL_DSO_VERSION@ src/libfltk_gl.so.@FL_DSO
 
 %subpackage devel
 %description FLTK Development Environment
-%description Install fltk-devel if you need to develop FLTK applications. 
+%description Install fltk-devel if you need to develop FLTK applications.
 %description You'll need to install the fltk package if you plan to run
 %description dynamically linked applications.
 
@@ -428,7 +426,3 @@ f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/src/sudoku.$CAT6EXT
 f 0444 root sys $mandir/man6/blocks.6 documentation/src/blocks.man
 f 0444 root sys $mandir/man6/checkers.6 documentation/src/checkers.man
 f 0444 root sys $mandir/man6/sudoku.6 documentation/src/sudoku.man
-
-#
-# End of "$Id$".
-#

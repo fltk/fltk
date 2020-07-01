@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Pixmap (and other images) label support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -112,7 +110,7 @@ void Fluid_Image::write_static() {
       }
       fclose(f);
     }
-    
+
     write_c(";\n");
     write_initializer("Fl_JPEG_Image", "\"%s\", %s", fl_filename_name(name()), idata_name);
   } else {
@@ -121,7 +119,7 @@ void Fluid_Image::write_static() {
     if (image_header_written != write_number) {
       write_c("#include <FL/Fl_Image.H>\n");
       image_header_written = write_number;
-    } 
+    }
     write_c("static const unsigned char %s[] =\n", idata_name);
     const int extra_data = img->ld() ? (img->ld()-img->w()*img->d()) : 0;
     write_cdata(img->data()[0], (img->w() * img->d() + extra_data) * img->h());
@@ -249,8 +247,3 @@ Fluid_Image *ui_find_image(const char *oldname) {
   leave_source_dir();
   return ret;
 }
-
-
-//
-// End of "$Id$".
-//

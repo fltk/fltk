@@ -1,5 +1,4 @@
-/* "$Id$"
- *
+/*
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2003 by O'ksi'D.
  *
@@ -7,11 +6,11 @@
  * the file "COPYING" which should have been included with this file.  If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 #include <config.h>
@@ -75,18 +74,18 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
   cd = iconv_open("EUC-TW", "UTF-8");
   iconv(cd, &b, &len, &buffer_return, &cdl);
   iconv_close(cd);
-  l -= cdl;	
+  l -= cdl;
 #else
   while (i < len) {
     unsigned int ucs;
-    unsigned char c; 
+    unsigned char c;
     c = (unsigned char) buf[i];
     if (c < 0x80) {
-      ucs = c;	
+      ucs = c;
       i++;
     } else if (c >= 0xa1 && c < 0xff && len - i > 1 ) {
 
-#if 0 
+#if 0
       unsigned char b[2];
       b[0] = (unsigned char) c - 0x80;
       b[1] = (unsigned char) buf[i + 1] - 0x80;
@@ -102,13 +101,13 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
       b[1] = (unsigned char)  buf[i + 3] - 0x80;
 #endif
       if (c1 >= 0xa1 && c1 <= 0xb0) {
-	if (c2 >= 0xa1 && c2 < 0xff && c3 >= 0xa1 && c3 < 0xff) {
-	  ucs = ' '; i += 4;
-	} else {
-	  ucs = '?'; i++;
-	}
+        if (c2 >= 0xa1 && c2 < 0xff && c3 >= 0xa1 && c3 < 0xff) {
+          ucs = ' '; i += 4;
+        } else {
+          ucs = '?'; i++;
+        }
       } else {
-	ucs = '?'; i++;
+        ucs = '?'; i++;
       }
     } else {
       ucs = '?';
@@ -136,19 +135,19 @@ XConvertEucKrToUtf8(char* buffer_return, int len) {
     unsigned char c, c1;
     c = (unsigned char) buf[i];
     if (c < 0x80) {
-      ucs = c;	
+      ucs = c;
       i++;
     } else if (c >= 0xA1 && c < 0xFF && len - i > 1) {
       c1 = (unsigned char) buf[i + 1];
       if (c1 >= 0xa1 && c1 < 0xff) {
-	unsigned char b[2];
-	b[0] = c - 0x80;
-	b[1] = c1 - 0x80;
-	if (ksc5601_mbtowc(NULL, &ucs, b, 2) < 1) {
-	  ucs = '?';
-	}
+        unsigned char b[2];
+        b[0] = c - 0x80;
+        b[1] = c1 - 0x80;
+        if (ksc5601_mbtowc(NULL, &ucs, b, 2) < 1) {
+          ucs = '?';
+        }
       } else {
-	ucs = '?';
+        ucs = '?';
       }
       i += 2;
     } else {
@@ -201,26 +200,26 @@ XConvertCp936extToUtf8(char* buffer_return, int len)
   memcpy(buf, buffer_return, (unsigned)len);
 
   if (len == 1) {
-	  l += XConvertUcsToUtf8((unsigned int)buf[i], buffer_return + l);
+          l += XConvertUcsToUtf8((unsigned int)buf[i], buffer_return + l);
   }
   while (i + 1 < len) {
-	  unsigned int ucs;
-	  unsigned char b[2];
-	  b[0] = (unsigned char) buf[i];
-	  b[1] = (unsigned char) buf[i + 1];
-	  if (cp936ext_mbtowc(NULL, &ucs, b, 2) == 2) {
-		  i += 2;
-	  } else {
-	      if ( b[0] < 0x80) {
-		    ucs = b[0];
-		}else{
-			      ucs = '?';
-		  }
-			  i++;
-		  }
-	  l += XConvertUcsToUtf8(ucs, buffer_return + l);
+          unsigned int ucs;
+          unsigned char b[2];
+          b[0] = (unsigned char) buf[i];
+          b[1] = (unsigned char) buf[i + 1];
+          if (cp936ext_mbtowc(NULL, &ucs, b, 2) == 2) {
+                  i += 2;
+          } else {
+              if ( b[0] < 0x80) {
+                    ucs = b[0];
+                }else{
+                              ucs = '?';
+                  }
+                          i++;
+                  }
+          l += XConvertUcsToUtf8(ucs, buffer_return + l);
   }
-  if(i + 1 == len) { 
+  if(i + 1 == len) {
       l += XConvertUcsToUtf8((unsigned int)buf[i], buffer_return + l);
   }
   free(buf);
@@ -276,19 +275,19 @@ XConvertEucCnToUtf8(char* buffer_return, int len) {
     unsigned char c, c1;
     c = (unsigned char) buf[i];
     if (c < 0x80) {
-      ucs = c;	
+      ucs = c;
       i++;
     } else if (c >= 0xA1 && c < 0xFF && len - i > 1) {
       c1 = (unsigned char) buf[i + 1];
-      if (c1 >= 0xa1 && c1 < 0xff) {	
-	unsigned char b[2];
-	b[0] = (unsigned char) c;
-	b[1] = (unsigned char) c1;
-	if (gb2312_mbtowc(NULL, &ucs, b, 2) < 1) {
-	  ucs = '?';
-	}	
+      if (c1 >= 0xa1 && c1 < 0xff) {
+        unsigned char b[2];
+        b[0] = (unsigned char) c;
+        b[1] = (unsigned char) c1;
+        if (gb2312_mbtowc(NULL, &ucs, b, 2) < 1) {
+          ucs = '?';
+        }
       } else {
-	ucs = '?';
+        ucs = '?';
       }
       i += 2;
     } else {
@@ -315,53 +314,53 @@ XConvertEucJpToUtf8(char* buffer_return, int len) {
     unsigned char c, c1;
     c = (unsigned char) buf[i];
     if (c < 0x80) {
-      ucs = c;	
+      ucs = c;
       i++;
     } else if (c >= 0xA1 && c < 0xFF && len - i > 1) {
-      c1 = (unsigned char) buf[i + 1];		
+      c1 = (unsigned char) buf[i + 1];
       if (c < 0xF5 && c1 >= 0xa1) {
-	unsigned char b[2];
-	b[0] = c - 0x80;
-	b[1] = c1 - 0x80;
-	if (jisx0208_mbtowc(NULL, &ucs, b, 2) < 1) { 
-	  ucs = '?';
-	}
+        unsigned char b[2];
+        b[0] = c - 0x80;
+        b[1] = c1 - 0x80;
+        if (jisx0208_mbtowc(NULL, &ucs, b, 2) < 1) {
+          ucs = '?';
+        }
       } else if (c1 >= 0xA1 && c1 < 0xFF) {
-	ucs = 0xE000 + 94 * (c - 0xF5) + (c1 - 0xA1);
+        ucs = 0xE000 + 94 * (c - 0xF5) + (c1 - 0xA1);
       } else {
-	ucs = '?';
+        ucs = '?';
       }
       i += 2;
     } else if (c == 0x8E && len - i > 1) {
-      c1 = (unsigned char) buf[i + 1];		
+      c1 = (unsigned char) buf[i + 1];
       if (c1 >= 0xa1 && c1 <= 0xe0) {
-	if (jisx0201_mbtowc(NULL, &ucs, &c1, 1) != 1) {
-	  ucs = '?';
-	}
+        if (jisx0201_mbtowc(NULL, &ucs, &c1, 1) != 1) {
+          ucs = '?';
+        }
       } else {
-	ucs = '?';
+        ucs = '?';
       }
       i += 2;
     } else if (c == 0x8F && len - i > 2) {
-      c = (unsigned char) buf[i + 1];		
-      c1 = (unsigned char) buf[i + 2];	
+      c = (unsigned char) buf[i + 1];
+      c1 = (unsigned char) buf[i + 2];
       if (c >= 0xa1 && c < 0xff) {
-	if (c < 0xf5 && c1 >= 0xa1 && c1 < 0xff) {
-	  unsigned char b[2];
-	  b[0] = c - 0x80;
-	  b[1] = c1 - 0x80;
-	  if (jisx0212_mbtowc(NULL, &ucs, b, 2) < 1) {
-	    ucs = '?';
-	  }
-	} else {
-	  ucs = '?';
-	}
+        if (c < 0xf5 && c1 >= 0xa1 && c1 < 0xff) {
+          unsigned char b[2];
+          b[0] = c - 0x80;
+          b[1] = c1 - 0x80;
+          if (jisx0212_mbtowc(NULL, &ucs, b, 2) < 1) {
+            ucs = '?';
+          }
+        } else {
+          ucs = '?';
+        }
       } else {
-	if (c1 >= 0xa1 && c1 < 0xff) {
-	  ucs = 0xe3ac + 94 * (c - 0xF5) + (c1 - 0xA1);
-	} else {
-	  ucs = '?';
-	}
+        if (c1 >= 0xa1 && c1 < 0xff) {
+          ucs = 0xe3ac + 94 * (c - 0xF5) + (c1 - 0xA1);
+        } else {
+          ucs = '?';
+        }
       }
       i += 3;
     } else {
@@ -375,10 +374,10 @@ XConvertEucJpToUtf8(char* buffer_return, int len) {
 }
 
 static int
-XConvertEucToUtf8(const char*	locale,
-		  char*		buffer_return, 
-		  int		len, 
-		  int		bytes_buffer) {
+XConvertEucToUtf8(const char*   locale,
+                  char*         buffer_return,
+                  int           len,
+                  int           bytes_buffer) {
 
   /* if (!locale) { */
   /* if (!locale || strstr(locale, "UTF") || strstr(locale, "utf")) { */
@@ -386,7 +385,7 @@ XConvertEucToUtf8(const char*	locale,
     return len;
   }
 
-  if (strstr(locale, "ja")) {	
+  if (strstr(locale, "ja")) {
     return XConvertEucJpToUtf8(buffer_return, len);
   } else if (strstr(locale, "Big5") || strstr(locale, "big5")) { /* BIG5 */
     return XConvertBig5ToUtf8(buffer_return, len);
@@ -395,7 +394,7 @@ XConvertEucToUtf8(const char*	locale,
   } else if (strstr(locale, "zh") || strstr(locale, "chinese-")) {
     if (strstr(locale, "TW") || strstr(locale, "chinese-t")) {
       if (strstr(locale, "EUC") || strstr(locale, "euc") || strstr(locale, "chinese-t")) {
-	return XConvertEucTwToUtf8(buffer_return, len);
+        return XConvertEucTwToUtf8(buffer_return, len);
       }
       return XConvertBig5ToUtf8(buffer_return, len);
     }
@@ -403,7 +402,7 @@ XConvertEucToUtf8(const char*	locale,
       return XConvertEucCnToUtf8(buffer_return, len);
     }
     return XConvertGb2312ToUtf8(buffer_return, len);
-  } else if (strstr(locale, "ko")) { 
+  } else if (strstr(locale, "ko")) {
     return XConvertEucKrToUtf8(buffer_return, len);
   }
   return len;
@@ -411,16 +410,16 @@ XConvertEucToUtf8(const char*	locale,
 
 int
 XUtf8LookupString(XIC                 ic,
-		  XKeyPressedEvent*   event,
-		  char*               buffer_return,
-		  int                 bytes_buffer,
-		  KeySym*             keysym,
-		  Status*             status_return) {
+                  XKeyPressedEvent*   event,
+                  char*               buffer_return,
+                  int                 bytes_buffer,
+                  KeySym*             keysym,
+                  Status*             status_return) {
 
   long ucs = -1;
   int len;
   len = XmbLookupString(ic, event, buffer_return, bytes_buffer / 5,
-		        keysym, status_return);
+                        keysym, status_return);
   if (*status_return == XBufferOverflow) {
     return len * 5;
   }
@@ -431,7 +430,7 @@ XUtf8LookupString(XIC                 ic,
       ucs = (long)*keysym;
     }
   } else  if (((*keysym >= 0x100 && *keysym <= 0xf000) ||
-	      (*keysym & 0xff000000U) == 0x01000000))
+              (*keysym & 0xff000000U) == 0x01000000))
   {
     ucs = XKeysymToUcs(*keysym);
   } else {
@@ -445,14 +444,10 @@ XUtf8LookupString(XIC                 ic,
     if (!ic) return 0;
     im = XIMOfIC(ic);
     if (!im) return 0;
-    len = XConvertEucToUtf8(XLocaleOfIM(im), buffer_return, len, bytes_buffer);	
+    len = XConvertEucToUtf8(XLocaleOfIM(im), buffer_return, len, bytes_buffer);
   }
   return len;
 }
 #endif /* X11 has UTF-8 */
 
 #endif /* X11 only */
-
-/*
- * End of "$Id$".
- */

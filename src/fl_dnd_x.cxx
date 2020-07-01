@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -54,9 +52,9 @@ static int dnd_aware(Window& window) {
   Atom actual; int format; unsigned long count, remaining;
   unsigned char *data = 0;
   XGetWindowProperty(fl_display, window, fl_XdndAware,
-		     0, 4, False, XA_ATOM,
-		     &actual, &format,
-		     &count, &remaining, &data);
+                     0, 4, False, XA_ATOM,
+                     &actual, &format,
+                     &count, &remaining, &data);
   int ret = 0;
   if (actual == XA_ATOM && format==32 && count && data)
     ret = int(*(Atom*)data);
@@ -101,8 +99,8 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
       XQueryPointer(fl_display, child, &root, &child,
                     &Fl::e_x_root, &Fl::e_y_root, &dest_x, &dest_y, &junk3);
       if (!child) {
-	if (!new_window && (new_version = dnd_aware(root))) new_window = root;
-	break;
+        if (!new_window && (new_version = dnd_aware(root))) new_window = root;
+        break;
       }
       new_window = child;
       if ((new_local_window = fl_find(child))) break;
@@ -118,42 +116,42 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
 
     if (new_window != target_window) {
       if (local_window) {
-	local_handle(FL_DND_LEAVE, local_window);
+        local_handle(FL_DND_LEAVE, local_window);
       } else if (dndversion) {
-	fl_sendClientMessage(target_window, fl_XdndLeave, source_window);
+        fl_sendClientMessage(target_window, fl_XdndLeave, source_window);
       }
       dndversion = new_version;
       target_window = new_window;
       local_window = new_local_window;
       if (local_window) {
-	local_handle(FL_DND_ENTER, local_window);
+        local_handle(FL_DND_ENTER, local_window);
       } else if (dndversion) {
         // Send an X-DND message to the target window.  In order to
-	// support dragging of files/URLs as well as arbitrary text,
-	// we look at the selection buffer - if the buffer starts
-	// with a common URI scheme, does not contain spaces, and
-	// contains at least one CR LF, then we flag the data as
-	// both a URI list (MIME media type "text/uri-list") and
-	// plain text.  Otherwise, we just say it is plain text.
+        // support dragging of files/URLs as well as arbitrary text,
+        // we look at the selection buffer - if the buffer starts
+        // with a common URI scheme, does not contain spaces, and
+        // contains at least one CR LF, then we flag the data as
+        // both a URI list (MIME media type "text/uri-list") and
+        // plain text.  Otherwise, we just say it is plain text.
         if ((!strncmp(fl_selection_buffer[0], "file:///", 8) ||
-	     !strncmp(fl_selection_buffer[0], "ftp://", 6) ||
-	     !strncmp(fl_selection_buffer[0], "http://", 7) ||
-	     !strncmp(fl_selection_buffer[0], "https://", 8) ||
-	     !strncmp(fl_selection_buffer[0], "ipp://", 6) ||
-	     !strncmp(fl_selection_buffer[0], "ldap:", 5) ||
-	     !strncmp(fl_selection_buffer[0], "mailto:", 7) ||
-	     !strncmp(fl_selection_buffer[0], "news:", 5) ||
-	     !strncmp(fl_selection_buffer[0], "smb://", 6)) &&
-	    !strchr(fl_selection_buffer[0], ' ') &&
-	    strstr(fl_selection_buffer[0], "\r\n")) {
-	  // Send file/URI list...
-	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-			       dndversion<<24, fl_XdndURIList, XA_STRING, 0);
+             !strncmp(fl_selection_buffer[0], "ftp://", 6) ||
+             !strncmp(fl_selection_buffer[0], "http://", 7) ||
+             !strncmp(fl_selection_buffer[0], "https://", 8) ||
+             !strncmp(fl_selection_buffer[0], "ipp://", 6) ||
+             !strncmp(fl_selection_buffer[0], "ldap:", 5) ||
+             !strncmp(fl_selection_buffer[0], "mailto:", 7) ||
+             !strncmp(fl_selection_buffer[0], "news:", 5) ||
+             !strncmp(fl_selection_buffer[0], "smb://", 6)) &&
+            !strchr(fl_selection_buffer[0], ' ') &&
+            strstr(fl_selection_buffer[0], "\r\n")) {
+          // Send file/URI list...
+          fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
+                               dndversion<<24, fl_XdndURIList, XA_STRING, 0);
         } else {
-	  // Send plain text...
-	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-			       dndversion<<24, fl_XaUtf8String, 0, 0);
-	}
+          // Send plain text...
+          fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
+                               dndversion<<24, fl_XaUtf8String, 0, 0);
+        }
       }
     }
     if (local_window) {
@@ -169,7 +167,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
 #endif
       fl_sendClientMessage(target_window, fl_XdndPosition, source_window,
                            0, (exroot<<16)|eyroot, fl_event_time,
-			   fl_XdndActionCopy);
+                           fl_XdndActionCopy);
     }
     Fl::wait();
   }
@@ -179,7 +177,7 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
     if (local_handle(FL_DND_RELEASE, local_window)) Fl::paste(*Fl::belowmouse(), 0);
   } else if (dndversion) {
     fl_sendClientMessage(target_window, fl_XdndDrop, source_window,
-			 0, fl_event_time);
+                         0, fl_event_time);
   } else if (target_window) {
     // fake a drop by clicking the middle mouse button:
     XButtonEvent msg;
@@ -210,8 +208,3 @@ int Fl_X11_Screen_Driver::dnd(int unused) {
   source_fl_win->cursor(FL_CURSOR_DEFAULT);
   return 1;
 }
-
-
-//
-// End of "$Id$".
-//

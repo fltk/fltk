@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Platform header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // These are FLTK symbols that are necessary or useful for calling
@@ -150,7 +148,3 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 extern FL_EXPORT void fl_open_callback(void (*)(const char *));
 
 #endif // !FL_PLATFORM_H
-
-//
-// End of "$Id$".
-//

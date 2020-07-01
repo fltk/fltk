@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Widget type code for the Fast Light Tool Kit (FLTK).
 //
 // Each object described by Fluid is one of these objects.  They
@@ -21,11 +19,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl.H>
@@ -44,10 +42,10 @@
 #include "pixmaps/invisible.xpm"
 //#include "pixmaps/unlock.xpm"
 
-static Fl_Pixmap	lock_pixmap(lock_xpm);
+static Fl_Pixmap        lock_pixmap(lock_xpm);
 static Fl_Pixmap    protected_pixmap(protected_xpm);
 static Fl_Pixmap    invisible_pixmap(invisible_xpm);
-//static Fl_Pixmap	unlock_pixmap(unlock_xpm);
+//static Fl_Pixmap      unlock_pixmap(unlock_xpm);
 
 #include "pixmaps/flWindow.xpm"
 #include "pixmaps/flButton.xpm"
@@ -102,66 +100,66 @@ static Fl_Pixmap    invisible_pixmap(invisible_xpm);
 #include "pixmaps/flTable.xpm"
 #include "pixmaps/flSimpleTerminal.xpm"
 
-static Fl_Pixmap	window_pixmap(flWindow_xpm);
-static Fl_Pixmap	button_pixmap(flButton_xpm);
-static Fl_Pixmap	checkbutton_pixmap(flCheckButton_xpm);
-static Fl_Pixmap	roundbutton_pixmap(flRoundButton_xpm);
-static Fl_Pixmap	box_pixmap(flBox_xpm);
-static Fl_Pixmap	group_pixmap(flGroup_xpm);
-static Fl_Pixmap	function_pixmap(flFunction_xpm);
-static Fl_Pixmap	code_pixmap(flCode_xpm);
-static Fl_Pixmap	codeblock_pixmap(flCodeBlock_xpm);
-static Fl_Pixmap	comment_pixmap(flComment_xpm);
-static Fl_Pixmap	declaration_pixmap(flDeclaration_xpm);
-static Fl_Pixmap	declarationblock_pixmap(flDeclarationBlock_xpm);
-static Fl_Pixmap	class_pixmap(flClass_xpm);
-static Fl_Pixmap	tabs_pixmap(flTabs_xpm);
-static Fl_Pixmap	input_pixmap(flInput_xpm);
-static Fl_Pixmap	choice_pixmap(flChoice_xpm);
-static Fl_Pixmap	menuitem_pixmap(flMenuitem_xpm);
-static Fl_Pixmap	menubar_pixmap(flMenubar_xpm);
-static Fl_Pixmap	submenu_pixmap(flSubmenu_xpm);
-static Fl_Pixmap	scroll_pixmap(flScroll_xpm);
-static Fl_Pixmap	tile_pixmap(flTile_xpm);
-static Fl_Pixmap	wizard_pixmap(flWizard_xpm);
-static Fl_Pixmap	pack_pixmap(flPack_xpm);
-static Fl_Pixmap	returnbutton_pixmap(flReturnButton_xpm);
-static Fl_Pixmap	lightbutton_pixmap(flLightButton_xpm);
-static Fl_Pixmap	repeatbutton_pixmap(flRepeatButton_xpm);
-static Fl_Pixmap	menubutton_pixmap(flMenuButton_xpm);
-static Fl_Pixmap	output_pixmap(flOutput_xpm);
-static Fl_Pixmap	textdisplay_pixmap(flTextDisplay_xpm);
-static Fl_Pixmap	textedit_pixmap(flTextEdit_xpm);
-static Fl_Pixmap	fileinput_pixmap(flFileInput_xpm);
-static Fl_Pixmap	browser_pixmap(flBrowser_xpm);
-static Fl_Pixmap	checkbrowser_pixmap(flCheckBrowser_xpm);
-static Fl_Pixmap	filebrowser_pixmap(flFileBrowser_xpm);
-static Fl_Pixmap	clock_pixmap(flClock_xpm);
-static Fl_Pixmap	help_pixmap(flHelp_xpm);
-static Fl_Pixmap	progress_pixmap(flProgress_xpm);
-static Fl_Pixmap	slider_pixmap(flSlider_xpm);
-static Fl_Pixmap	scrollbar_pixmap(flScrollBar_xpm);
-static Fl_Pixmap	valueslider_pixmap(flValueSlider_xpm);
-static Fl_Pixmap	adjuster_pixmap(flAdjuster_xpm);
-static Fl_Pixmap	counter_pixmap(flCounter_xpm);
-static Fl_Pixmap	dial_pixmap(flDial_xpm);
-static Fl_Pixmap	roller_pixmap(flRoller_xpm);
-static Fl_Pixmap	valueinput_pixmap(flValueInput_xpm);
-static Fl_Pixmap	valueoutput_pixmap(flValueOutput_xpm);
-static Fl_Pixmap	spinner_pixmap(flSpinner_xpm);
-static Fl_Pixmap	widgetclass_pixmap(flWidgetClass_xpm);
-static Fl_Pixmap	data_pixmap(flData_xpm);
-static Fl_Pixmap	tree_pixmap(flTree_xpm);
+static Fl_Pixmap        window_pixmap(flWindow_xpm);
+static Fl_Pixmap        button_pixmap(flButton_xpm);
+static Fl_Pixmap        checkbutton_pixmap(flCheckButton_xpm);
+static Fl_Pixmap        roundbutton_pixmap(flRoundButton_xpm);
+static Fl_Pixmap        box_pixmap(flBox_xpm);
+static Fl_Pixmap        group_pixmap(flGroup_xpm);
+static Fl_Pixmap        function_pixmap(flFunction_xpm);
+static Fl_Pixmap        code_pixmap(flCode_xpm);
+static Fl_Pixmap        codeblock_pixmap(flCodeBlock_xpm);
+static Fl_Pixmap        comment_pixmap(flComment_xpm);
+static Fl_Pixmap        declaration_pixmap(flDeclaration_xpm);
+static Fl_Pixmap        declarationblock_pixmap(flDeclarationBlock_xpm);
+static Fl_Pixmap        class_pixmap(flClass_xpm);
+static Fl_Pixmap        tabs_pixmap(flTabs_xpm);
+static Fl_Pixmap        input_pixmap(flInput_xpm);
+static Fl_Pixmap        choice_pixmap(flChoice_xpm);
+static Fl_Pixmap        menuitem_pixmap(flMenuitem_xpm);
+static Fl_Pixmap        menubar_pixmap(flMenubar_xpm);
+static Fl_Pixmap        submenu_pixmap(flSubmenu_xpm);
+static Fl_Pixmap        scroll_pixmap(flScroll_xpm);
+static Fl_Pixmap        tile_pixmap(flTile_xpm);
+static Fl_Pixmap        wizard_pixmap(flWizard_xpm);
+static Fl_Pixmap        pack_pixmap(flPack_xpm);
+static Fl_Pixmap        returnbutton_pixmap(flReturnButton_xpm);
+static Fl_Pixmap        lightbutton_pixmap(flLightButton_xpm);
+static Fl_Pixmap        repeatbutton_pixmap(flRepeatButton_xpm);
+static Fl_Pixmap        menubutton_pixmap(flMenuButton_xpm);
+static Fl_Pixmap        output_pixmap(flOutput_xpm);
+static Fl_Pixmap        textdisplay_pixmap(flTextDisplay_xpm);
+static Fl_Pixmap        textedit_pixmap(flTextEdit_xpm);
+static Fl_Pixmap        fileinput_pixmap(flFileInput_xpm);
+static Fl_Pixmap        browser_pixmap(flBrowser_xpm);
+static Fl_Pixmap        checkbrowser_pixmap(flCheckBrowser_xpm);
+static Fl_Pixmap        filebrowser_pixmap(flFileBrowser_xpm);
+static Fl_Pixmap        clock_pixmap(flClock_xpm);
+static Fl_Pixmap        help_pixmap(flHelp_xpm);
+static Fl_Pixmap        progress_pixmap(flProgress_xpm);
+static Fl_Pixmap        slider_pixmap(flSlider_xpm);
+static Fl_Pixmap        scrollbar_pixmap(flScrollBar_xpm);
+static Fl_Pixmap        valueslider_pixmap(flValueSlider_xpm);
+static Fl_Pixmap        adjuster_pixmap(flAdjuster_xpm);
+static Fl_Pixmap        counter_pixmap(flCounter_xpm);
+static Fl_Pixmap        dial_pixmap(flDial_xpm);
+static Fl_Pixmap        roller_pixmap(flRoller_xpm);
+static Fl_Pixmap        valueinput_pixmap(flValueInput_xpm);
+static Fl_Pixmap        valueoutput_pixmap(flValueOutput_xpm);
+static Fl_Pixmap        spinner_pixmap(flSpinner_xpm);
+static Fl_Pixmap        widgetclass_pixmap(flWidgetClass_xpm);
+static Fl_Pixmap        data_pixmap(flData_xpm);
+static Fl_Pixmap        tree_pixmap(flTree_xpm);
 static Fl_Pixmap    table_pixmap(flTable_xpm);
 static Fl_Pixmap    simple_terminal_pixmap(flSimpleTerminal_xpm);
 
 Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, &roundbutton_pixmap, /* 0..4 */
- &box_pixmap, &group_pixmap, &function_pixmap, &code_pixmap, &codeblock_pixmap, &declaration_pixmap, /* 5..10 */ 
+ &box_pixmap, &group_pixmap, &function_pixmap, &code_pixmap, &codeblock_pixmap, &declaration_pixmap, /* 5..10 */
  &declarationblock_pixmap, &class_pixmap, &tabs_pixmap, &input_pixmap, &choice_pixmap,               /* 11..15 */
  &menuitem_pixmap, &menubar_pixmap, &submenu_pixmap, &scroll_pixmap, &tile_pixmap, &wizard_pixmap,   /* 16..21 */
  &pack_pixmap, &returnbutton_pixmap, &lightbutton_pixmap, &repeatbutton_pixmap, &menubutton_pixmap,  /* 22..26 */
  &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
- &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	         /* 33..36 */
+ &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,           /* 33..36 */
  &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
  &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap,             /* 42..46 */
  &spinner_pixmap, &widgetclass_pixmap, &data_pixmap, &tree_pixmap, &table_pixmap,                    /* 47..51 */
@@ -186,23 +184,23 @@ extern int show_comments;
 
 static char *copy_trunc(char *p, const char *str, int maxl, int quote) {
 
-  int size = 0;				// truncated string size in characters
-  int bs;				// size of UTF-8 character in bytes
-  const char *end = str + strlen(str);	// end of input string
-  if (quote) *p++ = '"';		// opening quote
-  while (size < maxl) {			// maximum <maxl> characters
-    if (!(*str & (-32))) break;		// end of string (0 or control char)
-    bs = fl_utf8len(*str);		// size of next character
-    if (bs <= 0) break;			// some error - leave
-    if (str + bs > end) break;		// UTF-8 sequence beyond end of string
-    while (bs--) *p++ = *str++;		// copy that character into the buffer
-    size++;				// count copied characters
+  int size = 0;                         // truncated string size in characters
+  int bs;                               // size of UTF-8 character in bytes
+  const char *end = str + strlen(str);  // end of input string
+  if (quote) *p++ = '"';                // opening quote
+  while (size < maxl) {                 // maximum <maxl> characters
+    if (!(*str & (-32))) break;         // end of string (0 or control char)
+    bs = fl_utf8len(*str);              // size of next character
+    if (bs <= 0) break;                 // some error - leave
+    if (str + bs > end) break;          // UTF-8 sequence beyond end of string
+    while (bs--) *p++ = *str++;         // copy that character into the buffer
+    size++;                             // count copied characters
   }
-  if (*str) {				// string was truncated
+  if (*str) {                           // string was truncated
     strcpy(p,"..."); p += 3;
   }
-  if (quote) *p++ = '"';		// closing quote
-  *p = 0;				// terminating null byte
+  if (quote) *p++ = '"';                // closing quote
+  *p = 0;                               // terminating null byte
   return p;
 }
 
@@ -222,7 +220,7 @@ class Widget_Browser : public Fl_Browser_ {
   void item_draw(void *,int,int,int,int) const ;
   int incr_height() const ;
 
-public:	
+public:
 
   int handle(int);
   void callback();
@@ -320,10 +318,10 @@ extern const char* subclassname(Fl_Type*);
   followed by the name of the object. Other objects show their content as
   text, possibly abbreviated with an ellipsis.
 
-  \param v	v is a pointer to the actual widget type and can be cast safely
-		to Fl_Type
-  \param X,Y	these give the position in window coordinates of the top left 
-		corner of this line
+  \param v      v is a pointer to the actual widget type and can be cast safely
+                to Fl_Type
+  \param X,Y    these give the position in window coordinates of the top left
+                corner of this line
 */
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   // cast to a more general type
@@ -355,10 +353,10 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
     Y += comment_incr/2;
     comment_incr -= comment_incr/2;
   }
-  
+
   if (l->new_selected) fl_color(fl_contrast(FL_FOREGROUND_COLOR,FL_SELECTION_COLOR));
   else fl_color(FL_FOREGROUND_COLOR);
-  
+
   // Width=10: Draw the triangle that indicates possible children
   if (l->is_parent()) {
     X = X - 18 - 13;
@@ -381,11 +379,11 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
     }
     X = X + 13 + 18;
   }
-  
+
   // Width=18: Draw the icon associated with the type.
   Fl_Pixmap *pm = pixmap[l->pixmapID()];
   if (pm) pm->draw(X-18, Y);
-  
+
   // Add tags on top of the icon for locked and protected types.
   switch (l->is_public()) {
     case 0: lock_pixmap.draw(X - 17, Y); break;
@@ -395,7 +393,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (l->is_widget() && ((Fl_Widget_Type*)l)->o && !((Fl_Widget_Type*)l)->o->visible()) {
     invisible_pixmap.draw(X - 17, Y);
   }
-  
+
   // Indent=12 per level: Now write the text that comes after the graphics representation
   Y += comment_incr;
   if (l->is_widget() || l->is_class()) {
@@ -492,9 +490,9 @@ int Widget_Browser::handle(int e) {
     if (l) {
       X += 3 + 12*l->level - hposition();
       if (l->is_parent() && Fl::event_x()>X && Fl::event_x()<X+13) {
-	title = pushedtitle = l;
-	redraw_line(l);
-	return 1;
+        title = pushedtitle = l;
+        redraw_line(l);
+        return 1;
       }
     }
     break;
@@ -516,27 +514,27 @@ int Widget_Browser::handle(int e) {
     if (!title) {
       l = (Fl_Type*)find_item(Fl::event_y());
       if (l && l->new_selected && (Fl::event_clicks() || Fl::event_state(FL_CTRL)))
-	l->open();
+        l->open();
       break;
     }
     l = pushedtitle;
     title = pushedtitle = 0;
     if (l) {
       if (l->open_) {
-	l->open_ = 0;
-	for (Fl_Type*k = l->next; k&&k->level>l->level; k = k->next)
-	  k->visible = 0;
+        l->open_ = 0;
+        for (Fl_Type*k = l->next; k&&k->level>l->level; k = k->next)
+          k->visible = 0;
       } else {
-	l->open_ = 1;
-	for (Fl_Type*k=l->next; k&&k->level>l->level;) {
-	  k->visible = 1;
-	  if (k->is_parent() && !k->open_) {
-	    Fl_Type *j;
-	    for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
-	    k = j;
-	  } else
-	    k = k->next;
-	}
+        l->open_ = 1;
+        for (Fl_Type*k=l->next; k&&k->level>l->level;) {
+          k->visible = 1;
+          if (k->is_parent() && !k->open_) {
+            Fl_Type *j;
+            for (j = k->next; j && j->level>k->level; j = j->next) {/*empty*/}
+            k = j;
+          } else
+            k = k->next;
+        }
       }
       redraw();
     }
@@ -640,8 +638,8 @@ void Fl_Type::insert(Fl_Type *g) {
 // Return message number for I18N...
 int
 Fl_Type::msgnum() {
-  int		count;
-  Fl_Type	*p;
+  int           count;
+  Fl_Type       *p;
 
   for (count = 0, p = this; p;) {
     if (p->label()) count ++;
@@ -686,7 +684,7 @@ int storestring(const char *n, const char * & p, int nostrip) {
     if (!nostrip) while (e > n && isspace((int)(unsigned char)*(e-1))) e--;
     length = e-n;
     if (!length) n = 0;
-  }    
+  }
   if (n == p) return 0;
   if (n && p && !strncmp(n,p,length) && !p[length]) return 0;
   if (p) free((void *)p);
@@ -792,13 +790,13 @@ void select_all_cb(Fl_Widget *,void *) {
     if (p) {
       int foundany = 0;
       for (Fl_Type *t = p->next; t && t->level>p->level; t = t->next) {
-	if (!t->new_selected) {widget_browser->select(t,1,0); foundany = 1;}
+        if (!t->new_selected) {widget_browser->select(t,1,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
       for (Fl_Type *t = Fl_Type::first; t; t = t->next)
-	widget_browser->select(t,1,0);
+        widget_browser->select(t,1,0);
       break;
     }
   }
@@ -816,13 +814,13 @@ void select_none_cb(Fl_Widget *,void *) {
     if (p) {
       int foundany = 0;
       for (Fl_Type *t = p->next; t && t->level>p->level; t = t->next) {
-	if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
+        if (t->new_selected) {widget_browser->select(t,0,0); foundany = 1;}
       }
       if (foundany) break;
       p = p->parent;
     } else {
       for (Fl_Type *t = Fl_Type::first; t; t = t->next)
-	widget_browser->select(t,0,0);
+        widget_browser->select(t,0,0);
       break;
     }
   }
@@ -849,9 +847,9 @@ void delete_all(int selected_only) {
     } else f = f->next;
   }
   if(!selected_only) {
-		include_H_from_C=1;
-		use_FL_COMMAND=0;
-	}
+                include_H_from_C=1;
+                use_FL_COMMAND=0;
+        }
 
   selection_changed(0);
 }
@@ -860,7 +858,7 @@ void delete_all(int selected_only) {
 // returns pointer to whatever is after f & children
 void Fl_Type::move_before(Fl_Type* g) {
   if (level != g->level) printf("move_before levels don't match! %d %d\n",
-				level, g->level);
+                                level, g->level);
   Fl_Type* n;
   for (n = next; n && n->level > level; n = n->next) {/*empty*/}
   if (n == g) return;
@@ -921,10 +919,10 @@ void later_cb(Fl_Widget*,void*) {
 void Fl_Type::write() {
     write_indent(level);
     write_word(type_name());
-    
+
     if (is_class()) {
-      const char * p = 	((Fl_Class_Type*)this)->prefix();
-      if (p &&	strlen(p))
+      const char * p =  ((Fl_Class_Type*)this)->prefix();
+      if (p &&  strlen(p))
         write_word(p);
     }
 
@@ -937,7 +935,7 @@ void Fl_Type::write() {
     write_open(level);
     Fl_Type *child;
     for (child = next; child && child->level > level; child = child->next)
-	if (child->level == level+1) child->write();
+        if (child->level == level+1) child->write();
     write_close(level);
 }
 
@@ -1141,8 +1139,3 @@ int Fl_Type::user_defined(const char* cbname) const {
           return 1;
   return 0;
 }
-
-
-//
-// End of "$Id$".
-//

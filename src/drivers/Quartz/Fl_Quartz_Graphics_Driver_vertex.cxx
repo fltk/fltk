@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "../../config_lib.h"
@@ -42,7 +40,7 @@ void Fl_Quartz_Graphics_Driver::vertex(double x,double y) {
 
 void Fl_Quartz_Graphics_Driver::end_points() {
   if (quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(gc_, true);
-  for (int i=0; i<n; i++) { 
+  for (int i=0; i<n; i++) {
     CGContextMoveToPoint(gc_, p[i].x, p[i].y);
     CGContextAddLineToPoint(gc_, p[i].x, p[i].y);
     CGContextStrokePath(gc_);
@@ -79,7 +77,7 @@ void Fl_Quartz_Graphics_Driver::end_polygon() {
   if (n<=1) return;
   CGContextSetShouldAntialias(gc_, true);
   CGContextMoveToPoint(gc_, p[0].x, p[0].y);
-  for (int i=1; i<n; i++) 
+  for (int i=1; i<n; i++)
     CGContextAddLineToPoint(gc_, p[i].x, p[i].y);
   CGContextClosePath(gc_);
   CGContextFillPath(gc_);
@@ -153,7 +151,3 @@ void Fl_Quartz_Graphics_Driver::fixloop() {  // remove equal points from closed 
 
 
 #endif // FL_CFG_GFX_QUARTZ
-
-//
-// End of "$Id$".
-//

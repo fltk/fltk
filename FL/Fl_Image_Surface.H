@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Image_Surface_H
@@ -25,17 +23,17 @@
 #include <FL/platform_types.h> // for Fl_Offscreen
 
 
-/** 
+/**
  \brief Directs all graphics requests to an Fl_Image.
- 
+
  After creation of an Fl_Image_Surface object, make it the current drawing
  surface calling Fl_Surface_Device::push_current(), and all
- subsequent graphics requests will be recorded in the image. It's possible to 
- draw widgets (using Fl_Image_Surface::draw()) or to use any of the 
+ subsequent graphics requests will be recorded in the image. It's possible to
+ draw widgets (using Fl_Image_Surface::draw()) or to use any of the
  \ref fl_drawings or the \ref fl_attributes. Finally, call image() on the object
  to obtain a newly allocated Fl_RGB_Image object.
  Fl_Gl_Window objects can be drawn in the image as well.
- 
+
  Usage example:
  \code
  // this is the widget that you want to draw into an image
@@ -43,12 +41,12 @@
 
  // create an Fl_Image_Surface object
  Fl_Image_Surface *image_surface = new Fl_Image_Surface(g->w(), g->h());
- 
+
  // direct all further graphics requests to the image
  Fl_Surface_Device::push_current(image_surface);
 
  // draw a white background
- fl_color(FL_WHITE); 
+ fl_color(FL_WHITE);
  fl_rectf(0, 0, g->w(), g->h());
 
  // draw the g widget in the image
@@ -59,7 +57,7 @@
 
  // direct graphics requests back to their previous destination
  Fl_Surface_Device::pop_current();
- 
+
  // delete the image_surface object, but not the image itself
  delete image_surface;
  \endcode
@@ -125,7 +123,3 @@ protected:
  */
 
 #endif // Fl_Image_Surface_H
-
-//
-// End of "$Id$".
-//

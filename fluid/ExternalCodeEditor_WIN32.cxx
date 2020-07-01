@@ -1,9 +1,7 @@
 //
-// "$Id$".
+//      External code editor management class for Windows
 //
-//	External code editor management class for Windows
-//
-//	Note: This entire file Windows only.
+//      Note: This entire file Windows only.
 
 #include <stdio.h>      // snprintf()
 
@@ -88,7 +86,7 @@ int ExternalCodeEditor::is_editing() {
   return( (pinfo_.dwProcessId != 0) ? 1 : 0 );
 }
 
-// [Static/Local] Terminate_app()'s callback to send WM_CLOSE to a single window. 
+// [Static/Local] Terminate_app()'s callback to send WM_CLOSE to a single window.
 static BOOL CALLBACK terminate_app_enum(HWND hwnd, LPARAM lParam) {
   DWORD dwID;
   GetWindowThreadProcessId(hwnd, &dwID);
@@ -144,17 +142,17 @@ void ExternalCodeEditor::close_editor() {
                  "pid=%ld file=%s", long(pinfo_.dwProcessId), filename());
         break;
       case 0:   // process still running
-	switch ( fl_choice("Please close external editor\npid=%ld file=%s",
-			   "Force Close",	// button 0
-			   "Closed",		// button 1
-			   0,			// button 2
-			   long(pinfo_.dwProcessId), filename() ) ) {
-	  case 0: 	// Force Close
-	    kill_editor();
-	    continue;
-	  case 1: 	// Closed? try to reap
-	    continue;
-	}
+        switch ( fl_choice("Please close external editor\npid=%ld file=%s",
+                           "Force Close",       // button 0
+                           "Closed",            // button 1
+                           0,                   // button 2
+                           long(pinfo_.dwProcessId), filename() ) ) {
+          case 0:       // Force Close
+            kill_editor();
+            continue;
+          case 1:       // Closed? try to reap
+            continue;
+        }
         break;
       case 1:   // process reaped
         return;
@@ -178,7 +176,7 @@ void ExternalCodeEditor::kill_editor() {
     }
     case 0: {  // success -- process reaped
       DWORD pid = pinfo_.dwProcessId;     // save pid
-      reap_cleanup();			  // clears pinfo_
+      reap_cleanup();                     // clears pinfo_
       if ( G_debug )
         printf("*** kill_editor() REAP pid=%ld #open=%ld\n",
                long(pid), long(L_editors_open));
@@ -217,7 +215,7 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   // Get file size
   if ( GetFileSizeEx(fh, &fsize) == 0 ) {
     DWORD err = GetLastError();
-    CloseHandle(fh); 
+    CloseHandle(fh);
     SetLastError(err);  // return error from GetFileSizeEx(), not CloseHandle()
     return -1;
   }
@@ -225,7 +223,7 @@ int ExternalCodeEditor::handle_changes(const char **code, int force) {
   FILETIME ftCreate, ftAccess, ftWrite;
   if ( GetFileTime(fh, &ftCreate, &ftAccess, &ftWrite) == 0 ) {
     DWORD err = GetLastError();
-    CloseHandle(fh); 
+    CloseHandle(fh);
     SetLastError(err);  // return error from GetFileTime(), not CloseHandle()
     return -1;
   }
@@ -481,7 +479,7 @@ int ExternalCodeEditor::reap_editor(DWORD *pid_reaped) {
     }
     case WAIT_OBJECT_0: {  // reaped
       DWORD wpid = pinfo_.dwProcessId;      // save pid
-      reap_cleanup();			    // clears pinfo_
+      reap_cleanup();                       // clears pinfo_
       if ( pid_reaped ) *pid_reaped = wpid; // return pid to caller
       if ( G_debug ) printf("*** EDITOR REAPED: pid=%ld #open=%d\n",
                             long(wpid), L_editors_open);
@@ -515,8 +513,8 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
       // See if editor recently closed but not reaped; try to reap
       DWORD wpid;
       switch ( reap_editor(&wpid) ) {
-        case -2:	// no editor running (unlikely to happen)
-	  break;
+        case -2:        // no editor running (unlikely to happen)
+          break;
         case -1:        // wait failed
           fl_alert("ERROR: WaitForSingleObject() failed: %s\nfile='%s', pid=%ld",
             get_ms_errmsg(), filename(), long(pinfo_.dwProcessId));
@@ -578,7 +576,3 @@ void ExternalCodeEditor::set_update_timer_callback(Fl_Timeout_Handler cb) {
 int ExternalCodeEditor::editors_open() {
   return L_editors_open;
 }
-
-//
-// End of "$Id$".
-//

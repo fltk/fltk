@@ -9,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef FL_SVG_IMAGE_H
@@ -22,28 +22,28 @@
 struct NSVGimage;
 
 /** The Fl_SVG_Image class supports loading, caching and drawing of scalable vector graphics (SVG) images.
- The FLTK library performs parsing and rasterization of SVG data using a modified version 
+ The FLTK library performs parsing and rasterization of SVG data using a modified version
  of the \c nanosvg software (https://github.com/memononen/nanosvg).
  The software modification allows the option to change the image ratio
  while performing rasterization.
 
- Use Fl_Image::fail() to check if the Fl_SVG_Image failed to load. fail() returns ERR_FILE_ACCESS 
- if the file could not be opened or read, and ERR_FORMAT if the SVG format could not be decoded. 
+ Use Fl_Image::fail() to check if the Fl_SVG_Image failed to load. fail() returns ERR_FILE_ACCESS
+ if the file could not be opened or read, and ERR_FORMAT if the SVG format could not be decoded.
  If the image has loaded correctly, w(), h(), and d() should return values greater than zero.
 
- Rasterization is not done until the image is first drawn or resize() or normalize() is called. Therefore, 
+ Rasterization is not done until the image is first drawn or resize() or normalize() is called. Therefore,
  \ref array is NULL until then. The delayed rasterization ensures an Fl_SVG_Image is always rasterized
  to the exact screen resolution at which it is drawn.
 
  The Fl_SVG_Image class draws images computed by \c nanosvg with the following known limitations
- 
+
   - text between \c <text\> and </text\> marks,
   - \c image elements, and
   - <use\> statements
 
  are not rendered.
 
- The FLTK library can optionally be built without SVG support; in that case, 
+ The FLTK library can optionally be built without SVG support; in that case,
  class Fl_SVG_Image is unavailable.
 
  Example of displaying a hard-coded svg file:
@@ -117,7 +117,7 @@ struct NSVGimage;
       Fl_Box::resize(x, y, w, h);
     }
   };
- 
+
   int main(int argc, char **argv) {
     Fl_Window *win = new Fl_Window(130, 130);
     resizable_box *box = new resizable_box(win->w(), win->h());
@@ -166,7 +166,3 @@ public:
 };
 
 #endif // FL_SVG_IMAGE_H
-
-//
-// End of "$Id$".
-//

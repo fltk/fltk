@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <time.h>
@@ -63,7 +61,7 @@ class SimpleTerminal : public Fl_Group {
                 "\033[7m 30%  white     Courier 14\n"
                 "\033[8m 20%  white     Courier 14\n"
                 "\033[9m 10%  white     Courier 14\n"
-		"\033[0m");
+                "\033[0m");
   }
   static void DateTimer_CB(void *data) {
     Fl_Simple_Terminal *tty = (Fl_Simple_Terminal*)data;
@@ -76,7 +74,7 @@ public:
     return new SimpleTerminal(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
   SimpleTerminal(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-    static Fl_Text_Display::Style_Table_Entry my_stable[] = {	// 10 entry grayscale
+    static Fl_Text_Display::Style_Table_Entry my_stable[] = {   // 10 entry grayscale
       // Font Color Font Face        Font Size ANSI Sequence
       // ---------- ---------------- --------- -------------
       { 0xffffff00, FL_COURIER_BOLD, 14 },  // "\033[0m"      0   white 100%
@@ -118,7 +116,3 @@ public:
 };
 
 UnitTest simple_terminal("simple terminal", SimpleTerminal::create);
-
-//
-// End of "$Id$"
-//

@@ -1,9 +1,7 @@
 //
-// "$Id$".
+//      External code editor management class for Unix
 //
-//	External code editor management class for Unix
-//
-//	Note: This entire file Unix only
+//      Note: This entire file Unix only
 
 #include <errno.h>      /* errno */
 #include <string.h>     /* strerror() */
@@ -84,17 +82,17 @@ void ExternalCodeEditor::close_editor() {
                  "pid=%ld file=%s", long(pid_), filename());
         break;
       case 0:   // process still running
-	switch ( fl_choice("Please close external editor\npid=%ld file=%s",
-			   "Force Close",	// button 0
-			   "Closed",		// button 1
-			   0,			// button 2
-			   long(pid_), filename() ) ) {
-	  case 0: 	// Force Close
-	    kill_editor();
-	    continue;
-	  case 1: 	// Closed? try to reap
-	    continue;
-	}
+        switch ( fl_choice("Please close external editor\npid=%ld file=%s",
+                           "Force Close",       // button 0
+                           "Closed",            // button 1
+                           0,                   // button 2
+                           long(pid_), filename() ) ) {
+          case 0:       // Force Close
+            kill_editor();
+            continue;
+          case 1:       // Closed? try to reap
+            continue;
+        }
         break;
       case 1:   // process reaped
         return;
@@ -338,9 +336,9 @@ int ExternalCodeEditor::start_editor(const char *editor_cmd,
       int nargs;
       char **args = 0;
       if (make_args(cmd, &nargs, &args) > 0) {
-	execvp(args[0], args);  // run command - doesn't return if succeeds
-	fl_alert("couldn't exec() '%s': %s", cmd, strerror(errno));
-	exit(1);
+        execvp(args[0], args);  // run command - doesn't return if succeeds
+        fl_alert("couldn't exec() '%s': %s", cmd, strerror(errno));
+        exit(1);
       }
       exit(1);
       // break;
@@ -384,7 +382,7 @@ int ExternalCodeEditor::reap_editor(pid_t *pid_reaped) {
         { stop_update_timer(); }
       break;
   }
-  if ( G_debug ) 
+  if ( G_debug )
     printf("*** EDITOR REAPED: pid=%ld #open=%d\n", long(wpid), L_editors_open);
   return 1;
 }
@@ -411,7 +409,7 @@ int ExternalCodeEditor::open_editor(const char *editor_cmd,
       pid_t wpid;
       switch ( reap_editor(&wpid) ) {
         case -2:        // no editor running? (unlikely if is_editing() true)
-	  break;
+          break;
         case -1:        // waitpid() failed
           fl_alert("ERROR: waitpid() failed: %s\nfile='%s', pid=%ld",
             strerror(errno), filename(), (long)pid_);
@@ -475,7 +473,3 @@ void ExternalCodeEditor::set_update_timer_callback(Fl_Timeout_Handler cb) {
 int ExternalCodeEditor::editors_open() {
   return L_editors_open;
 }
-
-//
-// End of "$Id$".
-//

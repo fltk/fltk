@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Box.H>
@@ -44,7 +42,7 @@ class SymbolTest : public Fl_Widget
     fl_color(FL_BLACK);
     fl_draw(txt, X, Y, 10, 10, FL_ALIGN_INSIDE|FL_ALIGN_TOP|FL_ALIGN_LEFT, 0, 1);
   }
-public: 
+public:
   static Fl_Widget *create() {
     return new SymbolTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
@@ -63,15 +61,15 @@ public:
       fl_font(FL_HELVETICA, fsize);
       int xx = x0+10;
       int yy = y0+10;
-      DrawTextAndBoxes("Text"            ,xx,yy); yy += fsize+10;	// check no symbols
-      DrawTextAndBoxes("@->"             ,xx,yy); yy += fsize+10;	// check symbol alone
-      DrawTextAndBoxes("@-> "            ,xx,yy); yy += fsize+10;	// check symbol with trailing space
-      DrawTextAndBoxes("@-> Rt Arrow"    ,xx,yy); yy += fsize+10;	// check symbol at left edge
-      DrawTextAndBoxes("Lt Arrow @<-"    ,xx,yy); yy += fsize+10;	// check symbol at right edge
-      DrawTextAndBoxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;	// check symbol at lt+rt edges
-      DrawTextAndBoxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;	// check @@ at left, symbol at right
-      DrawTextAndBoxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;	// check symbol at left, @@ at right
-      DrawTextAndBoxes("@@ At/At @@"     ,xx,yy); yy += fsize+10;	// check @@ at left+right
+      DrawTextAndBoxes("Text"            ,xx,yy); yy += fsize+10;       // check no symbols
+      DrawTextAndBoxes("@->"             ,xx,yy); yy += fsize+10;       // check symbol alone
+      DrawTextAndBoxes("@-> "            ,xx,yy); yy += fsize+10;       // check symbol with trailing space
+      DrawTextAndBoxes("@-> Rt Arrow"    ,xx,yy); yy += fsize+10;       // check symbol at left edge
+      DrawTextAndBoxes("Lt Arrow @<-"    ,xx,yy); yy += fsize+10;       // check symbol at right edge
+      DrawTextAndBoxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;       // check symbol at lt+rt edges
+      DrawTextAndBoxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;       // check @@ at left, symbol at right
+      DrawTextAndBoxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;       // check symbol at left, @@ at right
+      DrawTextAndBoxes("@@ At/At @@"     ,xx,yy); yy += fsize+10;       // check @@ at left+right
       xx = x0+200;
       yy = y0+10;
       DrawTextAndBoxes("Line1\nLine2"               ,xx,yy); yy += (fsize+10)*2; // check 2 lines, no symbol
@@ -89,7 +87,3 @@ public:
 };
 
 UnitTest symbolExtents("symbol text", SymbolTest::create);
-
-//
-// End of "$Id$"
-//

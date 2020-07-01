@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Image_Surface.H>
@@ -23,7 +21,7 @@
 /** Constructor with optional high resolution.
  \param w and \param h set the size of the resulting image. The value of the \p high_res
  parameter controls whether \p w and \p h are interpreted as pixel or FLTK units.
- 
+
  \param high_res If zero, the created image surface is sized at \p w x \p h pixels.
  If non-zero, the pixel size of the created image surface depends on
  the value of the display scale factor (see Fl_Graphics_Driver::scale()):
@@ -73,7 +71,7 @@ void Fl_Image_Surface::untranslate() {
  The returned Fl_Offscreen object is deleted when the Fl_Image_Surface object is deleted,
  unless the Fl_Image_Surface was constructed with non-null Fl_Offscreen argument.
  */
-Fl_Offscreen Fl_Image_Surface::offscreen() { 
+Fl_Offscreen Fl_Image_Surface::offscreen() {
   return platform_surface ? platform_surface->offscreen : (Fl_Offscreen)0;
 }
 
@@ -108,7 +106,7 @@ Fl_RGB_Image *Fl_Image_Surface::image() {
 
 /** Returns a possibly high resolution image made of all drawings sent to the Fl_Image_Surface object.
  The Fl_Image_Surface object should have been constructed with Fl_Image_Surface(W, H, 1).
- The returned Fl_Shared_Image object is scaled to a size of WxH FLTK units and may have a 
+ The returned Fl_Shared_Image object is scaled to a size of WxH FLTK units and may have a
  pixel size larger than these values.
  The returned object should be deallocated with Fl_Shared_Image::release() after use.
  \deprecated Use image() instead.
@@ -173,7 +171,7 @@ static int find_slot(void) { // return an available slot to memorize an Fl_Image
    Creation of an offscreen graphics buffer.
    \param w,h     width and height in FLTK units of the buffer.
    \return    the created graphics buffer.
- 
+
  The pixel size of the created graphics buffer is equal to the number of pixels
  in an area of the screen containing the current window sized at \p w,h FLTK units.
  This pixel size varies with the value of the scale factor of this screen.
@@ -249,8 +247,3 @@ void fl_rescale_offscreen(Fl_Offscreen &ctx) {
 }
 
 /** @} */
-
-
-//
-// End of "$Id$".
-//

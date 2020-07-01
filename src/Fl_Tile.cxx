@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Tile widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file. If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -150,10 +148,10 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
   Fl_Widget::resize(X,Y,W,H);
 
   // find bottom-right corner of resizable:
-  int OR = p[1].r();		// old right border
-  int NR = X+W-(p[0].r()-OR);	// new right border
-  int OB = p[1].b();		// old bottom border
-  int NB = Y+H-(p[0].b()-OB);	// new bottom border
+  int OR = p[1].r();            // old right border
+  int NR = X+W-(p[0].r()-OR);   // new right border
+  int OB = p[1].b();            // old bottom border
+  int NB = Y+H-(p[0].b()-OB);   // new bottom border
 
   // move everything to be on correct side of new resizable:
   Fl_Widget*const* a = array();
@@ -221,20 +219,20 @@ int Fl_Tile::handle(int event) {
       Fl_Widget* o = *a++;
       if (o == resizable()) continue;
       if (p->r() < q->r() && o->y()<=my+GRABAREA && o->y()+o->h()>=my-GRABAREA) {
-	int t = mx - (o->x()+o->w());
-	if (abs(t) < mindx) {
-	  sdx = t;
-	  mindx = abs(t);
-	  oldx = p->r();
-	}
+        int t = mx - (o->x()+o->w());
+        if (abs(t) < mindx) {
+          sdx = t;
+          mindx = abs(t);
+          oldx = p->r();
+        }
       }
       if (p->b() < q->b() && o->x()<=mx+GRABAREA && o->x()+o->w()>=mx-GRABAREA) {
-	int t = my - (o->y()+o->h());
-	if (abs(t) < mindy) {
-	  sdy = t;
-	  mindy = abs(t);
-	  oldy = p->b();
-	}
+        int t = my - (o->y()+o->h());
+        if (abs(t) < mindy) {
+          sdy = t;
+          mindy = abs(t);
+          oldy = p->b();
+        }
       }
     }
     sdrag = 0; sx = sy = 0;
@@ -297,8 +295,3 @@ Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*L)
 : Fl_Group(X,Y,W,H,L)
 {
 }
-
-
-//
-// End of "$Id$".
-//

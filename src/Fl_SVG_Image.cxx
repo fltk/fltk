@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // SVG image code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <config.h>
@@ -33,11 +31,11 @@ static double strtoll(const char *str, char **endptr, int base) {
 }
 #endif
 
-#define NANOSVG_ALL_COLOR_KEYWORDS	// Include full list of color keywords.
-#define NANOSVG_IMPLEMENTATION		// Expands implementation
+#define NANOSVG_ALL_COLOR_KEYWORDS      // Include full list of color keywords.
+#define NANOSVG_IMPLEMENTATION          // Expands implementation
 #include "../nanosvg/nanosvg.h"
 
-#define NANOSVGRAST_IMPLEMENTATION	// Expands implementation
+#define NANOSVGRAST_IMPLEMENTATION      // Expands implementation
 #include "../nanosvg/nanosvgrast.h"
 
 #if defined(HAVE_LIBZ)
@@ -158,7 +156,7 @@ void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, Fl_SVG_I
   }
   if (filedata) {
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);
-    free(filedata);	// made with svg_inflate|malloc|strdup
+    free(filedata);     // made with svg_inflate|malloc|strdup
     if (counted_svg_image_->svg_image->width == 0 || counted_svg_image_->svg_image->height == 0) {
       d(-1);
       ld(ERR_FORMAT);
@@ -273,7 +271,3 @@ void Fl_SVG_Image::normalize() {
 }
 
 #endif // FLTK_USE_SVG
-
-//
-// End of "$Id$".
-//

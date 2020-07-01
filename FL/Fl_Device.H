@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of classes Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,14 +8,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-/** \file Fl_Device.H 
+/** \file Fl_Device.H
  \brief declaration of classes Fl_Surface_Device, Fl_Display_Device, Fl_Device_Plugin.
 */
 
@@ -36,7 +34,7 @@ class Fl_Widget;
  A drawing surface that's susceptible to receive graphical output.
  Any FLTK application has at any time a current drawing surface to which all drawing requests are directed.
  The current surface is given by Fl_Surface_Device::surface().
- When main() begins running, the current drawing surface has been set to the computer's display, 
+ When main() begins running, the current drawing surface has been set to the computer's display,
  an instance of the Fl_Display_Device class.
 
  A drawing surface other than the computer's display, is typically used as follows:
@@ -53,7 +51,7 @@ class Fl_Widget;
  </ol>
  For back-compatibility, it is also possible to use the Fl_Surface_Device::set_current() member function
  to change the current drawing surface, once to the new surface, once to the previous one.
- 
+
  Class Fl_Surface_Device can also be derived to define new kinds of graphical output
  usable with FLTK drawing functions.
  An example would be to draw to a PDF file. This would require to create a new class,
@@ -105,7 +103,7 @@ public:
 
 /**
  This plugin socket allows the integration of new device drivers for special
- window or screen types. 
+ window or screen types.
  This class is not intended for use outside the FLTK library.
  It is currently used to provide an automated printing
  service and screen capture for OpenGL windows, if linked with fltk_gl.
@@ -130,7 +128,3 @@ public:
 };
 
 #endif // Fl_Device_H
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -95,7 +93,3 @@ void Fl_Xlib_Graphics_Driver::ellipse_unscaled(double xt, double yt, double rx, 
   (what == POLYGON ? XFillArc : XDrawArc)
     (fl_display, fl_window, gc_, llx, lly, w, h, 0, 360*64);
 }
-
-//
-// End of "$Id$".
-//

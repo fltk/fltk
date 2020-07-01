@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Fl_Graphics_Driver class for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -43,11 +41,11 @@ Fl_Graphics_Driver::Fl_Graphics_Driver()
 {
   font_ = 0;
   size_ = 0;
-  sptr=0; rstackptr=0; 
+  sptr=0; rstackptr=0;
   rstack[0] = NULL;
   fl_clip_state_number=0;
-  m = m0; 
-  fl_matrix = &m; 
+  m = m0;
+  fl_matrix = &m;
   font_descriptor_ = NULL;
   scale_ = 1;
 };
@@ -944,7 +942,3 @@ void Fl_Scalable_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, 
 void Fl_Scalable_Graphics_Driver::transformed_vertex0(float x, float y) {}
 
 #endif
-
-//
-// End of "$Id$".
-//

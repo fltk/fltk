@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Definition of Posix system driver
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef FL_X11_SYSTEM_DRIVER_H
@@ -46,7 +44,7 @@ public:
   virtual void newUUID(char *uuidBuffer);
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                     const char *application);
-  virtual int preferences_need_protection_check() {return 1;} 
+  virtual int preferences_need_protection_check() {return 1;}
   virtual int utf8locale();
   // this one is in Fl_own_colormap.cxx
   virtual void own_colormap();
@@ -70,7 +68,3 @@ public:
 };
 
 #endif /* FL_X11_SYSTEM_DRIVER_H */
-
-//
-// End of "$Id$".
-//

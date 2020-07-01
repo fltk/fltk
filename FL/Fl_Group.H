@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /* \file
@@ -52,7 +50,7 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 
   int navigation(int);
   static Fl_Group *current_;
- 
+
   // unimplemented copy ctor and assignment operator
   Fl_Group(const Fl_Group&);
   Fl_Group& operator=(const Fl_Group&);
@@ -84,7 +82,7 @@ public:
   Fl_Widget* child(int n) const {return array()[n];}
   int find(const Fl_Widget*) const;
   /**
-    See int Fl_Group::find(const Fl_Widget *w) const 
+    See int Fl_Group::find(const Fl_Widget *w) const
   */
   int find(const Fl_Widget& o) const {return find(&o);}
   Fl_Widget* const* array() const;
@@ -98,7 +96,7 @@ public:
   virtual ~Fl_Group();
   void add(Fl_Widget&);
   /**
-    See void Fl_Group::add(Fl_Widget &w) 
+    See void Fl_Group::add(Fl_Widget &w)
   */
   void add(Fl_Widget* o) {add(*o);}
   void insert(Fl_Widget&, int i);
@@ -117,7 +115,7 @@ public:
   void clear();
 
   /**
-    See void Fl_Group::resizable(Fl_Widget *box) 
+    See void Fl_Group::resizable(Fl_Widget *box)
   */
   void resizable(Fl_Widget& o) {resizable_ = &o;}
   /**
@@ -132,11 +130,11 @@ public:
     \image html resizebox1.png
 
     <br>
-    
+
     \image html resizebox2.png
-    
+
     \image latex resizebox1.png "before resize"  width=4cm
-    
+
     \image latex resizebox2.png "after resize"   width=4.85cm
 
     The resizable may be set to the group itself, in which case all the
@@ -152,7 +150,7 @@ public:
   */
   void resizable(Fl_Widget* o) {resizable_ = o;}
   /**
-    See void Fl_Group::resizable(Fl_Widget *box) 
+    See void Fl_Group::resizable(Fl_Widget *box)
   */
   Fl_Widget* resizable() const {return resizable_;}
   /**
@@ -164,7 +162,7 @@ public:
   /**
     Controls whether the group widget clips the drawing of
     child widgets to its bounding box.
-    
+
     Set \p c to 1 if you want to clip the child widgets to the
     bounding box.
 
@@ -204,7 +202,7 @@ public:
 /**
   This is a dummy class that allows you to end a Fl_Group in a constructor list of a
   class:
-  \code 
+  \code
   class MyClass {
     Fl_Group group;
     Fl_Button button_in_group;
@@ -218,7 +216,7 @@ public:
     end(),
     button_outside_group(10,120,60,30) {
     [..ctor code..]
-  } 
+  }
   \endcode
 */
 class FL_EXPORT Fl_End {
@@ -228,7 +226,3 @@ public:
 };
 
 #endif
-
-//
-// End of "$Id$".
-//

@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // NOTE: I believe many of the following comments (between the dash markers)
@@ -48,7 +46,7 @@ static int ncolors, chars_per_pixel;
 
 typedef struct { uchar r; uchar g; uchar b; } UsedColor;
 static UsedColor *used_colors;
-static int color_count; 	    // # of non-transparent colors used in pixmap
+static int color_count;             // # of non-transparent colors used in pixmap
 
 /**
   Get the dimensions of a pixmap.
@@ -87,7 +85,7 @@ void Fl_GDI_Graphics_Driver::make_unused_color_(uchar &r, uchar &g, uchar &b) {
       if ( used_colors[i].r == r &&
            used_colors[i].g == g &&
            used_colors[i].b == b )
-	break;
+        break;
     if (i >= color_count) {
       free((void*)used_colors); used_colors = NULL;
       need_pixmap_bg_color = RGB(r, g, b);
@@ -100,8 +98,8 @@ void Fl_GDI_Graphics_Driver::make_unused_color_(uchar &r, uchar &g, uchar &b) {
       if (g < 255) {
         g++;
       } else {
-	g = 0;
-	b++;
+        g = 0;
+        b++;
       }
     }
   }
@@ -113,22 +111,22 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   int w, h;
   const uchar*const* data = (const uchar*const*)(cdata+1);
   uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
-  
+
   if (!fl_measure_pixmap(cdata, w, h))
     return 0;
-  
+
   if ((chars_per_pixel < 1) || (chars_per_pixel > 2))
     return 0;
-  
+
   typedef uchar uchar4[4];
   uchar4 *colors = new uchar4[1<<(chars_per_pixel*8)];
-  
+
   if (Fl_Graphics_Driver::need_pixmap_bg_color) {
     color_count = 0;
     used_colors = (UsedColor*)malloc(abs(ncolors) * sizeof(UsedColor));
   }
-  
-  if (ncolors < 0) {	// FLTK (non standard) compressed colormap
+
+  if (ncolors < 0) {    // FLTK (non standard) compressed colormap
     ncolors = -ncolors;
     const uchar *p = *data++;
     // if first color is ' ' it is transparent (put it later to make
@@ -154,7 +152,7 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
       *c++ = *p++;
       *c = 255;
     }
-  } else {	// normal XPM colormap with names
+  } else {      // normal XPM colormap with names
     for (int i=0; i<ncolors; i++) {
       const uchar *p = *data++;
       // the first 1 or 2 characters are the color index:
@@ -202,7 +200,7 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
       fl_graphics_driver->make_unused_color_(r, g, b);
     }
   }
-  
+
   U32 *q = (U32*)out;
   for (int Y = 0; Y < h; Y++) {
     const uchar* p = data[Y];
@@ -262,7 +260,3 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   delete[] buffer;
   return 1;
 }
-
-//
-// End of "$Id$".
-//

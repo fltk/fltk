@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // X overlay support for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Return an overlay visual, if any.  Also allocate a colormap and
@@ -52,10 +50,10 @@ XVisualInfo *fl_find_overlay_visual() {
   Atom actualType;
   int actualFormat;
   if (XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
-			 overlayVisualsAtom, 0L, 10000L, False,
-			 overlayVisualsAtom, &actualType, &actualFormat,
-			 &sizeData, &bytesLeft,
-			 (unsigned char **) &overlayInfo)) return 0;
+                         overlayVisualsAtom, 0L, 10000L, False,
+                         overlayVisualsAtom, &actualType, &actualFormat,
+                         &sizeData, &bytesLeft,
+                         (unsigned char **) &overlayInfo)) return 0;
 
   if (actualType == overlayVisualsAtom && actualFormat == 32) {
     int n = int(sizeData/4);
@@ -69,19 +67,19 @@ XVisualInfo *fl_find_overlay_visual() {
       int num;
       XVisualInfo *v1=XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
       if (v1->screen == fl_screen && v1->c_class == PseudoColor
-	  && (!v || v1->depth > v->depth && v1->depth <= 8)) {
-	if (v) XFree((char*)v);
-	v = v1;
-	fl_transparent_pixel = overlayInfo[i].value;
+          && (!v || v1->depth > v->depth && v1->depth <= 8)) {
+        if (v) XFree((char*)v);
+        v = v1;
+        fl_transparent_pixel = overlayInfo[i].value;
       } else {
-	XFree((char*)v1);
+        XFree((char*)v1);
       }
     }
     if (v) {
       fl_overlay_visual = v;
-      fl_overlay_colormap = 
-	XCreateColormap(fl_display, RootWindow(fl_display, fl_screen),
-			v->visual, AllocNone);
+      fl_overlay_colormap =
+        XCreateColormap(fl_display, RootWindow(fl_display, fl_screen),
+                        v->visual, AllocNone);
     }
   }
   XFree((char*)overlayInfo);
@@ -90,7 +88,3 @@ XVisualInfo *fl_find_overlay_visual() {
 }
 
 #endif
-
-//
-// End of "$Id$".
-//

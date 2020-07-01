@@ -1,4 +1,3 @@
-// "$Id$"
 //
 // FLTK native OS file chooser widget
 //
@@ -9,15 +8,15 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // TODO:
-//	o When doing 'open file', only dir is preset, not filename.
+//      o When doing 'open file', only dir is preset, not filename.
 //        Possibly 'preset_file' could be used to select the filename.
 //
 
@@ -28,35 +27,35 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
-#define MAXFILTERS	80
+#define MAXFILTERS      80
 #import <Cocoa/Cocoa.h>
 
 class Fl_Quartz_Native_File_Chooser_Driver : public Fl_Native_File_Chooser_Driver {
 private:
-  int             _btype;		// kind-of browser to show()
-  int             _options;		// general options
-  NSSavePanel 	*_panel;
-  char          **_pathnames;		// array of pathnames
-  int             _tpathnames;	        // total pathnames
-  char           *_directory;		// default pathname to use
-  char           *_title;		// title for window
-  char           *_preset_file;	        // the 'save as' filename
-  
-  char           *_filter;		// user-side search filter, eg:
+  int             _btype;               // kind-of browser to show()
+  int             _options;             // general options
+  NSSavePanel   *_panel;
+  char          **_pathnames;           // array of pathnames
+  int             _tpathnames;          // total pathnames
+  char           *_directory;           // default pathname to use
+  char           *_title;               // title for window
+  char           *_preset_file;         // the 'save as' filename
+
+  char           *_filter;              // user-side search filter, eg:
   // C Files\t*.[ch]\nText Files\t*.txt"
-  
-  char           *_filt_names;		// filter names (tab delimited)
+
+  char           *_filt_names;          // filter names (tab delimited)
   // eg. "C Files\tText Files"
-  
+
   char           *_filt_patt[MAXFILTERS];
   // array of filter patterns, eg:
   //     _filt_patt[0]="*.{cxx,h}"
   //     _filt_patt[1]="*.txt"
-  
-  int             _filt_total;		// parse_filter() # of filters loaded
-  int             _filt_value;		// index of the selected filter
-  char           *_errmsg;		// error message
-  
+
+  int             _filt_total;          // parse_filter() # of filters loaded
+  int             _filt_value;          // index of the selected filter
+  char           *_errmsg;              // error message
+
   // Private methods
   void errmsg(const char *msg);
   void clear_pathnames();
@@ -136,20 +135,20 @@ Fl_Quartz_Native_File_Chooser_Driver::Fl_Quartz_Native_File_Chooser_Driver(int v
 
 // DESTRUCTOR
 Fl_Quartz_Native_File_Chooser_Driver::~Fl_Quartz_Native_File_Chooser_Driver() {
-  // _opts		// nothing to manage
-  // _options		// nothing to manage
-  // _keepstate		// nothing to manage
-  // _tempitem		// nothing to manage
+  // _opts              // nothing to manage
+  // _options           // nothing to manage
+  // _keepstate         // nothing to manage
+  // _tempitem          // nothing to manage
   clear_pathnames();
   _directory   = strfree(_directory);
   _title       = strfree(_title);
   _preset_file = strfree(_preset_file);
   _filter      = strfree(_filter);
-  //_filt_names		// managed by clear_filters()
-  //_filt_patt[i]	// managed by clear_filters()
-  //_filt_total		// managed by clear_filters()
+  //_filt_names         // managed by clear_filters()
+  //_filt_patt[i]       // managed by clear_filters()
+  //_filt_total         // managed by clear_filters()
   clear_filters();
-  //_filt_value		// nothing to manage
+  //_filt_value         // nothing to manage
   _errmsg = strfree(_errmsg);
 }
 
@@ -178,7 +177,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::show() {
 
   // Make sure fltk interface updates before posting our dialog
   Fl::flush();
-  
+
   // POST BROWSER
   int err = post();
 
@@ -305,8 +304,8 @@ void Fl_Quartz_Native_File_Chooser_Driver::parse_filter(const char *in) {
   if ( ! in ) return;
   int has_name = strchr(in, '\t') ? 1 : 0;
 
-  char mode = has_name ? 'n' : 'w';	// parse mode: n=title, w=wildcard
-  char wildcard[1024] = "";		// parsed wildcard
+  char mode = has_name ? 'n' : 'w';     // parse mode: n=title, w=wildcard
+  char wildcard[1024] = "";             // parsed wildcard
   char name[1024] = "";
 
   // Parse filter user specified
@@ -315,59 +314,59 @@ void Fl_Quartz_Native_File_Chooser_Driver::parse_filter(const char *in) {
     //// DEBUG
     //// printf("WORKING ON '%c': mode=<%c> name=<%s> wildcard=<%s>\n",
     ////                    *in,  mode,     name,     wildcard);
-    
+
     switch (*in) {
       // FINISHED PARSING NAME?
       case '\t':
-	if ( mode != 'n' ) goto regchar;
-	mode = 'w';
-	break;
+        if ( mode != 'n' ) goto regchar;
+        mode = 'w';
+        break;
 
       // ESCAPE NEXT CHAR
       case '\\':
-	++in;
-	goto regchar;
+        ++in;
+        goto regchar;
 
       // FINISHED PARSING ONE OF POSSIBLY SEVERAL FILTERS?
       case '\r':
       case '\n':
       case '\0':
-	// TITLE
-	//     If user didn't specify a name, make one
-	//
-	if ( name[0] == '\0' ) {
-	  sprintf(name, "%.*s Files", (int)sizeof(name)-10, wildcard);
-	}
-	// APPEND NEW FILTER TO LIST
-	if ( wildcard[0] ) {
-	  // Add to filtername list
-	  //     Tab delimit if more than one. We later break
-	  //     tab delimited string into CFArray with 
-	  //     CFStringCreateArrayBySeparatingStrings()
-	  //
-	  if ( _filt_total ) {
+        // TITLE
+        //     If user didn't specify a name, make one
+        //
+        if ( name[0] == '\0' ) {
+          sprintf(name, "%.*s Files", (int)sizeof(name)-10, wildcard);
+        }
+        // APPEND NEW FILTER TO LIST
+        if ( wildcard[0] ) {
+          // Add to filtername list
+          //     Tab delimit if more than one. We later break
+          //     tab delimited string into CFArray with
+          //     CFStringCreateArrayBySeparatingStrings()
+          //
+          if ( _filt_total ) {
             _filt_names = strapp(_filt_names, "\t");
-	  }
-	  _filt_names = strapp(_filt_names, name);
+          }
+          _filt_names = strapp(_filt_names, name);
 
-	  // Add filter to the pattern array
-	  _filt_patt[_filt_total++] = strnew(wildcard);
-	}
-	// RESET
-	wildcard[0] = name[0] = '\0';
-	mode = strchr(in, '\t') ? 'n' : 'w';
-	// DONE?
-	if ( *in == '\0' ) return;	// done
-	else continue;			// not done yet, more filters
+          // Add filter to the pattern array
+          _filt_patt[_filt_total++] = strnew(wildcard);
+        }
+        // RESET
+        wildcard[0] = name[0] = '\0';
+        mode = strchr(in, '\t') ? 'n' : 'w';
+        // DONE?
+        if ( *in == '\0' ) return;      // done
+        else continue;                  // not done yet, more filters
 
       // Parse all other chars
-      default:				// handle all non-special chars
-      regchar:				// handle regular char
-	switch ( mode ) {
+      default:                          // handle all non-special chars
+      regchar:                          // handle regular char
+        switch ( mode ) {
           case 'n': chrcat(name, *in);     continue;
           case 'w': chrcat(wildcard, *in); continue;
-	}
-	break;
+        }
+        break;
     }
   }
   //NOTREACHED
@@ -440,28 +439,28 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   const char *r, *s;
   char *t;
   t = q;
-  do {	// copy to t what is in filter removing what is between \t and \n, if any
+  do {  // copy to t what is in filter removing what is between \t and \n, if any
     r = strchr(p, '\n');
     if (!r) r = p + strlen(p);
     s = strchr(p, '\t');
-    if (s && s < r) { 
-      memcpy(q, p, s - p); 
-      q += s - p; 
+    if (s && s < r) {
+      memcpy(q, p, s - p);
+      q += s - p;
       if (rank < count) { sprintf(q, " (%s)", patterns[rank]); q += strlen(q); }
     }
-    else { 
-      memcpy(q, p, r - p); 
-      q += r - p; 
+    else {
+      memcpy(q, p, r - p);
+      q += r - p;
     }
     rank++;
-    *(q++) = '\n'; 
+    *(q++) = '\n';
     if (*r) p = r + 1; else p = r;
   } while(*p);
   *q = 0;
   return t;
 }
-  
-@interface FLopenDelegate : NSObject 
+
+@interface FLopenDelegate : NSObject
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
 <NSOpenSavePanelDelegate>
 #endif
@@ -495,7 +494,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 }
 @end
 
-@interface FLsaveDelegate : NSObject 
+@interface FLsaveDelegate : NSObject
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
 <NSOpenSavePanelDelegate>
 #endif
@@ -533,9 +532,9 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   char *q = p+1;
   while (*q != ' ' && *q != ')' && *q != 0) q++;
   *q = 0;
-  NSString *ns = [NSString stringWithFormat:@"%@.%@", 
-		  [[dialog performSelector:@selector(nameFieldStringValue)] stringByDeletingPathExtension],
-		  [NSString stringWithUTF8String:p]];
+  NSString *ns = [NSString stringWithFormat:@"%@.%@",
+                  [[dialog performSelector:@selector(nameFieldStringValue)] stringByDeletingPathExtension],
+                  [NSString stringWithUTF8String:p]];
   if (fl_mac_os_version >= 100900) [dialog setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
   free(s);
   [dialog performSelector:@selector(setNameFieldStringValue:) withObject:ns];
@@ -549,7 +548,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
   saveas_confirm = o;
 }
 @end
-  
+
 static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filter, const char *title, int rank)
 {
   NSPopUpButton *popup;
@@ -648,11 +647,11 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
 //         0 - user picked a file
 //         1 - user cancelled
 //        -1 - failed; errmsg() has reason
-//     
+//
 int Fl_Quartz_Native_File_Chooser_Driver::post() {
   // INITIALIZE BROWSER
-  if ( _filt_total == 0 ) {	// Make sure they match
-    _filt_value = 0;		// TBD: move to someplace more logical?
+  if ( _filt_total == 0 ) {     // Make sure they match
+    _filt_value = 0;            // TBD: move to someplace more logical?
   }
   fl_open_display();
   NSAutoreleasePool *localPool;
@@ -663,7 +662,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
     case Fl_Native_File_Chooser::BROWSE_DIRECTORY:
     case Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY:
       _panel =  [NSOpenPanel openPanel];
-      break;	  
+      break;
     case Fl_Native_File_Chooser::BROWSE_SAVE_DIRECTORY:
     case Fl_Native_File_Chooser::BROWSE_SAVE_FILE:
       _panel =  [NSSavePanel savePanel];
@@ -689,7 +688,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       [_panel setCanCreateDirectories:YES];
       break;
   }
-  
+
   // SHOW THE DIALOG
   NSWindow *key = [NSApp keyWindow];
   NSPopUpButton *popup = nil;
@@ -708,7 +707,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
     }
   }
   else {
-    FLsaveDelegate *saveDelegate = [[[FLsaveDelegate alloc] init] autorelease]; 
+    FLsaveDelegate *saveDelegate = [[[FLsaveDelegate alloc] init] autorelease];
     [_panel setAllowsOtherFileTypes:YES];
     [_panel setDelegate:saveDelegate];
     [saveDelegate option:(_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM)];
@@ -718,9 +717,9 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       popup = createPopupAccessory(_panel, t, [[_panel nameFieldLabel] UTF8String], _filt_value);
       delete[] t;
       if (_options & Fl_Native_File_Chooser::USE_FILTER_EXT) {
-	[popup setAction:@selector(changedPopup:)];
-	[popup setTarget:saveDelegate];
-	[saveDelegate panel:(NSSavePanel*)_panel];
+        [popup setAction:@selector(changedPopup:)];
+        [popup setTarget:saveDelegate];
+        [saveDelegate panel:(NSSavePanel*)_panel];
         if (fl_mac_os_version >= 100900) {
           char *p = _filt_patt[_filt_value];
           char *q = strchr(p, '.'); if(!q) q = p-1;
@@ -746,7 +745,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
       _tpathnames = (int)[array count];
       _pathnames = new char*[_tpathnames];
       for(int i = 0; i < _tpathnames; i++) {
-	_pathnames[i] = strnew([[(NSURL*)[array objectAtIndex:i] path] UTF8String]);
+        _pathnames[i] = strnew([[(NSURL*)[array objectAtIndex:i] path] UTF8String]);
       }
     }
     else get_saveas_basename();
@@ -757,7 +756,3 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
 }
 
 #endif // __APPLE__
-
-//
-// End of "$Id$".
-//

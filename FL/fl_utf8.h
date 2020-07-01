@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Author: Jean-Marc Lienher ( http://oksid.ch )
  * Copyright 2000-2010 by O'ksi'D.
  * Copyright 2016-2020 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
  *
  *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     https://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  */
 
 /* Merged in some functionality from the fltk-2 version. IMM.
@@ -218,7 +216,3 @@ FL_EXPORT char fl_make_path( const char *path );
 
 
 #endif /* _HAVE_FL_UTF8_HDR_ */
-
-/*
- * End of "$Id$".
- */

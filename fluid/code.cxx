@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Code output routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2015 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <stdio.h>
@@ -197,35 +195,35 @@ void write_cstring(const char *s, int length) {
       // else fall through:
     default:
       if (c >= ' ' && c < 127) {
-	// a legal ASCII character
-	if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
-	putc(c, code_file);
-	linelength++;
-	break;
+        // a legal ASCII character
+        if (linelength >= 78) {fputs("\\\n",code_file); linelength = 0;}
+        putc(c, code_file);
+        linelength++;
+        break;
       }
       // otherwise we must print it as an octal constant:
       c &= 255;
       if (c < 8) {
-	if (linelength >= 76) {fputs("\\\n",code_file); linelength = 0;}
-	fprintf(code_file, "\\%o",c);
-	linelength += 2;
+        if (linelength >= 76) {fputs("\\\n",code_file); linelength = 0;}
+        fprintf(code_file, "\\%o",c);
+        linelength += 2;
       } else if (c < 64) {
-	if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
-	fprintf(code_file, "\\%o",c);
-	linelength += 3;
+        if (linelength >= 75) {fputs("\\\n",code_file); linelength = 0;}
+        fprintf(code_file, "\\%o",c);
+        linelength += 3;
       } else {
-	if (linelength >= 74) {fputs("\\\n",code_file); linelength = 0;}
-	fprintf(code_file, "\\%o",c);
-	linelength += 4;
+        if (linelength >= 74) {fputs("\\\n",code_file); linelength = 0;}
+        fprintf(code_file, "\\%o",c);
+        linelength += 4;
       }
       // We must not put more numbers after it, because some C compilers
       // consume them as part of the quoted sequence.  Use string constant
       // pasting to avoid this:
       c = *p;
       if (p < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
-	putc('\"', code_file); linelength++;
-	if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
-	putc('\"', code_file); linelength++;
+        putc('\"', code_file); linelength++;
+        if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
+        putc('\"', code_file); linelength++;
       }
       break;
     }
@@ -318,22 +316,22 @@ static Fl_Type* write_code(Fl_Type* p) {
       if (strcmp(q->type_name(), "Function")) q = write_code(q);
       else {
         int level = q->level;
-	do {
-	  q = q->next;
-	} while (q && q->level > level);
+        do {
+          q = q->next;
+        } while (q && q->level > level);
       }
     }
 
-    // write all code that come after the children 
+    // write all code that come after the children
     p->write_code2();
 
     for (q = p->next; q && q->level > p->level;) {
       if (!strcmp(q->type_name(), "Function")) q = write_code(q);
       else {
         int level = q->level;
-	do {
-	  q = q->next;
-	} while (q && q->level > level);
+        do {
+          q = q->next;
+        } while (q && q->level > level);
       }
     }
 
@@ -341,7 +339,7 @@ static Fl_Type* write_code(Fl_Type* p) {
     current_widget_class = 0L;
   } else {
     for (q = p->next; q && q->level > p->level;) q = write_code(q);
-    // write all code that come after the children 
+    // write all code that come after the children
     p->write_code2();
   }
   if (write_sourceview) {
@@ -357,7 +355,7 @@ extern Fl_Class_Type *current_class;
 
 int write_code(const char *s, const char *t) {
   const char *filemode = "w";
-  if (write_sourceview) 
+  if (write_sourceview)
     filemode = "wb";
   write_number++;
   delete id_root; id_root = 0;
@@ -376,7 +374,7 @@ int write_code(const char *s, const char *t) {
     if (!f) {fclose(code_file); return 0;}
     header_file = f;
   }
-  // if the first entry in the Type tree is a comment, then it is probably 
+  // if the first entry in the Type tree is a comment, then it is probably
   // a copyright notice. We print that before anything else in the file!
   Fl_Type* first_type = Fl_Type::first;
   if (first_type && first_type->is_comment()) {
@@ -406,7 +404,7 @@ int write_code(const char *s, const char *t) {
   *b = 0;
   fprintf(header_file, "#ifndef %s\n", define_name);
   fprintf(header_file, "#define %s\n", define_name);
-  }  
+  }
 
   write_declare("#include <FL/Fl.H>");
   if (i18n_type && i18n_include[0]) {
@@ -420,7 +418,7 @@ int write_code(const char *s, const char *t) {
       else {
         write_c("// Initialize I18N stuff now for menus...\n");
         write_c("#include <locale.h>\n");
-	write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
+        write_c("static char *_locale = setlocale(LC_MESSAGES, \"\");\n");
         write_c("static nl_catd _catalog = catopen(\"%s\", 0);\n",
                    i18n_program);
       }
@@ -490,110 +488,110 @@ int write_strings(const char *sfile) {
   switch (i18n_type) {
   case 0 : /* None, just put static text out */
       fprintf(fp, "# generated by Fast Light User Interface Designer (fluid) version %.4f\n",
-	      FL_VERSION);
+              FL_VERSION);
       for (p = Fl_Type::first; p; p = p->next) {
         if (p->is_widget()) {
-	  w = (Fl_Widget_Type *)p;
+          w = (Fl_Widget_Type *)p;
 
-	  if (w->label()) {
-	    for (const char *s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->label()) {
+            for (const char *s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             putc('\n', fp);
-	  }
+          }
 
-	  if (w->tooltip()) {
-	    for (const char *s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->tooltip()) {
+            for (const char *s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             putc('\n', fp);
-	  }
-	}
+          }
+        }
       }
       break;
   case 1 : /* GNU gettext, put a .po file out */
       fprintf(fp, "# generated by Fast Light User Interface Designer (fluid) version %.4f\n",
-	      FL_VERSION);
+              FL_VERSION);
       for (p = Fl_Type::first; p; p = p->next) {
         if (p->is_widget()) {
-	  w = (Fl_Widget_Type *)p;
+          w = (Fl_Widget_Type *)p;
 
-	  if (w->label()) {
-	    const char *s;
+          if (w->label()) {
+            const char *s;
 
-	    fputs("msgid \"", fp);
-	    for (s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgid \"", fp);
+            for (s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
 
-	    fputs("msgstr \"", fp);
-	    for (s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgstr \"", fp);
+            for (s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
+          }
 
-	  if (w->tooltip()) {
-	    const char *s;
+          if (w->tooltip()) {
+            const char *s;
 
-	    fputs("msgid \"", fp);
-	    for (s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgid \"", fp);
+            for (s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
 
-	    fputs("msgstr \"", fp);
-	    for (s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+            fputs("msgstr \"", fp);
+            for (s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
-	}
+          }
+        }
       }
       break;
   case 2 : /* POSIX catgets, put a .msg file out */
       fprintf(fp, "$ generated by Fast Light User Interface Designer (fluid) version %.4f\n",
-	      FL_VERSION);
+              FL_VERSION);
       fprintf(fp, "$set %s\n", i18n_set);
       fputs("$quote \"\n", fp);
 
       for (i = 1, p = Fl_Type::first; p; p = p->next) {
         if (p->is_widget()) {
-	  w = (Fl_Widget_Type *)p;
+          w = (Fl_Widget_Type *)p;
 
-	  if (w->label()) {
-	    fprintf(fp, "%d \"", i ++);
-	    for (const char *s = w->label(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->label()) {
+            fprintf(fp, "%d \"", i ++);
+            for (const char *s = w->label(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
+          }
 
-	  if (w->tooltip()) {
-	    fprintf(fp, "%d \"", i ++);
-	    for (const char *s = w->tooltip(); *s; s ++)
-	      if (*s < 32 || *s > 126 || *s == '\"')
-		fprintf(fp, "\\%03o", *s);
-	      else
-		putc(*s, fp);
+          if (w->tooltip()) {
+            fprintf(fp, "%d \"", i ++);
+            for (const char *s = w->tooltip(); *s; s ++)
+              if (*s < 32 || *s > 126 || *s == '\"')
+                fprintf(fp, "\\%03o", *s);
+              else
+                putc(*s, fp);
             fputs("\"\n", fp);
-	  }
-	}
+          }
+        }
       }
       break;
   }
@@ -609,7 +607,3 @@ void Fl_Type::write_code1() {
   write_c("// Code for %s\n", title());
 }
 void Fl_Type::write_code2() {}
-
-//
-// End of "$Id$".
-//

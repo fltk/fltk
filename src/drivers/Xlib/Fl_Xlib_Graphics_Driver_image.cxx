@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Image drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2020 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // I hope a simple and portable method of drawing color and monochrome
@@ -60,7 +58,7 @@
 #include <X11/extensions/Xrender.h>
 #endif
 
-static XImage xi;	// template used to pass info to X
+static XImage xi;       // template used to pass info to X
 static int bytes_per_pixel;
 static int scanline_add;
 static int scanline_mask;
@@ -68,8 +66,8 @@ static int scanline_mask;
 static void (*converter)(const uchar *from, uchar *to, int w, int delta);
 static void (*mono_converter)(const uchar *from, uchar *to, int w, int delta);
 
-static int dir;		// direction-alternator
-static int ri,gi,bi;	// saved error-diffusion value
+static int dir;         // direction-alternator
+static int ri,gi,bi;    // saved error-diffusion value
 
 #  if USE_COLORMAP
 ////////////////////////////////////////////////////////////////
@@ -468,9 +466,9 @@ static void figure_out_visual() {
 #  define MAXBUFFER 0x40000 // 256k
 
 static void innards(const uchar *buf, int X, int Y, int W, int H,
-		    int delta, int linedelta, int mono,
-		    Fl_Draw_Image_Cb cb, void* userdata,
-		    const bool alpha, GC gc)
+                    int delta, int linedelta, int mono,
+                    Fl_Draw_Image_Cb cb, void* userdata,
+                    const bool alpha, GC gc)
 {
   if (!linedelta) linedelta = W*abs(delta);
 
@@ -509,7 +507,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   // This can set bytes_per_line negative if image is bottom-to-top
   // I tested it on Linux, but it may fail on other Xlib implementations:
   if (buf && (
-#  if 0	// set this to 1 to allow 32-bit shortcut
+#  if 0 // set this to 1 to allow 32-bit shortcut
       delta == 4 &&
 #    if WORDS_BIGENDIAN
       conv == rgbx_converter
@@ -526,7 +524,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   } else {
     int linesize = ((w*bytes_per_pixel+scanline_add)&scanline_mask)/sizeof(STORETYPE);
     int blocking = h;
-    static STORETYPE *buffer;	// our storage, always word aligned
+    static STORETYPE *buffer;   // our storage, always word aligned
     static long buffer_size;
     {int size = linesize*h;
     if (size > MAXBUFFER) {
@@ -543,26 +541,26 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     if (buf) {
       buf += delta*dx+linedelta*dy;
       for (int j=0; j<h; ) {
-	STORETYPE *to = buffer;
-	int k;
-	for (k = 0; j<h && k<blocking; k++, j++) {
-	  conv(buf, (uchar*)to, w, delta);
-	  buf += linedelta;
-	  to += linesize;
-	}
-	XPutImage(fl_display,fl_window,gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
+        STORETYPE *to = buffer;
+        int k;
+        for (k = 0; j<h && k<blocking; k++, j++) {
+          conv(buf, (uchar*)to, w, delta);
+          buf += linedelta;
+          to += linesize;
+        }
+        XPutImage(fl_display,fl_window,gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
     } else {
       STORETYPE* linebuf = new STORETYPE[(W*delta+(sizeof(STORETYPE)-1))/sizeof(STORETYPE)];
       for (int j=0; j<h; ) {
-	STORETYPE *to = buffer;
-	int k;
-	for (k = 0; j<h && k<blocking; k++, j++) {
-	  cb(userdata, dx, dy+j, w, (uchar*)linebuf);
-	  conv((uchar*)linebuf, (uchar*)to, w, delta);
-	  to += linesize;
-	}
-	XPutImage(fl_display,fl_window,gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
+        STORETYPE *to = buffer;
+        int k;
+        for (k = 0; j<h && k<blocking; k++, j++) {
+          cb(userdata, dx, dy+j, w, (uchar*)linebuf);
+          conv((uchar*)linebuf, (uchar*)to, w, delta);
+          to += linesize;
+        }
+        XPutImage(fl_display,fl_window,gc, &xi, 0, 0, X+dx, Y+dy+j-k, w, k);
       }
 
       delete[] linebuf;
@@ -586,7 +584,7 @@ void Fl_Xlib_Graphics_Driver::draw_image_unscaled(const uchar* buf, int x, int y
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_unscaled(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
 
   const bool alpha = !!(abs(d) & FL_IMAGE_WITH_ALPHA);
   if (alpha) d ^= FL_IMAGE_WITH_ALPHA;
@@ -600,7 +598,7 @@ void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(const uchar* buf, int x, 
 }
 
 void Fl_Xlib_Graphics_Driver::draw_image_mono_unscaled(Fl_Draw_Image_Cb cb, void* data,
-		   int x, int y, int w, int h,int d) {
+                   int x, int y, int w, int h,int d) {
   innards(0,x+offset_x_*scale(),y+offset_y_*scale(),w,h,d,0,1,cb,data,0,gc_);
 }
 
@@ -892,7 +890,3 @@ void Fl_Xlib_Graphics_Driver::cache(Fl_Pixmap *pxm) {
 void Fl_Xlib_Graphics_Driver::uncache_pixmap(fl_uintptr_t offscreen) {
   XFreePixmap(fl_display, (Fl_Offscreen)offscreen);
 }
-
-//
-// End of "$Id$".
-//

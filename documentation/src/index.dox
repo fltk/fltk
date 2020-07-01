@@ -38,27 +38,27 @@
     \subpage basics
 
     \subpage common
-	- \ref common_colors
-	- \ref common_boxtypes
-	- \ref common_labels
-	- \ref drawing_images
+        - \ref common_colors
+        - \ref common_boxtypes
+        - \ref common_labels
+        - \ref drawing_images
 
     \subpage editor
 
     \subpage drawing
 
     \subpage events
-	- \ref events_event_xxx
-	- \ref events_propagation
+        - \ref events_event_xxx
+        - \ref events_propagation
 
     \subpage subclassing
 
     \subpage opengl
 
     \subpage fluid
-	- \ref fluid_widget_attributes
-	- \ref fluid_selecting_moving
-	- \ref fluid_images
+        - \ref fluid_widget_attributes
+        - \ref fluid_selecting_moving
+        - \ref fluid_images
 
   </TD>
   <TD ALIGN="LEFT" VALIGN="TOP">
@@ -70,25 +70,25 @@
     &nbsp;
 
     <b>Appendices:</b>
-	- \subpage enumerations
+        - \subpage enumerations
 
-	-  \subpage glut
-		- \ref glut_Fl_Glut_Window
-		<!-- - Fl_Glut_Window (not yet commented ?) -->
+        -  \subpage glut
+                - \ref glut_Fl_Glut_Window
+                <!-- - Fl_Glut_Window (not yet commented ?) -->
 
-	- \subpage forms
+        - \subpage forms
 
-	- \subpage osissues
+        - \subpage osissues
 
-	- \subpage migration_1_4
+        - \subpage migration_1_4
 
-	- \subpage development
+        - \subpage development
 
-	- \subpage license
+        - \subpage license
 
-	- \subpage examples
+        - \subpage examples
 
-	- \subpage FAQ
+        - \subpage FAQ
 
   </TD>
 </TR>

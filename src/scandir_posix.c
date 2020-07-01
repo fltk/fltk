@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * This implementation of 'scandir()' is intended to be POSIX.1-2008 compliant.
  * A POSIX.1-1990 compliant system is required as minimum base.
  * Note:
@@ -12,11 +10,11 @@
  * the file "COPYING" which should have been included with this file. If this
  * file is missing or damaged, see the license at:
  *
- *     http://www.fltk.org/COPYING.php
+ *     https://www.fltk.org/COPYING.php
  *
- * Please report all bugs and problems on the following page:
+ * Please see the following page on how to report bugs and issues:
  *
- *     http://www.fltk.org/str.php
+ *     https://www.fltk.org/bugs.php
  *
  * It is required that 'SIZE_MAX' is at least 'INT_MAX'.
  * Don't use a C++ compiler to build this module.
@@ -211,7 +209,3 @@ fl_scandir(const char *dir, struct dirent ***namelist,
 typedef int dummy;
 
 #endif /* defined(USE_X11) && !defined(HAVE_SCANDIR) */
-
-/*
- * End of "$Id$".
- */

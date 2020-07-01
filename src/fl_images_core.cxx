@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // FLTK images library core.
 //
 // Copyright 1997-2010 by Easy Software Products.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 // Contents:
 //
@@ -45,13 +43,13 @@
 // the extra image formats that aren't part of the core FLTK library.
 //
 
-static Fl_Image	*fl_check_images(const char *name, uchar *header, int headerlen);
+static Fl_Image *fl_check_images(const char *name, uchar *header, int headerlen);
 
 
 /**
 \brief Register the image formats.
 
- This function is provided in the fltk_images library and 
+ This function is provided in the fltk_images library and
  registers all of the "extra" image file formats that are not part
  of the core FLTK library.
 */
@@ -65,19 +63,19 @@ void fl_register_images() {
 // 'fl_check_images()' - Check for a supported image format.
 //
 
-Fl_Image *					// O - Image, if found
-fl_check_images(const char *name,		// I - Filename
-                uchar      *header,		// I - Header data from file
-		int headerlen) {		// I - Amount of data
+Fl_Image *                                      // O - Image, if found
+fl_check_images(const char *name,               // I - Filename
+                uchar      *header,             // I - Header data from file
+                int headerlen) {                // I - Amount of data
   if (memcmp(header, "GIF87a", 6) == 0 ||
-      memcmp(header, "GIF89a", 6) == 0)	// GIF file
+      memcmp(header, "GIF89a", 6) == 0) // GIF file
     return new Fl_GIF_Image(name);
 
-  if (memcmp(header, "BM", 2) == 0)	// BMP file
+  if (memcmp(header, "BM", 2) == 0)     // BMP file
     return new Fl_BMP_Image(name);
 
   if (header[0] == 'P' && header[1] >= '1' && header[1] <= '7')
-					// Portable anymap
+                                        // Portable anymap
     return new Fl_PNM_Image(name);
 
 #ifdef HAVE_LIBPNG
@@ -110,8 +108,3 @@ fl_check_images(const char *name,		// I - Filename
 
   return 0;
 }
-
-
-//
-// End of "$Id$".
-//

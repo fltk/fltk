@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Visual list utility for the Fast Light Tool Kit (FLTK).
 //
 // List all the visuals on the screen, and dumps anything interesting
@@ -17,11 +15,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #if defined(_WIN32) || defined(__APPLE__)
@@ -101,8 +99,8 @@ static void print_mask(XVisualInfo* p) {
     else new_what = '?';
     if (new_what != what) {
       if (what && (what != '?' || print_anything)) {
-	q += sprintf(q,"%d%c", n, what);
-	print_anything = 1;
+        q += sprintf(q,"%d%c", n, what);
+        print_anything = 1;
       }
       what = new_what;
       n = 1;
@@ -132,10 +130,10 @@ void list_visuals() {
     Atom actualType;
     int actualFormat;
     if (!XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
-			   overlayVisualsAtom, 0L, 10000L, False,
-			   overlayVisualsAtom, &actualType, &actualFormat,
-			   &sizeData, &bytesLeft,
-			   (unsigned char **) &overlayInfo))
+                           overlayVisualsAtom, 0L, 10000L, False,
+                           overlayVisualsAtom, &actualType, &actualFormat,
+                           &sizeData, &bytesLeft,
+                           (unsigned char **) &overlayInfo))
       numoverlayinfo = int(sizeData/4);
   }
 
@@ -145,7 +143,7 @@ void list_visuals() {
   int nmbuf = 0, nsbuf = 0;
   if (XmbufQueryExtension(fl_display,&event_base, &error_base)) {
     XmbufGetScreenInfo(fl_display,RootWindow(fl_display,fl_screen),
-		       &nmbuf, &mbuf, &nsbuf, &sbuf);
+                       &nmbuf, &mbuf, &nsbuf, &sbuf);
   }
 #endif
 
@@ -176,7 +174,7 @@ void list_visuals() {
 
     int j = pfv ? pfv->bits_per_pixel : 0;
     printf(" %2ld: %s %2d/%d", p->visualid, ClassNames[p->c_class],
-	   p->depth, j);
+           p->depth, j);
     if (j < 10) putchar(' ');
 
     print_mask(p);
@@ -184,11 +182,11 @@ void list_visuals() {
     for (j=0; j<numoverlayinfo; j++) {
       OverlayInfo *o = &overlayInfo[j];
       if (o->overlay_visual == long(p->visualid)) {
-	printf(" overlay(");
-	if (o->transparent_type==1) printf("transparent pixel %ld, ",o->value);
-	else if (o->transparent_type==2) printf("transparent mask %ld, ",o->value);
-	else printf("opaque, ");
-	printf("layer %ld)", o->layer);
+        printf(" overlay(");
+        if (o->transparent_type==1) printf("transparent pixel %ld, ",o->value);
+        else if (o->transparent_type==2) printf("transparent mask %ld, ",o->value);
+        else printf("opaque, ");
+        printf("layer %ld)", o->layer);
       }
     }
 
@@ -196,12 +194,12 @@ void list_visuals() {
     for (j=0; j<nmbuf; j++) {
       XmbufBufferInfo *m = &mbuf[j];
       if (m->visualid == p->visualid)
-	printf(" multibuffer(%d)", m->max_buffers);
+        printf(" multibuffer(%d)", m->max_buffers);
     }
     for (j=0; j<nsbuf; j++) {
       XmbufBufferInfo *m = &sbuf[j];
       if (m->visualid == p->visualid)
-	printf(" stereo multibuffer(%d)", m->max_buffers);
+        printf(" stereo multibuffer(%d)", m->max_buffers);
     }
 #endif
 
@@ -229,7 +227,3 @@ int main(int argc, char **argv) {
   return 0;
 }
 #endif
-
-//
-// End of "$Id$".
-//

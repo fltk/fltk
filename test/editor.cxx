@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A simple text editor program for the Fast Light Tool Kit (FLTK).
 //
 // This program is described in Chapter 4 of the FLTK Programmer's Guide.
@@ -13,9 +11,9 @@
 //
 //     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     https://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 //
@@ -50,7 +48,7 @@ Fl_Text_Buffer     *textbuf = 0;
 // width of line number display, if enabled
 const int line_num_width = 75;
 
-// #define DEV_TEST		// uncomment this line ...
+// #define DEV_TEST             // uncomment this line ...
 // ... to enable additional test features for developers,
 // particularly to test Fl_Text_Display and/or Fl_Text_Editor.
 
@@ -58,89 +56,89 @@ const int line_num_width = 75;
 #define TS 14 // default editor textsize
 Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
-                   styletable[] = {	// Style table
-		     { FL_BLACK,      FL_COURIER,           TS }, // A - Plain
-		     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // B - Line comments
-		     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // C - Block comments
-		     { FL_BLUE,       FL_COURIER,           TS }, // D - Strings
-		     { FL_DARK_RED,   FL_COURIER,           TS }, // E - Directives
-		     { FL_DARK_RED,   FL_COURIER_BOLD,      TS }, // F - Types
-		     { FL_BLUE,       FL_COURIER_BOLD,      TS }, // G - Keywords
-		   };
-const char         *code_keywords[] = {	// List of known C/C++ keywords...
-		     "and",
-		     "and_eq",
-		     "asm",
-		     "bitand",
-		     "bitor",
-		     "break",
-		     "case",
-		     "catch",
-		     "compl",
-		     "continue",
-		     "default",
-		     "delete",
-		     "do",
-		     "else",
-		     "false",
-		     "for",
-		     "goto",
-		     "if",
-		     "new",
-		     "not",
-		     "not_eq",
-		     "operator",
-		     "or",
-		     "or_eq",
-		     "return",
-		     "switch",
-		     "template",
-		     "this",
-		     "throw",
-		     "true",
-		     "try",
-		     "while",
-		     "xor",
-		     "xor_eq"
-		   };
-const char         *code_types[] = {	// List of known C/C++ types...
-		     "auto",
-		     "bool",
-		     "char",
-		     "class",
-		     "const",
-		     "const_cast",
-		     "double",
-		     "dynamic_cast",
-		     "enum",
-		     "explicit",
-		     "extern",
-		     "float",
-		     "friend",
-		     "inline",
-		     "int",
-		     "long",
-		     "mutable",
-		     "namespace",
-		     "private",
-		     "protected",
-		     "public",
-		     "register",
-		     "short",
-		     "signed",
-		     "sizeof",
-		     "static",
-		     "static_cast",
-		     "struct",
-		     "template",
-		     "typedef",
-		     "typename",
-		     "union",
-		     "unsigned",
-		     "virtual",
-		     "void",
-		     "volatile"
-		   };
+                   styletable[] = {     // Style table
+                     { FL_BLACK,      FL_COURIER,           TS }, // A - Plain
+                     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // B - Line comments
+                     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // C - Block comments
+                     { FL_BLUE,       FL_COURIER,           TS }, // D - Strings
+                     { FL_DARK_RED,   FL_COURIER,           TS }, // E - Directives
+                     { FL_DARK_RED,   FL_COURIER_BOLD,      TS }, // F - Types
+                     { FL_BLUE,       FL_COURIER_BOLD,      TS }, // G - Keywords
+                   };
+const char         *code_keywords[] = { // List of known C/C++ keywords...
+                     "and",
+                     "and_eq",
+                     "asm",
+                     "bitand",
+                     "bitor",
+                     "break",
+                     "case",
+                     "catch",
+                     "compl",
+                     "continue",
+                     "default",
+                     "delete",
+                     "do",
+                     "else",
+                     "false",
+                     "for",
+                     "goto",
+                     "if",
+                     "new",
+                     "not",
+                     "not_eq",
+                     "operator",
+                     "or",
+                     "or_eq",
+                     "return",
+                     "switch",
+                     "template",
+                     "this",
+                     "throw",
+                     "true",
+                     "try",
+                     "while",
+                     "xor",
+                     "xor_eq"
+                   };
+const char         *code_types[] = {    // List of known C/C++ types...
+                     "auto",
+                     "bool",
+                     "char",
+                     "class",
+                     "const",
+                     "const_cast",
+                     "double",
+                     "dynamic_cast",
+                     "enum",
+                     "explicit",
+                     "extern",
+                     "float",
+                     "friend",
+                     "inline",
+                     "int",
+                     "long",
+                     "mutable",
+                     "namespace",
+                     "private",
+                     "protected",
+                     "public",
+                     "register",
+                     "short",
+                     "signed",
+                     "sizeof",
+                     "static",
+                     "static_cast",
+                     "struct",
+                     "template",
+                     "typedef",
+                     "typename",
+                     "union",
+                     "unsigned",
+                     "virtual",
+                     "void",
+                     "volatile"
+                   };
 
 
 //
@@ -162,11 +160,11 @@ extern "C" {
 void
 style_parse(const char *text,
             char       *style,
-	    int        length) {
-  char	     current;
-  int	     col;
-  int	     last;
-  char	     buf[255],
+            int        length) {
+  char       current;
+  int        col;
+  int        last;
+  char       buf[255],
              *bufptr;
   const char *temp;
 
@@ -189,64 +187,64 @@ style_parse(const char *text,
         current = 'E';
       } else if (strncmp(text, "//", 2) == 0) {
         current = 'B';
-	for (; length > 0 && *text != '\n'; length --, text ++) *style++ = 'B';
+        for (; length > 0 && *text != '\n'; length --, text ++) *style++ = 'B';
 
         if (length == 0) break;
       } else if (strncmp(text, "/*", 2) == 0) {
         current = 'C';
       } else if (strncmp(text, "\\\"", 2) == 0) {
         // Quoted quote...
-	*style++ = current;
-	*style++ = current;
-	text ++;
-	length --;
-	col += 2;
-	continue;
+        *style++ = current;
+        *style++ = current;
+        text ++;
+        length --;
+        col += 2;
+        continue;
       } else if (*text == '\"') {
         current = 'D';
       } else if (!last && (islower((*text)&255) || *text == '_')) {
         // Might be a keyword...
-	for (temp = text, bufptr = buf;
-	     (islower((*temp)&255) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
-	     *bufptr++ = *temp++) {
-	  // nothing
+        for (temp = text, bufptr = buf;
+             (islower((*temp)&255) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
+             *bufptr++ = *temp++) {
+          // nothing
         }
 
         if (!islower((*temp)&255) && *temp != '_') {
-	  *bufptr = '\0';
+          *bufptr = '\0';
 
           bufptr = buf;
 
-	  if (bsearch(&bufptr, code_types,
-	              sizeof(code_types) / sizeof(code_types[0]),
-		      sizeof(code_types[0]), compare_keywords)) {
-	    while (text < temp) {
-	      *style++ = 'F';
-	      text ++;
-	      length --;
-	      col ++;
-	    }
+          if (bsearch(&bufptr, code_types,
+                      sizeof(code_types) / sizeof(code_types[0]),
+                      sizeof(code_types[0]), compare_keywords)) {
+            while (text < temp) {
+              *style++ = 'F';
+              text ++;
+              length --;
+              col ++;
+            }
 
-	    text --;
-	    length ++;
-	    last = 1;
-	    continue;
-	  } else if (bsearch(&bufptr, code_keywords,
-	                     sizeof(code_keywords) / sizeof(code_keywords[0]),
-		             sizeof(code_keywords[0]), compare_keywords)) {
-	    while (text < temp) {
-	      *style++ = 'G';
-	      text ++;
-	      length --;
-	      col ++;
-	    }
+            text --;
+            length ++;
+            last = 1;
+            continue;
+          } else if (bsearch(&bufptr, code_keywords,
+                             sizeof(code_keywords) / sizeof(code_keywords[0]),
+                             sizeof(code_keywords[0]), compare_keywords)) {
+            while (text < temp) {
+              *style++ = 'G';
+              text ++;
+              length --;
+              col ++;
+            }
 
-	    text --;
-	    length ++;
-	    last = 1;
-	    continue;
-	  }
-	}
+            text --;
+            length ++;
+            last = 1;
+            continue;
+          }
+        }
       }
     } else if (current == 'C' && strncmp(text, "*/", 2) == 0) {
       // Close a C comment...
@@ -261,18 +259,18 @@ style_parse(const char *text,
       // Continuing in string...
       if (strncmp(text, "\\\"", 2) == 0) {
         // Quoted end quote...
-	*style++ = current;
-	*style++ = current;
-	text ++;
-	length --;
-	col += 2;
-	continue;
+        *style++ = current;
+        *style++ = current;
+        text ++;
+        length --;
+        col += 2;
+        continue;
       } else if (*text == '\"') {
         // End quote...
-	*style++ = current;
-	col ++;
-	current = 'A';
-	continue;
+        *style++ = current;
+        col ++;
+        current = 'A';
+        continue;
       }
     }
 
@@ -328,17 +326,17 @@ style_unfinished_cb(int, void*) {
 //
 
 void
-style_update(int        pos,		// I - Position of update
-             int        nInserted,	// I - Number of inserted chars
-	     int        nDeleted,	// I - Number of deleted chars
-             int        /*nRestyled*/,	// I - Number of restyled chars
-	     const char * /*deletedText*/,// I - Text that was deleted
-             void       *cbArg) {	// I - Callback data
-  int	start,				// Start of text
-	end;				// End of text
-  char	last,				// Last style on line
-	*style,				// Style data
-	*text;				// Text data
+style_update(int        pos,            // I - Position of update
+             int        nInserted,      // I - Number of inserted chars
+             int        nDeleted,       // I - Number of deleted chars
+             int        /*nRestyled*/,  // I - Number of restyled chars
+             const char * /*deletedText*/,// I - Text that was deleted
+             void       *cbArg) {       // I - Callback data
+  int   start,                          // Start of text
+        end;                            // End of text
+  char  last,                           // Last style on line
+        *style,                         // Style data
+        *text;                          // Text data
 
 
   // If this is just a selection change, just unselect the style buffer...
@@ -435,17 +433,17 @@ class EditorWindow : public Fl_Double_Window {
 
 #ifdef DEV_TEST
 
-    Fl_Button		*plus;		// increase width
-    Fl_Button		*minus;		// decrease width
-    Fl_Button		*vscroll;	// toggle vert. scrollbar left/right
-    Fl_Button		*hscroll;	// toggle hor.  scrollbar top/bottom
-    Fl_Button		*lnum;		// toggle line number display
-    Fl_Button		*wrap;		// toggle wrap mode
+    Fl_Button           *plus;          // increase width
+    Fl_Button           *minus;         // decrease width
+    Fl_Button           *vscroll;       // toggle vert. scrollbar left/right
+    Fl_Button           *hscroll;       // toggle hor.  scrollbar top/bottom
+    Fl_Button           *lnum;          // toggle line number display
+    Fl_Button           *wrap;          // toggle wrap mode
 
 #endif // DEV_TEST
 
-    int			wrap_mode;
-    int			line_numbers;
+    int                 wrap_mode;
+    int                 line_numbers;
 
     Fl_Text_Editor     *editor;
     char               search[256];
@@ -485,8 +483,8 @@ void resize_cb(Fl_Widget *b, void *v) {
   Fl_Window *w = b->window();
   int dw = (int)(long)v;
 
-  const int fac = 16;	// factor
-  const int num = 1;	// loop count
+  const int fac = 16;   // factor
+  const int num = 1;    // loop count
 
   dw *= fac;
 
@@ -502,22 +500,22 @@ void scroll_cb(Fl_Widget *b, void *v) {
   int align = ed->scrollbar_align();
 
   switch(n) {
-    case 1:			// vscroll
+    case 1:                     // vscroll
       if (align & FL_ALIGN_LEFT) {
-	align &= ~FL_ALIGN_LEFT;
-	align |= FL_ALIGN_RIGHT;
+        align &= ~FL_ALIGN_LEFT;
+        align |= FL_ALIGN_RIGHT;
       } else {
-	align &= ~FL_ALIGN_RIGHT;
-	align |= FL_ALIGN_LEFT;
+        align &= ~FL_ALIGN_RIGHT;
+        align |= FL_ALIGN_LEFT;
       }
       break;
-    case 2:			// hscroll
+    case 2:                     // hscroll
       if (align & FL_ALIGN_TOP) {
-	align &= ~FL_ALIGN_TOP;
-	align |= FL_ALIGN_BOTTOM;
+        align &= ~FL_ALIGN_TOP;
+        align |= FL_ALIGN_BOTTOM;
       } else {
-	align &= ~FL_ALIGN_BOTTOM;
-	align |= FL_ALIGN_TOP;
+        align &= ~FL_ALIGN_BOTTOM;
+        align |= FL_ALIGN_TOP;
       }
       break;
     default:
@@ -544,10 +542,10 @@ void lnum_cb(Fl_Widget *w, void* v) {
   Fl_Text_Editor *ed = (Fl_Text_Editor*)ew->editor;
   ew->line_numbers = 1 - ew->line_numbers;
   if (ew->line_numbers) {
-    ed->linenumber_width(line_num_width);	// enable
+    ed->linenumber_width(line_num_width);       // enable
     ed->linenumber_size(ed->textsize());
   } else {
-    ed->linenumber_width(0);			// disable
+    ed->linenumber_width(0);                    // disable
   }
   ew->redraw();
 }
@@ -615,10 +613,10 @@ void linenumbers_cb(Fl_Widget *w, void* v) {
   Fl_Menu_Bar* m = (Fl_Menu_Bar*)w;
   const Fl_Menu_Item* i = m->mvalue();
   if ( i->value() ) {
-    e->editor->linenumber_width(line_num_width);	// enable
+    e->editor->linenumber_width(line_num_width);        // enable
     e->editor->linenumber_size(e->editor->textsize());
   } else {
-    e->editor->linenumber_width(0);	// disable
+    e->editor->linenumber_width(0);     // disable
   }
   e->line_numbers = (i->value()?1:0);
   e->redraw();
@@ -905,7 +903,7 @@ Fl_Window* new_view() {
     w->editor->buffer(textbuf);
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
-			      'A', style_unfinished_cb, 0);
+                              'A', style_unfinished_cb, 0);
 
 #ifdef DEV_TEST
 
@@ -969,7 +967,3 @@ int main(int argc, char **argv) {
 
   return Fl::run();
 }
-
-//
-// End of "$Id$".
-//

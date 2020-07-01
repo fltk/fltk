@@ -1,6 +1,6 @@
 /**
 
- \page	opengl Using OpenGL
+ \page  opengl Using OpenGL
 
 This chapter discusses using FLTK for your OpenGL applications.
 
@@ -55,15 +55,15 @@ glDrawBuffer(GL_BACK);
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
-	<TD><B>Note:</B>
+        <TD><B>Note:</B>
 
-	If you are using the Mesa graphics library, the call
-	to \p glDrawBuffer() is not required and will slow
-	down drawing considerably. The preprocessor instructions
-	shown above will optimize your code based upon the
-	graphics library used.
+        If you are using the Mesa graphics library, the call
+        to \p glDrawBuffer() is not required and will slow
+        down drawing considerably. The preprocessor instructions
+        shown above will optimize your code based upon the
+        graphics library used.
 
-	</TD>
+        </TD>
 
 </TR>
 </TABLE></CENTER>
@@ -150,12 +150,12 @@ loading functions by doing:
 
 \code
   case FL_PUSH:
-    make_current();	// make OpenGL context current
+    make_current();     // make OpenGL context current
     if (!valid()) {
 
       ... set up projection exactly the same as draw ...
 
-      valid(1);		// stop it from doing this next time
+      valid(1);         // stop it from doing this next time
     }
     ... ok to call NON-DRAWING OpenGL code here, such as hit
     detection, loading textures, etc...
@@ -453,10 +453,10 @@ void OptimizerWindow::draw() {
 
   // Clear the window...
   context_->clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
-                  0.0f,		// Red
-		  0.0f,		// Green
-		  0.0f,		// Blue
-		  1.0f);	// Alpha
+                  0.0f,         // Red
+                  0.0f,         // Green
+                  0.0f,         // Blue
+                  1.0f);        // Alpha
 
   // Then draw the scene (if any)...
   if (scene_)

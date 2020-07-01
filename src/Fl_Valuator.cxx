@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Valuator widget for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2016 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 
@@ -150,7 +148,7 @@ double Fl_Valuator::increment(double v, int n) {
 /**
   Uses internal rules to format the fields numerical value into
   the character array pointed to by the passed parameter.
-  
+
   The actual format used depends on the current step value. If
   the step value has been set to zero then a \%g format is used.
   If the step value is non-zero, then a \%.*f format is used,
@@ -192,7 +190,3 @@ int Fl_Valuator::format(char* buffer) {
   // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
   return snprintf(buffer, 128, "%.*f", c, v);
 }
-
-//
-// End of "$Id$".
-//

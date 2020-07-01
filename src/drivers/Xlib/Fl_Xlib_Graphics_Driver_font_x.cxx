@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // X11 font utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Select fonts from the FLTK font table.
@@ -67,9 +65,9 @@ static int attribute(int n, const char *p) {
   if (!*p || *p=='-' || *p=='*') return 0;
   if (n == 3) { // weight
     if (!strncmp(p,"normal",6) ||
-	!strncmp(p,"light",5) ||
-	!strncmp(p,"medium",6) ||
-	!strncmp(p,"book",4)) return 0;
+        !strncmp(p,"light",5) ||
+        !strncmp(p,"medium",6) ||
+        !strncmp(p,"book",4)) return 0;
     if (!strncmp(p,"bold",4) || !strncmp(p,"demi",4)) return FL_BOLD;
   } else if (n == 4) { // slant
     if (*p == 'r') return 0;
@@ -108,12 +106,12 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
       if (strstr(p,"bold")) type = FL_BOLD;
       if (strstr(p,"ital")) type |= FL_ITALIC;
       for (;*p; p++) {
-	if (*p == '*' || *p == ' ' || *p == '-') {
-	  do p++; while (*p == '*' || *p == ' ' || *p == '-');
-	  if (!*p) break;
-	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
-	}
-	if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = *p;
+        if (*p == '*' || *p == ' ' || *p == '-') {
+          do p++; while (*p == '*' || *p == ' ' || *p == '-');
+          if (!*p) break;
+          if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
+        }
+        if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = *p;
       }
       *o = 0;
 
@@ -122,35 +120,35 @@ const char* Fl_Xlib_Graphics_Driver::get_font_name(Fl_Font fnum, int* ap) {
       // get the family:
       const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;
       if (!*x) {
-	if (ap) *ap = 0;
-	return p;
+        if (ap) *ap = 0;
+        return p;
       }
       const char *e = fl_font_word(x,1);
       if ((e - x) < (int)(ENDOFBUFFER - 1)) {
-	// MRS: we want strncpy here, not strlcpy...
-	strncpy(o,x,e-x);
-	o += e-x;
+        // MRS: we want strncpy here, not strlcpy...
+        strncpy(o,x,e-x);
+        o += e-x;
       } else {
-	strlcpy(f->fontname, x, ENDOFBUFFER);
-	o = f->fontname+ENDOFBUFFER-1;
+        strlcpy(f->fontname, x, ENDOFBUFFER);
+        o = f->fontname+ENDOFBUFFER-1;
       }
 
       // collect all the attribute words:
       for (int n = 3; n <= 6; n++) {
-	// get the next word:
-	if (*e) e++; x = e; e = fl_font_word(x,1);
-	int t = attribute(n,x);
-	if (t < 0) {
-	  if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
-	  if ((e - x) < (int)(ENDOFBUFFER - (o - f->fontname) - 1)) {
-	    // MRS: we want strncpy here, not strlcpy...
-	    strncpy(o,x,e-x);
-	    o += e-x;
-	  } else {
-	    strlcpy(o,x, ENDOFBUFFER - (o - f->fontname) - 1);
-	    o = f->fontname+ENDOFBUFFER-1;
-	  }
-	} else type |= t;
+        // get the next word:
+        if (*e) e++; x = e; e = fl_font_word(x,1);
+        int t = attribute(n,x);
+        if (t < 0) {
+          if (o < (f->fontname + ENDOFBUFFER - 1)) *o++ = ' ';
+          if ((e - x) < (int)(ENDOFBUFFER - (o - f->fontname) - 1)) {
+            // MRS: we want strncpy here, not strlcpy...
+            strncpy(o,x,e-x);
+            o += e-x;
+          } else {
+            strlcpy(o,x, ENDOFBUFFER - (o - f->fontname) - 1);
+            o = f->fontname+ENDOFBUFFER-1;
+          }
+        } else type |= t;
       }
 
       // skip over the '*' for the size and get the registry-encoding:
@@ -181,15 +179,15 @@ static int ultrasort(const void *aa, const void *bb) {
     int ret = 0;
     for (;;) {
       if (isdigit(*a) && isdigit(*b)) {
-	int na = strtol(a, (char **)&a, 10);
-	int nb = strtol(b, (char **)&b, 10);
-	if (!ret) ret = na-nb;
+        int na = strtol(a, (char **)&a, 10);
+        int nb = strtol(b, (char **)&b, 10);
+        if (!ret) ret = na-nb;
       } else if (*a != *b) {
-	return (*a-*b);
+        return (*a-*b);
       } else if (!*a) {
-	return ret;
+        return ret;
       } else {
-	a++; b++;
+        a++; b++;
       }
     }
   } else {
@@ -290,26 +288,26 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* xstarname) {
     int size = to_canonical(canon, p, sizeof(canon));
     if (size >= 0) {
       for (;;) { // find all matching fonts:
-	if (i >= xlistsize) break;
-	const char *q = xlist[i];
-	char this_canon[1024];
-	if (to_canonical(this_canon, q, sizeof(this_canon)) < 0) break;
-	if (strcmp(canon, this_canon)) break;
-	i++;
+        if (i >= xlistsize) break;
+        const char *q = xlist[i];
+        char this_canon[1024];
+        if (to_canonical(this_canon, q, sizeof(this_canon)) < 0) break;
+        if (strcmp(canon, this_canon)) break;
+        i++;
       }
       /*if (*p=='-' || i > first_xlist+1)*/ p = canon;
     }
     unsigned int j;
     for (j = 0;; j++) {
       /*if (j < FL_FREE_FONT) {
-	// see if it is one of our built-in fonts:
-	// if so, set the list of x fonts, since we have it anyway
-	if (fl_fonts[j].name && !strcmp(fl_fonts[j].name, p)) break;
+        // see if it is one of our built-in fonts:
+        // if so, set the list of x fonts, since we have it anyway
+        if (fl_fonts[j].name && !strcmp(fl_fonts[j].name, p)) break;
       } else */{
-	j = fl_free_font++;
-	if (p == canon) p = strdup(p); else used_xlist = 1;
-	Fl::set_font((Fl_Font)j, p);
-	break;
+        j = fl_free_font++;
+        if (p == canon) p = strdup(p); else used_xlist = 1;
+        Fl::set_font((Fl_Font)j, p);
+        break;
       }
     }
     Fl_Xlib_Fontdesc *s = ((Fl_Xlib_Fontdesc*)fl_fonts)+j;
@@ -346,9 +344,9 @@ int Fl_Xlib_Graphics_Driver::get_font_sizes(Fl_Font fnum, int*& sizep) {
       int n;
       for (n = numsizes-1; n > 0; n--) if (sizes[n-1] < s) break;
       if (sizes[n] != s) {
-	for (int m = numsizes; m > n; m--) sizes[m] = sizes[m-1];
-	sizes[n] = s;
-	numsizes++;
+        for (int m = numsizes; m > n; m--) sizes[m] = sizes[m-1];
+        sizes[n] = s;
+        numsizes++;
       }
     }
   }
@@ -484,9 +482,9 @@ static const char *find_best_font(const char *fname, int size) {
       strcpy(namebuffer+l,c);
       name = namebuffer;
       ptsize = size;
-    } else if (!ptsize ||	// no fonts yet
-	       (thissize < ptsize && ptsize > size) || // current font too big
-	       (thissize > ptsize && thissize <= size) // current too small
+    } else if (!ptsize ||       // no fonts yet
+               (thissize < ptsize && ptsize > size) || // current font too big
+               (thissize > ptsize && thissize <= size) // current too small
       ) {
       name = thisname;
       ptsize = thissize;
@@ -497,9 +495,9 @@ static const char *find_best_font(const char *fname, int size) {
 //  if (ptsize != size) { // see if we already found this unscalable font:
 //    for (f = s->first; f; f = f->next) {
 //      if (f->minsize <= ptsize && f->maxsize >= ptsize) {
-//	if (f->minsize > size) f->minsize = size;
-//	if (f->maxsize < size) f->maxsize = size;
-//	return f;
+//      if (f->minsize > size) f->minsize = size;
+//      if (f->maxsize < size) f->maxsize = size;
+//      return f;
 //      }
 //    }
 //  }
@@ -673,8 +671,8 @@ void Fl_Xlib_Graphics_Driver::draw_unscaled(int angle, const char *str, int n, i
   if (!warning && angle != 0) {
     warning = 1;
     fprintf(stderr,
-	    "libfltk: rotated text not implemented by X backend.\n"
-	    "  You should use the Xft backend. Check USE_XFT in config.h.\n");
+            "libfltk: rotated text not implemented by X backend.\n"
+            "  You should use the Xft backend. Check USE_XFT in config.h.\n");
   }
   this->draw(str, n, (int)x, (int)y);
 }
@@ -713,7 +711,3 @@ float Fl_Xlib_Graphics_Driver::scale_bitmap_for_PostScript() {
 }
 
 #endif // FL_DOXYGEN
-
-//
-// End of "$Id$".
-//

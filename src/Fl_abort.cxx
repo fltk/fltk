@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Warning/error message code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2011 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // You can also override this by redefining all of these.
@@ -25,7 +23,3 @@
 void (*Fl::warning)(const char* format, ...) = Fl_System_Driver::warning;
 void (*Fl::error)(const char* format, ...) = Fl_System_Driver::error;
 void (*Fl::fatal)(const char* format, ...) = Fl_System_Driver::fatal;
-
-//
-// End of "$Id$".
-//

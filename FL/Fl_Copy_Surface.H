@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2014 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #ifndef Fl_Copy_Surface_H
@@ -22,12 +20,12 @@
 #include <FL/Fl_Widget_Surface.H>
 
 /** Supports copying of graphical data to the clipboard.
- 
+
  <br> After creation of an Fl_Copy_Surface object, make it the current drawing surface calling Fl_Surface_Device::push_current(), and all subsequent graphics requests
  will be recorded in the clipboard. It's possible to draw widgets (using Fl_Copy_Surface::draw()
  ) or to use any of the \ref fl_drawings or the \ref fl_attributes.
  Finally, delete the Fl_Copy_Surface object to load the clipboard with the graphical data.
- <br> Fl_Gl_Window 's can be copied to the clipboard as well. 
+ <br> Fl_Gl_Window 's can be copied to the clipboard as well.
  <br> Usage example:
  \code
  Fl_Widget *g = ...; // a widget you want to copy to the clipboard
@@ -44,7 +42,7 @@
  2) as a color bitmap. Applications to which the clipboard content is pasted can use the format
  that suits them best.
  \li Mac OS: The graphical data are copied to the clipboard (a.k.a. pasteboard) in two 'flavors':
- 1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image. 
+ 1) in vectorial form as PDF data; 2) in bitmap form as a TIFF image.
  Applications to which the clipboard content is pasted can use the flavor that suits them best.
  \li X11: the graphical data are copied to the clipboard as an image in BMP format.
 */
@@ -78,7 +76,7 @@ public:
 
 /**
  A base class describing the interface between FLTK and draw-to-clipboard operations.
- 
+
  This class is only for internal use by the FLTK library.
 
  A supported platform should implement the virtual methods of this class
@@ -108,7 +106,3 @@ protected:
  */
 
 #endif // Fl_Copy_Surface_H
-
-//
-// End of "$Id$".
-//

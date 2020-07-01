@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Box.H>
@@ -23,16 +21,16 @@
 //------- test the line drawing capabilities of this implementation ----------
 //
 class LineTest : public Fl_Box {
-public: 
+public:
   static Fl_Widget *create() {
     return new LineTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
   LineTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     label("testing the integer based fl_line calls\n"
-	  "No red pixels should be visible.\n"
-	  "If you see bright red pixels, the line drawing alignment is off,\n"
-	  "or the last pixel in a line does not get drawn.\n"
-	  "If you see dark red pixels, anti-aliasing must be switched off.");
+          "No red pixels should be visible.\n"
+          "If you see bright red pixels, the line drawing alignment is off,\n"
+          "or the last pixel in a line does not get drawn.\n"
+          "If you see dark red pixels, anti-aliasing must be switched off.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     box(FL_BORDER_BOX);
   }
@@ -77,7 +75,3 @@ public:
 };
 
 UnitTest lines("drawing lines", LineTest::create);
-
-//
-// End of "$Id$"
-//

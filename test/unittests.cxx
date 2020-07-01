@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Fltk unit tests
@@ -29,19 +27,19 @@
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
-#include <FL/fl_draw.H>		// fl_text_extents()
+#include <FL/fl_draw.H>         // fl_text_extents()
 
 // WINDOW/WIDGET SIZES
-#define MAINWIN_W	700				// main window w()
-#define MAINWIN_H	400				// main window h()
-#define BROWSER_X	10				// browser x()
-#define BROWSER_Y	25				// browser y()
-#define BROWSER_W	150				// browser w()
-#define BROWSER_H	MAINWIN_H-35			// browser h()
-#define TESTAREA_X	(BROWSER_W + 20)		// test area x()
-#define TESTAREA_Y	25				// test area y()
-#define TESTAREA_W	(MAINWIN_W - BROWSER_W - 30)	// test area w()
-#define TESTAREA_H	BROWSER_H			// test area h()
+#define MAINWIN_W       700                             // main window w()
+#define MAINWIN_H       400                             // main window h()
+#define BROWSER_X       10                              // browser x()
+#define BROWSER_Y       25                              // browser y()
+#define BROWSER_W       150                             // browser w()
+#define BROWSER_H       MAINWIN_H-35                    // browser h()
+#define TESTAREA_X      (BROWSER_W + 20)                // test area x()
+#define TESTAREA_Y      25                              // test area y()
+#define TESTAREA_W      (MAINWIN_W - BROWSER_W - 30)    // test area w()
+#define TESTAREA_H      BROWSER_H                       // test area h()
 
 typedef void (*UnitTestCallback)(const char*,Fl_Group*);
 
@@ -197,7 +195,3 @@ int main(int argc, char **argv) {
   Browser_CB(browser,0);
   return(Fl::run());
 }
-
-//
-// End of "$Id$".
-//

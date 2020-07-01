@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // A base class for platform specific window handling code
 // for the Fast Light Tool Kit (FLTK).
 //
@@ -10,11 +8,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -44,7 +42,7 @@ class Fl_RGB_Image;
  \brief A base class for platform specific window handling code.
 
  This class is only for internal use by the FLTK library.
- 
+
  When porting FLTK to a new platform, many mothods in this class provide
  a minimal default implementation. Some methods must be overridden to make
  sure that the Graphics Driver will draw into the bitmap associated with
@@ -120,7 +118,7 @@ public:
   void overlay(Fl_Window *o) {
     if (pWindow->as_overlay_window()) pWindow->as_overlay_window()->overlay_ = o;
   }
-  
+
   void resize_after_scale_change(int ns, float old_f, float new_f);
 
   // --- window data
@@ -165,7 +163,7 @@ public:
   virtual void show_with_args_end(int argc, char **argv) {}
   virtual int can_do_overlay();
   virtual void redraw_overlay();
-  
+
   // --- window cursor stuff
   virtual int set_cursor(Fl_Cursor);
   virtual int set_cursor(const Fl_RGB_Image*, int, int);
@@ -195,7 +193,3 @@ public:
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

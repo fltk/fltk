@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 //      Simple Example app using Fl_Simple_Terminal. - erco 10/12/2017
 //
 // Copyright 2017 Greg Ercolano.
@@ -10,14 +8,14 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
-#include <time.h>		//START
+#include <time.h>               //START
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Simple_Terminal.H>
@@ -53,8 +51,4 @@ int main(int argc, char **argv) {
   G_win->show();
   Fl::add_timeout(0.5, tick_cb);
   return Fl::run();
-}				//END
-
-//
-// End of "$Id$".
-//
+}                               //END

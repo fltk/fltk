@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Mac OS X-specific printing support (objective-c++) for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems to:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include <FL/Fl_Paged_Device.H>
@@ -132,9 +130,9 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
     pageFormat = (PMPageFormat)[info PMPageFormat];//from 10.5
     printSettings = (PMPrintSettings)[info PMPrintSettings];//from 10.5
     UInt32 from32, to32;
-    PMGetFirstPage(printSettings, &from32); 
+    PMGetFirstPage(printSettings, &from32);
     if (frompage) *frompage = (int)from32;
-    PMGetLastPage(printSettings, &to32); 
+    PMGetLastPage(printSettings, &to32);
     if (topage) {
       *topage = (int)to32;
       if (*topage > pagecount && pagecount > 0) *topage = pagecount;
@@ -176,9 +174,9 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
       return 1;
     }
     UInt32 from32, to32;
-    PMGetFirstPage(printSettings, &from32); 
+    PMGetFirstPage(printSettings, &from32);
     if (frompage) *frompage = (int)from32;
-    PMGetLastPage(printSettings, &to32); 
+    PMGetLastPage(printSettings, &to32);
     if (topage) *topage = (int)to32;
     if(topage && *topage > pagecount) *topage = pagecount;
     CFStringRef mystring[1];
@@ -234,10 +232,10 @@ int Fl_Cocoa_Printer_Driver::printable_rect(int *w, int *h)
   OSStatus status;
   PMRect pmRect;
   int x, y;
-  
+
   status = PMGetAdjustedPageRect(pageFormat, &pmRect);
   if (status != noErr) return 1;
-  
+
   x = (int)pmRect.left;
   y = (int)pmRect.top;
   *w = int((int)(pmRect.right - x) / scale_x + 1);
@@ -303,7 +301,7 @@ void Fl_Cocoa_Printer_Driver::untranslate(void)
 }
 
 int Fl_Cocoa_Printer_Driver::begin_page (void)
-{	
+{
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
   CGContextRef gc;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -330,11 +328,11 @@ int Fl_Cocoa_Printer_Driver::begin_page (void)
   PMPaperGetMargins(paper, &margins);
   PMOrientation orientation;
   PMGetOrientation(pageFormat, &orientation);
-  
+
   status = PMGetAdjustedPageRect(pageFormat, &pmRect);
   double h = pmRect.bottom - pmRect.top;
   x_offset = 0;
-  y_offset = 0; 
+  y_offset = 0;
   angle = 0;
   scale_x = scale_y = 1;
   win_scale_x = win_scale_y = 1;
@@ -354,7 +352,7 @@ int Fl_Cocoa_Printer_Driver::begin_page (void)
 }
 
 int Fl_Cocoa_Printer_Driver::end_page (void)
-{	
+{
   CGContextRef gc = (CGContextRef)driver()->gc();
   CGContextFlush(gc);
   CGContextRestoreGState(gc);
@@ -368,7 +366,7 @@ int Fl_Cocoa_Printer_Driver::end_page (void)
 void Fl_Cocoa_Printer_Driver::end_job (void)
 {
   OSStatus status;
-  
+
   status = PMSessionError(printSession);
   if (status != noErr) {
     fl_alert ("PM Session error %d", (int)status);
@@ -471,7 +469,3 @@ void Fl_Cocoa_Printer_Driver::draw_decorated_window(Fl_Window *win, int x_offset
   [title release];
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
-
-//
-// End of "$Id$".
-//

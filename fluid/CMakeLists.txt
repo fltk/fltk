@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # CMakeLists.txt to build fluid for the FLTK project using CMake (www.cmake.org)
 #
 # Copyright 1998-2018 by Bill Spitzak and others.
@@ -11,9 +9,9 @@
 #
 #     https://www.fltk.org/COPYING.php
 #
-# Please report all bugs and problems on the following page:
+# Please see the following page on how to report bugs and issues:
 #
-#     https://www.fltk.org/str.php
+#     https://www.fltk.org/bugs.php
 #
 
 

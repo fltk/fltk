@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "config_lib.h"
@@ -131,12 +129,12 @@ int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
 
 /**
  Let the main thread know an update is pending and have it call a specific function.
- Registers a function that will be 
- called by the main thread during the next message handling cycle. 
- Returns 0 if the callback function was registered, 
+ Registers a function that will be
+ called by the main thread during the next message handling cycle.
+ Returns 0 if the callback function was registered,
  and -1 if registration failed. Over a thousand awake callbacks can be
  registered simultaneously.
- 
+
  \see Fl::awake(void* message=0)
 */
 int Fl::awake(Fl_Awake_Handler func, void *data) {
@@ -152,19 +150,19 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
     data. The main thread must call lock() to initialize
     the threading support in FLTK. lock() will return non-zero
     if threading is not available on the platform.
-    
+
     Child threads must call unlock() when they are done
     accessing FLTK.
-    
+
     When the wait() method is waiting
     for input or timeouts, child threads are given access to FLTK.
     Similarly, when the main thread needs to do processing, it will
     wait until all child threads have called unlock() before processing
     additional data.
- 
+
     \return 0 if threading is available on the platform; non-zero
     otherwise.
-    
+
     See also: \ref advanced_multithreading
 */
 /** \fn void Fl::unlock()
@@ -172,26 +170,26 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
     using the lock() method. Child
     threads should call this method as soon as they are finished
     accessing FLTK.
-    
+
     See also: \ref advanced_multithreading
 */
 /** \fn void Fl::awake(void* msg)
-    Sends a message pointer to the main thread, 
-    causing any pending Fl::wait() call to 
-    terminate so that the main thread can retrieve the message and any pending 
+    Sends a message pointer to the main thread,
+    causing any pending Fl::wait() call to
+    terminate so that the main thread can retrieve the message and any pending
     redraws can be processed.
-    
-    Multiple calls to Fl::awake() will queue multiple pointers 
-    for the main thread to process, up to a system-defined (typically several 
-    thousand) depth. The default message handler saves the last message which 
-    can be accessed using the 
+
+    Multiple calls to Fl::awake() will queue multiple pointers
+    for the main thread to process, up to a system-defined (typically several
+    thousand) depth. The default message handler saves the last message which
+    can be accessed using the
     Fl::thread_message() function.
 
     In the context of a threaded application, a call to Fl::awake() with no
     argument will trigger event loop handling in the main thread. Since
     it is not possible to call Fl::flush() from a subsidiary thread,
     Fl::awake() is the best (and only, really) substitute.
-    
+
     See also: \ref advanced_multithreading
 */
 #if defined(FL_CFG_SYS_WIN32)
@@ -330,7 +328,7 @@ void* Fl_Posix_System_Driver::thread_message() {
 }
 
 static void thread_awake_cb(int fd, void*) {
-  if (read(fd, &thread_message_, sizeof(void*))==0) { 
+  if (read(fd, &thread_message_, sizeof(void*))==0) {
     /* This should never happen */
   }
   Fl_Awake_Handler func;
@@ -459,7 +457,3 @@ int Fl::lock() {
 void Fl::unlock() {
   Fl::system_driver()->unlock();
 }
-
-//
-// End of "$Id$".
-//

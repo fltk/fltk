@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // OpenGL definitions for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 // Internal interface to set up OpenGL.
@@ -63,7 +61,7 @@
 #ifdef FL_CFG_GFX_GDI
 #  include <FL/gl.h>
 #  define FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS  \
-      int pixelformat;	     /* the visual to use */ \
+      int pixelformat;       /* the visual to use */ \
       PIXELFORMATDESCRIPTOR pfd; // some wgl calls need this thing
 #endif // FL_CFG_GFX_GDI
 
@@ -82,7 +80,3 @@ public:
 #undef FL_GL_CHOICE_PLATFORM_SPECIFIC_MEMBERS
 
 #endif // Fl_Gl_Choice_H
-
-//
-// End of "$Id$".
-//

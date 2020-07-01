@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // All screen related calls in a driver style class.
 //
 // Copyright 1998-2018 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 /**
@@ -172,18 +170,18 @@ Image depths can differ between "to" and "from".
 
 /* Captures rectangle x,y,w,h from a mapped window or GL window.
  All sub-GL-windows that intersect x,y,w,h, and their subwindows, are also captured.
- 
+
  Arguments when this function is initially called:
  g: a window or GL window
  x,y,w,h: a rectangle in window g's coordinates
  full_img: NULL
- 
+
  Arguments when this function recursively calls itself:
  g: an Fl_Group
  x,y,w,h: a rectangle in g's coordinates if g is a window, or in g's parent window coords if g is a group
  full_img: NULL, or a previously captured image that encompasses the x,y,w,h rectangle and that
  will be partially overwritten with the new capture
- 
+
  Return value:
  An Fl_RGB_Image*, the depth of which is platform-dependent, containing the captured pixels,
  or NULL if capture failed.
@@ -235,62 +233,62 @@ int Fl_Screen_Driver::input_widget_handle_key(int key, unsigned mods, unsigned s
     case FL_Delete: {
       int selected = (input->position() != input->mark()) ? 1 : 0;
       if (mods==0 && shift && selected)
-        return input->kf_copy_cut();		// Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
+        return input->kf_copy_cut();            // Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
       if (mods==0 && shift && !selected)
-        return input->kf_delete_char_right();	// Shift-Delete no selection (WP,NP,WOW,GE,KE,!OF)
-      if (mods==0)          return input->kf_delete_char_right();	// Delete         (Standard)
-      if (mods==FL_CTRL)    return input->kf_delete_word_right();	// Ctrl-Delete    (WP,!NP,WOW,GE,KE,!OF)
-      return 0;							// ignore other combos, pass to parent
+        return input->kf_delete_char_right();   // Shift-Delete no selection (WP,NP,WOW,GE,KE,!OF)
+      if (mods==0)          return input->kf_delete_char_right();       // Delete         (Standard)
+      if (mods==FL_CTRL)    return input->kf_delete_word_right();       // Ctrl-Delete    (WP,!NP,WOW,GE,KE,!OF)
+      return 0;                                                 // ignore other combos, pass to parent
     }
-      
+
     case FL_Left:
-      if (mods==0)          return input->kf_move_char_left();		// Left           (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_word_left();		// Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
-      if (mods==FL_META)    return input->kf_move_char_left();		// Meta-Left      (WP,NP,?WOW,GE,KE)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_left();          // Left           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_word_left();          // Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return input->kf_move_char_left();          // Meta-Left      (WP,NP,?WOW,GE,KE)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Right:
-      if (mods==0)          return input->kf_move_char_right();	// Right          (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_word_right();	// Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
-      if (mods==FL_META)    return input->kf_move_char_right();	// Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_char_right(); // Right          (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_word_right(); // Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return input->kf_move_char_right(); // Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Up:
-      if (mods==0)          return input->kf_lines_up(1);		// Up             (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_up_and_sol();	// Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_up(1);               // Up             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_up_and_sol(); // Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Down:
-      if (mods==0)          return input->kf_lines_down(1);		// Dn             (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_move_down_and_eol();	// Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_lines_down(1);             // Dn             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_move_down_and_eol();       // Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Up:
       // Fl_Input has no scroll control, so instead we move the cursor by one page
-      if (mods==0)          return input->kf_page_up();		// PageUp         (WP,NP,WOW,GE,KE)
-      if (mods==FL_CTRL)    return input->kf_page_up();		// Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
-      if (mods==FL_ALT)     return input->kf_page_up();		// Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_up();         // PageUp         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return input->kf_page_up();         // Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return input->kf_page_up();         // Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Page_Down:
-      if (mods==0)          return input->kf_page_down();		// PageDn         (WP,NP,WOW,GE,KE)
-      if (mods==FL_CTRL)    return input->kf_page_down();		// Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
-      if (mods==FL_ALT)     return input->kf_page_down();		// Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_page_down();               // PageDn         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return input->kf_page_down();               // Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return input->kf_page_down();               // Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_Home:
-      if (mods==0)          return input->kf_move_sol();		// Home           (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_top();			// Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_sol();                // Home           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_top();                     // Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_End:
-      if (mods==0)          return input->kf_move_eol();		// End            (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_bottom();			// Ctrl-End       (WP,NP,WOW,GE,KE,OF)
-      return 0;							// ignore other combos, pass to parent
-      
+      if (mods==0)          return input->kf_move_eol();                // End            (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_bottom();                  // Ctrl-End       (WP,NP,WOW,GE,KE,OF)
+      return 0;                                                 // ignore other combos, pass to parent
+
     case FL_BackSpace:
-      if (mods==0)          return input->kf_delete_char_left();	// Backspace      (WP,NP,WOW,GE,KE,OF)
-      if (mods==FL_CTRL)    return input->kf_delete_word_left();	// Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
+      if (mods==0)          return input->kf_delete_char_left();        // Backspace      (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return input->kf_delete_word_left();        // Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
       return 0;
       // ignore other combos, pass to parent
   }
@@ -309,7 +307,7 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   Fl_Window *win = Fl::first_window();
   while (win) {
     if (!win->parent() &&
-	(Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
         win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       count++;
     }
@@ -321,8 +319,8 @@ void Fl_Screen_Driver::rescale_all_windows_from_screen(int screen, float f)
   win = Fl::first_window(); // memorize all top-level windows
   while (win) {
     if (!win->parent() &&
-	(Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
-	win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
+        (Fl_Window_Driver::driver(win)->screen_num() == screen || rescalable() == SYSTEMWIDE_APP_SCALING) &&
+        win->user_data() != &Fl_Screen_Driver::transient_scale_display) {
       win_array[i++] = win;
     }
     win = Fl::next_window(win);
@@ -480,7 +478,7 @@ void Fl_Screen_Driver::open_display()
     if (rescalable()) {
       use_startup_scale_factor();
       if (keyboard_screen_scaling)
-	Fl::add_handler(Fl_Screen_Driver::scale_handler);
+        Fl::add_handler(Fl_Screen_Driver::scale_handler);
       int mx, my;
       int ns = Fl::screen_driver()->get_mouse(mx, my);
       Fl_Graphics_Driver::default_driver().scale(scale(ns));
@@ -519,7 +517,3 @@ void Fl_Screen_Driver::default_icons(const Fl_RGB_Image *icons[], int count) {}
  \}
  \endcond
  */
-
-//
-// End of "$Id$".
-//

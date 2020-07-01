@@ -514,11 +514,11 @@ The following links may be of use:
 
   1. Main Cygwin homepage:
 
-	https://www.cygwin.com/
+        https://www.cygwin.com/
 
   2. Main MinGW homepage:
 
-	http://www.mingw.org/
+        http://www.mingw.org/
 
      In particular look for the MinGW FAQ at this link for
      a lot of useful MinGW-native development documentation.
@@ -526,7 +526,7 @@ The following links may be of use:
 
   3. Check out the FLTK newsgroups at the FLTK homepage:
 
-	https://www.fltk.org/
+        https://www.fltk.org/
 
      Its archival search facilities are EXTREMELY useful
      to check back through previous problems with this
@@ -534,15 +534,15 @@ The following links may be of use:
 
   4. GNU Compiler Collection (GCC) compiler homepage:
 
-	https://gcc.gnu.org/
+        https://gcc.gnu.org/
 
   5. OpenGL page - for OpenGL and GLUT libs
 
-	https://www.opengl.org/
+        https://www.opengl.org/
 
   6. CMake homepage:
 
-	https://cmake.org/
+        https://cmake.org/
 
   Note: all links in this document have been checked on Mar 21, 2020.
     We can't guarantee that these links are still valid any time later.

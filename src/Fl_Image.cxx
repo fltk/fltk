@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2017 by Bill Spitzak and others.
@@ -9,11 +7,11 @@
 // the file "COPYING" which should have been included with this file.  If this
 // file is missing or damaged, see the license at:
 //
-//     http://www.fltk.org/COPYING.php
+//     https://www.fltk.org/COPYING.php
 //
-// Please report all bugs and problems on the following page:
+// Please see the following page on how to report bugs and issues:
 //
-//     http://www.fltk.org/str.php
+//     https://www.fltk.org/bugs.php
 //
 
 #include "config_lib.h"
@@ -93,7 +91,7 @@ Fl_Image *Fl_Image::copy(int W, int H) {
   argument specifies the amount of the original image to combine
   with the color, so a value of 1.0 results in no color blend, and
   a value of 0.0 results in a constant image of the specified
-  color. 
+  color.
 
   An internal copy is made of the original image before
   changes are applied, to avoid modifying the original image.
@@ -105,7 +103,7 @@ void Fl_Image::color_average(Fl_Color, float) {
   The desaturate() method converts an image to
   grayscale. If the image contains an alpha channel (depth = 4),
   the alpha channel is preserved.
-  
+
   An internal copy is made of the original image before
   changes are applied, to avoid modifying the original image.
 */
@@ -183,14 +181,14 @@ int Fl_Image::fail()
 }
 
 void
-Fl_Image::labeltype(const Fl_Label *lo,		// I - Label
-                    int            lx,		// I - X position
-		    int            ly,		// I - Y position
-		    int            lw,		// I - Width of label
-		    int            lh,		// I - Height of label
-		    Fl_Align       la) {	// I - Alignment
-  Fl_Image	*img;				// Image pointer
-  int		cx, cy;				// Image position
+Fl_Image::labeltype(const Fl_Label *lo,         // I - Label
+                    int            lx,          // I - X position
+                    int            ly,          // I - Y position
+                    int            lw,          // I - Width of label
+                    int            lh,          // I - Height of label
+                    Fl_Align       la) {        // I - Alignment
+  Fl_Image      *img;                           // Image pointer
+  int           cx, cy;                         // Image position
 
   img = (Fl_Image *)(lo->value);
 
@@ -208,10 +206,10 @@ Fl_Image::labeltype(const Fl_Label *lo,		// I - Label
 }
 
 void
-Fl_Image::measure(const Fl_Label *lo,		// I - Label
-                  int            &lw,		// O - Width of image
-		  int            &lh) {		// O - Height of image
-  Fl_Image *img;				// Image pointer
+Fl_Image::measure(const Fl_Label *lo,           // I - Label
+                  int            &lw,           // O - Width of image
+                  int            &lh) {         // O - Height of image
+  Fl_Image *img;                                // Image pointer
 
   img = (Fl_Image *)(lo->value);
 
@@ -239,7 +237,7 @@ Fl_RGB_Scaling Fl_Image::RGB_scaling() {
  This can make a difference if the drawing surface has more than 1 pixel per
  FLTK unit because the image can be drawn at the full resolution of the drawing surface.
  Examples of such drawing surfaces: HiDPI displays, laser printers, PostScript files, PDF printers.
- 
+
  \param width,height   maximum values, in FLTK units, that w() and h() should return
  \param proportional   if not null, keep the values returned by w() and h() proportional to
  data_w() and data_h()
@@ -248,7 +246,7 @@ Fl_RGB_Scaling Fl_Image::RGB_scaling() {
  \note This function generally changes the values returned by the w() and h() member functions.
  In contrast, the values returned by data_w() and data_h() remain unchanged.
  \version 1.4 (1.3.4 and FL_ABI_VERSION for Fl_Shared_Image only)
- 
+
  Example code: scale an image to fit in a box
  \code
  Fl_Box *b = ...  // a box
@@ -355,7 +353,7 @@ Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD) :
 }
 
 
-/** 
+/**
   The constructor creates a new RGBA image from the specified Fl_Pixmap.
 
   The RGBA image is built fully opaque except for the transparent area
@@ -397,8 +395,8 @@ void Fl_RGB_Image::uncache() {
 }
 
 Fl_Image *Fl_RGB_Image::copy(int W, int H) {
-  Fl_RGB_Image	*new_image;	// New RGB image
-  uchar		*new_array;	// New array for image data
+  Fl_RGB_Image  *new_image;     // New RGB image
+  uchar         *new_array;     // New array for image data
 
   // Optimize the simple copy where the width and height are the same,
   // or when we are copying an empty image...
@@ -430,10 +428,10 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   if (W <= 0 || H <= 0) return 0;
 
   // OK, need to resize the image data; allocate memory and create new image
-  uchar		*new_ptr;	// Pointer into new array
-  const uchar	*old_ptr;	// Pointer into old array
-  int		dx, dy,		// Destination coordinates
-		line_d;		// stride from line to line
+  uchar         *new_ptr;       // Pointer into new array
+  const uchar   *old_ptr;       // Pointer into old array
+  int           dx, dy,         // Destination coordinates
+                line_d;         // stride from line to line
 
   // Allocate memory for the new image...
   new_array = new uchar [W * H * d()];
@@ -444,11 +442,11 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
   if (Fl_Image::RGB_scaling() == FL_RGB_SCALING_NEAREST) {
 
-    int		c,		// Channel number
-		sy,		// Source coordinate
-		xerr, yerr,	// X & Y errors
-		xmod, ymod,	// X & Y moduli
-		xstep, ystep;	// X & Y step increments
+    int         c,              // Channel number
+                sy,             // Source coordinate
+                xerr, yerr,     // X & Y errors
+                xmod, ymod,     // X & Y moduli
+                xstep, ystep;   // X & Y step increments
 
     // Figure out Bresenham step/modulus values...
     xmod   = data_w() % W;
@@ -466,7 +464,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
 
         if (xerr <= 0) {
           xerr    += W;
-	  old_ptr += d();
+          old_ptr += d();
         }
       }
 
@@ -520,10 +518,10 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
           }
         }
 
-	const float leftf = 1 - xfract;
-	const float rightf = xfract;
-	const float upf = 1 - yfract;
-	const float downf = yfract;
+        const float leftf = 1 - xfract;
+        const float rightf = xfract;
+        const float upf = 1 - yfract;
+        const float downf = yfract;
 
         for (i = 0; i < d(); i++) {
           new_ptr[i] = (uchar)((left[i] * leftf +
@@ -552,15 +550,15 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   uncache();
 
   // Allocate memory as needed...
-  uchar		*new_array,
-		*new_ptr;
+  uchar         *new_array,
+                *new_ptr;
 
   if (!alloc_array) new_array = new uchar[h() * w() * d()];
   else new_array = (uchar *)array;
 
   // Get the color to blend with...
-  uchar		r, g, b;
-  unsigned	ia, ir, ig, ib;
+  uchar         r, g, b;
+  unsigned      ia, ir, ig, ib;
 
   Fl::get_color(c, r, g, b);
   if (i < 0.0f) i = 0.0f;
@@ -572,8 +570,8 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
   ib = b * (256 - ia);
 
   // Update the image data to do the blend...
-  const uchar	*old_ptr;
-  int		x, y;
+  const uchar   *old_ptr;
+  int           x, y;
   int   line_i = ld() ? ld() - (w()*d()) : 0; // increment from line end to beginning of next line
 
   if (d() < 3) {
@@ -581,16 +579,16 @@ void Fl_RGB_Image::color_average(Fl_Color c, float i) {
 
     for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
       for (x = 0; x < w(); x ++) {
-	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
-	if (d() > 1) *new_ptr++ = *old_ptr++;
+        *new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
+        if (d() > 1) *new_ptr++ = *old_ptr++;
       }
   } else {
     for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
       for (x = 0; x < w(); x ++) {
-	*new_ptr++ = (*old_ptr++ * ia + ir) >> 8;
-	*new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
-	*new_ptr++ = (*old_ptr++ * ia + ib) >> 8;
-	if (d() > 3) *new_ptr++ = *old_ptr++;
+        *new_ptr++ = (*old_ptr++ * ia + ir) >> 8;
+        *new_ptr++ = (*old_ptr++ * ia + ig) >> 8;
+        *new_ptr++ = (*old_ptr++ * ia + ib) >> 8;
+        if (d() > 3) *new_ptr++ = *old_ptr++;
       }
   }
 
@@ -614,16 +612,16 @@ void Fl_RGB_Image::desaturate() {
   uncache();
 
   // Allocate memory for a grayscale image...
-  uchar		*new_array,
-		*new_ptr;
-  int		new_d;
+  uchar         *new_array,
+                *new_ptr;
+  int           new_d;
 
   new_d     = d() - 2;
   new_array = new uchar[h() * w() * new_d];
 
   // Copy the image data, converting to grayscale...
-  const uchar	*old_ptr;
-  int		x, y;
+  const uchar   *old_ptr;
+  int           x, y;
   int   line_i = ld() ? ld() - (w()*d()) : 0; // increment from line end to beginning of next line
 
   for (new_ptr = new_array, old_ptr = array, y = 0; y < h(); y ++, old_ptr += line_i)
@@ -653,7 +651,3 @@ void Fl_RGB_Image::label(Fl_Widget* widget) {
 void Fl_RGB_Image::label(Fl_Menu_Item* m) {
   m->label(FL_IMAGE_LABEL, (const char*)this);
 }
-
-//
-// End of "$Id$".
-//
