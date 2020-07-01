@@ -39,18 +39,24 @@ main(int  argc,			// I - Number of command-line arguments
 {
   Fl_Help_Dialog *help = new Fl_Help_Dialog;
   char htmlname[FL_PATH_MAX];
-  if (argc > 1) {
-    strcpy(htmlname, argv[1]);
-  } else {
 #ifdef __APPLE__
+  int i = 1;
+  while (i < argc && Fl::arg(argc, argv, i)) i++;
+  if (i < argc) {
+    strcpy(htmlname, argv[i]);
+  } else {
     // bundled apps do not set the current directory
     strcpy(htmlname, argv[0]);
     char *slash = strrchr(htmlname, '/');
     if (slash) strcpy(slash, "/../Resources/help_dialog.html");
-#else
-    strcpy(htmlname, "help_dialog.html");
-#endif
   }
+#else
+  if (argc > 1) {
+    strcpy(htmlname, argv[1]);
+  } else {
+    strcpy(htmlname, "help_dialog.html");
+  }
+#endif
 
   help->load(htmlname);	// TODO: add error check (when load() returns int instead of void)
 
