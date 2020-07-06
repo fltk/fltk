@@ -626,7 +626,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::runmodal()
     [_panel beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSInteger returnCode) {
       complete = returnCode; // this block runs after OK or Cancel was triggered in file dialog
     }]; // this message returns immediately and begins the file dialog as a sheet
-    while (complete < 0) Fl::wait(100); // loop until end of file dialog
+    while ([_panel isVisible]) Fl::wait(100); // loop until end of file dialog
     retval = complete;
   }
   else
