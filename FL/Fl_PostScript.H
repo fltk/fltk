@@ -311,6 +311,8 @@ public:
   void end_job(void);
   /** \brief Label of the PostScript file chooser window */
   static const char *file_chooser_title;
+  /** Returns the underlying FILE* receiving all PostScript data */
+  FILE *file() { return driver()->file(); }
 };
 
 /** Encapsulated PostScript drawing surface.
