@@ -413,7 +413,7 @@ ive to the origin at construction time");
         } // Fl_Group* o
         { // This is a special button that grabs keystrokes directly
           Shortcut_Button* o = new Shortcut_Button(95, 210, 310, 20, "Shortcut:");
-          o->tooltip("The shortcut key for the widget.");
+          o->tooltip("The shortcut key for the widget.\nUse 'Backspace' key to clear.");
           o->box(FL_DOWN_BOX);
           o->color(FL_BACKGROUND2_COLOR);
           o->selection_color(FL_BACKGROUND2_COLOR);

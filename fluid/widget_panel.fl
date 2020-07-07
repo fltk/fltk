@@ -362,7 +362,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           label {Shortcut:}
           callback shortcut_in_cb
           comment {This is a special button that grabs keystrokes directly}
-          tooltip {The shortcut key for the widget.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
+          tooltip {The shortcut key for the widget.\nUse 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selection_color 7 labelfont 1 labelsize 11 align 4
           code0 {\#include "Shortcut_Button.h"}
           class Shortcut_Button
         }
