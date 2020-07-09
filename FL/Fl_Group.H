@@ -41,7 +41,10 @@ class Fl_Rect;
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
-  Fl_Widget** array_;
+  union {
+    Fl_Widget** arrayN_;
+    Fl_Widget* array1_;
+  };
   Fl_Widget* savedfocus_;
   Fl_Widget* resizable_;
   int children_;

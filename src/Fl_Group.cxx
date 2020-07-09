@@ -38,7 +38,7 @@ Fl_Group* Fl_Group::current_;
         is added or removed.
 */
 Fl_Widget*const* Fl_Group::array() const {
-  return children_ <= 1 ? (Fl_Widget**)(&array_) : array_;
+  return children_ <= 1 ? &array1_ : arrayN_;
 }
 
 /**
@@ -317,9 +317,9 @@ int Fl_Group::navigation(int key) {
   int i;
   for (i = 0; ; i++) {
     if (i >= children_) return 0;
-    if (array_[i]->contains(Fl::focus())) break;
+    if (arrayN_[i]->contains(Fl::focus())) break;
   }
-  Fl_Widget *previous = array_[i];
+  Fl_Widget *previous = arrayN_[i];
 
   for (;;) {
     switch (key) {
@@ -342,7 +342,7 @@ int Fl_Group::navigation(int key) {
     default:
       return 0;
     }
-    Fl_Widget* o = array_[i];
+    Fl_Widget* o = arrayN_[i];
     if (o == previous) return 0;
     switch (key) {
     case FL_Down:
@@ -361,7 +361,7 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
 : Fl_Widget(X,Y,W,H,l) {
   align(FL_ALIGN_TOP);
   children_ = 0;
-  array_ = 0;
+  array1_ = 0;
   savedfocus_ = 0;
   resizable_ = this;
   bounds_ = 0; // this is allocated when first resize() is done
@@ -473,18 +473,18 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   }
   o.parent_ = this;
   if (children_ == 0) { // use array pointer to point at single child
-    array_ = (Fl_Widget**)&o;
+    array1_ = &o;
   } else if (children_ == 1) { // go from 1 to 2 children
-    Fl_Widget* t = (Fl_Widget*)array_;
-    array_ = (Fl_Widget**)malloc(2*sizeof(Fl_Widget*));
-    if (index) {array_[0] = t; array_[1] = &o;}
-    else {array_[0] = &o; array_[1] = t;}
+    Fl_Widget* t = array1_;
+    arrayN_ = (Fl_Widget**)malloc(2*sizeof(Fl_Widget*));
+    if (index) {arrayN_[0] = t; arrayN_[1] = &o;}
+    else {arrayN_[0] = &o; arrayN_[1] = t;}
   } else {
     if (!(children_ & (children_-1))) // double number of children
-      array_ = (Fl_Widget**)realloc((void*)array_,
+      arrayN_ = (Fl_Widget**)realloc((void*)arrayN_,
                                     2*children_*sizeof(Fl_Widget*));
-    int j; for (j = children_; j > index; j--) array_[j] = array_[j-1];
-    array_[j] = &o;
+    int j; for (j = children_; j > index; j--) arrayN_[j] = arrayN_[j-1];
+    arrayN_[j] = &o;
   }
   children_++;
   init_sizes();
@@ -518,11 +518,11 @@ void Fl_Group::remove(int index) {
 
   children_--;
   if (children_ == 1) { // go from 2 to 1 child
-    Fl_Widget *t = array_[!index];
-    free((void*)array_);
-    array_ = (Fl_Widget**)t;
+    Fl_Widget *t = arrayN_[!index];
+    free((void*)arrayN_);
+    array1_ = t;
   } else if (children_ > 1) { // delete from array
-    for (; index < children_; index++) array_[index] = array_[index+1];
+    for (; index < children_; index++) arrayN_[index] = arrayN_[index+1];
   }
   init_sizes();
 }
