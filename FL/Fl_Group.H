@@ -41,7 +41,10 @@ class Fl_Rect;
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
-  Fl_Widget** array_;
+  union {
+    Fl_Widget** array_; // used if group has two or more children or NULL
+    Fl_Widget* child1_; // used if group has one child or NULL
+  };
   Fl_Widget* savedfocus_;
   Fl_Widget* resizable_;
   int children_;

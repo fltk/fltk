@@ -38,7 +38,7 @@ Fl_Group* Fl_Group::current_;
         is added or removed.
 */
 Fl_Widget*const* Fl_Group::array() const {
-  return children_ <= 1 ? (Fl_Widget**)(&array_) : array_;
+  return children_ <= 1 ? &child1_ : array_;
 }
 
 /**
@@ -473,9 +473,9 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   }
   o.parent_ = this;
   if (children_ == 0) { // use array pointer to point at single child
-    array_ = (Fl_Widget**)&o;
+    child1_ = &o;
   } else if (children_ == 1) { // go from 1 to 2 children
-    Fl_Widget* t = (Fl_Widget*)array_;
+    Fl_Widget* t = child1_;
     array_ = (Fl_Widget**)malloc(2*sizeof(Fl_Widget*));
     if (index) {array_[0] = t; array_[1] = &o;}
     else {array_[0] = &o; array_[1] = t;}
@@ -520,7 +520,7 @@ void Fl_Group::remove(int index) {
   if (children_ == 1) { // go from 2 to 1 child
     Fl_Widget *t = array_[!index];
     free((void*)array_);
-    array_ = (Fl_Widget**)t;
+    child1_ = t;
   } else if (children_ > 1) { // delete from array
     for (; index < children_; index++) array_[index] = array_[index+1];
   }
