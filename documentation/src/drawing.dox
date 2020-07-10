@@ -251,7 +251,7 @@ standard colors and color cube for the first 256 colors. All of
 these are named with symbols in
 \ref enumerations "<FL/Enumerations.H>". Example:
 
-\image html fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)"
+\image html fltk-colormap.png "Figure 8.1: FLTK default colormap (Fl_Color 0x00 - 0xff)"
 \image latex fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)" width=6cm
 
 Color values greater than 255 are treated as 24-bit RGB
@@ -511,7 +511,7 @@ box. The two angles are measured in degrees counter-clockwise from
 must be greater or equal to \p a1.
 
 \par
-\image html  fl_pie_arc_diagram.png "fl_pie() and fl_arc()"
+\image html  fl_pie_arc_diagram.png "Figure 8.1: fl_pie() and fl_arc()"
 \image latex fl_pie_arc_diagram.png "fl_pie() and fl_arc()" width=6cm
 
 \par
@@ -654,7 +654,7 @@ If \p end is less than \p start then it draws the arc in a clockwise
 direction.
 
 \par
-\image html  fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)"
+\image html  fl_arc_xyr_diagram.png "Figure 8.3: fl_arc(x,y,r,a1,a2)"
 \image latex fl_arc_xyr_diagram.png "fl_arc(x,y,r,a1,a2)" width=6cm
 
 void fl_circle(double x, double y, double r)

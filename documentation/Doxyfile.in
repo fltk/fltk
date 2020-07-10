@@ -557,6 +557,7 @@ INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/preface.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/intro.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/basics.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/common.dox
+INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/resize.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/editor.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/drawing.dox
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/src/events.dox
