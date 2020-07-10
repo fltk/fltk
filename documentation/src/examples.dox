@@ -757,7 +757,7 @@ the display \b should look when running the example programs.
 The \c cairo_test demo program shows three shiny buttons drawn with Cairo
 in an Fl_Cairo_Window.
 
-  \image html cairo_test.png "Buttons drawn with Cairo"
+  \image html cairo_test.png "Figure 22.1: Buttons drawn with Cairo"
   \image latex cairo_test.png "Buttons drawn with Cairo" width=8cm
 
 
@@ -767,7 +767,7 @@ in an Fl_Cairo_Window.
 The \c icon program lets you set the program icon from an image (here
 an Fl_RGB_Image).
 
-  \image html icon.png "Green icon (Windows 10)"
+  \image html icon.png "Figure 22.2: Green icon (Windows 10)"
   \image latex icon.png "Green icon (Windows 10)" width=6cm
 
 
@@ -777,7 +777,7 @@ an Fl_RGB_Image).
 Select "drawing images" in the browser at the left side to see the
 image drawing example:
 
-  \image html unittest_images.png "Image Drawing"
+  \image html unittest_images.png "Figure 22.3: Image Drawing"
   \image latex unittest_images.png "Image Drawing" width=12cm
 
 
@@ -795,7 +795,9 @@ image drawing example:
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    &nbsp;
+    <a class="el" href="faq.html">
+    Frequently Asked Questions
+    [Next]
     </a>
   </td>
 </tr>
