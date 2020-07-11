@@ -23,10 +23,12 @@
 #include <FL/Fl_Printer.H>
 #include <string.h>
 #include <errno.h>
+#include <locale.h>	// setlocale()..
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_message.H>
 #include <FL/Fl_SVG_File_Surface.H>
 #include <FL/Fl_Native_File_Chooser.H>
+
 Fl_Box *b;
 Fl_Double_Window *w;
 Fl_Shared_Image *img;
@@ -124,6 +126,7 @@ int arg(int, char **argv, int &i) {
 int main(int argc, char **argv) {
   int i = 1;
 
+  setlocale(LC_ALL, "");    // enable multilanguage errors in file chooser
   fl_register_images();
 
   Fl::args(argc,argv,i,arg);
