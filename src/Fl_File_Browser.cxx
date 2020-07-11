@@ -354,10 +354,10 @@ Fl_File_Browser::item_draw(void *p,     // I - List item data
 }
 
 
-//
-// 'Fl_File_Browser::Fl_File_Browser()' - Create a Fl_File_Browser widget.
-//
-
+/**
+  The constructor creates the Fl_File_Browser widget at the specified position and size.
+  The destructor destroys the widget and frees all memory that has been allocated.
+*/
 Fl_File_Browser::Fl_File_Browser(int        X,  // I - Upper-lefthand X coordinate
                                  int        Y,  // I - Upper-lefthand Y coordinate
                                  int        W,  // I - Width in pixels
@@ -370,13 +370,40 @@ Fl_File_Browser::Fl_File_Browser(int        X,  // I - Upper-lefthand X coordina
   directory_ = "";
   iconsize_  = (uchar)(3 * textsize() / 2);
   filetype_  = FILES;
+  errmsg_    = NULL;
 }
 
 
-//
-// 'Fl_File_Browser::load()' - Load a directory into the browser.
-//
+// DTOR
+Fl_File_Browser::~Fl_File_Browser() {
+  errmsg(NULL);       // free()s prev errmsg, if any
+}
 
+
+/**
+  Sets OS error message to a string, which can be NULL.
+  Frees previous if any.
+  void errmsg(const char *emsg);
+ */
+void Fl_File_Browser::errmsg(const char* emsg) {
+  if ( errmsg_ ) { free((void*)errmsg_); errmsg_ = NULL; }
+  errmsg_ = emsg ? strdup(emsg) : NULL;
+}
+
+
+/**
+  Loads the specified directory into the browser. If icons have been
+  loaded then the correct icon is associated with each file in the list.
+
+  If directory is "", all mount points (unix) or drive letters (Windows)
+  are listed.
+
+  The sort argument specifies a sort function to be used with
+  fl_filename_list().
+
+  Return value is the number of filename entries, or 0 if none.
+  On error, 0 is returned, and errmsg() has OS error string if non-NULL.
+*/
 int                                             // O - Number of files loaded
 Fl_File_Browser::load(const char     *directory,// I - Directory to load
                       Fl_File_Sort_F *sort)     // I - Sort function to use
@@ -387,6 +414,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
   char          filename[4096];                 // Current file
   Fl_File_Icon  *icon;                          // Icon to use
 
+  errmsg(NULL); // clear errors first
 
 //  printf("Fl_File_Browser::load(\"%s\")\n", directory);
 
@@ -394,11 +422,12 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
 
   directory_ = directory;
 
-  if (!directory)
-    return (0);
+  if (!directory) {
+    errmsg("NULL directory specified");
+    return 0;
+  }
 
-  if (directory_[0] == '\0')
-  {
+  if (directory_[0] == '\0') {
     //
     // No directory specified; for UNIX list all mount points.  For DOS
     // list all valid drive letters...
@@ -406,21 +435,25 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
     if ((icon = Fl_File_Icon::find("any", Fl_File_Icon::DEVICE)) == NULL)
       icon = Fl_File_Icon::find("any", Fl_File_Icon::DIRECTORY);
     num_files = Fl::system_driver()->file_browser_load_filesystem(this, filename, (int)sizeof(filename), icon);
-  }
-  else
-  {
-    dirent      **files;        // Files in in directory
-    //
-    // Build the file list...
-    //
-    num_files = Fl::system_driver()->file_browser_load_directory(directory_, filename, sizeof(filename), &files, sort);
-    if (num_files <= 0)
-      return (0);
+  } else {
+    dirent **files;        // Files in in directory
+    char emsg[1024] = "";
+
+    // Build the file list, check for errors
+    num_files = Fl::system_driver()->file_browser_load_directory(directory_,
+                                                                 filename, sizeof(filename),
+                                                                 &files, sort,
+                                                                 emsg, sizeof(emsg));
+    // printf("Fl_File_Browser::load(dir='%s',filename='%s'): failed, emsg='%s'\n", directory_, filename, emsg);
+
+    if (num_files <= 0) {
+      errmsg(emsg);
+      return 0;
+    }
 
     for (i = 0, num_dirs = 0; i < num_files; i ++) {
       if (strcmp(files[i]->d_name, "./")) {
-        snprintf(filename, sizeof(filename), "%s/%s", directory_,
-                 files[i]->d_name);
+        fl_snprintf(filename, sizeof(filename), "%s/%s", directory_, files[i]->d_name);
 
         icon = Fl_File_Icon::find(filename);
         if ((icon && icon->type() == Fl_File_Icon::DIRECTORY) ||

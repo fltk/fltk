@@ -34,7 +34,9 @@ public:
   // these 2 are in Fl_get_key.cxx
   virtual int event_key(int k);
   virtual int get_key(int k);
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
+  virtual int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg=NULL, int errmsg_sz=0);
   virtual int need_menu_handle_part1_extra() {return 1;}
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int use_tooltip_timeout_condition() {return 1;}

@@ -25,7 +25,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-
+#include <string.h>     // strerror(errno)
+#include <errno.h>      // errno
 
 #if defined(_AIX)
 extern "C" {
@@ -56,7 +57,8 @@ extern "C" {
 extern "C" {
   int fl_scandir(const char *dirname, struct dirent ***namelist,
                  int (*select)(struct dirent *),
-                 int (*compar)(struct dirent **, struct dirent **));
+                 int (*compar)(struct dirent **, struct dirent **),
+                 char *errmsg, int errmsg_sz);
 }
 #endif
 
@@ -444,9 +446,18 @@ int Fl_X11_System_Driver::XParseGeometry(const char* string, int* x, int* y,
   return ::XParseGeometry(string, x, y, width, height);
 }
 
-int Fl_X11_System_Driver::filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {
+//
+// Needs some docs
+// Returns -1 on error, errmsg will contain OS error if non-NULL.
+//
+int Fl_X11_System_Driver::filename_list(const char *d,
+                                        dirent ***list,
+                                        int (*sort)(struct dirent **, struct dirent **),
+                                        char *errmsg, int errmsg_sz) {
   int dirlen;
   char *dirloc;
+
+  if (errmsg && errmsg_sz>0) errmsg[0] = '\0';
 
   // Assume that locale encoding is no less dense than UTF-8
   dirlen = strlen(d);
@@ -475,6 +486,11 @@ int Fl_X11_System_Driver::filename_list(const char *d, dirent ***list, int (*sor
 #endif
 
   free(dirloc);
+
+  if (n==-1) {
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+    return -1;
+  }
 
   // convert every filename to UTF-8, and append a '/' to all
   // filenames that are directories
