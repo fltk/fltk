@@ -46,10 +46,14 @@ static void get_ms_errmsg(char *errmsg, int errmsg_sz) {
   if ( size == 0 ) {
     fl_snprintf(errmsg, errmsg_sz, "Error #%lu", (unsigned long)lastErr);
   } else {
+    int cnt = 0;
     /* Copy mbuf -> errmsg, remove '\r's -- they screw up fl_alert()) */
     for ( char *src=mbuf, *dst=errmsg; 1; src++ ) {
       if ( *src == '\0' ) { *dst = '\0'; break; }
-      if ( *src != '\r' ) { *dst++ = *src; }
+      if ( *src != '\r' ) {
+        if ( ++cnt >= errmsg_sz ) { *dst = '\0'; break; } // trunc on overflow
+        *dst++ = *src;
+      }
     }
     LocalFree(mbuf);    /* Free the buffer allocated by the system */
   }
