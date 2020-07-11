@@ -144,6 +144,7 @@ fl_scandir(const char *dir, struct dirent ***namelist,
   size_t len, num = 0, max = ENTRIES_MIN;
   struct dirent *entryp, **entries, **p;
 
+  if (errmsg && errmsg_sz>0) errmsg[0] = '\0';
   entries = (struct dirent **) malloc(sizeof(*entries) * max);
   if (NULL == entries) {
     if (errmsg) fl_snprintf(errmsg, errmsg_sz, "out of memory");
@@ -154,6 +155,17 @@ fl_scandir(const char *dir, struct dirent ***namelist,
   dirp = opendir(dir);
   if (NULL == dirp) {
     if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+
+    // XXX: This would be a thread safe alternative to the above, but commented
+    //      out because we can get either GNU or POSIX versions on linux, 
+    //      which AFAICT are incompatible: GNU doesn't guarantee errmsg is used
+    //      at all, whereas POSIX /only/ fills buffer. The two calls are not really
+    //      compatible but have the same name and different return values.. wtf?
+    //
+    // if (errmsg && errmsg_sz > 0) {
+    //   strerror_r(errno, errmsg, errmsg_sz); // thread safe. Might be GNU, might be POSIX
+    //   errmsg[errmsg_sz-1] = '\0';           // force null term b/c XSI does not specify
+    // }
     return -1;
   }
 
