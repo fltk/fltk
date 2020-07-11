@@ -500,10 +500,16 @@ void Fl_Code_Type::write_code1() {
   while( (pch=strchr(c,'\n')) )
   {
     int line_len = pch - c;
-    write_c("%s%.*s\n", ind, line_len, c);
+    if (line_len < 1)
+      write_c("\n");
+    else
+      write_c("%s%.*s\n", ind, line_len, c);
     c = pch+1;
   }
-  write_c("%s%s\n", ind, c);
+  if (*c)
+    write_c("%s%s\n", ind, c);
+  else
+    write_c("\n");
 }
 
 void Fl_Code_Type::write_code2() {}
@@ -738,23 +744,24 @@ void Fl_Decl_Type::write_code1() {
   if (class_name(1)) {
     write_public(public_);
     write_comment_h("  ");
-    write_h("  %.*s; %s\n", (int)(e-c), c, csc);
+    write_hc("  ", int(e-c), c, csc);
   } else {
     if (public_) {
       if (static_)
         write_h("extern ");
       else
         write_comment_h();
-      write_h("%.*s; %s\n", (int)(e-c), c, csc);
+      write_hc("", int(e-c), c, csc);
+
       if (static_) {
         write_comment_c();
-        write_c("%.*s; %s\n", (int)(e-c), c, csc);
+        write_cc("", int(e-c), c, csc);
       }
     } else {
       write_comment_c();
       if (static_)
         write_c("static ");
-      write_c("%.*s; %s\n", (int)(e-c), c, csc);
+      write_cc("", int(e-c), c, csc);
     }
   }
 }

@@ -283,12 +283,28 @@ void write_c(const char* format,...) {
   va_end(args);
 }
 
+// write code (c) of size (n) to C file, with optional comment (com) w/o trailing space
+void write_cc(const char *indent, int n, const char *c, const char *com) {
+  if (*com)
+    write_c("%s%.*s; %s\n", indent, n, c, com);
+  else
+    write_c("%s%.*s;\n", indent, n, c);
+}
+
 void write_h(const char* format,...) {
   if (varused_test) return;
   va_list args;
   va_start(args, format);
   vfprintf(header_file, format, args);
   va_end(args);
+}
+
+// write code (c) of size (n) to H file, with optional comment (com) w/o trailing space
+void write_hc(const char *indent, int n, const char* c, const char *com) {
+  if (*com)
+    write_h("%s%.*s; %s\n", indent, n, c, com);
+  else
+    write_h("%s%.*s;\n", indent, n, c);
 }
 
 #include <FL/filename.H>
