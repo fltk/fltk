@@ -490,8 +490,8 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
 }
 
 int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list,
-                                           int (*sort)(struct dirent **, struct dirent **,
-                                           char *errmsg, int errmsg_sz) ) {
+                                           int (*sort)(struct dirent **, struct dirent **),
+                                           char *errmsg, int errmsg_sz) {
   // For Windows we have a special scandir implementation that uses
   // the Win32 "wide" functions for lookup, avoiding the code page mess
   // entirely. It also fixes up the trailing '/'.
