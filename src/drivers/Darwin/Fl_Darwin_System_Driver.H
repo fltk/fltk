@@ -52,7 +52,9 @@ public:
   // these 2 are in Fl_get_key_mac.cxx
   virtual int event_key(int k);
   virtual int get_key(int k);
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
+  virtual int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg=NULL, int errmsg_sz=0);
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int need_test_shortcut_extra() {return 1;}
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon);

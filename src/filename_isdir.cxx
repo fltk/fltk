@@ -57,6 +57,7 @@ int Fl_System_Driver::filename_isdir_quick(const char* n) {
 }
 
 
+// TODO: This should probably handle errors better (like permission denied) -erco
 int Fl_System_Driver::filename_isdir(const char* n) {
   struct stat   s;
   char          fn[FL_PATH_MAX];

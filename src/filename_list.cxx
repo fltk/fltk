@@ -63,9 +63,10 @@ int fl_casealphasort(struct dirent **a, struct dirent **b) {
       to put unpadded numbers in consecutive order; upper and lowercase letters are compared
       according to their ASCII ordering - uppercase before lowercase.
   \return the number of entries if no error, a negative value otherwise.
+  \todo should support returning OS error messages
 */
 int fl_filename_list(const char *d, dirent ***list, Fl_File_Sort_F *sort) {
-  return Fl::system_driver()->filename_list(d, list, sort);
+  return Fl::system_driver()->filename_list(d, list, sort, NULL, 0);
 }
 
 /**

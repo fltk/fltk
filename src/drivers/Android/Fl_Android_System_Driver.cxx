@@ -486,11 +486,13 @@ int Fl_WinAPI_System_Driver::clocale_printf(FILE *output, const char *format, va
   return retval;
 }
 
-int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {
+int Fl_WinAPI_System_Driver::filename_list(const char *d, dirent ***list,
+                                           int (*sort)(struct dirent **, struct dirent **),
+                                           char *errmsg, int errmsg_sz ) {
   // For Windows we have a special scandir implementation that uses
   // the Win32 "wide" functions for lookup, avoiding the code page mess
   // entirely. It also fixes up the trailing '/'.
-  return fl_scandir(d, list, 0, sort);
+  return fl_scandir(d, list, 0, sort, errmsg, errmsg_sz);
 }
 
 int Fl_WinAPI_System_Driver::filename_expand(char *to, int tolen, const char *from) {
@@ -747,7 +749,9 @@ int Fl_WinAPI_System_Driver::file_browser_load_filesystem(Fl_File_Browser *brows
 }
 
 int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, char *filename,
-                                                         size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
+                                                         size_t name_size, dirent ***pfiles,
+                                                         Fl_File_Sort_F *sort,
+                                                         char *errmsg, int errmsg_sz)
 {
   strlcpy(filename, directory, name_size);
   int i = (int) (strlen(filename) - 1);
@@ -756,7 +760,7 @@ int Fl_WinAPI_System_Driver::file_browser_load_directory(const char *directory, 
     filename[2] = '/';
   else if (filename[i] != '/' && filename[i] != '\\')
     strlcat(filename, "/", name_size);
-  return filename_list(filename, pfiles, sort);
+  return filename_list(filename, pfiles, sort, errmsg, errmsg_sz);
 }
 
 void Fl_WinAPI_System_Driver::newUUID(char *uuidBuffer)

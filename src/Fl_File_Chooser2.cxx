@@ -1020,17 +1020,15 @@ void Fl_File_Chooser::preview(int e)
   Fl_Group *p = previewBox->parent();
   if (e) {
     int w = p->w() * 2 / 3;
-    fileList->resize(fileList->x(), fileList->y(),
-                     w, fileList->h());
-    previewBox->resize(fileList->x()+w, previewBox->y(),
-                       p->w()-w, previewBox->h());
+    fileList->resize(fileList->x(), fileList->y(), w, fileList->h());
+    errorBox->resize(errorBox->x(), errorBox->y(), w, errorBox->h());
+    previewBox->resize(fileList->x()+w, previewBox->y(), p->w()-w, previewBox->h());
     previewBox->show();
     update_preview();
   } else {
-    fileList->resize(fileList->x(), fileList->y(),
-                     p->w(), fileList->h());
-    previewBox->resize(p->x()+p->w(), previewBox->y(),
-                       0, previewBox->h());
+    fileList->resize(fileList->x(), fileList->y(), p->w(), fileList->h());
+    errorBox->resize(errorBox->x(), errorBox->y(), p->w(), errorBox->h());
+    previewBox->resize(p->x()+p->w(), previewBox->y(), 0, previewBox->h());
     previewBox->hide();
   }
   p->init_sizes();
@@ -1070,7 +1068,14 @@ Fl_File_Chooser::rescan()
     okButton->deactivate();
 
   // Build the file list...
-  fileList->load(directory_, sort);
+  if ( fileList->load(directory_, sort) <= 0 ) {
+    if ( fileList->errmsg() ) errorBox->label(fileList->errmsg());     // show OS errormsg when possible
+    else                      errorBox->label("No files found...");
+    show_error_box(1);
+  } else {
+    show_error_box(0);
+  }
+
   if (Fl::system_driver()->dot_file_hidden() && !showHiddenButton->value()) remove_hidden_files();
   // Update the preview box...
   update_preview();
@@ -1094,7 +1099,13 @@ void Fl_File_Chooser::rescan_keep_filename()
   strlcpy(pathname, fn, sizeof(pathname));
 
   // Build the file list...
-  fileList->load(directory_, sort);
+  if (fileList->load(directory_, sort) <= 0) {
+    if ( fileList->errmsg() ) errorBox->label(fileList->errmsg());     // show OS errormsg when possible
+    else                      errorBox->label("No files found...");
+    show_error_box(1);
+  } else {
+    show_error_box(0);
+  }
   if (Fl::system_driver()->dot_file_hidden() && !showHiddenButton->value()) remove_hidden_files();
   // Update the preview box...
   update_preview();

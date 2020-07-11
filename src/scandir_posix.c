@@ -128,11 +128,16 @@ readentry(DIR *dirp, struct dirent **entryp, size_t *len)
 }
 
 
-/* ========================================================================== */
+/*
+ * This could use some docs.
+ *
+ * Returns -1 on error, errmsg returns error string (if non-NULL)
+ */
 int
 fl_scandir(const char *dir, struct dirent ***namelist,
            int (*sel)(struct dirent *),
-           int (*compar)(struct dirent **, struct dirent **))
+           int (*compar)(struct dirent **, struct dirent **),
+           char *errmsg, int errmsg_sz) {
 {
   int result = -1;
   DIR *dirp;
@@ -140,64 +145,62 @@ fl_scandir(const char *dir, struct dirent ***namelist,
   struct dirent *entryp, **entries, **p;
 
   entries = (struct dirent **) malloc(sizeof(*entries) * max);
-  if (NULL != entries)
-  {
-    /* Open directory 'dir' (and verify that it really is a directory) */
-    dirp = opendir(dir);
-    if (NULL != dirp)
-    {
-      /* Read next directory entry */
-      while (!readentry(dirp, &entryp, &len))
-      {
-        if (NULL == entryp)
-        {
-          /* EOD => Return number of directory entries */
-          result = (int) num;
-          break;
-        }
-        /* Apply select function if there is one provided */
-        if (NULL != sel)  { if (!sel(entryp))  continue; }
-        entries[num++] = entryp;
-        if (num >= max)
-        {
-          /* Allocate exponentially increasing sized memory chunks */
-          if (INT_MAX / 2 >= (int) max)  { max *= (size_t) 2; }
-          else
-          {
-            errno = ENOMEM;
-            break;
-          }
-          p = (struct dirent **) realloc((void *) entries,
-                                         sizeof(*entries) * max);
-          if (NULL != p)  { entries = p; }
-          else  break;
-        }
-      }
-      closedir(dirp);
-      /*
-       * A standard compliant 'closedir()' is allowed to fail with 'EINTR',
-       * but the state of the directory structure is undefined in this case.
-       * Therefore we ignore the return value because we can't call 'closedir()'
-       * again and must hope that the system has released all resources.
-       */
-    }
-    /* Sort entries in array if there is a compare function provided */
-    if (NULL != compar)
-    {
-      qsort((void *) entries, num, sizeof(*entries),
-            (int (*)(const void *, const void *)) compar);
-    }
-    *namelist = entries;
+  if (NULL == entries) {
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "out of memory");
+    return -1;
   }
 
-  /* Check for error */
-  if (-1 == result)
+  /* Open directory 'dir' (and verify that it really is a directory) */
+  dirp = opendir(dir);
+  if (NULL == dirp) {
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+    return -1;
+  }
+
+  /* Read next directory entry */
+  while (!readentry(dirp, &entryp, &len))
   {
+    if (NULL == entryp)
+    {
+      /* EOD => Return number of directory entries */
+      result = (int) num;
+      break;
+    }
+    /* Apply select function if there is one provided */
+    if (NULL != sel)  { if (!sel(entryp))  continue; }
+    entries[num++] = entryp;
+    if (num >= max) {
+      /* Allocate exponentially increasing sized memory chunks */
+      if (INT_MAX / 2 >= (int) max)  { max *= (size_t) 2; }
+      else {
+        errno = ENOMEM;
+        break;
+      }
+      p = (struct dirent **) realloc((void *)entries, sizeof(*entries)*max);
+      if (NULL != p) { entries = p; }
+      else  break;
+    }
+  }
+  closedir(dirp);
+  /*
+   * A standard compliant 'closedir()' is allowed to fail with 'EINTR',
+   * but the state of the directory structure is undefined in this case.
+   * Therefore we ignore the return value because we can't call 'closedir()'
+   * again and must hope that the system has released all resources.
+   */
+
+  /* Sort entries in array if there is a compare function provided */
+  if (NULL != compar) {
+    qsort((void *) entries, num, sizeof(*entries),
+          (int (*)(const void *, const void *)) compar);
+  }
+  *namelist = entries;
+  /* Check for error */
+  if (-1 == result) {
     /* Free all memory we have allocated */
     while (num--)  { free(entries[num]); }
     free(entries);
   }
-
   return result;
 }
 

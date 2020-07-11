@@ -70,7 +70,9 @@ public:
   // these 2 are in Fl_get_key_win32.cxx
   virtual int event_key(int k);
   virtual int get_key(int k);
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) );
+  virtual int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg, int errmsg_sz);
   virtual int filename_expand(char *to,int tolen, const char *from);
   virtual int filename_relative(char *to, int tolen, const char *from, const char *base);
   virtual int filename_absolute(char *to, int tolen, const char *from);
@@ -80,7 +82,9 @@ public:
   virtual int open_uri(const char *uri, char *msg, int msglen);
   virtual int use_recent_tooltip_fix() {return 1;}
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon);
-  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort);
+  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size,
+                                          dirent ***pfiles, Fl_File_Sort_F *sort,
+                                          char *errmsg=NULL, int errmsg_sz=0);
   virtual void newUUID(char *uuidBuffer);
   virtual char *preference_rootnode(Fl_Preferences *prefs, Fl_Preferences::Root root, const char *vendor,
                                     const char *application);

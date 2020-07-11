@@ -449,9 +449,11 @@ int Fl_System_Driver::filename_expand(char *to,int tolen, const char *from) {
 }
 
 int Fl_System_Driver::file_browser_load_directory(const char *directory, char *filename,
-                                                  size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort)
+                                                  size_t name_size, dirent ***pfiles,
+                                                  Fl_File_Sort_F *sort,
+                                                  char *errmsg, int errmsg_sz)
 {
-  return filename_list(directory, pfiles, sort);
+  return filename_list(directory, pfiles, sort, errmsg, errmsg_sz);
 }
 
 int Fl_System_Driver::file_type(const char *filename)
