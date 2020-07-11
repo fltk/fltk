@@ -27,7 +27,7 @@ Fl_Printer::Fl_Printer(void) {
 Fl_Paged_Device* Fl_Printer::newPrinterDriver(void) {
   return NULL;
 }
-int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Printer::begin_job(int pagecount, int *frompage, int *topage, char **perr_message) {return 2;}
 int Fl_Printer::begin_page(void) {return 1;}
 int Fl_Printer::printable_rect(int *w, int *h) {return 1;}
 void Fl_Printer::margins(int *left, int *top, int *right, int *bottom) {}
@@ -41,6 +41,7 @@ int Fl_Printer::end_page (void) {return 1;}
 void Fl_Printer::end_job (void) {}
 void Fl_Printer::draw_decorated_window(Fl_Window* win, int delta_x, int delta_y) {}
 void Fl_Printer::set_current(void) {}
+bool Fl_Printer::is_current(void) {return false;}
 Fl_Printer::~Fl_Printer(void) {}
 
 const char *Fl_Printer::dialog_title = NULL;
@@ -64,7 +65,7 @@ const char *Fl_Printer::property_save = NULL;
 const char *Fl_Printer::property_cancel = NULL;
 
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void) {}
-int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to) {return 1;}
+int Fl_PostScript_File_Device::begin_job(int pagecount, int* from, int* to, char **perr_message) {return 2;}
 int Fl_PostScript_File_Device::begin_job(int pagecount, enum Fl_Paged_Device::Page_Format format,
                                           enum Fl_Paged_Device::Page_Layout layout) {return 1;}
 int Fl_PostScript_File_Device::begin_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format,
@@ -81,6 +82,14 @@ void Fl_PostScript_File_Device::untranslate(void) {}
 int Fl_PostScript_File_Device::end_page (void) {return 1;}
 void Fl_PostScript_File_Device::end_job(void) {}
 Fl_PostScript_File_Device::~Fl_PostScript_File_Device(void) {}
+
+Fl_EPS_File_Surface::Fl_EPS_File_Surface(int width, int height, FILE *eps, Fl_Color background) : Fl_Widget_Surface(NULL) {}
+Fl_EPS_File_Surface::~Fl_EPS_File_Surface() {}
+void Fl_EPS_File_Surface::origin(int, int) {}
+void Fl_EPS_File_Surface::origin(int*, int*) {}
+int Fl_EPS_File_Surface::printable_rect(int*, int*) {return 1;}
+void Fl_EPS_File_Surface::translate(int, int) {}
+void Fl_EPS_File_Surface::untranslate() {}
 
 #else
 

@@ -357,7 +357,7 @@ public:
   ~Fl_EPS_File_Surface();
   virtual int printable_rect(int *w, int *h);
   /** Returns the underlying FILE pointer */
-  FILE *file() { return driver()->output; }
+  FILE *file() { return driver() ? driver()->output : NULL; }
   virtual void origin(int x, int y);
   virtual void origin(int *px, int *py);
   virtual void translate(int x, int y);

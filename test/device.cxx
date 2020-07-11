@@ -643,9 +643,11 @@ void copy(Fl_Widget *, void *data) {
           wh = target->h();
         }
         Fl_EPS_File_Surface p(ww, wh, eps);
-        if (target->as_window()) p.draw_decorated_window(target->as_window());
-        else p.draw(target);
+        if (p.file()) {
+          if (target->as_window()) p.draw_decorated_window(target->as_window());
+          else p.draw(target);
         //p.close();
+        }
       }
       fclose(eps);
     }
