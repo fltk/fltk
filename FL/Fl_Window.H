@@ -25,7 +25,7 @@
 #include <FL/Fl_Bitmap.H>
 #include <stdlib.h>
 
-#define FL_WINDOW 0xF0          ///< window type id all subclasses have type() >= this
+#define FL_WINDOW 0xF0          ///< window type id: all subclasses have type() >= this
 #define FL_DOUBLE_WINDOW 0xF1   ///< double window type id
 
 class Fl_X;
@@ -39,8 +39,8 @@ class Fl_Double_Window;
   or a "subwindow" inside a window.  This is controlled by whether or not
   the window has a parent().
 
-  Once you create a window, you usually add children Fl_Widget
-  's to it by using window->add(child) for each new widget.
+  Once you create a window, you usually add children Fl_Widget's to it
+  by using window->add(child) for each new widget.
   See Fl_Group for more information on how to add and remove children.
 
   There are several subclasses of Fl_Window that provide
@@ -68,8 +68,8 @@ private:
   int fullscreen_screen_right;
 
   // TODO: it would make sense to merge the use of Fl_X and Fl_Window_Driver, maybe simply by
-  // TODO: deriving Fl_Window_Driver from Fl_X. However, there are a lot of historic kldges for
-  // TODO: some platforms around Fl_X.
+  // TODO: deriving Fl_Window_Driver from Fl_X. However, there are a lot of historic kludges
+  // TODO: for some platforms around Fl_X.
   Fl_X *i; // points at the system-specific stuff, but exists only after the window is mapped
   Fl_Window_Driver *pWindowDriver; // points at the system-specific stuff at window creation time
 
@@ -123,17 +123,17 @@ protected:
 public:
 
   /**
-    Creates a window from the given size and title.
+    Creates a window from the given width \p w, height \p h, and \p title.
     If Fl_Group::current() is not NULL, the window is created as a
     subwindow of the parent window.
 
-    The (w,h) form of the constructor creates a top-level window
-    and asks the window manager to position the window. The (x,y,w,h)
+    The (w, h) form of the constructor creates a top-level window
+    and asks the window manager to position the window. The (x, y, w, h)
     form of the constructor either creates a subwindow or a
-    top-level window at the specified location (x,y) , subject to window
+    top-level window at the specified location (x, y), subject to window
     manager configuration. If you do not specify the position of the
     window, the window manager will pick a place to show the window
-    or allow the user to pick a location. Use position(x,y)
+    or allow the user to pick a location. Use position(x, y)
     or hotspot() before calling show() to request a
     position on the screen. See Fl_Window::resize()
     for some more details on positioning windows.
@@ -148,14 +148,14 @@ public:
     change this to FL_NO_BOX. If you turn the window border off
     you may want to change this to FL_UP_BOX.
 
-    \see Fl_Window(int x, int y, int w, int h, const char* title)
+    \see Fl_Window(int x, int y, int w, int h, const char *title)
   */
-    Fl_Window(int w, int h, const char* title= 0);
-  /** Creates a window from the given position, size and title.
+    Fl_Window(int w, int h, const char *title = 0);
+  /** Creates a window from the given position (x, y), size (w, h) and title.
 
     \see Fl_Window(int w, int h, const char *title)
   */
-    Fl_Window(int x, int y, int w, int h, const char* title = 0);
+    Fl_Window(int x, int y, int w, int h, const char *title = 0);
   /**
     The destructor <I>also deletes all the children</I>. This allows a
     whole tree to be deleted at once, without having to keep a pointer to
@@ -244,7 +244,7 @@ public:
     \code
     win->hide();
     win->clear_modal_states();
-    //Set win to new state as desired, or leave "normal", e.g...
+    // Set win to new state as desired, or leave "normal", e.g...
     win->set_non_modal();
     win->show();
     \endcode
@@ -490,10 +490,11 @@ public:
   void make_current();
 
   /**
-    Changes the cursor for this window.  This always calls the system, if
-    you are changing the cursor a lot you may want to keep track of how
-    you set it in a static variable and call this only if the new cursor
-    is different.
+    Changes the cursor for this window.
+
+    This always calls the system. If you are changing the cursor a lot
+    you may want to keep track of how you set it in a static variable
+    and call this only if the new cursor is different.
 
     The type Fl_Cursor is an enumeration defined in <FL/Enumerations.H>.
 

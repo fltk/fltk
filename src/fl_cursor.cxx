@@ -137,7 +137,7 @@ void Fl_Window::cursor(Fl_Cursor c) {
 }
 
 /**
-  Changes the cursor for this window.  This always calls the system, if
+  Changes the cursor for this window.  This always calls the system. If
   you are changing the cursor a lot you may want to keep track of how
   you set it in a static variable and call this only if the new cursor
   is different.
