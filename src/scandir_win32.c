@@ -1,7 +1,7 @@
 /*
  * Windows scandir function for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2020 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -37,23 +37,23 @@ static void get_ms_errmsg(char *errmsg, int errmsg_sz) {
                 FORMAT_MESSAGE_IGNORE_INSERTS  |
                 FORMAT_MESSAGE_FROM_SYSTEM;
   DWORD langid = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
-  LPSTR mbuf = 0;
+  LPWSTR mbuf = 0;
+  DWORD msize = 0;
 
-  // Early exit if parent doesn't want an errmsg
-  if (!errmsg || errmsg_sz<=0 ) return;
-  // Get error message from Windows
-  DWORD size = FormatMessageA(flags, 0, lastErr, langid, (LPSTR)&mbuf, 0, NULL);
-  if ( size == 0 ) {
+  /* Early exit if parent doesn't want an errmsg */
+  if (!errmsg || errmsg_sz <= 0 ) return;
+  /* Get error message from Windows */
+  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, NULL);
+  if ( msize == 0 ) {
     fl_snprintf(errmsg, errmsg_sz, "Error #%lu", (unsigned long)lastErr);
   } else {
-    int cnt = 0;
-    /* Copy mbuf -> errmsg, remove '\r's -- they screw up fl_alert()) */
-    for ( char *src=mbuf, *dst=errmsg; 1; src++ ) {
+    /* convert message to UTF-8 */
+    int mlen = fl_utf8fromwc(errmsg, errmsg_sz, mbuf, msize);
+    /* Remove '\r's -- they screw up fl_alert()) */
+    char *src = errmsg, *dst = errmsg;
+    for ( ; 1; src++ ) {
       if ( *src == '\0' ) { *dst = '\0'; break; }
-      if ( *src != '\r' ) {
-        if ( ++cnt >= errmsg_sz ) { *dst = '\0'; break; } // trunc on overflow
-        *dst++ = *src;
-      }
+      if ( *src != '\r' ) { *dst++ = *src; }
     }
     LocalFree(mbuf);    /* Free the buffer allocated by the system */
   }
