@@ -7,6 +7,7 @@
 
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()
+#include <FL/fl_utf8.h> // fl_utf8fromwc()
 
 #include "ExternalCodeEditor_WIN32.h"
 
@@ -19,22 +20,26 @@ static Fl_Timeout_Handler L_update_timer_cb = 0;        // app's update timer ca
 // [Static/Local] Get error message string for last failed WIN32 function.
 // Returns a string pointing to static memory.
 //
-//     TODO: Is more code needed here to convert returned string to utf8? -erco
-//
 static const char *get_ms_errmsg() {
   static char emsg[1024];
   DWORD lastErr = GetLastError();
   DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER |
                 FORMAT_MESSAGE_IGNORE_INSERTS  |
                 FORMAT_MESSAGE_FROM_SYSTEM;
-  LPSTR mbuf = 0;
-  DWORD size = FormatMessageA(flags, 0, lastErr, MAKELANGID(LANG_NEUTRAL,
-                              SUBLANG_DEFAULT), (LPSTR)&mbuf, 0, NULL);
-  if ( size == 0 ) {
-    _snprintf(emsg, sizeof(emsg), "Error Code %ld", long(lastErr));
+  DWORD langid = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
+  LPWSTR mbuf = 0;
+  DWORD msize = 0;
+
+  // Get error message from Windows
+  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, NULL);
+  if ( msize == 0 ) {
+    _snprintf(emsg, sizeof(emsg), "Error #%ld", (unsigned long)lastErr);
   } else {
-    // Copy mbuf -> emsg (with '\r's removed -- they screw up fl_alert())
-    for ( char *src=mbuf, *dst=emsg; 1; src++ ) {
+    // Convert message to UTF-8
+    int mlen = fl_utf8fromwc(emsg, sizeof(emsg), mbuf, msize);
+    // Remove '\r's -- they screw up fl_alert()
+    char *src = emsg, *dst = emsg;
+    for ( ; 1; src++ ) {
       if ( *src == '\0' ) { *dst = '\0'; break; }
       if ( *src != '\r' ) { *dst++ = *src; }
     }

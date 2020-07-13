@@ -39,7 +39,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <time.h> // time(), localtime(), etc.
+#include <locale.h>	// setlocale()..
+#include <time.h>   // time(), localtime(), etc.
 
 #include "../src/flstring.h"
 #include "alignment_panel.h"
@@ -1748,6 +1749,7 @@ static void sigint(SIGARG) {
 int main(int argc,char **argv) {
   int i = 1;
 
+  setlocale(LC_ALL, "");    // enable multilanguage errors in file chooser
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
     static const char *msg =
       "usage: %s <switches> name.fl\n"
