@@ -46,11 +46,11 @@ public:
     when(FL_WHEN_NOT_CHANGED|when());
     // Create input widget that we'll use whenever user clicks on a cell
     input = new Fl_Int_Input(W/2,H/2,0,0);
-    input->hide();
+    input->hide();                                      // hide until needed
     input->callback(input_cb, (void*)this);
     input->when(FL_WHEN_ENTER_KEY_ALWAYS);              // callback triggered when user hits Enter
     input->maximum_size(5);
-    input->color(FL_YELLOW);
+    input->color(FL_YELLOW);                            // yellow to standout during editing
     for (int c = 0; c < MAX_COLS; c++)
       for (int r = 0; r < MAX_ROWS; r++)
         values[r][c] = c + (r*MAX_COLS);                // initialize cells
@@ -81,12 +81,14 @@ public:
     input->value(s);
     input->position(0,strlen(s));                       // Select entire input field
     input->show();                                      // Show the input widget, now that we've positioned it
-    input->take_focus();
+    input->take_focus();                                // Put keyboard focus into the input widget
   }
   // Tell the input widget it's done editing, and to 'hide'
   void done_editing() {
     if (input->visible()) {                             // input widget visible, ie. edit in progress?
       set_value_hide();                                 // Transfer its current contents to cell and hide
+      row_edit = 0;                                     // Disable these until needed again
+      col_edit = 0;
     }
   }
   // Return the sum of all rows in this column
