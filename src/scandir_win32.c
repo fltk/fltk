@@ -1,7 +1,7 @@
 /*
  * Windows scandir function for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2018 by Bill Spitzak and others.
+ * Copyright 1998-2020 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -15,16 +15,59 @@
  */
 
 #ifndef __CYGWIN__
-/* Emulation of POSIX scandir() call */
+/* Emulation of POSIX scandir() call with error messages */
 #include <FL/platform_types.h>
 #include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <windows.h>
 #include <stdlib.h>
 
+/* Get error message string for last failed WIN32 operation
+ * in 'errmsg' (if non-NULL), string size limited to errmsg_sz.
+ *
+ * NOTE: Copied from: fluid/ExternalCodeEditor_WIN32.cxx
+ *
+ * TODO: Verify works in different languages, with utf8 strings.
+ * TODO: This should be made available globally to the FLTK internals, in case
+ *       other parts of FLTK need OS error messages..
+ */
+static void get_ms_errmsg(char *errmsg, int errmsg_sz) {
+  DWORD lastErr = GetLastError();
+  DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                FORMAT_MESSAGE_IGNORE_INSERTS  |
+                FORMAT_MESSAGE_FROM_SYSTEM;
+  DWORD langid = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
+  LPWSTR mbuf = 0;
+  DWORD msize = 0;
+
+  /* Early exit if parent doesn't want an errmsg */
+  if (!errmsg || errmsg_sz <= 0 ) return;
+  /* Get error message from Windows */
+  msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, NULL);
+  if ( msize == 0 ) {
+    fl_snprintf(errmsg, errmsg_sz, "Error #%lu", (unsigned long)lastErr);
+  } else {
+    /* convert message to UTF-8 */
+    int mlen = fl_utf8fromwc(errmsg, errmsg_sz, mbuf, msize);
+    /* Remove '\r's -- they screw up fl_alert()) */
+    char *src = errmsg, *dst = errmsg;
+    for ( ; 1; src++ ) {
+      if ( *src == '\0' ) { *dst = '\0'; break; }
+      if ( *src != '\r' ) { *dst++ = *src; }
+    }
+    LocalFree(mbuf);    /* Free the buffer allocated by the system */
+  }
+}
+
+/*
+ * This could use some docs.
+ *
+ * Returns -1 on error, errmsg returns error string (if non-NULL)
+ */
 int fl_scandir(const char *dirname, struct dirent ***namelist,
                int (*select)(struct dirent *),
-               int (*compar)(struct dirent **, struct dirent **)) {
+               int (*compar)(struct dirent **, struct dirent **),
+               char *errmsg, int errmsg_sz) {
   int len;
   char *findIn, *d, is_dir = 0;
   WIN32_FIND_DATAW findw;
@@ -33,9 +76,14 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   struct dirent **dir = 0, *selectDir;
   unsigned long ret;
 
+  if (errmsg && errmsg_sz>0) errmsg[0] = '\0';
   len    = (int) strlen(dirname);
   findIn = (char *)malloc((size_t)(len+10));
-  if (!findIn) return -1;
+  if (!findIn) {
+    /* win32 malloc() docs: "malloc sets errno to ENOMEM if allocation fails" */
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+    return -1;
+  }
   strcpy(findIn, dirname);
 
   /* #if defined(__GNUC__) */
@@ -49,7 +97,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   if ((len>1) && (d[-1]=='.') && (d[-2]=='\\')) { d[-1] = '*'; is_dir = 1; }
   if (!is_dir) { /* this file may still be a directory that we need to list */
     DWORD attr = GetFileAttributes(findIn);
-    if (attr&FILE_ATTRIBUTE_DIRECTORY)
+    if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY) )
       strcpy(d, "\\*");
   }
   { /* Create a block to limit the scope while we find the initial "wide" filename */
@@ -64,55 +112,54 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
         h = FindFirstFileW(wbuf, &findw); /* get a handle to the first filename in the search */
         free(wbuf); /* release the "wide" buffer before the pointer goes out of scope */
   }
+
   if (h==INVALID_HANDLE_VALUE) {
     free(findIn);
     ret = GetLastError();
     if (ret != ERROR_NO_MORE_FILES) {
       nDir = -1;
+      get_ms_errmsg(errmsg, errmsg_sz);         /* return OS error msg */
     }
     *namelist = dir;
     return nDir;
   }
   do {
-        int l = (int) wcslen(findw.cFileName);
-        int dstlen = l * 5 + 1;
-        selectDir=(struct dirent*)malloc(sizeof(struct dirent)+dstlen);
+    int l = (int) wcslen(findw.cFileName);
+    int dstlen = l * 5 + 1;
+    selectDir=(struct dirent*)malloc(sizeof(struct dirent)+dstlen);
 
-     /* l = fl_unicode2utf(findw.cFileName, l, selectDir->d_name); */
-        l = fl_utf8fromwc(selectDir->d_name, dstlen, findw.cFileName, l);
+ /* l = fl_unicode2utf(findw.cFileName, l, selectDir->d_name); */
+    l = fl_utf8fromwc(selectDir->d_name, dstlen, findw.cFileName, l);
 
-        selectDir->d_name[l] = 0;
-        if (findw.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                /* Append a trailing slash to directory names... */
-                strcat(selectDir->d_name, "/");
-        }
-        if (!select || (*select)(selectDir)) {
-                if (nDir==NDir) {
+    selectDir->d_name[l] = 0;
+    if (findw.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+      /* Append a trailing slash to directory names... */
+      strcat(selectDir->d_name, "/");
+    }
+    if (!select || (*select)(selectDir)) {
+      if (nDir==NDir) {
         struct dirent **tempDir = (struct dirent **)calloc(sizeof(struct dirent*), (size_t)(NDir+33));
         if (NDir) memcpy(tempDir, dir, sizeof(struct dirent*)*NDir);
         if (dir) free(dir);
         dir = tempDir;
         NDir += 32;
-                }
-                dir[nDir] = selectDir;
-                nDir++;
-                dir[nDir] = 0;
-        } else {
-                free(selectDir);
-        }
-   } while (FindNextFileW(h, &findw));
+      }
+      dir[nDir] = selectDir;
+      nDir++;
+      dir[nDir] = 0;
+    } else {
+      free(selectDir);
+    }
+  } while (FindNextFileW(h, &findw));
   ret = GetLastError();
   if (ret != ERROR_NO_MORE_FILES) {
     /* don't return an error code, because the dir list may still be valid
        up to this point */
   }
   FindClose(h);
-
   free (findIn);
-
   if (compar) qsort(dir, (size_t)nDir, sizeof(*dir),
                     (int(*)(const void*, const void*))compar);
-
   *namelist = dir;
   return nDir;
 }

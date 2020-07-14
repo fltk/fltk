@@ -128,7 +128,9 @@ public:
   virtual int event_key(int k) {return 0;}
   virtual int get_key(int k) {return 0;}
   // implement scandir-like function
-  virtual int filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {return -1;}
+  virtual int filename_list(const char *d, dirent ***list,
+                            int (*sort)(struct dirent **, struct dirent **),
+                            char *errmsg=NULL, int errmsg_sz=0) {return -1;}
   // the default implementation of filename_expand() may be enough
   virtual int filename_expand(char *to, int tolen, const char *from);
   // to implement
@@ -162,7 +164,9 @@ public:
   // implement to support Fl_File_Browser::load()
   virtual int file_browser_load_filesystem(Fl_File_Browser *browser, char *filename, int lname, Fl_File_Icon *icon) {return 0;}
   // the default implementation of file_browser_load_directory() should be enough
-  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size, dirent ***pfiles, Fl_File_Sort_F *sort);
+  virtual int file_browser_load_directory(const char *directory, char *filename, size_t name_size,
+                                          dirent ***pfiles, Fl_File_Sort_F *sort,
+                                          char *errmsg=NULL, int errmsg_sz=0);
   // implement to support Fl_Preferences
   virtual void newUUID(char *uuidBuffer) { uuidBuffer[0] = 0; }
   // implement to support Fl_Preferences

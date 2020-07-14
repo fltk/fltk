@@ -15,6 +15,7 @@
 //
 
 #include "Fl_Darwin_System_Driver.H"
+#include <src/flstring.h>
 #include <FL/platform.H>
 #include <FL/Fl.H>
 #include <FL/Fl_File_Browser.H>
@@ -139,7 +140,9 @@ void *Fl_Darwin_System_Driver::get_carbon_function(const char *function_name) {
   return (carbon ? dlsym(carbon, function_name) : NULL);
 }
 
-int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*sort)(struct dirent **, struct dirent **) ) {
+int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list,
+                                           int (*sort)(struct dirent **, struct dirent **),
+                                           char *errmsg, int errmsg_sz) {
   int dirlen;
   char *dirloc;
   // Assume that locale encoding is no less dense than UTF-8
@@ -150,6 +153,10 @@ int Fl_Darwin_System_Driver::filename_list(const char *d, dirent ***list, int (*
 # else
   int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
 # endif
+  if (n==-1) {
+    if (errmsg) fl_snprintf(errmsg, errmsg_sz, "%s", strerror(errno));
+    return -1;
+  }
   // convert every filename to UTF-8, and append a '/' to all
   // filenames that are directories
   int i;

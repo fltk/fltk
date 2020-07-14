@@ -197,9 +197,18 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
       o->callback((Fl_Callback*)cb_);
       { fileList = new Fl_File_Browser(10, 45, 295, 225);
         fileList->type(2);
+        fileList->box(FL_DOWN_BOX);
         fileList->callback((Fl_Callback*)cb_fileList);
         fileList->window()->hotspot(fileList);
       } // Fl_File_Browser* fileList
+      { errorBox = new Fl_Box(10, 45, 295, 225, "dynamic error display");
+        errorBox->box(FL_DOWN_BOX);
+        errorBox->color(FL_BACKGROUND2_COLOR);
+        errorBox->labelsize(18);
+        errorBox->labelcolor((Fl_Color)1);
+        errorBox->align(Fl_Align(133|FL_ALIGN_INSIDE));
+        errorBox->hide();
+      } // Fl_Box* errorBox
       { previewBox = new Fl_Box(305, 45, 175, 225, "?");
         previewBox->box(FL_DOWN_BOX);
         previewBox->labelsize(100);
@@ -470,4 +479,18 @@ Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
     window->resizable(svres);
   }
   return ret;
+}
+
+/**
+ Show error box if val=1, hide if val=0
+*/
+void Fl_File_Chooser::show_error_box(int val) {
+  if ( val ) {
+    errorBox->color(fileList->color()); // inherit fileList's bg color
+    errorBox->show();
+    fileList->hide();
+  } else {
+    errorBox->hide();
+    fileList->show();
+  }
 }

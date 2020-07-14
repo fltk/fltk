@@ -39,6 +39,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Simple_Terminal.H>
 #include <string.h>
+#include <locale.h>	// setlocale()..
 
 #define TERMINAL_HEIGHT 120
 #define TERMINAL_GREEN  "\033[32m"
@@ -92,6 +93,7 @@ main(int  argc,         // I - Number of command-line arguments
 
 
   // Make the file chooser...
+  setlocale(LC_ALL, "");    // enable multilanguage errors in file chooser
   Fl::scheme(NULL);
   Fl_File_Icon::load_system_icons();
 

@@ -40,6 +40,7 @@ class FL_EXPORT Fl_File_Browser : public Fl_Browser {
   const char    *directory_;
   uchar         iconsize_;
   const char    *pattern_;
+  const char    *errmsg_;
 
   int           full_height() const;
   int           item_height(void *) const;
@@ -50,11 +51,8 @@ class FL_EXPORT Fl_File_Browser : public Fl_Browser {
 public:
   enum { FILES, DIRECTORIES };
 
-  /**
-    The constructor creates the Fl_File_Browser widget at the specified position and size.
-    The destructor destroys the widget and frees all memory that has been allocated.
-  */
   Fl_File_Browser(int, int, int, int, const char * = 0);
+  ~Fl_File_Browser();
 
   /**    Sets or gets the size of the icons. The default size is 20 pixels.  */
   uchar         iconsize() const { return (iconsize_); };
@@ -73,16 +71,7 @@ public:
     function in FLTK.
   */
   const char    *filter() const { return (pattern_); };
-
-  /**
-    Loads the specified directory into the browser. If icons have been
-    loaded then the correct icon is associated with each file in the list.
-
-    <P>The sort argument specifies a sort function to be used with
-    fl_filename_list().
-  */
   int           load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
-
   Fl_Fontsize  textsize() const { return Fl_Browser::textsize(); };
   void          textsize(Fl_Fontsize s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); };
 
@@ -100,6 +89,11 @@ public:
     shown.
   */
   void          filetype(int t) { filetype_ = t; };
+  void errmsg(const char *emsg);
+  /**
+    Returns OS error messages, or NULL if none. Use when advised.
+   */
+  const char* errmsg() const { return errmsg_; }
 };
 
 #endif // !_Fl_File_Browser_H_

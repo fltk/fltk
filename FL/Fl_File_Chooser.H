@@ -85,6 +85,7 @@ private:
   Fl_File_Browser *fileList;
   inline void cb_fileList_i(Fl_File_Browser*, void*);
   static void cb_fileList(Fl_File_Browser*, void*);
+  Fl_Box *errorBox;
   Fl_Box *previewBox;
 public:
   Fl_Check_Button *previewButton;
@@ -231,6 +232,8 @@ private:
   Fl_Widget* ext_group;
 public:
   Fl_Widget* add_extra(Fl_Widget* gr);
+protected:
+  void show_error_box(int val);
 };
 FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);
