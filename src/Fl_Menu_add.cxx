@@ -324,7 +324,7 @@ int Fl_Menu_Item::insert(
   corresponding submenu terminators (maybe more than one) are added as well.
 
   \todo Raw integer shortcut needs examples.
-        Dependent on responses to http://fltk.org/newsgroups.php?gfltk.development+v:10086 and results of STR#2344
+        Dependent on responses to https://www.fltk.org/newsgroups.php?gfltk.coredev+v:10086 and results of STR#2344
  */
 int Fl_Menu_::add(const char *label,int shortcut,Fl_Callback *callback,void *userdata,int flags) {
   return(insert(-1,label,shortcut,callback,userdata,flags));    // -1: append

@@ -188,7 +188,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
 
   // Add modifier key names.
   // Note: if necessary we could change the order here depending on the platform.
-  // However, as discussed in fltk.development, the order appears to be the
+  // However, as discussed in fltk.coredev, the order appears to be the
   // same on all platforms, with exceptions in _some_ Linux applications.
 
   if (shortcut & FL_CTRL)  {p = add_modifier_key(p, end, fl_local_ctrl);}
