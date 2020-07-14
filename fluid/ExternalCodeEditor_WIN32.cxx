@@ -8,6 +8,9 @@
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()
 
+#include "../src/flstring.h"
+#include <FL/fl_utf8.h>
+
 #include "ExternalCodeEditor_WIN32.h"
 
 extern int G_debug;     // defined in fluid.cxx
@@ -26,14 +29,14 @@ static const char *get_ms_errmsg() {
                 FORMAT_MESSAGE_IGNORE_INSERTS  |
                 FORMAT_MESSAGE_FROM_SYSTEM;
   DWORD langid = MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
-  LPSTR mbuf = 0;
-  DWORD msize = FormatMessageA(flags, 0, lastErr, langid, (LPSTR)&mbuf, 0, NULL);
+  LPWSTR mbuf = 0;
+  DWORD msize = FormatMessageW(flags, 0, lastErr, langid, (LPWSTR)&mbuf, 0, NULL);
   if ( msize == 0 ) {
     fl_snprintf(emsg, sizeof(emsg), "Error #%ld", (unsigned long)lastErr);
   } else {
-    // convert message to UTF-8
+    // Convert message to UTF-8
     int mlen = fl_utf8fromwc(emsg, sizeof(emsg), mbuf, msize);
-    // Copy mbuf -> emsg (with '\r's removed -- they screw up fl_alert())
+    // Remove '\r's -- they screw up fl_alert())
     char *src=emsg, *dst=emsg;
     for ( ; 1; src++ ) {
       if ( *src == '\0' ) { *dst = '\0'; break; }
