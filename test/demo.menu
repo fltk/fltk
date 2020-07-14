@@ -98,3 +98,11 @@
 	@i:clock:clock
 	@i:popups:message
 	@i:boxtypes:boxtype
+	@i:Resize Examples\n...:@ir
+		@ir:Example\n1:resize-example1
+		@ir:Example\n2:resize-example2
+		@ir:Example\n3a:resize-example3a
+		@ir:Example\n3b:resize-example3b
+		@ir:Example\n3c:resize-example3c
+		@ir:Example\n4a:resize-example4a
+		@ir:Example\n4b:resize-example4b

@@ -76,8 +76,15 @@ CPPFILES =\
 	pixmap.cxx \
 	preferences.cxx \
 	radio.cxx \
-	resizebox.cxx \
 	resize.cxx \
+	resizebox.cxx \
+	resize-example1.cxx \
+	resize-example2.cxx \
+	resize-example3a.cxx \
+	resize-example3b.cxx \
+	resize-example3c.cxx \
+	resize-example4a.cxx \
+	resize-example4b.cxx \
 	rotated_text.cxx \
 	scroll.cxx \
 	shape.cxx \
@@ -152,6 +159,13 @@ ALL =	\
 	radio$(EXEEXT) \
 	resize$(EXEEXT) \
 	resizebox$(EXEEXT) \
+	resize-example1$(EXEEXT) \
+	resize-example2$(EXEEXT) \
+	resize-example3a$(EXEEXT) \
+	resize-example3b$(EXEEXT) \
+	resize-example3c$(EXEEXT) \
+	resize-example4a$(EXEEXT) \
+	resize-example4b$(EXEEXT) \
 	rotated_text$(EXEEXT) \
 	scroll$(EXEEXT) \
 	subwindow$(EXEEXT) \
@@ -486,6 +500,41 @@ resize$(EXEEXT): resize.o
 resize.cxx:	resize.fl ../fluid/fluid$(EXEEXT)
 
 resizebox$(EXEEXT): resizebox.o
+
+resize-example1$(EXEEXT): resize-example1.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example1.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example2$(EXEEXT): resize-example2.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example2.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example3a$(EXEEXT): resize-example3a.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example3a.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example3b$(EXEEXT): resize-example3b.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example3b.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example3c$(EXEEXT): resize-example3c.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example3c.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example4a$(EXEEXT): resize-example4a.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example4a.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
+
+resize-example4b$(EXEEXT): resize-example4b.o resize-arrows.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) resize-example4b.o resize-arrows.o -o $@ $(LINKFLTK) $(LDLIBS)
+	$(OSX_ONLY) ../fltk-config --post $@
 
 rotated_text$(EXEEXT): rotated_text.o
 
