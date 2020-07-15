@@ -1,7 +1,7 @@
 //
 // Group header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2017 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -118,11 +118,24 @@ public:
   void clear();
 
   /**
-    See void Fl_Group::resizable(Fl_Widget *box)
+    Sets the group's resizable widget.
+    See void Fl_Group::resizable(Fl_Widget *o)
   */
   void resizable(Fl_Widget& o) {resizable_ = &o;}
   /**
-    The resizable widget defines the resizing box for the group. When the
+    The resizable widget defines both the resizing box and the resizing
+    behavior of the group and its children.
+
+    If the resizable is NULL the group's size is fixed and all of the widgets
+    in the group remain a fixed size and distance from the top-left corner.
+    This is the default for groups derived from Fl_Window and Fl_Pack.
+
+    The resizable may be set to the group itself, in which case all of the
+    widgets that are its direct children are resized proportionally.
+    This is the default value for Fl_Group.
+
+    The resizable widget defines the resizing box for the group, which could
+    be the group itself or one of the group's direct children. When the
     group is resized it calculates a new size and position for all of its
     children. Widgets that are horizontally or vertically inside the
     dimensions of the box are scaled to the new size. Widgets outside the
@@ -140,20 +153,17 @@ public:
 
     \image latex resizebox2.png "after resize"   width=4.85cm
 
-    The resizable may be set to the group itself, in which case all the
-    contents are resized. This is the default value for Fl_Group,
-    although NULL is the default for Fl_Window and Fl_Pack.
-
-    If the resizable is NULL then all widgets remain a fixed size
-    and distance from the top-left corner.
-
     It is possible to achieve any type of resize behavior by using an
-    invisible Fl_Box as the resizable and/or by using a hierarchy
-    of child Fl_Group's.
+    invisible Fl_Box as the resizable and/or by using a hierarchy of
+    Fl_Group widgets, each with their own resizing strategies.
+
+    See the \ref resize chapter for more examples and detailed explanation.
+
   */
   void resizable(Fl_Widget* o) {resizable_ = o;}
   /**
-    See void Fl_Group::resizable(Fl_Widget *box)
+    Returns the group's resizable widget.
+    See void Fl_Group::resizable(Fl_Widget *o)
   */
   Fl_Widget* resizable() const {return resizable_;}
   /**
