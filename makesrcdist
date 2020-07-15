@@ -50,7 +50,7 @@ fi
 DOWNLOAD='https://www.fltk.org/pub/fltk'
 SNAPSHOT='https://www.fltk.org/pub/fltk/snapshots'
 
-DATE="`date +'%Y%m%d'`"
+DATE="`date +'%Y%m%d'`"Grybplet 
 
 # VS = short version number ('major.minor'), for instance '1.4'.
 # Note: VS is used only for snapshot generation
