@@ -14,9 +14,58 @@
 //     https://www.fltk.org/bugs.php
 //
 
+/*
+  General information on directory structure and file handling.
+
+  The "classic" autotools/make system creates executables in their source
+  folders, i.e. fluid/fluid, test/demo and test/xyz, resp.. The menu file is
+  in folder test/, as is the main demo(.exe) program. In the following text
+  and directory lists all test and demo executables are represented by "demo"
+  and the fluid executable by "fluid", no matter what OS (under Windows: *.exe).
+
+  The CMake build system generates all executables in the build tree and copies
+  the supporting test data files to the build tree as well. This structure is
+  different and needs to be handled separately in this program.
+
+  Additionally, different OS platforms create different types of files, for
+  instance "app bundles" on macOS. All this needs to be considered.
+
+  The overall structure, relative to the FLTK source dir (fltk) and the build
+  tree (build):
+
+  (1) Autotools / Make:
+
+    fltk/fluid              fluid (../fluid/fluid)
+    fltk/test               demo, demo.menu, working directory, data files
+    fltk/documentation/src  images for help_dialog(.html)
+
+  (2) CMake + make (e.g. Unix)
+
+    build/bin               fluid, demo
+    build/data              demo.menu, working directory, data files
+
+  (3) CMake + Visual Studio (TYPE == build type: Debug, Release, ...)
+
+    build/bin/TYPE          fluid, demo
+    build/data              demo.menu, working directory, data files
+
+  (4) CMake + macOS + Xcode
+
+    *FIXME*                 special code to handle bundles: do we need this?
+
+  The built executable 'demo' can also be executed with the menu filename
+  as commandline argument. In this case all the support (data) files are
+  expected to be in the same directory as the menu file or relative paths
+  as needed by the test programs, for instance help_dialog which needs
+  help_dialog.html and related image files.
+*/
+
+#define DEBUG_VARS (1)  // 1 = output variables to stderr, 0 = no
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #if defined __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -29,21 +78,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/filename.H>
 #include <FL/platform.H>
-
-/* Define a macro to decide whether a trailing 'd' needs to be removed
-   from the executable file name. Previous versions of Visual Studio
-   added a 'd' to the executable file name ('demod.exe') in Debug
-   configurations that needed to be removed.
-   This is no longer true with CMake-generated IDE's since FLTK 1.4.
-   Just in case we add it again: leave macro DEBUG_EXE_WITH_D defined
-   and leave the code using this macro as-is.
-*/
-
-// #if defined(_MSC_VER) && defined(_DEBUG) // Visual Studio in Debug mode
-// # define DEBUG_EXE_WITH_D 1
-// #else
-# define DEBUG_EXE_WITH_D 0
-// #endif
+#include <FL/fl_ask.H> // fl_alert()
 
 /* The form description */
 
@@ -56,6 +91,40 @@ void doscheme(Fl_Choice *c, void *) {
 
 Fl_Double_Window *form;
 Fl_Button *but[9];
+
+// Allocate space to edit commands and arguments from demo.menu.
+// We "trust demo.menu" that strings don't overflow
+
+char cmdbuf[256];           // commandline w/o arguments
+char params[256];           // commandline arguments
+
+// Global path variables for all platforms and build systems
+// to avoid duplication and dynamic allocation
+
+char src_path   [FL_PATH_MAX];          // directory of this souce file
+char app_path   [FL_PATH_MAX];          // directory of all demo binaries
+char fluid_path [FL_PATH_MAX];          // binary directory of fluid
+char data_path  [FL_PATH_MAX];          // working directory of all demos
+char command    [2 * FL_PATH_MAX + 40]; // command to be executed
+
+// platform specific suffix for executable files
+
+#ifdef _WIN32
+const char *suffix = ".exe";
+#elif defined __APPLE__
+const char *suffix = ".app";
+#else
+const char *suffix = "";
+#endif
+
+// debug output function (to stderr or ...)
+
+void debug_var(const char *varname, const char *value) {
+#if (DEBUG_VARS)
+  fprintf(stderr, "%-10s = '%s'\n", varname, value);
+  fflush(stderr); // Windows needs this
+#endif // DEBUG_VARS
+}
 
 void create_the_forms() {
   Fl_Widget *obj;
@@ -214,190 +283,145 @@ void dobut(Fl_Widget *, long arg) {
   int men = find_menu(stack[stsize-1]);
   int n = menus[men].numb;
   int bn = but2numb( (int) arg, n-1);
+
+  // menu ?
+
   if (menus[men].icommand[bn][0] == '@') {
     push_menu(menus[men].icommand[bn]);
+    return;
+  }
+
+  // not a menu: run test/demo/fluid executable
+  // find and separate "command" and "params"
+
+  // skip leading spaces in command
+  char *start_command = menus[men].icommand[bn];
+  while (*start_command == ' ') ++start_command;
+
+  strcpy(cmdbuf, start_command); // here still full command w/params
+
+  // find the space between the command and parameters if one exists
+  char *start_params = strchr(cmdbuf, ' ');
+  if (start_params) {
+    *start_params = '\0';         // terminate command
+    start_params++;               // skip space
+    strcpy(params, start_params); // copy parameters
   } else {
+    params[0] = '\0';             // empty string
+  }
+
+  // select application path: either app_path or fluid_path
+
+  const char *path = app_path;
+  if (!strncmp(cmdbuf, "fluid", 5))
+    path = fluid_path;
+
+  // format commandline with optional parameters
+
+#if defined(__APPLE__) // macOS
+
+  if (params[0]) {
+    // we assume that we have only one argument (which is a filename)
+    sprintf(command, "open '%s/%s%s' --args '%s'", path, cmdbuf, suffix, params);
+  } else {
+    sprintf(command, "open '%s/%s%s'", path, cmdbuf, suffix);
+  }
+
+#else // other platforms
+
+  if (params[0])
+    sprintf(command, "%s/%s%s %s", path, cmdbuf, suffix, params);
+  else
+    sprintf(command, "%s/%s%s", path, cmdbuf, suffix);
+
+#endif
+
+  // finally, execute program (the system specific part)
 
 #ifdef _WIN32
 
-    STARTUPINFO         suInfo;         // Process startup information
-    PROCESS_INFORMATION prInfo;         // Process information
+  STARTUPINFO         suInfo;         // Process startup information
+  PROCESS_INFORMATION prInfo;         // Process information
 
-# if DEBUG_EXE_WITH_D
-    const char *exe = "d.exe";          // exe name with trailing 'd'
-# else
-    const char *exe = ".exe";           // exe name w/o trailing 'd'
-# endif
+  memset(&suInfo, 0, sizeof(suInfo));
+  suInfo.cb = sizeof(suInfo);
 
-    memset(&suInfo, 0, sizeof(suInfo));
-    suInfo.cb = sizeof(suInfo);
+  debug_var("Command", command);
 
-    int icommand_length = strlen(menus[men].icommand[bn]);
-
-    char* copy_of_icommand = new char[icommand_length+1];
-    strcpy(copy_of_icommand,menus[men].icommand[bn]);
-
-    // On Windows the .exe suffix needs to be appended to the command
-    // whilst leaving any additional parameters unchanged - this
-    // is required to handle the correct conversion of cases such as :
-    // `../fluid/fluid valuators.fl' to '../fluid/fluid.exe valuators.fl'.
-
-    // skip leading spaces.
-    char* start_command = copy_of_icommand;
-    while (*start_command == ' ') ++start_command;
-
-    // find the space between the command and parameters if one exists.
-    char* start_parameters = strchr(start_command,' ');
-
-    char* command = new char[icommand_length+6]; // 6 for extra 'd.exe\0'
-
-    if (start_parameters==NULL) { // no parameters required.
-      sprintf(command, "%s%s", start_command, exe);
-    } else { // parameters required.
-      // break the start_command at the intermediate space between
-      // start_command and start_parameters.
-      *start_parameters = 0;
-      // move start_paremeters to skip over the intermediate space.
-      ++start_parameters;
-
-      sprintf(command, "%s%s %s", start_command, exe, start_parameters);
-    }
-
-    CreateProcess(NULL, command, NULL, NULL, FALSE,
-                  NORMAL_PRIORITY_CLASS, NULL, NULL, &suInfo, &prInfo);
-
-    delete[] command;
-    delete[] copy_of_icommand;
+  BOOL stat = CreateProcess(NULL, command, NULL, NULL, FALSE,
+                            NORMAL_PRIORITY_CLASS, NULL,
+                            NULL, &suInfo, &prInfo);
+  if (!stat) {
+    DWORD err = GetLastError();
+    fl_alert("Error starting process, error #%d\n'%s'", err, command);
+  }
 
 #elif defined __APPLE__
-    /*
-     Starting with version 1.4.0, FLTK uses CMake as the only supported build
-     system. On macOS, the app developer is expected to run CMake in a
-     directory named './build/Xcode' or './build/Makefiles' to generate the
-     build environment.
 
-     When building FLTK in the next step, teh macOS app bundles are then
-     stored in either:
-     './build/Xcode/bin/examples/hello.app/' for Makefiles
-     './build/Xcode/bin/examples/Debug/hello.app/' for XCode Debug
-     or
-     './build/Xcode/bin/examples/Release/hello.app/' as a symbolic
-     into the Archive system of macOS
+  debug_var("Command", command);
+  system(command);
 
-     'Demo' needs to find and run all of these app bundles, some requiring
-     an additional file name and path for resource files.
 
-     This is my attempt to find the bundles and resources so that Demo.app
-     and all its dependencies will run without any further configuration.
-     They will stop running however if any of the bundles or rresources
-     are moved.
-     */
-    {
-      char src_path[PATH_MAX];
-      char app_path[PATH_MAX];
-      char app_name[PATH_MAX];
-      char command[2*PATH_MAX+2];
-      char *cmd = strdup(menus[men].icommand[bn]);
-      char *args = strchr(cmd, ' ');
+#else // other platforms (Unix, Linux)
 
-      /*
-       Get the path to the source code at compile time. This is where the other
-       resources are located.
-       */
-      strcpy(src_path, __FILE__);
-      char *src_path_end = (char*)fl_filename_name(src_path);
-      if (src_path_end) *src_path_end = 0;
+  strcat(command, " &"); // run in background
+  debug_var("Command", command);
 
-      /*
-       All example app bundles are in the same directory as 'Demo', so set the
-       current dir to the location of Demo.app .
-
-       Starting with macOS 10.12, the actual location of the app has a randomized
-       path to fix a vulnerability. This still works in Debug mode which is
-       */
-      {
-        app_path[0] = 0;
-        CFBundleRef app = CFBundleGetMainBundle();
-        CFURLRef url = CFBundleCopyBundleURL(app);
-        CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-        CFRelease(url);
-        CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
-        CFRelease(cc_app_path);
-        if (app_path[0]) {
-          char *app_path_end = (char*)fl_filename_name(app_path);
-          if (app_path_end) *app_path_end = 0;
-          fl_chdir(app_path);
-        }
-      }
-
-      // extract the executable name from the command in the menu file
-      strcpy(app_name, cmd);
-      // remove any additioanl command line arguments
-      if (args) app_name[args-cmd] = 0;
-      // make the file name into a bundle name
-      strcat(app_name, ".app");
-
-      if (args) {
-        if (strcmp(app_name, "../fluid/fluid.app")==0) {
-          // CMake -G 'Unix Makefiles' ... : ./bin/fluid.app
-          // CMake -G 'Xcode' ... : ./bin/Debug/fluid.app or ./bin/Release/fluid.app
-          // so removing the '/example' path segment from the app_path should
-          // always work.
-          char *examples = strstr(app_path, "/examples");
-          if (examples) {
-            memmove(examples, examples+9, strlen(examples+9)+1);
-          }
-          sprintf(command, "open '%sfluid.app' --args '%s%s'", app_path, src_path, args+1);
-        } else {
-          // we assume that we have only one argument which is a filename, so we add a path
-          sprintf(command, "open '%s%s' --args '%s%s'", app_path, app_name, src_path, args+1);
-        }
-      } else {
-        sprintf(command, "open '%s%s'", app_path, app_name);
-      }
-      system(command);
-      free(cmd);
-    }
-
-#else // Non Windows systems.
-
-    int icommand_length = strlen(menus[men].icommand[bn]);
-    char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0'
-
-    sprintf(command, "./%s &", menus[men].icommand[bn]);
-    if (system(command)==-1) { /* ignore */ }
-
-    delete[] command;
+  if (system(command) == -1) {
+    fl_alert("Could not start program, errno = %d\n'%s'", errno, command);
+  }
 
 #endif // _WIN32
-  }
+
 }
 
 void doback(Fl_Widget *, void *) {pop_menu();}
 
 void doexit(Fl_Widget *, void *) {exit(0);}
 
-/* Load the menu file. Returns whether successful. */
-int load_the_menu(char* fname) {
+/*
+  Load the menu file. Returns whether successful.
+
+  New strategy: the menu file *should* be usable as is!
+
+  Old strategy was:
+
+  We have different situations:
+
+  (1) Visual Studio: see main(): nothing to do
+  (2) Standard (autotools/make): nothing to do
+  (3) CMake: see main(): nothing to do
+
+  (4) macOS: ???    *FIXME*
+*/
+int load_the_menu(char *menu) {
   FILE *fin = 0;
   char line[256], mname[64],iname[64],cname[64];
   int i, j;
-  fin = fl_fopen(fname,"r");
-#if defined ( __APPLE__ )
+
+  fin = fl_fopen(menu, "r");
+
+//      // *FIXME* Albrecht: Do we need this? I don't think so!
+#if (0) // *FIXME* disabled for testing
+
+#if defined (__APPLE__)
   if (fin == NULL) {
-    // mac os bundle menu detection:
-    char* pos = strrchr(fname,'/');
+    // macOS bundle menu detection:
+    char *pos = strrchr(menu, '/');
     if (!pos) return 0;
     *pos = '\0';
-    pos = strrchr(fname,'/');
+    pos = strrchr(menu, '/');
     if (!pos) return 0;
-    strcpy(pos,"/Resources/demo.menu");
-    fin  = fl_fopen(fname,"r");
+    strcpy(pos, "/Resources/demo.menu");
+    fin = fl_fopen(menu, "r");
   }
-#endif
-  if (fin == NULL) {
+#endif // __APPLE __
+
+#endif // *FIXME* disabled for testing
+
+  if (fin == NULL)
     return 0;
-  }
+
   for (;;) {
     if (fgets(line,256,fin) == NULL) break;
     // remove all carriage returns that Cygwin may have inserted
@@ -436,32 +460,132 @@ int load_the_menu(char* fname) {
   return 1;
 }
 
+// Fix '\' in Windows paths (convert to '/') and cut off filename (optional, default)
+void fix_path(char *path, int strip_filename = 1) {
+  if (!path[0])
+    return;
+#ifdef _WIN32 // convert '\' to '/'
+  char *p = path;
+  while (*p) {
+    if (*p == '\\')
+      *p = '/';
+    p++;
+  }
+#endif // _WIN32
+  if (strip_filename) {
+    char *pos = strrchr(path, '/');
+    if (pos)
+      *pos = 0;
+  }
+}
+
 int main(int argc, char **argv) {
-  fl_putenv("FLTK_DOCDIR=../documentation/html");
-  char buf[FL_PATH_MAX];
-  strcpy(buf, argv[0]);
-#if DEBUG_EXE_WITH_D
-  // MS_Visual Studio appends a 'd' to debugging executables. Remove it.
-  fl_filename_setext( buf, "" );
-  buf[ strlen(buf)-1 ] = 0;
+  fl_putenv("FLTK_DOCDIR=../documentation/html"); // *FIXME*
+
+  char menu[FL_PATH_MAX];
+
+  // construct app_path for all executable files
+
+#ifdef __APPLE__
+  {
+    // Starting with macOS 10.12, the actual location of the app has a randomized
+    // path to fix a vulnerability.
+    // We need some "Apple magic" ;-) to find the actual path.
+    // Albrecht: is this (still) true and necessary?
+
+    app_path[0] = 0;
+    CFBundleRef app = CFBundleGetMainBundle();
+    CFURLRef url = CFBundleCopyBundleURL(app);
+    CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+    CFRelease(url);
+    CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
+    CFRelease(cc_app_path);
+  }
+#else
+  fl_filename_absolute(app_path, sizeof(app_path), argv[0]);
 #endif
-  fl_filename_setext(buf,".menu");
-  char *fname = buf;
+  fix_path(app_path);
+
+  // construct src_path in case we want to use it (macOS ?)
+
+#if defined(GENERATED_BY_CMAKE)
+  strcpy(src_path, CMAKE_SOURCE_PATH);
+#else
+  strcpy(src_path, app_path);
+#endif
+  fix_path(src_path, 0);
+
+  // fluid's path is the same for CMake builds but not for autoconf/make
+
+  strcpy(fluid_path, app_path);
+
+#if !defined(GENERATED_BY_CMAKE)
+  fix_path(fluid_path); // removes folder name (test)
+  strcat(fluid_path, "/fluid");
+#endif
+
+  // construct data_path for the menu file and all resources (data files)
+  // CMake: replace "/bin/*"" with "/data"
+  // autotools: use app_path directly
+
+  strcpy(data_path, app_path);
+
+#if defined(GENERATED_BY_CMAKE)
+  {
+    char *pos = strstr(data_path, "/bin");
+    if (pos)
+      strcpy(pos, "/data");
+  }
+#endif
+
+  // construct the menu file name, optionally overridden by command args
+  // CMake: use data_path instead of app_path
+
+  const char *fn = fl_filename_name(argv[0]);
+
+#if defined(GENERATED_BY_CMAKE)
+  strcpy(menu, data_path);
+#else
+  strcpy(menu, app_path);
+#endif
+
+  // append "/<exe-file-name>.menu"
+  strcat(menu, "/");
+  strcat(menu, fn);
+  fl_filename_setext(menu, sizeof(menu), ".menu");
+
+  // parse commandline
+
   int i = 0;
   if (!Fl::args(argc,argv,i) || i < argc-1)
-    Fl::fatal("Usage: %s <switches> <menufile>\n%s",argv[0],Fl::help);
-  if (i < argc) fname = argv[i];
+    Fl::fatal("Usage: %s <switches> <menufile>\n%s", argv[0], Fl::help);
+  if (i < argc) {
+    // override menu file *and* data path !
+    fl_filename_absolute(menu, sizeof(menu), (const char *)argv[i]);
+    strcpy(data_path, menu);
+    fix_path(data_path);
+  }
+
+#if (DEBUG_VARS)
+  fprintf(stderr, "\n");
+  debug_var("src_path",   src_path);
+  debug_var("app_path",   app_path);
+  debug_var("fluid_path", fluid_path);
+  debug_var("data_path",  data_path);
+  debug_var("Menu file",  menu);
+  fprintf(stderr, "\n");
+#endif // DEBUG_VARS
 
   create_the_forms();
 
-  if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
-  if (buf != fname)
-    strcpy(buf,fname);
-  const char *c = fl_filename_name(buf);
-  if (c > buf) {
-    buf[c-buf] = 0;
-    if (fl_chdir(buf) == -1) { /* ignore */ }
-  }
+  // note: load_the_menu() *may* change the `menu` buffer contents !
+  if (!load_the_menu(menu))
+    Fl::fatal("Can't open %s", menu);
+
+  // set current work directory to 'app_path'
+
+  if (fl_chdir(data_path) == -1) { /* ignore */ }
+
   push_menu("@main");
   form->show(argc,argv);
   Fl::run();

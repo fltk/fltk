@@ -15,8 +15,8 @@
 #
 #######################################################################
 
-set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin/examples)
-set (TESTFILE_PATH ${EXECUTABLE_OUTPUT_PATH})
+set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin)
+set (TESTFILE_PATH ${CMAKE_CURRENT_BINARY_DIR}/../data)
 
 include (../CMake/FLTK-Functions.cmake)
 include (../CMake/fl_create_example.cmake)
@@ -204,13 +204,11 @@ endif (NOT ANDROID)
 
 # We need some support files for the demo programs:
 
-# Note: this is incomplete as of 11 Feb 2015
-# Todo: currently all files are copied, but some of them need configuration:
-# - demo.menu: fluid can't be started (wrong path)
+# Note: this is incomplete as of July 2020
+# Todo: currently all files are copied, but some of them may need configuration:
 # - demo.menu: help_dialog (help_dialog.html) can't find its images (not copied)
-# - maybe more ...
 
-# create data directory for test and demo programs
+# create data directory for test and demo programs if it doesn't exist
 file (MAKE_DIRECTORY ${TESTFILE_PATH})
 
 # copy the test files
@@ -221,12 +219,15 @@ file (COPY
   DESTINATION ${TESTFILE_PATH}
 )
 
+# the main test program 'demo' needs additional hints and configurations
+
+target_compile_definitions (demo PRIVATE GENERATED_BY_CMAKE)
+target_compile_definitions (demo PRIVATE CMAKE_SOURCE_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
+
 # Apple macOS creates bundles instead of executables and needs a little bit
 # more help for demos to run correctly
 
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
-
-  target_compile_definitions (demo PUBLIC USING_XCODE)
 
   # make the menu structure part of the app
   target_sources (demo PRIVATE demo.menu)
