@@ -16,6 +16,7 @@
 #######################################################################
 
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin/examples)
+set (TESTFILE_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 include (../CMake/FLTK-Functions.cmake)
 include (../CMake/fl_create_example.cmake)
@@ -202,18 +203,16 @@ endif (NOT ANDROID)
 # - demo.menu: help_dialog (help_dialog.html) can't find its images (not copied)
 # - maybe more ...
 
-# prepare for a "better" test file installation path
-set (TESTFILE_PATH ${EXECUTABLE_OUTPUT_PATH})
-# fl_debug_var (TESTFILE_PATH)
+# create data directory for test and demo programs
+file (MAKE_DIRECTORY ${TESTFILE_PATH})
 
-# use a target filename to make sure the target directory gets created
-configure_file (demo.menu ${TESTFILE_PATH}/demo.menu COPYONLY)
+# copy the test files
 
-# use target directory only (no filename) to avoid redundancy
-configure_file (rgb.txt ${TESTFILE_PATH} COPYONLY)
-configure_file (help_dialog.html ${TESTFILE_PATH} COPYONLY)
-configure_file (browser.cxx ${TESTFILE_PATH} COPYONLY)
-configure_file (editor.cxx ${TESTFILE_PATH} COPYONLY)
+file (COPY
+  demo.menu rgb.txt browser.cxx editor.cxx valuators.fl
+  help_dialog.html
+  DESTINATION ${TESTFILE_PATH}
+)
 
 # Apple macOS creates bundles instead of executables and needs a little bit
 # more help for demos to run correctly
