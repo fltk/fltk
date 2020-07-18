@@ -138,8 +138,15 @@ fl_file_chooser(const char *message,    // I - Message in titlebar
         *retname = 0;
       const char *n = fl_filename_name(retname);
       if (n) *((char*)n) = 0;
-      fc->value("");
-      fc->directory(retname);
+      if (*retname) {
+        fc->value("");
+        fc->directory(retname);
+      } else {
+        char dirsave[FL_PATH_MAX];
+        strlcpy(dirsave, fc->directory(), sizeof(dirsave));
+        fc->value("");          // also resets directory to "system default"
+        fc->directory(dirsave); // so reset directory back where we were
+      }
     } else {
        fc->value(fname);
     }
