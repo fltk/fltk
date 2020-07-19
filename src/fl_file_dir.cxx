@@ -93,11 +93,16 @@ fl_file_chooser(const char *message,    // I - Message in titlebar
   static char   retname[FL_PATH_MAX];           // Returned filename
 
   if (!fc) {
+    // first time, so create file chooser, remember pointer,
+    // and if no filename given, set it to current directory
+
     if (!fname || !*fname) fname = ".";
 
     fc = new Fl_File_Chooser(fname, pat, Fl_File_Chooser::CREATE, message);
     fc->callback(callback, 0);
   } else {
+    // file chooser exists, so check old/new directory, pattern, filename
+
     fc->type(Fl_File_Chooser::CREATE);
     // see, if we use the same pattern between calls
     char same_pattern = 0;
@@ -110,16 +115,16 @@ fl_file_chooser(const char *message,    // I - Message in titlebar
     fc->filter(pat);
     fc->label(message);
 
-    if (!fname) { // null pointer reuses same filename if pattern didn't change
+    if (!fname) {
+      // new filename is null, so reuse old one if pattern unchanged
+
       if (!same_pattern && fc->value()) {
         // if pattern is different, remove name but leave old directory:
         strlcpy(retname, fc->value(), sizeof(retname));
 
         char *p = strrchr(retname, '/');
-
         if (p) {
-          // If the filename is "/foo", then the directory will be "/", not
-          // ""...
+          // If old filename as "/foo", then directory will be "/", not ""
           if (p == retname)
             retname[1] = '\0';
           else
@@ -130,7 +135,9 @@ fl_file_chooser(const char *message,    // I - Message in titlebar
       } else {
         // re-use the previously selected name
       }
-    } else if (!*fname) { // empty filename reuses directory with empty name
+    } else if (!*fname) {
+      // new filename is empty, so reuse old directory with empty file
+
       const char *fcv = fc->value();
       if (fcv)
         strlcpy(retname, fc->value(), sizeof(retname));
@@ -138,9 +145,11 @@ fl_file_chooser(const char *message,    // I - Message in titlebar
         *retname = 0;
       const char *n = fl_filename_name(retname);
       if (n) *((char*)n) = 0;
+
+      // retname is either old directory, or empty if user cancelled
       if (*retname) {
         fc->value("");
-        fc->directory(retname);
+        fc->directory(retname); // reset old directory
       } else {
         char dirsave[FL_PATH_MAX];
         strlcpy(dirsave, fc->directory(), sizeof(dirsave));
@@ -151,6 +160,7 @@ fl_file_chooser(const char *message,    // I - Message in titlebar
        fc->value(fname);
     }
   }
+  // end [re]initialization
 
   fc->ok_label(current_label);
   popup(fc);
