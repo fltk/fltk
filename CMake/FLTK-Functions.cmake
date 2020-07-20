@@ -34,8 +34,8 @@ function (FLTK_RUN_FLUID TARGET SOURCES)
       )
       list (APPEND CXX_FILES "${basename}.cxx")
     endif ("${src}" MATCHES "\\.fl$")
-    set (${TARGET} ${CXX_FILES} PARENT_SCOPE)
   endforeach ()
+  set (${TARGET} ${CXX_FILES} PARENT_SCOPE)
 endfunction (FLTK_RUN_FLUID TARGET SOURCES)
 
 #######################################################################
