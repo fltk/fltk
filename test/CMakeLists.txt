@@ -216,7 +216,10 @@ file (COPY
 
 # Apple macOS creates bundles instead of executables and needs a little bit
 # more help for demos to run correctly
-if (APPLE AND NOT OPTION_APPLE_X11)
+
+if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+
+  target_compile_definitions (demo PUBLIC USING_XCODE)
 
   # make the menu structure part of the app
   target_sources (demo PRIVATE demo.menu)
@@ -230,4 +233,4 @@ if (APPLE AND NOT OPTION_APPLE_X11)
   target_sources (help_dialog PRIVATE help_dialog.html)
   set_target_properties (help_dialog PROPERTIES MACOSX_BUNDLE TRUE RESOURCE help_dialog.html)
 
-endif (APPLE AND NOT OPTION_APPLE_X11)
+endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))

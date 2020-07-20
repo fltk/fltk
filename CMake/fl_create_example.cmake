@@ -15,9 +15,9 @@
 #     https://www.fltk.org/bugs.php
 #
 
-#######################################################################
+################################################################################
 #
-# macro CREATE_EXAMPLE - Create a test/demo program
+# macro CREATE_EXAMPLE - Create a test/demo (example) program
 #
 # Input:
 #
@@ -29,10 +29,16 @@
 #   - .fl (fluid) files, e.g. 'radio.fl'
 #   - .plist file (macOS), e.g. 'editor-Info.plist'
 #   - .icns file (macOS Icon), e.g. 'checkers.icns'
-#   File name (type), e.g. '.icns' matters, it is parsed internally.
+#   - .rc file (Windows resource file, e.g. icon definition)
+#
 #   Order of sources doesn't matter, multiple .cxx and .fl files are
-#   supported, but only one .plist and .icns file.
-#   macOS specific files are ignored on other platforms.
+#   supported, but only one .plist and one .icns file.
+#
+#   File name (type), e.g. '.icns' matters, it is parsed internally:
+#   File types .fl, .plist, and .icns are treated specifically,
+#   all other file types are added to the target's source files.
+#
+#   macOS specific .icns and .plist files are ignored on other platforms.
 #
 # - LIBRARIES:
 #   List of libraries (CMake target names), separated by ';'. Needs
@@ -42,14 +48,13 @@
 # - the option ANDROID_OK is set if CREATE_EXAMPLE creates code for Android
 #   builds in addition to the native build
 #
-#######################################################################
+################################################################################
 
 macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
   set (srcs)                    # source files
   set (flsrcs)                  # fluid source (.fl) files
   set (TARGET_NAME ${NAME})     # CMake target name
-  set (FLUID_SOURCES)           # generated sources
   set (ICON_NAME)               # macOS icon (max. one)
   set (PLIST)                   # macOS .plist file (max. one)
   set (RESOURCE_PATH)           # macOS resource path
@@ -75,68 +80,44 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
     endif ("${src}" MATCHES "\\.fl$")
   endforeach (src)
 
+  # generate source files from .fl files, add output to sources
+
   if (flsrcs)
     FLTK_RUN_FLUID (FLUID_SOURCES "${flsrcs}")
+    list (APPEND srcs ${FLUID_SOURCES})
+    unset (FLUID_SOURCES)
   endif (flsrcs)
 
-  ## FIXME ## #############################################################
-  ## FIXME ## The macOS specific code needs reorganization/simplification
-  ## FIXME ## -- Albrecht (06/2020)
-  ## FIXME ## =============================================================
-  ## FIXME ## Use "new" function `FLTK_SET_BUNDLE_ICON()` (?)
-  ## FIXME ## -- see CMake/FLTK-Functions.cmake (may need some tweaks)
-  ## FIXME ## -- ported from FLTK 1.3 (06/2020)
-  ## FIXME ## #############################################################
+  # set macOS (icon) resource path if applicable
 
-  if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+  if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND ICON_NAME)
+    set (RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}.app/Contents/Resources/${ICON_NAME}")
+  endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND ICON_NAME)
 
-    ## -- Code from FLTK 1.3 for reference (variable names adjusted):
-    ##    add_executable (${TARGET_NAME} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES} ${ICON_NAME})
-    ##    if (ICON_NAME)
-    ##      FLTK_SET_BUNDLE_ICON (${TARGET_NAME} ${ICON_NAME})
-    ##    endif ()
-    ## -- End of code from FLTK 1.3
+  ###########################################################
+  # add executable target and set properties (all platforms)
+  ###########################################################
 
-    if (ICON_NAME)
-      set (RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}.app/Contents/Resources/${ICON_NAME}")
-    elseif (${TARGET_NAME} STREQUAL "demo")
-      set (RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/demo.menu")
-    endif (ICON_NAME)
+  add_executable          (${TARGET_NAME} WIN32 MACOSX_BUNDLE ${srcs} ${RESOURCE_PATH})
+  set_target_properties   (${TARGET_NAME} PROPERTIES OUTPUT_NAME ${NAME})
+  target_link_libraries   (${TARGET_NAME} ${LIBRARIES})
 
-    if (RESOURCE_PATH)
-      add_executable (${TARGET_NAME} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES} ${RESOURCE_PATH})
-      if (${TARGET_NAME} STREQUAL "demo")
-        target_compile_definitions (demo PUBLIC USING_XCODE)
-      endif (${TARGET_NAME} STREQUAL "demo")
-    else ()
-      add_executable (${TARGET_NAME} MACOSX_BUNDLE ${srcs} ${FLUID_SOURCES})
-    endif (RESOURCE_PATH)
-  else ()
-    add_executable (${TARGET_NAME} WIN32 ${srcs} ${FLUID_SOURCES})
-  endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
-
-  set_target_properties (${TARGET_NAME}
-    PROPERTIES OUTPUT_NAME ${NAME}
-  )
-
-  if (APPLE AND RESOURCE_PATH)
-    if (ICON_NAME)
-      set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
-    endif (ICON_NAME)
+  if (RESOURCE_PATH)
+    set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
     set_target_properties (${TARGET_NAME} PROPERTIES RESOURCE ${RESOURCE_PATH})
-  endif (APPLE AND RESOURCE_PATH)
+  endif (RESOURCE_PATH)
 
-  if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND PLIST)
+  if (PLIST)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${PLIST}")
-  endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND PLIST)
+  endif (PLIST)
 
-  target_link_libraries (${TARGET_NAME} ${LIBRARIES})
-
-  # Parse optional fourth argument 'ANDROID_OK', see description above.
+  ######################################################################
+  # Parse optional fourth argument "ANDROID_OK", see description above.
+  ######################################################################
 
   if (${ARGC} GREATER 3)
     foreach (OPTION ${ARGV3})
-      if (${OPTION} STREQUAL ANDROID_OK AND OPTION_CREATE_ANDROID_STUDIO_IDE)
+      if (${OPTION} STREQUAL "ANDROID_OK" AND OPTION_CREATE_ANDROID_STUDIO_IDE)
         CREATE_ANDROID_IDE_FOR_TEST (${NAME} ${SOURCES} ${LIBRARIES})
       endif ()
     endforeach ()
