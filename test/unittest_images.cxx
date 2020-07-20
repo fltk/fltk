@@ -20,6 +20,36 @@
 #include <FL/Fl_Check_Button.H>
 #include <FL/fl_draw.H>
 
+#ifdef TILE_IMAGE
+#include <FL/Fl_Tiled_Image.H>
+
+// A grey+white pixmap to use as a checker board background
+static const char *const checker_xpm[] = {"20 20 2 1",
+                                          " 	c #CCCCCCCCCCCC",
+                                          ".	c #FFFFFFFFFFFF",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "          ..........",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          ",
+                                          "..........          "};
+
+#endif
+
 // Note: currently (March 2010) fl_draw_image() supports transparency with
 //       alpha channel only on Apple (Mac OS X), but Fl_RGB_Image->draw()
 //       supports transparency on all platforms !
@@ -154,6 +184,10 @@ public:
   Fl_Radio_Button *rb_LXp1;
   Fl_Button *refresh;
 
+#ifdef TILE_IMAGE
+  Fl_Tiled_Image *checkerBoard;
+#endif
+
   ImageTest(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
     label("Testing Image Drawing\n\n"
         "This test renders four images, two of them with a checker board\n"
@@ -193,6 +227,10 @@ public:
     ctr_grp->box(FL_BORDER_BOX);
     ctr_grp->end();
     end(); // make sure this ImageTest group is closed
+
+#ifdef TILE_IMAGE
+    checkerBoard = new Fl_Tiled_Image(new Fl_Pixmap((const char *const *)checker_xpm));
+#endif
   } // constructor ends
 
   void draw() {
@@ -221,8 +259,12 @@ public:
     fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);      // black frame
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 128, 128); // white background
     if (CB) { // checker board
+#ifdef TILE_IMAGE
+      checkerBoard->draw(xx+1, yy+1, 128, 128);
+#else
       fl_color(FL_BLACK); fl_rectf(xx+65, yy+1, 64, 64);
       fl_color(FL_BLACK); fl_rectf(xx+1, yy+65, 64, 64);
+#endif
     }
     if (IMG) {
       i_rgba->draw(xx+1,yy+1);
@@ -260,8 +302,12 @@ public:
     fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);      // black frame
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 128, 128); // white background
     if (CB) { // checker board
+#ifdef TILE_IMAGE
+      checkerBoard->draw(xx+1, yy+1, 128, 128);
+#else
       fl_color(FL_BLACK); fl_rectf(xx+65, yy+1, 64, 64);
       fl_color(FL_BLACK); fl_rectf(xx+1, yy+65, 64, 64);
+#endif
     }
     if (IMG) {
       i_ga->draw(xx+1,yy+1);

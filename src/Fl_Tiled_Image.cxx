@@ -182,12 +182,12 @@ Fl_Tiled_Image::draw(int X,     // I - Starting X position
   if (cx > 0) iw -= cx;         // crop image
   if (cy > 0) ih -= cy;
 
-  for (int yy = Y; yy < H; yy += ih) {
+  for (int yy = Y; yy < Y+H; yy += ih) {
     if (fl_not_clipped(X,yy,W,ih)) {
-      for (int xx = X; xx < W; xx += iw) {
-        if (fl_not_clipped(xx,yy,iw,ih)) {
-          image_->draw(xx,yy,iw,ih,cx,cy);
-        }
+      for (int xx = X; xx < X+W; xx += iw) {
+	if (fl_not_clipped(xx,yy,iw,ih)) {
+	  image_->draw(xx,yy,iw,ih,cx,cy);
+	}
       }
     }
   }
