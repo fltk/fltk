@@ -1,7 +1,7 @@
 //
 // Tiled image code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2015 by Bill Spitzak and others.
+// Copyright 1998-2020 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -182,9 +182,9 @@ Fl_Tiled_Image::draw(int X,     // I - Starting X position
   if (cx > 0) iw -= cx;         // crop image
   if (cy > 0) ih -= cy;
 
-  for (int yy = Y; yy < H; yy += ih) {
+  for (int yy = Y; yy < Y+H; yy += ih) {
     if (fl_not_clipped(X,yy,W,ih)) {
-      for (int xx = X; xx < W; xx += iw) {
+      for (int xx = X; xx < X+W; xx += iw) {
         if (fl_not_clipped(xx,yy,iw,ih)) {
           image_->draw(xx,yy,iw,ih,cx,cy);
         }
