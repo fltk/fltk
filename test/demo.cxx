@@ -60,8 +60,6 @@
   help_dialog.html and related image files.
 */
 
-#define DEBUG_VARS (1)  // 1 = output variables to stderr, 0 = no
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -75,10 +73,18 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Menu_Button.H> // right click popup menu
 #include <FL/Fl_Choice.H>
+#include <FL/Fl_Simple_Terminal.H> // tty
 #include <FL/filename.H>
 #include <FL/platform.H>
 #include <FL/fl_ask.H> // fl_alert()
+#include <FL/fl_utf8.h> // fl_getcwd()
+
+#define FORM_W 350
+#define FORM_H 440
+#define TTY_W  int(FORM_W*2.5)
+#define TTY_H  200
 
 /* The form description */
 
@@ -89,7 +95,9 @@ void doscheme(Fl_Choice *c, void *) {
   Fl::scheme(c->text(c->value()));
 }
 
-Fl_Double_Window *form;
+Fl_Double_Window *form = 0;
+Fl_Group *demogrp = 0;
+Fl_Simple_Terminal *tty = 0;
 Fl_Button *but[9];
 
 // Allocate space to edit commands and arguments from demo.menu.
@@ -117,18 +125,51 @@ const char *suffix = ".app";
 const char *suffix = "";
 #endif
 
-// debug output function (to stderr or ...)
-
+// debug output function
 void debug_var(const char *varname, const char *value) {
-#if (DEBUG_VARS)
-  fprintf(stderr, "%-10s = '%s'\n", varname, value);
-  fflush(stderr); // Windows needs this
-#endif // DEBUG_VARS
+  tty->printf("%-10s = '%s'\n", varname, value);
+}
+
+// Show or hide the tty window
+void show_tty(int val) {
+  if ( val ) {
+    form->size_range(FORM_W,FORM_H+TTY_H,0,0); // allow resizing
+    form->size(TTY_W,FORM_H+TTY_H);         // demo + height for tty
+    demogrp->size(FORM_W,FORM_H);
+    tty->show();                               // show tty
+    tty->resize(0, FORM_H, TTY_W, TTY_H);      // force tty position
+  } else {
+    form->size_range(FORM_W,FORM_H,FORM_W,FORM_H);  // no resizing
+    tty->hide();                               // hide tty
+    form->size(FORM_W, FORM_H);                // normal demo size
+  }
+  demogrp->size(FORM_W, FORM_H);
+  form->init_sizes();
+}
+
+// Right click popup menu handler
+void popup_menu_cb(Fl_Widget*, void *userdata) {
+  const char *cmd = (const char*)userdata;
+  if ( strcmp(cmd, "showtty")==0 ) { show_tty(1); }
+  if ( strcmp(cmd, "hidetty")==0 ) { show_tty(0); }
 }
 
 void create_the_forms() {
   Fl_Widget *obj;
-  form = new Fl_Double_Window(350, 440);
+  Fl_Menu_Button *popup;
+  form = new Fl_Double_Window(FORM_W,FORM_H);
+  form->size_range(FORM_W,FORM_H,FORM_W+1,FORM_H+1); // XXX: +1 needed or window can't be made resizable later
+  // Small terminal window parented to window, not demogrp
+  tty = new Fl_Simple_Terminal(0, form->h(), form->w(), form->h());
+  tty->history_lines(50);
+  tty->ansi(true);
+  tty->hide();
+  tty->textsize(10);
+  // Parent group for demo
+  demogrp = new Fl_Group(0,0,FORM_W,FORM_H);
+  demogrp->resizable(0);
+  demogrp->begin();
+  // Demo
   obj = new Fl_Box(FL_FRAME_BOX,10,15,330,40,"FLTK Demonstration");
   obj->color(FL_GRAY-4);
   obj->labelsize(24);
@@ -166,7 +207,16 @@ void create_the_forms() {
     but[i]->align(FL_ALIGN_WRAP);
     but[i]->callback(dobut, i);
   }
+  demogrp->end();
+  // Right click popup menu
+  popup = new Fl_Menu_Button(0,0,FORM_W,FORM_H);
+  popup->box(FL_NO_BOX);
+  popup->type(Fl_Menu_Button::POPUP3); // pop menu on right-click
+  popup->add("Show debug terminal", 0, popup_menu_cb, (void*)"showtty");
+  popup->add("Hide debug terminal", 0, popup_menu_cb, (void*)"hidetty");
+  // End window
   form->end();
+  form->resizable(tty);
 }
 
 /* Maintaining and building up the menus. */
@@ -359,12 +409,13 @@ void dobut(Fl_Widget *, long arg) {
 #elif defined __APPLE__
 
   debug_var("Command", command);
-  system(command);
 
+  system(command);
 
 #else // other platforms (Unix, Linux)
 
   strcat(command, " &"); // run in background
+
   debug_var("Command", command);
 
   if (system(command) == -1) {
@@ -566,17 +617,21 @@ int main(int argc, char **argv) {
     fix_path(data_path);
   }
 
-#if (DEBUG_VARS)
-  fprintf(stderr, "\n");
-  debug_var("src_path",   src_path);
-  debug_var("app_path",   app_path);
-  debug_var("fluid_path", fluid_path);
-  debug_var("data_path",  data_path);
-  debug_var("Menu file",  menu);
-  fprintf(stderr, "\n");
-#endif // DEBUG_VARS
-
+  // Create forms first
+  //    tty needs to exist before we can print debug msgs
+  //
   create_the_forms();
+
+  {
+    char cwd[1024];
+    debug_var("src_path",   src_path);
+    debug_var("app_path",   app_path);
+    debug_var("fluid_path", fluid_path);
+    debug_var("data_path",  data_path);
+    debug_var("Menu file",  menu);
+    debug_var("Cwd",        fl_getcwd(cwd,sizeof(cwd)));
+    tty->printf("\n");
+  }
 
   // note: load_the_menu() *may* change the `menu` buffer contents !
   if (!load_the_menu(menu))
