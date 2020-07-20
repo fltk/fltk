@@ -49,9 +49,9 @@
     build/bin/TYPE          fluid, demo
     build/data              demo.menu, working directory, data files
 
-  (4) CMake + macOS + Xcode
-
-    *FIXME*                 special code to handle bundles: do we need this?
+  (4) macOS                 The setup is similar to Windows and Linux:
+                            Makefiles: like (1) or (2)
+                            Xcode: like (3), i.e. similar to VS layout
 
   The built executable 'demo' can also be executed with the menu filename
   as commandline argument. In this case all the support (data) files are
@@ -371,8 +371,8 @@ void dobut(Fl_Widget *, long arg) {
 #if defined(__APPLE__) // macOS
 
   if (params[0]) {
-    // we assume that we have only one argument (which is a filename)
-    sprintf(command, "open '%s/%s%s' --args '%s'", path, cmdbuf, suffix, params);
+    // we assume that we have only one argument which is a filename in 'data_path'
+    sprintf(command, "open '%s/%s%s' --args '%s/%s'", path, cmdbuf, suffix, data_path, params);
   } else {
     sprintf(command, "open '%s/%s%s'", path, cmdbuf, suffix);
   }
@@ -432,18 +432,6 @@ void doexit(Fl_Widget *, void *) {exit(0);}
 
 /*
   Load the menu file. Returns whether successful.
-
-  New strategy: the menu file *should* be usable as is!
-
-  Old strategy was:
-
-  We have different situations:
-
-  (1) Visual Studio: see main(): nothing to do
-  (2) Standard (autotools/make): nothing to do
-  (3) CMake: see main(): nothing to do
-
-  (4) macOS: ???    *FIXME*
 */
 int load_the_menu(char *menu) {
   FILE *fin = 0;
@@ -451,24 +439,6 @@ int load_the_menu(char *menu) {
   int i, j;
 
   fin = fl_fopen(menu, "r");
-
-//      // *FIXME* Albrecht: Do we need this? I don't think so!
-#if (0) // *FIXME* disabled for testing
-
-#if defined (__APPLE__)
-  if (fin == NULL) {
-    // macOS bundle menu detection:
-    char *pos = strrchr(menu, '/');
-    if (!pos) return 0;
-    *pos = '\0';
-    pos = strrchr(menu, '/');
-    if (!pos) return 0;
-    strcpy(pos, "/Resources/demo.menu");
-    fin = fl_fopen(menu, "r");
-  }
-#endif // __APPLE __
-
-#endif // *FIXME* disabled for testing
 
   if (fin == NULL)
     return 0;
@@ -531,7 +501,8 @@ void fix_path(char *path, int strip_filename = 1) {
 }
 
 int main(int argc, char **argv) {
-  fl_putenv("FLTK_DOCDIR=../documentation/html"); // *FIXME*
+
+  fl_putenv("FLTK_DOCDIR=../documentation/html"); // not sure if this is needed
 
   char menu[FL_PATH_MAX];
 
@@ -539,10 +510,9 @@ int main(int argc, char **argv) {
 
 #ifdef __APPLE__
   {
-    // Starting with macOS 10.12, the actual location of the app has a randomized
-    // path to fix a vulnerability.
-    // We need some "Apple magic" ;-) to find the actual path.
-    // Albrecht: is this (still) true and necessary?
+    // Starting with macOS 10.12, the actual location of the app has a
+    // randomized path to fix a vulnerability.
+    // We need some "Apple magic" ;-) to find the actual app_path.
 
     app_path[0] = 0;
     CFBundleRef app = CFBundleGetMainBundle();
@@ -617,6 +587,10 @@ int main(int argc, char **argv) {
     fix_path(data_path);
   }
 
+  // set current work directory to 'app_path'
+
+  if (fl_chdir(data_path) == -1) { /* ignore */ }
+
   // Create forms first
   //    tty needs to exist before we can print debug msgs
   //
@@ -636,10 +610,6 @@ int main(int argc, char **argv) {
   // note: load_the_menu() *may* change the `menu` buffer contents !
   if (!load_the_menu(menu))
     Fl::fatal("Can't open %s", menu);
-
-  // set current work directory to 'app_path'
-
-  if (fl_chdir(data_path) == -1) { /* ignore */ }
 
   push_menu("@main");
   form->show(argc,argv);
