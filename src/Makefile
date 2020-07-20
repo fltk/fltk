@@ -590,6 +590,7 @@ clean:
 	-$(RM)	drivers/Posix/*.o
 	-$(RM)	drivers/PostScript/*.o
 	-$(RM)	drivers/Quartz/*.o
+	-$(RM)	drivers/SVG/*.o
 	-$(RM)	drivers/WinAPI/*.o
 	-$(RM)	drivers/X11/*.o
 	-$(RM)	drivers/Xlib/*.o
