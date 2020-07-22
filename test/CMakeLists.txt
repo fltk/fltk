@@ -15,11 +15,16 @@
 #
 #######################################################################
 
+include (../CMake/FLTK-Functions.cmake)
+include (../CMake/fl_create_example.cmake)
+
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 set (TESTFILE_PATH ${CMAKE_CURRENT_BINARY_DIR}/../data)
 
-include (../CMake/FLTK-Functions.cmake)
-include (../CMake/fl_create_example.cmake)
+# create data and binary directory to copy scripts and data files
+
+file (MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+file (MAKE_DIRECTORY ${TESTFILE_PATH})
 
 #######################################################################
 # audio libs for test apps
@@ -202,21 +207,22 @@ endif (OPTION_BUILD_SHARED_LIBS)
 
 endif (NOT ANDROID)
 
-# We need some support files for the demo programs:
+#####################################################
+# We need some support files for the demo programs
+#####################################################
 
-# Note: this is incomplete as of July 2020
-# Todo: currently all files are copied, but some of them may need configuration:
-# - demo.menu: help_dialog (help_dialog.html) can't find its images (not copied)
-
-# create data directory for test and demo programs if it doesn't exist
-
-file (MAKE_DIRECTORY ${TESTFILE_PATH})
-
-# copy the test files
+# copy the required test files
 
 file (COPY
   demo.menu rgb.txt browser.cxx editor.cxx valuators.fl
   help_dialog.html
+  DESTINATION ${TESTFILE_PATH}
+)
+
+# copy the image directory for help_dialog.html
+
+file (COPY
+  ${CMAKE_CURRENT_SOURCE_DIR}/images
   DESTINATION ${TESTFILE_PATH}
 )
 
