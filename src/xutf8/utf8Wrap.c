@@ -21,7 +21,7 @@
 
 #include "../Xutf8.h"
 #include <X11/Xlib.h>
-#include <FL/fl_string.h>	// fl_strdup()
+#include <FL/fl_string.h>  // fl_strdup()
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>

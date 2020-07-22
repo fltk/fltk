@@ -15,7 +15,7 @@
  */
 
 #include <FL/fl_string.h>
-#include <string.h>	// strdup/_strdup
+#include <string.h>  // strdup/_strdup
 #include "Fl_System_Driver.H"
 
 /**

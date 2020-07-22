@@ -20,7 +20,7 @@
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_string.h>	// fl_strdup()
+#include <FL/fl_string.h>  // fl_strdup()
 #include <FL/platform.H>
 #include "Fl_Font.H"
 

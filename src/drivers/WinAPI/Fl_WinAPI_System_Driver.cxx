@@ -18,7 +18,7 @@
 #include "Fl_WinAPI_System_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
-#include <FL/fl_string.h>	// fl_strdup()
+#include <FL/fl_string.h>  // fl_strdup()
 #include <FL/filename.H>
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>

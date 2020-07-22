@@ -24,7 +24,7 @@
 
 #include "../../Fl_System_Driver.H"
 #include <stdarg.h>
-#include <string.h>	// strdup
+#include <string.h>  // strdup
 
 /*
  Move everything here that manages the system interface.
