@@ -209,6 +209,7 @@ endif (NOT ANDROID)
 # - demo.menu: help_dialog (help_dialog.html) can't find its images (not copied)
 
 # create data directory for test and demo programs if it doesn't exist
+
 file (MAKE_DIRECTORY ${TESTFILE_PATH})
 
 # copy the test files
@@ -223,22 +224,3 @@ file (COPY
 
 target_compile_definitions (demo PRIVATE GENERATED_BY_CMAKE)
 target_compile_definitions (demo PRIVATE CMAKE_SOURCE_PATH="${CMAKE_CURRENT_SOURCE_DIR}")
-
-# Apple macOS creates bundles instead of executables and needs a little bit
-# more help for demos to run correctly
-
-if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
-
-  # make the menu structure part of the app
-  target_sources (demo PRIVATE demo.menu)
-  set_target_properties (demo PROPERTIES MACOSX_BUNDLE TRUE RESOURCE demo.menu)
-
-  # add a sample RGB file that otherwise only exists under X11
-  target_sources (colbrowser PRIVATE rgb.txt)
-  set_target_properties (colbrowser PROPERTIES MACOSX_BUNDLE TRUE RESOURCE rgb.txt)
-
-  # help_dialog displays an html file as an example
-  target_sources (help_dialog PRIVATE help_dialog.html)
-  set_target_properties (help_dialog PROPERTIES MACOSX_BUNDLE TRUE RESOURCE help_dialog.html)
-
-endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
