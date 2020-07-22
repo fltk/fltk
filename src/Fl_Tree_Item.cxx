@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Tree_Item.H>
 #include <FL/Fl_Tree_Prefs.H>
 #include <FL/Fl_Tree.H>
+#include <FL/fl_string.h>
 
 //////////////////////
 // Fl_Tree_Item.cxx
@@ -103,7 +105,7 @@ Fl_Tree_Item::~Fl_Tree_Item() {
 /// Copy constructor.
 Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _tree             = o->_tree;
-  _label        = o->label() ? strdup(o->label()) : 0;
+  _label        = o->label() ? fl_strdup(o->label()) : 0;
   _labelfont    = o->labelfont();
   _labelsize    = o->labelsize();
   _labelfgcolor = o->labelfgcolor();
@@ -154,7 +156,7 @@ void Fl_Tree_Item::show_self(const char *indent) const {
 ///
 void Fl_Tree_Item::label(const char *name) {
   if ( _label ) { free((void*)_label); _label = 0; }
-  _label = name ? strdup(name) : 0;
+  _label = name ? fl_strdup(name) : 0;
   recalc_tree();                // may change label geometry
 }
 

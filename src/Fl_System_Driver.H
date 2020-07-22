@@ -98,6 +98,9 @@ public:
   virtual int putenv(const char *var) {return -1;}
   virtual int open(const char* f, int oflags, int pmode) {return -1;}
 
+  // implement these to support cross-platform string operations
+  virtual char *strdup(const char *s) {return NULL;}
+
   // Note: the default implementation ignores the 'binary' argument.
   // Some platforms (notably Windows) may use this argument.
   virtual int open_ext(const char* f, int binary, int oflags, int pmode) {

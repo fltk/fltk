@@ -79,6 +79,7 @@
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/fl_utf8.h> // for fl_utf8toUtf16()
+#include <FL/fl_string.h> // fl_strdup()
 
 Fl_Fontdesc* fl_fonts = NULL;
 
@@ -682,7 +683,7 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _CoreText)(const char* 
     CFRelease(font);
     static char fname[200];
     CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
-    tabfontnames[i] = strdup(fname); // never free'ed
+    tabfontnames[i] = fl_strdup(fname); // never free'ed
     CFRelease(cfname);
   }
   CFRelease(arrayref);
@@ -869,7 +870,7 @@ Fl_Font Fl_Quartz_Graphics_Driver::ADD_SUFFIX(set_fonts, _ATSU)(const char* xsta
       oName[511] = 0;
     else
       oName[actualLength] = 0;
-    Fl::set_font((Fl_Font)(fl_free_font++), strdup(oName));
+    Fl::set_font((Fl_Font)(fl_free_font++), fl_strdup(oName));
     //  free(oName);
   }
   free(oFontIDs);

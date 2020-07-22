@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include "alignment_panel.h"
 #include <FL/Fl.H>
+#include <FL/fl_string.h>
 #include "Fl_Widget_Type.h"
 
 ////////////////////////////////////////////////////////////////
@@ -405,19 +406,19 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_function")) {
-      i18n_function = strdup(read_word());
+      i18n_function = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_file")) {
-      i18n_file = strdup(read_word());
+      i18n_file = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_set")) {
-      i18n_set = strdup(read_word());
+      i18n_set = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_include")) {
-      i18n_include = strdup(read_word());
+      i18n_include = fl_strdup(read_word());
       goto CONTINUE;
     }
     if (!strcmp(c,"i18n_type"))
@@ -431,13 +432,13 @@ static void read_children(Fl_Type *p, int paste) {
       goto CONTINUE;
     }
     if (!strcmp(c,"header_name")) {
-      if (!header_file_set) header_file_name = strdup(read_word());
+      if (!header_file_set) header_file_name = fl_strdup(read_word());
       else read_word();
       goto CONTINUE;
     }
 
     if (!strcmp(c,"code_name")) {
-      if (!code_file_set) code_file_name = strdup(read_word());
+      if (!code_file_set) code_file_name = fl_strdup(read_word());
       else read_word();
       goto CONTINUE;
     }

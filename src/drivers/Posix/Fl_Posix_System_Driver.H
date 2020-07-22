@@ -38,6 +38,7 @@
  - directory and file access
  - system time and system timer
  - multithreading
+ - string management
  */
 
 class Fl_Posix_System_Driver : public Fl_System_Driver
@@ -74,6 +75,7 @@ public:
   virtual const char *home_directory_name() { return ::getenv("HOME"); }
   virtual int dot_file_hidden() {return 1;}
   virtual void gettime(time_t *sec, int *usec);
+  virtual char* strdup(const char *s) {return ::strdup(s);}
 };
 
 #endif // FL_POSIX_SYSTEM_DRIVER_H

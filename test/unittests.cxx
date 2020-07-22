@@ -28,6 +28,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>         // fl_text_extents()
+#include <FL/fl_string.h>       // fl_strdup()
 
 // WINDOW/WIDGET SIZES
 #define MAINWIN_W       700                             // main window w()
@@ -53,7 +54,7 @@ public:
   UnitTest(const char *label, Fl_Widget* (*create)()) :
     fWidget(0L)
   {
-    fLabel = strdup(label);
+    fLabel = fl_strdup(label);
     fCreate = create;
     add(this);
   }

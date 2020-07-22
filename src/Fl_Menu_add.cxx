@@ -25,6 +25,7 @@
 // string with a % sign in it!
 
 #include <FL/Fl_Menu_.H>
+#include <FL/fl_string.h>
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,7 +63,7 @@ static Fl_Menu_Item* array_insert(
   memmove(array+n+1, array+n, sizeof(Fl_Menu_Item)*(size-n));
   // create the new item:
   Fl_Menu_Item* m = array+n;
-  m->text = text ? strdup(text) : 0;
+  m->text = text ? fl_strdup(text) : 0;
   m->shortcut_ = 0;
   m->callback_ = 0;
   m->user_data_ = 0;
@@ -455,7 +456,7 @@ void Fl_Menu_::replace(int i, const char *str) {
   if (!alloc) copy(menu_);
   if (alloc > 1) {
     free((void *)menu_[i].text);
-      str = strdup(str?str:"");
+      str = fl_strdup(str?str:"");
   }
   menu_[i].text = str;
 }

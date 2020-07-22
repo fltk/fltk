@@ -21,6 +21,7 @@
 #include <FL/Fl_SVG_Image.H>
 #include <FL/fl_utf8.h>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 #include "Fl_Screen_Driver.H"
 #include <stdio.h>
 #include <stdlib.h>
@@ -152,7 +153,7 @@ void Fl_SVG_Image::init_(const char *filename, const char *in_filedata, Fl_SVG_I
     if (!filedata) ld(ERR_FILE_ACCESS);
   } else {
     // XXX: Make internal copy -- nsvgParse() modifies filedata during parsing (!)
-    filedata = in_filedata ? strdup(in_filedata) : NULL;
+    filedata = in_filedata ? fl_strdup(in_filedata) : NULL;
   }
   if (filedata) {
     counted_svg_image_->svg_image = nsvgParse(filedata, "px", 96);

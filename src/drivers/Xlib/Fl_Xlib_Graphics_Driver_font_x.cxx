@@ -20,6 +20,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/platform.H>
+#include <FL/fl_string.h>
 #include "Fl_Font.H"
 
 #include <stdio.h>
@@ -305,7 +306,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* xstarname) {
         if (fl_fonts[j].name && !strcmp(fl_fonts[j].name, p)) break;
       } else */{
         j = fl_free_font++;
-        if (p == canon) p = strdup(p); else used_xlist = 1;
+        if (p == canon) p = fl_strdup(p); else used_xlist = 1;
         Fl::set_font((Fl_Font)j, p);
         break;
       }
@@ -521,7 +522,7 @@ static char *put_font_size(const char *n, int size)
         const char *f;
         char *name;
         int nbf = 1;
-        name = strdup(n);
+        name = fl_strdup(n);
         while (name[i]) {
                 if (name[i] == ',') {nbf++; name[i] = '\0';}
                 i++;

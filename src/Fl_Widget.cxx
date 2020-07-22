@@ -19,6 +19,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -291,7 +292,7 @@ void Fl_Widget::copy_label(const char *a) {
   if ((flags() & COPIED_LABEL) && (label_.value == a))
     return;
   if (a) {
-    label(strdup(a));
+    label(fl_strdup(a));
     set_flag(COPIED_LABEL);
   } else {
     label(0);

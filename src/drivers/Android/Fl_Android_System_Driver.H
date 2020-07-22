@@ -22,6 +22,7 @@
 #ifndef FL_ANDROID_SYSTEM_DRIVER_H
 #define FL_ANDROID_SYSTEM_DRIVER_H
 
+#include <FL/fl_string.h>
 #include "../../Fl_System_Driver.H"
 #include <stdarg.h>
 
@@ -46,7 +47,7 @@ public:
   virtual void fatal(const char *format, va_list args);
   virtual char *utf2mbcs(const char *s);
   virtual char *getenv(const char *var);
-  virtual int putenv(const char *var) { return ::putenv(strdup(var)); }
+  virtual int putenv(const char *var) { return ::putenv(fl_strdup(var)); }
   virtual int open(const char *fnam, int oflags, int pmode);
   virtual int open_ext(const char *fnam, int binary, int oflags, int pmode);
   virtual FILE *fopen(const char *fnam, const char *mode);

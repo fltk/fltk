@@ -26,6 +26,7 @@
 #include <FL/platform.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 #import <Cocoa/Cocoa.h>
 
 typedef OSStatus (*PMSessionSetDocumentFormatGeneration_type)(
@@ -196,7 +197,7 @@ int Fl_Cocoa_Printer_Driver::begin_job (int pagecount, int *frompage, int *topag
     if (perr_message) {
       NSError *nserr = [NSError errorWithDomain:NSCocoaErrorDomain code:status userInfo:nil];
       NSString *s = [nserr localizedDescription];
-      if (s) *perr_message = strdup([s UTF8String]);
+      if (s) *perr_message = fl_strdup([s UTF8String]);
     }
     return 2;
   }

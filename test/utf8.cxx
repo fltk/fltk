@@ -28,6 +28,7 @@
 #include <FL/Fl_Output.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -620,10 +621,10 @@ int main(int argc, char** argv)
     sprintf(bu, "0x%06lX", y * 16);
     Fl_Input *b = new Fl_Input(200,(y-off)*25,80,25);
     b->textfont(FL_COURIER);
-    b->value(strdup(bu));
+    b->value(fl_strdup(bu));
     b = new Fl_Input(280,(y-off)*25,380,25);
     b->textfont(extra_font);
-    b->value(strdup(buf));
+    b->value(fl_strdup(buf));
   }
   scroll.end();
   main_win->resizable(scroll);

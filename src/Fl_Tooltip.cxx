@@ -18,10 +18,10 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl.H>
+#include <FL/fl_string.h>
 #include "Fl_System_Driver.H"
 
 #include <stdio.h>
-#include <string.h>   // strdup()
 
 float     Fl_Tooltip::delay_ = 1.0f;
 float     Fl_Tooltip::hidedelay_ = 12.0f;
@@ -379,7 +379,7 @@ void Fl_Widget::copy_tooltip(const char *text) {
   if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
   if (text) {
     set_flag(COPIED_TOOLTIP);
-    tooltip_ = strdup(text);
+    tooltip_ = fl_strdup(text);
   } else {
     clear_flag(COPIED_TOOLTIP);
     tooltip_ = (char *)0;

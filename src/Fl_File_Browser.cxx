@@ -34,6 +34,7 @@
 #include "Fl_System_Driver.H"
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
+#include <FL/fl_string.h>
 #include <FL/Fl_Image.H>        // icon
 #include <stdio.h>
 #include <stdlib.h>
@@ -387,7 +388,7 @@ Fl_File_Browser::~Fl_File_Browser() {
  */
 void Fl_File_Browser::errmsg(const char* emsg) {
   if ( errmsg_ ) { free((void*)errmsg_); errmsg_ = NULL; }
-  errmsg_ = emsg ? strdup(emsg) : NULL;
+  errmsg_ = emsg ? fl_strdup(emsg) : NULL;
 }
 
 

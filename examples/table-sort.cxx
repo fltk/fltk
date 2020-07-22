@@ -26,6 +26,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Table_Row.H>
+#include <FL/fl_string.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -225,7 +226,7 @@ void MyTable::load_command(const char *cmd) {
         char *ss;
         const char *delim = " \t\n";
         for(int t=0; (t==0)?(ss=strtok(s,delim)):(ss=strtok(NULL,delim)); t++) {
-            rc.push_back(strdup(ss));
+            rc.push_back(fl_strdup(ss));
         }
         // Keep track of max # columns
         if ( (int)rc.size() > cols() ) {

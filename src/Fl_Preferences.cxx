@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 #include "flstring.h"
 
 
@@ -636,7 +637,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
   }
   if ( !v ) v = defaultValue;
   if ( v )
-    text = strdup( v );
+    text = fl_strdup( v );
   else
     text = 0;
   return ( v != defaultValue );
@@ -911,9 +912,9 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   root_(root)
 {
   char *filename = Fl::system_driver()->preference_rootnode(prefs, root, vendor, application);
-  filename_    = filename ? strdup(filename) : 0L;
-  vendor_      = strdup(vendor);
-  application_ = strdup(application);
+  filename_    = filename ? fl_strdup(filename) : 0L;
+  vendor_      = fl_strdup(vendor);
+  application_ = fl_strdup(application);
   read();
 }
 
@@ -931,14 +932,14 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, const char *path, con
     vendor = "unknown";
   if (!application) {
     application = "unknown";
-    filename_ = strdup(path);
+    filename_ = fl_strdup(path);
   } else {
     char filename[ FL_PATH_MAX ]; filename[0] = 0;
     snprintf(filename, sizeof(filename), "%s/%s.prefs", path, application);
-    filename_  = strdup(filename);
+    filename_  = fl_strdup(filename);
   }
-  vendor_      = strdup(vendor);
-  application_ = strdup(application);
+  vendor_      = fl_strdup(vendor);
+  application_ = fl_strdup(application);
   read();
 }
 
@@ -1112,7 +1113,7 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen ) {
 // create a node that represents a group
 // - path must be a single word, prferable alnum(), dot and underscore only. Space is ok.
 Fl_Preferences::Node::Node( const char *path ) {
-  if ( path ) path_ = strdup( path ); else path_ = 0;
+  if ( path ) path_ = fl_strdup( path ); else path_ = 0;
   child_ = 0; next_ = 0; parent_ = 0;
   entry_ = 0;
   nEntry_ = NEntry_ = 0;
@@ -1225,7 +1226,7 @@ void Fl_Preferences::Node::setParent( Node *pn ) {
   pn->child_ = this;
   sprintf( nameBuffer, "%s/%s", pn->path_, path_ );
   free( path_ );
-  path_ = strdup( nameBuffer );
+  path_ = fl_strdup( nameBuffer );
 }
 
 // find the corresponding root node
@@ -1242,7 +1243,7 @@ Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot() {
 // add a child to this node and set its path (try to find it first...)
 Fl_Preferences::Node *Fl_Preferences::Node::addChild( const char *path ) {
   sprintf( nameBuffer, "%s/%s", path_, path );
-  char *name = strdup( nameBuffer );
+  char *name = fl_strdup( nameBuffer );
   Node *nd = find( name );
   free( name );
   updateIndex();
@@ -1258,7 +1259,7 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
       if ( strcmp( value, entry_[i].value ) != 0 ) {
         if ( entry_[i].value )
           free( entry_[i].value );
-        entry_[i].value = strdup( value );
+        entry_[i].value = fl_strdup( value );
         dirty_ = 1;
       }
       lastEntrySet = i;
@@ -1269,8 +1270,8 @@ void Fl_Preferences::Node::set( const char *name, const char *value )
     NEntry_ = NEntry_ ? NEntry_*2 : 10;
     entry_ = (Entry*)realloc( entry_, NEntry_ * sizeof(Entry) );
   }
-  entry_[ nEntry_ ].name = strdup( name );
-  entry_[ nEntry_ ].value = value?strdup( value ):0;
+  entry_[ nEntry_ ].name = fl_strdup( name );
+  entry_[ nEntry_ ].value = value?fl_strdup(value):0;
   lastEntrySet = nEntry_;
   nEntry_++;
   dirty_ = 1;

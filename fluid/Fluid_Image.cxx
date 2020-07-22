@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <FL/filename.H>
+#include <FL/fl_string.h>
 
 extern void goto_source_dir(); // in fluid.cxx
 extern void leave_source_dir(); // in fluid.cxx
@@ -204,7 +205,7 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
 }
 
 Fluid_Image::Fluid_Image(const char *iname) {
-  name_ = strdup(iname);
+  name_ = fl_strdup(iname);
   written = 0;
   refcount = 0;
   img = Fl_Shared_Image::get(iname);

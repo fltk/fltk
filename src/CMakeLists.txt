@@ -157,6 +157,7 @@ set (CPPFILES
   fl_vertex.cxx
   screen_xywh.cxx
   fl_utf8.cxx
+  fl_string.cxx
   fl_encoding_latin1.cxx
   fl_encoding_mac_roman.cxx
 )

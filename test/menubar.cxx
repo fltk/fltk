@@ -30,6 +30,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Simple_Terminal.H>
 #include <FL/fl_ask.H>
+#include <FL/fl_string.h>
 
 #define TERMINAL_HEIGHT 120
 
@@ -225,7 +226,7 @@ int main(int argc, char **argv) {
   for (int i=0; i<99; i++) {
     char buf[100];
     sprintf(buf,"item %d",i);
-    hugemenu[i].text = strdup(buf);
+    hugemenu[i].text = fl_strdup(buf);
   }
   Fl_Double_Window window(WIDTH,400+TERMINAL_HEIGHT);
   G_tty = new Fl_Simple_Terminal(0,400,WIDTH,TERMINAL_HEIGHT);

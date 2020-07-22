@@ -29,6 +29,7 @@
 #include "flstring.h"
 
 #include <FL/Fl.H>
+#include <FL/fl_string.h>
 
 #include <FL/fl_ask.H>
 
@@ -664,7 +665,7 @@ void fl_message_title_default(const char *title) {
     message_title_default = 0;
   }
   if (title)
-    message_title_default = strdup(title);
+    message_title_default = fl_strdup(title);
 }
 
 /** @} */

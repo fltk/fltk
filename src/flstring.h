@@ -52,10 +52,6 @@
  * Some of these functions are also defined in ISO C99...
  */
 
-#  if defined(_MSC_VER)
-#    define strdup _strdup
-#  endif /* _MSC_VER */
-
 #  if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #    define strcasecmp(s,t)     _stricmp((s), (t))
 #    define strncasecmp(s,t,n)  _strnicmp((s), (t), (n))

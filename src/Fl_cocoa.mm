@@ -30,6 +30,7 @@ extern "C" {
 #include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Rect.H>
+#include <FL/fl_string.h>
 #include "drivers/Quartz/Fl_Quartz_Graphics_Driver.H"
 #include "drivers/Quartz/Fl_Quartz_Copy_Surface_Driver.H"
 #include "drivers/Cocoa/Fl_Cocoa_Screen_Driver.H"
@@ -1587,7 +1588,7 @@ static void drain_dropped_files_list() {
     return;
   }
   NSString *s = (NSString*)[dropped_files_list objectAtIndex:0];
-  char *fname = strdup([s UTF8String]);
+  char *fname = fl_strdup([s UTF8String]);
   [dropped_files_list removeObjectAtIndex:0];
   if ([dropped_files_list count] == 0) {
     [dropped_files_list release];
@@ -3529,7 +3530,7 @@ static int get_plain_text_from_clipboard(int clipboard)
                                                         [data length],
                                                         [found isEqualToString:@"public.utf16-plain-text"] ? kCFStringEncodingUnicode : kCFStringEncodingMacRoman,
                                                         false);
-        aux_c = strdup([auxstring UTF8String]);
+        aux_c = fl_strdup([auxstring UTF8String]);
         [auxstring release];
         len = strlen(aux_c) + 1;
       }

@@ -6,6 +6,7 @@
 
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/fl_string.h>
 
 //////////////////////
 // Fl_Tree.cxx
@@ -2643,7 +2644,7 @@ void Fl_Tree::load(Fl_Preferences &prefs) {
   n = prefs.entries();
   for (i=0; i<n; i++) {
     // We must remove all fwd slashes in the key and value strings. Replace with backslash.
-    char *key = strdup(prefs.entry(i));
+    char *key = fl_strdup(prefs.entry(i));
     int kn = (int) strlen(key);
     for (j=0; j<kn; j++) {
       if (key[j]=='/') key[j]='\\';
