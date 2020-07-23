@@ -93,6 +93,14 @@ resize
 resizebox
 resize.cxx
 resize.h
+resize-example1
+resize-example2
+resize-example3a
+resize-example3b
+resize-example3c
+resize-example3d
+resize-example4a
+resize-example4b
 rotated_text
 scroll
 shape
