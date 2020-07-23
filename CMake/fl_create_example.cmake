@@ -57,9 +57,17 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   set (TARGET_NAME ${NAME})     # CMake target name
   set (ICON_NAME)               # macOS icon (max. one)
   set (PLIST)                   # macOS .plist file (max. one)
-  set (RESOURCE_PATH)           # macOS resource path
+  set (ICON_PATH)               # macOS icon resource path
 
-  # rename target name "help" (reserved since CMake 2.8.12 and later)
+  # create macOS bundle? 0 = no, 1 = yes
+
+  if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+    set (MAC_BUNDLE 1)
+  else ()
+    set (MAC_BUNDLE 0)
+  endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
+
+  # rename target name "help" (reserved since CMake 2.8.12)
   # FIXME: not necessary in FLTK 1.4 but left for compatibility (06/2020)
 
   if (${TARGET_NAME} STREQUAL "help")
@@ -90,22 +98,42 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
   # set macOS (icon) resource path if applicable
 
-  if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND ICON_NAME)
-    set (RESOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}.app/Contents/Resources/${ICON_NAME}")
-  endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL) AND ICON_NAME)
+  if (MAC_BUNDLE AND ICON_NAME)
+    set (ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}.app/Contents/Resources/${ICON_NAME}")
+  endif (MAC_BUNDLE AND ICON_NAME)
 
-  ###########################################################
+  ##############################################################################
+  # copy macOS "bundle wrapper" (shell script) to target (bin) directory
+  ##############################################################################
+  #  (1) file (COPY   ...) to set execution permissions
+  #  (2) file (RENAME ...) to move the file to its final place
+  ##############################################################################
+
+  if (MAC_BUNDLE)
+    file (COPY
+      ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/macOS-bundle-wrapper.in
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    )
+    file (RENAME
+      ${CMAKE_CURRENT_BINARY_DIR}/macOS-bundle-wrapper.in
+      ${EXECUTABLE_OUTPUT_PATH}/${TARGET_NAME}
+    )
+  endif (MAC_BUNDLE)
+
+  ##############################################################################
   # add executable target and set properties (all platforms)
-  ###########################################################
+  ##############################################################################
 
-  add_executable          (${TARGET_NAME} WIN32 MACOSX_BUNDLE ${srcs} ${RESOURCE_PATH})
+  add_executable          (${TARGET_NAME} WIN32 MACOSX_BUNDLE ${srcs} ${ICON_PATH})
   set_target_properties   (${TARGET_NAME} PROPERTIES OUTPUT_NAME ${NAME})
   target_link_libraries   (${TARGET_NAME} ${LIBRARIES})
 
-  if (RESOURCE_PATH)
+  if (ICON_PATH)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE ${ICON_NAME})
-    set_target_properties (${TARGET_NAME} PROPERTIES RESOURCE ${RESOURCE_PATH})
-  endif (RESOURCE_PATH)
+    set_target_properties (${TARGET_NAME} PROPERTIES RESOURCE ${ICON_PATH})
+  endif (ICON_PATH)
 
   if (PLIST)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${PLIST}")
