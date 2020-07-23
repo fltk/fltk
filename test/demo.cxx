@@ -510,17 +510,11 @@ int main(int argc, char **argv) {
 
 #ifdef __APPLE__
   {
-    // Starting with macOS 10.12, the actual location of the app has a
-    // randomized path to fix a vulnerability.
-    // We need some "Apple magic" ;-) to find the actual app_path.
-
-    app_path[0] = 0;
-    CFBundleRef app = CFBundleGetMainBundle();
-    CFURLRef url = CFBundleCopyBundleURL(app);
-    CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-    CFRelease(url);
-    CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
-    CFRelease(cc_app_path);
+    char *p = strdup(argv[0]);
+    char *q = strstr(p, "/Contents/MacOS/");
+    if (q) *q = 0;
+    fl_filename_absolute(app_path, sizeof(app_path), p);
+    free(p);
   }
 #else
   fl_filename_absolute(app_path, sizeof(app_path), argv[0]);
