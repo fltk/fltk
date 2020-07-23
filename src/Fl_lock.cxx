@@ -317,7 +317,9 @@ static void unlock_function_rec() {
 #  endif // PTHREAD_MUTEX_RECURSIVE
 
 void Fl_Posix_System_Driver::awake(void* msg) {
-  if (write(thread_filedes[1], &msg, sizeof(void*))==0) { /* ignore */ }
+  if (thread_filedes[1]) {
+    if (write(thread_filedes[1], &msg, sizeof(void*))==0) { /* ignore */ }
+  }
 }
 
 static void* thread_message_;
