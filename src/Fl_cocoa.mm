@@ -3190,6 +3190,11 @@ void Fl_Cocoa_Window_Driver::fullscreen_off(int X, int Y, int W, int H) {
     [nswin setStyleMask:calc_win_style(pWindow)]; //10.6
     restore_window_title_and_icon(pWindow, icon_image);
     pWindow->resize(X, Y, W, H);
+    // at least under macOS 10.15.5-6, NSViewFrameDidChangeNotification is not sent
+    // if the dock is at bottom (but is sent if the dock is at left!)
+    NSNotification *notif = [NSNotification notificationWithName:NSViewFrameDidChangeNotification
+                                                          object:[nswin contentView]];
+    [[FLWindowDelegate singleInstance] view_did_resize:notif];
   } else
 #endif
   {
