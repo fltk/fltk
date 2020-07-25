@@ -508,16 +508,10 @@ int main(int argc, char **argv) {
 
   // construct app_path for all executable files
 
-#ifdef __APPLE__
-  {
-    char *p = strdup(argv[0]);
-    char *q = strstr(p, "/Contents/MacOS/");
-    if (q) *q = 0;
-    fl_filename_absolute(app_path, sizeof(app_path), p);
-    free(p);
-  }
-#else
   fl_filename_absolute(app_path, sizeof(app_path), argv[0]);
+#ifdef __APPLE__
+    char *q = strstr(app_path, "/Contents/MacOS/");
+    if (q) *q = 0;
 #endif
   fix_path(app_path);
 
