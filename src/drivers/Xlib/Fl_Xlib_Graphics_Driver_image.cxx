@@ -640,6 +640,11 @@ void Fl_Xlib_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int
 // Composite an image with alpha on systems that don't have accelerated
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
+  if (cx < 0) { W += cx; X -= cx; cx = 0; }
+  if (cy < 0) { H += cy; Y -= cy; cy = 0; }
+  if (W + cx > img->data_w()) W = img->data_w() - cx;
+  if (H + cy > img->data_h()) H = img->data_h() - cy;
+  if (W <= 0 || H <= 0) return;
   int ld = img->ld();
   if (ld == 0) ld = img->data_w() * img->d();
   uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
