@@ -34,6 +34,8 @@
           +- Fl_Image_Surface_Driver: helper class interfacing FLTK with draw-to-image operations
               |
               +- Fl_..._Image_Surface_Driver: platform-specific implementation of Fl_Image_Surface_Driver
+          +- Fl_EPS_File_Surface: draw into an Encapsulated PostScript (.eps) file
+          +- Fl_SVG_File_Surface: draw into a Scalable Vector Graphics (.svg) file
           +- Fl_Paged_Device: output to a page-structured surface
               |
               +- Fl_Printer: user can instantiate this to gain access to a printer
@@ -47,6 +49,7 @@
   +- Fl_Graphics_Driver -> directed to an Fl_Surface_Device object
       |
       +- Fl_PostScript_Graphics_Driver: platform-independent graphics driver for PostScript drawing
+      +- Fl_SVG_Graphics_Driver: platform-independent graphics driver for Scalable Vector Graphics drawing
       +- Fl_..._Graphics_Driver: platform-specific graphics driver (MacOS, Android, Pico)
           +- Fl_Quartz_Printer_Graphics_Driver: MacOS-specific, for drawing to printers
       +- Fl_Scalable_Graphics_Driver: helper class to support GUI scaling
