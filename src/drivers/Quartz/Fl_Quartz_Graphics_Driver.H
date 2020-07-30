@@ -59,6 +59,7 @@ protected:
   CGLineJoin quartz_line_join_;
   CGFloat *quartz_line_pattern;
   int quartz_line_pattern_size;
+  virtual void cache_size(int &width, int &height);
 public:
   Fl_Quartz_Graphics_Driver();
   virtual ~Fl_Quartz_Graphics_Driver() { if (p) free(p); }

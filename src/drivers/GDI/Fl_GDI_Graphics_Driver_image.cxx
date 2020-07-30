@@ -400,7 +400,7 @@ void Fl_GDI_Graphics_Driver::delete_bitmask(Fl_Bitmask bm) {
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Bitmap *bm, int X, int Y, int W, int H, int cx, int cy) {
   X = X*scale();
   Y = Y*scale();
-  cache_size(bm, W, H);
+  cache_size(W, H);
   cx *= scale(); cy *= scale();
 
   HDC tempdc = CreateCompatibleDC(gc_);
@@ -500,7 +500,7 @@ void Fl_GDI_Graphics_Driver::cache(Fl_RGB_Image *img)
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
   X = X*scale();
   Y = Y*scale();
-  cache_size(img, W, H);
+  cache_size(W, H);
   cx *= scale(); cy *= scale();
   if (W + cx > img->data_w()) W = img->data_w() - cx;
   if (H + cy > img->data_h()) H = img->data_h() - cy;
@@ -538,7 +538,7 @@ void Fl_GDI_Graphics_Driver::draw_rgb(Fl_RGB_Image *rgb, int XP, int YP, int WP,
   float scaleW = float(rgb->data_w())/rgb->w();
   float scaleH = float(rgb->data_h())/rgb->h();
   int W = WP, H = HP;
-  cache_size(rgb, W, H);
+  cache_size(W, H);
   HDC new_gc = CreateCompatibleDC(gc_);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, (HBITMAP)*Fl_Graphics_Driver::id(rgb));
@@ -628,7 +628,7 @@ void Fl_GDI_Graphics_Driver::cache(Fl_Bitmap *bm) {
 void Fl_GDI_Graphics_Driver::draw_fixed(Fl_Pixmap *pxm, int X, int Y, int W, int H, int cx, int cy) {
   X = X*scale();
   Y = Y*scale();
-  cache_size(pxm, W, H);
+  cache_size(W, H);
   cx *= scale(); cy *= scale();
   Fl_Region r2 = scale_clip(scale());
   if (*Fl_Graphics_Driver::mask(pxm)) {

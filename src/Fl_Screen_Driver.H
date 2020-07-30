@@ -187,9 +187,6 @@ public:
   /** Returns the platform's support for rescaling the application with ctrl-/+/-/0/ keys.
    */
   virtual APP_SCALING_CAPABILITY rescalable() { return NO_APP_SCALING; }
-  /* Number of pixels per drawing unit for the display.
-     The default implementation may be enough. */
-  virtual float retina_factor() { return 1; }
   // supports Fl_Window::default_icons()
   virtual void default_icons(const Fl_RGB_Image *icons[], int count);
 };

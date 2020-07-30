@@ -82,6 +82,7 @@ class FL_EXPORT Fl_Graphics_Driver {
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
+  friend class Fl_SVG_Image;
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
@@ -235,7 +236,7 @@ protected:
   static void draw_empty(Fl_Image* img, int X, int Y) {img->draw_empty(X, Y);}
 
   Fl_Graphics_Driver();
-  void cache_size(Fl_Image *img, int &width, int &height);
+  virtual void cache_size(int &width, int &height);
   static unsigned need_pixmap_bg_color;
 public:
   virtual ~Fl_Graphics_Driver() {} ///< Destructor
