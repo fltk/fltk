@@ -618,15 +618,22 @@ void Fl_Quartz_Graphics_Driver::ADD_SUFFIX(draw, _CoreText)(const char *str, int
   CFRelease(ctline);
 }
 
+// Skip over bold/italic/oblique qualifiers part of PostScript font names
+// Example:
+//      input: '-Regular_Light-Condensed'
+//     return: '_Light-Condensed'
+//
 static char *skip(char *p, int& derived)
 {
-  if (memcmp(p, "-BoldItalic", 11) == 0) { p += 11; derived = 3; }
-  else if (memcmp(p, "-BoldOblique", 12) == 0) { p += 12; derived = 3; }
-  else if (memcmp(p, "-Bold", 5) == 0) {p += 5; derived = 1; }
-  else if (memcmp(p, "-Italic", 7) == 0) {p += 7; derived = 2; }
-  else if (memcmp(p, "-Oblique", 8) == 0) {p += 8; derived = 2; }
-  else if (memcmp(p, "-Regular", 8) == 0) {p += 8; }
-  else if (memcmp(p, "-Roman", 6) == 0) {p += 6; }
+  //                  0    5    10
+  //                  |    |    |
+  if      (strncmp(p, "-BoldItalic",  11) == 0) { p += 11; derived = 3; }
+  else if (strncmp(p, "-BoldOblique", 12) == 0) { p += 12; derived = 3; }
+  else if (strncmp(p, "-Bold",         5) == 0) { p +=  5; derived = 1; }
+  else if (strncmp(p, "-Italic",       7) == 0) { p +=  7; derived = 2; }
+  else if (strncmp(p, "-Oblique",      8) == 0) { p +=  8; derived = 2; }
+  else if (strncmp(p, "-Regular",      8) == 0) { p +=  8; }
+  else if (strncmp(p, "-Roman",        6) == 0) { p +=  6; }
   return p;
 }
 
