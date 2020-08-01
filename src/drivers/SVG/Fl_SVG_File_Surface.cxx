@@ -28,6 +28,8 @@
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
+#include <FL/fl_string.h>
+
 extern "C" {
 #if defined(HAVE_LIBPNG)
 #  ifdef HAVE_PNG_H
@@ -137,7 +139,7 @@ Fl_SVG_Graphics_Driver::Fl_SVG_Graphics_Driver(FILE *f) {
   clip_count_ = 0;
   clip_ = NULL;
   user_dash_array_ = 0;
-  dasharray_ = strdup("none");
+  dasharray_ = fl_strdup("none");
   p_size = 0;
   p = NULL;
   last_rgb_name_ = NULL;
@@ -205,13 +207,13 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
       sprintf(dasharray_+strlen(dasharray_), "%.3f,", (*p)/s);
     }
     dasharray_[strlen(dasharray_) - 1] = 0;
-    if (user_dash_array_ != dashes) user_dash_array_ = strdup(dashes);
+    if (user_dash_array_ != dashes) user_dash_array_ = fl_strdup(dashes);
     return;
   }
   int dash_part = line_style_ & 0xFF;
   if (dash_part == FL_SOLID)  {
     if (dasharray_ && strcmp(dasharray_, "none")) free(dasharray_);
-    dasharray_ = strdup("none");
+    dasharray_ = fl_strdup("none");
   } else {
     int cap_part = (line_style_ & 0xF00);
     bool is_flat = (cap_part == FL_CAP_FLAT || cap_part == 0);
@@ -458,7 +460,7 @@ void Fl_SVG_Graphics_Driver::define_rgb_png(Fl_RGB_Image *rgb, const char *name,
   }
   if (name) {
     if (last_rgb_name_) free(last_rgb_name_);
-    last_rgb_name_ = strdup(name);
+    last_rgb_name_ = fl_strdup(name);
   }
   float f = rgb->data_w() > rgb->data_h() ? float(rgb->w()) / rgb->data_w(): float(rgb->h()) / rgb->data_h();
   if (name) fprintf(out_, "<defs><image id=\"%s\" ", name);
@@ -547,7 +549,7 @@ static void term_destination(jpeg_compress_struct *cinfo) {
 void Fl_SVG_Graphics_Driver::define_rgb_jpeg(Fl_RGB_Image *rgb, const char *name, int x, int y) {
   if (name) {
     if (last_rgb_name_) free(last_rgb_name_);
-    last_rgb_name_ = strdup(name);
+    last_rgb_name_ = fl_strdup(name);
   }
   float f = rgb->data_w() > rgb->data_h() ? float(rgb->w()) / rgb->data_w(): float(rgb->h()) / rgb->data_h();
   if (name) fprintf(out_, "<defs><image id=\"%s\" ", name);

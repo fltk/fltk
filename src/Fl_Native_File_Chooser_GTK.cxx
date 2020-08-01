@@ -25,6 +25,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Image_Surface.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 #include <dlfcn.h>   // for dlopen et al
 #include "drivers/X11/Fl_X11_System_Driver.H"
 
@@ -110,7 +111,7 @@ private:
     const char *filter; // a filter string of the chooser
     pair(Fl_GTK_Native_File_Chooser_Driver* c, const char *f) {
       running = c;
-      filter = strdup(f);
+      filter = fl_strdup(f);
     };
     ~pair() {
       free((char*)filter);
@@ -490,7 +491,7 @@ static char *extract_dir_from_path(const char *path)
   }
   if (*path != '/') return NULL;
   if (dir) free(dir);
-  dir = strdup(path);
+  dir = fl_strdup(path);
   do {
     char *p = strrchr(dir, '/');
     if (p == dir) p++;
@@ -710,7 +711,7 @@ int Fl_GTK_Native_File_Chooser_Driver::fl_gtk_chooser_wrapper()
   GtkFileFilter **filter_tab = NULL;
   if (_parsedfilt) {
     filter_tab = new GtkFileFilter*[_nfilters];
-    char *filter = strdup(_parsedfilt);
+    char *filter = fl_strdup(_parsedfilt);
     p = strtok(filter, "\t");
     int count = 0;
     while (p) {

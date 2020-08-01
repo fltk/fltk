@@ -17,6 +17,7 @@
 
 #include "Fl_X11_System_Driver.H"
 #include <FL/Fl_File_Browser.H>
+#include <FL/fl_string.h>  // fl_strdup
 #include "../../flstring.h"
 
 #include <X11/Xlib.h>
@@ -592,7 +593,7 @@ bool Fl_X11_System_Driver::probe_for_GTK(int major, int minor, void **ptr_gtk) {
   char *before = NULL;
   // record in "before" the calling program's current locale
   char *p = setlocale(LC_ALL, NULL);
-  if (p) before = strdup(p);
+  if (p) before = fl_strdup(p);
   int ac = 0;
   init_f(&ac, NULL); // may change the locale
   if (before) {

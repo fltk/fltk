@@ -20,6 +20,7 @@
 #include "Fl_Xlib_Graphics_Driver.H"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>  // fl_strdup()
 #include <FL/platform.H>
 #include "Fl_Font.H"
 
@@ -423,7 +424,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
       }
       else
       { // The listed name has been modified
-        full_list[j] = strdup(first);
+        full_list[j] = fl_strdup(first);
         // Free the font name storage
         free (font);
       }
@@ -451,7 +452,7 @@ Fl_Font Fl_Xlib_Graphics_Driver::set_fonts(const char* pattern_name)
         make_raw_name(xft_name, full_list[j]);
         // NOTE: This just adds on AFTER the default fonts - no attempt is made
         // to identify already loaded fonts. Is this bad?
-        stored_name = strdup(xft_name);
+        stored_name = fl_strdup(xft_name);
         Fl::set_font((Fl_Font)(j + FL_FREE_FONT), stored_name);
         fl_free_font ++;
 
@@ -552,7 +553,7 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
     }
 
     if(comma_count) { // multiple comma-separated names were passed
-      char *local_name = strdup(name); // duplicate the full name so we can edit the copy
+      char *local_name = fl_strdup(name); // duplicate the full name so we can edit the copy
       char *curr = local_name; // points to first name in string
       char *nxt; // next name in string
       do {
@@ -681,7 +682,7 @@ static XftFont* fontopen(const char* name, /*Fl_Fontsize*/double size, bool core
      * XLFD's to construct a "super-pattern" that incorporates attributes from all
      * XLFD's and use that to perform a XftFontMatch(). Maybe...
      */
-    char *local_name = strdup(name);
+    char *local_name = fl_strdup(name);
     if(comma_count) { // This means we were passed multiple XLFD's
       char *pc = strchr(local_name, ',');
       *pc = 0; // terminate the XLFD at the first comma
@@ -1087,7 +1088,7 @@ static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   const char *weight = wt_med; // no specifc weight requested - accept any
   char slant = 'r';   // regular non-italic by default
   char xlfd[128];     // we will put our synthetic XLFD in here
-  char *pc = strdup(fl_fonts[fnum].name); // what font were we asked for?
+  char *pc = fl_strdup(fl_fonts[fnum].name); // what font were we asked for?
 #if USE_PANGO
   char *p = pc + 1;
   while (*p) { *p = tolower(*p); p++; }

@@ -36,6 +36,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Printer.H>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -1544,7 +1545,7 @@ show_shell_window() {
 
 void set_filename(const char *c) {
   if (filename) free((void *)filename);
-  filename = c ? strdup(c) : NULL;
+  filename = c ? fl_strdup(c) : NULL;
 
   if (filename && !batch_mode)
     update_history(filename);

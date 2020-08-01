@@ -17,6 +17,7 @@
 #if defined(__APPLE__)
 
 #include <FL/platform.H>
+#include <FL/fl_string.h>
 #include "drivers/Cocoa/Fl_MacOS_Sys_Menu_Bar_Driver.H"
 #include "flstring.h"
 #include <stdio.h>
@@ -291,7 +292,7 @@ static void setMenuFlags( NSMenu* mh, int miCnt, const Fl_Menu_Item *m )
 
 static char *remove_ampersand(const char *s)
 {
-  char *ret = strdup(s);
+  char *ret = fl_strdup(s);
   const char *p = s;
   char *q = ret;
   while(*p != 0) {

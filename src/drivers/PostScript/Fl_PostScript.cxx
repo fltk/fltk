@@ -23,6 +23,7 @@
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include "../../Fl_System_Driver.H"
+#include <FL/fl_string.h>
 #include <stdarg.h>
 #include <time.h>
 
@@ -83,7 +84,7 @@ int Fl_PostScript_File_Device::begin_job (int pagecount, enum Fl_Paged_Device::P
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->output = fl_fopen(fnfc.filename(), "w");
   if(ps->output == NULL) return 2;
-  ps->ps_filename_ = strdup(fnfc.filename());
+  ps->ps_filename_ = fl_strdup(fnfc.filename());
   ps->start_postscript(pagecount, format, layout);
   this->set_current();
   return 0;

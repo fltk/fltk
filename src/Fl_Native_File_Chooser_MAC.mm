@@ -27,6 +27,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
+#include <FL/fl_string.h>
 #define MAXFILTERS      80
 #import <Cocoa/Cocoa.h>
 
@@ -402,7 +403,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::filters() const {
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 
 int Fl_Quartz_Native_File_Chooser_Driver::get_saveas_basename(void) {
-  char *q = strdup( [[[_panel URL] path] UTF8String] );
+  char *q = fl_strdup( [[[_panel URL] path] UTF8String] );
   if ( !(_options & Fl_Native_File_Chooser::SAVEAS_CONFIRM) ) {
     const char *d = [[[[_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
     int l = (int)strlen(d) + 1;
@@ -520,7 +521,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
 // correspondingly changes the extension of the output file name
 {
   if (fl_mac_os_version < 100600) return; // because of setNameFieldStringValue and nameFieldStringValue
-  char *s = strdup([[(NSPopUpButton*)sender titleOfSelectedItem] UTF8String]);
+  char *s = fl_strdup([[(NSPopUpButton*)sender titleOfSelectedItem] UTF8String]);
   if (!s) return;
   char *p = strchr(s, '(');
   if (!p) p = s;
@@ -724,7 +725,7 @@ int Fl_Quartz_Native_File_Chooser_Driver::post() {
           char *p = _filt_patt[_filt_value];
           char *q = strchr(p, '.'); if(!q) q = p-1;
           do q++; while (*q==' ' || *q=='{');
-          p = strdup(q);
+          p = fl_strdup(q);
           q = strchr(p, ','); if (q) *q = 0;
           [_panel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:p]]];
           free(p);

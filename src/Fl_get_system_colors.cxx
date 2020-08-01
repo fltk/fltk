@@ -21,6 +21,7 @@
 #include <FL/platform.H>
 #include <FL/math.h>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -163,9 +164,9 @@ int Fl::scheme(const char *s) {
 
   if (s) {
     if (!fl_ascii_strcasecmp(s, "none") || !fl_ascii_strcasecmp(s, "base") || !*s) s = 0;
-    else if (!fl_ascii_strcasecmp(s, "gtk+")) s = strdup("gtk+");
-    else if (!fl_ascii_strcasecmp(s, "plastic")) s = strdup("plastic");
-    else if (!fl_ascii_strcasecmp(s, "gleam")) s = strdup("gleam");
+    else if (!fl_ascii_strcasecmp(s, "gtk+")) s = fl_strdup("gtk+");
+    else if (!fl_ascii_strcasecmp(s, "plastic")) s = fl_strdup("plastic");
+    else if (!fl_ascii_strcasecmp(s, "gleam")) s = fl_strdup("gleam");
     else s = 0;
   }
   if (scheme_) free((void*)scheme_);

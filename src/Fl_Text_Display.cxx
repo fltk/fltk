@@ -20,10 +20,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>     // fl_strdup()
 #include "flstring.h"
 #include <limits.h>
 #include <ctype.h>
-#include <string.h>     // strdup()
+#include <string.h>
 #include <FL/Fl.H>
 #include <FL/platform.H>
 #include <FL/Fl_Text_Buffer.H>
@@ -171,7 +172,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   linenumber_fgcolor_ = FL_INACTIVE_COLOR;
   linenumber_bgcolor_ = 53;     // ~90% gray
   linenumber_align_   = FL_ALIGN_RIGHT;
-  linenumber_format_  = strdup("%d");
+  linenumber_format_  = fl_strdup("%d");
 
   // Method calls -- only AFTER all members initialized
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
@@ -326,7 +327,7 @@ Fl_Align Fl_Text_Display::linenumber_align() const {
 */
 void Fl_Text_Display::linenumber_format(const char* val) {
   if ( linenumber_format_ ) free((void*)linenumber_format_);
-  linenumber_format_ = val ? strdup(val) : 0;
+  linenumber_format_ = val ? fl_strdup(val) : 0;
 }
 
 /**

@@ -325,6 +325,7 @@
 #include <FL/platform.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -945,7 +946,7 @@ Fl_File_Chooser::filter(const char *p)          // I - Pattern(s)
   if (!p || !*p) p = "*";
 
   // Copy the pattern string...
-  copyp = strdup(p);
+  copyp = fl_strdup(p);
 
   // Separate the pattern string as necessary...
   showChoice->clear();

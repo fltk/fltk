@@ -24,6 +24,7 @@
 
 #include "../../Fl_System_Driver.H"
 #include <stdarg.h>
+#include <string.h>  // strdup
 
 /*
  Move everything here that manages the system interface.
@@ -34,6 +35,7 @@
  - directory and file access
  - system time and system timer
  - multithreading
+ - string management
  */
 
 class Fl_WinAPI_System_Driver : public Fl_System_Driver
@@ -116,6 +118,7 @@ public:
   virtual void remove_fd(int, int when);
   virtual void remove_fd(int);
   virtual void gettime(time_t *sec, int *usec);
+  virtual char* strdup(const char *s) { return ::_strdup(s); }
 };
 
 #endif // FL_WINAPI_SYSTEM_DRIVER_H

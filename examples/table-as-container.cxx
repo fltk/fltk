@@ -75,7 +75,8 @@ public:
           } else {
             // Create the light buttons
             sprintf(s, "%d/%d ", r, c);
-            Fl_Light_Button *butt = new Fl_Light_Button(X,Y,W,H,strdup(s));
+            Fl_Light_Button *butt = new Fl_Light_Button(X,Y,W,H);
+            butt->copy_label(s);
             butt->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
             butt->callback(button_cb, (void*)0);
             butt->value( ((r+c*2) & 4 ) ? 1 : 0);

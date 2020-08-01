@@ -8,6 +8,7 @@
 #include <FL/Fl.H>      // Fl_Timeout_Handler..
 #include <FL/fl_ask.H>  // fl_alert()
 #include <FL/fl_utf8.h> // fl_utf8fromwc()
+#include <FL/fl_string.h> // fl_strdup()
 
 #include "ExternalCodeEditor_WIN32.h"
 
@@ -83,7 +84,7 @@ ExternalCodeEditor::~ExternalCodeEditor() {
 //
 void ExternalCodeEditor::set_filename(const char *val) {
   if ( filename_ ) free((void*)filename_);
-  filename_ = val ? strdup(val) : 0;
+  filename_ = val ? fl_strdup(val) : 0;
 }
 
 // [Public] Is editor running?

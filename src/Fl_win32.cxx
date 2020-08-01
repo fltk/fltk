@@ -60,6 +60,7 @@ void fl_cleanup_dc_list(void);
 #include "drivers/WinAPI/Fl_WinAPI_Screen_Driver.H"
 #include "drivers/GDI/Fl_GDI_Graphics_Driver.H"
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Enumerations.H>
@@ -1919,7 +1920,7 @@ public:
       NName += 5;
       name = (char **)realloc(name, NName * sizeof(char *));
     }
-    name[nName++] = strdup(n);
+    name[nName++] = fl_strdup(n);
   }
   char has_name(const char *n) {
     int i;

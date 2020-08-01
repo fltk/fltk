@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <string>
 #include <vector>
 #include <algorithm>            // STL sort
 
@@ -57,7 +58,7 @@ static const char *G_header[] = { "Perms", "#L", "Own", "Group", "Size", "Date",
 // A single row of columns
 class Row {
 public:
-    std::vector<char*> cols;
+    std::vector<std::string> cols;
 };
 
 // Sort class to handle sorting column using std::sort
@@ -69,8 +70,8 @@ public:
         _reverse = reverse;
     }
     bool operator()(const Row &a, const Row &b) {
-        const char *ap = ( _col < (int)a.cols.size() ) ? a.cols[_col] : "",
-                   *bp = ( _col < (int)b.cols.size() ) ? b.cols[_col] : "";
+        const char *ap = ( _col < (int)a.cols.size() ) ? a.cols[_col].c_str() : "",
+                   *bp = ( _col < (int)b.cols.size() ) ? b.cols[_col].c_str() : "";
         if ( isdigit(*ap) && isdigit(*bp) ) {           // cheezy detection of numeric data
             // Numeric sort
             int av=0; sscanf(ap, "%d", &av);
@@ -86,9 +87,9 @@ public:
 // Derive a custom class from Fl_Table_Row
 class MyTable : public Fl_Table_Row {
 private:
-    std::vector<Row> _rowdata;                                  // data in each row
-    int _sort_reverse;
-    int _sort_lastcol;
+    std::vector<Row> rowdata_;                                  // data in each row
+    int sort_reverse_;
+    int sort_lastcol_;
 
     static void event_callback(Fl_Widget*, void*);
     void event_callback2();                                     // callback for table events
@@ -102,8 +103,8 @@ protected:
 public:
     // Ctor
     MyTable(int x, int y, int w, int h, const char *l=0) : Fl_Table_Row(x,y,w,h,l) {
-        _sort_reverse = 0;
-        _sort_lastcol = -1;
+        sort_reverse_ = 0;
+        sort_lastcol_ = -1;
         end();
         callback(event_callback, (void*)this);
     }
@@ -115,7 +116,7 @@ public:
 
 // Sort a column up or down
 void MyTable::sort_column(int col, int reverse) {
-    std::sort(_rowdata.begin(), _rowdata.end(), SortColumn(col, reverse));
+    std::sort(rowdata_.begin(), rowdata_.end(), SortColumn(col, reverse));
     redraw();
 }
 
@@ -126,7 +127,7 @@ void MyTable::draw_sort_arrow(int X,int Y,int W,int H) {
     int xrit = X+(W-6)-0;
     int ytop = Y+(H/2)-4;
     int ybot = Y+(H/2)+4;
-    if ( _sort_reverse ) {
+    if ( sort_reverse_ ) {
         // Engraved down arrow
         fl_color(FL_WHITE);
         fl_line(xrit, ytop, xctr, ybot);
@@ -146,8 +147,8 @@ void MyTable::draw_sort_arrow(int X,int Y,int W,int H) {
 // Handle drawing all cells in table
 void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W, int H) {
     const char *s = "";
-    if ( R < (int)_rowdata.size() && C < (int)_rowdata[R].cols.size() )
-        s = _rowdata[R].cols[C];
+    if ( R < (int)rowdata_.size() && C < (int)rowdata_[R].cols.size() )
+        s = rowdata_[R].cols[C].c_str();
     switch ( context ) {
         case CONTEXT_COL_HEADER:
             fl_push_clip(X,Y,W,H); {
@@ -157,7 +158,7 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
                     fl_color(FL_BLACK);
                     fl_draw(G_header[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left
                     // Draw sort arrow
-                    if ( C == _sort_lastcol ) {
+                    if ( C == sort_lastcol_ ) {
                         draw_sort_arrow(X,Y,W,H);
                     }
                 }
@@ -192,9 +193,9 @@ void MyTable::autowidth(int pad) {
         col_width(c, w+pad);
     }
     fl_font(ROW_FONTFACE, ROW_FONTSIZE);
-    for ( int r=0; r<(int)_rowdata.size(); r++ ) {
-        for ( int c=0; c<(int)_rowdata[r].cols.size(); c++ ) {
-            w=0; fl_measure(_rowdata[r].cols[c], w, h, 0);       // pixel width of row text
+    for ( int r=0; r<(int)rowdata_.size(); r++ ) {
+        for ( int c=0; c<(int)rowdata_[r].cols.size(); c++ ) {
+            w=0; fl_measure(rowdata_[r].cols[c].c_str(), w, h, 0);       // pixel width of row text
             if ( (w + pad) > col_width(c)) col_width(c, w + pad);
         }
     }
@@ -205,8 +206,9 @@ void MyTable::autowidth(int pad) {
 // Resize parent window to size of table
 void MyTable::resize_window() {
     // Determine exact outer width of table with all columns visible
-    int width = 4;                                          // width of table borders
+    int width = 2;                                          // width of table borders
     for ( int t=0; t<cols(); t++ ) width += col_width(t);   // total width of all columns
+    width += vscrollbar->w();                               // include width of scrollbar
     width += MARGIN*2;
     if ( width < 200 || width > Fl::w() ) return;
     window()->resize(window()->x(), window()->y(), width, window()->h());  // resize window to fit
@@ -218,14 +220,15 @@ void MyTable::load_command(const char *cmd) {
     FILE *fp = popen(cmd, "r");
     cols(0);
     for ( int r=0; fgets(s, sizeof(s)-1, fp); r++ ) {
+        if ( r==0 && strncmp(s,"total ",6)==0) { --r; continue; }
         // Add a new row
-        Row newrow; _rowdata.push_back(newrow);
-        std::vector<char*> &rc = _rowdata[r].cols;
+        Row newrow; rowdata_.push_back(newrow);
+        std::vector<std::string> &rc = rowdata_[r].cols;
         // Break line into separate word 'columns'
         char *ss;
         const char *delim = " \t\n";
         for(int t=0; (t==0)?(ss=strtok(s,delim)):(ss=strtok(NULL,delim)); t++) {
-            rc.push_back(strdup(ss));
+            rc.push_back(ss);  // char* -> std::string
         }
         // Keep track of max # columns
         if ( (int)rc.size() > cols() ) {
@@ -233,7 +236,7 @@ void MyTable::load_command(const char *cmd) {
         }
     }
     // How many rows we loaded
-    rows((int)_rowdata.size());
+    rows((int)rowdata_.size());
     // Auto-calculate widths, with 20 pixel padding
     autowidth(20);
 }
@@ -251,13 +254,13 @@ void MyTable::event_callback2() {
     switch ( context ) {
         case CONTEXT_COL_HEADER: {              // someone clicked on column header
             if ( Fl::event() == FL_RELEASE && Fl::event_button() == 1 ) {
-                if ( _sort_lastcol == COL ) {   // Click same column? Toggle sort
-                    _sort_reverse ^= 1;
+                if ( sort_lastcol_ == COL ) {   // Click same column? Toggle sort
+                    sort_reverse_ ^= 1;
                 } else {                        // Click diff column? Up sort
-                    _sort_reverse = 0;
+                    sort_reverse_ = 0;
                 }
-                sort_column(COL, _sort_reverse);
-                _sort_lastcol = COL;
+                sort_column(COL, sort_reverse_);
+                sort_lastcol_ = COL;
             }
             break;
         }

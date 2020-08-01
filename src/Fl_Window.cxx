@@ -28,6 +28,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 #include <stdlib.h>
 #include "flstring.h"
 
@@ -225,7 +226,7 @@ void Fl_Window::default_xclass(const char *xc)
     default_xclass_ = 0L;
   }
   if (xc) {
-    default_xclass_ = strdup(xc);
+    default_xclass_ = fl_strdup(xc);
   }
 }
 
@@ -260,7 +261,7 @@ void Fl_Window::xclass(const char *xc)
     xclass_ = 0L;
   }
   if (xc) {
-    xclass_ = strdup(xc);
+    xclass_ = fl_strdup(xc);
     if (!default_xclass_) {
       default_xclass(xc);
     }

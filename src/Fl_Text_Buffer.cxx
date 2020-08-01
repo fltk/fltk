@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
+#include <FL/fl_string.h>
 #include "flstring.h"
 #include <ctype.h>
 #include <FL/Fl.H>
@@ -462,7 +463,7 @@ int Fl_Text_Buffer::undo(int *cursorPos)
   if (xlen && ilen) {
     undobuffersize(ilen + 1);
     undobuffer[ilen] = 0;
-    char *tmp = strdup(undobuffer);
+    char *tmp = fl_strdup(undobuffer);
     replace(b, undoat, tmp);
     if (cursorPos)
       *cursorPos = mCursorPosHint;

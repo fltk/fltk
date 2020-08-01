@@ -36,6 +36,7 @@
 #include "../src/flstring.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/fl_string.h>
 
 static Fl_Double_Window *print_panel=(Fl_Double_Window *)0;
 static Fl_Group *print_panel_controls=(Fl_Group *)0;
@@ -541,7 +542,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
         }
         *qptr = '\0';
 
-        print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
+        print_choice->add(qname, 0, 0, (void *)fl_strdup(name), 0);
       } else if (!strncmp(line, "system default destination: ", 28)) {
         if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\0';
       }
@@ -553,7 +554,7 @@ printing_style print_load() { // return whether SystemV or BSD printing style is
     while (fgets(line, sizeof(line),lpstat)) { // get names of all known printers
       if (*line == '#' || (p = strchr(line, '|')) == NULL) continue;
       *p = 0;
-      print_choice->add(line, 0, 0, (void *)strdup(line), 0);
+      print_choice->add(line, 0, 0, (void *)fl_strdup(line), 0);
       style = BSD;
       *p = '|';
       while (1) {

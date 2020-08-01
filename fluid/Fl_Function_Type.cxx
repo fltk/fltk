@@ -17,6 +17,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_File_Chooser.H>
+#include <FL/fl_string.h>
 #include "Fl_Type.h"
 #include <FL/fl_show_input.H>
 #include <FL/Fl_File_Chooser.H>
@@ -843,7 +844,7 @@ void Fl_Data_Type::open() {
     }
     // store the variable name:
     const char*c = data_input->value();
-    char *s = strdup(c), *p = s, *q, *n;
+    char *s = fl_strdup(c), *p = s, *q, *n;
     for (;;++p) {
       if (!isspace((unsigned char)(*p))) break;
     }
@@ -890,7 +891,7 @@ void Fl_Data_Type::open() {
     else if (!filename_ && *c)
       set_modflag(1);
     if (filename_) { free((void*)filename_); filename_ = 0L; }
-    if (c && *c) filename_ = strdup(c);
+    if (c && *c) filename_ = fl_strdup(c);
     // store the comment
     c = data_comment_input->buffer()->text();
     if (c && *c) {
@@ -1016,7 +1017,7 @@ Fl_Type *Fl_DeclBlock_Type::make() {
   Fl_DeclBlock_Type *o = new Fl_DeclBlock_Type();
   o->name("#if 1");
   o->public_ = 0;
-  o->after = strdup("#endif");
+  o->after = fl_strdup("#endif");
   o->add(p);
   o->factory = this;
   return o;
@@ -1188,7 +1189,7 @@ void Fl_Comment_Type::open() {
                                        "Use forward slashes '/' to create submenus.",
                                        "My Comment");
           if (xname) {
-            char *name = strdup(xname);
+            char *name = fl_strdup(xname);
             for (char*s=name;*s;s++) if (*s==':') *s = ';';
             int n;
             Fl_Preferences db(Fl_Preferences::USER, "fltk.org", "fluid_comments");
@@ -1305,7 +1306,7 @@ void Fl_Comment_Type::write_code1() {
     return;
   }
   // copy the comment line by line, add the double slash if needed
-  char *txt = strdup(c);
+  char *txt = fl_strdup(c);
   char *b = txt, *e = txt;
   for (;;) {
     // find the end of the line and set it to NUL
@@ -1374,7 +1375,7 @@ int Fl_Class_Type::is_public() const {return public_;}
 
 void Fl_Class_Type::prefix(const char*p) {
   free((void*) class_prefix);
-  class_prefix=strdup(p ? p : "" );
+  class_prefix=fl_strdup(p ? p : "" );
 }
 
 Fl_Type *Fl_Class_Type::make() {
@@ -1440,7 +1441,7 @@ void Fl_Class_Type::open() {
       else if (!w) Fl::wait();
     }
     const char*c = c_name_input->value();
-    char *s = strdup(c);
+    char *s = fl_strdup(c);
     size_t len = strlen(s);
     if (!*s) goto OOPS;
     p = (char*) (s+len-1);

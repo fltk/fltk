@@ -25,6 +25,7 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/fl_string.h>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include <io.h>
 #else
@@ -257,7 +258,7 @@ void template_load() {
 
       // Add the template to the browser...
       snprintf(filename, sizeof(filename), "%s/%s", path, files[i]->d_name);
-      template_browser->add(name, strdup(filename));
+      template_browser->add(name, fl_strdup(filename));
     }
 
     free(files[i]);

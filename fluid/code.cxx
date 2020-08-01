@@ -20,6 +20,7 @@
 #include <stdarg.h>
 
 #include <FL/Fl.H>
+#include <FL/fl_string.h>
 #include "Fl_Type.h"
 #include "alignment_panel.h"
 
@@ -46,7 +47,7 @@ struct id {
   char* text;
   void* object;
   id *left, *right;
-  id (const char* t, void* o) : text(strdup(t)), object(o) {left = right = 0;}
+  id (const char* t, void* o) : text(fl_strdup(t)), object(o) {left = right = 0;}
   ~id();
 };
 
@@ -109,7 +110,7 @@ struct included {
   char *text;
   included *left, *right;
   included(const char *t) {
-    text = strdup(t);
+    text = fl_strdup(t);
     left = right = 0;
   }
   ~included();

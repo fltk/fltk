@@ -21,6 +21,7 @@
 
 #include "../Xutf8.h"
 #include <X11/Xlib.h>
+#include <FL/fl_string.h>  // fl_strdup()
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -215,7 +216,7 @@ find_best_font(Display  *dpy,
   list = XListFonts(dpy, *name, 1, &cnt);
   if (cnt && list) {
     free(*name);
-    *name = strdup(list[0]);
+    *name = fl_strdup(list[0]);
     s = XLoadQueryFont(dpy, *name);
     XFreeFontNames(list);
     return s;

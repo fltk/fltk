@@ -56,6 +56,7 @@
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 #include <FL/filename.H>        // fl_open_uri()
+#include <FL/fl_string.h>       // fl_strdup()
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
@@ -3404,7 +3405,7 @@ int Fl_Help_View::load(const char *f)
              "<P>Unable to follow the link \"%s\" - "
              "%s.</P></BODY>",
              localname, strerror(errno));
-    value_ = strdup(error);
+    value_ = fl_strdup(error);
     ret = -1;
   }
 
@@ -3543,7 +3544,7 @@ Fl_Help_View::value(const char *val)    // I - Text to view
   if (!val)
     return;
 
-  value_ = strdup(val);
+  value_ = fl_strdup(val);
 
   initial_load = 1;
   format();

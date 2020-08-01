@@ -25,6 +25,7 @@
 
 #include <FL/platform.H>
 #include <FL/fl_draw.H>
+#include <FL/fl_string.h>
 
 #include <jni.h>
 
@@ -376,7 +377,7 @@ void *Fl_Android_Application::thread_entry(void* param)
   pthread_cond_broadcast(&pCond);
   pthread_mutex_unlock(&pMutex);
 
-  char *argv[] = { strdup(pActivity->obbPath), 0 };
+  char *argv[] = { fl_strdup(pActivity->obbPath), 0 };
   main(1, argv);
 
   destroy();

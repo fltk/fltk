@@ -29,6 +29,9 @@ decl {\#include <stdlib.h>} {private local
 decl {\#include "../src/flstring.h"} {private local
 }
 
+decl {\#include <FL/fl_string.h>} {private local
+}
+
 decl {\#include <errno.h>} {private local
 }
 
@@ -253,7 +256,7 @@ for (i = 0; i < num_files; i ++) {
 
     // Add the template to the browser...
     snprintf(filename, sizeof(filename), "%s/%s", path, files[i]->d_name);
-    template_browser->add(name, strdup(filename));
+    template_browser->add(name, fl_strdup(filename));
   }
 
   free(files[i]);

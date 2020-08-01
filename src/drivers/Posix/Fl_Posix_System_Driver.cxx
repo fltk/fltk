@@ -20,6 +20,7 @@
 #include <FL/Fl_File_Browser.H>
 #include <FL/Fl_File_Icon.H>
 #include <FL/filename.H>
+#include <FL/fl_string.h>
 #include <FL/Fl.H>
 #include <locale.h>
 #include <stdio.h>
@@ -65,7 +66,7 @@ void *Fl_Posix_System_Driver::dlopen(const char *filename)
   ptr = double_dlopen(filename);
 #  ifdef __APPLE_CC__ // allows testing on Darwin + XQuartz + fink
   if (!ptr) {
-    char *f_dylib = strdup(filename);
+    char *f_dylib = fl_strdup(filename);
     strcpy(strrchr(f_dylib, '.'), ".dylib");
     char path[FL_PATH_MAX];
     sprintf(path, "/sw/lib/%s", f_dylib);
