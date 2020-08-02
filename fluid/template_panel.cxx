@@ -20,12 +20,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../src/flstring.h"
+#include <FL/fl_string.h>
 #include <errno.h>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Preferences.H>
-#include <FL/fl_string.h>
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include <io.h>
 #else
