@@ -212,10 +212,6 @@ typedef BOOL(WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
 extern flTypeImmReleaseContext flImmReleaseContext;
 
 
-void Fl_GDI_Graphics_Driver::reset_spot()
-{
-}
-
 void Fl_GDI_Graphics_Driver::set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
   if (!win) return;
