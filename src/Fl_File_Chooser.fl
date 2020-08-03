@@ -78,11 +78,11 @@ class FL_EXPORT Fl_File_Chooser {open
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
 window->hide();} open
-      private xywh {1171 438 490 380} type Double resizable
+      private xywh {1171 438 490 380} type Double hide resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
-      code3 {\#include <string.h>} modal visible
+      code3 {\#include <string.h>} modal
     } {
       Fl_Group {} {open
         private xywh {10 10 470 25}

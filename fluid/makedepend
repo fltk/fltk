@@ -139,6 +139,7 @@ code.o: ../FL/Fl_Shared_Image.H
 code.o: ../FL/Fl_Simple_Terminal.H
 code.o: ../FL/Fl_Slider.H
 code.o: ../FL/Fl_Spinner.H
+code.o: ../FL/fl_string.h
 code.o: ../FL/Fl_Tabs.H
 code.o: ../FL/Fl_Text_Buffer.H
 code.o: ../FL/Fl_Text_Display.H
@@ -185,6 +186,7 @@ ExternalCodeEditor_UNIX.o: ../FL/Enumerations.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl.H
 ExternalCodeEditor_UNIX.o: ../FL/fl_ask.H
 ExternalCodeEditor_UNIX.o: ../FL/Fl_Export.H
+ExternalCodeEditor_UNIX.o: ../FL/fl_string.h
 ExternalCodeEditor_UNIX.o: ../FL/fl_types.h
 ExternalCodeEditor_UNIX.o: ../FL/fl_utf8.h
 ExternalCodeEditor_UNIX.o: ../FL/platform_types.h
@@ -308,6 +310,7 @@ file.o: ../FL/Fl_Shared_Image.H
 file.o: ../FL/Fl_Simple_Terminal.H
 file.o: ../FL/Fl_Slider.H
 file.o: ../FL/Fl_Spinner.H
+file.o: ../FL/fl_string.h
 file.o: ../FL/Fl_Tabs.H
 file.o: ../FL/Fl_Text_Buffer.H
 file.o: ../FL/Fl_Text_Display.H
@@ -380,6 +383,7 @@ fluid.o: ../FL/Fl_Shared_Image.H
 fluid.o: ../FL/Fl_Simple_Terminal.H
 fluid.o: ../FL/Fl_Slider.H
 fluid.o: ../FL/Fl_Spinner.H
+fluid.o: ../FL/fl_string.h
 fluid.o: ../FL/Fl_Tabs.H
 fluid.o: ../FL/Fl_Text_Buffer.H
 fluid.o: ../FL/Fl_Text_Display.H
@@ -446,6 +450,7 @@ Fluid_Image.o: ../FL/Fl_RGB_Image.H
 Fluid_Image.o: ../FL/Fl_Scrollbar.H
 Fluid_Image.o: ../FL/Fl_Shared_Image.H
 Fluid_Image.o: ../FL/Fl_Slider.H
+Fluid_Image.o: ../FL/fl_string.h
 Fluid_Image.o: ../FL/Fl_Tabs.H
 Fluid_Image.o: ../FL/Fl_Tile.H
 Fluid_Image.o: ../FL/fl_types.h
@@ -507,6 +512,7 @@ Fl_Function_Type.o: ../FL/fl_show_input.H
 Fl_Function_Type.o: ../FL/Fl_Simple_Terminal.H
 Fl_Function_Type.o: ../FL/Fl_Slider.H
 Fl_Function_Type.o: ../FL/Fl_Spinner.H
+Fl_Function_Type.o: ../FL/fl_string.h
 Fl_Function_Type.o: ../FL/Fl_Tabs.H
 Fl_Function_Type.o: ../FL/Fl_Text_Buffer.H
 Fl_Function_Type.o: ../FL/Fl_Text_Display.H
@@ -939,6 +945,7 @@ template_panel.o: ../FL/Fl_Return_Button.H
 template_panel.o: ../FL/Fl_Scrollbar.H
 template_panel.o: ../FL/Fl_Shared_Image.H
 template_panel.o: ../FL/Fl_Slider.H
+template_panel.o: ../FL/fl_string.h
 template_panel.o: ../FL/fl_types.h
 template_panel.o: ../FL/fl_utf8.h
 template_panel.o: ../FL/Fl_Valuator.H

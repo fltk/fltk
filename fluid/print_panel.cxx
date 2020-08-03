@@ -20,8 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../src/flstring.h"
-#include <FL/Fl_Preferences.H>
 #include <FL/fl_string.h>
+#include <FL/Fl_Preferences.H>
 extern Fl_Preferences fluid_prefs;
 
 Fl_Double_Window *print_panel=(Fl_Double_Window *)0;
