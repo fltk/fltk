@@ -212,8 +212,10 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   }
   int dash_part = line_style_ & 0xFF;
   if (dash_part == FL_SOLID)  {
-    if (dasharray_ && strcmp(dasharray_, "none")) free(dasharray_);
-    dasharray_ = fl_strdup("none");
+    if (strcmp(dasharray_, "none")) {
+      if (dasharray_) free(dasharray_);
+      dasharray_ = fl_strdup("none");
+    }
   } else {
     int cap_part = (line_style_ & 0xF00);
     bool is_flat = (cap_part == FL_CAP_FLAT || cap_part == 0);
