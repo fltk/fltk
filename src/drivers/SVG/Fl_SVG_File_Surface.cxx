@@ -213,7 +213,7 @@ void Fl_SVG_Graphics_Driver::compute_dasharray(float s, char *dashes) {
   int dash_part = line_style_ & 0xFF;
   if (dash_part == FL_SOLID)  {
     if (strcmp(dasharray_, "none")) {
-      if (dasharray_) free(dasharray_);
+      free(dasharray_);
       dasharray_ = fl_strdup("none");
     }
   } else {
