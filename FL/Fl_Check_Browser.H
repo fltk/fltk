@@ -39,30 +39,29 @@ protected:
   void item_draw(void *, int, int, int, int) const;
   void item_select(void *, int);
   int item_selected(void *) const;
-  const char *item_text(void *item) const /* override */;
+  const char *item_text(void *item) const; // override
 
 public:
-  void *item_at(int index) const /* override */;
-  void item_swap(int ia, int ib) /* override */;
-  void item_swap(void *a, void *b) /* override */;
+  void *item_at(int index) const;   // override
+  void item_swap(int ia, int ib);   // override
+  void item_swap(void *a, void *b); // override
 
   /* private data */
 
-  public: // IRIX 5.3 C++ compiler doesn't support private structures...
+public: // IRIX 5.3 C++ compiler doesn't support private structures...
 
 #ifndef FL_DOXYGEN
   /** For internal use only. */
   struct cb_item {
-          cb_item *next;        /**< For internal use only. */
-          cb_item *prev;        /**< For internal use only. */
-          char checked;         /**< For internal use only. */
-          char selected;        /**< For internal use only. */
-          char *text;           /**< For internal use only. */
+    cb_item *next;        /**< For internal use only. */
+    cb_item *prev;        /**< For internal use only. */
+    char checked;         /**< For internal use only. */
+    char selected;        /**< For internal use only. */
+    char *text;           /**< For internal use only. */
   };
 #endif // !FL_DOXYGEN
 
-  private:
-
+private:
   cb_item *first;
   cb_item *last;
   cb_item *cache;
@@ -72,10 +71,9 @@ public:
   cb_item *find_item(int) const;
   int lineno(cb_item *) const;
 
-  public:
-
+public:
   Fl_Check_Browser(int x, int y, int w, int h, const char *l = 0);
-   /** The destructor deletes all list items and destroys the browser. */
+  /** The destructor deletes all list items and destroys the browser. */
   ~Fl_Check_Browser() { clear(); }
   int add(char *s);               // add an (unchecked) item
   int add(char *s, int b);        // add an item and set checked
@@ -83,7 +81,7 @@ public:
   int remove(int item);           // delete an item. Returns nitems()
 
   // inline const char * methods to avoid breaking binary compatibility...
-   /** See int Fl_Check_Browser::add(char *s) */
+  /** See int Fl_Check_Browser::add(char *s) */
   int add(const char *s) { return add((char *)s); }
   /** See int Fl_Check_Browser::add(char *s) */
   int add(const char *s, int b) { return add((char *)s, b); }
@@ -94,21 +92,19 @@ public:
     this.
   */
   int nitems() const { return nitems_; }
-  /**    Returns how many items are currently checked.  */
+  /** Returns how many items are currently checked. */
   int nchecked() const { return nchecked_; }
   int checked(int item) const;
   void checked(int item, int b);
-  /**    Equivalent to Fl_Check_Browser::checked(item, 1).  */
+  /** Equivalent to Fl_Check_Browser::checked(item, 1). */
   void set_checked(int item) { checked(item, 1); }
   void check_all();
   void check_none();
   int value() const;              // currently selected item
   char *text(int item) const;     // returns pointer to internal buffer
 
-  protected:
-
+protected:
   int handle(int);
 };
 
 #endif // Fl_Check_Browser_H
-
