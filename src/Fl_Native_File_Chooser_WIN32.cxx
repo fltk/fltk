@@ -438,6 +438,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
     if ( len >= _ofn_ptr->nMaxFile ) {
       char msg[80];
       sprintf(msg, "preset_file() filename is too long: %ld is >=%ld", (long)len, (long)fsize);
+      errmsg(msg);
       return(-1);
     }
     wcscpy(_ofn_ptr->lpstrFile, utf8towchar(_preset_file));
