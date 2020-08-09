@@ -93,9 +93,14 @@ int main(int argc, char **argv) {
   int argn = 1;
 #ifdef __APPLE__
   // OS X may add the process number as the first argument - ignore
-  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0)
-    argn++;
+  if (argc>argn && strncmp(argv[argn], "-psn_", 5)==0) ++argn;
 #endif
+
+  // Parse preset filename (if any)
+  char *filename = 0;
+  if ( argc>argn && argv[argn][0] != '-' ) {
+    filename = argv[argn++];
+  }
 
   Fl_Window *win = new Fl_Window(640, 400+TERMINAL_HEIGHT, "Native File Chooser Test");
   win->size_range(win->w(), win->h(), 0, 0);
@@ -105,7 +110,7 @@ int main(int argc, char **argv) {
 
     int x = 80, y = 10;
     G_filename = new Fl_Input(x, y, win->w()-80-10, 25, "Filename");
-    G_filename->value(argc <= argn ? "." : argv[argn]);
+    G_filename->value(filename ? filename : ".");
     G_filename->tooltip("Default filename");
 
     y += G_filename->h() + 10;
@@ -148,6 +153,11 @@ int main(int argc, char **argv) {
     win->resizable(G_filter);
   }
   win->end();
-  win->show(argc, argv);
+  // Pass show() remaining args we haven't already parsed..
+  {
+    char **args = argv+(argn-1);
+    int   nargs = argc-(argn-1);
+    win->show(nargs, args);
+  }
   return(Fl::run());
 }

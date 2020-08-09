@@ -29,6 +29,7 @@
 
 #define FNFC_MAX_PATH 32768     // XXX: MAX_PATH under win32 is 260, too small for modern use
 
+#include <FL/fl_string.h>       // fl_strdup()
 #include <FL/Fl_Native_File_Chooser.H>
 #  include <windows.h>
 #  include <commdlg.h>          // OPENFILENAMEW, GetOpenFileName()
@@ -65,6 +66,7 @@ private:
   void ClearBINF();
   void Win2Unix(char *s);
   void Unix2Win(char *s);
+  bool IsUnixPath(const char *s);
   int showfile();
   int showdir();
 
@@ -338,14 +340,24 @@ void Fl_WinAPI_Native_File_Chooser_Driver::ClearBINF() {
 
 // CONVERT WINDOWS BACKSLASHES TO UNIX FRONTSLASHES
 void Fl_WinAPI_Native_File_Chooser_Driver::Win2Unix(char *s) {
-  for ( ; *s; s++ )
-    if ( *s == '\\' ) *s = '/';
+  while ( s=strchr(s,'\\') ) *s = '/';
 }
 
 // CONVERT UNIX FRONTSLASHES TO WINDOWS BACKSLASHES
 void Fl_WinAPI_Native_File_Chooser_Driver::Unix2Win(char *s) {
-  for ( ; *s; s++ )
-    if ( *s == '/' ) *s = '\\';
+  while ( s=strchr(s,'/') ) *s = '\\';
+}
+
+// SEE IF PATH IS FRONT SLASH OR BACKSLASH STYLE
+//    Use this to preserve path style after windows dialog appears.
+//    If no slashes are specified, windows is assumed.
+//    If a mix of both path styles is used, windows is assumed.
+//
+bool Fl_WinAPI_Native_File_Chooser_Driver::IsUnixPath(const char *s) {
+  if ( !s ) return false;               // NULL?
+  if ( strchr(s, '\\') ) return false;  // windows style?
+  if ( strchr(s, '/')  ) return true;   // unix style?
+  return false;                         // no slashes? assume native windows
 }
 
 // SAVE THE CURRENT WORKING DIRECTORY
@@ -375,6 +387,7 @@ static void RestoreCWD(char *thecwd) {
 
 // SHOW FILE BROWSER
 int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
+  bool unixpath = IsUnixPath(_directory) | IsUnixPath(_preset_file);    // caller uses unix paths?
   ClearOFN();
   clear_pathnames();
   size_t fsize = FNFC_MAX_PATH;
@@ -403,7 +416,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
   }
   // SPACE FOR RETURNED FILENAME
   _ofn_ptr->lpstrFile    = new WCHAR[fsize];
-  _ofn_ptr->nMaxFile     = (DWORD) fsize-1;
+  _ofn_ptr->nMaxFile     = (DWORD)(fsize-1);
   _ofn_ptr->lpstrFile[0] = 0;
   _ofn_ptr->lpstrFile[1] = 0;           // dnull
   // PARENT WINDOW
@@ -434,27 +447,40 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
   //     XXX: this doesn't preselect the item in the listview.. why?
   //
   if ( _preset_file ) {
-    size_t len = strlen(_preset_file);
+    // Temp copy of _dirname we can convert to windows path if needed
+    char *winpath = fl_strdup(_preset_file);
+    if ( unixpath ) Unix2Win(winpath);
+    size_t len = strlen(winpath);
     if ( len >= _ofn_ptr->nMaxFile ) {
       char msg[80];
       sprintf(msg, "preset_file() filename is too long: %ld is >=%ld", (long)len, (long)fsize);
       errmsg(msg);
       return(-1);
     }
-    wcscpy(_ofn_ptr->lpstrFile, utf8towchar(_preset_file));
-    // Unix2Win(_ofn_ptr->lpstrFile);
+    wcscpy(_ofn_ptr->lpstrFile, utf8towchar(winpath));
     len = wcslen(_ofn_ptr->lpstrFile);
     _ofn_ptr->lpstrFile[len+0] = 0;     // multiselect needs dnull
     _ofn_ptr->lpstrFile[len+1] = 0;
+    free(winpath);  // free temp copy now that we have a new wchar
+    //wprintf(L"lpstrFile is '%ls'\n", (WCHAR*)(_ofn_ptr->lpstrFile));
   }
+  // PRESET DIR
+  //     XXX: See KB Q86920 for doc bug:
+  //     http://support.microsoft.com/default.aspx?scid=kb;en-us;86920
+  //
   if ( _directory ) {
-    // PRESET DIR
-    //     XXX: See KB Q86920 for doc bug:
-    //     http://support.microsoft.com/default.aspx?scid=kb;en-us;86920
+    // Temp copy of _dirname we can convert to windows path if needed
+    char *winpath = fl_strdup(_directory);
+    // Caller specified unix front slash path?
+    //     If so, convert to backslashes; windows native browser mishandles unix style paths.
+    //     We'll convert back to unix style when dialog completes.
     //
-    _ofn_ptr->lpstrInitialDir    = new WCHAR[FNFC_MAX_PATH];
-    wcscpy((WCHAR *)_ofn_ptr->lpstrInitialDir, utf8towchar(_directory));
-    // Unix2Win((char*)_ofn_ptr->lpstrInitialDir);
+    if ( unixpath ) Unix2Win(winpath);
+    // Make a wide char version of potentially utf8 string
+    _ofn_ptr->lpstrInitialDir = new WCHAR[FNFC_MAX_PATH];
+    wcscpy((WCHAR *)_ofn_ptr->lpstrInitialDir, utf8towchar(winpath));
+    free(winpath);  // free temp copy now that we have a new wchar
+    //wprintf(L"lpstrInitialDir is '%ls'\n", (WCHAR*)(_ofn_ptr->lpstrInitialDir));
   }
   // SAVE THE CURRENT DIRECTORY
   //     See above warning (XXX) for OFN_NOCHANGEDIR
@@ -485,7 +511,7 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
     case Fl_Native_File_Chooser::BROWSE_FILE:
     case Fl_Native_File_Chooser::BROWSE_SAVE_FILE:
       set_single_pathname(wchartoutf8(_ofn_ptr->lpstrFile));
-      // Win2Unix(_pathnames[_tpathnames-1]);
+      if ( unixpath ) Win2Unix(_pathnames[_tpathnames-1]); // preserve unix style path
       break;
     case Fl_Native_File_Chooser::BROWSE_MULTI_FILE: {
       // EXTRACT MULTIPLE FILENAMES
@@ -497,11 +523,12 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
         //
         char pathname[FNFC_MAX_PATH];
         for ( const WCHAR *s = dirname + dirlen + 1;
-                 *s; s+= (wcslen(s)+1)) {
-                strcpy(pathname, wchartoutf8(dirname));
-                strcat(pathname, "\\");
-                strcat(pathname, wchartoutf8(s));
-                add_pathname(pathname);
+              *s; s += (wcslen(s)+1)) {
+          strncpy(pathname, wchartoutf8(dirname), FNFC_MAX_PATH);
+          strncat(pathname, "\\",                 FNFC_MAX_PATH);
+          strncat(pathname, wchartoutf8(s),       FNFC_MAX_PATH);
+	  pathname[FNFC_MAX_PATH-1] = 0;
+          add_pathname(pathname);
         }
       }
       // XXX
@@ -511,7 +538,12 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showfile() {
       //
       if ( _tpathnames == 0 ) {
         add_pathname(wchartoutf8(dirname));
-        // Win2Unix(_pathnames[_tpathnames-1]);
+      }
+      // Caller specified unix path? Return unix paths
+      if ( unixpath ) {
+        for ( int t=0; t<_tpathnames; t++ ) {
+          Win2Unix(_pathnames[t]);
+        }
       }
       break;
     }
@@ -553,6 +585,7 @@ static int CALLBACK Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data) {
 
 // SHOW DIRECTORY BROWSER
 int Fl_WinAPI_Native_File_Chooser_Driver::showdir() {
+  bool unixpath = IsUnixPath(_directory);      // caller uses unix paths?
   // initialize OLE only once
   fl_open_display();            // init needed by BIF_USENEWUI
   ClearBINF();
@@ -609,10 +642,20 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showdir() {
   // PRESET DIR
   WCHAR presetname[FNFC_MAX_PATH];
   if ( _directory ) {
-    // Unix2Win(presetname);
-    wcsncpy(presetname, utf8towchar(_directory), FNFC_MAX_PATH);
-    presetname[FNFC_MAX_PATH-1] = 0;
+    // Temp copy of _dirname we can convert to windows path if needed
+    char *winpath = fl_strdup(_directory);
+    // Caller specified unix front slash path?
+    //     If so, convert to backslashes; windows native browser mishandles unix style paths.
+    //     We'll convert back to unix style when dialog completes.
+    //
+    if ( unixpath ) Unix2Win(winpath);
+    // Wide char version of potentially utf8 string
+    wcsncpy(presetname, utf8towchar(winpath), FNFC_MAX_PATH);
+    free(winpath);  // free temp copy now that we have a new wchar
+    presetname[FNFC_MAX_PATH-1] = 0; // dnull
+    presetname[FNFC_MAX_PATH-2] = 0;
     _binf_ptr->lParam = (LPARAM)presetname;
+    //wprintf(L"presetname is '%ls'\n", (WCHAR*)(presetname));
   }
   else _binf_ptr->lParam = 0;
   _binf_ptr->lpfn = Dir_CB;
@@ -627,9 +670,8 @@ int Fl_WinAPI_Native_File_Chooser_Driver::showdir() {
 
   WCHAR path[FNFC_MAX_PATH];
   if ( SHGetPathFromIDListW(pidl, path) ) {
-    // Win2Unix(path);
-    //add_pathname(path);
     add_pathname(wchartoutf8(path));
+    if ( unixpath ) Win2Unix(_pathnames[_tpathnames-1]); // preserve unix style path
   }
   FreePIDL(pidl);
   if ( !wcslen(path) ) return(1);             // don't return empty pathnames
