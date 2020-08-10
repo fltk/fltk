@@ -31,6 +31,32 @@
   \image html Fl_File_Chooser.jpg
   \image latex  Fl_File_Chooser.jpg "Fl_File_Chooser" width=12cm
 
+  Features include:
+
+    - Multiple filter patterns can be specified, with parenthesis around filters,
+      and tabs to separate each pattern, e.g.:
+        \code
+        char pattern[] = "Image Files (*.{bmp,gif,jpg,png,xbm,xpm})\t"
+                         "Web Files (*.{htm,html,php})\t"
+                         "All Files (*)";
+        \endcode
+    - If no "*" pattern is provided, then an entry for "All Files (*)" is automatically added.
+    - An optional file preview box is provided which can be toggled by programmer or user
+      showing images, or the first 2048 bytes of printable text. 
+    - Preview image loading functions can be registered to provide custom file previews.
+    - The favorites button shows up to 100 user-saved favorite directories, the user's home
+      directory, and a filesystems item.
+    - A simple dialog is provided for managing saved directories.
+    - Shortcut keys are provided:
+         <CENTER><TABLE BORDER=1>
+           <TR><TH>Shortcut</TH><TH>Description</TH></TR>
+           <TR><TD>Alt+a</TD><TD>Adds a directory to the favorites list</TD></TR>
+           <TR><TD>Alt+m</TD><TD>Manages the favorites list</TD></TR>
+           <TR><TD>Alt+f</TD><TD>Shows the filesystem list</TD></TR>
+           <TR><TD>Alt+h</TD><TD>Go to the home directory</TD></TR>
+           <TR><TD>Alt+0..9</TD><TD>going to any of the first 10 favorites</TD></TR>
+         </TABLE></CENTER>
+
   The Fl_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
   recommended to open files that may have non-ASCII names with the fl_fopen() or
   fl_open() utility functions that handle these names in a cross-platform way
