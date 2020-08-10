@@ -515,8 +515,7 @@ Fl_File_Chooser::favoritesButtonCB()
     prefs_->set(menuname, directory_);
     prefs_->flush();
 
-    quote_pathname(menuname, directory_, sizeof(menuname));
-    favoritesButton->add(menuname);
+    update_favorites();              // adds item to favorites with Alt-n shortcut
 
     if (favoritesButton->size() > 104) {
       ((Fl_Menu_Item *)favoritesButton->menu())[0].deactivate();
