@@ -123,7 +123,8 @@ Changes in FLTK 1.4.0                            Released: ??? ?? 2020
   Other Improvements
 
   - (add new items here)
-  - Support for building for the arm64 architecture used by macOS 11.0 "Big Sur".
+  - Added support for macOS 11.0 "Big Sur" and for building for
+    the arm64 architecture.
   - Add optional argument to Fl_Printer::begin_job() to receive
     a string describing the error when an error occurs.
   - Fix Windows-specific bug when the program tries to enlarge a

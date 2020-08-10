@@ -2183,9 +2183,10 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
 - (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
-  aux_bitmap = CGBitmapContextCreate(NULL, CGBitmapContextGetWidth(gc), CGBitmapContextGetHeight(gc),
-                                     CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
-                                     CGBitmapContextGetColorSpace(gc), CGBitmapContextGetBitmapInfo(gc));
+  int W = [self frame].size.width, H = [self frame].size.height;
+  if (r) { W *= 2; H *= 2; }
+  static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+  aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 4 * W, cspace, kCGImageAlphaPremultipliedFirst);
   if (r) CGContextScaleCTM(aux_bitmap, 2, 2);
 }
 - (void)reset_aux_bitmap {
@@ -2249,15 +2250,11 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   if (window->damage()) d->Fl_Window_Driver::flush();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
   if (destination) {
-    if (CGBitmapContextGetBytesPerRow(aux_bitmap) == CGBitmapContextGetBytesPerRow(destination)) {
-      memcpy(CGBitmapContextGetData(destination), CGBitmapContextGetData(aux_bitmap),
-             CGBitmapContextGetHeight(aux_bitmap) * CGBitmapContextGetBytesPerRow(aux_bitmap));
-    } else {
-      // this condition (unchanged W and H but changed BytesPerRow) occurs with 10.15
-      CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
-      CGContextDrawImage(destination, [self frame], img);
-      CGImageRelease(img);
-    }
+    // With macOS 11.0, bitmap context-specific functions such as CGBitmapContextGetWidth()
+    // can't be used with destination. Why?
+    CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
+    CGContextDrawImage(destination, [self frame], img);
+    CGImageRelease(img);
     Fl_Cocoa_Window_Driver::q_release_context();
     }
 #endif
@@ -2305,7 +2302,7 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
 }
 - (void)resetCursorRects {
   Fl_Window *w = [(FLWindow*)[self window] getFl_Window];
-  Fl_X *i = Fl_X::i(w);
+  Fl_X *i = (w ? Fl_X::i(w) : NULL);
   if (!i) return;  // fix for STR #3128
   // We have to have at least one cursor rect for invalidateCursorRectsForView
   // to work, hence the "else" clause.
