@@ -14,7 +14,7 @@
 //
 //     https://www.fltk.org/bugs.php
 //
-#include <config.h>     /* needed only to detect FLTK_USE_NANOSVG */
+#include <config.h>     /* needed only to detect FLTK_USE_SVG */
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
@@ -53,12 +53,14 @@ const char *svg_logo =
     "</svg>\n";
 
 int main(int argc, char **argv) {
-#ifndef FLTK_USE_NANOSVG
-    fl_message("You need to build fltk with --enable-nanosvg to use this example.");
+#ifndef FLTK_USE_SVG
+    fl_message("You need to build FLTK with 'configure --enable-svg'\n"
+               "or CMake option 'OPTION_USE_SVG'\n"
+               "to use this example.");
     return(1);
 #else
     Fl_SVG_Image *svg = new Fl_SVG_Image(NULL, svg_logo);
-    Fl_Window    *win = new Fl_Window(720, 486, "svg test");
+    Fl_Window    *win = new Fl_Window(720, 486, "howto-simple-svg");
     Fl_Box       *box = new Fl_Box(10,10,720-20,486-20);
     box->image(svg);
     win->end();
