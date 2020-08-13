@@ -118,11 +118,16 @@ configure_file (
 )
 
 #######################################################################
-# build examples - these have to be built after fluid is built/imported
+# options to build test/demo and example programs
 #######################################################################
-if (OPTION_BUILD_EXAMPLES)
-   add_subdirectory (test)
-endif (OPTION_BUILD_EXAMPLES)
+
+if (FLTK_BUILD_TEST)
+  add_subdirectory (test)
+endif (FLTK_BUILD_TEST)
+
+if (FLTK_BUILD_EXAMPLES)
+  add_subdirectory (examples)
+endif (FLTK_BUILD_EXAMPLES)
 
 #######################################################################
 # Android Studio wrapup

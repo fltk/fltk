@@ -38,10 +38,11 @@ before_script:
   - |
     if [ $TRAVIS_OS_NAME == linux ]; then
        sudo apt-get update -q
-       sudo apt-get install -y libxinerama-dev libxcursor-dev libasound2-dev
+       sudo apt-get install -y libxinerama-dev libxcursor-dev libasound2-dev libglew-dev
        sudo apt-get install -y doxygen
     elif [ $TRAVIS_OS_NAME == osx ]; then
-      brew install ccache # need to install on OSX
+      brew install ccache # need to install on macOS
+      # brew install glew   # libGLEW not needed on macOS
       export PATH="/usr/local/opt/ccache/libexec:$PATH"
       brew install doxygen
     fi
@@ -54,12 +55,12 @@ script:
      make
      mkdir cmake-build
      cd cmake-build
-     cmake -G "Unix Makefiles" ..
+     cmake -G "Unix Makefiles" -D FLTK_BUILD_EXAMPLES=ON ..
      make
    else
      mkdir scan-build
      cd scan-build
-     scan-build cmake -G "Unix Makefiles" ..
+     scan-build cmake -G "Unix Makefiles" -D FLTK_BUILD_EXAMPLES=ON ..
      scan-build -v make
    fi
 

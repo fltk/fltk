@@ -37,6 +37,7 @@ elseif (HAVE_ALSA_ASOUNDLIB_H)
   if (LIB_asound)
     set (AUDIOLIBS ${LIB_asound})
   endif (LIB_asound)
+  mark_as_advanced (LIB_asound)
 endif (WIN32)
 
 #######################################################################
@@ -73,6 +74,7 @@ CREATE_EXAMPLE (doublebuffer doublebuffer.cxx fltk ANDROID_OK)
 CREATE_EXAMPLE (editor "editor.cxx;editor-Info.plist" fltk ANDROID_OK)
 CREATE_EXAMPLE (fast_slow fast_slow.fl fltk ANDROID_OK)
 CREATE_EXAMPLE (file_chooser file_chooser.cxx "fltk_images;fltk")
+CREATE_EXAMPLE (fltk-versions fltk-versions.cxx fltk)
 CREATE_EXAMPLE (fonts fonts.cxx fltk)
 CREATE_EXAMPLE (forms forms.cxx "fltk_forms;fltk")
 CREATE_EXAMPLE (hello hello.cxx fltk)
@@ -126,8 +128,6 @@ CREATE_EXAMPLE (utf8 utf8.cxx fltk)
 CREATE_EXAMPLE (valuators valuators.fl fltk)
 CREATE_EXAMPLE (unittests unittests.cxx fltk)
 CREATE_EXAMPLE (windowfocus windowfocus.cxx fltk)
-
-CREATE_EXAMPLE (fltk-versions ../examples/fltk-versions.cxx fltk)
 
 # OpenGL demos...
 if (OPENGL_FOUND)

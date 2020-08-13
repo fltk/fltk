@@ -35,14 +35,14 @@ add_definitions (${OPTION_OPTIM})
 set (OPTION_ARCHFLAGS ""
   CACHE STRING
   "custom architecture flags"
-  )
+)
 add_definitions (${OPTION_ARCHFLAGS})
 
 #######################################################################
 set (OPTION_ABI_VERSION ""
   CACHE STRING
   "FLTK ABI Version FL_ABI_VERSION: 1xxyy for 1.x.y (xx,yy with leading zero)"
-  )
+)
 set (FL_ABI_VERSION ${OPTION_ABI_VERSION})
 
 #######################################################################
@@ -100,14 +100,23 @@ endif (OPTION_USE_POLL)
 
 #######################################################################
 option (OPTION_BUILD_SHARED_LIBS
-  "Build shared libraries(in addition to static libraries)"
+  "Build shared libraries (in addition to static libraries)"
   OFF
-  )
+)
 
 #######################################################################
-option (OPTION_BUILD_EXAMPLES "build example programs" ON)
 option (OPTION_PRINT_SUPPORT "allow print support" ON)
 option (OPTION_FILESYSTEM_SUPPORT "allow file system support" ON)
+
+option (FLTK_BUILD_TEST     "Build test/demo programs" ON)
+option (FLTK_BUILD_EXAMPLES "Build example programs"   OFF)
+
+if (DEFINED OPTION_BUILD_EXAMPLES)
+  message (WARNING
+    "'OPTION_BUILD_EXAMPLES' is obsolete, please use 'FLTK_BUILD_TEST' instead.")
+  message (STATUS
+    "To remove this warning, please delete 'OPTION_BUILD_EXAMPLES' from the CMake cache")
+endif (DEFINED OPTION_BUILD_EXAMPLES)
 
 #######################################################################
 if (DOXYGEN_FOUND)
@@ -307,7 +316,7 @@ if (ZLIB_FOUND)
   set (FLTK_BUILTIN_ZLIB_FOUND FALSE)
 else()
   if (OPTION_USE_SYSTEM_ZLIB)
-    message (STATUS "\ncannot find system zlib library - using built-in\n")
+    message (STATUS "cannot find system zlib library - using built-in\n")
   endif (OPTION_USE_SYSTEM_ZLIB)
 
   add_subdirectory (zlib)
@@ -336,7 +345,7 @@ if (JPEG_FOUND)
   set (FLTK_BUILTIN_JPEG_FOUND FALSE)
 else ()
   if (OPTION_USE_SYSTEM_LIBJPEG)
-    message (STATUS "\ncannot find system jpeg library - using built-in\n")
+    message (STATUS "cannot find system jpeg library - using built-in\n")
   endif (OPTION_USE_SYSTEM_LIBJPEG)
 
   add_subdirectory (jpeg)
@@ -365,7 +374,7 @@ if (PNG_FOUND)
   set (FLTK_BUILTIN_PNG_FOUND FALSE)
 else()
   if (OPTION_USE_SYSTEM_LIBPNG)
-    message (STATUS "\ncannot find system png library - using built-in\n")
+    message (STATUS "cannot find system png library - using built-in\n")
   endif (OPTION_USE_SYSTEM_LIBPNG)
 
   add_subdirectory (png)

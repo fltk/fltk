@@ -156,12 +156,13 @@ find_library (LIB_fontconfig fontconfig)
 find_library (LIB_freetype freetype)
 find_library (LIB_GL GL)
 find_library (LIB_MesaGL MesaGL)
+find_library (LIB_GLEW GLEW)
 find_library (LIB_jpeg jpeg)
 find_library (LIB_png png)
 find_library (LIB_zlib z)
 
 mark_as_advanced (LIB_CAIRO LIB_dl LIB_fontconfig LIB_freetype)
-mark_as_advanced (LIB_GL LIB_MesaGL)
+mark_as_advanced (LIB_GL LIB_MesaGL LIB_GLEW)
 mark_as_advanced (LIB_jpeg LIB_png LIB_zlib)
 
 #######################################################################
