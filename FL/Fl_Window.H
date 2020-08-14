@@ -540,6 +540,7 @@ public:
   void shape(const Fl_Image& b) ;
   const Fl_Image *shape();
   int screen_num();
+  void screen_num(int screen_num);
   static bool is_a_rescale();
 };
 

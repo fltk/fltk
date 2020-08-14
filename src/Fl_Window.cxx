@@ -642,6 +642,24 @@ int Fl_Window::screen_num() {
   return pWindowDriver->screen_num();
 }
 
+/** Set the number of the screen where to map the window.
+ Call this and set also the window's desired position before show()'ing the window.
+ This can be necessary when a system has several screens with
+ distinct scaling factor values because the window's x() and y() may not suffice to
+ uniquely identify one screen.
+ To see that, consider a system with two screens where the screen at left is A pixel-wide
+ and has a scale factor of 1 whereas the screen at right has a scale factor of 2.
+ For the sake of simplicity, consider only
+ the X coordinates of windows. FLTK coordinates translate directly to pixel coordinates on the
+ left screen, whereas FLTK coordinates multiplied by 2 correspond to pixel coordinates
+ on the right screen. Consequently, FLTK coordinates between A/2 + 1 and A-1 can map to both
+ screens.  Both window coordinates and screen number are necessary to uniquely identify
+ where a window is to be mapped.
+ */
+void Fl_Window::screen_num(int screen_num) {
+  if (!shown() && screen_num >= 0 && screen_num < Fl::screen_count()) pWindowDriver->screen_num(screen_num);
+}
+
 /** Assigns a non-rectangular shape to the window.
  This function gives an arbitrary shape (not just a rectangular region) to an Fl_Window.
  An Fl_Image of any dimension can be used as mask; it is rescaled to the window's dimension as needed.
