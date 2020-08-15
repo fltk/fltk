@@ -113,7 +113,7 @@ void initShaders(void)
 #define SHADING_LANG_VERS "130"
 #endif
   // load shaders
-  const char *vv = "#version "SHADING_LANG_VERS"\n\
+  const char *vv = "#version " SHADING_LANG_VERS "\n\
   in  vec3 in_Position;\
   in  vec3 in_Color;\
   out vec3 ex_Color;\
@@ -123,7 +123,7 @@ void initShaders(void)
     gl_Position = vec4(in_Position, 1.0);\
   }";
 
-  const char *ff = "#version "SHADING_LANG_VERS"\n\
+  const char *ff = "#version " SHADING_LANG_VERS "\n\
   precision highp float;\
   in  vec3 ex_Color;\
   out vec4 out_Color;\
