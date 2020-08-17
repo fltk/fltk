@@ -559,7 +559,7 @@ void Fl_Cocoa_Screen_Driver::breakMacEventLoop()
 #endif
 - (BOOL)did_view_resolution_change;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-- (void)create_aux_bitmap:(BOOL)retina;
+- (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r;
 - (void)reset_aux_bitmap;
 #endif
 @end
@@ -2182,12 +2182,19 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
   return NO;
 }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-- (void)create_aux_bitmap:(BOOL)retina {
-  int W = [self frame].size.width, H = [self frame].size.height;
-  if (retina) { W *= 2; H *= 2; }
-  static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
-  aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 0, cspace, kCGImageAlphaPremultipliedFirst);
-  if (retina) CGContextScaleCTM(aux_bitmap, 2, 2);
+- (void)create_aux_bitmap:(CGContextRef)gc retina:(BOOL)r {
+  if (!gc || fl_mac_os_version >= 110000) {
+    // bitmap context-related functions (e.g., CGBitmapContextGetBytesPerRow) can't be used here with macOS 11.0 "Big Sur"
+    static CGColorSpaceRef cspace = CGColorSpaceCreateDeviceRGB();
+    int W = [self frame].size.width, H = [self frame].size.height;
+    if (r) { W *= 2; H *= 2; }
+    aux_bitmap = CGBitmapContextCreate(NULL, W, H, 8, 0, cspace, kCGImageAlphaPremultipliedFirst);
+  } else {
+    aux_bitmap = CGBitmapContextCreate(NULL, CGBitmapContextGetWidth(gc), CGBitmapContextGetHeight(gc),
+                                       CGBitmapContextGetBitsPerComponent(gc), CGBitmapContextGetBytesPerRow(gc),
+                                       CGBitmapContextGetColorSpace(gc), CGBitmapContextGetBitmapInfo(gc));
+  }
+  if (r) CGContextScaleCTM(aux_bitmap, 2, 2);
 }
 - (void)reset_aux_bitmap {
   CGContextRelease(aux_bitmap);
@@ -2241,20 +2248,26 @@ static FLTextInputContext* fltextinputcontext_instance = nil;
     window->clear_damage(FL_DAMAGE_ALL);
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  if (views_use_CA && !aux_bitmap && !window->as_gl_window()) [self create_aux_bitmap:d->mapped_to_retina()];
+  CGContextRef destination = NULL;
+  if (views_use_CA) {
+    destination = [[NSGraphicsContext currentContext] CGContext];
+    if (!aux_bitmap && !window->as_gl_window()) [self create_aux_bitmap:destination retina:d->mapped_to_retina()];
+  }
 #endif
   through_drawRect = YES;
   if (window->damage()) d->Fl_Window_Driver::flush();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
-  if (views_use_CA) {
-    CGContextRef destination = [[NSGraphicsContext currentContext] CGContext];
-    if (destination) { // can be NULL with gl_start/gl_finish
+  if (destination) { // can be NULL with gl_start/gl_finish
+    if (fl_mac_os_version < 110000 && CGBitmapContextGetBytesPerRow(aux_bitmap) == CGBitmapContextGetBytesPerRow(destination)) {
+      memcpy(CGBitmapContextGetData(destination), CGBitmapContextGetData(aux_bitmap),
+             CGBitmapContextGetHeight(aux_bitmap) * CGBitmapContextGetBytesPerRow(aux_bitmap));
+    } else {
       CGImageRef img = CGBitmapContextCreateImage(aux_bitmap);
       CGContextDrawImage(destination, [self frame], img);
       CGImageRelease(img);
     }
-    Fl_Cocoa_Window_Driver::q_release_context();
-    }
+  }
+  Fl_Cocoa_Window_Driver::q_release_context();
 #endif
   if (!through_Fl_X_flush) window->clear_damage();
   through_drawRect = NO;
