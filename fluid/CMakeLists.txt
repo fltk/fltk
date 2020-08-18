@@ -49,9 +49,23 @@ endif (WIN32)
 if (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
   set (ICON_NAME fluid.icns)
   set (ICON_PATH "${PROJECT_SOURCE_DIR}/fluid/fluid.app/Contents/Resources/${ICON_NAME}")
-  add_executable(fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+  add_executable (fluid MACOSX_BUNDLE ${CPPFILES} ${ICON_PATH})
+
+  # create macOS bundle wrapper script
+
+  set (WRAPPER "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/fluid")
+  add_custom_command (
+    TARGET fluid POST_BUILD
+    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/macOS-bundle-wrapper.in ${WRAPPER}
+    COMMAND chmod u+x,g+x,o+x ${WRAPPER}
+    BYPRODUCTS ${WRAPPER}
+    # COMMENT "Creating macOS bundle wrapper script ${WRAPPER}"
+    VERBATIM
+  )
+  unset (WRAPPER)
+
 else ()
-  add_executable(fluid WIN32 ${CPPFILES})
+  add_executable (fluid WIN32 ${CPPFILES})
 endif (APPLE AND (NOT OPTION_APPLE_X11) AND (NOT OPTION_APPLE_SDL))
 
 target_link_libraries(fluid fltk fltk_images fltk_forms)

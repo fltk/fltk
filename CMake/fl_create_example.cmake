@@ -103,26 +103,6 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   endif (MAC_BUNDLE AND ICON_NAME)
 
   ##############################################################################
-  # copy macOS "bundle wrapper" (shell script) to target (bin) directory
-  ##############################################################################
-  #  (1) file (COPY   ...) to set execution permissions
-  #  (2) file (RENAME ...) to move the file to its final place
-  ##############################################################################
-
-  if (MAC_BUNDLE)
-    file (COPY
-      ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/macOS-bundle-wrapper.in
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-        GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-    )
-    file (RENAME
-      ${CMAKE_CURRENT_BINARY_DIR}/macOS-bundle-wrapper.in
-      ${EXECUTABLE_OUTPUT_PATH}/${TARGET_NAME}
-    )
-  endif (MAC_BUNDLE)
-
-  ##############################################################################
   # add executable target and set properties (all platforms)
   ##############################################################################
 
@@ -138,6 +118,24 @@ macro (CREATE_EXAMPLE NAME SOURCES LIBRARIES)
   if (PLIST)
     set_target_properties (${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${PLIST}")
   endif (PLIST)
+
+  ##############################################################################
+  # Copy macOS "bundle wrapper" (shell script) to target directory.
+  # The "custom command" will be executed "POST_BUILD".
+  ##############################################################################
+
+  if (MAC_BUNDLE)
+    set (WRAPPER "${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/${TARGET_NAME}")
+    add_custom_command (
+      TARGET ${TARGET_NAME} POST_BUILD
+      COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/../CMake/macOS-bundle-wrapper.in ${WRAPPER}
+      COMMAND chmod u+x,g+x,o+x ${WRAPPER}
+      BYPRODUCTS ${WRAPPER}
+      # COMMENT "Creating macOS bundle wrapper script ${WRAPPER}"
+      VERBATIM
+    )
+    unset (WRAPPER)
+  endif (MAC_BUNDLE)
 
   ######################################################################
   # Parse optional fourth argument "ANDROID_OK", see description above.
